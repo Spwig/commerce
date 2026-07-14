@@ -4,11 +4,12 @@ Dynamic SMS provider loading from component registry.
 Discovers SMS providers from components_data/integrations/sms/
 and loads them dynamically based on their manifest.json.
 """
+
 import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Type, Any
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -21,15 +22,15 @@ class SMSProviderLoader:
     and loads them dynamically based on their manifest.json.
     """
 
-    COMPONENT_TYPE = 'sms_provider'
+    COMPONENT_TYPE = "sms_provider"
 
-    _providers: Dict[str, Type] = {}
-    _manifests: Dict[str, Dict[str, Any]] = {}
+    _providers: dict[str, type] = {}
+    _manifests: dict[str, dict[str, Any]] = {}
     _loaded = False
     _last_loaded_at: float = 0
 
     @classmethod
-    def discover_providers(cls) -> Dict[str, Type]:
+    def discover_providers(cls) -> dict[str, type]:
         """
         Discover and load all SMS providers from components.
 
@@ -41,7 +42,7 @@ class SMSProviderLoader:
 
         from component_updates.integration_paths import INTEGRATIONS_DIR, import_component_module
 
-        components_path = INTEGRATIONS_DIR / 'sms_provider'
+        components_path = INTEGRATIONS_DIR / "sms_provider"
 
         if not components_path.exists():
             logger.warning(f"SMS components path not found: {components_path}")
@@ -54,13 +55,13 @@ class SMSProviderLoader:
                 continue
 
             # Look for 'current' symlink pointing to version
-            current_path = provider_dir / 'current'
+            current_path = provider_dir / "current"
             if not current_path.exists():
                 logger.debug(f"Skipping {provider_dir.name} - no 'current' symlink/directory")
                 continue
 
             # Load manifest
-            manifest_path = current_path / 'manifest.json'
+            manifest_path = current_path / "manifest.json"
             if not manifest_path.exists():
                 logger.warning(f"No manifest found for SMS provider {provider_dir.name}")
                 continue
@@ -69,20 +70,20 @@ class SMSProviderLoader:
                 with open(manifest_path) as f:
                     manifest = json.load(f)
 
-                provider_key = manifest.get('provider_key')
+                provider_key = manifest.get("provider_key")
                 if not provider_key:
                     logger.warning(f"No provider_key in manifest for {provider_dir.name}")
                     continue
 
-                entry_point = manifest.get('entry_point', 'provider')
-                class_name = manifest.get('class_name')
+                entry_point = manifest.get("entry_point", "provider")
+                class_name = manifest.get("class_name")
 
                 if not class_name:
                     logger.warning(f"No class_name in manifest for {provider_dir.name}")
                     continue
 
                 # Remove .py extension if present
-                if entry_point.endswith('.py'):
+                if entry_point.endswith(".py"):
                     entry_point = entry_point[:-3]
 
                 # Import provider module using file-path-based loading
@@ -108,12 +109,13 @@ class SMSProviderLoader:
         """Check if provider files on disk are newer than our in-memory cache."""
         try:
             from component_updates.integration_paths import provider_cache_is_stale
+
             return provider_cache_is_stale(cls.COMPONENT_TYPE, cls._last_loaded_at)
         except Exception:
             return False
 
     @classmethod
-    def get_provider(cls, provider_key: str) -> Optional[Type]:
+    def get_provider(cls, provider_key: str) -> type | None:
         """
         Get a specific provider class by key.
 
@@ -132,7 +134,7 @@ class SMSProviderLoader:
         return cls._providers.get(provider_key)
 
     @classmethod
-    def get_manifest(cls, provider_key: str) -> Optional[Dict[str, Any]]:
+    def get_manifest(cls, provider_key: str) -> dict[str, Any] | None:
         """
         Get the manifest for a specific provider.
 
@@ -150,7 +152,7 @@ class SMSProviderLoader:
         return cls._manifests.get(provider_key)
 
     @classmethod
-    def list_providers(cls) -> List[Dict[str, Any]]:
+    def list_providers(cls) -> list[dict[str, Any]]:
         """
         List all available providers with metadata.
 
@@ -163,27 +165,30 @@ class SMSProviderLoader:
             cls.reload_providers()
 
         providers = []
-        for key, provider_class in cls._providers.items():
+        for key, _provider_class in cls._providers.items():
             manifest = cls._manifests.get(key, {})
 
-            providers.append({
-                'key': key,
-                'name': manifest.get('name', key),
-                'description': manifest.get('description', ''),
-                'capabilities': manifest.get('capabilities', {}),
-                'version': manifest.get('version', '1.0.0'),
-                'logo': manifest.get('logo'),
-                'documentation_url': manifest.get('documentation_url', '') or manifest.get('api_docs_url', ''),
-                'homepage_url': manifest.get('homepage_url', ''),
-                'setup': manifest.get('setup_wizard', manifest.get('setup', {})),
-                'translations': manifest.get('translations', {}),
-                'default_language': manifest.get('default_language', 'en'),
-            })
+            providers.append(
+                {
+                    "key": key,
+                    "name": manifest.get("name", key),
+                    "description": manifest.get("description", ""),
+                    "capabilities": manifest.get("capabilities", {}),
+                    "version": manifest.get("version", "1.0.0"),
+                    "logo": manifest.get("logo"),
+                    "documentation_url": manifest.get("documentation_url", "")
+                    or manifest.get("api_docs_url", ""),
+                    "homepage_url": manifest.get("homepage_url", ""),
+                    "setup": manifest.get("setup_wizard", manifest.get("setup", {})),
+                    "translations": manifest.get("translations", {}),
+                    "default_language": manifest.get("default_language", "en"),
+                }
+            )
 
         return providers
 
     @classmethod
-    def get_credential_schema(cls, provider_key: str) -> Optional[Dict[str, Any]]:
+    def get_credential_schema(cls, provider_key: str) -> dict[str, Any] | None:
         """
         Get the credential schema for a provider.
 
@@ -195,7 +200,7 @@ class SMSProviderLoader:
         """
         manifest = cls.get_manifest(provider_key)
         if manifest:
-            return manifest.get('credential_schema')
+            return manifest.get("credential_schema")
         return None
 
     @classmethod
@@ -215,8 +220,9 @@ class SMSProviderLoader:
 
         # Clear Python's module cache for SMS provider modules
         modules_to_remove = [
-            module_name for module_name in list(sys.modules.keys())
-            if module_name.startswith('sms_provider_')
+            module_name
+            for module_name in list(sys.modules.keys())
+            if module_name.startswith("sms_provider_")
         ]
 
         for module_name in modules_to_remove:
@@ -229,7 +235,7 @@ class SMSProviderLoader:
         logger.info(f"Reloaded {len(cls._providers)} SMS providers")
 
     @classmethod
-    def get_provider_path(cls, provider_key: str) -> Optional[Path]:
+    def get_provider_path(cls, provider_key: str) -> Path | None:
         """
         Get the filesystem path to a provider's current version.
 
@@ -241,7 +247,7 @@ class SMSProviderLoader:
         """
         from component_updates.integration_paths import INTEGRATIONS_DIR
 
-        components_path = INTEGRATIONS_DIR / 'sms_provider'
+        components_path = INTEGRATIONS_DIR / "sms_provider"
 
         if not components_path.exists():
             return None
@@ -251,14 +257,14 @@ class SMSProviderLoader:
             if not provider_dir.is_dir():
                 continue
 
-            current_path = provider_dir / 'current'
-            manifest_path = current_path / 'manifest.json'
+            current_path = provider_dir / "current"
+            manifest_path = current_path / "manifest.json"
 
             if manifest_path.exists():
                 try:
                     with open(manifest_path) as f:
                         manifest = json.load(f)
-                        if manifest.get('provider_key') == provider_key:
+                        if manifest.get("provider_key") == provider_key:
                             return current_path
                 except Exception:
                     pass
@@ -266,7 +272,7 @@ class SMSProviderLoader:
         return None
 
     @classmethod
-    def get_setup_instructions(cls, provider_key: str) -> Optional[str]:
+    def get_setup_instructions(cls, provider_key: str) -> str | None:
         """
         Get the setup instructions HTML for a provider.
 
@@ -280,10 +286,10 @@ class SMSProviderLoader:
         if not provider_path:
             return None
 
-        instructions_path = provider_path / 'setup_instructions.html'
+        instructions_path = provider_path / "setup_instructions.html"
         if instructions_path.exists():
             try:
-                with open(instructions_path, encoding='utf-8') as f:
+                with open(instructions_path, encoding="utf-8") as f:
                     return f.read()
             except Exception as e:
                 logger.error(f"Failed to read setup instructions for {provider_key}: {e}")

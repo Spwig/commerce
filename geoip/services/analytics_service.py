@@ -4,13 +4,15 @@ Visitor Analytics Service
 Provides aggregated visitor statistics and metrics for the analytics dashboard.
 Uses DailyPageStats/DailyTrafficStats for historical data and raw PageView for current day.
 """
-from django.db.models import Count, Sum, Avg, Q, F, Value, CharField
-from django.db.models.functions import TruncDate, TruncHour, ExtractHour
-from django.utils import timezone
-from datetime import timedelta, date, datetime
-import logging
 
-from ..models import PageView, DailyPageStats, DailyTrafficStats, VisitorLocation
+import logging
+from datetime import date, datetime, timedelta
+
+from django.db.models import Avg, Count, Q, Sum
+from django.db.models.functions import ExtractHour, TruncDate
+from django.utils import timezone
+
+from ..models import PageView, VisitorLocation
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,7 @@ def get_date_range_for_period(period, start_date=None, end_date=None):
     """
     now = timezone.now()
 
-    if period == 'custom' and start_date and end_date:
+    if period == "custom" and start_date and end_date:
         if isinstance(start_date, date) and not isinstance(start_date, datetime):
             start_date = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
         if isinstance(end_date, date) and not isinstance(end_date, datetime):
@@ -37,9 +39,9 @@ def get_date_range_for_period(period, start_date=None, end_date=None):
         return start_date, end_date
 
     days_map = {
-        '7_days': 7,
-        '30_days': 30,
-        '90_days': 90,
+        "7_days": 7,
+        "30_days": 30,
+        "90_days": 90,
     }
     days = days_map.get(period, 30)
     return now - timedelta(days=days), now
@@ -59,14 +61,12 @@ def get_overview(start, end):
     total_views = pv_qs.count()
     human_views = pv_qs.filter(human_filter).count()
     bot_views = total_views - human_views
-    unique_visitors = pv_qs.filter(human_filter).values('session_key').distinct().count()
+    unique_visitors = pv_qs.filter(human_filter).values("session_key").distinct().count()
 
     # Bounce rate: sessions with only 1 page view
     if unique_visitors > 0:
         session_counts = (
-            pv_qs.filter(human_filter)
-            .values('session_key')
-            .annotate(pv_count=Count('id'))
+            pv_qs.filter(human_filter).values("session_key").annotate(pv_count=Count("id"))
         )
         single_page_sessions = session_counts.filter(pv_count=1).count()
         bounce_rate = round((single_page_sessions / unique_visitors) * 100, 1)
@@ -78,12 +78,12 @@ def get_overview(start, end):
         avg_pages = 0.0
 
     return {
-        'total_views': total_views,
-        'human_views': human_views,
-        'unique_visitors': unique_visitors,
-        'bot_views': bot_views,
-        'bounce_rate': bounce_rate,
-        'avg_pages_per_session': avg_pages,
+        "total_views": total_views,
+        "human_views": human_views,
+        "unique_visitors": unique_visitors,
+        "bot_views": bot_views,
+        "bounce_rate": bounce_rate,
+        "avg_pages_per_session": avg_pages,
     }
 
 
@@ -99,13 +99,13 @@ def get_top_pages(start, end, limit=20):
             timestamp__range=(start, end),
             is_bot=False,
         )
-        .values('url_path')
+        .values("url_path")
         .annotate(
-            views=Count('id'),
-            unique_visitors=Count('session_key', distinct=True),
-            entries=Count('id', filter=Q(is_entry_page=True)),
+            views=Count("id"),
+            unique_visitors=Count("session_key", distinct=True),
+            entries=Count("id", filter=Q(is_entry_page=True)),
         )
-        .order_by('-views')[:limit]
+        .order_by("-views")[:limit]
     )
 
 
@@ -118,14 +118,14 @@ def get_traffic_trends(start, end):
     """
     daily = (
         PageView.objects.filter(timestamp__range=(start, end))
-        .annotate(day=TruncDate('timestamp'))
-        .values('day')
+        .annotate(day=TruncDate("timestamp"))
+        .values("day")
         .annotate(
-            views=Count('id'),
-            visitors=Count('session_key', distinct=True, filter=Q(is_bot=False)),
-            bot_views=Count('id', filter=Q(is_bot=True)),
+            views=Count("id"),
+            visitors=Count("session_key", distinct=True, filter=Q(is_bot=False)),
+            bot_views=Count("id", filter=Q(is_bot=True)),
         )
-        .order_by('day')
+        .order_by("day")
     )
 
     labels = []
@@ -134,16 +134,16 @@ def get_traffic_trends(start, end):
     bot_views = []
 
     for row in daily:
-        labels.append(row['day'].strftime('%Y-%m-%d'))
-        views.append(row['views'])
-        visitors.append(row['visitors'])
-        bot_views.append(row['bot_views'])
+        labels.append(row["day"].strftime("%Y-%m-%d"))
+        views.append(row["views"])
+        visitors.append(row["visitors"])
+        bot_views.append(row["bot_views"])
 
     return {
-        'labels': labels,
-        'views': views,
-        'visitors': visitors,
-        'bot_views': bot_views,
+        "labels": labels,
+        "views": views,
+        "visitors": visitors,
+        "bot_views": bot_views,
     }
 
 
@@ -159,13 +159,13 @@ def get_campaign_stats(start, end):
             first_seen__range=(start, end),
             is_bot=False,
         )
-        .exclude(utm_source='')
-        .values('utm_source', 'utm_medium', 'utm_campaign')
+        .exclude(utm_source="")
+        .values("utm_source", "utm_medium", "utm_campaign")
         .annotate(
-            visitors=Count('id'),
-            page_views=Sum('page_views'),
+            visitors=Count("id"),
+            page_views=Sum("page_views"),
         )
-        .order_by('-visitors')[:20]
+        .order_by("-visitors")[:20]
     )
 
 
@@ -176,17 +176,16 @@ def get_referrer_stats(start, end, limit=20):
     Returns:
         list of dicts: referrer, count
     """
-    from django.db.models.functions import Substr, StrIndex
 
     results = (
         PageView.objects.filter(
             timestamp__range=(start, end),
             is_bot=False,
         )
-        .exclude(referrer='')
-        .values('referrer')
-        .annotate(count=Count('id'))
-        .order_by('-count')[:limit * 2]  # Fetch extra for domain dedup
+        .exclude(referrer="")
+        .values("referrer")
+        .annotate(count=Count("id"))
+        .order_by("-count")[: limit * 2]  # Fetch extra for domain dedup
     )
 
     # Aggregate by domain
@@ -194,13 +193,14 @@ def get_referrer_stats(start, end, limit=20):
     for row in results:
         try:
             from urllib.parse import urlparse
-            domain = urlparse(row['referrer']).netloc or row['referrer']
+
+            domain = urlparse(row["referrer"]).netloc or row["referrer"]
         except Exception:
-            domain = row['referrer']
-        domain_counts[domain] = domain_counts.get(domain, 0) + row['count']
+            domain = row["referrer"]
+        domain_counts[domain] = domain_counts.get(domain, 0) + row["count"]
 
     sorted_domains = sorted(domain_counts.items(), key=lambda x: -x[1])[:limit]
-    return [{'referrer': domain, 'count': count} for domain, count in sorted_domains]
+    return [{"referrer": domain, "count": count} for domain, count in sorted_domains]
 
 
 def get_geographic_distribution(start, end):
@@ -215,13 +215,13 @@ def get_geographic_distribution(start, end):
             first_seen__range=(start, end),
             is_bot=False,
         )
-        .exclude(resolved_country='')
-        .values('resolved_country')
+        .exclude(resolved_country="")
+        .values("resolved_country")
         .annotate(
-            visitors=Count('id'),
-            page_views=Sum('page_views'),
+            visitors=Count("id"),
+            page_views=Sum("page_views"),
         )
-        .order_by('-visitors')[:20]
+        .order_by("-visitors")[:20]
     )
 
 
@@ -237,14 +237,14 @@ def get_device_distribution(start, end):
             first_seen__range=(start, end),
             is_bot=False,
         )
-        .values('device_type')
-        .annotate(count=Count('id'))
+        .values("device_type")
+        .annotate(count=Count("id"))
     )
 
-    result = {'desktop': 0, 'mobile': 0, 'tablet': 0, 'unknown': 0}
+    result = {"desktop": 0, "mobile": 0, "tablet": 0, "unknown": 0}
     for row in counts:
-        if row['device_type'] in result:
-            result[row['device_type']] = row['count']
+        if row["device_type"] in result:
+            result[row["device_type"]] = row["count"]
     return result
 
 
@@ -261,12 +261,12 @@ def get_landing_pages(start, end, limit=20):
             is_bot=False,
             is_entry_page=True,
         )
-        .values('url_path')
+        .values("url_path")
         .annotate(
-            entries=Count('id'),
-            unique_visitors=Count('session_key', distinct=True),
+            entries=Count("id"),
+            unique_visitors=Count("session_key", distinct=True),
         )
-        .order_by('-entries')[:limit]
+        .order_by("-entries")[:limit]
     )
 
 
@@ -287,16 +287,16 @@ def get_bot_summary(start, end):
             first_seen__range=(start, end),
             is_bot=True,
         )
-        .values('user_agent')
-        .annotate(count=Count('id'))
-        .order_by('-count')[:10]
+        .values("user_agent")
+        .annotate(count=Count("id"))
+        .order_by("-count")[:10]
     )
 
     return {
-        'bot_count': bot_count,
-        'human_count': human_count,
-        'bot_pct': round((bot_count / total) * 100, 1) if total else 0.0,
-        'top_bot_agents': top_agents,
+        "bot_count": bot_count,
+        "human_count": human_count,
+        "bot_pct": round((bot_count / total) * 100, 1) if total else 0.0,
+        "top_bot_agents": top_agents,
     }
 
 
@@ -309,8 +309,8 @@ def get_session_journey(session_key):
     """
     return list(
         PageView.objects.filter(session_key=session_key)
-        .order_by('timestamp')
-        .values('url_path', 'url', 'timestamp', 'referrer', 'is_entry_page')
+        .order_by("timestamp")
+        .values("url_path", "url", "timestamp", "referrer", "is_entry_page")
     )
 
 
@@ -326,15 +326,15 @@ def get_hourly_distribution(start, end):
             timestamp__range=(start, end),
             is_bot=False,
         )
-        .annotate(hour=ExtractHour('timestamp'))
-        .values('hour')
-        .annotate(count=Count('id'))
-        .order_by('hour')
+        .annotate(hour=ExtractHour("timestamp"))
+        .values("hour")
+        .annotate(count=Count("id"))
+        .order_by("hour")
     )
 
     result = [0] * 24
     for row in hourly:
-        result[row['hour']] = row['count']
+        result[row["hour"]] = row["count"]
     return result
 
 
@@ -353,8 +353,8 @@ def get_new_vs_returning(start, end):
     returning = visitors.exclude(first_seen__range=(start, end)).count()
 
     return {
-        'new_visitors': new,
-        'returning_visitors': returning,
+        "new_visitors": new,
+        "returning_visitors": returning,
     }
 
 
@@ -370,13 +370,13 @@ def get_campaign_engagement(start, end):
             first_seen__range=(start, end),
             is_bot=False,
         )
-        .exclude(utm_source='')
-        .values('utm_source', 'utm_campaign')
+        .exclude(utm_source="")
+        .values("utm_source", "utm_campaign")
         .annotate(
-            visitors=Count('id'),
-            avg_pages=Avg('page_views'),
+            visitors=Count("id"),
+            avg_pages=Avg("page_views"),
         )
-        .order_by('-visitors')[:20]
+        .order_by("-visitors")[:20]
     )
 
     return list(campaigns)

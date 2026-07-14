@@ -41,30 +41,30 @@ class SubpathMiddleware(MiddlewareMixin):
         Process incoming request to set SCRIPT_NAME from header or settings.
         """
         # Check for X-Script-Name header from reverse proxy
-        script_name = request.META.get('HTTP_X_SCRIPT_NAME', '')
+        script_name = request.META.get("HTTP_X_SCRIPT_NAME", "")
 
         # Fall back to settings if no header
         if not script_name:
-            script_name = getattr(settings, 'FORCE_SCRIPT_NAME', '') or ''
+            script_name = getattr(settings, "FORCE_SCRIPT_NAME", "") or ""
 
         # Normalize: ensure starts with / but doesn't end with /
         if script_name:
-            script_name = '/' + script_name.strip('/')
+            script_name = "/" + script_name.strip("/")
 
         if script_name:
             # Set SCRIPT_NAME for Django's URL generation
-            request.META['SCRIPT_NAME'] = script_name
+            request.META["SCRIPT_NAME"] = script_name
 
             # Adjust PATH_INFO if it starts with the script name
             # This handles cases where the proxy didn't strip the prefix
-            path_info = request.META.get('PATH_INFO', '/')
+            path_info = request.META.get("PATH_INFO", "/")
             if path_info.startswith(script_name):
-                request.META['PATH_INFO'] = path_info[len(script_name):] or '/'
+                request.META["PATH_INFO"] = path_info[len(script_name) :] or "/"
 
             # Store for templates
             request.script_name = script_name
         else:
-            request.script_name = ''
+            request.script_name = ""
 
         return None
 
@@ -75,14 +75,14 @@ class SubpathMiddleware(MiddlewareMixin):
         # Django should handle this automatically via SCRIPT_NAME,
         # but we double-check for edge cases
         if response.status_code in (301, 302, 303, 307, 308):
-            location = response.get('Location', '')
-            script_name = getattr(request, 'script_name', '')
+            location = response.get("Location", "")
+            script_name = getattr(request, "script_name", "")
 
             # If location is absolute path without script name, add it
-            if script_name and location.startswith('/') and not location.startswith(script_name):
+            if script_name and location.startswith("/") and not location.startswith(script_name):
                 # Don't modify if it's a full URL
-                if not location.startswith(('http://', 'https://')):
-                    response['Location'] = script_name + location
+                if not location.startswith(("http://", "https://")):
+                    response["Location"] = script_name + location
 
         return response
 
@@ -94,10 +94,10 @@ def get_subpath():
     Returns:
         str: The subpath prefix (e.g., '/shop') or empty string if none.
     """
-    subpath = getattr(settings, 'FORCE_SCRIPT_NAME', '') or ''
+    subpath = getattr(settings, "FORCE_SCRIPT_NAME", "") or ""
     if subpath:
-        return '/' + subpath.strip('/')
-    return ''
+        return "/" + subpath.strip("/")
+    return ""
 
 
 def build_absolute_uri(request, path):
@@ -111,13 +111,10 @@ def build_absolute_uri(request, path):
     Returns:
         str: Full URI with subpath (e.g., 'https://example.com/shop/products/')
     """
-    script_name = getattr(request, 'script_name', '')
+    script_name = getattr(request, "script_name", "")
 
     # Build the full path
-    if script_name and not path.startswith(script_name):
-        full_path = script_name + path
-    else:
-        full_path = path
+    full_path = script_name + path if script_name and not path.startswith(script_name) else path
 
     # Get scheme and host
     scheme = request.scheme

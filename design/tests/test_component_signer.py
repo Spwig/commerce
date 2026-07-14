@@ -9,11 +9,9 @@ Tests cover:
 - Security and integrity checks
 """
 
-import os
 import hashlib
-import tempfile
+import os
 from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 import pytest
 from django.core.files.base import ContentFile
@@ -42,18 +40,18 @@ def signer(temp_media_root, settings):
 def sample_component(db):
     """Create a sample component for testing."""
     component = ComponentStore.objects.create(
-        component_type='test_banner',
-        display_name='Test Banner',
-        version='1.0.0',
-        author='Test Author',
-        description='Test component for signing',
-        review_status='pending',
-        render_mode='server',
+        component_type="test_banner",
+        display_name="Test Banner",
+        version="1.0.0",
+        author="Test Author",
+        description="Test component for signing",
+        review_status="pending",
+        render_mode="server",
     )
 
     # Add a package file
-    package_content = b'Test package content for signing'
-    component.package_file.save('test_package.zip', ContentFile(package_content), save=True)
+    package_content = b"Test package content for signing"
+    component.package_file.save("test_package.zip", ContentFile(package_content), save=True)
 
     return component
 
@@ -69,7 +67,7 @@ class TestComponentSignerInitialization:
         signer = ComponentSigner()
 
         assert signer.keys_dir.exists()
-        assert signer.keys_dir == temp_media_root / 'component_signing'
+        assert signer.keys_dir == temp_media_root / "component_signing"
 
     def test_generates_keys_on_first_initialization(self, temp_media_root, settings):
         """Test that keys are generated if they don't exist."""
@@ -136,10 +134,10 @@ class TestKeyGeneration:
         private_content = signer.private_key_path.read_text()
         public_content = signer.public_key_path.read_text()
 
-        assert '-----BEGIN PRIVATE KEY-----' in private_content
-        assert '-----END PRIVATE KEY-----' in private_content
-        assert '-----BEGIN PUBLIC KEY-----' in public_content
-        assert '-----END PUBLIC KEY-----' in public_content
+        assert "-----BEGIN PRIVATE KEY-----" in private_content
+        assert "-----END PRIVATE KEY-----" in private_content
+        assert "-----BEGIN PUBLIC KEY-----" in public_content
+        assert "-----END PUBLIC KEY-----" in public_content
 
     def test_generated_keys_are_rsa_2048(self, signer):
         """Test that generated keys use RSA-2048."""
@@ -156,27 +154,27 @@ class TestComponentSigning:
         success, message = signer.sign_component(sample_component)
 
         assert success is True
-        assert 'successfully' in message.lower()
+        assert "successfully" in message.lower()
         assert sample_component.signature
         assert sample_component.checksum_sha256
         assert sample_component.signed_at is not None
-        assert sample_component.signed_by == 'Spwig'
+        assert sample_component.signed_by == "Spwig"
 
     def test_sign_component_without_package_file(self, signer, db):
         """Test signing component without package file fails."""
         component = ComponentStore.objects.create(
-            component_type='no_package',
-            display_name='No Package',
-            version='1.0.0',
-            author='Test',
-            description='Component without package',
-            review_status='pending',
+            component_type="no_package",
+            display_name="No Package",
+            version="1.0.0",
+            author="Test",
+            description="Component without package",
+            review_status="pending",
         )
 
         success, message = signer.sign_component(component)
 
         assert success is False
-        assert 'no package file' in message.lower()
+        assert "no package file" in message.lower()
 
     def test_signature_is_hex_string(self, signer, sample_component):
         """Test that signature is stored as hex string."""
@@ -237,9 +235,7 @@ class TestComponentSigning:
 
         # Modify package file
         sample_component.package_file.save(
-            'modified_package.zip',
-            ContentFile(b'Modified package content'),
-            save=True
+            "modified_package.zip", ContentFile(b"Modified package content"), save=True
         )
 
         # Re-sign
@@ -261,42 +257,42 @@ class TestComponentVerification:
         is_valid, message = signer.verify_component(sample_component)
 
         assert is_valid is True
-        assert 'valid' in message.lower()
-        assert 'authentic' in message.lower()
+        assert "valid" in message.lower()
+        assert "authentic" in message.lower()
 
     def test_verify_component_without_signature(self, signer, sample_component):
         """Test verifying component without signature fails."""
         is_valid, message = signer.verify_component(sample_component)
 
         assert is_valid is False
-        assert 'no signature' in message.lower()
+        assert "no signature" in message.lower()
 
     def test_verify_component_without_checksum(self, signer, sample_component):
         """Test verifying component without checksum fails."""
-        sample_component.signature = 'fake_signature'
+        sample_component.signature = "fake_signature"
 
         is_valid, message = signer.verify_component(sample_component)
 
         assert is_valid is False
-        assert 'no checksum' in message.lower()
+        assert "no checksum" in message.lower()
 
     def test_verify_component_without_package_file(self, signer, db):
         """Test verifying component without package file fails."""
         component = ComponentStore.objects.create(
-            component_type='no_package',
-            display_name='No Package',
-            version='1.0.0',
-            author='Test',
-            description='Component without package',
-            review_status='pending',
-            signature='fake_signature',
-            checksum_sha256='fake_checksum',
+            component_type="no_package",
+            display_name="No Package",
+            version="1.0.0",
+            author="Test",
+            description="Component without package",
+            review_status="pending",
+            signature="fake_signature",
+            checksum_sha256="fake_checksum",
         )
 
         is_valid, message = signer.verify_component(component)
 
         assert is_valid is False
-        assert 'no package file' in message.lower()
+        assert "no package file" in message.lower()
 
     def test_verify_modified_package_fails(self, signer, sample_component):
         """Test that verification fails if package file is modified after signing."""
@@ -309,9 +305,7 @@ class TestComponentVerification:
         original_checksum = sample_component.checksum_sha256
 
         sample_component.package_file.save(
-            'modified_package.zip',
-            ContentFile(b'Tampered package content'),
-            save=True
+            "modified_package.zip", ContentFile(b"Tampered package content"), save=True
         )
 
         # Restore signature and checksum (simulating tampering)
@@ -323,7 +317,7 @@ class TestComponentVerification:
         is_valid, message = signer.verify_component(sample_component)
 
         assert is_valid is False
-        assert 'checksum mismatch' in message.lower() or 'modified' in message.lower()
+        assert "checksum mismatch" in message.lower() or "modified" in message.lower()
 
     def test_verify_invalid_signature_fails(self, signer, sample_component):
         """Test that verification fails with invalid signature."""
@@ -339,7 +333,7 @@ class TestComponentVerification:
         is_valid, message = signer.verify_component(sample_component)
 
         assert is_valid is False
-        assert 'invalid signature' in message.lower() or 'tampered' in message.lower()
+        assert "invalid signature" in message.lower() or "tampered" in message.lower()
 
 
 @pytest.mark.django_db
@@ -352,6 +346,7 @@ class TestSingletonPattern:
 
         # Clear singleton
         import design.component_signer as signer_module
+
         signer_module._signer_instance = None
 
         signer1 = get_component_signer()
@@ -365,6 +360,7 @@ class TestSingletonPattern:
 
         # Clear singleton
         import design.component_signer as signer_module
+
         signer_module._signer_instance = None
 
         signer = get_component_signer()

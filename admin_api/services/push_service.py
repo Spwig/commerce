@@ -4,12 +4,13 @@ Push Notification Service for Admin API
 Handles sending push notifications to registered merchant devices
 via the Spwig push notification service (push.spwig.com).
 """
+
 import logging
-from typing import Optional, List, Dict, Any
+from typing import Any
 
 from django.conf import settings
 
-from .push_client import PushClient, PushClientError, PushAuthError, PushRateLimitError
+from .push_client import PushAuthError, PushClient, PushClientError, PushRateLimitError
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ class PushNotificationService:
     """
 
     # Use sandbox for DEBUG mode (development app builds)
-    USE_SANDBOX = getattr(settings, 'DEBUG', False)
+    USE_SANDBOX = getattr(settings, "DEBUG", False)
 
     @classmethod
     def is_configured(cls) -> bool:
@@ -53,13 +54,13 @@ class PushNotificationService:
     @classmethod
     def _send_notification_batch(
         cls,
-        tokens: List[str],
+        tokens: list[str],
         title: str,
         body: str,
-        data: Optional[Dict[str, Any]] = None,
-        sound: str = 'default',
-        badge: Optional[int] = None,
-    ) -> Dict[str, Any]:
+        data: dict[str, Any] | None = None,
+        sound: str = "default",
+        badge: int | None = None,
+    ) -> dict[str, Any]:
         """
         Send notification to a batch of device tokens.
 
@@ -75,7 +76,7 @@ class PushNotificationService:
             Dict with 'sent', 'failed', 'results' keys
         """
         if not tokens:
-            return {'sent': 0, 'failed': 0, 'results': [], 'invalid_tokens': []}
+            return {"sent": 0, "failed": 0, "results": [], "invalid_tokens": []}
 
         try:
             client = cls._get_client()
@@ -91,35 +92,58 @@ class PushNotificationService:
 
             # Collect invalid tokens that should be removed
             invalid_tokens = [
-                r['token'] for r in result.results
-                if r.get('should_remove_token', False)
+                r["token"] for r in result.results if r.get("should_remove_token", False)
             ]
 
             return {
-                'sent': result.sent,
-                'failed': result.failed,
-                'results': result.results,
-                'invalid_tokens': invalid_tokens,
+                "sent": result.sent,
+                "failed": result.failed,
+                "results": result.results,
+                "invalid_tokens": invalid_tokens,
             }
 
         except PushAuthError as e:
             logger.error(f"Push authentication failed: {e}")
-            return {'sent': 0, 'failed': len(tokens), 'results': [], 'invalid_tokens': [], 'error': str(e)}
+            return {
+                "sent": 0,
+                "failed": len(tokens),
+                "results": [],
+                "invalid_tokens": [],
+                "error": str(e),
+            }
 
         except PushRateLimitError as e:
             logger.warning(f"Push rate limit exceeded: {e}")
-            return {'sent': 0, 'failed': len(tokens), 'results': [], 'invalid_tokens': [], 'error': str(e)}
+            return {
+                "sent": 0,
+                "failed": len(tokens),
+                "results": [],
+                "invalid_tokens": [],
+                "error": str(e),
+            }
 
         except PushClientError as e:
             logger.error(f"Push client error: {e}")
-            return {'sent': 0, 'failed': len(tokens), 'results': [], 'invalid_tokens': [], 'error': str(e)}
+            return {
+                "sent": 0,
+                "failed": len(tokens),
+                "results": [],
+                "invalid_tokens": [],
+                "error": str(e),
+            }
 
         except Exception as e:
             logger.exception(f"Unexpected error sending notifications: {e}")
-            return {'sent': 0, 'failed': len(tokens), 'results': [], 'invalid_tokens': [], 'error': str(e)}
+            return {
+                "sent": 0,
+                "failed": len(tokens),
+                "results": [],
+                "invalid_tokens": [],
+                "error": str(e),
+            }
 
     @classmethod
-    def _remove_invalid_tokens(cls, tokens: List[str]):
+    def _remove_invalid_tokens(cls, tokens: list[str]):
         """
         Remove invalid device tokens from the database.
 
@@ -140,7 +164,7 @@ class PushNotificationService:
         notification_type: str,
         title: str,
         body: str,
-        data: Optional[Dict[str, Any]] = None,
+        data: dict[str, Any] | None = None,
         exclude_user=None,
     ) -> int:
         """
@@ -159,8 +183,7 @@ class PushNotificationService:
         from admin_api.models import DeviceRegistration
 
         devices = DeviceRegistration.get_devices_for_notification(
-            notification_type,
-            exclude_user=exclude_user
+            notification_type, exclude_user=exclude_user
         )
 
         if not devices.exists():
@@ -172,10 +195,10 @@ class PushNotificationService:
         device_map = {}  # token -> device for updating status
 
         for device in devices:
-            if device.platform == 'ios':
+            if device.platform == "ios":
                 ios_tokens.append(device.push_token)
                 device_map[device.push_token] = device
-            elif device.platform == 'android':
+            elif device.platform == "android":
                 # Android/FCM not yet supported by push service
                 logger.debug("Android notifications not yet supported")
                 continue
@@ -192,19 +215,19 @@ class PushNotificationService:
         )
 
         # Update device statuses based on results
-        for token_result in result.get('results', []):
-            token = token_result.get('token')
+        for token_result in result.get("results", []):
+            token = token_result.get("token")
             device = device_map.get(token)
             if device:
-                if token_result.get('status') == 'sent':
+                if token_result.get("status") == "sent":
                     device.mark_notification_sent()
                 else:
                     device.mark_notification_failed()
 
         # Remove invalid tokens
-        cls._remove_invalid_tokens(result.get('invalid_tokens', []))
+        cls._remove_invalid_tokens(result.get("invalid_tokens", []))
 
-        sent_count = result.get('sent', 0)
+        sent_count = result.get("sent", 0)
         logger.info(f"Sent {sent_count}/{len(ios_tokens)} notifications for {notification_type}")
 
         return sent_count
@@ -226,13 +249,13 @@ class PushNotificationService:
         body = f"Order #{order.order_number} - {localize(order.total_amount.amount)} {order.total_amount.currency}"
 
         data = {
-            'type': 'new_order',
-            'order_number': order.order_number,
-            'order_id': order.id,
+            "type": "new_order",
+            "order_number": order.order_number,
+            "order_id": order.id,
         }
 
         return cls.send_notification(
-            notification_type='new_order',
+            notification_type="new_order",
             title=title,
             body=body,
             data=data,
@@ -254,22 +277,22 @@ class PushNotificationService:
         body = f"{product.name} has only {current_stock} units left"
 
         data = {
-            'type': 'low_stock',
-            'product_id': product.id,
-            'product_name': product.name,
-            'sku': product.sku,
-            'current_stock': current_stock,
+            "type": "low_stock",
+            "product_id": product.id,
+            "product_name": product.name,
+            "sku": product.sku,
+            "current_stock": current_stock,
         }
 
         return cls.send_notification(
-            notification_type='low_stock',
+            notification_type="low_stock",
             title=title,
             body=body,
             data=data,
         )
 
     @classmethod
-    def send_customer_message_notification(cls, message, source: str = 'contact_form') -> int:
+    def send_customer_message_notification(cls, message, source: str = "contact_form") -> int:
         """
         Send notification for new customer message.
 
@@ -284,48 +307,48 @@ class PushNotificationService:
             - source='contact_form': Use message_id to navigate to /messages/contact_form/{id}/
             - source='order_note': Use order_number to navigate to /orders/{order_number}/
         """
-        if source == 'contact_form':
+        if source == "contact_form":
             # CustomerMessage instance
             title = "New Customer Message"
             body = f"From {message.name}: {message.subject}"
 
             data = {
-                'type': 'customer_message',
-                'source': 'contact_form',
-                'message_id': message.id,
-                'sender_name': message.name,
-                'sender_email': message.email,
-                'order_id': message.order_id,
-                'order_number': message.order.order_number if message.order else None,
+                "type": "customer_message",
+                "source": "contact_form",
+                "message_id": message.id,
+                "sender_name": message.name,
+                "sender_email": message.email,
+                "order_id": message.order_id,
+                "order_number": message.order.order_number if message.order else None,
             }
-        elif source == 'order_note':
+        elif source == "order_note":
             # OrderNote instance
             order = message.order
-            customer_name = order.billing_name or order.shipping_name or 'Customer'
+            customer_name = order.billing_name or order.shipping_name or "Customer"
             title = "New Customer Message"
             body = f"From {customer_name}: Re: Order #{order.order_number}"
 
             data = {
-                'type': 'customer_message',
-                'source': 'order_note',
-                'message_id': message.id,
-                'sender_name': customer_name,
-                'sender_email': order.email,
-                'order_id': order.id,
-                'order_number': order.order_number,
+                "type": "customer_message",
+                "source": "order_note",
+                "message_id": message.id,
+                "sender_name": customer_name,
+                "sender_email": order.email,
+                "order_id": order.id,
+                "order_number": order.order_number,
             }
         else:
             raise ValueError(f"Invalid source: {source}")
 
         return cls.send_notification(
-            notification_type='customer_message',
+            notification_type="customer_message",
             title=title,
             body=body,
             data=data,
         )
 
     @classmethod
-    def send_payment_alert_notification(cls, order, alert_type: str, details: str = '') -> int:
+    def send_payment_alert_notification(cls, order, alert_type: str, details: str = "") -> int:
         """
         Send notification for payment alert.
 
@@ -341,9 +364,9 @@ class PushNotificationService:
 
         title = "Payment Alert"
 
-        if alert_type == 'failed':
+        if alert_type == "failed":
             body = f"Payment failed for order #{order.order_number}"
-        elif alert_type == 'fraud_risk':
+        elif alert_type == "fraud_risk":
             body = f"High risk payment detected for order #{order.order_number}"
         else:
             body = f"Payment issue with order #{order.order_number}"
@@ -352,10 +375,10 @@ class PushNotificationService:
             body = f"{body}: {details}"
 
         data = {
-            'type': 'payment_alert',
-            'alert_type': alert_type,
-            'order_number': order.order_number,
-            'order_id': order.id,
+            "type": "payment_alert",
+            "alert_type": alert_type,
+            "order_number": order.order_number,
+            "order_id": order.id,
         }
 
         # Payment alerts go to all active devices regardless of preferences
@@ -365,7 +388,7 @@ class PushNotificationService:
         device_map = {}
 
         for device in devices:
-            if device.platform == 'ios':
+            if device.platform == "ios":
                 ios_tokens.append(device.push_token)
                 device_map[device.push_token] = device
 
@@ -380,16 +403,16 @@ class PushNotificationService:
         )
 
         # Update device statuses
-        for token_result in result.get('results', []):
-            token = token_result.get('token')
+        for token_result in result.get("results", []):
+            token = token_result.get("token")
             device = device_map.get(token)
             if device:
-                if token_result.get('status') == 'sent':
+                if token_result.get("status") == "sent":
                     device.mark_notification_sent()
                 else:
                     device.mark_notification_failed()
 
         # Remove invalid tokens
-        cls._remove_invalid_tokens(result.get('invalid_tokens', []))
+        cls._remove_invalid_tokens(result.get("invalid_tokens", []))
 
-        return result.get('sent', 0)
+        return result.get("sent", 0)

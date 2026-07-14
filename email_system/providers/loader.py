@@ -3,10 +3,9 @@ Dynamic provider loading from component registry.
 
 Pattern follows exchange_rates/providers/loader.py architecture.
 """
+
 import logging
 import time
-from pathlib import Path
-from typing import Dict, List, Optional, Type
 
 from email_system.providers.base import EmailProviderBase
 
@@ -21,9 +20,9 @@ class ProviderLoader:
     and loads them dynamically based on their manifest.json.
     """
 
-    COMPONENT_TYPE = 'email_provider'
+    COMPONENT_TYPE = "email_provider"
 
-    _providers: Dict[str, Type[EmailProviderBase]] = {}
+    _providers: dict[str, type[EmailProviderBase]] = {}
     _loaded = False
     _last_loaded_at: float = 0
 
@@ -38,8 +37,8 @@ class ProviderLoader:
         try:
             from email_system.providers.builtin.provider import BuiltinSMTPProvider
 
-            cls._providers['builtin_smtp'] = BuiltinSMTPProvider
-            logger.info(f"Loaded built-in SMTP provider: builtin_smtp")
+            cls._providers["builtin_smtp"] = BuiltinSMTPProvider
+            logger.info("Loaded built-in SMTP provider: builtin_smtp")
 
         except Exception as e:
             logger.error(f"Failed to load built-in SMTP provider: {e}")
@@ -56,14 +55,14 @@ class ProviderLoader:
         try:
             from email_system.providers.spwig_hosted.provider import SpwigHostedMailProvider
 
-            cls._providers['spwig_hosted_mail'] = SpwigHostedMailProvider
+            cls._providers["spwig_hosted_mail"] = SpwigHostedMailProvider
             logger.info("Loaded Spwig Hosted Mail provider: spwig_hosted_mail")
 
         except Exception as e:
             logger.error(f"Failed to load Spwig Hosted Mail provider: {e}")
 
     @classmethod
-    def discover_providers(cls) -> Dict[str, Type[EmailProviderBase]]:
+    def discover_providers(cls) -> dict[str, type[EmailProviderBase]]:
         """
         Discover and load all email providers from components.
 
@@ -81,7 +80,7 @@ class ProviderLoader:
 
         from component_updates.integration_paths import INTEGRATIONS_DIR, import_component_module
 
-        components_path = INTEGRATIONS_DIR / 'email_provider'
+        components_path = INTEGRATIONS_DIR / "email_provider"
 
         if not components_path.exists():
             logger.warning(f"Components path not found: {components_path}")
@@ -93,28 +92,29 @@ class ProviderLoader:
                 continue
 
             # Look for 'current' symlink pointing to version
-            current_path = provider_dir / 'current'
+            current_path = provider_dir / "current"
             if not current_path.exists() or not current_path.is_symlink():
                 logger.debug(f"Skipping {provider_dir.name} - no 'current' symlink")
                 continue
 
             # Load manifest
-            manifest_path = current_path / 'manifest.json'
+            manifest_path = current_path / "manifest.json"
             if not manifest_path.exists():
                 logger.warning(f"No manifest found for {provider_dir.name}")
                 continue
 
             try:
                 import json
+
                 with open(manifest_path) as f:
                     manifest = json.load(f)
 
-                provider_key = manifest['provider_key']
-                entry_point = manifest.get('entry_point', 'provider')
-                class_name = manifest['class_name']
+                provider_key = manifest["provider_key"]
+                entry_point = manifest.get("entry_point", "provider")
+                class_name = manifest["class_name"]
 
                 # Remove .py extension if present
-                if entry_point.endswith('.py'):
+                if entry_point.endswith(".py"):
                     entry_point = entry_point[:-3]
 
                 # Import provider module using file-path-based loading
@@ -148,12 +148,13 @@ class ProviderLoader:
         """
         try:
             from component_updates.integration_paths import provider_cache_is_stale
+
             return provider_cache_is_stale(cls.COMPONENT_TYPE, cls._last_loaded_at)
         except Exception:
             return False
 
     @classmethod
-    def get_provider(cls, provider_key: str) -> Optional[Type[EmailProviderBase]]:
+    def get_provider(cls, provider_key: str) -> type[EmailProviderBase] | None:
         """
         Get a specific provider by key.
 
@@ -172,7 +173,7 @@ class ProviderLoader:
         return cls._providers.get(provider_key)
 
     @classmethod
-    def list_providers(cls) -> List[Dict]:
+    def list_providers(cls) -> list[dict]:
         """
         List all available providers with metadata.
 
@@ -188,16 +189,20 @@ class ProviderLoader:
         for key, provider_class in cls._providers.items():
             # Get metadata from class attributes
             try:
-                providers.append({
-                    'key': provider_class.provider_key,
-                    'name': provider_class.provider_name,
-                })
+                providers.append(
+                    {
+                        "key": provider_class.provider_key,
+                        "name": provider_class.provider_name,
+                    }
+                )
             except Exception as e:
                 logger.warning(f"Could not get metadata for {key}: {e}")
-                providers.append({
-                    'key': key,
-                    'name': key,
-                })
+                providers.append(
+                    {
+                        "key": key,
+                        "name": key,
+                    }
+                )
 
         return providers
 
@@ -220,8 +225,9 @@ class ProviderLoader:
         # Clear Python's module cache for all provider modules
         # This ensures that updated provider code is loaded from disk
         modules_to_remove = [
-            module_name for module_name in list(sys.modules.keys())
-            if module_name.startswith('email_provider_')
+            module_name
+            for module_name in list(sys.modules.keys())
+            if module_name.startswith("email_provider_")
         ]
 
         for module_name in modules_to_remove:

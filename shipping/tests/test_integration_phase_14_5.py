@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Integration Tests for Phase 14.5: Provider Integration & Service Layer
 
@@ -8,37 +7,40 @@ Tests the complete flow:
 3. Shipment and Order models are updated
 4. Celery tasks work correctly
 """
+
 import os
 import sys
+
 import django
 
 # Add project directory to Python path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
 from decimal import Decimal
-from django.utils import timezone
-from shipping.models import Shipment, ProviderAccount, TrackingEvent
+
+from component_updates.models import ComponentRegistry
+from shipping.models import ProviderAccount, Shipment, TrackingEvent
 from shipping.providers.registry import ProviderRegistry
 from shipping.services.label_service import LabelService
-from shipping.utils.encryption import encrypt_credentials, decrypt_credentials
-from component_updates.models import ComponentRegistry
+from shipping.utils.encryption import decrypt_credentials, encrypt_credentials
 
 
 def test_provider_registry():
     """Test that FedEx provider can be discovered and retrieved"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("TEST 1: Provider Registry Discovery")
-    print("="*80)
+    print("=" * 80)
 
     # Manually register FedEx provider for testing
     from shipping.providers.fedex import FedExProvider
+
     ProviderRegistry.register_provider(FedExProvider)
 
     # Get provider
-    provider_class = ProviderRegistry.get_provider('fedex')
+    provider_class = ProviderRegistry.get_provider("fedex")
 
     if provider_class:
         print(" FedEx provider successfully retrieved from registry")
@@ -59,15 +61,15 @@ def test_provider_registry():
 
 def test_encryption():
     """Test credential encryption/decryption"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("TEST 2: Credential Encryption")
-    print("="*80)
+    print("=" * 80)
 
     credentials = {
-        'client_id': 'test_client_id_12345',
-        'client_secret': 'test_secret_key_67890',
-        'environment': 'sandbox',
-        'account_number': '123456789'
+        "client_id": "test_client_id_12345",
+        "client_secret": "test_secret_key_67890",
+        "environment": "sandbox",
+        "account_number": "123456789",
     }
 
     # Encrypt
@@ -90,13 +92,18 @@ def test_encryption():
 
 def test_label_service_structure():
     """Test that LabelService can be imported and has required methods"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("TEST 3: LabelService Structure")
-    print("="*80)
+    print("=" * 80)
 
     # Check LabelService has required methods
-    required_methods = ['buy_label', '_build_label_options', '_update_shipment',
-                       '_create_tracking_event', '_sync_order_tracking']
+    required_methods = [
+        "buy_label",
+        "_build_label_options",
+        "_update_shipment",
+        "_create_tracking_event",
+        "_sync_order_tracking",
+    ]
 
     for method_name in required_methods:
         if hasattr(LabelService, method_name):
@@ -118,13 +125,13 @@ def test_full_integration():
     - An Order with shipping address
     - A Shipment linked to the order
     """
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("TEST 4: Full Integration (Manual Setup Required)")
-    print("="*80)
+    print("=" * 80)
 
     # Check if FedEx component exists
     try:
-        component = ComponentRegistry.objects.get(slug='fedex', component_type='shipping_provider')
+        component = ComponentRegistry.objects.get(slug="fedex", component_type="shipping_provider")
         print(f" FedEx component found: {component.name}")
     except ComponentRegistry.DoesNotExist:
         print("�  FedEx component not found in ComponentRegistry")
@@ -140,8 +147,7 @@ def test_full_integration():
 
     # Check if provider account exists
     provider_account = ProviderAccount.objects.filter(
-        component__slug='fedex',
-        is_active=True
+        component__slug="fedex", is_active=True
     ).first()
 
     if not provider_account:
@@ -152,10 +158,7 @@ def test_full_integration():
     print(f" FedEx ProviderAccount found: {provider_account.display_name or 'Unnamed'}")
 
     # Check if there are any shipments
-    shipment = Shipment.objects.filter(
-        provider_account=provider_account,
-        status='created'
-    ).first()
+    shipment = Shipment.objects.filter(provider_account=provider_account, status="created").first()
 
     if not shipment:
         print("�  No shipments in 'created' status found")
@@ -173,30 +176,31 @@ def test_full_integration():
     try:
         # Build a test rate
         rate = {
-            'service_code': 'FEDEX_GROUND',
-            'service_name': 'FedEx Ground',
-            'carrier': 'FedEx',
-            'rate': Decimal('12.50'),
-            'currency': 'USD',
+            "service_code": "FEDEX_GROUND",
+            "service_name": "FedEx Ground",
+            "carrier": "FedEx",
+            "rate": Decimal("12.50"),
+            "currency": "USD",
         }
 
         label_info = LabelService.buy_label(
-            shipment=shipment,
-            rate=rate,
-            label_format='PDF',
-            label_size='4x6'
+            shipment=shipment, rate=rate, label_format="PDF", label_size="4x6"
         )
 
         print("\n Label purchased successfully!")
         print(f"   Tracking Number: {label_info['tracking_number']}")
-        print(f"   Label URL: {label_info['label_url'][:100]}..." if len(label_info['label_url']) > 100 else f"   Label URL: {label_info['label_url']}")
+        print(
+            f"   Label URL: {label_info['label_url'][:100]}..."
+            if len(label_info["label_url"]) > 100
+            else f"   Label URL: {label_info['label_url']}"
+        )
         print(f"   Cost: {label_info['cost']} {label_info['currency']}")
         print(f"   Carrier: {label_info['carrier']}")
         print(f"   Service: {label_info['service']}")
 
         # Verify shipment was updated
         shipment.refresh_from_db()
-        print(f"\n Shipment updated:")
+        print("\n Shipment updated:")
         print(f"   Status: {shipment.status}")
         print(f"   Tracking ID: {shipment.tracking_id}")
         print(f"   Label URL length: {len(shipment.label_url)} characters")
@@ -218,38 +222,39 @@ def test_full_integration():
     except Exception as e:
         print(f"\nL Label purchase failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
 
 def main():
     """Run all integration tests"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("PHASE 14.5 INTEGRATION TESTS")
-    print("="*80)
+    print("=" * 80)
 
     results = {
-        'Provider Registry': test_provider_registry(),
-        'Encryption': test_encryption(),
-        'LabelService Structure': test_label_service_structure(),
-        'Full Integration': test_full_integration(),
+        "Provider Registry": test_provider_registry(),
+        "Encryption": test_encryption(),
+        "LabelService Structure": test_label_service_structure(),
+        "Full Integration": test_full_integration(),
     }
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("TEST RESULTS")
-    print("="*80)
+    print("=" * 80)
     for test_name, result in results.items():
         status = " PASS" if result else "L FAIL"
         print(f"{status} - {test_name}")
 
     all_passed = all(results.values())
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     if all_passed:
         print("<� ALL TESTS PASSED!")
     else:
         print("�  SOME TESTS FAILED")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

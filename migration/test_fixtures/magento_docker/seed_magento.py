@@ -16,11 +16,12 @@ Creates:
 
 After seeding, creates an Integration and prints the access token for migration testing.
 """
+
 import argparse
-import json
 import random
 import sys
 import time
+
 import requests
 import urllib3
 
@@ -29,17 +30,17 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class MagentoSeeder:
     def __init__(self, base_url: str, admin_user: str, admin_password: str):
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url.rstrip("/")
         self.api_url = f"{self.base_url}/rest/V1"
         self.session = requests.Session()
         self.session.verify = False
         self.admin_token = None
         self.created = {
-            'categories': [],
-            'products': [],
-            'customers': [],
-            'orders': [],
-            'configurable_products': [],
+            "categories": [],
+            "products": [],
+            "customers": [],
+            "orders": [],
+            "configurable_products": [],
         }
 
     def authenticate(self, username: str, password: str):
@@ -52,10 +53,12 @@ class MagentoSeeder:
         )
         resp.raise_for_status()
         self.admin_token = resp.json()
-        self.session.headers.update({
-            "Authorization": f"Bearer {self.admin_token}",
-            "Content-Type": "application/json",
-        })
+        self.session.headers.update(
+            {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json",
+            }
+        )
         print(f"  Admin token obtained: {self.admin_token[:20]}...")
 
     def _post(self, endpoint: str, data: dict) -> dict:
@@ -93,17 +96,28 @@ class MagentoSeeder:
         ]
 
         for cat in categories:
-            result = self._post("/categories", {"category": {
-                "name": cat["name"],
-                "parent_id": cat["parent_id"],
-                "is_active": cat["is_active"],
-                "position": cat["position"],
-                "include_in_menu": True,
-                "custom_attributes": [
-                    {"attribute_code": "description", "value": f"Test category: {cat['name']}"},
-                    {"attribute_code": "url_key", "value": cat["name"].lower().replace(" & ", "-").replace(" ", "-")},
-                ],
-            }})
+            result = self._post(
+                "/categories",
+                {
+                    "category": {
+                        "name": cat["name"],
+                        "parent_id": cat["parent_id"],
+                        "is_active": cat["is_active"],
+                        "position": cat["position"],
+                        "include_in_menu": True,
+                        "custom_attributes": [
+                            {
+                                "attribute_code": "description",
+                                "value": f"Test category: {cat['name']}",
+                            },
+                            {
+                                "attribute_code": "url_key",
+                                "value": cat["name"].lower().replace(" & ", "-").replace(" ", "-"),
+                            },
+                        ],
+                    }
+                },
+            )
             cat_id = result.get("id")
             self.created["categories"].append(cat_id)
             print(f"  Created category: {cat['name']} (ID: {cat_id})")
@@ -115,15 +129,20 @@ class MagentoSeeder:
             {"name": "Laptops", "parent_id": electronics_id},
         ]
         for sub in subcats:
-            result = self._post("/categories", {"category": {
-                "name": sub["name"],
-                "parent_id": sub["parent_id"],
-                "is_active": True,
-                "position": 1,
-                "custom_attributes": [
-                    {"attribute_code": "url_key", "value": sub["name"].lower()},
-                ],
-            }})
+            result = self._post(
+                "/categories",
+                {
+                    "category": {
+                        "name": sub["name"],
+                        "parent_id": sub["parent_id"],
+                        "is_active": True,
+                        "position": 1,
+                        "custom_attributes": [
+                            {"attribute_code": "url_key", "value": sub["name"].lower()},
+                        ],
+                    }
+                },
+            )
             sub_id = result.get("id")
             self.created["categories"].append(sub_id)
             print(f"  Created subcategory: {sub['name']} (ID: {sub_id})")
@@ -270,10 +289,15 @@ class MagentoSeeder:
                 {"attribute_code": "short_description", "value": prod["short_description"]},
                 {"attribute_code": "url_key", "value": prod["sku"].lower().replace("_", "-")},
                 {"attribute_code": "meta_title", "value": prod.get("meta_title", prod["name"])},
-                {"attribute_code": "meta_description", "value": prod.get("meta_description", prod["short_description"])},
+                {
+                    "attribute_code": "meta_description",
+                    "value": prod.get("meta_description", prod["short_description"]),
+                },
             ]
             if prod.get("special_price"):
-                custom_attrs.append({"attribute_code": "special_price", "value": str(prod["special_price"])})
+                custom_attrs.append(
+                    {"attribute_code": "special_price", "value": str(prod["special_price"])}
+                )
 
             product_data = {
                 "product": {
@@ -288,8 +312,7 @@ class MagentoSeeder:
                     "custom_attributes": custom_attrs,
                     "extension_attributes": {
                         "category_links": [
-                            {"category_id": cid, "position": 0}
-                            for cid in prod["category_ids"]
+                            {"category_id": cid, "position": 0} for cid in prod["category_ids"]
                         ],
                         "stock_item": {
                             "qty": prod["qty"],
@@ -302,7 +325,9 @@ class MagentoSeeder:
 
             result = self._post("/products", product_data)
             prod_id = result.get("id")
-            self.created["products"].append({"id": prod_id, "sku": prod["sku"], "price": prod["price"]})
+            self.created["products"].append(
+                {"id": prod_id, "sku": prod["sku"], "price": prod["price"]}
+            )
             print(f"  Created product: {prod['name']} (ID: {prod_id}, SKU: {prod['sku']})")
 
     def seed_configurable_products(self):
@@ -312,7 +337,9 @@ class MagentoSeeder:
         # First, check if 'color' attribute exists with options
         try:
             color_attr = self._get("/products/attributes/color")
-            color_options = {opt["label"]: opt["value"] for opt in color_attr.get("options", []) if opt["value"]}
+            color_options = {
+                opt["label"]: opt["value"] for opt in color_attr.get("options", []) if opt["value"]
+            }
         except Exception:
             print("  Color attribute not available, skipping configurable products")
             return
@@ -342,7 +369,10 @@ class MagentoSeeder:
                 "attribute_set_id": 4,
                 "weight": 0.6,
                 "custom_attributes": [
-                    {"attribute_code": "description", "value": "<p>A cozy zip-up hoodie in multiple colors.</p>"},
+                    {
+                        "attribute_code": "description",
+                        "value": "<p>A cozy zip-up hoodie in multiple colors.</p>",
+                    },
                     {"attribute_code": "short_description", "value": "Cozy zip-up hoodie"},
                     {"attribute_code": "url_key", "value": "zip-up-hoodie"},
                 ],
@@ -376,7 +406,10 @@ class MagentoSeeder:
                         "weight": 0.6,
                         "custom_attributes": [
                             {"attribute_code": "color", "value": color_value},
-                            {"attribute_code": "url_key", "value": f"zip-up-hoodie-{color_label.lower()}"},
+                            {
+                                "attribute_code": "url_key",
+                                "value": f"zip-up-hoodie-{color_label.lower()}",
+                            },
                         ],
                         "extension_attributes": {
                             "stock_item": {
@@ -393,22 +426,25 @@ class MagentoSeeder:
 
             # Link children to configurable parent
             # Set configurable attribute
-            self._post(f"/configurable-products/{parent_sku}/options", {
-                "option": {
-                    "attribute_id": color_attr_id,
-                    "label": "Color",
-                    "position": 0,
-                    "values": [{"value_index": opt[1]} for opt in colors],
-                }
-            })
+            self._post(
+                f"/configurable-products/{parent_sku}/options",
+                {
+                    "option": {
+                        "attribute_id": color_attr_id,
+                        "label": "Color",
+                        "position": 0,
+                        "values": [{"value_index": opt[1]} for opt in colors],
+                    }
+                },
+            )
 
             # Assign children
-            for color_label, color_value in colors:
+            for color_label, _color_value in colors:
                 child_sku = f"TEST-CONFIG-HOODIE-{color_label.upper()}"
                 try:
-                    self._post(f"/configurable-products/{parent_sku}/child", {
-                        "childSku": child_sku
-                    })
+                    self._post(
+                        f"/configurable-products/{parent_sku}/child", {"childSku": child_sku}
+                    )
                 except Exception as e:
                     print(f"    Warning: Could not link child {child_sku}: {e}")
 
@@ -429,83 +465,116 @@ class MagentoSeeder:
                 "email": "john.doe@example.com",
                 "firstname": "John",
                 "lastname": "Doe",
-                "addresses": [{
-                    "firstname": "John", "lastname": "Doe",
-                    "street": ["123 Main Street", "Apt 4B"],
-                    "city": "New York", "region": {"region": "New York", "region_code": "NY", "region_id": 43},
-                    "postcode": "10001", "country_id": "US",
-                    "telephone": "212-555-0100",
-                    "default_billing": True, "default_shipping": True,
-                }],
+                "addresses": [
+                    {
+                        "firstname": "John",
+                        "lastname": "Doe",
+                        "street": ["123 Main Street", "Apt 4B"],
+                        "city": "New York",
+                        "region": {"region": "New York", "region_code": "NY", "region_id": 43},
+                        "postcode": "10001",
+                        "country_id": "US",
+                        "telephone": "212-555-0100",
+                        "default_billing": True,
+                        "default_shipping": True,
+                    }
+                ],
             },
             {
                 "email": "jane.smith@example.com",
                 "firstname": "Jane",
                 "lastname": "Smith",
-                "addresses": [{
-                    "firstname": "Jane", "lastname": "Smith",
-                    "street": ["456 Oak Avenue"],
-                    "city": "Los Angeles", "region": {"region": "California", "region_code": "CA", "region_id": 12},
-                    "postcode": "90001", "country_id": "US",
-                    "telephone": "310-555-0200",
-                    "default_billing": True, "default_shipping": True,
-                }],
+                "addresses": [
+                    {
+                        "firstname": "Jane",
+                        "lastname": "Smith",
+                        "street": ["456 Oak Avenue"],
+                        "city": "Los Angeles",
+                        "region": {"region": "California", "region_code": "CA", "region_id": 12},
+                        "postcode": "90001",
+                        "country_id": "US",
+                        "telephone": "310-555-0200",
+                        "default_billing": True,
+                        "default_shipping": True,
+                    }
+                ],
             },
             {
                 "email": "bob.wilson@example.com",
                 "firstname": "Bob",
                 "lastname": "Wilson",
-                "addresses": [{
-                    "firstname": "Bob", "lastname": "Wilson",
-                    "street": ["789 Pine Road"],
-                    "city": "Chicago", "region": {"region": "Illinois", "region_code": "IL", "region_id": 14},
-                    "postcode": "60601", "country_id": "US",
-                    "telephone": "312-555-0300",
-                    "default_billing": True, "default_shipping": True,
-                }],
+                "addresses": [
+                    {
+                        "firstname": "Bob",
+                        "lastname": "Wilson",
+                        "street": ["789 Pine Road"],
+                        "city": "Chicago",
+                        "region": {"region": "Illinois", "region_code": "IL", "region_id": 14},
+                        "postcode": "60601",
+                        "country_id": "US",
+                        "telephone": "312-555-0300",
+                        "default_billing": True,
+                        "default_shipping": True,
+                    }
+                ],
             },
             {
                 "email": "alice.chen@example.com",
                 "firstname": "Alice",
                 "lastname": "Chen",
-                "addresses": [{
-                    "firstname": "Alice", "lastname": "Chen",
-                    "street": ["321 Maple Lane"],
-                    "city": "San Francisco", "region": {"region": "California", "region_code": "CA", "region_id": 12},
-                    "postcode": "94102", "country_id": "US",
-                    "telephone": "415-555-0400",
-                    "default_billing": True, "default_shipping": True,
-                }],
+                "addresses": [
+                    {
+                        "firstname": "Alice",
+                        "lastname": "Chen",
+                        "street": ["321 Maple Lane"],
+                        "city": "San Francisco",
+                        "region": {"region": "California", "region_code": "CA", "region_id": 12},
+                        "postcode": "94102",
+                        "country_id": "US",
+                        "telephone": "415-555-0400",
+                        "default_billing": True,
+                        "default_shipping": True,
+                    }
+                ],
             },
             {
                 "email": "marco.rossi@example.com",
                 "firstname": "Marco",
                 "lastname": "Rossi",
-                "addresses": [{
-                    "firstname": "Marco", "lastname": "Rossi",
-                    "street": ["55 Elm Street"],
-                    "city": "Boston", "region": {"region": "Massachusetts", "region_code": "MA", "region_id": 22},
-                    "postcode": "02101", "country_id": "US",
-                    "telephone": "617-555-0500",
-                    "default_billing": True, "default_shipping": True,
-                }],
+                "addresses": [
+                    {
+                        "firstname": "Marco",
+                        "lastname": "Rossi",
+                        "street": ["55 Elm Street"],
+                        "city": "Boston",
+                        "region": {"region": "Massachusetts", "region_code": "MA", "region_id": 22},
+                        "postcode": "02101",
+                        "country_id": "US",
+                        "telephone": "617-555-0500",
+                        "default_billing": True,
+                        "default_shipping": True,
+                    }
+                ],
             },
         ]
 
         for cust in customers:
             try:
-                result = self._post("/customers", {
-                    "customer": {
-                        "email": cust["email"],
-                        "firstname": cust["firstname"],
-                        "lastname": cust["lastname"],
-                        "addresses": cust["addresses"],
-                        "group_id": 1,
-                        "store_id": 1,
-                        "website_id": 1,
+                result = self._post(
+                    "/customers",
+                    {
+                        "customer": {
+                            "email": cust["email"],
+                            "firstname": cust["firstname"],
+                            "lastname": cust["lastname"],
+                            "addresses": cust["addresses"],
+                            "group_id": 1,
+                            "store_id": 1,
+                            "website_id": 1,
+                        },
+                        "password": "TestPassword123!",
                     },
-                    "password": "TestPassword123!",
-                })
+                )
                 cust_id = result.get("id")
                 self.created["customers"].append({"id": cust_id, "email": cust["email"]})
                 print(f"  Created customer: {cust['firstname']} {cust['lastname']} (ID: {cust_id})")
@@ -547,7 +616,9 @@ class MagentoSeeder:
                     json={"username": customer["email"], "password": "TestPassword123!"},
                 )
                 if not resp.ok:
-                    print(f"  Warning: Could not get token for {customer['email']}: {resp.text[:100]}")
+                    print(
+                        f"  Warning: Could not get token for {customer['email']}: {resp.text[:100]}"
+                    )
                     continue
                 cust_token = resp.json()
 
@@ -575,7 +646,7 @@ class MagentoSeeder:
                                 "qty": qty,
                                 "quote_id": cart_id,
                             }
-                        }
+                        },
                     )
 
                 # Set shipping info
@@ -609,7 +680,7 @@ class MagentoSeeder:
                             "shipping_method_code": "flatrate",
                             "shipping_carrier_code": "flatrate",
                         }
-                    }
+                    },
                 )
 
                 # Place order
@@ -628,19 +699,28 @@ class MagentoSeeder:
                         try:
                             if cfg["status"] == "processing":
                                 # Create invoice to move to processing
-                                self.session.post(f"{self.api_url}/order/{order_id}/invoice", json={
-                                    "capture": True,
-                                    "notify": False,
-                                })
+                                self.session.post(
+                                    f"{self.api_url}/order/{order_id}/invoice",
+                                    json={
+                                        "capture": True,
+                                        "notify": False,
+                                    },
+                                )
                             elif cfg["status"] == "complete":
                                 # Invoice then ship
-                                self.session.post(f"{self.api_url}/order/{order_id}/invoice", json={
-                                    "capture": True,
-                                    "notify": False,
-                                })
-                                self.session.post(f"{self.api_url}/order/{order_id}/ship", json={
-                                    "notify": False,
-                                })
+                                self.session.post(
+                                    f"{self.api_url}/order/{order_id}/invoice",
+                                    json={
+                                        "capture": True,
+                                        "notify": False,
+                                    },
+                                )
+                                self.session.post(
+                                    f"{self.api_url}/order/{order_id}/ship",
+                                    json={
+                                        "notify": False,
+                                    },
+                                )
                             elif cfg["status"] == "canceled":
                                 self.session.post(f"{self.api_url}/orders/{order_id}/cancel")
                         except Exception:
@@ -729,7 +809,7 @@ class MagentoSeeder:
                 }
 
                 try:
-                    result = self._post("/reviews", review_data)
+                    self._post("/reviews", review_data)
                     print(f"  Created review: '{rev['title']}' for product {prod['sku']}")
                 except Exception as e:
                     print(f"  Warning: Could not create review '{rev['title']}': {e}")
@@ -779,37 +859,43 @@ class MagentoSeeder:
 
         for rule_data in rules:
             try:
-                result = self._post("/salesRules", {
-                    "rule": {
-                        "name": rule_data["name"],
-                        "description": rule_data["description"],
-                        "is_active": rule_data["is_active"],
-                        "coupon_type": rule_data["coupon_type"],
-                        "simple_action": rule_data["simple_action"],
-                        "discount_amount": rule_data["discount_amount"],
-                        "uses_per_customer": rule_data["uses_per_customer"],
-                        "store_labels": [
-                            {"store_id": 0, "store_label": rule_data["name"]},
-                            {"store_id": 1, "store_label": rule_data["name"]},
-                        ],
-                        "website_ids": [1],
-                        "customer_group_ids": [0, 1, 2, 3],
-                    }
-                })
+                result = self._post(
+                    "/salesRules",
+                    {
+                        "rule": {
+                            "name": rule_data["name"],
+                            "description": rule_data["description"],
+                            "is_active": rule_data["is_active"],
+                            "coupon_type": rule_data["coupon_type"],
+                            "simple_action": rule_data["simple_action"],
+                            "discount_amount": rule_data["discount_amount"],
+                            "uses_per_customer": rule_data["uses_per_customer"],
+                            "store_labels": [
+                                {"store_id": 0, "store_label": rule_data["name"]},
+                                {"store_id": 1, "store_label": rule_data["name"]},
+                            ],
+                            "website_ids": [1],
+                            "customer_group_ids": [0, 1, 2, 3],
+                        }
+                    },
+                )
                 rule_id = result.get("rule_id")
                 print(f"  Created sales rule: {rule_data['name']} (ID: {rule_id})")
 
                 # Create coupon code for the rule
-                coupon_result = self._post("/coupons", {
-                    "coupon": {
-                        "rule_id": rule_id,
-                        "code": rule_data["code"],
-                        "usage_limit": 100,
-                        "usage_per_customer": rule_data["uses_per_customer"],
-                        "type": 0,
-                        "is_primary": True,
-                    }
-                })
+                self._post(
+                    "/coupons",
+                    {
+                        "coupon": {
+                            "rule_id": rule_id,
+                            "code": rule_data["code"],
+                            "usage_limit": 100,
+                            "usage_per_customer": rule_data["uses_per_customer"],
+                            "type": 0,
+                            "is_primary": True,
+                        }
+                    },
+                )
                 print(f"    Created coupon code: {rule_data['code']}")
 
             except Exception as e:
@@ -826,7 +912,7 @@ class MagentoSeeder:
             {
                 "identifier": "about-us",
                 "title": "About Our Store",
-                "content": "<div class=\"about-page\">\n<h2>Welcome to Our Test Store</h2>\n<p>We are a leading online retailer specializing in electronics, clothing, and home goods.</p>\n<p>{{media url=\"wysiwyg/about-banner.jpg\"}}</p>\n<p>Founded in 2020, we have served over 10,000 happy customers worldwide.</p>\n</div>",
+                "content": '<div class="about-page">\n<h2>Welcome to Our Test Store</h2>\n<p>We are a leading online retailer specializing in electronics, clothing, and home goods.</p>\n<p>{{media url="wysiwyg/about-banner.jpg"}}</p>\n<p>Founded in 2020, we have served over 10,000 happy customers worldwide.</p>\n</div>',
                 "is_active": True,
                 "meta_title": "About Us | Test Store",
                 "meta_description": "Learn about our test store and our mission to provide quality products.",
@@ -834,7 +920,7 @@ class MagentoSeeder:
             {
                 "identifier": "shipping-info",
                 "title": "Shipping Information",
-                "content": "<div class=\"shipping-page\">\n<h2>Shipping Policy</h2>\n<p>We offer free shipping on orders over $50.</p>\n<ul>\n<li>Standard Shipping: 5-7 business days</li>\n<li>Express Shipping: 2-3 business days</li>\n<li>Next Day: Available for select areas</li>\n</ul>\n<p>{{widget type=\"Magento\\\\Cms\\\\Block\\\\Widget\\\\Block\" template=\"widget/static_block/default.phtml\" block_id=\"2\"}}</p>\n</div>",
+                "content": '<div class="shipping-page">\n<h2>Shipping Policy</h2>\n<p>We offer free shipping on orders over $50.</p>\n<ul>\n<li>Standard Shipping: 5-7 business days</li>\n<li>Express Shipping: 2-3 business days</li>\n<li>Next Day: Available for select areas</li>\n</ul>\n<p>{{widget type="Magento\\\\Cms\\\\Block\\\\Widget\\\\Block" template="widget/static_block/default.phtml" block_id="2"}}</p>\n</div>',
                 "is_active": True,
                 "meta_title": "Shipping Info | Test Store",
                 "meta_description": "Shipping rates and delivery times for our test store.",
@@ -842,7 +928,7 @@ class MagentoSeeder:
             {
                 "identifier": "sale-announcement",
                 "title": "Big Summer Sale!",
-                "content": "<div class=\"sale-page\">\n<h1>Summer Sale is Here!</h1>\n<p>Save up to 30% on select electronics and clothing.</p>\n<p>Use code <strong>SUMMER10</strong> for an extra 10% off.</p>\n<p>Sale ends August 31st. {{store url=\"catalog/category/view/id/3\"}}</p>\n</div>",
+                "content": '<div class="sale-page">\n<h1>Summer Sale is Here!</h1>\n<p>Save up to 30% on select electronics and clothing.</p>\n<p>Use code <strong>SUMMER10</strong> for an extra 10% off.</p>\n<p>Sale ends August 31st. {{store url="catalog/category/view/id/3"}}</p>\n</div>',
                 "is_active": True,
                 "meta_title": "Summer Sale | Test Store",
                 "meta_description": "Big summer sale with discounts on electronics and clothing.",
@@ -851,18 +937,21 @@ class MagentoSeeder:
 
         for page_data in pages:
             try:
-                result = self._post("/cmsPage", {
-                    "page": {
-                        "identifier": page_data["identifier"],
-                        "title": page_data["title"],
-                        "content": page_data["content"],
-                        "active": page_data["is_active"],
-                        "meta_title": page_data["meta_title"],
-                        "meta_description": page_data["meta_description"],
-                        "page_layout": "1column",
-                        "sort_order": 0,
-                    }
-                })
+                self._post(
+                    "/cmsPage",
+                    {
+                        "page": {
+                            "identifier": page_data["identifier"],
+                            "title": page_data["title"],
+                            "content": page_data["content"],
+                            "active": page_data["is_active"],
+                            "meta_title": page_data["meta_title"],
+                            "meta_description": page_data["meta_description"],
+                            "page_layout": "1column",
+                            "sort_order": 0,
+                        }
+                    },
+                )
                 print(f"  Created CMS page: {page_data['title']} (/{page_data['identifier']})")
             except Exception as e:
                 print(f"  Warning: Could not create CMS page '{page_data['title']}': {e}")
@@ -883,8 +972,10 @@ class MagentoSeeder:
 
         print(f"\n  Store URL:     {self.base_url}")
         print(f"  Access Token:  {self.admin_token}")
-        print(f"\n  Use these values in the Spwig migration wizard.")
-        print(f"\n  API test: curl -H 'Authorization: Bearer {self.admin_token}' {self.api_url}/store/storeConfigs")
+        print("\n  Use these values in the Spwig migration wizard.")
+        print(
+            f"\n  API test: curl -H 'Authorization: Bearer {self.admin_token}' {self.api_url}/store/storeConfigs"
+        )
 
     def print_summary(self):
         print("\n" + "=" * 60)
@@ -928,9 +1019,8 @@ def main():
     parser.add_argument("--timeout", type=int, default=600, help="Max seconds to wait")
     args = parser.parse_args()
 
-    if args.wait:
-        if not wait_for_magento(args.url, args.timeout):
-            sys.exit(1)
+    if args.wait and not wait_for_magento(args.url, args.timeout):
+        sys.exit(1)
 
     seeder = MagentoSeeder(args.url, args.user, args.password)
     seeder.authenticate(args.user, args.password)

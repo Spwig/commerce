@@ -23,14 +23,18 @@
   font-size: var(--theme-widget-cart-text-size, var(--theme-font-size-sm, 0.875rem));
   cursor: pointer;
   border-radius: var(--theme-widget-cart-button-radius, var(--theme-radius-md, 0.375rem));
-  transition: all var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+  transition: all var(--theme-transition-duration-fast, 150ms)
+    var(--theme-transition-easing-default, ease);
   text-decoration: none;
   touch-action: manipulation; /* Prevent double-tap zoom */
 }
 
 .widget-cart-button:hover,
 .widget-cart-button:focus {
-  color: var(--theme-widget-cart-icon-hover-color, var(--theme-header-icon-hover-color, var(--theme-color-primary)));
+  color: var(
+    --theme-widget-cart-icon-hover-color,
+    var(--theme-header-icon-hover-color, var(--theme-color-primary))
+  );
   background: var(--theme-color-surface-hover, rgba(0, 0, 0, 0.05));
 }
 
@@ -40,7 +44,7 @@
 }
 
 /* Aria-expanded state */
-[data-open-mini-cart][aria-expanded="true"] {
+[data-open-mini-cart][aria-expanded='true'] {
   color: var(--theme-color-primary, #3b82f6);
 }
 
@@ -77,7 +81,7 @@
   min-width: var(--theme-widget-cart-badge-size, 1.25rem);
   height: var(--theme-widget-cart-badge-size, 1.25rem);
   padding: 0 0.25rem;
-  background: var(--theme-widget-cart-badge-bg, var(--theme-color-primary, #3B82F6));
+  background: var(--theme-widget-cart-badge-bg, var(--theme-color-primary, #3b82f6));
   color: var(--theme-widget-cart-badge-color, var(--theme-color-text-inverse, white));
   font-size: var(--theme-widget-cart-badge-font-size, var(--theme-font-size-xs, 0.75rem));
   font-weight: var(--theme-widget-cart-badge-font-weight, var(--theme-font-weight-semibold, 600));
@@ -121,8 +125,9 @@
   z-index: var(--theme-widget-cart-z-index, var(--theme-z-modal-backdrop, 1040));
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--theme-transition-duration-normal, 300ms) ease,
-              visibility var(--theme-transition-duration-normal, 300ms) ease;
+  transition:
+    opacity var(--theme-transition-duration-normal, 300ms) ease,
+    visibility var(--theme-transition-duration-normal, 300ms) ease;
 }
 
 .mini-cart-overlay.active {
@@ -144,7 +149,10 @@
   flex-direction: column;
   transform: translateX(100%);
   transition: transform var(--theme-transition-duration-normal, 300ms) ease;
-  box-shadow: var(--theme-widget-cart-dropdown-shadow, var(--theme-shadow-xl, -4px 0 20px rgba(0, 0, 0, 0.1)));
+  box-shadow: var(
+    --theme-widget-cart-dropdown-shadow,
+    var(--theme-shadow-xl, -4px 0 20px rgba(0, 0, 0, 0.1))
+  );
   will-change: transform; /* Hint for browser optimization */
   backface-visibility: hidden; /* Smoother animation */
 }
@@ -158,8 +166,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--theme-widget-cart-dropdown-padding, var(--theme-space-4, 1rem)) var(--theme-space-5, 1.25rem);
-  border-bottom: 1px solid var(--theme-widget-cart-dropdown-border, var(--theme-color-border, #e5e7eb));
+  padding: var(--theme-widget-cart-dropdown-padding, var(--theme-space-4, 1rem))
+    var(--theme-space-5, 1.25rem);
+  border-bottom: 1px solid
+    var(--theme-widget-cart-dropdown-border, var(--theme-color-border, #e5e7eb));
   background: var(--theme-widget-cart-dropdown-bg, var(--theme-color-surface, #fff));
 }
 
@@ -202,8 +212,9 @@
   border-radius: var(--theme-radius-full, 9999px);
   color: var(--theme-color-text-muted, #6b7280);
   cursor: pointer;
-  transition: background var(--theme-transition-duration-fast, 200ms) ease,
-              color var(--theme-transition-duration-fast, 200ms) ease;
+  transition:
+    background var(--theme-transition-duration-fast, 200ms) ease,
+    color var(--theme-transition-duration-fast, 200ms) ease;
 }
 
 .mini-cart__close:hover {
@@ -346,8 +357,9 @@
   padding: var(--theme-space-3, 0.75rem);
   background: var(--theme-color-background-secondary, #f9fafb);
   border-radius: var(--theme-radius-md, 0.5rem);
-  transition: background var(--theme-transition-duration-fast, 200ms) ease,
-              box-shadow var(--theme-transition-duration-fast, 200ms) ease;
+  transition:
+    background var(--theme-transition-duration-fast, 200ms) ease,
+    box-shadow var(--theme-transition-duration-fast, 200ms) ease;
 }
 
 .recommendation-item:hover {
@@ -411,8 +423,9 @@
   border: none;
   border-radius: var(--theme-radius-full, 9999px);
   cursor: pointer;
-  transition: background var(--theme-transition-duration-fast, 200ms) ease,
-              transform var(--theme-transition-duration-fast, 200ms) ease;
+  transition:
+    background var(--theme-transition-duration-fast, 200ms) ease,
+    transform var(--theme-transition-duration-fast, 200ms) ease;
 }
 
 .recommendation-item__quick-add:hover {
@@ -741,8 +754,9 @@
   border: none;
   border-radius: var(--theme-radius-md, 0.5rem);
   cursor: pointer;
-  transition: opacity var(--theme-transition-duration-fast, 200ms) ease,
-              transform var(--theme-transition-duration-fast, 200ms) ease;
+  transition:
+    opacity var(--theme-transition-duration-fast, 200ms) ease,
+    transform var(--theme-transition-duration-fast, 200ms) ease;
 }
 
 .express-btn:hover {

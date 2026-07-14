@@ -20,20 +20,20 @@ Usage:
 
 import logging
 import os
-from typing import Dict, Optional, Any
 from pathlib import Path
+from typing import Any
+
 from django.core.cache import cache
-from django.template import Template, Context
-from django.core.exceptions import ValidationError
 
 from .models import ComponentStore, TierComponentPermission
-from .schema_registry import PageSchemaRegistry, ComponentPlacementError
+from .schema_registry import PageSchemaRegistry
 
 logger = logging.getLogger(__name__)
 
 
 class ComponentResolutionError(Exception):
     """Raised when component resolution fails"""
+
     pass
 
 
@@ -56,7 +56,7 @@ class ComponentRegistryService:
 
     # Cache timeout for component data (1 hour)
     CACHE_TIMEOUT = 3600
-    CACHE_KEY_PREFIX = 'component_registry'
+    CACHE_KEY_PREFIX = "component_registry"
 
     def __init__(self):
         """Initialize the component registry service."""
@@ -66,9 +66,9 @@ class ComponentRegistryService:
         self,
         component_type: str,
         tier: str,
-        version: Optional[str] = None,
-        page_type: Optional[str] = None
-    ) -> Dict[str, Any]:
+        version: str | None = None,
+        page_type: str | None = None,
+    ) -> dict[str, Any]:
         """
         Resolve component for rendering.
 
@@ -102,11 +102,7 @@ class ComponentRegistryService:
 
             if not component:
                 # Load from database
-                component = self._load_component_from_db(
-                    component_type,
-                    tier,
-                    version
-                )
+                component = self._load_component_from_db(component_type, tier, version)
 
                 # Cache for future requests
                 self._cache_component(component, tier, version)
@@ -117,17 +113,15 @@ class ComponentRegistryService:
 
             # Prepare component data
             return {
-                'component': component,
-                'template_path': self._get_template_path(component),
-                'assets': self._get_component_assets(component),
-                'permissions': self._get_component_permissions(component, tier)
+                "component": component,
+                "template_path": self._get_template_path(component),
+                "assets": self._get_component_assets(component),
+                "permissions": self._get_component_permissions(component, tier),
             }
 
         except ComponentStore.DoesNotExist:
             logger.error(f"Component '{component_type}' not found")
-            raise ComponentResolutionError(
-                f"Component '{component_type}' not found"
-            )
+            raise ComponentResolutionError(f"Component '{component_type}' not found")
         except Exception as e:
             logger.error(f"Failed to resolve component '{component_type}': {e}")
             raise ComponentResolutionError(str(e))
@@ -153,28 +147,20 @@ class ComponentRegistryService:
 
             # Load template file
             if os.path.exists(template_path):
-                with open(template_path, 'r', encoding='utf-8') as f:
+                with open(template_path, encoding="utf-8") as f:
                     return f.read()
 
             # Fallback to default template
-            logger.warning(
-                f"Template not found for {component.component_type}, "
-                f"using fallback"
-            )
+            logger.warning(f"Template not found for {component.component_type}, using fallback")
             return self._get_fallback_template(component)
 
         except Exception as e:
-            logger.error(
-                f"Failed to load template for {component.component_type}: {e}"
-            )
+            logger.error(f"Failed to load template for {component.component_type}: {e}")
             return self._get_fallback_template(component)
 
     def prepare_component_context(
-        self,
-        component: ComponentStore,
-        instance_data: Dict[str, Any],
-        page_context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, component: ComponentStore, instance_data: dict[str, Any], page_context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Prepare rendering context for component instance.
 
@@ -199,13 +185,13 @@ class ComponentRegistryService:
         """
         # Build base context
         context = {
-            'component': {
-                'type': component.component_type,
-                'name': component.name,
-                'version': component.version,
+            "component": {
+                "type": component.component_type,
+                "name": component.name,
+                "version": component.version,
             },
-            'tier': page_context.get('tier'),
-            'page_type': page_context.get('page_type'),
+            "tier": page_context.get("tier"),
+            "page_type": page_context.get("page_type"),
         }
 
         # Add instance-specific data
@@ -218,7 +204,7 @@ class ComponentRegistryService:
 
         return context
 
-    def get_fallback_component(self, component_type: str) -> Dict[str, Any]:
+    def get_fallback_component(self, component_type: str) -> dict[str, Any]:
         """
         Get fallback data for missing component.
 
@@ -236,28 +222,29 @@ class ComponentRegistryService:
         logger.warning(f"Using fallback for missing component: {component_type}")
 
         # Create a mock component for fallback
-        mock_component = type('MockComponent', (), {
-            'component_type': component_type,
-            'name': f'[Missing: {component_type}]',
-            'version': '0.0.0',
-            'package_name': 'fallback'
-        })()
+        mock_component = type(
+            "MockComponent",
+            (),
+            {
+                "component_type": component_type,
+                "name": f"[Missing: {component_type}]",
+                "version": "0.0.0",
+                "package_name": "fallback",
+            },
+        )()
 
         return {
-            'component': mock_component,
-            'template_path': '',
-            'assets': {},
-            'permissions': {},
-            'is_fallback': True
+            "component": mock_component,
+            "template_path": "",
+            "assets": {},
+            "permissions": {},
+            "is_fallback": True,
         }
 
     # Private methods
 
     def _load_component_from_db(
-        self,
-        component_type: str,
-        tier: str,
-        version: Optional[str] = None
+        self, component_type: str, tier: str, version: str | None = None
     ) -> ComponentStore:
         """
         Load component from database.
@@ -273,17 +260,10 @@ class ComponentRegistryService:
         Raises:
             ComponentStore.DoesNotExist: If component not found
         """
-        query = ComponentStore.objects.filter(
-            component_type=component_type,
-            is_active=True
-        )
+        query = ComponentStore.objects.filter(component_type=component_type, is_active=True)
 
-        if version:
-            # Load specific version
-            query = query.filter(version=version)
-        else:
-            # Load latest version
-            query = query.order_by('-created_at')
+        # Specific version if requested, otherwise the latest
+        query = query.filter(version=version) if version else query.order_by("-created_at")
 
         component = query.first()
 
@@ -292,17 +272,11 @@ class ComponentRegistryService:
                 f"Component '{component_type}' (version={version}) not found"
             )
 
-        logger.debug(
-            f"Loaded component: {component_type} v{component.version} "
-            f"for tier {tier}"
-        )
+        logger.debug(f"Loaded component: {component_type} v{component.version} for tier {tier}")
         return component
 
     def _validate_tier_permissions(
-        self,
-        component: ComponentStore,
-        tier: str,
-        page_type: str
+        self, component: ComponentStore, tier: str, page_type: str
     ) -> None:
         """
         Validate that component is allowed in the given tier/page.
@@ -319,7 +293,7 @@ class ComponentRegistryService:
             self.schema_registry.validate_component_placement(
                 page_type=page_type,
                 component_type=component.component_type,
-                region=None  # Region check happens at layout level
+                region=None,  # Region check happens at layout level
             )
         except Exception as e:
             logger.warning(
@@ -343,12 +317,18 @@ class ComponentRegistryService:
         # This will be updated when actual component packages are implemented
         from django.conf import settings
 
-        media_root = getattr(settings, 'MEDIA_ROOT', '/tmp')
-        template_path = Path(media_root) / 'components' / component.component_type / component.version / 'template.html'
+        media_root = getattr(settings, "MEDIA_ROOT", "/tmp")
+        template_path = (
+            Path(media_root)
+            / "components"
+            / component.component_type
+            / component.version
+            / "template.html"
+        )
 
         return str(template_path)
 
-    def _get_component_assets(self, component: ComponentStore) -> Dict[str, Any]:
+    def _get_component_assets(self, component: ComponentStore) -> dict[str, Any]:
         """
         Get component assets (CSS, JS, images).
 
@@ -359,17 +339,9 @@ class ComponentRegistryService:
             Dict with asset URLs
         """
         # Placeholder - will be implemented when component packages are ready
-        return {
-            'css': [],
-            'js': [],
-            'images': []
-        }
+        return {"css": [], "js": [], "images": []}
 
-    def _get_component_permissions(
-        self,
-        component: ComponentStore,
-        tier: str
-    ) -> Dict[str, Any]:
+    def _get_component_permissions(self, component: ComponentStore, tier: str) -> dict[str, Any]:
         """
         Get component permissions for the given tier.
 
@@ -382,15 +354,14 @@ class ComponentRegistryService:
         """
         try:
             permission = TierComponentPermission.objects.filter(
-                component=component,
-                tier__tier=tier
+                component=component, tier__tier=tier
             ).first()
 
             if permission:
                 return {
-                    'allowed_regions': permission.allowed_regions or [],
-                    'max_instances': permission.max_instances,
-                    'is_locked': permission.is_locked
+                    "allowed_regions": permission.allowed_regions or [],
+                    "max_instances": permission.max_instances,
+                    "is_locked": permission.is_locked,
                 }
 
             return {}
@@ -414,15 +385,12 @@ class ComponentRegistryService:
             f'  <p class="component-name">{component.name}</p>\n'
             f'  <p class="component-type">{component.component_type}</p>\n'
             f'  <p class="component-version">v{component.version}</p>\n'
-            f'</div>'
+            f"</div>"
         )
 
     def _get_cached_component(
-        self,
-        component_type: str,
-        tier: str,
-        version: Optional[str] = None
-    ) -> Optional[ComponentStore]:
+        self, component_type: str, tier: str, version: str | None = None
+    ) -> ComponentStore | None:
         """
         Get component from cache.
 
@@ -438,10 +406,7 @@ class ComponentRegistryService:
         return cache.get(cache_key)
 
     def _cache_component(
-        self,
-        component: ComponentStore,
-        tier: str,
-        version: Optional[str] = None
+        self, component: ComponentStore, tier: str, version: str | None = None
     ) -> None:
         """
         Cache component for future requests.
@@ -455,12 +420,7 @@ class ComponentRegistryService:
         cache.set(cache_key, component, self.CACHE_TIMEOUT)
         logger.debug(f"Cached component: {cache_key}")
 
-    def _build_cache_key(
-        self,
-        component_type: str,
-        tier: str,
-        version: Optional[str] = None
-    ) -> str:
+    def _build_cache_key(self, component_type: str, tier: str, version: str | None = None) -> str:
         """
         Build cache key for component.
 
@@ -472,11 +432,11 @@ class ComponentRegistryService:
         Returns:
             Cache key string
         """
-        version_str = version or 'latest'
-        return f'{self.CACHE_KEY_PREFIX}:{tier}:{component_type}:{version_str}'
+        version_str = version or "latest"
+        return f"{self.CACHE_KEY_PREFIX}:{tier}:{component_type}:{version_str}"
 
     @staticmethod
-    def clear_component_cache(component_type: Optional[str] = None) -> None:
+    def clear_component_cache(component_type: str | None = None) -> None:
         """
         Clear component cache.
 
@@ -489,7 +449,6 @@ class ComponentRegistryService:
         """
         if component_type:
             # Clear specific component across all tiers and versions
-            pattern = f'{ComponentRegistryService.CACHE_KEY_PREFIX}:*:{component_type}:*'
             logger.info(f"Clearing cache for component: {component_type}")
             # Note: Django's default cache doesn't support pattern matching
             # In production, use Redis with delete_pattern

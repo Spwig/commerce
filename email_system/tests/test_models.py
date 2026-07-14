@@ -2,14 +2,15 @@
 Tests for email_system models.
 Tests cover EmailAccount, EmailTemplate, EmailOutbox, and EmailEvent models.
 """
-import uuid
-from django.test import TestCase
+
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
+from django.test import TestCase
 from django.utils import timezone
-from email_system.models import EmailAccount, EmailTemplate, EmailOutbox, EmailEvent
-from email_system.utils.encryption import encrypt_credentials, decrypt_credentials
+
 from component_updates.models import ComponentRegistry
+from email_system.models import EmailAccount, EmailEvent, EmailOutbox, EmailTemplate
+from email_system.utils.encryption import encrypt_credentials
 
 User = get_user_model()
 
@@ -21,54 +22,52 @@ class EmailAccountModelTest(TestCase):
         """Set up test data"""
         self.site = Site.objects.get_current()
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
         # Create a test email provider component
         self.component = ComponentRegistry.objects.create(
-            component_type='email_provider',
-            slug='test-gmail',
-            name='Test Gmail Provider',
-            current_version='1.0.0',
+            component_type="email_provider",
+            slug="test-gmail",
+            name="Test Gmail Provider",
+            current_version="1.0.0",
         )
 
     def test_create_email_account(self):
         """Test creating an EmailAccount"""
-        credentials = {'api_key': 'test_key_123', 'secret': 'test_secret'}
+        credentials = {"api_key": "test_key_123", "secret": "test_secret"}
 
         account = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Test Account',
-            from_email='test@example.com',
-            from_name='Test Sender',
+            name="Test Account",
+            from_email="test@example.com",
+            from_name="Test Sender",
             credentials=encrypt_credentials(credentials),
             created_by=self.user,
         )
 
         self.assertIsNotNone(account.id)
-        self.assertEqual(account.name, 'Test Account')
-        self.assertEqual(account.from_email, 'test@example.com')
-        self.assertEqual(account.from_name, 'Test Sender')
+        self.assertEqual(account.name, "Test Account")
+        self.assertEqual(account.from_email, "test@example.com")
+        self.assertEqual(account.from_name, "Test Sender")
         self.assertTrue(account.is_active)
         self.assertFalse(account.is_default)
-        self.assertEqual(account.connection_status, 'unknown')
+        self.assertEqual(account.connection_status, "unknown")
 
     def test_credentials_encryption_decryption(self):
         """Test that credentials are properly encrypted and can be decrypted"""
         credentials = {
-            'client_id': 'test_client_id',
-            'client_secret': 'super_secret_value',
-            'access_token': 'test_access_token',
+            "client_id": "test_client_id",
+            "client_secret": "super_secret_value",
+            "access_token": "test_access_token",
         }
 
         account = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Test Account',
-            from_email='test@example.com',
+            name="Test Account",
+            from_email="test@example.com",
             credentials=encrypt_credentials(credentials),
             created_by=self.user,
         )
@@ -77,22 +76,22 @@ class EmailAccountModelTest(TestCase):
         retrieved_account = EmailAccount.objects.get(pk=account.pk)
         decrypted = retrieved_account.get_credentials()
 
-        self.assertEqual(decrypted['client_id'], 'test_client_id')
-        self.assertEqual(decrypted['client_secret'], 'super_secret_value')
-        self.assertEqual(decrypted['access_token'], 'test_access_token')
+        self.assertEqual(decrypted["client_id"], "test_client_id")
+        self.assertEqual(decrypted["client_secret"], "super_secret_value")
+        self.assertEqual(decrypted["access_token"], "test_access_token")
 
     def test_set_credentials_method(self):
         """Test set_credentials() method"""
         account = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Test Account',
-            from_email='test@example.com',
+            name="Test Account",
+            from_email="test@example.com",
             credentials=encrypt_credentials({}),
             created_by=self.user,
         )
 
-        new_credentials = {'api_key': 'new_key', 'secret': 'new_secret'}
+        new_credentials = {"api_key": "new_key", "secret": "new_secret"}
         account.set_credentials(new_credentials)
         account.save()
 
@@ -100,16 +99,16 @@ class EmailAccountModelTest(TestCase):
         account.refresh_from_db()
         decrypted = account.get_credentials()
 
-        self.assertEqual(decrypted['api_key'], 'new_key')
-        self.assertEqual(decrypted['secret'], 'new_secret')
+        self.assertEqual(decrypted["api_key"], "new_key")
+        self.assertEqual(decrypted["secret"], "new_secret")
 
     def test_get_credentials_empty(self):
         """Test get_credentials() with no credentials"""
         account = EmailAccount(
             site=self.site,
             component=self.component,
-            name='Test Account',
-            from_email='test@example.com',
+            name="Test Account",
+            from_email="test@example.com",
             created_by=self.user,
         )
         # Don't set credentials, so it will be empty
@@ -127,8 +126,8 @@ class EmailAccountModelTest(TestCase):
         account1 = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Account 1',
-            from_email='account1@example.com',
+            name="Account 1",
+            from_email="account1@example.com",
             is_default=True,
             credentials=encrypt_credentials({}),
             created_by=self.user,
@@ -138,17 +137,17 @@ class EmailAccountModelTest(TestCase):
 
         # Create second account as default
         component2 = ComponentRegistry.objects.create(
-            component_type='email_provider',
-            slug='test-smtp',
-            name='Test SMTP Provider',
-            current_version='1.0.0',
+            component_type="email_provider",
+            slug="test-smtp",
+            name="Test SMTP Provider",
+            current_version="1.0.0",
         )
 
         account2 = EmailAccount.objects.create(
             site=self.site,
             component=component2,
-            name='Account 2',
-            from_email='account2@example.com',
+            name="Account 2",
+            from_email="account2@example.com",
             is_default=True,
             credentials=encrypt_credentials({}),
             created_by=self.user,
@@ -163,14 +162,14 @@ class EmailAccountModelTest(TestCase):
 
     def test_is_default_multiple_sites(self):
         """Test that each site can have its own default account"""
-        site2 = Site.objects.create(domain='site2.example.com', name='Site 2')
+        site2 = Site.objects.create(domain="site2.example.com", name="Site 2")
 
         # Create default account for site 1
         account1 = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Account Site 1',
-            from_email='account1@example.com',
+            name="Account Site 1",
+            from_email="account1@example.com",
             is_default=True,
             credentials=encrypt_credentials({}),
             created_by=self.user,
@@ -178,17 +177,17 @@ class EmailAccountModelTest(TestCase):
 
         # Create default account for site 2
         component2 = ComponentRegistry.objects.create(
-            component_type='email_provider',
-            slug='test-smtp-2',
-            name='Test SMTP 2',
-            current_version='1.0.0',
+            component_type="email_provider",
+            slug="test-smtp-2",
+            name="Test SMTP 2",
+            current_version="1.0.0",
         )
 
         account2 = EmailAccount.objects.create(
             site=site2,
             component=component2,
-            name='Account Site 2',
-            from_email='account2@example.com',
+            name="Account Site 2",
+            from_email="account2@example.com",
             is_default=True,
             credentials=encrypt_credentials({}),
             created_by=self.user,
@@ -206,35 +205,35 @@ class EmailAccountModelTest(TestCase):
         account = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='My Email Account',
-            from_email='sender@example.com',
+            name="My Email Account",
+            from_email="sender@example.com",
             credentials=encrypt_credentials({}),
             created_by=self.user,
         )
 
-        self.assertEqual(str(account), 'My Email Account (sender@example.com)')
+        self.assertEqual(str(account), "My Email Account (sender@example.com)")
 
     def test_connection_status_tracking(self):
         """Test connection status and error tracking"""
         account = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Test Account',
-            from_email='test@example.com',
+            name="Test Account",
+            from_email="test@example.com",
             credentials=encrypt_credentials({}),
             created_by=self.user,
         )
 
         # Update connection status
-        account.connection_status = 'error'
-        account.connection_error = 'Failed to authenticate'
+        account.connection_status = "error"
+        account.connection_error = "Failed to authenticate"
         account.last_tested_at = timezone.now()
         account.save()
 
         account.refresh_from_db()
 
-        self.assertEqual(account.connection_status, 'error')
-        self.assertEqual(account.connection_error, 'Failed to authenticate')
+        self.assertEqual(account.connection_status, "error")
+        self.assertEqual(account.connection_error, "Failed to authenticate")
         self.assertIsNotNone(account.last_tested_at)
 
 
@@ -245,69 +244,80 @@ class EmailTemplateModelTest(TestCase):
         """Set up test data"""
         self.site = Site.objects.get_current()
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
     def test_create_email_template(self):
         """Test creating an EmailTemplate"""
         template = EmailTemplate.objects.create(
             site=self.site,
-            template_type='order_confirmation',
-            language_code='en',
-            subject='Order Confirmed #{{ order_number }}',
-            html_content='<h1>Thank you for your order!</h1>',
-            text_content='Thank you for your order!',
+            template_type="order_confirmation",
+            language_code="en",
+            subject="Order Confirmed #{{ order_number }}",
+            html_content="<h1>Thank you for your order!</h1>",
+            text_content="Thank you for your order!",
             created_by=self.user,
         )
 
         self.assertIsNotNone(template.id)
-        self.assertEqual(template.template_type, 'order_confirmation')
-        self.assertEqual(template.language_code, 'en')
+        self.assertEqual(template.template_type, "order_confirmation")
+        self.assertEqual(template.language_code, "en")
         self.assertTrue(template.is_active)
         self.assertFalse(template.is_system)
 
-    def test_unique_template_per_type_language_site(self):
-        """Test unique constraint for template_type + language_code + site"""
-        EmailTemplate.objects.create(
+    def test_multiple_templates_per_type_language_site_allowed(self):
+        """EmailTemplate.Meta has NO unique constraint on (site, template_type,
+        language_code) — the model documents this intentionally so a merchant
+        can keep the system template AND their cloned/customised copy
+        side-by-side (see comment in EmailTemplate.Meta). This test locks
+        that behaviour in."""
+        system = EmailTemplate.objects.create(
             site=self.site,
-            template_type='order_confirmation',
-            language_code='en',
-            subject='Order Confirmed',
-            html_content='<h1>Thank you!</h1>',
+            template_type="order_confirmation",
+            language_code="en",
+            subject="Order Confirmed",
+            html_content="<h1>Thank you!</h1>",
+            is_system=True,
             created_by=self.user,
         )
 
-        # Try to create duplicate
-        from django.db import IntegrityError
-        with self.assertRaises(IntegrityError):
-            EmailTemplate.objects.create(
-                site=self.site,
-                template_type='order_confirmation',
-                language_code='en',
-                subject='Different Subject',
-                html_content='<h1>Different Content</h1>',
-                created_by=self.user,
-            )
+        # Custom clone with the same (site, type, language) tuple must be
+        # allowed — no IntegrityError.
+        clone = EmailTemplate.objects.create(
+            site=self.site,
+            template_type="order_confirmation",
+            language_code="en",
+            subject="Different Subject",
+            html_content="<h1>Different Content</h1>",
+            is_system=False,
+            created_by=self.user,
+        )
+
+        self.assertNotEqual(system.pk, clone.pk)
+        matching = EmailTemplate.objects.filter(
+            site=self.site,
+            template_type="order_confirmation",
+            language_code="en",
+        )
+        self.assertEqual(matching.count(), 2)
 
     def test_multiple_languages_same_template_type(self):
         """Test creating templates for same type in different languages"""
         template_en = EmailTemplate.objects.create(
             site=self.site,
-            template_type='order_confirmation',
-            language_code='en',
-            subject='Order Confirmed',
-            html_content='<h1>Thank you!</h1>',
+            template_type="order_confirmation",
+            language_code="en",
+            subject="Order Confirmed",
+            html_content="<h1>Thank you!</h1>",
             created_by=self.user,
         )
 
         template_es = EmailTemplate.objects.create(
             site=self.site,
-            template_type='order_confirmation',
-            language_code='es',
-            subject='Pedido Confirmado',
-            html_content='<h1>¡Gracias!</h1>',
+            template_type="order_confirmation",
+            language_code="es",
+            subject="Pedido Confirmado",
+            html_content="<h1>¡Gracias!</h1>",
             created_by=self.user,
         )
 
@@ -319,23 +329,23 @@ class EmailTemplateModelTest(TestCase):
         """Test __str__ method"""
         template = EmailTemplate.objects.create(
             site=self.site,
-            template_type='password_reset',
-            language_code='en',
-            subject='Reset Your Password',
-            html_content='<h1>Password Reset</h1>',
+            template_type="password_reset",
+            language_code="en",
+            subject="Reset Your Password",
+            html_content="<h1>Password Reset</h1>",
             created_by=self.user,
         )
 
-        self.assertEqual(str(template), 'Password Reset (en)')
+        self.assertEqual(str(template), "Password Reset (en)")
 
     def test_system_template_flag(self):
         """Test is_system flag for pre-installed templates"""
         template = EmailTemplate.objects.create(
             site=self.site,
-            template_type='order_confirmation',
-            language_code='en',
-            subject='Order Confirmed',
-            html_content='<h1>Thank you!</h1>',
+            template_type="order_confirmation",
+            language_code="en",
+            subject="Order Confirmed",
+            html_content="<h1>Thank you!</h1>",
             is_system=True,
             created_by=self.user,
         )
@@ -350,23 +360,21 @@ class EmailOutboxModelTest(TestCase):
         """Set up test data"""
         self.site = Site.objects.get_current()
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
         self.component = ComponentRegistry.objects.create(
-            component_type='email_provider',
-            slug='test-gmail',
-            name='Test Gmail',
-            current_version='1.0.0',
+            component_type="email_provider",
+            slug="test-gmail",
+            name="Test Gmail",
+            current_version="1.0.0",
         )
 
         self.account = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Test Account',
-            from_email='sender@example.com',
+            name="Test Account",
+            from_email="sender@example.com",
             credentials=encrypt_credentials({}),
             created_by=self.user,
         )
@@ -376,18 +384,18 @@ class EmailOutboxModelTest(TestCase):
         email = EmailOutbox.objects.create(
             site=self.site,
             account=self.account,
-            to_email='recipient@example.com',
-            from_email='sender@example.com',
-            from_name='Test Sender',
-            subject='Test Email',
-            html_body='<p>Hello World</p>',
-            text_body='Hello World',
+            to_email="recipient@example.com",
+            from_email="sender@example.com",
+            from_name="Test Sender",
+            subject="Test Email",
+            html_body="<p>Hello World</p>",
+            text_body="Hello World",
         )
 
         self.assertIsNotNone(email.id)
-        self.assertEqual(email.to_email, 'recipient@example.com')
-        self.assertEqual(email.subject, 'Test Email')
-        self.assertEqual(email.status, 'queued')
+        self.assertEqual(email.to_email, "recipient@example.com")
+        self.assertEqual(email.subject, "Test Email")
+        self.assertEqual(email.status, "queued")
         self.assertEqual(email.retry_count, 0)
         self.assertEqual(email.max_retries, 3)
 
@@ -396,48 +404,48 @@ class EmailOutboxModelTest(TestCase):
         email = EmailOutbox.objects.create(
             site=self.site,
             account=self.account,
-            to_email='recipient@example.com',
-            from_email='sender@example.com',
-            subject='Test Email',
-            html_body='<p>Test</p>',
+            to_email="recipient@example.com",
+            from_email="sender@example.com",
+            subject="Test Email",
+            html_body="<p>Test</p>",
         )
 
         # Queued → Sending
-        email.status = 'sending'
+        email.status = "sending"
         email.save()
-        self.assertEqual(email.status, 'sending')
+        self.assertEqual(email.status, "sending")
 
         # Sending → Sent
-        email.status = 'sent'
+        email.status = "sent"
         email.sent_at = timezone.now()
-        email.provider_message_id = 'msg_12345'
+        email.provider_message_id = "msg_12345"
         email.save()
 
         email.refresh_from_db()
-        self.assertEqual(email.status, 'sent')
+        self.assertEqual(email.status, "sent")
         self.assertIsNotNone(email.sent_at)
-        self.assertEqual(email.provider_message_id, 'msg_12345')
+        self.assertEqual(email.provider_message_id, "msg_12345")
 
     def test_failed_status_with_error(self):
         """Test failed email with error message"""
         email = EmailOutbox.objects.create(
             site=self.site,
             account=self.account,
-            to_email='recipient@example.com',
-            from_email='sender@example.com',
-            subject='Test Email',
-            html_body='<p>Test</p>',
+            to_email="recipient@example.com",
+            from_email="sender@example.com",
+            subject="Test Email",
+            html_body="<p>Test</p>",
         )
 
-        email.status = 'failed'
-        email.error_message = 'Authentication failed'
+        email.status = "failed"
+        email.error_message = "Authentication failed"
         email.failed_at = timezone.now()
         email.retry_count = 1
         email.save()
 
         email.refresh_from_db()
-        self.assertEqual(email.status, 'failed')
-        self.assertEqual(email.error_message, 'Authentication failed')
+        self.assertEqual(email.status, "failed")
+        self.assertEqual(email.error_message, "Authentication failed")
         self.assertEqual(email.retry_count, 1)
         self.assertIsNotNone(email.failed_at)
 
@@ -446,30 +454,30 @@ class EmailOutboxModelTest(TestCase):
         email = EmailOutbox.objects.create(
             site=self.site,
             account=self.account,
-            to_email='recipient@example.com',
-            from_email='sender@example.com',
-            subject='Test Email',
-            html_body='<p>Test</p>',
-            cc=['cc1@example.com', 'cc2@example.com'],
-            bcc=['bcc@example.com'],
+            to_email="recipient@example.com",
+            from_email="sender@example.com",
+            subject="Test Email",
+            html_body="<p>Test</p>",
+            cc=["cc1@example.com", "cc2@example.com"],
+            bcc=["bcc@example.com"],
         )
 
-        self.assertEqual(email.cc, ['cc1@example.com', 'cc2@example.com'])
-        self.assertEqual(email.bcc, ['bcc@example.com'])
+        self.assertEqual(email.cc, ["cc1@example.com", "cc2@example.com"])
+        self.assertEqual(email.bcc, ["bcc@example.com"])
 
     def test_str_method(self):
         """Test __str__ method"""
         email = EmailOutbox.objects.create(
             site=self.site,
             account=self.account,
-            to_email='recipient@example.com',
-            from_email='sender@example.com',
-            subject='Order Confirmation',
-            html_body='<p>Test</p>',
-            status='sent',
+            to_email="recipient@example.com",
+            from_email="sender@example.com",
+            subject="Order Confirmation",
+            html_body="<p>Test</p>",
+            status="sent",
         )
 
-        self.assertEqual(str(email), 'Order Confirmation → recipient@example.com (Sent)')
+        self.assertEqual(str(email), "Order Confirmation → recipient@example.com (Sent)")
 
 
 class EmailEventModelTest(TestCase):
@@ -479,23 +487,21 @@ class EmailEventModelTest(TestCase):
         """Set up test data"""
         self.site = Site.objects.get_current()
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
         self.component = ComponentRegistry.objects.create(
-            component_type='email_provider',
-            slug='test-gmail',
-            name='Test Gmail',
-            current_version='1.0.0',
+            component_type="email_provider",
+            slug="test-gmail",
+            name="Test Gmail",
+            current_version="1.0.0",
         )
 
         self.account = EmailAccount.objects.create(
             site=self.site,
             component=self.component,
-            name='Test Account',
-            from_email='sender@example.com',
+            name="Test Account",
+            from_email="sender@example.com",
             credentials=encrypt_credentials({}),
             created_by=self.user,
         )
@@ -503,56 +509,56 @@ class EmailEventModelTest(TestCase):
         self.email = EmailOutbox.objects.create(
             site=self.site,
             account=self.account,
-            to_email='recipient@example.com',
-            from_email='sender@example.com',
-            subject='Test Email',
-            html_body='<p>Test</p>',
+            to_email="recipient@example.com",
+            from_email="sender@example.com",
+            subject="Test Email",
+            html_body="<p>Test</p>",
         )
 
     def test_create_email_event(self):
         """Test creating an EmailEvent"""
         event = EmailEvent.objects.create(
             email=self.email,
-            event_type='delivered',
-            event_data={'provider': 'gmail', 'timestamp': '2025-10-25T10:00:00Z'},
+            event_type="delivered",
+            event_data={"provider": "gmail", "timestamp": "2025-10-25T10:00:00Z"},
         )
 
         self.assertIsNotNone(event.id)
-        self.assertEqual(event.event_type, 'delivered')
+        self.assertEqual(event.event_type, "delivered")
         self.assertEqual(event.email, self.email)
 
     def test_bounce_event(self):
         """Test bounce event with details"""
         event = EmailEvent.objects.create(
             email=self.email,
-            event_type='bounced',
-            bounce_type='hard',
-            bounce_reason='Mailbox does not exist',
-            event_data={'smtp_code': 550},
+            event_type="bounced",
+            bounce_type="hard",
+            bounce_reason="Mailbox does not exist",
+            event_data={"smtp_code": 550},
         )
 
-        self.assertEqual(event.event_type, 'bounced')
-        self.assertEqual(event.bounce_type, 'hard')
-        self.assertEqual(event.bounce_reason, 'Mailbox does not exist')
+        self.assertEqual(event.event_type, "bounced")
+        self.assertEqual(event.bounce_type, "hard")
+        self.assertEqual(event.bounce_reason, "Mailbox does not exist")
 
     def test_open_event_with_tracking(self):
         """Test open event with user agent and IP"""
         event = EmailEvent.objects.create(
             email=self.email,
-            event_type='opened',
-            user_agent='Mozilla/5.0...',
-            ip_address='192.168.1.1',
+            event_type="opened",
+            user_agent="Mozilla/5.0...",
+            ip_address="192.168.1.1",
         )
 
-        self.assertEqual(event.event_type, 'opened')
-        self.assertEqual(event.user_agent, 'Mozilla/5.0...')
-        self.assertEqual(event.ip_address, '192.168.1.1')
+        self.assertEqual(event.event_type, "opened")
+        self.assertEqual(event.user_agent, "Mozilla/5.0...")
+        self.assertEqual(event.ip_address, "192.168.1.1")
 
     def test_str_method(self):
         """Test __str__ method"""
         event = EmailEvent.objects.create(
             email=self.email,
-            event_type='clicked',
+            event_type="clicked",
         )
 
-        self.assertEqual(str(event), 'Clicked - Test Email')
+        self.assertEqual(str(event), "Clicked - Test Email")

@@ -4,10 +4,9 @@ Provider registry for discovering and managing payment providers.
 The registry scans the ComponentRegistry for payment_provider components
 and dynamically loads provider classes.
 """
-import importlib
+
 import logging
 import time
-from typing import Dict, Optional, List, Type
 from pathlib import Path
 
 from payment_providers.providers.base import PaymentProviderBase
@@ -36,11 +35,11 @@ class ProviderRegistry:
         providers = ProviderRegistry.list_providers()
     """
 
-    COMPONENT_TYPE = 'payment_provider'
+    COMPONENT_TYPE = "payment_provider"
 
     # Class-level cache of loaded providers
-    _providers: Dict[str, Type[PaymentProviderBase]] = {}
-    _slug_to_key: Dict[str, str] = {}  # component slug -> provider_key
+    _providers: dict[str, type[PaymentProviderBase]] = {}
+    _slug_to_key: dict[str, str] = {}  # component slug -> provider_key
     _discovered: bool = False
     _last_loaded_at: float = 0
 
@@ -64,17 +63,14 @@ class ProviderRegistry:
 
             # Query for all payment provider components that have an installed version
             provider_components = ComponentRegistry.objects.filter(
-                component_type='payment_provider'
+                component_type="payment_provider"
             ).exclude(current_version__isnull=True)
 
             for component in provider_components:
                 try:
                     cls._load_provider_from_component(component)
                 except Exception as e:
-                    logger.error(
-                        f"Failed to load provider '{component.slug}': {e}",
-                        exc_info=True
-                    )
+                    logger.error(f"Failed to load provider '{component.slug}': {e}", exc_info=True)
                     continue
 
             cls._discovered = True
@@ -97,12 +93,15 @@ class ProviderRegistry:
             ImportError: If provider module cannot be imported
             ValueError: If provider class is invalid
         """
-        from payment_providers.providers.loader import load_provider_manifest, validate_provider_package
         from component_updates.integration_paths import INTEGRATIONS_DIR
+        from payment_providers.providers.loader import (
+            load_provider_manifest,
+            validate_provider_package,
+        )
 
         # Resolve component directory path
         # Expected: components_data/integrations/payment_provider/{slug}/current/
-        component_dir = INTEGRATIONS_DIR / 'payment_provider' / component.slug / 'current'
+        component_dir = INTEGRATIONS_DIR / "payment_provider" / component.slug / "current"
 
         if not component_dir.exists():
             logger.warning(f"Component directory not found: {component_dir}")
@@ -117,8 +116,8 @@ class ProviderRegistry:
             return
 
         # Import provider module
-        module_path = manifest.get('entry_point', 'provider')
-        provider_class_name = manifest.get('class_name', 'Provider')
+        module_path = manifest.get("entry_point", "provider")
+        provider_class_name = manifest.get("class_name", "Provider")
 
         try:
             # Dynamic import from component directory
@@ -132,14 +131,16 @@ class ProviderRegistry:
                 raise ValueError(f"Provider class '{provider_class_name}' not found in module")
 
             if not issubclass(provider_class, PaymentProviderBase):
-                raise ValueError(f"Provider class must inherit from PaymentProviderBase")
+                raise ValueError("Provider class must inherit from PaymentProviderBase")
 
             # Register provider
-            provider_key = manifest.get('provider_key', component.slug)
+            provider_key = manifest.get("provider_key", component.slug)
             cls._providers[provider_key] = provider_class
             cls._slug_to_key[component.slug] = provider_key
 
-            logger.info(f"Loaded provider: {provider_key} ({provider_class_name}) from {component_dir}")
+            logger.info(
+                f"Loaded provider: {provider_key} ({provider_class_name}) from {component_dir}"
+            )
 
         except ImportError as e:
             logger.error(f"Failed to import provider module '{module_path}': {e}")
@@ -179,12 +180,13 @@ class ProviderRegistry:
         """Check if provider files on disk are newer than our in-memory cache."""
         try:
             from component_updates.integration_paths import provider_cache_is_stale
+
             return provider_cache_is_stale(cls.COMPONENT_TYPE, cls._last_loaded_at)
         except Exception:
             return False
 
     @classmethod
-    def get_provider(cls, provider_key: str) -> Optional[Type[PaymentProviderBase]]:
+    def get_provider(cls, provider_key: str) -> type[PaymentProviderBase] | None:
         """
         Get a provider class by its key.
 
@@ -212,7 +214,7 @@ class ProviderRegistry:
         return result
 
     @classmethod
-    def list_providers(cls) -> Dict[str, Type[PaymentProviderBase]]:
+    def list_providers(cls) -> dict[str, type[PaymentProviderBase]]:
         """
         Get dictionary of all registered providers.
 
@@ -250,7 +252,7 @@ class ProviderRegistry:
         return provider_key in cls._providers
 
     @classmethod
-    def get_provider_info(cls, provider_key: str) -> Optional[Dict]:
+    def get_provider_info(cls, provider_key: str) -> dict | None:
         """
         Get information about a provider without instantiating it.
 
@@ -274,10 +276,10 @@ class ProviderRegistry:
 
         # Access class attributes without instantiation
         return {
-            'provider_key': provider_class.provider_key,
-            'provider_name': provider_class.provider_name,
-            'class_name': provider_class.__name__,
-            'module': provider_class.__module__,
+            "provider_key": provider_class.provider_key,
+            "provider_name": provider_class.provider_name,
+            "class_name": provider_class.__name__,
+            "module": provider_class.__module__,
         }
 
     @classmethod
@@ -292,7 +294,7 @@ class ProviderRegistry:
         cls.discover_providers()
 
     @classmethod
-    def register_provider(cls, provider_class: Type[PaymentProviderBase]) -> None:
+    def register_provider(cls, provider_class: type[PaymentProviderBase]) -> None:
         """
         Manually register a provider class (useful for testing).
 

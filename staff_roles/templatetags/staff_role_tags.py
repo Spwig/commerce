@@ -1,15 +1,16 @@
 """
 Template tags for role-based permission checks in templates.
 """
+
 from django import template
 
-from staff_roles.services import has_category_access, can_access_admin, get_user_roles
+from staff_roles.services import can_access_admin, get_user_roles, has_category_access
 
 register = template.Library()
 
 
 @register.simple_tag
-def has_category(user, category_key, level='view'):
+def has_category(user, category_key, level="view"):
     """
     Check if a user has access to a permission category.
 
@@ -39,7 +40,7 @@ def user_roles(user):
     return get_user_roles(user)
 
 
-@register.inclusion_tag('staff_roles/role_badge.html')
+@register.inclusion_tag("staff_roles/role_badge.html")
 def role_badge(role):
     """
     Render a colored badge for a role.
@@ -47,7 +48,7 @@ def role_badge(role):
     Usage:
         {% role_badge role %}
     """
-    return {'role': role}
+    return {"role": role}
 
 
 @register.simple_tag

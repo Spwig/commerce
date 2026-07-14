@@ -4,11 +4,12 @@ Attribute Management Service for WooCommerce Migration.
 Handles creation and matching of ProductAttribute and AttributeValue records
 during product variation imports.
 """
+
 import logging
-from typing import Dict, List, Optional, Tuple
+
 from django.utils.text import slugify
 
-from catalog.models import ProductAttribute, AttributeValue, ProductAttributeAssignment
+from catalog.models import AttributeValue, ProductAttribute, ProductAttributeAssignment
 
 logger = logging.getLogger(__name__)
 
@@ -32,14 +33,12 @@ class AttributeService:
 
     def __init__(self):
         # Cache for performance: {slug: ProductAttribute}
-        self._attribute_cache: Dict[str, ProductAttribute] = {}
+        self._attribute_cache: dict[str, ProductAttribute] = {}
         # Cache: {(attribute_id, value_slug): AttributeValue}
-        self._value_cache: Dict[Tuple[int, str], AttributeValue] = {}
+        self._value_cache: dict[tuple[int, str], AttributeValue] = {}
 
     def get_or_create_attribute(
-        self,
-        name: str,
-        attribute_type: str = 'select'
+        self, name: str, attribute_type: str = "select"
     ) -> ProductAttribute:
         """
         Get or create a ProductAttribute by name.
@@ -61,11 +60,11 @@ class AttributeService:
         attribute, created = ProductAttribute.objects.get_or_create(
             slug=slug,
             defaults={
-                'name': name,
-                'type': self._infer_attribute_type(name, attribute_type),
-                'is_required': True,
-                'sort_order': 0,
-            }
+                "name": name,
+                "type": self._infer_attribute_type(name, attribute_type),
+                "is_required": True,
+                "sort_order": 0,
+            },
         )
 
         if created:
@@ -76,10 +75,7 @@ class AttributeService:
         return attribute
 
     def get_or_create_attribute_value(
-        self,
-        attribute: ProductAttribute,
-        value: str,
-        color_hex: str = ''
+        self, attribute: ProductAttribute, value: str, color_hex: str = ""
     ) -> AttributeValue:
         """
         Get or create an AttributeValue for an attribute.
@@ -104,10 +100,10 @@ class AttributeService:
             attribute=attribute,
             slug=slug,
             defaults={
-                'value': value,
-                'color_hex': color_hex,
-                'sort_order': 0,
-            }
+                "value": value,
+                "color_hex": color_hex,
+                "sort_order": 0,
+            },
         )
 
         if created:
@@ -118,10 +114,7 @@ class AttributeService:
         return attr_value
 
     def ensure_product_attribute_assignment(
-        self,
-        product,
-        attribute: ProductAttribute,
-        values: List[AttributeValue]
+        self, product, attribute: ProductAttribute, values: list[AttributeValue]
     ) -> ProductAttributeAssignment:
         """
         Ensure a product has an attribute assignment with the given values.
@@ -138,9 +131,7 @@ class AttributeService:
             ProductAttributeAssignment instance
         """
         assignment, created = ProductAttributeAssignment.objects.get_or_create(
-            product=product,
-            attribute=attribute,
-            defaults={'sort_order': 0}
+            product=product, attribute=attribute, defaults={"sort_order": 0}
         )
 
         # Add values to allowed_values M2M (idempotent)
@@ -153,9 +144,8 @@ class AttributeService:
         return assignment
 
     def parse_woocommerce_attributes(
-        self,
-        wc_attributes: List[Dict]
-    ) -> List[Tuple[ProductAttribute, AttributeValue]]:
+        self, wc_attributes: list[dict]
+    ) -> list[tuple[ProductAttribute, AttributeValue]]:
         """
         Parse WooCommerce variation attributes and return Spwig equivalents.
 
@@ -174,33 +164,28 @@ class AttributeService:
         result = []
 
         for attr_data in wc_attributes:
-            attr_name = attr_data.get('name', '')
-            attr_option = attr_data.get('option', '')
+            attr_name = attr_data.get("name", "")
+            attr_option = attr_data.get("option", "")
 
             if not attr_name or not attr_option:
                 logger.debug(f"Skipping empty attribute: {attr_data}")
                 continue
 
             # Detect color hex if attribute is a color type
-            color_hex = ''
+            color_hex = ""
             if self._is_color_attribute(attr_name):
                 color_hex = self._detect_color_hex(attr_option)
 
             # Get or create attribute and value
             attribute = self.get_or_create_attribute(attr_name)
-            value = self.get_or_create_attribute_value(
-                attribute,
-                attr_option,
-                color_hex=color_hex
-            )
+            value = self.get_or_create_attribute_value(attribute, attr_option, color_hex=color_hex)
 
             result.append((attribute, value))
 
         return result
 
     def build_variant_name(
-        self,
-        attribute_pairs: List[Tuple[ProductAttribute, AttributeValue]]
+        self, attribute_pairs: list[tuple[ProductAttribute, AttributeValue]]
     ) -> str:
         """
         Build a variant name from attribute pairs.
@@ -214,7 +199,7 @@ class AttributeService:
         if not attribute_pairs:
             return "Default"
 
-        return ' / '.join([value.value for _, value in attribute_pairs])
+        return " / ".join([value.value for _, value in attribute_pairs])
 
     def _infer_attribute_type(self, name: str, default: str) -> str:
         """
@@ -229,17 +214,17 @@ class AttributeService:
         """
         name_lower = name.lower()
 
-        if 'color' in name_lower or 'colour' in name_lower:
-            return 'color'
-        elif 'size' in name_lower:
-            return 'button'
+        if "color" in name_lower or "colour" in name_lower:
+            return "color"
+        elif "size" in name_lower:
+            return "button"
 
         return default
 
     def _is_color_attribute(self, name: str) -> bool:
         """Check if attribute is a color type."""
         name_lower = name.lower()
-        return 'color' in name_lower or 'colour' in name_lower
+        return "color" in name_lower or "colour" in name_lower
 
     def _detect_color_hex(self, value: str) -> str:
         """
@@ -255,53 +240,53 @@ class AttributeService:
         """
         # Common color mappings
         color_map = {
-            'red': '#FF0000',
-            'blue': '#0000FF',
-            'green': '#008000',
-            'yellow': '#FFFF00',
-            'orange': '#FFA500',
-            'purple': '#800080',
-            'pink': '#FFC0CB',
-            'black': '#000000',
-            'white': '#FFFFFF',
-            'gray': '#808080',
-            'grey': '#808080',
-            'brown': '#A52A2A',
-            'navy': '#000080',
-            'teal': '#008080',
-            'maroon': '#800000',
-            'olive': '#808000',
-            'silver': '#C0C0C0',
-            'gold': '#FFD700',
-            'beige': '#F5F5DC',
-            'coral': '#FF7F50',
-            'cyan': '#00FFFF',
-            'magenta': '#FF00FF',
-            'lime': '#00FF00',
-            'indigo': '#4B0082',
-            'violet': '#EE82EE',
-            'aqua': '#00FFFF',
-            'tan': '#D2B48C',
-            'khaki': '#F0E68C',
-            'lavender': '#E6E6FA',
-            'salmon': '#FA8072',
-            'turquoise': '#40E0D0',
-            'charcoal': '#36454F',
-            'burgundy': '#800020',
-            'cream': '#FFFDD0',
-            'ivory': '#FFFFF0',
-            'peach': '#FFCBA4',
-            'mint': '#98FF98',
+            "red": "#FF0000",
+            "blue": "#0000FF",
+            "green": "#008000",
+            "yellow": "#FFFF00",
+            "orange": "#FFA500",
+            "purple": "#800080",
+            "pink": "#FFC0CB",
+            "black": "#000000",
+            "white": "#FFFFFF",
+            "gray": "#808080",
+            "grey": "#808080",
+            "brown": "#A52A2A",
+            "navy": "#000080",
+            "teal": "#008080",
+            "maroon": "#800000",
+            "olive": "#808000",
+            "silver": "#C0C0C0",
+            "gold": "#FFD700",
+            "beige": "#F5F5DC",
+            "coral": "#FF7F50",
+            "cyan": "#00FFFF",
+            "magenta": "#FF00FF",
+            "lime": "#00FF00",
+            "indigo": "#4B0082",
+            "violet": "#EE82EE",
+            "aqua": "#00FFFF",
+            "tan": "#D2B48C",
+            "khaki": "#F0E68C",
+            "lavender": "#E6E6FA",
+            "salmon": "#FA8072",
+            "turquoise": "#40E0D0",
+            "charcoal": "#36454F",
+            "burgundy": "#800020",
+            "cream": "#FFFDD0",
+            "ivory": "#FFFFF0",
+            "peach": "#FFCBA4",
+            "mint": "#98FF98",
         }
 
         value_lower = value.lower().strip()
 
         # Check if value is already a hex code
-        if value_lower.startswith('#') and len(value_lower) in [4, 7]:
+        if value_lower.startswith("#") and len(value_lower) in [4, 7]:
             return value_lower.upper()
 
         # Look up in color map
-        return color_map.get(value_lower, '')
+        return color_map.get(value_lower, "")
 
     def clear_cache(self):
         """Clear internal caches."""
@@ -309,7 +294,7 @@ class AttributeService:
         self._value_cache.clear()
         logger.debug("AttributeService cache cleared")
 
-    def get_cache_stats(self) -> Dict[str, int]:
+    def get_cache_stats(self) -> dict[str, int]:
         """
         Get cache statistics.
 
@@ -317,6 +302,6 @@ class AttributeService:
             Dict with cache counts
         """
         return {
-            'attributes_cached': len(self._attribute_cache),
-            'values_cached': len(self._value_cache),
+            "attributes_cached": len(self._attribute_cache),
+            "values_cached": len(self._value_cache),
         }

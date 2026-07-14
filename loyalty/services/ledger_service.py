@@ -5,14 +5,14 @@ Handles creation and management of loyalty transaction records.
 Ensures immutability and provides transaction history queries.
 """
 
-from django.db import transaction as db_transaction
-from django.utils import timezone
-from typing import Optional, List
 import logging
 
+from django.db import transaction as db_transaction
+from django.utils import timezone
+
 from loyalty.models import (
-    LoyaltyMember,
     LoyaltyBalance,
+    LoyaltyMember,
     LoyaltyTransaction,
 )
 
@@ -33,13 +33,13 @@ class LedgerService:
         transaction_type: str,
         points: int,
         description: str,
-        reason: str = '',
+        reason: str = "",
         status: str = LoyaltyTransaction.STATUS_AVAILABLE,
-        related_object_type: str = '',
-        related_object_id: str = '',
+        related_object_type: str = "",
+        related_object_id: str = "",
         expires_at=None,
         admin_user=None,
-        admin_note: str = '',
+        admin_note: str = "",
     ) -> LoyaltyTransaction:
         """
         Create a new transaction in the ledger.
@@ -101,12 +101,12 @@ class LedgerService:
             LoyaltyTransaction.TYPE_EARN,
             LoyaltyTransaction.TYPE_BONUS,
         ]:
-            raise ValueError(f"Cannot reverse transaction type: {original_transaction.transaction_type}")
+            raise ValueError(
+                f"Cannot reverse transaction type: {original_transaction.transaction_type}"
+            )
 
         # Check if already reversed
-        existing = LoyaltyTransaction.objects.filter(
-            reversal_of=original_transaction
-        ).exists()
+        existing = LoyaltyTransaction.objects.filter(reversal_of=original_transaction).exists()
 
         if existing:
             raise ValueError(f"Transaction {original_transaction.id} already reversed")
@@ -127,10 +127,7 @@ class LedgerService:
             )
 
             # Update balance
-            self._update_balance_for_reversal(
-                original_transaction.member,
-                reversal
-            )
+            self._update_balance_for_reversal(original_transaction.member, reversal)
 
             logger.info(f"Created reversal {reversal.id} for transaction {original_transaction.id}")
 
@@ -142,7 +139,7 @@ class LedgerService:
         points: int,
         reason: str,
         admin_user,
-        admin_note: str = '',
+        admin_note: str = "",
     ) -> LoyaltyTransaction:
         """
         Create a manual adjustment transaction (admin-initiated).
@@ -182,7 +179,9 @@ class LedgerService:
 
             balance.save()
 
-            logger.info(f"Created manual adjustment {txn.id}: {points} points for member {member.id}")
+            logger.info(
+                f"Created manual adjustment {txn.id}: {points} points for member {member.id}"
+            )
 
         return txn
 
@@ -209,7 +208,9 @@ class LedgerService:
 
             balance.save()
 
-            logger.info(f"Released {transaction.points} pending points for member {transaction.member.id}")
+            logger.info(
+                f"Released {transaction.points} pending points for member {transaction.member.id}"
+            )
 
     def expire_points(self, transaction: LoyaltyTransaction) -> LoyaltyTransaction:
         """
@@ -256,7 +257,7 @@ class LedgerService:
         member: LoyaltyMember,
         limit: int = 50,
         offset: int = 0,
-    ) -> List[LoyaltyTransaction]:
+    ) -> list[LoyaltyTransaction]:
         """
         Get transaction history for a member.
 
@@ -270,8 +271,8 @@ class LedgerService:
         """
         return list(
             LoyaltyTransaction.objects.filter(member=member)
-            .select_related('created_by', 'reversal_of')
-            .order_by('-created_at')[offset:offset + limit]
+            .select_related("created_by", "reversal_of")
+            .order_by("-created_at")[offset : offset + limit]
         )
 
     def reconcile_balance(self, member: LoyaltyMember):
@@ -325,7 +326,9 @@ class LedgerService:
         balance.lifetime_expired = lifetime_expired
         balance.save()
 
-        logger.info(f"Reconciled balance for member {member.id}: {available} available, {pending} pending")
+        logger.info(
+            f"Reconciled balance for member {member.id}: {available} available, {pending} pending"
+        )
 
     def _update_balance_for_reversal(self, member: LoyaltyMember, reversal: LoyaltyTransaction):
         """Update balance for a reversal transaction."""
@@ -374,12 +377,12 @@ class LedgerService:
             balance, created = LoyaltyBalance.objects.get_or_create(
                 member=member,
                 defaults={
-                    'available_points': 0,
-                    'pending_points': 0,
-                    'lifetime_earned': 0,
-                    'lifetime_redeemed': 0,
-                    'lifetime_expired': 0,
-                }
+                    "available_points": 0,
+                    "pending_points": 0,
+                    "lifetime_earned": 0,
+                    "lifetime_redeemed": 0,
+                    "lifetime_expired": 0,
+                },
             )
 
             # Deduct from available points

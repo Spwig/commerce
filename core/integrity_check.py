@@ -26,6 +26,7 @@ logger = logging.getLogger("spwig.integrity")
 
 class IntegrityError(Exception):
     """Raised when file integrity verification fails."""
+
     pass
 
 
@@ -76,9 +77,7 @@ def verify_integrity(
 
     files_to_check = manifest.get("files", {})
     if check_subset:
-        files_to_check = {
-            k: v for k, v in files_to_check.items() if k in check_subset
-        }
+        files_to_check = {k: v for k, v in files_to_check.items() if k in check_subset}
 
     tampered = []
     missing = []
@@ -110,9 +109,7 @@ def verify_integrity(
             logger.warning(msg)
             return False
 
-    logger.info(
-        f"Integrity check passed: {len(files_to_check)} files verified"
-    )
+    logger.info(f"Integrity check passed: {len(files_to_check)} files verified")
     return True
 
 

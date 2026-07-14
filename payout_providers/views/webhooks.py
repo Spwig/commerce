@@ -7,13 +7,14 @@ Endpoints for receiving webhook notifications from payout providers
 
 import json
 import logging
-from django.http import HttpResponse, JsonResponse
+
+from django.http import HttpResponse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.utils import timezone
 
-from ..models import PayoutProviderAccount, PayoutWebhookLog
 from ..loader import get_provider_class
+from ..models import PayoutProviderAccount, PayoutWebhookLog
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ def paypal_webhook(request):
     - PAYMENT.PAYOUTS-ITEM.FAILED
     - PAYMENT.PAYOUTS-ITEM.UNCLAIMED
     """
-    return _handle_webhook(request, 'paypal')
+    return _handle_webhook(request, "paypal")
 
 
 @csrf_exempt
@@ -46,7 +47,7 @@ def airwallex_webhook(request):
     - transfer.failed
     - transfer.returned
     """
-    return _handle_webhook(request, 'airwallex')
+    return _handle_webhook(request, "airwallex")
 
 
 def _handle_webhook(request, provider_type: str) -> HttpResponse:
@@ -67,14 +68,14 @@ def _handle_webhook(request, provider_type: str) -> HttpResponse:
     # Get raw payload
     try:
         payload = request.body
-        payload_str = payload.decode('utf-8')
+        payload_str = payload.decode("utf-8")
         payload_data = json.loads(payload_str)
     except (json.JSONDecodeError, UnicodeDecodeError) as e:
         logger.error(f"Invalid {provider_type} webhook payload: {e}")
         return HttpResponse("Invalid payload", status=400)
 
     # Extract headers
-    headers = {k: v for k, v in request.headers.items()}
+    headers = dict(request.headers.items())
 
     # Try to determine provider account and event info
     event_type = _extract_event_type(payload_data, provider_type)
@@ -82,8 +83,7 @@ def _handle_webhook(request, provider_type: str) -> HttpResponse:
 
     # Find matching provider account
     provider_account = PayoutProviderAccount.objects.filter(
-        provider_type=provider_type,
-        is_active=True
+        provider_type=provider_type, is_active=True
     ).first()
 
     # Create webhook log
@@ -94,7 +94,7 @@ def _handle_webhook(request, provider_type: str) -> HttpResponse:
         event_id=event_id,
         payload=payload_data,
         headers=headers,
-        received_at=timezone.now()
+        received_at=timezone.now(),
     )
 
     logger.info(f"Received {provider_type} webhook: {event_type} (ID: {event_id})")
@@ -126,6 +126,7 @@ def _handle_webhook(request, provider_type: str) -> HttpResponse:
     # Queue for async processing
     try:
         from ..tasks import handle_webhook_event
+
         handle_webhook_event.delay(webhook_log.id)
     except Exception as e:
         logger.error(f"Failed to queue webhook for processing: {e}")
@@ -136,17 +137,15 @@ def _handle_webhook(request, provider_type: str) -> HttpResponse:
 
 def _extract_event_type(payload: dict, provider_type: str) -> str:
     """Extract event type from webhook payload."""
-    if provider_type == 'paypal':
-        return payload.get('event_type', '')
-    elif provider_type == 'airwallex':
-        return payload.get('name', '')
-    return ''
+    if provider_type == "paypal":
+        return payload.get("event_type", "")
+    elif provider_type == "airwallex":
+        return payload.get("name", "")
+    return ""
 
 
 def _extract_event_id(payload: dict, provider_type: str) -> str:
     """Extract event ID from webhook payload."""
-    if provider_type == 'paypal':
-        return payload.get('id', '')
-    elif provider_type == 'airwallex':
-        return payload.get('id', '')
-    return ''
+    if provider_type == "paypal" or provider_type == "airwallex":
+        return payload.get("id", "")
+    return ""

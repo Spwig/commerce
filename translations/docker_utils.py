@@ -1,10 +1,10 @@
 """
 Docker container management utilities for the translation service
 """
-import subprocess
+
 import json
 import logging
-from typing import Dict, Optional, List, Tuple
+import subprocess
 
 from django.conf import settings
 
@@ -23,10 +23,7 @@ class DockerManager:
         """Check if Docker is installed and accessible"""
         try:
             result = subprocess.run(
-                ['docker', '--version'],
-                capture_output=True,
-                text=True,
-                timeout=5
+                ["docker", "--version"], capture_output=True, text=True, timeout=5
             )
             return result.returncode == 0
         except (subprocess.SubprocessError, FileNotFoundError):
@@ -38,104 +35,98 @@ class DockerManager:
         try:
             # Try docker-compose command
             result = subprocess.run(
-                ['docker-compose', '--version'],
-                capture_output=True,
-                text=True,
-                timeout=5
+                ["docker-compose", "--version"], capture_output=True, text=True, timeout=5
             )
             if result.returncode == 0:
                 return True
 
             # Try docker compose command (newer version)
             result = subprocess.run(
-                ['docker', 'compose', 'version'],
-                capture_output=True,
-                text=True,
-                timeout=5
+                ["docker", "compose", "version"], capture_output=True, text=True, timeout=5
             )
             return result.returncode == 0
         except (subprocess.SubprocessError, FileNotFoundError):
             return False
 
     @classmethod
-    def get_container_status(cls) -> Dict[str, any]:
+    def get_container_status(cls) -> dict[str, any]:
         """Get the status of the translator container"""
         try:
             # Try to find container by name or service
             result = subprocess.run(
-                ['docker', 'ps', '-a', '--filter', f'name={cls.CONTAINER_NAME}', '--format', 'json'],
+                [
+                    "docker",
+                    "ps",
+                    "-a",
+                    "--filter",
+                    f"name={cls.CONTAINER_NAME}",
+                    "--format",
+                    "json",
+                ],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
             )
 
             if result.returncode != 0:
-                return {
-                    'exists': False,
-                    'running': False,
-                    'error': result.stderr
-                }
+                return {"exists": False, "running": False, "error": result.stderr}
 
             if not result.stdout.strip():
                 # Try alternative name pattern
                 result = subprocess.run(
-                    ['docker', 'ps', '-a', '--filter', f'name={cls.SERVICE_NAME}', '--format', 'json'],
+                    [
+                        "docker",
+                        "ps",
+                        "-a",
+                        "--filter",
+                        f"name={cls.SERVICE_NAME}",
+                        "--format",
+                        "json",
+                    ],
                     capture_output=True,
                     text=True,
-                    timeout=10
+                    timeout=10,
                 )
 
             if result.stdout.strip():
                 # Parse the JSON output (one container per line)
-                container_info = json.loads(result.stdout.strip().split('\n')[0])
+                container_info = json.loads(result.stdout.strip().split("\n")[0])
 
                 return {
-                    'exists': True,
-                    'running': 'Up' in container_info.get('Status', ''),
-                    'container_id': container_info.get('ID', ''),
-                    'name': container_info.get('Names', ''),
-                    'status': container_info.get('Status', ''),
-                    'state': container_info.get('State', ''),
-                    'ports': container_info.get('Ports', ''),
-                    'created': container_info.get('CreatedAt', ''),
+                    "exists": True,
+                    "running": "Up" in container_info.get("Status", ""),
+                    "container_id": container_info.get("ID", ""),
+                    "name": container_info.get("Names", ""),
+                    "status": container_info.get("Status", ""),
+                    "state": container_info.get("State", ""),
+                    "ports": container_info.get("Ports", ""),
+                    "created": container_info.get("CreatedAt", ""),
                 }
 
-            return {
-                'exists': False,
-                'running': False,
-                'message': 'Container not found'
-            }
+            return {"exists": False, "running": False, "message": "Container not found"}
 
         except subprocess.TimeoutExpired:
-            return {
-                'exists': False,
-                'running': False,
-                'error': 'Docker command timed out'
-            }
+            return {"exists": False, "running": False, "error": "Docker command timed out"}
         except Exception as e:
             logger.error(f"Error checking container status: {e}")
-            return {
-                'exists': False,
-                'running': False,
-                'error': str(e)
-            }
+            return {"exists": False, "running": False, "error": str(e)}
 
     @classmethod
-    def start_container(cls) -> Tuple[bool, str]:
+    def start_container(cls) -> tuple[bool, str]:
         """Start the translator Docker container"""
         try:
             status = cls.get_container_status()
 
-            if status.get('running'):
+            if status.get("running"):
                 return True, "Container is already running"
 
-            if status.get('exists'):
+            if status.get("exists"):
                 # Container exists but stopped, start it
                 result = subprocess.run(
-                    ['docker', 'start', status.get('container_id', cls.CONTAINER_NAME)],
+                    ["docker", "start", status.get("container_id", cls.CONTAINER_NAME)],
                     capture_output=True,
                     text=True,
-                    timeout=30
+                    timeout=30,
                 )
 
                 if result.returncode == 0:
@@ -153,26 +144,26 @@ class DockerManager:
             return False, str(e)
 
     @classmethod
-    def start_with_compose(cls) -> Tuple[bool, str]:
+    def start_with_compose(cls) -> tuple[bool, str]:
         """Start the translator service using docker-compose"""
         try:
             # Try docker-compose command
             result = subprocess.run(
-                ['docker-compose', '-f', cls.COMPOSE_FILE, 'up', '-d', cls.SERVICE_NAME],
+                ["docker-compose", "-f", cls.COMPOSE_FILE, "up", "-d", cls.SERVICE_NAME],
                 capture_output=True,
                 text=True,
                 timeout=60,
-                cwd=str(settings.BASE_DIR)  # Run compose from the Django project root
+                cwd=str(settings.BASE_DIR),  # Run compose from the Django project root
             )
 
             if result.returncode != 0:
                 # Try docker compose (newer syntax)
                 result = subprocess.run(
-                    ['docker', 'compose', '-f', cls.COMPOSE_FILE, 'up', '-d', cls.SERVICE_NAME],
+                    ["docker", "compose", "-f", cls.COMPOSE_FILE, "up", "-d", cls.SERVICE_NAME],
                     capture_output=True,
                     text=True,
                     timeout=60,
-                    cwd=str(settings.BASE_DIR)
+                    cwd=str(settings.BASE_DIR),
                 )
 
             if result.returncode == 0:
@@ -187,21 +178,18 @@ class DockerManager:
             return False, str(e)
 
     @classmethod
-    def stop_container(cls) -> Tuple[bool, str]:
+    def stop_container(cls) -> tuple[bool, str]:
         """Stop the translator Docker container"""
         try:
             status = cls.get_container_status()
 
-            if not status.get('running'):
+            if not status.get("running"):
                 return True, "Container is not running"
 
-            container_id = status.get('container_id', cls.CONTAINER_NAME)
+            container_id = status.get("container_id", cls.CONTAINER_NAME)
 
             result = subprocess.run(
-                ['docker', 'stop', container_id],
-                capture_output=True,
-                text=True,
-                timeout=30
+                ["docker", "stop", container_id], capture_output=True, text=True, timeout=30
             )
 
             if result.returncode == 0:
@@ -216,7 +204,7 @@ class DockerManager:
             return False, str(e)
 
     @classmethod
-    def restart_container(cls) -> Tuple[bool, str]:
+    def restart_container(cls) -> tuple[bool, str]:
         """Restart the translator Docker container"""
         try:
             # First stop
@@ -241,16 +229,16 @@ class DockerManager:
         try:
             status = cls.get_container_status()
 
-            if not status.get('exists'):
+            if not status.get("exists"):
                 return "Container does not exist"
 
-            container_id = status.get('container_id', cls.CONTAINER_NAME)
+            container_id = status.get("container_id", cls.CONTAINER_NAME)
 
             result = subprocess.run(
-                ['docker', 'logs', '--tail', str(lines), container_id],
+                ["docker", "logs", "--tail", str(lines), container_id],
                 capture_output=True,
                 text=True,
-                timeout=10
+                timeout=10,
             )
 
             if result.returncode == 0:
@@ -265,26 +253,26 @@ class DockerManager:
             return str(e)
 
     @classmethod
-    def pull_image(cls) -> Tuple[bool, str]:
+    def pull_image(cls) -> tuple[bool, str]:
         """Pull the latest translator Docker image"""
         try:
             # Check docker-compose.yml for image name
             result = subprocess.run(
-                ['docker-compose', '-f', cls.COMPOSE_FILE, 'pull', cls.SERVICE_NAME],
+                ["docker-compose", "-f", cls.COMPOSE_FILE, "pull", cls.SERVICE_NAME],
                 capture_output=True,
                 text=True,
                 timeout=300,  # 5 minutes timeout for pulling
-                cwd=str(settings.BASE_DIR)
+                cwd=str(settings.BASE_DIR),
             )
 
             if result.returncode != 0:
                 # Try docker compose (newer syntax)
                 result = subprocess.run(
-                    ['docker', 'compose', '-f', cls.COMPOSE_FILE, 'pull', cls.SERVICE_NAME],
+                    ["docker", "compose", "-f", cls.COMPOSE_FILE, "pull", cls.SERVICE_NAME],
                     capture_output=True,
                     text=True,
                     timeout=300,
-                    cwd=str(settings.BASE_DIR)
+                    cwd=str(settings.BASE_DIR),
                 )
 
             if result.returncode == 0:

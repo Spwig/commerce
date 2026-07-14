@@ -2,8 +2,10 @@
 Template filters for shipping app
 Provides filters for displaying shipping-related data
 """
+
 from django import template
-from shipping.integrations import get_country_name, get_shipping_zone, get_country_currency
+
+from shipping.integrations import get_country_currency, get_country_name, get_shipping_zone
 
 register = template.Library()
 
@@ -18,12 +20,12 @@ def country_name(country_code):
         {{ 'US'|country_name }}  -> "United States"
     """
     if not country_code:
-        return ''
+        return ""
     return get_country_name(country_code)
 
 
 @register.filter
-def shipping_zone(country_code, origin='US'):
+def shipping_zone(country_code, origin="US"):
     """
     Get shipping zone for a country code.
 
@@ -32,7 +34,7 @@ def shipping_zone(country_code, origin='US'):
         {{ shipment.dest_country|shipping_zone:shipment.origin_country }}
     """
     if not country_code:
-        return 'international'
+        return "international"
     return get_shipping_zone(country_code, origin)
 
 
@@ -47,6 +49,7 @@ def country_currency(country_code):
     """
     if not country_code:
         from core.utils import get_default_currency
+
         return get_default_currency()
     return get_country_currency(country_code)
 
@@ -61,7 +64,7 @@ def country_with_code(country_code):
         "GB" -> "United Kingdom (GB)"
     """
     if not country_code:
-        return ''
+        return ""
     name = get_country_name(country_code)
     if name == country_code.upper():
         # Country not found in mapping, just return code

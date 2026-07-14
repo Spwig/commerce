@@ -8,17 +8,19 @@ Provides:
 - Auto-share to social platforms
 
 """
+
+import logging
+
 from celery import shared_task
-from django.utils import timezone
+from django.contrib.sites.models import Site
 from django.db import models
 from django.template.loader import render_to_string
-from django.contrib.sites.models import Site
-import logging
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name='blog.tasks.publish_scheduled_posts')
+@shared_task(name="blog.tasks.publish_scheduled_posts")
 def publish_scheduled_posts():
     """
     Publish posts that are scheduled for the current time.
@@ -28,17 +30,14 @@ def publish_scheduled_posts():
     from .models import BlogPost
 
     now = timezone.now()
-    scheduled_posts = BlogPost.objects.filter(
-        status='scheduled',
-        scheduled_at__lte=now
-    )
+    scheduled_posts = BlogPost.objects.filter(status="scheduled", scheduled_at__lte=now)
 
     published_count = 0
     for post in scheduled_posts:
         try:
-            post.status = 'published'
+            post.status = "published"
             post.published_at = now
-            post.save(update_fields=['status', 'published_at', 'updated_at'])
+            post.save(update_fields=["status", "published_at", "updated_at"])
 
             # Trigger subscriber notifications if enabled
             if post.notify_subscribers and not post.notification_sent:
@@ -59,7 +58,7 @@ def publish_scheduled_posts():
     return published_count
 
 
-@shared_task(name='blog.tasks.notify_subscribers_of_new_post')
+@shared_task(name="blog.tasks.notify_subscribers_of_new_post")
 def notify_subscribers_of_new_post(post_pk):
     """
     Send notification emails to immediate subscribers for a new post.
@@ -81,17 +80,15 @@ def notify_subscribers_of_new_post(post_pk):
 
     # Get active, verified subscribers with immediate frequency
     subscribers = BlogSubscriber.objects.filter(
-        is_active=True,
-        verification_status='verified',
-        notification_frequency='immediate'
+        is_active=True, verification_status="verified", notification_frequency="immediate"
     )
 
     # Filter by category preferences if applicable
     if post.category:
         # Include subscribers with no category preference OR matching category
         subscribers = subscribers.filter(
-            models.Q(subscribed_categories__isnull=True) |
-            models.Q(subscribed_categories__pk=post.category.pk)
+            models.Q(subscribed_categories__isnull=True)
+            | models.Q(subscribed_categories__pk=post.category.pk)
         ).distinct()
 
     sent_count = 0
@@ -112,19 +109,22 @@ def notify_subscribers_of_new_post(post_pk):
     # Also send to registered users with CommunicationPreference blog notifications enabled
     # (excluding those already sent via BlogSubscriber)
     from django.contrib.auth import get_user_model
+
     from accounts.models import CommunicationPreference
 
-    User = get_user_model()
+    get_user_model()
 
     # Get users with blog notifications enabled (excluding already-sent emails)
-    comm_prefs = CommunicationPreference.objects.filter(
-        email_enabled=True,
-        email_marketing=True,
-        email_verified=True,
-        app_preferences__blog__enabled=True,
-        app_preferences__blog__frequency='immediate'
-    ).select_related('user').exclude(
-        user__email__in=sent_emails
+    comm_prefs = (
+        CommunicationPreference.objects.filter(
+            email_enabled=True,
+            email_marketing=True,
+            email_verified=True,
+            app_preferences__blog__enabled=True,
+            app_preferences__blog__frequency="immediate",
+        )
+        .select_related("user")
+        .exclude(user__email__in=sent_emails)
     )
 
     for prefs in comm_prefs:
@@ -135,9 +135,10 @@ def notify_subscribers_of_new_post(post_pk):
                     self.email = user.email
                     self.name = user.get_full_name() or user.username
                     self.language_code = prefs.language_code
+                    self.unsubscribe_token = prefs.unsubscribe_token
 
                 def get_unsubscribe_url(self, site):
-                    return f"https://{site.domain}/accounts/unsubscribe/{prefs.unsubscribe_token}/?type=blog_post_published"
+                    return f"https://{site.domain}/accounts/unsubscribe/{self.unsubscribe_token}/?type=blog_post_published"
 
                 def get_preferences_url(self, site):
                     return f"https://{site.domain}/accounts/preferences/"
@@ -150,7 +151,7 @@ def notify_subscribers_of_new_post(post_pk):
 
     # Mark notification as sent
     post.notification_sent = True
-    post.save(update_fields=['notification_sent'])
+    post.save(update_fields=["notification_sent"])
 
     logger.info(f"Sent {sent_count} notifications for blog post: {post.title}")
     return sent_count
@@ -167,18 +168,18 @@ def _send_new_post_notification(post, subscriber, site):
     content = post.get_translated_content(language)
 
     context = {
-        'post': post,
-        'subscriber': subscriber,
-        'site': site,
-        'unsubscribe_url': subscriber.get_unsubscribe_url(site),
-        'preferences_url': subscriber.get_preferences_url(site),
-        'title': content['title'],
-        'excerpt': content['excerpt'],
+        "post": post,
+        "subscriber": subscriber,
+        "site": site,
+        "unsubscribe_url": subscriber.get_unsubscribe_url(site),
+        "preferences_url": subscriber.get_preferences_url(site),
+        "title": content["title"],
+        "excerpt": content["excerpt"],
     }
 
     subject = f"New Blog Post: {content['title']}"
-    html_content = render_to_string('blog/emails/new_post_notification.html', context)
-    text_content = render_to_string('blog/emails/new_post_notification.txt', context)
+    html_content = render_to_string("blog/emails/new_post_notification.html", context)
+    text_content = render_to_string("blog/emails/new_post_notification.txt", context)
 
     # Send via email system with preference checking
     try:
@@ -187,22 +188,23 @@ def _send_new_post_notification(post, subscriber, site):
             subject=subject,
             html_body=html_content,
             text_body=text_content,
-            template_type='blog_post_published',  # Enables preference checking
+            template_type="blog_post_published",  # Enables preference checking
         )
     except Exception as e:
         logger.error(f"Failed to send email to {subscriber.email}: {e}")
         raise
 
 
-@shared_task(name='blog.tasks.send_blog_verification_email')
+@shared_task(name="blog.tasks.send_blog_verification_email")
 def send_blog_verification_email(subscriber_id):
     """
     Send a double opt-in verification email to a blog subscriber.
 
     Uses the 'blog_subscription_confirmed' MJML template from the email system.
     """
-    from .models import BlogSubscriber
     from email_system.services.email_sender import EmailSendingService
+
+    from .models import BlogSubscriber
 
     try:
         subscriber = BlogSubscriber.objects.get(pk=subscriber_id)
@@ -210,62 +212,65 @@ def send_blog_verification_email(subscriber_id):
         logger.warning(f"Subscriber {subscriber_id} not found, skipping verification email")
         return
 
-    if subscriber.verification_status != 'pending':
+    if subscriber.verification_status != "pending":
         logger.info(f"Subscriber {subscriber.email} is not pending, skipping verification email")
         return
 
     site = Site.objects.get(pk=1)
 
     context = {
-        'subscriber_name': subscriber.name or subscriber.email,
-        'blog_name': site.name,
-        'confirmation_url': subscriber.get_verification_url(site),
+        "subscriber_name": subscriber.name or subscriber.email,
+        "blog_name": site.name,
+        "confirmation_url": subscriber.get_verification_url(site),
     }
 
     try:
         EmailSendingService.send_template_email(
             to_email=subscriber.email,
-            template_type='blog_subscription_confirmed',
+            template_type="blog_subscription_confirmed",
             context=context,
             language=subscriber.language_code,
         )
         subscriber.verification_sent_at = timezone.now()
-        subscriber.save(update_fields=['verification_sent_at'])
+        subscriber.save(update_fields=["verification_sent_at"])
         logger.info(f"Sent verification email to {subscriber.email}")
     except Exception as e:
         logger.error(f"Failed to send verification email to {subscriber.email}: {e}")
         raise
 
 
-@shared_task(name='blog.tasks.send_weekly_digest')
+@shared_task(name="blog.tasks.send_weekly_digest")
 def send_weekly_digest():
     """
     Send weekly digest to subscribers.
 
     Should run once per week at the configured time via Celery Beat.
     """
-    from .models import BlogPost, BlogSubscriber, BlogSettings
     from datetime import timedelta
+
+    from .models import BlogPost, BlogSettings, BlogSubscriber
 
     settings = BlogSettings.get_settings()
     now = timezone.now()
 
     # Check if it's the right day and hour
     if now.weekday() != settings.weekly_digest_day:
-        logger.info(f"Skipping weekly digest: today is {now.weekday()}, scheduled for {settings.weekly_digest_day}")
+        logger.info(
+            f"Skipping weekly digest: today is {now.weekday()}, scheduled for {settings.weekly_digest_day}"
+        )
         return
 
     if now.hour != settings.weekly_digest_hour:
-        logger.info(f"Skipping weekly digest: current hour is {now.hour}, scheduled for {settings.weekly_digest_hour}")
+        logger.info(
+            f"Skipping weekly digest: current hour is {now.hour}, scheduled for {settings.weekly_digest_hour}"
+        )
         return
 
     # Get posts from last week
     week_ago = now - timedelta(days=7)
     posts = BlogPost.objects.filter(
-        status='published',
-        published_at__gte=week_ago,
-        published_at__lt=now
-    ).order_by('-published_at')
+        status="published", published_at__gte=week_ago, published_at__lt=now
+    ).order_by("-published_at")
 
     if not posts.exists():
         logger.info("No posts to include in weekly digest")
@@ -273,9 +278,7 @@ def send_weekly_digest():
 
     # Get weekly subscribers
     subscribers = BlogSubscriber.objects.filter(
-        is_active=True,
-        verification_status='verified',
-        notification_frequency='weekly'
+        is_active=True, verification_status="verified", notification_frequency="weekly"
     )
 
     sent_count = 0
@@ -285,22 +288,17 @@ def send_weekly_digest():
         # Filter posts by subscriber's category preferences
         subscriber_posts = posts
         if subscriber.subscribed_categories.exists():
-            subscriber_posts = posts.filter(
-                category__in=subscriber.subscribed_categories.all()
-            )
+            subscriber_posts = posts.filter(category__in=subscriber.subscribed_categories.all())
 
         if not subscriber_posts.exists():
             continue
 
         try:
             _send_digest_email(
-                subscriber=subscriber,
-                posts=subscriber_posts,
-                digest_type='weekly',
-                site=site
+                subscriber=subscriber, posts=subscriber_posts, digest_type="weekly", site=site
             )
             subscriber.last_digest_sent_at = now
-            subscriber.save(update_fields=['last_digest_sent_at'])
+            subscriber.save(update_fields=["last_digest_sent_at"])
             sent_count += 1
         except Exception as e:
             logger.error(f"Error sending weekly digest to {subscriber.email}: {e}")
@@ -309,35 +307,38 @@ def send_weekly_digest():
     return sent_count
 
 
-@shared_task(name='blog.tasks.send_monthly_digest')
+@shared_task(name="blog.tasks.send_monthly_digest")
 def send_monthly_digest():
     """
     Send monthly digest to subscribers.
 
     Should run once per month at the configured time via Celery Beat.
     """
-    from .models import BlogPost, BlogSubscriber, BlogSettings
     from datetime import timedelta
+
+    from .models import BlogPost, BlogSettings, BlogSubscriber
 
     settings = BlogSettings.get_settings()
     now = timezone.now()
 
     # Check if it's the right day and hour
     if now.day != settings.monthly_digest_day:
-        logger.info(f"Skipping monthly digest: today is day {now.day}, scheduled for day {settings.monthly_digest_day}")
+        logger.info(
+            f"Skipping monthly digest: today is day {now.day}, scheduled for day {settings.monthly_digest_day}"
+        )
         return
 
     if now.hour != settings.monthly_digest_hour:
-        logger.info(f"Skipping monthly digest: current hour is {now.hour}, scheduled for {settings.monthly_digest_hour}")
+        logger.info(
+            f"Skipping monthly digest: current hour is {now.hour}, scheduled for {settings.monthly_digest_hour}"
+        )
         return
 
     # Get posts from last month
     month_ago = now - timedelta(days=30)
     posts = BlogPost.objects.filter(
-        status='published',
-        published_at__gte=month_ago,
-        published_at__lt=now
-    ).order_by('-published_at')
+        status="published", published_at__gte=month_ago, published_at__lt=now
+    ).order_by("-published_at")
 
     if not posts.exists():
         logger.info("No posts to include in monthly digest")
@@ -345,9 +346,7 @@ def send_monthly_digest():
 
     # Get monthly subscribers
     subscribers = BlogSubscriber.objects.filter(
-        is_active=True,
-        verification_status='verified',
-        notification_frequency='monthly'
+        is_active=True, verification_status="verified", notification_frequency="monthly"
     )
 
     sent_count = 0
@@ -357,22 +356,17 @@ def send_monthly_digest():
         # Filter posts by subscriber's category preferences
         subscriber_posts = posts
         if subscriber.subscribed_categories.exists():
-            subscriber_posts = posts.filter(
-                category__in=subscriber.subscribed_categories.all()
-            )
+            subscriber_posts = posts.filter(category__in=subscriber.subscribed_categories.all())
 
         if not subscriber_posts.exists():
             continue
 
         try:
             _send_digest_email(
-                subscriber=subscriber,
-                posts=subscriber_posts,
-                digest_type='monthly',
-                site=site
+                subscriber=subscriber, posts=subscriber_posts, digest_type="monthly", site=site
             )
             subscriber.last_digest_sent_at = now
-            subscriber.save(update_fields=['last_digest_sent_at'])
+            subscriber.save(update_fields=["last_digest_sent_at"])
             sent_count += 1
         except Exception as e:
             logger.error(f"Error sending monthly digest to {subscriber.email}: {e}")
@@ -385,26 +379,24 @@ def _send_digest_email(subscriber, posts, digest_type, site):
     """Send digest email to a subscriber."""
     from email_system.services.email_sender import EmailSendingService
 
-    language = subscriber.language_code
-
     context = {
-        'posts': posts,
-        'subscriber': subscriber,
-        'site': site,
-        'digest_type': digest_type,
-        'unsubscribe_url': subscriber.get_unsubscribe_url(site),
-        'preferences_url': subscriber.get_preferences_url(site),
+        "posts": posts,
+        "subscriber": subscriber,
+        "site": site,
+        "digest_type": digest_type,
+        "unsubscribe_url": subscriber.get_unsubscribe_url(site),
+        "preferences_url": subscriber.get_preferences_url(site),
     }
 
-    if digest_type == 'weekly':
-        subject = f"Your Weekly Blog Digest"
-        template_type = 'blog_weekly_digest'
+    if digest_type == "weekly":
+        subject = "Your Weekly Blog Digest"
+        template_type = "blog_weekly_digest"
     else:
-        subject = f"Your Monthly Blog Digest"
-        template_type = 'blog_monthly_digest'
+        subject = "Your Monthly Blog Digest"
+        template_type = "blog_monthly_digest"
 
-    html_content = render_to_string(f'blog/emails/{digest_type}_digest.html', context)
-    text_content = render_to_string(f'blog/emails/{digest_type}_digest.txt', context)
+    html_content = render_to_string(f"blog/emails/{digest_type}_digest.html", context)
+    text_content = render_to_string(f"blog/emails/{digest_type}_digest.txt", context)
 
     try:
         EmailSendingService.queue_email(
@@ -423,7 +415,8 @@ def _send_digest_email(subscriber, posts, digest_type, site):
 # Auto-Share Tasks
 # =============================================================================
 
-@shared_task(name='blog.tasks.trigger_auto_shares_for_post')
+
+@shared_task(name="blog.tasks.trigger_auto_shares_for_post")
 def trigger_auto_shares_for_post(post_pk):
     """
     Create auto-share entries for a newly published post.
@@ -431,8 +424,9 @@ def trigger_auto_shares_for_post(post_pk):
     Args:
         post_pk: Primary key of the BlogPost
     """
-    from .models import BlogPost, SocialConnectorAccount, BlogPostAutoShare
     from django.contrib.sites.models import Site
+
+    from .models import BlogPost, BlogPostAutoShare, SocialConnectorAccount
 
     try:
         post = BlogPost.objects.get(pk=post_pk)
@@ -444,9 +438,7 @@ def trigger_auto_shares_for_post(post_pk):
 
     # Get active social accounts
     social_accounts = SocialConnectorAccount.objects.filter(
-        site=site,
-        status='active',
-        auto_share_enabled=True
+        site=site, status="active", auto_share_enabled=True
     )
 
     created_count = 0
@@ -455,11 +447,14 @@ def trigger_auto_shares_for_post(post_pk):
         # Check if post has auto-share enabled for this provider
         should_share = False
 
-        if account.provider_key.startswith('facebook') and post.auto_share_facebook:
-            should_share = True
-        elif account.provider_key.startswith('instagram') and post.auto_share_instagram:
-            should_share = True
-        elif account.provider_key.startswith('linkedin') and post.auto_share_linkedin:
+        if (
+            account.provider_key.startswith("facebook")
+            and post.auto_share_facebook
+            or account.provider_key.startswith("instagram")
+            and post.auto_share_instagram
+            or account.provider_key.startswith("linkedin")
+            and post.auto_share_linkedin
+        ):
             should_share = True
 
         if not should_share:
@@ -470,8 +465,8 @@ def trigger_auto_shares_for_post(post_pk):
             post=post,
             social_account=account,
             defaults={
-                'status': 'pending',
-            }
+                "status": "pending",
+            },
         )
 
         if created:
@@ -485,7 +480,7 @@ def trigger_auto_shares_for_post(post_pk):
     return created_count
 
 
-@shared_task(name='blog.tasks.process_auto_share', bind=True, max_retries=3)
+@shared_task(name="blog.tasks.process_auto_share", bind=True, max_retries=3)
 def process_auto_share(self, auto_share_pk):
     """
     Process a single auto-share entry.
@@ -495,8 +490,9 @@ def process_auto_share(self, auto_share_pk):
     Args:
         auto_share_pk: Primary key (UUID) of the BlogPostAutoShare
     """
-    from .models import BlogPostAutoShare
     import uuid
+
+    from .models import BlogPostAutoShare
 
     try:
         auto_share = BlogPostAutoShare.objects.get(pk=uuid.UUID(auto_share_pk))
@@ -504,32 +500,32 @@ def process_auto_share(self, auto_share_pk):
         logger.error(f"Auto-share {auto_share_pk} not found")
         return
 
-    if auto_share.status in ['posted', 'skipped']:
+    if auto_share.status in ["posted", "skipped"]:
         logger.info(f"Auto-share {auto_share_pk} already processed")
         return
 
     # Update status to posting
-    auto_share.status = 'posting'
-    auto_share.save(update_fields=['status'])
+    auto_share.status = "posting"
+    auto_share.save(update_fields=["status"])
 
     try:
         account = auto_share.social_account
         post = auto_share.post
 
         # Check if account is still active
-        if account.status != 'active':
-            auto_share.status = 'failed'
+        if account.status != "active":
+            auto_share.status = "failed"
             auto_share.error_message = f"Social account status is {account.status}"
-            auto_share.save(update_fields=['status', 'error_message'])
+            auto_share.save(update_fields=["status", "error_message"])
             return
 
         # Load the social connector
         connector = _load_social_connector(account)
 
         if not connector:
-            auto_share.status = 'failed'
+            auto_share.status = "failed"
             auto_share.error_message = "Social connector not found or not installed"
-            auto_share.save(update_fields=['status', 'error_message'])
+            auto_share.save(update_fields=["status", "error_message"])
             return
 
         # Build post content
@@ -543,27 +539,27 @@ def process_auto_share(self, auto_share_pk):
             account=account,
             text=content,
             link=f"https://{Site.objects.get(pk=1).domain}{post.get_absolute_url()}",
-            image_url=image_url
+            image_url=image_url,
         )
 
         # Update auto-share with success
-        auto_share.status = 'posted'
-        auto_share.platform_post_id = result.get('post_id', '')
-        auto_share.platform_post_url = result.get('post_url', '')
+        auto_share.status = "posted"
+        auto_share.platform_post_id = result.get("post_id", "")
+        auto_share.platform_post_url = result.get("post_url", "")
         auto_share.posted_at = timezone.now()
         auto_share.posted_content = content
         auto_share.save()
 
         # Update account last successful post
         account.last_successful_post_at = timezone.now()
-        account.save(update_fields=['last_successful_post_at'])
+        account.save(update_fields=["last_successful_post_at"])
 
         logger.info(f"Successfully posted to {account.name}: {post.title}")
 
     except Exception as e:
         logger.error(f"Error processing auto-share {auto_share_pk}: {e}")
 
-        auto_share.status = 'failed'
+        auto_share.status = "failed"
         auto_share.error_message = str(e)
         auto_share.retry_count += 1
         auto_share.next_retry_at = auto_share.calculate_next_retry()
@@ -585,42 +581,48 @@ def _load_social_connector(account):
     Returns the connector instance or None if not found.
     """
     import json
+
     from component_updates.integration_paths import INTEGRATIONS_DIR, import_component_module
 
     component = account.component
     if not component:
         # Try to find component by provider_key
         from component_updates.models import ComponentRegistry
-        component = ComponentRegistry.objects.filter(
-            component_type='social_connector',
-            slug=account.provider_key,
-        ).exclude(current_version__isnull=True).first()
+
+        component = (
+            ComponentRegistry.objects.filter(
+                component_type="social_connector",
+                slug=account.provider_key,
+            )
+            .exclude(current_version__isnull=True)
+            .first()
+        )
 
     if not component:
         logger.warning(f"No social connector component found for {account.provider_key}")
         return None
 
-    component_dir = INTEGRATIONS_DIR / 'social_connector' / component.slug / 'current'
+    component_dir = INTEGRATIONS_DIR / "social_connector" / component.slug / "current"
     if not component_dir.exists():
         logger.warning(f"Social connector directory not found: {component_dir}")
         return None
 
     # Load manifest
-    manifest_path = component_dir / 'manifest.json'
+    manifest_path = component_dir / "manifest.json"
     if not manifest_path.exists():
         logger.error(f"No manifest.json found in {component_dir}")
         return None
 
     try:
-        with open(manifest_path, 'r') as f:
+        with open(manifest_path) as f:
             manifest = json.load(f)
     except Exception as e:
         logger.error(f"Failed to load manifest from {component_dir}: {e}")
         return None
 
     # Import connector module
-    module_path = manifest.get('entry_point', 'connector')
-    connector_class_name = manifest.get('class_name', 'Connector')
+    module_path = manifest.get("entry_point", "connector")
+    connector_class_name = manifest.get("class_name", "Connector")
     module_name = f"social_connector_{component.slug}"
 
     try:
@@ -654,16 +656,18 @@ def _build_share_content(post, account):
         text = post.social_share_message
     else:
         text = template.format(
-            title=content['title'],
-            excerpt=content['excerpt'][:200] + "..." if len(content['excerpt']) > 200 else content['excerpt'],
+            title=content["title"],
+            excerpt=content["excerpt"][:200] + "..."
+            if len(content["excerpt"]) > 200
+            else content["excerpt"],
             url=post.get_absolute_url(),
-            hashtags=hashtags
+            hashtags=hashtags,
         )
 
     return text
 
 
-@shared_task(name='blog.tasks.retry_failed_auto_shares')
+@shared_task(name="blog.tasks.retry_failed_auto_shares")
 def retry_failed_auto_shares():
     """
     Retry failed auto-shares that are due for retry.
@@ -676,16 +680,14 @@ def retry_failed_auto_shares():
 
     # Get failed shares that are due for retry
     pending_retries = BlogPostAutoShare.objects.filter(
-        status='failed',
-        next_retry_at__lte=now,
-        retry_count__lt=models.F('max_retries')
+        status="failed", next_retry_at__lte=now, retry_count__lt=models.F("max_retries")
     )
 
     queued_count = 0
     for auto_share in pending_retries:
         if auto_share.can_retry():
-            auto_share.status = 'pending'
-            auto_share.save(update_fields=['status'])
+            auto_share.status = "pending"
+            auto_share.save(update_fields=["status"])
             process_auto_share.delay(str(auto_share.pk))
             queued_count += 1
 
@@ -695,36 +697,37 @@ def retry_failed_auto_shares():
     return queued_count
 
 
-@shared_task(name='blog.tasks.refresh_expiring_social_tokens')
+@shared_task(name="blog.tasks.refresh_expiring_social_tokens")
 def refresh_expiring_social_tokens():
     """
     Refresh OAuth tokens that are about to expire.
 
     Should run hourly via Celery Beat.
     """
-    from .models import SocialConnectorAccount
     from datetime import timedelta
+
+    from .models import SocialConnectorAccount
 
     now = timezone.now()
     expiry_threshold = now + timedelta(hours=24)  # Refresh tokens expiring in 24 hours
 
     expiring_accounts = SocialConnectorAccount.objects.filter(
-        status='active',
+        status="active",
         access_token_expires_at__lte=expiry_threshold,
-        access_token_expires_at__gt=now
+        access_token_expires_at__gt=now,
     )
 
     refreshed_count = 0
     for account in expiring_accounts:
         try:
             connector = _load_social_connector(account)
-            if connector and hasattr(connector, 'refresh_token'):
+            if connector and hasattr(connector, "refresh_token"):
                 connector.refresh_token(account)
                 refreshed_count += 1
                 logger.info(f"Refreshed token for {account.name}")
         except Exception as e:
             logger.error(f"Error refreshing token for {account.name}: {e}")
-            account.status = 'token_expired'
+            account.status = "token_expired"
             account.last_error = str(e)
             account.last_error_at = now
             account.save()

@@ -4,6 +4,7 @@ ID Mapper
 Maps source instance IDs to target instance IDs during full migration.
 Ensures relational integrity when importing data with foreign key dependencies.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -81,9 +82,7 @@ class IDMapper:
         """Deserialize from a dict (from SyncStep.diff_data)."""
         mapper = cls()
         for model_key, mapping in data.items():
-            mapper._maps[model_key] = {
-                _parse_id(k): v for k, v in mapping.items()
-            }
+            mapper._maps[model_key] = {_parse_id(k): v for k, v in mapping.items()}
         return mapper
 
     def resolve_fk(self, model_key, source_id):
@@ -103,9 +102,7 @@ class IDMapper:
 
         target_id = self.get(model_key, source_id)
         if target_id is None:
-            logger.warning(
-                f"Missing ID mapping for {model_key} source_id={source_id}"
-            )
+            logger.warning(f"Missing ID mapping for {model_key} source_id={source_id}")
         return target_id
 
 

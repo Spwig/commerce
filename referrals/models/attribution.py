@@ -3,8 +3,9 @@ Referral Attribution model.
 
 Links referrer → referee → first order for attribution tracking.
 """
-from django.db import models
+
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
@@ -19,41 +20,41 @@ class ReferralAttribution(models.Model):
     """
 
     STATUS_CHOICES = [
-        ('pending', _('Pending')),
-        ('approved', _('Approved')),
-        ('rejected', _('Rejected')),
-        ('expired', _('Expired')),
+        ("pending", _("Pending")),
+        ("approved", _("Approved")),
+        ("rejected", _("Rejected")),
+        ("expired", _("Expired")),
     ]
 
     REJECTION_REASON_CHOICES = [
-        ('self_referral', _('Self Referral')),
-        ('not_new_customer', _('Not New Customer')),
-        ('below_minimum', _('Below Minimum Order Value')),
-        ('disposable_email', _('Disposable Email')),
-        ('cap_exceeded', _('Cap Exceeded')),
-        ('fraud_risk', _('Fraud Risk')),
-        ('order_refunded', _('Order Refunded')),
-        ('order_cancelled', _('Order Cancelled')),
-        ('manual_rejection', _('Manual Rejection')),
-        ('other', _('Other')),
+        ("self_referral", _("Self Referral")),
+        ("not_new_customer", _("Not New Customer")),
+        ("below_minimum", _("Below Minimum Order Value")),
+        ("disposable_email", _("Disposable Email")),
+        ("cap_exceeded", _("Cap Exceeded")),
+        ("fraud_risk", _("Fraud Risk")),
+        ("order_refunded", _("Order Refunded")),
+        ("order_cancelled", _("Order Cancelled")),
+        ("manual_rejection", _("Manual Rejection")),
+        ("other", _("Other")),
     ]
 
     # Link to program
     program = models.ForeignKey(
-        'referrals.ReferralProgram',
+        "referrals.ReferralProgram",
         on_delete=models.CASCADE,
-        related_name='attributions',
-        verbose_name=_('Program')
+        related_name="attributions",
+        verbose_name=_("Program"),
     )
 
     # Link to referrer identity
     referrer_identity = models.ForeignKey(
-        'referrals.ReferralIdentity',
+        "referrals.ReferralIdentity",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='referrals_made',
-        verbose_name=_('Referrer Identity')
+        related_name="referrals_made",
+        verbose_name=_("Referrer Identity"),
     )
 
     # Link to referee (new customer)
@@ -62,27 +63,27 @@ class ReferralAttribution(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='referred_by',
-        verbose_name=_('Referee Customer')
+        related_name="referred_by",
+        verbose_name=_("Referee Customer"),
     )
 
     # Link to first order
     first_order = models.OneToOneField(
-        'orders.Order',
+        "orders.Order",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='referral_attribution',
-        verbose_name=_('First Order')
+        related_name="referral_attribution",
+        verbose_name=_("First Order"),
     )
 
     # Status
     status = models.CharField(
         max_length=24,
         choices=STATUS_CHOICES,
-        default='pending',
+        default="pending",
         db_index=True,
-        verbose_name=_('Status')
+        verbose_name=_("Status"),
     )
 
     # Rejection Details
@@ -90,81 +91,69 @@ class ReferralAttribution(models.Model):
         max_length=64,
         choices=REJECTION_REASON_CHOICES,
         blank=True,
-        default='',
+        default="",
         db_index=True,
-        verbose_name=_('Rejection Reason')
+        verbose_name=_("Rejection Reason"),
     )
     rejection_notes = models.TextField(
         blank=True,
-        default='',
-        verbose_name=_('Rejection Notes'),
-        help_text=_('Additional notes about why this was rejected')
+        default="",
+        verbose_name=_("Rejection Notes"),
+        help_text=_("Additional notes about why this was rejected"),
     )
 
     # Validation Data (JSON)
     validation_data = models.JSONField(
         default=dict,
         blank=True,
-        verbose_name=_('Validation Data'),
-        help_text=_('Results from fraud detection and validation checks')
+        verbose_name=_("Validation Data"),
+        help_text=_("Results from fraud detection and validation checks"),
     )
 
     # Risk Score (0-100, higher = riskier)
     risk_score = models.PositiveSmallIntegerField(
-        default=0,
-        verbose_name=_('Risk Score'),
-        help_text=_('Calculated fraud risk score (0-100)')
+        default=0, verbose_name=_("Risk Score"), help_text=_("Calculated fraud risk score (0-100)")
     )
 
     # Timestamps
     created_at = models.DateTimeField(
-        auto_now_add=True,
-        db_index=True,
-        verbose_name=_('Created At')
+        auto_now_add=True, db_index=True, verbose_name=_("Created At")
     )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated At')
-    )
-    approved_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_('Approved At')
-    )
-    reviewed_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_('Reviewed At')
-    )
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    approved_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Approved At"))
+    reviewed_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Reviewed At"))
     reviewed_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='reviewed_attributions',
-        verbose_name=_('Reviewed By'),
-        help_text=_('Admin user who approved/rejected this attribution')
+        related_name="reviewed_attributions",
+        verbose_name=_("Reviewed By"),
+        help_text=_("Admin user who approved/rejected this attribution"),
     )
 
     class Meta:
-        verbose_name = _('Referral Attribution')
-        verbose_name_plural = _('Referral Attributions')
-        ordering = ['-created_at']
+        verbose_name = _("Referral Attribution")
+        verbose_name_plural = _("Referral Attributions")
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['status', 'created_at']),
-            models.Index(fields=['referrer_identity', 'status']),
-            models.Index(fields=['referee_customer']),
-            models.Index(fields=['first_order']),
-            models.Index(fields=['rejection_reason']),
-            models.Index(fields=['risk_score']),
+            models.Index(fields=["status", "created_at"]),
+            models.Index(fields=["referrer_identity", "status"]),
+            models.Index(fields=["referee_customer"]),
+            models.Index(fields=["first_order"]),
+            models.Index(fields=["rejection_reason"]),
+            models.Index(fields=["risk_score"]),
         ]
 
     def __str__(self):
-        referrer_name = 'Unknown'
-        referee_name = 'Unknown'
+        referrer_name = "Unknown"
+        referee_name = "Unknown"
 
         if self.referrer_identity and self.referrer_identity.customer:
-            referrer_name = self.referrer_identity.customer.get_full_name() or self.referrer_identity.customer.email
+            referrer_name = (
+                self.referrer_identity.customer.get_full_name()
+                or self.referrer_identity.customer.email
+            )
 
         if self.referee_customer:
             referee_name = self.referee_customer.get_full_name() or self.referee_customer.email
@@ -180,13 +169,13 @@ class ReferralAttribution(models.Model):
         """
         from django.utils import timezone
 
-        self.status = 'approved'
+        self.status = "approved"
         self.approved_at = timezone.now()
         self.reviewed_at = timezone.now()
         self.reviewed_by = reviewed_by
-        self.save(update_fields=['status', 'approved_at', 'reviewed_at', 'reviewed_by'])
+        self.save(update_fields=["status", "approved_at", "reviewed_at", "reviewed_by"])
 
-    def reject(self, reason, notes='', reviewed_by=None):
+    def reject(self, reason, notes="", reviewed_by=None):
         """
         Reject this attribution.
 
@@ -197,24 +186,32 @@ class ReferralAttribution(models.Model):
         """
         from django.utils import timezone
 
-        self.status = 'rejected'
+        self.status = "rejected"
         self.rejection_reason = reason
         self.rejection_notes = notes
         self.reviewed_at = timezone.now()
         self.reviewed_by = reviewed_by
-        self.save(update_fields=['status', 'rejection_reason', 'rejection_notes', 'reviewed_at', 'reviewed_by'])
+        self.save(
+            update_fields=[
+                "status",
+                "rejection_reason",
+                "rejection_notes",
+                "reviewed_at",
+                "reviewed_by",
+            ]
+        )
 
     def is_pending(self):
         """Check if attribution is pending review."""
-        return self.status == 'pending'
+        return self.status == "pending"
 
     def is_approved(self):
         """Check if attribution is approved."""
-        return self.status == 'approved'
+        return self.status == "approved"
 
     def is_rejected(self):
         """Check if attribution is rejected."""
-        return self.status == 'rejected'
+        return self.status == "rejected"
 
     def get_order_value(self):
         """Get the order total value."""
@@ -230,9 +227,9 @@ class ReferralAttribution(models.Model):
             str: 'low', 'medium', 'high', or 'critical'
         """
         if self.risk_score < 30:
-            return 'low'
+            return "low"
         elif self.risk_score < 70:
-            return 'medium'
+            return "medium"
         elif self.risk_score < 90:
-            return 'high'
-        return 'critical'
+            return "high"
+        return "critical"

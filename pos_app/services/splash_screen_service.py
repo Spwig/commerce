@@ -4,14 +4,14 @@ Splash Screen Service for POS Terminal Readers.
 Generates branded PNG splash screens for Stripe Terminal readers
 with merchant logo and Spwig branding.
 """
+
 import io
 import logging
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-
 from django.conf import settings
 from django.utils import timezone
+from PIL import Image, ImageDraw, ImageFont
 
 logger = logging.getLogger(__name__)
 
@@ -21,18 +21,18 @@ class SplashScreenService:
 
     # Reader type to dimensions mapping (width, height)
     READER_SIZES = {
-        'stripe_s700': (1080, 1920),
-        'bbpos_wisepos_e': (720, 1280),
-        'verifone_p400': (320, 480),
-        'bbpos_wisepad_3': (320, 240),
+        "stripe_s700": (1080, 1920),
+        "bbpos_wisepos_e": (720, 1280),
+        "verifone_p400": (320, 480),
+        "bbpos_wisepad_3": (320, 240),
     }
 
     # Readers that require grayscale/B&W images
-    BW_READERS = {'verifone_p400', 'bbpos_wisepad_3'}
+    BW_READERS = {"verifone_p400", "bbpos_wisepad_3"}
 
     # Gradient colors (subtle brand colors)
-    GRADIENT_START = (45, 35, 65)      # Deep purple
-    GRADIENT_END = (25, 45, 75)        # Deep blue
+    GRADIENT_START = (45, 35, 65)  # Deep purple
+    GRADIENT_END = (25, 45, 75)  # Deep blue
 
     # Spwig branding
     POWERED_BY_TEXT = "Powered by Spwig"
@@ -45,7 +45,14 @@ class SplashScreenService:
     def spwig_favicon_path(self):
         """Lazy-load Spwig favicon path."""
         if self._spwig_favicon_path is None:
-            self._spwig_favicon_path = Path(settings.BASE_DIR) / 'core' / 'static' / 'core' / 'images' / 'favicon-256x256.png'
+            self._spwig_favicon_path = (
+                Path(settings.BASE_DIR)
+                / "core"
+                / "static"
+                / "core"
+                / "images"
+                / "favicon-256x256.png"
+            )
         return self._spwig_favicon_path
 
     @property
@@ -53,7 +60,7 @@ class SplashScreenService:
         """Lazy-load Spwig favicon."""
         if self._spwig_logo is None:
             try:
-                self._spwig_logo = Image.open(self.spwig_favicon_path).convert('RGBA')
+                self._spwig_logo = Image.open(self.spwig_favicon_path).convert("RGBA")
             except Exception as e:
                 logger.warning(f"Could not load Spwig favicon: {e}")
                 self._spwig_logo = False
@@ -62,24 +69,30 @@ class SplashScreenService:
     def get_reader_size(self, reader_type: str) -> tuple:
         """Get dimensions for a reader type."""
         # Normalize reader type (lowercase, strip whitespace)
-        normalized = reader_type.lower().strip() if reader_type else ''
+        normalized = reader_type.lower().strip() if reader_type else ""
         return self.READER_SIZES.get(normalized, (720, 1280))  # Default to WisePOS E
 
     def is_bw_reader(self, reader_type: str) -> bool:
         """Check if reader requires B&W image."""
-        normalized = reader_type.lower().strip() if reader_type else ''
+        normalized = reader_type.lower().strip() if reader_type else ""
         return normalized in self.BW_READERS
 
     def generate_gradient(self, width: int, height: int) -> Image.Image:
         """Generate a vertical gradient background."""
-        gradient = Image.new('RGB', (width, height))
+        gradient = Image.new("RGB", (width, height))
         draw = ImageDraw.Draw(gradient)
 
         for y in range(height):
             ratio = y / height
-            r = int(self.GRADIENT_START[0] + (self.GRADIENT_END[0] - self.GRADIENT_START[0]) * ratio)
-            g = int(self.GRADIENT_START[1] + (self.GRADIENT_END[1] - self.GRADIENT_START[1]) * ratio)
-            b = int(self.GRADIENT_START[2] + (self.GRADIENT_END[2] - self.GRADIENT_START[2]) * ratio)
+            r = int(
+                self.GRADIENT_START[0] + (self.GRADIENT_END[0] - self.GRADIENT_START[0]) * ratio
+            )
+            g = int(
+                self.GRADIENT_START[1] + (self.GRADIENT_END[1] - self.GRADIENT_START[1]) * ratio
+            )
+            b = int(
+                self.GRADIENT_START[2] + (self.GRADIENT_END[2] - self.GRADIENT_START[2]) * ratio
+            )
             draw.line([(0, y), (width, y)], fill=(r, g, b))
 
         return gradient
@@ -91,9 +104,9 @@ class SplashScreenService:
 
         try:
             # Get the file path or URL
-            if hasattr(logo_asset, 'original_file') and logo_asset.original_file:
+            if hasattr(logo_asset, "original_file") and logo_asset.original_file:
                 logo_path = logo_asset.original_file.path
-                return Image.open(logo_path).convert('RGBA')
+                return Image.open(logo_path).convert("RGBA")
         except Exception as e:
             logger.warning(f"Could not load merchant logo: {e}")
 
@@ -115,9 +128,9 @@ class SplashScreenService:
         """Get a font for text rendering."""
         # Try system fonts
         font_paths = [
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-            '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
-            '/usr/share/fonts/TTF/DejaVuSans.ttf',
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+            "/usr/share/fonts/TTF/DejaVuSans.ttf",
         ]
         for path in font_paths:
             try:
@@ -127,12 +140,7 @@ class SplashScreenService:
         # Fallback to default
         return ImageFont.load_default()
 
-    def generate_splash_png(
-        self,
-        reader_type: str,
-        logo_asset=None,
-        custom_image=None
-    ) -> bytes:
+    def generate_splash_png(self, reader_type: str, logo_asset=None, custom_image=None) -> bytes:
         """
         Generate a PNG splash screen for a reader.
 
@@ -164,33 +172,29 @@ class SplashScreenService:
 
             # Center the logo
             logo_x = (width - logo_resized.width) // 2
-            logo_y = (height - logo_resized.height) // 2 - int(height * 0.05)  # Slightly above center
+            logo_y = (height - logo_resized.height) // 2 - int(
+                height * 0.05
+            )  # Slightly above center
 
             # Composite with alpha
-            image = image.convert('RGBA')
+            image = image.convert("RGBA")
             image.paste(logo_resized, (logo_x, logo_y), logo_resized)
-            image = image.convert('RGB')
+            image = image.convert("RGB")
 
         # Add Spwig branding in bottom-right
         self._add_spwig_branding(image, width, height)
 
         # Convert to B&W if needed
         if is_bw:
-            image = image.convert('L')
+            image = image.convert("L")
 
         # Save as PNG
         buffer = io.BytesIO()
-        image.save(buffer, format='PNG', optimize=True)
+        image.save(buffer, format="PNG", optimize=True)
         buffer.seek(0)
         return buffer.read()
 
-    def _process_custom_image(
-        self,
-        custom_image,
-        width: int,
-        height: int,
-        is_bw: bool
-    ) -> bytes:
+    def _process_custom_image(self, custom_image, width: int, height: int, is_bw: bool) -> bytes:
         """Process a custom override image."""
         if isinstance(custom_image, bytes):
             img = Image.open(io.BytesIO(custom_image))
@@ -198,7 +202,7 @@ class SplashScreenService:
             img = custom_image
 
         # Resize to fit reader dimensions (crop to fill)
-        img = img.convert('RGB')
+        img = img.convert("RGB")
         img_ratio = img.width / img.height
         target_ratio = width / height
 
@@ -216,10 +220,10 @@ class SplashScreenService:
         img = img.resize((width, height), Image.Resampling.LANCZOS)
 
         if is_bw:
-            img = img.convert('L')
+            img = img.convert("L")
 
         buffer = io.BytesIO()
-        img.save(buffer, format='PNG', optimize=True)
+        img.save(buffer, format="PNG", optimize=True)
         buffer.seek(0)
         return buffer.read()
 
@@ -245,7 +249,12 @@ class SplashScreenService:
 
         # Draw text with slight shadow for readability
         shadow_offset = max(1, font_size // 20)
-        draw.text((text_x + shadow_offset, text_y + shadow_offset), self.POWERED_BY_TEXT, fill=(0, 0, 0), font=font)
+        draw.text(
+            (text_x + shadow_offset, text_y + shadow_offset),
+            self.POWERED_BY_TEXT,
+            fill=(0, 0, 0),
+            font=font,
+        )
         draw.text((text_x, text_y), self.POWERED_BY_TEXT, fill=(200, 200, 200), font=font)
 
         # Add Spwig logo to left of text
@@ -258,9 +267,9 @@ class SplashScreenService:
 
             # Ensure position is valid
             if logo_x > 0 and logo_y > 0:
-                image_rgba = image.convert('RGBA')
+                image_rgba = image.convert("RGBA")
                 image_rgba.paste(logo, (logo_x, logo_y), logo)
-                image.paste(image_rgba.convert('RGB'))
+                image.paste(image_rgba.convert("RGB"))
 
     def update_reader_splash(self, reader, force: bool = False) -> dict:
         """
@@ -277,7 +286,7 @@ class SplashScreenService:
 
         # Check if already generated and not forcing
         if not force and reader.splash_generated_at and not reader.splash_override_image:
-            return {'success': True, 'skipped': True, 'reason': 'Already generated'}
+            return {"success": True, "skipped": True, "reason": "Already generated"}
 
         # Get logo source
         if reader.splash_override_image:
@@ -288,7 +297,7 @@ class SplashScreenService:
                 custom_image = Image.open(reader.splash_override_image.original_file.path)
             except Exception as e:
                 logger.error(f"Failed to load custom splash image: {e}")
-                return {'success': False, 'error': str(e)}
+                return {"success": False, "error": str(e)}
         else:
             # Use site logo
             site_settings = SiteSettings.get_settings()
@@ -300,31 +309,33 @@ class SplashScreenService:
             png_bytes = self.generate_splash_png(
                 reader_type=reader.reader_type,
                 logo_asset=logo_asset if not custom_image else None,
-                custom_image=custom_image
+                custom_image=custom_image,
             )
         except Exception as e:
             logger.error(f"Failed to generate splash screen: {e}")
-            return {'success': False, 'error': str(e)}
+            return {"success": False, "error": str(e)}
 
         # Upload to Stripe
         try:
             result = self._upload_to_stripe(reader, png_bytes)
         except Exception as e:
             logger.error(f"Failed to upload splash screen to Stripe: {e}")
-            return {'success': False, 'error': str(e)}
+            return {"success": False, "error": str(e)}
 
         # Update reader record
-        reader.stripe_splash_file_id = result.get('file_id', '')
-        reader.stripe_splash_config_id = result.get('config_id', '')
+        reader.stripe_splash_file_id = result.get("file_id", "")
+        reader.stripe_splash_config_id = result.get("config_id", "")
         reader.splash_generated_at = timezone.now()
-        reader.save(update_fields=[
-            'stripe_splash_file_id',
-            'stripe_splash_config_id',
-            'splash_generated_at'
-        ])
+        reader.save(
+            update_fields=[
+                "stripe_splash_file_id",
+                "stripe_splash_config_id",
+                "splash_generated_at",
+            ]
+        )
 
         logger.info(f"Splash screen updated for reader {reader.pk}: file={result.get('file_id')}")
-        return {'success': True, **result}
+        return {"success": True, **result}
 
     def _upload_to_stripe(self, reader, png_bytes: bytes) -> dict:
         """Upload PNG to Stripe and configure the reader."""
@@ -333,8 +344,10 @@ class SplashScreenService:
         if not provider_instance:
             raise ValueError("No provider instance available")
 
-        if not hasattr(provider_instance, 'upload_splash_screen'):
-            raise ValueError(f"Provider {reader.provider.provider_key} does not support splash screens")
+        if not hasattr(provider_instance, "upload_splash_screen"):
+            raise ValueError(
+                f"Provider {reader.provider.provider_key} does not support splash screens"
+            )
 
         # Upload file
         file_id = provider_instance.upload_splash_screen(png_bytes)
@@ -345,10 +358,7 @@ class SplashScreenService:
         # Assign to reader
         provider_instance.assign_configuration_to_reader(reader.provider_reader_id, config_id)
 
-        return {
-            'file_id': file_id,
-            'config_id': config_id
-        }
+        return {"file_id": file_id, "config_id": config_id}
 
 
 # Singleton instance

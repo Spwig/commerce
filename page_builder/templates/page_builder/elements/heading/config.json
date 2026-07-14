@@ -35,12 +35,12 @@
               "type": "select",
               "label": "HTML Tag",
               "options": [
-                {"value": "h1", "label": "H1"},
-                {"value": "h2", "label": "H2"},
-                {"value": "h3", "label": "H3"},
-                {"value": "h4", "label": "H4"},
-                {"value": "h5", "label": "H5"},
-                {"value": "h6", "label": "H6"}
+                { "value": "h1", "label": "H1" },
+                { "value": "h2", "label": "H2" },
+                { "value": "h3", "label": "H3" },
+                { "value": "h4", "label": "H4" },
+                { "value": "h5", "label": "H5" },
+                { "value": "h6", "label": "H6" }
               ],
               "default": "h2",
               "requires_rerender": true
@@ -55,9 +55,9 @@
               "type": "select",
               "label": "Text Alignment",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "center", "label": "Center"},
-                {"value": "right", "label": "Right"}
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
               ],
               "default": "left"
             }
@@ -67,16 +67,53 @@
     }
   },
   "properties": {
-    "text": {"type": "string", "label": "Heading Text", "default": "Heading Text", "translatable": true, "required": true},
-    "tag": {"type": "select", "label": "HTML Tag", "options": [{"value": "h1", "label": "H1"}, {"value": "h2", "label": "H2"}, {"value": "h3", "label": "H3"}, {"value": "h4", "label": "H4"}, {"value": "h5", "label": "H5"}, {"value": "h6", "label": "H6"}], "default": "h2", "requires_rerender": true},
-    "anchor": {"type": "string", "label": "Anchor Link ID", "required": false},
-    "alignment": {"type": "select", "label": "Text Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "left"}
+    "text": {
+      "type": "string",
+      "label": "Heading Text",
+      "default": "Heading Text",
+      "translatable": true,
+      "required": true
+    },
+    "tag": {
+      "type": "select",
+      "label": "HTML Tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ],
+      "default": "h2",
+      "requires_rerender": true
+    },
+    "anchor": { "type": "string", "label": "Anchor Link ID", "required": false },
+    "alignment": {
+      "type": "select",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    }
   },
   "translations": {
-    "en": {"name": "Heading", "description": "Semantic heading element with typography controls"},
-    "es": {"name": "Encabezado", "description": "Elemento de encabezado semantico con controles tipograficos"},
-    "fr": {"name": "En-tete", "description": "Element d'en-tete semantique avec controles typographiques"},
-    "de": {"name": "Uberschrift", "description": "Semantisches Uberschrift-Element mit typografischen Kontrollen"}
+    "en": { "name": "Heading", "description": "Semantic heading element with typography controls" },
+    "es": {
+      "name": "Encabezado",
+      "description": "Elemento de encabezado semantico con controles tipograficos"
+    },
+    "fr": {
+      "name": "En-tete",
+      "description": "Element d'en-tete semantique avec controles typographiques"
+    },
+    "de": {
+      "name": "Uberschrift",
+      "description": "Semantisches Uberschrift-Element mit typografischen Kontrollen"
+    }
   },
   "defaults": {
     "text": "New Heading",

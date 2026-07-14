@@ -2,12 +2,14 @@
 SyncJob Model
 Tracks Spwig-to-Spwig sync and migration operations.
 """
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-from datetime import timedelta
+
 import uuid
+from datetime import timedelta
+
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -17,117 +19,101 @@ class SyncJob(models.Model):
     Tracks a sync or migration operation between Spwig instances.
     Analogous to MigrationJob for external platform imports.
     """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     JOB_TYPE_CHOICES = [
-        ('settings_sync', _('Settings Sync')),
-        ('full_migration', _('Full System Migration')),
+        ("settings_sync", _("Settings Sync")),
+        ("full_migration", _("Full System Migration")),
     ]
     job_type = models.CharField(
-        max_length=20,
-        choices=JOB_TYPE_CHOICES,
-        help_text=_("Type of sync operation")
+        max_length=20, choices=JOB_TYPE_CHOICES, help_text=_("Type of sync operation")
     )
 
     DIRECTION_CHOICES = [
-        ('pull', _('Pull from Remote')),
-        ('push', _('Push to Remote')),
+        ("pull", _("Pull from Remote")),
+        ("push", _("Push to Remote")),
     ]
     direction = models.CharField(
-        max_length=10,
-        choices=DIRECTION_CHOICES,
-        help_text=_("Direction of data flow")
+        max_length=10, choices=DIRECTION_CHOICES, help_text=_("Direction of data flow")
     )
 
     connection = models.ForeignKey(
-        'migration.SyncConnection',
+        "migration.SyncConnection",
         on_delete=models.SET_NULL,
         null=True,
-        related_name='sync_jobs',
-        help_text=_("Connection to the remote instance")
+        related_name="sync_jobs",
+        help_text=_("Connection to the remote instance"),
     )
 
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='sync_jobs',
-        help_text=_("User who initiated this sync")
+        related_name="sync_jobs",
+        help_text=_("User who initiated this sync"),
     )
 
     # Selected categories (list of category keys from the registry)
     selected_categories = models.JSONField(
-        default=list,
-        blank=True,
-        help_text=_("List of sync category keys selected for this job")
+        default=list, blank=True, help_text=_("List of sync category keys selected for this job")
     )
 
     SYNC_MODE_CHOICES = [
-        ('additive', _('Add & Update Only')),
-        ('mirror', _('Full Mirror')),
+        ("additive", _("Add & Update Only")),
+        ("mirror", _("Full Mirror")),
     ]
     sync_mode = models.CharField(
         max_length=20,
         choices=SYNC_MODE_CHOICES,
-        default='additive',
-        help_text=_("Sync behaviour: additive (no deletions) or mirror (exact copy)")
+        default="additive",
+        help_text=_("Sync behaviour: additive (no deletions) or mirror (exact copy)"),
     )
 
     STATUS_CHOICES = [
-        ('pending', _('Pending')),
-        ('previewing', _('Generating Preview')),
-        ('awaiting_confirmation', _('Awaiting Confirmation')),
-        ('running', _('Running')),
-        ('completed', _('Completed')),
-        ('failed', _('Failed')),
-        ('rolling_back', _('Rolling Back')),
-        ('rolled_back', _('Rolled Back')),
-        ('cancelled', _('Cancelled')),
+        ("pending", _("Pending")),
+        ("previewing", _("Generating Preview")),
+        ("awaiting_confirmation", _("Awaiting Confirmation")),
+        ("running", _("Running")),
+        ("completed", _("Completed")),
+        ("failed", _("Failed")),
+        ("rolling_back", _("Rolling Back")),
+        ("rolled_back", _("Rolled Back")),
+        ("cancelled", _("Cancelled")),
     ]
     status = models.CharField(
         max_length=25,
         choices=STATUS_CHOICES,
-        default='pending',
-        help_text=_("Current status of the sync operation")
+        default="pending",
+        help_text=_("Current status of the sync operation"),
     )
 
     progress_percent = models.IntegerField(
-        default=0,
-        help_text=_("Overall progress percentage (0-100)")
+        default=0, help_text=_("Overall progress percentage (0-100)")
     )
     current_step = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text=_("Name of the currently executing step")
+        max_length=100, blank=True, help_text=_("Name of the currently executing step")
     )
 
     # Preview/diff data
     diff_preview = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text=_("Structured diff from preview step")
+        default=dict, blank=True, help_text=_("Structured diff from preview step")
     )
 
     # Production safety
     production_confirmed = models.BooleanField(
-        default=False,
-        help_text=_("Whether the merchant confirmed production overwrite")
+        default=False, help_text=_("Whether the merchant confirmed production overwrite")
     )
 
     # Rollback support
     rollback_snapshot = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text=_("Pre-sync state snapshot for rollback")
+        default=dict, blank=True, help_text=_("Pre-sync state snapshot for rollback")
     )
     can_rollback = models.BooleanField(
-        default=True,
-        help_text=_("Whether this job can be rolled back")
+        default=True, help_text=_("Whether this job can be rolled back")
     )
     rollback_deadline = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text=_("Deadline for rollback (24 hours after completion)")
+        null=True, blank=True, help_text=_("Deadline for rollback (24 hours after completion)")
     )
 
     # Statistics
@@ -147,13 +133,13 @@ class SyncJob(models.Model):
     activity_log = models.JSONField(
         default=list,
         blank=True,
-        help_text=_("Recent activity log entries [{ts, msg}, ...] (last 50)")
+        help_text=_("Recent activity log entries [{ts, msg}, ...] (last 50)"),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name = _("Sync Job")
         verbose_name_plural = _("Sync Jobs")
 
@@ -178,11 +164,9 @@ class SyncJob(models.Model):
     def is_rollbackable(self):
         if not self.can_rollback:
             return False
-        if self.status != 'completed':
+        if self.status != "completed":
             return False
-        if self.rollback_deadline and timezone.now() > self.rollback_deadline:
-            return False
-        return True
+        return not (self.rollback_deadline and timezone.now() > self.rollback_deadline)
 
     def add_log_entry(self, message):
         """
@@ -195,52 +179,68 @@ class SyncJob(models.Model):
         a DB-level atomic JSON append instead.
         """
         entry = {
-            'ts': timezone.now().strftime('%H:%M:%S'),
-            'msg': str(message),
+            "ts": timezone.now().strftime("%H:%M:%S"),
+            "msg": str(message),
         }
-        self.refresh_from_db(fields=['activity_log'])
+        self.refresh_from_db(fields=["activity_log"])
         log = list(self.activity_log or [])
         log.append(entry)
         if len(log) > 50:
             log = log[-50:]
         self.activity_log = log
-        self.save(update_fields=['activity_log'])
+        self.save(update_fields=["activity_log"])
 
     def update_progress(self, step, percent):
         self.current_step = step
         self.progress_percent = min(100, max(0, percent))
-        self.save(update_fields=['current_step', 'progress_percent'])
+        self.save(update_fields=["current_step", "progress_percent"])
 
     def start(self):
-        self.status = 'running'
+        self.status = "running"
         self.started_at = timezone.now()
-        self.save(update_fields=['status', 'started_at'])
+        self.save(update_fields=["status", "started_at"])
 
     def mark_completed(self):
-        self.status = 'completed'
+        self.status = "completed"
         self.completed_at = timezone.now()
         self.progress_percent = 100
         if self.started_at:
             self.duration_seconds = int((self.completed_at - self.started_at).total_seconds())
         self.rollback_deadline = timezone.now() + timedelta(hours=24)
-        self.save(update_fields=[
-            'status', 'completed_at', 'progress_percent',
-            'duration_seconds', 'rollback_deadline',
-            'items_total', 'items_synced', 'items_skipped', 'items_failed',
-        ])
+        self.save(
+            update_fields=[
+                "status",
+                "completed_at",
+                "progress_percent",
+                "duration_seconds",
+                "rollback_deadline",
+                "items_total",
+                "items_synced",
+                "items_skipped",
+                "items_failed",
+            ]
+        )
 
-    def mark_failed(self, error_message=''):
-        self.status = 'failed'
+    def mark_failed(self, error_message=""):
+        self.status = "failed"
         self.completed_at = timezone.now()
         self.error_summary = error_message
         if self.started_at:
             self.duration_seconds = int((self.completed_at - self.started_at).total_seconds())
-        self.save(update_fields=[
-            'status', 'completed_at', 'error_summary', 'duration_seconds',
-            'items_total', 'items_synced', 'items_skipped', 'items_failed',
-        ])
+        self.save(
+            update_fields=[
+                "status",
+                "completed_at",
+                "error_summary",
+                "duration_seconds",
+                "items_total",
+                "items_synced",
+                "items_skipped",
+                "items_failed",
+            ]
+        )
 
     def mark_cancelled(self):
-        self.status = 'cancelled'
+        self.status = "cancelled"
         self.completed_at = timezone.now()
-        self.save(update_fields=['status', 'completed_at'])
+        self.save(update_fields=["status", "completed_at"])

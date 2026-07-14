@@ -3,8 +3,8 @@ Payment Provider Admin Forms
 ==============================
 ModelForm for PaymentProviderAccount admin editing.
 """
+
 from django import forms
-from django.utils.translation import gettext_lazy as _
 
 from payment_providers.models import PaymentProviderAccount
 
@@ -19,4 +19,4 @@ class PaymentProviderConfigForm(forms.ModelForm):
 
     class Meta:
         model = PaymentProviderAccount
-        fields = ['display_name', 'checkout_mode', 'is_active', 'is_default', 'sort_order']
+        fields = ["display_name", "checkout_mode", "is_active", "is_default", "sort_order"]

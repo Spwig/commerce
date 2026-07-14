@@ -3,6 +3,7 @@ Celery tasks for POS app.
 
 Handles background processing for splash screen generation and updates.
 """
+
 import logging
 import time
 
@@ -23,15 +24,15 @@ def update_reader_splash_screen(self, reader_pk: str):
     from pos_app.services import splash_screen_service
 
     try:
-        reader = POSTerminalReader.objects.select_related('provider').get(pk=reader_pk)
+        reader = POSTerminalReader.objects.select_related("provider").get(pk=reader_pk)
     except POSTerminalReader.DoesNotExist:
         logger.warning(f"Reader {reader_pk} not found, skipping splash screen update")
-        return {'success': False, 'error': 'Reader not found'}
+        return {"success": False, "error": "Reader not found"}
 
     # Only process Stripe Terminal readers
-    if not reader.provider or reader.provider.provider_key != 'stripe_terminal':
+    if not reader.provider or reader.provider.provider_key != "stripe_terminal":
         logger.info(f"Reader {reader_pk} is not a Stripe Terminal reader, skipping")
-        return {'success': False, 'error': 'Not a Stripe Terminal reader'}
+        return {"success": False, "error": "Not a Stripe Terminal reader"}
 
     try:
         result = splash_screen_service.update_reader_splash(reader, force=False)
@@ -50,26 +51,24 @@ def regenerate_all_splash_screens(self):
 
     Called when site logo changes. Skips readers with custom override images.
     """
-    from pos_app.models import POSTerminalReader, POSTerminalProvider
+    from pos_app.models import POSTerminalProvider, POSTerminalReader
     from pos_app.services import splash_screen_service
 
     # Find all Stripe Terminal providers
     stripe_providers = POSTerminalProvider.objects.filter(
-        provider_key='stripe_terminal',
-        is_active=True
+        provider_key="stripe_terminal", is_active=True
     )
 
     if not stripe_providers.exists():
         logger.info("No active Stripe Terminal providers, skipping splash regeneration")
-        return {'success': True, 'processed': 0}
+        return {"success": True, "processed": 0}
 
     # Find all readers that:
     # 1. Use a Stripe Terminal provider
     # 2. Don't have a custom splash override
     readers = POSTerminalReader.objects.filter(
-        provider__in=stripe_providers,
-        splash_override_image__isnull=True
-    ).select_related('provider')
+        provider__in=stripe_providers, splash_override_image__isnull=True
+    ).select_related("provider")
 
     processed = 0
     errors = 0
@@ -77,7 +76,7 @@ def regenerate_all_splash_screens(self):
     for reader in readers:
         try:
             result = splash_screen_service.update_reader_splash(reader, force=True)
-            if result.get('success'):
+            if result.get("success"):
                 processed += 1
             else:
                 errors += 1
@@ -91,11 +90,7 @@ def regenerate_all_splash_screens(self):
             logger.error(f"Error regenerating splash for reader {reader.pk}: {e}")
 
     logger.info(f"Splash screen regeneration complete: {processed} updated, {errors} errors")
-    return {
-        'success': True,
-        'processed': processed,
-        'errors': errors
-    }
+    return {"success": True, "processed": processed, "errors": errors}
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=60)
@@ -109,13 +104,13 @@ def update_splash_screen_for_reader_override(self, reader_pk: str):
     from pos_app.services import splash_screen_service
 
     try:
-        reader = POSTerminalReader.objects.select_related('provider').get(pk=reader_pk)
+        reader = POSTerminalReader.objects.select_related("provider").get(pk=reader_pk)
     except POSTerminalReader.DoesNotExist:
         logger.warning(f"Reader {reader_pk} not found")
-        return {'success': False, 'error': 'Reader not found'}
+        return {"success": False, "error": "Reader not found"}
 
-    if not reader.provider or reader.provider.provider_key != 'stripe_terminal':
-        return {'success': False, 'error': 'Not a Stripe Terminal reader'}
+    if not reader.provider or reader.provider.provider_key != "stripe_terminal":
+        return {"success": False, "error": "Not a Stripe Terminal reader"}
 
     try:
         # Force regeneration since override changed
@@ -131,10 +126,12 @@ def update_splash_screen_for_reader_override(self, reader_pk: str):
 # Parked Cart Cleanup
 # ─────────────────────────────────────────────────────────────────────────────
 
-@shared_task(name='pos_app.cleanup_expired_parked_carts', ignore_result=True)
+
+@shared_task(name="pos_app.cleanup_expired_parked_carts", ignore_result=True)
 def cleanup_expired_parked_carts():
     """Delete parked carts that have passed their expires_at time."""
     from django.utils import timezone
+
     from pos_app.models import ParkedCart
 
     count, _ = ParkedCart.objects.filter(
@@ -143,12 +140,13 @@ def cleanup_expired_parked_carts():
     ).delete()
     if count:
         logger.info(f"Cleaned up {count} expired parked carts")
-    return {'deleted': count}
+    return {"deleted": count}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Digital Receipt Tasks
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
 def send_pos_receipt_email(self, order_pk: int, email: str = None, language: str = None):
@@ -164,14 +162,14 @@ def send_pos_receipt_email(self, order_pk: int, email: str = None, language: str
     from pos_app.services.digital_receipt_service import digital_receipt_service
 
     try:
-        order = Order.objects.prefetch_related(
-            'items', 'pos_payments'
-        ).select_related(
-            'user', 'cashier', 'pos_terminal', 'pos_terminal__warehouse'
-        ).get(pk=order_pk)
+        order = (
+            Order.objects.prefetch_related("items", "pos_payments")
+            .select_related("user", "cashier", "pos_terminal", "pos_terminal__warehouse")
+            .get(pk=order_pk)
+        )
     except Order.DoesNotExist:
         logger.warning(f"Order {order_pk} not found, skipping receipt email")
-        return {'success': False, 'error': 'Order not found'}
+        return {"success": False, "error": "Order not found"}
 
     try:
         result = digital_receipt_service.send_email_receipt(
@@ -199,12 +197,10 @@ def send_pos_receipt_sms(self, order_pk: int, phone: str = None):
     from pos_app.services.digital_receipt_service import digital_receipt_service
 
     try:
-        order = Order.objects.select_related(
-            'pos_terminal'
-        ).get(pk=order_pk)
+        order = Order.objects.select_related("pos_terminal").get(pk=order_pk)
     except Order.DoesNotExist:
         logger.warning(f"Order {order_pk} not found, skipping receipt SMS")
-        return {'success': False, 'error': 'Order not found'}
+        return {"success": False, "error": "Order not found"}
 
     try:
         result = digital_receipt_service.send_sms_receipt(
@@ -231,12 +227,10 @@ def send_pos_receipt_whatsapp(self, order_pk: int, phone: str = None):
     from pos_app.services.digital_receipt_service import digital_receipt_service
 
     try:
-        order = Order.objects.select_related(
-            'pos_terminal'
-        ).get(pk=order_pk)
+        order = Order.objects.select_related("pos_terminal").get(pk=order_pk)
     except Order.DoesNotExist:
         logger.warning(f"Order {order_pk} not found, skipping receipt WhatsApp")
-        return {'success': False, 'error': 'Order not found'}
+        return {"success": False, "error": "Order not found"}
 
     try:
         result = digital_receipt_service.send_whatsapp_receipt(
@@ -254,6 +248,7 @@ def send_pos_receipt_whatsapp(self, order_pk: int, phone: str = None):
 # POS License Validation
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 @shared_task(bind=True, max_retries=2, default_retry_delay=300, ignore_result=True)
 def validate_pos_license(self):
     """
@@ -262,19 +257,23 @@ def validate_pos_license(self):
     Runs daily via Celery Beat. Updates the local license state and sends
     warning emails when the license is nearing expiration.
     """
-    from pos_app.license import (
-        _validate_against_server, clear_pos_license_cache,
-        POS_GRACE_PERIOD_DAYS,
-    )
-    from component_updates.models import UpdateServerConfig
     from datetime import timedelta
+
+    from django.utils import timezone
+
+    from component_updates.models import UpdateServerConfig
+    from pos_app.license import (
+        POS_GRACE_PERIOD_DAYS,
+        _validate_against_server,
+        clear_pos_license_cache,
+    )
 
     try:
         config = UpdateServerConfig.get_instance()
 
         if not config.pos_license_key:
             logger.info("No POS license key configured, skipping validation")
-            return {'success': True, 'status': 'not_configured'}
+            return {"success": True, "status": "not_configured"}
 
         result = _validate_against_server(config)
         clear_pos_license_cache()
@@ -288,22 +287,21 @@ def validate_pos_license(self):
                 if days_until in (30, 7, 1):
                     _send_pos_expiration_warning(config, days_until)
 
-            return {'success': True, 'status': config.pos_license_status}
+            return {"success": True, "status": config.pos_license_status}
 
         elif result is False:
             logger.warning(f"POS license invalid: status={config.pos_license_status}")
 
-            if config.pos_license_status == 'grace':
-                if config.pos_license_expires_at:
-                    grace_end = config.pos_license_expires_at + timedelta(days=POS_GRACE_PERIOD_DAYS)
-                    days_left = (grace_end - timezone.now()).days
-                    _send_pos_expiration_warning(config, days_left, grace=True)
+            if config.pos_license_status == "grace" and config.pos_license_expires_at:
+                grace_end = config.pos_license_expires_at + timedelta(days=POS_GRACE_PERIOD_DAYS)
+                days_left = (grace_end - timezone.now()).days
+                _send_pos_expiration_warning(config, days_left, grace=True)
 
-            return {'success': True, 'status': config.pos_license_status}
+            return {"success": True, "status": config.pos_license_status}
 
         else:
             logger.warning("Could not reach update server for POS license validation")
-            return {'success': False, 'status': 'server_unreachable'}
+            return {"success": False, "status": "server_unreachable"}
 
     except Exception as exc:
         logger.error(f"POS license validation task failed: {exc}")
@@ -314,6 +312,7 @@ def _send_pos_expiration_warning(config, days_remaining, grace=False):
     """Send POS license expiration warning email to admin."""
     try:
         from core.models import SiteSettings
+
         ss = SiteSettings.objects.first()
         if not ss or not ss.admin_email:
             return
@@ -321,20 +320,20 @@ def _send_pos_expiration_warning(config, days_remaining, grace=False):
         from email_system.services.email_sender import EmailSendingService
 
         # Mask the license key for display
-        key = config.pos_license_key or ''
+        key = config.pos_license_key or ""
         license_key_masked = f"{key[:8]}****{key[-4:]}" if len(key) > 12 else key
 
         EmailSendingService.send_template_email(
             to_email=ss.admin_email,
-            template_type='pos_license_expiration_warning',
+            template_type="pos_license_expiration_warning",
             context={
-                'days_remaining': days_remaining,
-                'license_key_masked': license_key_masked,
-                'expires_at': str(config.pos_license_expires_at or ''),
-                'is_grace_period': grace,
-                'renewal_url': 'https://spwig.com/pos',
+                "days_remaining": days_remaining,
+                "license_key_masked": license_key_masked,
+                "expires_at": str(config.pos_license_expires_at or ""),
+                "is_grace_period": grace,
+                "renewal_url": "https://spwig.com/pos",
             },
-            language='en',
+            language="en",
             enable_tracking=False,
         )
 

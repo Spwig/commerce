@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 FedEx Document Upload API Integration.
 
@@ -11,15 +10,15 @@ Workflows:
 1. Pre-shipment: Upload docs → get docId → attach to shipment
 2. Post-shipment: Create shipment → upload with tracking number
 """
-import logging
+
 import base64
-from typing import Dict, List, Optional, Any
+import logging
 from decimal import Decimal
+from typing import Any
 
 from .exceptions import (
-    FedExError,
-    FedExValidationError,
     FedExDocumentError,
+    FedExValidationError,
 )
 
 logger = logging.getLogger(__name__)
@@ -39,11 +38,11 @@ class FedExDocumentUploader:
 
     # Supported document types
     DOCUMENT_TYPES = {
-        'COMMERCIAL_INVOICE': 'Commercial Invoice',
-        'CERTIFICATE_OF_ORIGIN': 'Certificate of Origin',
-        'USMCA_CERTIFICATE_OF_ORIGIN': 'USMCA Certificate of Origin',
-        'PRO_FORMA_INVOICE': 'Pro Forma Invoice',
-        'OTHER': 'Other Document',
+        "COMMERCIAL_INVOICE": "Commercial Invoice",
+        "CERTIFICATE_OF_ORIGIN": "Certificate of Origin",
+        "USMCA_CERTIFICATE_OF_ORIGIN": "USMCA Certificate of Origin",
+        "PRO_FORMA_INVOICE": "Pro Forma Invoice",
+        "OTHER": "Other Document",
     }
 
     # File size limits (FedEx API limits)
@@ -65,9 +64,9 @@ class FedExDocumentUploader:
         document_type: str,
         file_content: bytes,
         file_name: str,
-        reference_id: Optional[str] = None,
-        workflow_name: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        reference_id: str | None = None,
+        workflow_name: str | None = None,
+    ) -> dict[str, Any]:
         """
         Upload a document before creating the shipment (pre-shipment workflow).
 
@@ -98,36 +97,36 @@ class FedExDocumentUploader:
         self._validate_document(document_type, file_content, file_name)
 
         # Encode file to base64
-        encoded_content = base64.b64encode(file_content).decode('utf-8')
+        encoded_content = base64.b64encode(file_content).decode("utf-8")
 
         # Build request payload
         payload = {
-            'workflowName': workflow_name or 'ETDPostshipment',
-            'carrierCode': 'FDXE',  # FedEx Express
-            'documents': [{
-                'contentType': self._get_content_type(file_name),
-                'workflowName': workflow_name or 'ETDPostshipment',
-                'documentType': document_type,
-                'fileName': file_name,
-                'documentContent': encoded_content,
-            }]
+            "workflowName": workflow_name or "ETDPostshipment",
+            "carrierCode": "FDXE",  # FedEx Express
+            "documents": [
+                {
+                    "contentType": self._get_content_type(file_name),
+                    "workflowName": workflow_name or "ETDPostshipment",
+                    "documentType": document_type,
+                    "fileName": file_name,
+                    "documentContent": encoded_content,
+                }
+            ],
         }
 
         if reference_id:
-            payload['referenceId'] = reference_id
+            payload["referenceId"] = reference_id
 
         try:
             # Make API request
             response = self.api_client._make_request(
-                'POST',
-                '/documents/v1/etds/upload',
-                json=payload
+                "POST", "/documents/v1/etds/upload", json=payload
             )
 
             # Extract document ID from response
-            output = response.get('output', {})
-            meta = output.get('meta', {})
-            document_id = meta.get('documentId')
+            output = response.get("output", {})
+            meta = output.get("meta", {})
+            document_id = meta.get("documentId")
 
             if not document_id:
                 raise FedExDocumentError("No document ID returned from upload")
@@ -135,10 +134,10 @@ class FedExDocumentUploader:
             logger.info(f"Document uploaded successfully: {document_id}")
 
             return {
-                'success': True,
-                'document_id': document_id,
-                'reference_id': reference_id or '',
-                'message': f'Document {file_name} uploaded successfully',
+                "success": True,
+                "document_id": document_id,
+                "reference_id": reference_id or "",
+                "message": f"Document {file_name} uploaded successfully",
             }
 
         except Exception as e:
@@ -151,7 +150,7 @@ class FedExDocumentUploader:
         document_type: str,
         file_content: bytes,
         file_name: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Upload a document after shipment creation (post-shipment workflow).
 
@@ -181,34 +180,34 @@ class FedExDocumentUploader:
         self._validate_document(document_type, file_content, file_name)
 
         # Encode file to base64
-        encoded_content = base64.b64encode(file_content).decode('utf-8')
+        encoded_content = base64.b64encode(file_content).decode("utf-8")
 
         # Build request payload
         payload = {
-            'workflowName': 'ETDPostshipment',
-            'carrierCode': 'FDXE',
-            'trackingNumber': tracking_number,
-            'documents': [{
-                'contentType': self._get_content_type(file_name),
-                'workflowName': 'ETDPostshipment',
-                'documentType': document_type,
-                'fileName': file_name,
-                'documentContent': encoded_content,
-            }]
+            "workflowName": "ETDPostshipment",
+            "carrierCode": "FDXE",
+            "trackingNumber": tracking_number,
+            "documents": [
+                {
+                    "contentType": self._get_content_type(file_name),
+                    "workflowName": "ETDPostshipment",
+                    "documentType": document_type,
+                    "fileName": file_name,
+                    "documentContent": encoded_content,
+                }
+            ],
         }
 
         try:
             # Make API request
             response = self.api_client._make_request(
-                'POST',
-                '/documents/v1/etds/upload',
-                json=payload
+                "POST", "/documents/v1/etds/upload", json=payload
             )
 
             # Extract document ID from response
-            output = response.get('output', {})
-            meta = output.get('meta', {})
-            document_id = meta.get('documentId')
+            output = response.get("output", {})
+            meta = output.get("meta", {})
+            document_id = meta.get("documentId")
 
             if not document_id:
                 raise FedExDocumentError("No document ID returned from upload")
@@ -216,10 +215,10 @@ class FedExDocumentUploader:
             logger.info(f"Post-shipment document uploaded: {document_id}")
 
             return {
-                'success': True,
-                'document_id': document_id,
-                'tracking_number': tracking_number,
-                'message': f'Document {file_name} attached to shipment {tracking_number}',
+                "success": True,
+                "document_id": document_id,
+                "tracking_number": tracking_number,
+                "message": f"Document {file_name} attached to shipment {tracking_number}",
             }
 
         except Exception as e:
@@ -228,11 +227,11 @@ class FedExDocumentUploader:
 
     def generate_commercial_invoice_data(
         self,
-        order_items: List[Dict[str, Any]],
-        shipper: Dict[str, Any],
-        recipient: Dict[str, Any],
-        currency: str = 'USD',
-    ) -> Dict[str, Any]:
+        order_items: list[dict[str, Any]],
+        shipper: dict[str, Any],
+        recipient: dict[str, Any],
+        currency: str = "USD",
+    ) -> dict[str, Any]:
         """
         Generate commercial invoice data structure for FedEx.
 
@@ -250,14 +249,14 @@ class FedExDocumentUploader:
             Dict containing commercial invoice data ready for FedEx API
         """
         # Calculate totals
-        subtotal = Decimal('0')
-        total_weight = Decimal('0')
+        subtotal = Decimal("0")
+        total_weight = Decimal("0")
 
         commodities = []
 
         for item in order_items:
-            product = item.get('product')
-            quantity = item.get('quantity', 1)
+            product = item.get("product")
+            quantity = item.get("quantity", 1)
 
             # Get customs data from product
             if not product.is_international_shipping_ready():
@@ -271,40 +270,43 @@ class FedExDocumentUploader:
             subtotal += total_price
 
             # Add commodity
-            commodities.append({
-                'description': product.name[:35],  # FedEx limit
-                'quantity': quantity,
-                'unitPrice': {
-                    'currency': currency,
-                    'amount': float(unit_price),
-                },
-                'customsValue': {
-                    'currency': currency,
-                    'amount': float(total_price),
-                },
-                'weight': {
-                    'units': 'LB',
-                    'value': float(product.weight or 0),
-                },
-                'countryOfManufacture': product.country_of_origin,
-                'harmonizedCode': product.hs_code,
-                'exportLicenseNumber': product.export_license_number or None,
-                'exportLicenseExpirationDate': (
-                    product.export_license_expiry.isoformat()
-                    if product.export_license_expiry else None
-                ),
-            })
+            commodities.append(
+                {
+                    "description": product.name[:35],  # FedEx limit
+                    "quantity": quantity,
+                    "unitPrice": {
+                        "currency": currency,
+                        "amount": float(unit_price),
+                    },
+                    "customsValue": {
+                        "currency": currency,
+                        "amount": float(total_price),
+                    },
+                    "weight": {
+                        "units": "LB",
+                        "value": float(product.weight or 0),
+                    },
+                    "countryOfManufacture": product.country_of_origin,
+                    "harmonizedCode": product.hs_code,
+                    "exportLicenseNumber": product.export_license_number or None,
+                    "exportLicenseExpirationDate": (
+                        product.export_license_expiry.isoformat()
+                        if product.export_license_expiry
+                        else None
+                    ),
+                }
+            )
 
             total_weight += Decimal(str(product.weight or 0)) * Decimal(str(quantity))
 
         return {
-            'commodities': commodities,
-            'shipper': shipper,
-            'recipient': recipient,
-            'totals': {
-                'subtotal': float(subtotal),
-                'currency': currency,
-                'total_weight': float(total_weight),
+            "commodities": commodities,
+            "shipper": shipper,
+            "recipient": recipient,
+            "totals": {
+                "subtotal": float(subtotal),
+                "currency": currency,
+                "total_weight": float(total_weight),
             },
         }
 
@@ -322,10 +324,9 @@ class FedExDocumentUploader:
         """
         # Check document type
         if document_type not in self.DOCUMENT_TYPES:
-            valid_types = ', '.join(self.DOCUMENT_TYPES.keys())
+            valid_types = ", ".join(self.DOCUMENT_TYPES.keys())
             raise FedExValidationError(
-                f"Invalid document type: {document_type}. "
-                f"Valid types: {valid_types}"
+                f"Invalid document type: {document_type}. Valid types: {valid_types}"
             )
 
         # Check file size
@@ -337,12 +338,11 @@ class FedExDocumentUploader:
             )
 
         # Check file extension
-        allowed_extensions = ['.pdf', '.png', '.jpg', '.jpeg']
-        file_ext = '.' + file_name.split('.')[-1].lower() if '.' in file_name else ''
+        allowed_extensions = [".pdf", ".png", ".jpg", ".jpeg"]
+        file_ext = "." + file_name.split(".")[-1].lower() if "." in file_name else ""
         if file_ext not in allowed_extensions:
             raise FedExValidationError(
-                f"Unsupported file type: {file_ext}. "
-                f"Allowed: {', '.join(allowed_extensions)}"
+                f"Unsupported file type: {file_ext}. Allowed: {', '.join(allowed_extensions)}"
             )
 
         logger.debug(f"Document validation passed: {file_name} ({file_size} bytes)")
@@ -357,13 +357,13 @@ class FedExDocumentUploader:
         Returns:
             MIME type string
         """
-        file_ext = '.' + file_name.split('.')[-1].lower() if '.' in file_name else ''
+        file_ext = "." + file_name.split(".")[-1].lower() if "." in file_name else ""
 
         content_types = {
-            '.pdf': 'application/pdf',
-            '.png': 'image/png',
-            '.jpg': 'image/jpeg',
-            '.jpeg': 'image/jpeg',
+            ".pdf": "application/pdf",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
         }
 
-        return content_types.get(file_ext, 'application/pdf')
+        return content_types.get(file_ext, "application/pdf")

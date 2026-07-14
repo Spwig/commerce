@@ -3,11 +3,12 @@ Rewards service for referral program.
 
 Handles reward creation, issuance, redemption, revocation, and expiry.
 """
+
 import logging
-from django.utils import timezone
-from django.db import transaction
 from datetime import timedelta
-from decimal import Decimal
+
+from django.db import transaction
+from django.utils import timezone
 
 from core.utils import get_default_currency
 
@@ -30,47 +31,47 @@ def create_rewards(attribution):
     reward_config = program.reward_config
 
     # Calculate expiry date
-    expiry_days = reward_config.get('expiry_days', 90)
+    expiry_days = reward_config.get("expiry_days", 90)
     expires_at = timezone.now() + timedelta(days=expiry_days) if expiry_days else None
 
     referrer_reward = None
     referee_reward = None
 
     # Create referrer reward
-    if 'referrer' in reward_config:
-        referrer_config = reward_config['referrer']
+    if "referrer" in reward_config:
+        referrer_config = reward_config["referrer"]
 
         referrer_reward = ReferralReward.objects.create(
             program=program,
             attribution=attribution,
             referrer_identity=attribution.referrer_identity,
             customer=attribution.referrer_identity.customer,
-            recipient_type='referrer',
-            kind=referrer_config.get('kind', 'credit'),
-            amount=referrer_config.get('amount', 10),
-            amount_currency=referrer_config.get('currency', get_default_currency()),
-            percentage=referrer_config.get('percentage'),
-            description=referrer_config.get('description', 'Referral reward'),
-            status='pending',
+            recipient_type="referrer",
+            kind=referrer_config.get("kind", "credit"),
+            amount=referrer_config.get("amount", 10),
+            amount_currency=referrer_config.get("currency", get_default_currency()),
+            percentage=referrer_config.get("percentage"),
+            description=referrer_config.get("description", "Referral reward"),
+            status="pending",
             expires_at=expires_at,
         )
 
     # Create referee reward (if double-sided)
-    if reward_config.get('double_sided', False) and 'referee' in reward_config:
-        referee_config = reward_config['referee']
+    if reward_config.get("double_sided", False) and "referee" in reward_config:
+        referee_config = reward_config["referee"]
 
         referee_reward = ReferralReward.objects.create(
             program=program,
             attribution=attribution,
             referrer_identity=attribution.referrer_identity,  # Link to referrer for tracking
             customer=attribution.referee_customer,
-            recipient_type='referee',
-            kind=referee_config.get('kind', 'discount'),
-            amount=referee_config.get('amount', 10),
-            amount_currency=referee_config.get('currency', get_default_currency()),
-            percentage=referee_config.get('percentage'),
-            description=referee_config.get('description', 'Welcome reward'),
-            status='pending',
+            recipient_type="referee",
+            kind=referee_config.get("kind", "discount"),
+            amount=referee_config.get("amount", 10),
+            amount_currency=referee_config.get("currency", get_default_currency()),
+            percentage=referee_config.get("percentage"),
+            description=referee_config.get("description", "Welcome reward"),
+            status="pending",
             expires_at=expires_at,
         )
 
@@ -88,17 +89,17 @@ def issue_reward(reward):
     Returns:
         bool: True if successful
     """
-    if reward.status != 'pending':
+    if reward.status != "pending":
         return False
 
     # Issue based on reward kind
-    if reward.kind == 'credit':
+    if reward.kind == "credit":
         success = create_wallet_credit(reward)
-    elif reward.kind == 'coupon':
+    elif reward.kind == "coupon":
         success = create_coupon_code(reward)
-    elif reward.kind == 'percent':
+    elif reward.kind == "percent":
         success = create_percentage_coupon(reward)
-    elif reward.kind == 'perk':
+    elif reward.kind == "perk":
         # Perks are issued differently (manual or automated based on type)
         success = True
     else:
@@ -109,7 +110,7 @@ def issue_reward(reward):
         reward.issue()
 
         # Update referrer identity stats
-        if reward.recipient_type == 'referrer' and reward.referrer_identity:
+        if reward.recipient_type == "referrer" and reward.referrer_identity:
             reward.referrer_identity.increment_conversions(reward.amount.amount)
 
         # Send notification email
@@ -140,14 +141,18 @@ def create_and_issue_rewards(attribution):
         if referrer_reward:
             success = issue_reward(referrer_reward)
             if success:
-                logger.info(f"Issued referrer reward {referrer_reward.id} to {referrer_reward.customer.email}")
+                logger.info(
+                    f"Issued referrer reward {referrer_reward.id} to {referrer_reward.customer.email}"
+                )
             else:
                 logger.error(f"Failed to issue referrer reward {referrer_reward.id}")
 
         if referee_reward:
             success = issue_reward(referee_reward)
             if success:
-                logger.info(f"Issued referee reward {referee_reward.id} to {referee_reward.customer.email}")
+                logger.info(
+                    f"Issued referee reward {referee_reward.id} to {referee_reward.customer.email}"
+                )
             else:
                 logger.error(f"Failed to issue referee reward {referee_reward.id}")
 
@@ -155,12 +160,15 @@ def create_and_issue_rewards(attribution):
         if attribution.referrer_identity:
             try:
                 from .email_notifications import send_referral_successful_email
+
                 send_referral_successful_email(attribution)
             except Exception as e:
                 logger.error(f"Error sending referral successful email: {e}", exc_info=True)
 
     except Exception as e:
-        logger.error(f"Error creating/issuing rewards for attribution {attribution.id}: {e}", exc_info=True)
+        logger.error(
+            f"Error creating/issuing rewards for attribution {attribution.id}: {e}", exc_info=True
+        )
 
 
 def redeem_reward(reward):
@@ -173,7 +181,7 @@ def redeem_reward(reward):
     Returns:
         bool: True if successful
     """
-    if reward.status != 'issued':
+    if reward.status != "issued":
         return False
 
     reward.redeem()
@@ -181,7 +189,7 @@ def redeem_reward(reward):
 
 
 @transaction.atomic
-def revoke_reward(reward, reason=''):
+def revoke_reward(reward, reason=""):
     """
     Revoke a reward (reverse wallet credit or disable coupon).
 
@@ -192,13 +200,13 @@ def revoke_reward(reward, reason=''):
     Returns:
         bool: True if successful
     """
-    if reward.status not in ['pending', 'issued']:
+    if reward.status not in ["pending", "issued"]:
         return False
 
     # Reverse integration based on reward kind
-    if reward.kind == 'credit' and reward.wallet_transaction_id:
+    if reward.kind == "credit" and reward.wallet_transaction_id:
         reverse_wallet_credit(reward)
-    elif reward.kind in ['coupon', 'percent'] and reward.voucher_code_id:
+    elif reward.kind in ["coupon", "percent"] and reward.voucher_code_id:
         disable_coupon_code(reward)
 
     # Mark reward as revoked
@@ -220,17 +228,14 @@ def expire_old_rewards():
     from ..models import ReferralReward
 
     # Find expired rewards
-    expired_rewards = ReferralReward.objects.filter(
-        status='issued',
-        expires_at__lte=timezone.now()
-    )
+    expired_rewards = ReferralReward.objects.filter(status="issued", expires_at__lte=timezone.now())
 
     count = 0
     for reward in expired_rewards:
         # Reverse any wallet credits or coupons
-        if reward.kind == 'credit' and reward.wallet_transaction_id:
+        if reward.kind == "credit" and reward.wallet_transaction_id:
             reverse_wallet_credit(reward)
-        elif reward.kind in ['coupon', 'percent'] and reward.voucher_code_id:
+        elif reward.kind in ["coupon", "percent"] and reward.voucher_code_id:
             disable_coupon_code(reward)
 
         # Mark as expired
@@ -259,13 +264,13 @@ def create_wallet_credit(reward):
         user=reward.customer,
         amount=reward.amount.amount,
         currency=str(reward.amount.currency),
-        source='referral',
-        description=f'Referral reward: {reward.description}',
+        source="referral",
+        description=f"Referral reward: {reward.description}",
         reference_id=str(reward.id),
     )
 
     reward.wallet_transaction_id = txn.id
-    reward.save(update_fields=['wallet_transaction_id'])
+    reward.save(update_fields=["wallet_transaction_id"])
     return True
 
 
@@ -279,9 +284,10 @@ def create_coupon_code(reward):
     Returns:
         bool: True if successful
     """
-    from vouchers.models import VoucherCode
     import random
     import string
+
+    from vouchers.models import VoucherCode
 
     # Generate unique coupon code
     code = f"REF{''.join(random.choices(string.ascii_uppercase + string.digits, k=8))}"
@@ -291,7 +297,7 @@ def create_coupon_code(reward):
         code=code,
         name=f"Referral Reward - {reward.customer.email}",
         description=reward.description,
-        discount_type='fixed',
+        discount_type="fixed",
         discount_value=reward.amount.amount,
         minimum_spend=0,
         is_active=True,
@@ -301,7 +307,7 @@ def create_coupon_code(reward):
 
     # Store voucher ID reference
     reward.voucher_code_id = voucher.id
-    reward.save(update_fields=['voucher_code_id'])
+    reward.save(update_fields=["voucher_code_id"])
 
     return True
 
@@ -316,9 +322,10 @@ def create_percentage_coupon(reward):
     Returns:
         bool: True if successful
     """
-    from vouchers.models import VoucherCode
     import random
     import string
+
+    from vouchers.models import VoucherCode
 
     # Generate unique coupon code
     code = f"REF{''.join(random.choices(string.ascii_uppercase + string.digits, k=8))}"
@@ -328,7 +335,7 @@ def create_percentage_coupon(reward):
         code=code,
         name=f"Referral Reward - {reward.customer.email}",
         description=reward.description,
-        discount_type='percentage',
+        discount_type="percentage",
         discount_value=reward.percentage or 10,
         minimum_spend=0,
         maximum_discount=reward.amount.amount if reward.amount else None,
@@ -339,7 +346,7 @@ def create_percentage_coupon(reward):
 
     # Store voucher ID reference
     reward.voucher_code_id = voucher.id
-    reward.save(update_fields=['voucher_code_id'])
+    reward.save(update_fields=["voucher_code_id"])
 
     return True
 
@@ -354,15 +361,13 @@ def reverse_wallet_credit(reward):
     Returns:
         bool: True if successful
     """
-    from wallet.services import WalletService
     from wallet.models import WalletTransaction
+    from wallet.services import WalletService
 
     if reward.wallet_transaction_id:
         try:
             original = WalletTransaction.objects.get(id=reward.wallet_transaction_id)
-            WalletService.reverse_transaction(
-                original, reason='Referral reward revoked'
-            )
+            WalletService.reverse_transaction(original, reason="Referral reward revoked")
             return True
         except WalletTransaction.DoesNotExist:
             pass
@@ -386,7 +391,7 @@ def disable_coupon_code(reward):
         try:
             voucher = VoucherCode.objects.get(id=reward.voucher_code_id)
             voucher.is_active = False
-            voucher.save(update_fields=['is_active'])
+            voucher.save(update_fields=["is_active"])
             return True
         except VoucherCode.DoesNotExist:
             pass
@@ -418,6 +423,7 @@ def send_reward_expiring_email(reward, days_until_expiry=7):
         bool: True if sent successfully
     """
     from .email_notifications import send_reward_expiring_email as _send
+
     return _send(reward, days_until_expiry)
 
 
@@ -432,6 +438,7 @@ def send_reward_expired_email(reward):
         bool: True if sent successfully
     """
     from .email_notifications import send_reward_expired_email as _send
+
     return _send(reward)
 
 
@@ -447,4 +454,5 @@ def send_reward_revoked_email(reward, reason):
         bool: True if sent successfully
     """
     from .email_notifications import send_reward_revoked_email as _send
+
     return _send(reward, reason)

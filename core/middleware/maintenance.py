@@ -17,15 +17,15 @@ Bypass:
 """
 
 import logging
+
 from django.conf import settings
-from django.http import HttpResponse
+from django.core.cache import cache
 from django.shortcuts import render
 from django.utils.deprecation import MiddlewareMixin
-from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
-MAINTENANCE_CACHE_KEY = 'maintenance_mode_status'
+MAINTENANCE_CACHE_KEY = "maintenance_mode_status"
 MAINTENANCE_CACHE_TTL = 10  # seconds
 
 
@@ -36,23 +36,23 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
 
     # Paths that should always be accessible during maintenance
     ALLOWED_PATHS = (
-        '/admin/',
-        '/health/',
-        '/static/',
-        '/media/',
-        '/theme/',  # Theme CSS served via custom view
-        '/i18n/',  # Language switching
-        '/__debug__/',  # Django debug toolbar
-        '/api/',  # API access for headless setups
-        '/webhooks/',  # Webhooks for payment/shipping providers
+        "/admin/",
+        "/health/",
+        "/static/",
+        "/media/",
+        "/theme/",  # Theme CSS served via custom view
+        "/i18n/",  # Language switching
+        "/__debug__/",  # Django debug toolbar
+        "/api/",  # API access for headless setups
+        "/webhooks/",  # Webhooks for payment/shipping providers
     )
 
     # Paths that match setup wizard (with language prefix support)
     SETUP_PATHS = (
-        '/setup/',
-        '/en/setup/',
-        '/admin/setup/',
-        '/en/admin/setup/',
+        "/setup/",
+        "/en/setup/",
+        "/admin/setup/",
+        "/en/admin/setup/",
     )
 
     def process_request(self, request):
@@ -81,15 +81,15 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
         This runs after the view (or after process_request short-circuits),
         allowing the cookie to be set on whichever response is returned.
         """
-        if getattr(request, '_maintenance_bypass_granted', False):
-            secret = getattr(settings, 'MAINTENANCE_SECRET', '')
+        if getattr(request, "_maintenance_bypass_granted", False):
+            secret = getattr(settings, "MAINTENANCE_SECRET", "")
             response.set_cookie(
-                'maintenance_bypass',
+                "maintenance_bypass",
                 secret,
                 max_age=86400,  # 24 hours
                 httponly=True,
                 secure=not settings.DEBUG,
-                samesite='Lax'
+                samesite="Lax",
             )
         return response
 
@@ -101,45 +101,50 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
 
         try:
             from core.models import SiteSettings
+
             site_settings = SiteSettings.objects.first()
 
             if site_settings:
                 # Get logo URL if available
                 logo_url = None
-                if hasattr(site_settings, 'site_logo') and site_settings.site_logo:
+                if hasattr(site_settings, "site_logo") and site_settings.site_logo:
                     try:
-                        logo_url = site_settings.site_logo.file.url if site_settings.site_logo.file else None
+                        logo_url = (
+                            site_settings.site_logo.file.url
+                            if site_settings.site_logo.file
+                            else None
+                        )
                     except Exception:
                         pass
 
                 data = {
-                    'enabled': site_settings.maintenance_mode,
-                    'message': site_settings.maintenance_message,
-                    'page_id': getattr(site_settings, 'maintenance_page_id', None),
-                    'store_name': site_settings.site_name or 'Our Store',
-                    'logo_url': logo_url,
+                    "enabled": site_settings.maintenance_mode,
+                    "message": site_settings.maintenance_message,
+                    "page_id": getattr(site_settings, "maintenance_page_id", None),
+                    "store_name": site_settings.site_name or "Our Store",
+                    "logo_url": logo_url,
                 }
             else:
-                data = {'enabled': False}
+                data = {"enabled": False}
 
             cache.set(MAINTENANCE_CACHE_KEY, data, MAINTENANCE_CACHE_TTL)
             return data
         except Exception as e:
             logger.warning(f"Error fetching maintenance settings: {e}")
-            return {'enabled': False}
+            return {"enabled": False}
 
     def _is_maintenance_enabled(self):
         """Check if maintenance mode is enabled in SiteSettings."""
         # Check environment variable as emergency override (can force ON or OFF)
-        env_override = getattr(settings, 'MAINTENANCE_MODE_OVERRIDE', None)
+        env_override = getattr(settings, "MAINTENANCE_MODE_OVERRIDE", None)
         if env_override is not None:
             if isinstance(env_override, str):
-                return env_override.lower() in ('true', '1', 'yes')
+                return env_override.lower() in ("true", "1", "yes")
             return bool(env_override)
 
         # Read from database (cached)
         settings_data = self._get_cached_settings()
-        return settings_data.get('enabled', False)
+        return settings_data.get("enabled", False)
 
     def _should_bypass(self, request):
         """
@@ -156,7 +161,7 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
         # Check allowed paths (also handles language-prefixed paths like /en/theme/)
         # Strip language prefix if present (e.g., /en/theme/ -> /theme/)
         stripped_path = path
-        if len(path) > 3 and path[3] == '/' and path[1:3].isalpha():
+        if len(path) > 3 and path[3] == "/" and path[1:3].isalpha():
             stripped_path = path[3:]  # Remove /xx/ prefix
 
         for allowed in self.ALLOWED_PATHS:
@@ -170,9 +175,9 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
 
         # Check for any language prefix + admin/setup
         # Handles /de/admin/setup/, /fr/setup/, etc.
-        path_parts = path.strip('/').split('/')
+        path_parts = path.strip("/").split("/")
         if len(path_parts) >= 2:
-            if 'setup' in path_parts[:3] or 'admin' in path_parts[:2]:
+            if "setup" in path_parts[:3] or "admin" in path_parts[:2]:
                 return True
 
         # Check secret bypass
@@ -180,10 +185,9 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
             return True
 
         # Allow authenticated staff users (they might need frontend access for testing)
-        if hasattr(request, 'user') and request.user.is_authenticated and request.user.is_staff:
-            return True
-
-        return False
+        return bool(
+            hasattr(request, "user") and request.user.is_authenticated and request.user.is_staff
+        )
 
     def _check_secret(self, request):
         """
@@ -193,47 +197,45 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
         - Query parameter: ?secret=<MAINTENANCE_SECRET>
         - Cookie: maintenance_bypass=<MAINTENANCE_SECRET>
         """
-        secret = getattr(settings, 'MAINTENANCE_SECRET', None)
+        secret = getattr(settings, "MAINTENANCE_SECRET", None)
 
         if not secret:
             return False
 
         # Check query parameter
-        if request.GET.get('secret') == secret:
+        if request.GET.get("secret") == secret:
             # Will set cookie in response
             request._maintenance_bypass_granted = True
             return True
 
         # Check cookie
-        if request.COOKIES.get('maintenance_bypass') == secret:
-            return True
-
-        return False
+        return request.COOKIES.get("maintenance_bypass") == secret
 
     def _render_maintenance_page(self, request):
         """Render the maintenance page (PageBuilder or fallback)."""
         settings_data = self._get_cached_settings()
-        page_id = settings_data.get('page_id')
+        page_id = settings_data.get("page_id")
 
         # Try to render PageBuilder page
         if page_id:
             try:
                 from page_builder.models import Page
-                page = Page.objects.prefetch_related(
-                    'elements'
-                ).select_related(
-                    'theme', 'header_template', 'footer_template'
-                ).get(pk=page_id, status='published')
+
+                page = (
+                    Page.objects.prefetch_related("elements")
+                    .select_related("theme", "header_template", "footer_template")
+                    .get(pk=page_id, status="published")
+                )
 
                 elements = page.elements.filter(
-                    parent_element__isnull=True,
-                    is_active=True
-                ).order_by('order')
+                    parent_element__isnull=True, is_active=True
+                ).order_by("order")
 
                 # Get brand CSS
                 brand_css_url = None
                 try:
                     from design.theme_models import ThemeBranding
+
                     branding = ThemeBranding.objects.first()
                     if branding:
                         brand_css_url = branding.get_css_url()
@@ -241,16 +243,16 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
                     pass
 
                 context = {
-                    'page': page,
-                    'elements': elements,
-                    'page_title': page.meta_title or page.title,
-                    'brand_css_url': brand_css_url,
-                    'is_maintenance': True,
-                    'hide_header': getattr(page, 'hide_header', True),
-                    'hide_footer': getattr(page, 'hide_footer', True),
+                    "page": page,
+                    "elements": elements,
+                    "page_title": page.meta_title or page.title,
+                    "brand_css_url": brand_css_url,
+                    "is_maintenance": True,
+                    "hide_header": getattr(page, "hide_header", True),
+                    "hide_footer": getattr(page, "hide_footer", True),
                 }
 
-                response = render(request, 'page_builder/page.html', context, status=503)
+                response = render(request, "page_builder/page.html", context, status=503)
                 self._set_response_headers(response)
                 return response
 
@@ -265,23 +267,23 @@ class MaintenanceModeMiddleware(MiddlewareMixin):
     def _render_fallback_page(self, request, settings_data):
         """Render the static fallback maintenance page."""
         context = {
-            'store_name': settings_data.get('store_name', 'Our Store'),
-            'maintenance_message': settings_data.get('message', ''),
-            'store_logo': settings_data.get('logo_url'),
-            'spwig_url': 'https://spwig.com',
+            "store_name": settings_data.get("store_name", "Our Store"),
+            "maintenance_message": settings_data.get("message", ""),
+            "store_logo": settings_data.get("logo_url"),
+            "spwig_url": "https://spwig.com",
         }
 
-        response = render(request, 'maintenance/maintenance.html', context, status=503)
+        response = render(request, "maintenance/maintenance.html", context, status=503)
         self._set_response_headers(response)
         return response
 
     def _set_response_headers(self, response):
         """Set cache and other headers for maintenance response."""
         # Prevent caching of maintenance page
-        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = '0'
-        response['Retry-After'] = '3600'  # Hint to retry in 1 hour
+        response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response["Pragma"] = "no-cache"
+        response["Expires"] = "0"
+        response["Retry-After"] = "3600"  # Hint to retry in 1 hour
         return response
 
 
@@ -300,10 +302,11 @@ def is_maintenance_mode():
     """
     cached = cache.get(MAINTENANCE_CACHE_KEY)
     if cached is not None:
-        return cached.get('enabled', False)
+        return cached.get("enabled", False)
 
     try:
         from core.models import SiteSettings
+
         site_settings = SiteSettings.objects.first()
         return site_settings.maintenance_mode if site_settings else False
     except Exception:

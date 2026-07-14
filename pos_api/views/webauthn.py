@@ -3,34 +3,32 @@ import base64
 from django.core import signing
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from fido2.server import Fido2Server
+from fido2.webauthn import (
+    AttestationObject,
+    AttestedCredentialData,
+    AuthenticatorData,
+    CollectedClientData,
+    PublicKeyCredentialRpEntity,
+    PublicKeyCredentialUserEntity,
+    ResidentKeyRequirement,
+    UserVerificationRequirement,
+)
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiResponse
-
-from fido2.server import Fido2Server
-from fido2.webauthn import (
-    PublicKeyCredentialRpEntity,
-    PublicKeyCredentialUserEntity,
-    AttestedCredentialData,
-    AttestationObject,
-    AuthenticatorData,
-    CollectedClientData,
-    UserVerificationRequirement,
-    ResidentKeyRequirement,
-)
 
 from admin_api.authentication import MobileTokenAuthentication
 from pos_api.permissions import IsStaffUser
-
 
 CHALLENGE_MAX_AGE = 300  # 5 minutes
 
 
 def _get_rp(request):
     """Build relying party from request hostname."""
-    host = request.get_host().split(':')[0]
-    return PublicKeyCredentialRpEntity(name='Spwig POS', id=host)
+    host = request.get_host().split(":")[0]
+    return PublicKeyCredentialRpEntity(name="Spwig POS", id=host)
 
 
 def _get_server(request):
@@ -39,12 +37,12 @@ def _get_server(request):
 
 def _b64encode(data):
     """Encode bytes to URL-safe base64 without padding."""
-    return base64.urlsafe_b64encode(data).rstrip(b'=').decode('ascii')
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
 
 
 def _b64decode(s):
     """Decode URL-safe base64 (with or without padding)."""
-    s += '=' * (-len(s) % 4)
+    s += "=" * (-len(s) % 4)
     return base64.urlsafe_b64decode(s)
 
 
@@ -63,13 +61,16 @@ def _build_credentials(queryset):
 # Registration
 # ---------------------------------------------------------------------------
 
+
 @extend_schema(
     summary=_("Begin WebAuthn registration"),
-    description=_("Generate registration options for biometric enrollment. Returns challenge and credential creation options."),
+    description=_(
+        "Generate registration options for biometric enrollment. Returns challenge and credential creation options."
+    ),
     responses={200: OpenApiResponse(description=_("Registration options"))},
-    tags=['POS - WebAuthn'],
+    tags=["POS - WebAuthn"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def webauthn_register_begin(request):
@@ -97,85 +98,92 @@ def webauthn_register_begin(request):
     )
 
     # Sign the state for stateless round-trip
-    signed_state = signing.dumps(state, salt='webauthn-register')
+    signed_state = signing.dumps(state, salt="webauthn-register")
 
     # Serialize options to JSON-friendly format
     pk = options.public_key
-    return Response({
-        'success': True,
-        'state': signed_state,
-        'options': {
-            'rp': {'id': pk.rp.id, 'name': pk.rp.name},
-            'user': {
-                'id': _b64encode(pk.user.id),
-                'name': pk.user.name,
-                'displayName': pk.user.display_name,
+    return Response(
+        {
+            "success": True,
+            "state": signed_state,
+            "options": {
+                "rp": {"id": pk.rp.id, "name": pk.rp.name},
+                "user": {
+                    "id": _b64encode(pk.user.id),
+                    "name": pk.user.name,
+                    "displayName": pk.user.display_name,
+                },
+                "challenge": _b64encode(pk.challenge),
+                "pubKeyCredParams": [
+                    {"type": p.type.value, "alg": p.alg} for p in pk.pub_key_cred_params
+                ],
+                "timeout": pk.timeout or 60000,
+                "excludeCredentials": [
+                    {"type": c.type.value, "id": _b64encode(c.id)}
+                    for c in (pk.exclude_credentials or [])
+                ],
+                "authenticatorSelection": {
+                    "userVerification": "preferred",
+                    "residentKey": "discouraged",
+                },
+                "attestation": (pk.attestation.value if pk.attestation else "none"),
             },
-            'challenge': _b64encode(pk.challenge),
-            'pubKeyCredParams': [
-                {'type': p.type.value, 'alg': p.alg}
-                for p in pk.pub_key_cred_params
-            ],
-            'timeout': pk.timeout or 60000,
-            'excludeCredentials': [
-                {'type': c.type.value, 'id': _b64encode(c.id)}
-                for c in (pk.exclude_credentials or [])
-            ],
-            'authenticatorSelection': {
-                'userVerification': 'preferred',
-                'residentKey': 'discouraged',
-            },
-            'attestation': (pk.attestation.value if pk.attestation else 'none'),
-        },
-    })
+        }
+    )
 
 
 @extend_schema(
     summary=_("Complete WebAuthn registration"),
     description=_("Verify attestation and store credential for biometric unlock."),
     request={
-        'application/json': {
-            'type': 'object',
-            'properties': {
-                'state': {'type': 'string', 'description': 'Signed state from register_begin'},
-                'credential': {'type': 'object', 'description': 'Browser credential response'},
-                'device_name': {'type': 'string'},
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "state": {"type": "string", "description": "Signed state from register_begin"},
+                "credential": {"type": "object", "description": "Browser credential response"},
+                "device_name": {"type": "string"},
             },
-            'required': ['state', 'credential'],
+            "required": ["state", "credential"],
         }
     },
     responses={
         200: OpenApiResponse(description=_("Credential registered")),
         400: OpenApiResponse(description=_("Verification failed")),
     },
-    tags=['POS - WebAuthn'],
+    tags=["POS - WebAuthn"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def webauthn_register_complete(request):
     """Verify attestation and store credential."""
     from pos_app.models import WebAuthnCredential
 
-    signed_state = request.data.get('state', '')
-    credential_data = request.data.get('credential', {})
-    device_name = request.data.get('device_name', '')
+    signed_state = request.data.get("state", "")
+    credential_data = request.data.get("credential", {})
+    device_name = request.data.get("device_name", "")
 
     try:
-        state = signing.loads(signed_state, salt='webauthn-register', max_age=CHALLENGE_MAX_AGE)
+        state = signing.loads(signed_state, salt="webauthn-register", max_age=CHALLENGE_MAX_AGE)
     except (signing.BadSignature, signing.SignatureExpired):
         return Response(
-            {'success': False, 'error': {'code': 'INVALID_STATE', 'message': 'Challenge expired or invalid.'}},
-            status=status.HTTP_400_BAD_REQUEST
+            {
+                "success": False,
+                "error": {"code": "INVALID_STATE", "message": "Challenge expired or invalid."},
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     try:
-        client_data_bytes = _b64decode(credential_data['response']['clientDataJSON'])
-        att_object_bytes = _b64decode(credential_data['response']['attestationObject'])
+        client_data_bytes = _b64decode(credential_data["response"]["clientDataJSON"])
+        att_object_bytes = _b64decode(credential_data["response"]["attestationObject"])
     except (KeyError, Exception):
         return Response(
-            {'success': False, 'error': {'code': 'INVALID_CREDENTIAL', 'message': 'Invalid credential data.'}},
-            status=status.HTTP_400_BAD_REQUEST
+            {
+                "success": False,
+                "error": {"code": "INVALID_CREDENTIAL", "message": "Invalid credential data."},
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     server = _get_server(request)
@@ -188,8 +196,8 @@ def webauthn_register_complete(request):
         )
     except Exception as e:
         return Response(
-            {'success': False, 'error': {'code': 'VERIFICATION_FAILED', 'message': str(e)}},
-            status=status.HTTP_400_BAD_REQUEST
+            {"success": False, "error": {"code": "VERIFICATION_FAILED", "message": str(e)}},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Store credential
@@ -199,15 +207,16 @@ def webauthn_register_complete(request):
         credential_id=cred_data.credential_id,
         public_key=bytes(cred_data.public_key),
         sign_count=auth_data.counter,
-        device_name=device_name[:200] if device_name else '',
+        device_name=device_name[:200] if device_name else "",
     )
 
-    return Response({'success': True})
+    return Response({"success": True})
 
 
 # ---------------------------------------------------------------------------
 # Authentication
 # ---------------------------------------------------------------------------
+
 
 @extend_schema(
     summary=_("Begin WebAuthn authentication"),
@@ -217,11 +226,11 @@ def webauthn_register_complete(request):
         "If failed_attempts >= 3, only manager credentials are included."
     ),
     request={
-        'application/json': {
-            'type': 'object',
-            'properties': {
-                'locked_by_user_id': {'type': 'integer'},
-                'failed_attempts': {'type': 'integer'},
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "locked_by_user_id": {"type": "integer"},
+                "failed_attempts": {"type": "integer"},
             },
         }
     },
@@ -229,17 +238,17 @@ def webauthn_register_complete(request):
         200: OpenApiResponse(description=_("Authentication options")),
         404: OpenApiResponse(description=_("No credentials registered")),
     },
-    tags=['POS - WebAuthn'],
+    tags=["POS - WebAuthn"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def webauthn_authenticate_begin(request):
     """Generate WebAuthn authentication challenge."""
-    from pos_app.models import WebAuthnCredential, POSStaffDiscount
+    from pos_app.models import POSStaffDiscount, WebAuthnCredential
 
-    locked_by_user_id = request.data.get('locked_by_user_id')
-    failed_attempts = request.data.get('failed_attempts', 0)
+    locked_by_user_id = request.data.get("locked_by_user_id")
+    failed_attempts = request.data.get("failed_attempts", 0)
     require_manager = failed_attempts >= 3
 
     # Determine which user IDs have valid credentials
@@ -250,16 +259,21 @@ def webauthn_authenticate_begin(request):
 
     # Always include manager IDs
     manager_ids = set(
-        POSStaffDiscount.objects.filter(is_manager=True)
-        .values_list('user_id', flat=True)
+        POSStaffDiscount.objects.filter(is_manager=True).values_list("user_id", flat=True)
     )
     user_ids.update(manager_ids)
 
     credentials_qs = WebAuthnCredential.objects.filter(user_id__in=user_ids)
     if not credentials_qs.exists():
         return Response(
-            {'success': False, 'error': {'code': 'NO_CREDENTIALS', 'message': 'No biometric credentials registered.'}},
-            status=status.HTTP_404_NOT_FOUND
+            {
+                "success": False,
+                "error": {
+                    "code": "NO_CREDENTIALS",
+                    "message": "No biometric credentials registered.",
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
         )
 
     # Build credential ID → user ID map for lookup in complete
@@ -276,78 +290,85 @@ def webauthn_authenticate_begin(request):
     )
 
     # Attach context to state for the complete step
-    state['cred_user_map'] = cred_user_map
-    state['locked_by_user_id'] = locked_by_user_id
-    state['failed_attempts'] = failed_attempts
+    state["cred_user_map"] = cred_user_map
+    state["locked_by_user_id"] = locked_by_user_id
+    state["failed_attempts"] = failed_attempts
 
-    signed_state = signing.dumps(state, salt='webauthn-auth')
+    signed_state = signing.dumps(state, salt="webauthn-auth")
 
     pk = options.public_key
-    return Response({
-        'success': True,
-        'state': signed_state,
-        'options': {
-            'challenge': _b64encode(pk.challenge),
-            'timeout': pk.timeout or 60000,
-            'rpId': pk.rp_id,
-            'allowCredentials': [
-                {'type': c.type.value, 'id': _b64encode(c.id)}
-                for c in (pk.allow_credentials or [])
-            ],
-            'userVerification': 'preferred',
-        },
-    })
+    return Response(
+        {
+            "success": True,
+            "state": signed_state,
+            "options": {
+                "challenge": _b64encode(pk.challenge),
+                "timeout": pk.timeout or 60000,
+                "rpId": pk.rp_id,
+                "allowCredentials": [
+                    {"type": c.type.value, "id": _b64encode(c.id)}
+                    for c in (pk.allow_credentials or [])
+                ],
+                "userVerification": "preferred",
+            },
+        }
+    )
 
 
 @extend_schema(
     summary=_("Complete WebAuthn authentication"),
     description=_("Verify biometric assertion and unlock terminal."),
     request={
-        'application/json': {
-            'type': 'object',
-            'properties': {
-                'state': {'type': 'string'},
-                'credential': {'type': 'object'},
-                'cart_item_count': {'type': 'integer'},
-                'cart_total': {'type': 'string'},
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "state": {"type": "string"},
+                "credential": {"type": "object"},
+                "cart_item_count": {"type": "integer"},
+                "cart_total": {"type": "string"},
             },
-            'required': ['state', 'credential'],
+            "required": ["state", "credential"],
         }
     },
     responses={
         200: OpenApiResponse(description=_("Authentication successful")),
         400: OpenApiResponse(description=_("Verification failed")),
     },
-    tags=['POS - WebAuthn'],
+    tags=["POS - WebAuthn"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def webauthn_authenticate_complete(request):
     """Verify WebAuthn assertion and unlock."""
-    from pos_app.models import WebAuthnCredential, POSTerminal, POSStaffDiscount
     from django.contrib.auth import get_user_model
+
+    from pos_app.models import POSStaffDiscount, POSTerminal, WebAuthnCredential
+
     User = get_user_model()
 
-    signed_state = request.data.get('state', '')
-    credential_data = request.data.get('credential', {})
-    cart_items = request.data.get('cart_item_count', 0)
-    cart_total = request.data.get('cart_total')
+    signed_state = request.data.get("state", "")
+    credential_data = request.data.get("credential", {})
+    cart_items = request.data.get("cart_item_count", 0)
+    cart_total = request.data.get("cart_total")
 
     try:
-        state = signing.loads(signed_state, salt='webauthn-auth', max_age=CHALLENGE_MAX_AGE)
+        state = signing.loads(signed_state, salt="webauthn-auth", max_age=CHALLENGE_MAX_AGE)
     except (signing.BadSignature, signing.SignatureExpired):
         return Response(
-            {'success': False, 'error': {'code': 'INVALID_STATE', 'message': 'Challenge expired or invalid.'}},
-            status=status.HTTP_400_BAD_REQUEST
+            {
+                "success": False,
+                "error": {"code": "INVALID_STATE", "message": "Challenge expired or invalid."},
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
-    cred_user_map = state.pop('cred_user_map', {})
-    locked_by_user_id = state.pop('locked_by_user_id', None)
-    state.pop('failed_attempts', 0)
+    cred_user_map = state.pop("cred_user_map", {})
+    locked_by_user_id = state.pop("locked_by_user_id", None)
+    state.pop("failed_attempts", 0)
 
     # Get terminal for audit logging
-    terminal_uuid = request.headers.get('X-Terminal-UUID')
+    terminal_uuid = request.headers.get("X-Terminal-UUID")
     terminal = None
     if terminal_uuid:
         try:
@@ -357,20 +378,23 @@ def webauthn_authenticate_complete(request):
 
     # Parse client credential response
     try:
-        credential_id = _b64decode(credential_data['id'])
-        client_data_bytes = _b64decode(credential_data['response']['clientDataJSON'])
-        authenticator_data_bytes = _b64decode(credential_data['response']['authenticatorData'])
-        signature = _b64decode(credential_data['response']['signature'])
+        credential_id = _b64decode(credential_data["id"])
+        client_data_bytes = _b64decode(credential_data["response"]["clientDataJSON"])
+        authenticator_data_bytes = _b64decode(credential_data["response"]["authenticatorData"])
+        signature = _b64decode(credential_data["response"]["signature"])
     except (KeyError, Exception):
         return Response(
-            {'success': False, 'error': {'code': 'INVALID_CREDENTIAL', 'message': 'Invalid credential data.'}},
-            status=status.HTTP_400_BAD_REQUEST
+            {
+                "success": False,
+                "error": {"code": "INVALID_CREDENTIAL", "message": "Invalid credential data."},
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Rebuild credentials for verification
-    creds_qs = WebAuthnCredential.objects.filter(user_id__in=[
-        int(uid) for uid in cred_user_map.values()
-    ])
+    creds_qs = WebAuthnCredential.objects.filter(
+        user_id__in=[int(uid) for uid in cred_user_map.values()]
+    )
     credentials = _build_credentials(creds_qs)
 
     server = _get_server(request)
@@ -386,8 +410,8 @@ def webauthn_authenticate_complete(request):
         )
     except Exception as e:
         return Response(
-            {'success': False, 'error': {'code': 'VERIFICATION_FAILED', 'message': str(e)}},
-            status=status.HTTP_400_BAD_REQUEST
+            {"success": False, "error": {"code": "VERIFICATION_FAILED", "message": str(e)}},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Update sign count and last used
@@ -395,15 +419,13 @@ def webauthn_authenticate_complete(request):
         stored_cred = WebAuthnCredential.objects.get(credential_id=credential_id)
         stored_cred.sign_count += 1
         stored_cred.last_used_at = timezone.now()
-        stored_cred.save(update_fields=['sign_count', 'last_used_at'])
+        stored_cred.save(update_fields=["sign_count", "last_used_at"])
         auth_user = stored_cred.user
     except WebAuthnCredential.DoesNotExist:
         auth_user = request.user
 
     # Determine unlock type
-    is_manager = POSStaffDiscount.objects.filter(
-        user=auth_user, is_manager=True
-    ).exists()
+    is_manager = POSStaffDiscount.objects.filter(user=auth_user, is_manager=True).exists()
 
     locked_by_user = None
     if locked_by_user_id:
@@ -417,18 +439,23 @@ def webauthn_authenticate_complete(request):
     # Audit log
     if terminal:
         from pos_api.views.terminal import _log_lock_event
+
         _log_lock_event(
-            request, terminal, 'unlock_biometric',
+            request,
+            terminal,
+            "unlock_biometric",
             locked_by_user=locked_by_user,
             performed_by_user=auth_user,
             manager_override=manager_override,
             cart_items=cart_items,
             cart_total=cart_total,
-            unlock_method='biometric',
+            unlock_method="biometric",
         )
 
-    return Response({
-        'success': True,
-        'unlock_type': 'manager' if manager_override else 'cashier',
-        'user_name': auth_user.get_full_name() or auth_user.email,
-    })
+    return Response(
+        {
+            "success": True,
+            "unlock_type": "manager" if manager_override else "cashier",
+            "user_name": auth_user.get_full_name() or auth_user.email,
+        }
+    )

@@ -13,8 +13,6 @@ Usage:
 """
 
 import logging
-from functools import lru_cache
-from typing import Optional
 
 from django.conf import settings
 
@@ -28,6 +26,7 @@ def _get_platform_secrets():
     """
     try:
         from core.models import PlatformSecrets
+
         return PlatformSecrets.get_secrets()
     except Exception as e:
         # Database might not be available during migrations or early startup
@@ -51,8 +50,9 @@ def get_geoip_secret() -> str:
         return secrets.geoip_jwt_secret
 
     # Fall back to settings/env
-    return getattr(settings, 'GEOIP_JWT_SECRET_KEY',
-                   getattr(settings, 'GEOCODER_JWT_SECRET_KEY', ''))
+    return getattr(
+        settings, "GEOIP_JWT_SECRET_KEY", getattr(settings, "GEOCODER_JWT_SECRET_KEY", "")
+    )
 
 
 def get_push_secret() -> str:
@@ -70,7 +70,7 @@ def get_push_secret() -> str:
         return secrets.push_jwt_secret
 
     # Fall back to settings/env
-    return getattr(settings, 'PUSH_JWT_SECRET_KEY', '')
+    return getattr(settings, "PUSH_JWT_SECRET_KEY", "")
 
 
 def get_sso_secret() -> str:
@@ -88,10 +88,10 @@ def get_sso_secret() -> str:
         return secrets.sso_jwt_secret
 
     # Fall back to settings/env
-    return getattr(settings, 'SSO_REGISTRATION_SECRET', '')
+    return getattr(settings, "SSO_REGISTRATION_SECRET", "")
 
 
-def get_installation_uuid() -> Optional[str]:
+def get_installation_uuid() -> str | None:
     """
     Get the installation UUID assigned by the license server.
 

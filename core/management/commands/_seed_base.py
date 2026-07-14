@@ -9,6 +9,7 @@ Subclasses must define:
 Subclasses must implement:
     seed(self) -> int        -- Perform the seeding, return record count
 """
+
 import logging
 
 from django.core.management.base import BaseCommand
@@ -24,19 +25,21 @@ class SeedCommand(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--force', action='store_true',
-            help='Run even if version is current',
+            "--force",
+            action="store_true",
+            help="Run even if version is current",
         )
         parser.add_argument(
-            '--dry-run', action='store_true',
-            help='Show what would be done without making changes',
+            "--dry-run",
+            action="store_true",
+            help="Show what would be done without making changes",
         )
 
     def handle(self, *args, **options):
         from core.models import SeedVersion
 
-        force = options.get('force', False)
-        dry_run = options.get('dry_run', False)
+        force = options.get("force", False)
+        dry_run = options.get("dry_run", False)
 
         if not self.seed_name:
             raise ValueError("SeedCommand subclass must define seed_name")
@@ -44,16 +47,13 @@ class SeedCommand(BaseCommand):
         # Check version
         current = SeedVersion.objects.filter(seed_name=self.seed_name).first()
         if current and current.version >= self.seed_version and not force:
-            self.stdout.write(
-                f"  {self.seed_name} v{self.seed_version} already applied, skipping"
-            )
+            self.stdout.write(f"  {self.seed_name} v{self.seed_version} already applied, skipping")
             return
 
         if dry_run:
             action = "update" if current else "create"
             self.stdout.write(
-                f"  [DRY RUN] Would {action} {self.seed_name} "
-                f"to v{self.seed_version}"
+                f"  [DRY RUN] Would {action} {self.seed_name} to v{self.seed_version}"
             )
             return
 
@@ -66,20 +66,15 @@ class SeedCommand(BaseCommand):
         SeedVersion.objects.update_or_create(
             seed_name=self.seed_name,
             defaults={
-                'version': self.seed_version,
-                'record_count': record_count or 0,
+                "version": self.seed_version,
+                "record_count": record_count or 0,
             },
         )
 
         self.stdout.write(
-            self.style.SUCCESS(
-                f"  {self.seed_name} v{self.seed_version}: "
-                f"{record_count} records"
-            )
+            self.style.SUCCESS(f"  {self.seed_name} v{self.seed_version}: {record_count} records")
         )
 
     def seed(self) -> int:
         """Override in subclass. Return number of records affected."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} must implement seed()"
-        )
+        raise NotImplementedError(f"{self.__class__.__name__} must implement seed()")

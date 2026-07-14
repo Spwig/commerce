@@ -22,16 +22,14 @@ Key Management:
 import hashlib
 import os
 from pathlib import Path
-from typing import Tuple, Optional
-from datetime import datetime
 
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from django.conf import settings
+from django.core.files.base import File
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.core.files.base import File
 
 from .models import ComponentStore
 
@@ -57,11 +55,11 @@ class ComponentSigner:
 
     def __init__(self):
         """Initialize signer with loaded keys."""
-        self.keys_dir = Path(settings.MEDIA_ROOT) / 'component_signing'
+        self.keys_dir = Path(settings.MEDIA_ROOT) / "component_signing"
         self.keys_dir.mkdir(parents=True, exist_ok=True)
 
-        self.private_key_path = self.keys_dir / 'private_key.pem'
-        self.public_key_path = self.keys_dir / 'public_key.pem'
+        self.private_key_path = self.keys_dir / "private_key.pem"
+        self.public_key_path = self.keys_dir / "public_key.pem"
 
         # Load keys (generate if missing)
         if not self.private_key_path.exists() or not self.public_key_path.exists():
@@ -70,7 +68,7 @@ class ComponentSigner:
         self.private_key = self._load_private_key()
         self.public_key = self._load_public_key()
 
-    def sign_component(self, component: ComponentStore) -> Tuple[bool, str]:
+    def sign_component(self, component: ComponentStore) -> tuple[bool, str]:
         """
         Sign a component package.
 
@@ -95,22 +93,22 @@ class ComponentSigner:
             checksum = self._calculate_checksum(component.package_file)
 
             # Sign the checksum
-            signature = self._sign_data(checksum.encode('utf-8'))
+            signature = self._sign_data(checksum.encode("utf-8"))
 
             # Update component
             component.checksum_sha256 = checksum
             component.signature = signature.hex()
             component.signed_at = timezone.now()
-            component.signed_by = 'Spwig'  # System signing authority
+            component.signed_by = "Spwig"  # System signing authority
 
             # Don't save here - let caller save to allow additional updates
 
             return True, str(_("Component signed successfully"))
 
         except Exception as e:
-            return False, str(_("Signing failed: %(error)s") % {'error': str(e)})
+            return False, str(_("Signing failed: %(error)s") % {"error": str(e)})
 
-    def verify_component(self, component: ComponentStore) -> Tuple[bool, str]:
+    def verify_component(self, component: ComponentStore) -> tuple[bool, str]:
         """
         Verify component signature and integrity.
 
@@ -147,8 +145,7 @@ class ComponentSigner:
             # Verify signature
             signature_bytes = bytes.fromhex(component.signature)
             is_valid = self._verify_signature(
-                data=current_checksum.encode('utf-8'),
-                signature=signature_bytes
+                data=current_checksum.encode("utf-8"), signature=signature_bytes
             )
 
             if is_valid:
@@ -157,7 +154,7 @@ class ComponentSigner:
                 return False, str(_("Invalid signature - component may be tampered"))
 
         except Exception as e:
-            return False, str(_("Verification failed: %(error)s") % {'error': str(e)})
+            return False, str(_("Verification failed: %(error)s") % {"error": str(e)})
 
     def _calculate_checksum(self, file_field: File) -> str:
         """
@@ -191,11 +188,8 @@ class ComponentSigner:
         """
         signature = self.private_key.sign(
             data,
-            padding.PSS(
-                mgf=padding.MGF1(self.HASH_ALGORITHM),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            self.HASH_ALGORITHM
+            padding.PSS(mgf=padding.MGF1(self.HASH_ALGORITHM), salt_length=padding.PSS.MAX_LENGTH),
+            self.HASH_ALGORITHM,
         )
         return signature
 
@@ -215,10 +209,9 @@ class ComponentSigner:
                 signature,
                 data,
                 padding.PSS(
-                    mgf=padding.MGF1(self.HASH_ALGORITHM),
-                    salt_length=padding.PSS.MAX_LENGTH
+                    mgf=padding.MGF1(self.HASH_ALGORITHM), salt_length=padding.PSS.MAX_LENGTH
                 ),
-                self.HASH_ALGORITHM
+                self.HASH_ALGORITHM,
             )
             return True
         except Exception:
@@ -226,24 +219,21 @@ class ComponentSigner:
 
     def _load_private_key(self):
         """Load private key from file."""
-        with open(self.private_key_path, 'rb') as key_file:
+        with open(self.private_key_path, "rb") as key_file:
             private_key = serialization.load_pem_private_key(
-                key_file.read(),
-                password=None,
-                backend=default_backend()
+                key_file.read(), password=None, backend=default_backend()
             )
         return private_key
 
     def _load_public_key(self):
         """Load public key from file."""
-        with open(self.public_key_path, 'rb') as key_file:
+        with open(self.public_key_path, "rb") as key_file:
             public_key = serialization.load_pem_public_key(
-                key_file.read(),
-                backend=default_backend()
+                key_file.read(), backend=default_backend()
             )
         return public_key
 
-    def generate_keypair(self) -> Tuple[str, str]:
+    def generate_keypair(self) -> tuple[str, str]:
         """
         Generate new RSA keypair for signing.
 
@@ -255,9 +245,7 @@ class ComponentSigner:
         """
         # Generate private key
         private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=self.KEY_SIZE,
-            backend=default_backend()
+            public_exponent=65537, key_size=self.KEY_SIZE, backend=default_backend()
         )
 
         # Get public key
@@ -267,21 +255,21 @@ class ComponentSigner:
         private_pem = private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
+            encryption_algorithm=serialization.NoEncryption(),
         )
 
         # Serialize public key
         public_pem = public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
         )
 
         # Write keys to files
-        with open(self.private_key_path, 'wb') as f:
+        with open(self.private_key_path, "wb") as f:
             f.write(private_pem)
         os.chmod(self.private_key_path, 0o600)  # Read/write for owner only
 
-        with open(self.public_key_path, 'wb') as f:
+        with open(self.public_key_path, "wb") as f:
             f.write(public_pem)
         os.chmod(self.public_key_path, 0o644)  # Read for everyone
 

@@ -3,11 +3,13 @@ Analytics Serializers for Admin API
 
 Serializers for dashboard analytics and KPI data.
 """
+
 from rest_framework import serializers
 
 
 class SalesKPISerializer(serializers.Serializer):
     """Sales KPI data for a specific period."""
+
     total_sales = serializers.DecimalField(max_digits=12, decimal_places=2)
     currency = serializers.CharField()
     order_count = serializers.IntegerField()
@@ -17,6 +19,7 @@ class SalesKPISerializer(serializers.Serializer):
 
 class TopProductSerializer(serializers.Serializer):
     """Top selling product data."""
+
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     sku = serializers.CharField()
@@ -27,6 +30,7 @@ class TopProductSerializer(serializers.Serializer):
 
 class OrderStatusBreakdownSerializer(serializers.Serializer):
     """Order status breakdown."""
+
     status = serializers.CharField()
     status_display = serializers.CharField()
     count = serializers.IntegerField()
@@ -34,6 +38,7 @@ class OrderStatusBreakdownSerializer(serializers.Serializer):
 
 class DashboardAnalyticsSerializer(serializers.Serializer):
     """Complete dashboard analytics response."""
+
     today = SalesKPISerializer()
     last_7_days = SalesKPISerializer()
     last_30_days = SalesKPISerializer()
@@ -46,6 +51,7 @@ class DashboardAnalyticsSerializer(serializers.Serializer):
 
 class QuickStatsSerializer(serializers.Serializer):
     """Quick stats for dashboard header."""
+
     today_sales = serializers.DecimalField(max_digits=12, decimal_places=2)
     today_orders = serializers.IntegerField()
     pending_orders = serializers.IntegerField()
@@ -55,15 +61,17 @@ class QuickStatsSerializer(serializers.Serializer):
 
 class SalesComparisonSerializer(serializers.Serializer):
     """Sales comparison with previous period."""
+
     current_value = serializers.DecimalField(max_digits=12, decimal_places=2)
     previous_value = serializers.DecimalField(max_digits=12, decimal_places=2)
     change_percentage = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True)
-    trend = serializers.ChoiceField(choices=['up', 'down', 'stable'])
+    trend = serializers.ChoiceField(choices=["up", "down", "stable"])
     currency = serializers.CharField()
 
 
 class DailyStatsItemSerializer(serializers.Serializer):
     """Single day data point for chart display."""
+
     date = serializers.DateField()
     revenue = serializers.DecimalField(max_digits=12, decimal_places=2)
     order_count = serializers.IntegerField()
@@ -72,6 +80,7 @@ class DailyStatsItemSerializer(serializers.Serializer):
 
 class DailyStatsSerializer(serializers.Serializer):
     """Daily breakdown response for dashboard charts."""
+
     period = serializers.CharField()
     currency = serializers.CharField()
     start_date = serializers.DateField()
@@ -81,6 +90,7 @@ class DailyStatsSerializer(serializers.Serializer):
 
 class HourlySalesItemSerializer(serializers.Serializer):
     """Single hour data point."""
+
     hour = serializers.IntegerField()
     revenue = serializers.DecimalField(max_digits=12, decimal_places=2)
     order_count = serializers.IntegerField()
@@ -88,6 +98,7 @@ class HourlySalesItemSerializer(serializers.Serializer):
 
 class HourlySalesSerializer(serializers.Serializer):
     """Hourly sales breakdown for a single date."""
+
     date = serializers.DateField()
     currency = serializers.CharField()
     hours = HourlySalesItemSerializer(many=True)

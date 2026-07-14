@@ -4,8 +4,8 @@ Base Sync Serializer
 Abstract base class for all sync category serializers.
 Each serializer handles: export, import, diff, snapshot, and restore.
 """
+
 import logging
-from django.db import transaction
 
 logger = logging.getLogger(__name__)
 
@@ -28,13 +28,13 @@ class BaseSyncSerializer:
     """
 
     category_key = None  # Must be set by subclass
-    sync_type = 'collection'  # 'singleton' or 'collection'
+    sync_type = "collection"  # 'singleton' or 'collection'
 
     def __init__(self, sync_job=None, sync_step=None):
         self.sync_job = sync_job
         self.sync_step = sync_step
 
-    def export(self, credential_mode='redact'):
+    def export(self, credential_mode="redact"):
         """
         Export local data as a serializable dict.
 
@@ -52,7 +52,7 @@ class BaseSyncSerializer:
         """
         raise NotImplementedError
 
-    def import_data(self, data, dry_run=False, sync_mode='additive'):
+    def import_data(self, data, dry_run=False, sync_mode="additive"):
         """
         Import data into the local database.
 
@@ -150,10 +150,10 @@ class BaseSyncSerializer:
             value = getattr(instance, field_name)
 
             # Handle special field types
-            if hasattr(value, 'pk'):
+            if hasattr(value, "pk"):
                 # ForeignKey - store the related object's natural key or ID
                 data[field_name] = value.pk if value else None
-            elif hasattr(field, 'value_from_object'):
+            elif hasattr(field, "value_from_object"):
                 data[field_name] = field.value_from_object(instance)
             else:
                 data[field_name] = value
@@ -165,10 +165,10 @@ class BaseSyncSerializer:
         Get serializable field names for a model, excluding auto fields and specified fields.
         """
         exclude = set(exclude or [])
-        exclude.update({'id', 'pk'})
+        exclude.update({"id", "pk"})
         fields = []
         for field in model_class._meta.get_fields():
-            if hasattr(field, 'column') and field.name not in exclude:
+            if hasattr(field, "column") and field.name not in exclude:
                 fields.append(field.name)
         return fields
 
@@ -211,15 +211,17 @@ class BaseSyncSerializer:
             new_value = incoming.get(field_name)
 
             # Normalize for comparison
-            if hasattr(old_value, 'pk'):
+            if hasattr(old_value, "pk"):
                 old_value = old_value.pk if old_value else None
 
             if old_value != new_value:
-                changes.append({
-                    'field': field_name,
-                    'old': str(old_value)[:200] if old_value is not None else None,
-                    'new': str(new_value)[:200] if new_value is not None else None,
-                })
+                changes.append(
+                    {
+                        "field": field_name,
+                        "old": str(old_value)[:200] if old_value is not None else None,
+                        "new": str(new_value)[:200] if new_value is not None else None,
+                    }
+                )
 
         return changes
 
@@ -228,7 +230,8 @@ class SingletonSyncSerializer(BaseSyncSerializer):
     """
     Base class for singleton model serializers (e.g., SiteSettings, BlogSettings).
     """
-    sync_type = 'singleton'
+
+    sync_type = "singleton"
     model_class = None  # Must be set by subclass
     export_fields = None  # Must be set by subclass
     exclude_fields = None  # Fields to exclude from export/import
@@ -240,14 +243,14 @@ class SingletonSyncSerializer(BaseSyncSerializer):
         """Get the singleton instance."""
         return self.model_class.objects.first()
 
-    def export(self, credential_mode='redact'):
+    def export(self, credential_mode="redact"):
         instance = self._get_instance()
         if not instance:
             return {
-                'category': self.category_key,
-                'sync_type': 'singleton',
-                'items': {},
-                'total': 0,
+                "category": self.category_key,
+                "sync_type": "singleton",
+                "items": {},
+                "total": 0,
             }
 
         fields = self.export_fields or self._get_model_fields(
@@ -256,43 +259,51 @@ class SingletonSyncSerializer(BaseSyncSerializer):
         data = self._serialize_model_instance(instance, fields)
 
         return {
-            'category': self.category_key,
-            'sync_type': 'singleton',
-            'items': data,
-            'total': 1,
+            "category": self.category_key,
+            "sync_type": "singleton",
+            "items": data,
+            "total": 1,
         }
 
     def snapshot_current(self):
-        return self.export(credential_mode='skip')
+        return self.export(credential_mode="skip")
 
     def generate_diff(self, remote_data):
-        items = remote_data.get('items', {})
+        items = remote_data.get("items", {})
         if not items:
-            return {'changes': [], 'warnings': [], 'summary': 'No data to sync'}
+            return {"changes": [], "warnings": [], "summary": "No data to sync"}
 
         instance = self._get_instance()
         if not instance:
             return {
-                'changes': [{'type': 'add', 'model': self.model_class.__name__,
-                             'name': 'Settings', 'fields': items}],
-                'warnings': [],
-                'summary': '1 addition',
+                "changes": [
+                    {
+                        "type": "add",
+                        "model": self.model_class.__name__,
+                        "name": "Settings",
+                        "fields": items,
+                    }
+                ],
+                "warnings": [],
+                "summary": "1 addition",
             }
 
         fields = list(items.keys())
         changes = self._compute_field_diff(instance, items, fields)
         if not changes:
-            return {'changes': [], 'warnings': [], 'summary': 'No changes'}
+            return {"changes": [], "warnings": [], "summary": "No changes"}
 
         return {
-            'changes': [{
-                'type': 'modify',
-                'model': self.model_class.__name__,
-                'name': 'Settings',
-                'changes': changes,
-            }],
-            'warnings': [],
-            'summary': f'{len(changes)} field(s) modified',
+            "changes": [
+                {
+                    "type": "modify",
+                    "model": self.model_class.__name__,
+                    "name": "Settings",
+                    "changes": changes,
+                }
+            ],
+            "warnings": [],
+            "summary": f"{len(changes)} field(s) modified",
         }
 
 
@@ -300,7 +311,8 @@ class CollectionSyncSerializer(BaseSyncSerializer):
     """
     Base class for collection model serializers (multiple instances).
     """
-    sync_type = 'collection'
+
+    sync_type = "collection"
     model_class = None  # Primary model class
     natural_key_fields = None  # Fields that form the natural key for matching
     export_fields = None
@@ -313,7 +325,7 @@ class CollectionSyncSerializer(BaseSyncSerializer):
         """Get the queryset for export. Override for custom filtering."""
         return self.model_class.objects.all()
 
-    def export(self, credential_mode='redact'):
+    def export(self, credential_mode="redact"):
         queryset = self._get_queryset()
         fields = self.export_fields or self._get_model_fields(
             self.model_class, exclude=self.exclude_fields
@@ -322,23 +334,23 @@ class CollectionSyncSerializer(BaseSyncSerializer):
         items = []
         for instance in queryset:
             data = self._serialize_model_instance(instance, fields)
-            data['_source_pk'] = instance.pk
+            data["_source_pk"] = instance.pk
             items.append(data)
 
         return {
-            'category': self.category_key,
-            'sync_type': 'collection',
-            'items': items,
-            'total': len(items),
+            "category": self.category_key,
+            "sync_type": "collection",
+            "items": items,
+            "total": len(items),
         }
 
     def snapshot_current(self):
-        return self.export(credential_mode='skip')
+        return self.export(credential_mode="skip")
 
     def generate_diff(self, remote_data):
-        items = remote_data.get('items', [])
+        items = remote_data.get("items", [])
         if not items:
-            return {'changes': [], 'warnings': [], 'summary': 'No data to sync'}
+            return {"changes": [], "warnings": [], "summary": "No data to sync"}
 
         changes = []
         for item_data in items:
@@ -346,40 +358,44 @@ class CollectionSyncSerializer(BaseSyncSerializer):
                 self.model_class, item_data, self.natural_key_fields or []
             )
             if existing:
-                fields = [k for k in item_data.keys() if k != '_source_pk']
+                fields = [k for k in item_data if k != "_source_pk"]
                 field_changes = self._compute_field_diff(existing, item_data, fields)
                 if field_changes:
-                    changes.append({
-                        'type': 'modify',
-                        'model': self.model_class.__name__,
-                        'name': self._get_display_name(item_data),
-                        'changes': field_changes,
-                    })
+                    changes.append(
+                        {
+                            "type": "modify",
+                            "model": self.model_class.__name__,
+                            "name": self._get_display_name(item_data),
+                            "changes": field_changes,
+                        }
+                    )
             else:
-                changes.append({
-                    'type': 'add',
-                    'model': self.model_class.__name__,
-                    'name': self._get_display_name(item_data),
-                    'fields': {k: v for k, v in item_data.items() if k != '_source_pk'},
-                })
+                changes.append(
+                    {
+                        "type": "add",
+                        "model": self.model_class.__name__,
+                        "name": self._get_display_name(item_data),
+                        "fields": {k: v for k, v in item_data.items() if k != "_source_pk"},
+                    }
+                )
 
-        adds = sum(1 for c in changes if c['type'] == 'add')
-        mods = sum(1 for c in changes if c['type'] == 'modify')
+        adds = sum(1 for c in changes if c["type"] == "add")
+        mods = sum(1 for c in changes if c["type"] == "modify")
         parts = []
         if adds:
-            parts.append(f'{adds} addition(s)')
+            parts.append(f"{adds} addition(s)")
         if mods:
-            parts.append(f'{mods} modification(s)')
+            parts.append(f"{mods} modification(s)")
 
         return {
-            'changes': changes,
-            'warnings': [],
-            'summary': ', '.join(parts) if parts else 'No changes',
+            "changes": changes,
+            "warnings": [],
+            "summary": ", ".join(parts) if parts else "No changes",
         }
 
     def _get_display_name(self, item_data):
         """Get a human-readable name for an item. Override for custom display."""
-        for field in ['name', 'title', 'slug', 'code']:
+        for field in ["name", "title", "slug", "code"]:
             if field in item_data and item_data[field]:
                 return str(item_data[field])
-        return str(item_data.get('_source_pk', 'Unknown'))
+        return str(item_data.get("_source_pk", "Unknown"))

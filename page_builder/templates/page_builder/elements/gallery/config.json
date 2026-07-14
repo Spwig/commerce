@@ -11,9 +11,7 @@
   "translation_domain": "gallery_element",
   "template_file": "template.html",
   "inherit_base": true,
-  "scripts": [
-    "/static/page_builder/js/elements/gallery.js"
-  ],
+  "scripts": ["/static/page_builder/js/elements/gallery.js"],
   "disable_base_properties": ["text_color", "spacing"],
   "tabs": {
     "basic": {
@@ -54,11 +52,16 @@
               "item_schema": {
                 "type": "object",
                 "properties": {
-                  "src": {"type": "image", "label": "Image URL"},
-                  "alt": {"type": "string", "label": "Alt Text", "translatable": true},
-                  "title": {"type": "string", "label": "Image Title", "translatable": true},
-                  "caption": {"type": "textarea", "label": "Caption", "translatable": true, "rows": 2},
-                  "thumbnail": {"type": "image", "label": "Thumbnail URL (optional)"}
+                  "src": { "type": "image", "label": "Image URL" },
+                  "alt": { "type": "string", "label": "Alt Text", "translatable": true },
+                  "title": { "type": "string", "label": "Image Title", "translatable": true },
+                  "caption": {
+                    "type": "textarea",
+                    "label": "Caption",
+                    "translatable": true,
+                    "rows": 2
+                  },
+                  "thumbnail": { "type": "image", "label": "Thumbnail URL (optional)" }
                 }
               }
             }
@@ -79,9 +82,9 @@
               "type": "select",
               "label": "Style",
               "options": [
-                {"value": "grid", "label": "Grid Layout"},
-                {"value": "masonry", "label": "Masonry Layout"},
-                {"value": "carousel", "label": "Carousel Layout"}
+                { "value": "grid", "label": "Grid Layout" },
+                { "value": "masonry", "label": "Masonry Layout" },
+                { "value": "carousel", "label": "Carousel Layout" }
               ],
               "default": "grid"
             },
@@ -89,10 +92,10 @@
               "type": "select",
               "label": "Columns",
               "options": [
-                {"value": "2", "label": "2 Columns"},
-                {"value": "3", "label": "3 Columns"},
-                {"value": "4", "label": "4 Columns"},
-                {"value": "5", "label": "5 Columns"}
+                { "value": "2", "label": "2 Columns" },
+                { "value": "3", "label": "3 Columns" },
+                { "value": "4", "label": "4 Columns" },
+                { "value": "5", "label": "5 Columns" }
               ],
               "default": "3"
             },
@@ -100,9 +103,9 @@
               "type": "select",
               "label": "Spacing",
               "options": [
-                {"value": "2", "label": "Small"},
-                {"value": "4", "label": "Medium"},
-                {"value": "6", "label": "Large"}
+                { "value": "2", "label": "Small" },
+                { "value": "4", "label": "Medium" },
+                { "value": "6", "label": "Large" }
               ],
               "default": "4"
             }
@@ -158,26 +161,102 @@
     }
   },
   "properties": {
-    "title": {"type": "string", "label": "Gallery Title", "default": "Photo Gallery", "translatable": true},
-    "description": {"type": "textarea", "label": "Gallery Description", "default": "Explore our collection of beautiful images", "translatable": true, "rows": 2},
-    "layout": {"type": "select", "label": "Layout Style", "options": [{"value": "grid", "label": "Grid Layout"}, {"value": "masonry", "label": "Masonry Layout"}, {"value": "carousel", "label": "Carousel Layout"}], "default": "grid"},
-    "columns": {"type": "select", "label": "Columns", "options": [{"value": "2", "label": "2 Columns"}, {"value": "3", "label": "3 Columns"}, {"value": "4", "label": "4 Columns"}, {"value": "5", "label": "5 Columns"}], "default": "3"},
-    "spacing": {"type": "select", "label": "Image Spacing", "options": [{"value": "2", "label": "Small"}, {"value": "4", "label": "Medium"}, {"value": "6", "label": "Large"}], "default": "4"},
-    "lightbox": {"type": "boolean", "label": "Enable Lightbox", "default": true},
-    "lazy_loading": {"type": "boolean", "label": "Enable Lazy Loading", "default": true},
-    "images": {"type": "array", "label": "Gallery Images", "item_schema": {"type": "object", "properties": {"src": {"type": "image", "label": "Image URL"}, "alt": {"type": "string", "label": "Alt Text", "translatable": true}, "title": {"type": "string", "label": "Image Title", "translatable": true}, "caption": {"type": "textarea", "label": "Caption", "translatable": true, "rows": 2}, "thumbnail": {"type": "image", "label": "Thumbnail URL (optional)"}}}},
-    "show_captions": {"type": "boolean", "label": "Show Captions", "default": true},
-    "auto_play": {"type": "boolean", "label": "Auto Play (Carousel only)", "default": false},
-    "play_interval": {"type": "number", "label": "Auto Play Interval (seconds)", "default": 5, "min": 1, "max": 30}
+    "title": {
+      "type": "string",
+      "label": "Gallery Title",
+      "default": "Photo Gallery",
+      "translatable": true
+    },
+    "description": {
+      "type": "textarea",
+      "label": "Gallery Description",
+      "default": "Explore our collection of beautiful images",
+      "translatable": true,
+      "rows": 2
+    },
+    "layout": {
+      "type": "select",
+      "label": "Layout Style",
+      "options": [
+        { "value": "grid", "label": "Grid Layout" },
+        { "value": "masonry", "label": "Masonry Layout" },
+        { "value": "carousel", "label": "Carousel Layout" }
+      ],
+      "default": "grid"
+    },
+    "columns": {
+      "type": "select",
+      "label": "Columns",
+      "options": [
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" },
+        { "value": "4", "label": "4 Columns" },
+        { "value": "5", "label": "5 Columns" }
+      ],
+      "default": "3"
+    },
+    "spacing": {
+      "type": "select",
+      "label": "Image Spacing",
+      "options": [
+        { "value": "2", "label": "Small" },
+        { "value": "4", "label": "Medium" },
+        { "value": "6", "label": "Large" }
+      ],
+      "default": "4"
+    },
+    "lightbox": { "type": "boolean", "label": "Enable Lightbox", "default": true },
+    "lazy_loading": { "type": "boolean", "label": "Enable Lazy Loading", "default": true },
+    "images": {
+      "type": "array",
+      "label": "Gallery Images",
+      "item_schema": {
+        "type": "object",
+        "properties": {
+          "src": { "type": "image", "label": "Image URL" },
+          "alt": { "type": "string", "label": "Alt Text", "translatable": true },
+          "title": { "type": "string", "label": "Image Title", "translatable": true },
+          "caption": { "type": "textarea", "label": "Caption", "translatable": true, "rows": 2 },
+          "thumbnail": { "type": "image", "label": "Thumbnail URL (optional)" }
+        }
+      }
+    },
+    "show_captions": { "type": "boolean", "label": "Show Captions", "default": true },
+    "auto_play": { "type": "boolean", "label": "Auto Play (Carousel only)", "default": false },
+    "play_interval": {
+      "type": "number",
+      "label": "Auto Play Interval (seconds)",
+      "default": 5,
+      "min": 1,
+      "max": 30
+    }
   },
   "translations": {
-    "en": {"name": "Image Gallery", "description": "Responsive image gallery with lightbox and masonry layouts"},
-    "es": {"name": "Galería de Imágenes", "description": "Galería de imágenes responsiva con lightbox y diseños de mampostería"},
-    "fr": {"name": "Galerie d'Images", "description": "Galerie d'images responsive avec lightbox et mises en page en maçonnerie"},
-    "de": {"name": "Bildergalerie", "description": "Responsive Bildergalerie mit Lightbox und Mauerwerk-Layouts"},
-    "pt": {"name": "Galeria de Imagens", "description": "Galeria de imagens responsiva com lightbox e layouts de alvenaria"},
-    "zh-hans": {"name": "图片画廊", "description": "响应式图片画廊，支持灯箱和瀑布流布局"},
-    "ja": {"name": "画像ギャラリー", "description": "ライトボックスとメイソンリーレイアウトを備えたレスポンシブ画像ギャラリー"}
+    "en": {
+      "name": "Image Gallery",
+      "description": "Responsive image gallery with lightbox and masonry layouts"
+    },
+    "es": {
+      "name": "Galería de Imágenes",
+      "description": "Galería de imágenes responsiva con lightbox y diseños de mampostería"
+    },
+    "fr": {
+      "name": "Galerie d'Images",
+      "description": "Galerie d'images responsive avec lightbox et mises en page en maçonnerie"
+    },
+    "de": {
+      "name": "Bildergalerie",
+      "description": "Responsive Bildergalerie mit Lightbox und Mauerwerk-Layouts"
+    },
+    "pt": {
+      "name": "Galeria de Imagens",
+      "description": "Galeria de imagens responsiva com lightbox e layouts de alvenaria"
+    },
+    "zh-hans": { "name": "图片画廊", "description": "响应式图片画廊，支持灯箱和瀑布流布局" },
+    "ja": {
+      "name": "画像ギャラリー",
+      "description": "ライトボックスとメイソンリーレイアウトを備えたレスポンシブ画像ギャラリー"
+    }
   },
   "defaults": {
     "title": "Image Gallery",

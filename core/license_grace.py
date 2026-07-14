@@ -12,7 +12,6 @@ for license activation has expired. Uses progressive lockout:
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 from django.core.cache import cache
 from django.utils import timezone
@@ -23,34 +22,35 @@ GRACE_PERIOD_DAYS = 14
 WARNING_PHASE_DAYS = 7  # Additional days 15-21 after grace period
 TOTAL_DAYS_BEFORE_LOCKOUT = GRACE_PERIOD_DAYS + WARNING_PHASE_DAYS  # 21
 
-CACHE_KEY = 'license_grace_period_status'
+CACHE_KEY = "license_grace_period_status"
 CACHE_TTL = 60  # seconds
 
 
 @dataclass(frozen=True)
 class GracePeriodStatus:
     """Immutable status of the license grace period."""
+
     has_valid_license: bool
     is_in_grace_period: bool
     is_in_warning_phase: bool
     is_locked_out: bool
     days_remaining: int  # Days until lockout (0 if locked out)
     days_elapsed: int  # Days since installation
-    installed_at: Optional[datetime]
+    installed_at: datetime | None
     fingerprint_valid: bool
 
     @property
     def enforcement_state(self) -> str:
         """Return the enforcement state string."""
         if self.has_valid_license:
-            return 'licensed'
+            return "licensed"
         if self.is_locked_out:
-            return 'locked_out'
+            return "locked_out"
         if self.is_in_warning_phase:
-            return 'warning_phase'
+            return "warning_phase"
         if self.is_in_grace_period:
-            return 'grace_period'
-        return 'locked_out'
+            return "grace_period"
+        return "locked_out"
 
 
 def get_grace_period_status() -> GracePeriodStatus:
@@ -96,6 +96,7 @@ def _compute_grace_period_status() -> GracePeriodStatus:
     # Get installation date
     try:
         from core.models import SiteSettings
+
         settings = SiteSettings.get_settings()
 
         # Stamp installation date if not set (first access)

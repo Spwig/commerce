@@ -2,16 +2,18 @@
 Test script to fetch real WooCommerce data and analyze fields
 This helps ensure our models have all necessary fields
 """
+
 import json
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add project root to path — this file lives at migration/, so up one
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shop.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "shop.settings")
 
 import django
+
 django.setup()
 
 from migration.fetchers.woocommerce_api import WooCommerceAPIClient
@@ -26,9 +28,9 @@ if not job or not job.connection_config:
 
 # Initialize client
 client = WooCommerceAPIClient(
-    store_url=job.connection_config['store_url'],
-    consumer_key=job.connection_config['consumer_key'],
-    consumer_secret=job.connection_config['consumer_secret']
+    store_url=job.connection_config["store_url"],
+    consumer_key=job.connection_config["consumer_key"],
+    consumer_secret=job.connection_config["consumer_secret"],
 )
 
 print("=" * 80)
@@ -61,7 +63,7 @@ try:
         print(f"\n✅ Order fields: {len(order.keys())}")
         print(f"Keys: {list(order.keys())}")
 
-        if order.get('line_items'):
+        if order.get("line_items"):
             print(f"\n📦 Line item fields: {list(order['line_items'][0].keys())}")
     else:
         print("⚠️  No orders found")

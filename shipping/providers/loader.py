@@ -3,16 +3,18 @@ Provider component loading utilities.
 
 Handles loading and validating shipping provider component packages.
 """
+
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Any
+
 from packaging import version
 
 logger = logging.getLogger(__name__)
 
 
-def load_provider_manifest(component_dir: Path) -> Dict[str, Any]:
+def load_provider_manifest(component_dir: Path) -> dict[str, Any]:
     """
     Load and parse provider manifest.json file.
 
@@ -26,27 +28,23 @@ def load_provider_manifest(component_dir: Path) -> Dict[str, Any]:
         FileNotFoundError: If manifest.json not found
         json.JSONDecodeError: If manifest is invalid JSON
     """
-    manifest_path = component_dir / 'manifest.json'
+    manifest_path = component_dir / "manifest.json"
 
     if not manifest_path.exists():
         raise FileNotFoundError(f"manifest.json not found in {component_dir}")
 
     try:
-        with open(manifest_path, 'r', encoding='utf-8') as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = json.load(f)
 
         logger.debug(f"Loaded manifest from {manifest_path}")
         return manifest
 
     except json.JSONDecodeError as e:
-        raise json.JSONDecodeError(
-            f"Invalid JSON in {manifest_path}: {e.msg}",
-            e.doc,
-            e.pos
-        )
+        raise json.JSONDecodeError(f"Invalid JSON in {manifest_path}: {e.msg}", e.doc, e.pos)
 
 
-def validate_provider_package(manifest: Dict[str, Any], component_dir: Path) -> None:
+def validate_provider_package(manifest: dict[str, Any], component_dir: Path) -> None:
     """
     Validate provider package structure and manifest.
 
@@ -59,12 +57,12 @@ def validate_provider_package(manifest: Dict[str, Any], component_dir: Path) -> 
     """
     # Required manifest fields
     required_fields = [
-        'name',
-        'version',
-        'component_type',
-        'provider_key',
-        'entry_point',
-        'class_name'
+        "name",
+        "version",
+        "component_type",
+        "provider_key",
+        "entry_point",
+        "class_name",
     ]
 
     missing_fields = [field for field in required_fields if field not in manifest]
@@ -72,18 +70,20 @@ def validate_provider_package(manifest: Dict[str, Any], component_dir: Path) -> 
         raise ValueError(f"Missing required manifest fields: {', '.join(missing_fields)}")
 
     # Validate component_type
-    if manifest['component_type'] != 'shipping_provider':
-        raise ValueError(f"Invalid component type: {manifest['component_type']} (expected 'shipping_provider')")
+    if manifest["component_type"] != "shipping_provider":
+        raise ValueError(
+            f"Invalid component type: {manifest['component_type']} (expected 'shipping_provider')"
+        )
 
     # Validate version format
     try:
-        version.parse(manifest['version'])
+        version.parse(manifest["version"])
     except version.InvalidVersion:
         raise ValueError(f"Invalid version format: {manifest['version']}")
 
     # Validate entry point file exists
-    entry_point = manifest['entry_point']
-    if not entry_point.endswith('.py'):
+    entry_point = manifest["entry_point"]
+    if not entry_point.endswith(".py"):
         entry_point = f"{entry_point}.py"
 
     entry_point_path = component_dir / entry_point
@@ -93,7 +93,7 @@ def validate_provider_package(manifest: Dict[str, Any], component_dir: Path) -> 
     logger.debug(f"Provider package validation passed for {manifest['name']}")
 
 
-def check_platform_compatibility(manifest: Dict[str, Any], platform_version: str) -> bool:
+def check_platform_compatibility(manifest: dict[str, Any], platform_version: str) -> bool:
     """
     Check if provider is compatible with platform version.
 
@@ -104,12 +104,12 @@ def check_platform_compatibility(manifest: Dict[str, Any], platform_version: str
     Returns:
         True if compatible, False otherwise
     """
-    if 'min_platform_version' not in manifest:
+    if "min_platform_version" not in manifest:
         # No requirement specified, assume compatible
         return True
 
     try:
-        min_version = version.parse(manifest['min_platform_version'])
+        min_version = version.parse(manifest["min_platform_version"])
         current_version = version.parse(platform_version)
 
         compatible = current_version >= min_version
@@ -127,7 +127,7 @@ def check_platform_compatibility(manifest: Dict[str, Any], platform_version: str
         return False
 
 
-def check_dependencies(manifest: Dict[str, Any]) -> List[str]:
+def check_dependencies(manifest: dict[str, Any]) -> list[str]:
     """
     Check if all required dependencies are installed.
 
@@ -137,12 +137,12 @@ def check_dependencies(manifest: Dict[str, Any]) -> List[str]:
     Returns:
         List of missing dependencies (empty if all present)
     """
-    if 'dependencies' not in manifest:
+    if "dependencies" not in manifest:
         return []
 
     missing = []
 
-    for dep_name, dep_version in manifest['dependencies'].items():
+    for dep_name, dep_version in manifest["dependencies"].items():
         try:
             # Try to import the package
             importlib.import_module(dep_name)
@@ -156,7 +156,7 @@ def check_dependencies(manifest: Dict[str, Any]) -> List[str]:
     return missing
 
 
-def get_provider_metadata(component_dir: Path) -> Dict[str, Any]:
+def get_provider_metadata(component_dir: Path) -> dict[str, Any]:
     """
     Extract provider metadata from manifest.
 
@@ -178,15 +178,15 @@ def get_provider_metadata(component_dir: Path) -> Dict[str, Any]:
     manifest = load_provider_manifest(component_dir)
 
     return {
-        'name': manifest.get('name'),
-        'version': manifest.get('version'),
-        'provider_key': manifest.get('provider_key'),
-        'description': manifest.get('description', ''),
-        'author': manifest.get('author', ''),
-        'website': manifest.get('website', ''),
-        'capabilities': manifest.get('capabilities', {}),
-        'entry_point': manifest.get('entry_point'),
-        'class_name': manifest.get('class_name'),
+        "name": manifest.get("name"),
+        "version": manifest.get("version"),
+        "provider_key": manifest.get("provider_key"),
+        "description": manifest.get("description", ""),
+        "author": manifest.get("author", ""),
+        "website": manifest.get("website", ""),
+        "capabilities": manifest.get("capabilities", {}),
+        "entry_point": manifest.get("entry_point"),
+        "class_name": manifest.get("class_name"),
     }
 
 

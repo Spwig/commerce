@@ -8,16 +8,16 @@
  */
 
 (function () {
-    'use strict';
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Set progress bar width from data attribute
-        var progressFills = document.querySelectorAll('.setup-progress-fill[data-progress]');
-        progressFills.forEach(function (fill) {
-            var progress = fill.getAttribute('data-progress');
-            if (progress) {
-                fill.style.width = progress + '%';
-            }
-        });
+  document.addEventListener('DOMContentLoaded', function () {
+    // Set progress bar width from data attribute
+    const progressFills = document.querySelectorAll('.setup-progress-fill[data-progress]');
+    progressFills.forEach(function (fill) {
+      const progress = fill.getAttribute('data-progress');
+      if (progress) {
+        fill.style.width = progress + '%';
+      }
     });
-}());
+  });
+})();

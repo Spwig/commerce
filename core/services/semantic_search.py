@@ -14,13 +14,12 @@ Only search query encoding happens at runtime via ONNX.
 """
 
 import logging
-from typing import List, Dict, Optional, Any
-import numpy as np
+from typing import Any
+
 from django.conf import settings
-from django.db.models import Q
 from pgvector.django import CosineDistance
 
-from core.models import HelpTopic, HelpSearchIndex
+from core.models import HelpSearchIndex, HelpTopic
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +28,7 @@ class EmbeddingGenerator:
     """Generates embeddings for text using ONNX Runtime."""
 
     @staticmethod
-    def generate_embedding(text: str) -> List[float]:
+    def generate_embedding(text: str) -> list[float]:
         """
         Generate 384-dimensional embedding for text.
 
@@ -40,6 +39,7 @@ class EmbeddingGenerator:
             List of 384 floats
         """
         from core.ml.onnx_encoder import OnnxSentenceEncoder
+
         encoder = OnnxSentenceEncoder.get_instance()
         embedding_array = encoder.encode(text)
         # Convert numpy array to Python list for JSON serialization
@@ -53,7 +53,7 @@ class TextChunker:
     CHUNK_OVERLAP = 50  # characters
 
     @staticmethod
-    def chunk_content(title: str, content: str, keywords: List[str]) -> List[Dict[str, Any]]:
+    def chunk_content(title: str, content: str, keywords: list[str]) -> list[dict[str, Any]]:
         """
         Chunk document into overlapping segments.
 
@@ -73,12 +73,14 @@ class TextChunker:
         first_chunk_content_length = TextChunker.CHUNK_SIZE - len(title_text)
         first_chunk_text = title_text + content[:first_chunk_content_length]
 
-        chunks.append({
-            'text': first_chunk_text,
-            'position': 0,
-            'is_title_chunk': True,
-            'contains_keywords': any(kw in first_chunk_text.lower() for kw in keywords_lower)
-        })
+        chunks.append(
+            {
+                "text": first_chunk_text,
+                "position": 0,
+                "is_title_chunk": True,
+                "contains_keywords": any(kw in first_chunk_text.lower() for kw in keywords_lower),
+            }
+        )
 
         # Subsequent chunks with overlap
         start = first_chunk_content_length
@@ -92,12 +94,14 @@ class TextChunker:
             chunk_text = content[chunk_start:chunk_end]
 
             if chunk_text.strip():  # Only add non-empty chunks
-                chunks.append({
-                    'text': chunk_text,
-                    'position': chunk_number,
-                    'is_title_chunk': False,
-                    'contains_keywords': any(kw in chunk_text.lower() for kw in keywords_lower)
-                })
+                chunks.append(
+                    {
+                        "text": chunk_text,
+                        "position": chunk_number,
+                        "is_title_chunk": False,
+                        "contains_keywords": any(kw in chunk_text.lower() for kw in keywords_lower),
+                    }
+                )
                 chunk_number += 1
 
             start = chunk_end
@@ -109,7 +113,7 @@ class IndexingService:
     """Handles indexing of help topics."""
 
     @staticmethod
-    def get_supported_languages() -> List[str]:
+    def get_supported_languages() -> list[str]:
         """
         Get all supported languages from Django settings.
 
@@ -119,7 +123,7 @@ class IndexingService:
         return [lang for lang, name in settings.LANGUAGES]
 
     @staticmethod
-    def get_topic_content(topic: HelpTopic, language: str) -> Optional[str]:
+    def get_topic_content(topic: HelpTopic, language: str) -> str | None:
         """
         Get content for a topic in a specific language.
 
@@ -130,15 +134,15 @@ class IndexingService:
         Returns:
             Content string or None if not available
         """
-        if language == 'en':
+        if language == "en":
             # English content from content_markdown field
             return topic.content_markdown
 
         # Translated content from translations JSONField
         if topic.translations and language in topic.translations:
             translation = topic.translations[language]
-            if isinstance(translation, dict) and 'content' in translation:
-                return translation['content']
+            if isinstance(translation, dict) and "content" in translation:
+                return translation["content"]
 
         return None
 
@@ -154,21 +158,21 @@ class IndexingService:
         Returns:
             Title string
         """
-        if language == 'en':
+        if language == "en":
             # Use title_i18n_key as title for English
             return topic.title_i18n_key
 
         # Translated title from translations JSONField
         if topic.translations and language in topic.translations:
             translation = topic.translations[language]
-            if isinstance(translation, dict) and 'title' in translation:
-                return translation['title']
+            if isinstance(translation, dict) and "title" in translation:
+                return translation["title"]
 
         # Fallback to English title
         return topic.title_i18n_key
 
     @staticmethod
-    def index_topic(topic_id: int, languages: Optional[List[str]] = None) -> Dict[str, int]:
+    def index_topic(topic_id: int, languages: list[str] | None = None) -> dict[str, int]:
         """
         Index a single topic in specified languages.
 
@@ -183,7 +187,7 @@ class IndexingService:
             topic = HelpTopic.objects.get(pk=topic_id, is_published=True)
         except HelpTopic.DoesNotExist:
             logger.warning(f"Topic {topic_id} not found or not published")
-            return {'topics_indexed': 0, 'total_chunks': 0, 'languages': []}
+            return {"topics_indexed": 0, "total_chunks": 0, "languages": []}
 
         if languages is None:
             languages = IndexingService.get_supported_languages()
@@ -204,41 +208,43 @@ class IndexingService:
 
             # Generate chunks
             chunks = TextChunker.chunk_content(
-                title=title,
-                content=content,
-                keywords=topic.keywords or []
+                title=title, content=content, keywords=topic.keywords or []
             )
 
             # Generate embeddings and create index entries
             search_index_entries = []
             for chunk_data in chunks:
-                embedding = EmbeddingGenerator.generate_embedding(chunk_data['text'])
+                embedding = EmbeddingGenerator.generate_embedding(chunk_data["text"])
 
-                search_index_entries.append(HelpSearchIndex(
-                    topic=topic,
-                    language=language,
-                    chunk_text=chunk_data['text'],
-                    chunk_position=chunk_data['position'],
-                    embedding=embedding,
-                    is_title_chunk=chunk_data['is_title_chunk'],
-                    contains_keywords=chunk_data['contains_keywords']
-                ))
+                search_index_entries.append(
+                    HelpSearchIndex(
+                        topic=topic,
+                        language=language,
+                        chunk_text=chunk_data["text"],
+                        chunk_position=chunk_data["position"],
+                        embedding=embedding,
+                        is_title_chunk=chunk_data["is_title_chunk"],
+                        contains_keywords=chunk_data["contains_keywords"],
+                    )
+                )
 
             # Batch create
             HelpSearchIndex.objects.bulk_create(search_index_entries)
 
             total_chunks += len(search_index_entries)
             indexed_languages.append(language)
-            logger.info(f"Indexed topic {topic.slug} [{language}]: {len(search_index_entries)} chunks")
+            logger.info(
+                f"Indexed topic {topic.slug} [{language}]: {len(search_index_entries)} chunks"
+            )
 
         return {
-            'topics_indexed': 1 if indexed_languages else 0,
-            'total_chunks': total_chunks,
-            'languages': indexed_languages
+            "topics_indexed": 1 if indexed_languages else 0,
+            "total_chunks": total_chunks,
+            "languages": indexed_languages,
         }
 
     @staticmethod
-    def index_all_topics(languages: Optional[List[str]] = None) -> Dict[str, Any]:
+    def index_all_topics(languages: list[str] | None = None) -> dict[str, Any]:
         """
         Index all published topics in specified languages.
 
@@ -257,13 +263,13 @@ class IndexingService:
 
         for topic in topics:
             stats = IndexingService.index_topic(topic.id, languages=languages)
-            total_topics_indexed += stats['topics_indexed']
-            total_chunks += stats['total_chunks']
+            total_topics_indexed += stats["topics_indexed"]
+            total_chunks += stats["total_chunks"]
 
         return {
-            'topics_indexed': total_topics_indexed,
-            'total_chunks': total_chunks,
-            'languages': languages
+            "topics_indexed": total_topics_indexed,
+            "total_chunks": total_chunks,
+            "languages": languages,
         }
 
 
@@ -273,12 +279,12 @@ class SearchService:
     @staticmethod
     def search(
         query: str,
-        language: str = 'en',
-        component: Optional[str] = None,
-        category: Optional[str] = None,
+        language: str = "en",
+        component: str | None = None,
+        category: str | None = None,
         limit: int = 10,
-        threshold: float = 0.4
-    ) -> List[Dict[str, Any]]:
+        threshold: float = 0.4,
+    ) -> list[dict[str, Any]]:
         """
         Perform semantic search on help topics.
 
@@ -298,13 +304,13 @@ class SearchService:
             query_embedding = EmbeddingGenerator.generate_embedding(query)
 
             # Build queryset
-            qs = HelpSearchIndex.objects.annotate(
-                distance=CosineDistance('embedding', query_embedding)
-            ).filter(
-                language=language,
-                distance__lt=threshold,
-                topic__is_published=True
-            ).select_related('topic', 'topic__category')
+            qs = (
+                HelpSearchIndex.objects.annotate(
+                    distance=CosineDistance("embedding", query_embedding)
+                )
+                .filter(language=language, distance__lt=threshold, topic__is_published=True)
+                .select_related("topic", "topic__category")
+            )
 
             # Apply filters
             if component:
@@ -314,7 +320,7 @@ class SearchService:
 
             # Get results ordered by similarity (lower distance = higher similarity)
             # Fetch extra results for deduplication
-            results = qs.order_by('distance')[:limit * 3]
+            results = qs.order_by("distance")[: limit * 3]
 
             # Deduplicate by topic (keep best matching chunk per topic)
             seen_topics = {}
@@ -334,17 +340,15 @@ class SearchService:
                     similarity = max(0.0, min(1.0, similarity))  # Clamp to 0-1
 
                     seen_topics[topic_id] = {
-                        'topic': result.topic,
-                        'similarity': similarity,
-                        'chunk_position': result.chunk_position
+                        "topic": result.topic,
+                        "similarity": similarity,
+                        "chunk_position": result.chunk_position,
                     }
 
             # Return top N results
-            top_results = sorted(
-                seen_topics.values(),
-                key=lambda x: x['similarity'],
-                reverse=True
-            )[:limit]
+            top_results = sorted(seen_topics.values(), key=lambda x: x["similarity"], reverse=True)[
+                :limit
+            ]
 
             return top_results
 

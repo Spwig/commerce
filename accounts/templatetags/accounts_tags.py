@@ -1,8 +1,9 @@
 """
 Template tags for accounts app.
 """
-from django import template
+
 from allauth.account.models import EmailAddress
+from django import template
 
 register = template.Library()
 

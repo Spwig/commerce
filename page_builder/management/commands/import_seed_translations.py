@@ -10,124 +10,124 @@ to each element by a translation system.
 Output: Generates `_element_translations.py` with the ELEMENT_TRANSLATIONS dict
 used by `seed_page_elements.py` to apply pre-baked translations during seeding.
 """
+
 import json
 import os
-import textwrap
 
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = 'Import translated seed strings from JSON and generate _element_translations.py'
+    help = "Import translated seed strings from JSON and generate _element_translations.py"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'input_file',
-            help='Path to translated JSON file',
+            "input_file",
+            help="Path to translated JSON file",
         )
         parser.add_argument(
-            '--output', '-o',
+            "--output",
+            "-o",
             default=None,
-            help='Output Python file path (default: _element_translations.py in same directory)',
+            help="Output Python file path (default: _element_translations.py in same directory)",
         )
         parser.add_argument(
-            '--dry-run',
-            action='store_true',
-            help='Print stats without writing file',
+            "--dry-run",
+            action="store_true",
+            help="Print stats without writing file",
         )
 
     def handle(self, *args, **options):
-        input_path = options['input_file']
+        input_path = options["input_file"]
 
         if not os.path.exists(input_path):
-            self.stderr.write(self.style.ERROR(f'File not found: {input_path}'))
+            self.stderr.write(self.style.ERROR(f"File not found: {input_path}"))
             return
 
-        with open(input_path, 'r', encoding='utf-8') as f:
+        with open(input_path, encoding="utf-8") as f:
             data = json.load(f)
 
         # Determine output path
-        output_path = options['output']
+        output_path = options["output"]
         if not output_path:
             output_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                '_element_translations.py',
+                "_element_translations.py",
             )
 
         # Build translations dict
         translations = {}
         stats = {
-            'pages': 0,
-            'elements': 0,
-            'languages': set(),
-            'missing_translations': 0,
+            "pages": 0,
+            "elements": 0,
+            "languages": set(),
+            "missing_translations": 0,
         }
 
-        pages = data.get('pages', {})
+        pages = data.get("pages", {})
         for page_slug, page_data in pages.items():
-            stats['pages'] += 1
-            for element in page_data.get('elements', []):
-                element_name = element.get('element_name', '')
-                element_translations = element.get('translations', {})
+            stats["pages"] += 1
+            for element in page_data.get("elements", []):
+                element_name = element.get("element_name", "")
+                element_translations = element.get("translations", {})
 
                 if not element_translations:
-                    stats['missing_translations'] += 1
-                    self.stderr.write(
-                        f'  Warning: No translations for '
-                        f'{page_slug}:{element_name}'
-                    )
+                    stats["missing_translations"] += 1
+                    self.stderr.write(f"  Warning: No translations for {page_slug}:{element_name}")
                     continue
 
-                key = f'{page_slug}:{element_name}'
+                key = f"{page_slug}:{element_name}"
                 translations[key] = element_translations
-                stats['elements'] += 1
-                stats['languages'].update(element_translations.keys())
+                stats["elements"] += 1
+                stats["languages"].update(element_translations.keys())
 
-        if options['dry_run']:
-            self.stdout.write(f'Pages: {stats["pages"]}')
-            self.stdout.write(f'Elements with translations: {stats["elements"]}')
-            self.stdout.write(f'Elements missing translations: {stats["missing_translations"]}')
-            self.stdout.write(f'Languages: {", ".join(sorted(stats["languages"]))}')
+        if options["dry_run"]:
+            self.stdout.write(f"Pages: {stats['pages']}")
+            self.stdout.write(f"Elements with translations: {stats['elements']}")
+            self.stdout.write(f"Elements missing translations: {stats['missing_translations']}")
+            self.stdout.write(f"Languages: {', '.join(sorted(stats['languages']))}")
             return
 
         # Generate Python file
         self._write_python_file(output_path, translations)
 
-        self.stdout.write(self.style.SUCCESS(
-            f'Generated {output_path} with {stats["elements"]} elements '
-            f'in {len(stats["languages"])} languages'
-        ))
-        if stats['missing_translations']:
-            self.stdout.write(self.style.WARNING(
-                f'{stats["missing_translations"]} elements had no translations'
-            ))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Generated {output_path} with {stats['elements']} elements "
+                f"in {len(stats['languages'])} languages"
+            )
+        )
+        if stats["missing_translations"]:
+            self.stdout.write(
+                self.style.WARNING(f"{stats['missing_translations']} elements had no translations")
+            )
 
     def _write_python_file(self, output_path, translations):
         """Write the _element_translations.py file."""
         lines = [
             '"""',
-            'Pre-baked translations for seeded page builder elements.',
-            '',
-            'Generated by: python manage.py import_seed_translations',
-            'Do not edit manually - regenerate from translated JSON.',
-            '',
-            'Keys use page_slug:element_name format for disambiguation.',
+            "Pre-baked translations for seeded page builder elements.",
+            "",
+            "Generated by: python manage.py import_seed_translations",
+            "Do not edit manually - regenerate from translated JSON.",
+            "",
+            "Keys use page_slug:element_name format for disambiguation.",
             '"""',
-            '',
-            '',
-            'ELEMENT_TRANSLATIONS = {',
+            "",
+            "",
+            "ELEMENT_TRANSLATIONS = {",
         ]
 
         for key in sorted(translations.keys()):
             lang_dict = translations[key]
-            lines.append(f'    {key!r}: {{')
+            lines.append(f"    {key!r}: {{")
             for lang_code in sorted(lang_dict.keys()):
                 fields = lang_dict[lang_code]
-                lines.append(f'        {lang_code!r}: {fields!r},')
-            lines.append('    },')
+                lines.append(f"        {lang_code!r}: {fields!r},")
+            lines.append("    },")
 
-        lines.append('}')
-        lines.append('')
+        lines.append("}")
+        lines.append("")
 
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write('\n'.join(lines))
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))

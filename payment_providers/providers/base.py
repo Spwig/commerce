@@ -4,10 +4,10 @@ Base provider interface for payment integrations.
 All payment provider implementations must inherit from PaymentProviderBase
 and implement all abstract methods defined here.
 """
+
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any
 from decimal import Decimal
-from datetime import datetime
+from typing import Any
 
 
 class PaymentProviderBase(ABC):
@@ -33,7 +33,7 @@ class PaymentProviderBase(ABC):
     provider_key: str = None
     provider_name: str = None
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         """
         Initialize provider with credentials and configuration.
 
@@ -57,7 +57,7 @@ class PaymentProviderBase(ABC):
         selected = self._select_credentials(credentials)
         self.validate_credentials(selected)
 
-    def _select_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def _select_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Select test or live credentials based on test_mode flag.
         Handles both new dual-credential structure and legacy single-credential structure.
@@ -94,10 +94,9 @@ class PaymentProviderBase(ABC):
                 }
         """
         # Check for new dual-credential structure
-        has_test_mode = 'test_mode' in credentials
+        has_test_mode = "test_mode" in credentials
         has_prefixed_fields = any(
-            k.startswith('test_') or k.startswith('live_')
-            for k in credentials.keys()
+            k.startswith("test_") or k.startswith("live_") for k in credentials
         )
 
         if not (has_test_mode and has_prefixed_fields):
@@ -105,17 +104,17 @@ class PaymentProviderBase(ABC):
             return credentials
 
         # New structure - select active credentials
-        test_mode = credentials.get('test_mode', True)
-        prefix = 'test_' if test_mode else 'live_'
+        test_mode = credentials.get("test_mode", True)
+        prefix = "test_" if test_mode else "live_"
 
-        selected = {'test_mode': test_mode}
+        selected = {"test_mode": test_mode}
 
         # Extract fields with active prefix, remove prefix
         for key, value in credentials.items():
             if key.startswith(prefix):
-                unprefixed_key = key[len(prefix):]  # Remove prefix
+                unprefixed_key = key[len(prefix) :]  # Remove prefix
                 selected[unprefixed_key] = value
-            elif not key.startswith('test_') and not key.startswith('live_'):
+            elif not key.startswith("test_") and not key.startswith("live_"):
                 # Shared fields (no prefix) - copy as-is
                 selected[key] = value
 
@@ -123,7 +122,7 @@ class PaymentProviderBase(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return dictionary of provider capabilities.
 
@@ -150,7 +149,7 @@ class PaymentProviderBase(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema describing required credentials.
 
@@ -191,7 +190,7 @@ class PaymentProviderBase(ABC):
 
     @property
     @abstractmethod
-    def supported_payment_methods(self) -> List[str]:
+    def supported_payment_methods(self) -> list[str]:
         """
         Return list of supported payment method types.
 
@@ -205,7 +204,7 @@ class PaymentProviderBase(ABC):
 
     @property
     @abstractmethod
-    def supported_currencies(self) -> List[str]:
+    def supported_currencies(self) -> list[str]:
         """
         Return list of supported currency codes.
 
@@ -219,7 +218,7 @@ class PaymentProviderBase(ABC):
 
     @property
     @abstractmethod
-    def supported_countries(self) -> List[str]:
+    def supported_countries(self) -> list[str]:
         """
         Return list of supported country codes (for merchant accounts).
 
@@ -232,7 +231,7 @@ class PaymentProviderBase(ABC):
         pass
 
     @abstractmethod
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """
         Validate credentials against schema and business logic.
 
@@ -245,7 +244,7 @@ class PaymentProviderBase(ABC):
         pass
 
     @abstractmethod
-    def redact_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def redact_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Redact sensitive credential values for logging.
 
@@ -258,7 +257,7 @@ class PaymentProviderBase(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test API connection and credential validity.
 
@@ -286,9 +285,9 @@ class PaymentProviderBase(ABC):
         self,
         amount: Decimal,
         currency: str,
-        payment_method: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        payment_method: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Process an immediate payment charge.
 
@@ -334,9 +333,9 @@ class PaymentProviderBase(ABC):
         self,
         amount: Decimal,
         currency: str,
-        payment_method: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        payment_method: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Authorize a payment without capturing funds.
 
@@ -371,9 +370,9 @@ class PaymentProviderBase(ABC):
     def capture(
         self,
         authorization_id: str,
-        amount: Optional[Decimal] = None,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        amount: Decimal | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Capture funds from a previous authorization.
 
@@ -403,11 +402,7 @@ class PaymentProviderBase(ABC):
         pass
 
     @abstractmethod
-    def void(
-        self,
-        authorization_id: str,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+    def void(self, authorization_id: str, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Void an uncaptured authorization.
 
@@ -435,10 +430,10 @@ class PaymentProviderBase(ABC):
     def refund(
         self,
         transaction_id: str,
-        amount: Optional[Decimal] = None,
-        reason: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        amount: Decimal | None = None,
+        reason: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Refund a completed payment.
 
@@ -474,9 +469,9 @@ class PaymentProviderBase(ABC):
         self,
         customer_id: str,
         plan_id: str,
-        payment_method: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        payment_method: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Create a subscription with native provider support.
 
@@ -511,8 +506,8 @@ class PaymentProviderBase(ABC):
         self,
         subscription_id: str,
         immediately: bool = False,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Cancel a subscription.
 
@@ -545,9 +540,9 @@ class PaymentProviderBase(ABC):
     def save_payment_method(
         self,
         customer_id: str,
-        payment_method: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        payment_method: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Save a payment method for future use.
 
@@ -579,10 +574,8 @@ class PaymentProviderBase(ABC):
         raise NotImplementedError(f"{self.provider_name} does not support saving payment methods")
 
     def delete_payment_method(
-        self,
-        payment_method_id: str,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, payment_method_id: str, metadata: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Delete a saved payment method.
 
@@ -625,7 +618,7 @@ class PaymentProviderBase(ABC):
         pass
 
     @abstractmethod
-    def handle_webhook(self, event_type: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_webhook(self, event_type: str, payload: dict[str, Any]) -> dict[str, Any]:
         """
         Process webhook event from provider.
 
@@ -651,16 +644,16 @@ class PaymentProviderBase(ABC):
         """
         pass
 
-    def process_webhook(self, payload: Dict[str, Any], event_type: str = None) -> Dict[str, Any]:
+    def process_webhook(self, payload: dict[str, Any], event_type: str = None) -> dict[str, Any]:
         """
         Backward-compatible wrapper called by WebhookService.
         Delegates to the abstract handle_webhook() with correct parameter order.
         """
         if event_type is None:
-            event_type = payload.get('type', payload.get('event_type', 'unknown'))
+            event_type = payload.get("type", payload.get("event_type", "unknown"))
         result = self.handle_webhook(event_type, payload)
-        if 'success' not in result:
-            result['success'] = result.get('handled', True)
+        if "success" not in result:
+            result["success"] = result.get("handled", True)
         return result
 
     def translate_subscription_webhook(self, event_type: str, payload: dict):
@@ -682,8 +675,8 @@ class PaymentProviderBase(ABC):
         currency: str,
         success_url: str,
         cancel_url: str,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Create a hosted checkout session (if supported).
 
@@ -713,11 +706,8 @@ class PaymentProviderBase(ABC):
         raise NotImplementedError(f"{self.provider_name} does not support hosted checkout")
 
     def get_checkout_client_secret(
-        self,
-        amount: Decimal,
-        currency: str,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, amount: Decimal, currency: str, metadata: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Get client secret for integrated checkout (if supported).
 
@@ -752,10 +742,10 @@ class PaymentProviderBase(ABC):
         currency: str,
         return_url: str,
         cancel_url: str,
-        customer_email: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ) -> Dict[str, Any]:
+        customer_email: str | None = None,
+        metadata: dict[str, Any] | None = None,
+        **kwargs,
+    ) -> dict[str, Any]:
         """
         Create a payment intent for checkout orchestration.
 
@@ -804,10 +794,7 @@ class PaymentProviderBase(ABC):
             f"Implement this method for checkout orchestration."
         )
 
-    def retrieve_payment_intent(
-        self,
-        intent_id: str
-    ) -> Dict[str, Any]:
+    def retrieve_payment_intent(self, intent_id: str) -> dict[str, Any]:
         """
         Retrieve current status of a payment intent.
 
@@ -843,10 +830,8 @@ class PaymentProviderBase(ABC):
         )
 
     def confirm_payment_intent(
-        self,
-        intent_id: str,
-        confirmation_data: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, intent_id: str, confirmation_data: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Confirm a payment intent after customer action (3DS, etc.)
 
@@ -884,10 +869,8 @@ class PaymentProviderBase(ABC):
         )
 
     def cancel_payment_intent(
-        self,
-        intent_id: str,
-        cancellation_reason: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, intent_id: str, cancellation_reason: str | None = None
+    ) -> dict[str, Any]:
         """
         Cancel a payment intent.
 
@@ -912,7 +895,7 @@ class PaymentProviderBase(ABC):
             f"Implement this method for checkout orchestration."
         )
 
-    def get_payment_method_types(self) -> Dict[str, Any]:
+    def get_payment_method_types(self) -> dict[str, Any]:
         """
         Get available payment method types from provider.
 
@@ -939,9 +922,9 @@ class PaymentProviderBase(ABC):
         methods = self.supported_payment_methods
 
         return {
-            'success': True,
-            'methods': {country: methods for country in countries},
-            'raw_response': {}
+            "success": True,
+            "methods": dict.fromkeys(countries, methods),
+            "raw_response": {},
         }
 
     # Helper methods (optional to override)
@@ -958,7 +941,7 @@ class PaymentProviderBase(ABC):
         """
         return self.capabilities.get(capability, False)
 
-    def get_required_credentials(self) -> List[str]:
+    def get_required_credentials(self) -> list[str]:
         """
         Get list of required credential field names.
 
@@ -968,9 +951,9 @@ class PaymentProviderBase(ABC):
         schema = self.credential_schema
         required = []
 
-        if 'properties' in schema:
-            for field_name, field_spec in schema['properties'].items():
-                if field_spec.get('required', False):
+        if "properties" in schema:
+            for field_name, field_spec in schema["properties"].items():
+                if field_spec.get("required", False):
                     required.append(field_name)
 
         return required

@@ -12,9 +12,9 @@ The actual file parsing, validation, and bulk-create work lives in
 `vouchers.services.voucher_importer` so the views stay focused on
 HTTP / form-binding / session handoff.
 """
+
 from __future__ import annotations
 
-import json
 import logging
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
@@ -37,7 +37,6 @@ from vouchers.models import VoucherCode
 from vouchers.services.voucher_importer import (
     ALLOWED_EXTENSIONS,
     DUPLICATE_STRATEGIES,
-    EXPORT_COLUMNS,
     MAPPABLE_FIELDS,
     MAX_UPLOAD_BYTES,
     auto_detect_mapping,
@@ -58,6 +57,7 @@ SESSION_KEY = "voucher_import_pending"
 # ---------------------------------------------------------------------------
 # Forms
 # ---------------------------------------------------------------------------
+
 
 class VoucherImportSettingsForm(forms.Form):
     """Batch-level settings that apply to every imported row.
@@ -81,13 +81,16 @@ class VoucherImportSettingsForm(forms.Form):
         label=_("Discount type"),
     )
     discount_value = forms.DecimalField(
-        max_digits=10, decimal_places=2,
+        max_digits=10,
+        decimal_places=2,
         min_value=Decimal("0.01"),
         label=_("Discount value"),
         help_text=_("Percentage (0–100) or fixed amount."),
     )
     max_discount_amount = forms.DecimalField(
-        required=False, max_digits=10, decimal_places=2,
+        required=False,
+        max_digits=10,
+        decimal_places=2,
         label=_("Max discount amount"),
         help_text=_("Cap for percentage discounts. Leave blank for no cap."),
     )
@@ -108,21 +111,26 @@ class VoucherImportSettingsForm(forms.Form):
         help_text=_("Leave blank for no fixed expiry."),
     )
     days_valid = forms.IntegerField(
-        required=False, min_value=1,
+        required=False,
+        min_value=1,
         label=_("Days valid"),
         help_text=_("Days from creation. Overrides end date when set."),
     )
 
     max_uses_total = forms.IntegerField(
-        required=False, min_value=1,
+        required=False,
+        min_value=1,
         label=_("Max uses total"),
     )
     max_uses_per_customer = forms.IntegerField(
-        required=False, min_value=1,
+        required=False,
+        min_value=1,
         label=_("Max uses per customer"),
     )
     min_order_value = forms.DecimalField(
-        required=False, max_digits=10, decimal_places=2,
+        required=False,
+        max_digits=10,
+        decimal_places=2,
         label=_("Minimum order value"),
     )
 
@@ -133,7 +141,8 @@ class VoucherImportSettingsForm(forms.Form):
     is_active = forms.BooleanField(required=False, initial=True)
 
     currency_code = forms.CharField(
-        max_length=3, required=False,
+        max_length=3,
+        required=False,
         widget=forms.HiddenInput,
         help_text=_("ISO currency code applied to monetary settings."),
     )
@@ -142,13 +151,9 @@ class VoucherImportSettingsForm(forms.Form):
         f = self.cleaned_data["file"]
         name = (f.name or "").lower()
         if not name.endswith(ALLOWED_EXTENSIONS):
-            raise ValidationError(
-                _("Unsupported file type. Upload a .csv or .xlsx file.")
-            )
+            raise ValidationError(_("Unsupported file type. Upload a .csv or .xlsx file."))
         if f.size > MAX_UPLOAD_BYTES:
-            raise ValidationError(
-                _("File is too large. Maximum upload size is 5 MB.")
-            )
+            raise ValidationError(_("File is too large. Maximum upload size is 5 MB."))
         return f
 
     def to_batch_settings(self) -> dict[str, Any]:
@@ -173,6 +178,7 @@ def _store_default_currency() -> str:
     """Best-effort default currency lookup for batch money settings."""
     try:
         from core.utils import get_default_currency
+
         return str(get_default_currency())
     except Exception:
         return "USD"
@@ -184,6 +190,7 @@ def _store_default_currency() -> str:
 # 5 MB upload limit because we only keep a compact dict per row, not the
 # original bytes.
 # ---------------------------------------------------------------------------
+
 
 def _stash(request, payload: dict[str, Any]) -> None:
     request.session[SESSION_KEY] = payload
@@ -204,6 +211,7 @@ def _clear_stash(request) -> None:
 # Views
 # ---------------------------------------------------------------------------
 
+
 class _AdminViewMixin:
     """Common context every page in the wizard needs to render inside
     the Django admin shell (title bar, breadcrumbs, app verbose names)."""
@@ -212,6 +220,7 @@ class _AdminViewMixin:
 
     def admin_context(self, **extra) -> dict[str, Any]:
         from django.contrib import admin
+
         site = admin.site
         return {
             "title": self.title,
@@ -241,9 +250,7 @@ class VoucherImportUploadView(_AdminViewMixin, View):
     template_name = "admin/vouchers/vouchercode/import_upload.html"
 
     def get(self, request):
-        form = VoucherImportSettingsForm(
-            initial={"currency_code": _store_default_currency()}
-        )
+        form = VoucherImportSettingsForm(initial={"currency_code": _store_default_currency()})
         return render(request, self.template_name, self.admin_context(form=form))
 
     def post(self, request):
@@ -267,13 +274,16 @@ class VoucherImportUploadView(_AdminViewMixin, View):
         # so Money objects (etc.) don't end up in the session as
         # non-JSON-serialisable values.
         batch_settings = _settings_for_session(form.to_batch_settings())
-        _stash(request, {
-            "headers": parsed.headers,
-            "rows": parsed.rows,
-            "row_count": parsed.row_count,
-            "batch_settings": batch_settings,
-            "currency": form.cleaned_data.get("currency_code") or _store_default_currency(),
-        })
+        _stash(
+            request,
+            {
+                "headers": parsed.headers,
+                "rows": parsed.rows,
+                "row_count": parsed.row_count,
+                "batch_settings": batch_settings,
+                "currency": form.cleaned_data.get("currency_code") or _store_default_currency(),
+            },
+        )
         return redirect("admin:vouchers_vouchercode_import_preview")
 
 
@@ -291,12 +301,11 @@ class VoucherImportPreviewView(_AdminViewMixin, View):
     def get(self, request):
         payload = _read_stash(request)
         if not payload:
-            messages.warning(
-                request, _("Upload a file first to start an import.")
-            )
+            messages.warning(request, _("Upload a file first to start an import."))
             return redirect("admin:vouchers_vouchercode_import")
 
         from vouchers.services.voucher_importer import ParsedFile  # local import to avoid circular
+
         parsed = ParsedFile(
             headers=payload["headers"],
             rows=payload["rows"],
@@ -305,21 +314,23 @@ class VoucherImportPreviewView(_AdminViewMixin, View):
         mapping = auto_detect_mapping(parsed.headers)
         preview = build_preview(parsed, mapping)
 
-        return render(request, self.template_name, self.admin_context(
-            parsed=parsed,
-            preview=preview,
-            mapping=mapping,
-            mappable_fields=MAPPABLE_FIELDS,
-            duplicate_strategies=DUPLICATE_STRATEGIES,
-            preview_rows=parsed.first(20),
-        ))
+        return render(
+            request,
+            self.template_name,
+            self.admin_context(
+                parsed=parsed,
+                preview=preview,
+                mapping=mapping,
+                mappable_fields=MAPPABLE_FIELDS,
+                duplicate_strategies=DUPLICATE_STRATEGIES,
+                preview_rows=parsed.first(20),
+            ),
+        )
 
     def post(self, request):
         payload = _read_stash(request)
         if not payload:
-            messages.warning(
-                request, _("Upload a file first to start an import.")
-            )
+            messages.warning(request, _("Upload a file first to start an import."))
             return redirect("admin:vouchers_vouchercode_import")
 
         # Pull mapping + strategy off the form.
@@ -333,6 +344,7 @@ class VoucherImportPreviewView(_AdminViewMixin, View):
             dup_strategy = "skip"
 
         from vouchers.services.voucher_importer import ParsedFile
+
         parsed = ParsedFile(
             headers=payload["headers"],
             rows=payload["rows"],
@@ -355,15 +367,19 @@ class VoucherImportPreviewView(_AdminViewMixin, View):
         except ValidationError as exc:
             messages.error(request, "; ".join(exc.messages))
             preview = build_preview(parsed, mapping)
-            return render(request, self.template_name, self.admin_context(
-                parsed=parsed,
-                preview=preview,
-                mapping=mapping,
-                mappable_fields=MAPPABLE_FIELDS,
-                duplicate_strategies=DUPLICATE_STRATEGIES,
-                preview_rows=parsed.first(20),
-                selected_strategy=dup_strategy,
-            ))
+            return render(
+                request,
+                self.template_name,
+                self.admin_context(
+                    parsed=parsed,
+                    preview=preview,
+                    mapping=mapping,
+                    mappable_fields=MAPPABLE_FIELDS,
+                    duplicate_strategies=DUPLICATE_STRATEGIES,
+                    preview_rows=parsed.first(20),
+                    selected_strategy=dup_strategy,
+                ),
+            )
 
         _clear_stash(request)
         messages.success(
@@ -398,15 +414,20 @@ class VoucherImportResultView(_AdminViewMixin, View):
             messages.error(request, _("Import job not found."))
             return redirect("admin:vouchers_vouchercode_changelist")
 
-        return render(request, self.template_name, self.admin_context(
-            job=job,
-            vouchers_url=reverse("admin:vouchers_vouchercode_changelist"),
-        ))
+        return render(
+            request,
+            self.template_name,
+            self.admin_context(
+                job=job,
+                vouchers_url=reverse("admin:vouchers_vouchercode_changelist"),
+            ),
+        )
 
 
 # ---------------------------------------------------------------------------
 # XLSX export — wired up as an admin action in vouchers.admin
 # ---------------------------------------------------------------------------
+
 
 def export_vouchers_xlsx(modeladmin, request, queryset):
     """Admin action: download selected vouchers as an XLSX matching the
@@ -420,6 +441,7 @@ export_vouchers_xlsx.short_description = _("Export selected vouchers to XLSX")
 # ---------------------------------------------------------------------------
 # Session (de)serialisation
 # ---------------------------------------------------------------------------
+
 
 def _settings_for_session(settings: dict[str, Any]) -> dict[str, Any]:
     """Translate the form's cleaned data into a JSON-safe dict."""

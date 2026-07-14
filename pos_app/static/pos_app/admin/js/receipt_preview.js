@@ -102,7 +102,7 @@
       const taxLabel = getVal(fields.taxIdLabel);
       const taxNumber = getVal(fields.taxIdNumber);
       const bizReg = getVal(fields.businessReg);
-      let bizParts = [];
+      const bizParts = [];
       if (taxLabel && taxNumber) bizParts.push(taxLabel + ': ' + taxNumber);
       else if (taxNumber) bizParts.push('Tax ID: ' + taxNumber);
       if (bizReg) bizParts.push('Reg: ' + bizReg);

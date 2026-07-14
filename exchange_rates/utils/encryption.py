@@ -5,10 +5,12 @@ Uses Django's SECRET_KEY for symmetric encryption via Fernet.
 Credentials are encrypted before storing in ExchangeRateProviderAccount.credentials.
 Pattern follows shipping/utils/encryption.py.
 """
+
 import base64
 import hashlib
 import logging
-from typing import Dict, Any
+from typing import Any
+
 from cryptography.fernet import Fernet
 from django.conf import settings
 
@@ -27,7 +29,7 @@ def _get_fernet_key() -> bytes:
     return base64.urlsafe_b64encode(key)
 
 
-def encrypt_credentials(credentials: Dict[str, Any]) -> bytes:
+def encrypt_credentials(credentials: dict[str, Any]) -> bytes:
     """
     Encrypt credential dictionary for storage in BinaryField.
 
@@ -38,6 +40,7 @@ def encrypt_credentials(credentials: Dict[str, Any]) -> bytes:
         Encrypted bytes suitable for BinaryField storage
     """
     import json
+
     fernet = Fernet(_get_fernet_key())
 
     # Serialize to JSON then encrypt
@@ -47,7 +50,7 @@ def encrypt_credentials(credentials: Dict[str, Any]) -> bytes:
     return encrypted_data
 
 
-def decrypt_credentials(encrypted_data: bytes) -> Dict[str, Any]:
+def decrypt_credentials(encrypted_data: bytes) -> dict[str, Any]:
     """
     Decrypt credential data from BinaryField.
 
@@ -58,6 +61,7 @@ def decrypt_credentials(encrypted_data: bytes) -> Dict[str, Any]:
         Plain credential dictionary with decrypted values
     """
     import json
+
     fernet = Fernet(_get_fernet_key())
 
     try:
@@ -85,16 +89,25 @@ def _is_secret_field(field_name: str) -> bool:
         True if field should be encrypted
     """
     secret_keywords = [
-        'key', 'secret', 'token', 'password', 'credential',
-        'client_id', 'client_secret', 'api_key', 'access_token',
-        'refresh_token', 'private_key', 'app_id'
+        "key",
+        "secret",
+        "token",
+        "password",
+        "credential",
+        "client_id",
+        "client_secret",
+        "api_key",
+        "access_token",
+        "refresh_token",
+        "private_key",
+        "app_id",
     ]
 
     field_lower = field_name.lower()
     return any(keyword in field_lower for keyword in secret_keywords)
 
 
-def redact_credentials(credentials: Dict[str, Any]) -> Dict[str, Any]:
+def redact_credentials(credentials: dict[str, Any]) -> dict[str, Any]:
     """
     Redact sensitive credential values for logging.
 

@@ -1,7 +1,9 @@
 """
 Serializers for Payment Providers
 """
+
 from rest_framework import serializers
+
 from .models import PaymentProviderAccount
 
 
@@ -11,10 +13,11 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
 
     Used in checkout flow to display available payment providers.
     """
-    provider_name = serializers.CharField(source='component.name', read_only=True)
-    provider_slug = serializers.CharField(source='component.slug', read_only=True)
+
+    provider_name = serializers.CharField(source="component.name", read_only=True)
+    provider_slug = serializers.CharField(source="component.slug", read_only=True)
     provider_logo = serializers.SerializerMethodField()
-    provider_description = serializers.CharField(source='component.description', read_only=True)
+    provider_description = serializers.CharField(source="component.description", read_only=True)
 
     # Available payment methods for the customer's country
     available_methods = serializers.SerializerMethodField()
@@ -24,17 +27,17 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentProviderAccount
         fields = [
-            'id',
-            'provider_name',
-            'provider_slug',
-            'provider_logo',
-            'provider_description',
-            'display_name',
-            'connection_status',
-            'available_methods',
-            'is_default',
-            'test_mode',
-            'publishable_key',
+            "id",
+            "provider_name",
+            "provider_slug",
+            "provider_logo",
+            "provider_description",
+            "display_name",
+            "connection_status",
+            "available_methods",
+            "is_default",
+            "test_mode",
+            "publishable_key",
         ]
         read_only_fields = fields
 
@@ -43,9 +46,13 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
         if obj.component and obj.component.logo:
             logo_data = obj.component.logo
             # logo property returns a dict with 'url' key, or could be a FileField
-            logo_url = logo_data.get('url') if isinstance(logo_data, dict) else getattr(logo_data, 'url', None)
+            logo_url = (
+                logo_data.get("url")
+                if isinstance(logo_data, dict)
+                else getattr(logo_data, "url", None)
+            )
             if logo_url:
-                request = self.context.get('request')
+                request = self.context.get("request")
                 if request:
                     return request.build_absolute_uri(logo_url)
                 return logo_url
@@ -58,7 +65,7 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
         If customer country is provided in context, returns methods for that country.
         Otherwise returns all available methods.
         """
-        customer_country = self.context.get('customer_country')
+        customer_country = self.context.get("customer_country")
 
         if customer_country:
             # Get enabled methods for specific country
@@ -70,7 +77,7 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
         for country_methods in obj.enabled_payment_methods.values():
             all_methods.update(country_methods)
 
-        return sorted(list(all_methods))
+        return sorted(all_methods)
 
     def get_test_mode(self, obj):
         """Return whether provider is in test/sandbox mode."""
@@ -95,21 +102,22 @@ class PaymentProviderAccountSerializer(serializers.ModelSerializer):
             return None
         try:
             from payment_providers.utils.encryption import decrypt_credentials
+
             creds = decrypt_credentials(obj.credentials_encrypted or {})
         except Exception:
             return None
 
         slug = obj.component.slug
-        test_mode = bool(creds.get('test_mode'))
+        test_mode = bool(creds.get("test_mode"))
 
-        if slug == 'stripe':
-            field = 'test_publishable_key' if test_mode else 'live_publishable_key'
+        if slug == "stripe":
+            field = "test_publishable_key" if test_mode else "live_publishable_key"
             return creds.get(field) or None
 
-        if slug == 'revolut':
+        if slug == "revolut":
             # Revolut's Checkout Widget uses a single `public_key` (no
             # test/live split in the credential shape).
-            return creds.get('public_key') or None
+            return creds.get("public_key") or None
 
         # Airwallex / PayPal / Square have no publishable-style key.
         return None

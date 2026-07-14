@@ -6,10 +6,9 @@ Pattern follows shipping/providers/base.py architecture.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, List, Any
-from decimal import Decimal
 from datetime import datetime
-from django.utils.translation import gettext_lazy as _
+from decimal import Decimal
+from typing import Any
 
 
 class ExchangeRateProviderBase(ABC):
@@ -31,10 +30,10 @@ class ExchangeRateProviderBase(ABC):
     """
 
     # Must be set by subclass
-    provider_key: str = None       # e.g., 'openexchangerates'
-    provider_name: str = None      # e.g., 'Open Exchange Rates'
+    provider_key: str = None  # e.g., 'openexchangerates'
+    provider_name: str = None  # e.g., 'Open Exchange Rates'
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         """
         Initialize provider with credentials and configuration.
 
@@ -58,7 +57,7 @@ class ExchangeRateProviderBase(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return dictionary of provider capabilities.
 
@@ -78,7 +77,7 @@ class ExchangeRateProviderBase(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema describing required credentials.
 
@@ -111,7 +110,7 @@ class ExchangeRateProviderBase(ABC):
         pass
 
     @abstractmethod
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """
         Validate credentials against schema and business logic.
 
@@ -124,7 +123,7 @@ class ExchangeRateProviderBase(ABC):
         pass
 
     @abstractmethod
-    def redact_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def redact_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Redact sensitive credential values for logging.
 
@@ -137,7 +136,7 @@ class ExchangeRateProviderBase(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test API connection and credential validity.
 
@@ -159,7 +158,9 @@ class ExchangeRateProviderBase(ABC):
         pass
 
     @abstractmethod
-    def get_rate(self, from_currency: str, to_currency: str, date: Optional[datetime] = None) -> Decimal:
+    def get_rate(
+        self, from_currency: str, to_currency: str, date: datetime | None = None
+    ) -> Decimal:
         """
         Get exchange rate between two currencies.
 
@@ -178,7 +179,7 @@ class ExchangeRateProviderBase(ABC):
         pass
 
     @abstractmethod
-    def get_rates(self, base_currency: str, date: Optional[datetime] = None) -> Dict[str, Decimal]:
+    def get_rates(self, base_currency: str, date: datetime | None = None) -> dict[str, Decimal]:
         """
         Get all exchange rates for a base currency.
 
@@ -196,7 +197,7 @@ class ExchangeRateProviderBase(ABC):
         pass
 
     @abstractmethod
-    def get_supported_currencies(self) -> List[str]:
+    def get_supported_currencies(self) -> list[str]:
         """
         Get list of currency codes supported by this provider.
 
@@ -219,7 +220,7 @@ class ExchangeRateProviderBase(ABC):
         supported = self.get_supported_currencies()
         return from_currency in supported and to_currency in supported
 
-    def get_provider_info(self) -> Dict:
+    def get_provider_info(self) -> dict:
         """
         Get provider metadata for display in admin.
 
@@ -227,18 +228,20 @@ class ExchangeRateProviderBase(ABC):
             Dictionary with provider information
         """
         return {
-            'key': self.provider_key,
-            'name': self.provider_name,
-            'capabilities': self.capabilities,
+            "key": self.provider_key,
+            "name": self.provider_name,
+            "capabilities": self.capabilities,
         }
 
 
 # Custom Exceptions
 class CurrencyNotSupported(Exception):
     """Raised when currency is not supported by provider"""
+
     pass
 
 
 class RateFetchError(Exception):
     """Raised when rate fetch fails (API error, network error, etc.)"""
+
     pass

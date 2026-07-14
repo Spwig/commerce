@@ -3,16 +3,14 @@ Django Theme System Models
 Implements the theme architecture with versioning, packaging, and migration support
 """
 
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.core.validators import RegexValidator, FileExtensionValidator
-from django.core.files.storage import default_storage
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-import json
 import hashlib
 import re
+
 import semver
+from django.contrib.auth import get_user_model
+from django.core.validators import FileExtensionValidator, RegexValidator
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -28,29 +26,31 @@ class Theme(models.Model):
     # Versioning (SemVer)
     version = models.CharField(
         max_length=20,
-        validators=[RegexValidator(
-            regex=r'^\d+\.\d+\.\d+(?:[-+][\w\d.]+)?$',
-            message='Version must follow SemVer format (e.g., 1.2.3)'
-        )]
+        validators=[
+            RegexValidator(
+                regex=r"^\d+\.\d+\.\d+(?:[-+][\w\d.]+)?$",
+                message="Version must follow SemVer format (e.g., 1.2.3)",
+            )
+        ],
     )
 
     # Compatibility
     engine_min_version = models.CharField(
         max_length=20,
         help_text=_("Minimum shop platform version required"),
-        validators=[RegexValidator(
-            regex=r'^\d+\.\d+\.\d+$',
-            message='Version must be in format X.Y.Z'
-        )]
+        validators=[
+            RegexValidator(regex=r"^\d+\.\d+\.\d+$", message="Version must be in format X.Y.Z")
+        ],
     )
     engine_max_version = models.CharField(
         max_length=20,
         blank=True,
         help_text=_("Maximum compatible shop platform version"),
-        validators=[RegexValidator(
-            regex=r'^\d+\.\d+\.\d+$|^\d+\.x$',
-            message='Version must be in format X.Y.Z or X.x'
-        )]
+        validators=[
+            RegexValidator(
+                regex=r"^\d+\.\d+\.\d+$|^\d+\.x$", message="Version must be in format X.Y.Z or X.x"
+            )
+        ],
     )
 
     # Authorship and licensing
@@ -58,68 +58,50 @@ class Theme(models.Model):
     author_email = models.EmailField(blank=True)
     author_website = models.URLField(blank=True)
     license = models.CharField(
-        max_length=100,
-        default='Proprietary',
-        help_text=_("e.g., MIT, GPL-3.0, Proprietary")
+        max_length=100, default="Proprietary", help_text=_("e.g., MIT, GPL-3.0, Proprietary")
     )
 
     # Manifest and configuration
     manifest = models.JSONField(
-        default=dict,
-        help_text=_("Complete theme manifest including tokens, templates, widgets")
+        default=dict, help_text=_("Complete theme manifest including tokens, templates, widgets")
     )
-    feature_flags = models.JSONField(
-        default=list,
-        help_text=_("List of required feature flags")
-    )
+    feature_flags = models.JSONField(default=list, help_text=_("List of required feature flags"))
 
     # Token migrations for version upgrades
     token_migrations = models.JSONField(
-        default=list,
-        help_text=_("Token rename/migration rules for upgrades")
+        default=list, help_text=_("Token rename/migration rules for upgrades")
     )
 
     # File storage
     package_file = models.FileField(
-        upload_to='themes/packages/',
-        validators=[FileExtensionValidator(allowed_extensions=['zip'])],
-        help_text=_("Theme package ZIP file")
+        upload_to="themes/packages/",
+        validators=[FileExtensionValidator(allowed_extensions=["zip"])],
+        help_text=_("Theme package ZIP file"),
     )
     package_checksum = models.CharField(
-        max_length=64,
-        editable=False,
-        help_text=_("SHA256 checksum of package file")
+        max_length=64, editable=False, help_text=_("SHA256 checksum of package file")
     )
     extracted_path = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text=_("Path where theme assets are extracted")
+        max_length=255, blank=True, help_text=_("Path where theme assets are extracted")
     )
 
     # Database-served CSS (survives platform updates)
     compiled_css = models.TextField(
         blank=True,
-        help_text=_("Compiled theme CSS (tokens.css + reset.css + components.css + theme.css)")
+        help_text=_("Compiled theme CSS (tokens.css + reset.css + components.css + theme.css)"),
     )
     css_hash = models.CharField(
-        max_length=32,
-        blank=True,
-        editable=False,
-        help_text=_("MD5 hash for cache busting")
+        max_length=32, blank=True, editable=False, help_text=_("MD5 hash for cache busting")
     )
 
     # Preview assets
-    preview_images = models.JSONField(
-        default=list,
-        help_text=_("List of preview image paths")
-    )
+    preview_images = models.JSONField(default=list, help_text=_("List of preview image paths"))
 
     # Status
     is_active = models.BooleanField(default=True)
     is_default = models.BooleanField(default=False)
     is_marketplace = models.BooleanField(
-        default=False,
-        help_text=_("Whether this theme is from the marketplace")
+        default=False, help_text=_("Whether this theme is from the marketplace")
     )
 
     # Timestamps
@@ -129,18 +111,15 @@ class Theme(models.Model):
 
     # Relations
     created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='themes_created'
+        User, on_delete=models.SET_NULL, null=True, related_name="themes_created"
     )
 
     class Meta:
-        ordering = ['-created_at', 'name']
-        unique_together = [['slug', 'version']]
+        ordering = ["-created_at", "name"]
+        unique_together = [["slug", "version"]]
         indexes = [
-            models.Index(fields=['slug', '-version']),
-            models.Index(fields=['is_active', 'is_default']),
+            models.Index(fields=["slug", "-version"]),
+            models.Index(fields=["is_active", "is_default"]),
         ]
 
     def __str__(self):
@@ -163,9 +142,9 @@ class Theme(models.Model):
     @property
     def supports_dark_mode(self):
         """Check if this theme declares dark mode support in its manifest."""
-        features = self.manifest.get('features', {})
+        features = self.manifest.get("features", {})
         if isinstance(features, dict):
-            return features.get('dark_mode', False)
+            return features.get("dark_mode", False)
         return False
 
     def save(self, *args, **kwargs):
@@ -194,27 +173,27 @@ class Theme(models.Model):
         Prevents broken dark mode rendering for themes without dark tokens.
         """
         import logging
+
         logger = logging.getLogger(__name__)
         try:
             from design.models import GlobalDesignSettings
+
             settings = GlobalDesignSettings.get_settings()
             if not self.supports_dark_mode:
                 # Theme has no dark mode support - force light to prevent broken rendering
                 if not settings.force_light_mode:
                     settings.force_light_mode = True
-                    settings.save(update_fields=['force_light_mode'])
+                    settings.save(update_fields=["force_light_mode"])
                     logger.info(
-                        f"Auto-enabled force_light_mode for theme '{self.name}' "
-                        f"(dark_mode: false)"
+                        f"Auto-enabled force_light_mode for theme '{self.name}' (dark_mode: false)"
                     )
             else:
                 # Theme supports dark mode - allow user preference
                 if settings.force_light_mode:
                     settings.force_light_mode = False
-                    settings.save(update_fields=['force_light_mode'])
+                    settings.save(update_fields=["force_light_mode"])
                     logger.info(
-                        f"Auto-disabled force_light_mode for theme '{self.name}' "
-                        f"(dark_mode: true)"
+                        f"Auto-disabled force_light_mode for theme '{self.name}' (dark_mode: true)"
                     )
         except Exception as e:
             logger.warning(f"Could not sync force_light_mode for theme '{self.name}': {e}")
@@ -222,7 +201,7 @@ class Theme(models.Model):
     def calculate_checksum(self):
         """Calculate SHA256 checksum of package file"""
         if not self.package_file:
-            return ''
+            return ""
 
         sha256_hash = hashlib.sha256()
         for chunk in self.package_file.chunks():
@@ -242,27 +221,26 @@ class Theme(models.Model):
             if platform_ver < min_ver:
                 return False
 
-            if self.engine_max_version and not self.engine_max_version.endswith('.x'):
+            if self.engine_max_version and not self.engine_max_version.endswith(".x"):
                 max_ver = semver.VersionInfo.parse(self.engine_max_version)
                 if platform_ver > max_ver:
                     return False
 
             return True
-        except:
+        except Exception:
             return False
-
 
     def get_tokens(self):
         """Get theme design tokens"""
-        return self.manifest.get('tokens', {})
+        return self.manifest.get("tokens", {})
 
     def get_templates(self):
         """Get available templates"""
-        return self.manifest.get('templates', {})
+        return self.manifest.get("templates", {})
 
     def get_widgets(self):
         """Get available widgets"""
-        return self.manifest.get('widgets', [])
+        return self.manifest.get("widgets", [])
 
     def extract_theme(self):
         """
@@ -273,12 +251,14 @@ class Theme(models.Model):
         if not self.package_file:
             return False
 
-        import zipfile
+        import logging
         import os
         import tempfile
-        import logging
-        from django.conf import settings
+        import zipfile
         from pathlib import Path
+
+        from django.conf import settings
+
         from .theme_version_manager import ThemeVersionManager
 
         logger = logging.getLogger(__name__)
@@ -286,21 +266,19 @@ class Theme(models.Model):
         try:
             # Extract package to temp directory first
             with tempfile.TemporaryDirectory() as temp_dir:
-                temp_path = os.path.join(temp_dir, 'extracted')
+                temp_path = os.path.join(temp_dir, "extracted")
                 os.makedirs(temp_path, exist_ok=True)
 
                 # Extract ZIP to temp
-                with zipfile.ZipFile(self.package_file.path, 'r') as zip_ref:
+                with zipfile.ZipFile(self.package_file.path, "r") as zip_ref:
                     zip_ref.extractall(temp_path)
 
                 # Use ThemeVersionManager to install version
                 result = ThemeVersionManager.install_theme_version(
-                    self.slug,
-                    self.version,
-                    Path(temp_path)
+                    self.slug, self.version, Path(temp_path)
                 )
 
-                if not result['success']:
+                if not result["success"]:
                     logger.error(f"Failed to install theme version: {result.get('error')}")
                     return False
 
@@ -311,39 +289,41 @@ class Theme(models.Model):
                     update_active_theme=False,
                 )
 
-                if not activate_result['success']:
-                    logger.error(f"Failed to activate theme version: {activate_result.get('error')}")
+                if not activate_result["success"]:
+                    logger.error(
+                        f"Failed to activate theme version: {activate_result.get('error')}"
+                    )
                     return False
 
                 # Update extracted_path to point to current symlink in components_data
-                base_path = os.path.join(settings.BASE_DIR, 'components_data', 'static', 'design')
-                extract_dir = os.path.join(base_path, 'themes', self.slug, 'current')
+                base_path = os.path.join(settings.BASE_DIR, "components_data", "static", "design")
+                extract_dir = os.path.join(base_path, "themes", self.slug, "current")
 
                 self.extracted_path = extract_dir
 
                 # Build compiled CSS — detect v1 vs v2 theme format
-                theme_dir = Path(extract_dir) / 'theme'
-                css_dir = theme_dir / 'css'
-                tokens_css_path = css_dir / 'tokens.css'
-                tokens_json_path = theme_dir / 'tokens.json'
+                theme_dir = Path(extract_dir) / "theme"
+                css_dir = theme_dir / "css"
+                tokens_css_path = css_dir / "tokens.css"
+                tokens_json_path = theme_dir / "tokens.json"
 
                 if tokens_css_path.exists():
                     # v1 theme: bundled CSS files
-                    css_files = ['tokens.css', 'reset.css', 'components.css', 'theme.css']
+                    css_files = ["tokens.css", "reset.css", "components.css", "theme.css"]
                     combined_css = []
                     for css_file in css_files:
                         css_path = css_dir / css_file
                         if css_path.exists():
                             combined_css.append(f"/* {css_file} */\n{css_path.read_text()}")
-                    self.compiled_css = '\n\n'.join(combined_css)
+                    self.compiled_css = "\n\n".join(combined_css)
                 else:
                     # v2 theme: auto-generate tokens.css, use platform CSS
                     combined_css = []
                     design_app_path = os.path.dirname(os.path.abspath(__file__))
-                    platform_dir = Path(design_app_path) / 'static' / 'design' / 'platform'
+                    platform_dir = Path(design_app_path) / "static" / "design" / "platform"
 
                     # 1. Platform reset.css
-                    platform_reset = platform_dir / 'reset.css'
+                    platform_reset = platform_dir / "reset.css"
                     if platform_reset.exists():
                         combined_css.append(f"/* reset.css */\n{platform_reset.read_text()}")
 
@@ -351,34 +331,39 @@ class Theme(models.Model):
                     if tokens_json_path.exists():
                         try:
                             from design.services.token_css_generator import generate_tokens_css
+
                             tokens_css_content = generate_tokens_css(
                                 tokens_json_path,
                                 self.name,
                                 dark_mode_enabled=self.supports_dark_mode,
                             )
-                            combined_css.append(f"/* tokens.css (auto-generated) */\n{tokens_css_content}")
+                            combined_css.append(
+                                f"/* tokens.css (auto-generated) */\n{tokens_css_content}"
+                            )
                         except Exception as e:
                             logger.error(f"Failed to generate tokens.css for {self.slug}: {e}")
 
                     # 3. Platform components.css
-                    platform_components = platform_dir / 'components.css'
+                    platform_components = platform_dir / "components.css"
                     if platform_components.exists():
-                        combined_css.append(f"/* components.css */\n{platform_components.read_text()}")
+                        combined_css.append(
+                            f"/* components.css */\n{platform_components.read_text()}"
+                        )
 
                     # 4. Theme overrides.css (optional)
-                    overrides_path = theme_dir / 'overrides.css'
+                    overrides_path = theme_dir / "overrides.css"
                     if overrides_path.exists():
                         overrides_content = overrides_path.read_text().strip()
                         if overrides_content:
                             combined_css.append(f"/* overrides.css */\n{overrides_content}")
 
-                    self.compiled_css = '\n\n'.join(combined_css)
+                    self.compiled_css = "\n\n".join(combined_css)
 
                 # Strip relative @import statements (keep external font imports like Google Fonts)
                 self.compiled_css = re.sub(
                     r'@import\s+url\([\'"]?(?!https?://)[^\'")\s]+[\'"]?\)\s*;?\s*\n?',
-                    '',
-                    self.compiled_css
+                    "",
+                    self.compiled_css,
                 )
 
                 self.css_hash = hashlib.md5(self.compiled_css.encode()).hexdigest()[:8]
@@ -387,14 +372,15 @@ class Theme(models.Model):
                 Theme.objects.filter(pk=self.pk).update(
                     extracted_path=extract_dir,
                     compiled_css=self.compiled_css,
-                    css_hash=self.css_hash
+                    css_hash=self.css_hash,
                 )
 
                 # Install header/footer presets if theme includes them
-                presets_dir = theme_dir / 'presets'
+                presets_dir = theme_dir / "presets"
                 if presets_dir.is_dir():
                     try:
                         from design.services.theme_preset_installer import ThemePresetInstaller
+
                         preset_result = ThemePresetInstaller.install_presets(self.slug, presets_dir)
                         logger.info(
                             f"Installed presets for {self.slug}: "
@@ -435,6 +421,7 @@ class Theme(models.Model):
             QuerySet of ComponentStore instances that were bundled with this theme.
         """
         from .models import ComponentStore
+
         return ComponentStore.objects.filter(source_theme=self)
 
     @property
@@ -457,13 +444,13 @@ class Theme(models.Model):
         components = self.get_bundled_components()
         return [
             {
-                'component_type': comp.component_type,
-                'display_name': comp.display_name,
-                'version': comp.version,
-                'description': comp.description,
-                'review_status': comp.review_status,
-                'allowed_tiers': comp.allowed_tiers,
-                'is_installed': True,  # By definition, if it's in ComponentStore, it's installed
+                "component_type": comp.component_type,
+                "display_name": comp.display_name,
+                "version": comp.version,
+                "description": comp.description,
+                "review_status": comp.review_status,
+                "allowed_tiers": comp.allowed_tiers,
+                "is_installed": True,  # By definition, if it's in ComponentStore, it's installed
             }
             for comp in components
         ]
@@ -480,26 +467,21 @@ class ThemeInstallation(models.Model):
 
     # Previous theme for rollback
     previous_theme = models.ForeignKey(
-        Theme,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='replaced_by'
+        Theme, on_delete=models.SET_NULL, null=True, related_name="replaced_by"
     )
 
     # Customization state snapshot
     customization_snapshot = models.JSONField(
-        default=dict,
-        help_text=_("Snapshot of customizations before installation")
+        default=dict, help_text=_("Snapshot of customizations before installation")
     )
 
     # Migration status
     migrations_applied = models.JSONField(
-        default=list,
-        help_text=_("List of applied token migrations")
+        default=list, help_text=_("List of applied token migrations")
     )
 
     class Meta:
-        ordering = ['-installed_at']
+        ordering = ["-installed_at"]
 
     def __str__(self):
         return f"{self.theme.name} installed at {self.installed_at}"
@@ -528,27 +510,16 @@ class ThemeBranding(models.Model):
 
     # Component overrides
     component_overrides = models.JSONField(
-        default=dict,
-        help_text=_("Per-component style overrides")
+        default=dict, help_text=_("Per-component style overrides")
     )
 
     # Custom CSS (last resort)
-    custom_css = models.TextField(
-        blank=True,
-        help_text=_("Custom CSS code (use sparingly)")
-    )
+    custom_css = models.TextField(blank=True, help_text=_("Custom CSS code (use sparingly)"))
 
     # Generated CSS cache
-    generated_css = models.TextField(
-        blank=True,
-        editable=False,
-        help_text=_("Compiled brand CSS")
-    )
+    generated_css = models.TextField(blank=True, editable=False, help_text=_("Compiled brand CSS"))
     css_hash = models.CharField(
-        max_length=32,
-        blank=True,
-        editable=False,
-        help_text=_("Hash for cache busting")
+        max_length=32, blank=True, editable=False, help_text=_("Hash for cache busting")
     )
 
     # Timestamps
@@ -568,13 +539,13 @@ class ThemeBranding(models.Model):
     # Maps field_name (without _tokens suffix) to CSS prefix
     # Add new token types here - no other code changes needed
     TOKEN_CSS_PREFIXES = {
-        'color': 'theme-color',           # color_tokens → --theme-color-{key}
-        'typography': 'theme',            # typography_tokens → --theme-{key}
-        'spacing': 'theme-space',         # spacing_tokens → --theme-space-{key}
-        'border': 'theme',                # border_tokens → --theme-{key}
-        'shadow': 'theme-shadow',         # shadow_tokens → --theme-shadow-{key}
-        'animation': 'theme-transition',  # animation_tokens → --theme-transition-{key}
-        'transition': 'theme-transition', # transition_tokens → --theme-transition-{key}
+        "color": "theme-color",  # color_tokens → --theme-color-{key}
+        "typography": "theme",  # typography_tokens → --theme-{key}
+        "spacing": "theme-space",  # spacing_tokens → --theme-space-{key}
+        "border": "theme",  # border_tokens → --theme-{key}
+        "shadow": "theme-shadow",  # shadow_tokens → --theme-shadow-{key}
+        "animation": "theme-transition",  # animation_tokens → --theme-transition-{key}
+        "transition": "theme-transition",  # transition_tokens → --theme-transition-{key}
         # Component tokens use theme-{name} pattern automatically
     }
 
@@ -590,11 +561,11 @@ class ThemeBranding(models.Model):
 
         # Dynamically discover and process all *_tokens fields
         for field in self._meta.get_fields():
-            if not field.name.endswith('_tokens'):
+            if not field.name.endswith("_tokens"):
                 continue
 
             # Skip element_tokens - handled separately with nesting support
-            if field.name == 'element_tokens':
+            if field.name == "element_tokens":
                 continue
 
             tokens = getattr(self, field.name, None) or {}
@@ -602,7 +573,7 @@ class ThemeBranding(models.Model):
                 continue
 
             # Determine CSS prefix from field name
-            token_type = field.name.replace('_tokens', '')
+            token_type = field.name.replace("_tokens", "")
 
             if token_type in self.TOKEN_CSS_PREFIXES:
                 # Use explicit prefix mapping
@@ -613,16 +584,16 @@ class ThemeBranding(models.Model):
 
             # Generate CSS variables
             for key, value in tokens.items():
-                css_key = key.replace('_', '-')
+                css_key = key.replace("_", "-")
 
                 # Handle nested zones structure in header_tokens and footer_tokens
-                if key == 'zones' and isinstance(value, dict):
+                if key == "zones" and isinstance(value, dict):
                     css_parts.append(f"  /* {token_type.title()} Zone Tokens */")
                     for zone_name, zone_props in value.items():
-                        zone_css_name = zone_name.replace('_', '-')
+                        zone_css_name = zone_name.replace("_", "-")
                         if isinstance(zone_props, dict):
                             for prop_key, prop_value in zone_props.items():
-                                prop_css_key = prop_key.replace('_', '-')
+                                prop_css_key = prop_key.replace("_", "-")
                                 css_var = f"--{prefix}-zones-{zone_css_name}-{prop_css_key}"
                                 css_parts.append(f"  {css_var}: {prop_value};")
                 else:
@@ -632,11 +603,12 @@ class ThemeBranding(models.Model):
         # Element tokens → --theme-element-{category}-{key}
         # Supports nested structure: elements.heading.h1-color → --theme-element-heading-h1-color
         if self.element_tokens:
-            def flatten_elements(obj, prefix=''):
+
+            def flatten_elements(obj, prefix=""):
                 """Recursively flatten nested element tokens to CSS variables."""
                 result = []
                 for key, value in obj.items():
-                    css_key = key.replace('_', '-')
+                    css_key = key.replace("_", "-")
                     new_prefix = f"{prefix}-{css_key}" if prefix else css_key
 
                     if isinstance(value, dict):
@@ -658,21 +630,21 @@ class ThemeBranding(models.Model):
         # corner-shape can't use CSS variables, so we need actual CSS rules
         border_contexts = {}
         for key, value in (self.border_tokens or {}).items():
-            if '-corner-shape' in key:
-                context = key.replace('-corner-shape', '')
+            if "-corner-shape" in key:
+                context = key.replace("-corner-shape", "")
                 border_contexts[context] = value
 
         # Map context names to actual selectors
         context_selectors = {
-            'button': 'button, .button, [type="button"], [type="submit"], [type="reset"]',
-            'input': 'input, textarea, select, .input',
-            'card': '.card, .product-card, article',
-            'modal': '.modal, .dialog, [role="dialog"]'
+            "button": 'button, .button, [type="button"], [type="submit"], [type="reset"]',
+            "input": "input, textarea, select, .input",
+            "card": ".card, .product-card, article",
+            "modal": '.modal, .dialog, [role="dialog"]',
         }
 
         for context, corner_shape in border_contexts.items():
-            if corner_shape and corner_shape != 'round':
-                selectors = context_selectors.get(context, f'.{context}')
+            if corner_shape and corner_shape != "round":
+                selectors = context_selectors.get(context, f".{context}")
                 css_parts.append(f"\n/* Corner shape for {context} */")
                 css_parts.append(f"{selectors} {{")
                 css_parts.append(f"  corner-shape: {corner_shape};")
@@ -681,34 +653,34 @@ class ThemeBranding(models.Model):
         # Add component overrides (supports responsive tokens)
         if self.component_overrides:
             # Check for component tokens (like 'menu') that should become CSS variables
-            component_token_keys = ['menu']  # Components with token-based styling
+            component_token_keys = ["menu"]  # Components with token-based styling
             component_tokens_css = []
             responsive_media_queries = {}  # {min_width: [css_vars]}
 
             # Valid breakpoint names for responsive tokens
             valid_breakpoints = {
-                'mobile': None,  # Base (no media query)
-                'tablet': '768px',
-                'desktop': '1024px',
-                'sm': '640px',
-                'md': '768px',
-                'lg': '1024px',
-                'xl': '1280px',
-                '2xl': '1536px',
+                "mobile": None,  # Base (no media query)
+                "tablet": "768px",
+                "desktop": "1024px",
+                "sm": "640px",
+                "md": "768px",
+                "lg": "1024px",
+                "xl": "1280px",
+                "2xl": "1536px",
             }
 
             def is_responsive_value(val):
                 """Check if value is a responsive object with breakpoint keys."""
                 if not isinstance(val, dict):
                     return False
-                return any(k in valid_breakpoints for k in val.keys())
+                return any(k in valid_breakpoints for k in val)
 
             def get_base_value(responsive_val):
                 """Get mobile-first base value from responsive object."""
-                if 'mobile' in responsive_val:
-                    return responsive_val['mobile']
-                if 'sm' in responsive_val:
-                    return responsive_val['sm']
+                if "mobile" in responsive_val:
+                    return responsive_val["mobile"]
+                if "sm" in responsive_val:
+                    return responsive_val["sm"]
                 return list(responsive_val.values())[0]
 
             for key, value in self.component_overrides.items():
@@ -725,13 +697,15 @@ class ThemeBranding(models.Model):
 
                             # Collect responsive values for media queries
                             for breakpoint, bp_value in token_value.items():
-                                if breakpoint in ('mobile', 'sm'):
+                                if breakpoint in ("mobile", "sm"):
                                     continue  # Base value, no media query needed
                                 min_width = valid_breakpoints.get(breakpoint)
                                 if min_width:
                                     if min_width not in responsive_media_queries:
                                         responsive_media_queries[min_width] = []
-                                    responsive_media_queries[min_width].append(f"    {css_var}: {bp_value};")
+                                    responsive_media_queries[min_width].append(
+                                        f"    {css_var}: {bp_value};"
+                                    )
                         else:
                             # Flat value
                             component_tokens_css.append(f"  {css_var}: {token_value};")
@@ -752,7 +726,9 @@ class ThemeBranding(models.Model):
             # Add responsive media queries
             if responsive_media_queries:
                 css_parts.append("\n/* Responsive Component Tokens */")
-                for min_width in sorted(responsive_media_queries.keys(), key=lambda x: int(x.replace('px', ''))):
+                for min_width in sorted(
+                    responsive_media_queries.keys(), key=lambda x: int(x.replace("px", ""))
+                ):
                     vars_list = responsive_media_queries[min_width]
                     if vars_list:
                         css_parts.append(f"@media (min-width: {min_width}) {{")
@@ -782,22 +758,19 @@ class ThemeAsset(models.Model):
     """Individual theme assets (CSS, JS, images, fonts)"""
 
     ASSET_TYPES = [
-        ('css', 'CSS'),
-        ('js', 'JavaScript'),
-        ('image', 'Image'),
-        ('font', 'Font'),
-        ('icon', 'Icon'),
-        ('template', 'Template'),
+        ("css", "CSS"),
+        ("js", "JavaScript"),
+        ("image", "Image"),
+        ("font", "Font"),
+        ("icon", "Icon"),
+        ("template", "Template"),
     ]
 
-    theme = models.ForeignKey(Theme, on_delete=models.CASCADE, related_name='assets')
+    theme = models.ForeignKey(Theme, on_delete=models.CASCADE, related_name="assets")
 
     asset_type = models.CharField(max_length=20, choices=ASSET_TYPES)
-    path = models.CharField(
-        max_length=255,
-        help_text=_("Relative path within theme")
-    )
-    file = models.FileField(upload_to='themes/assets/')
+    path = models.CharField(max_length=255, help_text=_("Relative path within theme"))
+    file = models.FileField(upload_to="themes/assets/")
 
     # Metadata
     mime_type = models.CharField(max_length=100, blank=True)
@@ -806,20 +779,19 @@ class ThemeAsset(models.Model):
 
     # For critical CSS
     is_critical = models.BooleanField(
-        default=False,
-        help_text=_("Whether this is critical CSS for initial render")
+        default=False, help_text=_("Whether this is critical CSS for initial render")
     )
     route = models.CharField(
         max_length=50,
         blank=True,
-        help_text=_("Specific route for critical CSS (e.g., home, plp, pdp)")
+        help_text=_("Specific route for critical CSS (e.g., home, plp, pdp)"),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = [['theme', 'path']]
-        ordering = ['asset_type', 'path']
+        unique_together = [["theme", "path"]]
+        ordering = ["asset_type", "path"]
 
     def __str__(self):
         return f"{self.theme.slug}/{self.path}"

@@ -3,6 +3,7 @@ Admin API Permissions
 
 Custom permission classes for staff-only mobile app API endpoints.
 """
+
 import secrets
 
 from django.conf import settings as django_settings
@@ -18,14 +19,15 @@ class IsStaffUser(permissions.BasePermission):
         class MyView(APIView):
             permission_classes = [IsStaffUser]
     """
+
     message = "Staff access required for this endpoint."
 
     def has_permission(self, request, view):
         return (
-            request.user and
-            request.user.is_authenticated and
-            request.user.is_active and
-            request.user.is_staff
+            request.user
+            and request.user.is_authenticated
+            and request.user.is_active
+            and request.user.is_staff
         )
 
 
@@ -34,14 +36,15 @@ class IsSuperUser(permissions.BasePermission):
     Permission for superuser-only operations.
     Used for sensitive settings and administrative actions.
     """
+
     message = "Superuser access required for this endpoint."
 
     def has_permission(self, request, view):
         return (
-            request.user and
-            request.user.is_authenticated and
-            request.user.is_active and
-            request.user.is_superuser
+            request.user
+            and request.user.is_authenticated
+            and request.user.is_active
+            and request.user.is_superuser
         )
 
 
@@ -50,6 +53,7 @@ class IsStaffOrReadOnly(permissions.BasePermission):
     Permission to allow read-only access to authenticated users,
     but require staff status for write operations.
     """
+
     message = "Staff access required for write operations."
 
     def has_permission(self, request, view):
@@ -73,11 +77,16 @@ class IsStaffWithWritePermission(permissions.BasePermission):
 
     Defense-in-depth alongside AdminReadOnlyMiddleware.
     """
+
     message = "Your account has read-only access. Write operations are not permitted."
 
     def has_permission(self, request, view):
-        if not (request.user and request.user.is_authenticated
-                and request.user.is_active and request.user.is_staff):
+        if not (
+            request.user
+            and request.user.is_authenticated
+            and request.user.is_active
+            and request.user.is_staff
+        ):
             return False
 
         if request.method in permissions.SAFE_METHODS:
@@ -87,10 +96,11 @@ class IsStaffWithWritePermission(permissions.BasePermission):
             return True
 
         from staff_roles.services import is_effectively_read_only
+
         return not is_effectively_read_only(request.user)
 
 
-def category_permission(category_key, level='view'):
+def category_permission(category_key, level="view"):
     """
     Factory to create a DRF permission class for category-based access control.
 
@@ -111,22 +121,28 @@ def category_permission(category_key, level='view'):
         @permission_classes([category_permission('catalog', 'view')])
         def my_read_view(request): ...
     """
+
     class CategoryPermission(permissions.BasePermission):
         message = f"You do not have {level} access to {category_key}."
 
         def has_permission(self, request, view):
-            if not (request.user and request.user.is_authenticated
-                    and request.user.is_active and request.user.is_staff):
+            if not (
+                request.user
+                and request.user.is_authenticated
+                and request.user.is_active
+                and request.user.is_staff
+            ):
                 return False
 
             if request.user.is_superuser:
                 return True
 
             from staff_roles.services import has_category_access
+
             return has_category_access(request.user, category_key, level)
 
-    CategoryPermission.__name__ = f'Has_{category_key}_{level}'
-    CategoryPermission.__qualname__ = f'Has_{category_key}_{level}'
+    CategoryPermission.__name__ = f"Has_{category_key}_{level}"
+    CategoryPermission.__qualname__ = f"Has_{category_key}_{level}"
     return CategoryPermission
 
 
@@ -138,14 +154,15 @@ class HasMobileAppKey(permissions.BasePermission):
     requests must include a matching X-Spwig-App-Key header.
     If the key is not configured (empty/missing), all requests are allowed.
     """
-    message = 'Invalid or missing app key.'
+
+    message = "Invalid or missing app key."
 
     def has_permission(self, request, view):
-        mobile_settings = getattr(django_settings, 'MOBILE_API_SETTINGS', {})
-        app_key = mobile_settings.get('MOBILE_APP_API_KEY', '')
+        mobile_settings = getattr(django_settings, "MOBILE_API_SETTINGS", {})
+        app_key = mobile_settings.get("MOBILE_APP_API_KEY", "")
         if not app_key:
             return True
-        request_key = request.META.get('HTTP_X_SPWIG_APP_KEY', '')
+        request_key = request.META.get("HTTP_X_SPWIG_APP_KEY", "")
         if not request_key:
             return False
         return secrets.compare_digest(request_key, app_key)

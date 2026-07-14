@@ -1,28 +1,31 @@
 """
 Core application configuration
 """
+
 from django.apps import AppConfig
 
 
 class CoreConfig(AppConfig):
     """Configuration for the core app"""
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'core'
-    verbose_name = 'Core Platform'
+
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "core"
+    verbose_name = "Core Platform"
 
     def ready(self):
         """
         Called when Django starts. Connects signals and fetches platform secrets
         from license server in background thread if not already initialized.
         """
+        import logging
         import sys
         import threading
-        import logging
 
         logger = logging.getLogger(__name__)
 
         # Connect signal handlers for 2FA trusted device management
         from core.signals import connect_signals
+
         connect_signals()
 
         # Register Django system checks
@@ -34,20 +37,20 @@ class CoreConfig(AppConfig):
         # Bootstrap Community licence if no licence file exists. Safe to run
         # for every management command (no DB access, idempotent). Skipped
         # during makemigrations to avoid coupling migrations to filesystem state.
-        if 'makemigrations' not in sys.argv:
+        if "makemigrations" not in sys.argv:
             _bootstrap_community_licence(logger)
 
         # Determine if we're running as a web server (not management command/migrations)
         is_server = False
         if sys.argv:
             # Check for runserver, gunicorn, or uvicorn
-            cmd = sys.argv[0] if sys.argv else ''
-            args = ' '.join(sys.argv)
-            if 'runserver' in args or 'gunicorn' in cmd or 'uvicorn' in cmd:
+            cmd = sys.argv[0] if sys.argv else ""
+            args = " ".join(sys.argv)
+            if "runserver" in args or "gunicorn" in cmd or "uvicorn" in cmd:
                 is_server = True
 
         # Also check for Celery worker (needs secrets too)
-        is_celery = 'celery' in ' '.join(sys.argv) if sys.argv else False
+        is_celery = "celery" in " ".join(sys.argv) if sys.argv else False
 
         if not (is_server or is_celery):
             return
@@ -61,20 +64,21 @@ class CoreConfig(AppConfig):
             """
             import os
             import time
+
             # Brief delay to ensure DB connections are ready
             time.sleep(2)
 
             # Step 1: Check and activate license if needed
             try:
-                from core.license import get_license_manager
                 from component_updates.models import UpdateServerConfig
+                from core.license import get_license_manager
 
                 license_manager = get_license_manager()
 
                 # Check if we already have a valid license
                 if not license_manager.is_valid():
                     # Check if LICENSE_KEY is set in environment
-                    env_license_key = os.environ.get('LICENSE_KEY', '').strip()
+                    env_license_key = os.environ.get("LICENSE_KEY", "").strip()
 
                     # Also check UpdateServerConfig
                     update_config = UpdateServerConfig.get_instance()
@@ -91,7 +95,9 @@ class CoreConfig(AppConfig):
                         logger.info("No valid license file found, attempting auto-activation...")
                         _auto_activate_license(license_key, update_config, logger)
                     else:
-                        logger.info("No license key configured - running in Trial mode (payment processing disabled)")
+                        logger.info(
+                            "No license key configured - running in Trial mode (payment processing disabled)"
+                        )
                 else:
                     logger.debug("Valid license file already exists")
 
@@ -102,12 +108,14 @@ class CoreConfig(AppConfig):
                     update_config = UpdateServerConfig.get_instance()
                     if not update_config.license_key:
                         license_data = license_manager.get_license_data() or {}
-                        license_info = license_data.get('license', {})
-                        file_key = license_info.get('license_key', '')
+                        license_info = license_data.get("license", {})
+                        file_key = license_info.get("license_key", "")
                         if file_key:
                             update_config.license_key = file_key
                             update_config.save()
-                            logger.info("Synced license key from license.json to UpdateServerConfig")
+                            logger.info(
+                                "Synced license key from license.json to UpdateServerConfig"
+                            )
 
             except Exception as e:
                 logger.warning(f"License activation check failed: {e}")
@@ -116,11 +124,13 @@ class CoreConfig(AppConfig):
             # Step 2: Fetch platform secrets
             try:
                 from core.models import PlatformSecrets
+
                 secrets = PlatformSecrets.get_secrets()
 
                 if not secrets.is_initialized:
                     logger.info("Platform secrets not initialized, fetching from license server...")
                     from component_updates.services import UpdateManager
+
                     manager = UpdateManager()
                     # This will authenticate and store secrets
                     manager._ensure_authenticated()
@@ -141,8 +151,10 @@ class CoreConfig(AppConfig):
             # Step 3: Startup telemetry ping (best-effort, opt-out via SPWIG_TELEMETRY=0)
             try:
                 from django.conf import settings as dj_settings
-                if getattr(dj_settings, 'SPWIG_TELEMETRY_ENABLED', True):
+
+                if getattr(dj_settings, "SPWIG_TELEMETRY_ENABLED", True):
                     from core.telemetry.client import send_telemetry
+
                     send_telemetry()
                 else:
                     logger.debug("Telemetry disabled; startup ping skipped")
@@ -151,7 +163,9 @@ class CoreConfig(AppConfig):
                 # Non-fatal — daily beat task will retry.
 
         # Run in background thread to not block startup
-        thread = threading.Thread(target=fetch_secrets_and_activate_license, daemon=True, name='platform-startup')
+        thread = threading.Thread(
+            target=fetch_secrets_and_activate_license, daemon=True, name="platform-startup"
+        )
         thread.start()
         logger.debug("Started background platform startup thread")
 
@@ -167,6 +181,7 @@ def _bootstrap_community_licence(logger):
     """
     import shutil
     from pathlib import Path
+
     from django.conf import settings
 
     try:
@@ -212,7 +227,8 @@ def _patch_money_field_currency_defaults(logger):
     Skipped during makemigrations to avoid spurious migration detection.
     """
     import sys
-    if 'makemigrations' in sys.argv:
+
+    if "makemigrations" in sys.argv:
         return
 
     from django.apps import apps
@@ -225,18 +241,19 @@ def _patch_money_field_currency_defaults(logger):
     def _get_merchant_currency():
         try:
             from core.utils import get_default_currency
+
             return get_default_currency()
         except Exception:
-            return 'USD'
+            return "USD"
 
-    SKIP_APP_LABELS = {'license_checkout'}
+    SKIP_APP_LABELS = {"license_checkout"}
     patched = 0
 
     for model in apps.get_models():
         if model._meta.app_label in SKIP_APP_LABELS:
             continue
         for field in model._meta.get_fields():
-            if isinstance(field, DjMoneyField) and hasattr(field, '_currency_field'):
+            if isinstance(field, DjMoneyField) and hasattr(field, "_currency_field"):
                 if field.default_currency is None:
                     continue  # Multi-currency fields — stay None
                 field._currency_field.default = _get_merchant_currency
@@ -249,12 +266,14 @@ def _auto_activate_license(license_key, update_config, logger):
     """
     Attempt to activate license by calling the update server API.
     """
+    import hashlib
+    import hmac
     import json
     import secrets as secrets_module
-    import hmac
-    import hashlib
-    import requests
     from pathlib import Path
+
+    import requests
+
     import core
 
     try:
@@ -264,12 +283,14 @@ def _auto_activate_license(license_key, update_config, logger):
         platform_version = core.__version__
 
         # Get domain from SiteSettings (set during installation from $DOMAIN)
-        domain = ''
+        domain = ""
         try:
             from core.models import SiteSettings
+
             site_settings = SiteSettings.objects.filter(pk=1).first()
             if site_settings and site_settings.site_url:
                 from urllib.parse import urlparse
+
                 parsed = urlparse(site_settings.site_url)
                 domain = parsed.netloc or parsed.path
         except Exception:
@@ -279,42 +300,47 @@ def _auto_activate_license(license_key, update_config, logger):
         activation_url = f"{update_config.server_url}/api/v1/licenses/activate/"
 
         payload = {
-            'license_key': license_key,
-            'installation_uuid': installation_uuid,
-            'domain': domain,
-            'platform_version': platform_version,
-            'environment_type': 'production',
-            'challenge': challenge
+            "license_key": license_key,
+            "installation_uuid": installation_uuid,
+            "domain": domain,
+            "platform_version": platform_version,
+            "environment_type": "production",
+            "challenge": challenge,
         }
 
         response = requests.post(activation_url, json=payload, timeout=30)
 
         if response.status_code != 200:
-            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
-            logger.warning(f"License activation failed: {error_data.get('message', 'Unknown error')}")
+            error_data = (
+                response.json()
+                if response.headers.get("content-type", "").startswith("application/json")
+                else {}
+            )
+            logger.warning(
+                f"License activation failed: {error_data.get('message', 'Unknown error')}"
+            )
             return
 
         activation_data = response.json()
 
         # Verify challenge response
         expected_response = hmac.new(
-            license_key.encode(),
-            (challenge + installation_uuid).encode(),
-            hashlib.sha256
+            license_key.encode(), (challenge + installation_uuid).encode(), hashlib.sha256
         ).hexdigest()
 
-        if activation_data.get('challenge_response') != expected_response:
+        if activation_data.get("challenge_response") != expected_response:
             logger.error("License activation failed: challenge verification failed")
             return
 
         # Build license file
         license_data = {
-            'license': activation_data['license'],
-            'signature': activation_data['signature']
+            "license": activation_data["license"],
+            "signature": activation_data["signature"],
         }
 
         # Verify signature locally
         from core.license import get_license_manager, reload_license_manager
+
         license_manager = get_license_manager()
 
         if not license_manager.verify_signature(license_data):
@@ -325,11 +351,11 @@ def _auto_activate_license(license_key, update_config, logger):
         license_path = Path(license_manager.license_path)
         license_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(license_path, 'w') as f:
+        with open(license_path, "w") as f:
             json.dump(license_data, f, indent=2)
 
         # Ensure UpdateServerConfig has the canonical key from the server response
-        canonical_key = activation_data['license'].get('license_key', '')
+        canonical_key = activation_data["license"].get("license_key", "")
         if canonical_key and update_config.license_key != canonical_key:
             update_config.license_key = canonical_key
             update_config.save()
@@ -337,7 +363,7 @@ def _auto_activate_license(license_key, update_config, logger):
         # Reload license manager
         reload_license_manager()
 
-        license_type = activation_data['license'].get('license_type', 'unknown')
+        license_type = activation_data["license"].get("license_type", "unknown")
         logger.info(f"✅ License activated successfully! Type: {license_type}")
 
     except requests.exceptions.Timeout:

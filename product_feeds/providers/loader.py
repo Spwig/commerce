@@ -3,10 +3,9 @@ Dynamic provider loading from component registry.
 
 Pattern follows exchange_rates/providers/loader.py architecture.
 """
+
 import logging
 import time
-from pathlib import Path
-from typing import Dict, List, Optional, Type
 
 from product_feeds.providers.base import FeedProviderBase
 
@@ -21,14 +20,14 @@ class ProviderLoader:
     and loads them dynamically based on their manifest.json.
     """
 
-    COMPONENT_TYPE = 'product_feed_provider'
+    COMPONENT_TYPE = "product_feed_provider"
 
-    _providers: Dict[str, Type[FeedProviderBase]] = {}
+    _providers: dict[str, type[FeedProviderBase]] = {}
     _loaded = False
     _last_loaded_at: float = 0
 
     @classmethod
-    def discover_providers(cls) -> Dict[str, Type[FeedProviderBase]]:
+    def discover_providers(cls) -> dict[str, type[FeedProviderBase]]:
         """
         Discover and load all product feed providers from components.
 
@@ -40,10 +39,12 @@ class ProviderLoader:
 
         from component_updates.integration_paths import INTEGRATIONS_DIR, import_component_module
 
-        components_path = INTEGRATIONS_DIR / 'product_feed_provider'
+        components_path = INTEGRATIONS_DIR / "product_feed_provider"
 
         if not components_path.exists():
-            logger.debug(f"Components path not found: {components_path} - will be created when first provider is installed")
+            logger.debug(
+                f"Components path not found: {components_path} - will be created when first provider is installed"
+            )
             cls._loaded = True
             return cls._providers
 
@@ -53,28 +54,29 @@ class ProviderLoader:
                 continue
 
             # Look for 'current' symlink pointing to version
-            current_path = provider_dir / 'current'
+            current_path = provider_dir / "current"
             if not current_path.exists() or not current_path.is_symlink():
                 logger.debug(f"Skipping {provider_dir.name} - no 'current' symlink")
                 continue
 
             # Load manifest
-            manifest_path = current_path / 'manifest.json'
+            manifest_path = current_path / "manifest.json"
             if not manifest_path.exists():
                 logger.warning(f"No manifest found for {provider_dir.name}")
                 continue
 
             try:
                 import json
+
                 with open(manifest_path) as f:
                     manifest = json.load(f)
 
-                provider_key = manifest.get('provider_key') or manifest.get('slug')
-                entry_point = manifest.get('entry_point', 'provider')
-                class_name = manifest['class_name']
+                provider_key = manifest.get("provider_key") or manifest.get("slug")
+                entry_point = manifest.get("entry_point", "provider")
+                class_name = manifest["class_name"]
 
                 # Remove .py extension if present
-                if entry_point.endswith('.py'):
+                if entry_point.endswith(".py"):
                     entry_point = entry_point[:-3]
 
                 # Import provider module using file-path-based loading
@@ -104,12 +106,13 @@ class ProviderLoader:
         """Check if provider files on disk are newer than our in-memory cache."""
         try:
             from component_updates.integration_paths import provider_cache_is_stale
+
             return provider_cache_is_stale(cls.COMPONENT_TYPE, cls._last_loaded_at)
         except Exception:
             return False
 
     @classmethod
-    def get_provider(cls, provider_key: str) -> Optional[Type[FeedProviderBase]]:
+    def get_provider(cls, provider_key: str) -> type[FeedProviderBase] | None:
         """
         Get a specific provider by key.
 
@@ -128,7 +131,7 @@ class ProviderLoader:
         return cls._providers.get(provider_key)
 
     @classmethod
-    def list_providers(cls) -> List[Dict]:
+    def list_providers(cls) -> list[dict]:
         """
         List all available providers with metadata.
 
@@ -151,12 +154,14 @@ class ProviderLoader:
             except Exception as e:
                 # If we can't instantiate, get what we can from class attributes
                 logger.warning(f"Could not instantiate {key} for metadata: {e}")
-                providers.append({
-                    'key': key,
-                    'name': provider_class.provider_name or key,
-                    'supported_formats': provider_class.supported_formats or ['xml'],
-                    'capabilities': {},
-                })
+                providers.append(
+                    {
+                        "key": key,
+                        "name": provider_class.provider_name or key,
+                        "supported_formats": provider_class.supported_formats or ["xml"],
+                        "capabilities": {},
+                    }
+                )
 
         return providers
 
@@ -179,8 +184,9 @@ class ProviderLoader:
         # Clear Python's module cache for all provider modules
         # This ensures that updated provider code is loaded from disk
         modules_to_remove = [
-            module_name for module_name in list(sys.modules.keys())
-            if module_name.startswith('product_feed_provider_')
+            module_name
+            for module_name in list(sys.modules.keys())
+            if module_name.startswith("product_feed_provider_")
         ]
 
         for module_name in modules_to_remove:

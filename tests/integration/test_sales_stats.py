@@ -6,20 +6,23 @@ Covers:
 - catalog.management.commands.recalculate_sales_counts management command
 - Integration with _trigger_post_payment_flows() in PaymentOrchestrationService
 """
-import pytest
+
 from decimal import Decimal
 from io import StringIO
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
+import pytest
 from django.core.management import call_command
-from django.db.models import F
 
 from catalog.models import Product
-from orders.models import Order, OrderItem
+from orders.models import Order
 from orders.services.sales_stats_service import update_product_sales_counts
 from tests.factories import (
-    UserFactory, ProductFactory, CategoryFactory,
-    OrderFactory, OrderItemFactory,
+    CategoryFactory,
+    OrderFactory,
+    OrderItemFactory,
+    ProductFactory,
+    UserFactory,
 )
 
 pytestmark = [
@@ -33,38 +36,39 @@ pytestmark = [
 # Fixtures
 # ============================================================
 
+
 @pytest.fixture
 def category(db):
-    return CategoryFactory(name='Stats Test Category', slug='stats-test-cat')
+    return CategoryFactory(name="Stats Test Category", slug="stats-test-cat")
 
 
 @pytest.fixture
 def product_a(category):
     return ProductFactory(
-        name='Product A',
-        slug='product-a-stats',
+        name="Product A",
+        slug="product-a-stats",
         category=category,
-        price=Decimal('10.00'),
+        price=Decimal("10.00"),
     )
 
 
 @pytest.fixture
 def product_b(category):
     return ProductFactory(
-        name='Product B',
-        slug='product-b-stats',
+        name="Product B",
+        slug="product-b-stats",
         category=category,
-        price=Decimal('20.00'),
+        price=Decimal("20.00"),
     )
 
 
 @pytest.fixture
 def product_c(category):
     return ProductFactory(
-        name='Product C',
-        slug='product-c-stats',
+        name="Product C",
+        slug="product-c-stats",
         category=category,
-        price=Decimal('30.00'),
+        price=Decimal("30.00"),
     )
 
 
@@ -80,14 +84,15 @@ def guest_order(db):
     return OrderFactory(
         user=None,
         paid_order=True,
-        email='guest@example.com',
-        shipping_name='Guest Buyer',
+        email="guest@example.com",
+        shipping_name="Guest Buyer",
     )
 
 
 # ============================================================
 # update_product_sales_counts — basic increment
 # ============================================================
+
 
 class TestBasicSalesCountIncrement:
     """Verify single-item orders correctly increment Product.sales_count."""
@@ -147,6 +152,7 @@ class TestBasicSalesCountIncrement:
 # Idempotency
 # ============================================================
 
+
 class TestIdempotency:
     """Calling update_product_sales_counts() twice must not double-count."""
 
@@ -167,13 +173,13 @@ class TestIdempotency:
         update_product_sales_counts(paid_order)
 
         paid_order.refresh_from_db()
-        assert paid_order.metadata.get('sales_count_updated') is True
+        assert paid_order.metadata.get("sales_count_updated") is True
 
     def test_metadata_flag_prevents_reprocessing(self, paid_order, product_a):
         """Pre-setting the flag should prevent any increment."""
         OrderItemFactory(order=paid_order, product=product_a, quantity=4)
-        paid_order.metadata = {'sales_count_updated': True}
-        paid_order.save(update_fields=['metadata'])
+        paid_order.metadata = {"sales_count_updated": True}
+        paid_order.save(update_fields=["metadata"])
 
         update_product_sales_counts(paid_order)
 
@@ -188,7 +194,7 @@ class TestIdempotency:
         update_product_sales_counts(order)
 
         order.refresh_from_db()
-        assert order.metadata == {'sales_count_updated': True}
+        assert order.metadata == {"sales_count_updated": True}
         product_a.refresh_from_db()
         assert product_a.sales_count == 1
 
@@ -204,26 +210,27 @@ class TestIdempotency:
 
         # After save, metadata should be a dict with the flag
         order.refresh_from_db()
-        assert order.metadata == {'sales_count_updated': True}
+        assert order.metadata == {"sales_count_updated": True}
         product_a.refresh_from_db()
         assert product_a.sales_count == 1
 
     def test_existing_metadata_preserved(self, paid_order, product_a):
         """Existing metadata keys should not be overwritten by the flag."""
-        paid_order.metadata = {'some_key': 'some_value'}
-        paid_order.save(update_fields=['metadata'])
+        paid_order.metadata = {"some_key": "some_value"}
+        paid_order.save(update_fields=["metadata"])
         OrderItemFactory(order=paid_order, product=product_a, quantity=1)
 
         update_product_sales_counts(paid_order)
 
         paid_order.refresh_from_db()
-        assert paid_order.metadata['some_key'] == 'some_value'
-        assert paid_order.metadata['sales_count_updated'] is True
+        assert paid_order.metadata["some_key"] == "some_value"
+        assert paid_order.metadata["sales_count_updated"] is True
 
 
 # ============================================================
 # Bundle items exclusion
 # ============================================================
+
 
 class TestBundleExclusion:
     """Bundle component items (parent_bundle != null) must be excluded."""
@@ -317,6 +324,7 @@ class TestBundleExclusion:
 # Quantity aggregation (same product in multiple line items)
 # ============================================================
 
+
 class TestQuantityAggregation:
     """Multiple line items for the same product should aggregate quantities."""
 
@@ -360,8 +368,8 @@ class TestQuantityAggregation:
         bundle_parent = OrderItemFactory(
             order=paid_order,
             product=ProductFactory(
-                name='Bundle X',
-                slug='bundle-x-stats',
+                name="Bundle X",
+                slug="bundle-x-stats",
                 category=product_a.category,
             ),
             quantity=1,
@@ -382,6 +390,7 @@ class TestQuantityAggregation:
 # ============================================================
 # Guest orders
 # ============================================================
+
 
 class TestGuestOrders:
     """Guest orders (user=None) should still update product stats."""
@@ -423,6 +432,7 @@ class TestGuestOrders:
 # Atomicity (F-expression usage)
 # ============================================================
 
+
 class TestAtomicUpdate:
     """Verify that F() expressions are used for atomic increment."""
 
@@ -441,7 +451,7 @@ class TestAtomicUpdate:
 
     def test_multiple_orders_sequential(self, product_a, product_b):
         """Processing multiple orders sequentially accumulates counts."""
-        for i in range(5):
+        for _i in range(5):
             order = OrderFactory(paid_order=True)
             OrderItemFactory(order=order, product=product_a, quantity=2)
             OrderItemFactory(order=order, product=product_b, quantity=1)
@@ -450,12 +460,13 @@ class TestAtomicUpdate:
         product_a.refresh_from_db()
         product_b.refresh_from_db()
         assert product_a.sales_count == 10  # 5 orders x 2
-        assert product_b.sales_count == 5   # 5 orders x 1
+        assert product_b.sales_count == 5  # 5 orders x 1
 
 
 # ============================================================
 # Management command: recalculate_sales_counts
 # ============================================================
+
 
 class TestRecalculateSalesCountsCommand:
     """Tests for the recalculate_sales_counts management command."""
@@ -475,20 +486,20 @@ class TestRecalculateSalesCountsCommand:
         self._create_paid_order_with_items(product_b, quantity=3)
 
         out = StringIO()
-        call_command('recalculate_sales_counts', stdout=out)
+        call_command("recalculate_sales_counts", stdout=out)
 
         product_a.refresh_from_db()
         product_b.refresh_from_db()
         assert product_a.sales_count == 5
         assert product_b.sales_count == 3
-        assert 'Updated sales_count for 2 products' in out.getvalue()
+        assert "Updated sales_count for 2 products" in out.getvalue()
 
     def test_resets_existing_counts_before_recalculating(self, product_a):
         """Command should reset all counts to 0 first, then set from orders."""
         Product.objects.filter(pk=product_a.pk).update(sales_count=999)
         self._create_paid_order_with_items(product_a, quantity=2)
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
 
         product_a.refresh_from_db()
         assert product_a.sales_count == 2  # not 999 + 2
@@ -498,7 +509,7 @@ class TestRecalculateSalesCountsCommand:
         Product.objects.filter(pk=product_a.pk).update(sales_count=50)
         self._create_paid_order_with_items(product_b, quantity=3)
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
 
         product_a.refresh_from_db()
         product_b.refresh_from_db()
@@ -510,7 +521,7 @@ class TestRecalculateSalesCountsCommand:
         self._create_paid_order_with_items(product_a, quantity=5, is_test=True)
         self._create_paid_order_with_items(product_a, quantity=2, is_test=False)
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
 
         product_a.refresh_from_db()
         assert product_a.sales_count == 2
@@ -518,12 +529,12 @@ class TestRecalculateSalesCountsCommand:
     def test_excludes_unpaid_orders(self, product_a):
         """Only paid orders are counted."""
         # Unpaid order
-        unpaid_order = OrderFactory(payment_status='unpaid')
+        unpaid_order = OrderFactory(payment_status="unpaid")
         OrderItemFactory(order=unpaid_order, product=product_a, quantity=10)
         # Paid order
         self._create_paid_order_with_items(product_a, quantity=1)
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
 
         product_a.refresh_from_db()
         assert product_a.sales_count == 1
@@ -539,7 +550,7 @@ class TestRecalculateSalesCountsCommand:
             parent_bundle=bundle_item,
         )
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
 
         product_a.refresh_from_db()
         product_b.refresh_from_db()
@@ -551,7 +562,7 @@ class TestRecalculateSalesCountsCommand:
         self._create_paid_order_with_items(product_a, quantity=3)
         self._create_paid_order_with_items(product_a, quantity=7)
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
 
         product_a.refresh_from_db()
         assert product_a.sales_count == 10
@@ -562,12 +573,12 @@ class TestRecalculateSalesCountsCommand:
         self._create_paid_order_with_items(product_a, quantity=5)
 
         out = StringIO()
-        call_command('recalculate_sales_counts', '--dry-run', stdout=out)
+        call_command("recalculate_sales_counts", "--dry-run", stdout=out)
 
         product_a.refresh_from_db()
         assert product_a.sales_count == 42  # unchanged
         output = out.getvalue()
-        assert 'DRY RUN' in output
+        assert "DRY RUN" in output
 
     def test_dry_run_shows_product_details(self, product_a, product_b):
         """--dry-run should list products and their would-be counts."""
@@ -575,13 +586,13 @@ class TestRecalculateSalesCountsCommand:
         self._create_paid_order_with_items(product_b, quantity=3)
 
         out = StringIO()
-        call_command('recalculate_sales_counts', '--dry-run', stdout=out)
+        call_command("recalculate_sales_counts", "--dry-run", stdout=out)
 
         output = out.getvalue()
-        assert 'Product A' in output
-        assert '5 units' in output
-        assert 'Product B' in output
-        assert '3 units' in output
+        assert "Product A" in output
+        assert "5 units" in output
+        assert "Product B" in output
+        assert "3 units" in output
 
     def test_dry_run_handles_deleted_product(self, product_a):
         """--dry-run should handle products that no longer exist gracefully."""
@@ -590,11 +601,11 @@ class TestRecalculateSalesCountsCommand:
         deleted_product_id = product_a.pk
         # Remove the product but keep the order item referencing it
         # We can't actually delete due to PROTECT, so simulate with a mock
-        with patch.object(Product.objects, 'get', side_effect=Product.DoesNotExist):
+        with patch.object(Product.objects, "get", side_effect=Product.DoesNotExist):
             out = StringIO()
-            call_command('recalculate_sales_counts', '--dry-run', stdout=out)
+            call_command("recalculate_sales_counts", "--dry-run", stdout=out)
             output = out.getvalue()
-            assert '[deleted product' in output
+            assert "[deleted product" in output
 
     def test_output_shows_total_counts(self, product_a, product_b):
         """Actual run output should show the total products and units."""
@@ -602,21 +613,21 @@ class TestRecalculateSalesCountsCommand:
         self._create_paid_order_with_items(product_b, quantity=3)
 
         out = StringIO()
-        call_command('recalculate_sales_counts', stdout=out)
+        call_command("recalculate_sales_counts", stdout=out)
 
         output = out.getvalue()
-        assert '2 products' in output
-        assert '8 total units' in output
+        assert "2 products" in output
+        assert "8 total units" in output
 
     def test_idempotent_recalculation(self, product_a):
         """Running the command twice should produce the same result."""
         self._create_paid_order_with_items(product_a, quantity=5)
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
         product_a.refresh_from_db()
         assert product_a.sales_count == 5
 
-        call_command('recalculate_sales_counts', stdout=StringIO())
+        call_command("recalculate_sales_counts", stdout=StringIO())
         product_a.refresh_from_db()
         assert product_a.sales_count == 5  # same, not doubled
 
@@ -624,6 +635,7 @@ class TestRecalculateSalesCountsCommand:
 # ============================================================
 # Integration with _trigger_post_payment_flows
 # ============================================================
+
 
 class TestPostPaymentFlowIntegration:
     """Verify the integration points in PaymentOrchestrationService._trigger_post_payment_flows."""
@@ -633,9 +645,14 @@ class TestPostPaymentFlowIntegration:
         OrderItemFactory(order=paid_order, product=product_a, quantity=2)
 
         # These are lazy-imported inside the function body, so mock at source
-        with patch('webhooks.services.trigger_webhook'), \
-             patch('loyalty.services.award_order_points', create=True):
-            from payment_providers.services.payment_orchestration_service import PaymentOrchestrationService
+        with (
+            patch("webhooks.services.trigger_webhook"),
+            patch("loyalty.services.award_order_points", create=True),
+        ):
+            from payment_providers.services.payment_orchestration_service import (
+                PaymentOrchestrationService,
+            )
+
             PaymentOrchestrationService._trigger_post_payment_flows(paid_order)
 
         product_a.refresh_from_db()
@@ -645,12 +662,17 @@ class TestPostPaymentFlowIntegration:
         """Non-guest orders should trigger CustomerMetrics.calculate_for_user."""
         OrderItemFactory(order=paid_order, product=product_a, quantity=1)
         assert paid_order.user is not None
-        assert not paid_order.user.username.startswith('guest_')
+        assert not paid_order.user.username.startswith("guest_")
 
-        with patch('webhooks.services.trigger_webhook'), \
-             patch('loyalty.services.award_order_points', create=True), \
-             patch('customers.models.CustomerMetrics.calculate_for_user') as mock_calc:
-            from payment_providers.services.payment_orchestration_service import PaymentOrchestrationService
+        with (
+            patch("webhooks.services.trigger_webhook"),
+            patch("loyalty.services.award_order_points", create=True),
+            patch("customers.models.CustomerMetrics.calculate_for_user") as mock_calc,
+        ):
+            from payment_providers.services.payment_orchestration_service import (
+                PaymentOrchestrationService,
+            )
+
             PaymentOrchestrationService._trigger_post_payment_flows(paid_order)
             mock_calc.assert_called_once_with(paid_order.user)
 
@@ -658,47 +680,67 @@ class TestPostPaymentFlowIntegration:
         """Guest orders (user=None) should skip CustomerMetrics."""
         OrderItemFactory(order=guest_order, product=product_a, quantity=1)
 
-        with patch('webhooks.services.trigger_webhook'), \
-             patch('loyalty.services.award_order_points', create=True):
-            from payment_providers.services.payment_orchestration_service import PaymentOrchestrationService
-            with patch('customers.models.CustomerMetrics.calculate_for_user') as mock_calc:
+        with (
+            patch("webhooks.services.trigger_webhook"),
+            patch("loyalty.services.award_order_points", create=True),
+        ):
+            from payment_providers.services.payment_orchestration_service import (
+                PaymentOrchestrationService,
+            )
+
+            with patch("customers.models.CustomerMetrics.calculate_for_user") as mock_calc:
                 PaymentOrchestrationService._trigger_post_payment_flows(guest_order)
                 mock_calc.assert_not_called()
 
     def test_trigger_skips_customer_metrics_for_guest_username(self, product_a):
         """Orders with user having guest_ prefix username should skip metrics."""
-        guest_user = UserFactory(username='guest_abc123')
+        guest_user = UserFactory(username="guest_abc123")
         order = OrderFactory(paid_order=True, user=guest_user)
         OrderItemFactory(order=order, product=product_a, quantity=1)
 
-        with patch('webhooks.services.trigger_webhook'), \
-             patch('loyalty.services.award_order_points', create=True), \
-             patch('customers.models.CustomerMetrics.calculate_for_user') as mock_calc:
-            from payment_providers.services.payment_orchestration_service import PaymentOrchestrationService
+        with (
+            patch("webhooks.services.trigger_webhook"),
+            patch("loyalty.services.award_order_points", create=True),
+            patch("customers.models.CustomerMetrics.calculate_for_user") as mock_calc,
+        ):
+            from payment_providers.services.payment_orchestration_service import (
+                PaymentOrchestrationService,
+            )
+
             PaymentOrchestrationService._trigger_post_payment_flows(order)
             mock_calc.assert_not_called()
 
     def test_sales_count_failure_does_not_propagate(self, paid_order):
         """If update_product_sales_counts raises, it should be caught and logged."""
-        with patch('webhooks.services.trigger_webhook'), \
-             patch('loyalty.services.award_order_points', create=True), \
-             patch(
-                 'orders.services.sales_stats_service.update_product_sales_counts',
-                 side_effect=Exception('DB error')
-             ):
-            from payment_providers.services.payment_orchestration_service import PaymentOrchestrationService
+        with (
+            patch("webhooks.services.trigger_webhook"),
+            patch("loyalty.services.award_order_points", create=True),
+            patch(
+                "orders.services.sales_stats_service.update_product_sales_counts",
+                side_effect=Exception("DB error"),
+            ),
+        ):
+            from payment_providers.services.payment_orchestration_service import (
+                PaymentOrchestrationService,
+            )
+
             # Should not raise — exception is caught and logged
             PaymentOrchestrationService._trigger_post_payment_flows(paid_order)
 
     def test_customer_metrics_failure_does_not_propagate(self, paid_order):
         """If CustomerMetrics.calculate_for_user raises, it should be caught."""
-        with patch('webhooks.services.trigger_webhook'), \
-             patch('loyalty.services.award_order_points', create=True), \
-             patch(
-                 'customers.models.CustomerMetrics.calculate_for_user',
-                 side_effect=Exception('Metrics error')
-             ):
-            from payment_providers.services.payment_orchestration_service import PaymentOrchestrationService
+        with (
+            patch("webhooks.services.trigger_webhook"),
+            patch("loyalty.services.award_order_points", create=True),
+            patch(
+                "customers.models.CustomerMetrics.calculate_for_user",
+                side_effect=Exception("Metrics error"),
+            ),
+        ):
+            from payment_providers.services.payment_orchestration_service import (
+                PaymentOrchestrationService,
+            )
+
             # Should not raise
             PaymentOrchestrationService._trigger_post_payment_flows(paid_order)
 
@@ -706,6 +748,7 @@ class TestPostPaymentFlowIntegration:
 # ============================================================
 # Edge cases
 # ============================================================
+
 
 class TestEdgeCases:
     """Edge cases and boundary conditions for sales count tracking."""
@@ -724,7 +767,7 @@ class TestEdgeCases:
         """metadata={'sales_count_updated': False} should not block processing."""
         order = OrderFactory(
             paid_order=True,
-            metadata={'sales_count_updated': False},
+            metadata={"sales_count_updated": False},
         )
         OrderItemFactory(order=order, product=product_a, quantity=2)
 
@@ -746,11 +789,11 @@ class TestEdgeCases:
         """Verify save uses update_fields=['metadata'] to avoid full model save."""
         OrderItemFactory(order=paid_order, product=product_a, quantity=1)
 
-        with patch.object(Order, 'save', wraps=paid_order.save) as mock_save:
+        with patch.object(Order, "save", wraps=paid_order.save) as mock_save:
             update_product_sales_counts(paid_order)
             mock_save.assert_called_once()
             _, kwargs = mock_save.call_args
-            assert kwargs.get('update_fields') == ['metadata']
+            assert kwargs.get("update_fields") == ["metadata"]
 
     def test_test_order_skipped_by_realtime_service(self, product_a):
         """Test orders should be skipped by the real-time update_product_sales_counts()."""
@@ -767,8 +810,8 @@ class TestEdgeCases:
         Product.objects.filter(pk=product_a.pk).update(sales_count=100)
 
         out = StringIO()
-        call_command('recalculate_sales_counts', stdout=out)
+        call_command("recalculate_sales_counts", stdout=out)
 
         product_a.refresh_from_db()
         assert product_a.sales_count == 0
-        assert '0 products' in out.getvalue()
+        assert "0 products" in out.getvalue()

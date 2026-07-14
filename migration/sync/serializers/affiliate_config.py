@@ -6,8 +6,10 @@ Handles export/import of affiliate program configuration:
 - AffiliateReportSettings (singleton)
 - Program (collection)
 """
+
 import logging
 from decimal import Decimal
+
 from django.db import transaction
 
 from .base import CollectionSyncSerializer
@@ -15,25 +17,38 @@ from .base import CollectionSyncSerializer
 logger = logging.getLogger(__name__)
 
 AFFILIATE_SETTINGS_FIELDS = [
-    'hero_title', 'hero_subtitle',
-    'features_title', 'features',
-    'how_it_works_title', 'steps',
-    'cta_title', 'cta_description',
-    'allow_guest_registration', 'terms_url',
-    'require_approval', 'welcome_message',
-    'translations',
+    "hero_title",
+    "hero_subtitle",
+    "features_title",
+    "features",
+    "how_it_works_title",
+    "steps",
+    "cta_title",
+    "cta_description",
+    "allow_guest_registration",
+    "terms_url",
+    "require_approval",
+    "welcome_message",
+    "translations",
 ]
 
 REPORT_SETTINGS_FIELDS = [
-    'monthly_report_enabled', 'monthly_report_day', 'monthly_report_hour',
-    'include_top_orders_count',
+    "monthly_report_enabled",
+    "monthly_report_day",
+    "monthly_report_hour",
+    "include_top_orders_count",
 ]
 
 PROGRAM_FIELDS = [
-    'name', 'slug', 'description',
-    'commission_type', 'commission_value',
-    'cookie_lifetime_days', 'status',
-    'auto_approve_affiliates', 'minimum_payout',
+    "name",
+    "slug",
+    "description",
+    "commission_type",
+    "commission_value",
+    "cookie_lifetime_days",
+    "status",
+    "auto_approve_affiliates",
+    "minimum_payout",
 ]
 
 
@@ -46,24 +61,26 @@ class AffiliateConfigSerializer(CollectionSyncSerializer):
         - Program: Affiliate program definitions
     """
 
-    category_key = 'affiliate_config'
-    natural_key_fields = ['slug']
+    category_key = "affiliate_config"
+    natural_key_fields = ["slug"]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         from affiliate.models import Program
+
         self.model_class = Program
 
     def get_count(self):
-        from affiliate.models import AffiliateSettings, AffiliateReportSettings, Program
+        from affiliate.models import AffiliateReportSettings, AffiliateSettings, Program
+
         return (
             AffiliateSettings.objects.count()
             + AffiliateReportSettings.objects.count()
             + Program.objects.count()
         )
 
-    def export(self, credential_mode='redact'):
-        from affiliate.models import AffiliateSettings, AffiliateReportSettings, Program
+    def export(self, credential_mode="redact"):
+        from affiliate.models import AffiliateReportSettings, AffiliateSettings, Program
 
         items = []
 
@@ -71,58 +88,58 @@ class AffiliateConfigSerializer(CollectionSyncSerializer):
         settings = AffiliateSettings.objects.first()
         if settings:
             data = {f: getattr(settings, f) for f in AFFILIATE_SETTINGS_FIELDS}
-            data['_source_pk'] = settings.pk
-            data['_model'] = 'AffiliateSettings'
+            data["_source_pk"] = settings.pk
+            data["_model"] = "AffiliateSettings"
             # Store registration form slug for portable ref
             if settings.registration_form:
-                data['_registration_form_slug'] = settings.registration_form.slug
+                data["_registration_form_slug"] = settings.registration_form.slug
             items.append(data)
 
         # AffiliateReportSettings singleton
         report_settings = AffiliateReportSettings.objects.first()
         if report_settings:
             data = {f: getattr(report_settings, f) for f in REPORT_SETTINGS_FIELDS}
-            data['_source_pk'] = report_settings.pk
-            data['_model'] = 'AffiliateReportSettings'
+            data["_source_pk"] = report_settings.pk
+            data["_model"] = "AffiliateReportSettings"
             items.append(data)
 
         # Programs
         for program in Program.objects.all():
             data = {f: getattr(program, f) for f in PROGRAM_FIELDS}
-            data['_source_pk'] = program.pk
-            data['_model'] = 'Program'
+            data["_source_pk"] = program.pk
+            data["_model"] = "Program"
             # Decimal fields
-            for df in ['commission_value', 'minimum_payout']:
+            for df in ["commission_value", "minimum_payout"]:
                 if data.get(df) is not None:
                     data[df] = str(data[df])
             items.append(data)
 
         return {
-            'category': self.category_key,
-            'sync_type': 'collection',
-            'items': items,
-            'total': len(items),
+            "category": self.category_key,
+            "sync_type": "collection",
+            "items": items,
+            "total": len(items),
         }
 
-    def import_data(self, data, dry_run=False, sync_mode='additive'):
+    def import_data(self, data, dry_run=False, sync_mode="additive"):
         if dry_run:
             return self.generate_diff(data)
 
-        items = data.get('items', [])
+        items = data.get("items", [])
         synced = 0
         skipped = 0
         failed = 0
         errors = []
 
         for item in items:
-            model_type = item.get('_model')
+            model_type = item.get("_model")
             try:
                 with transaction.atomic():
-                    if model_type == 'AffiliateSettings':
+                    if model_type == "AffiliateSettings":
                         self._import_settings(item)
-                    elif model_type == 'AffiliateReportSettings':
+                    elif model_type == "AffiliateReportSettings":
                         self._import_report_settings(item)
-                    elif model_type == 'Program':
+                    elif model_type == "Program":
                         self._import_program(item)
                     else:
                         skipped += 1
@@ -132,29 +149,32 @@ class AffiliateConfigSerializer(CollectionSyncSerializer):
                 failed += 1
                 errors.append(f"{model_type} '{item.get('name', item.get('slug', '?'))}': {e}")
 
-        result = {'synced': synced, 'skipped': skipped, 'failed': failed, 'errors': errors}
+        result = {"synced": synced, "skipped": skipped, "failed": failed, "errors": errors}
 
-        if sync_mode == 'mirror':
+        if sync_mode == "mirror":
             deleted = self._delete_absent(items)
-            result['deleted'] = deleted
+            result["deleted"] = deleted
 
         return result
 
     def _import_settings(self, item):
         from affiliate.models import AffiliateSettings
+
         obj = AffiliateSettings.objects.first() or AffiliateSettings()
         for f in AFFILIATE_SETTINGS_FIELDS:
             if f in item:
                 setattr(obj, f, item[f])
         # Resolve registration form FK
-        form_slug = item.get('_registration_form_slug')
+        form_slug = item.get("_registration_form_slug")
         if form_slug:
             from form_builder.models import Form
+
             obj.registration_form = Form.objects.filter(slug=form_slug).first()
         obj.save()
 
     def _import_report_settings(self, item):
         from affiliate.models import AffiliateReportSettings
+
         obj = AffiliateReportSettings.objects.first() or AffiliateReportSettings()
         for f in REPORT_SETTINGS_FIELDS:
             if f in item:
@@ -162,17 +182,19 @@ class AffiliateConfigSerializer(CollectionSyncSerializer):
         obj.save()
 
     def _import_program(self, item):
-        from affiliate.models import Program
         from django.contrib.auth import get_user_model
+
+        from affiliate.models import Program
+
         User = get_user_model()
 
-        existing = Program.objects.filter(slug=item['slug']).first()
+        existing = Program.objects.filter(slug=item["slug"]).first()
         obj = existing or Program()
 
         for f in PROGRAM_FIELDS:
             if f in item:
                 val = item[f]
-                if f in ('commission_value', 'minimum_payout') and val is not None:
+                if f in ("commission_value", "minimum_payout") and val is not None:
                     val = Decimal(str(val))
                 setattr(obj, f, val)
 
@@ -187,9 +209,7 @@ class AffiliateConfigSerializer(CollectionSyncSerializer):
     def _delete_absent(self, remote_items):
         from affiliate.models import Program
 
-        remote_slugs = {
-            item['slug'] for item in remote_items if item.get('_model') == 'Program'
-        }
+        remote_slugs = {item["slug"] for item in remote_items if item.get("_model") == "Program"}
         deleted = 0
         for prog in Program.objects.all():
             if prog.slug not in remote_slugs:
@@ -201,62 +221,69 @@ class AffiliateConfigSerializer(CollectionSyncSerializer):
         return deleted
 
     def generate_diff(self, remote_data):
-        from affiliate.models import AffiliateSettings, AffiliateReportSettings, Program
+        from affiliate.models import AffiliateReportSettings, AffiliateSettings, Program
 
-        items = remote_data.get('items', [])
+        items = remote_data.get("items", [])
         changes = []
 
         for item in items:
-            model_type = item.get('_model')
-            if model_type == 'AffiliateSettings':
+            model_type = item.get("_model")
+            if model_type == "AffiliateSettings":
                 existing = AffiliateSettings.objects.first()
                 fields = AFFILIATE_SETTINGS_FIELDS
-                name = 'Affiliate Settings'
-            elif model_type == 'AffiliateReportSettings':
+                name = "Affiliate Settings"
+            elif model_type == "AffiliateReportSettings":
                 existing = AffiliateReportSettings.objects.first()
                 fields = REPORT_SETTINGS_FIELDS
-                name = 'Report Settings'
-            elif model_type == 'Program':
-                existing = Program.objects.filter(slug=item.get('slug')).first()
+                name = "Report Settings"
+            elif model_type == "Program":
+                existing = Program.objects.filter(slug=item.get("slug")).first()
                 fields = PROGRAM_FIELDS
-                name = item.get('name', item.get('slug', '?'))
+                name = item.get("name", item.get("slug", "?"))
             else:
                 continue
 
             if existing:
                 field_changes = self._compute_field_diff(existing, item, fields)
                 if field_changes:
-                    changes.append({
-                        'type': 'modify', 'model': model_type,
-                        'name': name, 'changes': field_changes,
-                    })
+                    changes.append(
+                        {
+                            "type": "modify",
+                            "model": model_type,
+                            "name": name,
+                            "changes": field_changes,
+                        }
+                    )
             else:
-                changes.append({
-                    'type': 'add', 'model': model_type,
-                    'name': name,
-                    'fields': {k: v for k, v in item.items() if not k.startswith('_')},
-                })
+                changes.append(
+                    {
+                        "type": "add",
+                        "model": model_type,
+                        "name": name,
+                        "fields": {k: v for k, v in item.items() if not k.startswith("_")},
+                    }
+                )
 
-        adds = sum(1 for c in changes if c['type'] == 'add')
-        mods = sum(1 for c in changes if c['type'] == 'modify')
+        adds = sum(1 for c in changes if c["type"] == "add")
+        mods = sum(1 for c in changes if c["type"] == "modify")
         parts = []
         if adds:
-            parts.append(f'{adds} addition(s)')
+            parts.append(f"{adds} addition(s)")
         if mods:
-            parts.append(f'{mods} modification(s)')
+            parts.append(f"{mods} modification(s)")
 
         return {
-            'changes': changes,
-            'warnings': [],
-            'summary': ', '.join(parts) if parts else 'No changes',
+            "changes": changes,
+            "warnings": [],
+            "summary": ", ".join(parts) if parts else "No changes",
         }
 
     def snapshot_current(self):
-        return self.export(credential_mode='skip')
+        return self.export(credential_mode="skip")
 
     def restore_snapshot(self, snapshot):
         try:
             result = self.import_data(snapshot, dry_run=False)
-            return {'restored': result.get('synced', 0), 'errors': result.get('errors', [])}
+            return {"restored": result.get("synced", 0), "errors": result.get("errors", [])}
         except Exception as e:
-            return {'restored': 0, 'errors': [str(e)]}
+            return {"restored": 0, "errors": [str(e)]}

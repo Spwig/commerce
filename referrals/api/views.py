@@ -4,26 +4,26 @@ Referral Program API Views
 Public API endpoints for click tracking and referrer dashboard data.
 """
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
-from rest_framework.decorators import api_view, throttle_classes, permission_classes
+from django.views.decorators.http import require_http_methods
+from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
+from rest_framework import serializers
+from rest_framework import status as drf_status
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework import status as drf_status
-from drf_spectacular.utils import extend_schema, OpenApiResponse, inline_serializer
-from rest_framework import serializers
 
-from ..models import ReferralProgram, ReferralIdentity, ReferralAttribution, ReferralReward
-from ..services import track_click, set_ref_cookie
 from core.api.throttling import ReferralTrackingThrottle
+
+from ..models import ReferralIdentity, ReferralProgram, ReferralReward
+from ..services import set_ref_cookie, track_click
 from .serializers import TrackClickSerializer
 
 
 @extend_schema(
-    tags=['Referrals'],
+    tags=["Referrals"],
     summary=_("Track referral link click"),
     description=_("""Track a referral link click using a referral token. Records visitor IP, user agent, and referrer information.
 
@@ -35,23 +35,23 @@ from .serializers import TrackClickSerializer
     request=TrackClickSerializer,
     responses={
         200: inline_serializer(
-            name='TrackClickResponse',
+            name="TrackClickResponse",
             fields={
-                'success': serializers.BooleanField(),
-                'message': serializers.CharField(),
-                'referrer': inline_serializer(
-                    name='ReferrerInfo',
+                "success": serializers.BooleanField(),
+                "message": serializers.CharField(),
+                "referrer": inline_serializer(
+                    name="ReferrerInfo",
                     fields={
-                        'name': serializers.CharField(allow_null=True),
-                        'total_referrals': serializers.IntegerField(),
-                    }
+                        "name": serializers.CharField(allow_null=True),
+                        "total_referrals": serializers.IntegerField(),
+                    },
                 ),
-            }
+            },
         ),
         400: OpenApiResponse(description=_("Invalid token or missing required fields")),
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 @throttle_classes([ReferralTrackingThrottle])
 def track_click_api(request):
@@ -78,31 +78,32 @@ def track_click_api(request):
     - Fake click generation
     - Database spam
     """
-    token = request.data.get('token', '').strip()
+    token = request.data.get("token", "").strip()
 
     if not token:
-        return Response({
-            'success': False,
-            'message': _('Token is required')
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"success": False, "message": _("Token is required")},
+            status=drf_status.HTTP_400_BAD_REQUEST,
+        )
 
     # Track the click
     success, identity, message = track_click(token, request)
 
     if not success:
-        return Response({
-            'success': False,
-            'message': message
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"success": False, "message": message}, status=drf_status.HTTP_400_BAD_REQUEST
+        )
 
     # Prepare response
     response_data = {
-        'success': True,
-        'message': message,
-        'referrer': {
-            'name': identity.customer.get_full_name() or identity.customer.email if identity else None,
-            'total_referrals': identity.total_conversions if identity else 0
-        }
+        "success": True,
+        "message": message,
+        "referrer": {
+            "name": identity.customer.get_full_name() or identity.customer.email
+            if identity
+            else None,
+            "total_referrals": identity.total_conversions if identity else 0,
+        },
     }
 
     # Create DRF response
@@ -153,60 +154,56 @@ def referrer_dashboard_data(request):
     """
     try:
         # Get or create referral identity for customer
-        identity, created = ReferralIdentity.objects.get_or_create(
-            customer=request.user
-        )
+        identity, created = ReferralIdentity.objects.get_or_create(customer=request.user)
 
         # Get stats
         stats = {
-            'total_clicks': identity.total_clicks,
-            'total_signups': identity.total_signups,
-            'total_conversions': identity.total_conversions,
-            'total_rewards_earned': float(identity.total_rewards_earned),
-            'conversion_rate': identity.get_conversion_rate(),
-            'signup_rate': identity.get_signup_rate(),
+            "total_clicks": identity.total_clicks,
+            "total_signups": identity.total_signups,
+            "total_conversions": identity.total_conversions,
+            "total_rewards_earned": float(identity.total_rewards_earned),
+            "conversion_rate": identity.get_conversion_rate(),
+            "signup_rate": identity.get_signup_rate(),
         }
 
         # Get rewards
         rewards_qs = ReferralReward.objects.filter(
-            customer=request.user,
-            recipient_type='referrer'
-        ).order_by('-created_at')
+            customer=request.user, recipient_type="referrer"
+        ).order_by("-created_at")
 
         rewards = []
         for reward in rewards_qs:
-            rewards.append({
-                'id': reward.id,
-                'amount': float(reward.amount.amount),
-                'currency': str(reward.amount.currency),
-                'kind': reward.kind,
-                'kind_display': reward.get_kind_display(),
-                'status': reward.status,
-                'status_display': reward.get_status_display(),
-                'description': reward.description,
-                'created_at': reward.created_at.isoformat() if reward.created_at else None,
-                'issued_at': reward.issued_at.isoformat() if reward.issued_at else None,
-                'expires_at': reward.expires_at.isoformat() if reward.expires_at else None,
-                'is_expiring_soon': reward.is_expiring_soon(),
-            })
+            rewards.append(
+                {
+                    "id": reward.id,
+                    "amount": float(reward.amount.amount),
+                    "currency": str(reward.amount.currency),
+                    "kind": reward.kind,
+                    "kind_display": reward.get_kind_display(),
+                    "status": reward.status,
+                    "status_display": reward.get_status_display(),
+                    "description": reward.description,
+                    "created_at": reward.created_at.isoformat() if reward.created_at else None,
+                    "issued_at": reward.issued_at.isoformat() if reward.issued_at else None,
+                    "expires_at": reward.expires_at.isoformat() if reward.expires_at else None,
+                    "is_expiring_soon": reward.is_expiring_soon(),
+                }
+            )
 
         # Get referral link
-        referral_link = request.build_absolute_uri('/') + f'?ref={identity.token}'
+        referral_link = request.build_absolute_uri("/") + f"?ref={identity.token}"
 
         response_data = {
-            'success': True,
-            'referrer': {
-                'token': identity.token,
-                'referral_link': referral_link,
-                'stats': stats,
-                'rewards': rewards,
-            }
+            "success": True,
+            "referrer": {
+                "token": identity.token,
+                "referral_link": referral_link,
+                "stats": stats,
+                "rewards": rewards,
+            },
         }
 
         return JsonResponse(response_data)
 
     except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }, status=500)
+        return JsonResponse({"success": False, "message": f"Error: {str(e)}"}, status=500)

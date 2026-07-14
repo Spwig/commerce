@@ -16,6 +16,7 @@ Whitelisted paths (always allowed even for read-only users):
 - Allauth / MFA flows
 - Django admin jsi18n
 """
+
 import logging
 import re
 
@@ -28,30 +29,28 @@ logger = logging.getLogger(__name__)
 
 # Match admin panel paths with optional language prefix
 # e.g. /admin/, /en/admin/, /de/admin/orders/order/1/change/
-ADMIN_PATH_RE = re.compile(r'^(/[a-z]{2}(-[a-z]+)?)?/admin/')
+ADMIN_PATH_RE = re.compile(r"^(/[a-z]{2}(-[a-z]+)?)?/admin/")
 
 # Match admin API paths
-ADMIN_API_PATH_RE = re.compile(r'^/api/admin/')
+ADMIN_API_PATH_RE = re.compile(r"^/api/admin/")
 
-WRITE_METHODS = frozenset({'POST', 'PUT', 'PATCH', 'DELETE'})
+WRITE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 
 # Path suffixes (after stripping language prefix) that always allow POST.
 # These are essential operations that don't modify business data.
 WHITELISTED_SUFFIXES = (
-    '/admin/login/',
-    '/admin/logout/',
-    '/admin/jsi18n/',
+    "/admin/login/",
+    "/admin/logout/",
+    "/admin/jsi18n/",
 )
 
 # Full path patterns that always allow POST (no language prefix).
-WHITELISTED_PATTERNS = (
-    '/i18n/setlang/',
-)
+WHITELISTED_PATTERNS = ("/i18n/setlang/",)
 
 # Regex patterns for more complex whitelisted paths.
 WHITELISTED_REGEXES = [
-    re.compile(r'^(/[a-z]{2}(-[a-z]+)?)?/admin/password_change/'),
-    re.compile(r'^(/[a-z]{2}(-[a-z]+)?)?/accounts/'),
+    re.compile(r"^(/[a-z]{2}(-[a-z]+)?)?/admin/password_change/"),
+    re.compile(r"^(/[a-z]{2}(-[a-z]+)?)?/accounts/"),
 ]
 
 
@@ -77,7 +76,7 @@ class AdminReadOnlyMiddleware:
         if not is_admin_panel and not is_admin_api:
             return self.get_response(request)
 
-        user = getattr(request, 'user', None)
+        user = getattr(request, "user", None)
         if not user or not user.is_authenticated or not user.is_staff:
             return self.get_response(request)
 
@@ -89,24 +88,27 @@ class AdminReadOnlyMiddleware:
             return self.get_response(request)
 
         from staff_roles.services import is_effectively_read_only
+
         if not is_effectively_read_only(user):
             return self.get_response(request)
 
         # Block the write operation
         logger.info(
             "Read-only enforcement: blocked %s %s for user %s (pk=%s)",
-            request.method, path, user.username, user.pk,
+            request.method,
+            path,
+            user.username,
+            user.pk,
         )
 
         if is_admin_api:
             return JsonResponse(
                 {
-                    'success': False,
-                    'error': 'read_only',
-                    'message': str(_(
-                        'Your account has read-only access. '
-                        'Write operations are not permitted.'
-                    )),
+                    "success": False,
+                    "error": "read_only",
+                    "message": str(
+                        _("Your account has read-only access. Write operations are not permitted.")
+                    ),
                 },
                 status=403,
             )
@@ -114,12 +116,9 @@ class AdminReadOnlyMiddleware:
         # HTML admin -- redirect back with a message
         messages.warning(
             request,
-            _(
-                'Your account has read-only access. '
-                'This action is not available in read-only mode.'
-            ),
+            _("Your account has read-only access. This action is not available in read-only mode."),
         )
-        referer = request.META.get('HTTP_REFERER', '')
+        referer = request.META.get("HTTP_REFERER", "")
         if referer and request.get_host() in referer:
             return redirect(referer)
         return redirect(request.path)
@@ -127,7 +126,7 @@ class AdminReadOnlyMiddleware:
     def _is_whitelisted(self, path):
         """Check if a path is whitelisted for write operations."""
         # Strip language prefix for suffix matching
-        stripped = re.sub(r'^/[a-z]{2}(-[a-z]+)?(?=/)', '', path)
+        stripped = re.sub(r"^/[a-z]{2}(-[a-z]+)?(?=/)", "", path)
 
         for suffix in WHITELISTED_SUFFIXES:
             if stripped.startswith(suffix):
@@ -137,8 +136,4 @@ class AdminReadOnlyMiddleware:
             if path == pattern or stripped == pattern:
                 return True
 
-        for regex in WHITELISTED_REGEXES:
-            if regex.match(path):
-                return True
-
-        return False
+        return any(regex.match(path) for regex in WHITELISTED_REGEXES)

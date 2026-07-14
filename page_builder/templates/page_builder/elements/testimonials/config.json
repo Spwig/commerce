@@ -40,10 +40,10 @@
               "type": "select",
               "label": "Columns",
               "options": [
-                {"value": "1", "label": "1 Column"},
-                {"value": "2", "label": "2 Columns"},
-                {"value": "3", "label": "3 Columns"},
-                {"value": "4", "label": "4 Columns"}
+                { "value": "1", "label": "1 Column" },
+                { "value": "2", "label": "2 Columns" },
+                { "value": "3", "label": "3 Columns" },
+                { "value": "4", "label": "4 Columns" }
               ],
               "default": "3"
             }
@@ -61,11 +61,25 @@
               "item_schema": {
                 "type": "object",
                 "properties": {
-                  "content": {"type": "string", "label": "Testimonial Content", "translatable": true},
-                  "name": {"type": "string", "label": "Customer Name"},
-                  "title": {"type": "string", "label": "Customer Title/Company"},
-                  "avatar": {"type": "image", "label": "Customer Photo"},
-                  "rating": {"type": "select", "label": "Rating", "options": [{"value": "1", "label": "1 Star"}, {"value": "2", "label": "2 Stars"}, {"value": "3", "label": "3 Stars"}, {"value": "4", "label": "4 Stars"}, {"value": "5", "label": "5 Stars"}]}
+                  "content": {
+                    "type": "string",
+                    "label": "Testimonial Content",
+                    "translatable": true
+                  },
+                  "name": { "type": "string", "label": "Customer Name" },
+                  "title": { "type": "string", "label": "Customer Title/Company" },
+                  "avatar": { "type": "image", "label": "Customer Photo" },
+                  "rating": {
+                    "type": "select",
+                    "label": "Rating",
+                    "options": [
+                      { "value": "1", "label": "1 Star" },
+                      { "value": "2", "label": "2 Stars" },
+                      { "value": "3", "label": "3 Stars" },
+                      { "value": "4", "label": "4 Stars" },
+                      { "value": "5", "label": "5 Stars" }
+                    ]
+                  }
                 }
               }
             }
@@ -75,18 +89,71 @@
     }
   },
   "properties": {
-    "title": {"type": "string", "label": "Section Title", "default": "What Our Customers Say", "translatable": true},
-    "columns": {"type": "select", "label": "Columns", "options": [{"value": "1", "label": "1 Column"}, {"value": "2", "label": "2 Columns"}, {"value": "3", "label": "3 Columns"}, {"value": "4", "label": "4 Columns"}], "default": "3"},
-    "testimonials": {"type": "array", "label": "Testimonials", "item_schema": {"type": "object", "properties": {"content": {"type": "string", "label": "Testimonial Content", "translatable": true}, "name": {"type": "string", "label": "Customer Name"}, "title": {"type": "string", "label": "Customer Title/Company"}, "avatar": {"type": "image", "label": "Customer Photo"}, "rating": {"type": "select", "label": "Rating", "options": [{"value": "1", "label": "1 Star"}, {"value": "2", "label": "2 Stars"}, {"value": "3", "label": "3 Stars"}, {"value": "4", "label": "4 Stars"}, {"value": "5", "label": "5 Stars"}]}}}}
+    "title": {
+      "type": "string",
+      "label": "Section Title",
+      "default": "What Our Customers Say",
+      "translatable": true
+    },
+    "columns": {
+      "type": "select",
+      "label": "Columns",
+      "options": [
+        { "value": "1", "label": "1 Column" },
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" },
+        { "value": "4", "label": "4 Columns" }
+      ],
+      "default": "3"
+    },
+    "testimonials": {
+      "type": "array",
+      "label": "Testimonials",
+      "item_schema": {
+        "type": "object",
+        "properties": {
+          "content": { "type": "string", "label": "Testimonial Content", "translatable": true },
+          "name": { "type": "string", "label": "Customer Name" },
+          "title": { "type": "string", "label": "Customer Title/Company" },
+          "avatar": { "type": "image", "label": "Customer Photo" },
+          "rating": {
+            "type": "select",
+            "label": "Rating",
+            "options": [
+              { "value": "1", "label": "1 Star" },
+              { "value": "2", "label": "2 Stars" },
+              { "value": "3", "label": "3 Stars" },
+              { "value": "4", "label": "4 Stars" },
+              { "value": "5", "label": "5 Stars" }
+            ]
+          }
+        }
+      }
+    }
   },
   "translations": {
-    "en": {"name": "Testimonials", "description": "Customer testimonials grid with ratings and author information"},
-    "es": {"name": "Testimonios", "description": "Cuadrícula de testimonios de clientes con calificaciones e información del autor"},
-    "fr": {"name": "Témoignages", "description": "Grille de témoignages clients avec notes et informations sur l'auteur"},
-    "de": {"name": "Testimonials", "description": "Kundenbewertungsraster mit Bewertungen und Autorinformationen"},
-    "pt": {"name": "Depoimentos", "description": "Grade de depoimentos de clientes com avaliações e informações do autor"},
-    "zh-hans": {"name": "客户评价", "description": "带有评分和作者信息的客户评价网格"},
-    "ja": {"name": "お客様の声", "description": "評価と著者情報付きの顧客証言グリッド"}
+    "en": {
+      "name": "Testimonials",
+      "description": "Customer testimonials grid with ratings and author information"
+    },
+    "es": {
+      "name": "Testimonios",
+      "description": "Cuadrícula de testimonios de clientes con calificaciones e información del autor"
+    },
+    "fr": {
+      "name": "Témoignages",
+      "description": "Grille de témoignages clients avec notes et informations sur l'auteur"
+    },
+    "de": {
+      "name": "Testimonials",
+      "description": "Kundenbewertungsraster mit Bewertungen und Autorinformationen"
+    },
+    "pt": {
+      "name": "Depoimentos",
+      "description": "Grade de depoimentos de clientes com avaliações e informações do autor"
+    },
+    "zh-hans": { "name": "客户评价", "description": "带有评分和作者信息的客户评价网格" },
+    "ja": { "name": "お客様の声", "description": "評価と著者情報付きの顧客証言グリッド" }
   },
   "defaults": {
     "title": "What Our Customers Say",

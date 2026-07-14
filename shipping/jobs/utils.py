@@ -4,17 +4,18 @@ Utility functions for shipping Celery tasks
 Helper functions used by tasks for common operations like
 validation, data formatting, and error handling.
 """
-import logging
+
 import hashlib
-import json
-from typing import Dict, List, Optional, Any
+import logging
 from decimal import Decimal
+from typing import Any
+
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
 
-def validate_shipment_data(data: Dict[str, Any]) -> tuple[bool, Optional[str]]:
+def validate_shipment_data(data: dict[str, Any]) -> tuple[bool, str | None]:
     """
     Validate shipment data for rate fetching or label generation.
 
@@ -24,23 +25,23 @@ def validate_shipment_data(data: Dict[str, Any]) -> tuple[bool, Optional[str]]:
     Returns:
         Tuple of (is_valid, error_message)
     """
-    required_fields = ['origin_country', 'dest_country']
+    required_fields = ["origin_country", "dest_country"]
 
     for field in required_fields:
         if field not in data or not data[field]:
             return False, f"Missing required field: {field}"
 
     # Validate country codes (2 characters)
-    if len(data['origin_country']) != 2:
+    if len(data["origin_country"]) != 2:
         return False, "origin_country must be 2-character ISO code"
 
-    if len(data['dest_country']) != 2:
+    if len(data["dest_country"]) != 2:
         return False, "dest_country must be 2-character ISO code"
 
     # Validate weight if provided
-    if 'weight' in data and data['weight']:
+    if "weight" in data and data["weight"]:
         try:
-            weight = Decimal(str(data['weight']))
+            weight = Decimal(str(data["weight"]))
             if weight <= 0:
                 return False, "weight must be positive"
         except (ValueError, TypeError):
@@ -49,7 +50,7 @@ def validate_shipment_data(data: Dict[str, Any]) -> tuple[bool, Optional[str]]:
     return True, None
 
 
-def format_rate_response(provider_rates: Dict[str, Any]) -> Dict[str, Any]:
+def format_rate_response(provider_rates: dict[str, Any]) -> dict[str, Any]:
     """
     Format rate response from provider to standardized format.
 
@@ -63,18 +64,18 @@ def format_rate_response(provider_rates: Dict[str, Any]) -> Dict[str, Any]:
     # This will normalize different provider responses into a standard format
 
     return {
-        'provider_account_id': provider_rates.get('provider_account_id'),
-        'carrier': provider_rates.get('carrier', 'Unknown'),
-        'service': provider_rates.get('service', 'Unknown'),
-        'rate': str(provider_rates.get('rate', '0.00')),
-        'currency': provider_rates.get('currency', 'USD'),
-        'delivery_days': provider_rates.get('delivery_days'),
-        'delivery_date': provider_rates.get('delivery_date'),
-        'raw_data': provider_rates.get('raw_data', {})
+        "provider_account_id": provider_rates.get("provider_account_id"),
+        "carrier": provider_rates.get("carrier", "Unknown"),
+        "service": provider_rates.get("service", "Unknown"),
+        "rate": str(provider_rates.get("rate", "0.00")),
+        "currency": provider_rates.get("currency", "USD"),
+        "delivery_days": provider_rates.get("delivery_days"),
+        "delivery_date": provider_rates.get("delivery_date"),
+        "raw_data": provider_rates.get("raw_data", {}),
     }
 
 
-def format_tracking_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
+def format_tracking_event(event_data: dict[str, Any]) -> dict[str, Any]:
     """
     Format tracking event from provider to standardized format.
 
@@ -87,15 +88,15 @@ def format_tracking_event(event_data: Dict[str, Any]) -> Dict[str, Any]:
     # TODO (Future Phase): Implement provider-specific formatting
 
     return {
-        'status': event_data.get('status', 'in_transit'),
-        'description': event_data.get('description', ''),
-        'location': event_data.get('location', ''),
-        'occurred_at': event_data.get('timestamp') or timezone.now(),
-        'raw': event_data
+        "status": event_data.get("status", "in_transit"),
+        "description": event_data.get("description", ""),
+        "location": event_data.get("location", ""),
+        "occurred_at": event_data.get("timestamp") or timezone.now(),
+        "raw": event_data,
     }
 
 
-def hash_tracking_event(event_data: Dict[str, Any]) -> str:
+def hash_tracking_event(event_data: dict[str, Any]) -> str:
     """
     Generate a unique hash for a tracking event to prevent duplicates.
 
@@ -113,7 +114,7 @@ def hash_tracking_event(event_data: Dict[str, Any]) -> str:
         f"{event_data.get('occurred_at', '')}"
     )
 
-    return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
+    return hashlib.sha256(hash_input.encode("utf-8")).hexdigest()
 
 
 def should_poll_shipment(shipment) -> bool:
@@ -127,7 +128,7 @@ def should_poll_shipment(shipment) -> bool:
         bool: True if shipment should be polled
     """
     # Don't poll completed/terminal states
-    terminal_statuses = ['delivered', 'returned', 'canceled']
+    terminal_statuses = ["delivered", "returned", "canceled"]
     if shipment.status in terminal_statuses:
         return False
 
@@ -140,10 +141,7 @@ def should_poll_shipment(shipment) -> bool:
         return False
 
     # Don't poll inactive providers
-    if not shipment.provider_account.is_active:
-        return False
-
-    return True
+    return shipment.provider_account.is_active
 
 
 def get_retry_delay(attempt: int, base_delay: int = 60, max_delay: int = 3600) -> int:
@@ -159,13 +157,13 @@ def get_retry_delay(attempt: int, base_delay: int = 60, max_delay: int = 3600) -
         int: Delay in seconds
     """
     # Exponential backoff: base_delay * (2 ** attempt)
-    delay = base_delay * (2 ** attempt)
+    delay = base_delay * (2**attempt)
 
     # Cap at max_delay
     return min(delay, max_delay)
 
 
-def format_error_response(error: Exception, context: Dict[str, Any] = None) -> Dict[str, Any]:
+def format_error_response(error: Exception, context: dict[str, Any] = None) -> dict[str, Any]:
     """
     Format exception into standardized error response.
 
@@ -177,15 +175,15 @@ def format_error_response(error: Exception, context: Dict[str, Any] = None) -> D
         Dictionary with error details
     """
     return {
-        'success': False,
-        'error': str(error),
-        'error_type': type(error).__name__,
-        'context': context or {},
-        'timestamp': timezone.now().isoformat()
+        "success": False,
+        "error": str(error),
+        "error_type": type(error).__name__,
+        "context": context or {},
+        "timestamp": timezone.now().isoformat(),
     }
 
 
-def sanitize_webhook_payload(payload: Dict[str, Any], provider_key: str) -> Dict[str, Any]:
+def sanitize_webhook_payload(payload: dict[str, Any], provider_key: str) -> dict[str, Any]:
     """
     Sanitize webhook payload for logging (remove sensitive data).
 
@@ -200,28 +198,27 @@ def sanitize_webhook_payload(payload: Dict[str, Any], provider_key: str) -> Dict
     # Different providers may have different sensitive fields
 
     sensitive_fields = [
-        'api_key',
-        'secret',
-        'password',
-        'token',
-        'authorization',
-        'credit_card',
-        'ssn',
+        "api_key",
+        "secret",
+        "password",
+        "token",
+        "authorization",
+        "credit_card",
+        "ssn",
     ]
 
-    def sanitize_dict(d: Dict) -> Dict:
+    def sanitize_dict(d: dict) -> dict:
         """Recursively sanitize dictionary"""
         sanitized = {}
         for key, value in d.items():
             # Check if key contains sensitive field name
             if any(sensitive in key.lower() for sensitive in sensitive_fields):
-                sanitized[key] = '*** REDACTED ***'
+                sanitized[key] = "*** REDACTED ***"
             elif isinstance(value, dict):
                 sanitized[key] = sanitize_dict(value)
             elif isinstance(value, list):
                 sanitized[key] = [
-                    sanitize_dict(item) if isinstance(item, dict) else item
-                    for item in value
+                    sanitize_dict(item) if isinstance(item, dict) else item for item in value
                 ]
             else:
                 sanitized[key] = value
@@ -246,18 +243,18 @@ def parse_tracking_status(provider_status: str, provider_key: str) -> str:
     # Generic mappings (case-insensitive)
     status_lower = provider_status.lower()
 
-    if 'delivered' in status_lower:
-        return 'delivered'
-    elif 'out for delivery' in status_lower:
-        return 'out_for_delivery'
-    elif any(word in status_lower for word in ['in transit', 'transit', 'moving']):
-        return 'in_transit'
-    elif any(word in status_lower for word in ['exception', 'problem', 'issue']):
-        return 'exception'
-    elif any(word in status_lower for word in ['return', 'returned']):
-        return 'returned'
+    if "delivered" in status_lower:
+        return "delivered"
+    elif "out for delivery" in status_lower:
+        return "out_for_delivery"
+    elif any(word in status_lower for word in ["in transit", "transit", "moving"]):
+        return "in_transit"
+    elif any(word in status_lower for word in ["exception", "problem", "issue"]):
+        return "exception"
+    elif any(word in status_lower for word in ["return", "returned"]):
+        return "returned"
     else:
-        return 'info_received'
+        return "info_received"
 
 
 def batch_shipments(shipment_queryset, batch_size: int = 100):
@@ -273,7 +270,7 @@ def batch_shipments(shipment_queryset, batch_size: int = 100):
     """
     offset = 0
     while True:
-        batch = list(shipment_queryset[offset:offset + batch_size])
+        batch = list(shipment_queryset[offset : offset + batch_size])
         if not batch:
             break
 
@@ -292,10 +289,11 @@ def calculate_task_eta(delay_seconds: int):
         datetime: ETA for task execution
     """
     from datetime import timedelta
+
     return timezone.now() + timedelta(seconds=delay_seconds)
 
 
-def log_task_metrics(task_name: str, metrics: Dict[str, Any]):
+def log_task_metrics(task_name: str, metrics: dict[str, Any]):
     """
     Log task execution metrics in structured format.
 
@@ -305,11 +303,7 @@ def log_task_metrics(task_name: str, metrics: Dict[str, Any]):
     """
     logger.info(
         f"Task metrics - {task_name}",
-        extra={
-            'task': task_name,
-            'metrics': metrics,
-            'timestamp': timezone.now().isoformat()
-        }
+        extra={"task": task_name, "metrics": metrics, "timestamp": timezone.now().isoformat()},
     )
 
 
@@ -335,20 +329,15 @@ class TaskExecutionContext:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         duration = (timezone.now() - self.start_time).total_seconds()
-        self.metrics['duration_seconds'] = duration
+        self.metrics["duration_seconds"] = duration
 
         if exc_type:
-            self.metrics['success'] = False
-            self.metrics['error'] = str(exc_val)
-            logger.error(
-                f"Task {self.task_name} failed after {duration:.2f}s",
-                exc_info=True
-            )
+            self.metrics["success"] = False
+            self.metrics["error"] = str(exc_val)
+            logger.error(f"Task {self.task_name} failed after {duration:.2f}s", exc_info=True)
         else:
-            self.metrics['success'] = True
-            logger.info(
-                f"Task {self.task_name} completed in {duration:.2f}s"
-            )
+            self.metrics["success"] = True
+            logger.info(f"Task {self.task_name} completed in {duration:.2f}s")
 
         log_task_metrics(self.task_name, self.metrics)
 

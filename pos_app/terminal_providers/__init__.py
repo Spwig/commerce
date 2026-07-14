@@ -7,16 +7,17 @@ Provides a registry for terminal payment providers:
 
 The registry uses lazy discovery - providers are loaded on first access.
 """
-from .registry import TerminalProviderRegistry
+
 from .base import TerminalProviderBase
 
 # These are kept for backwards compatibility / direct import
 # but providers are discovered dynamically from ComponentRegistry
 from .manual import ManualTerminalProvider
+from .registry import TerminalProviderRegistry
 
 # Re-export for convenience
 __all__ = [
-    'TerminalProviderRegistry',
-    'TerminalProviderBase',
-    'ManualTerminalProvider',
+    "TerminalProviderRegistry",
+    "TerminalProviderBase",
+    "ManualTerminalProvider",
 ]

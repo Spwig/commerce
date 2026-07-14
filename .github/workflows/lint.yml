@@ -7,14 +7,24 @@ on:
     branches: [main]
 
 jobs:
-  # Lint jobs are advisory during the initial OSS release window.
-  # continue-on-error means the job still runs and its output is
-  # visible in the PR checks, but failures don't block merge. A
-  # codebase-wide ruff format + prettier --write pass is tracked as
-  # a follow-up before we flip these to blocking.
-  ruff:
+  # All four lint checks are blocking as of the Phase 2/3/4/5 rollouts.
+  ruff-format:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: ruff format --check
+        run: ruff format --check .
+
+  ruff-check:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -28,12 +38,8 @@ jobs:
       - name: ruff check
         run: ruff check .
 
-      - name: ruff format --check
-        run: ruff format --check .
-
   prettier:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -46,6 +52,18 @@ jobs:
 
       - name: prettier --check
         run: npm run format:check
+
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: npm ci
 
       - name: eslint
         run: npm run lint

@@ -1,13 +1,14 @@
 """
 Template tags for Multi-Factor Authentication (MFA) status checks
 """
-from django import template
+
 from allauth.mfa.adapter import get_adapter
+from django import template
 
 register = template.Library()
 
 
-@register.filter(name='mfa_enabled')
+@register.filter(name="mfa_enabled")
 def mfa_enabled(user):
     """
     Check if a user has MFA enabled.

@@ -7,19 +7,20 @@ Includes caching for performance and zero-downtime installations.
 """
 
 import logging
-from typing import List, Dict, Any, Optional
+from typing import Any
+
 from django.conf import settings
 from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
 # Cache configuration
-UTILITY_CACHE_KEY = 'installed_utilities_list'
+UTILITY_CACHE_KEY = "installed_utilities_list"
 UTILITY_CACHE_TIMEOUT = 300  # 5 minutes
-UTILITY_ASSETS_CACHE_KEY = 'utility_assets_dict'
+UTILITY_ASSETS_CACHE_KEY = "utility_assets_dict"
 
 
-def discover_installed_utilities(use_cache: bool = True) -> List[Dict[str, Any]]:
+def discover_installed_utilities(use_cache: bool = True) -> list[dict[str, Any]]:
     """
     Discover all installed utility components by scanning the filesystem.
 
@@ -50,7 +51,8 @@ def discover_installed_utilities(use_cache: bool = True) -> List[Dict[str, Any]]
 
     # Scan filesystem for utility directories with 'current' symlinks
     from pathlib import Path
-    utilities_static_path = Path(settings.BASE_DIR) / 'components_data' / 'static' / 'utilities'
+
+    utilities_static_path = Path(settings.BASE_DIR) / "components_data" / "static" / "utilities"
 
     if not utilities_static_path.exists():
         logger.warning(f"Utilities static path does not exist: {utilities_static_path}")
@@ -61,7 +63,7 @@ def discover_installed_utilities(use_cache: bool = True) -> List[Dict[str, Any]]
             continue
 
         # Check for 'current' symlink
-        current_link = utility_dir / 'current'
+        current_link = utility_dir / "current"
         if not current_link.exists() or not current_link.is_symlink():
             logger.debug(f"Skipping {utility_dir.name} - no 'current' symlink")
             continue
@@ -78,22 +80,22 @@ def discover_installed_utilities(use_cache: bool = True) -> List[Dict[str, Any]]
             js_files = []
 
             # Find all CSS files in current version
-            for css_file in version_dir.glob('*.css'):
-                css_files.append(f'utilities/{utility_name}/current/{css_file.name}')
+            for css_file in version_dir.glob("*.css"):
+                css_files.append(f"utilities/{utility_name}/current/{css_file.name}")
 
             # Find all JS files in current version
-            for js_file in version_dir.glob('*.js'):
-                js_files.append(f'utilities/{utility_name}/current/{js_file.name}')
+            for js_file in version_dir.glob("*.js"):
+                js_files.append(f"utilities/{utility_name}/current/{js_file.name}")
 
             if css_files or js_files:
                 utility_data = {
-                    'name': utility_name,
-                    'css': css_files,
-                    'js': js_files,
-                    'template': f'utilities/{utility_name}/current/template.html',
-                    'version': version,
-                    'description': f'{utility_name.replace("_", " ").title()} utility',
-                    'component_name': utility_name,
+                    "name": utility_name,
+                    "css": css_files,
+                    "js": js_files,
+                    "template": f"utilities/{utility_name}/current/template.html",
+                    "version": version,
+                    "description": f"{utility_name.replace('_', ' ').title()} utility",
+                    "component_name": utility_name,
                 }
 
                 utilities.append(utility_data)
@@ -112,7 +114,7 @@ def discover_installed_utilities(use_cache: bool = True) -> List[Dict[str, Any]]
     return utilities
 
 
-def get_utility_assets() -> Dict[str, List[str]]:
+def get_utility_assets() -> dict[str, list[str]]:
     """
     Get all CSS and JS assets from installed utilities.
 
@@ -122,24 +124,32 @@ def get_utility_assets() -> Dict[str, List[str]]:
     utilities = discover_installed_utilities()
 
     assets = {
-        'css': [],
-        'js': [],
+        "css": [],
+        "js": [],
     }
 
     for utility in utilities:
-        assets['css'].extend(utility['css'])
-        assets['js'].extend(utility['js'])
+        assets["css"].extend(utility["css"])
+        assets["js"].extend(utility["js"])
 
     # Deduplicate by filename to handle both hyphen/underscore directory variants
     seen_js = set()
-    assets['js'] = [p for p in assets['js'] if (fn := p.rsplit('/', 1)[-1]) not in seen_js and not seen_js.add(fn)]
+    assets["js"] = [
+        p
+        for p in assets["js"]
+        if (fn := p.rsplit("/", 1)[-1]) not in seen_js and not seen_js.add(fn)
+    ]
     seen_css = set()
-    assets['css'] = [p for p in assets['css'] if (fn := p.rsplit('/', 1)[-1]) not in seen_css and not seen_css.add(fn)]
+    assets["css"] = [
+        p
+        for p in assets["css"]
+        if (fn := p.rsplit("/", 1)[-1]) not in seen_css and not seen_css.add(fn)
+    ]
 
     return assets
 
 
-def get_utility_info(utility_name: str) -> Optional[Dict[str, Any]]:
+def get_utility_info(utility_name: str) -> dict[str, Any] | None:
     """
     Get metadata for a specific utility by name.
 
@@ -151,7 +161,7 @@ def get_utility_info(utility_name: str) -> Optional[Dict[str, Any]]:
     """
     utilities = discover_installed_utilities()
     for utility in utilities:
-        if utility['name'] == utility_name:
+        if utility["name"] == utility_name:
             return utility
     logger.warning(f"Utility not found: {utility_name}")
     return None

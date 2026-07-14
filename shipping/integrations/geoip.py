@@ -3,11 +3,16 @@ GeoIP Integration for Shipping
 Provides helper functions to integrate with the geoip app's CountryMapping model
 for shipping zones, currencies, and country information.
 """
-from typing import Optional, Dict, Any
+
+from typing import TYPE_CHECKING, Any, Optional
+
 from django.core.cache import cache
 
+if TYPE_CHECKING:
+    from geoip.models import CountryMapping
 
-def get_country_mapping(country_code: str) -> Optional['CountryMapping']:
+
+def get_country_mapping(country_code: str) -> Optional["CountryMapping"]:
     """
     Get CountryMapping for a given country code.
     Uses caching to reduce database queries.
@@ -31,7 +36,7 @@ def get_country_mapping(country_code: str) -> Optional['CountryMapping']:
     country_code = country_code.upper()
 
     # Check cache first
-    cache_key = f'country_mapping:{country_code}'
+    cache_key = f"country_mapping:{country_code}"
     mapping = cache.get(cache_key)
 
     if mapping is None:
@@ -74,7 +79,7 @@ def is_domestic_shipment(origin_country: str, dest_country: str) -> bool:
     return origin_country.upper() == dest_country.upper()
 
 
-def get_shipping_zone(country_code: str, origin_country: str = 'US') -> str:
+def get_shipping_zone(country_code: str, origin_country: str = "US") -> str:
     """
     Get the shipping zone for a destination country.
 
@@ -94,11 +99,11 @@ def get_shipping_zone(country_code: str, origin_country: str = 'US') -> str:
         'europe'
     """
     if not country_code:
-        return 'international'
+        return "international"
 
     # Check if domestic
     if is_domestic_shipment(origin_country, country_code):
-        return 'domestic'
+        return "domestic"
 
     # Look up custom shipping zone
     mapping = get_country_mapping(country_code)
@@ -106,7 +111,7 @@ def get_shipping_zone(country_code: str, origin_country: str = 'US') -> str:
         return mapping.shipping_zone
 
     # Default to international
-    return 'international'
+    return "international"
 
 
 def get_country_currency(country_code: str) -> str:
@@ -134,6 +139,7 @@ def get_country_currency(country_code: str) -> str:
 
     # Fallback to store default currency for unknown countries
     from core.utils import get_default_currency
+
     return get_default_currency()
 
 
@@ -156,7 +162,7 @@ def get_country_name(country_code: str) -> str:
         'XX'
     """
     if not country_code:
-        return ''
+        return ""
 
     mapping = get_country_mapping(country_code)
 
@@ -167,7 +173,7 @@ def get_country_name(country_code: str) -> str:
     return country_code.upper()
 
 
-def get_country_info(country_code: str) -> Dict[str, Any]:
+def get_country_info(country_code: str) -> dict[str, Any]:
     """
     Get comprehensive country information for shipping.
 
@@ -199,31 +205,32 @@ def get_country_info(country_code: str) -> Dict[str, Any]:
 
     if mapping:
         return {
-            'country_code': mapping.country_code,
-            'country_name': mapping.country_name,
-            'currency': mapping.default_currency,
-            'shipping_zone': mapping.shipping_zone or 'international',
-            'tax_rate': float(mapping.tax_rate),
-            'is_eu_member': mapping.is_eu_member,
-            'requires_vat': mapping.requires_vat,
-            'uses_metric': mapping.uses_metric,
-            'timezone': mapping.timezone,
-            'supports_cod': mapping.supports_cod,
+            "country_code": mapping.country_code,
+            "country_name": mapping.country_name,
+            "currency": mapping.default_currency,
+            "shipping_zone": mapping.shipping_zone or "international",
+            "tax_rate": float(mapping.tax_rate),
+            "is_eu_member": mapping.is_eu_member,
+            "requires_vat": mapping.requires_vat,
+            "uses_metric": mapping.uses_metric,
+            "timezone": mapping.timezone,
+            "supports_cod": mapping.supports_cod,
         }
 
     # Fallback for unknown countries
     from core.utils import get_default_currency
+
     return {
-        'country_code': country_code.upper() if country_code else '',
-        'country_name': country_code.upper() if country_code else '',
-        'currency': get_default_currency(),
-        'shipping_zone': 'international',
-        'tax_rate': 0.0,
-        'is_eu_member': False,
-        'requires_vat': False,
-        'uses_metric': True,
-        'timezone': '',
-        'supports_cod': False,
+        "country_code": country_code.upper() if country_code else "",
+        "country_name": country_code.upper() if country_code else "",
+        "currency": get_default_currency(),
+        "shipping_zone": "international",
+        "tax_rate": 0.0,
+        "is_eu_member": False,
+        "requires_vat": False,
+        "uses_metric": True,
+        "timezone": "",
+        "supports_cod": False,
     }
 
 
@@ -254,6 +261,7 @@ def get_accepted_currencies(country_code: str) -> list:
 
     # Fallback to store default currency
     from core.utils import get_default_currency
+
     return [get_default_currency()]
 
 
@@ -329,13 +337,14 @@ def clear_country_cache(country_code: str = None):
         >>> clear_country_cache()  # Clear all country caches
     """
     if country_code:
-        cache_key = f'country_mapping:{country_code.upper()}'
+        cache_key = f"country_mapping:{country_code.upper()}"
         cache.delete(cache_key)
     else:
         # Clear all country mapping caches
         # Note: This is a simple implementation; for production you might want
         # to use cache versioning or a more sophisticated approach
         from geoip.models import CountryMapping
+
         for mapping in CountryMapping.objects.all():
-            cache_key = f'country_mapping:{mapping.country_code}'
+            cache_key = f"country_mapping:{mapping.country_code}"
             cache.delete(cache_key)

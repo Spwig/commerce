@@ -1,7 +1,9 @@
 """
 Template filters for order displays
 """
+
 from django import template
+
 from geoip.models import CountryMapping
 
 register = template.Library()
@@ -22,7 +24,7 @@ def money_format(value):
 
     # Split on first digit to separate currency from amount
     for i, char in enumerate(money_str):
-        if char.isdigit() or char == '-':
+        if char.isdigit() or char == "-":
             return f"{money_str[:i]} {money_str[i:]}"
 
     return money_str

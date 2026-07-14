@@ -6,27 +6,27 @@ Follows the component-based pattern from exchange_rates and shipping systems.
 """
 
 from email_system.providers.base import (
-    EmailProviderBase,
-    EmailMessage,
-    SendResult,
     EmailAttachment,
     EmailInlineImage,
-    EmailProviderError,
+    EmailMessage,
     EmailProviderAuthError,
+    EmailProviderBase,
+    EmailProviderError,
     EmailProviderRateLimitError,
     EmailProviderValidationError,
+    SendResult,
 )
 from email_system.providers.registry import ProviderRegistry
 
 __all__ = [
-    'EmailProviderBase',
-    'EmailMessage',
-    'SendResult',
-    'EmailAttachment',
-    'EmailInlineImage',
-    'EmailProviderError',
-    'EmailProviderAuthError',
-    'EmailProviderRateLimitError',
-    'EmailProviderValidationError',
-    'ProviderRegistry',
+    "EmailProviderBase",
+    "EmailMessage",
+    "SendResult",
+    "EmailAttachment",
+    "EmailInlineImage",
+    "EmailProviderError",
+    "EmailProviderAuthError",
+    "EmailProviderRateLimitError",
+    "EmailProviderValidationError",
+    "ProviderRegistry",
 ]

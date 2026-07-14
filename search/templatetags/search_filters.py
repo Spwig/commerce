@@ -1,4 +1,5 @@
 """Template filters for search app."""
+
 from django import template
 
 register = template.Library()
@@ -13,7 +14,7 @@ def getattr_filter(obj, attr):
     if hasattr(obj, attr):
         return getattr(obj, attr)
     # For form objects, try to get the field via __getitem__
-    if hasattr(obj, '__getitem__'):
+    if hasattr(obj, "__getitem__"):
         try:
             return obj[attr]
         except (KeyError, TypeError):
@@ -22,7 +23,7 @@ def getattr_filter(obj, attr):
 
 
 # Register as both 'getattr_filter' and 'getattr' for convenience
-register.filter('getattr', getattr_filter)
+register.filter("getattr", getattr_filter)
 
 
 @register.filter

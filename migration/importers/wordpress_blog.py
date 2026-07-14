@@ -3,20 +3,20 @@ WordPress Blog Importers.
 
 Imports WordPress blog posts, categories, and tags to Spwig blog system.
 """
+
 import logging
-from typing import Dict, List, Optional, Tuple
 from urllib.parse import urlparse
-from django.utils.text import slugify
+
 from django.db import transaction
 from tqdm import tqdm
 
-from blog.models import BlogCategory, BlogTag, BlogPost
+from blog.models import BlogCategory, BlogPost, BlogTag
 from media_library.models import MediaAsset
 from migration.fetchers.wordpress_api import WordPressAPIClient
 from migration.mappers.wordpress_blog import (
     WordPressBlogCategoryMapper,
-    WordPressBlogTagMapper,
     WordPressBlogPostMapper,
+    WordPressBlogTagMapper,
 )
 from migration.services.content_image_processor import ContentImageProcessor
 from migration.utils.transformers import parse_woocommerce_datetime
@@ -32,7 +32,13 @@ class WordPressBlogCategoryImporter:
     then mapping child categories to their imported parents.
     """
 
-    def __init__(self, category_map: Optional[Dict[int, int]] = None, skip_existing: bool = True, step=None, migration_job=None):
+    def __init__(
+        self,
+        category_map: dict[int, int] | None = None,
+        skip_existing: bool = True,
+        step=None,
+        migration_job=None,
+    ):
         """
         Initialize the category importer.
 
@@ -43,17 +49,15 @@ class WordPressBlogCategoryImporter:
             migration_job: Optional MigrationJob for tracking imported content
         """
         self.mapper = WordPressBlogCategoryMapper()
-        self.category_map: Dict[int, int] = category_map or {}
+        self.category_map: dict[int, int] = category_map or {}
         self.skip_existing = skip_existing
         self.step = step
         self.migration_job = migration_job
-        self.stats = {'created': 0, 'updated': 0, 'skipped': 0, 'errors': 0}
+        self.stats = {"created": 0, "updated": 0, "skipped": 0, "errors": 0}
 
     def import_categories(
-        self,
-        categories: List[Dict],
-        progress_bar: bool = True
-    ) -> Dict[int, int]:
+        self, categories: list[dict], progress_bar: bool = True
+    ) -> dict[int, int]:
         """
         Import WordPress categories to Spwig.
 
@@ -65,13 +69,10 @@ class WordPressBlogCategoryImporter:
             Mapping of WordPress category ID -> Spwig BlogCategory ID
         """
         # Sort categories to import parents first (parent=0 first, then by parent id)
-        sorted_categories = sorted(categories, key=lambda c: c.get('parent', 0))
+        sorted_categories = sorted(categories, key=lambda c: c.get("parent", 0))
 
         iterator = tqdm(
-            sorted_categories,
-            desc="📁 Blog Categories",
-            unit="cat",
-            disable=not progress_bar
+            sorted_categories, desc="📁 Blog Categories", unit="cat", disable=not progress_bar
         )
 
         for wp_category in iterator:
@@ -79,19 +80,17 @@ class WordPressBlogCategoryImporter:
                 self._import_single_category(wp_category)
                 # Update step progress in real-time
                 if self.step:
-                    self.step.items_imported = self.stats['created'] + self.stats['updated']
-                    self.step.items_skipped = self.stats['skipped']
-                    self.step.items_failed = self.stats['errors']
-                    name = wp_category.get('name', '')
+                    self.step.items_imported = self.stats["created"] + self.stats["updated"]
+                    self.step.items_skipped = self.stats["skipped"]
+                    self.step.items_failed = self.stats["errors"]
+                    name = wp_category.get("name", "")
                     self.step.current_item = f"Category: {name}"
                     self.step.save()
             except Exception as e:
-                self.stats['errors'] += 1
-                logger.error(
-                    f"Error importing category {wp_category.get('id')}: {e}"
-                )
+                self.stats["errors"] += 1
+                logger.error(f"Error importing category {wp_category.get('id')}: {e}")
                 if self.step:
-                    self.step.items_failed = self.stats['errors']
+                    self.step.items_failed = self.stats["errors"]
                     self.step.save()
 
         logger.info(
@@ -102,28 +101,26 @@ class WordPressBlogCategoryImporter:
 
         return self.category_map
 
-    def _import_single_category(self, wp_category: Dict) -> Optional[BlogCategory]:
+    def _import_single_category(self, wp_category: dict) -> BlogCategory | None:
         """Import a single WordPress category."""
-        wp_id = wp_category.get('id')
+        wp_id = wp_category.get("id")
 
         # Skip if already imported
         if wp_id in self.category_map:
-            self.stats['skipped'] += 1
+            self.stats["skipped"] += 1
             return None
 
         # Map WordPress data to Spwig format
         mapped_data = self.mapper.map(wp_category)
 
         # Handle parent reference
-        wp_parent_id = wp_category.get('parent', 0)
+        wp_parent_id = wp_category.get("parent", 0)
         parent = None
         if wp_parent_id and wp_parent_id in self.category_map:
-            parent = BlogCategory.objects.filter(
-                pk=self.category_map[wp_parent_id]
-            ).first()
+            parent = BlogCategory.objects.filter(pk=self.category_map[wp_parent_id]).first()
 
         # Ensure unique slug
-        slug = mapped_data['slug']
+        slug = mapped_data["slug"]
         original_slug = slug
         counter = 1
         while BlogCategory.objects.filter(slug=slug).exists():
@@ -136,36 +133,36 @@ class WordPressBlogCategoryImporter:
         if existing:
             if self.skip_existing:
                 self.category_map[wp_id] = existing.id
-                self.stats['skipped'] += 1
+                self.stats["skipped"] += 1
                 return existing
             # Update existing
-            existing.name = mapped_data['name']
-            existing.description = mapped_data['description']
+            existing.name = mapped_data["name"]
+            existing.description = mapped_data["description"]
             if parent:
                 existing.parent = parent
             existing.save()
             self.category_map[wp_id] = existing.id
-            self.stats['updated'] += 1
+            self.stats["updated"] += 1
             return existing
         else:
             # Create new
             create_kwargs = {
-                'name': mapped_data['name'],
-                'slug': slug,
-                'description': mapped_data['description'],
-                'parent': parent,
-                'is_active': True,
-                'external_id': str(wp_id),
+                "name": mapped_data["name"],
+                "slug": slug,
+                "description": mapped_data["description"],
+                "parent": parent,
+                "is_active": True,
+                "external_id": str(wp_id),
             }
             if self.migration_job:
-                create_kwargs['migration_job'] = self.migration_job
-                create_kwargs['imported_meta'] = {
-                    'wordpress_category_id': str(wp_id),
-                    'wordpress_permalink': wp_category.get('link', ''),
+                create_kwargs["migration_job"] = self.migration_job
+                create_kwargs["imported_meta"] = {
+                    "wordpress_category_id": str(wp_id),
+                    "wordpress_permalink": wp_category.get("link", ""),
                 }
             category = BlogCategory.objects.create(**create_kwargs)
             self.category_map[wp_id] = category.id
-            self.stats['created'] += 1
+            self.stats["created"] += 1
             return category
 
 
@@ -174,7 +171,13 @@ class WordPressBlogTagImporter:
     Import WordPress tags to Spwig BlogTag.
     """
 
-    def __init__(self, tag_map: Optional[Dict[int, int]] = None, skip_existing: bool = True, step=None, migration_job=None):
+    def __init__(
+        self,
+        tag_map: dict[int, int] | None = None,
+        skip_existing: bool = True,
+        step=None,
+        migration_job=None,
+    ):
         """
         Initialize the tag importer.
 
@@ -185,17 +188,13 @@ class WordPressBlogTagImporter:
             migration_job: Optional MigrationJob for tracking imported content
         """
         self.mapper = WordPressBlogTagMapper()
-        self.tag_map: Dict[int, int] = tag_map or {}
+        self.tag_map: dict[int, int] = tag_map or {}
         self.skip_existing = skip_existing
         self.step = step
         self.migration_job = migration_job
-        self.stats = {'created': 0, 'updated': 0, 'skipped': 0, 'errors': 0}
+        self.stats = {"created": 0, "updated": 0, "skipped": 0, "errors": 0}
 
-    def import_tags(
-        self,
-        tags: List[Dict],
-        progress_bar: bool = True
-    ) -> Dict[int, int]:
+    def import_tags(self, tags: list[dict], progress_bar: bool = True) -> dict[int, int]:
         """
         Import WordPress tags to Spwig.
 
@@ -214,12 +213,7 @@ class WordPressBlogTagImporter:
         else:
             self._base_imported = self._base_skipped = self._base_failed = 0
 
-        iterator = tqdm(
-            tags,
-            desc="🏷️  Blog Tags",
-            unit="tag",
-            disable=not progress_bar
-        )
+        iterator = tqdm(tags, desc="🏷️  Blog Tags", unit="tag", disable=not progress_bar)
 
         for wp_tag in iterator:
             try:
@@ -227,18 +221,18 @@ class WordPressBlogTagImporter:
                 # Update step progress in real-time
                 if self.step:
                     self.step.items_imported = (
-                        self._base_imported + self.stats['created'] + self.stats['updated']
+                        self._base_imported + self.stats["created"] + self.stats["updated"]
                     )
-                    self.step.items_skipped = self._base_skipped + self.stats['skipped']
-                    self.step.items_failed = self._base_failed + self.stats['errors']
-                    name = wp_tag.get('name', '')
+                    self.step.items_skipped = self._base_skipped + self.stats["skipped"]
+                    self.step.items_failed = self._base_failed + self.stats["errors"]
+                    name = wp_tag.get("name", "")
                     self.step.current_item = f"Tag: {name}"
                     self.step.save()
             except Exception as e:
-                self.stats['errors'] += 1
+                self.stats["errors"] += 1
                 logger.error(f"Error importing tag {wp_tag.get('id')}: {e}")
                 if self.step:
-                    self.step.items_failed = self._base_failed + self.stats['errors']
+                    self.step.items_failed = self._base_failed + self.stats["errors"]
                     self.step.save()
 
         logger.info(
@@ -249,20 +243,20 @@ class WordPressBlogTagImporter:
 
         return self.tag_map
 
-    def _import_single_tag(self, wp_tag: Dict) -> Optional[BlogTag]:
+    def _import_single_tag(self, wp_tag: dict) -> BlogTag | None:
         """Import a single WordPress tag."""
-        wp_id = wp_tag.get('id')
+        wp_id = wp_tag.get("id")
 
         # Skip if already imported
         if wp_id in self.tag_map:
-            self.stats['skipped'] += 1
+            self.stats["skipped"] += 1
             return None
 
         # Map WordPress data to Spwig format
         mapped_data = self.mapper.map(wp_tag)
 
         # Ensure unique slug
-        slug = mapped_data['slug']
+        slug = mapped_data["slug"]
         original_slug = slug
         counter = 1
         while BlogTag.objects.filter(slug=slug).exists():
@@ -270,23 +264,23 @@ class WordPressBlogTagImporter:
             counter += 1
 
         # Check if tag exists by name (tags have unique names)
-        existing = BlogTag.objects.filter(name=mapped_data['name']).first()
+        existing = BlogTag.objects.filter(name=mapped_data["name"]).first()
 
         if existing:
             self.tag_map[wp_id] = existing.id
-            self.stats['skipped'] += 1
+            self.stats["skipped"] += 1
             return existing
         else:
             create_kwargs = {
-                'name': mapped_data['name'],
-                'slug': slug,
-                'external_id': str(wp_id),
+                "name": mapped_data["name"],
+                "slug": slug,
+                "external_id": str(wp_id),
             }
             if self.migration_job:
-                create_kwargs['migration_job'] = self.migration_job
+                create_kwargs["migration_job"] = self.migration_job
             tag = BlogTag.objects.create(**create_kwargs)
             self.tag_map[wp_id] = tag.id
-            self.stats['created'] += 1
+            self.stats["created"] += 1
             return tag
 
 
@@ -304,9 +298,9 @@ class WordPressBlogPostImporter:
     def __init__(
         self,
         source_url: str,
-        category_map: Dict[int, int],
-        tag_map: Dict[int, int],
-        media_map: Optional[Dict[int, int]] = None,
+        category_map: dict[int, int],
+        tag_map: dict[int, int],
+        media_map: dict[int, int] | None = None,
         migration_job=None,
         skip_existing: bool = True,
         step=None,
@@ -328,7 +322,7 @@ class WordPressBlogPostImporter:
         self.mapper = WordPressBlogPostMapper()
         self.category_map = category_map
         self.tag_map = tag_map
-        self.media_map: Dict[int, int] = media_map or {}
+        self.media_map: dict[int, int] = media_map or {}
         self.migration_job = migration_job
         self.skip_existing = skip_existing
         self.step = step
@@ -337,19 +331,16 @@ class WordPressBlogPostImporter:
             migration_job=migration_job,
         )
         self.stats = {
-            'created': 0,
-            'updated': 0,
-            'skipped': 0,
-            'errors': 0,
-            'images_imported': 0,
+            "created": 0,
+            "updated": 0,
+            "skipped": 0,
+            "errors": 0,
+            "images_imported": 0,
         }
 
     def import_posts(
-        self,
-        posts: List[Dict],
-        wp_client: WordPressAPIClient,
-        progress_bar: bool = True
-    ) -> Tuple[Dict[int, int], Dict]:
+        self, posts: list[dict], wp_client: WordPressAPIClient, progress_bar: bool = True
+    ) -> tuple[dict[int, int], dict]:
         """
         Import WordPress posts to Spwig.
 
@@ -361,7 +352,7 @@ class WordPressBlogPostImporter:
         Returns:
             Tuple of (post_map, stats) where post_map is WP post ID -> Spwig post ID
         """
-        post_map: Dict[int, int] = {}
+        post_map: dict[int, int] = {}
 
         # Capture base offsets from previous import phases (categories + tags)
         if self.step:
@@ -371,16 +362,15 @@ class WordPressBlogPostImporter:
         else:
             self._base_imported = self._base_skipped = self._base_failed = 0
 
-        iterator = tqdm(
-            posts,
-            desc="📝 Blog Posts",
-            unit="post",
-            disable=not progress_bar
-        )
+        iterator = tqdm(posts, desc="📝 Blog Posts", unit="post", disable=not progress_bar)
 
         for wp_post in iterator:
             try:
-                title = wp_post.get('title', {}).get('rendered', '') if isinstance(wp_post.get('title'), dict) else wp_post.get('title', '')
+                title = (
+                    wp_post.get("title", {}).get("rendered", "")
+                    if isinstance(wp_post.get("title"), dict)
+                    else wp_post.get("title", "")
+                )
                 # Update current_item before processing (so UI shows what's being worked on)
                 if self.step:
                     self.step.current_item = f"Importing post: {title[:80]}"
@@ -388,21 +378,21 @@ class WordPressBlogPostImporter:
 
                 result = self._import_single_post(wp_post, wp_client)
                 if result:
-                    post_map[wp_post.get('id')] = result.id
+                    post_map[wp_post.get("id")] = result.id
 
                 # Update step progress after each post
                 if self.step:
                     self.step.items_imported = (
-                        self._base_imported + self.stats['created'] + self.stats['updated']
+                        self._base_imported + self.stats["created"] + self.stats["updated"]
                     )
-                    self.step.items_skipped = self._base_skipped + self.stats['skipped']
-                    self.step.items_failed = self._base_failed + self.stats['errors']
+                    self.step.items_skipped = self._base_skipped + self.stats["skipped"]
+                    self.step.items_failed = self._base_failed + self.stats["errors"]
                     self.step.save()
             except Exception as e:
-                self.stats['errors'] += 1
+                self.stats["errors"] += 1
                 logger.error(f"Error importing post {wp_post.get('id')}: {e}")
                 if self.step:
-                    self.step.items_failed = self._base_failed + self.stats['errors']
+                    self.step.items_failed = self._base_failed + self.stats["errors"]
                     self.step.save()
 
         logger.info(
@@ -415,24 +405,20 @@ class WordPressBlogPostImporter:
         return post_map, self.stats
 
     @transaction.atomic
-    def _import_single_post(
-        self,
-        wp_post: Dict,
-        wp_client: WordPressAPIClient
-    ) -> Optional[BlogPost]:
+    def _import_single_post(self, wp_post: dict, wp_client: WordPressAPIClient) -> BlogPost | None:
         """Import a single WordPress post with all its media."""
-        wp_id = wp_post.get('id')
+        wp_id = wp_post.get("id")
 
         # Map WordPress data to Spwig format
         mapped_data = self.mapper.map(wp_post)
 
         # Check if post already exists by slug
-        slug = mapped_data['slug']
+        slug = mapped_data["slug"]
         original_slug = slug
         existing = BlogPost.objects.filter(slug=original_slug).first()
 
         if existing and self.skip_existing:
-            self.stats['skipped'] += 1
+            self.stats["skipped"] += 1
             logger.debug(f"Post '{original_slug}' already exists, skipping")
             return existing
 
@@ -444,63 +430,59 @@ class WordPressBlogPostImporter:
 
         # Get featured image
         featured_image = None
-        featured_media_id = mapped_data.get('featured_media_id')
+        featured_media_id = mapped_data.get("featured_media_id")
         if featured_media_id:
-            featured_image = self._get_or_import_media(
-                featured_media_id, wp_client
-            )
+            featured_image = self._get_or_import_media(featured_media_id, wp_client)
             if featured_image:
-                self.stats['images_imported'] += 1
+                self.stats["images_imported"] += 1
 
         # Process content images
-        content = mapped_data.get('simple_content', '')
+        content = mapped_data.get("simple_content", "")
         if content:
             content, content_stats = self.content_processor.process_content(content)
-            self.stats['images_imported'] += content_stats.get('images_downloaded', 0)
+            self.stats["images_imported"] += content_stats.get("images_downloaded", 0)
 
         # Map category
         category = None
-        wp_category_ids = mapped_data.get('category_ids', [])
+        wp_category_ids = mapped_data.get("category_ids", [])
         for wp_cat_id in wp_category_ids:
             if wp_cat_id in self.category_map:
-                category = BlogCategory.objects.filter(
-                    pk=self.category_map[wp_cat_id]
-                ).first()
+                category = BlogCategory.objects.filter(pk=self.category_map[wp_cat_id]).first()
                 break  # Use first matching category
 
         # Parse original dates from WordPress (preserve creation date)
         create_kwargs = {
-            'title': mapped_data['title'],
-            'slug': slug,
-            'status': mapped_data['status'],
-            'excerpt': mapped_data.get('excerpt', ''),
-            'simple_content': content,
-            'featured_image': featured_image,
-            'category': category,
-            'external_id': str(wp_id),
+            "title": mapped_data["title"],
+            "slug": slug,
+            "status": mapped_data["status"],
+            "excerpt": mapped_data.get("excerpt", ""),
+            "simple_content": content,
+            "featured_image": featured_image,
+            "category": category,
+            "external_id": str(wp_id),
         }
 
         # Track migration job and WordPress metadata
         if self.migration_job:
-            create_kwargs['migration_job'] = self.migration_job
-            create_kwargs['imported_meta'] = {
-                'wordpress_post_id': str(wp_id),
-                'wordpress_permalink': wp_post.get('link', ''),
+            create_kwargs["migration_job"] = self.migration_job
+            create_kwargs["imported_meta"] = {
+                "wordpress_post_id": str(wp_id),
+                "wordpress_permalink": wp_post.get("link", ""),
             }
 
-        date_created = mapped_data.get('date_created_gmt') or mapped_data.get('date_created')
+        date_created = mapped_data.get("date_created_gmt") or mapped_data.get("date_created")
         if date_created:
             parsed_date = parse_woocommerce_datetime(date_created)
             if parsed_date:
-                create_kwargs['created_at'] = parsed_date
-                if mapped_data['status'] == 'published':
-                    create_kwargs['published_at'] = parsed_date
+                create_kwargs["created_at"] = parsed_date
+                if mapped_data["status"] == "published":
+                    create_kwargs["published_at"] = parsed_date
 
         # Create post with original dates in one DB write
         post = BlogPost.objects.create(**create_kwargs)
 
         # Set tags (M2M relationship)
-        wp_tag_ids = mapped_data.get('tag_ids', [])
+        wp_tag_ids = mapped_data.get("tag_ids", [])
         spwig_tags = []
         for wp_tag_id in wp_tag_ids:
             if wp_tag_id in self.tag_map:
@@ -511,20 +493,16 @@ class WordPressBlogPostImporter:
         if spwig_tags:
             post.tags.set(spwig_tags)
 
-        self.stats['created'] += 1
+        self.stats["created"] += 1
         return post
 
     def _get_or_import_media(
-        self,
-        wp_media_id: int,
-        wp_client: WordPressAPIClient
-    ) -> Optional[MediaAsset]:
+        self, wp_media_id: int, wp_client: WordPressAPIClient
+    ) -> MediaAsset | None:
         """Get existing or import new media asset from WordPress."""
         # Check if already imported
         if wp_media_id in self.media_map:
-            return MediaAsset.objects.filter(
-                pk=self.media_map[wp_media_id]
-            ).first()
+            return MediaAsset.objects.filter(pk=self.media_map[wp_media_id]).first()
 
         # Fetch media info from WordPress
         try:
@@ -534,22 +512,23 @@ class WordPressBlogPostImporter:
 
             # Get source URL
             source_url = None
-            if 'source_url' in media_data:
-                source_url = media_data['source_url']
-            elif 'media_details' in media_data:
-                sizes = media_data['media_details'].get('sizes', {})
-                if 'full' in sizes:
-                    source_url = sizes['full'].get('source_url')
+            if "source_url" in media_data:
+                source_url = media_data["source_url"]
+            elif "media_details" in media_data:
+                sizes = media_data["media_details"].get("sizes", {})
+                if "full" in sizes:
+                    source_url = sizes["full"].get("source_url")
 
             if not source_url:
                 return None
 
             # Download and create MediaAsset
             from migration.utils.media_helpers import download_and_create_media_asset
+
             asset = download_and_create_media_asset(
                 url=source_url,
-                alt_text=media_data.get('alt_text', ''),
-                title=media_data.get('title', {}).get('rendered', ''),
+                alt_text=media_data.get("alt_text", ""),
+                title=media_data.get("title", {}).get("rendered", ""),
                 migration_job=self.migration_job,
             )
 
@@ -593,13 +572,13 @@ class WordPressBlogImporter:
         self.migration_job = migration_job
         self.skip_existing = skip_existing
         self.stats = {
-            'categories': {'created': 0, 'updated': 0, 'skipped': 0, 'errors': 0},
-            'tags': {'created': 0, 'updated': 0, 'skipped': 0, 'errors': 0},
-            'posts': {'created': 0, 'updated': 0, 'skipped': 0, 'errors': 0},
-            'media': {'imported': 0},
+            "categories": {"created": 0, "updated": 0, "skipped": 0, "errors": 0},
+            "tags": {"created": 0, "updated": 0, "skipped": 0, "errors": 0},
+            "posts": {"created": 0, "updated": 0, "skipped": 0, "errors": 0},
+            "media": {"imported": 0},
         }
 
-    def import_all(self, progress_bar: bool = True, step=None) -> Dict:
+    def import_all(self, progress_bar: bool = True, step=None) -> dict:
         """
         Import all blog content from WordPress.
 
@@ -642,27 +621,29 @@ class WordPressBlogImporter:
         # Set total items on step now that we know the real counts
         if step:
             step.items_total = len(categories) + len(tags) + len(posts)
-            step.current_item = f"Importing {len(categories)} categories, {len(tags)} tags, {len(posts)} posts..."
+            step.current_item = (
+                f"Importing {len(categories)} categories, {len(tags)} tags, {len(posts)} posts..."
+            )
             step.save()
 
         # Import in order
         # 1. Categories
         category_importer = WordPressBlogCategoryImporter(
-            skip_existing=self.skip_existing, step=step,
+            skip_existing=self.skip_existing,
+            step=step,
             migration_job=self.migration_job,
         )
-        category_map = category_importer.import_categories(
-            categories, progress_bar=progress_bar
-        )
-        self.stats['categories'] = category_importer.stats
+        category_map = category_importer.import_categories(categories, progress_bar=progress_bar)
+        self.stats["categories"] = category_importer.stats
 
         # 2. Tags
         tag_importer = WordPressBlogTagImporter(
-            skip_existing=self.skip_existing, step=step,
+            skip_existing=self.skip_existing,
+            step=step,
             migration_job=self.migration_job,
         )
         tag_map = tag_importer.import_tags(tags, progress_bar=progress_bar)
-        self.stats['tags'] = tag_importer.stats
+        self.stats["tags"] = tag_importer.stats
 
         # 3. Posts
         post_importer = WordPressBlogPostImporter(
@@ -676,12 +657,12 @@ class WordPressBlogImporter:
         post_map, post_stats = post_importer.import_posts(
             posts, self.wp_client, progress_bar=progress_bar
         )
-        self.stats['posts'] = post_stats
-        self.stats['media']['imported'] = post_stats.get('images_imported', 0)
+        self.stats["posts"] = post_stats
+        self.stats["media"]["imported"] = post_stats.get("images_imported", 0)
 
         # Clear current_item when done
         if step:
-            step.current_item = ''
+            step.current_item = ""
             step.save()
 
         logger.info("WordPress blog import complete!")
@@ -689,26 +670,21 @@ class WordPressBlogImporter:
 
         return self.stats
 
-    def import_categories_only(self, progress_bar: bool = True) -> Dict[int, int]:
+    def import_categories_only(self, progress_bar: bool = True) -> dict[int, int]:
         """Import only categories."""
         categories = self.wp_client.fetch_all_categories()
         category_importer = WordPressBlogCategoryImporter()
-        return category_importer.import_categories(
-            categories, progress_bar=progress_bar
-        )
+        return category_importer.import_categories(categories, progress_bar=progress_bar)
 
-    def import_tags_only(self, progress_bar: bool = True) -> Dict[int, int]:
+    def import_tags_only(self, progress_bar: bool = True) -> dict[int, int]:
         """Import only tags."""
         tags = self.wp_client.fetch_all_tags()
         tag_importer = WordPressBlogTagImporter()
         return tag_importer.import_tags(tags, progress_bar=progress_bar)
 
     def import_posts_only(
-        self,
-        category_map: Dict[int, int],
-        tag_map: Dict[int, int],
-        progress_bar: bool = True
-    ) -> Tuple[Dict[int, int], Dict]:
+        self, category_map: dict[int, int], tag_map: dict[int, int], progress_bar: bool = True
+    ) -> tuple[dict[int, int], dict]:
         """Import only posts (requires category and tag maps)."""
         posts = self.wp_client.fetch_all_posts()
         post_importer = WordPressBlogPostImporter(
@@ -716,6 +692,4 @@ class WordPressBlogImporter:
             category_map=category_map,
             tag_map=tag_map,
         )
-        return post_importer.import_posts(
-            posts, self.wp_client, progress_bar=progress_bar
-        )
+        return post_importer.import_posts(posts, self.wp_client, progress_bar=progress_bar)

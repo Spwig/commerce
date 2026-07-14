@@ -5,168 +5,168 @@
  * Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    /* ─── Constants ──────────────────────────────────────────────────────── */
-    var MAX_HISTORY = 50;
+  /* ─── Constants ──────────────────────────────────────────────────────── */
+  const MAX_HISTORY = 50;
 
-    /* ─── State ──────────────────────────────────────────────────────────── */
-    var dom = null;
-    var state = null;
-    var activeSurfaceSlug = null;
+  /* ─── State ──────────────────────────────────────────────────────────── */
+  let dom = null;
+  let state = null;
+  let activeSurfaceSlug = null;
 
-    // Per-surface history stacks: { slug: { undoStack: [], redoStack: [] } }
-    var histories = {};
+  // Per-surface history stacks: { slug: { undoStack: [], redoStack: [] } }
+  let histories = {};
 
-    var isApplyingState = false; // Prevent recording during undo/redo
+  let isApplyingState = false; // Prevent recording during undo/redo
 
-    /* ─── Initialization ─────────────────────────────────────────────────── */
+  /* ─── Initialization ─────────────────────────────────────────────────── */
 
-    function init(sharedDom, sharedState) {
-        dom = sharedDom;
-        state = sharedState;
+  function init(sharedDom, sharedState) {
+    dom = sharedDom;
+    state = sharedState;
+  }
+
+  /* ─── Surface Switching ──────────────────────────────────────────────── */
+
+  function switchSurface(slug) {
+    activeSurfaceSlug = slug;
+
+    // Initialize history for this surface if not exists
+    if (!histories[slug]) {
+      histories[slug] = {
+        undoStack: [],
+        redoStack: [],
+      };
+
+      // Record initial state
+      recordState();
     }
 
-    /* ─── Surface Switching ──────────────────────────────────────────────── */
+    updateButtons();
+  }
 
-    function switchSurface(slug) {
-        activeSurfaceSlug = slug;
+  /* ─── Record State ───────────────────────────────────────────────────── */
 
-        // Initialize history for this surface if not exists
-        if (!histories[slug]) {
-            histories[slug] = {
-                undoStack: [],
-                redoStack: [],
-            };
+  function recordState() {
+    if (isApplyingState) return;
+    if (!activeSurfaceSlug) return;
+    if (!window.DesignEditorCanvas) return;
 
-            // Record initial state
-            recordState();
-        }
+    const history = histories[activeSurfaceSlug];
+    if (!history) return;
 
-        updateButtons();
+    const currentJSON = JSON.stringify(window.DesignEditorCanvas.toJSON());
+
+    // Don't record if state hasn't changed
+    if (history.undoStack.length > 0) {
+      const lastState = history.undoStack[history.undoStack.length - 1];
+      if (lastState === currentJSON) return;
     }
 
-    /* ─── Record State ───────────────────────────────────────────────────── */
+    // Push to undo stack
+    history.undoStack.push(currentJSON);
 
-    function recordState() {
-        if (isApplyingState) return;
-        if (!activeSurfaceSlug) return;
-        if (!window.DesignEditorCanvas) return;
-
-        var history = histories[activeSurfaceSlug];
-        if (!history) return;
-
-        var currentJSON = JSON.stringify(window.DesignEditorCanvas.toJSON());
-
-        // Don't record if state hasn't changed
-        if (history.undoStack.length > 0) {
-            var lastState = history.undoStack[history.undoStack.length - 1];
-            if (lastState === currentJSON) return;
-        }
-
-        // Push to undo stack
-        history.undoStack.push(currentJSON);
-
-        // Trim if exceeds max
-        if (history.undoStack.length > MAX_HISTORY) {
-            history.undoStack.shift();
-        }
-
-        // Clear redo stack (new action invalidates redo history)
-        history.redoStack = [];
-
-        updateButtons();
+    // Trim if exceeds max
+    if (history.undoStack.length > MAX_HISTORY) {
+      history.undoStack.shift();
     }
 
-    /* ─── Undo ───────────────────────────────────────────────────────────── */
+    // Clear redo stack (new action invalidates redo history)
+    history.redoStack = [];
 
-    function undo() {
-        if (!activeSurfaceSlug) return;
+    updateButtons();
+  }
 
-        var history = histories[activeSurfaceSlug];
-        if (!history || history.undoStack.length <= 1) return;
+  /* ─── Undo ───────────────────────────────────────────────────────────── */
 
-        // Move current state to redo stack
-        var currentState = history.undoStack.pop();
-        history.redoStack.push(currentState);
+  function undo() {
+    if (!activeSurfaceSlug) return;
 
-        // Apply previous state
-        var previousState = history.undoStack[history.undoStack.length - 1];
-        applyState(previousState);
+    const history = histories[activeSurfaceSlug];
+    if (!history || history.undoStack.length <= 1) return;
 
-        updateButtons();
+    // Move current state to redo stack
+    const currentState = history.undoStack.pop();
+    history.redoStack.push(currentState);
+
+    // Apply previous state
+    const previousState = history.undoStack[history.undoStack.length - 1];
+    applyState(previousState);
+
+    updateButtons();
+  }
+
+  /* ─── Redo ───────────────────────────────────────────────────────────── */
+
+  function redo() {
+    if (!activeSurfaceSlug) return;
+
+    const history = histories[activeSurfaceSlug];
+    if (!history || history.redoStack.length === 0) return;
+
+    // Pop from redo and push to undo
+    const nextState = history.redoStack.pop();
+    history.undoStack.push(nextState);
+
+    // Apply state
+    applyState(nextState);
+
+    updateButtons();
+  }
+
+  /* ─── Apply State ────────────────────────────────────────────────────── */
+
+  function applyState(jsonString) {
+    if (!window.DesignEditorCanvas) return;
+
+    isApplyingState = true;
+
+    try {
+      const json = JSON.parse(jsonString);
+      window.DesignEditorCanvas.loadFromJSON(json, function () {
+        isApplyingState = false;
+      });
+    } catch (e) {
+      console.error('[DesignEditorHistory] Failed to apply state:', e);
+      isApplyingState = false;
     }
+  }
 
-    /* ─── Redo ───────────────────────────────────────────────────────────── */
+  /* ─── Update UI ──────────────────────────────────────────────────────── */
 
-    function redo() {
-        if (!activeSurfaceSlug) return;
+  function updateButtons() {
+    if (!activeSurfaceSlug) return;
 
-        var history = histories[activeSurfaceSlug];
-        if (!history || history.redoStack.length === 0) return;
+    const history = histories[activeSurfaceSlug];
+    if (!history) return;
 
-        // Pop from redo and push to undo
-        var nextState = history.redoStack.pop();
-        history.undoStack.push(nextState);
+    const canUndo = history.undoStack.length > 1;
+    const canRedo = history.redoStack.length > 0;
 
-        // Apply state
-        applyState(nextState);
+    if (dom.btnUndo) dom.btnUndo.disabled = !canUndo;
+    if (dom.btnRedo) dom.btnRedo.disabled = !canRedo;
+  }
 
-        updateButtons();
+  /* ─── Clear History ──────────────────────────────────────────────────── */
+
+  function clearHistory(slug) {
+    if (slug) {
+      delete histories[slug];
+    } else {
+      histories = {};
     }
+    updateButtons();
+  }
 
-    /* ─── Apply State ────────────────────────────────────────────────────── */
+  /* ─── Public API ─────────────────────────────────────────────────────── */
 
-    function applyState(jsonString) {
-        if (!window.DesignEditorCanvas) return;
-
-        isApplyingState = true;
-
-        try {
-            var json = JSON.parse(jsonString);
-            window.DesignEditorCanvas.loadFromJSON(json, function () {
-                isApplyingState = false;
-            });
-        } catch (e) {
-            console.error('[DesignEditorHistory] Failed to apply state:', e);
-            isApplyingState = false;
-        }
-    }
-
-    /* ─── Update UI ──────────────────────────────────────────────────────── */
-
-    function updateButtons() {
-        if (!activeSurfaceSlug) return;
-
-        var history = histories[activeSurfaceSlug];
-        if (!history) return;
-
-        var canUndo = history.undoStack.length > 1;
-        var canRedo = history.redoStack.length > 0;
-
-        if (dom.btnUndo) dom.btnUndo.disabled = !canUndo;
-        if (dom.btnRedo) dom.btnRedo.disabled = !canRedo;
-    }
-
-    /* ─── Clear History ──────────────────────────────────────────────────── */
-
-    function clearHistory(slug) {
-        if (slug) {
-            delete histories[slug];
-        } else {
-            histories = {};
-        }
-        updateButtons();
-    }
-
-    /* ─── Public API ─────────────────────────────────────────────────────── */
-
-    window.DesignEditorHistory = {
-        init: init,
-        switchSurface: switchSurface,
-        recordState: recordState,
-        undo: undo,
-        redo: redo,
-        clearHistory: clearHistory,
-    };
+  window.DesignEditorHistory = {
+    init: init,
+    switchSurface: switchSurface,
+    recordState: recordState,
+    undo: undo,
+    redo: redo,
+    clearHistory: clearHistory,
+  };
 })();

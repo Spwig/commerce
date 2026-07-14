@@ -47,6 +47,9 @@ installed_language_packs.json
 *~
 .DS_Store
 
+# macOS AppleDouble metadata files
+._*
+
 # Docker
 docker-compose.override.yml
 
@@ -107,14 +110,16 @@ test-results.xml
 # Development screenshots (root-level only)
 /*.png
 
-# Dev-only directories (source lives in separate projects)
-components/
-components_data/
-sdks/
+# Dev-only directories (source lives in separate projects) — anchor to
+# repo root so we don't accidentally ignore template directories like
+# page_builder/templates/page_builder/components/
+/components/
+/components_data/
+/sdks/
 .3dmodels/
 /themes/
-translator/
-upgrader/
+/translator/
+/upgrader/
 
 # Stray pip artifacts
 =*

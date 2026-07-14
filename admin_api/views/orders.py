@@ -3,34 +3,36 @@ Admin API Order Views
 
 Order management endpoints for the merchant mobile app.
 """
+
 import logging
 import secrets
+
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch, Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter
 
-from orders.models import Order, OrderNote
 from admin_api.permissions import IsStaffWithWritePermission
-from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
-from admin_api.services.audit_service import AuditService
+from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.orders import (
-    AdminOrderListSerializer,
     AdminOrderDetailSerializer,
-    OrderStatusUpdateSerializer,
-    TrackingUpdateSerializer,
-    OrderRefundSerializer,
+    AdminOrderListSerializer,
     OrderCancelSerializer,
     OrderFilterSerializer,
     OrderNoteCreateSerializer,
     OrderNoteSerializer,
+    OrderRefundSerializer,
+    OrderStatusUpdateSerializer,
+    TrackingUpdateSerializer,
 )
-from admin_api.serializers.auth import ErrorResponseSerializer, SuccessResponseSerializer
+from admin_api.services.audit_service import AuditService
+from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
+from orders.models import Order, OrderNote
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ def generate_error_reference():
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("List orders"),
     description=_("""
     Get a paginated list of orders with filtering and sorting.
@@ -70,72 +72,76 @@ def generate_error_reference():
     """),
     parameters=[
         OpenApiParameter(
-            name='filter_type',
+            name="filter_type",
             type=str,
             location=OpenApiParameter.QUERY,
-            description=_("Filter type: 'all', 'open', 'completed', 'refunded'. Ignored if 'status' is provided."),
+            description=_(
+                "Filter type: 'all', 'open', 'completed', 'refunded'. Ignored if 'status' is provided."
+            ),
             required=False,
-            default='all'
+            default="all",
         ),
         OpenApiParameter(
-            name='status',
+            name="status",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Specific status filter"),
-            required=False
+            required=False,
         ),
         OpenApiParameter(
-            name='search',
+            name="search",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Search by order number, email, customer name, or phone number"),
-            required=False
+            required=False,
         ),
         OpenApiParameter(
-            name='sort',
+            name="sort",
             type=str,
             location=OpenApiParameter.QUERY,
-            description=_("Sort field: '-created_at', 'created_at', '-total_amount', 'total_amount', '-updated_at', 'updated_at', 'customer_name', '-customer_name'"),
+            description=_(
+                "Sort field: '-created_at', 'created_at', '-total_amount', 'total_amount', '-updated_at', 'updated_at', 'customer_name', '-customer_name'"
+            ),
             required=False,
-            default='-created_at'
+            default="-created_at",
         ),
         OpenApiParameter(
-            name='date_from',
+            name="date_from",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Filter orders from this date (YYYY-MM-DD)"),
             required=False,
         ),
         OpenApiParameter(
-            name='date_to',
+            name="date_to",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Filter orders up to this date (YYYY-MM-DD)"),
             required=False,
         ),
         OpenApiParameter(
-            name='page',
+            name="page",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Page number"),
             required=False,
-            default=1
+            default=1,
         ),
         OpenApiParameter(
-            name='page_size',
+            name="page_size",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Items per page (max 100)"),
             required=False,
-            default=20
+            default=20,
         ),
     ],
     responses={
         200: AdminOrderListSerializer(many=True),
         401: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def order_list(request):
@@ -145,66 +151,69 @@ def order_list(request):
     # Validate filter parameters
     filter_serializer = OrderFilterSerializer(data=request.query_params)
     if not filter_serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid filter parameters.'),
-                'reference': generate_error_reference(),
-                'details': filter_serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid filter parameters."),
+                    "reference": generate_error_reference(),
+                    "details": filter_serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     filters = filter_serializer.validated_data
-    queryset = Order.objects.select_related('user').prefetch_related('items')
+    queryset = Order.objects.select_related("user").prefetch_related("items")
 
     # Apply filters - specific status takes precedence over filter_type
-    specific_status = filters.get('status', 'all')
-    if specific_status != 'all':
+    specific_status = filters.get("status", "all")
+    if specific_status != "all":
         # Specific status filter overrides filter_type
         queryset = queryset.filter(status=specific_status)
     else:
         # Apply filter_type only when no specific status is requested
-        filter_type = filters.get('filter_type', 'all')
-        if filter_type == 'open':
-            queryset = queryset.filter(status__in=['pending', 'processing'])
-        elif filter_type == 'completed':
-            queryset = queryset.filter(status__in=['shipped', 'delivered'])
-        elif filter_type == 'refunded':
-            queryset = queryset.filter(status__in=['refunded', 'cancelled'])
+        filter_type = filters.get("filter_type", "all")
+        if filter_type == "open":
+            queryset = queryset.filter(status__in=["pending", "processing"])
+        elif filter_type == "completed":
+            queryset = queryset.filter(status__in=["shipped", "delivered"])
+        elif filter_type == "refunded":
+            queryset = queryset.filter(status__in=["refunded", "cancelled"])
         # 'all' - no filter
 
     # Apply search
-    search = filters.get('search', '').strip()
+    search = filters.get("search", "").strip()
     if search:
         queryset = queryset.filter(
-            Q(order_number__icontains=search) |
-            Q(email__icontains=search) |
-            Q(shipping_name__icontains=search) |
-            Q(phone__icontains=search) |
-            Q(shipping_phone__icontains=search) |
-            Q(billing_phone__icontains=search)
+            Q(order_number__icontains=search)
+            | Q(email__icontains=search)
+            | Q(shipping_name__icontains=search)
+            | Q(phone__icontains=search)
+            | Q(shipping_phone__icontains=search)
+            | Q(billing_phone__icontains=search)
         )
 
     # Apply date range filter
-    date_from = filters.get('date_from')
-    date_to = filters.get('date_to')
+    date_from = filters.get("date_from")
+    date_to = filters.get("date_to")
     if date_from:
         queryset = queryset.filter(created_at__date__gte=date_from)
     if date_to:
         queryset = queryset.filter(created_at__date__lte=date_to)
 
     # Apply sorting
-    sort = filters.get('sort', '-created_at')
+    sort = filters.get("sort", "-created_at")
     sort_field_map = {
-        'customer_name': 'shipping_name',
-        '-customer_name': '-shipping_name',
+        "customer_name": "shipping_name",
+        "-customer_name": "-shipping_name",
     }
     queryset = queryset.order_by(sort_field_map.get(sort, sort))
 
     # Pagination
-    page = filters.get('page', 1)
-    page_size = filters.get('page_size', 20)
+    page = filters.get("page", 1)
+    page_size = filters.get("page_size", 20)
     start = (page - 1) * page_size
     end = start + page_size
 
@@ -213,22 +222,25 @@ def order_list(request):
 
     serializer = AdminOrderListSerializer(orders, many=True)
 
-    return Response({
-        'success': True,
-        'data': {
-            'orders': serializer.data,
-            'pagination': {
-                'page': page,
-                'page_size': page_size,
-                'total_count': total_count,
-                'total_pages': (total_count + page_size - 1) // page_size
-            }
-        }
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "data": {
+                "orders": serializer.data,
+                "pagination": {
+                    "page": page,
+                    "page_size": page_size,
+                    "total_count": total_count,
+                    "total_pages": (total_count + page_size - 1) // page_size,
+                },
+            },
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Get order details"),
     description=_("""
     Get full details of a specific order.
@@ -239,9 +251,9 @@ def order_list(request):
         200: AdminOrderDetailSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def order_detail(request, order_number):
@@ -249,32 +261,34 @@ def order_detail(request, order_number):
     Get order details by order number.
     """
     try:
-        order = Order.objects.select_related('user', 'carrier').prefetch_related(
-            Prefetch('items__product__images'),
-            Prefetch('items__variant__images'),
-        ).get(
-            order_number=order_number
+        order = (
+            Order.objects.select_related("user", "carrier")
+            .prefetch_related(
+                Prefetch("items__product__images"),
+                Prefetch("items__variant__images"),
+            )
+            .get(order_number=order_number)
         )
     except Order.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Order not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = AdminOrderDetailSerializer(order)
 
-    return Response({
-        'success': True,
-        'data': serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Get order notes"),
     description=_("""
     Get all notes for an order (both merchant and customer notes).
@@ -285,9 +299,9 @@ def order_detail(request, order_number):
         200: OrderNoteSerializer(many=True),
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def order_notes(request, order_number):
@@ -297,29 +311,29 @@ def order_notes(request, order_number):
     try:
         order = Order.objects.get(order_number=order_number)
     except Order.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Order not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
-    notes = OrderNote.objects.filter(order=order).select_related('author').order_by('-created_at')
+    notes = OrderNote.objects.filter(order=order).select_related("author").order_by("-created_at")
     serializer = OrderNoteSerializer(notes, many=True)
 
-    return Response({
-        'success': True,
-        'data': {
-            'notes': serializer.data,
-            'count': notes.count()
-        }
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {"success": True, "data": {"notes": serializer.data, "count": notes.count()}},
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Add note to order"),
     description=_("""
     Add a note to an order. Can be used to reply to customer messages.
@@ -340,9 +354,9 @@ def order_notes(request, order_number):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def add_order_note(request, order_number):
@@ -352,52 +366,58 @@ def add_order_note(request, order_number):
     try:
         order = Order.objects.get(order_number=order_number)
     except Order.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Order not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = OrderNoteCreateSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid note data.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid note data."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Create the note
     note = OrderNote.objects.create(
         order=order,
         author=request.user,
-        note=serializer.validated_data['note'],
-        is_customer_note=serializer.validated_data.get('is_customer_visible', True),
+        note=serializer.validated_data["note"],
+        is_customer_note=serializer.validated_data.get("is_customer_visible", True),
         is_read=True,  # Merchant notes are already "read" by the merchant
     )
 
     # Audit log
     AuditService.log(
         user=request.user,
-        action='order.note_added',
-        resource_type='order',
+        action="order.note_added",
+        resource_type="order",
         resource_id=order.order_number,
         new_value={
-            'note_id': note.id,
-            'is_customer_visible': note.is_customer_note,
-            'notify_customer': serializer.validated_data.get('notify_customer', False)
+            "note_id": note.id,
+            "is_customer_visible": note.is_customer_note,
+            "notify_customer": serializer.validated_data.get("notify_customer", False),
         },
-        request=request
+        request=request,
     )
 
     # Send email notification if requested and note is customer-visible
-    if serializer.validated_data.get('notify_customer') and note.is_customer_note:
+    if serializer.validated_data.get("notify_customer") and note.is_customer_note:
         try:
             from email_system.services.email_sender import EmailSendingService
             from email_system.utils.language import get_order_email_language
@@ -407,31 +427,36 @@ def add_order_note(request, order_number):
 
             EmailSendingService.send_template_email(
                 to_email=order.email,
-                template_type='order_note_notification',
+                template_type="order_note_notification",
                 context={
-                    'customer_name': order.shipping_name,
-                    'order_number': order.order_number,
-                    'order_url': f"{site_url}/orders/{order.order_number}/",
-                    'note_content': note.note,
-                    'staff_name': request.user.get_full_name() or request.user.email,
+                    "customer_name": order.shipping_name,
+                    "order_number": order.order_number,
+                    "order_url": f"{site_url}/orders/{order.order_number}/",
+                    "note_content": note.note,
+                    "staff_name": request.user.get_full_name() or request.user.email,
                 },
                 language=get_order_email_language(order),
                 enable_tracking=True,
             )
         except Exception as e:
-            logger.error(f"Failed to send order note email for {order.order_number}: {e}", exc_info=True)
+            logger.error(
+                f"Failed to send order note email for {order.order_number}: {e}", exc_info=True
+            )
 
     response_serializer = OrderNoteSerializer(note)
 
-    return Response({
-        'success': True,
-        'message': _('Note added successfully.'),
-        'data': response_serializer.data
-    }, status=status.HTTP_201_CREATED)
+    return Response(
+        {
+            "success": True,
+            "message": _("Note added successfully."),
+            "data": response_serializer.data,
+        },
+        status=status.HTTP_201_CREATED,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Update order status"),
     description=_("""
     Update the status of an order.
@@ -454,9 +479,9 @@ def add_order_note(request, order_number):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_order_status(request, order_number):
@@ -466,35 +491,38 @@ def update_order_status(request, order_number):
     try:
         order = Order.objects.get(order_number=order_number)
     except Order.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Order not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
-    serializer = OrderStatusUpdateSerializer(
-        data=request.data,
-        context={'order': order}
-    )
+    serializer = OrderStatusUpdateSerializer(data=request.data, context={"order": order})
 
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid status update.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid status update."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     old_status = order.status
-    new_status = serializer.validated_data['status']
-    tracking_number = serializer.validated_data.get('tracking_number', '')
-    notes = serializer.validated_data.get('notes', '')
+    new_status = serializer.validated_data["status"]
+    tracking_number = serializer.validated_data.get("tracking_number", "")
+    notes = serializer.validated_data.get("notes", "")
 
     # Update order
     order.status = new_status
@@ -504,7 +532,7 @@ def update_order_status(request, order_number):
         order.notes = f"{order.notes}\n\n[{timezone.now().strftime('%Y-%m-%d %H:%M')}] Status changed to {new_status}: {notes}".strip()
 
     # Handle special status updates
-    if new_status == 'delivered' and not order.delivered_at:
+    if new_status == "delivered" and not order.delivered_at:
         order.delivered_at = timezone.now()
 
     order.save()
@@ -517,18 +545,21 @@ def update_order_status(request, order_number):
         new_status=new_status,
         request=request,
         tracking_number=tracking_number,
-        notes=notes
+        notes=notes,
     )
 
-    return Response({
-        'success': True,
-        'message': _('Order status updated successfully.'),
-        'data': AdminOrderDetailSerializer(order).data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Order status updated successfully."),
+            "data": AdminOrderDetailSerializer(order).data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Update tracking number"),
     description=_("""
     Update or add tracking number for an order.
@@ -541,9 +572,9 @@ def update_order_status(request, order_number):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_tracking(request, order_number):
@@ -553,31 +584,37 @@ def update_tracking(request, order_number):
     try:
         order = Order.objects.get(order_number=order_number)
     except Order.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Order not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = TrackingUpdateSerializer(data=request.data)
 
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid tracking information.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid tracking information."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     old_tracking = order.tracking_number
-    new_tracking = serializer.validated_data['tracking_number']
-    carrier = serializer.validated_data.get('carrier', '')
+    new_tracking = serializer.validated_data["tracking_number"]
+    carrier = serializer.validated_data.get("carrier", "")
 
     # Update order
     order.tracking_number = new_tracking
@@ -590,18 +627,21 @@ def update_tracking(request, order_number):
         old_tracking=old_tracking,
         new_tracking=new_tracking,
         carrier=carrier,
-        request=request
+        request=request,
     )
 
-    return Response({
-        'success': True,
-        'message': _('Tracking information updated successfully.'),
-        'data': AdminOrderDetailSerializer(order).data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Tracking information updated successfully."),
+            "data": AdminOrderDetailSerializer(order).data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Cancel order"),
     description=_("""
     Cancel an order. This is a destructive action.
@@ -616,9 +656,9 @@ def update_tracking(request, order_number):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def cancel_order(request, order_number):
@@ -628,43 +668,52 @@ def cancel_order(request, order_number):
     try:
         order = Order.objects.get(order_number=order_number)
     except Order.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Order not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     # Check if order can be cancelled
-    if order.status not in ['pending', 'processing']:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Only pending or processing orders can be cancelled.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+    if order.status not in ["pending", "processing"]:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Only pending or processing orders can be cancelled."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     serializer = OrderCancelSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid request.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid request."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     old_status = order.status
-    reason = serializer.validated_data.get('reason', '')
+    reason = serializer.validated_data.get("reason", "")
 
     # Update order
-    order.status = 'cancelled'
+    order.status = "cancelled"
     if reason:
         order.notes = f"{order.notes}\n\n[{timezone.now().strftime('%Y-%m-%d %H:%M')}] Cancelled: {reason}".strip()
     order.save()
@@ -674,13 +723,13 @@ def cancel_order(request, order_number):
         user=request.user,
         order=order,
         old_status=old_status,
-        new_status='cancelled',
+        new_status="cancelled",
         request=request,
-        notes=reason
+        notes=reason,
     )
 
     # Send cancellation email if requested (defaults to True)
-    if serializer.validated_data.get('notify_customer', True):
+    if serializer.validated_data.get("notify_customer", True):
         try:
             from email_system.services.email_sender import EmailSendingService
             from email_system.utils.language import get_order_email_language
@@ -690,29 +739,34 @@ def cancel_order(request, order_number):
 
             EmailSendingService.send_template_email(
                 to_email=order.email,
-                template_type='order_cancelled',
+                template_type="order_cancelled",
                 context={
-                    'customer_name': order.shipping_name,
-                    'order_number': order.order_number,
-                    'order_url': f"{site_url}/orders/{order.order_number}/",
-                    'cancellation_reason': reason,
-                    'cancellation_date': timezone.now().strftime('%B %d, %Y'),
+                    "customer_name": order.shipping_name,
+                    "order_number": order.order_number,
+                    "order_url": f"{site_url}/orders/{order.order_number}/",
+                    "cancellation_reason": reason,
+                    "cancellation_date": timezone.now().strftime("%B %d, %Y"),
                 },
                 language=get_order_email_language(order),
                 enable_tracking=True,
             )
         except Exception as e:
-            logger.error(f"Failed to send cancellation email for {order.order_number}: {e}", exc_info=True)
+            logger.error(
+                f"Failed to send cancellation email for {order.order_number}: {e}", exc_info=True
+            )
 
-    return Response({
-        'success': True,
-        'message': _('Order cancelled successfully.'),
-        'data': AdminOrderDetailSerializer(order).data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Order cancelled successfully."),
+            "data": AdminOrderDetailSerializer(order).data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Initiate refund"),
     description=_("""
     Initiate a refund for an order.
@@ -728,9 +782,9 @@ def cancel_order(request, order_number):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def initiate_refund(request, order_number):
@@ -740,41 +794,50 @@ def initiate_refund(request, order_number):
     try:
         order = Order.objects.get(order_number=order_number)
     except Order.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Order not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     # Check if order can be refunded
-    if order.payment_status not in ['paid', 'partially_refunded']:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Only paid orders can be refunded.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+    if order.payment_status not in ["paid", "partially_refunded"]:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Only paid orders can be refunded."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    serializer = OrderRefundSerializer(data=request.data, context={'order': order})
+    serializer = OrderRefundSerializer(data=request.data, context={"order": order})
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid refund request.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid refund request."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     old_status = order.status
-    reason = serializer.validated_data.get('reason', '')
-    refund_amount = serializer.validated_data.get('amount')
+    reason = serializer.validated_data.get("reason", "")
+    refund_amount = serializer.validated_data.get("amount")
 
     # If no amount provided, assume full refund
     if not refund_amount:
@@ -785,10 +848,10 @@ def initiate_refund(request, order_number):
 
     # Update status based on refund
     if order.amount_refunded.amount >= order.amount_paid.amount:
-        order.status = 'refunded'
-        order.payment_status = 'refunded'
+        order.status = "refunded"
+        order.payment_status = "refunded"
     else:
-        order.payment_status = 'partially_refunded'
+        order.payment_status = "partially_refunded"
 
     if reason:
         order.notes = f"{order.notes}\n\n[{timezone.now().strftime('%Y-%m-%d %H:%M')}] Refund initiated ({refund_amount}): {reason}".strip()
@@ -797,23 +860,33 @@ def initiate_refund(request, order_number):
     # Audit log
     AuditService.log(
         user=request.user,
-        action='order.refund',
-        resource_type='order',
+        action="order.refund",
+        resource_type="order",
         resource_id=order.order_number,
-        old_value={'status': old_status, 'amount_refunded': str(order.amount_refunded.amount - refund_amount)},
-        new_value={'status': order.status, 'amount_refunded': str(order.amount_refunded.amount), 'refund_amount': str(refund_amount)},
-        request=request
+        old_value={
+            "status": old_status,
+            "amount_refunded": str(order.amount_refunded.amount - refund_amount),
+        },
+        new_value={
+            "status": order.status,
+            "amount_refunded": str(order.amount_refunded.amount),
+            "refund_amount": str(refund_amount),
+        },
+        request=request,
     )
 
-    return Response({
-        'success': True,
-        'message': _('Refund initiated successfully.'),
-        'data': AdminOrderDetailSerializer(order).data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Refund initiated successfully."),
+            "data": AdminOrderDetailSerializer(order).data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Get order counts by status"),
     description=_("""
     Get count of orders by status for badge display.
@@ -823,9 +896,9 @@ def initiate_refund(request, order_number):
     responses={
         200: dict,
         401: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def order_counts(request):
@@ -834,19 +907,22 @@ def order_counts(request):
     """
     from django.db.models import Count
 
-    counts = Order.objects.values('status').annotate(count=Count('id'))
-    status_counts = {item['status']: item['count'] for item in counts}
+    counts = Order.objects.values("status").annotate(count=Count("id"))
+    status_counts = {item["status"]: item["count"] for item in counts}
 
     # Calculate aggregate counts
-    open_count = status_counts.get('pending', 0) + status_counts.get('processing', 0)
-    completed_count = status_counts.get('shipped', 0) + status_counts.get('delivered', 0)
+    open_count = status_counts.get("pending", 0) + status_counts.get("processing", 0)
+    completed_count = status_counts.get("shipped", 0) + status_counts.get("delivered", 0)
 
-    return Response({
-        'success': True,
-        'data': {
-            'by_status': status_counts,
-            'open': open_count,
-            'completed': completed_count,
-            'total': sum(status_counts.values())
-        }
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "data": {
+                "by_status": status_counts,
+                "open": open_count,
+                "completed": completed_count,
+                "total": sum(status_counts.values()),
+            },
+        },
+        status=status.HTTP_200_OK,
+    )

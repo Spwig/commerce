@@ -4,16 +4,17 @@ Provides rate limiting and security decorators for affiliate views.
 """
 
 import hashlib
+import logging
 from functools import wraps
+
 from django.core.cache import cache
 from django.http import HttpResponse
 from django.utils.translation import gettext as _
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-def rate_limit(max_requests=100, window_seconds=60, key_prefix='rate_limit'):
+def rate_limit(max_requests=100, window_seconds=60, key_prefix="rate_limit"):
     """
     Rate limiting decorator for tracking endpoints.
 
@@ -48,9 +49,9 @@ def rate_limit(max_requests=100, window_seconds=60, key_prefix='rate_limit'):
                     f"{request_count} requests in {window_seconds}s"
                 )
                 return HttpResponse(
-                    _('Rate limit exceeded. Please try again later.'),
+                    _("Rate limit exceeded. Please try again later."),
                     status=429,
-                    content_type='text/plain'
+                    content_type="text/plain",
                 )
 
             # Increment counter
@@ -80,13 +81,13 @@ def get_client_ip(request):
     Returns:
         str: Client IP address
     """
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
 
     if x_forwarded_for:
         # X-Forwarded-For can contain multiple IPs, get the first one
-        ip = x_forwarded_for.split(',')[0].strip()
+        ip = x_forwarded_for.split(",")[0].strip()
     else:
-        ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
+        ip = request.META.get("REMOTE_ADDR", "0.0.0.0")
 
     return ip
 
@@ -107,8 +108,8 @@ def track_affiliate_click(view_func):
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):
         ip_address = get_client_ip(request)
-        user_agent = request.META.get('HTTP_USER_AGENT', '')
-        link_code = kwargs.get('link_code', '')
+        user_agent = request.META.get("HTTP_USER_AGENT", "")
+        link_code = kwargs.get("link_code", "")
 
         # Log click attempt
         logger.info(
@@ -119,17 +120,12 @@ def track_affiliate_click(view_func):
         # Check for suspicious patterns
         # 1. Missing or suspicious user agent
         if not user_agent or len(user_agent) < 10:
-            logger.warning(
-                f"Suspicious click from {ip_address}: "
-                f"Invalid user agent '{user_agent}'"
-            )
+            logger.warning(f"Suspicious click from {ip_address}: Invalid user agent '{user_agent}'")
 
         # 2. Check for bot user agents (basic check)
-        bot_keywords = ['bot', 'crawler', 'spider', 'scraper', 'curl', 'wget']
+        bot_keywords = ["bot", "crawler", "spider", "scraper", "curl", "wget"]
         if any(keyword in user_agent.lower() for keyword in bot_keywords):
-            logger.warning(
-                f"Bot detected in click from {ip_address}: {user_agent}"
-            )
+            logger.warning(f"Bot detected in click from {ip_address}: {user_agent}")
 
         return view_func(request, *args, **kwargs)
 

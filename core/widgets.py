@@ -1,6 +1,7 @@
 """
 Custom form widgets for enhanced UX in admin interface.
 """
+
 import json
 
 from django import forms
@@ -23,9 +24,10 @@ class KeyValueWidget(forms.Widget):
             'specifications': KeyValueWidget(key_label='Specification', value_label='Value'),
         }
     """
-    template_name = 'admin/widgets/key_value_widget.html'
 
-    def __init__(self, key_label='Key', value_label='Value', attrs=None):
+    template_name = "admin/widgets/key_value_widget.html"
+
+    def __init__(self, key_label="Key", value_label="Value", attrs=None):
         self.key_label = key_label
         self.value_label = value_label
         super().__init__(attrs)
@@ -39,16 +41,16 @@ class KeyValueWidget(forms.Widget):
                 pairs = {}
         else:
             pairs = value or {}
-        context['widget']['pairs'] = list(pairs.items()) if isinstance(pairs, dict) else []
-        context['widget']['key_label'] = self.key_label
-        context['widget']['value_label'] = self.value_label
+        context["widget"]["pairs"] = list(pairs.items()) if isinstance(pairs, dict) else []
+        context["widget"]["key_label"] = self.key_label
+        context["widget"]["value_label"] = self.value_label
         return context
 
     def value_from_datadict(self, data, files, name):
-        keys = data.getlist(f'{name}_keys')
-        values = data.getlist(f'{name}_values')
+        keys = data.getlist(f"{name}_keys")
+        values = data.getlist(f"{name}_values")
         result = {}
-        for k, v in zip(keys, values):
+        for k, v in zip(keys, values, strict=True):
             k = k.strip()
             if k:
                 result[k] = v.strip()
@@ -57,8 +59,8 @@ class KeyValueWidget(forms.Widget):
     @property
     def media(self):
         return forms.Media(
-            css={'all': ('core/admin/css/key_value_widget.css',)},
-            js=('core/admin/js/key_value_widget.js',)
+            css={"all": ("core/admin/css/key_value_widget.css",)},
+            js=("core/admin/js/key_value_widget.js",),
         )
 
 
@@ -96,9 +98,9 @@ class SearchableSelectWidget(forms.Select):
         super().__init__(*args, **kwargs)
 
         # Add searchable-select marker attribute
-        if 'attrs' not in kwargs:
+        if "attrs" not in kwargs:
             self.attrs = {}
-        self.attrs['data-searchable-select'] = ''
+        self.attrs["data-searchable-select"] = ""
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
         """
@@ -127,9 +129,9 @@ class SearchableSelectWidget(forms.Select):
                 icon_class = self.icon_callback(value)
                 if icon_class:
                     # Add Font Awesome icon class to data attribute
-                    option['attrs']['data-icon'] = icon_class
+                    option["attrs"]["data-icon"] = icon_class
                     # Use solid style by default (fas)
-                    option['attrs']['data-icon-style'] = 'fas'
+                    option["attrs"]["data-icon-style"] = "fas"
             except Exception:
                 # Silently ignore icon callback errors
                 # This ensures the widget still works even if icon mapping fails
@@ -170,7 +172,7 @@ class TranslatableFieldWidget(forms.Widget):
         Requires TranslatableAdminMixin to inject translation context into template.
     """
 
-    template_name = 'admin/widgets/translatable_field.html'
+    template_name = "admin/widgets/translatable_field.html"
 
     def __init__(self, base_widget=None, attrs=None):
         """
@@ -210,20 +212,20 @@ class TranslatableFieldWidget(forms.Widget):
 
         # Detect field type
         is_richtext = isinstance(self.base_widget, CKEditor5Widget)
-        field_type = 'richtext' if is_richtext else 'text'
+        field_type = "richtext" if is_richtext else "text"
 
         # Get CKEditor config name if applicable
         ckeditor_config = None
         if is_richtext:
-            ckeditor_config = getattr(self.base_widget, 'config_name', 'default')
+            ckeditor_config = getattr(self.base_widget, "config_name", "default")
 
         # Prepare context for template
         context = {
-            'base_widget_html': base_widget_html,
-            'field_name': name,
-            'field_type': field_type,
-            'is_richtext': is_richtext,
-            'ckeditor_config': ckeditor_config,
+            "base_widget_html": base_widget_html,
+            "field_name": name,
+            "field_type": field_type,
+            "is_richtext": is_richtext,
+            "ckeditor_config": ckeditor_config,
         }
 
         # Render using template
@@ -250,9 +252,7 @@ class TranslatableFieldWidget(forms.Widget):
 
         Includes the base widget's media plus translation editor assets.
         """
-        widget_media = forms.Media(
-            css={'all': ('core/admin/css/translatable_field_widget.css',)}
-        )
+        widget_media = forms.Media(css={"all": ("core/admin/css/translatable_field_widget.css",)})
         return self.base_widget.media + widget_media
 
 
@@ -283,7 +283,8 @@ class IconPickerWidget(forms.Widget):
             style_prefix=False,
         )
     """
-    template_name = 'admin/widgets/icon_picker.html'
+
+    template_name = "admin/widgets/icon_picker.html"
 
     def __init__(self, priority_icons=None, style_prefix=True, attrs=None):
         """
@@ -307,55 +308,55 @@ class IconPickerWidget(forms.Widget):
         # Resolve priority icons from registry with selection state
         priority_data = []
         for icon_class in self.priority_icons:
-            bare_class = icon_class.split()[-1] if ' ' in icon_class else icon_class
+            bare_class = icon_class.split()[-1] if " " in icon_class else icon_class
             for entry in ICON_REGISTRY:
-                if entry['class'] == bare_class:
+                if entry["class"] == bare_class:
                     icon_data = dict(entry)
                     # Determine if this priority icon matches current value
                     full_val = f"{entry['style']} {entry['class']}"
-                    icon_data['is_selected'] = (
-                        value == entry['class'] or value == full_val
-                    )
+                    icon_data["is_selected"] = value == entry["class"] or value == full_val
                     priority_data.append(icon_data)
                     break
 
         # Resolve display label for current value
-        display_label = value or ''
+        display_label = value or ""
         if value:
-            bare_val = value.split()[-1] if ' ' in value else value
+            bare_val = value.split()[-1] if " " in value else value
             for entry in ICON_REGISTRY:
-                if entry['class'] == bare_val:
-                    display_label = entry['label']
+                if entry["class"] == bare_val:
+                    display_label = entry["label"]
                     break
 
         # Translations for JS
         translations = {
-            'noIconSelected': str(_('No icon selected')),
-            'chooseIcon': str(_('Choose an Icon')),
-            'searchIcons': str(_('Search icons...')),
-            'allCategories': str(_('All')),
-            'noIconsFound': str(_('No icons found')),
-            'iconCount': str(_('icons')),
+            "noIconSelected": str(_("No icon selected")),
+            "chooseIcon": str(_("Choose an Icon")),
+            "searchIcons": str(_("Search icons...")),
+            "allCategories": str(_("All")),
+            "noIconsFound": str(_("No icons found")),
+            "iconCount": str(_("icons")),
         }
 
-        context['widget'].update({
-            'icon_value': value or '',
-            'icon_display_label': display_label,
-            'style_prefix': self.style_prefix,
-            'priority_icons': priority_data,
-            'icon_registry_json': mark_safe(json.dumps(
-                get_registry_as_json(), ensure_ascii=False
-            )),
-            'translations_json': json.dumps(translations),
-        })
+        context["widget"].update(
+            {
+                "icon_value": value or "",
+                "icon_display_label": display_label,
+                "style_prefix": self.style_prefix,
+                "priority_icons": priority_data,
+                "icon_registry_json": mark_safe(
+                    json.dumps(get_registry_as_json(), ensure_ascii=False)
+                ),
+                "translations_json": json.dumps(translations),
+            }
+        )
         return context
 
     def value_from_datadict(self, data, files, name):
-        return data.get(name, '')
+        return data.get(name, "")
 
     @property
     def media(self):
         return forms.Media(
-            css={'all': ('core/admin/css/icon_picker.css',)},
-            js=('core/admin/js/icon_picker.js',),
+            css={"all": ("core/admin/css/icon_picker.css",)},
+            js=("core/admin/js/icon_picker.js",),
         )

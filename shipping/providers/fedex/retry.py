@@ -1,19 +1,18 @@
-# -*- coding: utf-8 -*-
 """
 Retry logic with exponential backoff for FedEx API calls.
 
 This module provides utilities for retrying failed API requests with
 intelligent backoff strategies to handle transient failures gracefully.
 """
-import time
+
 import logging
+import time
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable, Type, Tuple, Optional
 
 from .exceptions import (
-    FedExServiceUnavailableError,
     FedExRateLimitError,
-    FedExAPIError,
+    FedExServiceUnavailableError,
 )
 
 logger = logging.getLogger(__name__)
@@ -58,12 +57,13 @@ class RetryConfig:
         Returns:
             Delay in seconds
         """
-        delay = self.initial_delay * (self.exponential_base ** attempt)
+        delay = self.initial_delay * (self.exponential_base**attempt)
         delay = min(delay, self.max_delay)
 
         if self.jitter:
             # Add random jitter (0-50% of delay)
             import random
+
             jitter_amount = delay * random.uniform(0, 0.5)
             delay += jitter_amount
 
@@ -112,8 +112,8 @@ def should_retry(exception: Exception) -> bool:
         return True
 
     # Retry specific HTTP errors (timeouts, 5xx errors)
-    if hasattr(exception, 'response'):
-        status_code = getattr(exception.response, 'status_code', None)
+    if hasattr(exception, "response"):
+        status_code = getattr(exception.response, "status_code", None)
         if status_code in [408, 429, 500, 502, 503, 504]:
             return True
 
@@ -140,11 +140,11 @@ def get_retry_config(exception: Exception) -> RetryConfig:
 
 
 def retry_with_backoff(
-    retryable_exceptions: Tuple[Type[Exception], ...] = (
+    retryable_exceptions: tuple[type[Exception], ...] = (
         FedExServiceUnavailableError,
         FedExRateLimitError,
     ),
-    config: Optional[RetryConfig] = None,
+    config: RetryConfig | None = None,
 ):
     """
     Decorator to retry a function with exponential backoff.
@@ -177,16 +177,12 @@ def retry_with_backoff(
                 except retryable_exceptions as e:
                     # Check if we should retry this specific exception
                     if not should_retry(e):
-                        logger.warning(
-                            f"{func.__name__} failed with non-retryable error: {e}"
-                        )
+                        logger.warning(f"{func.__name__} failed with non-retryable error: {e}")
                         raise
 
                     # Check if we've exhausted retries
                     if attempt >= config.max_retries:
-                        logger.error(
-                            f"{func.__name__} failed after {attempt + 1} attempts"
-                        )
+                        logger.error(f"{func.__name__} failed after {attempt + 1} attempts")
                         raise
 
                     # Get retry configuration for this exception type
@@ -232,7 +228,7 @@ class RetryHandler:
                 retry_handler.handle_exception(e)
     """
 
-    def __init__(self, config: Optional[RetryConfig] = None):
+    def __init__(self, config: RetryConfig | None = None):
         """
         Initialize retry handler.
 
@@ -291,8 +287,7 @@ class RetryHandler:
             delay = max(delay, exception.retry_after)
 
         logger.warning(
-            f"Attempt {self.attempt} failed: {exception}. "
-            f"Retrying in {delay:.2f} seconds..."
+            f"Attempt {self.attempt} failed: {exception}. Retrying in {delay:.2f} seconds..."
         )
 
         # Wait before next attempt
@@ -303,7 +298,7 @@ class RetryHandler:
 def retry_call(
     func: Callable,
     *args,
-    config: Optional[RetryConfig] = None,
+    config: RetryConfig | None = None,
     **kwargs,
 ):
     """
@@ -321,6 +316,7 @@ def retry_call(
     Returns:
         Result of func(*args, **kwargs)
     """
+
     @retry_with_backoff(config=config)
     def wrapper():
         return func(*args, **kwargs)

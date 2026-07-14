@@ -1,29 +1,31 @@
 """
 Management command to extract all theme packages to static directories
 """
-from django.core.management.base import BaseCommand
+
 from django.conf import settings
+from django.core.management.base import BaseCommand
+
 from design.theme_models import Theme
 
 
 class Command(BaseCommand):
-    help = 'Extracts all theme packages to web-accessible static directories'
+    help = "Extracts all theme packages to web-accessible static directories"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Force re-extraction even if already extracted',
+            "--force",
+            action="store_true",
+            help="Force re-extraction even if already extracted",
         )
         parser.add_argument(
-            '--theme',
+            "--theme",
             type=str,
-            help='Extract specific theme by slug',
+            help="Extract specific theme by slug",
         )
 
     def handle(self, *args, **options):
-        force = options['force']
-        theme_slug = options.get('theme')
+        force = options["force"]
+        theme_slug = options.get("theme")
 
         # Get themes to extract
         if theme_slug:
@@ -70,24 +72,20 @@ class Command(BaseCommand):
                 )
             else:
                 failed_count += 1
-                self.stdout.write(
-                    self.style.ERROR(f"✗ Failed: {theme.name}")
-                )
+                self.stdout.write(self.style.ERROR(f"✗ Failed: {theme.name}"))
 
         # Summary
-        self.stdout.write("\n" + "="*50)
+        self.stdout.write("\n" + "=" * 50)
         self.stdout.write(self.style.SUCCESS(f"✓ Extracted: {extracted_count}"))
         if skipped_count > 0:
             self.stdout.write(self.style.WARNING(f"⊘ Skipped: {skipped_count}"))
         if failed_count > 0:
             self.stdout.write(self.style.ERROR(f"✗ Failed: {failed_count}"))
-        self.stdout.write("="*50 + "\n")
+        self.stdout.write("=" * 50 + "\n")
 
         # Show STATIC_ROOT info
         if settings.STATIC_ROOT:
-            self.stdout.write(
-                f"\nℹ️  Themes extracted to: {settings.STATIC_ROOT}/themes/"
-            )
+            self.stdout.write(f"\nℹ️  Themes extracted to: {settings.STATIC_ROOT}/themes/")
         else:
             self.stdout.write(
                 f"\nℹ️  Themes extracted to: {settings.MEDIA_ROOT}/static_themes/themes/\n"

@@ -6,34 +6,33 @@ Implements rate calculation, label generation, and tracking.
 
 Version: 1.0.0
 """
+
 import logging
-from typing import Dict, List, Optional, Any
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+from typing import Any
 
-from django.utils.translation import gettext_lazy as _
-from core.utils import get_default_currency, get_shipping_origin_country
+import requests
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
+from core.utils import get_default_currency, get_shipping_origin_country
 from shipping.providers.base import ProviderBase
-from shipping.providers.fedex.auth import create_oauth_client, FedExOAuthClient
 from shipping.providers.fedex import utils
+from shipping.providers.fedex.auth import FedExOAuthClient, create_oauth_client
 from shipping.providers.fedex.exceptions import (
-    FedExError,
+    FedExAccountError,
+    FedExAPIError,
     FedExAuthenticationError,
     FedExAuthorizationError,
-    FedExValidationError,
+    FedExError,
     FedExRateLimitError,
     FedExServiceUnavailableError,
-    FedExAccountError,
-    FedExShipmentError,
     FedExTrackingError,
-    FedExAPIError,
+    FedExValidationError,
     get_exception_for_error_code,
 )
-from shipping.providers.fedex.retry import retry_with_backoff, RetryConfig
-import requests
-
+from shipping.providers.fedex.retry import retry_with_backoff
 
 logger = logging.getLogger(__name__)
 
@@ -57,14 +56,14 @@ class FedExProvider(ProviderBase):
     """
 
     # Provider identification
-    provider_key = 'fedex'
-    provider_name = _('FedEx')
+    provider_key = "fedex"
+    provider_name = _("FedEx")
 
     # API URLs
-    SANDBOX_BASE_URL = 'https://apis-sandbox.fedex.com'
-    PRODUCTION_BASE_URL = 'https://apis.fedex.com'
+    SANDBOX_BASE_URL = "https://apis-sandbox.fedex.com"
+    PRODUCTION_BASE_URL = "https://apis.fedex.com"
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         """
         Initialize FedEx provider.
 
@@ -83,14 +82,13 @@ class FedExProvider(ProviderBase):
         super().__init__(credentials, config)
 
         # Set API base URL based on environment
-        environment = credentials.get('environment', 'sandbox')
+        environment = credentials.get("environment", "sandbox")
         self.base_url = (
-            self.PRODUCTION_BASE_URL if environment == 'production'
-            else self.SANDBOX_BASE_URL
+            self.PRODUCTION_BASE_URL if environment == "production" else self.SANDBOX_BASE_URL
         )
 
         # Store account number
-        self.account_number = credentials.get('account_number')
+        self.account_number = credentials.get("account_number")
         self.environment = environment
 
         # Create OAuth client
@@ -99,7 +97,7 @@ class FedExProvider(ProviderBase):
         logger.info(f"FedEx provider initialized (environment={environment})")
 
     @property
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return FedEx provider capabilities.
 
@@ -107,18 +105,18 @@ class FedExProvider(ProviderBase):
             Dictionary of supported features
         """
         return {
-            'rates': True,              # Rate calculation
-            'labels': True,             # Label generation
-            'tracking': True,           # Shipment tracking
-            'international': True,      # International shipping
-            'returns': False,           # Return labels (not in v1.0)
-            'pickup': False,            # Pickup scheduling (not in v1.0)
-            'insurance': True,          # Shipment insurance
-            'signature': True,          # Signature confirmation
+            "rates": True,  # Rate calculation
+            "labels": True,  # Label generation
+            "tracking": True,  # Shipment tracking
+            "international": True,  # International shipping
+            "returns": False,  # Return labels (not in v1.0)
+            "pickup": False,  # Pickup scheduling (not in v1.0)
+            "insurance": True,  # Shipment insurance
+            "signature": True,  # Signature confirmation
         }
 
     @property
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema for FedEx credentials.
 
@@ -126,42 +124,48 @@ class FedExProvider(ProviderBase):
             JSON schema dictionary
         """
         return {
-            'type': 'object',
-            'properties': {
-                'api_key': {
-                    'type': 'string',
-                    'title': _('API Key'),
-                    'description': _('Your FedEx API Key (Client ID) from the FedEx Developer Portal'),
-                    'required': True,
-                    'secret': True,
-                    'min_length': 20
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string",
+                    "title": _("API Key"),
+                    "description": _(
+                        "Your FedEx API Key (Client ID) from the FedEx Developer Portal"
+                    ),
+                    "required": True,
+                    "secret": True,
+                    "min_length": 20,
                 },
-                'api_secret': {
-                    'type': 'string',
-                    'title': _('API Secret'),
-                    'description': _('Your FedEx API Secret (Client Secret) from the FedEx Developer Portal'),
-                    'required': True,
-                    'secret': True,
-                    'min_length': 20
+                "api_secret": {
+                    "type": "string",
+                    "title": _("API Secret"),
+                    "description": _(
+                        "Your FedEx API Secret (Client Secret) from the FedEx Developer Portal"
+                    ),
+                    "required": True,
+                    "secret": True,
+                    "min_length": 20,
                 },
-                'account_number': {
-                    'type': 'string',
-                    'title': _('Account Number'),
-                    'description': _('Your 9-digit FedEx account number'),
-                    'required': True,
-                    'pattern': r'^\d{9}$'
+                "account_number": {
+                    "type": "string",
+                    "title": _("Account Number"),
+                    "description": _("Your 9-digit FedEx account number"),
+                    "required": True,
+                    "pattern": r"^\d{9}$",
                 },
-                'environment': {
-                    'type': 'string',
-                    'title': _('Environment'),
-                    'enum': ['sandbox', 'production'],
-                    'default': 'sandbox',
-                    'description': _('API environment to use. Use sandbox for testing, production for live shipping.')
-                }
-            }
+                "environment": {
+                    "type": "string",
+                    "title": _("Environment"),
+                    "enum": ["sandbox", "production"],
+                    "default": "sandbox",
+                    "description": _(
+                        "API environment to use. Use sandbox for testing, production for live shipping."
+                    ),
+                },
+            },
         }
 
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """
         Validate FedEx credentials.
 
@@ -171,38 +175,38 @@ class FedExProvider(ProviderBase):
         Raises:
             ValueError: If credentials are invalid or missing
         """
-        required_fields = ['api_key', 'api_secret', 'account_number']
+        required_fields = ["api_key", "api_secret", "account_number"]
         missing_fields = [f for f in required_fields if not credentials.get(f)]
 
         if missing_fields:
             raise ValueError(
-                _("Missing required FedEx credentials: %(fields)s") %
-                {'fields': ', '.join(missing_fields)}
+                _("Missing required FedEx credentials: %(fields)s")
+                % {"fields": ", ".join(missing_fields)}
             )
 
         # Validate API key length
-        api_key = credentials.get('api_key', '')
+        api_key = credentials.get("api_key", "")
         if len(api_key) < 20:
             raise ValueError(_("FedEx API Key must be at least 20 characters"))
 
         # Validate API secret length
-        api_secret = credentials.get('api_secret', '')
+        api_secret = credentials.get("api_secret", "")
         if len(api_secret) < 20:
             raise ValueError(_("FedEx API Secret must be at least 20 characters"))
 
         # Validate account number format (9 digits)
-        account_number = credentials.get('account_number', '')
+        account_number = credentials.get("account_number", "")
         if not account_number.isdigit() or len(account_number) != 9:
             raise ValueError(_("FedEx Account Number must be exactly 9 digits"))
 
         # Validate environment
-        environment = credentials.get('environment', 'sandbox')
-        if environment not in ['sandbox', 'production']:
+        environment = credentials.get("environment", "sandbox")
+        if environment not in ["sandbox", "production"]:
             raise ValueError(_("Environment must be 'sandbox' or 'production'"))
 
         logger.debug(f"FedEx credentials validated successfully (account={account_number})")
 
-    def redact_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def redact_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Redact sensitive credential values for logging.
 
@@ -214,17 +218,17 @@ class FedExProvider(ProviderBase):
         """
         redacted = credentials.copy()
 
-        if 'api_key' in redacted:
-            key = redacted['api_key']
-            redacted['api_key'] = f"***{key[-4:]}" if len(key) > 4 else '***'
+        if "api_key" in redacted:
+            key = redacted["api_key"]
+            redacted["api_key"] = f"***{key[-4:]}" if len(key) > 4 else "***"
 
-        if 'api_secret' in redacted:
-            redacted['api_secret'] = '***HIDDEN***'
+        if "api_secret" in redacted:
+            redacted["api_secret"] = "***HIDDEN***"
 
         # Account number is semi-sensitive - show last 4 digits
-        if 'account_number' in redacted:
-            acct = redacted['account_number']
-            redacted['account_number'] = f"*****{acct[-4:]}" if len(acct) > 4 else '***'
+        if "account_number" in redacted:
+            acct = redacted["account_number"]
+            redacted["account_number"] = f"*****{acct[-4:]}" if len(acct) > 4 else "***"
 
         return redacted
 
@@ -260,11 +264,10 @@ class FedExProvider(ProviderBase):
                 raise FedExAuthorizationError(f"{context} failed: Forbidden (403)")
             elif status_code == 429:
                 # Extract retry_after from headers if available
-                retry_after = response.headers.get('Retry-After')
+                retry_after = response.headers.get("Retry-After")
                 retry_after = int(retry_after) if retry_after else None
                 raise FedExRateLimitError(
-                    f"{context} failed: Rate limit exceeded (429)",
-                    retry_after=retry_after
+                    f"{context} failed: Rate limit exceeded (429)", retry_after=retry_after
                 )
             elif status_code >= 500:
                 raise FedExServiceUnavailableError(
@@ -272,23 +275,19 @@ class FedExProvider(ProviderBase):
                 )
             else:
                 raise FedExAPIError(
-                    f"{context} failed: HTTP {status_code}",
-                    error_code=str(status_code)
+                    f"{context} failed: HTTP {status_code}", error_code=str(status_code)
                 )
 
         # Parse FedEx error format
-        errors = error_data.get('errors', [])
+        errors = error_data.get("errors", [])
         if not errors:
             # No structured errors, use status code
-            raise FedExAPIError(
-                f"{context} failed: {error_data}",
-                error_details=error_data
-            )
+            raise FedExAPIError(f"{context} failed: {error_data}", error_details=error_data)
 
         # Get first error (usually most relevant)
         error = errors[0]
-        error_code = error.get('code', 'UNKNOWN')
-        error_message = error.get('message', 'Unknown error')
+        error_code = error.get("code", "UNKNOWN")
+        error_message = error.get("message", "Unknown error")
 
         # Log full error details
         logger.error(
@@ -302,25 +301,25 @@ class FedExProvider(ProviderBase):
 
         # Raise appropriate exception
         if exception_class == FedExRateLimitError:
-            retry_after = response.headers.get('Retry-After')
+            retry_after = response.headers.get("Retry-After")
             retry_after = int(retry_after) if retry_after else None
             raise FedExRateLimitError(error_message, retry_after=retry_after)
         else:
             raise exception_class(
                 f"{context} failed: {error_message}",
-                error_code=error_code if hasattr(exception_class, 'error_code') else None,
-                error_details=error if hasattr(exception_class, 'error_details') else None
+                error_code=error_code if hasattr(exception_class, "error_code") else None,
+                error_details=error if hasattr(exception_class, "error_details") else None,
             )
 
     def _make_api_request(
         self,
         method: str,
         endpoint: str,
-        payload: Optional[Dict[str, Any]] = None,
+        payload: dict[str, Any] | None = None,
         context: str = "API request",
         timeout: int = 30,
         retry: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Make an authenticated API request to FedEx with error handling and retry logic.
 
@@ -343,9 +342,9 @@ class FedExProvider(ProviderBase):
         # Get OAuth token
         token = self.oauth_client.get_token()
         headers = {
-            'Authorization': f'Bearer {token}',
-            'Content-Type': 'application/json',
-            'X-locale': 'en_US',
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "X-locale": "en_US",
         }
 
         # Log request (redact sensitive data)
@@ -358,11 +357,7 @@ class FedExProvider(ProviderBase):
         def make_request():
             try:
                 response = requests.request(
-                    method=method,
-                    url=url,
-                    json=payload,
-                    headers=headers,
-                    timeout=timeout
+                    method=method, url=url, json=payload, headers=headers, timeout=timeout
                 )
 
                 # Check for errors
@@ -400,7 +395,7 @@ class FedExProvider(ProviderBase):
         else:
             return make_request()
 
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test FedEx API connection and credentials.
 
@@ -413,73 +408,65 @@ class FedExProvider(ProviderBase):
 
         try:
             # Attempt to get OAuth token (this validates credentials)
-            token = self.oauth_client.get_token()
+            self.oauth_client.get_token()
 
             logger.info("FedEx connection test successful")
 
             return {
-                'success': True,
-                'message': _('Connection successful'),
-                'details': {
-                    'provider': 'FedEx',
-                    'environment': self.environment,
-                    'account_number': f"*****{self.account_number[-4:]}",
-                    'token_acquired': True
-                }
+                "success": True,
+                "message": _("Connection successful"),
+                "details": {
+                    "provider": "FedEx",
+                    "environment": self.environment,
+                    "account_number": f"*****{self.account_number[-4:]}",
+                    "token_acquired": True,
+                },
             }
 
         except (FedExAuthenticationError, FedExAuthorizationError) as e:
             # Invalid credentials
             logger.error(f"FedEx connection test failed - authentication: {e}")
             return {
-                'success': False,
-                'message': str(e),
-                'details': {'error_type': 'authentication'}
+                "success": False,
+                "message": str(e),
+                "details": {"error_type": "authentication"},
             }
 
         except FedExAccountError as e:
             # Account issue
             logger.error(f"FedEx connection test failed - account: {e}")
-            return {
-                'success': False,
-                'message': str(e),
-                'details': {'error_type': 'account'}
-            }
+            return {"success": False, "message": str(e), "details": {"error_type": "account"}}
 
         except FedExServiceUnavailableError as e:
             # Service unavailable
             logger.error(f"FedEx connection test failed - service unavailable: {e}")
             return {
-                'success': False,
-                'message': str(e),
-                'details': {'error_type': 'service_unavailable'}
+                "success": False,
+                "message": str(e),
+                "details": {"error_type": "service_unavailable"},
             }
 
         except FedExError as e:
             # Other FedEx errors
             logger.error(f"FedEx connection test failed: {e}")
-            return {
-                'success': False,
-                'message': str(e),
-                'details': {'error_type': 'fedex_error'}
-            }
+            return {"success": False, "message": str(e), "details": {"error_type": "fedex_error"}}
 
         except Exception as e:
             # Unexpected error
             logger.error(f"FedEx connection test failed with unexpected error: {e}", exc_info=True)
             return {
-                'success': False,
-                'message': _('Unexpected error: %(error)s') % {'error': str(e)},
-                'details': {'error_type': 'unexpected'}
+                "success": False,
+                "message": _("Unexpected error: %(error)s") % {"error": str(e)},
+                "details": {"error_type": "unexpected"},
             }
 
     def get_rates(
         self,
-        origin: Dict[str, str],
-        destination: Dict[str, str],
-        parcels: List[Dict[str, Any]],
-        options: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+        origin: dict[str, str],
+        destination: dict[str, str],
+        parcels: list[dict[str, Any]],
+        options: dict[str, Any] | None = None,
+    ) -> list[dict[str, Any]]:
         """
         Get FedEx shipping rates.
 
@@ -505,11 +492,11 @@ class FedExProvider(ProviderBase):
 
         # Make API request with centralized error handling and retry
         data = self._make_api_request(
-            method='POST',
-            endpoint='/rate/v1/rates/quotes',
+            method="POST",
+            endpoint="/rate/v1/rates/quotes",
             payload=payload,
-            context='Getting rates',
-            retry=True
+            context="Getting rates",
+            retry=True,
         )
 
         # Parse response
@@ -520,11 +507,11 @@ class FedExProvider(ProviderBase):
 
     def _build_rate_request(
         self,
-        origin: Dict[str, str],
-        destination: Dict[str, str],
-        parcels: List[Dict[str, Any]],
-        options: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        origin: dict[str, str],
+        destination: dict[str, str],
+        parcels: list[dict[str, Any]],
+        options: dict[str, Any],
+    ) -> dict[str, Any]:
         """
         Build FedEx rate request payload.
 
@@ -541,95 +528,92 @@ class FedExProvider(ProviderBase):
         package_line_items = []
         for parcel in parcels:
             package = {
-                'weight': {
-                    'units': 'LB',
-                    'value': utils.grams_to_pounds(parcel.get('weight', 0))
-                }
+                "weight": {"units": "LB", "value": utils.grams_to_pounds(parcel.get("weight", 0))}
             }
 
             # Add dimensions if provided
-            if all(k in parcel for k in ['length', 'width', 'height']):
-                package['dimensions'] = {
-                    'length': utils.cm_to_inches(parcel['length']),
-                    'width': utils.cm_to_inches(parcel['width']),
-                    'height': utils.cm_to_inches(parcel['height']),
-                    'units': 'IN'
+            if all(k in parcel for k in ["length", "width", "height"]):
+                package["dimensions"] = {
+                    "length": utils.cm_to_inches(parcel["length"]),
+                    "width": utils.cm_to_inches(parcel["width"]),
+                    "height": utils.cm_to_inches(parcel["height"]),
+                    "units": "IN",
                 }
 
             # Add insured value if provided
-            if 'value' in parcel and parcel['value'] > 0:
-                package['declaredValue'] = {
-                    'amount': float(parcel['value']),
-                    'currency': parcel.get('currency', get_default_currency())
+            if "value" in parcel and parcel["value"] > 0:
+                package["declaredValue"] = {
+                    "amount": float(parcel["value"]),
+                    "currency": parcel.get("currency", get_default_currency()),
                 }
 
             package_line_items.append(package)
 
         # Build request
         payload = {
-            'accountNumber': {
-                'value': self.account_number
-            },
-            'requestedShipment': {
-                'shipper': {
-                    'address': {
-                        'postalCode': origin.get('postal_code'),
-                        'countryCode': origin.get('country'),
+            "accountNumber": {"value": self.account_number},
+            "requestedShipment": {
+                "shipper": {
+                    "address": {
+                        "postalCode": origin.get("postal_code"),
+                        "countryCode": origin.get("country"),
                     }
                 },
-                'recipient': {
-                    'address': {
-                        'postalCode': destination.get('postal_code'),
-                        'countryCode': destination.get('country'),
+                "recipient": {
+                    "address": {
+                        "postalCode": destination.get("postal_code"),
+                        "countryCode": destination.get("country"),
                     }
                 },
-                'pickupType': 'USE_SCHEDULED_PICKUP',
-                'rateRequestType': ['LIST', 'ACCOUNT'],
-                'requestedPackageLineItems': package_line_items
+                "pickupType": "USE_SCHEDULED_PICKUP",
+                "rateRequestType": ["LIST", "ACCOUNT"],
+                "requestedPackageLineItems": package_line_items,
             },
-            'rateRequestControlParameters': {
-                'returnTransitTimes': True
-            }
+            "rateRequestControlParameters": {"returnTransitTimes": True},
         }
 
         # Add city/state if provided (optional but helps with accuracy)
-        if 'city' in origin:
-            payload['requestedShipment']['shipper']['address']['city'] = origin['city']
-        if 'state' in origin:
-            payload['requestedShipment']['shipper']['address']['stateOrProvinceCode'] = origin['state']
+        if "city" in origin:
+            payload["requestedShipment"]["shipper"]["address"]["city"] = origin["city"]
+        if "state" in origin:
+            payload["requestedShipment"]["shipper"]["address"]["stateOrProvinceCode"] = origin[
+                "state"
+            ]
 
-        if 'city' in destination:
-            payload['requestedShipment']['recipient']['address']['city'] = destination['city']
-        if 'state' in destination:
-            payload['requestedShipment']['recipient']['address']['stateOrProvinceCode'] = destination['state']
+        if "city" in destination:
+            payload["requestedShipment"]["recipient"]["address"]["city"] = destination["city"]
+        if "state" in destination:
+            payload["requestedShipment"]["recipient"]["address"]["stateOrProvinceCode"] = (
+                destination["state"]
+            )
 
         # Add ship date (today or specified)
-        ship_date = options.get('ship_date', timezone.now())
-        payload['requestedShipment']['shipDateStamp'] = utils.format_fedex_date(ship_date)
+        ship_date = options.get("ship_date", timezone.now())
+        payload["requestedShipment"]["shipDateStamp"] = utils.format_fedex_date(ship_date)
 
         # Add service type filter if specified
-        if 'service_type' in options:
-            payload['requestedShipment']['serviceType'] = options['service_type']
+        if "service_type" in options:
+            payload["requestedShipment"]["serviceType"] = options["service_type"]
 
         # Add carrier code filter if specified
-        if 'carrier_codes' in options:
-            payload['carrierCodes'] = options['carrier_codes']
+        if "carrier_codes" in options:
+            payload["carrierCodes"] = options["carrier_codes"]
 
         # Add customs clearance detail for international shipments
-        is_international = origin.get('country') != destination.get('country')
-        if is_international and 'order_items' in options:
+        is_international = origin.get("country") != destination.get("country")
+        if is_international and "order_items" in options:
             logger.info("International shipment detected - adding customs clearance detail")
 
             try:
                 # Build customs clearance detail
                 customs_clearance = self.build_customs_clearance_detail(
-                    order_items=options['order_items'],
-                    duties_payment=options.get('duties_payment', 'RECIPIENT'),
-                    commercial_invoice_terms=options.get('commercial_invoice_terms', 'DDU'),
-                    currency=options.get('currency', get_default_currency()),
+                    order_items=options["order_items"],
+                    duties_payment=options.get("duties_payment", "RECIPIENT"),
+                    commercial_invoice_terms=options.get("commercial_invoice_terms", "DDU"),
+                    currency=options.get("currency", get_default_currency()),
                 )
 
-                payload['requestedShipment']['customsClearanceDetail'] = customs_clearance
+                payload["requestedShipment"]["customsClearanceDetail"] = customs_clearance
 
                 logger.info("Customs clearance detail added to rate request")
 
@@ -643,7 +627,7 @@ class FedExProvider(ProviderBase):
         logger.debug(f"Built rate request for {len(package_line_items)} packages")
         return payload
 
-    def _parse_rate_response(self, data: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _parse_rate_response(self, data: dict[str, Any]) -> list[dict[str, Any]]:
         """
         Parse FedEx rate response into standard format.
 
@@ -656,63 +640,65 @@ class FedExProvider(ProviderBase):
         rates = []
 
         # Get rate details from response
-        output = data.get('output', {})
-        rate_reply_details = output.get('rateReplyDetails', [])
+        output = data.get("output", {})
+        rate_reply_details = output.get("rateReplyDetails", [])
 
         for detail in rate_reply_details:
             try:
                 # Get service info
-                service_type = detail.get('serviceType')
-                service_name = detail.get('serviceName') or utils.get_service_name(service_type)
+                service_type = detail.get("serviceType")
+                service_name = detail.get("serviceName") or utils.get_service_name(service_type)
 
                 # Get rated shipment details (use first one, usually ACCOUNT or LIST)
-                rated_shipment_list = detail.get('ratedShipmentDetails', [])
+                rated_shipment_list = detail.get("ratedShipmentDetails", [])
                 if not rated_shipment_list:
                     continue
 
                 rated_shipment = rated_shipment_list[0]
 
                 # Get total charge (can be plain number or Money object)
-                total_charge = rated_shipment.get('totalNetCharge') or rated_shipment.get('totalBaseCharge')
+                total_charge = rated_shipment.get("totalNetCharge") or rated_shipment.get(
+                    "totalBaseCharge"
+                )
                 if total_charge is None:
                     continue
 
                 rate_amount = utils.parse_money(total_charge)
 
                 # Get currency from rated shipment (fallback to USD)
-                currency = rated_shipment.get('currency', 'USD')
+                currency = rated_shipment.get("currency", "USD")
 
                 # Get delivery information
-                commit = detail.get('commit', {})
+                commit = detail.get("commit", {})
                 delivery_days = utils.calculate_delivery_days(commit)
 
                 # Get delivery date
                 delivery_date = None
-                date_detail = commit.get('dateDetail', {})
+                date_detail = commit.get("dateDetail", {})
                 if date_detail:
-                    delivery_date_str = date_detail.get('dayFormat')
+                    delivery_date_str = date_detail.get("dayFormat")
                     delivery_date = utils.parse_fedex_date(delivery_date_str)
 
                 # Get billable weight
                 billable_weight = None
-                shipment_weight = rated_shipment.get('totalBillingWeight', {})
+                shipment_weight = rated_shipment.get("totalBillingWeight", {})
                 if shipment_weight:
-                    weight_value = shipment_weight.get('value')
-                    weight_units = shipment_weight.get('units', 'LB')
-                    if weight_value and weight_units == 'LB':
+                    weight_value = shipment_weight.get("value")
+                    weight_units = shipment_weight.get("units", "LB")
+                    if weight_value and weight_units == "LB":
                         billable_weight = utils.pounds_to_grams(float(weight_value))
 
                 # Build rate dictionary
                 rate = {
-                    'service_code': service_type,
-                    'service_name': service_name,
-                    'carrier': 'FedEx',
-                    'rate': rate_amount,
-                    'currency': currency,
-                    'delivery_days': delivery_days,
-                    'delivery_date': delivery_date,
-                    'billable_weight': billable_weight,
-                    'included_insurance': Decimal('0.00')  # FedEx includes basic coverage
+                    "service_code": service_type,
+                    "service_name": service_name,
+                    "carrier": "FedEx",
+                    "rate": rate_amount,
+                    "currency": currency,
+                    "delivery_days": delivery_days,
+                    "delivery_date": delivery_date,
+                    "billable_weight": billable_weight,
+                    "included_insurance": Decimal("0.00"),  # FedEx includes basic coverage
                 }
 
                 rates.append(rate)
@@ -722,7 +708,7 @@ class FedExProvider(ProviderBase):
                 continue
 
         # Sort by rate (cheapest first)
-        rates.sort(key=lambda r: r['rate'] if r['rate'] else Decimal('9999999'))
+        rates.sort(key=lambda r: r["rate"] if r["rate"] else Decimal("9999999"))
 
         return rates
 
@@ -738,12 +724,12 @@ class FedExProvider(ProviderBase):
         """
         try:
             error_data = response.json()
-            errors = error_data.get('errors', [])
+            errors = error_data.get("errors", [])
 
             if errors:
                 error = errors[0]
-                code = error.get('code', 'UNKNOWN')
-                message = error.get('message', 'Unknown error')
+                code = error.get("code", "UNKNOWN")
+                message = error.get("message", "Unknown error")
                 return f"{code}: {message}"
 
             return f"HTTP {response.status_code}"
@@ -752,11 +738,8 @@ class FedExProvider(ProviderBase):
             return f"HTTP {response.status_code}: {response.text[:200]}"
 
     def buy_label(
-        self,
-        shipment_id: str,
-        rate: Dict[str, Any],
-        options: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, shipment_id: str, rate: dict[str, Any], options: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Purchase FedEx shipping label.
 
@@ -803,22 +786,31 @@ class FedExProvider(ProviderBase):
         if not options:
             raise FedExValidationError(_("Options are required for label purchase"))
 
-        required_fields = ['origin', 'destination', 'parcels', 'shipper_name', 'shipper_phone', 'recipient_name']
+        required_fields = [
+            "origin",
+            "destination",
+            "parcels",
+            "shipper_name",
+            "shipper_phone",
+            "recipient_name",
+        ]
         missing = [f for f in required_fields if f not in options]
         if missing:
-            raise FedExValidationError(_("Missing required options: %(fields)s") % {'fields': ', '.join(missing)})
+            raise FedExValidationError(
+                _("Missing required options: %(fields)s") % {"fields": ", ".join(missing)}
+            )
 
         # Build ship request payload
         payload = self._build_ship_request(shipment_id, rate, options)
 
         # Make API request with centralized error handling and retry
         data = self._make_api_request(
-            method='POST',
-            endpoint='/ship/v1/shipments',
+            method="POST",
+            endpoint="/ship/v1/shipments",
             payload=payload,
-            context='Purchasing label',
+            context="Purchasing label",
             timeout=60,
-            retry=True
+            retry=True,
         )
 
         # Parse response
@@ -828,11 +820,8 @@ class FedExProvider(ProviderBase):
         return label_info
 
     def _build_ship_request(
-        self,
-        shipment_id: str,
-        rate: Dict[str, Any],
-        options: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, shipment_id: str, rate: dict[str, Any], options: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Build FedEx ship request payload.
 
@@ -844,131 +833,128 @@ class FedExProvider(ProviderBase):
         Returns:
             Ship request payload dictionary
         """
-        origin = options['origin']
-        destination = options['destination']
-        parcels = options['parcels']
+        origin = options["origin"]
+        destination = options["destination"]
+        parcels = options["parcels"]
 
         # Get label preferences
-        label_format = options.get('label_format', 'PDF').upper()
-        label_size = options.get('label_size', '4x6')
+        label_format = options.get("label_format", "PDF").upper()
+        label_size = options.get("label_size", "4x6")
 
         # Map label size to FedEx stock type
         # STOCK_* types are for thermal printers (ZPL, EPL)
         # PAPER_* types are for PDF/PNG
-        if label_format in ['PDF', 'PNG']:
+        if label_format in ["PDF", "PNG"]:
             stock_type_map = {
-                '4x6': 'PAPER_4X6',
-                '4x8': 'PAPER_4X8',
-                'letter': 'PAPER_LETTER',
-                'PAPER_LETTER': 'PAPER_LETTER',
+                "4x6": "PAPER_4X6",
+                "4x8": "PAPER_4X8",
+                "letter": "PAPER_LETTER",
+                "PAPER_LETTER": "PAPER_LETTER",
             }
         else:  # ZPLII, EPL2
             stock_type_map = {
-                '4x6': 'STOCK_4X6',
-                '4x8': 'STOCK_4X8',
-                'letter': 'PAPER_LETTER',
+                "4x6": "STOCK_4X6",
+                "4x8": "STOCK_4X8",
+                "letter": "PAPER_LETTER",
             }
-        stock_type = stock_type_map.get(label_size.lower(), 'PAPER_4X6' if label_format in ['PDF', 'PNG'] else 'STOCK_4X6')
+        stock_type = stock_type_map.get(
+            label_size.lower(), "PAPER_4X6" if label_format in ["PDF", "PNG"] else "STOCK_4X6"
+        )
 
         # Build package line items
         package_line_items = []
         for parcel in parcels:
             package = {
-                'weight': {
-                    'units': 'LB',
-                    'value': utils.grams_to_pounds(parcel.get('weight', 0))
-                }
+                "weight": {"units": "LB", "value": utils.grams_to_pounds(parcel.get("weight", 0))}
             }
 
             # Add dimensions if provided
-            if all(k in parcel for k in ['length', 'width', 'height']):
-                package['dimensions'] = {
-                    'length': utils.cm_to_inches(parcel['length']),
-                    'width': utils.cm_to_inches(parcel['width']),
-                    'height': utils.cm_to_inches(parcel['height']),
-                    'units': 'IN'
+            if all(k in parcel for k in ["length", "width", "height"]):
+                package["dimensions"] = {
+                    "length": utils.cm_to_inches(parcel["length"]),
+                    "width": utils.cm_to_inches(parcel["width"]),
+                    "height": utils.cm_to_inches(parcel["height"]),
+                    "units": "IN",
                 }
 
             # Add insured value if provided
-            if 'value' in parcel and parcel['value'] > 0:
-                package['insuredValue'] = {
-                    'amount': float(parcel['value']),
-                    'currency': parcel.get('currency', get_default_currency())
+            if "value" in parcel and parcel["value"] > 0:
+                package["insuredValue"] = {
+                    "amount": float(parcel["value"]),
+                    "currency": parcel.get("currency", get_default_currency()),
                 }
 
             package_line_items.append(package)
 
         # Build request payload
         payload = {
-            'labelResponseOptions': 'LABEL',
-            'requestedShipment': {
-                'shipper': {
-                    'contact': {
-                        'personName': options['shipper_name'],
-                        'phoneNumber': options['shipper_phone'],
-                        'companyName': options.get('shipper_company', options['shipper_name'])
+            "labelResponseOptions": "LABEL",
+            "requestedShipment": {
+                "shipper": {
+                    "contact": {
+                        "personName": options["shipper_name"],
+                        "phoneNumber": options["shipper_phone"],
+                        "companyName": options.get("shipper_company", options["shipper_name"]),
                     },
-                    'address': {
-                        'streetLines': [origin.get('address1', '')],
-                        'city': origin.get('city', ''),
-                        'stateOrProvinceCode': origin.get('state', ''),
-                        'postalCode': origin.get('postal_code', ''),
-                        'countryCode': origin.get('country', get_shipping_origin_country())
-                    }
+                    "address": {
+                        "streetLines": [origin.get("address1", "")],
+                        "city": origin.get("city", ""),
+                        "stateOrProvinceCode": origin.get("state", ""),
+                        "postalCode": origin.get("postal_code", ""),
+                        "countryCode": origin.get("country", get_shipping_origin_country()),
+                    },
                 },
-                'recipients': [
+                "recipients": [
                     {
-                        'contact': {
-                            'personName': options['recipient_name'],
-                            'phoneNumber': options.get('recipient_phone', ''),
-                            'companyName': options.get('recipient_company', '')
+                        "contact": {
+                            "personName": options["recipient_name"],
+                            "phoneNumber": options.get("recipient_phone", ""),
+                            "companyName": options.get("recipient_company", ""),
                         },
-                        'address': {
-                            'streetLines': [destination.get('address1', '')],
-                            'city': destination.get('city', ''),
-                            'stateOrProvinceCode': destination.get('state', ''),
-                            'postalCode': destination.get('postal_code', ''),
-                            'countryCode': destination.get('country', 'US'),
-                            'residential': options.get('residential', False)
-                        }
+                        "address": {
+                            "streetLines": [destination.get("address1", "")],
+                            "city": destination.get("city", ""),
+                            "stateOrProvinceCode": destination.get("state", ""),
+                            "postalCode": destination.get("postal_code", ""),
+                            "countryCode": destination.get("country", "US"),
+                            "residential": options.get("residential", False),
+                        },
                     }
                 ],
-                'shipDatestamp': utils.format_fedex_date(timezone.now()),
-                'serviceType': rate.get('service_code', 'FEDEX_GROUND'),
-                'packagingType': 'YOUR_PACKAGING',
-                'pickupType': 'USE_SCHEDULED_PICKUP',
-                'blockInsightVisibility': False,
-                'shippingChargesPayment': {
-                    'paymentType': 'SENDER',
-                    'payor': {
-                        'responsibleParty': {
-                            'accountNumber': {
-                                'value': self.account_number
-                            }
-                        }
-                    }
+                "shipDatestamp": utils.format_fedex_date(timezone.now()),
+                "serviceType": rate.get("service_code", "FEDEX_GROUND"),
+                "packagingType": "YOUR_PACKAGING",
+                "pickupType": "USE_SCHEDULED_PICKUP",
+                "blockInsightVisibility": False,
+                "shippingChargesPayment": {
+                    "paymentType": "SENDER",
+                    "payor": {
+                        "responsibleParty": {"accountNumber": {"value": self.account_number}}
+                    },
                 },
-                'labelSpecification': {
-                    'imageType': label_format,
-                    'labelStockType': stock_type,
-                    'labelFormatType': 'COMMON2D'
+                "labelSpecification": {
+                    "imageType": label_format,
+                    "labelStockType": stock_type,
+                    "labelFormatType": "COMMON2D",
                 },
-                'requestedPackageLineItems': package_line_items
+                "requestedPackageLineItems": package_line_items,
             },
-            'accountNumber': {
-                'value': self.account_number
-            }
+            "accountNumber": {"value": self.account_number},
         }
 
         # Add address line 2 if provided
-        if origin.get('address2'):
-            payload['requestedShipment']['shipper']['address']['streetLines'].append(origin['address2'])
+        if origin.get("address2"):
+            payload["requestedShipment"]["shipper"]["address"]["streetLines"].append(
+                origin["address2"]
+            )
 
-        if destination.get('address2'):
-            payload['requestedShipment']['recipients'][0]['address']['streetLines'].append(destination['address2'])
+        if destination.get("address2"):
+            payload["requestedShipment"]["recipients"][0]["address"]["streetLines"].append(
+                destination["address2"]
+            )
 
         # Add customs clearance detail and ETD for international shipments
-        is_international = origin.get('country') != destination.get('country')
+        is_international = origin.get("country") != destination.get("country")
         if is_international:
             logger.info("International shipment detected - adding customs clearance and ETD")
 
@@ -976,14 +962,14 @@ class FedExProvider(ProviderBase):
             self.validate_international_shipping_address(destination)
 
             # Check export compliance if order_items provided
-            if 'order_items' in options:
+            if "order_items" in options:
                 compliance = self.check_export_compliance(
-                    destination_country=destination.get('country'),
-                    order_items=options['order_items']
+                    destination_country=destination.get("country"),
+                    order_items=options["order_items"],
                 )
 
                 # Block shipment if not compliant
-                if not compliance['compliant']:
+                if not compliance["compliant"]:
                     raise FedExValidationError(
                         f"International shipment blocked due to export compliance violations: "
                         f"{'; '.join(compliance['errors'])}"
@@ -992,13 +978,13 @@ class FedExProvider(ProviderBase):
                 # Build and add customs clearance detail
                 try:
                     customs_clearance = self.build_customs_clearance_detail(
-                        order_items=options['order_items'],
-                        duties_payment=options.get('duties_payment', 'RECIPIENT'),
-                        commercial_invoice_terms=options.get('commercial_invoice_terms', 'DDU'),
-                        currency=options.get('currency', get_default_currency()),
+                        order_items=options["order_items"],
+                        duties_payment=options.get("duties_payment", "RECIPIENT"),
+                        commercial_invoice_terms=options.get("commercial_invoice_terms", "DDU"),
+                        currency=options.get("currency", get_default_currency()),
                     )
 
-                    payload['requestedShipment']['customsClearanceDetail'] = customs_clearance
+                    payload["requestedShipment"]["customsClearanceDetail"] = customs_clearance
 
                     logger.info("Customs clearance detail added to shipment")
 
@@ -1010,21 +996,21 @@ class FedExProvider(ProviderBase):
 
                 # Add Electronic Trade Documents (ETD) special service
                 # This tells FedEx to generate commercial invoice and other docs electronically
-                special_services = payload['requestedShipment'].get('shipmentSpecialServices', {})
-                special_services_requested = special_services.get('specialServiceTypes', [])
+                special_services = payload["requestedShipment"].get("shipmentSpecialServices", {})
+                special_services_requested = special_services.get("specialServiceTypes", [])
 
                 # Add ETD service
-                if 'ELECTRONIC_TRADE_DOCUMENTS' not in special_services_requested:
-                    special_services_requested.append('ELECTRONIC_TRADE_DOCUMENTS')
+                if "ELECTRONIC_TRADE_DOCUMENTS" not in special_services_requested:
+                    special_services_requested.append("ELECTRONIC_TRADE_DOCUMENTS")
 
-                special_services['specialServiceTypes'] = special_services_requested
-                payload['requestedShipment']['shipmentSpecialServices'] = special_services
+                special_services["specialServiceTypes"] = special_services_requested
+                payload["requestedShipment"]["shipmentSpecialServices"] = special_services
 
                 logger.info("Electronic Trade Documents (ETD) service added")
 
                 # Log compliance warnings if any
-                if compliance['warnings']:
-                    for warning in compliance['warnings']:
+                if compliance["warnings"]:
+                    for warning in compliance["warnings"]:
                         logger.warning(f"Export compliance warning: {warning}")
 
             else:
@@ -1038,11 +1024,8 @@ class FedExProvider(ProviderBase):
         return payload
 
     def _parse_ship_response(
-        self,
-        data: Dict[str, Any],
-        rate: Dict[str, Any],
-        options: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, data: dict[str, Any], rate: dict[str, Any], options: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Parse FedEx ship response into standard format.
 
@@ -1054,8 +1037,8 @@ class FedExProvider(ProviderBase):
         Returns:
             Label information dictionary
         """
-        output = data.get('output', {})
-        transaction_shipments = output.get('transactionShipments', [])
+        output = data.get("output", {})
+        transaction_shipments = output.get("transactionShipments", [])
 
         if not transaction_shipments:
             raise ValueError(_("No shipment data in FedEx response"))
@@ -1063,23 +1046,23 @@ class FedExProvider(ProviderBase):
         shipment = transaction_shipments[0]
 
         # Get tracking number
-        tracking_number = shipment.get('masterTrackingNumber')
+        tracking_number = shipment.get("masterTrackingNumber")
         if not tracking_number:
             raise ValueError(_("No tracking number in FedEx response"))
 
         # Get label data from pieceResponses (not completedPackageDetails)
-        piece_responses = shipment.get('pieceResponses', [])
+        piece_responses = shipment.get("pieceResponses", [])
 
         if not piece_responses:
             raise ValueError(_("No piece responses in FedEx shipment"))
 
         piece = piece_responses[0]
-        label_data = piece.get('packageDocuments', [])
+        label_data = piece.get("packageDocuments", [])
 
         # Find the shipping label (not commercial invoice)
         label_doc = None
         for doc in label_data:
-            if doc.get('contentType') == 'LABEL' or doc.get('docType') == 'LABEL':
+            if doc.get("contentType") == "LABEL" or doc.get("docType") == "LABEL":
                 label_doc = doc
                 break
 
@@ -1088,39 +1071,39 @@ class FedExProvider(ProviderBase):
             label_doc = label_data[0] if label_data else {}
 
         # Get base64 encoded label
-        encoded_label = label_doc.get('encodedLabel', '')
-        label_format = options.get('label_format', 'PDF').upper()
+        encoded_label = label_doc.get("encodedLabel", "")
+        label_format = options.get("label_format", "PDF").upper()
 
         # Determine MIME type
         mime_types = {
-            'PDF': 'application/pdf',
-            'PNG': 'image/png',
-            'ZPLII': 'application/zpl',
-            'EPL2': 'application/epl'
+            "PDF": "application/pdf",
+            "PNG": "image/png",
+            "ZPLII": "application/zpl",
+            "EPL2": "application/epl",
         }
-        mime_type = mime_types.get(label_format, 'application/pdf')
+        mime_type = mime_types.get(label_format, "application/pdf")
 
         # Build label URL (data URI)
-        label_url = f"data:{mime_type};base64,{encoded_label}" if encoded_label else ''
+        label_url = f"data:{mime_type};base64,{encoded_label}" if encoded_label else ""
 
         # Get shipment cost (use rate cost if not in response)
-        cost = rate.get('rate', Decimal('0.00'))
-        currency = rate.get('currency', 'USD')
+        cost = rate.get("rate", Decimal("0.00"))
+        currency = rate.get("currency", "USD")
 
         # Build return dictionary
         return {
-            'tracking_number': tracking_number,
-            'label_url': label_url,
-            'label_format': label_format,
-            'cost': cost,
-            'currency': currency,
-            'carrier': 'FedEx',
-            'service': rate.get('service_name', rate.get('service_code', 'FedEx')),
-            'external_shipment_id': f"fedex_{tracking_number}",
-            'created_at': timezone.now()
+            "tracking_number": tracking_number,
+            "label_url": label_url,
+            "label_format": label_format,
+            "cost": cost,
+            "currency": currency,
+            "carrier": "FedEx",
+            "service": rate.get("service_name", rate.get("service_code", "FedEx")),
+            "external_shipment_id": f"fedex_{tracking_number}",
+            "created_at": timezone.now(),
         }
 
-    def cancel_label(self, tracking_number: str, reason: Optional[str] = None) -> Dict[str, Any]:
+    def cancel_label(self, tracking_number: str, reason: str | None = None) -> dict[str, Any]:
         """
         Cancel FedEx shipping label.
 
@@ -1138,7 +1121,7 @@ class FedExProvider(ProviderBase):
         """
         raise NotImplementedError(_("Label cancellation not yet implemented"))
 
-    def get_tracking(self, tracking_number: str, force_refresh: bool = False) -> Dict[str, Any]:
+    def get_tracking(self, tracking_number: str, force_refresh: bool = False) -> dict[str, Any]:
         """
         Get FedEx tracking information via Track API with intelligent caching.
 
@@ -1189,12 +1172,12 @@ class FedExProvider(ProviderBase):
         from django.core.cache import cache
 
         # Check cache first (unless force_refresh)
-        cache_key = f'fedex_tracking_{tracking_number}'
+        cache_key = f"fedex_tracking_{tracking_number}"
         if not force_refresh:
             cached_data = cache.get(cache_key)
             if cached_data:
-                cached_data['_cached'] = True
-                cached_data['_cached_at'] = cached_data.get('_cache_timestamp', timezone.now())
+                cached_data["_cached"] = True
+                cached_data["_cached_at"] = cached_data.get("_cache_timestamp", timezone.now())
                 logger.debug(
                     f"Returning cached tracking data for {tracking_number} "
                     f"(cached at {cached_data.get('_cache_timestamp')})"
@@ -1203,24 +1186,18 @@ class FedExProvider(ProviderBase):
 
         # Build Track API request
         payload = {
-            'includeDetailedScans': True,
-            'trackingInfo': [
-                {
-                    'trackingNumberInfo': {
-                        'trackingNumber': tracking_number
-                    }
-                }
-            ]
+            "includeDetailedScans": True,
+            "trackingInfo": [{"trackingNumberInfo": {"trackingNumber": tracking_number}}],
         }
 
         # Make API request with centralized error handling
         try:
             data = self._make_api_request(
-                method='POST',
-                endpoint='/track/v1/trackingnumbers',
+                method="POST",
+                endpoint="/track/v1/trackingnumbers",
                 payload=payload,
-                context=f'Getting tracking for {tracking_number}',
-                retry=True
+                context=f"Getting tracking for {tracking_number}",
+                retry=True,
             )
         except FedExValidationError as e:
             # Convert validation errors to ValueError for backward compatibility
@@ -1231,99 +1208,102 @@ class FedExProvider(ProviderBase):
 
         # Parse tracking results
         try:
-            complete_results = data['output']['completeTrackResults'][0]
-            track_results = complete_results['trackResults'][0]
+            complete_results = data["output"]["completeTrackResults"][0]
+            track_results = complete_results["trackResults"][0]
         except (KeyError, IndexError) as e:
             raise ValueError(
-                _("Unexpected FedEx Track API response format: %(error)s") %
-                {'error': str(e)}
+                _("Unexpected FedEx Track API response format: %(error)s") % {"error": str(e)}
             )
 
         # Extract latest status
-        latest_status = track_results.get('latestStatusDetail', {})
-        status_code = latest_status.get('code', '')
-        status_description = latest_status.get('description', '')
+        latest_status = track_results.get("latestStatusDetail", {})
+        status_code = latest_status.get("code", "")
+        status_description = latest_status.get("description", "")
 
         # Map FedEx status codes to platform statuses
         status_map = {
-            'OC': 'created',           # Order Created
-            'PU': 'in_transit',        # Picked Up
-            'IT': 'in_transit',        # In Transit
-            'AR': 'in_transit',        # Arrived at FedEx location
-            'DP': 'in_transit',        # Departed FedEx location
-            'OD': 'out_for_delivery',  # Out for Delivery
-            'DL': 'delivered',         # Delivered
-            'DE': 'exception',         # Delivery Exception
-            'RS': 'returned',          # Return to Sender
-            'CA': 'canceled',          # Canceled
+            "OC": "created",  # Order Created
+            "PU": "in_transit",  # Picked Up
+            "IT": "in_transit",  # In Transit
+            "AR": "in_transit",  # Arrived at FedEx location
+            "DP": "in_transit",  # Departed FedEx location
+            "OD": "out_for_delivery",  # Out for Delivery
+            "DL": "delivered",  # Delivered
+            "DE": "exception",  # Delivery Exception
+            "RS": "returned",  # Return to Sender
+            "CA": "canceled",  # Canceled
         }
 
-        platform_status = status_map.get(status_code, 'in_transit')
+        platform_status = status_map.get(status_code, "in_transit")
 
         # Extract service information
-        service_detail = track_results.get('serviceDetail', {})
-        service_name = service_detail.get('description', 'FedEx')
+        service_detail = track_results.get("serviceDetail", {})
+        service_name = service_detail.get("description", "FedEx")
 
         # Extract delivery information
         estimated_delivery = None
         actual_delivery = None
 
         # Estimated delivery from window
-        delivery_window = track_results.get('estimatedDeliveryTimeWindow', {}).get('window', {})
-        if delivery_window.get('ends'):
-            estimated_delivery = self._parse_fedex_datetime(delivery_window['ends'])
+        delivery_window = track_results.get("estimatedDeliveryTimeWindow", {}).get("window", {})
+        if delivery_window.get("ends"):
+            estimated_delivery = self._parse_fedex_datetime(delivery_window["ends"])
 
         # Actual delivery timestamp
-        delivery_details = track_results.get('deliveryDetails', {})
-        if delivery_details.get('actualDeliveryTimestamp'):
-            actual_delivery = self._parse_fedex_datetime(delivery_details['actualDeliveryTimestamp'])
+        delivery_details = track_results.get("deliveryDetails", {})
+        if delivery_details.get("actualDeliveryTimestamp"):
+            actual_delivery = self._parse_fedex_datetime(
+                delivery_details["actualDeliveryTimestamp"]
+            )
 
         # Extract current location
         current_location = None
-        if latest_status.get('scanLocation'):
-            loc = latest_status['scanLocation']
-            city = loc.get('city', '')
-            state = loc.get('stateOrProvinceCode', '')
+        if latest_status.get("scanLocation"):
+            loc = latest_status["scanLocation"]
+            city = loc.get("city", "")
+            state = loc.get("stateOrProvinceCode", "")
             current_location = f"{city}, {state}" if city and state else city or state
 
         # Parse scan events
         events = []
-        for scan in track_results.get('scanEvents', []):
-            event_code = scan.get('eventType', '')
-            event_status = status_map.get(event_code, 'in_transit')
+        for scan in track_results.get("scanEvents", []):
+            event_code = scan.get("eventType", "")
+            event_status = status_map.get(event_code, "in_transit")
 
             # Extract location
-            scan_location = scan.get('scanLocation', {})
-            city = scan_location.get('city', '')
-            state = scan_location.get('stateOrProvinceCode', '')
-            location_str = f"{city}, {state}" if city and state else city or state or ''
+            scan_location = scan.get("scanLocation", {})
+            city = scan_location.get("city", "")
+            state = scan_location.get("stateOrProvinceCode", "")
+            location_str = f"{city}, {state}" if city and state else city or state or ""
 
             # Parse timestamp
-            timestamp = self._parse_fedex_datetime(scan.get('date', ''))
+            timestamp = self._parse_fedex_datetime(scan.get("date", ""))
 
-            events.append({
-                'timestamp': timestamp,
-                'status': event_status,
-                'location': location_str,
-                'description': scan.get('eventDescription', ''),
-                'raw_code': event_code
-            })
+            events.append(
+                {
+                    "timestamp": timestamp,
+                    "status": event_status,
+                    "location": location_str,
+                    "description": scan.get("eventDescription", ""),
+                    "raw_code": event_code,
+                }
+            )
 
         # Sort events chronologically (oldest first)
-        events.sort(key=lambda x: x['timestamp'] if x['timestamp'] else timezone.now())
+        events.sort(key=lambda x: x["timestamp"] if x["timestamp"] else timezone.now())
 
         # Build result dictionary
         result = {
-            'tracking_number': tracking_number,
-            'status': platform_status,
-            'status_description': status_description,
-            'carrier': 'FedEx',
-            'service': service_name,
-            'estimated_delivery': estimated_delivery,
-            'actual_delivery': actual_delivery,
-            'current_location': current_location,
-            'events': events,
-            '_cache_timestamp': timezone.now()  # For cache metadata
+            "tracking_number": tracking_number,
+            "status": platform_status,
+            "status_description": status_description,
+            "carrier": "FedEx",
+            "service": service_name,
+            "estimated_delivery": estimated_delivery,
+            "actual_delivery": actual_delivery,
+            "current_location": current_location,
+            "events": events,
+            "_cache_timestamp": timezone.now(),  # For cache metadata
         }
 
         # Cache the result with TTL based on status
@@ -1354,18 +1334,18 @@ class FedExProvider(ProviderBase):
             Cache TTL in seconds
         """
         ttl_map = {
-            'delivered': 7 * 24 * 60 * 60,  # 7 days (604800s)
-            'returned': 3 * 24 * 60 * 60,   # 3 days (259200s)
-            'canceled': 3 * 24 * 60 * 60,   # 3 days
-            'exception': 2 * 60 * 60,       # 2 hours (7200s)
-            'in_transit': 1 * 60 * 60,      # 1 hour (3600s)
-            'out_for_delivery': 30 * 60,    # 30 minutes (1800s)
-            'created': 30 * 60,             # 30 minutes
+            "delivered": 7 * 24 * 60 * 60,  # 7 days (604800s)
+            "returned": 3 * 24 * 60 * 60,  # 3 days (259200s)
+            "canceled": 3 * 24 * 60 * 60,  # 3 days
+            "exception": 2 * 60 * 60,  # 2 hours (7200s)
+            "in_transit": 1 * 60 * 60,  # 1 hour (3600s)
+            "out_for_delivery": 30 * 60,  # 30 minutes (1800s)
+            "created": 30 * 60,  # 30 minutes
         }
 
         return ttl_map.get(status, 30 * 60)  # Default: 30 minutes
 
-    def _parse_fedex_datetime(self, datetime_str: str) -> Optional[datetime]:
+    def _parse_fedex_datetime(self, datetime_str: str) -> datetime | None:
         """
         Parse FedEx datetime string to Python datetime.
 
@@ -1383,19 +1363,22 @@ class FedExProvider(ProviderBase):
         try:
             # Parse ISO 8601 format with timezone
             from dateutil import parser
+
             return parser.isoparse(datetime_str)
         except (ValueError, ImportError):
             # Fallback: try basic ISO format without dateutil
             try:
                 # Remove timezone suffix for basic parsing
-                if '+' in datetime_str:
-                    datetime_str = datetime_str.split('+')[0]
-                elif datetime_str.count('-') > 2:  # Has timezone like -05:00
+                if "+" in datetime_str:
+                    datetime_str = datetime_str.split("+")[0]
+                elif datetime_str.count("-") > 2:  # Has timezone like -05:00
                     # Remove timezone
-                    datetime_str = datetime_str.rsplit('-', 1)[0] if 'T' in datetime_str else datetime_str
+                    datetime_str = (
+                        datetime_str.rsplit("-", 1)[0] if "T" in datetime_str else datetime_str
+                    )
 
                 # Parse as naive datetime then make timezone-aware
-                dt = datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S')
+                dt = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S")
                 return timezone.make_aware(dt)
             except ValueError:
                 return None
@@ -1406,11 +1389,11 @@ class FedExProvider(ProviderBase):
 
     def build_customs_clearance_detail(
         self,
-        order_items: List[Dict[str, Any]],
-        duties_payment: str = 'SENDER',
-        commercial_invoice_terms: str = 'DDU',
+        order_items: list[dict[str, Any]],
+        duties_payment: str = "SENDER",
+        commercial_invoice_terms: str = "DDU",
         currency: str = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Build customs clearance detail for international shipments.
 
@@ -1438,29 +1421,22 @@ class FedExProvider(ProviderBase):
 
         # Calculate total customs value
         customs_value = sum(
-            Decimal(str(commodity['customsValue']['amount']))
-            for commodity in commodities
+            Decimal(str(commodity["customsValue"]["amount"])) for commodity in commodities
         )
 
         # Build duties payment structure
         duties_payment_struct = {
-            'paymentType': duties_payment,
-            'payor': {
-                'responsibleParty': {
-                    'accountNumber': {
-                        'value': self.account_number
-                    }
-                }
-            }
+            "paymentType": duties_payment,
+            "payor": {"responsibleParty": {"accountNumber": {"value": self.account_number}}},
         }
 
         # Build customs clearance detail
         customs_clearance = {
-            'dutiesPayment': duties_payment_struct,
-            'commodities': commodities,
-            'commercialInvoice': {
-                'purpose': 'SOLD',  # Other options: GIFT, SAMPLE, REPAIR, etc.
-                'termsOfSale': commercial_invoice_terms,
+            "dutiesPayment": duties_payment_struct,
+            "commodities": commodities,
+            "commercialInvoice": {
+                "purpose": "SOLD",  # Other options: GIFT, SAMPLE, REPAIR, etc.
+                "termsOfSale": commercial_invoice_terms,
             },
         }
 
@@ -1474,9 +1450,9 @@ class FedExProvider(ProviderBase):
 
     def _build_commodity_items(
         self,
-        order_items: List[Dict[str, Any]],
+        order_items: list[dict[str, Any]],
         currency: str = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Build commodity items list for customs declaration.
 
@@ -1503,8 +1479,8 @@ class FedExProvider(ProviderBase):
         commodities = []
 
         for item in order_items:
-            product = item.get('product')
-            quantity = item.get('quantity', 1)
+            product = item.get("product")
+            quantity = item.get("quantity", 1)
 
             if not product:
                 raise FedExValidationError("Order item missing product")
@@ -1524,30 +1500,32 @@ class FedExProvider(ProviderBase):
 
             # Build commodity item
             commodity = {
-                'description': product.name[:35],  # FedEx limit: 35 characters
-                'quantity': quantity,
-                'quantityUnits': 'PCS',  # Pieces
-                'unitPrice': {
-                    'currency': currency,
-                    'amount': float(unit_price),
+                "description": product.name[:35],  # FedEx limit: 35 characters
+                "quantity": quantity,
+                "quantityUnits": "PCS",  # Pieces
+                "unitPrice": {
+                    "currency": currency,
+                    "amount": float(unit_price),
                 },
-                'customsValue': {
-                    'currency': currency,
-                    'amount': float(total_value),
+                "customsValue": {
+                    "currency": currency,
+                    "amount": float(total_value),
                 },
-                'weight': {
-                    'units': 'LB',
-                    'value': float(product.weight or 0),
+                "weight": {
+                    "units": "LB",
+                    "value": float(product.weight or 0),
                 },
-                'countryOfManufacture': product.country_of_origin,
-                'harmonizedCode': product.hs_code,
+                "countryOfManufacture": product.country_of_origin,
+                "harmonizedCode": product.hs_code,
             }
 
             # Add export license if present
             if product.export_license_number:
-                commodity['exportLicenseNumber'] = product.export_license_number
+                commodity["exportLicenseNumber"] = product.export_license_number
                 if product.export_license_expiry:
-                    commodity['exportLicenseExpirationDate'] = product.export_license_expiry.isoformat()
+                    commodity["exportLicenseExpirationDate"] = (
+                        product.export_license_expiry.isoformat()
+                    )
 
             commodities.append(commodity)
 
@@ -1555,7 +1533,7 @@ class FedExProvider(ProviderBase):
 
     def validate_international_shipping_address(
         self,
-        address: Dict[str, Any],
+        address: dict[str, Any],
     ) -> None:
         """
         Validate address for international shipping.
@@ -1568,14 +1546,14 @@ class FedExProvider(ProviderBase):
         Raises:
             FedExValidationError: If address validation fails
         """
-        required_fields = ['country', 'postal_code', 'city']
+        required_fields = ["country", "postal_code", "city"]
 
         # For non-US destinations, state/province may be required
-        if address.get('country') not in ['US', 'CA']:
+        if address.get("country") not in ["US", "CA"]:
             # Most countries don't require state, but validate what we have
             pass
         else:
-            required_fields.append('state_province')
+            required_fields.append("state_province")
 
         missing = [field for field in required_fields if not address.get(field)]
 
@@ -1585,7 +1563,7 @@ class FedExProvider(ProviderBase):
             )
 
         # Validate country code format (must be 2-letter ISO)
-        country = address.get('country', '')
+        country = address.get("country", "")
         if len(country) != 2:
             raise FedExValidationError(
                 f"Invalid country code: {country}. Must be 2-letter ISO code (e.g., 'CA', 'GB', 'DE')"
@@ -1594,8 +1572,8 @@ class FedExProvider(ProviderBase):
     def check_export_compliance(
         self,
         destination_country: str,
-        order_items: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        order_items: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         """
         Check export compliance for international shipment.
 
@@ -1624,7 +1602,7 @@ class FedExProvider(ProviderBase):
 
         # Check for embargoed countries (basic list - expand as needed)
         # Source: https://www.trade.gov/country-commercial-guides
-        embargoed_countries = ['CU', 'IR', 'KP', 'SY']  # Cuba, Iran, North Korea, Syria
+        embargoed_countries = ["CU", "IR", "KP", "SY"]  # Cuba, Iran, North Korea, Syria
 
         if destination_country in embargoed_countries:
             errors.append(
@@ -1633,10 +1611,10 @@ class FedExProvider(ProviderBase):
             )
 
         # Calculate total customs value and check for EEI requirement
-        total_value = Decimal('0')
+        total_value = Decimal("0")
         for item in order_items:
-            product = item.get('product')
-            quantity = item.get('quantity', 1)
+            product = item.get("product")
+            quantity = item.get("quantity", 1)
 
             if product and product.unit_price_for_customs:
                 total_value += product.unit_price_for_customs * Decimal(str(quantity))
@@ -1646,6 +1624,7 @@ class FedExProvider(ProviderBase):
                 # Verify license hasn't expired
                 if product.export_license_expiry:
                     from django.utils import timezone
+
                     if product.export_license_expiry < timezone.now().date():
                         errors.append(
                             f"Product '{product.name}' has expired export license "
@@ -1655,7 +1634,7 @@ class FedExProvider(ProviderBase):
 
         # EEI required for shipments > $2,500 USD or to certain countries
         # https://www.census.gov/foreign-trade/regulations/
-        if total_value > Decimal('2500.00'):
+        if total_value > Decimal("2500.00"):
             requires_eei = True
             warnings.append(
                 f"Shipment value (${total_value:.2f}) exceeds $2,500. "
@@ -1664,7 +1643,7 @@ class FedExProvider(ProviderBase):
             )
 
         # Additional high-risk countries that may require EEI regardless of value
-        eei_countries = ['RU', 'CN']  # Russia, China (example - verify with legal)
+        eei_countries = ["RU", "CN"]  # Russia, China (example - verify with legal)
         if destination_country in eei_countries:
             requires_eei = True
             warnings.append(
@@ -1675,10 +1654,10 @@ class FedExProvider(ProviderBase):
         compliant = len(errors) == 0
 
         result = {
-            'compliant': compliant,
-            'requires_eei': requires_eei,
-            'warnings': warnings,
-            'errors': errors,
+            "compliant": compliant,
+            "requires_eei": requires_eei,
+            "warnings": warnings,
+            "errors": errors,
         }
 
         if not compliant:
@@ -1706,9 +1685,11 @@ class FedExProvider(ProviderBase):
         Raises:
             NotImplementedError: FedEx does not support webhooks
         """
-        raise NotImplementedError(_("FedEx REST API does not support webhooks. Use polling instead."))
+        raise NotImplementedError(
+            _("FedEx REST API does not support webhooks. Use polling instead.")
+        )
 
-    def handle_webhook(self, event_type: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_webhook(self, event_type: str, payload: dict[str, Any]) -> dict[str, Any]:
         """
         Handle FedEx webhook event.
 
@@ -1725,4 +1706,6 @@ class FedExProvider(ProviderBase):
         Raises:
             NotImplementedError: FedEx does not support webhooks
         """
-        raise NotImplementedError(_("FedEx REST API does not support webhooks. Use polling instead."))
+        raise NotImplementedError(
+            _("FedEx REST API does not support webhooks. Use polling instead.")
+        )

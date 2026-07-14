@@ -4,8 +4,9 @@ Base provider interface for translation integrations.
 All translation provider implementations must inherit from TranslationProviderBase
 and implement all abstract methods defined here.
 """
+
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any
+from typing import Any
 
 
 class TranslationProviderBase(ABC):
@@ -29,7 +30,7 @@ class TranslationProviderBase(ABC):
     provider_key: str = None
     provider_name: str = None
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         """
         Initialize provider with credentials and configuration.
 
@@ -53,7 +54,7 @@ class TranslationProviderBase(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return dictionary of provider capabilities.
 
@@ -70,7 +71,7 @@ class TranslationProviderBase(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema describing required credentials.
 
@@ -91,7 +92,7 @@ class TranslationProviderBase(ABC):
 
     @property
     @abstractmethod
-    def supported_languages(self) -> List[str]:
+    def supported_languages(self) -> list[str]:
         """
         Return list of supported language codes.
 
@@ -101,7 +102,7 @@ class TranslationProviderBase(ABC):
         pass
 
     @abstractmethod
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """
         Validate that required credentials are present and well-formed.
 
@@ -114,7 +115,7 @@ class TranslationProviderBase(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test the API connection with the configured credentials.
 
@@ -147,7 +148,7 @@ class TranslationProviderBase(ABC):
         pass
 
     @abstractmethod
-    def translate_batch(self, texts: List[str], source_lang: str, target_lang: str) -> List[str]:
+    def translate_batch(self, texts: list[str], source_lang: str, target_lang: str) -> list[str]:
         """
         Translate multiple text strings in a single request.
 

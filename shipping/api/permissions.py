@@ -2,6 +2,7 @@
 Shipping API Permissions
 Custom permission classes for API endpoints
 """
+
 from rest_framework import permissions
 
 
@@ -18,11 +19,11 @@ class IsShipmentOwner(permissions.BasePermission):
             return True
 
         # Check if shipment belongs to user's order
-        if hasattr(obj, 'order') and obj.order:
+        if hasattr(obj, "order") and obj.order:
             return obj.order.user == request.user
 
         # Check if shipment.user matches (fallback)
-        if hasattr(obj, 'user'):
+        if hasattr(obj, "user"):
             return obj.user == request.user
 
         return False
@@ -57,7 +58,7 @@ class IsProviderOwner(permissions.BasePermission):
             return True
 
         # Check if provider account belongs to user
-        if hasattr(obj, 'user'):
+        if hasattr(obj, "user"):
             return obj.user == request.user
 
         return False

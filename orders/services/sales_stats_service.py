@@ -25,7 +25,7 @@ def update_product_sales_counts(order):
         # Re-fetch with row lock to prevent concurrent double-counting
         order = Order.objects.select_for_update().get(pk=order.pk)
 
-        if order.metadata and order.metadata.get('sales_count_updated'):
+        if order.metadata and order.metadata.get("sales_count_updated"):
             logger.info(f"Sales counts already updated for order {order.order_number}")
             return
 
@@ -39,16 +39,15 @@ def update_product_sales_counts(order):
 
         # Atomic F() update for each product
         from catalog.models import Product
+
         for product_id, quantity in product_quantities.items():
-            Product.objects.filter(pk=product_id).update(
-                sales_count=F('sales_count') + quantity
-            )
+            Product.objects.filter(pk=product_id).update(sales_count=F("sales_count") + quantity)
 
         # Mark idempotency flag
         if order.metadata is None:
             order.metadata = {}
-        order.metadata['sales_count_updated'] = True
-        order.save(update_fields=['metadata'])
+        order.metadata["sales_count_updated"] = True
+        order.save(update_fields=["metadata"])
 
     logger.info(
         f"Updated sales counts for order {order.order_number}: "

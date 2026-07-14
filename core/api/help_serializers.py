@@ -2,10 +2,13 @@
 Help System API Serializers
 DRF serializers for help system models
 """
-from rest_framework import serializers
+
+from django.utils.translation import get_language
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema_field
-from django.utils.translation import get_language, gettext_lazy as _
-from core.models import HelpCategory, HelpTopic, HelpFeedback, HelpView
+from rest_framework import serializers
+
+from core.models import HelpCategory, HelpFeedback, HelpTopic
 
 
 def _get_help_language(context=None):
@@ -18,12 +21,12 @@ def _get_help_language(context=None):
     """
     lang = None
     if context:
-        request = context.get('request')
+        request = context.get("request")
         if request:
-            lang = request.query_params.get('lang')
+            lang = request.query_params.get("lang")
     if not lang:
         lang = get_language()
-    if not lang or lang == 'en' or lang.startswith('en-'):
+    if not lang or lang == "en" or lang.startswith("en-"):
         return None
     return lang
 
@@ -36,15 +39,15 @@ class HelpCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = HelpCategory
         fields = [
-            'id',
-            'name',
-            'slug',
-            'icon',
-            'order',
-            'description',
-            'topics_count',
+            "id",
+            "name",
+            "slug",
+            "icon",
+            "order",
+            "description",
+            "topics_count",
         ]
-        read_only_fields = ['id']
+        read_only_fields = ["id"]
 
     @extend_schema_field(serializers.IntegerField())
     def get_topics_count(self, obj):
@@ -56,34 +59,34 @@ class HelpCategorySerializer(serializers.ModelSerializer):
         lang = _get_help_language(self.context)
         if lang and instance.translations:
             lang_data = instance.translations.get(lang, {})
-            if lang_data.get('name'):
-                data['name'] = lang_data['name']
-            if lang_data.get('description'):
-                data['description'] = lang_data['description']
+            if lang_data.get("name"):
+                data["name"] = lang_data["name"]
+            if lang_data.get("description"):
+                data["description"] = lang_data["description"]
         return data
 
 
 class HelpTopicListSerializer(serializers.ModelSerializer):
     """Minimal serializer for listing help topics"""
 
-    category_name = serializers.CharField(source='category.name', read_only=True)
-    category_icon = serializers.CharField(source='category.icon', read_only=True)
+    category_name = serializers.CharField(source="category.name", read_only=True)
+    category_icon = serializers.CharField(source="category.icon", read_only=True)
     helpfulness_percentage = serializers.SerializerMethodField()
 
     class Meta:
         model = HelpTopic
         fields = [
-            'id',
-            'slug',
-            'title_i18n_key',
-            'category_name',
-            'category_icon',
-            'component',
-            'view_count',
-            'helpful_count',
-            'not_helpful_count',
-            'helpfulness_percentage',
-            'updated_at',
+            "id",
+            "slug",
+            "title_i18n_key",
+            "category_name",
+            "category_icon",
+            "component",
+            "view_count",
+            "helpful_count",
+            "not_helpful_count",
+            "helpfulness_percentage",
+            "updated_at",
         ]
 
     @extend_schema_field(serializers.FloatField(allow_null=True))
@@ -96,53 +99,53 @@ class HelpTopicListSerializer(serializers.ModelSerializer):
         lang = _get_help_language(self.context)
         if lang and instance.translations:
             lang_data = instance.translations.get(lang, {})
-            if lang_data.get('title'):
-                data['title_i18n_key'] = lang_data['title']
+            if lang_data.get("title"):
+                data["title_i18n_key"] = lang_data["title"]
             # Category name translation
             if instance.category.translations:
                 cat_lang = instance.category.translations.get(lang, {})
-                if cat_lang.get('name'):
-                    data['category_name'] = cat_lang['name']
+                if cat_lang.get("name"):
+                    data["category_name"] = cat_lang["name"]
         return data
 
 
 class HelpTopicDetailSerializer(serializers.ModelSerializer):
     """Detailed serializer for individual help topic"""
 
-    category_name = serializers.CharField(source='category.name', read_only=True)
-    category_slug = serializers.CharField(source='category.slug', read_only=True)
+    category_name = serializers.CharField(source="category.name", read_only=True)
+    category_slug = serializers.CharField(source="category.slug", read_only=True)
     related_topics = serializers.SerializerMethodField()
     helpfulness_percentage = serializers.SerializerMethodField()
 
     class Meta:
         model = HelpTopic
         fields = [
-            'id',
-            'slug',
-            'title_i18n_key',
-            'category_name',
-            'category_slug',
-            'content_markdown',
-            'component',
-            'min_version',
-            'max_version',
-            'keywords',
-            'url_patterns',
-            'related_topics',
-            'view_count',
-            'helpful_count',
-            'not_helpful_count',
-            'helpfulness_percentage',
-            'created_at',
-            'updated_at',
+            "id",
+            "slug",
+            "title_i18n_key",
+            "category_name",
+            "category_slug",
+            "content_markdown",
+            "component",
+            "min_version",
+            "max_version",
+            "keywords",
+            "url_patterns",
+            "related_topics",
+            "view_count",
+            "helpful_count",
+            "not_helpful_count",
+            "helpfulness_percentage",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id',
-            'view_count',
-            'helpful_count',
-            'not_helpful_count',
-            'created_at',
-            'updated_at',
+            "id",
+            "view_count",
+            "helpful_count",
+            "not_helpful_count",
+            "created_at",
+            "updated_at",
         ]
 
     @extend_schema_field(HelpTopicListSerializer(many=True))
@@ -161,15 +164,15 @@ class HelpTopicDetailSerializer(serializers.ModelSerializer):
         lang = _get_help_language(self.context)
         if lang and instance.translations:
             lang_data = instance.translations.get(lang, {})
-            if lang_data.get('title'):
-                data['title_i18n_key'] = lang_data['title']
-            if lang_data.get('content'):
-                data['content_markdown'] = lang_data['content']
+            if lang_data.get("title"):
+                data["title_i18n_key"] = lang_data["title"]
+            if lang_data.get("content"):
+                data["content_markdown"] = lang_data["content"]
             # Category name translation
             if instance.category.translations:
                 cat_lang = instance.category.translations.get(lang, {})
-                if cat_lang.get('name'):
-                    data['category_name'] = cat_lang['name']
+                if cat_lang.get("name"):
+                    data["category_name"] = cat_lang["name"]
         return data
 
 
@@ -179,20 +182,20 @@ class HelpFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = HelpFeedback
         fields = [
-            'id',
-            'topic',
-            'helpful',
-            'comment',
-            'created_at',
+            "id",
+            "topic",
+            "helpful",
+            "comment",
+            "created_at",
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ["id", "created_at"]
 
     def create(self, validated_data):
         """Create feedback and update topic counters"""
         # Set user from request if authenticated
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request and request.user.is_authenticated:
-            validated_data['user'] = request.user
+            validated_data["user"] = request.user
 
         feedback = super().create(validated_data)
 
@@ -202,7 +205,7 @@ class HelpFeedbackSerializer(serializers.ModelSerializer):
             topic.helpful_count += 1
         else:
             topic.not_helpful_count += 1
-        topic.save(update_fields=['helpful_count', 'not_helpful_count'])
+        topic.save(update_fields=["helpful_count", "not_helpful_count"])
 
         return feedback
 
@@ -210,26 +213,17 @@ class HelpFeedbackSerializer(serializers.ModelSerializer):
 class HelpSearchSerializer(serializers.Serializer):
     """Serializer for help search requests"""
 
-    query = serializers.CharField(
-        required=True,
-        max_length=200,
-        help_text=_("Search query")
-    )
+    query = serializers.CharField(required=True, max_length=200, help_text=_("Search query"))
     component = serializers.CharField(
-        required=False,
-        max_length=50,
-        help_text=_("Filter by component")
+        required=False, max_length=50, help_text=_("Filter by component")
     )
-    category = serializers.SlugField(
-        required=False,
-        help_text=_("Filter by category slug")
-    )
+    category = serializers.SlugField(required=False, help_text=_("Filter by category slug"))
     limit = serializers.IntegerField(
         required=False,
         default=10,
         min_value=1,
         max_value=50,
-        help_text=_("Maximum number of results")
+        help_text=_("Maximum number of results"),
     )
 
 
@@ -237,35 +231,25 @@ class HelpSemanticSearchSerializer(serializers.Serializer):
     """Serializer for semantic search requests"""
 
     query = serializers.CharField(
-        required=True,
-        max_length=500,
-        help_text=_("Natural language search query")
+        required=True, max_length=500, help_text=_("Natural language search query")
     )
     language = serializers.CharField(
-        default='en',
+        default="en",
         max_length=10,
-        help_text=_("Language code for search (e.g., 'en', 'es', 'fr')")
+        help_text=_("Language code for search (e.g., 'en', 'es', 'fr')"),
     )
     component = serializers.CharField(
-        required=False,
-        max_length=50,
-        help_text=_("Filter by component")
+        required=False, max_length=50, help_text=_("Filter by component")
     )
-    category = serializers.SlugField(
-        required=False,
-        help_text=_("Filter by category slug")
-    )
+    category = serializers.SlugField(required=False, help_text=_("Filter by category slug"))
     limit = serializers.IntegerField(
-        default=10,
-        min_value=1,
-        max_value=50,
-        help_text=_("Maximum number of results")
+        default=10, min_value=1, max_value=50, help_text=_("Maximum number of results")
     )
     threshold = serializers.FloatField(
         default=0.4,
         min_value=0.0,
         max_value=2.0,
-        help_text=_("Similarity threshold (0-2, lower = more similar)")
+        help_text=_("Similarity threshold (0-2, lower = more similar)"),
     )
 
 
@@ -275,23 +259,22 @@ class HelpContextSerializer(serializers.Serializer):
     url_path = serializers.CharField(
         required=True,
         max_length=500,
-        help_text=_("Current page URL path (e.g., /admin/catalog/products/)")
+        help_text=_("Current page URL path (e.g., /admin/catalog/products/)"),
     )
     component = serializers.CharField(
-        required=False,
-        max_length=50,
-        help_text=_("Current component context")
+        required=False, max_length=50, help_text=_("Current component context")
     )
     limit = serializers.IntegerField(
         required=False,
         default=5,
         min_value=1,
         max_value=20,
-        help_text=_("Maximum number of suggestions")
+        help_text=_("Maximum number of suggestions"),
     )
 
 
 # Admin Metadata API Serializers
+
 
 class AdminTemplatesSerializer(serializers.Serializer):
     """Serializer for ModelAdmin template configurations"""
@@ -333,7 +316,7 @@ class AdminFormConfigurationSerializer(serializers.Serializer):
 class AdminInlineSerializer(serializers.Serializer):
     """Serializer for ModelAdmin inline formsets"""
 
-    inline_class = serializers.CharField(source='class')
+    inline_class = serializers.CharField(source="class")
     model = serializers.CharField(allow_null=True, required=False)
     extra = serializers.IntegerField()
     max_num = serializers.IntegerField(allow_null=True, required=False)

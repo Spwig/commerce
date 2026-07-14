@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 class POSPaymentBreakdownSerializer(serializers.Serializer):
     """Payment method breakdown in a report."""
+
     method = serializers.CharField()
     total = serializers.DecimalField(max_digits=10, decimal_places=2)
     count = serializers.IntegerField()
@@ -10,6 +11,7 @@ class POSPaymentBreakdownSerializer(serializers.Serializer):
 
 class POSDailyReportSerializer(serializers.Serializer):
     """Daily sales report."""
+
     date = serializers.DateField()
     total_sales = serializers.DecimalField(max_digits=10, decimal_places=2)
     total_refunds = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -22,6 +24,7 @@ class POSDailyReportSerializer(serializers.Serializer):
 
 class POSTopProductSerializer(serializers.Serializer):
     """Top selling product in a report."""
+
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     sku = serializers.CharField(allow_blank=True)

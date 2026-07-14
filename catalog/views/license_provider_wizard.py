@@ -2,14 +2,15 @@
 License Provider Connection Wizard Views
 Multi-step wizard for connecting to external license management providers
 """
-from django.shortcuts import render, redirect
-from django.contrib.admin.views.decorators import staff_member_required
+
 from django.contrib import messages
-from django.utils.decorators import method_decorator
-from django.views import View
-from django.utils.translation import gettext as _
-from django.http import JsonResponse
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
+from django.views import View
 
 from catalog.models import LicenseProvider
 from catalog.providers.registry import LicenseProviderRegistry
@@ -19,7 +20,7 @@ from providers_common.utils import load_manifest_translations, validate_credenti
 class WizardSessionMixin:
     """Mixin for managing wizard session data"""
 
-    SESSION_KEY = 'license_provider_wizard_data'
+    SESSION_KEY = "license_provider_wizard_data"
 
     def get_wizard_data(self):
         """Get wizard data from session"""
@@ -42,14 +43,14 @@ class WizardSessionMixin:
             del self.request.session[self.SESSION_KEY]
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(staff_member_required, name="dispatch")
 class ProviderWizardStep1View(WizardSessionMixin, View):
     """
     Step 1: Select Provider Type
     Displays available license provider types
     """
 
-    template_name = 'admin/catalog/licenseprovider/wizard/step1_select.html'
+    template_name = "admin/catalog/licenseprovider/wizard/step1_select.html"
 
     def get(self, request):
         """Display provider selection"""
@@ -61,27 +62,27 @@ class ProviderWizardStep1View(WizardSessionMixin, View):
         available_providers = LicenseProviderRegistry.list_providers()
 
         context = {
-            'title': _('Connect License Provider - Select Provider'),
-            'providers': available_providers,
-            'step': 1,
-            'total_steps': 4,
+            "title": _("Connect License Provider - Select Provider"),
+            "providers": available_providers,
+            "step": 1,
+            "total_steps": 4,
         }
 
         return render(request, self.template_name, context)
 
     def post(self, request):
         """Handle provider selection"""
-        provider_key = request.POST.get('provider_key')
+        provider_key = request.POST.get("provider_key")
 
         if not provider_key:
-            messages.error(request, _('Please select a provider.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.error(request, _("Please select a provider."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         # Validate provider exists
         provider_class = LicenseProviderRegistry.get_provider(provider_key)
         if not provider_class:
-            messages.error(request, _('Invalid provider selected.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.error(request, _("Invalid provider selected."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         # Store selected provider in session
         self.update_wizard_data(
@@ -89,31 +90,31 @@ class ProviderWizardStep1View(WizardSessionMixin, View):
             provider_name=provider_class.provider_name,
         )
 
-        return redirect('catalog_admin:license_provider_wizard_step2')
+        return redirect("catalog_admin:license_provider_wizard_step2")
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(staff_member_required, name="dispatch")
 class ProviderWizardStep2View(WizardSessionMixin, View):
     """
     Step 2: Setup Instructions
     Shows provider-specific setup instructions
     """
 
-    template_name = 'admin/catalog/licenseprovider/wizard/step2_setup.html'
+    template_name = "admin/catalog/licenseprovider/wizard/step2_setup.html"
 
     def get(self, request):
         """Display setup instructions"""
         wizard_data = self.get_wizard_data()
-        provider_key = wizard_data.get('provider_key')
+        provider_key = wizard_data.get("provider_key")
 
         if not provider_key:
-            messages.warning(request, _('Please select a provider first.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.warning(request, _("Please select a provider first."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         provider_class = LicenseProviderRegistry.get_provider(provider_key)
         if not provider_class:
-            messages.error(request, _('Provider not found.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.error(request, _("Provider not found."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         # Get setup instructions from provider
         setup_instructions = self._get_setup_instructions(provider_key)
@@ -121,19 +122,19 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
         # Load manifest translations for i18n (only for component-based providers)
         manifest_translations = None
         try:
-            if hasattr(provider_class, '_component_path') and provider_class._component_path:
+            if hasattr(provider_class, "_component_path") and provider_class._component_path:
                 manifest_translations = load_manifest_translations(provider_class._component_path)
         except Exception:
             manifest_translations = None
 
         context = {
-            'title': _('Connect License Provider - Setup Instructions'),
-            'provider_name': provider_class.provider_name,
-            'provider_key': provider_key,
-            'instructions_html': setup_instructions,
-            'step': 2,
-            'total_steps': 4,
-            'manifest_translations': manifest_translations,
+            "title": _("Connect License Provider - Setup Instructions"),
+            "provider_name": provider_class.provider_name,
+            "provider_key": provider_key,
+            "instructions_html": setup_instructions,
+            "step": 2,
+            "total_steps": 4,
+            "manifest_translations": manifest_translations,
         }
 
         return render(request, self.template_name, context)
@@ -141,34 +142,36 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
     def post(self, request):
         """Handle continue to credentials"""
         # Just continue to next step - no form data to process
-        return redirect('catalog_admin:license_provider_wizard_step3')
+        return redirect("catalog_admin:license_provider_wizard_step3")
 
     def _get_setup_instructions(self, provider_key):
         """Get HTML setup instructions for provider"""
         from django.utils.safestring import mark_safe
-        from pathlib import Path
 
         # Get provider class to check if it's a component
         provider_class = LicenseProviderRegistry.get_provider(provider_key)
 
         # Try to load from component first
-        if provider_class and hasattr(provider_class, '_component_path'):
+        if provider_class and hasattr(provider_class, "_component_path"):
             component_path = provider_class._component_path
-            setup_file = component_path / 'setup_instructions.html'
+            setup_file = component_path / "setup_instructions.html"
 
             if setup_file.exists():
                 try:
-                    with open(setup_file, 'r', encoding='utf-8') as f:
+                    with open(setup_file, encoding="utf-8") as f:
                         return mark_safe(f.read())
                 except Exception as e:
                     # Log error and fall back to hardcoded instructions
                     import logging
+
                     logger = logging.getLogger(__name__)
-                    logger.error(f"Failed to load setup instructions from component {provider_key}: {e}")
+                    logger.error(
+                        f"Failed to load setup instructions from component {provider_key}: {e}"
+                    )
 
         # Fallback to hardcoded instructions for built-in providers or if component file not found
         instructions = {
-            'spwig_server': _("""
+            "spwig_server": _("""
                 <h3>Spwig Built-in License Server</h3>
                 <p>Spwig's built-in license management server is fully-managed and requires no external setup!</p>
                 <ol>
@@ -180,7 +183,7 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
                     <strong>Recommended:</strong> The built-in license server provides the easiest integration with full feature support.
                 </div>
             """),
-            'keygen': _("""
+            "keygen": _("""
                 <h3>Keygen.sh Setup</h3>
                 <ol>
                     <li>Sign up for a Keygen.sh account at <a href="https://keygen.sh" target="_blank">keygen.sh</a></li>
@@ -191,7 +194,7 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
                 </ol>
                 <p>You'll need: <strong>Account ID</strong> and <strong>Product API Token</strong></p>
             """),
-            'licensespring': _("""
+            "licensespring": _("""
                 <h3>License Spring Setup</h3>
                 <ol>
                     <li>Sign up for License Spring at <a href="https://licensespring.com" target="_blank">licensespring.com</a></li>
@@ -203,7 +206,7 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
                 </ol>
                 <p>You'll need: <strong>Management API Key</strong>, <strong>Shared Key</strong>, and <strong>Product Code</strong></p>
             """),
-            'cryptlex': _("""
+            "cryptlex": _("""
                 <h3>Cryptlex Setup</h3>
                 <ol>
                     <li>Sign up for Cryptlex at <a href="https://cryptlex.com" target="_blank">cryptlex.com</a></li>
@@ -214,7 +217,7 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
                 </ol>
                 <p>You'll need: <strong>Access Token</strong>, <strong>Product ID</strong>, and <strong>Account ID</strong></p>
             """),
-            'custom': _("""
+            "custom": _("""
                 <h3>Custom API Setup</h3>
                 <p>This option allows you to integrate with your own license server.</p>
                 <div class="alert alert-warning">
@@ -231,31 +234,31 @@ class ProviderWizardStep2View(WizardSessionMixin, View):
             """),
         }
 
-        return mark_safe(instructions.get(provider_key, _('No setup instructions available.')))
+        return mark_safe(instructions.get(provider_key, _("No setup instructions available.")))
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(staff_member_required, name="dispatch")
 class ProviderWizardStep3View(WizardSessionMixin, View):
     """
     Step 3: Enter Credentials
     Dynamic form based on provider's credential schema
     """
 
-    template_name = 'admin/catalog/licenseprovider/wizard/step3_credentials.html'
+    template_name = "admin/catalog/licenseprovider/wizard/step3_credentials.html"
 
     def get(self, request):
         """Display credentials form"""
         wizard_data = self.get_wizard_data()
-        provider_key = wizard_data.get('provider_key')
+        provider_key = wizard_data.get("provider_key")
 
         if not provider_key:
-            messages.warning(request, _('Please select a provider first.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.warning(request, _("Please select a provider first."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         provider_class = LicenseProviderRegistry.get_provider(provider_key)
         if not provider_class:
-            messages.error(request, _('Provider not found.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.error(request, _("Provider not found."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         # Get credential schema from provider
         # Create a temporary instance just to get schema
@@ -263,12 +266,12 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
         credential_schema = temp_instance.credential_schema
 
         context = {
-            'title': _('Connect License Provider - Enter Credentials'),
-            'provider_name': provider_class.provider_name,
-            'provider_key': provider_key,
-            'credential_schema': credential_schema,
-            'step': 3,
-            'total_steps': 4,
+            "title": _("Connect License Provider - Enter Credentials"),
+            "provider_name": provider_class.provider_name,
+            "provider_key": provider_key,
+            "credential_schema": credential_schema,
+            "step": 3,
+            "total_steps": 4,
         }
 
         return render(request, self.template_name, context)
@@ -276,15 +279,15 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
     def post(self, request):
         """Handle credentials submission"""
         wizard_data = self.get_wizard_data()
-        provider_key = wizard_data.get('provider_key')
+        provider_key = wizard_data.get("provider_key")
 
         if not provider_key:
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         provider_class = LicenseProviderRegistry.get_provider(provider_key)
         if not provider_class:
-            messages.error(request, _('Provider not found.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.error(request, _("Provider not found."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         # Get credential schema
         temp_instance = provider_class(provider=None)
@@ -302,17 +305,18 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
                 continue
 
             # Parse JSON fields (like endpoint_mapping)
-            if field_config.get('type') == 'json' and isinstance(value, str):
+            if field_config.get("type") == "json" and isinstance(value, str):
                 try:
                     import json
+
                     value = json.loads(value)
                 except json.JSONDecodeError:
-                    field_title = field_config.get('title', field_name)
-                    errors.append(_('%(field)s must be valid JSON.') % {'field': field_title})
+                    field_title = field_config.get("title", field_name)
+                    errors.append(_("%(field)s must be valid JSON.") % {"field": field_title})
                     continue
 
             # Store in appropriate dict based on field type
-            if field_config.get('secret', False):
+            if field_config.get("secret", False):
                 credentials[field_name] = value
             else:
                 config[field_name] = value
@@ -323,75 +327,68 @@ class ProviderWizardStep3View(WizardSessionMixin, View):
             return self.get(request)
 
         # Get optional provider name from form
-        provider_name = request.POST.get('provider_name', '').strip()
+        provider_name = request.POST.get("provider_name", "").strip()
         if not provider_name:
             provider_name = provider_class.provider_name
 
         # Store credentials and config in session
-        self.update_wizard_data(
-            credentials=credentials,
-            config=config,
-            provider_name=provider_name
-        )
+        self.update_wizard_data(credentials=credentials, config=config, provider_name=provider_name)
 
-        return redirect('catalog_admin:license_provider_wizard_step4')
+        return redirect("catalog_admin:license_provider_wizard_step4")
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(staff_member_required, name="dispatch")
 class ProviderWizardStep4View(WizardSessionMixin, View):
     """
     Step 4: Test Connection & Save
     Tests the provider connection with entered credentials and saves if successful
     """
 
-    template_name = 'admin/catalog/licenseprovider/wizard/step4_test.html'
+    template_name = "admin/catalog/licenseprovider/wizard/step4_test.html"
 
     def get(self, request):
         """Display test connection page"""
         wizard_data = self.get_wizard_data()
 
-        if not wizard_data.get('provider_key') or not wizard_data.get('credentials'):
-            messages.warning(request, _('Please complete previous steps first.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+        if not wizard_data.get("provider_key") or not wizard_data.get("credentials"):
+            messages.warning(request, _("Please complete previous steps first."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
-        provider_key = wizard_data.get('provider_key')
+        provider_key = wizard_data.get("provider_key")
         provider_class = LicenseProviderRegistry.get_provider(provider_key)
 
         if not provider_class:
-            messages.error(request, _('Provider not found.'))
-            return redirect('catalog_admin:license_provider_wizard_step1')
+            messages.error(request, _("Provider not found."))
+            return redirect("catalog_admin:license_provider_wizard_step1")
 
         context = {
-            'title': _('Connect License Provider - Test Connection'),
-            'provider_name': provider_class.provider_name,
-            'provider_key': provider_key,
-            'step': 4,
-            'total_steps': 4,
+            "title": _("Connect License Provider - Test Connection"),
+            "provider_name": provider_class.provider_name,
+            "provider_key": provider_key,
+            "step": 4,
+            "total_steps": 4,
         }
 
         return render(request, self.template_name, context)
 
     def post(self, request):
         """Perform connection test and save if successful"""
-        action = request.POST.get('action', 'test')
+        action = request.POST.get("action", "test")
 
         wizard_data = self.get_wizard_data()
-        provider_key = wizard_data.get('provider_key')
-        credentials = wizard_data.get('credentials', {})
-        config = wizard_data.get('config', {})
-        provider_name = wizard_data.get('provider_name', '')
+        provider_key = wizard_data.get("provider_key")
+        credentials = wizard_data.get("credentials", {})
+        config = wizard_data.get("config", {})
+        provider_name = wizard_data.get("provider_name", "")
 
         if not provider_key or not credentials:
-            return JsonResponse({'success': False, 'error': 'Missing data'}, status=400)
+            return JsonResponse({"success": False, "error": "Missing data"}, status=400)
 
         provider_class = LicenseProviderRegistry.get_provider(provider_key)
         if not provider_class:
-            return JsonResponse({
-                'success': False,
-                'error': _('Provider not found.')
-            }, status=404)
+            return JsonResponse({"success": False, "error": _("Provider not found.")}, status=404)
 
-        if action == 'test':
+        if action == "test":
             # Test connection only
             try:
                 # Merge all credentials into config for adapter
@@ -401,9 +398,15 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
                 temp_provider = LicenseProvider(
                     provider_type=provider_key,
                     name=provider_name,
-                    api_key=credentials.get('api_key', credentials.get('api_token', credentials.get('access_token', credentials.get('auth_token', '')))),
-                    api_secret=credentials.get('api_secret', credentials.get('auth_secret', '')),
-                    api_endpoint=config.get('api_endpoint', ''),
+                    api_key=credentials.get(
+                        "api_key",
+                        credentials.get(
+                            "api_token",
+                            credentials.get("access_token", credentials.get("auth_token", "")),
+                        ),
+                    ),
+                    api_secret=credentials.get("api_secret", credentials.get("auth_secret", "")),
+                    api_endpoint=config.get("api_endpoint", ""),
                     provider_config=temp_config,  # Pass merged config to the model field
                 )
 
@@ -413,18 +416,15 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
 
                 # Store test result in session
                 self.update_wizard_data(
-                    connection_test_passed=test_result.get('success', False),
-                    connection_test_message=test_result.get('message', ''),
+                    connection_test_passed=test_result.get("success", False),
+                    connection_test_message=test_result.get("message", ""),
                 )
 
                 return JsonResponse(test_result)
             except Exception as e:
-                return JsonResponse({
-                    'success': False,
-                    'error': str(e)
-                }, status=500)
+                return JsonResponse({"success": False, "error": str(e)}, status=500)
 
-        elif action == 'save':
+        elif action == "save":
             # Save provider
             try:
                 # Merge all credentials into config for adapter
@@ -434,50 +434,66 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
                 temp_provider = LicenseProvider(
                     provider_type=provider_key,
                     name=provider_name,
-                    api_key=credentials.get('api_key', credentials.get('api_token', credentials.get('access_token', credentials.get('auth_token', '')))),
-                    api_secret=credentials.get('api_secret', credentials.get('auth_secret', '')),
-                    api_endpoint=config.get('api_endpoint', ''),
+                    api_key=credentials.get(
+                        "api_key",
+                        credentials.get(
+                            "api_token",
+                            credentials.get("access_token", credentials.get("auth_token", "")),
+                        ),
+                    ),
+                    api_secret=credentials.get("api_secret", credentials.get("auth_secret", "")),
+                    api_endpoint=config.get("api_endpoint", ""),
                     provider_config=temp_config,
                 )
 
                 adapter = provider_class(temp_provider)
                 test_result = adapter.test_connection()
 
-                if not test_result.get('success'):
-                    return JsonResponse({
-                        'success': False,
-                        'error': test_result.get('error', _('Connection test failed'))
-                    }, status=400)
+                if not test_result.get("success"):
+                    return JsonResponse(
+                        {
+                            "success": False,
+                            "error": test_result.get("error", _("Connection test failed")),
+                        },
+                        status=400,
+                    )
 
                 # Create provider
                 with transaction.atomic():
                     provider = LicenseProvider.objects.create(
                         provider_type=provider_key,
                         name=provider_name,
-                        api_key=credentials.get('api_key', credentials.get('api_token', credentials.get('access_token', credentials.get('auth_token', '')))),
-                        api_secret=credentials.get('api_secret', credentials.get('auth_secret', '')),
-                        api_endpoint=config.get('api_endpoint', ''),
-                        webhook_secret='',  # Can be set later if needed
+                        api_key=credentials.get(
+                            "api_key",
+                            credentials.get(
+                                "api_token",
+                                credentials.get("access_token", credentials.get("auth_token", "")),
+                            ),
+                        ),
+                        api_secret=credentials.get(
+                            "api_secret", credentials.get("auth_secret", "")
+                        ),
+                        api_endpoint=config.get("api_endpoint", ""),
+                        webhook_secret="",  # Can be set later if needed
                         provider_config=temp_config,  # Merged config with all settings
                         is_active=True,
                         sync_on_order=True,  # Sync license to provider when order is placed
-                        connection_status='connected',
+                        connection_status="connected",
                     )
 
                 # Clear wizard data
                 self.clear_wizard_data()
 
-                return JsonResponse({
-                    'success': True,
-                    'message': _('Provider connected successfully!'),
-                    'redirect_url': f'/admin/catalog/licenseprovider/{provider.id}/change/'
-                })
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "message": _("Provider connected successfully!"),
+                        "redirect_url": f"/admin/catalog/licenseprovider/{provider.id}/change/",
+                    }
+                )
 
             except Exception as e:
-                return JsonResponse({
-                    'success': False,
-                    'error': str(e)
-                }, status=500)
+                return JsonResponse({"success": False, "error": str(e)}, status=500)
 
         else:
-            return JsonResponse({'success': False, 'error': 'Invalid action'}, status=400)
+            return JsonResponse({"success": False, "error": "Invalid action"}, status=400)

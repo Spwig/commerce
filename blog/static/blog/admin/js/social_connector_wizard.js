@@ -6,21 +6,25 @@
  * The value of that attribute is the CSS class of the selectable cards.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var containers = document.querySelectorAll('[data-card-selector-class]');
-        containers.forEach(function (container) {
-            var cardClass = container.dataset.cardSelectorClass;
-            var cards = container.querySelectorAll('.' + cardClass);
-            cards.forEach(function (card) {
-                card.addEventListener('click', function () {
-                    cards.forEach(function (c) { c.classList.remove('selected'); });
-                    this.classList.add('selected');
-                    var radio = this.querySelector('input[type="radio"]');
-                    if (radio) { radio.checked = true; }
-                });
-            });
+  document.addEventListener('DOMContentLoaded', function () {
+    const containers = document.querySelectorAll('[data-card-selector-class]');
+    containers.forEach(function (container) {
+      const cardClass = container.dataset.cardSelectorClass;
+      const cards = container.querySelectorAll('.' + cardClass);
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          cards.forEach(function (c) {
+            c.classList.remove('selected');
+          });
+          this.classList.add('selected');
+          const radio = this.querySelector('input[type="radio"]');
+          if (radio) {
+            radio.checked = true;
+          }
         });
+      });
     });
-}());
+  });
+})();

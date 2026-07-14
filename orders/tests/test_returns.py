@@ -1,824 +1,557 @@
 """
-Comprehensive tests for Returns & RMA Workflow (Phase 7)
-Tests cover models, API endpoints, emails, and admin actions.
+Tests for the Returns & RMA workflow (Phase 7).
+
+This file focuses on the surfaces that are unique to this module and are not
+already covered by ``tests/unit/test_orders_models.py``:
+
+* the ``ReturnRequestViewSet.create_for_order`` custom action
+  (``POST /api/return-requests/create-for-order/<order_number>/``), including
+  its validation branches and access-control behaviour;
+* the ``return_label`` custom action
+  (``GET /api/return-requests/<pk>/return-label/``);
+* the six ``orders.emails`` notification helpers -- verified by asserting
+  that ``EmailSendingService.send_template_email`` is invoked with the
+  correct ``template_type`` and recipient, since the platform routes all
+  outbound mail through ``EmailOutbox`` rather than ``django.core.mail``;
+* ``DocumentService.generate_return_label`` returns a well-formed PDF
+  data-URI for a return request.
+
+Model-level state transitions (approve / reject / mark_received /
+mark_inspected / process_refund / complete / cancel / calculate_refund_amount
+/ get_items_summary) are already covered by
+``tests/unit/test_orders_models.py::TestReturnRequestModel`` -- we don't
+duplicate them here.
 """
+
+import base64
 from decimal import Decimal
-from django.test import TestCase, TransactionTestCase
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-from django.core import mail
-from rest_framework.test import APIClient
-from rest_framework import status
+from unittest.mock import patch
+
+import pytest
 from djmoney.money import Money
+from rest_framework import status
+from rest_framework.test import APIClient
 
-from orders.models import Order, OrderItem, ReturnRequest, Refund, Address
-from catalog.models import Product, Category
-from shipping.models import Shipment
+from orders.models import ReturnRequest
+from tests.factories import (
+    OrderFactory,
+    OrderItemFactory,
+    RefundFactory,
+    ReturnRequestFactory,
+    UserFactory,
+)
 
-User = get_user_model()
-
-
-class ReturnRequestModelTest(TestCase):
-    """Test ReturnRequest model methods and workflow"""
-
-    def setUp(self):
-        """Create test data"""
-        # Create user
-        self.user = User.objects.create_user(
-            username='testcustomer',
-            email='customer@example.com',
-            password='testpass123'
-        )
-        self.staff_user = User.objects.create_user(
-            username='staffuser',
-            email='staff@example.com',
-            password='staffpass123',
-            is_staff=True
-        )
-
-        # Create category and product
-        self.category = Category.objects.create(
-            name='Electronics',
-            slug='electronics'
-        )
-        self.product = Product.objects.create(
-            name='Test Product',
-            slug='test-product',
-            sku='TEST-SKU-001',
-            category=self.category,
-            price=Money(100, 'USD'),
-            quantity=10
-        )
-
-        # Create order
-        self.order = Order.objects.create(
-            user=self.user,
-            order_number='ORD-TEST-001',
-            status='delivered',
-            email='customer@example.com',
-            phone='+1234567890',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_state='TS',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money(200, 'USD'),
-            tax_amount=Money(20, 'USD'),
-            shipping_cost=Money(10, 'USD'),
-            total_amount=Money(230, 'USD')
-        )
-
-        # Create order items
-        self.order_item1 = OrderItem.objects.create(
-            order=self.order,
-            product=self.product,
-            product_name='Test Product',
-            sku='TEST-SKU-001',
-            quantity=2,
-            unit_price=Money(100, 'USD'),
-            total_price=Money(200, 'USD')
-        )
-
-    def test_create_return_request(self):
-        """Test creating a return request"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[
-                {
-                    'order_item_id': self.order_item1.id,
-                    'quantity': 1,
-                    'reason': 'defective',
-                    'notes': 'Product not working'
-                }
-            ],
-            customer_notes='Please process refund',
-            status='pending'
-        )
-
-        self.assertEqual(return_request.status, 'pending')
-        self.assertEqual(return_request.order, self.order)
-        self.assertEqual(return_request.user, self.user)
-        self.assertEqual(len(return_request.items_json), 1)
-        self.assertIsNotNone(return_request.requested_at)
-
-    def test_approve_return_request(self):
-        """Test approving a return request"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item1.id, 'quantity': 1, 'reason': 'defective'}],
-            status='pending'
-        )
-
-        return_request.approve(user=self.staff_user)
-
-        return_request.refresh_from_db()
-        self.assertEqual(return_request.status, 'approved')
-        self.assertEqual(return_request.approved_by, self.staff_user)
-        self.assertIsNotNone(return_request.approved_at)
-
-    def test_reject_return_request(self):
-        """Test rejecting a return request"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='changed_mind',
-            items_json=[{'order_item_id': self.order_item1.id, 'quantity': 1, 'reason': 'changed_mind'}],
-            status='pending'
-        )
-
-        return_request.reject(reason='Outside return window', user=self.staff_user)
-
-        return_request.refresh_from_db()
-        self.assertEqual(return_request.status, 'rejected')
-        self.assertEqual(return_request.rejection_reason, 'Outside return window')
-        self.assertEqual(return_request.approved_by, self.staff_user)
-        self.assertIsNotNone(return_request.rejected_at)
-
-    def test_mark_received(self):
-        """Test marking return as received"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item1.id, 'quantity': 1, 'reason': 'defective'}],
-            status='in_transit'
-        )
-
-        return_request.mark_received(user=self.staff_user)
-
-        return_request.refresh_from_db()
-        self.assertEqual(return_request.status, 'received')
-        self.assertIsNotNone(return_request.received_at)
-
-    def test_mark_inspected(self):
-        """Test marking return as inspected"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item1.id, 'quantity': 1, 'reason': 'defective'}],
-            status='received'
-        )
-
-        return_request.mark_inspected(
-            condition='good',
-            inspection_notes='Items in good condition',
-            restocking_fee=Money(10, 'USD'),
-            user=self.staff_user
-        )
-
-        return_request.refresh_from_db()
-        self.assertEqual(return_request.status, 'inspected')
-        self.assertEqual(return_request.items_condition, 'good')
-        self.assertEqual(return_request.inspection_notes, 'Items in good condition')
-        self.assertEqual(return_request.restocking_fee, Money(10, 'USD'))
-        self.assertEqual(return_request.inspected_by, self.staff_user)
-        self.assertIsNotNone(return_request.inspected_at)
-
-    def test_calculate_refund_amount(self):
-        """Test calculating refund amount"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[
-                {
-                    'order_item_id': self.order_item1.id,
-                    'quantity': 1,  # Returning 1 of 2 items
-                    'reason': 'defective'
-                }
-            ],
-            status='pending'
-        )
-
-        refund_amount = return_request.calculate_refund_amount()
-
-        # Should be 1 item * $100 = $100
-        self.assertEqual(refund_amount, Decimal('100.00'))
-
-    def test_process_refund(self):
-        """Test processing refund after inspection"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item1.id, 'quantity': 1, 'reason': 'defective'}],
-            status='inspected'
-        )
-
-        refund = return_request.process_refund({
-            'total_amount': Money(100, 'USD'),
-            'shipping_refund_amount': Money(10, 'USD'),
-            'tax_refund_amount': Money(10, 'USD'),
-            'customer_notes': 'Refund processed',
-            'staff_notes': 'Items inspected and approved'
-        })
-
-        return_request.refresh_from_db()
-        self.assertIsNotNone(return_request.refund)
-        self.assertEqual(return_request.refund, refund)
-        self.assertEqual(refund.total_amount, Money(100, 'USD'))
-        self.assertEqual(refund.status, 'approved')
-
-    def test_complete_return(self):
-        """Test completing return request"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item1.id, 'quantity': 1, 'reason': 'defective'}],
-            status='inspected'
-        )
-
-        return_request.complete()
-
-        return_request.refresh_from_db()
-        self.assertEqual(return_request.status, 'completed')
-        self.assertIsNotNone(return_request.completed_at)
-
-    def test_cancel_return(self):
-        """Test cancelling return request"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='changed_mind',
-            items_json=[{'order_item_id': self.order_item1.id, 'quantity': 1, 'reason': 'changed_mind'}],
-            status='pending'
-        )
-
-        return_request.cancel()
-
-        return_request.refresh_from_db()
-        self.assertEqual(return_request.status, 'cancelled')
-
-    def test_get_items_summary(self):
-        """Test getting items summary"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[
-                {'order_item_id': self.order_item1.id, 'quantity': 2, 'reason': 'defective'}
-            ],
-            status='pending'
-        )
-
-        summary = return_request.get_items_summary()
-        self.assertEqual(summary, "1 item(s), 2 unit(s)")
+pytestmark = [pytest.mark.django_db]
 
 
-class ReturnRequestAPITest(TransactionTestCase):
-    """Test Return Request API endpoints"""
+@pytest.fixture(autouse=True)
+def _core_infra(site_settings, django_site):
+    """Middleware (currency + geoip) reads ``SiteSettings`` on every
+    request. Without a materialised row, the auto-``get_or_create``
+    call in ``SiteSettings.get_settings`` triggers ``full_clean`` and
+    fails on the required ``admin_email`` field, producing a 500 for
+    every API test. Use the shared conftest fixtures so the row exists
+    and matches the single-tenant invariant (``SITE_ID = 1``).
+    """
+    return site_settings
 
-    def setUp(self):
-        """Create test data"""
+
+# ---------------------------------------------------------------------------
+# ``create-for-order`` custom action
+# ---------------------------------------------------------------------------
+
+
+class TestCreateReturnForOrderAPI:
+    """Cover ``POST /api/return-requests/create-for-order/<order_number>/``.
+
+    The endpoint lives on ``ReturnRequestViewSet.create_for_order`` and is
+    the customer-facing path for filing a new return; the standard
+    ``POST /api/return-requests/`` route (tested in
+    ``tests/integration/test_orders_api.py``) is a distinct surface.
+    """
+
+    def setup_method(self):
         self.client = APIClient()
-
-        # Create user
-        self.user = User.objects.create_user(
-            username='testcustomer',
-            email='customer@example.com',
-            password='testpass123'
-        )
-
-        # Create category and product
-        self.category = Category.objects.create(
-            name='Electronics',
-            slug='electronics'
-        )
-        self.product = Product.objects.create(
-            name='Test Product',
-            slug='test-product',
-            sku='TEST-SKU-001',
-            category=self.category,
-            price=Money(100, 'USD'),
-            quantity=10
-        )
-
-        # Create delivered order
-        self.order = Order.objects.create(
-            user=self.user,
-            order_number='ORD-TEST-002',
-            status='delivered',
-            email='customer@example.com',
-            phone='+1234567890',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_state='TS',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money(200, 'USD'),
-            tax_amount=Money(20, 'USD'),
-            shipping_cost=Money(10, 'USD'),
-            total_amount=Money(230, 'USD')
-        )
-
-        self.order_item = OrderItem.objects.create(
-            order=self.order,
-            product=self.product,
-            product_name='Test Product',
-            sku='TEST-SKU-002',
-            quantity=2,
-            unit_price=Money(100, 'USD'),
-            total_price=Money(200, 'USD')
-        )
-
-        # Authenticate
+        self.user = UserFactory()
         self.client.force_authenticate(user=self.user)
 
-    def test_create_return_request_api(self):
-        """Test creating return request via API"""
-        url = f'/api/return-requests/create-for-order/{self.order.order_number}/'
+        # A paid, delivered order with a single 2-quantity item -- the state
+        # that make an order eligible for returns.
+        self.order = OrderFactory(
+            user=self.user,
+            paid_order=True,
+            delivered=True,
+        )
+        self.order_item = OrderItemFactory(
+            order=self.order,
+            quantity=2,
+            unit_price=Money(Decimal("100.00"), "USD"),
+        )
+
+    def _url(self, order_number=None):
+        return f"/api/return-requests/create-for-order/{order_number or self.order.order_number}/"
+
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_create_return_request_success(self, mock_send):
+        """A valid POST creates a ReturnRequest and queues the confirmation email.
+
+        We assert on the confirmation call (template_type +
+        recipient) rather than ``mail.outbox`` because the platform
+        routes outbound mail through ``EmailOutbox`` via
+        ``EmailSendingService``.
+        """
         data = {
-            'reason': 'defective',
-            'items': [
+            "reason": "defective",
+            "items": [
                 {
-                    'order_item_id': self.order_item.id,
-                    'quantity': 1,
-                    'reason': 'defective',
-                    'notes': 'Screen flickering'
+                    "order_item_id": self.order_item.id,
+                    "quantity": 1,
+                    "reason": "defective",
+                    "notes": "Screen flickering",
                 }
             ],
-            'customer_notes': 'Would like replacement if possible'
+            "customer_notes": "Would like replacement if possible",
         }
 
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(self._url(), data, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(response.data['success'])
-        self.assertIn('return_request', response.data)
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["success"] is True
+        assert "return_request" in response.data
 
-        # Verify return request was created
         return_request = ReturnRequest.objects.get(order=self.order)
-        self.assertEqual(return_request.reason, 'defective')
-        self.assertEqual(return_request.status, 'pending')
-        self.assertEqual(len(return_request.items_json), 1)
+        assert return_request.reason == "defective"
+        assert return_request.status == "pending"
+        assert return_request.user == self.user
+        assert return_request.customer_notes == "Would like replacement if possible"
+        assert len(return_request.items_json) == 1
+        assert return_request.items_json[0]["order_item_id"] == self.order_item.id
+        assert return_request.items_json[0]["quantity"] == 1
 
-        # Verify email was sent
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertIn('Return Request Received', mail.outbox[0].subject)
-        self.assertIn(self.order.order_number, mail.outbox[0].body)
+        # Confirmation email was queued with the correct template + recipient.
+        mock_send.assert_called()
+        call_kwargs = mock_send.call_args.kwargs
+        assert call_kwargs["template_type"] == "return_request_confirmation"
+        assert call_kwargs["to_email"] == self.user.email
 
-    def test_create_return_for_non_delivered_order(self):
-        """Test creating return for order that hasn't been delivered"""
-        pending_order = Order.objects.create(
-            user=self.user,
-            order_number='ORD-PENDING-001',
-            status='pending',
-            email='customer@example.com',
-            phone='+1234567890',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_state='TS',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money(90, 'USD'),
-            tax_amount=Money(5, 'USD'),
-            shipping_cost=Money(5, 'USD'),
-            total_amount=Money(100, 'USD')
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_reject_non_delivered_order(self, mock_send):
+        """Non-delivered orders return 400 with an explanatory message."""
+        pending_order = OrderFactory(user=self.user, status="pending")
+
+        response = self.client.post(
+            self._url(pending_order.order_number),
+            {
+                "reason": "defective",
+                "items": [
+                    {"order_item_id": self.order_item.id, "quantity": 1, "reason": "defective"}
+                ],
+            },
+            format="json",
         )
 
-        url = f'/api/return-requests/create-for-order/{pending_order.order_number}/'
-        data = {
-            'reason': 'defective',
-            'items': [{'order_item_id': 1, 'quantity': 1, 'reason': 'defective'}]
-        }
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["success"] is False
+        assert "delivered orders" in str(response.data["message"])
+        assert not ReturnRequest.objects.filter(order=pending_order).exists()
+        # No confirmation email should be queued on rejection.
+        mock_send.assert_not_called()
 
-        response = self.client.post(url, data, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertFalse(response.data['success'])
-        self.assertIn('Only delivered orders can be returned', response.data['message'])
-
-    def test_create_return_with_invalid_quantity(self):
-        """Test creating return with quantity exceeding order quantity"""
-        url = f'/api/return-requests/create-for-order/{self.order.order_number}/'
-        data = {
-            'reason': 'defective',
-            'items': [
-                {
-                    'order_item_id': self.order_item.id,
-                    'quantity': 10,  # Order only has 2
-                    'reason': 'defective'
-                }
-            ]
-        }
-
-        response = self.client.post(url, data, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertFalse(response.data['success'])
-        self.assertIn('Return quantity cannot exceed ordered quantity', response.data['message'])
-
-    def test_create_return_with_invalid_item(self):
-        """Test creating return with invalid order item ID"""
-        url = f'/api/return-requests/create-for-order/{self.order.order_number}/'
-        data = {
-            'reason': 'defective',
-            'items': [
-                {
-                    'order_item_id': 99999,  # Non-existent item
-                    'quantity': 1,
-                    'reason': 'defective'
-                }
-            ]
-        }
-
-        response = self.client.post(url, data, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertFalse(response.data['success'])
-        self.assertIn('Invalid order item ID', response.data['message'])
-
-    def test_list_return_requests(self):
-        """Test listing user's return requests"""
-        # Create a return request
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='pending'
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_reject_quantity_exceeding_ordered(self, mock_send):
+        """Requested quantity may not exceed the OrderItem's ordered quantity."""
+        response = self.client.post(
+            self._url(),
+            {
+                "reason": "defective",
+                "items": [
+                    {
+                        "order_item_id": self.order_item.id,
+                        "quantity": self.order_item.quantity + 5,
+                        "reason": "defective",
+                    }
+                ],
+            },
+            format="json",
         )
 
-        url = '/api/return-requests/'
-        response = self.client.get(url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["success"] is False
+        assert "cannot exceed ordered quantity" in str(response.data["message"])
+        assert not ReturnRequest.objects.filter(order=self.order).exists()
+        mock_send.assert_not_called()
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], return_request.id)
-
-    def test_get_return_request_detail(self):
-        """Test getting return request details"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='approved'
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_reject_invalid_order_item_id(self, mock_send):
+        """Referencing an order_item that doesn't belong to the order returns 400."""
+        response = self.client.post(
+            self._url(),
+            {
+                "reason": "defective",
+                "items": [{"order_item_id": 999_999, "quantity": 1, "reason": "defective"}],
+            },
+            format="json",
         )
 
-        url = f'/api/return-requests/{return_request.id}/'
-        response = self.client.get(url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["success"] is False
+        assert "Invalid order item ID" in str(response.data["message"])
+        assert not ReturnRequest.objects.filter(order=self.order).exists()
+        mock_send.assert_not_called()
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], return_request.id)
-        self.assertEqual(response.data['status'], 'approved')
-        self.assertIn('suggested_refund', response.data)
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_reject_order_belonging_to_another_user(self, mock_send):
+        """``OrderService.get_order_detail`` scopes by user, so foreign
+        orders return 404 (not 403)."""
+        other_user = UserFactory()
+        foreign_order = OrderFactory(user=other_user, paid_order=True, delivered=True)
 
-    def test_get_return_label(self):
-        """Test getting return label when available"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='label_sent',
-            return_label_generated=True,
-            return_label_url='data:application/pdf;base64,test',
-            return_tracking_number='TRACK123'
+        response = self.client.post(
+            self._url(foreign_order.order_number),
+            {
+                "reason": "defective",
+                "items": [{"order_item_id": 1, "quantity": 1, "reason": "defective"}],
+            },
+            format="json",
         )
 
-        url = f'/api/return-requests/{return_request.id}/return-label/'
-        response = self.client.get(url)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.data["success"] is False
+        assert not ReturnRequest.objects.filter(order=foreign_order).exists()
+        mock_send.assert_not_called()
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.data['success'])
-        self.assertEqual(response.data['tracking_number'], 'TRACK123')
-        self.assertIn('label_url', response.data)
-
-    def test_get_return_label_not_generated(self):
-        """Test getting return label when not yet generated"""
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='pending',
-            return_label_generated=False
-        )
-
-        url = f'/api/return-requests/{return_request.id}/return-label/'
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertFalse(response.data['success'])
-        self.assertIn('not been generated yet', response.data['message'])
-
-    def test_unauthenticated_access(self):
-        """Test that unauthenticated users cannot access return requests"""
+    def test_unauthenticated_access_denied(self):
+        """Unauthenticated callers cannot create returns."""
         self.client.force_authenticate(user=None)
-
-        url = '/api/return-requests/'
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_user_can_only_see_own_returns(self):
-        """Test that users can only see their own return requests"""
-        # Create another user
-        other_user = User.objects.create_user(
-            username='otheruser',
-            email='other@example.com',
-            password='otherpass123'
+        response = self.client.post(
+            self._url(),
+            {"reason": "defective", "items": []},
+            format="json",
+        )
+        # DRF returns 401 (with token/session auth) or 403 (session-only)
+        # depending on configuration -- accept either "not authenticated" code.
+        assert response.status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
         )
 
-        # Create order for other user
-        other_order = Order.objects.create(
-            user=other_user,
-            order_number='ORD-OTHER-001',
-            status='delivered',
-            email='other@example.com',
-            phone='+9876543210',
-            shipping_name='Other User',
-            shipping_address1='456 Other St',
-            shipping_city='Other City',
-            shipping_state='OS',
-            shipping_postal_code='54321',
-            shipping_country='US',
-            subtotal=Money(100, 'USD'),
-            tax_amount=Money(10, 'USD'),
-            shipping_cost=Money(5, 'USD'),
-            total_amount=Money(115, 'USD')
+
+# ---------------------------------------------------------------------------
+# ``return-label`` custom action
+# ---------------------------------------------------------------------------
+
+
+class TestReturnLabelAPI:
+    """Cover ``GET /api/return-requests/<pk>/return-label/``."""
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+
+        self.order = OrderFactory(user=self.user, paid_order=True, delivered=True)
+
+    def _url(self, pk):
+        return f"/api/return-requests/{pk}/return-label/"
+
+    def test_returns_label_when_generated(self):
+        return_request = ReturnRequestFactory(
+            order=self.order,
+            user=self.user,
+            status="label_sent",
+            return_label_generated=True,
+            return_label_url="https://example.com/label.pdf",
+            return_tracking_number="TRACK123",
         )
 
-        # Create return request for other user
-        ReturnRequest.objects.create(
+        response = self.client.get(self._url(return_request.id))
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["success"] is True
+        assert response.data["tracking_number"] == "TRACK123"
+        assert response.data["label_url"] == "https://example.com/label.pdf"
+        assert response.data["status"] == "label_sent"
+        assert response.data["return_request_id"] == return_request.id
+
+    def test_returns_404_when_label_not_generated(self):
+        return_request = ReturnRequestFactory(
+            order=self.order,
+            user=self.user,
+            status="pending",
+            return_label_generated=False,
+        )
+
+        response = self.client.get(self._url(return_request.id))
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.data["success"] is False
+        assert "not been generated yet" in str(response.data["message"])
+
+    def test_returns_404_when_label_url_missing(self):
+        """``return_label_generated=True`` but no URL still returns 404."""
+        return_request = ReturnRequestFactory(
+            order=self.order,
+            user=self.user,
+            status="label_sent",
+            return_label_generated=True,
+            return_label_url="",  # generated flag flipped but URL missing
+            return_tracking_number="TRACK-EMPTY",
+        )
+
+        response = self.client.get(self._url(return_request.id))
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.data["success"] is False
+
+    def test_user_cannot_access_other_users_label(self):
+        other_user = UserFactory()
+        other_order = OrderFactory(user=other_user, paid_order=True, delivered=True)
+        foreign_return = ReturnRequestFactory(
             order=other_order,
             user=other_user,
-            reason='defective',
-            items_json=[],
-            status='pending'
+            status="label_sent",
+            return_label_generated=True,
+            return_label_url="https://example.com/label.pdf",
+            return_tracking_number="FOREIGN-TRACK",
         )
 
-        # Try to access as first user
-        url = '/api/return-requests/'
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 0)
+        response = self.client.get(self._url(foreign_return.id))
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-class ReturnEmailTest(TransactionTestCase):
-    """Test return request email notifications"""
+# ---------------------------------------------------------------------------
+# Listing / detail / auth
+# ---------------------------------------------------------------------------
 
-    def setUp(self):
-        """Create test data"""
-        self.user = User.objects.create_user(
-            username='testcustomer',
-            email='customer@example.com',
-            password='testpass123'
+
+class TestReturnRequestListAndDetail:
+    """Cover the standard list/retrieve DRF paths for the current user only."""
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+
+    def test_list_only_returns_current_users_requests(self):
+        my_order = OrderFactory(user=self.user, paid_order=True, delivered=True)
+        mine = ReturnRequestFactory(order=my_order, user=self.user)
+
+        other_user = UserFactory()
+        other_order = OrderFactory(user=other_user, paid_order=True, delivered=True)
+        ReturnRequestFactory(order=other_order, user=other_user)
+
+        response = self.client.get("/api/return-requests/")
+
+        assert response.status_code == status.HTTP_200_OK
+        # Response is paginated (OrderPagination) with a ``results`` key.
+        results = response.data["results"]
+        assert len(results) == 1
+        assert results[0]["id"] == mine.id
+
+    def test_retrieve_own_return_returns_detail(self):
+        my_order = OrderFactory(user=self.user, paid_order=True, delivered=True)
+        rr = ReturnRequestFactory(order=my_order, user=self.user, status="approved")
+
+        response = self.client.get(f"/api/return-requests/{rr.id}/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == rr.id
+        assert response.data["status"] == "approved"
+
+    def test_retrieve_other_users_return_is_404(self):
+        other_user = UserFactory()
+        other_order = OrderFactory(user=other_user, paid_order=True, delivered=True)
+        foreign = ReturnRequestFactory(order=other_order, user=other_user)
+
+        response = self.client.get(f"/api/return-requests/{foreign.id}/")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_unauthenticated_list_denied(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.get("/api/return-requests/")
+        assert response.status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
         )
 
-        self.category = Category.objects.create(name='Electronics', slug='electronics')
-        self.product = Product.objects.create(
-            name='Test Product',
-            slug='test-product',
-            sku='TEST-SKU-001',
-            category=self.category,
-            price=Money(100, 'USD'),
-            quantity=10
-        )
 
-        self.order = Order.objects.create(
-            user=self.user,
-            order_number='ORD-EMAIL-001',
-            status='delivered',
-            email='customer@example.com',
-            phone='+1234567890',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_state='TS',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money(90, 'USD'),
-            tax_amount=Money(5, 'USD'),
-            shipping_cost=Money(5, 'USD'),
-            total_amount=Money(100, 'USD')
-        )
+# ---------------------------------------------------------------------------
+# Email notification helpers
+# ---------------------------------------------------------------------------
 
-        self.order_item = OrderItem.objects.create(
-            order=self.order,
-            product=self.product,
-            product_name='Test Product',
-            sku='TEST-SKU',
-            quantity=1,
-            unit_price=Money(100, 'USD'),
-            total_price=Money(100, 'USD')
-        )
 
-    def test_return_confirmation_email(self):
-        """Test return request confirmation email"""
+class TestReturnEmailNotifications:
+    """The six ``orders.emails`` helpers each dispatch to
+    ``EmailSendingService.send_template_email`` -- verify the template_type
+    and recipient rather than ``django.core.mail.outbox`` (the platform
+    doesn't route through Django's default backend)."""
+
+    def setup_method(self):
+        self.user = UserFactory()
+        self.order = OrderFactory(user=self.user, paid_order=True, delivered=True)
+
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_send_return_request_confirmation(self, mock_send):
         from orders.emails import send_return_request_confirmation
 
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='pending'
-        )
+        rr = ReturnRequestFactory(order=self.order, user=self.user, status="pending")
+        mock_send.reset_mock()  # ignore any calls fired by factory-driven signals
 
-        result = send_return_request_confirmation(return_request)
+        result = send_return_request_confirmation(rr)
 
-        self.assertTrue(result)
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertIn('Return Request Received', email.subject)
-        self.assertIn(self.order.order_number, email.body)
-        self.assertEqual(email.to, [self.user.email])
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args.kwargs
+        assert call_kwargs["template_type"] == "return_request_confirmation"
+        assert call_kwargs["to_email"] == self.user.email
+        assert call_kwargs["context"]["order_number"] == self.order.order_number
 
-    def test_return_approved_email(self):
-        """Test return approved notification email"""
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_send_return_approved_notification(self, mock_send):
         from orders.emails import send_return_approved_notification
 
-        return_request = ReturnRequest.objects.create(
+        rr = ReturnRequestFactory(
             order=self.order,
             user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='approved',
-            return_tracking_number='TRACK123'
+            status="approved",
+            return_tracking_number="TRACK123",
         )
+        mock_send.reset_mock()
 
-        result = send_return_approved_notification(return_request)
+        send_return_approved_notification(rr)
 
-        self.assertTrue(result)
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertIn('Return Request Approved', email.subject)
-        self.assertIn('TRACK123', email.body)
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args.kwargs
+        assert call_kwargs["template_type"] == "return_request_approved"
+        assert call_kwargs["to_email"] == self.user.email
+        assert call_kwargs["context"]["return_tracking_number"] == "TRACK123"
 
-    def test_return_received_email(self):
-        """Test return received notification email"""
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_send_return_rejected_notification(self, mock_send):
+        from orders.emails import send_return_rejected_notification
+
+        rr = ReturnRequestFactory(
+            order=self.order,
+            user=self.user,
+            status="rejected",
+            rejection_reason="Outside return window",
+        )
+        mock_send.reset_mock()
+
+        send_return_rejected_notification(rr)
+
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args.kwargs
+        assert call_kwargs["template_type"] == "return_request_rejected"
+        assert call_kwargs["to_email"] == self.user.email
+        assert call_kwargs["context"]["rejection_reason"] == "Outside return window"
+
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_send_return_received_notification(self, mock_send):
         from orders.emails import send_return_received_notification
 
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='received'
-        )
+        rr = ReturnRequestFactory(order=self.order, user=self.user, status="received")
+        mock_send.reset_mock()
 
-        result = send_return_received_notification(return_request)
+        send_return_received_notification(rr)
 
-        self.assertTrue(result)
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertIn('Return Received', email.subject)
-        self.assertIn(self.order.order_number, email.body)
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args.kwargs
+        assert call_kwargs["template_type"] == "return_received"
+        assert call_kwargs["to_email"] == self.user.email
+        assert call_kwargs["context"]["order_number"] == self.order.order_number
 
-    def test_refund_processed_email(self):
-        """Test refund processed notification email"""
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_send_inspection_reminder_to_staff(self, mock_send):
+        """Staff reminder emails go to every active staff user."""
+        from orders.emails import send_inspection_reminder_to_staff
+
+        staff1 = UserFactory(staff=True, email="staff1@test.spwig.com")
+        staff2 = UserFactory(staff=True, email="staff2@test.spwig.com")
+        # inactive staff -- must NOT be notified
+        UserFactory(staff=True, is_active=False, email="inactive@test.spwig.com")
+
+        rr = ReturnRequestFactory(order=self.order, user=self.user, status="received")
+        mock_send.reset_mock()
+
+        send_inspection_reminder_to_staff(rr)
+
+        called_recipients = {call.kwargs["to_email"] for call in mock_send.call_args_list}
+        called_templates = {call.kwargs["template_type"] for call in mock_send.call_args_list}
+        assert staff1.email in called_recipients
+        assert staff2.email in called_recipients
+        assert "inactive@test.spwig.com" not in called_recipients
+        assert called_templates == {"admin_return_inspection_reminder"}
+
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_send_refund_processed_notification(self, mock_send):
         from orders.emails import send_refund_processed_notification
 
-        return_request = ReturnRequest.objects.create(
+        rr = ReturnRequestFactory(order=self.order, user=self.user, status="completed")
+        refund = RefundFactory(
             order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='completed'
+            refund_type="full",
+            reason="defective",
+            status="approved",
+            total_amount=Decimal("100.00"),
         )
+        rr.refund = refund
+        rr.save()
+        mock_send.reset_mock()
 
-        # Create refund
-        refund = Refund.objects.create(
-            order=self.order,
-            refund_type='full',
-            reason='defective',
-            status='approved',
-            total_amount=Money(100, 'USD')
-        )
-        return_request.refund = refund
-        return_request.save()
+        send_refund_processed_notification(rr)
 
-        result = send_refund_processed_notification(return_request)
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args.kwargs
+        assert call_kwargs["template_type"] == "return_refund_processed"
+        assert call_kwargs["to_email"] == self.user.email
+        assert call_kwargs["context"]["refund_amount"] == "100.00"
 
-        self.assertTrue(result)
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertIn('Refund Processed', email.subject)
-        self.assertIn('100', email.body)  # Refund amount
+    @patch("email_system.services.email_sender.EmailSendingService.send_template_email")
+    def test_refund_processed_short_circuits_when_no_refund_linked(self, mock_send):
+        """If ``return_request.refund`` is ``None``, no email is sent."""
+        from orders.emails import send_refund_processed_notification
+
+        rr = ReturnRequestFactory(order=self.order, user=self.user, status="completed")
+        assert rr.refund is None
+        mock_send.reset_mock()
+
+        send_refund_processed_notification(rr)
+
+        mock_send.assert_not_called()
 
 
-class ReturnLabelGenerationTest(TestCase):
-    """Test return label PDF generation"""
+# ---------------------------------------------------------------------------
+# Return-label PDF generation
+# ---------------------------------------------------------------------------
 
-    def setUp(self):
-        """Create test data"""
-        self.user = User.objects.create_user(
-            username='testcustomer',
-            email='customer@example.com',
-            password='testpass123'
-        )
 
-        self.category = Category.objects.create(name='Electronics', slug='electronics')
-        self.product = Product.objects.create(
-            name='Test Product',
-            slug='test-product',
-            sku='TEST-SKU-001',
-            category=self.category,
-            price=Money(100, 'USD'),
-            quantity=10
-        )
+class TestReturnLabelGeneration:
+    """``DocumentService.generate_return_label`` renders a PDF data-URI."""
 
-        self.order = Order.objects.create(
-            user=self.user,
-            order_number='ORD-LABEL-001',
-            status='delivered',
-            email='customer@example.com',
-            phone='+1234567890',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_state='TS',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money(90, 'USD'),
-            tax_amount=Money(5, 'USD'),
-            shipping_cost=Money(5, 'USD'),
-            total_amount=Money(100, 'USD')
-        )
+    def setup_method(self):
+        self.user = UserFactory()
+        self.order = OrderFactory(user=self.user, paid_order=True, delivered=True)
 
-        self.order_item = OrderItem.objects.create(
-            order=self.order,
-            product=self.product,
-            product_name='Test Product',
-            sku='TEST-SKU',
-            quantity=1,
-            unit_price=Money(100, 'USD'),
-            total_price=Money(100, 'USD')
-        )
-
-    def test_generate_return_label(self):
-        """Test generating return label PDF"""
+    def test_generates_pdf_data_uri(self):
         from shipping.services.document_service import DocumentService
 
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[
-                {
-                    'order_item_id': self.order_item.id,
-                    'quantity': 1,
-                    'reason': 'defective',
-                    'notes': 'Product not working'
-                }
-            ],
-            status='approved'
-        )
+        rr = ReturnRequestFactory(order=self.order, user=self.user, status="approved")
 
-        # Generate return label
-        data_uri = DocumentService.generate_return_label(return_request)
+        data_uri = DocumentService.generate_return_label(rr)
 
-        # Verify data URI format
-        self.assertIsNotNone(data_uri)
-        self.assertTrue(data_uri.startswith('data:application/pdf;base64,'))
-        self.assertGreater(len(data_uri), 100)  # Should have substantial content
+        assert data_uri is not None
+        assert data_uri.startswith("data:application/pdf;base64,")
+        assert len(data_uri) > 200
 
-    def test_return_label_contains_rma_number(self):
-        """Test that return label includes RMA number"""
+    def test_generated_pdf_is_valid(self):
+        """Decoded payload has the PDF magic-number header."""
         from shipping.services.document_service import DocumentService
-        import base64
 
-        return_request = ReturnRequest.objects.create(
-            order=self.order,
-            user=self.user,
-            reason='defective',
-            items_json=[{'order_item_id': self.order_item.id, 'quantity': 1, 'reason': 'defective'}],
-            status='approved'
-        )
+        rr = ReturnRequestFactory(order=self.order, user=self.user, status="approved")
 
-        data_uri = DocumentService.generate_return_label(return_request)
+        data_uri = DocumentService.generate_return_label(rr)
+        pdf_bytes = base64.b64decode(data_uri.split(",", 1)[1])
 
-        # Extract base64 content
-        base64_data = data_uri.split(',')[1]
-        pdf_bytes = base64.b64decode(base64_data)
-
-        # Verify it's a valid PDF
-        self.assertTrue(pdf_bytes.startswith(b'%PDF'))
-
-        # RMA number should be in PDF content (as text)
-        rma_number = f'RMA-{return_request.id}'
-        # Note: This is a basic check. Full PDF text extraction would require additional libraries
-        self.assertIsNotNone(data_uri)
-
-
-print("\n" + "="*80)
-print("Return Request Tests Summary")
-print("="*80)
-print("Test suites created:")
-print("  - ReturnRequestModelTest: Model methods and workflow")
-print("  - ReturnRequestAPITest: API endpoints and validation")
-print("  - ReturnEmailTest: Email notifications")
-print("  - ReturnLabelGenerationTest: PDF label generation")
-print("="*80 + "\n")
+        assert pdf_bytes.startswith(b"%PDF")

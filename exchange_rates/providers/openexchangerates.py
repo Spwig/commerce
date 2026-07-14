@@ -5,16 +5,17 @@ https://openexchangerates.org/
 API Documentation: https://docs.openexchangerates.org/
 """
 
-import requests
 import logging
-from typing import Dict, Optional, List
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+
+import requests
 from django.utils.translation import gettext_lazy as _
+
 from exchange_rates.providers.base import (
-    ExchangeRateProviderBase,
     CurrencyNotSupported,
-    RateFetchError
+    ExchangeRateProviderBase,
+    RateFetchError,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,12 +46,14 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
     paid_tier_requests = 0  # Unlimited on paid plans
 
     # Required credentials
-    required_credentials = ['app_id']
+    required_credentials = ["app_id"]
 
     # API Configuration
     API_BASE_URL = "https://openexchangerates.org/api"
 
-    def get_rate(self, from_currency: str, to_currency: str, date: Optional[datetime] = None) -> Decimal:
+    def get_rate(
+        self, from_currency: str, to_currency: str, date: datetime | None = None
+    ) -> Decimal:
         """
         Get exchange rate between two currencies.
 
@@ -74,24 +77,24 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
             date = None
 
         # Get rates with USD as base
-        rates = self.get_rates('USD', date)
+        rates = self.get_rates("USD", date)
 
-        if from_currency not in rates and from_currency != 'USD':
+        if from_currency not in rates and from_currency != "USD":
             raise CurrencyNotSupported(f"Currency {from_currency} not supported")
 
-        if to_currency not in rates and to_currency != 'USD':
+        if to_currency not in rates and to_currency != "USD":
             raise CurrencyNotSupported(f"Currency {to_currency} not supported")
 
         # Calculate cross rate
-        if from_currency == 'USD':
+        if from_currency == "USD":
             return rates[to_currency]
-        elif to_currency == 'USD':
-            return Decimal('1') / rates[from_currency]
+        elif to_currency == "USD":
+            return Decimal("1") / rates[from_currency]
         else:
             # Convert from -> USD -> to
             return rates[to_currency] / rates[from_currency]
 
-    def get_rates(self, base_currency: str, date: Optional[datetime] = None) -> Dict[str, Decimal]:
+    def get_rates(self, base_currency: str, date: datetime | None = None) -> dict[str, Decimal]:
         """
         Get all exchange rates for a base currency.
 
@@ -109,7 +112,7 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
             CurrencyNotSupported: If base currency not supported
             RateFetchError: If API request fails
         """
-        if not self.credentials.get('app_id'):
+        if not self.credentials.get("app_id"):
             raise RateFetchError("Missing app_id credential")
 
         # Endpoint selection
@@ -118,7 +121,7 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
                 logger.warning("Historical rates require paid plan, using latest rates")
                 endpoint = "latest.json"
             else:
-                date_str = date.strftime('%Y-%m-%d')
+                date_str = date.strftime("%Y-%m-%d")
                 endpoint = f"historical/{date_str}.json"
         else:
             endpoint = "latest.json"
@@ -126,8 +129,8 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
         url = f"{self.API_BASE_URL}/{endpoint}"
 
         params = {
-            'app_id': self.credentials['app_id'],
-            'show_alternative': 'false'  # Don't include alternative/digital currencies on free tier
+            "app_id": self.credentials["app_id"],
+            "show_alternative": "false",  # Don't include alternative/digital currencies on free tier
         }
 
         try:
@@ -136,14 +139,14 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
 
             data = response.json()
 
-            if 'error' in data:
+            if "error" in data:
                 raise RateFetchError(f"API error: {data.get('message', 'Unknown error')}")
 
             # OXR returns rates with USD as base
-            usd_rates = data.get('rates', {})
+            usd_rates = data.get("rates", {})
 
             # Convert to requested base currency
-            if base_currency == 'USD':
+            if base_currency == "USD":
                 # Direct rates
                 return {code: Decimal(str(rate)) for code, rate in usd_rates.items()}
             else:
@@ -158,7 +161,7 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
                     cross_rates[code] = Decimal(str(rate)) / base_rate
 
                 # Add USD itself
-                cross_rates['USD'] = Decimal('1') / base_rate
+                cross_rates["USD"] = Decimal("1") / base_rate
 
                 return cross_rates
 
@@ -187,15 +190,15 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
         try:
             # Test with usage endpoint (doesn't count against quota)
             url = f"{self.API_BASE_URL}/usage.json"
-            params = {'app_id': self.credentials.get('app_id', '')}
+            params = {"app_id": self.credentials.get("app_id", "")}
 
             response = requests.get(url, params=params, timeout=10)
 
             if response.status_code == 200:
                 data = response.json()
-                usage = data.get('data', {})
-                limit = usage.get('plan', {}).get('quota', 'unlimited')
-                used = usage.get('usage', {}).get('requests', 0)
+                usage = data.get("data", {})
+                limit = usage.get("plan", {}).get("quota", "unlimited")
+                used = usage.get("usage", {}).get("requests", 0)
 
                 return (True, f"Credentials valid. Usage: {used}/{limit} requests")
             elif response.status_code == 401:
@@ -212,7 +215,7 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
         except Exception as e:
             return (False, f"Error: {str(e)}")
 
-    def get_supported_currencies(self) -> List[str]:
+    def get_supported_currencies(self) -> list[str]:
         """
         Get list of currency codes supported by this provider.
 
@@ -233,10 +236,46 @@ class OpenExchangeRatesProvider(ExchangeRateProviderBase):
             logger.warning(f"Failed to fetch currency list from API: {e}")
             # Fallback to common currencies if API fails
             return [
-                'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
-                'MXN', 'SGD', 'HKD', 'NOK', 'KRW', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR',
-                'DKK', 'PLN', 'TWD', 'THB', 'MYR', 'IDR', 'HUF', 'CZK', 'ILS', 'CLP',
-                'PHP', 'AED', 'COP', 'SAR', 'RON', 'BGN', 'ARS', 'VND', 'UAH', 'BDT'
+                "USD",
+                "EUR",
+                "GBP",
+                "JPY",
+                "AUD",
+                "CAD",
+                "CHF",
+                "CNY",
+                "SEK",
+                "NZD",
+                "MXN",
+                "SGD",
+                "HKD",
+                "NOK",
+                "KRW",
+                "TRY",
+                "RUB",
+                "INR",
+                "BRL",
+                "ZAR",
+                "DKK",
+                "PLN",
+                "TWD",
+                "THB",
+                "MYR",
+                "IDR",
+                "HUF",
+                "CZK",
+                "ILS",
+                "CLP",
+                "PHP",
+                "AED",
+                "COP",
+                "SAR",
+                "RON",
+                "BGN",
+                "ARS",
+                "VND",
+                "UAH",
+                "BDT",
             ]
 
     @classmethod

@@ -10,14 +10,14 @@ The validate_credential_fields() function provides shared validation for all
 provider wizard views, enforcing manifest-defined constraints (required, max_length,
 boolean type handling) without requiring JavaScript.
 """
+
 import json
 from pathlib import Path
-from typing import Optional
 
 from django.utils.translation import gettext as _
 
 
-def load_manifest_translations(component_path: Path) -> Optional[dict]:
+def load_manifest_translations(component_path: Path) -> dict | None:
     """
     Load the translations section from a component's manifest.json.
 
@@ -32,23 +32,23 @@ def load_manifest_translations(component_path: Path) -> Optional[dict]:
     Returns:
         dict of translations (with default_language key), or None
     """
-    manifest_file = component_path / 'manifest.json'
+    manifest_file = component_path / "manifest.json"
     if not manifest_file.exists():
         return None
 
     try:
-        with open(manifest_file, 'r', encoding='utf-8') as f:
+        with open(manifest_file, encoding="utf-8") as f:
             manifest = json.load(f)
 
-        translations = manifest.get('translations')
+        translations = manifest.get("translations")
         if translations and isinstance(translations, dict):
             # Include default_language so JS knows the base content language.
             # Defaults to 'en' if not specified (backward compatibility).
-            default_language = manifest.get('default_language', 'en')
+            default_language = manifest.get("default_language", "en")
             translations_copy = dict(translations)
-            translations_copy['default_language'] = default_language
+            translations_copy["default_language"] = default_language
             return translations_copy
-    except (json.JSONDecodeError, IOError):
+    except (OSError, json.JSONDecodeError):
         pass
 
     return None
@@ -74,12 +74,12 @@ def get_translated_provider_fields(manifest: dict, lang: str) -> dict:
     Returns:
         dict with 'name' and 'description' keys
     """
-    translations = manifest.get('translations', {})
-    default_language = manifest.get('default_language', 'en')
+    translations = manifest.get("translations", {})
+    default_language = manifest.get("default_language", "en")
 
     result = {
-        'name': manifest.get('name', ''),
-        'description': manifest.get('description', ''),
+        "name": manifest.get("name", ""),
+        "description": manifest.get("description", ""),
     }
 
     # If admin language matches default, base content is already correct
@@ -89,10 +89,10 @@ def get_translated_provider_fields(manifest: dict, lang: str) -> dict:
     # Try requested language
     lang_t = translations.get(lang, {})
     if lang_t:
-        if lang_t.get('meta.name'):
-            result['name'] = lang_t['meta.name']
-        if lang_t.get('meta.description'):
-            result['description'] = lang_t['meta.description']
+        if lang_t.get("meta.name"):
+            result["name"] = lang_t["meta.name"]
+        if lang_t.get("meta.description"):
+            result["description"] = lang_t["meta.description"]
 
     # If no match, content stays in default_language (no blank fallback)
     return result
@@ -121,115 +121,104 @@ def validate_credential_fields(credential_schema, post_data):
     errors = []
 
     for field_name, field_config in credential_schema.items():
-        field_type = field_config.get('type', 'text')
+        field_type = field_config.get("type", "text")
         # Support both 'label' and 'title' (manifests vary by provider type)
-        field_label = field_config.get('label') or field_config.get('title', field_name)
+        field_label = field_config.get("label") or field_config.get("title", field_name)
 
         # Boolean fields: checkbox sends 'on' when checked, absent when unchecked
-        if field_type == 'boolean':
-            credentials[field_name] = post_data.get(field_name) == 'on'
+        if field_type == "boolean":
+            credentials[field_name] = post_data.get(field_name) == "on"
             continue
 
         # Multiselect fields: select multiple returns a list
-        if field_type == 'multiselect':
+        if field_type == "multiselect":
             value = post_data.getlist(field_name)
 
             # Required validation
-            if field_config.get('required', False) and not value:
-                errors.append(
-                    _('%(field)s is required.') % {'field': field_label}
-                )
+            if field_config.get("required", False) and not value:
+                errors.append(_("%(field)s is required.") % {"field": field_label})
                 credentials[field_name] = value
                 continue
 
             # Validate choices if options are defined
-            allowed_values = [opt['value'] for opt in field_config.get('options', [])]
+            allowed_values = [opt["value"] for opt in field_config.get("options", [])]
             if allowed_values:
                 invalid = [v for v in value if v not in allowed_values]
                 if invalid:
                     errors.append(
-                        _('%(field)s contains invalid selection: %(values)s') % {
-                            'field': field_label,
-                            'values': ', '.join(invalid)
-                        }
+                        _("%(field)s contains invalid selection: %(values)s")
+                        % {"field": field_label, "values": ", ".join(invalid)}
                     )
 
             credentials[field_name] = value
             continue
 
         # Number/integer fields: validate and convert to int
-        if field_type == 'number':
-            raw_value = post_data.get(field_name, '').strip()
+        if field_type == "number":
+            raw_value = post_data.get(field_name, "").strip()
 
-            if field_config.get('required', False) and not raw_value:
-                errors.append(
-                    _('%(field)s is required.') % {'field': field_label}
-                )
-                credentials[field_name] = field_config.get('default')
+            if field_config.get("required", False) and not raw_value:
+                errors.append(_("%(field)s is required.") % {"field": field_label})
+                credentials[field_name] = field_config.get("default")
                 continue
 
             if not raw_value:
-                credentials[field_name] = field_config.get('default')
+                credentials[field_name] = field_config.get("default")
                 continue
 
             try:
                 int_value = int(raw_value)
             except (ValueError, TypeError):
-                errors.append(
-                    _('%(field)s must be a valid number.') % {'field': field_label}
-                )
+                errors.append(_("%(field)s must be a valid number.") % {"field": field_label})
                 credentials[field_name] = raw_value
                 continue
 
-            minimum = field_config.get('minimum')
-            maximum = field_config.get('maximum')
+            minimum = field_config.get("minimum")
+            maximum = field_config.get("maximum")
             if minimum is not None and int_value < minimum:
                 errors.append(
-                    _('%(field)s must be at least %(min)d.') % {'field': field_label, 'min': minimum}
+                    _("%(field)s must be at least %(min)d.")
+                    % {"field": field_label, "min": minimum}
                 )
             if maximum is not None and int_value > maximum:
                 errors.append(
-                    _('%(field)s must be at most %(max)d.') % {'field': field_label, 'max': maximum}
+                    _("%(field)s must be at most %(max)d.") % {"field": field_label, "max": maximum}
                 )
 
             credentials[field_name] = int_value
             continue
 
         # All other field types: get as string
-        value = post_data.get(field_name, '').strip()
+        value = post_data.get(field_name, "").strip()
 
         # Required validation
-        if field_config.get('required', False) and not value:
-            errors.append(
-                _('%(field)s is required.') % {'field': field_label}
-            )
+        if field_config.get("required", False) and not value:
+            errors.append(_("%(field)s is required.") % {"field": field_label})
             credentials[field_name] = value
             continue
 
         # max_length validation
-        max_length = field_config.get('max_length')
+        max_length = field_config.get("max_length")
         try:
             max_val = int(max_length) if max_length else None
         except (ValueError, TypeError):
             max_val = None
         if max_val is not None and value and len(value) > max_val:
             errors.append(
-                _('%(field)s must be at most %(max)d characters.') % {
-                    'field': field_label, 'max': max_val
-                }
+                _("%(field)s must be at most %(max)d characters.")
+                % {"field": field_label, "max": max_val}
             )
 
         # min_length validation
-        min_length = field_config.get('min_length')
+        min_length = field_config.get("min_length")
         try:
             min_val = int(min_length) if min_length else None
         except (ValueError, TypeError):
             min_val = None
         if min_val is not None and value and len(value) < min_val:
             errors.append(
-                _('%(field)s must be at least %(min)d characters.') % {
-                    'field': field_label, 'min': min_val
-                }
+                _("%(field)s must be at least %(min)d characters.")
+                % {"field": field_label, "min": min_val}
             )
 
         credentials[field_name] = value
@@ -264,32 +253,36 @@ def validate_dual_environment_credentials(credential_schema, post_data):
     errors = list(basic_errors)
 
     # Determine active environment
-    test_mode = credentials.get('test_mode', True)
-    active_prefix = 'test_' if test_mode else 'live_'
-    mode_name = 'test' if test_mode else 'production'
+    test_mode = credentials.get("test_mode", True)
+    active_prefix = "test_" if test_mode else "live_"
+    mode_name = "test" if test_mode else "production"
 
     # Find all required fields for the active environment
     active_required_fields = []
     for field_name, field_config in credential_schema.items():
         # Skip test_mode itself and fields from other environment
-        if field_name == 'test_mode':
+        if field_name == "test_mode":
             continue
         if not field_name.startswith(active_prefix):
             continue
-        if field_config.get('required', False):
+        if field_config.get("required", False):
             active_required_fields.append(field_name)
 
     # Validate that all required fields for active environment are provided
     for field_name in active_required_fields:
-        value = credentials.get(field_name, '').strip() if isinstance(credentials.get(field_name), str) else credentials.get(field_name)
+        value = (
+            credentials.get(field_name, "").strip()
+            if isinstance(credentials.get(field_name), str)
+            else credentials.get(field_name)
+        )
         if not value:
             # Get field label for error message
-            field_label = credential_schema[field_name].get('label') or credential_schema[field_name].get('title', field_name)
+            field_label = credential_schema[field_name].get("label") or credential_schema[
+                field_name
+            ].get("title", field_name)
             errors.append(
-                _('%(field)s is required when in %(mode)s mode.') % {
-                    'field': field_label,
-                    'mode': mode_name
-                }
+                _("%(field)s is required when in %(mode)s mode.")
+                % {"field": field_label, "mode": mode_name}
             )
 
     return credentials, errors

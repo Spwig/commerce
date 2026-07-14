@@ -4,6 +4,7 @@ SMS Provider Registry.
 Provides access to SMS provider implementations.
 Uses component-based provider discovery from components_data/integrations/sms/
 """
+
 from .base import SMSProviderBase
 from .loader import SMSProviderLoader
 from .registry import SMSProviderRegistry
@@ -32,13 +33,13 @@ def get_provider_choices():
         List of tuples: [(provider_key, provider_name), ...]
     """
     providers = SMSProviderRegistry.list_providers()
-    return [(p['key'], p['name']) for p in providers]
+    return [(p["key"], p["name"]) for p in providers]
 
 
 __all__ = [
-    'SMSProviderBase',
-    'SMSProviderLoader',
-    'SMSProviderRegistry',
-    'get_provider_class',
-    'get_provider_choices',
+    "SMSProviderBase",
+    "SMSProviderLoader",
+    "SMSProviderRegistry",
+    "get_provider_class",
+    "get_provider_choices",
 ]

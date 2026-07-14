@@ -8,9 +8,9 @@ Validates security-related Django settings:
 - Password validation
 - Authentication settings
 """
+
 import pytest
 from django.conf import settings
-
 
 pytestmark = pytest.mark.integrity
 
@@ -19,17 +19,17 @@ class TestSecretKey:
     """Validate SECRET_KEY configuration"""
 
     INSECURE_PATTERNS = [
-        'spwig-insecure',
-        'django-insecure',
-        'changeme',
-        'secret',
-        'password',
-        '12345',
+        "spwig-insecure",
+        "django-insecure",
+        "changeme",
+        "secret",
+        "password",
+        "12345",
     ]
 
     def test_secret_key_exists(self):
         """Verify SECRET_KEY is configured"""
-        secret_key = getattr(settings, 'SECRET_KEY', None)
+        secret_key = getattr(settings, "SECRET_KEY", None)
         assert secret_key, "SECRET_KEY must be configured"
         assert isinstance(secret_key, str), "SECRET_KEY must be a string"
 
@@ -42,7 +42,9 @@ class TestSecretKey:
         found_patterns = [p for p in self.INSECURE_PATTERNS if p in secret_key]
 
         # Skip if using known dev/test keys
-        if found_patterns and ('dev-secret' in secret_key or 'test-secret' in secret_key or settings.DEBUG):
+        if found_patterns and (
+            "dev-secret" in secret_key or "test-secret" in secret_key or settings.DEBUG
+        ):
             pytest.skip(
                 f"WARNING: SECRET_KEY contains insecure patterns in dev/test mode: {', '.join(found_patterns)}\n"
                 "This is acceptable for development/testing. Ensure production uses a secure key."
@@ -62,7 +64,9 @@ class TestSecretKey:
         secret_key_lower = secret_key.lower()
 
         # Skip if using known dev/test keys
-        if len(secret_key) < 50 and ('dev-secret' in secret_key_lower or 'test-secret' in secret_key_lower or settings.DEBUG):
+        if len(secret_key) < 50 and (
+            "dev-secret" in secret_key_lower or "test-secret" in secret_key_lower or settings.DEBUG
+        ):
             pytest.skip(
                 f"WARNING: SECRET_KEY is {len(secret_key)} chars (< 50) in dev/test mode.\n"
                 "This is acceptable for development/testing. Ensure production uses a 50+ char key."
@@ -82,11 +86,12 @@ class TestSSLHTTPSSettings:
         Production sites should redirect HTTP to HTTPS.
         """
         import sys
+
         # Skip in DEBUG mode or pytest test runs
-        if settings.DEBUG or 'pytest' in sys.modules:
+        if settings.DEBUG or "pytest" in sys.modules:
             pytest.skip("Skipping SSL redirect check in dev/test mode")
 
-        secure_ssl_redirect = getattr(settings, 'SECURE_SSL_REDIRECT', False)
+        secure_ssl_redirect = getattr(settings, "SECURE_SSL_REDIRECT", False)
         assert secure_ssl_redirect is True, (
             "SECURE_SSL_REDIRECT must be True in production (DEBUG=False)"
         )
@@ -97,11 +102,12 @@ class TestSSLHTTPSSettings:
         Session cookies should only be sent over HTTPS in production.
         """
         import sys
+
         # Skip in DEBUG mode or pytest test runs
-        if settings.DEBUG or 'pytest' in sys.modules:
+        if settings.DEBUG or "pytest" in sys.modules:
             pytest.skip("Skipping SESSION_COOKIE_SECURE check in dev/test mode")
 
-        session_cookie_secure = getattr(settings, 'SESSION_COOKIE_SECURE', False)
+        session_cookie_secure = getattr(settings, "SESSION_COOKIE_SECURE", False)
         assert session_cookie_secure is True, (
             "SESSION_COOKIE_SECURE must be True in production (DEBUG=False)"
         )
@@ -112,11 +118,12 @@ class TestSSLHTTPSSettings:
         CSRF cookies should only be sent over HTTPS in production.
         """
         import sys
+
         # Skip in DEBUG mode or pytest test runs
-        if settings.DEBUG or 'pytest' in sys.modules:
+        if settings.DEBUG or "pytest" in sys.modules:
             pytest.skip("Skipping CSRF_COOKIE_SECURE check in dev/test mode")
 
-        csrf_cookie_secure = getattr(settings, 'CSRF_COOKIE_SECURE', False)
+        csrf_cookie_secure = getattr(settings, "CSRF_COOKIE_SECURE", False)
         assert csrf_cookie_secure is True, (
             "CSRF_COOKIE_SECURE must be True in production (DEBUG=False)"
         )
@@ -127,7 +134,7 @@ class TestSSLHTTPSSettings:
         HSTS tells browsers to only use HTTPS for future requests.
         """
         if not settings.DEBUG:
-            hsts_seconds = getattr(settings, 'SECURE_HSTS_SECONDS', 0)
+            hsts_seconds = getattr(settings, "SECURE_HSTS_SECONDS", 0)
             # Warn if not set, but don't fail (may be handled by reverse proxy)
             if hsts_seconds == 0:
                 pytest.skip(
@@ -139,9 +146,9 @@ class TestSSLHTTPSSettings:
         Verify SECURE_HSTS_INCLUDE_SUBDOMAINS is True when HSTS is enabled.
         HSTS should apply to all subdomains for comprehensive protection.
         """
-        hsts_seconds = getattr(settings, 'SECURE_HSTS_SECONDS', 0)
+        hsts_seconds = getattr(settings, "SECURE_HSTS_SECONDS", 0)
         if hsts_seconds > 0:
-            hsts_subdomains = getattr(settings, 'SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+            hsts_subdomains = getattr(settings, "SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
             assert hsts_subdomains is True, (
                 "SECURE_HSTS_INCLUDE_SUBDOMAINS should be True when HSTS is enabled"
             )
@@ -151,7 +158,7 @@ class TestSSLHTTPSSettings:
         Verify SECURE_CONTENT_TYPE_NOSNIFF is True.
         Prevents browsers from MIME-sniffing responses.
         """
-        nosniff = getattr(settings, 'SECURE_CONTENT_TYPE_NOSNIFF', False)
+        nosniff = getattr(settings, "SECURE_CONTENT_TYPE_NOSNIFF", False)
         assert nosniff is True, (
             "SECURE_CONTENT_TYPE_NOSNIFF should be True to prevent MIME-sniffing attacks"
         )
@@ -161,8 +168,8 @@ class TestSSLHTTPSSettings:
         Verify X_FRAME_OPTIONS is set to prevent clickjacking.
         Should be 'DENY' or 'SAMEORIGIN'.
         """
-        x_frame_options = getattr(settings, 'X_FRAME_OPTIONS', None)
-        assert x_frame_options in ['DENY', 'SAMEORIGIN'], (
+        x_frame_options = getattr(settings, "X_FRAME_OPTIONS", None)
+        assert x_frame_options in ["DENY", "SAMEORIGIN"], (
             f"X_FRAME_OPTIONS should be 'DENY' or 'SAMEORIGIN', got: {x_frame_options}"
         )
 
@@ -175,28 +182,24 @@ class TestCookieSettings:
         Verify SESSION_COOKIE_HTTPONLY is True.
         Prevents JavaScript access to session cookies (XSS mitigation).
         """
-        httponly = getattr(settings, 'SESSION_COOKIE_HTTPONLY', False)
-        assert httponly is True, (
-            "SESSION_COOKIE_HTTPONLY must be True to prevent XSS attacks"
-        )
+        httponly = getattr(settings, "SESSION_COOKIE_HTTPONLY", False)
+        assert httponly is True, "SESSION_COOKIE_HTTPONLY must be True to prevent XSS attacks"
 
     def test_csrf_cookie_httponly(self):
         """
         Verify CSRF_COOKIE_HTTPONLY is True.
         Prevents JavaScript access to CSRF cookies.
         """
-        httponly = getattr(settings, 'CSRF_COOKIE_HTTPONLY', False)
-        assert httponly is True, (
-            "CSRF_COOKIE_HTTPONLY should be True to prevent XSS attacks"
-        )
+        httponly = getattr(settings, "CSRF_COOKIE_HTTPONLY", False)
+        assert httponly is True, "CSRF_COOKIE_HTTPONLY should be True to prevent XSS attacks"
 
     def test_session_cookie_samesite(self):
         """
         Verify SESSION_COOKIE_SAMESITE is set.
         Should be 'Lax' or 'Strict' to prevent CSRF attacks.
         """
-        samesite = getattr(settings, 'SESSION_COOKIE_SAMESITE', None)
-        assert samesite in ['Lax', 'Strict'], (
+        samesite = getattr(settings, "SESSION_COOKIE_SAMESITE", None)
+        assert samesite in ["Lax", "Strict"], (
             f"SESSION_COOKIE_SAMESITE should be 'Lax' or 'Strict', got: {samesite}"
         )
 
@@ -205,8 +208,8 @@ class TestCookieSettings:
         Verify CSRF_COOKIE_SAMESITE is set.
         Should be 'Lax' or 'Strict' to prevent CSRF attacks.
         """
-        samesite = getattr(settings, 'CSRF_COOKIE_SAMESITE', None)
-        assert samesite in ['Lax', 'Strict'], (
+        samesite = getattr(settings, "CSRF_COOKIE_SAMESITE", None)
+        assert samesite in ["Lax", "Strict"], (
             f"CSRF_COOKIE_SAMESITE should be 'Lax' or 'Strict', got: {samesite}"
         )
 
@@ -215,7 +218,7 @@ class TestCookieSettings:
         Verify SESSION_EXPIRE_AT_BROWSER_CLOSE is configured.
         This is a policy decision (can be True or False), just check it's set.
         """
-        expire_at_close = getattr(settings, 'SESSION_EXPIRE_AT_BROWSER_CLOSE', None)
+        expire_at_close = getattr(settings, "SESSION_EXPIRE_AT_BROWSER_CLOSE", None)
         assert expire_at_close is not None, (
             "SESSION_EXPIRE_AT_BROWSER_CLOSE should be explicitly configured"
         )
@@ -225,47 +228,41 @@ class TestPasswordValidation:
     """Validate password strength requirements"""
 
     REQUIRED_VALIDATORS = [
-        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-        'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'django.contrib.auth.password_validation.CommonPasswordValidator',
-        'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "django.contrib.auth.password_validation.NumericPasswordValidator",
     ]
 
     def test_password_validators_configured(self):
         """Verify AUTH_PASSWORD_VALIDATORS is configured"""
-        validators = getattr(settings, 'AUTH_PASSWORD_VALIDATORS', [])
-        assert validators, (
-            "AUTH_PASSWORD_VALIDATORS must be configured for password strength"
-        )
+        validators = getattr(settings, "AUTH_PASSWORD_VALIDATORS", [])
+        assert validators, "AUTH_PASSWORD_VALIDATORS must be configured for password strength"
 
     def test_required_password_validators_present(self):
         """
         Verify all recommended Django password validators are enabled.
         These are Django's defaults and should always be active.
         """
-        validators = getattr(settings, 'AUTH_PASSWORD_VALIDATORS', [])
-        configured_validators = [v['NAME'] for v in validators]
+        validators = getattr(settings, "AUTH_PASSWORD_VALIDATORS", [])
+        configured_validators = [v["NAME"] for v in validators]
 
         missing = [v for v in self.REQUIRED_VALIDATORS if v not in configured_validators]
 
-        assert not missing, (
-            f"Missing recommended password validators:\n  " +
-            "\n  ".join(missing)
-        )
+        assert not missing, "Missing recommended password validators:\n  " + "\n  ".join(missing)
 
     def test_minimum_password_length(self):
         """
         Verify MinimumLengthValidator is configured with reasonable length.
         Default is 8, we recommend at least 8 characters.
         """
-        validators = getattr(settings, 'AUTH_PASSWORD_VALIDATORS', [])
+        validators = getattr(settings, "AUTH_PASSWORD_VALIDATORS", [])
         min_length_validator = next(
-            (v for v in validators if 'MinimumLengthValidator' in v['NAME']),
-            None
+            (v for v in validators if "MinimumLengthValidator" in v["NAME"]), None
         )
 
         if min_length_validator:
-            min_length = min_length_validator.get('OPTIONS', {}).get('min_length', 8)
+            min_length = min_length_validator.get("OPTIONS", {}).get("min_length", 8)
             assert min_length >= 8, (
                 f"Minimum password length should be at least 8, got: {min_length}"
             )
@@ -279,16 +276,16 @@ class TestAuthenticationSettings:
         Verify AUTH_USER_MODEL is configured (accept Django default or custom).
         Spwig can use either Django's default User or a custom user model.
         """
-        auth_user_model = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
+        auth_user_model = getattr(settings, "AUTH_USER_MODEL", "auth.User")
 
         # Accept Django default or custom user model
-        assert auth_user_model in ['auth.User', 'accounts.User'], (
+        assert auth_user_model in ["auth.User", "accounts.User"], (
             f"AUTH_USER_MODEL should be 'auth.User' (Django default) or 'accounts.User' (custom), "
             f"got: {auth_user_model}"
         )
 
         # Info message if using Django default
-        if auth_user_model == 'auth.User':
+        if auth_user_model == "auth.User":
             pytest.skip(
                 "INFO: Using Django default User model (auth.User). "
                 "This is acceptable. Custom User model can be added later if needed."
@@ -296,17 +293,17 @@ class TestAuthenticationSettings:
 
     def test_login_url_configured(self):
         """Verify LOGIN_URL is configured"""
-        login_url = getattr(settings, 'LOGIN_URL', None)
+        login_url = getattr(settings, "LOGIN_URL", None)
         assert login_url, "LOGIN_URL must be configured"
 
     def test_login_redirect_url_configured(self):
         """Verify LOGIN_REDIRECT_URL is configured"""
-        login_redirect = getattr(settings, 'LOGIN_REDIRECT_URL', None)
+        login_redirect = getattr(settings, "LOGIN_REDIRECT_URL", None)
         assert login_redirect, "LOGIN_REDIRECT_URL must be configured"
 
     def test_logout_redirect_url_configured(self):
         """Verify LOGOUT_REDIRECT_URL is configured"""
-        logout_redirect = getattr(settings, 'LOGOUT_REDIRECT_URL', None)
+        logout_redirect = getattr(settings, "LOGOUT_REDIRECT_URL", None)
         assert logout_redirect, "LOGOUT_REDIRECT_URL must be configured"
 
 
@@ -323,16 +320,16 @@ class TestDebugSettings:
         import os
 
         # Common production environment indicators
-        is_production = any([
-            os.environ.get('DJANGO_ENV') == 'production',
-            os.environ.get('ENVIRONMENT') == 'production',
-            os.environ.get('SPWIG_ENV') == 'production',
-        ])
+        is_production = any(
+            [
+                os.environ.get("DJANGO_ENV") == "production",
+                os.environ.get("ENVIRONMENT") == "production",
+                os.environ.get("SPWIG_ENV") == "production",
+            ]
+        )
 
         if is_production:
-            assert settings.DEBUG is False, (
-                "DEBUG must be False in production environment"
-            )
+            assert settings.DEBUG is False, "DEBUG must be False in production environment"
 
     def test_allowed_hosts_not_wildcard_in_production(self):
         """
@@ -340,8 +337,8 @@ class TestDebugSettings:
         Wildcard is only acceptable in development.
         """
         if not settings.DEBUG:
-            allowed_hosts = getattr(settings, 'ALLOWED_HOSTS', [])
-            assert '*' not in allowed_hosts, (
+            allowed_hosts = getattr(settings, "ALLOWED_HOSTS", [])
+            assert "*" not in allowed_hosts, (
                 "ALLOWED_HOSTS must not contain '*' in production (DEBUG=False)"
             )
             assert len(allowed_hosts) > 0, (
@@ -355,8 +352,6 @@ class TestDebugSettings:
         """
         installed_apps = settings.INSTALLED_APPS
 
-        if 'debug_toolbar' in installed_apps:
-            internal_ips = getattr(settings, 'INTERNAL_IPS', [])
-            assert internal_ips, (
-                "INTERNAL_IPS must be configured when debug_toolbar is installed"
-            )
+        if "debug_toolbar" in installed_apps:
+            internal_ips = getattr(settings, "INTERNAL_IPS", [])
+            assert internal_ips, "INTERNAL_IPS must be configured when debug_toolbar is installed"

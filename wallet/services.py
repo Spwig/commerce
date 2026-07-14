@@ -4,6 +4,7 @@ Wallet Service
 Provides credit, debit, and reversal operations on customer wallets.
 All balance mutations go through this service to keep the ledger consistent.
 """
+
 import logging
 from decimal import Decimal
 
@@ -12,6 +13,7 @@ from django.utils import timezone
 from djmoney.money import Money
 
 from core.utils import get_default_currency
+
 from .models import CustomerWallet, WalletTransaction
 
 logger = logging.getLogger(__name__)
@@ -26,7 +28,6 @@ class WalletFrozen(Exception):
 
 
 class WalletService:
-
     @staticmethod
     def get_or_create_wallet(user):
         """
@@ -40,8 +41,7 @@ class WalletService:
 
     @staticmethod
     @transaction.atomic
-    def credit(user, amount, currency, source, description,
-               reference_id='', created_by=None):
+    def credit(user, amount, currency, source, description, reference_id="", created_by=None):
         """
         Add credit to a customer's wallet.
 
@@ -83,15 +83,18 @@ class WalletService:
         )
 
         wallet.available_balance = Money(new_balance, currency)
-        wallet.lifetime_credited = Money(
-            wallet.lifetime_credited.amount + amount, currency
-        )
+        wallet.lifetime_credited = Money(wallet.lifetime_credited.amount + amount, currency)
         wallet.last_credited_at = timezone.now()
-        wallet.save(update_fields=[
-            'available_balance', 'available_balance_currency',
-            'lifetime_credited', 'lifetime_credited_currency',
-            'last_credited_at', 'updated_at',
-        ])
+        wallet.save(
+            update_fields=[
+                "available_balance",
+                "available_balance_currency",
+                "lifetime_credited",
+                "lifetime_credited_currency",
+                "last_credited_at",
+                "updated_at",
+            ]
+        )
 
         logger.info(
             f"Credited {amount} {currency} to wallet for {user.email} "
@@ -101,8 +104,7 @@ class WalletService:
 
     @staticmethod
     @transaction.atomic
-    def debit(user, amount, currency, source, description,
-              reference_id=''):
+    def debit(user, amount, currency, source, description, reference_id=""):
         """
         Deduct from a customer's wallet.
 
@@ -152,15 +154,18 @@ class WalletService:
         )
 
         wallet.available_balance = Money(new_balance, currency)
-        wallet.lifetime_used = Money(
-            wallet.lifetime_used.amount + amount, currency
-        )
+        wallet.lifetime_used = Money(wallet.lifetime_used.amount + amount, currency)
         wallet.last_used_at = timezone.now()
-        wallet.save(update_fields=[
-            'available_balance', 'available_balance_currency',
-            'lifetime_used', 'lifetime_used_currency',
-            'last_used_at', 'updated_at',
-        ])
+        wallet.save(
+            update_fields=[
+                "available_balance",
+                "available_balance_currency",
+                "lifetime_used",
+                "lifetime_used_currency",
+                "last_used_at",
+                "updated_at",
+            ]
+        )
 
         logger.info(
             f"Debited {amount} {currency} from wallet for {user.email} "
@@ -170,7 +175,7 @@ class WalletService:
 
     @staticmethod
     @transaction.atomic
-    def reverse_transaction(original_txn, reason=''):
+    def reverse_transaction(original_txn, reason=""):
         """
         Reverse a completed credit transaction.
 
@@ -191,16 +196,14 @@ class WalletService:
             WalletTransaction.TYPE_REFUND,
             WalletTransaction.TYPE_ADJUSTMENT,
         ):
-            raise ValueError(
-                f"Cannot reverse a {original_txn.transaction_type} transaction"
-            )
+            raise ValueError(f"Cannot reverse a {original_txn.transaction_type} transaction")
 
         # Lock the wallet row to prevent concurrent balance corruption
         wallet = CustomerWallet.objects.select_for_update().get(pk=original_txn.wallet_id)
         amount = original_txn.amount.amount
         currency = str(original_txn.amount.currency)
 
-        new_balance = max(wallet.available_balance.amount - amount, Decimal('0'))
+        new_balance = max(wallet.available_balance.amount - amount, Decimal("0"))
 
         reversal = WalletTransaction.objects.create(
             wallet=wallet,
@@ -217,14 +220,22 @@ class WalletService:
         # Mark the original as reversed, pointing to the reversal entry
         original_txn.reversed_by = reversal
         original_txn.status = WalletTransaction.STATUS_REVERSED
-        original_txn.save(_allow_update=True, update_fields=[
-            'reversed_by', 'status',
-        ])
+        original_txn.save(
+            _allow_update=True,
+            update_fields=[
+                "reversed_by",
+                "status",
+            ],
+        )
 
         wallet.available_balance = Money(new_balance, currency)
-        wallet.save(update_fields=[
-            'available_balance', 'available_balance_currency', 'updated_at',
-        ])
+        wallet.save(
+            update_fields=[
+                "available_balance",
+                "available_balance_currency",
+                "updated_at",
+            ]
+        )
 
         logger.info(
             f"Reversed transaction #{original_txn.id} for {amount} {currency} "

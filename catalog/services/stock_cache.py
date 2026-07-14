@@ -4,11 +4,13 @@ Stock Cache Service
 Provides caching for frequently accessed stock queries to improve performance.
 Uses Django's cache framework with automatic cache invalidation on stock changes.
 """
-from django.core.cache import cache
-from django.db.models import Sum, F
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
+
 import logging
+
+from django.core.cache import cache
+from django.db.models import Sum
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 
 logger = logging.getLogger(__name__)
 
@@ -38,11 +40,11 @@ class StockCache:
             str: Cache key
         """
         if warehouse_id:
-            return f'stock:product:{product_id}:warehouse:{warehouse_id}'
+            return f"stock:product:{product_id}:warehouse:{warehouse_id}"
         elif region_id:
-            return f'stock:product:{product_id}:region:{region_id}'
+            return f"stock:product:{product_id}:region:{region_id}"
         else:
-            return f'stock:product:{product_id}:total'
+            return f"stock:product:{product_id}:total"
 
     @staticmethod
     def get_product_stock(product, region=None, warehouse=None):
@@ -58,9 +60,7 @@ class StockCache:
             dict: Stock data with 'on_hand', 'allocated', 'available' keys
         """
         cache_key = StockCache._get_cache_key(
-            product.id,
-            region.id if region else None,
-            warehouse.id if warehouse else None
+            product.id, region.id if region else None, warehouse.id if warehouse else None
         )
 
         # Try to get from cache
@@ -99,26 +99,18 @@ class StockCache:
         if warehouse:
             queryset = queryset.filter(warehouse=warehouse)
         elif region:
-            queryset = queryset.filter(
-                warehouse__region=region,
-                warehouse__is_active=True
-            )
+            queryset = queryset.filter(warehouse__region=region, warehouse__is_active=True)
 
         # Aggregate stock
         aggregated = queryset.aggregate(
-            total_on_hand=Sum('on_hand'),
-            total_allocated=Sum('allocated')
+            total_on_hand=Sum("on_hand"), total_allocated=Sum("allocated")
         )
 
-        on_hand = aggregated['total_on_hand'] or 0
-        allocated = aggregated['total_allocated'] or 0
+        on_hand = aggregated["total_on_hand"] or 0
+        allocated = aggregated["total_allocated"] or 0
         available = on_hand - allocated
 
-        return {
-            'on_hand': on_hand,
-            'allocated': allocated,
-            'available': available
-        }
+        return {"on_hand": on_hand, "allocated": allocated, "available": available}
 
     @staticmethod
     def invalidate_product_cache(product_id):
@@ -130,7 +122,7 @@ class StockCache:
         Args:
             product_id: Product ID
         """
-        from catalog.models import StockItem, SalesRegion, Warehouse
+        from catalog.models import StockItem
 
         logger.info(f"Invalidating stock cache for product {product_id}")
 
@@ -139,7 +131,9 @@ class StockCache:
 
         # Invalidate regional caches
         try:
-            stock_items = StockItem.objects.filter(product_id=product_id).select_related('warehouse')
+            stock_items = StockItem.objects.filter(product_id=product_id).select_related(
+                "warehouse"
+            )
 
             # Get unique regions
             regions = set()
@@ -194,19 +188,20 @@ class StockCache:
 
 # Signal handlers for automatic cache invalidation
 
-@receiver(post_save, sender='catalog.StockItem')
+
+@receiver(post_save, sender="catalog.StockItem")
 def invalidate_on_stock_change(sender, instance, **kwargs):
     """Invalidate cache when StockItem is created or updated"""
     StockCache.invalidate_product_cache(instance.product_id)
 
 
-@receiver(post_delete, sender='catalog.StockItem')
+@receiver(post_delete, sender="catalog.StockItem")
 def invalidate_on_stock_delete(sender, instance, **kwargs):
     """Invalidate cache when StockItem is deleted"""
     StockCache.invalidate_product_cache(instance.product_id)
 
 
-@receiver(post_save, sender='catalog.StockMovement')
+@receiver(post_save, sender="catalog.StockMovement")
 def invalidate_on_stock_movement(sender, instance, **kwargs):
     """Invalidate cache when stock movement is recorded"""
     if instance.stock_item:

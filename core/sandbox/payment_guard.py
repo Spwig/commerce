@@ -17,35 +17,46 @@ logger = logging.getLogger(__name__)
 
 class SandboxPaymentError(Exception):
     """Raised when live credentials are detected in sandbox mode."""
+
     pass
 
 
 # Accepted test/sandbox environment values (universal across all providers)
-_TEST_ENVIRONMENTS = frozenset({
-    'test', 'sandbox', 'demo', 'development', 'dev',
-})
+_TEST_ENVIRONMENTS = frozenset(
+    {
+        "test",
+        "sandbox",
+        "demo",
+        "development",
+        "dev",
+    }
+)
 
 # Live environment values that should be rejected in sandbox mode
-_LIVE_ENVIRONMENTS = frozenset({
-    'live', 'production', 'prod',
-})
+_LIVE_ENVIRONMENTS = frozenset(
+    {
+        "live",
+        "production",
+        "prod",
+    }
+)
 
 # Provider-specific key prefix rules (for providers whose keys encode the mode)
 _KEY_PREFIX_RULES = {
-    'stripe': {
-        'secret_key': {
-            'test_prefixes': ('sk_test_',),
-            'live_prefixes': ('sk_live_',),
+    "stripe": {
+        "secret_key": {
+            "test_prefixes": ("sk_test_",),
+            "live_prefixes": ("sk_live_",),
         },
-        'publishable_key': {
-            'test_prefixes': ('pk_test_',),
-            'live_prefixes': ('pk_live_',),
+        "publishable_key": {
+            "test_prefixes": ("pk_test_",),
+            "live_prefixes": ("pk_live_",),
         },
     },
-    'revolut': {
-        'secret_key': {
-            'test_prefixes': ('sk_test_', 'sk_sandbox_'),
-            'live_prefixes': ('sk_live_',),
+    "revolut": {
+        "secret_key": {
+            "test_prefixes": ("sk_test_", "sk_sandbox_"),
+            "live_prefixes": ("sk_live_",),
         },
     },
 }
@@ -74,7 +85,7 @@ def validate_provider_credentials(provider_slug: str, credentials: dict) -> None
         return  # No credentials to check
 
     # Check NEW dual-credential structure first
-    test_mode = credentials.get('test_mode')
+    test_mode = credentials.get("test_mode")
     if test_mode is not None:  # New structure detected
         if test_mode is False:
             raise SandboxPaymentError(
@@ -84,7 +95,7 @@ def validate_provider_credentials(provider_slug: str, credentials: dict) -> None
             )
 
         # Ensure test credentials are present
-        test_fields = [k for k in credentials.keys() if k.startswith('test_')]
+        test_fields = [k for k in credentials if k.startswith("test_")]
         if not test_fields:
             raise SandboxPaymentError(
                 f"SANDBOX MODE: Payment provider '{provider_slug}' has test_mode=True "
@@ -94,7 +105,7 @@ def validate_provider_credentials(provider_slug: str, credentials: dict) -> None
         return  # New structure validated, exit early
 
     # LEGACY: Check old environment field for backward compatibility
-    environment = credentials.get('environment', '')
+    environment = credentials.get("environment", "")
     if isinstance(environment, str) and environment:
         env_lower = environment.lower()
 
@@ -117,14 +128,14 @@ def validate_provider_credentials(provider_slug: str, credentials: dict) -> None
     prefix_rules = _KEY_PREFIX_RULES.get(provider_slug)
     if prefix_rules:
         for field_name, rules in prefix_rules.items():
-            value = credentials.get(field_name, '')
+            value = credentials.get(field_name, "")
             if not value or not isinstance(value, str):
                 continue
 
             # Check if this looks like a live key
-            live_prefixes = rules.get('live_prefixes', ())
+            live_prefixes = rules.get("live_prefixes", ())
             if any(value.startswith(prefix) for prefix in live_prefixes):
-                test_prefixes = rules.get('test_prefixes', ())
+                test_prefixes = rules.get("test_prefixes", ())
                 raise SandboxPaymentError(
                     f"SANDBOX MODE: Payment provider '{provider_slug}' has a live "
                     f"key for '{field_name}' (starts with "

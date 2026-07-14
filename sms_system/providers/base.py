@@ -3,8 +3,9 @@ SMS Provider Base Class.
 
 Abstract interface for SMS/WhatsApp providers.
 """
+
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Any
 
 
 class SMSProviderBase(ABC):
@@ -25,7 +26,7 @@ class SMSProviderBase(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema for required credentials.
 
@@ -45,7 +46,7 @@ class SMSProviderBase(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test connection to the provider.
 
@@ -55,7 +56,7 @@ class SMSProviderBase(ABC):
         pass
 
     @abstractmethod
-    def send_sms(self, phone: str, message: str) -> Dict[str, Any]:
+    def send_sms(self, phone: str, message: str) -> dict[str, Any]:
         """
         Send an SMS message.
 
@@ -73,8 +74,8 @@ class SMSProviderBase(ABC):
         self,
         phone: str,
         template_name: str,
-        template_params: Dict[str, str],
-    ) -> Dict[str, Any]:
+        template_params: dict[str, str],
+    ) -> dict[str, Any]:
         """
         Send a WhatsApp template message.
 
@@ -89,8 +90,8 @@ class SMSProviderBase(ABC):
             Dict with 'success' boolean and details
         """
         return {
-            'success': False,
-            'error': 'WhatsApp not supported by this provider',
+            "success": False,
+            "error": "WhatsApp not supported by this provider",
         }
 
     def normalize_phone(self, phone: str) -> str:
@@ -104,16 +105,16 @@ class SMSProviderBase(ABC):
             Phone number in E.164 format (e.g., +1234567890)
         """
         # Remove common formatting characters
-        cleaned = ''.join(c for c in phone if c.isdigit() or c == '+')
+        cleaned = "".join(c for c in phone if c.isdigit() or c == "+")
 
         # Ensure it starts with +
-        if not cleaned.startswith('+'):
+        if not cleaned.startswith("+"):
             # Assume it's a US number if no country code
             if len(cleaned) == 10:
-                cleaned = '+1' + cleaned
-            elif len(cleaned) == 11 and cleaned.startswith('1'):
-                cleaned = '+' + cleaned
+                cleaned = "+1" + cleaned
+            elif len(cleaned) == 11 and cleaned.startswith("1"):
+                cleaned = "+" + cleaned
             else:
-                cleaned = '+' + cleaned
+                cleaned = "+" + cleaned
 
         return cleaned

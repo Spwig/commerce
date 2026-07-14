@@ -7,4 +7,4 @@ Uses the platform's built-in SMTP server with DKIM signing.
 
 from .provider import BuiltinSMTPProvider
 
-__all__ = ['BuiltinSMTPProvider']
+__all__ = ["BuiltinSMTPProvider"]

@@ -4,9 +4,12 @@ API Token Generation and Validation Utilities
 This module provides utilities for generating secure API tokens
 and validating them against database records.
 """
+
 import secrets
 import string
+
 from django.utils import timezone
+
 from core.models import APIToken
 
 
@@ -21,10 +24,10 @@ def generate_secure_token(length=64):
         str: Random token string containing letters and digits
     """
     alphabet = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
+    return "".join(secrets.choice(alphabet) for _ in range(length))
 
 
-def create_api_token(name, token_type='custom', description='', created_by=None, expires_at=None):
+def create_api_token(name, token_type="custom", description="", created_by=None, expires_at=None):
     """
     Create a new API token
 
@@ -47,7 +50,7 @@ def create_api_token(name, token_type='custom', description='', created_by=None,
         description=description,
         created_by=created_by,
         expires_at=expires_at,
-        is_active=True
+        is_active=True,
     )
 
     return api_token
@@ -86,9 +89,8 @@ def validate_api_token(token_string, token_type=None, record_usage=True, ip_addr
             return None
 
         # Check IP restrictions if configured
-        if api_token.allowed_ips and ip_address:
-            if ip_address not in api_token.allowed_ips:
-                return None
+        if api_token.allowed_ips and ip_address and ip_address not in api_token.allowed_ips:
+            return None
 
         # Record usage
         if record_usage:
@@ -113,7 +115,7 @@ def revoke_token(token_id):
     try:
         token = APIToken.objects.get(id=token_id)
         token.is_active = False
-        token.save(update_fields=['is_active'])
+        token.save(update_fields=["is_active"])
         return True
     except APIToken.DoesNotExist:
         return False
@@ -129,9 +131,6 @@ def get_active_tokens_by_type(token_type):
     Returns:
         QuerySet: Active tokens of the specified type
     """
-    return APIToken.objects.filter(
-        token_type=token_type,
-        is_active=True
-    ).exclude(
+    return APIToken.objects.filter(token_type=token_type, is_active=True).exclude(
         expires_at__lt=timezone.now()
     )

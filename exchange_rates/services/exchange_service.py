@@ -5,16 +5,20 @@ Centralized service for fetching, caching, and converting currencies.
 Handles provider fallback chain and exchange rate markup application.
 """
 
-from decimal import Decimal
-from typing import Optional
-from django.core.cache import cache
-from django.utils import timezone
-from django.db import transaction
-from django.contrib.sites.models import Site
-from exchange_rates.models import ExchangeRate, ExchangeRateHistory, ExchangeRateProviderAccount, ManualExchangeRate
-from exchange_rates.providers.base import RateFetchError
-from core.models import SiteSettings
 import logging
+from decimal import Decimal
+
+from django.contrib.sites.models import Site
+from django.core.cache import cache
+
+from core.models import SiteSettings
+from exchange_rates.models import (
+    ExchangeRate,
+    ExchangeRateHistory,
+    ExchangeRateProviderAccount,
+    ManualExchangeRate,
+)
+from exchange_rates.providers.base import RateFetchError
 
 logger = logging.getLogger(__name__)
 
@@ -38,15 +42,15 @@ class ExchangeRateService:
     def _get_cache_ttl(self):
         """Get Redis cache TTL in seconds based on sync interval setting."""
         TTL_MAP = {
-            'realtime': 300,      # 5 min
-            'hourly': 1800,       # 30 min
-            'daily': 3600,        # 1 hour
-            'weekly': 21600,      # 6 hours
-            'monthly': 43200,     # 12 hours
-            'quarterly': 86400,   # 24 hours
-            'manual_only': 3600,  # 1 hour (manual rates still cached)
+            "realtime": 300,  # 5 min
+            "hourly": 1800,  # 30 min
+            "daily": 3600,  # 1 hour
+            "weekly": 21600,  # 6 hours
+            "monthly": 43200,  # 12 hours
+            "quarterly": 86400,  # 24 hours
+            "manual_only": 3600,  # 1 hour (manual rates still cached)
         }
-        interval = getattr(self.settings, 'exchange_rate_sync_interval', 'daily')
+        interval = getattr(self.settings, "exchange_rate_sync_interval", "daily")
         return TTL_MAP.get(interval, 300)
 
     def convert(self, amount: Decimal, from_currency: str, to_currency: str) -> Decimal:
@@ -73,13 +77,16 @@ class ExchangeRateService:
 
         # Apply exchange rate markup if enabled
         if self.settings.exchange_rate_markup_enabled:
-            markup_decimal = Decimal(str(self.settings.exchange_rate_markup_percentage)) / Decimal('100')
-            rate = rate * (Decimal('1') + markup_decimal)
+            markup_decimal = Decimal(str(self.settings.exchange_rate_markup_percentage)) / Decimal(
+                "100"
+            )
+            rate = rate * (Decimal("1") + markup_decimal)
 
         converted = amount * rate
 
         # Round according to target currency decimal places
         from core.utils.currency_helpers import round_money
+
         return round_money(converted, to_currency)
 
     def get_rate(self, from_currency: str, to_currency: str) -> Decimal:
@@ -104,10 +111,10 @@ class ExchangeRateService:
             RateFetchError: If no rate available from any source
         """
         if from_currency == to_currency:
-            return Decimal('1.0')
+            return Decimal("1.0")
 
         # Try Redis cache first (fastest)
-        cache_key = f'exchange_rate:{from_currency}:{to_currency}'
+        cache_key = f"exchange_rate:{from_currency}:{to_currency}"
         cached_rate = cache.get(cache_key)
         if cached_rate:
             logger.debug(f"Rate {from_currency}/{to_currency} from Redis cache")
@@ -126,26 +133,32 @@ class ExchangeRateService:
             rate_query = ExchangeRate.objects.filter(
                 base_currency=from_currency,
                 target_currency=to_currency,
-                provider_account__is_active=True
+                provider_account__is_active=True,
             )
 
             # Apply strategy
-            if self.settings.exchange_rate_selection_strategy == 'primary':
+            if self.settings.exchange_rate_selection_strategy == "primary":
                 # Try primary provider first
-                db_rate = rate_query.filter(
-                    provider_account__is_primary=True
-                ).order_by('-fetched_at').first()
+                db_rate = (
+                    rate_query.filter(provider_account__is_primary=True)
+                    .order_by("-fetched_at")
+                    .first()
+                )
 
                 # Fallback to latest from any provider if primary has no rate
                 if not db_rate or db_rate.is_stale:
-                    logger.debug(f"Primary provider has no fresh rate for {from_currency}/{to_currency}, falling back to latest")
-                    db_rate = rate_query.order_by('-fetched_at').first()
+                    logger.debug(
+                        f"Primary provider has no fresh rate for {from_currency}/{to_currency}, falling back to latest"
+                    )
+                    db_rate = rate_query.order_by("-fetched_at").first()
             else:
                 # 'latest' strategy - use most recently synced rate from any provider
-                db_rate = rate_query.order_by('-fetched_at').first()
+                db_rate = rate_query.order_by("-fetched_at").first()
 
             if db_rate and not db_rate.is_stale:
-                logger.debug(f"Rate {from_currency}/{to_currency} from database cache (provider: {db_rate.provider_account.name}, strategy: {self.settings.exchange_rate_selection_strategy})")
+                logger.debug(
+                    f"Rate {from_currency}/{to_currency} from database cache (provider: {db_rate.provider_account.name}, strategy: {self.settings.exchange_rate_selection_strategy})"
+                )
                 cache.set(cache_key, str(db_rate.rate), self._get_cache_ttl())
                 return db_rate.rate
 
@@ -157,7 +170,9 @@ class ExchangeRateService:
         rate = self._fetch_from_providers(from_currency, to_currency)
 
         if not rate:
-            raise RateFetchError(f"Could not fetch rate for {from_currency}/{to_currency} from any provider")
+            raise RateFetchError(
+                f"Could not fetch rate for {from_currency}/{to_currency} from any provider"
+            )
 
         # Cache the fetched rate
         cache.set(cache_key, str(rate), self._get_cache_ttl())
@@ -165,7 +180,7 @@ class ExchangeRateService:
 
         return rate
 
-    def _get_manual_rate(self, from_currency: str, to_currency: str) -> Optional[Decimal]:
+    def _get_manual_rate(self, from_currency: str, to_currency: str) -> Decimal | None:
         """
         Check for an active manual exchange rate for this currency pair.
 
@@ -181,7 +196,7 @@ class ExchangeRateService:
                 site=self.site,
                 base_currency=from_currency,
                 target_currency=to_currency,
-                is_active=True
+                is_active=True,
             ).first()
 
             if manual_rate:
@@ -193,7 +208,7 @@ class ExchangeRateService:
 
         return None
 
-    def _fetch_from_providers(self, from_currency: str, to_currency: str) -> Optional[Decimal]:
+    def _fetch_from_providers(self, from_currency: str, to_currency: str) -> Decimal | None:
         """
         Fetch rate from providers in priority order.
         Implements fallback chain.
@@ -206,9 +221,8 @@ class ExchangeRateService:
             Exchange rate or None if all providers fail
         """
         providers = ExchangeRateProviderAccount.objects.filter(
-            site=self.site,
-            is_active=True
-        ).order_by('priority')
+            site=self.site, is_active=True
+        ).order_by("priority")
 
         if not providers.exists():
             logger.error("No active exchange rate providers configured")
@@ -220,11 +234,15 @@ class ExchangeRateService:
                 rate = provider.get_rate(from_currency, to_currency)
 
                 if rate:
-                    logger.info(f"Fetched rate {from_currency}/{to_currency}={rate} from {provider_account.name}")
+                    logger.info(
+                        f"Fetched rate {from_currency}/{to_currency}={rate} from {provider_account.name}"
+                    )
                     return rate
 
             except Exception as e:
-                logger.warning(f"Provider {provider_account.name} failed for {from_currency}/{to_currency}: {e}")
+                logger.warning(
+                    f"Provider {provider_account.name} failed for {from_currency}/{to_currency}: {e}"
+                )
                 continue
 
         logger.error(f"All providers failed for {from_currency}/{to_currency}")
@@ -242,26 +260,26 @@ class ExchangeRateService:
         """
         try:
             # Select provider account based on strategy
-            if self.settings.exchange_rate_selection_strategy == 'primary':
+            if self.settings.exchange_rate_selection_strategy == "primary":
                 # Prefer primary provider for caching
                 provider_account = ExchangeRateProviderAccount.objects.filter(
-                    site=self.site,
-                    is_active=True,
-                    is_primary=True
+                    site=self.site, is_active=True, is_primary=True
                 ).first()
 
                 # Fallback to highest priority if no primary
                 if not provider_account:
-                    provider_account = ExchangeRateProviderAccount.objects.filter(
-                        site=self.site,
-                        is_active=True
-                    ).order_by('priority').first()
+                    provider_account = (
+                        ExchangeRateProviderAccount.objects.filter(site=self.site, is_active=True)
+                        .order_by("priority")
+                        .first()
+                    )
             else:
                 # 'latest' strategy - use highest priority provider
-                provider_account = ExchangeRateProviderAccount.objects.filter(
-                    site=self.site,
-                    is_active=True
-                ).order_by('priority').first()
+                provider_account = (
+                    ExchangeRateProviderAccount.objects.filter(site=self.site, is_active=True)
+                    .order_by("priority")
+                    .first()
+                )
 
             if not provider_account:
                 logger.warning("No provider account available for caching rate")
@@ -271,10 +289,12 @@ class ExchangeRateService:
                 provider_account=provider_account,
                 base_currency=from_currency,
                 target_currency=to_currency,
-                defaults={'rate': rate}
+                defaults={"rate": rate},
             )
 
-            logger.debug(f"Cached rate {from_currency}/{to_currency}={rate} in database (provider: {provider_account.name})")
+            logger.debug(
+                f"Cached rate {from_currency}/{to_currency}={rate} in database (provider: {provider_account.name})"
+            )
 
         except Exception as e:
             logger.error(f"Failed to cache rate in database: {e}")
@@ -299,6 +319,7 @@ class ExchangeRateService:
         else:
             # If no specific currencies configured, use common currencies
             from core.utils.currency_helpers import get_common_currencies
+
             target_currencies = [code for code, _ in get_common_currencies()]
 
         # Remove base currency from targets
@@ -307,7 +328,9 @@ class ExchangeRateService:
         success_count = 0
         failure_count = 0
 
-        logger.info(f"Updating exchange rates for {len(target_currencies)} currencies from base {base_currency}")
+        logger.info(
+            f"Updating exchange rates for {len(target_currencies)} currencies from base {base_currency}"
+        )
 
         for target_currency in target_currencies:
             try:
@@ -326,7 +349,9 @@ class ExchangeRateService:
         logger.info(f"Rate update complete: {success_count} success, {failure_count} failed")
         return (success_count, failure_count)
 
-    def snapshot_rate_for_order(self, from_currency: str, to_currency: str, order=None) -> ExchangeRateHistory:
+    def snapshot_rate_for_order(
+        self, from_currency: str, to_currency: str, order=None
+    ) -> ExchangeRateHistory:
         """
         Create historical snapshot of exchange rate for order auditing.
 
@@ -346,10 +371,11 @@ class ExchangeRateService:
             if manual_rate is not None:
                 provider_name = "Manual"
             else:
-                provider_account = ExchangeRateProviderAccount.objects.filter(
-                    site=self.site,
-                    is_active=True
-                ).order_by('priority').first()
+                provider_account = (
+                    ExchangeRateProviderAccount.objects.filter(site=self.site, is_active=True)
+                    .order_by("priority")
+                    .first()
+                )
                 provider_name = provider_account.name if provider_account else "Unknown"
 
             snapshot = ExchangeRateHistory.objects.create(
@@ -357,7 +383,7 @@ class ExchangeRateService:
                 target_currency=to_currency,
                 rate=rate,
                 provider_name=provider_name,
-                order=order
+                order=order,
             )
 
             logger.info(f"Created rate snapshot for order: {from_currency}/{to_currency}={rate}")
@@ -382,55 +408,56 @@ class ExchangeRateService:
 
         # Check if this is a manual rate
         manual_rate_obj = ManualExchangeRate.objects.filter(
-            site=self.site,
-            base_currency=from_currency,
-            target_currency=to_currency,
-            is_active=True
+            site=self.site, base_currency=from_currency, target_currency=to_currency, is_active=True
         ).first()
 
         if manual_rate_obj:
             return {
-                'rate': rate,
-                'from_currency': from_currency,
-                'to_currency': to_currency,
-                'provider': 'Manual',
-                'fetched_at': manual_rate_obj.updated_at,
-                'is_stale': False,
-                'source': 'manual',
-                'markup_applied': self.settings.exchange_rate_markup_enabled,
-                'markup_percentage': str(self.settings.exchange_rate_markup_percentage) if self.settings.exchange_rate_markup_enabled else None,
-                'selection_strategy': self.settings.exchange_rate_selection_strategy,
+                "rate": rate,
+                "from_currency": from_currency,
+                "to_currency": to_currency,
+                "provider": "Manual",
+                "fetched_at": manual_rate_obj.updated_at,
+                "is_stale": False,
+                "source": "manual",
+                "markup_applied": self.settings.exchange_rate_markup_enabled,
+                "markup_percentage": str(self.settings.exchange_rate_markup_percentage)
+                if self.settings.exchange_rate_markup_enabled
+                else None,
+                "selection_strategy": self.settings.exchange_rate_selection_strategy,
             }
 
         # Get rate source using same strategy as get_rate()
         rate_query = ExchangeRate.objects.filter(
             base_currency=from_currency,
             target_currency=to_currency,
-            provider_account__is_active=True
+            provider_account__is_active=True,
         )
 
         # Apply selection strategy
-        if self.settings.exchange_rate_selection_strategy == 'primary':
-            db_rate = rate_query.filter(
-                provider_account__is_primary=True
-            ).order_by('-fetched_at').first()
+        if self.settings.exchange_rate_selection_strategy == "primary":
+            db_rate = (
+                rate_query.filter(provider_account__is_primary=True).order_by("-fetched_at").first()
+            )
 
             # Fallback to latest if primary not available
             if not db_rate:
-                db_rate = rate_query.order_by('-fetched_at').first()
+                db_rate = rate_query.order_by("-fetched_at").first()
         else:
             # 'latest' strategy
-            db_rate = rate_query.order_by('-fetched_at').first()
+            db_rate = rate_query.order_by("-fetched_at").first()
 
         return {
-            'rate': rate,
-            'from_currency': from_currency,
-            'to_currency': to_currency,
-            'provider': db_rate.provider_account.name if db_rate else None,
-            'fetched_at': db_rate.fetched_at if db_rate else None,
-            'is_stale': db_rate.is_stale if db_rate else True,
-            'source': 'provider',
-            'markup_applied': self.settings.exchange_rate_markup_enabled,
-            'markup_percentage': str(self.settings.exchange_rate_markup_percentage) if self.settings.exchange_rate_markup_enabled else None,
-            'selection_strategy': self.settings.exchange_rate_selection_strategy,
+            "rate": rate,
+            "from_currency": from_currency,
+            "to_currency": to_currency,
+            "provider": db_rate.provider_account.name if db_rate else None,
+            "fetched_at": db_rate.fetched_at if db_rate else None,
+            "is_stale": db_rate.is_stale if db_rate else True,
+            "source": "provider",
+            "markup_applied": self.settings.exchange_rate_markup_enabled,
+            "markup_percentage": str(self.settings.exchange_rate_markup_percentage)
+            if self.settings.exchange_rate_markup_enabled
+            else None,
+            "selection_strategy": self.settings.exchange_rate_selection_strategy,
         }

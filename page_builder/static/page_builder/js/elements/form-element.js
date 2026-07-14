@@ -5,32 +5,32 @@
  * Auto-initializes all [data-form-id] containers that have a matching #fb-form-data-{id} island.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    function initFormElement(formContainer) {
-        var formId = formContainer.dataset.formId;
-        var dataIsland = document.getElementById('fb-form-data-' + formId);
-        if (!dataIsland) return;
+  function initFormElement(formContainer) {
+    const formId = formContainer.dataset.formId;
+    const dataIsland = document.getElementById('fb-form-data-' + formId);
+    if (!dataIsland) return;
 
-        var formData;
-        try {
-            formData = JSON.parse(dataIsland.textContent);
-        } catch (e) {
-            return;
-        }
-
-        if (window.DynamicForm) {
-            new window.DynamicForm(formContainer, formData);
-        }
+    let formData;
+    try {
+      formData = JSON.parse(dataIsland.textContent);
+    } catch (e) {
+      return;
     }
 
-    function init() {
-        document.querySelectorAll('[data-form-id]').forEach(initFormElement);
+    if (window.DynamicForm) {
+      new window.DynamicForm(formContainer, formData);
     }
+  }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+  function init() {
+    document.querySelectorAll('[data-form-id]').forEach(initFormElement);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

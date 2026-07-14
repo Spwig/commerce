@@ -1,13 +1,14 @@
 """
 Forms for Catalog app admin customization
 """
+
 import json
 from decimal import Decimal, InvalidOperation
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import ProductVariant, AttributeValue, ProductAttributeAssignment
+from .models import ProductAttributeAssignment, ProductVariant
 
 
 class CommaSeparatedDecimalField(forms.CharField):
@@ -22,8 +23,8 @@ class CommaSeparatedDecimalField(forms.CharField):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('help_text', _('Enter amounts separated by commas (e.g., 25, 50, 100)'))
-        kwargs.setdefault('required', False)
+        kwargs.setdefault("help_text", _("Enter amounts separated by commas (e.g., 25, 50, 100)"))
+        kwargs.setdefault("required", False)
         super().__init__(*args, **kwargs)
 
     def prepare_value(self, value):
@@ -32,7 +33,7 @@ class CommaSeparatedDecimalField(forms.CharField):
         [25, 50, 100] -> "25, 50, 100"
         """
         if value is None:
-            return ''
+            return ""
 
         if isinstance(value, str):
             # If it's already a string (e.g., from form POST), return as is
@@ -53,9 +54,9 @@ class CommaSeparatedDecimalField(forms.CharField):
                         formatted.append(str(v))
                 else:
                     formatted.append(str(v))
-            return ', '.join(formatted)
+            return ", ".join(formatted)
 
-        return str(value) if value else ''
+        return str(value) if value else ""
 
     def to_python(self, value):
         """
@@ -71,7 +72,7 @@ class CommaSeparatedDecimalField(forms.CharField):
 
         # Split by comma and process each value
         result = []
-        parts = value.split(',')
+        parts = value.split(",")
 
         for part in parts:
             part = part.strip()
@@ -89,8 +90,8 @@ class CommaSeparatedDecimalField(forms.CharField):
             except (InvalidOperation, ValueError):
                 raise forms.ValidationError(
                     _('Invalid value "%(value)s". Please enter numbers only, separated by commas.'),
-                    code='invalid',
-                    params={'value': part}
+                    code="invalid",
+                    params={"value": part},
                 )
 
         return result
@@ -103,9 +104,9 @@ class CommaSeparatedDecimalField(forms.CharField):
             for v in value:
                 if v <= 0:
                     raise forms.ValidationError(
-                        _('All amounts must be positive numbers. Found: %(value)s'),
-                        code='invalid',
-                        params={'value': v}
+                        _("All amounts must be positive numbers. Found: %(value)s"),
+                        code="invalid",
+                        params={"value": v},
                     )
 
 
@@ -119,7 +120,7 @@ class ProductVariantForm(forms.ModelForm):
 
     class Meta:
         model = ProductVariant
-        fields = '__all__'
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -134,17 +135,15 @@ class ProductVariantForm(forms.ModelForm):
 
         # Update help text based on context
         if product:
-            assigned_attrs = ProductAttributeAssignment.objects.filter(
-                product=product
-            ).exists()
+            assigned_attrs = ProductAttributeAssignment.objects.filter(product=product).exists()
 
             if assigned_attrs:
-                self.fields['selected_attributes'].help_text = _(
+                self.fields["selected_attributes"].help_text = _(
                     "Select attribute values for this variant. "
                     "Only values for attributes assigned to this product are shown."
                 )
             else:
-                self.fields['selected_attributes'].help_text = _(
+                self.fields["selected_attributes"].help_text = _(
                     "No attributes assigned to this product yet. "
                     "Add attributes in the 'Product Attributes & Variations' section above."
                 )

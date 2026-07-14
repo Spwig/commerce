@@ -1,13 +1,13 @@
 """
 Translation utilities for page builder
 """
-from django.core.cache import cache
-from django.conf import settings
-from django.utils import timezone
+
 import json
 import logging
-from typing import Dict, Optional, List, Tuple
-from datetime import timedelta
+
+from django.conf import settings
+from django.core.cache import cache
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ def get_available_languages():
     Caches the result for performance.
     """
     # Try cache first
-    cached_langs = cache.get('translation_service_languages')
+    cached_langs = cache.get("translation_service_languages")
     if cached_langs:
         return cached_langs
 
@@ -28,11 +28,11 @@ def get_available_languages():
 
         languages = []
         # Only return languages marked as active in the translations app
-        for lang in SiteLanguage.objects.filter(is_active=True).order_by('order', 'name'):
+        for lang in SiteLanguage.objects.filter(is_active=True).order_by("order", "name"):
             languages.append((lang.code, lang.name))
 
         # Cache for 1 hour
-        cache.set('translation_service_languages', languages, 3600)
+        cache.set("translation_service_languages", languages, 3600)
         return languages  # No fallback - if no active languages, return empty
 
     except ImportError:
@@ -67,10 +67,7 @@ def get_primary_language():
     try:
         from translations.models import SiteLanguage
 
-        primary = SiteLanguage.objects.filter(
-            is_active=True,
-            is_default=True
-        ).first()
+        primary = SiteLanguage.objects.filter(is_active=True, is_default=True).first()
 
         if primary:
             return primary.code
@@ -79,12 +76,12 @@ def get_primary_language():
         pass
 
     # Fallback to settings or default
-    lang_code = getattr(settings, 'LANGUAGE_CODE', 'en')
+    lang_code = getattr(settings, "LANGUAGE_CODE", "en")
 
     # Normalize language code for translator (en-us -> en)
     # The translator expects simple language codes like 'en', 'es', 'fr'
-    if '-' in lang_code:
-        lang_code = lang_code.split('-')[0]
+    if "-" in lang_code:
+        lang_code = lang_code.split("-")[0]
 
     return lang_code
 
@@ -108,8 +105,8 @@ def is_language_supported(code):
         return True
 
     # Check base language (e.g., 'en' for 'en-US')
-    if '-' in code:
-        base_code = code.split('-')[0]
+    if "-" in code:
+        base_code = code.split("-")[0]
         return base_code in language_dict
 
     return False
@@ -126,8 +123,8 @@ def get_language_fallback_chain(language_code):
     chain.append(language_code)
 
     # Add base language if it's a variant
-    if '-' in language_code:
-        base_code = language_code.split('-')[0]
+    if "-" in language_code:
+        base_code = language_code.split("-")[0]
         if base_code != language_code:
             chain.append(base_code)
 
@@ -148,10 +145,7 @@ def serialize_translations_for_js():
     """
     languages = []
     for code, name in get_available_languages():
-        languages.append({
-            'code': code,
-            'name': name
-        })
+        languages.append({"code": code, "name": name})
 
     return json.dumps(languages)
 
@@ -162,8 +156,8 @@ def get_translation_coverage(element):
     Returns dict with coverage statistics.
     Now checks the separate translations field, not content field.
     """
-    if not hasattr(element, 'translations'):
-        return {'coverage': 0, 'translated': 0, 'total': 0}
+    if not hasattr(element, "translations"):
+        return {"coverage": 0, "translated": 0, "total": 0}
 
     # Get translations from the separate field
     translations = element.translations or {}
@@ -179,10 +173,10 @@ def get_translation_coverage(element):
     coverage = (translated_count / total_count * 100) if total_count > 0 else 0
 
     return {
-        'coverage': round(coverage, 1),
-        'translated': translated_count,
-        'total': total_count,
-        'missing': [lang for lang in target_languages if lang not in translations]
+        "coverage": round(coverage, 1),
+        "translated": translated_count,
+        "total": total_count,
+        "missing": [lang for lang in target_languages if lang not in translations],
     }
 
 
@@ -191,7 +185,7 @@ def get_translation_health_status():
     Get translation service health status using the translator API.
     Returns dict with health information.
     """
-    cache_key = 'translation_service_health'
+    cache_key = "translation_service_health"
     cache_timeout = 60  # 1 minute cache
 
     # Check cache first
@@ -201,6 +195,7 @@ def get_translation_health_status():
 
     try:
         from translations.client import TranslatorClient
+
         client = TranslatorClient()
 
         # Get health info from translator service
@@ -208,40 +203,42 @@ def get_translation_health_status():
 
         if health_data:
             status = {
-                'available': True,
-                'status': health_data.get('status', 'unknown'),
-                'message': 'Translation service is operational',
-                'model_loaded': health_data.get('model_loaded', False),
-                'cpu_percent': health_data.get('cpu_percent', 0),
-                'memory_percent': health_data.get('memory_percent', 0),
-                'available_languages': health_data.get('available_languages', []),
-                'checked_at': timezone.now().isoformat()
+                "available": True,
+                "status": health_data.get("status", "unknown"),
+                "message": "Translation service is operational",
+                "model_loaded": health_data.get("model_loaded", False),
+                "cpu_percent": health_data.get("cpu_percent", 0),
+                "memory_percent": health_data.get("memory_percent", 0),
+                "available_languages": health_data.get("available_languages", []),
+                "checked_at": timezone.now().isoformat(),
             }
 
             # Update message based on status
-            if not status['model_loaded']:
-                status['status'] = 'degraded'
-                status['message'] = 'Translation models not loaded'
-            elif status['cpu_percent'] > 80 or status['memory_percent'] > 90:
-                status['status'] = 'degraded'
-                status['message'] = f"High resource usage (CPU: {status['cpu_percent']}%, Memory: {status['memory_percent']}%)"
+            if not status["model_loaded"]:
+                status["status"] = "degraded"
+                status["message"] = "Translation models not loaded"
+            elif status["cpu_percent"] > 80 or status["memory_percent"] > 90:
+                status["status"] = "degraded"
+                status["message"] = (
+                    f"High resource usage (CPU: {status['cpu_percent']}%, Memory: {status['memory_percent']}%)"
+                )
 
         else:
             # Service not responding
             status = {
-                'available': False,
-                'status': 'offline',
-                'message': 'Translation service is not responding',
-                'checked_at': timezone.now().isoformat()
+                "available": False,
+                "status": "offline",
+                "message": "Translation service is not responding",
+                "checked_at": timezone.now().isoformat(),
             }
 
     except Exception as e:
         logger.error(f"Error checking translation service health: {e}")
         status = {
-            'available': False,
-            'status': 'offline',
-            'message': f'Error connecting to translation service',
-            'checked_at': timezone.now().isoformat()
+            "available": False,
+            "status": "offline",
+            "message": "Error connecting to translation service",
+            "checked_at": timezone.now().isoformat(),
         }
 
     # Cache the result
@@ -249,7 +246,7 @@ def get_translation_health_status():
     return status
 
 
-def should_schedule_translation(char_count: int, language_count: int) -> Tuple[bool, str]:
+def should_schedule_translation(char_count: int, language_count: int) -> tuple[bool, str]:
     """
     Determine if translation should be scheduled instead of immediate.
     Based on sentence count rather than just character count.
@@ -265,9 +262,9 @@ def should_schedule_translation(char_count: int, language_count: int) -> Tuple[b
     status = get_translation_health_status()
 
     # Check if service is under heavy load
-    if status.get('status') == 'degraded':
-        cpu = status.get('cpu_percent', 0)
-        mem = status.get('memory_percent', 0)
+    if status.get("status") == "degraded":
+        cpu = status.get("cpu_percent", 0)
+        mem = status.get("memory_percent", 0)
 
         # Only recommend scheduling if actually under heavy load
         if cpu > 80 or mem > 90:
@@ -291,7 +288,10 @@ def should_schedule_translation(char_count: int, language_count: int) -> Tuple[b
     # - 10 sentences × 5 languages = 50 units (immediate)
 
     if work_units > 100:
-        return True, f"Large translation job (~{int(estimated_sentences)} sentences × {language_count} languages = {int(work_units)} work units)"
+        return (
+            True,
+            f"Large translation job (~{int(estimated_sentences)} sentences × {language_count} languages = {int(work_units)} work units)",
+        )
 
     # Otherwise, proceed with immediate translation
     return False, ""
@@ -313,12 +313,42 @@ def estimate_translation_time(char_count: int, language_count: int) -> int:
 
     # Check current load and adjust estimate
     status = get_translation_health_status()
-    if status.get('status') == 'degraded':
+    if status.get("status") == "degraded":
         base_time *= 2  # Double time if degraded
-    elif status.get('cpu_percent', 0) > 70:
+    elif status.get("cpu_percent", 0) > 70:
         base_time *= 1.5  # 50% more if high CPU
 
     return max(5, int(base_time))  # Minimum 5 seconds
+
+
+class TranslationServiceHealth:
+    """Thin wrapper over the module-level health helpers.
+
+    Introduced because several call sites (page_builder middleware,
+    translation endpoints, and this module's own TranslationFallbackHandler)
+    were instantiating a TranslationServiceHealth() that never existed,
+    raising NameError as soon as the code path was hit.
+    """
+
+    def get_health_status(self) -> dict:
+        """Return the current cached health-status dict."""
+        return get_translation_health_status()
+
+    def should_schedule_translation(self, char_count: int, language_count: int) -> tuple[bool, str]:
+        return should_schedule_translation(char_count, language_count)
+
+    def estimate_translation_time(self, char_count: int, language_count: int) -> int:
+        return estimate_translation_time(char_count, language_count)
+
+    def get_degradation_warnings(self) -> list[str]:
+        """Return any active degradation warnings from the current health status."""
+        status = get_translation_health_status()
+        warnings = []
+        if not status.get("available"):
+            warnings.append(status.get("message", "Translation service is unavailable"))
+        elif status.get("status") == "degraded":
+            warnings.append(status.get("message", "Translation service is degraded"))
+        return warnings
 
 
 class TranslationFallbackHandler:
@@ -330,8 +360,9 @@ class TranslationFallbackHandler:
     def __init__(self):
         self.context_manager = TranslationContextManager()
 
-    def handle_service_unavailable(self, content: str, languages: List[str],
-                                  element_id: Optional[str] = None) -> Dict:
+    def handle_service_unavailable(
+        self, content: str, languages: list[str], element_id: str | None = None
+    ) -> dict:
         """
         Handle when service is completely down.
 
@@ -342,23 +373,23 @@ class TranslationFallbackHandler:
         job = None
         if self.context_manager.service_available:
             job = self.context_manager.create_translation_job(
-                job_type='page_element',
-                status='pending',
+                job_type="page_element",
+                status="pending",
                 source_language=get_primary_language(),
                 target_languages=languages,
-                content_snapshot={'text': content, 'element_id': element_id}
+                content_snapshot={"text": content, "element_id": element_id},
             )
 
         return {
-            'success': False,
-            'error': 'service_unavailable',
-            'message': 'Translation service is currently offline',
-            'queued': job is not None,
-            'job_id': job.id if job else None,
-            'retry_after': 300  # Suggest retry after 5 minutes
+            "success": False,
+            "error": "service_unavailable",
+            "message": "Translation service is currently offline",
+            "queued": job is not None,
+            "job_id": job.id if job else None,
+            "retry_after": 300,  # Suggest retry after 5 minutes
         }
 
-    def handle_service_degraded(self, content: str, languages: List[str]) -> Dict:
+    def handle_service_degraded(self, content: str, languages: list[str]) -> dict:
         """
         Handle when service is slow/limited.
 
@@ -367,21 +398,20 @@ class TranslationFallbackHandler:
         """
         # Suggest scheduling or limiting batch size
         health = TranslationServiceHealth()
-        should_schedule, reason = health.should_schedule_translation(
-            len(content), len(languages)
-        )
+        should_schedule, reason = health.should_schedule_translation(len(content), len(languages))
 
         return {
-            'success': True,
-            'warning': 'service_degraded',
-            'message': reason,
-            'suggest_schedule': should_schedule,
-            'max_batch_size': 3,  # Limit concurrent translations
-            'estimated_time': health.estimate_translation_time(len(content), len(languages))
+            "success": True,
+            "warning": "service_degraded",
+            "message": reason,
+            "suggest_schedule": should_schedule,
+            "max_batch_size": 3,  # Limit concurrent translations
+            "estimated_time": health.estimate_translation_time(len(content), len(languages)),
         }
 
-    def handle_partial_failure(self, succeeded: Dict[str, str],
-                              failed: List[str], reason: str) -> Dict:
+    def handle_partial_failure(
+        self, succeeded: dict[str, str], failed: list[str], reason: str
+    ) -> dict:
         """
         Handle when some languages fail to translate.
 
@@ -394,12 +424,12 @@ class TranslationFallbackHandler:
             Dict with partial success information
         """
         return {
-            'success': 'partial',
-            'message': f'Translated {len(succeeded)} of {len(succeeded) + len(failed)} languages',
-            'translations': succeeded,
-            'failed_languages': failed,
-            'failure_reason': reason,
-            'retry_failed': True
+            "success": "partial",
+            "message": f"Translated {len(succeeded)} of {len(succeeded) + len(failed)} languages",
+            "translations": succeeded,
+            "failed_languages": failed,
+            "failure_reason": reason,
+            "retry_failed": True,
         }
 
 
@@ -419,6 +449,7 @@ class TranslationContextManager:
         """Try to load translation models"""
         try:
             from translations.models import SiteLanguage, TranslationJob
+
             self.SiteLanguage = SiteLanguage
             self.TranslationJob = TranslationJob
             self.service_available = True
@@ -429,12 +460,14 @@ class TranslationContextManager:
         """Get languages with fallback"""
         if self.service_available and self.SiteLanguage:
             try:
-                return [(lang.code, lang.name)
-                        for lang in self.SiteLanguage.objects.filter(is_active=True)]
+                return [
+                    (lang.code, lang.name)
+                    for lang in self.SiteLanguage.objects.filter(is_active=True)
+                ]
             except Exception:
                 pass
 
-        return getattr(settings, 'LANGUAGES', [('en', 'English')])
+        return getattr(settings, "LANGUAGES", [("en", "English")])
 
     def create_translation_job(self, **kwargs):
         """Create a translation job if service is available"""

@@ -11,12 +11,19 @@ from .models import DomainConfiguration
 class DomainConfigurationAdmin(admin.ModelAdmin):
     """Minimal admin registration. Primary UI is via the Site Settings tab."""
 
-    list_display = ('domain', 'ssl_mode', 'status', 'cert_expires_at')
+    list_display = ("domain", "ssl_mode", "status", "cert_expires_at")
     readonly_fields = (
-        'previous_domain', 'cert_domain', 'cert_issuer',
-        'cert_expires_at', 'cert_obtained_at', 'is_wildcard',
-        'status', 'last_error', 'task_id',
-        'created_at', 'updated_at',
+        "previous_domain",
+        "cert_domain",
+        "cert_issuer",
+        "cert_expires_at",
+        "cert_obtained_at",
+        "is_wildcard",
+        "status",
+        "last_error",
+        "task_id",
+        "created_at",
+        "updated_at",
     )
 
     def has_add_permission(self, request):
@@ -32,9 +39,9 @@ class DomainConfigurationAdmin(admin.ModelAdmin):
         if settings.IS_HOSTED:
             custom_urls = [
                 path(
-                    'custom-domain/',
+                    "custom-domain/",
                     self.admin_site.admin_view(self.custom_domain_view),
-                    name='domain_ssl_custom_domain',
+                    name="domain_ssl_custom_domain",
                 ),
             ]
         return custom_urls + urls
@@ -43,11 +50,11 @@ class DomainConfigurationAdmin(admin.ModelAdmin):
         """Admin page for hosted custom domain management."""
         context = {
             **self.admin_site.each_context(request),
-            'title': _('Custom Domain'),
-            'opts': self.model._meta,
+            "title": _("Custom Domain"),
+            "opts": self.model._meta,
         }
         return TemplateResponse(
             request,
-            'admin/domain_ssl/custom_domain.html',
+            "admin/domain_ssl/custom_domain.html",
             context,
         )

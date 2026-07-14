@@ -2,24 +2,26 @@
 Management command to create the default theme
 """
 
+import hashlib
+import json
+import tempfile
+import zipfile
+from pathlib import Path
+
+from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-import json
-import hashlib
-from pathlib import Path
-import zipfile
-import tempfile
-from django.core.files import File
+
 
 class Command(BaseCommand):
-    help = 'Creates the default theme with comprehensive base tokens'
+    help = "Creates the default theme with comprehensive base tokens"
 
     def handle(self, *args, **options):
         from design.theme_models import Theme, ThemeBranding
 
         # Check if default theme already exists
-        if Theme.objects.filter(slug='default').exists():
-            self.stdout.write(self.style.WARNING('Default theme already exists'))
+        if Theme.objects.filter(slug="default").exists():
+            self.stdout.write(self.style.WARNING("Default theme already exists"))
             return
 
         # Define comprehensive default tokens
@@ -30,9 +32,7 @@ class Command(BaseCommand):
             "description": "The default shop theme with comprehensive design tokens",
             "author": "Shop Platform",
             "author_email": "themes@shop.com",
-            "engine": {
-                "min_version": "1.0.0"
-            },
+            "engine": {"min_version": "1.0.0"},
             "tokens": {
                 "colors": {
                     "primary": "#3B82F6",
@@ -69,7 +69,7 @@ class Command(BaseCommand):
                     "border-light": "#F3F4F6",
                     "border-dark": "#D1D5DB",
                     "shadow": "rgba(0, 0, 0, 0.1)",
-                    "overlay": "rgba(0, 0, 0, 0.5)"
+                    "overlay": "rgba(0, 0, 0, 0.5)",
                 },
                 "typography": {
                     "font-family-heading": "Inter, system-ui, -apple-system, sans-serif",
@@ -104,7 +104,7 @@ class Command(BaseCommand):
                     "letter-spacing-normal": "0",
                     "letter-spacing-wide": "0.025em",
                     "letter-spacing-wider": "0.05em",
-                    "letter-spacing-widest": "0.1em"
+                    "letter-spacing-widest": "0.1em",
                 },
                 "spacing": {
                     "0": "0",
@@ -141,7 +141,7 @@ class Command(BaseCommand):
                     "64": "16rem",
                     "72": "18rem",
                     "80": "20rem",
-                    "96": "24rem"
+                    "96": "24rem",
                 },
                 "borders": {
                     "width-0": "0",
@@ -157,7 +157,7 @@ class Command(BaseCommand):
                     "radius-xl": "0.75rem",
                     "radius-2xl": "1rem",
                     "radius-3xl": "1.5rem",
-                    "radius-full": "9999px"
+                    "radius-full": "9999px",
                 },
                 "shadows": {
                     "none": "none",
@@ -167,7 +167,7 @@ class Command(BaseCommand):
                     "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
                     "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
                     "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-                    "inner": "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)"
+                    "inner": "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)",
                 },
                 "animations": {
                     "duration-75": "75ms",
@@ -181,7 +181,7 @@ class Command(BaseCommand):
                     "easing-linear": "linear",
                     "easing-in": "cubic-bezier(0.4, 0, 1, 1)",
                     "easing-out": "cubic-bezier(0, 0, 0.2, 1)",
-                    "easing-in-out": "cubic-bezier(0.4, 0, 0.2, 1)"
+                    "easing-in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
                 },
                 "breakpoints": {
                     "xs": "0",
@@ -189,7 +189,7 @@ class Command(BaseCommand):
                     "md": "768px",
                     "lg": "1024px",
                     "xl": "1280px",
-                    "2xl": "1536px"
+                    "2xl": "1536px",
                 },
                 "z-index": {
                     "0": "0",
@@ -198,50 +198,46 @@ class Command(BaseCommand):
                     "30": "30",
                     "40": "40",
                     "50": "50",
-                    "auto": "auto"
-                }
+                    "auto": "auto",
+                },
             },
-            "assets": {
-                "css": ["css/default.css"],
-                "js": [],
-                "images": []
-            }
+            "assets": {"css": ["css/default.css"], "js": [], "images": []},
         }
 
         # Create the default CSS file content
-        css_content = self.generate_css_from_tokens(manifest['tokens'])
+        css_content = self.generate_css_from_tokens(manifest["tokens"])
 
         # Create a temporary theme package
         with tempfile.TemporaryDirectory() as temp_dir:
-            theme_dir = Path(temp_dir) / 'theme'
+            theme_dir = Path(temp_dir) / "theme"
             theme_dir.mkdir()
 
             # Write manifest
-            manifest_path = theme_dir / 'manifest.json'
-            with open(manifest_path, 'w') as f:
+            manifest_path = theme_dir / "manifest.json"
+            with open(manifest_path, "w") as f:
                 json.dump(manifest, f, indent=2)
 
             # Create CSS directory and file
-            css_dir = theme_dir / 'css'
+            css_dir = theme_dir / "css"
             css_dir.mkdir()
-            css_file = css_dir / 'default.css'
-            with open(css_file, 'w') as f:
+            css_file = css_dir / "default.css"
+            with open(css_file, "w") as f:
                 f.write(css_content)
 
             # Create ZIP package
-            zip_path = Path(temp_dir) / 'default-theme.zip'
-            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-                for file in theme_dir.rglob('*'):
+            zip_path = Path(temp_dir) / "default-theme.zip"
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+                for file in theme_dir.rglob("*"):
                     if file.is_file():
                         arcname = str(file.relative_to(temp_dir))
                         zipf.write(file, arcname)
 
             # Calculate checksum
-            with open(zip_path, 'rb') as f:
+            with open(zip_path, "rb") as f:
                 checksum = hashlib.sha256(f.read()).hexdigest()
 
             # Create Theme model instance
-            with open(zip_path, 'rb') as f:
+            with open(zip_path, "rb") as f:
                 theme = Theme.objects.create(
                     name="Default Theme",
                     slug="default",
@@ -251,64 +247,69 @@ class Command(BaseCommand):
                     author="Shop Platform",
                     author_email="themes@shop.com",
                     manifest=manifest,
-                    package_file=File(f, name='default-theme.zip'),
+                    package_file=File(f, name="default-theme.zip"),
                     package_checksum=checksum,
                     is_active=True,
                     is_default=True,
-                    installed_at=timezone.now()
+                    installed_at=timezone.now(),
                 )
 
-            self.stdout.write(self.style.SUCCESS(f'Successfully created default theme: {theme}'))
+            self.stdout.write(self.style.SUCCESS(f"Successfully created default theme: {theme}"))
 
             # Update existing branding to use this theme
             from design.theme_models import ThemeBranding
+
             branding = ThemeBranding.objects.first()
             if branding and not branding.theme:
                 branding.theme = theme
                 branding.save()
-                self.stdout.write(self.style.SUCCESS('Updated existing branding to use default theme'))
+                self.stdout.write(
+                    self.style.SUCCESS("Updated existing branding to use default theme")
+                )
 
     def generate_css_from_tokens(self, tokens):
         """Generate CSS from token definitions"""
-        css_lines = ['/* Default Theme CSS Variables */\n', ':root {']
+        css_lines = ["/* Default Theme CSS Variables */\n", ":root {"]
 
         # Process each token category
         for category, values in tokens.items():
-            if category in ['colors', 'typography', 'spacing', 'borders', 'shadows', 'animations']:
-                css_lines.append(f'\n  /* {category.title()} */')
+            if category in ["colors", "typography", "spacing", "borders", "shadows", "animations"]:
+                css_lines.append(f"\n  /* {category.title()} */")
                 for key, value in values.items():
                     css_var = f"--{key.replace('_', '-')}"
                     css_lines.append(f"  {css_var}: {value};")
 
-        css_lines.append('}')
+        css_lines.append("}")
 
         # Add base styles
-        css_lines.extend([
-            '\n/* Base Styles */',
-            'body {',
-            '  font-family: var(--font-family-body);',
-            '  font-size: var(--font-size-base);',
-            '  line-height: var(--line-height-base);',
-            '  color: var(--text);',
-            '  background: var(--background);',
-            '}',
-            '',
-            'h1, h2, h3, h4, h5, h6 {',
-            '  font-family: var(--font-family-heading);',
-            '  font-weight: var(--font-weight-bold);',
-            '  line-height: var(--line-height-tight);',
-            '  color: var(--text);',
-            '}',
-            '',
-            'a {',
-            '  color: var(--primary);',
-            '  text-decoration: none;',
-            '  transition: color var(--duration-200) var(--easing-in-out);',
-            '}',
-            '',
-            'a:hover {',
-            '  color: var(--primary-dark);',
-            '}',
-        ])
+        css_lines.extend(
+            [
+                "\n/* Base Styles */",
+                "body {",
+                "  font-family: var(--font-family-body);",
+                "  font-size: var(--font-size-base);",
+                "  line-height: var(--line-height-base);",
+                "  color: var(--text);",
+                "  background: var(--background);",
+                "}",
+                "",
+                "h1, h2, h3, h4, h5, h6 {",
+                "  font-family: var(--font-family-heading);",
+                "  font-weight: var(--font-weight-bold);",
+                "  line-height: var(--line-height-tight);",
+                "  color: var(--text);",
+                "}",
+                "",
+                "a {",
+                "  color: var(--primary);",
+                "  text-decoration: none;",
+                "  transition: color var(--duration-200) var(--easing-in-out);",
+                "}",
+                "",
+                "a:hover {",
+                "  color: var(--primary-dark);",
+                "}",
+            ]
+        )
 
-        return '\n'.join(css_lines)
+        return "\n".join(css_lines)

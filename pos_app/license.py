@@ -12,8 +12,7 @@ The functions below stay as no-op shims so existing callers
 ``component_updates.services`` calls) keep working without changes.
 """
 
-
-POS_LICENSE_CACHE_KEY = 'pos_license_valid'  # kept for backwards-compat
+POS_LICENSE_CACHE_KEY = "pos_license_valid"  # kept for backwards-compat
 POS_LICENSE_CACHE_TIMEOUT = 86400
 POS_GRACE_PERIOD_DAYS = 14
 
@@ -34,12 +33,12 @@ def get_pos_license_status() -> dict:
     install now shows POS as active and unbounded.
     """
     return {
-        'valid': True,
-        'license_key': None,
-        'status': 'active',
-        'expires_at': None,
-        'grace_period_ends': None,
-        'days_remaining': None,
+        "valid": True,
+        "license_key": None,
+        "status": "active",
+        "expires_at": None,
+        "grace_period_ends": None,
+        "days_remaining": None,
     }
 
 
@@ -49,7 +48,7 @@ def activate_pos_license(license_key: str) -> dict:
     licence key. Accept it, ignore it, respond with success.
     """
     return {
-        'success': True,
-        'message': 'POS is now included in every edition — no licence key required.',
-        'status': 'active',
+        "success": True,
+        "message": "POS is now included in every edition — no licence key required.",
+        "status": "active",
     }

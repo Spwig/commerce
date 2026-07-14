@@ -3,11 +3,13 @@ Schema generation utilities
 
 Generates JSON Schemas from DRF serializers and API responses
 """
-from typing import Dict, Any, Type
+
+from typing import Any
+
 from rest_framework import serializers
 
 
-def generate_serializer_schema(serializer_class: Type[serializers.Serializer]) -> Dict[str, Any]:
+def generate_serializer_schema(serializer_class: type[serializers.Serializer]) -> dict[str, Any]:
     """
     Generate JSON Schema from DRF serializer
 
@@ -44,7 +46,7 @@ def generate_serializer_schema(serializer_class: Type[serializers.Serializer]) -
     }
 
 
-def _get_field_schema(field: serializers.Field) -> Dict[str, Any]:
+def _get_field_schema(field: serializers.Field) -> dict[str, Any]:
     """
     Get JSON Schema for a DRF field
 
@@ -58,50 +60,50 @@ def _get_field_schema(field: serializers.Field) -> Dict[str, Any]:
 
     # Map DRF field types to JSON Schema types
     if isinstance(field, serializers.BooleanField):
-        schema['type'] = 'boolean'
+        schema["type"] = "boolean"
     elif isinstance(field, serializers.IntegerField):
-        schema['type'] = 'integer'
+        schema["type"] = "integer"
     elif isinstance(field, (serializers.FloatField, serializers.DecimalField)):
-        schema['type'] = 'number'
+        schema["type"] = "number"
     elif isinstance(field, serializers.CharField):
-        schema['type'] = 'string'
-        if hasattr(field, 'max_length') and field.max_length:
-            schema['maxLength'] = field.max_length
+        schema["type"] = "string"
+        if hasattr(field, "max_length") and field.max_length:
+            schema["maxLength"] = field.max_length
     elif isinstance(field, serializers.EmailField):
-        schema['type'] = 'string'
-        schema['format'] = 'email'
+        schema["type"] = "string"
+        schema["format"] = "email"
     elif isinstance(field, serializers.URLField):
-        schema['type'] = 'string'
-        schema['format'] = 'uri'
+        schema["type"] = "string"
+        schema["format"] = "uri"
     elif isinstance(field, serializers.DateTimeField):
-        schema['type'] = 'string'
-        schema['format'] = 'date-time'
+        schema["type"] = "string"
+        schema["format"] = "date-time"
     elif isinstance(field, serializers.DateField):
-        schema['type'] = 'string'
-        schema['format'] = 'date'
-    elif isinstance(field, serializers.ListField) or isinstance(field, serializers.ListSerializer):
-        schema['type'] = 'array'
+        schema["type"] = "string"
+        schema["format"] = "date"
+    elif isinstance(field, (serializers.ListField, serializers.ListSerializer)):
+        schema["type"] = "array"
         # Try to get item schema
-        if hasattr(field, 'child'):
-            schema['items'] = _get_field_schema(field.child)
+        if hasattr(field, "child"):
+            schema["items"] = _get_field_schema(field.child)
         else:
-            schema['items'] = {}
-    elif isinstance(field, serializers.DictField) or isinstance(field, serializers.JSONField):
-        schema['type'] = 'object'
+            schema["items"] = {}
+    elif isinstance(field, (serializers.DictField, serializers.JSONField)):
+        schema["type"] = "object"
     elif isinstance(field, serializers.Serializer):
         # Nested serializer
         nested_schema = generate_serializer_schema(type(field))
         schema = nested_schema
     elif isinstance(field, serializers.ChoiceField):
         # Enum field
-        schema['type'] = 'string'
-        schema['enum'] = [choice for choice, _ in field.choices.items()]
+        schema["type"] = "string"
+        schema["enum"] = [choice for choice, _ in field.choices.items()]
     else:
         # Default to string for unknown types
-        schema['type'] = 'string'
+        schema["type"] = "string"
 
     # Add description if available
     if field.help_text:
-        schema['description'] = field.help_text
+        schema["description"] = field.help_text
 
     return schema

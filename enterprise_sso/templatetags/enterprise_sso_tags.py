@@ -16,13 +16,14 @@ def get_sso_config_status():
     """
     try:
         from enterprise_sso.models import SSOProviderConfig
+
         config = SSOProviderConfig.get_config()
         return {
-            'is_configured': config.is_configured,
-            'provider_name': config.provider_name,
+            "is_configured": config.is_configured,
+            "provider_name": config.provider_name,
         }
     except Exception:
         return {
-            'is_configured': False,
-            'provider_name': '',
+            "is_configured": False,
+            "provider_name": "",
         }

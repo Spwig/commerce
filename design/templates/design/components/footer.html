@@ -1,0 +1,116 @@
+{% load i18n static theme_tags merchant_trans %}
+{# Dynamic Footer Component - Renders widgets from FooterTemplate #}
+{# Supports page-specific footer selection and hidden state #}
+
+{# If hidden is True, don't render anything #}
+{% if hidden %}
+    {# Footer hidden for this page #}
+{% elif footer %}
+<footer class="site-footer {{ footer.css_classes }}" role="contentinfo">
+    {# Main Footer Content #}
+    <div class="footer-main">
+        <div class="container">
+            {% if footer.layout_type == 'columns' %}
+            {# Multi-column layout #}
+            <div class="footer-columns footer-columns--{{ footer.column_count }}">
+                {% for i in '123456'|make_list %}
+                    {% if forloop.counter <= footer.column_count %}
+                        {% with zone_name='column_'|add:forloop.counter|stringformat:'s' %}
+                        <div class="footer-column">
+                            {% for placement in zones|get_item:zone_name %}
+                                <div class="widget-wrapper">{% render_widget placement %}</div>
+                            {% empty %}
+                                {# Empty column #}
+                            {% endfor %}
+                        </div>
+                        {% endwith %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% elif footer.layout_type == 'stacked' %}
+            {# Stacked sections #}
+            {% if zones.section_top %}
+            <div class="footer-section footer-section--top">
+                {% for placement in zones.section_top %}
+                    <div class="widget-wrapper">{% render_widget placement %}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if zones.section_middle %}
+            <div class="footer-section footer-section--middle">
+                {% for placement in zones.section_middle %}
+                    <div class="widget-wrapper">{% render_widget placement %}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if zones.section_bottom %}
+            <div class="footer-section footer-section--bottom">
+                {% for placement in zones.section_bottom %}
+                    <div class="widget-wrapper">{% render_widget placement %}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            {# Simple or custom layout - render all zones #}
+            {% for zone_name, placements in zones.items %}
+            <div class="footer-zone footer-zone--{{ zone_name }}">
+                {% for placement in placements %}
+                    <div class="widget-wrapper">{% render_widget placement %}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    {# Bottom Bar (Copyright, etc.) #}
+    {% if footer.has_bottom_bar %}
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="footer-bottom__inner">
+                {% if zones.bottom_bar_left %}
+                <div class="footer-bottom__section footer-bottom__section--left">
+                    {% for placement in zones.bottom_bar_left %}
+                        <div class="widget-wrapper">{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.bottom_bar_center %}
+                <div class="footer-bottom__section footer-bottom__section--center">
+                    {% for placement in zones.bottom_bar_center %}
+                        <div class="widget-wrapper">{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.bottom_bar_right %}
+                <div class="footer-bottom__section footer-bottom__section--right">
+                    {% for placement in zones.bottom_bar_right %}
+                        <div class="widget-wrapper">{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {# Default copyright if no widgets #}
+                {% if not zones.bottom_bar_left and not zones.bottom_bar_center and not zones.bottom_bar_right %}
+                <div class="footer-bottom__section footer-bottom__section--center">
+                    <p class="footer-copyright">
+                        &copy; {% now 'Y' %} {{ site_settings.site_name|default:'Shop' }}. {% mtrans 'All rights reserved.' %}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Custom CSS #}
+    {% if footer.custom_css %}
+    <style>{{ footer.custom_css|safe }}</style>
+    {% endif %}
+</footer>
+{% else %}
+{# Fallback: Static footer when no FooterTemplate is configured #}
+{% include 'page_builder/components/footer_static.html' %}
+{% endif %}

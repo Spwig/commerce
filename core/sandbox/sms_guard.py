@@ -29,6 +29,7 @@ def get_sms_whitelist():
     """
     try:
         from core.models import SiteSettings
+
         ss = SiteSettings.objects.first()
         if not ss:
             return set()
@@ -63,11 +64,11 @@ def validate_sms_whitelist_entry(phone_number):
     phone_number = phone_number.strip()
 
     # Reject wildcards and patterns
-    if '*' in phone_number or '?' in phone_number:
+    if "*" in phone_number or "?" in phone_number:
         return False, "Wildcards are not allowed. Use exact phone numbers only."
 
     # E.164 format: + followed by 1-15 digits
-    if not re.match(r'^\+[1-9]\d{1,14}$', phone_number):
+    if not re.match(r"^\+[1-9]\d{1,14}$", phone_number):
         return False, "Invalid phone number format. Use E.164 format (e.g., +1234567890)."
 
     return True, None
@@ -119,17 +120,13 @@ def sandbox_filter_sms_recipient(phone_number):
         - Non-whitelisted -> ('log', phone_number)
     """
     if not is_sandbox_mode():
-        return 'send', phone_number
+        return "send", phone_number
 
     whitelist = get_sms_whitelist()
 
     if phone_number and phone_number.strip() in whitelist:
-        logger.info(
-            f"[SANDBOX] SMS to {phone_number} — whitelisted, will deliver"
-        )
-        return 'send', phone_number
+        logger.info(f"[SANDBOX] SMS to {phone_number} — whitelisted, will deliver")
+        return "send", phone_number
     else:
-        logger.info(
-            f"[SANDBOX] SMS to {phone_number} — not whitelisted, logging only"
-        )
-        return 'log', phone_number
+        logger.info(f"[SANDBOX] SMS to {phone_number} — not whitelisted, logging only")
+        return "log", phone_number

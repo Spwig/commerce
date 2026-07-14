@@ -2,45 +2,46 @@
 Subscription REST API Views
 Following rules.md API standards with drf-spectacular documentation.
 """
-from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from django.db.models import Q
-from django.utils.translation import gettext_lazy as _
-from drf_spectacular.utils import (
-    extend_schema,
-    extend_schema_view,
-    OpenApiResponse,
-    OpenApiParameter
-)
+
 import logging
 
-from core.api.authentication import HeadlessAPIMixin
-from .models import SubscriptionPlan, PaymentToken, CustomerSubscription, BillingCycleLog
-from .serializers import (
-    SubscriptionPlanSerializer,
-    PaymentTokenSerializer,
-    CustomerSubscriptionSerializer,
-    BillingCycleLogSerializer,
-    CreateSubscriptionSerializer,
-    CancelSubscriptionSerializer,
-    PauseSubscriptionSerializer,
-    UpdatePaymentMethodSerializer,
-    CreatePaymentTokenSerializer,
-    ChangePlanSerializer,
-    CancelScheduledChangeSerializer,
-    ReactivateSubscriptionSerializer,
+from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
 )
-from .manager import SubscriptionManager
+from rest_framework import permissions, serializers, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from core.api.authentication import HeadlessAPIMixin
 from payment_providers.models import PaymentProviderAccount
+
+from .manager import SubscriptionManager
+from .models import CustomerSubscription, PaymentToken, SubscriptionPlan
+from .serializers import (
+    BillingCycleLogSerializer,
+    CancelScheduledChangeSerializer,
+    CancelSubscriptionSerializer,
+    ChangePlanSerializer,
+    CreatePaymentTokenSerializer,
+    CreateSubscriptionSerializer,
+    CustomerSubscriptionSerializer,
+    PauseSubscriptionSerializer,
+    PaymentTokenSerializer,
+    ReactivateSubscriptionSerializer,
+    SubscriptionPlanSerializer,
+    UpdatePaymentMethodSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
 
 @extend_schema_view(
     list=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("List subscription plans"),
         description=_("""Get all available subscription plans.
 
@@ -48,16 +49,16 @@ logger = logging.getLogger(__name__)
 
         **Use Case**: Display available subscription options to customers during checkout or on pricing pages.
 
-        **Security**: Public endpoint - no authentication required.""")
+        **Security**: Public endpoint - no authentication required."""),
     ),
     retrieve=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Get subscription plan details"),
         description=_("""Get detailed information about a specific subscription plan.
 
         **Use Case**: Show plan details before subscription creation or on plan comparison pages.
 
-        **Security**: Public endpoint - no authentication required.""")
+        **Security**: Public endpoint - no authentication required."""),
     ),
 )
 class SubscriptionPlanViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
@@ -67,8 +68,9 @@ class SubscriptionPlanViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
     Provides read-only access to available subscription plans.
     Only shows active and public plans to non-staff users.
     """
+
     serializer_class = SubscriptionPlanSerializer
-    lookup_field = 'plan_id'
+    lookup_field = "plan_id"
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
@@ -76,15 +78,12 @@ class SubscriptionPlanViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         if self.request.user.is_staff:
             return SubscriptionPlan.objects.all()
 
-        return SubscriptionPlan.objects.filter(
-            is_active=True,
-            is_public=True
-        )
+        return SubscriptionPlan.objects.filter(is_active=True, is_public=True)
 
 
 @extend_schema_view(
     list=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("List payment tokens"),
         description=_("""Get all payment tokens for the authenticated user.
 
@@ -92,17 +91,17 @@ class SubscriptionPlanViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
 
         **Use Case**: Show saved payment methods to users when subscribing or updating subscription payment method.
 
-        **Security**: Requires authentication. Users can only see their own tokens.""")
+        **Security**: Requires authentication. Users can only see their own tokens."""),
     ),
     retrieve=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Get payment token details"),
         description=_("""Get detailed information about a specific payment token.
 
-        **Security**: Requires authentication. Users can only access their own tokens.""")
+        **Security**: Requires authentication. Users can only access their own tokens."""),
     ),
     create=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Create payment token"),
         description=_("""Create a new payment token for recurring billing.
 
@@ -123,21 +122,20 @@ class SubscriptionPlanViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
         request=CreatePaymentTokenSerializer,
         responses={
             201: OpenApiResponse(
-                description=_("Payment token created successfully"),
-                response=PaymentTokenSerializer
+                description=_("Payment token created successfully"), response=PaymentTokenSerializer
             ),
             400: OpenApiResponse(description=_("Invalid payment method data")),
             401: OpenApiResponse(description=_("Authentication required")),
-        }
+        },
     ),
     destroy=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Delete payment token"),
         description=_("""Delete a payment token.
 
         **Warning**: Cannot delete token if it's being used by an active subscription.
 
-        **Security**: Requires authentication. Users can only delete their own tokens.""")
+        **Security**: Requires authentication. Users can only delete their own tokens."""),
     ),
 )
 class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
@@ -146,61 +144,52 @@ class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
     Manages tokenized payment methods for recurring billing.
     """
+
     serializer_class = PaymentTokenSerializer
-    lookup_field = 'token_id'
+    lookup_field = "token_id"
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['get', 'post', 'delete']
+    http_method_names = ["get", "post", "delete"]
 
     def get_queryset(self):
         """Filter tokens to current user"""
-        return PaymentToken.objects.filter(
-            user=self.request.user
-        ).select_related('provider_account')
+        return PaymentToken.objects.filter(user=self.request.user).select_related(
+            "provider_account"
+        )
 
     def perform_create(self, serializer):
         """Create payment token via SubscriptionManager"""
         data = serializer.validated_data
-        provider_account = PaymentProviderAccount.objects.get(id=data['provider_account_id'])
+        provider_account = PaymentProviderAccount.objects.get(id=data["provider_account_id"])
 
         manager = SubscriptionManager(provider_account)
 
         payment_token = manager.create_customer_token(
             user=self.request.user,
-            payment_method_data=data['payment_method_data'],
-            set_as_default=data['set_as_default']
+            payment_method_data=data["payment_method_data"],
+            set_as_default=data["set_as_default"],
         )
 
         return payment_token
 
     def create(self, request, *args, **kwargs):
         """Override create to use SubscriptionManager"""
-        serializer = CreatePaymentTokenSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = CreatePaymentTokenSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
 
         try:
             payment_token = self.perform_create(serializer)
 
             output_serializer = PaymentTokenSerializer(payment_token)
-            return Response(
-                output_serializer.data,
-                status=status.HTTP_201_CREATED
-            )
+            return Response(output_serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             logger.exception(f"Failed to create payment token: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_destroy(self, instance):
         """Delete payment token - check for active subscriptions first"""
         # Check if token is used by active subscriptions
         active_subs = CustomerSubscription.objects.filter(
-            payment_token=instance,
-            status__in=['trial', 'active', 'past_due', 'paused']
+            payment_token=instance, status__in=["trial", "active", "past_due", "paused"]
         ).exists()
 
         if active_subs:
@@ -210,6 +199,7 @@ class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
         # Delete token at provider
         from .provider_base import get_provider
+
         provider = get_provider(instance.provider_account)
         provider.delete_payment_token(instance.gateway_token_id)
 
@@ -219,7 +209,7 @@ class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("List customer subscriptions"),
         description=_("""Get all subscriptions for the authenticated user.
 
@@ -230,23 +220,25 @@ class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         **Security**: Requires authentication. Users can only see their own subscriptions."""),
         parameters=[
             OpenApiParameter(
-                name='status',
+                name="status",
                 type=str,
                 location=OpenApiParameter.QUERY,
-                description=_("Filter by status (trial, active, past_due, paused, canceled, expired)"),
-                required=False
+                description=_(
+                    "Filter by status (trial, active, past_due, paused, canceled, expired)"
+                ),
+                required=False,
             ),
-        ]
+        ],
     ),
     retrieve=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Get subscription details"),
         description=_("""Get detailed information about a specific subscription.
 
-        **Security**: Requires authentication. Users can only access their own subscriptions.""")
+        **Security**: Requires authentication. Users can only access their own subscriptions."""),
     ),
     create=extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Create subscription"),
         description=_("""Create a new subscription.
 
@@ -266,11 +258,11 @@ class PaymentTokenViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             201: OpenApiResponse(
                 description=_("Subscription created successfully"),
-                response=CustomerSubscriptionSerializer
+                response=CustomerSubscriptionSerializer,
             ),
             400: OpenApiResponse(description=_("Invalid subscription data")),
             401: OpenApiResponse(description=_("Authentication required")),
-        }
+        },
     ),
 )
 class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
@@ -279,25 +271,20 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
     Manages customer subscription lifecycle including creation, viewing, and management.
     """
+
     serializer_class = CustomerSubscriptionSerializer
-    lookup_field = 'subscription_id'
+    lookup_field = "subscription_id"
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['get', 'post']  # Create and read only - updates via actions
+    http_method_names = ["get", "post"]  # Create and read only - updates via actions
 
     def get_queryset(self):
         """Filter subscriptions to current user"""
-        queryset = CustomerSubscription.objects.filter(
-            user=self.request.user
-        ).select_related(
-            'plan',
-            'payment_provider_account',
-            'payment_token',
-            'product',
-            'variant'
+        queryset = CustomerSubscription.objects.filter(user=self.request.user).select_related(
+            "plan", "payment_provider_account", "payment_token", "product", "variant"
         )
 
         # Filter by status if provided
-        status_filter = self.request.query_params.get('status')
+        status_filter = self.request.query_params.get("status")
         if status_filter:
             queryset = queryset.filter(status=status_filter)
 
@@ -305,39 +292,31 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create subscription via SubscriptionManager"""
-        serializer = CreateSubscriptionSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = CreateSubscriptionSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
 
         try:
             from .models import PlanPricingTier
 
             # Get plan, pricing tier, and payment token
-            plan = SubscriptionPlan.objects.get(
-                plan_id=serializer.validated_data['plan_id']
-            )
+            plan = SubscriptionPlan.objects.get(plan_id=serializer.validated_data["plan_id"])
             pricing_tier = PlanPricingTier.objects.get(
-                tier_id=serializer.validated_data['pricing_tier_id']
+                tier_id=serializer.validated_data["pricing_tier_id"]
             )
             payment_token = PaymentToken.objects.get(
-                token_id=serializer.validated_data['payment_token_id'],
-                user=request.user
+                token_id=serializer.validated_data["payment_token_id"], user=request.user
             )
 
             # Get product and optional variant
             from catalog.models import Product
-            product = Product.objects.get(
-                id=serializer.validated_data['product_id']
-            )
+
+            product = Product.objects.get(id=serializer.validated_data["product_id"])
 
             variant = None
-            if serializer.validated_data.get('variant_id'):
+            if serializer.validated_data.get("variant_id"):
                 from catalog.models import ProductVariant
-                variant = ProductVariant.objects.get(
-                    id=serializer.validated_data['variant_id']
-                )
+
+                variant = ProductVariant.objects.get(id=serializer.validated_data["variant_id"])
 
             # Create subscription via manager
             manager = SubscriptionManager(payment_token.provider_account)
@@ -348,25 +327,19 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
                 payment_token=payment_token,
                 product=product,
                 variant=variant,
-                quantity=serializer.validated_data.get('quantity', 1),
-                trial_override_days=serializer.validated_data.get('trial_override_days')
+                quantity=serializer.validated_data.get("quantity", 1),
+                trial_override_days=serializer.validated_data.get("trial_override_days"),
             )
 
             output_serializer = CustomerSubscriptionSerializer(subscription)
-            return Response(
-                output_serializer.data,
-                status=status.HTTP_201_CREATED
-            )
+            return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as e:
             logger.exception(f"Failed to create subscription: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Cancel subscription"),
         description=_("""Cancel a subscription.
 
@@ -381,13 +354,13 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             200: OpenApiResponse(
                 description=_("Subscription canceled successfully"),
-                response=CustomerSubscriptionSerializer
+                response=CustomerSubscriptionSerializer,
             ),
             400: OpenApiResponse(description=_("Cannot cancel subscription")),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def cancel(self, request, subscription_id=None):
         """Cancel subscription"""
         subscription = self.get_object()
@@ -399,8 +372,8 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             manager = SubscriptionManager(subscription.payment_provider_account)
             updated_subscription = manager.cancel_subscription(
                 subscription=subscription,
-                immediately=serializer.validated_data.get('immediately', False),
-                reason=serializer.validated_data.get('reason', '')
+                immediately=serializer.validated_data.get("immediately", False),
+                reason=serializer.validated_data.get("reason", ""),
             )
 
             output_serializer = CustomerSubscriptionSerializer(updated_subscription)
@@ -408,13 +381,10 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
         except Exception as e:
             logger.exception(f"Failed to cancel subscription: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Pause subscription"),
         description=_("""Pause a subscription temporarily.
 
@@ -429,13 +399,13 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             200: OpenApiResponse(
                 description=_("Subscription paused successfully"),
-                response=CustomerSubscriptionSerializer
+                response=CustomerSubscriptionSerializer,
             ),
             400: OpenApiResponse(description=_("Cannot pause subscription")),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def pause(self, request, subscription_id=None):
         """Pause subscription"""
         subscription = self.get_object()
@@ -447,8 +417,8 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             manager = SubscriptionManager(subscription.payment_provider_account)
             updated_subscription = manager.pause_subscription(
                 subscription=subscription,
-                reason=serializer.validated_data.get('reason', ''),
-                auto_resume_date=serializer.validated_data.get('auto_resume_date')
+                reason=serializer.validated_data.get("reason", ""),
+                auto_resume_date=serializer.validated_data.get("auto_resume_date"),
             )
 
             output_serializer = CustomerSubscriptionSerializer(updated_subscription)
@@ -456,13 +426,10 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
         except Exception as e:
             logger.exception(f"Failed to pause subscription: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Resume subscription"),
         description=_("""Resume a paused subscription.
 
@@ -472,13 +439,13 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             200: OpenApiResponse(
                 description=_("Subscription resumed successfully"),
-                response=CustomerSubscriptionSerializer
+                response=CustomerSubscriptionSerializer,
             ),
             400: OpenApiResponse(description=_("Cannot resume subscription")),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def resume(self, request, subscription_id=None):
         """Resume paused subscription"""
         subscription = self.get_object()
@@ -492,13 +459,10 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
         except Exception as e:
             logger.exception(f"Failed to resume subscription: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Update payment method"),
         description=_("""Update subscription payment method.
 
@@ -512,52 +476,41 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             200: OpenApiResponse(
                 description=_("Payment method updated successfully"),
-                response=CustomerSubscriptionSerializer
+                response=CustomerSubscriptionSerializer,
             ),
             400: OpenApiResponse(description=_("Invalid payment token")),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def update_payment_method(self, request, subscription_id=None):
         """Update subscription payment method"""
         subscription = self.get_object()
 
-        serializer = UpdatePaymentMethodSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = UpdatePaymentMethodSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
 
         try:
             new_token = PaymentToken.objects.get(
-                token_id=serializer.validated_data['payment_token_id'],
-                user=request.user
+                token_id=serializer.validated_data["payment_token_id"], user=request.user
             )
 
             manager = SubscriptionManager(subscription.payment_provider_account)
             updated_subscription = manager.update_payment_method(
-                subscription=subscription,
-                payment_token=new_token
+                subscription=subscription, payment_token=new_token
             )
 
             output_serializer = CustomerSubscriptionSerializer(updated_subscription)
             return Response(output_serializer.data)
 
         except PaymentToken.DoesNotExist:
-            return Response(
-                {'error': 'Payment token not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Payment token not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             logger.exception(f"Failed to update payment method: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Get billing history"),
         description=_("""Get billing history for a subscription.
 
@@ -569,23 +522,23 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             200: OpenApiResponse(
                 description=_("Billing history retrieved successfully"),
-                response=BillingCycleLogSerializer(many=True)
+                response=BillingCycleLogSerializer(many=True),
             ),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def billing_history(self, request, subscription_id=None):
         """Get billing history for subscription"""
         subscription = self.get_object()
 
-        logs = subscription.billing_logs.all().order_by('-billing_date')
+        logs = subscription.billing_logs.all().order_by("-billing_date")
 
         serializer = BillingCycleLogSerializer(logs, many=True)
         return Response(serializer.data)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Change subscription plan"),
         description=_("""Change the subscription to a different plan.
 
@@ -606,13 +559,13 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             200: OpenApiResponse(
                 description=_("Plan changed or scheduled successfully"),
-                response=CustomerSubscriptionSerializer
+                response=CustomerSubscriptionSerializer,
             ),
             400: OpenApiResponse(description=_("Cannot change plan")),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def change_plan(self, request, subscription_id=None):
         """Change subscription plan (upgrade/downgrade)"""
         subscription = self.get_object()
@@ -624,18 +577,16 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
             from .models import PlanPricingTier
 
             new_plan = SubscriptionPlan.objects.get(
-                plan_id=serializer.validated_data['new_plan_id']
+                plan_id=serializer.validated_data["new_plan_id"]
             )
-            new_tier = PlanPricingTier.objects.get(
-                tier_id=serializer.validated_data['new_tier_id']
-            )
+            new_tier = PlanPricingTier.objects.get(tier_id=serializer.validated_data["new_tier_id"])
 
             manager = SubscriptionManager(subscription.payment_provider_account)
             updated_subscription = manager.change_plan(
                 subscription=subscription,
                 new_plan=new_plan,
                 new_tier=new_tier,
-                mode=serializer.validated_data.get('mode', 'auto')
+                mode=serializer.validated_data.get("mode", "auto"),
             )
 
             output_serializer = CustomerSubscriptionSerializer(updated_subscription)
@@ -643,28 +594,18 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
 
         except SubscriptionPlan.DoesNotExist:
             return Response(
-                {'error': 'Subscription plan not found'},
-                status=status.HTTP_404_NOT_FOUND
+                {"error": "Subscription plan not found"}, status=status.HTTP_404_NOT_FOUND
             )
         except PlanPricingTier.DoesNotExist:
-            return Response(
-                {'error': 'Pricing tier not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Pricing tier not found"}, status=status.HTTP_404_NOT_FOUND)
         except ValueError as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.exception(f"Failed to change plan: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Cancel scheduled plan change"),
         description=_("""Cancel a pending scheduled plan change.
 
@@ -677,22 +618,20 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         request=CancelScheduledChangeSerializer,
         responses={
             200: OpenApiResponse(
-                description=_("Scheduled change canceled"),
-                response=CustomerSubscriptionSerializer
+                description=_("Scheduled change canceled"), response=CustomerSubscriptionSerializer
             ),
             400: OpenApiResponse(description=_("No scheduled change to cancel")),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def cancel_scheduled_change(self, request, subscription_id=None):
         """Cancel a scheduled plan change"""
         subscription = self.get_object()
 
         if not subscription.has_scheduled_plan_change():
             return Response(
-                {'error': 'No scheduled plan change to cancel'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "No scheduled plan change to cancel"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         subscription.cancel_scheduled_plan_change()
@@ -701,7 +640,7 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         return Response(output_serializer.data)
 
     @extend_schema(
-        tags=['Subscriptions'],
+        tags=["Subscriptions"],
         summary=_("Reactivate canceled subscription"),
         description=_("""Reactivate a previously canceled subscription within the reactivation window.
 
@@ -720,56 +659,44 @@ class CustomerSubscriptionViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         responses={
             200: OpenApiResponse(
                 description=_("Subscription reactivated successfully"),
-                response=CustomerSubscriptionSerializer
+                response=CustomerSubscriptionSerializer,
             ),
             400: OpenApiResponse(description=_("Cannot reactivate subscription")),
             404: OpenApiResponse(description=_("Subscription not found")),
-        }
+        },
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def reactivate(self, request, subscription_id=None):
         """Reactivate a canceled subscription"""
         subscription = self.get_object()
 
         serializer = ReactivateSubscriptionSerializer(
-            data=request.data,
-            context={'request': request}
+            data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
 
         # Resolve payment token if provided
         payment_token = None
-        token_id = serializer.validated_data.get('payment_token_id')
+        token_id = serializer.validated_data.get("payment_token_id")
         if token_id:
             try:
-                payment_token = PaymentToken.objects.get(
-                    token_id=token_id,
-                    user=request.user
-                )
+                payment_token = PaymentToken.objects.get(token_id=token_id, user=request.user)
             except PaymentToken.DoesNotExist:
                 return Response(
-                    {'error': 'Payment token not found'},
-                    status=status.HTTP_404_NOT_FOUND
+                    {"error": "Payment token not found"}, status=status.HTTP_404_NOT_FOUND
                 )
 
         try:
             manager = SubscriptionManager(subscription.payment_provider_account)
             updated_subscription = manager.reactivate_subscription(
-                subscription=subscription,
-                payment_token=payment_token
+                subscription=subscription, payment_token=payment_token
             )
 
             output_serializer = CustomerSubscriptionSerializer(updated_subscription)
             return Response(output_serializer.data)
 
         except ValueError as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.exception(f"Failed to reactivate subscription: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

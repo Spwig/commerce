@@ -1,0 +1,137 @@
+{% load i18n static merchant_trans %}
+<!-- Site Header -->
+<header class="site-header" role="banner">
+    <div class="container">
+        <div class="site-header__inner">
+            <!-- Logo/Brand -->
+            <a href="{% url 'page_builder:home' %}" class="site-header__logo">
+                {% if design_settings and design_settings.logo %}
+                    <img src="{{ design_settings.logo.url }}" alt="{{ site_settings.site_name|default:'Shop' }}" data-img-fallback="hide">
+                {% endif %}
+                <span class="site-header__logo-text"{% if design_settings and design_settings.logo %} style="display: none;"{% endif %}>
+                    <i class="fas fa-store"></i>
+                    {{ site_settings.site_name|default:'Shop' }}
+                </span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="site-header__nav" role="navigation" aria-label="{% mtrans 'Main navigation' %}">
+                <a href="{% url 'page_builder:home' %}" class="site-header__nav-link">{% mtrans 'Home' %}</a>
+                <a href="{% url 'page_builder:category_list' %}" class="site-header__nav-link">{% mtrans 'Shop' %}</a>
+                <a href="{% url 'page_builder:page_detail' slug='about' %}" class="site-header__nav-link">{% mtrans 'About' %}</a>
+                <a href="{% url 'page_builder:page_detail' slug='contact' %}" class="site-header__nav-link">{% mtrans 'Contact' %}</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="site-header__actions">
+                <!-- Search Toggle (Desktop) -->
+                <button type="button" class="site-header__icon hide-mobile" aria-label="{% mtrans 'Search' %}" data-search-toggle>
+                    <i class="fas fa-search"></i>
+                </button>
+
+                <!-- User Account -->
+                {% if user.is_authenticated %}
+                <a href="/account/" class="site-header__icon" aria-label="{% mtrans 'My Account' %}">
+                    <i class="fas fa-user"></i>
+                </a>
+                {% else %}
+                <a href="/account/login/" class="site-header__icon" aria-label="{% mtrans 'Login' %}">
+                    <i class="fas fa-user"></i>
+                </a>
+                {% endif %}
+
+                <!-- Cart (opens mini-cart) -->
+                <button type="button"
+                        class="site-header__icon site-header__cart-btn"
+                        aria-label="{% mtrans 'Shopping cart' %}"
+                        data-open-mini-cart>
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="header__cart-count site-header__cart-count" data-cart-count style="display: none;">
+                        0
+                    </span>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button
+                    type="button"
+                    class="site-header__icon site-header__menu-toggle"
+                    data-menu-toggle
+                    aria-label="{% mtrans 'Toggle menu' %}"
+                    aria-expanded="false"
+                    aria-controls="mobile-menu"
+                >
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu" data-mobile-menu aria-hidden="true">
+        <div class="container">
+            <!-- Mobile Search -->
+            <form class="mobile-menu__search" action="/search/" method="get">
+                <div class="form-group">
+                    <input
+                        type="search"
+                        name="q"
+                        class="form-input"
+                        placeholder="{% mtrans 'Search products...' %}"
+                        aria-label="{% mtrans 'Search products' %}"
+                    >
+                </div>
+            </form>
+
+            <!-- Mobile Navigation -->
+            <nav class="mobile-menu__nav" role="navigation" aria-label="{% mtrans 'Mobile navigation' %}">
+                <a href="{% url 'page_builder:home' %}" class="mobile-menu__link">
+                    <i class="fas fa-home"></i>
+                    {% mtrans 'Home' %}
+                </a>
+                <a href="{% url 'page_builder:category_list' %}" class="mobile-menu__link">
+                    <i class="fas fa-th-large"></i>
+                    {% mtrans 'Shop' %}
+                </a>
+                {% for category in categories %}
+                <a href="{% url 'page_builder:category_detail' category_slug=category.slug %}" class="mobile-menu__link mobile-menu__link--sub">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+                <a href="{% url 'page_builder:page_detail' slug='about' %}" class="mobile-menu__link">
+                    <i class="fas fa-info-circle"></i>
+                    {% mtrans 'About' %}
+                </a>
+                <a href="{% url 'page_builder:page_detail' slug='contact' %}" class="mobile-menu__link">
+                    <i class="fas fa-envelope"></i>
+                    {% mtrans 'Contact' %}
+                </a>
+
+                <div class="mobile-menu__divider"></div>
+
+                {% if user.is_authenticated %}
+                <a href="/account/" class="mobile-menu__link">
+                    <i class="fas fa-user"></i>
+                    {% mtrans 'My Account' %}
+                </a>
+                <a href="/orders/" class="mobile-menu__link">
+                    <i class="fas fa-box"></i>
+                    {% mtrans 'Orders' %}
+                </a>
+                <a href="/account/logout/" class="mobile-menu__link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    {% mtrans 'Logout' %}
+                </a>
+                {% else %}
+                <a href="/account/login/" class="mobile-menu__link">
+                    <i class="fas fa-sign-in-alt"></i>
+                    {% mtrans 'Login' %}
+                </a>
+                <a href="/account/register/" class="mobile-menu__link">
+                    <i class="fas fa-user-plus"></i>
+                    {% mtrans 'Sign Up' %}
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</header>

@@ -7,17 +7,17 @@ Core services for feed generation and management.
 from .feed_service import FeedService
 from .formatters import (
     BaseFeedFormatter,
-    XMLFeedFormatter,
     CSVFeedFormatter,
     JSONFeedFormatter,
     ProductFeedItem,
+    XMLFeedFormatter,
 )
 
 __all__ = [
-    'FeedService',
-    'BaseFeedFormatter',
-    'XMLFeedFormatter',
-    'CSVFeedFormatter',
-    'JSONFeedFormatter',
-    'ProductFeedItem',
+    "FeedService",
+    "BaseFeedFormatter",
+    "XMLFeedFormatter",
+    "CSVFeedFormatter",
+    "JSONFeedFormatter",
+    "ProductFeedItem",
 ]

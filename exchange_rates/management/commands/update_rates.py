@@ -7,49 +7,51 @@ Usage:
     python manage.py update_rates --currencies EUR,GBP,JPY
 """
 
-from django.core.management.base import BaseCommand, CommandError
-from django.contrib.sites.models import Site
-from exchange_rates.services.exchange_service import ExchangeRateService
-from exchange_rates.models import ExchangeRateProviderAccount
-from core.models import SiteSettings
 import logging
+
+from django.contrib.sites.models import Site
+from django.core.management.base import BaseCommand, CommandError
+
+from core.models import SiteSettings
+from exchange_rates.models import ExchangeRateProviderAccount
+from exchange_rates.services.exchange_service import ExchangeRateService
 
 logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Update exchange rates from configured providers'
+    help = "Update exchange rates from configured providers"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--base',
+            "--base",
             type=str,
-            help='Base currency to use (defaults to site default_currency)',
+            help="Base currency to use (defaults to site default_currency)",
         )
 
         parser.add_argument(
-            '--currencies',
+            "--currencies",
             type=str,
-            help='Comma-separated list of target currencies (e.g., EUR,GBP,JPY)',
+            help="Comma-separated list of target currencies (e.g., EUR,GBP,JPY)",
         )
 
         parser.add_argument(
-            '--site',
+            "--site",
             type=int,
-            help='Site ID (defaults to current site)',
+            help="Site ID (defaults to current site)",
         )
 
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Force update even if cached rates are fresh',
+            "--force",
+            action="store_true",
+            help="Force update even if cached rates are fresh",
         )
 
     def handle(self, *args, **options):
         # Get site
-        if options['site']:
+        if options["site"]:
             try:
-                site = Site.objects.get(pk=options['site'])
+                site = Site.objects.get(pk=options["site"])
             except Site.DoesNotExist:
                 raise CommandError(f"Site with ID {options['site']} does not exist")
         else:
@@ -65,8 +67,7 @@ class Command(BaseCommand):
 
         # Check for active providers
         active_providers = ExchangeRateProviderAccount.objects.filter(
-            site=site,
-            is_active=True
+            site=site, is_active=True
         ).count()
 
         if active_providers == 0:
@@ -81,27 +82,34 @@ class Command(BaseCommand):
         service = ExchangeRateService(site=site)
 
         # Determine base currency
-        base_currency = options.get('base') or settings.default_currency
+        base_currency = options.get("base") or settings.default_currency
         self.stdout.write(f"Base currency: {base_currency}")
 
         # Determine target currencies
-        if options.get('currencies'):
-            target_currencies = [c.strip().upper() for c in options['currencies'].split(',')]
+        if options.get("currencies"):
+            target_currencies = [c.strip().upper() for c in options["currencies"].split(",")]
             self.stdout.write(f"Target currencies: {', '.join(target_currencies)}")
         else:
             if settings.supported_currencies:
                 target_currencies = [c for c in settings.supported_currencies if c != base_currency]
-                self.stdout.write(f"Using configured supported currencies: {', '.join(target_currencies)}")
+                self.stdout.write(
+                    f"Using configured supported currencies: {', '.join(target_currencies)}"
+                )
             else:
                 from core.utils.currency_helpers import get_common_currencies
-                target_currencies = [code for code, _ in get_common_currencies() if code != base_currency]
-                self.stdout.write(f"Using common currencies (no specific currencies configured)")
+
+                target_currencies = [
+                    code for code, _ in get_common_currencies() if code != base_currency
+                ]
+                self.stdout.write("Using common currencies (no specific currencies configured)")
 
         if not target_currencies:
             raise CommandError("No target currencies to update")
 
         # Update rates
-        self.stdout.write(self.style.SUCCESS(f"\nUpdating {len(target_currencies)} exchange rates...\n"))
+        self.stdout.write(
+            self.style.SUCCESS(f"\nUpdating {len(target_currencies)} exchange rates...\n")
+        )
 
         success_count = 0
         failure_count = 0
@@ -109,9 +117,10 @@ class Command(BaseCommand):
         for target_currency in target_currencies:
             try:
                 # Clear cache if force flag is set
-                if options['force']:
+                if options["force"]:
                     from django.core.cache import cache
-                    cache_key = f'exchange_rate:{base_currency}:{target_currency}'
+
+                    cache_key = f"exchange_rate:{base_currency}:{target_currency}"
                     cache.delete(cache_key)
 
                 rate = service.get_rate(base_currency, target_currency)
@@ -129,14 +138,10 @@ class Command(BaseCommand):
 
         # Summary
         self.stdout.write("\n" + "=" * 60)
-        self.stdout.write(
-            self.style.SUCCESS(f"Successfully updated: {success_count} rates")
-        )
+        self.stdout.write(self.style.SUCCESS(f"Successfully updated: {success_count} rates"))
 
         if failure_count > 0:
-            self.stdout.write(
-                self.style.WARNING(f"Failed to update: {failure_count} rates")
-            )
+            self.stdout.write(self.style.WARNING(f"Failed to update: {failure_count} rates"))
 
         self.stdout.write("=" * 60)
 
@@ -146,6 +151,4 @@ class Command(BaseCommand):
                 self.style.WARNING("\nSome rates failed to update. Check logs for details.")
             )
         else:
-            self.stdout.write(
-                self.style.SUCCESS("\n✓ All rates updated successfully!")
-            )
+            self.stdout.write(self.style.SUCCESS("\n✓ All rates updated successfully!"))

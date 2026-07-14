@@ -2,11 +2,12 @@
 Base Importer
 Abstract base class for all data importers with transaction support
 """
-from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any
-from django.db import transaction, connection
-from django.db.models import Model
+
 import logging
+from abc import ABC, abstractmethod
+from typing import Any
+
+from django.db import transaction
 
 logger = logging.getLogger(__name__)
 
@@ -31,11 +32,11 @@ class BaseImporter(ABC):
 
         # Statistics
         self.stats = {
-            'created': 0,
-            'updated': 0,
-            'skipped': 0,
-            'failed': 0,
-            'total': 0,
+            "created": 0,
+            "updated": 0,
+            "skipped": 0,
+            "failed": 0,
+            "total": 0,
         }
 
         # Tracking for rollback
@@ -44,7 +45,7 @@ class BaseImporter(ABC):
         self.errors = []
 
     @abstractmethod
-    def import_data(self, mapped_data: Dict) -> Any:
+    def import_data(self, mapped_data: dict) -> Any:
         """
         Import mapped data into database
 
@@ -56,7 +57,7 @@ class BaseImporter(ABC):
         """
         pass
 
-    def import_batch(self, mapped_data_list: List[Dict], progress_callback=None) -> Dict:
+    def import_batch(self, mapped_data_list: list[dict], progress_callback=None) -> dict:
         """
         Import a batch of items with transaction support
 
@@ -67,7 +68,7 @@ class BaseImporter(ABC):
         Returns:
             Dictionary with statistics
         """
-        self.stats['total'] = len(mapped_data_list)
+        self.stats["total"] = len(mapped_data_list)
 
         with transaction.atomic():
             # Create savepoint for potential rollback
@@ -80,32 +81,28 @@ class BaseImporter(ABC):
                         result = self.import_data(mapped_data)
 
                         if result:
-                            if hasattr(result, '_state') and result._state.adding:
-                                self.stats['created'] += 1
+                            if hasattr(result, "_state") and result._state.adding:
+                                self.stats["created"] += 1
                                 self.created_objects.append(result)
                             else:
-                                self.stats['updated'] += 1
+                                self.stats["updated"] += 1
                                 self.updated_objects.append(result)
                         else:
-                            self.stats['skipped'] += 1
+                            self.stats["skipped"] += 1
 
                         # Progress callback
                         if progress_callback:
                             progress_callback(
                                 current=idx + 1,
-                                total=self.stats['total'],
-                                created=self.stats['created'],
-                                updated=self.stats['updated'],
-                                failed=self.stats['failed']
+                                total=self.stats["total"],
+                                created=self.stats["created"],
+                                updated=self.stats["updated"],
+                                failed=self.stats["failed"],
                             )
 
                     except Exception as e:
-                        self.stats['failed'] += 1
-                        self.errors.append({
-                            'index': idx,
-                            'data': mapped_data,
-                            'error': str(e)
-                        })
+                        self.stats["failed"] += 1
+                        self.errors.append({"index": idx, "data": mapped_data, "error": str(e)})
                         logger.error(f"Failed to import item {idx}: {e}")
 
                         # Continue with next item (don't fail entire batch)
@@ -116,7 +113,9 @@ class BaseImporter(ABC):
                     logger.info("Dry run mode - rolling back changes")
                     transaction.savepoint_rollback(savepoint_id)
                 else:
-                    logger.info(f"Committing {self.stats['created']} creates, {self.stats['updated']} updates")
+                    logger.info(
+                        f"Committing {self.stats['created']} creates, {self.stats['updated']} updates"
+                    )
                     transaction.savepoint_commit(savepoint_id)
 
             except Exception as e:
@@ -127,11 +126,7 @@ class BaseImporter(ABC):
         return self.get_stats()
 
     def get_or_create(
-        self,
-        model_class: type,
-        lookup_fields: Dict,
-        defaults: Dict,
-        update_existing: bool = True
+        self, model_class: type, lookup_fields: dict, defaults: dict, update_existing: bool = True
     ) -> tuple:
         """
         Get or create model instance
@@ -173,7 +168,9 @@ class BaseImporter(ABC):
 
         return instance, created
 
-    def record_mapping(self, source_id: str, source_platform: str, target_model: str, target_id: Any):
+    def record_mapping(
+        self, source_id: str, source_platform: str, target_model: str, target_id: Any
+    ):
         """
         Record mapping between source and target for future reference
 
@@ -194,7 +191,7 @@ class BaseImporter(ABC):
             target_id=str(target_id),
         )
 
-    def get_mapped_id(self, source_id: str, source_platform: str, target_model: str) -> Optional[Any]:
+    def get_mapped_id(self, source_id: str, source_platform: str, target_model: str) -> Any | None:
         """
         Get mapped target ID for a source ID
 
@@ -219,29 +216,30 @@ class BaseImporter(ABC):
         except MigrationMapping.DoesNotExist:
             return None
 
-    def get_stats(self) -> Dict:
+    def get_stats(self) -> dict:
         """Get import statistics"""
         return {
             **self.stats,
-            'success_rate': (
-                ((self.stats['created'] + self.stats['updated']) / self.stats['total'] * 100)
-                if self.stats['total'] > 0 else 0
+            "success_rate": (
+                ((self.stats["created"] + self.stats["updated"]) / self.stats["total"] * 100)
+                if self.stats["total"] > 0
+                else 0
             ),
-            'errors': self.errors,
+            "errors": self.errors,
         }
 
-    def get_errors(self) -> List[Dict]:
+    def get_errors(self) -> list[dict]:
         """Get import errors"""
         return self.errors
 
     def clear_stats(self):
         """Clear statistics"""
         self.stats = {
-            'created': 0,
-            'updated': 0,
-            'skipped': 0,
-            'failed': 0,
-            'total': 0,
+            "created": 0,
+            "updated": 0,
+            "skipped": 0,
+            "failed": 0,
+            "total": 0,
         }
         self.created_objects = []
         self.updated_objects = []

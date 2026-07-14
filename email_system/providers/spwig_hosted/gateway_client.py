@@ -11,6 +11,7 @@ dedicated mail server. Used by:
 The gateway API runs on a dedicated Linode behind nginx with TLS.
 All endpoints (except /health) require a Bearer API key.
 """
+
 import logging
 
 import httpx
@@ -160,10 +161,13 @@ class SpwigMailGatewayClient:
         Raises:
             GatewayAPIError: On API failure or duplicate domain (409)
         """
-        return self._post("/api/domains/", {
-            "domain": domain,
-            "merchant_slug": merchant_slug,
-        })
+        return self._post(
+            "/api/domains/",
+            {
+                "domain": domain,
+                "merchant_slug": merchant_slug,
+            },
+        )
 
     def verify_domain(self, domain: str) -> dict:
         """Verify DNS records for a custom domain.
@@ -210,7 +214,9 @@ class SpwigMailGatewayClient:
     # ── Stats ─────────────────────────────────────────────────────────
 
     def get_merchant_stats(
-        self, slug: str, period: str = "last_24h",
+        self,
+        slug: str,
+        period: str = "last_24h",
     ) -> dict:
         """Get sending statistics for a merchant."""
         return self._get(f"/api/stats/{slug}", params={"period": period})

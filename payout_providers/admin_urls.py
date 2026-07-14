@@ -7,10 +7,11 @@ Included inside i18n_patterns as:
 """
 
 from django.urls import path
+
 from . import admin_views
 
-app_name = 'payout_providers_admin'
+app_name = "payout_providers_admin"
 
 urlpatterns = [
-    path('accounts/filter/', admin_views.filter_providers, name='filter_providers'),
+    path("accounts/filter/", admin_views.filter_providers, name="filter_providers"),
 ]

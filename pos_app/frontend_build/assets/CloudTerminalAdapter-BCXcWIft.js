@@ -1,1 +1,117 @@
-import{a as s,u as i}from"./index-DF7XhMeX.js";const c=2e3,l=12e4;class u{constructor(e){this._providerKey=e,this._selectedReader=null,this._currentTransactionId=null,this._cancelled=!1,this._pollTimer=null}async initialize(){}async discoverReaders(){var r;const e=await s.get("/terminal-provider/readers/");if(!e.success)throw new Error(((r=e.error)==null?void 0:r.message)||"Failed to list readers");return e.readers||[]}async connectReader(e){return this._selectedReader=e,i.getState().setTerminalReader({id:e.id,label:e.label||e.id,type:e.type||"",status:e.status||"online"}),e}async collectPayment(e){if(!this._selectedReader)throw new Error("No reader selected");this._cancelled=!1;const{amount:r,currency:t}=e,a=this._selectedReader.id,n=await s.post("/terminal-provider/initiate-cloud-payment/",{amount:typeof r=="number"?r.toFixed(2):r,currency:t,reader_id:a});if(!n.success)throw n;return this._currentTransactionId=n.transaction_id,this._pollForCompletion(n.transaction_id)}async _pollForCompletion(e){const r=Date.now();for(;Date.now()-r<l;){if(this._cancelled)throw new Error("Payment cancelled");if(await new Promise(n=>{this._pollTimer=setTimeout(n,c)}),this._cancelled)throw new Error("Payment cancelled");const t=await s.get(`/terminal-provider/payment-status/${encodeURIComponent(e)}/`);if(!t.success&&t.error)throw t;const a=t.status;if(a==="succeeded")return this._currentTransactionId=null,{transaction_id:e,status:"succeeded",card_brand:t.card_brand||"",last4:t.last4||"",amount:t.amount};if(a==="failed")throw this._currentTransactionId=null,new Error(t.message||"Payment failed on reader");if(a==="canceled")throw this._currentTransactionId=null,new Error("Payment was cancelled")}throw this._currentTransactionId=null,new Error("Payment timed out waiting for reader response")}async cancelCollect(){if(this._cancelled=!0,this._pollTimer&&(clearTimeout(this._pollTimer),this._pollTimer=null),this._currentTransactionId){try{await s.post("/terminal-provider/cancel-cloud-payment/",{transaction_id:this._currentTransactionId})}catch{}this._currentTransactionId=null}}async disconnect(){this._selectedReader=null,this._currentTransactionId=null,i.getState().setTerminalReader(null)}get isConnected(){return!!this._selectedReader}get connectedReader(){return this._selectedReader}get status(){return this._selectedReader?"connected":"disconnected"}}export{u as CloudTerminalAdapter};
+import { a as s, u as i } from './index-COyQw9XM.js';
+const c = 2e3,
+  l = 12e4;
+class u {
+  constructor(e) {
+    ((this._providerKey = e),
+      (this._selectedReader = null),
+      (this._currentTransactionId = null),
+      (this._cancelled = !1),
+      (this._pollTimer = null));
+  }
+  async initialize() {}
+  async discoverReaders() {
+    let r;
+    const e = await s.get('/terminal-provider/readers/');
+    if (!e.success)
+      throw new Error(((r = e.error) == null ? void 0 : r.message) || 'Failed to list readers');
+    return e.readers || [];
+  }
+  async connectReader(e) {
+    return (
+      (this._selectedReader = e),
+      i
+        .getState()
+        .setTerminalReader({
+          id: e.id,
+          label: e.label || e.id,
+          type: e.type || '',
+          status: e.status || 'online',
+        }),
+      e
+    );
+  }
+  async collectPayment(e) {
+    if (!this._selectedReader) throw new Error('No reader selected');
+    this._cancelled = !1;
+    const { amount: r, currency: t } = e,
+      a = this._selectedReader.id,
+      n = await s.post('/terminal-provider/initiate-cloud-payment/', {
+        amount: typeof r == 'number' ? r.toFixed(2) : r,
+        currency: t,
+        reader_id: a,
+      });
+    if (!n.success) throw n;
+    return (
+      (this._currentTransactionId = n.transaction_id),
+      this._pollForCompletion(n.transaction_id)
+    );
+  }
+  async _pollForCompletion(e) {
+    const r = Date.now();
+    for (; Date.now() - r < l; ) {
+      if (this._cancelled) throw new Error('Payment cancelled');
+      if (
+        (await new Promise(n => {
+          this._pollTimer = setTimeout(n, c);
+        }),
+        this._cancelled)
+      )
+        throw new Error('Payment cancelled');
+      const t = await s.get(`/terminal-provider/payment-status/${encodeURIComponent(e)}/`);
+      if (!t.success && t.error) throw t;
+      const a = t.status;
+      if (a === 'succeeded')
+        return (
+          (this._currentTransactionId = null),
+          {
+            transaction_id: e,
+            status: 'succeeded',
+            card_brand: t.card_brand || '',
+            last4: t.last4 || '',
+            amount: t.amount,
+          }
+        );
+      if (a === 'failed')
+        throw (
+          (this._currentTransactionId = null),
+          new Error(t.message || 'Payment failed on reader')
+        );
+      if (a === 'canceled')
+        throw ((this._currentTransactionId = null), new Error('Payment was cancelled'));
+    }
+    throw (
+      (this._currentTransactionId = null),
+      new Error('Payment timed out waiting for reader response')
+    );
+  }
+  async cancelCollect() {
+    if (
+      ((this._cancelled = !0),
+      this._pollTimer && (clearTimeout(this._pollTimer), (this._pollTimer = null)),
+      this._currentTransactionId)
+    ) {
+      try {
+        await s.post('/terminal-provider/cancel-cloud-payment/', {
+          transaction_id: this._currentTransactionId,
+        });
+      } catch {}
+      this._currentTransactionId = null;
+    }
+  }
+  async disconnect() {
+    ((this._selectedReader = null),
+      (this._currentTransactionId = null),
+      i.getState().setTerminalReader(null));
+  }
+  get isConnected() {
+    return !!this._selectedReader;
+  }
+  get connectedReader() {
+    return this._selectedReader;
+  }
+  get status() {
+    return this._selectedReader ? 'connected' : 'disconnected';
+  }
+}
+export { u as CloudTerminalAdapter };

@@ -1,5 +1,6 @@
-from admin_api.authentication import MobileTokenAuthentication
 from rest_framework.authentication import TokenAuthentication
+
+from admin_api.authentication import MobileTokenAuthentication
 
 
 class HeadlessAPIMixin:
@@ -30,6 +31,6 @@ class HeadlessAPIMixin:
         # `no-store` = don't write to any cache.
         # `must-revalidate` + `max-age=0` = if anything cached it anyway, treat
         # it as immediately stale.
-        response['Cache-Control'] = 'private, no-store, no-cache, must-revalidate, max-age=0'
-        response['Pragma'] = 'no-cache'
+        response["Cache-Control"] = "private, no-store, no-cache, must-revalidate, max-age=0"
+        response["Pragma"] = "no-cache"
         return response

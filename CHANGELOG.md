@@ -5,6 +5,67 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-07-14
+
+A quality-hardening release. Continuous integration now enforces
+formatting, linting, and typing across the codebase, and a batch of
+targeted stability improvements ship alongside.
+
+### Fixed
+
+- Address updates on the customer profile no longer surface an error
+  under specific data shapes.
+- POS manager admin now filters on the correct hashed credential.
+- Product admin search restored on catalogs that store the
+  description field outside the primary record.
+- Order statistics computation is now robust against multi-currency
+  amounts.
+- Email unsubscribe footer no longer duplicates when the sending
+  template already contains one.
+- Affiliate program email templates are now discoverable through the
+  admin template registry.
+- Smart-defaults service correctly resolves order fields on the
+  current schema.
+- Guest activation and email-unsubscribe redirects now resolve to
+  the storefront home.
+- Site settings change form: four inline style attributes moved to
+  CSS, restoring strict-CSP compliance.
+- Page-builder structure view now stays in sync when the wrapper is
+  clicked.
+- Broader import correctness across page builder, catalog, email
+  system, and orders admin code paths.
+
+### Changed
+
+- Ruff format and prettier are now the enforced source-formatting
+  standards; CI blocks on any drift.
+- ESLint runs codebase-wide with strict enforcement and blocks CI
+  on regressions.
+- Contributors get instant local feedback via a `.pre-commit-config.yaml`
+  in the repo — `pre-commit install` once, then formatting and
+  linting apply on every commit.
+- Unused import cleanup across the codebase reduces cognitive load
+  during code review and speeds up cold Django startup marginally.
+
+### Tests
+
+- Substantially expanded integration test coverage — new suites for
+  preferences, custom fields, referrals, shipping, orders returns,
+  and admin push notifications. Existing suites brought in line with
+  the current models and APIs.
+- End-to-end (Playwright) tests now run in a dedicated CI track,
+  isolated from the unit / integration cluster so fixture bleed
+  can't cross-contaminate.
+- A dedicated CI step exercises 13 audited app-level test suites in
+  addition to the main test run.
+
+### Contributors
+
+- DCO enforcement continues (`git commit -s` required); nothing new
+  here, mentioned for context.
+- New in-repo `CONTRIBUTING.md` note flagging that
+  `ruff --unsafe-fixes` output needs manual review before merge.
+
 ## [1.5.9] - 2026-07-12
 
 ### Fixed

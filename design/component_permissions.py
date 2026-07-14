@@ -21,58 +21,54 @@ Usage:
     apply_permission_template(component, 'marketing')
 """
 
-from typing import Dict, List
 from django.utils.translation import gettext_lazy as _
 
-from .models import TierComponentPermission, ComponentStore, PageTier
-
+from .models import ComponentStore, PageTier, TierComponentPermission
 
 # Permission template definitions
 PERMISSION_TEMPLATES = {
-    'system': {
-        'description': _('System components - allowed in all tiers'),
-        'allowed_tiers': ['A', 'B', 'C'],
-        'allowed_regions': [],  # All regions
-        'max_instances': -1,  # Unlimited
+    "system": {
+        "description": _("System components - allowed in all tiers"),
+        "allowed_tiers": ["A", "B", "C"],
+        "allowed_regions": [],  # All regions
+        "max_instances": -1,  # Unlimited
     },
-    'marketing': {
-        'description': _('Marketing components - Tier C only (public pages)'),
-        'allowed_tiers': ['C'],
-        'allowed_regions': [],
-        'max_instances': -1,
+    "marketing": {
+        "description": _("Marketing components - Tier C only (public pages)"),
+        "allowed_tiers": ["C"],
+        "allowed_regions": [],
+        "max_instances": -1,
     },
-    'product': {
-        'description': _('Product components - Tier B and C'),
-        'allowed_tiers': ['B', 'C'],
-        'allowed_regions': [],
-        'max_instances': -1,
+    "product": {
+        "description": _("Product components - Tier B and C"),
+        "allowed_tiers": ["B", "C"],
+        "allowed_regions": [],
+        "max_instances": -1,
     },
-    'checkout': {
-        'description': _('Checkout components - Tier A only (secure pages)'),
-        'allowed_tiers': ['A'],
-        'allowed_regions': [],
-        'max_instances': 1,  # Usually only one per page
+    "checkout": {
+        "description": _("Checkout components - Tier A only (secure pages)"),
+        "allowed_tiers": ["A"],
+        "allowed_regions": [],
+        "max_instances": 1,  # Usually only one per page
     },
-    'content': {
-        'description': _('Content components - all tiers'),
-        'allowed_tiers': ['A', 'B', 'C'],
-        'allowed_regions': [],
-        'max_instances': -1,
+    "content": {
+        "description": _("Content components - all tiers"),
+        "allowed_tiers": ["A", "B", "C"],
+        "allowed_regions": [],
+        "max_instances": -1,
     },
-    'restricted': {
-        'description': _('Restricted components - Tier A and B only'),
-        'allowed_tiers': ['A', 'B'],
-        'allowed_regions': [],
-        'max_instances': -1,
+    "restricted": {
+        "description": _("Restricted components - Tier A and B only"),
+        "allowed_tiers": ["A", "B"],
+        "allowed_regions": [],
+        "max_instances": -1,
     },
 }
 
 
 def apply_permission_template(
-    component: ComponentStore,
-    template_name: str,
-    override_settings: Dict = None
-) -> List[TierComponentPermission]:
+    component: ComponentStore, template_name: str, override_settings: dict = None
+) -> list[TierComponentPermission]:
     """
     Apply a permission template to a component.
 
@@ -103,7 +99,7 @@ def apply_permission_template(
         )
 
     template = PERMISSION_TEMPLATES[template_name].copy()
-    template.pop('description', None)  # Remove description from template
+    template.pop("description", None)  # Remove description from template
 
     # Apply overrides
     if override_settings:
@@ -114,15 +110,15 @@ def apply_permission_template(
 
     # Create permissions for each tier
     created_permissions = []
-    for tier_id in template['allowed_tiers']:
+    for tier_id in template["allowed_tiers"]:
         try:
             tier = PageTier.objects.get(tier=tier_id)
 
             permission = TierComponentPermission.objects.create(
                 tier=tier,
                 component=component,
-                allowed_regions=template['allowed_regions'],
-                max_instances=template['max_instances']
+                allowed_regions=template["allowed_regions"],
+                max_instances=template["max_instances"],
             )
             created_permissions.append(permission)
 
@@ -134,9 +130,8 @@ def apply_permission_template(
 
 
 def copy_permissions(
-    source_component: ComponentStore,
-    target_component: ComponentStore
-) -> List[TierComponentPermission]:
+    source_component: ComponentStore, target_component: ComponentStore
+) -> list[TierComponentPermission]:
     """
     Copy permissions from one component to another.
 
@@ -162,24 +157,21 @@ def copy_permissions(
             tier=source_perm.tier,
             component=target_component,
             allowed_regions=source_perm.allowed_regions,
-            max_instances=source_perm.max_instances
+            max_instances=source_perm.max_instances,
         )
         created_permissions.append(new_perm)
 
     return created_permissions
 
 
-def get_available_templates() -> Dict[str, str]:
+def get_available_templates() -> dict[str, str]:
     """
     Get list of available permission templates.
 
     Returns:
         Dict mapping template names to descriptions
     """
-    return {
-        name: str(config['description'])
-        for name, config in PERMISSION_TEMPLATES.items()
-    }
+    return {name: str(config["description"]) for name, config in PERMISSION_TEMPLATES.items()}
 
 
 def remove_all_permissions(component: ComponentStore) -> int:
@@ -192,14 +184,12 @@ def remove_all_permissions(component: ComponentStore) -> int:
     Returns:
         Number of permissions deleted
     """
-    deleted_count, _ = TierComponentPermission.objects.filter(
-        component=component
-    ).delete()
+    deleted_count, _ = TierComponentPermission.objects.filter(component=component).delete()
 
     return deleted_count
 
 
-def get_permission_summary(component: ComponentStore) -> Dict:
+def get_permission_summary(component: ComponentStore) -> dict:
     """
     Get summary of component's tier permissions.
 
@@ -220,10 +210,7 @@ def get_permission_summary(component: ComponentStore) -> Dict:
     permissions = component.tier_permissions.all()
 
     return {
-        'tier_count': permissions.count(),
-        'allowed_tiers': sorted([p.tier.tier for p in permissions]),
-        'has_restrictions': any(
-            p.allowed_regions or p.max_instances != -1
-            for p in permissions
-        ),
+        "tier_count": permissions.count(),
+        "allowed_tiers": sorted([p.tier.tier for p in permissions]),
+        "has_restrictions": any(p.allowed_regions or p.max_instances != -1 for p in permissions),
     }

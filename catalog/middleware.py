@@ -2,10 +2,11 @@
 Multi-Location Inventory Middleware
 Determines visitor's sales region based on GeoIP data
 """
+
+import logging
+
 from django.core.cache import cache
 from django.utils.functional import SimpleLazyObject
-from typing import Optional
-import logging
 
 from .models import SalesRegion
 
@@ -26,9 +27,7 @@ class RegionDetectionMiddleware:
 
     def __call__(self, request):
         # Add sales_region to request as lazy object
-        request.sales_region = SimpleLazyObject(
-            lambda: self._detect_region(request)
-        )
+        request.sales_region = SimpleLazyObject(lambda: self._detect_region(request))
 
         response = self.get_response(request)
 
@@ -37,7 +36,7 @@ class RegionDetectionMiddleware:
 
         return response
 
-    def _detect_region(self, request) -> Optional[SalesRegion]:
+    def _detect_region(self, request) -> SalesRegion | None:
         """
         Detect visitor's sales region based on geo location.
 
@@ -74,7 +73,7 @@ class RegionDetectionMiddleware:
         logger.debug(f"No region match for country {country_code}, using default")
         return self._get_default_region()
 
-    def _get_user_override(self, request) -> Optional[SalesRegion]:
+    def _get_user_override(self, request) -> SalesRegion | None:
         """
         Get user's region preference override from session/cookie.
 
@@ -85,18 +84,18 @@ class RegionDetectionMiddleware:
             SalesRegion instance or None
         """
         # Check session first
-        if hasattr(request, 'session'):
-            region_code = request.session.get('preferred_region')
+        if hasattr(request, "session"):
+            region_code = request.session.get("preferred_region")
             if region_code:
                 try:
                     return SalesRegion.objects.get(code=region_code, is_active=True)
                 except SalesRegion.DoesNotExist:
                     # Invalid region code in session, clear it
-                    del request.session['preferred_region']
+                    del request.session["preferred_region"]
 
         # Check cookie
-        if hasattr(request, 'COOKIES'):
-            region_code = request.COOKIES.get('preferred_region')
+        if hasattr(request, "COOKIES"):
+            region_code = request.COOKIES.get("preferred_region")
             if region_code:
                 try:
                     return SalesRegion.objects.get(code=region_code, is_active=True)
@@ -105,7 +104,7 @@ class RegionDetectionMiddleware:
 
         return None
 
-    def _get_country_code(self, request) -> Optional[str]:
+    def _get_country_code(self, request) -> str | None:
         """
         Extract country code from geo location data.
 
@@ -115,21 +114,21 @@ class RegionDetectionMiddleware:
         Returns:
             Two-letter country code or None
         """
-        if not hasattr(request, 'geo_location'):
+        if not hasattr(request, "geo_location"):
             return None
 
         try:
             # geo_location is a SimpleLazyObject, accessing it triggers resolution
             geo_location = request.geo_location
             if isinstance(geo_location, dict):
-                country_code = geo_location.get('country_code', '').upper()
+                country_code = geo_location.get("country_code", "").upper()
                 return country_code if country_code else None
         except Exception as e:
             logger.error(f"Error accessing geo_location: {e}")
 
         return None
 
-    def _find_region_by_country(self, country_code: str) -> Optional[SalesRegion]:
+    def _find_region_by_country(self, country_code: str) -> SalesRegion | None:
         """
         Find sales region that includes the given country code.
 
@@ -155,7 +154,7 @@ class RegionDetectionMiddleware:
         # Query database for matching region
         # A region matches if the country_code is in its countries JSON array
         try:
-            regions = SalesRegion.objects.filter(is_active=True).order_by('-priority')
+            regions = SalesRegion.objects.filter(is_active=True).order_by("-priority")
 
             for region in regions:
                 if isinstance(region.countries, list) and country_code in region.countries:
@@ -167,7 +166,7 @@ class RegionDetectionMiddleware:
 
         return None
 
-    def _get_default_region(self) -> Optional[SalesRegion]:
+    def _get_default_region(self) -> SalesRegion | None:
         """
         Get the default sales region (highest priority active region).
 
@@ -188,7 +187,7 @@ class RegionDetectionMiddleware:
 
         # Query database for highest priority region
         try:
-            region = SalesRegion.objects.filter(is_active=True).order_by('-priority').first()
+            region = SalesRegion.objects.filter(is_active=True).order_by("-priority").first()
             if region:
                 # Cache for 1 hour
                 cache.set(cache_key, region.id, timeout=3600)
@@ -210,11 +209,11 @@ class RegionDetectionMiddleware:
         """
         try:
             # Get current language from request
-            language_code = getattr(request, 'LANGUAGE_CODE', 'en')
+            language_code = getattr(request, "LANGUAGE_CODE", "en")
 
             # Get detected region
             region = None
-            if hasattr(request, 'sales_region'):
+            if hasattr(request, "sales_region"):
                 try:
                     region = request.sales_region if request.sales_region else None
                 except Exception:
@@ -228,14 +227,14 @@ class RegionDetectionMiddleware:
                 # Just language code
                 content_language = language_code
 
-            response['Content-Language'] = content_language
+            response["Content-Language"] = content_language
 
         except Exception as e:
             logger.error(f"Error adding Content-Language header: {e}")
             # Don't fail the request if header setting fails
 
 
-def get_region_from_request(request) -> Optional[SalesRegion]:
+def get_region_from_request(request) -> SalesRegion | None:
     """
     Utility function to safely get the sales region from a request.
 
@@ -249,7 +248,7 @@ def get_region_from_request(request) -> Optional[SalesRegion]:
     Returns:
         SalesRegion instance or None
     """
-    if hasattr(request, 'sales_region'):
+    if hasattr(request, "sales_region"):
         try:
             # Force evaluation of lazy object
             return request.sales_region if request.sales_region else None

@@ -9,19 +9,17 @@ Handles business logic for theme development including:
 - Theme validation
 """
 
-import os
-import json
 import hashlib
-import shutil
+import json
 import logging
 import queue
+import shutil
 import threading
 from pathlib import Path
-from typing import Optional, Dict, List, Tuple, Any
+from typing import Any
 
 from django.conf import settings
 from django.utils import timezone
-from django.contrib.auth import authenticate
 
 from .models import DevSession
 from .theme_service import ThemeService
@@ -33,7 +31,7 @@ class DevServerService:
     """Service for managing theme development sessions and file sync."""
 
     # Queue for SSE hot reload notifications
-    _reload_queues: Dict[str, queue.Queue] = {}
+    _reload_queues: dict[str, queue.Queue] = {}
     _queue_lock = threading.Lock()
 
     def __init__(self):
@@ -42,22 +40,14 @@ class DevServerService:
 
     def _get_dev_themes_dir(self) -> Path:
         """Get the directory for development themes."""
-        dev_dir = getattr(
-            settings,
-            'THEME_DEV_DIR',
-            settings.BASE_DIR / 'theme_dev'
-        )
+        dev_dir = getattr(settings, "THEME_DEV_DIR", settings.BASE_DIR / "theme_dev")
         Path(dev_dir).mkdir(parents=True, exist_ok=True)
         return Path(dev_dir)
 
     # ========== Session Management ==========
 
     def create_session(
-        self,
-        user,
-        theme_name: str,
-        theme_path: str = '',
-        client_info: dict = None
+        self, user, theme_name: str, theme_path: str = "", client_info: dict = None
     ) -> DevSession:
         """
         Create a new development session.
@@ -72,18 +62,13 @@ class DevServerService:
             DevSession instance with generated token
         """
         # Deactivate any existing sessions for this user/theme
-        DevSession.objects.filter(
-            user=user,
-            theme_name=theme_name,
-            is_active=True
-        ).update(is_active=False)
+        DevSession.objects.filter(user=user, theme_name=theme_name, is_active=True).update(
+            is_active=False
+        )
 
         # Create new session
         session = DevSession.objects.create(
-            user=user,
-            theme_name=theme_name,
-            theme_path=theme_path,
-            client_info=client_info or {}
+            user=user, theme_name=theme_name, theme_path=theme_path, client_info=client_info or {}
         )
 
         # Create dev theme directory
@@ -93,7 +78,7 @@ class DevServerService:
         logger.info(f"Created dev session for {theme_name} by {user.username}")
         return session
 
-    def validate_token(self, token: str) -> Optional[DevSession]:
+    def validate_token(self, token: str) -> DevSession | None:
         """
         Validate a session token and return the session if valid.
 
@@ -140,23 +125,21 @@ class DevServerService:
     def get_session_status(self, session: DevSession) -> dict:
         """Get current session status."""
         return {
-            'token': session.token,
-            'theme_name': session.theme_name,
-            'is_active': session.is_active,
-            'is_expired': session.is_expired(),
-            'last_sync': session.last_sync.isoformat() if session.last_sync else None,
-            'synced_files_count': len(session.synced_files),
-            'created_at': session.created_at.isoformat(),
-            'expires_at': session.expires_at.isoformat(),
+            "token": session.token,
+            "theme_name": session.theme_name,
+            "is_active": session.is_active,
+            "is_expired": session.is_expired(),
+            "last_sync": session.last_sync.isoformat() if session.last_sync else None,
+            "synced_files_count": len(session.synced_files),
+            "created_at": session.created_at.isoformat(),
+            "expires_at": session.expires_at.isoformat(),
         }
 
     # ========== File Synchronization ==========
 
     def sync_files(
-        self,
-        session: DevSession,
-        files: List[Dict[str, Any]]
-    ) -> Tuple[bool, Dict[str, Any]]:
+        self, session: DevSession, files: list[dict[str, Any]]
+    ) -> tuple[bool, dict[str, Any]]:
         """
         Sync files from SDK to dev server.
 
@@ -174,19 +157,19 @@ class DevServerService:
         template_changed = False
 
         for file_data in files:
-            file_path = file_data.get('path', '')
-            content = file_data.get('content', '')
-            checksum = file_data.get('checksum', '')
+            file_path = file_data.get("path", "")
+            content = file_data.get("content", "")
+            checksum = file_data.get("checksum", "")
 
             # Validate file path (prevent directory traversal)
-            if '..' in file_path or file_path.startswith('/'):
+            if ".." in file_path or file_path.startswith("/"):
                 errors.append(f"Invalid file path: {file_path}")
                 continue
 
             # Determine file type for reload strategy
-            if file_path.endswith('.css'):
+            if file_path.endswith(".css"):
                 css_changed = True
-            elif file_path.endswith(('.html', '.json')):
+            elif file_path.endswith((".html", ".json")):
                 template_changed = True
 
             # Write file
@@ -198,7 +181,7 @@ class DevServerService:
                 if isinstance(content, bytes):
                     full_path.write_bytes(content)
                 else:
-                    full_path.write_text(content, encoding='utf-8')
+                    full_path.write_text(content, encoding="utf-8")
 
                 synced[file_path] = checksum
                 logger.debug(f"Synced file: {file_path}")
@@ -212,23 +195,21 @@ class DevServerService:
 
         # Trigger appropriate reload
         if css_changed:
-            self._notify_reload(session.token, 'css')
+            self._notify_reload(session.token, "css")
         elif template_changed:
-            self._notify_reload(session.token, 'full')
+            self._notify_reload(session.token, "full")
 
         result = {
-            'synced': list(synced.keys()),
-            'errors': errors,
-            'reload_type': 'css' if css_changed else ('full' if template_changed else 'none')
+            "synced": list(synced.keys()),
+            "errors": errors,
+            "reload_type": "css" if css_changed else ("full" if template_changed else "none"),
         }
 
         return len(errors) == 0, result
 
     def sync_full_theme(
-        self,
-        session: DevSession,
-        theme_archive: bytes
-    ) -> Tuple[bool, Dict[str, Any]]:
+        self, session: DevSession, theme_archive: bytes
+    ) -> tuple[bool, dict[str, Any]]:
         """
         Sync complete theme archive (ZIP).
 
@@ -239,8 +220,8 @@ class DevServerService:
         Returns:
             Tuple of (success, result_dict)
         """
-        import zipfile
         import io
+        import zipfile
 
         theme_dev_path = self.dev_themes_dir / session.token
 
@@ -256,7 +237,7 @@ class DevServerService:
 
             # Build file list with checksums
             synced = {}
-            for file_path in theme_dev_path.rglob('*'):
+            for file_path in theme_dev_path.rglob("*"):
                 if file_path.is_file():
                     rel_path = str(file_path.relative_to(theme_dev_path))
                     checksum = hashlib.sha256(file_path.read_bytes()).hexdigest()
@@ -265,16 +246,13 @@ class DevServerService:
             session.update_sync(synced)
 
             # Trigger full reload
-            self._notify_reload(session.token, 'full')
+            self._notify_reload(session.token, "full")
 
-            return True, {
-                'synced': list(synced.keys()),
-                'file_count': len(synced)
-            }
+            return True, {"synced": list(synced.keys()), "file_count": len(synced)}
 
         except Exception as e:
             logger.error(f"Failed to sync full theme: {e}")
-            return False, {'error': str(e)}
+            return False, {"error": str(e)}
 
     def get_dev_theme_path(self, session: DevSession) -> Path:
         """Get the path to a session's dev theme directory."""
@@ -303,10 +281,7 @@ class DevServerService:
             reload_type: 'css' for CSS-only, 'full' for full page reload
         """
         q = self._get_reload_queue(token)
-        event = {
-            'type': reload_type,
-            'timestamp': timezone.now().isoformat()
-        }
+        event = {"type": reload_type, "timestamp": timezone.now().isoformat()}
         q.put(event)
         logger.debug(f"Queued {reload_type} reload for session {token[:8]}...")
 
@@ -329,11 +304,11 @@ class DevServerService:
                 yield event
             except queue.Empty:
                 # Send keepalive
-                yield {'type': 'keepalive'}
+                yield {"type": "keepalive"}
 
     # ========== CSS Compilation ==========
 
-    def compile_css(self, session: DevSession) -> Tuple[bool, str]:
+    def compile_css(self, session: DevSession) -> tuple[bool, str]:
         """
         Compile CSS for the dev theme.
 
@@ -347,7 +322,7 @@ class DevServerService:
 
         try:
             # Read design tokens from dev theme
-            tokens_path = theme_dev_path / 'design_tokens.json'
+            tokens_path = theme_dev_path / "design_tokens.json"
             if not tokens_path.exists():
                 return False, "design_tokens.json not found"
 
@@ -357,7 +332,7 @@ class DevServerService:
             css = self._generate_css_from_tokens(tokens)
 
             # Write to static-servable location
-            css_output_path = theme_dev_path / 'compiled' / 'theme.css'
+            css_output_path = theme_dev_path / "compiled" / "theme.css"
             css_output_path.parent.mkdir(parents=True, exist_ok=True)
             css_output_path.write_text(css)
 
@@ -371,30 +346,30 @@ class DevServerService:
 
     def _generate_css_from_tokens(self, tokens: dict) -> str:
         """Generate CSS custom properties from design tokens."""
-        css_lines = [':root {']
+        css_lines = [":root {"]
 
         # Colors
-        colors = tokens.get('colors', {})
+        colors = tokens.get("colors", {})
         for name, value in colors.items():
-            css_lines.append(f'  --color-{name}: {value};')
+            css_lines.append(f"  --color-{name}: {value};")
 
         # Typography
-        typography = tokens.get('typography', {})
+        typography = tokens.get("typography", {})
         for name, value in typography.items():
-            css_lines.append(f'  --font-{name}: {value};')
+            css_lines.append(f"  --font-{name}: {value};")
 
         # Spacing
-        spacing = tokens.get('spacing', {})
-        if isinstance(spacing.get('scale'), list):
-            for i, value in enumerate(spacing['scale']):
-                css_lines.append(f'  --spacing-{i}: {value};')
+        spacing = tokens.get("spacing", {})
+        if isinstance(spacing.get("scale"), list):
+            for i, value in enumerate(spacing["scale"]):
+                css_lines.append(f"  --spacing-{i}: {value};")
 
-        css_lines.append('}')
-        return '\n'.join(css_lines)
+        css_lines.append("}")
+        return "\n".join(css_lines)
 
     # ========== Validation ==========
 
-    def validate_theme(self, session: DevSession) -> Dict[str, Any]:
+    def validate_theme(self, session: DevSession) -> dict[str, Any]:
         """
         Validate the dev theme structure and files.
 
@@ -409,26 +384,26 @@ class DevServerService:
         warnings = []
 
         # Check required files
-        required_files = ['manifest.json', 'design_tokens.json']
+        required_files = ["manifest.json", "design_tokens.json"]
         for filename in required_files:
             if not (theme_dev_path / filename).exists():
                 errors.append(f"Missing required file: {filename}")
 
         # Validate manifest
-        manifest_path = theme_dev_path / 'manifest.json'
+        manifest_path = theme_dev_path / "manifest.json"
         if manifest_path.exists():
             try:
                 manifest = json.loads(manifest_path.read_text())
 
                 # Check required fields
-                required_fields = ['name', 'version', 'spwig_version']
+                required_fields = ["name", "version", "spwig_version"]
                 for field in required_fields:
                     if field not in manifest:
                         errors.append(f"Manifest missing required field: {field}")
 
                 # Check bundled components
-                for component in manifest.get('bundled_components', []):
-                    component_path = theme_dev_path / component.get('path', '')
+                for component in manifest.get("bundled_components", []):
+                    component_path = theme_dev_path / component.get("path", "")
                     if not component_path.exists():
                         errors.append(f"Bundled component not found: {component.get('name')}")
 
@@ -436,56 +411,56 @@ class DevServerService:
                 errors.append(f"Invalid manifest.json: {e}")
 
         # Validate design tokens
-        tokens_path = theme_dev_path / 'design_tokens.json'
+        tokens_path = theme_dev_path / "design_tokens.json"
         if tokens_path.exists():
             try:
                 tokens = json.loads(tokens_path.read_text())
 
-                if 'colors' not in tokens:
+                if "colors" not in tokens:
                     warnings.append("design_tokens.json missing 'colors' section")
-                if 'typography' not in tokens:
+                if "typography" not in tokens:
                     warnings.append("design_tokens.json missing 'typography' section")
 
             except json.JSONDecodeError as e:
                 errors.append(f"Invalid design_tokens.json: {e}")
 
         return {
-            'is_valid': len(errors) == 0,
-            'errors': errors,
-            'warnings': warnings,
-            'error_count': len(errors),
-            'warning_count': len(warnings)
+            "is_valid": len(errors) == 0,
+            "errors": errors,
+            "warnings": warnings,
+            "error_count": len(errors),
+            "warning_count": len(warnings),
         }
 
     # ========== Component Operations ==========
 
-    def list_components(self, session: DevSession) -> List[Dict[str, Any]]:
+    def list_components(self, session: DevSession) -> list[dict[str, Any]]:
         """List components in the dev theme."""
         theme_dev_path = self.dev_themes_dir / session.token
         components = []
 
         # Read manifest for bundled components
-        manifest_path = theme_dev_path / 'manifest.json'
+        manifest_path = theme_dev_path / "manifest.json"
         if manifest_path.exists():
             try:
                 manifest = json.loads(manifest_path.read_text())
 
-                for component in manifest.get('bundled_components', []):
-                    component_path = theme_dev_path / component.get('path', '')
-                    component_manifest_path = component_path / 'manifest.json'
+                for component in manifest.get("bundled_components", []):
+                    component_path = theme_dev_path / component.get("path", "")
+                    component_manifest_path = component_path / "manifest.json"
 
                     comp_info = {
-                        'name': component.get('name'),
-                        'type': component.get('type'),
-                        'path': component.get('path'),
-                        'exists': component_path.exists()
+                        "name": component.get("name"),
+                        "type": component.get("type"),
+                        "path": component.get("path"),
+                        "exists": component_path.exists(),
                     }
 
                     # Read component manifest if exists
                     if component_manifest_path.exists():
                         comp_manifest = json.loads(component_manifest_path.read_text())
-                        comp_info['version'] = comp_manifest.get('version')
-                        comp_info['display_name'] = comp_manifest.get('display_name')
+                        comp_info["version"] = comp_manifest.get("version")
+                        comp_info["display_name"] = comp_manifest.get("display_name")
 
                     components.append(comp_info)
 
@@ -494,19 +469,19 @@ class DevServerService:
 
         return components
 
-    def get_component(self, session: DevSession, component_name: str) -> Optional[Dict[str, Any]]:
+    def get_component(self, session: DevSession, component_name: str) -> dict[str, Any] | None:
         """Get details for a specific component."""
         components = self.list_components(session)
         for comp in components:
-            if comp.get('name') == component_name:
+            if comp.get("name") == component_name:
                 # Add full component data
                 theme_dev_path = self.dev_themes_dir / session.token
-                component_path = theme_dev_path / comp.get('path', '')
+                component_path = theme_dev_path / comp.get("path", "")
 
                 if component_path.exists():
-                    comp['files'] = [
+                    comp["files"] = [
                         str(f.relative_to(component_path))
-                        for f in component_path.rglob('*')
+                        for f in component_path.rglob("*")
                         if f.is_file()
                     ]
 

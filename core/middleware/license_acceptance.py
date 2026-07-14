@@ -38,18 +38,18 @@ class LicenseAcceptanceMiddleware(MiddlewareMixin):
     """
 
     EXEMPT_PREFIXES = (
-        '/static/',
-        '/media/',
-        '/health/',
-        '/license/',
-        '/api/',
-        '/__debug__/',
+        "/static/",
+        "/media/",
+        "/health/",
+        "/license/",
+        "/api/",
+        "/__debug__/",
     )
 
-    REDIRECT_URL = '/license/accept/'
+    REDIRECT_URL = "/license/accept/"
 
     # Matches /admin/ with optional locale prefix: /en/admin/, /zh-hans/admin/
-    ADMIN_PATH_RE = re.compile(r'^(/[a-z]{2}(-[a-z]+)?)?/admin/')
+    ADMIN_PATH_RE = re.compile(r"^(/[a-z]{2}(-[a-z]+)?)?/admin/")
 
     def process_request(self, request):
         """Check license acceptance before processing any request."""
@@ -78,10 +78,7 @@ class LicenseAcceptanceMiddleware(MiddlewareMixin):
 
             # Either never accepted (fresh install) or admin path needing
             # re-acceptance → redirect to acceptance page
-            logger.info(
-                f"License not accepted, redirecting {path} to "
-                f"{self.REDIRECT_URL}"
-            )
+            logger.info(f"License not accepted, redirecting {path} to {self.REDIRECT_URL}")
             return redirect(self.REDIRECT_URL)
 
         except Exception as e:

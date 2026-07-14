@@ -12,26 +12,28 @@ The PageSchemaRegistry:
 - Validates CSP policy compliance
 """
 
-from typing import Dict, List, Optional, Set, Tuple
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import Prefetch
 
-from .models import PageTier, ComponentStore, TierComponentPermission
+from .models import ComponentStore, PageTier, TierComponentPermission
 
 
 class SchemaValidationError(ValidationError):
     """Raised when schema validation fails"""
+
     pass
 
 
 class ComponentPlacementError(SchemaValidationError):
     """Raised when component cannot be placed in requested location"""
+
     pass
 
 
 class LockedRegionError(SchemaValidationError):
     """Raised when attempting to modify a locked region"""
+
     pass
 
 
@@ -57,13 +59,13 @@ class PageSchemaRegistry:
 
     # Cache timeout for schema data (5 minutes)
     CACHE_TIMEOUT = 300
-    CACHE_KEY_PREFIX = 'page_schema_registry'
+    CACHE_KEY_PREFIX = "page_schema_registry"
 
     def __init__(self):
         """Initialize the schema registry."""
-        self._schema_cache: Dict[str, PageTier] = {}
+        self._schema_cache: dict[str, PageTier] = {}
 
-    def get_page_tier(self, page_type: str) -> Optional[PageTier]:
+    def get_page_tier(self, page_type: str) -> PageTier | None:
         """
         Get PageTier configuration for a specific page type.
 
@@ -78,7 +80,7 @@ class PageSchemaRegistry:
             >>> tier.tier
             'A'
         """
-        cache_key = f'{self.CACHE_KEY_PREFIX}:tier:{page_type}'
+        cache_key = f"{self.CACHE_KEY_PREFIX}:tier:{page_type}"
 
         # Try cache first
         cached = cache.get(cache_key)
@@ -89,8 +91,8 @@ class PageSchemaRegistry:
         try:
             tier = PageTier.objects.prefetch_related(
                 Prefetch(
-                    'component_permissions',
-                    queryset=TierComponentPermission.objects.select_related('component')
+                    "component_permissions",
+                    queryset=TierComponentPermission.objects.select_related("component"),
                 )
             ).get(page_type=page_type)
 
@@ -101,7 +103,7 @@ class PageSchemaRegistry:
         except PageTier.DoesNotExist:
             return None
 
-    def get_allowed_components(self, page_type: str) -> List[ComponentStore]:
+    def get_allowed_components(self, page_type: str) -> list[ComponentStore]:
         """
         Get list of components allowed on a specific page type.
 
@@ -120,27 +122,23 @@ class PageSchemaRegistry:
         if not tier:
             return []
 
-        cache_key = f'{self.CACHE_KEY_PREFIX}:components:{page_type}'
+        cache_key = f"{self.CACHE_KEY_PREFIX}:components:{page_type}"
         cached = cache.get(cache_key)
         if cached:
             return cached
 
         # Get components from tier permissions
-        permissions = TierComponentPermission.objects.filter(
-            tier=tier
-        ).select_related('component').filter(
-            component__review_status='approved'
+        permissions = (
+            TierComponentPermission.objects.filter(tier=tier)
+            .select_related("component")
+            .filter(component__review_status="approved")
         )
 
         components = [perm.component for perm in permissions]
         cache.set(cache_key, components, self.CACHE_TIMEOUT)
         return components
 
-    def get_allowed_regions(
-        self,
-        page_type: str,
-        component_type: str
-    ) -> List[str]:
+    def get_allowed_regions(self, page_type: str, component_type: str) -> list[str]:
         """
         Get list of regions where a component can be placed.
 
@@ -161,11 +159,8 @@ class PageSchemaRegistry:
             return []
 
         try:
-            permission = TierComponentPermission.objects.select_related(
-                'component'
-            ).get(
-                tier=tier,
-                component__component_type=component_type
+            permission = TierComponentPermission.objects.select_related("component").get(
+                tier=tier, component__component_type=component_type
             )
             return permission.allowed_regions
         except TierComponentPermission.DoesNotExist:
@@ -193,12 +188,8 @@ class PageSchemaRegistry:
         return region in tier.locked_regions
 
     def validate_component_placement(
-        self,
-        page_type: str,
-        component_type: str,
-        region: str,
-        instance_count: int = 1
-    ) -> Tuple[bool, Optional[str]]:
+        self, page_type: str, component_type: str, region: str, instance_count: int = 1
+    ) -> tuple[bool, str | None]:
         """
         Validate if a component can be placed in a specific region.
 
@@ -238,12 +229,10 @@ class PageSchemaRegistry:
 
         # Get component permission
         try:
-            permission = TierComponentPermission.objects.select_related(
-                'component', 'tier'
-            ).get(
+            permission = TierComponentPermission.objects.select_related("component", "tier").get(
                 tier=tier,
                 component__component_type=component_type,
-                component__review_status='approved'
+                component__review_status="approved",
             )
         except TierComponentPermission.DoesNotExist:
             return False, f"Component '{component_type}' not allowed in Tier {tier.tier} pages"
@@ -251,7 +240,7 @@ class PageSchemaRegistry:
         # Check if component is allowed in this region
         # Empty allowed_regions means all regions are allowed
         if permission.allowed_regions and region not in permission.allowed_regions:
-            allowed = ', '.join(permission.allowed_regions)
+            allowed = ", ".join(permission.allowed_regions)
             return False, (
                 f"Component '{component_type}' not allowed in region '{region}'. "
                 f"Allowed regions: {allowed}"
@@ -266,11 +255,7 @@ class PageSchemaRegistry:
 
         return True, None
 
-    def validate_page_schema(
-        self,
-        page_type: str,
-        layout_data: Dict
-    ) -> Tuple[bool, List[str]]:
+    def validate_page_schema(self, page_type: str, layout_data: dict) -> tuple[bool, list[str]]:
         """
         Validate an entire page layout against tier rules.
 
@@ -311,15 +296,15 @@ class PageSchemaRegistry:
             return False, [f"Page type '{page_type}' not found"]
 
         # Validate structure
-        if 'regions' not in layout_data:
+        if "regions" not in layout_data:
             return False, ["Layout data must contain 'regions' key"]
 
-        regions = layout_data['regions']
+        regions = layout_data["regions"]
         if not isinstance(regions, dict):
             return False, ["'regions' must be a dictionary"]
 
         # Track component instances for max_instances validation
-        component_counts: Dict[str, int] = {}
+        component_counts: dict[str, int] = {}
 
         # Validate each region
         for region_id, components in regions.items():
@@ -338,7 +323,7 @@ class PageSchemaRegistry:
                     errors.append(f"Component in region '{region_id}' must be a dictionary")
                     continue
 
-                component_type = component_data.get('component')
+                component_type = component_data.get("component")
                 if not component_type:
                     errors.append(f"Component in region '{region_id}' missing 'component' field")
                     continue
@@ -351,7 +336,7 @@ class PageSchemaRegistry:
                     page_type=page_type,
                     component_type=component_type,
                     region=region_id,
-                    instance_count=component_counts[component_type]
+                    instance_count=component_counts[component_type],
                 )
 
                 if not valid:
@@ -359,7 +344,7 @@ class PageSchemaRegistry:
 
         return len(errors) == 0, errors
 
-    def get_schema_for_page(self, page_type: str) -> Dict:
+    def get_schema_for_page(self, page_type: str) -> dict:
         """
         Get the full schema definition for a page type.
 
@@ -383,28 +368,28 @@ class PageSchemaRegistry:
         allowed_components = self.get_allowed_components(page_type)
 
         return {
-            'page_type': page_type,
-            'tier': tier.tier,
-            'tier_name': tier.get_tier_display(),
-            'display_name': tier.display_name,
-            'description': tier.description,
-            'schema': tier.schema,
-            'locked_regions': tier.locked_regions,
-            'csp_policy': tier.csp_policy,
-            'max_external_scripts': tier.max_external_scripts,
-            'allows_custom_html': tier.allows_custom_html,
-            'allowed_components': [
+            "page_type": page_type,
+            "tier": tier.tier,
+            "tier_name": tier.get_tier_display(),
+            "display_name": tier.display_name,
+            "description": tier.description,
+            "schema": tier.schema,
+            "locked_regions": tier.locked_regions,
+            "csp_policy": tier.csp_policy,
+            "max_external_scripts": tier.max_external_scripts,
+            "allows_custom_html": tier.allows_custom_html,
+            "allowed_components": [
                 {
-                    'component_type': c.component_type,
-                    'display_name': c.display_name,
-                    'render_mode': c.render_mode,
-                    'capabilities': c.capabilities,
+                    "component_type": c.component_type,
+                    "display_name": c.display_name,
+                    "render_mode": c.render_mode,
+                    "capabilities": c.capabilities,
                 }
                 for c in allowed_components
-            ]
+            ],
         }
 
-    def clear_cache(self, page_type: Optional[str] = None):
+    def clear_cache(self, page_type: str | None = None):
         """
         Clear cached schema data.
 
@@ -416,15 +401,15 @@ class PageSchemaRegistry:
             >>> registry.clear_cache()  # Clear all cached schemas
         """
         if page_type:
-            cache.delete(f'{self.CACHE_KEY_PREFIX}:tier:{page_type}')
-            cache.delete(f'{self.CACHE_KEY_PREFIX}:components:{page_type}')
+            cache.delete(f"{self.CACHE_KEY_PREFIX}:tier:{page_type}")
+            cache.delete(f"{self.CACHE_KEY_PREFIX}:components:{page_type}")
         else:
             # Clear all schema-related cache keys
-            cache.delete_pattern(f'{self.CACHE_KEY_PREFIX}:*')
+            cache.delete_pattern(f"{self.CACHE_KEY_PREFIX}:*")
 
 
 # Singleton instance for global access
-_registry_instance: Optional[PageSchemaRegistry] = None
+_registry_instance: PageSchemaRegistry | None = None
 
 
 def get_schema_registry() -> PageSchemaRegistry:

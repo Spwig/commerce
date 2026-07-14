@@ -6,7 +6,6 @@ apps.ready() helper.
 """
 
 import json
-from pathlib import Path
 
 import pytest
 
@@ -39,9 +38,7 @@ def stub_community_template(tmp_path, monkeypatch):
     return template
 
 
-def test_bootstrap_installs_template_when_missing(
-    tmp_path, settings, stub_community_template
-):
+def test_bootstrap_installs_template_when_missing(tmp_path, settings, stub_community_template):
     """No licence at LICENSE_PATH → template is installed."""
     from django.core.management import call_command
 
@@ -56,9 +53,7 @@ def test_bootstrap_installs_template_when_missing(
     assert data["license"]["edition"] == "community"
 
 
-def test_bootstrap_preserves_existing_licence(
-    tmp_path, settings, stub_community_template
-):
+def test_bootstrap_preserves_existing_licence(tmp_path, settings, stub_community_template):
     """An existing licence is never overwritten by default."""
     from django.core.management import call_command
 

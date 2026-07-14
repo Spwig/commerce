@@ -11,11 +11,11 @@
 /* --- Reset Django admin chrome --- */
 
 body.spwig-license-acceptance {
-    background: linear-gradient(135deg, #1178f4 0%, #7b45dd 50%, #f411c7 100%) !important;
-    margin: 0;
-    padding: 0 !important;
-    min-height: 100vh;
-    overflow-x: hidden;
+  background: linear-gradient(135deg, #1178f4 0%, #7b45dd 50%, #f411c7 100%) !important;
+  margin: 0;
+  padding: 0 !important;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 body.spwig-license-acceptance #header,
@@ -26,20 +26,20 @@ body.spwig-license-acceptance .sidebar,
 body.spwig-license-acceptance .admin-wrapper,
 body.spwig-license-acceptance .main-content,
 body.spwig-license-acceptance #container > header {
-    display: none !important;
+  display: none !important;
 }
 
 body.spwig-license-acceptance #container {
-    background: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
 }
 
 body.spwig-license-acceptance .main,
@@ -47,448 +47,467 @@ body.spwig-license-acceptance #main,
 body.spwig-license-acceptance .content,
 body.spwig-license-acceptance #content-start,
 body.spwig-license-acceptance #content {
-    display: block !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 body.spwig-license-acceptance #footer {
-    display: none !important;
+  display: none !important;
 }
 
 body.spwig-license-acceptance .skip-to-content-link {
-    display: none !important;
+  display: none !important;
 }
-
 
 /* --- License page layout --- */
 
 .license-page {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
 }
 
 .license-background {
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background:
-        radial-gradient(ellipse at 0% 50%, rgba(17, 120, 244, 0.6) 0%, transparent 60%),
-        radial-gradient(ellipse at 100% 50%, rgba(244, 17, 199, 0.5) 0%, transparent 60%),
-        radial-gradient(ellipse at 50% 100%, rgba(123, 69, 221, 0.5) 0%, transparent 60%),
-        linear-gradient(135deg, #1178f4 0%, #7b45dd 50%, #f411c7 100%);
-    background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
-    animation: license-mesh-shift 30s ease-in-out infinite, license-mesh-rotate 60s linear infinite;
-    z-index: 0;
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(ellipse at 0% 50%, rgba(17, 120, 244, 0.6) 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 50%, rgba(244, 17, 199, 0.5) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(123, 69, 221, 0.5) 0%, transparent 60%),
+    linear-gradient(135deg, #1178f4 0%, #7b45dd 50%, #f411c7 100%);
+  background-size:
+    200% 200%,
+    200% 200%,
+    200% 200%,
+    100% 100%;
+  animation:
+    license-mesh-shift 30s ease-in-out infinite,
+    license-mesh-rotate 60s linear infinite;
+  z-index: 0;
 }
 
 @keyframes license-mesh-shift {
-    0%, 100% { background-position: 0% 50%, 100% 50%, 50% 100%, 0% 0%; }
-    33%      { background-position: 100% 0%, 0% 100%, 50% 0%, 0% 0%; }
-    66%      { background-position: 50% 100%, 50% 0%, 0% 50%, 0% 0%; }
+  0%,
+  100% {
+    background-position:
+      0% 50%,
+      100% 50%,
+      50% 100%,
+      0% 0%;
+  }
+  33% {
+    background-position:
+      100% 0%,
+      0% 100%,
+      50% 0%,
+      0% 0%;
+  }
+  66% {
+    background-position:
+      50% 100%,
+      50% 0%,
+      0% 50%,
+      0% 0%;
+  }
 }
 
 @keyframes license-mesh-rotate {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
 
 /* --- License container & card --- */
 
 .license-container {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 720px;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: 100vh;
-    overflow-y: auto;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 720px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 .license-card {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 2.5rem 2rem;
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  width: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
-
 
 /* --- Card header --- */
 
 .license-card-header {
-    text-align: center;
-    margin-bottom: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .license-logo {
-    width: 140px;
-    height: auto;
-    margin-bottom: 1rem;
-    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+  width: 140px;
+  height: auto;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
 }
 
 .license-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #ffffff !important;
-    margin: 0 0 0.5rem 0;
-    letter-spacing: -0.02em;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff !important;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
 }
 
 .license-subtitle {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    font-weight: 400;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-weight: 400;
 }
 
 .license-version-badge {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    margin-top: 0.5rem;
-    letter-spacing: 0.02em;
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  margin-top: 0.5rem;
+  letter-spacing: 0.02em;
 }
-
 
 /* --- Re-acceptance alert --- */
 
 .license-alert {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.875rem 1rem;
-    border-radius: 12px;
-    font-size: 0.875rem;
-    margin-bottom: 1.25rem;
-    line-height: 1.5;
-    background: rgba(255, 193, 7, 0.15);
-    border: 1px solid rgba(255, 193, 7, 0.3);
-    color: #ffe08a;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #ffe08a;
 }
 
 .license-alert i {
-    margin-top: 0.125rem;
-    flex-shrink: 0;
-    color: #ffc107;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  color: #ffc107;
 }
-
 
 /* --- License text scroll area --- */
 
 .license-text-container {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 1.25rem;
-    height: 320px;
-    overflow-y: auto;
-    font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", "Courier New", monospace;
-    font-size: 0.8125rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.85);
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    margin-bottom: 1.25rem;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem;
+  height: 320px;
+  overflow-y: auto;
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Courier New', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 1.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 .license-text-container::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 .license-text-container::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .license-text-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
 }
 
 .license-text-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.5);
 }
-
 
 /* --- Third-party notices link --- */
 
 .license-third-party {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
-    font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.8125rem;
 }
 
 .license-third-party i {
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 0.75rem;
-    flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.75rem;
+  flex-shrink: 0;
 }
 
 .license-third-party a {
-    color: rgba(255, 255, 255, 0.6) !important;
-    text-decoration: none;
-    transition: color 0.2s ease;
+  color: rgba(255, 255, 255, 0.6) !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .license-third-party a:hover {
-    color: #ffffff !important;
-    text-decoration: underline;
+  color: #ffffff !important;
+  text-decoration: underline;
 }
-
 
 /* --- Acceptance form --- */
 
 .license-form {
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 1.25rem;
 }
 
 .license-checkbox-wrapper {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
-.license-checkbox-wrapper input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    margin-top: 2px;
-    cursor: pointer;
-    accent-color: #ffffff;
+.license-checkbox-wrapper input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #ffffff;
 }
 
 .license-checkbox-wrapper label {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.85);
-    line-height: 1.5;
-    cursor: pointer;
-    font-weight: 400;
-    float: none !important;
-    width: auto !important;
-    padding: 0 !important;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  cursor: pointer;
+  font-weight: 400;
+  float: none !important;
+  width: auto !important;
+  padding: 0 !important;
 }
 
 .license-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 .license-scroll-hint {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    transition: opacity 0.3s ease;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: opacity 0.3s ease;
 }
 
 .license-scroll-hint.hidden {
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .license-scroll-hint i {
-    font-size: 0.625rem;
+  font-size: 0.625rem;
 }
 
 .license-submit {
-    padding: 0.875rem 2rem;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 12px;
-    color: #ffffff;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+  padding: 0.875rem 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .license-submit:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .license-submit:active:not(:disabled) {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 .license-submit:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .license-submit-icon {
-    transition: transform 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .license-submit:hover:not(:disabled) .license-submit-icon {
-    transform: translateX(3px);
+  transform: translateX(3px);
 }
-
 
 /* --- Footer --- */
 
 .license-footer {
-    text-align: center;
-    margin-top: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
+  text-align: center;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
 }
 
 .license-footer-powered {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
 }
 
 .license-footer-favicon {
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  vertical-align: middle;
 }
 
 .license-footer-powered a {
-    color: rgba(255, 255, 255, 0.6) !important;
-    text-decoration: none;
-    transition: color 0.2s ease;
+  color: rgba(255, 255, 255, 0.6) !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .license-footer-powered a:hover {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 .license-footer-copyright {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
 }
-
 
 /* --- Responsive --- */
 
 @media (max-width: 768px) {
-    .license-container {
-        padding: 1rem;
-        max-width: 100%;
-    }
+  .license-container {
+    padding: 1rem;
+    max-width: 100%;
+  }
 
-    .license-card {
-        padding: 2rem 1.5rem;
-        border-radius: 16px;
-    }
+  .license-card {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+  }
 
-    .license-logo {
-        width: 110px;
-    }
+  .license-logo {
+    width: 110px;
+  }
 
-    .license-title {
-        font-size: 1.25rem;
-    }
+  .license-title {
+    font-size: 1.25rem;
+  }
 
-    .license-text-container {
-        height: 250px;
-        font-size: 0.75rem;
-    }
+  .license-text-container {
+    height: 250px;
+    font-size: 0.75rem;
+  }
 
-    .license-actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
+  .license-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
 
-    .license-scroll-hint {
-        text-align: center;
-        justify-content: center;
-    }
+  .license-scroll-hint {
+    text-align: center;
+    justify-content: center;
+  }
 
-    .license-submit {
-        justify-content: center;
-    }
+  .license-submit {
+    justify-content: center;
+  }
 }
 
 @media (max-height: 700px) {
-    .license-page {
-        position: relative;
-        min-height: 100vh;
-    }
+  .license-page {
+    position: relative;
+    min-height: 100vh;
+  }
 
-    .license-card-header {
-        margin-bottom: 1rem;
-    }
+  .license-card-header {
+    margin-bottom: 1rem;
+  }
 
-    .license-logo {
-        width: 100px;
-        margin-bottom: 0.5rem;
-    }
+  .license-logo {
+    width: 100px;
+    margin-bottom: 0.5rem;
+  }
 
-    .license-text-container {
-        height: 200px;
-    }
+  .license-text-container {
+    height: 200px;
+  }
 }
-
 
 /* --- Accessibility --- */
 
 @media (prefers-reduced-motion: reduce) {
-    .license-background {
-        animation: none;
-    }
+  .license-background {
+    animation: none;
+  }
 
-    .license-card,
-    .license-submit {
-        transition: none;
-    }
+  .license-card,
+  .license-submit {
+    transition: none;
+  }
 }
 
 .license-submit:focus-visible {
-    outline: 2px solid #ffffff;
-    outline-offset: 2px;
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
-.license-checkbox-wrapper input[type="checkbox"]:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 2px;
+.license-checkbox-wrapper input[type='checkbox']:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
 }

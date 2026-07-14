@@ -4,10 +4,12 @@ Webhook serializers for payload generation.
 This module provides serializers for converting model instances
 into webhook payload data.
 """
-from rest_framework import serializers
+
+import logging
+
 from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
-import logging
+from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +18,10 @@ logger = logging.getLogger(__name__)
 # Webhook Endpoint Serializers (for API)
 # =============================================================================
 
+
 class WebhookEndpointListSerializer(serializers.Serializer):
     """Serializer for listing webhook endpoints."""
+
     id = serializers.UUIDField(read_only=True)
     name = serializers.CharField()
     url = serializers.URLField()
@@ -31,14 +35,14 @@ class WebhookEndpointListSerializer(serializers.Serializer):
 
 class WebhookEndpointDetailSerializer(serializers.Serializer):
     """Serializer for webhook endpoint details."""
+
     id = serializers.UUIDField(read_only=True)
     name = serializers.CharField(max_length=255)
     url = serializers.URLField(max_length=2048)
     secret = serializers.CharField(read_only=True, help_text=_("Only shown once on creation"))
     is_active = serializers.BooleanField(default=True)
     events = serializers.ListField(
-        child=serializers.CharField(),
-        help_text=_("List of event types to subscribe to")
+        child=serializers.CharField(), help_text=_("List of event types to subscribe to")
     )
     description = serializers.CharField(required=False, allow_blank=True)
     max_retries = serializers.IntegerField(min_value=0, max_value=10, default=5)
@@ -52,13 +56,13 @@ class WebhookEndpointDetailSerializer(serializers.Serializer):
 
 class WebhookEndpointCreateSerializer(serializers.Serializer):
     """Serializer for creating a webhook endpoint."""
+
     name = serializers.CharField(max_length=255)
     url = serializers.URLField(max_length=2048)
     events = serializers.ListField(
-        child=serializers.CharField(),
-        help_text=_("List of event types to subscribe to")
+        child=serializers.CharField(), help_text=_("List of event types to subscribe to")
     )
-    description = serializers.CharField(required=False, allow_blank=True, default='')
+    description = serializers.CharField(required=False, allow_blank=True, default="")
     max_retries = serializers.IntegerField(min_value=0, max_value=10, default=5)
     timeout_seconds = serializers.IntegerField(min_value=5, max_value=60, default=30)
     is_active = serializers.BooleanField(default=True)
@@ -66,13 +70,15 @@ class WebhookEndpointCreateSerializer(serializers.Serializer):
     def validate_url(self, value):
         """Validate webhook URL."""
         from django.conf import settings
-        if not settings.DEBUG and not value.startswith('https://'):
+
+        if not settings.DEBUG and not value.startswith("https://"):
             raise serializers.ValidationError("Webhook URLs must use HTTPS in production")
         return value
 
     def validate_events(self, value):
         """Validate event types."""
         from .events import validate_events
+
         valid, invalid = validate_events(value)
         if invalid:
             # Allow but warn about unknown events
@@ -83,17 +89,16 @@ class WebhookEndpointCreateSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         from .models import WebhookEndpoint
+
         return WebhookEndpoint.objects.create(**validated_data)
 
 
 class WebhookEndpointUpdateSerializer(serializers.Serializer):
     """Serializer for updating a webhook endpoint."""
+
     name = serializers.CharField(max_length=255, required=False)
     url = serializers.URLField(max_length=2048, required=False)
-    events = serializers.ListField(
-        child=serializers.CharField(),
-        required=False
-    )
+    events = serializers.ListField(child=serializers.CharField(), required=False)
     description = serializers.CharField(required=False, allow_blank=True)
     max_retries = serializers.IntegerField(min_value=0, max_value=10, required=False)
     timeout_seconds = serializers.IntegerField(min_value=5, max_value=60, required=False)
@@ -101,12 +106,14 @@ class WebhookEndpointUpdateSerializer(serializers.Serializer):
 
     def validate_url(self, value):
         from django.conf import settings
-        if not settings.DEBUG and not value.startswith('https://'):
+
+        if not settings.DEBUG and not value.startswith("https://"):
             raise serializers.ValidationError("Webhook URLs must use HTTPS in production")
         return value
 
     def validate_events(self, value):
         from .events import validate_events
+
         if value is not None:
             valid, invalid = validate_events(value)
             if invalid:
@@ -118,9 +125,10 @@ class WebhookEndpointUpdateSerializer(serializers.Serializer):
 
 class WebhookDeliveryListSerializer(serializers.Serializer):
     """Serializer for listing webhook deliveries."""
+
     id = serializers.UUIDField(read_only=True)
-    endpoint_id = serializers.UUIDField(source='endpoint.id')
-    endpoint_name = serializers.CharField(source='endpoint.name')
+    endpoint_id = serializers.UUIDField(source="endpoint.id")
+    endpoint_name = serializers.CharField(source="endpoint.name")
     event_type = serializers.CharField()
     status = serializers.CharField()
     response_status_code = serializers.IntegerField()
@@ -132,9 +140,10 @@ class WebhookDeliveryListSerializer(serializers.Serializer):
 
 class WebhookDeliveryDetailSerializer(serializers.Serializer):
     """Serializer for webhook delivery details."""
+
     id = serializers.UUIDField(read_only=True)
-    endpoint_id = serializers.UUIDField(source='endpoint.id')
-    endpoint_name = serializers.CharField(source='endpoint.name')
+    endpoint_id = serializers.UUIDField(source="endpoint.id")
+    endpoint_name = serializers.CharField(source="endpoint.name")
     event_type = serializers.CharField()
     payload = serializers.JSONField()
     status = serializers.CharField()
@@ -151,6 +160,7 @@ class WebhookDeliveryDetailSerializer(serializers.Serializer):
 
 class WebhookEventSerializer(serializers.Serializer):
     """Serializer for webhook event type information."""
+
     event = serializers.CharField()
     description = serializers.CharField()
     category = serializers.CharField()
@@ -160,25 +170,28 @@ class WebhookEventSerializer(serializers.Serializer):
 # Payload Serializers (for webhook event data)
 # =============================================================================
 
+
 class OrderWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for order webhook payloads."""
+
     id = serializers.IntegerField()
     order_number = serializers.CharField()
     status = serializers.CharField()
     total = serializers.DecimalField(max_digits=12, decimal_places=2)
     currency = serializers.CharField()
-    customer_email = serializers.EmailField(source='customer.email', allow_null=True)
-    customer_id = serializers.IntegerField(source='customer.id', allow_null=True)
+    customer_email = serializers.EmailField(source="customer.email", allow_null=True)
+    customer_id = serializers.IntegerField(source="customer.id", allow_null=True)
     items_count = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
 
     def get_items_count(self, obj):
-        return obj.items.count() if hasattr(obj, 'items') else 0
+        return obj.items.count() if hasattr(obj, "items") else 0
 
 
 class ProductWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for product webhook payloads."""
+
     id = serializers.IntegerField()
     sku = serializers.CharField()
     name = serializers.CharField()
@@ -194,20 +207,22 @@ class ProductWebhookPayloadSerializer(serializers.Serializer):
 
 class CustomerWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for customer webhook payloads."""
+
     id = serializers.IntegerField()
     email = serializers.EmailField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
-    created_at = serializers.DateTimeField(source='date_joined')
+    created_at = serializers.DateTimeField(source="date_joined")
 
 
 class ShipmentWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for shipment webhook payloads."""
+
     id = serializers.IntegerField()
-    order_id = serializers.IntegerField(source='order.id')
-    order_number = serializers.CharField(source='order.order_number')
+    order_id = serializers.IntegerField(source="order.id")
+    order_number = serializers.CharField(source="order.order_number")
     tracking_number = serializers.CharField()
-    carrier = serializers.CharField(source='carrier_name', allow_null=True)
+    carrier = serializers.CharField(source="carrier_name", allow_null=True)
     status = serializers.CharField()
     shipped_at = serializers.DateTimeField(allow_null=True)
     delivered_at = serializers.DateTimeField(allow_null=True)
@@ -216,6 +231,7 @@ class ShipmentWebhookPayloadSerializer(serializers.Serializer):
 
 class InventoryWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for inventory webhook payloads."""
+
     product_id = serializers.IntegerField()
     product_sku = serializers.CharField()
     product_name = serializers.CharField()
@@ -226,10 +242,11 @@ class InventoryWebhookPayloadSerializer(serializers.Serializer):
 
 class SubscriptionWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for subscription webhook payloads."""
+
     id = serializers.IntegerField()
-    customer_id = serializers.IntegerField(source='customer.id')
-    customer_email = serializers.EmailField(source='customer.email')
-    plan_name = serializers.CharField(source='plan.name')
+    customer_id = serializers.IntegerField(source="customer.id")
+    customer_email = serializers.EmailField(source="customer.email")
+    plan_name = serializers.CharField(source="plan.name")
     status = serializers.CharField()
     current_period_start = serializers.DateTimeField()
     current_period_end = serializers.DateTimeField()
@@ -238,9 +255,10 @@ class SubscriptionWebhookPayloadSerializer(serializers.Serializer):
 
 class RefundWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for refund webhook payloads."""
+
     id = serializers.IntegerField()
-    order_id = serializers.IntegerField(source='order.id')
-    order_number = serializers.CharField(source='order.order_number')
+    order_id = serializers.IntegerField(source="order.id")
+    order_number = serializers.CharField(source="order.order_number")
     amount = serializers.DecimalField(max_digits=12, decimal_places=2)
     currency = serializers.CharField()
     reason = serializers.CharField(allow_blank=True)
@@ -250,6 +268,7 @@ class RefundWebhookPayloadSerializer(serializers.Serializer):
 
 class TranslationJobWebhookPayloadSerializer(serializers.Serializer):
     """Serializer for translation job webhook payloads."""
+
     id = serializers.IntegerField()
     job_type = serializers.CharField()
     status = serializers.CharField()
@@ -270,14 +289,14 @@ class TranslationJobWebhookPayloadSerializer(serializers.Serializer):
 
 # Mapping of event prefixes to serializer classes
 EVENT_SERIALIZERS = {
-    'order': OrderWebhookPayloadSerializer,
-    'product': ProductWebhookPayloadSerializer,
-    'customer': CustomerWebhookPayloadSerializer,
-    'shipment': ShipmentWebhookPayloadSerializer,
-    'inventory': InventoryWebhookPayloadSerializer,
-    'subscription': SubscriptionWebhookPayloadSerializer,
-    'refund': RefundWebhookPayloadSerializer,
-    'translation': TranslationJobWebhookPayloadSerializer,
+    "order": OrderWebhookPayloadSerializer,
+    "product": ProductWebhookPayloadSerializer,
+    "customer": CustomerWebhookPayloadSerializer,
+    "shipment": ShipmentWebhookPayloadSerializer,
+    "inventory": InventoryWebhookPayloadSerializer,
+    "subscription": SubscriptionWebhookPayloadSerializer,
+    "refund": RefundWebhookPayloadSerializer,
+    "translation": TranslationJobWebhookPayloadSerializer,
 }
 
 
@@ -291,7 +310,7 @@ def get_serializer_for_event(event_type: str):
     Returns:
         Serializer class or None
     """
-    prefix = event_type.split('.')[0] if '.' in event_type else event_type
+    prefix = event_type.split(".")[0] if "." in event_type else event_type
     return EVENT_SERIALIZERS.get(prefix)
 
 
@@ -331,15 +350,15 @@ def _generic_serialize(instance: Model) -> dict:
         Dictionary with basic model data
     """
     data = {
-        'id': instance.pk,
-        'model': f"{instance._meta.app_label}.{instance._meta.model_name}",
+        "id": instance.pk,
+        "model": f"{instance._meta.app_label}.{instance._meta.model_name}",
     }
 
     # Add common fields if they exist
-    for field in ['created_at', 'updated_at', 'status', 'name', 'email']:
+    for field in ["created_at", "updated_at", "status", "name", "email"]:
         if hasattr(instance, field):
             value = getattr(instance, field)
-            if hasattr(value, 'isoformat'):
+            if hasattr(value, "isoformat"):
                 value = value.isoformat()
             data[field] = value
 

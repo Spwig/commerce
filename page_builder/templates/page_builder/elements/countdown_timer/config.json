@@ -12,9 +12,7 @@
   "template_file": "template.html",
   "inherit_base": true,
   "css_files": ["page_builder/css/elements/countdown-timer.css"],
-  "scripts": [
-    "/static/page_builder/js/elements/countdown-timer.js"
-  ],
+  "scripts": ["/static/page_builder/js/elements/countdown-timer.js"],
   "disable_base_properties": ["text_color"],
   "tabs": {
     "basic": {
@@ -52,9 +50,9 @@
               "type": "select",
               "label": "Timer Mode",
               "options": [
-                {"value": "date", "label": "Countdown to Date"},
-                {"value": "duration", "label": "Fixed Duration"},
-                {"value": "daily", "label": "Daily Recurring"}
+                { "value": "date", "label": "Countdown to Date" },
+                { "value": "duration", "label": "Fixed Duration" },
+                { "value": "daily", "label": "Daily Recurring" }
               ],
               "default": "date",
               "help_text": "How the countdown should work"
@@ -63,7 +61,7 @@
               "type": "string",
               "label": "Target Date & Time",
               "help_text": "Format: YYYY-MM-DD HH:MM (e.g., 2025-12-31 23:59)",
-              "show_if": {"mode": "date"}
+              "show_if": { "mode": "date" }
             },
             "duration_hours": {
               "type": "number",
@@ -72,27 +70,27 @@
               "min": 1,
               "max": 720,
               "help_text": "Countdown duration in hours",
-              "show_if": {"mode": "duration"}
+              "show_if": { "mode": "duration" }
             },
             "daily_end_time": {
               "type": "string",
               "label": "Daily End Time",
               "default": "23:59",
               "help_text": "Time the countdown resets each day (HH:MM format)",
-              "show_if": {"mode": "daily"}
+              "show_if": { "mode": "daily" }
             },
             "timezone": {
               "type": "select",
               "label": "Timezone",
               "options": [
-                {"value": "local", "label": "Visitor's Local Time"},
-                {"value": "UTC", "label": "UTC"},
-                {"value": "Europe/London", "label": "London (GMT/BST)"},
-                {"value": "Europe/Paris", "label": "Paris (CET/CEST)"},
-                {"value": "America/New_York", "label": "New York (EST/EDT)"},
-                {"value": "America/Los_Angeles", "label": "Los Angeles (PST/PDT)"},
-                {"value": "Asia/Tokyo", "label": "Tokyo (JST)"},
-                {"value": "Asia/Shanghai", "label": "Shanghai (CST)"}
+                { "value": "local", "label": "Visitor's Local Time" },
+                { "value": "UTC", "label": "UTC" },
+                { "value": "Europe/London", "label": "London (GMT/BST)" },
+                { "value": "Europe/Paris", "label": "Paris (CET/CEST)" },
+                { "value": "America/New_York", "label": "New York (EST/EDT)" },
+                { "value": "America/Los_Angeles", "label": "Los Angeles (PST/PDT)" },
+                { "value": "Asia/Tokyo", "label": "Tokyo (JST)" },
+                { "value": "Asia/Shanghai", "label": "Shanghai (CST)" }
               ],
               "default": "local"
             }
@@ -113,10 +111,10 @@
               "type": "select",
               "label": "Timer Style",
               "options": [
-                {"value": "flip", "label": "Flip Cards"},
-                {"value": "minimal", "label": "Minimal"},
-                {"value": "bold", "label": "Bold Numbers"},
-                {"value": "circular", "label": "Circular Progress"}
+                { "value": "flip", "label": "Flip Cards" },
+                { "value": "minimal", "label": "Minimal" },
+                { "value": "bold", "label": "Bold Numbers" },
+                { "value": "circular", "label": "Circular Progress" }
               ],
               "default": "flip"
             },
@@ -124,10 +122,10 @@
               "type": "select",
               "label": "Size",
               "options": [
-                {"value": "sm", "label": "Small"},
-                {"value": "md", "label": "Medium"},
-                {"value": "lg", "label": "Large"},
-                {"value": "xl", "label": "Extra Large"}
+                { "value": "sm", "label": "Small" },
+                { "value": "md", "label": "Medium" },
+                { "value": "lg", "label": "Large" },
+                { "value": "xl", "label": "Extra Large" }
               ],
               "default": "md"
             }
@@ -173,10 +171,10 @@
               "type": "select",
               "label": "Separator",
               "options": [
-                {"value": "colon", "label": "Colon (:)"},
-                {"value": "none", "label": "None"},
-                {"value": "dot", "label": "Dot (.)"},
-                {"value": "space", "label": "Space"}
+                { "value": "colon", "label": "Colon (:)" },
+                { "value": "none", "label": "None" },
+                { "value": "dot", "label": "Dot (.)" },
+                { "value": "space", "label": "Space" }
               ],
               "default": "colon"
             },
@@ -184,9 +182,9 @@
               "type": "select",
               "label": "Alignment",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "center", "label": "Center"},
-                {"value": "right", "label": "Right"}
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
               ],
               "default": "center"
             }
@@ -246,10 +244,10 @@
               "type": "select",
               "label": "On Expiry",
               "options": [
-                {"value": "hide", "label": "Hide Element"},
-                {"value": "message", "label": "Show Message"},
-                {"value": "redirect", "label": "Redirect to URL"},
-                {"value": "zeros", "label": "Show All Zeros"}
+                { "value": "hide", "label": "Hide Element" },
+                { "value": "message", "label": "Show Message" },
+                { "value": "redirect", "label": "Redirect to URL" },
+                { "value": "zeros", "label": "Show All Zeros" }
               ],
               "default": "message"
             },
@@ -258,13 +256,13 @@
               "label": "Expired Message",
               "default": "This offer has ended",
               "translatable": true,
-              "show_if": {"on_expire": "message"}
+              "show_if": { "on_expire": "message" }
             },
             "redirect_url": {
               "type": "link_selector",
               "label": "Redirect URL",
               "help_text": "URL to redirect visitors when countdown expires",
-              "show_if": {"on_expire": "redirect"}
+              "show_if": { "on_expire": "redirect" }
             },
             "redirect_delay": {
               "type": "number",
@@ -272,7 +270,7 @@
               "default": 3,
               "min": 0,
               "max": 30,
-              "show_if": {"on_expire": "redirect"}
+              "show_if": { "on_expire": "redirect" }
             }
           }
         }
@@ -317,42 +315,147 @@
     }
   },
   "properties": {
-    "title": {"type": "string", "label": "Title", "default": "Sale Ends In", "translatable": true},
-    "subtitle": {"type": "string", "label": "Subtitle", "default": "", "translatable": true},
-    "mode": {"type": "select", "label": "Timer Mode", "options": [{"value": "date", "label": "Countdown to Date"}, {"value": "duration", "label": "Fixed Duration"}, {"value": "daily", "label": "Daily Recurring"}], "default": "date"},
-    "target_date": {"type": "string", "label": "Target Date & Time", "show_if": {"mode": "date"}},
-    "duration_hours": {"type": "number", "label": "Duration (Hours)", "default": 24, "show_if": {"mode": "duration"}},
-    "daily_end_time": {"type": "string", "label": "Daily End Time", "default": "23:59", "show_if": {"mode": "daily"}},
-    "timezone": {"type": "select", "label": "Timezone", "options": [{"value": "local", "label": "Visitor's Local Time"}, {"value": "UTC", "label": "UTC"}], "default": "local"},
-    "style": {"type": "select", "label": "Timer Style", "options": [{"value": "flip", "label": "Flip Cards"}, {"value": "minimal", "label": "Minimal"}, {"value": "bold", "label": "Bold Numbers"}, {"value": "circular", "label": "Circular Progress"}], "default": "flip"},
-    "size": {"type": "select", "label": "Size", "options": [{"value": "sm", "label": "Small"}, {"value": "md", "label": "Medium"}, {"value": "lg", "label": "Large"}, {"value": "xl", "label": "Extra Large"}], "default": "md"},
-    "show_days": {"type": "boolean", "default": true},
-    "show_hours": {"type": "boolean", "default": true},
-    "show_minutes": {"type": "boolean", "default": true},
-    "show_seconds": {"type": "boolean", "default": true},
-    "show_labels": {"type": "boolean", "default": true},
-    "separator": {"type": "select", "label": "Separator", "options": [{"value": "colon", "label": "Colon (:)"}, {"value": "none", "label": "None"}], "default": "colon"},
-    "alignment": {"type": "select", "label": "Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "center"},
-    "number_color": {"type": "color_advanced", "default": ""},
-    "label_color": {"type": "color_advanced", "default": ""},
-    "card_background": {"type": "color_advanced", "default": ""},
-    "separator_color": {"type": "color_advanced", "default": ""},
-    "on_expire": {"type": "select", "label": "On Expiry", "options": [{"value": "hide", "label": "Hide Element"}, {"value": "message", "label": "Show Message"}, {"value": "redirect", "label": "Redirect to URL"}, {"value": "zeros", "label": "Show All Zeros"}], "default": "message"},
-    "expired_message": {"type": "string", "default": "This offer has ended", "translatable": true},
-    "redirect_url": {"type": "link_selector"},
-    "redirect_delay": {"type": "number", "default": 3},
-    "label_days": {"type": "string", "default": "Days", "translatable": true},
-    "label_hours": {"type": "string", "default": "Hours", "translatable": true},
-    "label_minutes": {"type": "string", "default": "Minutes", "translatable": true},
-    "label_seconds": {"type": "string", "default": "Seconds", "translatable": true}
+    "title": {
+      "type": "string",
+      "label": "Title",
+      "default": "Sale Ends In",
+      "translatable": true
+    },
+    "subtitle": { "type": "string", "label": "Subtitle", "default": "", "translatable": true },
+    "mode": {
+      "type": "select",
+      "label": "Timer Mode",
+      "options": [
+        { "value": "date", "label": "Countdown to Date" },
+        { "value": "duration", "label": "Fixed Duration" },
+        { "value": "daily", "label": "Daily Recurring" }
+      ],
+      "default": "date"
+    },
+    "target_date": {
+      "type": "string",
+      "label": "Target Date & Time",
+      "show_if": { "mode": "date" }
+    },
+    "duration_hours": {
+      "type": "number",
+      "label": "Duration (Hours)",
+      "default": 24,
+      "show_if": { "mode": "duration" }
+    },
+    "daily_end_time": {
+      "type": "string",
+      "label": "Daily End Time",
+      "default": "23:59",
+      "show_if": { "mode": "daily" }
+    },
+    "timezone": {
+      "type": "select",
+      "label": "Timezone",
+      "options": [
+        { "value": "local", "label": "Visitor's Local Time" },
+        { "value": "UTC", "label": "UTC" }
+      ],
+      "default": "local"
+    },
+    "style": {
+      "type": "select",
+      "label": "Timer Style",
+      "options": [
+        { "value": "flip", "label": "Flip Cards" },
+        { "value": "minimal", "label": "Minimal" },
+        { "value": "bold", "label": "Bold Numbers" },
+        { "value": "circular", "label": "Circular Progress" }
+      ],
+      "default": "flip"
+    },
+    "size": {
+      "type": "select",
+      "label": "Size",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" },
+        { "value": "xl", "label": "Extra Large" }
+      ],
+      "default": "md"
+    },
+    "show_days": { "type": "boolean", "default": true },
+    "show_hours": { "type": "boolean", "default": true },
+    "show_minutes": { "type": "boolean", "default": true },
+    "show_seconds": { "type": "boolean", "default": true },
+    "show_labels": { "type": "boolean", "default": true },
+    "separator": {
+      "type": "select",
+      "label": "Separator",
+      "options": [
+        { "value": "colon", "label": "Colon (:)" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "colon"
+    },
+    "alignment": {
+      "type": "select",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    "number_color": { "type": "color_advanced", "default": "" },
+    "label_color": { "type": "color_advanced", "default": "" },
+    "card_background": { "type": "color_advanced", "default": "" },
+    "separator_color": { "type": "color_advanced", "default": "" },
+    "on_expire": {
+      "type": "select",
+      "label": "On Expiry",
+      "options": [
+        { "value": "hide", "label": "Hide Element" },
+        { "value": "message", "label": "Show Message" },
+        { "value": "redirect", "label": "Redirect to URL" },
+        { "value": "zeros", "label": "Show All Zeros" }
+      ],
+      "default": "message"
+    },
+    "expired_message": {
+      "type": "string",
+      "default": "This offer has ended",
+      "translatable": true
+    },
+    "redirect_url": { "type": "link_selector" },
+    "redirect_delay": { "type": "number", "default": 3 },
+    "label_days": { "type": "string", "default": "Days", "translatable": true },
+    "label_hours": { "type": "string", "default": "Hours", "translatable": true },
+    "label_minutes": { "type": "string", "default": "Minutes", "translatable": true },
+    "label_seconds": { "type": "string", "default": "Seconds", "translatable": true }
   },
   "translations": {
-    "en": {"name": "Countdown Timer", "description": "Customizable countdown timer for sales, launches, and events"},
-    "es": {"name": "Temporizador", "description": "Temporizador de cuenta regresiva personalizable para ventas, lanzamientos y eventos"},
-    "fr": {"name": "Compte à Rebours", "description": "Compteur personnalisable pour les ventes, lancements et événements"},
-    "de": {"name": "Countdown-Timer", "description": "Anpassbarer Countdown-Timer für Verkäufe, Launches und Events"},
-    "pt": {"name": "Temporizador", "description": "Temporizador de contagem regressiva personalizável para vendas, lançamentos e eventos"},
-    "zh-hans": {"name": "倒计时器", "description": "用于促销、发布和活动的可自定义倒计时器"},
-    "ja": {"name": "カウントダウンタイマー", "description": "セール、ローンチ、イベント用のカスタマイズ可能なカウントダウンタイマー"}
+    "en": {
+      "name": "Countdown Timer",
+      "description": "Customizable countdown timer for sales, launches, and events"
+    },
+    "es": {
+      "name": "Temporizador",
+      "description": "Temporizador de cuenta regresiva personalizable para ventas, lanzamientos y eventos"
+    },
+    "fr": {
+      "name": "Compte à Rebours",
+      "description": "Compteur personnalisable pour les ventes, lancements et événements"
+    },
+    "de": {
+      "name": "Countdown-Timer",
+      "description": "Anpassbarer Countdown-Timer für Verkäufe, Launches und Events"
+    },
+    "pt": {
+      "name": "Temporizador",
+      "description": "Temporizador de contagem regressiva personalizável para vendas, lançamentos e eventos"
+    },
+    "zh-hans": { "name": "倒计时器", "description": "用于促销、发布和活动的可自定义倒计时器" },
+    "ja": {
+      "name": "カウントダウンタイマー",
+      "description": "セール、ローンチ、イベント用のカスタマイズ可能なカウントダウンタイマー"
+    }
   }
 }

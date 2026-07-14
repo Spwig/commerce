@@ -1,1 +1,107 @@
-import{u as i,a}from"./index-DF7XhMeX.js";class c{constructor(){this._terminal=null,this._connectedReader=null,this._sdkLoaded=!1,this._initializing=!1}async initialize(){if(!this._terminal&&!this._initializing){this._initializing=!0;try{await this._loadSDK(),this._terminal=window.StripeTerminal.create({onFetchConnectionToken:async()=>{var r;const e=await a.post("/terminal-provider/connection-token/",{});if(!e.success)throw new Error(((r=e.error)==null?void 0:r.message)||"Failed to get connection token");return e.secret},onUnexpectedReaderDisconnect:()=>{this._connectedReader=null,i.getState().setTerminalReader(null)}})}finally{this._initializing=!1}}}async _loadSDK(){if(!(this._sdkLoaded&&window.StripeTerminal))return new Promise((e,r)=>{if(window.StripeTerminal){this._sdkLoaded=!0,e();return}const t=document.createElement("script");t.src="https://js.stripe.com/terminal/v1/",t.async=!0,t.onload=()=>{this._sdkLoaded=!0,e()},t.onerror=()=>r(new Error("Failed to load Stripe Terminal SDK")),document.head.appendChild(t)})}async discoverReaders(){if(!this._terminal)throw new Error("Terminal SDK not initialized");const e=await this._terminal.discoverReaders({simulated:!1});if(e.error)throw new Error(e.error.message);return e.discoveredReaders||[]}async connectReader(e){if(!this._terminal)throw new Error("Terminal SDK not initialized");const r=await this._terminal.connectInternetReader(e);if(r.error)throw new Error(r.error.message);return this._connectedReader=r.reader,i.getState().setTerminalReader({id:r.reader.id,label:r.reader.label||r.reader.id,type:r.reader.device_type,status:r.reader.status}),r.reader}async collectPayment(e){if(!this._terminal)throw new Error("Terminal SDK not initialized");if(!this._connectedReader)throw new Error("No reader connected");const r=typeof e=="string"?e:e.clientSecret,t=await this._terminal.collectPaymentMethod(r);if(t.error)throw new Error(t.error.message);const n=await this._terminal.processPayment(t.paymentIntent);if(n.error)throw new Error(n.error.message);return n.paymentIntent}async cancelCollect(){if(this._terminal)try{await this._terminal.cancelCollectPaymentMethod()}catch{}}async disconnect(){if(this._terminal&&this._connectedReader){try{await this._terminal.disconnectReader()}catch{}this._connectedReader=null,i.getState().setTerminalReader(null)}}get isConnected(){return!!this._connectedReader}get connectedReader(){return this._connectedReader}get status(){return this._connectedReader?"connected":this._terminal?"initialized":"disconnected"}}export{c as StripeTerminalAdapter};
+import { u as i, a } from './index-COyQw9XM.js';
+class c {
+  constructor() {
+    ((this._terminal = null),
+      (this._connectedReader = null),
+      (this._sdkLoaded = !1),
+      (this._initializing = !1));
+  }
+  async initialize() {
+    if (!this._terminal && !this._initializing) {
+      this._initializing = !0;
+      try {
+        (await this._loadSDK(),
+          (this._terminal = window.StripeTerminal.create({
+            onFetchConnectionToken: async () => {
+              let r;
+              const e = await a.post('/terminal-provider/connection-token/', {});
+              if (!e.success)
+                throw new Error(
+                  ((r = e.error) == null ? void 0 : r.message) || 'Failed to get connection token'
+                );
+              return e.secret;
+            },
+            onUnexpectedReaderDisconnect: () => {
+              ((this._connectedReader = null), i.getState().setTerminalReader(null));
+            },
+          })));
+      } finally {
+        this._initializing = !1;
+      }
+    }
+  }
+  async _loadSDK() {
+    if (!(this._sdkLoaded && window.StripeTerminal))
+      return new Promise((e, r) => {
+        if (window.StripeTerminal) {
+          ((this._sdkLoaded = !0), e());
+          return;
+        }
+        const t = document.createElement('script');
+        ((t.src = 'https://js.stripe.com/terminal/v1/'),
+          (t.async = !0),
+          (t.onload = () => {
+            ((this._sdkLoaded = !0), e());
+          }),
+          (t.onerror = () => r(new Error('Failed to load Stripe Terminal SDK'))),
+          document.head.appendChild(t));
+      });
+  }
+  async discoverReaders() {
+    if (!this._terminal) throw new Error('Terminal SDK not initialized');
+    const e = await this._terminal.discoverReaders({ simulated: !1 });
+    if (e.error) throw new Error(e.error.message);
+    return e.discoveredReaders || [];
+  }
+  async connectReader(e) {
+    if (!this._terminal) throw new Error('Terminal SDK not initialized');
+    const r = await this._terminal.connectInternetReader(e);
+    if (r.error) throw new Error(r.error.message);
+    return (
+      (this._connectedReader = r.reader),
+      i
+        .getState()
+        .setTerminalReader({
+          id: r.reader.id,
+          label: r.reader.label || r.reader.id,
+          type: r.reader.device_type,
+          status: r.reader.status,
+        }),
+      r.reader
+    );
+  }
+  async collectPayment(e) {
+    if (!this._terminal) throw new Error('Terminal SDK not initialized');
+    if (!this._connectedReader) throw new Error('No reader connected');
+    const r = typeof e == 'string' ? e : e.clientSecret,
+      t = await this._terminal.collectPaymentMethod(r);
+    if (t.error) throw new Error(t.error.message);
+    const n = await this._terminal.processPayment(t.paymentIntent);
+    if (n.error) throw new Error(n.error.message);
+    return n.paymentIntent;
+  }
+  async cancelCollect() {
+    if (this._terminal)
+      try {
+        await this._terminal.cancelCollectPaymentMethod();
+      } catch {}
+  }
+  async disconnect() {
+    if (this._terminal && this._connectedReader) {
+      try {
+        await this._terminal.disconnectReader();
+      } catch {}
+      ((this._connectedReader = null), i.getState().setTerminalReader(null));
+    }
+  }
+  get isConnected() {
+    return !!this._connectedReader;
+  }
+  get connectedReader() {
+    return this._connectedReader;
+  }
+  get status() {
+    return this._connectedReader ? 'connected' : this._terminal ? 'initialized' : 'disconnected';
+  }
+}
+export { c as StripeTerminalAdapter };

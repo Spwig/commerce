@@ -7,256 +7,261 @@
 
 /* Input styles */
 .address-autocomplete-input {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 /* Suggestions container - Mobile First */
 .address-autocomplete-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: var(--theme-space-1, 0.25rem);
-    background: var(--theme-color-surface, #fff);
-    border: 1px solid var(--theme-color-border, #e5e7eb);
-    border-radius: var(--theme-radius-lg, 0.75rem);
-    box-shadow: var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
-    max-height: none;
-    overflow-y: visible;
-    z-index: var(--theme-z-dropdown, 1000);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--theme-space-1, 0.25rem);
+  background: var(--theme-color-surface, #fff);
+  border: 1px solid var(--theme-color-border, #e5e7eb);
+  border-radius: var(--theme-radius-lg, 0.75rem);
+  box-shadow: var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+  max-height: none;
+  overflow-y: visible;
+  z-index: var(--theme-z-dropdown, 1000);
 }
 
 /* Loading indicator - Mobile First */
 .address-autocomplete-loading {
-    padding: var(--theme-space-3, 0.75rem);
-    text-align: center;
-    color: var(--theme-color-text-muted, #6b7280);
-    font-size: var(--theme-font-size-sm, 0.875rem);
+  padding: var(--theme-space-3, 0.75rem);
+  text-align: center;
+  color: var(--theme-color-text-muted, #6b7280);
+  font-size: var(--theme-font-size-sm, 0.875rem);
 }
 
 @media (min-width: 640px) {
-    .address-autocomplete-loading {
-        padding: var(--theme-space-4, 1rem);
-    }
+  .address-autocomplete-loading {
+    padding: var(--theme-space-4, 1rem);
+  }
 }
 
 .address-autocomplete-loading .spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--theme-color-border, #e5e7eb);
-    border-top: 2px solid var(--theme-color-primary, #2563eb);
-    border-radius: 50%;
-    animation: address-spinner 1s linear infinite;
-    vertical-align: middle;
-    margin-right: var(--theme-space-2, 0.5rem);
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--theme-color-border, #e5e7eb);
+  border-top: 2px solid var(--theme-color-primary, #2563eb);
+  border-radius: 50%;
+  animation: address-spinner 1s linear infinite;
+  vertical-align: middle;
+  margin-right: var(--theme-space-2, 0.5rem);
 }
 
 @keyframes address-spinner {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Suggestions list */
 .address-autocomplete-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    /* Desktop: show 4.5 items before scrolling (48px per item) */
-    max-height: calc(48px * 4.5);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--theme-color-border, #e5e7eb) transparent;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  /* Desktop: show 4.5 items before scrolling (48px per item) */
+  max-height: calc(48px * 4.5);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-color-border, #e5e7eb) transparent;
 }
 
 /* Mobile: show 3.5 items before scrolling */
 @media (max-width: 640px) {
-    .address-autocomplete-list {
-        max-height: calc(48px * 3.5);
-    }
+  .address-autocomplete-list {
+    max-height: calc(48px * 3.5);
+  }
 }
 
 /* Webkit scrollbar styling */
 .address-autocomplete-list::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 .address-autocomplete-list::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .address-autocomplete-list::-webkit-scrollbar-thumb {
-    background-color: var(--theme-color-border, #e5e7eb);
-    border-radius: var(--theme-radius-sm, 0.25rem);
+  background-color: var(--theme-color-border, #e5e7eb);
+  border-radius: var(--theme-radius-sm, 0.25rem);
 }
 
 .address-autocomplete-list::-webkit-scrollbar-thumb:hover {
-    background-color: var(--theme-color-border-hover, #d1d5db);
+  background-color: var(--theme-color-border-hover, #d1d5db);
 }
 
 /* Individual suggestion item - Mobile First */
 .address-autocomplete-item {
-    display: flex;
-    align-items: center;
-    gap: var(--theme-space-2, 0.5rem);
-    padding: var(--theme-space-3, 0.75rem);
-    cursor: pointer;
-    border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
-    transition: background-color var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+  padding: var(--theme-space-3, 0.75rem);
+  cursor: pointer;
+  border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
+  transition: background-color var(--theme-transition-duration-fast, 150ms)
+    var(--theme-transition-easing-default, ease);
 }
 
 @media (min-width: 640px) {
-    .address-autocomplete-item {
-        padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
-    }
+  .address-autocomplete-item {
+    padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+  }
 }
 
 .address-autocomplete-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .address-autocomplete-item:hover,
 .address-autocomplete-item.selected {
-    background-color: var(--theme-color-background-secondary, #f9fafb);
+  background-color: var(--theme-color-background-secondary, #f9fafb);
 }
 
 /* Country match indicator */
 .address-autocomplete-item.country-match {
-    background-color: var(--theme-color-primary-light, #eff6ff);
-    border-left: 3px solid var(--theme-color-primary, #2563eb);
+  background-color: var(--theme-color-primary-light, #eff6ff);
+  border-left: 3px solid var(--theme-color-primary, #2563eb);
 }
 
 /* Address label - Mobile First */
 .address-autocomplete-item .address-label,
 .address-autocomplete-item .suggestion-label {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--theme-color-text, #1f2937);
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--theme-color-text, #1f2937);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  line-height: 1.4;
 }
 
 @media (min-width: 640px) {
-    .address-autocomplete-item .address-label,
-    .address-autocomplete-item .suggestion-label {
-        font-size: var(--theme-font-size-base, 1rem);
-    }
+  .address-autocomplete-item .address-label,
+  .address-autocomplete-item .suggestion-label {
+    font-size: var(--theme-font-size-base, 1rem);
+  }
 }
 
 /* Country match badge */
 .country-badge {
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    opacity: 0.7;
-    margin-left: auto;
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  opacity: 0.7;
+  margin-left: auto;
 }
 
 /* Confidence indicator */
 .address-autocomplete-item .confidence {
-    float: none;
-    color: var(--theme-color-success, #059669);
-    font-size: var(--theme-font-size-xs, 0.75rem);
-    margin-left: var(--theme-space-2, 0.5rem);
+  float: none;
+  color: var(--theme-color-success, #059669);
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  margin-left: var(--theme-space-2, 0.5rem);
 }
 
 /* Error message - Mobile First */
 .address-autocomplete-error {
-    padding: var(--theme-space-3, 0.75rem);
-    color: var(--theme-color-error, #ef4444);
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    display: flex;
-    align-items: center;
+  padding: var(--theme-space-3, 0.75rem);
+  color: var(--theme-color-error, #ef4444);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  display: flex;
+  align-items: center;
 }
 
 @media (min-width: 640px) {
-    .address-autocomplete-error {
-        padding: var(--theme-space-4, 1rem);
-    }
+  .address-autocomplete-error {
+    padding: var(--theme-space-4, 1rem);
+  }
 }
 
 .address-autocomplete-error .error-icon {
-    margin-right: var(--theme-space-2, 0.5rem);
-    font-size: var(--theme-font-size-lg, 1.125rem);
+  margin-right: var(--theme-space-2, 0.5rem);
+  font-size: var(--theme-font-size-lg, 1.125rem);
 }
 
 /* No results message - Mobile First */
 .address-autocomplete-no-results {
-    padding: var(--theme-space-3, 0.75rem);
-    color: var(--theme-color-text-muted, #6b7280);
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    text-align: center;
-    font-style: italic;
+  padding: var(--theme-space-3, 0.75rem);
+  color: var(--theme-color-text-muted, #6b7280);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  text-align: center;
+  font-style: italic;
 }
 
 @media (min-width: 640px) {
-    .address-autocomplete-no-results {
-        padding: var(--theme-space-4, 1rem);
-    }
+  .address-autocomplete-no-results {
+    padding: var(--theme-space-4, 1rem);
+  }
 }
 
 /* Keyboard navigation highlight */
 .address-autocomplete-item.selected {
-    background-color: var(--theme-color-primary-light, #eff6ff);
+  background-color: var(--theme-color-primary-light, #eff6ff);
 }
 
 /* Integration with common CSS frameworks */
 
 /* Bootstrap compatibility */
 .form-control.address-autocomplete-input {
-    position: relative;
+  position: relative;
 }
 
 .input-group .address-autocomplete-suggestions {
-    width: 100%;
-    top: calc(100% + var(--theme-space-1, 0.25rem));
+  width: 100%;
+  top: calc(100% + var(--theme-space-1, 0.25rem));
 }
 
 /* Tailwind compatibility */
 .address-autocomplete-input.form-input,
 .address-autocomplete-input.input {
-    position: relative;
+  position: relative;
 }
 
 /* Material UI compatibility */
 .MuiInput-root .address-autocomplete-suggestions {
-    top: calc(100% + var(--theme-space-1, 0.25rem));
+  top: calc(100% + var(--theme-space-1, 0.25rem));
 }
 
 /* Custom themes */
 
 /* Minimal theme */
 .address-autocomplete-minimal .address-autocomplete-suggestions {
-    border: none;
-    box-shadow: var(--theme-shadow-base, 0 1px 3px rgba(0, 0, 0, 0.1));
+  border: none;
+  box-shadow: var(--theme-shadow-base, 0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 .address-autocomplete-minimal .address-autocomplete-item {
-    border-bottom: none;
-    padding: var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem);
+  border-bottom: none;
+  padding: var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem);
 }
 
 /* Rounded theme */
 .address-autocomplete-rounded .address-autocomplete-suggestions {
-    border-radius: var(--theme-radius-xl, 1rem);
-    margin-top: var(--theme-space-1, 0.25rem);
+  border-radius: var(--theme-radius-xl, 1rem);
+  margin-top: var(--theme-space-1, 0.25rem);
 }
 
 .address-autocomplete-rounded .address-autocomplete-item:first-child {
-    border-radius: var(--theme-radius-xl, 1rem) var(--theme-radius-xl, 1rem) 0 0;
+  border-radius: var(--theme-radius-xl, 1rem) var(--theme-radius-xl, 1rem) 0 0;
 }
 
 .address-autocomplete-rounded .address-autocomplete-item:last-child {
-    border-radius: 0 0 var(--theme-radius-xl, 1rem) var(--theme-radius-xl, 1rem);
+  border-radius: 0 0 var(--theme-radius-xl, 1rem) var(--theme-radius-xl, 1rem);
 }
 
 /* Compact theme */
 .address-autocomplete-compact .address-autocomplete-item {
-    padding: var(--theme-space-2, 0.5rem);
-    font-size: var(--theme-font-size-sm, 0.875rem);
+  padding: var(--theme-space-2, 0.5rem);
+  font-size: var(--theme-font-size-sm, 0.875rem);
 }
 
 .address-autocomplete-compact .address-autocomplete-suggestions {
-    max-height: 200px;
+  max-height: 200px;
 }

@@ -6,70 +6,63 @@ Usage:
     ./manage.py start_smtp_server --host 127.0.0.1 --port 2525
     ./manage.py start_smtp_server --postfix-host 127.0.0.1 --postfix-port 25
 """
+
 import signal
 import sys
+
 from django.core.management.base import BaseCommand
 
 from email_system.smtp_server.server import SMTPServerManager
 
 
 class Command(BaseCommand):
-    help = 'Start the built-in SMTP server for email sending'
+    help = "Start the built-in SMTP server for email sending"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--host',
+            "--host",
             type=str,
-            default='127.0.0.1',
-            help='SMTP server listen address (default: 127.0.0.1 - localhost only for security)'
+            default="127.0.0.1",
+            help="SMTP server listen address (default: 127.0.0.1 - localhost only for security)",
         )
         parser.add_argument(
-            '--port',
+            "--port",
             type=int,
             default=2525,
-            help='SMTP server listen port (default: 2525 - non-privileged port)'
+            help="SMTP server listen port (default: 2525 - non-privileged port)",
         )
         parser.add_argument(
-            '--postfix-host',
+            "--postfix-host",
             type=str,
-            default='127.0.0.1',
-            help='Postfix relay server address (default: 127.0.0.1)'
+            default="127.0.0.1",
+            help="Postfix relay server address (default: 127.0.0.1)",
         )
         parser.add_argument(
-            '--postfix-port',
-            type=int,
-            default=25,
-            help='Postfix relay server port (default: 25)'
+            "--postfix-port", type=int, default=25, help="Postfix relay server port (default: 25)"
         )
         parser.add_argument(
-            '--dev-mode',
-            action='store_true',
-            help='Development mode - log emails instead of sending via Postfix'
+            "--dev-mode",
+            action="store_true",
+            help="Development mode - log emails instead of sending via Postfix",
         )
 
     def handle(self, *args, **options):
-        host = options['host']
-        port = options['port']
-        postfix_host = options['postfix_host']
-        postfix_port = options['postfix_port']
-        dev_mode = options.get('dev_mode', False)
+        host = options["host"]
+        port = options["port"]
+        postfix_host = options["postfix_host"]
+        postfix_port = options["postfix_port"]
+        dev_mode = options.get("dev_mode", False)
 
         # Security warning if binding to non-localhost
-        if host != '127.0.0.1' and host != 'localhost':
-            self.stdout.write(
-                self.style.WARNING(
-                    "\n⚠️  WARNING: Binding to non-localhost address!"
-                )
-            )
+        if host != "127.0.0.1" and host != "localhost":
+            self.stdout.write(self.style.WARNING("\n⚠️  WARNING: Binding to non-localhost address!"))
             self.stdout.write(
                 self.style.WARNING(
                     "This SMTP server has no authentication and should only be used on localhost."
                 )
             )
             self.stdout.write(
-                self.style.WARNING(
-                    "Binding to a public interface is a SECURITY RISK.\n"
-                )
+                self.style.WARNING("Binding to a public interface is a SECURITY RISK.\n")
             )
 
         # Create server manager
@@ -78,7 +71,7 @@ class Command(BaseCommand):
             port=port,
             postfix_host=postfix_host,
             postfix_port=postfix_port,
-            dev_mode=dev_mode
+            dev_mode=dev_mode,
         )
 
         # Setup signal handlers for graceful shutdown
@@ -96,10 +89,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("=" * 80))
         self.stdout.write(f"\n  Listen Address: {host}:{port}")
         if dev_mode:
-            self.stdout.write(f"  Mode: Development (emails logged, not sent)")
+            self.stdout.write("  Mode: Development (emails logged, not sent)")
         else:
             self.stdout.write(f"  Relay to: {postfix_host}:{postfix_port}")
-        self.stdout.write(f"  DKIM Signing: Enabled\n")
+        self.stdout.write("  DKIM Signing: Enabled\n")
         self.stdout.write(self.style.SUCCESS("=" * 80))
         self.stdout.write("\nStarting server... (Press CTRL+C to stop)\n")
 
@@ -109,6 +102,7 @@ class Command(BaseCommand):
 
             # Keep the process alive
             import time
+
             while manager.is_running():
                 time.sleep(1)
 

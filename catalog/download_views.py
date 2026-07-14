@@ -8,15 +8,14 @@ Handles secure file streaming for digital product downloads with:
 - Progress tracking
 - File streaming from MinIO
 """
+
 import logging
-from django.http import StreamingHttpResponse, HttpResponse, Http404
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import never_cache
+
 from django.core.cache import cache
-from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
-from django.utils import timezone
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
+from django.http import Http404, HttpResponse, StreamingHttpResponse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_http_methods
 
 from catalog.models import DigitalAsset, DigitalDownload
 from orders.models import OrderItem
@@ -60,7 +59,7 @@ def verify_download_token(signed_token: str, max_age: int = 3600) -> tuple:
     """
     signer = TimestampSigner()
     token_data = signer.unsign(signed_token, max_age=max_age)
-    asset_id, order_item_id = token_data.split(':')
+    asset_id, order_item_id = token_data.split(":")
     return int(asset_id), int(order_item_id)
 
 
@@ -97,11 +96,11 @@ def check_rate_limit(ip_address: str, asset_id: int) -> bool:
 
 def get_client_ip(request) -> str:
     """Extract client IP address from request"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
+        ip = x_forwarded_for.split(",")[0].strip()
     else:
-        ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
+        ip = request.META.get("REMOTE_ADDR", "0.0.0.0")
     return ip
 
 
@@ -154,20 +153,17 @@ def download_digital_asset(request, token):
             logger.warning(f"Expired download token: {token}")
             return HttpResponse(
                 "Download link has expired. Please request a new download link from your account.",
-                status=410  # Gone
+                status=410,  # Gone
             )
         except BadSignature:
             logger.warning(f"Invalid download token: {token}")
             return HttpResponse(
                 "Invalid download link.",
-                status=400  # Bad Request
+                status=400,  # Bad Request
             )
         except Exception as e:
             logger.error(f"Token verification error: {e}")
-            return HttpResponse(
-                "Invalid download link.",
-                status=400
-            )
+            return HttpResponse("Invalid download link.", status=400)
 
         # Get client IP for rate limiting
         client_ip = get_client_ip(request)
@@ -176,7 +172,7 @@ def download_digital_asset(request, token):
         if check_rate_limit(client_ip, asset_id):
             return HttpResponse(
                 "Too many download attempts. Please try again in an hour.",
-                status=429  # Too Many Requests
+                status=429,  # Too Many Requests
             )
 
         # Get digital asset
@@ -188,7 +184,7 @@ def download_digital_asset(request, token):
 
         # Get order item
         try:
-            order_item = OrderItem.objects.select_related('order').get(pk=order_item_id)
+            order_item = OrderItem.objects.select_related("order").get(pk=order_item_id)
         except OrderItem.DoesNotExist:
             logger.warning(f"Order item {order_item_id} not found")
             raise Http404("Order not found")
@@ -196,24 +192,20 @@ def download_digital_asset(request, token):
         # Verify ownership (order item matches asset)
         if order_item.product_id != asset.product_id:
             logger.warning(
-                f"Ownership mismatch: order_item {order_item_id} "
-                f"does not own asset {asset_id}"
+                f"Ownership mismatch: order_item {order_item_id} does not own asset {asset_id}"
             )
             return HttpResponse(
                 "You do not have access to this digital product.",
-                status=403  # Forbidden
+                status=403,  # Forbidden
             )
 
         # Verify order status
-        if order_item.order.status not in ['processing', 'completed', 'delivered']:
+        if order_item.order.status not in ["processing", "completed", "delivered"]:
             logger.warning(
                 f"Invalid order status for download: {order_item.order.status} "
                 f"(order: {order_item.order.order_number})"
             )
-            return HttpResponse(
-                "This order is not eligible for download yet.",
-                status=403
-            )
+            return HttpResponse("This order is not eligible for download yet.", status=403)
 
         # Check download limit
         if asset.is_download_limit_exceeded(order_item):
@@ -223,19 +215,17 @@ def download_digital_asset(request, token):
                 f"({download_count}/{asset.download_limit})"
             )
             return HttpResponse(
-                f"Download limit exceeded ({asset.download_limit} downloads allowed).",
-                status=403
+                f"Download limit exceeded ({asset.download_limit} downloads allowed).", status=403
             )
 
         # Check expiration
         if asset.is_download_expired(order_item.order.created_at):
             logger.warning(
-                f"Download expired for asset {asset_id} "
-                f"(purchased: {order_item.order.created_at})"
+                f"Download expired for asset {asset_id} (purchased: {order_item.order.created_at})"
             )
             return HttpResponse(
                 "Download access has expired.",
-                status=410  # Gone
+                status=410,  # Gone
             )
 
         # Create or get download record
@@ -244,7 +234,7 @@ def download_digital_asset(request, token):
             order_item=order_item,
             user=order_item.order.user,
             ip_address=client_ip,
-            user_agent=request.META.get('HTTP_USER_AGENT', '')
+            user_agent=request.META.get("HTTP_USER_AGENT", ""),
         )
 
         logger.info(
@@ -254,33 +244,29 @@ def download_digital_asset(request, token):
 
         # Open file from MinIO storage
         try:
-            file_handle = asset.file.open('rb')
+            file_handle = asset.file.open("rb")
         except Exception as e:
             logger.error(f"Failed to open file from MinIO for asset {asset_id}: {e}")
             download.mark_failed(str(e))
             return HttpResponse(
-                "Failed to retrieve digital product. Please contact support.",
-                status=500
+                "Failed to retrieve digital product. Please contact support.", status=500
             )
 
         # Determine MIME type
-        content_type = asset.file_type or 'application/octet-stream'
+        content_type = asset.file_type or "application/octet-stream"
 
         # Create streaming response
-        response = StreamingHttpResponse(
-            file_iterator(file_handle),
-            content_type=content_type
-        )
+        response = StreamingHttpResponse(file_iterator(file_handle), content_type=content_type)
 
         # Set headers for download
-        response['Content-Disposition'] = f'attachment; filename="{asset.filename}"'
-        response['Content-Length'] = asset.file_size
-        response['X-Download-ID'] = download.id
+        response["Content-Disposition"] = f'attachment; filename="{asset.filename}"'
+        response["Content-Length"] = asset.file_size
+        response["X-Download-ID"] = download.id
 
         # Add caching headers (no caching)
-        response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = '0'
+        response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response["Pragma"] = "no-cache"
+        response["Expires"] = "0"
 
         # Mark download as completed (optimistic - assumes successful stream)
         # In production, you might want to track this via middleware or signals
@@ -298,6 +284,5 @@ def download_digital_asset(request, token):
     except Exception as e:
         logger.error(f"Unexpected error in download_digital_asset: {e}", exc_info=True)
         return HttpResponse(
-            "An error occurred while processing your download. Please contact support.",
-            status=500
+            "An error occurred while processing your download. Please contact support.", status=500
         )

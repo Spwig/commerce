@@ -3,6 +3,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class PaymentProvidersConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'payment_providers'
-    verbose_name = _('Payment Providers')
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "payment_providers"
+    verbose_name = _("Payment Providers")

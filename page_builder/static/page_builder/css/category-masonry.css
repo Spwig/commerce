@@ -12,9 +12,9 @@
    ========================================================================== */
 
 .cat-masonry {
-    column-count: var(--theme-element-category-masonry-columns, 3);
-    column-gap: var(--theme-element-category-masonry-gap, 1.5rem);
-    padding: 0;
+  column-count: var(--theme-element-category-masonry-columns, 3);
+  column-gap: var(--theme-element-category-masonry-gap, 1.5rem);
+  padding: 0;
 }
 
 /* ==========================================================================
@@ -22,15 +22,15 @@
    ========================================================================== */
 
 .cat-masonry--cols-2 {
-    column-count: 2;
+  column-count: 2;
 }
 
 .cat-masonry--cols-3 {
-    column-count: 3;
+  column-count: 3;
 }
 
 .cat-masonry--cols-4 {
-    column-count: 4;
+  column-count: 4;
 }
 
 /* ==========================================================================
@@ -38,15 +38,15 @@
    ========================================================================== */
 
 .cat-masonry--gap-sm {
-    column-gap: var(--theme-element-category-masonry-gap-sm, 0.75rem);
+  column-gap: var(--theme-element-category-masonry-gap-sm, 0.75rem);
 }
 
 .cat-masonry--gap-md {
-    column-gap: var(--theme-element-category-masonry-gap, 1.5rem);
+  column-gap: var(--theme-element-category-masonry-gap, 1.5rem);
 }
 
 .cat-masonry--gap-lg {
-    column-gap: var(--theme-element-category-masonry-gap-lg, 2.5rem);
+  column-gap: var(--theme-element-category-masonry-gap-lg, 2.5rem);
 }
 
 /* ==========================================================================
@@ -54,19 +54,19 @@
    ========================================================================== */
 
 .cat-masonry__item {
-    break-inside: avoid;
-    margin-bottom: var(--theme-element-category-masonry-gap, 1.5rem);
-    display: inline-block;
-    width: 100%;
+  break-inside: avoid;
+  margin-bottom: var(--theme-element-category-masonry-gap, 1.5rem);
+  display: inline-block;
+  width: 100%;
 }
 
 /* Adjust item margin for gap variants */
 .cat-masonry--gap-sm .cat-masonry__item {
-    margin-bottom: var(--theme-element-category-masonry-gap-sm, 0.75rem);
+  margin-bottom: var(--theme-element-category-masonry-gap-sm, 0.75rem);
 }
 
 .cat-masonry--gap-lg .cat-masonry__item {
-    margin-bottom: var(--theme-element-category-masonry-gap-lg, 2.5rem);
+  margin-bottom: var(--theme-element-category-masonry-gap-lg, 2.5rem);
 }
 
 /* ==========================================================================
@@ -74,19 +74,26 @@
    ========================================================================== */
 
 .cat-masonry__card {
-    display: block;
-    background: var(--theme-element-category-masonry-card-bg, #ffffff);
-    border-radius: var(--theme-element-category-masonry-card-radius, 0.75rem);
-    border: var(--theme-element-category-masonry-card-border-width, 1px) solid var(--theme-element-category-masonry-card-border-color, #e5e7eb);
-    box-shadow: var(--theme-element-category-masonry-card-shadow, 0 1px 3px rgba(0, 0, 0, 0.06));
-    overflow: hidden;
-    transition: box-shadow var(--theme-element-category-masonry-card-transition-duration, 200ms) var(--theme-element-category-masonry-card-transition-easing, ease),
-                transform var(--theme-element-category-masonry-card-transition-duration, 200ms) var(--theme-element-category-masonry-card-transition-easing, ease);
+  display: block;
+  background: var(--theme-element-category-masonry-card-bg, #ffffff);
+  border-radius: var(--theme-element-category-masonry-card-radius, 0.75rem);
+  border: var(--theme-element-category-masonry-card-border-width, 1px) solid
+    var(--theme-element-category-masonry-card-border-color, #e5e7eb);
+  box-shadow: var(--theme-element-category-masonry-card-shadow, 0 1px 3px rgba(0, 0, 0, 0.06));
+  overflow: hidden;
+  transition:
+    box-shadow var(--theme-element-category-masonry-card-transition-duration, 200ms)
+      var(--theme-element-category-masonry-card-transition-easing, ease),
+    transform var(--theme-element-category-masonry-card-transition-duration, 200ms)
+      var(--theme-element-category-masonry-card-transition-easing, ease);
 }
 
 .cat-masonry__card:hover {
-    box-shadow: var(--theme-element-category-masonry-card-shadow-hover, 0 10px 20px rgba(0, 0, 0, 0.1));
-    transform: var(--theme-element-category-masonry-card-hover-transform, translateY(-2px));
+  box-shadow: var(
+    --theme-element-category-masonry-card-shadow-hover,
+    0 10px 20px rgba(0, 0, 0, 0.1)
+  );
+  transform: var(--theme-element-category-masonry-card-hover-transform, translateY(-2px));
 }
 
 /* ==========================================================================
@@ -94,34 +101,35 @@
    ========================================================================== */
 
 .cat-masonry__image-wrapper {
-    position: relative;
-    overflow: hidden;
-    background: var(--theme-element-category-masonry-image-bg, #f9fafb);
+  position: relative;
+  overflow: hidden;
+  background: var(--theme-element-category-masonry-image-bg, #f9fafb);
 }
 
 .cat-masonry__image-link {
-    display: block;
+  display: block;
 }
 
 .cat-masonry__image {
-    width: 100%;
-    height: auto;
-    display: block;
-    transition: transform var(--theme-element-category-masonry-image-transition-duration, 300ms) var(--theme-element-category-masonry-image-transition-easing, ease);
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform var(--theme-element-category-masonry-image-transition-duration, 300ms)
+    var(--theme-element-category-masonry-image-transition-easing, ease);
 }
 
 .cat-masonry__card:hover .cat-masonry__image {
-    transform: var(--theme-element-category-masonry-image-hover-transform, scale(1.03));
+  transform: var(--theme-element-category-masonry-image-hover-transform, scale(1.03));
 }
 
 .cat-masonry__placeholder {
-    width: 100%;
-    aspect-ratio: var(--theme-element-category-masonry-placeholder-aspect-ratio, 4 / 3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--theme-element-category-masonry-placeholder-size, 2.5rem);
-    color: var(--theme-element-category-masonry-placeholder-color, #9ca3af);
+  width: 100%;
+  aspect-ratio: var(--theme-element-category-masonry-placeholder-aspect-ratio, 4 / 3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--theme-element-category-masonry-placeholder-size, 2.5rem);
+  color: var(--theme-element-category-masonry-placeholder-color, #9ca3af);
 }
 
 /* ==========================================================================
@@ -129,16 +137,17 @@
    ========================================================================== */
 
 .cat-masonry__overlay {
-    position: absolute;
-    inset: 0;
-    background: var(--theme-color-surface-hover, rgba(0, 0, 0, 0.03));
-    opacity: 0;
-    transition: opacity var(--theme-element-category-masonry-card-transition-duration, 200ms) var(--theme-element-category-masonry-card-transition-easing, ease);
-    pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: var(--theme-color-surface-hover, rgba(0, 0, 0, 0.03));
+  opacity: 0;
+  transition: opacity var(--theme-element-category-masonry-card-transition-duration, 200ms)
+    var(--theme-element-category-masonry-card-transition-easing, ease);
+  pointer-events: none;
 }
 
 .cat-masonry__card:hover .cat-masonry__overlay {
-    opacity: 1;
+  opacity: 1;
 }
 
 /* ==========================================================================
@@ -146,22 +155,25 @@
    ========================================================================== */
 
 .cat-masonry__quick-actions {
-    position: absolute;
-    top: var(--theme-space-2, 0.5rem);
-    right: var(--theme-space-2, 0.5rem);
-    display: flex;
-    flex-direction: column;
-    gap: var(--theme-space-2, 0.5rem);
-    opacity: 0;
-    transform: translateX(4px);
-    transition: opacity var(--theme-element-category-masonry-card-transition-duration, 200ms) var(--theme-element-category-masonry-card-transition-easing, ease),
-                transform var(--theme-element-category-masonry-card-transition-duration, 200ms) var(--theme-element-category-masonry-card-transition-easing, ease);
-    z-index: 2;
+  position: absolute;
+  top: var(--theme-space-2, 0.5rem);
+  right: var(--theme-space-2, 0.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-space-2, 0.5rem);
+  opacity: 0;
+  transform: translateX(4px);
+  transition:
+    opacity var(--theme-element-category-masonry-card-transition-duration, 200ms)
+      var(--theme-element-category-masonry-card-transition-easing, ease),
+    transform var(--theme-element-category-masonry-card-transition-duration, 200ms)
+      var(--theme-element-category-masonry-card-transition-easing, ease);
+  z-index: 2;
 }
 
 .cat-masonry__card:hover .cat-masonry__quick-actions {
-    opacity: 1;
-    transform: translateX(0);
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* ==========================================================================
@@ -169,25 +181,25 @@
    ========================================================================== */
 
 .cat-masonry__info {
-    padding: var(--theme-element-category-masonry-content-padding, 1rem);
+  padding: var(--theme-element-category-masonry-content-padding, 1rem);
 }
 
 .cat-masonry__title {
-    font-size: var(--theme-element-category-masonry-title-size, 1rem);
-    font-weight: var(--theme-element-category-masonry-title-weight, 600);
-    color: var(--theme-element-category-masonry-title-color, #1f2937);
-    margin: 0 0 var(--theme-space-1, 0.25rem) 0;
-    line-height: var(--theme-element-category-masonry-title-line-height, 1.3);
+  font-size: var(--theme-element-category-masonry-title-size, 1rem);
+  font-weight: var(--theme-element-category-masonry-title-weight, 600);
+  color: var(--theme-element-category-masonry-title-color, #1f2937);
+  margin: 0 0 var(--theme-space-1, 0.25rem) 0;
+  line-height: var(--theme-element-category-masonry-title-line-height, 1.3);
 }
 
 .cat-masonry__title a {
-    color: inherit;
-    text-decoration: none;
-    transition: color 200ms ease;
+  color: inherit;
+  text-decoration: none;
+  transition: color 200ms ease;
 }
 
 .cat-masonry__title a:hover {
-    color: var(--theme-color-primary, #2563eb);
+  color: var(--theme-color-primary, #2563eb);
 }
 
 /* ==========================================================================
@@ -195,27 +207,27 @@
    ========================================================================== */
 
 .cat-masonry__price {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: var(--theme-space-2, 0.5rem);
-    margin: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--theme-space-2, 0.5rem);
+  margin: 0;
 }
 
 .cat-masonry__price-current {
-    font-size: var(--theme-element-category-masonry-price-size, 1rem);
-    font-weight: var(--theme-element-category-masonry-price-weight, 700);
-    color: var(--theme-element-category-masonry-price-color, #1f2937);
+  font-size: var(--theme-element-category-masonry-price-size, 1rem);
+  font-weight: var(--theme-element-category-masonry-price-weight, 700);
+  color: var(--theme-element-category-masonry-price-color, #1f2937);
 }
 
 .cat-masonry__price-current--sale {
-    color: var(--theme-color-danger, #dc2626);
+  color: var(--theme-color-danger, #dc2626);
 }
 
 .cat-masonry__price-original {
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    color: var(--theme-color-text-muted, #6b7280);
-    text-decoration: line-through;
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-text-muted, #6b7280);
+  text-decoration: line-through;
 }
 
 /* ==========================================================================
@@ -223,17 +235,17 @@
    ========================================================================== */
 
 .cat-masonry__empty {
-    column-span: all;
-    text-align: center;
-    padding: var(--theme-space-12, 3rem) var(--theme-space-6, 1.5rem);
-    color: var(--theme-element-category-masonry-empty-color, #6b7280);
+  column-span: all;
+  text-align: center;
+  padding: var(--theme-space-12, 3rem) var(--theme-space-6, 1.5rem);
+  color: var(--theme-element-category-masonry-empty-color, #6b7280);
 }
 
 .cat-masonry__empty i {
-    font-size: var(--theme-element-category-masonry-empty-icon-size, 3rem);
-    margin-bottom: var(--theme-space-4, 1rem);
-    display: block;
-    color: var(--theme-element-category-masonry-empty-icon-color, #d1d5db);
+  font-size: var(--theme-element-category-masonry-empty-icon-size, 3rem);
+  margin-bottom: var(--theme-space-4, 1rem);
+  display: block;
+  color: var(--theme-element-category-masonry-empty-icon-color, #d1d5db);
 }
 
 /* ==========================================================================
@@ -241,16 +253,16 @@
    ========================================================================== */
 
 .cat-masonry__item--animate {
-    opacity: 0;
-    transform: translateY(10px);
-    animation: catMasonryFadeIn 300ms ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: catMasonryFadeIn 300ms ease forwards;
 }
 
 @keyframes catMasonryFadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================================
@@ -258,7 +270,7 @@
    ========================================================================== */
 
 .cat-masonry--loaded .cat-masonry__image {
-    opacity: 1;
+  opacity: 1;
 }
 
 /* ==========================================================================
@@ -266,11 +278,11 @@
    ========================================================================== */
 
 @media (max-width: 1024px) {
-    .cat-masonry,
-    .cat-masonry--cols-3,
-    .cat-masonry--cols-4 {
-        column-count: 2;
-    }
+  .cat-masonry,
+  .cat-masonry--cols-3,
+  .cat-masonry--cols-4 {
+    column-count: 2;
+  }
 }
 
 /* ==========================================================================
@@ -278,16 +290,16 @@
    ========================================================================== */
 
 @media (max-width: 640px) {
-    .cat-masonry,
-    .cat-masonry--cols-2,
-    .cat-masonry--cols-3,
-    .cat-masonry--cols-4 {
-        column-count: 1;
-    }
+  .cat-masonry,
+  .cat-masonry--cols-2,
+  .cat-masonry--cols-3,
+  .cat-masonry--cols-4 {
+    column-count: 1;
+  }
 
-    .cat-masonry__info {
-        padding: var(--theme-element-category-masonry-content-mobile-padding, 0.75rem);
-    }
+  .cat-masonry__info {
+    padding: var(--theme-element-category-masonry-content-mobile-padding, 0.75rem);
+  }
 }
 
 /* ==========================================================================
@@ -295,14 +307,14 @@
    ========================================================================== */
 
 @media (hover: none) {
-    .cat-masonry__quick-actions {
-        opacity: 1;
-        transform: translateX(0);
-    }
+  .cat-masonry__quick-actions {
+    opacity: 1;
+    transform: translateX(0);
+  }
 
-    .cat-masonry__overlay {
-        display: none;
-    }
+  .cat-masonry__overlay {
+    display: none;
+  }
 }
 
 /* ==========================================================================
@@ -310,14 +322,14 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-    .cat-masonry__card,
-    .cat-masonry__image,
-    .cat-masonry__overlay,
-    .cat-masonry__quick-actions,
-    .cat-masonry__item--animate {
-        transition: none;
-        animation: none;
-        opacity: 1;
-        transform: none;
-    }
+  .cat-masonry__card,
+  .cat-masonry__image,
+  .cat-masonry__overlay,
+  .cat-masonry__quick-actions,
+  .cat-masonry__item--animate {
+    transition: none;
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }

@@ -30,55 +30,57 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Install bundled component packages (themes + utilities) from preinstalled/'
+    help = "Install bundled component packages (themes + utilities) from preinstalled/"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--type',
-            choices=['theme', 'utility', 'all'],
-            default='all',
-            help='Component type to install (default: all)',
+            "--type",
+            choices=["theme", "utility", "all"],
+            default="all",
+            help="Component type to install (default: all)",
         )
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Reinstall even if already at the same version',
+            "--force",
+            action="store_true",
+            help="Reinstall even if already at the same version",
         )
         parser.add_argument(
-            '--bundle-dir',
-            default=str(Path(settings.BASE_DIR) / 'preinstalled'),
-            help='Path to preinstalled bundles directory',
+            "--bundle-dir",
+            default=str(Path(settings.BASE_DIR) / "preinstalled"),
+            help="Path to preinstalled bundles directory",
         )
 
     def handle(self, *args, **options):
-        bundle_dir = Path(options['bundle_dir'])
-        manifest_path = bundle_dir / 'manifest.json'
-        component_type = options['type']
-        force = options['force']
+        bundle_dir = Path(options["bundle_dir"])
+        manifest_path = bundle_dir / "manifest.json"
+        component_type = options["type"]
+        force = options["force"]
 
         if not manifest_path.exists():
-            self.stdout.write(self.style.WARNING(
-                f"No preinstalled manifest found at {manifest_path}. "
-                "Run 'build_preinstalled_packages' first."
-            ))
+            self.stdout.write(
+                self.style.WARNING(
+                    f"No preinstalled manifest found at {manifest_path}. "
+                    "Run 'build_preinstalled_packages' first."
+                )
+            )
             return
 
         with open(manifest_path) as f:
             manifest = json.load(f)
 
-        components = manifest.get('components', [])
-        if component_type != 'all':
-            components = [c for c in components if c['type'] == component_type]
+        components = manifest.get("components", [])
+        if component_type != "all":
+            components = [c for c in components if c["type"] == component_type]
 
         installed = 0
         skipped = 0
         failed = 0
 
         for entry in components:
-            comp_type = entry['type']
-            slug = entry['slug']
-            version = entry['version']
-            package_rel = entry['package']
+            comp_type = entry["type"]
+            slug = entry["slug"]
+            version = entry["version"]
+            package_rel = entry["package"]
             package_path = bundle_dir / package_rel
 
             if not package_path.exists():
@@ -93,42 +95,46 @@ class Command(BaseCommand):
                 continue
 
             try:
-                if comp_type == 'theme':
+                if comp_type == "theme":
                     result = self._install_theme(package_path, entry)
-                elif comp_type == 'utility':
+                elif comp_type == "utility":
                     result = self._install_utility(package_path, entry)
                 else:
                     self.stdout.write(self.style.WARNING(f"  ! Unknown type: {comp_type}"))
                     skipped += 1
                     continue
 
-                if result.get('success'):
+                if result.get("success"):
                     installed += 1
                     self.stdout.write(self.style.SUCCESS(f"  + {comp_type}: {slug} v{version}"))
                 else:
                     failed += 1
-                    self.stdout.write(self.style.ERROR(
-                        f"  x {comp_type}: {slug} v{version} - {result.get('error', 'unknown')}"
-                    ))
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"  x {comp_type}: {slug} v{version} - {result.get('error', 'unknown')}"
+                        )
+                    )
 
             except Exception as e:
                 failed += 1
                 self.stdout.write(self.style.ERROR(f"  x {comp_type}: {slug} v{version} - {e}"))
 
-        self.stdout.write(self.style.SUCCESS(
-            f"\nBundled components: {installed} installed, {skipped} skipped, {failed} failed"
-        ))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"\nBundled components: {installed} installed, {skipped} skipped, {failed} failed"
+            )
+        )
 
     def _install_theme(self, package_path: Path, entry: dict) -> dict:
         """Install a theme from a bundled ZIP package."""
         with tempfile.TemporaryDirectory() as extract_dir:
             extract_path = Path(extract_dir)
-            with zipfile.ZipFile(package_path, 'r') as zf:
+            with zipfile.ZipFile(package_path, "r") as zf:
                 zf.extractall(extract_path)
 
             # Read manifest from the extracted package
             manifest = self._read_manifest(extract_path, entry)
-            manifest['is_default'] = entry.get('is_default', False)
+            manifest["is_default"] = entry.get("is_default", False)
 
             result = install_theme_from_package(
                 extract_dir=extract_path,
@@ -136,8 +142,10 @@ class Command(BaseCommand):
                 create_db_record=True,
             )
 
-            if result.get('success'):
-                ensure_component_registry('theme', entry['slug'], manifest, install_method='bundled')
+            if result.get("success"):
+                ensure_component_registry(
+                    "theme", entry["slug"], manifest, install_method="bundled"
+                )
 
             return result
 
@@ -145,7 +153,7 @@ class Command(BaseCommand):
         """Install a utility from a bundled ZIP package."""
         with tempfile.TemporaryDirectory() as extract_dir:
             extract_path = Path(extract_dir)
-            with zipfile.ZipFile(package_path, 'r') as zf:
+            with zipfile.ZipFile(package_path, "r") as zf:
                 zf.extractall(extract_path)
 
             # Read manifest from the extracted package
@@ -156,16 +164,18 @@ class Command(BaseCommand):
                 manifest=manifest,
             )
 
-            if result.get('success'):
-                ensure_component_registry('utility', entry['slug'], manifest, install_method='bundled')
+            if result.get("success"):
+                ensure_component_registry(
+                    "utility", entry["slug"], manifest, install_method="bundled"
+                )
 
             return result
 
     def _read_manifest(self, extract_path: Path, entry: dict) -> dict:
         """Read manifest.json from extracted package, falling back to entry data."""
-        manifest_path = extract_path / 'manifest.json'
+        manifest_path = extract_path / "manifest.json"
         # Some theme packages have manifest under theme/ subdir
-        theme_manifest = extract_path / 'theme' / 'manifest.json'
+        theme_manifest = extract_path / "theme" / "manifest.json"
 
         if manifest_path.exists():
             with open(manifest_path) as f:
@@ -176,10 +186,10 @@ class Command(BaseCommand):
 
         # Fallback: construct from entry data
         return {
-            'slug': entry['slug'],
-            'name': entry['slug'].replace('-', ' ').replace('_', ' ').title(),
-            'version': entry['version'],
-            'author': 'Spwig',
+            "slug": entry["slug"],
+            "name": entry["slug"].replace("-", " ").replace("_", " ").title(),
+            "version": entry["version"],
+            "author": "Spwig",
         }
 
     def _is_installed(self, component_type: str, slug: str, version: str) -> bool:

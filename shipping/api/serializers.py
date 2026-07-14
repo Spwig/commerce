@@ -2,17 +2,19 @@
 Shipping API Serializers
 DRF serializers for shipping models
 """
-from rest_framework import serializers
+
 from drf_spectacular.utils import extend_schema_field
+from rest_framework import serializers
+
 from shipping.models import (
     CarrierPreset,
-    Shipment,
-    TrackingEvent,
+    Location,
     ProviderAccount,
-    ShippingZone,
+    Shipment,
     ShippingPromotion,
     ShippingRateTable,
-    Location,
+    ShippingZone,
+    TrackingEvent,
 )
 
 
@@ -22,16 +24,16 @@ class CarrierPresetSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarrierPreset
         fields = [
-            'id',
-            'name',
-            'slug',
-            'tracking_url_template',
-            'logo',
-            'is_active',
-            'is_default',
-            'is_system',
+            "id",
+            "name",
+            "slug",
+            "tracking_url_template",
+            "logo",
+            "is_active",
+            "is_default",
+            "is_system",
         ]
-        read_only_fields = ['id', 'is_system']
+        read_only_fields = ["id", "is_system"]
 
 
 class TrackingEventSerializer(serializers.ModelSerializer):
@@ -40,12 +42,12 @@ class TrackingEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrackingEvent
         fields = [
-            'id',
-            'occurred_at',
-            'status',
-            'location',
-            'description',
-            'created_at',
+            "id",
+            "occurred_at",
+            "status",
+            "location",
+            "description",
+            "created_at",
         ]
         read_only_fields = fields  # All fields are read-only
 
@@ -66,43 +68,43 @@ class ShipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipment
         fields = [
-            'id',
-            'order',
-            'user',
-            'status',
-            'tracking_id',
-            'tracking_url',
-            'label_url',
-            'packing_slip_url',  # Phase 6: Document Generation
-            'commercial_invoice_url',
-            'customs_form_url',
-            'carrier_preset',
-            'carrier_name',
-            'provider_account',
-            'provider_name',
-            'origin_country',
-            'dest_country',
-            'service_level',
-            'packages',
-            'shipping_cost',
-            'carrier_cost',
-            'pricing_mode_used',
-            'is_manual',
-            'is_api',
-            'tracking_events',
-            'created_at',
-            'updated_at',
+            "id",
+            "order",
+            "user",
+            "status",
+            "tracking_id",
+            "tracking_url",
+            "label_url",
+            "packing_slip_url",  # Phase 6: Document Generation
+            "commercial_invoice_url",
+            "customs_form_url",
+            "carrier_preset",
+            "carrier_name",
+            "provider_account",
+            "provider_name",
+            "origin_country",
+            "dest_country",
+            "service_level",
+            "packages",
+            "shipping_cost",
+            "carrier_cost",
+            "pricing_mode_used",
+            "is_manual",
+            "is_api",
+            "tracking_events",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id',
-            'tracking_url',
-            'carrier_name',
-            'provider_name',
-            'is_manual',
-            'is_api',
-            'tracking_events',
-            'created_at',
-            'updated_at',
+            "id",
+            "tracking_url",
+            "carrier_name",
+            "provider_name",
+            "is_manual",
+            "is_api",
+            "tracking_events",
+            "created_at",
+            "updated_at",
         ]
 
     @extend_schema_field(serializers.URLField(allow_null=True))
@@ -141,28 +143,28 @@ class ShipmentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipment
         fields = [
-            'order',
-            'carrier_preset',
-            'provider_account',
-            'tracking_id',
-            'origin_country',
-            'dest_country',
-            'service_level',
-            'packages',
+            "order",
+            "carrier_preset",
+            "provider_account",
+            "tracking_id",
+            "origin_country",
+            "dest_country",
+            "service_level",
+            "packages",
         ]
 
     def validate(self, data):
         """Validate shipment data"""
         # Must have either carrier_preset or provider_account
-        if not data.get('carrier_preset') and not data.get('provider_account'):
+        if not data.get("carrier_preset") and not data.get("provider_account"):
             raise serializers.ValidationError(
                 "Either carrier_preset or provider_account must be provided."
             )
 
         # If provider_account, tracking_id is optional (will be generated)
         # If carrier_preset only, tracking_id is required
-        if data.get('carrier_preset') and not data.get('provider_account'):
-            if not data.get('tracking_id'):
+        if data.get("carrier_preset") and not data.get("provider_account"):
+            if not data.get("tracking_id"):
                 raise serializers.ValidationError(
                     "tracking_id is required when using manual carrier preset."
                 )
@@ -172,13 +174,13 @@ class ShipmentCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create shipment with user from request"""
         # Set user from request context
-        validated_data['user'] = self.context['request'].user
+        validated_data["user"] = self.context["request"].user
 
         # Set initial status
-        if validated_data.get('tracking_id'):
-            validated_data['status'] = 'in_transit'
+        if validated_data.get("tracking_id"):
+            validated_data["status"] = "in_transit"
         else:
-            validated_data['status'] = 'created'
+            validated_data["status"] = "created"
 
         shipment = super().create(validated_data)
         return shipment
@@ -191,33 +193,33 @@ class ShipmentCreateSerializer(serializers.ModelSerializer):
 class ProviderAccountSerializer(serializers.ModelSerializer):
     """Serializer for ProviderAccount - credentials are redacted"""
 
-    component_name = serializers.CharField(source='component.name', read_only=True)
-    provider_type = serializers.CharField(source='component.slug', read_only=True)
+    component_name = serializers.CharField(source="component.name", read_only=True)
+    provider_type = serializers.CharField(source="component.slug", read_only=True)
 
     class Meta:
         model = ProviderAccount
         fields = [
-            'id',
-            'component',
-            'component_name',
-            'provider_type',
-            'user',
-            'display_name',
-            'is_active',
-            'is_default',
-            'connection_status',
-            'last_tested_at',
-            'created_at',
-            'updated_at',
+            "id",
+            "component",
+            "component_name",
+            "provider_type",
+            "user",
+            "display_name",
+            "is_active",
+            "is_default",
+            "connection_status",
+            "last_tested_at",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id',
-            'component_name',
-            'provider_type',
-            'connection_status',
-            'last_tested_at',
-            'created_at',
-            'updated_at',
+            "id",
+            "component_name",
+            "provider_type",
+            "connection_status",
+            "last_tested_at",
+            "created_at",
+            "updated_at",
         ]
 
     # Note: credentials_encrypted is explicitly excluded for security
@@ -226,17 +228,17 @@ class ProviderAccountSerializer(serializers.ModelSerializer):
 class ProviderAccountListSerializer(serializers.ModelSerializer):
     """Minimal serializer for listing provider accounts"""
 
-    component_name = serializers.CharField(source='component.name', read_only=True)
+    component_name = serializers.CharField(source="component.name", read_only=True)
 
     class Meta:
         model = ProviderAccount
         fields = [
-            'id',
-            'component_name',
-            'display_name',
-            'is_active',
-            'is_default',
-            'connection_status',
+            "id",
+            "component_name",
+            "display_name",
+            "is_active",
+            "is_default",
+            "connection_status",
         ]
 
 
@@ -251,26 +253,26 @@ class ShippingZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingZone
         fields = [
-            'id',
-            'name',
-            'description',
-            'countries',
-            'states',
-            'postal_code_patterns',
-            'is_active',
-            'coverage_summary',
-            'country_count',
-            'state_count',
-            'created_at',
-            'updated_at',
+            "id",
+            "name",
+            "description",
+            "countries",
+            "states",
+            "postal_code_patterns",
+            "is_active",
+            "coverage_summary",
+            "country_count",
+            "state_count",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id',
-            'coverage_summary',
-            'country_count',
-            'state_count',
-            'created_at',
-            'updated_at',
+            "id",
+            "coverage_summary",
+            "country_count",
+            "state_count",
+            "created_at",
+            "updated_at",
         ]
 
     def get_coverage_summary(self, obj):
@@ -289,11 +291,11 @@ class ShippingZoneSerializer(serializers.ModelSerializer):
 class ShippingZoneListSerializer(serializers.ModelSerializer):
     """Minimal serializer for listing shipping zones"""
 
-    coverage_summary = serializers.CharField(source='get_coverage_summary', read_only=True)
+    coverage_summary = serializers.CharField(source="get_coverage_summary", read_only=True)
 
     class Meta:
         model = ShippingZone
-        fields = ['id', 'name', 'is_active', 'coverage_summary']
+        fields = ["id", "name", "is_active", "coverage_summary"]
 
 
 # Phase 3: Shipping Promotions
@@ -306,34 +308,34 @@ class ShippingPromotionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingPromotion
         fields = [
-            'id',
-            'name',
-            'description',
-            'promotion_type',
-            'promotion_value',
-            'priority',
-            'min_cart_value',
-            'max_cart_value',
-            'min_cart_weight',
-            'max_cart_weight',
-            'min_item_count',
-            'max_item_count',
-            'zones_count',
-            'methods_count',
-            'stop_further_promotions',
-            'controls_visibility',
-            'is_active',
-            'start_date',
-            'end_date',
-            'created_at',
-            'updated_at',
+            "id",
+            "name",
+            "description",
+            "promotion_type",
+            "promotion_value",
+            "priority",
+            "min_cart_value",
+            "max_cart_value",
+            "min_cart_weight",
+            "max_cart_weight",
+            "min_item_count",
+            "max_item_count",
+            "zones_count",
+            "methods_count",
+            "stop_further_promotions",
+            "controls_visibility",
+            "is_active",
+            "start_date",
+            "end_date",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id',
-            'zones_count',
-            'methods_count',
-            'created_at',
-            'updated_at',
+            "id",
+            "zones_count",
+            "methods_count",
+            "created_at",
+            "updated_at",
         ]
 
     def get_zones_count(self, obj):
@@ -350,7 +352,7 @@ class ShippingPromotionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShippingPromotion
-        fields = ['id', 'name', 'promotion_type', 'priority', 'is_active']
+        fields = ["id", "name", "promotion_type", "priority", "is_active"]
 
 
 # Phase 3: Rate Tables
@@ -362,22 +364,22 @@ class ShippingRateTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingRateTable
         fields = [
-            'id',
-            'name',
-            'description',
-            'basis_type',
-            'shipping_method',
-            'tiers',
-            'tier_count',
-            'is_active',
-            'created_at',
-            'updated_at',
+            "id",
+            "name",
+            "description",
+            "basis_type",
+            "shipping_method",
+            "tiers",
+            "tier_count",
+            "is_active",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id',
-            'tier_count',
-            'created_at',
-            'updated_at',
+            "id",
+            "tier_count",
+            "created_at",
+            "updated_at",
         ]
 
     def get_tier_count(self, obj):
@@ -394,36 +396,36 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = [
-            'id',
-            'name',
-            'address1',
-            'address2',
-            'city',
-            'state',
-            'postal_code',
-            'country',
-            'latitude',
-            'longitude',
-            'phone',
-            'email',
-            'pickup_instructions',
-            'operating_hours',
-            'is_active',
-            'distance_to',
-            'created_at',
-            'updated_at',
+            "id",
+            "name",
+            "address1",
+            "address2",
+            "city",
+            "state",
+            "postal_code",
+            "country",
+            "latitude",
+            "longitude",
+            "phone",
+            "email",
+            "pickup_instructions",
+            "operating_hours",
+            "is_active",
+            "distance_to",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id',
-            'distance_to',
-            'created_at',
-            'updated_at',
+            "id",
+            "distance_to",
+            "created_at",
+            "updated_at",
         ]
 
     def get_distance_to(self, obj):
         """Get distance to location from coordinates in context"""
-        lat = self.context.get('latitude')
-        lon = self.context.get('longitude')
+        lat = self.context.get("latitude")
+        lon = self.context.get("longitude")
 
         if lat is not None and lon is not None:
             return obj.calculate_distance_to(lat, lon)
@@ -437,10 +439,10 @@ class LocationListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = [
-            'id',
-            'name',
-            'city',
-            'state',
-            'country',
-            'is_active',
+            "id",
+            "name",
+            "city",
+            "state",
+            "country",
+            "is_active",
         ]

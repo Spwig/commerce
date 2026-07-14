@@ -4,9 +4,8 @@ Base adapter class for external license providers.
 This module defines the interface that all provider adapters must implement.
 """
 
-from abc import ABC, abstractmethod
-from typing import Dict, Optional, Tuple
 import logging
+from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +46,7 @@ class BaseLicenseProviderAdapter(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict:
+    def capabilities(self) -> dict:
         """
         Return dictionary of provider capabilities.
 
@@ -70,7 +69,7 @@ class BaseLicenseProviderAdapter(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict:
+    def credential_schema(self) -> dict:
         """
         Return schema defining required credentials for this provider.
 
@@ -91,7 +90,7 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def create_license(self, license_key, product, order) -> Tuple[bool, str, Dict]:
+    def create_license(self, license_key, product, order) -> tuple[bool, str, dict]:
         """
         Create a license in the external provider system.
 
@@ -106,7 +105,7 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def validate_license(self, key: str) -> Tuple[bool, Dict]:
+    def validate_license(self, key: str) -> tuple[bool, dict]:
         """
         Validate a license key with the external provider.
 
@@ -119,7 +118,9 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def activate_device(self, license_key, device_fingerprint: str, device_info: Dict) -> Tuple[bool, str, Dict]:
+    def activate_device(
+        self, license_key, device_fingerprint: str, device_info: dict
+    ) -> tuple[bool, str, dict]:
         """
         Register a device activation with the external provider.
 
@@ -134,7 +135,7 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def deactivate_device(self, license_key, device_fingerprint: str) -> Tuple[bool, Dict]:
+    def deactivate_device(self, license_key, device_fingerprint: str) -> tuple[bool, dict]:
         """
         Deactivate a device with the external provider.
 
@@ -148,7 +149,7 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def suspend_license(self, license_key) -> Tuple[bool, Dict]:
+    def suspend_license(self, license_key) -> tuple[bool, dict]:
         """
         Suspend a license in the external provider.
 
@@ -161,7 +162,7 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def revoke_license(self, license_key) -> Tuple[bool, Dict]:
+    def revoke_license(self, license_key) -> tuple[bool, dict]:
         """
         Revoke a license in the external provider.
 
@@ -174,7 +175,7 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def get_license_info(self, external_id: str) -> Tuple[bool, Dict]:
+    def get_license_info(self, external_id: str) -> tuple[bool, dict]:
         """
         Retrieve license information from external provider.
 
@@ -187,7 +188,7 @@ class BaseLicenseProviderAdapter(ABC):
         pass
 
     @abstractmethod
-    def _get_auth_headers(self) -> Dict:
+    def _get_auth_headers(self) -> dict:
         """
         Get authentication headers for API requests.
 
@@ -199,7 +200,7 @@ class BaseLicenseProviderAdapter(ABC):
         """
         pass
 
-    def handle_webhook(self, event_type: str, payload: Dict) -> Tuple[bool, Optional[str]]:
+    def handle_webhook(self, event_type: str, payload: dict) -> tuple[bool, str | None]:
         """
         Process webhook event from external provider.
 
@@ -230,22 +231,20 @@ class BaseLicenseProviderAdapter(ABC):
         Returns:
             bool: True if signature is valid
         """
-        import hmac
         import hashlib
+        import hmac
 
         if not self.provider.webhook_secret:
             logger.warning(f"No webhook secret configured for {self.provider.name}")
             return False
 
         expected = hmac.new(
-            self.provider.webhook_secret.encode(),
-            payload,
-            hashlib.sha256
+            self.provider.webhook_secret.encode(), payload, hashlib.sha256
         ).hexdigest()
 
         return hmac.compare_digest(expected, signature)
 
-    def test_connection(self) -> Dict:
+    def test_connection(self) -> dict:
         """
         Test connection to provider API.
 
@@ -259,26 +258,26 @@ class BaseLicenseProviderAdapter(ABC):
             # Validate credentials first
             is_valid, error_msg = self.validate_credentials()
             if not is_valid:
-                return {'success': False, 'error': error_msg}
+                return {"success": False, "error": error_msg}
 
             # Try a basic API call with auth headers
             headers = self._get_auth_headers()
 
             # Most providers have a health or account endpoint
             # This is a generic attempt - subclasses should override with specific endpoint
-            success, response = self._make_request('GET', '/', headers=headers)
+            success, response = self._make_request("GET", "/", headers=headers)
 
             if success:
-                return {'success': True, 'message': 'Connection successful'}
+                return {"success": True, "message": "Connection successful"}
             else:
-                error = response.get('error', 'Unknown error')
-                return {'success': False, 'error': f'Connection failed: {error}'}
+                error = response.get("error", "Unknown error")
+                return {"success": False, "error": f"Connection failed: {error}"}
 
         except Exception as e:
             logger.exception(f"Connection test failed for {self.provider.name}")
-            return {'success': False, 'error': str(e)}
+            return {"success": False, "error": str(e)}
 
-    def validate_credentials(self) -> Tuple[bool, Optional[str]]:
+    def validate_credentials(self) -> tuple[bool, str | None]:
         """
         Validate credential format and values.
 
@@ -288,25 +287,30 @@ class BaseLicenseProviderAdapter(ABC):
         schema = self.credential_schema
 
         for field_name, field_config in schema.items():
-            if field_config.get('required', False):
+            if field_config.get("required", False):
                 value = self.config.get(field_name)
 
                 # For standard fields, check the provider attributes too
-                if field_name == 'api_key' and not value:
+                if field_name == "api_key" and not value:
                     value = self.api_key
-                if field_name == 'api_secret' and not value:
+                if field_name == "api_secret" and not value:
                     value = self.api_secret
-                if field_name == 'api_endpoint' and not value:
+                if field_name == "api_endpoint" and not value:
                     value = self.api_endpoint
 
                 if not value:
-                    title = field_config.get('title', field_name)
+                    title = field_config.get("title", field_name)
                     return False, f"Missing required field: {title}"
 
         return True, None
 
-    def _make_request(self, method: str, endpoint: str, data: Optional[Dict] = None,
-                     headers: Optional[Dict] = None) -> Tuple[bool, Dict]:
+    def _make_request(
+        self,
+        method: str,
+        endpoint: str,
+        data: dict | None = None,
+        headers: dict | None = None,
+    ) -> tuple[bool, dict]:
         """
         Helper method for making HTTP requests to provider API.
 
@@ -325,19 +329,15 @@ class BaseLicenseProviderAdapter(ABC):
 
         # Build headers with authentication
         request_headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            "Accept": "application/json",
         }
         if headers:
             request_headers.update(headers)
 
         try:
             response = requests.request(
-                method=method,
-                url=url,
-                json=data,
-                headers=request_headers,
-                timeout=30
+                method=method, url=url, json=data, headers=request_headers, timeout=30
             )
 
             response.raise_for_status()
@@ -346,4 +346,4 @@ class BaseLicenseProviderAdapter(ABC):
 
         except requests.exceptions.RequestException as e:
             logger.error(f"API request failed: {e}")
-            return False, {'error': str(e)}
+            return False, {"error": str(e)}

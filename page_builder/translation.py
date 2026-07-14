@@ -1,4 +1,5 @@
-from modeltranslation.translator import register, TranslationOptions
+from modeltranslation.translator import TranslationOptions, register
+
 from .models import Element
 
 # NOTE: Page model now uses JSON-based translations (Page.translations JSONField)
@@ -8,6 +9,4 @@ from .models import Element
 
 @register(Element)
 class ElementTranslationOptions(TranslationOptions):
-    fields = (
-        'name',
-    )
+    fields = ("name",)

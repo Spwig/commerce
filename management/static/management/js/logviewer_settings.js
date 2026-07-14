@@ -8,93 +8,99 @@
  * custom card-layout slots so form submission works natively.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    var config = document.getElementById('lvs-config');
-    if (!config) return;
+  const config = document.getElementById('lvs-config');
+  if (!config) return;
 
-    var form = document.getElementById('logviewersettings_form');
-    var layout = document.getElementById('lvs-layout');
-    if (!form || !layout) return;
+  const form = document.getElementById('logviewersettings_form');
+  const layout = document.getElementById('lvs-layout');
+  if (!form || !layout) return;
 
-    // Move card layout container INSIDE the Django form
-    // so relocated inputs remain within the <form> tag
-    form.appendChild(layout);
+  // Move card layout container INSIDE the Django form
+  // so relocated inputs remain within the <form> tag
+  form.appendChild(layout);
 
-    // Move Django messages (success/error) between header and cards
-    var messageList = document.querySelector('.messagelist');
-    if (messageList) {
-        layout.insertBefore(messageList, layout.firstChild);
-    }
+  // Move Django messages (success/error) between header and cards
+  const messageList = document.querySelector('.messagelist');
+  if (messageList) {
+    layout.insertBefore(messageList, layout.firstChild);
+  }
 
-    // Field configuration – help text comes from data attributes
-    var fieldMap = {
-        'redis_retention_minutes': { type: 'number', help: config.dataset.helpRedis },
-        'db_retention_days':       { type: 'number', help: config.dataset.helpDb },
-        'archive_batch_size':      { type: 'number', help: config.dataset.helpBatch },
-        'archive_interval_seconds':{ type: 'number', help: config.dataset.helpInterval },
-        'stream_enabled':          { type: 'checkbox', help: config.dataset.helpStream },
-        'max_logs_per_container':  { type: 'number', help: config.dataset.helpMaxLogs },
-        'sensitive_patterns':      { type: 'textarea', help: config.dataset.helpPatterns },
-        'default_page_size':       { type: 'number', help: config.dataset.helpPageSize },
-        'auto_refresh_interval':   { type: 'number', help: config.dataset.helpRefresh }
-    };
+  // Field configuration – help text comes from data attributes
+  const fieldMap = {
+    redis_retention_minutes: { type: 'number', help: config.dataset.helpRedis },
+    db_retention_days: { type: 'number', help: config.dataset.helpDb },
+    archive_batch_size: { type: 'number', help: config.dataset.helpBatch },
+    archive_interval_seconds: { type: 'number', help: config.dataset.helpInterval },
+    stream_enabled: { type: 'checkbox', help: config.dataset.helpStream },
+    max_logs_per_container: { type: 'number', help: config.dataset.helpMaxLogs },
+    sensitive_patterns: { type: 'textarea', help: config.dataset.helpPatterns },
+    default_page_size: { type: 'number', help: config.dataset.helpPageSize },
+    auto_refresh_interval: { type: 'number', help: config.dataset.helpRefresh },
+  };
 
-    var toggleLabel = config.dataset.labelStreamEnabled;
+  const toggleLabel = config.dataset.labelStreamEnabled;
 
-    Object.keys(fieldMap).forEach(function (fieldName) {
-        var slot = document.getElementById('slot-' + fieldName);
-        var input = document.getElementById('id_' + fieldName);
-        if (!slot || !input) return;
+  Object.keys(fieldMap).forEach(function (fieldName) {
+    const slot = document.getElementById('slot-' + fieldName);
+    const input = document.getElementById('id_' + fieldName);
+    if (!slot || !input) return;
 
-        var meta = fieldMap[fieldName];
+    const meta = fieldMap[fieldName];
 
-        if (meta.type === 'checkbox') {
-            // Build toggle switch using the actual Django checkbox
-            var wrapper = document.createElement('div');
-            wrapper.className = 'lvs-toggle-group';
+    if (meta.type === 'checkbox') {
+      // Build toggle switch using the actual Django checkbox
+      const wrapper = document.createElement('div');
+      wrapper.className = 'lvs-toggle-group';
 
-            var label = document.createElement('label');
-            label.className = 'toggle-switch';
-            label.appendChild(input);
+      const label = document.createElement('label');
+      label.className = 'toggle-switch';
+      label.appendChild(input);
 
-            var slider = document.createElement('span');
-            slider.className = 'toggle-slider';
-            label.appendChild(slider);
-            wrapper.appendChild(label);
+      const slider = document.createElement('span');
+      slider.className = 'toggle-slider';
+      label.appendChild(slider);
+      wrapper.appendChild(label);
 
-            var textDiv = document.createElement('div');
-            textDiv.innerHTML =
-                '<div class="toggle-label">' + toggleLabel + '</div>' +
-                '<div class="toggle-desc">' + meta.help + '</div>';
-            wrapper.appendChild(textDiv);
-            slot.appendChild(wrapper);
-        } else {
-            // Add CSS class so stylesheet rules apply
-            input.classList.add('lvs-input');
-            if (meta.type === 'textarea') {
-                input.classList.add('lvs-input--textarea');
-                // Pretty-print JSON
-                try {
-                    var val = JSON.parse(input.value);
-                    input.value = JSON.stringify(val, null, 2);
-                } catch (e) { /* leave as-is */ }
-            }
-
-            slot.appendChild(input);
-
-            var helpDiv = document.createElement('div');
-            helpDiv.className = 'help-text';
-            helpDiv.textContent = meta.help;
-            slot.appendChild(helpDiv);
+      const textDiv = document.createElement('div');
+      textDiv.innerHTML =
+        '<div class="toggle-label">' +
+        toggleLabel +
+        '</div>' +
+        '<div class="toggle-desc">' +
+        meta.help +
+        '</div>';
+      wrapper.appendChild(textDiv);
+      slot.appendChild(wrapper);
+    } else {
+      // Add CSS class so stylesheet rules apply
+      input.classList.add('lvs-input');
+      if (meta.type === 'textarea') {
+        input.classList.add('lvs-input--textarea');
+        // Pretty-print JSON
+        try {
+          const val = JSON.parse(input.value);
+          input.value = JSON.stringify(val, null, 2);
+        } catch (e) {
+          /* leave as-is */
         }
-    });
+      }
 
-    // Cancel button navigation
-    var cancelBtn = document.getElementById('lvs-cancel-btn');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', function () {
-            window.location.href = config.dataset.cancelUrl;
-        });
+      slot.appendChild(input);
+
+      const helpDiv = document.createElement('div');
+      helpDiv.className = 'help-text';
+      helpDiv.textContent = meta.help;
+      slot.appendChild(helpDiv);
     }
+  });
+
+  // Cancel button navigation
+  const cancelBtn = document.getElementById('lvs-cancel-btn');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', function () {
+      window.location.href = config.dataset.cancelUrl;
+    });
+  }
 })();

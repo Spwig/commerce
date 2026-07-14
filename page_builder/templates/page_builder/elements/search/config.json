@@ -62,9 +62,9 @@
               "type": "select",
               "label": "Button Icon",
               "options": [
-                {"value": "fa-search", "label": "Search (magnifying glass)"},
-                {"value": "fa-arrow-right", "label": "Arrow Right"},
-                {"value": "none", "label": "No Icon"}
+                { "value": "fa-search", "label": "Search (magnifying glass)" },
+                { "value": "fa-arrow-right", "label": "Arrow Right" },
+                { "value": "none", "label": "No Icon" }
               ],
               "default": "fa-search"
             }
@@ -86,9 +86,9 @@
               "type": "select",
               "label": "On Submit",
               "options": [
-                {"value": "redirect", "label": "Go to Search Results Page"},
-                {"value": "inline", "label": "Show Results Below (AJAX)"},
-                {"value": "autocomplete_only", "label": "Autocomplete Only (No Submit)"}
+                { "value": "redirect", "label": "Go to Search Results Page" },
+                { "value": "inline", "label": "Show Results Below (AJAX)" },
+                { "value": "autocomplete_only", "label": "Autocomplete Only (No Submit)" }
               ],
               "default": "redirect",
               "help_text": "What happens when user presses Enter or clicks the search button"
@@ -199,10 +199,10 @@
               "type": "select",
               "label": "Size",
               "options": [
-                {"value": "sm", "label": "Small"},
-                {"value": "md", "label": "Medium"},
-                {"value": "lg", "label": "Large"},
-                {"value": "xl", "label": "Extra Large"}
+                { "value": "sm", "label": "Small" },
+                { "value": "md", "label": "Medium" },
+                { "value": "lg", "label": "Large" },
+                { "value": "xl", "label": "Extra Large" }
               ],
               "default": "md"
             },
@@ -210,10 +210,10 @@
               "type": "select",
               "label": "Style",
               "options": [
-                {"value": "default", "label": "Default (border)"},
-                {"value": "filled", "label": "Filled Background"},
-                {"value": "minimal", "label": "Minimal (underline only)"},
-                {"value": "pill", "label": "Pill (rounded)"}
+                { "value": "default", "label": "Default (border)" },
+                { "value": "filled", "label": "Filled Background" },
+                { "value": "minimal", "label": "Minimal (underline only)" },
+                { "value": "pill", "label": "Pill (rounded)" }
               ],
               "default": "default"
             },
@@ -269,10 +269,10 @@
               "type": "select",
               "label": "Style",
               "options": [
-                {"value": "primary", "label": "Primary"},
-                {"value": "secondary", "label": "Secondary"},
-                {"value": "outline", "label": "Outline"},
-                {"value": "ghost", "label": "Ghost (transparent)"}
+                { "value": "primary", "label": "Primary" },
+                { "value": "secondary", "label": "Secondary" },
+                { "value": "outline", "label": "Outline" },
+                { "value": "ghost", "label": "Ghost (transparent)" }
               ],
               "default": "primary"
             },
@@ -280,8 +280,8 @@
               "type": "select",
               "label": "Position",
               "options": [
-                {"value": "inside", "label": "Inside Input"},
-                {"value": "outside", "label": "Outside Input"}
+                { "value": "inside", "label": "Inside Input" },
+                { "value": "outside", "label": "Outside Input" }
               ],
               "default": "inside"
             }
@@ -395,8 +395,8 @@
               "type": "select",
               "label": "Layout",
               "options": [
-                {"value": "grid", "label": "Grid"},
-                {"value": "list", "label": "List"}
+                { "value": "grid", "label": "Grid" },
+                { "value": "list", "label": "List" }
               ],
               "default": "grid"
             },
@@ -404,9 +404,9 @@
               "type": "select",
               "label": "Columns (Grid)",
               "options": [
-                {"value": "2", "label": "2 Columns"},
-                {"value": "3", "label": "3 Columns"},
-                {"value": "4", "label": "4 Columns"}
+                { "value": "2", "label": "2 Columns" },
+                { "value": "3", "label": "3 Columns" },
+                { "value": "4", "label": "4 Columns" }
               ],
               "default": "4"
             },
@@ -458,9 +458,9 @@
               "type": "select",
               "label": "Card Style",
               "options": [
-                {"value": "default", "label": "Default"},
-                {"value": "minimal", "label": "Minimal"},
-                {"value": "bordered", "label": "Bordered"}
+                { "value": "default", "label": "Default" },
+                { "value": "minimal", "label": "Minimal" },
+                { "value": "bordered", "label": "Bordered" }
               ],
               "default": "default"
             }
@@ -470,60 +470,129 @@
     }
   },
   "properties": {
-    "placeholder": {"type": "string", "label": "Placeholder Text", "default": "Search products, categories...", "translatable": true},
-    "aria_label": {"type": "string", "label": "Accessibility Label", "default": "Search", "translatable": true},
-    "show_button": {"type": "boolean", "label": "Show Search Button", "default": true},
-    "button_text": {"type": "string", "label": "Button Text", "default": "", "translatable": true},
-    "button_icon": {"type": "select", "label": "Button Icon", "default": "fa-search"},
-    "submit_action": {"type": "select", "label": "On Submit", "default": "redirect"},
-    "results_page_url": {"type": "url", "label": "Search Results Page URL", "default": "/search/"},
-    "query_param": {"type": "string", "label": "Query Parameter Name", "default": "q"},
-    "autocomplete_enabled": {"type": "boolean", "label": "Enable Autocomplete", "default": true},
-    "use_global_settings": {"type": "boolean", "label": "Use Global Search Settings", "default": true},
-    "min_query_length": {"type": "number", "label": "Min Query Length", "default": 2},
-    "debounce_ms": {"type": "number", "label": "Debounce (ms)", "default": 300},
-    "max_results": {"type": "number", "label": "Max Results", "default": 8},
-    "search_products": {"type": "boolean", "label": "Search Products", "default": true},
-    "search_categories": {"type": "boolean", "label": "Search Categories", "default": true},
-    "search_brands": {"type": "boolean", "label": "Search Brands", "default": true},
-    "search_blog_posts": {"type": "boolean", "label": "Search Blog Posts", "default": true},
-    "input_size": {"type": "select", "label": "Input Size", "default": "md"},
-    "input_style": {"type": "select", "label": "Input Style", "default": "default"},
-    "full_width": {"type": "boolean", "label": "Full Width", "default": true},
-    "input_background": {"type": "color_advanced", "label": "Input Background", "default": ""},
-    "input_text_color": {"type": "color_advanced", "label": "Input Text Color", "default": ""},
-    "input_border_color": {"type": "color_advanced", "label": "Input Border Color", "default": ""},
-    "input_focus_border_color": {"type": "color_advanced", "label": "Input Focus Border", "default": ""},
-    "button_style": {"type": "select", "label": "Button Style", "default": "primary"},
-    "button_position": {"type": "select", "label": "Button Position", "default": "inside"},
-    "button_background": {"type": "color_advanced", "label": "Button Background", "default": ""},
-    "button_text_color": {"type": "color_advanced", "label": "Button Text Color", "default": ""},
-    "button_hover_background": {"type": "color_advanced", "label": "Button Hover Background", "default": ""},
-    "show_thumbnails": {"type": "boolean", "label": "Show Thumbnails", "default": true},
-    "show_prices": {"type": "boolean", "label": "Show Prices", "default": true},
-    "show_sku": {"type": "boolean", "label": "Show SKU", "default": false},
-    "show_stock_status": {"type": "boolean", "label": "Show Stock Status", "default": false},
-    "show_product_count": {"type": "boolean", "label": "Show Product Count", "default": true},
-    "show_view_all_link": {"type": "boolean", "label": "Show View All Link", "default": true},
-    "dropdown_background": {"type": "color_advanced", "label": "Dropdown Background", "default": ""},
-    "dropdown_border_color": {"type": "color_advanced", "label": "Dropdown Border", "default": ""},
-    "dropdown_item_hover": {"type": "color_advanced", "label": "Dropdown Hover", "default": ""},
-    "inline_layout": {"type": "select", "label": "Inline Layout", "default": "grid"},
-    "inline_columns": {"type": "select", "label": "Inline Columns", "default": "4"},
-    "inline_max_results": {"type": "number", "label": "Inline Max Results", "default": 12},
-    "inline_show_filters": {"type": "boolean", "label": "Show Inline Filters", "default": true},
-    "inline_show_pagination": {"type": "boolean", "label": "Show Load More", "default": true},
-    "inline_empty_message": {"type": "string", "label": "No Results Message", "default": "No results found. Try a different search term.", "translatable": true},
-    "inline_background": {"type": "color_advanced", "label": "Inline Background", "default": ""},
-    "inline_card_style": {"type": "select", "label": "Inline Card Style", "default": "default"}
+    "placeholder": {
+      "type": "string",
+      "label": "Placeholder Text",
+      "default": "Search products, categories...",
+      "translatable": true
+    },
+    "aria_label": {
+      "type": "string",
+      "label": "Accessibility Label",
+      "default": "Search",
+      "translatable": true
+    },
+    "show_button": { "type": "boolean", "label": "Show Search Button", "default": true },
+    "button_text": {
+      "type": "string",
+      "label": "Button Text",
+      "default": "",
+      "translatable": true
+    },
+    "button_icon": { "type": "select", "label": "Button Icon", "default": "fa-search" },
+    "submit_action": { "type": "select", "label": "On Submit", "default": "redirect" },
+    "results_page_url": {
+      "type": "url",
+      "label": "Search Results Page URL",
+      "default": "/search/"
+    },
+    "query_param": { "type": "string", "label": "Query Parameter Name", "default": "q" },
+    "autocomplete_enabled": { "type": "boolean", "label": "Enable Autocomplete", "default": true },
+    "use_global_settings": {
+      "type": "boolean",
+      "label": "Use Global Search Settings",
+      "default": true
+    },
+    "min_query_length": { "type": "number", "label": "Min Query Length", "default": 2 },
+    "debounce_ms": { "type": "number", "label": "Debounce (ms)", "default": 300 },
+    "max_results": { "type": "number", "label": "Max Results", "default": 8 },
+    "search_products": { "type": "boolean", "label": "Search Products", "default": true },
+    "search_categories": { "type": "boolean", "label": "Search Categories", "default": true },
+    "search_brands": { "type": "boolean", "label": "Search Brands", "default": true },
+    "search_blog_posts": { "type": "boolean", "label": "Search Blog Posts", "default": true },
+    "input_size": { "type": "select", "label": "Input Size", "default": "md" },
+    "input_style": { "type": "select", "label": "Input Style", "default": "default" },
+    "full_width": { "type": "boolean", "label": "Full Width", "default": true },
+    "input_background": { "type": "color_advanced", "label": "Input Background", "default": "" },
+    "input_text_color": { "type": "color_advanced", "label": "Input Text Color", "default": "" },
+    "input_border_color": {
+      "type": "color_advanced",
+      "label": "Input Border Color",
+      "default": ""
+    },
+    "input_focus_border_color": {
+      "type": "color_advanced",
+      "label": "Input Focus Border",
+      "default": ""
+    },
+    "button_style": { "type": "select", "label": "Button Style", "default": "primary" },
+    "button_position": { "type": "select", "label": "Button Position", "default": "inside" },
+    "button_background": { "type": "color_advanced", "label": "Button Background", "default": "" },
+    "button_text_color": { "type": "color_advanced", "label": "Button Text Color", "default": "" },
+    "button_hover_background": {
+      "type": "color_advanced",
+      "label": "Button Hover Background",
+      "default": ""
+    },
+    "show_thumbnails": { "type": "boolean", "label": "Show Thumbnails", "default": true },
+    "show_prices": { "type": "boolean", "label": "Show Prices", "default": true },
+    "show_sku": { "type": "boolean", "label": "Show SKU", "default": false },
+    "show_stock_status": { "type": "boolean", "label": "Show Stock Status", "default": false },
+    "show_product_count": { "type": "boolean", "label": "Show Product Count", "default": true },
+    "show_view_all_link": { "type": "boolean", "label": "Show View All Link", "default": true },
+    "dropdown_background": {
+      "type": "color_advanced",
+      "label": "Dropdown Background",
+      "default": ""
+    },
+    "dropdown_border_color": {
+      "type": "color_advanced",
+      "label": "Dropdown Border",
+      "default": ""
+    },
+    "dropdown_item_hover": { "type": "color_advanced", "label": "Dropdown Hover", "default": "" },
+    "inline_layout": { "type": "select", "label": "Inline Layout", "default": "grid" },
+    "inline_columns": { "type": "select", "label": "Inline Columns", "default": "4" },
+    "inline_max_results": { "type": "number", "label": "Inline Max Results", "default": 12 },
+    "inline_show_filters": { "type": "boolean", "label": "Show Inline Filters", "default": true },
+    "inline_show_pagination": { "type": "boolean", "label": "Show Load More", "default": true },
+    "inline_empty_message": {
+      "type": "string",
+      "label": "No Results Message",
+      "default": "No results found. Try a different search term.",
+      "translatable": true
+    },
+    "inline_background": { "type": "color_advanced", "label": "Inline Background", "default": "" },
+    "inline_card_style": { "type": "select", "label": "Inline Card Style", "default": "default" }
   },
   "translations": {
-    "en": {"name": "Search Bar", "description": "Search form with autocomplete for products, categories, brands, and blog posts"},
-    "es": {"name": "Barra de Busqueda", "description": "Formulario de busqueda con autocompletado para productos, categorias, marcas y publicaciones del blog"},
-    "fr": {"name": "Barre de Recherche", "description": "Formulaire de recherche avec autocompletion pour produits, categories, marques et articles de blog"},
-    "de": {"name": "Suchleiste", "description": "Suchformular mit Autovervollstandigung fur Produkte, Kategorien, Marken und Blogbeitrage"},
-    "pt": {"name": "Barra de Pesquisa", "description": "Formulario de pesquisa com autocompletar para produtos, categorias, marcas e posts do blog"},
-    "zh-hans": {"name": "搜索栏", "description": "带有自动完成功能的搜索表单，可搜索产品、类别、品牌和博客文章"},
-    "ja": {"name": "検索バー", "description": "製品、カテゴリ、ブランド、ブログ記事のオートコンプリート機能付き検索フォーム"}
+    "en": {
+      "name": "Search Bar",
+      "description": "Search form with autocomplete for products, categories, brands, and blog posts"
+    },
+    "es": {
+      "name": "Barra de Busqueda",
+      "description": "Formulario de busqueda con autocompletado para productos, categorias, marcas y publicaciones del blog"
+    },
+    "fr": {
+      "name": "Barre de Recherche",
+      "description": "Formulaire de recherche avec autocompletion pour produits, categories, marques et articles de blog"
+    },
+    "de": {
+      "name": "Suchleiste",
+      "description": "Suchformular mit Autovervollstandigung fur Produkte, Kategorien, Marken und Blogbeitrage"
+    },
+    "pt": {
+      "name": "Barra de Pesquisa",
+      "description": "Formulario de pesquisa com autocompletar para produtos, categorias, marcas e posts do blog"
+    },
+    "zh-hans": {
+      "name": "搜索栏",
+      "description": "带有自动完成功能的搜索表单，可搜索产品、类别、品牌和博客文章"
+    },
+    "ja": {
+      "name": "検索バー",
+      "description": "製品、カテゴリ、ブランド、ブログ記事のオートコンプリート機能付き検索フォーム"
+    }
   }
 }

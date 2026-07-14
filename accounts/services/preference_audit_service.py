@@ -4,7 +4,9 @@ Preference Audit Service
 Handles audit logging for communication preference changes with GDPR Article 7
 compliance (proof of consent).
 """
+
 import logging
+
 from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
@@ -20,8 +22,18 @@ class PreferenceAuditService:
     """
 
     @classmethod
-    def log_change(cls, preference, action, old_value, new_value, request=None,
-                   source='user', notes='', ip_address=None, user_agent=None):
+    def log_change(
+        cls,
+        preference,
+        action,
+        old_value,
+        new_value,
+        request=None,
+        source="user",
+        notes="",
+        ip_address=None,
+        user_agent=None,
+    ):
         """
         Log a preference change with full context.
 
@@ -45,11 +57,11 @@ class PreferenceAuditService:
             # Extract IP and user agent from request if provided
             if request:
                 ip_address = ip_address or cls._get_client_ip(request)
-                user_agent = user_agent or request.META.get('HTTP_USER_AGENT', '')
+                user_agent = user_agent or request.META.get("HTTP_USER_AGENT", "")
 
             # Ensure user_agent has a default value
             if user_agent is None:
-                user_agent = ''
+                user_agent = ""
 
             # Create audit log
             log_entry = PreferenceChangeLog.objects.create(
@@ -74,18 +86,14 @@ class PreferenceAuditService:
         except Exception as e:
             # Never fail the main operation because of logging issues
             extra_data = {
-                'action': action,
-                'source': source,
+                "action": action,
+                "source": source,
             }
             # Only add user email if preference is not None
-            if preference and hasattr(preference, 'user'):
-                extra_data['user'] = preference.user.email
+            if preference and hasattr(preference, "user"):
+                extra_data["user"] = preference.user.email
 
-            logger.error(
-                f"Failed to log preference change: {e}",
-                exc_info=True,
-                extra=extra_data
-            )
+            logger.error(f"Failed to log preference change: {e}", exc_info=True, extra=extra_data)
             return None
 
     @classmethod
@@ -111,12 +119,12 @@ class PreferenceAuditService:
             old_value=old_value,
             new_value=new_value,
             request=request,
-            source='verification',
-            notes=f'{channel.upper()} verification completed'
+            source="verification",
+            notes=f"{channel.upper()} verification completed",
         )
 
     @classmethod
-    def log_bulk_update(cls, preference, changes, request=None, source='user'):
+    def log_bulk_update(cls, preference, changes, request=None, source="user"):
         """
         Log multiple preference changes in a single entry.
 
@@ -137,8 +145,8 @@ class PreferenceAuditService:
             action = f"bulk_update.{len(field_names)}_fields"
 
         # Extract old and new values
-        old_value = {field: change['old'] for field, change in changes.items()}
-        new_value = {field: change['new'] for field, change in changes.items()}
+        old_value = {field: change["old"] for field, change in changes.items()}
+        new_value = {field: change["new"] for field, change in changes.items()}
 
         return cls.log_change(
             preference=preference,
@@ -147,7 +155,7 @@ class PreferenceAuditService:
             new_value=new_value,
             request=request,
             source=source,
-            notes=f"Updated {len(field_names)} fields: {', '.join(field_names)}"
+            notes=f"Updated {len(field_names)} fields: {', '.join(field_names)}",
         )
 
     @classmethod
@@ -164,29 +172,29 @@ class PreferenceAuditService:
             PreferenceChangeLog instance or None
         """
         old_value = {
-            'email_marketing': True,
-            'sms_marketing': True,
-            'app_preferences': preference.app_preferences.copy()
+            "email_marketing": True,
+            "sms_marketing": True,
+            "app_preferences": preference.app_preferences.copy(),
         }
 
         new_value = {
-            'email_marketing': False,
-            'sms_marketing': False,
-            'app_preferences': {}  # All apps disabled
+            "email_marketing": False,
+            "sms_marketing": False,
+            "app_preferences": {},  # All apps disabled
         }
 
-        notes = 'Unsubscribed from all marketing communications'
+        notes = "Unsubscribed from all marketing communications"
         if reason:
-            notes += f' - Reason: {reason}'
+            notes += f" - Reason: {reason}"
 
         return cls.log_change(
             preference=preference,
-            action='unsubscribe_all',
+            action="unsubscribe_all",
             old_value=old_value,
             new_value=new_value,
             request=request,
-            source='unsubscribe',
-            notes=notes
+            source="unsubscribe",
+            notes=notes,
         )
 
     @classmethod
@@ -203,12 +211,12 @@ class PreferenceAuditService:
             str: IP address or None
         """
         # Check X-Forwarded-For header first (proxy support)
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
             # Take the first IP (client IP)
-            ip = x_forwarded_for.split(',')[0].strip()
+            ip = x_forwarded_for.split(",")[0].strip()
         else:
             # Fallback to REMOTE_ADDR
-            ip = request.META.get('REMOTE_ADDR')
+            ip = request.META.get("REMOTE_ADDR")
 
         return ip

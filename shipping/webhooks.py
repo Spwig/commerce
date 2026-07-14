@@ -15,17 +15,19 @@ Workflow:
 NOTE: Phase 12 creates the webhook receiver. Actual webhook parsing will be
 implemented when provider implementations are complete.
 """
+
 import json
 import logging
-from django.http import JsonResponse, HttpResponse
+
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
-from shipping.models import WebhookLog
 from shipping.jobs.tasks import process_webhook
+from shipping.models import WebhookLog
 from shipping.providers.registry import ProviderRegistry
 from shipping.utils.encryption import decrypt_credentials
 
@@ -69,20 +71,20 @@ def provider_webhook(request, provider_key):
     try:
         payload = json.loads(request.body)
     except json.JSONDecodeError:
-        payload = {'raw_body': request.body.decode('utf-8', errors='replace')}
+        payload = {"raw_body": request.body.decode("utf-8", errors="replace")}
 
     headers = {
         key: value
         for key, value in request.META.items()
-        if key.startswith('HTTP_') or key in ['CONTENT_TYPE', 'CONTENT_LENGTH']
+        if key.startswith("HTTP_") or key in ["CONTENT_TYPE", "CONTENT_LENGTH"]
     }
 
     # Extract common webhook identifiers
     webhook_id = (
-        headers.get('HTTP_X_WEBHOOK_ID') or
-        headers.get('HTTP_X_HOOK_ID') or
-        payload.get('id') or
-        payload.get('webhook_id')
+        headers.get("HTTP_X_WEBHOOK_ID")
+        or headers.get("HTTP_X_HOOK_ID")
+        or payload.get("id")
+        or payload.get("webhook_id")
     )
 
     logger.info(
@@ -98,13 +100,10 @@ def provider_webhook(request, provider_key):
             endpoint=request.path,
             payload=payload,
             headers=headers,
-            processing_status='pending'
+            processing_status="pending",
         )
 
-        logger.debug(
-            f"Webhook logged - log_id: {webhook_log.id}, "
-            f"provider: {provider_key}"
-        )
+        logger.debug(f"Webhook logged - log_id: {webhook_log.id}, provider: {provider_key}")
 
         # Verify webhook signature (security)
         provider_class = ProviderRegistry.get_provider(provider_key)
@@ -112,21 +111,21 @@ def provider_webhook(request, provider_key):
             # Try to get the provider account/credentials to access webhook secret
             try:
                 from shipping.models import ProviderAccount
+
                 provider_account = ProviderAccount.objects.filter(
-                    component__slug=provider_key,
-                    is_active=True
+                    component__slug=provider_key, is_active=True
                 ).first()
 
                 if provider_account:
                     # Extract signature from common header locations
                     signature = (
-                        headers.get('HTTP_X_WEBHOOK_SIGNATURE') or
-                        headers.get('HTTP_X_SIGNATURE') or
-                        headers.get('HTTP_X_HMAC') or
-                        headers.get('HTTP_SIGNATURE') or
-                        headers.get('X-Webhook-Signature') or
-                        headers.get('X-Signature') or
-                        headers.get('X-HMAC')
+                        headers.get("HTTP_X_WEBHOOK_SIGNATURE")
+                        or headers.get("HTTP_X_SIGNATURE")
+                        or headers.get("HTTP_X_HMAC")
+                        or headers.get("HTTP_SIGNATURE")
+                        or headers.get("X-Webhook-Signature")
+                        or headers.get("X-Signature")
+                        or headers.get("X-HMAC")
                     )
 
                     # Try to verify signature
@@ -135,17 +134,15 @@ def provider_webhook(request, provider_key):
                         credentials = decrypt_credentials(provider_account.credentials_encrypted)
 
                         # Create provider instance with decrypted credentials
-                        provider_instance = provider_class(
-                            credentials=credentials
-                        )
+                        provider_instance = provider_class(credentials=credentials)
 
                         # Check if provider supports webhook verification
-                        if hasattr(provider_instance, 'verify_webhook_signature'):
+                        if hasattr(provider_instance, "verify_webhook_signature"):
                             # Verify signature
                             is_valid = provider_instance.verify_webhook_signature(
                                 payload=request.body,
                                 signature=signature,
-                                webhook_secret=credentials.get('webhook_secret')
+                                webhook_secret=credentials.get("webhook_secret"),
                             )
 
                             if not is_valid:
@@ -153,13 +150,12 @@ def provider_webhook(request, provider_key):
                                     f"Invalid webhook signature from {provider_key} - "
                                     f"log_id: {webhook_log.id}"
                                 )
-                                webhook_log.processing_status = 'failed'
-                                webhook_log.error_message = 'Invalid webhook signature'
+                                webhook_log.processing_status = "failed"
+                                webhook_log.error_message = "Invalid webhook signature"
                                 webhook_log.save()
-                                return JsonResponse({
-                                    'status': 'error',
-                                    'message': 'Invalid signature'
-                                }, status=401)
+                                return JsonResponse(
+                                    {"status": "error", "message": "Invalid signature"}, status=401
+                                )
 
                             logger.debug(f"Webhook signature verified for {provider_key}")
                         else:
@@ -167,77 +163,81 @@ def provider_webhook(request, provider_key):
                             logger.error(
                                 f"Provider {provider_key} does not implement webhook signature verification"
                             )
-                            webhook_log.processing_status = 'failed'
-                            webhook_log.error_message = 'Provider does not support webhook verification'
+                            webhook_log.processing_status = "failed"
+                            webhook_log.error_message = (
+                                "Provider does not support webhook verification"
+                            )
                             webhook_log.save()
-                            return JsonResponse({
-                                'status': 'error',
-                                'message': 'Webhook verification not supported by provider'
-                            }, status=401)
+                            return JsonResponse(
+                                {
+                                    "status": "error",
+                                    "message": "Webhook verification not supported by provider",
+                                },
+                                status=401,
+                            )
 
                     except NotImplementedError:
                         # Provider explicitly doesn't support webhooks - REJECT
                         logger.error(
                             f"Provider {provider_key} does not support webhooks (NotImplementedError)"
                         )
-                        webhook_log.processing_status = 'failed'
-                        webhook_log.error_message = 'Provider does not support webhooks'
+                        webhook_log.processing_status = "failed"
+                        webhook_log.error_message = "Provider does not support webhooks"
                         webhook_log.save()
-                        return JsonResponse({
-                            'status': 'error',
-                            'message': 'Webhooks not supported by this provider'
-                        }, status=501)  # 501 Not Implemented
+                        return JsonResponse(
+                            {
+                                "status": "error",
+                                "message": "Webhooks not supported by this provider",
+                            },
+                            status=501,
+                        )  # 501 Not Implemented
                     except Exception as e:
                         # Signature verification failed with error
                         logger.error(
                             f"Webhook signature verification error for {provider_key}: {e}",
-                            exc_info=True
+                            exc_info=True,
                         )
-                        webhook_log.processing_status = 'failed'
-                        webhook_log.error_message = f'Signature verification error: {str(e)}'
+                        webhook_log.processing_status = "failed"
+                        webhook_log.error_message = f"Signature verification error: {str(e)}"
                         webhook_log.save()
-                        return JsonResponse({
-                            'status': 'error',
-                            'message': 'Signature verification failed'
-                        }, status=401)
+                        return JsonResponse(
+                            {"status": "error", "message": "Signature verification failed"},
+                            status=401,
+                        )
 
                 else:
                     # No provider account configured - REJECT webhook
                     logger.error(
                         f"No active provider account found for {provider_key} - cannot verify webhook"
                     )
-                    webhook_log.processing_status = 'failed'
-                    webhook_log.error_message = 'No provider account configured for webhook verification'
+                    webhook_log.processing_status = "failed"
+                    webhook_log.error_message = (
+                        "No provider account configured for webhook verification"
+                    )
                     webhook_log.save()
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Provider account not configured'
-                    }, status=401)
+                    return JsonResponse(
+                        {"status": "error", "message": "Provider account not configured"},
+                        status=401,
+                    )
 
             except Exception as e:
                 logger.error(
-                    f"Error loading provider account for signature verification: {e}",
-                    exc_info=True
+                    f"Error loading provider account for signature verification: {e}", exc_info=True
                 )
-                webhook_log.processing_status = 'failed'
-                webhook_log.error_message = f'Unable to verify webhook authenticity: {str(e)}'
+                webhook_log.processing_status = "failed"
+                webhook_log.error_message = f"Unable to verify webhook authenticity: {str(e)}"
                 webhook_log.save()
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Unable to verify webhook authenticity'
-                }, status=401)
+                return JsonResponse(
+                    {"status": "error", "message": "Unable to verify webhook authenticity"},
+                    status=401,
+                )
         else:
             # Provider not found in registry - REJECT
-            logger.error(
-                f"Provider {provider_key} not found in registry - cannot verify webhook"
-            )
-            webhook_log.processing_status = 'failed'
-            webhook_log.error_message = 'Provider not registered'
+            logger.error(f"Provider {provider_key} not found in registry - cannot verify webhook")
+            webhook_log.processing_status = "failed"
+            webhook_log.error_message = "Provider not registered"
             webhook_log.save()
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Unknown provider'
-            }, status=400)
+            return JsonResponse({"status": "error", "message": "Unknown provider"}, status=400)
 
         # Enqueue processing task (async)
         process_webhook.delay(str(webhook_log.id))
@@ -250,20 +250,21 @@ def provider_webhook(request, provider_key):
 
         # Return 200 OK immediately
         # Don't block the provider with long processing
-        return JsonResponse({
-            'status': 'received',
-            'webhook_id': str(webhook_log.id),
-            'message': 'Webhook received and queued for processing',
-            'received_at': start_time.isoformat()
-        }, status=200)
+        return JsonResponse(
+            {
+                "status": "received",
+                "webhook_id": str(webhook_log.id),
+                "message": "Webhook received and queued for processing",
+                "received_at": start_time.isoformat(),
+            },
+            status=200,
+        )
 
     except Exception as exc:
         # Log error but still return 200 OK
         # We don't want providers to keep retrying on our bugs
         logger.error(
-            f"Webhook processing error - provider: {provider_key}, "
-            f"error: {str(exc)}",
-            exc_info=True
+            f"Webhook processing error - provider: {provider_key}, error: {str(exc)}", exc_info=True
         )
 
         # Try to log the error
@@ -273,22 +274,22 @@ def provider_webhook(request, provider_key):
                 endpoint=request.path,
                 payload=payload,
                 headers=headers,
-                processing_status='failed',
-                error_message=f"Webhook receiver error: {str(exc)}"
+                processing_status="failed",
+                error_message=f"Webhook receiver error: {str(exc)}",
             )
         except Exception:
             # Even logging failed, just log to app logs
-            logger.error(
-                f"Failed to create webhook log for {provider_key}",
-                exc_info=True
-            )
+            logger.error(f"Failed to create webhook log for {provider_key}", exc_info=True)
 
         # Still return 200 OK to prevent provider retries
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Internal error processing webhook',
-            'received_at': start_time.isoformat()
-        }, status=200)
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Internal error processing webhook",
+                "received_at": start_time.isoformat(),
+            },
+            status=200,
+        )
 
 
 def webhook_health_check(request):
@@ -303,15 +304,17 @@ def webhook_health_check(request):
     This endpoint can be used by monitoring systems to verify
     the webhook endpoint is operational.
     """
-    if request.method not in ['GET', 'HEAD']:
+    if request.method not in ["GET", "HEAD"]:
         return HttpResponse(status=405)
 
-    return JsonResponse({
-        'status': 'healthy',
-        'service': 'shipping-webhooks',
-        'timestamp': timezone.now().isoformat(),
-        'version': '1.0'
-    })
+    return JsonResponse(
+        {
+            "status": "healthy",
+            "service": "shipping-webhooks",
+            "timestamp": timezone.now().isoformat(),
+            "version": "1.0",
+        }
+    )
 
 
 @staff_member_required
@@ -331,26 +334,26 @@ def webhook_documentation(request):
 
     webhook_examples = [
         {
-            'provider': 'easypost',
-            'url': request.build_absolute_uri('/admin/shipping/webhooks/easypost/'),
-            'description': _('EasyPost tracking updates and label events')
+            "provider": "easypost",
+            "url": request.build_absolute_uri("/admin/shipping/webhooks/easypost/"),
+            "description": _("EasyPost tracking updates and label events"),
         },
         {
-            'provider': 'shipstation',
-            'url': request.build_absolute_uri('/admin/shipping/webhooks/shipstation/'),
-            'description': _('ShipStation shipment notifications')
+            "provider": "shipstation",
+            "url": request.build_absolute_uri("/admin/shipping/webhooks/shipstation/"),
+            "description": _("ShipStation shipment notifications"),
         },
         {
-            'provider': 'custom',
-            'url': request.build_absolute_uri('/admin/shipping/webhooks/custom/'),
-            'description': _('Custom provider webhooks')
+            "provider": "custom",
+            "url": request.build_absolute_uri("/admin/shipping/webhooks/custom/"),
+            "description": _("Custom provider webhooks"),
         },
     ]
 
     context = {
-        'title': _('Shipping Webhooks'),
-        'webhook_examples': webhook_examples,
-        'health_check_url': request.build_absolute_uri('/admin/shipping/webhooks/health/'),
+        "title": _("Shipping Webhooks"),
+        "webhook_examples": webhook_examples,
+        "health_check_url": request.build_absolute_uri("/admin/shipping/webhooks/health/"),
     }
 
-    return render(request, 'admin/shipping/webhooks/documentation.html', context)
+    return render(request, "admin/shipping/webhooks/documentation.html", context)

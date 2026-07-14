@@ -4,15 +4,16 @@ Loyalty Program Signal Handlers
 Listens to order and user events to automatically award loyalty points.
 """
 
-from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
 import logging
 
-from orders.models import Order
+from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+
 from loyalty.models import LoyaltyMember
-from loyalty.services.points_engine import points_engine
 from loyalty.services.badge_awarding_service import BadgeAwardingService
+from loyalty.services.points_engine import points_engine
+from orders.models import Order
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ def award_points_on_order(sender, instance, created, **kwargs):
     order = instance
 
     # Only award points for certain statuses
-    if order.status not in ['processing', 'delivered']:
+    if order.status not in ["processing", "delivered"]:
         logger.debug(f"Order {order.order_number} status is {order.status}, not awarding points")
         return
 
@@ -49,9 +50,10 @@ def award_points_on_order(sender, instance, created, **kwargs):
 
     # Check if points already awarded for this order
     from loyalty.models import LoyaltyTransaction
+
     existing = LoyaltyTransaction.objects.filter(
         member=member,
-        related_object_type='order',
+        related_object_type="order",
         related_object_id=str(order.id),
         transaction_type=LoyaltyTransaction.TYPE_EARN,
     ).exists()
@@ -73,13 +75,22 @@ def award_points_on_order(sender, instance, created, **kwargs):
     # Check and award eligible badges
     try:
         criteria_to_check = [
-            'first_purchase', 'order_count', 'total_spend',
-            'early_morning_orders', 'late_night_orders', 'weekend_orders',
-            'quick_return', 'single_order_value', 'items_per_order', 'orders_per_month'
+            "first_purchase",
+            "order_count",
+            "total_spend",
+            "early_morning_orders",
+            "late_night_orders",
+            "weekend_orders",
+            "quick_return",
+            "single_order_value",
+            "items_per_order",
+            "orders_per_month",
         ]
         newly_awarded = badge_service.check_and_award_badges(member, criteria_to_check)
         if newly_awarded:
-            logger.info(f"Auto-awarded {len(newly_awarded)} badges to member {member.id} after order")
+            logger.info(
+                f"Auto-awarded {len(newly_awarded)} badges to member {member.id} after order"
+            )
     except Exception as e:
         logger.error(f"Error checking badges for order {order.order_number}: {e}", exc_info=True)
 
@@ -101,7 +112,7 @@ def revoke_points_on_cancellation(sender, instance, **kwargs):
     if old_order.status == instance.status:
         return  # Status didn't change
 
-    if instance.status not in ['cancelled', 'refunded']:
+    if instance.status not in ["cancelled", "refunded"]:
         return  # Not a cancellation/refund
 
     # Check if customer is a loyalty member
@@ -112,9 +123,10 @@ def revoke_points_on_cancellation(sender, instance, **kwargs):
 
     # Find original earn transaction
     from loyalty.models import LoyaltyTransaction
+
     original_txn = LoyaltyTransaction.objects.filter(
         member=member,
-        related_object_type='order',
+        related_object_type="order",
         related_object_id=str(instance.id),
         transaction_type=LoyaltyTransaction.TYPE_EARN,
     ).first()
@@ -135,6 +147,7 @@ def revoke_points_on_cancellation(sender, instance, **kwargs):
     # Create reversal transaction
     try:
         from loyalty.services.ledger_service import ledger_service
+
         ledger_service.create_reversal(
             original_transaction=original_txn,
             reason=f"Order {instance.order_number} {instance.status}",
@@ -162,8 +175,7 @@ def create_loyalty_member_on_signup(sender, instance, created, **kwargs):
     # Create loyalty member
     try:
         member, member_created = LoyaltyMember.objects.get_or_create(
-            customer=user,
-            defaults={'is_active': True}
+            customer=user, defaults={"is_active": True}
         )
 
         if member_created:
@@ -173,25 +185,31 @@ def create_loyalty_member_on_signup(sender, instance, created, **kwargs):
             try:
                 transaction = points_engine.award_action_points(
                     member=member,
-                    action_type='signup',
+                    action_type="signup",
                     metadata={
-                        'description': 'Welcome to our loyalty program!',
-                        'object_type': 'user',
-                        'object_id': str(user.id),
-                    }
+                        "description": "Welcome to our loyalty program!",
+                        "object_type": "user",
+                        "object_id": str(user.id),
+                    },
                 )
                 if transaction:
-                    logger.info(f"Awarded signup bonus of {transaction.points} points to user {user.id}")
+                    logger.info(
+                        f"Awarded signup bonus of {transaction.points} points to user {user.id}"
+                    )
             except Exception as e:
                 logger.error(f"Error awarding signup bonus for user {user.id}: {e}", exc_info=True)
 
             # Check and award program join badges
             try:
-                newly_awarded = badge_service.check_and_award_badges(member, ['program_join'])
+                newly_awarded = badge_service.check_and_award_badges(member, ["program_join"])
                 if newly_awarded:
-                    logger.info(f"Auto-awarded {len(newly_awarded)} signup badges to member {member.id}")
+                    logger.info(
+                        f"Auto-awarded {len(newly_awarded)} signup badges to member {member.id}"
+                    )
             except Exception as e:
-                logger.error(f"Error checking badges for new member {member.id}: {e}", exc_info=True)
+                logger.error(
+                    f"Error checking badges for new member {member.id}: {e}", exc_info=True
+                )
 
     except Exception as e:
         logger.error(f"Error creating loyalty member for user {user.id}: {e}", exc_info=True)
@@ -212,8 +230,8 @@ def trigger_campaigns_on_order(sender, instance, created, **kwargs):
     - order_refunded: When order is refunded
     - order_cancelled: When order is cancelled
     """
-    from loyalty.services.campaign_orchestrator import CampaignOrchestrator
     from loyalty.models import LoyaltyCampaign
+    from loyalty.services.campaign_orchestrator import CampaignOrchestrator
 
     order = instance
 
@@ -224,9 +242,8 @@ def trigger_campaigns_on_order(sender, instance, created, **kwargs):
 
     # Get loyalty member
     try:
-        member = LoyaltyMember.objects.select_related('customer', 'balance', 'current_tier').get(
-            customer=order.user,
-            is_active=True
+        member = LoyaltyMember.objects.select_related("customer", "balance", "current_tier").get(
+            customer=order.user, is_active=True
         )
     except LoyaltyMember.DoesNotExist:
         logger.debug(f"User {order.user.id} is not a loyalty member")
@@ -236,18 +253,20 @@ def trigger_campaigns_on_order(sender, instance, created, **kwargs):
 
     # Build context
     context = {
-        'order_id': order.id,
-        'order_number': order.order_number,
-        'order_total': float(order.total_amount.amount),
-        'order_count': Order.objects.filter(user=order.user, status='completed').count(),
+        "order_id": order.id,
+        "order_number": order.order_number,
+        "order_total": float(order.total_amount.amount),
+        "order_count": Order.objects.filter(user=order.user, status="completed").count(),
     }
 
     # Add order items context
     try:
-        items = order.items.select_related('product', 'product__category')
-        context['product_ids'] = list(items.values_list('product_id', flat=True))
-        context['category_ids'] = list(
-            items.filter(product__category__isnull=False).values_list('product__category_id', flat=True).distinct()
+        items = order.items.select_related("product", "product__category")
+        context["product_ids"] = list(items.values_list("product_id", flat=True))
+        context["category_ids"] = list(
+            items.filter(product__category__isnull=False)
+            .values_list("product__category_id", flat=True)
+            .distinct()
         )
     except Exception as e:
         logger.warning(f"Could not extract order items data: {e}")
@@ -257,11 +276,11 @@ def trigger_campaigns_on_order(sender, instance, created, **kwargs):
         # New order - trigger order_placed
         event = LoyaltyCampaign.EVENT_ORDER_PLACED
         logger.debug(f"Triggering order_placed campaigns for order {order.order_number}")
-    elif instance.status == 'refunded':
+    elif instance.status == "refunded":
         # Order refunded
         event = LoyaltyCampaign.EVENT_ORDER_REFUNDED
         logger.debug(f"Triggering order_refunded campaigns for order {order.order_number}")
-    elif instance.status == 'cancelled':
+    elif instance.status == "cancelled":
         # Order cancelled
         event = LoyaltyCampaign.EVENT_ORDER_CANCELLED
         logger.debug(f"Triggering order_cancelled campaigns for order {order.order_number}")
@@ -272,9 +291,13 @@ def trigger_campaigns_on_order(sender, instance, created, **kwargs):
     # Trigger campaigns
     try:
         result = orchestrator.trigger_event(event, member, context)
-        logger.info(f"Triggered {result['triggered']} campaigns for event '{event}' on order {order.order_number}")
+        logger.info(
+            f"Triggered {result['triggered']} campaigns for event '{event}' on order {order.order_number}"
+        )
     except Exception as e:
-        logger.error(f"Error triggering campaigns for order {order.order_number}: {e}", exc_info=True)
+        logger.error(
+            f"Error triggering campaigns for order {order.order_number}: {e}", exc_info=True
+        )
 
 
 @receiver(post_save, sender=User)
@@ -285,8 +308,8 @@ def trigger_campaigns_on_signup(sender, instance, created, **kwargs):
     if not created:
         return
 
-    from loyalty.services.campaign_orchestrator import CampaignOrchestrator
     from loyalty.models import LoyaltyCampaign
+    from loyalty.services.campaign_orchestrator import CampaignOrchestrator
 
     user = instance
 
@@ -296,9 +319,8 @@ def trigger_campaigns_on_signup(sender, instance, created, **kwargs):
 
     # Get loyalty member (should be created by create_loyalty_member_on_signup)
     try:
-        member = LoyaltyMember.objects.select_related('customer', 'balance').get(
-            customer=user,
-            is_active=True
+        member = LoyaltyMember.objects.select_related("customer", "balance").get(
+            customer=user, is_active=True
         )
     except LoyaltyMember.DoesNotExist:
         logger.debug(f"User {user.id} is not yet a loyalty member")
@@ -307,9 +329,9 @@ def trigger_campaigns_on_signup(sender, instance, created, **kwargs):
     orchestrator = CampaignOrchestrator()
 
     context = {
-        'user_id': user.id,
-        'username': user.username,
-        'email': user.email,
+        "user_id": user.id,
+        "username": user.username,
+        "email": user.email,
     }
 
     try:
@@ -319,7 +341,7 @@ def trigger_campaigns_on_signup(sender, instance, created, **kwargs):
         logger.error(f"Error triggering signup campaigns for user {user.id}: {e}", exc_info=True)
 
 
-@receiver(post_save, sender='loyalty.LoyaltyMember')
+@receiver(post_save, sender="loyalty.LoyaltyMember")
 def trigger_campaigns_on_tier_change(sender, instance, created, **kwargs):
     """
     Trigger tier promotion/demotion campaigns when member's tier changes.
@@ -327,13 +349,13 @@ def trigger_campaigns_on_tier_change(sender, instance, created, **kwargs):
     if created:
         return  # New member, not a tier change
 
-    from loyalty.services.campaign_orchestrator import CampaignOrchestrator
     from loyalty.models import LoyaltyCampaign
+    from loyalty.services.campaign_orchestrator import CampaignOrchestrator
 
     member = instance
 
     # Check if tier actually changed
-    if not hasattr(member, '_old_tier_id'):
+    if not hasattr(member, "_old_tier_id"):
         # Store current tier for next save
         try:
             current_member = LoyaltyMember.objects.get(pk=member.pk)
@@ -342,7 +364,7 @@ def trigger_campaigns_on_tier_change(sender, instance, created, **kwargs):
             pass
         return
 
-    old_tier_id = getattr(member, '_old_tier_id', None)
+    old_tier_id = getattr(member, "_old_tier_id", None)
     new_tier_id = member.current_tier_id
 
     if old_tier_id == new_tier_id:
@@ -369,21 +391,23 @@ def trigger_campaigns_on_tier_change(sender, instance, created, **kwargs):
         orchestrator = CampaignOrchestrator()
 
         context = {
-            'old_tier_id': old_tier_id,
-            'old_tier_name': old_tier.name if old_tier else None,
-            'new_tier_id': new_tier_id,
-            'new_tier_name': new_tier.name if new_tier else None,
+            "old_tier_id": old_tier_id,
+            "old_tier_name": old_tier.name if old_tier else None,
+            "new_tier_id": new_tier_id,
+            "new_tier_name": new_tier.name if new_tier else None,
         }
 
         result = orchestrator.trigger_event(event, member, context)
         logger.info(f"Triggered {result['triggered']} {event} campaigns for member {member.id}")
 
     except Exception as e:
-        logger.error(f"Error triggering tier change campaigns for member {member.id}: {e}", exc_info=True)
+        logger.error(
+            f"Error triggering tier change campaigns for member {member.id}: {e}", exc_info=True
+        )
 
 
 # Store tier ID before save for tier change detection
-@receiver(pre_save, sender='loyalty.LoyaltyMember')
+@receiver(pre_save, sender="loyalty.LoyaltyMember")
 def store_previous_tier(sender, instance, **kwargs):
     """Store previous tier ID for comparison after save"""
     if instance.pk:
@@ -399,7 +423,7 @@ def store_previous_tier(sender, instance, **kwargs):
 # ============================================================================
 
 
-@receiver(post_save, sender='catalog.ProductReview')
+@receiver(post_save, sender="catalog.ProductReview")
 def check_review_badges(sender, instance, created, **kwargs):
     """
     Check and award review-based badges when a review is created or approved.
@@ -419,7 +443,7 @@ def check_review_badges(sender, instance, created, **kwargs):
 
     # Check and award eligible review badges
     try:
-        criteria_to_check = ['review_count']
+        criteria_to_check = ["review_count"]
         newly_awarded = badge_service.check_and_award_badges(member, criteria_to_check)
         if newly_awarded:
             logger.info(f"Auto-awarded {len(newly_awarded)} review badges to member {member.id}")
@@ -427,7 +451,7 @@ def check_review_badges(sender, instance, created, **kwargs):
         logger.error(f"Error checking review badges for member {member.id}: {e}", exc_info=True)
 
 
-@receiver(post_save, sender='cart.WishlistItem')
+@receiver(post_save, sender="cart.WishlistItem")
 def check_wishlist_badges(sender, instance, created, **kwargs):
     """
     Check and award wishlist-based badges when items are added to wishlist.
@@ -450,7 +474,7 @@ def check_wishlist_badges(sender, instance, created, **kwargs):
 
     # Check and award eligible wishlist badges
     try:
-        criteria_to_check = ['wishlist_items']
+        criteria_to_check = ["wishlist_items"]
         newly_awarded = badge_service.check_and_award_badges(member, criteria_to_check)
         if newly_awarded:
             logger.info(f"Auto-awarded {len(newly_awarded)} wishlist badges to member {member.id}")
