@@ -5,14 +5,12 @@ Discovers and caches available license provider adapters.
 Follows the same pattern as payment and shipping provider registries.
 """
 
-import os
 import importlib
 import json
 import logging
+import os
 import time
-from pathlib import Path
-from typing import Dict, List, Optional, Type
-from django.conf import settings
+
 from catalog.providers.base import BaseLicenseProviderAdapter
 
 logger = logging.getLogger(__name__)
@@ -37,9 +35,9 @@ class LicenseProviderRegistry:
         LicenseProviderRegistry.reload_providers()
     """
 
-    COMPONENT_TYPE = 'license_server_provider'
+    COMPONENT_TYPE = "license_server_provider"
 
-    _providers: Dict[str, Type[BaseLicenseProviderAdapter]] = {}
+    _providers: dict[str, type[BaseLicenseProviderAdapter]] = {}
     _discovered: bool = False
     _last_loaded_at: float = 0
 
@@ -65,12 +63,14 @@ class LicenseProviderRegistry:
 
         cls._discovered = True
         cls._last_loaded_at = time.time()
-        logger.info(f"Discovered {len(cls._providers)} license providers: {', '.join(cls._providers.keys())}")
+        logger.info(
+            f"Discovered {len(cls._providers)} license providers: {', '.join(cls._providers.keys())}"
+        )
 
     @classmethod
     def _discover_builtin_providers(cls):
         """Discover providers in catalog/providers/builtin/ directory"""
-        builtin_dir = os.path.join(os.path.dirname(__file__), 'builtin')
+        builtin_dir = os.path.join(os.path.dirname(__file__), "builtin")
 
         if not os.path.exists(builtin_dir):
             logger.warning(f"Built-in providers directory not found: {builtin_dir}")
@@ -78,14 +78,14 @@ class LicenseProviderRegistry:
 
         # Scan for Python files in builtin directory
         for filename in os.listdir(builtin_dir):
-            if filename.startswith('_') or not filename.endswith('.py'):
+            if filename.startswith("_") or not filename.endswith(".py"):
                 continue
 
             module_name = filename[:-3]  # Remove .py extension
 
             try:
                 # Import the provider module
-                module_path = f'catalog.providers.builtin.{module_name}'
+                module_path = f"catalog.providers.builtin.{module_name}"
                 module = importlib.import_module(module_path)
 
                 # Find adapter classes in the module
@@ -94,18 +94,22 @@ class LicenseProviderRegistry:
 
                     # Check if it's a provider adapter class
                     if (
-                        isinstance(attr, type) and
-                        issubclass(attr, BaseLicenseProviderAdapter) and
-                        attr is not BaseLicenseProviderAdapter and
-                        hasattr(attr, 'provider_key') and
-                        attr.provider_key is not None
+                        isinstance(attr, type)
+                        and issubclass(attr, BaseLicenseProviderAdapter)
+                        and attr is not BaseLicenseProviderAdapter
+                        and hasattr(attr, "provider_key")
+                        and attr.provider_key is not None
                     ):
                         # Register the provider only if not already registered (component providers take precedence)
                         if attr.provider_key not in cls._providers:
                             cls._providers[attr.provider_key] = attr
-                            logger.debug(f"Registered builtin provider: {attr.provider_key} ({attr.provider_name})")
+                            logger.debug(
+                                f"Registered builtin provider: {attr.provider_key} ({attr.provider_name})"
+                            )
                         else:
-                            logger.debug(f"Skipping builtin provider {attr.provider_key} - component version already loaded")
+                            logger.debug(
+                                f"Skipping builtin provider {attr.provider_key} - component version already loaded"
+                            )
 
             except Exception as e:
                 logger.error(f"Failed to load provider module {module_name}: {e}")
@@ -121,7 +125,7 @@ class LicenseProviderRegistry:
         """
         from component_updates.integration_paths import INTEGRATIONS_DIR, import_component_module
 
-        components_path = INTEGRATIONS_DIR / 'license_server_provider'
+        components_path = INTEGRATIONS_DIR / "license_server_provider"
 
         if not components_path.exists():
             logger.debug(f"Component providers path not found: {components_path}")
@@ -133,13 +137,13 @@ class LicenseProviderRegistry:
                 continue
 
             # Look for 'current' symlink pointing to active version
-            current_path = provider_dir / 'current'
+            current_path = provider_dir / "current"
             if not current_path.exists() or not current_path.is_symlink():
                 logger.debug(f"Skipping {provider_dir.name} - no 'current' symlink")
                 continue
 
             # Load manifest.json
-            manifest_path = current_path / 'manifest.json'
+            manifest_path = current_path / "manifest.json"
             if not manifest_path.exists():
                 logger.warning(f"No manifest.json found for {provider_dir.name}")
                 continue
@@ -148,12 +152,12 @@ class LicenseProviderRegistry:
                 with open(manifest_path) as f:
                     manifest = json.load(f)
 
-                provider_key = manifest['provider_key']
-                entry_point = manifest.get('entry_point', 'provider')
-                class_name = manifest['class_name']
+                provider_key = manifest["provider_key"]
+                entry_point = manifest.get("entry_point", "provider")
+                class_name = manifest["class_name"]
 
                 # Remove .py extension if present
-                if entry_point.endswith('.py'):
+                if entry_point.endswith(".py"):
                     entry_point = entry_point[:-3]
 
                 # Import provider module using file-path-based loading
@@ -173,11 +177,14 @@ class LicenseProviderRegistry:
                 provider_class._component_path = current_path
 
                 cls._providers[provider_key] = provider_class
-                logger.info(f"Loaded license provider component: {provider_key} ({class_name}) v{manifest.get('version', 'unknown')}")
+                logger.info(
+                    f"Loaded license provider component: {provider_key} ({class_name}) v{manifest.get('version', 'unknown')}"
+                )
 
             except Exception as e:
                 logger.error(f"Failed to load provider component {provider_dir.name}: {e}")
                 import traceback
+
                 logger.debug(traceback.format_exc())
 
     @classmethod
@@ -185,12 +192,13 @@ class LicenseProviderRegistry:
         """Check if provider files on disk are newer than our in-memory cache."""
         try:
             from component_updates.integration_paths import provider_cache_is_stale
+
             return provider_cache_is_stale(cls.COMPONENT_TYPE, cls._last_loaded_at)
         except Exception:
             return False
 
     @classmethod
-    def get_provider(cls, provider_type: str) -> Optional[Type[BaseLicenseProviderAdapter]]:
+    def get_provider(cls, provider_type: str) -> type[BaseLicenseProviderAdapter] | None:
         """
         Get provider class by provider type/key.
 
@@ -215,7 +223,7 @@ class LicenseProviderRegistry:
         return provider_class
 
     @classmethod
-    def list_providers(cls) -> List[Dict]:
+    def list_providers(cls) -> list[dict]:
         """
         List all available providers with metadata.
 
@@ -239,25 +247,25 @@ class LicenseProviderRegistry:
 
         # Fallback metadata for built-in providers (if not componentized)
         fallback_metadata = {
-            'spwig_server': {
-                'description': 'Built-in license management server. Fully managed by Spwig, no external setup required.',
-                'logo': None,
+            "spwig_server": {
+                "description": "Built-in license management server. Fully managed by Spwig, no external setup required.",
+                "logo": None,
             },
-            'keygen': {
-                'description': 'Popular license management platform with policy-based licensing.',
-                'logo': None,
+            "keygen": {
+                "description": "Popular license management platform with policy-based licensing.",
+                "logo": None,
             },
-            'licensespring': {
-                'description': 'Comprehensive license management with floating licenses and usage tracking.',
-                'logo': None,
+            "licensespring": {
+                "description": "Comprehensive license management with floating licenses and usage tracking.",
+                "logo": None,
             },
-            'cryptlex': {
-                'description': 'Secure license management with node-locked and floating licenses.',
-                'logo': None,
+            "cryptlex": {
+                "description": "Secure license management with node-locked and floating licenses.",
+                "logo": None,
             },
-            'custom': {
-                'description': 'Connect your own license server via REST API.',
-                'logo': None,
+            "custom": {
+                "description": "Connect your own license server via REST API.",
+                "logo": None,
             },
         }
 
@@ -266,19 +274,21 @@ class LicenseProviderRegistry:
         for key, provider_class in cls._providers.items():
             try:
                 # Check if this is a component-based provider with manifest
-                if hasattr(provider_class, '_manifest') and hasattr(provider_class, '_component_path'):
+                if hasattr(provider_class, "_manifest") and hasattr(
+                    provider_class, "_component_path"
+                ):
                     manifest = provider_class._manifest
                     component_path = provider_class._component_path
 
                     # Get description from manifest
-                    description = manifest.get('description', '')
+                    description = manifest.get("description", "")
 
                     # Get logo path from manifest (handle dict and string formats)
-                    logo_raw = manifest.get('logo')
+                    logo_raw = manifest.get("logo")
                     if isinstance(logo_raw, dict):
-                        logo_file = logo_raw.get('file', '')
+                        logo_file = logo_raw.get("file", "")
                     else:
-                        logo_file = logo_raw or ''
+                        logo_file = logo_raw or ""
                     if logo_file:
                         # Build relative path to logo file
                         logo_path = component_path / logo_file
@@ -286,6 +296,7 @@ class LicenseProviderRegistry:
                             # Convert to path relative to components_data/integrations (STATICFILES_DIR)
                             # Path should be: license_server_providers/{provider}/current/logo.ext
                             from component_updates.integration_paths import INTEGRATIONS_DIR
+
                             logo = str(logo_path.relative_to(INTEGRATIONS_DIR))
                         else:
                             logo = None
@@ -295,22 +306,24 @@ class LicenseProviderRegistry:
                 else:
                     # Fall back to hardcoded metadata for built-in providers
                     metadata = fallback_metadata.get(key, {})
-                    description = metadata.get('description', '')
-                    logo = metadata.get('logo')
+                    description = metadata.get("description", "")
+                    logo = metadata.get("logo")
 
-                providers.append({
-                    'key': key,
-                    'name': provider_class.provider_name,
-                    'description': description,
-                    'logo': logo,
-                    'class': provider_class,
-                })
+                providers.append(
+                    {
+                        "key": key,
+                        "name": provider_class.provider_name,
+                        "description": description,
+                        "logo": logo,
+                        "class": provider_class,
+                    }
+                )
             except Exception as e:
                 logger.error(f"Error listing provider {key}: {e}")
                 continue
 
         # Sort: spwig_server first, then alphabetically
-        providers.sort(key=lambda p: (0 if p['key'] == 'spwig_server' else 1, p['name']))
+        providers.sort(key=lambda p: (0 if p["key"] == "spwig_server" else 1, p["name"]))
 
         return providers
 

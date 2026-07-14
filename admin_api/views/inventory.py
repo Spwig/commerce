@@ -4,28 +4,29 @@ Admin API Inventory Intelligence Views
 Endpoints for inventory dashboard, low stock analysis, velocity tracking,
 stock movements, reorder suggestions, and inventory settings.
 """
+
 import secrets
 from datetime import datetime
 
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse
 
 from admin_api.permissions import category_permission
-from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
-from admin_api.services.inventory_service import InventoryService
+from admin_api.serializers.auth import ErrorResponseSerializer
 from admin_api.serializers.inventory import (
     InventoryDashboardSerializer,
-    LowStockProductListSerializer,
-    VelocityResponseSerializer,
-    StockMovementListSerializer,
-    ReorderSuggestionListSerializer,
     InventorySettingsSerializer,
     InventorySettingsUpdateSerializer,
+    LowStockProductListSerializer,
+    ReorderSuggestionListSerializer,
+    StockMovementListSerializer,
+    VelocityResponseSerializer,
 )
-from admin_api.serializers.auth import ErrorResponseSerializer
+from admin_api.services.inventory_service import InventoryService
+from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
 from core.api.api_descriptions import AUTH_REQUIRED, PERMISSION_DENIED, RATE_LIMIT_EXCEEDED
 
 
@@ -38,8 +39,9 @@ def _generate_error_reference():
 # a) Dashboard
 # ──────────────────────────────────────────────
 
+
 @extend_schema(
-    tags=['Admin - Inventory'],
+    tags=["Admin - Inventory"],
     summary=_("Get inventory intelligence dashboard"),
     description=_("""
     Get comprehensive inventory dashboard data including stock status breakdown,
@@ -60,10 +62,10 @@ def _generate_error_reference():
         401: OpenApiResponse(description=AUTH_REQUIRED),
         403: OpenApiResponse(description=PERMISSION_DENIED),
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
-    }
+    },
 )
-@api_view(['GET'])
-@permission_classes([category_permission('catalog', 'view')])
+@api_view(["GET"])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def inventory_dashboard(request):
     """
@@ -71,27 +73,28 @@ def inventory_dashboard(request):
     """
     try:
         data = InventoryService.get_inventory_dashboard()
-        return Response({
-            'success': True,
-            'data': data
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to retrieve inventory dashboard data.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"success": True, "data": data}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to retrieve inventory dashboard data."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # ──────────────────────────────────────────────
 # b) Low Stock Products
 # ──────────────────────────────────────────────
 
+
 @extend_schema(
-    tags=['Admin - Inventory'],
+    tags=["Admin - Inventory"],
     summary=_("Get low stock products with velocity data"),
     description=_("""
     Enhanced low stock product list with sales velocity, days of supply,
@@ -105,45 +108,45 @@ def inventory_dashboard(request):
     """),
     parameters=[
         OpenApiParameter(
-            name='page',
+            name="page",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Page number"),
             required=False,
-            default=1
+            default=1,
         ),
         OpenApiParameter(
-            name='page_size',
+            name="page_size",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Items per page (max 100)"),
             required=False,
-            default=20
+            default=20,
         ),
         OpenApiParameter(
-            name='ordering',
+            name="ordering",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Sort field: available_stock, -available_stock, name, -name"),
             required=False,
-            default='available_stock'
+            default="available_stock",
         ),
         OpenApiParameter(
-            name='severity',
+            name="severity",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Filter by severity: critical, warning"),
             required=False,
         ),
         OpenApiParameter(
-            name='category_id',
+            name="category_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Filter by category ID"),
             required=False,
         ),
         OpenApiParameter(
-            name='warehouse_id',
+            name="warehouse_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Filter by warehouse ID"),
@@ -155,10 +158,10 @@ def inventory_dashboard(request):
         401: OpenApiResponse(description=AUTH_REQUIRED),
         403: OpenApiResponse(description=PERMISSION_DENIED),
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
-    }
+    },
 )
-@api_view(['GET'])
-@permission_classes([category_permission('catalog', 'view')])
+@api_view(["GET"])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def inventory_low_stock(request):
     """
@@ -166,29 +169,29 @@ def inventory_low_stock(request):
     """
     # Parse pagination parameters
     try:
-        page = int(request.query_params.get('page', 1))
+        page = int(request.query_params.get("page", 1))
         page = max(1, page)
     except (ValueError, TypeError):
         page = 1
 
     try:
-        page_size = int(request.query_params.get('page_size', 20))
+        page_size = int(request.query_params.get("page_size", 20))
         page_size = min(max(1, page_size), 100)
     except (ValueError, TypeError):
         page_size = 20
 
-    ordering = request.query_params.get('ordering', 'available_stock')
-    if ordering not in ('available_stock', '-available_stock', 'name', '-name'):
-        ordering = 'available_stock'
+    ordering = request.query_params.get("ordering", "available_stock")
+    if ordering not in ("available_stock", "-available_stock", "name", "-name"):
+        ordering = "available_stock"
 
-    severity = request.query_params.get('severity')
-    if severity and severity not in ('critical', 'warning'):
+    severity = request.query_params.get("severity")
+    if severity and severity not in ("critical", "warning"):
         severity = None
 
     # Optional filters
     category_id = None
     try:
-        cat_param = request.query_params.get('category_id')
+        cat_param = request.query_params.get("category_id")
         if cat_param:
             category_id = int(cat_param)
     except (ValueError, TypeError):
@@ -196,7 +199,7 @@ def inventory_low_stock(request):
 
     warehouse_id = None
     try:
-        wh_param = request.query_params.get('warehouse_id')
+        wh_param = request.query_params.get("warehouse_id")
         if wh_param:
             warehouse_id = int(wh_param)
     except (ValueError, TypeError):
@@ -211,27 +214,28 @@ def inventory_low_stock(request):
             category_id=category_id,
             warehouse_id=warehouse_id,
         )
-        return Response({
-            'success': True,
-            'data': data
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to retrieve low stock products.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"success": True, "data": data}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to retrieve low stock products."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # ──────────────────────────────────────────────
 # c) Velocity
 # ──────────────────────────────────────────────
 
+
 @extend_schema(
-    tags=['Admin - Inventory'],
+    tags=["Admin - Inventory"],
     summary=_("Get stock velocity for a product"),
     description=_("""
     Get detailed stock velocity data for a specific product including
@@ -244,26 +248,26 @@ def inventory_low_stock(request):
     """),
     parameters=[
         OpenApiParameter(
-            name='product_id',
+            name="product_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Product ID (required)"),
             required=True,
         ),
         OpenApiParameter(
-            name='variant_id',
+            name="variant_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Optional variant ID"),
             required=False,
         ),
         OpenApiParameter(
-            name='period',
+            name="period",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Period for daily sales chart: 7d, 30d, 90d"),
             required=False,
-            default='30d'
+            default="30d",
         ),
     ],
     responses={
@@ -273,50 +277,56 @@ def inventory_low_stock(request):
         403: OpenApiResponse(description=PERMISSION_DENIED),
         404: ErrorResponseSerializer,
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
-    }
+    },
 )
-@api_view(['GET'])
-@permission_classes([category_permission('catalog', 'view')])
+@api_view(["GET"])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def inventory_velocity(request):
     """
     Get stock velocity for a specific product.
     """
     # product_id is required
-    product_id_param = request.query_params.get('product_id')
+    product_id_param = request.query_params.get("product_id")
     if not product_id_param:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('product_id query parameter is required.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("product_id query parameter is required."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
         product_id = int(product_id_param)
     except (ValueError, TypeError):
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('product_id must be a valid integer.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("product_id must be a valid integer."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     variant_id = None
     try:
-        v_param = request.query_params.get('variant_id')
+        v_param = request.query_params.get("variant_id")
         if v_param:
             variant_id = int(v_param)
     except (ValueError, TypeError):
         pass
 
-    period = request.query_params.get('period', '30d')
-    if period not in ('7d', '30d', '90d'):
-        period = '30d'
+    period = request.query_params.get("period", "30d")
+    if period not in ("7d", "30d", "90d"):
+        period = "30d"
 
     try:
         data = InventoryService.get_velocity(
@@ -326,36 +336,40 @@ def inventory_velocity(request):
         )
 
         if data is None:
-            return Response({
-                'success': False,
-                'error': {
-                    'code': 404,
-                    'message': _('Product not found.'),
-                    'reference': _generate_error_reference(),
-                }
-            }, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 404,
+                        "message": _("Product not found."),
+                        "reference": _generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-        return Response({
-            'success': True,
-            'data': data
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to retrieve velocity data.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"success": True, "data": data}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to retrieve velocity data."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # ──────────────────────────────────────────────
 # d) Stock Movements
 # ──────────────────────────────────────────────
 
+
 @extend_schema(
-    tags=['Admin - Inventory'],
+    tags=["Admin - Inventory"],
     summary=_("Get stock movement history"),
     description=_("""
     Get paginated stock movement history for a specific product.
@@ -369,62 +383,62 @@ def inventory_velocity(request):
     """),
     parameters=[
         OpenApiParameter(
-            name='product_id',
+            name="product_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Product ID (required)"),
             required=True,
         ),
         OpenApiParameter(
-            name='variant_id',
+            name="variant_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Filter by variant ID"),
             required=False,
         ),
         OpenApiParameter(
-            name='warehouse_id',
+            name="warehouse_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Filter by warehouse ID"),
             required=False,
         ),
         OpenApiParameter(
-            name='movement_type',
+            name="movement_type",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Filter by movement type"),
             required=False,
         ),
         OpenApiParameter(
-            name='start_date',
+            name="start_date",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Start date filter (YYYY-MM-DD)"),
             required=False,
         ),
         OpenApiParameter(
-            name='end_date',
+            name="end_date",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("End date filter (YYYY-MM-DD)"),
             required=False,
         ),
         OpenApiParameter(
-            name='page',
+            name="page",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Page number"),
             required=False,
-            default=1
+            default=1,
         ),
         OpenApiParameter(
-            name='page_size',
+            name="page_size",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Items per page (max 100)"),
             required=False,
-            default=20
+            default=20,
         ),
     ],
     responses={
@@ -433,43 +447,49 @@ def inventory_velocity(request):
         401: OpenApiResponse(description=AUTH_REQUIRED),
         403: OpenApiResponse(description=PERMISSION_DENIED),
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
-    }
+    },
 )
-@api_view(['GET'])
-@permission_classes([category_permission('catalog', 'view')])
+@api_view(["GET"])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def inventory_movements(request):
     """
     Get stock movement history for a product.
     """
     # product_id is required
-    product_id_param = request.query_params.get('product_id')
+    product_id_param = request.query_params.get("product_id")
     if not product_id_param:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('product_id query parameter is required.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("product_id query parameter is required."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
         product_id = int(product_id_param)
     except (ValueError, TypeError):
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('product_id must be a valid integer.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("product_id must be a valid integer."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Optional filters
     variant_id = None
     try:
-        v_param = request.query_params.get('variant_id')
+        v_param = request.query_params.get("variant_id")
         if v_param:
             variant_id = int(v_param)
     except (ValueError, TypeError):
@@ -477,14 +497,22 @@ def inventory_movements(request):
 
     warehouse_id = None
     try:
-        wh_param = request.query_params.get('warehouse_id')
+        wh_param = request.query_params.get("warehouse_id")
         if wh_param:
             warehouse_id = int(wh_param)
     except (ValueError, TypeError):
         pass
 
-    movement_type = request.query_params.get('movement_type')
-    valid_types = ('adjustment', 'allocation', 'fulfillment', 'return', 'transfer', 'damage', 'recount')
+    movement_type = request.query_params.get("movement_type")
+    valid_types = (
+        "adjustment",
+        "allocation",
+        "fulfillment",
+        "return",
+        "transfer",
+        "damage",
+        "recount",
+    )
     if movement_type and movement_type not in valid_types:
         movement_type = None
 
@@ -492,28 +520,28 @@ def inventory_movements(request):
     start_date = None
     end_date = None
     try:
-        sd_param = request.query_params.get('start_date')
+        sd_param = request.query_params.get("start_date")
         if sd_param:
-            start_date = datetime.strptime(sd_param, '%Y-%m-%d').date()
+            start_date = datetime.strptime(sd_param, "%Y-%m-%d").date()
     except (ValueError, TypeError):
         pass
 
     try:
-        ed_param = request.query_params.get('end_date')
+        ed_param = request.query_params.get("end_date")
         if ed_param:
-            end_date = datetime.strptime(ed_param, '%Y-%m-%d').date()
+            end_date = datetime.strptime(ed_param, "%Y-%m-%d").date()
     except (ValueError, TypeError):
         pass
 
     # Pagination
     try:
-        page = int(request.query_params.get('page', 1))
+        page = int(request.query_params.get("page", 1))
         page = max(1, page)
     except (ValueError, TypeError):
         page = 1
 
     try:
-        page_size = int(request.query_params.get('page_size', 20))
+        page_size = int(request.query_params.get("page_size", 20))
         page_size = min(max(1, page_size), 100)
     except (ValueError, TypeError):
         page_size = 20
@@ -529,27 +557,28 @@ def inventory_movements(request):
             page=page,
             page_size=page_size,
         )
-        return Response({
-            'success': True,
-            'data': data
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to retrieve stock movements.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"success": True, "data": data}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to retrieve stock movements."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # ──────────────────────────────────────────────
 # e) Reorder Suggestions
 # ──────────────────────────────────────────────
 
+
 @extend_schema(
-    tags=['Admin - Inventory'],
+    tags=["Admin - Inventory"],
     summary=_("Get reorder suggestions"),
     description=_("""
     Get products that need reordering based on sales velocity, lead time,
@@ -567,31 +596,31 @@ def inventory_movements(request):
     """),
     parameters=[
         OpenApiParameter(
-            name='page',
+            name="page",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Page number"),
             required=False,
-            default=1
+            default=1,
         ),
         OpenApiParameter(
-            name='page_size',
+            name="page_size",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Items per page (max 100)"),
             required=False,
-            default=20
+            default=20,
         ),
         OpenApiParameter(
-            name='ordering',
+            name="ordering",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Sort field: urgency, -urgency, name, -name"),
             required=False,
-            default='urgency'
+            default="urgency",
         ),
         OpenApiParameter(
-            name='urgency',
+            name="urgency",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Filter by urgency: immediate, soon, upcoming"),
@@ -603,10 +632,10 @@ def inventory_movements(request):
         401: OpenApiResponse(description=AUTH_REQUIRED),
         403: OpenApiResponse(description=PERMISSION_DENIED),
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
-    }
+    },
 )
-@api_view(['GET'])
-@permission_classes([category_permission('catalog', 'view')])
+@api_view(["GET"])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def inventory_reorder_suggestions(request):
     """
@@ -614,23 +643,23 @@ def inventory_reorder_suggestions(request):
     """
     # Pagination
     try:
-        page = int(request.query_params.get('page', 1))
+        page = int(request.query_params.get("page", 1))
         page = max(1, page)
     except (ValueError, TypeError):
         page = 1
 
     try:
-        page_size = int(request.query_params.get('page_size', 20))
+        page_size = int(request.query_params.get("page_size", 20))
         page_size = min(max(1, page_size), 100)
     except (ValueError, TypeError):
         page_size = 20
 
-    ordering = request.query_params.get('ordering', 'urgency')
-    if ordering not in ('urgency', '-urgency', 'name', '-name'):
-        ordering = 'urgency'
+    ordering = request.query_params.get("ordering", "urgency")
+    if ordering not in ("urgency", "-urgency", "name", "-name"):
+        ordering = "urgency"
 
-    urgency = request.query_params.get('urgency')
-    if urgency and urgency not in ('immediate', 'soon', 'upcoming'):
+    urgency = request.query_params.get("urgency")
+    if urgency and urgency not in ("immediate", "soon", "upcoming"):
         urgency = None
 
     try:
@@ -640,27 +669,28 @@ def inventory_reorder_suggestions(request):
             ordering=ordering,
             urgency=urgency,
         )
-        return Response({
-            'success': True,
-            'data': data
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to retrieve reorder suggestions.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"success": True, "data": data}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to retrieve reorder suggestions."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # ──────────────────────────────────────────────
 # f) Inventory Settings - GET
 # ──────────────────────────────────────────────
 
+
 @extend_schema(
-    tags=['Admin - Inventory'],
+    tags=["Admin - Inventory"],
     summary=_("Get inventory settings"),
     description=_("""
     Get current inventory management settings from site configuration.
@@ -678,10 +708,10 @@ def inventory_reorder_suggestions(request):
         401: OpenApiResponse(description=AUTH_REQUIRED),
         403: OpenApiResponse(description=PERMISSION_DENIED),
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
-    }
+    },
 )
-@api_view(['GET'])
-@permission_classes([category_permission('catalog', 'view')])
+@api_view(["GET"])
+@permission_classes([category_permission("catalog", "view")])
 @throttle_classes([AdminAPIThrottle])
 def inventory_settings_get(request):
     """
@@ -694,53 +724,44 @@ def inventory_settings_get(request):
 
         # Map API field names -> actual SiteSettings field names
         data = {
-            'default_low_stock_threshold': getattr(
-                site_settings, 'low_stock_threshold', 10
+            "default_low_stock_threshold": getattr(site_settings, "low_stock_threshold", 10),
+            "low_stock_alerts_enabled": getattr(site_settings, "enable_low_stock_alerts", True),
+            "low_stock_alert_frequency": getattr(
+                site_settings, "low_stock_alert_frequency", "daily"
             ),
-            'low_stock_alerts_enabled': getattr(
-                site_settings, 'enable_low_stock_alerts', True
+            "track_inventory_by_default": getattr(site_settings, "enable_inventory_tracking", True),
+            "allow_backorders_by_default": getattr(
+                site_settings, "allow_backorders_by_default", False
             ),
-            'low_stock_alert_frequency': getattr(
-                site_settings, 'low_stock_alert_frequency', 'daily'
-            ),
-            'track_inventory_by_default': getattr(
-                site_settings, 'enable_inventory_tracking', True
-            ),
-            'allow_backorders_by_default': getattr(
-                site_settings, 'allow_backorders_by_default', False
-            ),
-            'default_reorder_lead_days': getattr(
-                site_settings, 'default_reorder_lead_days', 14
-            ),
-            'safety_stock_multiplier': getattr(
-                site_settings, 'safety_stock_multiplier', 1.5
-            ),
-            'velocity_calculation_window_days': getattr(
-                site_settings, 'velocity_calculation_window_days', 30
+            "default_reorder_lead_days": getattr(site_settings, "default_reorder_lead_days", 14),
+            "safety_stock_multiplier": getattr(site_settings, "safety_stock_multiplier", 1.5),
+            "velocity_calculation_window_days": getattr(
+                site_settings, "velocity_calculation_window_days", 30
             ),
         }
 
-        return Response({
-            'success': True,
-            'data': data
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to retrieve inventory settings.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"success": True, "data": data}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to retrieve inventory settings."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # ──────────────────────────────────────────────
 # g) Inventory Settings - UPDATE
 # ──────────────────────────────────────────────
 
+
 @extend_schema(
-    tags=['Admin - Inventory'],
+    tags=["Admin - Inventory"],
     summary=_("Update inventory settings"),
     description=_("""
     Update inventory management settings. Partial updates are supported;
@@ -757,10 +778,10 @@ def inventory_settings_get(request):
         401: OpenApiResponse(description=AUTH_REQUIRED),
         403: OpenApiResponse(description=PERMISSION_DENIED),
         429: OpenApiResponse(description=RATE_LIMIT_EXCEEDED),
-    }
+    },
 )
-@api_view(['PATCH'])
-@permission_classes([category_permission('settings', 'full')])
+@api_view(["PATCH"])
+@permission_classes([category_permission("settings", "full")])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def inventory_settings_update(request):
     """
@@ -770,39 +791,45 @@ def inventory_settings_update(request):
 
     serializer = InventorySettingsUpdateSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid settings data.'),
-                'reference': _generate_error_reference(),
-                'details': serializer.errors,
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid settings data."),
+                    "reference": _generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
         site_settings = SiteSettings.objects.first()
         if not site_settings:
-            return Response({
-                'success': False,
-                'error': {
-                    'code': 500,
-                    'message': _('Site settings not configured.'),
-                    'reference': _generate_error_reference(),
-                }
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 500,
+                        "message": _("Site settings not configured."),
+                        "reference": _generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         # Map API field names to actual SiteSettings model field names
         API_TO_MODEL_FIELD = {
-            'default_low_stock_threshold': 'low_stock_threshold',
-            'low_stock_alerts_enabled': 'enable_low_stock_alerts',
-            'track_inventory_by_default': 'enable_inventory_tracking',
+            "default_low_stock_threshold": "low_stock_threshold",
+            "low_stock_alerts_enabled": "enable_low_stock_alerts",
+            "track_inventory_by_default": "enable_inventory_tracking",
             # These map 1:1
-            'low_stock_alert_frequency': 'low_stock_alert_frequency',
-            'allow_backorders_by_default': 'allow_backorders_by_default',
-            'default_reorder_lead_days': 'default_reorder_lead_days',
-            'safety_stock_multiplier': 'safety_stock_multiplier',
-            'velocity_calculation_window_days': 'velocity_calculation_window_days',
+            "low_stock_alert_frequency": "low_stock_alert_frequency",
+            "allow_backorders_by_default": "allow_backorders_by_default",
+            "default_reorder_lead_days": "default_reorder_lead_days",
+            "safety_stock_multiplier": "safety_stock_multiplier",
+            "velocity_calculation_window_days": "velocity_calculation_window_days",
         }
 
         # Update only provided fields
@@ -820,42 +847,32 @@ def inventory_settings_update(request):
 
         # Return updated settings
         data = {
-            'default_low_stock_threshold': getattr(
-                site_settings, 'low_stock_threshold', 10
+            "default_low_stock_threshold": getattr(site_settings, "low_stock_threshold", 10),
+            "low_stock_alerts_enabled": getattr(site_settings, "enable_low_stock_alerts", True),
+            "low_stock_alert_frequency": getattr(
+                site_settings, "low_stock_alert_frequency", "daily"
             ),
-            'low_stock_alerts_enabled': getattr(
-                site_settings, 'enable_low_stock_alerts', True
+            "track_inventory_by_default": getattr(site_settings, "enable_inventory_tracking", True),
+            "allow_backorders_by_default": getattr(
+                site_settings, "allow_backorders_by_default", False
             ),
-            'low_stock_alert_frequency': getattr(
-                site_settings, 'low_stock_alert_frequency', 'daily'
-            ),
-            'track_inventory_by_default': getattr(
-                site_settings, 'enable_inventory_tracking', True
-            ),
-            'allow_backorders_by_default': getattr(
-                site_settings, 'allow_backorders_by_default', False
-            ),
-            'default_reorder_lead_days': getattr(
-                site_settings, 'default_reorder_lead_days', 14
-            ),
-            'safety_stock_multiplier': getattr(
-                site_settings, 'safety_stock_multiplier', 1.5
-            ),
-            'velocity_calculation_window_days': getattr(
-                site_settings, 'velocity_calculation_window_days', 30
+            "default_reorder_lead_days": getattr(site_settings, "default_reorder_lead_days", 14),
+            "safety_stock_multiplier": getattr(site_settings, "safety_stock_multiplier", 1.5),
+            "velocity_calculation_window_days": getattr(
+                site_settings, "velocity_calculation_window_days", 30
             ),
         }
 
-        return Response({
-            'success': True,
-            'data': data
-        }, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to update inventory settings.'),
-                'reference': _generate_error_reference(),
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"success": True, "data": data}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to update inventory settings."),
+                    "reference": _generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )

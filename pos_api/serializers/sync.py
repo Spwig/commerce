@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 class POSOfflineTransactionItemSerializer(serializers.Serializer):
     """Single item in an offline transaction."""
+
     product_id = serializers.IntegerField()
     variant_id = serializers.IntegerField(required=False, allow_null=True)
     quantity = serializers.IntegerField(min_value=1, max_value=9999)
@@ -11,7 +12,8 @@ class POSOfflineTransactionItemSerializer(serializers.Serializer):
 
 class POSOfflinePaymentSerializer(serializers.Serializer):
     """Payment in an offline transaction."""
-    method = serializers.ChoiceField(choices=['cash', 'card', 'gift_card'])
+
+    method = serializers.ChoiceField(choices=["cash", "card", "gift_card"])
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     amount_tendered = serializers.DecimalField(
         max_digits=10, decimal_places=2, required=False, allow_null=True
@@ -23,6 +25,7 @@ class POSOfflinePaymentSerializer(serializers.Serializer):
 
 class POSOfflineTransactionSerializer(serializers.Serializer):
     """Single offline transaction for batch upload."""
+
     local_id = serializers.CharField(max_length=100)
     terminal_uuid = serializers.UUIDField()
     cashier_id = serializers.IntegerField()
@@ -34,17 +37,17 @@ class POSOfflineTransactionSerializer(serializers.Serializer):
 
 class POSOfflineUploadSerializer(serializers.Serializer):
     """Batch offline transaction upload."""
+
     transactions = POSOfflineTransactionSerializer(many=True)
 
 
 class POSOfflineStockAdjustmentItemSerializer(serializers.Serializer):
     """Single offline stock adjustment."""
+
     idempotency_key = serializers.CharField(max_length=64)
     product_id = serializers.IntegerField()
     variant_id = serializers.IntegerField(required=False, allow_null=True)
-    adjustment_type = serializers.ChoiceField(
-        choices=['receive', 'damage', 'recount', 'return']
-    )
+    adjustment_type = serializers.ChoiceField(choices=["receive", "damage", "recount", "return"])
     quantity = serializers.IntegerField(min_value=0)
     reason = serializers.CharField(min_length=1)
     created_at = serializers.DateTimeField(required=False)
@@ -52,11 +55,13 @@ class POSOfflineStockAdjustmentItemSerializer(serializers.Serializer):
 
 class POSOfflineStockAdjustmentUploadSerializer(serializers.Serializer):
     """Batch offline stock adjustment upload."""
+
     adjustments = POSOfflineStockAdjustmentItemSerializer(many=True)
 
 
 class POSOrderSyncItemSerializer(serializers.Serializer):
     """Order line item for offline sync."""
+
     id = serializers.IntegerField()
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
@@ -69,20 +74,18 @@ class POSOrderSyncItemSerializer(serializers.Serializer):
 
 class POSOrderSyncPaymentSerializer(serializers.Serializer):
     """Payment detail for offline sync."""
+
     method = serializers.CharField()
     method_display = serializers.CharField()
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
-    amount_tendered = serializers.DecimalField(
-        max_digits=10, decimal_places=2, allow_null=True
-    )
-    change_given = serializers.DecimalField(
-        max_digits=10, decimal_places=2, allow_null=True
-    )
+    amount_tendered = serializers.DecimalField(max_digits=10, decimal_places=2, allow_null=True)
+    change_given = serializers.DecimalField(max_digits=10, decimal_places=2, allow_null=True)
     card_last_four = serializers.CharField(allow_blank=True)
 
 
 class POSOrderSyncSerializer(serializers.Serializer):
     """Full order for offline sync cache."""
+
     id = serializers.IntegerField()
     order_number = serializers.CharField()
     status = serializers.CharField()
@@ -106,6 +109,7 @@ class POSOrderSyncSerializer(serializers.Serializer):
 
 class POSSyncStatusSerializer(serializers.Serializer):
     """Sync status response."""
+
     server_time = serializers.DateTimeField()
     total_products = serializers.IntegerField()
     total_customers = serializers.IntegerField()

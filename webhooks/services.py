@@ -4,38 +4,40 @@ Webhook service functions.
 This module provides the main interface for triggering webhooks
 from anywhere in the application.
 """
+
 import logging
-from typing import Any, Optional
 from urllib.parse import urlparse
 
 from django.db.models import Model
 from django.utils import timezone
 
-from .events import is_valid_event, WEBHOOK_EVENTS
+from .events import is_valid_event
 
 logger = logging.getLogger(__name__)
 
 # Hostnames considered localhost (safe for sandbox delivery)
-_LOCALHOST_HOSTS = frozenset({
-    'localhost', '127.0.0.1', '::1', '[::1]',
-})
+_LOCALHOST_HOSTS = frozenset(
+    {
+        "localhost",
+        "127.0.0.1",
+        "::1",
+        "[::1]",
+    }
+)
 
 
 def _is_localhost_url(url: str) -> bool:
     """Check if a URL points to localhost."""
     try:
         parsed = urlparse(url)
-        hostname = parsed.hostname or ''
+        hostname = parsed.hostname or ""
         return hostname in _LOCALHOST_HOSTS
     except Exception:
         return False
 
 
 def trigger_webhook(
-    event_type: str,
-    instance: Optional[Model] = None,
-    data: Optional[dict] = None,
-    **extra_data
+    event_type: str, instance: Model | None = None, data: dict | None = None, **extra_data
 ) -> int:
     """
     Trigger webhooks for an event type.
@@ -64,9 +66,9 @@ def trigger_webhook(
             'threshold': 10,
         })
     """
-    from .models import WebhookEndpoint, WebhookDelivery
-    from .tasks import deliver_webhook
+    from .models import WebhookDelivery, WebhookEndpoint
     from .serializers import get_payload_for_event
+    from .tasks import deliver_webhook
 
     # Validate event type
     if not is_valid_event(event_type):
@@ -81,10 +83,7 @@ def trigger_webhook(
 
     # Filter by subscribed events
     # JSONField contains check for the event in the list
-    subscribed_endpoints = [
-        ep for ep in endpoints
-        if event_type in ep.events or '*' in ep.events
-    ]
+    subscribed_endpoints = [ep for ep in endpoints if event_type in ep.events or "*" in ep.events]
 
     if not subscribed_endpoints:
         logger.debug(f"No endpoints subscribed to event {event_type}")
@@ -103,15 +102,16 @@ def trigger_webhook(
 
     # Create full payload
     payload = {
-        'event': event_type,
-        'created_at': timezone.now().isoformat(),
-        'data': payload_data,
+        "event": event_type,
+        "created_at": timezone.now().isoformat(),
+        "data": payload_data,
     }
 
     # Add sandbox flag when in sandbox mode
     from core.license import is_sandbox_mode
+
     if is_sandbox_mode():
-        payload['sandbox'] = True
+        payload["sandbox"] = True
 
     # Queue deliveries
     count = 0
@@ -123,7 +123,7 @@ def trigger_webhook(
                 endpoint=endpoint,
                 event_type=event_type,
                 payload=payload,
-                status='sandbox_blocked',
+                status="sandbox_blocked",
             )
             logger.info(
                 f"[SANDBOX] Webhook to {endpoint.url} blocked "
@@ -148,10 +148,7 @@ def trigger_webhook(
 
 
 def trigger_webhook_sync(
-    event_type: str,
-    instance: Optional[Model] = None,
-    data: Optional[dict] = None,
-    **extra_data
+    event_type: str, instance: Model | None = None, data: dict | None = None, **extra_data
 ) -> list:
     """
     Trigger webhooks synchronously (for testing/debugging).
@@ -168,19 +165,16 @@ def trigger_webhook_sync(
     Returns:
         List of delivery results
     """
-    from .models import WebhookEndpoint, WebhookDelivery
-    from .tasks import deliver_webhook
+    from .models import WebhookDelivery, WebhookEndpoint
     from .serializers import get_payload_for_event
+    from .tasks import deliver_webhook
 
     endpoints = WebhookEndpoint.objects.filter(
         is_active=True,
         is_disabled_by_failures=False,
     )
 
-    subscribed_endpoints = [
-        ep for ep in endpoints
-        if event_type in ep.events or '*' in ep.events
-    ]
+    subscribed_endpoints = [ep for ep in endpoints if event_type in ep.events or "*" in ep.events]
 
     if not subscribed_endpoints:
         return []
@@ -195,15 +189,16 @@ def trigger_webhook_sync(
     payload_data.update(extra_data)
 
     payload = {
-        'event': event_type,
-        'created_at': timezone.now().isoformat(),
-        'data': payload_data,
+        "event": event_type,
+        "created_at": timezone.now().isoformat(),
+        "data": payload_data,
     }
 
     # Add sandbox flag when in sandbox mode
     from core.license import is_sandbox_mode
+
     if is_sandbox_mode():
-        payload['sandbox'] = True
+        payload["sandbox"] = True
 
     sandbox = is_sandbox_mode()
     results = []
@@ -214,14 +209,16 @@ def trigger_webhook_sync(
                 endpoint=endpoint,
                 event_type=event_type,
                 payload=payload,
-                status='sandbox_blocked',
+                status="sandbox_blocked",
             )
-            results.append({
-                'delivery_id': str(delivery.id),
-                'endpoint': endpoint.name,
-                'status': 'sandbox_blocked',
-                'response_code': None,
-            })
+            results.append(
+                {
+                    "delivery_id": str(delivery.id),
+                    "endpoint": endpoint.name,
+                    "status": "sandbox_blocked",
+                    "response_code": None,
+                }
+            )
             logger.info(
                 f"[SANDBOX] Webhook to {endpoint.url} blocked "
                 f"(external URL in sandbox mode), delivery_id={delivery.id}"
@@ -236,12 +233,14 @@ def trigger_webhook_sync(
         # Run synchronously
         deliver_webhook(str(delivery.id))
         delivery.refresh_from_db()
-        results.append({
-            'delivery_id': str(delivery.id),
-            'endpoint': endpoint.name,
-            'status': delivery.status,
-            'response_code': delivery.response_status_code,
-        })
+        results.append(
+            {
+                "delivery_id": str(delivery.id),
+                "endpoint": endpoint.name,
+                "status": delivery.status,
+                "response_code": delivery.response_status_code,
+            }
+        )
 
     return results
 
@@ -256,9 +255,11 @@ def get_endpoint_stats(endpoint_id: str) -> dict:
     Returns:
         Dictionary with delivery statistics
     """
-    from .models import WebhookEndpoint, WebhookDelivery
-    from django.db.models import Count, Avg, Q
     from datetime import timedelta
+
+    from django.db.models import Avg, Count, Q
+
+    from .models import WebhookDelivery, WebhookEndpoint
 
     try:
         endpoint = WebhookEndpoint.objects.get(id=endpoint_id)
@@ -272,33 +273,33 @@ def get_endpoint_stats(endpoint_id: str) -> dict:
         endpoint=endpoint,
         created_at__gte=since,
     ).aggregate(
-        total=Count('id'),
-        success=Count('id', filter=Q(status=WebhookDelivery.Status.SUCCESS)),
-        failed=Count('id', filter=Q(status=WebhookDelivery.Status.FAILED)),
-        retrying=Count('id', filter=Q(status=WebhookDelivery.Status.RETRYING)),
-        pending=Count('id', filter=Q(status=WebhookDelivery.Status.PENDING)),
-        avg_response_time=Avg('response_time_ms', filter=Q(response_time_ms__isnull=False)),
+        total=Count("id"),
+        success=Count("id", filter=Q(status=WebhookDelivery.Status.SUCCESS)),
+        failed=Count("id", filter=Q(status=WebhookDelivery.Status.FAILED)),
+        retrying=Count("id", filter=Q(status=WebhookDelivery.Status.RETRYING)),
+        pending=Count("id", filter=Q(status=WebhookDelivery.Status.PENDING)),
+        avg_response_time=Avg("response_time_ms", filter=Q(response_time_ms__isnull=False)),
     )
 
     # Calculate success rate
-    total = stats['total'] or 0
-    success = stats['success'] or 0
+    total = stats["total"] or 0
+    success = stats["success"] or 0
     success_rate = (success / total * 100) if total > 0 else 0
 
     return {
-        'endpoint_id': str(endpoint_id),
-        'endpoint_name': endpoint.name,
-        'period': '24h',
-        'total_deliveries': total,
-        'successful': success,
-        'failed': stats['failed'] or 0,
-        'retrying': stats['retrying'] or 0,
-        'pending': stats['pending'] or 0,
-        'success_rate': round(success_rate, 1),
-        'avg_response_time_ms': round(stats['avg_response_time'] or 0, 0),
-        'is_healthy': endpoint.consecutive_failures < 5 and not endpoint.is_disabled_by_failures,
-        'consecutive_failures': endpoint.consecutive_failures,
-        'is_disabled': endpoint.is_disabled_by_failures,
+        "endpoint_id": str(endpoint_id),
+        "endpoint_name": endpoint.name,
+        "period": "24h",
+        "total_deliveries": total,
+        "successful": success,
+        "failed": stats["failed"] or 0,
+        "retrying": stats["retrying"] or 0,
+        "pending": stats["pending"] or 0,
+        "success_rate": round(success_rate, 1),
+        "avg_response_time_ms": round(stats["avg_response_time"] or 0, 0),
+        "is_healthy": endpoint.consecutive_failures < 5 and not endpoint.is_disabled_by_failures,
+        "consecutive_failures": endpoint.consecutive_failures,
+        "is_disabled": endpoint.is_disabled_by_failures,
     }
 
 
@@ -314,20 +315,19 @@ def list_available_events() -> list:
     events = []
     for category, category_events in get_events_by_category().items():
         for event_info in category_events:
-            events.append({
-                'event': event_info['event'],
-                'description': event_info['description'],
-                'category': category,
-            })
+            events.append(
+                {
+                    "event": event_info["event"],
+                    "description": event_info["description"],
+                    "category": category,
+                }
+            )
 
-    return sorted(events, key=lambda x: x['event'])
+    return sorted(events, key=lambda x: x["event"])
 
 
 def verify_webhook_signature(
-    payload: str,
-    signature_header: str,
-    secret: str,
-    tolerance_seconds: int = 300
+    payload: str, signature_header: str, secret: str, tolerance_seconds: int = 300
 ) -> tuple[bool, str]:
     """
     Verify a webhook signature.
@@ -344,19 +344,19 @@ def verify_webhook_signature(
     Returns:
         Tuple of (is_valid, error_message)
     """
-    import hmac
     import hashlib
+    import hmac
     import time
 
     try:
         # Parse signature header: "t=1234567890,v1=abc123..."
         parts = {}
-        for part in signature_header.split(','):
-            key, value = part.split('=', 1)
+        for part in signature_header.split(","):
+            key, value = part.split("=", 1)
             parts[key] = value
 
-        timestamp_str = parts.get('t')
-        signature = parts.get('v1')
+        timestamp_str = parts.get("t")
+        signature = parts.get("v1")
 
         if not timestamp_str or not signature:
             return False, "Missing timestamp or signature in header"
@@ -371,9 +371,7 @@ def verify_webhook_signature(
         # Compute expected signature
         signature_payload = f"{timestamp}.{payload}"
         expected_signature = hmac.new(
-            secret.encode('utf-8'),
-            signature_payload.encode('utf-8'),
-            hashlib.sha256
+            secret.encode("utf-8"), signature_payload.encode("utf-8"), hashlib.sha256
         ).hexdigest()
 
         # Compare signatures using constant-time comparison

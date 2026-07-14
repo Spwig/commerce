@@ -7,32 +7,32 @@ Provides customer-facing endpoints for:
 - iCal feed download
 - Joining the waitlist
 """
-from datetime import datetime, date, time, timezone as dt_timezone
+
+from datetime import UTC, date, datetime, time
 from decimal import Decimal
 
-from rest_framework import serializers, status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
 from drf_spectacular.utils import (
-    extend_schema,
     OpenApiParameter,
     OpenApiResponse,
+    extend_schema,
     inline_serializer,
 )
+from rest_framework import serializers, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
-from catalog.models import Product, Booking, BookingNote
+from catalog.models import Booking, Product
 from catalog.services.booking_service import BookingAvailabilityService, BookingLifecycleService
-
 
 # =============================================================================
 # Serializers for drf-spectacular documentation
 # =============================================================================
+
 
 class BookingConfigSerializer(serializers.Serializer):
     booking_type = serializers.CharField()
@@ -57,7 +57,9 @@ class BookingResourceSerializer(serializers.Serializer):
     name = serializers.CharField()
     resource_type = serializers.CharField()
     cost_adjustment = serializers.CharField()
-    is_per_night = serializers.BooleanField(help_text="Whether cost adjustment is applied per night")
+    is_per_night = serializers.BooleanField(
+        help_text="Whether cost adjustment is applied per night"
+    )
 
 
 class BookingPersonTypeSerializer(serializers.Serializer):
@@ -65,7 +67,9 @@ class BookingPersonTypeSerializer(serializers.Serializer):
     cost_adjustment = serializers.CharField()
     min_persons = serializers.IntegerField()
     max_persons = serializers.IntegerField()
-    is_per_night = serializers.BooleanField(help_text="Whether cost adjustment is charged per night")
+    is_per_night = serializers.BooleanField(
+        help_text="Whether cost adjustment is charged per night"
+    )
 
 
 class AvailableDateSerializer(serializers.Serializer):
@@ -116,7 +120,7 @@ class BookingCheckRequestSerializer(serializers.Serializer):
     persons = serializers.DictField(
         child=serializers.IntegerField(),
         required=False,
-        help_text='Person type counts, e.g. {"Adult": 2, "Child": 1}'
+        help_text='Person type counts, e.g. {"Adult": 2, "Child": 1}',
     )
     duration = serializers.IntegerField(
         required=False, help_text="Custom duration when duration_type is customer_selected"
@@ -148,7 +152,9 @@ class BookingCheckResponseSerializer(serializers.Serializer):
     deposit_amount = serializers.CharField(required=False, help_text="Deposit amount due now")
     deposit_type = serializers.CharField(required=False, help_text="fixed or percentage")
     # Accommodation-specific fields (included when booking_type is accommodation)
-    num_nights = serializers.IntegerField(required=False, help_text="Number of nights (accommodation only)")
+    num_nights = serializers.IntegerField(
+        required=False, help_text="Number of nights (accommodation only)"
+    )
     nightly_breakdown = NightlyBreakdownSerializer(
         many=True, required=False, help_text="Per-night pricing breakdown (accommodation only)"
     )
@@ -178,13 +184,11 @@ class WaitlistRequestSerializer(serializers.Serializer):
     desired_time_start = serializers.CharField(
         required=False, help_text="Desired start time (HH:MM)"
     )
-    desired_time_end = serializers.CharField(
-        required=False, help_text="Desired end time (HH:MM)"
-    )
+    desired_time_end = serializers.CharField(required=False, help_text="Desired end time (HH:MM)")
     desired_persons = serializers.DictField(
         child=serializers.IntegerField(),
         required=False,
-        help_text='Desired person counts, e.g. {"Adult": 2}'
+        help_text='Desired person counts, e.g. {"Adult": 2}',
     )
 
 
@@ -198,8 +202,9 @@ class WaitlistResponseSerializer(serializers.Serializer):
 # API Endpoints
 # =============================================================================
 
+
 @extend_schema(
-    tags=['Catalog'],
+    tags=["Catalog"],
     summary=_("Get booking availability"),
     description=_("""
     Returns available dates for a booking product in a given month, along with
@@ -217,24 +222,34 @@ class WaitlistResponseSerializer(serializers.Serializer):
     """),
     parameters=[
         OpenApiParameter(
-            name='product_slug', location=OpenApiParameter.PATH, type=str,
+            name="product_slug",
+            location=OpenApiParameter.PATH,
+            type=str,
             description=_("Product URL slug"),
         ),
         OpenApiParameter(
-            name='year', type=int, location=OpenApiParameter.QUERY,
+            name="year",
+            type=int,
+            location=OpenApiParameter.QUERY,
             description=_("Year to check (default: current year)"),
         ),
         OpenApiParameter(
-            name='month', type=int, location=OpenApiParameter.QUERY,
+            name="month",
+            type=int,
+            location=OpenApiParameter.QUERY,
             description=_("Month to check, 1-12 (default: current month)"),
         ),
         OpenApiParameter(
-            name='resource_id', type=int, location=OpenApiParameter.QUERY,
+            name="resource_id",
+            type=int,
+            location=OpenApiParameter.QUERY,
             required=False,
             description=_("Filter availability by a specific resource ID"),
         ),
         OpenApiParameter(
-            name='timezone', type=str, location=OpenApiParameter.QUERY,
+            name="timezone",
+            type=str,
+            location=OpenApiParameter.QUERY,
             required=False,
             description=_("Customer timezone (IANA identifier, e.g. 'America/New_York')"),
         ),
@@ -245,94 +260,98 @@ class WaitlistResponseSerializer(serializers.Serializer):
         404: OpenApiResponse(description=_("Product not found or not a booking product")),
     },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def booking_availability(request, product_slug):
     """Get available dates for a booking product in a given month."""
     product = get_object_or_404(
-        Product.objects.filter(product_type='booking', status='published'),
+        Product.objects.filter(product_type="booking", status="published"),
         slug=product_slug,
     )
 
     try:
-        year = int(request.GET.get('year', timezone.now().year))
-        month = int(request.GET.get('month', timezone.now().month))
+        year = int(request.GET.get("year", timezone.now().year))
+        month = int(request.GET.get("month", timezone.now().month))
     except (ValueError, TypeError):
         return Response(
-            {'error': 'Invalid year or month'},
+            {"error": "Invalid year or month"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    resource_id = request.GET.get('resource_id')
+    resource_id = request.GET.get("resource_id")
     if resource_id:
         try:
             resource_id = int(resource_id)
         except (ValueError, TypeError):
             resource_id = None
 
-    dates = BookingAvailabilityService.get_available_dates(
-        product, year, month, resource_id
-    )
+    dates = BookingAvailabilityService.get_available_dates(product, year, month, resource_id)
 
     # Include booking config summary for frontend
     config = product.booking_config
     config_data = {
-        'booking_type': config.booking_type,
-        'duration_type': config.duration_type,
-        'duration': config.duration,
-        'duration_unit': config.duration_unit,
-        'min_duration': config.min_duration,
-        'max_duration': config.max_duration,
-        'calendar_display': config.calendar_display,
-        'customer_timezone_enabled': config.customer_timezone_enabled,
-        'deposit_enabled': config.deposit_enabled,
-        'deposit_type': config.deposit_type if config.deposit_enabled else None,
-        'deposit_amount': str(config.deposit_amount) if config.deposit_enabled else None,
-        'confirmation_required': config.confirmation_required,
-        'min_stay': config.min_stay,
-        'max_stay': config.max_stay,
-        'standard_occupancy': config.standard_occupancy,
-        'max_occupancy': config.max_occupancy,
+        "booking_type": config.booking_type,
+        "duration_type": config.duration_type,
+        "duration": config.duration,
+        "duration_unit": config.duration_unit,
+        "min_duration": config.min_duration,
+        "max_duration": config.max_duration,
+        "calendar_display": config.calendar_display,
+        "customer_timezone_enabled": config.customer_timezone_enabled,
+        "deposit_enabled": config.deposit_enabled,
+        "deposit_type": config.deposit_type if config.deposit_enabled else None,
+        "deposit_amount": str(config.deposit_amount) if config.deposit_enabled else None,
+        "confirmation_required": config.confirmation_required,
+        "min_stay": config.min_stay,
+        "max_stay": config.max_stay,
+        "standard_occupancy": config.standard_occupancy,
+        "max_occupancy": config.max_occupancy,
     }
 
     # Include resources if customer-selected
     resources = []
     for r in product.booking_resources.filter(
-        is_active=True, assignment_type='customer_selected'
-    ).order_by('sort_order'):
-        resources.append({
-            'id': r.pk,
-            'name': r.name,
-            'resource_type': r.resource_type,
-            'cost_adjustment': str(r.base_cost_adjustment),
-            'is_per_night': r.is_per_night,
-        })
+        is_active=True, assignment_type="customer_selected"
+    ).order_by("sort_order"):
+        resources.append(
+            {
+                "id": r.pk,
+                "name": r.name,
+                "resource_type": r.resource_type,
+                "cost_adjustment": str(r.base_cost_adjustment),
+                "is_per_night": r.is_per_night,
+            }
+        )
 
     # Include person types
     person_types = []
-    for pt in product.booking_person_types.all().order_by('sort_order'):
-        person_types.append({
-            'name': pt.name,
-            'cost_adjustment': str(pt.cost_adjustment),
-            'min_persons': pt.min_persons,
-            'max_persons': pt.max_persons,
-            'is_per_night': pt.is_per_night,
-        })
+    for pt in product.booking_person_types.all().order_by("sort_order"):
+        person_types.append(
+            {
+                "name": pt.name,
+                "cost_adjustment": str(pt.cost_adjustment),
+                "min_persons": pt.min_persons,
+                "max_persons": pt.max_persons,
+                "is_per_night": pt.is_per_night,
+            }
+        )
 
-    return Response({
-        'product_id': product.pk,
-        'product_name': product.name,
-        'config': config_data,
-        'resources': resources,
-        'person_types': person_types,
-        'available_dates': dates,
-        'year': year,
-        'month': month,
-    })
+    return Response(
+        {
+            "product_id": product.pk,
+            "product_name": product.name,
+            "config": config_data,
+            "resources": resources,
+            "person_types": person_types,
+            "available_dates": dates,
+            "year": year,
+            "month": month,
+        }
+    )
 
 
 @extend_schema(
-    tags=['Catalog'],
+    tags=["Catalog"],
     summary=_("Get booking time slots"),
     description=_("""
     Returns available time slots for a specific date on a booking product.
@@ -346,20 +365,29 @@ def booking_availability(request, product_slug):
     """),
     parameters=[
         OpenApiParameter(
-            name='product_slug', location=OpenApiParameter.PATH, type=str,
+            name="product_slug",
+            location=OpenApiParameter.PATH,
+            type=str,
             description=_("Product URL slug"),
         ),
         OpenApiParameter(
-            name='date', type=str, location=OpenApiParameter.QUERY,
-            description=_("Date to check (YYYY-MM-DD format)"), required=True,
+            name="date",
+            type=str,
+            location=OpenApiParameter.QUERY,
+            description=_("Date to check (YYYY-MM-DD format)"),
+            required=True,
         ),
         OpenApiParameter(
-            name='resource_id', type=int, location=OpenApiParameter.QUERY,
+            name="resource_id",
+            type=int,
+            location=OpenApiParameter.QUERY,
             required=False,
             description=_("Filter slots by a specific resource ID"),
         ),
         OpenApiParameter(
-            name='timezone', type=str, location=OpenApiParameter.QUERY,
+            name="timezone",
+            type=str,
+            location=OpenApiParameter.QUERY,
             required=False,
             description=_("Customer timezone (IANA identifier)"),
         ),
@@ -370,19 +398,19 @@ def booking_availability(request, product_slug):
         404: OpenApiResponse(description=_("Product not found or not a booking product")),
     },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def booking_slots(request, product_slug):
     """Get available time slots for a specific date."""
     product = get_object_or_404(
-        Product.objects.filter(product_type='booking', status='published'),
+        Product.objects.filter(product_type="booking", status="published"),
         slug=product_slug,
     )
 
-    date_str = request.GET.get('date')
+    date_str = request.GET.get("date")
     if not date_str:
         return Response(
-            {'error': 'date parameter is required (YYYY-MM-DD)'},
+            {"error": "date parameter is required (YYYY-MM-DD)"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -390,20 +418,18 @@ def booking_slots(request, product_slug):
         booking_date = date.fromisoformat(date_str)
     except ValueError:
         return Response(
-            {'error': 'Invalid date format. Use YYYY-MM-DD'},
+            {"error": "Invalid date format. Use YYYY-MM-DD"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    resource_id = request.GET.get('resource_id')
+    resource_id = request.GET.get("resource_id")
     if resource_id:
         try:
             resource_id = int(resource_id)
         except (ValueError, TypeError):
             resource_id = None
 
-    raw_slots = BookingAvailabilityService.get_available_slots(
-        product, booking_date, resource_id
-    )
+    raw_slots = BookingAvailabilityService.get_available_slots(product, booking_date, resource_id)
 
     # Normalize slot keys for frontend: capacity_remaining → remaining, add capacity
     slots = []
@@ -413,24 +439,28 @@ def booking_slots(request, product_slug):
         max_capacity = 1
 
     for s in raw_slots:
-        slots.append({
-            'start': s['start'],
-            'end': s['end'],
-            'available': s['available'],
-            'remaining': s.get('capacity_remaining', 0),
-            'capacity': max_capacity,
-            'price': s.get('price', '0.00'),
-        })
+        slots.append(
+            {
+                "start": s["start"],
+                "end": s["end"],
+                "available": s["available"],
+                "remaining": s.get("capacity_remaining", 0),
+                "capacity": max_capacity,
+                "price": s.get("price", "0.00"),
+            }
+        )
 
-    return Response({
-        'product_id': product.pk,
-        'date': date_str,
-        'slots': slots,
-    })
+    return Response(
+        {
+            "product_id": product.pk,
+            "date": date_str,
+            "slots": slots,
+        }
+    )
 
 
 @extend_schema(
-    tags=['Catalog'],
+    tags=["Catalog"],
     summary=_("Check booking availability and price"),
     description=_("""
     Validate a specific booking configuration and calculate the total price.
@@ -455,22 +485,22 @@ def booking_slots(request, product_slug):
         404: OpenApiResponse(description=_("Product not found or not a booking product")),
     },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def booking_check(request, product_slug):
     """Validate a booking and calculate the price."""
     product = get_object_or_404(
-        Product.objects.filter(product_type='booking', status='published'),
+        Product.objects.filter(product_type="booking", status="published"),
         slug=product_slug,
     )
 
     data = request.data
 
     # Accept the frontend's date + time_start/time_end format
-    booking_date_str = data.get('date')
+    booking_date_str = data.get("date")
     if not booking_date_str:
         return Response(
-            {'error': 'date is required (YYYY-MM-DD)'},
+            {"error": "date is required (YYYY-MM-DD)"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -481,55 +511,56 @@ def booking_check(request, product_slug):
             booking_date = booking_date_str
     except (ValueError, TypeError):
         return Response(
-            {'error': 'Invalid date format. Use YYYY-MM-DD'},
+            {"error": "Invalid date format. Use YYYY-MM-DD"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Build start/end datetimes from date + time_start/time_end
-    time_start_str = data.get('time_start')
-    time_end_str = data.get('time_end')
-    end_date_str = data.get('end_date')
+    time_start_str = data.get("time_start")
+    time_end_str = data.get("time_end")
+    end_date_str = data.get("end_date")
 
     try:
         if time_start_str and time_end_str:
             # Time-based booking (appointment, class, event, rental)
             start_time = time.fromisoformat(time_start_str)
             end_time = time.fromisoformat(time_end_str)
-            start_dt = datetime.combine(booking_date, start_time, tzinfo=dt_timezone.utc)
-            end_dt = datetime.combine(booking_date, end_time, tzinfo=dt_timezone.utc)
+            start_dt = datetime.combine(booking_date, start_time, tzinfo=UTC)
+            end_dt = datetime.combine(booking_date, end_time, tzinfo=UTC)
         elif end_date_str:
             # Date-range booking (accommodation)
             if isinstance(end_date_str, str):
                 end_date_obj = date.fromisoformat(end_date_str)
             else:
                 end_date_obj = end_date_str
-            start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=dt_timezone.utc)
-            end_dt = datetime.combine(end_date_obj, time(0, 0), tzinfo=dt_timezone.utc)
+            start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=UTC)
+            end_dt = datetime.combine(end_date_obj, time(0, 0), tzinfo=UTC)
         else:
             # Fallback: use product's default duration
             try:
                 config = product.booking_config
                 from datetime import timedelta
-                start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=dt_timezone.utc)
+
+                start_dt = datetime.combine(booking_date, time(0, 0), tzinfo=UTC)
                 duration_minutes = config.duration
-                if config.duration_unit == 'hour':
+                if config.duration_unit == "hour":
                     duration_minutes = config.duration * 60
-                elif config.duration_unit == 'day':
+                elif config.duration_unit == "day":
                     duration_minutes = config.duration * 1440
                 end_dt = start_dt + timedelta(minutes=duration_minutes)
             except Exception:
                 return Response(
-                    {'error': 'time_start/time_end or end_date is required'},
+                    {"error": "time_start/time_end or end_date is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
     except (ValueError, TypeError) as e:
         return Response(
-            {'error': f'Invalid time format: {e}'},
+            {"error": f"Invalid time format: {e}"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    resource_id = data.get('resource_id')
-    persons = data.get('persons', {})
+    resource_id = data.get("resource_id")
+    persons = data.get("persons", {})
 
     # Validate person counts — must be non-negative integers
     if persons and isinstance(persons, dict):
@@ -538,12 +569,12 @@ def booking_check(request, product_slug):
                 c = int(count)
             except (TypeError, ValueError):
                 return Response(
-                    {'error': f'Invalid person count for {ptype}'},
+                    {"error": f"Invalid person count for {ptype}"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             if c < 0:
                 return Response(
-                    {'error': f'Person count cannot be negative for {ptype}'},
+                    {"error": f"Person count cannot be negative for {ptype}"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         persons = {k: int(v) for k, v in persons.items()}
@@ -553,30 +584,32 @@ def booking_check(request, product_slug):
     )
 
     response_data = {
-        'available': is_available,
-        'reason': message,
+        "available": is_available,
+        "reason": message,
     }
 
     if price is not None:
-        response_data['total_price'] = str(price)
+        response_data["total_price"] = str(price)
 
         # For accommodation, include full nightly breakdown
         try:
             config = product.booking_config
-            if is_available and config.booking_type == 'accommodation':
+            if is_available and config.booking_type == "accommodation":
                 _, breakdown = BookingAvailabilityService.calculate_booking_price_with_breakdown(
                     product, start_dt, end_dt, resource_id, persons
                 )
-                response_data['num_nights'] = breakdown.get('num_nights', 0)
-                response_data['nightly_breakdown'] = breakdown.get('nightly_breakdown', [])
-                response_data['length_of_stay_discount'] = breakdown.get('length_of_stay_discount')
-                response_data['subtotal_before_discount'] = breakdown.get('subtotal_before_discount')
-                response_data['one_time_charges'] = breakdown.get('one_time_charges')
-                response_data['resource_name'] = breakdown.get('resource_name')
-                response_data['min_stay'] = config.min_stay or 1
-                response_data['max_stay'] = config.max_stay or 365
-                response_data['standard_occupancy'] = config.standard_occupancy or 2
-                response_data['max_occupancy'] = config.max_occupancy or 0
+                response_data["num_nights"] = breakdown.get("num_nights", 0)
+                response_data["nightly_breakdown"] = breakdown.get("nightly_breakdown", [])
+                response_data["length_of_stay_discount"] = breakdown.get("length_of_stay_discount")
+                response_data["subtotal_before_discount"] = breakdown.get(
+                    "subtotal_before_discount"
+                )
+                response_data["one_time_charges"] = breakdown.get("one_time_charges")
+                response_data["resource_name"] = breakdown.get("resource_name")
+                response_data["min_stay"] = config.min_stay or 1
+                response_data["max_stay"] = config.max_stay or 365
+                response_data["standard_occupancy"] = config.standard_occupancy or 2
+                response_data["max_occupancy"] = config.max_occupancy or 0
         except Exception:
             pass
 
@@ -584,12 +617,12 @@ def booking_check(request, product_slug):
         try:
             config = product.booking_config
             if config.deposit_enabled:
-                if config.deposit_type == 'fixed':
+                if config.deposit_type == "fixed":
                     deposit = min(config.deposit_amount, price)
                 else:
-                    deposit = price * (config.deposit_amount / Decimal('100'))
-                response_data['deposit_amount'] = str(deposit)
-                response_data['deposit_type'] = config.deposit_type
+                    deposit = price * (config.deposit_amount / Decimal("100"))
+                response_data["deposit_amount"] = str(deposit)
+                response_data["deposit_type"] = config.deposit_type
         except Exception:
             pass
 
@@ -597,7 +630,7 @@ def booking_check(request, product_slug):
 
 
 @extend_schema(
-    tags=['Catalog'],
+    tags=["Catalog"],
     summary=_("Check per-resource availability for a date range"),
     description=_("""
     Returns availability status for each customer-selectable resource over a date range.
@@ -613,29 +646,37 @@ def booking_check(request, product_slug):
     """),
     parameters=[
         OpenApiParameter(
-            name='product_slug', location=OpenApiParameter.PATH, type=str,
+            name="product_slug",
+            location=OpenApiParameter.PATH,
+            type=str,
             description=_("Product URL slug"),
         ),
         OpenApiParameter(
-            name='checkin', type=str, location=OpenApiParameter.QUERY,
-            description=_("Check-in date (YYYY-MM-DD)"), required=True,
+            name="checkin",
+            type=str,
+            location=OpenApiParameter.QUERY,
+            description=_("Check-in date (YYYY-MM-DD)"),
+            required=True,
         ),
         OpenApiParameter(
-            name='checkout', type=str, location=OpenApiParameter.QUERY,
-            description=_("Check-out date (YYYY-MM-DD)"), required=True,
+            name="checkout",
+            type=str,
+            location=OpenApiParameter.QUERY,
+            description=_("Check-out date (YYYY-MM-DD)"),
+            required=True,
         ),
     ],
     responses={
         200: inline_serializer(
-            name='ResourceAvailabilityResponse',
+            name="ResourceAvailabilityResponse",
             fields={
-                'resources': serializers.ListField(
+                "resources": serializers.ListField(
                     child=inline_serializer(
-                        name='ResourceAvailabilityItem',
+                        name="ResourceAvailabilityItem",
                         fields={
-                            'id': serializers.IntegerField(),
-                            'name': serializers.CharField(),
-                            'available': serializers.BooleanField(),
+                            "id": serializers.IntegerField(),
+                            "name": serializers.CharField(),
+                            "available": serializers.BooleanField(),
                         },
                     ),
                 ),
@@ -645,20 +686,20 @@ def booking_check(request, product_slug):
         404: OpenApiResponse(description=_("Product not found or not a booking product")),
     },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def booking_resource_availability(request, product_slug):
     """Check per-resource availability for a date range (accommodation)."""
     product = get_object_or_404(
-        Product.objects.filter(product_type='booking', status='published'),
+        Product.objects.filter(product_type="booking", status="published"),
         slug=product_slug,
     )
 
-    checkin_str = request.GET.get('checkin')
-    checkout_str = request.GET.get('checkout')
+    checkin_str = request.GET.get("checkin")
+    checkout_str = request.GET.get("checkout")
     if not checkin_str or not checkout_str:
         return Response(
-            {'error': 'checkin and checkout parameters are required (YYYY-MM-DD)'},
+            {"error": "checkin and checkout parameters are required (YYYY-MM-DD)"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -667,45 +708,47 @@ def booking_resource_availability(request, product_slug):
         checkout_date = date.fromisoformat(checkout_str)
     except ValueError:
         return Response(
-            {'error': 'Invalid date format. Use YYYY-MM-DD'},
+            {"error": "Invalid date format. Use YYYY-MM-DD"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     if checkout_date <= checkin_date:
         return Response(
-            {'error': 'checkout must be after checkin'},
+            {"error": "checkout must be after checkin"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     results = BookingAvailabilityService.check_resources_for_date_range(
-        product, checkin_date, checkout_date,
+        product,
+        checkin_date,
+        checkout_date,
     )
 
-    return Response({'resources': results})
+    return Response({"resources": results})
 
 
 @extend_schema(
-    tags=['Catalog'],
+    tags=["Catalog"],
     summary=_("Get booking resource detail with images"),
     description=_("Returns full detail for a single booking resource, including images/media."),
     responses={
         200: inline_serializer(
-            name='BookingResourceDetailResponse',
+            name="BookingResourceDetailResponse",
             fields={
-                'id': serializers.IntegerField(),
-                'name': serializers.CharField(),
-                'description': serializers.CharField(),
-                'resource_type': serializers.CharField(),
-                'base_cost_adjustment': serializers.CharField(),
-                'images': serializers.ListField(
+                "id": serializers.IntegerField(),
+                "name": serializers.CharField(),
+                "description": serializers.CharField(),
+                "resource_type": serializers.CharField(),
+                "base_cost_adjustment": serializers.CharField(),
+                "images": serializers.ListField(
                     child=inline_serializer(
-                        name='BookingResourceImageItem',
+                        name="BookingResourceImageItem",
                         fields={
-                            'url': serializers.CharField(),
-                            'thumbnail': serializers.CharField(),
-                            'alt_text': serializers.CharField(),
-                            'is_primary': serializers.BooleanField(),
-                            'is_video': serializers.BooleanField(),
+                            "url": serializers.CharField(),
+                            "thumbnail": serializers.CharField(),
+                            "alt_text": serializers.CharField(),
+                            "is_primary": serializers.BooleanField(),
+                            "is_video": serializers.BooleanField(),
                         },
                     ),
                 ),
@@ -714,12 +757,12 @@ def booking_resource_availability(request, product_slug):
         404: OpenApiResponse(description=_("Product or resource not found")),
     },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def booking_resource_detail(request, product_slug, resource_id):
     """Get full detail for a booking resource including images."""
     product = get_object_or_404(
-        Product.objects.filter(product_type='booking', status='published'),
+        Product.objects.filter(product_type="booking", status="published"),
         slug=product_slug,
     )
     resource = get_object_or_404(
@@ -727,28 +770,34 @@ def booking_resource_detail(request, product_slug, resource_id):
         pk=resource_id,
     )
     images = []
-    for img in resource.images.select_related('media_asset').all():
-        images.append({
-            'url': img.media_asset.get_display_url(),
-            'thumbnail': img.media_asset.get_thumbnail('medium'),
-            'alt_text': img.alt_text or img.media_asset.alt_text,
-            'is_primary': img.is_primary,
-            'is_video': img.media_asset.is_video(),
-            'video_type': img.media_asset.mime_type if img.media_asset.is_video() else None,
-            'poster': img.media_asset.poster_image.url if img.media_asset.is_video() and img.media_asset.poster_image else None,
-        })
-    return Response({
-        'id': resource.pk,
-        'name': resource.name,
-        'description': resource.description,
-        'resource_type': resource.resource_type,
-        'base_cost_adjustment': str(resource.base_cost_adjustment),
-        'images': images,
-    })
+    for img in resource.images.select_related("media_asset").all():
+        images.append(
+            {
+                "url": img.media_asset.get_display_url(),
+                "thumbnail": img.media_asset.get_thumbnail("medium"),
+                "alt_text": img.alt_text or img.media_asset.alt_text,
+                "is_primary": img.is_primary,
+                "is_video": img.media_asset.is_video(),
+                "video_type": img.media_asset.mime_type if img.media_asset.is_video() else None,
+                "poster": img.media_asset.poster_image.url
+                if img.media_asset.is_video() and img.media_asset.poster_image
+                else None,
+            }
+        )
+    return Response(
+        {
+            "id": resource.pk,
+            "name": resource.name,
+            "description": resource.description,
+            "resource_type": resource.resource_type,
+            "base_cost_adjustment": str(resource.base_cost_adjustment),
+            "images": images,
+        }
+    )
 
 
 @extend_schema(
-    tags=['Catalog'],
+    tags=["Catalog"],
     summary=_("Download booking iCal file"),
     description=_("""
     Download an iCal (.ics) calendar file for a specific booking.
@@ -763,40 +812,42 @@ def booking_resource_detail(request, product_slug, resource_id):
     """),
     parameters=[
         OpenApiParameter(
-            name='product_slug', location=OpenApiParameter.PATH, type=str,
+            name="product_slug",
+            location=OpenApiParameter.PATH,
+            type=str,
             description=_("Product URL slug"),
         ),
         OpenApiParameter(
-            name='ical_uid', location=OpenApiParameter.PATH, type=str,
+            name="ical_uid",
+            location=OpenApiParameter.PATH,
+            type=str,
             description=_("Unique iCal identifier for the booking"),
         ),
     ],
     responses={
-        (200, 'text/calendar'): OpenApiResponse(
-            description=_("iCal file download (.ics)")
-        ),
+        (200, "text/calendar"): OpenApiResponse(description=_("iCal file download (.ics)")),
         404: OpenApiResponse(description=_("Booking not found")),
     },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def booking_ical(request, product_slug, ical_uid):
     """Download iCal file for a booking."""
     booking = get_object_or_404(
-        Booking.objects.select_related('product', 'resource'),
+        Booking.objects.select_related("product", "resource"),
         product__slug=product_slug,
         ical_uid=ical_uid,
     )
 
     ical_content = BookingAvailabilityService.generate_ical(booking)
 
-    response = HttpResponse(ical_content, content_type='text/calendar')
-    response['Content-Disposition'] = f'attachment; filename="booking-{booking.pk}.ics"'
+    response = HttpResponse(ical_content, content_type="text/calendar")
+    response["Content-Disposition"] = f'attachment; filename="booking-{booking.pk}.ics"'
     return response
 
 
 @extend_schema(
-    tags=['Catalog'],
+    tags=["Catalog"],
     summary=_("Join booking waitlist"),
     description=_("""
     Add the customer to the waitlist for a booking product.
@@ -822,70 +873,74 @@ def booking_ical(request, product_slug, ical_uid):
         409: WaitlistResponseSerializer,
     },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def booking_waitlist(request, product_slug):
     """Join the waitlist for a booking product."""
     product = get_object_or_404(
-        Product.objects.filter(product_type='booking', status='published'),
+        Product.objects.filter(product_type="booking", status="published"),
         slug=product_slug,
     )
 
     data = request.data
 
-    email = data.get('email')
+    email = data.get("email")
     if not email:
         return Response(
-            {'error': 'email is required'},
+            {"error": "email is required"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     try:
-        desired_date = date.fromisoformat(data['desired_date'])
+        desired_date = date.fromisoformat(data["desired_date"])
     except (KeyError, ValueError):
         return Response(
-            {'error': 'desired_date is required (YYYY-MM-DD)'},
+            {"error": "desired_date is required (YYYY-MM-DD)"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     desired_time_start = None
     desired_time_end = None
-    if data.get('desired_time_start'):
+    if data.get("desired_time_start"):
         try:
-            desired_time_start = time.fromisoformat(data['desired_time_start'])
+            desired_time_start = time.fromisoformat(data["desired_time_start"])
         except ValueError:
             pass
-    if data.get('desired_time_end'):
+    if data.get("desired_time_end"):
         try:
-            desired_time_end = time.fromisoformat(data['desired_time_end'])
+            desired_time_end = time.fromisoformat(data["desired_time_end"])
         except ValueError:
             pass
 
     customer = None
     if request.user.is_authenticated:
-        customer = getattr(request.user, 'profile', None)
+        customer = getattr(request.user, "profile", None)
 
     success, message, entry = BookingAvailabilityService.join_waitlist(
         product=product,
         customer_email=email,
         desired_date=desired_date,
-        customer_name=data.get('name', ''),
+        customer_name=data.get("name", ""),
         desired_time_start=desired_time_start,
         desired_time_end=desired_time_end,
-        desired_persons=data.get('desired_persons', {}),
+        desired_persons=data.get("desired_persons", {}),
         customer=customer,
     )
 
-    return Response({
-        'success': success,
-        'message': message,
-        'waitlist_id': entry.pk if entry else None,
-    }, status=status.HTTP_201_CREATED if success else status.HTTP_409_CONFLICT)
+    return Response(
+        {
+            "success": success,
+            "message": message,
+            "waitlist_id": entry.pk if entry else None,
+        },
+        status=status.HTTP_201_CREATED if success else status.HTTP_409_CONFLICT,
+    )
 
 
 # =============================================================================
 # Customer Self-Service Endpoints
 # =============================================================================
+
 
 class MyBookingSerializer(serializers.Serializer):
     id = serializers.IntegerField()
@@ -907,21 +962,22 @@ def _get_customer_booking(request, booking_id):
     Helper to get a booking that belongs to the authenticated user.
     Returns (booking, error_response).
     """
-    customer = getattr(request.user, 'profile', None)
+    customer = getattr(request.user, "profile", None)
     if not customer:
         return None, Response(
-            {'error': 'No customer profile found'},
+            {"error": "No customer profile found"},
             status=status.HTTP_403_FORBIDDEN,
         )
 
     try:
         booking = Booking.objects.select_related(
-            'product', 'resource',
+            "product",
+            "resource",
         ).get(pk=booking_id, customer=customer)
         return booking, None
     except Booking.DoesNotExist:
         return None, Response(
-            {'error': 'Booking not found'},
+            {"error": "Booking not found"},
             status=status.HTTP_404_NOT_FOUND,
         )
 
@@ -929,55 +985,65 @@ def _get_customer_booking(request, booking_id):
 def _serialize_booking(booking):
     """Serialize a booking for the customer API."""
     return {
-        'id': booking.pk,
-        'product_name': booking.product.name if booking.product else '',
-        'resource_name': booking.resource.name if booking.resource else None,
-        'start_datetime': booking.start_datetime.isoformat(),
-        'end_datetime': booking.end_datetime.isoformat(),
-        'status': booking.status,
-        'status_display': booking.get_status_display(),
-        'total_cost': str(booking.total_cost) if booking.total_cost else None,
-        'deposit_amount': str(booking.deposit_amount) if booking.deposit_amount else None,
-        'customer_name': booking.customer_name or '',
-        'persons': booking.persons or {},
-        'duration_minutes': booking.duration_minutes,
-        'ical_uid': booking.ical_uid,
-        'is_cancellable': booking.status in ('pending_confirmation', 'confirmed'),
-        'can_reschedule': booking.status in ('pending_confirmation', 'confirmed'),
-        'created_at': booking.created_at.isoformat(),
+        "id": booking.pk,
+        "product_name": booking.product.name if booking.product else "",
+        "resource_name": booking.resource.name if booking.resource else None,
+        "start_datetime": booking.start_datetime.isoformat(),
+        "end_datetime": booking.end_datetime.isoformat(),
+        "status": booking.status,
+        "status_display": booking.get_status_display(),
+        "total_cost": str(booking.total_cost) if booking.total_cost else None,
+        "deposit_amount": str(booking.deposit_amount) if booking.deposit_amount else None,
+        "customer_name": booking.customer_name or "",
+        "persons": booking.persons or {},
+        "duration_minutes": booking.duration_minutes,
+        "ical_uid": booking.ical_uid,
+        "is_cancellable": booking.status in ("pending_confirmation", "confirmed"),
+        "can_reschedule": booking.status in ("pending_confirmation", "confirmed"),
+        "created_at": booking.created_at.isoformat(),
     }
 
 
 @extend_schema(
-    tags=['Bookings - Customer'],
+    tags=["Bookings - Customer"],
     summary=_("List my bookings"),
-    description=_("Returns all bookings for the authenticated customer, ordered by start date (newest first)."),
+    description=_(
+        "Returns all bookings for the authenticated customer, ordered by start date (newest first)."
+    ),
     responses={200: MyBookingSerializer(many=True)},
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def my_bookings(request):
     """List bookings for the authenticated customer."""
-    customer = getattr(request.user, 'profile', None)
+    customer = getattr(request.user, "profile", None)
     if not customer:
-        return Response({'bookings': []})
+        return Response({"bookings": []})
 
-    bookings = Booking.objects.filter(
-        customer=customer,
-    ).select_related('product', 'resource').order_by('-start_datetime')
+    bookings = (
+        Booking.objects.filter(
+            customer=customer,
+        )
+        .select_related("product", "resource")
+        .order_by("-start_datetime")
+    )
 
-    return Response({
-        'bookings': [_serialize_booking(b) for b in bookings],
-    })
+    return Response(
+        {
+            "bookings": [_serialize_booking(b) for b in bookings],
+        }
+    )
 
 
 @extend_schema(
-    tags=['Bookings - Customer'],
+    tags=["Bookings - Customer"],
     summary=_("Get booking detail"),
-    description=_("Returns detailed information about a specific booking owned by the authenticated customer."),
+    description=_(
+        "Returns detailed information about a specific booking owned by the authenticated customer."
+    ),
     responses={200: MyBookingSerializer},
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def booking_detail_api(request, booking_id):
     """Get a specific booking for the authenticated customer."""
@@ -986,34 +1052,38 @@ def booking_detail_api(request, booking_id):
         return error
 
     # Include customer-visible notes
-    notes = booking.booking_notes.filter(
-        is_customer_visible=True,
-    ).order_by('-created_at').values('note', 'created_at', 'note_type')
+    notes = (
+        booking.booking_notes.filter(
+            is_customer_visible=True,
+        )
+        .order_by("-created_at")
+        .values("note", "created_at", "note_type")
+    )
 
     data = _serialize_booking(booking)
-    data['notes'] = list(notes)
+    data["notes"] = list(notes)
     return Response(data)
 
 
 @extend_schema(
-    tags=['Bookings - Customer'],
+    tags=["Bookings - Customer"],
     summary=_("Cancel my booking"),
     description=_("Cancel a booking. Only pending or confirmed bookings can be cancelled."),
     request=inline_serializer(
-        name='CancelBookingRequest',
-        fields={'reason': serializers.CharField(required=False)},
+        name="CancelBookingRequest",
+        fields={"reason": serializers.CharField(required=False)},
     ),
     responses={
         200: inline_serializer(
-            name='CancelBookingResponse',
+            name="CancelBookingResponse",
             fields={
-                'success': serializers.BooleanField(),
-                'message': serializers.CharField(),
+                "success": serializers.BooleanField(),
+                "message": serializers.CharField(),
             },
         ),
     },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def booking_cancel(request, booking_id):
     """Cancel a booking for the authenticated customer."""
@@ -1021,45 +1091,48 @@ def booking_cancel(request, booking_id):
     if error:
         return error
 
-    reason = request.data.get('reason', '')
+    reason = request.data.get("reason", "")
 
     ok, msg = BookingLifecycleService.cancel_booking(
-        booking, author=request.user, reason=reason, initiated_by='customer',
+        booking,
+        author=request.user,
+        reason=reason,
+        initiated_by="customer",
     )
 
     return Response(
-        {'success': ok, 'message': msg},
+        {"success": ok, "message": msg},
         status=status.HTTP_200_OK if ok else status.HTTP_400_BAD_REQUEST,
     )
 
 
 @extend_schema(
-    tags=['Bookings - Customer'],
+    tags=["Bookings - Customer"],
     summary=_("Reschedule my booking"),
     description=_("""
     Reschedule a booking to a new date and time. Checks availability before
     confirming the change. Only pending or confirmed bookings can be rescheduled.
     """),
     request=inline_serializer(
-        name='RescheduleBookingRequest',
+        name="RescheduleBookingRequest",
         fields={
-            'date': serializers.DateField(),
-            'time_start': serializers.CharField(),
-            'time_end': serializers.CharField(),
-            'resource_id': serializers.IntegerField(required=False),
+            "date": serializers.DateField(),
+            "time_start": serializers.CharField(),
+            "time_end": serializers.CharField(),
+            "resource_id": serializers.IntegerField(required=False),
         },
     ),
     responses={
         200: inline_serializer(
-            name='RescheduleBookingResponse',
+            name="RescheduleBookingResponse",
             fields={
-                'success': serializers.BooleanField(),
-                'message': serializers.CharField(),
+                "success": serializers.BooleanField(),
+                "message": serializers.CharField(),
             },
         ),
     },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def booking_reschedule_api(request, booking_id):
     """Reschedule a booking for the authenticated customer."""
@@ -1068,40 +1141,43 @@ def booking_reschedule_api(request, booking_id):
         return error
 
     data = request.data
-    date_str = data.get('date')
-    start_str = data.get('time_start')
-    end_str = data.get('time_end')
+    date_str = data.get("date")
+    start_str = data.get("time_start")
+    end_str = data.get("time_end")
 
     if not (date_str and start_str and end_str):
         return Response(
-            {'error': 'date, time_start, and time_end are required'},
+            {"error": "date, time_start, and time_end are required"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     try:
-        from datetime import timezone as dt_tz
         new_date = date.fromisoformat(str(date_str))
         new_start = datetime.combine(
-            new_date, time.fromisoformat(str(start_str)),
-        ).replace(tzinfo=dt_tz.utc)
+            new_date,
+            time.fromisoformat(str(start_str)),
+        ).replace(tzinfo=UTC)
         new_end = datetime.combine(
-            new_date, time.fromisoformat(str(end_str)),
-        ).replace(tzinfo=dt_tz.utc)
+            new_date,
+            time.fromisoformat(str(end_str)),
+        ).replace(tzinfo=UTC)
     except (ValueError, TypeError):
         return Response(
-            {'error': 'Invalid date or time format'},
+            {"error": "Invalid date or time format"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    resource_id = data.get('resource_id')
+    resource_id = data.get("resource_id")
 
     ok, msg = BookingLifecycleService.reschedule_booking(
-        booking, new_start, new_end,
+        booking,
+        new_start,
+        new_end,
         new_resource_id=resource_id,
         author=request.user,
     )
 
     return Response(
-        {'success': ok, 'message': msg},
+        {"success": ok, "message": msg},
         status=status.HTTP_200_OK if ok else status.HTTP_400_BAD_REQUEST,
     )

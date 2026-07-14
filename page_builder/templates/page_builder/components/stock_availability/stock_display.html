@@ -1,0 +1,70 @@
+{% load i18n static merchant_trans %}
+<!-- Stock Availability Display Component -->
+<div class="stock-availability"
+     data-product-stock
+     data-product-slug="{{ product_slug }}"
+     data-product-id="{{ product_id }}">
+    <!-- Regional Stock Summary -->
+    <div class="stock-availability__regional mb-6">
+        <div id="regional-stock-{{ product_id }}" class="stock-status">
+            <div class="stock-status__loading">
+                <span class="stock-status__dot stock-status__dot--loading"></span>
+                <span class="stock-status__text stock-status__text--muted">{% mtrans "Checking availability..." %}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pickup Availability -->
+    <div class="stock-availability__pickup mt-6">
+        <button
+            id="check-stores-btn-{{ product_id }}"
+            class="btn btn--outline btn--icon-left"
+            data-action="toggle-store-picker"
+            data-product-id="{{ product_id }}"
+            data-product-slug="{{ product_slug }}"
+        >
+            <svg class="btn__icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            {% mtrans "Check Store Availability" %}
+        </button>
+
+        <!-- Store Picker Modal -->
+        <div
+            id="store-picker-{{ product_id }}"
+            class="modal modal--store-picker hidden"
+        >
+            <div class="modal__backdrop"></div>
+            <div class="modal__content card">
+                <div class="modal__header">
+                    <h3 class="modal__title">
+                        {% mtrans "Store Availability" %}
+                    </h3>
+                    <button
+                        data-action="toggle-store-picker"
+                        data-product-id="{{ product_id }}"
+                        data-product-slug="{{ product_slug }}"
+                        class="modal__close"
+                        aria-label="{% mtrans 'Close' %}"
+                    >
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="store-list-{{ product_id }}" class="modal__body">
+                    <!-- Loading state -->
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'page_builder/css/components/stock-display.css' %}" />
+
+<script src="{% static 'page_builder/js/stock-display.js' %}" defer></script>

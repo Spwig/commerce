@@ -17,10 +17,12 @@ class ErrorReportingClient:
 
     def __init__(self):
         self.session = requests.Session()
-        self.session.headers.update({
-            'User-Agent': 'Spwig-ErrorReporter/1.0',
-            'Content-Type': 'application/json',
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "Spwig-ErrorReporter/1.0",
+                "Content-Type": "application/json",
+            }
+        )
 
     def _ensure_auth(self):
         """Reuse UpdateManager's auth flow for JWT token."""
@@ -28,24 +30,24 @@ class ErrorReportingClient:
 
         manager = UpdateManager()
         manager._ensure_authenticated()
-        self.session.headers['Authorization'] = f'Bearer {manager.config.jwt_token}'
+        self.session.headers["Authorization"] = f"Bearer {manager.config.jwt_token}"
         return manager.config
 
     def build_payload(self, reports):
         """Build the batch payload from ErrorReport instances."""
         config = self._ensure_auth()
         return {
-            'installation_uuid': str(config.installation_uuid),
-            'platform_version': getattr(settings, 'PLATFORM_VERSION', 'unknown'),
-            'batch_size': len(reports),
-            'reports': [
+            "installation_uuid": str(config.installation_uuid),
+            "platform_version": getattr(settings, "PLATFORM_VERSION", "unknown"),
+            "batch_size": len(reports),
+            "reports": [
                 {
-                    'error_type': r.error_type,
-                    'fingerprint': r.fingerprint,
-                    'occurrence_count': r.occurrence_count,
-                    'error_data': r.error_data,
-                    'first_seen': r.first_seen.isoformat(),
-                    'last_seen': r.last_seen.isoformat(),
+                    "error_type": r.error_type,
+                    "fingerprint": r.fingerprint,
+                    "occurrence_count": r.occurrence_count,
+                    "error_data": r.error_data,
+                    "first_seen": r.first_seen.isoformat(),
+                    "last_seen": r.last_seen.isoformat(),
                 }
                 for r in reports
             ],
@@ -86,10 +88,12 @@ class BugReportClient:
 
     def __init__(self):
         self.session = requests.Session()
-        self.session.headers.update({
-            'User-Agent': 'Spwig-BugReporter/1.0',
-            'Content-Type': 'application/json',
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "Spwig-BugReporter/1.0",
+                "Content-Type": "application/json",
+            }
+        )
 
     def _ensure_auth(self):
         """Reuse UpdateManager's auth flow for JWT token."""
@@ -97,27 +101,27 @@ class BugReportClient:
 
         manager = UpdateManager()
         manager._ensure_authenticated()
-        self.session.headers['Authorization'] = f'Bearer {manager.config.jwt_token}'
+        self.session.headers["Authorization"] = f"Bearer {manager.config.jwt_token}"
         return manager.config
 
     def build_payload(self, report):
         """Build a single bug report payload."""
         config = self._ensure_auth()
         return {
-            'installation_uuid': str(config.installation_uuid),
-            'platform_version': getattr(settings, 'PLATFORM_VERSION', 'unknown'),
-            'report': {
-                'category': report.category,
-                'description': report.description,
-                'severity': report.severity,
-                'browser_data': report.browser_data,
-                'consent_flags': report.consent_flags,
-                'contact_name': report.contact_name,
-                'contact_email': report.contact_email,
-                'contact_consent': report.contact_consent,
-                'page_url': report.page_url,
-                'admin_section': report.admin_section,
-                'submitted_at': report.created_at.isoformat(),
+            "installation_uuid": str(config.installation_uuid),
+            "platform_version": getattr(settings, "PLATFORM_VERSION", "unknown"),
+            "report": {
+                "category": report.category,
+                "description": report.description,
+                "severity": report.severity,
+                "browser_data": report.browser_data,
+                "consent_flags": report.consent_flags,
+                "contact_name": report.contact_name,
+                "contact_email": report.contact_email,
+                "contact_consent": report.contact_consent,
+                "page_url": report.page_url,
+                "admin_section": report.admin_section,
+                "submitted_at": report.created_at.isoformat(),
             },
         }
 

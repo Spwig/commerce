@@ -2,6 +2,7 @@
 Sync serializers for each data category.
 Each serializer handles export, import, diff, snapshot, and restore.
 """
+
 import importlib
 import logging
 
@@ -27,14 +28,14 @@ def get_serializer_for_category(category_key, sync_job=None, sync_step=None):
         logger.error(f"Unknown sync category: {category_key}")
         return None
 
-    serializer_path = config.get('serializer')
+    serializer_path = config.get("serializer")
     if not serializer_path:
         logger.error(f"No serializer configured for category: {category_key}")
         return None
 
     try:
         # Split into module path and class name
-        module_path, class_name = serializer_path.rsplit('.', 1)
+        module_path, class_name = serializer_path.rsplit(".", 1)
         module = importlib.import_module(module_path)
         serializer_class = getattr(module, class_name)
         return serializer_class(sync_job=sync_job, sync_step=sync_step)

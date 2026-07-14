@@ -2,17 +2,13 @@
 Provider Service
 Handles provider discovery, installation, and management
 """
+
 import logging
-from typing import List, Dict, Optional
 from pathlib import Path
-from django.db import transaction
-from django.utils.translation import gettext as _
-from django.conf import settings
 
 from component_updates.integration_paths import INTEGRATIONS_DIR
-from component_updates.services import UpdateManager
 from component_updates.models import ComponentRegistry
-from shipping.providers.registry import ProviderRegistry
+from component_updates.services import UpdateManager
 from shipping.providers.loader import load_provider_manifest
 
 logger = logging.getLogger(__name__)
@@ -43,9 +39,9 @@ class ProviderService:
         Returns:
             Path to component directory (current version)
         """
-        return INTEGRATIONS_DIR / 'shipping_provider' / component_slug / 'current'
+        return INTEGRATIONS_DIR / "shipping_provider" / component_slug / "current"
 
-    def fetch_available_providers(self) -> List[Dict]:
+    def fetch_available_providers(self) -> list[dict]:
         """
         Fetch all available shipping providers from update server.
 
@@ -55,21 +51,20 @@ class ProviderService:
         try:
             # Get all shipping provider components from update server
             available = self.update_manager.list_available_components(
-                component_type='shipping_provider'
+                component_type="shipping_provider"
             )
 
             # Enhance with local installation status
             providers = []
             for component_data in available:
-                slug = component_data.get('slug')
+                slug = component_data.get("slug")
 
                 # Check if already installed locally
                 is_installed = ComponentRegistry.objects.filter(
-                    slug=slug,
-                    component_type='shipping_provider'
+                    slug=slug, component_type="shipping_provider"
                 ).exists()
 
-                component_data['is_installed'] = is_installed
+                component_data["is_installed"] = is_installed
                 providers.append(component_data)
 
             return providers
@@ -78,7 +73,7 @@ class ProviderService:
             logger.error(f"Error fetching providers from update server: {e}")
             return []
 
-    def get_installed_providers(self) -> List[Dict]:
+    def get_installed_providers(self) -> list[dict]:
         """
         Get all locally installed shipping providers.
 
@@ -87,9 +82,9 @@ class ProviderService:
         """
         providers = []
 
-        components = ComponentRegistry.objects.filter(
-            component_type='shipping_provider'
-        ).order_by('name')
+        components = ComponentRegistry.objects.filter(component_type="shipping_provider").order_by(
+            "name"
+        )
 
         for component in components:
             try:
@@ -98,23 +93,29 @@ class ProviderService:
                 if component_path.exists():
                     manifest = load_provider_manifest(component_path)
                 else:
-                    logger.warning(f"Component directory not found for {component.name}: {component_path}")
+                    logger.warning(
+                        f"Component directory not found for {component.name}: {component_path}"
+                    )
                     manifest = None
 
-                providers.append({
-                    'component': component,
-                    'manifest': manifest or {},
-                    'capabilities': manifest.get('capabilities', {}) if manifest else {},
-                    'setup': manifest.get('setup', {}) if manifest else {},
-                })
+                providers.append(
+                    {
+                        "component": component,
+                        "manifest": manifest or {},
+                        "capabilities": manifest.get("capabilities", {}) if manifest else {},
+                        "setup": manifest.get("setup", {}) if manifest else {},
+                    }
+                )
             except Exception as e:
                 logger.warning(f"Could not load manifest for {component.name}: {e}")
-                providers.append({
-                    'component': component,
-                    'manifest': {},
-                    'capabilities': {},
-                    'setup': {},
-                })
+                providers.append(
+                    {
+                        "component": component,
+                        "manifest": {},
+                        "capabilities": {},
+                        "setup": {},
+                    }
+                )
 
         return providers
 
@@ -129,11 +130,10 @@ class ProviderService:
             True if installed, False otherwise
         """
         return ComponentRegistry.objects.filter(
-            slug=slug,
-            component_type='shipping_provider'
+            slug=slug, component_type="shipping_provider"
         ).exists()
 
-    def get_provider_metadata(self, component_id: str) -> Optional[Dict]:
+    def get_provider_metadata(self, component_id: str) -> dict | None:
         """
         Get provider metadata including manifest.
 
@@ -147,14 +147,12 @@ class ProviderService:
             # Try by ID first
             try:
                 component = ComponentRegistry.objects.get(
-                    id=component_id,
-                    component_type='shipping_provider'
+                    id=component_id, component_type="shipping_provider"
                 )
             except (ComponentRegistry.DoesNotExist, ValueError):
                 # Try by slug
                 component = ComponentRegistry.objects.get(
-                    slug=component_id,
-                    component_type='shipping_provider'
+                    slug=component_id, component_type="shipping_provider"
                 )
 
             # Load manifest from component path
@@ -162,11 +160,11 @@ class ProviderService:
             manifest = load_provider_manifest(component_path) if component_path.exists() else None
 
             return {
-                'component': component,
-                'manifest': manifest or {},
-                'capabilities': manifest.get('capabilities', {}) if manifest else {},
-                'setup': manifest.get('setup', {}) if manifest else {},
-                'credential_schema': manifest.get('credential_schema', {}) if manifest else {},
+                "component": component,
+                "manifest": manifest or {},
+                "capabilities": manifest.get("capabilities", {}) if manifest else {},
+                "setup": manifest.get("setup", {}) if manifest else {},
+                "credential_schema": manifest.get("credential_schema", {}) if manifest else {},
             }
 
         except ComponentRegistry.DoesNotExist:

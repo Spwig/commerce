@@ -15,4 +15,4 @@ __dependencies__ = [
     "orders>=1.0.0",
 ]
 
-default_app_config = 'affiliate.apps.AffiliateConfig'
+default_app_config = "affiliate.apps.AffiliateConfig"

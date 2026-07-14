@@ -3,11 +3,12 @@ Referral Identity model.
 
 Each customer gets one referral identity with a unique token for tracking.
 """
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
+
 import secrets
+
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -22,10 +23,7 @@ class ReferralIdentity(models.Model):
 
     # Link to customer (OneToOne)
     customer = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='referral_identity',
-        verbose_name=_('Customer')
+        User, on_delete=models.CASCADE, related_name="referral_identity", verbose_name=_("Customer")
     )
 
     # Unique token for referral links
@@ -33,60 +31,54 @@ class ReferralIdentity(models.Model):
         max_length=32,
         unique=True,
         db_index=True,
-        verbose_name=_('Referral Token'),
-        help_text=_('Unique token used in referral links')
+        verbose_name=_("Referral Token"),
+        help_text=_("Unique token used in referral links"),
     )
 
     # QR Code image (optional)
     qr_code = models.ImageField(
-        upload_to='referrals/qr_codes/',
+        upload_to="referrals/qr_codes/",
         blank=True,
         null=True,
-        verbose_name=_('QR Code'),
-        help_text=_('Generated QR code for this referral link')
+        verbose_name=_("QR Code"),
+        help_text=_("Generated QR code for this referral link"),
     )
 
     # Denormalized Stats (updated via signals)
     total_clicks = models.PositiveIntegerField(
         default=0,
-        verbose_name=_('Total Clicks'),
-        help_text=_('Total number of referral link clicks')
+        verbose_name=_("Total Clicks"),
+        help_text=_("Total number of referral link clicks"),
     )
     total_signups = models.PositiveIntegerField(
         default=0,
-        verbose_name=_('Total Signups'),
-        help_text=_('Total number of signups from referrals')
+        verbose_name=_("Total Signups"),
+        help_text=_("Total number of signups from referrals"),
     )
     total_conversions = models.PositiveIntegerField(
         default=0,
-        verbose_name=_('Total Conversions'),
-        help_text=_('Total number of successful referral conversions')
+        verbose_name=_("Total Conversions"),
+        help_text=_("Total number of successful referral conversions"),
     )
     total_rewards_earned = models.DecimalField(
         max_digits=12,
         decimal_places=2,
         default=0,
-        verbose_name=_('Total Rewards Earned'),
-        help_text=_('Total value of rewards earned from referrals')
+        verbose_name=_("Total Rewards Earned"),
+        help_text=_("Total value of rewards earned from referrals"),
     )
 
     # Timestamps
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created At')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated At')
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
-        verbose_name = _('Referral Identity')
-        verbose_name_plural = _('Referral Identities')
-        ordering = ['-created_at']
+        verbose_name = _("Referral Identity")
+        verbose_name_plural = _("Referral Identities")
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['token']),
-            models.Index(fields=['customer']),
+            models.Index(fields=["token"]),
+            models.Index(fields=["customer"]),
         ]
 
     def __str__(self):
@@ -150,12 +142,12 @@ class ReferralIdentity(models.Model):
     def increment_clicks(self):
         """Increment click counter (called by tracking service)."""
         self.total_clicks += 1
-        self.save(update_fields=['total_clicks', 'updated_at'])
+        self.save(update_fields=["total_clicks", "updated_at"])
 
     def increment_signups(self):
         """Increment signup counter (called by tracking service)."""
         self.total_signups += 1
-        self.save(update_fields=['total_signups', 'updated_at'])
+        self.save(update_fields=["total_signups", "updated_at"])
 
     def increment_conversions(self, reward_amount=0):
         """
@@ -166,4 +158,4 @@ class ReferralIdentity(models.Model):
         """
         self.total_conversions += 1
         self.total_rewards_earned += reward_amount
-        self.save(update_fields=['total_conversions', 'total_rewards_earned', 'updated_at'])
+        self.save(update_fields=["total_conversions", "total_rewards_earned", "updated_at"])

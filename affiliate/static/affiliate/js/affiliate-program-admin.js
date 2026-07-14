@@ -5,49 +5,58 @@
  * Handles member search/filter on the program change form.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    function filterMembers() {
-        var searchEl = document.getElementById('member-search');
-        var statusEl = document.getElementById('member-status-filter');
-        var formEl = document.querySelector('.program-change-form');
-        if (!formEl) return;
+  function filterMembers() {
+    const searchEl = document.getElementById('member-search');
+    const statusEl = document.getElementById('member-status-filter');
+    const formEl = document.querySelector('.program-change-form');
+    if (!formEl) return;
 
-        var search = searchEl ? searchEl.value : '';
-        var status = statusEl ? statusEl.value : '';
-        var programId = formEl.dataset.programId;
-        var lang = document.documentElement.lang || 'en';
+    const search = searchEl ? searchEl.value : '';
+    const status = statusEl ? statusEl.value : '';
+    const programId = formEl.dataset.programId;
+    const lang = document.documentElement.lang || 'en';
 
-        var params = new URLSearchParams();
-        if (search) params.append('search', search);
-        if (status) params.append('status', status);
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (status) params.append('status', status);
 
-        var url = '/' + lang + '/admin/affiliate/programs/' + programId + '/members/filter/?' + params.toString();
+    const url =
+      '/' +
+      lang +
+      '/admin/affiliate/programs/' +
+      programId +
+      '/members/filter/?' +
+      params.toString();
 
-        fetch(url, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                var container = document.getElementById('members-container');
-                if (container) container.innerHTML = data.html;
-            })
-            .catch(function (err) { console.error('Member filter error:', err); });
+    fetch(url, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (data) {
+        const container = document.getElementById('members-container');
+        if (container) container.innerHTML = data.html;
+      })
+      .catch(function (err) {
+        console.error('Member filter error:', err);
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('member-search');
+    const statusFilter = document.getElementById('member-status-filter');
+
+    if (searchInput) {
+      let searchTimeout;
+      searchInput.addEventListener('input', function () {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(filterMembers, 300);
+      });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var searchInput = document.getElementById('member-search');
-        var statusFilter = document.getElementById('member-status-filter');
-
-        if (searchInput) {
-            var searchTimeout;
-            searchInput.addEventListener('input', function () {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(filterMembers, 300);
-            });
-        }
-
-        if (statusFilter) {
-            statusFilter.addEventListener('change', filterMembers);
-        }
-    });
-
-}());
+    if (statusFilter) {
+      statusFilter.addEventListener('change', filterMembers);
+    }
+  });
+})();

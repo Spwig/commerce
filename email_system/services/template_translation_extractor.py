@@ -12,9 +12,8 @@ Strategy:
 4. Reconstruct template with translated strings
 """
 
-import re
 import logging
-from typing import Dict, List, Tuple
+import re
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
@@ -23,9 +22,10 @@ logger = logging.getLogger(__name__)
 @dataclass
 class TranslatableString:
     """A string that needs translation with its context"""
-    key: str           # Unique identifier (e.g., "text_001")
-    text: str          # The actual text to translate
-    context: str       # Where it appears (for translator reference)
+
+    key: str  # Unique identifier (e.g., "text_001")
+    text: str  # The actual text to translate
+    context: str  # Where it appears (for translator reference)
 
 
 class TemplateTranslationExtractor:
@@ -37,34 +37,29 @@ class TemplateTranslationExtractor:
     PATTERNS = [
         # MJML text content: <mj-text>Translatable text</mj-text>
         # Use non-greedy match and ensure we don't cross major boundaries
-        (r'(<mj-text[^>]*>)([^<{]+(?:\{\{[^}]+\}\}[^<{]*)*?)(</mj-text>)', 'mjml_text'),
-
+        (r"(<mj-text[^>]*>)([^<{]+(?:\{\{[^}]+\}\}[^<{]*)*?)(</mj-text>)", "mjml_text"),
         # MJML button text: <mj-button>Click here</mj-button>
-        (r'(<mj-button[^>]*>)([^<]+)(</mj-button>)', 'mjml_button'),
-
+        (r"(<mj-button[^>]*>)([^<]+)(</mj-button>)", "mjml_button"),
         # HTML comments that are descriptive: <!-- Header -->
-        (r'(<!-- )([A-Za-z\s]{3,30})( -->)', 'html_comment'),
-
+        (r"(<!-- )([A-Za-z\s]{3,30})( -->)", "html_comment"),
         # Title attributes: title="Shipping Address"
-        (r'(title=")([^"]{3,100})(")', 'title_attr'),
-
+        (r'(title=")([^"]{3,100})(")', "title_attr"),
         # Text parameter in includes: text="View Order"
-        (r'(text=")([^"]{3,100})(")', 'text_attr'),
-
+        (r'(text=")([^"]{3,100})(")', "text_attr"),
         # Strong tags: <strong>Label:</strong>
-        (r'(<strong>)([^<]{1,50})(</strong>)', 'strong_tag'),
+        (r"(<strong>)([^<]{1,50})(</strong>)", "strong_tag"),
     ]
 
     # Patterns to NEVER translate
     PRESERVE_PATTERNS = [
-        r'\{\{[^}]+\}\}',        # Django variables: {{ variable }}
-        r'\{%[^%]+%\}',          # Django tags: {% tag %}
-        r'<mj-[^>]+>',           # MJML tags
-        r'</mj-[^>]+>',          # MJML closing tags
-        r'#[0-9a-fA-F]{3,6}',    # Color codes: #fff, #ffffff
-        r'\d+px',                # Pixel values: 28px
-        r'https?://[^\s]+',      # URLs
-        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # Email addresses
+        r"\{\{[^}]+\}\}",  # Django variables: {{ variable }}
+        r"\{%[^%]+%\}",  # Django tags: {% tag %}
+        r"<mj-[^>]+>",  # MJML tags
+        r"</mj-[^>]+>",  # MJML closing tags
+        r"#[0-9a-fA-F]{3,6}",  # Color codes: #fff, #ffffff
+        r"\d+px",  # Pixel values: 28px
+        r"https?://[^\s]+",  # URLs
+        r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",  # Email addresses
     ]
 
     def __init__(self):
@@ -72,12 +67,8 @@ class TemplateTranslationExtractor:
         self.strings_map = {}  # Maps placeholder -> TranslatableString
 
     def extract_from_template(
-        self,
-        template_type: str,
-        subject: str,
-        html_content: str,
-        text_content: str
-    ) -> Tuple[Dict, Dict]:
+        self, template_type: str, subject: str, html_content: str, text_content: str
+    ) -> tuple[dict, dict]:
         """
         Extract translatable strings from all template parts.
 
@@ -95,39 +86,31 @@ class TemplateTranslationExtractor:
 
         # Extract from subject (simple case)
         subject_with_placeholders, subject_strings = self._extract_from_text(
-            subject,
-            context=f"{template_type}/subject"
+            subject, context=f"{template_type}/subject"
         )
 
         # Extract from HTML content
         html_with_placeholders, html_strings = self._extract_from_html(
-            html_content,
-            context=f"{template_type}/html"
+            html_content, context=f"{template_type}/html"
         )
 
         # Extract from text content
         text_with_placeholders, text_strings = self._extract_from_text(
-            text_content,
-            context=f"{template_type}/text",
-            preserve_structure=True
+            text_content, context=f"{template_type}/text", preserve_structure=True
         )
 
         # Combine all strings
         all_strings = {**subject_strings, **html_strings, **text_strings}
 
         templates = {
-            'subject': subject_with_placeholders,
-            'html_content': html_with_placeholders,
-            'text_content': text_with_placeholders,
+            "subject": subject_with_placeholders,
+            "html_content": html_with_placeholders,
+            "text_content": text_with_placeholders,
         }
 
         return templates, all_strings
 
-    def _extract_from_html(
-        self,
-        html: str,
-        context: str
-    ) -> Tuple[str, Dict]:
+    def _extract_from_html(self, html: str, context: str) -> tuple[str, dict]:
         """Extract translatable strings from HTML/MJML content"""
         result = html
         strings = {}
@@ -150,24 +133,23 @@ class TemplateTranslationExtractor:
                     strings[placeholder_key] = TranslatableString(
                         key=placeholder_key,
                         text=content.strip(),
-                        context=f"{context}/{pattern_type}"
+                        context=f"{context}/{pattern_type}",
                     )
 
                     # Replace in result
                     result = (
-                        result[:match.start()] +
-                        prefix + placeholder + suffix +
-                        result[match.end():]
+                        result[: match.start()]
+                        + prefix
+                        + placeholder
+                        + suffix
+                        + result[match.end() :]
                     )
 
         return result, strings
 
     def _extract_from_text(
-        self,
-        text: str,
-        context: str,
-        preserve_structure: bool = False
-    ) -> Tuple[str, Dict]:
+        self, text: str, context: str, preserve_structure: bool = False
+    ) -> tuple[str, dict]:
         """
         Extract translatable strings from plain text.
 
@@ -186,9 +168,7 @@ class TemplateTranslationExtractor:
                 placeholder = f"__TRANSLATE_{placeholder_key}__"
 
                 strings[placeholder_key] = TranslatableString(
-                    key=placeholder_key,
-                    text=text.strip(),
-                    context=context
+                    key=placeholder_key, text=text.strip(), context=context
                 )
 
                 return placeholder, strings
@@ -196,17 +176,17 @@ class TemplateTranslationExtractor:
                 return text, strings
 
         # For structured text content, process line by line
-        lines = text.split('\n')
+        lines = text.split("\n")
         result_lines = []
 
         for line in lines:
             # Skip Django tags
-            if re.search(r'\{%.*%\}', line):
+            if re.search(r"\{%.*%\}", line):
                 result_lines.append(line)
                 continue
 
             # Skip lines that are only variables
-            if re.match(r'^\s*\{\{.*\}\}\s*$', line):
+            if re.match(r"^\s*\{\{.*\}\}\s*$", line):
                 result_lines.append(line)
                 continue
 
@@ -221,18 +201,16 @@ class TemplateTranslationExtractor:
                 placeholder = f"__TRANSLATE_{placeholder_key}__"
 
                 strings[placeholder_key] = TranslatableString(
-                    key=placeholder_key,
-                    text=line.strip(),
-                    context=f"{context}/line"
+                    key=placeholder_key, text=line.strip(), context=f"{context}/line"
                 )
 
                 # Preserve indentation
                 indent = len(line) - len(line.lstrip())
-                result_lines.append(' ' * indent + placeholder)
+                result_lines.append(" " * indent + placeholder)
             else:
                 result_lines.append(line)
 
-        return '\n'.join(result_lines), strings
+        return "\n".join(result_lines), strings
 
     def _should_translate(self, text: str) -> bool:
         """
@@ -254,10 +232,7 @@ class TemplateTranslationExtractor:
 
         # Check if contains any translatable text (letters)
         # Must have at least 2 consecutive letters to be translatable
-        if not re.search(r'[A-Za-z]{2,}', text):
-            return False
-
-        return True
+        return re.search(r"[A-Za-z]{2,}", text)
 
     def _get_next_key(self) -> str:
         """Generate next unique placeholder key"""
@@ -265,10 +240,8 @@ class TemplateTranslationExtractor:
         return f"{self.string_counter:03d}"
 
     def reconstruct_template(
-        self,
-        templates_with_placeholders: Dict,
-        translated_strings: Dict[str, str]
-    ) -> Dict:
+        self, templates_with_placeholders: dict, translated_strings: dict[str, str]
+    ) -> dict:
         """
         Reconstruct templates with translated strings.
 
@@ -294,24 +267,18 @@ class TemplateTranslationExtractor:
         return result
 
     def prepare_for_translation(
-        self,
-        translatable_strings: Dict[str, TranslatableString]
-    ) -> Dict[str, str]:
+        self, translatable_strings: dict[str, TranslatableString]
+    ) -> dict[str, str]:
         """
         Prepare strings for translation service.
 
         Returns dict mapping keys to text for translation API.
         """
-        return {
-            key: string_obj.text
-            for key, string_obj in translatable_strings.items()
-        }
+        return {key: string_obj.text for key, string_obj in translatable_strings.items()}
 
     def validate_translation(
-        self,
-        original_strings: Dict[str, TranslatableString],
-        translated_strings: Dict[str, str]
-    ) -> List[str]:
+        self, original_strings: dict[str, TranslatableString], translated_strings: dict[str, str]
+    ) -> list[str]:
         """
         Validate that translation preserved important elements.
 

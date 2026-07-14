@@ -5,9 +5,8 @@ This module provides utilities for working with currencies using django-money's
 full currency list (308 currencies) instead of hardcoded values.
 """
 
-from django.utils.translation import gettext_lazy as _
-from decimal import Decimal, ROUND_HALF_UP
 import logging
+from decimal import ROUND_HALF_UP, Decimal
 
 logger = logging.getLogger(__name__)
 
@@ -22,10 +21,7 @@ def get_all_currencies():
     """
     from moneyed import CURRENCIES
 
-    return [
-        (code, f"{code} - {curr.name}")
-        for code, curr in CURRENCIES.items()
-    ]
+    return [(code, f"{code} - {curr.name}") for code, curr in CURRENCIES.items()]
 
 
 def get_common_currencies():
@@ -39,33 +35,29 @@ def get_common_currencies():
 
     # Common currencies used in e-commerce
     common = [
-        'USD',  # US Dollar
-        'EUR',  # Euro
-        'GBP',  # British Pound
-        'JPY',  # Japanese Yen
-        'CNY',  # Chinese Yuan
-        'CAD',  # Canadian Dollar
-        'AUD',  # Australian Dollar
-        'CHF',  # Swiss Franc
-        'HKD',  # Hong Kong Dollar
-        'SGD',  # Singapore Dollar
-        'SEK',  # Swedish Krona
-        'NOK',  # Norwegian Krone
-        'NZD',  # New Zealand Dollar
-        'INR',  # Indian Rupee
-        'KRW',  # South Korean Won
-        'MXN',  # Mexican Peso
-        'BRL',  # Brazilian Real
-        'ZAR',  # South African Rand
-        'DKK',  # Danish Krone
-        'PLN',  # Polish Złoty
+        "USD",  # US Dollar
+        "EUR",  # Euro
+        "GBP",  # British Pound
+        "JPY",  # Japanese Yen
+        "CNY",  # Chinese Yuan
+        "CAD",  # Canadian Dollar
+        "AUD",  # Australian Dollar
+        "CHF",  # Swiss Franc
+        "HKD",  # Hong Kong Dollar
+        "SGD",  # Singapore Dollar
+        "SEK",  # Swedish Krona
+        "NOK",  # Norwegian Krone
+        "NZD",  # New Zealand Dollar
+        "INR",  # Indian Rupee
+        "KRW",  # South Korean Won
+        "MXN",  # Mexican Peso
+        "BRL",  # Brazilian Real
+        "ZAR",  # South African Rand
+        "DKK",  # Danish Krone
+        "PLN",  # Polish Złoty
     ]
 
-    return [
-        (code, f"{code} - {CURRENCIES[code].name}")
-        for code in common
-        if code in CURRENCIES
-    ]
+    return [(code, f"{code} - {CURRENCIES[code].name}") for code in common if code in CURRENCIES]
 
 
 def get_currency_decimal_places(currency_code):
@@ -89,39 +81,39 @@ def get_currency_decimal_places(currency_code):
     """
     # Zero decimal currencies
     no_decimal_currencies = [
-        'BIF',  # Burundian Franc
-        'CLP',  # Chilean Peso
-        'DJF',  # Djiboutian Franc
-        'GNF',  # Guinean Franc
-        'ISK',  # Icelandic Króna
-        'JPY',  # Japanese Yen
-        'KMF',  # Comorian Franc
-        'KRW',  # South Korean Won
-        'PYG',  # Paraguayan Guaraní
-        'RWF',  # Rwandan Franc
-        'UGX',  # Ugandan Shilling
-        'VND',  # Vietnamese Dong
-        'VUV',  # Vanuatu Vatu
-        'XAF',  # Central African CFA Franc
-        'XOF',  # West African CFA Franc
-        'XPF',  # CFP Franc
+        "BIF",  # Burundian Franc
+        "CLP",  # Chilean Peso
+        "DJF",  # Djiboutian Franc
+        "GNF",  # Guinean Franc
+        "ISK",  # Icelandic Króna
+        "JPY",  # Japanese Yen
+        "KMF",  # Comorian Franc
+        "KRW",  # South Korean Won
+        "PYG",  # Paraguayan Guaraní
+        "RWF",  # Rwandan Franc
+        "UGX",  # Ugandan Shilling
+        "VND",  # Vietnamese Dong
+        "VUV",  # Vanuatu Vatu
+        "XAF",  # Central African CFA Franc
+        "XOF",  # West African CFA Franc
+        "XPF",  # CFP Franc
     ]
 
     # Three decimal currencies
     three_decimal_currencies = [
-        'BHD',  # Bahraini Dinar
-        'IQD',  # Iraqi Dinar
-        'JOD',  # Jordanian Dinar
-        'KWD',  # Kuwaiti Dinar
-        'LYD',  # Libyan Dinar
-        'OMR',  # Omani Rial
-        'TND',  # Tunisian Dinar
+        "BHD",  # Bahraini Dinar
+        "IQD",  # Iraqi Dinar
+        "JOD",  # Jordanian Dinar
+        "KWD",  # Kuwaiti Dinar
+        "LYD",  # Libyan Dinar
+        "OMR",  # Omani Rial
+        "TND",  # Tunisian Dinar
     ]
 
     # Four decimal currencies (rare)
     four_decimal_currencies = [
-        'CLF',  # Chilean Unit of Account (UF)
-        'UYW',  # Uruguayan Nominal Wage Index Unit
+        "CLF",  # Chilean Unit of Account (UF)
+        "UYW",  # Uruguayan Nominal Wage Index Unit
     ]
 
     if currency_code in no_decimal_currencies:
@@ -151,9 +143,9 @@ def round_money(amount, currency_code):
     decimal_places = get_currency_decimal_places(currency_code)
 
     if decimal_places == 0:
-        return amount.quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        return amount.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
     else:
-        quantizer = Decimal('0.1') ** decimal_places
+        quantizer = Decimal("0.1") ** decimal_places
         return amount.quantize(quantizer, rounding=ROUND_HALF_UP)
 
 
@@ -184,28 +176,28 @@ def format_money(amount, currency_code, locale=None):
 
         # Default locales for common currencies
         currency_locales = {
-            'USD': 'en_US',
-            'EUR': 'de_DE',  # German format: 1.234,56 €
-            'GBP': 'en_GB',
-            'JPY': 'ja_JP',
-            'CNY': 'zh_CN',
-            'AUD': 'en_AU',
-            'CAD': 'en_CA',
-            'CHF': 'de_CH',
-            'HKD': 'en_HK',
-            'SGD': 'en_SG',
-            'SEK': 'sv_SE',
-            'NOK': 'nb_NO',
-            'DKK': 'da_DK',
-            'INR': 'en_IN',
-            'KRW': 'ko_KR',
-            'MXN': 'es_MX',
-            'BRL': 'pt_BR',
-            'ZAR': 'en_ZA',
+            "USD": "en_US",
+            "EUR": "de_DE",  # German format: 1.234,56 €
+            "GBP": "en_GB",
+            "JPY": "ja_JP",
+            "CNY": "zh_CN",
+            "AUD": "en_AU",
+            "CAD": "en_CA",
+            "CHF": "de_CH",
+            "HKD": "en_HK",
+            "SGD": "en_SG",
+            "SEK": "sv_SE",
+            "NOK": "nb_NO",
+            "DKK": "da_DK",
+            "INR": "en_IN",
+            "KRW": "ko_KR",
+            "MXN": "es_MX",
+            "BRL": "pt_BR",
+            "ZAR": "en_ZA",
         }
 
         if not locale:
-            locale = currency_locales.get(currency_code, 'en_US')
+            locale = currency_locales.get(currency_code, "en_US")
 
         return format_currency(amount, currency_code, locale=locale)
 
@@ -235,15 +227,12 @@ def _format_money_simple(amount, currency_code):
         return f"{amount} {currency_code}"
 
     currency_obj = CURRENCIES[currency_code]
-    symbol = getattr(currency_obj, 'symbol', currency_code)
+    symbol = getattr(currency_obj, "symbol", currency_code)
 
     # Format with proper decimal places
     decimal_places = get_currency_decimal_places(currency_code)
 
-    if decimal_places == 0:
-        formatted_amount = f"{amount:,.0f}"
-    else:
-        formatted_amount = f"{amount:,.{decimal_places}f}"
+    formatted_amount = f"{amount:,.0f}" if decimal_places == 0 else f"{amount:,.{decimal_places}f}"
 
     return f"{symbol}{formatted_amount}"
 
@@ -264,7 +253,7 @@ def get_currency_symbol(currency_code):
         return currency_code
 
     currency_obj = CURRENCIES[currency_code]
-    return getattr(currency_obj, 'symbol', currency_code)
+    return getattr(currency_obj, "symbol", currency_code)
 
 
 def get_currency_name(currency_code):
@@ -297,6 +286,7 @@ def validate_currency_code(currency_code):
         bool: True if valid, False otherwise
     """
     from moneyed import CURRENCIES
+
     return currency_code in CURRENCIES
 
 
@@ -312,6 +302,7 @@ def get_enabled_currencies():
               e.g., [('USD', 'USD - US Dollar'), ('EUR', 'EUR - Euro'), ...]
     """
     from moneyed import CURRENCIES
+
     from core.models import SiteSettings
     from core.supported_currency_model import SupportedCurrency
 
@@ -323,7 +314,9 @@ def get_enabled_currencies():
             # Only return default currency
             default_currency = settings.default_currency
             if default_currency in CURRENCIES:
-                return [(default_currency, f"{default_currency} - {CURRENCIES[default_currency].name}")]
+                return [
+                    (default_currency, f"{default_currency} - {CURRENCIES[default_currency].name}")
+                ]
             return [(default_currency, default_currency)]
 
         # Get active currencies from SupportedCurrency model
@@ -333,7 +326,9 @@ def get_enabled_currencies():
             # If no currencies are active, return default currency only
             default_currency = settings.default_currency
             if default_currency in CURRENCIES:
-                return [(default_currency, f"{default_currency} - {CURRENCIES[default_currency].name}")]
+                return [
+                    (default_currency, f"{default_currency} - {CURRENCIES[default_currency].name}")
+                ]
             return [(default_currency, default_currency)]
 
         # Build choices from active currencies
@@ -344,12 +339,20 @@ def get_enabled_currencies():
 
         if not choices:
             default_currency = settings.default_currency
-            return [(default_currency, f"{default_currency} - {CURRENCIES[default_currency].name}" if default_currency in CURRENCIES else default_currency)]
+            return [
+                (
+                    default_currency,
+                    f"{default_currency} - {CURRENCIES[default_currency].name}"
+                    if default_currency in CURRENCIES
+                    else default_currency,
+                )
+            ]
 
         return choices
 
     except Exception as e:
         from core.utils import get_default_currency
+
         dc = get_default_currency()
         logger.warning(f"Failed to get enabled currencies: {e}, falling back to {dc}")
         return [(dc, dc)]

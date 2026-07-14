@@ -5,6 +5,7 @@ Handles chunked media file transfer for full system migration.
 Uses streaming endpoints rather than base64 inline encoding.
 Works with both local filesystem and S3/MinIO storage backends.
 """
+
 import hashlib
 import logging
 
@@ -34,29 +35,37 @@ def export_media_metadata(queryset):
     metadata = []
     for asset in queryset.iterator():
         entry = {
-            'id': asset.pk,
-            'original_file': asset.original_file.name if asset.original_file else None,
-            'webp_file': asset.webp_file.name if asset.webp_file else None,
+            "id": asset.pk,
+            "original_file": asset.original_file.name if asset.original_file else None,
+            "webp_file": asset.webp_file.name if asset.webp_file else None,
         }
 
         # Add optional fields if they exist
-        if hasattr(asset, 'converted_video') and asset.converted_video:
-            entry['converted_video'] = asset.converted_video.name
-        if hasattr(asset, 'poster_image') and asset.poster_image:
-            entry['poster_image'] = asset.poster_image.name
+        if hasattr(asset, "converted_video") and asset.converted_video:
+            entry["converted_video"] = asset.converted_video.name
+        if hasattr(asset, "poster_image") and asset.poster_image:
+            entry["poster_image"] = asset.poster_image.name
 
         # Add non-file metadata
-        for field_name in ['title', 'alt_text', 'caption', 'content_type',
-                           'file_size', 'width', 'height', 'duration']:
+        for field_name in [
+            "title",
+            "alt_text",
+            "caption",
+            "content_type",
+            "file_size",
+            "width",
+            "height",
+            "duration",
+        ]:
             if hasattr(asset, field_name):
                 entry[field_name] = getattr(asset, field_name)
 
         # Compute checksum for verification
         if asset.original_file:
             try:
-                entry['checksum'] = _compute_file_checksum(asset.original_file)
+                entry["checksum"] = _compute_file_checksum(asset.original_file)
             except Exception:
-                entry['checksum'] = None
+                entry["checksum"] = None
 
         metadata.append(entry)
 
@@ -77,7 +86,7 @@ def stream_media_file(file_field):
         return
 
     try:
-        file_field.open('rb')
+        file_field.open("rb")
         try:
             while True:
                 chunk = file_field.read(CHUNK_SIZE)
@@ -121,26 +130,26 @@ def import_media_file(file_content, target_path, expected_checksum=None):
 
             if actual_checksum != expected_checksum:
                 return {
-                    'success': False,
-                    'saved_path': None,
-                    'error': f"Checksum mismatch: expected {expected_checksum}, got {actual_checksum}",
+                    "success": False,
+                    "saved_path": None,
+                    "error": f"Checksum mismatch: expected {expected_checksum}, got {actual_checksum}",
                 }
 
         # Save using Django's storage API (works for local and S3)
         saved_path = default_storage.save(target_path, content_file)
 
         return {
-            'success': True,
-            'saved_path': saved_path,
-            'error': None,
+            "success": True,
+            "saved_path": saved_path,
+            "error": None,
         }
 
     except Exception as e:
         logger.error(f"Failed to save media file to {target_path}: {e}")
         return {
-            'success': False,
-            'saved_path': None,
-            'error': str(e),
+            "success": False,
+            "saved_path": None,
+            "error": str(e),
         }
 
 
@@ -154,10 +163,7 @@ def get_media_transfer_batches(asset_ids):
     Returns:
         list of lists (batches)
     """
-    return [
-        asset_ids[i:i + BATCH_SIZE]
-        for i in range(0, len(asset_ids), BATCH_SIZE)
-    ]
+    return [asset_ids[i : i + BATCH_SIZE] for i in range(0, len(asset_ids), BATCH_SIZE)]
 
 
 def get_media_total_size():
@@ -169,10 +175,9 @@ def get_media_total_size():
     """
     try:
         from media_library.models import MediaAsset
-        result = MediaAsset.objects.aggregate(
-            total_size=Sum('file_size')
-        )
-        return result.get('total_size') or 0
+
+        result = MediaAsset.objects.aggregate(total_size=Sum("file_size"))
+        return result.get("total_size") or 0
     except Exception:
         return 0
 
@@ -180,9 +185,9 @@ def get_media_total_size():
 def _compute_file_checksum(file_field):
     """Compute MD5 checksum of a file."""
     hasher = hashlib.md5()
-    file_field.open('rb')
+    file_field.open("rb")
     try:
-        for chunk in iter(lambda: file_field.read(CHUNK_SIZE), b''):
+        for chunk in iter(lambda: file_field.read(CHUNK_SIZE), b""):
             hasher.update(chunk)
     finally:
         file_field.close()

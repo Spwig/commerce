@@ -1,7 +1,8 @@
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 from datetime import timedelta
+
+from django.db import models
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class FeedProviderAccount(models.Model):
@@ -9,40 +10,41 @@ class FeedProviderAccount(models.Model):
     Merchant's connection to a product feed provider component.
     Pattern follows exchange_rates/models.py ExchangeRateProviderAccount.
     """
+
     site = models.ForeignKey(
-        'sites.Site',
+        "sites.Site",
         on_delete=models.CASCADE,
         verbose_name=_("Site"),
-        help_text=_("Site this feed provider account belongs to")
+        help_text=_("Site this feed provider account belongs to"),
     )
 
     component = models.ForeignKey(
-        'component_updates.ComponentRegistry',
+        "component_updates.ComponentRegistry",
         on_delete=models.PROTECT,
-        limit_choices_to={'component_type': 'product_feed_provider'},
-        related_name='feed_provider_accounts',
+        limit_choices_to={"component_type": "product_feed_provider"},
+        related_name="feed_provider_accounts",
         verbose_name=_("Provider Component"),
-        help_text=_("Product feed provider component from update system")
+        help_text=_("Product feed provider component from update system"),
     )
 
     name = models.CharField(
         max_length=255,
         verbose_name=_("Account Name"),
-        help_text=_("Friendly name for this feed configuration (e.g., 'Google Shopping - US')")
+        help_text=_("Friendly name for this feed configuration (e.g., 'Google Shopping - US')"),
     )
 
     credentials = models.BinaryField(
         blank=True,
         null=True,
         verbose_name=_("Encrypted Credentials"),
-        help_text=_("Encrypted API credentials for this provider")
+        help_text=_("Encrypted API credentials for this provider"),
     )
 
     config = models.JSONField(
         default=dict,
         blank=True,
         verbose_name=_("Feed Configuration"),
-        help_text=_("Feed configuration including attribute mapping and product filters")
+        help_text=_("Feed configuration including attribute mapping and product filters"),
     )
     # Config structure:
     # {
@@ -68,67 +70,64 @@ class FeedProviderAccount(models.Model):
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Active"),
-        help_text=_("Whether this feed is active and should be synced")
+        help_text=_("Whether this feed is active and should be synced"),
     )
 
     is_primary = models.BooleanField(
         default=False,
         verbose_name=_("Primary Feed"),
-        help_text=_("Mark as primary feed for this provider type")
+        help_text=_("Mark as primary feed for this provider type"),
     )
 
     priority = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Priority"),
-        help_text=_("Sort order when displaying feeds (lower = first)")
+        help_text=_("Sort order when displaying feeds (lower = first)"),
     )
 
     # Sync tracking
     SYNC_STATUS_CHOICES = [
-        ('pending', _('Pending')),
-        ('syncing', _('Syncing')),
-        ('success', _('Success')),
-        ('error', _('Error')),
+        ("pending", _("Pending")),
+        ("syncing", _("Syncing")),
+        ("success", _("Success")),
+        ("error", _("Error")),
     ]
     sync_status = models.CharField(
-        max_length=20,
-        choices=SYNC_STATUS_CHOICES,
-        default='pending',
-        verbose_name=_("Sync Status")
+        max_length=20, choices=SYNC_STATUS_CHOICES, default="pending", verbose_name=_("Sync Status")
     )
 
     last_sync_at = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Last Sync At"),
-        help_text=_("When feed was last successfully synced")
+        help_text=_("When feed was last successfully synced"),
     )
 
     next_sync_at = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Next Sync At"),
-        help_text=_("When next scheduled sync should occur")
+        help_text=_("When next scheduled sync should occur"),
     )
 
     sync_error_message = models.TextField(
         blank=True,
         verbose_name=_("Sync Error Message"),
-        help_text=_("Error message from last sync attempt")
+        help_text=_("Error message from last sync attempt"),
     )
 
     last_error_at = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Last Error At"),
-        help_text=_("When last error occurred")
+        help_text=_("When last error occurred"),
     )
 
     # Feed statistics
     products_in_feed = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Products in Feed"),
-        help_text=_("Number of products in the current feed")
+        help_text=_("Number of products in the current feed"),
     )
 
     # Hosted feed URL (for providers that fetch from URL)
@@ -136,7 +135,7 @@ class FeedProviderAccount(models.Model):
         max_length=500,
         blank=True,
         verbose_name=_("Feed URL"),
-        help_text=_("URL where feed is hosted for provider to fetch")
+        help_text=_("URL where feed is hosted for provider to fetch"),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -145,19 +144,18 @@ class FeedProviderAccount(models.Model):
     class Meta:
         verbose_name = _("Feed Provider Account")
         verbose_name_plural = _("Feed Provider Accounts")
-        ordering = ['-is_primary', '-is_active', 'priority', 'name']
+        ordering = ["-is_primary", "-is_active", "priority", "name"]
         indexes = [
-            models.Index(fields=['site', 'is_active']),
-            models.Index(fields=['priority']),
-            models.Index(fields=['is_primary']),
-            models.Index(fields=['sync_status']),
-            models.Index(fields=['next_sync_at']),
+            models.Index(fields=["site", "is_active"]),
+            models.Index(fields=["priority"]),
+            models.Index(fields=["is_primary"]),
+            models.Index(fields=["sync_status"]),
+            models.Index(fields=["next_sync_at"]),
         ]
         constraints = [
             # Unique name per site and component
             models.UniqueConstraint(
-                fields=['site', 'component', 'name'],
-                name='unique_feed_account_per_site_component'
+                fields=["site", "component", "name"], name="unique_feed_account_per_site_component"
             )
         ]
 
@@ -179,14 +177,14 @@ class FeedProviderAccount(models.Model):
 
     def calculate_next_sync(self):
         """Calculate next sync time based on config interval"""
-        interval = self.config.get('sync_interval', 'daily')
+        interval = self.config.get("sync_interval", "daily")
         now = timezone.now()
 
         interval_mapping = {
-            'hourly': timedelta(hours=1),
-            'daily': timedelta(days=1),
-            'weekly': timedelta(weeks=1),
-            'manual': None,
+            "hourly": timedelta(hours=1),
+            "daily": timedelta(days=1),
+            "weekly": timedelta(weeks=1),
+            "manual": None,
         }
 
         delta = interval_mapping.get(interval)
@@ -198,12 +196,12 @@ class FeedProviderAccount(models.Model):
     @property
     def sync_interval_display(self):
         """Human-readable sync interval"""
-        interval = self.config.get('sync_interval', 'daily')
+        interval = self.config.get("sync_interval", "daily")
         return {
-            'hourly': _('Every Hour'),
-            'daily': _('Once Daily'),
-            'weekly': _('Once Weekly'),
-            'manual': _('Manual Only'),
+            "hourly": _("Every Hour"),
+            "daily": _("Once Daily"),
+            "weekly": _("Once Weekly"),
+            "manual": _("Manual Only"),
         }.get(interval, interval)
 
 
@@ -212,29 +210,26 @@ class ProductFeed(models.Model):
     Generated feed content cache.
     Stores the actual feed data for download or provider fetch.
     """
+
     account = models.ForeignKey(
         FeedProviderAccount,
         on_delete=models.CASCADE,
-        related_name='feeds',
-        verbose_name=_("Provider Account")
+        related_name="feeds",
+        verbose_name=_("Provider Account"),
     )
 
     FORMAT_CHOICES = [
-        ('xml', 'XML'),
-        ('csv', 'CSV'),
-        ('json', 'JSON'),
+        ("xml", "XML"),
+        ("csv", "CSV"),
+        ("json", "JSON"),
     ]
     feed_format = models.CharField(
-        max_length=10,
-        choices=FORMAT_CHOICES,
-        verbose_name=_("Feed Format")
+        max_length=10, choices=FORMAT_CHOICES, verbose_name=_("Feed Format")
     )
 
     # Feed content - for smaller feeds stored in DB
     content = models.TextField(
-        blank=True,
-        verbose_name=_("Feed Content"),
-        help_text=_("Feed content for smaller feeds")
+        blank=True, verbose_name=_("Feed Content"), help_text=_("Feed content for smaller feeds")
     )
 
     # For larger feeds, store file path
@@ -242,31 +237,23 @@ class ProductFeed(models.Model):
         max_length=500,
         blank=True,
         verbose_name=_("File Path"),
-        help_text=_("File path for large feeds stored on disk")
+        help_text=_("File path for large feeds stored on disk"),
     )
 
     # Metadata
     file_size = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("File Size"),
-        help_text=_("Size in bytes")
+        default=0, verbose_name=_("File Size"), help_text=_("Size in bytes")
     )
 
     product_count = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Product Count"),
-        help_text=_("Number of products in this feed")
+        default=0, verbose_name=_("Product Count"), help_text=_("Number of products in this feed")
     )
 
     # Timestamps
-    generated_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Generated At")
-    )
+    generated_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Generated At"))
 
     expires_at = models.DateTimeField(
-        verbose_name=_("Expires At"),
-        help_text=_("When this cached feed expires")
+        verbose_name=_("Expires At"), help_text=_("When this cached feed expires")
     )
 
     # Validation results and statistics
@@ -274,7 +261,7 @@ class ProductFeed(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Statistics"),
-        help_text=_("Feed statistics and validation results")
+        help_text=_("Feed statistics and validation results"),
     )
     # Stats structure:
     # {
@@ -287,24 +274,19 @@ class ProductFeed(models.Model):
     # }
 
     # Download tracking
-    download_count = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Download Count")
-    )
+    download_count = models.PositiveIntegerField(default=0, verbose_name=_("Download Count"))
 
     last_downloaded_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Last Downloaded At")
+        null=True, blank=True, verbose_name=_("Last Downloaded At")
     )
 
     class Meta:
         verbose_name = _("Product Feed")
         verbose_name_plural = _("Product Feeds")
-        ordering = ['-generated_at']
+        ordering = ["-generated_at"]
         indexes = [
-            models.Index(fields=['account', '-generated_at']),
-            models.Index(fields=['expires_at']),
+            models.Index(fields=["account", "-generated_at"]),
+            models.Index(fields=["expires_at"]),
         ]
 
     def __str__(self):
@@ -324,26 +306,26 @@ class ProductFeed(models.Model):
         """Get feed content from DB or file"""
         if self.file_path:
             try:
-                with open(self.file_path, 'r', encoding='utf-8') as f:
+                with open(self.file_path, encoding="utf-8") as f:
                     return f.read()
             except FileNotFoundError:
-                return ''
+                return ""
         return self.content
 
     def get_content_type(self):
         """Get MIME content type for feed format"""
         content_types = {
-            'xml': 'application/xml',
-            'csv': 'text/csv',
-            'json': 'application/json',
+            "xml": "application/xml",
+            "csv": "text/csv",
+            "json": "application/json",
         }
-        return content_types.get(self.feed_format, 'text/plain')
+        return content_types.get(self.feed_format, "text/plain")
 
     def increment_download(self):
         """Track download"""
         self.download_count += 1
         self.last_downloaded_at = timezone.now()
-        self.save(update_fields=['download_count', 'last_downloaded_at'])
+        self.save(update_fields=["download_count", "last_downloaded_at"])
 
 
 class FeedSyncLog(models.Model):
@@ -351,72 +333,49 @@ class FeedSyncLog(models.Model):
     Audit log for feed sync operations.
     Tracks every sync attempt with detailed results.
     """
+
     account = models.ForeignKey(
         FeedProviderAccount,
         on_delete=models.CASCADE,
-        related_name='sync_logs',
-        verbose_name=_("Provider Account")
+        related_name="sync_logs",
+        verbose_name=_("Provider Account"),
     )
 
     STATUS_CHOICES = [
-        ('pending', _('Pending')),
-        ('running', _('Running')),
-        ('success', _('Success')),
-        ('partial', _('Partial Success')),
-        ('failed', _('Failed')),
+        ("pending", _("Pending")),
+        ("running", _("Running")),
+        ("success", _("Success")),
+        ("partial", _("Partial Success")),
+        ("failed", _("Failed")),
     ]
     status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending',
-        verbose_name=_("Status")
+        max_length=20, choices=STATUS_CHOICES, default="pending", verbose_name=_("Status")
     )
 
     # Timing
-    started_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Started At")
-    )
+    started_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Started At"))
 
-    completed_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Completed At")
-    )
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Completed At"))
 
     duration_seconds = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        verbose_name=_("Duration (seconds)")
+        null=True, blank=True, verbose_name=_("Duration (seconds)")
     )
 
     # Statistics
-    products_synced = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Products Synced")
-    )
+    products_synced = models.PositiveIntegerField(default=0, verbose_name=_("Products Synced"))
 
-    products_failed = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Products Failed")
-    )
+    products_failed = models.PositiveIntegerField(default=0, verbose_name=_("Products Failed"))
 
-    products_skipped = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Products Skipped")
-    )
+    products_skipped = models.PositiveIntegerField(default=0, verbose_name=_("Products Skipped"))
 
     # Error tracking
-    error_message = models.TextField(
-        blank=True,
-        verbose_name=_("Error Message")
-    )
+    error_message = models.TextField(blank=True, verbose_name=_("Error Message"))
 
     error_details = models.JSONField(
         default=dict,
         blank=True,
         verbose_name=_("Error Details"),
-        help_text=_("Detailed error information, including per-product errors")
+        help_text=_("Detailed error information, including per-product errors"),
     )
     # Error details structure:
     # {
@@ -433,37 +392,34 @@ class FeedSyncLog(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='sync_logs',
-        verbose_name=_("Generated Feed")
+        related_name="sync_logs",
+        verbose_name=_("Generated Feed"),
     )
 
     # Sync type
     SYNC_TYPE_CHOICES = [
-        ('full', _('Full Sync')),
-        ('incremental', _('Incremental')),
-        ('manual', _('Manual')),
-        ('scheduled', _('Scheduled')),
+        ("full", _("Full Sync")),
+        ("incremental", _("Incremental")),
+        ("manual", _("Manual")),
+        ("scheduled", _("Scheduled")),
     ]
     sync_type = models.CharField(
-        max_length=20,
-        choices=SYNC_TYPE_CHOICES,
-        default='full',
-        verbose_name=_("Sync Type")
+        max_length=20, choices=SYNC_TYPE_CHOICES, default="full", verbose_name=_("Sync Type")
     )
 
     class Meta:
         verbose_name = _("Feed Sync Log")
         verbose_name_plural = _("Feed Sync Logs")
-        ordering = ['-started_at']
+        ordering = ["-started_at"]
         indexes = [
-            models.Index(fields=['account', '-started_at']),
-            models.Index(fields=['status']),
+            models.Index(fields=["account", "-started_at"]),
+            models.Index(fields=["status"]),
         ]
 
     def __str__(self):
         return f"{self.account.name} - {self.status} ({self.started_at.strftime('%Y-%m-%d %H:%M')})"
 
-    def complete(self, status='success', error_message=''):
+    def complete(self, status="success", error_message=""):
         """Mark sync as complete"""
         self.status = status
         self.completed_at = timezone.now()

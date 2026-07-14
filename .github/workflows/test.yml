@@ -75,3 +75,43 @@ jobs:
           SPWIG_TELEMETRY: "0"
         run: |
           pytest tests/community_edition/ tests/integration/test_sandbox.py -v
+
+      - name: Run Django tests (app-level suites — audited drift-recovery scope)
+        env:
+          DJANGO_SETTINGS_MODULE: core.settings
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: spwig_test
+          DB_USER: spwig
+          DB_PASSWORD: spwig
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          SECRET_KEY: ci-test-secret-key-not-for-production
+          EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
+          SPWIG_TELEMETRY: "0"
+        # Explicit paths: pytest.ini has `testpaths = tests`, so bare
+        # `pytest` skips these dirs. Guards the ~4,400 tests audited
+        # in the drift-recovery campaign (Phases 1 + 4 + 5 of
+        # docs/.claude_code/plans/test-suite-drift-recovery.md).
+        # New drift in any of these paths will now turn CI red.
+        run: |
+          pytest --create-db -v \
+            tests/unit/ \
+            tests/integration/ \
+            tests/contract/ \
+            tests/catalog/ \
+            tests/rbac/ \
+            tests/integrity/ \
+            accounts/tests/ \
+            admin_api/tests/ \
+            catalog/tests/ \
+            design/tests/ \
+            email_system/tests/ \
+            loyalty/tests/ \
+            migration/tests/ \
+            orders/tests/ \
+            referrals/tests/ \
+            search/tests/ \
+            shipping/tests/ \
+            social_sharing/tests/ \
+            subscriptions/tests/

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 class POSProductVariantSerializer(serializers.Serializer):
     """Lightweight variant serializer for POS product display."""
+
     id = serializers.IntegerField()
     sku = serializers.CharField()
     barcode = serializers.CharField(allow_blank=True)
@@ -15,6 +16,7 @@ class POSProductVariantSerializer(serializers.Serializer):
 
 class POSProductSerializer(serializers.Serializer):
     """Full product serializer for POS product detail."""
+
     id = serializers.IntegerField()
     name = serializers.CharField()
     slug = serializers.CharField()
@@ -38,6 +40,7 @@ class POSProductSerializer(serializers.Serializer):
 
 class POSProductListSerializer(serializers.Serializer):
     """Lightweight product serializer for POS grid display."""
+
     id = serializers.IntegerField()
     name = serializers.CharField()
     sku = serializers.CharField()
@@ -53,6 +56,7 @@ class POSProductListSerializer(serializers.Serializer):
 
 class POSCategorySerializer(serializers.Serializer):
     """Category tree serializer for POS navigation."""
+
     id = serializers.IntegerField()
     name = serializers.CharField()
     slug = serializers.CharField()

@@ -4,18 +4,20 @@ Payment Provider Webhook Handlers
 Handles incoming webhooks from payment providers (Stripe, AirWallex, etc.)
 Also includes admin API endpoints for provider management.
 """
+
 import json
 import logging
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST, require_http_methods
-from django.contrib.admin.views.decorators import staff_member_required
-from django.utils.translation import gettext as _
 
-from payment_providers.models import PaymentWebhook, PaymentProviderAccount
-from payment_providers.services.webhook_service import WebhookService
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods, require_POST
+
+from payment_providers.models import PaymentProviderAccount, PaymentWebhook
 from payment_providers.providers.registry import ProviderRegistry
+from payment_providers.services.webhook_service import WebhookService
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,7 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 # Admin Webhook Handler (Legacy - for admin URLs)
 # =============================================================================
+
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -35,22 +38,22 @@ def webhook_handler(request, provider_slug):
     """
     try:
         # Parse webhook payload
-        payload = json.loads(request.body.decode('utf-8'))
+        payload = json.loads(request.body.decode("utf-8"))
 
         # Extract event information (varies by provider)
-        event_id = payload.get('id') or payload.get('event_id') or payload.get('txn_id')
-        event_type = payload.get('type') or payload.get('event_type') or payload.get('txn_type')
+        event_id = payload.get("id") or payload.get("event_id") or payload.get("txn_id")
+        event_type = payload.get("type") or payload.get("event_type") or payload.get("txn_type")
 
         # Get all HTTP headers for signature verification
-        headers = {key: value for key, value in request.META.items() if key.startswith('HTTP_')}
+        headers = {key: value for key, value in request.META.items() if key.startswith("HTTP_")}
 
         # Store webhook for processing (provider_account will be determined later)
-        webhook = PaymentWebhook.objects.create(
+        PaymentWebhook.objects.create(
             provider_slug=provider_slug,
-            event_id=event_id or 'unknown',
-            event_type=event_type or 'unknown',
+            event_id=event_id or "unknown",
+            event_type=event_type or "unknown",
             payload=payload,
-            headers=headers
+            headers=headers,
         )
 
         logger.info(f"Received webhook from {provider_slug}: {event_type} (ID: {event_id})")
@@ -69,6 +72,7 @@ def webhook_handler(request, provider_slug):
 # Admin API Endpoints
 # =============================================================================
 
+
 @staff_member_required
 @require_http_methods(["POST"])
 def test_provider_connection(request, account_id):
@@ -81,18 +85,17 @@ def test_provider_connection(request, account_id):
         # Test the connection using the account's test_connection method
         result = account.test_connection()
 
-        return JsonResponse({
-            'success': result.get('success', False),
-            'message': result.get('message', ''),
-            'details': result.get('details', {})
-        })
+        return JsonResponse(
+            {
+                "success": result.get("success", False),
+                "message": result.get("message", ""),
+                "details": result.get("details", {}),
+            }
+        )
 
     except Exception as e:
         logger.error(f"Error testing provider connection: {str(e)}", exc_info=True)
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 @staff_member_required
@@ -105,17 +108,13 @@ def provider_info(request, provider_key):
         info = ProviderRegistry.get_provider_info(provider_key)
 
         if not info:
-            return JsonResponse({
-                'error': _('Provider not found')
-            }, status=404)
+            return JsonResponse({"error": _("Provider not found")}, status=404)
 
         return JsonResponse(info)
 
     except Exception as e:
         logger.error(f"Error getting provider info: {str(e)}", exc_info=True)
-        return JsonResponse({
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 # =============================================================================
@@ -151,30 +150,21 @@ def payment_webhook_handler(request, provider_slug: str) -> HttpResponse:
 
         # Parse JSON payload
         try:
-            payload = json.loads(raw_payload.decode('utf-8'))
+            payload = json.loads(raw_payload.decode("utf-8"))
         except json.JSONDecodeError as e:
             logger.error(f"Invalid JSON in webhook payload: {e}")
-            return JsonResponse(
-                {'error': 'Invalid JSON payload'},
-                status=400
-            )
+            return JsonResponse({"error": "Invalid JSON payload"}, status=400)
 
         # Extract headers for signature verification
-        headers = {
-            key: value
-            for key, value in request.headers.items()
-        }
+        headers = dict(request.headers.items())
 
         # Get signature from headers (varies by provider)
         signature = _get_webhook_signature(headers, provider_slug)
 
         # Log webhook receipt
-        event_type = payload.get('type', payload.get('name', payload.get('event_type', 'unknown')))
-        event_id = payload.get('id', payload.get('event_id', 'unknown'))
-        logger.info(
-            f"Received webhook from {provider_slug}: "
-            f"type={event_type}, id={event_id}"
-        )
+        event_type = payload.get("type", payload.get("name", payload.get("event_type", "unknown")))
+        event_id = payload.get("id", payload.get("event_id", "unknown"))
+        logger.info(f"Received webhook from {provider_slug}: type={event_type}, id={event_id}")
 
         # Process webhook through service
         success, message = WebhookService.process_webhook(
@@ -182,7 +172,7 @@ def payment_webhook_handler(request, provider_slug: str) -> HttpResponse:
             payload=payload,
             headers=headers,
             raw_payload=raw_payload,
-            signature=signature
+            signature=signature,
         )
 
         if success:
@@ -222,12 +212,12 @@ def _get_webhook_signature(headers: dict, provider_slug: str) -> str:
 
     # Provider-specific signature headers
     signature_headers = {
-        'stripe': 'stripe-signature',
-        'airwallex': 'x-signature',
-        'paypal': 'paypal-transmission-sig',
-        'adyen': 'hmac-signature',
-        'square': 'x-square-signature',
-        'braintree': 'bt-signature',
+        "stripe": "stripe-signature",
+        "airwallex": "x-signature",
+        "paypal": "paypal-transmission-sig",
+        "adyen": "hmac-signature",
+        "square": "x-square-signature",
+        "braintree": "bt-signature",
     }
 
     # Get provider-specific header or try common ones
@@ -237,14 +227,14 @@ def _get_webhook_signature(headers: dict, provider_slug: str) -> str:
 
     # Try common signature header names
     common_headers = [
-        'x-signature',
-        'signature',
-        'x-hub-signature-256',
-        'x-webhook-signature',
+        "x-signature",
+        "signature",
+        "x-hub-signature-256",
+        "x-webhook-signature",
     ]
 
     for header in common_headers:
         if header in normalized:
             return normalized[header]
 
-    return ''
+    return ""

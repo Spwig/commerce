@@ -14,7 +14,6 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-
 COMMUNITY_LICENCE_TEMPLATE = (
     Path(__file__).resolve().parent.parent.parent / "data" / "community_licence.json"
 )
@@ -42,9 +41,7 @@ class Command(BaseCommand):
 
         if target.exists() and not force:
             if not quiet:
-                self.stdout.write(
-                    f"Licence already exists at {target}; leaving untouched."
-                )
+                self.stdout.write(f"Licence already exists at {target}; leaving untouched.")
             return
 
         if not COMMUNITY_LICENCE_TEMPLATE.exists():

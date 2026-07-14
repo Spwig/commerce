@@ -5,6 +5,7 @@ Handles FileField/ImageField export (base64 encoding) and import for settings sy
 For small files like logos, favicons, and preview images.
 For large media files, use media_transfer.py instead.
 """
+
 import base64
 import logging
 import mimetypes
@@ -53,19 +54,19 @@ def export_file_field(instance, field_name):
             return None
 
         # Read and encode
-        field_file.open('rb')
+        field_file.open("rb")
         try:
             content = field_file.read()
         finally:
             field_file.close()
 
-        content_type = mimetypes.guess_type(field_file.name)[0] or 'application/octet-stream'
+        content_type = mimetypes.guess_type(field_file.name)[0] or "application/octet-stream"
 
         return {
-            'filename': field_file.name,
-            'content_type': content_type,
-            'data': base64.b64encode(content).decode('ascii'),
-            'size': len(content),
+            "filename": field_file.name,
+            "content_type": content_type,
+            "data": base64.b64encode(content).decode("ascii"),
+            "size": len(content),
         }
 
     except Exception as e:
@@ -85,12 +86,12 @@ def import_file_field(instance, field_name, file_data):
     Returns:
         bool: True if import was successful
     """
-    if not file_data or not file_data.get('data'):
+    if not file_data or not file_data.get("data"):
         return False
 
     try:
-        content = base64.b64decode(file_data['data'])
-        filename = file_data.get('filename', 'imported_file')
+        content = base64.b64decode(file_data["data"])
+        filename = file_data.get("filename", "imported_file")
 
         # Extract just the filename (not the full path) to let Django handle upload_to
         filename = os.path.basename(filename)
@@ -148,4 +149,4 @@ def import_model_files(instance, files_data, file_fields):
             else:
                 failed += 1
 
-    return {'imported': imported, 'failed': failed}
+    return {"imported": imported, "failed": failed}

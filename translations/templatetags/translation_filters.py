@@ -19,15 +19,14 @@ def get_site_languages():
     Returns a list of SiteLanguage objects where is_active=True.
     Usage: {% get_site_languages as site_languages %}
     """
-    cache_key = 'active_site_languages'
+    cache_key = "active_site_languages"
     languages = cache.get(cache_key)
 
     if languages is None:
         try:
             from translations.models import SiteLanguage
-            languages = list(
-                SiteLanguage.objects.filter(is_active=True).order_by('order', 'name')
-            )
+
+            languages = list(SiteLanguage.objects.filter(is_active=True).order_by("order", "name"))
             cache.set(cache_key, languages, 300)
         except Exception:
             languages = []

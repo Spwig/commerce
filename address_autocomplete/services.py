@@ -1,20 +1,24 @@
 """
 Address Autocomplete Service Client for Django
 """
-import os
-import logging
+
 import hashlib
-from typing import Optional, Dict, Any, List
+import logging
+import os
 from datetime import datetime, timedelta
-from django.conf import settings
-from django.core.cache import cache
-from django.contrib.sites.models import Site
-from django.utils import timezone
+from typing import Any
+
 import httpx
+from django.conf import settings
+from django.contrib.sites.models import Site
+from django.core.cache import cache
+from django.utils import timezone
 from tenacity import retry, stop_after_attempt, wait_exponential
+
 from .jwt_auth import GeocoderJWTAuth
 
 logger = logging.getLogger(__name__)
+
 
 class AutocompleteClient:
     """Client for interacting with the address autocomplete service"""
@@ -22,14 +26,14 @@ class AutocompleteClient:
     def __init__(self, prewarm_token=False):
         self.base_url = getattr(
             settings,
-            'ADDRESS_AUTOCOMPLETE_URL',
-            os.getenv('ADDRESS_AUTOCOMPLETE_URL', 'http://localhost:8001')
+            "ADDRESS_AUTOCOMPLETE_URL",
+            os.getenv("ADDRESS_AUTOCOMPLETE_URL", "http://localhost:8001"),
         )
         # Get configuration from settings
-        config = getattr(settings, 'ADDRESS_AUTOCOMPLETE_CONFIG', {})
-        self.timeout = config.get('request_timeout', 5.0)
-        self.cache_ttl = config.get('cache_timeout', 300)
-        self.max_suggestions = config.get('max_suggestions', 10)
+        config = getattr(settings, "ADDRESS_AUTOCOMPLETE_CONFIG", {})
+        self.timeout = config.get("request_timeout", 5.0)
+        self.cache_ttl = config.get("cache_timeout", 300)
+        self.max_suggestions = config.get("max_suggestions", 10)
         self.client = httpx.Client(timeout=self.timeout)
 
         # JWT authentication setup
@@ -45,13 +49,14 @@ class AutocompleteClient:
         """Check if the Spwig geocoder service should be available based on maintenance status."""
         try:
             from core.license import get_license_manager
+
             return get_license_manager().are_spwig_services_available()
         except Exception:
             return True  # Fail open - don't break autocomplete on import errors
 
     def _get_cache_key(self, operation: str, params: dict) -> str:
         """Generate cache key for operation"""
-        param_str = '-'.join(f"{k}:{v}" for k, v in sorted(params.items()))
+        param_str = "-".join(f"{k}:{v}" for k, v in sorted(params.items()))
         if len(param_str) > 200:
             param_str = hashlib.md5(param_str.encode()).hexdigest()
         return f"address_autocomplete:{operation}:{param_str}"
@@ -62,6 +67,7 @@ class AutocompleteClient:
         Uses SiteSettings model for persistent storage.
         """
         from core.models import SiteSettings
+
         return SiteSettings.get_installation_uuid()
 
     def _get_merchant_id(self) -> str:
@@ -75,7 +81,7 @@ class AutocompleteClient:
             logger.warning(f"Failed to get site domain for merchant_id: {e}")
             return "shop-localhost"
 
-    def _get_jwt_token(self) -> Optional[str]:
+    def _get_jwt_token(self) -> str | None:
         """
         Get cached JWT token or generate a new one if expired.
         Returns None if token generation fails.
@@ -90,7 +96,7 @@ class AutocompleteClient:
         # Generate new token
         return self._generate_token()
 
-    def _generate_token(self) -> Optional[str]:
+    def _generate_token(self) -> str | None:
         """
         Generate a new JWT token for geocoder service authentication.
         Caches the token for future use.
@@ -101,16 +107,14 @@ class AutocompleteClient:
 
             # Generate token
             token_info = self.jwt_auth.generate_merchant_token(
-                merchant_id=merchant_id,
-                installation_uuid=installation_uuid,
-                tier='standard'
+                merchant_id=merchant_id, installation_uuid=installation_uuid, tier="standard"
             )
 
             # Cache token and expiry
-            self._cached_token = token_info['token']
+            self._cached_token = token_info["token"]
             # Parse expiry time (it's in ISO format)
-            expiry_str = token_info['expires_at']
-            self._token_expiry = datetime.fromisoformat(expiry_str.replace('Z', '+00:00'))
+            expiry_str = token_info["expires_at"]
+            self._token_expiry = datetime.fromisoformat(expiry_str.replace("Z", "+00:00"))
 
             logger.info(
                 f"Generated geocoder JWT for {merchant_id}, "
@@ -132,10 +136,7 @@ class AutocompleteClient:
 
     def _get_headers(self, user_tier: str = "anonymous") -> dict:
         """Get request headers with JWT authentication"""
-        headers = {
-            "X-User-Tier": user_tier,
-            "Accept": "application/json"
-        }
+        headers = {"X-User-Tier": user_tier, "Accept": "application/json"}
 
         # Add JWT token for authentication
         token = self._get_jwt_token()
@@ -164,7 +165,7 @@ class AutocompleteClient:
         return bool(cache.get(self._over_limit_cache_key()))
 
     def _mark_over_limit(self, response) -> None:
-        retry_after = int(response.headers.get('Retry-After', 60))
+        retry_after = int(response.headers.get("Retry-After", 60))
         cache.set(self._over_limit_cache_key(), True, timeout=retry_after)
         logger.debug("Geocoder over tier limit; cached for %ds", retry_after)
 
@@ -172,13 +173,13 @@ class AutocompleteClient:
     def autocomplete(
         self,
         query: str,
-        country_bias: Optional[str] = None,
-        lat: Optional[float] = None,
-        lon: Optional[float] = None,
+        country_bias: str | None = None,
+        lat: float | None = None,
+        lon: float | None = None,
         limit: int = 5,
         user_tier: str = "anonymous",
-        is_postcode: bool = False
-    ) -> Dict[str, Any]:
+        is_postcode: bool = False,
+    ) -> dict[str, Any]:
         """
         Get address autocomplete suggestions
 
@@ -214,7 +215,7 @@ class AutocompleteClient:
             "lat": lat,
             "lon": lon,
             "limit": limit,
-            "is_postcode": is_postcode
+            "is_postcode": is_postcode,
         }
         cache_key = self._get_cache_key("autocomplete", cache_params)
         cached_result = cache.get(cache_key)
@@ -225,10 +226,7 @@ class AutocompleteClient:
 
         try:
             # Prepare request body with all parameters
-            request_data = {
-                "query": query,
-                "limit": limit
-            }
+            request_data = {"query": query, "limit": limit}
 
             # Add optional parameters to request body
             if country_bias:
@@ -244,7 +242,7 @@ class AutocompleteClient:
             response = self.client.post(
                 f"{self.base_url}/api/v1/autocomplete",
                 json=request_data,
-                headers=self._get_headers(user_tier)
+                headers=self._get_headers(user_tier),
             )
 
             if response.status_code == 401:
@@ -255,7 +253,7 @@ class AutocompleteClient:
                 response = self.client.post(
                     f"{self.base_url}/api/v1/autocomplete",
                     json=request_data,
-                    headers=self._get_headers(user_tier)
+                    headers=self._get_headers(user_tier),
                 )
 
             if response.status_code == 429:
@@ -276,7 +274,9 @@ class AutocompleteClient:
             return {"suggestions": [], "error": "Service timeout"}
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
-                logger.error(f"Geocoder authentication failed for merchant {self._get_merchant_id()}")
+                logger.error(
+                    f"Geocoder authentication failed for merchant {self._get_merchant_id()}"
+                )
                 return {"suggestions": [], "error": "Authentication failed"}
             logger.error(f"Autocomplete HTTP error: {e}")
             return {"suggestions": [], "error": "Service error"}
@@ -285,11 +285,7 @@ class AutocompleteClient:
             return {"suggestions": [], "error": "Service error"}
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=0.5))
-    def normalize_address(
-        self,
-        address: str,
-        user_tier: str = "anonymous"
-    ) -> Dict[str, Any]:
+    def normalize_address(self, address: str, user_tier: str = "anonymous") -> dict[str, Any]:
         """
         Normalize and parse an address
 
@@ -318,26 +314,24 @@ class AutocompleteClient:
             response = self.client.post(
                 f"{self.base_url}/api/v1/normalize",
                 json={"address": address},
-                headers=self._get_headers(user_tier)
+                headers=self._get_headers(user_tier),
             )
 
             if response.status_code == 401:
                 # Authentication failed - clear token cache and retry once
-                logger.warning("Geocoder authentication failed during normalize, clearing token cache")
+                logger.warning(
+                    "Geocoder authentication failed during normalize, clearing token cache"
+                )
                 self._clear_token_cache()
                 response = self.client.post(
                     f"{self.base_url}/api/v1/normalize",
                     json={"address": address},
-                    headers=self._get_headers(user_tier)
+                    headers=self._get_headers(user_tier),
                 )
 
             if response.status_code == 429:
                 self._mark_over_limit(response)
-                return {
-                    "normalized": address,
-                    "components": {},
-                    "error": "Rate limit exceeded"
-                }
+                return {"normalized": address, "components": {}, "error": "Rate limit exceeded"}
 
             response.raise_for_status()
             data = response.json()
@@ -349,31 +343,17 @@ class AutocompleteClient:
 
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
-                logger.error(f"Geocoder authentication failed during normalize")
-                return {
-                    "normalized": address,
-                    "components": {},
-                    "error": "Authentication failed"
-                }
+                logger.error("Geocoder authentication failed during normalize")
+                return {"normalized": address, "components": {}, "error": "Authentication failed"}
             logger.error(f"Normalize HTTP error: {e}")
-            return {
-                "normalized": address,
-                "components": {},
-                "error": str(e)
-            }
+            return {"normalized": address, "components": {}, "error": str(e)}
         except Exception as e:
             logger.error(f"Normalize error: {str(e)}")
-            return {
-                "normalized": address,
-                "components": {},
-                "error": str(e)
-            }
+            return {"normalized": address, "components": {}, "error": str(e)}
 
     def validate_address(
-        self,
-        address_data: Dict[str, str],
-        user_tier: str = "anonymous"
-    ) -> Dict[str, Any]:
+        self, address_data: dict[str, str], user_tier: str = "anonymous"
+    ) -> dict[str, Any]:
         """
         Validate an address using the autocomplete service
 
@@ -398,23 +378,19 @@ class AutocompleteClient:
         try:
             response = self.client.get(
                 f"{self.base_url}/api/v1/validate",
-                params={
-                    "address": address,
-                    "country": address_data.get("country")
-                },
-                headers=self._get_headers(user_tier)
+                params={"address": address, "country": address_data.get("country")},
+                headers=self._get_headers(user_tier),
             )
 
             if response.status_code == 401:
-                logger.warning("Geocoder authentication failed during validate, clearing token cache")
+                logger.warning(
+                    "Geocoder authentication failed during validate, clearing token cache"
+                )
                 self._clear_token_cache()
                 response = self.client.get(
                     f"{self.base_url}/api/v1/validate",
-                    params={
-                        "address": address,
-                        "country": address_data.get("country")
-                    },
-                    headers=self._get_headers(user_tier)
+                    params={"address": address, "country": address_data.get("country")},
+                    headers=self._get_headers(user_tier),
                 )
 
             response.raise_for_status()
@@ -423,31 +399,16 @@ class AutocompleteClient:
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 401:
                 logger.error("Geocoder authentication failed during validate")
-                return {
-                    "valid": False,
-                    "errors": ["Authentication failed"],
-                    "normalized": {}
-                }
+                return {"valid": False, "errors": ["Authentication failed"], "normalized": {}}
             logger.error(f"Validation HTTP error: {e}")
-            return {
-                "valid": False,
-                "errors": [str(e)],
-                "normalized": {}
-            }
+            return {"valid": False, "errors": [str(e)], "normalized": {}}
         except Exception as e:
             logger.error(f"Validation error: {str(e)}")
-            return {
-                "valid": False,
-                "errors": [str(e)],
-                "normalized": {}
-            }
+            return {"valid": False, "errors": [str(e)], "normalized": {}}
 
     def reverse_geocode(
-        self,
-        lat: float,
-        lon: float,
-        user_tier: str = "anonymous"
-    ) -> Dict[str, Any]:
+        self, lat: float, lon: float, user_tier: str = "anonymous"
+    ) -> dict[str, Any]:
         """
         Reverse geocode coordinates to address
 
@@ -473,16 +434,18 @@ class AutocompleteClient:
             response = self.client.get(
                 f"{self.base_url}/api/v1/reverse",
                 params={"lat": lat, "lon": lon},
-                headers=self._get_headers(user_tier)
+                headers=self._get_headers(user_tier),
             )
 
             if response.status_code == 401:
-                logger.warning("Geocoder authentication failed during reverse geocode, clearing token cache")
+                logger.warning(
+                    "Geocoder authentication failed during reverse geocode, clearing token cache"
+                )
                 self._clear_token_cache()
                 response = self.client.get(
                     f"{self.base_url}/api/v1/reverse",
                     params={"lat": lat, "lon": lon},
-                    headers=self._get_headers(user_tier)
+                    headers=self._get_headers(user_tier),
                 )
 
             response.raise_for_status()
@@ -503,7 +466,7 @@ class AutocompleteClient:
             logger.error(f"Reverse geocoding error: {str(e)}")
             return {"error": str(e)}
 
-    def get_service_health(self) -> Dict[str, Any]:
+    def get_service_health(self) -> dict[str, Any]:
         """Check health of autocomplete service"""
         try:
             response = self.client.get(f"{self.base_url}/health")
@@ -524,10 +487,8 @@ class AddressEnhancer:
         self.client = client if client is not None else AutocompleteClient(prewarm_token=True)
 
     def enhance_address_data(
-        self,
-        address_data: Dict[str, Any],
-        user_tier: str = "anonymous"
-    ) -> Dict[str, Any]:
+        self, address_data: dict[str, Any], user_tier: str = "anonymous"
+    ) -> dict[str, Any]:
         """
         Enhance address data with normalized components and geocoding
 
@@ -562,7 +523,7 @@ class AddressEnhancer:
                 query=address_string,
                 country_bias=address_data.get("country"),
                 limit=1,
-                user_tier=user_tier
+                user_tier=user_tier,
             )
 
             if suggestions.get("suggestions"):
@@ -574,10 +535,8 @@ class AddressEnhancer:
         return enhanced
 
     def validate_and_enhance(
-        self,
-        address_data: Dict[str, Any],
-        user_tier: str = "anonymous"
-    ) -> tuple[bool, Dict[str, Any], List[str]]:
+        self, address_data: dict[str, Any], user_tier: str = "anonymous"
+    ) -> tuple[bool, dict[str, Any], list[str]]:
         """
         Validate and enhance address data
 

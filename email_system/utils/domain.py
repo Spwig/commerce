@@ -3,15 +3,16 @@ Domain Extraction and Validation Utilities
 
 Utilities for extracting and validating email domains for DNS configuration.
 """
-import re
+
 import logging
+import re
+
 import requests
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
 
-def extract_domain(email: str) -> Optional[str]:
+def extract_domain(email: str) -> str | None:
     """
     Extract domain from email address.
 
@@ -27,23 +28,23 @@ def extract_domain(email: str) -> Optional[str]:
         >>> extract_domain('user+tag@subdomain.example.com')
         'subdomain.example.com'
     """
-    if not email or '@' not in email:
+    if not email or "@" not in email:
         return None
 
     try:
         # Split on @ and get domain part
-        parts = email.rsplit('@', 1)
+        parts = email.rsplit("@", 1)
         if len(parts) != 2:
             return None
 
         domain = parts[1].strip().lower()
 
         # Basic validation
-        if not domain or '.' not in domain:
+        if not domain or "." not in domain:
             return None
 
         # Remove any trailing/leading dots
-        domain = domain.strip('.')
+        domain = domain.strip(".")
 
         return domain if domain else None
 
@@ -70,13 +71,13 @@ def normalize_domain(domain: str) -> str:
         'example.com'
     """
     if not domain:
-        return ''
+        return ""
 
     # Lowercase and strip whitespace/dots
-    domain = domain.lower().strip().strip('.')
+    domain = domain.lower().strip().strip(".")
 
     # Remove www prefix if present
-    if domain.startswith('www.'):
+    if domain.startswith("www."):
         domain = domain[4:]
 
     return domain
@@ -113,37 +114,37 @@ def validate_domain(domain: str) -> bool:
         return False
 
     # Must contain at least one dot
-    if '.' not in domain:
+    if "." not in domain:
         return False
 
     # Regex pattern for valid domain
     # Allows: letters, numbers, hyphens, dots
     # Must start/end with alphanumeric
     # TLD must be at least 2 characters
-    pattern = r'^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$'
+    pattern = r"^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$"
 
     if not re.match(pattern, domain):
         return False
 
     # No consecutive dots
-    if '..' in domain:
+    if ".." in domain:
         return False
 
     # Each label (part between dots) must be valid
-    labels = domain.split('.')
+    labels = domain.split(".")
     for label in labels:
         # Label length check (1-63 characters)
         if not label or len(label) > 63:
             return False
 
         # Label can't start or end with hyphen
-        if label.startswith('-') or label.endswith('-'):
+        if label.startswith("-") or label.endswith("-"):
             return False
 
     return True
 
 
-def get_base_domain(domain: str) -> Optional[str]:
+def get_base_domain(domain: str) -> str | None:
     """
     Extract base domain from subdomain.
 
@@ -170,7 +171,7 @@ def get_base_domain(domain: str) -> Optional[str]:
         return None
 
     domain = normalize_domain(domain)
-    parts = domain.split('.')
+    parts = domain.split(".")
 
     # If only 2 parts, it's already the base domain
     if len(parts) <= 2:
@@ -178,7 +179,7 @@ def get_base_domain(domain: str) -> Optional[str]:
 
     # Return last 2 parts (domain + TLD)
     # Note: This is simplified and doesn't handle .co.uk, .com.au, etc.
-    return '.'.join(parts[-2:])
+    return ".".join(parts[-2:])
 
 
 def domains_match(domain1: str, domain2: str, strict: bool = False) -> bool:
@@ -222,7 +223,7 @@ def domains_match(domain1: str, domain2: str, strict: bool = False) -> bool:
         return base1 == base2 if (base1 and base2) else False
 
 
-def get_external_ip() -> Optional[str]:
+def get_external_ip() -> str | None:
     """
     Detect the server's external (public) IP address.
 
@@ -243,11 +244,11 @@ def get_external_ip() -> Optional[str]:
     # List of reliable IP detection services
     # These services return just the IP address in plain text
     services = [
-        'https://api.ipify.org',           # Most reliable
-        'https://icanhazip.com',           # Cloudflare-backed
-        'https://ifconfig.me/ip',          # Well-established
-        'https://ident.me',                # Simple and fast
-        'https://checkip.amazonaws.com',   # AWS-backed
+        "https://api.ipify.org",  # Most reliable
+        "https://icanhazip.com",  # Cloudflare-backed
+        "https://ifconfig.me/ip",  # Well-established
+        "https://ident.me",  # Simple and fast
+        "https://checkip.amazonaws.com",  # AWS-backed
     ]
 
     for service in services:
@@ -257,9 +258,9 @@ def get_external_ip() -> Optional[str]:
                 ip = response.text.strip()
 
                 # Validate IP format (IPv4)
-                if re.match(r'^(\d{1,3}\.){3}\d{1,3}$', ip):
+                if re.match(r"^(\d{1,3}\.){3}\d{1,3}$", ip):
                     # Additional validation: each octet should be 0-255
-                    octets = ip.split('.')
+                    octets = ip.split(".")
                     if all(0 <= int(octet) <= 255 for octet in octets):
                         logger.info(f"Detected external IP: {ip} (via {service})")
                         return ip
@@ -294,7 +295,7 @@ def is_private_ip(ip: str) -> bool:
         return False
 
     try:
-        octets = [int(x) for x in ip.split('.')]
+        octets = [int(x) for x in ip.split(".")]
 
         # Private ranges:
         # 10.0.0.0 - 10.255.255.255
@@ -308,10 +309,7 @@ def is_private_ip(ip: str) -> bool:
             return True
         if octets[0] == 192 and octets[1] == 168:
             return True
-        if octets[0] == 127:
-            return True
-
-        return False
+        return octets[0] == 127
 
     except (ValueError, IndexError):
         return False

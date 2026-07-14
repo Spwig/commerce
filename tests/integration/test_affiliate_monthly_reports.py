@@ -1,74 +1,107 @@
 """
-Integration tests for Affiliate Monthly Reports (Enhancement 6)
+Integration tests for Affiliate Monthly Reports.
 
-Tests the AffiliateReportSettings model and send_affiliate_monthly_reports task.
+Verifies the ``AffiliateReportSettings`` singleton model and the
+``send_affiliate_monthly_reports`` Celery task. The task is guarded by day
++ hour toggles and consults per-user CommunicationPreference before firing
+each email.
+
+The task imports ``EmailSendingService`` lazily inside the function body
+(``from email_system.services.email_sender import EmailSendingService``),
+so ``@patch("affiliate.tasks.EmailSendingService...")`` will always raise
+``AttributeError``. We patch at source:
+``email_system.services.email_sender.EmailSendingService.send_template_email``.
 """
 
-import pytest
+from datetime import timedelta
 from decimal import Decimal
-from datetime import datetime, timedelta
-from django.utils import timezone
-from django.contrib.auth import get_user_model
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
-from affiliate.models import AffiliateReportSettings, Affiliate, Commission, Payout
-from affiliate.tasks import send_affiliate_monthly_reports
+import pytest
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+
 from accounts.models import CommunicationPreference
-from tests.factories import UserFactory
+from affiliate.models import Affiliate, AffiliateReportSettings, Commission, Payout, Program
+from affiliate.tasks import send_affiliate_monthly_reports
+from tests.factories import EmailAccountFactory, OrderFactory, UserFactory
 
 User = get_user_model()
 
 pytestmark = [pytest.mark.django_db, pytest.mark.integration, pytest.mark.affiliate_reports]
 
 
+# Patch path constant — task imports EmailSendingService lazily inside the
+# function body, so we patch at the source module.
+_SEND_TEMPLATE_PATH = "email_system.services.email_sender.EmailSendingService.send_template_email"
+
+
+# ============================================================
+# Autouse infrastructure fixtures
+# ============================================================
+
+
+@pytest.fixture(autouse=True)
+def _default_email_account(_integration_django_site):
+    return EmailAccountFactory(default=True, site=_integration_django_site)
+
+
+@pytest.fixture(autouse=True)
+def _disable_sandbox_mode():
+    with (
+        patch("core.license.is_sandbox_mode", return_value=False),
+        patch("email_system.services.email_sender.is_sandbox_mode", return_value=False),
+        patch("core.sandbox.email_guard.is_sandbox_mode", return_value=False),
+    ):
+        yield
+
+
+# ============================================================
+# Data fixtures
+# ============================================================
+
+
 @pytest.fixture
 def affiliate_with_commissions(db):
-    """Create affiliate with commission history"""
-    from orders.models import Order
-    from affiliate.models import Program
-
+    """Create affiliate with 5 commissions in the previous month."""
     user = UserFactory()
 
     # Create affiliate
-    affiliate = Affiliate.objects.create(
-        user=user,
-        status='active'
-    )
+    affiliate = Affiliate.objects.create(user=user, status="active")
 
     # Create program
     program = Program.objects.create(
-        name='Test Program',
-        slug='test-program',
+        name="Test Program",
+        slug="test-program",
         merchant=UserFactory(),
-        commission_type='percentage',
-        commission_value=Decimal('10.00')
+        commission_type="percentage",
+        commission_value=Decimal("10.00"),
     )
 
     # Create commissions from last month
     last_month_start = (timezone.now().replace(day=1) - timedelta(days=1)).replace(day=1)
 
     for i in range(5):
-        order = Order.objects.create(
-            customer=UserFactory(),
-            status='completed',
-            total=Decimal('100.00'),
-            created_at=last_month_start + timedelta(days=i)
-        )
+        order = OrderFactory(user=UserFactory(), status="delivered")
 
-        Commission.objects.create(
+        commission = Commission.objects.create(
             affiliate=affiliate,
+            program=program,
             order=order,
-            amount=Decimal('10.00'),
-            status='approved',
+            amount=Decimal("10.00"),
+            status="approved",
+        )
+        # Bypass auto_now via .update() so we can plant a last-month timestamp
+        Commission.objects.filter(pk=commission.pk).update(
             created_at=last_month_start + timedelta(days=i)
         )
 
     # Enable monthly reports in preferences
-    prefs = CommunicationPreference.get_or_create_for_user(user)[0]
+    prefs, _ = CommunicationPreference.get_or_create_for_user(user)
     prefs.email_marketing = True
     prefs.email_verified = True
-    prefs.app_preferences['affiliate']['enabled'] = True
-    prefs.app_preferences['affiliate']['monthly_report'] = True
+    prefs.app_preferences["affiliate"]["enabled"] = True
+    prefs.app_preferences["affiliate"]["monthly_report"] = True
     prefs.save()
 
     return affiliate
@@ -78,8 +111,9 @@ def affiliate_with_commissions(db):
 # AffiliateReportSettings Model Tests
 # =============================================================================
 
+
 def test_affiliate_report_settings_singleton():
-    """Test AffiliateReportSettings is a singleton (pk=1)"""
+    """AffiliateReportSettings is a singleton (pk=1)."""
     settings1 = AffiliateReportSettings.get_settings()
     settings2 = AffiliateReportSettings.get_settings()
 
@@ -88,7 +122,7 @@ def test_affiliate_report_settings_singleton():
 
 
 def test_affiliate_report_settings_defaults():
-    """Test AffiliateReportSettings has correct defaults"""
+    """AffiliateReportSettings has correct defaults."""
     settings = AffiliateReportSettings.get_settings()
 
     assert settings.monthly_report_enabled is True
@@ -98,17 +132,16 @@ def test_affiliate_report_settings_defaults():
 
 
 def test_affiliate_report_settings_str():
-    """Test AffiliateReportSettings string representation"""
+    """AffiliateReportSettings string representation is human-readable."""
     settings = AffiliateReportSettings.get_settings()
-
     str_repr = str(settings)
 
-    assert 'Affiliate Report Settings' in str_repr
-    assert 'Enabled' in str_repr
+    assert "Affiliate Report Settings" in str_repr
+    assert "Enabled" in str_repr
 
 
 def test_affiliate_report_settings_update():
-    """Test updating AffiliateReportSettings"""
+    """Updating AffiliateReportSettings persists."""
     settings = AffiliateReportSettings.get_settings()
 
     settings.monthly_report_day = 15
@@ -128,23 +161,24 @@ def test_affiliate_report_settings_update():
 # Monthly Report Task Tests
 # =============================================================================
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_disabled(mock_send, db):
-    """Test task skips when reports are disabled"""
+    """Task short-circuits when reports are disabled."""
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_enabled = False
     settings.save()
 
     result = send_affiliate_monthly_reports()
 
-    assert result['reason'] == 'disabled'
-    assert result['sent'] == 0
+    assert result["reason"] == "disabled"
+    assert result["sent"] == 0
     assert mock_send.call_count == 0
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_wrong_day(mock_send, db):
-    """Test task skips when not on configured send day"""
+    """Task skips when not on configured send day."""
     settings = AffiliateReportSettings.get_settings()
     today = timezone.now().day
 
@@ -154,14 +188,14 @@ def test_send_affiliate_monthly_reports_wrong_day(mock_send, db):
 
     result = send_affiliate_monthly_reports()
 
-    assert result['reason'] == 'not_send_day'
-    assert result['sent'] == 0
+    assert result["reason"] == "not_send_day"
+    assert result["sent"] == 0
     assert mock_send.call_count == 0
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_wrong_hour(mock_send, db):
-    """Test task skips when not on configured send hour"""
+    """Task skips when not on configured send hour."""
     settings = AffiliateReportSettings.get_settings()
     current_hour = timezone.now().hour
 
@@ -172,13 +206,13 @@ def test_send_affiliate_monthly_reports_wrong_hour(mock_send, db):
 
     result = send_affiliate_monthly_reports()
 
-    assert result['reason'] == 'not_send_hour'
+    assert result["reason"] == "not_send_hour"
     assert mock_send.call_count == 0
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_success(mock_send, affiliate_with_commissions):
-    """Test task sends reports on correct day/hour"""
+    """Task sends reports on correct day/hour."""
     # Configure to current day/hour
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_day = timezone.now().day
@@ -187,26 +221,26 @@ def test_send_affiliate_monthly_reports_success(mock_send, affiliate_with_commis
 
     # Mock successful email send
     mock_outbox = Mock()
-    mock_outbox.status = 'queued'
+    mock_outbox.status = "queued"
     mock_send.return_value = mock_outbox
 
     result = send_affiliate_monthly_reports()
 
-    assert result['sent'] == 1
-    assert result['skipped'] == 0
+    assert result["sent"] == 1
+    assert result["skipped"] == 0
     assert mock_send.call_count == 1
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_email_context(mock_send, affiliate_with_commissions):
-    """Test task builds correct email context"""
+    """Task builds correct email context."""
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_day = timezone.now().day
     settings.monthly_report_hour = timezone.now().hour
     settings.save()
 
     mock_outbox = Mock()
-    mock_outbox.status = 'queued'
+    mock_outbox.status = "queued"
     mock_send.return_value = mock_outbox
 
     send_affiliate_monthly_reports()
@@ -216,55 +250,56 @@ def test_send_affiliate_monthly_reports_email_context(mock_send, affiliate_with_
     call_args = mock_send.call_args
 
     # Check to_email
-    assert call_args[1]['to_email'] == affiliate_with_commissions.user.email
+    assert call_args[1]["to_email"] == affiliate_with_commissions.user.email
 
     # Check template_type
-    assert call_args[1]['template_type'] == 'affiliate_monthly_report'
+    assert call_args[1]["template_type"] == "affiliate_monthly_report"
 
     # Check context has required fields
-    context = call_args[1]['context']
-    assert 'affiliate_name' in context
-    assert 'month_name' in context
-    assert 'year' in context
-    assert 'total_earned' in context
-    assert 'commission_count' in context
-    assert 'avg_commission' in context
-    assert 'top_orders' in context
-    assert 'pending_balance' in context
-    assert 'payment_status' in context
-    assert 'portal_url' in context
-    assert 'shop_name' in context
+    context = call_args[1]["context"]
+    for key in (
+        "affiliate_name",
+        "month_name",
+        "year",
+        "total_earned",
+        "commission_count",
+        "avg_commission",
+        "top_orders",
+        "pending_balance",
+        "payment_status",
+        "portal_url",
+        "shop_name",
+    ):
+        assert key in context, f"Missing context key: {key}"
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_calculates_correctly(mock_send, affiliate_with_commissions):
-    """Test task calculates totals correctly"""
+    """Task calculates totals correctly (5 commissions x $10 = $50 total)."""
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_day = timezone.now().day
     settings.monthly_report_hour = timezone.now().hour
     settings.save()
 
     mock_outbox = Mock()
-    mock_outbox.status = 'queued'
+    mock_outbox.status = "queued"
     mock_send.return_value = mock_outbox
 
     send_affiliate_monthly_reports()
 
-    context = mock_send.call_args[1]['context']
+    context = mock_send.call_args[1]["context"]
 
     # 5 commissions × $10 = $50
-    assert '$50.00' in context['total_earned']
-
+    assert "$50.00" in context["total_earned"]
     # 5 commissions
-    assert context['commission_count'] == 5
-
+    assert context["commission_count"] == 5
     # $50 / 5 = $10 average
-    assert '$10.00' in context['avg_commission']
+    assert "$10.00" in context["avg_commission"]
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_top_orders(mock_send, affiliate_with_commissions):
-    """Test task includes top N orders"""
+    """Task includes top N orders (configurable)."""
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_day = timezone.now().day
     settings.monthly_report_hour = timezone.now().hour
@@ -272,29 +307,29 @@ def test_send_affiliate_monthly_reports_top_orders(mock_send, affiliate_with_com
     settings.save()
 
     mock_outbox = Mock()
-    mock_outbox.status = 'queued'
+    mock_outbox.status = "queued"
     mock_send.return_value = mock_outbox
 
     send_affiliate_monthly_reports()
 
-    context = mock_send.call_args[1]['context']
+    context = mock_send.call_args[1]["context"]
 
     # Should include top 3 orders
-    assert len(context['top_orders']) == 3
-    assert context['top_orders_count'] == 3
+    assert len(context["top_orders"]) == 3
+    assert context["top_orders_count"] == 3
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_skips_no_activity(mock_send, db):
-    """Test task skips affiliates with no commissions last month"""
+    """Task skips affiliates with no commissions last month."""
     user = UserFactory()
-    affiliate = Affiliate.objects.create(user=user, status='active')
+    Affiliate.objects.create(user=user, status="active")
 
     # Enable preferences
-    prefs = CommunicationPreference.get_or_create_for_user(user)[0]
+    prefs, _ = CommunicationPreference.get_or_create_for_user(user)
     prefs.email_marketing = True
     prefs.email_verified = True
-    prefs.app_preferences['affiliate']['monthly_report'] = True
+    prefs.app_preferences["affiliate"]["monthly_report"] = True
     prefs.save()
 
     settings = AffiliateReportSettings.get_settings()
@@ -305,17 +340,23 @@ def test_send_affiliate_monthly_reports_skips_no_activity(mock_send, db):
     result = send_affiliate_monthly_reports()
 
     # Should skip (no commissions)
-    assert result['sent'] == 0
-    assert result['skipped'] == 1
+    assert result["sent"] == 0
+    assert result["skipped"] == 1
     assert mock_send.call_count == 0
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_respects_preferences(mock_send, affiliate_with_commissions):
-    """Test task respects communication preferences"""
-    # Disable monthly reports in preferences
+    """Task respects communication preferences: monthly_report=False → skipped.
+
+    Note: the task calls ``prefs.should_send_email('affiliate_monthly_report')``.
+    ``affiliate_monthly_report`` IS registered in
+    ``APP_EMAIL_TYPES['affiliate']``, so category resolution is
+    ``('app_specific', 'affiliate')`` — pref_key strips ``affiliate_`` and
+    checks ``monthly_report`` (matches default key).
+    """
     prefs = affiliate_with_commissions.user.communication_preferences
-    prefs.app_preferences['affiliate']['monthly_report'] = False
+    prefs.app_preferences["affiliate"]["monthly_report"] = False
     prefs.save()
 
     settings = AffiliateReportSettings.get_settings()
@@ -326,16 +367,25 @@ def test_send_affiliate_monthly_reports_respects_preferences(mock_send, affiliat
     result = send_affiliate_monthly_reports()
 
     # Should skip (preference disabled)
-    assert result['sent'] == 0
-    assert result['skipped'] == 1
+    assert result["sent"] == 0
+    assert result["skipped"] == 1
     assert mock_send.call_count == 0
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_uses_user_language(mock_send, affiliate_with_commissions):
-    """Test task uses user's language preference"""
+    """Task uses user's language preference."""
+    # Refresh the preference from DB and explicitly re-affirm the enabled
+    # keys — mutating self.app_preferences["affiliate"]["monthly_report"] in
+    # the fixture updates a nested dict which is persisted, but any second
+    # instance load can silently reset the copy in memory. Reset explicitly.
     prefs = affiliate_with_commissions.user.communication_preferences
-    prefs.language_code = 'fr'
+    prefs.refresh_from_db()
+    prefs.language_code = "fr"
+    prefs.email_marketing = True
+    prefs.email_verified = True
+    prefs.app_preferences["affiliate"]["enabled"] = True
+    prefs.app_preferences["affiliate"]["monthly_report"] = True
     prefs.save()
 
     settings = AffiliateReportSettings.get_settings()
@@ -344,19 +394,21 @@ def test_send_affiliate_monthly_reports_uses_user_language(mock_send, affiliate_
     settings.save()
 
     mock_outbox = Mock()
-    mock_outbox.status = 'queued'
+    mock_outbox.status = "queued"
     mock_send.return_value = mock_outbox
 
     send_affiliate_monthly_reports()
 
     # Check language parameter
     call_args = mock_send.call_args
-    assert call_args[1]['language'] == 'fr'
+    assert call_args[1]["language"] == "fr"
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
-def test_send_affiliate_monthly_reports_handles_skipped_email(mock_send, affiliate_with_commissions):
-    """Test task counts skipped emails correctly"""
+@patch(_SEND_TEMPLATE_PATH)
+def test_send_affiliate_monthly_reports_handles_skipped_email(
+    mock_send, affiliate_with_commissions
+):
+    """Task counts skipped emails as ``skipped``."""
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_day = timezone.now().day
     settings.monthly_report_hour = timezone.now().hour
@@ -364,23 +416,23 @@ def test_send_affiliate_monthly_reports_handles_skipped_email(mock_send, affilia
 
     # Mock email service returning skipped status
     mock_outbox = Mock()
-    mock_outbox.status = 'skipped'
+    mock_outbox.status = "skipped"
     mock_send.return_value = mock_outbox
 
     result = send_affiliate_monthly_reports()
 
-    assert result['sent'] == 0
-    assert result['skipped'] == 1
+    assert result["sent"] == 0
+    assert result["skipped"] == 1
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
-def test_send_affiliate_monthly_reports_includes_payout_status(mock_send, affiliate_with_commissions):
-    """Test task includes payout status in context"""
+@patch(_SEND_TEMPLATE_PATH)
+def test_send_affiliate_monthly_reports_includes_payout_status(
+    mock_send, affiliate_with_commissions
+):
+    """Task includes payout status in context."""
     # Create a payout
     Payout.objects.create(
-        affiliate=affiliate_with_commissions,
-        amount=Decimal('50.00'),
-        status='processing'
+        affiliate=affiliate_with_commissions, amount=Decimal("50.00"), status="processing"
     )
 
     settings = AffiliateReportSettings.get_settings()
@@ -389,24 +441,25 @@ def test_send_affiliate_monthly_reports_includes_payout_status(mock_send, affili
     settings.save()
 
     mock_outbox = Mock()
-    mock_outbox.status = 'queued'
+    mock_outbox.status = "queued"
     mock_send.return_value = mock_outbox
 
     send_affiliate_monthly_reports()
 
-    context = mock_send.call_args[1]['context']
+    context = mock_send.call_args[1]["context"]
 
-    assert 'payment_status' in context
-    assert 'Payout Processing' in context['payment_status']
+    assert "payment_status" in context
+    assert "Payout Processing" in context["payment_status"]
 
 
 # =============================================================================
 # Edge Cases
 # =============================================================================
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_handles_exceptions(mock_send, affiliate_with_commissions):
-    """Test task handles exceptions gracefully"""
+    """Task handles exceptions gracefully — counted as skipped."""
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_day = timezone.now().day
     settings.monthly_report_hour = timezone.now().hour
@@ -419,51 +472,44 @@ def test_send_affiliate_monthly_reports_handles_exceptions(mock_send, affiliate_
     result = send_affiliate_monthly_reports()
 
     # Should count as skipped
-    assert result['skipped'] == 1
+    assert result["skipped"] == 1
 
 
-@patch('affiliate.tasks.EmailSendingService.send_template_email')
+@patch(_SEND_TEMPLATE_PATH)
 def test_send_affiliate_monthly_reports_multiple_affiliates(mock_send, db):
-    """Test task processes multiple affiliates correctly"""
-    from orders.models import Order
-    from affiliate.models import Program
-
+    """Task processes multiple affiliates correctly."""
     program = Program.objects.create(
-        name='Test Program',
-        slug='test-program',
+        name="Test Program",
+        slug="test-program",
         merchant=UserFactory(),
-        commission_type='percentage',
-        commission_value=Decimal('10.00')
+        commission_type="percentage",
+        commission_value=Decimal("10.00"),
     )
 
     last_month_start = (timezone.now().replace(day=1) - timedelta(days=1)).replace(day=1)
 
     # Create 3 affiliates with commissions
-    for i in range(3):
+    for _i in range(3):
         user = UserFactory()
-        affiliate = Affiliate.objects.create(user=user, status='active')
+        affiliate = Affiliate.objects.create(user=user, status="active")
 
         # Enable preferences
-        prefs = CommunicationPreference.get_or_create_for_user(user)[0]
+        prefs, _ = CommunicationPreference.get_or_create_for_user(user)
         prefs.email_marketing = True
         prefs.email_verified = True
-        prefs.app_preferences['affiliate']['monthly_report'] = True
+        prefs.app_preferences["affiliate"]["monthly_report"] = True
         prefs.save()
 
         # Create commission
-        order = Order.objects.create(
-            customer=UserFactory(),
-            status='completed',
-            total=Decimal('100.00'),
-            created_at=last_month_start
-        )
-        Commission.objects.create(
+        order = OrderFactory(user=UserFactory(), status="delivered")
+        commission = Commission.objects.create(
             affiliate=affiliate,
+            program=program,
             order=order,
-            amount=Decimal('10.00'),
-            status='approved',
-            created_at=last_month_start
+            amount=Decimal("10.00"),
+            status="approved",
         )
+        Commission.objects.filter(pk=commission.pk).update(created_at=last_month_start)
 
     settings = AffiliateReportSettings.get_settings()
     settings.monthly_report_day = timezone.now().day
@@ -471,11 +517,11 @@ def test_send_affiliate_monthly_reports_multiple_affiliates(mock_send, db):
     settings.save()
 
     mock_outbox = Mock()
-    mock_outbox.status = 'queued'
+    mock_outbox.status = "queued"
     mock_send.return_value = mock_outbox
 
     result = send_affiliate_monthly_reports()
 
     # Should send to all 3 affiliates
-    assert result['sent'] == 3
+    assert result["sent"] == 3
     assert mock_send.call_count == 3

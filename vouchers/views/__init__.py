@@ -24,27 +24,26 @@ def filter_voucher_codes(request):
     - status: Active/inactive
     - scope: Application scope (cart/products/categories)
     """
-    if not request.headers.get("X-Requested-With") == "XMLHttpRequest":
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
         return JsonResponse({"error": "Invalid request"}, status=400)
 
     search = request.GET.get("search", "").strip() or request.GET.get("q", "").strip()
-    discount_type = request.GET.get("type", "").strip() or request.GET.get(
-        "discount_type__exact", ""
-    ).strip()
-    status = request.GET.get("status", "").strip() or request.GET.get(
-        "is_active__exact", ""
-    ).strip()
-    scope = request.GET.get("scope", "").strip() or request.GET.get(
-        "application_scope__exact", ""
-    ).strip()
+    discount_type = (
+        request.GET.get("type", "").strip() or request.GET.get("discount_type__exact", "").strip()
+    )
+    status = (
+        request.GET.get("status", "").strip() or request.GET.get("is_active__exact", "").strip()
+    )
+    scope = (
+        request.GET.get("scope", "").strip()
+        or request.GET.get("application_scope__exact", "").strip()
+    )
 
     vouchers = VoucherCode.objects.all().order_by("-created_at")
 
     if search:
         vouchers = vouchers.filter(
-            Q(code__icontains=search)
-            | Q(name__icontains=search)
-            | Q(description__icontains=search)
+            Q(code__icontains=search) | Q(name__icontains=search) | Q(description__icontains=search)
         )
 
     if discount_type:

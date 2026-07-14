@@ -9,22 +9,26 @@ It selects the optimal warehouse(s) to fulfill an order based on:
 - Stock buffer percentages
 - Geographic proximity (via geocoder service)
 """
-from typing import List, Dict, Tuple, Optional
-from decimal import Decimal
-from django.db.models import Q, F, Sum
-from django.core.exceptions import ValidationError
-from django.core.cache import cache
-import logging
-from math import radians, cos, sin, asin, sqrt
 
-from catalog.models import Product, StockItem, Warehouse, SalesRegion
+import logging
+from math import asin, cos, radians, sin, sqrt
+from typing import TYPE_CHECKING, Optional
+
+from django.core.cache import cache
+from django.db.models import F, Sum
+
+from catalog.models import Product, SalesRegion, StockItem, Warehouse
 from orders.models import Order, OrderItem
+
+if TYPE_CHECKING:
+    from catalog.models import ProductVariant
 
 logger = logging.getLogger(__name__)
 
 
 class InsufficientStockError(Exception):
     """Raised when there's insufficient stock to fulfill an order"""
+
     pass
 
 
@@ -36,13 +40,11 @@ class FulfillmentService:
     def __init__(self):
         self.distance_weight = 0.3  # Weight for distance in scoring (30%)
         self.priority_weight = 0.4  # Weight for priority in scoring (40%)
-        self.stock_weight = 0.3     # Weight for stock levels in scoring (30%)
+        self.stock_weight = 0.3  # Weight for stock levels in scoring (30%)
 
     def select_warehouse_for_order(
-        self,
-        order: Order,
-        order_items: List[Dict]
-    ) -> Dict[int, Warehouse]:
+        self, order: Order, order_items: list[dict]
+    ) -> dict[int, Warehouse]:
         """
         Select optimal warehouse(s) to fulfill an order.
 
@@ -72,7 +74,9 @@ class FulfillmentService:
 
         # If still no warehouses, try highest-priority region as catch-all
         if not warehouses:
-            default_region = SalesRegion.objects.filter(is_active=True).order_by('-priority').first()
+            default_region = (
+                SalesRegion.objects.filter(is_active=True).order_by("-priority").first()
+            )
             if default_region:
                 logger.warning(
                     f"Order {order.id} has no region match or fallbacks, "
@@ -81,16 +85,14 @@ class FulfillmentService:
                 warehouses = self._get_warehouses_for_region(default_region)
 
         if not warehouses:
-            region_info = region.code if region else 'unknown'
+            region_info = region.code if region else "unknown"
             raise InsufficientStockError(f"No active warehouses available for region {region_info}")
 
         # Try to fulfill from single warehouse first (preferred)
-        single_warehouse = self._try_single_warehouse_fulfillment(
-            order_items, warehouses, order
-        )
+        single_warehouse = self._try_single_warehouse_fulfillment(order_items, warehouses, order)
         if single_warehouse:
             logger.info(f"Order can be fulfilled from single warehouse: {single_warehouse.code}")
-            return {idx: single_warehouse for idx in range(len(order_items))}
+            return dict.fromkeys(range(len(order_items)), single_warehouse)
 
         # Fall back to split shipment if necessary
         logger.info(f"Attempting split shipment for order {order.id}")
@@ -105,9 +107,9 @@ class FulfillmentService:
         self,
         product: Product,
         quantity: int,
-        region: Optional[SalesRegion] = None,
-        variant: Optional['ProductVariant'] = None
-    ) -> Dict:
+        region: SalesRegion | None = None,
+        variant: Optional["ProductVariant"] = None,
+    ) -> dict:
         """
         Check stock availability for a product in a region.
 
@@ -129,17 +131,14 @@ class FulfillmentService:
         # Products not tracking inventory are always available
         if not product.track_inventory:
             return {
-                'available': True,
-                'quantity_available': 999999,  # Effectively unlimited
-                'warehouses': [],
-                'can_backorder': False
+                "available": True,
+                "quantity_available": 999999,  # Effectively unlimited
+                "warehouses": [],
+                "can_backorder": False,
             }
 
         # Get stock items — filter by variant
-        stock_query = StockItem.objects.filter(
-            product=product,
-            warehouse__is_active=True
-        )
+        stock_query = StockItem.objects.filter(product=product, warehouse__is_active=True)
         if variant:
             stock_query = stock_query.filter(variant=variant)
         else:
@@ -150,36 +149,32 @@ class FulfillmentService:
             stock_query = stock_query.filter(warehouse__region=region)
 
         # Calculate total available (on_hand - allocated)
-        total_available = stock_query.aggregate(
-            total=Sum(F('on_hand') - F('allocated'))
-        )['total'] or 0
+        total_available = (
+            stock_query.aggregate(total=Sum(F("on_hand") - F("allocated")))["total"] or 0
+        )
 
         # Get warehouses with stock
-        warehouses_with_stock = stock_query.filter(
-            on_hand__gt=F('allocated')
-        ).values_list('warehouse__code', flat=True)
+        warehouses_with_stock = stock_query.filter(on_hand__gt=F("allocated")).values_list(
+            "warehouse__code", flat=True
+        )
 
         return {
-            'available': total_available >= quantity,
-            'quantity_available': total_available,
-            'warehouses': list(warehouses_with_stock),
-            'can_backorder': product.allow_backorders
+            "available": total_available >= quantity,
+            "quantity_available": total_available,
+            "warehouses": list(warehouses_with_stock),
+            "can_backorder": product.allow_backorders,
         }
 
     def _build_stock_filter(self, product, warehouse, variant=None):
         """Build filter kwargs for StockItem queries with proper variant handling."""
-        filter_kwargs = {'product': product, 'warehouse': warehouse}
+        filter_kwargs = {"product": product, "warehouse": warehouse}
         if variant:
-            filter_kwargs['variant'] = variant
+            filter_kwargs["variant"] = variant
         else:
-            filter_kwargs['variant__isnull'] = True
+            filter_kwargs["variant__isnull"] = True
         return filter_kwargs
 
-    def allocate_stock(
-        self,
-        order_item: OrderItem,
-        warehouse: Warehouse
-    ) -> StockItem:
+    def allocate_stock(self, order_item: OrderItem, warehouse: Warehouse) -> StockItem:
         """
         Allocate stock for an order item at a specific warehouse.
 
@@ -218,9 +213,7 @@ class FulfillmentService:
             )
 
         # Allocate stock — use .filter().update() to bypass post_save signal
-        StockItem.objects.filter(pk=stock_item.pk).update(
-            allocated=F('allocated') + quantity
-        )
+        StockItem.objects.filter(pk=stock_item.pk).update(allocated=F("allocated") + quantity)
         stock_item.refresh_from_db()
 
         logger.info(
@@ -230,11 +223,7 @@ class FulfillmentService:
 
         return stock_item
 
-    def fulfill_stock(
-        self,
-        order_item: OrderItem,
-        warehouse: Warehouse
-    ) -> StockItem:
+    def fulfill_stock(self, order_item: OrderItem, warehouse: Warehouse) -> StockItem:
         """
         Fulfill stock for an order item (reduce on_hand and allocated).
 
@@ -264,8 +253,8 @@ class FulfillmentService:
 
         # Reduce on_hand and allocated — use .filter().update() to bypass post_save signal
         StockItem.objects.filter(pk=stock_item.pk).update(
-            on_hand=F('on_hand') - quantity,
-            allocated=F('allocated') - quantity,
+            on_hand=F("on_hand") - quantity,
+            allocated=F("allocated") - quantity,
         )
         stock_item.refresh_from_db()
 
@@ -283,11 +272,7 @@ class FulfillmentService:
 
         return stock_item
 
-    def release_stock(
-        self,
-        order_item: OrderItem,
-        warehouse: Warehouse
-    ) -> StockItem:
+    def release_stock(self, order_item: OrderItem, warehouse: Warehouse) -> StockItem:
         """
         Release allocated stock for an order item (e.g., on cancellation).
 
@@ -315,7 +300,7 @@ class FulfillmentService:
 
         # Release allocation — use .filter().update() to bypass post_save signal
         StockItem.objects.filter(pk=stock_item.pk).update(
-            allocated=F('allocated') - quantity,
+            allocated=F("allocated") - quantity,
         )
         stock_item.refresh_from_db()
 
@@ -328,7 +313,7 @@ class FulfillmentService:
 
     # Private helper methods
 
-    def _get_order_region(self, order: Order) -> Optional[SalesRegion]:
+    def _get_order_region(self, order: Order) -> SalesRegion | None:
         """Get the sales region for an order based on shipping address."""
         # Get country from shipping address
         country_code = order.shipping_country
@@ -340,7 +325,7 @@ class FulfillmentService:
             return None
 
         # Find region that includes this country
-        regions = SalesRegion.objects.filter(is_active=True).order_by('-priority')
+        regions = SalesRegion.objects.filter(is_active=True).order_by("-priority")
         for region in regions:
             if isinstance(region.countries, list) and country_code in region.countries:
                 return region
@@ -348,6 +333,7 @@ class FulfillmentService:
         # Fallback: use shipping_origin_country from site settings to find a default region
         try:
             from core.models import SiteSettings
+
             site_settings = SiteSettings.objects.first()
             if site_settings and site_settings.shipping_origin_country:
                 origin = site_settings.shipping_origin_country
@@ -363,26 +349,25 @@ class FulfillmentService:
 
         return None
 
-    def _get_warehouses_for_region(self, region: SalesRegion) -> List[Warehouse]:
+    def _get_warehouses_for_region(self, region: SalesRegion) -> list[Warehouse]:
         """Get active warehouses for a region, ordered by fulfillment priority."""
         return list(
-            Warehouse.objects.filter(
-                region=region,
-                is_active=True
-            ).order_by('-fulfillment_priority')
+            Warehouse.objects.filter(region=region, is_active=True).order_by(
+                "-fulfillment_priority"
+            )
         )
 
-    def _get_fallback_warehouses(self, country_code: str) -> List[Warehouse]:
+    def _get_fallback_warehouses(self, country_code: str) -> list[Warehouse]:
         """
         Get fallback warehouses for a country from CountryWarehouseFallback.
 
         Used when no regional warehouses are available.
         """
         try:
-            from shipping.models import ShippingCountry, CountryWarehouseFallback
+            from shipping.models import CountryWarehouseFallback, ShippingCountry
+
             shipping_country = ShippingCountry.objects.get(
-                country_code=country_code.upper(),
-                is_active=True
+                country_code=country_code.upper(), is_active=True
             )
             # First try the primary source_warehouse
             warehouses = []
@@ -390,29 +375,28 @@ class FulfillmentService:
                 warehouses.append(shipping_country.source_warehouse)
 
             # Then add fallback warehouses in priority order
-            fallbacks = CountryWarehouseFallback.objects.filter(
-                country=shipping_country,
-                warehouse__is_active=True
-            ).select_related('warehouse').order_by('priority')
+            fallbacks = (
+                CountryWarehouseFallback.objects.filter(
+                    country=shipping_country, warehouse__is_active=True
+                )
+                .select_related("warehouse")
+                .order_by("priority")
+            )
             for fallback in fallbacks:
                 if fallback.warehouse not in warehouses:
                     warehouses.append(fallback.warehouse)
 
             if warehouses:
                 logger.info(
-                    f"Using fallback warehouses for {country_code}: "
-                    f"{[w.code for w in warehouses]}"
+                    f"Using fallback warehouses for {country_code}: {[w.code for w in warehouses]}"
                 )
             return warehouses
         except Exception:
             return []
 
     def _try_single_warehouse_fulfillment(
-        self,
-        order_items: List[Dict],
-        warehouses: List[Warehouse],
-        order: Order
-    ) -> Optional[Warehouse]:
+        self, order_items: list[dict], warehouses: list[Warehouse], order: Order
+    ) -> Warehouse | None:
         """
         Try to fulfill entire order from a single warehouse.
 
@@ -424,9 +408,9 @@ class FulfillmentService:
             can_fulfill = True
 
             for item in order_items:
-                product = item['product']
-                variant = item.get('variant')
-                quantity = item['quantity']
+                product = item["product"]
+                variant = item.get("variant")
+                quantity = item["quantity"]
 
                 # Skip non-inventory-tracked products
                 if not product.track_inventory:
@@ -456,11 +440,8 @@ class FulfillmentService:
         return candidate_warehouses[0][0]
 
     def _allocate_split_shipment(
-        self,
-        order_items: List[Dict],
-        warehouses: List[Warehouse],
-        order: Order
-    ) -> Optional[Dict[int, Warehouse]]:
+        self, order_items: list[dict], warehouses: list[Warehouse], order: Order
+    ) -> dict[int, Warehouse] | None:
         """
         Allocate items across multiple warehouses for split shipment.
 
@@ -474,9 +455,9 @@ class FulfillmentService:
             newly_allocated = []
 
             for idx, item in remaining:
-                product = item['product']
-                variant = item.get('variant')
-                quantity = item['quantity']
+                product = item["product"]
+                variant = item.get("variant")
+                quantity = item["quantity"]
 
                 # Non-inventory-tracked products can be allocated anywhere
                 if not product.track_inventory:
@@ -509,10 +490,7 @@ class FulfillmentService:
         return allocation
 
     def _calculate_warehouse_score(
-        self,
-        warehouse: Warehouse,
-        order: Order,
-        order_items: Optional[List[Dict]] = None
+        self, warehouse: Warehouse, order: Order, order_items: list[dict] | None = None
     ) -> float:
         """
         Calculate a score for a warehouse based on multiple factors.
@@ -536,9 +514,7 @@ class FulfillmentService:
         return score
 
     def _calculate_stock_score(
-        self,
-        warehouse: Warehouse,
-        order_items: Optional[List[Dict]] = None
+        self, warehouse: Warehouse, order_items: list[dict] | None = None
     ) -> float:
         """
         Calculate stock score based on actual availability vs needed quantity.
@@ -551,9 +527,9 @@ class FulfillmentService:
 
         scores = []
         for item in order_items:
-            product = item['product']
-            variant = item.get('variant')
-            quantity = item['quantity']
+            product = item["product"]
+            variant = item.get("variant")
+            quantity = item["quantity"]
 
             if not product.track_inventory:
                 scores.append(1.0)
@@ -590,22 +566,20 @@ class FulfillmentService:
 
         # Calculate distance
         distance_km = self._haversine_distance(
-            float(warehouse.latitude),
-            float(warehouse.longitude),
-            customer_lat,
-            customer_lon
+            float(warehouse.latitude), float(warehouse.longitude), customer_lat, customer_lon
         )
 
         # Convert distance to score: closer = higher
         # Use exponential decay: score = e^(-distance/reference_distance)
         # Reference: 1000km gives ~0.37, 100km gives ~0.90, 5000km gives ~0.007
         import math
+
         reference_distance = 1000.0  # km
         distance_score = math.exp(-distance_km / reference_distance)
 
         return min(max(distance_score, 0.0), 1.0)
 
-    def _geocode_order_address(self, order: Order) -> Optional[Tuple[float, float]]:
+    def _geocode_order_address(self, order: Order) -> tuple[float, float] | None:
         """
         Geocode an order's shipping address to (lat, lon) coordinates.
 
@@ -614,9 +588,13 @@ class FulfillmentService:
         """
         # Build address string from order
         address_parts = []
-        for field in [order.shipping_address1, order.shipping_city,
-                      order.shipping_state, order.shipping_postal_code,
-                      order.shipping_country]:
+        for field in [
+            order.shipping_address1,
+            order.shipping_city,
+            order.shipping_state,
+            order.shipping_postal_code,
+            order.shipping_country,
+        ]:
             if field:
                 address_parts.append(str(field))
 
@@ -629,10 +607,11 @@ class FulfillmentService:
         cache_key = f"fulfillment:geocode:{hash(address_string)}"
         cached = cache.get(cache_key)
         if cached is not None:
-            return cached if cached != 'NONE' else None
+            return cached if cached != "NONE" else None
 
         try:
             from address_autocomplete.services import AutocompleteClient
+
             client = AutocompleteClient()
             result = client.autocomplete(
                 query=address_string,
@@ -640,28 +619,22 @@ class FulfillmentService:
                 limit=1,
             )
 
-            if result.get('suggestions'):
-                centroid = result['suggestions'][0].get('centroid')
-                if centroid and centroid.get('lat') and centroid.get('lon'):
-                    coords = (float(centroid['lat']), float(centroid['lon']))
+            if result.get("suggestions"):
+                centroid = result["suggestions"][0].get("centroid")
+                if centroid and centroid.get("lat") and centroid.get("lon"):
+                    coords = (float(centroid["lat"]), float(centroid["lon"]))
                     cache.set(cache_key, coords, 86400)  # Cache 24 hours
                     return coords
 
             # Cache negative result to avoid re-querying
-            cache.set(cache_key, 'NONE', 3600)  # Cache 1 hour
+            cache.set(cache_key, "NONE", 3600)  # Cache 1 hour
             return None
 
         except Exception as e:
             logger.debug(f"Geocoding failed for order {order.id}: {e}")
             return None
 
-    def _haversine_distance(
-        self,
-        lat1: float,
-        lon1: float,
-        lat2: float,
-        lon2: float
-    ) -> float:
+    def _haversine_distance(self, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
         """
         Calculate distance between two points on Earth using Haversine formula.
 
@@ -673,7 +646,7 @@ class FulfillmentService:
         # Haversine formula
         dlat = lat2 - lat1
         dlon = lon2 - lon1
-        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
         c = 2 * asin(sqrt(a))
 
         # Radius of Earth in kilometers

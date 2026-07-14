@@ -5,20 +5,20 @@
  * Appends the optional reason query parameter to the unsubscribe link.
  * Replaces inline <script> block in unsubscribe_confirm.html.
  */
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        var btn = document.getElementById('confirm-unsubscribe-btn');
-        var textarea = document.getElementById('unsubscribe-reason');
-        if (!btn || !textarea) return;
+  document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('confirm-unsubscribe-btn');
+    const textarea = document.getElementById('unsubscribe-reason');
+    if (!btn || !textarea) return;
 
-        btn.addEventListener('click', function(e) {
-            var reason = textarea.value.trim();
-            if (reason) {
-                e.preventDefault();
-                window.location.href = btn.href + '&reason=' + encodeURIComponent(reason);
-            }
-        });
+    btn.addEventListener('click', function (e) {
+      const reason = textarea.value.trim();
+      if (reason) {
+        e.preventDefault();
+        window.location.href = btn.href + '&reason=' + encodeURIComponent(reason);
+      }
     });
+  });
 })();

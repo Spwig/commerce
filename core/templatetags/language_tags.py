@@ -15,6 +15,7 @@ Usage in templates:
 """
 
 from django import template
+
 from core.language_metadata import get_language_info
 
 register = template.Library()
@@ -35,7 +36,7 @@ def language_flag(code):
         {{ 'en'|language_flag }}  -> 🇺🇸
         {{ 'ja'|language_flag }}  -> 🇯🇵
     """
-    return get_language_info(code)['flag']
+    return get_language_info(code)["flag"]
 
 
 @register.filter
@@ -53,7 +54,7 @@ def language_native_name(code):
         {{ 'en'|language_native_name }}  -> English
         {{ 'ar'|language_native_name }}  -> العربية
     """
-    return get_language_info(code)['native_name']
+    return get_language_info(code)["native_name"]
 
 
 @register.filter
@@ -71,7 +72,7 @@ def language_dir(code):
         {{ 'en'|language_dir }}  -> ltr
         {{ 'ar'|language_dir }}  -> rtl
     """
-    return get_language_info(code)['dir']
+    return get_language_info(code)["dir"]
 
 
 @register.filter

@@ -387,10 +387,10 @@
 
         <div class="form-card">
             <h2><i class="fas fa-mail-bulk"></i> {% trans "Email Delivery Mode" %}</h2>
-            <p class="help" style="margin-bottom: 16px;">{% trans "Control how outgoing emails are handled across your entire store." %}</p>
+            <p class="help form-card-spacer">{% trans "Control how outgoing emails are handled across your entire store." %}</p>
 
             {% if adminform.form.email_delivery_mode.value != "live" %}
-            <div class="messagelist" style="margin-bottom: 16px;">
+            <div class="messagelist form-card-spacer">
                 {% if adminform.form.email_delivery_mode.value == "paused" %}
                 <li class="warning">
                     <i class="fas fa-pause-circle"></i>
@@ -439,7 +439,7 @@
         {% if license_status.is_sandbox %}
         <div class="form-card">
             <h2><i class="fas fa-shield-alt"></i> {% trans "Sandbox Whitelists" %}</h2>
-            <div class="messagelist" style="margin-bottom: 16px;">
+            <div class="messagelist form-card-spacer">
                 <li class="info">
                     <i class="fas fa-info-circle"></i>
                     {% trans "In sandbox mode, emails and SMS are only delivered to whitelisted addresses. All other messages are logged but never sent. Your admin email is always included automatically." %}
@@ -1770,7 +1770,7 @@
     {# ============================================================ #}
     <div class="tab-panel" data-panel="domain-ssl">
         {% if license_status.is_hosted %}
-        <div class="license-notice-banner license-banner-info" style="margin-bottom: 16px;">
+        <div class="license-notice-banner license-banner-info form-card-spacer">
             <div class="license-banner-icon"><i class="fas fa-info-circle"></i></div>
             <div class="license-banner-content">
                 <strong>{% trans "Spwig Hosted:" %}</strong>

@@ -1,12 +1,13 @@
 """
 WooCommerce REST API v3 client with rate limiting and pagination
 """
+
+import logging
+import time
+from collections.abc import Callable
+
 import requests
 from requests.auth import HTTPBasicAuth
-import time
-import logging
-from typing import List, Dict, Callable, Optional
-from urllib.parse import urlparse, parse_qs
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class WooCommerceAPIClient:
             consumer_secret: WooCommerce REST API consumer secret (cs_xxx)
             timeout: Request timeout in seconds
         """
-        self.store_url = store_url.rstrip('/')
+        self.store_url = store_url.rstrip("/")
         self.base_url = f"{self.store_url}/wp-json/wc/v3"
         self.auth = HTTPBasicAuth(consumer_key, consumer_secret)
         self.timeout = timeout
@@ -56,29 +57,47 @@ class WooCommerceAPIClient:
         try:
             response = self.session.get(url, timeout=10)
             if response.status_code == 200:
-                return {'success': True}
+                return {"success": True}
             elif response.status_code == 401:
-                return {'success': False, 'error': 'Invalid API credentials (401 Unauthorized)'}
+                return {"success": False, "error": "Invalid API credentials (401 Unauthorized)"}
             elif response.status_code == 403:
-                return {'success': False, 'error': 'Access denied. Check API key permissions (403 Forbidden)'}
+                return {
+                    "success": False,
+                    "error": "Access denied. Check API key permissions (403 Forbidden)",
+                }
             elif response.status_code == 404:
-                return {'success': False, 'error': 'WooCommerce REST API not found (404). Is WooCommerce installed and active?'}
+                return {
+                    "success": False,
+                    "error": "WooCommerce REST API not found (404). Is WooCommerce installed and active?",
+                }
             else:
-                return {'success': False, 'error': f'Unexpected response from store (HTTP {response.status_code})'}
+                return {
+                    "success": False,
+                    "error": f"Unexpected response from store (HTTP {response.status_code})",
+                }
         except requests.exceptions.SSLError as e:
             logger.error(f"Connection test SSL error: {e}")
-            return {'success': False, 'error': f'SSL certificate error connecting to store. Ensure the URL uses a valid HTTPS certificate.'}
+            return {
+                "success": False,
+                "error": "SSL certificate error connecting to store. Ensure the URL uses a valid HTTPS certificate.",
+            }
         except requests.exceptions.ConnectionError as e:
             logger.error(f"Connection test connection error: {e}")
-            return {'success': False, 'error': 'Cannot connect to store. Please check the URL is correct and the store is online.'}
+            return {
+                "success": False,
+                "error": "Cannot connect to store. Please check the URL is correct and the store is online.",
+            }
         except requests.exceptions.Timeout:
             logger.error(f"Connection test timed out for {url}")
-            return {'success': False, 'error': 'Connection timed out (10s). Is the store URL correct and the site responsive?'}
+            return {
+                "success": False,
+                "error": "Connection timed out (10s). Is the store URL correct and the site responsive?",
+            }
         except Exception as e:
             logger.error(f"Connection test failed: {e}")
-            return {'success': False, 'error': str(e)}
+            return {"success": False, "error": str(e)}
 
-    def get_api_version(self) -> Optional[str]:
+    def get_api_version(self) -> str | None:
         """
         Get WooCommerce API version
 
@@ -86,15 +105,15 @@ class WooCommerceAPIClient:
             str: API version (e.g., 'wc/v3')
         """
         try:
-            response = self._request('GET', '/')
+            response = self._request("GET", "/")
             data = response.json()
-            return data.get('namespace', 'unknown')
-        except:
+            return data.get("namespace", "unknown")
+        except Exception:
             return None
 
     # Paginated fetch methods
 
-    def fetch_all_categories(self, progress_callback: Optional[Callable] = None) -> List[Dict]:
+    def fetch_all_categories(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all product categories with pagination
 
@@ -104,9 +123,9 @@ class WooCommerceAPIClient:
         Returns:
             List of category dictionaries
         """
-        return self._fetch_all_paginated('/products/categories', progress_callback)
+        return self._fetch_all_paginated("/products/categories", progress_callback)
 
-    def fetch_all_products(self, progress_callback: Optional[Callable] = None) -> List[Dict]:
+    def fetch_all_products(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all products with pagination
 
@@ -116,9 +135,9 @@ class WooCommerceAPIClient:
         Returns:
             List of product dictionaries
         """
-        return self._fetch_all_paginated('/products', progress_callback)
+        return self._fetch_all_paginated("/products", progress_callback)
 
-    def fetch_all_customers(self, progress_callback: Optional[Callable] = None) -> List[Dict]:
+    def fetch_all_customers(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all customers with pagination
 
@@ -128,9 +147,9 @@ class WooCommerceAPIClient:
         Returns:
             List of customer dictionaries
         """
-        return self._fetch_all_paginated('/customers', progress_callback)
+        return self._fetch_all_paginated("/customers", progress_callback)
 
-    def fetch_all_orders(self, progress_callback: Optional[Callable] = None) -> List[Dict]:
+    def fetch_all_orders(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all orders with pagination
 
@@ -140,9 +159,9 @@ class WooCommerceAPIClient:
         Returns:
             List of order dictionaries
         """
-        return self._fetch_all_paginated('/orders', progress_callback)
+        return self._fetch_all_paginated("/orders", progress_callback)
 
-    def fetch_all_coupons(self, progress_callback: Optional[Callable] = None) -> List[Dict]:
+    def fetch_all_coupons(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all coupons with pagination
 
@@ -152,9 +171,9 @@ class WooCommerceAPIClient:
         Returns:
             List of coupon dictionaries
         """
-        return self._fetch_all_paginated('/coupons', progress_callback)
+        return self._fetch_all_paginated("/coupons", progress_callback)
 
-    def fetch_all_reviews(self, progress_callback: Optional[Callable] = None) -> List[Dict]:
+    def fetch_all_reviews(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all product reviews with pagination
 
@@ -164,41 +183,39 @@ class WooCommerceAPIClient:
         Returns:
             List of review dictionaries
         """
-        return self._fetch_all_paginated('/products/reviews', progress_callback)
+        return self._fetch_all_paginated("/products/reviews", progress_callback)
 
     # Single page fetch methods
 
-    def fetch_categories(self, page: int = 1, per_page: int = 100) -> List[Dict]:
+    def fetch_categories(self, page: int = 1, per_page: int = 100) -> list[dict]:
         """Fetch categories (single page)"""
-        return self._fetch_page('/products/categories', page, per_page)
+        return self._fetch_page("/products/categories", page, per_page)
 
-    def fetch_products(self, page: int = 1, per_page: int = 100) -> List[Dict]:
+    def fetch_products(self, page: int = 1, per_page: int = 100) -> list[dict]:
         """Fetch products (single page)"""
-        return self._fetch_page('/products', page, per_page)
+        return self._fetch_page("/products", page, per_page)
 
-    def fetch_customers(self, page: int = 1, per_page: int = 100) -> List[Dict]:
+    def fetch_customers(self, page: int = 1, per_page: int = 100) -> list[dict]:
         """Fetch customers (single page)"""
-        return self._fetch_page('/customers', page, per_page)
+        return self._fetch_page("/customers", page, per_page)
 
-    def fetch_orders(self, page: int = 1, per_page: int = 100) -> List[Dict]:
+    def fetch_orders(self, page: int = 1, per_page: int = 100) -> list[dict]:
         """Fetch orders (single page)"""
-        return self._fetch_page('/orders', page, per_page)
+        return self._fetch_page("/orders", page, per_page)
 
-    def fetch_coupons(self, page: int = 1, per_page: int = 100) -> List[Dict]:
+    def fetch_coupons(self, page: int = 1, per_page: int = 100) -> list[dict]:
         """Fetch coupons (single page)"""
-        return self._fetch_page('/coupons', page, per_page)
+        return self._fetch_page("/coupons", page, per_page)
 
-    def fetch_reviews(self, page: int = 1, per_page: int = 100) -> List[Dict]:
+    def fetch_reviews(self, page: int = 1, per_page: int = 100) -> list[dict]:
         """Fetch product reviews (single page)"""
-        return self._fetch_page('/products/reviews', page, per_page)
+        return self._fetch_page("/products/reviews", page, per_page)
 
     # Product variation methods
 
     def fetch_all_product_variations(
-        self,
-        product_id: int,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
+        self, product_id: int, progress_callback: Callable | None = None
+    ) -> list[dict]:
         """
         Fetch all variations for a specific product with pagination.
 
@@ -211,15 +228,12 @@ class WooCommerceAPIClient:
         Returns:
             List of variation dictionaries
         """
-        endpoint = f'/products/{product_id}/variations'
+        endpoint = f"/products/{product_id}/variations"
         return self._fetch_all_paginated(endpoint, progress_callback)
 
     def fetch_product_variations(
-        self,
-        product_id: int,
-        page: int = 1,
-        per_page: int = 100
-    ) -> List[Dict]:
+        self, product_id: int, page: int = 1, per_page: int = 100
+    ) -> list[dict]:
         """
         Fetch variations for a product (single page).
 
@@ -231,12 +245,12 @@ class WooCommerceAPIClient:
         Returns:
             List of variation dictionaries
         """
-        endpoint = f'/products/{product_id}/variations'
+        endpoint = f"/products/{product_id}/variations"
         return self._fetch_page(endpoint, page, per_page)
 
     # Core methods
 
-    def _fetch_page(self, endpoint: str, page: int, per_page: int) -> List[Dict]:
+    def _fetch_page(self, endpoint: str, page: int, per_page: int) -> list[dict]:
         """
         Fetch a single page of results
 
@@ -249,11 +263,11 @@ class WooCommerceAPIClient:
             List of items
         """
         params = {
-            'page': page,
-            'per_page': min(per_page, 100)  # WooCommerce max is 100
+            "page": page,
+            "per_page": min(per_page, 100),  # WooCommerce max is 100
         }
 
-        response = self._request('GET', endpoint, params=params)
+        response = self._request("GET", endpoint, params=params)
 
         if response.status_code == 200:
             return response.json()
@@ -261,7 +275,9 @@ class WooCommerceAPIClient:
             logger.error(f"Failed to fetch {endpoint} page {page}: {response.status_code}")
             return []
 
-    def _fetch_all_paginated(self, endpoint: str, progress_callback: Optional[Callable] = None) -> List[Dict]:
+    def _fetch_all_paginated(
+        self, endpoint: str, progress_callback: Callable | None = None
+    ) -> list[dict]:
         """
         Fetch all items with automatic pagination
 
@@ -283,12 +299,9 @@ class WooCommerceAPIClient:
         total_pages = None
 
         while True:
-            params = {
-                'page': page,
-                'per_page': per_page
-            }
+            params = {"page": page, "per_page": per_page}
 
-            response = self._request('GET', endpoint, params=params)
+            response = self._request("GET", endpoint, params=params)
 
             if response.status_code != 200:
                 logger.error(f"Failed to fetch {endpoint} page {page}: {response.status_code}")
@@ -296,8 +309,8 @@ class WooCommerceAPIClient:
 
             # Get pagination info from headers
             if total_items is None:
-                total_items = int(response.headers.get('X-WP-Total', 0))
-                total_pages = int(response.headers.get('X-WP-TotalPages', 1))
+                total_items = int(response.headers.get("X-WP-Total", 0))
+                total_pages = int(response.headers.get("X-WP-TotalPages", 1))
                 logger.info(f"Fetching {total_items} items from {endpoint} ({total_pages} pages)")
 
             # Get items from this page
@@ -320,8 +333,9 @@ class WooCommerceAPIClient:
         logger.info(f"Fetched {len(all_items)} items from {endpoint}")
         return all_items
 
-    def _request(self, method: str, endpoint: str, params: Optional[Dict] = None,
-                 max_retries: int = 3) -> requests.Response:
+    def _request(
+        self, method: str, endpoint: str, params: dict | None = None, max_retries: int = 3
+    ) -> requests.Response:
         """
         Make HTTP request with retry logic and rate limiting
 
@@ -342,12 +356,7 @@ class WooCommerceAPIClient:
                 self._rate_limit_wait()
 
                 # Make request
-                response = self.session.request(
-                    method,
-                    url,
-                    params=params,
-                    timeout=self.timeout
-                )
+                response = self.session.request(method, url, params=params, timeout=self.timeout)
 
                 # Update rate limit info
                 self._update_rate_limit_info(response)
@@ -357,7 +366,7 @@ class WooCommerceAPIClient:
 
                 # Handle rate limiting (429 status)
                 if response.status_code == 429:
-                    retry_after = int(response.headers.get('Retry-After', 5))
+                    retry_after = int(response.headers.get("Retry-After", 5))
                     logger.warning(f"Rate limited. Waiting {retry_after} seconds...")
                     time.sleep(retry_after)
                     continue
@@ -367,8 +376,10 @@ class WooCommerceAPIClient:
 
             except requests.exceptions.Timeout:
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt  # Exponential backoff
-                    logger.warning(f"Request timeout. Retrying in {wait_time}s... (attempt {attempt + 1}/{max_retries})")
+                    wait_time = 2**attempt  # Exponential backoff
+                    logger.warning(
+                        f"Request timeout. Retrying in {wait_time}s... (attempt {attempt + 1}/{max_retries})"
+                    )
                     time.sleep(wait_time)
                 else:
                     logger.error(f"Request timeout after {max_retries} attempts")
@@ -376,7 +387,7 @@ class WooCommerceAPIClient:
 
             except requests.exceptions.ConnectionError as e:
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt
+                    wait_time = 2**attempt
                     logger.warning(f"Connection error: {e}. Retrying in {wait_time}s...")
                     time.sleep(wait_time)
                 else:
@@ -411,8 +422,8 @@ class WooCommerceAPIClient:
         - X-WC-Store-API-Rate-Limit-Remaining: Requests remaining
         - X-WC-Store-API-Rate-Limit-Reset: Reset timestamp
         """
-        remaining = response.headers.get('X-WC-Store-API-Rate-Limit-Remaining')
-        reset = response.headers.get('X-WC-Store-API-Rate-Limit-Reset')
+        remaining = response.headers.get("X-WC-Store-API-Rate-Limit-Remaining")
+        reset = response.headers.get("X-WC-Store-API-Rate-Limit-Reset")
 
         if remaining:
             self.rate_limit_remaining = int(remaining)
@@ -423,7 +434,7 @@ class WooCommerceAPIClient:
         if remaining and self.rate_limit_remaining < 10:
             logger.warning(f"Rate limit warning: {self.rate_limit_remaining} requests remaining")
 
-    def get_total_counts(self) -> Dict[str, int]:
+    def get_total_counts(self) -> dict[str, int]:
         """
         Get total counts for all data types
 
@@ -441,31 +452,28 @@ class WooCommerceAPIClient:
         counts = {}
 
         endpoints = [
-            'products',
-            'products/categories',
-            'customers',
-            'orders',
-            'coupons',
-            'products/reviews'
+            "products",
+            "products/categories",
+            "customers",
+            "orders",
+            "coupons",
+            "products/reviews",
         ]
 
         for endpoint in endpoints:
             try:
-                response = self.session.head(
-                    f"{self.base_url}/{endpoint}",
-                    timeout=self.timeout
-                )
+                response = self.session.head(f"{self.base_url}/{endpoint}", timeout=self.timeout)
 
                 if response.status_code == 200:
-                    total = int(response.headers.get('X-WP-Total', 0))
+                    total = int(response.headers.get("X-WP-Total", 0))
                     # Normalize key (remove 'products/' prefix)
-                    key = endpoint.split('/')[-1]
+                    key = endpoint.split("/")[-1]
                     counts[key] = total
                 else:
-                    counts[endpoint.split('/')[-1]] = 0
+                    counts[endpoint.split("/")[-1]] = 0
 
             except Exception as e:
                 logger.error(f"Failed to get count for {endpoint}: {e}")
-                counts[endpoint.split('/')[-1]] = 0
+                counts[endpoint.split("/")[-1]] = 0
 
         return counts

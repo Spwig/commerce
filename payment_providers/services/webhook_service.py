@@ -2,21 +2,21 @@
 Webhook Service - Handles payment provider webhook events
 Processes and routes webhook notifications from payment providers
 """
-from typing import Dict, Any, Tuple, Optional
+
+import json
+import logging
+import uuid
+from typing import Any
+
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-import hashlib
-import hmac
-import json
-import uuid
-import logging
 
 from payment_providers.models import (
+    PaymentIntent,
     PaymentProviderAccount,
     PaymentTransaction,
     PaymentWebhook,
-    PaymentIntent,
 )
 from payment_providers.providers.registry import ProviderRegistry
 
@@ -33,7 +33,7 @@ class WebhookService:
         provider_account: PaymentProviderAccount,
         payload: bytes,
         signature: str,
-        headers: Dict[str, str]
+        headers: dict[str, str],
     ) -> bool:
         """
         Verify webhook signature from provider
@@ -57,9 +57,7 @@ class WebhookService:
 
             # Delegate signature verification to provider
             is_valid = provider_instance.verify_webhook_signature(
-                payload=payload,
-                signature=signature,
-                headers=headers
+                payload=payload, signature=signature, headers=headers
             )
 
             return is_valid
@@ -72,11 +70,11 @@ class WebhookService:
     @transaction.atomic
     def process_webhook(
         provider_slug: str,
-        payload: Dict[str, Any],
-        headers: Dict[str, str],
+        payload: dict[str, Any],
+        headers: dict[str, str],
         raw_payload: bytes,
-        signature: Optional[str] = None
-    ) -> Tuple[bool, str]:
+        signature: str | None = None,
+    ) -> tuple[bool, str]:
         """
         Process incoming webhook from payment provider
 
@@ -91,14 +89,13 @@ class WebhookService:
             Tuple of (success: bool, message: str)
         """
         # Extract event information
-        event_id = payload.get('id', str(uuid.uuid4()))
-        event_type = payload.get('type', payload.get('event_type', 'unknown'))
+        event_id = payload.get("id", str(uuid.uuid4()))
+        event_type = payload.get("type", payload.get("event_type", "unknown"))
 
         # Check for duplicate webhook (idempotency)
         idempotency_key = f"{provider_slug}:{event_id}"
         existing_webhook = PaymentWebhook.objects.filter(
-            provider_slug=provider_slug,
-            event_id=event_id
+            provider_slug=provider_slug, event_id=event_id
         ).first()
 
         if existing_webhook and existing_webhook.processed:
@@ -109,8 +106,7 @@ class WebhookService:
         # Note: This is simplified - in production you may need to extract provider account
         # from webhook payload or use a token/identifier in the webhook URL
         provider_accounts = PaymentProviderAccount.objects.filter(
-            component__slug=provider_slug,
-            is_active=True
+            component__slug=provider_slug, is_active=True
         )
 
         if not provider_accounts.exists():
@@ -127,7 +123,7 @@ class WebhookService:
                 provider_account=provider_account,
                 payload=raw_payload,
                 signature=signature,
-                headers=headers
+                headers=headers,
             )
 
             if not signature_verified:
@@ -145,7 +141,7 @@ class WebhookService:
             headers=headers,
             signature_verified=signature_verified,
             idempotency_key=idempotency_key,
-            processed=False
+            processed=False,
         )
 
         try:
@@ -159,38 +155,33 @@ class WebhookService:
             # Process webhook through provider
             processing_result = provider_instance.process_webhook(payload, event_type)
 
-            if not processing_result.get('success'):
-                raise Exception(processing_result.get('message', 'Webhook processing failed'))
+            if not processing_result.get("success"):
+                raise Exception(processing_result.get("message", "Webhook processing failed"))
 
             # Handle payment intent events for orchestration flow
             intent_handled = False
-            provider_intent_id = processing_result.get('payment_intent_id')
-            if provider_intent_id and event_type.startswith('payment_intent.'):
+            provider_intent_id = processing_result.get("payment_intent_id")
+            if provider_intent_id and event_type.startswith("payment_intent."):
                 intent_handled = WebhookService._handle_payment_intent_event(
                     provider_intent_id=provider_intent_id,
                     event_type=event_type,
-                    event_data=processing_result
+                    event_data=processing_result,
                 )
 
             # Update related transaction if event contains transaction data (legacy flow)
-            transaction_id = processing_result.get('transaction_id')
+            transaction_id = processing_result.get("transaction_id")
             if transaction_id and not intent_handled:
                 WebhookService._update_transaction_from_webhook(
                     transaction_id=transaction_id,
                     event_type=event_type,
-                    event_data=processing_result.get('data', {})
+                    event_data=processing_result.get("data", {}),
                 )
 
             # Route subscription events
             try:
-                WebhookService._handle_subscription_event(
-                    provider_instance, event_type, payload
-                )
+                WebhookService._handle_subscription_event(provider_instance, event_type, payload)
             except Exception as sub_err:
-                logger.warning(
-                    f"Subscription event processing failed: {sub_err}",
-                    exc_info=True
-                )
+                logger.warning(f"Subscription event processing failed: {sub_err}", exc_info=True)
 
             # Mark webhook as processed
             webhook.processed = True
@@ -206,20 +197,13 @@ class WebhookService:
             return True, _("Webhook processed successfully")
 
         except Exception as e:
-            logger.error(
-                f"Error processing webhook {event_id}: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Error processing webhook {event_id}: {str(e)}", exc_info=True)
             webhook.processing_error = str(e)
             webhook.save()
             return False, str(e)
 
     @staticmethod
-    def _handle_subscription_event(
-        provider_instance,
-        event_type: str,
-        payload: Dict[str, Any]
-    ):
+    def _handle_subscription_event(provider_instance, event_type: str, payload: dict[str, Any]):
         """
         Route subscription-related webhook events to the subscription event processor.
         Non-subscription events are silently skipped.
@@ -235,15 +219,12 @@ class WebhookService:
 
         success, message = SubscriptionEventProcessor.process_event(event)
         logger.info(
-            f"Subscription event {event.event_type.value}: "
-            f"success={success}, message={message}"
+            f"Subscription event {event.event_type.value}: success={success}, message={message}"
         )
 
     @staticmethod
     def _update_transaction_from_webhook(
-        transaction_id: str,
-        event_type: str,
-        event_data: Dict[str, Any]
+        transaction_id: str, event_type: str, event_data: dict[str, Any]
     ):
         """
         Update transaction based on webhook event
@@ -264,49 +245,51 @@ class WebhookService:
                 return
 
             # Update transaction based on event type
-            if event_type in ['payment_intent.succeeded', 'charge.succeeded', 'payment.captured']:
-                transaction.status = 'succeeded'
+            if event_type in ["payment_intent.succeeded", "charge.succeeded", "payment.captured"]:
+                transaction.status = "succeeded"
                 transaction.completed_at = timezone.now()
 
                 # Update order
                 if transaction.order:
-                    transaction.order.payment_status = 'paid'
+                    transaction.order.payment_status = "paid"
                     transaction.order.amount_paid = transaction.amount
                     transaction.order.paid_at = timezone.now()
-                    transaction.order.save(update_fields=['payment_status', 'amount_paid', 'paid_at'])
+                    transaction.order.save(
+                        update_fields=["payment_status", "amount_paid", "paid_at"]
+                    )
 
-            elif event_type in ['payment_intent.payment_failed', 'charge.failed', 'payment.failed']:
-                transaction.status = 'failed'
-                transaction.error_message = event_data.get('error_message', 'Payment failed')
-                transaction.error_code = event_data.get('error_code', '')
+            elif event_type in ["payment_intent.payment_failed", "charge.failed", "payment.failed"]:
+                transaction.status = "failed"
+                transaction.error_message = event_data.get("error_message", "Payment failed")
+                transaction.error_code = event_data.get("error_code", "")
 
                 # Update order
                 if transaction.order:
-                    transaction.order.payment_status = 'failed'
-                    transaction.order.save(update_fields=['payment_status'])
+                    transaction.order.payment_status = "failed"
+                    transaction.order.save(update_fields=["payment_status"])
 
-            elif event_type in ['payment_intent.canceled', 'charge.canceled', 'payment.cancelled']:
-                transaction.status = 'cancelled'
+            elif event_type in ["payment_intent.canceled", "charge.canceled", "payment.cancelled"]:
+                transaction.status = "cancelled"
                 transaction.completed_at = timezone.now()
 
                 # Update order
                 if transaction.order:
-                    transaction.order.payment_status = 'cancelled'
-                    transaction.order.save(update_fields=['payment_status'])
+                    transaction.order.payment_status = "cancelled"
+                    transaction.order.save(update_fields=["payment_status"])
 
-            elif event_type in ['charge.refunded', 'refund.succeeded', 'payment.refunded']:
+            elif event_type in ["charge.refunded", "refund.succeeded", "payment.refunded"]:
                 # Refund webhooks are usually handled separately via RefundService
                 # This is just to update metadata
-                refund_amount = event_data.get('refund_amount')
+                refund_amount = event_data.get("refund_amount")
                 if refund_amount and transaction.order:
                     # Note: Actual refund transactions should be created via RefundService
                     pass
 
             # Save transaction with updated webhook data
-            transaction.metadata['last_webhook_event'] = {
-                'type': event_type,
-                'timestamp': timezone.now().isoformat(),
-                'data': event_data
+            transaction.metadata["last_webhook_event"] = {
+                "type": event_type,
+                "timestamp": timezone.now().isoformat(),
+                "data": event_data,
             }
             transaction.save()
 
@@ -316,16 +299,11 @@ class WebhookService:
             )
 
         except Exception as e:
-            logger.error(
-                f"Error updating transaction from webhook: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Error updating transaction from webhook: {str(e)}", exc_info=True)
 
     @staticmethod
     def _handle_payment_intent_event(
-        provider_intent_id: str,
-        event_type: str,
-        event_data: Dict[str, Any]
+        provider_intent_id: str, event_type: str, event_data: dict[str, Any]
     ) -> bool:
         """
         Handle payment intent webhook events for the orchestration flow.
@@ -343,117 +321,109 @@ class WebhookService:
         """
         try:
             # Find the PaymentIntent by provider intent ID
-            intent = PaymentIntent.objects.filter(
-                provider_intent_id=provider_intent_id
-            ).select_related('order', 'provider_account', 'checkout_session').first()
+            intent = (
+                PaymentIntent.objects.filter(provider_intent_id=provider_intent_id)
+                .select_related("order", "provider_account", "checkout_session")
+                .first()
+            )
 
             if not intent:
-                logger.warning(
-                    f"PaymentIntent not found for webhook: {provider_intent_id}"
-                )
+                logger.warning(f"PaymentIntent not found for webhook: {provider_intent_id}")
                 return False
 
-            logger.info(
-                f"Processing payment intent event: {event_type} "
-                f"for intent: {intent.id}"
-            )
+            logger.info(f"Processing payment intent event: {event_type} for intent: {intent.id}")
 
             # Import here to avoid circular imports
             from payment_providers.services.payment_orchestration_service import (
-                PaymentOrchestrationService
+                PaymentOrchestrationService,
             )
 
-            if event_type == 'payment_intent.succeeded':
+            if event_type == "payment_intent.succeeded":
                 # Payment succeeded - update order to paid
                 success, message = PaymentOrchestrationService.handle_payment_success(
-                    intent=intent,
-                    provider_data=event_data
+                    intent=intent, provider_data=event_data
                 )
                 if not success:
                     logger.error(f"Failed to handle payment success: {message}")
                 return True
 
-            elif event_type in ['payment_intent.failed', 'payment_intent.payment_failed']:
+            elif event_type in ["payment_intent.failed", "payment_intent.payment_failed"]:
                 # Payment failed
-                error_code = event_data.get('error', {}).get('code', 'payment_failed')
-                error_message = event_data.get('error', {}).get(
-                    'message',
-                    event_data.get('message', 'Payment failed')
+                error_code = event_data.get("error", {}).get("code", "payment_failed")
+                error_message = event_data.get("error", {}).get(
+                    "message", event_data.get("message", "Payment failed")
                 )
                 PaymentOrchestrationService.handle_payment_failure(
-                    intent=intent,
-                    error_code=error_code,
-                    error_message=error_message
+                    intent=intent, error_code=error_code, error_message=error_message
                 )
                 return True
 
-            elif event_type in ['payment_intent.cancelled', 'payment_intent.canceled']:
+            elif event_type in ["payment_intent.cancelled", "payment_intent.canceled"]:
                 # Payment was cancelled
-                intent.status = 'canceled'
-                intent.save(update_fields=['status', 'updated_at'])
+                intent.status = "canceled"
+                intent.save(update_fields=["status", "updated_at"])
 
                 # Update order if no other active intents
                 if intent.order:
-                    other_active_intents = PaymentIntent.objects.filter(
-                        order=intent.order
-                    ).exclude(
-                        id=intent.id
-                    ).exclude(
-                        status__in=['canceled', 'failed']
-                    ).exists()
+                    other_active_intents = (
+                        PaymentIntent.objects.filter(order=intent.order)
+                        .exclude(id=intent.id)
+                        .exclude(status__in=["canceled", "failed"])
+                        .exists()
+                    )
 
                     if not other_active_intents:
-                        intent.order.status = 'cancelled'
-                        intent.order.payment_status = 'cancelled'
-                        intent.order.save(update_fields=['status', 'payment_status'])
+                        intent.order.status = "cancelled"
+                        intent.order.payment_status = "cancelled"
+                        intent.order.save(update_fields=["status", "payment_status"])
 
                         # Release stock
                         try:
                             from fulfillment.services.stock_service import StockService
+
                             StockService.release_stock_for_order(intent.order)
                         except Exception as e:
                             logger.error(f"Failed to release stock: {e}")
 
                 return True
 
-            elif event_type == 'payment_intent.requires_action':
+            elif event_type == "payment_intent.requires_action":
                 # Customer action required (3DS, etc.)
-                intent.status = 'requires_action'
+                intent.status = "requires_action"
                 intent.requires_action = True
-                intent.action_type = event_data.get('action', {}).get('type', 'redirect')
-                intent.action_url = event_data.get('action', {}).get('url', '')
-                intent.action_data = event_data.get('action', {}).get('data', {})
-                intent.save(update_fields=[
-                    'status', 'requires_action', 'action_type',
-                    'action_url', 'action_data', 'updated_at'
-                ])
+                intent.action_type = event_data.get("action", {}).get("type", "redirect")
+                intent.action_url = event_data.get("action", {}).get("url", "")
+                intent.action_data = event_data.get("action", {}).get("data", {})
+                intent.save(
+                    update_fields=[
+                        "status",
+                        "requires_action",
+                        "action_type",
+                        "action_url",
+                        "action_data",
+                        "updated_at",
+                    ]
+                )
                 return True
 
-            elif event_type == 'payment_intent.requires_capture':
+            elif event_type == "payment_intent.requires_capture":
                 # Payment authorized, needs capture
-                intent.status = 'processing'
-                intent.save(update_fields=['status', 'updated_at'])
+                intent.status = "processing"
+                intent.save(update_fields=["status", "updated_at"])
                 return True
 
             else:
                 # Unknown event type, just log it
-                logger.info(
-                    f"Unhandled payment intent event type: {event_type}"
-                )
+                logger.info(f"Unhandled payment intent event type: {event_type}")
                 return False
 
         except Exception as e:
-            logger.error(
-                f"Error handling payment intent event: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Error handling payment intent event: {str(e)}", exc_info=True)
             return False
 
     @staticmethod
     def handle_payment_intent_succeeded(
-        provider_slug: str,
-        provider_intent_id: str,
-        event_data: Dict[str, Any]
+        provider_slug: str, provider_intent_id: str, event_data: dict[str, Any]
     ) -> bool:
         """
         Handle a successful payment intent.
@@ -471,15 +441,13 @@ class WebhookService:
         """
         return WebhookService._handle_payment_intent_event(
             provider_intent_id=provider_intent_id,
-            event_type='payment_intent.succeeded',
-            event_data=event_data
+            event_type="payment_intent.succeeded",
+            event_data=event_data,
         )
 
     @staticmethod
     def handle_payment_intent_failed(
-        provider_slug: str,
-        provider_intent_id: str,
-        error_data: Dict[str, Any]
+        provider_slug: str, provider_intent_id: str, error_data: dict[str, Any]
     ) -> bool:
         """
         Handle a failed payment intent.
@@ -494,16 +462,16 @@ class WebhookService:
         """
         return WebhookService._handle_payment_intent_event(
             provider_intent_id=provider_intent_id,
-            event_type='payment_intent.failed',
-            event_data={'error': error_data}
+            event_type="payment_intent.failed",
+            event_data={"error": error_data},
         )
 
     @staticmethod
     def get_webhook_history(
-        provider_account: Optional[PaymentProviderAccount] = None,
-        event_type: Optional[str] = None,
-        processed: Optional[bool] = None,
-        limit: int = 100
+        provider_account: PaymentProviderAccount | None = None,
+        event_type: str | None = None,
+        processed: bool | None = None,
+        limit: int = 100,
     ) -> list:
         """
         Get webhook history with optional filters
@@ -528,11 +496,11 @@ class WebhookService:
         if processed is not None:
             queryset = queryset.filter(processed=processed)
 
-        return queryset.order_by('-created_at')[:limit]
+        return queryset.order_by("-created_at")[:limit]
 
     @staticmethod
     @transaction.atomic
-    def retry_failed_webhook(webhook_id: uuid.UUID) -> Tuple[bool, str]:
+    def retry_failed_webhook(webhook_id: uuid.UUID) -> tuple[bool, str]:
         """
         Retry processing a failed webhook
 
@@ -553,8 +521,8 @@ class WebhookService:
                 provider_slug=webhook.provider_slug,
                 payload=webhook.payload,
                 headers=webhook.headers,
-                raw_payload=json.dumps(webhook.payload).encode('utf-8'),
-                signature=None  # Signature already verified
+                raw_payload=json.dumps(webhook.payload).encode("utf-8"),
+                signature=None,  # Signature already verified
             )
 
             return success, message

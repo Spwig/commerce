@@ -5,10 +5,11 @@ Provides a task base class that routes Celery tasks to the low-priority
 'background' PgBouncer pool, ensuring background operations don't starve
 customer-facing database connections.
 """
-from celery import Task
-from django.conf import settings
 
 import logging
+
+from celery import Task
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +29,10 @@ class BackgroundDBTask(Task):
     """
 
     def __call__(self, *args, **kwargs):
-        if 'background' in settings.DATABASES:
-            from core.db_router import set_db_alias, clear_db_alias
-            set_db_alias('background')
+        if "background" in settings.DATABASES:
+            from core.db_router import clear_db_alias, set_db_alias
+
+            set_db_alias("background")
             try:
                 return super().__call__(*args, **kwargs)
             finally:

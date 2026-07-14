@@ -5,13 +5,13 @@
  * Tab switching handled by global AdminTabs utility.
  */
 
-(function() {
-    // Ensure translation adapter initializes
-    window.addEventListener('load', function() {
-        if (window.MediaTranslationAdapter) {
-            // Translation adapter already initialized
-        } else if (window.initializeMediaTranslations) {
-            window.initializeMediaTranslations();
-        }
-    });
+(function () {
+  // Ensure translation adapter initializes
+  window.addEventListener('load', function () {
+    if (window.MediaTranslationAdapter) {
+      // Translation adapter already initialized
+    } else if (window.initializeMediaTranslations) {
+      window.initializeMediaTranslations();
+    }
+  });
 })();

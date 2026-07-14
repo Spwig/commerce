@@ -4,15 +4,15 @@ SMS Provider Service.
 Provides high-level operations for managing SMS providers,
 including installation, configuration, and update checking.
 """
-import json
+
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Any
 
 from django.conf import settings
 
-from sms_system.providers.registry import SMSProviderRegistry
 from sms_system.providers.loader import SMSProviderLoader
+from sms_system.providers.registry import SMSProviderRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class SMSProviderService:
     and interaction with the upgrade server.
     """
 
-    COMPONENT_PATH = 'components_data/integrations/sms_provider'
+    COMPONENT_PATH = "components_data/integrations/sms_provider"
 
     @classmethod
     def get_component_path(cls, slug: str = None) -> Path:
@@ -40,11 +40,11 @@ class SMSProviderService:
         """
         base_path = Path(settings.BASE_DIR) / cls.COMPONENT_PATH
         if slug:
-            return base_path / slug / 'current'
+            return base_path / slug / "current"
         return base_path
 
     @classmethod
-    def get_installed_providers(cls) -> List[Dict[str, Any]]:
+    def get_installed_providers(cls) -> list[dict[str, Any]]:
         """
         Get list of installed SMS providers.
 
@@ -54,7 +54,7 @@ class SMSProviderService:
         return SMSProviderRegistry.list_providers()
 
     @classmethod
-    def get_provider_metadata(cls, provider_key: str) -> Optional[Dict[str, Any]]:
+    def get_provider_metadata(cls, provider_key: str) -> dict[str, Any] | None:
         """
         Get detailed metadata for a provider.
 
@@ -67,7 +67,7 @@ class SMSProviderService:
         return SMSProviderRegistry.get_provider_info(provider_key)
 
     @classmethod
-    def get_credential_schema(cls, provider_key: str) -> Optional[Dict[str, Any]]:
+    def get_credential_schema(cls, provider_key: str) -> dict[str, Any] | None:
         """
         Get the credential schema for a provider.
 
@@ -80,7 +80,7 @@ class SMSProviderService:
         return SMSProviderRegistry.get_credential_schema(provider_key)
 
     @classmethod
-    def get_setup_instructions(cls, provider_key: str) -> Optional[str]:
+    def get_setup_instructions(cls, provider_key: str) -> str | None:
         """
         Get setup instructions HTML for a provider.
 
@@ -94,10 +94,8 @@ class SMSProviderService:
 
     @classmethod
     def validate_credentials(
-        cls,
-        provider_key: str,
-        credentials: Dict[str, Any]
-    ) -> tuple[bool, Optional[str]]:
+        cls, provider_key: str, credentials: dict[str, Any]
+    ) -> tuple[bool, str | None]:
         """
         Validate provider credentials.
 
@@ -111,11 +109,7 @@ class SMSProviderService:
         return SMSProviderRegistry.validate_credentials(provider_key, credentials)
 
     @classmethod
-    def test_connection(
-        cls,
-        provider_key: str,
-        credentials: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def test_connection(cls, provider_key: str, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Test connection to a provider.
 
@@ -129,7 +123,7 @@ class SMSProviderService:
         return SMSProviderRegistry.test_connection(provider_key, credentials)
 
     @classmethod
-    def fetch_available_providers(cls) -> tuple[List[Dict[str, Any]], bool]:
+    def fetch_available_providers(cls) -> tuple[list[dict[str, Any]], bool]:
         """
         Fetch available providers from upgrade server.
 
@@ -140,9 +134,7 @@ class SMSProviderService:
             from component_updates.services import UpdateManager
 
             update_manager = UpdateManager()
-            providers = update_manager.list_available_components(
-                component_type='sms_provider'
-            )
+            providers = update_manager.list_available_components(component_type="sms_provider")
             return providers, True
 
         except Exception as e:
@@ -163,7 +155,7 @@ class SMSProviderService:
         return SMSProviderRegistry.is_provider_installed(provider_key)
 
     @classmethod
-    def get_provider_version(cls, provider_key: str) -> Optional[str]:
+    def get_provider_version(cls, provider_key: str) -> str | None:
         """
         Get the installed version of a provider.
 
@@ -175,11 +167,11 @@ class SMSProviderService:
         """
         manifest = SMSProviderLoader.get_manifest(provider_key)
         if manifest:
-            return manifest.get('version')
+            return manifest.get("version")
         return None
 
     @classmethod
-    def get_provider_logo_url(cls, provider_key: str) -> Optional[str]:
+    def get_provider_logo_url(cls, provider_key: str) -> str | None:
         """
         Get the logo URL for a provider.
 
@@ -195,15 +187,12 @@ class SMSProviderService:
         if not manifest:
             return None
 
-        logo_raw = manifest.get('logo')
+        logo_raw = manifest.get("logo")
         if not logo_raw:
             return None
 
         # Handle both dict and string formats
-        if isinstance(logo_raw, dict):
-            logo_filename = logo_raw.get('file', '')
-        else:
-            logo_filename = logo_raw
+        logo_filename = logo_raw.get("file", "") if isinstance(logo_raw, dict) else logo_raw
         if not logo_filename:
             return None
 
@@ -219,7 +208,7 @@ class SMSProviderService:
         return static(f"sms/{slug}/current/{logo_filename}")
 
     @classmethod
-    def _get_provider_slug(cls, provider_key: str) -> Optional[str]:
+    def _get_provider_slug(cls, provider_key: str) -> str | None:
         """Get the directory slug for a provider from its filesystem path."""
         path = SMSProviderLoader.get_provider_path(provider_key)
         if path:
@@ -227,21 +216,23 @@ class SMSProviderService:
         return None
 
     @classmethod
-    def _get_local_manifest(cls, slug: str) -> Dict[str, Any]:
+    def _get_local_manifest(cls, slug: str) -> dict[str, Any]:
         """Read the local manifest.json for an installed provider."""
         try:
             from component_updates.integration_paths import INTEGRATIONS_DIR
-            manifest_path = INTEGRATIONS_DIR / 'sms_provider' / slug / 'current' / 'manifest.json'
+
+            manifest_path = INTEGRATIONS_DIR / "sms_provider" / slug / "current" / "manifest.json"
             if manifest_path.exists():
                 import json
-                with open(manifest_path, 'r') as f:
+
+                with open(manifest_path) as f:
                     return json.load(f)
         except Exception:
             pass
         return {}
 
     @classmethod
-    def get_providers_for_browse(cls, lang: str = 'en') -> Dict[str, Any]:
+    def get_providers_for_browse(cls, lang: str = "en") -> dict[str, Any]:
         """
         Get providers organized for browse view.
 
@@ -257,12 +248,12 @@ class SMSProviderService:
 
         # Get installed providers from loader
         installed_raw = cls.get_installed_providers()
-        installed_keys = {p['key'] for p in installed_raw}
+        installed_keys = {p["key"] for p in installed_raw}
 
         # ComponentRegistry lookup for version tracking
         installed_db = {
             p.slug: p.current_version
-            for p in ComponentRegistry.objects.filter(component_type='sms_provider')
+            for p in ComponentRegistry.objects.filter(component_type="sms_provider")
         }
 
         # Fetch from upgrade server
@@ -271,7 +262,7 @@ class SMSProviderService:
         # Build installed provider list with enriched data
         installed_providers = []
         for provider in installed_raw:
-            key = provider['key']
+            key = provider["key"]
             slug = cls._get_provider_slug(key) or key
 
             # Get logo URL
@@ -282,136 +273,158 @@ class SMSProviderService:
             translated = get_translated_provider_fields(manifest, lang)
 
             # Check for updates using proper semver comparison
-            current_version = provider.get('version', '0.0.0')
+            current_version = provider.get("version", "0.0.0")
             update_available = False
             latest_version = current_version
 
             for server_provider in available_from_server:
-                if server_provider.get('provider_key') == key or server_provider.get('slug') == slug:
-                    server_version = server_provider.get('current_version') or server_provider.get('version', '0.0.0')
+                if (
+                    server_provider.get("provider_key") == key
+                    or server_provider.get("slug") == slug
+                ):
+                    server_version = server_provider.get("current_version") or server_provider.get(
+                        "version", "0.0.0"
+                    )
                     latest_version = server_version
                     try:
                         from packaging import version as pkg_version
-                        update_available = pkg_version.parse(server_version) > pkg_version.parse(current_version)
+
+                        update_available = pkg_version.parse(server_version) > pkg_version.parse(
+                            current_version
+                        )
                     except Exception:
                         update_available = False
                     break
 
             provider_data = {
-                'key': key,
-                'slug': slug,
-                'name': translated['name'] or provider.get('name', key),
-                'description': translated['description'] or provider.get('description', ''),
-                'version': current_version,
-                'logo_url': logo_url,
-                'thumbnail_url': logo_url,
-                'documentation_url': provider.get('documentation_url', ''),
-                'homepage_url': provider.get('homepage_url', ''),
-                'capabilities': provider.get('capabilities', {}),
-                'setup': provider.get('setup', {}),
-                'is_installed': True,
-                'update_available': update_available,
-                'current_version': current_version,
-                'latest_version': latest_version,
-                'translations': provider.get('translations', {}),
-                'default_language': provider.get('default_language', 'en'),
+                "key": key,
+                "slug": slug,
+                "name": translated["name"] or provider.get("name", key),
+                "description": translated["description"] or provider.get("description", ""),
+                "version": current_version,
+                "logo_url": logo_url,
+                "thumbnail_url": logo_url,
+                "documentation_url": provider.get("documentation_url", ""),
+                "homepage_url": provider.get("homepage_url", ""),
+                "capabilities": provider.get("capabilities", {}),
+                "setup": provider.get("setup", {}),
+                "is_installed": True,
+                "update_available": update_available,
+                "current_version": current_version,
+                "latest_version": latest_version,
+                "translations": provider.get("translations", {}),
+                "default_language": provider.get("default_language", "en"),
             }
             installed_providers.append(provider_data)
 
         # Build available (not installed) provider list from server data
         available_providers = []
-        server_slugs_processed = set()
 
         for server_provider in available_from_server:
-            slug = server_provider.get('slug', '')
-            provider_key = server_provider.get('provider_key', '')
+            slug = server_provider.get("slug", "")
+            provider_key = server_provider.get("provider_key", "")
 
             # Skip if already installed
-            if provider_key in installed_keys or slug in {cls._get_provider_slug(k) for k in installed_keys}:
+            if provider_key in installed_keys or slug in {
+                cls._get_provider_slug(k) for k in installed_keys
+            }:
                 continue
 
-            server_manifest = server_provider.get('manifest', {})
-            capabilities = server_provider.get('capabilities') or server_manifest.get('capabilities', {})
+            server_manifest = server_provider.get("manifest", {})
+            capabilities = server_provider.get("capabilities") or server_manifest.get(
+                "capabilities", {}
+            )
             translated = get_translated_provider_fields(server_manifest, lang)
 
             provider_data = {
-                'slug': slug,
-                'key': provider_key or slug,
-                'name': translated['name'] or server_provider.get('name', slug),
-                'description': translated['description'] or server_provider.get('description', ''),
-                'version': server_provider.get('current_version') or server_provider.get('version', ''),
-                'thumbnail_url': server_provider.get('thumbnail_url', ''),
-                'documentation_url': server_provider.get('documentation_url', '') or server_manifest.get('documentation_url', ''),
-                'homepage_url': server_provider.get('homepage_url', '') or server_manifest.get('homepage_url', ''),
-                'capabilities': capabilities,
-                'setup': server_manifest.get('setup_wizard', server_manifest.get('setup', {})),
-                'is_installed': False,
-                'translations': server_manifest.get('translations', {}),
-                'default_language': server_manifest.get('default_language', 'en'),
+                "slug": slug,
+                "key": provider_key or slug,
+                "name": translated["name"] or server_provider.get("name", slug),
+                "description": translated["description"] or server_provider.get("description", ""),
+                "version": server_provider.get("current_version")
+                or server_provider.get("version", ""),
+                "thumbnail_url": server_provider.get("thumbnail_url", ""),
+                "documentation_url": server_provider.get("documentation_url", "")
+                or server_manifest.get("documentation_url", ""),
+                "homepage_url": server_provider.get("homepage_url", "")
+                or server_manifest.get("homepage_url", ""),
+                "capabilities": capabilities,
+                "setup": server_manifest.get("setup_wizard", server_manifest.get("setup", {})),
+                "is_installed": False,
+                "translations": server_manifest.get("translations", {}),
+                "default_language": server_manifest.get("default_language", "en"),
             }
             available_providers.append(provider_data)
 
         # Add installed providers not returned by update server (offline fallback)
-        server_keys = {p.get('provider_key') for p in available_from_server}
-        server_slugs = {p.get('slug') for p in available_from_server}
+        {p.get("provider_key") for p in available_from_server}
+        server_slugs = {p.get("slug") for p in available_from_server}
         for slug, db_version in installed_db.items():
             if slug in server_slugs:
                 continue
             # Check if this provider is already in installed_providers
-            if any(p.get('slug') == slug for p in installed_providers):
+            if any(p.get("slug") == slug for p in installed_providers):
                 continue
             local_manifest = cls._get_local_manifest(slug)
             if not local_manifest:
                 continue
             translated = get_translated_provider_fields(local_manifest, lang)
             logo_url = None
-            pk = local_manifest.get('provider_key')
+            pk = local_manifest.get("provider_key")
             if pk:
                 logo_url = cls.get_provider_logo_url(pk)
-            installed_providers.append({
-                'key': pk or slug,
-                'slug': slug,
-                'name': translated['name'] or local_manifest.get('name', slug),
-                'description': translated['description'] or local_manifest.get('description', ''),
-                'version': db_version or local_manifest.get('version', ''),
-                'logo_url': logo_url,
-                'thumbnail_url': logo_url,
-                'documentation_url': local_manifest.get('documentation_url', '') or local_manifest.get('api_docs_url', ''),
-                'homepage_url': local_manifest.get('homepage_url', ''),
-                'capabilities': local_manifest.get('capabilities', {}),
-                'setup': local_manifest.get('setup_wizard', local_manifest.get('setup', {})),
-                'is_installed': True,
-                'update_available': False,
-                'current_version': db_version or local_manifest.get('version', ''),
-                'latest_version': db_version or local_manifest.get('version', ''),
-                'translations': local_manifest.get('translations', {}),
-                'default_language': local_manifest.get('default_language', 'en'),
-            })
+            installed_providers.append(
+                {
+                    "key": pk or slug,
+                    "slug": slug,
+                    "name": translated["name"] or local_manifest.get("name", slug),
+                    "description": translated["description"]
+                    or local_manifest.get("description", ""),
+                    "version": db_version or local_manifest.get("version", ""),
+                    "logo_url": logo_url,
+                    "thumbnail_url": logo_url,
+                    "documentation_url": local_manifest.get("documentation_url", "")
+                    or local_manifest.get("api_docs_url", ""),
+                    "homepage_url": local_manifest.get("homepage_url", ""),
+                    "capabilities": local_manifest.get("capabilities", {}),
+                    "setup": local_manifest.get("setup_wizard", local_manifest.get("setup", {})),
+                    "is_installed": True,
+                    "update_available": False,
+                    "current_version": db_version or local_manifest.get("version", ""),
+                    "latest_version": db_version or local_manifest.get("version", ""),
+                    "translations": local_manifest.get("translations", {}),
+                    "default_language": local_manifest.get("default_language", "en"),
+                }
+            )
 
         # Build providers_json for modal
         providers_json = []
         for p in installed_providers + available_providers:
-            providers_json.append({
-                'slug': p.get('slug', p.get('key', '')),
-                'name': p.get('name', ''),
-                'description': p.get('description', ''),
-                'thumbnail_url': p.get('thumbnail_url') or p.get('logo_url', ''),
-                'homepage_url': p.get('homepage_url', ''),
-                'documentation_url': p.get('documentation_url', ''),
-                'capabilities': p.get('capabilities', {}),
-                'translations': dict(p.get('translations', {}), default_language=p.get('default_language', 'en')),
-                'is_installed': p.get('is_installed', False),
-                'current_version': p.get('current_version', p.get('version', '')),
-                'latest_version': p.get('latest_version', p.get('version', '')),
-                'has_update': p.get('update_available', False),
-                'configure_url': '/admin/sms-system/wizard/',
-            })
+            providers_json.append(
+                {
+                    "slug": p.get("slug", p.get("key", "")),
+                    "name": p.get("name", ""),
+                    "description": p.get("description", ""),
+                    "thumbnail_url": p.get("thumbnail_url") or p.get("logo_url", ""),
+                    "homepage_url": p.get("homepage_url", ""),
+                    "documentation_url": p.get("documentation_url", ""),
+                    "capabilities": p.get("capabilities", {}),
+                    "translations": dict(
+                        p.get("translations", {}), default_language=p.get("default_language", "en")
+                    ),
+                    "is_installed": p.get("is_installed", False),
+                    "current_version": p.get("current_version", p.get("version", "")),
+                    "latest_version": p.get("latest_version", p.get("version", "")),
+                    "has_update": p.get("update_available", False),
+                    "configure_url": "/admin/sms-system/wizard/",
+                }
+            )
 
         return {
-            'installed': installed_providers,
-            'available': available_providers,
-            'has_update_server': has_update_server,
-            'providers_json': providers_json,
+            "installed": installed_providers,
+            "available": available_providers,
+            "has_update_server": has_update_server,
+            "providers_json": providers_json,
         }
 
     @classmethod
@@ -428,7 +441,7 @@ class SMSProviderService:
         cls,
         provider_key: str,
         display_name: str,
-        credentials: Dict[str, Any],
+        credentials: dict[str, Any],
         is_default_sms: bool = False,
         is_default_whatsapp: bool = False,
     ):
@@ -475,7 +488,7 @@ class SMSProviderService:
         return account
 
     @classmethod
-    def build_credential_form_fields(cls, provider_key: str) -> Dict[str, Any]:
+    def build_credential_form_fields(cls, provider_key: str) -> dict[str, Any]:
         """
         Build form field definitions from credential schema.
 
@@ -491,48 +504,45 @@ class SMSProviderService:
         if not schema:
             return {}
 
-        properties = schema.get('properties', {})
-        required_fields = schema.get('required', [])
+        properties = schema.get("properties", {})
+        required_fields = schema.get("required", [])
 
         fields = {}
         for field_name, field_schema in properties.items():
-            field_type = field_schema.get('type', 'string')
+            field_type = field_schema.get("type", "string")
             is_required = field_name in required_fields
-            is_secret = field_schema.get('secret', False)
+            is_secret = field_schema.get("secret", False)
 
-            if field_type == 'string':
+            if field_type == "string":
                 if is_secret:
                     field_class = forms.CharField
-                    widget = forms.PasswordInput(attrs={
-                        'class': 'vTextField',
-                        'autocomplete': 'new-password'
-                    })
+                    widget = forms.PasswordInput(
+                        attrs={"class": "vTextField", "autocomplete": "new-password"}
+                    )
                 else:
                     field_class = forms.CharField
-                    widget = forms.TextInput(attrs={'class': 'vTextField'})
-            elif field_type == 'integer':
+                    widget = forms.TextInput(attrs={"class": "vTextField"})
+            elif field_type == "integer":
                 field_class = forms.IntegerField
-                widget = forms.NumberInput(attrs={'class': 'vTextField'})
-            elif field_type == 'boolean':
+                widget = forms.NumberInput(attrs={"class": "vTextField"})
+            elif field_type == "boolean":
                 field_class = forms.BooleanField
                 widget = forms.CheckboxInput()
             else:
                 field_class = forms.CharField
-                widget = forms.TextInput(attrs={'class': 'vTextField'})
+                widget = forms.TextInput(attrs={"class": "vTextField"})
 
             fields[field_name] = {
-                'field_class': field_class,
-                'widget': widget,
-                'required': is_required and not is_secret,  # Secrets not required on edit
-                'label': field_schema.get('title', field_name.replace('_', ' ').title()),
-                'help_text': field_schema.get('description', ''),
-                'initial': field_schema.get('default'),
-                'order': field_schema.get('order', 999),
+                "field_class": field_class,
+                "widget": widget,
+                "required": is_required and not is_secret,  # Secrets not required on edit
+                "label": field_schema.get("title", field_name.replace("_", " ").title()),
+                "help_text": field_schema.get("description", ""),
+                "initial": field_schema.get("default"),
+                "order": field_schema.get("order", 999),
             }
 
         # Sort by order
-        sorted_fields = dict(
-            sorted(fields.items(), key=lambda x: x[1]['order'])
-        )
+        sorted_fields = dict(sorted(fields.items(), key=lambda x: x[1]["order"]))
 
         return sorted_fields

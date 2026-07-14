@@ -3,9 +3,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 class TranslationsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'translations'
-    verbose_name = _('Translations')
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "translations"
+    verbose_name = _("Translations")
 
     def ready(self):
         # Import signal handlers when app is ready
@@ -22,6 +22,7 @@ class TranslationsConfig(AppConfig):
         """Add active SiteLanguage codes to settings.LANGUAGES at startup."""
         try:
             from django.conf import settings
+
             from .models import SiteLanguage
 
             builtin_codes = {code for code, _ in settings.LANGUAGES}

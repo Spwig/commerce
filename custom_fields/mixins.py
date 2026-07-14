@@ -4,11 +4,11 @@ Mixins for models and admin classes to support custom fields.
 CustomFieldsMixin - add to models that should have custom fields
 CustomFieldsAdminMixin - add to ModelAdmin classes to render custom fields in forms
 """
+
 import json
 import logging
 
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -30,11 +30,12 @@ class CustomFieldsMixin(models.Model):
 
     The JSONField stores values as {field_slug: value}.
     """
+
     custom_fields = models.JSONField(
-        _('custom fields'),
+        _("custom fields"),
         default=dict,
         blank=True,
-        help_text=_('Custom field values defined by the merchant')
+        help_text=_("Custom field values defined by the merchant"),
     )
 
     class Meta:
@@ -90,32 +91,36 @@ class CustomFieldsMixin(models.Model):
                     continue
 
                 value = self.get_custom_field_value(field_def.slug)
-                if value is not None and value != '' and value != []:
+                if value is not None and value != "" and value != []:
                     # Format display value for select/multiselect
                     display_value = value
-                    if field_def.field_type == 'select':
+                    if field_def.field_type == "select":
                         choices = field_def.get_choices()
                         for c in choices:
-                            if c.get('value') == value:
-                                display_value = c.get('label', value)
+                            if c.get("value") == value:
+                                display_value = c.get("label", value)
                                 break
-                    elif field_def.field_type == 'multiselect' and isinstance(value, list):
-                        choices = {c['value']: c['label'] for c in field_def.get_choices()}
+                    elif field_def.field_type == "multiselect" and isinstance(value, list):
+                        choices = {c["value"]: c["label"] for c in field_def.get_choices()}
                         display_value = [choices.get(v, v) for v in value]
-                    elif field_def.field_type == 'boolean':
-                        display_value = _('Yes') if value else _('No')
+                    elif field_def.field_type == "boolean":
+                        display_value = _("Yes") if value else _("No")
 
-                    group_fields.append({
-                        'definition': field_def,
-                        'value': value,
-                        'display_value': display_value,
-                    })
+                    group_fields.append(
+                        {
+                            "definition": field_def,
+                            "value": value,
+                            "display_value": display_value,
+                        }
+                    )
 
             if group_fields:
-                result.append({
-                    'group': group,
-                    'fields': group_fields,
-                })
+                result.append(
+                    {
+                        "group": group,
+                        "fields": group_fields,
+                    }
+                )
 
         return result
 
@@ -149,14 +154,8 @@ class CustomFieldsAdminMixin:
     """
 
     class CustomFieldsMedia:
-        js = (
-            'custom_fields/js/custom_fields_admin.js',
-        )
-        css = {
-            'all': (
-                'custom_fields/css/custom_fields_admin.css',
-            )
-        }
+        js = ("custom_fields/js/custom_fields_admin.js",)
+        css = {"all": ("custom_fields/css/custom_fields_admin.css",)}
 
     def _get_custom_fields_context(self, obj=None):
         """Build template context for custom fields."""
@@ -174,46 +173,52 @@ class CustomFieldsAdminMixin:
             fields_with_values = []
             for field_def in group_defs:
                 value = None
-                if obj and obj.pk and hasattr(obj, 'custom_fields'):
+                if obj and obj.pk and hasattr(obj, "custom_fields"):
                     value = obj.custom_fields.get(field_def.slug)
                 if value is None and field_def.default_value is not None:
                     value = field_def.default_value
 
-                fields_with_values.append({
-                    'definition': field_def,
-                    'value': value,
-                    'choices': field_def.get_choices(),
-                })
+                fields_with_values.append(
+                    {
+                        "definition": field_def,
+                        "value": value,
+                        "choices": field_def.get_choices(),
+                    }
+                )
 
-            grouped_fields.append({
-                'group': group,
-                'fields': fields_with_values,
-            })
+            grouped_fields.append(
+                {
+                    "group": group,
+                    "fields": fields_with_values,
+                }
+            )
 
         return {
-            'custom_field_groups': grouped_fields,
-            'has_custom_fields': bool(definitions),
-            'custom_field_definitions_json': json.dumps([
-                {
-                    'slug': d.slug,
-                    'name': d.name,
-                    'field_type': d.field_type,
-                    'is_required': d.is_required,
-                    'help_text': d.help_text_value,
-                    'validation_config': d.validation_config,
-                    'choices': d.get_choices(),
-                }
-                for d in definitions
-            ]),
+            "custom_field_groups": grouped_fields,
+            "has_custom_fields": bool(definitions),
+            "custom_field_definitions_json": json.dumps(
+                [
+                    {
+                        "slug": d.slug,
+                        "name": d.name,
+                        "field_type": d.field_type,
+                        "is_required": d.is_required,
+                        "help_text": d.help_text_value,
+                        "validation_config": d.validation_config,
+                        "choices": d.get_choices(),
+                    }
+                    for d in definitions
+                ]
+            ),
         }
 
-    def change_view(self, request, object_id, form_url='', extra_context=None):
+    def change_view(self, request, object_id, form_url="", extra_context=None):
         extra_context = extra_context or {}
         obj = self.get_object(request, object_id)
         extra_context.update(self._get_custom_fields_context(obj))
         return super().change_view(request, object_id, form_url, extra_context)
 
-    def add_view(self, request, form_url='', extra_context=None):
+    def add_view(self, request, form_url="", extra_context=None):
         extra_context = extra_context or {}
         extra_context.update(self._get_custom_fields_context(None))
         return super().add_view(request, form_url, extra_context)
@@ -226,25 +231,23 @@ class CustomFieldsAdminMixin:
         custom_data = obj.custom_fields.copy() if obj.custom_fields else {}
 
         for field_def in definitions:
-            post_key = f'cf_{field_def.slug}'
+            post_key = f"cf_{field_def.slug}"
 
-            if field_def.field_type == 'boolean':
+            if field_def.field_type == "boolean":
                 # Checkbox: present in POST = True, absent = False
                 custom_data[field_def.slug] = post_key in request.POST
-            elif field_def.field_type == 'multiselect':
+            elif field_def.field_type == "multiselect":
                 values = request.POST.getlist(post_key)
                 custom_data[field_def.slug] = values if values else []
             else:
-                value = request.POST.get(post_key, '').strip()
-                if value == '':
+                value = request.POST.get(post_key, "").strip()
+                if value == "":
                     # Don't store empty strings, use None
                     custom_data[field_def.slug] = None
                 else:
                     # Validate and coerce
                     try:
-                        custom_data[field_def.slug] = validate_custom_field_value(
-                            field_def, value
-                        )
+                        custom_data[field_def.slug] = validate_custom_field_value(field_def, value)
                     except ValidationError:
                         # Store raw value, validation errors shown via form
                         custom_data[field_def.slug] = value

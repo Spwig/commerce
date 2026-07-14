@@ -10,74 +10,80 @@
  */
 
 .spwig-usage-tile {
-    background: var(--card-bg, #fff);
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin: 1rem 0;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1rem 0;
 }
 
 .spwig-usage-tile h3 {
-    margin: 0 0 0.75rem 0;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .spwig-usage-tile .row {
-    display: grid;
-    grid-template-columns: 90px 1fr auto;
-    gap: 0.75rem;
-    align-items: center;
-    margin: 0.5rem 0;
-    font-size: 0.875rem;
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
 }
 
 .spwig-usage-tile .bar {
-    background: var(--border-color, #e5e7eb);
-    height: 6px;
-    border-radius: 3px;
-    overflow: hidden;
+  background: var(--border-color, #e5e7eb);
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 .spwig-usage-tile .bar > span {
-    display: block;
-    height: 100%;
-    background: #10b981;
-    transition: width 0.3s ease, background 0.3s ease;
+  display: block;
+  height: 100%;
+  background: #10b981;
+  transition:
+    width 0.3s ease,
+    background 0.3s ease;
 }
 
-.spwig-usage-tile .bar.warn > span { background: #f59e0b; }
-.spwig-usage-tile .bar.over > span { background: #ef4444; }
+.spwig-usage-tile .bar.warn > span {
+  background: #f59e0b;
+}
+.spwig-usage-tile .bar.over > span {
+  background: #ef4444;
+}
 
 .spwig-usage-tile .counts {
-    color: var(--body-quiet-color, #6b7280);
-    font-variant-numeric: tabular-nums;
-    font-size: 0.8125rem;
+  color: var(--body-quiet-color, #6b7280);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
 }
 
 .spwig-usage-tile .counts .window-label {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
 .spwig-usage-tile .upgrade-btn {
-    display: inline-block;
-    padding: 6px 14px;
-    background: #4338ca;
-    color: #fff;
-    border-radius: 6px;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    text-decoration: none;
+  display: inline-block;
+  padding: 6px 14px;
+  background: #4338ca;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .spwig-usage-tile .upgrade-btn:hover {
-    background: #3730a3;
-    color: #fff;
+  background: #3730a3;
+  color: #fff;
 }
 
 .spwig-usage-tile .no-data {
-    color: var(--body-quiet-color, #6b7280);
-    font-style: italic;
+  color: var(--body-quiet-color, #6b7280);
+  font-style: italic;
 }

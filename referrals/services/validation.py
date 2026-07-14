@@ -3,19 +3,35 @@ Referral validation service.
 
 Validates referral eligibility, checks caps, and prevents abuse.
 """
-from django.db.models import Count, Q
-from django.utils import timezone
-from datetime import timedelta
-from .fraud import calculate_risk_score
 
+from datetime import timedelta
+
+from django.utils import timezone
+
+from .fraud import calculate_risk_score
 
 # List of known disposable email domains
 DISPOSABLE_EMAIL_DOMAINS = [
-    'tempmail.com', 'guerrillamail.com', '10minutemail.com', 'mailinator.com',
-    'throwaway.email', 'temp-mail.org', 'getnada.com', 'fakeinbox.com',
-    'trashmail.com', 'maildrop.cc', 'sharklasers.com', 'guerrillamail.info',
-    'grr.la', 'guerrillamail.biz', 'guerrillamail.de', 'spam4.me',
-    'yopmail.com', 'mytemp.email', 'mohmal.com', 'emailondeck.com',
+    "tempmail.com",
+    "guerrillamail.com",
+    "10minutemail.com",
+    "mailinator.com",
+    "throwaway.email",
+    "temp-mail.org",
+    "getnada.com",
+    "fakeinbox.com",
+    "trashmail.com",
+    "maildrop.cc",
+    "sharklasers.com",
+    "guerrillamail.info",
+    "grr.la",
+    "guerrillamail.biz",
+    "guerrillamail.de",
+    "spam4.me",
+    "yopmail.com",
+    "mytemp.email",
+    "mohmal.com",
+    "emailondeck.com",
 ]
 
 
@@ -37,36 +53,36 @@ def validate_referral(order, identity, program):
 
     # Check self-referral
     is_valid, reason = check_self_referral(order, identity)
-    validation_data['self_referral_check'] = {'passed': is_valid, 'reason': reason}
+    validation_data["self_referral_check"] = {"passed": is_valid, "reason": reason}
     if not is_valid:
         return False, reason, validation_data
 
     # Check new customer
     is_valid, reason = check_new_customer(order.user, program)
-    validation_data['new_customer_check'] = {'passed': is_valid, 'reason': reason}
+    validation_data["new_customer_check"] = {"passed": is_valid, "reason": reason}
     if not is_valid:
         return False, reason, validation_data
 
     # Check minimum order value
     is_valid, reason = check_min_order_value(order, program)
-    validation_data['min_order_value_check'] = {'passed': is_valid, 'reason': reason}
+    validation_data["min_order_value_check"] = {"passed": is_valid, "reason": reason}
     if not is_valid:
         return False, reason, validation_data
 
     # Check monthly cap
     is_valid, reason = check_monthly_cap(identity, program)
-    validation_data['monthly_cap_check'] = {'passed': is_valid, 'reason': reason}
+    validation_data["monthly_cap_check"] = {"passed": is_valid, "reason": reason}
     if not is_valid:
         return False, reason, validation_data
 
     # Check disposable email
     is_valid, reason = check_disposable_email(order.user.email)
-    validation_data['disposable_email_check'] = {'passed': is_valid, 'reason': reason}
+    validation_data["disposable_email_check"] = {"passed": is_valid, "reason": reason}
     if not is_valid:
         return False, reason, validation_data
 
     # All checks passed
-    return True, 'ok', validation_data
+    return True, "ok", validation_data
 
 
 def validate_attribution(attribution):
@@ -90,13 +106,11 @@ def validate_attribution(attribution):
     # Get program
     program = ReferralProgram.get_program()
     if not program:
-        return False, {'error': 'No active referral program'}, 100
+        return False, {"error": "No active referral program"}, 100
 
     # Validate using existing function
     is_valid, reason, validation_data = validate_referral(
-        attribution.first_order,
-        attribution.referrer_identity,
-        program
+        attribution.first_order, attribution.referrer_identity, program
     )
 
     # Calculate risk score
@@ -117,9 +131,9 @@ def check_self_referral(order, identity):
         tuple: (is_valid: bool, reason: str)
     """
     if order.user == identity.customer:
-        return False, 'self_referral'
+        return False, "self_referral"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def check_new_customer(customer, program):
@@ -134,21 +148,20 @@ def check_new_customer(customer, program):
         tuple: (is_valid: bool, reason: str)
     """
     # Check if program requires new customers only
-    if not program.eligibility_rules.get('new_customer_only', True):
-        return True, 'ok'
+    if not program.eligibility_rules.get("new_customer_only", True):
+        return True, "ok"
 
     # Check if customer has previous orders
     from orders.models import Order
 
     previous_orders = Order.objects.filter(
-        user=customer,
-        status__in=['completed', 'delivered', 'shipped']
+        user=customer, status__in=["completed", "delivered", "shipped"]
     ).count()
 
     if previous_orders > 1:  # > 1 because current order is already counted
-        return False, 'not_new_customer'
+        return False, "not_new_customer"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def check_min_order_value(order, program):
@@ -165,12 +178,14 @@ def check_min_order_value(order, program):
     min_order_value = program.get_min_order_value()
 
     # order.total_amount is a Money object, get the numeric amount
-    order_value = order.total_amount.amount if hasattr(order.total_amount, 'amount') else order.total_amount
+    order_value = (
+        order.total_amount.amount if hasattr(order.total_amount, "amount") else order.total_amount
+    )
 
     if min_order_value and order_value < min_order_value:
-        return False, 'below_minimum'
+        return False, "below_minimum"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def check_monthly_cap(identity, program):
@@ -187,7 +202,7 @@ def check_monthly_cap(identity, program):
     monthly_cap = program.get_monthly_cap()
 
     if not monthly_cap:
-        return True, 'ok'
+        return True, "ok"
 
     # Count successful referrals in current month
     from ..models import ReferralAttribution
@@ -195,15 +210,13 @@ def check_monthly_cap(identity, program):
     start_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     monthly_count = ReferralAttribution.objects.filter(
-        referrer_identity=identity,
-        status='approved',
-        created_at__gte=start_of_month
+        referrer_identity=identity, status="approved", created_at__gte=start_of_month
     ).count()
 
     if monthly_count >= monthly_cap:
-        return False, 'cap_exceeded'
+        return False, "cap_exceeded"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def check_lifetime_cap(identity, program):
@@ -220,20 +233,19 @@ def check_lifetime_cap(identity, program):
     lifetime_cap = program.get_lifetime_cap()
 
     if not lifetime_cap:
-        return True, 'ok'
+        return True, "ok"
 
     # Count all successful referrals
     from ..models import ReferralAttribution
 
     lifetime_count = ReferralAttribution.objects.filter(
-        referrer_identity=identity,
-        status='approved'
+        referrer_identity=identity, status="approved"
     ).count()
 
     if lifetime_count >= lifetime_cap:
-        return False, 'cap_exceeded'
+        return False, "cap_exceeded"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def check_disposable_email(email):
@@ -247,14 +259,14 @@ def check_disposable_email(email):
         tuple: (is_valid: bool, reason: str)
     """
     if not email:
-        return False, 'disposable_email'
+        return False, "disposable_email"
 
-    domain = email.split('@')[-1].lower()
+    domain = email.split("@")[-1].lower()
 
     if is_disposable_email(domain):
-        return False, 'disposable_email'
+        return False, "disposable_email"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def is_disposable_email(domain):
@@ -294,9 +306,7 @@ def exceeds_monthly_cap(referrer_customer_id, monthly_cap):
     start_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     monthly_count = ReferralAttribution.objects.filter(
-        referrer_identity=identity,
-        status='approved',
-        created_at__gte=start_of_month
+        referrer_identity=identity, status="approved", created_at__gte=start_of_month
     ).count()
 
     return monthly_count >= monthly_cap
@@ -319,14 +329,13 @@ def check_velocity(identity, window_hours=24, max_referrals=5):
     window_start = timezone.now() - timedelta(hours=window_hours)
 
     recent_count = ReferralAttribution.objects.filter(
-        referrer_identity=identity,
-        created_at__gte=window_start
+        referrer_identity=identity, created_at__gte=window_start
     ).count()
 
     if recent_count >= max_referrals:
-        return False, 'velocity_exceeded'
+        return False, "velocity_exceeded"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def check_order_excludes(order, program):
@@ -343,19 +352,17 @@ def check_order_excludes(order, program):
     eligibility_rules = program.eligibility_rules
 
     # Check if discounted orders are excluded
-    if eligibility_rules.get('exclude_discounts', False):
-        if hasattr(order, 'discount_amount') and order.discount_amount > 0:
-            return False, 'discounted_order'
+    if eligibility_rules.get("exclude_discounts", False):
+        if hasattr(order, "discount_amount") and order.discount_amount > 0:
+            return False, "discounted_order"
 
     # Check if gift card orders are excluded
-    if eligibility_rules.get('exclude_gift_cards', False):
-        has_gift_cards = order.items.filter(
-            product__product_type='gift_card'
-        ).exists()
+    if eligibility_rules.get("exclude_gift_cards", False):
+        has_gift_cards = order.items.filter(product__product_type="gift_card").exists()
         if has_gift_cards:
-            return False, 'gift_card_order'
+            return False, "gift_card_order"
 
-    return True, 'ok'
+    return True, "ok"
 
 
 def check_staff_account(customer, program):
@@ -371,8 +378,8 @@ def check_staff_account(customer, program):
     """
     eligibility_rules = program.eligibility_rules
 
-    if eligibility_rules.get('exclude_staff', True):
+    if eligibility_rules.get("exclude_staff", True):
         if customer.is_staff or customer.is_superuser:
-            return False, 'staff_account'
+            return False, "staff_account"
 
-    return True, 'ok'
+    return True, "ok"

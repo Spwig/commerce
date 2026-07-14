@@ -3,7 +3,7 @@ Fuzzy matching service for typo tolerance.
 
 Provides spelling correction suggestions and fuzzy term matching.
 """
-from typing import List, Optional, Tuple
+
 from functools import lru_cache
 
 from django.db.models import Count
@@ -25,7 +25,8 @@ class FuzzyService:
         """Check if rapidfuzz is available."""
         if self._rapidfuzz_available is None:
             try:
-                import rapidfuzz
+                import rapidfuzz  # noqa: F401
+
                 self._rapidfuzz_available = True
             except ImportError:
                 self._rapidfuzz_available = False
@@ -65,6 +66,7 @@ class FuzzyService:
         """
         if self.rapidfuzz_available:
             from rapidfuzz import fuzz
+
             return fuzz.ratio(s1, s2) / 100.0
 
         # Fallback to Levenshtein-based similarity
@@ -77,8 +79,9 @@ class FuzzyService:
         max_len = max(len(s1), len(s2))
         return 1.0 - (distance / max_len)
 
-    def is_fuzzy_match(self, query: str, target: str, threshold: float = 0.8,
-                       max_edits: int = 2) -> bool:
+    def is_fuzzy_match(
+        self, query: str, target: str, threshold: float = 0.8, max_edits: int = 2
+    ) -> bool:
         """
         Check if query fuzzy-matches target.
 
@@ -100,27 +103,27 @@ class FuzzyService:
         similarity = self.similarity_ratio(query_lower, target_lower)
         return similarity >= threshold
 
-    def find_similar(self, query: str, candidates: List[str],
-                     threshold: float = 0.8, max_results: int = 5) -> List[Tuple[str, float]]:
+    def find_similar(
+        self, query: str, candidates: list[str], threshold: float = 0.8, max_results: int = 5
+    ) -> list[tuple[str, float]]:
         """
         Find similar terms from a list of candidates.
 
         Returns list of (term, similarity_score) tuples, sorted by score descending.
         """
         if self.rapidfuzz_available:
-            from rapidfuzz import process, fuzz
+            from rapidfuzz import fuzz, process
+
             # Use rapidfuzz for efficient matching
             results = process.extract(
                 query,
                 candidates,
                 scorer=fuzz.ratio,
-                limit=max_results * 2  # Get more to filter by threshold
+                limit=max_results * 2,  # Get more to filter by threshold
             )
             # Filter by threshold and convert score to 0-1
             return [
-                (term, score / 100.0)
-                for term, score, _ in results
-                if score / 100.0 >= threshold
+                (term, score / 100.0) for term, score, _ in results if score / 100.0 >= threshold
             ][:max_results]
 
         # Fallback to manual comparison
@@ -136,7 +139,7 @@ class FuzzyService:
         similarities.sort(key=lambda x: x[1], reverse=True)
         return similarities[:max_results]
 
-    def suggest_correction(self, query: str, language: str = 'en') -> Optional[str]:
+    def suggest_correction(self, query: str, language: str = "en") -> str | None:
         """
         Suggest a spelling correction based on known terms.
 
@@ -149,26 +152,27 @@ class FuzzyService:
             return None
 
         # Get popular queries that returned results
-        popular_queries = SearchQuery.objects.filter(
-            result_count__gt=0,
-            language=language,
-        ).values('query_normalized').annotate(
-            count=Count('id')
-        ).filter(
-            count__gte=2  # At least 2 occurrences
-        ).order_by('-count')[:500]
+        popular_queries = (
+            SearchQuery.objects.filter(
+                result_count__gt=0,
+                language=language,
+            )
+            .values("query_normalized")
+            .annotate(count=Count("id"))
+            .filter(
+                count__gte=2  # At least 2 occurrences
+            )
+            .order_by("-count")[:500]
+        )
 
-        candidates = [q['query_normalized'] for q in popular_queries]
+        candidates = [q["query_normalized"] for q in popular_queries]
 
         if not candidates:
             return None
 
         # Find similar terms
         similar = self.find_similar(
-            query,
-            candidates,
-            threshold=float(settings.fuzzy_threshold),
-            max_results=1
+            query, candidates, threshold=float(settings.fuzzy_threshold), max_results=1
         )
 
         if similar:
@@ -179,31 +183,33 @@ class FuzzyService:
 
         return None
 
-    def get_phonetic_matches(self, query: str, candidates: List[str],
-                             max_results: int = 5) -> List[str]:
+    def get_phonetic_matches(
+        self, query: str, candidates: list[str], max_results: int = 5
+    ) -> list[str]:
         """
         Find phonetically similar matches using Soundex or Metaphone.
 
         This is a simplified implementation - for production use,
         consider using jellyfish or phonetics libraries.
         """
+
         # Simple Soundex implementation
         def soundex(name: str) -> str:
             name = name.upper()
             if not name:
-                return ''
+                return ""
 
             # Keep first letter
             soundex_code = name[0]
 
             # Mapping for Soundex
             mapping = {
-                'BFPV': '1',
-                'CGJKQSXZ': '2',
-                'DT': '3',
-                'L': '4',
-                'MN': '5',
-                'R': '6',
+                "BFPV": "1",
+                "CGJKQSXZ": "2",
+                "DT": "3",
+                "L": "4",
+                "MN": "5",
+                "R": "6",
             }
 
             # Convert remaining letters
@@ -215,7 +221,7 @@ class FuzzyService:
                         break
 
             # Pad with zeros or truncate
-            soundex_code = soundex_code[:4].ljust(4, '0')
+            soundex_code = soundex_code[:4].ljust(4, "0")
             return soundex_code
 
         query_soundex = soundex(query)
@@ -229,13 +235,14 @@ class FuzzyService:
 
         return matches
 
-    @lru_cache(maxsize=1000)
+    @lru_cache(maxsize=1000)  # noqa: B019  # service is per-request; cache freed with instance
     def cached_similarity(self, s1: str, s2: str) -> float:
         """Cached version of similarity_ratio for repeated comparisons."""
         return self.similarity_ratio(s1, s2)
 
-    def batch_find_similar(self, queries: List[str], candidates: List[str],
-                           threshold: float = 0.8) -> dict:
+    def batch_find_similar(
+        self, queries: list[str], candidates: list[str], threshold: float = 0.8
+    ) -> dict:
         """
         Find similar terms for multiple queries efficiently.
 
@@ -244,15 +251,10 @@ class FuzzyService:
         results = {}
 
         if self.rapidfuzz_available:
-            from rapidfuzz import process, fuzz
+            from rapidfuzz import fuzz, process
 
             for query in queries:
-                matches = process.extract(
-                    query,
-                    candidates,
-                    scorer=fuzz.ratio,
-                    limit=5
-                )
+                matches = process.extract(query, candidates, scorer=fuzz.ratio, limit=5)
                 results[query] = [
                     (term, score / 100.0)
                     for term, score, _ in matches

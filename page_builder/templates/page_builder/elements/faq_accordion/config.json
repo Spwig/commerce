@@ -12,9 +12,7 @@
   "template_file": "template.html",
   "inherit_base": true,
   "css_files": ["page_builder/css/elements/faq-accordion.css"],
-  "scripts": [
-    "/static/page_builder/js/elements/faq-accordion.js"
-  ],
+  "scripts": ["/static/page_builder/js/elements/faq-accordion.js"],
   "disable_base_properties": ["text_color"],
   "tabs": {
     "basic": {
@@ -111,8 +109,8 @@
               "type": "select",
               "label": "Accordion Behavior",
               "options": [
-                {"value": "single", "label": "One open at a time"},
-                {"value": "multiple", "label": "Multiple can be open"}
+                { "value": "single", "label": "One open at a time" },
+                { "value": "multiple", "label": "Multiple can be open" }
               ],
               "default": "single",
               "help_text": "Whether multiple items can be expanded simultaneously"
@@ -132,10 +130,10 @@
               "type": "select",
               "label": "Style",
               "options": [
-                {"value": "default", "label": "Default"},
-                {"value": "bordered", "label": "Bordered"},
-                {"value": "minimal", "label": "Minimal"},
-                {"value": "cards", "label": "Card Style"}
+                { "value": "default", "label": "Default" },
+                { "value": "bordered", "label": "Bordered" },
+                { "value": "minimal", "label": "Minimal" },
+                { "value": "cards", "label": "Card Style" }
               ],
               "default": "default"
             },
@@ -143,10 +141,10 @@
               "type": "select",
               "label": "Item Spacing",
               "options": [
-                {"value": "none", "label": "None"},
-                {"value": "sm", "label": "Small"},
-                {"value": "md", "label": "Medium"},
-                {"value": "lg", "label": "Large"}
+                { "value": "none", "label": "None" },
+                { "value": "sm", "label": "Small" },
+                { "value": "md", "label": "Medium" },
+                { "value": "lg", "label": "Large" }
               ],
               "default": "sm"
             }
@@ -160,10 +158,10 @@
               "type": "select",
               "label": "Toggle Icon",
               "options": [
-                {"value": "chevron", "label": "Chevron"},
-                {"value": "plus", "label": "Plus/Minus"},
-                {"value": "arrow", "label": "Arrow"},
-                {"value": "none", "label": "No Icon"}
+                { "value": "chevron", "label": "Chevron" },
+                { "value": "plus", "label": "Plus/Minus" },
+                { "value": "arrow", "label": "Arrow" },
+                { "value": "none", "label": "No Icon" }
               ],
               "default": "chevron"
             },
@@ -171,8 +169,8 @@
               "type": "select",
               "label": "Icon Position",
               "options": [
-                {"value": "right", "label": "Right"},
-                {"value": "left", "label": "Left"}
+                { "value": "right", "label": "Right" },
+                { "value": "left", "label": "Left" }
               ],
               "default": "right"
             }
@@ -251,29 +249,106 @@
     }
   },
   "properties": {
-    "title": {"type": "string", "label": "Section Title", "default": "Frequently Asked Questions", "translatable": true},
-    "subtitle": {"type": "string", "label": "Subtitle", "default": "", "translatable": true},
-    "items": {"type": "array", "label": "FAQ Items", "item_schema": {"type": "object", "properties": {"question": {"type": "string", "label": "Question", "translatable": true}, "answer": {"type": "textarea", "label": "Answer", "translatable": true, "rows": 4}, "is_open": {"type": "boolean", "label": "Open by default", "default": false}}}},
-    "behavior": {"type": "select", "label": "Accordion Behavior", "options": [{"value": "single", "label": "One open at a time"}, {"value": "multiple", "label": "Multiple can be open"}], "default": "single"},
-    "style": {"type": "select", "label": "Style", "options": [{"value": "default", "label": "Default"}, {"value": "bordered", "label": "Bordered"}, {"value": "minimal", "label": "Minimal"}, {"value": "cards", "label": "Card Style"}], "default": "default"},
-    "icon_style": {"type": "select", "label": "Toggle Icon", "options": [{"value": "chevron", "label": "Chevron"}, {"value": "plus", "label": "Plus/Minus"}, {"value": "arrow", "label": "Arrow"}, {"value": "none", "label": "No Icon"}], "default": "chevron"},
-    "icon_position": {"type": "select", "label": "Icon Position", "options": [{"value": "right", "label": "Right"}, {"value": "left", "label": "Left"}], "default": "right"},
-    "gap": {"type": "select", "label": "Item Spacing", "options": [{"value": "none", "label": "None"}, {"value": "sm", "label": "Small"}, {"value": "md", "label": "Medium"}, {"value": "lg", "label": "Large"}], "default": "sm"},
-    "animate": {"type": "boolean", "default": true},
-    "question_color": {"type": "color_advanced", "default": ""},
-    "answer_color": {"type": "color_advanced", "default": ""},
-    "icon_color": {"type": "color_advanced", "default": ""},
-    "border_color": {"type": "color_advanced", "default": ""},
-    "active_background": {"type": "color_advanced", "default": ""},
-    "enable_schema": {"type": "boolean", "default": true}
+    "title": {
+      "type": "string",
+      "label": "Section Title",
+      "default": "Frequently Asked Questions",
+      "translatable": true
+    },
+    "subtitle": { "type": "string", "label": "Subtitle", "default": "", "translatable": true },
+    "items": {
+      "type": "array",
+      "label": "FAQ Items",
+      "item_schema": {
+        "type": "object",
+        "properties": {
+          "question": { "type": "string", "label": "Question", "translatable": true },
+          "answer": { "type": "textarea", "label": "Answer", "translatable": true, "rows": 4 },
+          "is_open": { "type": "boolean", "label": "Open by default", "default": false }
+        }
+      }
+    },
+    "behavior": {
+      "type": "select",
+      "label": "Accordion Behavior",
+      "options": [
+        { "value": "single", "label": "One open at a time" },
+        { "value": "multiple", "label": "Multiple can be open" }
+      ],
+      "default": "single"
+    },
+    "style": {
+      "type": "select",
+      "label": "Style",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "bordered", "label": "Bordered" },
+        { "value": "minimal", "label": "Minimal" },
+        { "value": "cards", "label": "Card Style" }
+      ],
+      "default": "default"
+    },
+    "icon_style": {
+      "type": "select",
+      "label": "Toggle Icon",
+      "options": [
+        { "value": "chevron", "label": "Chevron" },
+        { "value": "plus", "label": "Plus/Minus" },
+        { "value": "arrow", "label": "Arrow" },
+        { "value": "none", "label": "No Icon" }
+      ],
+      "default": "chevron"
+    },
+    "icon_position": {
+      "type": "select",
+      "label": "Icon Position",
+      "options": [
+        { "value": "right", "label": "Right" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "right"
+    },
+    "gap": {
+      "type": "select",
+      "label": "Item Spacing",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "sm"
+    },
+    "animate": { "type": "boolean", "default": true },
+    "question_color": { "type": "color_advanced", "default": "" },
+    "answer_color": { "type": "color_advanced", "default": "" },
+    "icon_color": { "type": "color_advanced", "default": "" },
+    "border_color": { "type": "color_advanced", "default": "" },
+    "active_background": { "type": "color_advanced", "default": "" },
+    "enable_schema": { "type": "boolean", "default": true }
   },
   "translations": {
-    "en": {"name": "FAQ Accordion", "description": "Collapsible FAQ section with SEO-friendly schema markup"},
-    "es": {"name": "Preguntas Frecuentes", "description": "Sección de preguntas frecuentes con marcado de esquema SEO"},
-    "fr": {"name": "FAQ Accordéon", "description": "Section FAQ repliable avec balisage de schéma SEO"},
-    "de": {"name": "FAQ Akkordeon", "description": "Zusammenklappbarer FAQ-Bereich mit SEO-freundlichem Schema-Markup"},
-    "pt": {"name": "FAQ Acordeão", "description": "Seção de perguntas frequentes com marcação de esquema SEO"},
-    "zh-hans": {"name": "常见问题", "description": "带有SEO友好架构标记的可折叠常见问题部分"},
-    "ja": {"name": "よくある質問", "description": "SEO対応スキーマ付き折りたたみFAQセクション"}
+    "en": {
+      "name": "FAQ Accordion",
+      "description": "Collapsible FAQ section with SEO-friendly schema markup"
+    },
+    "es": {
+      "name": "Preguntas Frecuentes",
+      "description": "Sección de preguntas frecuentes con marcado de esquema SEO"
+    },
+    "fr": {
+      "name": "FAQ Accordéon",
+      "description": "Section FAQ repliable avec balisage de schéma SEO"
+    },
+    "de": {
+      "name": "FAQ Akkordeon",
+      "description": "Zusammenklappbarer FAQ-Bereich mit SEO-freundlichem Schema-Markup"
+    },
+    "pt": {
+      "name": "FAQ Acordeão",
+      "description": "Seção de perguntas frequentes com marcação de esquema SEO"
+    },
+    "zh-hans": { "name": "常见问题", "description": "带有SEO友好架构标记的可折叠常见问题部分" },
+    "ja": { "name": "よくある質問", "description": "SEO対応スキーマ付き折りたたみFAQセクション" }
   }
 }

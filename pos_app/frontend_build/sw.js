@@ -1,1 +1,88 @@
-if(!self.define){let e,i={};const n=(n,s)=>(n=new URL(n+".js",s).href,i[n]||new Promise(i=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=i,document.head.appendChild(e)}else e=n,importScripts(n),i()}).then(()=>{let e=i[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e}));self.define=(s,o)=>{const r=e||("document"in self?document.currentScript.src:"")||location.href;if(i[r])return;let c={};const a=e=>n(e,r),t={module:{uri:r},exports:c,require:a};i[r]=Promise.all(s.map(e=>t[e]||a(e))).then(e=>(o(...e),c))}}define(["./workbox-88ec821d"],function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"spwig-logo.svg",revision:"3196b63671c333d870b4af92dde7c0f9"},{url:"spwig-icon.png",revision:"525ae23ef44ed0260653e1f9ee0230c8"},{url:"spwig-icon-512.png",revision:"0b891601b005b44a57558362fc715261"},{url:"spwig-icon-192.png",revision:"568193def0ff2ed42213efb826d55691"},{url:"registerSW.js",revision:"f2fcc095c296287be9738f6c097a4995"},{url:"index.html",revision:"15fda61dd36d5d8098e72bf48323820d"},{url:"favicon.ico",revision:"797b85afa3f6013cedfcca1faf1a4571"},{url:"apple-touch-icon.png",revision:"8471d0654510d732bc28a487d65f2d59"},{url:"assets/index-DF7XhMeX.js",revision:null},{url:"assets/index-C1tKg-Xs.css",revision:null},{url:"assets/StripeTerminalAdapter-CIkH7UAV.js",revision:null},{url:"assets/CloudTerminalAdapter-BCXcWIft.js",revision:null},{url:"apple-touch-icon.png",revision:"8471d0654510d732bc28a487d65f2d59"},{url:"favicon.ico",revision:"797b85afa3f6013cedfcca1faf1a4571"},{url:"spwig-icon-192.png",revision:"568193def0ff2ed42213efb826d55691"},{url:"spwig-icon-512.png",revision:"0b891601b005b44a57558362fc715261"},{url:"manifest.webmanifest",revision:"c14e361c918efb2b36243852f6508f6a"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html"))),e.registerRoute(/^\/api\/pos\/products/,new e.StaleWhileRevalidate({cacheName:"pos-products",plugins:[new e.ExpirationPlugin({maxEntries:500,maxAgeSeconds:300})]}),"GET"),e.registerRoute(/^\/api\/pos\/categories/,new e.StaleWhileRevalidate({cacheName:"pos-categories",plugins:[new e.ExpirationPlugin({maxEntries:50,maxAgeSeconds:600})]}),"GET"),e.registerRoute(/^\/api\/pos\/inventory/,new e.NetworkFirst({cacheName:"pos-inventory",networkTimeoutSeconds:3,plugins:[new e.ExpirationPlugin({maxEntries:500,maxAgeSeconds:60})]}),"GET"),e.registerRoute(/\/media\//,new e.CacheFirst({cacheName:"pos-images",plugins:[new e.ExpirationPlugin({maxEntries:200,maxAgeSeconds:86400})]}),"GET")});
+if (!self.define) {
+  let e,
+    i = {};
+  const n = (n, s) => (
+    (n = new URL(n + '.js', s).href),
+    i[n] ||
+      new Promise(i => {
+        if ('document' in self) {
+          const e = document.createElement('script');
+          ((e.src = n), (e.onload = i), document.head.appendChild(e));
+        } else ((e = n), importScripts(n), i());
+      }).then(() => {
+        const e = i[n];
+        if (!e) throw new Error(`Module ${n} didn’t register its module`);
+        return e;
+      })
+  );
+  self.define = (s, o) => {
+    const r = e || ('document' in self ? document.currentScript.src : '') || location.href;
+    if (i[r]) return;
+    const c = {};
+    const a = e => n(e, r),
+      t = { module: { uri: r }, exports: c, require: a };
+    i[r] = Promise.all(s.map(e => t[e] || a(e))).then(e => (o(...e), c));
+  };
+}
+define(['./workbox-88ec821d'], function (e) {
+  'use strict';
+  (self.skipWaiting(),
+    e.clientsClaim(),
+    e.precacheAndRoute(
+      [
+        { url: 'spwig-logo.svg', revision: '3196b63671c333d870b4af92dde7c0f9' },
+        { url: 'spwig-icon.png', revision: '525ae23ef44ed0260653e1f9ee0230c8' },
+        { url: 'spwig-icon-512.png', revision: '0b891601b005b44a57558362fc715261' },
+        { url: 'spwig-icon-192.png', revision: '568193def0ff2ed42213efb826d55691' },
+        { url: 'registerSW.js', revision: 'f2fcc095c296287be9738f6c097a4995' },
+        { url: 'index.html', revision: 'a3385c2374c8027ac746779f12c02cea' },
+        { url: 'favicon.ico', revision: '797b85afa3f6013cedfcca1faf1a4571' },
+        { url: 'apple-touch-icon.png', revision: '8471d0654510d732bc28a487d65f2d59' },
+        { url: 'assets/index-COyQw9XM.js', revision: null },
+        { url: 'assets/index-C1tKg-Xs.css', revision: null },
+        { url: 'assets/StripeTerminalAdapter-CDKZMYJD.js', revision: null },
+        { url: 'assets/CloudTerminalAdapter-C6eNIR6K.js', revision: null },
+        { url: 'apple-touch-icon.png', revision: '8471d0654510d732bc28a487d65f2d59' },
+        { url: 'favicon.ico', revision: '797b85afa3f6013cedfcca1faf1a4571' },
+        { url: 'spwig-icon-192.png', revision: '568193def0ff2ed42213efb826d55691' },
+        { url: 'spwig-icon-512.png', revision: '0b891601b005b44a57558362fc715261' },
+        { url: 'manifest.webmanifest', revision: 'c14e361c918efb2b36243852f6508f6a' },
+      ],
+      {}
+    ),
+    e.cleanupOutdatedCaches(),
+    e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL('index.html'))),
+    e.registerRoute(
+      /^\/api\/pos\/products/,
+      new e.StaleWhileRevalidate({
+        cacheName: 'pos-products',
+        plugins: [new e.ExpirationPlugin({ maxEntries: 500, maxAgeSeconds: 300 })],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /^\/api\/pos\/categories/,
+      new e.StaleWhileRevalidate({
+        cacheName: 'pos-categories',
+        plugins: [new e.ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 600 })],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /^\/api\/pos\/inventory/,
+      new e.NetworkFirst({
+        cacheName: 'pos-inventory',
+        networkTimeoutSeconds: 3,
+        plugins: [new e.ExpirationPlugin({ maxEntries: 500, maxAgeSeconds: 60 })],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\/media\//,
+      new e.CacheFirst({
+        cacheName: 'pos-images',
+        plugins: [new e.ExpirationPlugin({ maxEntries: 200, maxAgeSeconds: 86400 })],
+      }),
+      'GET'
+    ));
+});

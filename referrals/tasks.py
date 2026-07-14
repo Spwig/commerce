@@ -4,17 +4,19 @@ Referral Program Celery Tasks
 Background tasks for reward expiry, attribution management, and stats aggregation.
 """
 
-from celery import shared_task
-from django.utils import timezone
-from django.db.models import Q, Sum, Count
-from core.celery_utils import BackgroundDBTask
-from datetime import timedelta
 import logging
+from datetime import timedelta
+
+from celery import shared_task
+from django.db.models import Sum
+from django.utils import timezone
+
+from core.celery_utils import BackgroundDBTask
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name='referrals.send_reward_expiry_reminders', ignore_result=True)
+@shared_task(name="referrals.send_reward_expiry_reminders", ignore_result=True)
 def send_reward_expiry_reminders():
     """
     Send email reminders for rewards expiring soon.
@@ -25,7 +27,7 @@ def send_reward_expiry_reminders():
     Returns:
         dict: Summary of emails sent
     """
-    from .models import ReferralReward, ReferralProgram
+    from .models import ReferralProgram, ReferralReward
     from .services.email_notifications import send_reward_expiring_email
 
     logger.info("Starting reward expiry reminder task")
@@ -34,19 +36,17 @@ def send_reward_expiry_reminders():
     try:
         program = ReferralProgram.get_program()
         if not program or not program.is_active():
-            return {'sent': 0, 'message': 'Referral program not active'}
+            return {"sent": 0, "message": "Referral program not active"}
     except Exception:
-        return {'sent': 0, 'message': 'Referral program not configured'}
+        return {"sent": 0, "message": "Referral program not configured"}
 
     # Find rewards expiring in 7 days
     seven_days_from_now = timezone.now() + timedelta(days=7)
     target_date = seven_days_from_now.date()
 
     rewards = ReferralReward.objects.filter(
-        status='issued',
-        expires_at__date=target_date,
-        expires_at__isnull=False
-    ).select_related('customer')
+        status="issued", expires_at__date=target_date, expires_at__isnull=False
+    ).select_related("customer")
 
     sent = 0
     failed = 0
@@ -56,23 +56,23 @@ def send_reward_expiry_reminders():
             success = send_reward_expiring_email(reward, days_until_expiration=7)
             if success:
                 sent += 1
-                logger.info(f"Sent expiry reminder for reward {reward.id} to {reward.customer.email}")
+                logger.info(
+                    f"Sent expiry reminder for reward {reward.id} to {reward.customer.email}"
+                )
             else:
                 failed += 1
                 logger.warning(f"Failed to send expiry reminder for reward {reward.id}")
         except Exception as e:
             failed += 1
-            logger.error(f"Error sending expiry reminder for reward {reward.id}: {e}", exc_info=True)
+            logger.error(
+                f"Error sending expiry reminder for reward {reward.id}: {e}", exc_info=True
+            )
 
     logger.info(f"Expiry reminders complete: {sent} sent, {failed} failed")
-    return {
-        'sent': sent,
-        'failed': failed,
-        'total_expiring': rewards.count()
-    }
+    return {"sent": sent, "failed": failed, "total_expiring": rewards.count()}
 
 
-@shared_task(name='referrals.expire_old_rewards', base=BackgroundDBTask, ignore_result=True)
+@shared_task(name="referrals.expire_old_rewards", base=BackgroundDBTask, ignore_result=True)
 def expire_old_rewards():
     """
     Mark expired rewards as expired and update stats.
@@ -90,27 +90,22 @@ def expire_old_rewards():
 
     # Find expired rewards that are still marked as issued
     expired_rewards = ReferralReward.objects.filter(
-        status='issued',
-        expires_at__lt=now,
-        expires_at__isnull=False
+        status="issued", expires_at__lt=now, expires_at__isnull=False
     )
 
     count = expired_rewards.count()
 
     if count == 0:
-        return {'expired': 0, 'message': 'No rewards to expire'}
+        return {"expired": 0, "message": "No rewards to expire"}
 
     # Mark as expired
-    expired_rewards.update(status='expired')
+    expired_rewards.update(status="expired")
 
     logger.info(f"Marked {count} rewards as expired")
-    return {
-        'expired': count,
-        'message': f'Marked {count} rewards as expired'
-    }
+    return {"expired": count, "message": f"Marked {count} rewards as expired"}
 
 
-@shared_task(name='referrals.expire_old_attributions', base=BackgroundDBTask, ignore_result=True)
+@shared_task(name="referrals.expire_old_attributions", base=BackgroundDBTask, ignore_result=True)
 def expire_old_attributions():
     """
     Mark pending attributions as expired if they exceed the review period.
@@ -129,41 +124,40 @@ def expire_old_attributions():
     try:
         program = ReferralProgram.get_program()
         if not program:
-            return {'expired': 0, 'message': 'Referral program not configured'}
+            return {"expired": 0, "message": "Referral program not configured"}
     except Exception:
-        return {'expired': 0, 'message': 'Referral program not configured'}
+        return {"expired": 0, "message": "Referral program not configured"}
 
     # Get review period from fraud policy (default 30 days)
-    review_period_days = program.fraud_policy.get('attribution_review_period_days', 30)
+    review_period_days = program.fraud_policy.get("attribution_review_period_days", 30)
     cutoff_date = timezone.now() - timedelta(days=review_period_days)
 
     # Find pending attributions older than review period
     expired_attributions = ReferralAttribution.objects.filter(
-        status='pending',
-        created_at__lt=cutoff_date
+        status="pending", created_at__lt=cutoff_date
     )
 
     count = expired_attributions.count()
 
     if count == 0:
-        return {'expired': 0, 'message': 'No attributions to expire'}
+        return {"expired": 0, "message": "No attributions to expire"}
 
     # Mark as expired
     for attribution in expired_attributions:
         attribution.reject(
-            reason='other',
-            notes=f'Automatically expired after {review_period_days} days pending review'
+            reason="other",
+            notes=f"Automatically expired after {review_period_days} days pending review",
         )
 
     logger.info(f"Expired {count} pending attributions")
     return {
-        'expired': count,
-        'review_period_days': review_period_days,
-        'message': f'Expired {count} attributions older than {review_period_days} days'
+        "expired": count,
+        "review_period_days": review_period_days,
+        "message": f"Expired {count} attributions older than {review_period_days} days",
     }
 
 
-@shared_task(name='referrals.update_referrer_stats', base=BackgroundDBTask, ignore_result=True)
+@shared_task(name="referrals.update_referrer_stats", base=BackgroundDBTask, ignore_result=True)
 def update_referrer_stats():
     """
     Update aggregated statistics for referrer identities.
@@ -174,8 +168,7 @@ def update_referrer_stats():
     Returns:
         dict: Summary of stats updated
     """
-    from .models import ReferralIdentity, ReferralAttribution, ReferralReward
-    from django.db.models import Q
+    from .models import ReferralAttribution, ReferralIdentity, ReferralReward
 
     logger.info("Starting referrer stats update task")
 
@@ -186,42 +179,45 @@ def update_referrer_stats():
         try:
             # Count total approved attributions
             total_conversions = ReferralAttribution.objects.filter(
-                referrer_identity=identity,
-                status='approved'
+                referrer_identity=identity, status="approved"
             ).count()
 
             # Sum total rewards earned (only issued/redeemed rewards)
-            total_rewards = ReferralReward.objects.filter(
-                referrer_identity=identity,
-                recipient_type='referrer',
-                status__in=['issued', 'redeemed']
-            ).aggregate(
-                total=Sum('amount')
-            )['total'] or 0
+            total_rewards = (
+                ReferralReward.objects.filter(
+                    referrer_identity=identity,
+                    recipient_type="referrer",
+                    status__in=["issued", "redeemed"],
+                ).aggregate(total=Sum("amount"))["total"]
+                or 0
+            )
 
             # Update identity stats if changed
-            if (identity.total_conversions != total_conversions or
-                    identity.total_rewards_earned != float(total_rewards)):
-
+            if (
+                identity.total_conversions != total_conversions
+                or identity.total_rewards_earned != float(total_rewards)
+            ):
                 identity.total_conversions = total_conversions
                 identity.total_rewards_earned = float(total_rewards)
-                identity.save(update_fields=['total_conversions', 'total_rewards_earned'])
+                identity.save(update_fields=["total_conversions", "total_rewards_earned"])
 
                 updated += 1
-                logger.debug(f"Updated stats for identity {identity.id}: {total_conversions} conversions, {total_rewards} rewards")
+                logger.debug(
+                    f"Updated stats for identity {identity.id}: {total_conversions} conversions, {total_rewards} rewards"
+                )
 
         except Exception as e:
             logger.error(f"Error updating stats for identity {identity.id}: {e}", exc_info=True)
 
     logger.info(f"Updated stats for {updated} identities")
     return {
-        'updated': updated,
-        'total_identities': identities.count(),
-        'message': f'Updated stats for {updated}/{identities.count()} identities'
+        "updated": updated,
+        "total_identities": identities.count(),
+        "message": f"Updated stats for {updated}/{identities.count()} identities",
     }
 
 
-@shared_task(name='referrals.fraud_check_batch_process', base=BackgroundDBTask, ignore_result=True)
+@shared_task(name="referrals.fraud_check_batch_process", base=BackgroundDBTask, ignore_result=True)
 def fraud_check_batch_process():
     """
     Re-evaluate high-risk pending attributions with updated fraud checks.
@@ -241,18 +237,16 @@ def fraud_check_batch_process():
     try:
         program = ReferralProgram.get_program()
         if not program or not program.is_active():
-            return {'processed': 0, 'message': 'Referral program not active'}
+            return {"processed": 0, "message": "Referral program not active"}
     except Exception:
-        return {'processed': 0, 'message': 'Referral program not configured'}
+        return {"processed": 0, "message": "Referral program not configured"}
 
     # Find high-risk pending attributions (24+ hours old)
     cutoff_time = timezone.now() - timedelta(hours=24)
     high_risk_threshold = 70
 
     attributions = ReferralAttribution.objects.filter(
-        status='pending',
-        risk_score__gte=high_risk_threshold,
-        created_at__lt=cutoff_time
+        status="pending", risk_score__gte=high_risk_threshold, created_at__lt=cutoff_time
     )[:100]  # Process 100 at a time
 
     processed = 0
@@ -268,21 +262,25 @@ def fraud_check_batch_process():
             attribution.validation_data = validation_data
             old_risk_score = attribution.risk_score
             attribution.risk_score = new_risk_score
-            attribution.save(update_fields=['validation_data', 'risk_score'])
+            attribution.save(update_fields=["validation_data", "risk_score"])
 
-            logger.info(f"Re-evaluated attribution {attribution.id}: risk {old_risk_score} → {new_risk_score}")
+            logger.info(
+                f"Re-evaluated attribution {attribution.id}: risk {old_risk_score} → {new_risk_score}"
+            )
 
             # Auto-reject if very high risk
             if not is_valid or new_risk_score >= 90:
                 attribution.reject(
-                    reason='fraud_risk',
-                    notes=f'Automatically rejected: risk score {new_risk_score} (threshold: 90)'
+                    reason="fraud_risk",
+                    notes=f"Automatically rejected: risk score {new_risk_score} (threshold: 90)",
                 )
                 auto_rejected += 1
-                logger.warning(f"Auto-rejected attribution {attribution.id} due to high risk ({new_risk_score})")
+                logger.warning(
+                    f"Auto-rejected attribution {attribution.id} due to high risk ({new_risk_score})"
+                )
 
             # Auto-approve if risk dropped significantly
-            elif new_risk_score < program.fraud_policy.get('auto_approve_threshold', 30):
+            elif new_risk_score < program.fraud_policy.get("auto_approve_threshold", 30):
                 from .services.rewards import create_rewards, issue_reward
 
                 attribution.approve()
@@ -305,16 +303,18 @@ def fraud_check_batch_process():
         except Exception as e:
             logger.error(f"Error processing attribution {attribution.id}: {e}", exc_info=True)
 
-    logger.info(f"Fraud check complete: {processed} processed, {auto_approved} approved, {auto_rejected} rejected")
+    logger.info(
+        f"Fraud check complete: {processed} processed, {auto_approved} approved, {auto_rejected} rejected"
+    )
     return {
-        'processed': processed,
-        'auto_approved': auto_approved,
-        'auto_rejected': auto_rejected,
-        'message': f'Processed {processed} high-risk attributions'
+        "processed": processed,
+        "auto_approved": auto_approved,
+        "auto_rejected": auto_rejected,
+        "message": f"Processed {processed} high-risk attributions",
     }
 
 
-@shared_task(name='referrals.cleanup_old_events', base=BackgroundDBTask, ignore_result=True)
+@shared_task(name="referrals.cleanup_old_events", base=BackgroundDBTask, ignore_result=True)
 def cleanup_old_events():
     """
     Clean up old referral events to prevent database bloat.
@@ -332,7 +332,7 @@ def cleanup_old_events():
     # Get retention period from settings (default 90 days)
     try:
         program = ReferralProgram.get_program()
-        retention_days = program.settings.get('event_retention_days', 90) if program else 90
+        retention_days = program.settings.get("event_retention_days", 90) if program else 90
     except Exception:
         retention_days = 90
 
@@ -342,33 +342,33 @@ def cleanup_old_events():
     # Only delete view/other low-priority events
     old_events = ReferralEvent.objects.filter(
         created_at__lt=cutoff_date,
-        event_type__in=['view', 'share']  # Keep important events like click, signup, order
+        event_type__in=["view", "share"],  # Keep important events like click, signup, order
     )
 
     count = old_events.count()
 
     if count == 0:
-        return {'deleted': 0, 'message': 'No events to clean up'}
+        return {"deleted": 0, "message": "No events to clean up"}
 
     deleted = old_events.delete()[0]
 
     logger.info(f"Deleted {deleted} old events (older than {retention_days} days)")
     return {
-        'deleted': deleted,
-        'retention_days': retention_days,
-        'message': f'Deleted {deleted} events older than {retention_days} days'
+        "deleted": deleted,
+        "retention_days": retention_days,
+        "message": f"Deleted {deleted} events older than {retention_days} days",
     }
 
 
 @shared_task(
     bind=True,
-    name='referrals.process_attribution',
+    name="referrals.process_attribution",
     max_retries=3,
     default_retry_delay=300,  # 5 minutes
     autoretry_for=(Exception,),
     retry_backoff=True,
     retry_backoff_max=1800,  # 30 minutes
-    retry_jitter=True
+    retry_jitter=True,
 )
 def process_attribution(self, attribution_id: int):
     """
@@ -383,14 +383,14 @@ def process_attribution(self, attribution_id: int):
         dict: Processing result
     """
     from .models import ReferralAttribution
-    from .services.validation import validate_attribution
     from .services.rewards import create_rewards, issue_reward
+    from .services.validation import validate_attribution
 
     try:
         attribution = ReferralAttribution.objects.get(id=attribution_id)
     except ReferralAttribution.DoesNotExist:
         logger.error(f"Attribution {attribution_id} not found")
-        return {'success': False, 'error': 'Attribution not found'}
+        return {"success": False, "error": "Attribution not found"}
 
     try:
         # Run validation
@@ -398,16 +398,18 @@ def process_attribution(self, attribution_id: int):
 
         attribution.validation_data = validation_data
         attribution.risk_score = risk_score
-        attribution.save(update_fields=['validation_data', 'risk_score'])
+        attribution.save(update_fields=["validation_data", "risk_score"])
 
-        if is_valid and attribution.status == 'approved':
+        if is_valid and attribution.status == "approved":
             # Create and issue rewards
             referrer_reward, referee_reward = create_rewards(attribution)
 
             if referrer_reward:
                 success = issue_reward(referrer_reward)
                 if not success:
-                    logger.error(f"Failed to issue referrer reward for attribution {attribution_id}")
+                    logger.error(
+                        f"Failed to issue referrer reward for attribution {attribution_id}"
+                    )
 
             if referee_reward:
                 success = issue_reward(referee_reward)
@@ -415,18 +417,14 @@ def process_attribution(self, attribution_id: int):
                     logger.error(f"Failed to issue referee reward for attribution {attribution_id}")
 
             logger.info(f"Processed attribution {attribution_id} successfully")
-            return {
-                'success': True,
-                'attribution_id': attribution_id,
-                'risk_score': risk_score
-            }
+            return {"success": True, "attribution_id": attribution_id, "risk_score": risk_score}
         else:
             logger.info(f"Attribution {attribution_id} validation failed or not approved")
             return {
-                'success': False,
-                'attribution_id': attribution_id,
-                'error': 'Validation failed or not approved',
-                'risk_score': risk_score
+                "success": False,
+                "attribution_id": attribution_id,
+                "error": "Validation failed or not approved",
+                "risk_score": risk_score,
             }
 
     except Exception as e:
@@ -434,10 +432,6 @@ def process_attribution(self, attribution_id: int):
 
         # Retry if not max retries
         if self.request.retries < self.max_retries:
-            raise self.retry(exc=e, countdown=300 * (2 ** self.request.retries))
+            raise self.retry(exc=e, countdown=300 * (2**self.request.retries))
 
-        return {
-            'success': False,
-            'attribution_id': attribution_id,
-            'error': str(e)
-        }
+        return {"success": False, "attribution_id": attribution_id, "error": str(e)}

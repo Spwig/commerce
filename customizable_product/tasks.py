@@ -1,4 +1,5 @@
 """Celery tasks for the customizable product app."""
+
 import logging
 
 from celery import shared_task
@@ -7,7 +8,7 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name='customizable_product.render_design_snapshot')
+@shared_task(name="customizable_product.render_design_snapshot")
 def render_design_snapshot(snapshot_id):
     """
     Render high-resolution fulfillment images for a design snapshot.
@@ -19,7 +20,7 @@ def render_design_snapshot(snapshot_id):
     from .services.render_service import DesignRenderService
 
     try:
-        snapshot = DesignSnapshot.objects.select_related('order_item__product').get(pk=snapshot_id)
+        snapshot = DesignSnapshot.objects.select_related("order_item__product").get(pk=snapshot_id)
     except DesignSnapshot.DoesNotExist:
         logger.error(f"DesignSnapshot {snapshot_id} not found")
         return
@@ -37,12 +38,12 @@ def render_design_snapshot(snapshot_id):
         return
 
     design_data = snapshot.design_data
-    surfaces_data = design_data.get('surfaces', {})
+    surfaces_data = design_data.get("surfaces", {})
     fulfillment_files = {}
 
     for surface_slug, surface_data in surfaces_data.items():
-        canvas_json = surface_data.get('canvas_json', {})
-        if not canvas_json.get('objects'):
+        canvas_json = surface_data.get("canvas_json", {})
+        if not canvas_json.get("objects"):
             continue
 
         try:
@@ -53,7 +54,9 @@ def render_design_snapshot(snapshot_id):
 
         # Render the composite image
         composite = DesignRenderService.render_surface(
-            surface, canvas_json, output_dpi=surface.recommended_dpi,
+            surface,
+            canvas_json,
+            output_dpi=surface.recommended_dpi,
         )
 
         if composite:
@@ -65,7 +68,7 @@ def render_design_snapshot(snapshot_id):
 
             # Save as PNG
             buffer = io.BytesIO()
-            composite.save(buffer, format='PNG', quality=95)
+            composite.save(buffer, format="PNG", quality=95)
             buffer.seek(0)
 
             filename = f"fulfillment_{product.slug}_{surface_slug}_{snapshot.id}.png"
@@ -83,17 +86,17 @@ def render_design_snapshot(snapshot_id):
     snapshot.render_completed_at = timezone.now()
     snapshot.save()
 
-    logger.info(f"DesignSnapshot {snapshot_id} fully rendered with {len(fulfillment_files)} surfaces")
+    logger.info(
+        f"DesignSnapshot {snapshot_id} fully rendered with {len(fulfillment_files)} surfaces"
+    )
 
 
-@shared_task(name='customizable_product.cleanup_expired_drafts')
+@shared_task(name="customizable_product.cleanup_expired_drafts")
 def cleanup_expired_drafts():
     """Remove expired DesignDraft records to prevent database bloat."""
     from .models import DesignDraft
 
-    expired_count, _ = DesignDraft.objects.filter(
-        expires_at__lt=timezone.now()
-    ).delete()
+    expired_count, _ = DesignDraft.objects.filter(expires_at__lt=timezone.now()).delete()
 
     if expired_count:
         logger.info(f"Cleaned up {expired_count} expired design drafts")

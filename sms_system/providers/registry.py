@@ -4,8 +4,9 @@ SMS Provider Registry.
 Central registry for discovering and accessing SMS providers.
 Provides a unified interface for the provider system.
 """
+
 import logging
-from typing import Dict, List, Optional, Type, Any
+from typing import Any
 
 from .loader import SMSProviderLoader
 
@@ -21,7 +22,7 @@ class SMSProviderRegistry:
     """
 
     @classmethod
-    def discover_providers(cls) -> Dict[str, Type]:
+    def discover_providers(cls) -> dict[str, type]:
         """
         Discover all available SMS providers.
 
@@ -31,7 +32,7 @@ class SMSProviderRegistry:
         return SMSProviderLoader.discover_providers()
 
     @classmethod
-    def get_provider_class(cls, provider_key: str) -> Optional[Type]:
+    def get_provider_class(cls, provider_key: str) -> type | None:
         """
         Get a provider class by key.
 
@@ -45,10 +46,7 @@ class SMSProviderRegistry:
 
     @classmethod
     def create_provider_instance(
-        cls,
-        provider_key: str,
-        credentials: Dict[str, Any],
-        config: Optional[Dict[str, Any]] = None
+        cls, provider_key: str, credentials: dict[str, Any], config: dict[str, Any] | None = None
     ):
         """
         Create an instance of a provider.
@@ -71,7 +69,7 @@ class SMSProviderRegistry:
         return provider_class(credentials, config)
 
     @classmethod
-    def list_providers(cls) -> List[Dict[str, Any]]:
+    def list_providers(cls) -> list[dict[str, Any]]:
         """
         List all available providers with metadata.
 
@@ -87,7 +85,7 @@ class SMSProviderRegistry:
         return SMSProviderLoader.list_providers()
 
     @classmethod
-    def get_provider_info(cls, provider_key: str) -> Optional[Dict[str, Any]]:
+    def get_provider_info(cls, provider_key: str) -> dict[str, Any] | None:
         """
         Get detailed information about a provider.
 
@@ -102,22 +100,22 @@ class SMSProviderRegistry:
             return None
 
         return {
-            'key': manifest.get('provider_key'),
-            'name': manifest.get('name'),
-            'description': manifest.get('description'),
-            'version': manifest.get('version'),
-            'author': manifest.get('author'),
-            'capabilities': manifest.get('capabilities', {}),
-            'credential_schema': manifest.get('credential_schema', {}),
-            'setup_wizard': manifest.get('setup_wizard', {}),
-            'logo': manifest.get('logo'),
-            'homepage_url': manifest.get('homepage_url'),
-            'support_url': manifest.get('support_url'),
-            'api_docs_url': manifest.get('api_docs_url'),
+            "key": manifest.get("provider_key"),
+            "name": manifest.get("name"),
+            "description": manifest.get("description"),
+            "version": manifest.get("version"),
+            "author": manifest.get("author"),
+            "capabilities": manifest.get("capabilities", {}),
+            "credential_schema": manifest.get("credential_schema", {}),
+            "setup_wizard": manifest.get("setup_wizard", {}),
+            "logo": manifest.get("logo"),
+            "homepage_url": manifest.get("homepage_url"),
+            "support_url": manifest.get("support_url"),
+            "api_docs_url": manifest.get("api_docs_url"),
         }
 
     @classmethod
-    def get_credential_schema(cls, provider_key: str) -> Optional[Dict[str, Any]]:
+    def get_credential_schema(cls, provider_key: str) -> dict[str, Any] | None:
         """
         Get the credential schema for a provider.
 
@@ -130,7 +128,7 @@ class SMSProviderRegistry:
         return SMSProviderLoader.get_credential_schema(provider_key)
 
     @classmethod
-    def get_setup_instructions(cls, provider_key: str) -> Optional[str]:
+    def get_setup_instructions(cls, provider_key: str) -> str | None:
         """
         Get setup instructions HTML for a provider.
 
@@ -143,7 +141,7 @@ class SMSProviderRegistry:
         return SMSProviderLoader.get_setup_instructions(provider_key)
 
     @classmethod
-    def get_providers_by_capability(cls, capability: str) -> List[Dict[str, Any]]:
+    def get_providers_by_capability(cls, capability: str) -> list[dict[str, Any]]:
         """
         Get providers that have a specific capability.
 
@@ -154,30 +152,27 @@ class SMSProviderRegistry:
             List of provider info dictionaries
         """
         providers = cls.list_providers()
-        return [
-            p for p in providers
-            if p.get('capabilities', {}).get(capability, False)
-        ]
+        return [p for p in providers if p.get("capabilities", {}).get(capability, False)]
 
     @classmethod
-    def get_sms_providers(cls) -> List[Dict[str, Any]]:
+    def get_sms_providers(cls) -> list[dict[str, Any]]:
         """
         Get providers that support SMS.
 
         Returns:
             List of SMS-capable provider info dictionaries
         """
-        return cls.get_providers_by_capability('sms')
+        return cls.get_providers_by_capability("sms")
 
     @classmethod
-    def get_whatsapp_providers(cls) -> List[Dict[str, Any]]:
+    def get_whatsapp_providers(cls) -> list[dict[str, Any]]:
         """
         Get providers that support WhatsApp.
 
         Returns:
             List of WhatsApp-capable provider info dictionaries
         """
-        return cls.get_providers_by_capability('whatsapp')
+        return cls.get_providers_by_capability("whatsapp")
 
     @classmethod
     def reload(cls):
@@ -203,10 +198,8 @@ class SMSProviderRegistry:
 
     @classmethod
     def validate_credentials(
-        cls,
-        provider_key: str,
-        credentials: Dict[str, Any]
-    ) -> tuple[bool, Optional[str]]:
+        cls, provider_key: str, credentials: dict[str, Any]
+    ) -> tuple[bool, str | None]:
         """
         Validate credentials for a provider.
 
@@ -219,7 +212,7 @@ class SMSProviderRegistry:
         """
         try:
             provider = cls.create_provider_instance(provider_key, credentials)
-            if hasattr(provider, 'validate_credentials'):
+            if hasattr(provider, "validate_credentials"):
                 return provider.validate_credentials()
             return True, None
         except ValueError as e:
@@ -229,11 +222,7 @@ class SMSProviderRegistry:
             return False, str(e)
 
     @classmethod
-    def test_connection(
-        cls,
-        provider_key: str,
-        credentials: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def test_connection(cls, provider_key: str, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Test connection to a provider.
 
@@ -246,20 +235,20 @@ class SMSProviderRegistry:
         """
         try:
             provider = cls.create_provider_instance(provider_key, credentials)
-            if hasattr(provider, 'test_connection'):
+            if hasattr(provider, "test_connection"):
                 return provider.test_connection()
             return {
-                'success': True,
-                'message': 'Provider does not support connection testing',
+                "success": True,
+                "message": "Provider does not support connection testing",
             }
         except ValueError as e:
             return {
-                'success': False,
-                'error': str(e),
+                "success": False,
+                "error": str(e),
             }
         except Exception as e:
             logger.error(f"Error testing connection for {provider_key}: {e}")
             return {
-                'success': False,
-                'error': str(e),
+                "success": False,
+                "error": str(e),
             }

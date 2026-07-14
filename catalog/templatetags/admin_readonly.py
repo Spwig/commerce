@@ -1,8 +1,10 @@
 """
 Template tags for rendering admin readonly fields in custom templates
 """
-from django import template
+
 from decimal import Decimal
+
+from django import template
 
 register = template.Library()
 
@@ -22,15 +24,15 @@ def money_amount(value):
         {{ adminform.form.price.value|money_amount }}
     """
     if value is None:
-        return ''
+        return ""
 
     # Handle Money objects
-    if hasattr(value, 'amount'):
+    if hasattr(value, "amount"):
         return value.amount
 
     # Handle list/tuple from MultiWidget (bound form data)
     if isinstance(value, (list, tuple)) and len(value) >= 1:
-        return value[0] if value[0] not in (None, '') else ''
+        return value[0] if value[0] not in (None, "") else ""
 
     # Handle Decimal/float/int directly
     if isinstance(value, (Decimal, float, int)):
@@ -40,7 +42,7 @@ def money_amount(value):
     if isinstance(value, str):
         return value
 
-    return ''
+    return ""
 
 
 @register.filter
@@ -58,25 +60,25 @@ def money_currency(value):
         {{ adminform.form.price.value|money_currency }}
     """
     if value is None:
-        return ''
+        return ""
 
     # Handle Money objects
-    if hasattr(value, 'currency'):
+    if hasattr(value, "currency"):
         currency = value.currency
         # Currency might be a Currency object or string
-        if hasattr(currency, 'code'):
+        if hasattr(currency, "code"):
             return currency.code
         return str(currency)
 
     # Handle list/tuple from MultiWidget (bound form data)
     if isinstance(value, (list, tuple)) and len(value) >= 2:
-        return value[1] if value[1] not in (None, '') else ''
+        return value[1] if value[1] not in (None, "") else ""
 
     # Handle string currency code directly
     if isinstance(value, str) and len(value) == 3:
         return value
 
-    return ''
+    return ""
 
 
 @register.simple_tag
@@ -99,7 +101,7 @@ def call_admin_method(admin_instance, method_name, obj):
         return ""
 
     # Get the model admin from inline admin form
-    if hasattr(admin_instance, 'model_admin'):
+    if hasattr(admin_instance, "model_admin"):
         model_admin = admin_instance.model_admin
     else:
         model_admin = admin_instance
@@ -129,7 +131,7 @@ def get_readonly_field_label(admin_instance, method_name):
         The short_description or method name as fallback
     """
     # Get the model admin from inline admin form
-    if hasattr(admin_instance, 'model_admin'):
+    if hasattr(admin_instance, "model_admin"):
         model_admin = admin_instance.model_admin
     else:
         model_admin = admin_instance
@@ -137,8 +139,8 @@ def get_readonly_field_label(admin_instance, method_name):
     # Get the method from the admin class
     if hasattr(model_admin, method_name):
         method = getattr(model_admin, method_name)
-        if hasattr(method, 'short_description'):
+        if hasattr(method, "short_description"):
             return method.short_description
 
     # Fallback: convert method_name to human-readable
-    return method_name.replace('_', ' ').title()
+    return method_name.replace("_", " ").title()

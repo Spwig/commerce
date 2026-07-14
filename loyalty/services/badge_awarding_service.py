@@ -7,8 +7,8 @@ when they meet achievement requirements.
 
 import logging
 from decimal import Decimal
-from typing import List, Optional
-from django.db.models import Sum, Count, Q
+
+from django.db.models import Sum
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class BadgeAwardingService:
         """Initialize the badge awarding service."""
         pass
 
-    def check_and_award_badges(self, member, criteria_types: Optional[List[str]] = None) -> List:
+    def check_and_award_badges(self, member, criteria_types: list[str] | None = None) -> list:
         """
         Check all eligible badges for a member and award any they've earned.
 
@@ -41,10 +41,7 @@ class BadgeAwardingService:
         from loyalty.models import LoyaltyBadge, LoyaltyMemberBadge
 
         # Get all auto-award badges that are active
-        badges = LoyaltyBadge.objects.filter(
-            is_active=True,
-            auto_award=True
-        )
+        badges = LoyaltyBadge.objects.filter(is_active=True, auto_award=True)
 
         # Filter by criteria types if specified
         if criteria_types:
@@ -52,7 +49,7 @@ class BadgeAwardingService:
 
         # Get badges member already has
         earned_badge_ids = set(
-            LoyaltyMemberBadge.objects.filter(member=member).values_list('badge_id', flat=True)
+            LoyaltyMemberBadge.objects.filter(member=member).values_list("badge_id", flat=True)
         )
 
         # Filter out already earned badges
@@ -85,23 +82,23 @@ class BadgeAwardingService:
 
         # Map criteria types to check methods
         criteria_checks = {
-            'program_join': self._check_program_join,
-            'first_purchase': self._check_first_purchase,
-            'order_count': self._check_order_count,
-            'total_spend': self._check_total_spend,
-            'review_count': self._check_review_count,
-            'social_share': self._check_social_share,
-            'monthly_streak': self._check_monthly_streak,
-            'referrals': self._check_referrals,
-            'birthday_purchase': self._check_birthday_purchase,
-            'wishlist_items': self._check_wishlist_items,
-            'early_morning_orders': self._check_early_morning_orders,
-            'late_night_orders': self._check_late_night_orders,
-            'weekend_orders': self._check_weekend_orders,
-            'quick_return': self._check_quick_return,
-            'single_order_value': self._check_single_order_value,
-            'items_per_order': self._check_items_per_order,
-            'orders_per_month': self._check_orders_per_month,
+            "program_join": self._check_program_join,
+            "first_purchase": self._check_first_purchase,
+            "order_count": self._check_order_count,
+            "total_spend": self._check_total_spend,
+            "review_count": self._check_review_count,
+            "social_share": self._check_social_share,
+            "monthly_streak": self._check_monthly_streak,
+            "referrals": self._check_referrals,
+            "birthday_purchase": self._check_birthday_purchase,
+            "wishlist_items": self._check_wishlist_items,
+            "early_morning_orders": self._check_early_morning_orders,
+            "late_night_orders": self._check_late_night_orders,
+            "weekend_orders": self._check_weekend_orders,
+            "quick_return": self._check_quick_return,
+            "single_order_value": self._check_single_order_value,
+            "items_per_order": self._check_items_per_order,
+            "orders_per_month": self._check_orders_per_month,
         }
 
         check_method = criteria_checks.get(criteria_type)
@@ -120,8 +117,7 @@ class BadgeAwardingService:
         from orders.models import Order
 
         order_count = Order.objects.filter(
-            user=member.customer,
-            status__in=['processing', 'completed', 'shipped']
+            user=member.customer, status__in=["processing", "completed", "shipped"]
         ).count()
 
         return order_count >= 1
@@ -131,8 +127,7 @@ class BadgeAwardingService:
         from orders.models import Order
 
         order_count = Order.objects.filter(
-            user=member.customer,
-            status__in=['processing', 'completed', 'shipped']
+            user=member.customer, status__in=["processing", "completed", "shipped"]
         ).count()
 
         return order_count >= criteria_value
@@ -142,11 +137,8 @@ class BadgeAwardingService:
         from orders.models import Order
 
         total_spend = Order.objects.filter(
-            user=member.customer,
-            status__in=['processing', 'completed', 'shipped']
-        ).aggregate(
-            total=Sum('total_amount')
-        )['total'] or Decimal('0')
+            user=member.customer, status__in=["processing", "completed", "shipped"]
+        ).aggregate(total=Sum("total_amount"))["total"] or Decimal("0")
 
         return total_spend >= Decimal(str(criteria_value))
 
@@ -154,10 +146,7 @@ class BadgeAwardingService:
         """Check if member has submitted enough reviews."""
         from catalog.models import ProductReview
 
-        review_count = ProductReview.objects.filter(
-            user=member.customer,
-            is_approved=True
-        ).count()
+        review_count = ProductReview.objects.filter(user=member.customer, is_approved=True).count()
 
         return review_count >= criteria_value
 
@@ -166,14 +155,12 @@ class BadgeAwardingService:
         try:
             from social_sharing.models import SocialShare
 
-            share_count = SocialShare.objects.filter(
-                user=member.customer
-            ).count()
+            share_count = SocialShare.objects.filter(user=member.customer).count()
 
             return share_count >= criteria_value
 
         except ImportError:
-            logger.debug(f"Social sharing module not available")
+            logger.debug("Social sharing module not available")
             return False
         except Exception as e:
             logger.error(f"Error checking social share criteria: {e}", exc_info=True)
@@ -181,20 +168,21 @@ class BadgeAwardingService:
 
     def _check_monthly_streak(self, member, criteria_value) -> bool:
         """Check if member has maintained a monthly purchase streak."""
-        from orders.models import Order
-        from datetime import timedelta
         from django.db.models import Count
         from django.db.models.functions import TruncMonth
 
+        from orders.models import Order
+
         # Get orders grouped by month
-        monthly_orders = Order.objects.filter(
-            user=member.customer,
-            status__in=['processing', 'completed', 'shipped']
-        ).annotate(
-            month=TruncMonth('created_at')
-        ).values('month').annotate(
-            count=Count('id')
-        ).order_by('-month')
+        monthly_orders = (
+            Order.objects.filter(
+                user=member.customer, status__in=["processing", "completed", "shipped"]
+            )
+            .annotate(month=TruncMonth("created_at"))
+            .values("month")
+            .annotate(count=Count("id"))
+            .order_by("-month")
+        )
 
         if not monthly_orders:
             return False
@@ -204,7 +192,10 @@ class BadgeAwardingService:
         expected_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
         for entry in monthly_orders:
-            if entry['month'].year == expected_month.year and entry['month'].month == expected_month.month:
+            if (
+                entry["month"].year == expected_month.year
+                and entry["month"].month == expected_month.month
+            ):
                 current_streak += 1
                 # Move to previous month
                 if expected_month.month == 1:
@@ -223,7 +214,7 @@ class BadgeAwardingService:
 
             referral_count = Referral.objects.filter(
                 referrer=member.customer,
-                status='converted',
+                status="converted",
             ).count()
 
             return referral_count >= criteria_value
@@ -241,7 +232,7 @@ class BadgeAwardingService:
 
         # Get customer's birthday
         customer = member.customer
-        if not hasattr(customer, 'date_of_birth') or not customer.date_of_birth:
+        if not hasattr(customer, "date_of_birth") or not customer.date_of_birth:
             return False
 
         birthday_month = customer.date_of_birth.month
@@ -250,9 +241,9 @@ class BadgeAwardingService:
         # Check for orders on birthday
         birthday_orders = Order.objects.filter(
             user=member.customer,
-            status__in=['processing', 'completed', 'shipped'],
+            status__in=["processing", "completed", "shipped"],
             created_at__month=birthday_month,
-            created_at__day=birthday_day
+            created_at__day=birthday_day,
         ).count()
 
         return birthday_orders >= criteria_value
@@ -274,8 +265,8 @@ class BadgeAwardingService:
 
         early_morning_count = Order.objects.filter(
             user=member.customer,
-            status__in=['processing', 'completed', 'shipped'],
-            created_at__hour__lt=9
+            status__in=["processing", "completed", "shipped"],
+            created_at__hour__lt=9,
         ).count()
 
         return early_morning_count >= criteria_value
@@ -286,8 +277,8 @@ class BadgeAwardingService:
 
         late_night_count = Order.objects.filter(
             user=member.customer,
-            status__in=['processing', 'completed', 'shipped'],
-            created_at__hour__gte=21
+            status__in=["processing", "completed", "shipped"],
+            created_at__hour__gte=21,
         ).count()
 
         return late_night_count >= criteria_value
@@ -299,22 +290,26 @@ class BadgeAwardingService:
         # Django week_day: 1=Sunday, 2=Monday, ..., 7=Saturday
         weekend_count = Order.objects.filter(
             user=member.customer,
-            status__in=['processing', 'completed', 'shipped'],
-            created_at__week_day__in=[1, 7]  # Sunday=1, Saturday=7
+            status__in=["processing", "completed", "shipped"],
+            created_at__week_day__in=[1, 7],  # Sunday=1, Saturday=7
         ).count()
 
         return weekend_count >= criteria_value
 
     def _check_quick_return(self, member, criteria_value) -> bool:
         """Check if member made a purchase within 24 hours of previous purchase."""
-        from orders.models import Order
         from datetime import timedelta
 
+        from orders.models import Order
+
         # Get all completed orders sorted by date
-        orders = Order.objects.filter(
-            user=member.customer,
-            status__in=['processing', 'completed', 'shipped']
-        ).order_by('created_at').values_list('created_at', flat=True)
+        orders = (
+            Order.objects.filter(
+                user=member.customer, status__in=["processing", "completed", "shipped"]
+            )
+            .order_by("created_at")
+            .values_list("created_at", flat=True)
+        )
 
         if orders.count() < 2:
             return False
@@ -322,7 +317,7 @@ class BadgeAwardingService:
         # Check consecutive orders for 24-hour gap
         quick_returns = 0
         for i in range(1, len(orders)):
-            time_diff = orders[i] - orders[i-1]
+            time_diff = orders[i] - orders[i - 1]
             if time_diff <= timedelta(hours=24):
                 quick_returns += 1
                 if quick_returns >= criteria_value:
@@ -336,8 +331,8 @@ class BadgeAwardingService:
 
         high_value_orders = Order.objects.filter(
             user=member.customer,
-            status__in=['processing', 'completed', 'shipped'],
-            total_amount__gte=Decimal(str(criteria_value))
+            status__in=["processing", "completed", "shipped"],
+            total_amount__gte=Decimal(str(criteria_value)),
         ).exists()
 
         return high_value_orders
@@ -348,9 +343,8 @@ class BadgeAwardingService:
 
         # Check if any order has enough items
         orders = Order.objects.filter(
-            user=member.customer,
-            status__in=['processing', 'completed', 'shipped']
-        ).prefetch_related('items')
+            user=member.customer, status__in=["processing", "completed", "shipped"]
+        ).prefetch_related("items")
 
         for order in orders:
             total_quantity = sum(item.quantity for item in order.items.all())
@@ -361,25 +355,27 @@ class BadgeAwardingService:
 
     def _check_orders_per_month(self, member, criteria_value) -> bool:
         """Check if member has placed the specified number of orders in any single month."""
-        from orders.models import Order
         from django.db.models import Count
         from django.db.models.functions import TruncMonth
 
+        from orders.models import Order
+
         # Group orders by month and count them
-        monthly_orders = Order.objects.filter(
-            user=member.customer,
-            status__in=['processing', 'completed', 'shipped']
-        ).annotate(
-            month=TruncMonth('created_at')
-        ).values('month').annotate(
-            count=Count('id')
-        ).order_by('-count')
+        monthly_orders = (
+            Order.objects.filter(
+                user=member.customer, status__in=["processing", "completed", "shipped"]
+            )
+            .annotate(month=TruncMonth("created_at"))
+            .values("month")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )
 
         if not monthly_orders:
             return False
 
         # Check if any month meets the criteria
-        max_orders_in_month = monthly_orders[0]['count']
+        max_orders_in_month = monthly_orders[0]["count"]
         return max_orders_in_month >= criteria_value
 
     def _award_badge(self, member, badge):
@@ -393,7 +389,7 @@ class BadgeAwardingService:
         Returns:
             LoyaltyMemberBadge instance or None if already awarded
         """
-        from loyalty.models import LoyaltyMemberBadge, LoyaltyTransaction
+        from loyalty.models import LoyaltyMemberBadge
 
         # Double-check member doesn't already have this badge
         if LoyaltyMemberBadge.objects.filter(member=member, badge=badge).exists():
@@ -404,22 +400,20 @@ class BadgeAwardingService:
         transaction = None
         if badge.points_reward > 0:
             from loyalty.services.points_engine import PointsEngine
+
             engine = PointsEngine()
             try:
                 transaction = engine.award_bonus_points(
                     member=member,
                     points=badge.points_reward,
-                    description=f"Badge earned: {badge.name}"
+                    description=f"Badge earned: {badge.name}",
                 )
             except Exception as e:
                 logger.error(f"Failed to award points for badge {badge.id}: {e}")
 
         # Award the badge
         member_badge = LoyaltyMemberBadge.objects.create(
-            member=member,
-            badge=badge,
-            transaction=transaction,
-            earned_at=timezone.now()
+            member=member, badge=badge, transaction=transaction, earned_at=timezone.now()
         )
 
         logger.info(f"Awarded badge '{badge.name}' (ID: {badge.id}) to member {member.id}")

@@ -23,8 +23,8 @@
               "label": "Data Source",
               "default": "dynamic",
               "options": [
-                {"value": "dynamic", "label": "Live from store"},
-                {"value": "static", "label": "Manual content"}
+                { "value": "dynamic", "label": "Live from store" },
+                { "value": "static", "label": "Manual content" }
               ]
             },
             "source_type": {
@@ -32,26 +32,26 @@
               "label": "Product Source",
               "default": "featured",
               "options": [
-                {"value": "featured", "label": "Featured Products"},
-                {"value": "recent", "label": "Recently Added"},
-                {"value": "category", "label": "From Category"},
-                {"value": "collection", "label": "From Collection"},
-                {"value": "bestselling", "label": "Best Sellers"},
-                {"value": "on_sale", "label": "On Sale"}
+                { "value": "featured", "label": "Featured Products" },
+                { "value": "recent", "label": "Recently Added" },
+                { "value": "category", "label": "From Category" },
+                { "value": "collection", "label": "From Collection" },
+                { "value": "bestselling", "label": "Best Sellers" },
+                { "value": "on_sale", "label": "On Sale" }
               ],
-              "show_if": {"data_source": "dynamic"}
+              "show_if": { "data_source": "dynamic" }
             },
             "category_id": {
               "type": "number",
               "label": "Category ID",
               "default": null,
-              "show_if": {"source_type": "category"}
+              "show_if": { "source_type": "category" }
             },
             "collection_id": {
               "type": "number",
               "label": "Collection ID",
               "default": null,
-              "show_if": {"source_type": "collection"}
+              "show_if": { "source_type": "collection" }
             },
             "max_products": {
               "type": "number",
@@ -66,7 +66,7 @@
           "type": "property_group",
           "label": "Static Products",
           "columns": 1,
-          "show_if": {"data_source": "static"},
+          "show_if": { "data_source": "static" },
           "properties": {
             "products": {
               "type": "array",
@@ -74,14 +74,14 @@
               "full_width": true,
               "item_type": "object",
               "item_properties": {
-                "name": {"type": "string", "label": "Product Name"},
-                "description": {"type": "textarea", "label": "Description"},
-                "price": {"type": "string", "label": "Price"},
-                "original_price": {"type": "string", "label": "Original Price (for sale)"},
-                "image": {"type": "image", "label": "Product Image"},
-                "url": {"type": "url", "label": "Product URL", "link_selector": true},
-                "rating": {"type": "number", "label": "Rating (0-5)", "min": 0, "max": 5},
-                "in_stock": {"type": "boolean", "label": "In Stock", "default": true}
+                "name": { "type": "string", "label": "Product Name" },
+                "description": { "type": "textarea", "label": "Description" },
+                "price": { "type": "string", "label": "Price" },
+                "original_price": { "type": "string", "label": "Original Price (for sale)" },
+                "image": { "type": "image", "label": "Product Image" },
+                "url": { "type": "url", "label": "Product URL", "link_selector": true },
+                "rating": { "type": "number", "label": "Rating (0-5)", "min": 0, "max": 5 },
+                "in_stock": { "type": "boolean", "label": "In Stock", "default": true }
               }
             }
           }
@@ -103,9 +103,9 @@
               "label": "Image Position",
               "default": "left",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "right", "label": "Right"},
-                {"value": "alternating", "label": "Alternating"}
+                { "value": "left", "label": "Left" },
+                { "value": "right", "label": "Right" },
+                { "value": "alternating", "label": "Alternating" }
               ]
             }
           }
@@ -162,10 +162,10 @@
               "label": "Card Style",
               "default": "default",
               "options": [
-                {"value": "default", "label": "Default"},
-                {"value": "bordered", "label": "Bordered"},
-                {"value": "elevated", "label": "Elevated"},
-                {"value": "minimal", "label": "Minimal"}
+                { "value": "default", "label": "Default" },
+                { "value": "bordered", "label": "Bordered" },
+                { "value": "elevated", "label": "Elevated" },
+                { "value": "minimal", "label": "Minimal" }
               ]
             },
             "image_size": {
@@ -173,9 +173,9 @@
               "label": "Image Size",
               "default": "medium",
               "options": [
-                {"value": "small", "label": "Small (100px)"},
-                {"value": "medium", "label": "Medium (150px)"},
-                {"value": "large", "label": "Large (200px)"}
+                { "value": "small", "label": "Small (100px)" },
+                { "value": "medium", "label": "Medium (150px)" },
+                { "value": "large", "label": "Large (200px)" }
               ]
             },
             "divider_style": {
@@ -183,10 +183,10 @@
               "label": "Divider Style",
               "default": "line",
               "options": [
-                {"value": "none", "label": "None"},
-                {"value": "line", "label": "Line"},
-                {"value": "dashed", "label": "Dashed"},
-                {"value": "dotted", "label": "Dotted"}
+                { "value": "none", "label": "None" },
+                { "value": "line", "label": "Line" },
+                { "value": "dashed", "label": "Dashed" },
+                { "value": "dotted", "label": "Dotted" }
               ]
             }
           }
@@ -231,14 +231,14 @@
               "type": "link_selector",
               "label": "View All URL",
               "default": "/products/",
-              "show_if": {"show_view_all": true}
+              "show_if": { "show_view_all": true }
             },
             "view_all_text": {
               "type": "string",
               "label": "View All Text",
               "default": "View All Products",
               "translatable": true,
-              "show_if": {"show_view_all": true}
+              "show_if": { "show_view_all": true }
             }
           }
         }
@@ -246,35 +246,63 @@
     }
   },
   "properties": {
-    "data_source": {"type": "select", "label": "Data Source", "default": "dynamic"},
-    "source_type": {"type": "select", "label": "Product Source", "default": "featured"},
-    "category_id": {"type": "number", "label": "Category ID", "default": null},
-    "collection_id": {"type": "number", "label": "Collection ID", "default": null},
-    "max_products": {"type": "number", "label": "Maximum Products", "default": 5, "min": 1, "max": 20},
-    "products": {"type": "array", "label": "Static Products", "item_type": "object"},
-    "image_position": {"type": "select", "label": "Image Position", "default": "left"},
-    "show_description": {"type": "boolean", "label": "Show Description", "default": true},
-    "show_rating": {"type": "boolean", "label": "Show Rating", "default": true},
-    "show_stock_status": {"type": "boolean", "label": "Show Stock Status", "default": true},
-    "show_add_to_cart": {"type": "boolean", "label": "Show Add to Cart", "default": true},
-    "show_wishlist": {"type": "boolean", "label": "Show Wishlist Button", "default": false},
-    "show_compare": {"type": "boolean", "label": "Show Compare Button", "default": false},
-    "card_style": {"type": "select", "label": "Card Style", "default": "default"},
-    "image_size": {"type": "select", "label": "Image Size", "default": "medium"},
-    "divider_style": {"type": "select", "label": "Divider Style", "default": "line"},
-    "title": {"type": "string", "label": "Section Title", "default": "", "translatable": true},
-    "subtitle": {"type": "string", "label": "Section Subtitle", "default": "", "translatable": true},
-    "show_view_all": {"type": "boolean", "label": "Show View All Link", "default": false},
-    "view_all_url": {"type": "link_selector", "label": "View All URL", "default": "/products/"},
-    "view_all_text": {"type": "string", "label": "View All Text", "default": "View All Products", "translatable": true}
+    "data_source": { "type": "select", "label": "Data Source", "default": "dynamic" },
+    "source_type": { "type": "select", "label": "Product Source", "default": "featured" },
+    "category_id": { "type": "number", "label": "Category ID", "default": null },
+    "collection_id": { "type": "number", "label": "Collection ID", "default": null },
+    "max_products": {
+      "type": "number",
+      "label": "Maximum Products",
+      "default": 5,
+      "min": 1,
+      "max": 20
+    },
+    "products": { "type": "array", "label": "Static Products", "item_type": "object" },
+    "image_position": { "type": "select", "label": "Image Position", "default": "left" },
+    "show_description": { "type": "boolean", "label": "Show Description", "default": true },
+    "show_rating": { "type": "boolean", "label": "Show Rating", "default": true },
+    "show_stock_status": { "type": "boolean", "label": "Show Stock Status", "default": true },
+    "show_add_to_cart": { "type": "boolean", "label": "Show Add to Cart", "default": true },
+    "show_wishlist": { "type": "boolean", "label": "Show Wishlist Button", "default": false },
+    "show_compare": { "type": "boolean", "label": "Show Compare Button", "default": false },
+    "card_style": { "type": "select", "label": "Card Style", "default": "default" },
+    "image_size": { "type": "select", "label": "Image Size", "default": "medium" },
+    "divider_style": { "type": "select", "label": "Divider Style", "default": "line" },
+    "title": { "type": "string", "label": "Section Title", "default": "", "translatable": true },
+    "subtitle": {
+      "type": "string",
+      "label": "Section Subtitle",
+      "default": "",
+      "translatable": true
+    },
+    "show_view_all": { "type": "boolean", "label": "Show View All Link", "default": false },
+    "view_all_url": { "type": "link_selector", "label": "View All URL", "default": "/products/" },
+    "view_all_text": {
+      "type": "string",
+      "label": "View All Text",
+      "default": "View All Products",
+      "translatable": true
+    }
   },
   "translations": {
-    "en": {"name": "Product List", "description": "Display products in a detailed list layout"},
-    "es": {"name": "Lista de Productos", "description": "Mostrar productos en un diseño de lista detallada"},
-    "fr": {"name": "Liste de Produits", "description": "Afficher les produits dans une mise en page liste détaillée"},
-    "de": {"name": "Produktliste", "description": "Produkte in einem detaillierten Listenlayout anzeigen"},
-    "pt": {"name": "Lista de Produtos", "description": "Exibir produtos em um layout de lista detalhada"},
-    "zh-hans": {"name": "产品列表", "description": "以详细列表布局显示产品"},
-    "ja": {"name": "商品リスト", "description": "詳細なリストレイアウトで商品を表示"}
+    "en": { "name": "Product List", "description": "Display products in a detailed list layout" },
+    "es": {
+      "name": "Lista de Productos",
+      "description": "Mostrar productos en un diseño de lista detallada"
+    },
+    "fr": {
+      "name": "Liste de Produits",
+      "description": "Afficher les produits dans une mise en page liste détaillée"
+    },
+    "de": {
+      "name": "Produktliste",
+      "description": "Produkte in einem detaillierten Listenlayout anzeigen"
+    },
+    "pt": {
+      "name": "Lista de Produtos",
+      "description": "Exibir produtos em um layout de lista detalhada"
+    },
+    "zh-hans": { "name": "产品列表", "description": "以详细列表布局显示产品" },
+    "ja": { "name": "商品リスト", "description": "詳細なリストレイアウトで商品を表示" }
   }
 }

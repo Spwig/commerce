@@ -4,15 +4,17 @@ Celery tasks for webhook delivery.
 This module provides async tasks for delivering webhooks with
 retry logic and exponential backoff.
 """
-import hmac
+
 import hashlib
+import hmac
 import json
-import time
 import logging
+import time
+from datetime import timedelta
+
 import requests
 from celery import shared_task
 from django.utils import timezone
-from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +36,7 @@ def generate_signature(secret: str, timestamp: int, payload: str) -> str:
     """
     signature_payload = f"{timestamp}.{payload}"
     return hmac.new(
-        secret.encode('utf-8'),
-        signature_payload.encode('utf-8'),
-        hashlib.sha256
+        secret.encode("utf-8"), signature_payload.encode("utf-8"), hashlib.sha256
     ).hexdigest()
 
 
@@ -60,7 +60,7 @@ def calculate_retry_delay(attempt: int, base_delay: int = 60, max_delay: int = 3
 
 @shared_task(
     bind=True,
-    name='webhooks.deliver_webhook',
+    name="webhooks.deliver_webhook",
     max_retries=5,
     default_retry_delay=60,
     acks_late=True,
@@ -87,7 +87,7 @@ def deliver_webhook(self, delivery_id: str):
     from .models import WebhookDelivery
 
     try:
-        delivery = WebhookDelivery.objects.select_related('endpoint').get(id=delivery_id)
+        delivery = WebhookDelivery.objects.select_related("endpoint").get(id=delivery_id)
     except WebhookDelivery.DoesNotExist:
         logger.error(f"WebhookDelivery {delivery_id} not found")
         return
@@ -99,14 +99,16 @@ def deliver_webhook(self, delivery_id: str):
         logger.info(f"Webhook endpoint {endpoint.id} is inactive, skipping delivery {delivery_id}")
         delivery.status = WebhookDelivery.Status.FAILED
         delivery.error_message = "Endpoint is inactive"
-        delivery.save(update_fields=['status', 'error_message'])
+        delivery.save(update_fields=["status", "error_message"])
         return
 
     if endpoint.is_disabled_by_failures:
-        logger.info(f"Webhook endpoint {endpoint.id} is disabled due to failures, skipping delivery {delivery_id}")
+        logger.info(
+            f"Webhook endpoint {endpoint.id} is disabled due to failures, skipping delivery {delivery_id}"
+        )
         delivery.status = WebhookDelivery.Status.FAILED
         delivery.error_message = "Endpoint is disabled due to consecutive failures"
-        delivery.save(update_fields=['status', 'error_message'])
+        delivery.save(update_fields=["status", "error_message"])
         return
 
     # Prepare payload
@@ -116,7 +118,7 @@ def deliver_webhook(self, delivery_id: str):
         logger.error(f"Failed to serialize payload for delivery {delivery_id}: {e}")
         delivery.status = WebhookDelivery.Status.FAILED
         delivery.error_message = f"Failed to serialize payload: {e}"
-        delivery.save(update_fields=['status', 'error_message'])
+        delivery.save(update_fields=["status", "error_message"])
         return
 
     # Generate signature
@@ -125,18 +127,18 @@ def deliver_webhook(self, delivery_id: str):
 
     # Prepare headers
     headers = {
-        'Content-Type': 'application/json; charset=utf-8',
-        'X-Spwig-Signature': f"t={timestamp},v1={signature}",
-        'X-Spwig-Event': delivery.event_type,
-        'X-Spwig-Delivery-Id': str(delivery.id),
-        'X-Spwig-Timestamp': str(timestamp),
-        'User-Agent': 'Spwig-Webhooks/1.0',
+        "Content-Type": "application/json; charset=utf-8",
+        "X-Spwig-Signature": f"t={timestamp},v1={signature}",
+        "X-Spwig-Event": delivery.event_type,
+        "X-Spwig-Delivery-Id": str(delivery.id),
+        "X-Spwig-Timestamp": str(timestamp),
+        "User-Agent": "Spwig-Webhooks/1.0",
     }
 
     # Increment attempt count
     delivery.attempt_count += 1
     delivery.status = WebhookDelivery.Status.RETRYING
-    delivery.save(update_fields=['attempt_count', 'status'])
+    delivery.save(update_fields=["attempt_count", "status"])
 
     # Send request
     start_time = time.time()
@@ -146,11 +148,13 @@ def deliver_webhook(self, delivery_id: str):
     response_headers = {}
 
     try:
-        logger.info(f"Delivering webhook {delivery_id} to {endpoint.url} (attempt {delivery.attempt_count})")
+        logger.info(
+            f"Delivering webhook {delivery_id} to {endpoint.url} (attempt {delivery.attempt_count})"
+        )
 
         response = requests.post(
             endpoint.url,
-            data=payload_json.encode('utf-8'),
+            data=payload_json.encode("utf-8"),
             headers=headers,
             timeout=endpoint.timeout_seconds,
             allow_redirects=False,  # Don't follow redirects for security
@@ -158,7 +162,7 @@ def deliver_webhook(self, delivery_id: str):
 
         response_time_ms = int((time.time() - start_time) * 1000)
         response_code = response.status_code
-        response_body = response.text[:10000] if response.text else ''  # Truncate large responses
+        response_body = response.text[:10000] if response.text else ""  # Truncate large responses
         response_headers = dict(response.headers)
 
         # Check for success (2xx status codes)
@@ -180,13 +184,18 @@ def deliver_webhook(self, delivery_id: str):
         logger.warning(f"Webhook {delivery_id} failed: {error_msg}")
         raise requests.exceptions.HTTPError(error_msg, response=response)
 
-    except requests.exceptions.Timeout as e:
+    except requests.exceptions.Timeout:
         response_time_ms = int((time.time() - start_time) * 1000)
         error_msg = f"Request timed out after {endpoint.timeout_seconds}s"
         logger.warning(f"Webhook {delivery_id} timed out: {error_msg}")
         _handle_delivery_failure(
-            self, delivery, error_msg, response_code, response_body,
-            response_time_ms, response_headers
+            self,
+            delivery,
+            error_msg,
+            response_code,
+            response_body,
+            response_time_ms,
+            response_headers,
         )
         raise  # Let Celery handle retry
 
@@ -195,8 +204,13 @@ def deliver_webhook(self, delivery_id: str):
         error_msg = f"Connection error: {str(e)}"
         logger.warning(f"Webhook {delivery_id} connection error: {error_msg}")
         _handle_delivery_failure(
-            self, delivery, error_msg, response_code, response_body,
-            response_time_ms, response_headers
+            self,
+            delivery,
+            error_msg,
+            response_code,
+            response_body,
+            response_time_ms,
+            response_headers,
         )
         raise  # Let Celery handle retry
 
@@ -204,8 +218,13 @@ def deliver_webhook(self, delivery_id: str):
         response_time_ms = int((time.time() - start_time) * 1000)
         error_msg = str(e)
         _handle_delivery_failure(
-            self, delivery, error_msg, response_code, response_body,
-            response_time_ms, response_headers
+            self,
+            delivery,
+            error_msg,
+            response_code,
+            response_body,
+            response_time_ms,
+            response_headers,
         )
 
         # Only retry for certain status codes (server errors, rate limits)
@@ -214,7 +233,7 @@ def deliver_webhook(self, delivery_id: str):
         else:
             # Client errors (4xx except 429) - don't retry
             delivery.status = WebhookDelivery.Status.FAILED
-            delivery.save(update_fields=['status'])
+            delivery.save(update_fields=["status"])
             return
 
     except requests.exceptions.RequestException as e:
@@ -222,14 +241,26 @@ def deliver_webhook(self, delivery_id: str):
         error_msg = f"Request error: {str(e)}"
         logger.error(f"Webhook {delivery_id} request error: {error_msg}")
         _handle_delivery_failure(
-            self, delivery, error_msg, response_code, response_body,
-            response_time_ms, response_headers
+            self,
+            delivery,
+            error_msg,
+            response_code,
+            response_body,
+            response_time_ms,
+            response_headers,
         )
         raise  # Let Celery handle retry
 
 
-def _handle_delivery_failure(task, delivery, error_message, response_code=None,
-                            response_body=None, response_time_ms=None, response_headers=None):
+def _handle_delivery_failure(
+    task,
+    delivery,
+    error_message,
+    response_code=None,
+    response_body=None,
+    response_time_ms=None,
+    response_headers=None,
+):
     """
     Handle a delivery failure by updating the delivery record.
 
@@ -269,12 +300,11 @@ def _handle_delivery_failure(task, delivery, error_message, response_code=None,
         )
     else:
         logger.warning(
-            f"Webhook delivery {delivery.id} failed permanently "
-            f"after {current_attempt} attempts"
+            f"Webhook delivery {delivery.id} failed permanently after {current_attempt} attempts"
         )
 
 
-@shared_task(name='webhooks.send_test_webhook')
+@shared_task(name="webhooks.send_test_webhook")
 def send_test_webhook(endpoint_id: str):
     """
     Send a test webhook to verify endpoint configuration.
@@ -290,20 +320,17 @@ def send_test_webhook(endpoint_id: str):
     try:
         endpoint = WebhookEndpoint.objects.get(id=endpoint_id)
     except WebhookEndpoint.DoesNotExist:
-        return {
-            'success': False,
-            'error': f'Endpoint {endpoint_id} not found'
-        }
+        return {"success": False, "error": f"Endpoint {endpoint_id} not found"}
 
     # Create test payload
     test_payload = {
-        'event': 'test.webhook',
-        'data': {
-            'message': 'This is a test webhook from Spwig',
-            'timestamp': timezone.now().isoformat(),
-            'endpoint_id': str(endpoint.id),
-            'endpoint_name': endpoint.name,
-        }
+        "event": "test.webhook",
+        "data": {
+            "message": "This is a test webhook from Spwig",
+            "timestamp": timezone.now().isoformat(),
+            "endpoint_id": str(endpoint.id),
+            "endpoint_name": endpoint.name,
+        },
     }
 
     payload_json = json.dumps(test_payload, default=str, ensure_ascii=False)
@@ -311,12 +338,12 @@ def send_test_webhook(endpoint_id: str):
     signature = generate_signature(endpoint.secret, timestamp, payload_json)
 
     headers = {
-        'Content-Type': 'application/json; charset=utf-8',
-        'X-Spwig-Signature': f"t={timestamp},v1={signature}",
-        'X-Spwig-Event': 'test.webhook',
-        'X-Spwig-Test': 'true',
-        'X-Spwig-Timestamp': str(timestamp),
-        'User-Agent': 'Spwig-Webhooks/1.0',
+        "Content-Type": "application/json; charset=utf-8",
+        "X-Spwig-Signature": f"t={timestamp},v1={signature}",
+        "X-Spwig-Event": "test.webhook",
+        "X-Spwig-Test": "true",
+        "X-Spwig-Timestamp": str(timestamp),
+        "User-Agent": "Spwig-Webhooks/1.0",
     }
 
     start_time = time.time()
@@ -324,7 +351,7 @@ def send_test_webhook(endpoint_id: str):
     try:
         response = requests.post(
             endpoint.url,
-            data=payload_json.encode('utf-8'),
+            data=payload_json.encode("utf-8"),
             headers=headers,
             timeout=endpoint.timeout_seconds,
             allow_redirects=False,
@@ -333,33 +360,33 @@ def send_test_webhook(endpoint_id: str):
         response_time_ms = int((time.time() - start_time) * 1000)
 
         return {
-            'success': 200 <= response.status_code < 300,
-            'status_code': response.status_code,
-            'response_time_ms': response_time_ms,
-            'response_body': response.text[:1000] if response.text else '',
+            "success": 200 <= response.status_code < 300,
+            "status_code": response.status_code,
+            "response_time_ms": response_time_ms,
+            "response_body": response.text[:1000] if response.text else "",
         }
 
     except requests.exceptions.Timeout:
         return {
-            'success': False,
-            'error': f'Request timed out after {endpoint.timeout_seconds}s',
-            'response_time_ms': int((time.time() - start_time) * 1000),
+            "success": False,
+            "error": f"Request timed out after {endpoint.timeout_seconds}s",
+            "response_time_ms": int((time.time() - start_time) * 1000),
         }
 
     except requests.exceptions.ConnectionError as e:
         return {
-            'success': False,
-            'error': f'Connection error: {str(e)}',
+            "success": False,
+            "error": f"Connection error: {str(e)}",
         }
 
     except requests.exceptions.RequestException as e:
         return {
-            'success': False,
-            'error': f'Request error: {str(e)}',
+            "success": False,
+            "error": f"Request error: {str(e)}",
         }
 
 
-@shared_task(name='webhooks.retry_failed_deliveries')
+@shared_task(name="webhooks.retry_failed_deliveries")
 def retry_failed_deliveries():
     """
     Retry failed webhook deliveries that are due for retry.
@@ -373,7 +400,7 @@ def retry_failed_deliveries():
     due_deliveries = WebhookDelivery.objects.filter(
         status=WebhookDelivery.Status.RETRYING,
         next_retry_at__lte=timezone.now(),
-    ).select_related('endpoint')
+    ).select_related("endpoint")
 
     count = 0
     for delivery in due_deliveries:
@@ -387,7 +414,7 @@ def retry_failed_deliveries():
     return count
 
 
-@shared_task(name='webhooks.cleanup_old_deliveries')
+@shared_task(name="webhooks.cleanup_old_deliveries")
 def cleanup_old_deliveries(days: int = 30):
     """
     Clean up old webhook delivery records.

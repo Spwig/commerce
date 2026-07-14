@@ -3,6 +3,7 @@ DRF serializers for custom fields.
 
 CustomFieldsSerializerMixin - add to any model serializer to include custom fields
 """
+
 from rest_framework import serializers
 
 from .models import CustomFieldDefinition, CustomFieldGroup
@@ -12,22 +13,31 @@ from .validators import validate_custom_field_value
 class CustomFieldGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomFieldGroup
-        fields = ['id', 'name', 'slug', 'sort_order', 'show_on_storefront']
+        fields = ["id", "name", "slug", "sort_order", "show_on_storefront"]
 
 
 class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
-    group_name = serializers.CharField(source='group.name', read_only=True)
-    field_type_display = serializers.CharField(source='get_field_type_display', read_only=True)
+    group_name = serializers.CharField(source="group.name", read_only=True)
+    field_type_display = serializers.CharField(source="get_field_type_display", read_only=True)
     choices = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomFieldDefinition
         fields = [
-            'id', 'name', 'slug', 'field_type', 'field_type_display',
-            'help_text_value', 'default_value', 'validation_config',
-            'is_required', 'show_on_storefront', 'is_translatable',
-            'sort_order', 'group_name',
-            'choices',
+            "id",
+            "name",
+            "slug",
+            "field_type",
+            "field_type_display",
+            "help_text_value",
+            "default_value",
+            "validation_config",
+            "is_required",
+            "show_on_storefront",
+            "is_translatable",
+            "sort_order",
+            "group_name",
+            "choices",
         ]
 
     def get_choices(self, obj):
@@ -49,8 +59,8 @@ class CustomFieldsSerializerMixin:
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if hasattr(instance, 'custom_fields') and 'custom_fields' not in data:
-            data['custom_fields'] = instance.custom_fields or {}
+        if hasattr(instance, "custom_fields") and "custom_fields" not in data:
+            data["custom_fields"] = instance.custom_fields or {}
         return data
 
     def validate_custom_fields(self, value):

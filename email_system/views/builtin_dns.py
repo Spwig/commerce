@@ -4,14 +4,15 @@ DNS Configuration View for Built-in SMTP Server
 Reuses the DNSAssistant from Phase 9 to provide DNS validation
 and configuration guidance for the built-in SMTP server.
 """
-import socket
+
 import logging
-from typing import Optional
-from django.shortcuts import render, get_object_or_404
+import socket
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.sites.models import Site
-from django.utils.translation import gettext as _
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from email_system.models import EmailAccount
@@ -22,7 +23,7 @@ from email_system.utils.domain import extract_domain
 logger = logging.getLogger(__name__)
 
 
-def get_server_ip() -> Optional[str]:
+def get_server_ip() -> str | None:
     """
     Auto-detect the server's public IP address.
 
@@ -37,7 +38,7 @@ def get_server_ip() -> Optional[str]:
         ip_address = socket.gethostbyname(hostname)
 
         # If it's localhost, try another method
-        if ip_address.startswith('127.'):
+        if ip_address.startswith("127."):
             # Connect to external server to get public IP
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(("8.8.8.8", 80))
@@ -51,7 +52,7 @@ def get_server_ip() -> Optional[str]:
         return None
 
 
-def generate_spf_record(domain: str, server_ip: Optional[str] = None) -> str:
+def generate_spf_record(domain: str, server_ip: str | None = None) -> str:
     """
     Generate recommended SPF record for the domain.
 
@@ -68,7 +69,7 @@ def generate_spf_record(domain: str, server_ip: Optional[str] = None) -> str:
         return "v=spf1 a mx ~all"
 
 
-def generate_dmarc_record(domain: str, policy: str = 'quarantine') -> str:
+def generate_dmarc_record(domain: str, policy: str = "quarantine") -> str:
     """
     Generate recommended DMARC record.
 
@@ -80,7 +81,7 @@ def generate_dmarc_record(domain: str, policy: str = 'quarantine') -> str:
         DMARC record value
     """
     # Get site for admin email
-    site = Site.objects.get_current()
+    Site.objects.get_current()
     admin_email = f"postmaster@{domain}"
 
     return f"v=DMARC1; p={policy}; rua=mailto:{admin_email}; ruf=mailto:{admin_email}; fo=1"
@@ -88,7 +89,7 @@ def generate_dmarc_record(domain: str, policy: str = 'quarantine') -> str:
 
 @staff_member_required
 @require_http_methods(["GET", "POST"])
-def builtin_smtp_dns_config(request, account_id: Optional[int] = None):
+def builtin_smtp_dns_config(request, account_id: int | None = None):
     """
     DNS configuration view for built-in SMTP server.
 
@@ -101,8 +102,7 @@ def builtin_smtp_dns_config(request, account_id: Optional[int] = None):
     else:
         # Get default built-in account
         account = EmailAccount.objects.filter(
-            component__component_type='email_provider',
-            component__key='builtin_smtp'
+            component__component_type="email_provider", component__key="builtin_smtp"
         ).first()
 
     # Extract domain from account or site
@@ -113,8 +113,8 @@ def builtin_smtp_dns_config(request, account_id: Optional[int] = None):
         domain = site.domain
 
     # Handle domain override from form
-    if request.method == 'POST':
-        domain_override = request.POST.get('domain', '').strip()
+    if request.method == "POST":
+        domain_override = request.POST.get("domain", "").strip()
         if domain_override:
             domain = domain_override
 
@@ -122,10 +122,10 @@ def builtin_smtp_dns_config(request, account_id: Optional[int] = None):
     server_ip = get_server_ip()
 
     # Get DKIM selector from account or use default
-    dkim_selector = 'mail'
+    dkim_selector = "mail"
     if account:
         credentials = account.get_credentials() or {}
-        dkim_selector = credentials.get('dkim_selector', 'mail')
+        dkim_selector = credentials.get("dkim_selector", "mail")
 
     # Initialize DKIM handler
     dkim_handler = DKIMHandler(domain=domain, selector=dkim_selector)
@@ -147,54 +147,50 @@ def builtin_smtp_dns_config(request, account_id: Optional[int] = None):
 
     # Check if email domain differs from site domain
     site = Site.objects.get_current()
-    email_domain_differs = (domain != site.domain)
+    email_domain_differs = domain != site.domain
 
     # Prepare context
     context = {
-        'account': account,
-        'domain': domain,
-        'server_ip': server_ip,
-        'dkim_selector': dkim_selector,
-        'dkim_public_key': dkim_public_key,
-        'dkim_dns_record': dkim_dns_record,
-        'dkim_dns_hostname': dkim_dns_hostname,
-        'spf_recommendation': spf_recommendation,
-        'dmarc_recommendation': dmarc_recommendation,
-        'dns_results': dns_results,
-        'email_domain_differs': email_domain_differs,
-        'site_domain': site.domain,
-
+        "account": account,
+        "domain": domain,
+        "server_ip": server_ip,
+        "dkim_selector": dkim_selector,
+        "dkim_public_key": dkim_public_key,
+        "dkim_dns_record": dkim_dns_record,
+        "dkim_dns_hostname": dkim_dns_hostname,
+        "spf_recommendation": spf_recommendation,
+        "dmarc_recommendation": dmarc_recommendation,
+        "dns_results": dns_results,
+        "email_domain_differs": email_domain_differs,
+        "site_domain": site.domain,
         # DNS record hostnames for clarity
-        'spf_hostname': domain,
-        'dmarc_hostname': f"_dmarc.{domain}",
-
+        "spf_hostname": domain,
+        "dmarc_hostname": f"_dmarc.{domain}",
         # Status flags
-        'dkim_keys_exist': dkim_public_key is not None,
-        'dns_validated': dns_results['overall']['status'] == 'pass',
+        "dkim_keys_exist": dkim_public_key is not None,
+        "dns_validated": dns_results["overall"]["status"] == "pass",
     }
 
     # Render the dns_requirements.html template directly
     # This matches the pattern used by external providers
     import os
-    from django.template import Template, Context
+
     from django.conf import settings
+    from django.template import Context, Template
 
     # Load the built-in provider's dns_requirements.html
     template_path = os.path.join(
-        settings.BASE_DIR,
-        'email_system',
-        'providers',
-        'builtin',
-        'dns_requirements.html'
+        settings.BASE_DIR, "email_system", "providers", "builtin", "dns_requirements.html"
     )
 
-    with open(template_path, 'r') as f:
+    with open(template_path) as f:
         template_content = f.read()
 
     template = Template(template_content)
     rendered_html = template.render(Context(context))
 
     from django.http import HttpResponse
+
     return HttpResponse(rendered_html)
 
 
@@ -206,28 +202,19 @@ def validate_dns_ajax(request):
 
     Returns JSON with validation results.
     """
-    domain = request.POST.get('domain', '').strip()
-    dkim_selector = request.POST.get('dkim_selector', 'mail').strip()
+    domain = request.POST.get("domain", "").strip()
+    dkim_selector = request.POST.get("dkim_selector", "mail").strip()
 
     if not domain:
-        return JsonResponse({
-            'success': False,
-            'error': _('Domain is required')
-        }, status=400)
+        return JsonResponse({"success": False, "error": _("Domain is required")}, status=400)
 
     try:
         # Run DNS validation
         dns_assistant = DNSAssistant(domain=domain, dkim_selector=dkim_selector)
         results = dns_assistant.check_all()
 
-        return JsonResponse({
-            'success': True,
-            'results': results
-        })
+        return JsonResponse({"success": True, "results": results})
 
     except Exception as e:
         logger.error(f"DNS validation failed: {e}", exc_info=True)
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

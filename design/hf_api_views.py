@@ -8,56 +8,49 @@ API tag: Design (per rules_llm.md approved tag list)
 
 import json
 import logging
+import time
 from pathlib import Path
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
-import time
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
-from rest_framework import status
-
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
     extend_schema,
     extend_schema_view,
-    OpenApiResponse,
-    OpenApiParameter,
 )
-from django.utils.translation import gettext_lazy as _
+from rest_framework import status
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from core.api.api_descriptions import (
-    HEADER_NOT_FOUND,
     FOOTER_NOT_FOUND,
-    INVALID_REQUEST,
+    HEADER_NOT_FOUND,
 )
 
-from .header_footer_models import (
-    HeaderTemplate, FooterTemplate, Widget,
-    WidgetPlacement, Menu
-)
+from .header_footer_models import FooterTemplate, HeaderTemplate, Menu, Widget, WidgetPlacement
 from .hf_serializers import (
-    WidgetPlacementSerializer,
-    WidgetPlacementCreateSerializer,
-    WidgetPlacementUpdateSerializer,
-    ReorderPlacementsSerializer,
-    HeaderBuilderResponseSerializer,
-    HeaderBuilderUpdateSerializer,
-    HeaderDuplicateSerializer,
-    HeaderDuplicateResponseSerializer,
+    ClonePresetResponseSerializer,
+    ClonePresetSerializer,
+    ErrorResponseSerializer,
     FooterBuilderResponseSerializer,
     FooterBuilderUpdateSerializer,
-    WidgetLibraryItemSerializer,
-    HeaderPresetSerializer,
     FooterPresetSerializer,
-    ClonePresetSerializer,
-    ClonePresetResponseSerializer,
+    HeaderBuilderResponseSerializer,
+    HeaderBuilderUpdateSerializer,
+    HeaderDuplicateResponseSerializer,
+    HeaderDuplicateSerializer,
+    HeaderPresetSerializer,
     MenuListSerializer,
-    WidgetSchemasResponseSerializer,
+    ReorderPlacementsSerializer,
     SuccessResponseSerializer,
-    ErrorResponseSerializer,
+    WidgetPlacementCreateSerializer,
+    WidgetPlacementSerializer,
+    WidgetPlacementUpdateSerializer,
+    WidgetSchemasResponseSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -67,52 +60,52 @@ logger = logging.getLogger(__name__)
 # Header Builder API
 # ============================================================
 
+
 @extend_schema_view(
     get=extend_schema(
-        tags=['Design'],
-        summary=_('Get header template for builder'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Get header template for builder"),
+        description=_("""
         Load a header template with all widget placements for the visual builder.
 
         Returns the header configuration including zones and all placed widgets
         with their merged configurations (base config + overrides).
 
         **Authentication:** Admin user required
-        '''),
+        """),
         responses={
             200: OpenApiResponse(
                 response=HeaderBuilderResponseSerializer,
-                description=_('Header template data with widget placements')
+                description=_("Header template data with widget placements"),
             ),
             404: OpenApiResponse(description=HEADER_NOT_FOUND),
-        }
+        },
     ),
     post=extend_schema(
-        tags=['Design'],
-        summary=_('Update header template'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Update header template"),
+        description=_("""
         Update header template properties.
 
         Supports partial updates - only provided fields will be modified.
 
         **Authentication:** Admin user required
-        '''),
+        """),
         request=HeaderBuilderUpdateSerializer,
         responses={
             200: OpenApiResponse(
-                response=SuccessResponseSerializer,
-                description=_('Header updated successfully')
+                response=SuccessResponseSerializer, description=_("Header updated successfully")
             ),
             400: OpenApiResponse(
-                response=ErrorResponseSerializer,
-                description=_('Invalid request data')
+                response=ErrorResponseSerializer, description=_("Invalid request data")
             ),
             404: OpenApiResponse(description=HEADER_NOT_FOUND),
-        }
+        },
     ),
 )
 class HeaderBuilderAPIView(APIView):
     """Load and update header data for visual builder"""
+
     permission_classes = [IsAdminUser]
 
     def get(self, request, header_id):
@@ -121,9 +114,11 @@ class HeaderBuilderAPIView(APIView):
 
         # Always build zones from widget placements (source of truth)
         # This ensures changes made via placement API are reflected immediately
-        placements = header.widget_placements.filter(
-            is_active=True
-        ).select_related('widget').order_by('zone', 'order')
+        placements = (
+            header.widget_placements.filter(is_active=True)
+            .select_related("widget")
+            .order_by("zone", "order")
+        )
 
         zones_data = {}
         for placement in placements:
@@ -131,38 +126,44 @@ class HeaderBuilderAPIView(APIView):
             if zone not in zones_data:
                 zones_data[zone] = []
 
-            zones_data[zone].append({
-                'id': placement.id,
-                'widget_id': placement.widget.id,
-                'widget_name': placement.widget.name,
-                'widget_type': placement.widget.widget_type,
-                'order': placement.order,
-                'config': {**placement.widget.config, **placement.override_config},
-                'show_on_mobile': placement.widget.show_on_mobile,
-                'show_on_tablet': placement.widget.show_on_tablet,
-                'show_on_desktop': placement.widget.show_on_desktop,
-            })
+            zones_data[zone].append(
+                {
+                    "id": placement.id,
+                    "widget_id": placement.widget.id,
+                    "widget_name": placement.widget.name,
+                    "widget_type": placement.widget.widget_type,
+                    "order": placement.order,
+                    "config": {**placement.widget.config, **placement.override_config},
+                    "show_on_mobile": placement.widget.show_on_mobile,
+                    "show_on_tablet": placement.widget.show_on_tablet,
+                    "show_on_desktop": placement.widget.show_on_desktop,
+                }
+            )
 
-        return Response({
-            'header': {
-                'id': header.id,
-                'name': header.name,
-                'layout_type': header.layout_type,
-                'is_sticky': header.is_sticky,
-                'has_top_bar': header.has_top_bar,
-                'mobile_layout': header.mobile_layout,
-                'mobile_menu_position': header.mobile_menu_position,
-                'zones': zones_data,
-                'zone_overrides': header.zone_overrides,
-                'zone_layouts': header.zone_layouts,
-                # Notification zone
-                'enable_notification_zone': header.enable_notification_zone,
-                'notification_zone_config': header.get_notification_zone_config(),
-                # Draft/Publish status
-                'has_unpublished_changes': header.has_unpublished_changes,
-                'published_at': header.published_at.isoformat() if header.published_at else None,
+        return Response(
+            {
+                "header": {
+                    "id": header.id,
+                    "name": header.name,
+                    "layout_type": header.layout_type,
+                    "is_sticky": header.is_sticky,
+                    "has_top_bar": header.has_top_bar,
+                    "mobile_layout": header.mobile_layout,
+                    "mobile_menu_position": header.mobile_menu_position,
+                    "zones": zones_data,
+                    "zone_overrides": header.zone_overrides,
+                    "zone_layouts": header.zone_layouts,
+                    # Notification zone
+                    "enable_notification_zone": header.enable_notification_zone,
+                    "notification_zone_config": header.get_notification_zone_config(),
+                    # Draft/Publish status
+                    "has_unpublished_changes": header.has_unpublished_changes,
+                    "published_at": header.published_at.isoformat()
+                    if header.published_at
+                    else None,
+                }
             }
-        })
+        )
 
     def post(self, request, header_id):
         """Save header template as draft"""
@@ -172,56 +173,66 @@ class HeaderBuilderAPIView(APIView):
         draft_data = request.data
 
         # Also update the model fields for backwards compatibility
-        for field in ['name', 'layout_type', 'is_sticky', 'has_top_bar', 'mobile_layout', 'mobile_menu_position']:
+        for field in [
+            "name",
+            "layout_type",
+            "is_sticky",
+            "has_top_bar",
+            "mobile_layout",
+            "mobile_menu_position",
+        ]:
             if field in draft_data:
                 setattr(header, field, draft_data[field])
 
         # Update zone_overrides and zone_layouts if provided
-        if 'zone_overrides' in draft_data:
-            header.zone_overrides = draft_data['zone_overrides']
-        if 'zone_layouts' in draft_data:
-            header.zone_layouts = draft_data['zone_layouts']
+        if "zone_overrides" in draft_data:
+            header.zone_overrides = draft_data["zone_overrides"]
+        if "zone_layouts" in draft_data:
+            header.zone_layouts = draft_data["zone_layouts"]
 
         # Update notification zone settings if provided
-        if 'enable_notification_zone' in draft_data:
-            header.enable_notification_zone = draft_data['enable_notification_zone']
-        if 'notification_zone_config' in draft_data:
-            header.notification_zone_config = draft_data['notification_zone_config']
+        if "enable_notification_zone" in draft_data:
+            header.enable_notification_zone = draft_data["enable_notification_zone"]
+        if "notification_zone_config" in draft_data:
+            header.notification_zone_config = draft_data["notification_zone_config"]
 
         # Save as draft
         header.save_draft(draft_data)
 
-        return Response({
-            'status': 'draft_saved',
-            'message': 'Draft saved successfully',
-            'has_unpublished_changes': True
-        })
+        return Response(
+            {
+                "status": "draft_saved",
+                "message": "Draft saved successfully",
+                "has_unpublished_changes": True,
+            }
+        )
 
 
 # ============================================================
 # Header Publish/Discard API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Publish header template'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Publish header template"),
+    description=_("""
     Publish the current draft of a header template, making it live on the storefront.
 
     Copies draft_data to published_data and updates the published_at timestamp.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
         200: OpenApiResponse(
-            response=SuccessResponseSerializer,
-            description=_('Header published successfully')
+            response=SuccessResponseSerializer, description=_("Header published successfully")
         ),
         404: OpenApiResponse(description=HEADER_NOT_FOUND),
-    }
+    },
 )
 class HeaderPublishAPIView(APIView):
     """Publish header draft to make it live"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, header_id):
@@ -229,31 +240,32 @@ class HeaderPublishAPIView(APIView):
         header = get_object_or_404(HeaderTemplate, pk=header_id)
         header.publish(user=request.user)
 
-        return Response({
-            'status': 'published',
-            'message': 'Header published successfully',
-            'published_at': header.published_at.isoformat() if header.published_at else None,
-            'has_unpublished_changes': False
-        })
+        return Response(
+            {
+                "status": "published",
+                "message": "Header published successfully",
+                "published_at": header.published_at.isoformat() if header.published_at else None,
+                "has_unpublished_changes": False,
+            }
+        )
 
 
 @extend_schema(
-    tags=['Design'],
-    summary=_('Discard header draft changes'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Discard header draft changes"),
+    description=_("""
     Discard all unpublished changes and revert draft to the published state.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
-        200: OpenApiResponse(
-            description=_('Draft discarded, reverted to published state')
-        ),
+        200: OpenApiResponse(description=_("Draft discarded, reverted to published state")),
         404: OpenApiResponse(description=HEADER_NOT_FOUND),
-    }
+    },
 )
 class HeaderDiscardAPIView(APIView):
     """Discard header draft and revert to published state"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, header_id):
@@ -261,64 +273,66 @@ class HeaderDiscardAPIView(APIView):
         header = get_object_or_404(HeaderTemplate, pk=header_id)
         header.discard_draft()
 
-        return Response({
-            'status': 'discarded',
-            'message': 'Draft discarded, reverted to published state',
-            'draft_data': header.draft_data,
-            'has_unpublished_changes': False
-        })
+        return Response(
+            {
+                "status": "discarded",
+                "message": "Draft discarded, reverted to published state",
+                "draft_data": header.draft_data,
+                "has_unpublished_changes": False,
+            }
+        )
 
 
 # ============================================================
 # Footer Builder API
 # ============================================================
 
+
 @extend_schema_view(
     get=extend_schema(
-        tags=['Design'],
-        summary=_('Get footer template for builder'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Get footer template for builder"),
+        description=_("""
         Load a footer template with all widget placements for the visual builder.
 
         Returns the footer configuration including zones and all placed widgets
         with their merged configurations (base config + overrides).
 
         **Authentication:** Admin user required
-        '''),
+        """),
         responses={
             200: OpenApiResponse(
                 response=FooterBuilderResponseSerializer,
-                description=_('Footer template data with widget placements')
+                description=_("Footer template data with widget placements"),
             ),
             404: OpenApiResponse(description=FOOTER_NOT_FOUND),
-        }
+        },
     ),
     post=extend_schema(
-        tags=['Design'],
-        summary=_('Update footer template'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Update footer template"),
+        description=_("""
         Update footer template properties.
 
         Supports partial updates - only provided fields will be modified.
 
         **Authentication:** Admin user required
-        '''),
+        """),
         request=FooterBuilderUpdateSerializer,
         responses={
             200: OpenApiResponse(
-                response=SuccessResponseSerializer,
-                description=_('Footer updated successfully')
+                response=SuccessResponseSerializer, description=_("Footer updated successfully")
             ),
             400: OpenApiResponse(
-                response=ErrorResponseSerializer,
-                description=_('Invalid request data')
+                response=ErrorResponseSerializer, description=_("Invalid request data")
             ),
             404: OpenApiResponse(description=FOOTER_NOT_FOUND),
-        }
+        },
     ),
 )
 class FooterBuilderAPIView(APIView):
     """Load and update footer data for visual builder"""
+
     permission_classes = [IsAdminUser]
 
     def get(self, request, footer_id):
@@ -327,9 +341,11 @@ class FooterBuilderAPIView(APIView):
 
         # Always build zones from widget placements (source of truth)
         # This ensures changes made via placement API are reflected immediately
-        placements = footer.widget_placements.filter(
-            is_active=True
-        ).select_related('widget').order_by('zone', 'order')
+        placements = (
+            footer.widget_placements.filter(is_active=True)
+            .select_related("widget")
+            .order_by("zone", "order")
+        )
 
         zones_data = {}
         for placement in placements:
@@ -337,35 +353,41 @@ class FooterBuilderAPIView(APIView):
             if zone not in zones_data:
                 zones_data[zone] = []
 
-            zones_data[zone].append({
-                'id': placement.id,
-                'widget_id': placement.widget.id,
-                'widget_name': placement.widget.name,
-                'widget_type': placement.widget.widget_type,
-                'order': placement.order,
-                'config': {**placement.widget.config, **placement.override_config},
-                'show_on_mobile': placement.widget.show_on_mobile,
-                'show_on_tablet': placement.widget.show_on_tablet,
-                'show_on_desktop': placement.widget.show_on_desktop,
-            })
+            zones_data[zone].append(
+                {
+                    "id": placement.id,
+                    "widget_id": placement.widget.id,
+                    "widget_name": placement.widget.name,
+                    "widget_type": placement.widget.widget_type,
+                    "order": placement.order,
+                    "config": {**placement.widget.config, **placement.override_config},
+                    "show_on_mobile": placement.widget.show_on_mobile,
+                    "show_on_tablet": placement.widget.show_on_tablet,
+                    "show_on_desktop": placement.widget.show_on_desktop,
+                }
+            )
 
-        return Response({
-            'footer': {
-                'id': footer.id,
-                'name': footer.name,
-                'layout_type': footer.layout_type,
-                'column_count': footer.column_count,
-                'has_bottom_bar': footer.has_bottom_bar,
-                'background_color': footer.background_color,
-                'text_color': footer.text_color,
-                'zones': zones_data,
-                'zone_overrides': getattr(footer, 'zone_overrides', {}),
-                'zone_layouts': getattr(footer, 'zone_layouts', {}),
-                # Draft/Publish status
-                'has_unpublished_changes': footer.has_unpublished_changes,
-                'published_at': footer.published_at.isoformat() if footer.published_at else None,
+        return Response(
+            {
+                "footer": {
+                    "id": footer.id,
+                    "name": footer.name,
+                    "layout_type": footer.layout_type,
+                    "column_count": footer.column_count,
+                    "has_bottom_bar": footer.has_bottom_bar,
+                    "background_color": footer.background_color,
+                    "text_color": footer.text_color,
+                    "zones": zones_data,
+                    "zone_overrides": getattr(footer, "zone_overrides", {}),
+                    "zone_layouts": getattr(footer, "zone_layouts", {}),
+                    # Draft/Publish status
+                    "has_unpublished_changes": footer.has_unpublished_changes,
+                    "published_at": footer.published_at.isoformat()
+                    if footer.published_at
+                    else None,
+                }
             }
-        })
+        )
 
     def post(self, request, footer_id):
         """Save footer template as draft"""
@@ -375,45 +397,54 @@ class FooterBuilderAPIView(APIView):
         draft_data = request.data
 
         # Also update the model fields for backwards compatibility
-        for field in ['name', 'layout_type', 'column_count', 'has_bottom_bar',
-                      'background_color', 'text_color']:
+        for field in [
+            "name",
+            "layout_type",
+            "column_count",
+            "has_bottom_bar",
+            "background_color",
+            "text_color",
+        ]:
             if field in draft_data:
                 setattr(footer, field, draft_data[field])
 
         # Save as draft
         footer.save_draft(draft_data)
 
-        return Response({
-            'status': 'draft_saved',
-            'message': 'Draft saved successfully',
-            'has_unpublished_changes': True
-        })
+        return Response(
+            {
+                "status": "draft_saved",
+                "message": "Draft saved successfully",
+                "has_unpublished_changes": True,
+            }
+        )
 
 
 # ============================================================
 # Footer Publish/Discard API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Publish footer template'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Publish footer template"),
+    description=_("""
     Publish the current draft of a footer template, making it live on the storefront.
 
     Copies draft_data to published_data and updates the published_at timestamp.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
         200: OpenApiResponse(
-            response=SuccessResponseSerializer,
-            description=_('Footer published successfully')
+            response=SuccessResponseSerializer, description=_("Footer published successfully")
         ),
         404: OpenApiResponse(description=FOOTER_NOT_FOUND),
-    }
+    },
 )
 class FooterPublishAPIView(APIView):
     """Publish footer draft to make it live"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, footer_id):
@@ -421,31 +452,32 @@ class FooterPublishAPIView(APIView):
         footer = get_object_or_404(FooterTemplate, pk=footer_id)
         footer.publish(user=request.user)
 
-        return Response({
-            'status': 'published',
-            'message': 'Footer published successfully',
-            'published_at': footer.published_at.isoformat() if footer.published_at else None,
-            'has_unpublished_changes': False
-        })
+        return Response(
+            {
+                "status": "published",
+                "message": "Footer published successfully",
+                "published_at": footer.published_at.isoformat() if footer.published_at else None,
+                "has_unpublished_changes": False,
+            }
+        )
 
 
 @extend_schema(
-    tags=['Design'],
-    summary=_('Discard footer draft changes'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Discard footer draft changes"),
+    description=_("""
     Discard all unpublished changes and revert draft to the published state.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
-        200: OpenApiResponse(
-            description=_('Draft discarded, reverted to published state')
-        ),
+        200: OpenApiResponse(description=_("Draft discarded, reverted to published state")),
         404: OpenApiResponse(description=FOOTER_NOT_FOUND),
-    }
+    },
 )
 class FooterDiscardAPIView(APIView):
     """Discard footer draft and revert to published state"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, footer_id):
@@ -453,83 +485,82 @@ class FooterDiscardAPIView(APIView):
         footer = get_object_or_404(FooterTemplate, pk=footer_id)
         footer.discard_draft()
 
-        return Response({
-            'status': 'discarded',
-            'message': 'Draft discarded, reverted to published state',
-            'draft_data': footer.draft_data,
-            'has_unpublished_changes': False
-        })
+        return Response(
+            {
+                "status": "discarded",
+                "message": "Draft discarded, reverted to published state",
+                "draft_data": footer.draft_data,
+                "has_unpublished_changes": False,
+            }
+        )
 
 
 # ============================================================
 # Widget Placement API
 # ============================================================
 
+
 @extend_schema_view(
     post=extend_schema(
-        tags=['Design'],
-        summary=_('Create widget placement'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Create widget placement"),
+        description=_("""
         Add a widget to a header or footer zone.
 
         Must specify either `header_id` or `footer_id` (not both).
 
         **Authentication:** Admin user required
-        '''),
+        """),
         request=WidgetPlacementCreateSerializer,
         responses={
             201: OpenApiResponse(
-                response=WidgetPlacementSerializer,
-                description=_('Widget placement created')
+                response=WidgetPlacementSerializer, description=_("Widget placement created")
             ),
             400: OpenApiResponse(
-                response=ErrorResponseSerializer,
-                description=_('Invalid request data')
+                response=ErrorResponseSerializer, description=_("Invalid request data")
             ),
-        }
+        },
     ),
     put=extend_schema(
-        tags=['Design'],
-        summary=_('Update widget placement'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Update widget placement"),
+        description=_("""
         Update an existing widget placement.
 
         Supports partial updates for zone, order, is_active, and override_config.
 
         **Authentication:** Admin user required
-        '''),
+        """),
         request=WidgetPlacementUpdateSerializer,
         responses={
             200: OpenApiResponse(
-                response=SuccessResponseSerializer,
-                description=_('Placement updated')
+                response=SuccessResponseSerializer, description=_("Placement updated")
             ),
             400: OpenApiResponse(
-                response=ErrorResponseSerializer,
-                description=_('Invalid request data')
+                response=ErrorResponseSerializer, description=_("Invalid request data")
             ),
-            404: OpenApiResponse(description=_('Placement not found')),
-        }
+            404: OpenApiResponse(description=_("Placement not found")),
+        },
     ),
     delete=extend_schema(
-        tags=['Design'],
-        summary=_('Delete widget placement'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Delete widget placement"),
+        description=_("""
         Remove a widget from its zone.
 
         **Authentication:** Admin user required
-        '''),
+        """),
         responses={
             200: OpenApiResponse(
-                response=SuccessResponseSerializer,
-                description=_('Placement deleted')
+                response=SuccessResponseSerializer, description=_("Placement deleted")
             ),
-            404: OpenApiResponse(description=_('Placement not found')),
-        }
+            404: OpenApiResponse(description=_("Placement not found")),
+        },
     ),
 )
 class WidgetPlacementAPIView(APIView):
     """CRUD operations for widget placements"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request):
@@ -537,61 +568,55 @@ class WidgetPlacementAPIView(APIView):
         serializer = WidgetPlacementCreateSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(
-                {'error': serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
-        widget = get_object_or_404(Widget, pk=data['widget_id'])
+        widget = get_object_or_404(Widget, pk=data["widget_id"])
 
         placement = WidgetPlacement(
             widget=widget,
-            zone=data['zone'],
-            order=data.get('order', 0),
-            is_active=data.get('is_active', True),
-            override_config=data.get('override_config', {}),
+            zone=data["zone"],
+            order=data.get("order", 0),
+            is_active=data.get("is_active", True),
+            override_config=data.get("override_config", {}),
         )
 
         # Set header or footer
-        if data.get('header_id'):
-            placement.header_id = data['header_id']
+        if data.get("header_id"):
+            placement.header_id = data["header_id"]
         else:
-            placement.footer_id = data['footer_id']
+            placement.footer_id = data["footer_id"]
 
         placement.save()
 
-        return Response({
-            'placement': {
-                'id': placement.id,
-                'widget_id': placement.widget.id,
-                'widget_name': placement.widget.name,
-                'widget_type': placement.widget.widget_type,
-                'zone': placement.zone,
-                'order': placement.order,
-            }
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "placement": {
+                    "id": placement.id,
+                    "widget_id": placement.widget.id,
+                    "widget_name": placement.widget.name,
+                    "widget_type": placement.widget.widget_type,
+                    "zone": placement.zone,
+                    "order": placement.order,
+                }
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     def put(self, request, placement_id=None):
         """Update widget placement"""
         if not placement_id:
-            return Response(
-                {'error': 'placement_id required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "placement_id required"}, status=status.HTTP_400_BAD_REQUEST)
 
         placement = get_object_or_404(WidgetPlacement, pk=placement_id)
         serializer = WidgetPlacementUpdateSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(
-                {'error': serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
 
-        for field in ['zone', 'order', 'is_active', 'override_config']:
+        for field in ["zone", "order", "is_active", "override_config"]:
             if field in data:
                 setattr(placement, field, data[field])
 
@@ -599,58 +624,57 @@ class WidgetPlacementAPIView(APIView):
 
         # Update widget-level visibility fields if provided
         widget_visibility_changed = False
-        for field in ['show_on_mobile', 'show_on_tablet', 'show_on_desktop']:
+        for field in ["show_on_mobile", "show_on_tablet", "show_on_desktop"]:
             if field in request.data:
                 setattr(placement.widget, field, request.data[field])
                 widget_visibility_changed = True
         if widget_visibility_changed:
-            placement.widget.save(update_fields=['show_on_mobile', 'show_on_tablet', 'show_on_desktop'])
+            placement.widget.save(
+                update_fields=["show_on_mobile", "show_on_tablet", "show_on_desktop"]
+            )
 
-        return Response({'message': 'Placement updated'})
+        return Response({"message": "Placement updated"})
 
     def delete(self, request, placement_id=None):
         """Delete widget placement"""
         if not placement_id:
-            return Response(
-                {'error': 'placement_id required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "placement_id required"}, status=status.HTTP_400_BAD_REQUEST)
 
         placement = get_object_or_404(WidgetPlacement, pk=placement_id)
         placement.delete()
 
-        return Response({'message': 'Placement deleted'})
+        return Response({"message": "Placement deleted"})
 
 
 # ============================================================
 # Reorder Placements API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Reorder widget placements'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Reorder widget placements"),
+    description=_("""
     Update the order of multiple widget placements within a zone.
 
     Accepts a list of placement IDs with their new order values.
     All updates are performed atomically in a single transaction.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     request=ReorderPlacementsSerializer,
     responses={
         200: OpenApiResponse(
-            response=SuccessResponseSerializer,
-            description=_('Placements reordered')
+            response=SuccessResponseSerializer, description=_("Placements reordered")
         ),
         400: OpenApiResponse(
-            response=ErrorResponseSerializer,
-            description=_('Invalid request data')
+            response=ErrorResponseSerializer, description=_("Invalid request data")
         ),
-    }
+    },
 )
 class ReorderPlacementsAPIView(APIView):
     """Reorder widget placements within a zone"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request):
@@ -658,50 +682,45 @@ class ReorderPlacementsAPIView(APIView):
         serializer = ReorderPlacementsSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(
-                {'error': serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        placement_orders = serializer.validated_data.get('placements', [])
+        placement_orders = serializer.validated_data.get("placements", [])
 
         with transaction.atomic():
             for item in placement_orders:
-                WidgetPlacement.objects.filter(
-                    pk=item['id']
-                ).update(order=item['order'])
+                WidgetPlacement.objects.filter(pk=item["id"]).update(order=item["order"])
 
-        return Response({'message': 'Placements reordered'})
+        return Response({"message": "Placements reordered"})
 
 
 # ============================================================
 # Widget Library API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Get widget library'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Get widget library"),
+    description=_("""
     Get all available widgets for the builder's widget library panel.
 
     Returns widgets grouped by type (logo, menu, search, cart, etc.).
     Each widget includes its base configuration and visibility settings.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
-        200: OpenApiResponse(
-            description=_('Widgets grouped by type')
-        ),
-    }
+        200: OpenApiResponse(description=_("Widgets grouped by type")),
+    },
 )
 class WidgetLibraryAPIView(APIView):
     """Get available widgets for library panel"""
+
     permission_classes = [IsAdminUser]
 
     def get(self, request):
         """Return all active widgets grouped by type"""
-        widgets = Widget.objects.filter(is_active=True).order_by('widget_type', 'name')
+        widgets = Widget.objects.filter(is_active=True).order_by("widget_type", "name")
 
         # Group by widget type
         grouped = {}
@@ -710,28 +729,31 @@ class WidgetLibraryAPIView(APIView):
             if widget_type not in grouped:
                 grouped[widget_type] = []
 
-            grouped[widget_type].append({
-                'id': widget.id,
-                'name': widget.name,
-                'type': widget.widget_type,
-                'type_display': widget.get_widget_type_display(),
-                'config': widget.config,
-                'show_on_mobile': widget.show_on_mobile,
-                'show_on_tablet': widget.show_on_tablet,
-                'show_on_desktop': widget.show_on_desktop,
-            })
+            grouped[widget_type].append(
+                {
+                    "id": widget.id,
+                    "name": widget.name,
+                    "type": widget.widget_type,
+                    "type_display": widget.get_widget_type_display(),
+                    "config": widget.config,
+                    "show_on_mobile": widget.show_on_mobile,
+                    "show_on_tablet": widget.show_on_tablet,
+                    "show_on_desktop": widget.show_on_desktop,
+                }
+            )
 
-        return Response({'widgets': grouped})
+        return Response({"widgets": grouped})
 
 
 # ============================================================
 # Widget Schemas API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Get widget property schemas'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Get widget property schemas"),
+    description=_("""
     Get JSON schemas defining widget property panel configuration.
 
     Schemas are loaded from JSON files in `design/templates/design/widgets/`.
@@ -739,152 +761,154 @@ class WidgetLibraryAPIView(APIView):
     configuration panel in the visual builder.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
         200: OpenApiResponse(
-            response=WidgetSchemasResponseSerializer,
-            description=_('Widget schemas keyed by type')
+            response=WidgetSchemasResponseSerializer, description=_("Widget schemas keyed by type")
         ),
-    }
+    },
 )
 class WidgetSchemasAPIView(APIView):
     """Serve widget property schemas from JSON files"""
+
     permission_classes = [IsAdminUser]
 
     def get(self, request):
         """Return all widget schemas as JSON"""
         schemas = {}
-        widgets_dir = Path(__file__).parent / 'templates' / 'design' / 'widgets'
+        widgets_dir = Path(__file__).parent / "templates" / "design" / "widgets"
 
-        for json_file in widgets_dir.glob('*.json'):
+        for json_file in widgets_dir.glob("*.json"):
             try:
                 widget_type = json_file.stem  # e.g., "logo" from "logo.json"
-                with open(json_file, 'r', encoding='utf-8') as f:
+                with open(json_file, encoding="utf-8") as f:
                     schemas[widget_type] = json.load(f)
-            except (json.JSONDecodeError, IOError) as e:
+            except (OSError, json.JSONDecodeError) as e:
                 logger.error(f"Error loading widget schema {json_file}: {e}")
                 continue
 
-        return Response({'schemas': schemas})
+        return Response({"schemas": schemas})
 
 
 # ============================================================
 # Preset Gallery API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Get preset templates'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Get preset templates"),
+    description=_("""
     Get available preset templates for headers or footers.
 
     Presets are pre-configured templates that can be cloned to create
     new headers/footers with predefined layouts and widget configurations.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     parameters=[
         OpenApiParameter(
-            name='template_type',
+            name="template_type",
             location=OpenApiParameter.PATH,
             description=_('Type of template: "header" or "footer"'),
             required=True,
             type=str,
-            enum=['header', 'footer']
+            enum=["header", "footer"],
         )
     ],
     responses={
-        200: OpenApiResponse(description=_('List of preset templates')),
+        200: OpenApiResponse(description=_("List of preset templates")),
         400: OpenApiResponse(
-            response=ErrorResponseSerializer,
-            description=_('Invalid template_type')
+            response=ErrorResponseSerializer, description=_("Invalid template_type")
         ),
-    }
+    },
 )
 class PresetGalleryAPIView(APIView):
     """Get preset header/footer templates"""
+
     permission_classes = [IsAdminUser]
 
     def get(self, request, template_type):
         """Get presets for header or footer"""
-        if template_type == 'header':
+        if template_type == "header":
             presets = HeaderTemplate.objects.filter(is_preset=True, is_active=True)
             serializer = HeaderPresetSerializer(presets, many=True)
-        elif template_type == 'footer':
+        elif template_type == "footer":
             presets = FooterTemplate.objects.filter(is_preset=True, is_active=True)
             serializer = FooterPresetSerializer(presets, many=True)
         else:
             return Response(
-                {'error': 'Invalid template_type. Must be "header" or "footer"'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": 'Invalid template_type. Must be "header" or "footer"'},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return Response({'presets': serializer.data})
+        return Response({"presets": serializer.data})
 
 
 # ============================================================
 # Clone Preset API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Clone a preset template'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Clone a preset template"),
+    description=_("""
     Create a new header or footer by cloning a preset template.
 
     Copies all widget placements and configurations from the preset.
     The new template will not be marked as default or preset.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     parameters=[
         OpenApiParameter(
-            name='template_type',
+            name="template_type",
             location=OpenApiParameter.PATH,
             description=_('Type of template: "header" or "footer"'),
             required=True,
             type=str,
-            enum=['header', 'footer']
+            enum=["header", "footer"],
         ),
         OpenApiParameter(
-            name='preset_id',
+            name="preset_id",
             location=OpenApiParameter.PATH,
-            description=_('ID of the preset to clone'),
+            description=_("ID of the preset to clone"),
             required=True,
-            type=int
-        )
+            type=int,
+        ),
     ],
     request=ClonePresetSerializer,
     responses={
         201: OpenApiResponse(
             response=ClonePresetResponseSerializer,
-            description=_('New template created from preset')
+            description=_("New template created from preset"),
         ),
         400: OpenApiResponse(
-            response=ErrorResponseSerializer,
-            description=_('Invalid request or clone failed')
+            response=ErrorResponseSerializer, description=_("Invalid request or clone failed")
         ),
-        404: OpenApiResponse(description=_('Preset not found')),
-    }
+        404: OpenApiResponse(description=_("Preset not found")),
+    },
 )
 class ClonePresetAPIView(APIView):
     """Clone a preset template"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, template_type, preset_id):
         """Clone preset and return new template ID"""
         serializer = ClonePresetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        new_name = serializer.validated_data.get('name', 'Copy of Preset')
+        new_name = serializer.validated_data.get("name", "Copy of Preset")
 
-        if template_type == 'header':
+        if template_type == "header":
             return self._clone_header(request, preset_id, new_name)
-        elif template_type == 'footer':
+        elif template_type == "footer":
             return self._clone_footer(request, preset_id, new_name)
         else:
             return Response(
-                {'error': 'Invalid template_type. Must be "header" or "footer"'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": 'Invalid template_type. Must be "header" or "footer"'},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def _clone_header(self, request, preset_id, new_name):
@@ -892,7 +916,7 @@ class ClonePresetAPIView(APIView):
         preset = get_object_or_404(HeaderTemplate, pk=preset_id, is_preset=True)
 
         # Generate unique slug
-        base_slug = slugify(new_name) or 'header'
+        base_slug = slugify(new_name) or "header"
         unique_slug = f"{base_slug}-{int(time.time())}"
 
         # Clone the header
@@ -931,8 +955,7 @@ class ClonePresetAPIView(APIView):
             )
 
         return Response(
-            {'id': new_header.id, 'name': new_header.name},
-            status=status.HTTP_201_CREATED
+            {"id": new_header.id, "name": new_header.name}, status=status.HTTP_201_CREATED
         )
 
     def _clone_footer(self, request, preset_id, new_name):
@@ -940,7 +963,7 @@ class ClonePresetAPIView(APIView):
         preset = get_object_or_404(FooterTemplate, pk=preset_id, is_preset=True)
 
         # Generate unique slug
-        base_slug = slugify(new_name) or 'footer'
+        base_slug = slugify(new_name) or "footer"
         unique_slug = f"{base_slug}-{int(time.time())}"
 
         # Clone the footer
@@ -974,8 +997,7 @@ class ClonePresetAPIView(APIView):
             )
 
         return Response(
-            {'id': new_footer.id, 'name': new_footer.name},
-            status=status.HTTP_201_CREATED
+            {"id": new_footer.id, "name": new_footer.name}, status=status.HTTP_201_CREATED
         )
 
 
@@ -983,25 +1005,26 @@ class ClonePresetAPIView(APIView):
 # Menu List API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('List available menus'),
-    description=_('''
+    tags=["Design"],
+    summary=_("List available menus"),
+    description=_("""
     Get all active menus for widget configuration dropdowns.
 
     Used by the menu widget to select which menu to display.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
         200: OpenApiResponse(
-            response=MenuListSerializer(many=True),
-            description=_('List of active menus')
+            response=MenuListSerializer(many=True), description=_("List of active menus")
         ),
-    }
+    },
 )
 class MenuListAPIView(APIView):
     """List all menus for widget configuration dropdowns"""
+
     permission_classes = [IsAdminUser]
 
     def get(self, request):
@@ -1015,32 +1038,31 @@ class MenuListAPIView(APIView):
 # Header Management APIs
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Duplicate header template'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Duplicate header template"),
+    description=_("""
     Create a copy of an existing header template.
 
     Copies all settings and widget placements. The new header will not
     be marked as default or preset.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     request=HeaderDuplicateSerializer,
     responses={
         201: OpenApiResponse(
             response=HeaderDuplicateResponseSerializer,
-            description=_('Header duplicated successfully')
+            description=_("Header duplicated successfully"),
         ),
-        400: OpenApiResponse(
-            response=ErrorResponseSerializer,
-            description=_('Duplication failed')
-        ),
+        400: OpenApiResponse(response=ErrorResponseSerializer, description=_("Duplication failed")),
         404: OpenApiResponse(description=HEADER_NOT_FOUND),
-    }
+    },
 )
 class DuplicateHeaderAPIView(APIView):
     """Duplicate a header template with all widget placements"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, header_id):
@@ -1049,10 +1071,10 @@ class DuplicateHeaderAPIView(APIView):
 
         serializer = HeaderDuplicateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        new_name = serializer.validated_data.get('name', f'Copy of {header.name}')
+        new_name = serializer.validated_data.get("name", f"Copy of {header.name}")
 
         # Generate unique slug
-        base_slug = slugify(new_name) or 'header'
+        base_slug = slugify(new_name) or "header"
         unique_slug = f"{base_slug}-{int(time.time())}"
 
         # Clone the header
@@ -1091,17 +1113,20 @@ class DuplicateHeaderAPIView(APIView):
                 is_active=placement.is_active,
             )
 
-        return Response({
-            'id': new_header.id,
-            'name': new_header.name,
-            'message': f'Header "{header.name}" duplicated successfully as "{new_header.name}"'
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "id": new_header.id,
+                "name": new_header.name,
+                "message": f'Header "{header.name}" duplicated successfully as "{new_header.name}"',
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 @extend_schema(
-    tags=['Design'],
-    summary=_('Delete header template'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Delete header template"),
+    description=_("""
     Delete a header template after validation checks.
 
     Will fail if:
@@ -1111,21 +1136,20 @@ class DuplicateHeaderAPIView(APIView):
     Widget placements are deleted via cascade.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
         200: OpenApiResponse(
-            response=SuccessResponseSerializer,
-            description=_('Header deleted successfully')
+            response=SuccessResponseSerializer, description=_("Header deleted successfully")
         ),
         400: OpenApiResponse(
-            response=ErrorResponseSerializer,
-            description=_('Cannot delete (default or in use)')
+            response=ErrorResponseSerializer, description=_("Cannot delete (default or in use)")
         ),
         404: OpenApiResponse(description=HEADER_NOT_FOUND),
-    }
+    },
 )
 class DeleteHeaderAPIView(APIView):
     """Delete a header template with validation checks"""
+
     permission_classes = [IsAdminUser]
 
     def delete(self, request, header_id):
@@ -1134,54 +1158,58 @@ class DeleteHeaderAPIView(APIView):
 
         # Check if this is the default header
         if header.is_default:
-            return Response({
-                'error': 'cannot_delete_default',
-                'message': 'This is the default header. Please set another header as default before deleting this one.'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "error": "cannot_delete_default",
+                    "message": "This is the default header. Please set another header as default before deleting this one.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check if any pages are using this header
-        pages_using = list(header.pages.values_list('title', flat=True)[:10])
+        pages_using = list(header.pages.values_list("title", flat=True)[:10])
         page_count = header.pages.count()
 
         if page_count > 0:
             if page_count > 10:
-                pages_using.append(f'... and {page_count - 10} more')
+                pages_using.append(f"... and {page_count - 10} more")
 
-            return Response({
-                'error': 'header_in_use',
-                'message': f'This header is used by {page_count} page(s). Please assign a different header to these pages before deleting.',
-                'pages': pages_using
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "error": "header_in_use",
+                    "message": f"This header is used by {page_count} page(s). Please assign a different header to these pages before deleting.",
+                    "pages": pages_using,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Safe to delete
         header_name = header.name
         header.delete()
 
-        return Response({
-            'message': f'Header "{header_name}" has been deleted successfully.'
-        })
+        return Response({"message": f'Header "{header_name}" has been deleted successfully.'})
 
 
 @extend_schema(
-    tags=['Design'],
-    summary=_('Set default header'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Set default header"),
+    description=_("""
     Set a header template as the site default.
 
     The previously default header will be automatically unset.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     responses={
         200: OpenApiResponse(
-            response=SuccessResponseSerializer,
-            description=_('Header set as default')
+            response=SuccessResponseSerializer, description=_("Header set as default")
         ),
         404: OpenApiResponse(description=HEADER_NOT_FOUND),
-    }
+    },
 )
 class SetDefaultHeaderAPIView(APIView):
     """Set a header template as the site default"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, header_id):
@@ -1190,188 +1218,192 @@ class SetDefaultHeaderAPIView(APIView):
 
         # Check if already default
         if header.is_default:
-            return Response({
-                'message': f'"{header.name}" is already the default header.'
-            })
+            return Response({"message": f'"{header.name}" is already the default header.'})
 
         # Set as default (model's save() will clear other defaults)
         header.is_default = True
         header.save()
 
-        return Response({
-            'message': f'"{header.name}" is now the default header for your site.'
-        })
+        return Response({"message": f'"{header.name}" is now the default header for your site.'})
 
 
 # ============================================================
 # Site Logo API
 # ============================================================
 
+
 @extend_schema_view(
     get=extend_schema(
-        tags=['Design'],
-        summary=_('Get site logo for builder'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Get site logo for builder"),
+        description=_("""
         Get the current site logo URL and metadata for the header/footer builder.
 
         Used by the logo widget to display the site logo when "Use Site Logo" is enabled.
 
         **Authentication:** Admin user required
-        '''),
+        """),
         responses={
             200: OpenApiResponse(
-                description=_('Site logo data'),
+                description=_("Site logo data"),
                 response={
-                    'type': 'object',
-                    'properties': {
-                        'has_logo': {'type': 'boolean'},
-                        'logo_url': {'type': 'string', 'nullable': True},
-                        'logo_url_footer': {'type': 'string', 'nullable': True},
-                        'logo_url_original': {'type': 'string', 'nullable': True},
-                        'is_svg': {'type': 'boolean'},
-                        'asset_id': {'type': 'string', 'nullable': True},
+                    "type": "object",
+                    "properties": {
+                        "has_logo": {"type": "boolean"},
+                        "logo_url": {"type": "string", "nullable": True},
+                        "logo_url_footer": {"type": "string", "nullable": True},
+                        "logo_url_original": {"type": "string", "nullable": True},
+                        "is_svg": {"type": "boolean"},
+                        "asset_id": {"type": "string", "nullable": True},
                     },
-                }
+                },
             ),
-        }
+        },
     ),
     post=extend_schema(
-        tags=['Design'],
-        summary=_('Update site logo from widget'),
-        description=_('''
+        tags=["Design"],
+        summary=_("Update site logo from widget"),
+        description=_("""
         Update the site logo from a logo widget upload.
 
         When a merchant uploads a new logo in the header/footer builder logo widget,
         this endpoint allows syncing that logo to the site settings.
 
         **Authentication:** Admin user required
-        '''),
+        """),
         request={
-            'type': 'object',
-            'properties': {
-                'asset_id': {'type': 'string', 'description': 'Media asset UUID'},
+            "type": "object",
+            "properties": {
+                "asset_id": {"type": "string", "description": "Media asset UUID"},
             },
-            'required': ['asset_id'],
+            "required": ["asset_id"],
         },
         responses={
             200: OpenApiResponse(
-                response=SuccessResponseSerializer,
-                description=_('Site logo updated')
+                response=SuccessResponseSerializer, description=_("Site logo updated")
             ),
             400: OpenApiResponse(
-                response=ErrorResponseSerializer,
-                description=_('Missing asset_id')
+                response=ErrorResponseSerializer, description=_("Missing asset_id")
             ),
-            404: OpenApiResponse(description=_('Asset or settings not found')),
-        }
+            404: OpenApiResponse(description=_("Asset or settings not found")),
+        },
     ),
 )
 class SiteLogoAPIView(APIView):
     """API for site logo operations in the header/footer builder"""
+
     permission_classes = [IsAdminUser]
 
     def get(self, request):
         """Get current site logo URL and metadata"""
         from core.models import SiteSettings
+
         settings = SiteSettings.get_settings()
 
         if not settings or not settings.site_logo:
-            return Response({'logo_url': None, 'has_logo': False})
+            return Response({"logo_url": None, "has_logo": False})
 
-        return Response({
-            'has_logo': True,
-            'logo_url': settings.get_site_logo_url('header'),
-            'logo_url_footer': settings.get_site_logo_url('footer'),
-            'logo_url_original': settings.get_site_logo_url('original'),
-            'is_svg': settings.site_logo.mime_type == 'image/svg+xml',
-            'asset_id': str(settings.site_logo.id),
-        })
+        return Response(
+            {
+                "has_logo": True,
+                "logo_url": settings.get_site_logo_url("header"),
+                "logo_url_footer": settings.get_site_logo_url("footer"),
+                "logo_url_original": settings.get_site_logo_url("original"),
+                "is_svg": settings.site_logo.mime_type == "image/svg+xml",
+                "asset_id": str(settings.site_logo.id),
+            }
+        )
 
     def post(self, request):
         """Update site logo from widget (when custom logo is uploaded)"""
         from core.models import SiteSettings
         from media_library.models import MediaAsset
 
-        asset_id = request.data.get('asset_id')
+        asset_id = request.data.get("asset_id")
         if not asset_id:
-            return Response({'error': 'asset_id required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "asset_id required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             asset = MediaAsset.objects.get(id=asset_id)
         except MediaAsset.DoesNotExist:
-            return Response({'error': 'Asset not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
 
         settings = SiteSettings.get_settings()
         if not settings:
-            return Response({'error': 'Site settings not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Site settings not found"}, status=status.HTTP_404_NOT_FOUND)
 
         settings.site_logo = asset
         settings.save()
 
-        return Response({
-            'success': True,
-            'logo_url': settings.get_site_logo_url('header'),
-            'message': 'Site logo updated successfully',
-        })
+        return Response(
+            {
+                "success": True,
+                "logo_url": settings.get_site_logo_url("header"),
+                "message": "Site logo updated successfully",
+            }
+        )
 
 
 # ============================================================
 # Widget Preview API
 # ============================================================
 
+
 @extend_schema(
-    tags=['Design'],
-    summary=_('Render widget preview'),
-    description=_('''
+    tags=["Design"],
+    summary=_("Render widget preview"),
+    description=_("""
     Render a widget with given configuration for real-time preview in the builder.
 
     Uses the same Django templates as the storefront to ensure visual consistency.
     This ensures the preview always matches the actual appearance.
 
     **Authentication:** Admin user required
-    '''),
+    """),
     request={
-        'type': 'object',
-        'properties': {
-            'widget_type': {'type': 'string', 'description': 'Widget type (menu, logo, search, etc.)'},
-            'config': {'type': 'object', 'description': 'Widget configuration'},
+        "type": "object",
+        "properties": {
+            "widget_type": {
+                "type": "string",
+                "description": "Widget type (menu, logo, search, etc.)",
+            },
+            "config": {"type": "object", "description": "Widget configuration"},
         },
-        'required': ['widget_type'],
+        "required": ["widget_type"],
     },
     responses={
         200: OpenApiResponse(
-            description=_('Rendered widget HTML'),
+            description=_("Rendered widget HTML"),
             response={
-                'type': 'object',
-                'properties': {
-                    'html': {'type': 'string', 'description': 'Rendered HTML'},
+                "type": "object",
+                "properties": {
+                    "html": {"type": "string", "description": "Rendered HTML"},
                 },
-            }
+            },
         ),
         400: OpenApiResponse(
-            response=ErrorResponseSerializer,
-            description=_('Missing widget_type parameter')
+            response=ErrorResponseSerializer, description=_("Missing widget_type parameter")
         ),
-    }
+    },
 )
 class WidgetPreviewAPIView(APIView):
     """Render widget HTML for builder preview using actual templates"""
+
     permission_classes = [IsAdminUser]
 
     def post(self, request):
         """Render widget with given configuration"""
         from .widget_preview_service import WidgetPreviewRenderer
 
-        widget_type = request.data.get('widget_type')
-        config = request.data.get('config', {})
+        widget_type = request.data.get("widget_type")
+        config = request.data.get("config", {})
 
         if not widget_type:
             return Response(
-                {'error': 'widget_type is required'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "widget_type is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         renderer = WidgetPreviewRenderer()
         html = renderer.render(widget_type, config, request)
 
-        return Response({'html': html})
+        return Response({"html": html})

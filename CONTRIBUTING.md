@@ -118,9 +118,11 @@ Full tour in [ARCHITECTURE.md](ARCHITECTURE.md).
 ## Coding style
 
 - **Python**: PEP 8. Run `ruff check .` and `ruff format .` — both are already
-  configured in [`pyproject.toml`](pyproject.toml). CI runs both.
+  configured in [`pyproject.toml`](pyproject.toml). CI runs both and both are
+  blocking.
 - **JavaScript**: no build step required for admin JS. Use vanilla DOM APIs
-  where possible; keep the bundle small. `eslint` config is in the repo.
+  where possible; keep the bundle small. `eslint` config is in the repo. CI
+  runs `prettier --check` and `npm run lint` — both blocking.
 - **CSS**: prefer design tokens (`css/tokens.css` per theme) over hardcoded
   values. Support RTL where the component may render in Arabic/Hebrew stores.
 - **File headers**: keep them terse. When adding a new source file, use
@@ -130,6 +132,28 @@ Full tour in [ARCHITECTURE.md](ARCHITECTURE.md).
 - **Translations**: user-facing strings should use `{% trans %}` /
   `gettext_lazy`. Do NOT translate `.po` files manually — extraction happens
   through `makemessages` and translation is handled by our translation system.
+
+### Pre-commit hook (recommended)
+
+A `.pre-commit-config.yaml` at the repo root wires up the same checks CI
+enforces (ruff, prettier, eslint) into a local git hook. To install:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Every subsequent `git commit` will run the checks against your staged files.
+This lets you catch style/lint problems locally instead of finding them in CI.
+
+**A note on `ruff --unsafe-fixes`.** Ruff offers an `--unsafe-fixes` flag
+that enables additional auto-fixes ruff considers risky (e.g. deleting
+unused variables, rewriting some annotations). Do not run
+`ruff --fix --unsafe-fixes` blindly in PRs — the "unsafe" name is a
+warning: those fixes can delete side-effect-bearing code (e.g. an
+`x = obj.save()` assignment whose RHS matters). If you do use it, keep
+the resulting commit focused on the fix category and diff-review each
+file it touches. The blocking CI checks only use the default (safe) set.
 
 ## Testing
 

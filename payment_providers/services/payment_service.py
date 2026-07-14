@@ -2,21 +2,22 @@
 Payment Service - Core payment processing logic
 Handles payment creation, authorization, and capture
 """
+
+import logging
+import uuid
 from decimal import Decimal
-from typing import Dict, Any, Tuple, Optional
+from typing import Any
+
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-import uuid
-import logging
 
+from orders.models import Order
 from payment_providers.models import (
-    PaymentProviderAccount,
     PaymentIntent,
+    PaymentProviderAccount,
     PaymentTransaction,
 )
-from orders.models import Order
 from payment_providers.providers.registry import ProviderRegistry
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ class PaymentService:
     """
 
     @staticmethod
-    def validate_payment_amount(amount: Decimal, currency: str = 'USD') -> Tuple[bool, str]:
+    def validate_payment_amount(amount: Decimal, currency: str = "USD") -> tuple[bool, str]:
         """
         Validate payment amount
 
@@ -43,7 +44,7 @@ class PaymentService:
             return False, _("Payment amount must be greater than zero")
 
         # Check for reasonable maximum (e.g., $1,000,000)
-        if amount > Decimal('1000000.00'):
+        if amount > Decimal("1000000.00"):
             return False, _("Payment amount exceeds maximum allowed")
 
         return True, ""
@@ -54,9 +55,9 @@ class PaymentService:
         provider_account: PaymentProviderAccount,
         order: Order,
         amount: Decimal,
-        currency: str = 'USD',
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Tuple[bool, Optional[PaymentTransaction], str]:
+        currency: str = "USD",
+        metadata: dict[str, Any] | None = None,
+    ) -> tuple[bool, PaymentTransaction | None, str]:
         """
         Create a payment intent with the provider
 
@@ -74,7 +75,7 @@ class PaymentService:
         if not provider_account.is_active:
             return False, None, _("Payment provider is not active")
 
-        if provider_account.connection_status != 'connected':
+        if provider_account.connection_status != "connected":
             return False, None, _("Payment provider is not properly configured")
 
         # Validate amount
@@ -96,14 +97,15 @@ class PaymentService:
             # Create payment intent via provider
             # This will vary by provider - Stripe creates PaymentIntent, PayPal creates Order, etc.
             provider_response = provider_instance.create_payment_intent(
-                amount=float(amount),
-                currency=currency,
-                order_id=order.id,
-                metadata=metadata or {}
+                amount=float(amount), currency=currency, order_id=order.id, metadata=metadata or {}
             )
 
-            if not provider_response.get('success'):
-                return False, None, provider_response.get('message', _("Payment intent creation failed"))
+            if not provider_response.get("success"):
+                return (
+                    False,
+                    None,
+                    provider_response.get("message", _("Payment intent creation failed")),
+                )
 
             # Create transaction record
             transaction = PaymentTransaction.objects.create(
@@ -112,13 +114,13 @@ class PaymentService:
                 order=order,
                 amount=amount,
                 amount_currency=currency,
-                status='pending',
-                transaction_type='charge',
-                provider_transaction_id=provider_response.get('provider_transaction_id', ''),
+                status="pending",
+                transaction_type="charge",
+                provider_transaction_id=provider_response.get("provider_transaction_id", ""),
                 provider_response=PaymentIntent._json_safe(provider_response),
                 metadata=metadata or {},
-                customer_name=order.shipping_address.name if order.shipping_address else '',
-                customer_email=order.customer.email if order.customer else '',
+                customer_name=order.shipping_address.name if order.shipping_address else "",
+                customer_email=order.customer.email if order.customer else "",
             )
 
             logger.info(
@@ -135,9 +137,8 @@ class PaymentService:
     @staticmethod
     @transaction.atomic
     def authorize_payment(
-        transaction: PaymentTransaction,
-        payment_method_details: Optional[Dict[str, Any]] = None
-    ) -> Tuple[bool, str]:
+        transaction: PaymentTransaction, payment_method_details: dict[str, Any] | None = None
+    ) -> tuple[bool, str]:
         """
         Authorize a payment (hold funds without capturing)
 
@@ -148,7 +149,7 @@ class PaymentService:
         Returns:
             Tuple of (success: bool, message: str)
         """
-        if transaction.status != 'pending':
+        if transaction.status != "pending":
             return False, _("Payment transaction is not in pending state")
 
         try:
@@ -160,28 +161,28 @@ class PaymentService:
             # Authorize payment via provider
             auth_response = provider_instance.authorize_payment(
                 transaction_id=transaction.provider_transaction_id,
-                payment_method_details=payment_method_details or {}
+                payment_method_details=payment_method_details or {},
             )
 
-            if not auth_response.get('success'):
-                transaction.status = 'failed'
-                transaction.error_message = auth_response.get('message', _("Authorization failed"))
-                transaction.error_code = auth_response.get('error_code', '')
+            if not auth_response.get("success"):
+                transaction.status = "failed"
+                transaction.error_message = auth_response.get("message", _("Authorization failed"))
+                transaction.error_code = auth_response.get("error_code", "")
                 transaction.save()
                 return False, transaction.error_message
 
             # Update transaction
-            transaction.status = 'authorized'
-            transaction.authorization_id = auth_response.get('authorization_id', '')
-            transaction.payment_method_type = auth_response.get('payment_method_type', '')
-            transaction.payment_method_last4 = auth_response.get('payment_method_last4', '')
+            transaction.status = "authorized"
+            transaction.authorization_id = auth_response.get("authorization_id", "")
+            transaction.payment_method_type = auth_response.get("payment_method_type", "")
+            transaction.payment_method_last4 = auth_response.get("payment_method_last4", "")
             transaction.provider_response = PaymentIntent._json_safe(auth_response)
             transaction.save()
 
             # Update order
             if transaction.order:
-                transaction.order.payment_status = 'authorized'
-                transaction.order.save(update_fields=['payment_status'])
+                transaction.order.payment_status = "authorized"
+                transaction.order.save(update_fields=["payment_status"])
 
             logger.info(f"Payment authorized: {transaction.transaction_id}")
 
@@ -189,7 +190,7 @@ class PaymentService:
 
         except Exception as e:
             logger.error(f"Error authorizing payment: {str(e)}", exc_info=True)
-            transaction.status = 'failed'
+            transaction.status = "failed"
             transaction.error_message = str(e)
             transaction.save()
             return False, _("Payment authorization error: {error}").format(error=str(e))
@@ -197,9 +198,8 @@ class PaymentService:
     @staticmethod
     @transaction.atomic
     def capture_payment(
-        transaction: PaymentTransaction,
-        amount: Optional[Decimal] = None
-    ) -> Tuple[bool, str]:
+        transaction: PaymentTransaction, amount: Decimal | None = None
+    ) -> tuple[bool, str]:
         """
         Capture an authorized payment
 
@@ -210,7 +210,7 @@ class PaymentService:
         Returns:
             Tuple of (success: bool, message: str)
         """
-        if transaction.status != 'authorized':
+        if transaction.status != "authorized":
             return False, _("Payment transaction is not authorized")
 
         # Default to full transaction amount
@@ -228,15 +228,14 @@ class PaymentService:
 
             # Capture payment via provider
             capture_response = provider_instance.capture_payment(
-                authorization_id=transaction.authorization_id,
-                amount=float(capture_amount)
+                authorization_id=transaction.authorization_id, amount=float(capture_amount)
             )
 
-            if not capture_response.get('success'):
-                return False, capture_response.get('message', _("Capture failed"))
+            if not capture_response.get("success"):
+                return False, capture_response.get("message", _("Capture failed"))
 
             # Update transaction
-            transaction.status = 'succeeded'
+            transaction.status = "succeeded"
             transaction.amount = capture_amount
             transaction.completed_at = timezone.now()
             transaction.provider_response = PaymentIntent._json_safe(capture_response)
@@ -244,10 +243,10 @@ class PaymentService:
 
             # Update order
             if transaction.order:
-                transaction.order.payment_status = 'paid'
+                transaction.order.payment_status = "paid"
                 transaction.order.amount_paid = capture_amount
                 transaction.order.paid_at = timezone.now()
-                transaction.order.save(update_fields=['payment_status', 'amount_paid', 'paid_at'])
+                transaction.order.save(update_fields=["payment_status", "amount_paid", "paid_at"])
 
             logger.info(
                 f"Payment captured: {transaction.transaction_id} "
@@ -261,7 +260,7 @@ class PaymentService:
             return False, _("Payment capture error: {error}").format(error=str(e))
 
     @staticmethod
-    def get_payment_status(transaction: PaymentTransaction) -> Dict[str, Any]:
+    def get_payment_status(transaction: PaymentTransaction) -> dict[str, Any]:
         """
         Get current payment status from provider
 
@@ -283,24 +282,21 @@ class PaymentService:
             )
 
             return {
-                'success': True,
-                'status': status_response.get('status'),
-                'amount': status_response.get('amount'),
-                'currency': status_response.get('currency'),
-                'payment_method': status_response.get('payment_method'),
-                'provider_data': status_response
+                "success": True,
+                "status": status_response.get("status"),
+                "amount": status_response.get("amount"),
+                "currency": status_response.get("currency"),
+                "payment_method": status_response.get("payment_method"),
+                "provider_data": status_response,
             }
 
         except Exception as e:
             logger.error(f"Error getting payment status: {str(e)}", exc_info=True)
-            return {
-                'success': False,
-                'error': str(e)
-            }
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     @transaction.atomic
-    def cancel_payment(transaction: PaymentTransaction) -> Tuple[bool, str]:
+    def cancel_payment(transaction: PaymentTransaction) -> tuple[bool, str]:
         """
         Cancel a pending or authorized payment
 
@@ -310,7 +306,7 @@ class PaymentService:
         Returns:
             Tuple of (success: bool, message: str)
         """
-        if transaction.status not in ['pending', 'authorized']:
+        if transaction.status not in ["pending", "authorized"]:
             return False, _("Only pending or authorized payments can be cancelled")
 
         try:
@@ -322,22 +318,22 @@ class PaymentService:
             # Cancel payment via provider
             cancel_response = provider_instance.cancel_payment(
                 transaction_id=transaction.provider_transaction_id,
-                authorization_id=transaction.authorization_id
+                authorization_id=transaction.authorization_id,
             )
 
-            if not cancel_response.get('success'):
-                return False, cancel_response.get('message', _("Cancellation failed"))
+            if not cancel_response.get("success"):
+                return False, cancel_response.get("message", _("Cancellation failed"))
 
             # Update transaction
-            transaction.status = 'cancelled'
+            transaction.status = "cancelled"
             transaction.completed_at = timezone.now()
             transaction.provider_response = PaymentIntent._json_safe(cancel_response)
             transaction.save()
 
             # Update order
             if transaction.order:
-                transaction.order.payment_status = 'cancelled'
-                transaction.order.save(update_fields=['payment_status'])
+                transaction.order.payment_status = "cancelled"
+                transaction.order.save(update_fields=["payment_status"])
 
             logger.info(f"Payment cancelled: {transaction.transaction_id}")
 

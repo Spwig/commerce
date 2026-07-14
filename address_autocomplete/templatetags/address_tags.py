@@ -1,20 +1,20 @@
 """
 Template tags for address autocomplete
 """
+
+import json
+
 from django import template
 from django.conf import settings
-from django.utils.safestring import mark_safe
 from django.templatetags.static import static
-import json
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
-@register.inclusion_tag('address_autocomplete/widget.html')
+
+@register.inclusion_tag("address_autocomplete/widget.html")
 def address_autocomplete_widget(
-    field_id='id_address',
-    options=None,
-    css_class='',
-    placeholder='Start typing an address...'
+    field_id="id_address", options=None, css_class="", placeholder="Start typing an address..."
 ):
     """
     Render address autocomplete widget
@@ -24,34 +24,30 @@ def address_autocomplete_widget(
         {% address_autocomplete_widget field_id="id_shipping_address" %}
     """
     # Check if service is available (maintenance status)
-    enabled = getattr(settings, 'ADDRESS_AUTOCOMPLETE_ENABLED', True)
+    enabled = getattr(settings, "ADDRESS_AUTOCOMPLETE_ENABLED", True)
     if enabled:
         try:
             from core.license import get_license_manager
+
             if not get_license_manager().are_spwig_services_available():
                 enabled = False
         except Exception:
             pass  # Fail open
 
     if not enabled:
-        return {'enabled': False}
+        return {"enabled": False}
 
-    default_options = {
-        'minChars': 3,
-        'delay': 300,
-        'maxSuggestions': 5,
-        'autoDetectCountry': True
-    }
+    default_options = {"minChars": 3, "delay": 300, "maxSuggestions": 5, "autoDetectCountry": True}
 
     if options:
         default_options.update(options)
 
     return {
-        'enabled': True,
-        'field_id': field_id,
-        'options': json.dumps(default_options),
-        'css_class': css_class,
-        'placeholder': placeholder
+        "enabled": True,
+        "field_id": field_id,
+        "options": json.dumps(default_options),
+        "css_class": css_class,
+        "placeholder": placeholder,
     }
 
 
@@ -64,8 +60,8 @@ def address_autocomplete_scripts():
         {% load address_tags %}
         {% address_autocomplete_scripts %}
     """
-    js_url = static('address_autocomplete/js/autocomplete.js')
-    css_url = static('address_autocomplete/css/autocomplete.css')
+    js_url = static("address_autocomplete/js/autocomplete.js")
+    css_url = static("address_autocomplete/css/autocomplete.css")
 
     return mark_safe(f'''
         <link rel="stylesheet" href="{css_url}">
@@ -74,11 +70,7 @@ def address_autocomplete_scripts():
 
 
 @register.simple_tag
-def init_address_autocomplete(
-    selector,
-    api_url='/api/address/autocomplete',
-    **kwargs
-):
+def init_address_autocomplete(selector, api_url="/api/address/autocomplete", **kwargs):
     """
     Initialize address autocomplete on specific element
 
@@ -87,28 +79,26 @@ def init_address_autocomplete(
         {% init_address_autocomplete "#shipping-address" postalCodeFirst=True %}
     """
     options = {
-        'apiUrl': api_url,
-        'normalizeUrl': '/api/address/normalize',
-        'validateUrl': '/api/address/validate'
+        "apiUrl": api_url,
+        "normalizeUrl": "/api/address/normalize",
+        "validateUrl": "/api/address/validate",
     }
     options.update(kwargs)
 
-    script = f'''
+    script = f"""
         <script>
         document.addEventListener('DOMContentLoaded', function() {{
             new AddressAutocomplete('{selector}', {json.dumps(options)});
         }});
         </script>
-    '''
+    """
 
     return mark_safe(script)
 
 
-@register.inclusion_tag('address_autocomplete/checkout_integration.html')
+@register.inclusion_tag("address_autocomplete/checkout_integration.html")
 def checkout_address_autocomplete(
-    shipping_prefix='shipping_',
-    billing_prefix='billing_',
-    separate_billing=True
+    shipping_prefix="shipping_", billing_prefix="billing_", separate_billing=True
 ):
     """
     Complete checkout form integration
@@ -118,9 +108,9 @@ def checkout_address_autocomplete(
         {% checkout_address_autocomplete %}
     """
     return {
-        'shipping_prefix': shipping_prefix,
-        'billing_prefix': billing_prefix,
-        'separate_billing': separate_billing
+        "shipping_prefix": shipping_prefix,
+        "billing_prefix": billing_prefix,
+        "separate_billing": separate_billing,
     }
 
 
@@ -133,29 +123,29 @@ def format_address_components(components):
         {{ suggestion.components|format_address_components }}
     """
     if not components:
-        return ''
+        return ""
 
     parts = []
 
     # Build address lines
-    if components.get('house_number') and components.get('road'):
+    if components.get("house_number") and components.get("road"):
         parts.append(f"{components['house_number']} {components['road']}")
-    elif components.get('road'):
-        parts.append(components['road'])
+    elif components.get("road"):
+        parts.append(components["road"])
 
-    if components.get('city'):
-        parts.append(components['city'])
+    if components.get("city"):
+        parts.append(components["city"])
 
-    if components.get('state'):
-        parts.append(components['state'])
+    if components.get("state"):
+        parts.append(components["state"])
 
-    if components.get('postcode'):
-        parts.append(components['postcode'])
+    if components.get("postcode"):
+        parts.append(components["postcode"])
 
-    if components.get('country'):
-        parts.append(components['country'])
+    if components.get("country"):
+        parts.append(components["country"])
 
-    return ', '.join(parts)
+    return ", ".join(parts)
 
 
 @register.simple_tag(takes_context=True)
@@ -166,42 +156,43 @@ def get_address_config(context):
     Usage:
         {% get_address_config as config %}
     """
-    request = context.get('request')
+    request = context.get("request")
 
-    enabled = getattr(settings, 'ADDRESS_AUTOCOMPLETE_ENABLED', True)
+    enabled = getattr(settings, "ADDRESS_AUTOCOMPLETE_ENABLED", True)
     if enabled:
         try:
             from core.license import get_license_manager
+
             if not get_license_manager().are_spwig_services_available():
                 enabled = False
         except Exception:
             pass  # Fail open
 
     config = {
-        'enabled': enabled,
-        'api_url': getattr(settings, 'ADDRESS_AUTOCOMPLETE_URL', '/api/address/autocomplete'),
-        'min_chars': getattr(settings, 'ADDRESS_AUTOCOMPLETE_MIN_CHARS', 3),
-        'max_suggestions': getattr(settings, 'ADDRESS_AUTOCOMPLETE_MAX_SUGGESTIONS', 5),
-        'auto_detect_country': True
+        "enabled": enabled,
+        "api_url": getattr(settings, "ADDRESS_AUTOCOMPLETE_URL", "/api/address/autocomplete"),
+        "min_chars": getattr(settings, "ADDRESS_AUTOCOMPLETE_MIN_CHARS", 3),
+        "max_suggestions": getattr(settings, "ADDRESS_AUTOCOMPLETE_MAX_SUGGESTIONS", 5),
+        "auto_detect_country": True,
     }
 
     # Add user tier if authenticated
     if request and request.user.is_authenticated:
         if request.user.is_superuser:
-            config['user_tier'] = 'admin'
-        elif hasattr(request.user, 'is_merchant') and request.user.is_merchant:
-            config['user_tier'] = 'merchant'
+            config["user_tier"] = "admin"
+        elif hasattr(request.user, "is_merchant") and request.user.is_merchant:
+            config["user_tier"] = "merchant"
         else:
-            config['user_tier'] = 'authenticated'
+            config["user_tier"] = "authenticated"
     else:
-        config['user_tier'] = 'anonymous'
+        config["user_tier"] = "anonymous"
 
     # Add geo bias from request if available
-    if request and hasattr(request, 'geo_location'):
+    if request and hasattr(request, "geo_location"):
         geo = request.geo_location
-        if geo.get('country'):
-            config['country_bias'] = geo['country']
-        if geo.get('coordinates'):
-            config['geo_bias'] = geo['coordinates']
+        if geo.get("country"):
+            config["country_bias"] = geo["country"]
+        if geo.get("coordinates"):
+            config["geo_bias"] = geo["coordinates"]
 
     return config

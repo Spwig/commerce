@@ -1,11 +1,10 @@
-import os
-import io
-import subprocess
 import json
 import logging
-from django.core.files.base import ContentFile
+import os
+import subprocess
+
 from django.conf import settings
-from PIL import Image
+from django.core.files.base import ContentFile
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +13,15 @@ class VideoProcessor:
     """Service for processing videos - conversion, optimization, and thumbnail generation"""
 
     def __init__(self):
-        self.video_settings = getattr(settings, 'MEDIA_LIBRARY_SETTINGS', {}).get('VIDEO_FORMATS', {})
-        self.thumbnail_time = getattr(settings, 'MEDIA_LIBRARY_SETTINGS', {}).get('VIDEO_THUMBNAIL_TIME', '00:00:02')
-        self.video_resolutions = getattr(settings, 'MEDIA_LIBRARY_SETTINGS', {}).get('VIDEO_RESOLUTIONS', {})
+        self.video_settings = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get(
+            "VIDEO_FORMATS", {}
+        )
+        self.thumbnail_time = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get(
+            "VIDEO_THUMBNAIL_TIME", "00:00:02"
+        )
+        self.video_resolutions = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get(
+            "VIDEO_RESOLUTIONS", {}
+        )
 
     def probe_video(self, video_path):
         """
@@ -27,12 +32,14 @@ class VideoProcessor:
         """
         try:
             cmd = [
-                'ffprobe',
-                '-v', 'quiet',
-                '-print_format', 'json',
-                '-show_format',
-                '-show_streams',
-                video_path
+                "ffprobe",
+                "-v",
+                "quiet",
+                "-print_format",
+                "json",
+                "-show_format",
+                "-show_streams",
+                video_path,
             ]
 
             result = subprocess.run(cmd, capture_output=True, text=True, check=True)
@@ -40,37 +47,37 @@ class VideoProcessor:
 
             # Extract relevant metadata
             metadata = {
-                'duration': None,
-                'width': None,
-                'height': None,
-                'frame_rate': None,
-                'bitrate': None,
-                'video_codec': None,
-                'audio_codec': None,
-                'format': data.get('format', {}).get('format_name'),
-                'size': data.get('format', {}).get('size'),
+                "duration": None,
+                "width": None,
+                "height": None,
+                "frame_rate": None,
+                "bitrate": None,
+                "video_codec": None,
+                "audio_codec": None,
+                "format": data.get("format", {}).get("format_name"),
+                "size": data.get("format", {}).get("size"),
             }
 
             # Get format-level metadata
-            if 'format' in data:
-                metadata['duration'] = float(data['format'].get('duration', 0))
-                metadata['bitrate'] = int(data['format'].get('bit_rate', 0))
+            if "format" in data:
+                metadata["duration"] = float(data["format"].get("duration", 0))
+                metadata["bitrate"] = int(data["format"].get("bit_rate", 0))
 
             # Get stream-level metadata
-            for stream in data.get('streams', []):
-                if stream['codec_type'] == 'video' and metadata['width'] is None:
-                    metadata['width'] = stream.get('width')
-                    metadata['height'] = stream.get('height')
-                    metadata['video_codec'] = stream.get('codec_name')
+            for stream in data.get("streams", []):
+                if stream["codec_type"] == "video" and metadata["width"] is None:
+                    metadata["width"] = stream.get("width")
+                    metadata["height"] = stream.get("height")
+                    metadata["video_codec"] = stream.get("codec_name")
 
                     # Calculate frame rate
-                    if 'r_frame_rate' in stream:
-                        num, den = stream['r_frame_rate'].split('/')
-                        if den != '0':
-                            metadata['frame_rate'] = float(num) / float(den)
+                    if "r_frame_rate" in stream:
+                        num, den = stream["r_frame_rate"].split("/")
+                        if den != "0":
+                            metadata["frame_rate"] = float(num) / float(den)
 
-                elif stream['codec_type'] == 'audio' and metadata['audio_codec'] is None:
-                    metadata['audio_codec'] = stream.get('codec_name')
+                elif stream["codec_type"] == "audio" and metadata["audio_codec"] is None:
+                    metadata["audio_codec"] = stream.get("codec_name")
 
             return metadata
 
@@ -99,20 +106,25 @@ class VideoProcessor:
             temp_output = f"/tmp/thumbnail_{os.getpid()}.jpg"
 
             cmd = [
-                'ffmpeg',
-                '-ss', str(timestamp),
-                '-i', video_path,
-                '-vframes', '1',
-                '-vf', 'scale=800:-1',  # Max width 800px, maintain aspect ratio
-                '-q:v', '2',  # High quality JPEG
+                "ffmpeg",
+                "-ss",
+                str(timestamp),
+                "-i",
+                video_path,
+                "-vframes",
+                "1",
+                "-vf",
+                "scale=800:-1",  # Max width 800px, maintain aspect ratio
+                "-q:v",
+                "2",  # High quality JPEG
                 temp_output,
-                '-y'  # Overwrite output
+                "-y",  # Overwrite output
             ]
 
             subprocess.run(cmd, capture_output=True, check=True)
 
             # Read the generated thumbnail
-            with open(temp_output, 'rb') as f:
+            with open(temp_output, "rb") as f:
                 content = ContentFile(f.read())
 
             # Clean up temp file
@@ -127,7 +139,9 @@ class VideoProcessor:
             logger.error(f"Unexpected error extracting thumbnail: {e}")
             return None
 
-    def convert_to_webm_av1(self, video_path, output_path=None, crf=30, preset=6, progress_callback=None):
+    def convert_to_webm_av1(
+        self, video_path, output_path=None, crf=30, preset=6, progress_callback=None
+    ):
         """
         Convert video to WebM with AV1 codec
 
@@ -149,21 +163,30 @@ class VideoProcessor:
             duration = None
             if progress_callback:
                 metadata = self.probe_video(video_path)
-                duration = metadata.get('duration') if metadata else None
+                duration = metadata.get("duration") if metadata else None
 
             cmd = [
-                'ffmpeg',
-                '-i', video_path,
-                '-c:v', 'libsvtav1',  # Use SVT-AV1 encoder (faster than libaom)
-                '-crf', str(crf),
-                '-preset', str(preset),
-                '-c:a', 'libopus',  # Opus audio codec
-                '-b:a', '128k',
-                '-f', 'webm',
-                '-progress', 'pipe:1',  # Output progress to stdout
-                '-stats_period', '1',   # Update every second
+                "ffmpeg",
+                "-i",
+                video_path,
+                "-c:v",
+                "libsvtav1",  # Use SVT-AV1 encoder (faster than libaom)
+                "-crf",
+                str(crf),
+                "-preset",
+                str(preset),
+                "-c:a",
+                "libopus",  # Opus audio codec
+                "-b:a",
+                "128k",
+                "-f",
+                "webm",
+                "-progress",
+                "pipe:1",  # Output progress to stdout
+                "-stats_period",
+                "1",  # Update every second
                 output_path,
-                '-y'
+                "-y",
             ]
 
             logger.info(f"Converting video to WebM/AV1: {' '.join(cmd)}")
@@ -171,12 +194,15 @@ class VideoProcessor:
             if progress_callback and duration:
                 # Run with progress monitoring
                 import re
-                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+                process = subprocess.Popen(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+                )
 
                 for line in process.stdout:
                     # Parse progress from ffmpeg output
-                    if 'out_time_ms=' in line:
-                        match = re.search(r'out_time_ms=(\d+)', line)
+                    if "out_time_ms=" in line:
+                        match = re.search(r"out_time_ms=(\d+)", line)
                         if match:
                             time_ms = int(match.group(1))
                             time_seconds = time_ms / 1000000  # Convert microseconds to seconds
@@ -223,36 +249,46 @@ class VideoProcessor:
             if progress_callback:
                 metadata = self.probe_video(video_path)
                 if metadata:
-                    duration = metadata.get('duration')
+                    duration = metadata.get("duration")
 
             cmd = [
-                'ffmpeg',
-                '-i', video_path,
-                '-c:v', 'libvpx-vp9',
-                '-crf', str(crf),
-                '-b:v', '0',  # Use CRF mode
-                '-c:a', 'libopus',
-                '-b:a', '128k',
-                '-f', 'webm',
+                "ffmpeg",
+                "-i",
+                video_path,
+                "-c:v",
+                "libvpx-vp9",
+                "-crf",
+                str(crf),
+                "-b:v",
+                "0",  # Use CRF mode
+                "-c:a",
+                "libopus",
+                "-b:a",
+                "128k",
+                "-f",
+                "webm",
             ]
 
             # Add progress output if callback provided
             if progress_callback and duration:
-                cmd.extend(['-progress', 'pipe:1'])
+                cmd.extend(["-progress", "pipe:1"])
 
-            cmd.extend([output_path, '-y'])
+            cmd.extend([output_path, "-y"])
 
             logger.info(f"Converting video to WebM/VP9: {' '.join(cmd)}")
 
             if progress_callback and duration:
                 # Run with progress monitoring
                 import re
-                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+                process = subprocess.Popen(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+                )
 
                 for line in process.stdout:
                     # Parse progress from ffmpeg output
-                    if 'out_time_ms=' in line:
-                        match = re.search(r'out_time_ms=(\d+)', line)
+                    if "out_time_ms=" in line:
+                        match = re.search(r"out_time_ms=(\d+)", line)
                         if match:
                             time_ms = int(match.group(1))
                             time_seconds = time_ms / 1000000  # Convert microseconds to seconds
@@ -298,38 +334,50 @@ class VideoProcessor:
             if progress_callback:
                 metadata = self.probe_video(video_path)
                 if metadata:
-                    duration = metadata.get('duration')
+                    duration = metadata.get("duration")
 
             cmd = [
-                'ffmpeg',
-                '-i', video_path,
-                '-c:v', 'libx265',
-                '-preset', 'medium',
-                '-crf', str(crf),
-                '-c:a', 'aac',
-                '-b:a', '128k',
-                '-tag:v', 'hvc1',  # Better compatibility for Apple devices
-                '-movflags', '+faststart',
-                '-pix_fmt', 'yuv420p',
+                "ffmpeg",
+                "-i",
+                video_path,
+                "-c:v",
+                "libx265",
+                "-preset",
+                "medium",
+                "-crf",
+                str(crf),
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                "-tag:v",
+                "hvc1",  # Better compatibility for Apple devices
+                "-movflags",
+                "+faststart",
+                "-pix_fmt",
+                "yuv420p",
             ]
 
             # Add progress output if callback provided
             if progress_callback and duration:
-                cmd.extend(['-progress', 'pipe:1'])
+                cmd.extend(["-progress", "pipe:1"])
 
-            cmd.extend([output_path, '-y'])
+            cmd.extend([output_path, "-y"])
 
             logger.info(f"Converting video to MP4/H.265: {' '.join(cmd)}")
 
             if progress_callback and duration:
                 # Run with progress monitoring
                 import re
-                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+                process = subprocess.Popen(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+                )
 
                 for line in process.stdout:
                     # Parse progress from ffmpeg output
-                    if 'out_time_ms=' in line:
-                        match = re.search(r'out_time_ms=(\d+)', line)
+                    if "out_time_ms=" in line:
+                        match = re.search(r"out_time_ms=(\d+)", line)
                         if match:
                             time_ms = int(match.group(1))
                             time_seconds = time_ms / 1000000  # Convert microseconds to seconds
@@ -370,17 +418,25 @@ class VideoProcessor:
                 output_path = f"/tmp/video_{os.getpid()}.mp4"
 
             cmd = [
-                'ffmpeg',
-                '-i', video_path,
-                '-c:v', 'libx264',
-                '-preset', 'medium',
-                '-crf', str(crf),
-                '-c:a', 'aac',
-                '-b:a', '128k',
-                '-movflags', '+faststart',  # Enable fast start for web streaming
-                '-pix_fmt', 'yuv420p',  # Ensure compatibility
+                "ffmpeg",
+                "-i",
+                video_path,
+                "-c:v",
+                "libx264",
+                "-preset",
+                "medium",
+                "-crf",
+                str(crf),
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                "-movflags",
+                "+faststart",  # Enable fast start for web streaming
+                "-pix_fmt",
+                "yuv420p",  # Ensure compatibility
                 output_path,
-                '-y'
+                "-y",
             ]
 
             logger.info(f"Converting video to MP4/H.264: {' '.join(cmd)}")
@@ -406,11 +462,15 @@ class VideoProcessor:
         Returns:
             Dict of resolution names to file paths
         """
-        resolutions = resolutions or self.video_resolutions or {
-            '1080p': '1920x1080',
-            '720p': '1280x720',
-            '480p': '854x480',
-        }
+        resolutions = (
+            resolutions
+            or self.video_resolutions
+            or {
+                "1080p": "1920x1080",
+                "720p": "1280x720",
+                "480p": "854x480",
+            }
+        )
 
         versions = {}
 
@@ -419,17 +479,25 @@ class VideoProcessor:
                 output_path = f"/tmp/video_{os.getpid()}_{name}.mp4"
 
                 cmd = [
-                    'ffmpeg',
-                    '-i', video_path,
-                    '-c:v', 'libx264',
-                    '-preset', 'medium',
-                    '-crf', '23',
-                    '-vf', f'scale={resolution}:force_original_aspect_ratio=decrease,pad={resolution}:(ow-iw)/2:(oh-ih)/2',
-                    '-c:a', 'aac',
-                    '-b:a', '128k',
-                    '-movflags', '+faststart',
+                    "ffmpeg",
+                    "-i",
+                    video_path,
+                    "-c:v",
+                    "libx264",
+                    "-preset",
+                    "medium",
+                    "-crf",
+                    "23",
+                    "-vf",
+                    f"scale={resolution}:force_original_aspect_ratio=decrease,pad={resolution}:(ow-iw)/2:(oh-ih)/2",
+                    "-c:a",
+                    "aac",
+                    "-b:a",
+                    "128k",
+                    "-movflags",
+                    "+faststart",
                     output_path,
-                    '-y'
+                    "-y",
                 ]
 
                 subprocess.run(cmd, capture_output=True, check=True)
@@ -456,10 +524,10 @@ class VideoProcessor:
         try:
             # Get video duration to calculate target bitrate
             metadata = self.probe_video(video_path)
-            if not metadata or not metadata['duration']:
+            if not metadata or not metadata["duration"]:
                 return None
 
-            duration_seconds = metadata['duration']
+            duration_seconds = metadata["duration"]
 
             # Calculate target bitrate to achieve desired file size
             # Formula: bitrate = (file_size_bits) / duration_seconds
@@ -472,18 +540,27 @@ class VideoProcessor:
             output_path = f"/tmp/video_{os.getpid()}_optimized.mp4"
 
             cmd = [
-                'ffmpeg',
-                '-i', video_path,
-                '-c:v', 'libx264',
-                '-b:v', str(video_bitrate),
-                '-maxrate', str(int(video_bitrate * 1.5)),
-                '-bufsize', str(video_bitrate * 2),
-                '-preset', 'medium',
-                '-c:a', 'aac',
-                '-b:a', '128k',
-                '-movflags', '+faststart',
+                "ffmpeg",
+                "-i",
+                video_path,
+                "-c:v",
+                "libx264",
+                "-b:v",
+                str(video_bitrate),
+                "-maxrate",
+                str(int(video_bitrate * 1.5)),
+                "-bufsize",
+                str(video_bitrate * 2),
+                "-preset",
+                "medium",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                "-movflags",
+                "+faststart",
                 output_path,
-                '-y'
+                "-y",
             ]
 
             subprocess.run(cmd, capture_output=True, check=True)
@@ -497,31 +574,28 @@ class VideoProcessor:
     def check_ffmpeg_available(self):
         """Check if ffmpeg is installed and available"""
         try:
-            subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
+            subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
             return True
-        except:
+        except Exception:
             return False
 
     def get_supported_encoders(self):
         """Get list of available video encoders"""
         try:
             result = subprocess.run(
-                ['ffmpeg', '-encoders'],
-                capture_output=True,
-                text=True,
-                check=True
+                ["ffmpeg", "-encoders"], capture_output=True, text=True, check=True
             )
 
             encoders = []
-            for line in result.stdout.split('\n'):
-                if 'libsvtav1' in line:
-                    encoders.append('av1')
-                elif 'libvpx-vp9' in line:
-                    encoders.append('vp9')
-                elif 'libx264' in line:
-                    encoders.append('h264')
+            for line in result.stdout.split("\n"):
+                if "libsvtav1" in line:
+                    encoders.append("av1")
+                elif "libvpx-vp9" in line:
+                    encoders.append("vp9")
+                elif "libx264" in line:
+                    encoders.append("h264")
 
             return encoders
 
-        except:
+        except Exception:
             return []

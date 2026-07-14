@@ -1,21 +1,24 @@
 """
 Background tasks for translation processing
 """
+
 import logging
 from datetime import timedelta
 
 from celery import shared_task
 from django.utils import timezone
+
 from core.celery_utils import BackgroundDBTask
-from .models import TranslationJob, TranslationProvider
+
 from .client import get_translator_client
+from .models import TranslationJob
 
 logger = logging.getLogger(__name__)
 
 
 @shared_task(
     bind=True,
-    name='translations.process_job',
+    name="translations.process_job",
     max_retries=3,
     default_retry_delay=60,
     autoretry_for=(Exception,),
@@ -38,11 +41,11 @@ def process_translation_job(self, job_id):
         processor.process_job(job_id)
 
         logger.info(f"Successfully processed translation job {job_id}")
-        return {'status': 'completed', 'job_id': job_id}
+        return {"status": "completed", "job_id": job_id}
 
     except TranslationJob.DoesNotExist:
         logger.error(f"Translation job {job_id} not found")
-        return {'status': 'error', 'message': 'Job not found'}
+        return {"status": "error", "message": "Job not found"}
 
     except Exception as e:
         logger.error(f"Failed to process translation job {job_id}: {e}")
@@ -51,10 +54,10 @@ def process_translation_job(self, job_id):
         if self.request.retries >= self.max_retries:
             try:
                 job = TranslationJob.objects.get(id=job_id)
-                job.status = 'failed'
+                job.status = "failed"
                 job.error_message = f"Failed after {self.max_retries} retries: {str(e)}"
                 job.save()
-            except:
+            except Exception:
                 pass
 
         # Re-raise to trigger Celery's retry mechanism
@@ -75,7 +78,7 @@ class TranslationJobProcessor:
             job = TranslationJob.objects.get(id=job_id)
 
             # Update status
-            job.status = 'processing'
+            job.status = "processing"
             job.started_at = timezone.now()
             job.save()
 
@@ -88,7 +91,7 @@ class TranslationJobProcessor:
                 self._save_translations(job, translated)
 
             # Mark as completed
-            job.status = 'completed'
+            job.status = "completed"
             job.completed_at = timezone.now()
             job.progress = 100
             job.save()
@@ -100,7 +103,9 @@ class TranslationJobProcessor:
                 self._notify_completion(job)
                 logger.info(f"Successfully called _notify_completion for job {job_id}")
             except Exception as callback_error:
-                logger.error(f"❌ Callback failed for job {job_id}: {callback_error}", exc_info=True)
+                logger.error(
+                    f"❌ Callback failed for job {job_id}: {callback_error}", exc_info=True
+                )
                 # Don't let callback failure fail the entire job
                 pass
 
@@ -114,11 +119,7 @@ class TranslationJobProcessor:
 
         for target_lang in target_langs:
             batch_items = [
-                {
-                    'id': item['id'],
-                    'text': item['text'],
-                    'target_lang': target_lang
-                }
+                {"id": item["id"], "text": item["text"], "target_lang": target_lang}
                 for item in items
             ]
 
@@ -130,33 +131,33 @@ class TranslationJobProcessor:
     def update_progress(self, job, percent):
         """Update job progress"""
         job.progress = percent
-        job.save(update_fields=['progress'])
+        job.save(update_fields=["progress"])
 
     def _get_content_for_translation(self, job):
         """Extract content based on job type"""
         translated_data = job.translated_data or {}
-        source_content = translated_data.get('source_content', {})
+        source_content = translated_data.get("source_content", {})
 
         # Email template with extracted strings
-        if job.content_type == 'email_template' and 'translatable_strings' in source_content:
-            return source_content['translatable_strings']
+        if job.content_type == "email_template" and "translatable_strings" in source_content:
+            return source_content["translatable_strings"]
 
         # Legacy email template (full content - will likely timeout)
-        elif job.content_type == 'email_template':
+        elif job.content_type == "email_template":
             return {
-                'subject': source_content.get('subject', ''),
-                'html_content': source_content.get('html_content', ''),
-                'text_content': source_content.get('text_content', ''),
+                "subject": source_content.get("subject", ""),
+                "html_content": source_content.get("html_content", ""),
+                "text_content": source_content.get("text_content", ""),
             }
 
         # Model-based content types (products, categories, pages, etc.)
-        elif translated_data.get('registry_key'):
+        elif translated_data.get("registry_key"):
             return self._get_model_content(job, translated_data)
 
         # Generic field translation (scheduled from translation_api.py)
-        elif job.content_type == 'generic_field':
-            field_key = translated_data.get('field_key', '')
-            text = translated_data.get('source_text', '')
+        elif job.content_type == "generic_field":
+            field_key = translated_data.get("field_key", "")
+            text = translated_data.get("source_text", "")
             if field_key and text:
                 return {field_key: text}
 
@@ -168,7 +169,7 @@ class TranslationJobProcessor:
 
         # Get target language from translated_data or target_languages list
         translated_data = job.translated_data or {}
-        target_lang = translated_data.get('language')
+        target_lang = translated_data.get("language")
         if not target_lang and job.target_languages:
             target_lang = job.target_languages[0]
 
@@ -177,9 +178,7 @@ class TranslationJobProcessor:
             try:
                 # Translate this string
                 translated = self.client.translate(
-                    text=text,
-                    source_lang=job.source_language,
-                    target_lang=target_lang
+                    text=text, source_lang=job.source_language, target_lang=target_lang
                 )
 
                 if translated:
@@ -204,30 +203,32 @@ class TranslationJobProcessor:
         # For email templates with extracted strings, save in the format expected by
         # EmailTemplateTranslationService.handle_translation_complete()
         translated_data = job.translated_data or {}
-        source_content = translated_data.get('source_content', {})
+        source_content = translated_data.get("source_content", {})
 
-        if job.content_type == 'email_template' and 'translatable_strings' in source_content:
+        if job.content_type == "email_template" and "translatable_strings" in source_content:
             # Update translated_data with translated strings
-            translated_data['translated_content'] = {
-                'translatable_strings': translations,  # Dict of key -> translated text
+            translated_data["translated_content"] = {
+                "translatable_strings": translations,  # Dict of key -> translated text
             }
             job.translated_data = translated_data
-            job.save(update_fields=['translated_data'])
+            job.save(update_fields=["translated_data"])
             logger.info(f"Saved {len(translations)} translated strings for job {job.id}")
 
         # Legacy email template format
-        elif job.content_type == 'email_template':
-            translated_data['translated_content'] = translations  # Dict with subject, html_content, text_content
+        elif job.content_type == "email_template":
+            translated_data["translated_content"] = (
+                translations  # Dict with subject, html_content, text_content
+            )
             job.translated_data = translated_data
-            job.save(update_fields=['translated_data'])
+            job.save(update_fields=["translated_data"])
             logger.info(f"Saved translated content for job {job.id}")
 
         # Model-based content types
-        elif job.translated_data and job.translated_data.get('registry_key'):
+        elif job.translated_data and job.translated_data.get("registry_key"):
             self._save_model_translations(job, translations)
 
         # Generic field: save to model instance's translations JSONField
-        elif job.content_type == 'generic_field':
+        elif job.content_type == "generic_field":
             self._save_generic_field_translations(job, translations)
 
         else:
@@ -241,7 +242,7 @@ class TranslationJobProcessor:
         """
         from translations.content_registry import get_content_type, get_model_class
 
-        registry_key = translated_data.get('registry_key')
+        registry_key = translated_data.get("registry_key")
         ct_entry = get_content_type(registry_key)
         if not ct_entry:
             logger.warning(f"Unknown registry key '{registry_key}' for job {job.id}")
@@ -251,11 +252,13 @@ class TranslationJobProcessor:
         if not model_class:
             return {}
 
-        object_ids = translated_data.get('object_ids', [])
-        fields = ct_entry['fields']
-        target_lang = translated_data.get('language') or (job.target_languages[0] if job.target_languages else None)
-        is_simple = ct_entry.get('format') == 'simple'
-        is_widget_config = ct_entry.get('format') == 'widget_config'
+        object_ids = translated_data.get("object_ids", [])
+        fields = ct_entry["fields"]
+        target_lang = translated_data.get("language") or (
+            job.target_languages[0] if job.target_languages else None
+        )
+        is_simple = ct_entry.get("format") == "simple"
+        is_widget_config = ct_entry.get("format") == "widget_config"
 
         content = {}
         try:
@@ -268,6 +271,7 @@ class TranslationJobProcessor:
         locked = set()
         if target_lang:
             from translations.lock_service import get_locked_fields
+
             locked = get_locked_fields(registry_key, object_ids, target_lang)
 
         # Widget config format: extract from config JSONField dynamically
@@ -282,7 +286,7 @@ class TranslationJobProcessor:
                 if (instance.pk, field_name) in locked:
                     continue
 
-                source_value = getattr(instance, field_name, '')
+                source_value = getattr(instance, field_name, "")
                 if not source_value:
                     continue
 
@@ -326,7 +330,7 @@ class TranslationJobProcessor:
             for field in simple_fields:
                 if (instance.pk, field) in locked:
                     continue
-                value = config.get(field, '')
+                value = config.get(field, "")
                 if not value:
                     continue
                 # Skip if already translated
@@ -337,8 +341,8 @@ class TranslationJobProcessor:
             # Array fields (e.g. links[].text, badges[].title)
             array_spec = Widget.TRANSLATABLE_ARRAY_FIELDS.get(wtype)
             if array_spec:
-                array_key = array_spec['array_key']
-                array_fields = array_spec['fields']
+                array_key = array_spec["array_key"]
+                array_fields = array_spec["fields"]
                 items = config.get(array_key, [])
                 for idx, item in enumerate(items):
                     if not isinstance(item, dict):
@@ -347,7 +351,7 @@ class TranslationJobProcessor:
                         dotted_key = f"{array_key}.{idx}.{af}"
                         if (instance.pk, dotted_key) in locked:
                             continue
-                        value = item.get(af, '')
+                        value = item.get(af, "")
                         if not value:
                             continue
                         if lang_data.get(dotted_key):
@@ -355,8 +359,8 @@ class TranslationJobProcessor:
                         content[f"{instance.pk}:{dotted_key}"] = str(value)
 
             # Text widget content field
-            if wtype == 'text' and instance.content:
-                if (instance.pk, 'content') not in locked and not lang_data.get('content'):
+            if wtype == "text" and instance.content:
+                if (instance.pk, "content") not in locked and not lang_data.get("content"):
                     content[f"{instance.pk}:content"] = str(instance.content)
 
         logger.info(f"Extracted {len(content)} widget strings for job {job.id}")
@@ -371,7 +375,7 @@ class TranslationJobProcessor:
         from translations.content_registry import get_content_type, get_model_class
 
         translated_data = job.translated_data or {}
-        registry_key = translated_data.get('registry_key')
+        registry_key = translated_data.get("registry_key")
         ct_entry = get_content_type(registry_key)
         if not ct_entry:
             return
@@ -380,16 +384,17 @@ class TranslationJobProcessor:
         if not model_class:
             return
 
-        target_lang = translated_data.get('language') or (job.target_languages[0] if job.target_languages else None)
-        is_simple = ct_entry.get('format') == 'simple'
-        is_widget_config = ct_entry.get('format') == 'widget_config'
+        target_lang = translated_data.get("language") or (
+            job.target_languages[0] if job.target_languages else None
+        )
+        is_simple = ct_entry.get("format") == "simple"
 
         # Group translations by instance PK
         by_instance = {}
         for key, translated_text in translations.items():
-            if ':' not in key:
+            if ":" not in key:
                 continue
-            pk_str, field_name = key.split(':', 1)
+            pk_str, field_name = key.split(":", 1)
             try:
                 pk = int(pk_str)
             except ValueError:
@@ -403,6 +408,7 @@ class TranslationJobProcessor:
         locked = set()
         if target_lang:
             from translations.lock_service import get_locked_fields
+
             locked = get_locked_fields(registry_key, list(by_instance.keys()), target_lang)
 
         instances = model_class.objects.filter(pk__in=by_instance.keys())
@@ -432,24 +438,27 @@ class TranslationJobProcessor:
                     current[target_lang][field_name] = value
 
                 # Add metadata
-                current[target_lang]['_meta'] = {
-                    'auto': True,
-                    'verified': False,
-                    'translated_at': timezone.now().isoformat(),
+                current[target_lang]["_meta"] = {
+                    "auto": True,
+                    "verified": False,
+                    "translated_at": timezone.now().isoformat(),
                 }
 
             instance.translations = current
-            instance.save(update_fields=['translations'])
+            instance.save(update_fields=["translations"])
             saved_count += 1
 
         # Invalidate coverage cache
         try:
             from translations.coverage_service import invalidate_coverage_cache
+
             invalidate_coverage_cache()
         except Exception:
             pass
 
-        logger.info(f"Saved translations for {saved_count} {registry_key} instances in job {job.id}")
+        logger.info(
+            f"Saved translations for {saved_count} {registry_key} instances in job {job.id}"
+        )
 
     def _save_generic_field_translations(self, job, translations):
         """
@@ -461,13 +470,14 @@ class TranslationJobProcessor:
         """
         from django.apps import apps
         from django.core.cache import cache
+
         from translations.lock_service import is_field_locked
 
         translated_data = job.translated_data or {}
-        model_type = translated_data.get('model_type', '')
-        object_id = translated_data.get('object_id')
-        field_key = translated_data.get('field_key', '')
-        target_lang = translated_data.get('language') or (
+        model_type = translated_data.get("model_type", "")
+        object_id = translated_data.get("object_id")
+        field_key = translated_data.get("field_key", "")
+        target_lang = translated_data.get("language") or (
             job.target_languages[0] if job.target_languages else None
         )
 
@@ -480,7 +490,7 @@ class TranslationJobProcessor:
             return
 
         try:
-            app_label, model_name = model_type.lower().split('.')
+            app_label, model_name = model_type.lower().split(".")
             model_class = apps.get_model(app_label, model_name)
             instance = model_class.objects.get(pk=object_id)
         except Exception as e:
@@ -491,7 +501,7 @@ class TranslationJobProcessor:
             logger.info(f"Skipping locked field {field_key}:{target_lang} for job {job.id}")
             return
 
-        translated_text = translations.get(field_key, '')
+        translated_text = translations.get(field_key, "")
         if not translated_text:
             logger.warning(f"No translated text for {field_key} in job {job.id}")
             return
@@ -502,22 +512,25 @@ class TranslationJobProcessor:
 
         current[target_lang][field_key] = translated_text
 
-        if '_meta' not in current[target_lang]:
-            current[target_lang]['_meta'] = {}
-        current[target_lang]['_meta'].update({
-            'auto': True,
-            'verified': False,
-            'translated_at': timezone.now().isoformat(),
-            'last_field': field_key,
-        })
+        if "_meta" not in current[target_lang]:
+            current[target_lang]["_meta"] = {}
+        current[target_lang]["_meta"].update(
+            {
+                "auto": True,
+                "verified": False,
+                "translated_at": timezone.now().isoformat(),
+                "last_field": field_key,
+            }
+        )
 
         instance.translations = current
-        instance.save(update_fields=['translations'])
+        instance.save(update_fields=["translations"])
 
-        cache.delete(f'translations_{model_type}_{object_id}')
+        cache.delete(f"translations_{model_type}_{object_id}")
 
         try:
             from translations.coverage_service import invalidate_coverage_cache
+
             invalidate_coverage_cache()
         except Exception:
             pass
@@ -531,7 +544,7 @@ class TranslationJobProcessor:
         """Handle job failure"""
         try:
             job = TranslationJob.objects.get(id=job_id)
-            job.status = 'failed'
+            job.status = "failed"
             job.error_message = str(error)
             job.save()
 
@@ -540,18 +553,22 @@ class TranslationJobProcessor:
             # Fire webhook for external integrations
             try:
                 from webhooks.services import trigger_webhook
-                trigger_webhook('translation.job_failed', instance=job)
+
+                trigger_webhook("translation.job_failed", instance=job)
             except Exception as webhook_err:
                 logger.warning(f"Failed to fire webhook for failed job {job_id}: {webhook_err}")
-        except:
+        except Exception:
             pass
 
     def _notify_completion(self, job):
         """Send webhook notification and trigger callbacks"""
         # For email templates, trigger the email system callback
-        if job.content_type == 'email_template':
+        if job.content_type == "email_template":
             try:
-                from email_system.services.translation_service import EmailTemplateTranslationService
+                from email_system.services.translation_service import (
+                    EmailTemplateTranslationService,
+                )
+
                 service = EmailTemplateTranslationService()
                 service.handle_translation_complete(job.id)
                 logger.info(f"Triggered email template callback for job {job.id}")
@@ -561,7 +578,8 @@ class TranslationJobProcessor:
         # Fire webhook for external integrations
         try:
             from webhooks.services import trigger_webhook
-            trigger_webhook('translation.job_completed', instance=job)
+
+            trigger_webhook("translation.job_completed", instance=job)
         except Exception as e:
             logger.warning(f"Failed to fire webhook for completed job {job.id}: {e}")
 
@@ -578,17 +596,17 @@ def process_pending_translation_callbacks():
     Returns:
         int: Number of callbacks processed
     """
-    from email_system.services.translation_service import EmailTemplateTranslationService
     from email_system.models import EmailTemplate, EmailTemplateTranslation
+    from email_system.services.translation_service import EmailTemplateTranslationService
 
     # Find completed email template jobs from the last 2 hours
     cutoff_time = timezone.now() - timedelta(hours=2)
     completed_jobs = TranslationJob.objects.filter(
-        content_type='email_template',
-        status='completed',
+        content_type="email_template",
+        status="completed",
         completed_at__isnull=False,
-        completed_at__gte=cutoff_time
-    ).order_by('completed_at')
+        completed_at__gte=cutoff_time,
+    ).order_by("completed_at")
 
     if not completed_jobs.exists():
         logger.debug("No recent completed translation jobs found")
@@ -602,15 +620,17 @@ def process_pending_translation_callbacks():
         if not job.translated_data:
             continue
 
-        template_id = job.translated_data.get('template_id')
+        template_id = job.translated_data.get("template_id")
         if not template_id:
             continue
 
-        target_lang = job.translated_data.get('language') or (job.target_languages[0] if job.target_languages else None)
+        target_lang = job.translated_data.get("language") or (
+            job.target_languages[0] if job.target_languages else None
+        )
         if not target_lang:
             continue
 
-        create_base_template = job.translated_data.get('create_base_template', False)
+        create_base_template = job.translated_data.get("create_base_template", False)
 
         # Check if template/translation already exists
         try:
@@ -618,9 +638,7 @@ def process_pending_translation_callbacks():
                 # Check for base template
                 template = EmailTemplate.all_objects.get(id=template_id)
                 exists = EmailTemplate.objects.filter(
-                    template_type=template.template_type,
-                    language_code=target_lang,
-                    is_system=True
+                    template_type=template.template_type, language_code=target_lang, is_system=True
                 ).exists()
 
                 if exists:
@@ -629,8 +647,7 @@ def process_pending_translation_callbacks():
                 # Check for translation
                 template = EmailTemplate.all_objects.get(id=template_id)
                 exists = EmailTemplateTranslation.objects.filter(
-                    template=template,
-                    language_code=target_lang
+                    template=template, language_code=target_lang
                 ).exists()
 
                 if exists:
@@ -656,7 +673,7 @@ def process_pending_translation_callbacks():
 
 @shared_task(
     bind=True,
-    name='translations.auto_translate_ui_strings',
+    name="translations.auto_translate_ui_strings",
     max_retries=3,
     default_retry_delay=120,
 )
@@ -678,13 +695,12 @@ def auto_translate_ui_strings(self, site_language_id):
         return
 
     # Skip English — it's the source language
-    if site_lang.code == 'en':
+    if site_lang.code == "en":
         return
 
     # Get or create the override row
     override_obj, created = UITranslationOverride.objects.get_or_create(
-        language=site_lang,
-        defaults={'total_strings': get_total_string_count()}
+        language=site_lang, defaults={"total_strings": get_total_string_count()}
     )
 
     # Update total strings count (in case registry has grown)
@@ -693,22 +709,26 @@ def auto_translate_ui_strings(self, site_language_id):
     # Find strings that need translation (not already translated, not locked)
     existing = override_obj.overrides or {}
     locked_keys = {
-        k for k, v in (override_obj.meta_info or {}).items()
-        if isinstance(v, dict) and v.get('locked')
+        k
+        for k, v in (override_obj.meta_info or {}).items()
+        if isinstance(v, dict) and v.get("locked")
     }
     strings_to_translate = {
-        k: v for k, v in UI_STRING_REGISTRY.items()
+        k: v
+        for k, v in UI_STRING_REGISTRY.items()
         if (k not in existing or not existing[k]) and k not in locked_keys
     }
 
     if not strings_to_translate:
-        override_obj.save(update_fields=['total_strings'])
+        override_obj.save(update_fields=["total_strings"])
         logger.info(f"All UI strings already translated for {site_lang.code}")
         return
 
     client = get_translator_client()
     if not client.is_available():
-        logger.warning(f"Translation service not available for UI strings auto-translate ({site_lang.code})")
+        logger.warning(
+            f"Translation service not available for UI strings auto-translate ({site_lang.code})"
+        )
         return
 
     logger.info(f"Auto-translating {len(strings_to_translate)} UI strings for {site_lang.code}")
@@ -720,7 +740,7 @@ def auto_translate_ui_strings(self, site_language_id):
     items_list = list(strings_to_translate.items())
 
     for i in range(0, len(items_list), CHUNK_SIZE):
-        chunk = items_list[i:i + CHUNK_SIZE]
+        chunk = items_list[i : i + CHUNK_SIZE]
         batch_items = [
             {
                 "id": key,
@@ -735,13 +755,13 @@ def auto_translate_ui_strings(self, site_language_id):
             results = client.translate_batch(batch_items)
 
             for result in results:
-                if result.get('success') and result.get('translated_text'):
-                    key = result['id']
-                    existing[key] = result['translated_text']
+                if result.get("success") and result.get("translated_text"):
+                    key = result["id"]
+                    existing[key] = result["translated_text"]
                     meta_info[key] = {
-                        'auto': True,
-                        'verified': False,
-                        'translated_at': now,
+                        "auto": True,
+                        "verified": False,
+                        "translated_at": now,
                     }
         except Exception as e:
             logger.error(f"Batch translation failed for {site_lang.code} chunk {i}: {e}")
@@ -755,7 +775,8 @@ def auto_translate_ui_strings(self, site_language_id):
 
     # Invalidate cache
     from django.core.cache import cache
-    cache_key = f'ui_trans_overrides:{site_lang.code}'
+
+    cache_key = f"ui_trans_overrides:{site_lang.code}"
     cache.delete(cache_key)
 
     logger.info(
@@ -764,7 +785,7 @@ def auto_translate_ui_strings(self, site_language_id):
     )
 
 
-@shared_task(name='translations.sync_ui_string_registry')
+@shared_task(name="translations.sync_ui_string_registry")
 def sync_ui_string_registry_task():
     """
     Sync UI string registry with all UITranslationOverride rows.
@@ -773,4 +794,5 @@ def sync_ui_string_registry_task():
     Queued after language activation to ensure counts are correct.
     """
     from django.core.management import call_command
-    call_command('sync_ui_string_registry')
+
+    call_command("sync_ui_string_registry")

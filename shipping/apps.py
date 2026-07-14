@@ -3,9 +3,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 class ShippingConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'shipping'
-    verbose_name = _('Shipping & Fulfillment')
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "shipping"
+    verbose_name = _("Shipping & Fulfillment")
 
     def ready(self):
         """

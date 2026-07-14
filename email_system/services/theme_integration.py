@@ -10,9 +10,8 @@ Uses TokenResolver for proper 4-level cascade:
 """
 
 import logging
-from typing import Dict, Optional, Any
+
 from django.core.cache import cache
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -20,51 +19,51 @@ logger = logging.getLogger(__name__)
 # Fallback defaults organized by category (from Starter theme)
 # Used when no theme/branding is applied or tokens are missing
 EMAIL_COLOR_DEFAULTS = {
-    'primary': '#2563eb',
-    'primary-hover': '#1d4ed8',
-    'primary-light': '#dbeafe',
-    'primary-dark': '#0b0b60',
-    'secondary': '#64748b',
-    'secondary-hover': '#475569',
-    'accent': '#10b981',
-    'text': '#1f2937',
-    'text-light': '#374151',
-    'text-muted': '#6b7280',
-    'text-inverse': '#ffffff',
-    'background': '#ffffff',
-    'background-alt': '#f9fafb',
-    'surface': '#ffffff',
-    'surface-hover': '#f3f4f6',
-    'border': '#e5e7eb',
-    'border-light': '#f3f4f6',
-    'success': '#10b981',
-    'success-light': '#d1fae5',
-    'warning': '#f59e0b',
-    'warning-light': '#fef3c7',
-    'error': '#ef4444',
-    'error-light': '#fee2e2',
-    'info': '#3b82f6',
-    'info-light': '#dbeafe',
+    "primary": "#2563eb",
+    "primary-hover": "#1d4ed8",
+    "primary-light": "#dbeafe",
+    "primary-dark": "#0b0b60",
+    "secondary": "#64748b",
+    "secondary-hover": "#475569",
+    "accent": "#10b981",
+    "text": "#1f2937",
+    "text-light": "#374151",
+    "text-muted": "#6b7280",
+    "text-inverse": "#ffffff",
+    "background": "#ffffff",
+    "background-alt": "#f9fafb",
+    "surface": "#ffffff",
+    "surface-hover": "#f3f4f6",
+    "border": "#e5e7eb",
+    "border-light": "#f3f4f6",
+    "success": "#10b981",
+    "success-light": "#d1fae5",
+    "warning": "#f59e0b",
+    "warning-light": "#fef3c7",
+    "error": "#ef4444",
+    "error-light": "#fee2e2",
+    "info": "#3b82f6",
+    "info-light": "#dbeafe",
 }
 
 EMAIL_FONT_DEFAULTS = {
-    'family-body': "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-    'family-heading': "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-    'sans': "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    'serif': "Georgia, 'Times New Roman', serif",
+    "family-body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "family-heading": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    "serif": "Georgia, 'Times New Roman', serif",
 }
 
 EMAIL_RADIUS_DEFAULTS = {
-    'sm': '0.25rem',
-    'md': '0.5rem',
-    'lg': '0.75rem',
+    "sm": "0.25rem",
+    "md": "0.5rem",
+    "lg": "0.75rem",
 }
 
 EMAIL_SPACE_DEFAULTS = {
-    '2': '0.5rem',
-    '4': '1rem',
-    '6': '1.5rem',
-    '8': '2rem',
+    "2": "0.5rem",
+    "4": "1rem",
+    "6": "1.5rem",
+    "8": "2rem",
 }
 
 
@@ -80,8 +79,8 @@ class ThemeIntegrationService:
     ensuring Brand Builder customizations take priority over theme defaults.
     """
 
-    CACHE_KEY = 'email_theme_css'
-    CONTEXT_CACHE_KEY = 'email_theme_context'
+    CACHE_KEY = "email_theme_css"
+    CONTEXT_CACHE_KEY = "email_theme_context"
     CACHE_TIMEOUT = 300  # 5 minutes
 
     def generate_theme_css(self, force_refresh: bool = False) -> str:
@@ -120,26 +119,26 @@ class ThemeIntegrationService:
 
         return css_vars
 
-    def _load_branding(self) -> Optional[Dict]:
+    def _load_branding(self) -> dict | None:
         """
         Load active theme branding configuration
         """
         try:
-            from design.models import ThemeBranding, ThemeInstallation
+            from design.models import ThemeInstallation
 
             # Get active theme installation
-            installation = ThemeInstallation.objects.filter(
-                is_active=True
-            ).select_related('branding').first()
+            installation = (
+                ThemeInstallation.objects.filter(is_active=True).select_related("branding").first()
+            )
 
             if installation and installation.branding:
                 branding = installation.branding
                 return {
-                    'colors': branding.colors_config or {},
-                    'typography': branding.typography_config or {},
-                    'spacing': branding.spacing_config or {},
-                    'borders': branding.borders_config or {},
-                    'logo_url': branding.logo.url if branding.logo else None,
+                    "colors": branding.colors_config or {},
+                    "typography": branding.typography_config or {},
+                    "spacing": branding.spacing_config or {},
+                    "borders": branding.borders_config or {},
+                    "logo_url": branding.logo.url if branding.logo else None,
                 }
 
         except Exception as e:
@@ -147,23 +146,23 @@ class ThemeIntegrationService:
 
         return None
 
-    def _load_theme(self) -> Optional[Dict]:
+    def _load_theme(self) -> dict | None:
         """
         Load active theme configuration
         """
         try:
-            from design.models import Theme, ThemeInstallation
+            from design.models import ThemeInstallation
 
-            installation = ThemeInstallation.objects.filter(
-                is_active=True
-            ).select_related('theme').first()
+            installation = (
+                ThemeInstallation.objects.filter(is_active=True).select_related("theme").first()
+            )
 
             if installation and installation.theme:
                 theme = installation.theme
                 return {
-                    'colors': theme.colors or {},
-                    'typography': theme.typography or {},
-                    'spacing': theme.spacing or {},
+                    "colors": theme.colors or {},
+                    "typography": theme.typography or {},
+                    "spacing": theme.spacing or {},
                 }
 
         except Exception as e:
@@ -171,11 +170,7 @@ class ThemeIntegrationService:
 
         return None
 
-    def _generate_css_variables(
-        self,
-        branding: Optional[Dict],
-        theme: Optional[Dict]
-    ) -> str:
+    def _generate_css_variables(self, branding: dict | None, theme: dict | None) -> str:
         """
         Generate CSS variables string
 
@@ -183,60 +178,88 @@ class ThemeIntegrationService:
         """
         # Default values (Spwig brand colors)
         defaults = {
-            'primary_color': '#1a73e8',
-            'secondary_color': '#34a853',
-            'accent_color': '#fbbc04',
-            'text_color': '#202124',
-            'background_color': '#ffffff',
-            'border_color': '#dadce0',
-            'success_color': '#34a853',
-            'warning_color': '#fbbc04',
-            'error_color': '#ea4335',
-            'font_family': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-            'heading_font': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-            'font_size_base': '16px',
-            'font_size_small': '14px',
-            'font_size_large': '18px',
-            'line_height': '1.5',
-            'border_radius': '8px',
-            'spacing_small': '8px',
-            'spacing_medium': '16px',
-            'spacing_large': '24px',
+            "primary_color": "#1a73e8",
+            "secondary_color": "#34a853",
+            "accent_color": "#fbbc04",
+            "text_color": "#202124",
+            "background_color": "#ffffff",
+            "border_color": "#dadce0",
+            "success_color": "#34a853",
+            "warning_color": "#fbbc04",
+            "error_color": "#ea4335",
+            "font_family": '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            "heading_font": '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            "font_size_base": "16px",
+            "font_size_small": "14px",
+            "font_size_large": "18px",
+            "line_height": "1.5",
+            "border_radius": "8px",
+            "spacing_small": "8px",
+            "spacing_medium": "16px",
+            "spacing_large": "24px",
         }
 
         # Merge with theme
         if theme:
-            if theme.get('colors'):
-                defaults['primary_color'] = theme['colors'].get('primary', defaults['primary_color'])
-                defaults['secondary_color'] = theme['colors'].get('secondary', defaults['secondary_color'])
-                defaults['text_color'] = theme['colors'].get('text', defaults['text_color'])
-                defaults['background_color'] = theme['colors'].get('background', defaults['background_color'])
+            if theme.get("colors"):
+                defaults["primary_color"] = theme["colors"].get(
+                    "primary", defaults["primary_color"]
+                )
+                defaults["secondary_color"] = theme["colors"].get(
+                    "secondary", defaults["secondary_color"]
+                )
+                defaults["text_color"] = theme["colors"].get("text", defaults["text_color"])
+                defaults["background_color"] = theme["colors"].get(
+                    "background", defaults["background_color"]
+                )
 
-            if theme.get('typography'):
-                defaults['font_family'] = theme['typography'].get('body_font', defaults['font_family'])
-                defaults['heading_font'] = theme['typography'].get('heading_font', defaults['heading_font'])
-                defaults['font_size_base'] = theme['typography'].get('base_size', defaults['font_size_base'])
+            if theme.get("typography"):
+                defaults["font_family"] = theme["typography"].get(
+                    "body_font", defaults["font_family"]
+                )
+                defaults["heading_font"] = theme["typography"].get(
+                    "heading_font", defaults["heading_font"]
+                )
+                defaults["font_size_base"] = theme["typography"].get(
+                    "base_size", defaults["font_size_base"]
+                )
 
         # Override with branding (highest priority)
         if branding:
-            if branding.get('colors'):
-                defaults['primary_color'] = branding['colors'].get('primary', defaults['primary_color'])
-                defaults['secondary_color'] = branding['colors'].get('secondary', defaults['secondary_color'])
-                defaults['accent_color'] = branding['colors'].get('accent', defaults['accent_color'])
+            if branding.get("colors"):
+                defaults["primary_color"] = branding["colors"].get(
+                    "primary", defaults["primary_color"]
+                )
+                defaults["secondary_color"] = branding["colors"].get(
+                    "secondary", defaults["secondary_color"]
+                )
+                defaults["accent_color"] = branding["colors"].get(
+                    "accent", defaults["accent_color"]
+                )
 
-            if branding.get('typography'):
-                defaults['font_family'] = branding['typography'].get('body_font', defaults['font_family'])
-                defaults['heading_font'] = branding['typography'].get('heading_font', defaults['heading_font'])
+            if branding.get("typography"):
+                defaults["font_family"] = branding["typography"].get(
+                    "body_font", defaults["font_family"]
+                )
+                defaults["heading_font"] = branding["typography"].get(
+                    "heading_font", defaults["heading_font"]
+                )
 
-            if branding.get('spacing'):
-                defaults['spacing_small'] = branding['spacing'].get('small', defaults['spacing_small'])
-                defaults['spacing_medium'] = branding['spacing'].get('medium', defaults['spacing_medium'])
-                defaults['spacing_large'] = branding['spacing'].get('large', defaults['spacing_large'])
+            if branding.get("spacing"):
+                defaults["spacing_small"] = branding["spacing"].get(
+                    "small", defaults["spacing_small"]
+                )
+                defaults["spacing_medium"] = branding["spacing"].get(
+                    "medium", defaults["spacing_medium"]
+                )
+                defaults["spacing_large"] = branding["spacing"].get(
+                    "large", defaults["spacing_large"]
+                )
 
         # Generate CSS string
         css_lines = []
         for key, value in defaults.items():
-            css_var_name = key.replace('_', '-')
+            css_var_name = key.replace("_", "-")
             css_lines.append(f"  --{css_var_name}: {value};")
 
         css = "/* Theme and Branding Variables */\n* {\n" + "\n".join(css_lines) + "\n}"
@@ -250,7 +273,7 @@ class ThemeIntegrationService:
         cache.delete(self.CONTEXT_CACHE_KEY)
         logger.info("Cleared theme CSS and context cache")
 
-    def get_email_context(self, force_refresh: bool = False) -> Dict[str, Dict[str, str]]:
+    def get_email_context(self, force_refresh: bool = False) -> dict[str, dict[str, str]]:
         """
         Get resolved theme token values for email template context.
 
@@ -313,71 +336,88 @@ class ThemeIntegrationService:
 
         # Build nested context structure
         context = {
-            'color': {},
-            'font': {},
-            'radius': {},
-            'space': {},
+            "color": {},
+            "font": {},
+            "radius": {},
+            "space": {},
         }
 
         try:
-            from design.token_resolver import get_token_resolver
             from design.theme_utils import get_active_theme
+            from design.token_resolver import get_token_resolver
 
             theme = get_active_theme()
             # Use tier 'C' (Marketing) which has full access to all tokens
-            resolver = get_token_resolver(page_tier='C', theme=theme)
+            resolver = get_token_resolver(page_tier="C", theme=theme)
 
             # Resolve color tokens
             color_keys = [
-                'primary', 'primary-hover', 'primary-light', 'primary-dark',
-                'secondary', 'secondary-hover', 'accent', 'accent-hover',
-                'text', 'text-light', 'text-muted', 'text-inverse',
-                'background', 'background-alt',
-                'surface', 'surface-hover',
-                'border', 'border-light', 'border-dark',
-                'success', 'success-light',
-                'warning', 'warning-light',
-                'error', 'error-light',
-                'info', 'info-light',
+                "primary",
+                "primary-hover",
+                "primary-light",
+                "primary-dark",
+                "secondary",
+                "secondary-hover",
+                "accent",
+                "accent-hover",
+                "text",
+                "text-light",
+                "text-muted",
+                "text-inverse",
+                "background",
+                "background-alt",
+                "surface",
+                "surface-hover",
+                "border",
+                "border-light",
+                "border-dark",
+                "success",
+                "success-light",
+                "warning",
+                "warning-light",
+                "error",
+                "error-light",
+                "info",
+                "info-light",
             ]
             for key in color_keys:
-                token = resolver.resolve_token(f'theme-color-{key}')
+                token = resolver.resolve_token(f"theme-color-{key}")
                 # Convert hyphens to underscores for Django template dot notation
                 # e.g., 'primary-hover' -> 'primary_hover' -> {{ theme.color.primary_hover }}
-                context_key = key.replace('-', '_')
+                context_key = key.replace("-", "_")
                 if token:
-                    context['color'][context_key] = token.value
+                    context["color"][context_key] = token.value
                 else:
-                    context['color'][context_key] = EMAIL_COLOR_DEFAULTS.get(key, '')
+                    context["color"][context_key] = EMAIL_COLOR_DEFAULTS.get(key, "")
 
             # Resolve font tokens
-            font_keys = ['family-body', 'family-heading', 'sans', 'serif']
+            font_keys = ["family-body", "family-heading", "sans", "serif"]
             for key in font_keys:
-                token = resolver.resolve_token(f'theme-font-{key}')
+                token = resolver.resolve_token(f"theme-font-{key}")
                 # Convert hyphens to underscores for Django template dot notation
-                context_key = key.replace('-', '_')
+                context_key = key.replace("-", "_")
                 if token:
-                    context['font'][context_key] = token.value
+                    context["font"][context_key] = token.value
                 else:
-                    context['font'][context_key] = EMAIL_FONT_DEFAULTS.get(key, '')
+                    context["font"][context_key] = EMAIL_FONT_DEFAULTS.get(key, "")
 
             # Resolve radius tokens
-            radius_keys = ['sm', 'md', 'lg']
+            radius_keys = ["sm", "md", "lg"]
             for key in radius_keys:
-                token = resolver.resolve_token(f'theme-radius-{key}')
+                token = resolver.resolve_token(f"theme-radius-{key}")
                 if token:
-                    context['radius'][key] = token.value
+                    context["radius"][key] = token.value
                 else:
-                    context['radius'][key] = EMAIL_RADIUS_DEFAULTS.get(key, '')
+                    context["radius"][key] = EMAIL_RADIUS_DEFAULTS.get(key, "")
 
             # Resolve spacing tokens
-            space_keys = ['2', '4', '6', '8']
+            space_keys = ["2", "4", "6", "8"]
             for key in space_keys:
-                token = resolver.resolve_token(f'theme-space-{key}')
+                token = resolver.resolve_token(f"theme-space-{key}")
                 if token:
-                    context['space'][key] = token.value
+                    context["space"][key] = token.value
                 else:
-                    context['space'][key] = EMAIL_SPACE_DEFAULTS.get(key, '')
+                    context["space"][key] = EMAIL_SPACE_DEFAULTS.get(key, "")
 
             logger.info("Generated email theme context from TokenResolver")
 
@@ -385,15 +425,15 @@ class ThemeIntegrationService:
             logger.warning(f"Could not load theme tokens via TokenResolver: {e}")
             # Fall back to defaults - convert hyphens to underscores for Django templates
             for key in EMAIL_COLOR_DEFAULTS:
-                context_key = key.replace('-', '_')
-                context['color'][context_key] = EMAIL_COLOR_DEFAULTS[key]
+                context_key = key.replace("-", "_")
+                context["color"][context_key] = EMAIL_COLOR_DEFAULTS[key]
             for key in EMAIL_FONT_DEFAULTS:
-                context_key = key.replace('-', '_')
-                context['font'][context_key] = EMAIL_FONT_DEFAULTS[key]
+                context_key = key.replace("-", "_")
+                context["font"][context_key] = EMAIL_FONT_DEFAULTS[key]
             for key in EMAIL_RADIUS_DEFAULTS:
-                context['radius'][key] = EMAIL_RADIUS_DEFAULTS[key]
+                context["radius"][key] = EMAIL_RADIUS_DEFAULTS[key]
             for key in EMAIL_SPACE_DEFAULTS:
-                context['space'][key] = EMAIL_SPACE_DEFAULTS[key]
+                context["space"][key] = EMAIL_SPACE_DEFAULTS[key]
             logger.info("Using fallback defaults for email theme context")
 
         # Cache the result

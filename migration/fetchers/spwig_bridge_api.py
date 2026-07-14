@@ -5,10 +5,12 @@ This client fetches affiliate data (affiliates, commissions, plans, payouts)
 from WordPress sites with the Spwig Migration Bridge plugin installed.
 It uses query string auth with WooCommerce consumer keys.
 """
-import requests
-import time
+
 import logging
-from typing import List, Dict, Callable, Optional
+import time
+from collections.abc import Callable
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -24,14 +26,8 @@ class SpwigBridgeAPIClient:
     - Progress callbacks for TQDM integration
     """
 
-    def __init__(
-        self,
-        store_url: str,
-        consumer_key: str,
-        consumer_secret: str,
-        timeout: int = 30
-    ):
-        self.store_url = store_url.rstrip('/')
+    def __init__(self, store_url: str, consumer_key: str, consumer_secret: str, timeout: int = 30):
+        self.store_url = store_url.rstrip("/")
         self.base_url = f"{self.store_url}/wp-json/spwig/v1"
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
@@ -49,7 +45,7 @@ class SpwigBridgeAPIClient:
         Returns:
             dict with plugin info if successful, or raises exception
         """
-        response = self._request('GET', '/info')
+        response = self._request("GET", "/info")
         if response.status_code == 200:
             return response.json()
         elif response.status_code == 404:
@@ -64,8 +60,7 @@ class SpwigBridgeAPIClient:
             )
         else:
             raise ConnectionError(
-                f"Bridge plugin returned status {response.status_code}: "
-                f"{response.text[:200]}"
+                f"Bridge plugin returned status {response.status_code}: {response.text[:200]}"
             )
 
     def get_info(self) -> dict:
@@ -75,42 +70,28 @@ class SpwigBridgeAPIClient:
         Returns:
             dict: {detected_plugin, plugin_name, plugin_version, counts, store_currency}
         """
-        response = self._request('GET', '/info')
+        response = self._request("GET", "/info")
         if response.status_code == 200:
             return response.json()
         return {}
 
-    def fetch_all_affiliates(
-        self,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
-        return self._fetch_all_paginated('/affiliates', progress_callback)
+    def fetch_all_affiliates(self, progress_callback: Callable | None = None) -> list[dict]:
+        return self._fetch_all_paginated("/affiliates", progress_callback)
 
-    def fetch_all_referrals(
-        self,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
-        return self._fetch_all_paginated('/referrals', progress_callback)
+    def fetch_all_referrals(self, progress_callback: Callable | None = None) -> list[dict]:
+        return self._fetch_all_paginated("/referrals", progress_callback)
 
-    def fetch_all_plans(
-        self,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
-        return self._fetch_all_paginated('/plans', progress_callback)
+    def fetch_all_plans(self, progress_callback: Callable | None = None) -> list[dict]:
+        return self._fetch_all_paginated("/plans", progress_callback)
 
-    def fetch_all_payouts(
-        self,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
-        return self._fetch_all_paginated('/payouts', progress_callback)
+    def fetch_all_payouts(self, progress_callback: Callable | None = None) -> list[dict]:
+        return self._fetch_all_paginated("/payouts", progress_callback)
 
     # Core methods
 
     def _fetch_all_paginated(
-        self,
-        endpoint: str,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
+        self, endpoint: str, progress_callback: Callable | None = None
+    ) -> list[dict]:
         """
         Fetch all items with automatic pagination.
 
@@ -133,28 +114,22 @@ class SpwigBridgeAPIClient:
 
         while True:
             params = {
-                'page': page,
-                'per_page': per_page,
+                "page": page,
+                "per_page": per_page,
             }
 
-            response = self._request('GET', endpoint, params=params)
+            response = self._request("GET", endpoint, params=params)
 
             if response.status_code != 200:
                 if response.status_code == 400 and page > 1:
                     break
-                logger.error(
-                    f"Failed to fetch {endpoint} page {page}: "
-                    f"{response.status_code}"
-                )
+                logger.error(f"Failed to fetch {endpoint} page {page}: {response.status_code}")
                 break
 
             if total_items is None:
-                total_items = int(response.headers.get('X-WP-Total', 0))
-                total_pages = int(response.headers.get('X-WP-TotalPages', 1))
-                logger.info(
-                    f"Fetching {total_items} items from {endpoint} "
-                    f"({total_pages} pages)"
-                )
+                total_items = int(response.headers.get("X-WP-Total", 0))
+                total_pages = int(response.headers.get("X-WP-TotalPages", 1))
+                logger.info(f"Fetching {total_items} items from {endpoint} ({total_pages} pages)")
 
             items = response.json()
             if not items:
@@ -174,11 +149,7 @@ class SpwigBridgeAPIClient:
         return all_items
 
     def _request(
-        self,
-        method: str,
-        endpoint: str,
-        params: Optional[Dict] = None,
-        max_retries: int = 3
+        self, method: str, endpoint: str, params: dict | None = None, max_retries: int = 3
     ) -> requests.Response:
         """
         Make HTTP request with query string auth, retry logic, and rate limiting.
@@ -187,8 +158,8 @@ class SpwigBridgeAPIClient:
 
         # Add WC consumer key auth to query params
         auth_params = {
-            'consumer_key': self.consumer_key,
-            'consumer_secret': self.consumer_secret,
+            "consumer_key": self.consumer_key,
+            "consumer_secret": self.consumer_secret,
         }
         if params:
             auth_params.update(params)
@@ -198,19 +169,14 @@ class SpwigBridgeAPIClient:
                 self._rate_limit_wait()
 
                 response = self.session.request(
-                    method,
-                    url,
-                    params=auth_params,
-                    timeout=self.timeout
+                    method, url, params=auth_params, timeout=self.timeout
                 )
 
                 self.last_request_time = time.time()
 
                 if response.status_code == 429:
-                    retry_after = int(response.headers.get('Retry-After', 5))
-                    logger.warning(
-                        f"Rate limited. Waiting {retry_after} seconds..."
-                    )
+                    retry_after = int(response.headers.get("Retry-After", 5))
+                    logger.warning(f"Rate limited. Waiting {retry_after} seconds...")
                     time.sleep(retry_after)
                     continue
 
@@ -218,7 +184,7 @@ class SpwigBridgeAPIClient:
 
             except requests.exceptions.Timeout:
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt
+                    wait_time = 2**attempt
                     logger.warning(
                         f"Request timeout. Retrying in {wait_time}s... "
                         f"(attempt {attempt + 1}/{max_retries})"
@@ -229,10 +195,8 @@ class SpwigBridgeAPIClient:
 
             except requests.exceptions.ConnectionError as e:
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt
-                    logger.warning(
-                        f"Connection error: {e}. Retrying in {wait_time}s..."
-                    )
+                    wait_time = 2**attempt
+                    logger.warning(f"Connection error: {e}. Retrying in {wait_time}s...")
                     time.sleep(wait_time)
                 else:
                     raise
@@ -240,9 +204,7 @@ class SpwigBridgeAPIClient:
             except Exception:
                 raise
 
-        raise Exception(
-            f"Failed to complete request after {max_retries} attempts"
-        )
+        raise Exception(f"Failed to complete request after {max_retries} attempts")
 
     def _rate_limit_wait(self):
         """Wait if needed to respect rate limits."""

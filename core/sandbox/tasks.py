@@ -30,25 +30,23 @@ def report_tamper_to_server(self, event: str, url: str, ip: str):
         import requests
 
         payload = {
-            'installation_uuid': str(config.installation_uuid) if config.installation_uuid else '',
-            'event': event,
-            'url': url,
-            'ip': ip,
+            "installation_uuid": str(config.installation_uuid) if config.installation_uuid else "",
+            "event": event,
+            "url": url,
+            "ip": ip,
         }
 
         response = requests.post(
             f"{config.server_url.rstrip('/')}/api/v1/installations/tamper-report/",
             json=payload,
             timeout=10,
-            headers={'Content-Type': 'application/json'},
+            headers={"Content-Type": "application/json"},
         )
 
         if response.status_code == 200:
             logger.info(f"Tamper report sent to update server: event={event}")
         else:
-            logger.warning(
-                f"Update server returned {response.status_code} for tamper report"
-            )
+            logger.warning(f"Update server returned {response.status_code} for tamper report")
 
     except Exception as exc:
         logger.error(f"Failed to send tamper report: {exc}")

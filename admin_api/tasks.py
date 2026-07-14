@@ -3,7 +3,9 @@ Celery Tasks for Admin API
 
 Async tasks for push notifications and other background operations.
 """
+
 import logging
+
 from celery import shared_task
 
 logger = logging.getLogger(__name__)
@@ -18,8 +20,8 @@ def send_new_order_push_notification(self, order_id: int):
         order_id: ID of the order
     """
     try:
-        from orders.models import Order
         from admin_api.services.push_service import PushNotificationService
+        from orders.models import Order
 
         order = Order.objects.get(id=order_id)
         sent_count = PushNotificationService.send_new_order_notification(order)
@@ -42,8 +44,8 @@ def send_low_stock_push_notification(self, product_id: int, current_stock: int):
         current_stock: Current stock quantity
     """
     try:
-        from catalog.models import Product
         from admin_api.services.push_service import PushNotificationService
+        from catalog.models import Product
 
         product = Product.objects.get(id=product_id)
         sent_count = PushNotificationService.send_low_stock_notification(product, current_stock)
@@ -57,7 +59,7 @@ def send_low_stock_push_notification(self, product_id: int, current_stock: int):
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=60)
-def send_customer_message_push_notification(self, message_id: int, source: str = 'contact_form'):
+def send_customer_message_push_notification(self, message_id: int, source: str = "contact_form"):
     """
     Send push notification for a new customer message.
 
@@ -68,17 +70,21 @@ def send_customer_message_push_notification(self, message_id: int, source: str =
     try:
         from admin_api.services.push_service import PushNotificationService
 
-        if source == 'contact_form':
+        if source == "contact_form":
             from admin_api.models import CustomerMessage
-            message = CustomerMessage.objects.select_related('order').get(id=message_id)
-        elif source == 'order_note':
+
+            message = CustomerMessage.objects.select_related("order").get(id=message_id)
+        elif source == "order_note":
             from orders.models import OrderNote
-            message = OrderNote.objects.select_related('order').get(id=message_id)
+
+            message = OrderNote.objects.select_related("order").get(id=message_id)
         else:
             logger.error(f"Invalid source: {source}")
             return
 
-        sent_count = PushNotificationService.send_customer_message_notification(message, source=source)
+        sent_count = PushNotificationService.send_customer_message_notification(
+            message, source=source
+        )
         logger.info(f"Sent {sent_count} customer message notifications for {source} {message_id}")
 
     except Exception as e:
@@ -87,7 +93,7 @@ def send_customer_message_push_notification(self, message_id: int, source: str =
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=60)
-def send_payment_alert_push_notification(self, order_id: int, alert_type: str, details: str = ''):
+def send_payment_alert_push_notification(self, order_id: int, alert_type: str, details: str = ""):
     """
     Send push notification for payment alert.
 
@@ -97,8 +103,8 @@ def send_payment_alert_push_notification(self, order_id: int, alert_type: str, d
         details: Additional details
     """
     try:
-        from orders.models import Order
         from admin_api.services.push_service import PushNotificationService
+        from orders.models import Order
 
         order = Order.objects.get(id=order_id)
         sent_count = PushNotificationService.send_payment_alert_notification(

@@ -10,19 +10,20 @@ scans ComponentRegistry for payment_provider components and dynamically imports
 any subscription_provider.py modules found, triggering @register_provider
 decorator registration.
 """
+
 # Import from parent provider_base module
 from subscriptions.provider_base import (
-    SubscriptionProviderBase,
     FallbackSubscriptionProvider,
-    register_provider,
+    SubscriptionProviderBase,
     get_provider,
     is_subscription_supported,
+    register_provider,
 )
 
 __all__ = [
-    'SubscriptionProviderBase',
-    'FallbackSubscriptionProvider',
-    'register_provider',
-    'get_provider',
-    'is_subscription_supported',
+    "SubscriptionProviderBase",
+    "FallbackSubscriptionProvider",
+    "register_provider",
+    "get_provider",
+    "is_subscription_supported",
 ]

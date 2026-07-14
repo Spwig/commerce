@@ -8,87 +8,87 @@
  * Fully CSP-compliant: no inline handlers, uses addEventListener.
  */
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    var hasScrolledToBottom = false;
+  let hasScrolledToBottom = false;
 
-    /**
-     * Check if the license text has been scrolled to the bottom.
-     */
-    function checkScrollPosition() {
-        var licenseText = document.getElementById('license-text');
-        if (!licenseText) return;
+  /**
+   * Check if the license text has been scrolled to the bottom.
+   */
+  function checkScrollPosition() {
+    const licenseText = document.getElementById('license-text');
+    if (!licenseText) return;
 
-        var atBottom = licenseText.scrollHeight - licenseText.scrollTop <= licenseText.clientHeight + 20;
+    const atBottom =
+      licenseText.scrollHeight - licenseText.scrollTop <= licenseText.clientHeight + 20;
 
-        if (atBottom && !hasScrolledToBottom) {
-            hasScrolledToBottom = true;
-            updateScrollHint();
-            updateSubmitButton();
-        }
+    if (atBottom && !hasScrolledToBottom) {
+      hasScrolledToBottom = true;
+      updateScrollHint();
+      updateSubmitButton();
+    }
+  }
+
+  /**
+   * Hide the scroll hint once the user has scrolled to the bottom.
+   */
+  function updateScrollHint() {
+    const hint = document.getElementById('scroll-hint');
+    if (hint && hasScrolledToBottom) {
+      hint.classList.add('hidden');
+    }
+  }
+
+  /**
+   * Enable or disable the submit button based on scroll + checkbox state.
+   */
+  function updateSubmitButton() {
+    const submitBtn = document.getElementById('accept-btn');
+    const checkbox = document.getElementById('accept-checkbox');
+    if (!submitBtn || !checkbox) return;
+
+    submitBtn.disabled = !(hasScrolledToBottom && checkbox.checked);
+  }
+
+  /**
+   * Handle checkbox change.
+   */
+  function handleCheckboxChange() {
+    updateSubmitButton();
+  }
+
+  /**
+   * Initialize license acceptance page.
+   */
+  function init() {
+    const licenseText = document.getElementById('license-text');
+    const checkbox = document.getElementById('accept-checkbox');
+
+    if (!licenseText) return;
+
+    // Listen for scroll events on the license text container
+    licenseText.addEventListener('scroll', checkScrollPosition);
+
+    // Check if content is short enough that no scrolling is needed
+    if (licenseText.scrollHeight <= licenseText.clientHeight + 20) {
+      hasScrolledToBottom = true;
+      updateScrollHint();
     }
 
-    /**
-     * Hide the scroll hint once the user has scrolled to the bottom.
-     */
-    function updateScrollHint() {
-        var hint = document.getElementById('scroll-hint');
-        if (hint && hasScrolledToBottom) {
-            hint.classList.add('hidden');
-        }
+    // Listen for checkbox changes
+    if (checkbox) {
+      checkbox.addEventListener('change', handleCheckboxChange);
     }
 
-    /**
-     * Enable or disable the submit button based on scroll + checkbox state.
-     */
-    function updateSubmitButton() {
-        var submitBtn = document.getElementById('accept-btn');
-        var checkbox = document.getElementById('accept-checkbox');
-        if (!submitBtn || !checkbox) return;
+    // Initial state
+    updateSubmitButton();
+  }
 
-        submitBtn.disabled = !(hasScrolledToBottom && checkbox.checked);
-    }
-
-    /**
-     * Handle checkbox change.
-     */
-    function handleCheckboxChange() {
-        updateSubmitButton();
-    }
-
-    /**
-     * Initialize license acceptance page.
-     */
-    function init() {
-        var licenseText = document.getElementById('license-text');
-        var checkbox = document.getElementById('accept-checkbox');
-
-        if (!licenseText) return;
-
-        // Listen for scroll events on the license text container
-        licenseText.addEventListener('scroll', checkScrollPosition);
-
-        // Check if content is short enough that no scrolling is needed
-        if (licenseText.scrollHeight <= licenseText.clientHeight + 20) {
-            hasScrolledToBottom = true;
-            updateScrollHint();
-        }
-
-        // Listen for checkbox changes
-        if (checkbox) {
-            checkbox.addEventListener('change', handleCheckboxChange);
-        }
-
-        // Initial state
-        updateSubmitButton();
-    }
-
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

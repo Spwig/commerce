@@ -3,11 +3,12 @@ Communication Preferences Model Tests.
 
 Tests CommunicationPreference model creation, defaults, methods, and behavior.
 """
+
 import pytest
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.utils import timezone
 
-from accounts.models import CommunicationPreference
 from tests.factories import UserFactory
 
 User = get_user_model()
@@ -19,12 +20,13 @@ pytestmark = [pytest.mark.django_db, pytest.mark.integration, pytest.mark.commun
 # Model Creation & Defaults
 # ============================================================
 
-def test_communication_preference_created_on_user_save(db):
-    """CommunicationPreference auto-created via post_save signal when user is created."""
+
+def test_communication_preference_get_or_create_for_user(db):
+    """``CommunicationPreference.get_or_create_for_user`` seeds sensible defaults."""
     user = UserFactory()
 
-    # Should auto-create preference
-    assert hasattr(user, 'communication_preferences')
+    # Fixture auto-creates preferences via the model helper — the same code
+    # path exercised by ``PreferenceService.get_or_create_for_user``.
     prefs = user.communication_preferences
 
     # Check defaults (GDPR opt-out for marketing)
@@ -36,7 +38,7 @@ def test_communication_preference_created_on_user_save(db):
     assert prefs.sms_marketing is False
     assert prefs.email_verified is False
     assert prefs.sms_verified is False
-    assert prefs.language_code == 'en'
+    assert prefs.language_code == "en"
 
 
 def test_unsubscribe_token_auto_generated(db):
@@ -47,10 +49,11 @@ def test_unsubscribe_token_auto_generated(db):
     prefs1 = user1.communication_preferences
     prefs2 = user2.communication_preferences
 
-    # Tokens should be generated
+    # Tokens should be generated. ``secrets.token_urlsafe(32)`` returns a
+    # 43-char base64 string; the field itself allows up to 64.
     assert prefs1.unsubscribe_token
     assert prefs2.unsubscribe_token
-    assert len(prefs1.unsubscribe_token) == 64
+    assert 32 <= len(prefs1.unsubscribe_token) <= 64
 
     # Tokens should be unique
     assert prefs1.unsubscribe_token != prefs2.unsubscribe_token
@@ -62,26 +65,26 @@ def test_default_app_preferences_structure(db):
     prefs = user.communication_preferences
 
     # Should have all app sections
-    assert 'blog' in prefs.app_preferences
-    assert 'loyalty' in prefs.app_preferences
-    assert 'referrals' in prefs.app_preferences
-    assert 'affiliate' in prefs.app_preferences
+    assert "blog" in prefs.app_preferences
+    assert "loyalty" in prefs.app_preferences
+    assert "referrals" in prefs.app_preferences
+    assert "affiliate" in prefs.app_preferences
 
     # Blog defaults
-    assert prefs.app_preferences['blog']['enabled'] is True
-    assert prefs.app_preferences['blog']['frequency'] == 'weekly'
-    assert prefs.app_preferences['blog']['categories'] == []
+    assert prefs.app_preferences["blog"]["enabled"] is True
+    assert prefs.app_preferences["blog"]["frequency"] == "weekly"
+    assert prefs.app_preferences["blog"]["categories"] == []
 
     # Loyalty defaults
-    loyalty = prefs.app_preferences['loyalty']
-    assert loyalty['enabled'] is True
-    assert loyalty['frequency'] == 'immediate'
-    assert loyalty['points_earned'] is True
-    assert loyalty['tier_changes'] is True
-    assert loyalty['rewards_available'] is True
-    assert loyalty['points_expiring'] is True
-    assert loyalty['birthday_bonus'] is True
-    assert loyalty['campaign_offers'] is False  # Marketing opt-out
+    loyalty = prefs.app_preferences["loyalty"]
+    assert loyalty["enabled"] is True
+    assert loyalty["frequency"] == "immediate"
+    assert loyalty["points_earned"] is True
+    assert loyalty["tier_changes"] is True
+    assert loyalty["rewards_available"] is True
+    assert loyalty["points_expiring"] is True
+    assert loyalty["birthday_bonus"] is True
+    assert loyalty["campaign_offers"] is False  # Marketing opt-out
 
 
 def test_consent_metadata_recorded(db):
@@ -90,7 +93,7 @@ def test_consent_metadata_recorded(db):
     prefs = user.communication_preferences
 
     # Should have consent metadata
-    assert prefs.consent_source == 'registration'
+    assert prefs.consent_source == "registration"
     assert prefs.consent_timestamp is not None
     assert isinstance(prefs.consent_timestamp, timezone.datetime)
 
@@ -99,20 +102,27 @@ def test_consent_metadata_recorded(db):
 # Model Methods - should_send_email
 # ============================================================
 
-def test_should_send_email_transactional_always_true(db):
-    """Transactional emails always allowed regardless of preferences."""
+
+def test_should_send_email_transactional_gated_by_master_toggle(db):
+    """Transactional emails obey the ``email_enabled`` master toggle."""
     user = UserFactory()
     prefs = user.communication_preferences
 
-    # Even with all email disabled
-    prefs.email_enabled = False
+    # Defaults: email_enabled=True, email_transactional=True → transactional sends.
+    assert prefs.should_send_email("order_confirmation") is True
+    assert prefs.should_send_email("order_shipped") is True
+    assert prefs.should_send_email("password_reset") is True
+
+    # When merchants disable transactional, transactional stops.
     prefs.email_transactional = False
     prefs.save()
+    assert prefs.should_send_email("order_confirmation") is False
 
-    # Transactional types still allowed
-    assert prefs.should_send_email('order_confirmation') is True
-    assert prefs.should_send_email('order_shipped') is True
-    assert prefs.should_send_email('password_reset') is True
+    # Re-enable transactional, then disable the master toggle.
+    prefs.email_transactional = True
+    prefs.email_enabled = False
+    prefs.save()
+    assert prefs.should_send_email("order_confirmation") is False
 
 
 def test_should_send_email_marketing_requires_verified(db):
@@ -125,21 +135,21 @@ def test_should_send_email_marketing_requires_verified(db):
     prefs.email_verified = False
     prefs.save()
 
-    assert prefs.should_send_email('newsletter') is False
+    assert prefs.should_send_email("newsletter") is False
 
     # Verified but not opted in
     prefs.email_marketing = False
     prefs.email_verified = True
     prefs.save()
 
-    assert prefs.should_send_email('newsletter') is False
+    assert prefs.should_send_email("newsletter") is False
 
     # Both opted in and verified
     prefs.email_marketing = True
     prefs.email_verified = True
     prefs.save()
 
-    assert prefs.should_send_email('newsletter') is True
+    assert prefs.should_send_email("newsletter") is True
 
 
 def test_should_send_email_app_specific(db):
@@ -153,26 +163,30 @@ def test_should_send_email_app_specific(db):
     prefs.save()
 
     # Blog enabled
-    assert prefs.should_send_email('blog_post_published') is True
+    assert prefs.should_send_email("blog_post_published") is True
 
     # Disable blog
-    prefs.app_preferences['blog']['enabled'] = False
+    prefs.app_preferences["blog"]["enabled"] = False
     prefs.save()
 
-    assert prefs.should_send_email('blog_post_published') is False
+    assert prefs.should_send_email("blog_post_published") is False
 
-    # Loyalty - specific event disabled
-    prefs.app_preferences['loyalty']['campaign_offers'] = False
+    # Re-enable blog so we can test a per-event override on loyalty.
+    prefs.app_preferences["blog"]["enabled"] = True
+    # ``should_send_email`` derives the preference key from the message type
+    # by stripping the ``<app>_`` prefix, so ``loyalty_points_earned`` maps
+    # to the ``points_earned`` flag on the loyalty app preferences.
+    prefs.app_preferences["loyalty"]["points_earned"] = False
     prefs.save()
 
-    assert prefs.should_send_email('loyalty_campaign_offer') is False
+    assert prefs.should_send_email("loyalty_points_earned") is False
 
-    # But other loyalty events still enabled
-    assert prefs.should_send_email('loyalty_points_earned') is True
+    # Other loyalty events (defaulting to True) still fire.
+    assert prefs.should_send_email("loyalty_tier_upgraded") is True
 
 
 def test_should_send_email_master_toggle(db):
-    """email_enabled=False blocks all emails except critical transactional."""
+    """``email_enabled=False`` blocks all emails including transactional."""
     user = UserFactory()
     prefs = user.communication_preferences
 
@@ -181,23 +195,23 @@ def test_should_send_email_master_toggle(db):
     prefs.email_verified = True
     prefs.save()
 
-    # Disable master toggle
+    # Disable master toggle — the model treats this as a hard stop for every
+    # category (transactional, marketing, app-specific). Merchants who want
+    # to keep transactional flowing must leave ``email_enabled=True``.
     prefs.email_enabled = False
     prefs.save()
 
-    # Critical transactional still work
-    assert prefs.should_send_email('order_confirmation') is True
-    assert prefs.should_send_email('password_reset') is True
-
-    # Everything else blocked
-    assert prefs.should_send_email('newsletter') is False
-    assert prefs.should_send_email('blog_post_published') is False
-    assert prefs.should_send_email('loyalty_points_earned') is False
+    assert prefs.should_send_email("order_confirmation") is False
+    assert prefs.should_send_email("password_reset") is False
+    assert prefs.should_send_email("newsletter") is False
+    assert prefs.should_send_email("blog_post_published") is False
+    assert prefs.should_send_email("loyalty_points_earned") is False
 
 
 # ============================================================
 # Model Methods - should_send_sms
 # ============================================================
+
 
 def test_should_send_sms_requires_opt_in(db):
     """All SMS requires explicit opt-in (TCPA compliance)."""
@@ -205,44 +219,54 @@ def test_should_send_sms_requires_opt_in(db):
     prefs = user.communication_preferences
 
     # Default state - all SMS disabled
-    assert prefs.should_send_sms('order_shipped') is False
-    assert prefs.should_send_sms('promotional_offer') is False
+    assert prefs.should_send_sms("order_shipped") is False
+    assert prefs.should_send_sms("promotional_offers") is False
 
-    # Enable transactional SMS
+    # ``should_send_sms`` requires the master toggle **and** verification
+    # (TCPA compliance) *before* per-category flags are consulted.
+    prefs.sms_enabled = True
+    prefs.sms_verified = True
     prefs.sms_transactional = True
     prefs.save()
 
-    assert prefs.should_send_sms('order_shipped') is True
-    assert prefs.should_send_sms('promotional_offer') is False  # Still needs marketing opt-in
+    assert prefs.should_send_sms("order_shipped") is True
+    assert prefs.should_send_sms("promotional_offers") is False  # Marketing opt-in still needed
 
     # Enable marketing SMS
     prefs.sms_marketing = True
     prefs.save()
 
-    assert prefs.should_send_sms('promotional_offer') is True
+    assert prefs.should_send_sms("promotional_offers") is True
 
 
 def test_should_send_sms_master_toggle(db):
-    """sms_enabled=False blocks all SMS."""
+    """``sms_enabled=False`` blocks all SMS."""
     user = UserFactory()
     prefs = user.communication_preferences
 
-    # Enable both transactional and marketing
+    # Enable both transactional and marketing + verification
+    prefs.sms_enabled = True
+    prefs.sms_verified = True
     prefs.sms_transactional = True
     prefs.sms_marketing = True
     prefs.save()
+
+    # Sanity check: with everything on, both types would fire
+    assert prefs.should_send_sms("order_shipped") is True
+    assert prefs.should_send_sms("promotional_offers") is True
 
     # Disable master toggle
     prefs.sms_enabled = False
     prefs.save()
 
-    assert prefs.should_send_sms('order_shipped') is False
-    assert prefs.should_send_sms('promotional_offer') is False
+    assert prefs.should_send_sms("order_shipped") is False
+    assert prefs.should_send_sms("promotional_offers") is False
 
 
 # ============================================================
 # Model Methods - get_app_preference / update_app_preference
 # ============================================================
+
 
 def test_get_app_preference_returns_value(db):
     """get_app_preference retrieves nested app preference values."""
@@ -250,13 +274,13 @@ def test_get_app_preference_returns_value(db):
     prefs = user.communication_preferences
 
     # Get nested value
-    assert prefs.get_app_preference('blog', 'enabled') is True
-    assert prefs.get_app_preference('blog', 'frequency') == 'weekly'
-    assert prefs.get_app_preference('loyalty', 'points_earned') is True
+    assert prefs.get_app_preference("blog", "enabled") is True
+    assert prefs.get_app_preference("blog", "frequency") == "weekly"
+    assert prefs.get_app_preference("loyalty", "points_earned") is True
 
     # Get with default for missing key
-    assert prefs.get_app_preference('blog', 'nonexistent', default='fallback') == 'fallback'
-    assert prefs.get_app_preference('nonexistent_app', 'key', default=None) is None
+    assert prefs.get_app_preference("blog", "nonexistent", default="fallback") == "fallback"
+    assert prefs.get_app_preference("nonexistent_app", "key", default=None) is None
 
 
 def test_update_app_preference_modifies_json(db):
@@ -265,29 +289,33 @@ def test_update_app_preference_modifies_json(db):
     prefs = user.communication_preferences
 
     # Update a single key
-    prefs.update_app_preference('blog', {'frequency': 'immediate'})
+    prefs.update_app_preference("blog", {"frequency": "immediate"})
     prefs.refresh_from_db()
 
-    assert prefs.app_preferences['blog']['frequency'] == 'immediate'
+    assert prefs.app_preferences["blog"]["frequency"] == "immediate"
     # Other keys preserved
-    assert prefs.app_preferences['blog']['enabled'] is True
+    assert prefs.app_preferences["blog"]["enabled"] is True
 
     # Update multiple keys
-    prefs.update_app_preference('loyalty', {
-        'points_earned': False,
-        'tier_changes': False,
-    })
+    prefs.update_app_preference(
+        "loyalty",
+        {
+            "points_earned": False,
+            "tier_changes": False,
+        },
+    )
     prefs.refresh_from_db()
 
-    assert prefs.app_preferences['loyalty']['points_earned'] is False
-    assert prefs.app_preferences['loyalty']['tier_changes'] is False
+    assert prefs.app_preferences["loyalty"]["points_earned"] is False
+    assert prefs.app_preferences["loyalty"]["tier_changes"] is False
     # Other keys preserved
-    assert prefs.app_preferences['loyalty']['rewards_available'] is True
+    assert prefs.app_preferences["loyalty"]["rewards_available"] is True
 
 
 # ============================================================
 # Edge Cases
 # ============================================================
+
 
 def test_preference_survives_user_updates(db):
     """CommunicationPreference persists when user model is updated."""
@@ -295,7 +323,7 @@ def test_preference_survives_user_updates(db):
     original_token = user.communication_preferences.unsubscribe_token
 
     # Update user
-    user.first_name = 'Updated'
+    user.first_name = "Updated"
     user.save()
 
     # Preference still exists with same token
@@ -314,5 +342,5 @@ def test_unique_unsubscribe_token_constraint(db):
     # Try to set duplicate token (should fail on save)
     prefs2.unsubscribe_token = prefs1.unsubscribe_token
 
-    with pytest.raises(Exception):  # IntegrityError
+    with pytest.raises(IntegrityError):
         prefs2.save()

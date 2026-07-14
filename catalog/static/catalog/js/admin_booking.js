@@ -5,97 +5,98 @@
  * AJAX-based booking management for booking products.
  * Replaces Django inlines with compact card rows + modal editing.
  */
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    // ===== Utilities =====
+  // ===== Utilities =====
 
-    function getLanguagePrefix() {
-        const match = window.location.pathname.match(/^\/([a-z]{2}(?:-[a-z]{2})?)\/admin/);
-        return match ? '/' + match[1] : '';
+  function getLanguagePrefix() {
+    const match = window.location.pathname.match(/^\/([a-z]{2}(?:-[a-z]{2})?)\/admin/);
+    return match ? '/' + match[1] : '';
+  }
+
+  function getProductId() {
+    const urlMatch = window.location.pathname.match(/\/admin\/catalog\/product\/(\d+)\//);
+    return urlMatch ? parseInt(urlMatch[1]) : null;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+  }
+
+  function showNotification(message, type) {
+    AdminModal.toast(message, type || 'info');
+  }
+
+  async function fetchJSON(url) {
+    const resp = await fetch(url, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    });
+    if (!resp.ok) {
+      const data = await resp.json().catch(() => ({}));
+      throw new Error(data.error || `HTTP ${resp.status}`);
     }
+    return resp.json();
+  }
 
-    function getProductId() {
-        const urlMatch = window.location.pathname.match(/\/admin\/catalog\/product\/(\d+)\//);
-        return urlMatch ? parseInt(urlMatch[1]) : null;
+  async function postJSON(url, data) {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': AdminUtils.getCsrfToken(),
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await resp.json();
+    if (!resp.ok || !result.success) {
+      throw new Error(result.error || `HTTP ${resp.status}`);
     }
+    return result;
+  }
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text || '';
-        return div.innerHTML;
+  // ===== Main Manager =====
+
+  const LANG = getLanguagePrefix();
+  const PRODUCT_ID = getProductId();
+  const BASE = `${LANG}/admin/catalog`;
+
+  if (!PRODUCT_ID) return;
+
+  const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  // Current modal state
+  let modalEntityType = null; // 'resource', 'person_type', 'availability_rule', 'recurrence_rule'
+  let modalEntityId = null; // null = creating, id = editing
+  let modalResourceImages = []; // images for the resource being edited
+  let availableResources = []; // cached resources for availability rule dropdown
+
+  // DOM refs
+  let modalOverlay, modalTitle, modalBody, modalSaveBtn, modalSaveText;
+
+  // ===================================================================
+  // BOOKING CONFIG (Singleton form)
+  // ===================================================================
+
+  async function loadBookingConfig() {
+    const container = document.getElementById('booking-config-form');
+    if (!container) return;
+    try {
+      const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-config/`);
+      renderBookingConfigForm(container, data.exists ? data.config : null);
+    } catch (e) {
+      container.innerHTML =
+        '<div class="booking-list-loading" style="color:var(--error-color,#d93025);"><i class="fas fa-exclamation-circle"></i> Failed to load configuration</div>';
     }
+  }
 
-    function showNotification(message, type) {
-        AdminModal.toast(message, type || 'info');
-    }
+  function renderBookingConfigForm(container, config) {
+    const c = config || {};
 
-    async function fetchJSON(url) {
-        const resp = await fetch(url, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        if (!resp.ok) {
-            const data = await resp.json().catch(() => ({}));
-            throw new Error(data.error || `HTTP ${resp.status}`);
-        }
-        return resp.json();
-    }
-
-    async function postJSON(url, data) {
-        const resp = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': AdminUtils.getCsrfToken(),
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            body: JSON.stringify(data),
-        });
-        const result = await resp.json();
-        if (!resp.ok || !result.success) {
-            throw new Error(result.error || `HTTP ${resp.status}`);
-        }
-        return result;
-    }
-
-    // ===== Main Manager =====
-
-    const LANG = getLanguagePrefix();
-    const PRODUCT_ID = getProductId();
-    const BASE = `${LANG}/admin/catalog`;
-
-    if (!PRODUCT_ID) return;
-
-    const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-    // Current modal state
-    let modalEntityType = null;  // 'resource', 'person_type', 'availability_rule', 'recurrence_rule'
-    let modalEntityId = null;    // null = creating, id = editing
-    let modalResourceImages = []; // images for the resource being edited
-    let availableResources = []; // cached resources for availability rule dropdown
-
-    // DOM refs
-    let modalOverlay, modalTitle, modalBody, modalSaveBtn, modalSaveText;
-
-    // ===================================================================
-    // BOOKING CONFIG (Singleton form)
-    // ===================================================================
-
-    async function loadBookingConfig() {
-        const container = document.getElementById('booking-config-form');
-        if (!container) return;
-        try {
-            const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-config/`);
-            renderBookingConfigForm(container, data.exists ? data.config : null);
-        } catch (e) {
-            container.innerHTML = `<div class="booking-list-loading" style="color:var(--error-color,#d93025);"><i class="fas fa-exclamation-circle"></i> Failed to load configuration</div>`;
-        }
-    }
-
-    function renderBookingConfigForm(container, config) {
-        const c = config || {};
-
-        container.innerHTML = `
+    container.innerHTML = `
         <div class="booking-config-form">
             <div class="booking-config-section" id="bk-section-type">
                 <div class="booking-config-section__header">
@@ -336,170 +337,186 @@
             </div>
         </div>`;
 
-        // Bind collapsible section toggles
-        container.querySelectorAll('.booking-config-section__header').forEach(header => {
-            header.addEventListener('click', function() {
-                this.parentElement.classList.toggle('collapsed');
-            });
-        });
+    // Bind collapsible section toggles
+    container.querySelectorAll('.booking-config-section__header').forEach(header => {
+      header.addEventListener('click', function () {
+        this.parentElement.classList.toggle('collapsed');
+      });
+    });
 
-        // Bind save button
-        document.getElementById('booking-config-save-btn').addEventListener('click', saveBookingConfig);
+    // Bind save button
+    document.getElementById('booking-config-save-btn').addEventListener('click', saveBookingConfig);
 
-        // Bind dynamic field visibility triggers
-        const visibilityTriggers = [
-            'bk-booking_type', 'bk-duration_type',
-            'bk-cancellation_allowed', 'bk-deposit_enabled', 'bk-reminder_enabled'
-        ];
-        visibilityTriggers.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('change', updateBookingConfigVisibility);
-        });
+    // Bind dynamic field visibility triggers
+    const visibilityTriggers = [
+      'bk-booking_type',
+      'bk-duration_type',
+      'bk-cancellation_allowed',
+      'bk-deposit_enabled',
+      'bk-reminder_enabled',
+    ];
+    visibilityTriggers.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', updateBookingConfigVisibility);
+    });
 
-        // Apply initial visibility based on loaded config values
-        updateBookingConfigVisibility();
+    // Apply initial visibility based on loaded config values
+    updateBookingConfigVisibility();
+  }
+
+  function updateBookingConfigVisibility() {
+    const bookingType = document.getElementById('bk-booking_type')?.value;
+    const durationType = document.getElementById('bk-duration_type')?.value;
+    const cancellationAllowed = document.getElementById('bk-cancellation_allowed')?.checked;
+    const depositEnabled = document.getElementById('bk-deposit_enabled')?.checked;
+    const reminderEnabled = document.getElementById('bk-reminder_enabled')?.checked;
+
+    // Accommodation section — only for accommodation type
+    const accomSection = document.getElementById('bk-section-accommodation');
+    if (accomSection) {
+      accomSection.style.display = bookingType === 'accommodation' ? '' : 'none';
+      if (bookingType === 'accommodation') accomSection.classList.remove('collapsed');
     }
 
-    function updateBookingConfigVisibility() {
-        const bookingType = document.getElementById('bk-booking_type')?.value;
-        const durationType = document.getElementById('bk-duration_type')?.value;
-        const cancellationAllowed = document.getElementById('bk-cancellation_allowed')?.checked;
-        const depositEnabled = document.getElementById('bk-deposit_enabled')?.checked;
-        const reminderEnabled = document.getElementById('bk-reminder_enabled')?.checked;
-
-        // Accommodation section — only for accommodation type
-        const accomSection = document.getElementById('bk-section-accommodation');
-        if (accomSection) {
-            accomSection.style.display = bookingType === 'accommodation' ? '' : 'none';
-            if (bookingType === 'accommodation') accomSection.classList.remove('collapsed');
-        }
-
-        // Recurrence section — hide for appointment and rental
-        const recurSection = document.getElementById('bk-section-recurrence');
-        if (recurSection) {
-            recurSection.style.display = ['class', 'event', 'accommodation'].includes(bookingType) ? '' : 'none';
-        }
-
-        // Min/Max duration — only when customer selects duration
-        const showMinMax = durationType === 'customer_selected';
-        ['bk-field-min_duration', 'bk-field-max_duration'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = showMinMax ? '' : 'none';
-        });
-
-        // Cancellation deadline fields — only when cancellation is allowed
-        ['bk-field-cancellation_deadline', 'bk-field-cancellation_deadline_unit'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = cancellationAllowed ? '' : 'none';
-        });
-
-        // Deposit type/amount — only when deposit is enabled
-        ['bk-field-deposit_type', 'bk-field-deposit_amount'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = depositEnabled ? '' : 'none';
-        });
-
-        // Reminder hours — only when reminders are enabled
-        const reminderHoursField = document.getElementById('bk-field-reminder_hours_before');
-        if (reminderHoursField) reminderHoursField.style.display = reminderEnabled ? '' : 'none';
+    // Recurrence section — hide for appointment and rental
+    const recurSection = document.getElementById('bk-section-recurrence');
+    if (recurSection) {
+      recurSection.style.display = ['class', 'event', 'accommodation'].includes(bookingType)
+        ? ''
+        : 'none';
     }
 
-    async function saveBookingConfig() {
-        const btn = document.getElementById('booking-config-save-btn');
-        const origText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        btn.disabled = true;
+    // Min/Max duration — only when customer selects duration
+    const showMinMax = durationType === 'customer_selected';
+    ['bk-field-min_duration', 'bk-field-max_duration'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = showMinMax ? '' : 'none';
+    });
 
-        const getVal = (id) => document.getElementById(id)?.value || '';
-        const getChecked = (id) => document.getElementById(id)?.checked || false;
-        const getNum = (id) => {
-            const v = document.getElementById(id)?.value;
-            return v !== '' && v !== undefined ? parseInt(v) : null;
-        };
+    // Cancellation deadline fields — only when cancellation is allowed
+    ['bk-field-cancellation_deadline', 'bk-field-cancellation_deadline_unit'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = cancellationAllowed ? '' : 'none';
+    });
 
-        // Parse reminder hours
-        const reminderStr = getVal('bk-reminder_hours_before');
-        let reminderHours = [];
-        if (reminderStr.trim()) {
-            reminderHours = reminderStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-        }
+    // Deposit type/amount — only when deposit is enabled
+    ['bk-field-deposit_type', 'bk-field-deposit_amount'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = depositEnabled ? '' : 'none';
+    });
 
-        const data = {
-            booking_type: getVal('bk-booking_type'),
-            duration_type: getVal('bk-duration_type'),
-            duration: getNum('bk-duration'),
-            duration_unit: getVal('bk-duration_unit'),
-            min_duration: getNum('bk-min_duration'),
-            max_duration: getNum('bk-max_duration'),
-            buffer_before: getNum('bk-buffer_before'),
-            buffer_after: getNum('bk-buffer_after'),
-            min_advance: getNum('bk-min_advance'),
-            min_advance_unit: getVal('bk-min_advance_unit'),
-            max_advance: getNum('bk-max_advance'),
-            max_advance_unit: getVal('bk-max_advance_unit'),
-            max_bookings_per_slot: getNum('bk-max_bookings_per_slot'),
-            confirmation_required: getChecked('bk-confirmation_required'),
-            cancellation_allowed: getChecked('bk-cancellation_allowed'),
-            cancellation_deadline: getNum('bk-cancellation_deadline'),
-            cancellation_deadline_unit: getVal('bk-cancellation_deadline_unit'),
-            calendar_display: getVal('bk-calendar_display'),
-            customer_timezone_enabled: getChecked('bk-customer_timezone_enabled'),
-            deposit_enabled: getChecked('bk-deposit_enabled'),
-            deposit_type: getVal('bk-deposit_type'),
-            deposit_amount: getVal('bk-deposit_amount'),
-            check_in_time: getVal('bk-check_in_time'),
-            check_out_time: getVal('bk-check_out_time'),
-            standard_occupancy: getNum('bk-standard_occupancy'),
-            max_occupancy: getNum('bk-max_occupancy'),
-            min_stay: getNum('bk-min_stay'),
-            max_stay: getNum('bk-max_stay'),
-            recurrence_enabled: getChecked('bk-recurrence_enabled'),
-            reminder_enabled: getChecked('bk-reminder_enabled'),
-            reminder_hours_before: reminderHours,
-        };
+    // Reminder hours — only when reminders are enabled
+    const reminderHoursField = document.getElementById('bk-field-reminder_hours_before');
+    if (reminderHoursField) reminderHoursField.style.display = reminderEnabled ? '' : 'none';
+  }
 
-        try {
-            await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-config/save/`, data);
-            showNotification('Configuration saved', 'success');
-        } catch (e) {
-            showNotification('Failed to save: ' + e.message, 'error');
-        } finally {
-            btn.innerHTML = origText;
-            btn.disabled = false;
-        }
+  async function saveBookingConfig() {
+    const btn = document.getElementById('booking-config-save-btn');
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    btn.disabled = true;
+
+    const getVal = id => document.getElementById(id)?.value || '';
+    const getChecked = id => document.getElementById(id)?.checked || false;
+    const getNum = id => {
+      const v = document.getElementById(id)?.value;
+      return v !== '' && v !== undefined ? parseInt(v) : null;
+    };
+
+    // Parse reminder hours
+    const reminderStr = getVal('bk-reminder_hours_before');
+    let reminderHours = [];
+    if (reminderStr.trim()) {
+      reminderHours = reminderStr
+        .split(',')
+        .map(s => parseInt(s.trim()))
+        .filter(n => !isNaN(n));
     }
 
-    // ===================================================================
-    // RESOURCES (Card list)
-    // ===================================================================
+    const data = {
+      booking_type: getVal('bk-booking_type'),
+      duration_type: getVal('bk-duration_type'),
+      duration: getNum('bk-duration'),
+      duration_unit: getVal('bk-duration_unit'),
+      min_duration: getNum('bk-min_duration'),
+      max_duration: getNum('bk-max_duration'),
+      buffer_before: getNum('bk-buffer_before'),
+      buffer_after: getNum('bk-buffer_after'),
+      min_advance: getNum('bk-min_advance'),
+      min_advance_unit: getVal('bk-min_advance_unit'),
+      max_advance: getNum('bk-max_advance'),
+      max_advance_unit: getVal('bk-max_advance_unit'),
+      max_bookings_per_slot: getNum('bk-max_bookings_per_slot'),
+      confirmation_required: getChecked('bk-confirmation_required'),
+      cancellation_allowed: getChecked('bk-cancellation_allowed'),
+      cancellation_deadline: getNum('bk-cancellation_deadline'),
+      cancellation_deadline_unit: getVal('bk-cancellation_deadline_unit'),
+      calendar_display: getVal('bk-calendar_display'),
+      customer_timezone_enabled: getChecked('bk-customer_timezone_enabled'),
+      deposit_enabled: getChecked('bk-deposit_enabled'),
+      deposit_type: getVal('bk-deposit_type'),
+      deposit_amount: getVal('bk-deposit_amount'),
+      check_in_time: getVal('bk-check_in_time'),
+      check_out_time: getVal('bk-check_out_time'),
+      standard_occupancy: getNum('bk-standard_occupancy'),
+      max_occupancy: getNum('bk-max_occupancy'),
+      min_stay: getNum('bk-min_stay'),
+      max_stay: getNum('bk-max_stay'),
+      recurrence_enabled: getChecked('bk-recurrence_enabled'),
+      reminder_enabled: getChecked('bk-reminder_enabled'),
+      reminder_hours_before: reminderHours,
+    };
 
-    async function loadResources() {
-        try {
-            const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-resources/list/`);
-            renderResourceList(data.resources || []);
-            const badge = document.getElementById('booking-resource-count');
-            if (badge) badge.textContent = data.count || 0;
-        } catch (e) {
-            const el = document.getElementById('booking-resource-list');
-            if (el) el.innerHTML = `<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>`;
-        }
+    try {
+      await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-config/save/`, data);
+      showNotification('Configuration saved', 'success');
+    } catch (e) {
+      showNotification('Failed to save: ' + e.message, 'error');
+    } finally {
+      btn.innerHTML = origText;
+      btn.disabled = false;
+    }
+  }
+
+  // ===================================================================
+  // RESOURCES (Card list)
+  // ===================================================================
+
+  async function loadResources() {
+    try {
+      const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-resources/list/`);
+      renderResourceList(data.resources || []);
+      const badge = document.getElementById('booking-resource-count');
+      if (badge) badge.textContent = data.count || 0;
+    } catch (e) {
+      const el = document.getElementById('booking-resource-list');
+      if (el)
+        el.innerHTML =
+          '<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>';
+    }
+  }
+
+  function renderResourceList(resources) {
+    const el = document.getElementById('booking-resource-list');
+    if (!el) return;
+
+    if (!resources.length) {
+      el.innerHTML =
+        '<div class="booking-empty-state"><i class="fas fa-users"></i><p>No resources yet. Add staff, rooms, or equipment.</p></div>';
+      return;
     }
 
-    function renderResourceList(resources) {
-        const el = document.getElementById('booking-resource-list');
-        if (!el) return;
+    const RESOURCE_ICONS = {
+      staff: 'fas fa-user-tie',
+      room: 'fas fa-door-open',
+      equipment: 'fas fa-wrench',
+      vehicle: 'fas fa-car',
+      generic: 'fas fa-cube',
+    };
 
-        if (!resources.length) {
-            el.innerHTML = `<div class="booking-empty-state"><i class="fas fa-users"></i><p>No resources yet. Add staff, rooms, or equipment.</p></div>`;
-            return;
-        }
-
-        const RESOURCE_ICONS = {
-            staff: 'fas fa-user-tie', room: 'fas fa-door-open', equipment: 'fas fa-wrench',
-            vehicle: 'fas fa-car', generic: 'fas fa-cube'
-        };
-
-        el.innerHTML = resources.map(r => `
+    el.innerHTML = resources
+      .map(
+        r => `
             <div class="booking-card-row" data-id="${r.id}">
                 <div class="booking-card-row__icon"><i class="${RESOURCE_ICONS[r.resource_type] || 'fas fa-cube'}"></i></div>
                 <div class="booking-card-row__info">
@@ -507,44 +524,54 @@
                     <div class="booking-card-row__desc">${escapeHtml(r.resource_type_display)} &middot; Qty: ${r.quantity} &middot; ${escapeHtml(r.assignment_type_display)}</div>
                 </div>
                 <div class="booking-card-row__badges">
-                    ${r.is_active
+                    ${
+                      r.is_active
                         ? '<span class="booking-card-row__badge booking-card-row__badge--active">Active</span>'
-                        : '<span class="booking-card-row__badge booking-card-row__badge--inactive">Inactive</span>'}
-                    ${parseFloat(r.base_cost_adjustment) !== 0
-                        ? `<span class="booking-card-row__badge">${parseFloat(r.base_cost_adjustment) > 0 ? '+' : ''}${r.base_cost_adjustment}</span>` : ''}
+                        : '<span class="booking-card-row__badge booking-card-row__badge--inactive">Inactive</span>'
+                    }
+                    ${
+                      parseFloat(r.base_cost_adjustment) !== 0
+                        ? `<span class="booking-card-row__badge">${parseFloat(r.base_cost_adjustment) > 0 ? '+' : ''}${r.base_cost_adjustment}</span>`
+                        : ''
+                    }
                 </div>
                 <div class="booking-card-row__actions">
                     <button type="button" class="booking-card-row__action" data-action="edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>
                     <button type="button" class="booking-card-row__action booking-card-row__action--danger" data-action="delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>
-        `).join('');
+        `
+      )
+      .join('');
+  }
+
+  function openResourceModal(resourceId) {
+    modalEntityType = 'resource';
+    modalEntityId = resourceId;
+    modalTitle.textContent = resourceId ? 'Edit Resource' : 'Add Resource';
+    modalSaveText.textContent = resourceId ? 'Update Resource' : 'Save Resource';
+
+    if (resourceId) {
+      modalBody.innerHTML =
+        '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+      showModal();
+      fetchJSON(`${BASE}/booking-resource/${resourceId}/detail/`)
+        .then(data => {
+          renderResourceForm(data.resource);
+        })
+        .catch(e => {
+          modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
+        });
+    } else {
+      renderResourceForm(null);
+      showModal();
     }
+  }
 
-    function openResourceModal(resourceId) {
-        modalEntityType = 'resource';
-        modalEntityId = resourceId;
-        modalTitle.textContent = resourceId ? 'Edit Resource' : 'Add Resource';
-        modalSaveText.textContent = resourceId ? 'Update Resource' : 'Save Resource';
-
-        if (resourceId) {
-            modalBody.innerHTML = '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-            showModal();
-            fetchJSON(`${BASE}/booking-resource/${resourceId}/detail/`).then(data => {
-                renderResourceForm(data.resource);
-            }).catch(e => {
-                modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
-            });
-        } else {
-            renderResourceForm(null);
-            showModal();
-        }
-    }
-
-    function renderResourceForm(r) {
-        const d = r || {};
-        modalResourceImages = (d.images || []).map(img => ({...img}));
-        modalBody.innerHTML = `
+  function renderResourceForm(r) {
+    const d = r || {};
+    modalResourceImages = (d.images || []).map(img => ({ ...img }));
+    modalBody.innerHTML = `
             <div class="booking-modal-section">
                 <h4><i class="fas fa-info-circle"></i> Resource Details</h4>
                 <div class="booking-modal-field">
@@ -610,46 +637,53 @@
                     <i class="fas fa-plus"></i> Add Images
                 </button>
             </div>`;
-        renderResourceImageGrid();
-        document.getElementById('resource-add-images').addEventListener('click', openResourceMediaPicker);
-    }
+    renderResourceImageGrid();
+    document
+      .getElementById('resource-add-images')
+      .addEventListener('click', openResourceMediaPicker);
+  }
 
-    function openResourceMediaPicker() {
-        if (typeof window.selectMultipleMedia !== 'function') {
-            showNotification('Media library not available', 'error');
-            return;
-        }
-        window.selectMultipleMedia(function(selectedMedia) {
-            if (!selectedMedia || !selectedMedia.length) return;
-            selectedMedia.forEach(m => {
-                if (modalResourceImages.some(x => x.media_asset_id === m.id)) return;
-                modalResourceImages.push({
-                    media_asset_id: m.id,
-                    url: m.url || m.original_url,
-                    thumbnail: m.thumbnail_url || m.url,
-                    alt_text: m.alt_text || m.title || '',
-                    is_primary: modalResourceImages.length === 0,
-                    is_video: (m.type === 'video' || (m.mime_type && m.mime_type.startsWith('video/'))),
-                    position: modalResourceImages.length,
-                });
-            });
-            renderResourceImageGrid();
+  function openResourceMediaPicker() {
+    if (typeof window.selectMultipleMedia !== 'function') {
+      showNotification('Media library not available', 'error');
+      return;
+    }
+    window.selectMultipleMedia(function (selectedMedia) {
+      if (!selectedMedia || !selectedMedia.length) return;
+      selectedMedia.forEach(m => {
+        if (modalResourceImages.some(x => x.media_asset_id === m.id)) return;
+        modalResourceImages.push({
+          media_asset_id: m.id,
+          url: m.url || m.original_url,
+          thumbnail: m.thumbnail_url || m.url,
+          alt_text: m.alt_text || m.title || '',
+          is_primary: modalResourceImages.length === 0,
+          is_video: m.type === 'video' || (m.mime_type && m.mime_type.startsWith('video/')),
+          position: modalResourceImages.length,
         });
-    }
+      });
+      renderResourceImageGrid();
+    });
+  }
 
-    function renderResourceImageGrid() {
-        const grid = document.getElementById('resource-images-grid');
-        if (!grid) return;
-        if (!modalResourceImages.length) {
-            grid.innerHTML = '<p class="booking-modal-help" style="margin:0">No images added yet. Click "Add Images" to select from the media library.</p>';
-            return;
-        }
-        grid.innerHTML = modalResourceImages.map((img, i) => `
+  function renderResourceImageGrid() {
+    const grid = document.getElementById('resource-images-grid');
+    if (!grid) return;
+    if (!modalResourceImages.length) {
+      grid.innerHTML =
+        '<p class="booking-modal-help" style="margin:0">No images added yet. Click "Add Images" to select from the media library.</p>';
+      return;
+    }
+    grid.innerHTML = modalResourceImages
+      .map(
+        (img, i) => `
             <div class="resource-image-card${img.is_primary ? ' resource-image-card--primary' : ''}" data-idx="${i}">
                 <div class="resource-image-card__preview">
-                    ${img.is_video
+                    ${
+                      img.is_video
                         ? '<i class="fas fa-video resource-image-card__video-icon"></i>'
-                        : ''}
+                        : ''
+                    }
                     <img src="${escapeHtml(img.thumbnail || img.url)}" alt="${escapeHtml(img.alt_text)}">
                 </div>
                 <div class="resource-image-card__actions">
@@ -664,105 +698,127 @@
                     </button>
                 </div>
             </div>
-        `).join('');
+        `
+      )
+      .join('');
 
-        grid.querySelectorAll('[data-action="primary"]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const idx = parseInt(this.dataset.idx);
-                modalResourceImages.forEach((img, j) => { img.is_primary = j === idx; });
-                renderResourceImageGrid();
-            });
+    grid.querySelectorAll('[data-action="primary"]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const idx = parseInt(this.dataset.idx);
+        modalResourceImages.forEach((img, j) => {
+          img.is_primary = j === idx;
         });
-        grid.querySelectorAll('[data-action="remove"]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const idx = parseInt(this.dataset.idx);
-                modalResourceImages.splice(idx, 1);
-                if (modalResourceImages.length && !modalResourceImages.some(x => x.is_primary)) {
-                    modalResourceImages[0].is_primary = true;
-                }
-                modalResourceImages.forEach((img, j) => { img.position = j; });
-                renderResourceImageGrid();
-            });
+        renderResourceImageGrid();
+      });
+    });
+    grid.querySelectorAll('[data-action="remove"]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const idx = parseInt(this.dataset.idx);
+        modalResourceImages.splice(idx, 1);
+        if (modalResourceImages.length && !modalResourceImages.some(x => x.is_primary)) {
+          modalResourceImages[0].is_primary = true;
+        }
+        modalResourceImages.forEach((img, j) => {
+          img.position = j;
         });
+        renderResourceImageGrid();
+      });
+    });
+  }
+
+  function collectResourceData() {
+    return {
+      name: document.getElementById('modal-resource-name')?.value || '',
+      description: document.getElementById('modal-resource-description')?.value || '',
+      resource_type: document.getElementById('modal-resource-type')?.value || 'generic',
+      quantity: parseInt(document.getElementById('modal-resource-quantity')?.value || 1),
+      assignment_type:
+        document.getElementById('modal-resource-assignment')?.value || 'customer_selected',
+      base_cost_adjustment: document.getElementById('modal-resource-cost')?.value || '0',
+      email: document.getElementById('modal-resource-email')?.value || '',
+      sort_order: parseInt(document.getElementById('modal-resource-sort')?.value || 0),
+      is_active: document.getElementById('modal-resource-active')?.checked ?? true,
+      is_per_night: document.getElementById('modal-resource-per-night')?.checked ?? true,
+      images: modalResourceImages.map((img, i) => ({
+        media_asset_id: img.media_asset_id,
+        alt_text: img.alt_text || '',
+        is_primary: !!img.is_primary,
+        position: i,
+      })),
+    };
+  }
+
+  async function saveResource() {
+    const data = collectResourceData();
+    if (!data.name.trim()) {
+      showNotification('Name is required', 'error');
+      return;
+    }
+    try {
+      if (modalEntityId) {
+        await postJSON(`${BASE}/booking-resource/${modalEntityId}/update/`, data);
+        showNotification('Resource updated', 'success');
+      } else {
+        await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-resources/create/`, data);
+        showNotification('Resource created', 'success');
+      }
+      hideModal();
+      loadResources();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  async function deleteResource(id) {
+    if (
+      !(await AdminModal.confirm({
+        message: 'Delete this resource? This cannot be undone.',
+        danger: true,
+        confirmText: 'Delete',
+      }))
+    )
+      return;
+    try {
+      await postJSON(`${BASE}/booking-resource/${id}/delete/`, {});
+      showNotification('Resource deleted', 'success');
+      loadResources();
+      loadAvailabilityRules(); // rules may reference this resource
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ===================================================================
+  // PERSON TYPES (Card list)
+  // ===================================================================
+
+  async function loadPersonTypes() {
+    try {
+      const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-person-types/list/`);
+      renderPersonTypeList(data.person_types || []);
+      const badge = document.getElementById('booking-person-type-count');
+      if (badge) badge.textContent = data.count || 0;
+    } catch (e) {
+      const el = document.getElementById('booking-person-type-list');
+      if (el)
+        el.innerHTML =
+          '<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>';
+    }
+  }
+
+  function renderPersonTypeList(types) {
+    const el = document.getElementById('booking-person-type-list');
+    if (!el) return;
+
+    if (!types.length) {
+      el.innerHTML =
+        '<div class="booking-empty-state"><i class="fas fa-user-friends"></i><p>No person types yet. Add types like Adult, Child, Senior.</p></div>';
+      return;
     }
 
-    function collectResourceData() {
-        return {
-            name: document.getElementById('modal-resource-name')?.value || '',
-            description: document.getElementById('modal-resource-description')?.value || '',
-            resource_type: document.getElementById('modal-resource-type')?.value || 'generic',
-            quantity: parseInt(document.getElementById('modal-resource-quantity')?.value || 1),
-            assignment_type: document.getElementById('modal-resource-assignment')?.value || 'customer_selected',
-            base_cost_adjustment: document.getElementById('modal-resource-cost')?.value || '0',
-            email: document.getElementById('modal-resource-email')?.value || '',
-            sort_order: parseInt(document.getElementById('modal-resource-sort')?.value || 0),
-            is_active: document.getElementById('modal-resource-active')?.checked ?? true,
-            is_per_night: document.getElementById('modal-resource-per-night')?.checked ?? true,
-            images: modalResourceImages.map((img, i) => ({
-                media_asset_id: img.media_asset_id,
-                alt_text: img.alt_text || '',
-                is_primary: !!img.is_primary,
-                position: i,
-            })),
-        };
-    }
-
-    async function saveResource() {
-        const data = collectResourceData();
-        if (!data.name.trim()) { showNotification('Name is required', 'error'); return; }
-        try {
-            if (modalEntityId) {
-                await postJSON(`${BASE}/booking-resource/${modalEntityId}/update/`, data);
-                showNotification('Resource updated', 'success');
-            } else {
-                await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-resources/create/`, data);
-                showNotification('Resource created', 'success');
-            }
-            hideModal();
-            loadResources();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
-
-    async function deleteResource(id) {
-        if (!await AdminModal.confirm({ message: 'Delete this resource? This cannot be undone.', danger: true, confirmText: 'Delete' })) return;
-        try {
-            await postJSON(`${BASE}/booking-resource/${id}/delete/`, {});
-            showNotification('Resource deleted', 'success');
-            loadResources();
-            loadAvailabilityRules(); // rules may reference this resource
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
-
-    // ===================================================================
-    // PERSON TYPES (Card list)
-    // ===================================================================
-
-    async function loadPersonTypes() {
-        try {
-            const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-person-types/list/`);
-            renderPersonTypeList(data.person_types || []);
-            const badge = document.getElementById('booking-person-type-count');
-            if (badge) badge.textContent = data.count || 0;
-        } catch (e) {
-            const el = document.getElementById('booking-person-type-list');
-            if (el) el.innerHTML = `<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>`;
-        }
-    }
-
-    function renderPersonTypeList(types) {
-        const el = document.getElementById('booking-person-type-list');
-        if (!el) return;
-
-        if (!types.length) {
-            el.innerHTML = `<div class="booking-empty-state"><i class="fas fa-user-friends"></i><p>No person types yet. Add types like Adult, Child, Senior.</p></div>`;
-            return;
-        }
-
-        el.innerHTML = types.map(pt => `
+    el.innerHTML = types
+      .map(
+        pt => `
             <div class="booking-card-row" data-id="${pt.id}">
                 <div class="booking-card-row__icon"><i class="fas fa-user"></i></div>
                 <div class="booking-card-row__info">
@@ -777,32 +833,37 @@
                     <button type="button" class="booking-card-row__action booking-card-row__action--danger" data-action="delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>
-        `).join('');
+        `
+      )
+      .join('');
+  }
+
+  function openPersonTypeModal(id) {
+    modalEntityType = 'person_type';
+    modalEntityId = id;
+    modalTitle.textContent = id ? 'Edit Person Type' : 'Add Person Type';
+    modalSaveText.textContent = id ? 'Update' : 'Save';
+
+    if (id) {
+      modalBody.innerHTML =
+        '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+      showModal();
+      fetchJSON(`${BASE}/booking-person-type/${id}/detail/`)
+        .then(data => {
+          renderPersonTypeForm(data.person_type);
+        })
+        .catch(e => {
+          modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
+        });
+    } else {
+      renderPersonTypeForm(null);
+      showModal();
     }
+  }
 
-    function openPersonTypeModal(id) {
-        modalEntityType = 'person_type';
-        modalEntityId = id;
-        modalTitle.textContent = id ? 'Edit Person Type' : 'Add Person Type';
-        modalSaveText.textContent = id ? 'Update' : 'Save';
-
-        if (id) {
-            modalBody.innerHTML = '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-            showModal();
-            fetchJSON(`${BASE}/booking-person-type/${id}/detail/`).then(data => {
-                renderPersonTypeForm(data.person_type);
-            }).catch(e => {
-                modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
-            });
-        } else {
-            renderPersonTypeForm(null);
-            showModal();
-        }
-    }
-
-    function renderPersonTypeForm(pt) {
-        const d = pt || {};
-        modalBody.innerHTML = `
+  function renderPersonTypeForm(pt) {
+    const d = pt || {};
+    modalBody.innerHTML = `
             <div class="booking-modal-section">
                 <h4><i class="fas fa-user-friends"></i> Person Type Details</h4>
                 <div class="booking-modal-field">
@@ -839,86 +900,105 @@
                     <span class="booking-modal-help">If unchecked, cost adjustment is a one-time charge</span>
                 </div>
             </div>`;
+  }
+
+  function collectPersonTypeData() {
+    return {
+      name: document.getElementById('modal-pt-name')?.value || '',
+      cost_adjustment: document.getElementById('modal-pt-cost')?.value || '0',
+      min_persons: parseInt(document.getElementById('modal-pt-min')?.value || 0),
+      max_persons: parseInt(document.getElementById('modal-pt-max')?.value || 10),
+      is_counted_for_capacity: document.getElementById('modal-pt-capacity')?.checked ?? true,
+      is_per_night: document.getElementById('modal-pt-per-night')?.checked ?? true,
+      sort_order: parseInt(document.getElementById('modal-pt-sort')?.value || 0),
+    };
+  }
+
+  async function savePersonType() {
+    const data = collectPersonTypeData();
+    if (!data.name.trim()) {
+      showNotification('Name is required', 'error');
+      return;
+    }
+    try {
+      if (modalEntityId) {
+        await postJSON(`${BASE}/booking-person-type/${modalEntityId}/update/`, data);
+        showNotification('Person type updated', 'success');
+      } else {
+        await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-person-types/create/`, data);
+        showNotification('Person type created', 'success');
+      }
+      hideModal();
+      loadPersonTypes();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  async function deletePersonType(id) {
+    if (
+      !(await AdminModal.confirm({
+        message: 'Delete this person type?',
+        danger: true,
+        confirmText: 'Delete',
+      }))
+    )
+      return;
+    try {
+      await postJSON(`${BASE}/booking-person-type/${id}/delete/`, {});
+      showNotification('Person type deleted', 'success');
+      loadPersonTypes();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ===================================================================
+  // AVAILABILITY RULES (Card list)
+  // ===================================================================
+
+  async function loadAvailabilityRules() {
+    try {
+      const data = await fetchJSON(
+        `${BASE}/product/${PRODUCT_ID}/booking-availability-rules/list/`
+      );
+      availableResources = data.resources || [];
+      // Exclude unavailable rules — they appear in the Blackout Periods section
+      const nonBlackout = (data.rules || []).filter(r => r.rule_type !== 'unavailable');
+      renderAvailabilityRuleList(nonBlackout);
+      const badge = document.getElementById('booking-availability-rule-count');
+      if (badge) badge.textContent = nonBlackout.length;
+    } catch (e) {
+      const el = document.getElementById('booking-availability-rule-list');
+      if (el)
+        el.innerHTML =
+          '<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>';
+    }
+  }
+
+  function renderAvailabilityRuleList(rules) {
+    const el = document.getElementById('booking-availability-rule-list');
+    if (!el) return;
+
+    if (!rules.length) {
+      el.innerHTML =
+        '<div class="booking-empty-state"><i class="fas fa-calendar-alt"></i><p>No availability rules yet. Add rules to control when bookings are available.</p></div>';
+      return;
     }
 
-    function collectPersonTypeData() {
-        return {
-            name: document.getElementById('modal-pt-name')?.value || '',
-            cost_adjustment: document.getElementById('modal-pt-cost')?.value || '0',
-            min_persons: parseInt(document.getElementById('modal-pt-min')?.value || 0),
-            max_persons: parseInt(document.getElementById('modal-pt-max')?.value || 10),
-            is_counted_for_capacity: document.getElementById('modal-pt-capacity')?.checked ?? true,
-            is_per_night: document.getElementById('modal-pt-per-night')?.checked ?? true,
-            sort_order: parseInt(document.getElementById('modal-pt-sort')?.value || 0),
-        };
-    }
-
-    async function savePersonType() {
-        const data = collectPersonTypeData();
-        if (!data.name.trim()) { showNotification('Name is required', 'error'); return; }
-        try {
-            if (modalEntityId) {
-                await postJSON(`${BASE}/booking-person-type/${modalEntityId}/update/`, data);
-                showNotification('Person type updated', 'success');
-            } else {
-                await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-person-types/create/`, data);
-                showNotification('Person type created', 'success');
-            }
-            hideModal();
-            loadPersonTypes();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
-
-    async function deletePersonType(id) {
-        if (!await AdminModal.confirm({ message: 'Delete this person type?', danger: true, confirmText: 'Delete' })) return;
-        try {
-            await postJSON(`${BASE}/booking-person-type/${id}/delete/`, {});
-            showNotification('Person type deleted', 'success');
-            loadPersonTypes();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
-
-    // ===================================================================
-    // AVAILABILITY RULES (Card list)
-    // ===================================================================
-
-    async function loadAvailabilityRules() {
-        try {
-            const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-availability-rules/list/`);
-            availableResources = data.resources || [];
-            // Exclude unavailable rules — they appear in the Blackout Periods section
-            const nonBlackout = (data.rules || []).filter(r => r.rule_type !== 'unavailable');
-            renderAvailabilityRuleList(nonBlackout);
-            const badge = document.getElementById('booking-availability-rule-count');
-            if (badge) badge.textContent = nonBlackout.length;
-        } catch (e) {
-            const el = document.getElementById('booking-availability-rule-list');
-            if (el) el.innerHTML = `<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>`;
-        }
-    }
-
-    function renderAvailabilityRuleList(rules) {
-        const el = document.getElementById('booking-availability-rule-list');
-        if (!el) return;
-
-        if (!rules.length) {
-            el.innerHTML = `<div class="booking-empty-state"><i class="fas fa-calendar-alt"></i><p>No availability rules yet. Add rules to control when bookings are available.</p></div>`;
-            return;
-        }
-
-        el.innerHTML = rules.map(r => {
-            const badgeClass = r.rule_type === 'available' ? 'booking-card-row__badge--available'
-                : r.rule_type === 'unavailable' ? 'booking-card-row__badge--unavailable'
-                : 'booking-card-row__badge--custom-cost';
-            let desc = r.scope_display;
-            if (r.resource_name) desc += ` &middot; ${escapeHtml(r.resource_name)}`;
-            if (r.start_date) desc += ` &middot; ${r.start_date}`;
-            if (r.end_date) desc += ` to ${r.end_date}`;
-            return `
+    el.innerHTML = rules
+      .map(r => {
+        const badgeClass =
+          r.rule_type === 'available'
+            ? 'booking-card-row__badge--available'
+            : r.rule_type === 'unavailable'
+              ? 'booking-card-row__badge--unavailable'
+              : 'booking-card-row__badge--custom-cost';
+        let desc = r.scope_display;
+        if (r.resource_name) desc += ` &middot; ${escapeHtml(r.resource_name)}`;
+        if (r.start_date) desc += ` &middot; ${r.start_date}`;
+        if (r.end_date) desc += ` to ${r.end_date}`;
+        return `
             <div class="booking-card-row" data-id="${r.id}">
                 <div class="booking-card-row__icon"><i class="fas fa-calendar-check"></i></div>
                 <div class="booking-card-row__info">
@@ -933,38 +1013,45 @@
                     <button type="button" class="booking-card-row__action booking-card-row__action--danger" data-action="delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>`;
-        }).join('');
+      })
+      .join('');
+  }
+
+  function openAvailabilityRuleModal(id) {
+    modalEntityType = 'availability_rule';
+    modalEntityId = id;
+    modalTitle.textContent = id ? 'Edit Availability Rule' : 'Add Availability Rule';
+    modalSaveText.textContent = id ? 'Update Rule' : 'Save Rule';
+
+    if (id) {
+      modalBody.innerHTML =
+        '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+      showModal();
+      fetchJSON(`${BASE}/booking-availability-rule/${id}/detail/`)
+        .then(data => {
+          renderAvailabilityRuleForm(data.rule);
+        })
+        .catch(e => {
+          modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
+        });
+    } else {
+      renderAvailabilityRuleForm(null);
+      showModal();
     }
+  }
 
-    function openAvailabilityRuleModal(id) {
-        modalEntityType = 'availability_rule';
-        modalEntityId = id;
-        modalTitle.textContent = id ? 'Edit Availability Rule' : 'Add Availability Rule';
-        modalSaveText.textContent = id ? 'Update Rule' : 'Save Rule';
+  function renderAvailabilityRuleForm(rule) {
+    const d = rule || {};
+    const resourceOptions = availableResources
+      .map(
+        r =>
+          `<option value="${r.id}" ${d.resource_id === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`
+      )
+      .join('');
 
-        if (id) {
-            modalBody.innerHTML = '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-            showModal();
-            fetchJSON(`${BASE}/booking-availability-rule/${id}/detail/`).then(data => {
-                renderAvailabilityRuleForm(data.rule);
-            }).catch(e => {
-                modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
-            });
-        } else {
-            renderAvailabilityRuleForm(null);
-            showModal();
-        }
-    }
+    const daysChecked = d.days_of_week || [];
 
-    function renderAvailabilityRuleForm(rule) {
-        const d = rule || {};
-        const resourceOptions = availableResources.map(r =>
-            `<option value="${r.id}" ${d.resource_id === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`
-        ).join('');
-
-        const daysChecked = d.days_of_week || [];
-
-        modalBody.innerHTML = `
+    modalBody.innerHTML = `
             <div class="booking-modal-section">
                 <h4><i class="fas fa-calendar-alt"></i> Rule Settings</h4>
                 <div class="booking-modal-row">
@@ -1080,106 +1167,121 @@
                 </div>
             </div>`;
 
-        // Bind day picker toggle
-        modalBody.querySelectorAll('.booking-days-picker label').forEach(label => {
-            label.addEventListener('click', function(e) {
-                if (e.target.tagName === 'INPUT') return;
-                const cb = this.querySelector('input[type="checkbox"]');
-                cb.checked = !cb.checked;
-                this.classList.toggle('active', cb.checked);
-                e.preventDefault();
-            });
-        });
+    // Bind day picker toggle
+    modalBody.querySelectorAll('.booking-days-picker label').forEach(label => {
+      label.addEventListener('click', function (e) {
+        if (e.target.tagName === 'INPUT') return;
+        const cb = this.querySelector('input[type="checkbox"]');
+        cb.checked = !cb.checked;
+        this.classList.toggle('active', cb.checked);
+        e.preventDefault();
+      });
+    });
+  }
+
+  function collectAvailabilityRuleData() {
+    const daysEls = document.querySelectorAll('#modal-ar-days input[type="checkbox"]:checked');
+    const days = Array.from(daysEls).map(cb => parseInt(cb.value));
+
+    return {
+      rule_type: document.getElementById('modal-ar-rule_type')?.value || 'available',
+      scope: document.getElementById('modal-ar-scope')?.value || 'all_dates',
+      resource_id: document.getElementById('modal-ar-resource')?.value || null,
+      priority: parseInt(document.getElementById('modal-ar-priority')?.value || 10),
+      start_date: document.getElementById('modal-ar-start_date')?.value || '',
+      end_date: document.getElementById('modal-ar-end_date')?.value || '',
+      start_time: document.getElementById('modal-ar-start_time')?.value || '',
+      end_time: document.getElementById('modal-ar-end_time')?.value || '',
+      days_of_week: days,
+      cost_override: document.getElementById('modal-ar-cost_override')?.value || '',
+      cost_adjustment: document.getElementById('modal-ar-cost_adjustment')?.value || '',
+      cost_adjustment_type:
+        document.getElementById('modal-ar-cost_adjustment_type')?.value || 'flat',
+      min_stay_override: document.getElementById('modal-ar-min_stay_override')?.value || '',
+      length_of_stay_min: document.getElementById('modal-ar-los_min')?.value || '',
+      length_of_stay_discount_percent:
+        document.getElementById('modal-ar-los_discount')?.value || '',
+      lead_time_min_days: document.getElementById('modal-ar-lead_min')?.value || '',
+      lead_time_max_days: document.getElementById('modal-ar-lead_max')?.value || '',
+    };
+  }
+
+  async function saveAvailabilityRule() {
+    const data = collectAvailabilityRuleData();
+    try {
+      if (modalEntityId) {
+        await postJSON(`${BASE}/booking-availability-rule/${modalEntityId}/update/`, data);
+        showNotification('Rule updated', 'success');
+      } else {
+        await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-availability-rules/create/`, data);
+        showNotification('Rule created', 'success');
+      }
+      hideModal();
+      loadAvailabilityRules();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  async function deleteAvailabilityRule(id) {
+    if (
+      !(await AdminModal.confirm({
+        message: 'Delete this availability rule?',
+        danger: true,
+        confirmText: 'Delete',
+      }))
+    )
+      return;
+    try {
+      await postJSON(`${BASE}/booking-availability-rule/${id}/delete/`, {});
+      showNotification('Rule deleted', 'success');
+      loadAvailabilityRules();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ===================================================================
+  // BLACKOUT PERIODS (Filtered view of unavailable rules)
+  // ===================================================================
+
+  async function loadBlackoutPeriods() {
+    try {
+      const data = await fetchJSON(
+        `${BASE}/product/${PRODUCT_ID}/booking-availability-rules/list/?rule_type=unavailable`
+      );
+      renderBlackoutList(data.rules || []);
+      renderBlackoutCalendar(data.rules || []);
+      const badge = document.getElementById('booking-blackout-count');
+      if (badge) badge.textContent = data.count || 0;
+    } catch (e) {
+      const el = document.getElementById('booking-blackout-list');
+      if (el)
+        el.innerHTML =
+          '<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>';
+    }
+  }
+
+  function renderBlackoutList(rules) {
+    const el = document.getElementById('booking-blackout-list');
+    if (!el) return;
+
+    if (!rules.length) {
+      el.innerHTML =
+        '<div class="booking-empty-state"><i class="fas fa-ban"></i><p>No blackout periods. Use "Block Dates" to prevent bookings on specific dates.</p></div>';
+      return;
     }
 
-    function collectAvailabilityRuleData() {
-        const daysEls = document.querySelectorAll('#modal-ar-days input[type="checkbox"]:checked');
-        const days = Array.from(daysEls).map(cb => parseInt(cb.value));
-
-        return {
-            rule_type: document.getElementById('modal-ar-rule_type')?.value || 'available',
-            scope: document.getElementById('modal-ar-scope')?.value || 'all_dates',
-            resource_id: document.getElementById('modal-ar-resource')?.value || null,
-            priority: parseInt(document.getElementById('modal-ar-priority')?.value || 10),
-            start_date: document.getElementById('modal-ar-start_date')?.value || '',
-            end_date: document.getElementById('modal-ar-end_date')?.value || '',
-            start_time: document.getElementById('modal-ar-start_time')?.value || '',
-            end_time: document.getElementById('modal-ar-end_time')?.value || '',
-            days_of_week: days,
-            cost_override: document.getElementById('modal-ar-cost_override')?.value || '',
-            cost_adjustment: document.getElementById('modal-ar-cost_adjustment')?.value || '',
-            cost_adjustment_type: document.getElementById('modal-ar-cost_adjustment_type')?.value || 'flat',
-            min_stay_override: document.getElementById('modal-ar-min_stay_override')?.value || '',
-            length_of_stay_min: document.getElementById('modal-ar-los_min')?.value || '',
-            length_of_stay_discount_percent: document.getElementById('modal-ar-los_discount')?.value || '',
-            lead_time_min_days: document.getElementById('modal-ar-lead_min')?.value || '',
-            lead_time_max_days: document.getElementById('modal-ar-lead_max')?.value || '',
-        };
-    }
-
-    async function saveAvailabilityRule() {
-        const data = collectAvailabilityRuleData();
-        try {
-            if (modalEntityId) {
-                await postJSON(`${BASE}/booking-availability-rule/${modalEntityId}/update/`, data);
-                showNotification('Rule updated', 'success');
-            } else {
-                await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-availability-rules/create/`, data);
-                showNotification('Rule created', 'success');
-            }
-            hideModal();
-            loadAvailabilityRules();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
+    el.innerHTML = rules
+      .map(r => {
+        let desc = r.scope_display;
+        if (r.resource_name) desc += ` &middot; ${escapeHtml(r.resource_name)}`;
+        if (r.start_date) desc += ` &middot; ${r.start_date}`;
+        if (r.end_date) desc += ` to ${r.end_date}`;
+        if (r.days_of_week && r.days_of_week.length) {
+          desc += ` &middot; ${r.days_of_week.map(d => DAY_NAMES[d] || '?').join(', ')}`;
         }
-    }
-
-    async function deleteAvailabilityRule(id) {
-        if (!await AdminModal.confirm({ message: 'Delete this availability rule?', danger: true, confirmText: 'Delete' })) return;
-        try {
-            await postJSON(`${BASE}/booking-availability-rule/${id}/delete/`, {});
-            showNotification('Rule deleted', 'success');
-            loadAvailabilityRules();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
-
-    // ===================================================================
-    // BLACKOUT PERIODS (Filtered view of unavailable rules)
-    // ===================================================================
-
-    async function loadBlackoutPeriods() {
-        try {
-            const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-availability-rules/list/?rule_type=unavailable`);
-            renderBlackoutList(data.rules || []);
-            renderBlackoutCalendar(data.rules || []);
-            const badge = document.getElementById('booking-blackout-count');
-            if (badge) badge.textContent = data.count || 0;
-        } catch (e) {
-            const el = document.getElementById('booking-blackout-list');
-            if (el) el.innerHTML = `<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>`;
-        }
-    }
-
-    function renderBlackoutList(rules) {
-        const el = document.getElementById('booking-blackout-list');
-        if (!el) return;
-
-        if (!rules.length) {
-            el.innerHTML = `<div class="booking-empty-state"><i class="fas fa-ban"></i><p>No blackout periods. Use "Block Dates" to prevent bookings on specific dates.</p></div>`;
-            return;
-        }
-
-        el.innerHTML = rules.map(r => {
-            let desc = r.scope_display;
-            if (r.resource_name) desc += ` &middot; ${escapeHtml(r.resource_name)}`;
-            if (r.start_date) desc += ` &middot; ${r.start_date}`;
-            if (r.end_date) desc += ` to ${r.end_date}`;
-            if (r.days_of_week && r.days_of_week.length) {
-                desc += ` &middot; ${r.days_of_week.map(d => DAY_NAMES[d] || '?').join(', ')}`;
-            }
-            return `
+        return `
             <div class="booking-card-row" data-id="${r.id}">
                 <div class="booking-card-row__icon"><i class="fas fa-ban" style="color:var(--error-color,#dc2626);"></i></div>
                 <div class="booking-card-row__info">
@@ -1194,96 +1296,108 @@
                     <button type="button" class="booking-card-row__action booking-card-row__action--danger" data-action="delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>`;
-        }).join('');
-    }
+      })
+      .join('');
+  }
 
-    function renderBlackoutCalendar(rules) {
-        const container = document.getElementById('booking-blackout-calendar');
-        if (!container) return;
+  function renderBlackoutCalendar(rules) {
+    const container = document.getElementById('booking-blackout-calendar');
+    if (!container) return;
 
-        // Collect all blocked dates from rules
-        const blockedDates = new Set();
-        const blockedDays = new Set();  // days of week
+    // Collect all blocked dates from rules
+    const blockedDates = new Set();
+    const blockedDays = new Set(); // days of week
 
-        for (const r of rules) {
-            if (r.scope === 'date_range' && r.start_date && r.end_date) {
-                let d = new Date(r.start_date + 'T00:00:00');
-                const end = new Date(r.end_date + 'T00:00:00');
-                while (d <= end) {
-                    blockedDates.add(fmtDate(d));
-                    d.setDate(d.getDate() + 1);
-                }
-            } else if (r.scope === 'specific_dates' && r.specific_dates) {
-                r.specific_dates.forEach(ds => blockedDates.add(ds));
-            } else if (r.scope === 'days_of_week' && r.days_of_week) {
-                r.days_of_week.forEach(d => blockedDays.add(d));
-            } else if (r.scope === 'all_dates') {
-                // All dates blocked — show indicator
-                container.innerHTML = '<p style="padding:0.5rem;color:var(--error-color,#dc2626);font-size:0.875rem;"><i class="fas fa-exclamation-triangle"></i> All dates are blocked</p>';
-                return;
-            }
+    for (const r of rules) {
+      if (r.scope === 'date_range' && r.start_date && r.end_date) {
+        const d = new Date(r.start_date + 'T00:00:00');
+        const end = new Date(r.end_date + 'T00:00:00');
+        while (d <= end) {
+          blockedDates.add(fmtDate(d));
+          d.setDate(d.getDate() + 1);
         }
-
-        // Render 2-month mini calendar
-        const now = new Date();
-        let html = '';
-        for (let m = 0; m < 2; m++) {
-            const monthDate = new Date(now.getFullYear(), now.getMonth() + m, 1);
-            const year = monthDate.getFullYear();
-            const month = monthDate.getMonth();
-            const monthName = monthDate.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
-            const firstDow = (monthDate.getDay() + 6) % 7;
-            const totalDays = new Date(year, month + 1, 0).getDate();
-
-            html += `<div class="booking-blackout-calendar__month">`;
-            html += `<div class="booking-blackout-calendar__title">${monthName}</div>`;
-            html += `<div class="booking-blackout-calendar__daynames">`;
-            for (const dn of DAY_NAMES) html += `<span>${dn.charAt(0)}</span>`;
-            html += `</div><div class="booking-blackout-calendar__grid">`;
-            for (let i = 0; i < firstDow; i++) html += '<span class="booking-blackout-calendar__day--empty"></span>';
-            for (let d = 1; d <= totalDays; d++) {
-                const ds = fmtDate(new Date(year, month, d));
-                const dayOfWeek = (new Date(year, month, d).getDay() + 6) % 7;
-                const isBlocked = blockedDates.has(ds) || blockedDays.has(dayOfWeek);
-                html += `<span class="booking-blackout-calendar__day${isBlocked ? ' booking-blackout-calendar__day--blocked' : ''}">${d}</span>`;
-            }
-            html += '</div></div>';
-        }
-
-        container.innerHTML = html;
+      } else if (r.scope === 'specific_dates' && r.specific_dates) {
+        r.specific_dates.forEach(ds => blockedDates.add(ds));
+      } else if (r.scope === 'days_of_week' && r.days_of_week) {
+        r.days_of_week.forEach(d => blockedDays.add(d));
+      } else if (r.scope === 'all_dates') {
+        // All dates blocked — show indicator
+        container.innerHTML =
+          '<p style="padding:0.5rem;color:var(--error-color,#dc2626);font-size:0.875rem;"><i class="fas fa-exclamation-triangle"></i> All dates are blocked</p>';
+        return;
+      }
     }
 
-    function fmtDate(d) {
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    // Render 2-month mini calendar
+    const now = new Date();
+    let html = '';
+    for (let m = 0; m < 2; m++) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() + m, 1);
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
+      const monthName = monthDate.toLocaleDateString(undefined, {
+        month: 'short',
+        year: 'numeric',
+      });
+      const firstDow = (monthDate.getDay() + 6) % 7;
+      const totalDays = new Date(year, month + 1, 0).getDate();
+
+      html += '<div class="booking-blackout-calendar__month">';
+      html += `<div class="booking-blackout-calendar__title">${monthName}</div>`;
+      html += '<div class="booking-blackout-calendar__daynames">';
+      for (const dn of DAY_NAMES) html += `<span>${dn.charAt(0)}</span>`;
+      html += '</div><div class="booking-blackout-calendar__grid">';
+      for (let i = 0; i < firstDow; i++)
+        html += '<span class="booking-blackout-calendar__day--empty"></span>';
+      for (let d = 1; d <= totalDays; d++) {
+        const ds = fmtDate(new Date(year, month, d));
+        const dayOfWeek = (new Date(year, month, d).getDay() + 6) % 7;
+        const isBlocked = blockedDates.has(ds) || blockedDays.has(dayOfWeek);
+        html += `<span class="booking-blackout-calendar__day${isBlocked ? ' booking-blackout-calendar__day--blocked' : ''}">${d}</span>`;
+      }
+      html += '</div></div>';
     }
 
-    function openBlackoutModal(id) {
-        modalEntityType = 'blackout';
-        modalEntityId = id;
-        modalTitle.textContent = id ? 'Edit Blackout Period' : 'Block Dates';
-        modalSaveText.textContent = id ? 'Update' : 'Save';
+    container.innerHTML = html;
+  }
 
-        if (id) {
-            modalBody.innerHTML = '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-            showModal();
-            fetchJSON(`${BASE}/booking-availability-rule/${id}/detail/`).then(data => {
-                renderBlackoutForm(data.rule);
-            }).catch(e => {
-                modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
-            });
-        } else {
-            renderBlackoutForm(null);
-            showModal();
-        }
+  function fmtDate(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  function openBlackoutModal(id) {
+    modalEntityType = 'blackout';
+    modalEntityId = id;
+    modalTitle.textContent = id ? 'Edit Blackout Period' : 'Block Dates';
+    modalSaveText.textContent = id ? 'Update' : 'Save';
+
+    if (id) {
+      modalBody.innerHTML =
+        '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+      showModal();
+      fetchJSON(`${BASE}/booking-availability-rule/${id}/detail/`)
+        .then(data => {
+          renderBlackoutForm(data.rule);
+        })
+        .catch(e => {
+          modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
+        });
+    } else {
+      renderBlackoutForm(null);
+      showModal();
     }
+  }
 
-    function renderBlackoutForm(rule) {
-        const d = rule || {};
-        const resourceOptions = availableResources.map(r =>
-            `<option value="${r.id}" ${d.resource_id === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`
-        ).join('');
+  function renderBlackoutForm(rule) {
+    const d = rule || {};
+    const resourceOptions = availableResources
+      .map(
+        r =>
+          `<option value="${r.id}" ${d.resource_id === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`
+      )
+      .join('');
 
-        modalBody.innerHTML = `
+    modalBody.innerHTML = `
             <div class="booking-modal-section">
                 <h4><i class="fas fa-ban"></i> Blackout Settings</h4>
                 <div class="booking-modal-row">
@@ -1317,7 +1431,8 @@
                     <div class="booking-modal-field" style="flex:1;">
                         <label>Days of Week</label>
                         <div class="booking-dow-picker">
-                            ${DAY_NAMES.map((name, i) =>
+                            ${DAY_NAMES.map(
+                              (name, i) =>
                                 `<label class="booking-dow-picker__item">
                                     <input type="checkbox" value="${i}" ${(d.days_of_week || []).includes(i) ? 'checked' : ''}>
                                     <span>${name}</span>
@@ -1338,103 +1453,121 @@
             </div>
         `;
 
-        // Toggle scope fields
-        const scopeSelect = document.getElementById('modal-bo-scope');
-        function toggleScopeFields() {
-            const scope = scopeSelect.value;
-            document.getElementById('modal-bo-daterange-row').style.display = scope === 'date_range' ? '' : 'none';
-            document.getElementById('modal-bo-dow-row').style.display = scope === 'days_of_week' ? '' : 'none';
-            document.getElementById('modal-bo-specific-row').style.display = scope === 'specific_dates' ? '' : 'none';
-        }
-        scopeSelect.addEventListener('change', toggleScopeFields);
-        toggleScopeFields();
+    // Toggle scope fields
+    const scopeSelect = document.getElementById('modal-bo-scope');
+    function toggleScopeFields() {
+      const scope = scopeSelect.value;
+      document.getElementById('modal-bo-daterange-row').style.display =
+        scope === 'date_range' ? '' : 'none';
+      document.getElementById('modal-bo-dow-row').style.display =
+        scope === 'days_of_week' ? '' : 'none';
+      document.getElementById('modal-bo-specific-row').style.display =
+        scope === 'specific_dates' ? '' : 'none';
+    }
+    scopeSelect.addEventListener('change', toggleScopeFields);
+    toggleScopeFields();
+  }
+
+  function collectBlackoutData() {
+    const scope = document.getElementById('modal-bo-scope')?.value || 'date_range';
+    const data = {
+      rule_type: 'unavailable',
+      scope: scope,
+      resource_id: document.getElementById('modal-bo-resource')?.value || '',
+      priority: document.getElementById('modal-bo-priority')?.value || '50',
+    };
+    if (scope === 'date_range') {
+      data.start_date = document.getElementById('modal-bo-start_date')?.value || '';
+      data.end_date = document.getElementById('modal-bo-end_date')?.value || '';
+    } else if (scope === 'days_of_week') {
+      const checked = [];
+      document.querySelectorAll('#modal-bo-dow-row input[type="checkbox"]:checked').forEach(cb => {
+        checked.push(parseInt(cb.value));
+      });
+      data.days_of_week = checked;
+    } else if (scope === 'specific_dates') {
+      const raw = document.getElementById('modal-bo-specific_dates')?.value || '';
+      data.specific_dates = raw
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+    return data;
+  }
+
+  async function saveBlackout() {
+    const data = collectBlackoutData();
+    try {
+      if (modalEntityId) {
+        await postJSON(`${BASE}/booking-availability-rule/${modalEntityId}/update/`, data);
+        showNotification('Blackout period updated', 'success');
+      } else {
+        await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-availability-rules/create/`, data);
+        showNotification('Blackout period created', 'success');
+      }
+      hideModal();
+      loadBlackoutPeriods();
+      loadAvailabilityRules(); // Refresh the full list too
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  async function deleteBlackout(id) {
+    if (
+      !(await AdminModal.confirm({
+        message: 'Remove this blackout period?',
+        danger: true,
+        confirmText: 'Remove',
+      }))
+    )
+      return;
+    try {
+      await postJSON(`${BASE}/booking-availability-rule/${id}/delete/`, {});
+      showNotification('Blackout period removed', 'success');
+      loadBlackoutPeriods();
+      loadAvailabilityRules();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ===================================================================
+  // RECURRENCE RULES (Card list)
+  // ===================================================================
+
+  async function loadRecurrenceRules() {
+    try {
+      const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-recurrence-rules/list/`);
+      renderRecurrenceRuleList(data.rules || []);
+      const badge = document.getElementById('booking-recurrence-rule-count');
+      if (badge) badge.textContent = data.count || 0;
+    } catch (e) {
+      const el = document.getElementById('booking-recurrence-rule-list');
+      if (el)
+        el.innerHTML =
+          '<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>';
+    }
+  }
+
+  function renderRecurrenceRuleList(rules) {
+    const el = document.getElementById('booking-recurrence-rule-list');
+    if (!el) return;
+
+    if (!rules.length) {
+      el.innerHTML =
+        '<div class="booking-empty-state"><i class="fas fa-redo"></i><p>No recurrence rules yet. Add recurring schedules for repeating bookings.</p></div>';
+      return;
     }
 
-    function collectBlackoutData() {
-        const scope = document.getElementById('modal-bo-scope')?.value || 'date_range';
-        const data = {
-            rule_type: 'unavailable',
-            scope: scope,
-            resource_id: document.getElementById('modal-bo-resource')?.value || '',
-            priority: document.getElementById('modal-bo-priority')?.value || '50',
-        };
-        if (scope === 'date_range') {
-            data.start_date = document.getElementById('modal-bo-start_date')?.value || '';
-            data.end_date = document.getElementById('modal-bo-end_date')?.value || '';
-        } else if (scope === 'days_of_week') {
-            const checked = [];
-            document.querySelectorAll('#modal-bo-dow-row input[type="checkbox"]:checked').forEach(cb => {
-                checked.push(parseInt(cb.value));
-            });
-            data.days_of_week = checked;
-        } else if (scope === 'specific_dates') {
-            const raw = document.getElementById('modal-bo-specific_dates')?.value || '';
-            data.specific_dates = raw.split(',').map(s => s.trim()).filter(Boolean);
-        }
-        return data;
-    }
-
-    async function saveBlackout() {
-        const data = collectBlackoutData();
-        try {
-            if (modalEntityId) {
-                await postJSON(`${BASE}/booking-availability-rule/${modalEntityId}/update/`, data);
-                showNotification('Blackout period updated', 'success');
-            } else {
-                await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-availability-rules/create/`, data);
-                showNotification('Blackout period created', 'success');
-            }
-            hideModal();
-            loadBlackoutPeriods();
-            loadAvailabilityRules();  // Refresh the full list too
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
-
-    async function deleteBlackout(id) {
-        if (!await AdminModal.confirm({ message: 'Remove this blackout period?', danger: true, confirmText: 'Remove' })) return;
-        try {
-            await postJSON(`${BASE}/booking-availability-rule/${id}/delete/`, {});
-            showNotification('Blackout period removed', 'success');
-            loadBlackoutPeriods();
-            loadAvailabilityRules();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
-
-    // ===================================================================
-    // RECURRENCE RULES (Card list)
-    // ===================================================================
-
-    async function loadRecurrenceRules() {
-        try {
-            const data = await fetchJSON(`${BASE}/product/${PRODUCT_ID}/booking-recurrence-rules/list/`);
-            renderRecurrenceRuleList(data.rules || []);
-            const badge = document.getElementById('booking-recurrence-rule-count');
-            if (badge) badge.textContent = data.count || 0;
-        } catch (e) {
-            const el = document.getElementById('booking-recurrence-rule-list');
-            if (el) el.innerHTML = `<div class="booking-list-loading" style="color:var(--error-color);"><i class="fas fa-exclamation-circle"></i> Failed to load</div>`;
-        }
-    }
-
-    function renderRecurrenceRuleList(rules) {
-        const el = document.getElementById('booking-recurrence-rule-list');
-        if (!el) return;
-
-        if (!rules.length) {
-            el.innerHTML = `<div class="booking-empty-state"><i class="fas fa-redo"></i><p>No recurrence rules yet. Add recurring schedules for repeating bookings.</p></div>`;
-            return;
-        }
-
-        el.innerHTML = rules.map(r => {
-            let desc = `${r.start_time} - ${r.end_time}`;
-            if (r.day_of_week !== null && r.day_of_week !== undefined) desc += ` &middot; ${DAY_NAMES[r.day_of_week] || '?'}`;
-            if (r.start_date) desc += ` &middot; From ${r.start_date}`;
-            if (r.end_date) desc += ` to ${r.end_date}`;
-            return `
+    el.innerHTML = rules
+      .map(r => {
+        let desc = `${r.start_time} - ${r.end_time}`;
+        if (r.day_of_week !== null && r.day_of_week !== undefined)
+          desc += ` &middot; ${DAY_NAMES[r.day_of_week] || '?'}`;
+        if (r.start_date) desc += ` &middot; From ${r.start_date}`;
+        if (r.end_date) desc += ` to ${r.end_date}`;
+        return `
             <div class="booking-card-row" data-id="${r.id}">
                 <div class="booking-card-row__icon"><i class="fas fa-sync-alt"></i></div>
                 <div class="booking-card-row__info">
@@ -1442,41 +1575,47 @@
                     <div class="booking-card-row__desc">${desc} &middot; Auto-create: ${r.auto_create_days_ahead} days</div>
                 </div>
                 <div class="booking-card-row__badges">
-                    ${r.is_active
+                    ${
+                      r.is_active
                         ? '<span class="booking-card-row__badge booking-card-row__badge--active">Active</span>'
-                        : '<span class="booking-card-row__badge booking-card-row__badge--inactive">Inactive</span>'}
+                        : '<span class="booking-card-row__badge booking-card-row__badge--inactive">Inactive</span>'
+                    }
                 </div>
                 <div class="booking-card-row__actions">
                     <button type="button" class="booking-card-row__action" data-action="edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>
                     <button type="button" class="booking-card-row__action booking-card-row__action--danger" data-action="delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>`;
-        }).join('');
+      })
+      .join('');
+  }
+
+  function openRecurrenceRuleModal(id) {
+    modalEntityType = 'recurrence_rule';
+    modalEntityId = id;
+    modalTitle.textContent = id ? 'Edit Recurrence Rule' : 'Add Recurrence Rule';
+    modalSaveText.textContent = id ? 'Update' : 'Save';
+
+    if (id) {
+      modalBody.innerHTML =
+        '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+      showModal();
+      fetchJSON(`${BASE}/booking-recurrence-rule/${id}/detail/`)
+        .then(data => {
+          renderRecurrenceRuleForm(data.rule);
+        })
+        .catch(e => {
+          modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
+        });
+    } else {
+      renderRecurrenceRuleForm(null);
+      showModal();
     }
+  }
 
-    function openRecurrenceRuleModal(id) {
-        modalEntityType = 'recurrence_rule';
-        modalEntityId = id;
-        modalTitle.textContent = id ? 'Edit Recurrence Rule' : 'Add Recurrence Rule';
-        modalSaveText.textContent = id ? 'Update' : 'Save';
-
-        if (id) {
-            modalBody.innerHTML = '<div class="booking-list-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
-            showModal();
-            fetchJSON(`${BASE}/booking-recurrence-rule/${id}/detail/`).then(data => {
-                renderRecurrenceRuleForm(data.rule);
-            }).catch(e => {
-                modalBody.innerHTML = `<p style="color:var(--error-color);">Failed to load: ${escapeHtml(e.message)}</p>`;
-            });
-        } else {
-            renderRecurrenceRuleForm(null);
-            showModal();
-        }
-    }
-
-    function renderRecurrenceRuleForm(rule) {
-        const d = rule || {};
-        modalBody.innerHTML = `
+  function renderRecurrenceRuleForm(rule) {
+    const d = rule || {};
+    modalBody.innerHTML = `
             <div class="booking-modal-section">
                 <h4><i class="fas fa-redo"></i> Recurrence Settings</h4>
                 <div class="booking-modal-row">
@@ -1536,166 +1675,207 @@
                     <label><input type="checkbox" id="modal-rr-active" ${d.is_active !== false ? 'checked' : ''}> Active</label>
                 </div>
             </div>`;
+  }
+
+  function collectRecurrenceRuleData() {
+    const dayOfWeek = document.getElementById('modal-rr-day_of_week')?.value;
+    const dayOfMonth = document.getElementById('modal-rr-day_of_month')?.value;
+    return {
+      frequency: document.getElementById('modal-rr-frequency')?.value || 'weekly',
+      day_of_week: dayOfWeek !== '' ? dayOfWeek : null,
+      day_of_month: dayOfMonth !== '' ? dayOfMonth : null,
+      start_time: document.getElementById('modal-rr-start_time')?.value || '09:00',
+      end_time: document.getElementById('modal-rr-end_time')?.value || '17:00',
+      start_date: document.getElementById('modal-rr-start_date')?.value || '',
+      end_date: document.getElementById('modal-rr-end_date')?.value || '',
+      auto_create_days_ahead: parseInt(
+        document.getElementById('modal-rr-auto_create')?.value || 90
+      ),
+      is_active: document.getElementById('modal-rr-active')?.checked ?? true,
+    };
+  }
+
+  async function saveRecurrenceRule() {
+    const data = collectRecurrenceRuleData();
+    if (!data.start_date) {
+      showNotification('Start date is required', 'error');
+      return;
+    }
+    try {
+      if (modalEntityId) {
+        await postJSON(`${BASE}/booking-recurrence-rule/${modalEntityId}/update/`, data);
+        showNotification('Recurrence rule updated', 'success');
+      } else {
+        await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-recurrence-rules/create/`, data);
+        showNotification('Recurrence rule created', 'success');
+      }
+      hideModal();
+      loadRecurrenceRules();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  async function deleteRecurrenceRule(id) {
+    if (
+      !(await AdminModal.confirm({
+        message: 'Delete this recurrence rule?',
+        danger: true,
+        confirmText: 'Delete',
+      }))
+    )
+      return;
+    try {
+      await postJSON(`${BASE}/booking-recurrence-rule/${id}/delete/`, {});
+      showNotification('Recurrence rule deleted', 'success');
+      loadRecurrenceRules();
+    } catch (e) {
+      showNotification('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ===================================================================
+  // MODAL MANAGEMENT
+  // ===================================================================
+
+  function showModal() {
+    if (modalOverlay) modalOverlay.style.display = 'flex';
+  }
+
+  function hideModal() {
+    if (modalOverlay) modalOverlay.style.display = 'none';
+    modalEntityType = null;
+    modalEntityId = null;
+  }
+
+  function handleModalSave() {
+    switch (modalEntityType) {
+      case 'resource':
+        saveResource();
+        break;
+      case 'person_type':
+        savePersonType();
+        break;
+      case 'availability_rule':
+        saveAvailabilityRule();
+        break;
+      case 'recurrence_rule':
+        saveRecurrenceRule();
+        break;
+      case 'blackout':
+        saveBlackout();
+        break;
+    }
+  }
+
+  // ===================================================================
+  // INITIALIZATION
+  // ===================================================================
+
+  function init() {
+    const panel = document.getElementById('panel-booking');
+    if (!panel) return;
+
+    // Check product type
+    const typeSelect = document.getElementById('id_product_type');
+    if (typeSelect && typeSelect.value !== 'booking') return;
+
+    // Cache modal DOM refs
+    modalOverlay = document.getElementById('booking-modal-overlay');
+    modalTitle = document.getElementById('booking-modal-title');
+    modalBody = document.getElementById('booking-modal-body');
+    modalSaveBtn = document.getElementById('booking-modal-save');
+    modalSaveText = document.getElementById('booking-modal-save-text');
+
+    // Modal event binding
+    if (modalSaveBtn) modalSaveBtn.addEventListener('click', handleModalSave);
+    const cancelBtn = document.getElementById('booking-modal-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', hideModal);
+    const closeBtn = document.getElementById('booking-modal-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', hideModal);
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', function (e) {
+        if (e.target === modalOverlay) hideModal();
+      });
     }
 
-    function collectRecurrenceRuleData() {
-        const dayOfWeek = document.getElementById('modal-rr-day_of_week')?.value;
-        const dayOfMonth = document.getElementById('modal-rr-day_of_month')?.value;
-        return {
-            frequency: document.getElementById('modal-rr-frequency')?.value || 'weekly',
-            day_of_week: dayOfWeek !== '' ? dayOfWeek : null,
-            day_of_month: dayOfMonth !== '' ? dayOfMonth : null,
-            start_time: document.getElementById('modal-rr-start_time')?.value || '09:00',
-            end_time: document.getElementById('modal-rr-end_time')?.value || '17:00',
-            start_date: document.getElementById('modal-rr-start_date')?.value || '',
-            end_date: document.getElementById('modal-rr-end_date')?.value || '',
-            auto_create_days_ahead: parseInt(document.getElementById('modal-rr-auto_create')?.value || 90),
-            is_active: document.getElementById('modal-rr-active')?.checked ?? true,
-        };
-    }
+    // Escape key to close modal
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modalOverlay && modalOverlay.style.display === 'flex') {
+        hideModal();
+      }
+    });
 
-    async function saveRecurrenceRule() {
-        const data = collectRecurrenceRuleData();
-        if (!data.start_date) { showNotification('Start date is required', 'error'); return; }
-        try {
-            if (modalEntityId) {
-                await postJSON(`${BASE}/booking-recurrence-rule/${modalEntityId}/update/`, data);
-                showNotification('Recurrence rule updated', 'success');
-            } else {
-                await postJSON(`${BASE}/product/${PRODUCT_ID}/booking-recurrence-rules/create/`, data);
-                showNotification('Recurrence rule created', 'success');
-            }
-            hideModal();
-            loadRecurrenceRules();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
+    // Add buttons
+    const addResourceBtn = document.getElementById('add-booking-resource-btn');
+    if (addResourceBtn) addResourceBtn.addEventListener('click', () => openResourceModal(null));
 
-    async function deleteRecurrenceRule(id) {
-        if (!await AdminModal.confirm({ message: 'Delete this recurrence rule?', danger: true, confirmText: 'Delete' })) return;
-        try {
-            await postJSON(`${BASE}/booking-recurrence-rule/${id}/delete/`, {});
-            showNotification('Recurrence rule deleted', 'success');
-            loadRecurrenceRules();
-        } catch (e) {
-            showNotification('Error: ' + e.message, 'error');
-        }
-    }
+    const addPersonTypeBtn = document.getElementById('add-booking-person-type-btn');
+    if (addPersonTypeBtn)
+      addPersonTypeBtn.addEventListener('click', () => openPersonTypeModal(null));
 
-    // ===================================================================
-    // MODAL MANAGEMENT
-    // ===================================================================
+    const addAvailRuleBtn = document.getElementById('add-booking-availability-rule-btn');
+    if (addAvailRuleBtn)
+      addAvailRuleBtn.addEventListener('click', () => openAvailabilityRuleModal(null));
 
-    function showModal() {
-        if (modalOverlay) modalOverlay.style.display = 'flex';
-    }
+    const addRecurrenceBtn = document.getElementById('add-booking-recurrence-rule-btn');
+    if (addRecurrenceBtn)
+      addRecurrenceBtn.addEventListener('click', () => openRecurrenceRuleModal(null));
 
-    function hideModal() {
-        if (modalOverlay) modalOverlay.style.display = 'none';
-        modalEntityType = null;
-        modalEntityId = null;
-    }
+    const addBlackoutBtn = document.getElementById('add-booking-blackout-btn');
+    if (addBlackoutBtn) addBlackoutBtn.addEventListener('click', () => openBlackoutModal(null));
 
-    function handleModalSave() {
-        switch (modalEntityType) {
-            case 'resource': saveResource(); break;
-            case 'person_type': savePersonType(); break;
-            case 'availability_rule': saveAvailabilityRule(); break;
-            case 'recurrence_rule': saveRecurrenceRule(); break;
-            case 'blackout': saveBlackout(); break;
-        }
-    }
+    // Delegated card row actions (CSP-compliant: no inline onclick)
+    [
+      { listId: 'booking-resource-list', editFn: openResourceModal, deleteFn: deleteResource },
+      {
+        listId: 'booking-person-type-list',
+        editFn: openPersonTypeModal,
+        deleteFn: deletePersonType,
+      },
+      {
+        listId: 'booking-availability-rule-list',
+        editFn: openAvailabilityRuleModal,
+        deleteFn: deleteAvailabilityRule,
+      },
+      {
+        listId: 'booking-recurrence-rule-list',
+        editFn: openRecurrenceRuleModal,
+        deleteFn: deleteRecurrenceRule,
+      },
+      { listId: 'booking-blackout-list', editFn: openBlackoutModal, deleteFn: deleteBlackout },
+    ].forEach(({ listId, editFn, deleteFn }) => {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      list.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const id = parseInt(btn.closest('.booking-card-row').dataset.id);
+        if (btn.dataset.action === 'edit') editFn(id);
+        if (btn.dataset.action === 'delete') deleteFn(id);
+      });
+    });
 
-    // ===================================================================
-    // INITIALIZATION
-    // ===================================================================
+    // Zero out Django inline management forms
+    panel.querySelectorAll('input[name$="-TOTAL_FORMS"]').forEach(input => {
+      input.value = '0';
+    });
+    panel.querySelectorAll('input[name$="-INITIAL_FORMS"]').forEach(input => {
+      input.value = '0';
+    });
 
-    function init() {
-        const panel = document.getElementById('panel-booking');
-        if (!panel) return;
+    // Load all data
+    loadBookingConfig();
+    loadResources();
+    loadPersonTypes();
+    loadBlackoutPeriods();
+    loadAvailabilityRules();
+    loadRecurrenceRules();
+  }
 
-        // Check product type
-        const typeSelect = document.getElementById('id_product_type');
-        if (typeSelect && typeSelect.value !== 'booking') return;
-
-        // Cache modal DOM refs
-        modalOverlay = document.getElementById('booking-modal-overlay');
-        modalTitle = document.getElementById('booking-modal-title');
-        modalBody = document.getElementById('booking-modal-body');
-        modalSaveBtn = document.getElementById('booking-modal-save');
-        modalSaveText = document.getElementById('booking-modal-save-text');
-
-        // Modal event binding
-        if (modalSaveBtn) modalSaveBtn.addEventListener('click', handleModalSave);
-        const cancelBtn = document.getElementById('booking-modal-cancel');
-        if (cancelBtn) cancelBtn.addEventListener('click', hideModal);
-        const closeBtn = document.getElementById('booking-modal-close-btn');
-        if (closeBtn) closeBtn.addEventListener('click', hideModal);
-        if (modalOverlay) {
-            modalOverlay.addEventListener('click', function(e) {
-                if (e.target === modalOverlay) hideModal();
-            });
-        }
-
-        // Escape key to close modal
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && modalOverlay && modalOverlay.style.display === 'flex') {
-                hideModal();
-            }
-        });
-
-        // Add buttons
-        const addResourceBtn = document.getElementById('add-booking-resource-btn');
-        if (addResourceBtn) addResourceBtn.addEventListener('click', () => openResourceModal(null));
-
-        const addPersonTypeBtn = document.getElementById('add-booking-person-type-btn');
-        if (addPersonTypeBtn) addPersonTypeBtn.addEventListener('click', () => openPersonTypeModal(null));
-
-        const addAvailRuleBtn = document.getElementById('add-booking-availability-rule-btn');
-        if (addAvailRuleBtn) addAvailRuleBtn.addEventListener('click', () => openAvailabilityRuleModal(null));
-
-        const addRecurrenceBtn = document.getElementById('add-booking-recurrence-rule-btn');
-        if (addRecurrenceBtn) addRecurrenceBtn.addEventListener('click', () => openRecurrenceRuleModal(null));
-
-        const addBlackoutBtn = document.getElementById('add-booking-blackout-btn');
-        if (addBlackoutBtn) addBlackoutBtn.addEventListener('click', () => openBlackoutModal(null));
-
-        // Delegated card row actions (CSP-compliant: no inline onclick)
-        [
-            { listId: 'booking-resource-list',          editFn: openResourceModal,         deleteFn: deleteResource },
-            { listId: 'booking-person-type-list',       editFn: openPersonTypeModal,        deleteFn: deletePersonType },
-            { listId: 'booking-availability-rule-list', editFn: openAvailabilityRuleModal,  deleteFn: deleteAvailabilityRule },
-            { listId: 'booking-recurrence-rule-list',   editFn: openRecurrenceRuleModal,    deleteFn: deleteRecurrenceRule },
-            { listId: 'booking-blackout-list',          editFn: openBlackoutModal,           deleteFn: deleteBlackout },
-        ].forEach(({ listId, editFn, deleteFn }) => {
-            const list = document.getElementById(listId);
-            if (!list) return;
-            list.addEventListener('click', function(e) {
-                const btn = e.target.closest('[data-action]');
-                if (!btn) return;
-                const id = parseInt(btn.closest('.booking-card-row').dataset.id);
-                if (btn.dataset.action === 'edit') editFn(id);
-                if (btn.dataset.action === 'delete') deleteFn(id);
-            });
-        });
-
-        // Zero out Django inline management forms
-        panel.querySelectorAll('input[name$="-TOTAL_FORMS"]').forEach(input => { input.value = '0'; });
-        panel.querySelectorAll('input[name$="-INITIAL_FORMS"]').forEach(input => { input.value = '0'; });
-
-        // Load all data
-        loadBookingConfig();
-        loadResources();
-        loadPersonTypes();
-        loadBlackoutPeriods();
-        loadAvailabilityRules();
-        loadRecurrenceRules();
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

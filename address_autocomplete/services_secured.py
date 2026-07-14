@@ -2,14 +2,15 @@
 Secured Address Autocomplete Service Client
 Includes IP restriction and API key authentication
 """
+
 import hashlib
-import httpx
 import json
-from typing import Dict, Any, Optional, List
+import logging
+from typing import Any
+
+import httpx
 from django.conf import settings
 from django.core.cache import cache
-from django.utils import timezone
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -22,40 +23,42 @@ class SecuredAutocompleteClient:
 
     def __init__(self):
         # Service configuration
-        self.base_url = getattr(settings, 'ADDRESS_AUTOCOMPLETE_URL', 'http://geocoder.spwig.com')
-        self.api_key = getattr(settings, 'ADDRESS_AUTOCOMPLETE_API_KEY', None)
-        self.timeout = getattr(settings, 'ADDRESS_AUTOCOMPLETE_TIMEOUT', 5.0)
-        self.cache_ttl = getattr(settings, 'ADDRESS_AUTOCOMPLETE_CACHE_TTL', 300)
+        self.base_url = getattr(settings, "ADDRESS_AUTOCOMPLETE_URL", "http://geocoder.spwig.com")
+        self.api_key = getattr(settings, "ADDRESS_AUTOCOMPLETE_API_KEY", None)
+        self.timeout = getattr(settings, "ADDRESS_AUTOCOMPLETE_TIMEOUT", 5.0)
+        self.cache_ttl = getattr(settings, "ADDRESS_AUTOCOMPLETE_CACHE_TTL", 300)
 
         # Security settings
-        self.require_https = getattr(settings, 'ADDRESS_AUTOCOMPLETE_REQUIRE_HTTPS', False)
-        self.verify_ssl = getattr(settings, 'ADDRESS_AUTOCOMPLETE_VERIFY_SSL', True)
+        self.require_https = getattr(settings, "ADDRESS_AUTOCOMPLETE_REQUIRE_HTTPS", False)
+        self.verify_ssl = getattr(settings, "ADDRESS_AUTOCOMPLETE_VERIFY_SSL", True)
 
         # Validate configuration
-        if self.require_https and not self.base_url.startswith('https://'):
+        if self.require_https and not self.base_url.startswith("https://"):
             raise ValueError("HTTPS required but base_url is not HTTPS")
 
-    def _get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         """Build request headers with authentication"""
         headers = {
-            'Content-Type': 'application/json',
-            'User-Agent': f'SpwigShop/{settings.VERSION if hasattr(settings, "VERSION") else "1.0"}'
+            "Content-Type": "application/json",
+            "User-Agent": f"SpwigShop/{settings.VERSION if hasattr(settings, 'VERSION') else '1.0'}",
         }
 
         # Add API key if configured
         if self.api_key:
-            headers['X-API-Key'] = self.api_key
+            headers["X-API-Key"] = self.api_key
 
         return headers
 
-    def _get_cache_key(self, operation: str, params: Dict) -> str:
+    def _get_cache_key(self, operation: str, params: dict) -> str:
         """Generate cache key for request"""
         # Create deterministic cache key
         param_str = json.dumps(params, sort_keys=True)
         hash_str = hashlib.md5(param_str.encode()).hexdigest()
-        return f'geocoder:{operation}:{hash_str}'
+        return f"geocoder:{operation}:{hash_str}"
 
-    async def _make_request(self, endpoint: str, data: Dict, use_cache: bool = True) -> Dict[str, Any]:
+    async def _make_request(
+        self, endpoint: str, data: dict, use_cache: bool = True
+    ) -> dict[str, Any]:
         """Make authenticated request to geocoder service"""
         url = f"{self.base_url}{endpoint}"
 
@@ -70,10 +73,7 @@ class SecuredAutocompleteClient:
         try:
             async with httpx.AsyncClient(verify=self.verify_ssl) as client:
                 response = await client.post(
-                    url,
-                    json=data,
-                    headers=self._get_headers(),
-                    timeout=self.timeout
+                    url, json=data, headers=self._get_headers(), timeout=self.timeout
                 )
 
                 if response.status_code == 403:
@@ -91,7 +91,7 @@ class SecuredAutocompleteClient:
 
         except httpx.TimeoutException:
             logger.error(f"Timeout calling {endpoint}")
-            raise TimeoutError(f"Geocoder service timeout")
+            raise TimeoutError("Geocoder service timeout")
         except httpx.HTTPStatusError as e:
             logger.error(f"HTTP error calling {endpoint}: {e}")
             raise
@@ -99,19 +99,18 @@ class SecuredAutocompleteClient:
             logger.error(f"Error calling geocoder service: {e}")
             raise
 
-    async def autocomplete(self,
-                          query: str,
-                          country_bias: Optional[str] = None,
-                          lat: Optional[float] = None,
-                          lon: Optional[float] = None,
-                          limit: int = 5) -> Dict[str, Any]:
+    async def autocomplete(
+        self,
+        query: str,
+        country_bias: str | None = None,
+        lat: float | None = None,
+        lon: float | None = None,
+        limit: int = 5,
+    ) -> dict[str, Any]:
         """
         Get address suggestions with authentication
         """
-        data = {
-            "query": query,
-            "limit": limit
-        }
+        data = {"query": query, "limit": limit}
 
         if country_bias:
             data["country_bias"] = country_bias
@@ -121,20 +120,20 @@ class SecuredAutocompleteClient:
 
         return await self._make_request("/api/v1/autocomplete", data)
 
-    async def validate_address(self, address_data: Dict) -> Dict[str, Any]:
+    async def validate_address(self, address_data: dict) -> dict[str, Any]:
         """
         Validate address with authentication
         """
         return await self._make_request("/api/v1/validate", address_data)
 
-    async def normalize_address(self, address_text: str) -> Dict[str, Any]:
+    async def normalize_address(self, address_text: str) -> dict[str, Any]:
         """
         Normalize address with authentication
         """
         data = {"address": address_text}
         return await self._make_request("/api/v1/normalize", data)
 
-    async def reverse_geocode(self, lat: float, lon: float) -> Dict[str, Any]:
+    async def reverse_geocode(self, lat: float, lon: float) -> dict[str, Any]:
         """
         Reverse geocode coordinates with authentication
         """
@@ -148,11 +147,12 @@ class SecuredAutocompleteClient:
         """
         try:
             import requests
+
             response = requests.get(
                 f"{self.base_url}/health",
                 headers=self._get_headers(),
                 timeout=self.timeout,
-                verify=self.verify_ssl
+                verify=self.verify_ssl,
             )
             return response.status_code == 200
         except Exception as e:
@@ -168,7 +168,7 @@ class SecuredAddressEnhancer:
     def __init__(self):
         self.client = SecuredAutocompleteClient()
 
-    async def enhance_checkout_address(self, address_data: Dict) -> Dict:
+    async def enhance_checkout_address(self, address_data: dict) -> dict:
         """
         Enhance address data during checkout with validation
         """
@@ -176,12 +176,12 @@ class SecuredAddressEnhancer:
             # Validate the address
             validation_result = await self.client.validate_address(address_data)
 
-            if validation_result.get('is_valid'):
+            if validation_result.get("is_valid"):
                 # Return normalized address
-                return validation_result.get('normalized', address_data)
+                return validation_result.get("normalized", address_data)
             else:
                 # Log validation issues
-                issues = validation_result.get('issues', [])
+                issues = validation_result.get("issues", [])
                 logger.warning(f"Address validation issues: {issues}")
                 return address_data
 
@@ -194,27 +194,23 @@ class SecuredAddressEnhancer:
             logger.error(f"Failed to enhance address: {e}")
             return address_data
 
-    def verify_service_access(self) -> Dict[str, Any]:
+    def verify_service_access(self) -> dict[str, Any]:
         """
         Verify service access and return status
         """
-        status = {
-            'accessible': False,
-            'authenticated': False,
-            'error': None
-        }
+        status = {"accessible": False, "authenticated": False, "error": None}
 
         try:
             # Test basic connection
             if self.client.test_connection():
-                status['accessible'] = True
-                status['authenticated'] = True
+                status["accessible"] = True
+                status["authenticated"] = True
             else:
-                status['error'] = 'Service not accessible'
+                status["error"] = "Service not accessible"
         except PermissionError:
-            status['accessible'] = True
-            status['error'] = 'Authentication failed'
+            status["accessible"] = True
+            status["error"] = "Authentication failed"
         except Exception as e:
-            status['error'] = str(e)
+            status["error"] = str(e)
 
         return status

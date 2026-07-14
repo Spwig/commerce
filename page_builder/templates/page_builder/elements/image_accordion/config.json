@@ -42,11 +42,11 @@
                     "type": "select",
                     "label": "Image Position",
                     "options": [
-                      {"value": "center", "label": "Center"},
-                      {"value": "top", "label": "Top"},
-                      {"value": "bottom", "label": "Bottom"},
-                      {"value": "left", "label": "Left"},
-                      {"value": "right", "label": "Right"}
+                      { "value": "center", "label": "Center" },
+                      { "value": "top", "label": "Top" },
+                      { "value": "bottom", "label": "Bottom" },
+                      { "value": "left", "label": "Left" },
+                      { "value": "right", "label": "Right" }
                     ],
                     "default": "center"
                   },
@@ -60,8 +60,8 @@
                     "type": "select",
                     "label": "Open In",
                     "options": [
-                      {"value": "_self", "label": "Same Window"},
-                      {"value": "_blank", "label": "New Window"}
+                      { "value": "_self", "label": "Same Window" },
+                      { "value": "_blank", "label": "New Window" }
                     ],
                     "default": "_self"
                   },
@@ -108,16 +108,16 @@
                     "label": "Override Style",
                     "help_text": "Override the global overlay style for this frame only",
                     "options": [
-                      {"value": "", "label": "Use Global Style"},
-                      {"value": "hero-bold", "label": "Hero Bold"},
-                      {"value": "bottom-left", "label": "Bottom Left"},
-                      {"value": "bottom-right", "label": "Bottom Right"},
-                      {"value": "center-left", "label": "Center Left"},
-                      {"value": "center-right", "label": "Center Right"},
-                      {"value": "center-center", "label": "Center"},
-                      {"value": "top-left", "label": "Top Left"},
-                      {"value": "card", "label": "Card"},
-                      {"value": "minimal", "label": "Minimal"}
+                      { "value": "", "label": "Use Global Style" },
+                      { "value": "hero-bold", "label": "Hero Bold" },
+                      { "value": "bottom-left", "label": "Bottom Left" },
+                      { "value": "bottom-right", "label": "Bottom Right" },
+                      { "value": "center-left", "label": "Center Left" },
+                      { "value": "center-right", "label": "Center Right" },
+                      { "value": "center-center", "label": "Center" },
+                      { "value": "top-left", "label": "Top Left" },
+                      { "value": "card", "label": "Card" },
+                      { "value": "minimal", "label": "Minimal" }
                     ],
                     "default": ""
                   }
@@ -170,11 +170,11 @@
               "type": "select",
               "label": "Accordion Height",
               "options": [
-                {"value": "sm", "label": "Small (300px)"},
-                {"value": "md", "label": "Medium (450px)"},
-                {"value": "lg", "label": "Large (600px)"},
-                {"value": "xl", "label": "Extra Large (750px)"},
-                {"value": "screen", "label": "Full Screen"}
+                { "value": "sm", "label": "Small (300px)" },
+                { "value": "md", "label": "Medium (450px)" },
+                { "value": "lg", "label": "Large (600px)" },
+                { "value": "xl", "label": "Extra Large (750px)" },
+                { "value": "screen", "label": "Full Screen" }
               ],
               "default": "lg"
             },
@@ -182,10 +182,10 @@
               "type": "select",
               "label": "Gap Between Frames",
               "options": [
-                {"value": "0", "label": "None"},
-                {"value": "2", "label": "Small (0.5rem)"},
-                {"value": "4", "label": "Medium (1rem)"},
-                {"value": "6", "label": "Large (1.5rem)"}
+                { "value": "0", "label": "None" },
+                { "value": "2", "label": "Small (0.5rem)" },
+                { "value": "4", "label": "Medium (1rem)" },
+                { "value": "6", "label": "Large (1.5rem)" }
               ],
               "default": "4"
             }
@@ -199,10 +199,10 @@
               "type": "select",
               "label": "Default Expanded Frame",
               "options": [
-                {"value": "none", "label": "None (Equal Width)"},
-                {"value": "first", "label": "First Frame"},
-                {"value": "last", "label": "Last Frame"},
-                {"value": "specific", "label": "Specific Frame..."}
+                { "value": "none", "label": "None (Equal Width)" },
+                { "value": "first", "label": "First Frame" },
+                { "value": "last", "label": "Last Frame" },
+                { "value": "specific", "label": "Specific Frame..." }
               ],
               "default": "none",
               "help_text": "Which frame is expanded when not hovering",
@@ -215,16 +215,16 @@
               "min": 1,
               "help_text": "Which frame to expand (1 = first, 2 = second, etc.)",
               "requires_rerender": true,
-              "show_when": {"property": "default_expanded", "value": "specific"}
+              "show_when": { "property": "default_expanded", "value": "specific" }
             },
             "expand_ratio": {
               "type": "select",
               "label": "Expansion Ratio",
               "options": [
-                {"value": "2", "label": "2x (Moderate)"},
-                {"value": "3", "label": "3x (Standard)"},
-                {"value": "4", "label": "4x (Dramatic)"},
-                {"value": "5", "label": "5x (Maximum)"}
+                { "value": "2", "label": "2x (Moderate)" },
+                { "value": "3", "label": "3x (Standard)" },
+                { "value": "4", "label": "4x (Dramatic)" },
+                { "value": "5", "label": "5x (Maximum)" }
               ],
               "default": "3",
               "help_text": "How much the hovered frame expands relative to others"
@@ -241,16 +241,22 @@
               "label": "Content Style",
               "help_text": "Choose a predefined overlay layout style for all frames",
               "options": [
-                {"value": "hero-bold", "label": "Hero Bold - Large dramatic title, left aligned"},
-                {"value": "bottom-left", "label": "Bottom Left - Clean minimal corner placement"},
-                {"value": "bottom-right", "label": "Bottom Right - Subtle right corner"},
-                {"value": "center-left", "label": "Center Left - Vertically centered, left aligned"},
-                {"value": "center-right", "label": "Center Right - Vertically centered, right aligned"},
-                {"value": "center-center", "label": "Center - Fully centered content"},
-                {"value": "top-left", "label": "Top Left - Upper corner placement"},
-                {"value": "card", "label": "Card - Content in semi-transparent box"},
-                {"value": "minimal", "label": "Minimal - Title only, ultra clean"},
-                {"value": "custom", "label": "Custom - Manual alignment settings"}
+                { "value": "hero-bold", "label": "Hero Bold - Large dramatic title, left aligned" },
+                { "value": "bottom-left", "label": "Bottom Left - Clean minimal corner placement" },
+                { "value": "bottom-right", "label": "Bottom Right - Subtle right corner" },
+                {
+                  "value": "center-left",
+                  "label": "Center Left - Vertically centered, left aligned"
+                },
+                {
+                  "value": "center-right",
+                  "label": "Center Right - Vertically centered, right aligned"
+                },
+                { "value": "center-center", "label": "Center - Fully centered content" },
+                { "value": "top-left", "label": "Top Left - Upper corner placement" },
+                { "value": "card", "label": "Card - Content in semi-transparent box" },
+                { "value": "minimal", "label": "Minimal - Title only, ultra clean" },
+                { "value": "custom", "label": "Custom - Manual alignment settings" }
               ],
               "default": "bottom-left"
             },
@@ -258,35 +264,35 @@
               "type": "select",
               "label": "Vertical Alignment",
               "options": [
-                {"value": "top", "label": "Top"},
-                {"value": "center", "label": "Center"},
-                {"value": "bottom", "label": "Bottom"}
+                { "value": "top", "label": "Top" },
+                { "value": "center", "label": "Center" },
+                { "value": "bottom", "label": "Bottom" }
               ],
               "default": "bottom",
-              "show_when": {"property": "overlay_style", "value": "custom"}
+              "show_when": { "property": "overlay_style", "value": "custom" }
             },
             "content_align_h": {
               "type": "select",
               "label": "Horizontal Alignment",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "center", "label": "Center"},
-                {"value": "right", "label": "Right"}
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
               ],
               "default": "left",
-              "show_when": {"property": "overlay_style", "value": "custom"}
+              "show_when": { "property": "overlay_style", "value": "custom" }
             },
             "content_padding": {
               "type": "select",
               "label": "Content Padding",
               "options": [
-                {"value": "4", "label": "Small"},
-                {"value": "6", "label": "Medium"},
-                {"value": "8", "label": "Large"},
-                {"value": "12", "label": "Extra Large"}
+                { "value": "4", "label": "Small" },
+                { "value": "6", "label": "Medium" },
+                { "value": "8", "label": "Large" },
+                { "value": "12", "label": "Extra Large" }
               ],
               "default": "6",
-              "show_when": {"property": "overlay_style", "value": "custom"}
+              "show_when": { "property": "overlay_style", "value": "custom" }
             }
           }
         }
@@ -305,10 +311,10 @@
               "type": "select",
               "label": "Transition Duration",
               "options": [
-                {"value": "200", "label": "Fast (200ms)"},
-                {"value": "300", "label": "Normal (300ms)"},
-                {"value": "500", "label": "Slow (500ms)"},
-                {"value": "700", "label": "Very Slow (700ms)"}
+                { "value": "200", "label": "Fast (200ms)" },
+                { "value": "300", "label": "Normal (300ms)" },
+                { "value": "500", "label": "Slow (500ms)" },
+                { "value": "700", "label": "Very Slow (700ms)" }
               ],
               "default": "300"
             },
@@ -316,10 +322,10 @@
               "type": "select",
               "label": "Easing Function",
               "options": [
-                {"value": "ease", "label": "Ease"},
-                {"value": "ease-in-out", "label": "Ease In Out"},
-                {"value": "ease-out", "label": "Ease Out"},
-                {"value": "cubic-bezier(0.4, 0, 0.2, 1)", "label": "Smooth (Material)"}
+                { "value": "ease", "label": "Ease" },
+                { "value": "ease-in-out", "label": "Ease In Out" },
+                { "value": "ease-out", "label": "Ease Out" },
+                { "value": "cubic-bezier(0.4, 0, 0.2, 1)", "label": "Smooth (Material)" }
               ],
               "default": "cubic-bezier(0.4, 0, 0.2, 1)"
             }
@@ -358,10 +364,10 @@
               "type": "select",
               "label": "Title Size",
               "options": [
-                {"value": "lg", "label": "Large"},
-                {"value": "xl", "label": "Extra Large"},
-                {"value": "2xl", "label": "2X Large"},
-                {"value": "3xl", "label": "3X Large"}
+                { "value": "lg", "label": "Large" },
+                { "value": "xl", "label": "Extra Large" },
+                { "value": "2xl", "label": "2X Large" },
+                { "value": "3xl", "label": "3X Large" }
               ],
               "default": "2xl"
             },
@@ -381,9 +387,9 @@
               "type": "select",
               "label": "Subtitle Size",
               "options": [
-                {"value": "sm", "label": "Small"},
-                {"value": "base", "label": "Medium"},
-                {"value": "lg", "label": "Large"}
+                { "value": "sm", "label": "Small" },
+                { "value": "base", "label": "Medium" },
+                { "value": "lg", "label": "Large" }
               ],
               "default": "base"
             },
@@ -403,9 +409,9 @@
               "type": "select",
               "label": "Button Style",
               "options": [
-                {"value": "solid", "label": "Solid"},
-                {"value": "outline", "label": "Outline"},
-                {"value": "ghost", "label": "Ghost"}
+                { "value": "solid", "label": "Solid" },
+                { "value": "outline", "label": "Outline" },
+                { "value": "ghost", "label": "Ghost" }
               ],
               "default": "solid"
             },
@@ -413,9 +419,9 @@
               "type": "select",
               "label": "Button Size",
               "options": [
-                {"value": "sm", "label": "Small"},
-                {"value": "md", "label": "Medium"},
-                {"value": "lg", "label": "Large"}
+                { "value": "sm", "label": "Small" },
+                { "value": "md", "label": "Medium" },
+                { "value": "lg", "label": "Large" }
               ],
               "default": "md"
             }
@@ -437,9 +443,9 @@
               "type": "select",
               "label": "Mobile Layout",
               "options": [
-                {"value": "stack", "label": "Stack Vertically"},
-                {"value": "carousel", "label": "Horizontal Scroll"},
-                {"value": "collapse", "label": "Collapse to Grid"}
+                { "value": "stack", "label": "Stack Vertically" },
+                { "value": "carousel", "label": "Horizontal Scroll" },
+                { "value": "collapse", "label": "Collapse to Grid" }
               ],
               "default": "stack",
               "help_text": "How the accordion behaves on mobile devices"
@@ -448,10 +454,10 @@
               "type": "select",
               "label": "Mobile Frame Height",
               "options": [
-                {"value": "200", "label": "Small (200px)"},
-                {"value": "250", "label": "Medium (250px)"},
-                {"value": "300", "label": "Large (300px)"},
-                {"value": "auto", "label": "Auto (16:9 ratio)"}
+                { "value": "200", "label": "Small (200px)" },
+                { "value": "250", "label": "Medium (250px)" },
+                { "value": "300", "label": "Large (300px)" },
+                { "value": "auto", "label": "Auto (16:9 ratio)" }
               ],
               "default": "250"
             }
@@ -467,50 +473,82 @@
       "item_schema": {
         "type": "object",
         "properties": {
-          "image": {"type": "image", "label": "Background Image"},
-          "image_position": {"type": "select", "label": "Image Position", "default": "center"},
-          "link_url": {"type": "url", "label": "Link URL"},
-          "link_target": {"type": "select", "label": "Open In", "default": "_self"},
-          "show_content": {"type": "boolean", "label": "Show Content Overlay", "default": true},
-          "title": {"type": "string", "label": "Title", "translatable": true},
-          "subtitle": {"type": "string", "label": "Subtitle", "translatable": true},
-          "button_text": {"type": "string", "label": "Button Text", "translatable": true},
-          "button_url": {"type": "url", "label": "Button URL"},
-          "overlay_color": {"type": "color", "label": "Overlay Color", "default": "#000000"},
-          "overlay_opacity": {"type": "range", "label": "Overlay Opacity", "default": 0.4}
+          "image": { "type": "image", "label": "Background Image" },
+          "image_position": { "type": "select", "label": "Image Position", "default": "center" },
+          "link_url": { "type": "url", "label": "Link URL" },
+          "link_target": { "type": "select", "label": "Open In", "default": "_self" },
+          "show_content": { "type": "boolean", "label": "Show Content Overlay", "default": true },
+          "title": { "type": "string", "label": "Title", "translatable": true },
+          "subtitle": { "type": "string", "label": "Subtitle", "translatable": true },
+          "button_text": { "type": "string", "label": "Button Text", "translatable": true },
+          "button_url": { "type": "url", "label": "Button URL" },
+          "overlay_color": { "type": "color", "label": "Overlay Color", "default": "#000000" },
+          "overlay_opacity": { "type": "range", "label": "Overlay Opacity", "default": 0.4 }
         }
       }
     },
-    "height": {"type": "select", "label": "Accordion Height", "default": "lg"},
-    "gap": {"type": "select", "label": "Gap Between Frames", "default": "4"},
-    "default_expanded": {"type": "select", "label": "Default Expanded Frame", "default": "none"},
-    "expand_ratio": {"type": "select", "label": "Expansion Ratio", "default": "3"},
-    "overlay_style": {"type": "select", "label": "Content Style", "default": "bottom-left"},
-    "content_align_v": {"type": "select", "label": "Vertical Alignment", "default": "bottom"},
-    "content_align_h": {"type": "select", "label": "Horizontal Alignment", "default": "left"},
-    "content_padding": {"type": "select", "label": "Content Padding", "default": "6"},
-    "transition_duration": {"type": "select", "label": "Transition Duration", "default": "300"},
-    "transition_timing": {"type": "select", "label": "Easing Function", "default": "cubic-bezier(0.4, 0, 0.2, 1)"},
-    "content_fade": {"type": "boolean", "label": "Fade Content on Collapse", "default": true},
-    "content_slide": {"type": "boolean", "label": "Slide Content on Expand", "default": true},
-    "title_size": {"type": "select", "label": "Title Size", "default": "2xl"},
-    "title_color": {"type": "color_advanced", "label": "Title Color", "default": "#ffffff"},
-    "subtitle_size": {"type": "select", "label": "Subtitle Size", "default": "base"},
-    "subtitle_color": {"type": "color_advanced", "label": "Subtitle Color", "default": "rgba(255, 255, 255, 0.85)"},
-    "button_style": {"type": "select", "label": "Button Style", "default": "solid"},
-    "button_size": {"type": "select", "label": "Button Size", "default": "md"},
-    "mobile_layout": {"type": "select", "label": "Mobile Layout", "default": "stack"},
-    "mobile_height": {"type": "select", "label": "Mobile Frame Height", "default": "250"}
+    "height": { "type": "select", "label": "Accordion Height", "default": "lg" },
+    "gap": { "type": "select", "label": "Gap Between Frames", "default": "4" },
+    "default_expanded": { "type": "select", "label": "Default Expanded Frame", "default": "none" },
+    "expand_ratio": { "type": "select", "label": "Expansion Ratio", "default": "3" },
+    "overlay_style": { "type": "select", "label": "Content Style", "default": "bottom-left" },
+    "content_align_v": { "type": "select", "label": "Vertical Alignment", "default": "bottom" },
+    "content_align_h": { "type": "select", "label": "Horizontal Alignment", "default": "left" },
+    "content_padding": { "type": "select", "label": "Content Padding", "default": "6" },
+    "transition_duration": { "type": "select", "label": "Transition Duration", "default": "300" },
+    "transition_timing": {
+      "type": "select",
+      "label": "Easing Function",
+      "default": "cubic-bezier(0.4, 0, 0.2, 1)"
+    },
+    "content_fade": { "type": "boolean", "label": "Fade Content on Collapse", "default": true },
+    "content_slide": { "type": "boolean", "label": "Slide Content on Expand", "default": true },
+    "title_size": { "type": "select", "label": "Title Size", "default": "2xl" },
+    "title_color": { "type": "color_advanced", "label": "Title Color", "default": "#ffffff" },
+    "subtitle_size": { "type": "select", "label": "Subtitle Size", "default": "base" },
+    "subtitle_color": {
+      "type": "color_advanced",
+      "label": "Subtitle Color",
+      "default": "rgba(255, 255, 255, 0.85)"
+    },
+    "button_style": { "type": "select", "label": "Button Style", "default": "solid" },
+    "button_size": { "type": "select", "label": "Button Size", "default": "md" },
+    "mobile_layout": { "type": "select", "label": "Mobile Layout", "default": "stack" },
+    "mobile_height": { "type": "select", "label": "Mobile Frame Height", "default": "250" }
   },
   "translations": {
-    "en": {"name": "Image Accordion", "description": "Interactive horizontal accordion with expandable image frames and optional content overlays"},
-    "es": {"name": "Acordeon de Imagenes", "description": "Acordeon horizontal interactivo con marcos de imagen expandibles y superposiciones de contenido opcionales"},
-    "fr": {"name": "Accordeon d'Images", "description": "Accordeon horizontal interactif avec des cadres d'images extensibles et des superpositions de contenu optionnelles"},
-    "de": {"name": "Bild-Akkordeon", "description": "Interaktives horizontales Akkordeon mit erweiterbaren Bildrahmen und optionalen Inhalts-Overlays"},
-    "pt": {"name": "Acordeao de Imagens", "description": "Acordeao horizontal interativo com molduras de imagem expansiveis e sobreposicoes de conteudo opcionais"},
-    "zh-hans": {"name": "Image Accordion", "description": "Interactive horizontal accordion with expandable image frames"},
-    "ja": {"name": "Image Accordion", "description": "Interactive horizontal accordion with expandable image frames"},
-    "ar": {"name": "Image Accordion", "description": "Interactive horizontal accordion with expandable image frames"}
+    "en": {
+      "name": "Image Accordion",
+      "description": "Interactive horizontal accordion with expandable image frames and optional content overlays"
+    },
+    "es": {
+      "name": "Acordeon de Imagenes",
+      "description": "Acordeon horizontal interactivo con marcos de imagen expandibles y superposiciones de contenido opcionales"
+    },
+    "fr": {
+      "name": "Accordeon d'Images",
+      "description": "Accordeon horizontal interactif avec des cadres d'images extensibles et des superpositions de contenu optionnelles"
+    },
+    "de": {
+      "name": "Bild-Akkordeon",
+      "description": "Interaktives horizontales Akkordeon mit erweiterbaren Bildrahmen und optionalen Inhalts-Overlays"
+    },
+    "pt": {
+      "name": "Acordeao de Imagens",
+      "description": "Acordeao horizontal interativo com molduras de imagem expansiveis e sobreposicoes de conteudo opcionais"
+    },
+    "zh-hans": {
+      "name": "Image Accordion",
+      "description": "Interactive horizontal accordion with expandable image frames"
+    },
+    "ja": {
+      "name": "Image Accordion",
+      "description": "Interactive horizontal accordion with expandable image frames"
+    },
+    "ar": {
+      "name": "Image Accordion",
+      "description": "Interactive horizontal accordion with expandable image frames"
+    }
   },
   "defaults": {
     "height": "lg",

@@ -1,13 +1,13 @@
-from .search_service import SearchService
-from .indexing_service import IndexingService
-from .fuzzy_service import FuzzyService
 from .analytics_service import AnalyticsService
 from .document_service import DocumentService
+from .fuzzy_service import FuzzyService
+from .indexing_service import IndexingService
+from .search_service import SearchService
 
 __all__ = [
-    'SearchService',
-    'IndexingService',
-    'FuzzyService',
-    'AnalyticsService',
-    'DocumentService',
+    "SearchService",
+    "IndexingService",
+    "FuzzyService",
+    "AnalyticsService",
+    "DocumentService",
 ]

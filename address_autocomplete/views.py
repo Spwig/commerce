@@ -1,23 +1,25 @@
 """
 Views for address autocomplete functionality
 """
+
 import json
 import logging
 import re
+
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
 from django_countries import countries
 
-from .services import AutocompleteClient, AddressEnhancer
+from .services import AddressEnhancer, AutocompleteClient
 
 logger = logging.getLogger(__name__)
 
 # Module-level singleton client with pre-warmed token for better performance
 _autocomplete_client = None
+
 
 def get_autocomplete_client():
     """Get or create singleton autocomplete client with pre-warmed JWT token"""
@@ -25,6 +27,7 @@ def get_autocomplete_client():
     if _autocomplete_client is None:
         _autocomplete_client = AutocompleteClient(prewarm_token=True)
     return _autocomplete_client
+
 
 class AutocompleteView(View):
     """Handle autocomplete requests"""
@@ -39,7 +42,7 @@ class AutocompleteView(View):
             return "admin"
         elif request.user.is_authenticated:
             # Check if merchant (you might have a merchant flag/group)
-            if hasattr(request.user, 'is_merchant') and request.user.is_merchant:
+            if hasattr(request.user, "is_merchant") and request.user.is_merchant:
                 return "merchant"
             return "authenticated"
         return "anonymous"
@@ -47,19 +50,19 @@ class AutocompleteView(View):
     def get_geo_bias(self, request):
         """Extract geo-bias from request"""
         # Try to get from GeoIP middleware
-        geo_location = getattr(request, 'geo_location', {})
+        geo_location = getattr(request, "geo_location", {})
         lat = lon = None
 
         if geo_location:
-            coords = geo_location.get('coordinates', {})
-            lat = coords.get('lat')
-            lon = coords.get('lon')
+            coords = geo_location.get("coordinates", {})
+            lat = coords.get("lat")
+            lon = coords.get("lon")
 
         # Override with explicit parameters
-        if 'lat' in request.GET and 'lon' in request.GET:
+        if "lat" in request.GET and "lon" in request.GET:
             try:
-                lat = float(request.GET['lat'])
-                lon = float(request.GET['lon'])
+                lat = float(request.GET["lat"])
+                lon = float(request.GET["lon"])
             except ValueError:
                 pass
 
@@ -67,11 +70,11 @@ class AutocompleteView(View):
 
     def get_country_bias(self, request):
         """Extract country bias from request"""
-        country_bias = request.GET.get('country')
+        country_bias = request.GET.get("country")
 
         # Get geo location from middleware if available
-        if not country_bias and hasattr(request, 'geo_location'):
-            country_bias = request.geo_location.get('country_code')
+        if not country_bias and hasattr(request, "geo_location"):
+            country_bias = request.geo_location.get("country_code")
 
         return country_bias
 
@@ -80,15 +83,15 @@ class AutocompleteView(View):
         if not query or not country_code:
             return False
 
-        query_clean = query.strip().replace(' ', '')
+        query_clean = query.strip().replace(" ", "")
 
         # Country-specific postcode patterns
         patterns = {
-            'SG': r'^\d{6}$',  # Singapore: 6 digits
-            'AU': r'^\d{4}$',  # Australia: 4 digits
-            'GB': r'^[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}$',  # UK
-            'US': r'^\d{5}(-\d{4})?$',  # US: 5 or 9 digits
-            'CA': r'^[A-Z]\d[A-Z]\s?\d[A-Z]\d$',  # Canada
+            "SG": r"^\d{6}$",  # Singapore: 6 digits
+            "AU": r"^\d{4}$",  # Australia: 4 digits
+            "GB": r"^[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}$",  # UK
+            "US": r"^\d{5}(-\d{4})?$",  # US: 5 or 9 digits
+            "CA": r"^[A-Z]\d[A-Z]\s?\d[A-Z]\d$",  # Canada
         }
 
         pattern = patterns.get(country_code.upper())
@@ -97,7 +100,7 @@ class AutocompleteView(View):
 
         # Generic: mostly digits (>70%)
         if len(query_clean) > 0:
-            digit_ratio = len(re.findall(r'\d', query_clean)) / len(query_clean)
+            digit_ratio = len(re.findall(r"\d", query_clean)) / len(query_clean)
             return digit_ratio > 0.7
 
         return False
@@ -109,15 +112,12 @@ class AutocompleteView(View):
 
         def sort_key(suggestion):
             # Get country from suggestion components
-            components = suggestion.get('components', {})
-            suggestion_country = components.get('country_code', '').upper()
-            confidence = suggestion.get('confidence', 0.5)
+            components = suggestion.get("components", {})
+            suggestion_country = components.get("country_code", "").upper()
+            confidence = suggestion.get("confidence", 0.5)
 
-            # Country match gets priority boost
-            if suggestion_country == preferred_country.upper():
-                priority = 0  # Highest priority
-            else:
-                priority = 1  # Lower priority
+            # Country match gets priority boost (0 = highest, 1 = lower)
+            priority = 0 if suggestion_country == preferred_country.upper() else 1
 
             # Within each priority group, sort by confidence (descending)
             return (priority, -confidence)
@@ -126,18 +126,15 @@ class AutocompleteView(View):
 
     def get(self, request):
         """Handle GET request for autocomplete"""
-        query = request.GET.get('q', '').strip()
+        query = request.GET.get("q", "").strip()
 
         if len(query) < 3:
-            return JsonResponse({
-                'suggestions': [],
-                'error': 'Query must be at least 3 characters'
-            })
+            return JsonResponse({"suggestions": [], "error": "Query must be at least 3 characters"})
 
         # Get parameters
         country_bias = self.get_country_bias(request)
         lat, lon = self.get_geo_bias(request)
-        limit = min(int(request.GET.get('limit', 10)), 10)
+        limit = min(int(request.GET.get("limit", 10)), 10)
         user_tier = self.get_user_tier(request)
 
         # Detect if query is likely a postcode
@@ -154,24 +151,21 @@ class AutocompleteView(View):
             lon=lon,
             limit=request_limit,
             user_tier=user_tier,
-            is_postcode=is_postcode
+            is_postcode=is_postcode,
         )
 
         # Apply country-based sorting if we have suggestions and country bias
-        if 'suggestions' in result and country_bias and result['suggestions']:
-            result['suggestions'] = self._sort_by_country_match(
-                result['suggestions'],
-                country_bias
-            )
+        if "suggestions" in result and country_bias and result["suggestions"]:
+            result["suggestions"] = self._sort_by_country_match(result["suggestions"], country_bias)
 
             # Limit to requested amount after sorting
-            result['suggestions'] = result['suggestions'][:limit]
+            result["suggestions"] = result["suggestions"][:limit]
 
         # Enrich suggestions with full country names from django-countries
-        if 'suggestions' in result:
-            for suggestion in result['suggestions']:
-                components = suggestion.get('components', {})
-                country_code = components.get('country_code')
+        if "suggestions" in result:
+            for suggestion in result["suggestions"]:
+                components = suggestion.get("components", {})
+                country_code = components.get("country_code")
 
                 # Add full country name if we have a country code
                 if country_code:
@@ -179,12 +173,12 @@ class AutocompleteView(View):
                     # django-countries provides a dict-like object
                     country_name = countries.name(country_code_upper)
                     if country_name:
-                        components['country'] = country_name
+                        components["country"] = country_name
 
         return JsonResponse(result)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name="dispatch")
 class NormalizeView(View):
     """Handle address normalization requests"""
 
@@ -197,12 +191,12 @@ class NormalizeView(View):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-        address = data.get('address', '').strip()
+        address = data.get("address", "").strip()
 
         if not address:
-            return JsonResponse({'error': 'No address provided'}, status=400)
+            return JsonResponse({"error": "No address provided"}, status=400)
 
         # Get user tier
         user_tier = "authenticated" if request.user.is_authenticated else "anonymous"
@@ -223,37 +217,34 @@ class ValidateView(View):
     def get(self, request):
         """Validate address from query parameters"""
         address_data = {
-            'address1': request.GET.get('address1', ''),
-            'address2': request.GET.get('address2', ''),
-            'city': request.GET.get('city', ''),
-            'state': request.GET.get('state', ''),
-            'postal_code': request.GET.get('postal_code', ''),
-            'country': request.GET.get('country', '')
+            "address1": request.GET.get("address1", ""),
+            "address2": request.GET.get("address2", ""),
+            "city": request.GET.get("city", ""),
+            "state": request.GET.get("state", ""),
+            "postal_code": request.GET.get("postal_code", ""),
+            "country": request.GET.get("country", ""),
         }
 
         # Remove empty fields
         address_data = {k: v for k, v in address_data.items() if v}
 
         if not address_data:
-            return JsonResponse({'error': 'No address data provided'}, status=400)
+            return JsonResponse({"error": "No address data provided"}, status=400)
 
         # Get user tier
         user_tier = "authenticated" if request.user.is_authenticated else "anonymous"
 
         # Validate and enhance
         is_valid, enhanced_data, errors = self.enhancer.validate_and_enhance(
-            address_data,
-            user_tier
+            address_data, user_tier
         )
 
-        return JsonResponse({
-            'valid': is_valid,
-            'errors': errors,
-            'enhanced': enhanced_data if is_valid else None
-        })
+        return JsonResponse(
+            {"valid": is_valid, "errors": errors, "enhanced": enhanced_data if is_valid else None}
+        )
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class EnhanceAddressView(View):
     """Enhance existing address with geocoding and normalization"""
 
@@ -266,20 +257,20 @@ class EnhanceAddressView(View):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-        address_data = data.get('address', {})
+        address_data = data.get("address", {})
 
         if not address_data:
-            return JsonResponse({'error': 'No address data provided'}, status=400)
+            return JsonResponse({"error": "No address data provided"}, status=400)
 
         # Get user tier
-        user_tier = "merchant" if hasattr(request.user, 'is_merchant') else "authenticated"
+        user_tier = "merchant" if hasattr(request.user, "is_merchant") else "authenticated"
 
         # Enhance address
         enhanced = self.enhancer.enhance_address_data(address_data, user_tier)
 
-        return JsonResponse({'enhanced': enhanced})
+        return JsonResponse({"enhanced": enhanced})
 
 
 class ReverseGeocodeView(View):
@@ -292,10 +283,10 @@ class ReverseGeocodeView(View):
     def get(self, request):
         """Reverse geocode coordinates"""
         try:
-            lat = float(request.GET.get('lat'))
-            lon = float(request.GET.get('lon'))
+            lat = float(request.GET.get("lat"))
+            lon = float(request.GET.get("lon"))
         except (TypeError, ValueError):
-            return JsonResponse({'error': 'Invalid coordinates'}, status=400)
+            return JsonResponse({"error": "Invalid coordinates"}, status=400)
 
         # Get user tier
         user_tier = "authenticated" if request.user.is_authenticated else "anonymous"
@@ -318,9 +309,9 @@ class ServiceHealthView(View):
         health = self.client.get_service_health()
 
         # Add Django app health
-        health['django_integration'] = {
-            'status': 'healthy',
-            'cache_backend': 'redis' if hasattr(request, 'session') else 'none'
+        health["django_integration"] = {
+            "status": "healthy",
+            "cache_backend": "redis" if hasattr(request, "session") else "none",
         }
 
         return JsonResponse(health)

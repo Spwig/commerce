@@ -8,7 +8,6 @@ key.
 
 import base64
 import json
-from pathlib import Path
 
 import pytest
 from cryptography.hazmat.primitives import hashes, serialization
@@ -85,6 +84,7 @@ def licence_manager(rsa_keypair, licence_file_path, tmp_path, settings):
     reads on demand.
     """
     from django.core.cache import cache
+
     from core.license import LicenseManager
 
     _, public = rsa_keypair

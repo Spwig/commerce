@@ -6,7 +6,9 @@ Models for the Spwig Merchant mobile app Admin API:
 - AdminAPIAuditLog: Audit trail for admin operations
 - DeviceRegistration: Push notification device registration
 """
+
 import secrets
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -21,10 +23,11 @@ class MobileAuthToken(models.Model):
     and 2FA pending tokens (very short-lived, for completing 2FA flow)
     with device tracking for multi-device support.
     """
+
     TOKEN_TYPE_CHOICES = [
-        ('access', _('Access Token')),
-        ('refresh', _('Refresh Token')),
-        ('2fa_pending', _('2FA Pending Token')),
+        ("access", _("Access Token")),
+        ("refresh", _("Refresh Token")),
+        ("2fa_pending", _("2FA Pending Token")),
     ]
 
     # 2FA pending token lifetime in minutes (default 5 minutes)
@@ -33,55 +36,40 @@ class MobileAuthToken(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='mobile_tokens',
-        verbose_name=_('User')
+        related_name="mobile_tokens",
+        verbose_name=_("User"),
     )
-    token = models.CharField(
-        _('Token'),
-        max_length=64,
-        unique=True,
-        db_index=True
-    )
-    token_type = models.CharField(
-        _('Token Type'),
-        max_length=12,
-        choices=TOKEN_TYPE_CHOICES
-    )
+    token = models.CharField(_("Token"), max_length=64, unique=True, db_index=True)
+    token_type = models.CharField(_("Token Type"), max_length=12, choices=TOKEN_TYPE_CHOICES)
     device_id = models.CharField(
-        _('Device ID'),
-        max_length=255,
-        help_text=_('Unique identifier for the device')
+        _("Device ID"), max_length=255, help_text=_("Unique identifier for the device")
     )
     device_name = models.CharField(
-        _('Device Name'),
+        _("Device Name"),
         max_length=255,
         blank=True,
-        help_text=_('Human-readable device name (e.g., "iPhone 15 Pro")')
+        help_text=_('Human-readable device name (e.g., "iPhone 15 Pro")'),
     )
 
     # Timestamps
-    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
-    expires_at = models.DateTimeField(_('Expires At'))
-    last_used_at = models.DateTimeField(_('Last Used At'), null=True, blank=True)
-    last_used_ip = models.GenericIPAddressField(_('Last Used IP'), null=True, blank=True)
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
+    expires_at = models.DateTimeField(_("Expires At"))
+    last_used_at = models.DateTimeField(_("Last Used At"), null=True, blank=True)
+    last_used_ip = models.GenericIPAddressField(_("Last Used IP"), null=True, blank=True)
 
     # Revocation
-    is_revoked = models.BooleanField(_('Is Revoked'), default=False)
-    revoked_at = models.DateTimeField(_('Revoked At'), null=True, blank=True)
-    revoked_reason = models.CharField(
-        _('Revocation Reason'),
-        max_length=255,
-        blank=True
-    )
+    is_revoked = models.BooleanField(_("Is Revoked"), default=False)
+    revoked_at = models.DateTimeField(_("Revoked At"), null=True, blank=True)
+    revoked_reason = models.CharField(_("Revocation Reason"), max_length=255, blank=True)
 
     class Meta:
-        verbose_name = _('Mobile Auth Token')
-        verbose_name_plural = _('Mobile Auth Tokens')
-        ordering = ['-created_at']
+        verbose_name = _("Mobile Auth Token")
+        verbose_name_plural = _("Mobile Auth Tokens")
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['token', 'token_type']),
-            models.Index(fields=['user', 'device_id']),
-            models.Index(fields=['user', 'token_type', 'is_revoked']),
+            models.Index(fields=["token", "token_type"]),
+            models.Index(fields=["user", "device_id"]),
+            models.Index(fields=["user", "token_type", "is_revoked"]),
         ]
 
     def __str__(self):
@@ -97,19 +85,19 @@ class MobileAuthToken(models.Model):
         """Check if the token is valid (not expired and not revoked)."""
         return not self.is_expired and not self.is_revoked
 
-    def revoke(self, reason=''):
+    def revoke(self, reason=""):
         """Revoke this token."""
         self.is_revoked = True
         self.revoked_at = timezone.now()
         self.revoked_reason = reason
-        self.save(update_fields=['is_revoked', 'revoked_at', 'revoked_reason'])
+        self.save(update_fields=["is_revoked", "revoked_at", "revoked_reason"])
 
     def update_last_used(self, ip_address=None):
         """Update last used timestamp and IP."""
         self.last_used_at = timezone.now()
         if ip_address:
             self.last_used_ip = ip_address
-        self.save(update_fields=['last_used_at', 'last_used_ip'])
+        self.save(update_fields=["last_used_at", "last_used_ip"])
 
     @classmethod
     def generate_token(cls):
@@ -117,7 +105,7 @@ class MobileAuthToken(models.Model):
         return secrets.token_urlsafe(48)
 
     @classmethod
-    def create_token_pair(cls, user, device_id, device_name=''):
+    def create_token_pair(cls, user, device_id, device_name=""):
         """
         Create an access/refresh token pair for a user and device.
 
@@ -126,9 +114,9 @@ class MobileAuthToken(models.Model):
         """
         from django.conf import settings
 
-        mobile_settings = getattr(settings, 'MOBILE_API_SETTINGS', {})
-        access_lifetime = mobile_settings.get('ACCESS_TOKEN_LIFETIME_MINUTES', 30)
-        refresh_lifetime = mobile_settings.get('REFRESH_TOKEN_LIFETIME_DAYS', 14)
+        mobile_settings = getattr(settings, "MOBILE_API_SETTINGS", {})
+        access_lifetime = mobile_settings.get("ACCESS_TOKEN_LIFETIME_MINUTES", 30)
+        refresh_lifetime = mobile_settings.get("REFRESH_TOKEN_LIFETIME_DAYS", 14)
 
         now = timezone.now()
 
@@ -136,26 +124,26 @@ class MobileAuthToken(models.Model):
         access_token = cls.objects.create(
             user=user,
             token=cls.generate_token(),
-            token_type='access',
+            token_type="access",
             device_id=device_id,
             device_name=device_name,
-            expires_at=now + timezone.timedelta(minutes=access_lifetime)
+            expires_at=now + timezone.timedelta(minutes=access_lifetime),
         )
 
         # Create refresh token
         refresh_token = cls.objects.create(
             user=user,
             token=cls.generate_token(),
-            token_type='refresh',
+            token_type="refresh",
             device_id=device_id,
             device_name=device_name,
-            expires_at=now + timezone.timedelta(days=refresh_lifetime)
+            expires_at=now + timezone.timedelta(days=refresh_lifetime),
         )
 
         return access_token, refresh_token
 
     @classmethod
-    def create_2fa_pending_token(cls, user, device_id, device_name=''):
+    def create_2fa_pending_token(cls, user, device_id, device_name=""):
         """
         Create a short-lived 2FA pending token.
 
@@ -174,51 +162,33 @@ class MobileAuthToken(models.Model):
 
         # Revoke any existing 2FA pending tokens for this device
         cls.objects.filter(
-            user=user,
-            device_id=device_id,
-            token_type='2fa_pending',
-            is_revoked=False
-        ).update(
-            is_revoked=True,
-            revoked_at=now,
-            revoked_reason='New 2FA challenge'
-        )
+            user=user, device_id=device_id, token_type="2fa_pending", is_revoked=False
+        ).update(is_revoked=True, revoked_at=now, revoked_reason="New 2FA challenge")
 
         # Create new 2FA pending token (short-lived)
         pending_token = cls.objects.create(
             user=user,
             token=cls.generate_token(),
-            token_type='2fa_pending',
+            token_type="2fa_pending",
             device_id=device_id,
             device_name=device_name,
-            expires_at=now + timezone.timedelta(minutes=cls.TWO_FA_PENDING_LIFETIME_MINUTES)
+            expires_at=now + timezone.timedelta(minutes=cls.TWO_FA_PENDING_LIFETIME_MINUTES),
         )
 
         return pending_token
 
     @classmethod
-    def revoke_all_for_user(cls, user, reason='Logout from all devices'):
+    def revoke_all_for_user(cls, user, reason="Logout from all devices"):
         """Revoke all tokens for a user."""
-        cls.objects.filter(
-            user=user,
-            is_revoked=False
-        ).update(
-            is_revoked=True,
-            revoked_at=timezone.now(),
-            revoked_reason=reason
+        cls.objects.filter(user=user, is_revoked=False).update(
+            is_revoked=True, revoked_at=timezone.now(), revoked_reason=reason
         )
 
     @classmethod
-    def revoke_all_for_device(cls, user, device_id, reason='Device logout'):
+    def revoke_all_for_device(cls, user, device_id, reason="Device logout"):
         """Revoke all tokens for a specific device."""
-        cls.objects.filter(
-            user=user,
-            device_id=device_id,
-            is_revoked=False
-        ).update(
-            is_revoked=True,
-            revoked_at=timezone.now(),
-            revoked_reason=reason
+        cls.objects.filter(user=user, device_id=device_id, is_revoked=False).update(
+            is_revoked=True, revoked_at=timezone.now(), revoked_reason=reason
         )
 
     @classmethod
@@ -235,93 +205,66 @@ class AdminAPIAuditLog(models.Model):
     Tracks who made what changes, when, with old and new values.
     Used for accountability and debugging.
     """
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='admin_api_audit_logs',
-        verbose_name=_('User')
+        related_name="admin_api_audit_logs",
+        verbose_name=_("User"),
     )
-    timestamp = models.DateTimeField(
-        _('Timestamp'),
-        auto_now_add=True,
-        db_index=True
-    )
+    timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True, db_index=True)
 
     # Action details
     action = models.CharField(
-        _('Action'),
+        _("Action"),
         max_length=100,
         db_index=True,
-        help_text=_('Action performed (e.g., "order.update_status")')
+        help_text=_('Action performed (e.g., "order.update_status")'),
     )
     resource_type = models.CharField(
-        _('Resource Type'),
+        _("Resource Type"),
         max_length=50,
-        help_text=_('Type of resource (e.g., "order", "product")')
+        help_text=_('Type of resource (e.g., "order", "product")'),
     )
     resource_id = models.CharField(
-        _('Resource ID'),
-        max_length=100,
-        help_text=_('ID of the affected resource')
+        _("Resource ID"), max_length=100, help_text=_("ID of the affected resource")
     )
 
     # Change tracking
     old_value = models.JSONField(
-        _('Old Value'),
-        default=dict,
-        blank=True,
-        help_text=_('Previous state before the change')
+        _("Old Value"), default=dict, blank=True, help_text=_("Previous state before the change")
     )
     new_value = models.JSONField(
-        _('New Value'),
-        default=dict,
-        blank=True,
-        help_text=_('New state after the change')
+        _("New Value"), default=dict, blank=True, help_text=_("New state after the change")
     )
 
     # Request context
-    ip_address = models.GenericIPAddressField(
-        _('IP Address'),
-        null=True,
-        blank=True
-    )
-    device_id = models.CharField(
-        _('Device ID'),
-        max_length=255,
-        blank=True
-    )
-    user_agent = models.CharField(
-        _('User Agent'),
-        max_length=500,
-        blank=True
-    )
+    ip_address = models.GenericIPAddressField(_("IP Address"), null=True, blank=True)
+    device_id = models.CharField(_("Device ID"), max_length=255, blank=True)
+    user_agent = models.CharField(_("User Agent"), max_length=500, blank=True)
 
     # Additional context
     success = models.BooleanField(
-        _('Success'),
-        default=True,
-        help_text=_('Whether the operation succeeded')
+        _("Success"), default=True, help_text=_("Whether the operation succeeded")
     )
     error_message = models.TextField(
-        _('Error Message'),
-        blank=True,
-        help_text=_('Error details if the operation failed')
+        _("Error Message"), blank=True, help_text=_("Error details if the operation failed")
     )
 
     class Meta:
-        verbose_name = _('Admin API Audit Log')
-        verbose_name_plural = _('Admin API Audit Logs')
-        ordering = ['-timestamp']
+        verbose_name = _("Admin API Audit Log")
+        verbose_name_plural = _("Admin API Audit Logs")
+        ordering = ["-timestamp"]
         indexes = [
-            models.Index(fields=['user', '-timestamp']),
-            models.Index(fields=['action', '-timestamp']),
-            models.Index(fields=['resource_type', 'resource_id']),
-            models.Index(fields=['-timestamp']),
+            models.Index(fields=["user", "-timestamp"]),
+            models.Index(fields=["action", "-timestamp"]),
+            models.Index(fields=["resource_type", "resource_id"]),
+            models.Index(fields=["-timestamp"]),
         ]
 
     def __str__(self):
-        user_str = self.user.email if self.user else 'Unknown'
+        user_str = self.user.email if self.user else "Unknown"
         return f"{user_str} - {self.action} - {self.resource_type}:{self.resource_id}"
 
     @classmethod
@@ -338,79 +281,64 @@ class DeviceRegistration(models.Model):
     Stores push notification tokens and notification preferences
     for each registered device.
     """
+
     PLATFORM_CHOICES = [
-        ('ios', _('iOS')),
-        ('android', _('Android')),
+        ("ios", _("iOS")),
+        ("android", _("Android")),
     ]
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='registered_devices',
-        verbose_name=_('User')
+        related_name="registered_devices",
+        verbose_name=_("User"),
     )
     device_id = models.CharField(
-        _('Device ID'),
-        max_length=255,
-        help_text=_('Unique identifier for the device')
+        _("Device ID"), max_length=255, help_text=_("Unique identifier for the device")
     )
     push_token = models.CharField(
-        _('Push Token'),
-        max_length=500,
-        help_text=_('APNs/FCM token for push notifications')
+        _("Push Token"), max_length=500, help_text=_("APNs/FCM token for push notifications")
     )
-    platform = models.CharField(
-        _('Platform'),
-        max_length=10,
-        choices=PLATFORM_CHOICES
-    )
+    platform = models.CharField(_("Platform"), max_length=10, choices=PLATFORM_CHOICES)
 
     # Notification preferences
     notify_new_orders = models.BooleanField(
-        _('Notify New Orders'),
-        default=True,
-        help_text=_('Receive notifications for new orders')
+        _("Notify New Orders"), default=True, help_text=_("Receive notifications for new orders")
     )
     notify_low_stock = models.BooleanField(
-        _('Notify Low Stock'),
+        _("Notify Low Stock"),
         default=True,
-        help_text=_('Receive notifications for low stock alerts')
+        help_text=_("Receive notifications for low stock alerts"),
     )
     notify_customer_messages = models.BooleanField(
-        _('Notify Customer Messages'),
+        _("Notify Customer Messages"),
         default=True,
-        help_text=_('Receive notifications for customer messages')
+        help_text=_("Receive notifications for customer messages"),
     )
 
     # Status
     is_active = models.BooleanField(
-        _('Is Active'),
+        _("Is Active"),
         default=True,
-        help_text=_('Whether this device should receive notifications')
+        help_text=_("Whether this device should receive notifications"),
     )
-    last_notification_at = models.DateTimeField(
-        _('Last Notification At'),
-        null=True,
-        blank=True
-    )
+    last_notification_at = models.DateTimeField(_("Last Notification At"), null=True, blank=True)
     failed_attempts = models.PositiveIntegerField(
-        _('Failed Attempts'),
-        default=0,
-        help_text=_('Number of consecutive failed push attempts')
+        _("Failed Attempts"), default=0, help_text=_("Number of consecutive failed push attempts")
     )
 
     # Timestamps
-    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
-    updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
 
     class Meta:
-        verbose_name = _('Device Registration')
-        verbose_name_plural = _('Device Registrations')
-        ordering = ['-updated_at']
-        unique_together = [['user', 'device_id']]
+        verbose_name = _("Device Registration")
+        verbose_name_plural = _("Device Registrations")
+        ordering = ["-updated_at"]
+        unique_together = [["user", "device_id"]]
         indexes = [
-            models.Index(fields=['user', 'is_active']),
-            models.Index(fields=['platform', 'is_active']),
+            models.Index(fields=["user", "is_active"]),
+            models.Index(fields=["platform", "is_active"]),
         ]
 
     def __str__(self):
@@ -420,7 +348,7 @@ class DeviceRegistration(models.Model):
         """Mark that a notification was successfully sent."""
         self.last_notification_at = timezone.now()
         self.failed_attempts = 0
-        self.save(update_fields=['last_notification_at', 'failed_attempts'])
+        self.save(update_fields=["last_notification_at", "failed_attempts"])
 
     def mark_notification_failed(self):
         """Mark that a notification failed to send."""
@@ -428,7 +356,7 @@ class DeviceRegistration(models.Model):
         # Deactivate after 5 consecutive failures
         if self.failed_attempts >= 5:
             self.is_active = False
-        self.save(update_fields=['failed_attempts', 'is_active'])
+        self.save(update_fields=["failed_attempts", "is_active"])
 
     @classmethod
     def get_devices_for_notification(cls, notification_type, exclude_user=None):
@@ -444,17 +372,17 @@ class DeviceRegistration(models.Model):
         """
         queryset = cls.objects.filter(is_active=True)
 
-        if notification_type == 'new_order':
+        if notification_type == "new_order":
             queryset = queryset.filter(notify_new_orders=True)
-        elif notification_type == 'low_stock':
+        elif notification_type == "low_stock":
             queryset = queryset.filter(notify_low_stock=True)
-        elif notification_type == 'customer_message':
+        elif notification_type == "customer_message":
             queryset = queryset.filter(notify_customer_messages=True)
 
         if exclude_user:
             queryset = queryset.exclude(user=exclude_user)
 
-        return queryset.select_related('user')
+        return queryset.select_related("user")
 
 
 class StaffInvitation(models.Model):
@@ -464,52 +392,43 @@ class StaffInvitation(models.Model):
     When a store owner or admin invites a new staff member, this model
     stores the invitation details until accepted.
     """
-    email = models.EmailField(
-        _('Email'),
-        help_text=_('Email address of the invited staff member')
-    )
+
+    email = models.EmailField(_("Email"), help_text=_("Email address of the invited staff member"))
     first_name = models.CharField(
-        _('First Name'),
+        _("First Name"),
         max_length=150,
     )
     last_name = models.CharField(
-        _('Last Name'),
+        _("Last Name"),
         max_length=150,
     )
     invited_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='sent_invitations',
-        verbose_name=_('Invited By')
+        related_name="sent_invitations",
+        verbose_name=_("Invited By"),
     )
-    token = models.CharField(
-        _('Invitation Token'),
-        max_length=64,
-        unique=True,
-        db_index=True
-    )
+    token = models.CharField(_("Invitation Token"), max_length=64, unique=True, db_index=True)
     group_ids = models.JSONField(
-        _('Role IDs'),
-        default=list,
-        help_text=_('List of StaffRole IDs to assign upon acceptance')
+        _("Role IDs"), default=list, help_text=_("List of StaffRole IDs to assign upon acceptance")
     )
 
     # Status
-    is_accepted = models.BooleanField(_('Accepted'), default=False)
-    accepted_at = models.DateTimeField(_('Accepted At'), null=True, blank=True)
-    expires_at = models.DateTimeField(_('Expires At'))
+    is_accepted = models.BooleanField(_("Accepted"), default=False)
+    accepted_at = models.DateTimeField(_("Accepted At"), null=True, blank=True)
+    expires_at = models.DateTimeField(_("Expires At"))
 
     # Timestamps
-    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
 
     class Meta:
-        verbose_name = _('Staff Invitation')
-        verbose_name_plural = _('Staff Invitations')
-        ordering = ['-created_at']
+        verbose_name = _("Staff Invitation")
+        verbose_name_plural = _("Staff Invitations")
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['email', 'is_accepted']),
-            models.Index(fields=['token']),
+            models.Index(fields=["email", "is_accepted"]),
+            models.Index(fields=["token"]),
         ]
 
     def __str__(self):
@@ -535,164 +454,118 @@ class CustomerMessage(models.Model):
     Stores messages submitted through the store's contact form
     for staff to review and respond via email.
     """
+
     STATUS_CHOICES = [
-        ('unread', _('Unread')),
-        ('read', _('Read')),
-        ('replied', _('Replied')),
-        ('archived', _('Archived')),
+        ("unread", _("Unread")),
+        ("read", _("Read")),
+        ("replied", _("Replied")),
+        ("archived", _("Archived")),
     ]
 
     TYPE_CHOICES = [
-        ('general', _('General Inquiry')),
-        ('support', _('Support Request')),
-        ('order', _('Order Related')),
-        ('product', _('Product Question')),
-        ('other', _('Other')),
+        ("general", _("General Inquiry")),
+        ("support", _("Support Request")),
+        ("order", _("Order Related")),
+        ("product", _("Product Question")),
+        ("other", _("Other")),
     ]
 
     # Sender information
-    name = models.CharField(
-        _('Name'),
-        max_length=200,
-        help_text=_("Sender's name")
-    )
-    email = models.EmailField(
-        _('Email'),
-        help_text=_("Sender's email address")
-    )
+    name = models.CharField(_("Name"), max_length=200, help_text=_("Sender's name"))
+    email = models.EmailField(_("Email"), help_text=_("Sender's email address"))
     phone = models.CharField(
-        _('Phone'),
-        max_length=30,
-        blank=True,
-        help_text=_("Sender's phone number (optional)")
+        _("Phone"), max_length=30, blank=True, help_text=_("Sender's phone number (optional)")
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='customer_messages',
-        verbose_name=_('User'),
-        help_text=_('Linked customer account (set when submitted while logged in)')
+        related_name="customer_messages",
+        verbose_name=_("User"),
+        help_text=_("Linked customer account (set when submitted while logged in)"),
     )
 
     # Message details
-    subject = models.CharField(
-        _('Subject'),
-        max_length=300,
-        help_text=_('Message subject')
-    )
-    message = models.TextField(
-        _('Message'),
-        help_text=_('Message content')
-    )
+    subject = models.CharField(_("Subject"), max_length=300, help_text=_("Message subject"))
+    message = models.TextField(_("Message"), help_text=_("Message content"))
     message_type = models.CharField(
-        _('Type'),
-        max_length=20,
-        choices=TYPE_CHOICES,
-        default='general'
+        _("Type"), max_length=20, choices=TYPE_CHOICES, default="general"
     )
 
     # Related entities (optional)
     order = models.ForeignKey(
-        'orders.Order',
+        "orders.Order",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='customer_messages',
-        help_text=_('Related order (if applicable)')
+        related_name="customer_messages",
+        help_text=_("Related order (if applicable)"),
     )
 
     # Status tracking
     status = models.CharField(
-        _('Status'),
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='unread',
-        db_index=True
+        _("Status"), max_length=20, choices=STATUS_CHOICES, default="unread", db_index=True
     )
-    read_at = models.DateTimeField(
-        _('Read At'),
-        null=True,
-        blank=True
-    )
+    read_at = models.DateTimeField(_("Read At"), null=True, blank=True)
     read_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='read_customer_messages',
-        verbose_name=_('Read By')
+        related_name="read_customer_messages",
+        verbose_name=_("Read By"),
     )
 
     # Reply tracking
     reply_text = models.TextField(
-        _('Reply Text'),
-        blank=True,
-        help_text=_('Staff reply to the customer')
+        _("Reply Text"), blank=True, help_text=_("Staff reply to the customer")
     )
-    replied_at = models.DateTimeField(
-        _('Replied At'),
-        null=True,
-        blank=True
-    )
+    replied_at = models.DateTimeField(_("Replied At"), null=True, blank=True)
     replied_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='replied_customer_messages',
-        verbose_name=_('Replied By')
+        related_name="replied_customer_messages",
+        verbose_name=_("Replied By"),
     )
 
     # Thread tracking (denormalized for efficient list queries)
     reply_count = models.PositiveIntegerField(
-        _('Reply Count'),
-        default=0,
-        help_text=_('Total number of replies in this thread')
+        _("Reply Count"), default=0, help_text=_("Total number of replies in this thread")
     )
     last_reply_at = models.DateTimeField(
-        _('Last Reply At'),
-        null=True,
-        blank=True,
-        help_text=_('Timestamp of the most recent reply')
+        _("Last Reply At"), null=True, blank=True, help_text=_("Timestamp of the most recent reply")
     )
     LAST_REPLY_BY_CHOICES = [
-        ('customer', _('Customer')),
-        ('staff', _('Staff')),
+        ("customer", _("Customer")),
+        ("staff", _("Staff")),
     ]
     last_reply_by = models.CharField(
-        _('Last Reply By'),
+        _("Last Reply By"),
         max_length=10,
         choices=LAST_REPLY_BY_CHOICES,
         blank=True,
-        help_text=_('Who sent the last reply in this thread')
+        help_text=_("Who sent the last reply in this thread"),
     )
 
     # Timestamps
-    created_at = models.DateTimeField(_('Created At'), auto_now_add=True, db_index=True)
-    updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
 
     # Metadata
-    ip_address = models.GenericIPAddressField(
-        _('IP Address'),
-        null=True,
-        blank=True
-    )
-    user_agent = models.CharField(
-        _('User Agent'),
-        max_length=500,
-        blank=True
-    )
+    ip_address = models.GenericIPAddressField(_("IP Address"), null=True, blank=True)
+    user_agent = models.CharField(_("User Agent"), max_length=500, blank=True)
 
     class Meta:
-        verbose_name = _('Customer Message')
-        verbose_name_plural = _('Customer Messages')
-        ordering = ['-created_at']
+        verbose_name = _("Customer Message")
+        verbose_name_plural = _("Customer Messages")
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['status', '-created_at']),
-            models.Index(fields=['email', '-created_at']),
-            models.Index(fields=['user', '-created_at'], name='idx_customermsg_user_created'),
+            models.Index(fields=["status", "-created_at"]),
+            models.Index(fields=["email", "-created_at"]),
+            models.Index(fields=["user", "-created_at"], name="idx_customermsg_user_created"),
         ]
 
     def __str__(self):
@@ -700,26 +573,26 @@ class CustomerMessage(models.Model):
 
     def mark_as_read(self, user):
         """Mark message as read by a staff member."""
-        if self.status == 'unread':
-            self.status = 'read'
+        if self.status == "unread":
+            self.status = "read"
             self.read_at = timezone.now()
             self.read_by = user
-            self.save(update_fields=['status', 'read_at', 'read_by', 'updated_at'])
+            self.save(update_fields=["status", "read_at", "read_by", "updated_at"])
 
-    def mark_as_replied(self, user=None, reply_text=''):
+    def mark_as_replied(self, user=None, reply_text=""):
         """Mark message as replied with optional reply text."""
-        self.status = 'replied'
+        self.status = "replied"
         self.replied_at = timezone.now()
         if user:
             self.replied_by = user
         if reply_text:
             self.reply_text = reply_text
-        self.save(update_fields=['status', 'replied_at', 'replied_by', 'reply_text', 'updated_at'])
+        self.save(update_fields=["status", "replied_at", "replied_by", "reply_text", "updated_at"])
 
     def archive(self):
         """Archive the message."""
-        self.status = 'archived'
-        self.save(update_fields=['status', 'updated_at'])
+        self.status = "archived"
+        self.save(update_fields=["status", "updated_at"])
 
     def add_reply(self, sender_type, content, sender_user=None, email_sent=False):
         """
@@ -744,19 +617,19 @@ class CustomerMessage(models.Model):
         self.reply_count = self.replies.count()
         self.last_reply_at = reply.created_at
         self.last_reply_by = sender_type
-        update_fields = ['reply_count', 'last_reply_at', 'last_reply_by', 'updated_at']
+        update_fields = ["reply_count", "last_reply_at", "last_reply_by", "updated_at"]
 
         # For staff replies, also update legacy single-reply fields
-        if sender_type == 'staff':
-            self.status = 'replied'
+        if sender_type == "staff":
+            self.status = "replied"
             self.reply_text = content
             self.replied_at = reply.created_at
             self.replied_by = sender_user
-            update_fields += ['status', 'reply_text', 'replied_at', 'replied_by']
-        elif sender_type == 'customer':
+            update_fields += ["status", "reply_text", "replied_at", "replied_by"]
+        elif sender_type == "customer":
             # Customer follow-up resets to unread so merchants see it
-            self.status = 'unread'
-            update_fields += ['status']
+            self.status = "unread"
+            update_fields += ["status"]
 
         self.save(update_fields=update_fields)
         return reply
@@ -764,7 +637,7 @@ class CustomerMessage(models.Model):
     @classmethod
     def get_unread_count(cls):
         """Get count of unread messages."""
-        return cls.objects.filter(status='unread').count()
+        return cls.objects.filter(status="unread").count()
 
 
 class MessageReadReceipt(models.Model):
@@ -775,35 +648,36 @@ class MessageReadReceipt(models.Model):
     stores where multiple team members may handle customer communications.
     Works for both CustomerMessage and OrderNote sources.
     """
+
     SOURCE_CHOICES = [
-        ('contact_form', _('Contact Form')),
-        ('order_note', _('Order Note')),
+        ("contact_form", _("Contact Form")),
+        ("order_note", _("Order Note")),
     ]
 
     source = models.CharField(
-        _('Source'),
+        _("Source"),
         max_length=20,
         choices=SOURCE_CHOICES,
     )
     object_id = models.PositiveIntegerField(
-        _('Object ID'),
-        help_text=_('ID of the CustomerMessage or OrderNote'),
+        _("Object ID"),
+        help_text=_("ID of the CustomerMessage or OrderNote"),
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='message_read_receipts',
-        verbose_name=_('Read By'),
+        related_name="message_read_receipts",
+        verbose_name=_("Read By"),
     )
-    read_at = models.DateTimeField(_('Read At'), auto_now_add=True)
+    read_at = models.DateTimeField(_("Read At"), auto_now_add=True)
 
     class Meta:
-        verbose_name = _('Message Read Receipt')
-        verbose_name_plural = _('Message Read Receipts')
-        unique_together = [('source', 'object_id', 'user')]
+        verbose_name = _("Message Read Receipt")
+        verbose_name_plural = _("Message Read Receipts")
+        unique_together = [("source", "object_id", "user")]
         indexes = [
-            models.Index(fields=['source', 'object_id']),
-            models.Index(fields=['user', 'source']),
+            models.Index(fields=["source", "object_id"]),
+            models.Index(fields=["user", "source"]),
         ]
 
     def __str__(self):
@@ -817,56 +691,46 @@ class MessageReply(models.Model):
     Supports multi-turn conversations between customers and staff.
     Each reply belongs to a CustomerMessage and is ordered chronologically.
     """
+
     SENDER_CHOICES = [
-        ('customer', _('Customer')),
-        ('staff', _('Staff')),
+        ("customer", _("Customer")),
+        ("staff", _("Staff")),
     ]
 
     message = models.ForeignKey(
-        'CustomerMessage',
+        "CustomerMessage",
         on_delete=models.CASCADE,
-        related_name='replies',
-        verbose_name=_('Message')
+        related_name="replies",
+        verbose_name=_("Message"),
     )
-    sender_type = models.CharField(
-        _('Sender Type'),
-        max_length=10,
-        choices=SENDER_CHOICES
-    )
+    sender_type = models.CharField(_("Sender Type"), max_length=10, choices=SENDER_CHOICES)
     sender_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='message_replies',
-        verbose_name=_('Sender'),
-        help_text=_('Staff user or customer user who sent this reply')
+        related_name="message_replies",
+        verbose_name=_("Sender"),
+        help_text=_("Staff user or customer user who sent this reply"),
     )
-    content = models.TextField(
-        _('Content'),
-        help_text=_('Reply message content')
-    )
+    content = models.TextField(_("Content"), help_text=_("Reply message content"))
 
     # Email tracking (for staff replies sent via email)
     email_sent = models.BooleanField(
-        _('Email Sent'),
+        _("Email Sent"),
         default=False,
-        help_text=_('Whether this reply was sent to the customer via email')
+        help_text=_("Whether this reply was sent to the customer via email"),
     )
-    email_sent_at = models.DateTimeField(
-        _('Email Sent At'),
-        null=True,
-        blank=True
-    )
+    email_sent_at = models.DateTimeField(_("Email Sent At"), null=True, blank=True)
 
-    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
 
     class Meta:
-        verbose_name = _('Message Reply')
-        verbose_name_plural = _('Message Replies')
-        ordering = ['created_at']
+        verbose_name = _("Message Reply")
+        verbose_name_plural = _("Message Replies")
+        ordering = ["created_at"]
         indexes = [
-            models.Index(fields=['message', 'created_at']),
+            models.Index(fields=["message", "created_at"]),
         ]
 
     def __str__(self):
@@ -877,6 +741,6 @@ class MessageReply(models.Model):
         """Get display name for the sender."""
         if self.sender_user:
             return self.sender_user.get_full_name() or self.sender_user.email
-        if self.sender_type == 'customer':
+        if self.sender_type == "customer":
             return self.message.name
-        return 'Staff'
+        return "Staff"

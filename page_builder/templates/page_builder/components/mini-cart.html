@@ -1,0 +1,116 @@
+{% load i18n static merchant_trans %}
+<!-- Mini Cart Overlay -->
+<div class="mini-cart-overlay" id="mini-cart-overlay"></div>
+
+<!-- Mini Cart Panel -->
+<aside class="mini-cart" id="mini-cart" aria-label="{% mtrans 'Shopping Cart' %}" aria-hidden="true">
+    <div class="mini-cart__header">
+        <h2 class="mini-cart__title">
+            <i class="fas fa-shopping-cart"></i>
+            {% mtrans 'Your Cart' %}
+            <span class="mini-cart__count" id="mini-cart-count">0</span>
+        </h2>
+        <button type="button" class="mini-cart__close" id="mini-cart-close" aria-label="{% mtrans 'Close cart' %}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="mini-cart__body" id="mini-cart-body">
+        <!-- Empty State (shown when cart is empty) -->
+        <div class="mini-cart__empty" id="mini-cart-empty">
+            <div class="mini-cart__empty-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <h3 class="mini-cart__empty-title">{% mtrans 'Your cart is empty' %}</h3>
+            <p class="mini-cart__empty-text">{% mtrans 'Looks like you haven\'t added anything to your cart yet.' %}</p>
+            <a href="{% url 'page_builder:category_list' %}" class="btn btn--primary">
+                {% mtrans 'Start Shopping' %}
+            </a>
+
+            <!-- Product Recommendations (when empty) -->
+            <div class="mini-cart__recommendations" id="mini-cart-recommendations">
+                <div class="mini-cart__recommendations-sections" id="recommendations-list">
+                    <!-- Sections populated via JavaScript with dynamic titles -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Items (shown when cart has items) -->
+        <div class="mini-cart__items" id="mini-cart-items" style="display: none;">
+            <!-- Cart items populated via JavaScript -->
+        </div>
+    </div>
+
+    <div class="mini-cart__footer" id="mini-cart-footer" style="display: none;">
+        <!-- Subtotal -->
+        <div class="mini-cart__subtotal">
+            <span class="mini-cart__subtotal-label">{% mtrans 'Subtotal' %}</span>
+            <span class="mini-cart__subtotal-value" id="mini-cart-subtotal">0.00</span>
+        </div>
+
+        <p class="mini-cart__shipping-note">
+            {% mtrans 'Shipping & taxes calculated at checkout' %}
+        </p>
+
+        <!-- Express Checkout -->
+        {% if payments_enabled %}
+            {% if express_checkout_methods %}
+                <div class="mini-cart__express">
+                    {% for method in express_checkout_methods %}
+                        <button type="button"
+                                class="express-btn {{ method.button_class }} mini-cart__express-btn"
+                                id="mc-{{ method.slug }}"
+                                data-action="express-checkout"
+                                data-provider="{{ method.provider_slug }}"
+                                data-method="{{ method.slug }}"
+                                {% if method.requires_js_check %}style="display: none;" data-js-check="{{ method.js_check }}"{% endif %}>
+                            <i class="{{ method.icon }}"></i>
+                            {% if method.slug == 'apple_pay' or method.slug == 'google_pay' %}
+                                Pay
+                            {% else %}
+                                {{ method.name }}
+                            {% endif %}
+                        </button>
+                    {% endfor %}
+                </div>
+
+                <div class="mini-cart__divider">
+                    <span>{% mtrans 'or' %}</span>
+                </div>
+            {% elif show_payment_setup_prompt %}
+                <!-- Staff-only: No payment providers configured -->
+                <div class="mini-cart__setup-prompt">
+                    <p class="mini-cart__setup-text">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% mtrans 'No payment providers configured.' %}
+                    </p>
+                    <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="mini-cart__setup-link">
+                        {% mtrans 'Configure Payment Providers' %}
+                    </a>
+                </div>
+            {% endif %}
+        {% elif show_trial_mode_banner %}
+            <!-- Staff-only: Trial mode notice -->
+            <div class="mini-cart__trial-notice">
+                <p class="mini-cart__trial-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% mtrans 'Payment processing disabled in trial mode.' %}
+                </p>
+                <a href="{% url 'admin:core_licensestatus_changelist' %}" class="mini-cart__setup-link">
+                    {% mtrans 'Activate License' %}
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- View Cart / Checkout Buttons -->
+        <div class="mini-cart__actions">
+            <a href="{% url 'page_builder:cart' %}" class="btn btn--outline btn--block">
+                {% mtrans 'View Cart' %}
+            </a>
+            <a href="/checkout/" class="btn btn--primary btn--block">
+                {% mtrans 'Checkout' %}
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</aside>

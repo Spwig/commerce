@@ -1,14 +1,14 @@
 /* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
 
 (function () {
-    'use strict';
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var typeFilter = document.getElementById('type-filter');
-        if (typeFilter) {
-            typeFilter.addEventListener('change', function () {
-                window.location.href = '?type=' + this.value;
-            });
-        }
-    });
-}());
+  document.addEventListener('DOMContentLoaded', function () {
+    const typeFilter = document.getElementById('type-filter');
+    if (typeFilter) {
+      typeFilter.addEventListener('change', function () {
+        window.location.href = '?type=' + this.value;
+      });
+    }
+  });
+})();

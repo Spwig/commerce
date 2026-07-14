@@ -15,28 +15,28 @@ logger = logging.getLogger(__name__)
 MAX_PENDING_REPORTS = 500
 
 
-def buffer_python_error(error_data, status='pending'):
+def buffer_python_error(error_data, status="pending"):
     """Buffer a Python error, deduplicating by fingerprint."""
     from core.models import ErrorReport
 
     fingerprint = ErrorReport.compute_fingerprint(
-        error_data.get('exception_type', ''),
-        error_data.get('traceback', ''),
+        error_data.get("exception_type", ""),
+        error_data.get("traceback", ""),
     )
 
     # Try to increment existing pending/held report with same fingerprint
     updated = ErrorReport.objects.filter(
         fingerprint=fingerprint,
-        status__in=['pending', 'held'],
+        status__in=["pending", "held"],
     ).update(
-        occurrence_count=models.F('occurrence_count') + 1,
+        occurrence_count=models.F("occurrence_count") + 1,
         last_seen=timezone.now(),
         error_data=error_data,
     )
 
     if not updated:
         ErrorReport.objects.create(
-            error_type='python',
+            error_type="python",
             status=status,
             fingerprint=fingerprint,
             error_data=error_data,
@@ -45,27 +45,27 @@ def buffer_python_error(error_data, status='pending'):
     _enforce_buffer_cap()
 
 
-def buffer_js_error(error_data, status='pending'):
+def buffer_js_error(error_data, status="pending"):
     """Buffer a JavaScript error, deduplicating by fingerprint."""
     from core.models import ErrorReport
 
     fingerprint = ErrorReport.compute_fingerprint(
-        error_data.get('message', ''),
-        error_data.get('stack', ''),
+        error_data.get("message", ""),
+        error_data.get("stack", ""),
     )
 
     updated = ErrorReport.objects.filter(
         fingerprint=fingerprint,
-        status__in=['pending', 'held'],
+        status__in=["pending", "held"],
     ).update(
-        occurrence_count=models.F('occurrence_count') + 1,
+        occurrence_count=models.F("occurrence_count") + 1,
         last_seen=timezone.now(),
         error_data=error_data,
     )
 
     if not updated:
         ErrorReport.objects.create(
-            error_type='javascript',
+            error_type="javascript",
             status=status,
             fingerprint=fingerprint,
             error_data=error_data,
@@ -78,11 +78,11 @@ def _enforce_buffer_cap():
     """Keep no more than MAX_PENDING_REPORTS buffered reports. Delete oldest if exceeded."""
     from core.models import ErrorReport
 
-    count = ErrorReport.objects.filter(status__in=['pending', 'held']).count()
+    count = ErrorReport.objects.filter(status__in=["pending", "held"]).count()
     if count > MAX_PENDING_REPORTS:
         excess_ids = list(
-            ErrorReport.objects.filter(status__in=['pending', 'held'])
-            .order_by('first_seen')
-            .values_list('id', flat=True)[: count - MAX_PENDING_REPORTS]
+            ErrorReport.objects.filter(status__in=["pending", "held"])
+            .order_by("first_seen")
+            .values_list("id", flat=True)[: count - MAX_PENDING_REPORTS]
         )
         ErrorReport.objects.filter(id__in=excess_ids).delete()

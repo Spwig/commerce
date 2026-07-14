@@ -1,7 +1,7 @@
 import uuid
 
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -10,50 +10,51 @@ User = get_user_model()
 
 class DatabaseBackup(models.Model):
     """Track database backup operations"""
+
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     file_path = models.CharField(max_length=500, blank=True)
     file_size = models.BigIntegerField(null=True, blank=True, help_text="File size in bytes")
-    
+
     # Backup details
     backup_type = models.CharField(
         max_length=20,
         choices=[
-            ('full', 'Full Database'),
-            ('schema', 'Schema Only'),
-            ('data', 'Data Only'),
+            ("full", "Full Database"),
+            ("schema", "Schema Only"),
+            ("data", "Data Only"),
         ],
-        default='full'
+        default="full",
     )
-    
+
     compression = models.CharField(
         max_length=10,
         choices=[
-            ('none', 'None'),
-            ('gzip', 'Gzip'),
-            ('bzip2', 'Bzip2'),
+            ("none", "None"),
+            ("gzip", "Gzip"),
+            ("bzip2", "Bzip2"),
         ],
-        default='gzip'
+        default="gzip",
     )
-    
+
     # Metadata
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     # Status
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('running', 'Running'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed'),
+        ("pending", "Pending"),
+        ("running", "Running"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     error_message = models.TextField(blank=True)
-    
+
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name = "Database Backup"
         verbose_name_plural = "Database Backups"
 
@@ -63,22 +64,23 @@ class DatabaseBackup(models.Model):
 
 class QueryHistory(models.Model):
     """Track SQL queries executed through the admin"""
+
     query = models.TextField()
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     executed_at = models.DateTimeField(auto_now_add=True)
-    
+
     # Execution details
     execution_time = models.FloatField(help_text="Execution time in seconds")
     rows_affected = models.IntegerField(default=0)
-    
+
     # Status
     success = models.BooleanField(default=True)
     error_message = models.TextField(blank=True)
-    
+
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-executed_at']
+        ordering = ["-executed_at"]
         verbose_name = "Query History"
         verbose_name_plural = "Query History"
 
@@ -88,40 +90,41 @@ class QueryHistory(models.Model):
 
 class SystemMetrics(models.Model):
     """Store system performance metrics"""
+
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     # CPU metrics
     cpu_percent = models.FloatField()
     cpu_count = models.IntegerField()
     load_average = models.JSONField(default=list)  # 1min, 5min, 15min
-    
+
     # Memory metrics
     memory_total = models.BigIntegerField()  # bytes
     memory_available = models.BigIntegerField()  # bytes
     memory_percent = models.FloatField()
     memory_used = models.BigIntegerField()  # bytes
-    
+
     # Disk metrics
     disk_total = models.BigIntegerField()  # bytes
     disk_used = models.BigIntegerField()  # bytes
     disk_free = models.BigIntegerField()  # bytes
     disk_percent = models.FloatField()
-    
+
     # Network metrics
     network_bytes_sent = models.BigIntegerField(default=0)
     network_bytes_recv = models.BigIntegerField(default=0)
     network_packets_sent = models.BigIntegerField(default=0)
     network_packets_recv = models.BigIntegerField(default=0)
-    
+
     # Django metrics
     active_sessions = models.IntegerField(default=0)
     cache_hits = models.BigIntegerField(default=0)
     cache_misses = models.BigIntegerField(default=0)
-    
+
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-timestamp']
+        ordering = ["-timestamp"]
         verbose_name = "System Metrics"
         verbose_name_plural = "System Metrics"
 
@@ -131,27 +134,28 @@ class SystemMetrics(models.Model):
 
 class AccessLog(models.Model):
     """Track admin access and actions"""
+
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     ip_address = models.GenericIPAddressField()
     user_agent = models.TextField()
-    
+
     # Request details
     path = models.CharField(max_length=500)
     method = models.CharField(max_length=10)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     # Response details
     status_code = models.IntegerField()
     response_time = models.FloatField(help_text="Response time in seconds")
-    
+
     # Action context
     action = models.CharField(max_length=100, blank=True)  # e.g., "Database Query", "File Upload"
     details = models.JSONField(default=dict, blank=True)
-    
+
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-timestamp']
+        ordering = ["-timestamp"]
         verbose_name = "Access Log"
         verbose_name_plural = "Access Logs"
 
@@ -162,35 +166,36 @@ class AccessLog(models.Model):
 
 class FileOperation(models.Model):
     """Track file operations in the file manager"""
+
     OPERATION_TYPES = [
-        ('upload', 'Upload'),
-        ('download', 'Download'),
-        ('delete', 'Delete'),
-        ('rename', 'Rename'),
-        ('move', 'Move'),
-        ('copy', 'Copy'),
-        ('create_folder', 'Create Folder'),
+        ("upload", "Upload"),
+        ("download", "Download"),
+        ("delete", "Delete"),
+        ("rename", "Rename"),
+        ("move", "Move"),
+        ("copy", "Copy"),
+        ("create_folder", "Create Folder"),
     ]
-    
+
     operation_type = models.CharField(max_length=20, choices=OPERATION_TYPES)
     file_path = models.CharField(max_length=1000)
     file_size = models.BigIntegerField(null=True, blank=True)
-    
+
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     # Operation details
     success = models.BooleanField(default=True)
     error_message = models.TextField(blank=True)
-    
+
     # Additional context
     source_path = models.CharField(max_length=1000, blank=True)  # For move/copy operations
     details = models.JSONField(default=dict, blank=True)
-    
+
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-timestamp']
+        ordering = ["-timestamp"]
         verbose_name = "File Operation"
         verbose_name_plural = "File Operations"
 
@@ -202,31 +207,33 @@ class FileOperation(models.Model):
 # Deployment Dashboard Models
 # =============================================================================
 
+
 class DeploymentBackup(models.Model):
     """
     Enhanced backup model for full system backups (db + media + config).
     Different from DatabaseBackup which only handles database dumps.
     This model tracks backups created via the deployment scripts.
     """
+
     BACKUP_TYPES = [
-        ('full', 'Full System'),
-        ('db', 'Database Only'),
-        ('media', 'Media Only'),
-        ('config', 'Configuration Only'),
+        ("full", "Full System"),
+        ("db", "Database Only"),
+        ("media", "Media Only"),
+        ("config", "Configuration Only"),
     ]
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('running', 'Running'),
-        ('compressing', 'Compressing'),
-        ('encrypting', 'Encrypting'),
-        ('uploading', 'Uploading'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed'),
+        ("pending", "Pending"),
+        ("running", "Running"),
+        ("compressing", "Compressing"),
+        ("encrypting", "Encrypting"),
+        ("uploading", "Uploading"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
     ]
 
     name = models.CharField(max_length=200)
-    backup_type = models.CharField(max_length=20, choices=BACKUP_TYPES, default='full')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    backup_type = models.CharField(max_length=20, choices=BACKUP_TYPES, default="full")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
     # Storage locations
     local_path = models.CharField(max_length=500, blank=True)
@@ -255,7 +262,7 @@ class DeploymentBackup(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name = "Deployment Backup"
         verbose_name_plural = "Deployment Backups"
 
@@ -268,7 +275,7 @@ class DeploymentBackup(models.Model):
         if not self.file_size:
             return "Unknown"
         size = self.file_size
-        for unit in ['B', 'KB', 'MB', 'GB']:
+        for unit in ["B", "KB", "MB", "GB"]:
             if size < 1024:
                 return f"{size:.1f} {unit}"
             size /= 1024
@@ -280,35 +287,36 @@ class BackupSchedule(models.Model):
     Scheduled backup configuration.
     Singleton-like model - only one schedule configuration per installation.
     """
+
     FREQUENCY_CHOICES = [
-        ('daily', 'Daily'),
-        ('weekly', 'Weekly'),
-        ('monthly', 'Monthly'),
+        ("daily", "Daily"),
+        ("weekly", "Weekly"),
+        ("monthly", "Monthly"),
     ]
     BACKUP_TYPE_CHOICES = [
-        ('full', 'Full System'),
-        ('db', 'Database Only'),
+        ("full", "Full System"),
+        ("db", "Database Only"),
     ]
 
     is_enabled = models.BooleanField(default=False)
-    frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, default='daily')
-    time_of_day = models.TimeField(default='03:00', help_text="Time to run backup (server timezone)")
+    frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, default="daily")
+    time_of_day = models.TimeField(
+        default="03:00", help_text="Time to run backup (server timezone)"
+    )
     day_of_week = models.IntegerField(
-        default=0,
-        help_text="0=Monday, 6=Sunday. Only used for weekly backups."
+        default=0, help_text="0=Monday, 6=Sunday. Only used for weekly backups."
     )
     day_of_month = models.IntegerField(
-        default=1,
-        help_text="Day of month (1-28). Only used for monthly backups."
+        default=1, help_text="Day of month (1-28). Only used for monthly backups."
     )
 
-    backup_type = models.CharField(max_length=20, choices=BACKUP_TYPE_CHOICES, default='full')
+    backup_type = models.CharField(max_length=20, choices=BACKUP_TYPE_CHOICES, default="full")
 
     # Remote storage destinations
     remote_destinations = models.ManyToManyField(
-        'RemoteStorageDestination',
+        "RemoteStorageDestination",
         blank=True,
-        related_name='backup_schedules',
+        related_name="backup_schedules",
         verbose_name=_("remote destinations"),
         help_text=_("Upload scheduled backups to these destinations"),
     )
@@ -317,7 +325,9 @@ class BackupSchedule(models.Model):
     encrypt = models.BooleanField(default=False)
 
     # Retention
-    retention_days = models.IntegerField(default=30, help_text="Delete backups older than this many days")
+    retention_days = models.IntegerField(
+        default=30, help_text="Delete backups older than this many days"
+    )
 
     # Tracking
     last_run = models.DateTimeField(null=True, blank=True)
@@ -327,7 +337,7 @@ class BackupSchedule(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='schedule_runs'
+        related_name="schedule_runs",
     )
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -341,29 +351,25 @@ class BackupSchedule(models.Model):
 
     def calculate_next_run(self):
         """Calculate the next run time based on frequency and schedule"""
-        from datetime import datetime, timedelta
-        import calendar
+        from datetime import timedelta
 
         now = timezone.now()
         base_time = now.replace(
-            hour=self.time_of_day.hour,
-            minute=self.time_of_day.minute,
-            second=0,
-            microsecond=0
+            hour=self.time_of_day.hour, minute=self.time_of_day.minute, second=0, microsecond=0
         )
 
-        if self.frequency == 'daily':
+        if self.frequency == "daily":
             next_run = base_time
             if next_run <= now:
                 next_run += timedelta(days=1)
 
-        elif self.frequency == 'weekly':
+        elif self.frequency == "weekly":
             days_ahead = self.day_of_week - now.weekday()
             if days_ahead < 0 or (days_ahead == 0 and base_time <= now):
                 days_ahead += 7
             next_run = base_time + timedelta(days=days_ahead)
 
-        elif self.frequency == 'monthly':
+        elif self.frequency == "monthly":
             next_run = base_time.replace(day=min(self.day_of_month, 28))
             if next_run <= now:
                 # Move to next month
@@ -378,25 +384,26 @@ class BackupSchedule(models.Model):
 
 class SystemUpgrade(models.Model):
     """Track upgrade operations"""
+
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('preflight', 'Running Preflight Checks'),
-        ('backup', 'Creating Backup'),
-        ('draining', 'Draining Celery Tasks'),
-        ('maintenance', 'Enabling Maintenance Mode'),
-        ('pulling', 'Pulling New Images'),
-        ('upgrading', 'Upgrading Containers'),
-        ('migrating', 'Running Migrations'),
-        ('finalizing', 'Finalizing'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed'),
-        ('rolling_back', 'Rolling Back'),
-        ('rolled_back', 'Rolled Back'),
+        ("pending", "Pending"),
+        ("preflight", "Running Preflight Checks"),
+        ("backup", "Creating Backup"),
+        ("draining", "Draining Celery Tasks"),
+        ("maintenance", "Enabling Maintenance Mode"),
+        ("pulling", "Pulling New Images"),
+        ("upgrading", "Upgrading Containers"),
+        ("migrating", "Running Migrations"),
+        ("finalizing", "Finalizing"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+        ("rolling_back", "Rolling Back"),
+        ("rolled_back", "Rolled Back"),
     ]
 
     from_version = models.CharField(max_length=50)
     to_version = models.CharField(max_length=50)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
     # Progress tracking
     progress_percent = models.IntegerField(default=0)
@@ -409,7 +416,7 @@ class SystemUpgrade(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='upgrade_operations'
+        related_name="upgrade_operations",
     )
 
     # Preflight and migration info
@@ -428,7 +435,7 @@ class SystemUpgrade(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name = "System Upgrade"
         verbose_name_plural = "System Upgrades"
 
@@ -438,27 +445,26 @@ class SystemUpgrade(models.Model):
 
 class SystemRestore(models.Model):
     """Track restore operations"""
+
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('confirming', 'Awaiting Confirmation'),
-        ('backup', 'Creating Safety Backup'),
-        ('downloading', 'Downloading from Remote Storage'),
-        ('decrypting', 'Decrypting'),
-        ('extracting', 'Extracting'),
-        ('restoring_db', 'Restoring Database'),
-        ('restoring_media', 'Restoring Media'),
-        ('restoring_config', 'Restoring Configuration'),
-        ('post_restore', 'Running Post-Restore Tasks'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed'),
+        ("pending", "Pending"),
+        ("confirming", "Awaiting Confirmation"),
+        ("backup", "Creating Safety Backup"),
+        ("downloading", "Downloading from Remote Storage"),
+        ("decrypting", "Decrypting"),
+        ("extracting", "Extracting"),
+        ("restoring_db", "Restoring Database"),
+        ("restoring_media", "Restoring Media"),
+        ("restoring_config", "Restoring Configuration"),
+        ("post_restore", "Running Post-Restore Tasks"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
     ]
 
     source_backup = models.ForeignKey(
-        DeploymentBackup,
-        on_delete=models.CASCADE,
-        related_name='restores'
+        DeploymentBackup, on_delete=models.CASCADE, related_name="restores"
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
     # Progress tracking
     progress_percent = models.IntegerField(default=0)
@@ -476,7 +482,7 @@ class SystemRestore(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='restore_safety_backups'
+        related_name="restore_safety_backups",
     )
 
     # Timing
@@ -490,7 +496,7 @@ class SystemRestore(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name = "System Restore"
         verbose_name_plural = "System Restores"
 
@@ -504,6 +510,7 @@ class SystemStatus(models.Model):
     Updated periodically by Celery task.
     Only one record should exist - acts as a singleton.
     """
+
     checked_at = models.DateTimeField(auto_now=True)
 
     # Service health (DB, Redis, Celery - not NGINX since it's external)
@@ -578,31 +585,32 @@ class SystemStatus(models.Model):
 # Log Viewer Models
 # =============================================================================
 
+
 class LogEntry(models.Model):
     """Archived log entries from Docker containers"""
 
     LEVEL_CHOICES = [
-        ('INFO', 'Info'),
-        ('WARNING', 'Warning'),
-        ('ERROR', 'Error'),
-        ('CRITICAL', 'Critical'),
+        ("INFO", "Info"),
+        ("WARNING", "Warning"),
+        ("ERROR", "Error"),
+        ("CRITICAL", "Critical"),
     ]
 
     CONTAINER_CHOICES = [
-        ('db', 'PostgreSQL'),
-        ('redis', 'Redis'),
-        ('minio', 'MinIO'),
-        ('shop', 'Spwig Web'),
-        ('celery', 'Celery Worker'),
-        ('celery_beat', 'Celery Beat'),
-        ('translator', 'Translator'),
-        ('nginx', 'Nginx'),
-        ('upgrader', 'Upgrader'),
+        ("db", "PostgreSQL"),
+        ("redis", "Redis"),
+        ("minio", "MinIO"),
+        ("shop", "Spwig Web"),
+        ("celery", "Celery Worker"),
+        ("celery_beat", "Celery Beat"),
+        ("translator", "Translator"),
+        ("nginx", "Nginx"),
+        ("upgrader", "Upgrader"),
     ]
 
     SOURCE_CHOICES = [
-        ('stdout', 'Standard Output'),
-        ('stderr', 'Standard Error'),
+        ("stdout", "Standard Output"),
+        ("stderr", "Standard Error"),
     ]
 
     # Core fields
@@ -613,21 +621,23 @@ class LogEntry(models.Model):
 
     # Metadata
     raw_line = models.TextField(blank=True, help_text="Original log line before parsing")
-    source = models.CharField(max_length=20, default='stdout', choices=SOURCE_CHOICES)
+    source = models.CharField(max_length=20, default="stdout", choices=SOURCE_CHOICES)
 
     # For efficient cleanup
     archived_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-timestamp']
+        ordering = ["-timestamp"]
         verbose_name = "Log Entry"
         verbose_name_plural = "Log Entries"
         indexes = [
-            models.Index(fields=['container_name', 'timestamp'], name='mgmt_log_container_ts'),
-            models.Index(fields=['level', 'timestamp'], name='mgmt_log_level_ts'),
-            models.Index(fields=['container_name', 'level', 'timestamp'], name='mgmt_log_container_level_ts'),
-            models.Index(fields=['archived_at'], name='mgmt_log_archived'),
+            models.Index(fields=["container_name", "timestamp"], name="mgmt_log_container_ts"),
+            models.Index(fields=["level", "timestamp"], name="mgmt_log_level_ts"),
+            models.Index(
+                fields=["container_name", "level", "timestamp"], name="mgmt_log_container_level_ts"
+            ),
+            models.Index(fields=["archived_at"], name="mgmt_log_archived"),
         ]
 
     def __str__(self):
@@ -642,49 +652,41 @@ class LogViewerSettings(models.Model):
 
     # Retention settings
     redis_retention_minutes = models.IntegerField(
-        default=60,
-        help_text="How long to keep logs in Redis (minutes)"
+        default=60, help_text="How long to keep logs in Redis (minutes)"
     )
     db_retention_days = models.IntegerField(
-        default=30,
-        help_text="How long to keep archived logs in database (days)"
+        default=30, help_text="How long to keep archived logs in database (days)"
     )
 
     # Archive settings
     archive_batch_size = models.IntegerField(
-        default=100,
-        help_text="Number of logs to archive in each batch"
+        default=100, help_text="Number of logs to archive in each batch"
     )
     archive_interval_seconds = models.IntegerField(
-        default=300,
-        help_text="How often to archive logs from Redis to DB (seconds)"
+        default=300, help_text="How often to archive logs from Redis to DB (seconds)"
     )
 
     # Streaming settings
     stream_enabled = models.BooleanField(
-        default=True,
-        help_text="Enable real-time log collection from Docker containers"
+        default=True, help_text="Enable real-time log collection from Docker containers"
     )
     max_logs_per_container = models.IntegerField(
-        default=1000,
-        help_text="Maximum logs to keep in Redis per container"
+        default=1000, help_text="Maximum logs to keep in Redis per container"
     )
 
     # Sanitization patterns (JSON list of regex patterns)
     sensitive_patterns = models.JSONField(
         default=list,
         blank=True,
-        help_text="Regex patterns to redact from logs (e.g., passwords, tokens)"
+        help_text="Regex patterns to redact from logs (e.g., passwords, tokens)",
     )
 
     # Display settings
     default_page_size = models.IntegerField(
-        default=50,
-        help_text="Default number of logs to show per page"
+        default=50, help_text="Default number of logs to show per page"
     )
     auto_refresh_interval = models.IntegerField(
-        default=5,
-        help_text="Auto-refresh interval in seconds for UI"
+        default=5, help_text="Auto-refresh interval in seconds for UI"
     )
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -711,6 +713,7 @@ class LogViewerSettings(models.Model):
 # Remote Storage Models
 # =============================================================================
 
+
 class RemoteStorageDestination(models.Model):
     """
     A configured remote storage destination for backup uploads.
@@ -718,17 +721,18 @@ class RemoteStorageDestination(models.Model):
     Credentials are encrypted using the same Fernet pattern as
     PaymentProviderAccount.
     """
+
     PROVIDER_TYPES = [
-        ('s3', _('Amazon S3 / S3-Compatible')),
-        ('sftp', _('SFTP')),
-        ('google_drive', _('Google Drive')),
-        ('dropbox', _('Dropbox')),
+        ("s3", _("Amazon S3 / S3-Compatible")),
+        ("sftp", _("SFTP")),
+        ("google_drive", _("Google Drive")),
+        ("dropbox", _("Dropbox")),
     ]
 
     CONNECTION_STATUS_CHOICES = [
-        ('unknown', _('Unknown')),
-        ('connected', _('Connected')),
-        ('error', _('Error')),
+        ("unknown", _("Unknown")),
+        ("connected", _("Connected")),
+        ("error", _("Error")),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -771,7 +775,7 @@ class RemoteStorageDestination(models.Model):
     connection_status = models.CharField(
         max_length=20,
         choices=CONNECTION_STATUS_CHOICES,
-        default='unknown',
+        default="unknown",
     )
     connection_error = models.TextField(blank=True)
     last_tested_at = models.DateTimeField(null=True, blank=True)
@@ -793,7 +797,7 @@ class RemoteStorageDestination(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
         verbose_name = _("Remote Storage Destination")
         verbose_name_plural = _("Remote Storage Destinations")
 
@@ -804,7 +808,7 @@ class RemoteStorageDestination(models.Model):
     def total_bytes_display(self):
         """Human-readable total bytes uploaded."""
         size = self.total_bytes_uploaded
-        for unit in ['B', 'KB', 'MB', 'GB']:
+        for unit in ["B", "KB", "MB", "GB"]:
             if size < 1024:
                 return f"{size:.1f} {unit}"
             size /= 1024
@@ -816,25 +820,26 @@ class BackupRemoteUpload(models.Model):
     Tracks individual backup uploads to remote destinations.
     One backup can be uploaded to multiple destinations.
     """
+
     STATUS_CHOICES = [
-        ('pending', _('Pending')),
-        ('uploading', _('Uploading')),
-        ('completed', _('Completed')),
-        ('failed', _('Failed')),
+        ("pending", _("Pending")),
+        ("uploading", _("Uploading")),
+        ("completed", _("Completed")),
+        ("failed", _("Failed")),
     ]
 
     backup = models.ForeignKey(
         DeploymentBackup,
         on_delete=models.CASCADE,
-        related_name='remote_uploads',
+        related_name="remote_uploads",
     )
     destination = models.ForeignKey(
         RemoteStorageDestination,
         on_delete=models.CASCADE,
-        related_name='uploads',
+        related_name="uploads",
     )
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     remote_path = models.CharField(max_length=500, blank=True)
     file_size = models.BigIntegerField(null=True, blank=True)
 
@@ -849,8 +854,8 @@ class BackupRemoteUpload(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
-        unique_together = [['backup', 'destination']]
+        ordering = ["-created_at"]
+        unique_together = [["backup", "destination"]]
         verbose_name = _("Backup Remote Upload")
         verbose_name_plural = _("Backup Remote Uploads")
 

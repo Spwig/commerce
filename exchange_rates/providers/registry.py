@@ -5,8 +5,6 @@ Pattern follows shipping/providers/registry.py.
 Uses ProviderLoader to dynamically discover providers from components.
 """
 
-from typing import Dict, List, Optional, Type
-
 from exchange_rates.providers.base import ExchangeRateProviderBase
 from exchange_rates.providers.loader import ProviderLoader
 
@@ -19,7 +17,7 @@ class ProviderRegistry:
     """
 
     @classmethod
-    def get_provider(cls, provider_key: str) -> Optional[Type[ExchangeRateProviderBase]]:
+    def get_provider(cls, provider_key: str) -> type[ExchangeRateProviderBase] | None:
         """
         Get provider class by key.
 
@@ -32,7 +30,7 @@ class ProviderRegistry:
         return ProviderLoader.get_provider(provider_key)
 
     @classmethod
-    def list_providers(cls) -> List[Dict]:
+    def list_providers(cls) -> list[dict]:
         """
         List all available providers with metadata.
 
@@ -60,7 +58,7 @@ class ProviderRegistry:
         ProviderLoader.reload_providers()
 
     @classmethod
-    def get_provider_choices(cls) -> List[tuple]:
+    def get_provider_choices(cls) -> list[tuple]:
         """
         Get provider choices for Django form fields.
 
@@ -68,4 +66,4 @@ class ProviderRegistry:
             List of (provider_key, provider_name) tuples
         """
         providers = cls.list_providers()
-        return [(p['key'], p['name']) for p in sorted(providers, key=lambda x: x['name'])]
+        return [(p["key"], p["name"]) for p in sorted(providers, key=lambda x: x["name"])]

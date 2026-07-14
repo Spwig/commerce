@@ -1,6 +1,7 @@
 """
 DRF permission classes for role-based access control.
 """
+
 from rest_framework import permissions
 
 from staff_roles.services import get_pos_permission
@@ -35,9 +36,11 @@ def pos_permission(permission_key):
     Usage in views:
         @permission_classes([IsStaffUser, pos_permission('pos_refund')])
     """
+
     class POSPermission(HasPOSPermission):
         def __init__(self):
             super().__init__(required_permission=permission_key)
-    POSPermission.__name__ = f'POSPermission_{permission_key}'
-    POSPermission.__qualname__ = f'POSPermission_{permission_key}'
+
+    POSPermission.__name__ = f"POSPermission_{permission_key}"
+    POSPermission.__qualname__ = f"POSPermission_{permission_key}"
     return POSPermission

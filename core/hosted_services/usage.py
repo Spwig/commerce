@@ -17,7 +17,7 @@ Design notes:
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 import requests
 from django.conf import settings
@@ -25,56 +25,59 @@ from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
-CACHE_KEY = 'hosted_services:usage_snapshot'
+CACHE_KEY = "hosted_services:usage_snapshot"
 CACHE_TIMEOUT = 300  # 5 minutes
 
 
-def _fetch_geoip_usage() -> Optional[Dict[str, Any]]:
+def _fetch_geoip_usage() -> dict[str, Any] | None:
     """Poll ``geoip.spwig.com/api/v1/usage/`` using the shop's GeoIPClient."""
     try:
         from geoip.client import GeoIPClient
+
         client = GeoIPClient()
         # Reuse the token the client already manages
         client._ensure_token()
-        base_url = getattr(settings, 'GEOIP_SERVICE_URL', 'https://geoip.spwig.com')
+        base_url = getattr(settings, "GEOIP_SERVICE_URL", "https://geoip.spwig.com")
         response = client.session.get(
             f"{base_url.rstrip('/')}/api/v1/usage",
             timeout=5,
         )
         if response.status_code != 200:
-            return {'error': f'http_{response.status_code}'}
+            return {"error": f"http_{response.status_code}"}
         return response.json()
     except Exception as e:
         logger.debug("GeoIP usage fetch failed: %s", e)
-        return {'error': 'unreachable'}
+        return {"error": "unreachable"}
 
 
-def _fetch_geocoder_usage() -> Optional[Dict[str, Any]]:
+def _fetch_geocoder_usage() -> dict[str, Any] | None:
     """Poll ``geocoder.spwig.com/api/v1/usage`` using the shop's AutocompleteClient."""
     try:
         from address_autocomplete.services import AutocompleteClient
+
         client = AutocompleteClient()
         token = client._get_jwt_token()
         if not token:
-            return {'error': 'no_token'}
-        base_url = getattr(settings, 'ADDRESS_AUTOCOMPLETE_URL', 'https://geocoder.spwig.com')
+            return {"error": "no_token"}
+        base_url = getattr(settings, "ADDRESS_AUTOCOMPLETE_URL", "https://geocoder.spwig.com")
         response = requests.get(
             f"{base_url.rstrip('/')}/api/v1/usage",
-            headers={'Authorization': f'Bearer {token}'},
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5,
         )
         if response.status_code != 200:
-            return {'error': f'http_{response.status_code}'}
+            return {"error": f"http_{response.status_code}"}
         return response.json()
     except Exception as e:
         logger.debug("Geocoder usage fetch failed: %s", e)
-        return {'error': 'unreachable'}
+        return {"error": "unreachable"}
 
 
-def _fetch_push_usage() -> Optional[Dict[str, Any]]:
+def _fetch_push_usage() -> dict[str, Any] | None:
     """Poll ``push.spwig.com/api/v1/usage/`` using the shop's PushClient."""
     try:
         from admin_api.services.push_client import PushClient
+
         client = PushClient()
         base_url = client.base_url
         response = requests.get(
@@ -83,14 +86,14 @@ def _fetch_push_usage() -> Optional[Dict[str, Any]]:
             timeout=5,
         )
         if response.status_code != 200:
-            return {'error': f'http_{response.status_code}'}
+            return {"error": f"http_{response.status_code}"}
         return response.json()
     except Exception as e:
         logger.debug("Push usage fetch failed: %s", e)
-        return {'error': 'unreachable'}
+        return {"error": "unreachable"}
 
 
-def _normalise(service: str, raw: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+def _normalise(service: str, raw: dict[str, Any] | None) -> dict[str, Any]:
     """
     Reduce a per-service usage response to a common shape:
 
@@ -107,61 +110,64 @@ def _normalise(service: str, raw: Optional[Dict[str, Any]]) -> Dict[str, Any]:
           "error": None,
         }
     """
-    if not raw or raw.get('error'):
+    if not raw or raw.get("error"):
         return {
-            'service': service,
-            'tier': None,
-            'primary_window': None,
-            'over_limit': False,
-            'error': (raw or {}).get('error', 'unreachable'),
+            "service": service,
+            "tier": None,
+            "primary_window": None,
+            "over_limit": False,
+            "error": (raw or {}).get("error", "unreachable"),
         }
 
-    tier = raw.get('tier')
+    tier = raw.get("tier")
 
     # Prefer the largest-scoped window that's set — month > day > hour > minute.
     window = None
-    if raw.get('month'):
-        window = ('this month', raw['month'])
-    elif raw.get('day'):
-        window = ('today', raw['day'])
-    elif service == 'push' and raw.get('requests_this_hour') is not None:
+    if raw.get("month"):
+        window = ("this month", raw["month"])
+    elif raw.get("day"):
+        window = ("today", raw["day"])
+    elif service == "push" and raw.get("requests_this_hour") is not None:
         # Legacy push /usage/ response
-        window = ('this hour', {
-            'current': raw['requests_this_hour'],
-            'limit': raw.get('rate_limit'),
-        })
-    elif raw.get('minute'):
-        window = ('this minute', raw['minute'])
+        window = (
+            "this hour",
+            {
+                "current": raw["requests_this_hour"],
+                "limit": raw.get("rate_limit"),
+            },
+        )
+    elif raw.get("minute"):
+        window = ("this minute", raw["minute"])
 
     if window is None:
         return {
-            'service': service, 'tier': tier,
-            'primary_window': None, 'over_limit': False, 'error': None,
+            "service": service,
+            "tier": tier,
+            "primary_window": None,
+            "over_limit": False,
+            "error": None,
         }
 
     label, block = window
-    current = block.get('current') or 0
-    limit = block.get('limit')
-    if limit and limit > 0:
-        pct = round(100.0 * current / limit, 1)
-    else:
-        pct = 0.0
+    current = block.get("current") or 0
+    limit = block.get("limit")
+    pct = round(100.0 * current / limit, 1) if limit and limit > 0 else 0.0
 
     return {
-        'service': service,
-        'tier': tier,
-        'primary_window': {
-            'label': label,
-            'current': current,
-            'limit': limit,
-            'pct': pct,
+        "service": service,
+        "tier": tier,
+        "primary_window": {
+            "label": label,
+            "current": current,
+            "limit": limit,
+            "pct": pct,
         },
-        'over_limit': (limit is not None and current >= limit),
-        'error': None,
+        "over_limit": (limit is not None and current >= limit),
+        "error": None,
     }
 
 
-def get_usage_snapshot() -> Optional[Dict[str, Any]]:
+def get_usage_snapshot() -> dict[str, Any] | None:
     """
     Return the cached per-service usage snapshot, or ``None`` if cold.
 
@@ -183,7 +189,7 @@ def get_usage_snapshot() -> Optional[Dict[str, Any]]:
     return cache.get(CACHE_KEY)
 
 
-def refresh_usage_snapshot() -> Dict[str, Any]:
+def refresh_usage_snapshot() -> dict[str, Any]:
     """
     Poll all three hosted services and repopulate the cache.
 
@@ -193,21 +199,22 @@ def refresh_usage_snapshot() -> Dict[str, Any]:
     request handler.
     """
     from core.hosted_services.tiers import get_tier_config
+
     tier_config = get_tier_config()
-    upgrade_url = tier_config.get('upgrade_url', 'https://updates.spwig.com/upgrade/')
+    upgrade_url = tier_config.get("upgrade_url", "https://updates.spwig.com/upgrade/")
 
-    geoip = _normalise('geoip', _fetch_geoip_usage())
-    geocoder = _normalise('geocoder', _fetch_geocoder_usage())
-    push = _normalise('push', _fetch_push_usage())
+    geoip = _normalise("geoip", _fetch_geoip_usage())
+    geocoder = _normalise("geocoder", _fetch_geocoder_usage())
+    push = _normalise("push", _fetch_push_usage())
 
-    services = {'geoip': geoip, 'geocoder': geocoder, 'push': push}
-    percentages = [s['primary_window']['pct'] for s in services.values() if s['primary_window']]
+    services = {"geoip": geoip, "geocoder": geocoder, "push": push}
+    percentages = [s["primary_window"]["pct"] for s in services.values() if s["primary_window"]]
 
     snapshot = {
         **services,
-        'any_over_80':  any(p >= 80.0 for p in percentages),
-        'any_over_100': any(s['over_limit'] for s in services.values()),
-        'upgrade_url':  upgrade_url,
+        "any_over_80": any(p >= 80.0 for p in percentages),
+        "any_over_100": any(s["over_limit"] for s in services.values()),
+        "upgrade_url": upgrade_url,
     }
 
     cache.set(CACHE_KEY, snapshot, timeout=CACHE_TIMEOUT)

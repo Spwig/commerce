@@ -12,7 +12,6 @@ import json
 
 import pytest
 
-
 pytestmark = pytest.mark.django_db
 
 
@@ -29,9 +28,7 @@ def test_community_is_not_sandbox(licence_manager, community_licence_at_path):
     assert licence_manager.is_sandbox() is False
 
 
-def test_community_allows_free_tier_hosted_services(
-    licence_manager, community_licence_at_path
-):
+def test_community_allows_free_tier_hosted_services(licence_manager, community_licence_at_path):
     """
     Community edition can call GeoIP/Geocoder/Push directly — the hosted
     services enforce a Community-tier rate limit at ingress. Only the
@@ -39,11 +36,11 @@ def test_community_allows_free_tier_hosted_services(
     model introduced in Phase 2.5 (strategy revision 2026-07-06).
     """
     # Free-tier services: Community allowed
-    assert licence_manager.is_hosted_service_available('geoip') is True
-    assert licence_manager.is_hosted_service_available('geocoder') is True
-    assert licence_manager.is_hosted_service_available('push') is True
+    assert licence_manager.is_hosted_service_available("geoip") is True
+    assert licence_manager.is_hosted_service_available("geocoder") is True
+    assert licence_manager.is_hosted_service_available("push") is True
     # Paid-only: Community still blocked
-    assert licence_manager.is_hosted_service_available('mail_gateway') is False
+    assert licence_manager.is_hosted_service_available("mail_gateway") is False
 
     # Legacy blanket check now returns True (Community can use *some* services)
     assert licence_manager.are_spwig_services_available() is True

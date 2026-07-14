@@ -5,15 +5,16 @@ Reusable core for auditing web pages via Playwright (browser) or plain HTTP.
 Collects HTTP status, console errors/warnings, failed sub-resource requests,
 Django error pages, and load times.
 """
+
 import json
 import time
 import xml.etree.ElementTree as ET
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
 import requests as http_requests
-from playwright.sync_api import Page, ConsoleMessage
+from playwright.sync_api import ConsoleMessage, Page
 
 # ── Patterns to ignore in console output ─────────────────────
 IGNORED_PATTERNS = [
@@ -25,6 +26,7 @@ IGNORED_PATTERNS = [
 @dataclass
 class PageResult:
     """Result of visiting a single page."""
+
     url: str
     label: str
     category: str = "unknown"  # "admin", "storefront", "api"
@@ -50,6 +52,7 @@ class PageResult:
 @dataclass
 class AuditReport:
     """Collection of page results for a single audit run."""
+
     category: str
     results: list[PageResult] = field(default_factory=list)
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
@@ -88,6 +91,7 @@ class AuditReport:
 
 # ── Browser-based page visiting ──────────────────────────────
 
+
 def should_ignore(msg_text: str) -> bool:
     """Return True if the console message matches an ignored pattern."""
     return any(pattern in msg_text for pattern in IGNORED_PATTERNS)
@@ -109,7 +113,9 @@ def visit_page_browser(
     console_messages: list[ConsoleMessage] = []
     failed_reqs: list[dict] = []
 
-    handler = lambda msg: console_messages.append(msg)
+    def handler(msg):
+        return console_messages.append(msg)
+
     page.on("console", handler)
 
     full_url = url if url.startswith("http") else base_url + url
@@ -129,9 +135,7 @@ def visit_page_browser(
         page.wait_for_timeout(500)
 
         if result.status_code and result.status_code >= 400:
-            error_el = page.query_selector(
-                "#summary h1, #info h2, .errornote, title"
-            )
+            error_el = page.query_selector("#summary h1, #info h2, .errornote, title")
             if error_el:
                 result.django_error = error_el.text_content().strip()[:300]
 
@@ -141,9 +145,7 @@ def visit_page_browser(
     page.remove_listener("console", handler)
     page.remove_listener("response", on_response)
 
-    result.failed_requests = [
-        f"[{r['status']}] {r['url']}" for r in failed_reqs
-    ]
+    result.failed_requests = [f"[{r['status']}] {r['url']}" for r in failed_reqs]
 
     for msg in console_messages:
         text = msg.text
@@ -158,6 +160,7 @@ def visit_page_browser(
 
 
 # ── HTTP-only page visiting (for APIs) ───────────────────────
+
 
 def visit_url_http(
     url: str,
@@ -203,6 +206,7 @@ def visit_url_http(
 
 # ── Terminal output ──────────────────────────────────────────
 
+
 def print_result_line(i: int, total: int, result: PageResult):
     """Print a single-line progress indicator."""
     status = result.status_code or "ERR"
@@ -243,9 +247,13 @@ def print_report_summary(report: AuditReport, title: str | None = None) -> int:
     print(f"  Pages visited:       {report.total_pages}")
     print(f"  HTTP errors (4xx/5xx): {len(report.http_errors)}")
     print(f"  Navigation failures: {len(report.exception_pages)}")
-    print(f"  Failed requests:     {total_failed_requests} across {len(report.failed_request_pages)} page(s)")
+    print(
+        f"  Failed requests:     {total_failed_requests} across {len(report.failed_request_pages)} page(s)"
+    )
     print(f"  Console errors:      {total_console_errors} across {len(report.error_pages)} page(s)")
-    print(f"  Console warnings:    {total_console_warnings} across {len(report.warning_pages)} page(s)")
+    print(
+        f"  Console warnings:    {total_console_warnings} across {len(report.warning_pages)} page(s)"
+    )
     print(f"  Slow pages (>3s):    {len(slow)}")
 
     if report.http_errors:
@@ -300,7 +308,7 @@ def print_report_summary(report: AuditReport, title: str | None = None) -> int:
             print(f"  {r.load_time_ms}ms  {r.label}: {r.url}")
 
     if report.has_issues:
-        print(f"\n\033[91m✗ Issues found — review above.\033[0m\n")
+        print("\n\033[91m✗ Issues found — review above.\033[0m\n")
     else:
         print(f"\n\033[92m✓ All {report.total_pages} pages loaded cleanly.\033[0m\n")
 
@@ -308,6 +316,7 @@ def print_report_summary(report: AuditReport, title: str | None = None) -> int:
 
 
 # ── File reporters ───────────────────────────────────────────
+
 
 def save_json_report(report: AuditReport, path: str):
     """Save report as JSON."""
@@ -318,18 +327,20 @@ def save_json_report(report: AuditReport, path: str):
         "results": [],
     }
     for r in report.results:
-        data["results"].append({
-            "label": r.label,
-            "url": r.url,
-            "category": r.category,
-            "status_code": r.status_code,
-            "load_time_ms": r.load_time_ms,
-            "failed_requests": r.failed_requests,
-            "console_errors": r.console_errors,
-            "console_warnings": r.console_warnings,
-            "django_error": r.django_error,
-            "exception": r.exception,
-        })
+        data["results"].append(
+            {
+                "label": r.label,
+                "url": r.url,
+                "category": r.category,
+                "status_code": r.status_code,
+                "load_time_ms": r.load_time_ms,
+                "failed_requests": r.failed_requests,
+                "console_errors": r.console_errors,
+                "console_warnings": r.console_warnings,
+                "django_error": r.django_error,
+                "exception": r.exception,
+            }
+        )
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
@@ -339,19 +350,26 @@ def save_json_report(report: AuditReport, path: str):
 def save_junit_report(report: AuditReport, path: str):
     """Save report as JUnit XML for CI systems."""
     failures = sum(1 for r in report.results if r.has_issues)
-    suite = ET.Element("testsuite", {
-        "name": f"site-health-{report.category}",
-        "tests": str(report.total_pages),
-        "failures": str(failures),
-        "timestamp": report.timestamp,
-    })
+    suite = ET.Element(
+        "testsuite",
+        {
+            "name": f"site-health-{report.category}",
+            "tests": str(report.total_pages),
+            "failures": str(failures),
+            "timestamp": report.timestamp,
+        },
+    )
 
     for r in report.results:
-        tc = ET.SubElement(suite, "testcase", {
-            "name": r.label,
-            "classname": r.category,
-            "time": str(round(r.load_time_ms / 1000, 3)),
-        })
+        tc = ET.SubElement(
+            suite,
+            "testcase",
+            {
+                "name": r.label,
+                "classname": r.category,
+                "time": str(round(r.load_time_ms / 1000, 3)),
+            },
+        )
         if r.has_issues:
             issues = []
             if r.status_code and r.status_code >= 400:
@@ -364,9 +382,13 @@ def save_junit_report(report: AuditReport, path: str):
                 issues.extend(r.failed_requests[:3])
             if r.exception:
                 issues.append(r.exception)
-            ET.SubElement(tc, "failure", {
-                "message": issues[0][:200] if issues else "Unknown issue",
-            }).text = "\n".join(issues)
+            ET.SubElement(
+                tc,
+                "failure",
+                {
+                    "message": issues[0][:200] if issues else "Unknown issue",
+                },
+            ).text = "\n".join(issues)
 
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     tree = ET.ElementTree(suite)

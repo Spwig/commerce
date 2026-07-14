@@ -4,45 +4,50 @@ Push Notification Client for push.spwig.com
 HTTP client that sends push notifications via the Spwig push notification service.
 This replaces direct APNs communication with a centralized service.
 """
+
 import logging
 import time
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any
+from typing import Any
 
 import httpx
 import jwt
-
 from django.conf import settings
-from core.platform_secrets import get_push_secret, get_installation_uuid
+
+from core.platform_secrets import get_installation_uuid, get_push_secret
 
 logger = logging.getLogger(__name__)
 
 # Default service URL
-PUSH_SERVICE_URL = getattr(settings, 'PUSH_SERVICE_URL', 'https://push.spwig.com')
+PUSH_SERVICE_URL = getattr(settings, "PUSH_SERVICE_URL", "https://push.spwig.com")
 
 
 @dataclass
 class PushResult:
     """Result from a push notification send operation."""
+
     success: bool
     sent: int
     failed: int
-    results: List[Dict[str, Any]]
-    error: Optional[str] = None
+    results: list[dict[str, Any]]
+    error: str | None = None
 
 
 class PushClientError(Exception):
     """Base exception for push client errors."""
+
     pass
 
 
 class PushAuthError(PushClientError):
     """Authentication failed with push service."""
+
     pass
 
 
 class PushRateLimitError(PushClientError):
     """Rate limit exceeded."""
+
     pass
 
 
@@ -62,7 +67,7 @@ class PushClient:
         )
     """
 
-    def __init__(self, base_url: Optional[str] = None, timeout: float = 30.0):
+    def __init__(self, base_url: str | None = None, timeout: float = 30.0):
         """
         Initialize the push client.
 
@@ -70,9 +75,9 @@ class PushClient:
             base_url: Override the push service URL (defaults to PUSH_SERVICE_URL setting)
             timeout: Request timeout in seconds
         """
-        self.base_url = (base_url or PUSH_SERVICE_URL).rstrip('/')
+        self.base_url = (base_url or PUSH_SERVICE_URL).rstrip("/")
         self.timeout = timeout
-        self._jwt_token: Optional[str] = None
+        self._jwt_token: str | None = None
         self._jwt_expires_at: float = 0
 
     def _get_jwt_secret(self) -> str:
@@ -113,27 +118,27 @@ class PushClient:
 
         # JWT payload matching what push.spwig.com expects
         payload = {
-            'installation_uuid': installation_uuid,
-            'sub': installation_uuid,  # Subject (merchant identifier)
-            'aud': 'push.spwig.com',   # Audience
-            'iat': now,
-            'exp': now + 3600,  # 1 hour expiry
-            'iss': 'spwig-platform',   # Must match push server's jwt_issuer
-            'tier': 'standard',
-            'rate_limit': 1000,
+            "installation_uuid": installation_uuid,
+            "sub": installation_uuid,  # Subject (merchant identifier)
+            "aud": "push.spwig.com",  # Audience
+            "iat": now,
+            "exp": now + 3600,  # 1 hour expiry
+            "iss": "spwig-platform",  # Must match push server's jwt_issuer
+            "tier": "standard",
+            "rate_limit": 1000,
         }
 
-        self._jwt_token = jwt.encode(payload, secret, algorithm='HS256')
+        self._jwt_token = jwt.encode(payload, secret, algorithm="HS256")
         self._jwt_expires_at = now + 3600
 
         return self._jwt_token
 
-    def _get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         """Get headers for API requests."""
         return {
-            'Authorization': f'Bearer {self._generate_jwt()}',
-            'Content-Type': 'application/json',
-            'User-Agent': 'SpwigShop/1.0',
+            "Authorization": f"Bearer {self._generate_jwt()}",
+            "Content-Type": "application/json",
+            "User-Agent": "SpwigShop/1.0",
         }
 
     def _over_limit_cache_key(self) -> str:
@@ -146,15 +151,17 @@ class PushClient:
         without an HTTP round trip.
         """
         from django.core.cache import cache as django_cache
+
         return bool(django_cache.get(self._over_limit_cache_key()))
 
     def _mark_over_limit(self, response) -> None:
         from django.core.cache import cache as django_cache
-        retry_after = int(response.headers.get('Retry-After', 60))
+
+        retry_after = int(response.headers.get("Retry-After", 60))
         django_cache.set(self._over_limit_cache_key(), True, timeout=retry_after)
         logger.debug("Push service over tier limit; cached for %ds", retry_after)
 
-    def _handle_response(self, response: httpx.Response, operation: str) -> Dict[str, Any]:
+    def _handle_response(self, response: httpx.Response, operation: str) -> dict[str, Any]:
         """
         Handle API response, raising appropriate exceptions on error.
 
@@ -189,18 +196,17 @@ class PushClient:
 
         # Generic error
         raise PushClientError(
-            f"Push service error during {operation}: "
-            f"HTTP {response.status_code} - {response.text}"
+            f"Push service error during {operation}: HTTP {response.status_code} - {response.text}"
         )
 
     def send_notification(
         self,
-        tokens: List[str],
+        tokens: list[str],
         title: str,
         body: str,
-        data: Optional[Dict[str, Any]] = None,
-        sound: str = 'default',
-        badge: Optional[int] = None,
+        data: dict[str, Any] | None = None,
+        sound: str = "default",
+        badge: int | None = None,
         sandbox: bool = False,
     ) -> PushResult:
         """
@@ -226,37 +232,37 @@ class PushClient:
             tokens = tokens[:100]
 
         payload = {
-            'tokens': tokens,
-            'platform': 'ios',
-            'notification': {
-                'title': title,
-                'body': body,
-                'sound': sound,
+            "tokens": tokens,
+            "platform": "ios",
+            "notification": {
+                "title": title,
+                "body": body,
+                "sound": sound,
             },
-            'sandbox': sandbox,
+            "sandbox": sandbox,
         }
 
         if badge is not None:
-            payload['notification']['badge'] = badge
+            payload["notification"]["badge"] = badge
 
         if data:
-            payload['data'] = data
+            payload["data"] = data
 
         try:
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(
-                    f'{self.base_url}/api/v1/send/',
+                    f"{self.base_url}/api/v1/send/",
                     headers=self._get_headers(),
                     json=payload,
                 )
 
-            result_data = self._handle_response(response, 'send_notification')
+            result_data = self._handle_response(response, "send_notification")
 
             return PushResult(
-                success=result_data.get('success', False),
-                sent=result_data.get('sent', 0),
-                failed=result_data.get('failed', 0),
-                results=result_data.get('results', []),
+                success=result_data.get("success", False),
+                sent=result_data.get("sent", 0),
+                failed=result_data.get("failed", 0),
+                results=result_data.get("results", []),
             )
 
         except httpx.TimeoutException:
@@ -291,7 +297,7 @@ class PushClient:
 
     def send_bulk(
         self,
-        notifications: List[Dict[str, Any]],
+        notifications: list[dict[str, Any]],
         sandbox: bool = False,
     ) -> PushResult:
         """
@@ -317,38 +323,38 @@ class PushClient:
 
         # Format for push service API
         bulk_payload = {
-            'notifications': [
+            "notifications": [
                 {
-                    'token': n['token'],
-                    'platform': 'ios',
-                    'notification': {
-                        'title': n.get('title', ''),
-                        'body': n.get('body', ''),
-                        'sound': n.get('sound', 'default'),
-                        'badge': n.get('badge'),
+                    "token": n["token"],
+                    "platform": "ios",
+                    "notification": {
+                        "title": n.get("title", ""),
+                        "body": n.get("body", ""),
+                        "sound": n.get("sound", "default"),
+                        "badge": n.get("badge"),
                     },
-                    'data': n.get('data'),
+                    "data": n.get("data"),
                 }
                 for n in notifications
             ],
-            'sandbox': sandbox,
+            "sandbox": sandbox,
         }
 
         try:
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(
-                    f'{self.base_url}/api/v1/send/bulk/',
+                    f"{self.base_url}/api/v1/send/bulk/",
                     headers=self._get_headers(),
                     json=bulk_payload,
                 )
 
-            result_data = self._handle_response(response, 'send_bulk')
+            result_data = self._handle_response(response, "send_bulk")
 
             return PushResult(
-                success=result_data.get('success', False),
-                sent=result_data.get('sent', 0),
-                failed=result_data.get('failed', 0),
-                results=result_data.get('results', []),
+                success=result_data.get("success", False),
+                sent=result_data.get("sent", 0),
+                failed=result_data.get("failed", 0),
+                results=result_data.get("results", []),
             )
 
         except httpx.TimeoutException:
@@ -391,6 +397,7 @@ class PushClient:
         """
         try:
             from core.license import get_license_manager
+
             if not get_license_manager().are_spwig_services_available():
                 return False
         except Exception:
@@ -403,7 +410,7 @@ class PushClient:
         except Exception:
             return False
 
-    def health_check(self) -> Dict[str, Any]:
+    def health_check(self) -> dict[str, Any]:
         """
         Check connectivity to the push service.
 
@@ -412,23 +419,15 @@ class PushClient:
         """
         try:
             with httpx.Client(timeout=10.0) as client:
-                response = client.get(f'{self.base_url}/health')
+                response = client.get(f"{self.base_url}/health")
 
             if response.status_code == 200:
-                return {
-                    'healthy': True,
-                    'service_url': self.base_url,
-                    **response.json()
-                }
+                return {"healthy": True, "service_url": self.base_url, **response.json()}
             else:
                 return {
-                    'healthy': False,
-                    'service_url': self.base_url,
-                    'error': f'HTTP {response.status_code}'
+                    "healthy": False,
+                    "service_url": self.base_url,
+                    "error": f"HTTP {response.status_code}",
                 }
         except Exception as e:
-            return {
-                'healthy': False,
-                'service_url': self.base_url,
-                'error': str(e)
-            }
+            return {"healthy": False, "service_url": self.base_url, "error": str(e)}

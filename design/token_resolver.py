@@ -29,13 +29,12 @@ Example Usage:
     >>> # Returns: ":root { --primary-color: #FF5733; ... }"
 """
 
-from typing import Dict, Optional, List
-from django.core.cache import cache
-from django.db.models import Q
-from django.utils.translation import gettext_lazy as _
 import logging
 
-from .models import DesignToken, PageTier
+from django.core.cache import cache
+from django.db.models import Q
+
+from .models import DesignToken
 from .theme_models import Theme
 
 logger = logging.getLogger(__name__)
@@ -71,16 +70,16 @@ class TokenResolver:
     """
 
     CACHE_TIMEOUT = 300  # 5 minutes
-    CACHE_KEY_PREFIX = 'token_resolver'
+    CACHE_KEY_PREFIX = "token_resolver"
 
     PRIORITY_LEVELS = {
-        'brand_builder': 1,
-        'theme': 2,
-        'component': 3,
-        'system': 4,
+        "brand_builder": 1,
+        "theme": 2,
+        "component": 3,
+        "system": 4,
     }
 
-    def __init__(self, page_tier: str = None, theme: Theme = None, component = None):
+    def __init__(self, page_tier: str = None, theme: Theme = None, component=None):
         """Initialize resolver for specific context.
 
         Args:
@@ -105,7 +104,7 @@ class TokenResolver:
             f"component={component.component_type if component else 'None'}"
         )
 
-    def resolve_token(self, token_name: str) -> Optional[DesignToken]:
+    def resolve_token(self, token_name: str) -> DesignToken | None:
         """Resolve token with priority cascade.
 
         Returns the highest priority token available for the current tier.
@@ -136,36 +135,34 @@ class TokenResolver:
         # Add tier restriction filter
         if self.page_tier:
             query &= (
-                Q(tier_restriction__contains=[self.page_tier]) |
-                Q(tier_restriction=[])  # Empty = all tiers
+                Q(tier_restriction__contains=[self.page_tier])
+                | Q(tier_restriction=[])  # Empty = all tiers
             )
 
         # Query all matching tokens ordered by priority
-        tokens = DesignToken.objects.filter(query).select_related('theme', 'component').order_by(
-            'priority_level', 'name'
+        tokens = (
+            DesignToken.objects.filter(query)
+            .select_related("theme", "component")
+            .order_by("priority_level", "name")
         )
 
         # Filter theme-specific tokens if theme is specified
         if self.theme:
             # Include: brand_builder, theme (matching theme), component, system
-            tokens = [
-                t for t in tokens
-                if t.source != 'theme' or t.theme_id == self.theme.id
-            ]
+            tokens = [t for t in tokens if t.source != "theme" or t.theme_id == self.theme.id]
         else:
             # Exclude theme tokens if no theme specified
-            tokens = [t for t in tokens if t.source != 'theme']
+            tokens = [t for t in tokens if t.source != "theme"]
 
         # Filter component-specific tokens if component is specified
         if self.component:
             # Include: brand_builder, theme, component (matching component), system
             tokens = [
-                t for t in tokens
-                if t.source != 'component' or t.component_id == self.component.id
+                t for t in tokens if t.source != "component" or t.component_id == self.component.id
             ]
         else:
             # Exclude component tokens if no component specified
-            tokens = [t for t in tokens if t.source != 'component']
+            tokens = [t for t in tokens if t.source != "component"]
 
         # Return highest priority token (first in ordered list)
         resolved_token = tokens[0] if tokens else None
@@ -183,7 +180,7 @@ class TokenResolver:
 
         return resolved_token
 
-    def resolve_all_tokens(self, token_type: str = None) -> Dict[str, DesignToken]:
+    def resolve_all_tokens(self, token_type: str = None) -> dict[str, DesignToken]:
         """Resolve all tokens for current context.
 
         Returns a dictionary of token_name: DesignToken for all available tokens,
@@ -214,37 +211,36 @@ class TokenResolver:
 
         # Add tier restriction
         if self.page_tier:
-            query &= (
-                Q(tier_restriction__contains=[self.page_tier]) |
-                Q(tier_restriction=[])
-            )
+            query &= Q(tier_restriction__contains=[self.page_tier]) | Q(tier_restriction=[])
 
         # Add token type filter
         if token_type:
             query &= Q(token_type=token_type)
 
         # Get all matching tokens ordered by priority
-        all_tokens = DesignToken.objects.filter(query).select_related('theme', 'component').order_by(
-            'priority_level', 'name'
+        all_tokens = (
+            DesignToken.objects.filter(query)
+            .select_related("theme", "component")
+            .order_by("priority_level", "name")
         )
 
         # Filter theme tokens
         if self.theme:
             all_tokens = [
-                t for t in all_tokens
-                if t.source != 'theme' or t.theme_id == self.theme.id
+                t for t in all_tokens if t.source != "theme" or t.theme_id == self.theme.id
             ]
         else:
-            all_tokens = [t for t in all_tokens if t.source != 'theme']
+            all_tokens = [t for t in all_tokens if t.source != "theme"]
 
         # Filter component tokens
         if self.component:
             all_tokens = [
-                t for t in all_tokens
-                if t.source != 'component' or t.component_id == self.component.id
+                t
+                for t in all_tokens
+                if t.source != "component" or t.component_id == self.component.id
             ]
         else:
-            all_tokens = [t for t in all_tokens if t.source != 'component']
+            all_tokens = [t for t in all_tokens if t.source != "component"]
 
         # Resolve cascades: for each token name, keep only highest priority
         resolved = {}
@@ -255,10 +251,7 @@ class TokenResolver:
         # Cache the result
         cache.set(cache_key, resolved, self.CACHE_TIMEOUT)
 
-        logger.debug(
-            f"Resolved {len(resolved)} tokens "
-            f"(tier={self.page_tier}, type={token_type})"
-        )
+        logger.debug(f"Resolved {len(resolved)} tokens (tier={self.page_tier}, type={token_type})")
 
         return resolved
 
@@ -299,13 +292,12 @@ class TokenResolver:
         css_output = "\n".join(css_lines)
 
         logger.debug(
-            f"Generated CSS with {len(tokens)} variables "
-            f"(tier={self.page_tier}, type={token_type})"
+            f"Generated CSS with {len(tokens)} variables (tier={self.page_tier}, type={token_type})"
         )
 
         return css_output
 
-    def get_cascade_for_token(self, token_name: str) -> List[DesignToken]:
+    def get_cascade_for_token(self, token_name: str) -> list[DesignToken]:
         """Get full cascade of tokens for debugging/preview.
 
         Returns all tokens with the given name across all priority levels,
@@ -328,32 +320,27 @@ class TokenResolver:
         query = Q(name=token_name, is_active=True)
 
         if self.page_tier:
-            query &= (
-                Q(tier_restriction__contains=[self.page_tier]) |
-                Q(tier_restriction=[])
-            )
+            query &= Q(tier_restriction__contains=[self.page_tier]) | Q(tier_restriction=[])
 
-        cascade = DesignToken.objects.filter(query).select_related('theme', 'component').order_by(
-            'priority_level'
+        cascade = (
+            DesignToken.objects.filter(query)
+            .select_related("theme", "component")
+            .order_by("priority_level")
         )
 
         # Filter theme tokens
         if self.theme:
-            cascade = [
-                t for t in cascade
-                if t.source != 'theme' or t.theme_id == self.theme.id
-            ]
+            cascade = [t for t in cascade if t.source != "theme" or t.theme_id == self.theme.id]
         else:
-            cascade = [t for t in cascade if t.source != 'theme']
+            cascade = [t for t in cascade if t.source != "theme"]
 
         # Filter component tokens
         if self.component:
             cascade = [
-                t for t in cascade
-                if t.source != 'component' or t.component_id == self.component.id
+                t for t in cascade if t.source != "component" or t.component_id == self.component.id
             ]
         else:
-            cascade = [t for t in cascade if t.source != 'component']
+            cascade = [t for t in cascade if t.source != "component"]
 
         return list(cascade)
 
@@ -367,7 +354,16 @@ class TokenResolver:
         """
         # Clear specific token caches (would need to know all token names)
         # For now, clear the all-tokens cache
-        for token_type in ['color', 'font', 'spacing', 'border', 'shadow', 'animation', 'breakpoint', None]:
+        for token_type in [
+            "color",
+            "font",
+            "spacing",
+            "border",
+            "shadow",
+            "animation",
+            "breakpoint",
+            None,
+        ]:
             cache_key = self._get_cache_key_all(token_type)
             cache.delete(cache_key)
 
@@ -375,17 +371,17 @@ class TokenResolver:
 
     def _get_cache_key(self, token_name: str) -> str:
         """Generate cache key for single token resolution."""
-        theme_id = self.theme.id if self.theme else 'none'
-        component_id = self.component.id if self.component else 'none'
-        tier = self.page_tier or 'all'
+        theme_id = self.theme.id if self.theme else "none"
+        component_id = self.component.id if self.component else "none"
+        tier = self.page_tier or "all"
         return f"{self.CACHE_KEY_PREFIX}:{tier}:{theme_id}:{component_id}:{token_name}"
 
     def _get_cache_key_all(self, token_type: str = None) -> str:
         """Generate cache key for all tokens resolution."""
-        theme_id = self.theme.id if self.theme else 'none'
-        component_id = self.component.id if self.component else 'none'
-        tier = self.page_tier or 'all'
-        token_type_str = token_type or 'all'
+        theme_id = self.theme.id if self.theme else "none"
+        component_id = self.component.id if self.component else "none"
+        tier = self.page_tier or "all"
+        token_type_str = token_type or "all"
         return f"{self.CACHE_KEY_PREFIX}:all:{tier}:{theme_id}:{component_id}:{token_type_str}"
 
 
@@ -393,7 +389,7 @@ class TokenResolver:
 _resolver_cache = {}
 
 
-def get_token_resolver(page_tier: str = None, theme: Theme = None, component = None) -> TokenResolver:
+def get_token_resolver(page_tier: str = None, theme: Theme = None, component=None) -> TokenResolver:
     """Factory function to get TokenResolver instance.
 
     Provides a convenient way to get resolver instances. Can be extended

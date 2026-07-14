@@ -1,34 +1,35 @@
 """
 Order Service - Business logic for order operations
 """
+
+from datetime import timedelta
+from typing import TYPE_CHECKING, Any, Optional
+
 from django.db import transaction
 from django.db.models import QuerySet
-from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from datetime import timedelta
-from typing import Tuple, Optional, List, Dict, Any
-from decimal import Decimal
-from ..models import Order, OrderItem
+from django.utils.translation import gettext_lazy as _
+
+from ..models import Order
+
+if TYPE_CHECKING:
+    from cart.models import Cart
 
 
 class OrderService:
     """Service class for order operations"""
 
     # Order statuses that allow cancellation
-    CANCELABLE_STATUSES = ['pending', 'processing']
+    CANCELABLE_STATUSES = ["pending", "processing"]
 
     # Order statuses that are considered "completed"
-    COMPLETED_STATUSES = ['delivered']
+    COMPLETED_STATUSES = ["delivered"]
 
     # Time window for cancellation (in hours)
     CANCELLATION_WINDOW_HOURS = 24
 
     @staticmethod
-    def get_order_history(
-        user,
-        status: Optional[str] = None,
-        limit: Optional[int] = None
-    ) -> QuerySet:
+    def get_order_history(user, status: str | None = None, limit: int | None = None) -> QuerySet:
         """
         Get order history for user
 
@@ -40,11 +41,10 @@ class OrderService:
         Returns:
             QuerySet of Order objects
         """
-        queryset = Order.objects.filter(user=user).select_related(
-            'user'
-        ).prefetch_related(
-            'items__product',
-            'items__variant'
+        queryset = (
+            Order.objects.filter(user=user)
+            .select_related("user")
+            .prefetch_related("items__product", "items__variant")
         )
 
         if status:
@@ -56,7 +56,7 @@ class OrderService:
         return queryset
 
     @staticmethod
-    def get_order_detail(order_number: str, user) -> Optional[Order]:
+    def get_order_detail(order_number: str, user) -> Order | None:
         """
         Get detailed order information
 
@@ -68,10 +68,11 @@ class OrderService:
             Order instance or None
         """
         try:
-            order = Order.objects.select_related('user').prefetch_related(
-                'items__product',
-                'items__variant'
-            ).get(order_number=order_number)
+            order = (
+                Order.objects.select_related("user")
+                .prefetch_related("items__product", "items__variant")
+                .get(order_number=order_number)
+            )
 
             # Check permission - user must own the order or be staff
             if order.user != user and not user.is_staff:
@@ -83,7 +84,7 @@ class OrderService:
             return None
 
     @staticmethod
-    def get_order_statistics(user) -> Dict[str, Any]:
+    def get_order_statistics(user) -> dict[str, Any]:
         """
         Get order statistics for user
 
@@ -96,47 +97,43 @@ class OrderService:
         orders = Order.objects.filter(user=user)
 
         total_orders = orders.count()
-        total_spent = sum(
-            float(order.total_amount) for order in orders
-        )
+        # Order.total_amount is a Money instance; unwrap .amount before float().
+        total_spent = sum(float(order.total_amount.amount) for order in orders)
 
         # Get status breakdown
         status_counts = {}
-        for status, _ in Order.STATUS_CHOICES:
+        for status, _label in Order.STATUS_CHOICES:
             count = orders.filter(status=status).count()
             if count > 0:
                 status_counts[status] = count
 
         # Get recent orders
-        recent_orders = orders.order_by('-created_at')[:5]
+        recent_orders = orders.order_by("-created_at")[:5]
 
         # Calculate average order value
         avg_order_value = total_spent / total_orders if total_orders > 0 else 0
 
         return {
-            'total_orders': total_orders,
-            'total_spent': total_spent,
-            'average_order_value': avg_order_value,
-            'status_breakdown': status_counts,
-            'recent_orders': [
+            "total_orders": total_orders,
+            "total_spent": total_spent,
+            "average_order_value": avg_order_value,
+            "status_breakdown": status_counts,
+            "recent_orders": [
                 {
-                    'order_number': order.order_number,
-                    'total_amount': float(order.total_amount),
-                    'status': order.status,
-                    'created_at': order.created_at.isoformat()
+                    "order_number": order.order_number,
+                    "total_amount": float(order.total_amount.amount),
+                    "status": order.status,
+                    "created_at": order.created_at.isoformat(),
                 }
                 for order in recent_orders
-            ]
+            ],
         }
 
     @staticmethod
     @transaction.atomic
     def cancel_order(
-        order: Order,
-        user,
-        reason: str = "",
-        restore_stock: bool = True
-    ) -> Tuple[bool, str]:
+        order: Order, user, reason: str = "", restore_stock: bool = True
+    ) -> tuple[bool, str]:
         """
         Cancel an order
 
@@ -167,21 +164,20 @@ class OrderService:
 
         # Restore stock if requested - use multi-location inventory system
         if restore_stock:
-            from catalog.services import fulfillment_service
             import logging
+
+            from catalog.services import fulfillment_service
+
             logger = logging.getLogger(__name__)
 
             for item in order.items.all():
                 # If stock was allocated but not yet fulfilled, release it
                 if item.stock_allocated and not item.stock_fulfilled and item.warehouse:
                     try:
-                        fulfillment_service.release_stock(
-                            order_item=item,
-                            warehouse=item.warehouse
-                        )
+                        fulfillment_service.release_stock(order_item=item, warehouse=item.warehouse)
                         # Mark as no longer allocated
                         item.stock_allocated = False
-                        item.save(update_fields=['stock_allocated'])
+                        item.save(update_fields=["stock_allocated"])
                         logger.info(
                             f"Released stock for {item.sku} at {item.warehouse.code} "
                             f"(Order: {order.order_number})"
@@ -207,12 +203,13 @@ class OrderService:
                     )
 
         # Update order status
-        old_status = order.status
-        order.status = 'cancelled'
+        order.status = "cancelled"
 
         # Store cancellation reason in notes
         if reason:
-            cancellation_note = f"\n\n[Cancelled by {user.username} on {timezone.now()}]\nReason: {reason}"
+            cancellation_note = (
+                f"\n\n[Cancelled by {user.username} on {timezone.now()}]\nReason: {reason}"
+            )
             order.notes += cancellation_note
 
         order.save()
@@ -221,7 +218,7 @@ class OrderService:
 
     @staticmethod
     @transaction.atomic
-    def reorder(order: Order, user) -> Tuple[bool, str, Optional['Cart']]:
+    def reorder(order: Order, user) -> tuple[bool, str, Optional["Cart"]]:
         """
         Create a new cart from a previous order
 
@@ -232,7 +229,6 @@ class OrderService:
         Returns:
             Tuple of (success: bool, message: str, cart: Cart or None)
         """
-        from cart.models import Cart, CartItem
         from cart.services import CartService
 
         # Check permission
@@ -264,19 +260,18 @@ class OrderService:
 
                 # Check stock availability in user's region
                 region = None
-                if user and hasattr(user, 'sales_region'):
+                if user and hasattr(user, "sales_region"):
                     region = user.sales_region
 
                 availability = fulfillment_service.check_stock_availability(
-                    product=product,
-                    quantity=order_item.quantity,
-                    region=region,
-                    variant=variant
+                    product=product, quantity=order_item.quantity, region=region, variant=variant
                 )
 
-                if not availability['available']:
+                if not availability["available"]:
                     if variant:
-                        items_unavailable.append(f"{order_item.product_name} - {order_item.variant_name} (out of stock)")
+                        items_unavailable.append(
+                            f"{order_item.product_name} - {order_item.variant_name} (out of stock)"
+                        )
                     else:
                         items_unavailable.append(f"{order_item.product_name} (out of stock)")
                     continue
@@ -287,7 +282,7 @@ class OrderService:
                 product_id=order_item.product.id,
                 quantity=order_item.quantity,
                 variant_id=variant.id if variant else None,
-                customizations=order_item.customizations
+                customizations=order_item.customizations,
             )
 
             if success:
@@ -310,12 +305,8 @@ class OrderService:
     @staticmethod
     @transaction.atomic
     def update_order_status(
-        order: Order,
-        new_status: str,
-        user,
-        tracking_number: str = "",
-        notes: str = ""
-    ) -> Tuple[bool, str]:
+        order: Order, new_status: str, user, tracking_number: str = "", notes: str = ""
+    ) -> tuple[bool, str]:
         """
         Update order status (staff only)
 
@@ -355,7 +346,7 @@ class OrderService:
         return True, _("Order status updated successfully")
 
     @staticmethod
-    def get_tracking_info(order: Order, user) -> Optional[Dict[str, Any]]:
+    def get_tracking_info(order: Order, user) -> dict[str, Any] | None:
         """
         Get order tracking information
 
@@ -372,51 +363,49 @@ class OrderService:
 
         # Calculate estimated delivery (placeholder - should integrate with shipping provider)
         estimated_delivery = None
-        if order.status == 'shipped' and order.tracking_number:
+        if order.status == "shipped" and order.tracking_number:
             # This is a placeholder - real implementation would call shipping API
             estimated_delivery = (timezone.now() + timedelta(days=3)).date().isoformat()
 
         return {
-            'order_number': order.order_number,
-            'status': order.status,
-            'status_display': order.get_status_display(),
-            'tracking_number': order.tracking_number,
-            'estimated_delivery': estimated_delivery,
-            'shipping_address': {
-                'name': order.shipping_name,
-                'address1': order.shipping_address1,
-                'address2': order.shipping_address2,
-                'city': order.shipping_city,
-                'state': order.shipping_state,
-                'postal_code': order.shipping_postal_code,
-                'country': order.shipping_country
+            "order_number": order.order_number,
+            "status": order.status,
+            "status_display": order.get_status_display(),
+            "tracking_number": order.tracking_number,
+            "estimated_delivery": estimated_delivery,
+            "shipping_address": {
+                "name": order.shipping_name,
+                "address1": order.shipping_address1,
+                "address2": order.shipping_address2,
+                "city": order.shipping_city,
+                "state": order.shipping_state,
+                "postal_code": order.shipping_postal_code,
+                "country": order.shipping_country,
             },
-            'timeline': [
+            "timeline": [
+                {"status": "pending", "date": order.created_at.isoformat(), "completed": True},
                 {
-                    'status': 'pending',
-                    'date': order.created_at.isoformat(),
-                    'completed': True
+                    "status": "processing",
+                    "date": order.updated_at.isoformat() if order.status != "pending" else None,
+                    "completed": order.status not in ["pending"],
                 },
                 {
-                    'status': 'processing',
-                    'date': order.updated_at.isoformat() if order.status != 'pending' else None,
-                    'completed': order.status not in ['pending']
+                    "status": "shipped",
+                    "date": order.updated_at.isoformat()
+                    if order.status in ["shipped", "delivered"]
+                    else None,
+                    "completed": order.status in ["shipped", "delivered"],
                 },
                 {
-                    'status': 'shipped',
-                    'date': order.updated_at.isoformat() if order.status in ['shipped', 'delivered'] else None,
-                    'completed': order.status in ['shipped', 'delivered']
+                    "status": "delivered",
+                    "date": order.updated_at.isoformat() if order.status == "delivered" else None,
+                    "completed": order.status == "delivered",
                 },
-                {
-                    'status': 'delivered',
-                    'date': order.updated_at.isoformat() if order.status == 'delivered' else None,
-                    'completed': order.status == 'delivered'
-                }
-            ]
+            ],
         }
 
     @staticmethod
-    def can_cancel_order(order: Order, user) -> Tuple[bool, str]:
+    def can_cancel_order(order: Order, user) -> tuple[bool, str]:
         """
         Check if order can be cancelled
 

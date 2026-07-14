@@ -5,9 +5,8 @@ This module provides mixins that can be used with any Django ModelAdmin
 to add common functionality like translation support, audit logging, etc.
 
 """
+
 import json
-from django.contrib import admin
-from typing import Dict, List
 
 
 class MoneyFieldCurrencyMixin:
@@ -58,10 +57,10 @@ def _apply_money_field_currency_defaults(form, obj=None):
     enabled_codes = {code for code, _ in currency_choices}
 
     for field_name, field in form.base_fields.items():
-        if hasattr(field, 'widget') and hasattr(field.widget, 'widgets'):
+        if hasattr(field, "widget") and hasattr(field.widget, "widgets"):
             if len(field.widget.widgets) == 2:
                 currency_widget = field.widget.widgets[1]
-                if hasattr(currency_widget, 'choices'):
+                if hasattr(currency_widget, "choices"):
                     field_choices = list(currency_choices)
                     if obj is not None:
                         # MoneyField stores currency in <field>_currency column
@@ -69,6 +68,7 @@ def _apply_money_field_currency_defaults(form, obj=None):
                         if stored and stored not in enabled_codes:
                             try:
                                 from moneyed import CURRENCIES
+
                                 label = f"{stored} - {CURRENCIES[stored].name}"
                             except (KeyError, ImportError):
                                 label = stored
@@ -97,22 +97,19 @@ class TranslatableAdminMixin:
     """
 
     # Fields that can be translated (override in subclass)
-    translatable_fields: List[str] = []
+    translatable_fields: list[str] = []
 
     class Media:
         """
         Media assets required for translation functionality.
         Include these in your ModelAdmin's Media class.
         """
+
         js = (
             # Translation Editor utility (using symlink to current version)
-            'utilities/translation_editor/current/translation_editor.js',
+            "utilities/translation_editor/current/translation_editor.js",
         )
-        css = {
-            'all': (
-                'utilities/translation_editor/current/translation_editor.css',
-            )
-        }
+        css = {"all": ("utilities/translation_editor/current/translation_editor.css",)}
 
     def get_translatable_fields(self, request, obj=None):
         """
@@ -143,28 +140,21 @@ class TranslatableAdminMixin:
             JSON string of available languages
         """
         try:
-            from page_builder.translation_utils import (
-                get_available_languages,
-                get_primary_language
-            )
+            from page_builder.translation_utils import get_available_languages, get_primary_language
 
             languages = get_available_languages()
             primary = get_primary_language()
 
             # Format for JavaScript
             lang_list = [
-                {
-                    'code': code,
-                    'name': str(name),
-                    'is_primary': code == primary
-                }
+                {"code": code, "name": str(name), "is_primary": code == primary}
                 for code, name in languages
                 if code != primary  # Exclude primary from translation targets
             ]
 
             return json.dumps(lang_list)
 
-        except Exception as e:
+        except Exception:
             # Return empty array if translation service unavailable
             return json.dumps([])
 
@@ -199,7 +189,7 @@ class TranslatableAdminMixin:
             return obj.pk
         return None
 
-    def change_view(self, request, object_id, form_url='', extra_context=None):
+    def change_view(self, request, object_id, form_url="", extra_context=None):
         """
         Override change view to inject translation context.
 
@@ -212,15 +202,17 @@ class TranslatableAdminMixin:
         obj = self.get_object(request, object_id)
 
         # Add translation context
-        extra_context['translatable_fields'] = json.dumps(self.get_translatable_fields(request, obj))
-        extra_context['available_languages_json'] = self.get_available_languages_json(request, obj)
-        extra_context['translation_model_type'] = self.get_translation_model_type(request, obj)
-        extra_context['translation_object_id'] = self.get_translation_object_id(request, obj)
-        extra_context['has_translation_support'] = True
+        extra_context["translatable_fields"] = json.dumps(
+            self.get_translatable_fields(request, obj)
+        )
+        extra_context["available_languages_json"] = self.get_available_languages_json(request, obj)
+        extra_context["translation_model_type"] = self.get_translation_model_type(request, obj)
+        extra_context["translation_object_id"] = self.get_translation_object_id(request, obj)
+        extra_context["has_translation_support"] = True
 
         return super().change_view(request, object_id, form_url, extra_context)
 
-    def add_view(self, request, form_url='', extra_context=None):
+    def add_view(self, request, form_url="", extra_context=None):
         """
         Override add view to inject translation context.
 
@@ -230,10 +222,12 @@ class TranslatableAdminMixin:
         extra_context = extra_context or {}
 
         # Add translation context (object_id will be None for add view)
-        extra_context['translatable_fields'] = json.dumps(self.get_translatable_fields(request, None))
-        extra_context['available_languages_json'] = self.get_available_languages_json(request, None)
-        extra_context['translation_model_type'] = self.get_translation_model_type(request, None)
-        extra_context['translation_object_id'] = None
-        extra_context['has_translation_support'] = False  # Disable for new objects
+        extra_context["translatable_fields"] = json.dumps(
+            self.get_translatable_fields(request, None)
+        )
+        extra_context["available_languages_json"] = self.get_available_languages_json(request, None)
+        extra_context["translation_model_type"] = self.get_translation_model_type(request, None)
+        extra_context["translation_object_id"] = None
+        extra_context["has_translation_support"] = False  # Disable for new objects
 
         return super().add_view(request, form_url, extra_context)

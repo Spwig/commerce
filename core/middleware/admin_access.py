@@ -11,18 +11,19 @@ Rules:
 - Staff whose only roles have can_access_admin=False get redirected
 - Non-staff users are handled by Django's built-in admin auth
 """
+
 import logging
 import re
 
-from django.shortcuts import redirect
 from django.contrib import messages
+from django.shortcuts import redirect
 from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
 
 # Match admin paths with or without language prefix
 # e.g. /admin/, /en/admin/, /de/admin/login/
-ADMIN_PATH_RE = re.compile(r'^(/[a-z]{2})?/admin/')
+ADMIN_PATH_RE = re.compile(r"^(/[a-z]{2})?/admin/")
 
 
 class AdminAccessMiddleware:
@@ -39,7 +40,7 @@ class AdminAccessMiddleware:
             return self.get_response(request)
 
         # Only check authenticated staff users
-        user = getattr(request, 'user', None)
+        user = getattr(request, "user", None)
         if not user or not user.is_authenticated or not user.is_staff:
             return self.get_response(request)
 
@@ -48,18 +49,21 @@ class AdminAccessMiddleware:
             return self.get_response(request)
 
         # Allow the admin login/logout pages themselves
-        if '/admin/login/' in request.path or '/admin/logout/' in request.path:
+        if "/admin/login/" in request.path or "/admin/logout/" in request.path:
             return self.get_response(request)
 
         # Check role-based admin access
         from staff_roles.services import can_access_admin
+
         if not can_access_admin(user):
             messages.error(
                 request,
-                _('Your account does not have admin panel access. '
-                  'Contact your store owner if you believe this is an error.')
+                _(
+                    "Your account does not have admin panel access. "
+                    "Contact your store owner if you believe this is an error."
+                ),
             )
             # Redirect to the storefront home page
-            return redirect('/')
+            return redirect("/")
 
         return self.get_response(request)

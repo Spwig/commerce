@@ -6,15 +6,22 @@ formatters to output XML, CSV, or JSON.
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Iterator, Type
-from datetime import datetime, timedelta
+from collections.abc import Iterator
+from datetime import timedelta
+from typing import TYPE_CHECKING, Any, Optional
+
 from django.conf import settings
-from django.db.models import QuerySet, Prefetch
+from django.db.models import Prefetch, QuerySet
 from django.utils import timezone
 
 from core.utils import get_default_currency
+
+from .formatters import CSVFeedFormatter, JSONFeedFormatter, XMLFeedFormatter
 from .formatters.base import BaseFeedFormatter, ProductFeedItem
-from .formatters import XMLFeedFormatter, CSVFeedFormatter, JSONFeedFormatter
+
+if TYPE_CHECKING:
+    from catalog.models import Product
+    from product_feeds.models import FeedProviderAccount, ProductFeed
 
 logger = logging.getLogger(__name__)
 
@@ -31,30 +38,29 @@ class FeedService:
     """
 
     # Available formatters
-    FORMATTERS: Dict[str, Type[BaseFeedFormatter]] = {
-        'xml': XMLFeedFormatter,
-        'csv': CSVFeedFormatter,
-        'json': JSONFeedFormatter,
+    FORMATTERS: dict[str, type[BaseFeedFormatter]] = {
+        "xml": XMLFeedFormatter,
+        "csv": CSVFeedFormatter,
+        "json": JSONFeedFormatter,
     }
 
-    def __init__(self, account: 'FeedProviderAccount'):
+    def __init__(self, account: "FeedProviderAccount"):
         """
         Initialize feed service for a specific provider account.
 
         Args:
             account: FeedProviderAccount instance
         """
-        from product_feeds.models import FeedProviderAccount
         self.account = account
         self.config = account.config or {}
-        self.attribute_mapping = self.config.get('attribute_mapping', {})
+        self.attribute_mapping = self.config.get("attribute_mapping", {})
 
     def generate_feed(
         self,
-        format: str = 'xml',
-        product_ids: Optional[List[int]] = None,
+        format: str = "xml",
+        product_ids: list[int] | None = None,
         save_to_db: bool = True,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Generate a complete product feed.
@@ -99,9 +105,9 @@ class FeedService:
 
     def generate_feed_streaming(
         self,
-        format: str = 'xml',
-        product_ids: Optional[List[int]] = None,
-        metadata: Optional[Dict[str, Any]] = None
+        format: str = "xml",
+        product_ids: list[int] | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> Iterator[str]:
         """
         Generate feed content as a stream for large catalogs.
@@ -134,7 +140,7 @@ class FeedService:
         # Stream feed
         yield from formatter.stream_feed(feed_items, feed_metadata)
 
-    def _get_products_queryset(self, product_ids: Optional[List[int]] = None) -> QuerySet:
+    def _get_products_queryset(self, product_ids: list[int] | None = None) -> QuerySet:
         """
         Get products queryset with optimized loading.
 
@@ -147,18 +153,19 @@ class FeedService:
         from catalog.models import Product, ProductImage
 
         # Base queryset - only active, published products
-        queryset = Product.objects.filter(
-            is_active=True,
-            status='published'
-        ).select_related(
-            'category',
-            'brand',
-            'primary_image',
-        ).prefetch_related(
-            Prefetch(
-                'images',
-                queryset=ProductImage.objects.filter(is_active=True).order_by('sort_order')
-            ),
+        queryset = (
+            Product.objects.filter(is_active=True, status="published")
+            .select_related(
+                "category",
+                "brand",
+                "primary_image",
+            )
+            .prefetch_related(
+                Prefetch(
+                    "images",
+                    queryset=ProductImage.objects.filter(is_active=True).order_by("sort_order"),
+                ),
+            )
         )
 
         # Apply product filter if specified
@@ -166,18 +173,18 @@ class FeedService:
             queryset = queryset.filter(id__in=product_ids)
 
         # Apply config filters
-        filters = self.config.get('product_filters', {})
+        filters = self.config.get("product_filters", {})
         if filters:
-            if filters.get('categories'):
-                queryset = queryset.filter(category_id__in=filters['categories'])
-            if filters.get('exclude_out_of_stock'):
+            if filters.get("categories"):
+                queryset = queryset.filter(category_id__in=filters["categories"])
+            if filters.get("exclude_out_of_stock"):
                 queryset = queryset.filter(stock_quantity__gt=0)
-            if filters.get('min_price'):
-                queryset = queryset.filter(price__gte=filters['min_price'])
+            if filters.get("min_price"):
+                queryset = queryset.filter(price__gte=filters["min_price"])
 
-        return queryset.order_by('id')
+        return queryset.order_by("id")
 
-    def _convert_products_to_feed_items(self, products: QuerySet) -> List[ProductFeedItem]:
+    def _convert_products_to_feed_items(self, products: QuerySet) -> list[ProductFeedItem]:
         """
         Convert products queryset to list of ProductFeedItem.
 
@@ -189,7 +196,9 @@ class FeedService:
         """
         return list(self._convert_products_to_feed_items_iterator(products))
 
-    def _convert_products_to_feed_items_iterator(self, products: QuerySet) -> Iterator[ProductFeedItem]:
+    def _convert_products_to_feed_items_iterator(
+        self, products: QuerySet
+    ) -> Iterator[ProductFeedItem]:
         """
         Convert products to feed items as an iterator.
 
@@ -206,7 +215,7 @@ class FeedService:
             site = Site.objects.get_current()
             base_url = f"https://{site.domain}"
         except Exception:
-            base_url = getattr(settings, 'SITE_URL', 'https://example.com')
+            base_url = getattr(settings, "SITE_URL", "https://example.com")
 
         for product in products.iterator():
             try:
@@ -215,7 +224,7 @@ class FeedService:
                 logger.warning(f"Failed to convert product {product.id}: {e}")
                 continue
 
-    def _product_to_feed_item(self, product: 'Product', base_url: str) -> ProductFeedItem:
+    def _product_to_feed_item(self, product: "Product", base_url: str) -> ProductFeedItem:
         """
         Convert a single Product to ProductFeedItem.
 
@@ -227,33 +236,33 @@ class FeedService:
             ProductFeedItem instance
         """
         # Get default language content
-        default_lang = getattr(settings, 'LANGUAGE_CODE', 'en').split('-')[0]
+        default_lang = getattr(settings, "LANGUAGE_CODE", "en").split("-")[0]
         translations = product.translations.get(default_lang, {})
 
         # Build title and description
-        title = translations.get('name', product.name)
-        description = translations.get('description_text', '')
+        title = translations.get("name", product.name)
+        description = translations.get("description_text", "")
         if not description:
-            description = translations.get('short_description_text', product.name)
+            description = translations.get("short_description_text", product.name)
 
         # Build product URL
         link = f"{base_url}/product/{product.slug}/"
 
         # Get primary image
-        image_link = ''
-        if hasattr(product, 'primary_image') and product.primary_image:
-            if hasattr(product.primary_image, 'image') and product.primary_image.image:
+        image_link = ""
+        if hasattr(product, "primary_image") and product.primary_image:
+            if hasattr(product.primary_image, "image") and product.primary_image.image:
                 image_link = f"{base_url}{product.primary_image.image.url}"
-            elif hasattr(product.primary_image, 'asset') and product.primary_image.asset:
+            elif hasattr(product.primary_image, "asset") and product.primary_image.asset:
                 image_link = f"{base_url}{product.primary_image.asset.file.url}"
 
         # Get additional images
         additional_images = []
-        if hasattr(product, 'images'):
+        if hasattr(product, "images"):
             for img in list(product.images.all())[:10]:
-                if hasattr(img, 'image') and img.image:
+                if hasattr(img, "image") and img.image:
                     additional_images.append(f"{base_url}{img.image.url}")
-                elif hasattr(img, 'asset') and img.asset:
+                elif hasattr(img, "asset") and img.asset:
                     additional_images.append(f"{base_url}{img.asset.file.url}")
 
         # Build price string
@@ -268,29 +277,37 @@ class FeedService:
         product_type = self._get_category_path(product)
 
         # Get brand
-        brand_name = product.brand.name if product.brand else ''
+        brand_name = product.brand.name if product.brand else ""
 
         # Get identifiers from imported_meta or specifications
-        gtin = ''
-        mpn = ''
+        gtin = ""
+        mpn = ""
         if product.imported_meta:
-            gtin = product.imported_meta.get('gtin', '') or product.imported_meta.get('ean', '') or product.imported_meta.get('upc', '')
-            mpn = product.imported_meta.get('mpn', '')
+            gtin = (
+                product.imported_meta.get("gtin", "")
+                or product.imported_meta.get("ean", "")
+                or product.imported_meta.get("upc", "")
+            )
+            mpn = product.imported_meta.get("mpn", "")
         if product.specifications:
-            gtin = gtin or product.specifications.get('gtin', '') or product.specifications.get('ean', '')
-            mpn = mpn or product.specifications.get('mpn', '')
+            gtin = (
+                gtin
+                or product.specifications.get("gtin", "")
+                or product.specifications.get("ean", "")
+            )
+            mpn = mpn or product.specifications.get("mpn", "")
 
         # Get product attributes
-        color = product.specifications.get('color', '') if product.specifications else ''
-        size = product.specifications.get('size', '') if product.specifications else ''
-        material = product.specifications.get('material', '') if product.specifications else ''
-        gender = product.specifications.get('gender', '') if product.specifications else ''
-        age_group = product.specifications.get('age_group', '') if product.specifications else ''
+        color = product.specifications.get("color", "") if product.specifications else ""
+        size = product.specifications.get("size", "") if product.specifications else ""
+        material = product.specifications.get("material", "") if product.specifications else ""
+        gender = product.specifications.get("gender", "") if product.specifications else ""
+        age_group = product.specifications.get("age_group", "") if product.specifications else ""
 
         # Item group ID for variants
-        item_group_id = ''
-        if product.product_type == 'variable' and hasattr(product, 'parent_product'):
-            item_group_id = str(product.parent_product.id) if product.parent_product else ''
+        item_group_id = ""
+        if product.product_type == "variable" and hasattr(product, "parent_product"):
+            item_group_id = str(product.parent_product.id) if product.parent_product else ""
 
         # Build feed item
         return ProductFeedItem(
@@ -308,7 +325,7 @@ class FeedService:
             mpn=mpn or product.sku,
             sale_price=sale_price,
             sale_price_effective_date=sale_effective_date,
-            condition='new',  # Default to new
+            condition="new",  # Default to new
             color=color,
             size=size,
             material=material,
@@ -324,84 +341,88 @@ class FeedService:
             custom_label_4=self._get_custom_label(product, 4),
         )
 
-    def _format_price(self, product: 'Product') -> str:
+    def _format_price(self, product: "Product") -> str:
         """Format product price as 'XX.XX CUR' string."""
-        if hasattr(product.price, 'amount') and hasattr(product.price, 'currency'):
+        if hasattr(product.price, "amount") and hasattr(product.price, "currency"):
             return f"{product.price.amount:.2f} {product.price.currency}"
         return f"{float(product.price):.2f} {get_default_currency()}"
 
-    def _format_sale_price(self, product: 'Product') -> str:
+    def _format_sale_price(self, product: "Product") -> str:
         """Get sale price if applicable."""
-        if product.sale_type == 'none':
-            return ''
+        if product.sale_type == "none":
+            return ""
 
         now = timezone.now()
 
         # Check sale dates
         if product.sale_start_date and now < product.sale_start_date:
-            return ''
+            return ""
         if product.sale_end_date and now > product.sale_end_date:
-            return ''
+            return ""
 
         # Calculate sale price
-        if product.sale_type == 'fixed_price' and product.sale_value:
+        if product.sale_type == "fixed_price" and product.sale_value:
             sale_amount = float(product.sale_value)
-        elif product.sale_type == 'amount_off' and product.sale_value:
+        elif product.sale_type == "amount_off" and product.sale_value:
             sale_amount = float(product.price.amount) - float(product.sale_value)
-        elif product.sale_type == 'percentage_off' and product.sale_value:
+        elif product.sale_type == "percentage_off" and product.sale_value:
             sale_amount = float(product.price.amount) * (1 - float(product.sale_value) / 100)
         else:
-            return ''
+            return ""
 
         if sale_amount <= 0:
-            return ''
+            return ""
 
-        currency = product.price.currency if hasattr(product.price, 'currency') else get_default_currency()
+        currency = (
+            product.price.currency if hasattr(product.price, "currency") else get_default_currency()
+        )
         return f"{sale_amount:.2f} {currency}"
 
-    def _format_sale_effective_date(self, product: 'Product') -> str:
+    def _format_sale_effective_date(self, product: "Product") -> str:
         """Format sale effective date range."""
-        if product.sale_type == 'none':
-            return ''
+        if product.sale_type == "none":
+            return ""
 
         if not product.sale_start_date and not product.sale_end_date:
-            return ''
+            return ""
 
-        start = product.sale_start_date.strftime('%Y-%m-%dT%H:%M%z') if product.sale_start_date else ''
-        end = product.sale_end_date.strftime('%Y-%m-%dT%H:%M%z') if product.sale_end_date else ''
+        start = (
+            product.sale_start_date.strftime("%Y-%m-%dT%H:%M%z") if product.sale_start_date else ""
+        )
+        end = product.sale_end_date.strftime("%Y-%m-%dT%H:%M%z") if product.sale_end_date else ""
 
         if start and end:
             return f"{start}/{end}"
         elif end:
             return f"/{end}"
-        return ''
+        return ""
 
-    def _get_availability(self, product: 'Product') -> str:
+    def _get_availability(self, product: "Product") -> str:
         """Determine product availability status."""
-        if not product.is_active or product.status == 'discontinued':
-            return 'out_of_stock'
+        if not product.is_active or product.status == "discontinued":
+            return "out_of_stock"
 
         # Check stock quantity if available
         stock = self._get_stock_quantity(product)
         if stock == 0:
-            return 'out_of_stock'
+            return "out_of_stock"
         elif stock < 0:  # Backorder allowed
-            return 'backorder'
+            return "backorder"
 
-        return 'in_stock'
+        return "in_stock"
 
-    def _get_stock_quantity(self, product: 'Product') -> int:
+    def _get_stock_quantity(self, product: "Product") -> int:
         """Get stock quantity from product."""
-        if hasattr(product, 'stock_quantity'):
+        if hasattr(product, "stock_quantity"):
             return product.stock_quantity or 0
-        if hasattr(product, 'inventory') and product.inventory:
+        if hasattr(product, "inventory") and product.inventory:
             return product.inventory.quantity or 0
         return 0
 
-    def _get_category_path(self, product: 'Product') -> str:
+    def _get_category_path(self, product: "Product") -> str:
         """Get full category path for product_type field."""
         if not product.category:
-            return ''
+            return ""
 
         path_parts = []
         category = product.category
@@ -409,87 +430,97 @@ class FeedService:
             path_parts.insert(0, category.name)
             category = category.parent
 
-        return ' > '.join(path_parts)
+        return " > ".join(path_parts)
 
-    def _get_google_category(self, product: 'Product') -> str:
+    def _get_google_category(self, product: "Product") -> str:
         """Get Google product category taxonomy ID."""
         # Check if mapped in config
-        category_mapping = self.config.get('google_category_mapping', {})
+        category_mapping = self.config.get("google_category_mapping", {})
         if product.category and str(product.category.id) in category_mapping:
             return category_mapping[str(product.category.id)]
 
         # Check if stored on category
-        if product.category and hasattr(product.category, 'imported_meta'):
-            google_cat = product.category.imported_meta.get('google_product_category', '')
+        if product.category and hasattr(product.category, "imported_meta"):
+            google_cat = product.category.imported_meta.get("google_product_category", "")
             if google_cat:
                 return google_cat
 
-        return ''
+        return ""
 
-    def _get_custom_label(self, product: 'Product', index: int) -> str:
+    def _get_custom_label(self, product: "Product", index: int) -> str:
         """Get custom label value for segmentation."""
-        custom_labels = self.config.get('custom_labels', {})
-        label_config = custom_labels.get(f'label_{index}', {})
+        custom_labels = self.config.get("custom_labels", {})
+        label_config = custom_labels.get(f"label_{index}", {})
 
         if not label_config:
-            return ''
+            return ""
 
         # Labels can be based on various product attributes
-        label_type = label_config.get('type', '')
+        label_type = label_config.get("type", "")
 
-        if label_type == 'category':
-            return product.category.name if product.category else ''
-        elif label_type == 'brand':
-            return product.brand.name if product.brand else ''
-        elif label_type == 'price_tier':
-            return self._get_price_tier(product, label_config.get('tiers', []))
-        elif label_type == 'margin_tier':
-            return self._get_margin_tier(product, label_config.get('tiers', []))
-        elif label_type == 'sale_status':
-            return 'On Sale' if product.sale_type != 'none' else 'Regular Price'
-        elif label_type == 'custom':
-            return label_config.get('value', '')
+        if label_type == "category":
+            return product.category.name if product.category else ""
+        elif label_type == "brand":
+            return product.brand.name if product.brand else ""
+        elif label_type == "price_tier":
+            return self._get_price_tier(product, label_config.get("tiers", []))
+        elif label_type == "margin_tier":
+            return self._get_margin_tier(product, label_config.get("tiers", []))
+        elif label_type == "sale_status":
+            return "On Sale" if product.sale_type != "none" else "Regular Price"
+        elif label_type == "custom":
+            return label_config.get("value", "")
 
-        return ''
+        return ""
 
-    def _get_price_tier(self, product: 'Product', tiers: List[Dict]) -> str:
+    def _get_price_tier(self, product: "Product", tiers: list[dict]) -> str:
         """Determine price tier label."""
         if not tiers:
-            return ''
+            return ""
 
-        price = float(product.price.amount) if hasattr(product.price, 'amount') else float(product.price)
+        price = (
+            float(product.price.amount)
+            if hasattr(product.price, "amount")
+            else float(product.price)
+        )
 
         for tier in tiers:
-            if price <= tier.get('max', float('inf')):
-                return tier.get('label', '')
+            if price <= tier.get("max", float("inf")):
+                return tier.get("label", "")
 
-        return ''
+        return ""
 
-    def _get_margin_tier(self, product: 'Product', tiers: List[Dict]) -> str:
+    def _get_margin_tier(self, product: "Product", tiers: list[dict]) -> str:
         """Determine margin tier label."""
         if not tiers or not product.cost:
-            return ''
+            return ""
 
-        price = float(product.price.amount) if hasattr(product.price, 'amount') else float(product.price)
-        cost = float(product.cost.amount) if hasattr(product.cost, 'amount') else float(product.cost)
+        price = (
+            float(product.price.amount)
+            if hasattr(product.price, "amount")
+            else float(product.price)
+        )
+        cost = (
+            float(product.cost.amount) if hasattr(product.cost, "amount") else float(product.cost)
+        )
 
         if cost <= 0:
-            return ''
+            return ""
 
         margin = ((price - cost) / price) * 100
 
         for tier in tiers:
-            if margin <= tier.get('max', float('inf')):
-                return tier.get('label', '')
+            if margin <= tier.get("max", float("inf")):
+                return tier.get("label", "")
 
-        return ''
+        return ""
 
-    def _get_formatter_config(self, format: str) -> Dict[str, Any]:
+    def _get_formatter_config(self, format: str) -> dict[str, Any]:
         """Get formatter-specific configuration."""
-        format_config = self.config.get('format_config', {})
+        format_config = self.config.get("format_config", {})
         return format_config.get(format, {})
 
-    def _build_feed_metadata(self, custom_metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _build_feed_metadata(self, custom_metadata: dict[str, Any] | None = None) -> dict[str, Any]:
         """Build feed metadata."""
         from django.contrib.sites.models import Site
 
@@ -498,14 +529,14 @@ class FeedService:
             site_name = site.name
             site_url = f"https://{site.domain}"
         except Exception:
-            site_name = 'Store'
-            site_url = getattr(settings, 'SITE_URL', 'https://example.com')
+            site_name = "Store"
+            site_url = getattr(settings, "SITE_URL", "https://example.com")
 
         metadata = {
-            'title': f'{site_name} Product Feed',
-            'description': f'Product catalog for {site_name}',
-            'link': site_url,
-            'updated': timezone.now().isoformat(),
+            "title": f"{site_name} Product Feed",
+            "description": f"Product catalog for {site_name}",
+            "link": site_url,
+            "updated": timezone.now().isoformat(),
         }
 
         if custom_metadata:
@@ -513,7 +544,7 @@ class FeedService:
 
         return metadata
 
-    def _save_feed_to_db(self, content: str, format: str, product_count: int) -> 'ProductFeed':
+    def _save_feed_to_db(self, content: str, format: str, product_count: int) -> "ProductFeed":
         """
         Save generated feed to database.
 
@@ -528,21 +559,21 @@ class FeedService:
         from product_feeds.models import ProductFeed
 
         # Calculate expiry based on config
-        cache_hours = self.config.get('cache_hours', 24)
+        cache_hours = self.config.get("cache_hours", 24)
         expires_at = timezone.now() + timedelta(hours=cache_hours)
 
         feed = ProductFeed.objects.create(
             account=self.account,
             feed_format=format,
-            content=content if len(content) < 1_000_000 else '',  # Store inline if small
-            file_size=len(content.encode('utf-8')),
+            content=content if len(content) < 1_000_000 else "",  # Store inline if small
+            file_size=len(content.encode("utf-8")),
             product_count=product_count,
             expires_at=expires_at,
             stats={
-                'generated_at': timezone.now().isoformat(),
-                'product_count': product_count,
-                'format': format,
-            }
+                "generated_at": timezone.now().isoformat(),
+                "product_count": product_count,
+                "format": format,
+            },
         )
 
         # Save large feeds to file
@@ -551,17 +582,18 @@ class FeedService:
 
         # Update account stats
         self.account.products_in_feed = product_count
-        self.account.save(update_fields=['products_in_feed', 'updated_at'])
+        self.account.save(update_fields=["products_in_feed", "updated_at"])
 
         return feed
 
-    def _save_feed_to_file(self, feed: 'ProductFeed', content: str) -> None:
+    def _save_feed_to_file(self, feed: "ProductFeed", content: str) -> None:
         """Save large feed to file system."""
         import os
+
         from django.conf import settings
 
         # Create feeds directory
-        feeds_dir = os.path.join(settings.MEDIA_ROOT, 'product_feeds', str(self.account.id))
+        feeds_dir = os.path.join(settings.MEDIA_ROOT, "product_feeds", str(self.account.id))
         os.makedirs(feeds_dir, exist_ok=True)
 
         # Generate filename
@@ -569,14 +601,14 @@ class FeedService:
         filepath = os.path.join(feeds_dir, filename)
 
         # Write content
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
 
         # Update feed record
         feed.file_path = filepath
-        feed.save(update_fields=['file_path'])
+        feed.save(update_fields=["file_path"])
 
-    def get_latest_feed(self, format: Optional[str] = None) -> Optional['ProductFeed']:
+    def get_latest_feed(self, format: str | None = None) -> Optional["ProductFeed"]:
         """
         Get the latest cached feed.
 
@@ -588,12 +620,9 @@ class FeedService:
         """
         from product_feeds.models import ProductFeed
 
-        queryset = ProductFeed.objects.filter(
-            account=self.account,
-            expires_at__gt=timezone.now()
-        )
+        queryset = ProductFeed.objects.filter(account=self.account, expires_at__gt=timezone.now())
 
         if format:
             queryset = queryset.filter(feed_format=format)
 
-        return queryset.order_by('-generated_at').first()
+        return queryset.order_by("-generated_at").first()

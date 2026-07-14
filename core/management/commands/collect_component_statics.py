@@ -24,21 +24,22 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = 'Incrementally collect component static files into STATIC_ROOT'
+    help = "Incrementally collect component static files into STATIC_ROOT"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--dry-run', action='store_true',
-            help='List files that would be collected without copying',
+            "--dry-run",
+            action="store_true",
+            help="List files that would be collected without copying",
         )
 
     def handle(self, *args, **options):
         start = time.monotonic()
-        dry_run = options['dry_run']
-        verbosity = options['verbosity']
+        dry_run = options["dry_run"]
+        verbosity = options["verbosity"]
 
         static_root = Path(settings.STATIC_ROOT)
-        manifest_path = static_root / 'staticfiles.json'
+        manifest_path = static_root / "staticfiles.json"
 
         # Load existing manifest (pre-baked at build time)
         manifest = {}
@@ -47,20 +48,18 @@ class Command(BaseCommand):
                 with open(manifest_path) as f:
                     data = json.load(f)
                 # WhiteNoise manifest format: {"version": "1.0", "paths": {...}}
-                if 'paths' in data:
-                    manifest = data['paths']
-                else:
-                    manifest = data
+                manifest = data.get("paths", data)
             except (json.JSONDecodeError, KeyError):
-                self.stderr.write(self.style.WARNING(
-                    'Could not parse existing manifest, starting fresh'
-                ))
+                self.stderr.write(
+                    self.style.WARNING("Could not parse existing manifest, starting fresh")
+                )
 
         # Instantiate component finders
         from component_updates.finders import (
             ComponentStaticFinder,
             IntegrationStaticFinder,
         )
+
         finders = [ComponentStaticFinder(), IntegrationStaticFinder()]
 
         collected = 0
@@ -85,7 +84,7 @@ class Command(BaseCommand):
                         continue
 
                 if dry_run:
-                    self.stdout.write(f'  Would collect: {rel_path} -> {hashed_name}')
+                    self.stdout.write(f"  Would collect: {rel_path} -> {hashed_name}")
                     collected += 1
                     continue
 
@@ -108,25 +107,27 @@ class Command(BaseCommand):
                 collected += 1
 
                 if verbosity >= 2:
-                    self.stdout.write(f'  {rel_path} -> {hashed_name}')
+                    self.stdout.write(f"  {rel_path} -> {hashed_name}")
 
         if not dry_run and collected > 0:
             # Write updated manifest
-            manifest_data = {'version': '1.0', 'paths': manifest}
-            with open(manifest_path, 'w') as f:
+            manifest_data = {"version": "1.0", "paths": manifest}
+            with open(manifest_path, "w") as f:
                 json.dump(manifest_data, f, indent=2)
 
         elapsed = time.monotonic() - start
-        action = 'Would collect' if dry_run else 'Collected'
-        self.stdout.write(self.style.SUCCESS(
-            f'{action} {collected} component static files '
-            f'({skipped} unchanged) in {elapsed:.1f}s'
-        ))
+        action = "Would collect" if dry_run else "Collected"
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"{action} {collected} component static files "
+                f"({skipped} unchanged) in {elapsed:.1f}s"
+            )
+        )
 
     def _md5_hash(self, path, block_size=65536):
         """Compute MD5 hash of a file (matches Django's ManifestStaticFilesStorage)."""
         md5 = hashlib.md5()
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             while True:
                 data = f.read(block_size)
                 if not data:
@@ -137,29 +138,32 @@ class Command(BaseCommand):
     def _hashed_name(self, name, file_hash):
         """Generate hashed filename: name.HASH.ext"""
         path = Path(name)
-        return str(path.with_suffix(f'.{file_hash}{path.suffix}'))
+        return str(path.with_suffix(f".{file_hash}{path.suffix}"))
 
     def _compress(self, path):
         """Create .gz and .br compressed versions of a file."""
         import gzip
 
         # gzip
-        gz_path = Path(str(path) + '.gz')
+        gz_path = Path(str(path) + ".gz")
         try:
-            with open(path, 'rb') as f_in:
-                with gzip.open(gz_path, 'wb', compresslevel=9) as f_out:
-                    shutil.copyfileobj(f_in, f_out)
+            with (
+                open(path, "rb") as f_in,
+                gzip.open(gz_path, "wb", compresslevel=9) as f_out,
+            ):
+                shutil.copyfileobj(f_in, f_out)
         except Exception:
             pass
 
         # brotli (optional — may not be installed)
         try:
             import brotli
-            br_path = Path(str(path) + '.br')
-            with open(path, 'rb') as f_in:
+
+            br_path = Path(str(path) + ".br")
+            with open(path, "rb") as f_in:
                 data = f_in.read()
                 compressed = brotli.compress(data, quality=6)
-                with open(br_path, 'wb') as f_out:
+                with open(br_path, "wb") as f_out:
                     f_out.write(compressed)
         except ImportError:
             pass

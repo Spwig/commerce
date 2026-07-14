@@ -1,11 +1,12 @@
 """
 Base provider class for GeoIP resolution
 """
-from abc import ABC, abstractmethod
-from typing import Dict, Optional, Any
-import time
-import logging
+
 import ipaddress
+import logging
+import time
+from abc import ABC, abstractmethod
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ class GeoIPProviderBase(ABC):
     Abstract base class for GeoIP providers
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: dict[str, Any] = None):
         """
         Initialize provider with optional configuration
 
@@ -38,7 +39,7 @@ class GeoIPProviderBase(ABC):
         pass
 
     @abstractmethod
-    def lookup(self, ip: str) -> Optional[Dict[str, Any]]:
+    def lookup(self, ip: str) -> dict[str, Any] | None:
         """
         Perform IP lookup
 
@@ -60,7 +61,7 @@ class GeoIPProviderBase(ABC):
         """
         pass
 
-    def close(self):
+    def close(self):  # noqa: B027 — optional hook; default no-op for providers with no resources
         """
         Cleanup resources (databases, connections, etc.)
         Override if needed
@@ -124,16 +125,18 @@ class GeoIPProviderBase(ABC):
         """
         Decorator to measure lookup time
         """
+
         def wrapper(*args, **kwargs):
             start = time.time()
             result = func(*args, **kwargs)
             elapsed = (time.time() - start) * 1000  # Convert to ms
             if result:
-                result['lookup_time_ms'] = elapsed
+                result["lookup_time_ms"] = elapsed
             return result
+
         return wrapper
 
-    def get_confidence_score(self, data: Dict[str, Any]) -> float:
+    def get_confidence_score(self, data: dict[str, Any]) -> float:
         """
         Calculate confidence score based on available data
 
@@ -148,12 +151,12 @@ class GeoIPProviderBase(ABC):
 
         score = 0.0
         weights = {
-            'country': 0.3,
-            'region': 0.2,
-            'city': 0.2,
-            'postal_code': 0.1,
-            'lat': 0.1,
-            'lon': 0.1
+            "country": 0.3,
+            "region": 0.2,
+            "city": 0.2,
+            "postal_code": 0.1,
+            "lat": 0.1,
+            "lon": 0.1,
         }
 
         for field, weight in weights.items():
@@ -162,7 +165,7 @@ class GeoIPProviderBase(ABC):
 
         return min(score, 1.0)
 
-    def format_response(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def format_response(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Format response to standard structure
 
@@ -177,30 +180,27 @@ class GeoIPProviderBase(ABC):
 
         # Map common field names to standard ones
         field_mapping = {
-            'country': 'country_code',
-            'country_iso': 'country_code',
-            'country_code': 'country_code',
-            'country_name': 'country_name',
-            'region': 'region_code',
-            'region_code': 'region_code',
-            'region_name': 'region_name',
-            'state': 'region_name',
-            'city': 'city_name',
-            'city_name': 'city_name',
-            'postal': 'postal_code',
-            'postal_code': 'postal_code',
-            'zip': 'postal_code',
-            'latitude': 'latitude',
-            'lat': 'latitude',
-            'longitude': 'longitude',
-            'lon': 'longitude',
-            'lng': 'longitude',
+            "country": "country_code",
+            "country_iso": "country_code",
+            "country_code": "country_code",
+            "country_name": "country_name",
+            "region": "region_code",
+            "region_code": "region_code",
+            "region_name": "region_name",
+            "state": "region_name",
+            "city": "city_name",
+            "city_name": "city_name",
+            "postal": "postal_code",
+            "postal_code": "postal_code",
+            "zip": "postal_code",
+            "latitude": "latitude",
+            "lat": "latitude",
+            "longitude": "longitude",
+            "lon": "longitude",
+            "lng": "longitude",
         }
 
-        result = {
-            'source': self.name,
-            'confidence': self.get_confidence_score(data)
-        }
+        result = {"source": self.name, "confidence": self.get_confidence_score(data)}
 
         # Map fields
         for src, dst in field_mapping.items():
@@ -208,11 +208,11 @@ class GeoIPProviderBase(ABC):
                 result[dst] = data[src]
 
         # Standardize country code
-        if 'country_code' in result:
-            result['country_code'] = self.standardize_country_code(result['country_code'])
+        if "country_code" in result:
+            result["country_code"] = self.standardize_country_code(result["country_code"])
 
         # Convert lat/lon to float
-        for coord in ['latitude', 'longitude']:
+        for coord in ["latitude", "longitude"]:
             if coord in result:
                 try:
                     result[coord] = float(result[coord])

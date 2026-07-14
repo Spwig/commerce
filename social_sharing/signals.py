@@ -6,11 +6,12 @@ Also integrates with loyalty badge system for awarding share-based badges.
 """
 
 import logging
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
-from django.db.models import F
 
-from social_sharing.models import SocialShare, ShareCount
+from django.db.models import F
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+
+from social_sharing.models import ShareCount, SocialShare
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +32,12 @@ def update_share_count_on_create(sender, instance, created, **kwargs):
             content_type=instance.content_type,
             object_id=instance.object_id,
             platform=instance.platform,
-            defaults={'count': 0}
+            defaults={"count": 0},
         )
 
         # Increment the count using F() expression for database-level increment
         # This avoids race conditions
-        ShareCount.objects.filter(pk=share_count.pk).update(count=F('count') + 1)
+        ShareCount.objects.filter(pk=share_count.pk).update(count=F("count") + 1)
 
         logger.debug(
             f"Incremented {instance.platform} share count for "
@@ -59,13 +60,13 @@ def update_share_count_on_delete(sender, instance, **kwargs):
         share_count = ShareCount.objects.filter(
             content_type=instance.content_type,
             object_id=instance.object_id,
-            platform=instance.platform
+            platform=instance.platform,
         ).first()
 
         if share_count:
             if share_count.count > 1:
                 # Decrement the count
-                ShareCount.objects.filter(pk=share_count.pk).update(count=F('count') - 1)
+                ShareCount.objects.filter(pk=share_count.pk).update(count=F("count") - 1)
             else:
                 # If count would be 0, delete the record
                 share_count.delete()
@@ -110,8 +111,7 @@ def check_loyalty_badges(sender, instance, created, **kwargs):
         # Check and award social share badges
         badge_service = BadgeAwardingService()
         newly_awarded = badge_service.check_and_award_badges(
-            member,
-            criteria_types=['social_share']
+            member, criteria_types=["social_share"]
         )
 
         if newly_awarded:

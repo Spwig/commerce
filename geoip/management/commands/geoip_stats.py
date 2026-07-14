@@ -1,26 +1,29 @@
 """
 Display GeoIP statistics
 """
-from django.core.management.base import BaseCommand
-from django.db.models import Count, Avg, Q, F
-from django.utils import timezone
+
 from datetime import timedelta
-from geoip.models import GeoLocation, VisitorLocation, GeoIPProvider, BusinessRule
+
+from django.core.management.base import BaseCommand
+from django.db.models import Count, F
+from django.utils import timezone
+
+from geoip.models import BusinessRule, GeoIPProvider, GeoLocation, VisitorLocation
 
 
 class Command(BaseCommand):
-    help = 'Display GeoIP statistics'
+    help = "Display GeoIP statistics"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--days',
+            "--days",
             type=int,
             default=7,
-            help='Number of days to include in statistics (default: 7)'
+            help="Number of days to include in statistics (default: 7)",
         )
 
     def handle(self, *args, **options):
-        days = options['days']
+        days = options["days"]
         since = timezone.now() - timedelta(days=days)
 
         self.stdout.write(f"GeoIP Statistics (Last {days} days)")
@@ -30,9 +33,7 @@ class Command(BaseCommand):
         self.stdout.write("\n📦 Cache Statistics:")
         total_cached = GeoLocation.objects.count()
         recent_cached = GeoLocation.objects.filter(resolved_at__gte=since).count()
-        expired = GeoLocation.objects.filter(
-            expires_at__lt=timezone.now()
-        ).count()
+        expired = GeoLocation.objects.filter(expires_at__lt=timezone.now()).count()
 
         self.stdout.write(f"  Total cached locations: {total_cached:,}")
         self.stdout.write(f"  Recently resolved: {recent_cached:,}")
@@ -41,28 +42,33 @@ class Command(BaseCommand):
         # Top countries
         self.stdout.write("\n🌍 Top Countries:")
         top_countries = (
-            GeoLocation.objects
-            .filter(resolved_at__gte=since)
-            .values('country_code')
-            .annotate(count=Count('id'))
-            .order_by('-count')[:10]
+            GeoLocation.objects.filter(resolved_at__gte=since)
+            .values("country_code")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:10]
         )
 
         for country in top_countries:
-            code = country['country_code'] or 'Unknown'
+            code = country["country_code"] or "Unknown"
             flag = self._country_flag(code)
             self.stdout.write(f"  {flag} {code}: {country['count']:,}")
 
         # Provider statistics
         self.stdout.write("\n🔌 Provider Statistics:")
-        providers = GeoIPProvider.objects.filter(is_active=True).order_by('priority')
+        providers = GeoIPProvider.objects.filter(is_active=True).order_by("priority")
 
         for provider in providers:
             accuracy = provider.accuracy_rate
             avg_ms = provider.average_response_ms
 
             status = "✓" if provider.is_active else "✗"
-            color = self.style.SUCCESS if accuracy >= 90 else self.style.WARNING if accuracy >= 70 else self.style.ERROR
+            color = (
+                self.style.SUCCESS
+                if accuracy >= 90
+                else self.style.WARNING
+                if accuracy >= 70
+                else self.style.ERROR
+            )
 
             self.stdout.write(f"  {status} {provider.name}")
             self.stdout.write(f"     Type: {provider.get_provider_type_display()}")
@@ -74,18 +80,16 @@ class Command(BaseCommand):
         self.stdout.write("\n👥 Visitor Statistics:")
         total_visitors = VisitorLocation.objects.filter(last_seen__gte=since).count()
         returning_visitors = VisitorLocation.objects.filter(
-            last_seen__gte=since,
-            page_views__gt=1
+            last_seen__gte=since, page_views__gt=1
         ).count()
 
         # Correction rate
-        corrected = VisitorLocation.objects.filter(
-            last_seen__gte=since
-        ).exclude(
-            actual_country__isnull=True
-        ).exclude(
-            actual_country=F('resolved_country')
-        ).count()
+        corrected = (
+            VisitorLocation.objects.filter(last_seen__gte=since)
+            .exclude(actual_country__isnull=True)
+            .exclude(actual_country=F("resolved_country"))
+            .count()
+        )
 
         correction_rate = (corrected / total_visitors * 100) if total_visitors > 0 else 0
 
@@ -95,39 +99,37 @@ class Command(BaseCommand):
 
         # Detection statistics
         self.stdout.write("\n🔍 Detection Statistics:")
-        vpn_detected = GeoLocation.objects.filter(
-            resolved_at__gte=since,
-            is_vpn=True
-        ).count()
-        proxy_detected = GeoLocation.objects.filter(
-            resolved_at__gte=since,
-            is_proxy=True
-        ).count()
-        tor_detected = GeoLocation.objects.filter(
-            resolved_at__gte=since,
-            is_tor=True
-        ).count()
-        mobile_detected = GeoLocation.objects.filter(
-            resolved_at__gte=since,
-            is_mobile=True
-        ).count()
+        vpn_detected = GeoLocation.objects.filter(resolved_at__gte=since, is_vpn=True).count()
+        proxy_detected = GeoLocation.objects.filter(resolved_at__gte=since, is_proxy=True).count()
+        tor_detected = GeoLocation.objects.filter(resolved_at__gte=since, is_tor=True).count()
+        mobile_detected = GeoLocation.objects.filter(resolved_at__gte=since, is_mobile=True).count()
 
         if recent_cached > 0:
-            self.stdout.write(f"  VPN: {vpn_detected:,} ({vpn_detected/recent_cached*100:.1f}%)")
-            self.stdout.write(f"  Proxy: {proxy_detected:,} ({proxy_detected/recent_cached*100:.1f}%)")
-            self.stdout.write(f"  Tor: {tor_detected:,} ({tor_detected/recent_cached*100:.1f}%)")
-            self.stdout.write(f"  Mobile: {mobile_detected:,} ({mobile_detected/recent_cached*100:.1f}%)")
+            self.stdout.write(
+                f"  VPN: {vpn_detected:,} ({vpn_detected / recent_cached * 100:.1f}%)"
+            )
+            self.stdout.write(
+                f"  Proxy: {proxy_detected:,} ({proxy_detected / recent_cached * 100:.1f}%)"
+            )
+            self.stdout.write(
+                f"  Tor: {tor_detected:,} ({tor_detected / recent_cached * 100:.1f}%)"
+            )
+            self.stdout.write(
+                f"  Mobile: {mobile_detected:,} ({mobile_detected / recent_cached * 100:.1f}%)"
+            )
 
         # Business rules
         self.stdout.write("\n📋 Business Rules:")
-        active_rules = BusinessRule.objects.filter(is_active=True).order_by('-times_triggered')[:5]
+        active_rules = BusinessRule.objects.filter(is_active=True).order_by("-times_triggered")[:5]
 
         if active_rules:
             for rule in active_rules:
                 self.stdout.write(f"  {rule.name}")
                 self.stdout.write(f"     Triggered: {rule.times_triggered:,} times")
                 if rule.last_triggered:
-                    self.stdout.write(f"     Last: {rule.last_triggered.strftime('%Y-%m-%d %H:%M')}")
+                    self.stdout.write(
+                        f"     Last: {rule.last_triggered.strftime('%Y-%m-%d %H:%M')}"
+                    )
         else:
             self.stdout.write("  No active business rules")
 
@@ -137,14 +139,12 @@ class Command(BaseCommand):
             (0.9, 1.0, "High (90-100%)"),
             (0.7, 0.9, "Medium (70-90%)"),
             (0.5, 0.7, "Low (50-70%)"),
-            (0.0, 0.5, "Very Low (<50%)")
+            (0.0, 0.5, "Very Low (<50%)"),
         ]
 
         for min_conf, max_conf, label in confidence_ranges:
             count = GeoLocation.objects.filter(
-                resolved_at__gte=since,
-                confidence__gte=min_conf,
-                confidence__lt=max_conf
+                resolved_at__gte=since, confidence__gte=min_conf, confidence__lt=max_conf
             ).count()
 
             if recent_cached > 0:
@@ -158,5 +158,5 @@ class Command(BaseCommand):
     def _country_flag(self, country_code):
         """Convert country code to flag emoji"""
         if not country_code or len(country_code) != 2:
-            return '  '
-        return ''.join(chr(0x1F1E6 + ord(c) - ord('A')) for c in country_code.upper())
+            return "  "
+        return "".join(chr(0x1F1E6 + ord(c) - ord("A")) for c in country_code.upper())

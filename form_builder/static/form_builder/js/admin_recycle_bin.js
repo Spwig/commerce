@@ -2,45 +2,53 @@
 /* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
 
 (function () {
-    'use strict';
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var selectAll = document.getElementById('select-all');
-        var checkboxes = document.querySelectorAll('input[name="form_ids"]');
+  document.addEventListener('DOMContentLoaded', function () {
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('input[name="form_ids"]');
 
-        if (selectAll) {
-            selectAll.addEventListener('change', function (e) {
-                checkboxes.forEach(function (cb) { cb.checked = e.target.checked; });
-            });
-        }
-
+    if (selectAll) {
+      selectAll.addEventListener('change', function (e) {
         checkboxes.forEach(function (cb) {
-            cb.addEventListener('change', function () {
-                var allChecked = Array.from(checkboxes).every(function (c) { return c.checked; });
-                var someChecked = Array.from(checkboxes).some(function (c) { return c.checked; });
-                if (selectAll) {
-                    selectAll.checked = allChecked;
-                    selectAll.indeterminate = someChecked && !allChecked;
-                }
-            });
+          cb.checked = e.target.checked;
         });
+      });
+    }
 
-        // Handle data-confirm buttons
-        document.addEventListener('click', async function (e) {
-            var btn = e.target.closest('[data-confirm]');
-            if (!btn) return;
-            var msg = btn.getAttribute('data-confirm');
-            if (msg) {
-                e.preventDefault();
-                if (await AdminModal.confirm({
-                    message: msg,
-                    danger: true,
-                    confirmText: 'Delete'
-                })) {
-                    var form = btn.closest('form');
-                    if (form) form.submit();
-                }
-            }
+    checkboxes.forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        const allChecked = Array.from(checkboxes).every(function (c) {
+          return c.checked;
         });
+        const someChecked = Array.from(checkboxes).some(function (c) {
+          return c.checked;
+        });
+        if (selectAll) {
+          selectAll.checked = allChecked;
+          selectAll.indeterminate = someChecked && !allChecked;
+        }
+      });
     });
+
+    // Handle data-confirm buttons
+    document.addEventListener('click', async function (e) {
+      const btn = e.target.closest('[data-confirm]');
+      if (!btn) return;
+      const msg = btn.getAttribute('data-confirm');
+      if (msg) {
+        e.preventDefault();
+        if (
+          await AdminModal.confirm({
+            message: msg,
+            danger: true,
+            confirmText: 'Delete',
+          })
+        ) {
+          const form = btn.closest('form');
+          if (form) form.submit();
+        }
+      }
+    });
+  });
 })();

@@ -17,7 +17,7 @@ Exposes:
 """
 
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 
 from celery import shared_task
 from django.conf import settings
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 def _current_month_bucket() -> str:
-    return datetime.now(timezone.utc).strftime('%Y-%m')
+    return datetime.now(UTC).strftime("%Y-%m")
 
 
 @shared_task(bind=True, max_retries=0, ignore_result=True)
@@ -38,12 +38,14 @@ def refresh_hosted_service_usage(self):
     """
     try:
         from core.license import get_license_manager
+
         if not get_license_manager().is_community():
             return
     except Exception:
         return
 
     from core.hosted_services import refresh_usage_snapshot
+
     try:
         refresh_usage_snapshot()
     except Exception as e:
@@ -53,19 +55,20 @@ def refresh_hosted_service_usage(self):
 
 
 def _sent_key(service: str) -> str:
-    return f'hosted_services:quota_email_sent:{service}:{_current_month_bucket()}'
+    return f"hosted_services:quota_email_sent:{service}:{_current_month_bucket()}"
 
 
 def _admin_email() -> str:
     """Grab the site admin's email from ``SiteSettings``."""
     try:
         from core.models import SiteSettings
+
         site_settings = SiteSettings.objects.first()
         if site_settings and site_settings.admin_email:
             return site_settings.admin_email
     except Exception as e:
         logger.debug("Could not read SiteSettings.admin_email: %s", e)
-    return ''
+    return ""
 
 
 @shared_task(bind=True, max_retries=0, ignore_result=True)
@@ -77,6 +80,7 @@ def check_hosted_service_quotas(self):
     # Community edition only — paid tiers have plenty of headroom
     try:
         from core.license import get_license_manager
+
         if not get_license_manager().is_community():
             return
     except Exception:
@@ -91,17 +95,18 @@ def check_hosted_service_quotas(self):
     # don't want to fire the email off a snapshot that's up to 5 min
     # stale when the merchant may already be past 100%.
     from core.hosted_services import refresh_usage_snapshot
+
     snapshot = refresh_usage_snapshot()
 
     triggered = []
-    for key in ('geoip', 'geocoder', 'push'):
+    for key in ("geoip", "geocoder", "push"):
         svc = snapshot.get(key)
-        if not svc or not svc.get('primary_window'):
+        if not svc or not svc.get("primary_window"):
             continue
-        pct = svc['primary_window'].get('pct', 0)
+        pct = svc["primary_window"].get("pct", 0)
         # Only 90-99% band: at 100% the merchant already sees a 429 and the
         # bright red banner in-admin, so an email is redundant.
-        if pct < 90 or svc.get('over_limit'):
+        if pct < 90 or svc.get("over_limit"):
             continue
         sent_key = _sent_key(key)
         if cache.get(sent_key):
@@ -113,7 +118,7 @@ def check_hosted_service_quotas(self):
     if not triggered:
         return
 
-    upgrade_url = snapshot.get('upgrade_url', 'https://updates.spwig.com/upgrade/')
+    upgrade_url = snapshot.get("upgrade_url", "https://updates.spwig.com/upgrade/")
     _send_quota_email(admin_email, triggered, upgrade_url)
 
 
@@ -124,9 +129,8 @@ def _send_quota_email(to: str, services: list, upgrade_url: str) -> None:
     Uses ``email_system.services.email_sender`` if available; falls back to
     Django's ``send_mail`` if the email system isn't wired up (e.g. tests).
     """
-    subject_lines = ', '.join(
-        f"{s['service']}: {s['primary_window']['pct']}% used"
-        for s in services
+    subject_lines = ", ".join(
+        f"{s['service']}: {s['primary_window']['pct']}% used" for s in services
     )
     subject = f"Approaching Spwig service limit — {subject_lines}"
 
@@ -138,10 +142,9 @@ def _send_quota_email(to: str, services: list, upgrade_url: str) -> None:
         "",
     ]
     for s in services:
-        w = s['primary_window']
+        w = s["primary_window"]
         lines.append(
-            f"  • {s['service']}: {w['current']} / {w['limit']} "
-            f"({w['pct']}% used, {w['label']})"
+            f"  • {s['service']}: {w['current']} / {w['limit']} ({w['pct']}% used, {w['label']})"
         )
     lines += [
         "",
@@ -155,11 +158,12 @@ def _send_quota_email(to: str, services: list, upgrade_url: str) -> None:
         "",
         "— Spwig",
     ]
-    body = '\n'.join(lines)
+    body = "\n".join(lines)
 
     try:
         # Prefer the platform's email sender if available
         from email_system.services.email_sender import EmailSendingService
+
         service = EmailSendingService()
         service.send_email(
             to_email=to,
@@ -167,16 +171,16 @@ def _send_quota_email(to: str, services: list, upgrade_url: str) -> None:
             body_text=body,
             body_html=None,
         )
-        logger.info("Sent quota-warning email to %s for %d service(s)",
-                    to, len(services))
+        logger.info("Sent quota-warning email to %s for %d service(s)", to, len(services))
     except Exception as e:
         logger.debug("Email sender path failed (%s); falling back to send_mail", e)
         try:
             from django.core.mail import send_mail
+
             send_mail(
                 subject=subject,
                 message=body,
-                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
+                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
                 recipient_list=[to],
                 fail_silently=True,
             )

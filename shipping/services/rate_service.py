@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Rate Service - Calculate shipping rates from providers.
 
@@ -8,8 +7,10 @@ Orchestrates rate calculation workflow:
 3. Call provider get_rates() API
 4. Return standardized rate list
 """
+
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Any
+
 from django.utils.translation import gettext_lazy as _
 
 from shipping.providers.registry import ProviderRegistry
@@ -18,7 +19,7 @@ from shipping.utils.encryption import decrypt_credentials
 logger = logging.getLogger(__name__)
 
 
-def get_origin_address(destination_country_code: str) -> Dict[str, str]:
+def get_origin_address(destination_country_code: str) -> dict[str, str]:
     """
     Resolve the best origin/warehouse address for shipping to a destination country.
 
@@ -33,21 +34,26 @@ def get_origin_address(destination_country_code: str) -> Dict[str, str]:
     Returns:
         Origin address dictionary with keys: country, postal_code, state, city, address1, address2
     """
-    from shipping.models import ShippingCountry, CountryWarehouseFallback
+    from shipping.models import CountryWarehouseFallback, ShippingCountry
 
     # 1. Try primary warehouse from ShippingCountry
     try:
-        shipping_country = ShippingCountry.objects.select_related('source_warehouse').filter(
-            country_code=destination_country_code.upper(),
-            is_active=True,
-            source_warehouse__isnull=False,
-        ).first()
+        shipping_country = (
+            ShippingCountry.objects.select_related("source_warehouse")
+            .filter(
+                country_code=destination_country_code.upper(),
+                is_active=True,
+                source_warehouse__isnull=False,
+            )
+            .first()
+        )
 
         if shipping_country and shipping_country.source_warehouse:
             warehouse = shipping_country.source_warehouse
             logger.debug(
                 "Using primary warehouse '%s' for destination %s",
-                warehouse.name, destination_country_code
+                warehouse.name,
+                destination_country_code,
             )
             return _warehouse_to_address(warehouse)
     except Exception as e:
@@ -61,32 +67,42 @@ def get_origin_address(destination_country_code: str) -> Dict[str, str]:
         ).first()
 
         if shipping_country:
-            fallback = CountryWarehouseFallback.objects.select_related('warehouse').filter(
-                country=shipping_country,
-            ).order_by('priority').first()
+            fallback = (
+                CountryWarehouseFallback.objects.select_related("warehouse")
+                .filter(
+                    country=shipping_country,
+                )
+                .order_by("priority")
+                .first()
+            )
 
             if fallback and fallback.warehouse:
                 logger.debug(
                     "Using fallback warehouse '%s' (priority %d) for destination %s",
-                    fallback.warehouse.name, fallback.priority, destination_country_code
+                    fallback.warehouse.name,
+                    fallback.priority,
+                    destination_country_code,
                 )
                 return _warehouse_to_address(fallback.warehouse)
     except Exception as e:
-        logger.warning("Error looking up fallback warehouse for %s: %s", destination_country_code, e)
+        logger.warning(
+            "Error looking up fallback warehouse for %s: %s", destination_country_code, e
+        )
 
     # 3. Final fallback: SiteSettings business address
     try:
         from core.models import SiteSettings
+
         settings = SiteSettings.objects.first()
         if settings and settings.address_line_1:
             logger.debug("Using SiteSettings business address as shipping origin")
             return {
-                'country': settings.shipping_origin_country or settings.country or '',
-                'postal_code': settings.postal_code or '',
-                'state': settings.state_province or '',
-                'city': settings.city or '',
-                'address1': settings.address_line_1 or '',
-                'address2': settings.address_line_2 or '',
+                "country": settings.shipping_origin_country or settings.country or "",
+                "postal_code": settings.postal_code or "",
+                "state": settings.state_province or "",
+                "city": settings.city or "",
+                "address1": settings.address_line_1 or "",
+                "address2": settings.address_line_2 or "",
             }
     except Exception as e:
         logger.warning("Error loading SiteSettings for origin address: %s", e)
@@ -94,24 +110,24 @@ def get_origin_address(destination_country_code: str) -> Dict[str, str]:
     # Absolute fallback - empty address (caller should handle this)
     logger.warning("No origin address configured for destination %s", destination_country_code)
     return {
-        'country': '',
-        'postal_code': '',
-        'state': '',
-        'city': '',
-        'address1': '',
-        'address2': '',
+        "country": "",
+        "postal_code": "",
+        "state": "",
+        "city": "",
+        "address1": "",
+        "address2": "",
     }
 
 
-def _warehouse_to_address(warehouse) -> Dict[str, str]:
+def _warehouse_to_address(warehouse) -> dict[str, str]:
     """Convert a catalog.Warehouse model instance to an address dictionary."""
     return {
-        'country': warehouse.country or '',
-        'postal_code': warehouse.postal_code or '',
-        'state': warehouse.state_province or '',
-        'city': warehouse.city or '',
-        'address1': warehouse.address_line1 or '',
-        'address2': warehouse.address_line2 or '',
+        "country": warehouse.country or "",
+        "postal_code": warehouse.postal_code or "",
+        "state": warehouse.state_province or "",
+        "city": warehouse.city or "",
+        "address1": warehouse.address_line1 or "",
+        "address2": warehouse.address_line2 or "",
     }
 
 
@@ -121,11 +137,11 @@ class RateService:
     @staticmethod
     def get_rates(
         provider_account,
-        origin: Dict[str, str],
-        destination: Dict[str, str],
-        parcels: List[Dict[str, Any]],
-        options: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+        origin: dict[str, str],
+        destination: dict[str, str],
+        parcels: list[dict[str, Any]],
+        options: dict[str, Any] | None = None,
+    ) -> list[dict[str, Any]]:
         """
         Get shipping rates from a provider.
 
@@ -181,18 +197,15 @@ class RateService:
         provider_class = ProviderRegistry.get_provider(provider_account.component.slug)
         if not provider_class:
             raise ValueError(
-                _("Provider '%(provider)s' not found or not registered") %
-                {'provider': provider_account.component.slug}
+                _("Provider '%(provider)s' not found or not registered")
+                % {"provider": provider_account.component.slug}
             )
 
         # Decrypt credentials
         credentials = decrypt_credentials(provider_account.credentials_encrypted)
 
         # Initialize provider
-        provider = provider_class(
-            credentials=credentials,
-            config=provider_account.settings
-        )
+        provider = provider_class(credentials=credentials, config=provider_account.settings)
 
         # Call provider API
         logger.info(
@@ -202,27 +215,21 @@ class RateService:
 
         try:
             rates = provider.get_rates(
-                origin=origin,
-                destination=destination,
-                parcels=parcels,
-                options=options or {}
+                origin=origin, destination=destination, parcels=parcels, options=options or {}
             )
 
-            logger.info(
-                f"Retrieved {len(rates)} rates from {provider.provider_name}"
-            )
+            logger.info(f"Retrieved {len(rates)} rates from {provider.provider_name}")
 
             return rates
 
         except Exception as e:
-            logger.error(
-                f"Failed to fetch rates from {provider.provider_name}: {e}",
-                exc_info=True
-            )
+            logger.error(f"Failed to fetch rates from {provider.provider_name}: {e}", exc_info=True)
             raise
 
     @staticmethod
-    def get_rates_from_order(provider_account, order, parcels: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def get_rates_from_order(
+        provider_account, order, parcels: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """
         Get shipping rates for an order.
 
@@ -238,21 +245,21 @@ class RateService:
         """
         # Build destination from order shipping address
         destination = {
-            'country': order.shipping_address.get('country', ''),
-            'postal_code': order.shipping_address.get('postal_code', ''),
-            'state': order.shipping_address.get('state', ''),
-            'city': order.shipping_address.get('city', ''),
-            'address1': order.shipping_address.get('address1', ''),
-            'address2': order.shipping_address.get('address2', ''),
+            "country": order.shipping_address.get("country", ""),
+            "postal_code": order.shipping_address.get("postal_code", ""),
+            "state": order.shipping_address.get("state", ""),
+            "city": order.shipping_address.get("city", ""),
+            "address1": order.shipping_address.get("address1", ""),
+            "address2": order.shipping_address.get("address2", ""),
         }
 
         # Resolve origin address from warehouse → fallback warehouse → SiteSettings
-        origin = get_origin_address(destination['country'])
+        origin = get_origin_address(destination["country"])
 
         return RateService.get_rates(
             provider_account=provider_account,
             origin=origin,
             destination=destination,
             parcels=parcels,
-            options={}
+            options={},
         )

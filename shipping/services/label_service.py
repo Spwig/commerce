@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Label Service - Purchase shipping labels from providers.
 
@@ -10,12 +9,13 @@ Orchestrates the complete label purchase workflow:
 5. Create TrackingEvent audit record
 6. Update Order.tracking_number if this is the first shipment
 """
+
 import logging
-from typing import Dict, Any, Optional
-from decimal import Decimal
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
+from typing import Any
+
 from django.db import transaction
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from shipping.models import Shipment, TrackingEvent
 from shipping.providers.registry import ProviderRegistry
@@ -30,10 +30,10 @@ class LabelService:
     @staticmethod
     def buy_label(
         shipment: Shipment,
-        rate: Dict[str, Any],
-        label_format: str = 'PDF',
-        label_size: str = '4x6',
-    ) -> Dict[str, Any]:
+        rate: dict[str, Any],
+        label_format: str = "PDF",
+        label_size: str = "4x6",
+    ) -> dict[str, Any]:
         """
         Purchase shipping label for a shipment.
 
@@ -70,8 +70,8 @@ class LabelService:
         provider_class = ProviderRegistry.get_provider(shipment.provider_account.component.slug)
         if not provider_class:
             raise ValueError(
-                _("Provider '%(provider)s' not found or not registered") %
-                {'provider': shipment.provider_account.component.slug}
+                _("Provider '%(provider)s' not found or not registered")
+                % {"provider": shipment.provider_account.component.slug}
             )
 
         # Decrypt credentials
@@ -79,23 +79,18 @@ class LabelService:
 
         # Initialize provider
         provider = provider_class(
-            credentials=credentials,
-            config=shipment.provider_account.settings
+            credentials=credentials, config=shipment.provider_account.settings
         )
 
         # Build options from shipment data
         options = LabelService._build_label_options(shipment, label_format, label_size)
 
         # Call provider API
-        logger.info(
-            f"Purchasing label for shipment {shipment.id} via {provider.provider_name}"
-        )
+        logger.info(f"Purchasing label for shipment {shipment.id} via {provider.provider_name}")
 
         try:
             label_info = provider.buy_label(
-                shipment_id=str(shipment.id),
-                rate=rate,
-                options=options
+                shipment_id=str(shipment.id), rate=rate, options=options
             )
 
             # Update shipment with atomic transaction
@@ -112,18 +107,13 @@ class LabelService:
             return label_info
 
         except Exception as e:
-            logger.error(
-                f"Failed to purchase label for shipment {shipment.id}: {e}",
-                exc_info=True
-            )
+            logger.error(f"Failed to purchase label for shipment {shipment.id}: {e}", exc_info=True)
             raise
 
     @staticmethod
     def _build_label_options(
-        shipment: Shipment,
-        label_format: str,
-        label_size: str
-    ) -> Dict[str, Any]:
+        shipment: Shipment, label_format: str, label_size: str
+    ) -> dict[str, Any]:
         """
         Build provider-specific options from shipment data.
 
@@ -142,21 +132,21 @@ class LabelService:
         # TODO: Get warehouse/origin address from store settings
         # For now, use placeholder - will be enhanced in future phase
         origin = {
-            'country': shipment.origin_country,
-            'postal_code': '10001',  # TODO: Get from store settings
-            'state': 'NY',
-            'city': 'New York',
-            'address1': '123 Main St',  # TODO: Get from store settings
+            "country": shipment.origin_country,
+            "postal_code": "10001",  # TODO: Get from store settings
+            "state": "NY",
+            "city": "New York",
+            "address1": "123 Main St",  # TODO: Get from store settings
         }
 
         # Build destination address from order
         destination = {
-            'country': shipment.dest_country,
-            'postal_code': order.shipping_address.get('postal_code', ''),
-            'state': order.shipping_address.get('state', ''),
-            'city': order.shipping_address.get('city', ''),
-            'address1': order.shipping_address.get('address1', ''),
-            'address2': order.shipping_address.get('address2', ''),
+            "country": shipment.dest_country,
+            "postal_code": order.shipping_address.get("postal_code", ""),
+            "state": order.shipping_address.get("state", ""),
+            "city": order.shipping_address.get("city", ""),
+            "address1": order.shipping_address.get("address1", ""),
+            "address2": order.shipping_address.get("address2", ""),
         }
 
         # Build parcels from shipment.packages
@@ -164,32 +154,35 @@ class LabelService:
 
         # Build shipper information
         # TODO: Get from store settings
-        shipper_name = 'Your Store Name'  # TODO: Get from site settings
-        shipper_phone = '+12125551234'  # TODO: Get from site settings
+        shipper_name = "Your Store Name"  # TODO: Get from site settings
+        shipper_phone = "+12125551234"  # TODO: Get from site settings
 
         # Build recipient information from order
-        recipient_name = order.customer_name or f"{order.shipping_address.get('first_name', '')} {order.shipping_address.get('last_name', '')}".strip()
-        recipient_phone = order.shipping_address.get('phone', '')
+        recipient_name = (
+            order.customer_name
+            or f"{order.shipping_address.get('first_name', '')} {order.shipping_address.get('last_name', '')}".strip()
+        )
+        recipient_phone = order.shipping_address.get("phone", "")
         recipient_email = order.customer_email
 
         options = {
-            'origin': origin,
-            'destination': destination,
-            'parcels': parcels,
-            'shipper_name': shipper_name,
-            'shipper_phone': shipper_phone,
-            'shipper_email': 'shipping@example.com',  # TODO: Get from settings
-            'recipient_name': recipient_name,
-            'recipient_phone': recipient_phone,
-            'recipient_email': recipient_email,
-            'label_format': label_format,
-            'label_size': label_size,
+            "origin": origin,
+            "destination": destination,
+            "parcels": parcels,
+            "shipper_name": shipper_name,
+            "shipper_phone": shipper_phone,
+            "shipper_email": "shipping@example.com",  # TODO: Get from settings
+            "recipient_name": recipient_name,
+            "recipient_phone": recipient_phone,
+            "recipient_email": recipient_email,
+            "label_format": label_format,
+            "label_size": label_size,
         }
 
         return options
 
     @staticmethod
-    def _update_shipment(shipment: Shipment, label_info: Dict[str, Any]) -> None:
+    def _update_shipment(shipment: Shipment, label_info: dict[str, Any]) -> None:
         """
         Update shipment with label information.
 
@@ -197,33 +190,35 @@ class LabelService:
             shipment: Shipment instance to update
             label_info: Label information from provider
         """
-        shipment.tracking_id = label_info['tracking_number']
-        shipment.label_url = label_info['label_url']
-        shipment.status = 'labeled'
+        shipment.tracking_id = label_info["tracking_number"]
+        shipment.label_url = label_info["label_url"]
+        shipment.status = "labeled"
 
         # Update carrier cost if provided
-        if 'cost' in label_info and 'currency' in label_info:
-            shipment.carrier_cost = label_info['cost']
-            shipment.carrier_cost_currency = label_info['currency']
+        if "cost" in label_info and "currency" in label_info:
+            shipment.carrier_cost = label_info["cost"]
+            shipment.carrier_cost_currency = label_info["currency"]
 
         # Store provider reference if provided
-        if 'external_shipment_id' in label_info:
-            shipment.provider_reference = label_info['external_shipment_id']
+        if "external_shipment_id" in label_info:
+            shipment.provider_reference = label_info["external_shipment_id"]
 
         # Add to audit log
-        shipment.audit_log.append({
-            'timestamp': timezone.now().isoformat(),
-            'action': 'label_purchased',
-            'tracking_number': label_info['tracking_number'],
-            'carrier': label_info.get('carrier', ''),
-            'service': label_info.get('service', ''),
-            'cost': str(label_info.get('cost', '')),
-        })
+        shipment.audit_log.append(
+            {
+                "timestamp": timezone.now().isoformat(),
+                "action": "label_purchased",
+                "tracking_number": label_info["tracking_number"],
+                "carrier": label_info.get("carrier", ""),
+                "service": label_info.get("service", ""),
+                "cost": str(label_info.get("cost", "")),
+            }
+        )
 
         shipment.save()
 
     @staticmethod
-    def _create_tracking_event(shipment: Shipment, label_info: Dict[str, Any]) -> None:
+    def _create_tracking_event(shipment: Shipment, label_info: dict[str, Any]) -> None:
         """
         Create initial tracking event for label purchase.
 
@@ -233,11 +228,11 @@ class LabelService:
         """
         TrackingEvent.objects.create(
             shipment=shipment,
-            status='info_received',
-            description=_('Shipping label created'),
-            location='',
+            status="info_received",
+            description=_("Shipping label created"),
+            location="",
             occurred_at=timezone.now(),
-            raw={'label_info': label_info}
+            raw={"label_info": label_info},
         )
 
     @staticmethod
@@ -253,7 +248,7 @@ class LabelService:
         # Only update if order doesn't have a tracking number yet
         if not order.tracking_number and shipment.tracking_id:
             order.tracking_number = shipment.tracking_id
-            order.save(update_fields=['tracking_number'])
+            order.save(update_fields=["tracking_number"])
 
             logger.info(
                 f"Updated order {order.order_number} with tracking number: {shipment.tracking_id}"

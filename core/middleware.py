@@ -21,7 +21,7 @@ warnings.warn(
     "Importing from 'core.middleware' is deprecated. "
     "Use 'core.middleware.license' or 'core.middleware.currency' instead.",
     DeprecationWarning,
-    stacklevel=2
+    stacklevel=2,
 )
 
-__all__ = ['LicenseEnforcementMiddleware']
+__all__ = ["LicenseEnforcementMiddleware"]

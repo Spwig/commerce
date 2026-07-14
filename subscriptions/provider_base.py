@@ -2,13 +2,12 @@
 Subscription Provider Abstraction Layer
 Supports both native provider subscriptions (Stripe, PayPal) and fallback internal billing.
 """
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
-from decimal import Decimal
-from datetime import datetime, timedelta
-from django.utils import timezone
-from django.conf import settings
+
 import logging
+from abc import ABC, abstractmethod
+from datetime import datetime
+from decimal import Decimal
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -29,13 +28,14 @@ class SubscriptionProviderBase(ABC):
         self.gateway = gateway
         # Support both PaymentProviderAccount (credentials_encrypted) and
         # legacy gateway objects (configuration)
-        if hasattr(gateway, 'configuration'):
+        if hasattr(gateway, "configuration"):
             self.config = gateway.configuration
-        elif hasattr(gateway, 'credentials_encrypted'):
+        elif hasattr(gateway, "credentials_encrypted"):
             raw = gateway.credentials_encrypted or {}
             # Decrypt credentials — the encrypted JSONField stores secret
             # values as {'value': '...', 'encrypted': True} dicts.
             from payment_providers.utils.encryption import decrypt_credentials
+
             try:
                 self.config = decrypt_credentials(raw)
             except Exception:
@@ -46,7 +46,7 @@ class SubscriptionProviderBase(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return provider capabilities.
 
@@ -66,7 +66,7 @@ class SubscriptionProviderBase(ABC):
     # ===========================
 
     @abstractmethod
-    def create_customer(self, user, email: str, metadata: Optional[Dict] = None) -> Dict[str, Any]:
+    def create_customer(self, user, email: str, metadata: dict | None = None) -> dict[str, Any]:
         """
         Create a customer record in the payment provider.
 
@@ -82,10 +82,8 @@ class SubscriptionProviderBase(ABC):
 
     @abstractmethod
     def create_payment_token(
-        self,
-        customer_id: str,
-        payment_method_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, customer_id: str, payment_method_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Tokenize a payment method for recurring billing.
 
@@ -127,9 +125,9 @@ class SubscriptionProviderBase(ABC):
         customer_id: str,
         plan_id: str,
         payment_token_id: str,
-        trial_end: Optional[datetime] = None,
-        metadata: Optional[Dict] = None
-    ) -> Dict[str, Any]:
+        trial_end: datetime | None = None,
+        metadata: dict | None = None,
+    ) -> dict[str, Any]:
         """
         Create a subscription using provider's native subscription API.
         Only called for providers with native_subscriptions=True.
@@ -150,17 +148,15 @@ class SubscriptionProviderBase(ABC):
                 'next_billing_date': datetime,
             }
         """
-        if not self.capabilities['native_subscriptions']:
+        if not self.capabilities["native_subscriptions"]:
             raise NotImplementedError(
                 f"{self.__class__.__name__} does not support native subscriptions"
             )
         return {}
 
     def cancel_subscription(
-        self,
-        subscription_id: str,
-        immediately: bool = False
-    ) -> Dict[str, Any]:
+        self, subscription_id: str, immediately: bool = False
+    ) -> dict[str, Any]:
         """
         Cancel a provider-managed subscription.
         Only called for providers with native_subscriptions=True.
@@ -172,13 +168,13 @@ class SubscriptionProviderBase(ABC):
         Returns:
             dict: {'status': str, 'canceled_at': datetime}
         """
-        if not self.capabilities['native_subscriptions']:
+        if not self.capabilities["native_subscriptions"]:
             raise NotImplementedError(
                 f"{self.__class__.__name__} does not support native subscriptions"
             )
         return {}
 
-    def pause_subscription(self, subscription_id: str) -> Dict[str, Any]:
+    def pause_subscription(self, subscription_id: str) -> dict[str, Any]:
         """
         Pause a provider-managed subscription.
         Only called for providers with native_subscriptions=True.
@@ -189,13 +185,13 @@ class SubscriptionProviderBase(ABC):
         Returns:
             dict: {'status': str, 'paused_at': datetime}
         """
-        if not self.capabilities['native_subscriptions']:
+        if not self.capabilities["native_subscriptions"]:
             raise NotImplementedError(
                 f"{self.__class__.__name__} does not support native subscriptions"
             )
         return {}
 
-    def resume_subscription(self, subscription_id: str) -> Dict[str, Any]:
+    def resume_subscription(self, subscription_id: str) -> dict[str, Any]:
         """
         Resume a paused provider-managed subscription.
         Only called for providers with native_subscriptions=True.
@@ -206,7 +202,7 @@ class SubscriptionProviderBase(ABC):
         Returns:
             dict: {'status': str, 'resumed_at': datetime}
         """
-        if not self.capabilities['native_subscriptions']:
+        if not self.capabilities["native_subscriptions"]:
             raise NotImplementedError(
                 f"{self.__class__.__name__} does not support native subscriptions"
             )
@@ -215,10 +211,10 @@ class SubscriptionProviderBase(ABC):
     def update_subscription(
         self,
         subscription_id: str,
-        plan_id: Optional[str] = None,
-        payment_token_id: Optional[str] = None,
-        proration_behavior: Optional[str] = None
-    ) -> Dict[str, Any]:
+        plan_id: str | None = None,
+        payment_token_id: str | None = None,
+        proration_behavior: str | None = None,
+    ) -> dict[str, Any]:
         """
         Update subscription plan or payment method.
         Only called for providers with native_subscriptions=True.
@@ -232,7 +228,7 @@ class SubscriptionProviderBase(ABC):
         Returns:
             dict: {'status': str, 'updated_at': datetime}
         """
-        if not self.capabilities['native_subscriptions']:
+        if not self.capabilities["native_subscriptions"]:
             raise NotImplementedError(
                 f"{self.__class__.__name__} does not support native subscriptions"
             )
@@ -249,8 +245,8 @@ class SubscriptionProviderBase(ABC):
         amount: Decimal,
         currency: str,
         description: str,
-        metadata: Optional[Dict] = None
-    ) -> Dict[str, Any]:
+        metadata: dict | None = None,
+    ) -> dict[str, Any]:
         """
         Charge a tokenized payment method (for fallback billing).
 
@@ -291,7 +287,7 @@ class SubscriptionProviderBase(ABC):
         # Default implementation - providers should override
         return True
 
-    def parse_webhook_event(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def parse_webhook_event(self, payload: dict[str, Any]) -> dict[str, Any]:
         """
         Parse webhook payload into standardized event format.
 
@@ -309,10 +305,11 @@ class SubscriptionProviderBase(ABC):
         """
         # Default implementation - providers should override
         return {
-            'event_type': 'unknown',
-            'event_id': '',
-            'data': payload,
+            "event_type": "unknown",
+            "event_id": "",
+            "data": payload,
         }
+
 
 class FallbackSubscriptionProvider(SubscriptionProviderBase):
     """
@@ -321,14 +318,14 @@ class FallbackSubscriptionProvider(SubscriptionProviderBase):
     """
 
     @property
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         return {
-            'native_subscriptions': False,  # Uses fallback engine
-            'tokenization': True,
-            'webhooks': True,
-            'trial_periods': True,  # Handled by internal engine
-            'prorated_billing': False,
-            'usage_based': False,
+            "native_subscriptions": False,  # Uses fallback engine
+            "tokenization": True,
+            "webhooks": True,
+            "trial_periods": True,  # Handled by internal engine
+            "prorated_billing": False,
+            "usage_based": False,
         }
 
     def create_subscription(self, *args, **kwargs):
@@ -340,34 +337,26 @@ class FallbackSubscriptionProvider(SubscriptionProviderBase):
 
     def cancel_subscription(self, *args, **kwargs):
         """Fallback providers don't manage provider-side subscriptions"""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} uses fallback billing engine."
-        )
+        raise NotImplementedError(f"{self.__class__.__name__} uses fallback billing engine.")
 
     def pause_subscription(self, *args, **kwargs):
         """Fallback providers don't manage provider-side subscriptions"""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} uses fallback billing engine."
-        )
+        raise NotImplementedError(f"{self.__class__.__name__} uses fallback billing engine.")
 
     def resume_subscription(self, *args, **kwargs):
         """Fallback providers don't manage provider-side subscriptions"""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} uses fallback billing engine."
-        )
+        raise NotImplementedError(f"{self.__class__.__name__} uses fallback billing engine.")
 
     def update_subscription(self, *args, **kwargs):
         """Fallback providers don't manage provider-side subscriptions"""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} uses fallback billing engine."
-        )
+        raise NotImplementedError(f"{self.__class__.__name__} uses fallback billing engine.")
 
 
 # ===========================
 # Provider Registry
 # ===========================
 
-_PROVIDER_REGISTRY: Dict[str, type] = {}
+_PROVIDER_REGISTRY: dict[str, type] = {}
 _COMPONENT_PROVIDERS_DISCOVERED: bool = False
 
 
@@ -382,9 +371,9 @@ def _resolve_gateway_name(gateway_or_account) -> str:
     Returns:
         str: Provider name for registry lookup
     """
-    if hasattr(gateway_or_account, 'component'):
+    if hasattr(gateway_or_account, "component"):
         return gateway_or_account.component.slug
-    if hasattr(gateway_or_account, 'name'):
+    if hasattr(gateway_or_account, "name"):
         return gateway_or_account.name
     return str(gateway_or_account)
 
@@ -398,9 +387,11 @@ def register_provider(gateway_name: str):
         class StripeSubscriptionProvider(SubscriptionProviderBase):
             ...
     """
+
     def decorator(provider_class):
         _PROVIDER_REGISTRY[gateway_name] = provider_class
         return provider_class
+
     return decorator
 
 
@@ -423,15 +414,16 @@ def _discover_component_providers() -> None:
     try:
         from component_updates.integration_paths import INTEGRATIONS_DIR
 
-        components_dir = INTEGRATIONS_DIR / 'payment_provider'
+        components_dir = INTEGRATIONS_DIR / "payment_provider"
 
         if not components_dir.exists():
             return
 
         try:
             from component_updates.models import ComponentRegistry
+
             provider_components = ComponentRegistry.objects.filter(
-                component_type='payment_provider'
+                component_type="payment_provider"
             ).exclude(current_version__isnull=True)
         except Exception:
             # Fall back to scanning filesystem if DB isn't ready
@@ -440,15 +432,14 @@ def _discover_component_providers() -> None:
         if provider_components is not None:
             for component in provider_components:
                 _load_component_subscription_provider(
-                    components_dir / component.slug / 'current',
-                    component.slug
+                    components_dir / component.slug / "current", component.slug
                 )
         else:
             # Filesystem fallback: scan component directories
             for slug_dir in components_dir.iterdir():
                 if not slug_dir.is_dir():
                     continue
-                current_dir = slug_dir / 'current'
+                current_dir = slug_dir / "current"
                 if current_dir.exists():
                     _load_component_subscription_provider(current_dir, slug_dir.name)
 
@@ -469,7 +460,7 @@ def _load_component_subscription_provider(component_dir, slug: str) -> None:
     from pathlib import Path
 
     component_dir = Path(component_dir)
-    sp_file = component_dir / 'subscription_provider.py'
+    sp_file = component_dir / "subscription_provider.py"
 
     if not sp_file.exists():
         return

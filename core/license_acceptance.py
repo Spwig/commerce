@@ -9,16 +9,15 @@ Storage: {BASE_DIR}/license_acceptance.json (JSON, not executable Python)
 Audit: LicenseAcceptanceRecord model in database
 """
 
-import json
 import hashlib
+import json
 import logging
 import os
 import re
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict, Optional, Tuple
 
 from django.conf import settings
 
@@ -41,32 +40,31 @@ class LicenseAcceptanceService:
 
     def __init__(self):
         self.base_dir = Path(settings.BASE_DIR)
-        self.license_path = self.base_dir / 'LICENSE.txt'
+        self.license_path = self.base_dir / "LICENSE.txt"
 
         # Store acceptance alongside the license file on a persistent volume
         # so it survives container rebuilds / upgrades. Fall back to BASE_DIR
         # for dev environments where the license volume doesn't exist.
-        license_dir = Path(getattr(
-            settings, 'LICENSE_PATH',
-            '/opt/shop-platform/license/license.json'
-        )).parent
+        license_dir = Path(
+            getattr(settings, "LICENSE_PATH", "/opt/shop-platform/license/license.json")
+        ).parent
         if license_dir.is_dir():
-            self.acceptance_path = license_dir / 'license_acceptance.json'
+            self.acceptance_path = license_dir / "license_acceptance.json"
         else:
-            self.acceptance_path = self.base_dir / 'license_acceptance.json'
+            self.acceptance_path = self.base_dir / "license_acceptance.json"
 
     def is_accepted(self) -> bool:
         """Check if the license agreement has been accepted."""
         # Check environment variable override (for Docker/CI)
-        if os.environ.get('SPWIG_ACCEPT_LICENSE', '').lower() == 'true':
+        if os.environ.get("SPWIG_ACCEPT_LICENSE", "").lower() == "true":
             return True
 
         info = self._get_cached_acceptance()
         if info is None:
             return False
-        return info.get('accepted', False)
+        return info.get("accepted", False)
 
-    def needs_reacceptance(self) -> Tuple[bool, Optional[str]]:
+    def needs_reacceptance(self) -> tuple[bool, str | None]:
         """
         Check if the license version has changed materially since acceptance.
 
@@ -80,19 +78,19 @@ class LicenseAcceptanceService:
         if not info:
             return True, None
 
-        accepted_version = info.get('license_version', '0.0.0')
+        accepted_version = info.get("license_version", "0.0.0")
         current_version = self.get_current_license_version()
 
         if not current_version:
             return False, None
 
         try:
-            accepted_parts = [int(x) for x in accepted_version.split('.')]
-            current_parts = [int(x) for x in current_version.split('.')]
+            accepted_parts = [int(x) for x in accepted_version.split(".")]
+            current_parts = [int(x) for x in current_version.split(".")]
 
             # Major version bump requires re-acceptance
             if current_parts[0] > accepted_parts[0]:
-                return True, 'major'
+                return True, "major"
 
         except (ValueError, IndexError):
             logger.warning(
@@ -102,7 +100,7 @@ class LicenseAcceptanceService:
 
         return False, None
 
-    def get_acceptance_info(self) -> Optional[Dict]:
+    def get_acceptance_info(self) -> dict | None:
         """Get the current acceptance record."""
         return self._get_cached_acceptance()
 
@@ -113,13 +111,13 @@ class LicenseAcceptanceService:
             return ""
 
         try:
-            with open(self.license_path, 'r', encoding='utf-8') as f:
+            with open(self.license_path, encoding="utf-8") as f:
                 return f.read()
         except Exception as e:
             logger.error(f"Failed to read LICENSE.txt: {e}")
             return ""
 
-    def get_current_license_version(self) -> Optional[str]:
+    def get_current_license_version(self) -> str | None:
         """Extract version from LICENSE.txt header."""
         license_text = self.get_license_text()
         if not license_text:
@@ -127,23 +125,23 @@ class LicenseAcceptanceService:
         return self.extract_license_version(license_text)
 
     @staticmethod
-    def extract_license_version(license_text: str) -> Optional[str]:
+    def extract_license_version(license_text: str) -> str | None:
         """Extract version string from license header."""
-        match = re.search(r'Version:\s*(\d+\.\d+\.\d+)', license_text)
+        match = re.search(r"Version:\s*(\d+\.\d+\.\d+)", license_text)
         return match.group(1) if match else None
 
     @staticmethod
     def compute_checksum(text: str) -> str:
         """Compute SHA-256 checksum of license text."""
-        return hashlib.sha256(text.encode('utf-8')).hexdigest()
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
     def record_acceptance(
         self,
-        accepted_via: str = 'web',
-        ip_address: Optional[str] = None,
-        email: str = '',
+        accepted_via: str = "web",
+        ip_address: str | None = None,
+        email: str = "",
         user=None,
-    ) -> Dict:
+    ) -> dict:
         """
         Record license acceptance to JSON file and database.
 
@@ -159,20 +157,20 @@ class LicenseAcceptanceService:
         from core.version import __version__ as software_version
 
         license_text = self.get_license_text()
-        license_version = self.extract_license_version(license_text) or '1.0.0'
+        license_version = self.extract_license_version(license_text) or "1.0.0"
         checksum = self.compute_checksum(license_text)
         installation_id = str(uuid.uuid4())
 
         acceptance_data = {
-            'accepted': True,
-            'license_version': license_version,
-            'software_version': software_version,
-            'timestamp': datetime.now(timezone.utc).isoformat(),
-            'accepted_via': accepted_via,
-            'installation_id': installation_id,
-            'license_checksum': f'sha256:{checksum}',
-            'accepted_by_email': email,
-            'ip_address': ip_address or '',
+            "accepted": True,
+            "license_version": license_version,
+            "software_version": software_version,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "accepted_via": accepted_via,
+            "installation_id": installation_id,
+            "license_checksum": f"sha256:{checksum}",
+            "accepted_by_email": email,
+            "ip_address": ip_address or "",
         }
 
         # Write JSON file
@@ -191,8 +189,7 @@ class LicenseAcceptanceService:
             pass  # Silent failure — local acceptance is authoritative
 
         logger.info(
-            f"License v{license_version} accepted via {accepted_via} "
-            f"by {email or 'unknown'}"
+            f"License v{license_version} accepted via {accepted_via} by {email or 'unknown'}"
         )
 
         return acceptance_data
@@ -208,11 +205,11 @@ class LicenseAcceptanceService:
             return False
 
         current_checksum = self.compute_checksum(license_text)
-        accepted_checksum = info.get('license_checksum', '').replace('sha256:', '')
+        accepted_checksum = info.get("license_checksum", "").replace("sha256:", "")
 
         return current_checksum == accepted_checksum
 
-    def phone_home(self, acceptance_data: Optional[Dict] = None):
+    def phone_home(self, acceptance_data: dict | None = None):
         """
         Report license acceptance to the upgrade server.
 
@@ -221,26 +218,28 @@ class LicenseAcceptanceService:
         For re-acceptance of registered installations, reports immediately.
         """
         info = acceptance_data or self.get_acceptance_info()
-        if not info or not info.get('accepted'):
+        if not info or not info.get("accepted"):
             return
 
         try:
             from component_updates.models import UpdateServerConfig
+
             config = UpdateServerConfig.get_instance()
             if not config.jwt_token or not config.is_jwt_valid():
                 return  # Will be sent during next registration
 
             import requests as http_requests
+
             response = http_requests.post(
                 f"{config.server_url}/api/v1/license-acceptance/report/",
                 json={
-                    'license_version': info.get('license_version', ''),
-                    'accepted_at': info.get('timestamp', ''),
-                    'checksum': info.get('license_checksum', ''),
-                    'accepted_via': info.get('accepted_via', ''),
-                    'accepted_by_email': info.get('accepted_by_email', ''),
+                    "license_version": info.get("license_version", ""),
+                    "accepted_at": info.get("timestamp", ""),
+                    "checksum": info.get("license_checksum", ""),
+                    "accepted_via": info.get("accepted_via", ""),
+                    "accepted_by_email": info.get("accepted_by_email", ""),
                 },
-                headers={'Authorization': f'Bearer {config.jwt_token}'},
+                headers={"Authorization": f"Bearer {config.jwt_token}"},
                 timeout=10,
             )
             response.raise_for_status()
@@ -250,7 +249,7 @@ class LicenseAcceptanceService:
 
     # --- Private methods ---
 
-    def _get_cached_acceptance(self) -> Optional[Dict]:
+    def _get_cached_acceptance(self) -> dict | None:
         """Get acceptance info with class-level caching."""
         now = time.time()
         if (
@@ -269,48 +268,46 @@ class LicenseAcceptanceService:
         LicenseAcceptanceService._acceptance_cache = None
         LicenseAcceptanceService._cache_time = 0
 
-    def _read_acceptance_file(self) -> Optional[Dict]:
+    def _read_acceptance_file(self) -> dict | None:
         """Read the acceptance JSON file."""
         if not self.acceptance_path.exists():
             return None
 
         try:
-            with open(self.acceptance_path, 'r', encoding='utf-8') as f:
+            with open(self.acceptance_path, encoding="utf-8") as f:
                 return json.load(f)
-        except (json.JSONDecodeError, IOError) as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.error(f"Failed to read license_acceptance.json: {e}")
             return None
 
-    def _write_acceptance_file(self, data: Dict):
+    def _write_acceptance_file(self, data: dict):
         """Write the acceptance JSON file."""
         try:
             self.acceptance_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.acceptance_path, 'w', encoding='utf-8') as f:
+            with open(self.acceptance_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-        except IOError as e:
+        except OSError as e:
             logger.error(f"Failed to write license_acceptance.json: {e}")
             raise
 
-    def _write_db_record(self, data: Dict, user=None):
+    def _write_db_record(self, data: dict, user=None):
         """Write acceptance record to database (best-effort)."""
         try:
             from core.models import LicenseAcceptanceRecord
 
             # Mark all previous records as not current
-            LicenseAcceptanceRecord.objects.filter(
-                is_current=True
-            ).update(is_current=False)
+            LicenseAcceptanceRecord.objects.filter(is_current=True).update(is_current=False)
 
             # Create new record
             LicenseAcceptanceRecord.objects.create(
-                license_version=data['license_version'],
-                software_version=data['software_version'],
+                license_version=data["license_version"],
+                software_version=data["software_version"],
                 accepted_by=user,
-                accepted_by_email=data.get('accepted_by_email', ''),
-                accepted_via=data['accepted_via'],
-                installation_id=data['installation_id'],
-                license_checksum=data['license_checksum'],
-                ip_address=data.get('ip_address') or None,
+                accepted_by_email=data.get("accepted_by_email", ""),
+                accepted_via=data["accepted_via"],
+                installation_id=data["installation_id"],
+                license_checksum=data["license_checksum"],
+                ip_address=data.get("ip_address") or None,
                 is_current=True,
             )
         except Exception as e:

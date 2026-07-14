@@ -11,15 +11,15 @@ class ProductDesignConfig(models.Model):
     """Master configuration linking a customizable product to its visual design editor."""
 
     EDITOR_MODE_CHOICES = [
-        ('canvas', _('Canvas Editor')),
-        ('simple', _('Simple Form')),
+        ("canvas", _("Canvas Editor")),
+        ("simple", _("Simple Form")),
     ]
 
     product = models.OneToOneField(
-        'catalog.Product',
+        "catalog.Product",
         on_delete=models.CASCADE,
-        related_name='design_config',
-        limit_choices_to={'product_type': 'customizable'},
+        related_name="design_config",
+        limit_choices_to={"product_type": "customizable"},
         verbose_name=_("Product"),
     )
     is_enabled = models.BooleanField(
@@ -30,9 +30,11 @@ class ProductDesignConfig(models.Model):
     editor_mode = models.CharField(
         max_length=20,
         choices=EDITOR_MODE_CHOICES,
-        default='canvas',
+        default="canvas",
         verbose_name=_("Editor Mode"),
-        help_text=_("Canvas: full visual editor with Fabric.js. Simple: traditional form fields only."),
+        help_text=_(
+            "Canvas: full visual editor with Fabric.js. Simple: traditional form fields only."
+        ),
     )
 
     # Feature toggles
@@ -75,7 +77,7 @@ class ProductDesignConfig(models.Model):
     base_design_fee = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default_currency='USD',
+        default_currency="USD",
         default=0,
         blank=True,
         verbose_name=_("Base Design Fee"),
@@ -84,7 +86,7 @@ class ProductDesignConfig(models.Model):
     per_surface_fee = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default_currency='USD',
+        default_currency="USD",
         default=0,
         blank=True,
         verbose_name=_("Per Surface Fee"),
@@ -93,7 +95,7 @@ class ProductDesignConfig(models.Model):
     per_upload_fee = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default_currency='USD',
+        default_currency="USD",
         default=0,
         blank=True,
         verbose_name=_("Per Upload Fee"),
@@ -102,7 +104,7 @@ class ProductDesignConfig(models.Model):
     per_text_fee = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default_currency='USD',
+        default_currency="USD",
         default=0,
         blank=True,
         verbose_name=_("Per Text Fee"),
@@ -124,15 +126,15 @@ class ProductSurface(models.Model):
     """A designable area/face of a product (e.g., Front, Back, Left Sleeve)."""
 
     UNIT_CHOICES = [
-        ('mm', _('Millimeters')),
-        ('in', _('Inches')),
-        ('px', _('Pixels')),
+        ("mm", _("Millimeters")),
+        ("in", _("Inches")),
+        ("px", _("Pixels")),
     ]
 
     design_config = models.ForeignKey(
         ProductDesignConfig,
         on_delete=models.CASCADE,
-        related_name='surfaces',
+        related_name="surfaces",
         verbose_name=_("Design Configuration"),
     )
     name = models.CharField(
@@ -151,11 +153,11 @@ class ProductSurface(models.Model):
 
     # Mockup image
     mockup_image = models.ForeignKey(
-        'media_library.MediaAsset',
+        "media_library.MediaAsset",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='surface_mockups',
+        related_name="surface_mockups",
         verbose_name=_("Mockup Image"),
         help_text=_("Product photo showing this surface/angle."),
     )
@@ -164,7 +166,7 @@ class ProductSurface(models.Model):
     dimension_unit = models.CharField(
         max_length=5,
         choices=UNIT_CHOICES,
-        default='mm',
+        default="mm",
         verbose_name=_("Dimension Unit"),
     )
     width = models.DecimalField(
@@ -188,14 +190,18 @@ class ProductSurface(models.Model):
         decimal_places=2,
         default=25,
         verbose_name=_("Zone X Position (%)"),
-        help_text=_("Horizontal position of design zone on the mockup image, as percentage from left."),
+        help_text=_(
+            "Horizontal position of design zone on the mockup image, as percentage from left."
+        ),
     )
     area_y_percent = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         default=15,
         verbose_name=_("Zone Y Position (%)"),
-        help_text=_("Vertical position of design zone on the mockup image, as percentage from top."),
+        help_text=_(
+            "Vertical position of design zone on the mockup image, as percentage from top."
+        ),
     )
     area_width_percent = models.DecimalField(
         max_digits=5,
@@ -236,11 +242,13 @@ class ProductSurface(models.Model):
         null=True,
         blank=True,
         verbose_name=_("Max Colors"),
-        help_text=_("Maximum number of colors allowed (for screen printing). Leave blank for unlimited."),
+        help_text=_(
+            "Maximum number of colors allowed (for screen printing). Leave blank for unlimited."
+        ),
     )
     background_color = models.CharField(
         max_length=20,
-        default='#ffffff',
+        default="#ffffff",
         verbose_name=_("Background Color"),
         help_text=_("Default background color for the design canvas."),
     )
@@ -285,8 +293,8 @@ class ProductSurface(models.Model):
     class Meta:
         verbose_name = _("Product Surface")
         verbose_name_plural = _("Product Surfaces")
-        ordering = ['sort_order', 'name']
-        unique_together = [('design_config', 'slug')]
+        ordering = ["sort_order", "name"]
+        unique_together = [("design_config", "slug")]
 
     def __str__(self):
         return f"{self.design_config.product.name} - {self.name}"
@@ -316,7 +324,7 @@ class DesignTemplate(models.Model):
     design_config = models.ForeignKey(
         ProductDesignConfig,
         on_delete=models.CASCADE,
-        related_name='templates',
+        related_name="templates",
         verbose_name=_("Design Configuration"),
     )
     name = models.CharField(
@@ -347,11 +355,11 @@ class DesignTemplate(models.Model):
 
     # Preview thumbnail
     thumbnail = models.ForeignKey(
-        'media_library.MediaAsset',
+        "media_library.MediaAsset",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='template_thumbnails',
+        related_name="template_thumbnails",
         verbose_name=_("Thumbnail"),
     )
 
@@ -370,8 +378,8 @@ class DesignTemplate(models.Model):
     class Meta:
         verbose_name = _("Design Template")
         verbose_name_plural = _("Design Templates")
-        ordering = ['sort_order', 'name']
-        unique_together = [('design_config', 'slug')]
+        ordering = ["sort_order", "name"]
+        unique_together = [("design_config", "slug")]
 
     def __str__(self):
         return self.name
@@ -381,21 +389,21 @@ class DesignTemplateElement(models.Model):
     """Individual element within a design template, with lock controls."""
 
     ELEMENT_TYPE_CHOICES = [
-        ('text', _('Text')),
-        ('image', _('Image')),
-        ('clipart', _('Clipart')),
+        ("text", _("Text")),
+        ("image", _("Image")),
+        ("clipart", _("Clipart")),
     ]
 
     template = models.ForeignKey(
         DesignTemplate,
         on_delete=models.CASCADE,
-        related_name='elements',
+        related_name="elements",
         verbose_name=_("Template"),
     )
     surface = models.ForeignKey(
         ProductSurface,
         on_delete=models.CASCADE,
-        related_name='template_elements',
+        related_name="template_elements",
         verbose_name=_("Surface"),
     )
     element_type = models.CharField(
@@ -450,7 +458,7 @@ class DesignTemplateElement(models.Model):
     class Meta:
         verbose_name = _("Design Template Element")
         verbose_name_plural = _("Design Template Elements")
-        ordering = ['sort_order']
+        ordering = ["sort_order"]
 
     def __str__(self):
         return f"{self.template.name} - {self.get_element_type_display()} on {self.surface.name}"
@@ -489,7 +497,7 @@ class ClipartCategory(models.Model):
     class Meta:
         verbose_name = _("Clipart Category")
         verbose_name_plural = _("Clipart Categories")
-        ordering = ['sort_order', 'name']
+        ordering = ["sort_order", "name"]
 
     def __str__(self):
         return self.name
@@ -499,14 +507,14 @@ class ClipartAsset(models.Model):
     """Individual clipart/icon/graphic that merchants provide for customers."""
 
     SCOPE_CHOICES = [
-        ('global', _('Available to All Products')),
-        ('product', _('Specific Product Only')),
+        ("global", _("Available to All Products")),
+        ("product", _("Specific Product Only")),
     ]
 
     category = models.ForeignKey(
         ClipartCategory,
         on_delete=models.CASCADE,
-        related_name='assets',
+        related_name="assets",
         verbose_name=_("Category"),
     )
     name = models.CharField(
@@ -514,24 +522,24 @@ class ClipartAsset(models.Model):
         verbose_name=_("Name"),
     )
     media_asset = models.ForeignKey(
-        'media_library.MediaAsset',
+        "media_library.MediaAsset",
         on_delete=models.PROTECT,
-        related_name='clipart_usages',
+        related_name="clipart_usages",
         verbose_name=_("Image Asset"),
         help_text=_("PNG or SVG file for the clipart."),
     )
     scope = models.CharField(
         max_length=20,
         choices=SCOPE_CHOICES,
-        default='global',
+        default="global",
         verbose_name=_("Scope"),
     )
     product = models.ForeignKey(
-        'catalog.Product',
+        "catalog.Product",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='clipart_assets',
+        related_name="clipart_assets",
         verbose_name=_("Product"),
         help_text=_("Only set when scope is 'Specific Product Only'."),
     )
@@ -556,7 +564,7 @@ class ClipartAsset(models.Model):
     class Meta:
         verbose_name = _("Clipart Asset")
         verbose_name_plural = _("Clipart Assets")
-        ordering = ['sort_order', 'name']
+        ordering = ["sort_order", "name"]
 
     def __str__(self):
         return self.name
@@ -579,36 +587,36 @@ class CustomFont(models.Model):
 
     # Font files (at least regular is required for custom fonts)
     regular = models.ForeignKey(
-        'media_library.MediaAsset',
+        "media_library.MediaAsset",
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name="+",
         null=True,
         blank=True,
         verbose_name=_("Regular"),
         help_text=_("WOFF2 or TTF file for regular weight."),
     )
     bold = models.ForeignKey(
-        'media_library.MediaAsset',
+        "media_library.MediaAsset",
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name="+",
         null=True,
         blank=True,
         verbose_name=_("Bold"),
         help_text=_("WOFF2 or TTF file for bold weight."),
     )
     italic = models.ForeignKey(
-        'media_library.MediaAsset',
+        "media_library.MediaAsset",
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name="+",
         null=True,
         blank=True,
         verbose_name=_("Italic"),
         help_text=_("WOFF2 or TTF file for italic style."),
     )
     bold_italic = models.ForeignKey(
-        'media_library.MediaAsset',
+        "media_library.MediaAsset",
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name="+",
         null=True,
         blank=True,
         verbose_name=_("Bold Italic"),
@@ -635,7 +643,7 @@ class CustomFont(models.Model):
     class Meta:
         verbose_name = _("Custom Font")
         verbose_name_plural = _("Custom Fonts")
-        ordering = ['sort_order', 'name']
+        ordering = ["sort_order", "name"]
 
     def __str__(self):
         return self.name
@@ -647,13 +655,13 @@ class SavedDesign(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='saved_designs',
+        related_name="saved_designs",
         verbose_name=_("User"),
     )
     product = models.ForeignKey(
-        'catalog.Product',
+        "catalog.Product",
         on_delete=models.CASCADE,
-        related_name='saved_designs',
+        related_name="saved_designs",
         verbose_name=_("Product"),
     )
     name = models.CharField(
@@ -678,7 +686,7 @@ class SavedDesign(models.Model):
     class Meta:
         verbose_name = _("Saved Design")
         verbose_name_plural = _("Saved Designs")
-        ordering = ['-updated_at']
+        ordering = ["-updated_at"]
 
     def __str__(self):
         return f"{self.name} ({self.product.name})"
@@ -705,13 +713,13 @@ class DesignDraft(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='design_drafts',
+        related_name="design_drafts",
         verbose_name=_("User"),
     )
     product = models.ForeignKey(
-        'catalog.Product',
+        "catalog.Product",
         on_delete=models.CASCADE,
-        related_name='design_drafts',
+        related_name="design_drafts",
         verbose_name=_("Product"),
     )
     design_data = models.JSONField(
@@ -722,7 +730,7 @@ class DesignDraft(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Thumbnails"),
-        help_text=_('Per-surface thumbnail MediaAsset IDs.'),
+        help_text=_("Per-surface thumbnail MediaAsset IDs."),
     )
     pricing_breakdown = models.JSONField(
         default=dict,
@@ -742,9 +750,9 @@ class DesignDraft(models.Model):
         verbose_name = _("Design Draft")
         verbose_name_plural = _("Design Drafts")
         indexes = [
-            models.Index(fields=['token']),
-            models.Index(fields=['expires_at']),
-            models.Index(fields=['session_key']),
+            models.Index(fields=["token"]),
+            models.Index(fields=["expires_at"]),
+            models.Index(fields=["session_key"]),
         ]
 
     def __str__(self):
@@ -764,9 +772,9 @@ class DesignSnapshot(models.Model):
     """Immutable snapshot of a design at the time of order placement for fulfillment."""
 
     order_item = models.OneToOneField(
-        'orders.OrderItem',
+        "orders.OrderItem",
         on_delete=models.CASCADE,
-        related_name='design_snapshot',
+        related_name="design_snapshot",
         verbose_name=_("Order Item"),
     )
     design_data = models.JSONField(
@@ -784,7 +792,7 @@ class DesignSnapshot(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Fulfillment Files"),
-        help_text=_('High-resolution composite MediaAsset IDs for printing.'),
+        help_text=_("High-resolution composite MediaAsset IDs for printing."),
     )
     is_rendered = models.BooleanField(
         default=False,

@@ -37,16 +37,17 @@ imports should be queued through the migration Celery infrastructure
 in a follow-up — `MigrationJob` is already linked from `VoucherCode`
 for exactly that upgrade path.
 """
+
 from __future__ import annotations
 
 import csv
 import io
 import logging
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime
-from decimal import Decimal
-from typing import Any, Iterable
+from typing import Any
 
 import openpyxl
 from django.core.exceptions import ValidationError
@@ -77,8 +78,15 @@ MAPPABLE_FIELDS: dict[str, dict[str, Any]] = {
         "required": True,
         "max_length": 50,
         "aliases": (
-            "code", "voucher_code", "coupon_code", "voucher", "coupon",
-            "promo_code", "discount_code", "vouchercode", "couponcode",
+            "code",
+            "voucher_code",
+            "coupon_code",
+            "voucher",
+            "coupon",
+            "promo_code",
+            "discount_code",
+            "vouchercode",
+            "couponcode",
         ),
     },
     "name": {
@@ -86,8 +94,12 @@ MAPPABLE_FIELDS: dict[str, dict[str, Any]] = {
         "required": False,
         "max_length": 200,
         "aliases": (
-            "name", "voucher_name", "title", "internal_name",
-            "description_short", "campaign",
+            "name",
+            "voucher_name",
+            "title",
+            "internal_name",
+            "description_short",
+            "campaign",
         ),
     },
     "description": {
@@ -101,8 +113,14 @@ MAPPABLE_FIELDS: dict[str, dict[str, Any]] = {
         "required": False,
         "max_length": 100,
         "aliases": (
-            "external_id", "externalid", "source_id", "member_id",
-            "customer_id", "user_id", "external_ref", "reference",
+            "external_id",
+            "externalid",
+            "source_id",
+            "member_id",
+            "customer_id",
+            "user_id",
+            "external_ref",
+            "reference",
         ),
     },
 }
@@ -113,19 +131,34 @@ DUPLICATE_STRATEGIES = ("skip", "overwrite", "fail")
 #: shape. Keeping these aligned is what makes export → edit → re-import
 #: a stable round-trip; see `tests/unit/test_voucher_import_export.py`.
 EXPORT_COLUMNS: tuple[str, ...] = (
-    "code", "name", "description", "external_id",
-    "discount_type", "discount_value", "max_discount_amount",
-    "application_scope", "start_date", "end_date", "days_valid",
-    "max_uses_total", "max_uses_per_customer", "current_uses",
-    "min_order_value", "exclude_sale_items",
-    "cannot_combine_with_other_vouchers", "cannot_combine_with_sale_items",
-    "first_time_customers_only", "is_active", "created_at",
+    "code",
+    "name",
+    "description",
+    "external_id",
+    "discount_type",
+    "discount_value",
+    "max_discount_amount",
+    "application_scope",
+    "start_date",
+    "end_date",
+    "days_valid",
+    "max_uses_total",
+    "max_uses_per_customer",
+    "current_uses",
+    "min_order_value",
+    "exclude_sale_items",
+    "cannot_combine_with_other_vouchers",
+    "cannot_combine_with_sale_items",
+    "first_time_customers_only",
+    "is_active",
+    "created_at",
 )
 
 
 # ---------------------------------------------------------------------------
 # Result types
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class ParsedFile:
@@ -189,6 +222,7 @@ class ImportResult:
 # Parsing
 # ---------------------------------------------------------------------------
 
+
 def _normalise_header(header: str | None) -> str:
     """Lowercase and squash punctuation/whitespace for header matching."""
     if not header:
@@ -206,15 +240,11 @@ def parse_file(uploaded_file) -> ParsedFile:
     """
     name = (getattr(uploaded_file, "name", "") or "").lower()
     if not name.endswith(ALLOWED_EXTENSIONS):
-        raise ValidationError(
-            _("Unsupported file type. Upload a .csv or .xlsx file.")
-        )
+        raise ValidationError(_("Unsupported file type. Upload a .csv or .xlsx file."))
 
     size = getattr(uploaded_file, "size", None)
     if size is not None and size > MAX_UPLOAD_BYTES:
-        raise ValidationError(
-            _("File is too large. Maximum upload size is 5 MB.")
-        )
+        raise ValidationError(_("File is too large. Maximum upload size is 5 MB."))
 
     if name.endswith(".csv"):
         headers, rows = _parse_csv(uploaded_file)
@@ -224,7 +254,8 @@ def parse_file(uploaded_file) -> ParsedFile:
     if len(rows) > MAX_ROWS:
         raise ValidationError(
             _("Too many rows ({count}). Maximum is {limit} per import.").format(
-                count=len(rows), limit=MAX_ROWS,
+                count=len(rows),
+                limit=MAX_ROWS,
             )
         )
 
@@ -261,7 +292,7 @@ def _parse_csv(uploaded_file) -> tuple[list[str], list[dict[str, str]]]:
             continue
         # Pad/truncate to header width so dict zipping is total.
         cells = (cells + [""] * len(headers))[: len(headers)]
-        out.append(dict(zip(headers, cells)))
+        out.append(dict(zip(headers, cells, strict=True)))
     return headers, out
 
 
@@ -286,7 +317,7 @@ def _parse_xlsx(uploaded_file) -> tuple[list[str], list[dict[str, str]]]:
         if not any(c for c in cells):
             continue
         cells = (cells + [""] * len(headers))[: len(headers)]
-        out.append(dict(zip(headers, cells)))
+        out.append(dict(zip(headers, cells, strict=True)))
     return headers, out
 
 
@@ -303,6 +334,7 @@ def _cell_to_str(value: Any) -> str:
 # ---------------------------------------------------------------------------
 # Mapping
 # ---------------------------------------------------------------------------
+
 
 def auto_detect_mapping(headers: Iterable[str]) -> dict[str, str]:
     """Suggest a {target_field: source_header} mapping from headers.
@@ -334,9 +366,7 @@ def validate_mapping(mapping: dict[str, str], headers: Iterable[str]) -> dict[st
             continue
         if source not in headers_set:
             raise ValidationError(
-                _("Column '{source}' not found in the uploaded file.").format(
-                    source=source
-                )
+                _("Column '{source}' not found in the uploaded file.").format(source=source)
             )
         cleaned[target] = source
 
@@ -349,9 +379,8 @@ def validate_mapping(mapping: dict[str, str], headers: Iterable[str]) -> dict[st
 # Validation + preview
 # ---------------------------------------------------------------------------
 
-def _row_to_target_values(
-    row: dict[str, str], mapping: dict[str, str]
-) -> dict[str, str]:
+
+def _row_to_target_values(row: dict[str, str], mapping: dict[str, str]) -> dict[str, str]:
     """Translate one raw file row into a `{target_field: value}` dict."""
     return {target: (row.get(source) or "").strip() for target, source in mapping.items()}
 
@@ -380,12 +409,16 @@ def partition_rows(
         for target, max_len in (("name", 200), ("external_id", 100)):
             val = targets.get(target, "")
             if val and max_len and len(val) > max_len:
-                invalid.append(InvalidRow(
-                    idx, code,
-                    str(_("{target} exceeds {max_len} characters")).format(
-                        target=target, max_len=max_len,
-                    ),
-                ))
+                invalid.append(
+                    InvalidRow(
+                        idx,
+                        code,
+                        str(_("{target} exceeds {max_len} characters")).format(
+                            target=target,
+                            max_len=max_len,
+                        ),
+                    )
+                )
                 ok = False
                 break
         if not ok:
@@ -405,11 +438,7 @@ def find_existing_codes(codes: Iterable[str]) -> set[str]:
     codes_list = list(codes)
     if not codes_list:
         return set()
-    return set(
-        VoucherCode.objects
-        .filter(code__in=codes_list)
-        .values_list("code", flat=True)
-    )
+    return set(VoucherCode.objects.filter(code__in=codes_list).values_list("code", flat=True))
 
 
 def build_preview(parsed: ParsedFile, mapping: dict[str, str]) -> ImportPreview:
@@ -429,6 +458,7 @@ def build_preview(parsed: ParsedFile, mapping: dict[str, str]) -> ImportPreview:
 # ---------------------------------------------------------------------------
 # Import
 # ---------------------------------------------------------------------------
+
 
 def _normalise_batch_settings(settings: dict[str, Any]) -> dict[str, Any]:
     """Strip blank values so the model defaults / `null=True` columns
@@ -502,15 +532,17 @@ def import_batch(
             if dup_strategy == "overwrite":
                 codes_to_update.append(code)
             continue
-        to_create.append(VoucherCode(
-            code=code,
-            name=row.get("name") or f"Imported voucher {code}",
-            description=row.get("description", ""),
-            external_id=row.get("external_id", ""),
-            created_by=user,
-            migration_job=job,
-            **settings,
-        ))
+        to_create.append(
+            VoucherCode(
+                code=code,
+                name=row.get("name") or f"Imported voucher {code}",
+                description=row.get("description", ""),
+                external_id=row.get("external_id", ""),
+                created_by=user,
+                migration_job=job,
+                **settings,
+            )
+        )
 
     if to_create:
         VoucherCode.objects.bulk_create(to_create, batch_size=500)
@@ -537,14 +569,22 @@ def import_batch(
     job.coupons_skipped = result.skipped_duplicate + result.skipped_invalid
     job.status = "completed"
     job.progress_percent = 100
-    job.save(update_fields=[
-        "coupons_imported", "coupons_skipped", "status", "progress_percent",
-    ])
+    job.save(
+        update_fields=[
+            "coupons_imported",
+            "coupons_skipped",
+            "status",
+            "progress_percent",
+        ]
+    )
 
     logger.info(
         "Voucher import complete: job=%s imported=%d updated=%d skipped_dup=%d skipped_invalid=%d",
-        job.id, result.imported, result.updated,
-        result.skipped_duplicate, result.skipped_invalid,
+        job.id,
+        result.imported,
+        result.updated,
+        result.skipped_duplicate,
+        result.skipped_invalid,
     )
     return result
 
@@ -553,8 +593,10 @@ def import_batch(
 # Export
 # ---------------------------------------------------------------------------
 
+
 def _voucher_row(voucher: VoucherCode) -> list[Any]:
     """Project a `VoucherCode` onto `EXPORT_COLUMNS`."""
+
     def money_amount(field):
         value = getattr(voucher, field)
         return str(value.amount) if value and hasattr(value, "amount") else ""
@@ -608,9 +650,7 @@ def export_queryset(queryset, fmt: str = "csv", filename: str = "vouchers") -> H
         buffer.seek(0)
         response = HttpResponse(
             buffer.getvalue(),
-            content_type=(
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            ),
+            content_type=("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
         )
         response["Content-Disposition"] = f'attachment; filename="{filename}.xlsx"'
         return response

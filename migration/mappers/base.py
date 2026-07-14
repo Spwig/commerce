@@ -2,10 +2,12 @@
 Base Mapper
 Abstract base class for all data mappers
 """
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
-from django.utils.text import slugify
+
 import logging
+from abc import ABC, abstractmethod
+from typing import Any
+
+from django.utils.text import slugify
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,7 @@ class BaseMapper(ABC):
         self.warnings = []
 
     @abstractmethod
-    def map(self, source_data: Dict) -> Dict:
+    def map(self, source_data: dict) -> dict:
         """
         Map source data to internal format
 
@@ -41,7 +43,7 @@ class BaseMapper(ABC):
         """
         pass
 
-    def safe_get(self, data: Dict, *keys, default=None):
+    def safe_get(self, data: dict, *keys, default=None):
         """
         Safely get nested dictionary values
 
@@ -75,7 +77,7 @@ class BaseMapper(ABC):
             URL-safe slug
         """
         if not text:
-            return ''
+            return ""
 
         slug = slugify(text)
         return slug[:max_length] if len(slug) > max_length else slug
@@ -91,12 +93,12 @@ class BaseMapper(ABC):
             Cleaned HTML
         """
         if not html:
-            return ''
+            return ""
 
         # Basic HTML cleaning - can be enhanced with bleach or similar
         return html.strip()
 
-    def parse_price(self, price_str: str) -> Optional[float]:
+    def parse_price(self, price_str: str) -> float | None:
         """
         Parse price string to float
 
@@ -111,7 +113,7 @@ class BaseMapper(ABC):
 
         try:
             # Remove currency symbols and commas
-            cleaned = str(price_str).replace('$', '').replace(',', '').strip()
+            cleaned = str(price_str).replace("$", "").replace(",", "").strip()
             return float(cleaned)
         except (ValueError, TypeError):
             self.warnings.append(f"Failed to parse price: {price_str}")
@@ -131,11 +133,11 @@ class BaseMapper(ABC):
             return value
 
         if isinstance(value, str):
-            return value.lower() in ('true', 'yes', '1', 'on')
+            return value.lower() in ("true", "yes", "1", "on")
 
         return bool(value)
 
-    def log_error(self, message: str, data: Optional[Dict] = None):
+    def log_error(self, message: str, data: dict | None = None):
         """
         Log a mapping error
 
@@ -143,14 +145,14 @@ class BaseMapper(ABC):
             message: Error message
             data: Optional data context
         """
-        error = {'message': message}
+        error = {"message": message}
         if data:
-            error['data'] = data
+            error["data"] = data
 
         self.errors.append(error)
         logger.error(f"Mapping error: {message}")
 
-    def log_warning(self, message: str, data: Optional[Dict] = None):
+    def log_warning(self, message: str, data: dict | None = None):
         """
         Log a mapping warning
 
@@ -158,18 +160,18 @@ class BaseMapper(ABC):
             message: Warning message
             data: Optional data context
         """
-        warning = {'message': message}
+        warning = {"message": message}
         if data:
-            warning['data'] = data
+            warning["data"] = data
 
         self.warnings.append(warning)
         logger.warning(f"Mapping warning: {message}")
 
-    def get_errors(self) -> List[Dict]:
+    def get_errors(self) -> list[dict]:
         """Get all logged errors"""
         return self.errors
 
-    def get_warnings(self) -> List[Dict]:
+    def get_warnings(self) -> list[dict]:
         """Get all logged warnings"""
         return self.warnings
 

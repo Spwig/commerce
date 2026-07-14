@@ -10,6 +10,8 @@
 // are initialized directly on translatable fields
 
 // Legacy function kept for compatibility if needed
-window.openTranslationEditor = function(elementId) {
-    console.warn('openTranslationEditor is deprecated. Translation editors are now attached directly to translatable fields.');
+window.openTranslationEditor = function (elementId) {
+  console.warn(
+    'openTranslationEditor is deprecated. Translation editors are now attached directly to translatable fields.'
+  );
 };

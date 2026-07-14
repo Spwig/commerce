@@ -6,35 +6,35 @@
  * for CSP compliance.
  */
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    function initLocationWidget() {
-        document.querySelectorAll('.geoip-location-widget').forEach(function(widget) {
-            var currencySelector = widget.querySelector('.currency-selector');
-            var languageSelector = widget.querySelector('.language-selector');
+  function initLocationWidget() {
+    document.querySelectorAll('.geoip-location-widget').forEach(function (widget) {
+      const currencySelector = widget.querySelector('.currency-selector');
+      const languageSelector = widget.querySelector('.language-selector');
 
-            if (currencySelector) {
-                currencySelector.addEventListener('change', function() {
-                    if (window.GeoIP && typeof window.GeoIP.setPreference === 'function') {
-                        window.GeoIP.setPreference('currency', this.value);
-                    }
-                });
-            }
-
-            if (languageSelector) {
-                languageSelector.addEventListener('change', function() {
-                    if (window.GeoIP && typeof window.GeoIP.setPreference === 'function') {
-                        window.GeoIP.setPreference('language', this.value);
-                    }
-                });
-            }
+      if (currencySelector) {
+        currencySelector.addEventListener('change', function () {
+          if (window.GeoIP && typeof window.GeoIP.setPreference === 'function') {
+            window.GeoIP.setPreference('currency', this.value);
+          }
         });
-    }
+      }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initLocationWidget);
-    } else {
-        initLocationWidget();
-    }
+      if (languageSelector) {
+        languageSelector.addEventListener('change', function () {
+          if (window.GeoIP && typeof window.GeoIP.setPreference === 'function') {
+            window.GeoIP.setPreference('language', this.value);
+          }
+        });
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLocationWidget);
+  } else {
+    initLocationWidget();
+  }
 })();

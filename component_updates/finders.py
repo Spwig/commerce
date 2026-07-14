@@ -22,17 +22,28 @@ from django.contrib.staticfiles import utils as staticfiles_utils
 from django.contrib.staticfiles.finders import BaseFinder
 from django.core.files.storage import FileSystemStorage
 
-
 # File extensions that are actual static assets served to browsers
-STATIC_EXTENSIONS = frozenset({
-    '.svg', '.png', '.gif', '.jpg', '.jpeg', '.webp', '.ico',
-    '.css', '.js',
-    '.woff', '.woff2', '.ttf', '.eot',
-    '.json',
-})
+STATIC_EXTENSIONS = frozenset(
+    {
+        ".svg",
+        ".png",
+        ".gif",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".ico",
+        ".css",
+        ".js",
+        ".woff",
+        ".woff2",
+        ".ttf",
+        ".eot",
+        ".json",
+    }
+)
 
 
-_VERSION_RE = re.compile(r'^v?\d+\.\d+\.\d+$')
+_VERSION_RE = re.compile(r"^v?\d+\.\d+\.\d+$")
 
 
 def _is_version_dir(name):
@@ -51,9 +62,9 @@ class IntegrationStaticFinder(BaseFinder):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.integrations_root = Path(settings.BASE_DIR) / 'components_data' / 'integrations'
+        self.integrations_root = Path(settings.BASE_DIR) / "components_data" / "integrations"
         self.storage = FileSystemStorage(location=str(self.integrations_root))
-        self.storage.prefix = ''
+        self.storage.prefix = ""
 
     def _is_static_asset(self, path):
         """Check if a file path has a static asset extension."""
@@ -66,7 +77,7 @@ class IntegrationStaticFinder(BaseFinder):
             if all:
                 return [str(full_path)]
             return str(full_path)
-        return [] if all else ''
+        return [] if all else ""
 
     def list(self, ignore_patterns):
         """
@@ -78,10 +89,7 @@ class IntegrationStaticFinder(BaseFinder):
         for root, dirs, files in os.walk(str(self.integrations_root), followlinks=True):
             # Skip __pycache__ and versioned directories (v1.0.0, v2.1.3, etc.)
             # Only the 'current' symlink is used for static URL resolution.
-            dirs[:] = [
-                d for d in dirs
-                if d != '__pycache__' and not _is_version_dir(d)
-            ]
+            dirs[:] = [d for d in dirs if d != "__pycache__" and not _is_version_dir(d)]
 
             for filename in files:
                 if not self._is_static_asset(filename):
@@ -111,9 +119,9 @@ class ComponentStaticFinder(BaseFinder):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.static_root = Path(settings.BASE_DIR) / 'components_data' / 'static'
+        self.static_root = Path(settings.BASE_DIR) / "components_data" / "static"
         self.storage = FileSystemStorage(location=str(self.static_root))
-        self.storage.prefix = ''
+        self.storage.prefix = ""
 
     def find(self, path, all=False):
         """Find a requested static file in the components static directory."""
@@ -122,7 +130,7 @@ class ComponentStaticFinder(BaseFinder):
             if all:
                 return [str(full_path)]
             return str(full_path)
-        return [] if all else ''
+        return [] if all else ""
 
     def list(self, ignore_patterns):
         """
@@ -134,10 +142,7 @@ class ComponentStaticFinder(BaseFinder):
         for root, dirs, files in os.walk(str(self.static_root), followlinks=True):
             # Skip __pycache__ and versioned directories.
             # Only the 'current' symlink is used for static URL resolution.
-            dirs[:] = [
-                d for d in dirs
-                if d != '__pycache__' and not _is_version_dir(d)
-            ]
+            dirs[:] = [d for d in dirs if d != "__pycache__" and not _is_version_dir(d)]
 
             for filename in files:
                 full_path = os.path.join(root, filename)

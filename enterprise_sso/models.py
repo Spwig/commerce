@@ -19,9 +19,11 @@ class SSOProviderConfig(models.Model):
     # Display
     provider_name = models.CharField(
         max_length=100,
-        default='SSO',
+        default="SSO",
         verbose_name=_("Provider Name"),
-        help_text=_("Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google Workspace'"),
+        help_text=_(
+            "Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google Workspace'"
+        ),
     )
 
     # OIDC Core Settings
@@ -29,7 +31,9 @@ class SSOProviderConfig(models.Model):
         max_length=500,
         blank=True,
         verbose_name=_("OIDC Discovery URL"),
-        help_text=_("OpenID Connect discovery endpoint (e.g. https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-configuration)"),
+        help_text=_(
+            "OpenID Connect discovery endpoint (e.g. https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-configuration)"
+        ),
     )
     oidc_authorization_endpoint = models.URLField(
         max_length=500,
@@ -67,35 +71,37 @@ class SSOProviderConfig(models.Model):
     )
     oidc_client_secret_encrypted = models.BinaryField(
         blank=True,
-        default=b'',
+        default=b"",
         verbose_name=_("Client Secret (Encrypted)"),
     )
 
     # Claims mapping
     claim_email = models.CharField(
         max_length=100,
-        default='email',
+        default="email",
         verbose_name=_("Email Claim"),
         help_text=_("OIDC claim field for user email address"),
     )
     claim_first_name = models.CharField(
         max_length=100,
-        default='given_name',
+        default="given_name",
         verbose_name=_("First Name Claim"),
         help_text=_("OIDC claim field for first name"),
     )
     claim_last_name = models.CharField(
         max_length=100,
-        default='family_name',
+        default="family_name",
         verbose_name=_("Last Name Claim"),
         help_text=_("OIDC claim field for last name"),
     )
     claim_groups = models.CharField(
         max_length=100,
-        default='groups',
+        default="groups",
         blank=True,
         verbose_name=_("Groups Claim"),
-        help_text=_("OIDC claim field for group memberships (leave blank to disable group mapping)"),
+        help_text=_(
+            "OIDC claim field for group memberships (leave blank to disable group mapping)"
+        ),
     )
 
     # Role mapping
@@ -113,7 +119,7 @@ class SSOProviderConfig(models.Model):
     # Scopes
     oidc_scopes = models.CharField(
         max_length=500,
-        default='openid email profile',
+        default="openid email profile",
         verbose_name=_("OIDC Scopes"),
         help_text=_("Space-separated OIDC scopes to request"),
     )
@@ -122,12 +128,16 @@ class SSOProviderConfig(models.Model):
     auto_create_users = models.BooleanField(
         default=False,
         verbose_name=_("Auto-Create Users"),
-        help_text=_("Automatically create a user account when an SSO user signs in for the first time"),
+        help_text=_(
+            "Automatically create a user account when an SSO user signs in for the first time"
+        ),
     )
     restrict_to_staff = models.BooleanField(
         default=True,
         verbose_name=_("Restrict to Staff"),
-        help_text=_("Only allow existing staff users to sign in via SSO. Disable to allow SSO user auto-creation."),
+        help_text=_(
+            "Only allow existing staff users to sign in via SSO. Disable to allow SSO user auto-creation."
+        ),
     )
 
     class Meta:
@@ -155,10 +165,10 @@ class SSOProviderConfig(models.Model):
     def set_client_secret(self, plain_secret):
         """Encrypt and store the client secret."""
         if not plain_secret:
-            self.oidc_client_secret_encrypted = b''
+            self.oidc_client_secret_encrypted = b""
             return
 
-        encryption_key = getattr(settings, 'EMAIL_ENCRYPTION_KEY', None)
+        encryption_key = getattr(settings, "EMAIL_ENCRYPTION_KEY", None)
         if not encryption_key:
             logger.warning("EMAIL_ENCRYPTION_KEY not set - storing client secret unencrypted")
             self.oidc_client_secret_encrypted = plain_secret.encode()
@@ -173,16 +183,16 @@ class SSOProviderConfig(models.Model):
     def get_client_secret(self):
         """Decrypt and return the client secret."""
         if not self.oidc_client_secret_encrypted:
-            return ''
+            return ""
 
         encrypted = self.oidc_client_secret_encrypted
         if isinstance(encrypted, memoryview):
             encrypted = bytes(encrypted)
 
         if not encrypted:
-            return ''
+            return ""
 
-        encryption_key = getattr(settings, 'EMAIL_ENCRYPTION_KEY', None)
+        encryption_key = getattr(settings, "EMAIL_ENCRYPTION_KEY", None)
         if not encryption_key:
             # Stored unencrypted (fallback)
             return encrypted.decode()
@@ -195,4 +205,4 @@ class SSOProviderConfig(models.Model):
             return f.decrypt(encrypted).decode()
         except Exception:
             logger.error("Failed to decrypt SSO client secret")
-            return ''
+            return ""

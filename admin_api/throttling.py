@@ -3,7 +3,8 @@ Admin API Throttling
 
 Custom throttle classes for rate limiting admin API endpoints.
 """
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
 
 class AdminAuthThrottle(AnonRateThrottle):
@@ -13,7 +14,8 @@ class AdminAuthThrottle(AnonRateThrottle):
 
     Rate: 5 requests per minute (configured in settings)
     """
-    scope = 'admin_auth'
+
+    scope = "admin_auth"
 
 
 class AdminAPIThrottle(UserRateThrottle):
@@ -23,7 +25,8 @@ class AdminAPIThrottle(UserRateThrottle):
 
     Rate: 300 requests per minute (configured in settings)
     """
-    scope = 'admin_api'
+
+    scope = "admin_api"
 
 
 class AdminSensitiveOperationThrottle(UserRateThrottle):
@@ -33,4 +36,5 @@ class AdminSensitiveOperationThrottle(UserRateThrottle):
 
     Rate: 30 requests per minute (configured in settings)
     """
-    scope = 'admin_sensitive'
+
+    scope = "admin_sensitive"

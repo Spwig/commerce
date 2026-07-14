@@ -3,8 +3,9 @@ Contract validation using schema matching
 
 Validates API response data against JSON Schema definitions
 """
-from typing import Dict, Any, List
+
 from decimal import Decimal
+from typing import Any
 
 
 class SchemaValidationResult:
@@ -12,8 +13,8 @@ class SchemaValidationResult:
 
     def __init__(self):
         self.is_valid: bool = True
-        self.errors: List[str] = []
-        self.warnings: List[str] = []
+        self.errors: list[str] = []
+        self.warnings: list[str] = []
 
     def add_error(self, error: str):
         """Add an error and mark as invalid"""
@@ -26,9 +27,7 @@ class SchemaValidationResult:
 
 
 def validate_response_against_schema(
-    response_data: Dict[str, Any],
-    schema: Dict[str, Any],
-    path: str = ""
+    response_data: dict[str, Any], schema: dict[str, Any], path: str = ""
 ) -> SchemaValidationResult:
     """
     Validate API response data against JSON Schema
@@ -44,13 +43,17 @@ def validate_response_against_schema(
     result = SchemaValidationResult()
 
     # Validate required fields
-    required_fields = schema.get('required', [])
+    required_fields = schema.get("required", [])
     for field in required_fields:
         if field not in response_data:
-            result.add_error(f"{path}.{field}: Required field missing" if path else f"{field}: Required field missing")
+            result.add_error(
+                f"{path}.{field}: Required field missing"
+                if path
+                else f"{field}: Required field missing"
+            )
 
     # Validate field types and values
-    properties = schema.get('properties', {})
+    properties = schema.get("properties", {})
     for field, field_schema in properties.items():
         field_path = f"{path}.{field}" if path else field
 
@@ -59,7 +62,7 @@ def validate_response_against_schema(
             continue
 
         actual_value = response_data[field]
-        expected_type = field_schema.get('type')
+        expected_type = field_schema.get("type")
 
         # Validate type
         if not _validate_type(actual_value, expected_type):
@@ -70,11 +73,9 @@ def validate_response_against_schema(
             continue  # Skip further validation if type is wrong
 
         # Validate nested objects recursively
-        if expected_type == 'object' and isinstance(actual_value, dict):
+        if expected_type == "object" and isinstance(actual_value, dict):
             nested_result = validate_response_against_schema(
-                actual_value,
-                field_schema,
-                path=field_path
+                actual_value, field_schema, path=field_path
             )
             result.errors.extend(nested_result.errors)
             result.warnings.extend(nested_result.warnings)
@@ -82,15 +83,13 @@ def validate_response_against_schema(
                 result.is_valid = False
 
         # Validate arrays
-        elif expected_type == 'array' and isinstance(actual_value, list):
-            item_schema = field_schema.get('items', {})
-            if item_schema.get('type') == 'object':
+        elif expected_type == "array" and isinstance(actual_value, list):
+            item_schema = field_schema.get("items", {})
+            if item_schema.get("type") == "object":
                 for idx, item in enumerate(actual_value):
                     if isinstance(item, dict):
                         item_result = validate_response_against_schema(
-                            item,
-                            item_schema,
-                            path=f"{field_path}[{idx}]"
+                            item, item_schema, path=f"{field_path}[{idx}]"
                         )
                         result.errors.extend(item_result.errors)
                         result.warnings.extend(item_result.warnings)
@@ -98,7 +97,7 @@ def validate_response_against_schema(
                             result.is_valid = False
 
         # Validate enum values
-        enum_values = field_schema.get('enum')
+        enum_values = field_schema.get("enum")
         if enum_values and actual_value not in enum_values:
             result.add_error(
                 f"{field_path}: Value '{actual_value}' not in allowed enum values: {enum_values}"
@@ -125,13 +124,13 @@ def _validate_type(value: Any, expected_type: str) -> bool:
         True if value matches expected type
     """
     type_map = {
-        'string': str,
-        'integer': int,
-        'number': (int, float, Decimal),
-        'boolean': bool,
-        'array': list,
-        'object': dict,
-        'null': type(None)
+        "string": str,
+        "integer": int,
+        "number": (int, float, Decimal),
+        "boolean": bool,
+        "array": list,
+        "object": dict,
+        "null": type(None),
     }
 
     expected_python_type = type_map.get(expected_type)
@@ -153,24 +152,24 @@ def _get_type_name(value: Any) -> str:
         JSON Schema type name
     """
     if isinstance(value, bool):
-        return 'boolean'
+        return "boolean"
     elif isinstance(value, int):
-        return 'integer'
+        return "integer"
     elif isinstance(value, (float, Decimal)):
-        return 'number'
+        return "number"
     elif isinstance(value, str):
-        return 'string'
+        return "string"
     elif isinstance(value, list):
-        return 'array'
+        return "array"
     elif isinstance(value, dict):
-        return 'object'
+        return "object"
     elif value is None:
-        return 'null'
+        return "null"
     else:
         return type(value).__name__
 
 
-def extract_response_schema(response_data: Dict[str, Any]) -> Dict[str, Any]:
+def extract_response_schema(response_data: dict[str, Any]) -> dict[str, Any]:
     """
     Extract schema structure from actual API response
 
@@ -182,6 +181,7 @@ def extract_response_schema(response_data: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Dict describing the response structure in JSON Schema format
     """
+
     def build_schema(data):
         if isinstance(data, dict):
             properties = {}
@@ -192,22 +192,12 @@ def extract_response_schema(response_data: Dict[str, Any]) -> Dict[str, Any]:
                 # All present fields are considered required in the baseline
                 required.append(key)
 
-            return {
-                "type": "object",
-                "properties": properties,
-                "required": required
-            }
+            return {"type": "object", "properties": properties, "required": required}
         elif isinstance(data, list):
             if len(data) > 0:
                 # Use first item as schema template
-                return {
-                    "type": "array",
-                    "items": build_schema(data[0])
-                }
-            return {
-                "type": "array",
-                "items": {}
-            }
+                return {"type": "array", "items": build_schema(data[0])}
+            return {"type": "array", "items": {}}
         else:
             # Primitive type
             return {"type": _get_type_name(data)}

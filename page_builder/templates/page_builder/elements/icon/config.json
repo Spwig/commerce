@@ -33,11 +33,11 @@
               "type": "select",
               "label": "Style",
               "options": [
-                {"value": "solid", "label": "Solid (fas)"},
-                {"value": "regular", "label": "Regular (far)"},
-                {"value": "light", "label": "Light (fal)"},
-                {"value": "duotone", "label": "Duotone (fad)"},
-                {"value": "brands", "label": "Brands (fab)"}
+                { "value": "solid", "label": "Solid (fas)" },
+                { "value": "regular", "label": "Regular (far)" },
+                { "value": "light", "label": "Light (fal)" },
+                { "value": "duotone", "label": "Duotone (fad)" },
+                { "value": "brands", "label": "Brands (fab)" }
               ],
               "default": "solid"
             }
@@ -58,9 +58,9 @@
               "type": "select",
               "label": "Unit",
               "options": [
-                {"value": "px", "label": "Pixels (px)"},
-                {"value": "rem", "label": "REM"},
-                {"value": "em", "label": "EM"}
+                { "value": "px", "label": "Pixels (px)" },
+                { "value": "rem", "label": "REM" },
+                { "value": "em", "label": "EM" }
               ],
               "default": "px"
             },
@@ -82,9 +82,9 @@
               "type": "select",
               "label": "Alignment",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "center", "label": "Center"},
-                {"value": "right", "label": "Right"}
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
               ],
               "default": "center"
             }
@@ -103,8 +103,8 @@
               "type": "select",
               "label": "Target",
               "options": [
-                {"value": "_self", "label": "Same Window"},
-                {"value": "_blank", "label": "New Window"}
+                { "value": "_self", "label": "Same Window" },
+                { "value": "_blank", "label": "New Window" }
               ],
               "default": "_self"
             },
@@ -121,22 +121,76 @@
     }
   },
   "properties": {
-    "icon": {"type": "icon_picker", "label": "Icon", "default": "fa-star", "required": true},
-    "icon_style": {"type": "select", "label": "Icon Style", "options": [{"value": "solid", "label": "Solid (fas)"}, {"value": "regular", "label": "Regular (far)"}, {"value": "light", "label": "Light (fal)"}, {"value": "duotone", "label": "Duotone (fad)"}, {"value": "brands", "label": "Brands (fab)"}], "default": "solid"},
-    "size": {"type": "number", "label": "Size", "default": 24, "min": 8, "max": 200},
-    "size_unit": {"type": "select", "label": "Size Unit", "options": [{"value": "px", "label": "Pixels (px)"}, {"value": "rem", "label": "REM"}, {"value": "em", "label": "EM"}], "default": "px"},
-    "color": {"type": "color", "label": "Icon Color", "default": null, "placeholder": "Theme default", "help_text": "Leave empty to use theme color"},
-    "alignment": {"type": "select", "label": "Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "center"},
-    "link_url": {"type": "link_selector", "label": "Link URL", "required": false},
-    "link_target": {"type": "select", "label": "Link Target", "options": [{"value": "_self", "label": "Same Window"}, {"value": "_blank", "label": "New Window"}], "default": "_self"},
-    "aria_label": {"type": "string", "label": "Accessibility Label", "translatable": true, "required": false}
+    "icon": { "type": "icon_picker", "label": "Icon", "default": "fa-star", "required": true },
+    "icon_style": {
+      "type": "select",
+      "label": "Icon Style",
+      "options": [
+        { "value": "solid", "label": "Solid (fas)" },
+        { "value": "regular", "label": "Regular (far)" },
+        { "value": "light", "label": "Light (fal)" },
+        { "value": "duotone", "label": "Duotone (fad)" },
+        { "value": "brands", "label": "Brands (fab)" }
+      ],
+      "default": "solid"
+    },
+    "size": { "type": "number", "label": "Size", "default": 24, "min": 8, "max": 200 },
+    "size_unit": {
+      "type": "select",
+      "label": "Size Unit",
+      "options": [
+        { "value": "px", "label": "Pixels (px)" },
+        { "value": "rem", "label": "REM" },
+        { "value": "em", "label": "EM" }
+      ],
+      "default": "px"
+    },
+    "color": {
+      "type": "color",
+      "label": "Icon Color",
+      "default": null,
+      "placeholder": "Theme default",
+      "help_text": "Leave empty to use theme color"
+    },
+    "alignment": {
+      "type": "select",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    "link_url": { "type": "link_selector", "label": "Link URL", "required": false },
+    "link_target": {
+      "type": "select",
+      "label": "Link Target",
+      "options": [
+        { "value": "_self", "label": "Same Window" },
+        { "value": "_blank", "label": "New Window" }
+      ],
+      "default": "_self"
+    },
+    "aria_label": {
+      "type": "string",
+      "label": "Accessibility Label",
+      "translatable": true,
+      "required": false
+    }
   },
   "translations": {
-    "en": {"name": "Icon", "description": "Display FontAwesome icons with customizable styling"},
-    "es": {"name": "Icono", "description": "Muestra iconos de FontAwesome con estilo personalizable"},
-    "fr": {"name": "Icone", "description": "Affiche des icones FontAwesome avec un style personnalisable"},
-    "de": {"name": "Symbol", "description": "Zeigt FontAwesome-Symbole mit anpassbarem Stil an"},
-    "ar": {"name": "ayqwnh", "description": "erd ayqwnat FontAwesome me tnsyq qabl lltkysys"}
+    "en": { "name": "Icon", "description": "Display FontAwesome icons with customizable styling" },
+    "es": {
+      "name": "Icono",
+      "description": "Muestra iconos de FontAwesome con estilo personalizable"
+    },
+    "fr": {
+      "name": "Icone",
+      "description": "Affiche des icones FontAwesome avec un style personnalisable"
+    },
+    "de": { "name": "Symbol", "description": "Zeigt FontAwesome-Symbole mit anpassbarem Stil an" },
+    "ar": { "name": "ayqwnh", "description": "erd ayqwnat FontAwesome me tnsyq qabl lltkysys" }
   },
   "defaults": {
     "icon": "fa-star",

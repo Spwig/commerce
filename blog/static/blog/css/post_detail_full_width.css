@@ -20,195 +20,193 @@
    Layout Override — Remove grid and max-width constraints
    ========================================================================== */
 .blog-layout--full-width {
-    max-width: none;
-    display: block;
-    padding: 0;
+  max-width: none;
+  display: block;
+  padding: 0;
 }
-
 
 /* ==========================================================================
    Breadcrumb — Needs its own padding since layout padding is removed
    ========================================================================== */
 .blog-layout--full-width .blog-breadcrumb {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.5rem 2rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 0;
 }
 
 @media (max-width: 1023px) {
-    .blog-layout--full-width .blog-breadcrumb {
-        padding: 1rem 1rem 0;
-    }
+  .blog-layout--full-width .blog-breadcrumb {
+    padding: 1rem 1rem 0;
+  }
 }
-
 
 /* ==========================================================================
    Hero — Full viewport width
    ========================================================================== */
 .blog-fw-hero {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .blog-fw-hero__image {
-    width: 100%;
-    height: 65vh;
-    min-height: 400px;
-    max-height: 650px;
-    object-fit: cover;
-    display: block;
+  width: 100%;
+  height: 65vh;
+  min-height: 400px;
+  max-height: 650px;
+  object-fit: cover;
+  display: block;
 }
 
 .blog-fw-hero__placeholder {
-    width: 100%;
-    height: 50vh;
-    min-height: 300px;
-    max-height: 500px;
-    background: var(--darkened-bg, #f3f4f6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--body-quiet-color, #999);
-    font-size: 3rem;
+  width: 100%;
+  height: 50vh;
+  min-height: 300px;
+  max-height: 500px;
+  background: var(--darkened-bg, #f3f4f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--body-quiet-color, #999);
+  font-size: 3rem;
 }
 
 .blog-fw-hero__overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 6rem 2rem 3rem;
-    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
-    color: #fff;
-    text-align: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 6rem 2rem 3rem;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.4) 60%,
+    transparent 100%
+  );
+  color: #fff;
+  text-align: center;
 }
 
 .blog-fw-hero__category {
-    display: inline-block;
-    padding: 0.3rem 0.875rem;
-    background: var(--theme-color-primary, #2563eb);
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-radius: 3px;
-    text-decoration: none;
-    margin-bottom: 1rem;
+  display: inline-block;
+  padding: 0.3rem 0.875rem;
+  background: var(--theme-color-primary, #2563eb);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 3px;
+  text-decoration: none;
+  margin-bottom: 1rem;
 }
 
 .blog-fw-hero__category:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 .blog-fw-hero__title {
-    font-family: var(--theme-font-heading, inherit);
-    font-size: clamp(2rem, 5vw, 3.25rem);
-    font-weight: 800;
-    line-height: 1.12;
-    max-width: 900px;
-    margin: 0 auto 1rem;
-    color: #fff;
+  font-family: var(--theme-font-heading, inherit);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.12;
+  max-width: 900px;
+  margin: 0 auto 1rem;
+  color: #fff;
 }
 
 .blog-fw-hero__meta {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.85);
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .blog-fw-hero__meta span {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
-
 
 /* ==========================================================================
    No-image Header Fallback
    ========================================================================== */
 .blog-fw-header {
-    text-align: center;
-    max-width: 800px;
-    margin: 2.5rem auto 0;
-    padding: 0 2rem 2rem;
-    border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
+  text-align: center;
+  max-width: 800px;
+  margin: 2.5rem auto 0;
+  padding: 0 2rem 2rem;
+  border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
 }
 
 .blog-fw-header .blog-article__title {
-    font-size: clamp(2rem, 5vw, 3.25rem);
+  font-size: clamp(2rem, 5vw, 3.25rem);
 }
 
 .blog-fw-header .blog-article__meta {
-    justify-content: center;
-    border-bottom: none;
-    padding-bottom: 0;
+  justify-content: center;
+  border-bottom: none;
+  padding-bottom: 0;
 }
-
 
 /* ==========================================================================
    Article Body — Centered readable width
    ========================================================================== */
 .blog-fw-body {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2.5rem 2rem 0;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 0;
 }
 
 .blog-fw-body .blog-article__body {
-    max-width: none;
-    font-size: 1.125rem;
-    line-height: 1.8;
+  max-width: none;
+  font-size: 1.125rem;
+  line-height: 1.8;
 }
-
 
 /* ==========================================================================
    Related Posts — Slightly wider than body
    ========================================================================== */
 .blog-related--full-width {
-    max-width: 1000px;
-    margin: 3rem auto 0;
-    padding: 0 2rem;
+  max-width: 1000px;
+  margin: 3rem auto 0;
+  padding: 0 2rem;
 }
-
 
 /* ==========================================================================
    Subscribe CTA — Match body width
    ========================================================================== */
 .blog-subscribe-cta--full-width {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
-
 
 /* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 768px) {
-    .blog-fw-hero__overlay {
-        padding: 4rem 1.5rem 2rem;
-    }
+  .blog-fw-hero__overlay {
+    padding: 4rem 1.5rem 2rem;
+  }
 
-    .blog-fw-hero__image {
-        height: 50vh;
-        min-height: 300px;
-    }
+  .blog-fw-hero__image {
+    height: 50vh;
+    min-height: 300px;
+  }
 
-    .blog-fw-header {
-        padding: 1.5rem 1rem;
-    }
+  .blog-fw-header {
+    padding: 1.5rem 1rem;
+  }
 
-    .blog-fw-body {
-        padding: 1.5rem 1rem 0;
-    }
+  .blog-fw-body {
+    padding: 1.5rem 1rem 0;
+  }
 
-    .blog-related--full-width,
-    .blog-subscribe-cta--full-width {
-        padding: 0 1rem;
-    }
+  .blog-related--full-width,
+  .blog-subscribe-cta--full-width {
+    padding: 0 1rem;
+  }
 }

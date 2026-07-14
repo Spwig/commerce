@@ -6,7 +6,7 @@ Pattern follows exchange_rates/providers/base.py architecture.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, List, Any
+from typing import Any
 
 
 class FeedProviderBase(ABC):
@@ -29,11 +29,11 @@ class FeedProviderBase(ABC):
     """
 
     # Must be set by subclass
-    provider_key: str = None       # e.g., 'google_merchant'
-    provider_name: str = None      # e.g., 'Google Merchant Center'
-    supported_formats: List[str] = ['xml']  # Default to XML
+    provider_key: str = None  # e.g., 'google_merchant'
+    provider_name: str = None  # e.g., 'Google Merchant Center'
+    supported_formats: list[str] = ["xml"]  # Default to XML
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         """
         Initialize provider with credentials and configuration.
 
@@ -58,7 +58,7 @@ class FeedProviderBase(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return dictionary of provider capabilities.
 
@@ -80,7 +80,7 @@ class FeedProviderBase(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema describing required credentials.
 
@@ -113,7 +113,7 @@ class FeedProviderBase(ABC):
         pass
 
     @property
-    def attribute_mapping_schema(self) -> Dict[str, Any]:
+    def attribute_mapping_schema(self) -> dict[str, Any]:
         """
         Return schema for product attribute mapping.
 
@@ -122,14 +122,10 @@ class FeedProviderBase(ABC):
         Returns:
             Dictionary with 'required', 'recommended', 'optional' sections
         """
-        return {
-            'required': {},
-            'recommended': {},
-            'optional': {}
-        }
+        return {"required": {}, "recommended": {}, "optional": {}}
 
     @abstractmethod
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """
         Validate credentials against schema and business logic.
 
@@ -142,7 +138,7 @@ class FeedProviderBase(ABC):
         pass
 
     @abstractmethod
-    def redact_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def redact_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Redact sensitive credential values for logging.
 
@@ -155,7 +151,7 @@ class FeedProviderBase(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test API connection and credential validity.
 
@@ -176,7 +172,7 @@ class FeedProviderBase(ABC):
         pass
 
     @abstractmethod
-    def push_feed(self, feed_content: str, format: str) -> Dict[str, Any]:
+    def push_feed(self, feed_content: str, format: str) -> dict[str, Any]:
         """
         Push feed content to provider API.
 
@@ -197,7 +193,7 @@ class FeedProviderBase(ABC):
         pass
 
     @abstractmethod
-    def validate_feed(self, feed_content: str, format: str) -> Dict[str, Any]:
+    def validate_feed(self, feed_content: str, format: str) -> dict[str, Any]:
         """
         Validate feed content against provider requirements.
 
@@ -216,7 +212,7 @@ class FeedProviderBase(ABC):
         """
         pass
 
-    def get_feed_url(self) -> Optional[str]:
+    def get_feed_url(self) -> str | None:
         """
         Get URL where feed is hosted for provider to fetch.
 
@@ -234,22 +230,18 @@ class FeedProviderBase(ABC):
         Returns:
             True if incremental updates are supported
         """
-        return self.capabilities.get('incremental_updates', False)
+        return self.capabilities.get("incremental_updates", False)
 
-    def get_rate_limits(self) -> Dict[str, int]:
+    def get_rate_limits(self) -> dict[str, int]:
         """
         Return API rate limits for this provider.
 
         Returns:
             Dictionary with rate limit information
         """
-        return {
-            'requests_per_minute': 60,
-            'requests_per_day': 10000,
-            'products_per_batch': 1000
-        }
+        return {"requests_per_minute": 60, "requests_per_day": 10000, "products_per_batch": 1000}
 
-    def get_provider_info(self) -> Dict:
+    def get_provider_info(self) -> dict:
         """
         Get provider metadata for display in admin.
 
@@ -257,29 +249,33 @@ class FeedProviderBase(ABC):
             Dictionary with provider information
         """
         return {
-            'key': self.provider_key,
-            'name': self.provider_name,
-            'supported_formats': self.supported_formats,
-            'capabilities': self.capabilities,
+            "key": self.provider_key,
+            "name": self.provider_name,
+            "supported_formats": self.supported_formats,
+            "capabilities": self.capabilities,
         }
 
 
 # Custom Exceptions
 class FeedValidationError(Exception):
     """Raised when feed content fails validation"""
+
     pass
 
 
 class FeedPushError(Exception):
     """Raised when feed push to provider fails"""
+
     pass
 
 
 class ProviderConnectionError(Exception):
     """Raised when connection to provider fails"""
+
     pass
 
 
 class UnsupportedFormatError(Exception):
     """Raised when requested feed format is not supported"""
+
     pass

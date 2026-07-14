@@ -6,7 +6,8 @@ Pattern follows exchange_rates/providers/base.py and shipping/providers/base.py 
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Any
+from typing import Any
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -28,11 +29,13 @@ class BaseSEOProvider(ABC):
     """
 
     # Must be set by subclass
-    provider_key: str = None       # e.g., 'deterministic'
-    provider_name: str = None      # e.g., 'Built-in Generator'
+    provider_key: str = None  # e.g., 'deterministic'
+    provider_name: str = None  # e.g., 'Built-in Generator'
     requires_credentials: bool = False  # True for external API providers
 
-    def __init__(self, credentials: Optional[Dict[str, Any]] = None, config: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self, credentials: dict[str, Any] | None = None, config: dict[str, Any] | None = None
+    ):
         """
         Initialize provider with optional credentials and configuration.
 
@@ -55,13 +58,13 @@ class BaseSEOProvider(ABC):
         if self.requires_credentials:
             if not credentials:
                 raise ValueError(
-                    _("Provider '%(key)s' requires credentials") % {'key': self.provider_key}
+                    _("Provider '%(key)s' requires credentials") % {"key": self.provider_key}
                 )
             self.validate_credentials(credentials)
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return dictionary of provider capabilities.
 
@@ -79,7 +82,7 @@ class BaseSEOProvider(ABC):
         """
         pass
 
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:  # noqa: B027 — default no-op for providers without credentials
         """
         Validate credentials against schema and business logic.
 
@@ -95,7 +98,7 @@ class BaseSEOProvider(ABC):
         pass
 
     @abstractmethod
-    def generate_meta_title(self, content: Dict[str, str], language: str = 'en') -> str:
+    def generate_meta_title(self, content: dict[str, str], language: str = "en") -> str:
         """
         Generate SEO meta title from content.
 
@@ -116,7 +119,7 @@ class BaseSEOProvider(ABC):
         pass
 
     @abstractmethod
-    def generate_meta_description(self, content: Dict[str, str], language: str = 'en') -> str:
+    def generate_meta_description(self, content: dict[str, str], language: str = "en") -> str:
         """
         Generate SEO meta description from content.
 
@@ -137,7 +140,7 @@ class BaseSEOProvider(ABC):
         pass
 
     @abstractmethod
-    def extract_keywords(self, content: Dict[str, str], max_keywords: int = 10) -> list:
+    def extract_keywords(self, content: dict[str, str], max_keywords: int = 10) -> list:
         """
         Extract relevant keywords from content.
 
@@ -153,7 +156,7 @@ class BaseSEOProvider(ABC):
         """
         pass
 
-    def generate_seo(self, content: Dict[str, str], language: str = 'en') -> Dict[str, Any]:
+    def generate_seo(self, content: dict[str, str], language: str = "en") -> dict[str, Any]:
         """
         Generate complete SEO package (title, description, keywords).
 
@@ -175,12 +178,12 @@ class BaseSEOProvider(ABC):
             GenerationError: If generation fails
         """
         return {
-            'meta_title': self.generate_meta_title(content, language),
-            'meta_description': self.generate_meta_description(content, language),
-            'keywords': self.extract_keywords(content)
+            "meta_title": self.generate_meta_title(content, language),
+            "meta_description": self.generate_meta_description(content, language),
+            "keywords": self.extract_keywords(content),
         }
 
-    def get_provider_info(self) -> Dict:
+    def get_provider_info(self) -> dict:
         """
         Get provider metadata for display in admin.
 
@@ -188,19 +191,21 @@ class BaseSEOProvider(ABC):
             Dictionary with provider information
         """
         return {
-            'key': self.provider_key,
-            'name': self.provider_name,
-            'capabilities': self.capabilities,
-            'requires_credentials': self.requires_credentials,
+            "key": self.provider_key,
+            "name": self.provider_name,
+            "capabilities": self.capabilities,
+            "requires_credentials": self.requires_credentials,
         }
 
 
 # Custom Exceptions
 class GenerationError(Exception):
     """Raised when SEO generation fails"""
+
     pass
 
 
 class ProviderNotAvailable(Exception):
     """Raised when requested provider is not available"""
+
     pass

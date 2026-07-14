@@ -14,6 +14,22 @@ readme = "README.md"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = [
+    "*/migrations/*",
+    "shop_venv/",
+    "staticfiles/",
+    "node_modules/",
+    "**/vendor/",
+    "**/ckeditor5/",
+    "pos_app/dist/",
+    "pos_app/frontend/node_modules/",
+    # Temporarily excluded while a parallel session fixes broken tests
+    # (stale PaymentGateway, deleted design.HeaderTemplate refs, etc.).
+    # Remove once their fixes land.
+    "design/tests/test_theme_packaging_ui.py",
+    "loyalty/tests/test_models.py",
+    "subscriptions/tests/test_api.py",
+]
 
 [tool.ruff.lint]
 # Enable selected linting rules
@@ -36,14 +52,42 @@ ignore = [
     "DJ001",  # avoid null=True on string fields (we use it intentionally)
     "B904",   # raise from None or raise from e
     "B006",   # mutable default argument
+    # ── Style/convention rules deliberately not enforced ──
+    # Fixing these codebase-wide would be many hundreds of near-mechanical
+    # edits with no correctness benefit. Kept in this section (rather than
+    # per-file-ignores) so future contributors know they're intentional.
+    "N806",   # non-lowercase-variable-in-function — 34 of 148 hits are `User = get_user_model()` (universal Django idiom); rest are function-scope constants
+    "N803",   # invalid-argument-name — Django management commands / importers inject model classes as PascalCase args (Page, Element, BlogPost)
+    "N812",   # lowercase-imported-as-non-lowercase — `__version__ as PLATFORM_VERSION` is intentional
+    "N818",   # error-suffix-on-exception-name — existing public exception names (CurrencyNotSupported, InsufficientBalance, etc.); renaming would break API
+    "E402",   # module-import-not-at-top-of-file — mixes legitimate patterns (django.setup() in tests, settings-conditional imports) with style-only cases; ~107 hits, per-file ignore would touch too many files
+    "DJ006",  # django-exclude-with-model-form — both hits are admin forms where exclude is safe
+    "DJ007",  # django-all-with-model-form — all 18 hits are admin forms where fields="__all__" is safe (mass-assignment concern applies only to public forms)
+    "DJ012",  # django-unordered-body-content-in-model — reordering 22 model bodies is cosmetic churn with no correctness benefit
+    "SIM102", # collapsible-if — 88 residuals ruff can't auto-fix (inside elif chains, complex bodies); manual rewrites reduce readability
+    "SIM105", # suppressible-exception (contextlib.suppress often less readable)
 ]
 
 # Per-file ignores
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]  # imported but unused
 "*/migrations/*" = ["E501", "N806", "DJ"]  # long lines, non-lowercase variable names
-"*/tests/*" = ["E501"]  # allow long test function names
+"*/tests/*" = ["E501", "F811", "F841", "N802", "SIM117"]  # test function name lengths, pytest fixture redefine, unused vars in tests, test-name conventions, nested assertRaises patterns
+"tests/**" = ["E501", "F811", "F841", "N802", "SIM117"]  # top-level tests/ (root-relative)
 "manage.py" = ["E402"]  # module level import not at top of file
+# Django admin uses inner `class Media:` per admin — pyflakes flags each as a
+# module-level redefine.
+"**/admin.py" = ["F811"]
+"core/admin.py" = ["F811"]
+# aiosmtpd requires handle_DATA/handle_RCPT/etc method names verbatim, and
+# imports SMTP as SMTPProtocol.
+"email_system/smtp_server/server.py" = ["N802", "N811"]
+# StrEnum shim — inheriting from both `str` and Enum is intentional for API compat.
+"subscriptions/events.py" = ["UP042"]
+# Admin `<script>` blocks reference customColorPalette by name from CKEditor JS.
+"core/settings.py" = ["N816"]
+# API-facing serializer field name (camelCase per JS-consumer contract).
+"design/hf_serializers.py" = ["N815"]
 
 # Import sorting configuration
 [tool.ruff.lint.isort]
@@ -70,6 +114,12 @@ known-first-party = [
     "translation_service",
     "help_content",
     "enterprise_sso",
+    # HQ-only apps — physically present in shop-dev but excluded from the
+    # public commerce sync. Declaring them here keeps ruff's import
+    # classification stable across both trees.
+    "developer_portal",
+    "license_checkout",
+    "marketplace_checkout",
 ]
 
 [tool.mypy]

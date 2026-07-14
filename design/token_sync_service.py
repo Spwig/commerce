@@ -8,7 +8,7 @@ This service ensures that:
 """
 
 import logging
-from typing import Dict, List, Optional, Tuple
+
 from django.db import transaction
 
 from .models import DesignToken
@@ -23,46 +23,46 @@ class TokenSyncService:
     # Maps token.json categories to CSS variable prefixes
     # These must match the existing tokens.css naming convention
     CATEGORY_PREFIXES = {
-        'colors': 'theme-color',
-        'typography': 'theme',           # Keys already have font-, line-height- prefix
-        'spacing': 'theme-space',
-        'borders': 'theme',              # Keys already have border-, radius- prefix
-        'shadows': 'theme-shadow',
-        'transitions': 'theme-transition',
-        'breakpoints': 'theme-breakpoint',
-        'z-index': 'theme-z',
-        'container': 'theme-container',
-        'menu': 'theme-menu',
-        'header': 'theme-header',
-        'footer': 'theme-footer',
-        'search': 'theme-search',
-        'elements': 'theme-element',     # Nested: elements.button.radius -> theme-element-button-radius
-        'widgets': 'theme-widget',       # Nested: widgets.cart.icon-size -> theme-widget-cart-icon-size
-        'animations': 'theme-transition',  # Alias for transitions
+        "colors": "theme-color",
+        "typography": "theme",  # Keys already have font-, line-height- prefix
+        "spacing": "theme-space",
+        "borders": "theme",  # Keys already have border-, radius- prefix
+        "shadows": "theme-shadow",
+        "transitions": "theme-transition",
+        "breakpoints": "theme-breakpoint",
+        "z-index": "theme-z",
+        "container": "theme-container",
+        "menu": "theme-menu",
+        "header": "theme-header",
+        "footer": "theme-footer",
+        "search": "theme-search",
+        "elements": "theme-element",  # Nested: elements.button.radius -> theme-element-button-radius
+        "widgets": "theme-widget",  # Nested: widgets.cart.icon-size -> theme-widget-cart-icon-size
+        "animations": "theme-transition",  # Alias for transitions
     }
 
     # Maps categories to DesignToken.token_type
     CATEGORY_TOKEN_TYPES = {
-        'colors': 'color',
-        'typography': 'font',
-        'spacing': 'spacing',
-        'borders': 'border',
-        'shadows': 'shadow',
-        'transitions': 'animation',
-        'breakpoints': 'breakpoint',
-        'z-index': 'spacing',       # Z-index doesn't have dedicated type, use spacing
-        'container': 'spacing',     # Container dimensions
-        'menu': 'spacing',          # Menu tokens are mixed
-        'header': 'spacing',        # Header tokens are mixed
-        'footer': 'spacing',        # Footer tokens are mixed
-        'search': 'spacing',        # Search tokens are mixed
-        'elements': 'spacing',      # Element tokens are mixed
-        'widgets': 'spacing',       # Widget tokens are mixed (colors, spacing, etc.)
-        'animations': 'animation',
+        "colors": "color",
+        "typography": "font",
+        "spacing": "spacing",
+        "borders": "border",
+        "shadows": "shadow",
+        "transitions": "animation",
+        "breakpoints": "breakpoint",
+        "z-index": "spacing",  # Z-index doesn't have dedicated type, use spacing
+        "container": "spacing",  # Container dimensions
+        "menu": "spacing",  # Menu tokens are mixed
+        "header": "spacing",  # Header tokens are mixed
+        "footer": "spacing",  # Footer tokens are mixed
+        "search": "spacing",  # Search tokens are mixed
+        "elements": "spacing",  # Element tokens are mixed
+        "widgets": "spacing",  # Widget tokens are mixed (colors, spacing, etc.)
+        "animations": "animation",
     }
 
     @classmethod
-    def sync_theme_to_design_tokens(cls, theme: Theme) -> Tuple[int, int, int]:
+    def sync_theme_to_design_tokens(cls, theme: Theme) -> tuple[int, int, int]:
         """
         Sync theme manifest tokens to DesignToken records using bulk operations.
 
@@ -81,7 +81,7 @@ class TokenSyncService:
             logger.warning(f"Theme {theme} has no manifest, skipping sync")
             return (0, 0, 0)
 
-        tokens = theme.manifest.get('tokens', {})
+        tokens = theme.manifest.get("tokens", {})
         if not tokens:
             logger.warning(f"Theme {theme.name} has no tokens in manifest")
             return (0, 0, 0)
@@ -92,26 +92,32 @@ class TokenSyncService:
             if not isinstance(category_tokens, dict):
                 continue
             for token_data in cls._flatten_tokens(category, category_tokens):
-                desired_tokens[token_data['name']] = token_data
+                desired_tokens[token_data["name"]] = token_data
 
         # Fetch all existing theme tokens for this theme in one query
         existing_tokens = {
-            t.name: t
-            for t in DesignToken.objects.filter(source='theme', theme=theme)
+            t.name: t for t in DesignToken.objects.filter(source="theme", theme=theme)
         }
 
         to_create = []
         to_update = []
-        update_fields = ['value', 'token_type', 'description', 'priority_level',
-                         'is_locked', 'is_active', 'tier_restriction']
+        update_fields = [
+            "value",
+            "token_type",
+            "description",
+            "priority_level",
+            "is_locked",
+            "is_active",
+            "tier_restriction",
+        ]
 
         for token_name, token_data in desired_tokens.items():
             if token_name in existing_tokens:
                 # Update existing token
                 obj = existing_tokens[token_name]
-                obj.value = token_data['value']
-                obj.token_type = token_data['token_type']
-                obj.description = token_data.get('description', '')
+                obj.value = token_data["value"]
+                obj.token_type = token_data["token_type"]
+                obj.description = token_data.get("description", "")
                 obj.priority_level = 2
                 obj.is_locked = True
                 obj.is_active = True
@@ -119,18 +125,20 @@ class TokenSyncService:
                 to_update.append(obj)
             else:
                 # New token
-                to_create.append(DesignToken(
-                    name=token_name,
-                    source='theme',
-                    theme=theme,
-                    value=token_data['value'],
-                    token_type=token_data['token_type'],
-                    description=token_data.get('description', ''),
-                    priority_level=2,
-                    is_locked=True,
-                    is_active=True,
-                    tier_restriction=[],
-                ))
+                to_create.append(
+                    DesignToken(
+                        name=token_name,
+                        source="theme",
+                        theme=theme,
+                        value=token_data["value"],
+                        token_type=token_data["token_type"],
+                        description=token_data.get("description", ""),
+                        priority_level=2,
+                        is_locked=True,
+                        is_active=True,
+                        tier_restriction=[],
+                    )
+                )
 
         with transaction.atomic():
             # Bulk create new tokens (bypasses post_save signals)
@@ -146,7 +154,7 @@ class TokenSyncService:
             deleted_count = 0
             if orphan_names:
                 deleted_count, _ = DesignToken.objects.filter(
-                    source='theme',
+                    source="theme",
                     theme=theme,
                     name__in=orphan_names,
                 ).delete()
@@ -165,7 +173,7 @@ class TokenSyncService:
         return (created_count, updated_count, deleted_count)
 
     @classmethod
-    def sync_branding_to_design_tokens(cls, branding: ThemeBranding) -> Tuple[int, int, int]:
+    def sync_branding_to_design_tokens(cls, branding: ThemeBranding) -> tuple[int, int, int]:
         """
         Sync ThemeBranding customizations to DesignToken records.
 
@@ -186,18 +194,22 @@ class TokenSyncService:
 
         # Map ThemeBranding fields to categories
         branding_fields = {
-            'colors': branding.color_tokens or {},
-            'typography': branding.typography_tokens or {},
-            'spacing': branding.spacing_tokens or {},
-            'borders': branding.border_tokens or {},
-            'shadows': branding.shadow_tokens or {},
-            'transitions': branding.transition_tokens or {} if hasattr(branding, 'transition_tokens') else {},
-            'header': branding.header_tokens or {} if hasattr(branding, 'header_tokens') else {},
-            'footer': branding.footer_tokens or {} if hasattr(branding, 'footer_tokens') else {},
-            'menu': branding.menu_tokens or {} if hasattr(branding, 'menu_tokens') else {},
-            'search': branding.search_tokens or {} if hasattr(branding, 'search_tokens') else {},
-            'elements': branding.element_tokens or {} if hasattr(branding, 'element_tokens') else {},
-            'animations': branding.animation_tokens or {},
+            "colors": branding.color_tokens or {},
+            "typography": branding.typography_tokens or {},
+            "spacing": branding.spacing_tokens or {},
+            "borders": branding.border_tokens or {},
+            "shadows": branding.shadow_tokens or {},
+            "transitions": branding.transition_tokens or {}
+            if hasattr(branding, "transition_tokens")
+            else {},
+            "header": branding.header_tokens or {} if hasattr(branding, "header_tokens") else {},
+            "footer": branding.footer_tokens or {} if hasattr(branding, "footer_tokens") else {},
+            "menu": branding.menu_tokens or {} if hasattr(branding, "menu_tokens") else {},
+            "search": branding.search_tokens or {} if hasattr(branding, "search_tokens") else {},
+            "elements": branding.element_tokens or {}
+            if hasattr(branding, "element_tokens")
+            else {},
+            "animations": branding.animation_tokens or {},
         }
 
         with transaction.atomic():
@@ -208,20 +220,17 @@ class TokenSyncService:
                 flattened = cls._flatten_tokens(category, category_tokens)
 
                 for token_data in flattened:
-                    token_name = token_data['name']
+                    token_name = token_data["name"]
                     processed_names.add(token_name)
 
                     # Create or update DesignToken
                     # Use get_or_create + manual update to set _skip_branding_sync flag
                     try:
-                        token = DesignToken.objects.get(
-                            name=token_name,
-                            source='brand_builder'
-                        )
+                        token = DesignToken.objects.get(name=token_name, source="brand_builder")
                         created = False
                         # Update fields
-                        token.value = token_data['value']
-                        token.token_type = token_data['token_type']
+                        token.value = token_data["value"]
+                        token.token_type = token_data["token_type"]
                         token.description = f"Brand customization: {token_name}"
                         token.priority_level = 1
                         token.is_locked = False
@@ -231,9 +240,9 @@ class TokenSyncService:
                         created = True
                         token = DesignToken(
                             name=token_name,
-                            source='brand_builder',
-                            value=token_data['value'],
-                            token_type=token_data['token_type'],
+                            source="brand_builder",
+                            value=token_data["value"],
+                            token_type=token_data["token_type"],
                             description=f"Brand customization: {token_name}",
                             priority_level=1,
                             is_locked=False,
@@ -251,11 +260,13 @@ class TokenSyncService:
                         updated_count += 1
 
             # Delete orphaned brand_builder tokens (customizations that were reset)
-            deleted_count, _ = DesignToken.objects.filter(
-                source='brand_builder',
-            ).exclude(
-                name__in=processed_names
-            ).delete()
+            deleted_count, _ = (
+                DesignToken.objects.filter(
+                    source="brand_builder",
+                )
+                .exclude(name__in=processed_names)
+                .delete()
+            )
 
         logger.info(
             f"Synced branding tokens: "
@@ -278,7 +289,7 @@ class TokenSyncService:
         Returns:
             True if sync was successful, False otherwise
         """
-        if token.source != 'brand_builder':
+        if token.source != "brand_builder":
             # Only sync brand_builder tokens back to branding
             return False
 
@@ -292,18 +303,18 @@ class TokenSyncService:
 
         # Map category to ThemeBranding field
         field_mapping = {
-            'colors': 'color_tokens',
-            'typography': 'typography_tokens',
-            'spacing': 'spacing_tokens',
-            'borders': 'border_tokens',
-            'shadows': 'shadow_tokens',
-            'transitions': 'transition_tokens',
-            'header': 'header_tokens',
-            'footer': 'footer_tokens',
-            'menu': 'menu_tokens',
-            'search': 'search_tokens',
-            'elements': 'element_tokens',
-            'animations': 'animation_tokens',
+            "colors": "color_tokens",
+            "typography": "typography_tokens",
+            "spacing": "spacing_tokens",
+            "borders": "border_tokens",
+            "shadows": "shadow_tokens",
+            "transitions": "transition_tokens",
+            "header": "header_tokens",
+            "footer": "footer_tokens",
+            "menu": "menu_tokens",
+            "search": "search_tokens",
+            "elements": "element_tokens",
+            "animations": "animation_tokens",
         }
 
         field_name = field_mapping.get(category)
@@ -318,12 +329,12 @@ class TokenSyncService:
 
         # Save with update_fields to avoid triggering full post_save processing
         # CSS regeneration is handled by the post_save signal on ThemeBranding
-        branding.save(update_fields=[field_name, 'updated_at'])
+        branding.save(update_fields=[field_name, "updated_at"])
 
         return True
 
     @classmethod
-    def _flatten_tokens(cls, category: str, tokens: Dict, prefix: str = '') -> List[Dict]:
+    def _flatten_tokens(cls, category: str, tokens: dict, prefix: str = "") -> list[dict]:
         """
         Flatten nested token structure to flat list of token dicts.
 
@@ -336,11 +347,11 @@ class TokenSyncService:
             List of dicts with 'name', 'value', 'token_type', 'description'
         """
         result = []
-        category_prefix = cls.CATEGORY_PREFIXES.get(category, 'theme')
-        token_type = cls.CATEGORY_TOKEN_TYPES.get(category, 'spacing')
+        category_prefix = cls.CATEGORY_PREFIXES.get(category, "theme")
+        token_type = cls.CATEGORY_TOKEN_TYPES.get(category, "spacing")
 
         for key, value in tokens.items():
-            if isinstance(value, dict) and category in ('elements', 'widgets'):
+            if isinstance(value, dict) and category in ("elements", "widgets"):
                 # Handle nested element/widget tokens (e.g., elements.button.radius, widgets.cart.icon-size)
                 nested_prefix = f"{prefix}{key}-" if prefix else f"{key}-"
                 result.extend(cls._flatten_tokens(category, value, nested_prefix))
@@ -355,17 +366,19 @@ class TokenSyncService:
                 # Infer token type from key if possible
                 inferred_type = cls._infer_token_type(key, category)
 
-                result.append({
-                    'name': token_name,
-                    'value': str(value),
-                    'token_type': inferred_type or token_type,
-                    'description': f"{category}: {full_key}",
-                })
+                result.append(
+                    {
+                        "name": token_name,
+                        "value": str(value),
+                        "token_type": inferred_type or token_type,
+                        "description": f"{category}: {full_key}",
+                    }
+                )
 
         return result
 
     @classmethod
-    def _infer_token_type(cls, key: str, category: str) -> Optional[str]:
+    def _infer_token_type(cls, key: str, category: str) -> str | None:
         """
         Infer DesignToken.token_type from key name.
 
@@ -379,33 +392,35 @@ class TokenSyncService:
         key_lower = key.lower()
 
         # Check for color indicators
-        if any(x in key_lower for x in ['color', 'bg', 'background', '-light', '-dark', '-hover']):
-            return 'color'
+        if any(x in key_lower for x in ["color", "bg", "background", "-light", "-dark", "-hover"]):
+            return "color"
 
         # Check for font indicators
-        if any(x in key_lower for x in ['font', 'line-height', 'letter-spacing', 'text-transform']):
-            return 'font'
+        if any(x in key_lower for x in ["font", "line-height", "letter-spacing", "text-transform"]):
+            return "font"
 
         # Check for spacing indicators
-        if any(x in key_lower for x in ['padding', 'margin', 'gap', 'space', 'height', 'width', 'size']):
-            return 'spacing'
+        if any(
+            x in key_lower for x in ["padding", "margin", "gap", "space", "height", "width", "size"]
+        ):
+            return "spacing"
 
         # Check for border indicators
-        if any(x in key_lower for x in ['border', 'radius', 'rounded']):
-            return 'border'
+        if any(x in key_lower for x in ["border", "radius", "rounded"]):
+            return "border"
 
         # Check for shadow indicators
-        if 'shadow' in key_lower:
-            return 'shadow'
+        if "shadow" in key_lower:
+            return "shadow"
 
         # Check for animation indicators
-        if any(x in key_lower for x in ['duration', 'easing', 'timing', 'transition', 'animation']):
-            return 'animation'
+        if any(x in key_lower for x in ["duration", "easing", "timing", "transition", "animation"]):
+            return "animation"
 
         return None
 
     @classmethod
-    def _parse_token_name(cls, token_name: str) -> Tuple[Optional[str], Optional[str]]:
+    def _parse_token_name(cls, token_name: str) -> tuple[str | None, str | None]:
         """
         Parse a token name to extract category and key.
 
@@ -418,23 +433,21 @@ class TokenSyncService:
         # Sort prefixes by length (longest first) to avoid ambiguous matches
         # e.g., 'theme-color' should match before 'theme'
         sorted_prefixes = sorted(
-            cls.CATEGORY_PREFIXES.items(),
-            key=lambda x: len(x[1]),
-            reverse=True
+            cls.CATEGORY_PREFIXES.items(), key=lambda x: len(x[1]), reverse=True
         )
 
         for category, prefix in sorted_prefixes:
             if token_name.startswith(f"{prefix}-"):
-                key = token_name[len(prefix) + 1:]  # +1 for the dash
+                key = token_name[len(prefix) + 1 :]  # +1 for the dash
 
                 # For categories with shared 'theme' prefix, validate the key pattern
-                if prefix == 'theme':
+                if prefix == "theme":
                     # Typography keys start with: font-, line-height-, letter-spacing-
-                    if key.startswith(('font-', 'line-height-', 'letter-spacing-')):
-                        return ('typography', key)
+                    if key.startswith(("font-", "line-height-", "letter-spacing-")):
+                        return ("typography", key)
                     # Border keys start with: border-, radius-
-                    elif key.startswith(('border-', 'radius-')):
-                        return ('borders', key)
+                    elif key.startswith(("border-", "radius-")):
+                        return ("borders", key)
                     # If no specific pattern matches, skip to try other prefixes
                     continue
 
@@ -442,21 +455,24 @@ class TokenSyncService:
 
         # Handle legacy/custom token names that start with 'theme-' but don't match patterns
         # These are typically from old branding customizations
-        if token_name.startswith('theme-'):
+        if token_name.startswith("theme-"):
             key = token_name[6:]  # Remove 'theme-' prefix
             # Try to infer category from key content
             key_lower = key.lower()
-            if any(x in key_lower for x in ['color', 'bg', 'background']):
-                return ('colors', key)
-            elif any(x in key_lower for x in ['button', 'btn']):
-                return ('borders', key)  # Button styles often go to borders
-            elif any(x in key_lower for x in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'text', 'font', 'align']):
-                return ('typography', key)
+            if any(x in key_lower for x in ["color", "bg", "background"]):
+                return ("colors", key)
+            elif any(x in key_lower for x in ["button", "btn"]):
+                return ("borders", key)  # Button styles often go to borders
+            elif any(
+                x in key_lower
+                for x in ["h1", "h2", "h3", "h4", "h5", "h6", "text", "font", "align"]
+            ):
+                return ("typography", key)
 
         return (None, None)
 
     @classmethod
-    def get_all_theme_token_names(cls, theme: Theme) -> List[str]:
+    def get_all_theme_token_names(cls, theme: Theme) -> list[str]:
         """
         Get all token names that would be created from a theme manifest.
 
@@ -471,13 +487,13 @@ class TokenSyncService:
         if not theme or not theme.manifest:
             return []
 
-        tokens = theme.manifest.get('tokens', {})
+        tokens = theme.manifest.get("tokens", {})
         all_names = []
 
         for category, category_tokens in tokens.items():
             if not isinstance(category_tokens, dict):
                 continue
             flattened = cls._flatten_tokens(category, category_tokens)
-            all_names.extend([t['name'] for t in flattened])
+            all_names.extend([t["name"] for t in flattened])
 
         return all_names

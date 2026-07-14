@@ -3,12 +3,16 @@ Document extraction service for PDF/Office file content.
 
 Provides methods to extract text from documents for search indexing.
 """
+
 import hashlib
 import os
-from typing import Optional
 from pathlib import Path
+from typing import TYPE_CHECKING, Optional
 
 from django.contrib.contenttypes.models import ContentType
+
+if TYPE_CHECKING:
+    from search.models import SearchIndex
 
 
 class DocumentService:
@@ -29,7 +33,8 @@ class DocumentService:
         """Check if PyPDF2 is available."""
         if self._pypdf2_available is None:
             try:
-                import PyPDF2
+                import PyPDF2  # noqa: F401
+
                 self._pypdf2_available = True
             except ImportError:
                 self._pypdf2_available = False
@@ -40,7 +45,8 @@ class DocumentService:
         """Check if python-docx is available."""
         if self._docx_available is None:
             try:
-                import docx
+                import docx  # noqa: F401
+
                 self._docx_available = True
             except ImportError:
                 self._docx_available = False
@@ -51,7 +57,8 @@ class DocumentService:
         """Check if openpyxl is available."""
         if self._openpyxl_available is None:
             try:
-                import openpyxl
+                import openpyxl  # noqa: F401
+
                 self._openpyxl_available = True
             except ImportError:
                 self._openpyxl_available = False
@@ -65,21 +72,21 @@ class DocumentService:
                 for chunk in iter(lambda: f.read(4096), b""):
                     hash_md5.update(chunk)
             return hash_md5.hexdigest()
-        except (IOError, OSError):
+        except OSError:
             return ""
 
     def detect_file_type(self, file_path: str) -> str:
         """Detect the file type from extension."""
         ext = Path(file_path).suffix.lower()
         mapping = {
-            '.pdf': 'pdf',
-            '.docx': 'docx',
-            '.doc': 'docx',
-            '.xlsx': 'xlsx',
-            '.xls': 'xlsx',
-            '.txt': 'txt',
+            ".pdf": "pdf",
+            ".docx": "docx",
+            ".doc": "docx",
+            ".xlsx": "xlsx",
+            ".xls": "xlsx",
+            ".txt": "txt",
         }
-        return mapping.get(ext, 'other')
+        return mapping.get(ext, "other")
 
     def extract_text(self, file_path: str) -> str:
         """
@@ -93,13 +100,13 @@ class DocumentService:
 
         file_type = self.detect_file_type(file_path)
 
-        if file_type == 'pdf':
+        if file_type == "pdf":
             return self._extract_pdf(file_path)
-        elif file_type == 'docx':
+        elif file_type == "docx":
             return self._extract_docx(file_path)
-        elif file_type == 'xlsx':
+        elif file_type == "xlsx":
             return self._extract_xlsx(file_path)
-        elif file_type == 'txt':
+        elif file_type == "txt":
             return self._extract_txt(file_path)
 
         return ""
@@ -113,14 +120,14 @@ class DocumentService:
             import PyPDF2
 
             text_parts = []
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 reader = PyPDF2.PdfReader(f)
                 for page in reader.pages:
                     page_text = page.extract_text()
                     if page_text:
                         text_parts.append(page_text)
 
-            return ' '.join(text_parts)
+            return " ".join(text_parts)
         except Exception:
             return ""
 
@@ -147,7 +154,7 @@ class DocumentService:
                         if cell.text:
                             text_parts.append(cell.text)
 
-            return ' '.join(text_parts)
+            return " ".join(text_parts)
         except Exception:
             return ""
 
@@ -170,19 +177,19 @@ class DocumentService:
                             text_parts.append(str(cell.value))
 
             wb.close()
-            return ' '.join(text_parts)
+            return " ".join(text_parts)
         except Exception:
             return ""
 
     def _extract_txt(self, file_path: str) -> str:
         """Extract text from a plain text file."""
         try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, encoding="utf-8", errors="ignore") as f:
                 return f.read()
         except Exception:
             return ""
 
-    def index_digital_asset(self, asset) -> Optional['SearchIndex']:
+    def index_digital_asset(self, asset) -> Optional["SearchIndex"]:
         """
         Extract and index text from a digital asset.
 
@@ -195,7 +202,7 @@ class DocumentService:
             return None
 
         # Get file path from asset
-        if not hasattr(asset, 'file') or not asset.file:
+        if not hasattr(asset, "file") or not asset.file:
             return None
 
         file_path = asset.file.path
@@ -212,9 +219,9 @@ class DocumentService:
             content_type=content_type,
             object_id=asset.pk,
             defaults={
-                'file_type': file_type,
-                'checksum': new_checksum,
-            }
+                "file_type": file_type,
+                "checksum": new_checksum,
+            },
         )
 
         # Check if needs reindex
@@ -240,15 +247,12 @@ class DocumentService:
         """
         from ..models import SearchIndex
 
-        if not hasattr(asset, 'file') or not asset.file:
+        if not hasattr(asset, "file") or not asset.file:
             return False
 
         try:
             content_type = ContentType.objects.get_for_model(asset)
-            search_index = SearchIndex.objects.get(
-                content_type=content_type,
-                object_id=asset.pk
-            )
+            search_index = SearchIndex.objects.get(content_type=content_type, object_id=asset.pk)
 
             current_checksum = self.get_file_checksum(asset.file.path)
             return search_index.checksum != current_checksum
@@ -262,24 +266,24 @@ class DocumentService:
         Returns dict with counts of indexed, skipped, and failed.
         """
         results = {
-            'indexed': 0,
-            'skipped': 0,
-            'failed': 0,
+            "indexed": 0,
+            "skipped": 0,
+            "failed": 0,
         }
 
         for asset in assets:
             try:
                 if not self.needs_reindex(asset):
-                    results['skipped'] += 1
+                    results["skipped"] += 1
                     continue
 
                 index = self.index_digital_asset(asset)
                 if index:
-                    results['indexed'] += 1
+                    results["indexed"] += 1
                 else:
-                    results['skipped'] += 1
+                    results["skipped"] += 1
             except Exception:
-                results['failed'] += 1
+                results["failed"] += 1
 
         return results
 
@@ -291,14 +295,9 @@ class DocumentService:
         """
         from ..models import SearchIndex
 
-        return list(
-            SearchIndex.objects.filter(
-                extracted_text__icontains=query
-            )[:limit]
-        )
+        return list(SearchIndex.objects.filter(extracted_text__icontains=query)[:limit])
 
-    def get_document_snippet(self, text: str, query: str,
-                             snippet_length: int = 200) -> str:
+    def get_document_snippet(self, text: str, query: str, snippet_length: int = 200) -> str:
         """
         Get a snippet of text around the query match.
 
@@ -310,7 +309,7 @@ class DocumentService:
         # Find query position
         pos = text_lower.find(query_lower)
         if pos == -1:
-            return text[:snippet_length] + '...' if len(text) > snippet_length else text
+            return text[:snippet_length] + "..." if len(text) > snippet_length else text
 
         # Calculate snippet boundaries
         start = max(0, pos - snippet_length // 2)
@@ -320,8 +319,8 @@ class DocumentService:
 
         # Add ellipsis if truncated
         if start > 0:
-            snippet = '...' + snippet
+            snippet = "..." + snippet
         if end < len(text):
-            snippet = snippet + '...'
+            snippet = snippet + "..."
 
         return snippet

@@ -9,11 +9,13 @@ Usage:
     {% mtrans 'Shopping Cart' %}
     {% mtrans 'Shopping Cart' as cart_title %}
 """
+
 import logging
+
 from django import template
 from django.conf import settings
-from django.utils.translation import get_language, gettext
 from django.core.cache import cache
+from django.utils.translation import get_language, gettext
 
 logger = logging.getLogger(__name__)
 register = template.Library()
@@ -29,7 +31,7 @@ def _get_ui_overrides(language_code):
     Returns a dict of {english_string: translated_string}.
     Cached for 5 minutes.
     """
-    cache_key = f'ui_trans_overrides:{language_code}'
+    cache_key = f"ui_trans_overrides:{language_code}"
     overrides = cache.get(cache_key)
 
     if overrides is not None:
@@ -39,9 +41,7 @@ def _get_ui_overrides(language_code):
         from translations.models import SiteLanguage, UITranslationOverride
         from translations.ui_string_registry import UI_STRING_REGISTRY
 
-        site_lang = SiteLanguage.objects.filter(
-            code=language_code, is_active=True
-        ).first()
+        site_lang = SiteLanguage.objects.filter(code=language_code, is_active=True).first()
 
         if not site_lang:
             cache.set(cache_key, {}, 300)
@@ -75,7 +75,7 @@ class MerchantTransNode(template.Node):
 
     def render(self, context):
         source_string = self.message_string
-        language_code = get_language() or 'en'
+        language_code = get_language() or "en"
 
         # Check merchant overrides (works for all languages including built-in)
         overrides = _get_ui_overrides(language_code)
@@ -90,11 +90,11 @@ class MerchantTransNode(template.Node):
 
         if self.asvar:
             context[self.asvar] = result
-            return ''
+            return ""
         return result
 
 
-@register.tag('mtrans')
+@register.tag("mtrans")
 def do_mtrans(parser, token):
     """
     Merchant-aware translation tag.
@@ -112,20 +112,22 @@ def do_mtrans(parser, token):
     """
     bits = token.split_contents()
     if len(bits) < 2:
-        raise template.TemplateSyntaxError(
-            "'%s' tag requires at least one argument" % bits[0]
-        )
+        raise template.TemplateSyntaxError(f"'{bits[0]}' tag requires at least one argument")
 
     # Extract the string (remove quotes and unescape)
     message_string = bits[1]
-    if len(message_string) >= 2 and message_string[0] in ('"', "'") and message_string[-1] == message_string[0]:
+    if (
+        len(message_string) >= 2
+        and message_string[0] in ('"', "'")
+        and message_string[-1] == message_string[0]
+    ):
         quote_char = message_string[0]
         message_string = message_string[1:-1]
         # Unescape escaped quotes (e.g. we\'ll -> we'll)
-        message_string = message_string.replace('\\' + quote_char, quote_char)
+        message_string = message_string.replace("\\" + quote_char, quote_char)
 
     asvar = None
-    if len(bits) >= 4 and bits[2] == 'as':
+    if len(bits) >= 4 and bits[2] == "as":
         asvar = bits[3]
 
     return MerchantTransNode(message_string, asvar=asvar)

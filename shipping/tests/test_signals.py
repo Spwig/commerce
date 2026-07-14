@@ -3,19 +3,19 @@ Tests for shipping signal handlers
 Tests bidirectional sync between Order and Shipment
 """
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from djmoney.money import Money
 
-from shipping.models import Shipment, CarrierPreset
+from orders.models import Order
+from shipping.models import CarrierPreset, Shipment
 from shipping.signals import (
-    shipment_created,
     label_purchased,
-    tracking_updated,
+    shipment_created,
     shipment_delivered,
     shipment_exception,
+    tracking_updated,
 )
-from orders.models import Order
 
 User = get_user_model()
 
@@ -25,29 +25,27 @@ class ShipmentToOrderSyncTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
         self.carrier = CarrierPreset.objects.create(
-            name='Test Carrier',
-            slug='test-carrier-sync',
-            tracking_url_template='https://test.com/track/{tracking_number}',
+            name="Test Carrier",
+            slug="test-carrier-sync",
+            tracking_url_template="https://test.com/track/{tracking_number}",
         )
 
         self.order = Order.objects.create(
             user=self.user,
-            order_number='SYNC-TEST-001',
-            email='customer@example.com',
-            status='processing',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money('100.00', 'USD'),
-            total_amount=Money('100.00', 'USD'),
+            order_number="SYNC-TEST-001",
+            email="customer@example.com",
+            status="processing",
+            shipping_name="Test Customer",
+            shipping_address1="123 Test St",
+            shipping_city="Test City",
+            shipping_postal_code="12345",
+            shipping_country="US",
+            subtotal=Money("100.00", "USD"),
+            total_amount=Money("100.00", "USD"),
         )
 
     def test_shipment_tracking_syncs_to_order(self):
@@ -57,21 +55,21 @@ class ShipmentToOrderSyncTest(TestCase):
             order=self.order,
             user=self.user,
             carrier_preset=self.carrier,
-            origin_country='US',
-            dest_country='US',
+            origin_country="US",
+            dest_country="US",
         )
 
         # Verify order has no tracking yet
         self.order.refresh_from_db()
-        self.assertEqual(self.order.tracking_number, '')
+        self.assertEqual(self.order.tracking_number, "")
 
         # Add tracking to shipment
-        shipment.tracking_id = 'ABC123456'
+        shipment.tracking_id = "ABC123456"
         shipment.save()
 
         # Verify it synced to order
         self.order.refresh_from_db()
-        self.assertEqual(self.order.tracking_number, 'ABC123456')
+        self.assertEqual(self.order.tracking_number, "ABC123456")
 
     def test_shipment_tracking_update_syncs_to_order(self):
         """Test that updating shipment tracking updates the order"""
@@ -79,22 +77,22 @@ class ShipmentToOrderSyncTest(TestCase):
             order=self.order,
             user=self.user,
             carrier_preset=self.carrier,
-            origin_country='US',
-            dest_country='US',
-            tracking_id='FIRST123',
+            origin_country="US",
+            dest_country="US",
+            tracking_id="FIRST123",
         )
 
         # Verify initial sync
         self.order.refresh_from_db()
-        self.assertEqual(self.order.tracking_number, 'FIRST123')
+        self.assertEqual(self.order.tracking_number, "FIRST123")
 
         # Update tracking
-        shipment.tracking_id = 'SECOND456'
+        shipment.tracking_id = "SECOND456"
         shipment.save()
 
         # Verify update synced
         self.order.refresh_from_db()
-        self.assertEqual(self.order.tracking_number, 'SECOND456')
+        self.assertEqual(self.order.tracking_number, "SECOND456")
 
     def test_no_sync_when_no_order(self):
         """Test that signal doesn't crash when shipment has no order"""
@@ -104,9 +102,9 @@ class ShipmentToOrderSyncTest(TestCase):
             shipment = Shipment(
                 user=self.user,
                 carrier_preset=self.carrier,
-                origin_country='US',
-                dest_country='US',
-                tracking_id='TEST123',
+                origin_country="US",
+                dest_country="US",
+                tracking_id="TEST123",
             )
             # Save will fail due to order being required, but signal should handle gracefully
             shipment.save()
@@ -120,31 +118,29 @@ class OrderToShipmentSyncTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
         # Create a default carrier
         self.carrier = CarrierPreset.objects.create(
-            name='Default Carrier',
-            slug='default-carrier',
+            name="Default Carrier",
+            slug="default-carrier",
             is_default=True,
             is_active=True,
         )
 
         self.order = Order.objects.create(
             user=self.user,
-            order_number='ORDER-SYNC-001',
-            email='customer@example.com',
-            status='processing',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money('100.00', 'USD'),
-            total_amount=Money('100.00', 'USD'),
+            order_number="ORDER-SYNC-001",
+            email="customer@example.com",
+            status="processing",
+            shipping_name="Test Customer",
+            shipping_address1="123 Test St",
+            shipping_city="Test City",
+            shipping_postal_code="12345",
+            shipping_country="US",
+            subtotal=Money("100.00", "USD"),
+            total_amount=Money("100.00", "USD"),
         )
 
     def test_order_tracking_creates_shipment(self):
@@ -153,7 +149,7 @@ class OrderToShipmentSyncTest(TestCase):
         self.assertEqual(Shipment.objects.filter(order=self.order).count(), 0)
 
         # Add tracking number to order
-        self.order.tracking_number = 'XYZ789'
+        self.order.tracking_number = "XYZ789"
         self.order.save()
 
         # Verify shipment was created
@@ -161,9 +157,9 @@ class OrderToShipmentSyncTest(TestCase):
         self.assertEqual(shipments.count(), 1)
 
         shipment = shipments.first()
-        self.assertEqual(shipment.tracking_id, 'XYZ789')
+        self.assertEqual(shipment.tracking_id, "XYZ789")
         self.assertEqual(shipment.carrier_preset, self.carrier)
-        self.assertEqual(shipment.status, 'in_transit')
+        self.assertEqual(shipment.status, "in_transit")
 
     def test_order_tracking_updates_existing_shipment(self):
         """Test that updating order tracking updates existing shipment"""
@@ -172,18 +168,18 @@ class OrderToShipmentSyncTest(TestCase):
             order=self.order,
             user=self.user,
             carrier_preset=self.carrier,
-            origin_country='US',
-            dest_country='US',
-            tracking_id='INITIAL123',
+            origin_country="US",
+            dest_country="US",
+            tracking_id="INITIAL123",
         )
 
         # Update order tracking number
-        self.order.tracking_number = 'UPDATED456'
+        self.order.tracking_number = "UPDATED456"
         self.order.save()
 
         # Verify shipment was updated
         shipment.refresh_from_db()
-        self.assertEqual(shipment.tracking_id, 'UPDATED456')
+        self.assertEqual(shipment.tracking_id, "UPDATED456")
 
         # Verify no new shipment was created
         self.assertEqual(Shipment.objects.filter(order=self.order).count(), 1)
@@ -192,17 +188,17 @@ class OrderToShipmentSyncTest(TestCase):
         """Test that creating a new order doesn't automatically create shipment"""
         new_order = Order.objects.create(
             user=self.user,
-            order_number='NEW-ORDER-001',
-            email='customer@example.com',
-            status='pending',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money('100.00', 'USD'),
-            total_amount=Money('100.00', 'USD'),
-            tracking_number='',  # Empty tracking
+            order_number="NEW-ORDER-001",
+            email="customer@example.com",
+            status="pending",
+            shipping_name="Test Customer",
+            shipping_address1="123 Test St",
+            shipping_city="Test City",
+            shipping_postal_code="12345",
+            shipping_country="US",
+            subtotal=Money("100.00", "USD"),
+            total_amount=Money("100.00", "USD"),
+            tracking_number="",  # Empty tracking
         )
 
         # Verify no shipment was created
@@ -210,11 +206,11 @@ class OrderToShipmentSyncTest(TestCase):
 
     def test_no_shipment_when_tracking_cleared(self):
         """Test that clearing tracking doesn't create a shipment"""
-        self.order.tracking_number = 'TEMP123'
+        self.order.tracking_number = "TEMP123"
         self.order.save()
 
         # Clear tracking
-        self.order.tracking_number = ''
+        self.order.tracking_number = ""
         self.order.save()
 
         # Should still have only 1 shipment (from first save)
@@ -226,29 +222,27 @@ class SignalLoopPreventionTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
         self.carrier = CarrierPreset.objects.create(
-            name='Test Carrier',
-            slug='test-carrier-loop',
+            name="Test Carrier",
+            slug="test-carrier-loop",
             is_default=True,
         )
 
         self.order = Order.objects.create(
             user=self.user,
-            order_number='LOOP-TEST-001',
-            email='customer@example.com',
-            status='processing',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money('100.00', 'USD'),
-            total_amount=Money('100.00', 'USD'),
+            order_number="LOOP-TEST-001",
+            email="customer@example.com",
+            status="processing",
+            shipping_name="Test Customer",
+            shipping_address1="123 Test St",
+            shipping_city="Test City",
+            shipping_postal_code="12345",
+            shipping_country="US",
+            subtotal=Money("100.00", "USD"),
+            total_amount=Money("100.00", "USD"),
         )
 
     def test_no_infinite_loop_on_shipment_save(self):
@@ -257,9 +251,9 @@ class SignalLoopPreventionTest(TestCase):
             order=self.order,
             user=self.user,
             carrier_preset=self.carrier,
-            origin_country='US',
-            dest_country='US',
-            tracking_id='LOOP123',
+            origin_country="US",
+            dest_country="US",
+            tracking_id="LOOP123",
         )
 
         # This should not cause infinite recursion
@@ -269,11 +263,11 @@ class SignalLoopPreventionTest(TestCase):
 
         # Verify tracking synced exactly once
         self.order.refresh_from_db()
-        self.assertEqual(self.order.tracking_number, 'LOOP123')
+        self.assertEqual(self.order.tracking_number, "LOOP123")
 
     def test_no_infinite_loop_on_order_save(self):
         """Test that saving an order doesn't cause infinite loop"""
-        self.order.tracking_number = 'ORDER123'
+        self.order.tracking_number = "ORDER123"
         self.order.save()
 
         # This should not cause infinite recursion
@@ -289,52 +283,50 @@ class CustomSignalTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
 
         self.carrier = CarrierPreset.objects.create(
-            name='Test Carrier',
-            slug='test-carrier-custom',
+            name="Test Carrier",
+            slug="test-carrier-custom",
         )
 
         self.order = Order.objects.create(
             user=self.user,
-            order_number='CUSTOM-SIG-001',
-            email='customer@example.com',
-            status='processing',
-            shipping_name='Test Customer',
-            shipping_address1='123 Test St',
-            shipping_city='Test City',
-            shipping_postal_code='12345',
-            shipping_country='US',
-            subtotal=Money('100.00', 'USD'),
-            total_amount=Money('100.00', 'USD'),
+            order_number="CUSTOM-SIG-001",
+            email="customer@example.com",
+            status="processing",
+            shipping_name="Test Customer",
+            shipping_address1="123 Test St",
+            shipping_city="Test City",
+            shipping_postal_code="12345",
+            shipping_country="US",
+            subtotal=Money("100.00", "USD"),
+            total_amount=Money("100.00", "USD"),
         )
 
         self.shipment = Shipment.objects.create(
             order=self.order,
             user=self.user,
             carrier_preset=self.carrier,
-            origin_country='US',
-            dest_country='US',
+            origin_country="US",
+            dest_country="US",
         )
 
     def test_label_purchased_signal_updates_order_status(self):
         """Test that label_purchased signal updates order status to shipped"""
-        self.assertEqual(self.order.status, 'processing')
+        self.assertEqual(self.order.status, "processing")
 
         # Send label_purchased signal
         label_purchased.send(sender=Shipment, shipment=self.shipment)
 
         # Verify order status updated
         self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'shipped')
+        self.assertEqual(self.order.status, "shipped")
 
     def test_shipment_delivered_signal_updates_order_status(self):
         """Test that shipment_delivered signal updates order status to completed"""
-        self.order.status = 'shipped'
+        self.order.status = "shipped"
         self.order.save()
 
         # Send shipment_delivered signal
@@ -342,7 +334,7 @@ class CustomSignalTest(TestCase):
 
         # Verify order status updated
         self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'completed')
+        self.assertEqual(self.order.status, "completed")
 
     def test_shipment_created_signal(self):
         """Test that shipment_created signal can be sent"""
@@ -357,4 +349,4 @@ class CustomSignalTest(TestCase):
     def test_shipment_exception_signal(self):
         """Test that shipment_exception signal can be sent"""
         # Should not crash
-        shipment_exception.send(sender=Shipment, shipment=self.shipment, error='Test error')
+        shipment_exception.send(sender=Shipment, shipment=self.shipment, error="Test error")

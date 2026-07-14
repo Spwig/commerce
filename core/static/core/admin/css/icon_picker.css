@@ -13,154 +13,156 @@
 
 /* ── Root Container ── */
 .icon-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
 }
 
 /* ── Selected Icon Preview ── */
 .icon-picker-selected {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .icon-picker-preview {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--darkened-bg, #f5f5f5);
-    border: 2px solid var(--border-color, #ddd);
-    border-radius: 8px;
-    font-size: 22px;
-    color: var(--body-fg, #333);
-    flex-shrink: 0;
-    transition: border-color 0.2s, background 0.2s;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--darkened-bg, #f5f5f5);
+  border: 2px solid var(--border-color, #ddd);
+  border-radius: 8px;
+  font-size: 22px;
+  color: var(--body-fg, #333);
+  flex-shrink: 0;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .icon-picker-preview-empty {
-    color: var(--body-quiet-color, #999);
-    font-size: 18px;
+  color: var(--body-quiet-color, #999);
+  font-size: 18px;
 }
 
 .icon-picker-preview:has(.icon-picker-preview-empty) {
-    border-style: dashed;
+  border-style: dashed;
 }
 
 .icon-picker-selected-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .icon-picker-selected-label {
-    font-size: 13px;
-    color: var(--body-fg, #333);
-    font-family: monospace;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  font-size: 13px;
+  color: var(--body-fg, #333);
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .icon-picker-clear {
-    background: none;
-    border: none;
-    color: var(--delete-button-bg, #ba2121);
-    font-size: 12px;
-    cursor: pointer;
-    padding: 0;
-    text-align: left;
-    width: fit-content;
-    font-family: inherit;
-    line-height: 1;
+  background: none;
+  border: none;
+  color: var(--delete-button-bg, #ba2121);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  width: fit-content;
+  font-family: inherit;
+  line-height: 1;
 }
 
 .icon-picker-clear:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* ── Priority Icons Grid ── */
 .icon-picker-priority {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .icon-picker-priority-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--body-quiet-color, #999);
-    font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--body-quiet-color, #999);
+  font-weight: 600;
 }
 
 .icon-picker-priority-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .icon-picker-grid-item {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border-color, #ddd);
-    border-radius: 6px;
-    background: var(--body-bg, #fff);
-    color: var(--body-fg, #333);
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    padding: 0;
-    line-height: 1;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  background: var(--body-bg, #fff);
+  color: var(--body-fg, #333);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  line-height: 1;
 }
 
 .icon-picker-grid-item:hover {
-    border-color: var(--primary, #417690);
-    background: rgba(65, 118, 144, 0.06);
-    color: var(--primary, #417690);
-    transform: scale(1.1);
+  border-color: var(--primary, #417690);
+  background: rgba(65, 118, 144, 0.06);
+  color: var(--primary, #417690);
+  transform: scale(1.1);
 }
 
 .icon-picker-grid-item.selected {
-    border-color: var(--primary, #417690);
-    background: var(--primary, #417690);
-    color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary, #417690);
+  background: var(--primary, #417690);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* ── Browse Button ── */
 .icon-picker-browse {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 16px;
-    border: 1px solid var(--border-color, #ddd);
-    border-radius: 6px;
-    background: var(--body-bg, #fff);
-    color: var(--primary, #417690);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: fit-content;
-    font-family: inherit;
-    line-height: 1.4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  background: var(--body-bg, #fff);
+  color: var(--primary, #417690);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+  font-family: inherit;
+  line-height: 1.4;
 }
 
 .icon-picker-browse:hover {
-    background: rgba(65, 118, 144, 0.06);
-    border-color: var(--primary, #417690);
+  background: rgba(65, 118, 144, 0.06);
+  border-color: var(--primary, #417690);
 }
 
 .icon-picker-browse:focus-visible {
-    outline: 2px solid var(--primary, #417690);
-    outline-offset: 2px;
+  outline: 2px solid var(--primary, #417690);
+  outline-offset: 2px;
 }
 
 /* ── Modal Overrides ──
@@ -168,245 +170,245 @@
    These styles extend the base modal for icon-picker specific content. */
 
 .icon-picker-modal .admin-modal-body {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* ── Modal Toolbar (sticky) ── */
 .icon-picker-modal-toolbar {
-    padding: 16px 20px 12px;
-    border-bottom: 1px solid var(--hairline-color, #e8e8e8);
-    flex-shrink: 0;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
+  flex-shrink: 0;
 }
 
 .icon-picker-modal-search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--darkened-bg, #f5f5f5);
-    border: 1px solid var(--border-color, #ddd);
-    border-radius: 6px;
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--darkened-bg, #f5f5f5);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
 }
 
 .icon-picker-modal-search:focus-within {
-    border-color: var(--primary, #417690);
+  border-color: var(--primary, #417690);
 }
 
 .icon-picker-modal-search i {
-    color: var(--body-quiet-color, #999);
-    font-size: 14px;
-    flex-shrink: 0;
+  color: var(--body-quiet-color, #999);
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 .icon-picker-modal-search input {
-    border: none;
-    background: transparent;
-    color: var(--body-fg, #333);
-    font-size: 14px;
-    width: 100%;
-    outline: none;
-    font-family: inherit;
+  border: none;
+  background: transparent;
+  color: var(--body-fg, #333);
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  font-family: inherit;
 }
 
 .icon-picker-modal-search input::placeholder {
-    color: var(--body-quiet-color, #999);
+  color: var(--body-quiet-color, #999);
 }
 
 /* ── Category Pills ── */
 .icon-picker-modal-categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    max-height: 68px;
-    overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 68px;
+  overflow-y: auto;
 }
 
 .icon-picker-category-btn {
-    padding: 3px 10px;
-    border: 1px solid var(--border-color, #ddd);
-    border-radius: 99px;
-    background: var(--body-bg, #fff);
-    color: var(--body-fg, #333);
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-    font-family: inherit;
-    line-height: 1.5;
+  padding: 3px 10px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 99px;
+  background: var(--body-bg, #fff);
+  color: var(--body-fg, #333);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  font-family: inherit;
+  line-height: 1.5;
 }
 
 .icon-picker-category-btn:hover {
-    border-color: var(--primary, #417690);
-    color: var(--primary, #417690);
+  border-color: var(--primary, #417690);
+  color: var(--primary, #417690);
 }
 
 .icon-picker-category-btn.active {
-    background: var(--primary, #417690);
-    color: #fff;
-    border-color: var(--primary, #417690);
+  background: var(--primary, #417690);
+  color: #fff;
+  border-color: var(--primary, #417690);
 }
 
 /* ── Icon Count ── */
 .icon-picker-modal-count {
-    padding: 6px 20px;
-    font-size: 12px;
-    color: var(--body-quiet-color, #999);
-    flex-shrink: 0;
-    border-bottom: 1px solid var(--hairline-color, #e8e8e8);
+  padding: 6px 20px;
+  font-size: 12px;
+  color: var(--body-quiet-color, #999);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
 }
 
 /* ── Modal Icon Grid ── */
 .icon-picker-modal-grid {
-    padding: 12px 20px 20px;
-    overflow-y: auto;
-    flex: 1;
-    min-height: 0;
+  padding: 12px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .icon-picker-modal-category-heading {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--header-color, #666);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 12px 0 8px;
-    border-bottom: 1px solid var(--hairline-color, #e8e8e8);
-    margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--header-color, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 0 8px;
+  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
+  margin-bottom: 8px;
 }
 
 .icon-picker-modal-category-heading:first-child {
-    padding-top: 0;
+  padding-top: 0;
 }
 
 .icon-picker-modal-category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-    gap: 4px;
-    margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 4px;
+  margin-bottom: 16px;
 }
 
 .icon-picker-modal-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 8px 4px;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--body-fg, #333);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    min-height: 60px;
-    justify-content: center;
-    font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--body-fg, #333);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 60px;
+  justify-content: center;
+  font-family: inherit;
 }
 
 .icon-picker-modal-item i {
-    font-size: 20px;
-    line-height: 1;
+  font-size: 20px;
+  line-height: 1;
 }
 
 .icon-picker-modal-item-label {
-    font-size: 9px;
-    color: var(--body-quiet-color, #999);
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 100%;
-    line-height: 1.2;
+  font-size: 9px;
+  color: var(--body-quiet-color, #999);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  line-height: 1.2;
 }
 
 .icon-picker-modal-item:hover {
-    background: var(--darkened-bg, #f5f5f5);
-    border-color: var(--border-color, #ddd);
+  background: var(--darkened-bg, #f5f5f5);
+  border-color: var(--border-color, #ddd);
 }
 
 .icon-picker-modal-item.selected {
-    background: rgba(65, 118, 144, 0.08);
-    border-color: var(--primary, #417690);
-    color: var(--primary, #417690);
+  background: rgba(65, 118, 144, 0.08);
+  border-color: var(--primary, #417690);
+  color: var(--primary, #417690);
 }
 
 .icon-picker-modal-item.selected .icon-picker-modal-item-label {
-    color: var(--primary, #417690);
+  color: var(--primary, #417690);
 }
 
 /* ── Empty State ── */
 .icon-picker-modal-empty {
-    padding: 48px 20px;
-    text-align: center;
-    color: var(--body-quiet-color, #999);
-    font-size: 14px;
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--body-quiet-color, #999);
+  font-size: 14px;
 }
 
 /* ── Dark Mode ──
    Most theming is handled via CSS variables automatically.
    Only explicit overrides for hardcoded values. */
 
-[data-theme="dark"] .icon-picker-grid-item.selected {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+[data-theme='dark'] .icon-picker-grid-item.selected {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-[data-theme="dark"] .icon-picker-grid-item:hover {
-    background: rgba(65, 118, 144, 0.15);
+[data-theme='dark'] .icon-picker-grid-item:hover {
+  background: rgba(65, 118, 144, 0.15);
 }
 
-[data-theme="dark"] .icon-picker-browse:hover {
-    background: rgba(65, 118, 144, 0.15);
+[data-theme='dark'] .icon-picker-browse:hover {
+  background: rgba(65, 118, 144, 0.15);
 }
 
-[data-theme="dark"] .icon-picker-modal-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+[data-theme='dark'] .icon-picker-modal-item:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-[data-theme="dark"] .icon-picker-modal-item.selected {
-    background: rgba(65, 118, 144, 0.2);
+[data-theme='dark'] .icon-picker-modal-item.selected {
+  background: rgba(65, 118, 144, 0.2);
 }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-    .icon-picker {
-        max-width: 100%;
-    }
+  .icon-picker {
+    max-width: 100%;
+  }
 
-    .icon-picker-modal-category-grid {
-        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    }
+  .icon-picker-modal-category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  }
 
-    .icon-picker-modal-categories {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        max-height: none;
-        padding-bottom: 4px;
-        -webkit-overflow-scrolling: touch;
-    }
+  .icon-picker-modal-categories {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-height: none;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    .icon-picker-priority-grid {
-        gap: 4px;
-    }
+  .icon-picker-priority-grid {
+    gap: 4px;
+  }
 
-    .icon-picker-grid-item {
-        width: 36px;
-        height: 36px;
-        font-size: 14px;
-    }
+  .icon-picker-grid-item {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
 
-    .icon-picker-modal-toolbar {
-        padding: 12px 16px 10px;
-    }
+  .icon-picker-modal-toolbar {
+    padding: 12px 16px 10px;
+  }
 
-    .icon-picker-modal-grid {
-        padding: 8px 16px 16px;
-    }
+  .icon-picker-modal-grid {
+    padding: 8px 16px 16px;
+  }
 
-    .icon-picker-modal-count {
-        padding: 4px 16px;
-    }
+  .icon-picker-modal-count {
+    padding: 4px 16px;
+  }
 }

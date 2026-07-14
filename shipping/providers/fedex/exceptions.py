@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
 """
 Custom exceptions for FedEx provider.
 
 This module defines FedEx-specific exceptions to provide better error handling
 and more informative error messages throughout the provider implementation.
 """
-from django.utils.translation import gettext_lazy as _
 
 
 class FedExError(Exception):
     """Base exception for all FedEx-related errors."""
+
     pass
 
 
@@ -22,6 +21,7 @@ class FedExAuthenticationError(FedExError):
     - Expired OAuth token
     - Credentials for wrong environment (sandbox vs production)
     """
+
     pass
 
 
@@ -34,6 +34,7 @@ class FedExAuthorizationError(FedExError):
     - Account not enabled for international shipping
     - Account not enabled for specific service type
     """
+
     pass
 
 
@@ -47,6 +48,7 @@ class FedExValidationError(FedExError):
     - Invalid service type for route
     - Invalid package dimensions/weight
     """
+
     pass
 
 
@@ -56,6 +58,7 @@ class FedExRateLimitError(FedExError):
 
     The error includes retry_after attribute indicating when to retry.
     """
+
     def __init__(self, message, retry_after=None):
         super().__init__(message)
         self.retry_after = retry_after
@@ -67,6 +70,7 @@ class FedExServiceUnavailableError(FedExError):
 
     This is typically a temporary issue. Retry with exponential backoff.
     """
+
     pass
 
 
@@ -79,6 +83,7 @@ class FedExAccountError(FedExError):
     - Account suspended or disabled
     - Account not registered for API access
     """
+
     pass
 
 
@@ -91,6 +96,7 @@ class FedExShipmentError(FedExError):
     - Service not available for route
     - Package restrictions violated
     """
+
     pass
 
 
@@ -103,6 +109,7 @@ class FedExTrackingError(FedExError):
     - Tracking number not yet in system
     - Shipment too old (archived)
     """
+
     pass
 
 
@@ -116,6 +123,7 @@ class FedExDocumentError(FedExError):
     - Document upload failed
     - Invalid document type
     """
+
     pass
 
 
@@ -125,6 +133,7 @@ class FedExAPIError(FedExError):
 
     Includes the error code and full error details from FedEx.
     """
+
     def __init__(self, message, error_code=None, error_details=None):
         super().__init__(message)
         self.error_code = error_code
@@ -134,53 +143,45 @@ class FedExAPIError(FedExError):
 # Error code mappings from FedEx API to custom exceptions
 FEDEX_ERROR_CODE_MAP = {
     # Authentication errors
-    'NOT.AUTHORIZED.ERROR': FedExAuthenticationError,
-    'UNAUTHORIZED': FedExAuthenticationError,
-    'AUTHENTICATION.ERROR': FedExAuthenticationError,
-    'INVALID.ACCESS.TOKEN': FedExAuthenticationError,
-
+    "NOT.AUTHORIZED.ERROR": FedExAuthenticationError,
+    "UNAUTHORIZED": FedExAuthenticationError,
+    "AUTHENTICATION.ERROR": FedExAuthenticationError,
+    "INVALID.ACCESS.TOKEN": FedExAuthenticationError,
     # Authorization errors
-    'FORBIDDEN.ERROR': FedExAuthorizationError,
-    'FORBIDDEN': FedExAuthorizationError,
-    'INSUFFICIENT.PERMISSIONS': FedExAuthorizationError,
-
+    "FORBIDDEN.ERROR": FedExAuthorizationError,
+    "FORBIDDEN": FedExAuthorizationError,
+    "INSUFFICIENT.PERMISSIONS": FedExAuthorizationError,
     # Account errors
-    'ACCOUNT.NUMBER.MISMATCH': FedExAccountError,
-    'ACCOUNTNUMBER.REGISTRATION.REQUIRED': FedExAccountError,
-    'INVALID.ACCOUNT.NUMBER': FedExAccountError,
-    'ACCOUNT.SUSPENDED': FedExAccountError,
-
+    "ACCOUNT.NUMBER.MISMATCH": FedExAccountError,
+    "ACCOUNTNUMBER.REGISTRATION.REQUIRED": FedExAccountError,
+    "INVALID.ACCOUNT.NUMBER": FedExAccountError,
+    "ACCOUNT.SUSPENDED": FedExAccountError,
     # Validation errors
-    'VALIDATION.ERROR': FedExValidationError,
-    'INVALID.INPUT.DATA': FedExValidationError,
-    'MISSING.REQUIRED.FIELD': FedExValidationError,
-    'INVALID.ADDRESS': FedExValidationError,
-
+    "VALIDATION.ERROR": FedExValidationError,
+    "INVALID.INPUT.DATA": FedExValidationError,
+    "MISSING.REQUIRED.FIELD": FedExValidationError,
+    "INVALID.ADDRESS": FedExValidationError,
     # Rate limit errors
-    'RATE.LIMIT.EXCEEDED': FedExRateLimitError,
-    'TOO.MANY.REQUESTS': FedExRateLimitError,
-
+    "RATE.LIMIT.EXCEEDED": FedExRateLimitError,
+    "TOO.MANY.REQUESTS": FedExRateLimitError,
     # Service availability errors
-    'SERVICE.UNAVAILABLE.ERROR': FedExServiceUnavailableError,
-    'INTERNAL.SERVER.ERROR': FedExServiceUnavailableError,
-    'GATEWAY.TIMEOUT': FedExServiceUnavailableError,
-    'SERVICE.TEMPORARILY.UNAVAILABLE': FedExServiceUnavailableError,
-
+    "SERVICE.UNAVAILABLE.ERROR": FedExServiceUnavailableError,
+    "INTERNAL.SERVER.ERROR": FedExServiceUnavailableError,
+    "GATEWAY.TIMEOUT": FedExServiceUnavailableError,
+    "SERVICE.TEMPORARILY.UNAVAILABLE": FedExServiceUnavailableError,
     # Shipment errors
-    'SHIPMENT.NOT.FOUND': FedExShipmentError,
-    'INVALID.SHIPMENT.DATA': FedExShipmentError,
-    'SERVICE.NOT.AVAILABLE': FedExShipmentError,
-
+    "SHIPMENT.NOT.FOUND": FedExShipmentError,
+    "INVALID.SHIPMENT.DATA": FedExShipmentError,
+    "SERVICE.NOT.AVAILABLE": FedExShipmentError,
     # Tracking errors
-    'TRACKING.NUMBER.NOT.FOUND': FedExTrackingError,
-    'INVALID.TRACKING.NUMBER': FedExTrackingError,
-    'TRACKING.DATA.UNAVAILABLE': FedExTrackingError,
-
+    "TRACKING.NUMBER.NOT.FOUND": FedExTrackingError,
+    "INVALID.TRACKING.NUMBER": FedExTrackingError,
+    "TRACKING.DATA.UNAVAILABLE": FedExTrackingError,
     # Document errors
-    'DOCUMENT.UPLOAD.FAILED': FedExDocumentError,
-    'INVALID.DOCUMENT.TYPE': FedExDocumentError,
-    'DOCUMENT.SIZE.EXCEEDED': FedExDocumentError,
-    'UNSUPPORTED.DOCUMENT.FORMAT': FedExDocumentError,
+    "DOCUMENT.UPLOAD.FAILED": FedExDocumentError,
+    "INVALID.DOCUMENT.TYPE": FedExDocumentError,
+    "DOCUMENT.SIZE.EXCEEDED": FedExDocumentError,
+    "UNSUPPORTED.DOCUMENT.FORMAT": FedExDocumentError,
 }
 
 

@@ -5,12 +5,11 @@ Provides utilities to bridge GeoIP data with Site Settings for currency, languag
 and timezone configuration. Leverages GeoIP CountryMapping data and django-money
 for comprehensive international support.
 """
-from typing import List, Tuple, Dict, Optional
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
+
+from datetime import UTC
 
 
-def get_all_currencies() -> List[Tuple[str, str]]:
+def get_all_currencies() -> list[tuple[str, str]]:
     """
     Get all available currencies from django-money, excluding obsolete and special purpose currencies.
 
@@ -28,27 +27,160 @@ def get_all_currencies() -> List[Tuple[str, str]]:
     """
     # Obsolete/historical currencies
     OBSOLETE_CURRENCIES = {
-        'ADP', 'AFA', 'ALK', 'AOK', 'AON', 'AOR', 'ARA', 'ARL', 'ARM', 'ARP', 'ATS', 'AZM',
-        'BAD', 'BAN', 'BEC', 'BEF', 'BEL', 'BGL', 'BGO', 'BOL', 'BRB', 'BRC', 'BRE', 'BRN', 'BRR', 'BRZ', 'BYB', 'BYR',
-        'CLE', 'CSD', 'CSK', 'CYP', 'DDM', 'DEM', 'ECS', 'ECV', 'EEK',
-        'ESA', 'ESB', 'ESP', 'FIM', 'FRF', 'GHC', 'GRD', 'GWP',
-        'HRD', 'IEP', 'ILR', 'ILP', 'ISJ', 'ITL', 'KRH', 'KRO', 'LTL', 'LUC', 'LUF', 'LUL', 'LVL',
-        'MGF', 'MKN', 'MLF', 'MRO', 'MTL', 'MVP', 'MXP', 'MZM',
-        'NIC', 'NLG', 'PEI', 'PES', 'PLZ', 'PTE', 'ROL',
-        'RUR', 'SDD', 'SDP', 'SIT', 'SKK', 'SLL', 'SRG', 'STD', 'SUR', 'TJR', 'TMM',
-        'TPE', 'TRL', 'TVD', 'UAK', 'UGS', 'UYP', 'VEB', 'VEF', 'VNN',
-        'XEU', 'YDD', 'YUD', 'YUM', 'YUN', 'YUR',
-        'ZAL', 'ZMK', 'ZRN', 'ZRZ', 'ZWD', 'ZWN', 'ZWR',
-        'BUK', 'GEK', 'GNS', 'GQE', 'GWE', 'LTT', 'LVR', 'MAF', 'MCF', 'MTP', 'MZE', 'RHD',
+        "ADP",
+        "AFA",
+        "ALK",
+        "AOK",
+        "AON",
+        "AOR",
+        "ARA",
+        "ARL",
+        "ARM",
+        "ARP",
+        "ATS",
+        "AZM",
+        "BAD",
+        "BAN",
+        "BEC",
+        "BEF",
+        "BEL",
+        "BGL",
+        "BGO",
+        "BOL",
+        "BRB",
+        "BRC",
+        "BRE",
+        "BRN",
+        "BRR",
+        "BRZ",
+        "BYB",
+        "BYR",
+        "CLE",
+        "CSD",
+        "CSK",
+        "CYP",
+        "DDM",
+        "DEM",
+        "ECS",
+        "ECV",
+        "EEK",
+        "ESA",
+        "ESB",
+        "ESP",
+        "FIM",
+        "FRF",
+        "GHC",
+        "GRD",
+        "GWP",
+        "HRD",
+        "IEP",
+        "ILR",
+        "ILP",
+        "ISJ",
+        "ITL",
+        "KRH",
+        "KRO",
+        "LTL",
+        "LUC",
+        "LUF",
+        "LUL",
+        "LVL",
+        "MGF",
+        "MKN",
+        "MLF",
+        "MRO",
+        "MTL",
+        "MVP",
+        "MXP",
+        "MZM",
+        "NIC",
+        "NLG",
+        "PEI",
+        "PES",
+        "PLZ",
+        "PTE",
+        "ROL",
+        "RUR",
+        "SDD",
+        "SDP",
+        "SIT",
+        "SKK",
+        "SLL",
+        "SRG",
+        "STD",
+        "SUR",
+        "TJR",
+        "TMM",
+        "TPE",
+        "TRL",
+        "TVD",
+        "UAK",
+        "UGS",
+        "UYP",
+        "VEB",
+        "VEF",
+        "VNN",
+        "XEU",
+        "YDD",
+        "YUD",
+        "YUM",
+        "YUN",
+        "YUR",
+        "ZAL",
+        "ZMK",
+        "ZRN",
+        "ZRZ",
+        "ZWD",
+        "ZWN",
+        "ZWR",
+        "BUK",
+        "GEK",
+        "GNS",
+        "GQE",
+        "GWE",
+        "LTT",
+        "LVR",
+        "MAF",
+        "MCF",
+        "MTP",
+        "MZE",
+        "RHD",
     }
 
     # Special/non-circulating currencies
     SPECIAL_CURRENCIES = {
-        'XAU', 'XAG', 'XPT', 'XPD',  # Precious metals
-        'XDR', 'XSU', 'XUA', 'XXX', 'XTS',  # Special purpose
-        'XBA', 'XBB', 'XBC', 'XBD', 'XFO', 'XRE', 'XBR', 'XFU', 'XPF',  # Special settlement
-        'CHE', 'CHW', 'CLF', 'MXV', 'USN', 'USS', 'UYI', 'UYW',  # Funds codes
-        'NPW', 'BOV', 'COU', 'CUC', 'KPW', 'MDC',  # Not for general use
+        "XAU",
+        "XAG",
+        "XPT",
+        "XPD",  # Precious metals
+        "XDR",
+        "XSU",
+        "XUA",
+        "XXX",
+        "XTS",  # Special purpose
+        "XBA",
+        "XBB",
+        "XBC",
+        "XBD",
+        "XFO",
+        "XRE",
+        "XBR",
+        "XFU",
+        "XPF",  # Special settlement
+        "CHE",
+        "CHW",
+        "CLF",
+        "MXV",
+        "USN",
+        "USS",
+        "UYI",
+        "UYW",  # Funds codes
+        "NPW",
+        "BOV",
+        "COU",
+        "CUC",
+        "KPW",
+        "MDC",  # Not for general use
     }
 
     try:
@@ -69,13 +201,13 @@ def get_all_currencies() -> List[Tuple[str, str]]:
     except ImportError:
         # Fallback if moneyed is not installed
         return [
-            ('USD', 'US Dollar (USD)'),
-            ('EUR', 'Euro (EUR)'),
-            ('GBP', 'British Pound (GBP)'),
+            ("USD", "US Dollar (USD)"),
+            ("EUR", "Euro (EUR)"),
+            ("GBP", "British Pound (GBP)"),
         ]
 
 
-def get_popular_currencies() -> List[Tuple[str, str]]:
+def get_popular_currencies() -> list[tuple[str, str]]:
     """
     Get the most commonly used currencies worldwide.
 
@@ -88,31 +220,31 @@ def get_popular_currencies() -> List[Tuple[str, str]]:
         - Major trading currencies
     """
     popular = [
-        ('USD', 'US Dollar ($)'),
-        ('EUR', 'Euro (€)'),
-        ('GBP', 'British Pound (£)'),
-        ('JPY', 'Japanese Yen (¥)'),
-        ('CNY', 'Chinese Yuan (¥)'),
-        ('CAD', 'Canadian Dollar (C$)'),
-        ('AUD', 'Australian Dollar (A$)'),
-        ('CHF', 'Swiss Franc (CHF)'),
-        ('SEK', 'Swedish Krona (kr)'),
-        ('NZD', 'New Zealand Dollar (NZ$)'),
-        ('MXN', 'Mexican Peso (MX$)'),
-        ('SGD', 'Singapore Dollar (S$)'),
-        ('HKD', 'Hong Kong Dollar (HK$)'),
-        ('NOK', 'Norwegian Krone (kr)'),
-        ('KRW', 'South Korean Won (₩)'),
-        ('TRY', 'Turkish Lira (₺)'),
-        ('INR', 'Indian Rupee (₹)'),
-        ('BRL', 'Brazilian Real (R$)'),
-        ('ZAR', 'South African Rand (R)'),
-        ('DKK', 'Danish Krone (kr)'),
+        ("USD", "US Dollar ($)"),
+        ("EUR", "Euro (€)"),
+        ("GBP", "British Pound (£)"),
+        ("JPY", "Japanese Yen (¥)"),
+        ("CNY", "Chinese Yuan (¥)"),
+        ("CAD", "Canadian Dollar (C$)"),
+        ("AUD", "Australian Dollar (A$)"),
+        ("CHF", "Swiss Franc (CHF)"),
+        ("SEK", "Swedish Krona (kr)"),
+        ("NZD", "New Zealand Dollar (NZ$)"),
+        ("MXN", "Mexican Peso (MX$)"),
+        ("SGD", "Singapore Dollar (S$)"),
+        ("HKD", "Hong Kong Dollar (HK$)"),
+        ("NOK", "Norwegian Krone (kr)"),
+        ("KRW", "South Korean Won (₩)"),
+        ("TRY", "Turkish Lira (₺)"),
+        ("INR", "Indian Rupee (₹)"),
+        ("BRL", "Brazilian Real (R$)"),
+        ("ZAR", "South African Rand (R)"),
+        ("DKK", "Danish Krone (kr)"),
     ]
     return popular
 
 
-def get_grouped_currencies() -> Dict[str, List[Tuple[str, str]]]:
+def get_grouped_currencies() -> dict[str, list[tuple[str, str]]]:
     """
     Get currencies organized into groups for better UI/UX.
 
@@ -130,13 +262,13 @@ def get_grouped_currencies() -> Dict[str, List[Tuple[str, str]]]:
     other = [(code, name) for code, name in all_currencies if code not in popular_codes]
 
     return {
-        'popular': sorted(popular, key=lambda x: popular_codes.index(x[0])),
-        'other': other,
-        'all': all_currencies,
+        "popular": sorted(popular, key=lambda x: popular_codes.index(x[0])),
+        "other": other,
+        "all": all_currencies,
     }
 
 
-def get_all_timezones() -> List[Tuple[str, str]]:
+def get_all_timezones() -> list[tuple[str, str]]:
     """
     Get all available timezones from Python's zoneinfo.
 
@@ -148,10 +280,10 @@ def get_all_timezones() -> List[Tuple[str, str]]:
         Returns 599 timezones from the IANA Time Zone Database
     """
     import zoneinfo
-    from datetime import datetime, timezone as dt_timezone
+    from datetime import datetime
 
     timezones = []
-    now = datetime.now(dt_timezone.utc)
+    now = datetime.now(UTC)
 
     for tz_name in sorted(zoneinfo.available_timezones()):
         try:
@@ -164,10 +296,7 @@ def get_all_timezones() -> List[Tuple[str, str]]:
                 total_seconds = int(offset.total_seconds())
                 hours = total_seconds // 3600
                 minutes = abs(total_seconds % 3600) // 60
-                if minutes:
-                    offset_str = f"UTC{hours:+d}:{minutes:02d}"
-                else:
-                    offset_str = f"UTC{hours:+d}"
+                offset_str = f"UTC{hours:+d}:{minutes:02d}" if minutes else f"UTC{hours:+d}"
             else:
                 offset_str = "UTC±0"
 
@@ -180,7 +309,7 @@ def get_all_timezones() -> List[Tuple[str, str]]:
     return timezones
 
 
-def get_popular_timezones() -> List[Tuple[str, str]]:
+def get_popular_timezones() -> list[tuple[str, str]]:
     """
     Get commonly used timezones grouped by major regions.
 
@@ -189,50 +318,46 @@ def get_popular_timezones() -> List[Tuple[str, str]]:
     """
     popular = [
         # UTC
-        ('UTC', 'UTC (Coordinated Universal Time)'),
-
+        ("UTC", "UTC (Coordinated Universal Time)"),
         # Americas
-        ('America/New_York', 'Eastern Time - New York (UTC-5/-4)'),
-        ('America/Chicago', 'Central Time - Chicago (UTC-6/-5)'),
-        ('America/Denver', 'Mountain Time - Denver (UTC-7/-6)'),
-        ('America/Los_Angeles', 'Pacific Time - Los Angeles (UTC-8/-7)'),
-        ('America/Phoenix', 'Arizona - Phoenix (UTC-7)'),
-        ('America/Toronto', 'Eastern Canada - Toronto (UTC-5/-4)'),
-        ('America/Vancouver', 'Pacific Canada - Vancouver (UTC-8/-7)'),
-        ('America/Mexico_City', 'Mexico City (UTC-6/-5)'),
-        ('America/Sao_Paulo', 'Brazil - São Paulo (UTC-3)'),
-        ('America/Argentina/Buenos_Aires', 'Argentina - Buenos Aires (UTC-3)'),
-
+        ("America/New_York", "Eastern Time - New York (UTC-5/-4)"),
+        ("America/Chicago", "Central Time - Chicago (UTC-6/-5)"),
+        ("America/Denver", "Mountain Time - Denver (UTC-7/-6)"),
+        ("America/Los_Angeles", "Pacific Time - Los Angeles (UTC-8/-7)"),
+        ("America/Phoenix", "Arizona - Phoenix (UTC-7)"),
+        ("America/Toronto", "Eastern Canada - Toronto (UTC-5/-4)"),
+        ("America/Vancouver", "Pacific Canada - Vancouver (UTC-8/-7)"),
+        ("America/Mexico_City", "Mexico City (UTC-6/-5)"),
+        ("America/Sao_Paulo", "Brazil - São Paulo (UTC-3)"),
+        ("America/Argentina/Buenos_Aires", "Argentina - Buenos Aires (UTC-3)"),
         # Europe
-        ('Europe/London', 'United Kingdom - London (UTC±0/+1)'),
-        ('Europe/Paris', 'France - Paris (UTC+1/+2)'),
-        ('Europe/Berlin', 'Germany - Berlin (UTC+1/+2)'),
-        ('Europe/Rome', 'Italy - Rome (UTC+1/+2)'),
-        ('Europe/Madrid', 'Spain - Madrid (UTC+1/+2)'),
-        ('Europe/Amsterdam', 'Netherlands - Amsterdam (UTC+1/+2)'),
-        ('Europe/Brussels', 'Belgium - Brussels (UTC+1/+2)'),
-        ('Europe/Zurich', 'Switzerland - Zurich (UTC+1/+2)'),
-        ('Europe/Stockholm', 'Sweden - Stockholm (UTC+1/+2)'),
-        ('Europe/Moscow', 'Russia - Moscow (UTC+3)'),
-
+        ("Europe/London", "United Kingdom - London (UTC±0/+1)"),
+        ("Europe/Paris", "France - Paris (UTC+1/+2)"),
+        ("Europe/Berlin", "Germany - Berlin (UTC+1/+2)"),
+        ("Europe/Rome", "Italy - Rome (UTC+1/+2)"),
+        ("Europe/Madrid", "Spain - Madrid (UTC+1/+2)"),
+        ("Europe/Amsterdam", "Netherlands - Amsterdam (UTC+1/+2)"),
+        ("Europe/Brussels", "Belgium - Brussels (UTC+1/+2)"),
+        ("Europe/Zurich", "Switzerland - Zurich (UTC+1/+2)"),
+        ("Europe/Stockholm", "Sweden - Stockholm (UTC+1/+2)"),
+        ("Europe/Moscow", "Russia - Moscow (UTC+3)"),
         # Asia
-        ('Asia/Dubai', 'UAE - Dubai (UTC+4)'),
-        ('Asia/Kolkata', 'India - Kolkata (UTC+5:30)'),
-        ('Asia/Singapore', 'Singapore (UTC+8)'),
-        ('Asia/Hong_Kong', 'Hong Kong (UTC+8)'),
-        ('Asia/Shanghai', 'China - Shanghai (UTC+8)'),
-        ('Asia/Tokyo', 'Japan - Tokyo (UTC+9)'),
-        ('Asia/Seoul', 'South Korea - Seoul (UTC+9)'),
-
+        ("Asia/Dubai", "UAE - Dubai (UTC+4)"),
+        ("Asia/Kolkata", "India - Kolkata (UTC+5:30)"),
+        ("Asia/Singapore", "Singapore (UTC+8)"),
+        ("Asia/Hong_Kong", "Hong Kong (UTC+8)"),
+        ("Asia/Shanghai", "China - Shanghai (UTC+8)"),
+        ("Asia/Tokyo", "Japan - Tokyo (UTC+9)"),
+        ("Asia/Seoul", "South Korea - Seoul (UTC+9)"),
         # Pacific
-        ('Australia/Sydney', 'Australia - Sydney (UTC+10/+11)'),
-        ('Australia/Melbourne', 'Australia - Melbourne (UTC+10/+11)'),
-        ('Pacific/Auckland', 'New Zealand - Auckland (UTC+12/+13)'),
+        ("Australia/Sydney", "Australia - Sydney (UTC+10/+11)"),
+        ("Australia/Melbourne", "Australia - Melbourne (UTC+10/+11)"),
+        ("Pacific/Auckland", "New Zealand - Auckland (UTC+12/+13)"),
     ]
     return popular
 
 
-def get_grouped_timezones() -> Dict[str, List[Tuple[str, str]]]:
+def get_grouped_timezones() -> dict[str, list[tuple[str, str]]]:
     """
     Get timezones organized by geographic region.
 
@@ -242,33 +367,33 @@ def get_grouped_timezones() -> Dict[str, List[Tuple[str, str]]]:
     all_timezones = get_all_timezones()
 
     groups = {
-        'popular': get_popular_timezones(),
-        'americas': [],
-        'europe': [],
-        'asia': [],
-        'africa': [],
-        'pacific': [],
-        'other': [],
+        "popular": get_popular_timezones(),
+        "americas": [],
+        "europe": [],
+        "asia": [],
+        "africa": [],
+        "pacific": [],
+        "other": [],
     }
 
     for tz_code, tz_display in all_timezones:
-        if tz_code.startswith('America/'):
-            groups['americas'].append((tz_code, tz_display))
-        elif tz_code.startswith('Europe/'):
-            groups['europe'].append((tz_code, tz_display))
-        elif tz_code.startswith('Asia/'):
-            groups['asia'].append((tz_code, tz_display))
-        elif tz_code.startswith('Africa/'):
-            groups['africa'].append((tz_code, tz_display))
-        elif tz_code.startswith('Pacific/') or tz_code.startswith('Australia/'):
-            groups['pacific'].append((tz_code, tz_display))
-        elif tz_code not in [code for code, _ in groups['popular']]:
-            groups['other'].append((tz_code, tz_display))
+        if tz_code.startswith("America/"):
+            groups["americas"].append((tz_code, tz_display))
+        elif tz_code.startswith("Europe/"):
+            groups["europe"].append((tz_code, tz_display))
+        elif tz_code.startswith("Asia/"):
+            groups["asia"].append((tz_code, tz_display))
+        elif tz_code.startswith("Africa/"):
+            groups["africa"].append((tz_code, tz_display))
+        elif tz_code.startswith("Pacific/") or tz_code.startswith("Australia/"):
+            groups["pacific"].append((tz_code, tz_display))
+        elif tz_code not in [code for code, _ in groups["popular"]]:
+            groups["other"].append((tz_code, tz_display))
 
     return groups
 
 
-def get_all_languages() -> List[Tuple[str, str]]:
+def get_all_languages() -> list[tuple[str, str]]:
     """
     Get all available languages from Django's global settings.
 
@@ -289,7 +414,7 @@ def get_all_languages() -> List[Tuple[str, str]]:
     return sorted(languages, key=lambda x: x[1])
 
 
-def get_admin_languages() -> List[Tuple[str, str]]:
+def get_admin_languages() -> list[tuple[str, str]]:
     """
     Get languages supported for the admin interface.
 
@@ -301,17 +426,17 @@ def get_admin_languages() -> List[Tuple[str, str]]:
         List of admin-supported languages
     """
     return [
-        ('en', 'English'),
-        ('es', 'Spanish (Español)'),
-        ('fr', 'French (Français)'),
-        ('de', 'German (Deutsch)'),
-        ('ja', 'Japanese (日本語)'),
-        ('pt', 'Portuguese (Português)'),
-        ('zh-hans', 'Chinese Simplified (简体中文)'),
+        ("en", "English"),
+        ("es", "Spanish (Español)"),
+        ("fr", "French (Français)"),
+        ("de", "German (Deutsch)"),
+        ("ja", "Japanese (日本語)"),
+        ("pt", "Portuguese (Português)"),
+        ("zh-hans", "Chinese Simplified (简体中文)"),
     ]
 
 
-def get_grouped_languages() -> Dict[str, List[Tuple[str, str]]]:
+def get_grouped_languages() -> dict[str, list[tuple[str, str]]]:
     """
     Get languages organized into groups.
 
@@ -325,25 +450,51 @@ def get_grouped_languages() -> Dict[str, List[Tuple[str, str]]]:
 
     # Popular languages (by number of speakers)
     popular_codes = {
-        'en', 'zh', 'zh-hans', 'zh-hant', 'es', 'hi', 'ar', 'pt', 'bn', 'ru',
-        'ja', 'pa', 'de', 'jv', 'ko', 'fr', 'te', 'mr', 'tr', 'ta', 'vi', 'ur'
+        "en",
+        "zh",
+        "zh-hans",
+        "zh-hant",
+        "es",
+        "hi",
+        "ar",
+        "pt",
+        "bn",
+        "ru",
+        "ja",
+        "pa",
+        "de",
+        "jv",
+        "ko",
+        "fr",
+        "te",
+        "mr",
+        "tr",
+        "ta",
+        "vi",
+        "ur",
     }
 
-    popular = [(code, name) for code, name in all_langs
-               if code in popular_codes and code not in admin_codes]
+    popular = [
+        (code, name)
+        for code, name in all_langs
+        if code in popular_codes and code not in admin_codes
+    ]
 
-    other = [(code, name) for code, name in all_langs
-             if code not in admin_codes and code not in popular_codes]
+    other = [
+        (code, name)
+        for code, name in all_langs
+        if code not in admin_codes and code not in popular_codes
+    ]
 
     return {
-        'admin': admin_langs,
-        'popular': popular,
-        'other': other,
-        'all': all_langs,
+        "admin": admin_langs,
+        "popular": popular,
+        "other": other,
+        "all": all_langs,
     }
 
 
-def get_country_defaults(country_code: str) -> Optional[Dict[str, str]]:
+def get_country_defaults(country_code: str) -> dict[str, str] | None:
     """
     Get default currency, language, and timezone for a country from GeoIP data.
 
@@ -367,18 +518,17 @@ def get_country_defaults(country_code: str) -> Optional[Dict[str, str]]:
         from geoip.models import CountryMapping
 
         mapping = CountryMapping.objects.filter(
-            country_code=country_code.upper(),
-            is_active=True
+            country_code=country_code.upper(), is_active=True
         ).first()
 
         if mapping:
             return {
-                'currency': mapping.default_currency,
-                'language': mapping.default_language,
-                'timezone': mapping.timezone or 'UTC',
-                'uses_metric': mapping.uses_metric,
+                "currency": mapping.default_currency,
+                "language": mapping.default_language,
+                "timezone": mapping.timezone or "UTC",
+                "uses_metric": mapping.uses_metric,
             }
-    except:
+    except Exception:
         pass
 
     return None
@@ -399,15 +549,41 @@ def get_currency_symbol(currency_code: str) -> str:
         '$'
     """
     symbols = {
-        'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'CNY': '¥',
-        'INR': '₹', 'CAD': 'C$', 'AUD': 'A$', 'CHF': 'CHF', 'SEK': 'kr',
-        'NZD': 'NZ$', 'MXN': 'MX$', 'SGD': 'S$', 'HKD': 'HK$', 'NOK': 'kr',
-        'KRW': '₩', 'TRY': '₺', 'BRL': 'R$', 'ZAR': 'R', 'DKK': 'kr',
-        'PLN': 'zł', 'THB': '฿', 'IDR': 'Rp', 'HUF': 'Ft', 'CZK': 'Kč',
-        'ILS': '₪', 'CLP': '$', 'PHP': '₱', 'AED': 'د.إ', 'COP': '$',
-        'SAR': '﷼', 'MYR': 'RM', 'RON': 'lei',
+        "USD": "$",
+        "EUR": "€",
+        "GBP": "£",
+        "JPY": "¥",
+        "CNY": "¥",
+        "INR": "₹",
+        "CAD": "C$",
+        "AUD": "A$",
+        "CHF": "CHF",
+        "SEK": "kr",
+        "NZD": "NZ$",
+        "MXN": "MX$",
+        "SGD": "S$",
+        "HKD": "HK$",
+        "NOK": "kr",
+        "KRW": "₩",
+        "TRY": "₺",
+        "BRL": "R$",
+        "ZAR": "R",
+        "DKK": "kr",
+        "PLN": "zł",
+        "THB": "฿",
+        "IDR": "Rp",
+        "HUF": "Ft",
+        "CZK": "Kč",
+        "ILS": "₪",
+        "CLP": "$",
+        "PHP": "₱",
+        "AED": "د.إ",
+        "COP": "$",
+        "SAR": "﷼",
+        "MYR": "RM",
+        "RON": "lei",
     }
-    return symbols.get(currency_code, '')
+    return symbols.get(currency_code, "")
 
 
 def get_currency_icon(currency_code: str) -> str:
@@ -432,55 +608,46 @@ def get_currency_icon(currency_code: str) -> str:
     # Map currencies to Font Awesome icon classes
     icon_map = {
         # Dollar-based currencies
-        'USD': 'fa-dollar-sign',
-        'CAD': 'fa-dollar-sign',
-        'AUD': 'fa-dollar-sign',
-        'NZD': 'fa-dollar-sign',
-        'HKD': 'fa-dollar-sign',
-        'SGD': 'fa-dollar-sign',
-        'TWD': 'fa-dollar-sign',
-        'MXN': 'fa-dollar-sign',
-        'ARS': 'fa-dollar-sign',
-        'CLP': 'fa-dollar-sign',
-        'COP': 'fa-dollar-sign',
-
+        "USD": "fa-dollar-sign",
+        "CAD": "fa-dollar-sign",
+        "AUD": "fa-dollar-sign",
+        "NZD": "fa-dollar-sign",
+        "HKD": "fa-dollar-sign",
+        "SGD": "fa-dollar-sign",
+        "TWD": "fa-dollar-sign",
+        "MXN": "fa-dollar-sign",
+        "ARS": "fa-dollar-sign",
+        "CLP": "fa-dollar-sign",
+        "COP": "fa-dollar-sign",
         # Euro
-        'EUR': 'fa-euro-sign',
-
+        "EUR": "fa-euro-sign",
         # Pound
-        'GBP': 'fa-pound-sign',
-        'EGP': 'fa-pound-sign',
-        'SYP': 'fa-pound-sign',
-        'LBP': 'fa-pound-sign',
-
+        "GBP": "fa-pound-sign",
+        "EGP": "fa-pound-sign",
+        "SYP": "fa-pound-sign",
+        "LBP": "fa-pound-sign",
         # Yen/Yuan
-        'JPY': 'fa-yen-sign',
-        'CNY': 'fa-yen-sign',
-
+        "JPY": "fa-yen-sign",
+        "CNY": "fa-yen-sign",
         # Rupee
-        'INR': 'fa-rupee-sign',
-        'PKR': 'fa-rupee-sign',
-        'LKR': 'fa-rupee-sign',
-        'NPR': 'fa-rupee-sign',
-        'IDR': 'fa-rupee-sign',
-
+        "INR": "fa-rupee-sign",
+        "PKR": "fa-rupee-sign",
+        "LKR": "fa-rupee-sign",
+        "NPR": "fa-rupee-sign",
+        "IDR": "fa-rupee-sign",
         # Ruble
-        'RUB': 'fa-ruble-sign',
-
+        "RUB": "fa-ruble-sign",
         # Lira
-        'TRY': 'fa-lira-sign',
-
+        "TRY": "fa-lira-sign",
         # Won
-        'KRW': 'fa-won-sign',
-
+        "KRW": "fa-won-sign",
         # Shekel
-        'ILS': 'fa-shekel-sign',
-
+        "ILS": "fa-shekel-sign",
         # Bitcoin and crypto
-        'BTC': 'fa-bitcoin',
+        "BTC": "fa-bitcoin",
     }
 
-    return icon_map.get(currency_code, 'fa-money-bill-wave')
+    return icon_map.get(currency_code, "fa-money-bill-wave")
 
 
 def get_timezone_icon(timezone: str) -> str:
@@ -504,28 +671,28 @@ def get_timezone_icon(timezone: str) -> str:
         >>> get_timezone_icon('UTC')
         'fa-globe'
     """
-    if not timezone or timezone == 'UTC':
-        return 'fa-globe'
+    if not timezone or timezone == "UTC":
+        return "fa-globe"
 
     # Extract region from timezone (e.g., 'America' from 'America/New_York')
-    region = timezone.split('/')[0] if '/' in timezone else timezone
+    region = timezone.split("/")[0] if "/" in timezone else timezone
 
     # Map regions to Font Awesome globe icons
     region_icons = {
-        'America': 'fa-globe-americas',
-        'Europe': 'fa-globe-europe',
-        'Asia': 'fa-globe-asia',
-        'Africa': 'fa-globe-africa',
-        'Pacific': 'fa-globe',
-        'Australia': 'fa-globe',
-        'Antarctica': 'fa-globe',
-        'Atlantic': 'fa-globe',
-        'Indian': 'fa-globe',
-        'Arctic': 'fa-globe',
+        "America": "fa-globe-americas",
+        "Europe": "fa-globe-europe",
+        "Asia": "fa-globe-asia",
+        "Africa": "fa-globe-africa",
+        "Pacific": "fa-globe",
+        "Australia": "fa-globe",
+        "Antarctica": "fa-globe",
+        "Atlantic": "fa-globe",
+        "Indian": "fa-globe",
+        "Arctic": "fa-globe",
     }
 
     # Return regional icon or clock as fallback
-    return region_icons.get(region, 'fa-clock')
+    return region_icons.get(region, "fa-clock")
 
 
 def get_language_icon(language_code: str) -> str:
@@ -549,4 +716,4 @@ def get_language_icon(language_code: str) -> str:
     """
     # Use generic language icon for all languages
     # Future enhancement: Could map specific languages to regional icons
-    return 'fa-language'
+    return "fa-language"

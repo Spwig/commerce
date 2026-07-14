@@ -6,9 +6,8 @@ Pattern follows exchange_rates/providers/base.py architecture.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, List, Any
 from datetime import datetime
-from django.utils.translation import gettext_lazy as _
+from typing import Any
 
 
 class SocialConnectorBase(ABC):
@@ -31,10 +30,10 @@ class SocialConnectorBase(ABC):
     """
 
     # Must be set by subclass
-    provider_key: str = None       # e.g., 'facebook_page'
-    provider_name: str = None      # e.g., 'Facebook Page'
+    provider_key: str = None  # e.g., 'facebook_page'
+    provider_name: str = None  # e.g., 'Facebook Page'
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         """
         Initialize connector with credentials and configuration.
 
@@ -58,7 +57,7 @@ class SocialConnectorBase(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return dictionary of connector capabilities.
 
@@ -86,7 +85,7 @@ class SocialConnectorBase(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema describing required credentials.
 
@@ -124,7 +123,7 @@ class SocialConnectorBase(ABC):
 
     @property
     @abstractmethod
-    def oauth_config(self) -> Dict[str, Any]:
+    def oauth_config(self) -> dict[str, Any]:
         """
         Return OAuth configuration for this provider.
 
@@ -143,7 +142,7 @@ class SocialConnectorBase(ABC):
         pass
 
     @abstractmethod
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """
         Validate credentials against schema and business logic.
 
@@ -156,7 +155,7 @@ class SocialConnectorBase(ABC):
         pass
 
     @abstractmethod
-    def redact_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def redact_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Redact sensitive credential values for logging.
 
@@ -169,7 +168,7 @@ class SocialConnectorBase(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test API connection and credential validity.
 
@@ -194,12 +193,12 @@ class SocialConnectorBase(ABC):
     def create_post(
         self,
         message: str,
-        link: Optional[str] = None,
-        image_urls: Optional[List[str]] = None,
-        image_files: Optional[List[Any]] = None,
-        scheduled_time: Optional[datetime] = None,
-        **kwargs
-    ) -> Dict[str, Any]:
+        link: str | None = None,
+        image_urls: list[str] | None = None,
+        image_files: list[Any] | None = None,
+        scheduled_time: datetime | None = None,
+        **kwargs,
+    ) -> dict[str, Any]:
         """
         Create a post on the social platform.
 
@@ -227,7 +226,7 @@ class SocialConnectorBase(ABC):
         pass
 
     @abstractmethod
-    def get_post_status(self, post_id: str) -> Dict[str, Any]:
+    def get_post_status(self, post_id: str) -> dict[str, Any]:
         """
         Get the status of a posted content.
 
@@ -250,7 +249,7 @@ class SocialConnectorBase(ABC):
         pass
 
     @abstractmethod
-    def delete_post(self, post_id: str) -> Dict[str, Any]:
+    def delete_post(self, post_id: str) -> dict[str, Any]:
         """
         Delete a post from the platform.
 
@@ -267,7 +266,7 @@ class SocialConnectorBase(ABC):
         pass
 
     @abstractmethod
-    def refresh_token(self) -> Dict[str, Any]:
+    def refresh_token(self) -> dict[str, Any]:
         """
         Refresh OAuth access token using refresh token.
 
@@ -288,7 +287,7 @@ class SocialConnectorBase(ABC):
         """
         pass
 
-    def get_account_info(self) -> Dict[str, Any]:
+    def get_account_info(self) -> dict[str, Any]:
         """
         Get account information from the platform.
 
@@ -305,8 +304,8 @@ class SocialConnectorBase(ABC):
         """
         # Default implementation uses test_connection
         result = self.test_connection()
-        if result.get('success'):
-            return result.get('details', {})
+        if result.get("success"):
+            return result.get("details", {})
         return {}
 
     def format_post_content(
@@ -314,8 +313,8 @@ class SocialConnectorBase(ABC):
         title: str,
         excerpt: str,
         url: str,
-        hashtags: Optional[List[str]] = None,
-        template: Optional[str] = None
+        hashtags: list[str] | None = None,
+        template: str | None = None,
     ) -> str:
         """
         Format blog post content for social media.
@@ -331,12 +330,9 @@ class SocialConnectorBase(ABC):
             Formatted post content string
         """
         if template:
-            hashtag_str = ' '.join(f'#{tag.strip("#")}' for tag in (hashtags or []))
+            hashtag_str = " ".join(f"#{tag.strip('#')}" for tag in (hashtags or []))
             return template.format(
-                title=title,
-                excerpt=excerpt,
-                url=url,
-                hashtags=hashtag_str
+                title=title, excerpt=excerpt, url=url, hashtags=hashtag_str
             ).strip()
 
         # Default format
@@ -348,10 +344,10 @@ class SocialConnectorBase(ABC):
         if url:
             content_parts.append(url)
         if hashtags:
-            hashtag_str = ' '.join(f'#{tag.strip("#")}' for tag in hashtags)
+            hashtag_str = " ".join(f"#{tag.strip('#')}" for tag in hashtags)
             content_parts.append(hashtag_str)
 
-        return '\n\n'.join(content_parts)
+        return "\n\n".join(content_parts)
 
     def get_character_limit(self) -> int:
         """
@@ -363,7 +359,7 @@ class SocialConnectorBase(ABC):
         # Default limit, should be overridden by subclass
         return 280  # Twitter default
 
-    def get_provider_info(self) -> Dict:
+    def get_provider_info(self) -> dict:
         """
         Get provider metadata for display in admin.
 
@@ -371,29 +367,33 @@ class SocialConnectorBase(ABC):
             Dictionary with provider information
         """
         return {
-            'key': self.provider_key,
-            'name': self.provider_name,
-            'capabilities': self.capabilities,
-            'character_limit': self.get_character_limit(),
+            "key": self.provider_key,
+            "name": self.provider_name,
+            "capabilities": self.capabilities,
+            "character_limit": self.get_character_limit(),
         }
 
 
 # Custom Exceptions
 class PostError(Exception):
     """Raised when post creation fails"""
+
     pass
 
 
 class TokenRefreshError(Exception):
     """Raised when token refresh fails"""
+
     pass
 
 
 class OAuthError(Exception):
     """Raised when OAuth flow fails"""
+
     pass
 
 
 class RateLimitError(Exception):
     """Raised when API rate limit is hit"""
+
     pass

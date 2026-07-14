@@ -4,24 +4,25 @@ Handles open and click tracking endpoints
 """
 
 import logging
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.views.decorators.http import require_GET
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.utils import timezone
 from urllib.parse import unquote
 
-from email_system.models import EmailOutbox, EmailEvent
+from django.conf import settings
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
+
+from email_system.models import EmailEvent, EmailOutbox
 from email_system.services.tracking_service import TrackingService
 
 logger = logging.getLogger(__name__)
 
 # 1x1 transparent GIF pixel
 TRACKING_PIXEL = (
-    b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff'
-    b'\x00\x00\x00\x21\xf9\x04\x01\x00\x00\x00\x00\x2c\x00\x00\x00\x00'
-    b'\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b'
+    b"\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff"
+    b"\x00\x00\x00\x21\xf9\x04\x01\x00\x00\x00\x00\x2c\x00\x00\x00\x00"
+    b"\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b"
 )
 
 
@@ -50,25 +51,19 @@ def track_open(request, tracking_id):
             return _return_pixel()
 
         # Check if already tracked (avoid duplicate opens)
-        existing_open = EmailEvent.objects.filter(
-            email=email_outbox,
-            event_type='opened'
-        ).first()
+        existing_open = EmailEvent.objects.filter(email=email_outbox, event_type="opened").first()
 
         if not existing_open:
             # Record open event
             EmailEvent.objects.create(
                 email=email_outbox,
-                event_type='opened',
+                event_type="opened",
                 occurred_at=timezone.now(),
-                user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                ip_address=_get_client_ip(request)
+                user_agent=request.META.get("HTTP_USER_AGENT", ""),
+                ip_address=_get_client_ip(request),
             )
 
-            logger.info(
-                f"Email opened: outbox_id={email_outbox_id}, "
-                f"to={email_outbox.to_email}"
-            )
+            logger.info(f"Email opened: outbox_id={email_outbox_id}, to={email_outbox.to_email}")
 
     except Exception as e:
         logger.error(f"Error tracking email open: {e}", exc_info=True)
@@ -87,10 +82,10 @@ def track_click(request, tracking_id):
         url: Original URL to redirect to
     """
     # Get original URL from query params
-    original_url = request.GET.get('url')
+    original_url = request.GET.get("url")
 
     if not original_url:
-        logger.warning(f"Click tracking missing URL parameter")
+        logger.warning("Click tracking missing URL parameter")
         raise Http404("Invalid tracking URL")
 
     # Decode URL
@@ -101,6 +96,7 @@ def track_click(request, tracking_id):
     allowed_hosts = set()
     try:
         from django.contrib.sites.models import Site
+
         current_site = Site.objects.get_current()
         allowed_hosts.add(current_site.domain)
     except Exception:
@@ -114,8 +110,9 @@ def track_click(request, tracking_id):
         # For external URLs in emails (e.g., partner links), allow http(s) schemes
         # but block javascript:, data:, and other dangerous schemes
         from urllib.parse import urlparse
+
         parsed = urlparse(original_url)
-        if parsed.scheme not in ('http', 'https', ''):
+        if parsed.scheme not in ("http", "https", ""):
             logger.warning(f"Click tracking blocked dangerous URL scheme: {parsed.scheme}")
             raise Http404("Invalid tracking URL")
 
@@ -132,11 +129,11 @@ def track_click(request, tracking_id):
                 # Record click event
                 EmailEvent.objects.create(
                     email=email_outbox,
-                    event_type='clicked',
+                    event_type="clicked",
                     occurred_at=timezone.now(),
-                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                    user_agent=request.META.get("HTTP_USER_AGENT", ""),
                     ip_address=_get_client_ip(request),
-                    event_data={'url': original_url}
+                    event_data={"url": original_url},
                 )
 
                 logger.info(
@@ -161,11 +158,11 @@ def _return_pixel():
     Returns:
         HttpResponse with GIF image
     """
-    response = HttpResponse(TRACKING_PIXEL, content_type='image/gif')
+    response = HttpResponse(TRACKING_PIXEL, content_type="image/gif")
     # Prevent caching
-    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response['Pragma'] = 'no-cache'
-    response['Expires'] = '0'
+    response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
     return response
 
 
@@ -182,11 +179,11 @@ def _get_client_ip(request):
     Returns:
         IP address string or empty string
     """
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
         # Take first IP if multiple (proxy chain)
-        ip = x_forwarded_for.split(',')[0].strip()
+        ip = x_forwarded_for.split(",")[0].strip()
     else:
-        ip = request.META.get('REMOTE_ADDR', '')
+        ip = request.META.get("REMOTE_ADDR", "")
 
     return ip

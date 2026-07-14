@@ -1,13 +1,16 @@
 """
 Gift Card Service - Business logic for gift card creation and management
 """
-from django.db import transaction
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-from typing import Tuple, Optional, List
-from decimal import Decimal
-from datetime import timedelta
+
 import logging
+from datetime import timedelta
+from typing import TYPE_CHECKING
+
+from django.db import transaction
+from django.utils import timezone
+
+if TYPE_CHECKING:
+    from catalog.models import GiftCard
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +20,7 @@ class GiftCardService:
 
     @staticmethod
     @transaction.atomic
-    def create_gift_cards_for_order(order) -> Tuple[int, List[str]]:
+    def create_gift_cards_for_order(order) -> tuple[int, list[str]]:
         """
         Create gift cards for all gift card products in an order after payment is completed.
 
@@ -29,15 +32,13 @@ class GiftCardService:
         Returns:
             Tuple of (count: int, gift_card_codes: List[str])
         """
-        from catalog.models import GiftCard, GiftCardTransaction
-        from orders.models import OrderItem
 
         created_codes = []
 
         # Get all order items for gift card products
         gift_card_items = order.items.filter(
-            product__product_type='gift_card',
-            parent_bundle__isnull=True  # Only process top-level items, not bundle components
+            product__product_type="gift_card",
+            parent_bundle__isnull=True,  # Only process top-level items, not bundle components
         )
 
         if not gift_card_items.exists():
@@ -46,14 +47,15 @@ class GiftCardService:
 
         for order_item in gift_card_items:
             # Create one gift card per quantity
-            for i in range(order_item.quantity):
+            for _i in range(order_item.quantity):
                 try:
                     gift_card = GiftCardService._create_gift_card_from_order_item(
-                        order_item=order_item,
-                        order=order
+                        order_item=order_item, order=order
                     )
                     created_codes.append(gift_card.code)
-                    logger.info(f"Created gift card {gift_card.code} for order {order.order_number}")
+                    logger.info(
+                        f"Created gift card {gift_card.code} for order {order.order_number}"
+                    )
 
                 except Exception as e:
                     logger.error(f"Failed to create gift card for order item {order_item.id}: {e}")
@@ -63,7 +65,7 @@ class GiftCardService:
         return len(created_codes), created_codes
 
     @staticmethod
-    def _create_gift_card_from_order_item(order_item, order) -> 'GiftCard':
+    def _create_gift_card_from_order_item(order_item, order) -> "GiftCard":
         """
         Create a single gift card from an order item.
 
@@ -74,8 +76,9 @@ class GiftCardService:
         Returns:
             GiftCard instance
         """
-        from catalog.models import GiftCard, GiftCardTransaction
         from djmoney.money import Money
+
+        from catalog.models import GiftCard, GiftCardTransaction
 
         product = order_item.product
 
@@ -88,11 +91,10 @@ class GiftCardService:
         if target_currency and str(initial_value.currency) != target_currency:
             try:
                 from exchange_rates.services.exchange_service import ExchangeRateService
+
                 fx_service = ExchangeRateService()
                 converted_amount = fx_service.convert(
-                    initial_value.amount,
-                    str(initial_value.currency),
-                    target_currency
+                    initial_value.amount, str(initial_value.currency), target_currency
                 )
                 rate_used = fx_service.get_rate(str(initial_value.currency), target_currency)
                 conversion_note = (
@@ -110,15 +112,17 @@ class GiftCardService:
                     f"Falling back to base currency."
                 )
                 # Fall back to base currency if conversion fails
-                conversion_note = f" | Currency conversion to {target_currency} failed, using base currency"
+                conversion_note = (
+                    f" | Currency conversion to {target_currency} failed, using base currency"
+                )
 
         # Get recipient information from order item customizations
         customizations = order_item.customizations or {}
-        recipient_email = customizations.get('recipient_email', order.email)
-        recipient_name = customizations.get('recipient_name', '')
-        sender_name = customizations.get('sender_name', order.shipping_name)
-        message = customizations.get('message', '')
-        scheduled_send_date = customizations.get('scheduled_send_date')
+        recipient_email = customizations.get("recipient_email", order.email)
+        recipient_name = customizations.get("recipient_name", "")
+        sender_name = customizations.get("sender_name", order.shipping_name)
+        message = customizations.get("message", "")
+        scheduled_send_date = customizations.get("scheduled_send_date")
 
         # Calculate expiration date
         expires_at = None
@@ -147,12 +151,12 @@ class GiftCardService:
         # Create initial transaction record
         GiftCardTransaction.objects.create(
             gift_card=gift_card,
-            transaction_type='issue',
+            transaction_type="issue",
             amount=initial_value,
             balance_after=initial_value,
             order=order,
             notes=f"Gift card issued from order {order.order_number}{conversion_note}",
-            created_by=order.user if order.user else None
+            created_by=order.user if order.user else None,
         )
 
         # Schedule or send email delivery
@@ -163,7 +167,7 @@ class GiftCardService:
             # Send immediately and set issued_at on success
             if GiftCardService._send_gift_card_email(gift_card):
                 gift_card.issued_at = timezone.now()
-                gift_card.save(update_fields=['issued_at'])
+                gift_card.save(update_fields=["issued_at"])
 
         return gift_card
 
@@ -178,26 +182,27 @@ class GiftCardService:
         Returns:
             bool: True if email sent successfully
         """
-        from email_system.services.email_service import EmailService
         from django.contrib.sites.models import Site
+
+        from email_system.services.email_service import EmailService
 
         try:
             site = Site.objects.get(pk=1)
 
             # Build context for email template
             context = {
-                'gift_card': gift_card,
-                'shop_url': f"https://{site.domain}",
-                'check_balance_url': f"https://{site.domain}/gift-cards/check-balance/",
+                "gift_card": gift_card,
+                "shop_url": f"https://{site.domain}",
+                "check_balance_url": f"https://{site.domain}/gift-cards/check-balance/",
             }
 
             # Send email using email service
             EmailService.send_transactional_email(
-                template_type='gift_card_delivery',
+                template_type="gift_card_delivery",
                 recipient_email=gift_card.recipient_email,
                 recipient_name=gift_card.recipient_name or gift_card.recipient_email,
                 context=context,
-                site=site
+                site=site,
             )
 
             logger.info(f"Gift card {gift_card.code} email sent to {gift_card.recipient_email}")
@@ -222,13 +227,14 @@ class GiftCardService:
         Returns:
             bool: True if scheduled successfully
         """
-        from django.utils import timezone
         from datetime import datetime
+
+        from django.utils import timezone
 
         try:
             # Parse send_date if it's a string
             if isinstance(send_date, str):
-                send_date = datetime.fromisoformat(send_date.replace('Z', '+00:00'))
+                send_date = datetime.fromisoformat(send_date.replace("Z", "+00:00"))
 
             # Make sure it's timezone aware
             if send_date.tzinfo is None:
@@ -236,7 +242,7 @@ class GiftCardService:
 
             # Set the scheduled_send_at field
             gift_card.scheduled_send_at = send_date
-            gift_card.save(update_fields=['scheduled_send_at'])
+            gift_card.save(update_fields=["scheduled_send_at"])
 
             logger.info(f"Gift card {gift_card.code} scheduled for delivery on {send_date}")
             return True
@@ -263,38 +269,35 @@ class GiftCardService:
             int: Number of gift cards processed
         """
         from catalog.models import GiftCard, GiftCardTransaction
-        from djmoney.money import Money
 
         processed_count = 0
 
         # --- Part 1: Gift cards PURCHASED in this order ---
         # Exclude GCs that already have a refund transaction for this order
         already_deactivated_gc_ids = GiftCardTransaction.objects.filter(
-            order=order,
-            transaction_type='refund',
-            gift_card__order_item__order=order
-        ).values_list('gift_card_id', flat=True)
+            order=order, transaction_type="refund", gift_card__order_item__order=order
+        ).values_list("gift_card_id", flat=True)
 
-        purchased_gift_cards = GiftCard.objects.filter(
-            order_item__order=order
-        ).exclude(id__in=already_deactivated_gc_ids)
+        purchased_gift_cards = GiftCard.objects.filter(order_item__order=order).exclude(
+            id__in=already_deactivated_gc_ids
+        )
 
         for gift_card in purchased_gift_cards:
             # Only refund if gift card hasn't been used yet
             if gift_card.current_balance == gift_card.initial_value:
                 # Deactivate gift card
                 gift_card.is_active = False
-                gift_card.save(update_fields=['is_active'])
+                gift_card.save(update_fields=["is_active"])
 
                 # Create refund transaction
                 GiftCardTransaction.objects.create(
                     gift_card=gift_card,
-                    transaction_type='refund',
+                    transaction_type="refund",
                     amount=-gift_card.initial_value,
                     balance_after=gift_card.current_balance,
                     order=order,
                     notes=f"Gift card deactivated due to order {order.order_number} refund",
-                    created_by=None
+                    created_by=None,
                 )
 
                 processed_count += 1
@@ -312,16 +315,15 @@ class GiftCardService:
         # have a corresponding refund transaction for this order
         already_refunded_gc_ids = GiftCardTransaction.objects.filter(
             order=order,
-            transaction_type='refund',
-            amount__gt=0  # Positive refund = balance restoration (Part 2)
-        ).values_list('gift_card_id', flat=True)
+            transaction_type="refund",
+            amount__gt=0,  # Positive refund = balance restoration (Part 2)
+        ).values_list("gift_card_id", flat=True)
 
-        redemption_transactions = GiftCardTransaction.objects.filter(
-            order=order,
-            transaction_type='redemption'
-        ).exclude(
-            gift_card_id__in=already_refunded_gc_ids
-        ).select_related('gift_card')
+        redemption_transactions = (
+            GiftCardTransaction.objects.filter(order=order, transaction_type="redemption")
+            .exclude(gift_card_id__in=already_refunded_gc_ids)
+            .select_related("gift_card")
+        )
 
         for txn in redemption_transactions:
             gift_card = txn.gift_card
@@ -333,17 +335,17 @@ class GiftCardService:
                 new_balance = gift_card.current_balance + restore_amount
                 gift_card.current_balance = new_balance
                 gift_card.is_active = True  # Re-activate if it was fully redeemed
-                gift_card.save(update_fields=['current_balance', 'is_active'])
+                gift_card.save(update_fields=["current_balance", "is_active"])
 
                 # Create refund transaction
                 GiftCardTransaction.objects.create(
                     gift_card=gift_card,
-                    transaction_type='refund',
+                    transaction_type="refund",
                     amount=restore_amount,
                     balance_after=new_balance,
                     order=order,
                     notes=f"Balance restored due to order {order.order_number} refund",
-                    created_by=None
+                    created_by=None,
                 )
 
                 processed_count += 1
@@ -360,7 +362,7 @@ class GiftCardService:
         return processed_count
 
     @staticmethod
-    def check_balance(code: str) -> Optional[dict]:
+    def check_balance(code: str) -> dict | None:
         """
         Check gift card balance without requiring authentication.
 
@@ -376,26 +378,26 @@ class GiftCardService:
             gift_card = GiftCard.objects.get(code=code)
 
             return {
-                'code': gift_card.code,
-                'current_balance': {
-                    'amount': str(gift_card.current_balance.amount),
-                    'currency': gift_card.current_balance.currency.code
+                "code": gift_card.code,
+                "current_balance": {
+                    "amount": str(gift_card.current_balance.amount),
+                    "currency": gift_card.current_balance.currency.code,
                 },
-                'initial_value': {
-                    'amount': str(gift_card.initial_value.amount),
-                    'currency': gift_card.initial_value.currency.code
+                "initial_value": {
+                    "amount": str(gift_card.initial_value.amount),
+                    "currency": gift_card.initial_value.currency.code,
                 },
-                'is_active': gift_card.is_active,
-                'is_expired': gift_card.is_expired,
-                'is_valid': gift_card.is_valid,
-                'expires_at': gift_card.expires_at.isoformat() if gift_card.expires_at else None,
-                'redemption_percentage': gift_card.redemption_percentage
+                "is_active": gift_card.is_active,
+                "is_expired": gift_card.is_expired,
+                "is_valid": gift_card.is_valid,
+                "expires_at": gift_card.expires_at.isoformat() if gift_card.expires_at else None,
+                "redemption_percentage": gift_card.redemption_percentage,
             }
         except GiftCard.DoesNotExist:
             return None
 
     @staticmethod
-    def validate_card(code: str) -> Tuple[bool, any]:
+    def validate_card(code: str) -> tuple[bool, any]:
         """
         Validate a gift card code and return its balance.
 
@@ -437,7 +439,7 @@ class GiftCardService:
 
     @staticmethod
     @transaction.atomic
-    def deduct_balance(code: str, amount, order=None, notes: str = '') -> Tuple[bool, str]:
+    def deduct_balance(code: str, amount, order=None, notes: str = "") -> tuple[bool, str]:
         """
         Deduct an amount from a gift card balance.
 
@@ -452,16 +454,18 @@ class GiftCardService:
         Returns:
             Tuple of (success: bool, message: str)
         """
-        from catalog.models import GiftCard
         from decimal import Decimal
+
         from djmoney.money import Money
+
+        from catalog.models import GiftCard
 
         try:
             # Lock the gift card row to prevent concurrent balance depletion (TOCTOU)
             gift_card = GiftCard.objects.select_for_update().get(code=code)
 
             # Convert amount to Money if it's a Decimal
-            if isinstance(amount, Decimal) or isinstance(amount, (int, float)):
+            if isinstance(amount, (Decimal, int, float)):
                 amount = Money(Decimal(str(amount)), gift_card.current_balance.currency)
 
             # Check if redemption is allowed
@@ -470,15 +474,10 @@ class GiftCardService:
                 return False, error_msg
 
             # Perform redemption
-            transaction_record = gift_card.redeem(
-                amount=amount,
-                order=order,
-                notes=notes or f"POS payment redemption"
-            )
+            gift_card.redeem(amount=amount, order=order, notes=notes or "POS payment redemption")
 
             logger.info(
-                f"Gift card {code} deducted {amount} - "
-                f"new balance: {gift_card.current_balance}"
+                f"Gift card {code} deducted {amount} - new balance: {gift_card.current_balance}"
             )
 
             return True, f"Deducted {amount} from gift card"

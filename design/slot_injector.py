@@ -19,10 +19,10 @@ Usage:
     output = injector.inject_slots(template, slot_data)
 """
 
-import re
 import logging
-from typing import Dict, List, Optional, Any, Tuple
+import re
 from dataclasses import dataclass
+from typing import Any
 
 from .content_sanitizer import ContentSanitizer
 
@@ -31,17 +31,20 @@ logger = logging.getLogger(__name__)
 
 class SlotSyntaxError(Exception):
     """Raised when slot syntax is malformed"""
+
     pass
 
 
 class SlotConstraintError(Exception):
     """Raised when slot constraints are violated"""
+
     pass
 
 
 @dataclass
 class SlotDefinition:
     """Parsed slot definition from template."""
+
     name: str
     slot_type: str  # 'component', 'html', 'text'
     max_instances: int  # -1 = unlimited
@@ -71,17 +74,17 @@ class SlotInjector:
     # Matches: {{ slot:name|type:component|max:1 }}
     # Allows whitespace around pipes and values
     SLOT_PATTERN = re.compile(
-        r'\{\{\s*slot:\s*(?P<name>\w+)'
-        r'(?:\s*\|\s*type:\s*(?P<type>\w+))?'
-        r'(?:\s*\|\s*max:\s*(?P<max>-?\d+))?\s*\}\}',
-        re.MULTILINE
+        r"\{\{\s*slot:\s*(?P<name>\w+)"
+        r"(?:\s*\|\s*type:\s*(?P<type>\w+))?"
+        r"(?:\s*\|\s*max:\s*(?P<max>-?\d+))?\s*\}\}",
+        re.MULTILINE,
     )
 
     # Valid slot types
-    VALID_TYPES = ['component', 'html', 'text']
+    VALID_TYPES = ["component", "html", "text"]
 
     # Default values
-    DEFAULT_TYPE = 'html'
+    DEFAULT_TYPE = "html"
     DEFAULT_MAX_INSTANCES = -1  # Unlimited
 
     def __init__(self, sanitizer: ContentSanitizer):
@@ -94,11 +97,7 @@ class SlotInjector:
         self.sanitizer = sanitizer
         logger.debug(f"SlotInjector initialized with tier {sanitizer.tier}")
 
-    def inject_slots(
-        self,
-        template: str,
-        slot_data: Dict[str, Any]
-    ) -> str:
+    def inject_slots(self, template: str, slot_data: dict[str, Any]) -> str:
         """
         Inject content into all slots in template.
 
@@ -125,7 +124,7 @@ class SlotInjector:
             >>> output = injector.inject_slots(template, slot_data)
         """
         if not template:
-            return ''
+            return ""
 
         try:
             # Parse slots (catch syntax errors for graceful degradation)
@@ -155,7 +154,7 @@ class SlotInjector:
             # Return template with error comments instead of crashing
             return self._get_fallback_output(template, str(e))
 
-    def validate_slot_syntax(self, template: str) -> List[str]:
+    def validate_slot_syntax(self, template: str) -> list[str]:
         """
         Validate all slot syntax in template without injecting content.
 
@@ -195,7 +194,7 @@ class SlotInjector:
 
         return errors
 
-    def get_slot_definitions(self, template: str) -> List[SlotDefinition]:
+    def get_slot_definitions(self, template: str) -> list[SlotDefinition]:
         """
         Get all slot definitions from template.
 
@@ -214,7 +213,7 @@ class SlotInjector:
 
     # Private methods
 
-    def _parse_slots(self, template: str) -> List[SlotDefinition]:
+    def _parse_slots(self, template: str) -> list[SlotDefinition]:
         """
         Parse all slot markers in template.
 
@@ -229,7 +228,7 @@ class SlotInjector:
         """
         # First check for malformed slot patterns (anything that looks like a slot but doesn't match)
         # This helps catch typos like {{ slot:name|typo:value }}
-        malformed_pattern = re.compile(r'\{\{\s*slot:[^}]*\}\}')
+        malformed_pattern = re.compile(r"\{\{\s*slot:[^}]*\}\}")
         all_slot_like = list(malformed_pattern.finditer(template))
 
         # Parse valid slots
@@ -243,9 +242,7 @@ class SlotInjector:
                 slots.append(slot)
                 valid_positions.add(match.start())
             except Exception as e:
-                raise SlotSyntaxError(
-                    f"Malformed slot syntax at position {match.start()}: {e}"
-                )
+                raise SlotSyntaxError(f"Malformed slot syntax at position {match.start()}: {e}")
 
         # Check if there are any slot-like patterns that didn't match the valid pattern
         for slot_like in all_slot_like:
@@ -267,9 +264,9 @@ class SlotInjector:
         Returns:
             SlotDefinition object
         """
-        name = match.group('name')
-        slot_type = match.group('type') or self.DEFAULT_TYPE
-        max_str = match.group('max')
+        name = match.group("name")
+        slot_type = match.group("type") or self.DEFAULT_TYPE
+        max_str = match.group("max")
 
         # Parse max instances
         if max_str is not None:
@@ -283,22 +280,14 @@ class SlotInjector:
         # Validate slot type
         if slot_type not in self.VALID_TYPES:
             raise SlotSyntaxError(
-                f"Invalid slot type '{slot_type}'. "
-                f"Must be one of: {', '.join(self.VALID_TYPES)}"
+                f"Invalid slot type '{slot_type}'. Must be one of: {', '.join(self.VALID_TYPES)}"
             )
 
         return SlotDefinition(
-            name=name,
-            slot_type=slot_type,
-            max_instances=max_instances,
-            raw_syntax=match.group(0)
+            name=name, slot_type=slot_type, max_instances=max_instances, raw_syntax=match.group(0)
         )
 
-    def _validate_slot_data(
-        self,
-        slots: List[SlotDefinition],
-        slot_data: Dict[str, Any]
-    ) -> None:
+    def _validate_slot_data(self, slots: list[SlotDefinition], slot_data: dict[str, Any]) -> None:
         """
         Validate that slot data conforms to slot constraints.
 
@@ -317,11 +306,10 @@ class SlotInjector:
                 continue
 
             # Validate component slots
-            if slot.slot_type == 'component':
+            if slot.slot_type == "component":
                 if not isinstance(data, list):
                     raise SlotConstraintError(
-                        f"Slot '{slot.name}' expects list of components, "
-                        f"got {type(data).__name__}"
+                        f"Slot '{slot.name}' expects list of components, got {type(data).__name__}"
                     )
 
                 # Check max instances
@@ -332,18 +320,13 @@ class SlotInjector:
                     )
 
             # Validate HTML/text slots
-            elif slot.slot_type in ['html', 'text']:
+            elif slot.slot_type in ["html", "text"]:
                 if not isinstance(data, str):
                     raise SlotConstraintError(
-                        f"Slot '{slot.name}' expects string content, "
-                        f"got {type(data).__name__}"
+                        f"Slot '{slot.name}' expects string content, got {type(data).__name__}"
                     )
 
-    def _render_slot_content(
-        self,
-        slot: SlotDefinition,
-        data: Any
-    ) -> str:
+    def _render_slot_content(self, slot: SlotDefinition, data: Any) -> str:
         """
         Render content for a single slot.
 
@@ -357,29 +340,25 @@ class SlotInjector:
         # No data provided - return empty
         if data is None:
             logger.debug(f"No data for slot '{slot.name}', rendering empty")
-            return ''
+            return ""
 
         try:
             # Render based on slot type
-            if slot.slot_type == 'component':
+            if slot.slot_type == "component":
                 return self._render_component_slot(slot, data)
-            elif slot.slot_type == 'html':
+            elif slot.slot_type == "html":
                 return self._render_html_slot(slot, data)
-            elif slot.slot_type == 'text':
+            elif slot.slot_type == "text":
                 return self._render_text_slot(slot, data)
             else:
                 logger.warning(f"Unknown slot type: {slot.slot_type}")
-                return ''
+                return ""
 
         except Exception as e:
             logger.error(f"Failed to render slot '{slot.name}': {e}", exc_info=True)
-            return f'<!-- Slot {slot.name} failed to render: {e} -->'
+            return f"<!-- Slot {slot.name} failed to render: {e} -->"
 
-    def _render_component_slot(
-        self,
-        slot: SlotDefinition,
-        components: List[Dict[str, Any]]
-    ) -> str:
+    def _render_component_slot(self, slot: SlotDefinition, components: list[dict[str, Any]]) -> str:
         """
         Render component slot with list of components.
 
@@ -394,22 +373,20 @@ class SlotInjector:
             logger.warning(
                 f"Component slot '{slot.name}' expects list, got {type(components).__name__}"
             )
-            return ''
+            return ""
 
         # Render each component (placeholder for now)
         # Task 2 (ComponentRegistryService) will handle actual rendering
         rendered = []
-        for i, component_config in enumerate(components):
-            component_type = component_config.get('type', 'unknown')
-            component_data = component_config.get('data', {})
+        for _i, component_config in enumerate(components):
+            component_type = component_config.get("type", "unknown")
+            component_data = component_config.get("data", {})
 
             # For now, return placeholder comment
             # This will be replaced with actual component rendering
-            rendered.append(
-                f'<!-- Component: {component_type} (data: {component_data}) -->'
-            )
+            rendered.append(f"<!-- Component: {component_type} (data: {component_data}) -->")
 
-        return '\n'.join(rendered)
+        return "\n".join(rendered)
 
     def _render_html_slot(self, slot: SlotDefinition, html: str) -> str:
         """
@@ -423,10 +400,8 @@ class SlotInjector:
             Sanitized HTML
         """
         if not isinstance(html, str):
-            logger.warning(
-                f"HTML slot '{slot.name}' expects string, got {type(html).__name__}"
-            )
-            return ''
+            logger.warning(f"HTML slot '{slot.name}' expects string, got {type(html).__name__}")
+            return ""
 
         # Sanitize HTML before injection
         sanitized = self.sanitizer.sanitize_html(html)
@@ -446,13 +421,12 @@ class SlotInjector:
             Escaped text safe for HTML
         """
         if not isinstance(text, str):
-            logger.warning(
-                f"Text slot '{slot.name}' expects string, got {type(text).__name__}"
-            )
-            return ''
+            logger.warning(f"Text slot '{slot.name}' expects string, got {type(text).__name__}")
+            return ""
 
         # Escape HTML entities to prevent injection
         import html
+
         escaped = html.escape(text)
 
         return escaped
@@ -468,7 +442,4 @@ class SlotInjector:
         Returns:
             Template with error comments
         """
-        return (
-            f'<!-- Slot injection failed: {error} -->\n'
-            f'{template}'
-        )
+        return f"<!-- Slot injection failed: {error} -->\n{template}"

@@ -5,21 +5,21 @@ Manages temporary stock reservations tied to cart items.
 Reservations hold allocated stock while a customer shops,
 preventing overselling between add-to-cart and checkout.
 """
+
+import logging
 from datetime import timedelta
-from typing import Optional, Tuple
 
 from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
-import logging
 
-from catalog.models import StockItem, StockReservation, Product, Warehouse
+from catalog.models import StockItem, StockReservation, Warehouse
 
 logger = logging.getLogger(__name__)
 
 RESERVATION_TTL = {
-    'web': timedelta(minutes=30),
-    'pos': timedelta(minutes=15),
+    "web": timedelta(minutes=30),
+    "pos": timedelta(minutes=15),
 }
 
 
@@ -31,10 +31,10 @@ class StockReservationService:
     def reserve_stock(
         cart_item,
         quantity: int,
-        channel: str = 'web',
-        warehouse: Optional[Warehouse] = None,
+        channel: str = "web",
+        warehouse: Warehouse | None = None,
         region=None,
-    ) -> Tuple[bool, str, Optional[StockReservation]]:
+    ) -> tuple[bool, str, StockReservation | None]:
         """
         Create or update a stock reservation for a cart item.
 
@@ -56,13 +56,15 @@ class StockReservationService:
         variant = cart_item.variant
 
         if not product.track_inventory:
-            return True, 'Product does not track inventory', None
+            return True, "Product does not track inventory", None
 
         if warehouse is None:
             # Re-use warehouse from existing reservation if one exists
-            existing_res = StockReservation.objects.filter(
-                cart_item=cart_item
-            ).select_related('warehouse').first()
+            existing_res = (
+                StockReservation.objects.filter(cart_item=cart_item)
+                .select_related("warehouse")
+                .first()
+            )
             if existing_res:
                 warehouse = existing_res.warehouse
             else:
@@ -70,7 +72,7 @@ class StockReservationService:
                     product, variant, quantity, region=region
                 )
                 if warehouse is None:
-                    return False, 'No warehouse with sufficient stock', None
+                    return False, "No warehouse with sufficient stock", None
 
         # Get stock item with row lock
         try:
@@ -85,9 +87,9 @@ class StockReservationService:
 
             stock_item = stock_query.get()
         except StockItem.DoesNotExist:
-            return False, f'No stock record at warehouse', None
+            return False, "No stock record at warehouse", None
 
-        ttl = RESERVATION_TTL.get(channel, RESERVATION_TTL['web'])
+        ttl = RESERVATION_TTL.get(channel, RESERVATION_TTL["web"])
 
         # Check for existing reservation on this cart_item + stock_item
         existing = StockReservation.objects.filter(
@@ -99,45 +101,42 @@ class StockReservationService:
             delta = quantity - existing.quantity
             if delta > 0:
                 if stock_item.available < delta:
-                    return False, 'Insufficient stock for increased quantity', None
-                StockItem.objects.filter(pk=stock_item.pk).update(
-                    allocated=F('allocated') + delta
-                )
+                    return False, "Insufficient stock for increased quantity", None
+                StockItem.objects.filter(pk=stock_item.pk).update(allocated=F("allocated") + delta)
             elif delta < 0:
                 StockItem.objects.filter(pk=stock_item.pk).update(
-                    allocated=F('allocated') + delta  # delta is negative
+                    allocated=F("allocated") + delta  # delta is negative
                 )
 
             existing.quantity = quantity
             existing.expires_at = timezone.now() + ttl
-            existing.save(update_fields=['quantity', 'expires_at'])
+            existing.save(update_fields=["quantity", "expires_at"])
 
             logger.info(
                 f"Updated reservation for cart_item {cart_item.id}: "
                 f"{quantity}x {product.sku} @ {warehouse.code}"
             )
-            return True, 'Reservation updated', existing
+            return True, "Reservation updated", existing
 
         # Release any reservation at a different warehouse for this cart_item
-        old_reservations = StockReservation.objects.filter(
-            cart_item=cart_item
-        ).select_related('stock_item')
+        old_reservations = StockReservation.objects.filter(cart_item=cart_item).select_related(
+            "stock_item"
+        )
         for old_res in old_reservations:
-            StockItem.objects.select_for_update().filter(
-                pk=old_res.stock_item_id
-            ).update(allocated=F('allocated') - old_res.quantity)
+            StockItem.objects.select_for_update().filter(pk=old_res.stock_item_id).update(
+                allocated=F("allocated") - old_res.quantity
+            )
             old_res.delete()
 
         # Create new reservation
         if stock_item.available < quantity:
-            return False, (
-                f'Insufficient stock: need {quantity}, '
-                f'have {stock_item.available}'
-            ), None
+            return (
+                False,
+                (f"Insufficient stock: need {quantity}, have {stock_item.available}"),
+                None,
+            )
 
-        StockItem.objects.filter(pk=stock_item.pk).update(
-            allocated=F('allocated') + quantity
-        )
+        StockItem.objects.filter(pk=stock_item.pk).update(allocated=F("allocated") + quantity)
 
         reservation = StockReservation.objects.create(
             stock_item=stock_item,
@@ -153,7 +152,7 @@ class StockReservationService:
             f"{quantity}x {product.sku} @ {warehouse.code} "
             f"(expires {reservation.expires_at})"
         )
-        return True, 'Stock reserved', reservation
+        return True, "Stock reserved", reservation
 
     @staticmethod
     @transaction.atomic
@@ -162,15 +161,15 @@ class StockReservationService:
         Release all reservations for a cart item.
         Decrements allocated on StockItem.
         """
-        reservations = StockReservation.objects.filter(
-            cart_item=cart_item
-        ).select_related('stock_item')
+        reservations = StockReservation.objects.filter(cart_item=cart_item).select_related(
+            "stock_item"
+        )
 
         released = False
         for reservation in reservations:
-            StockItem.objects.select_for_update().filter(
-                pk=reservation.stock_item_id
-            ).update(allocated=F('allocated') - reservation.quantity)
+            StockItem.objects.select_for_update().filter(pk=reservation.stock_item_id).update(
+                allocated=F("allocated") - reservation.quantity
+            )
             reservation.delete()
             released = True
 
@@ -185,15 +184,15 @@ class StockReservationService:
     @transaction.atomic
     def release_cart_reservations(cart) -> int:
         """Release all reservations for all items in a cart."""
-        reservations = StockReservation.objects.filter(
-            cart_item__cart=cart
-        ).select_related('stock_item')
+        reservations = StockReservation.objects.filter(cart_item__cart=cart).select_related(
+            "stock_item"
+        )
 
         count = 0
         for reservation in reservations:
-            StockItem.objects.select_for_update().filter(
-                pk=reservation.stock_item_id
-            ).update(allocated=F('allocated') - reservation.quantity)
+            StockItem.objects.select_for_update().filter(pk=reservation.stock_item_id).update(
+                allocated=F("allocated") - reservation.quantity
+            )
             reservation.delete()
             count += 1
 
@@ -217,9 +216,11 @@ class StockReservationService:
         If different warehouse: release old reservation, return False so
         the caller does a fresh allocate_stock() at the new warehouse.
         """
-        reservation = StockReservation.objects.filter(
-            cart_item=cart_item
-        ).select_related('stock_item').first()
+        reservation = (
+            StockReservation.objects.filter(cart_item=cart_item)
+            .select_related("stock_item")
+            .first()
+        )
 
         if not reservation:
             return False
@@ -232,9 +233,9 @@ class StockReservationService:
             )
             return True
         else:
-            StockItem.objects.select_for_update().filter(
-                pk=reservation.stock_item_id
-            ).update(allocated=F('allocated') - reservation.quantity)
+            StockItem.objects.select_for_update().filter(pk=reservation.stock_item_id).update(
+                allocated=F("allocated") - reservation.quantity
+            )
             reservation.delete()
             logger.info(
                 f"Released reservation at warehouse {reservation.warehouse_id} for "
@@ -255,28 +256,25 @@ class StockReservationService:
         Net: allocated returns to pre-reservation level, on_hand decreases
         (item physically removed from warehouse).
         """
-        reservation = StockReservation.objects.filter(
-            cart_item=cart_item
-        ).select_related('stock_item').first()
+        reservation = (
+            StockReservation.objects.filter(cart_item=cart_item)
+            .select_related("stock_item")
+            .first()
+        )
 
         if not reservation:
             return False
 
         qty = reservation.quantity
 
-        StockItem.objects.select_for_update().filter(
-            pk=reservation.stock_item_id
-        ).update(
-            on_hand=F('on_hand') - qty,
-            allocated=F('allocated') - qty,
+        StockItem.objects.select_for_update().filter(pk=reservation.stock_item_id).update(
+            on_hand=F("on_hand") - qty,
+            allocated=F("allocated") - qty,
         )
 
         reservation.delete()
 
-        logger.info(
-            f"POS fulfillment for cart_item {cart_item.id}: "
-            f"{qty}x @ {warehouse.code}"
-        )
+        logger.info(f"POS fulfillment for cart_item {cart_item.id}: {qty}x @ {warehouse.code}")
         return True
 
     @staticmethod
@@ -287,24 +285,24 @@ class StockReservationService:
         """
         now = timezone.now()
         expired_ids = list(
-            StockReservation.objects.filter(
-                expires_at__lte=now
-            ).values_list('id', flat=True)[:500]
+            StockReservation.objects.filter(expires_at__lte=now).values_list("id", flat=True)[:500]
         )
 
         count = 0
         for res_id in expired_ids:
             try:
                 with transaction.atomic():
-                    reservation = StockReservation.objects.select_related(
-                        'stock_item'
-                    ).filter(pk=res_id).first()
+                    reservation = (
+                        StockReservation.objects.select_related("stock_item")
+                        .filter(pk=res_id)
+                        .first()
+                    )
                     if not reservation:
                         continue
 
                     StockItem.objects.select_for_update().filter(
                         pk=reservation.stock_item_id
-                    ).update(allocated=F('allocated') - reservation.quantity)
+                    ).update(allocated=F("allocated") - reservation.quantity)
                     reservation.delete()
                     count += 1
 
@@ -321,12 +319,10 @@ class StockReservationService:
         return count
 
     @staticmethod
-    def extend_reservation(cart_item, channel: str = 'web') -> bool:
+    def extend_reservation(cart_item, channel: str = "web") -> bool:
         """Extend the TTL of an existing reservation."""
-        ttl = RESERVATION_TTL.get(channel, RESERVATION_TTL['web'])
-        updated = StockReservation.objects.filter(
-            cart_item=cart_item
-        ).update(
+        ttl = RESERVATION_TTL.get(channel, RESERVATION_TTL["web"])
+        updated = StockReservation.objects.filter(cart_item=cart_item).update(
             expires_at=timezone.now() + ttl
         )
         return updated > 0
@@ -342,7 +338,7 @@ class StockReservationService:
         stock_query = StockItem.objects.filter(
             product=product,
             warehouse__is_active=True,
-        ).select_related('warehouse')
+        ).select_related("warehouse")
 
         if variant:
             stock_query = stock_query.filter(variant=variant)
@@ -352,16 +348,12 @@ class StockReservationService:
         # If region provided, try regional warehouses first
         if region:
             regional_query = stock_query.filter(warehouse__region=region)
-            best = StockReservationService._find_best_stock_item(
-                regional_query, quantity
-            )
+            best = StockReservationService._find_best_stock_item(regional_query, quantity)
             if best:
                 return best.warehouse
 
         # Fall back to global search
-        best = StockReservationService._find_best_stock_item(
-            stock_query, quantity
-        )
+        best = StockReservationService._find_best_stock_item(stock_query, quantity)
         return best.warehouse if best else None
 
     @staticmethod

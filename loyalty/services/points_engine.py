@@ -5,20 +5,18 @@ Calculates and awards loyalty points based on rules, orders, and actions.
 Handles rule evaluation, point calculation, and transaction creation.
 """
 
-from decimal import Decimal
+import logging
 from datetime import timedelta
+
 from django.db import transaction
 from django.db.models import Sum
 from django.utils import timezone
-from typing import Dict, List, Optional, Tuple
-import logging
 
 from loyalty.models import (
-    LoyaltyMember,
     LoyaltyBalance,
-    LoyaltyTransaction,
+    LoyaltyMember,
     LoyaltyRule,
-    LoyaltyTier,
+    LoyaltyTransaction,
 )
 from loyalty.services.tiering_service import TieringService
 
@@ -36,7 +34,7 @@ class PointsEngine:
     - Cap enforcement (per order, per day, per member)
     """
 
-    def calculate_order_points(self, order, member: LoyaltyMember) -> Dict:
+    def calculate_order_points(self, order, member: LoyaltyMember) -> dict:
         """
         Calculate points for an order based on applicable rules.
 
@@ -52,11 +50,7 @@ class PointsEngine:
 
         if not rules:
             logger.info(f"No applicable rules for member {member.id}")
-            return {
-                'total_points': 0,
-                'rules_applied': [],
-                'message': 'No applicable rules found'
-            }
+            return {"total_points": 0, "rules_applied": [], "message": "No applicable rules found"}
 
         total_points = 0
         rules_applied = []
@@ -71,11 +65,13 @@ class PointsEngine:
                     points = int(points * float(member.current_tier.points_multiplier))
 
                 total_points += points
-                rules_applied.append({
-                    'rule_id': rule.id,
-                    'rule_name': rule.name,
-                    'points': points,
-                })
+                rules_applied.append(
+                    {
+                        "rule_id": rule.id,
+                        "rule_name": rule.name,
+                        "points": points,
+                    }
+                )
 
                 # Stop if rule is exclusive
                 if rule.is_exclusive:
@@ -90,13 +86,14 @@ class PointsEngine:
                 break
 
         return {
-            'total_points': total_points,
-            'rules_applied': rules_applied,
-            'message': f'Calculated {total_points} points from {len(rules_applied)} rule(s)'
+            "total_points": total_points,
+            "rules_applied": rules_applied,
+            "message": f"Calculated {total_points} points from {len(rules_applied)} rule(s)",
         }
 
-    def award_order_points(self, order, member: LoyaltyMember,
-                          admin_user=None) -> Optional[LoyaltyTransaction]:
+    def award_order_points(
+        self, order, member: LoyaltyMember, admin_user=None
+    ) -> LoyaltyTransaction | None:
         """
         Award points for an order and create transaction.
 
@@ -110,7 +107,7 @@ class PointsEngine:
         """
         # Calculate points
         result = self.calculate_order_points(order, member)
-        points = result['total_points']
+        points = result["total_points"]
 
         if points <= 0:
             logger.info(f"No points to award for order {order.order_number}")
@@ -127,13 +124,13 @@ class PointsEngine:
             return None
 
         # Determine if points should be pending
-        rules_applied = result['rules_applied']
+        rules_applied = result["rules_applied"]
         pending_days = 0
         expires_days = None
 
         if rules_applied:
             # Use the first rule's settings
-            first_rule = LoyaltyRule.objects.get(id=rules_applied[0]['rule_id'])
+            first_rule = LoyaltyRule.objects.get(id=rules_applied[0]["rule_id"])
             pending_days = first_rule.points_pending_days
             expires_days = first_rule.points_expire_days
 
@@ -143,13 +140,16 @@ class PointsEngine:
             expires_at = timezone.now() + timedelta(days=expires_days)
 
         # Determine status
-        status = (LoyaltyTransaction.STATUS_PENDING if pending_days > 0
-                 else LoyaltyTransaction.STATUS_AVAILABLE)
+        status = (
+            LoyaltyTransaction.STATUS_PENDING
+            if pending_days > 0
+            else LoyaltyTransaction.STATUS_AVAILABLE
+        )
 
         # Create transaction
         description = f"Earned {points} points from order #{order.order_number}"
         if len(rules_applied) > 0:
-            rule_names = ', '.join([r['rule_name'] for r in rules_applied])
+            rule_names = ", ".join([r["rule_name"] for r in rules_applied])
             description += f" ({rule_names})"
 
         with transaction.atomic():
@@ -161,7 +161,7 @@ class PointsEngine:
                 status=status,
                 description=description,
                 reason=f"Order #{order.order_number}",
-                related_object_type='order',
+                related_object_type="order",
                 related_object_id=str(order.id),
                 expires_at=expires_at,
                 created_by=admin_user,
@@ -173,23 +173,25 @@ class PointsEngine:
             # Evaluate tier eligibility after points change
             tiering_service = TieringService()
             tier_result = tiering_service.evaluate_and_update_tier(
-                member,
-                trigger_event=f"order_points_awarded:{order.order_number}"
+                member, trigger_event=f"order_points_awarded:{order.order_number}"
             )
 
-            if tier_result['changed']:
-                action = tier_result['action']
-                new_tier_name = tier_result['new_tier'].name if tier_result['new_tier'] else 'No Tier'
-                logger.info(
-                    f"Member {member.id} tier {action}: {new_tier_name}"
+            if tier_result["changed"]:
+                action = tier_result["action"]
+                new_tier_name = (
+                    tier_result["new_tier"].name if tier_result["new_tier"] else "No Tier"
                 )
+                logger.info(f"Member {member.id} tier {action}: {new_tier_name}")
 
-            logger.info(f"Awarded {points} points to member {member.id} for order {order.order_number}")
+            logger.info(
+                f"Awarded {points} points to member {member.id} for order {order.order_number}"
+            )
 
         return txn
 
-    def award_action_points(self, member: LoyaltyMember, action_type: str,
-                           metadata: Dict = None, admin_user=None) -> Optional[LoyaltyTransaction]:
+    def award_action_points(
+        self, member: LoyaltyMember, action_type: str, metadata: dict = None, admin_user=None
+    ) -> LoyaltyTransaction | None:
         """
         Award points for an action (signup, review, etc.).
 
@@ -209,7 +211,7 @@ class PointsEngine:
             rule_type=LoyaltyRule.TYPE_ACTION_BASED,
             action_type=action_type,
             is_active=True,
-        ).order_by('priority')
+        ).order_by("priority")
 
         # Filter by tier if applicable
         if member.current_tier:
@@ -245,8 +247,11 @@ class PointsEngine:
             expires_at = timezone.now() + timedelta(days=rule.points_expire_days)
 
         # Determine status
-        status = (LoyaltyTransaction.STATUS_PENDING if rule.points_pending_days > 0
-                 else LoyaltyTransaction.STATUS_AVAILABLE)
+        status = (
+            LoyaltyTransaction.STATUS_PENDING
+            if rule.points_pending_days > 0
+            else LoyaltyTransaction.STATUS_AVAILABLE
+        )
 
         # Create transaction
         description = f"Earned {points} points for {rule.get_action_type_display()}"
@@ -261,8 +266,8 @@ class PointsEngine:
                 status=status,
                 description=description,
                 reason=f"Action: {action_type}",
-                related_object_type=metadata.get('object_type', ''),
-                related_object_id=metadata.get('object_id', ''),
+                related_object_type=metadata.get("object_type", ""),
+                related_object_id=metadata.get("object_id", ""),
                 expires_at=expires_at,
                 created_by=admin_user,
             )
@@ -273,23 +278,23 @@ class PointsEngine:
             # Evaluate tier eligibility after points change
             tiering_service = TieringService()
             tier_result = tiering_service.evaluate_and_update_tier(
-                member,
-                trigger_event=f"action_points_awarded:{action_type}"
+                member, trigger_event=f"action_points_awarded:{action_type}"
             )
 
-            if tier_result['changed']:
-                action_name = tier_result['action']
-                new_tier_name = tier_result['new_tier'].name if tier_result['new_tier'] else 'No Tier'
-                logger.info(
-                    f"Member {member.id} tier {action_name}: {new_tier_name}"
+            if tier_result["changed"]:
+                action_name = tier_result["action"]
+                new_tier_name = (
+                    tier_result["new_tier"].name if tier_result["new_tier"] else "No Tier"
                 )
+                logger.info(f"Member {member.id} tier {action_name}: {new_tier_name}")
 
             logger.info(f"Awarded {points} points to member {member.id} for action {action_type}")
 
         return txn
 
-    def award_bonus_points(self, member: LoyaltyMember, points: int,
-                          description: str = '', admin_user=None) -> Optional[LoyaltyTransaction]:
+    def award_bonus_points(
+        self, member: LoyaltyMember, points: int, description: str = "", admin_user=None
+    ) -> LoyaltyTransaction | None:
         """
         Award bonus points directly (e.g., for badges, promotions, manual gifts).
 
@@ -317,7 +322,7 @@ class PointsEngine:
                 points=points,
                 status=LoyaltyTransaction.STATUS_AVAILABLE,
                 description=description or f"Bonus: {points} points",
-                reason='bonus_award',
+                reason="bonus_award",
                 created_by=admin_user,
             )
 
@@ -327,27 +332,26 @@ class PointsEngine:
             # Evaluate tier eligibility after points change
             tiering_service = TieringService()
             tier_result = tiering_service.evaluate_and_update_tier(
-                member,
-                trigger_event='bonus_points_awarded'
+                member, trigger_event="bonus_points_awarded"
             )
 
-            if tier_result['changed']:
-                action_name = tier_result['action']
-                new_tier_name = tier_result['new_tier'].name if tier_result['new_tier'] else 'No Tier'
-                logger.info(
-                    f"Member {member.id} tier {action_name}: {new_tier_name}"
+            if tier_result["changed"]:
+                action_name = tier_result["action"]
+                new_tier_name = (
+                    tier_result["new_tier"].name if tier_result["new_tier"] else "No Tier"
                 )
+                logger.info(f"Member {member.id} tier {action_name}: {new_tier_name}")
 
             logger.info(f"Awarded {points} bonus points to member {member.id}: {description}")
 
         return txn
 
-    def _get_applicable_rules(self, member: LoyaltyMember) -> List[LoyaltyRule]:
+    def _get_applicable_rules(self, member: LoyaltyMember) -> list[LoyaltyRule]:
         """Get rules applicable to this member, ordered by priority."""
         rules = LoyaltyRule.objects.filter(
             rule_type__in=[LoyaltyRule.TYPE_SPEND_BASED, LoyaltyRule.TYPE_ITEM_BASED],
             is_active=True,
-        ).order_by('priority')
+        ).order_by("priority")
 
         # Filter by tier
         if member.current_tier:
@@ -375,7 +379,7 @@ class PointsEngine:
         elif rule.rule_type == LoyaltyRule.TYPE_ITEM_BASED:
             # Calculate points per qualifying item
             total_points = 0
-            for item in order.items.select_related('product', 'product__brand').all():
+            for item in order.items.select_related("product", "product__brand").all():
                 if self._item_matches_scope(rule, item):
                     total_points += int(rule.points_rate) * item.quantity
             return total_points
@@ -390,15 +394,15 @@ class PointsEngine:
         scope_filters = rule.scope_filters or {}
 
         if rule.scope == LoyaltyRule.SCOPE_PRODUCT:
-            product_ids = scope_filters.get('product_ids', [])
+            product_ids = scope_filters.get("product_ids", [])
             return not product_ids or item.product_id in product_ids
 
         if rule.scope == LoyaltyRule.SCOPE_CATEGORY:
-            category_ids = scope_filters.get('category_ids', [])
+            category_ids = scope_filters.get("category_ids", [])
             return not category_ids or item.product.category_id in category_ids
 
         if rule.scope == LoyaltyRule.SCOPE_BRAND:
-            brand_ids = scope_filters.get('brand_ids', [])
+            brand_ids = scope_filters.get("brand_ids", [])
             return not brand_ids or (item.product.brand_id and item.product.brand_id in brand_ids)
 
         return False
@@ -416,11 +420,14 @@ class PointsEngine:
 
         # Check today's points for this member
         today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        today_points = LoyaltyTransaction.objects.filter(
-            member=member,
-            transaction_type=LoyaltyTransaction.TYPE_EARN,
-            created_at__gte=today_start,
-        ).aggregate(total=Sum('points'))['total'] or 0
+        today_points = (
+            LoyaltyTransaction.objects.filter(
+                member=member,
+                transaction_type=LoyaltyTransaction.TYPE_EARN,
+                created_at__gte=today_start,
+            ).aggregate(total=Sum("points"))["total"]
+            or 0
+        )
 
         # Check against the strictest cap
         min_cap = min(r.max_points_per_day for r in rules_with_caps)

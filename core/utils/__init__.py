@@ -84,14 +84,13 @@ def get_default_country():
         # Convert full name to code
         try:
             from geoip.models import CountryMapping
-            mapping = CountryMapping.objects.filter(
-                country_name__iexact=country
-            ).first()
+
+            mapping = CountryMapping.objects.filter(country_name__iexact=country).first()
             if mapping:
                 return mapping.country_code
         except Exception:
             pass
-    return settings.shipping_origin_country or 'US'
+    return settings.shipping_origin_country or "US"
 
 
 def get_shipping_origin_country():
@@ -101,7 +100,7 @@ def get_shipping_origin_country():
     Returns:
         str: Two-letter ISO 3166-1 alpha-2 country code (e.g., 'US')
     """
-    return get_site_settings().shipping_origin_country or 'US'
+    return get_site_settings().shipping_origin_country or "US"
 
 
 def allows_guest_checkout():

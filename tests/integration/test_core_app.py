@@ -4,15 +4,13 @@ Core app integration tests.
 Tests model fields, admin views, widgets, CSP template compliance,
 and static file copyright headers following the core audit changes.
 """
+
 import json
 import re
 from pathlib import Path
 
 import pytest
 from django.test import Client
-from django.utils import timezone
-
-from tests.factories import UserFactory
 
 pytestmark = [pytest.mark.integration, pytest.mark.core]
 
@@ -38,17 +36,17 @@ class TestHelpFeedbackModel:
         from core.models import HelpCategory, HelpTopic
 
         category = HelpCategory.objects.create(
-            name='Test Category',
-            slug='test-category',
-            icon='fa-box',
+            name="Test Category",
+            slug="test-category",
+            icon="fa-box",
             order=0,
         )
         topic = HelpTopic.objects.create(
-            slug='test-topic',
+            slug="test-topic",
             category=category,
-            title_i18n_key='help.test.title',
-            content_markdown='Test content',
-            component='core',
+            title_i18n_key="help.test.title",
+            content_markdown="Test content",
+            component="core",
         )
         return topic
 
@@ -97,10 +95,8 @@ class TestHelpFeedbackModel:
         from core.models import HelpFeedback
 
         field_names = {f.name for f in HelpFeedback._meta.get_fields()}
-        expected = {'id', 'topic', 'user', 'helpful', 'comment', 'created_at', 'updated_at'}
-        assert expected.issubset(field_names), (
-            f"Missing fields: {expected - field_names}"
-        )
+        expected = {"id", "topic", "user", "helpful", "comment", "created_at", "updated_at"}
+        assert expected.issubset(field_names), f"Missing fields: {expected - field_names}"
 
 
 class TestSiteSettingsVerboseNames:
@@ -108,17 +104,17 @@ class TestSiteSettingsVerboseNames:
 
     FIELDS_WITH_I18N_VERBOSE_NAME = [
         # Shipping fields
-        'enable_shipping_labels',
-        'default_shipping_provider',
-        'default_manual_carrier',
-        'shipping_origin_country',
+        "enable_shipping_labels",
+        "default_shipping_provider",
+        "default_manual_carrier",
+        "shipping_origin_country",
         # Unit system fields
-        'default_weight_unit',
-        'default_length_unit',
-        'default_volume_unit',
-        'default_area_unit',
-        'default_temperature_unit',
-        'enable_unit_conversion',
+        "default_weight_unit",
+        "default_length_unit",
+        "default_volume_unit",
+        "default_area_unit",
+        "default_temperature_unit",
+        "enable_unit_conversion",
     ]
 
     def test_shipping_and_unit_fields_have_verbose_name(self):
@@ -128,9 +124,7 @@ class TestSiteSettingsVerboseNames:
         for field_name in self.FIELDS_WITH_I18N_VERBOSE_NAME:
             field = SiteSettings._meta.get_field(field_name)
             # verbose_name should be set and not be the auto-generated one
-            assert field.verbose_name is not None, (
-                f"Field {field_name} has no verbose_name"
-            )
+            assert field.verbose_name is not None, f"Field {field_name} has no verbose_name"
             # Auto-generated verbose_name replaces _ with space;
             # i18n-wrapped names are typically capitalized Title Case
             # The key thing: they should NOT equal the raw field name
@@ -143,8 +137,10 @@ class TestSiteSettingsVerboseNames:
         from core.models import SiteSettings
 
         shipping_fields = [
-            'enable_shipping_labels', 'default_shipping_provider',
-            'default_manual_carrier', 'shipping_origin_country',
+            "enable_shipping_labels",
+            "default_shipping_provider",
+            "default_manual_carrier",
+            "shipping_origin_country",
         ]
         for field_name in shipping_fields:
             assert SiteSettings._meta.get_field(field_name) is not None
@@ -154,8 +150,12 @@ class TestSiteSettingsVerboseNames:
         from core.models import SiteSettings
 
         unit_fields = [
-            'default_weight_unit', 'default_length_unit', 'default_volume_unit',
-            'default_area_unit', 'default_temperature_unit', 'enable_unit_conversion',
+            "default_weight_unit",
+            "default_length_unit",
+            "default_volume_unit",
+            "default_area_unit",
+            "default_temperature_unit",
+            "enable_unit_conversion",
         ]
         for field_name in unit_fields:
             assert SiteSettings._meta.get_field(field_name) is not None
@@ -165,43 +165,43 @@ class TestSiteSettingsVerboseNames:
         from core.models import SiteSettings
 
         values = [c[0] for c in SiteSettings.WEIGHT_UNIT_CHOICES]
-        assert 'kg' in values
-        assert 'lb' in values
-        assert 'g' in values
-        assert 'oz' in values
+        assert "kg" in values
+        assert "lb" in values
+        assert "g" in values
+        assert "oz" in values
 
     def test_length_unit_choices(self):
         """LENGTH_UNIT_CHOICES contains expected options."""
         from core.models import SiteSettings
 
         values = [c[0] for c in SiteSettings.LENGTH_UNIT_CHOICES]
-        assert 'cm' in values
-        assert 'in' in values
+        assert "cm" in values
+        assert "in" in values
 
     def test_volume_unit_choices(self):
         """VOLUME_UNIT_CHOICES contains expected options."""
         from core.models import SiteSettings
 
         values = [c[0] for c in SiteSettings.VOLUME_UNIT_CHOICES]
-        assert 'ml' in values
-        assert 'l' in values
-        assert 'fl_oz' in values
+        assert "ml" in values
+        assert "l" in values
+        assert "fl_oz" in values
 
     def test_area_unit_choices(self):
         """AREA_UNIT_CHOICES contains expected options."""
         from core.models import SiteSettings
 
         values = [c[0] for c in SiteSettings.AREA_UNIT_CHOICES]
-        assert 'sq_m' in values
-        assert 'sq_ft' in values
+        assert "sq_m" in values
+        assert "sq_ft" in values
 
     def test_temperature_unit_choices(self):
         """TEMPERATURE_UNIT_CHOICES contains expected options."""
         from core.models import SiteSettings
 
         values = [c[0] for c in SiteSettings.TEMPERATURE_UNIT_CHOICES]
-        assert 'c' in values
-        assert 'f' in values
+        assert "c" in values
+        assert "f" in values
 
 
 # ============================================================
@@ -226,10 +226,7 @@ class TestSiteSettingsAdminFieldTabMapping:
         mapping = admin_instance.get_field_tab_mapping()
 
         # Get actual model field names (only DB-backed columns)
-        model_fields = {
-            f.name for f in SiteSettings._meta.get_fields()
-            if hasattr(f, 'column')
-        }
+        model_fields = {f.name for f in SiteSettings._meta.get_fields() if hasattr(f, "column")}
 
         # Check every mapping key exists as a real model field
         phantom_fields = set(mapping.keys()) - model_fields
@@ -247,13 +244,17 @@ class TestSiteSettingsAdminFieldTabMapping:
         mapping = admin_instance.get_field_tab_mapping()
 
         # These were explicitly removed in the audit
-        for phantom in ['youtube_url', 'tiktok_url', 'pinterest_url']:
+        for phantom in ["youtube_url", "tiktok_url", "pinterest_url"]:
             assert phantom not in mapping, (
                 f"Phantom field '{phantom}' found in get_field_tab_mapping()"
             )
 
     def test_mapping_covers_expected_tabs(self, site_settings):
-        """The mapping should cover the expected set of admin tabs."""
+        """The mapping should cover the expected set of admin tabs.
+
+        Inventory fields now live under the "ecommerce" tab and SEO/meta
+        fields live under the "pages" tab — those tab IDs were merged.
+        """
         from core.admin import SiteSettingsAdmin
         from core.models import SiteSettings
 
@@ -262,13 +263,18 @@ class TestSiteSettingsAdminFieldTabMapping:
 
         tabs = set(mapping.values())
         expected_tabs = {
-            'general', 'contact', 'locale', 'multicurrency',
-            'ecommerce', 'shipping', 'authentication',
-            'seo', 'inventory', 'advanced', 'pages',
+            "general",
+            "contact",
+            "locale",
+            "multicurrency",
+            "ecommerce",
+            "shipping",
+            "authentication",
+            "advanced",
+            "pages",
+            "cookies",
         }
-        assert expected_tabs.issubset(tabs), (
-            f"Missing tabs: {expected_tabs - tabs}"
-        )
+        assert expected_tabs.issubset(tabs), f"Missing tabs: {expected_tabs - tabs}"
 
     def test_mapping_returns_json_serializable_dict(self, site_settings):
         """get_field_tab_mapping() must return a JSON-serializable dict for template use."""
@@ -297,26 +303,22 @@ class TestSiteSettingsAdminViews:
 
     def test_sitesettings_changelist_redirects_to_change(self, staff_client, site_settings):
         """SiteSettings changelist should redirect to the single settings instance."""
-        resp = staff_client.get('/en/admin/core/sitesettings/')
+        resp = staff_client.get("/en/admin/core/sitesettings/")
         # Should redirect to change form for the existing instance
         assert resp.status_code == 302
-        assert f'/en/admin/core/sitesettings/{site_settings.pk}/change/' in resp.url
+        assert f"/en/admin/core/sitesettings/{site_settings.pk}/change/" in resp.url
 
     def test_sitesettings_change_view_loads(self, staff_client, site_settings):
         """SiteSettings change form should load without errors."""
-        resp = staff_client.get(
-            f'/en/admin/core/sitesettings/{site_settings.pk}/change/'
-        )
+        resp = staff_client.get(f"/en/admin/core/sitesettings/{site_settings.pk}/change/")
         assert resp.status_code == 200
 
     def test_sitesettings_change_view_has_field_tab_mapping(self, staff_client, site_settings):
         """SiteSettings change form should include field_tab_mapping_json in context."""
-        resp = staff_client.get(
-            f'/en/admin/core/sitesettings/{site_settings.pk}/change/'
-        )
+        resp = staff_client.get(f"/en/admin/core/sitesettings/{site_settings.pk}/change/")
         assert resp.status_code == 200
         content = resp.content.decode()
-        assert 'data-field-tab-map' in content
+        assert "data-field-tab-map" in content
 
 
 @pytest.mark.django_db
@@ -332,16 +334,16 @@ class TestAPITokenAdminViews:
 
     def test_apitoken_changelist_loads(self, staff_client, site_settings):
         """APIToken changelist should load without errors."""
-        resp = staff_client.get('/en/admin/core/apitoken/')
+        resp = staff_client.get("/en/admin/core/apitoken/")
         assert resp.status_code == 200
 
     def test_apitoken_changelist_has_stats(self, staff_client, site_settings):
         """APIToken changelist should include token_stats in context."""
-        resp = staff_client.get('/en/admin/core/apitoken/')
+        resp = staff_client.get("/en/admin/core/apitoken/")
         assert resp.status_code == 200
         content = resp.content.decode()
         # Template renders dashboard-stats-grid with stats
-        assert 'dashboard-stat-card' in content
+        assert "dashboard-stat-card" in content
 
 
 @pytest.mark.django_db
@@ -357,15 +359,15 @@ class TestLicenseStatusAdminViews:
 
     def test_license_status_changelist_loads(self, staff_client, site_settings):
         """LicenseStatus changelist should load without errors."""
-        resp = staff_client.get('/en/admin/core/licensestatus/')
+        resp = staff_client.get("/en/admin/core/licensestatus/")
         assert resp.status_code == 200
 
     def test_license_status_contains_license_info(self, staff_client, site_settings):
         """LicenseStatus page should contain license information."""
-        resp = staff_client.get('/en/admin/core/licensestatus/')
+        resp = staff_client.get("/en/admin/core/licensestatus/")
         assert resp.status_code == 200
         content = resp.content.decode()
-        assert 'license-dashboard' in content
+        assert "license-dashboard" in content
 
 
 class TestCoreAdminImports:
@@ -374,27 +376,30 @@ class TestCoreAdminImports:
     def test_admin_module_imports_forms(self):
         """core.admin should have 'from django import forms' available."""
         from core import admin as core_admin
+
         # The forms module should be importable from the admin module's context
-        assert hasattr(core_admin, 'forms')
+        assert hasattr(core_admin, "forms")
 
     def test_admin_does_not_import_default_storage(self):
         """core.admin should NOT import default_storage (removed in audit)."""
         import inspect
+
         from core import admin as core_admin
 
         source = inspect.getsource(core_admin)
         # Should not contain "from django.core.files.storage import default_storage"
-        assert 'default_storage' not in source, (
+        assert "default_storage" not in source, (
             "core.admin still imports default_storage (should have been removed)"
         )
 
     def test_admin_does_not_import_content_file(self):
         """core.admin should NOT import ContentFile (removed in audit)."""
         import inspect
+
         from core import admin as core_admin
 
         source = inspect.getsource(core_admin)
-        assert 'ContentFile' not in source, (
+        assert "ContentFile" not in source, (
             "core.admin still imports ContentFile (should have been removed)"
         )
 
@@ -412,81 +417,83 @@ class TestKeyValueWidget:
         from core.widgets import KeyValueWidget
 
         widget = KeyValueWidget()
-        assert widget.key_label == 'Key'
-        assert widget.value_label == 'Value'
+        assert widget.key_label == "Key"
+        assert widget.value_label == "Value"
 
     def test_instantiation_with_custom_labels(self):
         """KeyValueWidget accepts custom key/value labels."""
         from core.widgets import KeyValueWidget
 
-        widget = KeyValueWidget(key_label='Feature', value_label='Detail')
-        assert widget.key_label == 'Feature'
-        assert widget.value_label == 'Detail'
+        widget = KeyValueWidget(key_label="Feature", value_label="Detail")
+        assert widget.key_label == "Feature"
+        assert widget.value_label == "Detail"
 
     def test_get_context_with_dict_value(self):
         """get_context parses a dict into pairs."""
         from core.widgets import KeyValueWidget
 
         widget = KeyValueWidget()
-        context = widget.get_context('specs', {'color': 'red', 'size': 'large'}, {})
-        pairs = context['widget']['pairs']
-        assert ('color', 'red') in pairs
-        assert ('size', 'large') in pairs
+        context = widget.get_context("specs", {"color": "red", "size": "large"}, {})
+        pairs = context["widget"]["pairs"]
+        assert ("color", "red") in pairs
+        assert ("size", "large") in pairs
 
     def test_get_context_with_json_string_value(self):
         """get_context parses JSON string into pairs."""
         from core.widgets import KeyValueWidget
 
         widget = KeyValueWidget()
-        context = widget.get_context('specs', '{"color": "red"}', {})
-        pairs = context['widget']['pairs']
-        assert ('color', 'red') in pairs
+        context = widget.get_context("specs", '{"color": "red"}', {})
+        pairs = context["widget"]["pairs"]
+        assert ("color", "red") in pairs
 
     def test_get_context_with_none_value(self):
         """get_context handles None value gracefully."""
         from core.widgets import KeyValueWidget
 
         widget = KeyValueWidget()
-        context = widget.get_context('specs', None, {})
-        assert context['widget']['pairs'] == []
+        context = widget.get_context("specs", None, {})
+        assert context["widget"]["pairs"] == []
 
     def test_get_context_with_invalid_json(self):
         """get_context handles invalid JSON gracefully."""
         from core.widgets import KeyValueWidget
 
         widget = KeyValueWidget()
-        context = widget.get_context('specs', 'not-json', {})
-        assert context['widget']['pairs'] == []
+        context = widget.get_context("specs", "not-json", {})
+        assert context["widget"]["pairs"] == []
 
     def test_value_from_datadict(self):
         """value_from_datadict reconstructs JSON dict from POST keys/values."""
-        from core.widgets import KeyValueWidget
         from django.http import QueryDict
+
+        from core.widgets import KeyValueWidget
 
         widget = KeyValueWidget()
         data = QueryDict(mutable=True)
-        data.setlist('specs_keys', ['color', 'size', ''])
-        data.setlist('specs_values', ['red', 'large', 'ignored'])
+        data.setlist("specs_keys", ["color", "size", ""])
+        data.setlist("specs_values", ["red", "large", "ignored"])
 
-        result = widget.value_from_datadict(data, {}, 'specs')
+        result = widget.value_from_datadict(data, {}, "specs")
         parsed = json.loads(result)
-        assert parsed == {'color': 'red', 'size': 'large'}
+        assert parsed == {"color": "red", "size": "large"}
         # Empty keys should be stripped
-        assert '' not in parsed
+        assert "" not in parsed
 
     def test_value_from_datadict_strips_whitespace(self):
         """value_from_datadict strips whitespace from keys and values."""
-        from core.widgets import KeyValueWidget
         from django.http import QueryDict
+
+        from core.widgets import KeyValueWidget
 
         widget = KeyValueWidget()
         data = QueryDict(mutable=True)
-        data.setlist('specs_keys', ['  color  '])
-        data.setlist('specs_values', ['  red  '])
+        data.setlist("specs_keys", ["  color  "])
+        data.setlist("specs_values", ["  red  "])
 
-        result = widget.value_from_datadict(data, {}, 'specs')
+        result = widget.value_from_datadict(data, {}, "specs")
         parsed = json.loads(result)
-        assert parsed == {'color': 'red'}
+        assert parsed == {"color": "red"}
 
     def test_media_includes_css_and_js(self):
         """KeyValueWidget media includes its CSS and JS files."""
@@ -494,10 +501,10 @@ class TestKeyValueWidget:
 
         widget = KeyValueWidget()
         media = widget.media
-        css_files = [str(f) for f in media._css.get('all', [])]
+        css_files = [str(f) for f in media._css.get("all", [])]
         js_files = [str(f) for f in media._js]
-        assert 'core/admin/css/key_value_widget.css' in css_files
-        assert 'core/admin/js/key_value_widget.js' in js_files
+        assert "core/admin/css/key_value_widget.css" in css_files
+        assert "core/admin/js/key_value_widget.js" in js_files
 
 
 class TestSearchableSelectWidget:
@@ -509,13 +516,15 @@ class TestSearchableSelectWidget:
 
         widget = SearchableSelectWidget()
         assert widget.icon_callback is None
-        assert 'data-searchable-select' in widget.attrs
+        assert "data-searchable-select" in widget.attrs
 
     def test_instantiation_with_icon_callback(self):
         """SearchableSelectWidget stores the icon_callback."""
         from core.widgets import SearchableSelectWidget
 
-        callback = lambda v: f'fa-{v}'
+        def callback(v):
+            return f"fa-{v}"
+
         widget = SearchableSelectWidget(icon_callback=callback)
         assert widget.icon_callback is callback
 
@@ -523,22 +532,26 @@ class TestSearchableSelectWidget:
         """create_option adds data-icon when icon_callback returns a value."""
         from core.widgets import SearchableSelectWidget
 
-        callback = lambda v: 'fa-dollar-sign' if v == 'USD' else None
+        def callback(v):
+            return "fa-dollar-sign" if v == "USD" else None
+
         widget = SearchableSelectWidget(icon_callback=callback)
 
-        option = widget.create_option('currency', 'USD', 'US Dollar', False, 0)
-        assert option['attrs'].get('data-icon') == 'fa-dollar-sign'
-        assert option['attrs'].get('data-icon-style') == 'fas'
+        option = widget.create_option("currency", "USD", "US Dollar", False, 0)
+        assert option["attrs"].get("data-icon") == "fa-dollar-sign"
+        assert option["attrs"].get("data-icon-style") == "fas"
 
     def test_create_option_no_icon_for_empty_value(self):
         """create_option does not add icon for empty/None value."""
         from core.widgets import SearchableSelectWidget
 
-        callback = lambda v: 'fa-test'
+        def callback(v):
+            return "fa-test"
+
         widget = SearchableSelectWidget(icon_callback=callback)
 
-        option = widget.create_option('currency', '', '---', False, 0)
-        assert 'data-icon' not in option['attrs']
+        option = widget.create_option("currency", "", "---", False, 0)
+        assert "data-icon" not in option["attrs"]
 
     def test_create_option_handles_callback_exception(self):
         """create_option handles icon_callback exceptions gracefully."""
@@ -549,8 +562,8 @@ class TestSearchableSelectWidget:
 
         widget = SearchableSelectWidget(icon_callback=bad_callback)
         # Should not raise
-        option = widget.create_option('field', 'val', 'Label', False, 0)
-        assert 'data-icon' not in option['attrs']
+        option = widget.create_option("field", "val", "Label", False, 0)
+        assert "data-icon" not in option["attrs"]
 
 
 class TestIconPickerWidget:
@@ -559,6 +572,7 @@ class TestIconPickerWidget:
     def test_inherits_from_widget(self):
         """IconPickerWidget should inherit from forms.Widget."""
         from django import forms as django_forms
+
         from core.widgets import IconPickerWidget
 
         assert issubclass(IconPickerWidget, django_forms.Widget)
@@ -574,7 +588,7 @@ class TestIconPickerWidget:
         """IconPickerWidget limits priority icons to 10."""
         from core.widgets import IconPickerWidget
 
-        icons = [f'fa-icon-{i}' for i in range(15)]
+        icons = [f"fa-icon-{i}" for i in range(15)]
         widget = IconPickerWidget(priority_icons=icons)
         assert len(widget.priority_icons) == 10
 
@@ -595,21 +609,23 @@ class TestIconPickerWidget:
     def test_value_from_datadict(self):
         """value_from_datadict returns value from POST data."""
         from django.http import QueryDict
+
         from core.widgets import IconPickerWidget
 
         widget = IconPickerWidget()
         data = QueryDict(mutable=True)
-        data['icon'] = 'fas fa-star'
-        assert widget.value_from_datadict(data, {}, 'icon') == 'fas fa-star'
+        data["icon"] = "fas fa-star"
+        assert widget.value_from_datadict(data, {}, "icon") == "fas fa-star"
 
     def test_value_from_datadict_empty(self):
         """value_from_datadict returns empty string when missing."""
         from django.http import QueryDict
+
         from core.widgets import IconPickerWidget
 
         widget = IconPickerWidget()
         data = QueryDict(mutable=True)
-        assert widget.value_from_datadict(data, {}, 'icon') == ''
+        assert widget.value_from_datadict(data, {}, "icon") == ""
 
     def test_media_includes_css_and_js(self):
         """IconPickerWidget media includes icon_picker.css and icon_picker.js."""
@@ -620,15 +636,15 @@ class TestIconPickerWidget:
         all_css = []
         for css_list in media._css.values():
             all_css.extend(str(f) for f in css_list)
-        assert 'core/admin/css/icon_picker.css' in all_css
-        assert 'core/admin/js/icon_picker.js' in [str(f) for f in media._js]
+        assert "core/admin/css/icon_picker.css" in all_css
+        assert "core/admin/js/icon_picker.js" in [str(f) for f in media._js]
 
     def test_template_name_is_set(self):
         """IconPickerWidget uses the correct template."""
         from core.widgets import IconPickerWidget
 
         widget = IconPickerWidget()
-        assert widget.template_name == 'admin/widgets/icon_picker.html'
+        assert widget.template_name == "admin/widgets/icon_picker.html"
 
 
 class TestTranslatableFieldWidget:
@@ -637,6 +653,7 @@ class TestTranslatableFieldWidget:
     def test_instantiation_with_default_base_widget(self):
         """TranslatableFieldWidget defaults to TextInput if no base_widget provided."""
         from django import forms as django_forms
+
         from core.widgets import TranslatableFieldWidget
 
         widget = TranslatableFieldWidget()
@@ -645,9 +662,10 @@ class TestTranslatableFieldWidget:
     def test_instantiation_with_custom_base_widget(self):
         """TranslatableFieldWidget accepts a custom base_widget."""
         from django import forms as django_forms
+
         from core.widgets import TranslatableFieldWidget
 
-        textarea = django_forms.Textarea(attrs={'rows': 4})
+        textarea = django_forms.Textarea(attrs={"rows": 4})
         widget = TranslatableFieldWidget(base_widget=textarea)
         assert isinstance(widget.base_widget, django_forms.Textarea)
 
@@ -661,29 +679,27 @@ class TestTranslatableFieldWidget:
         all_css = []
         for css_list in media._css.values():
             all_css.extend(str(f) for f in css_list)
-        assert 'core/admin/css/translatable_field_widget.css' in all_css
+        assert "core/admin/css/translatable_field_widget.css" in all_css
 
     def test_value_from_datadict_delegates_to_base_widget(self):
         """value_from_datadict delegates to the base widget."""
-        from django import forms as django_forms
         from django.http import QueryDict
+
         from core.widgets import TranslatableFieldWidget
 
         widget = TranslatableFieldWidget()
         data = QueryDict(mutable=True)
-        data['site_name'] = 'Test Store'
+        data["site_name"] = "Test Store"
 
-        result = widget.value_from_datadict(data, {}, 'site_name')
-        assert result == 'Test Store'
+        result = widget.value_from_datadict(data, {}, "site_name")
+        assert result == "Test Store"
 
     def test_template_name_is_set(self):
         """TranslatableFieldWidget uses the correct template."""
         from core.widgets import TranslatableFieldWidget
 
         widget = TranslatableFieldWidget()
-        assert widget.template_name == 'admin/widgets/translatable_field.html'
-
-
+        assert widget.template_name == "admin/widgets/translatable_field.html"
 
 
 # ============================================================
@@ -700,117 +716,114 @@ class TestCSPTemplateCompliance:
 
     # Templates that should have NO inline <style> blocks
     NO_STYLE_BLOCK_TEMPLATES = [
-        'core/templates/admin/widgets/icon_picker.html',
-        'core/templates/maintenance/coming_soon.html',
-        'core/templates/maintenance/maintenance.html',
-        'core/templates/core/license_required.html',
+        "core/templates/admin/widgets/icon_picker.html",
+        "core/templates/maintenance/coming_soon.html",
+        "core/templates/maintenance/maintenance.html",
+        "core/templates/core/license_required.html",
     ]
 
     # Admin templates that should have NO inline style="" attributes
     # Exception: sitesettings has 1 dynamic width for compliance bar
     NO_INLINE_STYLE_TEMPLATES = [
-        'core/templates/admin/core/apitoken/change_list.html',
-        'core/templates/admin/core/license_status/changelist.html',
-        'core/templates/admin/widgets/translatable_field.html',
+        "core/templates/admin/core/apitoken/change_list.html",
+        "core/templates/admin/core/license_status/changelist.html",
+        "core/templates/admin/widgets/translatable_field.html",
     ]
 
-    @pytest.mark.parametrize('template_path', NO_STYLE_BLOCK_TEMPLATES)
+    @pytest.mark.parametrize("template_path", NO_STYLE_BLOCK_TEMPLATES)
     def test_no_inline_style_blocks(self, template_path):
         """Template should have no <style> blocks -- all styles in external CSS."""
         full_path = PROJECT_ROOT / template_path
         assert full_path.exists(), f"Template not found: {full_path}"
 
-        content = full_path.read_text(encoding='utf-8')
+        content = full_path.read_text(encoding="utf-8")
         # Match <style> or <style ...> opening tags
-        style_blocks = re.findall(r'<style[\s>]', content, re.IGNORECASE)
+        style_blocks = re.findall(r"<style[\s>]", content, re.IGNORECASE)
         assert len(style_blocks) == 0, (
             f"Found {len(style_blocks)} inline <style> block(s) in {template_path}. "
             f"All styles should be in external CSS files."
         )
 
-    @pytest.mark.parametrize('template_path', NO_INLINE_STYLE_TEMPLATES)
+    @pytest.mark.parametrize("template_path", NO_INLINE_STYLE_TEMPLATES)
     def test_no_inline_style_attributes(self, template_path):
         """Template should have no style="" attributes -- all styles in external CSS."""
         full_path = PROJECT_ROOT / template_path
         assert full_path.exists(), f"Template not found: {full_path}"
 
-        content = full_path.read_text(encoding='utf-8')
+        content = full_path.read_text(encoding="utf-8")
         style_attrs = re.findall(r'\bstyle\s*=\s*["\']', content, re.IGNORECASE)
         assert len(style_attrs) == 0, (
-            f"Found {len(style_attrs)} inline style=\"\" attribute(s) in {template_path}. "
+            f'Found {len(style_attrs)} inline style="" attribute(s) in {template_path}. '
             f"All styles should be in external CSS files."
         )
 
-    def test_sitesettings_template_only_dynamic_width_style(self):
-        """sitesettings change_form.html should have at most 1 inline style (dynamic compliance bar width)."""
-        full_path = PROJECT_ROOT / 'core/templates/admin/core/sitesettings/change_form.html'
-        assert full_path.exists()
+    def test_sitesettings_template_no_inline_styles(self):
+        """sitesettings change_form.html has zero inline style="" attributes.
 
-        content = full_path.read_text(encoding='utf-8')
+        Dynamic values (compliance bar width) ride on data-width attributes
+        with the actual style hooked up via external CSS; static spacing
+        uses the .form-card-spacer utility.
+        """
+        full_path = PROJECT_ROOT / "core/templates/admin/core/sitesettings/change_form.html"
+        content = full_path.read_text(encoding="utf-8")
         style_attrs = re.findall(r'\bstyle\s*=\s*["\']', content, re.IGNORECASE)
-
-        # Allow exactly 1 for the dynamic compliance bar width
-        assert len(style_attrs) <= 1, (
-            f"Found {len(style_attrs)} inline style=\"\" attribute(s) in sitesettings change_form.html. "
-            f"Only 1 is allowed (dynamic compliance bar width)."
+        assert len(style_attrs) == 0, (
+            f'Found {len(style_attrs)} inline style="" attribute(s) in '
+            "sitesettings/change_form.html. All styles must live in external CSS."
         )
-
-        # If there is one, verify it is the compliance bar width
-        if len(style_attrs) == 1:
-            assert 'compliance-bar' in content, (
-                "The allowed inline style should be on the compliance-bar element"
-            )
 
     def test_frontend_templates_use_external_css(self):
         """Frontend templates (coming_soon, maintenance, license_required) should reference external CSS."""
         templates_and_css = [
             (
-                'core/templates/maintenance/coming_soon.html',
-                'core/css/coming_soon.css',
+                "core/templates/maintenance/coming_soon.html",
+                "core/css/coming_soon.css",
             ),
             (
-                'core/templates/maintenance/maintenance.html',
-                'core/css/maintenance.css',
+                "core/templates/maintenance/maintenance.html",
+                "core/css/maintenance.css",
             ),
             (
-                'core/templates/core/license_required.html',
-                'core/css/license_required.css',
+                "core/templates/core/license_required.html",
+                "core/css/license_required.css",
             ),
         ]
         for template_path, expected_css in templates_and_css:
             full_path = PROJECT_ROOT / template_path
-            content = full_path.read_text(encoding='utf-8')
+            content = full_path.read_text(encoding="utf-8")
             assert expected_css in content, (
                 f"Template {template_path} does not reference external CSS file {expected_css}"
             )
 
     def test_icon_picker_template_no_style_blocks(self):
         """icon_picker.html should have no <style> blocks."""
-        full_path = PROJECT_ROOT / 'core/templates/admin/widgets/icon_picker.html'
-        content = full_path.read_text(encoding='utf-8')
-        assert '<style' not in content.lower()
+        full_path = PROJECT_ROOT / "core/templates/admin/widgets/icon_picker.html"
+        content = full_path.read_text(encoding="utf-8")
+        assert "<style" not in content.lower()
 
     def test_icon_picker_template_no_inline_styles(self):
         """icon_picker.html should have no inline style="" attributes (data-icon-style is allowed)."""
-        full_path = PROJECT_ROOT / 'core/templates/admin/widgets/icon_picker.html'
-        content = full_path.read_text(encoding='utf-8')
+        full_path = PROJECT_ROOT / "core/templates/admin/widgets/icon_picker.html"
+        content = full_path.read_text(encoding="utf-8")
         # Match style= but exclude data-*-style= (e.g., data-icon-style)
         style_attrs = re.findall(r'(?<![-\w])style\s*=\s*["\']', content, re.IGNORECASE)
         assert len(style_attrs) == 0
 
     def test_coming_soon_svg_styles_are_svg_only(self):
         """coming_soon.html may have SVG stop-color styles but no HTML inline styles."""
-        full_path = PROJECT_ROOT / 'core/templates/maintenance/coming_soon.html'
-        content = full_path.read_text(encoding='utf-8')
+        full_path = PROJECT_ROOT / "core/templates/maintenance/coming_soon.html"
+        content = full_path.read_text(encoding="utf-8")
 
         # Find all style= occurrences
-        style_matches = list(re.finditer(r'\bstyle\s*=\s*["\']([^"\']*)["\']', content, re.IGNORECASE))
+        style_matches = list(
+            re.finditer(r'\bstyle\s*=\s*["\']([^"\']*)["\']', content, re.IGNORECASE)
+        )
 
         for match in style_matches:
             style_value = match.group(1)
             # SVG stop-color is acceptable
-            assert 'stop-color' in style_value, (
-                f"Found non-SVG inline style in coming_soon.html: style=\"{style_value}\""
+            assert "stop-color" in style_value, (
+                f'Found non-SVG inline style in coming_soon.html: style="{style_value}"'
             )
 
 
@@ -822,23 +835,26 @@ class TestCSPTemplateCompliance:
 class TestCopyrightHeaders:
     """Tests ensuring copyright headers are present on core static JS/CSS files."""
 
-    COPYRIGHT_PATTERN = re.compile(r'(?:\xc2\xa9|©|\(c\))\s*\d{4}\s*Spwig', re.IGNORECASE)
-    COPYRIGHT_PATTERN_STR = re.compile(r'(?:©|\(c\))\s*\d{4}\s*Spwig', re.IGNORECASE)
+    # Support single year (2025) or year range (2025-2026) after the (c) symbol.
+    COPYRIGHT_PATTERN = re.compile(
+        r"(?:\xc2\xa9|©|\(c\))\s*\d{4}(?:-\d{4})?\s*Spwig", re.IGNORECASE
+    )
+    COPYRIGHT_PATTERN_STR = re.compile(r"(?:©|\(c\))\s*\d{4}(?:-\d{4})?\s*Spwig", re.IGNORECASE)
 
     # Files that were specifically fixed in the audit
     AUDIT_FIXED_FILES = [
-        'core/static/core/admin/js/admin-badge-refresh.js',
-        'core/static/core/admin/js/translation_editor_init.js',
-        'core/static/core/css/logged-out.css',
+        "core/static/core/admin/js/admin-badge-refresh.js",
+        "core/static/core/admin/js/translation_editor_init.js",
+        "core/static/core/css/logged-out.css",
     ]
 
-    @pytest.mark.parametrize('file_path', AUDIT_FIXED_FILES)
+    @pytest.mark.parametrize("file_path", AUDIT_FIXED_FILES)
     def test_copyright_header_present(self, file_path):
         """Static file should have a copyright header in the first 5 lines."""
         full_path = PROJECT_ROOT / file_path
         assert full_path.exists(), f"Static file not found: {full_path}"
 
-        content = full_path.read_text(encoding='utf-8')
+        content = full_path.read_text(encoding="utf-8")
         # Check only the first 500 characters (should be in header comment)
         header = content[:500]
         assert self.COPYRIGHT_PATTERN_STR.search(header), (
@@ -846,25 +862,25 @@ class TestCopyrightHeaders:
             f"Expected pattern like '(c) 2025 Spwig' or similar."
         )
 
-    @pytest.mark.parametrize('file_path', AUDIT_FIXED_FILES)
+    @pytest.mark.parametrize("file_path", AUDIT_FIXED_FILES)
     def test_copyright_header_in_comment_block(self, file_path):
         """Copyright header should be inside a CSS/JS comment block."""
         full_path = PROJECT_ROOT / file_path
-        content = full_path.read_text(encoding='utf-8')
+        content = full_path.read_text(encoding="utf-8")
 
         # First line should be a comment opening
-        first_line = content.split('\n')[0].strip()
-        assert first_line.startswith('/*') or first_line.startswith('//'), (
+        first_line = content.split("\n")[0].strip()
+        assert first_line.startswith("/*") or first_line.startswith("//"), (
             f"First line of {file_path} is not a comment: '{first_line}'"
         )
 
     def test_external_css_files_exist_for_csp_templates(self):
         """External CSS files referenced by CSP-compliant templates should exist."""
         css_files = [
-            'core/static/core/css/coming_soon.css',
-            'core/static/core/css/maintenance.css',
-            'core/static/core/css/license_required.css',
-            'core/static/core/admin/css/translatable_field_widget.css',
+            "core/static/core/css/coming_soon.css",
+            "core/static/core/css/maintenance.css",
+            "core/static/core/css/license_required.css",
+            "core/static/core/admin/css/translatable_field_widget.css",
         ]
         for css_file in css_files:
             full_path = PROJECT_ROOT / css_file
@@ -887,14 +903,14 @@ class TestSiteSettingsModelIntegrity:
         """SiteSettings should have created_at (auto_now_add)."""
         from core.models import SiteSettings
 
-        field = SiteSettings._meta.get_field('created_at')
+        field = SiteSettings._meta.get_field("created_at")
         assert field is not None
 
     def test_sitesettings_has_updated_at(self):
         """SiteSettings should have updated_at (auto_now)."""
         from core.models import SiteSettings
 
-        field = SiteSettings._meta.get_field('updated_at')
+        field = SiteSettings._meta.get_field("updated_at")
         assert field is not None
 
     def test_sitesettings_singleton_get_settings(self, site_settings):
@@ -909,15 +925,16 @@ class TestSiteSettingsModelIntegrity:
         from core.models import SiteSettings
 
         # Fields that should exist
-        existing_fields = ['facebook_url', 'twitter_url', 'instagram_url', 'linkedin_url']
+        existing_fields = ["facebook_url", "twitter_url", "instagram_url", "linkedin_url"]
         for field_name in existing_fields:
             assert SiteSettings._meta.get_field(field_name) is not None
 
     def test_phantom_social_media_fields_do_not_exist(self):
         """youtube_url, tiktok_url, pinterest_url should NOT exist on SiteSettings model."""
         from django.core.exceptions import FieldDoesNotExist
+
         from core.models import SiteSettings
 
-        for phantom in ['youtube_url', 'tiktok_url', 'pinterest_url']:
+        for phantom in ["youtube_url", "tiktok_url", "pinterest_url"]:
             with pytest.raises(FieldDoesNotExist):
                 SiteSettings._meta.get_field(phantom)

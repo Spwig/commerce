@@ -4,6 +4,7 @@ Storefront Page Audit Runner
 Discovers and visits customer-facing storefront pages via Playwright,
 collecting health data.
 """
+
 from playwright.sync_api import Page
 
 from tests.audit.engine import (
@@ -12,7 +13,6 @@ from tests.audit.engine import (
     print_result_line,
     visit_page_browser,
 )
-
 
 # ── Static pages (always available) ─────────────────────────
 
@@ -152,8 +152,11 @@ def run_storefront_audit(
     # Visit public pages
     for i, pg in enumerate(pages, 1):
         result = visit_page_browser(
-            page, url=pg["url"], label=pg["label"],
-            base_url=base_url, category="storefront",
+            page,
+            url=pg["url"],
+            label=pg["label"],
+            base_url=base_url,
+            category="storefront",
         )
         results.append(result)
         if verbose:
@@ -162,7 +165,7 @@ def run_storefront_audit(
     # Visit authenticated pages
     if include_authenticated and customer_email:
         if verbose:
-            print(f"\n  Logging in as customer for authenticated pages...")
+            print("\n  Logging in as customer for authenticated pages...")
         try:
             login_storefront(page, base_url, customer_email, customer_password)
         except Exception as exc:
@@ -178,8 +181,11 @@ def run_storefront_audit(
         offset = len(results)
         for i, pg in enumerate(auth_pages, 1):
             result = visit_page_browser(
-                page, url=pg["url"], label=pg["label"],
-                base_url=base_url, category="storefront",
+                page,
+                url=pg["url"],
+                label=pg["label"],
+                base_url=base_url,
+                category="storefront",
             )
             results.append(result)
             if verbose:

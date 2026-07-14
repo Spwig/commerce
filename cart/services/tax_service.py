@@ -4,20 +4,20 @@ Tax calculation service.
 Handles matching TaxRate rules to addresses, calculating taxes
 with compound support, and loading preset tax configurations.
 """
+
 import logging
-from decimal import Decimal, ROUND_HALF_UP
-from django.db.models import Q
+from decimal import ROUND_HALF_UP, Decimal
 
 logger = logging.getLogger(__name__)
 
-TWOPLACES = Decimal('0.01')
+TWOPLACES = Decimal("0.01")
 
 
 class TaxService:
     """Service for tax calculation, matching, and preset loading."""
 
     @staticmethod
-    def get_applicable_taxes(country, state='', city='', postal_code='', product=None):
+    def get_applicable_taxes(country, state="", city="", postal_code="", product=None):
         """
         Find all active TaxRate rules matching the given address.
 
@@ -40,10 +40,8 @@ class TaxService:
         if not country_code:
             return []
 
-        rates = (
-            TaxRate.objects
-            .filter(is_active=True, country=country_code)
-            .prefetch_related('exempt_categories')
+        rates = TaxRate.objects.filter(is_active=True, country=country_code).prefetch_related(
+            "exempt_categories"
         )
 
         matched = []
@@ -77,7 +75,7 @@ class TaxService:
         return [m[2] for m in matched]
 
     @staticmethod
-    def calculate_tax(items, shipping_cost, country, state='', city='', postal_code=''):
+    def calculate_tax(items, shipping_cost, country, state="", city="", postal_code=""):
         """
         Calculate all applicable taxes for a set of items and shipping.
 
@@ -94,23 +92,19 @@ class TaxService:
         """
         country_code = TaxService._resolve_country_code(country)
         if not country_code:
-            return Decimal('0.00'), []
-
-        from cart.models import TaxRate
+            return Decimal("0.00"), []
 
         # Get all applicable rates for this location (without product filter)
-        all_rates = TaxService.get_applicable_taxes(
-            country_code, state, city, postal_code
-        )
+        all_rates = TaxService.get_applicable_taxes(country_code, state, city, postal_code)
 
         if not all_rates:
-            return Decimal('0.00'), []
+            return Decimal("0.00"), []
 
         # Build per-rate taxable amounts
         rate_amounts = {}  # tax_rate_id -> taxable_amount
         for rate in all_rates:
-            taxable = Decimal('0.00')
-            for product, quantity, line_total in items:
+            taxable = Decimal("0.00")
+            for product, _quantity, line_total in items:
                 if rate.applies_to_product(product):
                     taxable += line_total
             if rate.applies_to_shipping and shipping_cost:
@@ -122,12 +116,12 @@ class TaxService:
         compound = [r for r in all_rates if r.compound]
 
         breakdown = []
-        total_tax = Decimal('0.00')
-        non_compound_total = Decimal('0.00')
+        total_tax = Decimal("0.00")
+        non_compound_total = Decimal("0.00")
 
         # Phase 1: Non-compound taxes on base amounts
         for rate in non_compound:
-            base = rate_amounts.get(rate.id, Decimal('0.00'))
+            base = rate_amounts.get(rate.id, Decimal("0.00"))
             if base <= 0:
                 continue
             amount = (base * rate.rate).quantize(TWOPLACES, rounding=ROUND_HALF_UP)
@@ -137,7 +131,7 @@ class TaxService:
 
         # Phase 2: Compound taxes on (base + non-compound total)
         for rate in compound:
-            base = rate_amounts.get(rate.id, Decimal('0.00'))
+            base = rate_amounts.get(rate.id, Decimal("0.00"))
             if base <= 0:
                 continue
             compound_base = base + non_compound_total
@@ -146,7 +140,7 @@ class TaxService:
             breakdown.append(TaxService._build_breakdown_entry(rate, amount))
 
         # Calculate shipping-specific tax for breakdown summary
-        shipping_tax = Decimal('0.00')
+        shipping_tax = Decimal("0.00")
         if shipping_cost:
             shipping_decimal = Decimal(str(shipping_cost))
             for rate in all_rates:
@@ -170,10 +164,10 @@ class TaxService:
         Returns:
             Tuple of (created_count, skipped_count)
         """
-        from cart.models import TaxRate, TaxPresetGroup
+        from cart.models import TaxPresetGroup, TaxRate
 
         try:
-            group = TaxPresetGroup.objects.prefetch_related('rates').get(
+            group = TaxPresetGroup.objects.prefetch_related("rates").get(
                 key=group_key, is_active=True
             )
         except TaxPresetGroup.DoesNotExist:
@@ -209,9 +203,7 @@ class TaxService:
             )
             created += 1
 
-        logger.info(
-            f"Loaded preset '{group_key}': {created} created, {skipped} skipped"
-        )
+        logger.info(f"Loaded preset '{group_key}': {created} created, {skipped} skipped")
         return created, skipped
 
     @staticmethod
@@ -223,7 +215,7 @@ class TaxService:
         CountryMapping when needed.
         """
         if not country_value:
-            return ''
+            return ""
 
         value = str(country_value).strip()
 
@@ -234,16 +226,15 @@ class TaxService:
         # Try to look up by country name
         try:
             from geoip.models import CountryMapping
-            mapping = CountryMapping.objects.filter(
-                country_name__iexact=value
-            ).first()
+
+            mapping = CountryMapping.objects.filter(country_name__iexact=value).first()
             if mapping:
                 return mapping.country_code.upper()
         except Exception:
             pass
 
         logger.warning(f"Could not resolve country code for: {value}")
-        return ''
+        return ""
 
     @staticmethod
     def _build_breakdown_entry(rate, amount):
@@ -255,12 +246,12 @@ class TaxService:
             jurisdiction += f", {rate.city}"
 
         return {
-            'tax_rate_id': rate.id,
-            'name': rate.name,
-            'rate': str(rate.rate),
-            'rate_display': f"{rate.rate * 100}%",
-            'amount': str(amount),
-            'jurisdiction': jurisdiction,
-            'tax_type': rate.tax_type,
-            'compound': rate.compound,
+            "tax_rate_id": rate.id,
+            "name": rate.name,
+            "rate": str(rate.rate),
+            "rate_display": f"{rate.rate * 100}%",
+            "amount": str(amount),
+            "jurisdiction": jurisdiction,
+            "tax_type": rate.tax_type,
+            "compound": rate.compound,
         }

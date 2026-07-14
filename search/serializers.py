@@ -1,14 +1,12 @@
 """
 DRF serializers for search API endpoints.
 """
+
 from rest_framework import serializers
 
 from .models import (
-    SearchSettings,
     SearchEngine,
-    Synonym,
-    SearchRedirect,
-    SearchQuery,
+    SearchSettings,
 )
 
 
@@ -18,34 +16,34 @@ class SearchSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchSettings
         fields = [
-            'is_enabled',
-            'min_query_length',
-            'autocomplete_enabled',
-            'autocomplete_max_results',
-            'autocomplete_debounce_ms',
-            'show_thumbnails',
-            'search_products',
-            'search_categories',
-            'search_brands',
-            'search_blog_posts',
-            'fuzzy_enabled',
-            'results_per_page',
+            "is_enabled",
+            "min_query_length",
+            "autocomplete_enabled",
+            "autocomplete_max_results",
+            "autocomplete_debounce_ms",
+            "show_thumbnails",
+            "search_products",
+            "search_categories",
+            "search_brands",
+            "search_blog_posts",
+            "fuzzy_enabled",
+            "results_per_page",
             # Autocomplete Display - Products
-            'autocomplete_product_thumbnail',
-            'autocomplete_product_description',
-            'autocomplete_product_price',
-            'autocomplete_product_sku',
-            'autocomplete_product_stock_status',
+            "autocomplete_product_thumbnail",
+            "autocomplete_product_description",
+            "autocomplete_product_price",
+            "autocomplete_product_sku",
+            "autocomplete_product_stock_status",
             # Autocomplete Display - Blog Posts
-            'autocomplete_blog_thumbnail',
-            'autocomplete_blog_excerpt',
-            'autocomplete_blog_excerpt_length',
+            "autocomplete_blog_thumbnail",
+            "autocomplete_blog_excerpt",
+            "autocomplete_blog_excerpt_length",
             # Autocomplete Display - Categories
-            'autocomplete_category_thumbnail',
-            'autocomplete_category_product_count',
+            "autocomplete_category_thumbnail",
+            "autocomplete_category_product_count",
             # Autocomplete Display - Brands
-            'autocomplete_brand_logo',
-            'autocomplete_brand_product_count',
+            "autocomplete_brand_logo",
+            "autocomplete_brand_product_count",
         ]
 
 
@@ -55,18 +53,19 @@ class SearchEngineSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchEngine
         fields = [
-            'id',
-            'name',
-            'slug',
-            'is_active',
-            'content_types',
+            "id",
+            "name",
+            "slug",
+            "is_active",
+            "content_types",
         ]
 
 
 class ProductResultSerializer(serializers.Serializer):
     """Serializer for product search results."""
+
     id = serializers.IntegerField()
-    type = serializers.CharField(default='product')
+    type = serializers.CharField(default="product")
     name = serializers.CharField()
     name_base = serializers.CharField(allow_null=True)
     slug = serializers.CharField()
@@ -82,8 +81,9 @@ class ProductResultSerializer(serializers.Serializer):
 
 class CategoryResultSerializer(serializers.Serializer):
     """Serializer for category search results."""
+
     id = serializers.IntegerField()
-    type = serializers.CharField(default='category')
+    type = serializers.CharField(default="category")
     name = serializers.CharField()
     name_base = serializers.CharField(allow_null=True)
     slug = serializers.CharField()
@@ -95,8 +95,9 @@ class CategoryResultSerializer(serializers.Serializer):
 
 class BrandResultSerializer(serializers.Serializer):
     """Serializer for brand search results."""
+
     id = serializers.IntegerField()
-    type = serializers.CharField(default='brand')
+    type = serializers.CharField(default="brand")
     name = serializers.CharField()
     slug = serializers.CharField()
     url = serializers.CharField()
@@ -106,8 +107,9 @@ class BrandResultSerializer(serializers.Serializer):
 
 class BlogPostResultSerializer(serializers.Serializer):
     """Serializer for blog post search results."""
+
     id = serializers.IntegerField()
-    type = serializers.CharField(default='blog_post')
+    type = serializers.CharField(default="blog_post")
     title = serializers.CharField()
     title_base = serializers.CharField(allow_null=True)
     slug = serializers.CharField()
@@ -119,6 +121,7 @@ class BlogPostResultSerializer(serializers.Serializer):
 
 class RedirectSerializer(serializers.Serializer):
     """Serializer for redirect info."""
+
     url = serializers.CharField()
     type = serializers.CharField()
     matched_term = serializers.CharField()
@@ -126,6 +129,7 @@ class RedirectSerializer(serializers.Serializer):
 
 class AutocompleteResponseSerializer(serializers.Serializer):
     """Serializer for autocomplete API response."""
+
     query = serializers.CharField()
     language = serializers.CharField()
     did_you_mean = serializers.CharField(allow_null=True)
@@ -140,6 +144,7 @@ class AutocompleteResponseSerializer(serializers.Serializer):
 
 class FacetsSerializer(serializers.Serializer):
     """Serializer for search facets."""
+
     types = serializers.DictField(child=serializers.IntegerField())
     categories = serializers.ListField(child=serializers.DictField())
     brands = serializers.ListField(child=serializers.DictField())
@@ -149,6 +154,7 @@ class FacetsSerializer(serializers.Serializer):
 
 class SearchResultItemSerializer(serializers.Serializer):
     """Generic serializer for any search result item."""
+
     id = serializers.IntegerField()
     type = serializers.CharField()
     name = serializers.CharField(required=False)
@@ -171,6 +177,7 @@ class SearchResultItemSerializer(serializers.Serializer):
 
 class SearchResultsResponseSerializer(serializers.Serializer):
     """Serializer for full search results API response."""
+
     query = serializers.CharField()
     language = serializers.CharField()
     did_you_mean = serializers.CharField(allow_null=True)
@@ -191,6 +198,7 @@ class SearchResultsResponseSerializer(serializers.Serializer):
 
 class TrendingQuerySerializer(serializers.Serializer):
     """Serializer for trending query items."""
+
     query = serializers.CharField()
     count = serializers.IntegerField()
     avg_results = serializers.FloatField()
@@ -199,12 +207,14 @@ class TrendingQuerySerializer(serializers.Serializer):
 
 class TrendingResponseSerializer(serializers.Serializer):
     """Serializer for trending queries API response."""
+
     queries = TrendingQuerySerializer(many=True)
     period_days = serializers.IntegerField()
 
 
 class TrackClickRequestSerializer(serializers.Serializer):
     """Serializer for click tracking request."""
+
     search_query_id = serializers.IntegerField()
     content_type = serializers.CharField()
     object_id = serializers.IntegerField()
@@ -213,6 +223,7 @@ class TrackClickRequestSerializer(serializers.Serializer):
 
 class SuggestCorrectionsResponseSerializer(serializers.Serializer):
     """Serializer for spelling correction suggestions."""
+
     query = serializers.CharField()
     suggestion = serializers.CharField(allow_null=True)
     confidence = serializers.FloatField(allow_null=True)

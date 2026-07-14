@@ -17,16 +17,16 @@ Exempt paths:
 """
 
 import logging
+from pathlib import Path
 
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-ACTIVATION_CACHE_KEY = 'spwig_activated'
+ACTIVATION_CACHE_KEY = "spwig_activated"
 ACTIVATION_CACHE_TTL = 60 * 60 * 24  # 24 hours (only cached when True)
 
 
@@ -41,16 +41,16 @@ class ActivationMiddleware(MiddlewareMixin):
     """
 
     EXEMPT_PREFIXES = (
-        '/static/',
-        '/media/',
-        '/health/',
-        '/activate/',
-        '/license/',
-        '/api/',
-        '/__debug__/',
+        "/static/",
+        "/media/",
+        "/health/",
+        "/activate/",
+        "/license/",
+        "/api/",
+        "/__debug__/",
     )
 
-    REDIRECT_URL = '/activate/'
+    REDIRECT_URL = "/activate/"
 
     def process_request(self, request):
         path = request.path
@@ -72,11 +72,7 @@ class ActivationMiddleware(MiddlewareMixin):
         if cached is not None:
             return cached
 
-        license_path = getattr(
-            settings,
-            'LICENSE_PATH',
-            '/opt/shop-platform/license/license.json'
-        )
+        license_path = getattr(settings, "LICENSE_PATH", "/opt/shop-platform/license/license.json")
         activated = Path(license_path).exists()
 
         if activated:

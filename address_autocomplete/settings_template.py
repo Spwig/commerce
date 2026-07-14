@@ -8,28 +8,28 @@ Add these settings to your Django project
 # ========================================
 
 # Your Spwig platform license key (REQUIRED)
-PLATFORM_LICENSE_KEY = 'XXXX-XXXX-XXXX-XXXX'  # Your actual license key
+PLATFORM_LICENSE_KEY = "XXXX-XXXX-XXXX-XXXX"  # Your actual license key
 
 # Unique installation identifier (auto-generated if not set)
 INSTALLATION_UUID = None  # Will be auto-generated based on hostname
 
 # Update server URL for license validation
-UPDATE_SERVER_URL = 'https://updates.spwig.com'
+UPDATE_SERVER_URL = "https://updates.spwig.com"
 
 # ========================================
 # GEOCODER SERVICE CONFIGURATION
 # ========================================
 
 # Geocoder service endpoint
-GEOCODER_SERVICE_URL = 'https://geocoder.spwig.com'
+GEOCODER_SERVICE_URL = "https://geocoder.spwig.com"
 
 # JWT configuration — the shared secret is provisioned automatically by the
 # update server on activation and read at runtime via
 # core.platform_secrets.get_geocoder_secret(). This template value is a
 # placeholder; do not hardcode a real key here.
-GEOCODER_JWT_SECRET_KEY = 'REPLACE_ME_WITH_PROVISIONED_SECRET'
-GEOCODER_JWT_ALGORITHM = 'HS256'
-GEOCODER_JWT_ISSUER = 'spwig-platform'
+GEOCODER_JWT_SECRET_KEY = "REPLACE_ME_WITH_PROVISIONED_SECRET"
+GEOCODER_JWT_ALGORITHM = "HS256"
+GEOCODER_JWT_ISSUER = "spwig-platform"
 GEOCODER_JWT_EXPIRY_HOURS = 24
 
 # These will be auto-populated from license
@@ -43,10 +43,10 @@ GEOCODER_TIER = None  # Auto-determined from license type
 
 # Maps platform license types to geocoder service tiers
 LICENSE_TO_GEOCODER_TIER = {
-    'trial': 'standard',       # 100 req/min
-    'standard': 'standard',     # 100 req/min
-    'professional': 'premium',  # 500 req/min
-    'enterprise': 'enterprise'  # 2000 req/min
+    "trial": "standard",  # 100 req/min
+    "standard": "standard",  # 100 req/min
+    "professional": "premium",  # 500 req/min
+    "enterprise": "enterprise",  # 2000 req/min
 }
 
 # ========================================
@@ -55,14 +55,14 @@ LICENSE_TO_GEOCODER_TIER = {
 
 # Cache for storing JWT tokens and geocoder results
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
-        'KEY_PREFIX': 'shop',
-        'TIMEOUT': 300,
+        "KEY_PREFIX": "shop",
+        "TIMEOUT": 300,
     }
 }
 
@@ -72,7 +72,7 @@ CACHES = {
 
 MIDDLEWARE = [
     # ... other middleware ...
-    'address_autocomplete.license_integration.GeocoderLicenseMiddleware',
+    "address_autocomplete.license_integration.GeocoderLicenseMiddleware",
     # ... other middleware ...
 ]
 
@@ -82,7 +82,7 @@ MIDDLEWARE = [
 
 INSTALLED_APPS = [
     # ... other apps ...
-    'address_autocomplete',  # Add the address autocomplete app
+    "address_autocomplete",  # Add the address autocomplete app
     # ... other apps ...
 ]
 
@@ -91,32 +91,32 @@ INSTALLED_APPS = [
 # ========================================
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': 'logs/geocoder.log',
-            'formatter': 'verbose',
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "logs/geocoder.log",
+            "formatter": "verbose",
         },
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
-    'loggers': {
-        'address_autocomplete': {
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-            'propagate': False,
+    "loggers": {
+        "address_autocomplete": {
+            "handlers": ["file", "console"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }
@@ -160,4 +160,4 @@ GEOCODER_REPORT_USAGE = True
 GEOCODER_USE_FALLBACK = False  # Disabled by default
 
 # Public Nominatim endpoint (rate limited)
-GEOCODER_FALLBACK_URL = 'https://nominatim.openstreetmap.org'
+GEOCODER_FALLBACK_URL = "https://nominatim.openstreetmap.org"

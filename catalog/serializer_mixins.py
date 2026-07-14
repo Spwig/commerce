@@ -1,12 +1,14 @@
 """
 Serializer mixins for handling translated fields in the catalog app
 """
+
 from django.utils import translation
+
 from core.translation_utils import get_primary_language
 
 # Map serializer field names to model field names where they differ
 _MODEL_FIELD_MAP = {
-    'description': 'full_description',
+    "description": "full_description",
 }
 
 
@@ -32,9 +34,9 @@ class TranslatedFieldsMixin:
         """
         model_field = _MODEL_FIELD_MAP.get(field_name, field_name)
 
-        if not hasattr(obj, 'translations') or not obj.translations:
+        if not hasattr(obj, "translations") or not obj.translations:
             # No translations — fall back to raw model field
-            return getattr(obj, model_field, '') or ''
+            return getattr(obj, model_field, "") or ""
 
         # Get current language, falling back to the merchant's primary language
         primary_lang = get_primary_language()
@@ -53,39 +55,43 @@ class TranslatedFieldsMixin:
                 return content
 
         # Fallback to the raw model field if no translation exists
-        return getattr(obj, model_field, '') or ''
+        return getattr(obj, model_field, "") or ""
 
     @staticmethod
     def _extract_field(lang_data, field_name, prefer_html):
         """Extract a field from a language data dict, trying html/text variants."""
         if prefer_html:
-            return (lang_data.get(f'{field_name}_html') or
-                    lang_data.get(f'{field_name}_text') or
-                    lang_data.get(field_name, ''))
+            return (
+                lang_data.get(f"{field_name}_html")
+                or lang_data.get(f"{field_name}_text")
+                or lang_data.get(field_name, "")
+            )
         else:
-            return (lang_data.get(f'{field_name}_text') or
-                    lang_data.get(f'{field_name}_html') or
-                    lang_data.get(field_name, ''))
+            return (
+                lang_data.get(f"{field_name}_text")
+                or lang_data.get(f"{field_name}_html")
+                or lang_data.get(field_name, "")
+            )
 
     def get_translated_name(self, obj):
         """Get translated name"""
-        return self.get_translated_field(obj, 'name', prefer_html=False)
+        return self.get_translated_field(obj, "name", prefer_html=False)
 
     def get_translated_description(self, obj):
         """Get translated description (prefers HTML)"""
-        return self.get_translated_field(obj, 'description', prefer_html=True)
+        return self.get_translated_field(obj, "description", prefer_html=True)
 
     def get_translated_short_description(self, obj):
         """Get translated short description (prefers HTML)"""
-        return self.get_translated_field(obj, 'short_description', prefer_html=True)
+        return self.get_translated_field(obj, "short_description", prefer_html=True)
 
     def get_translated_meta_title(self, obj):
         """Get translated meta title"""
-        return self.get_translated_field(obj, 'meta_title', prefer_html=False)
+        return self.get_translated_field(obj, "meta_title", prefer_html=False)
 
     def get_translated_meta_description(self, obj):
         """Get translated meta description"""
-        return self.get_translated_field(obj, 'meta_description', prefer_html=False)
+        return self.get_translated_field(obj, "meta_description", prefer_html=False)
 
 
 class TranslationAwareSerializer:
@@ -107,9 +113,9 @@ class TranslationAwareSerializer:
         Returns:
             Language code (e.g., 'en', 'es', 'ar')
         """
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request:
-            accept_lang = request.META.get('HTTP_ACCEPT_LANGUAGE')
+            accept_lang = request.META.get("HTTP_ACCEPT_LANGUAGE")
             if accept_lang:
                 return _parse_accept_language(accept_lang)
 
@@ -126,8 +132,8 @@ class TranslationAwareSerializer:
             data = super().to_representation(instance)
 
         # Apply translations from the model's translations JSONField
-        translated_fields = getattr(getattr(self, 'Meta', None), 'translated_fields', None)
-        if translated_fields and hasattr(instance, 'translations') and instance.translations:
+        translated_fields = getattr(getattr(self, "Meta", None), "translated_fields", None)
+        if translated_fields and hasattr(instance, "translations") and instance.translations:
             primary_lang = get_primary_language()
             # Try requested language, then primary language
             lang_data = instance.translations.get(current_lang)
@@ -151,16 +157,16 @@ def _parse_accept_language(header):
     """
     best_lang = None
     best_q = -1
-    for part in header.split(','):
+    for part in header.split(","):
         part = part.strip()
         if not part:
             continue
-        pieces = part.split(';')
-        lang = pieces[0].strip().split('-')[0]
+        pieces = part.split(";")
+        lang = pieces[0].strip().split("-")[0]
         q = 1.0
         for param in pieces[1:]:
             param = param.strip()
-            if param.startswith('q='):
+            if param.startswith("q="):
                 try:
                     q = float(param[2:])
                 except ValueError:

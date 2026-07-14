@@ -1,13 +1,12 @@
 """
 Client for communicating with the translator microservice
 """
-import os
-import httpx
+
 import logging
+import os
 import re
-from typing import List, Dict, Optional, Tuple
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
+
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -17,23 +16,23 @@ class TranslatorClient:
 
     def __init__(self):
         # Auto-detect if running in Docker or locally
-        default_url = 'http://translator:8088'
-        if not os.path.exists('/.dockerenv'):
+        default_url = "http://translator:8088"
+        if not os.path.exists("/.dockerenv"):
             # Running outside Docker, use localhost
-            default_url = 'http://localhost:8088'
+            default_url = "http://localhost:8088"
 
-        self.base_url = os.getenv('TRANSLATOR_URL', default_url)
-        self.enabled = os.getenv('TRANSLATOR_ENABLED', 'true').lower() == 'true'
+        self.base_url = os.getenv("TRANSLATOR_URL", default_url)
+        self.enabled = os.getenv("TRANSLATOR_ENABLED", "true").lower() == "true"
         self.timeout = 30.0
-        self._api_key = os.getenv('TRANSLATOR_API_KEY', '')
+        self._api_key = os.getenv("TRANSLATOR_API_KEY", "")
 
     def _headers(self) -> dict:
         """Return auth headers for translator API requests"""
         if self._api_key:
-            return {'X-API-Key': self._api_key}
+            return {"X-API-Key": self._api_key}
         return {}
 
-    def _split_into_sentences(self, text: str) -> List[Tuple[str, bool]]:
+    def _split_into_sentences(self, text: str) -> list[tuple[str, bool]]:
         """
         Split text into sentences while preserving formatting.
 
@@ -50,10 +49,10 @@ class TranslatorClient:
         # Pattern to split on sentence boundaries while preserving whitespace
         # Matches sentence-ending punctuation from various writing systems followed by space/newline
         # Includes: Latin, Chinese, Japanese, Arabic, Greek, Armenian, Ethiopic, Thai, Devanagari, etc.
-        sentence_pattern = r'(?<=[.!?。！？؟۔։֊።፧፨ฯ।॥])(?=\s+|$)'
+        sentence_pattern = r"(?<=[.!?。！？؟۔։֊።፧፨ฯ।॥])(?=\s+|$)"
 
         # First check for common abbreviations that shouldn't split sentences
-        abbreviations = r'\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|vs|etc|e\.g|i\.e|Inc|Ltd|Co)\.'
+        abbreviations = r"\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|vs|etc|e\.g|i\.e|Inc|Ltd|Co)\."
 
         # Replace abbreviations temporarily to protect them
         protected_text = text
@@ -84,11 +83,14 @@ class TranslatorClient:
 
                 # Extract and preserve whitespace after sentence
                 whitespace_end = match.end()
-                while whitespace_end < len(protected_text) and protected_text[whitespace_end].isspace():
+                while (
+                    whitespace_end < len(protected_text)
+                    and protected_text[whitespace_end].isspace()
+                ):
                     whitespace_end += 1
 
                 if whitespace_end > match.end():
-                    whitespace = protected_text[match.end():whitespace_end]
+                    whitespace = protected_text[match.end() : whitespace_end]
                     chunks.append((whitespace, False))  # Preserve whitespace
 
                 last_end = whitespace_end
@@ -126,8 +128,8 @@ class TranslatorClient:
         text: str,
         source_lang: str,
         target_lang: str,
-        glossary: Optional[Dict[str, str]] = None
-    ) -> Optional[str]:
+        glossary: dict[str, str] | None = None,
+    ) -> str | None:
         """
         Translate text using the translator service.
 
@@ -153,12 +155,12 @@ class TranslatorClient:
         # Thai: ฯ
         # Devanagari: । ॥
         # And more...
-        sentence_end_pattern = r'[.!?。！？؟۔։֊።፧፨ฯ।॥]$'
+        sentence_end_pattern = r"[.!?。！？؟۔։֊።፧፨ฯ।॥]$"
 
         if text.strip() and not re.search(sentence_end_pattern, text.strip()):
-            text_to_translate = text.strip() + '.'
+            text_to_translate = text.strip() + "."
             added_punctuation = True
-            logger.debug(f"Added sentence-ending punctuation for proper translation")
+            logger.debug("Added sentence-ending punctuation for proper translation")
 
         # Split text into sentences
         chunks = self._split_into_sentences(text_to_translate)
@@ -174,7 +176,7 @@ class TranslatorClient:
             # We only remove the Latin period (.) that we added, not other punctuation
             if result and added_punctuation:
                 # Check if result ends with a Latin period (the one we added)
-                if result.rstrip().endswith('.'):
+                if result.rstrip().endswith("."):
                     result = result.rstrip()[:-1].rstrip()
 
             return result
@@ -187,36 +189,44 @@ class TranslatorClient:
             batch_items = []
             for i, (chunk_text, is_sentence) in enumerate(chunks):
                 if is_sentence:
-                    batch_items.append({
-                        "id": str(i),
-                        "text": chunk_text,
-                        "source_lang": source_lang,
-                        "target_lang": target_lang
-                    })
+                    batch_items.append(
+                        {
+                            "id": str(i),
+                            "text": chunk_text,
+                            "source_lang": source_lang,
+                            "target_lang": target_lang,
+                        }
+                    )
 
             # Call batch translation API
             batch_results = self.translate_batch(batch_items, glossary)
 
             # Build result lookup by ID
-            translations = {item["id"]: item.get("translated_text", "") for item in batch_results if item.get("success")}
+            translations = {
+                item["id"]: item.get("translated_text", "")
+                for item in batch_results
+                if item.get("success")
+            }
 
             # Reconstruct text with translations
             result_parts = []
             for i, (chunk_text, is_sentence) in enumerate(chunks):
                 if is_sentence:
                     # Use translated text
-                    translated = translations.get(str(i), chunk_text)  # Fallback to original if translation failed
+                    translated = translations.get(
+                        str(i), chunk_text
+                    )  # Fallback to original if translation failed
                     result_parts.append(translated)
                 else:
                     # Preserve whitespace as-is
                     result_parts.append(chunk_text)
 
-            final_text = ''.join(result_parts)
+            final_text = "".join(result_parts)
 
             # Remove added punctuation from result if we added it
             # We specifically check for Latin period (.) since that's what we always add,
             # regardless of the source language
-            if added_punctuation and final_text.rstrip().endswith('.'):
+            if added_punctuation and final_text.rstrip().endswith("."):
                 final_text = final_text.rstrip()[:-1].rstrip()
 
             logger.debug(f"Multi-sentence translation successful: {len(sentences)} sentences")
@@ -231,7 +241,7 @@ class TranslatorClient:
             # Remove added punctuation from result if we added it
             # We specifically check for Latin period (.) since that's what we always add,
             # regardless of the source language
-            if result and added_punctuation and result.rstrip().endswith('.'):
+            if result and added_punctuation and result.rstrip().endswith("."):
                 result = result.rstrip()[:-1].rstrip()
 
             return result
@@ -241,15 +251,11 @@ class TranslatorClient:
         text: str,
         source_lang: str,
         target_lang: str,
-        glossary: Optional[Dict[str, str]] = None
-    ) -> Optional[str]:
+        glossary: dict[str, str] | None = None,
+    ) -> str | None:
         """Translate a single text using the single translation endpoint"""
         # Build request data, excluding None values
-        request_data = {
-            "text": text,
-            "source_lang": source_lang,
-            "target_lang": target_lang
-        }
+        request_data = {"text": text, "source_lang": source_lang, "target_lang": target_lang}
         if glossary is not None:
             request_data["glossary"] = glossary
 
@@ -258,9 +264,7 @@ class TranslatorClient:
         try:
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(
-                    f"{self.base_url}/translate",
-                    json=request_data,
-                    headers=self._headers()
+                    f"{self.base_url}/translate", json=request_data, headers=self._headers()
                 )
 
                 # Log response for debugging
@@ -270,12 +274,16 @@ class TranslatorClient:
                     # Log the validation error details
                     error_detail = response.json()
                     logger.error(f"Translation validation error (422): {error_detail}")
-                    logger.error(f"Request was: text='{text[:50]}...', source={source_lang}, target={target_lang}")
+                    logger.error(
+                        f"Request was: text='{text[:50]}...', source={source_lang}, target={target_lang}"
+                    )
                     return None
 
                 response.raise_for_status()
                 result = response.json()
-                logger.debug(f"Translation successful: {target_lang} -> {result.get('translated_text', '')[:50]}...")
+                logger.debug(
+                    f"Translation successful: {target_lang} -> {result.get('translated_text', '')[:50]}..."
+                )
                 return result["translated_text"]
         except httpx.TimeoutException:
             logger.error(f"Translation timeout for text: {text[:50]}...")
@@ -288,10 +296,8 @@ class TranslatorClient:
             return None
 
     def translate_batch(
-        self,
-        items: List[Dict],
-        glossary: Optional[Dict[str, str]] = None
-    ) -> List[Dict]:
+        self, items: list[dict], glossary: dict[str, str] | None = None
+    ) -> list[dict]:
         """Translate multiple texts in batch"""
         if not self.enabled:
             logger.warning("Translator service is disabled")
@@ -301,11 +307,8 @@ class TranslatorClient:
             with httpx.Client(timeout=self.timeout * 2) as client:
                 response = client.post(
                     f"{self.base_url}/translate_batch",
-                    json={
-                        "items": items,
-                        "glossary": glossary
-                    },
-                    headers=self._headers()
+                    json={"items": items, "glossary": glossary},
+                    headers=self._headers(),
                 )
                 response.raise_for_status()
                 return response.json()["results"]
@@ -313,7 +316,7 @@ class TranslatorClient:
             logger.error(f"Batch translation failed: {e}")
             return []
 
-    def get_models(self) -> List[Dict]:
+    def get_models(self) -> list[dict]:
         """Get list of installed models"""
         if not self.enabled:
             return []
@@ -332,8 +335,8 @@ class TranslatorClient:
         source_lang: str,
         target_lang: str,
         num_samples: int = 50,
-        sample_length: str = "medium"
-    ) -> Optional[Dict]:
+        sample_length: str = "medium",
+    ) -> dict | None:
         """Run a translation benchmark"""
         if not self.enabled:
             return None
@@ -345,9 +348,9 @@ class TranslatorClient:
                     json={
                         "language_pair": f"{source_lang}-{target_lang}",
                         "num_samples": num_samples,
-                        "sample_length": sample_length
+                        "sample_length": sample_length,
                     },
-                    headers=self._headers()
+                    headers=self._headers(),
                 )
                 response.raise_for_status()
                 return response.json()
@@ -355,7 +358,7 @@ class TranslatorClient:
             logger.error(f"Benchmark failed: {e}")
             return None
 
-    def get_system_info(self) -> Optional[Dict]:
+    def get_system_info(self) -> dict | None:
         """Get system information from the translator service"""
         if not self.enabled:
             return None
@@ -369,7 +372,7 @@ class TranslatorClient:
             logger.error(f"Failed to get system info: {e}")
             return None
 
-    def get_download_status(self) -> Optional[Dict]:
+    def get_download_status(self) -> dict | None:
         """Get model download status"""
         if not self.enabled:
             return None
@@ -411,7 +414,7 @@ class TranslatorClient:
             logger.error(f"Failed to clear cache: {e}")
             return False
 
-    def _request(self, method: str, endpoint: str, **kwargs) -> Optional[Dict]:
+    def _request(self, method: str, endpoint: str, **kwargs) -> dict | None:
         """Make a generic request to the translator service"""
         if not self.enabled:
             return None
@@ -419,8 +422,8 @@ class TranslatorClient:
         try:
             # Merge auth headers with any caller-provided headers
             headers = self._headers()
-            if 'headers' in kwargs:
-                headers.update(kwargs.pop('headers'))
+            if "headers" in kwargs:
+                headers.update(kwargs.pop("headers"))
             with httpx.Client(timeout=self.timeout) as client:
                 url = f"{self.base_url}{endpoint}"
                 response = client.request(method, url, headers=headers, **kwargs)
@@ -430,7 +433,7 @@ class TranslatorClient:
             logger.error(f"Request to {endpoint} failed: {e}")
             return None
 
-    def get_full_status(self) -> Optional[Dict]:
+    def get_full_status(self) -> dict | None:
         """Get complete system status in one call (optimized)"""
         if not self.enabled:
             return None

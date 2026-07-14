@@ -1,14 +1,18 @@
 """
 Cart Service - Business logic for cart operations
 """
+
+from decimal import Decimal
+from typing import Any
+
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
-from decimal import Decimal
-from typing import Tuple, Optional, Dict, Any, List
-from ..models import Cart, CartItem
-from catalog.models import Product, ProductVariant, CustomizationOption, ConfigurationSlot, ConfigurationSlotOption, CompatibilityRule
+
+from catalog.models import CompatibilityRule, Product, ProductVariant
 from catalog.services.stock_reservation import StockReservationService
 from core.utils import get_default_currency
+
+from ..models import Cart, CartItem
 
 
 class CartService:
@@ -17,7 +21,7 @@ class CartService:
     @staticmethod
     def _get_user_region(user):
         """Resolve the SalesRegion for a user, if available."""
-        if user and hasattr(user, 'sales_region'):
+        if user and hasattr(user, "sales_region"):
             return user.sales_region
         return None
 
@@ -28,12 +32,15 @@ class CartService:
         ordering in get_or_create_cart stays meaningful."""
         # Bump the parent cart's updated_at — without this it stays at
         # created_at, making any duplicate-row resolution non-deterministic.
-        cart.save(update_fields=['updated_at'])
+        cart.save(update_fields=["updated_at"])
         try:
             from ..models import CheckoutSession
-            session = CheckoutSession.objects.filter(
-                cart=cart, status='active'
-            ).select_related('shipping_address', 'selected_shipping_method').first()
+
+            session = (
+                CheckoutSession.objects.filter(cart=cart, status="active")
+                .select_related("shipping_address", "selected_shipping_method")
+                .first()
+            )
             if session:
                 session.recalculate_totals()
         except Exception:
@@ -41,9 +48,8 @@ class CartService:
 
     @staticmethod
     def _validate_customizations(
-        product: Product,
-        customizations: Optional[Dict]
-    ) -> Tuple[bool, str, Optional[Dict]]:
+        product: Product, customizations: dict | None
+    ) -> tuple[bool, str, dict | None]:
         """
         Validate product customizations and calculate prices.
 
@@ -65,32 +71,34 @@ class CartService:
             return True, "", {}
 
         # Handle visual design editor customizations
-        if '_design' in customizations:
-            design_data = customizations['_design']
-            design_token = design_data.get('token')
+        if "_design" in customizations:
+            design_data = customizations["_design"]
+            design_token = design_data.get("token")
             if not design_token:
                 return False, _("Invalid design token"), None
 
             # Verify the design draft exists and is valid
             try:
-                from customizable_product.models import DesignDraft
                 from django.utils import timezone
+
+                from customizable_product.models import DesignDraft
+
                 draft = DesignDraft.objects.get(
                     token=design_token,
                     product=product,
                     expires_at__gt=timezone.now(),
                 )
                 # Include the design pricing from the draft
-                design_price = '0.00'
+                design_price = "0.00"
                 if draft.pricing_breakdown:
-                    design_price = str(draft.pricing_breakdown.get('total', '0.00'))
+                    design_price = str(draft.pricing_breakdown.get("total", "0.00"))
 
                 validated = {
-                    '_design': {
-                        'token': str(design_token),
-                        'surfaces_used': design_data.get('surfaces_used', []),
-                        'element_counts': design_data.get('element_counts', {}),
-                        'calculated_price': design_price,
+                    "_design": {
+                        "token": str(design_token),
+                        "surfaces_used": design_data.get("surfaces_used", []),
+                        "element_counts": design_data.get("element_counts", {}),
+                        "calculated_price": design_price,
                     }
                 }
                 return True, "", validated
@@ -104,10 +112,7 @@ class CartService:
         validated = {}
 
         # Get all customization options for the product
-        options = {
-            str(opt.id): opt
-            for opt in product.customization_options.all()
-        }
+        options = {str(opt.id): opt for opt in product.customization_options.all()}
 
         # Validate each provided customization
         for option_id, value in customizations.items():
@@ -122,10 +127,11 @@ class CartService:
             # Validate the value
             is_valid, error_msg = option.validate_value(value)
             if not is_valid:
-                return False, _("Customization '{name}': {error}").format(
-                    name=option.name,
-                    error=error_msg
-                ), None
+                return (
+                    False,
+                    _("Customization '{name}': {error}").format(name=option.name, error=error_msg),
+                    None,
+                )
 
             # Calculate price for this customization
             base_price = product.price
@@ -133,21 +139,29 @@ class CartService:
 
             # Store validated customization with calculated price
             validated[option_id_str] = {
-                'value': value,
-                'calculated_price': str(customization_price.amount)
+                "value": value,
+                "calculated_price": str(customization_price.amount),
             }
 
         # Check if all required options are provided
         for option_id_str, option in options.items():
             if option.is_required and option_id_str not in validated:
-                return False, _("Required customization '{name}' is missing").format(
-                    name=option.name
-                ), None
+                return (
+                    False,
+                    _("Required customization '{name}' is missing").format(name=option.name),
+                    None,
+                )
 
         return True, "", validated
 
     @staticmethod
-    def _check_stock_availability(product: Product, quantity: int, variant: Optional[ProductVariant] = None, user=None, cart_item=None) -> Tuple[bool, str]:
+    def _check_stock_availability(
+        product: Product,
+        quantity: int,
+        variant: ProductVariant | None = None,
+        user=None,
+        cart_item=None,
+    ) -> tuple[bool, str]:
         """
         Check if sufficient stock is available using multi-location inventory.
 
@@ -169,24 +183,21 @@ class CartService:
 
         # Get region from user if available
         region = None
-        if user and hasattr(user, 'sales_region'):
+        if user and hasattr(user, "sales_region"):
             region = user.sales_region
 
         availability = fulfillment_service.check_stock_availability(
-            product=product,
-            quantity=quantity,
-            region=region,
-            variant=variant
+            product=product, quantity=quantity, region=region, variant=variant
         )
 
-        if not availability['available']:
+        if not availability["available"]:
             # If this cart item already holds a reservation, that allocation
             # is "ours" and should not block an increase.
             if cart_item:
                 from catalog.models import StockReservation
+
                 own_reserved = sum(
-                    r.quantity for r in
-                    StockReservation.objects.filter(cart_item=cart_item)
+                    r.quantity for r in StockReservation.objects.filter(cart_item=cart_item)
                 )
                 if own_reserved > 0:
                     effective_qty = quantity - own_reserved
@@ -198,7 +209,7 @@ class CartService:
                         region=region,
                         variant=variant,
                     )
-                    if re_check['available']:
+                    if re_check["available"]:
                         return True, ""
             return False, _("Insufficient stock")
 
@@ -210,12 +221,12 @@ class CartService:
         cart: Cart,
         product: Product,
         quantity: int,
-        customizations: Optional[Dict],
+        customizations: dict | None,
         notes: str,
         unit_price,
-        variant_selections: Optional[Dict[int, int]] = None,
-        excluded_optional_items: Optional[List[int]] = None
-    ) -> Tuple[bool, str, Optional[CartItem]]:
+        variant_selections: dict[int, int] | None = None,
+        excluded_optional_items: list[int] | None = None,
+    ) -> tuple[bool, str, CartItem | None]:
         """
         Add bundle product to cart by splitting it into components.
         Creates a parent CartItem for the bundle and child CartItems for each component.
@@ -240,7 +251,7 @@ class CartService:
         excluded_optional_items = [int(x) for x in (excluded_optional_items or [])]
 
         # Get bundle components
-        bundle_components = product.bundle_items.order_by('sort_order')
+        bundle_components = product.bundle_items.order_by("sort_order")
 
         if not bundle_components.exists():
             return False, _("Bundle has no components configured"), None
@@ -250,27 +261,38 @@ class CartService:
             # Skip excluded optional items
             if bundle_item.id in excluded_optional_items:
                 if not bundle_item.is_optional:
-                    return False, _("Cannot exclude non-optional bundle component: {name}").format(
-                        name=bundle_item.component_product.name
-                    ), None
+                    return (
+                        False,
+                        _("Cannot exclude non-optional bundle component: {name}").format(
+                            name=bundle_item.component_product.name
+                        ),
+                        None,
+                    )
                 continue
 
             # Check if variant selection is required
             if bundle_item.allow_variant_selection:
-                if bundle_item.component_product.product_type == 'variable':
+                if bundle_item.component_product.product_type == "variable":
                     if bundle_item.id not in variant_selections:
-                        return False, _("Variant selection required for: {name}").format(
-                            name=bundle_item.component_product.name
-                        ), None
+                        return (
+                            False,
+                            _("Variant selection required for: {name}").format(
+                                name=bundle_item.component_product.name
+                            ),
+                            None,
+                        )
                     # Validate that the selected variant belongs to the product
                     selected_variant_id = variant_selections[bundle_item.id]
                     if not ProductVariant.objects.filter(
-                        id=selected_variant_id,
-                        product=bundle_item.component_product
+                        id=selected_variant_id, product=bundle_item.component_product
                     ).exists():
-                        return False, _("Invalid variant selected for: {name}").format(
-                            name=bundle_item.component_product.name
-                        ), None
+                        return (
+                            False,
+                            _("Invalid variant selected for: {name}").format(
+                                name=bundle_item.component_product.name
+                            ),
+                            None,
+                        )
 
         # Check stock for all non-excluded components
         for bundle_item in bundle_components:
@@ -290,12 +312,16 @@ class CartService:
                 product=bundle_item.component_product,
                 quantity=component_quantity,
                 variant=variant,
-                user=cart.user
+                user=cart.user,
             )
             if not is_available:
-                return False, _("Insufficient stock for bundle component: {name}").format(
-                    name=bundle_item.component_product.name
-                ), None
+                return (
+                    False,
+                    _("Insufficient stock for bundle component: {name}").format(
+                        name=bundle_item.component_product.name
+                    ),
+                    None,
+                )
 
         # Calculate effective bundle price
         bundle_price = product.get_effective_bundle_price()
@@ -303,9 +329,9 @@ class CartService:
         # Store variant selections and excluded items in customizations for cart retrieval
         bundle_customizations = customizations.copy() if customizations else {}
         if variant_selections:
-            bundle_customizations['_bundle_variant_selections'] = variant_selections
+            bundle_customizations["_bundle_variant_selections"] = variant_selections
         if excluded_optional_items:
-            bundle_customizations['_bundle_excluded_items'] = excluded_optional_items
+            bundle_customizations["_bundle_excluded_items"] = excluded_optional_items
 
         # Create parent cart item for the bundle
         parent_item, created = CartItem.objects.get_or_create(
@@ -314,11 +340,11 @@ class CartService:
             variant=None,
             parent_bundle=None,  # Ensure it's a parent item
             defaults={
-                'quantity': quantity,
-                'unit_price': bundle_price,
-                'customizations': bundle_customizations,
-                'notes': notes
-            }
+                "quantity": quantity,
+                "unit_price": bundle_price,
+                "customizations": bundle_customizations,
+                "notes": notes,
+            },
         )
 
         if not created:
@@ -332,7 +358,7 @@ class CartService:
                 try:
                     bundle_item = bundle_components.get(
                         component_product=component_item.product,
-                        component_variant=component_item.variant
+                        component_variant=component_item.variant,
                     )
                     component_item.quantity = parent_item.quantity * bundle_item.quantity
                     component_item.save()
@@ -367,7 +393,7 @@ class CartService:
                     unit_price=component_price,
                     parent_bundle=parent_item,
                     customizations={},
-                    notes=""
+                    notes="",
                 )
 
             message = _("Bundle added to cart")
@@ -381,8 +407,8 @@ class CartService:
     @staticmethod
     def _validate_configuration(
         product: Product,
-        configuration: Dict[int, List[int]],
-    ) -> Tuple[bool, str, list]:
+        configuration: dict[int, list[int]],
+    ) -> tuple[bool, str, list]:
         """
         Validate a configurator configuration dict.
 
@@ -394,7 +420,7 @@ class CartService:
             Tuple of (is_valid, error_message, resolved_options)
             resolved_options: list of (ConfigurationSlotOption, variant_or_none) tuples
         """
-        slots = product.configuration_slots.prefetch_related('options').all()
+        slots = product.configuration_slots.prefetch_related("options").all()
         slot_map = {slot.pk: slot for slot in slots}
 
         # Normalize configuration keys to integers (JSON sends string keys)
@@ -406,18 +432,30 @@ class CartService:
         for slot in slots:
             selected_ids = configuration.get(slot.pk, [])
             if slot.is_required and not selected_ids:
-                return False, _("Required slot '{name}' has no selection.").format(name=slot.name), []
+                return (
+                    False,
+                    _("Required slot '{name}' has no selection.").format(name=slot.name),
+                    [],
+                )
 
             if selected_ids:
                 # Validate selection count
                 if len(selected_ids) < slot.min_selections:
-                    return False, _("Slot '{name}' requires at least {min} selection(s).").format(
-                        name=slot.name, min=slot.min_selections
-                    ), []
+                    return (
+                        False,
+                        _("Slot '{name}' requires at least {min} selection(s).").format(
+                            name=slot.name, min=slot.min_selections
+                        ),
+                        [],
+                    )
                 if len(selected_ids) > slot.max_selections:
-                    return False, _("Slot '{name}' allows at most {max} selection(s).").format(
-                        name=slot.name, max=slot.max_selections
-                    ), []
+                    return (
+                        False,
+                        _("Slot '{name}' allows at most {max} selection(s).").format(
+                            name=slot.name, max=slot.max_selections
+                        ),
+                        [],
+                    )
 
         # Validate each selected option exists and belongs to the right slot
         all_selected_options = []
@@ -427,23 +465,27 @@ class CartService:
                 return False, _("Invalid slot ID: {id}").format(id=slot_id), []
 
             slot = slot_map[slot_id]
-            valid_option_ids = set(slot.options.values_list('id', flat=True))
+            valid_option_ids = set(slot.options.values_list("id", flat=True))
 
             for option_id in option_ids:
                 option_id = int(option_id)
                 if option_id not in valid_option_ids:
-                    return False, _("Option {opt_id} is not valid for slot '{slot}'.").format(
-                        opt_id=option_id, slot=slot.name
-                    ), []
+                    return (
+                        False,
+                        _("Option {opt_id} is not valid for slot '{slot}'.").format(
+                            opt_id=option_id, slot=slot.name
+                        ),
+                        [],
+                    )
 
                 option = slot.options.get(pk=option_id)
                 all_selected_options.append(option)
                 resolved_options.append((option, option.option_variant))
 
         # Validate compatibility rules
-        rules = CompatibilityRule.objects.filter(
-            configurable_product=product
-        ).prefetch_related('compatible_options')
+        rules = CompatibilityRule.objects.filter(configurable_product=product).prefetch_related(
+            "compatible_options"
+        )
 
         selected_option_ids = {opt.pk for opt in all_selected_options}
 
@@ -453,29 +495,35 @@ class CartService:
 
             # Get what's selected in the target slot
             target_slot_id = rule.target_slot_id
-            selected_in_target = set(
-                int(oid) for oid in configuration.get(target_slot_id, [])
-            )
+            selected_in_target = {int(oid) for oid in configuration.get(target_slot_id, [])}
 
             if not selected_in_target:
                 continue  # Nothing selected in target slot
 
-            compatible_ids = set(rule.compatible_options.values_list('id', flat=True))
+            compatible_ids = set(rule.compatible_options.values_list("id", flat=True))
 
-            if rule.rule_type == 'requires':
+            if rule.rule_type == "requires":
                 # All selected options in target must be in the compatible set
                 invalid = selected_in_target - compatible_ids
                 if invalid:
-                    return False, _("Incompatible selection in slot '{slot}'. Some options are not compatible with your other choices.").format(
-                        slot=rule.target_slot.name
-                    ), []
-            elif rule.rule_type == 'excludes':
+                    return (
+                        False,
+                        _(
+                            "Incompatible selection in slot '{slot}'. Some options are not compatible with your other choices."
+                        ).format(slot=rule.target_slot.name),
+                        [],
+                    )
+            elif rule.rule_type == "excludes":
                 # No selected options in target may be in the excluded set
                 excluded = selected_in_target & compatible_ids
                 if excluded:
-                    return False, _("Excluded selection in slot '{slot}'. Some options conflict with your other choices.").format(
-                        slot=rule.target_slot.name
-                    ), []
+                    return (
+                        False,
+                        _(
+                            "Excluded selection in slot '{slot}'. Some options conflict with your other choices."
+                        ).format(slot=rule.target_slot.name),
+                        [],
+                    )
 
         return True, "", resolved_options
 
@@ -498,30 +546,29 @@ class CartService:
 
         strategy = product.configurator_pricing_strategy
 
-        if strategy == 'fixed':
+        if strategy == "fixed":
             return product.price
 
-        elif strategy == 'base_plus_adjustments':
+        elif strategy == "base_plus_adjustments":
             base = product.configurator_base_price or product.price
-            total = base.amount if hasattr(base, 'amount') else Decimal(str(base))
-            currency = base.currency if hasattr(base, 'currency') else get_default_currency()
-            for option, variant in resolved_options:
+            total = base.amount if hasattr(base, "amount") else Decimal(str(base))
+            currency = base.currency if hasattr(base, "currency") else get_default_currency()
+            for option, _variant in resolved_options:
                 adj = option.price_adjustment
                 if adj:
-                    total += adj.amount if hasattr(adj, 'amount') else Decimal(str(adj))
+                    total += adj.amount if hasattr(adj, "amount") else Decimal(str(adj))
             return Money(total, currency)
 
         else:  # components_sum
-            total = Decimal('0.00')
+            total = Decimal("0.00")
             currency = get_default_currency()
             for option, variant in resolved_options:
-                if variant:
-                    price = variant.get_price()
-                else:
-                    price = option.option_product.price
+                price = variant.get_price() if variant else option.option_product.price
                 if price:
-                    total += (price.amount if hasattr(price, 'amount') else Decimal(str(price))) * option.quantity
-                    currency = price.currency if hasattr(price, 'currency') else currency
+                    total += (
+                        price.amount if hasattr(price, "amount") else Decimal(str(price))
+                    ) * option.quantity
+                    currency = price.currency if hasattr(price, "currency") else currency
             return Money(total, currency)
 
     @staticmethod
@@ -530,12 +577,12 @@ class CartService:
         cart: Cart,
         product: Product,
         quantity: int,
-        configuration: Dict[int, List[int]],
+        configuration: dict[int, list[int]],
         notes: str,
-        channel: str = 'web',
+        channel: str = "web",
         warehouse=None,
-        preset_id: Optional[int] = None,
-    ) -> Tuple[bool, str, Optional[CartItem]]:
+        preset_id: int | None = None,
+    ) -> tuple[bool, str, CartItem | None]:
         """
         Add configurable product to cart with selected component options.
         Creates a parent CartItem for the configurable product and child CartItems
@@ -568,22 +615,26 @@ class CartService:
                 product=option.option_product,
                 quantity=component_qty,
                 variant=variant,
-                user=cart.user
+                user=cart.user,
             )
             if not is_available:
-                return False, _("Insufficient stock for component: {name}").format(
-                    name=option.option_product.name
-                ), None
+                return (
+                    False,
+                    _("Insufficient stock for component: {name}").format(
+                        name=option.option_product.name
+                    ),
+                    None,
+                )
 
         # Calculate price
         unit_price = CartService._calculate_configurable_price(product, resolved_options)
 
         # Store configuration metadata in customizations
         config_metadata = {
-            '_configuration': {str(k): v for k, v in configuration.items()},
+            "_configuration": {str(k): v for k, v in configuration.items()},
         }
         if preset_id:
-            config_metadata['_preset_id'] = preset_id
+            config_metadata["_preset_id"] = preset_id
 
         # Create parent cart item
         parent_item = CartItem.objects.create(
@@ -601,10 +652,7 @@ class CartService:
         for option, variant in resolved_options:
             component_qty = option.quantity * quantity
 
-            if variant:
-                component_price = variant.get_price()
-            else:
-                component_price = option.option_product.price
+            component_price = variant.get_price() if variant else option.option_product.price
 
             child_item = CartItem.objects.create(
                 cart=cart,
@@ -614,7 +662,7 @@ class CartService:
                 unit_price=component_price,
                 parent_bundle=parent_item,
                 customizations={},
-                notes=""
+                notes="",
             )
 
             # Reserve stock for each component
@@ -658,10 +706,9 @@ class CartService:
             # select_for_update + atomic, and self-heal if any exist.
             with transaction.atomic():
                 carts = list(
-                    Cart.objects
-                    .select_for_update()
+                    Cart.objects.select_for_update()
                     .filter(user=user, session_key__isnull=True)
-                    .order_by('-updated_at', '-id')
+                    .order_by("-updated_at", "-id")
                 )
                 if not carts:
                     cart = Cart.objects.create(user=user, session_key=None)
@@ -677,10 +724,9 @@ class CartService:
             # reads (see _merge_duplicate_carts).
             with transaction.atomic():
                 carts = list(
-                    Cart.objects
-                    .select_for_update()
+                    Cart.objects.select_for_update()
                     .filter(session_key=session_key, user=None)
-                    .order_by('-updated_at', '-id')
+                    .order_by("-updated_at", "-id")
                 )
                 if not carts:
                     cart = Cart.objects.create(
@@ -700,7 +746,7 @@ class CartService:
         return cart
 
     @staticmethod
-    def _merge_duplicate_carts(carts: List[Cart]) -> Cart:
+    def _merge_duplicate_carts(carts: list[Cart]) -> Cart:
         """
         Merge a list of duplicate Cart rows into one keeper.
 
@@ -710,7 +756,6 @@ class CartService:
         are deleted. Must be called inside an outer transaction.
         """
         from ..models import AppliedGiftCard
-        from vouchers.models import AppliedVoucher
 
         keeper = max(carts, key=lambda c: (c.items.count(), c.id))
         losers = [c for c in carts if c.id != keeper.id]
@@ -732,33 +777,29 @@ class CartService:
                         break
                 if match:
                     match.quantity += item.quantity
-                    match.save(update_fields=['quantity', 'updated_at'])
+                    match.save(update_fields=["quantity", "updated_at"])
                     item.delete()  # CASCADEs to its bundle children
                 else:
                     # Move parent and any children to keeper
-                    CartItem.objects.filter(
-                        parent_bundle=item
-                    ).update(cart=keeper)
+                    CartItem.objects.filter(parent_bundle=item).update(cart=keeper)
                     item.cart = keeper
-                    item.save(update_fields=['cart', 'updated_at'])
+                    item.save(update_fields=["cart", "updated_at"])
 
             # Preserve vouchers / gift cards not already on keeper
             for v in loser.applied_vouchers.all():
                 if not keeper.applied_vouchers.filter(voucher=v.voucher).exists():
                     v.cart = keeper
-                    v.save(update_fields=['cart'])
+                    v.save(update_fields=["cart"])
             for g in AppliedGiftCard.objects.filter(cart=loser):
-                if not AppliedGiftCard.objects.filter(
-                    cart=keeper, gift_card=g.gift_card
-                ).exists():
+                if not AppliedGiftCard.objects.filter(cart=keeper, gift_card=g.gift_card).exists():
                     g.cart = keeper
-                    g.save(update_fields=['cart'])
+                    g.save(update_fields=["cart"])
 
             loser.delete()
 
         keeper.recalculate_voucher_discounts()
         keeper.recalculate_gift_card_discounts()
-        keeper.save(update_fields=['updated_at'])
+        keeper.save(update_fields=["updated_at"])
         return keeper
 
     @staticmethod
@@ -767,22 +808,22 @@ class CartService:
         cart: Cart,
         product_id: int,
         quantity: int = 1,
-        variant_id: Optional[int] = None,
-        customizations: Optional[Dict] = None,
+        variant_id: int | None = None,
+        customizations: dict | None = None,
         notes: str = "",
-        variant_selections: Optional[Dict[int, int]] = None,
-        excluded_optional_items: Optional[List[int]] = None,
-        channel: str = 'web',
-        warehouse: Optional[Any] = None,
-        configuration: Optional[Dict[int, List[int]]] = None,
-        preset_id: Optional[int] = None,
-        booking_data: Optional[Dict] = None,
+        variant_selections: dict[int, int] | None = None,
+        excluded_optional_items: list[int] | None = None,
+        channel: str = "web",
+        warehouse: Any | None = None,
+        configuration: dict[int, list[int]] | None = None,
+        preset_id: int | None = None,
+        booking_data: dict | None = None,
         is_subscription: bool = False,
         subscription_plan=None,
         pricing_tier=None,
         payment_token=None,
-        customer_currency: Optional[str] = None,
-    ) -> Tuple[bool, str, Optional[CartItem]]:
+        customer_currency: str | None = None,
+    ) -> tuple[bool, str, CartItem | None]:
         """
         Add item to cart
 
@@ -816,16 +857,19 @@ class CartService:
 
         # Check product dependencies
         from catalog.services.dependency_service import check_hard_dependencies
+
         deps_satisfied, blocking_deps = check_hard_dependencies(
-            product=product, user=cart.user, cart=cart,
+            product=product,
+            user=cart.user,
+            cart=cart,
         )
         if not deps_satisfied:
             if not cart.user or not cart.user.is_authenticated:
                 return False, _("You must be logged in to purchase this product."), None
             dep = blocking_deps[0]
             msg = dep.customer_message or _(
-                "This product requires you to own \"%(required)s\" first."
-            ) % {'required': dep.required_product.name}
+                'This product requires you to own "%(required)s" first.'
+            ) % {"required": dep.required_product.name}
             return False, msg, None
 
         variant = None
@@ -836,7 +880,7 @@ class CartService:
                 return False, _("Product variant not found"), None
 
         # Handle configurable products early — stock is checked per-component
-        if product.product_type == 'configurable':
+        if product.product_type == "configurable":
             if not configuration:
                 return False, _("Configuration is required for configurable products"), None
             return CartService._add_configurable_to_cart(
@@ -852,34 +896,32 @@ class CartService:
 
         # Validate customizations if provided
         is_valid, error_msg, validated_customizations = CartService._validate_customizations(
-            product=product,
-            customizations=customizations
+            product=product, customizations=customizations
         )
         if not is_valid:
             return False, error_msg, None
 
         # Check stock availability using multi-location inventory
         is_available, error_msg = CartService._check_stock_availability(
-            product=product,
-            quantity=quantity,
-            variant=variant,
-            user=cart.user
+            product=product, quantity=quantity, variant=variant, user=cart.user
         )
         if not is_available:
             return False, error_msg, None
 
         # Get unit price — use customer's currency when multi-currency is enabled
         from core.utils import get_default_currency
+
         cart_currency = cart.effective_currency
 
         # If cart has no currency yet, set it from the customer's preference
         # or fall back to store default
         if not cart.currency:
             from core.models import SiteSettings
+
             settings = SiteSettings.get_settings()
             if settings.enable_multi_currency and customer_currency:
                 # Display-only mode: cart always operates in base currency
-                if getattr(settings, 'multi_currency_checkout_mode', 'full') == 'display_only':
+                if getattr(settings, "multi_currency_checkout_mode", "full") == "display_only":
                     cart.currency = settings.default_currency
                     cart_currency = settings.default_currency
                 else:
@@ -888,7 +930,7 @@ class CartService:
             else:
                 cart.currency = get_default_currency()
                 cart_currency = cart.currency
-            cart.save(update_fields=['currency'])
+            cart.save(update_fields=["currency"])
 
         # Get price in the cart's operating currency.
         # Important: use *effective* price (sale price if a sale is active)
@@ -904,7 +946,7 @@ class CartService:
             unit_price = product.get_effective_price()
 
         # Handle bundle products - split into components
-        if product.product_type == 'bundle':
+        if product.product_type == "bundle":
             return CartService._add_bundle_to_cart(
                 cart=cart,
                 product=product,
@@ -913,7 +955,7 @@ class CartService:
                 notes=notes,
                 unit_price=unit_price,
                 variant_selections=variant_selections,
-                excluded_optional_items=excluded_optional_items
+                excluded_optional_items=excluded_optional_items,
             )
 
         # Booking products are never merged — each booking is a unique time slot
@@ -923,26 +965,26 @@ class CartService:
             booking_unit_price = unit_price
             enriched_booking_data = dict(booking_data)
             try:
-                from catalog.services.booking_service import BookingAvailabilityService
                 from datetime import datetime as _dt
-                _start = _dt.fromisoformat(
-                    booking_data['start_datetime'].replace('Z', '+00:00')
-                )
-                _end = _dt.fromisoformat(
-                    booking_data['end_datetime'].replace('Z', '+00:00')
-                )
-                _resource_id = booking_data.get('resource_id')
-                _persons = booking_data.get('persons')
+
+                from catalog.services.booking_service import BookingAvailabilityService
+
+                _start = _dt.fromisoformat(booking_data["start_datetime"].replace("Z", "+00:00"))
+                _end = _dt.fromisoformat(booking_data["end_datetime"].replace("Z", "+00:00"))
+                _resource_id = booking_data.get("resource_id")
+                _persons = booking_data.get("persons")
                 calc_total, breakdown = (
                     BookingAvailabilityService.calculate_booking_price_with_breakdown(
                         product, _start, _end, _resource_id, _persons
                     )
                 )
-                from djmoney.money import Money
                 import json
+
+                from djmoney.money import Money
+
                 booking_unit_price = Money(calc_total, unit_price.currency)
                 # Sanitize breakdown for JSON storage (Decimal → str)
-                enriched_booking_data['price_breakdown'] = json.loads(
+                enriched_booking_data["price_breakdown"] = json.loads(
                     json.dumps(breakdown, default=str)
                 )
             except Exception:
@@ -966,7 +1008,7 @@ class CartService:
             cart=cart,
             product=product,
             variant=variant,
-            parent_bundle__isnull=True  # Only match standalone items, not bundle components
+            parent_bundle__isnull=True,  # Only match standalone items, not bundle components
         )
 
         # Subscription items should not merge with one-time items (or different plans)
@@ -1004,17 +1046,17 @@ class CartService:
             message = _("Cart item quantity updated")
         else:
             # Create new cart item
-            create_kwargs = dict(
-                cart=cart,
-                product=product,
-                variant=variant,
-                quantity=quantity,
-                unit_price=unit_price,
-                customizations=validated_customizations,
-                notes=notes,
-            )
+            create_kwargs = {
+                "cart": cart,
+                "product": product,
+                "variant": variant,
+                "quantity": quantity,
+                "unit_price": unit_price,
+                "customizations": validated_customizations,
+                "notes": notes,
+            }
             if booking_data:
-                create_kwargs['booking_data'] = booking_data
+                create_kwargs["booking_data"] = booking_data
             if is_subscription:
                 create_kwargs.update(
                     is_subscription=True,
@@ -1050,11 +1092,11 @@ class CartService:
     @transaction.atomic
     def update_item(
         cart_item: CartItem,
-        quantity: Optional[int] = None,
-        customizations: Optional[Dict] = None,
-        notes: Optional[str] = None,
-        channel: str = 'web',
-    ) -> Tuple[bool, str]:
+        quantity: int | None = None,
+        customizations: dict | None = None,
+        notes: str | None = None,
+        channel: str = "web",
+    ) -> tuple[bool, str]:
         """
         Update cart item
 
@@ -1070,7 +1112,9 @@ class CartService:
         """
         # Guard: reject direct updates on child/component items
         if quantity is not None and cart_item.parent_bundle is not None:
-            return False, _("Component quantities cannot be changed directly. Update the parent product instead.")
+            return False, _(
+                "Component quantities cannot be changed directly. Update the parent product instead."
+            )
 
         if quantity is not None:
             if quantity == 0:
@@ -1082,14 +1126,16 @@ class CartService:
                 cart_item.delete()
                 cascade_removed = CartService._cascade_dependency_removals(cart)
                 if cascade_removed:
-                    names = ', '.join(cascade_removed)
-                    return True, _("Item removed from cart. Also removed %(names)s (required product no longer in cart).") % {'names': names}
+                    names = ", ".join(cascade_removed)
+                    return True, _(
+                        "Item removed from cart. Also removed %(names)s (required product no longer in cart)."
+                    ) % {"names": names}
                 return True, _("Item removed from cart")
 
             # Check stock using multi-location inventory
             # Skip parent stock check for configurable/bundle products — their
             # stock is tracked through component products, checked in cascade below
-            if cart_item.product.product_type not in ('configurable', 'bundle'):
+            if cart_item.product.product_type not in ("configurable", "bundle"):
                 is_available, error_msg = CartService._check_stock_availability(
                     product=cart_item.product,
                     quantity=quantity,
@@ -1105,8 +1151,7 @@ class CartService:
         if customizations is not None:
             # Validate customizations
             is_valid, error_msg, validated_customizations = CartService._validate_customizations(
-                product=cart_item.product,
-                customizations=customizations
+                product=cart_item.product, customizations=customizations
             )
             if not is_valid:
                 return False, error_msg
@@ -1131,10 +1176,10 @@ class CartService:
                 pass
 
             # Cascade quantity to child component items (configurable/bundle)
-            children = cart_item.component_items.select_related('product', 'variant').all()
+            children = cart_item.component_items.select_related("product", "variant").all()
             if children.exists():
                 config_meta = cart_item.customizations or {}
-                configuration = config_meta.get('_configuration', {})
+                configuration = config_meta.get("_configuration", {})
 
                 for child in children:
                     base_qty = CartService._get_component_base_quantity(
@@ -1156,7 +1201,7 @@ class CartService:
                         )
 
                     child.quantity = new_child_qty
-                    child.save(update_fields=['quantity'])
+                    child.save(update_fields=["quantity"])
 
                     # Update reservation for child
                     try:
@@ -1187,25 +1232,29 @@ class CartService:
         For bundle products: looks up BundleItem.quantity
         Falls back to 1 if lookup fails.
         """
-        if product_type == 'configurable' and configuration:
+        if product_type == "configurable" and configuration:
             try:
                 from catalog.models import ConfigurationSlotOption
-                for slot_id, option_ids in configuration.items():
+
+                for _slot_id, option_ids in configuration.items():
                     if not isinstance(option_ids, list):
                         continue
                     for opt_id in option_ids:
                         try:
                             opt = ConfigurationSlotOption.objects.get(pk=opt_id)
-                            if (opt.option_product_id == child_item.product_id and
-                                    opt.option_variant_id == child_item.variant_id):
+                            if (
+                                opt.option_product_id == child_item.product_id
+                                and opt.option_variant_id == child_item.variant_id
+                            ):
                                 return opt.quantity
                         except ConfigurationSlotOption.DoesNotExist:
                             continue
             except Exception:
                 pass
-        elif product_type == 'bundle':
+        elif product_type == "bundle":
             try:
                 from catalog.models import BundleItem
+
                 bundle_item = BundleItem.objects.filter(
                     bundle=child_item.parent_bundle.product,
                     product=child_item.product,
@@ -1218,7 +1267,7 @@ class CartService:
 
     @staticmethod
     @transaction.atomic
-    def remove_item(cart_item: CartItem) -> Tuple[bool, str]:
+    def remove_item(cart_item: CartItem) -> tuple[bool, str]:
         """
         Remove item from cart
 
@@ -1230,7 +1279,9 @@ class CartService:
         """
         # Guard: reject direct removal of child/component items
         if cart_item.parent_bundle is not None:
-            return False, _("Component items cannot be removed directly. Remove the parent product instead.")
+            return False, _(
+                "Component items cannot be removed directly. Remove the parent product instead."
+            )
 
         cart = cart_item.cart
 
@@ -1258,8 +1309,10 @@ class CartService:
         CartService._sync_checkout_session(cart)
 
         if cascade_removed:
-            names = ', '.join(cascade_removed)
-            return True, _("Item removed from cart. Also removed %(names)s (required product no longer in cart).") % {'names': names}
+            names = ", ".join(cascade_removed)
+            return True, _(
+                "Item removed from cart. Also removed %(names)s (required product no longer in cart)."
+            ) % {"names": names}
         return True, _("Item removed from cart")
 
     @staticmethod
@@ -1270,13 +1323,16 @@ class CartService:
         (not owned by user AND not in the cart). Returns list of removed product names.
         """
         from catalog.services.dependency_service import check_hard_dependencies
+
         removed_names = []
         changed = True
         while changed:
             changed = False
             for item in cart.items.filter(parent_bundle__isnull=True):
                 satisfied, _ = check_hard_dependencies(
-                    product=item.product, user=cart.user, cart=cart,
+                    product=item.product,
+                    user=cart.user,
+                    cart=cart,
                 )
                 if not satisfied:
                     removed_names.append(item.product.name)
@@ -1291,7 +1347,7 @@ class CartService:
 
     @staticmethod
     @transaction.atomic
-    def clear_cart(cart: Cart) -> Tuple[bool, str]:
+    def clear_cart(cart: Cart) -> tuple[bool, str]:
         """
         Clear all items from cart
 
@@ -1316,11 +1372,7 @@ class CartService:
 
     @staticmethod
     @transaction.atomic
-    def apply_voucher(
-        cart: Cart,
-        voucher_code: str,
-        user=None
-    ) -> Tuple[bool, str, Decimal]:
+    def apply_voucher(cart: Cart, voucher_code: str, user=None) -> tuple[bool, str, Decimal]:
         """
         Apply voucher to cart
 
@@ -1339,7 +1391,7 @@ class CartService:
 
     @staticmethod
     @transaction.atomic
-    def remove_voucher(cart: Cart, voucher_code: str) -> Tuple[bool, str]:
+    def remove_voucher(cart: Cart, voucher_code: str) -> tuple[bool, str]:
         """
         Remove voucher from cart
 
@@ -1359,10 +1411,8 @@ class CartService:
     @staticmethod
     @transaction.atomic
     def apply_gift_card(
-        cart: Cart,
-        gift_card_code: str,
-        customer_currency: str = None
-    ) -> Tuple[bool, str, Decimal]:
+        cart: Cart, gift_card_code: str, customer_currency: str = None
+    ) -> tuple[bool, str, Decimal]:
         """
         Apply gift card to cart
 
@@ -1381,7 +1431,7 @@ class CartService:
 
     @staticmethod
     @transaction.atomic
-    def remove_gift_card(cart: Cart, gift_card_code: str) -> Tuple[bool, str]:
+    def remove_gift_card(cart: Cart, gift_card_code: str) -> tuple[bool, str]:
         """
         Remove gift card from cart
 
@@ -1400,7 +1450,7 @@ class CartService:
 
     @staticmethod
     @transaction.atomic
-    def merge_carts(source_cart: Cart, target_cart: Cart) -> Tuple[bool, str]:
+    def merge_carts(source_cart: Cart, target_cart: Cart) -> tuple[bool, str]:
         """
         Merge source cart into target cart (used when anonymous user logs in)
 
@@ -1412,7 +1462,6 @@ class CartService:
             Tuple of (success: bool, message: str)
         """
         items_merged = 0
-        items_skipped = 0
 
         for item in source_cart.items.all():
             # Skip bundle component items - they'll be handled when parent is merged
@@ -1423,7 +1472,7 @@ class CartService:
             existing_items = target_cart.items.filter(
                 product=item.product,
                 variant=item.variant,
-                parent_bundle__isnull=True  # Only match standalone items
+                parent_bundle__isnull=True,  # Only match standalone items
             )
 
             # Find item with matching customizations
@@ -1456,13 +1505,13 @@ class CartService:
         # Recalculate target cart
         target_cart.recalculate_voucher_discounts()
         target_cart.recalculate_gift_card_discounts()
-        target_cart.save(update_fields=['updated_at'])
+        target_cart.save(update_fields=["updated_at"])
 
         message = _("{count} items merged into cart").format(count=items_merged)
         return True, message
 
     @staticmethod
-    def get_cart_summary(cart: Cart) -> Dict[str, Any]:
+    def get_cart_summary(cart: Cart) -> dict[str, Any]:
         """
         Get comprehensive cart summary
 
@@ -1472,9 +1521,10 @@ class CartService:
         Returns:
             Dict with cart summary data
         """
+
         # Helper to safely extract amount from Money objects
         def to_float(value):
-            if hasattr(value, 'amount'):
+            if hasattr(value, "amount"):
                 return float(value.amount)
             return float(value) if value else 0
 
@@ -1484,15 +1534,15 @@ class CartService:
         )
 
         return {
-            'total_items': parent_item_count,
-            'item_count': parent_item_count,  # Alias for mini-cart compatibility
-            'subtotal': to_float(cart.subtotal),
-            'total_savings': to_float(cart.total_savings),
-            'voucher_discount': to_float(cart.voucher_discount_amount),
-            'shipping_cost': to_float(cart.shipping_cost),
-            'tax_amount': to_float(cart.tax_amount),
-            'grand_total': to_float(cart.grand_total),
-            'requires_shipping': cart.requires_shipping,
-            'total_weight': float(cart.total_weight),
-            'applied_vouchers': cart.get_voucher_summary()
+            "total_items": parent_item_count,
+            "item_count": parent_item_count,  # Alias for mini-cart compatibility
+            "subtotal": to_float(cart.subtotal),
+            "total_savings": to_float(cart.total_savings),
+            "voucher_discount": to_float(cart.voucher_discount_amount),
+            "shipping_cost": to_float(cart.shipping_cost),
+            "tax_amount": to_float(cart.tax_amount),
+            "grand_total": to_float(cart.grand_total),
+            "requires_shipping": cart.requires_shipping,
+            "total_weight": float(cart.total_weight),
+            "applied_vouchers": cart.get_voucher_summary(),
         }

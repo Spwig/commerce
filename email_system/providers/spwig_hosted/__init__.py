@@ -8,4 +8,4 @@ are injected during provisioning.
 
 from .provider import SpwigHostedMailProvider
 
-__all__ = ['SpwigHostedMailProvider']
+__all__ = ["SpwigHostedMailProvider"]

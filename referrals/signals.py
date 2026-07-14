@@ -7,22 +7,24 @@ Automatically handles:
 - Email notifications for referral events
 - Referrer identity stats updates
 """
+
 import logging
+
+from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from orders.models import Order
-from .models import ReferralAttribution, ReferralReward, ReferralIdentity, ReferralProgram
-from .services.tracking import track_signup, track_order, get_ref_token_from_cookie
-from .services.validation import validate_attribution
-from .services.rewards import create_rewards, issue_reward, create_and_issue_rewards
+
+from .middleware import get_current_request
+from .models import ReferralAttribution, ReferralIdentity, ReferralProgram, ReferralReward
 from .services.email_notifications import (
     send_referral_reward_email,
-    send_referral_successful_email,
 )
-from .middleware import get_current_request
+from .services.rewards import create_and_issue_rewards
+from .services.tracking import get_ref_token_from_cookie, track_order, track_signup
+from .services.validation import validate_attribution
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -31,6 +33,7 @@ logger = logging.getLogger(__name__)
 # =====================================================================
 # USER SIGNUP TRACKING
 # =====================================================================
+
 
 @receiver(post_save, sender=User)
 def track_user_signup(sender, instance, created, **kwargs):
@@ -67,7 +70,9 @@ def track_user_signup(sender, instance, created, **kwargs):
         try:
             success, identity, message = track_signup(instance, request)
             if success:
-                logger.info(f"Tracked signup for {instance.email} via referrer {identity.customer.email}")
+                logger.info(
+                    f"Tracked signup for {instance.email} via referrer {identity.customer.email}"
+                )
         except Exception as e:
             logger.error(f"Error tracking signup for {instance.email}: {e}", exc_info=True)
 
@@ -75,6 +80,7 @@ def track_user_signup(sender, instance, created, **kwargs):
 # =====================================================================
 # ORDER TRACKING & ATTRIBUTION
 # =====================================================================
+
 
 @receiver(post_save, sender=Order)
 def handle_order_completion(sender, instance, created, **kwargs):
@@ -89,16 +95,19 @@ def handle_order_completion(sender, instance, created, **kwargs):
     5. Create and issue rewards
     """
     # Only process on status change to delivered
-    if not hasattr(instance, '_previous_status'):
+    if not hasattr(instance, "_previous_status"):
         # This is handled by pre_save signal below
         return
 
     # Check if status just changed to delivered
-    if instance._previous_status != 'delivered' and instance.status == 'delivered':
+    if instance._previous_status != "delivered" and instance.status == "delivered":
         try:
             _process_order_attribution(instance)
         except Exception as e:
-            logger.error(f"Error processing order attribution for {instance.order_number}: {e}", exc_info=True)
+            logger.error(
+                f"Error processing order attribution for {instance.order_number}: {e}",
+                exc_info=True,
+            )
 
 
 @receiver(pre_save, sender=Order)
@@ -128,17 +137,21 @@ def _process_order_attribution(order):
     # Get program
     program = ReferralProgram.get_program()
     if not program or not program.is_active():
-        logger.info(f"Referral program not active, skipping attribution for order {order.order_number}")
+        logger.info(
+            f"Referral program not active, skipping attribution for order {order.order_number}"
+        )
         return
 
     # Check if this is user's first order
-    first_order = Order.objects.filter(user=order.user).order_by('created_at').first()
+    first_order = Order.objects.filter(user=order.user).order_by("created_at").first()
     if first_order.pk != order.pk:
-        logger.info(f"Order {order.order_number} is not first order for {order.user.email}, skipping")
+        logger.info(
+            f"Order {order.order_number} is not first order for {order.user.email}, skipping"
+        )
         return
 
     # Check if attribution already exists
-    if hasattr(order, 'referral_attribution') and order.referral_attribution:
+    if hasattr(order, "referral_attribution") and order.referral_attribution:
         logger.info(f"Attribution already exists for order {order.order_number}")
         return
 
@@ -146,7 +159,9 @@ def _process_order_attribution(order):
     request = get_current_request()
 
     if not request:
-        logger.debug(f"No request context for order {order.order_number}, cannot check referral cookie")
+        logger.debug(
+            f"No request context for order {order.order_number}, cannot check referral cookie"
+        )
         return
 
     # Get referral token from cookie
@@ -157,7 +172,7 @@ def _process_order_attribution(order):
 
     # Get referrer identity
     try:
-        referrer_identity = ReferralIdentity.objects.select_related('customer').get(token=token)
+        referrer_identity = ReferralIdentity.objects.select_related("customer").get(token=token)
     except ReferralIdentity.DoesNotExist:
         logger.warning(f"Invalid referral token {token} for order {order.order_number}")
         return
@@ -171,7 +186,9 @@ def _process_order_attribution(order):
     try:
         success, identity, message = track_order(order, request)
         if success:
-            logger.info(f"Tracked order {order.order_number} for referrer {identity.customer.email}")
+            logger.info(
+                f"Tracked order {order.order_number} for referrer {identity.customer.email}"
+            )
     except Exception as e:
         logger.error(f"Error tracking order: {e}", exc_info=True)
 
@@ -182,7 +199,7 @@ def _process_order_attribution(order):
             referrer_identity=referrer_identity,
             referee_customer=order.user,
             first_order=order,
-            status='pending',
+            status="pending",
         )
         logger.info(f"Created attribution for order {order.order_number}")
 
@@ -193,10 +210,10 @@ def _process_order_attribution(order):
         attribution.risk_score = risk_score
 
         # Auto-approve if low risk and passes validation
-        auto_approve_threshold = program.fraud_policy.get('auto_approve_threshold', 30)
+        auto_approve_threshold = program.fraud_policy.get("auto_approve_threshold", 30)
 
         if is_valid and risk_score < auto_approve_threshold:
-            attribution.status = 'approved'
+            attribution.status = "approved"
             attribution.approved_at = timezone.now()
             attribution.save()
 
@@ -216,6 +233,7 @@ def _process_order_attribution(order):
 # ATTRIBUTION APPROVAL HANDLING
 # =====================================================================
 
+
 @receiver(post_save, sender=ReferralAttribution)
 def handle_attribution_approval(sender, instance, created, **kwargs):
     """
@@ -228,14 +246,16 @@ def handle_attribution_approval(sender, instance, created, **kwargs):
         return
 
     # Check if just approved
-    if not hasattr(instance, '_previous_status'):
+    if not hasattr(instance, "_previous_status"):
         return
 
-    if instance._previous_status != 'approved' and instance.status == 'approved':
+    if instance._previous_status != "approved" and instance.status == "approved":
         # Only process manual approvals (reviewed_by will be set)
         # Auto-approvals are handled in _process_order_attribution
         if instance.reviewed_by:
-            logger.info(f"Attribution {instance.id} manually approved by {instance.reviewed_by.email}")
+            logger.info(
+                f"Attribution {instance.id} manually approved by {instance.reviewed_by.email}"
+            )
             create_and_issue_rewards(instance)
         else:
             logger.debug(f"Attribution {instance.id} auto-approved, rewards already created")
@@ -260,6 +280,7 @@ def track_attribution_status_change(sender, instance, **kwargs):
 # REWARD ISSUANCE NOTIFICATIONS
 # =====================================================================
 
+
 @receiver(post_save, sender=ReferralReward)
 def handle_reward_issuance(sender, instance, created, **kwargs):
     """
@@ -271,17 +292,19 @@ def handle_reward_issuance(sender, instance, created, **kwargs):
         return
 
     # Check if just issued
-    if not hasattr(instance, '_previous_status'):
+    if not hasattr(instance, "_previous_status"):
         return
 
-    if instance._previous_status != 'issued' and instance.status == 'issued':
+    if instance._previous_status != "issued" and instance.status == "issued":
         try:
             # Send reward notification email
             success = send_referral_reward_email(instance, instance.recipient_type)
             if success:
                 logger.info(f"Sent reward notification email to {instance.customer.email}")
             else:
-                logger.warning(f"Failed to send reward notification email to {instance.customer.email}")
+                logger.warning(
+                    f"Failed to send reward notification email to {instance.customer.email}"
+                )
         except Exception as e:
             logger.error(f"Error sending reward notification: {e}", exc_info=True)
 
@@ -305,6 +328,7 @@ def track_reward_status_change(sender, instance, **kwargs):
 # ORDER CANCELLATION / REFUND HANDLING
 # =====================================================================
 
+
 @receiver(post_save, sender=Order)
 def handle_order_cancellation(sender, instance, **kwargs):
     """
@@ -313,33 +337,37 @@ def handle_order_cancellation(sender, instance, **kwargs):
     If an order with attribution is cancelled/refunded, mark attribution as rejected
     and revoke any issued rewards.
     """
-    if not hasattr(instance, '_previous_status'):
+    if not hasattr(instance, "_previous_status"):
         return
 
     # Check if order was cancelled or refunded
-    if instance.status in ['cancelled', 'refunded'] and instance._previous_status not in ['cancelled', 'refunded']:
+    if instance.status in ["cancelled", "refunded"] and instance._previous_status not in [
+        "cancelled",
+        "refunded",
+    ]:
         try:
             # Check if this order has an attribution
-            if hasattr(instance, 'referral_attribution') and instance.referral_attribution:
+            if hasattr(instance, "referral_attribution") and instance.referral_attribution:
                 attribution = instance.referral_attribution
 
                 # Don't process if already rejected
-                if attribution.status == 'rejected':
+                if attribution.status == "rejected":
                     return
 
-                logger.info(f"Order {instance.order_number} cancelled/refunded, rejecting attribution {attribution.id}")
+                logger.info(
+                    f"Order {instance.order_number} cancelled/refunded, rejecting attribution {attribution.id}"
+                )
 
                 # Reject attribution
-                reason = 'order_cancelled' if instance.status == 'cancelled' else 'order_refunded'
+                reason = "order_cancelled" if instance.status == "cancelled" else "order_refunded"
                 attribution.reject(
-                    reason=reason,
-                    notes=f"Order {instance.order_number} was {instance.status}"
+                    reason=reason, notes=f"Order {instance.order_number} was {instance.status}"
                 )
 
                 # Revoke any issued rewards
                 from .services.rewards import revoke_reward
 
-                rewards = ReferralReward.objects.filter(attribution=attribution, status='issued')
+                rewards = ReferralReward.objects.filter(attribution=attribution, status="issued")
                 for reward in rewards:
                     success = revoke_reward(reward, reason=f"Order {instance.status}")
                     if success:

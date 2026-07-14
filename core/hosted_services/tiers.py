@@ -15,7 +15,7 @@ from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
-CACHE_KEY = 'hosted_services:tier_config'
+CACHE_KEY = "hosted_services:tier_config"
 CACHE_TIMEOUT = 300  # 5 minutes
 
 
@@ -41,7 +41,7 @@ def get_tier_config() -> dict:
     if cached is not None:
         return cached
 
-    server_url = getattr(settings, 'UPDATE_SERVER_URL', None) or 'https://updates.spwig.com'
+    server_url = getattr(settings, "UPDATE_SERVER_URL", None) or "https://updates.spwig.com"
     try:
         response = requests.get(
             f"{server_url.rstrip('/')}/api/v1/tiers/",
@@ -51,7 +51,7 @@ def get_tier_config() -> dict:
         data = response.json()
     except Exception as e:
         logger.debug("Tier config fetch failed: %s", e)
-        data = {'services': {}, 'upgrade_url': 'https://updates.spwig.com/upgrade/'}
+        data = {"services": {}, "upgrade_url": "https://updates.spwig.com/upgrade/"}
 
     cache.set(CACHE_KEY, data, timeout=CACHE_TIMEOUT)
     return data

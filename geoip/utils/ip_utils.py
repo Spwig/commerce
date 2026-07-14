@@ -1,6 +1,7 @@
 """
 IP utility functions for GeoIP
 """
+
 import ipaddress
 import logging
 
@@ -21,30 +22,30 @@ def get_client_ip(request) -> str:
     # Cloudflare headers first (they contain the actual visitor IP),
     # before X-Real-IP/X-Forwarded-For which may contain edge server IPs
     headers_to_check = [
-        'HTTP_CF_CONNECTING_IP',  # Cloudflare (actual visitor IP)
-        'HTTP_TRUE_CLIENT_IP',    # Cloudflare Enterprise
-        'HTTP_X_REAL_IP',
-        'HTTP_X_FORWARDED_FOR',
-        'HTTP_X_CLIENT_IP',
-        'HTTP_X_CLUSTER_CLIENT_IP',
-        'HTTP_FORWARDED_FOR',
-        'HTTP_FORWARDED',
-        'REMOTE_ADDR',
+        "HTTP_CF_CONNECTING_IP",  # Cloudflare (actual visitor IP)
+        "HTTP_TRUE_CLIENT_IP",  # Cloudflare Enterprise
+        "HTTP_X_REAL_IP",
+        "HTTP_X_FORWARDED_FOR",
+        "HTTP_X_CLIENT_IP",
+        "HTTP_X_CLUSTER_CLIENT_IP",
+        "HTTP_FORWARDED_FOR",
+        "HTTP_FORWARDED",
+        "REMOTE_ADDR",
     ]
 
     for header in headers_to_check:
         ip = request.META.get(header)
         if ip:
             # X-Forwarded-For can contain multiple IPs
-            if ',' in ip:
-                ip = ip.split(',')[0].strip()
+            if "," in ip:
+                ip = ip.split(",")[0].strip()
 
             # Validate IP
             if is_valid_ip(ip) and not is_private_ip(ip):
                 return ip
 
     # Fallback to REMOTE_ADDR
-    ip = request.META.get('REMOTE_ADDR')
+    ip = request.META.get("REMOTE_ADDR")
     if ip and is_valid_ip(ip):
         # Return even if private (for development)
         return ip
@@ -127,9 +128,9 @@ def anonymize_ip(ip: str) -> str:
         addr = ipaddress.ip_address(ip)
         if addr.version == 4:
             # Zero out last octet
-            parts = str(addr).split('.')
-            parts[3] = '0'
-            return '.'.join(parts)
+            parts = str(addr).split(".")
+            parts[3] = "0"
+            return ".".join(parts)
         else:
             # Zero out last 80 bits for IPv6
             network = ipaddress.ip_network(f"{ip}/48", strict=False)

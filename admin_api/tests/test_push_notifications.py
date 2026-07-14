@@ -1,474 +1,460 @@
 """
-Test script for APNs push notifications via push.spwig.com
+Tests for the admin_api push notification service.
 
-Usage:
-    # From project root with venv activated:
-    ./shop_venv/bin/python -c "from admin_api.tests.test_push_notifications import *; run_all_tests()"
+The previous version of this file was a manual interactive script that
+queried live production data and hit push.spwig.com. It has been
+rewritten as a proper pytest suite that exercises PushNotificationService
+behaviour with mocked network I/O so it runs deterministically in CI.
 
-    # Or run individual tests:
-    ./shop_venv/bin/python -c "from admin_api.tests.test_push_notifications import *; test_push_config()"
-    ./shop_venv/bin/python -c "from admin_api.tests.test_push_notifications import *; test_new_order_notification()"
+Covered surfaces:
+- PushNotificationService.send_new_order_notification
+- PushNotificationService.send_low_stock_notification
+- PushNotificationService.send_customer_message_notification
+- PushNotificationService.send_payment_alert_notification
+- Device filtering via DeviceRegistration.get_devices_for_notification
+- Invalid token cleanup path via _remove_invalid_tokens
+- Configuration probe via PushNotificationService.is_configured
 """
-import os
-import sys
-import django
 
-# Setup Django environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-django.setup()
+from unittest.mock import MagicMock, patch
 
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from decimal import Decimal
+import pytest
 
+from admin_api.models import CustomerMessage, DeviceRegistration
+from admin_api.services.push_client import PushResult
+from admin_api.services.push_service import PushNotificationService
+from tests.factories import (
+    CustomerMessageFactory,
+    OrderFactory,
+    OrderNoteFactory,
+    ProductFactory,
+    UserFactory,
+)
 
-def set_test_installation_uuid():
-    """Set a test installation UUID for development testing."""
-    import uuid
-    from core.models import PlatformSecrets
-
-    secrets = PlatformSecrets.get_secrets()
-
-    if secrets.installation_uuid:
-        print(f"  Installation UUID already set: {secrets.installation_uuid}")
-        return str(secrets.installation_uuid)
-
-    test_uuid = str(uuid.uuid4())
-    secrets.installation_uuid = test_uuid
-    secrets.save()
-    print(f"  Set test installation UUID: {test_uuid}")
-    print("  [WARNING] This is for TESTING ONLY!")
-    return test_uuid
+pytestmark = [pytest.mark.django_db]
 
 
-def test_push_config(setup_test_env=False):
-    """Test 1: Check push service configuration."""
-    print("\n" + "="*60)
-    print("TEST 1: Push Service Configuration")
-    print("="*60)
-
-    from admin_api.services.push_client import PushClient
-    from core.platform_secrets import get_push_secret, get_installation_uuid
-
-    client = PushClient()
-
-    # Check configuration
-    print("\n1.1 Checking configuration...")
-    push_secret = get_push_secret()
-    installation_uuid = get_installation_uuid()
-
-    print(f"  - Installation UUID: {installation_uuid if installation_uuid else '[NOT SET]'}")
-    print(f"  - Push Secret: {'[SET]' if push_secret else '[NOT SET]'}")
-    print(f"  - Push Service URL: {client.base_url}")
-    print(f"  - Is Configured: {client.is_configured()}")
-
-    # Setup test environment if requested
-    if setup_test_env and not installation_uuid:
-        print("\n1.2 Setting up test environment...")
-        set_test_installation_uuid()
-        # Re-check configuration
-        installation_uuid = get_installation_uuid()
-        print(f"  - Installation UUID now: {installation_uuid}")
-
-    if not client.is_configured():
-        print("\n  [WARNING] Push notifications are NOT configured!")
-        print("  Run with setup_test_env=True to set a test UUID for development.")
-        print("  Production requires proper license server registration.")
-        return False
-
-    # Health check
-    print("\n1.3 Health check...")
-    health = client.health_check()
-    print(f"  - Service Healthy: {health.get('healthy')}")
-    if health.get('error'):
-        print(f"  - Error: {health.get('error')}")
-
-    return health.get('healthy', False)
+# ---------------------------------------------------------------------------
+# Helpers / fixtures
+# ---------------------------------------------------------------------------
 
 
-def register_test_device(push_token, user_email=None):
-    """
-    Register a test device for push notifications.
-
-    Args:
-        push_token: The APNs push token from your iOS device
-        user_email: Email of staff user to associate (defaults to first superuser)
-    """
-    from admin_api.models import DeviceRegistration
-    from django.contrib.auth import get_user_model
+def _make_device(user, *, platform="ios", token=None, **prefs):
+    """Create a DeviceRegistration with sensible defaults for tests."""
     import uuid
 
-    User = get_user_model()
+    defaults = {
+        "device_id": f"dev-{uuid.uuid4().hex[:8]}",
+        "push_token": token or f"apns-token-{uuid.uuid4().hex}",
+        "platform": platform,
+        "notify_new_orders": True,
+        "notify_low_stock": True,
+        "notify_customer_messages": True,
+        "is_active": True,
+    }
+    defaults.update(prefs)
+    return DeviceRegistration.objects.create(user=user, **defaults)
 
-    # Find user
-    if user_email:
-        user = User.objects.filter(email=user_email).first()
-    else:
-        user = User.objects.filter(is_superuser=True).first()
 
-    if not user:
-        print(f"  [ERROR] No user found!")
-        return None
-
-    # Create or update device registration
-    device_id = f"test-device-{uuid.uuid4().hex[:8]}"
-
-    device, created = DeviceRegistration.objects.update_or_create(
-        push_token=push_token,
-        defaults={
-            'user': user,
-            'device_id': device_id,
-            'platform': 'ios',
-            'notify_new_orders': True,
-            'notify_low_stock': True,
-            'notify_customer_messages': True,
-            'is_active': True,
-        }
+def _push_result(*, sent=1, failed=0, results=None):
+    """Build a PushResult stand-in that _send_notification_batch expects."""
+    return PushResult(
+        success=(sent > 0 and failed == 0),
+        sent=sent,
+        failed=failed,
+        results=results if results is not None else [],
     )
 
-    action = "Created" if created else "Updated"
-    print(f"  {action} device registration:")
-    print(f"    - Device ID: {device.device_id}")
-    print(f"    - User: {user.email}")
-    print(f"    - Token: {push_token[:30]}...")
 
-    return device
+@pytest.fixture
+def staff_user():
+    return UserFactory(is_staff=True)
 
 
-def test_list_devices():
-    """Test 2: List registered devices."""
-    print("\n" + "="*60)
-    print("TEST 2: Registered Devices")
-    print("="*60)
-
-    from admin_api.models import DeviceRegistration
-
-    devices = DeviceRegistration.objects.filter(is_active=True)
-    print(f"\nActive devices: {devices.count()}")
-
-    if devices.count() == 0:
-        print("\n  [WARNING] No devices registered for push notifications!")
-        print("  Register a device via: POST /api/admin/settings/devices/register/")
-        print("  Or use: register_test_device('your-apns-token-here')")
-        return []
-
-    for device in devices:
-        print(f"\n  Device: {device.device_id[:20]}...")
-        print(f"    - User: {device.user.email}")
-        print(f"    - Platform: {device.platform}")
-        print(f"    - Token: {device.push_token[:30]}...")
-        print(f"    - Notify Orders: {device.notify_new_orders}")
-        print(f"    - Notify Low Stock: {device.notify_low_stock}")
-        print(f"    - Notify Messages: {device.notify_customer_messages}")
-
-    return list(devices)
+@pytest.fixture
+def ios_device(staff_user):
+    return _make_device(staff_user, token="apns-ios-primary")
 
 
-def test_new_order_notification(dry_run=True):
-    """Test 3: Simulate new order notification."""
-    print("\n" + "="*60)
-    print("TEST 3: New Order Notification")
-    print("="*60)
-
-    from admin_api.services.push_service import PushNotificationService
-    from orders.models import Order
-
-    # Get a recent order or create mock data
-    order = Order.objects.order_by('-created_at').first()
-
-    if not order:
-        print("\n  [WARNING] No orders found in database!")
-        return False
-
-    print(f"\n  Using order: {order.order_number}")
-    print(f"  - Status: {order.status}")
-    print(f"  - Payment Status: {order.payment_status}")
-    print(f"  - Total: {order.total_amount}")
-
-    if dry_run:
-        print("\n  [DRY RUN] Would send notification:")
-        print(f"    Title: New Order Received")
-        print(f"    Body: Order #{order.order_number} - {order.total_amount.amount} {order.total_amount.currency}")
-        print(f"    Data: {{'type': 'new_order', 'order_number': '{order.order_number}', 'order_id': {order.id}}}")
-        return True
-
-    # Actually send the notification
-    print("\n  Sending notification...")
-    sent_count = PushNotificationService.send_new_order_notification(order)
-    print(f"  Notifications sent: {sent_count}")
-
-    return sent_count > 0
-
-
-def test_customer_message_contact_form(dry_run=True):
-    """Test 4: Simulate customer message notification (contact form)."""
-    print("\n" + "="*60)
-    print("TEST 4: Customer Message Notification (Contact Form)")
-    print("="*60)
-
-    from admin_api.services.push_service import PushNotificationService
-    from admin_api.models import CustomerMessage
-
-    # Get a recent message or show what would be sent
-    message = CustomerMessage.objects.order_by('-created_at').first()
-
-    if not message:
-        print("\n  [INFO] No CustomerMessage found, showing sample notification...")
-        print("\n  [DRY RUN] Would send notification:")
-        print(f"    Title: New Customer Message")
-        print(f"    Body: From Test User: Test Subject")
-        print(f"    Data: {{'type': 'customer_message', 'source': 'contact_form', 'message_id': 1}}")
-        return True
-
-    print(f"\n  Using message ID: {message.id}")
-    print(f"  - From: {message.name} <{message.email}>")
-    print(f"  - Subject: {message.subject}")
-    print(f"  - Status: {message.status}")
-
-    if dry_run:
-        print("\n  [DRY RUN] Would send notification:")
-        print(f"    Title: New Customer Message")
-        print(f"    Body: From {message.name}: {message.subject}")
-        data = {
-            'type': 'customer_message',
-            'source': 'contact_form',
-            'message_id': message.id,
-            'sender_name': message.name,
-        }
-        print(f"    Data: {data}")
-        return True
-
-    # Actually send
-    print("\n  Sending notification...")
-    sent_count = PushNotificationService.send_customer_message_notification(message, source='contact_form')
-    print(f"  Notifications sent: {sent_count}")
-
-    return sent_count > 0
-
-
-def test_customer_message_order_note(dry_run=True):
-    """Test 5: Simulate customer message notification (order note)."""
-    print("\n" + "="*60)
-    print("TEST 5: Customer Message Notification (Order Note)")
-    print("="*60)
-
-    from admin_api.services.push_service import PushNotificationService
-    from orders.models import OrderNote
-
-    # Get a recent customer note
-    note = OrderNote.objects.filter(is_customer_note=True).order_by('-created_at').first()
-
-    if not note:
-        print("\n  [INFO] No customer OrderNote found, showing sample notification...")
-        print("\n  [DRY RUN] Would send notification:")
-        print(f"    Title: New Customer Message")
-        print(f"    Body: From Customer: Re: Order #ORD-12345")
-        print(f"    Data: {{'type': 'customer_message', 'source': 'order_note', 'order_number': 'ORD-12345'}}")
-        return True
-
-    order = note.order
-    customer_name = order.billing_name or order.shipping_name or 'Customer'
-
-    print(f"\n  Using note ID: {note.id}")
-    print(f"  - Order: {order.order_number}")
-    print(f"  - From: {customer_name}")
-    print(f"  - Note: {note.note[:50]}...")
-
-    if dry_run:
-        print("\n  [DRY RUN] Would send notification:")
-        print(f"    Title: New Customer Message")
-        print(f"    Body: From {customer_name}: Re: Order #{order.order_number}")
-        data = {
-            'type': 'customer_message',
-            'source': 'order_note',
-            'message_id': note.id,
-            'order_number': order.order_number,
-        }
-        print(f"    Data: {data}")
-        return True
-
-    # Actually send
-    print("\n  Sending notification...")
-    sent_count = PushNotificationService.send_customer_message_notification(note, source='order_note')
-    print(f"  Notifications sent: {sent_count}")
-
-    return sent_count > 0
-
-
-def test_low_stock_notification(dry_run=True):
-    """Test 6: Simulate low stock notification."""
-    print("\n" + "="*60)
-    print("TEST 6: Low Stock Notification")
-    print("="*60)
-
-    from admin_api.services.push_service import PushNotificationService
-    from catalog.models import Product
-
-    # Get a product that tracks inventory
-    product = Product.objects.filter(track_inventory=True).first()
-
-    if not product:
-        print("\n  [INFO] No inventory-tracked products, showing sample notification...")
-        print("\n  [DRY RUN] Would send notification:")
-        print(f"    Title: Low Stock Alert")
-        print(f"    Body: Sample Product has only 5 units left")
-        print(f"    Data: {{'type': 'low_stock', 'product_id': 1, 'sku': 'SKU-001', 'current_stock': 5}}")
-        return True
-
-    print(f"\n  Using product: {product.name}")
-    print(f"  - SKU: {product.sku}")
-    print(f"  - Low Stock Threshold: {product.low_stock_threshold}")
-
-    # Simulate low stock
-    current_stock = 5
-
-    if dry_run:
-        print("\n  [DRY RUN] Would send notification:")
-        print(f"    Title: Low Stock Alert")
-        print(f"    Body: {product.name} has only {current_stock} units left")
-        data = {
-            'type': 'low_stock',
-            'product_id': product.id,
-            'product_name': product.name,
-            'sku': product.sku,
-            'current_stock': current_stock,
-        }
-        print(f"    Data: {data}")
-        return True
-
-    # Actually send
-    print("\n  Sending notification...")
-    sent_count = PushNotificationService.send_low_stock_notification(product, current_stock)
-    print(f"  Notifications sent: {sent_count}")
-
-    return sent_count > 0
-
-
-def test_direct_push(token=None):
-    """Test 7: Send a direct test push notification."""
-    print("\n" + "="*60)
-    print("TEST 7: Direct Push Test")
-    print("="*60)
-
-    from admin_api.services.push_client import PushClient
-    from admin_api.models import DeviceRegistration
-
-    # Get token from argument or first registered device
-    if not token:
-        device = DeviceRegistration.objects.filter(is_active=True, platform='ios').first()
-        if not device:
-            print("\n  [ERROR] No active iOS device found!")
-            return False
-        token = device.push_token
-        print(f"\n  Using device: {device.device_id[:20]}...")
-
-    client = PushClient()
-
-    # Check sandbox mode
-    use_sandbox = getattr(settings, 'DEBUG', False)
-    print(f"  - Using Sandbox: {use_sandbox}")
-    print(f"  - Token: {token[:30]}...")
-
-    print("\n  Sending test notification...")
-
-    result = client.send_notification(
-        tokens=[token],
-        title="Test Notification",
-        body="This is a test push notification from Spwig Admin API",
-        data={
-            'type': 'test',
-            'timestamp': str(django.utils.timezone.now()),
-        },
-        sandbox=use_sandbox,
-    )
-
-    print(f"\n  Result:")
-    print(f"    - Success: {result.success}")
-    print(f"    - Sent: {result.sent}")
-    print(f"    - Failed: {result.failed}")
-    if result.error:
-        print(f"    - Error: {result.error}")
-    if result.results:
-        for r in result.results:
-            print(f"    - Token Result: {r}")
-
-    return result.success and result.sent > 0
-
-
-def run_all_tests(dry_run=True, setup_test_env=False):
+@pytest.fixture
+def mock_client():
     """
-    Run all push notification tests.
+    Patch PushClient at the point PushNotificationService imports it.
 
-    Args:
-        dry_run: If True, show what would be sent without actually sending
-        setup_test_env: If True, set test installation UUID if not configured
+    The service creates a new client via cls._get_client(); the returned
+    MagicMock is populated by each test with a PushResult return value.
     """
-    print("\n" + "="*60)
-    print("PUSH NOTIFICATION TEST SUITE")
-    print("="*60)
-    print(f"\nDry Run Mode: {dry_run}")
-    print(f"Setup Test Env: {setup_test_env}")
-    if dry_run:
-        print("(Set dry_run=False to actually send notifications)")
-
-    results = {}
-
-    # Test 1: Configuration
-    results['config'] = test_push_config(setup_test_env=setup_test_env)
-
-    # Test 2: List devices
-    devices = test_list_devices()
-    results['devices'] = len(devices) > 0
-
-    if not results['config']:
-        print("\n" + "="*60)
-        print("STOPPING: Push service not configured")
-        print("To set up test environment, run:")
-        print("  run_all_tests(setup_test_env=True)")
-        print("="*60)
-        return results
-
-    if not devices:
-        print("\n" + "="*60)
-        print("STOPPING: No devices registered")
-        print("To register a test device, run:")
-        print("  register_test_device('your-apns-push-token')")
-        print("="*60)
-        return results
-
-    # Test 3-6: Notification types (dry run by default)
-    results['new_order'] = test_new_order_notification(dry_run=dry_run)
-    results['contact_form'] = test_customer_message_contact_form(dry_run=dry_run)
-    results['order_note'] = test_customer_message_order_note(dry_run=dry_run)
-    results['low_stock'] = test_low_stock_notification(dry_run=dry_run)
-
-    # Summary
-    print("\n" + "="*60)
-    print("TEST SUMMARY")
-    print("="*60)
-    for test, passed in results.items():
-        status = "PASS" if passed else "FAIL"
-        print(f"  {test}: {status}")
-
-    all_passed = all(results.values())
-    print(f"\nOverall: {'ALL TESTS PASSED' if all_passed else 'SOME TESTS FAILED'}")
-
-    return results
+    with patch("admin_api.services.push_service.PushClient") as mock_cls:
+        instance = MagicMock()
+        # Default: single-token success
+        instance.send_notification.return_value = _push_result(
+            sent=1, failed=0, results=[{"token": "apns-ios-primary", "status": "sent"}]
+        )
+        instance.is_configured.return_value = True
+        mock_cls.return_value = instance
+        yield instance
 
 
-def send_live_test():
-    """Send actual push notifications (not dry run)."""
-    print("\n" + "!"*60)
-    print("WARNING: This will send REAL push notifications!")
-    print("!"*60)
-
-    confirm = input("\nType 'yes' to continue: ")
-    if confirm.lower() != 'yes':
-        print("Cancelled.")
-        return
-
-    run_all_tests(dry_run=False)
+# ---------------------------------------------------------------------------
+# is_configured
+# ---------------------------------------------------------------------------
 
 
-if __name__ == '__main__':
-    run_all_tests(dry_run=True)
+class TestIsConfigured:
+    def test_returns_true_when_client_is_configured(self, mock_client):
+        mock_client.is_configured.return_value = True
+        assert PushNotificationService.is_configured() is True
+
+    def test_returns_false_when_client_reports_not_configured(self, mock_client):
+        mock_client.is_configured.return_value = False
+        assert PushNotificationService.is_configured() is False
+
+    def test_returns_false_when_client_raises(self):
+        with patch(
+            "admin_api.services.push_service.PushClient",
+            side_effect=RuntimeError("boom"),
+        ):
+            assert PushNotificationService.is_configured() is False
+
+
+# ---------------------------------------------------------------------------
+# Device selection
+# ---------------------------------------------------------------------------
+
+
+class TestDeviceFiltering:
+    def test_get_devices_for_new_order_respects_preference(self, staff_user):
+        active_opted_in = _make_device(staff_user, notify_new_orders=True)
+        _make_device(UserFactory(is_staff=True), notify_new_orders=False)  # opted out
+
+        qs = DeviceRegistration.get_devices_for_notification("new_order")
+
+        assert list(qs.values_list("id", flat=True)) == [active_opted_in.id]
+
+    def test_get_devices_for_low_stock_respects_preference(self, staff_user):
+        opted_in = _make_device(staff_user, notify_low_stock=True)
+        _make_device(UserFactory(is_staff=True), notify_low_stock=False)
+
+        qs = DeviceRegistration.get_devices_for_notification("low_stock")
+
+        assert list(qs.values_list("id", flat=True)) == [opted_in.id]
+
+    def test_get_devices_excludes_inactive(self, staff_user):
+        active = _make_device(staff_user, is_active=True)
+        _make_device(UserFactory(is_staff=True), is_active=False)
+
+        qs = DeviceRegistration.get_devices_for_notification("customer_message")
+
+        assert list(qs.values_list("id", flat=True)) == [active.id]
+
+    def test_exclude_user_removes_that_users_devices(self, staff_user):
+        _make_device(staff_user)
+        other = UserFactory(is_staff=True)
+        other_device = _make_device(other)
+
+        qs = DeviceRegistration.get_devices_for_notification("new_order", exclude_user=staff_user)
+
+        assert list(qs.values_list("id", flat=True)) == [other_device.id]
+
+
+# ---------------------------------------------------------------------------
+# send_new_order_notification
+# ---------------------------------------------------------------------------
+
+
+class TestSendNewOrderNotification:
+    def test_sends_to_ios_device_and_returns_count(self, ios_device, mock_client):
+        order = OrderFactory()
+        mock_client.send_notification.return_value = _push_result(
+            sent=1, results=[{"token": ios_device.push_token, "status": "sent"}]
+        )
+
+        sent = PushNotificationService.send_new_order_notification(order)
+
+        assert sent == 1
+        assert mock_client.send_notification.called
+        call_kwargs = mock_client.send_notification.call_args.kwargs
+        assert call_kwargs["title"] == "New Order Received"
+        assert order.order_number in call_kwargs["body"]
+        assert call_kwargs["data"]["type"] == "new_order"
+        assert call_kwargs["data"]["order_number"] == order.order_number
+        assert call_kwargs["data"]["order_id"] == order.id
+        assert ios_device.push_token in call_kwargs["tokens"]
+
+    def test_no_devices_returns_zero_and_skips_network(self, mock_client):
+        order = OrderFactory()
+
+        sent = PushNotificationService.send_new_order_notification(order)
+
+        assert sent == 0
+        mock_client.send_notification.assert_not_called()
+
+    def test_opted_out_device_receives_nothing(self, staff_user, mock_client):
+        _make_device(staff_user, notify_new_orders=False)
+        order = OrderFactory()
+
+        sent = PushNotificationService.send_new_order_notification(order)
+
+        assert sent == 0
+        mock_client.send_notification.assert_not_called()
+
+    def test_android_devices_are_skipped(self, staff_user, mock_client):
+        _make_device(staff_user, platform="android")
+        order = OrderFactory()
+
+        sent = PushNotificationService.send_new_order_notification(order)
+
+        assert sent == 0
+        mock_client.send_notification.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# send_low_stock_notification
+# ---------------------------------------------------------------------------
+
+
+class TestSendLowStockNotification:
+    def test_sends_with_product_metadata(self, ios_device, mock_client):
+        product = ProductFactory()
+        mock_client.send_notification.return_value = _push_result(
+            sent=1, results=[{"token": ios_device.push_token, "status": "sent"}]
+        )
+
+        sent = PushNotificationService.send_low_stock_notification(product, 3)
+
+        assert sent == 1
+        call_kwargs = mock_client.send_notification.call_args.kwargs
+        assert call_kwargs["title"] == "Low Stock Alert"
+        assert product.name in call_kwargs["body"]
+        assert "3" in call_kwargs["body"]
+        assert call_kwargs["data"]["type"] == "low_stock"
+        assert call_kwargs["data"]["product_id"] == product.id
+        assert call_kwargs["data"]["sku"] == product.sku
+        assert call_kwargs["data"]["current_stock"] == 3
+
+    def test_opted_out_device_receives_nothing(self, staff_user, mock_client):
+        _make_device(staff_user, notify_low_stock=False)
+        product = ProductFactory()
+
+        sent = PushNotificationService.send_low_stock_notification(product, 2)
+
+        assert sent == 0
+        mock_client.send_notification.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# send_customer_message_notification
+# ---------------------------------------------------------------------------
+
+
+class TestSendCustomerMessageNotification:
+    def test_contact_form_source_uses_message_attrs(self, ios_device, mock_client):
+        message = CustomerMessageFactory(name="Jane Doe", subject="Help please")
+        mock_client.send_notification.return_value = _push_result(
+            sent=1, results=[{"token": ios_device.push_token, "status": "sent"}]
+        )
+
+        sent = PushNotificationService.send_customer_message_notification(
+            message, source="contact_form"
+        )
+
+        assert sent == 1
+        call_kwargs = mock_client.send_notification.call_args.kwargs
+        assert call_kwargs["title"] == "New Customer Message"
+        assert "Jane Doe" in call_kwargs["body"]
+        assert "Help please" in call_kwargs["body"]
+        assert call_kwargs["data"]["source"] == "contact_form"
+        assert call_kwargs["data"]["message_id"] == message.id
+        assert call_kwargs["data"]["sender_name"] == "Jane Doe"
+
+    def test_order_note_source_uses_order_metadata(self, ios_device, mock_client):
+        note = OrderNoteFactory(customer_note=True, note="Please expedite")
+        order = note.order
+        mock_client.send_notification.return_value = _push_result(
+            sent=1, results=[{"token": ios_device.push_token, "status": "sent"}]
+        )
+
+        sent = PushNotificationService.send_customer_message_notification(note, source="order_note")
+
+        assert sent == 1
+        call_kwargs = mock_client.send_notification.call_args.kwargs
+        assert call_kwargs["title"] == "New Customer Message"
+        assert order.order_number in call_kwargs["body"]
+        assert call_kwargs["data"]["source"] == "order_note"
+        assert call_kwargs["data"]["order_number"] == order.order_number
+        assert call_kwargs["data"]["order_id"] == order.id
+
+    def test_invalid_source_raises_value_error(self, ios_device, mock_client):
+        message = CustomerMessageFactory()
+
+        with pytest.raises(ValueError, match="Invalid source"):
+            PushNotificationService.send_customer_message_notification(message, source="bogus")
+
+    def test_opted_out_device_receives_nothing(self, staff_user, mock_client):
+        _make_device(staff_user, notify_customer_messages=False)
+        message = CustomerMessageFactory()
+
+        sent = PushNotificationService.send_customer_message_notification(
+            message, source="contact_form"
+        )
+
+        assert sent == 0
+        mock_client.send_notification.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# send_payment_alert_notification
+# ---------------------------------------------------------------------------
+
+
+class TestSendPaymentAlertNotification:
+    def test_alert_targets_all_active_ios_devices_regardless_of_prefs(
+        self, staff_user, mock_client
+    ):
+        # This device has ALL notification prefs disabled — payment alerts
+        # ignore preferences by design.
+        device = _make_device(
+            staff_user,
+            notify_new_orders=False,
+            notify_low_stock=False,
+            notify_customer_messages=False,
+        )
+        order = OrderFactory()
+        mock_client.send_notification.return_value = _push_result(
+            sent=1, results=[{"token": device.push_token, "status": "sent"}]
+        )
+
+        sent = PushNotificationService.send_payment_alert_notification(order, alert_type="failed")
+
+        assert sent == 1
+        call_kwargs = mock_client.send_notification.call_args.kwargs
+        assert call_kwargs["title"] == "Payment Alert"
+        assert "failed" in call_kwargs["body"].lower()
+        assert order.order_number in call_kwargs["body"]
+        assert call_kwargs["data"]["type"] == "payment_alert"
+        assert call_kwargs["data"]["alert_type"] == "failed"
+
+    def test_fraud_risk_body_contains_hint(self, ios_device, mock_client):
+        order = OrderFactory()
+        mock_client.send_notification.return_value = _push_result(
+            sent=1, results=[{"token": ios_device.push_token, "status": "sent"}]
+        )
+
+        PushNotificationService.send_payment_alert_notification(
+            order, alert_type="fraud_risk", details="score=0.92"
+        )
+
+        call_kwargs = mock_client.send_notification.call_args.kwargs
+        assert "risk" in call_kwargs["body"].lower()
+        assert "score=0.92" in call_kwargs["body"]
+
+    def test_no_devices_returns_zero(self, mock_client):
+        order = OrderFactory()
+
+        sent = PushNotificationService.send_payment_alert_notification(order, alert_type="failed")
+
+        assert sent == 0
+        mock_client.send_notification.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Invalid token cleanup
+# ---------------------------------------------------------------------------
+
+
+class TestInvalidTokenCleanup:
+    def test_invalid_tokens_are_removed_from_registrations(self, staff_user, mock_client):
+        bad = _make_device(staff_user, token="bad-token")
+        good = _make_device(UserFactory(is_staff=True), token="good-token")
+        order = OrderFactory()
+
+        mock_client.send_notification.return_value = _push_result(
+            sent=1,
+            failed=1,
+            results=[
+                {
+                    "token": "bad-token",
+                    "status": "failed",
+                    "should_remove_token": True,
+                },
+                {"token": "good-token", "status": "sent"},
+            ],
+        )
+
+        PushNotificationService.send_new_order_notification(order)
+
+        assert not DeviceRegistration.objects.filter(id=bad.id).exists()
+        assert DeviceRegistration.objects.filter(id=good.id).exists()
+
+    def test_successful_send_updates_last_notification_at(self, ios_device, mock_client):
+        order = OrderFactory()
+        mock_client.send_notification.return_value = _push_result(
+            sent=1,
+            results=[{"token": ios_device.push_token, "status": "sent"}],
+        )
+
+        assert ios_device.last_notification_at is None
+        PushNotificationService.send_new_order_notification(order)
+
+        ios_device.refresh_from_db()
+        assert ios_device.last_notification_at is not None
+        assert ios_device.failed_attempts == 0
+
+    def test_failed_send_increments_failed_attempts(self, ios_device, mock_client):
+        order = OrderFactory()
+        mock_client.send_notification.return_value = _push_result(
+            sent=0,
+            failed=1,
+            results=[{"token": ios_device.push_token, "status": "failed"}],
+        )
+
+        PushNotificationService.send_new_order_notification(order)
+
+        ios_device.refresh_from_db()
+        assert ios_device.failed_attempts == 1
+        assert ios_device.is_active is True  # not yet deactivated
+
+
+# ---------------------------------------------------------------------------
+# Model sanity
+# ---------------------------------------------------------------------------
+
+
+class TestDeviceRegistrationMethods:
+    def test_mark_notification_sent_resets_failed_attempts(self, staff_user):
+        device = _make_device(staff_user)
+        device.failed_attempts = 3
+        device.save(update_fields=["failed_attempts"])
+
+        device.mark_notification_sent()
+
+        device.refresh_from_db()
+        assert device.failed_attempts == 0
+        assert device.last_notification_at is not None
+
+    def test_mark_notification_failed_deactivates_after_five(self, staff_user):
+        device = _make_device(staff_user)
+        for _ in range(4):
+            device.mark_notification_failed()
+
+        device.refresh_from_db()
+        assert device.failed_attempts == 4
+        assert device.is_active is True
+
+        device.mark_notification_failed()
+        device.refresh_from_db()
+        assert device.failed_attempts == 5
+        assert device.is_active is False
+
+    def test_str_contains_email_and_platform(self, staff_user):
+        device = _make_device(staff_user, platform="ios")
+        rendered = str(device)
+        assert staff_user.email in rendered
+        assert "ios" in rendered
+
+
+class TestCustomerMessageFactory:
+    def test_factory_creates_saved_message(self):
+        msg = CustomerMessageFactory()
+        assert msg.pk is not None
+        assert CustomerMessage.objects.filter(pk=msg.pk).exists()

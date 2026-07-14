@@ -1,6 +1,6 @@
-from modeltranslation.translator import register, TranslationOptions
-from .models import Brand, Collection
+from modeltranslation.translator import TranslationOptions, register
 
+from .models import Brand, Collection
 
 # NOTE: Category no longer uses django-modeltranslation.
 # It uses the JSON-based translation system with TranslatableAdminMixin
@@ -10,19 +10,9 @@ from .models import Brand, Collection
 
 @register(Brand)
 class BrandTranslationOptions(TranslationOptions):
-    fields = (
-        'name',
-        'description',
-        'meta_title',
-        'meta_description'
-    )
+    fields = ("name", "description", "meta_title", "meta_description")
 
 
 @register(Collection)
 class CollectionTranslationOptions(TranslationOptions):
-    fields = (
-        'name',
-        'description',
-        'meta_title',
-        'meta_description'
-    )
+    fields = ("name", "description", "meta_title", "meta_description")

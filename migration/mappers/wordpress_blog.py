@@ -3,11 +3,12 @@ WordPress Blog Content Mappers.
 
 Maps WordPress blog data structures to Spwig blog models.
 """
+
 import logging
-from typing import Dict, Optional
-from django.utils.text import slugify
-from html import unescape
 import re
+from html import unescape
+
+from django.utils.text import slugify
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ class WordPressBlogCategoryMapper:
     }
     """
 
-    def map(self, source_data: Dict) -> Dict:
+    def map(self, source_data: dict) -> dict:
         """
         Map a WordPress category to Spwig format.
 
@@ -37,30 +38,30 @@ class WordPressBlogCategoryMapper:
         Returns:
             Dict with mapped fields
         """
-        name = self._clean_html(source_data.get('name', ''))
+        name = self._clean_html(source_data.get("name", ""))
 
         return {
-            'name': name,
-            'slug': self._generate_slug(source_data.get('slug', ''), name),
-            'description': self._clean_html(source_data.get('description', '')),
-            'parent_id': source_data.get('parent', 0),  # 0 means no parent
-            'is_active': True,
-            'source_id': str(source_data.get('id')),
-            'source_platform': 'wordpress',
+            "name": name,
+            "slug": self._generate_slug(source_data.get("slug", ""), name),
+            "description": self._clean_html(source_data.get("description", "")),
+            "parent_id": source_data.get("parent", 0),  # 0 means no parent
+            "is_active": True,
+            "source_id": str(source_data.get("id")),
+            "source_platform": "wordpress",
         }
 
     def _generate_slug(self, original_slug: str, name: str) -> str:
         """Generate a valid slug."""
         if original_slug:
             return slugify(original_slug)
-        return slugify(name) if name else 'category'
+        return slugify(name) if name else "category"
 
     def _clean_html(self, text: str) -> str:
         """Remove HTML tags and decode entities."""
         if not text:
-            return ''
+            return ""
         # Remove HTML tags
-        clean = re.sub(r'<[^>]+>', '', text)
+        clean = re.sub(r"<[^>]+>", "", text)
         # Decode HTML entities
         return unescape(clean).strip()
 
@@ -79,7 +80,7 @@ class WordPressBlogTagMapper:
     }
     """
 
-    def map(self, source_data: Dict) -> Dict:
+    def map(self, source_data: dict) -> dict:
         """
         Map a WordPress tag to Spwig format.
 
@@ -89,26 +90,26 @@ class WordPressBlogTagMapper:
         Returns:
             Dict with mapped fields
         """
-        name = self._clean_html(source_data.get('name', ''))
+        name = self._clean_html(source_data.get("name", ""))
 
         return {
-            'name': name,
-            'slug': self._generate_slug(source_data.get('slug', ''), name),
-            'source_id': str(source_data.get('id')),
-            'source_platform': 'wordpress',
+            "name": name,
+            "slug": self._generate_slug(source_data.get("slug", ""), name),
+            "source_id": str(source_data.get("id")),
+            "source_platform": "wordpress",
         }
 
     def _generate_slug(self, original_slug: str, name: str) -> str:
         """Generate a valid slug."""
         if original_slug:
             return slugify(original_slug)
-        return slugify(name) if name else 'tag'
+        return slugify(name) if name else "tag"
 
     def _clean_html(self, text: str) -> str:
         """Remove HTML tags and decode entities."""
         if not text:
-            return ''
-        clean = re.sub(r'<[^>]+>', '', text)
+            return ""
+        clean = re.sub(r"<[^>]+>", "", text)
         return unescape(clean).strip()
 
 
@@ -136,15 +137,15 @@ class WordPressBlogPostMapper:
 
     # Status mapping
     STATUS_MAP = {
-        'publish': 'published',
-        'draft': 'draft',
-        'pending': 'draft',
-        'private': 'draft',
-        'future': 'scheduled',
-        'trash': 'archived',
+        "publish": "published",
+        "draft": "draft",
+        "pending": "draft",
+        "private": "draft",
+        "future": "scheduled",
+        "trash": "archived",
     }
 
-    def map(self, source_data: Dict) -> Dict:
+    def map(self, source_data: dict) -> dict:
         """
         Map a WordPress post to Spwig format.
 
@@ -155,52 +156,52 @@ class WordPressBlogPostMapper:
             Dict with mapped fields
         """
         # Extract rendered content from nested structures
-        title = self._extract_rendered(source_data.get('title', {}))
-        content = self._extract_rendered(source_data.get('content', {}))
-        excerpt = self._extract_rendered(source_data.get('excerpt', {}))
+        title = self._extract_rendered(source_data.get("title", {}))
+        content = self._extract_rendered(source_data.get("content", {}))
+        excerpt = self._extract_rendered(source_data.get("excerpt", {}))
 
         # Clean excerpt (remove HTML for summary)
         clean_excerpt = self._clean_html(excerpt)
         if len(clean_excerpt) > 500:
-            clean_excerpt = clean_excerpt[:497] + '...'
+            clean_excerpt = clean_excerpt[:497] + "..."
 
         return {
-            'title': title,
-            'slug': self._generate_slug(source_data.get('slug', ''), title),
-            'status': self._map_status(source_data.get('status', 'draft')),
-            'simple_content': content,  # Keep HTML for CKEditor
-            'excerpt': clean_excerpt,
-            'featured_media_id': source_data.get('featured_media', 0),
-            'category_ids': source_data.get('categories', []),
-            'tag_ids': source_data.get('tags', []),
-            'author_id': source_data.get('author'),
-            'date_created': source_data.get('date'),
-            'date_created_gmt': source_data.get('date_gmt'),
-            'date_modified': source_data.get('modified'),
-            'date_modified_gmt': source_data.get('modified_gmt'),
-            'source_id': str(source_data.get('id')),
-            'source_platform': 'wordpress',
+            "title": title,
+            "slug": self._generate_slug(source_data.get("slug", ""), title),
+            "status": self._map_status(source_data.get("status", "draft")),
+            "simple_content": content,  # Keep HTML for CKEditor
+            "excerpt": clean_excerpt,
+            "featured_media_id": source_data.get("featured_media", 0),
+            "category_ids": source_data.get("categories", []),
+            "tag_ids": source_data.get("tags", []),
+            "author_id": source_data.get("author"),
+            "date_created": source_data.get("date"),
+            "date_created_gmt": source_data.get("date_gmt"),
+            "date_modified": source_data.get("modified"),
+            "date_modified_gmt": source_data.get("modified_gmt"),
+            "source_id": str(source_data.get("id")),
+            "source_platform": "wordpress",
         }
 
     def _extract_rendered(self, field_data) -> str:
         """Extract rendered content from WordPress nested structure."""
         if isinstance(field_data, dict):
-            return field_data.get('rendered', '')
-        return str(field_data) if field_data else ''
+            return field_data.get("rendered", "")
+        return str(field_data) if field_data else ""
 
     def _generate_slug(self, original_slug: str, title: str) -> str:
         """Generate a valid slug."""
         if original_slug:
             return slugify(original_slug)
-        return slugify(title) if title else 'post'
+        return slugify(title) if title else "post"
 
     def _map_status(self, wp_status: str) -> str:
         """Map WordPress status to Spwig status."""
-        return self.STATUS_MAP.get(wp_status, 'draft')
+        return self.STATUS_MAP.get(wp_status, "draft")
 
     def _clean_html(self, text: str) -> str:
         """Remove HTML tags and decode entities."""
         if not text:
-            return ''
-        clean = re.sub(r'<[^>]+>', '', text)
+            return ""
+        clean = re.sub(r"<[^>]+>", "", text)
         return unescape(clean).strip()

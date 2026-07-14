@@ -4,11 +4,13 @@ Referral Cookie Tracking Middleware.
 Automatically tracks referral link clicks and sets tracking cookies.
 Also attaches request context to user/order objects for signal handlers.
 """
+
 import logging
+
 from django.utils.deprecation import MiddlewareMixin
 
-from .services.tracking import track_click, set_ref_cookie
 from .models import ReferralProgram
+from .services.tracking import set_ref_cookie, track_click
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +37,7 @@ class ReferralTrackingMiddleware(MiddlewareMixin):
             None (allows request to continue)
         """
         # Check for referral token in query parameter
-        ref_token = request.GET.get('ref')
+        ref_token = request.GET.get("ref")
 
         if ref_token:
             try:
@@ -69,7 +71,7 @@ class ReferralTrackingMiddleware(MiddlewareMixin):
             HttpResponse with referral cookie set (if applicable)
         """
         # Check if we need to set referral cookie
-        if hasattr(request, '_ref_token_to_set'):
+        if hasattr(request, "_ref_token_to_set"):
             try:
                 # Get cookie TTL from program settings
                 program = ReferralProgram.get_program()
@@ -107,6 +109,7 @@ class RequestContextMiddleware(MiddlewareMixin):
         """
         # Store request in thread-local storage
         from threading import current_thread
+
         thread = current_thread()
         thread.request = request
 
@@ -125,9 +128,10 @@ class RequestContextMiddleware(MiddlewareMixin):
         """
         # Clean up thread-local storage
         from threading import current_thread
+
         thread = current_thread()
-        if hasattr(thread, 'request'):
-            delattr(thread, 'request')
+        if hasattr(thread, "request"):
+            delattr(thread, "request")
 
         return response
 
@@ -144,9 +148,10 @@ class RequestContextMiddleware(MiddlewareMixin):
         """
         # Clean up thread-local storage
         from threading import current_thread
+
         thread = current_thread()
-        if hasattr(thread, 'request'):
-            delattr(thread, 'request')
+        if hasattr(thread, "request"):
+            delattr(thread, "request")
 
         return None
 
@@ -168,5 +173,6 @@ def get_current_request():
             token = request.COOKIES.get('ref_token')
     """
     from threading import current_thread
+
     thread = current_thread()
-    return getattr(thread, 'request', None)
+    return getattr(thread, "request", None)

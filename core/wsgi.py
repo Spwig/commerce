@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
 import os
 
 # Force core.settings - prevent bypass via DJANGO_SETTINGS_MODULE override
-os.environ['DJANGO_SETTINGS_MODULE'] = 'core.settings'
+os.environ["DJANGO_SETTINGS_MODULE"] = "core.settings"
 
 # =============================================================================
 # Code Integrity Verification
@@ -20,9 +20,10 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'core.settings'
 #
 # Set SPWIG_SKIP_INTEGRITY_CHECK=true to disable (e.g., for development)
 # =============================================================================
-if not os.environ.get('SPWIG_SKIP_INTEGRITY_CHECK'):
+if not os.environ.get("SPWIG_SKIP_INTEGRITY_CHECK"):
     try:
         from core.integrity_check import verify_or_die
+
         # Verify integrity of compiled files against manifest
         verify_or_die(os.path.dirname(os.path.dirname(__file__)))
     except ImportError:
@@ -31,6 +32,7 @@ if not os.environ.get('SPWIG_SKIP_INTEGRITY_CHECK'):
     except Exception as e:
         # Log but don't crash for other errors (manifest may not exist in dev)
         import sys
+
         print(f"Integrity check warning: {e}", file=sys.stderr)
 
 from django.core.wsgi import get_wsgi_application

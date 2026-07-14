@@ -4,15 +4,17 @@ Inventory Intelligence Serializers for Admin API
 Serializers for inventory dashboard, velocity, movements, reorder
 suggestions, and inventory settings endpoints.
 """
-from rest_framework import serializers
 
+from rest_framework import serializers
 
 # ──────────────────────────────────────────────
 # Dashboard
 # ──────────────────────────────────────────────
 
+
 class VelocityProductSerializer(serializers.Serializer):
     """Top velocity product in dashboard."""
+
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     sku = serializers.CharField()
@@ -22,6 +24,7 @@ class VelocityProductSerializer(serializers.Serializer):
 
 class RecentStockoutSerializer(serializers.Serializer):
     """Recent stockout entry in dashboard."""
+
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     sku = serializers.CharField()
@@ -30,6 +33,7 @@ class RecentStockoutSerializer(serializers.Serializer):
 
 class InventoryDashboardSerializer(serializers.Serializer):
     """Complete inventory dashboard response."""
+
     total_products = serializers.IntegerField()
     total_variants = serializers.IntegerField()
     total_stock_value = serializers.DecimalField(max_digits=14, decimal_places=2)
@@ -47,8 +51,10 @@ class InventoryDashboardSerializer(serializers.Serializer):
 # Low Stock Products
 # ──────────────────────────────────────────────
 
+
 class StockItemBreakdownSerializer(serializers.Serializer):
     """Per-warehouse stock breakdown."""
+
     warehouse_id = serializers.IntegerField()
     warehouse_name = serializers.CharField()
     on_hand = serializers.IntegerField()
@@ -57,6 +63,7 @@ class StockItemBreakdownSerializer(serializers.Serializer):
 
 class LowStockProductDetailSerializer(serializers.Serializer):
     """Enhanced low stock product with velocity and restock data."""
+
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     sku = serializers.CharField()
@@ -64,7 +71,7 @@ class LowStockProductDetailSerializer(serializers.Serializer):
     category_name = serializers.CharField(allow_null=True)
     available_stock = serializers.IntegerField()
     low_stock_threshold = serializers.IntegerField()
-    severity = serializers.ChoiceField(choices=['critical', 'warning'])
+    severity = serializers.ChoiceField(choices=["critical", "warning"])
     velocity_7d = serializers.DecimalField(max_digits=10, decimal_places=2)
     velocity_30d = serializers.DecimalField(max_digits=10, decimal_places=2)
     days_of_supply_remaining = serializers.DecimalField(
@@ -77,6 +84,7 @@ class LowStockProductDetailSerializer(serializers.Serializer):
 
 class PaginationSerializer(serializers.Serializer):
     """Pagination metadata."""
+
     page = serializers.IntegerField()
     page_size = serializers.IntegerField()
     total_count = serializers.IntegerField()
@@ -85,6 +93,7 @@ class PaginationSerializer(serializers.Serializer):
 
 class LowStockProductListSerializer(serializers.Serializer):
     """Low stock products list response with pagination."""
+
     products = LowStockProductDetailSerializer(many=True)
     pagination = PaginationSerializer()
 
@@ -93,8 +102,10 @@ class LowStockProductListSerializer(serializers.Serializer):
 # Velocity
 # ──────────────────────────────────────────────
 
+
 class VelocityAveragesSerializer(serializers.Serializer):
     """Velocity averages for different time windows."""
+
     daily_average_7d = serializers.DecimalField(max_digits=10, decimal_places=2)
     daily_average_30d = serializers.DecimalField(max_digits=10, decimal_places=2)
     daily_average_90d = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -102,6 +113,7 @@ class VelocityAveragesSerializer(serializers.Serializer):
 
 class DailySalesPointSerializer(serializers.Serializer):
     """Single day data point for velocity chart."""
+
     date = serializers.DateField()
     units_sold = serializers.IntegerField()
     stock_level = serializers.IntegerField()
@@ -109,12 +121,13 @@ class DailySalesPointSerializer(serializers.Serializer):
 
 class VelocityResponseSerializer(serializers.Serializer):
     """Stock velocity response for a product."""
+
     product_id = serializers.IntegerField()
     variant_id = serializers.IntegerField(allow_null=True)
     current_stock = serializers.IntegerField()
     low_stock_threshold = serializers.IntegerField()
     velocity = VelocityAveragesSerializer()
-    trend = serializers.ChoiceField(choices=['increasing', 'decreasing', 'stable'])
+    trend = serializers.ChoiceField(choices=["increasing", "decreasing", "stable"])
     trend_percentage = serializers.FloatField()
     days_of_supply_remaining = serializers.DecimalField(
         max_digits=10, decimal_places=1, allow_null=True
@@ -127,8 +140,10 @@ class VelocityResponseSerializer(serializers.Serializer):
 # Stock Movements
 # ──────────────────────────────────────────────
 
+
 class StockMovementSerializer(serializers.Serializer):
     """Stock movement entry."""
+
     id = serializers.IntegerField()
     movement_type = serializers.CharField()
     movement_type_display = serializers.CharField()
@@ -147,6 +162,7 @@ class StockMovementSerializer(serializers.Serializer):
 
 class StockMovementListSerializer(serializers.Serializer):
     """Stock movements list response with pagination."""
+
     movements = StockMovementSerializer(many=True)
     pagination = PaginationSerializer()
 
@@ -155,8 +171,10 @@ class StockMovementListSerializer(serializers.Serializer):
 # Reorder Suggestions
 # ──────────────────────────────────────────────
 
+
 class ReorderSuggestionSerializer(serializers.Serializer):
     """Single reorder suggestion."""
+
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     sku = serializers.CharField()
@@ -167,17 +185,19 @@ class ReorderSuggestionSerializer(serializers.Serializer):
     days_of_supply_remaining = serializers.DecimalField(max_digits=10, decimal_places=1)
     projected_stockout_date = serializers.DateField()
     suggested_reorder_quantity = serializers.IntegerField()
-    urgency = serializers.ChoiceField(choices=['immediate', 'soon', 'upcoming'])
+    urgency = serializers.ChoiceField(choices=["immediate", "soon", "upcoming"])
 
 
 class ReorderSettingsSerializer(serializers.Serializer):
     """Reorder calculation settings included in response."""
+
     lead_days = serializers.IntegerField()
     safety_multiplier = serializers.FloatField()
 
 
 class ReorderSuggestionListSerializer(serializers.Serializer):
     """Reorder suggestions list response with pagination."""
+
     suggestions = ReorderSuggestionSerializer(many=True)
     settings = ReorderSettingsSerializer()
     pagination = PaginationSerializer()
@@ -187,18 +207,18 @@ class ReorderSuggestionListSerializer(serializers.Serializer):
 # Inventory Settings
 # ──────────────────────────────────────────────
 
+
 class InventorySettingsSerializer(serializers.Serializer):
     """Inventory settings from SiteSettings."""
+
     default_low_stock_threshold = serializers.IntegerField(
-        min_value=0,
-        help_text="Default threshold for low stock alerts"
+        min_value=0, help_text="Default threshold for low stock alerts"
     )
     low_stock_alerts_enabled = serializers.BooleanField(
         help_text="Whether low stock alert notifications are enabled"
     )
     low_stock_alert_frequency = serializers.ChoiceField(
-        choices=['realtime', 'daily', 'weekly'],
-        help_text="How often low stock alerts are sent"
+        choices=["realtime", "daily", "weekly"], help_text="How often low stock alerts are sent"
     )
     track_inventory_by_default = serializers.BooleanField(
         help_text="Default value for new products' track_inventory field"
@@ -207,36 +227,26 @@ class InventorySettingsSerializer(serializers.Serializer):
         help_text="Default value for new products' allow_backorders field"
     )
     default_reorder_lead_days = serializers.IntegerField(
-        min_value=1,
-        help_text="Default supplier lead time in days for reorder calculations"
+        min_value=1, help_text="Default supplier lead time in days for reorder calculations"
     )
     safety_stock_multiplier = serializers.FloatField(
-        min_value=0.1,
-        help_text="Safety stock multiplier for reorder quantity formula"
+        min_value=0.1, help_text="Safety stock multiplier for reorder quantity formula"
     )
     velocity_calculation_window_days = serializers.IntegerField(
-        min_value=7,
-        help_text="Number of days used for velocity calculations"
+        min_value=7, help_text="Number of days used for velocity calculations"
     )
 
 
 class InventorySettingsUpdateSerializer(serializers.Serializer):
     """Partial update serializer for inventory settings (all fields optional)."""
-    default_low_stock_threshold = serializers.IntegerField(
-        min_value=0, required=False
-    )
+
+    default_low_stock_threshold = serializers.IntegerField(min_value=0, required=False)
     low_stock_alerts_enabled = serializers.BooleanField(required=False)
     low_stock_alert_frequency = serializers.ChoiceField(
-        choices=['realtime', 'daily', 'weekly'], required=False
+        choices=["realtime", "daily", "weekly"], required=False
     )
     track_inventory_by_default = serializers.BooleanField(required=False)
     allow_backorders_by_default = serializers.BooleanField(required=False)
-    default_reorder_lead_days = serializers.IntegerField(
-        min_value=1, required=False
-    )
-    safety_stock_multiplier = serializers.FloatField(
-        min_value=0.1, required=False
-    )
-    velocity_calculation_window_days = serializers.IntegerField(
-        min_value=7, required=False
-    )
+    default_reorder_lead_days = serializers.IntegerField(min_value=1, required=False)
+    safety_stock_multiplier = serializers.FloatField(min_value=0.1, required=False)
+    velocity_calculation_window_days = serializers.IntegerField(min_value=7, required=False)

@@ -30,6 +30,7 @@ def get_email_whitelist():
     """
     try:
         from core.models import SiteSettings
+
         ss = SiteSettings.objects.first()
         if not ss:
             return set()
@@ -70,15 +71,15 @@ def validate_whitelist_entry(email_address):
     email_address = email_address.strip()
 
     # Reject wildcards and patterns
-    if '*' in email_address or '?' in email_address:
+    if "*" in email_address or "?" in email_address:
         return False, "Wildcards are not allowed. Use exact email addresses only."
 
     # Reject domain-only patterns like @domain.com
-    if email_address.startswith('@'):
+    if email_address.startswith("@"):
         return False, "Domain patterns are not allowed. Use exact email addresses only."
 
     # Basic email format check
-    if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email_address):
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_address):
         return False, "Invalid email address format."
 
     return True, None
@@ -99,8 +100,7 @@ def validate_whitelist(whitelist):
 
     if len(whitelist) > MAX_WHITELIST_SIZE:
         return False, [
-            f"Maximum {MAX_WHITELIST_SIZE} whitelisted addresses allowed "
-            f"(got {len(whitelist)})."
+            f"Maximum {MAX_WHITELIST_SIZE} whitelisted addresses allowed (got {len(whitelist)})."
         ]
 
     errors = []
@@ -130,17 +130,13 @@ def sandbox_filter_recipient(to_email):
         - Non-whitelisted -> ('log', to_email) recorded but never sent
     """
     if not is_sandbox_mode():
-        return 'send', to_email
+        return "send", to_email
 
     whitelist = get_email_whitelist()
 
     if to_email and to_email.lower() in whitelist:
-        logger.info(
-            f"[SANDBOX] Email to {to_email} — whitelisted, will deliver"
-        )
-        return 'send', to_email
+        logger.info(f"[SANDBOX] Email to {to_email} — whitelisted, will deliver")
+        return "send", to_email
     else:
-        logger.info(
-            f"[SANDBOX] Email to {to_email} — not whitelisted, logging only"
-        )
-        return 'log', to_email
+        logger.info(f"[SANDBOX] Email to {to_email} — not whitelisted, logging only")
+        return "log", to_email

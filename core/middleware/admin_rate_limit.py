@@ -6,6 +6,7 @@ the number of login attempts per IP address.
 
 Uses django-ratelimit with Redis cache backend for distributed rate limiting.
 """
+
 from django.http import HttpResponse
 
 
@@ -30,25 +31,25 @@ class AdminLoginRateLimitMiddleware:
     def __call__(self, request):
         # Only rate limit POST requests to admin login
         # GET requests are for displaying the login form
-        if request.path.endswith('/admin/login/') and request.method == 'POST':
+        if request.path.endswith("/admin/login/") and request.method == "POST":
             from django_ratelimit.core import is_ratelimited
 
             # Check if this IP has exceeded the rate limit
             ratelimited = is_ratelimited(
                 request=request,
-                group='admin_login',  # REQUIRED: provide group name
-                key='ip',  # Rate limit by IP address
-                rate='5/m',  # 5 attempts per minute
-                method='POST',  # Only POST requests
-                increment=True  # Increment the counter
+                group="admin_login",  # REQUIRED: provide group name
+                key="ip",  # Rate limit by IP address
+                rate="5/m",  # 5 attempts per minute
+                method="POST",  # Only POST requests
+                increment=True,  # Increment the counter
             )
 
             if ratelimited:
                 # Return HTTP 429 Too Many Requests
                 return HttpResponse(
-                    'Too many login attempts. Please try again in 1 minute.',
+                    "Too many login attempts. Please try again in 1 minute.",
                     status=429,
-                    content_type='text/plain'
+                    content_type="text/plain",
                 )
 
         # Continue processing the request

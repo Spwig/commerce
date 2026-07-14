@@ -3,14 +3,15 @@ Referral tracking service.
 
 Handles click tracking, cookie management, signup/order event logging.
 """
-import secrets
+
 import hashlib
+import secrets
 from datetime import timedelta
-from django.utils import timezone
-from django.http import HttpRequest, HttpResponse
 from io import BytesIO
 
-from ..models import ReferralIdentity, ReferralEvent, ReferralProgram
+from django.utils import timezone
+
+from ..models import ReferralEvent, ReferralIdentity, ReferralProgram
 
 
 def generate_token(length=12):
@@ -38,7 +39,6 @@ def generate_qr_code(identity):
     """
     try:
         import qrcode
-        from PIL import Image
     except ImportError:
         # QR code library not installed, return None
         return None
@@ -61,7 +61,7 @@ def generate_qr_code(identity):
 
     # Save to buffer
     buffer = BytesIO()
-    img.save(buffer, format='PNG')
+    img.save(buffer, format="PNG")
     buffer.seek(0)
 
     return buffer
@@ -80,31 +80,28 @@ def track_click(token, request):
     """
     try:
         # Get referral identity
-        identity = ReferralIdentity.objects.select_related('customer').get(token=token)
+        identity = ReferralIdentity.objects.select_related("customer").get(token=token)
     except ReferralIdentity.DoesNotExist:
-        return False, None, 'Invalid referral token'
+        return False, None, "Invalid referral token"
 
     # Get program
     program = ReferralProgram.get_program()
 
     if not program.is_active():
-        return False, None, 'Referral program is not active'
+        return False, None, "Referral program is not active"
 
     # Extract tracking data from request
     tracking_data = _extract_tracking_data(request)
 
     # Log click event
     ReferralEvent.log_event(
-        event_type='click',
-        program=program,
-        referrer_identity=identity,
-        **tracking_data
+        event_type="click", program=program, referrer_identity=identity, **tracking_data
     )
 
     # Increment click counter
     identity.increment_clicks()
 
-    return True, identity, 'Click tracked successfully'
+    return True, identity, "Click tracked successfully"
 
 
 def track_signup(customer, request):
@@ -122,13 +119,13 @@ def track_signup(customer, request):
     token = get_ref_token_from_cookie(request)
 
     if not token:
-        return False, None, 'No referral cookie found'
+        return False, None, "No referral cookie found"
 
     try:
         # Get referral identity
-        identity = ReferralIdentity.objects.select_related('customer').get(token=token)
+        identity = ReferralIdentity.objects.select_related("customer").get(token=token)
     except ReferralIdentity.DoesNotExist:
-        return False, None, 'Invalid referral token'
+        return False, None, "Invalid referral token"
 
     # Get program
     program = ReferralProgram.get_program()
@@ -138,17 +135,17 @@ def track_signup(customer, request):
 
     # Log signup event
     ReferralEvent.log_event(
-        event_type='signup',
+        event_type="signup",
         program=program,
         referrer_identity=identity,
         customer=customer,
-        **tracking_data
+        **tracking_data,
     )
 
     # Increment signup counter
     identity.increment_signups()
 
-    return True, identity, 'Signup tracked successfully'
+    return True, identity, "Signup tracked successfully"
 
 
 def track_order(order, request):
@@ -168,17 +165,17 @@ def track_order(order, request):
     token = get_ref_token_from_cookie(request) if request else None
 
     if not token:
-        return False, None, 'No referral cookie found'
+        return False, None, "No referral cookie found"
 
     try:
         # Get referral identity
-        identity = ReferralIdentity.objects.select_related('customer').get(token=token)
+        identity = ReferralIdentity.objects.select_related("customer").get(token=token)
     except ReferralIdentity.DoesNotExist:
-        return False, None, 'Invalid referral token'
+        return False, None, "Invalid referral token"
 
     # Check if this is referrer's own order (self-referral)
     if identity.customer == order.user:
-        return False, None, 'Self-referral not allowed'
+        return False, None, "Self-referral not allowed"
 
     # Get program
     program = ReferralProgram.get_program()
@@ -188,15 +185,15 @@ def track_order(order, request):
 
     # Log order event
     ReferralEvent.log_event(
-        event_type='order',
+        event_type="order",
         program=program,
         referrer_identity=identity,
         customer=order.user,
         order=order,
-        **tracking_data
+        **tracking_data,
     )
 
-    return True, identity, 'Order tracked successfully'
+    return True, identity, "Order tracked successfully"
 
 
 def get_ref_token_from_cookie(request):
@@ -209,7 +206,7 @@ def get_ref_token_from_cookie(request):
     Returns:
         str or None: Referral token if found
     """
-    return request.COOKIES.get('ref_token')
+    return request.COOKIES.get("ref_token")
 
 
 def set_ref_cookie(response, token, ttl_days=30):
@@ -228,12 +225,12 @@ def set_ref_cookie(response, token, ttl_days=30):
     expires = timezone.now() + timedelta(days=ttl_days)
 
     response.set_cookie(
-        key='ref_token',
+        key="ref_token",
         value=token,
         max_age=max_age,
         expires=expires,
         httponly=True,
-        samesite='Lax',
+        samesite="Lax",
         secure=False,  # Set to True in production with HTTPS
     )
 
@@ -251,7 +248,7 @@ def hash_ip_address(ip_address):
         str: Hashed IP address (first 16 chars of SHA256)
     """
     if not ip_address:
-        return ''
+        return ""
 
     return hashlib.sha256(ip_address.encode()).hexdigest()[:16]
 
@@ -285,39 +282,39 @@ def _extract_tracking_data(request):
     ip_address = _get_client_ip(request)
 
     # Get user agent
-    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    user_agent = request.META.get("HTTP_USER_AGENT", "")
 
     # Generate device fingerprint
     device_fingerprint = hash_device_fingerprint(user_agent, ip_address)
 
     # Get referrer URL
-    referrer_url = request.META.get('HTTP_REFERER', '')
+    referrer_url = request.META.get("HTTP_REFERER", "")
 
     # Get landing URL
     landing_url = request.build_absolute_uri()
 
     # Extract UTM parameters
     utm_params = {
-        'utm_source': request.GET.get('utm_source', ''),
-        'utm_medium': request.GET.get('utm_medium', ''),
-        'utm_campaign': request.GET.get('utm_campaign', ''),
-        'utm_term': request.GET.get('utm_term', ''),
-        'utm_content': request.GET.get('utm_content', ''),
+        "utm_source": request.GET.get("utm_source", ""),
+        "utm_medium": request.GET.get("utm_medium", ""),
+        "utm_campaign": request.GET.get("utm_campaign", ""),
+        "utm_term": request.GET.get("utm_term", ""),
+        "utm_content": request.GET.get("utm_content", ""),
     }
 
     # Remove empty UTM params
     utm_params = {k: v for k, v in utm_params.items() if v}
 
     return {
-        'ip_address': hash_ip_address(ip_address),  # Store hashed IP for privacy
-        'user_agent': user_agent,
-        'device_fingerprint': device_fingerprint,
-        'referrer_url': referrer_url,
-        'landing_url': landing_url,
-        'metadata': {
-            'utm': utm_params,
-            'browser': _parse_user_agent(user_agent),
-        }
+        "ip_address": hash_ip_address(ip_address),  # Store hashed IP for privacy
+        "user_agent": user_agent,
+        "device_fingerprint": device_fingerprint,
+        "referrer_url": referrer_url,
+        "landing_url": landing_url,
+        "metadata": {
+            "utm": utm_params,
+            "browser": _parse_user_agent(user_agent),
+        },
     }
 
 
@@ -331,11 +328,8 @@ def _get_client_ip(request):
     Returns:
         str: Client IP address
     """
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    ip = x_forwarded_for.split(",")[0] if x_forwarded_for else request.META.get("REMOTE_ADDR")
     return ip
 
 
@@ -351,9 +345,9 @@ def _parse_user_agent(user_agent):
     """
     # Basic user agent parsing (can be enhanced with user-agents library)
     browser_info = {
-        'is_mobile': 'Mobile' in user_agent or 'Android' in user_agent,
-        'is_tablet': 'Tablet' in user_agent or 'iPad' in user_agent,
-        'is_desktop': 'Windows' in user_agent or 'Macintosh' in user_agent or 'Linux' in user_agent,
+        "is_mobile": "Mobile" in user_agent or "Android" in user_agent,
+        "is_tablet": "Tablet" in user_agent or "iPad" in user_agent,
+        "is_desktop": "Windows" in user_agent or "Macintosh" in user_agent or "Linux" in user_agent,
     }
 
     return browser_info

@@ -39,28 +39,30 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
 
     # Always allowed regardless of license state
     ALWAYS_ALLOWED = (
-        '/static/', '/media/', '/health/', '/license/',
-        '/activate/',
-        '/__debug__/', '/api/sandbox/tamper-report/',
-        '/i18n/',
+        "/static/",
+        "/media/",
+        "/health/",
+        "/license/",
+        "/activate/",
+        "/__debug__/",
+        "/api/sandbox/tamper-report/",
+        "/i18n/",
     )
 
     # Admin paths allowed during full lockout
     ADMIN_ALLOWED_LOCKOUT = (
-        '/admin/login/',
-        '/admin/logout/',
-        '/admin/core/licensestatus/',
-        '/admin/jsi18n/',
-        '/admin/password_change/',
+        "/admin/login/",
+        "/admin/logout/",
+        "/admin/core/licensestatus/",
+        "/admin/jsi18n/",
+        "/admin/password_change/",
     )
 
     # Webhook paths allowed even during lockout (prevent breaking integrations)
-    WEBHOOK_PATHS = (
-        '/webhooks/',
-    )
+    WEBHOOK_PATHS = ("/webhooks/",)
 
     # Cache key for trial auto-convert attempt (prevent repeated calls)
-    TRIAL_CONVERT_CACHE_KEY = 'trial_auto_convert_attempted'
+    TRIAL_CONVERT_CACHE_KEY = "trial_auto_convert_attempted"
     TRIAL_CONVERT_CACHE_TTL = 3600  # Try once per hour
 
     def process_request(self, request):
@@ -100,8 +102,8 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
         license_data = license_manager.get_license_data()
         if not license_data:
             return False
-        license_info = license_data.get('license', {})
-        return license_info.get('license_type') == 'trial'
+        license_info = license_data.get("license", {})
+        return license_info.get("license_type") == "trial"
 
     def _attempt_trial_to_dev_conversion(self, license_manager):
         """
@@ -117,30 +119,31 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
 
         try:
             from core.license_convert import attempt_trial_to_dev_conversion
+
             attempt_trial_to_dev_conversion()
         except Exception as e:
             logger.warning(f"Trial-to-dev conversion attempt failed: {e}")
 
     def process_template_response(self, request, response):
         """Add license info to template context for admin pages."""
-        if hasattr(response, 'context_data') and response.context_data is not None:
+        if hasattr(response, "context_data") and response.context_data is not None:
             license_manager = get_license_manager()
-            response.context_data['license_info'] = license_manager.get_license_info()
-            response.context_data['is_licensed'] = license_manager.is_valid()
-            response.context_data['trial_mode'] = not license_manager.is_valid()
-            response.context_data['maintenance_status'] = license_manager.get_maintenance_status()
+            response.context_data["license_info"] = license_manager.get_license_info()
+            response.context_data["is_licensed"] = license_manager.is_valid()
+            response.context_data["trial_mode"] = not license_manager.is_valid()
+            response.context_data["maintenance_status"] = license_manager.get_maintenance_status()
 
         return response
 
     def _strip_language_prefix(self, path):
         """Strip /en/, /de/ etc. from path."""
-        if len(path) > 3 and path[3] == '/' and path[1:3].isalpha():
+        if len(path) > 3 and path[3] == "/" and path[1:3].isalpha():
             return path[3:]
         # Also handle longer codes like /zh-hans/
-        if len(path) > 4 and path[0] == '/':
-            parts = path.split('/', 2)
+        if len(path) > 4 and path[0] == "/":
+            parts = path.split("/", 2)
             if len(parts) >= 3 and 2 <= len(parts[1]) <= 7:
-                candidate = '/' + parts[2] if parts[2] else '/'
+                candidate = "/" + parts[2] if parts[2] else "/"
                 return candidate
         return path
 
@@ -153,10 +156,7 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
 
     def _is_admin_allowed_lockout(self, stripped):
         """Check if admin path is allowed during lockout."""
-        for allowed in self.ADMIN_ALLOWED_LOCKOUT:
-            if stripped.startswith(allowed):
-                return True
-        return False
+        return any(stripped.startswith(allowed) for allowed in self.ADMIN_ALLOWED_LOCKOUT)
 
     def _enforce_lockout(self, request, path, stripped):
         """Full lockout: block almost everything."""
@@ -166,11 +166,11 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
             if path.startswith(webhook) or stripped.startswith(webhook):
                 return None
 
-        is_admin = '/admin/' in stripped
+        is_admin = "/admin/" in stripped
 
         if is_admin:
             return self._lockout_admin(request, stripped)
-        elif stripped.startswith('/api/'):
+        elif stripped.startswith("/api/"):
             return self._lockout_api(request)
         else:
             return self._lockout_storefront(request)
@@ -185,22 +185,25 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
             try:
                 messages.error(
                     request,
-                    _('Your license has expired. Please activate or renew your license to continue using the platform.')
+                    _(
+                        "Your license has expired. Please activate or renew your license to continue using the platform."
+                    ),
                 )
             except Exception:
                 pass  # MessageMiddleware may not have processed yet
 
         from django.urls import reverse
-        license_url = reverse('admin:core_licensestatus_changelist')
+
+        license_url = reverse("admin:core_licensestatus_changelist")
         return redirect(license_url)
 
     def _lockout_api(self, request):
         """Handle API lockout: return 503 JSON."""
         return JsonResponse(
             {
-                'error': 'license_required',
-                'message': 'Platform license has expired. Contact the store administrator.',
-                'code': 'LICENSE_EXPIRED',
+                "error": "license_required",
+                "message": "Platform license has expired. Contact the store administrator.",
+                "code": "LICENSE_EXPIRED",
             },
             status=503,
         )
@@ -209,8 +212,8 @@ class LicenseEnforcementMiddleware(MiddlewareMixin):
         """Handle storefront lockout: show 503 page."""
         response = render(
             request,
-            'core/license_expired.html',
+            "core/license_expired.html",
             status=503,
         )
-        response['Retry-After'] = '3600'
+        response["Retry-After"] = "3600"
         return response

@@ -1,11 +1,12 @@
 """
 Admin AJAX views for SMS System management.
 """
-from django.http import JsonResponse
-from django.views.decorators.http import require_GET
+
 from django.contrib.admin.views.decorators import staff_member_required
-from django.template.loader import render_to_string
 from django.db.models import Q
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.views.decorators.http import require_GET
 
 from .models import SMSOutbox
 
@@ -18,27 +19,27 @@ def filter_sms_outbox(request):
     Returns rendered HTML for message cards.
     """
     # Verify AJAX request
-    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
-        return JsonResponse({'error': 'Invalid request'}, status=400)
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        return JsonResponse({"error": "Invalid request"}, status=400)
 
-    queryset = SMSOutbox.objects.select_related('account', 'template').all()
+    queryset = SMSOutbox.objects.select_related("account", "template").all()
 
     # Search filter (phone, message, provider_message_id)
-    search = request.GET.get('search', '').strip()
+    search = request.GET.get("search", "").strip()
     if search:
         queryset = queryset.filter(
-            Q(phone__icontains=search) |
-            Q(message__icontains=search) |
-            Q(provider_message_id__icontains=search)
+            Q(phone__icontains=search)
+            | Q(message__icontains=search)
+            | Q(provider_message_id__icontains=search)
         )
 
     # Status filter
-    status = request.GET.get('status', '').strip()
+    status = request.GET.get("status", "").strip()
     if status:
         queryset = queryset.filter(status=status)
 
     # Message type filter
-    message_type = request.GET.get('message_type', '').strip()
+    message_type = request.GET.get("message_type", "").strip()
     if message_type:
         queryset = queryset.filter(message_type=message_type)
 
@@ -46,15 +47,15 @@ def filter_sms_outbox(request):
     total_count = queryset.count()
 
     # Order by most recent first, limit to 100 for performance
-    items = queryset.order_by('-created_at')[:100]
+    items = queryset.order_by("-created_at")[:100]
 
     html = render_to_string(
-        'admin/sms_system/partials/smsoutbox_cards.html',
-        {'items': items},
-        request=request
+        "admin/sms_system/partials/smsoutbox_cards.html", {"items": items}, request=request
     )
 
-    return JsonResponse({
-        'html': html,
-        'count': total_count,
-    })
+    return JsonResponse(
+        {
+            "html": html,
+            "count": total_count,
+        }
+    )

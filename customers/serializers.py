@@ -1,13 +1,15 @@
 """
 Serializers for Customer-Facing APIs
 """
+
 from rest_framework import serializers
-from django.utils.translation import gettext_lazy as _
+
 from .models import CustomerMetrics, CustomerSegment
 
 
 class CustomerDashboardSerializer(serializers.Serializer):
     """Serializer for customer dashboard summary"""
+
     # Customer Info
     name = serializers.CharField(read_only=True)
     email = serializers.EmailField(read_only=True)
@@ -38,6 +40,7 @@ class CustomerDashboardSerializer(serializers.Serializer):
 
 class CustomerStatsSerializer(serializers.Serializer):
     """Serializer for detailed customer statistics"""
+
     # Order Statistics
     total_orders = serializers.IntegerField(read_only=True)
     completed_orders = serializers.IntegerField(read_only=True)
@@ -67,9 +70,12 @@ class CustomerStatsSerializer(serializers.Serializer):
 
 class CustomerInsightsSerializer(serializers.Serializer):
     """Serializer for customer spending insights and trends"""
+
     # Spending Overview
     total_lifetime_spent = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    average_monthly_spend = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    average_monthly_spend = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True
+    )
     highest_month_spend = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     lowest_month_spend = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
@@ -98,38 +104,37 @@ class CustomerInsightsSerializer(serializers.Serializer):
 
 class CustomerRecommendationSerializer(serializers.Serializer):
     """Serializer for product recommendations"""
+
     product_id = serializers.IntegerField(read_only=True)
     product_name = serializers.CharField(read_only=True)
     product_slug = serializers.CharField(read_only=True)
     product_image = serializers.CharField(read_only=True, allow_null=True)
     price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    discount_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True, allow_null=True)
-    reason = serializers.CharField(read_only=True)  # 'frequently_bought', 'similar_to_purchased', 'trending', etc.
+    discount_price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True, allow_null=True
+    )
+    reason = serializers.CharField(
+        read_only=True
+    )  # 'frequently_bought', 'similar_to_purchased', 'trending', etc.
     confidence_score = serializers.FloatField(read_only=True)
 
 
 class CustomerRecommendationsSerializer(serializers.Serializer):
     """Serializer for all customer recommendations"""
+
     based_on_history = serializers.ListField(
-        child=CustomerRecommendationSerializer(),
-        read_only=True
+        child=CustomerRecommendationSerializer(), read_only=True
     )
     trending_in_categories = serializers.ListField(
-        child=CustomerRecommendationSerializer(),
-        read_only=True
+        child=CustomerRecommendationSerializer(), read_only=True
     )
-    back_in_stock = serializers.ListField(
-        child=CustomerRecommendationSerializer(),
-        read_only=True
-    )
-    on_sale = serializers.ListField(
-        child=CustomerRecommendationSerializer(),
-        read_only=True
-    )
+    back_in_stock = serializers.ListField(child=CustomerRecommendationSerializer(), read_only=True)
+    on_sale = serializers.ListField(child=CustomerRecommendationSerializer(), read_only=True)
 
 
 class CustomerLifetimeValueSerializer(serializers.Serializer):
     """Serializer for customer lifetime value metrics"""
+
     # Current Value
     total_revenue = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     total_orders = serializers.IntegerField(read_only=True)
@@ -156,6 +161,7 @@ class CustomerLifetimeValueSerializer(serializers.Serializer):
 
 class CustomerLoyaltyStatusSerializer(serializers.Serializer):
     """Serializer for customer loyalty status and benefits"""
+
     # Current Status
     segment = serializers.CharField(read_only=True)
     segment_display = serializers.CharField(read_only=True)
@@ -182,10 +188,13 @@ class CustomerLoyaltyStatusSerializer(serializers.Serializer):
 
 class CustomerSavingsSerializer(serializers.Serializer):
     """Serializer for customer savings history"""
+
     # Total Savings
     total_saved = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     total_orders_with_savings = serializers.IntegerField(read_only=True)
-    average_savings_per_order = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    average_savings_per_order = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True
+    )
 
     # Savings Breakdown
     voucher_savings = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
@@ -202,6 +211,7 @@ class CustomerSavingsSerializer(serializers.Serializer):
 
 class CustomerFavoriteProductSerializer(serializers.Serializer):
     """Serializer for favorite product data"""
+
     product_id = serializers.IntegerField(read_only=True)
     product_name = serializers.CharField(read_only=True)
     product_slug = serializers.CharField(read_only=True)
@@ -215,10 +225,10 @@ class CustomerFavoriteProductSerializer(serializers.Serializer):
 
 class CustomerFavoritesSerializer(serializers.Serializer):
     """Serializer for customer favorites"""
+
     # Most Purchased Products
     most_purchased = serializers.ListField(
-        child=CustomerFavoriteProductSerializer(),
-        read_only=True
+        child=CustomerFavoriteProductSerializer(), read_only=True
     )
 
     # Favorite Categories
@@ -229,8 +239,7 @@ class CustomerFavoritesSerializer(serializers.Serializer):
 
     # Recently Purchased
     recently_purchased = serializers.ListField(
-        child=CustomerFavoriteProductSerializer(),
-        read_only=True
+        child=CustomerFavoriteProductSerializer(), read_only=True
     )
 
     # Wishlist Summary
@@ -244,43 +253,70 @@ class CustomerMetricsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerMetrics
         fields = [
-            'user', 'total_orders', 'completed_orders', 'cancelled_orders',
-            'total_spent', 'average_order_value', 'lifetime_value',
-            'total_items_purchased', 'unique_products_purchased',
-            'first_order_date', 'last_order_date', 'days_since_last_order',
-            'average_days_between_orders', 'total_saved', 'favorite_categories',
-            'favorite_brands', 'wishlist_items_count', 'cart_abandonment_rate',
-            'return_rate', 'review_count', 'last_calculated'
+            "user",
+            "total_orders",
+            "completed_orders",
+            "cancelled_orders",
+            "total_spent",
+            "average_order_value",
+            "lifetime_value",
+            "total_items_purchased",
+            "unique_products_purchased",
+            "first_order_date",
+            "last_order_date",
+            "days_since_last_order",
+            "average_days_between_orders",
+            "total_saved",
+            "favorite_categories",
+            "favorite_brands",
+            "wishlist_items_count",
+            "cart_abandonment_rate",
+            "return_rate",
+            "review_count",
+            "last_calculated",
         ]
-        read_only_fields = ['user', 'last_calculated']
+        read_only_fields = ["user", "last_calculated"]
 
 
 class CustomerSegmentSerializer(serializers.ModelSerializer):
     """Serializer for CustomerSegment model"""
-    segment_type_display = serializers.CharField(source='get_segment_type_display', read_only=True)
+
+    segment_type_display = serializers.CharField(source="get_segment_type_display", read_only=True)
 
     class Meta:
         model = CustomerSegment
         fields = [
-            'id', 'name', 'segment_type', 'segment_type_display',
-            'description', 'color', 'icon', 'is_active',
-            'min_orders', 'min_total_spent', 'min_lifetime_value',
-            'max_days_since_order', 'priority', 'created_at'
+            "id",
+            "name",
+            "segment_type",
+            "segment_type_display",
+            "description",
+            "color",
+            "icon",
+            "is_active",
+            "min_orders",
+            "min_total_spent",
+            "min_lifetime_value",
+            "max_days_since_order",
+            "priority",
+            "created_at",
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ["id", "created_at"]
 
 
 # ============================================================================
 # Digital Products Serializers
 # ============================================================================
 
+
 class DigitalAssetSerializer(serializers.Serializer):
     """Serializer for customer digital assets"""
+
     id = serializers.IntegerField(read_only=True)
-    product_name = serializers.CharField(source='product.name', read_only=True)
-    product_slug = serializers.CharField(source='product.slug', read_only=True)
+    product_name = serializers.CharField(source="product.name", read_only=True)
+    product_slug = serializers.CharField(source="product.slug", read_only=True)
     filename = serializers.CharField(read_only=True)
-    file_size = serializers.CharField(source='get_file_size_display', read_only=True)
+    file_size = serializers.CharField(source="get_file_size_display", read_only=True)
     file_type = serializers.CharField(read_only=True)
     version = serializers.CharField(read_only=True)
     changelog = serializers.CharField(read_only=True)
@@ -297,9 +333,10 @@ class DigitalAssetSerializer(serializers.Serializer):
 
 class DigitalDownloadSerializer(serializers.Serializer):
     """Serializer for download history"""
+
     id = serializers.IntegerField(read_only=True)
-    asset_filename = serializers.CharField(source='digital_asset.filename', read_only=True)
-    product_name = serializers.CharField(source='digital_asset.product.name', read_only=True)
+    asset_filename = serializers.CharField(source="digital_asset.filename", read_only=True)
+    product_name = serializers.CharField(source="digital_asset.product.name", read_only=True)
     file_version = serializers.CharField(read_only=True)
     downloaded_at = serializers.DateTimeField(read_only=True)
     status = serializers.CharField(read_only=True)
@@ -308,9 +345,10 @@ class DigitalDownloadSerializer(serializers.Serializer):
 
 class LicenseKeySerializer(serializers.Serializer):
     """Serializer for software license keys"""
+
     id = serializers.IntegerField(read_only=True)
-    product_name = serializers.CharField(source='digital_asset.product.name', read_only=True)
-    product_version = serializers.CharField(source='digital_asset.version', read_only=True)
+    product_name = serializers.CharField(source="digital_asset.product.name", read_only=True)
+    product_version = serializers.CharField(source="digital_asset.version", read_only=True)
     key = serializers.CharField(read_only=True)
     key_type = serializers.CharField(read_only=True)
 
@@ -334,6 +372,7 @@ class LicenseKeySerializer(serializers.Serializer):
 
 class LicenseActivationSerializer(serializers.Serializer):
     """Serializer for license activations"""
+
     id = serializers.IntegerField(read_only=True)
     device_identifier = serializers.CharField(read_only=True)
     device_name = serializers.CharField(read_only=True)
@@ -348,10 +387,11 @@ class LicenseActivationSerializer(serializers.Serializer):
 
 class CustomerDigitalProductSerializer(serializers.Serializer):
     """Serializer for customer's purchased digital product"""
-    order_number = serializers.CharField(source='order.order_number', read_only=True)
-    order_date = serializers.DateTimeField(source='order.created_at', read_only=True)
-    product_name = serializers.CharField(source='product.name', read_only=True)
-    product_slug = serializers.CharField(source='product.slug', read_only=True)
+
+    order_number = serializers.CharField(source="order.order_number", read_only=True)
+    order_date = serializers.DateTimeField(source="order.created_at", read_only=True)
+    product_name = serializers.CharField(source="product.name", read_only=True)
+    product_slug = serializers.CharField(source="product.slug", read_only=True)
 
     # Digital assets for this purchase
     digital_assets = DigitalAssetSerializer(many=True, read_only=True)
@@ -365,6 +405,7 @@ class CustomerDigitalProductSerializer(serializers.Serializer):
 
 class DownloadLinkSerializer(serializers.Serializer):
     """Serializer for download link response"""
+
     download_url = serializers.URLField(read_only=True)
     expires_in_seconds = serializers.IntegerField(read_only=True)
     filename = serializers.CharField(read_only=True)
@@ -374,6 +415,7 @@ class DownloadLinkSerializer(serializers.Serializer):
 
 class LicenseActivationRequestSerializer(serializers.Serializer):
     """Serializer for license activation requests"""
+
     device_identifier = serializers.CharField(required=True, max_length=255)
     device_name = serializers.CharField(required=False, allow_blank=True, max_length=255)
     device_info = serializers.JSONField(required=False, default=dict)

@@ -6,20 +6,21 @@
  * Auto-submits the filter form when filter controls change.
  */
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    function initSearchFilters() {
-        var form = document.getElementById('search-filters-form');
-        if (!form) return;
+  function initSearchFilters() {
+    const form = document.getElementById('search-filters-form');
+    if (!form) return;
 
-        form.querySelectorAll('input[type="radio"], input[type="checkbox"], select').forEach(function(input) {
-            input.addEventListener('change', function() {
-                form.submit();
-            });
+    form
+      .querySelectorAll('input[type="radio"], input[type="checkbox"], select')
+      .forEach(function (input) {
+        input.addEventListener('change', function () {
+          form.submit();
         });
-    }
+      });
+  }
 
-    document.addEventListener('DOMContentLoaded', initSearchFilters);
-
+  document.addEventListener('DOMContentLoaded', initSearchFilters);
 })();

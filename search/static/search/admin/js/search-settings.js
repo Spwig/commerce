@@ -6,30 +6,29 @@
  * Handles slider synchronization for relevance weight fields.
  */
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    function initSearchSettings() {
-        // Slider synchronization
-        document.querySelectorAll('input[type="range"]').forEach(function(slider) {
-            var targetId = slider.dataset.target;
-            var targetInput = document.getElementById(targetId);
-            var valueDisplay = slider.parentNode.querySelector('.slider-value');
+  function initSearchSettings() {
+    // Slider synchronization
+    document.querySelectorAll('input[type="range"]').forEach(function (slider) {
+      const targetId = slider.dataset.target;
+      const targetInput = document.getElementById(targetId);
+      const valueDisplay = slider.parentNode.querySelector('.slider-value');
 
-            if (!targetInput || !valueDisplay) return;
+      if (!targetInput || !valueDisplay) return;
 
-            slider.addEventListener('input', function() {
-                targetInput.value = this.value;
-                valueDisplay.textContent = this.value;
-            });
+      slider.addEventListener('input', function () {
+        targetInput.value = this.value;
+        valueDisplay.textContent = this.value;
+      });
 
-            targetInput.addEventListener('input', function() {
-                slider.value = this.value;
-                valueDisplay.textContent = this.value;
-            });
-        });
-    }
+      targetInput.addEventListener('input', function () {
+        slider.value = this.value;
+        valueDisplay.textContent = this.value;
+      });
+    });
+  }
 
-    document.addEventListener('DOMContentLoaded', initSearchSettings);
-
+  document.addEventListener('DOMContentLoaded', initSearchSettings);
 })();

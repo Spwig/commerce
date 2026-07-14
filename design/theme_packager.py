@@ -5,18 +5,17 @@ Packages themes with bundled components into distributable ZIP files.
 Follows the same pattern as existing provider packaging (exchange_rates, shipping, etc.)
 """
 
+import hashlib
 import json
 import logging
-import hashlib
-import zipfile
 import shutil
+import zipfile
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-from datetime import datetime
+from typing import Any
 
 try:
     import jsonschema
-    from jsonschema import validate, ValidationError, SchemaError
+    from jsonschema import SchemaError, ValidationError, validate
 except ImportError:
     jsonschema = None
     validate = None
@@ -25,12 +24,12 @@ except ImportError:
 
 from design.component_schema_validator import ComponentSchemaValidator
 
-
 logger = logging.getLogger(__name__)
 
 
 class ThemePackagingError(Exception):
     """Raised when theme packaging fails."""
+
     pass
 
 
@@ -45,7 +44,7 @@ class ThemePackager:
     """
 
     REQUIRED_FILES = [
-        'manifest.json',
+        "manifest.json",
     ]
 
     def __init__(self, theme_dir: Path):
@@ -57,16 +56,16 @@ class ThemePackager:
         """
         self.theme_dir = Path(theme_dir)
         self.manifest = None
-        self.errors: List[str] = []
-        self.warnings: List[str] = []
+        self.errors: list[str] = []
+        self.warnings: list[str] = []
         self.component_validator = ComponentSchemaValidator()
 
         # Load theme manifest schema
-        schema_path = Path(__file__).parent / 'theme_manifest_schema.json'
-        with open(schema_path, 'r', encoding='utf-8') as f:
+        schema_path = Path(__file__).parent / "theme_manifest_schema.json"
+        with open(schema_path, encoding="utf-8") as f:
             self.theme_schema = json.load(f)
 
-    def validate(self) -> Tuple[bool, List[str], List[str]]:
+    def validate(self) -> tuple[bool, list[str], list[str]]:
         """
         Validate complete theme package.
 
@@ -86,7 +85,7 @@ class ThemePackager:
             return False, self.errors, self.warnings
 
         # 2. Check required files
-        manifest_path = self.theme_dir / 'manifest.json'
+        manifest_path = self.theme_dir / "manifest.json"
         if not manifest_path.exists():
             self.errors.append("Required file missing: manifest.json")
             return False, self.errors, self.warnings
@@ -102,33 +101,29 @@ class ThemePackager:
             return False, self.errors, self.warnings
 
         # 4. Validate bundled components (if any)
-        if 'bundled_components' in self.manifest:
+        if "bundled_components" in self.manifest:
             if not self._validate_bundled_components():
                 return False, self.errors, self.warnings
 
         # 5. Validate page schemas (if declared)
-        if 'page_schemas' in self.manifest:
-            if not self._validate_page_schemas():
-                return False, self.errors, self.warnings
+        if "page_schemas" in self.manifest and not self._validate_page_schemas():
+            return False, self.errors, self.warnings
 
         # 6. Validate design tokens (if declared)
-        if 'design_tokens' in self.manifest:
-            if not self._validate_design_tokens():
-                return False, self.errors, self.warnings
+        if "design_tokens" in self.manifest and not self._validate_design_tokens():
+            return False, self.errors, self.warnings
 
         # 7. Validate preview image (if declared)
-        if 'preview_image' in self.manifest:
-            if not self._validate_preview_image():
-                return False, self.errors, self.warnings
+        if "preview_image" in self.manifest and not self._validate_preview_image():
+            return False, self.errors, self.warnings
 
         # 8. Validate screenshots (if declared)
-        if 'screenshots' in self.manifest:
-            if not self._validate_screenshots():
-                return False, self.errors, self.warnings
+        if "screenshots" in self.manifest and not self._validate_screenshots():
+            return False, self.errors, self.warnings
 
         return len(self.errors) == 0, self.errors, self.warnings
 
-    def package(self, output_path: Path) -> Dict[str, Any]:
+    def package(self, output_path: Path) -> dict[str, Any]:
         """
         Create ZIP package from theme directory.
 
@@ -147,9 +142,7 @@ class ThemePackager:
         if self.manifest is None:
             is_valid, errors, warnings = self.validate()
             if not is_valid:
-                raise ThemePackagingError(
-                    f"Theme validation failed: {'; '.join(errors)}"
-                )
+                raise ThemePackagingError(f"Theme validation failed: {'; '.join(errors)}")
 
         # Create temporary build directory
         build_dir = output_path.parent / f"build_{self.manifest['name']}"
@@ -177,22 +170,22 @@ class ThemePackager:
             package_checksum = self._calculate_file_checksum(output_path)
 
             # Create checksum file
-            checksum_path = Path(str(output_path) + '.sha256')
-            with open(checksum_path, 'w') as f:
+            checksum_path = Path(str(output_path) + ".sha256")
+            with open(checksum_path, "w") as f:
                 f.write(f"{package_checksum}  {output_path.name}\n")
 
             # Return package info
             package_info = {
-                'theme_name': self.manifest['name'],
-                'version': self.manifest['version'],
-                'package_file': str(output_path),
-                'checksum_file': str(checksum_path),
-                'package_size': output_path.stat().st_size,
-                'package_checksum': package_checksum,
-                'content_checksum': metadata['checksum'],
-                'file_count': metadata['file_count'],
-                'total_size': metadata['total_size'],
-                'bundled_components': len(self.manifest.get('bundled_components', [])),
+                "theme_name": self.manifest["name"],
+                "version": self.manifest["version"],
+                "package_file": str(output_path),
+                "checksum_file": str(checksum_path),
+                "package_size": output_path.stat().st_size,
+                "package_checksum": package_checksum,
+                "content_checksum": metadata["checksum"],
+                "file_count": metadata["file_count"],
+                "total_size": metadata["total_size"],
+                "bundled_components": len(self.manifest.get("bundled_components", [])),
             }
 
             logger.info(
@@ -206,10 +199,10 @@ class ThemePackager:
             if build_dir.exists():
                 shutil.rmtree(build_dir)
 
-    def _load_manifest(self, manifest_path: Path) -> Dict[str, Any]:
+    def _load_manifest(self, manifest_path: Path) -> dict[str, Any]:
         """Load and parse manifest.json."""
         try:
-            with open(manifest_path, 'r', encoding='utf-8') as f:
+            with open(manifest_path, encoding="utf-8") as f:
                 manifest = json.load(f)
             return manifest
 
@@ -219,9 +212,7 @@ class ThemePackager:
     def _validate_manifest_schema(self) -> bool:
         """Validate manifest against JSON schema."""
         if jsonschema is None:
-            logger.warning(
-                "jsonschema library not installed - skipping manifest schema validation"
-            )
+            logger.warning("jsonschema library not installed - skipping manifest schema validation")
             return True
 
         try:
@@ -240,13 +231,11 @@ class ThemePackager:
         """Validate all bundled components."""
         all_valid = True
 
-        for component_ref in self.manifest['bundled_components']:
-            component_path = self.theme_dir / component_ref['path']
+        for component_ref in self.manifest["bundled_components"]:
+            component_path = self.theme_dir / component_ref["path"]
 
             if not component_path.exists():
-                self.errors.append(
-                    f"Bundled component not found: {component_ref['path']}"
-                )
+                self.errors.append(f"Bundled component not found: {component_ref['path']}")
                 all_valid = False
                 continue
 
@@ -254,9 +243,7 @@ class ThemePackager:
             is_valid, errors = self.component_validator.validate_component(component_path)
 
             if not is_valid:
-                self.errors.append(
-                    f"Component validation failed for {component_ref['name']}:"
-                )
+                self.errors.append(f"Component validation failed for {component_ref['name']}:")
                 self.errors.extend([f"  - {err}" for err in errors])
                 all_valid = False
 
@@ -266,41 +253,35 @@ class ThemePackager:
         """Validate page schema files exist."""
         all_valid = True
 
-        for page_type, schema_path in self.manifest['page_schemas'].items():
+        for page_type, schema_path in self.manifest["page_schemas"].items():
             full_path = self.theme_dir / schema_path
 
             if not full_path.exists():
-                self.errors.append(
-                    f"Page schema not found: {schema_path} (for {page_type})"
-                )
+                self.errors.append(f"Page schema not found: {schema_path} (for {page_type})")
                 all_valid = False
                 continue
 
             # Validate it's valid JSON
             try:
-                with open(full_path, 'r', encoding='utf-8') as f:
+                with open(full_path, encoding="utf-8") as f:
                     json.load(f)
             except json.JSONDecodeError as e:
-                self.errors.append(
-                    f"Invalid JSON in page schema {schema_path}: {e}"
-                )
+                self.errors.append(f"Invalid JSON in page schema {schema_path}: {e}")
                 all_valid = False
 
         return all_valid
 
     def _validate_design_tokens(self) -> bool:
         """Validate design tokens file exists and is valid JSON."""
-        tokens_path = self.theme_dir / self.manifest['design_tokens']
+        tokens_path = self.theme_dir / self.manifest["design_tokens"]
 
         if not tokens_path.exists():
-            self.errors.append(
-                f"Design tokens file not found: {self.manifest['design_tokens']}"
-            )
+            self.errors.append(f"Design tokens file not found: {self.manifest['design_tokens']}")
             return False
 
         # Validate it's valid JSON
         try:
-            with open(tokens_path, 'r', encoding='utf-8') as f:
+            with open(tokens_path, encoding="utf-8") as f:
                 json.load(f)
         except json.JSONDecodeError as e:
             self.errors.append(f"Invalid JSON in design tokens: {e}")
@@ -310,12 +291,10 @@ class ThemePackager:
 
     def _validate_preview_image(self) -> bool:
         """Validate preview image exists."""
-        preview_path = self.theme_dir / self.manifest['preview_image']
+        preview_path = self.theme_dir / self.manifest["preview_image"]
 
         if not preview_path.exists():
-            self.errors.append(
-                f"Preview image not found: {self.manifest['preview_image']}"
-            )
+            self.errors.append(f"Preview image not found: {self.manifest['preview_image']}")
             return False
 
         # Check file size (max 5MB like component previews)
@@ -332,9 +311,9 @@ class ThemePackager:
         """Validate screenshot files exist."""
         all_valid = True
 
-        for screenshot in self.manifest['screenshots']:
+        for screenshot in self.manifest["screenshots"]:
             # Support both string format and dict format {"file": "...", "title": "..."}
-            screenshot_file = screenshot['file'] if isinstance(screenshot, dict) else screenshot
+            screenshot_file = screenshot["file"] if isinstance(screenshot, dict) else screenshot
             screenshot_path = self.theme_dir / screenshot_file
 
             if not screenshot_path.exists():
@@ -345,9 +324,7 @@ class ThemePackager:
             # Check file size (max 5MB each)
             max_size = 5 * 1024 * 1024  # 5 MB
             if screenshot_path.stat().st_size > max_size:
-                self.warnings.append(
-                    f"Screenshot is large (>5MB): {screenshot_file}"
-                )
+                self.warnings.append(f"Screenshot is large (>5MB): {screenshot_file}")
 
         return all_valid
 
@@ -359,90 +336,90 @@ class ThemePackager:
             build_dir,
             dirs_exist_ok=True,
             ignore=shutil.ignore_patterns(
-                '__pycache__',
-                '*.pyc',
-                '.DS_Store',
-                '.git',
-                '.gitignore',
-                'node_modules',
-                '.env',
-                '*.log'
-            )
+                "__pycache__",
+                "*.pyc",
+                ".DS_Store",
+                ".git",
+                ".gitignore",
+                "node_modules",
+                ".env",
+                "*.log",
+            ),
         )
 
     def _clean_build_dir(self, build_dir: Path):
         """Clean build directory of unwanted files."""
         # Remove Python cache files
-        for pyc_file in build_dir.rglob('*.pyc'):
+        for pyc_file in build_dir.rglob("*.pyc"):
             pyc_file.unlink()
 
-        for pycache_dir in build_dir.rglob('__pycache__'):
+        for pycache_dir in build_dir.rglob("__pycache__"):
             shutil.rmtree(pycache_dir)
 
         # Remove .DS_Store files (macOS)
-        for ds_file in build_dir.rglob('.DS_Store'):
+        for ds_file in build_dir.rglob(".DS_Store"):
             ds_file.unlink()
 
-    def _calculate_metadata(self, build_dir: Path) -> Dict[str, Any]:
+    def _calculate_metadata(self, build_dir: Path) -> dict[str, Any]:
         """Calculate package metadata (file count, size, checksum)."""
         file_count = 0
         total_size = 0
         file_hashes = []
 
         # Collect all files (excluding manifest.json for checksum calculation)
-        for file_path in sorted(build_dir.rglob('*')):
+        for file_path in sorted(build_dir.rglob("*")):
             if file_path.is_file():
                 file_count += 1
                 total_size += file_path.stat().st_size
 
                 # Don't include manifest.json in checksum (will be updated)
-                if file_path.name != 'manifest.json':
+                if file_path.name != "manifest.json":
                     file_hash = self._calculate_file_checksum(file_path)
                     file_hashes.append(file_hash)
 
         # Calculate overall checksum from sorted file hashes
         combined_hash = hashlib.sha256()
         for file_hash in sorted(file_hashes):
-            combined_hash.update(file_hash.encode('utf-8'))
+            combined_hash.update(file_hash.encode("utf-8"))
 
         checksum = combined_hash.hexdigest()
 
         return {
-            'file_count': file_count,
-            'total_size': total_size,
-            'checksum': f"sha256:{checksum}",
+            "file_count": file_count,
+            "total_size": total_size,
+            "checksum": f"sha256:{checksum}",
         }
 
     def _calculate_file_checksum(self, file_path: Path) -> str:
         """Calculate SHA256 checksum of a file."""
         sha256_hash = hashlib.sha256()
 
-        with open(file_path, 'rb') as f:
-            for chunk in iter(lambda: f.read(4096), b''):
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
                 sha256_hash.update(chunk)
 
         return sha256_hash.hexdigest()
 
-    def _update_manifest_with_metadata(self, build_dir: Path, metadata: Dict[str, Any]):
+    def _update_manifest_with_metadata(self, build_dir: Path, metadata: dict[str, Any]):
         """Update manifest.json with package metadata."""
-        manifest_path = build_dir / 'manifest.json'
+        manifest_path = build_dir / "manifest.json"
 
-        with open(manifest_path, 'r', encoding='utf-8') as f:
+        with open(manifest_path, encoding="utf-8") as f:
             manifest = json.load(f)
 
         # Add metadata
-        manifest['total_size_bytes'] = metadata['total_size']
-        manifest['file_count'] = metadata['file_count']
-        manifest['checksum'] = metadata['checksum']
+        manifest["total_size_bytes"] = metadata["total_size"]
+        manifest["file_count"] = metadata["file_count"]
+        manifest["checksum"] = metadata["checksum"]
 
         # Write updated manifest
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2)
 
     def _create_zip(self, build_dir: Path, output_path: Path):
         """Create ZIP package with files at root (not in subdirectory)."""
-        with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zf:
-            for file_path in build_dir.rglob('*'):
+        with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zf:
+            for file_path in build_dir.rglob("*"):
                 if file_path.is_file():
                     # Archive path is relative to build_dir (files at root)
                     archive_path = file_path.relative_to(build_dir)

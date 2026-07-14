@@ -15,19 +15,22 @@ This view implements secure file serving with:
 URL Pattern: /components/payments/{provider_slug}/current/{filename}
 Example: /components/payments/airwallex/current/checkout-handler.js
 """
-from django.http import FileResponse, Http404
-from django.views import View
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from pathlib import Path
-from component_updates.models import ComponentRegistry
-import mimetypes
+
 import logging
+import mimetypes
+from pathlib import Path
+
+from django.http import FileResponse, Http404
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.cache import cache_control
+
+from component_updates.models import ComponentRegistry
 
 logger = logging.getLogger(__name__)
 
 
-@method_decorator(cache_control(max_age=3600), name='dispatch')  # Cache for 1 hour
+@method_decorator(cache_control(max_age=3600), name="dispatch")  # Cache for 1 hour
 class ComponentStaticFileView(View):
     """
     Serve static files from payment provider component directories.
@@ -64,12 +67,12 @@ class ComponentStaticFileView(View):
             Http404: If provider not found, file not found, or invalid path
         """
         # Security: Prevent directory traversal
-        if '..' in filename or filename.startswith('/'):
+        if ".." in filename or filename.startswith("/"):
             logger.warning(f"Directory traversal attempt blocked: {filename}")
             raise Http404("Invalid filename")
 
         # Additional security: Check for suspicious patterns
-        suspicious_patterns = ['../', '..\\', '%2e%2e', '%252e']
+        suspicious_patterns = ["../", "..\\", "%2e%2e", "%252e"]
         if any(pattern in filename.lower() for pattern in suspicious_patterns):
             logger.warning(f"Suspicious path pattern detected: {filename}")
             raise Http404("Invalid filename")
@@ -77,8 +80,7 @@ class ComponentStaticFileView(View):
         # Get provider component from registry
         try:
             component = ComponentRegistry.objects.get(
-                slug=provider_slug,
-                component_type='payment_provider'
+                slug=provider_slug, component_type="payment_provider"
             )
         except ComponentRegistry.DoesNotExist:
             logger.warning(f"Provider not found: {provider_slug}")
@@ -117,7 +119,7 @@ class ComponentStaticFileView(View):
 
         # Default to application/octet-stream if type unknown
         if not content_type:
-            content_type = 'application/octet-stream'
+            content_type = "application/octet-stream"
             logger.debug(f"Unknown MIME type for {filename}, using default")
 
         # Log successful file serving (debug level to avoid log spam)
@@ -125,16 +127,13 @@ class ComponentStaticFileView(View):
 
         # Serve the file
         try:
-            response = FileResponse(
-                open(file_path_resolved, 'rb'),
-                content_type=content_type
-            )
+            response = FileResponse(open(file_path_resolved, "rb"), content_type=content_type)  # noqa: SIM115  # FileResponse takes ownership + closes on stream end
 
             # Add Content-Encoding if detected
             if encoding:
-                response['Content-Encoding'] = encoding
+                response["Content-Encoding"] = encoding
 
             return response
-        except IOError as e:
+        except OSError as e:
             logger.error(f"Error reading file {filename}: {e}")
             raise Http404("Error reading file")

@@ -9,8 +9,8 @@ and a MutationObserver + interval-based tamper detection system that nukes
 the page content if the banner is removed or hidden.
 """
 
-import uuid
 import logging
+import uuid
 
 from django.utils.deprecation import MiddlewareMixin
 
@@ -20,8 +20,14 @@ logger = logging.getLogger(__name__)
 
 # Paths that should NOT get any injection (banner or badge)
 EXCLUDED_PATHS = (
-    '/api/', '/webhooks/', '/static/', '/media/',
-    '/theme/', '/i18n/', '/__debug__/', '/health/',
+    "/api/",
+    "/webhooks/",
+    "/static/",
+    "/media/",
+    "/theme/",
+    "/i18n/",
+    "/__debug__/",
+    "/health/",
 )
 
 
@@ -33,8 +39,8 @@ class SandboxBannerMiddleware(MiddlewareMixin):
             return response
 
         # Only process HTML responses
-        content_type = response.get('Content-Type', '')
-        if 'text/html' not in content_type:
+        content_type = response.get("Content-Type", "")
+        if "text/html" not in content_type:
             return response
 
         # Skip non-200, streaming, or empty responses
@@ -45,7 +51,7 @@ class SandboxBannerMiddleware(MiddlewareMixin):
 
         # Strip language prefix (e.g., /en/admin/ -> /admin/)
         stripped = path
-        if len(path) > 3 and path[3] == '/' and path[1:3].isalpha():
+        if len(path) > 3 and path[3] == "/" and path[1:3].isalpha():
             stripped = path[3:]
 
         # Skip excluded paths entirely
@@ -54,55 +60,55 @@ class SandboxBannerMiddleware(MiddlewareMixin):
                 return response
 
         try:
-            content = response.content.decode('utf-8')
+            content = response.content.decode("utf-8")
         except (UnicodeDecodeError, AttributeError):
             return response
 
         # Determine page type
         # Treat staff-only merchant dashboard as admin to avoid full storefront banner
         # and instead show the subtle header badge.
-        is_admin = '/admin/' in path or stripped.startswith('/affiliate/merchant/')
-        is_pos = '/pos/' in path or stripped.startswith('/pos/')
+        is_admin = "/admin/" in path or stripped.startswith("/affiliate/merchant/")
+        is_pos = "/pos/" in path or stripped.startswith("/pos/")
 
         # Get CSP nonce for inline scripts (triggers nonce inclusion in header).
         # Must str() the lazy object — CheckableLazyObject is Falsy until read as string.
-        nonce = str(getattr(request, 'csp_nonce', ''))
+        nonce = str(getattr(request, "csp_nonce", ""))
 
         if is_admin:
             # Admin badge injected before </body> (doesn't need spacer)
-            if '</body>' not in content:
+            if "</body>" not in content:
                 return response
             inject = self._build_admin_badge(nonce)
-            content = content.replace('</body>', inject + '</body>')
+            content = content.replace("</body>", inject + "</body>")
         elif is_pos:
             # POS banner injected after <body> to push content down
-            if '<body' not in content:
+            if "<body" not in content:
                 return response
             inject = self._build_pos_banner(nonce)
             # Find end of <body ...> tag and inject right after it
-            body_tag_end = content.find('>', content.find('<body'))
+            body_tag_end = content.find(">", content.find("<body"))
             if body_tag_end != -1:
-                content = content[:body_tag_end + 1] + inject + content[body_tag_end + 1:]
+                content = content[: body_tag_end + 1] + inject + content[body_tag_end + 1 :]
         else:
             # Storefront banner injected after <body> to push content down
-            if '<body' not in content:
+            if "<body" not in content:
                 return response
             inject = self._build_storefront_banner(nonce)
             # Find end of <body ...> tag and inject right after it
-            body_tag_end = content.find('>', content.find('<body'))
+            body_tag_end = content.find(">", content.find("<body"))
             if body_tag_end != -1:
-                content = content[:body_tag_end + 1] + inject + content[body_tag_end + 1:]
+                content = content[: body_tag_end + 1] + inject + content[body_tag_end + 1 :]
 
-        response.content = content.encode('utf-8')
-        response['Content-Length'] = len(response.content)
+        response.content = content.encode("utf-8")
+        response["Content-Length"] = len(response.content)
 
         return response
 
-    def _build_storefront_banner(self, nonce='') -> str:
+    def _build_storefront_banner(self, nonce="") -> str:
         """Full tamper-resistant banner for storefront pages."""
-        bid = f'sb_{uuid.uuid4().hex[:12]}'
-        sid = f'sh_{uuid.uuid4().hex[:12]}'
-        nonce_attr = f' nonce="{nonce}"' if nonce else ''
+        bid = f"sb_{uuid.uuid4().hex[:12]}"
+        sid = f"sh_{uuid.uuid4().hex[:12]}"
+        nonce_attr = f' nonce="{nonce}"' if nonce else ""
 
         return f'''
 <div id="{bid}" style="position:fixed;top:0;left:0;right:0;z-index:2147483647;
@@ -176,11 +182,11 @@ class SandboxBannerMiddleware(MiddlewareMixin):
 }})();
 </script>'''
 
-    def _build_pos_banner(self, nonce='') -> str:
+    def _build_pos_banner(self, nonce="") -> str:
         """Sandbox banner for POS pages — smaller but still tamper-resistant."""
-        bid = f'ps_{uuid.uuid4().hex[:12]}'
-        sid = f'psh_{uuid.uuid4().hex[:12]}'
-        nonce_attr = f' nonce="{nonce}"' if nonce else ''
+        bid = f"ps_{uuid.uuid4().hex[:12]}"
+        sid = f"psh_{uuid.uuid4().hex[:12]}"
+        nonce_attr = f' nonce="{nonce}"' if nonce else ""
 
         return f'''
 <div id="{bid}" style="position:fixed;top:0;left:0;right:0;z-index:2147483647;
@@ -236,10 +242,10 @@ class SandboxBannerMiddleware(MiddlewareMixin):
 }})();
 </script>'''
 
-    def _build_admin_badge(self, nonce='') -> str:
+    def _build_admin_badge(self, nonce="") -> str:
         """Subtle SANDBOX badge for admin header."""
-        badge_id = f'ab_{uuid.uuid4().hex[:8]}'
-        nonce_attr = f' nonce="{nonce}"' if nonce else ''
+        badge_id = f"ab_{uuid.uuid4().hex[:8]}"
+        nonce_attr = f' nonce="{nonce}"' if nonce else ""
         return f'''
 <script{nonce_attr}>
 (function(){{

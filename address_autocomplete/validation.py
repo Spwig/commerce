@@ -24,11 +24,13 @@ Usage:
         print(f"User entered: {result['user_address']}")
         print(f"Validated: {result['validated_address']}")
 """
-import logging
-from typing import Dict, Any, Optional, List
-from dataclasses import dataclass, asdict
-from django.core.cache import cache
+
 import hashlib
+import logging
+from dataclasses import asdict, dataclass
+from typing import Any
+
+from django.core.cache import cache
 
 from .services import AutocompleteClient
 
@@ -38,31 +40,32 @@ logger = logging.getLogger(__name__)
 @dataclass
 class AddressValidationResult:
     """Result of address validation with mismatch detection"""
+
     is_valid: bool
     has_mismatch: bool
     confidence: float  # 0.0 to 1.0
 
     # Original user input
-    user_address: Dict[str, str]
+    user_address: dict[str, str]
 
     # Validated address from provider (Australia Post, etc.)
-    validated_address: Optional[Dict[str, str]] = None
+    validated_address: dict[str, str] | None = None
 
     # Autocomplete suggestion (OSM data)
-    autocomplete_suggestion: Optional[Dict[str, str]] = None
+    autocomplete_suggestion: dict[str, str] | None = None
 
     # Mismatch details
-    mismatch_fields: List[str] = None
-    mismatch_reason: Optional[str] = None
+    mismatch_fields: list[str] = None
+    mismatch_reason: str | None = None
 
     # Suggestions for correction
-    suggestions: List[Dict[str, str]] = None
+    suggestions: list[dict[str, str]] = None
 
     # Provider-specific data
-    provider_response: Optional[Dict[str, Any]] = None
+    provider_response: dict[str, Any] | None = None
 
     # Validation errors
-    errors: List[str] = None
+    errors: list[str] = None
 
     def __post_init__(self):
         if self.mismatch_fields is None:
@@ -72,7 +75,7 @@ class AddressValidationResult:
         if self.errors is None:
             self.errors = []
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return asdict(self)
 
@@ -87,7 +90,7 @@ class AddressValidationResult:
         if self.mismatch_reason:
             return f"Address verified but {self.mismatch_reason}"
 
-        fields = ', '.join(self.mismatch_fields)
+        fields = ", ".join(self.mismatch_fields)
         return f"Address verified with minor differences in: {fields}"
 
 
@@ -103,23 +106,20 @@ class AddressValidator:
         self.autocomplete = AutocompleteClient()
         self._cache_ttl = 3600  # 1 hour
 
-    def _get_cache_key(self, operation: str, data: Dict[str, Any]) -> str:
+    def _get_cache_key(self, operation: str, data: dict[str, Any]) -> str:
         """Generate cache key"""
-        data_str = '-'.join(f"{k}:{v}" for k, v in sorted(data.items()) if v)
+        data_str = "-".join(f"{k}:{v}" for k, v in sorted(data.items()) if v)
         hash_key = hashlib.md5(data_str.encode()).hexdigest()
         return f"address_validation:{operation}:{hash_key}"
 
-    def _normalize_field(self, value: Optional[str]) -> str:
+    def _normalize_field(self, value: str | None) -> str:
         """Normalize field for comparison"""
         if not value:
             return ""
         return str(value).strip().upper().replace(".", "").replace(",", "")
 
     def _compare_fields(
-        self,
-        user_value: Optional[str],
-        validated_value: Optional[str],
-        field_name: str
+        self, user_value: str | None, validated_value: str | None, field_name: str
     ) -> bool:
         """
         Compare two field values
@@ -154,9 +154,9 @@ class AddressValidator:
                 "WA": ["WESTERN AUSTRALIA", "WA"],
                 "TAS": ["TASMANIA", "TAS"],
                 "NT": ["NORTHERN TERRITORY", "NT"],
-                "ACT": ["AUSTRALIAN CAPITAL TERRITORY", "ACT"]
+                "ACT": ["AUSTRALIAN CAPITAL TERRITORY", "ACT"],
             }
-            for abbr, full_names in state_mappings.items():
+            for _abbr, full_names in state_mappings.items():
                 if user_norm in full_names and validated_norm in full_names:
                     return True
 
@@ -191,16 +191,16 @@ class AddressValidator:
                     validated_words[i] = street_abbr[word]
 
             # Compare after normalization
-            if ' '.join(user_words) == ' '.join(validated_words):
+            if " ".join(user_words) == " ".join(validated_words):
                 return True
 
         return False
 
     async def validate_australian_address(
         self,
-        user_input: Dict[str, str],
+        user_input: dict[str, str],
         provider_account_id: int,
-        include_autocomplete: bool = True
+        include_autocomplete: bool = True,
     ) -> AddressValidationResult:
         """
         Validate Australian address with mismatch detection
@@ -230,21 +230,19 @@ class AddressValidator:
         if include_autocomplete:
             query = f"{user_input.get('address1', '')}, {user_input.get('city', '')}"
             autocomplete_result = self.autocomplete.autocomplete(
-                query=query,
-                country_bias="au",
-                limit=1
+                query=query, country_bias="au", limit=1
             )
 
-            if autocomplete_result.get('suggestions'):
-                first = autocomplete_result['suggestions'][0]
-                components = first.get('components', {})
+            if autocomplete_result.get("suggestions"):
+                first = autocomplete_result["suggestions"][0]
+                components = first.get("components", {})
 
                 autocomplete_suggestion = {
-                    'address1': f"{components.get('house_number', '')} {components.get('road', '')}".strip(),
-                    'city': components.get('suburb') or components.get('city', ''),
-                    'state': components.get('state', ''),
-                    'postcode': components.get('postcode', ''),
-                    'country': 'AU'
+                    "address1": f"{components.get('house_number', '')} {components.get('road', '')}".strip(),
+                    "city": components.get("suburb") or components.get("city", ""),
+                    "state": components.get("state", ""),
+                    "postcode": components.get("postcode", ""),
+                    "country": "AU",
                 }
 
         # Validate with Australia Post
@@ -257,12 +255,12 @@ class AddressValidator:
 
             # Validate suburb and postcode
             validation_result = await australia_post.validate_suburb(
-                suburb=user_input.get('city', ''),
-                postcode=user_input.get('postcode', ''),
-                state=user_input.get('state', '')
+                suburb=user_input.get("city", ""),
+                postcode=user_input.get("postcode", ""),
+                state=user_input.get("state", ""),
             )
 
-            if not validation_result.get('valid'):
+            if not validation_result.get("valid"):
                 # Invalid according to Australia Post
                 result = AddressValidationResult(
                     is_valid=False,
@@ -270,48 +268,52 @@ class AddressValidator:
                     confidence=0.0,
                     user_address=user_input,
                     autocomplete_suggestion=autocomplete_suggestion,
-                    errors=[
-                        validation_result.get('error', 'Invalid suburb/postcode combination')
-                    ],
-                    provider_response=validation_result
+                    errors=[validation_result.get("error", "Invalid suburb/postcode combination")],
+                    provider_response=validation_result,
                 )
 
                 # Add suggestions if available
-                if validation_result.get('suggestions'):
-                    result.suggestions = validation_result['suggestions']
+                if validation_result.get("suggestions"):
+                    result.suggestions = validation_result["suggestions"]
 
                 cache.set(cache_key, result.to_dict(), self._cache_ttl)
                 return result
 
             # Valid according to Australia Post
             validated_address = {
-                'address1': user_input.get('address1', ''),  # Australia Post doesn't validate street address
-                'city': validation_result.get('locality', user_input.get('city', '')),
-                'state': validation_result.get('state', user_input.get('state', '')),
-                'postcode': validation_result.get('postcode', user_input.get('postcode', '')),
-                'country': 'AU'
+                "address1": user_input.get(
+                    "address1", ""
+                ),  # Australia Post doesn't validate street address
+                "city": validation_result.get("locality", user_input.get("city", "")),
+                "state": validation_result.get("state", user_input.get("state", "")),
+                "postcode": validation_result.get("postcode", user_input.get("postcode", "")),
+                "country": "AU",
             }
 
             # Detect mismatches
             mismatches = []
 
-            if not self._compare_fields(user_input.get('city'), validated_address['city'], 'city'):
-                mismatches.append('city')
+            if not self._compare_fields(user_input.get("city"), validated_address["city"], "city"):
+                mismatches.append("city")
 
-            if not self._compare_fields(user_input.get('state'), validated_address['state'], 'state'):
-                mismatches.append('state')
+            if not self._compare_fields(
+                user_input.get("state"), validated_address["state"], "state"
+            ):
+                mismatches.append("state")
 
-            if not self._compare_fields(user_input.get('postcode'), validated_address['postcode'], 'postcode'):
-                mismatches.append('postcode')
+            if not self._compare_fields(
+                user_input.get("postcode"), validated_address["postcode"], "postcode"
+            ):
+                mismatches.append("postcode")
 
             # Build mismatch reason
             mismatch_reason = None
             if mismatches:
-                if 'city' in mismatches:
+                if "city" in mismatches:
                     mismatch_reason = f"suburb should be '{validated_address['city']}' instead of '{user_input.get('city')}'"
-                elif 'postcode' in mismatches:
+                elif "postcode" in mismatches:
                     mismatch_reason = f"postcode should be '{validated_address['postcode']}' instead of '{user_input.get('postcode')}'"
-                elif 'state' in mismatches:
+                elif "state" in mismatches:
                     mismatch_reason = f"state should be '{validated_address['state']}' instead of '{user_input.get('state')}'"
 
             result = AddressValidationResult(
@@ -323,7 +325,7 @@ class AddressValidator:
                 autocomplete_suggestion=autocomplete_suggestion,
                 mismatch_fields=mismatches,
                 mismatch_reason=mismatch_reason,
-                provider_response=validation_result
+                provider_response=validation_result,
             )
 
             cache.set(cache_key, result.to_dict(), self._cache_ttl)
@@ -337,13 +339,12 @@ class AddressValidator:
                 confidence=0.0,
                 user_address=user_input,
                 autocomplete_suggestion=autocomplete_suggestion,
-                errors=[str(e)]
+                errors=[str(e)],
             )
             return result
 
     async def validate_international_address(
-        self,
-        user_input: Dict[str, str]
+        self, user_input: dict[str, str]
     ) -> AddressValidationResult:
         """
         Validate international address using autocomplete only
@@ -356,35 +357,34 @@ class AddressValidator:
         """
         # Build query
         query_parts = [
-            user_input.get('address1', ''),
-            user_input.get('city', ''),
-            user_input.get('postcode', ''),
-            user_input.get('country', '')
+            user_input.get("address1", ""),
+            user_input.get("city", ""),
+            user_input.get("postcode", ""),
+            user_input.get("country", ""),
         ]
-        query = ', '.join(filter(None, query_parts))
+        query = ", ".join(filter(None, query_parts))
 
         # Get autocomplete suggestions
-        autocomplete_result = self.autocomplete.autocomplete(
-            query=query,
-            limit=3
-        )
+        autocomplete_result = self.autocomplete.autocomplete(query=query, limit=3)
 
         suggestions = []
-        if autocomplete_result.get('suggestions'):
-            for suggestion in autocomplete_result['suggestions']:
-                components = suggestion.get('components', {})
-                suggestions.append({
-                    'address1': f"{components.get('house_number', '')} {components.get('road', '')}".strip(),
-                    'city': components.get('city') or components.get('suburb', ''),
-                    'state': components.get('state', ''),
-                    'postcode': components.get('postcode', ''),
-                    'country': components.get('country', '')
-                })
+        if autocomplete_result.get("suggestions"):
+            for suggestion in autocomplete_result["suggestions"]:
+                components = suggestion.get("components", {})
+                suggestions.append(
+                    {
+                        "address1": f"{components.get('house_number', '')} {components.get('road', '')}".strip(),
+                        "city": components.get("city") or components.get("suburb", ""),
+                        "state": components.get("state", ""),
+                        "postcode": components.get("postcode", ""),
+                        "country": components.get("country", ""),
+                    }
+                )
 
         # For international addresses, we can't definitively validate
         # without provider-specific APIs, so we return based on autocomplete
         is_valid = len(suggestions) > 0
-        confidence = suggestions[0].get('confidence', 0.8) if is_valid else 0.0
+        confidence = suggestions[0].get("confidence", 0.8) if is_valid else 0.0
 
         result = AddressValidationResult(
             is_valid=is_valid,
@@ -393,7 +393,7 @@ class AddressValidator:
             user_address=user_input,
             autocomplete_suggestion=suggestions[0] if suggestions else None,
             suggestions=suggestions,
-            errors=[] if is_valid else ["Could not find matching address"]
+            errors=[] if is_valid else ["Could not find matching address"],
         )
 
         return result

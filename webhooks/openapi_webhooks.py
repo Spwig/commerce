@@ -7,26 +7,32 @@ the OpenAPI/Swagger documentation alongside REST API endpoints.
 Note: These are documentation-only - they describe what webhooks
 merchants will receive, not endpoints they call.
 """
-from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiResponse
-from rest_framework import serializers
 
+from rest_framework import serializers
 
 # =============================================================================
 # Webhook Payload Schemas (for documentation)
 # =============================================================================
 
+
 class WebhookPayloadBase(serializers.Serializer):
     """Base schema for all webhook payloads."""
+
     event = serializers.CharField(help_text="The event type (e.g., 'order.created')")
     created_at = serializers.DateTimeField(help_text="When the event occurred (ISO 8601)")
 
 
 class OrderWebhookData(serializers.Serializer):
     """Schema for order data in webhooks."""
+
     id = serializers.IntegerField(help_text="Order ID")
     order_number = serializers.CharField(help_text="Human-readable order number")
-    status = serializers.CharField(help_text="Order status (pending, processing, shipped, delivered, cancelled, refunded)")
-    total = serializers.DecimalField(max_digits=12, decimal_places=2, help_text="Order total amount")
+    status = serializers.CharField(
+        help_text="Order status (pending, processing, shipped, delivered, cancelled, refunded)"
+    )
+    total = serializers.DecimalField(
+        max_digits=12, decimal_places=2, help_text="Order total amount"
+    )
     currency = serializers.CharField(help_text="3-letter currency code")
     customer_email = serializers.EmailField(help_text="Customer email address")
     customer_id = serializers.IntegerField(help_text="Customer ID", allow_null=True)
@@ -37,13 +43,18 @@ class OrderWebhookData(serializers.Serializer):
 
 class ProductWebhookData(serializers.Serializer):
     """Schema for product data in webhooks."""
+
     id = serializers.IntegerField(help_text="Product ID")
     sku = serializers.CharField(help_text="Product SKU")
     name = serializers.CharField(help_text="Product name")
     slug = serializers.CharField(help_text="URL slug")
     status = serializers.CharField(help_text="Product status")
-    price = serializers.DecimalField(max_digits=12, decimal_places=2, help_text="Regular price", allow_null=True)
-    sale_price = serializers.DecimalField(max_digits=12, decimal_places=2, help_text="Sale price", allow_null=True)
+    price = serializers.DecimalField(
+        max_digits=12, decimal_places=2, help_text="Regular price", allow_null=True
+    )
+    sale_price = serializers.DecimalField(
+        max_digits=12, decimal_places=2, help_text="Sale price", allow_null=True
+    )
     stock_quantity = serializers.IntegerField(help_text="Current stock quantity", allow_null=True)
     is_published = serializers.BooleanField(help_text="Whether product is published")
     created_at = serializers.DateTimeField()
@@ -52,6 +63,7 @@ class ProductWebhookData(serializers.Serializer):
 
 class CustomerWebhookData(serializers.Serializer):
     """Schema for customer data in webhooks."""
+
     id = serializers.IntegerField(help_text="Customer ID")
     email = serializers.EmailField(help_text="Customer email")
     first_name = serializers.CharField(help_text="First name")
@@ -61,6 +73,7 @@ class CustomerWebhookData(serializers.Serializer):
 
 class ShipmentWebhookData(serializers.Serializer):
     """Schema for shipment data in webhooks."""
+
     id = serializers.IntegerField(help_text="Shipment ID")
     order_id = serializers.IntegerField(help_text="Associated order ID")
     order_number = serializers.CharField(help_text="Order number")
@@ -74,16 +87,20 @@ class ShipmentWebhookData(serializers.Serializer):
 
 class InventoryWebhookData(serializers.Serializer):
     """Schema for inventory event data in webhooks."""
+
     product_id = serializers.IntegerField(help_text="Product ID")
     product_sku = serializers.CharField(help_text="Product SKU")
     product_name = serializers.CharField(help_text="Product name")
     previous_stock = serializers.IntegerField(help_text="Stock level before change")
     current_stock = serializers.IntegerField(help_text="Stock level after change")
-    low_stock_threshold = serializers.IntegerField(help_text="Configured low stock threshold", allow_null=True)
+    low_stock_threshold = serializers.IntegerField(
+        help_text="Configured low stock threshold", allow_null=True
+    )
 
 
 class SubscriptionWebhookData(serializers.Serializer):
     """Schema for subscription data in webhooks."""
+
     id = serializers.IntegerField(help_text="Subscription ID")
     customer_id = serializers.IntegerField(help_text="Customer ID")
     customer_email = serializers.EmailField(help_text="Customer email")
@@ -192,6 +209,7 @@ function verifyWebhook(payload, signatureHeader, secret) {
 # Webhook Event Documentation
 # =============================================================================
 
+
 def get_webhook_documentation():
     """
     Get documentation content for webhook events.
@@ -202,7 +220,7 @@ def get_webhook_documentation():
     from .events import get_events_by_category
 
     docs = {
-        'overview': '''
+        "overview": """
 # Webhooks
 
 Spwig webhooks allow you to receive real-time HTTP notifications when
@@ -223,9 +241,9 @@ sync data with external systems, and automate workflows.
 - Process webhooks asynchronously if needed
 - Handle duplicate deliveries idempotently
 - Store the delivery ID to detect duplicates
-''',
-        'signature_verification': WEBHOOK_SIGNATURE_DOCS,
-        'events_by_category': get_events_by_category(),
+""",
+        "signature_verification": WEBHOOK_SIGNATURE_DOCS,
+        "events_by_category": get_events_by_category(),
     }
 
     return docs
@@ -234,6 +252,7 @@ sync data with external systems, and automate workflows.
 # =============================================================================
 # Schema Generation Helpers
 # =============================================================================
+
 
 def get_webhook_payload_schema(event_type: str):
     """
@@ -245,15 +264,15 @@ def get_webhook_payload_schema(event_type: str):
     Returns:
         Serializer class for the payload
     """
-    prefix = event_type.split('.')[0] if '.' in event_type else event_type
+    prefix = event_type.split(".")[0] if "." in event_type else event_type
 
     schemas = {
-        'order': OrderWebhookData,
-        'product': ProductWebhookData,
-        'customer': CustomerWebhookData,
-        'shipment': ShipmentWebhookData,
-        'inventory': InventoryWebhookData,
-        'subscription': SubscriptionWebhookData,
+        "order": OrderWebhookData,
+        "product": ProductWebhookData,
+        "customer": CustomerWebhookData,
+        "shipment": ShipmentWebhookData,
+        "inventory": InventoryWebhookData,
+        "subscription": SubscriptionWebhookData,
     }
 
     return schemas.get(prefix, serializers.DictField)

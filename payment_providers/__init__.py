@@ -8,4 +8,4 @@ __component_name__ = "payment_providers"
 __description__ = "Payment provider integrations (Stripe, PayPal, AirWallex, etc.)"
 __requires_platform__ = "1.x"
 
-default_app_config = 'payment_providers.apps.PaymentProvidersConfig'
+default_app_config = "payment_providers.apps.PaymentProvidersConfig"

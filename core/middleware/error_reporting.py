@@ -21,7 +21,7 @@ from core.error_reporting.sanitizer import DataSanitizer
 
 logger = logging.getLogger(__name__)
 
-SETTINGS_CACHE_KEY = 'error_reporting:site_settings'
+SETTINGS_CACHE_KEY = "error_reporting:site_settings"
 SETTINGS_CACHE_TTL = 30  # seconds
 
 
@@ -44,28 +44,28 @@ class ErrorReportingMiddleware(MiddlewareMixin):
         if not settings_obj:
             return
 
-        tb_string = ''.join(
+        tb_string = "".join(
             traceback.format_exception(type(exception), exception, exception.__traceback__)
         )
         sanitized_tb = DataSanitizer.sanitize_traceback(tb_string)
 
         error_data = {
-            'exception_type': f"{type(exception).__module__}.{type(exception).__qualname__}",
-            'exception_message': DataSanitizer.sanitize_traceback(str(exception)),
-            'traceback': sanitized_tb,
-            'request_url': DataSanitizer.sanitize_url(request.build_absolute_uri()),
-            'request_method': request.method,
-            'user_agent': request.META.get('HTTP_USER_AGENT', ''),
-            'safe_headers': DataSanitizer.sanitize_headers(
-                {k: v for k, v in request.META.items() if k.startswith('HTTP_')}
+            "exception_type": f"{type(exception).__module__}.{type(exception).__qualname__}",
+            "exception_message": DataSanitizer.sanitize_traceback(str(exception)),
+            "traceback": sanitized_tb,
+            "request_url": DataSanitizer.sanitize_url(request.build_absolute_uri()),
+            "request_method": request.method,
+            "user_agent": request.META.get("HTTP_USER_AGENT", ""),
+            "safe_headers": DataSanitizer.sanitize_headers(
+                {k: v for k, v in request.META.items() if k.startswith("HTTP_")}
             ),
-            'django_version': django.get_version(),
-            'platform_version': getattr(settings, 'PLATFORM_VERSION', 'unknown'),
-            'python_version': platform.python_version(),
-            'timestamp': django.utils.timezone.now().isoformat(),
+            "django_version": django.get_version(),
+            "platform_version": getattr(settings, "PLATFORM_VERSION", "unknown"),
+            "python_version": platform.python_version(),
+            "timestamp": django.utils.timezone.now().isoformat(),
         }
 
-        status = 'pending' if settings_obj.error_reporting_enabled else 'held'
+        status = "pending" if settings_obj.error_reporting_enabled else "held"
         buffer_python_error(error_data, status=status)
 
     def _get_settings(self):
@@ -73,6 +73,7 @@ class ErrorReportingMiddleware(MiddlewareMixin):
         settings_obj = cache.get(SETTINGS_CACHE_KEY)
         if settings_obj is None:
             from core.models import SiteSettings
+
             try:
                 settings_obj = SiteSettings.get_settings()
             except Exception:

@@ -28,6 +28,7 @@ def attempt_trial_to_dev_conversion():
     - Installation continues in sandbox mode anyway (trials never lock out)
     """
     import requests
+
     from core.license import get_license_manager, reload_license_manager
 
     license_manager = get_license_manager()
@@ -36,8 +37,8 @@ def attempt_trial_to_dev_conversion():
         logger.warning("No license data found for trial-to-dev conversion")
         return False
 
-    license_info = license_data.get('license', {})
-    license_key = license_info.get('license_key', '')
+    license_info = license_data.get("license", {})
+    license_key = license_info.get("license_key", "")
 
     if not license_key:
         logger.warning("No license key found for trial-to-dev conversion")
@@ -46,9 +47,10 @@ def attempt_trial_to_dev_conversion():
     # Get installation UUID from UpdateServerConfig
     try:
         from component_updates.models import UpdateServerConfig
+
         config = UpdateServerConfig.get_instance()
         installation_uuid = str(config.installation_uuid)
-        server_url = config.server_url.rstrip('/')
+        server_url = config.server_url.rstrip("/")
     except Exception as e:
         logger.error(f"Failed to get update server config: {e}")
         return False
@@ -56,8 +58,8 @@ def attempt_trial_to_dev_conversion():
     # Phone home to convert-to-dev endpoint
     url = f"{server_url}/api/v1/licenses/convert-to-dev/"
     payload = {
-        'license_key': license_key,
-        'installation_uuid': installation_uuid,
+        "license_key": license_key,
+        "installation_uuid": installation_uuid,
     }
 
     try:
@@ -65,23 +67,21 @@ def attempt_trial_to_dev_conversion():
 
         if response.status_code == 200:
             data = response.json()
-            if data.get('converted'):
+            if data.get("converted"):
                 # Write the new license file
                 license_path = getattr(
-                    settings,
-                    'LICENSE_PATH',
-                    '/opt/shop-platform/license/license.json'
+                    settings, "LICENSE_PATH", "/opt/shop-platform/license/license.json"
                 )
 
                 new_license_file = {
-                    'license': data['license'],
-                    'signature': data['signature'],
+                    "license": data["license"],
+                    "signature": data["signature"],
                 }
 
                 license_path = Path(license_path)
                 license_path.parent.mkdir(parents=True, exist_ok=True)
 
-                with open(license_path, 'w') as f:
+                with open(license_path, "w") as f:
                     json.dump(new_license_file, f, indent=2)
 
                 logger.info(
@@ -99,10 +99,12 @@ def attempt_trial_to_dev_conversion():
 
         elif response.status_code == 400:
             data = response.json()
-            error = data.get('error', '')
-            if error == 'not_a_trial':
+            error = data.get("error", "")
+            if error == "not_a_trial":
                 # License has already been converted or is no longer a trial
-                logger.info("License is no longer a trial - may have already been converted or upgraded")
+                logger.info(
+                    "License is no longer a trial - may have already been converted or upgraded"
+                )
                 return False
             logger.warning(f"Trial-to-dev conversion rejected: {data.get('message', '')}")
             return False

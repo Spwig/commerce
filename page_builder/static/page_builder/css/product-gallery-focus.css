@@ -11,158 +11,162 @@
 /* Section
    Override base section padding for a more immersive gallery experience. */
 .product-section--gallery-focus {
-    padding: var(--theme-space-6, 1.5rem) 0 var(--theme-space-12, 3rem);
+  padding: var(--theme-space-6, 1.5rem) 0 var(--theme-space-12, 3rem);
 }
 
 /* Layout Grid
    60/40 split: gallery takes the dominant share, info sidebar is narrower. */
 .product-layout--gallery-focus {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: var(--theme-space-10, 2.5rem);
-    align-items: start;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--theme-space-10, 2.5rem);
+  align-items: start;
 }
 
 /* Gallery Column
    ========================================================================== */
 .product-gallery-focus__gallery {
-    display: grid;
-    gap: var(--theme-space-3, 0.75rem);
+  display: grid;
+  gap: var(--theme-space-3, 0.75rem);
 }
 
 /* 1-column gallery: images stack vertically, full width */
 .product-gallery-focus__gallery--cols-1 {
-    grid-template-columns: 1fr;
+  grid-template-columns: 1fr;
 }
 
 /* 2-column gallery: masonry-style 2-up grid */
 .product-gallery-focus__gallery--cols-2 {
-    grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
 }
 
 /* Override the shared product-gallery partial within gallery-focus context.
    Remove the sticky behavior on the gallery itself (the sidebar is sticky instead)
    and reset the single-image container to fill grid cells properly. */
 .product-gallery-focus__gallery .product-gallery {
-    position: static;
+  position: static;
 }
 
 .product-gallery-focus__gallery .product-gallery__main {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Hero image (from _gallery.html) — use contain to prevent clipping */
 .product-gallery-focus__gallery .product-gallery__zoom-container {
-    aspect-ratio: 4 / 5;
-    border-radius: var(--theme-radius-lg, 0.75rem);
-    overflow: hidden;
-    background: var(--theme-color-background-secondary, #f9fafb);
+  aspect-ratio: 4 / 5;
+  border-radius: var(--theme-radius-lg, 0.75rem);
+  overflow: hidden;
+  background: var(--theme-color-background-secondary, #f9fafb);
 }
 
 .product-gallery-focus__gallery .product-gallery__image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transition: transform 0.4s ease, opacity 0.2s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition:
+    transform 0.4s ease,
+    opacity 0.2s ease;
 }
 
 /* Subtle zoom on hover for an interactive feel */
 .product-gallery-focus__gallery .product-gallery__zoom-container:hover .product-gallery__image {
-    transform: scale(1.03);
+  transform: scale(1.03);
 }
 
 /* Hide thumbnails strip — all images visible as grid items instead */
 .product-gallery-focus__gallery .product-gallery__thumbnails {
-    display: none;
+  display: none;
 }
 
 /* Zoom still works on the hero image — grid items below update the hero on click */
 
 /* In 2-column mode, let the hero image span both columns */
 .product-gallery-focus__gallery--cols-2 .product-gallery:first-child {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
-.product-gallery-focus__gallery--cols-2 .product-gallery:first-child .product-gallery__zoom-container {
-    aspect-ratio: 16 / 10;
+.product-gallery-focus__gallery--cols-2
+  .product-gallery:first-child
+  .product-gallery__zoom-container {
+  aspect-ratio: 16 / 10;
 }
 
 /* Gallery Grid Items (additional images beyond the hero)
    ========================================================================== */
 .gallery-focus__item {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    border-radius: var(--theme-radius-lg, 0.75rem);
-    overflow: hidden;
-    background: var(--theme-color-background-secondary, #f9fafb);
-    cursor: pointer;
-    /* Inset padding so scaled images never reach the card edge */
-    padding: 5%;
-    border: 2px solid transparent;
-    transition: border-color 0.25s ease;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--theme-radius-lg, 0.75rem);
+  overflow: hidden;
+  background: var(--theme-color-background-secondary, #f9fafb);
+  cursor: pointer;
+  /* Inset padding so scaled images never reach the card edge */
+  padding: 5%;
+  border: 2px solid transparent;
+  transition: border-color 0.25s ease;
 }
 
 .gallery-focus__item:hover {
-    border-color: var(--theme-color-border, #e5e7eb);
+  border-color: var(--theme-color-border, #e5e7eb);
 }
 
 .gallery-focus__item--active {
-    border-color: var(--theme-color-primary, #2563eb);
+  border-color: var(--theme-color-primary, #2563eb);
 }
 
 .gallery-focus__image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transition: transform 0.4s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
 }
 
 .gallery-focus__media {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--theme-radius-md, 0.5rem);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--theme-radius-md, 0.5rem);
 }
 
 .gallery-focus__item:hover .gallery-focus__image {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 /* Sidebar
    ========================================================================== */
 .product-gallery-focus__sidebar {
-    min-width: 0;
+  min-width: 0;
 }
 
 /* Sticky variant: sidebar follows the user as they scroll through gallery images */
 .product-gallery-focus__sidebar--sticky {
-    position: sticky;
-    top: 2rem;
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--theme-color-border, #e5e7eb) transparent;
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-color-border, #e5e7eb) transparent;
 }
 
 /* Subtle refinement of info block spacing within gallery-focus */
 .product-gallery-focus__sidebar .product-info {
-    padding-top: var(--theme-space-1, 0.25rem);
+  padding-top: var(--theme-space-1, 0.25rem);
 }
 
 .product-gallery-focus__sidebar .product-info__title {
-    font-size: var(--theme-font-size-2xl, 1.5rem);
-    line-height: 1.25;
+  font-size: var(--theme-font-size-2xl, 1.5rem);
+  line-height: 1.25;
 }
 
 .product-gallery-focus__sidebar .product-info__description {
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    line-height: 1.7;
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  line-height: 1.7;
 }
 
 /* Trust badges in the sidebar stack more compactly */
 .product-gallery-focus__sidebar .trust-badges {
-    flex-direction: column;
-    gap: var(--theme-space-2, 0.5rem);
+  flex-direction: column;
+  gap: var(--theme-space-2, 0.5rem);
 }
 
 /* Responsive
@@ -170,79 +174,81 @@
 
 /* Tablet: narrow the gap, keep 2-column but tighter */
 @media (max-width: 1024px) {
-    .product-layout--gallery-focus {
-        gap: var(--theme-space-6, 1.5rem);
-    }
+  .product-layout--gallery-focus {
+    gap: var(--theme-space-6, 1.5rem);
+  }
 
-    .product-gallery-focus__sidebar .product-info__title {
-        font-size: var(--theme-font-size-xl, 1.25rem);
-    }
+  .product-gallery-focus__sidebar .product-info__title {
+    font-size: var(--theme-font-size-xl, 1.25rem);
+  }
 }
 
 /* Mobile: single column, sidebar unsticks, gallery goes 1-column */
 @media (max-width: 768px) {
-    .product-layout--gallery-focus {
-        grid-template-columns: 1fr;
-        gap: var(--theme-space-6, 1.5rem);
-    }
+  .product-layout--gallery-focus {
+    grid-template-columns: 1fr;
+    gap: var(--theme-space-6, 1.5rem);
+  }
 
-    .product-gallery-focus__sidebar--sticky {
-        position: static;
-        max-height: none;
-        overflow-y: visible;
-    }
+  .product-gallery-focus__sidebar--sticky {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
 
-    /* Force single column gallery on mobile regardless of setting */
-    .product-gallery-focus__gallery--cols-2 {
-        grid-template-columns: 1fr;
-    }
+  /* Force single column gallery on mobile regardless of setting */
+  .product-gallery-focus__gallery--cols-2 {
+    grid-template-columns: 1fr;
+  }
 
-    .product-gallery-focus__gallery--cols-2 .product-gallery:first-child {
-        grid-column: auto;
-    }
+  .product-gallery-focus__gallery--cols-2 .product-gallery:first-child {
+    grid-column: auto;
+  }
 
-    .product-gallery-focus__gallery--cols-2 .product-gallery:first-child .product-gallery__zoom-container {
-        aspect-ratio: 4 / 5;
-    }
+  .product-gallery-focus__gallery--cols-2
+    .product-gallery:first-child
+    .product-gallery__zoom-container {
+    aspect-ratio: 4 / 5;
+  }
 
-    .product-gallery-focus__gallery .product-gallery__zoom-container {
-        aspect-ratio: 3 / 4;
-        border-radius: var(--theme-radius-md, 0.5rem);
-    }
+  .product-gallery-focus__gallery .product-gallery__zoom-container {
+    aspect-ratio: 3 / 4;
+    border-radius: var(--theme-radius-md, 0.5rem);
+  }
 
-    .gallery-focus__item {
-        aspect-ratio: 3 / 4;
-        border-radius: var(--theme-radius-md, 0.5rem);
-    }
+  .gallery-focus__item {
+    aspect-ratio: 3 / 4;
+    border-radius: var(--theme-radius-md, 0.5rem);
+  }
 
-    /* Restore full-size title on mobile since sidebar is now full width */
-    .product-gallery-focus__sidebar .product-info__title {
-        font-size: var(--theme-font-size-2xl, 1.5rem);
-    }
+  /* Restore full-size title on mobile since sidebar is now full width */
+  .product-gallery-focus__sidebar .product-info__title {
+    font-size: var(--theme-font-size-2xl, 1.5rem);
+  }
 
-    .product-gallery-focus__sidebar .trust-badges {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
+  .product-gallery-focus__sidebar .trust-badges {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 
-    .product-gallery-focus__sidebar .product-info__description {
-        font-size: var(--theme-font-size-base, 1rem);
-    }
+  .product-gallery-focus__sidebar .product-info__description {
+    font-size: var(--theme-font-size-base, 1rem);
+  }
 }
 
 /* Small mobile */
 @media (max-width: 480px) {
-    .product-section--gallery-focus {
-        padding: var(--theme-space-4, 1rem) 0 var(--theme-space-8, 2rem);
-    }
+  .product-section--gallery-focus {
+    padding: var(--theme-space-4, 1rem) 0 var(--theme-space-8, 2rem);
+  }
 
-    .product-gallery-focus__gallery .product-gallery__zoom-container {
-        aspect-ratio: 1;
-        border-radius: var(--theme-radius-sm, 0.25rem);
-    }
+  .product-gallery-focus__gallery .product-gallery__zoom-container {
+    aspect-ratio: 1;
+    border-radius: var(--theme-radius-sm, 0.25rem);
+  }
 
-    .gallery-focus__item {
-        aspect-ratio: 1;
-        border-radius: var(--theme-radius-sm, 0.25rem);
-    }
+  .gallery-focus__item {
+    aspect-ratio: 1;
+    border-radius: var(--theme-radius-sm, 0.25rem);
+  }
 }
