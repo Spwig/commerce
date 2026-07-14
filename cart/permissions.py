@@ -1,7 +1,9 @@
 """
 Custom permissions for cart and checkout operations.
 """
+
 from rest_framework import permissions
+
 from core.utils import allows_guest_checkout
 
 
@@ -19,11 +21,7 @@ class IsAuthenticatedOrGuestCheckoutAllowed(permissions.BasePermission):
         if request.user and request.user.is_authenticated:
             return True
 
-        # For unauthenticated users, check if guest checkout is allowed
-        if allows_guest_checkout():
-            return True
-
-        # Deny access if guest checkout is disabled
-        return False
+        # For unauthenticated users, allow access iff guest checkout is enabled
+        return allows_guest_checkout()
 
     message = "Please log in or create an account to checkout."

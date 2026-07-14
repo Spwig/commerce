@@ -4,15 +4,26 @@ Analytics Service for Admin API
 Provides analytics data for the merchant mobile app dashboard
 and advanced analytics for the admin web interface.
 """
+
 import math
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-from datetime import datetime, timedelta, date
+
 from django.db.models import (
-    Sum, Count, Avg, F, Q, Value, DecimalField, IntegerField,
-    CharField, Subquery, OuterRef, Min,
+    Avg,
+    Count,
+    DecimalField,
+    F,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
 )
-from django.db.models.functions import Coalesce, TruncDate, TruncHour, ExtractHour
+from django.db.models.functions import Coalesce, ExtractHour, TruncDate
 from django.utils import timezone
+
 from core.utils import get_default_currency
 
 
@@ -30,19 +41,17 @@ class AnalyticsService:
     @staticmethod
     def _paid_orders_qs():
         from orders.models import Order
-        return Order.objects.filter(
-            payment_status='paid'
-        ).exclude(
-            status__in=['cancelled', 'refunded']
+
+        return Order.objects.filter(payment_status="paid").exclude(
+            status__in=["cancelled", "refunded"]
         )
 
     @staticmethod
     def _paid_order_items_qs():
         from orders.models import OrderItem
-        return OrderItem.objects.filter(
-            order__payment_status='paid'
-        ).exclude(
-            order__status__in=['cancelled', 'refunded']
+
+        return OrderItem.objects.filter(order__payment_status="paid").exclude(
+            order__status__in=["cancelled", "refunded"]
         )
 
     # ------------------------------------------------------------------ #
@@ -61,7 +70,7 @@ class AnalyticsService:
     #  Existing: get_sales_kpi  (enhanced with optional date range)
     # ------------------------------------------------------------------ #
     @classmethod
-    def get_sales_kpi(cls, period: str = 'today', start_date=None, end_date=None) -> dict:
+    def get_sales_kpi(cls, period: str = "today", start_date=None, end_date=None) -> dict:
         """
         Get sales KPIs for a specified period or explicit date range.
 
@@ -83,11 +92,11 @@ class AnalyticsService:
                 end_date = cls._date_to_aware_dt(end_date, end_of_day=True)
         else:
             # Period-based calculation
-            if period == 'today':
+            if period == "today":
                 start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
-            elif period == '7_days':
+            elif period == "7_days":
                 start_date = now - timedelta(days=7)
-            elif period == '30_days':
+            elif period == "30_days":
                 start_date = now - timedelta(days=30)
             else:
                 start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -103,31 +112,31 @@ class AnalyticsService:
         # Aggregate sales data
         aggregates = orders.aggregate(
             total_sales=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Sum('total_amount', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_amount_base", output_field=DecimalField()),
+                Sum("total_amount", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            order_count=Count('id'),
+            order_count=Count("id"),
             avg_order=Coalesce(
-                Avg('total_amount_base', output_field=DecimalField()),
-                Avg('total_amount', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
-            )
+                Avg("total_amount_base", output_field=DecimalField()),
+                Avg("total_amount", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
+            ),
         )
 
         return {
-            'total_sales': aggregates['total_sales'],
-            'currency': currency,
-            'order_count': aggregates['order_count'],
-            'average_order_value': aggregates['avg_order'],
-            'period': period
+            "total_sales": aggregates["total_sales"],
+            "currency": currency,
+            "order_count": aggregates["order_count"],
+            "average_order_value": aggregates["avg_order"],
+            "period": period,
         }
 
     # ------------------------------------------------------------------ #
     #  Existing: get_top_products
     # ------------------------------------------------------------------ #
     @classmethod
-    def get_top_products(cls, period: str = 'today', limit: int = 5) -> list:
+    def get_top_products(cls, period: str = "today", limit: int = 5) -> list:
         """
         Get top selling products for a specified period.
 
@@ -140,9 +149,9 @@ class AnalyticsService:
         """
         now = timezone.now()
 
-        if period == 'today':
+        if period == "today":
             start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        elif period == '7_days':
+        elif period == "7_days":
             start_date = now - timedelta(days=7)
         else:
             start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -150,29 +159,31 @@ class AnalyticsService:
         currency = get_default_currency()
 
         # Query order items from paid orders
-        top_products = cls._paid_order_items_qs().filter(
-            order__created_at__gte=start_date,
-        ).values(
-            'product_id',
-            'product_name',
-            'sku'
-        ).annotate(
-            units_sold=Sum('quantity'),
-            revenue=Coalesce(
-                Sum('total_price_base', output_field=DecimalField()),
-                Sum('total_price', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+        top_products = (
+            cls._paid_order_items_qs()
+            .filter(
+                order__created_at__gte=start_date,
             )
-        ).order_by('-units_sold')[:limit]
+            .values("product_id", "product_name", "sku")
+            .annotate(
+                units_sold=Sum("quantity"),
+                revenue=Coalesce(
+                    Sum("total_price_base", output_field=DecimalField()),
+                    Sum("total_price", output_field=DecimalField()),
+                    Value(Decimal("0.00"), output_field=DecimalField()),
+                ),
+            )
+            .order_by("-units_sold")[:limit]
+        )
 
         return [
             {
-                'product_id': item['product_id'],
-                'product_name': item['product_name'],
-                'sku': item['sku'],
-                'units_sold': item['units_sold'],
-                'revenue': item['revenue'] or Decimal('0.00'),
-                'currency': currency
+                "product_id": item["product_id"],
+                "product_name": item["product_name"],
+                "sku": item["sku"],
+                "units_sold": item["units_sold"],
+                "revenue": item["revenue"] or Decimal("0.00"),
+                "currency": currency,
             }
             for item in top_products
         ]
@@ -192,15 +203,13 @@ class AnalyticsService:
 
         status_display_map = dict(Order.STATUS_CHOICES)
 
-        breakdown = Order.objects.values('status').annotate(
-            count=Count('id')
-        ).order_by('status')
+        breakdown = Order.objects.values("status").annotate(count=Count("id")).order_by("status")
 
         return [
             {
-                'status': item['status'],
-                'status_display': status_display_map.get(item['status'], item['status'].title()),
-                'count': item['count']
+                "status": item["status"],
+                "status_display": status_display_map.get(item["status"], item["status"].title()),
+                "count": item["count"],
             }
             for item in breakdown
         ]
@@ -213,9 +222,7 @@ class AnalyticsService:
         """Get count of orders awaiting action (pending, processing)."""
         from orders.models import Order
 
-        return Order.objects.filter(
-            status__in=['pending', 'processing']
-        ).count()
+        return Order.objects.filter(status__in=["pending", "processing"]).count()
 
     # ------------------------------------------------------------------ #
     #  Existing: get_low_stock_count
@@ -238,14 +245,11 @@ class AnalyticsService:
         from catalog.models import Product
 
         # Build queryset for published products that track inventory
-        products = Product.objects.filter(
-            status='published',
-            track_inventory=True
-        ).annotate(
+        products = Product.objects.filter(status="published", track_inventory=True).annotate(
             available_stock=Coalesce(
-                Sum(F('stock_items__on_hand') - F('stock_items__allocated')),
+                Sum(F("stock_items__on_hand") - F("stock_items__allocated")),
                 0,
-                output_field=IntegerField()
+                output_field=IntegerField(),
             )
         )
 
@@ -254,9 +258,7 @@ class AnalyticsService:
             low_stock_products = products.filter(available_stock__lte=threshold)
         else:
             # Use each product's individual low_stock_threshold
-            low_stock_products = products.filter(
-                available_stock__lte=F('low_stock_threshold')
-            )
+            low_stock_products = products.filter(available_stock__lte=F("low_stock_threshold"))
 
         return low_stock_products.count()
 
@@ -277,29 +279,29 @@ class AnalyticsService:
         """
         if start_date and end_date:
             custom_kpi = cls.get_sales_kpi(
-                period='custom', start_date=start_date, end_date=end_date
+                period="custom", start_date=start_date, end_date=end_date
             )
             return {
-                'custom_range': custom_kpi,
-                'today': cls.get_sales_kpi('today'),
-                'last_7_days': cls.get_sales_kpi('7_days'),
-                'last_30_days': cls.get_sales_kpi('30_days'),
-                'top_products_today': cls.get_top_products('today', 5),
-                'top_products_7_days': cls.get_top_products('7_days', 5),
-                'order_status_breakdown': cls.get_order_status_breakdown(),
-                'pending_orders_count': cls.get_pending_orders_count(),
-                'low_stock_count': cls.get_low_stock_count()
+                "custom_range": custom_kpi,
+                "today": cls.get_sales_kpi("today"),
+                "last_7_days": cls.get_sales_kpi("7_days"),
+                "last_30_days": cls.get_sales_kpi("30_days"),
+                "top_products_today": cls.get_top_products("today", 5),
+                "top_products_7_days": cls.get_top_products("7_days", 5),
+                "order_status_breakdown": cls.get_order_status_breakdown(),
+                "pending_orders_count": cls.get_pending_orders_count(),
+                "low_stock_count": cls.get_low_stock_count(),
             }
 
         return {
-            'today': cls.get_sales_kpi('today'),
-            'last_7_days': cls.get_sales_kpi('7_days'),
-            'last_30_days': cls.get_sales_kpi('30_days'),
-            'top_products_today': cls.get_top_products('today', 5),
-            'top_products_7_days': cls.get_top_products('7_days', 5),
-            'order_status_breakdown': cls.get_order_status_breakdown(),
-            'pending_orders_count': cls.get_pending_orders_count(),
-            'low_stock_count': cls.get_low_stock_count()
+            "today": cls.get_sales_kpi("today"),
+            "last_7_days": cls.get_sales_kpi("7_days"),
+            "last_30_days": cls.get_sales_kpi("30_days"),
+            "top_products_today": cls.get_top_products("today", 5),
+            "top_products_7_days": cls.get_top_products("7_days", 5),
+            "order_status_breakdown": cls.get_order_status_breakdown(),
+            "pending_orders_count": cls.get_pending_orders_count(),
+            "low_stock_count": cls.get_low_stock_count(),
         }
 
     # ------------------------------------------------------------------ #
@@ -313,22 +315,22 @@ class AnalyticsService:
         Returns:
             dict with today_sales, today_orders, pending_orders, low_stock_items
         """
-        today_kpi = cls.get_sales_kpi('today')
+        today_kpi = cls.get_sales_kpi("today")
         currency = get_default_currency()
 
         return {
-            'today_sales': today_kpi['total_sales'],
-            'today_orders': today_kpi['order_count'],
-            'pending_orders': cls.get_pending_orders_count(),
-            'low_stock_items': cls.get_low_stock_count(),
-            'currency': currency
+            "today_sales": today_kpi["total_sales"],
+            "today_orders": today_kpi["order_count"],
+            "pending_orders": cls.get_pending_orders_count(),
+            "low_stock_items": cls.get_low_stock_count(),
+            "currency": currency,
         }
 
     # ------------------------------------------------------------------ #
     #  Existing: get_daily_stats
     # ------------------------------------------------------------------ #
     @classmethod
-    def get_daily_stats(cls, period: str = '7_days') -> dict:
+    def get_daily_stats(cls, period: str = "7_days") -> dict:
         """
         Get per-day breakdown of revenue and order counts.
 
@@ -341,9 +343,9 @@ class AnalyticsService:
         now = timezone.now()
         today = now.date()
 
-        if period == '90_days':
+        if period == "90_days":
             num_days = 90
-        elif period == '30_days':
+        elif period == "30_days":
             num_days = 30
         else:
             num_days = 7
@@ -354,47 +356,52 @@ class AnalyticsService:
         currency = get_default_currency()
 
         # Query daily aggregates for paid, non-cancelled orders
-        daily_data = cls._paid_orders_qs().filter(
-            created_at__gte=start_dt,
-        ).annotate(
-            order_date=TruncDate('created_at')
-        ).values('order_date').annotate(
-            revenue=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Sum('total_amount', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
-            ),
-            order_count=Count('id'),
-            avg_order=Coalesce(
-                Avg('total_amount_base', output_field=DecimalField()),
-                Avg('total_amount', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+        daily_data = (
+            cls._paid_orders_qs()
+            .filter(
+                created_at__gte=start_dt,
             )
-        ).order_by('order_date')
+            .annotate(order_date=TruncDate("created_at"))
+            .values("order_date")
+            .annotate(
+                revenue=Coalesce(
+                    Sum("total_amount_base", output_field=DecimalField()),
+                    Sum("total_amount", output_field=DecimalField()),
+                    Value(Decimal("0.00"), output_field=DecimalField()),
+                ),
+                order_count=Count("id"),
+                avg_order=Coalesce(
+                    Avg("total_amount_base", output_field=DecimalField()),
+                    Avg("total_amount", output_field=DecimalField()),
+                    Value(Decimal("0.00"), output_field=DecimalField()),
+                ),
+            )
+            .order_by("order_date")
+        )
 
         # Build lookup from DB results
-        daily_lookup = {
-            row['order_date']: row for row in daily_data
-        }
+        daily_lookup = {row["order_date"]: row for row in daily_data}
 
         # Fill in all dates (including zero-order days)
         days = []
         for i in range(num_days):
             d = start_date + timedelta(days=i)
             row = daily_lookup.get(d)
-            days.append({
-                'date': d,
-                'revenue': row['revenue'] if row else Decimal('0.00'),
-                'order_count': row['order_count'] if row else 0,
-                'average_order_value': row['avg_order'] if row else Decimal('0.00'),
-            })
+            days.append(
+                {
+                    "date": d,
+                    "revenue": row["revenue"] if row else Decimal("0.00"),
+                    "order_count": row["order_count"] if row else 0,
+                    "average_order_value": row["avg_order"] if row else Decimal("0.00"),
+                }
+            )
 
         return {
-            'period': period,
-            'currency': currency,
-            'start_date': start_date,
-            'end_date': today,
-            'days': days,
+            "period": period,
+            "currency": currency,
+            "start_date": start_date,
+            "end_date": today,
+            "days": days,
         }
 
     # ------------------------------------------------------------------ #
@@ -403,7 +410,7 @@ class AnalyticsService:
     @classmethod
     def get_sales_comparison(
         cls,
-        period: str = 'today',
+        period: str = "today",
         start_date=None,
         end_date=None,
         compare_start_date=None,
@@ -440,11 +447,15 @@ class AnalyticsService:
                 current_end = end_date
 
             if compare_start_date and compare_end_date:
-                if isinstance(compare_start_date, date) and not isinstance(compare_start_date, datetime):
+                if isinstance(compare_start_date, date) and not isinstance(
+                    compare_start_date, datetime
+                ):
                     previous_start = cls._date_to_aware_dt(compare_start_date)
                 else:
                     previous_start = compare_start_date
-                if isinstance(compare_end_date, date) and not isinstance(compare_end_date, datetime):
+                if isinstance(compare_end_date, date) and not isinstance(
+                    compare_end_date, datetime
+                ):
                     previous_end = cls._date_to_aware_dt(compare_end_date, end_of_day=True)
                 else:
                     previous_end = compare_end_date
@@ -455,7 +466,7 @@ class AnalyticsService:
                 previous_start = previous_end - delta
         else:
             # Period-based calculation (original logic)
-            if period == 'today':
+            if period == "today":
                 current_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
                 current_end = now
                 previous_start = current_start - timedelta(days=1)
@@ -475,28 +486,27 @@ class AnalyticsService:
             current_qs = current_qs.filter(created_at__lte=current_end)
         current_sales = current_qs.aggregate(
             total=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Sum('total_amount', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_amount_base", output_field=DecimalField()),
+                Sum("total_amount", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            count=Count('id'),
+            count=Count("id"),
         )
 
         # Previous period sales
         previous_sales_agg = base_qs.filter(
-            created_at__gte=previous_start,
-            created_at__lt=previous_end
+            created_at__gte=previous_start, created_at__lt=previous_end
         ).aggregate(
             total=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Sum('total_amount', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_amount_base", output_field=DecimalField()),
+                Sum("total_amount", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            count=Count('id'),
+            count=Count("id"),
         )
 
-        current_total = current_sales['total']
-        previous_total = previous_sales_agg['total']
+        current_total = current_sales["total"]
+        previous_total = previous_sales_agg["total"]
 
         # Calculate change percentage
         if previous_total and previous_total > 0:
@@ -506,13 +516,13 @@ class AnalyticsService:
 
         # Determine trend
         if change is None:
-            trend = 'stable'
+            trend = "stable"
         elif change > 0:
-            trend = 'up'
+            trend = "up"
         elif change < 0:
-            trend = 'down'
+            trend = "down"
         else:
-            trend = 'stable'
+            trend = "stable"
 
         # Build daily breakdown for chart rendering
         daily_breakdown = cls._build_daily_breakdown(
@@ -520,14 +530,14 @@ class AnalyticsService:
         )
 
         return {
-            'current_value': current_total,
-            'previous_value': previous_total,
-            'current_order_count': current_sales['count'],
-            'previous_order_count': previous_sales_agg['count'],
-            'change_percentage': change,
-            'trend': trend,
-            'currency': currency,
-            'daily_breakdown': daily_breakdown,
+            "current_value": current_total,
+            "previous_value": previous_total,
+            "current_order_count": current_sales["count"],
+            "previous_order_count": previous_sales_agg["count"],
+            "change_percentage": change,
+            "trend": trend,
+            "currency": currency,
+            "daily_breakdown": daily_breakdown,
         }
 
     @classmethod
@@ -536,20 +546,24 @@ class AnalyticsService:
         base_qs = cls._paid_orders_qs()
 
         def _get_daily(qs_start, qs_end):
-            daily = base_qs.filter(
-                created_at__gte=qs_start,
-                created_at__lte=qs_end,
-            ).annotate(
-                order_date=TruncDate('created_at')
-            ).values('order_date').annotate(
-                revenue=Coalesce(
-                    Sum('total_amount_base', output_field=DecimalField()),
-                    Value(Decimal('0.00'), output_field=DecimalField())
-                ),
-                order_count=Count('id'),
-            ).order_by('order_date')
+            daily = (
+                base_qs.filter(
+                    created_at__gte=qs_start,
+                    created_at__lte=qs_end,
+                )
+                .annotate(order_date=TruncDate("created_at"))
+                .values("order_date")
+                .annotate(
+                    revenue=Coalesce(
+                        Sum("total_amount_base", output_field=DecimalField()),
+                        Value(Decimal("0.00"), output_field=DecimalField()),
+                    ),
+                    order_count=Count("id"),
+                )
+                .order_by("order_date")
+            )
 
-            lookup = {row['order_date']: row for row in daily}
+            lookup = {row["order_date"]: row for row in daily}
 
             start_d = qs_start.date() if isinstance(qs_start, datetime) else qs_start
             end_d = qs_end.date() if isinstance(qs_end, datetime) else qs_end
@@ -559,16 +573,18 @@ class AnalyticsService:
             for i in range(num_days):
                 d = start_d + timedelta(days=i)
                 row = lookup.get(d)
-                result.append({
-                    'date': d,
-                    'revenue': row['revenue'] if row else Decimal('0.00'),
-                    'order_count': row['order_count'] if row else 0,
-                })
+                result.append(
+                    {
+                        "date": d,
+                        "revenue": row["revenue"] if row else Decimal("0.00"),
+                        "order_count": row["order_count"] if row else 0,
+                    }
+                )
             return result
 
         return {
-            'current': _get_daily(current_start, current_end),
-            'previous': _get_daily(previous_start, previous_end),
+            "current": _get_daily(current_start, current_end),
+            "previous": _get_daily(previous_start, previous_end),
         }
 
     # ================================================================== #
@@ -582,7 +598,7 @@ class AnalyticsService:
         category_id=None,
         brand_id=None,
         search=None,
-        ordering='-revenue',
+        ordering="-revenue",
         page=1,
         page_size=20,
     ) -> dict:
@@ -592,9 +608,8 @@ class AnalyticsService:
         Returns:
             dict with summary, products list, and pagination
         """
-        from orders.models import OrderItem
-        from orders.models import Refund
         from catalog.models import Product
+        from orders.models import OrderItem, Refund
 
         currency = get_default_currency()
         start_dt = cls._date_to_aware_dt(start_date)
@@ -612,22 +627,20 @@ class AnalyticsService:
         if brand_id:
             items_qs = items_qs.filter(product__brand_id=brand_id)
         if search:
-            items_qs = items_qs.filter(
-                Q(product_name__icontains=search) | Q(sku__icontains=search)
-            )
+            items_qs = items_qs.filter(Q(product_name__icontains=search) | Q(sku__icontains=search))
 
         # Aggregate by product
         product_stats = items_qs.values(
-            'product_id',
-            'product_name',
-            'sku',
+            "product_id",
+            "product_name",
+            "sku",
         ).annotate(
-            units_sold=Coalesce(Sum('quantity'), Value(0), output_field=IntegerField()),
+            units_sold=Coalesce(Sum("quantity"), Value(0), output_field=IntegerField()),
             revenue=Coalesce(
-                Sum('total_price_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_price_base", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            orders_count=Count('order_id', distinct=True),
+            orders_count=Count("order_id", distinct=True),
         )
 
         # Get refund counts per product for the period
@@ -637,98 +650,110 @@ class AnalyticsService:
         refunds_in_range = Refund.objects.filter(
             order__created_at__gte=start_dt,
             order__created_at__lte=end_dt,
-            status__in=['approved', 'processing', 'completed'],
-        ).select_related('order')
+            status__in=["approved", "processing", "completed"],
+        ).select_related("order")
         for refund in refunds_in_range:
-            for item_data in (refund.items_json or []):
-                oi_id = item_data.get('order_item_id')
+            for item_data in refund.items_json or []:
+                oi_id = item_data.get("order_item_id")
                 if oi_id:
                     try:
-                        oi = OrderItem.objects.only('product_id').get(pk=oi_id)
+                        oi = OrderItem.objects.only("product_id").get(pk=oi_id)
                         refund_counts[oi.product_id] = refund_counts.get(oi.product_id, 0) + 1
                     except OrderItem.DoesNotExist:
                         pass
 
         # Ordering
         allowed_orderings = {
-            'revenue', '-revenue', 'units_sold', '-units_sold',
-            'orders_count', '-orders_count', 'product_name', '-product_name',
+            "revenue",
+            "-revenue",
+            "units_sold",
+            "-units_sold",
+            "orders_count",
+            "-orders_count",
+            "product_name",
+            "-product_name",
         }
         if ordering not in allowed_orderings:
-            ordering = '-revenue'
+            ordering = "-revenue"
         product_stats = product_stats.order_by(ordering)
 
         # Summary aggregates (before pagination)
         total_count = product_stats.count()
         summary_agg = items_qs.aggregate(
             total_revenue=Coalesce(
-                Sum('total_price_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_price_base", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            total_units=Coalesce(Sum('quantity'), Value(0), output_field=IntegerField()),
-            total_products_sold=Count('product_id', distinct=True),
+            total_units=Coalesce(Sum("quantity"), Value(0), output_field=IntegerField()),
+            total_products_sold=Count("product_id", distinct=True),
         )
 
         # Pagination
         total_pages = math.ceil(total_count / page_size) if total_count > 0 else 1
         offset = (page - 1) * page_size
-        page_data = list(product_stats[offset:offset + page_size])
+        page_data = list(product_stats[offset : offset + page_size])
 
         # Enrich with image URL, category, brand, return info
-        product_ids = [p['product_id'] for p in page_data]
+        product_ids = [p["product_id"] for p in page_data]
         products_map = {}
         if product_ids:
-            products_qs = Product.objects.filter(
-                id__in=product_ids
-            ).select_related('category', 'brand').prefetch_related('images')
+            products_qs = (
+                Product.objects.filter(id__in=product_ids)
+                .select_related("category", "brand")
+                .prefetch_related("images")
+            )
             for p in products_qs:
                 primary_img = p.images.filter(is_primary=True).first()
                 products_map[p.id] = {
-                    'category_name': p.category.name if p.category else '',
-                    'brand_name': p.brand.name if p.brand else '',
-                    'image_url': primary_img.image_url if primary_img else None,
+                    "category_name": p.category.name if p.category else "",
+                    "brand_name": p.brand.name if p.brand else "",
+                    "image_url": primary_img.image_url if primary_img else None,
                 }
 
         products = []
         for item in page_data:
-            pid = item['product_id']
+            pid = item["product_id"]
             extra = products_map.get(pid, {})
-            units = item['units_sold'] or 0
-            rev = item['revenue'] or Decimal('0.00')
+            units = item["units_sold"] or 0
+            rev = item["revenue"] or Decimal("0.00")
             returns = refund_counts.get(pid, 0)
-            return_rate = (Decimal(returns) / Decimal(units) * 100) if units > 0 else Decimal('0.00')
-            avg_price = (rev / Decimal(units)) if units > 0 else Decimal('0.00')
+            return_rate = (
+                (Decimal(returns) / Decimal(units) * 100) if units > 0 else Decimal("0.00")
+            )
+            avg_price = (rev / Decimal(units)) if units > 0 else Decimal("0.00")
 
-            products.append({
-                'product_id': pid,
-                'product_name': item['product_name'],
-                'sku': item['sku'],
-                'image_url': extra.get('image_url'),
-                'category_name': extra.get('category_name', ''),
-                'brand_name': extra.get('brand_name', ''),
-                'units_sold': units,
-                'revenue': rev,
-                'orders_count': item['orders_count'],
-                'returns_count': returns,
-                'return_rate': round(return_rate, 2),
-                'average_selling_price': round(avg_price, 2),
-            })
+            products.append(
+                {
+                    "product_id": pid,
+                    "product_name": item["product_name"],
+                    "sku": item["sku"],
+                    "image_url": extra.get("image_url"),
+                    "category_name": extra.get("category_name", ""),
+                    "brand_name": extra.get("brand_name", ""),
+                    "units_sold": units,
+                    "revenue": rev,
+                    "orders_count": item["orders_count"],
+                    "returns_count": returns,
+                    "return_rate": round(return_rate, 2),
+                    "average_selling_price": round(avg_price, 2),
+                }
+            )
 
         return {
-            'currency': currency,
-            'start_date': start_date.isoformat(),
-            'end_date': end_date.isoformat(),
-            'summary': {
-                'total_revenue': summary_agg['total_revenue'],
-                'total_units': summary_agg['total_units'],
-                'total_products_sold': summary_agg['total_products_sold'],
+            "currency": currency,
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "summary": {
+                "total_revenue": summary_agg["total_revenue"],
+                "total_units": summary_agg["total_units"],
+                "total_products_sold": summary_agg["total_products_sold"],
             },
-            'results': products,
-            'pagination': {
-                'page': page,
-                'page_size': page_size,
-                'total_count': total_count,
-                'total_pages': total_pages,
+            "results": products,
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total_count": total_count,
+                "total_pages": total_pages,
             },
         }
 
@@ -741,7 +766,7 @@ class AnalyticsService:
         start_date,
         end_date,
         segment=None,
-        ordering='-total_spent',
+        ordering="-total_spent",
         page=1,
         page_size=20,
     ) -> dict:
@@ -760,6 +785,7 @@ class AnalyticsService:
             dict with summary, geo_breakdown, ltv_distribution, top_customers, pagination
         """
         from django.contrib.auth import get_user_model
+
         User = get_user_model()
 
         currency = get_default_currency()
@@ -776,19 +802,16 @@ class AnalyticsService:
 
         # Customers who ordered in the range (exclude guest orders)
         range_customer_ids = set(
-            range_orders.filter(user__isnull=False)
-            .values_list('user_id', flat=True).distinct()
+            range_orders.filter(user__isnull=False).values_list("user_id", flat=True).distinct()
         )
 
         # New customers: first-ever paid order is within date range
         # Determine each user's first order date
-        first_order_subquery = base_qs.filter(
-            user_id=OuterRef('pk')
-        ).order_by('created_at').values('created_at')[:1]
+        first_order_subquery = (
+            base_qs.filter(user_id=OuterRef("pk")).order_by("created_at").values("created_at")[:1]
+        )
 
-        users_with_first_order = User.objects.filter(
-            id__in=range_customer_ids
-        ).annotate(
+        users_with_first_order = User.objects.filter(id__in=range_customer_ids).annotate(
             first_order_date=Subquery(first_order_subquery)
         )
 
@@ -796,7 +819,7 @@ class AnalyticsService:
             users_with_first_order.filter(
                 first_order_date__gte=start_dt,
                 first_order_date__lte=end_dt,
-            ).values_list('id', flat=True)
+            ).values_list("id", flat=True)
         )
         returning_customer_ids = range_customer_ids - new_customer_ids
 
@@ -805,102 +828,102 @@ class AnalyticsService:
         returning_customers = len(returning_customer_ids)
 
         # Average LTV (lifetime total spent by customers who ordered in range)
-        ltv_data = base_qs.filter(
-            user_id__in=range_customer_ids
-        ).values('user_id').annotate(
-            lifetime_spent=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
-            ),
-            lifetime_orders=Count('id'),
+        ltv_data = (
+            base_qs.filter(user_id__in=range_customer_ids)
+            .values("user_id")
+            .annotate(
+                lifetime_spent=Coalesce(
+                    Sum("total_amount_base", output_field=DecimalField()),
+                    Value(Decimal("0.00"), output_field=DecimalField()),
+                ),
+                lifetime_orders=Count("id"),
+            )
         )
-        ltv_lookup = {row['user_id']: row for row in ltv_data}
+        ltv_lookup = {row["user_id"]: row for row in ltv_data}
 
-        ltv_values = [row['lifetime_spent'] for row in ltv_data]
-        avg_ltv = (
-            sum(ltv_values) / Decimal(len(ltv_values))
-            if ltv_values else Decimal('0.00')
-        )
-        order_counts = [row['lifetime_orders'] for row in ltv_data]
-        avg_orders = (
-            sum(order_counts) / len(order_counts)
-            if order_counts else 0
-        )
+        ltv_values = [row["lifetime_spent"] for row in ltv_data]
+        avg_ltv = sum(ltv_values) / Decimal(len(ltv_values)) if ltv_values else Decimal("0.00")
+        order_counts = [row["lifetime_orders"] for row in ltv_data]
+        avg_orders = sum(order_counts) / len(order_counts) if order_counts else 0
 
         # Geo breakdown from shipping_country on orders in range
-        geo_data = range_orders.filter(
-            shipping_country__gt=''
-        ).values('shipping_country').annotate(
-            order_count=Count('id'),
-            revenue=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
-            ),
-            customer_count=Count('user_id', distinct=True),
-        ).order_by('-revenue')
+        geo_data = (
+            range_orders.filter(shipping_country__gt="")
+            .values("shipping_country")
+            .annotate(
+                order_count=Count("id"),
+                revenue=Coalesce(
+                    Sum("total_amount_base", output_field=DecimalField()),
+                    Value(Decimal("0.00"), output_field=DecimalField()),
+                ),
+                customer_count=Count("user_id", distinct=True),
+            )
+            .order_by("-revenue")
+        )
 
         geo_breakdown = [
             {
-                'country': row['shipping_country'],
-                'order_count': row['order_count'],
-                'revenue': row['revenue'],
-                'customer_count': row['customer_count'],
+                "country": row["shipping_country"],
+                "order_count": row["order_count"],
+                "revenue": row["revenue"],
+                "customer_count": row["customer_count"],
             }
             for row in geo_data
         ]
 
         # LTV distribution buckets
         ltv_buckets = [
-            {'label': '$0 - $50', 'min': Decimal('0'), 'max': Decimal('50'), 'count': 0},
-            {'label': '$50 - $100', 'min': Decimal('50'), 'max': Decimal('100'), 'count': 0},
-            {'label': '$100 - $250', 'min': Decimal('100'), 'max': Decimal('250'), 'count': 0},
-            {'label': '$250 - $500', 'min': Decimal('250'), 'max': Decimal('500'), 'count': 0},
-            {'label': '$500 - $1000', 'min': Decimal('500'), 'max': Decimal('1000'), 'count': 0},
-            {'label': '$1000+', 'min': Decimal('1000'), 'max': None, 'count': 0},
+            {"label": "$0 - $50", "min": Decimal("0"), "max": Decimal("50"), "count": 0},
+            {"label": "$50 - $100", "min": Decimal("50"), "max": Decimal("100"), "count": 0},
+            {"label": "$100 - $250", "min": Decimal("100"), "max": Decimal("250"), "count": 0},
+            {"label": "$250 - $500", "min": Decimal("250"), "max": Decimal("500"), "count": 0},
+            {"label": "$500 - $1000", "min": Decimal("500"), "max": Decimal("1000"), "count": 0},
+            {"label": "$1000+", "min": Decimal("1000"), "max": None, "count": 0},
         ]
         for ltv_val in ltv_values:
             for bucket in ltv_buckets:
-                if bucket['max'] is None:
-                    if ltv_val >= bucket['min']:
-                        bucket['count'] += 1
+                if bucket["max"] is None:
+                    if ltv_val >= bucket["min"]:
+                        bucket["count"] += 1
                         break
-                elif bucket['min'] <= ltv_val < bucket['max']:
-                    bucket['count'] += 1
+                elif bucket["min"] <= ltv_val < bucket["max"]:
+                    bucket["count"] += 1
                     break
-        ltv_distribution = [
-            {'label': b['label'], 'count': b['count']}
-            for b in ltv_buckets
-        ]
+        ltv_distribution = [{"label": b["label"], "count": b["count"]} for b in ltv_buckets]
 
         # Top customers list with segment filtering and pagination
         # Build list from ltv_lookup, filter by segment
-        if segment == 'new':
+        if segment == "new":
             target_ids = new_customer_ids
-        elif segment == 'returning':
+        elif segment == "returning":
             target_ids = returning_customer_ids
         else:
             target_ids = range_customer_ids
 
         # Get per-range stats for top customers
-        range_stats = base_qs.filter(
-            user_id__in=target_ids,
-            created_at__gte=start_dt,
-            created_at__lte=end_dt,
-        ).values('user_id').annotate(
-            range_spent=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
-            ),
-            range_orders=Count('id'),
+        range_stats = (
+            base_qs.filter(
+                user_id__in=target_ids,
+                created_at__gte=start_dt,
+                created_at__lte=end_dt,
+            )
+            .values("user_id")
+            .annotate(
+                range_spent=Coalesce(
+                    Sum("total_amount_base", output_field=DecimalField()),
+                    Value(Decimal("0.00"), output_field=DecimalField()),
+                ),
+                range_orders=Count("id"),
+            )
         )
-        range_stats_lookup = {row['user_id']: row for row in range_stats}
+        range_stats_lookup = {row["user_id"]: row for row in range_stats}
 
         # Build customer records
         customer_records = []
         users_map = {}
         if target_ids:
             for u in User.objects.filter(id__in=target_ids).only(
-                'id', 'first_name', 'last_name', 'email', 'date_joined'
+                "id", "first_name", "last_name", "email", "date_joined"
             ):
                 users_map[u.id] = u
 
@@ -910,28 +933,37 @@ class AnalyticsService:
                 continue
             ltv_info = ltv_lookup.get(uid, {})
             range_info = range_stats_lookup.get(uid, {})
-            customer_records.append({
-                'user_id': uid,
-                'name': f"{user.first_name} {user.last_name}".strip() or user.email,
-                'email': user.email,
-                'segment': 'new' if uid in new_customer_ids else 'returning',
-                'total_spent': ltv_info.get('lifetime_spent', Decimal('0.00')),
-                'total_orders': ltv_info.get('lifetime_orders', 0),
-                'range_spent': range_info.get('range_spent', Decimal('0.00')),
-                'range_orders': range_info.get('range_orders', 0),
-                'joined': user.date_joined.date().isoformat() if user.date_joined else None,
-            })
+            customer_records.append(
+                {
+                    "user_id": uid,
+                    "name": f"{user.first_name} {user.last_name}".strip() or user.email,
+                    "email": user.email,
+                    "segment": "new" if uid in new_customer_ids else "returning",
+                    "total_spent": ltv_info.get("lifetime_spent", Decimal("0.00")),
+                    "total_orders": ltv_info.get("lifetime_orders", 0),
+                    "range_spent": range_info.get("range_spent", Decimal("0.00")),
+                    "range_orders": range_info.get("range_orders", 0),
+                    "joined": user.date_joined.date().isoformat() if user.date_joined else None,
+                }
+            )
 
         # Sort
         allowed_orderings = {
-            'total_spent', '-total_spent', 'range_spent', '-range_spent',
-            'total_orders', '-total_orders', 'range_orders', '-range_orders',
-            'name', '-name',
+            "total_spent",
+            "-total_spent",
+            "range_spent",
+            "-range_spent",
+            "total_orders",
+            "-total_orders",
+            "range_orders",
+            "-range_orders",
+            "name",
+            "-name",
         }
         if ordering not in allowed_orderings:
-            ordering = '-total_spent'
-        reverse = ordering.startswith('-')
-        sort_key = ordering.lstrip('-')
+            ordering = "-total_spent"
+        reverse = ordering.startswith("-")
+        sort_key = ordering.lstrip("-")
         customer_records.sort(
             key=lambda x: x.get(sort_key, 0) or 0,
             reverse=reverse,
@@ -941,27 +973,29 @@ class AnalyticsService:
         total_count = len(customer_records)
         total_pages = math.ceil(total_count / page_size) if total_count > 0 else 1
         offset = (page - 1) * page_size
-        page_customers = customer_records[offset:offset + page_size]
+        page_customers = customer_records[offset : offset + page_size]
 
         return {
-            'currency': currency,
-            'start_date': start_date.isoformat(),
-            'end_date': end_date.isoformat(),
-            'summary': {
-                'total_customers': total_customers,
-                'new_customers': new_customers,
-                'returning_customers': returning_customers,
-                'average_ltv': round(avg_ltv, 2),
-                'average_orders_per_customer': round(avg_orders, 2) if isinstance(avg_orders, float) else avg_orders,
+            "currency": currency,
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "summary": {
+                "total_customers": total_customers,
+                "new_customers": new_customers,
+                "returning_customers": returning_customers,
+                "average_ltv": round(avg_ltv, 2),
+                "average_orders_per_customer": round(avg_orders, 2)
+                if isinstance(avg_orders, float)
+                else avg_orders,
             },
-            'geo_breakdown': geo_breakdown,
-            'ltv_distribution': ltv_distribution,
-            'top_customers': page_customers,
-            'pagination': {
-                'page': page,
-                'page_size': page_size,
-                'total_count': total_count,
-                'total_pages': total_pages,
+            "geo_breakdown": geo_breakdown,
+            "ltv_distribution": ltv_distribution,
+            "top_customers": page_customers,
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total_count": total_count,
+                "total_pages": total_pages,
             },
         }
 
@@ -969,7 +1003,7 @@ class AnalyticsService:
     #  NEW: Category Analytics
     # ================================================================== #
     @classmethod
-    def get_category_analytics(cls, start_date, end_date, ordering='-revenue') -> dict:
+    def get_category_analytics(cls, start_date, end_date, ordering="-revenue") -> dict:
         """
         Get revenue per category from OrderItem -> product__category.
 
@@ -991,77 +1025,77 @@ class AnalyticsService:
         )
 
         category_stats = items_qs.values(
-            'product__category__id',
-            'product__category__name',
+            "product__category__id",
+            "product__category__name",
         ).annotate(
             revenue=Coalesce(
-                Sum('total_price_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_price_base", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            units_sold=Coalesce(Sum('quantity'), Value(0), output_field=IntegerField()),
-            orders_count=Count('order_id', distinct=True),
-            products_count=Count('product_id', distinct=True),
+            units_sold=Coalesce(Sum("quantity"), Value(0), output_field=IntegerField()),
+            orders_count=Count("order_id", distinct=True),
+            products_count=Count("product_id", distinct=True),
         )
 
         # Ordering
         order_map = {
-            '-revenue': '-revenue',
-            'revenue': 'revenue',
-            '-units_sold': '-units_sold',
-            'units_sold': 'units_sold',
-            '-orders_count': '-orders_count',
-            'orders_count': 'orders_count',
-            'name': 'product__category__name',
-            '-name': '-product__category__name',
+            "-revenue": "-revenue",
+            "revenue": "revenue",
+            "-units_sold": "-units_sold",
+            "units_sold": "units_sold",
+            "-orders_count": "-orders_count",
+            "orders_count": "orders_count",
+            "name": "product__category__name",
+            "-name": "-product__category__name",
         }
-        db_ordering = order_map.get(ordering, '-revenue')
+        db_ordering = order_map.get(ordering, "-revenue")
         category_stats = category_stats.order_by(db_ordering)
 
         # Calculate total for percentage
-        total_revenue = sum(
-            (row['revenue'] or Decimal('0.00')) for row in category_stats
-        )
+        total_revenue = sum((row["revenue"] or Decimal("0.00")) for row in category_stats)
 
         categories = []
         for row in category_stats:
-            rev = row['revenue'] or Decimal('0.00')
-            pct = (rev / total_revenue * 100) if total_revenue > 0 else Decimal('0.00')
-            categories.append({
-                'category_id': row['product__category__id'],
-                'category_name': row['product__category__name'] or 'Uncategorized',
-                'revenue': rev,
-                'units_sold': row['units_sold'],
-                'orders_count': row['orders_count'],
-                'products_count': row['products_count'],
-                'revenue_percentage': round(pct, 2),
-            })
+            rev = row["revenue"] or Decimal("0.00")
+            pct = (rev / total_revenue * 100) if total_revenue > 0 else Decimal("0.00")
+            categories.append(
+                {
+                    "category_id": row["product__category__id"],
+                    "category_name": row["product__category__name"] or "Uncategorized",
+                    "revenue": rev,
+                    "units_sold": row["units_sold"],
+                    "orders_count": row["orders_count"],
+                    "products_count": row["products_count"],
+                    "revenue_percentage": round(pct, 2),
+                }
+            )
 
         summary_agg = items_qs.aggregate(
             total_revenue=Coalesce(
-                Sum('total_price_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_price_base", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            total_units=Coalesce(Sum('quantity'), Value(0), output_field=IntegerField()),
-            total_categories=Count('product__category__id', distinct=True),
+            total_units=Coalesce(Sum("quantity"), Value(0), output_field=IntegerField()),
+            total_categories=Count("product__category__id", distinct=True),
         )
 
         return {
-            'currency': currency,
-            'start_date': start_date.isoformat(),
-            'end_date': end_date.isoformat(),
-            'summary': {
-                'total_revenue': summary_agg['total_revenue'],
-                'total_units': summary_agg['total_units'],
-                'total_categories': summary_agg['total_categories'],
+            "currency": currency,
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "summary": {
+                "total_revenue": summary_agg["total_revenue"],
+                "total_units": summary_agg["total_units"],
+                "total_categories": summary_agg["total_categories"],
             },
-            'categories': categories,
+            "categories": categories,
         }
 
     # ================================================================== #
     #  NEW: Brand Analytics
     # ================================================================== #
     @classmethod
-    def get_brand_analytics(cls, start_date, end_date, ordering='-revenue') -> dict:
+    def get_brand_analytics(cls, start_date, end_date, ordering="-revenue") -> dict:
         """
         Get revenue per brand from OrderItem -> product__brand.
 
@@ -1083,70 +1117,70 @@ class AnalyticsService:
         )
 
         brand_stats = items_qs.values(
-            'product__brand__id',
-            'product__brand__name',
+            "product__brand__id",
+            "product__brand__name",
         ).annotate(
             revenue=Coalesce(
-                Sum('total_price_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_price_base", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            units_sold=Coalesce(Sum('quantity'), Value(0), output_field=IntegerField()),
-            orders_count=Count('order_id', distinct=True),
-            products_count=Count('product_id', distinct=True),
+            units_sold=Coalesce(Sum("quantity"), Value(0), output_field=IntegerField()),
+            orders_count=Count("order_id", distinct=True),
+            products_count=Count("product_id", distinct=True),
         )
 
         # Ordering
         order_map = {
-            '-revenue': '-revenue',
-            'revenue': 'revenue',
-            '-units_sold': '-units_sold',
-            'units_sold': 'units_sold',
-            '-orders_count': '-orders_count',
-            'orders_count': 'orders_count',
-            'name': 'product__brand__name',
-            '-name': '-product__brand__name',
+            "-revenue": "-revenue",
+            "revenue": "revenue",
+            "-units_sold": "-units_sold",
+            "units_sold": "units_sold",
+            "-orders_count": "-orders_count",
+            "orders_count": "orders_count",
+            "name": "product__brand__name",
+            "-name": "-product__brand__name",
         }
-        db_ordering = order_map.get(ordering, '-revenue')
+        db_ordering = order_map.get(ordering, "-revenue")
         brand_stats = brand_stats.order_by(db_ordering)
 
         # Calculate total for percentage
-        total_revenue = sum(
-            (row['revenue'] or Decimal('0.00')) for row in brand_stats
-        )
+        total_revenue = sum((row["revenue"] or Decimal("0.00")) for row in brand_stats)
 
         brands = []
         for row in brand_stats:
-            rev = row['revenue'] or Decimal('0.00')
-            pct = (rev / total_revenue * 100) if total_revenue > 0 else Decimal('0.00')
-            brands.append({
-                'brand_id': row['product__brand__id'],
-                'brand_name': row['product__brand__name'] or 'No Brand',
-                'revenue': rev,
-                'units_sold': row['units_sold'],
-                'orders_count': row['orders_count'],
-                'products_count': row['products_count'],
-                'revenue_percentage': round(pct, 2),
-            })
+            rev = row["revenue"] or Decimal("0.00")
+            pct = (rev / total_revenue * 100) if total_revenue > 0 else Decimal("0.00")
+            brands.append(
+                {
+                    "brand_id": row["product__brand__id"],
+                    "brand_name": row["product__brand__name"] or "No Brand",
+                    "revenue": rev,
+                    "units_sold": row["units_sold"],
+                    "orders_count": row["orders_count"],
+                    "products_count": row["products_count"],
+                    "revenue_percentage": round(pct, 2),
+                }
+            )
 
         summary_agg = items_qs.aggregate(
             total_revenue=Coalesce(
-                Sum('total_price_base', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
+                Sum("total_price_base", output_field=DecimalField()),
+                Value(Decimal("0.00"), output_field=DecimalField()),
             ),
-            total_units=Coalesce(Sum('quantity'), Value(0), output_field=IntegerField()),
-            total_brands=Count('product__brand__id', distinct=True),
+            total_units=Coalesce(Sum("quantity"), Value(0), output_field=IntegerField()),
+            total_brands=Count("product__brand__id", distinct=True),
         )
 
         return {
-            'currency': currency,
-            'start_date': start_date.isoformat(),
-            'end_date': end_date.isoformat(),
-            'summary': {
-                'total_revenue': summary_agg['total_revenue'],
-                'total_units': summary_agg['total_units'],
-                'total_brands': summary_agg['total_brands'],
+            "currency": currency,
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "summary": {
+                "total_revenue": summary_agg["total_revenue"],
+                "total_units": summary_agg["total_units"],
+                "total_brands": summary_agg["total_brands"],
             },
-            'brands': brands,
+            "brands": brands,
         }
 
     # ------------------------------------------------------------------ #
@@ -1170,33 +1204,40 @@ class AnalyticsService:
         end_dt = cls._date_to_aware_dt(target_date, end_of_day=True)
         currency = get_default_currency()
 
-        hourly_data = cls._paid_orders_qs().filter(
-            created_at__gte=start_dt,
-            created_at__lte=end_dt,
-        ).annotate(
-            hour=ExtractHour('created_at')
-        ).values('hour').annotate(
-            revenue=Coalesce(
-                Sum('total_amount_base', output_field=DecimalField()),
-                Sum('total_amount', output_field=DecimalField()),
-                Value(Decimal('0.00'), output_field=DecimalField())
-            ),
-            order_count=Count('id'),
-        ).order_by('hour')
+        hourly_data = (
+            cls._paid_orders_qs()
+            .filter(
+                created_at__gte=start_dt,
+                created_at__lte=end_dt,
+            )
+            .annotate(hour=ExtractHour("created_at"))
+            .values("hour")
+            .annotate(
+                revenue=Coalesce(
+                    Sum("total_amount_base", output_field=DecimalField()),
+                    Sum("total_amount", output_field=DecimalField()),
+                    Value(Decimal("0.00"), output_field=DecimalField()),
+                ),
+                order_count=Count("id"),
+            )
+            .order_by("hour")
+        )
 
-        hourly_lookup = {row['hour']: row for row in hourly_data}
+        hourly_lookup = {row["hour"]: row for row in hourly_data}
 
         hours = []
         for h in range(24):
             row = hourly_lookup.get(h)
-            hours.append({
-                'hour': h,
-                'revenue': row['revenue'] if row else Decimal('0.00'),
-                'order_count': row['order_count'] if row else 0,
-            })
+            hours.append(
+                {
+                    "hour": h,
+                    "revenue": row["revenue"] if row else Decimal("0.00"),
+                    "order_count": row["order_count"] if row else 0,
+                }
+            )
 
         return {
-            'date': target_date,
-            'currency': currency,
-            'hours': hours,
+            "date": target_date,
+            "currency": currency,
+            "hours": hours,
         }

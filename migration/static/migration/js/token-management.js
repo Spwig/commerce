@@ -4,32 +4,32 @@
  * Token Management
  * Handles revoke confirmation for sync tokens.
  */
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        document.addEventListener('click', function(e) {
-            var btn = e.target.closest('[data-action="revoke-token"]');
-            if (!btn) return;
+  document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-action="revoke-token"]');
+      if (!btn) return;
 
-            e.preventDefault();
-            var tokenName = btn.getAttribute('data-token-name') || '';
-            var form = btn.closest('form');
-            if (!form) return;
+      e.preventDefault();
+      const tokenName = btn.getAttribute('data-token-name') || '';
+      const form = btn.closest('form');
+      if (!form) return;
 
-            var msg = tokenName
-                ? 'Revoke token "' + tokenName + '"? Any connections using it will stop working.'
-                : 'Revoke this token? Any connections using it will stop working.';
+      const msg = tokenName
+        ? 'Revoke token "' + tokenName + '"? Any connections using it will stop working.'
+        : 'Revoke this token? Any connections using it will stop working.';
 
-            AdminModal.confirm({
-                message: msg,
-                danger: true,
-                confirmText: 'Revoke'
-            }).then(function(confirmed) {
-                if (confirmed) {
-                    form.submit();
-                }
-            });
-        });
+      AdminModal.confirm({
+        message: msg,
+        danger: true,
+        confirmText: 'Revoke',
+      }).then(function (confirmed) {
+        if (confirmed) {
+          form.submit();
+        }
+      });
     });
+  });
 })();

@@ -46,62 +46,70 @@ class ThemePresetInstaller:
         headers_created = 0
         footers_created = 0
 
-        headers_dir = presets_dir / 'headers'
-        footers_dir = presets_dir / 'footers'
+        headers_dir = presets_dir / "headers"
+        footers_dir = presets_dir / "footers"
 
         # Install header presets
         if headers_dir.is_dir():
-            for json_file in sorted(headers_dir.glob('*.json')):
+            for json_file in sorted(headers_dir.glob("*.json")):
                 try:
-                    preset_data = json.loads(json_file.read_text(encoding='utf-8'))
+                    preset_data = json.loads(json_file.read_text(encoding="utf-8"))
                     header = cls._create_header_from_preset(preset_data, theme_slug)
                     if header:
                         headers_created += 1
                         logger.info(
                             "Installed header preset '%s' from theme '%s'",
-                            header.name, theme_slug,
+                            header.name,
+                            theme_slug,
                         )
                 except (json.JSONDecodeError, KeyError) as e:
                     logger.error(
                         "Failed to parse header preset %s: %s",
-                        json_file.name, e,
+                        json_file.name,
+                        e,
                     )
                 except Exception as e:
                     logger.error(
                         "Failed to install header preset %s: %s",
-                        json_file.name, e,
+                        json_file.name,
+                        e,
                     )
 
         # Install footer presets
         if footers_dir.is_dir():
-            for json_file in sorted(footers_dir.glob('*.json')):
+            for json_file in sorted(footers_dir.glob("*.json")):
                 try:
-                    preset_data = json.loads(json_file.read_text(encoding='utf-8'))
+                    preset_data = json.loads(json_file.read_text(encoding="utf-8"))
                     footer = cls._create_footer_from_preset(preset_data, theme_slug)
                     if footer:
                         footers_created += 1
                         logger.info(
                             "Installed footer preset '%s' from theme '%s'",
-                            footer.name, theme_slug,
+                            footer.name,
+                            theme_slug,
                         )
                 except (json.JSONDecodeError, KeyError) as e:
                     logger.error(
                         "Failed to parse footer preset %s: %s",
-                        json_file.name, e,
+                        json_file.name,
+                        e,
                     )
                 except Exception as e:
                     logger.error(
                         "Failed to install footer preset %s: %s",
-                        json_file.name, e,
+                        json_file.name,
+                        e,
                     )
 
         result = {
-            'headers_created': headers_created,
-            'footers_created': footers_created,
+            "headers_created": headers_created,
+            "footers_created": footers_created,
         }
         logger.info(
             "Theme '%s' preset installation complete: %d headers, %d footers",
-            theme_slug, headers_created, footers_created,
+            theme_slug,
+            headers_created,
+            footers_created,
         )
         return result
 
@@ -114,7 +122,7 @@ class ThemePresetInstaller:
 
         Returns dict with counts: {'headers_deleted': N, 'footers_deleted': N}
         """
-        source = f'theme:{theme_slug}'
+        source = f"theme:{theme_slug}"
 
         with transaction.atomic():
             headers_qs = HeaderTemplate.objects.filter(source=source)
@@ -126,12 +134,14 @@ class ThemePresetInstaller:
             footers_qs.delete()
 
         result = {
-            'headers_deleted': headers_deleted,
-            'footers_deleted': footers_deleted,
+            "headers_deleted": headers_deleted,
+            "footers_deleted": footers_deleted,
         }
         logger.info(
             "Theme '%s' preset uninstall complete: %d headers, %d footers removed",
-            theme_slug, headers_deleted, footers_deleted,
+            theme_slug,
+            headers_deleted,
+            footers_deleted,
         )
         return result
 
@@ -158,16 +168,17 @@ class ThemePresetInstaller:
             ]
         }
         """
-        source = f'theme:{theme_slug}'
-        preset_name = preset_data['name']
-        preset_slug = f'theme-{theme_slug}-{slugify(preset_name)}'
+        source = f"theme:{theme_slug}"
+        preset_name = preset_data["name"]
+        preset_slug = f"theme-{theme_slug}-{slugify(preset_name)}"
 
         # Skip if already installed (idempotent)
         existing = HeaderTemplate.objects.filter(slug=preset_slug).first()
         if existing:
             logger.debug(
                 "Header preset '%s' already exists (slug=%s), skipping",
-                preset_name, preset_slug,
+                preset_name,
+                preset_slug,
             )
             return None
 
@@ -175,22 +186,22 @@ class ThemePresetInstaller:
             header = HeaderTemplate.objects.create(
                 name=preset_name,
                 slug=preset_slug,
-                description=preset_data.get('description', ''),
-                layout_type=preset_data.get('layout_type', 'classic'),
-                is_sticky=preset_data.get('is_sticky', False),
-                enable_notification_zone=preset_data.get('enable_notification_zone', True),
-                zone_layouts=preset_data.get('zone_layouts', {}),
-                zone_overrides=preset_data.get('zone_overrides', {}),
+                description=preset_data.get("description", ""),
+                layout_type=preset_data.get("layout_type", "classic"),
+                is_sticky=preset_data.get("is_sticky", False),
+                enable_notification_zone=preset_data.get("enable_notification_zone", True),
+                zone_layouts=preset_data.get("zone_layouts", {}),
+                zone_overrides=preset_data.get("zone_overrides", {}),
                 is_preset=True,
-                preset_category=preset_data.get('preset_category', 'modern'),
+                preset_category=preset_data.get("preset_category", "modern"),
                 source=source,
                 is_active=True,
-                is_default=preset_data.get('is_default', False),
+                is_default=preset_data.get("is_default", False),
             )
 
             # Create widget placements
             cls._create_widget_placements(
-                preset_data.get('widget_placements', []),
+                preset_data.get("widget_placements", []),
                 header=header,
                 footer=None,
             )
@@ -215,16 +226,17 @@ class ThemePresetInstaller:
             ]
         }
         """
-        source = f'theme:{theme_slug}'
-        preset_name = preset_data['name']
-        preset_slug = f'theme-{theme_slug}-{slugify(preset_name)}'
+        source = f"theme:{theme_slug}"
+        preset_name = preset_data["name"]
+        preset_slug = f"theme-{theme_slug}-{slugify(preset_name)}"
 
         # Skip if already installed (idempotent)
         existing = FooterTemplate.objects.filter(slug=preset_slug).first()
         if existing:
             logger.debug(
                 "Footer preset '%s' already exists (slug=%s), skipping",
-                preset_name, preset_slug,
+                preset_name,
+                preset_slug,
             )
             return None
 
@@ -232,21 +244,21 @@ class ThemePresetInstaller:
             footer = FooterTemplate.objects.create(
                 name=preset_name,
                 slug=preset_slug,
-                description=preset_data.get('description', ''),
-                layout_type=preset_data.get('layout_type', 'columns'),
-                column_count=preset_data.get('column_count', 4),
-                has_bottom_bar=preset_data.get('has_bottom_bar', True),
-                zones=preset_data.get('zones', {}),
+                description=preset_data.get("description", ""),
+                layout_type=preset_data.get("layout_type", "columns"),
+                column_count=preset_data.get("column_count", 4),
+                has_bottom_bar=preset_data.get("has_bottom_bar", True),
+                zones=preset_data.get("zones", {}),
                 is_preset=True,
-                preset_category=preset_data.get('preset_category', 'modern'),
+                preset_category=preset_data.get("preset_category", "modern"),
                 source=source,
                 is_active=True,
-                is_default=preset_data.get('is_default', False),
+                is_default=preset_data.get("is_default", False),
             )
 
             # Create widget placements
             cls._create_widget_placements(
-                preset_data.get('widget_placements', []),
+                preset_data.get("widget_placements", []),
                 header=None,
                 footer=footer,
             )
@@ -275,19 +287,21 @@ class ThemePresetInstaller:
 
         created_placements = []
         for placement_data in placements_data:
-            widget_type = placement_data.get('widget_type')
+            widget_type = placement_data.get("widget_type")
             if not widget_type:
                 logger.warning("Skipping placement with no widget_type: %s", placement_data)
                 continue
 
             # Get or create the shared widget for this type
-            display_name = str(widget_type_names.get(widget_type, widget_type.replace('_', ' ').title()))
+            display_name = str(
+                widget_type_names.get(widget_type, widget_type.replace("_", " ").title())
+            )
             widget, _ = Widget.objects.get_or_create(
                 widget_type=widget_type,
                 defaults={
-                    'name': display_name,
-                    'config': {},
-                    'is_active': True,
+                    "name": display_name,
+                    "config": {},
+                    "is_active": True,
                 },
             )
 
@@ -295,9 +309,9 @@ class ThemePresetInstaller:
                 widget=widget,
                 header=header,
                 footer=footer,
-                zone=placement_data.get('zone', ''),
-                order=placement_data.get('order', 0),
-                override_config=placement_data.get('config', {}),
+                zone=placement_data.get("zone", ""),
+                order=placement_data.get("order", 0),
+                override_config=placement_data.get("config", {}),
                 is_active=True,
             )
             created_placements.append(placement)

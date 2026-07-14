@@ -1,9 +1,12 @@
 """
 Test Celery configuration and task execution
 """
+
 from django.test import TestCase
-from core.celery import app as celery_app, debug_task
-from migration.tasks import run_migration_job, rollback_migration_task, cleanup_old_jobs
+
+from core.celery import app as celery_app
+from core.celery import debug_task
+from migration.tasks import run_migration_job
 
 
 class CeleryConfigTest(TestCase):
@@ -12,21 +15,21 @@ class CeleryConfigTest(TestCase):
     def test_celery_app_configured(self):
         """Test that Celery app is properly configured"""
         self.assertIsNotNone(celery_app)
-        self.assertEqual(celery_app.main, 'shop')
+        self.assertEqual(celery_app.main, "shop")
 
     def test_celery_settings(self):
         """Test that Celery settings are loaded"""
         # Check broker URL is configured
         self.assertIsNotNone(celery_app.conf.broker_url)
-        self.assertIn('redis://', celery_app.conf.broker_url)
+        self.assertIn("redis://", celery_app.conf.broker_url)
 
         # Check result backend
         self.assertIsNotNone(celery_app.conf.result_backend)
 
         # Check serialization
-        self.assertEqual(celery_app.conf.task_serializer, 'json')
-        self.assertEqual(celery_app.conf.result_serializer, 'json')
-        self.assertIn('json', celery_app.conf.accept_content)
+        self.assertEqual(celery_app.conf.task_serializer, "json")
+        self.assertEqual(celery_app.conf.result_serializer, "json")
+        self.assertIn("json", celery_app.conf.accept_content)
 
         # Check time limits
         self.assertEqual(celery_app.conf.task_time_limit, 30 * 60)
@@ -34,14 +37,14 @@ class CeleryConfigTest(TestCase):
 
     def test_debug_task_registered(self):
         """Test that debug task is registered"""
-        self.assertIn('core.celery.debug_task', celery_app.tasks)
+        self.assertIn("core.celery.debug_task", celery_app.tasks)
 
     def test_migration_tasks_registered(self):
         """Test that migration tasks are registered"""
         # Check tasks are registered
-        self.assertIn('migration.run_migration_job', celery_app.tasks)
-        self.assertIn('migration.rollback_migration', celery_app.tasks)
-        self.assertIn('migration.cleanup_old_jobs', celery_app.tasks)
+        self.assertIn("migration.run_migration_job", celery_app.tasks)
+        self.assertIn("migration.rollback_migration", celery_app.tasks)
+        self.assertIn("migration.cleanup_old_jobs", celery_app.tasks)
 
     def test_migration_task_has_generous_time_limit(self):
         """Migration task needs extended time for large imports"""

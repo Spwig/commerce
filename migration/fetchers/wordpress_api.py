@@ -4,12 +4,14 @@ WordPress REST API client for blog content migration.
 This client fetches blog posts, categories, tags, and media from WordPress sites.
 It uses the WordPress REST API (wp-json/wp/v2) which is separate from WooCommerce API.
 """
+
+import logging
+import time
+from collections.abc import Callable
+from urllib.parse import urlparse
+
 import requests
 from requests.auth import HTTPBasicAuth
-import time
-import logging
-from typing import List, Dict, Callable, Optional
-from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +30,9 @@ class WordPressAPIClient:
     def __init__(
         self,
         site_url: str,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        timeout: int = 30
+        username: str | None = None,
+        password: str | None = None,
+        timeout: int = 30,
     ):
         """
         Initialize WordPress API client.
@@ -41,7 +43,7 @@ class WordPressAPIClient:
             password: Optional application password (WordPress 5.6+)
             timeout: Request timeout in seconds
         """
-        self.site_url = site_url.rstrip('/')
+        self.site_url = site_url.rstrip("/")
         self.base_url = f"{self.site_url}/wp-json/wp/v2"
         self.timeout = timeout
         self.session = requests.Session()
@@ -66,7 +68,7 @@ class WordPressAPIClient:
             bool: True if connection successful
         """
         try:
-            response = self._request('GET', '')
+            response = self._request("GET", "")
             return response.status_code == 200
         except Exception as e:
             logger.error(f"WordPress connection test failed: {e}")
@@ -81,7 +83,7 @@ class WordPressAPIClient:
         """
         return self.source_domain
 
-    def get_total_counts(self) -> Dict[str, int]:
+    def get_total_counts(self) -> dict[str, int]:
         """
         Get total counts for posts, categories, and tags.
 
@@ -91,20 +93,17 @@ class WordPressAPIClient:
         counts = {}
 
         endpoints = {
-            'posts': '/posts',
-            'categories': '/categories',
-            'tags': '/tags',
+            "posts": "/posts",
+            "categories": "/categories",
+            "tags": "/tags",
         }
 
         for key, endpoint in endpoints.items():
             try:
-                response = self.session.head(
-                    f"{self.base_url}{endpoint}",
-                    timeout=self.timeout
-                )
+                response = self.session.head(f"{self.base_url}{endpoint}", timeout=self.timeout)
 
                 if response.status_code == 200:
-                    counts[key] = int(response.headers.get('X-WP-Total', 0))
+                    counts[key] = int(response.headers.get("X-WP-Total", 0))
                 else:
                     counts[key] = 0
             except Exception as e:
@@ -116,10 +115,8 @@ class WordPressAPIClient:
     # Paginated fetch methods
 
     def fetch_all_posts(
-        self,
-        progress_callback: Optional[Callable] = None,
-        status: str = 'publish'
-    ) -> List[Dict]:
+        self, progress_callback: Callable | None = None, status: str = "publish"
+    ) -> list[dict]:
         """
         Fetch all blog posts with pagination.
 
@@ -130,13 +127,10 @@ class WordPressAPIClient:
         Returns:
             List of post dictionaries
         """
-        params = {'status': status} if status != 'any' else {}
-        return self._fetch_all_paginated('/posts', progress_callback, extra_params=params)
+        params = {"status": status} if status != "any" else {}
+        return self._fetch_all_paginated("/posts", progress_callback, extra_params=params)
 
-    def fetch_all_categories(
-        self,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
+    def fetch_all_categories(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all blog categories with pagination.
 
@@ -146,12 +140,9 @@ class WordPressAPIClient:
         Returns:
             List of category dictionaries
         """
-        return self._fetch_all_paginated('/categories', progress_callback)
+        return self._fetch_all_paginated("/categories", progress_callback)
 
-    def fetch_all_tags(
-        self,
-        progress_callback: Optional[Callable] = None
-    ) -> List[Dict]:
+    def fetch_all_tags(self, progress_callback: Callable | None = None) -> list[dict]:
         """
         Fetch all blog tags with pagination.
 
@@ -161,11 +152,11 @@ class WordPressAPIClient:
         Returns:
             List of tag dictionaries
         """
-        return self._fetch_all_paginated('/tags', progress_callback)
+        return self._fetch_all_paginated("/tags", progress_callback)
 
     # Single item fetch methods
 
-    def fetch_media(self, media_id: int) -> Optional[Dict]:
+    def fetch_media(self, media_id: int) -> dict | None:
         """
         Fetch a single media item (for featured images).
 
@@ -176,7 +167,7 @@ class WordPressAPIClient:
             Media dictionary or None if not found
         """
         try:
-            response = self._request('GET', f'/media/{media_id}')
+            response = self._request("GET", f"/media/{media_id}")
             if response.status_code == 200:
                 return response.json()
             else:
@@ -186,7 +177,7 @@ class WordPressAPIClient:
             logger.error(f"Failed to fetch media {media_id}: {e}")
             return None
 
-    def fetch_post(self, post_id: int) -> Optional[Dict]:
+    def fetch_post(self, post_id: int) -> dict | None:
         """
         Fetch a single post by ID.
 
@@ -197,7 +188,7 @@ class WordPressAPIClient:
             Post dictionary or None if not found
         """
         try:
-            response = self._request('GET', f'/posts/{post_id}')
+            response = self._request("GET", f"/posts/{post_id}")
             if response.status_code == 200:
                 return response.json()
             else:
@@ -207,7 +198,7 @@ class WordPressAPIClient:
             logger.error(f"Failed to fetch post {post_id}: {e}")
             return None
 
-    def fetch_category(self, category_id: int) -> Optional[Dict]:
+    def fetch_category(self, category_id: int) -> dict | None:
         """
         Fetch a single category by ID.
 
@@ -218,7 +209,7 @@ class WordPressAPIClient:
             Category dictionary or None if not found
         """
         try:
-            response = self._request('GET', f'/categories/{category_id}')
+            response = self._request("GET", f"/categories/{category_id}")
             if response.status_code == 200:
                 return response.json()
             else:
@@ -227,7 +218,7 @@ class WordPressAPIClient:
             logger.error(f"Failed to fetch category {category_id}: {e}")
             return None
 
-    def fetch_tag(self, tag_id: int) -> Optional[Dict]:
+    def fetch_tag(self, tag_id: int) -> dict | None:
         """
         Fetch a single tag by ID.
 
@@ -238,7 +229,7 @@ class WordPressAPIClient:
             Tag dictionary or None if not found
         """
         try:
-            response = self._request('GET', f'/tags/{tag_id}')
+            response = self._request("GET", f"/tags/{tag_id}")
             if response.status_code == 200:
                 return response.json()
             else:
@@ -252,9 +243,9 @@ class WordPressAPIClient:
     def _fetch_all_paginated(
         self,
         endpoint: str,
-        progress_callback: Optional[Callable] = None,
-        extra_params: Optional[Dict] = None
-    ) -> List[Dict]:
+        progress_callback: Callable | None = None,
+        extra_params: dict | None = None,
+    ) -> list[dict]:
         """
         Fetch all items with automatic pagination.
 
@@ -277,13 +268,9 @@ class WordPressAPIClient:
         total_pages = None
 
         while True:
-            params = {
-                'page': page,
-                'per_page': per_page,
-                **(extra_params or {})
-            }
+            params = {"page": page, "per_page": per_page, **(extra_params or {})}
 
-            response = self._request('GET', endpoint, params=params)
+            response = self._request("GET", endpoint, params=params)
 
             if response.status_code != 200:
                 if response.status_code == 400 and page > 1:
@@ -294,8 +281,8 @@ class WordPressAPIClient:
 
             # Get pagination info from headers
             if total_items is None:
-                total_items = int(response.headers.get('X-WP-Total', 0))
-                total_pages = int(response.headers.get('X-WP-TotalPages', 1))
+                total_items = int(response.headers.get("X-WP-Total", 0))
+                total_pages = int(response.headers.get("X-WP-TotalPages", 1))
                 logger.info(f"Fetching {total_items} items from {endpoint} ({total_pages} pages)")
 
             # Get items from this page
@@ -319,11 +306,7 @@ class WordPressAPIClient:
         return all_items
 
     def _request(
-        self,
-        method: str,
-        endpoint: str,
-        params: Optional[Dict] = None,
-        max_retries: int = 3
+        self, method: str, endpoint: str, params: dict | None = None, max_retries: int = 3
     ) -> requests.Response:
         """
         Make HTTP request with retry logic and rate limiting.
@@ -345,19 +328,14 @@ class WordPressAPIClient:
                 self._rate_limit_wait()
 
                 # Make request
-                response = self.session.request(
-                    method,
-                    url,
-                    params=params,
-                    timeout=self.timeout
-                )
+                response = self.session.request(method, url, params=params, timeout=self.timeout)
 
                 # Update last request time
                 self.last_request_time = time.time()
 
                 # Handle rate limiting (429 status)
                 if response.status_code == 429:
-                    retry_after = int(response.headers.get('Retry-After', 5))
+                    retry_after = int(response.headers.get("Retry-After", 5))
                     logger.warning(f"Rate limited. Waiting {retry_after} seconds...")
                     time.sleep(retry_after)
                     continue
@@ -367,7 +345,7 @@ class WordPressAPIClient:
 
             except requests.exceptions.Timeout:
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt  # Exponential backoff
+                    wait_time = 2**attempt  # Exponential backoff
                     logger.warning(
                         f"Request timeout. Retrying in {wait_time}s... "
                         f"(attempt {attempt + 1}/{max_retries})"
@@ -379,7 +357,7 @@ class WordPressAPIClient:
 
             except requests.exceptions.ConnectionError as e:
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt
+                    wait_time = 2**attempt
                     logger.warning(f"Connection error: {e}. Retrying in {wait_time}s...")
                     time.sleep(wait_time)
                 else:

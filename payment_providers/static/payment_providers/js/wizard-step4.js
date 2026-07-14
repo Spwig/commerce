@@ -5,17 +5,16 @@
  * Auto-submits the test form after a short delay.
  */
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Auto-submit form to start test
-        setTimeout(function() {
-            var form = document.getElementById('test-form');
-            if (form) {
-                form.submit();
-            }
-        }, 500);
-    });
-
-}());
+  document.addEventListener('DOMContentLoaded', function () {
+    // Auto-submit form to start test
+    setTimeout(function () {
+      const form = document.getElementById('test-form');
+      if (form) {
+        form.submit();
+      }
+    }, 500);
+  });
+})();

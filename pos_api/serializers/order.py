@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .cart import POSCartItemSerializer
 
 
 class POSOrderItemSerializer(serializers.Serializer):
     """Order line item for POS display."""
+
     id = serializers.IntegerField()
     product_name = serializers.CharField()
     variant_name = serializers.CharField(allow_null=True, allow_blank=True)
@@ -15,20 +15,18 @@ class POSOrderItemSerializer(serializers.Serializer):
 
 class POSPaymentDetailSerializer(serializers.Serializer):
     """Payment detail in order context."""
+
     method = serializers.CharField()
     method_display = serializers.CharField()
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
-    amount_tendered = serializers.DecimalField(
-        max_digits=10, decimal_places=2, allow_null=True
-    )
-    change_given = serializers.DecimalField(
-        max_digits=10, decimal_places=2, allow_null=True
-    )
+    amount_tendered = serializers.DecimalField(max_digits=10, decimal_places=2, allow_null=True)
+    change_given = serializers.DecimalField(max_digits=10, decimal_places=2, allow_null=True)
     card_last_four = serializers.CharField(allow_blank=True)
 
 
 class POSOrderSerializer(serializers.Serializer):
     """Full order for POS display."""
+
     id = serializers.IntegerField()
     order_number = serializers.CharField()
     status = serializers.CharField()
@@ -49,6 +47,7 @@ class POSOrderSerializer(serializers.Serializer):
 
 class POSOrderListSerializer(serializers.Serializer):
     """Lightweight order for POS order list."""
+
     id = serializers.IntegerField()
     order_number = serializers.CharField()
     status = serializers.CharField()
@@ -62,6 +61,7 @@ class POSOrderListSerializer(serializers.Serializer):
 
 class POSReceiptSerializer(serializers.Serializer):
     """Receipt data for printing."""
+
     order_number = serializers.CharField()
     store_name = serializers.CharField()
     store_address = serializers.CharField(allow_blank=True)
@@ -75,8 +75,6 @@ class POSReceiptSerializer(serializers.Serializer):
     total = serializers.DecimalField(max_digits=10, decimal_places=2)
     currency = serializers.CharField()
     payments = POSPaymentDetailSerializer(many=True)
-    change_given = serializers.DecimalField(
-        max_digits=10, decimal_places=2, allow_null=True
-    )
+    change_given = serializers.DecimalField(max_digits=10, decimal_places=2, allow_null=True)
     date = serializers.DateTimeField()
     footer_text = serializers.CharField(allow_blank=True)

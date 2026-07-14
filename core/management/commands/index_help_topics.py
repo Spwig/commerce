@@ -5,7 +5,6 @@ Generates embeddings and creates search index entries for all or specific help t
 """
 
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
 from tqdm import tqdm
 
 from core.models import HelpTopic
@@ -13,29 +12,29 @@ from core.services.semantic_search import IndexingService
 
 
 class Command(BaseCommand):
-    help = 'Index help topics for semantic search'
+    help = "Index help topics for semantic search"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--language',
+            "--language",
             type=str,
-            help='Index specific language (default: all languages from settings.LANGUAGES)',
+            help="Index specific language (default: all languages from settings.LANGUAGES)",
         )
         parser.add_argument(
-            '--topic',
+            "--topic",
             type=str,
-            help='Index specific topic by slug (default: all published topics)',
+            help="Index specific topic by slug (default: all published topics)",
         )
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Force re-indexing even if already indexed',
+            "--force",
+            action="store_true",
+            help="Force re-indexing even if already indexed",
         )
 
     def handle(self, *args, **options):
-        language = options.get('language')
-        topic_slug = options.get('topic')
-        force = options.get('force')
+        language = options.get("language")
+        topic_slug = options.get("topic")
+        options.get("force")
 
         # Determine which languages to index
         if language:
@@ -68,15 +67,17 @@ class Command(BaseCommand):
 
             stats = IndexingService.index_topic(topic.id, languages=languages)
 
-            self.stdout.write(self.style.SUCCESS(
-                f"✓ Indexed {stats['topics_indexed']} topic, "
-                f"{stats['total_chunks']} chunks in "
-                f"{len(stats['languages'])} language(s)"
-            ))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"✓ Indexed {stats['topics_indexed']} topic, "
+                    f"{stats['total_chunks']} chunks in "
+                    f"{len(stats['languages'])} language(s)"
+                )
+            )
 
         else:
             # Index all topics
-            topics = HelpTopic.objects.filter(is_published=True).order_by('slug')
+            topics = HelpTopic.objects.filter(is_published=True).order_by("slug")
             topic_count = topics.count()
 
             if topic_count == 0:
@@ -85,7 +86,9 @@ class Command(BaseCommand):
 
             if languages is None:
                 lang_list = IndexingService.get_supported_languages()
-                self.stdout.write(f"Indexing {topic_count} topics in {len(lang_list)} language(s)...")
+                self.stdout.write(
+                    f"Indexing {topic_count} topics in {len(lang_list)} language(s)..."
+                )
             else:
                 self.stdout.write(f"Indexing {topic_count} topics in language: {language}...")
 
@@ -95,8 +98,8 @@ class Command(BaseCommand):
             # Use tqdm for progress bar
             for topic in tqdm(topics, desc="Indexing topics", unit="topic"):
                 stats = IndexingService.index_topic(topic.id, languages=languages)
-                total_topics_indexed += stats['topics_indexed']
-                total_chunks += stats['total_chunks']
+                total_topics_indexed += stats["topics_indexed"]
+                total_chunks += stats["total_chunks"]
 
             # Final summary
             self.stdout.write(self.style.SUCCESS("\nIndexing complete:"))

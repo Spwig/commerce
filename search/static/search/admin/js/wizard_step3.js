@@ -6,46 +6,46 @@
  */
 
 (function () {
-    'use strict';
+  'use strict';
 
-    function init() {
-        var checkbox = document.getElementById('use-custom-weights');
-        if (checkbox) {
-            checkbox.addEventListener('change', toggleWeightSliders);
-        }
-
-        // Sync range sliders with number inputs
-        document.querySelectorAll('input[type="range"][data-target]').forEach(function (slider) {
-            slider.addEventListener('input', function () {
-                var target = document.getElementById(slider.dataset.target);
-                if (target) target.value = slider.value;
-            });
-        });
-
-        // Sync number inputs back to sliders
-        document.querySelectorAll('input[type="number"][id]').forEach(function (input) {
-            input.addEventListener('input', function () {
-                var slider = document.getElementById(input.id + '_slider');
-                if (slider) slider.value = input.value;
-            });
-        });
+  function init() {
+    const checkbox = document.getElementById('use-custom-weights');
+    if (checkbox) {
+      checkbox.addEventListener('change', toggleWeightSliders);
     }
 
-    function toggleWeightSliders() {
-        var checkbox = document.getElementById('use-custom-weights');
-        var sliders = document.getElementById('weight-sliders');
-        if (!checkbox || !sliders) return;
+    // Sync range sliders with number inputs
+    document.querySelectorAll('input[type="range"][data-target]').forEach(function (slider) {
+      slider.addEventListener('input', function () {
+        const target = document.getElementById(slider.dataset.target);
+        if (target) target.value = slider.value;
+      });
+    });
 
-        if (checkbox.checked) {
-            sliders.classList.remove('wizard-weights-disabled');
-        } else {
-            sliders.classList.add('wizard-weights-disabled');
-        }
-    }
+    // Sync number inputs back to sliders
+    document.querySelectorAll('input[type="number"][id]').forEach(function (input) {
+      input.addEventListener('input', function () {
+        const slider = document.getElementById(input.id + '_slider');
+        if (slider) slider.value = input.value;
+      });
+    });
+  }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+  function toggleWeightSliders() {
+    const checkbox = document.getElementById('use-custom-weights');
+    const sliders = document.getElementById('weight-sliders');
+    if (!checkbox || !sliders) return;
+
+    if (checkbox.checked) {
+      sliders.classList.remove('wizard-weights-disabled');
     } else {
-        init();
+      sliders.classList.add('wizard-weights-disabled');
     }
-}());
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

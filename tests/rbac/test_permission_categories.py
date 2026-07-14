@@ -1,16 +1,17 @@
 """
 Permission Category Tests
 
-Validates the 13 permission categories:
+Validates the 16 permission categories:
 - Category structure and metadata
 - Permission resolution logic (view/full levels)
 - Sidebar category mapping
 """
+
 import pytest
 from django.contrib.auth.models import Permission
+
 from staff_roles.categories import PERMISSION_CATEGORIES, SIDEBAR_CATEGORY_MAP
 from staff_roles.services import resolve_category_permissions
-
 
 pytestmark = pytest.mark.integrity
 
@@ -18,29 +19,34 @@ pytestmark = pytest.mark.integrity
 class TestPermissionCategoryStructure:
     """Validate category definition structure"""
 
-    # Expected categories
+    # Expected categories (16 total — the original 13 + system, custom_fields,
+    # translations added as the platform picked up dedicated admin areas for
+    # each).
     EXPECTED_CATEGORIES = [
-        'catalog',
-        'orders',
-        'customers',
-        'content',
-        'design',
-        'marketing',
-        'media',
-        'email',
-        'payments',
-        'search',
-        'settings',
-        'pos_admin',
-        'users',
+        "catalog",
+        "orders",
+        "customers",
+        "content",
+        "design",
+        "marketing",
+        "media",
+        "email",
+        "payments",
+        "search",
+        "settings",
+        "pos_admin",
+        "users",
+        "translations",
+        "custom_fields",
+        "system",
     ]
 
     # Required category keys
-    REQUIRED_CATEGORY_KEYS = ['label', 'icon', 'description', 'sort_order', 'permissions']
-    REQUIRED_PERMISSION_LEVELS = ['view', 'full']
+    REQUIRED_CATEGORY_KEYS = ["label", "icon", "description", "sort_order", "permissions"]
+    REQUIRED_PERMISSION_LEVELS = ["view", "full"]
 
     def test_all_expected_categories_present(self):
-        """Verify all 13 expected categories are defined"""
+        """Verify all 16 expected categories are defined"""
         actual_categories = set(PERMISSION_CATEGORIES.keys())
         expected_categories = set(self.EXPECTED_CATEGORIES)
 
@@ -50,10 +56,11 @@ class TestPermissionCategoryStructure:
         assert not missing, f"Missing expected categories: {missing}"
         assert not extra, f"Unexpected extra categories: {extra}"
 
-    def test_category_count_is_thirteen(self):
-        """Verify exactly 13 categories exist"""
-        assert len(PERMISSION_CATEGORIES) == 13, (
-            f"Expected 13 permission categories, found {len(PERMISSION_CATEGORIES)}"
+    def test_category_count_is_sixteen(self):
+        """Verify exactly 16 categories exist"""
+        assert len(PERMISSION_CATEGORIES) == len(self.EXPECTED_CATEGORIES), (
+            f"Expected {len(self.EXPECTED_CATEGORIES)} permission categories, "
+            f"found {len(PERMISSION_CATEGORIES)}"
         )
 
     def test_all_categories_have_required_keys(self):
@@ -61,39 +68,25 @@ class TestPermissionCategoryStructure:
         errors = []
 
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            missing_keys = [
-                key for key in self.REQUIRED_CATEGORY_KEYS
-                if key not in category_def
-            ]
+            missing_keys = [key for key in self.REQUIRED_CATEGORY_KEYS if key not in category_def]
             if missing_keys:
-                errors.append(
-                    f"{category_key}: missing keys {missing_keys}"
-                )
+                errors.append(f"{category_key}: missing keys {missing_keys}")
 
-        assert not errors, (
-            f"Categories with missing keys:\n  " +
-            "\n  ".join(errors)
-        )
+        assert not errors, "Categories with missing keys:\n  " + "\n  ".join(errors)
 
     def test_all_categories_have_view_and_full_permissions(self):
         """Verify each category defines both 'view' and 'full' permission levels"""
         errors = []
 
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            permissions = category_def.get('permissions', {})
+            permissions = category_def.get("permissions", {})
             missing_levels = [
-                level for level in self.REQUIRED_PERMISSION_LEVELS
-                if level not in permissions
+                level for level in self.REQUIRED_PERMISSION_LEVELS if level not in permissions
             ]
             if missing_levels:
-                errors.append(
-                    f"{category_key}: missing permission levels {missing_levels}"
-                )
+                errors.append(f"{category_key}: missing permission levels {missing_levels}")
 
-        assert not errors, (
-            f"Categories with missing permission levels:\n  " +
-            "\n  ".join(errors)
-        )
+        assert not errors, "Categories with missing permission levels:\n  " + "\n  ".join(errors)
 
     def test_category_labels_are_translated(self):
         """Verify category labels use gettext_lazy for translation"""
@@ -101,12 +94,10 @@ class TestPermissionCategoryStructure:
 
         errors = []
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            label = category_def.get('label')
+            label = category_def.get("label")
             # Translated strings are lazy objects (Promise instances)
             if not isinstance(label, (Promise, str)):
-                errors.append(
-                    f"{category_key}: label is not a translatable string"
-                )
+                errors.append(f"{category_key}: label is not a translatable string")
 
         # This test passes if labels are either Promise (translated) or str (not translated yet)
         # No assertions needed - just checking types
@@ -116,16 +107,11 @@ class TestPermissionCategoryStructure:
         errors = []
 
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            icon = category_def.get('icon', '')
-            if not icon.startswith('fas fa-') and not icon.startswith('fab fa-'):
-                errors.append(
-                    f"{category_key}: icon '{icon}' doesn't use Font Awesome format"
-                )
+            icon = category_def.get("icon", "")
+            if not icon.startswith("fas fa-") and not icon.startswith("fab fa-"):
+                errors.append(f"{category_key}: icon '{icon}' doesn't use Font Awesome format")
 
-        assert not errors, (
-            f"Categories with invalid icon format:\n  " +
-            "\n  ".join(errors)
-        )
+        assert not errors, "Categories with invalid icon format:\n  " + "\n  ".join(errors)
 
     def test_category_sort_order_is_unique(self):
         """Verify each category has a unique sort_order"""
@@ -133,17 +119,14 @@ class TestPermissionCategoryStructure:
         duplicates = []
 
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            sort_order = category_def.get('sort_order')
+            sort_order = category_def.get("sort_order")
             if sort_order in sort_orders:
                 duplicates.append(
                     f"{category_key} and {sort_orders[sort_order]} both have sort_order {sort_order}"
                 )
             sort_orders[sort_order] = category_key
 
-        assert not duplicates, (
-            f"Duplicate sort_order values:\n  " +
-            "\n  ".join(duplicates)
-        )
+        assert not duplicates, "Duplicate sort_order values:\n  " + "\n  ".join(duplicates)
 
 
 class TestPermissionResolution:
@@ -154,36 +137,48 @@ class TestPermissionResolution:
         """
         Verify 'view' level returns only view permissions, not full permissions
         """
-        category_settings = {'catalog': 'view'}
+        category_settings = {"catalog": "view"}
         permissions = resolve_category_permissions(category_settings)
         permission_codenames = {p.codename for p in permissions}
 
         # Should have view permissions
-        assert 'view_product' in permission_codenames, "view_product should be included"
-        assert 'view_category' in permission_codenames, "view_category should be included"
+        assert "view_product" in permission_codenames, "view_product should be included"
+        assert "view_category" in permission_codenames, "view_category should be included"
 
         # Should NOT have add/change/delete permissions
-        assert 'add_product' not in permission_codenames, "add_product should NOT be included for 'view' level"
-        assert 'change_product' not in permission_codenames, "change_product should NOT be included for 'view' level"
-        assert 'delete_product' not in permission_codenames, "delete_product should NOT be included for 'view' level"
+        assert "add_product" not in permission_codenames, (
+            "add_product should NOT be included for 'view' level"
+        )
+        assert "change_product" not in permission_codenames, (
+            "change_product should NOT be included for 'view' level"
+        )
+        assert "delete_product" not in permission_codenames, (
+            "delete_product should NOT be included for 'view' level"
+        )
 
     @pytest.mark.django_db
     def test_resolve_full_permissions_includes_view_and_full(self):
         """
         Verify 'full' level returns both view and full permissions
         """
-        category_settings = {'catalog': 'full'}
+        category_settings = {"catalog": "full"}
         permissions = resolve_category_permissions(category_settings)
         permission_codenames = {p.codename for p in permissions}
 
         # Should have view permissions
-        assert 'view_product' in permission_codenames, "view_product should be included"
-        assert 'view_category' in permission_codenames, "view_category should be included"
+        assert "view_product" in permission_codenames, "view_product should be included"
+        assert "view_category" in permission_codenames, "view_category should be included"
 
         # Should also have full permissions
-        assert 'add_product' in permission_codenames, "add_product should be included for 'full' level"
-        assert 'change_product' in permission_codenames, "change_product should be included for 'full' level"
-        assert 'delete_product' in permission_codenames, "delete_product should be included for 'full' level"
+        assert "add_product" in permission_codenames, (
+            "add_product should be included for 'full' level"
+        )
+        assert "change_product" in permission_codenames, (
+            "change_product should be included for 'full' level"
+        )
+        assert "delete_product" in permission_codenames, (
+            "delete_product should be included for 'full' level"
+        )
 
     @pytest.mark.django_db
     def test_resolve_multiple_categories(self):
@@ -191,18 +186,18 @@ class TestPermissionResolution:
         Verify multiple categories can be resolved in a single call
         """
         category_settings = {
-            'catalog': 'view',
-            'orders': 'full',
+            "catalog": "view",
+            "orders": "full",
         }
         permissions = resolve_category_permissions(category_settings)
         permission_codenames = {p.codename for p in permissions}
 
         # Catalog view permissions
-        assert 'view_product' in permission_codenames
+        assert "view_product" in permission_codenames
 
         # Orders view + full permissions
-        assert 'view_order' in permission_codenames
-        assert 'change_order' in permission_codenames
+        assert "view_order" in permission_codenames
+        assert "change_order" in permission_codenames
 
     @pytest.mark.django_db
     def test_invalid_category_gracefully_ignored(self):
@@ -210,22 +205,22 @@ class TestPermissionResolution:
         Verify invalid category keys are silently ignored
         """
         category_settings = {
-            'invalid_category': 'full',
-            'catalog': 'view',
+            "invalid_category": "full",
+            "catalog": "view",
         }
         # Should not raise exception
         permissions = resolve_category_permissions(category_settings)
         permission_codenames = {p.codename for p in permissions}
 
         # Valid category should still work
-        assert 'view_product' in permission_codenames
+        assert "view_product" in permission_codenames
 
     @pytest.mark.django_db
     def test_invalid_access_level_ignored(self):
         """
         Verify invalid access levels are silently ignored
         """
-        category_settings = {'catalog': 'invalid_level'}
+        category_settings = {"catalog": "invalid_level"}
         permissions = resolve_category_permissions(category_settings)
 
         # Should return empty set (no permissions matched)
@@ -236,14 +231,12 @@ class TestPermissionResolution:
         """
         Verify resolved permissions are actual Permission model instances
         """
-        category_settings = {'catalog': 'view'}
+        category_settings = {"catalog": "view"}
         permissions = resolve_category_permissions(category_settings)
 
         assert len(permissions) > 0, "Should resolve at least some permissions"
         for perm in permissions:
-            assert isinstance(perm, Permission), (
-                f"Expected Permission instance, got {type(perm)}"
-            )
+            assert isinstance(perm, Permission), f"Expected Permission instance, got {type(perm)}"
 
 
 class TestSidebarCategoryMapping:
@@ -253,19 +246,19 @@ class TestSidebarCategoryMapping:
         """Verify SIDEBAR_CATEGORY_MAP covers all expected sidebar groups"""
         # These should match the admin sidebar structure
         expected_sidebar_groups = [
-            'catalog',
-            'orders',
-            'customers',
-            'pos',
-            'search',
-            'marketing',
-            'content',
-            'design',
-            'settings',
-            'payments',
-            'email',
-            'users',
-            'media',
+            "catalog",
+            "orders",
+            "customers",
+            "pos",
+            "search",
+            "marketing",
+            "content",
+            "design",
+            "settings",
+            "payments",
+            "email",
+            "users",
+            "media",
         ]
 
         actual_groups = set(SIDEBAR_CATEGORY_MAP.keys())
@@ -287,9 +280,8 @@ class TestSidebarCategoryMapping:
                         f"Sidebar group '{sidebar_group}' references non-existent category '{category}'"
                     )
 
-        assert not errors, (
-            f"Invalid category references in SIDEBAR_CATEGORY_MAP:\n  " +
-            "\n  ".join(errors)
+        assert not errors, "Invalid category references in SIDEBAR_CATEGORY_MAP:\n  " + "\n  ".join(
+            errors
         )
 
     def test_no_duplicate_mappings(self):
@@ -303,10 +295,7 @@ class TestSidebarCategoryMapping:
                     f"Sidebar group '{sidebar_group}' has duplicate categories: {duplicates}"
                 )
 
-        assert not errors, (
-            f"Duplicate category mappings:\n  " +
-            "\n  ".join(errors)
-        )
+        assert not errors, "Duplicate category mappings:\n  " + "\n  ".join(errors)
 
 
 class TestPermissionStringFormat:
@@ -319,24 +308,21 @@ class TestPermissionStringFormat:
         errors = []
 
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            for level in ['view', 'full']:
-                perm_list = category_def.get('permissions', {}).get(level, [])
+            for level in ["view", "full"]:
+                perm_list = category_def.get("permissions", {}).get(level, [])
                 for perm_string in perm_list:
-                    if '.' not in perm_string:
+                    if "." not in perm_string:
                         errors.append(
                             f"{category_key} {level}: '{perm_string}' missing dot separator"
                         )
                     else:
-                        parts = perm_string.split('.')
+                        parts = perm_string.split(".")
                         if len(parts) != 2:
                             errors.append(
                                 f"{category_key} {level}: '{perm_string}' has invalid format"
                             )
 
-        assert not errors, (
-            f"Invalid permission string formats:\n  " +
-            "\n  ".join(errors)
-        )
+        assert not errors, "Invalid permission string formats:\n  " + "\n  ".join(errors)
 
     def test_view_permissions_use_view_codename(self):
         """
@@ -345,11 +331,11 @@ class TestPermissionStringFormat:
         errors = []
 
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            view_perms = category_def.get('permissions', {}).get('view', [])
+            view_perms = category_def.get("permissions", {}).get("view", [])
             for perm_string in view_perms:
                 try:
-                    app_label, codename = perm_string.split('.')
-                    if not codename.startswith('view_'):
+                    app_label, codename = perm_string.split(".")
+                    if not codename.startswith("view_"):
                         errors.append(
                             f"{category_key}: view permission '{perm_string}' doesn't start with 'view_'"
                         )
@@ -357,10 +343,7 @@ class TestPermissionStringFormat:
                     # Already caught by format test
                     pass
 
-        assert not errors, (
-            f"View permissions not using view_* codenames:\n  " +
-            "\n  ".join(errors)
-        )
+        assert not errors, "View permissions not using view_* codenames:\n  " + "\n  ".join(errors)
 
     def test_full_permissions_use_add_change_delete_codenames(self):
         """
@@ -369,11 +352,11 @@ class TestPermissionStringFormat:
         errors = []
 
         for category_key, category_def in PERMISSION_CATEGORIES.items():
-            full_perms = category_def.get('permissions', {}).get('full', [])
+            full_perms = category_def.get("permissions", {}).get("full", [])
             for perm_string in full_perms:
                 try:
-                    app_label, codename = perm_string.split('.')
-                    valid_prefixes = ['add_', 'change_', 'delete_']
+                    app_label, codename = perm_string.split(".")
+                    valid_prefixes = ["add_", "change_", "delete_"]
                     if not any(codename.startswith(prefix) for prefix in valid_prefixes):
                         errors.append(
                             f"{category_key}: full permission '{perm_string}' doesn't use add/change/delete prefix"
@@ -383,6 +366,5 @@ class TestPermissionStringFormat:
                     pass
 
         assert not errors, (
-            f"Full permissions not using add/change/delete codenames:\n  " +
-            "\n  ".join(errors)
+            "Full permissions not using add/change/delete codenames:\n  " + "\n  ".join(errors)
         )

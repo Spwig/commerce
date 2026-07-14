@@ -1,4 +1,5 @@
 """Template helpers used by the voucher admin (import wizard, list view)."""
+
 from django import template
 
 register = template.Library()

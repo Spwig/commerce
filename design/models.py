@@ -1,20 +1,26 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import RegexValidator
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
+from django.db import models
 from django.db.models import Q
-import json
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
-# Import theme models
-from .theme_models import (
-    Theme, ThemeInstallation, ThemeBranding, ThemeAsset
+from .header_footer_models import (  # noqa: F401
+    FooterTemplate,
+    HeaderTemplate,
+    Menu,
+    MenuItem,
+    Widget,
+    WidgetPlacement,
 )
 
-# Import header/footer models
-from .header_footer_models import (
-    HeaderTemplate, FooterTemplate, Widget,
-    WidgetPlacement, Menu, MenuItem
+# Import theme + header/footer models — force-loads their submodules so
+# their models register with Django's app registry regardless of admin
+# autodiscover timing. Matches the pattern in social_sharing/models.py.
+from .theme_models import (  # noqa: F401
+    Theme,
+    ThemeAsset,
+    ThemeBranding,
+    ThemeInstallation,
 )
 
 User = get_user_model()
@@ -49,148 +55,145 @@ class DesignToken(models.Model):
     """
 
     TOKEN_TYPES = [
-        ('color', _('Color')),
-        ('font', _('Font')),
-        ('spacing', _('Spacing')),
-        ('border', _('Border')),
-        ('shadow', _('Shadow')),
-        ('animation', _('Animation')),
-        ('breakpoint', _('Breakpoint')),
+        ("color", _("Color")),
+        ("font", _("Font")),
+        ("spacing", _("Spacing")),
+        ("border", _("Border")),
+        ("shadow", _("Shadow")),
+        ("animation", _("Animation")),
+        ("breakpoint", _("Breakpoint")),
     ]
 
     SOURCE_CHOICES = [
-        ('brand_builder', _('Brand Builder')),
-        ('theme', _('Theme')),
-        ('component', _('Component')),
-        ('system', _('System Default')),
+        ("brand_builder", _("Brand Builder")),
+        ("theme", _("Theme")),
+        ("component", _("Component")),
+        ("system", _("System Default")),
     ]
 
     PRIORITY_CHOICES = [
-        (1, _('Brand Builder (Highest)')),
-        (2, _('Theme')),
-        (3, _('Component')),
-        (4, _('System Default (Lowest)')),
+        (1, _("Brand Builder (Highest)")),
+        (2, _("Theme")),
+        (3, _("Component")),
+        (4, _("System Default (Lowest)")),
     ]
 
     # Basic token information
     name = models.CharField(
         max_length=100,
         db_index=True,
-        verbose_name=_('Token Name'),
-        help_text=_("e.g., primary-500, text-lg, spacing-4. Same name can exist at different priority levels for cascade.")
+        verbose_name=_("Token Name"),
+        help_text=_(
+            "e.g., primary-500, text-lg, spacing-4. Same name can exist at different priority levels for cascade."
+        ),
     )
     token_type = models.CharField(
         max_length=20,
         choices=TOKEN_TYPES,
         db_index=True,
-        verbose_name=_('Token Type'),
-        help_text=_("Category of design token")
+        verbose_name=_("Token Type"),
+        help_text=_("Category of design token"),
     )
     value = models.TextField(
-        verbose_name=_('Token Value'),
-        help_text=_("CSS value: #3B82F6, 1.125rem, 16px, etc.")
+        verbose_name=_("Token Value"), help_text=_("CSS value: #3B82F6, 1.125rem, 16px, etc.")
     )
     description = models.CharField(
         max_length=255,
         blank=True,
-        verbose_name=_('Description'),
-        help_text=_("Human-readable description of token purpose")
+        verbose_name=_("Description"),
+        help_text=_("Human-readable description of token purpose"),
     )
 
     # Priority cascade fields
     source = models.CharField(
         max_length=20,
         choices=SOURCE_CHOICES,
-        default='system',
+        default="system",
         db_index=True,
-        verbose_name=_('Token Source'),
-        help_text=_("Where this token comes from in the cascade")
+        verbose_name=_("Token Source"),
+        help_text=_("Where this token comes from in the cascade"),
     )
     priority_level = models.IntegerField(
         choices=PRIORITY_CHOICES,
         default=4,
         db_index=True,
-        verbose_name=_('Priority Level'),
-        help_text=_("Lower number = higher priority. 1=Brand Builder (highest), 4=System (lowest)")
+        verbose_name=_("Priority Level"),
+        help_text=_("Lower number = higher priority. 1=Brand Builder (highest), 4=System (lowest)"),
     )
     theme = models.ForeignKey(
         Theme,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='design_tokens',
-        verbose_name=_('Theme'),
-        help_text=_("Associated theme (only for theme-level tokens)")
+        related_name="design_tokens",
+        verbose_name=_("Theme"),
+        help_text=_("Associated theme (only for theme-level tokens)"),
     )
     component = models.ForeignKey(
-        'ComponentStore',
+        "ComponentStore",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='design_tokens',
-        verbose_name=_('Component'),
-        help_text=_("Associated component (only for component-level tokens)")
+        related_name="design_tokens",
+        verbose_name=_("Component"),
+        help_text=_("Associated component (only for component-level tokens)"),
     )
 
     # Tier restrictions
     tier_restriction = models.JSONField(
         default=list,
         blank=True,
-        verbose_name=_('Tier Restrictions'),
-        help_text=_("List of tiers where this token is available. Empty = all tiers. Options: ['A', 'B', 'C']")
+        verbose_name=_("Tier Restrictions"),
+        help_text=_(
+            "List of tiers where this token is available. Empty = all tiers. Options: ['A', 'B', 'C']"
+        ),
     )
 
     # Status and metadata
     is_active = models.BooleanField(
         default=True,
-        verbose_name=_('Is Active'),
-        help_text=_("Whether this token is currently active")
+        verbose_name=_("Is Active"),
+        help_text=_("Whether this token is currently active"),
     )
     is_locked = models.BooleanField(
         default=False,
-        verbose_name=_('Is Locked'),
-        help_text=_("Locked tokens cannot be renamed. Theme tokens are locked by default.")
+        verbose_name=_("Is Locked"),
+        help_text=_("Locked tokens cannot be renamed. Theme tokens are locked by default."),
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created At')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated At')
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
-        db_table = 'design_design_token'
-        ordering = ['priority_level', 'token_type', 'name']
-        verbose_name = _('Design Token')
-        verbose_name_plural = _('Design Tokens')
+        db_table = "design_design_token"
+        ordering = ["priority_level", "token_type", "name"]
+        verbose_name = _("Design Token")
+        verbose_name_plural = _("Design Tokens")
         constraints = [
             # For brand_builder and system tokens: name + source must be unique
             models.UniqueConstraint(
-                fields=['name', 'source'],
-                condition=Q(source__in=['brand_builder', 'system']),
-                name='unique_global_token'
+                fields=["name", "source"],
+                condition=Q(source__in=["brand_builder", "system"]),
+                name="unique_global_token",
             ),
             # For theme tokens: name + source + theme must be unique
             models.UniqueConstraint(
-                fields=['name', 'source', 'theme'],
-                condition=Q(source='theme'),
-                name='unique_theme_token'
+                fields=["name", "source", "theme"],
+                condition=Q(source="theme"),
+                name="unique_theme_token",
             ),
             # For component tokens: name + source + component must be unique
             models.UniqueConstraint(
-                fields=['name', 'source', 'component'],
-                condition=Q(source='component'),
-                name='unique_component_token'
+                fields=["name", "source", "component"],
+                condition=Q(source="component"),
+                name="unique_component_token",
             ),
         ]
         indexes = [
-            models.Index(fields=['name']),
-            models.Index(fields=['token_type']),
-            models.Index(fields=['source']),
-            models.Index(fields=['priority_level']),
-            models.Index(fields=['priority_level', 'name']),  # For cascade queries
+            models.Index(fields=["name"]),
+            models.Index(fields=["token_type"]),
+            models.Index(fields=["source"]),
+            models.Index(fields=["priority_level"]),
+            models.Index(fields=["priority_level", "name"]),  # For cascade queries
         ]
 
     def __str__(self):
@@ -235,23 +238,23 @@ class DesignToken(models.Model):
             >>> token.get_priority_name()
             'Brand Builder'
         """
-        return dict(self.SOURCE_CHOICES).get(self.source, _('Unknown'))
+        return dict(self.SOURCE_CHOICES).get(self.source, _("Unknown"))
 
     def is_brand_builder(self):
         """Check if this is a Brand Builder token (highest priority)."""
-        return self.source == 'brand_builder' and self.priority_level == 1
+        return self.source == "brand_builder" and self.priority_level == 1
 
     def is_theme_token(self):
         """Check if this is a Theme token."""
-        return self.source == 'theme' and self.priority_level == 2
+        return self.source == "theme" and self.priority_level == 2
 
     def is_component_token(self):
         """Check if this is a Component token."""
-        return self.source == 'component' and self.priority_level == 3
+        return self.source == "component" and self.priority_level == 3
 
     def is_system_token(self):
         """Check if this is a System default token (lowest priority)."""
-        return self.source == 'system' and self.priority_level == 4
+        return self.source == "system" and self.priority_level == 4
 
 
 # ThemePreset model has been replaced by Theme model in theme_models.py
@@ -293,112 +296,109 @@ class DesignToken(models.Model):
 
 class ComponentStyle(models.Model):
     """Reusable component style configurations"""
+
     COMPONENT_TYPES = [
-        ('button', 'Button'),
-        ('card', 'Card'),
-        ('form', 'Form'),
-        ('navigation', 'Navigation'),
-        ('product_grid', 'Product Grid'),
-        ('product_card', 'Product Card'),
-        ('category_display', 'Category Display'),
-        ('hero_section', 'Hero Section'),
-        ('footer', 'Footer'),
-        ('header', 'Header'),
-        ('sidebar', 'Sidebar'),
-        ('modal', 'Modal'),
-        ('gallery', 'Gallery'),
+        ("button", "Button"),
+        ("card", "Card"),
+        ("form", "Form"),
+        ("navigation", "Navigation"),
+        ("product_grid", "Product Grid"),
+        ("product_card", "Product Card"),
+        ("category_display", "Category Display"),
+        ("hero_section", "Hero Section"),
+        ("footer", "Footer"),
+        ("header", "Header"),
+        ("sidebar", "Sidebar"),
+        ("modal", "Modal"),
+        ("gallery", "Gallery"),
     ]
-    
+
     name = models.CharField(max_length=100)
     component_type = models.CharField(max_length=30, choices=COMPONENT_TYPES)
-    
+
     # Style configuration
     css_classes = models.JSONField(default=dict, help_text="CSS class mappings")
     layout_config = models.JSONField(default=dict, help_text="Layout configuration")
     responsive_config = models.JSONField(default=dict, help_text="Mobile/tablet/desktop settings")
-    
+
     # Custom CSS
     custom_css = models.TextField(blank=True, help_text="Additional CSS rules")
-    
+
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
-        ordering = ['component_type', 'name']
-        unique_together = ['name', 'component_type']
-    
+        ordering = ["component_type", "name"]
+        unique_together = ["name", "component_type"]
+
     def __str__(self):
         return f"{self.component_type}: {self.name}"
 
 
 class DesignMixin(models.Model):
     """Abstract base class for design-aware models"""
+
     TEMPLATE_VARIANTS = [
-        ('default', 'Default'),
-        ('minimal', 'Minimal'),
-        ('detailed', 'Detailed'),
-        ('compact', 'Compact'),
-        ('featured', 'Featured'),
-        ('custom', 'Custom'),
+        ("default", "Default"),
+        ("minimal", "Minimal"),
+        ("detailed", "Detailed"),
+        ("compact", "Compact"),
+        ("featured", "Featured"),
+        ("custom", "Custom"),
     ]
-    
+
     # Template and layout
     template_variant = models.CharField(
-        max_length=20, 
-        choices=TEMPLATE_VARIANTS, 
-        default='default',
-        help_text="Choose how this content is displayed"
+        max_length=20,
+        choices=TEMPLATE_VARIANTS,
+        default="default",
+        help_text="Choose how this content is displayed",
     )
-    
+
     # CSS and styling
     css_classes = models.JSONField(
-        default=dict, 
+        default=dict,
         blank=True,
-        help_text="Custom CSS classes: {'container': 'my-container', 'title': 'my-title'}"
+        help_text="Custom CSS classes: {'container': 'my-container', 'title': 'my-title'}",
     )
-    
+
     # Layout configuration
     layout_config = models.JSONField(
-        default=dict, 
+        default=dict,
         blank=True,
-        help_text="Layout settings: grid columns, spacing, alignment, etc."
+        help_text="Layout settings: grid columns, spacing, alignment, etc.",
     )
-    
+
     # Theme and styling overrides
     style_overrides = models.JSONField(
-        default=dict, 
-        blank=True,
-        help_text="Override colors, fonts, spacing for this item"
+        default=dict, blank=True, help_text="Override colors, fonts, spacing for this item"
     )
-    
+
     # Responsive settings
     responsive_config = models.JSONField(
-        default=dict, 
-        blank=True,
-        help_text="Mobile/tablet/desktop specific settings"
+        default=dict, blank=True, help_text="Mobile/tablet/desktop specific settings"
     )
-    
+
     # Theme inheritance
     inherit_parent_theme = models.BooleanField(
-        default=True,
-        help_text="Whether to inherit styling from parent category/theme"
+        default=True, help_text="Whether to inherit styling from parent category/theme"
     )
-    
+
     class Meta:
         abstract = True
-    
-    def get_css_classes(self, element='container'):
+
+    def get_css_classes(self, element="container"):
         """Get CSS classes for a specific element"""
-        return self.css_classes.get(element, '')
-    
+        return self.css_classes.get(element, "")
+
     def get_layout_setting(self, key, default=None):
         """Get a specific layout configuration value"""
         return self.layout_config.get(key, default)
-    
+
     def get_style_override(self, property_name, default=None):
         """Get a style override value"""
         return self.style_overrides.get(property_name, default)
-    
+
     def get_responsive_setting(self, breakpoint, key, default=None):
         """Get responsive setting for specific breakpoint"""
         breakpoint_config = self.responsive_config.get(breakpoint, {})
@@ -407,29 +407,31 @@ class DesignMixin(models.Model):
 
 class GlobalDesignSettings(models.Model):
     """Site-wide design configuration"""
+
     site_name = models.CharField(max_length=100, default="My Shop")
-    
+
     # Active theme
     active_theme = models.ForeignKey(
-        Theme,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='active_sites'
+        Theme, on_delete=models.SET_NULL, null=True, related_name="active_sites"
     )
-    
+
     # Logo and branding
-    logo = models.ImageField(upload_to='branding/', blank=True, null=True)
-    favicon = models.ImageField(upload_to='branding/', blank=True, null=True)
+    logo = models.ImageField(upload_to="branding/", blank=True, null=True)
+    favicon = models.ImageField(upload_to="branding/", blank=True, null=True)
     brand_colors = models.JSONField(default=dict, help_text="Primary brand colors")
-    
+
     # Typography
-    primary_font = models.CharField(max_length=100, default="Inter", help_text="Primary font family")
-    secondary_font = models.CharField(max_length=100, default="Roboto", help_text="Secondary font family")
-    
+    primary_font = models.CharField(
+        max_length=100, default="Inter", help_text="Primary font family"
+    )
+    secondary_font = models.CharField(
+        max_length=100, default="Roboto", help_text="Secondary font family"
+    )
+
     # Layout defaults
     container_max_width = models.CharField(max_length=10, default="1200px")
     default_spacing = models.CharField(max_length=10, default="1rem")
-    
+
     # Custom CSS
     global_css = models.TextField(blank=True, help_text="Global CSS rules applied site-wide")
 
@@ -437,41 +439,41 @@ class GlobalDesignSettings(models.Model):
     force_light_mode = models.BooleanField(
         default=False,
         verbose_name=_("Force Light Mode"),
-        help_text=_("Force light mode (disable dark mode). When enabled, site always uses light theme colors even if user's browser prefers dark mode.")
+        help_text=_(
+            "Force light mode (disable dark mode). When enabled, site always uses light theme colors even if user's browser prefers dark mode."
+        ),
     )
 
     # SEO and meta
     default_meta_description = models.TextField(max_length=160, blank=True)
-    default_og_image = models.ImageField(upload_to='meta/', blank=True, null=True)
-    
+    default_og_image = models.ImageField(upload_to="meta/", blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         verbose_name = "Global Design Settings"
         verbose_name_plural = "Global Design Settings"
-    
+
     def __str__(self):
         return f"Design Settings for {self.site_name}"
-    
+
     def save(self, *args, **kwargs):
         # Ensure only one instance exists
         if not self.pk and GlobalDesignSettings.objects.exists():
             raise ValueError("Only one GlobalDesignSettings instance is allowed")
         super().save(*args, **kwargs)
-    
+
     @classmethod
     def get_settings(cls):
         """Get the global design settings instance"""
-        settings, created = cls.objects.get_or_create(
-            pk=1,
-            defaults={'site_name': 'My Shop'}
-        )
+        settings, created = cls.objects.get_or_create(pk=1, defaults={"site_name": "My Shop"})
         return settings
 
 
 class CustomCSS(models.Model):
     """Admin-injectable custom CSS rules"""
+
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     css_code = models.TextField(help_text="CSS code to inject into pages")
@@ -480,7 +482,7 @@ class CustomCSS(models.Model):
     apply_to_pages = models.JSONField(
         default=list,
         blank=True,
-        help_text="List of page types/URLs to apply this CSS to. Empty = all pages"
+        help_text="List of page types/URLs to apply this CSS to. Empty = all pages",
     )
 
     # Conditions
@@ -491,7 +493,7 @@ class CustomCSS(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['load_order', 'name']
+        ordering = ["load_order", "name"]
         verbose_name = "Custom CSS"
         verbose_name_plural = "Custom CSS"
 
@@ -529,62 +531,55 @@ class PageTier(models.Model):
     """
 
     TIER_CHOICES = [
-        ('A', 'System-Critical (Checkout)'),
-        ('B', 'Semi-Critical (Product/Collection)'),
-        ('C', 'Marketing (Full Flexibility)'),
+        ("A", "System-Critical (Checkout)"),
+        ("B", "Semi-Critical (Product/Collection)"),
+        ("C", "Marketing (Full Flexibility)"),
     ]
 
     page_type = models.CharField(
         max_length=50,
         unique=True,
         db_index=True,
-        help_text="Unique page type identifier (e.g., 'checkout', 'product', 'home')"
+        help_text="Unique page type identifier (e.g., 'checkout', 'product', 'home')",
     )
     tier = models.CharField(
         max_length=1,
         choices=TIER_CHOICES,
         db_index=True,
-        help_text="Security tier: A (strictest), B (moderate), C (flexible)"
+        help_text="Security tier: A (strictest), B (moderate), C (flexible)",
     )
     display_name = models.CharField(
-        max_length=100,
-        help_text="Human-readable name for admin interface"
+        max_length=100, help_text="Human-readable name for admin interface"
     )
     description = models.TextField(
-        blank=True,
-        help_text="Detailed description of page type and its purpose"
+        blank=True, help_text="Detailed description of page type and its purpose"
     )
     schema = models.JSONField(
-        default=dict,
-        help_text="Page structure schema defining regions and allowed components"
+        default=dict, help_text="Page structure schema defining regions and allowed components"
     )
     csp_policy = models.JSONField(
-        default=dict,
-        help_text="Content Security Policy rules for this tier"
+        default=dict, help_text="Content Security Policy rules for this tier"
     )
     max_external_scripts = models.IntegerField(
-        default=0,
-        help_text="Maximum number of external scripts allowed (-1 for unlimited)"
+        default=0, help_text="Maximum number of external scripts allowed (-1 for unlimited)"
     )
     allows_custom_html = models.BooleanField(
-        default=False,
-        help_text="Whether custom HTML injection is permitted"
+        default=False, help_text="Whether custom HTML injection is permitted"
     )
     locked_regions = models.JSONField(
-        default=list,
-        help_text="List of region IDs that cannot be modified by themes"
+        default=list, help_text="List of region IDs that cannot be modified by themes"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'design_page_tier'
-        ordering = ['tier', 'page_type']
+        db_table = "design_page_tier"
+        ordering = ["tier", "page_type"]
         verbose_name = "Page Tier"
         verbose_name_plural = "Page Tiers"
         indexes = [
-            models.Index(fields=['page_type']),
-            models.Index(fields=['tier']),
+            models.Index(fields=["page_type"]),
+            models.Index(fields=["tier"]),
         ]
 
     def __str__(self):
@@ -595,19 +590,19 @@ class PageTier(models.Model):
 
     def is_tier_a(self):
         """Check if this is a Tier A (system-critical) page."""
-        return self.tier == 'A'
+        return self.tier == "A"
 
     def is_tier_b(self):
         """Check if this is a Tier B (semi-critical) page."""
-        return self.tier == 'B'
+        return self.tier == "B"
 
     def is_tier_c(self):
         """Check if this is a Tier C (marketing) page."""
-        return self.tier == 'C'
+        return self.tier == "C"
 
     def get_security_level(self):
         """Get human-readable security level description."""
-        return dict(self.TIER_CHOICES).get(self.tier, 'Unknown')
+        return dict(self.TIER_CHOICES).get(self.tier, "Unknown")
 
 
 class ComponentStore(models.Model):
@@ -640,148 +635,118 @@ class ComponentStore(models.Model):
     """
 
     REVIEW_STATUS_CHOICES = [
-        ('pending', 'Pending Review'),
-        ('reviewing', 'Under Review'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-        ('suspended', 'Suspended'),
+        ("pending", "Pending Review"),
+        ("reviewing", "Under Review"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+        ("suspended", "Suspended"),
     ]
 
     RENDER_MODE_CHOICES = [
-        ('ssr', 'Server-Side Render'),
-        ('csr', 'Client-Side Render'),
-        ('island', 'Island (Selective Hydration)'),
-        ('static', 'Static HTML'),
+        ("ssr", "Server-Side Render"),
+        ("csr", "Client-Side Render"),
+        ("island", "Island (Selective Hydration)"),
+        ("static", "Static HTML"),
     ]
 
     component_type = models.CharField(
         max_length=100,
         unique=True,
         db_index=True,
-        help_text="Unique component identifier (e.g., 'checkout_header', 'product_card')"
+        help_text="Unique component identifier (e.g., 'checkout_header', 'product_card')",
     )
-    display_name = models.CharField(
-        max_length=200,
-        help_text="Human-readable component name"
-    )
+    display_name = models.CharField(max_length=200, help_text="Human-readable component name")
     description = models.TextField(
-        blank=True,
-        help_text="Detailed description of component functionality"
+        blank=True, help_text="Detailed description of component functionality"
     )
-    version = models.CharField(
-        max_length=20,
-        help_text="Semantic version (e.g., '1.0.0')"
-    )
-    author = models.CharField(
-        max_length=200,
-        help_text="Component author name"
-    )
+    version = models.CharField(max_length=20, help_text="Semantic version (e.g., '1.0.0')")
+    author = models.CharField(max_length=200, help_text="Component author name")
 
     # Capabilities and restrictions
     capabilities = models.JSONField(
-        default=list,
-        help_text="Required capabilities (e.g., ['custom_html', 'external_scripts'])"
+        default=list, help_text="Required capabilities (e.g., ['custom_html', 'external_scripts'])"
     )
     allowed_tiers = models.JSONField(
-        default=list,
-        help_text="List of tiers where component can be used (e.g., ['B', 'C'])"
+        default=list, help_text="List of tiers where component can be used (e.g., ['B', 'C'])"
     )
     render_mode = models.CharField(
         max_length=20,
         choices=RENDER_MODE_CHOICES,
-        default='ssr',
-        help_text="How this component should be rendered"
+        default="ssr",
+        help_text="How this component should be rendered",
     )
 
     # Security settings
     external_domains = models.JSONField(
-        default=list,
-        help_text="Whitelisted external domains for scripts/resources"
+        default=list, help_text="Whitelisted external domains for scripts/resources"
     )
     script_budget_kb = models.DecimalField(
-        max_digits=6,
-        decimal_places=2,
-        default=0,
-        help_text="JavaScript size budget in KB"
+        max_digits=6, decimal_places=2, default=0, help_text="JavaScript size budget in KB"
     )
     requires_sandbox = models.BooleanField(
-        default=False,
-        help_text="Whether component requires iframe sandbox for security"
+        default=False, help_text="Whether component requires iframe sandbox for security"
     )
 
     # Distribution
     package_file = models.FileField(
-        upload_to='components/',
-        help_text="Component package file (.zip)"
+        upload_to="components/", help_text="Component package file (.zip)"
     )
     signature = models.TextField(
-        blank=True,
-        help_text="Cryptographic signature for package verification"
+        blank=True, help_text="Cryptographic signature for package verification"
     )
     checksum_sha256 = models.CharField(
-        max_length=64,
-        blank=True,
-        help_text="SHA-256 checksum of package file"
+        max_length=64, blank=True, help_text="SHA-256 checksum of package file"
     )
     signed_by = models.CharField(
-        max_length=200,
-        blank=True,
-        help_text="Signing authority (typically 'Spwig')"
+        max_length=200, blank=True, help_text="Signing authority (typically 'Spwig')"
     )
     signed_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text="When component was cryptographically signed"
+        null=True, blank=True, help_text="When component was cryptographically signed"
     )
 
     # Theme bundling
     source_theme = models.ForeignKey(
-        'Theme',
+        "Theme",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='bundled_components',
-        help_text="Theme that bundled this component (if component came from a theme package)"
+        related_name="bundled_components",
+        help_text="Theme that bundled this component (if component came from a theme package)",
     )
 
     # Review workflow
     review_status = models.CharField(
         max_length=20,
         choices=REVIEW_STATUS_CHOICES,
-        default='pending',
+        default="pending",
         db_index=True,
-        help_text="Component approval status"
+        help_text="Component approval status",
     )
     reviewed_by = models.ForeignKey(
         User,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='reviewed_components',
-        help_text="User who reviewed this component"
+        related_name="reviewed_components",
+        help_text="User who reviewed this component",
     )
     reviewed_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text="When component was reviewed"
+        null=True, blank=True, help_text="When component was reviewed"
     )
-    review_notes = models.TextField(
-        blank=True,
-        help_text="Review notes and feedback"
-    )
+    review_notes = models.TextField(blank=True, help_text="Review notes and feedback")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'design_component_store'
-        ordering = ['component_type']
+        db_table = "design_component_store"
+        ordering = ["component_type"]
         verbose_name = "Component"
         verbose_name_plural = "Component Store"
         indexes = [
-            models.Index(fields=['component_type']),
-            models.Index(fields=['review_status']),
-            models.Index(fields=['author']),
+            models.Index(fields=["component_type"]),
+            models.Index(fields=["review_status"]),
+            models.Index(fields=["author"]),
         ]
 
     def __str__(self):
@@ -792,7 +757,7 @@ class ComponentStore(models.Model):
 
     def is_approved(self):
         """Check if component is approved for use."""
-        return self.review_status == 'approved'
+        return self.review_status == "approved"
 
     def can_use_in_tier(self, tier):
         """Check if component can be used in specific tier."""
@@ -820,6 +785,7 @@ class ComponentStore(models.Model):
             ...     print("Component is authentic and unmodified")
         """
         from .component_signer import get_component_signer
+
         signer = get_component_signer()
         return signer.verify_component(self)
 
@@ -842,6 +808,7 @@ class ComponentStore(models.Model):
             ...     print("Component signed successfully")
         """
         from .component_signer import get_component_signer
+
         signer = get_component_signer()
         return signer.sign_component(self)
 
@@ -870,47 +837,43 @@ class TierComponentPermission(models.Model):
     tier = models.ForeignKey(
         PageTier,
         on_delete=models.CASCADE,
-        related_name='component_permissions',
-        verbose_name=_('Page Tier'),
-        help_text=_("Page tier this permission applies to")
+        related_name="component_permissions",
+        verbose_name=_("Page Tier"),
+        help_text=_("Page tier this permission applies to"),
     )
     component = models.ForeignKey(
         ComponentStore,
         on_delete=models.CASCADE,
-        related_name='tier_permissions',
-        verbose_name=_('Component'),
-        help_text=_("Component being whitelisted")
+        related_name="tier_permissions",
+        verbose_name=_("Component"),
+        help_text=_("Component being whitelisted"),
     )
     allowed_regions = models.JSONField(
         default=list,
-        verbose_name=_('Allowed Regions'),
-        help_text=_("Specific region IDs where component can be placed (empty = all regions)")
+        verbose_name=_("Allowed Regions"),
+        help_text=_("Specific region IDs where component can be placed (empty = all regions)"),
     )
     max_instances = models.IntegerField(
         default=-1,
-        verbose_name=_('Max Instances'),
-        help_text=_("Maximum instances allowed on page (-1 = unlimited)")
+        verbose_name=_("Max Instances"),
+        help_text=_("Maximum instances allowed on page (-1 = unlimited)"),
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Created At')
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated At')
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     class Meta:
-        db_table = 'design_tier_component_permission'
-        unique_together = ['tier', 'component']
-        verbose_name = _('Tier Component Permission')
-        verbose_name_plural = _('Tier Component Permissions')
+        db_table = "design_tier_component_permission"
+        unique_together = ["tier", "component"]
+        verbose_name = _("Tier Component Permission")
+        verbose_name_plural = _("Tier Component Permissions")
 
     def __str__(self):
         return f"{self.component.component_type} allowed in Tier {self.tier.tier}"
 
     def __repr__(self):
-        return f"<TierComponentPermission: {self.component.component_type} in {self.tier.page_type}>"
+        return (
+            f"<TierComponentPermission: {self.component.component_type} in {self.tier.page_type}>"
+        )
 
     def is_unlimited(self):
         """Check if unlimited instances are allowed."""
@@ -953,57 +916,53 @@ class ComponentValidationReport(models.Model):
     component = models.ForeignKey(
         ComponentStore,
         on_delete=models.CASCADE,
-        related_name='validation_reports',
-        verbose_name=_('Component'),
-        help_text=_("Component that was validated")
+        related_name="validation_reports",
+        verbose_name=_("Component"),
+        help_text=_("Component that was validated"),
     )
     validated_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name=_('Validated At'),
-        help_text=_("When this validation was performed")
+        verbose_name=_("Validated At"),
+        help_text=_("When this validation was performed"),
     )
     validated_by = models.ForeignKey(
         User,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='component_validations',
-        verbose_name=_('Validated By'),
-        help_text=_("User who triggered this validation")
+        related_name="component_validations",
+        verbose_name=_("Validated By"),
+        help_text=_("User who triggered this validation"),
     )
     is_valid = models.BooleanField(
         default=False,
-        verbose_name=_('Is Valid'),
-        help_text=_("Whether validation passed (no critical errors)")
+        verbose_name=_("Is Valid"),
+        help_text=_("Whether validation passed (no critical errors)"),
     )
     errors = models.JSONField(
-        default=list,
-        verbose_name=_('Errors'),
-        help_text=_("Critical errors that must be fixed")
+        default=list, verbose_name=_("Errors"), help_text=_("Critical errors that must be fixed")
     )
     warnings = models.JSONField(
-        default=list,
-        verbose_name=_('Warnings'),
-        help_text=_("Warnings that should be reviewed")
+        default=list, verbose_name=_("Warnings"), help_text=_("Warnings that should be reviewed")
     )
     version_validated = models.CharField(
         max_length=20,
-        verbose_name=_('Version Validated'),
-        help_text=_("Component version at time of validation")
+        verbose_name=_("Version Validated"),
+        help_text=_("Component version at time of validation"),
     )
 
     class Meta:
-        db_table = 'design_component_validation_report'
-        ordering = ['-validated_at']
-        verbose_name = _('Component Validation Report')
-        verbose_name_plural = _('Component Validation Reports')
+        db_table = "design_component_validation_report"
+        ordering = ["-validated_at"]
+        verbose_name = _("Component Validation Report")
+        verbose_name_plural = _("Component Validation Reports")
         indexes = [
-            models.Index(fields=['component', '-validated_at']),
-            models.Index(fields=['is_valid']),
+            models.Index(fields=["component", "-validated_at"]),
+            models.Index(fields=["is_valid"]),
         ]
 
     def __str__(self):
-        status = 'Valid' if self.is_valid else 'Invalid'
+        status = "Valid" if self.is_valid else "Invalid"
         return f"{self.component} - {status} ({self.validated_at.strftime('%Y-%m-%d %H:%M')})"
 
     def __repr__(self):
@@ -1057,68 +1016,48 @@ class DevSession(models.Model):
         max_length=64,
         unique=True,
         db_index=True,
-        help_text="Unique authentication token for this dev session"
+        help_text="Unique authentication token for this dev session",
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='dev_sessions',
-        help_text="Staff user who created this session"
+        related_name="dev_sessions",
+        help_text="Staff user who created this session",
     )
-    theme_name = models.CharField(
-        max_length=100,
-        help_text="Name of theme being developed"
-    )
+    theme_name = models.CharField(max_length=100, help_text="Name of theme being developed")
     theme_path = models.CharField(
-        max_length=500,
-        blank=True,
-        help_text="Local path to theme on developer's machine"
+        max_length=500, blank=True, help_text="Local path to theme on developer's machine"
     )
 
     # Session state
     is_active = models.BooleanField(
-        default=True,
-        db_index=True,
-        help_text="Whether session is currently active"
+        default=True, db_index=True, help_text="Whether session is currently active"
     )
-    last_sync = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text="Last successful file sync"
-    )
-    last_activity = models.DateTimeField(
-        auto_now=True,
-        help_text="Last activity timestamp"
-    )
+    last_sync = models.DateTimeField(null=True, blank=True, help_text="Last successful file sync")
+    last_activity = models.DateTimeField(auto_now=True, help_text="Last activity timestamp")
 
     # Sync state
     synced_files = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text="Map of synced files and their checksums"
+        default=dict, blank=True, help_text="Map of synced files and their checksums"
     )
 
     # Session metadata
     client_info = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text="CLI version, OS, Node version, etc."
+        default=dict, blank=True, help_text="CLI version, OS, Node version, etc."
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(
-        help_text="When session token expires"
-    )
+    expires_at = models.DateTimeField(help_text="When session token expires")
 
     class Meta:
-        db_table = 'design_dev_session'
-        ordering = ['-created_at']
+        db_table = "design_dev_session"
+        ordering = ["-created_at"]
         verbose_name = "Dev Session"
         verbose_name_plural = "Dev Sessions"
         indexes = [
-            models.Index(fields=['token']),
-            models.Index(fields=['is_active', '-created_at']),
-            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=["token"]),
+            models.Index(fields=["is_active", "-created_at"]),
+            models.Index(fields=["user", "-created_at"]),
         ]
 
     def __str__(self):
@@ -1132,6 +1071,7 @@ class DevSession(models.Model):
         # Generate token if not set
         if not self.token:
             import secrets
+
             self.token = secrets.token_hex(32)
 
         # Set expiry if not set (default 24 hours)
@@ -1151,18 +1091,18 @@ class DevSession(models.Model):
     def refresh_expiry(self, hours=24):
         """Extend session expiry time."""
         self.expires_at = timezone.now() + timezone.timedelta(hours=hours)
-        self.save(update_fields=['expires_at'])
+        self.save(update_fields=["expires_at"])
 
     def deactivate(self):
         """Deactivate this session."""
         self.is_active = False
-        self.save(update_fields=['is_active'])
+        self.save(update_fields=["is_active"])
 
     def update_sync(self, files_synced):
         """Update last sync time and synced files."""
         self.last_sync = timezone.now()
         self.synced_files.update(files_synced)
-        self.save(update_fields=['last_sync', 'synced_files', 'last_activity'])
+        self.save(update_fields=["last_sync", "synced_files", "last_activity"])
 
 
 class PageTemplateConfig(models.Model):
@@ -1174,142 +1114,142 @@ class PageTemplateConfig(models.Model):
     """
 
     BLOG_POST_TEMPLATE_CHOICES = [
-        ('classic', _('Classic')),
-        ('minimal', _('Minimal')),
-        ('magazine', _('Magazine')),
-        ('full_width', _('Full Width')),
+        ("classic", _("Classic")),
+        ("minimal", _("Minimal")),
+        ("magazine", _("Magazine")),
+        ("full_width", _("Full Width")),
     ]
 
     BLOG_LIST_TEMPLATE_CHOICES = [
-        ('grid', _('Grid')),
-        ('list', _('List')),
-        ('magazine', _('Magazine')),
-        ('minimal', _('Minimal')),
+        ("grid", _("Grid")),
+        ("list", _("List")),
+        ("magazine", _("Magazine")),
+        ("minimal", _("Minimal")),
     ]
 
     CHECKOUT_TEMPLATE_CHOICES = [
-        ('accordion', _('Accordion')),
-        ('multi_step', _('Multi-Step')),
-        ('single_page', _('Single Page')),
-        ('express', _('Express')),
+        ("accordion", _("Accordion")),
+        ("multi_step", _("Multi-Step")),
+        ("single_page", _("Single Page")),
+        ("express", _("Express")),
     ]
 
     PRODUCT_TEMPLATE_CHOICES = [
-        ('classic', _('Classic')),
-        ('full_width', _('Full Width')),
-        ('gallery_focus', _('Gallery Focus')),
-        ('digital', _('Digital')),
+        ("classic", _("Classic")),
+        ("full_width", _("Full Width")),
+        ("gallery_focus", _("Gallery Focus")),
+        ("digital", _("Digital")),
     ]
 
     CATEGORY_TEMPLATE_CHOICES = [
-        ('grid', _('Grid')),
-        ('list', _('List')),
-        ('carousel', _('Carousel')),
-        ('masonry', _('Masonry')),
-        ('featured', _('Featured')),
-        ('accordion', _('Accordion')),
+        ("grid", _("Grid")),
+        ("list", _("List")),
+        ("carousel", _("Carousel")),
+        ("masonry", _("Masonry")),
+        ("featured", _("Featured")),
+        ("accordion", _("Accordion")),
     ]
 
     # Checkout template selection
     checkout_template = models.CharField(
         max_length=30,
         choices=CHECKOUT_TEMPLATE_CHOICES,
-        default='accordion',
-        verbose_name=_('Checkout Template'),
-        help_text=_('The checkout page layout used for all customers.')
+        default="accordion",
+        verbose_name=_("Checkout Template"),
+        help_text=_("The checkout page layout used for all customers."),
     )
     checkout_options = models.JSONField(
         default=dict,
         blank=True,
-        verbose_name=_('Checkout Options'),
-        help_text=_('Configuration options for the selected checkout template.')
+        verbose_name=_("Checkout Options"),
+        help_text=_("Configuration options for the selected checkout template."),
     )
     checkout_trust_badges = models.JSONField(
         default=list,
         blank=True,
-        verbose_name=_('Checkout Trust Badges'),
-        help_text=_('Configurable trust badges shown during checkout.')
+        verbose_name=_("Checkout Trust Badges"),
+        help_text=_("Configurable trust badges shown during checkout."),
     )
 
     # Product page template selection
     product_template = models.CharField(
         max_length=30,
         choices=PRODUCT_TEMPLATE_CHOICES,
-        default='classic',
-        verbose_name=_('Default Product Template'),
-        help_text=_('The default product page layout. Individual products can override this.')
+        default="classic",
+        verbose_name=_("Default Product Template"),
+        help_text=_("The default product page layout. Individual products can override this."),
     )
     product_options = models.JSONField(
         default=dict,
         blank=True,
-        verbose_name=_('Product Page Options'),
-        help_text=_('Configuration options for the selected product template.')
+        verbose_name=_("Product Page Options"),
+        help_text=_("Configuration options for the selected product template."),
     )
     product_trust_badges = models.JSONField(
         default=list,
         blank=True,
-        verbose_name=_('Product Trust Badges'),
-        help_text=_('Trust badges shown on physical product pages.')
+        verbose_name=_("Product Trust Badges"),
+        help_text=_("Trust badges shown on physical product pages."),
     )
     digital_trust_badges = models.JSONField(
         default=list,
         blank=True,
-        verbose_name=_('Digital Product Trust Badges'),
-        help_text=_('Trust badges shown on digital product pages.')
+        verbose_name=_("Digital Product Trust Badges"),
+        help_text=_("Trust badges shown on digital product pages."),
     )
 
     # Category page template selection
     category_template = models.CharField(
         max_length=30,
         choices=CATEGORY_TEMPLATE_CHOICES,
-        default='grid',
-        verbose_name=_('Category Template'),
-        help_text=_('The category page layout. Individual categories can override options.')
+        default="grid",
+        verbose_name=_("Category Template"),
+        help_text=_("The category page layout. Individual categories can override options."),
     )
     category_options = models.JSONField(
         default=dict,
         blank=True,
-        verbose_name=_('Category Page Options'),
-        help_text=_('Configuration options for the category page template.')
+        verbose_name=_("Category Page Options"),
+        help_text=_("Configuration options for the category page template."),
     )
 
     # Blog post template selection
     blog_post_template = models.CharField(
         max_length=30,
         choices=BLOG_POST_TEMPLATE_CHOICES,
-        default='classic',
-        verbose_name=_('Blog Post Template'),
-        help_text=_('The default blog post detail layout. Individual posts can override this.')
+        default="classic",
+        verbose_name=_("Blog Post Template"),
+        help_text=_("The default blog post detail layout. Individual posts can override this."),
     )
     blog_post_options = models.JSONField(
         default=dict,
         blank=True,
-        verbose_name=_('Blog Post Options'),
-        help_text=_('Configuration options for the blog post template.')
+        verbose_name=_("Blog Post Options"),
+        help_text=_("Configuration options for the blog post template."),
     )
 
     # Blog list template selection
     blog_list_template = models.CharField(
         max_length=30,
         choices=BLOG_LIST_TEMPLATE_CHOICES,
-        default='grid',
-        verbose_name=_('Blog List Template'),
-        help_text=_('The blog listing page layout.')
+        default="grid",
+        verbose_name=_("Blog List Template"),
+        help_text=_("The blog listing page layout."),
     )
     blog_list_options = models.JSONField(
         default=dict,
         blank=True,
-        verbose_name=_('Blog List Options'),
-        help_text=_('Configuration options for the blog list template.')
+        verbose_name=_("Blog List Options"),
+        help_text=_("Configuration options for the blog list template."),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'design_page_template_config'
-        verbose_name = _('Page Template Configuration')
-        verbose_name_plural = _('Page Template Configuration')
+        db_table = "design_page_template_config"
+        verbose_name = _("Page Template Configuration")
+        verbose_name_plural = _("Page Template Configuration")
 
     def __str__(self):
         return f"Template Config: Checkout={self.checkout_template}, Product={self.product_template}, Category={self.category_template}"

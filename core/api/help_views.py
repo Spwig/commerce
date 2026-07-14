@@ -2,73 +2,80 @@
 Help System API Views
 REST API endpoints for help system
 """
+
 import re
 from datetime import datetime
-from django.db.models import Q, F
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-from django.contrib import admin
-from django.conf import settings
-from rest_framework import viewsets, status
-from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiResponse
-from drf_spectacular.types import OpenApiTypes
 
-from core.models import HelpCategory, HelpTopic, HelpFeedback, HelpView
+from django.conf import settings
+from django.contrib import admin
+from django.db.models import F, Q
+from django.utils.translation import gettext_lazy as _
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
+from rest_framework import status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import BasePermission, IsAdminUser
+from rest_framework.response import Response
+
 from core.api.help_serializers import (
+    AdminMetadataResponseSerializer,
     HelpCategorySerializer,
-    HelpTopicListSerializer,
-    HelpTopicDetailSerializer,
+    HelpContextSerializer,
     HelpFeedbackSerializer,
     HelpSearchSerializer,
     HelpSemanticSearchSerializer,
-    HelpContextSerializer,
-    AdminMetadataResponseSerializer,
-    AdminModelMetadataSerializer,
+    HelpTopicDetailSerializer,
+    HelpTopicListSerializer,
 )
+from core.models import HelpCategory, HelpFeedback, HelpTopic, HelpView
 
 
 @extend_schema_view(
     list=extend_schema(
         summary=_("List all help categories"),
         description=_("Get list of all help categories with topic counts"),
-        tags=['Help System'],
+        tags=["Help System"],
     ),
     retrieve=extend_schema(
         summary=_("Get help category details"),
         description=_("Get detailed information about a specific help category"),
-        tags=['Help System'],
+        tags=["Help System"],
     ),
 )
 class HelpCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    ViewSet for browsing help categories
-    Read-only access to help categories
+    ViewSet for browsing help categories.
+
+    Read-only. Admin-only — the help content is a merchant-facing
+    admin surface, not something exposed to storefront customers.
     """
-    queryset = HelpCategory.objects.all().order_by('order', 'name')
+
+    queryset = HelpCategory.objects.all().order_by("order", "name")
     serializer_class = HelpCategorySerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = 'slug'
+    permission_classes = [IsAdminUser]
+    lookup_field = "slug"
     pagination_class = None  # Disable pagination for help categories
 
     @extend_schema(
         summary=_("Get topics in category"),
         description=_("Get all published topics in this category"),
         responses={200: HelpTopicListSerializer(many=True)},
-        tags=['Help System'],
+        tags=["Help System"],
     )
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=["get"])
     def topics(self, request, slug=None):
         """Get all topics in this category"""
         category = self.get_object()
-        topics = HelpTopic.objects.filter(
-            category=category,
-            is_published=True
-        ).order_by('title_i18n_key')
+        topics = HelpTopic.objects.filter(category=category, is_published=True).order_by(
+            "title_i18n_key"
+        )
 
-        serializer = HelpTopicListSerializer(topics, many=True, context={'request': request})
+        serializer = HelpTopicListSerializer(topics, many=True, context={"request": request})
         return Response(serializer.data)
 
 
@@ -77,55 +84,64 @@ class HelpCategoryViewSet(viewsets.ReadOnlyModelViewSet):
         summary=_("List help topics"),
         description=_("Get list of published help topics with optional filtering"),
         parameters=[
-            OpenApiParameter('category', OpenApiTypes.STR, description=_('Filter by category slug')),
-            OpenApiParameter('component', OpenApiTypes.STR, description=_('Filter by component')),
-            OpenApiParameter('search', OpenApiTypes.STR, description=_('Search in title and keywords')),
+            OpenApiParameter(
+                "category", OpenApiTypes.STR, description=_("Filter by category slug")
+            ),
+            OpenApiParameter("component", OpenApiTypes.STR, description=_("Filter by component")),
+            OpenApiParameter(
+                "search", OpenApiTypes.STR, description=_("Search in title and keywords")
+            ),
         ],
-        tags=['Help System'],
+        tags=["Help System"],
     ),
     retrieve=extend_schema(
         summary=_("Get help topic details"),
         description=_("Get detailed content for a specific help topic"),
-        tags=['Help System'],
+        tags=["Help System"],
     ),
 )
 class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    ViewSet for browsing help topics
-    Read-only access with search and filtering
+    ViewSet for browsing help topics.
+
+    Read-only with search + filtering. Admin-only — help content is a
+    merchant-facing admin surface, not exposed to storefront customers.
+    The only in-tree consumer is
+    ``core/static/core/admin/js/help-system.js``.
     """
-    permission_classes = [IsAuthenticated]
-    lookup_field = 'slug'
+
+    permission_classes = [IsAdminUser]
+    lookup_field = "slug"
     pagination_class = None  # Disable pagination for help topics
 
     def get_queryset(self):
         """Get published topics with optional filtering"""
-        queryset = HelpTopic.objects.filter(is_published=True).select_related('category')
+        queryset = HelpTopic.objects.filter(is_published=True).select_related("category")
 
         # Filter by category
-        category_slug = self.request.query_params.get('category')
+        category_slug = self.request.query_params.get("category")
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
 
         # Filter by component
-        component = self.request.query_params.get('component')
+        component = self.request.query_params.get("component")
         if component:
             queryset = queryset.filter(component=component)
 
         # Simple search
-        search = self.request.query_params.get('search')
+        search = self.request.query_params.get("search")
         if search:
             queryset = queryset.filter(
-                Q(title_i18n_key__icontains=search) |
-                Q(keywords__contains=[search]) |
-                Q(content_markdown__icontains=search)
+                Q(title_i18n_key__icontains=search)
+                | Q(keywords__contains=[search])
+                | Q(content_markdown__icontains=search)
             )
 
-        return queryset.order_by('category__order', 'title_i18n_key')
+        return queryset.order_by("category__order", "title_i18n_key")
 
     def get_serializer_class(self):
         """Use detail serializer for retrieve, list serializer for list"""
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             return HelpTopicDetailSerializer
         return HelpTopicListSerializer
 
@@ -134,14 +150,14 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         instance = self.get_object()
 
         # Increment view count
-        HelpTopic.objects.filter(pk=instance.pk).update(view_count=F('view_count') + 1)
+        HelpTopic.objects.filter(pk=instance.pk).update(view_count=F("view_count") + 1)
 
         # Record view for telemetry (anonymous)
-        session_id = request.session.session_key or 'anonymous'
+        session_id = request.session.session_key or "anonymous"
         HelpView.objects.create(
             topic=instance,
             session_id=session_id,
-            context_url=request.META.get('HTTP_REFERER', ''),
+            context_url=request.META.get("HTTP_REFERER", ""),
         )
 
         serializer = self.get_serializer(instance)
@@ -152,9 +168,9 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         description=_("Full-text search across help topics with relevance ranking"),
         request=HelpSearchSerializer,
         responses={200: HelpTopicListSerializer(many=True)},
-        tags=['Help System'],
+        tags=["Help System"],
     )
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def search(self, request):
         """
         Advanced search for help topics
@@ -163,13 +179,13 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = HelpSearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        query = serializer.validated_data['query']
-        component = serializer.validated_data.get('component')
-        category = serializer.validated_data.get('category')
-        limit = serializer.validated_data.get('limit', 10)
+        query = serializer.validated_data["query"]
+        component = serializer.validated_data.get("component")
+        category = serializer.validated_data.get("category")
+        limit = serializer.validated_data.get("limit", 10)
 
         # Build base queryset
-        queryset = HelpTopic.objects.filter(is_published=True).select_related('category')
+        queryset = HelpTopic.objects.filter(is_published=True).select_related("category")
 
         if component:
             queryset = queryset.filter(component=component)
@@ -221,17 +237,19 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         results.sort(reverse=True, key=lambda x: x[0])
         topics = [topic for score, topic in results[:limit]]
 
-        result_serializer = HelpTopicListSerializer(topics, many=True, context={'request': request})
+        result_serializer = HelpTopicListSerializer(topics, many=True, context={"request": request})
         return Response(result_serializer.data)
 
     @extend_schema(
         summary=_("Semantic search for help topics"),
-        description=_("Search using natural language understanding with automatic fallback to keyword search"),
+        description=_(
+            "Search using natural language understanding with automatic fallback to keyword search"
+        ),
         request=HelpSemanticSearchSerializer,
         responses={200: HelpTopicListSerializer(many=True)},
-        tags=['Help System'],
+        tags=["Help System"],
     )
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def semantic_search(self, request):
         """
         Semantic search with automatic fallback to keyword search.
@@ -240,6 +258,7 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         Falls back to keyword search if semantic search fails or is unavailable.
         """
         import logging
+
         logger = logging.getLogger(__name__)
 
         try:
@@ -251,24 +270,24 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
             from core.services.semantic_search import SearchService
 
             results = SearchService.search(
-                query=serializer.validated_data['query'],
-                language=serializer.validated_data.get('language', 'en'),
-                component=serializer.validated_data.get('component'),
-                category=serializer.validated_data.get('category'),
-                limit=serializer.validated_data.get('limit', 10),
-                threshold=serializer.validated_data.get('threshold', 0.4)
+                query=serializer.validated_data["query"],
+                language=serializer.validated_data.get("language", "en"),
+                component=serializer.validated_data.get("component"),
+                category=serializer.validated_data.get("category"),
+                limit=serializer.validated_data.get("limit", 10),
+                threshold=serializer.validated_data.get("threshold", 0.4),
             )
 
             # Extract topics from results
-            topics = [r['topic'] for r in results]
+            topics = [r["topic"] for r in results]
 
             # Serialize and return
-            result_serializer = HelpTopicListSerializer(topics, many=True, context={'request': request})
-            return Response({
-                'results': result_serializer.data,
-                'search_type': 'semantic',
-                'count': len(topics)
-            })
+            result_serializer = HelpTopicListSerializer(
+                topics, many=True, context={"request": request}
+            )
+            return Response(
+                {"results": result_serializer.data, "search_type": "semantic", "count": len(topics)}
+            )
 
         except Exception as e:
             # Fallback to keyword search
@@ -280,9 +299,9 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         description=_("Get help topics relevant to current page/context"),
         request=HelpContextSerializer,
         responses={200: HelpTopicListSerializer(many=True)},
-        tags=['Help System'],
+        tags=["Help System"],
     )
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def contextual(self, request):
         """
         Get help suggestions based on current page context
@@ -291,12 +310,12 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = HelpContextSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        url_path = serializer.validated_data['url_path']
-        component = serializer.validated_data.get('component')
-        limit = serializer.validated_data.get('limit', 5)
+        url_path = serializer.validated_data["url_path"]
+        component = serializer.validated_data.get("component")
+        limit = serializer.validated_data.get("limit", 5)
 
         # Build base queryset
-        queryset = HelpTopic.objects.filter(is_published=True).select_related('category')
+        queryset = HelpTopic.objects.filter(is_published=True).select_related("category")
 
         if component:
             queryset = queryset.filter(component=component)
@@ -319,17 +338,14 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         # If no pattern matches, return most popular topics for component
         if not matching_topics:
             matching_topics = list(
-                queryset.filter(component=component or 'core')
-                .order_by('-view_count')[:limit]
+                queryset.filter(component=component or "core").order_by("-view_count")[:limit]
             )
 
         # Limit results
         matching_topics = matching_topics[:limit]
 
         result_serializer = HelpTopicListSerializer(
-            matching_topics,
-            many=True,
-            context={'request': request}
+            matching_topics, many=True, context={"request": request}
         )
         return Response(result_serializer.data)
 
@@ -338,16 +354,15 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
         description=_("Submit helpful/not helpful feedback with optional comment"),
         request=HelpFeedbackSerializer,
         responses={201: HelpFeedbackSerializer},
-        tags=['Help System'],
+        tags=["Help System"],
     )
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def feedback(self, request, slug=None):
         """Submit feedback for this topic"""
         topic = self.get_object()
 
         serializer = HelpFeedbackSerializer(
-            data={**request.data, 'topic': topic.id},
-            context={'request': request}
+            data={**request.data, "topic": topic.id}, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -359,29 +374,34 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
     list=extend_schema(
         summary=_("List help feedback"),
         description=_("Get feedback for help topics (admin only)"),
-        tags=['Help System'],
+        tags=["Help System"],
     ),
     retrieve=extend_schema(
         summary=_("Get help feedback details"),
-        description=_("Get detailed information about a specific feedback entry including topic, rating, and comment. Admin only."),
-        tags=['Help System'],
+        description=_(
+            "Get detailed information about a specific feedback entry including topic, rating, and comment. Admin only."
+        ),
+        tags=["Help System"],
     ),
 )
 class HelpFeedbackViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    ViewSet for viewing help feedback
-    Read-only access for administrators
+    ViewSet for viewing help feedback.
+
+    Read-only. Admin-only — feedback is aggregated for merchants to
+    review, not something customers should see.
     """
-    queryset = HelpFeedback.objects.all().select_related('topic', 'user').order_by('-created_at')
+
+    queryset = HelpFeedback.objects.all().select_related("topic", "user").order_by("-created_at")
     serializer_class = HelpFeedbackSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     pagination_class = None  # Disable pagination for help feedback
 
     def get_queryset(self):
         """Filter by topic if specified"""
         queryset = super().get_queryset()
 
-        topic_slug = self.request.query_params.get('topic')
+        topic_slug = self.request.query_params.get("topic")
         if topic_slug:
             queryset = queryset.filter(topic__slug=topic_slug)
 
@@ -419,37 +439,35 @@ def _check_api_token(request):
     Returns:
         bool: True if valid token provided, False otherwise
     """
-    auth_header = request.headers.get('Authorization', '')
-    if not auth_header.startswith('Bearer '):
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
         return False
 
-    token_string = auth_header.replace('Bearer ', '').strip()
+    token_string = auth_header.replace("Bearer ", "").strip()
 
     # Get client IP for tracking
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
-        ip_address = x_forwarded_for.split(',')[0].strip()
+        ip_address = x_forwarded_for.split(",")[0].strip()
     else:
-        ip_address = request.META.get('REMOTE_ADDR')
+        ip_address = request.META.get("REMOTE_ADDR")
 
     # Method 1: Check database tokens (preferred)
     from core.utils.api_tokens import validate_api_token
+
     db_token = validate_api_token(
         token_string,
         token_type=None,  # Accept any token type for now
         record_usage=True,
-        ip_address=ip_address
+        ip_address=ip_address,
     )
 
     if db_token:
         return True
 
     # Method 2: Check environment variable (legacy fallback)
-    env_token = getattr(settings, 'ADMIN_METADATA_API_TOKEN', None)
-    if env_token and token_string == env_token:
-        return True
-
-    return False
+    env_token = getattr(settings, "ADMIN_METADATA_API_TOKEN", None)
+    return bool(env_token and token_string == env_token)
 
 
 def _extract_fieldsets_data(model_admin):
@@ -462,13 +480,13 @@ def _extract_fieldsets_data(model_admin):
     Returns:
         list: List of fieldset dictionaries
     """
-    fieldsets = getattr(model_admin, 'fieldsets', None)
+    fieldsets = getattr(model_admin, "fieldsets", None)
     fieldsets_data = []
 
     if fieldsets:
         for name, opts in fieldsets:
             # Handle nested field tuples and flatten them
-            fields = opts.get('fields', [])
+            fields = opts.get("fields", [])
             flat_fields = []
             for field in fields:
                 if isinstance(field, (list, tuple)):
@@ -476,12 +494,14 @@ def _extract_fieldsets_data(model_admin):
                 else:
                     flat_fields.append(str(field))
 
-            fieldsets_data.append({
-                'name': name,
-                'fields': flat_fields,
-                'classes': list(opts.get('classes', [])),
-                'description': opts.get('description', ''),
-            })
+            fieldsets_data.append(
+                {
+                    "name": name,
+                    "fields": flat_fields,
+                    "classes": list(opts.get("classes", [])),
+                    "description": opts.get("description", ""),
+                }
+            )
 
     return fieldsets_data
 
@@ -498,15 +518,17 @@ def _extract_inlines_data(model_admin):
     """
     inlines_data = []
 
-    for inline in getattr(model_admin, 'inlines', []):
-        inline_model = getattr(inline, 'model', None)
-        inlines_data.append({
-            'class': inline.__name__,
-            'model': inline_model.__name__ if inline_model else None,
-            'extra': getattr(inline, 'extra', 1),
-            'max_num': getattr(inline, 'max_num', None),
-            'min_num': getattr(inline, 'min_num', None),
-        })
+    for inline in getattr(model_admin, "inlines", []):
+        inline_model = getattr(inline, "model", None)
+        inlines_data.append(
+            {
+                "class": inline.__name__,
+                "model": inline_model.__name__ if inline_model else None,
+                "extra": getattr(inline, "extra", 1),
+                "max_num": getattr(inline, "max_num", None),
+                "min_num": getattr(inline, "min_num", None),
+            }
+        )
 
     return inlines_data
 
@@ -521,18 +543,18 @@ def _extract_custom_actions(model_admin):
     Returns:
         list: List of custom action names
     """
-    actions = getattr(model_admin, 'actions', None)
+    actions = getattr(model_admin, "actions", None)
     custom_actions = []
 
     # Handle None or empty actions
     if not actions:
         return custom_actions
 
-    for action in actions:
+    for admin_action in actions:
         # Convert action to string name
-        action_name = action if isinstance(action, str) else action.__name__
+        action_name = admin_action if isinstance(admin_action, str) else admin_action.__name__
         # Exclude default Django actions
-        if action_name not in ['delete_selected']:
+        if action_name not in ["delete_selected"]:
             custom_actions.append(action_name)
 
     return custom_actions
@@ -548,15 +570,15 @@ def _extract_media_data(model_admin):
     Returns:
         dict or None: Media configuration dictionary
     """
-    media_obj = getattr(model_admin, 'Media', None)
+    media_obj = getattr(model_admin, "Media", None)
 
     if media_obj:
-        js_files = getattr(media_obj, 'js', [])
-        css_files = getattr(media_obj, 'css', {})
+        js_files = getattr(media_obj, "js", [])
+        css_files = getattr(media_obj, "css", {})
 
         return {
-            'js': list(js_files) if js_files else [],
-            'css': dict(css_files) if css_files else {},
+            "js": list(js_files) if js_files else [],
+            "css": dict(css_files) if css_files else {},
         }
 
     return None
@@ -578,32 +600,32 @@ def _build_model_metadata(model, model_admin):
 
     # Extract template names
     templates = {
-        'change_form_template': getattr(model_admin, 'change_form_template', None),
-        'change_list_template': getattr(model_admin, 'change_list_template', None),
-        'delete_confirmation_template': getattr(model_admin, 'delete_confirmation_template', None),
-        'object_history_template': getattr(model_admin, 'object_history_template', None),
+        "change_form_template": getattr(model_admin, "change_form_template", None),
+        "change_list_template": getattr(model_admin, "change_list_template", None),
+        "delete_confirmation_template": getattr(model_admin, "delete_confirmation_template", None),
+        "object_history_template": getattr(model_admin, "object_history_template", None),
     }
 
     # Extract list configuration (handle None values)
-    ordering = getattr(model_admin, 'ordering', None)
+    ordering = getattr(model_admin, "ordering", None)
     list_config = {
-        'list_display': [str(field) for field in getattr(model_admin, 'list_display', []) or []],
-        'list_filter': [str(field) for field in getattr(model_admin, 'list_filter', []) or []],
-        'search_fields': [str(field) for field in getattr(model_admin, 'search_fields', []) or []],
-        'ordering': [str(field) for field in ordering] if ordering else [],
-        'date_hierarchy': getattr(model_admin, 'date_hierarchy', None),
+        "list_display": [str(field) for field in getattr(model_admin, "list_display", []) or []],
+        "list_filter": [str(field) for field in getattr(model_admin, "list_filter", []) or []],
+        "search_fields": [str(field) for field in getattr(model_admin, "search_fields", []) or []],
+        "ordering": [str(field) for field in ordering] if ordering else [],
+        "date_hierarchy": getattr(model_admin, "date_hierarchy", None),
     }
 
     # Extract fieldsets
     fieldsets_data = _extract_fieldsets_data(model_admin)
 
     # Extract form configuration
-    form_class = getattr(model_admin, 'form', None)
+    form_class = getattr(model_admin, "form", None)
     form_config = {
-        'fieldsets': fieldsets_data,
-        'readonly_fields': [str(field) for field in getattr(model_admin, 'readonly_fields', [])],
-        'custom_form': form_class.__name__ if form_class else None,
-        'form_module': form_class.__module__ if form_class else None,
+        "fieldsets": fieldsets_data,
+        "readonly_fields": [str(field) for field in getattr(model_admin, "readonly_fields", [])],
+        "custom_form": form_class.__name__ if form_class else None,
+        "form_module": form_class.__module__ if form_class else None,
     }
 
     # Extract inlines
@@ -617,27 +639,27 @@ def _build_model_metadata(model, model_admin):
 
     # Build flags
     flags = {
-        'has_custom_change_form': bool(templates['change_form_template']),
-        'has_custom_change_list': bool(templates['change_list_template']),
-        'has_custom_media': bool(media_data),
-        'has_fieldsets': bool(fieldsets_data),
-        'has_inlines': bool(inlines_data),
+        "has_custom_change_form": bool(templates["change_form_template"]),
+        "has_custom_change_list": bool(templates["change_list_template"]),
+        "has_custom_media": bool(media_data),
+        "has_fieldsets": bool(fieldsets_data),
+        "has_inlines": bool(inlines_data),
     }
 
     # Build complete metadata
     model_metadata = {
-        'app_label': app_label,
-        'model_name': model_name,
-        'verbose_name': str(model._meta.verbose_name),
-        'verbose_name_plural': str(model._meta.verbose_name_plural),
-        'admin_class': model_admin.__class__.__name__,
-        'templates': templates,
-        'list_configuration': list_config,
-        'form_configuration': form_config,
-        'inlines': inlines_data,
-        'custom_actions': custom_actions,
-        'media': media_data,
-        'flags': flags,
+        "app_label": app_label,
+        "model_name": model_name,
+        "verbose_name": str(model._meta.verbose_name),
+        "verbose_name_plural": str(model._meta.verbose_name_plural),
+        "admin_class": model_admin.__class__.__name__,
+        "templates": templates,
+        "list_configuration": list_config,
+        "form_configuration": form_config,
+        "inlines": inlines_data,
+        "custom_actions": custom_actions,
+        "media": media_data,
+        "flags": flags,
     }
 
     return model_metadata
@@ -664,17 +686,17 @@ def _build_model_metadata(model, model_admin):
     **Security**: This endpoint is restricted to authenticated admin users only. It exposes
     internal admin configuration details and should never be made publicly accessible.
     """),
-    tags=['Help System'],
+    tags=["Help System"],
     parameters=[
         OpenApiParameter(
-            name='app_label',
+            name="app_label",
             type=OpenApiTypes.STR,
             location=OpenApiParameter.QUERY,
             description=_('Filter results to specific Spwig app (e.g., "catalog", "orders")'),
             required=False,
         ),
         OpenApiParameter(
-            name='model_name',
+            name="model_name",
             type=OpenApiTypes.STR,
             location=OpenApiParameter.QUERY,
             description=_('Filter results to specific model within app (e.g., "product", "order")'),
@@ -684,17 +706,17 @@ def _build_model_metadata(model, model_admin):
     responses={
         200: OpenApiResponse(
             response=AdminMetadataResponseSerializer,
-            description=_('Successfully retrieved admin metadata'),
+            description=_("Successfully retrieved admin metadata"),
         ),
         401: OpenApiResponse(
-            description=_('Authentication required - provide admin credentials or valid API token'),
+            description=_("Authentication required - provide admin credentials or valid API token"),
         ),
         403: OpenApiResponse(
-            description=_('Permission denied - user must be staff/admin'),
+            description=_("Permission denied - user must be staff/admin"),
         ),
     },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAdminOrHasAPIToken])
 def admin_metadata_api(request):
     """
@@ -718,8 +740,8 @@ def admin_metadata_api(request):
     # Permission class has already checked authentication
 
     # Get filter parameters
-    app_filter = request.query_params.get('app_label')
-    model_filter = request.query_params.get('model_name')
+    app_filter = request.query_params.get("app_label")
+    model_filter = request.query_params.get("model_name")
 
     # Build metadata for all registered ModelAdmins
     models_metadata = []
@@ -742,18 +764,18 @@ def admin_metadata_api(request):
             # Log error but continue processing other models
             # This ensures one broken ModelAdmin doesn't break the entire API
             import logging
+
             logger = logging.getLogger(__name__)
             logger.error(
-                f"Failed to extract metadata for {app_label}.{model_name}: {e}",
-                exc_info=True
+                f"Failed to extract metadata for {app_label}.{model_name}: {e}", exc_info=True
             )
             continue
 
     # Build response
     response_data = {
-        'timestamp': datetime.utcnow().isoformat() + 'Z',
-        'count': len(models_metadata),
-        'models': models_metadata,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "count": len(models_metadata),
+        "models": models_metadata,
     }
 
     return Response(response_data, status=status.HTTP_200_OK)

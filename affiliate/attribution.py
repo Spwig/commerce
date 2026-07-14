@@ -3,12 +3,13 @@ Affiliate Attribution Engine
 Handles conversion tracking and commission calculation for affiliate sales
 """
 
-from decimal import Decimal
-from django.utils import timezone
-from django.db import transaction
 import logging
+from decimal import Decimal
 
-from .models import Click, Commission, Link, Program
+from django.db import transaction
+from django.utils import timezone
+
+from .models import Click, Commission
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,8 @@ class AttributionEngine:
             order: The order instance to attribute
         """
         self.order = order
-        self.session = getattr(order, 'session', None)
-        self.request = getattr(order, 'request', None)
+        self.session = getattr(order, "session", None)
+        self.request = getattr(order, "request", None)
 
     def process_order(self):
         """
@@ -52,9 +53,7 @@ class AttributionEngine:
                 commissions.append(commission)
 
         if commissions:
-            logger.info(
-                f"Created {len(commissions)} commission(s) for order {self.order.id}"
-            )
+            logger.info(f"Created {len(commissions)} commission(s) for order {self.order.id}")
 
         return commissions
 
@@ -76,14 +75,14 @@ class AttributionEngine:
 
         # Method 2: Check for affiliate parameter in session
         if self.session:
-            affiliate_code = self.session.get('affiliate_code')
+            affiliate_code = self.session.get("affiliate_code")
             if affiliate_code:
                 click = self._find_click_by_code(affiliate_code)
                 if click:
                     clicks.append(click)
 
         # Method 3: Check user's recent clicks (fallback)
-        if not clicks and hasattr(self.order, 'user') and self.order.user:
+        if not clicks and hasattr(self.order, "user") and self.order.user:
             click = self._find_click_by_user(self.order.user)
             if click:
                 clicks.append(click)
@@ -105,29 +104,30 @@ class AttributionEngine:
 
         # Check for affiliate cookies (format: aff_{program_id})
         for cookie_name, cookie_value in self.request.COOKIES.items():
-            if cookie_name.startswith('aff_'):
+            if cookie_name.startswith("aff_"):
                 try:
                     # Extract program ID from cookie name
-                    program_id = int(cookie_name.split('_')[1])
+                    program_id = int(cookie_name.split("_")[1])
 
                     # Find click by cookie value and program
-                    click = Click.objects.select_related(
-                        'link', 'link__affiliate', 'link__program'
-                    ).filter(
-                        cookie_value=cookie_value,
-                        link__program_id=program_id,
-                        link__is_active=True,
-                        link__program__status='active'
-                    ).first()
+                    click = (
+                        Click.objects.select_related("link", "link__affiliate", "link__program")
+                        .filter(
+                            cookie_value=cookie_value,
+                            link__program_id=program_id,
+                            link__is_active=True,
+                            link__program__status="active",
+                        )
+                        .first()
+                    )
 
                     if click and self._is_click_valid(click):
                         clicks.append(click)
                         logger.debug(
-                            f"Found valid click from cookie: {cookie_name} "
-                            f"for program {program_id}"
+                            f"Found valid click from cookie: {cookie_name} for program {program_id}"
                         )
 
-                except (ValueError, IndexError) as e:
+                except (ValueError, IndexError):
                     logger.warning(f"Invalid affiliate cookie format: {cookie_name}")
                     continue
 
@@ -143,13 +143,16 @@ class AttributionEngine:
         Returns:
             Click or None: Most recent valid click
         """
-        click = Click.objects.select_related(
-            'link', 'link__affiliate', 'link__program'
-        ).filter(
-            link__affiliate__affiliate_code=affiliate_code,
-            link__is_active=True,
-            link__program__status='active'
-        ).order_by('-clicked_at').first()
+        click = (
+            Click.objects.select_related("link", "link__affiliate", "link__program")
+            .filter(
+                link__affiliate__affiliate_code=affiliate_code,
+                link__is_active=True,
+                link__program__status="active",
+            )
+            .order_by("-clicked_at")
+            .first()
+        )
 
         if click and self._is_click_valid(click):
             return click
@@ -168,12 +171,12 @@ class AttributionEngine:
         """
         # Get most recent click within cookie lifetime
         # This is a fallback method if no cookies/session data available
-        click = Click.objects.select_related(
-            'link', 'link__affiliate', 'link__program'
-        ).filter(
-            link__is_active=True,
-            link__program__status='active'
-        ).order_by('-clicked_at').first()
+        click = (
+            Click.objects.select_related("link", "link__affiliate", "link__program")
+            .filter(link__is_active=True, link__program__status="active")
+            .order_by("-clicked_at")
+            .first()
+        )
 
         if click and self._is_click_valid(click):
             # Additional check: click should be recent enough
@@ -199,10 +202,7 @@ class AttributionEngine:
         max_age = click.link.program.cookie_lifetime_days
 
         if age.days > max_age:
-            logger.debug(
-                f"Click {click.id} is too old ({age.days} days, "
-                f"max {max_age} days)"
-            )
+            logger.debug(f"Click {click.id} is too old ({age.days} days, max {max_age} days)")
             return False
 
         # Check if link and program are active
@@ -210,12 +210,12 @@ class AttributionEngine:
             logger.debug(f"Click {click.id} has inactive link")
             return False
 
-        if click.link.program.status != 'active':
+        if click.link.program.status != "active":
             logger.debug(f"Click {click.id} has inactive program")
             return False
 
         # Check if affiliate is active
-        if click.link.affiliate.status != 'active':
+        if click.link.affiliate.status != "active":
             logger.debug(f"Click {click.id} has inactive affiliate")
             return False
 
@@ -238,8 +238,10 @@ class AttributionEngine:
         program_clicks = {}
         for click in clicks:
             program_id = click.link.program_id
-            if program_id not in program_clicks or \
-               click.clicked_at > program_clicks[program_id].clicked_at:
+            if (
+                program_id not in program_clicks
+                or click.clicked_at > program_clicks[program_id].clicked_at
+            ):
                 program_clicks[program_id] = click
 
         return list(program_clicks.values())
@@ -257,33 +259,31 @@ class AttributionEngine:
         """
         try:
             # Check if commission already exists for this order/click
-            existing = Commission.objects.filter(
-                order=self.order,
-                click=click
-            ).exists()
+            existing = Commission.objects.filter(order=self.order, click=click).exists()
 
             if existing:
                 logger.warning(
-                    f"Commission already exists for order {self.order.id} "
-                    f"and click {click.id}"
+                    f"Commission already exists for order {self.order.id} and click {click.id}"
                 )
                 return None
 
             # Calculate commission amount
-            amount = self._calculate_commission_amount(
-                click.link.program,
-                self.order
-            )
+            amount = self._calculate_commission_amount(click.link.program, self.order)
 
             # Determine currency and base-currency equivalent
             from core.models import SiteSettings
+
             settings = SiteSettings.get_settings()
-            order_currency = self.order.customer_currency or str(self.order.total_amount.currency) if hasattr(self.order.total_amount, 'currency') else settings.default_currency
+            order_currency = (
+                self.order.customer_currency or str(self.order.total_amount.currency)
+                if hasattr(self.order.total_amount, "currency")
+                else settings.default_currency
+            )
             base_currency = settings.default_currency
             commission_exchange_rate = self.order.exchange_rate_used
 
             if order_currency and order_currency != base_currency and commission_exchange_rate:
-                amount_base = (amount / commission_exchange_rate).quantize(Decimal('0.01'))
+                amount_base = (amount / commission_exchange_rate).quantize(Decimal("0.01"))
             else:
                 amount_base = amount
 
@@ -298,8 +298,8 @@ class AttributionEngine:
                 amount_base=amount_base,
                 base_currency=base_currency,
                 exchange_rate_used=commission_exchange_rate,
-                status='pending',  # Requires approval
-                notes=f"Auto-generated from order {self.order.id}"
+                status="pending",  # Requires approval
+                notes=f"Auto-generated from order {self.order.id}",
             )
 
             logger.info(
@@ -311,9 +311,7 @@ class AttributionEngine:
             return commission
 
         except Exception as e:
-            logger.error(
-                f"Error creating commission for order {self.order.id}: {str(e)}"
-            )
+            logger.error(f"Error creating commission for order {self.order.id}: {str(e)}")
             return None
 
     def _calculate_commission_amount(self, program, order):
@@ -327,10 +325,10 @@ class AttributionEngine:
         Returns:
             Decimal: Commission amount
         """
-        if program.commission_type == 'percentage':
+        if program.commission_type == "percentage":
             # Calculate percentage of order total
-            order_total = getattr(order, 'total', Decimal('0'))
-            percentage = program.commission_value / Decimal('100')
+            order_total = getattr(order, "total", Decimal("0"))
+            percentage = program.commission_value / Decimal("100")
             amount = order_total * percentage
 
         else:  # fixed
@@ -338,7 +336,7 @@ class AttributionEngine:
             amount = program.commission_value
 
         # Round to 2 decimal places
-        return amount.quantize(Decimal('0.01'))
+        return amount.quantize(Decimal("0.01"))
 
 
 class CommissionCalculator:
@@ -358,13 +356,13 @@ class CommissionCalculator:
         Returns:
             Decimal: Commission amount
         """
-        if program.commission_type == 'percentage':
-            percentage = program.commission_value / Decimal('100')
+        if program.commission_type == "percentage":
+            percentage = program.commission_value / Decimal("100")
             amount = order_total * percentage
         else:
             amount = program.commission_value
 
-        return amount.quantize(Decimal('0.01'))
+        return amount.quantize(Decimal("0.01"))
 
     @staticmethod
     def forecast_earnings(program, estimated_sales, estimated_order_value):
@@ -380,18 +378,17 @@ class CommissionCalculator:
             dict: Forecast data
         """
         commission_per_order = CommissionCalculator.calculate_for_order(
-            program,
-            Decimal(str(estimated_order_value))
+            program, Decimal(str(estimated_order_value))
         )
 
         total_commissions = commission_per_order * Decimal(str(estimated_sales))
 
         return {
-            'commission_per_order': float(commission_per_order),
-            'estimated_sales': estimated_sales,
-            'total_commissions': float(total_commissions),
-            'commission_type': program.get_commission_type_display(),
-            'commission_value': float(program.commission_value)
+            "commission_per_order": float(commission_per_order),
+            "estimated_sales": estimated_sales,
+            "total_commissions": float(total_commissions),
+            "commission_type": program.get_commission_type_display(),
+            "commission_value": float(program.commission_value),
         }
 
 

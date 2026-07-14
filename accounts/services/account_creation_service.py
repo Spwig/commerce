@@ -2,12 +2,14 @@
 Account Creation Service
 Handles account creation at different checkout timing points with transaction safety
 """
-from django.db import transaction
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from typing import Tuple, Optional, Dict, Any
+
 import logging
 import uuid
+from typing import Any, Optional
+
+from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -19,10 +21,10 @@ class AccountCreationService:
     @staticmethod
     def _normalize_email(email: str) -> str:
         """Normalize email for consistent lookup: lowercase + strip whitespace"""
-        return email.lower().strip() if email else ''
+        return email.lower().strip() if email else ""
 
     @staticmethod
-    def create_guest_user(email: str, first_name: str = '', last_name: str = '') -> User:
+    def create_guest_user(email: str, first_name: str = "", last_name: str = "") -> User:
         """
         Get or create a guest user account by normalized email.
 
@@ -41,10 +43,11 @@ class AccountCreationService:
         normalized_email = AccountCreationService._normalize_email(email)
 
         # Look for existing guest user with this email
-        existing_guest = User.objects.filter(
-            email__iexact=normalized_email,
-            username__startswith='guest_'
-        ).order_by('-date_joined').first()
+        existing_guest = (
+            User.objects.filter(email__iexact=normalized_email, username__startswith="guest_")
+            .order_by("-date_joined")
+            .first()
+        )
 
         if existing_guest:
             # Update name if provided and currently empty
@@ -56,9 +59,11 @@ class AccountCreationService:
                 existing_guest.last_name = last_name
                 updated = True
             if updated:
-                existing_guest.save(update_fields=['first_name', 'last_name'])
+                existing_guest.save(update_fields=["first_name", "last_name"])
 
-            logger.info(f"Reused existing guest user: {existing_guest.username} ({normalized_email})")
+            logger.info(
+                f"Reused existing guest user: {existing_guest.username} ({normalized_email})"
+            )
             return existing_guest
 
         # No existing guest — create new one
@@ -81,10 +86,8 @@ class AccountCreationService:
     @staticmethod
     @transaction.atomic
     def convert_guest_to_full_account(
-        user: User,
-        password: str,
-        send_confirmation_email: bool = True
-    ) -> Tuple[bool, str]:
+        user: User, password: str, send_confirmation_email: bool = True
+    ) -> tuple[bool, str]:
         """
         Convert guest user to full account with password
 
@@ -96,7 +99,7 @@ class AccountCreationService:
         Returns:
             Tuple of (success: bool, message: str)
         """
-        if not user.username.startswith('guest_'):
+        if not user.username.startswith("guest_"):
             return False, _("User is not a guest account")
 
         try:
@@ -105,15 +108,12 @@ class AccountCreationService:
             if user.email:
                 other_guests = list(
                     User.objects.filter(
-                        email__iexact=user.email,
-                        username__startswith='guest_'
+                        email__iexact=user.email, username__startswith="guest_"
                     ).exclude(pk=user.pk)
                 )
                 if other_guests:
                     merge_stats = AccountCreationService.merge_guest_users(user, other_guests)
-                    logger.info(
-                        f"Pre-conversion merge for {user.email}: {merge_stats}"
-                    )
+                    logger.info(f"Pre-conversion merge for {user.email}: {merge_stats}")
 
             # Use full email as username to avoid collisions
             user.username = user.email.lower()
@@ -128,13 +128,12 @@ class AccountCreationService:
 
                     # Create/update email address record
                     email_address, created = EmailAddress.objects.get_or_create(
-                        user=user,
-                        email=user.email,
-                        defaults={'primary': True, 'verified': False}
+                        user=user, email=user.email, defaults={"primary": True, "verified": False}
                     )
 
                     if not email_address.verified:
                         from django.http import HttpRequest
+
                         # Create a minimal request object for send_email_confirmation
                         request = HttpRequest()
                         send_email_confirmation(request, user, email=user.email)
@@ -154,10 +153,10 @@ class AccountCreationService:
     def create_account_during_checkout(
         email: str,
         password: str,
-        first_name: str = '',
-        last_name: str = '',
-        send_confirmation: bool = True
-    ) -> Tuple[bool, str, Optional[User]]:
+        first_name: str = "",
+        last_name: str = "",
+        send_confirmation: bool = True,
+    ) -> tuple[bool, str, User | None]:
         """
         Create full account during checkout (timing: during_checkout or before_checkout)
 
@@ -173,17 +172,20 @@ class AccountCreationService:
         """
         # Check if a registered (non-guest) account already exists with this email
         normalized_email = AccountCreationService._normalize_email(email)
-        if User.objects.filter(email__iexact=normalized_email).exclude(
-            username__startswith='guest_'
-        ).exists():
+        if (
+            User.objects.filter(email__iexact=normalized_email)
+            .exclude(username__startswith="guest_")
+            .exists()
+        ):
             return False, _("An account with this email already exists"), None
 
         try:
             # Check if a guest user exists — convert them instead of creating new
-            existing_guest = User.objects.filter(
-                email__iexact=normalized_email,
-                username__startswith='guest_'
-            ).order_by('-date_joined').first()
+            existing_guest = (
+                User.objects.filter(email__iexact=normalized_email, username__startswith="guest_")
+                .order_by("-date_joined")
+                .first()
+            )
 
             if existing_guest:
                 # Merge any duplicates and convert the guest
@@ -191,12 +193,12 @@ class AccountCreationService:
                     existing_guest.first_name = first_name
                 if last_name:
                     existing_guest.last_name = last_name
-                existing_guest.save(update_fields=['first_name', 'last_name'])
+                existing_guest.save(update_fields=["first_name", "last_name"])
 
                 success, message = AccountCreationService.convert_guest_to_full_account(
                     user=existing_guest,
                     password=password,
-                    send_confirmation_email=send_confirmation
+                    send_confirmation_email=send_confirmation,
                 )
                 if success:
                     return True, message, existing_guest
@@ -204,7 +206,7 @@ class AccountCreationService:
 
             # No guest exists — create fresh account
             # Generate username from email
-            base_username = email.split('@')[0] if email else 'user'
+            base_username = email.split("@")[0] if email else "user"
             username = base_username
             counter = 1
 
@@ -229,10 +231,7 @@ class AccountCreationService:
                     from django.http import HttpRequest
 
                     EmailAddress.objects.create(
-                        user=user,
-                        email=email,
-                        primary=True,
-                        verified=False
+                        user=user, email=email, primary=True, verified=False
                     )
 
                     # Create minimal request for email sending
@@ -251,7 +250,7 @@ class AccountCreationService:
 
     @staticmethod
     @transaction.atomic
-    def merge_guest_users(canonical_user: 'User', duplicate_users: list) -> Dict[str, Any]:
+    def merge_guest_users(canonical_user: "User", duplicate_users: list) -> dict[str, Any]:
         """
         Merge duplicate guest users into a single canonical user.
 
@@ -265,9 +264,9 @@ class AccountCreationService:
         Returns:
             Dict with merge statistics: orders_moved, addresses_moved, users_deleted
         """
-        from orders.models import Order, Address
+        from orders.models import Address, Order
 
-        stats = {'orders_moved': 0, 'addresses_moved': 0, 'users_deleted': 0}
+        stats = {"orders_moved": 0, "addresses_moved": 0, "users_deleted": 0}
 
         for dup_user in duplicate_users:
             if dup_user.pk == canonical_user.pk:
@@ -275,21 +274,21 @@ class AccountCreationService:
 
             # Reassign orders
             orders_moved = Order.objects.filter(user=dup_user).update(user=canonical_user)
-            stats['orders_moved'] += orders_moved
+            stats["orders_moved"] += orders_moved
 
             # Reassign addresses
             addresses_moved = Address.objects.filter(user=dup_user).update(user=canonical_user)
-            stats['addresses_moved'] += addresses_moved
+            stats["addresses_moved"] += addresses_moved
 
             # Delete OneToOne related records (they can't be reassigned if canonical already has them)
             try:
-                if hasattr(dup_user, 'profile'):
+                if hasattr(dup_user, "profile"):
                     dup_user.profile.delete()
             except Exception:
                 pass
 
             try:
-                if hasattr(dup_user, 'communication_preferences'):
+                if hasattr(dup_user, "communication_preferences"):
                     dup_user.communication_preferences.delete()
             except Exception:
                 pass
@@ -301,12 +300,12 @@ class AccountCreationService:
                 f"{orders_moved} orders, {addresses_moved} addresses"
             )
             dup_user.delete()
-            stats['users_deleted'] += 1
+            stats["users_deleted"] += 1
 
         return stats
 
     @staticmethod
-    def merge_all_guests_for_email(email: str) -> Tuple[Optional['User'], Dict[str, Any]]:
+    def merge_all_guests_for_email(email: str) -> tuple[Optional["User"], dict[str, Any]]:
         """
         Find all guest users for an email and merge them into one canonical user.
 
@@ -322,14 +321,15 @@ class AccountCreationService:
         normalized_email = AccountCreationService._normalize_email(email)
         guest_users = list(
             User.objects.filter(
-                email__iexact=normalized_email,
-                username__startswith='guest_'
-            ).order_by('-date_joined')
+                email__iexact=normalized_email, username__startswith="guest_"
+            ).order_by("-date_joined")
         )
 
         if len(guest_users) <= 1:
             return (guest_users[0] if guest_users else None), {
-                'orders_moved': 0, 'addresses_moved': 0, 'users_deleted': 0
+                "orders_moved": 0,
+                "addresses_moved": 0,
+                "users_deleted": 0,
             }
 
         canonical = guest_users[0]  # Most recent
@@ -343,7 +343,7 @@ class AccountCreationService:
         return canonical, stats
 
     @staticmethod
-    def get_account_creation_context(user: Optional[User] = None) -> Dict[str, Any]:
+    def get_account_creation_context(user: User | None = None) -> dict[str, Any]:
         """
         Get context data for account creation UI
 
@@ -362,22 +362,19 @@ class AccountCreationService:
         if settings.show_social_auth_on_account_creation:
             try:
                 from allauth.socialaccount import providers
+
                 provider_list = providers.registry.get_list()
                 social_providers = [
-                    {
-                        'provider': p.id,
-                        'display_name': p.name
-                    }
-                    for p in provider_list
+                    {"provider": p.id, "display_name": p.name} for p in provider_list
                 ]
             except Exception as e:
                 logger.warning(f"Failed to get social providers: {e}")
 
         return {
-            'account_creation_message': settings.effective_account_creation_message,
-            'show_social_auth': settings.show_social_auth_on_account_creation,
-            'social_providers': social_providers,
-            'prefill_email': user.email if user else '',
-            'prefill_first_name': user.first_name if user else '',
-            'prefill_last_name': user.last_name if user else '',
+            "account_creation_message": settings.effective_account_creation_message,
+            "show_social_auth": settings.show_social_auth_on_account_creation,
+            "social_providers": social_providers,
+            "prefill_email": user.email if user else "",
+            "prefill_first_name": user.first_name if user else "",
+            "prefill_last_name": user.last_name if user else "",
         }

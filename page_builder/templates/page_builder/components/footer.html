@@ -1,0 +1,125 @@
+{% load i18n static merchant_trans %}
+<!-- Site Footer -->
+<footer class="site-footer" role="contentinfo">
+    <div class="container">
+        <!-- Main Footer Grid -->
+        <div class="site-footer__grid">
+            <!-- Brand Column -->
+            <div class="site-footer__brand">
+                <div class="site-footer__logo">
+                    {% if design_settings and design_settings.logo %}
+                        <img src="{{ design_settings.logo.url }}" alt="{{ site_settings.site_name|default:'Shop' }}" style="max-height: 40px; width: auto;">
+                    {% else %}
+                        <i class="fas fa-store"></i>
+                        {{ site_settings.site_name|default:'Shop' }}
+                    {% endif %}
+                </div>
+                <p class="site-footer__tagline">
+                    {{ site_settings.site_tagline|default:_('Your premier destination for quality products. We curate the best items to enhance your lifestyle.') }}
+                </p>
+                <div class="site-footer__social">
+                    {% if site_settings.facebook_url %}
+                    <a href="{{ site_settings.facebook_url }}" class="site-footer__social-link" aria-label="Facebook" target="_blank" rel="noopener">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    {% endif %}
+                    {% if site_settings.twitter_url %}
+                    <a href="{{ site_settings.twitter_url }}" class="site-footer__social-link" aria-label="Twitter" target="_blank" rel="noopener">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    {% endif %}
+                    {% if site_settings.instagram_url %}
+                    <a href="{{ site_settings.instagram_url }}" class="site-footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    {% endif %}
+                    {% if site_settings.linkedin_url %}
+                    <a href="{{ site_settings.linkedin_url }}" class="site-footer__social-link" aria-label="LinkedIn" target="_blank" rel="noopener">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="site-footer__column">
+                <h3 class="site-footer__column-title">{% mtrans 'Quick Links' %}</h3>
+                <ul class="site-footer__links">
+                    <li><a href="{% url 'page_builder:home' %}" class="site-footer__link">{% mtrans 'Home' %}</a></li>
+                    <li><a href="{% url 'page_builder:category_list' %}" class="site-footer__link">{% mtrans 'Shop' %}</a></li>
+                    <li><a href="{% url 'page_builder:page_detail' slug='about' %}" class="site-footer__link">{% mtrans 'About Us' %}</a></li>
+                    <li><a href="{% url 'page_builder:page_detail' slug='contact' %}" class="site-footer__link">{% mtrans 'Contact' %}</a></li>
+                    <li><a href="{% url 'page_builder:page_detail' slug='faq' %}" class="site-footer__link">{% mtrans 'FAQ' %}</a></li>
+                </ul>
+            </div>
+
+            <!-- Customer Service -->
+            <div class="site-footer__column">
+                <h3 class="site-footer__column-title">{% mtrans 'Customer Service' %}</h3>
+                <ul class="site-footer__links">
+                    <li><a href="/account/" class="site-footer__link">{% mtrans 'My Account' %}</a></li>
+                    <li><a href="/orders/" class="site-footer__link">{% mtrans 'Order Tracking' %}</a></li>
+                    {% if site_settings.returns_page %}
+                    <li><a href="{% url 'page_builder:page_detail' slug=site_settings.returns_page.slug %}" class="site-footer__link">{% mtrans 'Returns' %}</a></li>
+                    {% endif %}
+                    {% if site_settings.shipping_page %}
+                    <li><a href="{% url 'page_builder:page_detail' slug=site_settings.shipping_page.slug %}" class="site-footer__link">{% mtrans 'Shipping Info' %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Legal -->
+            <div class="site-footer__column">
+                <h3 class="site-footer__column-title">{% mtrans 'Legal' %}</h3>
+                <ul class="site-footer__links">
+                    {% if site_settings.privacy_page %}
+                    <li><a href="{% url 'page_builder:page_detail' slug=site_settings.privacy_page.slug %}" class="site-footer__link">{% mtrans 'Privacy Policy' %}</a></li>
+                    {% endif %}
+                    {% if site_settings.terms_page %}
+                    <li><a href="{% url 'page_builder:page_detail' slug=site_settings.terms_page.slug %}" class="site-footer__link">{% mtrans 'Terms of Service' %}</a></li>
+                    {% endif %}
+                    {% if site_settings.cookie_page %}
+                    <li><a href="{% url 'page_builder:page_detail' slug=site_settings.cookie_page.slug %}" class="site-footer__link">{% mtrans 'Cookie Policy' %}</a></li>
+                    {% endif %}
+                    {% if site_settings.cookie_consent_enabled %}
+                    <li><a href="#" class="site-footer__link" data-cookie-action="open-settings">{% mtrans 'Cookie Settings' %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="site-footer__trust">
+            <div class="site-footer__trust-item">
+                <i class="fas fa-truck"></i>
+                <span>{% mtrans 'Free Shipping' %}</span>
+            </div>
+            <div class="site-footer__trust-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>{% mtrans 'Secure Payment' %}</span>
+            </div>
+            <div class="site-footer__trust-item">
+                <i class="fas fa-undo"></i>
+                <span>{% mtrans 'Easy Returns' %}</span>
+            </div>
+            <div class="site-footer__trust-item">
+                <i class="fas fa-headset"></i>
+                <span>{% mtrans '24/7 Support' %}</span>
+            </div>
+        </div>
+
+        <!-- Bottom -->
+        <div class="site-footer__bottom">
+            <p class="site-footer__copyright">
+                &copy; {% now "Y" %} {{ site_settings.site_name|default:'Shop' }}. {% mtrans 'All rights reserved.' %}
+            </p>
+            <div class="site-footer__payments">
+                <i class="fab fa-cc-visa site-footer__payment-icon"></i>
+                <i class="fab fa-cc-mastercard site-footer__payment-icon"></i>
+                <i class="fab fa-cc-amex site-footer__payment-icon"></i>
+                <i class="fab fa-cc-paypal site-footer__payment-icon"></i>
+                <i class="fab fa-cc-apple-pay site-footer__payment-icon"></i>
+            </div>
+        </div>
+    </div>
+</footer>

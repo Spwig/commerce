@@ -12,11 +12,11 @@ Usage:
     clean_html = sanitizer.sanitize_html(user_content)
 """
 
-import re
 import logging
-from typing import List, Dict, Optional
-from urllib.parse import urlparse
+import re
 from html.parser import HTMLParser
+from urllib.parse import urlparse
+
 import bleach
 from django.conf import settings
 
@@ -37,88 +37,148 @@ class ContentSanitizer:
     """
 
     # Tier A (Checkout) - Most restrictive
-    TIER_A_ALLOWED_TAGS = [
-        'p', 'span', 'strong', 'em', 'br', 'b', 'i', 'u'
-    ]
+    TIER_A_ALLOWED_TAGS = ["p", "span", "strong", "em", "br", "b", "i", "u"]
     TIER_A_ALLOWED_ATTRS = {
-        '*': ['class', 'id'],
+        "*": ["class", "id"],
     }
 
     # Tier B (Product/Collection) - Moderate
     TIER_B_ALLOWED_TAGS = TIER_A_ALLOWED_TAGS + [
-        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'ul', 'ol', 'li', 'dl', 'dt', 'dd',
-        'a', 'img', 'blockquote', 'code', 'pre'
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "ul",
+        "ol",
+        "li",
+        "dl",
+        "dt",
+        "dd",
+        "a",
+        "img",
+        "blockquote",
+        "code",
+        "pre",
     ]
     TIER_B_ALLOWED_ATTRS = {
-        '*': ['class', 'id'],
-        'a': ['href', 'title', 'target', 'rel'],
-        'img': ['src', 'alt', 'width', 'height', 'loading'],
-        'blockquote': ['cite'],
+        "*": ["class", "id"],
+        "a": ["href", "title", "target", "rel"],
+        "img": ["src", "alt", "width", "height", "loading"],
+        "blockquote": ["cite"],
     }
 
     # Tier C (Marketing) - Most permissive
     TIER_C_ALLOWED_TAGS = TIER_B_ALLOWED_TAGS + [
-        'div', 'section', 'article', 'header', 'footer', 'nav', 'main', 'aside',
-        'figure', 'figcaption', 'picture', 'source',
-        'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'caption', 'col', 'colgroup',
-        'iframe', 'video', 'audio', 'track',
-        'abbr', 'cite', 'del', 'ins', 'mark', 'q', 's', 'small', 'sub', 'sup', 'time',
-        'hr', 'wbr'
+        "div",
+        "section",
+        "article",
+        "header",
+        "footer",
+        "nav",
+        "main",
+        "aside",
+        "figure",
+        "figcaption",
+        "picture",
+        "source",
+        "table",
+        "thead",
+        "tbody",
+        "tfoot",
+        "tr",
+        "th",
+        "td",
+        "caption",
+        "col",
+        "colgroup",
+        "iframe",
+        "video",
+        "audio",
+        "track",
+        "abbr",
+        "cite",
+        "del",
+        "ins",
+        "mark",
+        "q",
+        "s",
+        "small",
+        "sub",
+        "sup",
+        "time",
+        "hr",
+        "wbr",
     ]
     TIER_C_ALLOWED_ATTRS = {
-        '*': ['class', 'id', 'style', 'title', 'lang', 'dir'],
-        'a': ['href', 'title', 'target', 'rel', 'download'],
-        'img': ['src', 'alt', 'width', 'height', 'loading', 'srcset', 'sizes'],
-        'iframe': ['src', 'width', 'height', 'sandbox', 'allow', 'loading', 'title'],
-        'video': ['src', 'width', 'height', 'controls', 'autoplay', 'loop', 'muted', 'poster', 'preload'],
-        'audio': ['src', 'controls', 'autoplay', 'loop', 'muted', 'preload'],
-        'source': ['src', 'type', 'srcset', 'sizes', 'media'],
-        'track': ['src', 'kind', 'srclang', 'label', 'default'],
-        'table': ['border', 'cellpadding', 'cellspacing'],
-        'td': ['colspan', 'rowspan', 'headers'],
-        'th': ['colspan', 'rowspan', 'scope', 'headers'],
-        'col': ['span'],
-        'colgroup': ['span'],
-        'blockquote': ['cite'],
-        'q': ['cite'],
-        'time': ['datetime'],
-        'del': ['cite', 'datetime'],
-        'ins': ['cite', 'datetime'],
+        "*": ["class", "id", "style", "title", "lang", "dir"],
+        "a": ["href", "title", "target", "rel", "download"],
+        "img": ["src", "alt", "width", "height", "loading", "srcset", "sizes"],
+        "iframe": ["src", "width", "height", "sandbox", "allow", "loading", "title"],
+        "video": [
+            "src",
+            "width",
+            "height",
+            "controls",
+            "autoplay",
+            "loop",
+            "muted",
+            "poster",
+            "preload",
+        ],
+        "audio": ["src", "controls", "autoplay", "loop", "muted", "preload"],
+        "source": ["src", "type", "srcset", "sizes", "media"],
+        "track": ["src", "kind", "srclang", "label", "default"],
+        "table": ["border", "cellpadding", "cellspacing"],
+        "td": ["colspan", "rowspan", "headers"],
+        "th": ["colspan", "rowspan", "scope", "headers"],
+        "col": ["span"],
+        "colgroup": ["span"],
+        "blockquote": ["cite"],
+        "q": ["cite"],
+        "time": ["datetime"],
+        "del": ["cite", "datetime"],
+        "ins": ["cite", "datetime"],
     }
 
     # Allowed URL protocols
-    ALLOWED_PROTOCOLS = ['http', 'https', 'mailto', 'tel']
+    ALLOWED_PROTOCOLS = ["http", "https", "mailto", "tel"]
 
     # Dangerous patterns to block
     DANGEROUS_PATTERNS = [
-        r'javascript:',
-        r'data:text/html',
-        r'vbscript:',
-        r'on\w+\s*=',  # onclick, onload, onerror, etc.
-        r'<script',
-        r'expression\s*\(',  # CSS expressions (IE)
-        r'behavior\s*:',  # CSS behaviors (IE)
-        r'@import',  # CSS @import
-        r'-moz-binding',  # XBL bindings
+        r"javascript:",
+        r"data:text/html",
+        r"vbscript:",
+        r"on\w+\s*=",  # onclick, onload, onerror, etc.
+        r"<script",
+        r"expression\s*\(",  # CSS expressions (IE)
+        r"behavior\s*:",  # CSS behaviors (IE)
+        r"@import",  # CSS @import
+        r"-moz-binding",  # XBL bindings
     ]
 
     # Dangerous CSS properties
     DANGEROUS_CSS_PROPERTIES = [
-        'behavior', 'expression', '-moz-binding', 'binding',
-        'import', '@import', 'javascript'
+        "behavior",
+        "expression",
+        "-moz-binding",
+        "binding",
+        "import",
+        "@import",
+        "javascript",
     ]
 
     # External domains whitelist (configurable via settings)
     DEFAULT_ALLOWED_DOMAINS = [
-        'fonts.googleapis.com',
-        'fonts.gstatic.com',
-        'cdn.jsdelivr.net',
-        'cdnjs.cloudflare.com',
-        'unpkg.com',
+        "fonts.googleapis.com",
+        "fonts.gstatic.com",
+        "cdn.jsdelivr.net",
+        "cdnjs.cloudflare.com",
+        "unpkg.com",
     ]
 
-    def __init__(self, tier: str, allowed_domains: Optional[List[str]] = None):
+    def __init__(self, tier: str, allowed_domains: list[str] | None = None):
         """
         Initialize sanitizer with tier-specific rules.
 
@@ -126,7 +186,7 @@ class ContentSanitizer:
             tier: Page tier ('A', 'B', or 'C')
             allowed_domains: Custom list of allowed external domains
         """
-        if tier not in ['A', 'B', 'C']:
+        if tier not in ["A", "B", "C"]:
             raise ValueError(f"Invalid tier: {tier}. Must be 'A', 'B', or 'C'")
 
         self.tier = tier
@@ -140,29 +200,26 @@ class ContentSanitizer:
             self.allowed_domains.extend(allowed_domains)
 
         # Add domains from settings if available
-        if hasattr(settings, 'CONTENT_SANITIZER_ALLOWED_DOMAINS'):
+        if hasattr(settings, "CONTENT_SANITIZER_ALLOWED_DOMAINS"):
             self.allowed_domains.extend(settings.CONTENT_SANITIZER_ALLOWED_DOMAINS)
 
         # Compile dangerous pattern regex
-        self._dangerous_pattern = re.compile(
-            '|'.join(self.DANGEROUS_PATTERNS),
-            re.IGNORECASE
-        )
+        self._dangerous_pattern = re.compile("|".join(self.DANGEROUS_PATTERNS), re.IGNORECASE)
 
-    def _get_allowed_tags(self) -> List[str]:
+    def _get_allowed_tags(self) -> list[str]:
         """Get allowed HTML tags for current tier."""
-        if self.tier == 'A':
+        if self.tier == "A":
             return self.TIER_A_ALLOWED_TAGS
-        elif self.tier == 'B':
+        elif self.tier == "B":
             return self.TIER_B_ALLOWED_TAGS
         else:  # Tier C
             return self.TIER_C_ALLOWED_TAGS
 
-    def _get_allowed_attrs(self) -> Dict[str, List[str]]:
+    def _get_allowed_attrs(self) -> dict[str, list[str]]:
         """Get allowed HTML attributes for current tier."""
-        if self.tier == 'A':
+        if self.tier == "A":
             return self.TIER_A_ALLOWED_ATTRS
-        elif self.tier == 'B':
+        elif self.tier == "B":
             return self.TIER_B_ALLOWED_ATTRS
         else:  # Tier C
             return self.TIER_C_ALLOWED_ATTRS
@@ -184,13 +241,13 @@ class ContentSanitizer:
             '&lt;script&gt;alert(1)&lt;/script&gt;<p>Hello</p>'
         """
         if not html:
-            return ''
+            return ""
 
         # First check for dangerous patterns
         if self._contains_dangerous_pattern(html):
             logger.warning(
-                f'Dangerous pattern detected in HTML (tier={self.tier}). '
-                f'Content will be heavily sanitized.'
+                f"Dangerous pattern detected in HTML (tier={self.tier}). "
+                f"Content will be heavily sanitized."
             )
 
         # Use bleach to clean HTML
@@ -203,12 +260,12 @@ class ContentSanitizer:
         )
 
         # Additional sanitization for Tier C (has style attribute)
-        if self.tier == 'C' and 'style' in cleaned:
+        if self.tier == "C" and "style" in cleaned:
             cleaned = self._sanitize_inline_styles(cleaned)
 
         return cleaned
 
-    def sanitize_url(self, url: str) -> Optional[str]:
+    def sanitize_url(self, url: str) -> str | None:
         """
         Validate and sanitize URLs.
 
@@ -230,28 +287,27 @@ class ContentSanitizer:
 
         # Check for dangerous patterns
         if self._contains_dangerous_pattern(url):
-            logger.warning(f'Dangerous pattern in URL: {url}')
+            logger.warning(f"Dangerous pattern in URL: {url}")
             return None
 
         # Parse URL
         try:
             parsed = urlparse(url)
         except Exception as e:
-            logger.warning(f'Failed to parse URL: {url}, error: {e}')
+            logger.warning(f"Failed to parse URL: {url}, error: {e}")
             return None
 
         # Check protocol
         if parsed.scheme and parsed.scheme.lower() not in self.allowed_protocols:
-            logger.warning(f'Disallowed protocol in URL: {parsed.scheme}')
+            logger.warning(f"Disallowed protocol in URL: {parsed.scheme}")
             return None
 
         # For external URLs, check domain whitelist (Tier A/B only)
         # Tier C (marketing) allows all external http/https URLs
-        if parsed.scheme in ['http', 'https'] and parsed.netloc:
-            if self.tier in ['A', 'B']:
-                if not self._is_domain_allowed(parsed.netloc):
-                    logger.warning(f'External domain not whitelisted: {parsed.netloc}')
-                    return None
+        if parsed.scheme in ["http", "https"] and parsed.netloc and self.tier in ["A", "B"]:
+            if not self._is_domain_allowed(parsed.netloc):
+                logger.warning(f"External domain not whitelisted: {parsed.netloc}")
+                return None
 
         return url
 
@@ -271,27 +327,19 @@ class ContentSanitizer:
             'color: red;'
         """
         if not css:
-            return ''
+            return ""
 
         # Remove dangerous properties
         for dangerous_prop in self.DANGEROUS_CSS_PROPERTIES:
             css = re.sub(
-                rf'{re.escape(dangerous_prop)}\s*[:\(].*?[;\)]',
-                '',
-                css,
-                flags=re.IGNORECASE
+                rf"{re.escape(dangerous_prop)}\s*[:\(].*?[;\)]", "", css, flags=re.IGNORECASE
             )
 
         # Remove @import rules
-        css = re.sub(r'@import\s+.*?;', '', css, flags=re.IGNORECASE)
+        css = re.sub(r"@import\s+.*?;", "", css, flags=re.IGNORECASE)
 
         # Remove url() with javascript:
-        css = re.sub(
-            r'url\s*\(\s*["\']?\s*javascript:.*?\)',
-            '',
-            css,
-            flags=re.IGNORECASE
-        )
+        css = re.sub(r'url\s*\(\s*["\']?\s*javascript:.*?\)', "", css, flags=re.IGNORECASE)
 
         return css.strip()
 
@@ -313,7 +361,7 @@ class ContentSanitizer:
             clean_css = self.sanitize_css(css)
             if clean_css:
                 return f'style="{clean_css}"'
-            return ''
+            return ""
 
         return re.sub(pattern, sanitize_match, html)
 
@@ -340,18 +388,14 @@ class ContentSanitizer:
             True if domain is allowed
         """
         # Remove port if present
-        domain_without_port = domain.split(':')[0]
+        domain_without_port = domain.split(":")[0]
 
         # Check exact match
         if domain_without_port in self.allowed_domains:
             return True
 
         # Check subdomain match (e.g., cdn.example.com matches example.com)
-        for allowed in self.allowed_domains:
-            if domain_without_port.endswith('.' + allowed):
-                return True
-
-        return False
+        return any(domain_without_port.endswith("." + allowed) for allowed in self.allowed_domains)
 
     def validate_iframe_sandbox(self, iframe_html: str) -> bool:
         """
@@ -363,21 +407,21 @@ class ContentSanitizer:
         Returns:
             True if iframe has valid sandbox attribute
         """
-        if '<iframe' not in iframe_html.lower():
+        if "<iframe" not in iframe_html.lower():
             return True  # No iframe
 
         # Tier A and B: iframes not allowed
-        if self.tier in ['A', 'B']:
+        if self.tier in ["A", "B"]:
             return False
 
         # Tier C: iframe must have sandbox attribute
-        if 'sandbox=' not in iframe_html:
-            logger.warning('iframe without sandbox attribute detected')
+        if "sandbox=" not in iframe_html:
+            logger.warning("iframe without sandbox attribute detected")
             return False
 
         return True
 
-    def get_sanitization_report(self, html: str) -> Dict:
+    def get_sanitization_report(self, html: str) -> dict:
         """
         Get detailed sanitization report without actually sanitizing.
 
@@ -390,12 +434,12 @@ class ContentSanitizer:
             Dict with sanitization details
         """
         report = {
-            'tier': self.tier,
-            'has_dangerous_patterns': self._contains_dangerous_pattern(html),
-            'disallowed_tags': [],
-            'disallowed_attrs': [],
-            'external_domains': [],
-            'warnings': []
+            "tier": self.tier,
+            "has_dangerous_patterns": self._contains_dangerous_pattern(html),
+            "disallowed_tags": [],
+            "disallowed_attrs": [],
+            "external_domains": [],
+            "warnings": [],
         }
 
         # Find disallowed tags
@@ -412,8 +456,8 @@ class ContentSanitizer:
         parser = TagFinder(self.allowed_tags)
         try:
             parser.feed(html)
-            report['disallowed_tags'] = list(parser.disallowed_tags)
+            report["disallowed_tags"] = list(parser.disallowed_tags)
         except Exception as e:
-            report['warnings'].append(f'Failed to parse HTML: {e}')
+            report["warnings"].append(f"Failed to parse HTML: {e}")
 
         return report

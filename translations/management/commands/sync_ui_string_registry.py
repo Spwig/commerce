@@ -8,43 +8,44 @@ Usage:
     python manage.py sync_ui_string_registry
     python manage.py sync_ui_string_registry --auto-translate
 """
+
 from django.core.management.base import BaseCommand
-from translations.models import UITranslationOverride, SiteLanguage
-from translations.ui_string_registry import get_total_string_count, UI_STRING_REGISTRY
+
+from translations.models import SiteLanguage, UITranslationOverride
+from translations.ui_string_registry import UI_STRING_REGISTRY, get_total_string_count
 
 
 class Command(BaseCommand):
-    help = 'Sync UI string registry with existing translation overrides'
+    help = "Sync UI string registry with existing translation overrides"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--auto-translate',
-            action='store_true',
-            help='Auto-translate new strings for languages that have untranslated entries',
+            "--auto-translate",
+            action="store_true",
+            help="Auto-translate new strings for languages that have untranslated entries",
         )
 
     def handle(self, *args, **options):
-        from translations.templatetags.merchant_trans import BUILTIN_LANGUAGES
         from translations.coverage_service import TranslationCoverageService
+        from translations.templatetags.merchant_trans import BUILTIN_LANGUAGES
 
         total = get_total_string_count()
         self.stdout.write(f"Registry contains {total} strings")
 
-        overrides = UITranslationOverride.objects.select_related('language').all()
+        overrides = UITranslationOverride.objects.select_related("language").all()
 
         if not overrides.exists():
-            self.stdout.write(self.style.WARNING('No UITranslationOverride rows found'))
+            self.stdout.write(self.style.WARNING("No UITranslationOverride rows found"))
             # Create override rows for all active languages
             active_langs = SiteLanguage.objects.filter(is_active=True)
             for lang in active_langs:
-                if lang.code == 'en':
+                if lang.code == "en":
                     continue
                 UITranslationOverride.objects.get_or_create(
-                    language=lang,
-                    defaults={'total_strings': total}
+                    language=lang, defaults={"total_strings": total}
                 )
                 self.stdout.write(f"  Created override row for {lang.code}")
-            overrides = UITranslationOverride.objects.select_related('language').all()
+            overrides = UITranslationOverride.objects.select_related("language").all()
 
         coverage_service = TranslationCoverageService()
 
@@ -53,15 +54,13 @@ class Command(BaseCommand):
             override.total_strings = total
             override.translated_count = sum(1 for v in override.overrides.values() if v)
             override.verified_count = sum(
-                1 for m in override.meta_info.values() if m.get('verified')
+                1 for m in override.meta_info.values() if m.get("verified")
             )
-            override.save(update_fields=[
-                'total_strings', 'translated_count', 'verified_count'
-            ])
+            override.save(update_fields=["total_strings", "translated_count", "verified_count"])
 
             new_strings = total - old_total if old_total > 0 else 0
             lang_code = override.language.code
-            is_builtin = lang_code in BUILTIN_LANGUAGES and lang_code != 'en'
+            is_builtin = lang_code in BUILTIN_LANGUAGES and lang_code != "en"
 
             if is_builtin:
                 effective = coverage_service._count_effective_ui_coverage(
@@ -80,11 +79,12 @@ class Command(BaseCommand):
                     f"{f' (+{new_strings} new strings)' if new_strings > 0 else ''}"
                 )
 
-        if options['auto_translate']:
+        if options["auto_translate"]:
             from translations.tasks import auto_translate_ui_strings
+
             for override in overrides:
                 lang_code = override.language.code
-                is_builtin = lang_code in BUILTIN_LANGUAGES and lang_code != 'en'
+                is_builtin = lang_code in BUILTIN_LANGUAGES and lang_code != "en"
 
                 if is_builtin:
                     # Built-in languages are already covered by .po translations
@@ -98,7 +98,8 @@ class Command(BaseCommand):
                         f"({untranslated} untranslated strings)"
                     )
 
-        self.stdout.write(self.style.SUCCESS(
-            f'Synced registry ({total} strings) with '
-            f'{overrides.count()} language overrides'
-        ))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Synced registry ({total} strings) with {overrides.count()} language overrides"
+            )
+        )

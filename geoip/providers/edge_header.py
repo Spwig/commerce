@@ -1,9 +1,11 @@
 """
 Edge Header Provider - Reads location from CDN headers
 """
-from typing import Dict, Optional, Any
-from .base import GeoIPProviderBase
+
 import logging
+from typing import Any
+
+from .base import GeoIPProviderBase
 
 logger = logging.getLogger(__name__)
 
@@ -16,31 +18,33 @@ class EdgeHeaderProvider(GeoIPProviderBase):
 
     # Known CDN headers that contain country information
     COUNTRY_HEADERS = [
-        'CF-IPCountry',          # Cloudflare
-        'CloudFront-Viewer-Country',  # AWS CloudFront
-        'X-Country-Code',        # Generic
-        'X-GeoIP-Country',       # Nginx GeoIP module
-        'X-Real-Country',        # Custom
-        'Fastly-Client-Country', # Fastly
-        'X-Akamai-Country-Code', # Akamai
+        "CF-IPCountry",  # Cloudflare
+        "CloudFront-Viewer-Country",  # AWS CloudFront
+        "X-Country-Code",  # Generic
+        "X-GeoIP-Country",  # Nginx GeoIP module
+        "X-Real-Country",  # Custom
+        "Fastly-Client-Country",  # Fastly
+        "X-Akamai-Country-Code",  # Akamai
     ]
 
     REGION_HEADERS = [
-        'CloudFront-Viewer-Country-Region',  # AWS CloudFront
-        'X-GeoIP-Region',        # Nginx GeoIP module
-        'CF-Region',             # Cloudflare (if configured)
+        "CloudFront-Viewer-Country-Region",  # AWS CloudFront
+        "X-GeoIP-Region",  # Nginx GeoIP module
+        "CF-Region",  # Cloudflare (if configured)
     ]
 
     CITY_HEADERS = [
-        'CloudFront-Viewer-City',  # AWS CloudFront
-        'X-GeoIP-City',            # Nginx GeoIP module
-        'CF-City',                 # Cloudflare (if configured)
+        "CloudFront-Viewer-City",  # AWS CloudFront
+        "X-GeoIP-City",  # Nginx GeoIP module
+        "CF-City",  # Cloudflare (if configured)
     ]
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: dict[str, Any] = None):
         super().__init__(config)
         self.request = None  # Will be set by middleware
-        self.trusted_headers = config.get('trusted_headers', self.COUNTRY_HEADERS) if config else self.COUNTRY_HEADERS
+        self.trusted_headers = (
+            config.get("trusted_headers", self.COUNTRY_HEADERS) if config else self.COUNTRY_HEADERS
+        )
 
     def initialize(self) -> bool:
         """
@@ -64,7 +68,7 @@ class EdgeHeaderProvider(GeoIPProviderBase):
         """
         self.request = request
 
-    def lookup(self, ip: str) -> Optional[Dict[str, Any]]:
+    def lookup(self, ip: str) -> dict[str, Any] | None:
         """
         Read location from request headers
 
@@ -83,41 +87,38 @@ class EdgeHeaderProvider(GeoIPProviderBase):
         # Try to get country from headers
         country = self._get_header_value(self.COUNTRY_HEADERS)
         if country:
-            result['country_code'] = country
+            result["country_code"] = country
 
         # Try to get region
         region = self._get_header_value(self.REGION_HEADERS)
         if region:
-            result['region_code'] = region
+            result["region_code"] = region
 
         # Try to get city
         city = self._get_header_value(self.CITY_HEADERS)
         if city:
-            result['city_name'] = city
+            result["city_name"] = city
 
         # Check for IP type headers
-        if self._get_header_value(['CF-IPCountry']) == 'T1':
-            result['is_tor'] = True
+        if self._get_header_value(["CF-IPCountry"]) == "T1":
+            result["is_tor"] = True
 
         # Check for mobile headers
-        mobile_header = self._get_header_value([
-            'CloudFront-Is-Mobile-Viewer',
-            'CF-Device-Type'
-        ])
-        if mobile_header in ['true', 'mobile']:
-            result['is_mobile'] = True
+        mobile_header = self._get_header_value(["CloudFront-Is-Mobile-Viewer", "CF-Device-Type"])
+        if mobile_header in ["true", "mobile"]:
+            result["is_mobile"] = True
 
         if not result:
-            logger.debug(f"No geo headers found in request")
+            logger.debug("No geo headers found in request")
             return None
 
         # Add metadata
-        result['source'] = 'edge_header'
+        result["source"] = "edge_header"
 
         logger.debug(f"Edge header lookup result: {result}")
         return self.format_response(result)
 
-    def _get_header_value(self, headers: list) -> Optional[str]:
+    def _get_header_value(self, headers: list) -> str | None:
         """
         Get first available header value
 
@@ -135,18 +136,18 @@ class EdgeHeaderProvider(GeoIPProviderBase):
             meta_key = f"HTTP_{header.upper().replace('-', '_')}"
             value = self.request.META.get(meta_key)
 
-            if value and value != 'XX':  # XX often means unknown
+            if value and value != "XX":  # XX often means unknown
                 return value
 
             # Also try direct header access (for some frameworks)
-            if hasattr(self.request, 'headers'):
+            if hasattr(self.request, "headers"):
                 value = self.request.headers.get(header)
-                if value and value != 'XX':
+                if value and value != "XX":
                     return value
 
         return None
 
-    def get_all_headers(self) -> Dict[str, str]:
+    def get_all_headers(self) -> dict[str, str]:
         """
         Get all geo-related headers for debugging
 

@@ -2,9 +2,9 @@ from core.management.commands._seed_base import SeedCommand
 
 
 class Command(SeedCommand):
-    seed_name = 'trust_badges'
+    seed_name = "trust_badges"
     seed_version = 1
-    help = 'Seed default trust badges for checkout and product pages'
+    help = "Seed default trust badges for checkout and product pages"
 
     CHECKOUT_BADGES = [
         {"icon": "fas fa-lock", "text": "Secure Checkout"},
@@ -26,16 +26,16 @@ class Command(SeedCommand):
 
         count = 0
         # Only populate empty badge fields (don't overwrite merchant customizations)
-        count += PageTemplateConfig.objects.filter(
-            checkout_trust_badges=[]
-        ).update(checkout_trust_badges=self.CHECKOUT_BADGES)
+        count += PageTemplateConfig.objects.filter(checkout_trust_badges=[]).update(
+            checkout_trust_badges=self.CHECKOUT_BADGES
+        )
 
-        count += PageTemplateConfig.objects.filter(
-            product_trust_badges=[]
-        ).update(product_trust_badges=self.PRODUCT_BADGES)
+        count += PageTemplateConfig.objects.filter(product_trust_badges=[]).update(
+            product_trust_badges=self.PRODUCT_BADGES
+        )
 
-        count += PageTemplateConfig.objects.filter(
-            digital_trust_badges=[]
-        ).update(digital_trust_badges=self.DIGITAL_BADGES)
+        count += PageTemplateConfig.objects.filter(digital_trust_badges=[]).update(
+            digital_trust_badges=self.DIGITAL_BADGES
+        )
 
         return count

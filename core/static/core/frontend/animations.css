@@ -13,199 +13,221 @@
 
 /* Pulse Animation - Fades between two colors */
 @keyframes border-pulse {
-    0%, 100% {
-        border-color: var(--animation-color-primary, #4a90e2);
-        opacity: 1;
-    }
-    50% {
-        border-color: var(--animation-color-secondary, #667eea);
-        opacity: 0.8;
-    }
+  0%,
+  100% {
+    border-color: var(--animation-color-primary, #4a90e2);
+    opacity: 1;
+  }
+  50% {
+    border-color: var(--animation-color-secondary, #667eea);
+    opacity: 0.8;
+  }
 }
 
 /* Glow Animation - Creates a glowing shadow effect */
 @keyframes border-glow {
-    0%, 100% {
-        box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 20px rgba(74, 144, 226, 0.8),
-                    0 0 40px rgba(74, 144, 226, 0.4);
-    }
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(74, 144, 226, 0.8),
+      0 0 40px rgba(74, 144, 226, 0.4);
+  }
 }
 
 /* Dash Animation - Animated dashed border */
 @keyframes border-dash {
-    0% {
-        border-dasharray: 0, 100%;
-    }
-    100% {
-        border-dasharray: 100%, 0;
-    }
+  0% {
+    border-dasharray: 0, 100%;
+  }
+  100% {
+    border-dasharray: 100%, 0;
+  }
 }
 
 /* Rainbow Animation - Cycles through rainbow colors */
 @keyframes border-rainbow {
-    0% { border-color: #ff0000; }
-    17% { border-color: #ff8800; }
-    33% { border-color: #ffff00; }
-    50% { border-color: #00ff00; }
-    67% { border-color: #0088ff; }
-    83% { border-color: #8800ff; }
-    100% { border-color: #ff0000; }
+  0% {
+    border-color: #ff0000;
+  }
+  17% {
+    border-color: #ff8800;
+  }
+  33% {
+    border-color: #ffff00;
+  }
+  50% {
+    border-color: #00ff00;
+  }
+  67% {
+    border-color: #0088ff;
+  }
+  83% {
+    border-color: #8800ff;
+  }
+  100% {
+    border-color: #ff0000;
+  }
 }
 
 /* Rotate Animation - Rotates the entire element */
 @keyframes border-rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Draw Animation - Draws border one side at a time */
 @keyframes border-draw {
-    0% {
-        border-top-color: transparent;
-        border-right-color: transparent;
-        border-bottom-color: transparent;
-        border-left-color: transparent;
-    }
-    25% {
-        border-top-color: currentColor;
-    }
-    50% {
-        border-right-color: currentColor;
-    }
-    75% {
-        border-bottom-color: currentColor;
-    }
-    100% {
-        border-left-color: currentColor;
-    }
+  0% {
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+  }
+  25% {
+    border-top-color: currentColor;
+  }
+  50% {
+    border-right-color: currentColor;
+  }
+  75% {
+    border-bottom-color: currentColor;
+  }
+  100% {
+    border-left-color: currentColor;
+  }
 }
 
 /* Shimmer Animation - Creates a light sweep effect */
 @keyframes border-shimmer {
-    0% {
-        border-color: rgba(74, 144, 226, 0.3);
-        box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
-    }
-    50% {
-        border-color: rgba(74, 144, 226, 1);
-        box-shadow: 0 0 20px rgba(74, 144, 226, 0.6),
-                    inset 0 0 20px rgba(74, 144, 226, 0.2);
-    }
-    100% {
-        border-color: rgba(74, 144, 226, 0.3);
-        box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
-    }
+  0% {
+    border-color: rgba(74, 144, 226, 0.3);
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+  }
+  50% {
+    border-color: rgba(74, 144, 226, 1);
+    box-shadow:
+      0 0 20px rgba(74, 144, 226, 0.6),
+      inset 0 0 20px rgba(74, 144, 226, 0.2);
+  }
+  100% {
+    border-color: rgba(74, 144, 226, 0.3);
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+  }
 }
 
 /* Wobble Animation - Creates a shaking/wobbling effect */
 @keyframes border-wobble {
-    0% {
-        transform: translateX(0) rotate(0deg);
-    }
-    15% {
-        transform: translateX(-3px) rotate(-1deg);
-    }
-    30% {
-        transform: translateX(3px) rotate(1deg);
-    }
-    45% {
-        transform: translateX(-3px) rotate(-1deg);
-    }
-    60% {
-        transform: translateX(3px) rotate(1deg);
-    }
-    75% {
-        transform: translateX(-2px) rotate(-0.5deg);
-    }
-    100% {
-        transform: translateX(0) rotate(0deg);
-    }
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  15% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  30% {
+    transform: translateX(3px) rotate(1deg);
+  }
+  45% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  60% {
+    transform: translateX(3px) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-2px) rotate(-0.5deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
 }
 
 /* Breathing Animation - Smooth scale effect */
 @keyframes border-breathing {
-    0% {
-        transform: scale(1);
-        border-width: inherit;
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.02);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1);
-        border-width: inherit;
-        opacity: 1;
-    }
+  0% {
+    transform: scale(1);
+    border-width: inherit;
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    border-width: inherit;
+    opacity: 1;
+  }
 }
 
 /* Border Animation Classes */
 .border-pulse {
-    animation-name: border-pulse;
-    animation-duration: 2s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+  animation-name: border-pulse;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 .border-glow {
-    animation-name: border-glow;
-    animation-duration: 2s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+  animation-name: border-glow;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 .border-dash {
-    border-style: dashed !important;
-    animation-name: border-dash;
-    animation-duration: 20s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+  border-style: dashed !important;
+  animation-name: border-dash;
+  animation-duration: 20s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 .border-rainbow {
-    animation-name: border-rainbow;
-    animation-duration: 4s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+  animation-name: border-rainbow;
+  animation-duration: 4s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 .border-rotate {
-    animation-name: border-rotate;
-    animation-duration: 4s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+  animation-name: border-rotate;
+  animation-duration: 4s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 .border-draw {
-    animation-name: border-draw;
-    animation-duration: 2s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+  animation-name: border-draw;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 .border-shimmer {
-    animation-name: border-shimmer;
-    animation-duration: 2s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+  animation-name: border-shimmer;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 .border-wobble {
-    animation-name: border-wobble;
-    animation-duration: 0.8s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+  animation-name: border-wobble;
+  animation-duration: 0.8s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 .border-breathing {
-    animation-name: border-breathing;
-    animation-duration: 3s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+  animation-name: border-breathing;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 /* ===========================
@@ -214,115 +236,115 @@
 
 /* Fade In */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-fadeIn {
-    animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 /* Slide In from different directions */
 @keyframes slideInUp {
-    from {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInLeft {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .animate-slideInUp {
-    animation: slideInUp 0.5s ease-out;
+  animation: slideInUp 0.5s ease-out;
 }
 
 .animate-slideInDown {
-    animation: slideInDown 0.5s ease-out;
+  animation: slideInDown 0.5s ease-out;
 }
 
 .animate-slideInLeft {
-    animation: slideInLeft 0.5s ease-out;
+  animation: slideInLeft 0.5s ease-out;
 }
 
 .animate-slideInRight {
-    animation: slideInRight 0.5s ease-out;
+  animation: slideInRight 0.5s ease-out;
 }
 
 /* Zoom In */
 @keyframes zoomIn {
-    from {
-        transform: scale(0);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .animate-zoomIn {
-    animation: zoomIn 0.3s ease-out;
+  animation: zoomIn 0.3s ease-out;
 }
 
 /* Bounce In */
 @keyframes bounceIn {
-    0% {
-        transform: scale(0.3);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    70% {
-        transform: scale(0.9);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .animate-bounceIn {
-    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* ===========================
@@ -331,93 +353,93 @@
 
 /* Fade Out */
 @keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .animate-fadeOut {
-    animation: fadeOut 0.5s ease-in-out;
+  animation: fadeOut 0.5s ease-in-out;
 }
 
 /* Slide Out to different directions */
 @keyframes slideOutUp {
-    from {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
 }
 
 @keyframes slideOutDown {
-    from {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateY(100%);
-        opacity: 0;
-    }
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
 }
 
 @keyframes slideOutLeft {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
 }
 
 @keyframes slideOutRight {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 .animate-slideOutUp {
-    animation: slideOutUp 0.5s ease-in;
+  animation: slideOutUp 0.5s ease-in;
 }
 
 .animate-slideOutDown {
-    animation: slideOutDown 0.5s ease-in;
+  animation: slideOutDown 0.5s ease-in;
 }
 
 .animate-slideOutLeft {
-    animation: slideOutLeft 0.5s ease-in;
+  animation: slideOutLeft 0.5s ease-in;
 }
 
 .animate-slideOutRight {
-    animation: slideOutRight 0.5s ease-in;
+  animation: slideOutRight 0.5s ease-in;
 }
 
 /* Zoom Out */
 @keyframes zoomOut {
-    from {
-        transform: scale(1);
-        opacity: 1;
-    }
-    to {
-        transform: scale(0);
-        opacity: 0;
-    }
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
 }
 
 .animate-zoomOut {
-    animation: zoomOut 0.3s ease-in;
+  animation: zoomOut 0.3s ease-in;
 }
 
 /* ===========================
@@ -426,106 +448,120 @@
 
 /* Pulse (scale) */
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .animate-pulse {
-    animation-name: pulse;
-    animation-duration: 1s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
+  animation-name: pulse;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
 }
 
 /* Shake */
 @keyframes shake {
-    0%, 100% {
-        transform: translateX(0);
-    }
-    10%, 30%, 50%, 70%, 90% {
-        transform: translateX(-10px);
-    }
-    20%, 40%, 60%, 80% {
-        transform: translateX(10px);
-    }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-10px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(10px);
+  }
 }
 
 .animate-shake {
-    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97);
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97);
 }
 
 /* Bounce */
 @keyframes bounce {
-    0%, 20%, 53%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-30px);
-    }
-    43% {
-        transform: translateY(-15px);
-    }
-    70% {
-        transform: translateY(-15px);
-    }
-    80% {
-        transform: translateY(-4px);
-    }
-    90% {
-        transform: translateY(-4px);
-    }
+  0%,
+  20%,
+  53%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  43% {
+    transform: translateY(-15px);
+  }
+  70% {
+    transform: translateY(-15px);
+  }
+  80% {
+    transform: translateY(-4px);
+  }
+  90% {
+    transform: translateY(-4px);
+  }
 }
 
 .animate-bounce {
-    animation-name: bounce;
-    animation-duration: 1s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
+  animation-name: bounce;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
 }
 
 /* Flash */
 @keyframes flash {
-    0%, 50%, 100% {
-        opacity: 1;
-    }
-    25%, 75% {
-        opacity: 0;
-    }
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  75% {
+    opacity: 0;
+  }
 }
 
 .animate-flash {
-    animation-name: flash;
-    animation-duration: 1s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
+  animation-name: flash;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
 }
 
 /* Spin */
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-spin {
-    animation-name: spin;
-    animation-duration: 1s;
-    animation-timing-function: linear;
-    animation-iteration-count: 1;
-    animation-fill-mode: both;
+  animation-name: spin;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
 }
 
 /* ===========================
@@ -534,52 +570,54 @@
 
 /* Loading Dots */
 @keyframes loadingDots {
-    0%, 80%, 100% {
-        opacity: 0;
-    }
-    40% {
-        opacity: 1;
-    }
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
 }
 
 .loading-dots span {
-    animation: loadingDots 1.4s infinite ease-in-out;
+  animation: loadingDots 1.4s infinite ease-in-out;
 }
 
 .loading-dots span:nth-child(1) {
-    animation-delay: -0.32s;
+  animation-delay: -0.32s;
 }
 
 .loading-dots span:nth-child(2) {
-    animation-delay: -0.16s;
+  animation-delay: -0.16s;
 }
 
 /* Spinner */
 @keyframes spinner {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .spinner {
-    animation: spinner 1s linear infinite;
+  animation: spinner 1s linear infinite;
 }
 
 /* Progress Bar */
 @keyframes progress {
-    0% {
-        width: 0;
-    }
-    100% {
-        width: 100%;
-    }
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
 .progress-animation {
-    animation: progress 2s ease-out forwards;
+  animation: progress 2s ease-out forwards;
 }
 
 /* ===========================
@@ -587,27 +625,57 @@
    =========================== */
 
 /* Animation Delays */
-.animation-delay-100 { animation-delay: 0.1s; }
-.animation-delay-200 { animation-delay: 0.2s; }
-.animation-delay-300 { animation-delay: 0.3s; }
-.animation-delay-400 { animation-delay: 0.4s; }
-.animation-delay-500 { animation-delay: 0.5s; }
-.animation-delay-1000 { animation-delay: 1s; }
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
 
 /* Animation Durations */
-.animation-duration-fast { animation-duration: 0.3s !important; }
-.animation-duration-normal { animation-duration: 0.5s !important; }
-.animation-duration-slow { animation-duration: 1s !important; }
-.animation-duration-slower { animation-duration: 2s !important; }
+.animation-duration-fast {
+  animation-duration: 0.3s !important;
+}
+.animation-duration-normal {
+  animation-duration: 0.5s !important;
+}
+.animation-duration-slow {
+  animation-duration: 1s !important;
+}
+.animation-duration-slower {
+  animation-duration: 2s !important;
+}
 
 /* Animation Fill Modes */
-.animation-fill-forwards { animation-fill-mode: forwards; }
-.animation-fill-backwards { animation-fill-mode: backwards; }
-.animation-fill-both { animation-fill-mode: both; }
+.animation-fill-forwards {
+  animation-fill-mode: forwards;
+}
+.animation-fill-backwards {
+  animation-fill-mode: backwards;
+}
+.animation-fill-both {
+  animation-fill-mode: both;
+}
 
 /* Animation States */
-.animation-paused { animation-play-state: paused; }
-.animation-running { animation-play-state: running; }
+.animation-paused {
+  animation-play-state: paused;
+}
+.animation-running {
+  animation-play-state: running;
+}
 
 /* ===========================
    Hover Animations
@@ -619,168 +687,174 @@
 
 /* Base hover transition setup - applied via data attribute */
 [data-hover-animation] {
-    transition-property: transform, opacity, filter, box-shadow, border-color;
-    will-change: transform, opacity, filter, box-shadow;
+  transition-property: transform, opacity, filter, box-shadow, border-color;
+  will-change: transform, opacity, filter, box-shadow;
 }
 
 /* Scale Up */
-[data-hover-animation="scale-up"][data-hover-intensity="subtle"]:hover {
-    transform: scale(1.02);
+[data-hover-animation='scale-up'][data-hover-intensity='subtle']:hover {
+  transform: scale(1.02);
 }
-[data-hover-animation="scale-up"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="scale-up"]:not([data-hover-intensity]):hover {
-    transform: scale(1.05);
+[data-hover-animation='scale-up'][data-hover-intensity='normal']:hover,
+[data-hover-animation='scale-up']:not([data-hover-intensity]):hover {
+  transform: scale(1.05);
 }
-[data-hover-animation="scale-up"][data-hover-intensity="strong"]:hover {
-    transform: scale(1.1);
+[data-hover-animation='scale-up'][data-hover-intensity='strong']:hover {
+  transform: scale(1.1);
 }
 
 /* Scale Down */
-[data-hover-animation="scale-down"][data-hover-intensity="subtle"]:hover {
-    transform: scale(0.98);
+[data-hover-animation='scale-down'][data-hover-intensity='subtle']:hover {
+  transform: scale(0.98);
 }
-[data-hover-animation="scale-down"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="scale-down"]:not([data-hover-intensity]):hover {
-    transform: scale(0.95);
+[data-hover-animation='scale-down'][data-hover-intensity='normal']:hover,
+[data-hover-animation='scale-down']:not([data-hover-intensity]):hover {
+  transform: scale(0.95);
 }
-[data-hover-animation="scale-down"][data-hover-intensity="strong"]:hover {
-    transform: scale(0.9);
+[data-hover-animation='scale-down'][data-hover-intensity='strong']:hover {
+  transform: scale(0.9);
 }
 
 /* Lift (Float Up) */
-[data-hover-animation="lift"][data-hover-intensity="subtle"]:hover {
-    transform: translateY(-2px);
+[data-hover-animation='lift'][data-hover-intensity='subtle']:hover {
+  transform: translateY(-2px);
 }
-[data-hover-animation="lift"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="lift"]:not([data-hover-intensity]):hover {
-    transform: translateY(-4px);
+[data-hover-animation='lift'][data-hover-intensity='normal']:hover,
+[data-hover-animation='lift']:not([data-hover-intensity]):hover {
+  transform: translateY(-4px);
 }
-[data-hover-animation="lift"][data-hover-intensity="strong"]:hover {
-    transform: translateY(-8px);
+[data-hover-animation='lift'][data-hover-intensity='strong']:hover {
+  transform: translateY(-8px);
 }
 
 /* Rotate Clockwise */
-[data-hover-animation="rotate-cw"][data-hover-intensity="subtle"]:hover {
-    transform: rotate(2deg);
+[data-hover-animation='rotate-cw'][data-hover-intensity='subtle']:hover {
+  transform: rotate(2deg);
 }
-[data-hover-animation="rotate-cw"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="rotate-cw"]:not([data-hover-intensity]):hover {
-    transform: rotate(5deg);
+[data-hover-animation='rotate-cw'][data-hover-intensity='normal']:hover,
+[data-hover-animation='rotate-cw']:not([data-hover-intensity]):hover {
+  transform: rotate(5deg);
 }
-[data-hover-animation="rotate-cw"][data-hover-intensity="strong"]:hover {
-    transform: rotate(10deg);
+[data-hover-animation='rotate-cw'][data-hover-intensity='strong']:hover {
+  transform: rotate(10deg);
 }
 
 /* Rotate Counter-Clockwise */
-[data-hover-animation="rotate-ccw"][data-hover-intensity="subtle"]:hover {
-    transform: rotate(-2deg);
+[data-hover-animation='rotate-ccw'][data-hover-intensity='subtle']:hover {
+  transform: rotate(-2deg);
 }
-[data-hover-animation="rotate-ccw"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="rotate-ccw"]:not([data-hover-intensity]):hover {
-    transform: rotate(-5deg);
+[data-hover-animation='rotate-ccw'][data-hover-intensity='normal']:hover,
+[data-hover-animation='rotate-ccw']:not([data-hover-intensity]):hover {
+  transform: rotate(-5deg);
 }
-[data-hover-animation="rotate-ccw"][data-hover-intensity="strong"]:hover {
-    transform: rotate(-10deg);
+[data-hover-animation='rotate-ccw'][data-hover-intensity='strong']:hover {
+  transform: rotate(-10deg);
 }
 
 /* Fade */
-[data-hover-animation="fade"]:hover {
-    opacity: 0.7;
+[data-hover-animation='fade']:hover {
+  opacity: 0.7;
 }
 
 /* Brighten */
-[data-hover-animation="brighten"]:hover {
-    filter: brightness(1.1);
+[data-hover-animation='brighten']:hover {
+  filter: brightness(1.1);
 }
 
 /* Shadow Grow */
-[data-hover-animation="shadow-grow"][data-hover-intensity="subtle"]:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+[data-hover-animation='shadow-grow'][data-hover-intensity='subtle']:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-[data-hover-animation="shadow-grow"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="shadow-grow"]:not([data-hover-intensity]):hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+[data-hover-animation='shadow-grow'][data-hover-intensity='normal']:hover,
+[data-hover-animation='shadow-grow']:not([data-hover-intensity]):hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
-[data-hover-animation="shadow-grow"][data-hover-intensity="strong"]:hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+[data-hover-animation='shadow-grow'][data-hover-intensity='strong']:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
 /* Combined: Lift with Shadow */
-[data-hover-animation="lift-shadow"][data-hover-intensity="subtle"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+[data-hover-animation='lift-shadow'][data-hover-intensity='subtle']:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-[data-hover-animation="lift-shadow"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="lift-shadow"]:not([data-hover-intensity]):hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+[data-hover-animation='lift-shadow'][data-hover-intensity='normal']:hover,
+[data-hover-animation='lift-shadow']:not([data-hover-intensity]):hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
-[data-hover-animation="lift-shadow"][data-hover-intensity="strong"]:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+[data-hover-animation='lift-shadow'][data-hover-intensity='strong']:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
 /* Combined: Zoom with Brightness */
-[data-hover-animation="zoom-brighten"][data-hover-intensity="subtle"]:hover {
-    transform: scale(1.02);
-    filter: brightness(1.05);
+[data-hover-animation='zoom-brighten'][data-hover-intensity='subtle']:hover {
+  transform: scale(1.02);
+  filter: brightness(1.05);
 }
-[data-hover-animation="zoom-brighten"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="zoom-brighten"]:not([data-hover-intensity]):hover {
-    transform: scale(1.05);
-    filter: brightness(1.1);
+[data-hover-animation='zoom-brighten'][data-hover-intensity='normal']:hover,
+[data-hover-animation='zoom-brighten']:not([data-hover-intensity]):hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }
-[data-hover-animation="zoom-brighten"][data-hover-intensity="strong"]:hover {
-    transform: scale(1.08);
-    filter: brightness(1.15);
+[data-hover-animation='zoom-brighten'][data-hover-intensity='strong']:hover {
+  transform: scale(1.08);
+  filter: brightness(1.15);
 }
 
 /* Pulse Scale - Continuous animation on hover */
 @keyframes hover-pulse-scale {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.03); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
 }
 
-[data-hover-animation="pulse-scale"]:hover {
-    animation: hover-pulse-scale 0.6s ease-in-out infinite;
+[data-hover-animation='pulse-scale']:hover {
+  animation: hover-pulse-scale 0.6s ease-in-out infinite;
 }
 
 /* Skew */
-[data-hover-animation="skew"][data-hover-intensity="subtle"]:hover {
-    transform: skewX(-1deg);
+[data-hover-animation='skew'][data-hover-intensity='subtle']:hover {
+  transform: skewX(-1deg);
 }
-[data-hover-animation="skew"][data-hover-intensity="normal"]:hover,
-[data-hover-animation="skew"]:not([data-hover-intensity]):hover {
-    transform: skewX(-2deg);
+[data-hover-animation='skew'][data-hover-intensity='normal']:hover,
+[data-hover-animation='skew']:not([data-hover-intensity]):hover {
+  transform: skewX(-2deg);
 }
-[data-hover-animation="skew"][data-hover-intensity="strong"]:hover {
-    transform: skewX(-4deg);
+[data-hover-animation='skew'][data-hover-intensity='strong']:hover {
+  transform: skewX(-4deg);
 }
 
 /* Border Glow */
-[data-hover-animation="border-glow"]:hover {
-    box-shadow: 0 0 0 2px var(--primary-color, #3b82f6),
-                0 0 20px rgba(59, 130, 246, 0.3);
+[data-hover-animation='border-glow']:hover {
+  box-shadow:
+    0 0 0 2px var(--primary-color, #3b82f6),
+    0 0 20px rgba(59, 130, 246, 0.3);
 }
 
 /* Disable animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 
-    /* Disable hover animations */
-    [data-hover-animation] {
-        transition: none !important;
-    }
-    [data-hover-animation]:hover {
-        transform: none !important;
-        filter: none !important;
-        box-shadow: inherit !important;
-        opacity: inherit !important;
-    }
+  /* Disable hover animations */
+  [data-hover-animation] {
+    transition: none !important;
+  }
+  [data-hover-animation]:hover {
+    transform: none !important;
+    filter: none !important;
+    box-shadow: inherit !important;
+    opacity: inherit !important;
+  }
 }

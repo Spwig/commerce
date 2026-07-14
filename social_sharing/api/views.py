@@ -5,46 +5,56 @@ REST API endpoints for tracking social media shares and retrieving share counts.
 """
 
 import logging
+
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
-from rest_framework.decorators import api_view, authentication_classes, throttle_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
-from rest_framework import status as drf_status
 from django.utils.translation import gettext_lazy as _
-from drf_spectacular.utils import extend_schema, OpenApiResponse, inline_serializer
+from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
 from rest_framework import serializers
+from rest_framework import status as drf_status
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+    throttle_classes,
+)
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
 from core.api.authentication import HeadlessAPIMixin
-from social_sharing.models import SocialShare, ShareCount
-from social_sharing.api.serializers import TrackShareSerializer
 from core.api.throttling import (
-    SocialTrackingThrottle,
     AnonymousSocialTrackingThrottle,
     AuthenticatedUserThrottle,
+    SocialTrackingThrottle,
 )
+from social_sharing.api.serializers import TrackShareSerializer
+from social_sharing.models import ShareCount, SocialShare
 
 logger = logging.getLogger(__name__)
 
 
 def _get_client_ip(request):
     """Extract client IP from request headers"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
+        ip = x_forwarded_for.split(",")[0].strip()
     else:
-        ip = request.META.get('REMOTE_ADDR')
+        ip = request.META.get("REMOTE_ADDR")
     return ip
 
 
 def _detect_device_type(user_agent):
     """Simple device type detection from user agent"""
     user_agent_lower = user_agent.lower()
-    if 'mobile' in user_agent_lower or 'android' in user_agent_lower or 'iphone' in user_agent_lower:
+    if (
+        "mobile" in user_agent_lower
+        or "android" in user_agent_lower
+        or "iphone" in user_agent_lower
+    ):
         return SocialShare.DEVICE_MOBILE
-    elif 'tablet' in user_agent_lower or 'ipad' in user_agent_lower:
+    elif "tablet" in user_agent_lower or "ipad" in user_agent_lower:
         return SocialShare.DEVICE_TABLET
-    elif any(browser in user_agent_lower for browser in ['chrome', 'firefox', 'safari', 'edge']):
+    elif any(browser in user_agent_lower for browser in ["chrome", "firefox", "safari", "edge"]):
         return SocialShare.DEVICE_DESKTOP
     return SocialShare.DEVICE_UNKNOWN
 
@@ -64,12 +74,12 @@ def _detect_device_type(user_agent):
 # provider package registers a model with the same bare name. The bare
 # model name below is the public wire format accepted by the API.
 SHAREABLE_CONTENT_TYPES: dict[str, tuple[str, str]] = {
-    'product':    ('catalog', 'product'),
-    'category':   ('catalog', 'category'),
-    'brand':      ('catalog', 'brand'),
-    'collection': ('catalog', 'collection'),
-    'blogpost':   ('blog', 'blogpost'),
-    'page':       ('page_builder', 'page'),
+    "product": ("catalog", "product"),
+    "category": ("catalog", "category"),
+    "brand": ("catalog", "brand"),
+    "collection": ("catalog", "collection"),
+    "blogpost": ("blog", "blogpost"),
+    "page": ("page_builder", "page"),
 }
 
 
@@ -89,15 +99,15 @@ def _resolve_shareable_content_type(content_type_str):
 
     Returns the ContentType instance on success, or None if rejected.
     """
-    ct_str = (content_type_str or '').strip().lower()
+    ct_str = (content_type_str or "").strip().lower()
     if not ct_str:
         return None
 
     # Parse app_label.model OR bare model — both forms must match the
     # whitelist's explicit (app_label, model) tuple.
-    if '.' in ct_str:
+    if "." in ct_str:
         try:
-            app_label, model = ct_str.split('.', 1)
+            app_label, model = ct_str.split(".", 1)
         except ValueError:
             return None
     else:
@@ -112,9 +122,7 @@ def _resolve_shareable_content_type(content_type_str):
         return None
 
     try:
-        return ContentType.objects.get(
-            app_label=expected[0], model=expected[1]
-        )
+        return ContentType.objects.get(app_label=expected[0], model=expected[1])
     except ContentType.DoesNotExist:
         return None
 
@@ -135,7 +143,7 @@ def _target_object_exists(content_type, object_id):
 
 
 @extend_schema(
-    tags=['Social Sharing'],
+    tags=["Social Sharing"],
     summary=_("Track social media share"),
     description=_("""Track a social media share event for a product or other content. Records platform, URL, user, session, IP, and device type.
 
@@ -149,18 +157,20 @@ def _target_object_exists(content_type, object_id):
     request=TrackShareSerializer,
     responses={
         201: inline_serializer(
-            name='TrackShareResponse',
+            name="TrackShareResponse",
             fields={
-                'success': serializers.BooleanField(),
-                'share_id': serializers.IntegerField(),
-                'message': serializers.CharField(),
-            }
+                "success": serializers.BooleanField(),
+                "share_id": serializers.IntegerField(),
+                "message": serializers.CharField(),
+            },
         ),
-        400: OpenApiResponse(description=_("Invalid request, missing required fields, or invalid platform")),
+        400: OpenApiResponse(
+            description=_("Invalid request, missing required fields, or invalid platform")
+        ),
         500: OpenApiResponse(description=_("Internal server error")),
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([SocialTrackingThrottle])
 def track_share(request):
@@ -181,31 +191,40 @@ def track_share(request):
     """
     serializer = TrackShareSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'errors': serializer.errors,
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "errors": serializer.errors,
+            },
+            status=drf_status.HTTP_400_BAD_REQUEST,
+        )
 
     data = serializer.validated_data
-    content_type_str = data['content_type'].lower()
-    object_id = data['object_id']
-    platform = data['platform'].lower()
-    shared_url = data['url']
+    content_type_str = data["content_type"].lower()
+    object_id = data["object_id"]
+    platform = data["platform"].lower()
+    shared_url = data["url"]
 
     # Whitelist check — only shareable storefront content types allowed
     content_type = _resolve_shareable_content_type(content_type_str)
     if content_type is None:
-        return Response({
-            'success': False,
-            'error': f'Invalid or non-shareable content_type: {content_type_str}',
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": f"Invalid or non-shareable content_type: {content_type_str}",
+            },
+            status=drf_status.HTTP_400_BAD_REQUEST,
+        )
 
     # Existence check — prevent orphan rows and ID enumeration
     if not _target_object_exists(content_type, object_id):
-        return Response({
-            'success': False,
-            'error': 'Target object does not exist',
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": "Target object does not exist",
+            },
+            status=drf_status.HTTP_400_BAD_REQUEST,
+        )
 
     # Create share record
     try:
@@ -215,32 +234,33 @@ def track_share(request):
                 object_id=object_id,
                 platform=platform,
                 shared_url=shared_url,
-                referrer=request.META.get('HTTP_REFERER', ''),
+                referrer=request.META.get("HTTP_REFERER", ""),
                 user=request.user,  # User is guaranteed to be authenticated
-                session_id=request.session.session_key or '',
+                session_id=request.session.session_key or "",
                 ip_address=_get_client_ip(request),
-                user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                device_type=_detect_device_type(request.META.get('HTTP_USER_AGENT', ''))
+                user_agent=request.META.get("HTTP_USER_AGENT", ""),
+                device_type=_detect_device_type(request.META.get("HTTP_USER_AGENT", "")),
             )
 
-        logger.info(f"Tracked {platform} share of {content_type_str} #{object_id} by {request.user}")
+        logger.info(
+            f"Tracked {platform} share of {content_type_str} #{object_id} by {request.user}"
+        )
 
-        return Response({
-            'success': True,
-            'share_id': share.id,
-            'message': 'Share tracked successfully'
-        }, status=drf_status.HTTP_201_CREATED)
+        return Response(
+            {"success": True, "share_id": share.id, "message": "Share tracked successfully"},
+            status=drf_status.HTTP_201_CREATED,
+        )
 
     except Exception as e:
         logger.error(f"Error tracking share: {e}", exc_info=True)
-        return Response({
-            'success': False,
-            'error': 'Internal server error'
-        }, status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {"success": False, "error": "Internal server error"},
+            status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @extend_schema(
-    tags=['Social Sharing'],
+    tags=["Social Sharing"],
     summary=_("Track social media share (anonymous)"),
     description=_("""Anonymous variant of the share tracking endpoint for guest visitors.
 
@@ -252,19 +272,21 @@ def track_share(request):
     request=TrackShareSerializer,
     responses={
         201: inline_serializer(
-            name='TrackAnonymousShareResponse',
+            name="TrackAnonymousShareResponse",
             fields={
-                'success': serializers.BooleanField(),
-                'share_id': serializers.IntegerField(),
-                'message': serializers.CharField(),
-            }
+                "success": serializers.BooleanField(),
+                "share_id": serializers.IntegerField(),
+                "message": serializers.CharField(),
+            },
         ),
-        400: OpenApiResponse(description=_("Invalid request, missing required fields, or invalid platform")),
+        400: OpenApiResponse(
+            description=_("Invalid request, missing required fields, or invalid platform")
+        ),
         429: OpenApiResponse(description=_("Rate limit exceeded")),
         500: OpenApiResponse(description=_("Internal server error")),
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([AllowAny])
 @throttle_classes([AnonymousSocialTrackingThrottle])
@@ -301,31 +323,40 @@ def track_share_anonymous(request):
     # enforces platform choices, coerces object_id to int)
     serializer = TrackShareSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'errors': serializer.errors,
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "errors": serializer.errors,
+            },
+            status=drf_status.HTTP_400_BAD_REQUEST,
+        )
 
     data = serializer.validated_data
-    content_type_str = data['content_type'].lower()
-    object_id = data['object_id']
-    platform = data['platform'].lower()
-    shared_url = data['url']
+    content_type_str = data["content_type"].lower()
+    object_id = data["object_id"]
+    platform = data["platform"].lower()
+    shared_url = data["url"]
 
     # Step 2 — whitelist check
     content_type = _resolve_shareable_content_type(content_type_str)
     if content_type is None:
-        return Response({
-            'success': False,
-            'error': f'Invalid or non-shareable content_type: {content_type_str}',
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": f"Invalid or non-shareable content_type: {content_type_str}",
+            },
+            status=drf_status.HTTP_400_BAD_REQUEST,
+        )
 
     # Step 3 — existence check (prevents orphan rows + ID enumeration)
     if not _target_object_exists(content_type, object_id):
-        return Response({
-            'success': False,
-            'error': 'Target object does not exist',
-        }, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": "Target object does not exist",
+            },
+            status=drf_status.HTTP_400_BAD_REQUEST,
+        )
 
     # Step 4 — NOW we can safely persist the visitor's session so the
     # share is linked to their session key (required for funnel
@@ -342,34 +373,31 @@ def track_share_anonymous(request):
                 object_id=object_id,
                 platform=platform,
                 shared_url=shared_url,
-                referrer=request.META.get('HTTP_REFERER', ''),
+                referrer=request.META.get("HTTP_REFERER", ""),
                 user=None,
-                session_id=request.session.session_key or '',
+                session_id=request.session.session_key or "",
                 ip_address=_get_client_ip(request),
-                user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                device_type=_detect_device_type(request.META.get('HTTP_USER_AGENT', '')),
+                user_agent=request.META.get("HTTP_USER_AGENT", ""),
+                device_type=_detect_device_type(request.META.get("HTTP_USER_AGENT", "")),
             )
 
-        logger.info(
-            f"Tracked anonymous {platform} share of {content_type_str} #{object_id}"
-        )
+        logger.info(f"Tracked anonymous {platform} share of {content_type_str} #{object_id}")
 
-        return Response({
-            'success': True,
-            'share_id': share.id,
-            'message': 'Share tracked successfully'
-        }, status=drf_status.HTTP_201_CREATED)
+        return Response(
+            {"success": True, "share_id": share.id, "message": "Share tracked successfully"},
+            status=drf_status.HTTP_201_CREATED,
+        )
 
     except Exception as e:
         logger.error(f"Error tracking anonymous share: {e}", exc_info=True)
-        return Response({
-            'success': False,
-            'error': 'Internal server error'
-        }, status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {"success": False, "error": "Internal server error"},
+            status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @extend_schema(
-    tags=['Social Sharing'],
+    tags=["Social Sharing"],
     summary=_("Get share counts for content"),
     description=_("""Get aggregated share counts by platform for a specific piece of content.
 
@@ -378,23 +406,23 @@ def track_share_anonymous(request):
     **No authentication required** - share counts are public data."""),
     responses={
         200: inline_serializer(
-            name='ShareCountsResponse',
+            name="ShareCountsResponse",
             fields={
-                'facebook': serializers.IntegerField(),
-                'twitter': serializers.IntegerField(),
-                'linkedin': serializers.IntegerField(),
-                'pinterest': serializers.IntegerField(),
-                'whatsapp': serializers.IntegerField(),
-                'telegram': serializers.IntegerField(),
-                'email': serializers.IntegerField(),
-                'total': serializers.IntegerField(),
-            }
+                "facebook": serializers.IntegerField(),
+                "twitter": serializers.IntegerField(),
+                "linkedin": serializers.IntegerField(),
+                "pinterest": serializers.IntegerField(),
+                "whatsapp": serializers.IntegerField(),
+                "telegram": serializers.IntegerField(),
+                "email": serializers.IntegerField(),
+                "total": serializers.IntegerField(),
+            },
         ),
         404: OpenApiResponse(description=_("Invalid content type")),
         500: OpenApiResponse(description=_("Internal server error")),
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([AllowAny])
 def get_share_counts(request, content_type_str, object_id):
@@ -408,21 +436,19 @@ def get_share_counts(request, content_type_str, object_id):
         try:
             content_type = ContentType.objects.get(model=content_type_str.lower())
         except ContentType.DoesNotExist:
-            return Response({
-                'error': f'Invalid content_type: {content_type_str}'
-            }, status=drf_status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": f"Invalid content_type: {content_type_str}"},
+                status=drf_status.HTTP_404_NOT_FOUND,
+            )
 
         # Get all share counts for this content
-        share_counts = ShareCount.objects.filter(
-            content_type=content_type,
-            object_id=object_id
-        )
+        share_counts = ShareCount.objects.filter(content_type=content_type, object_id=object_id)
 
         # Build response dict with all platforms
         counts = {}
         total = 0
 
-        for platform_code, platform_name in SocialShare.PLATFORM_CHOICES:
+        for platform_code, _platform_name in SocialShare.PLATFORM_CHOICES:
             count = 0
             share_count = share_counts.filter(platform=platform_code).first()
             if share_count:
@@ -430,37 +456,37 @@ def get_share_counts(request, content_type_str, object_id):
                 total += count
             counts[platform_code] = count
 
-        counts['total'] = total
+        counts["total"] = total
 
         return Response(counts)
 
     except Exception as e:
         logger.error(f"Error retrieving share counts: {e}", exc_info=True)
-        return Response({
-            'error': 'Internal server error'
-        }, status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {"error": "Internal server error"}, status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @extend_schema(
-    tags=['Social Sharing'],
+    tags=["Social Sharing"],
     summary=_("Get current user's share history"),
     description=_("""Get the authenticated user's social sharing history, including total shares, breakdown by platform, and recent share events.
 
     **Authentication required.**"""),
     responses={
         200: inline_serializer(
-            name='UserSharesResponse',
+            name="UserSharesResponse",
             fields={
-                'total_shares': serializers.IntegerField(),
-                'by_platform': serializers.DictField(child=serializers.IntegerField()),
-                'recent_shares': serializers.ListField(child=serializers.DictField()),
-            }
+                "total_shares": serializers.IntegerField(),
+                "by_platform": serializers.DictField(child=serializers.IntegerField()),
+                "recent_shares": serializers.ListField(child=serializers.DictField()),
+            },
         ),
         401: OpenApiResponse(description=_("Authentication required")),
         500: OpenApiResponse(description=_("Internal server error")),
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([AuthenticatedUserThrottle])
 def get_user_shares(request):
@@ -476,29 +502,33 @@ def get_user_shares(request):
 
         # Count by platform
         by_platform = {}
-        for platform_code, platform_name in SocialShare.PLATFORM_CHOICES:
+        for platform_code, _platform_name in SocialShare.PLATFORM_CHOICES:
             count = shares.filter(platform=platform_code).count()
             by_platform[platform_code] = count
 
         # Get recent shares (last 10)
         recent_shares = []
-        for share in shares.select_related('content_type').order_by('-shared_at')[:10]:
-            recent_shares.append({
-                'id': share.id,
-                'platform': share.platform,
-                'content_type': share.content_type.model,
-                'object_id': share.object_id,
-                'shared_at': share.shared_at.isoformat(),
-            })
+        for share in shares.select_related("content_type").order_by("-shared_at")[:10]:
+            recent_shares.append(
+                {
+                    "id": share.id,
+                    "platform": share.platform,
+                    "content_type": share.content_type.model,
+                    "object_id": share.object_id,
+                    "shared_at": share.shared_at.isoformat(),
+                }
+            )
 
-        return Response({
-            'total_shares': total_shares,
-            'by_platform': by_platform,
-            'recent_shares': recent_shares
-        })
+        return Response(
+            {
+                "total_shares": total_shares,
+                "by_platform": by_platform,
+                "recent_shares": recent_shares,
+            }
+        )
 
     except Exception as e:
         logger.error(f"Error retrieving user shares: {e}", exc_info=True)
-        return Response({
-            'error': 'Internal server error'
-        }, status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {"error": "Internal server error"}, status=drf_status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

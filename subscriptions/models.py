@@ -10,15 +10,18 @@ This module provides a comprehensive subscription management system with:
 6. Plan changes with proration
 7. Support for both native (Stripe, PayPal) and fallback providers
 """
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-from djmoney.models.fields import MoneyField
-from decimal import Decimal
+
 import uuid
 from datetime import timedelta
+from decimal import Decimal
+
+from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
+from djmoney.money import Money
 
 User = get_user_model()
 
@@ -35,16 +38,16 @@ class SubscriptionPlan(models.Model):
 
     # Pricing Model Choices
     PRICING_MODEL_CHOICES = [
-        ('tiered', _('Tiered Pricing')),  # Multiple commitment options with discounts
-        ('quantity_based', _('Quantity-Based')),  # Per-seat/per-user pricing
-        ('flat', _('Flat Rate')),  # Single price, no variations
+        ("tiered", _("Tiered Pricing")),  # Multiple commitment options with discounts
+        ("quantity_based", _("Quantity-Based")),  # Per-seat/per-user pricing
+        ("flat", _("Flat Rate")),  # Single price, no variations
     ]
 
     # Cancellation Policy Choices
     CANCELLATION_POLICY_CHOICES = [
-        ('anytime', _('Cancel Anytime')),  # Immediate cancellation
-        ('end_of_period', _('Cancel at Period End')),  # Finish paid period
-        ('minimum_commitment', _('Minimum Commitment Required')),  # Enforce commitment period
+        ("anytime", _("Cancel Anytime")),  # Immediate cancellation
+        ("end_of_period", _("Cancel at Period End")),  # Finish paid period
+        ("minimum_commitment", _("Minimum Commitment Required")),  # Enforce commitment period
     ]
 
     # Identity
@@ -53,25 +56,25 @@ class SubscriptionPlan(models.Model):
         unique=True,
         editable=False,
         verbose_name=_("Plan ID"),
-        help_text=_("Unique identifier for this plan")
+        help_text=_("Unique identifier for this plan"),
     )
 
     # Basic Information
     name = models.CharField(
         max_length=200,
         verbose_name=_("Plan Name"),
-        help_text=_("Name displayed to customers (e.g., 'Premium Plan', 'Enterprise Plan')")
+        help_text=_("Name displayed to customers (e.g., 'Premium Plan', 'Enterprise Plan')"),
     )
     slug = models.SlugField(
         max_length=200,
         unique=True,
         verbose_name=_("Slug"),
-        help_text=_("URL-friendly version of the name")
+        help_text=_("URL-friendly version of the name"),
     )
     description = models.TextField(
         blank=True,
         verbose_name=_("Description"),
-        help_text=_("Detailed description of what this plan includes")
+        help_text=_("Detailed description of what this plan includes"),
     )
 
     # Translations (for merchant multi-language support)
@@ -79,45 +82,45 @@ class SubscriptionPlan(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Translations"),
-        help_text=_("Multilingual content for customer-facing fields (name, description)")
+        help_text=_("Multilingual content for customer-facing fields (name, description)"),
     )
 
     # Pricing Model
     pricing_model = models.CharField(
         max_length=20,
         choices=PRICING_MODEL_CHOICES,
-        default='tiered',
+        default="tiered",
         verbose_name=_("Pricing Model"),
-        help_text=_("How pricing is structured for this plan")
+        help_text=_("How pricing is structured for this plan"),
     )
 
     # Quantity-Based Pricing Settings
     allow_quantity = models.BooleanField(
         default=False,
         verbose_name=_("Allow Quantity"),
-        help_text=_("Enable per-seat/per-user pricing (price × quantity)")
+        help_text=_("Enable per-seat/per-user pricing (price × quantity)"),
     )
     minimum_quantity = models.PositiveIntegerField(
         default=1,
         validators=[MinValueValidator(1)],
         verbose_name=_("Minimum Quantity"),
-        help_text=_("Minimum number of units required (for quantity-based pricing)")
+        help_text=_("Minimum number of units required (for quantity-based pricing)"),
     )
     maximum_quantity = models.PositiveIntegerField(
         null=True,
         blank=True,
         verbose_name=_("Maximum Quantity"),
-        help_text=_("Maximum number of units allowed (leave empty for unlimited)")
+        help_text=_("Maximum number of units allowed (leave empty for unlimited)"),
     )
 
     # Setup Fee (one-time charge at subscription start)
     setup_fee = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default=Decimal('0.00'),
-        default_currency='USD',
+        default=Decimal("0.00"),
+        default_currency="USD",
         verbose_name=_("Setup Fee"),
-        help_text=_("One-time fee charged at subscription start (0.00 for no fee)")
+        help_text=_("One-time fee charged at subscription start (0.00 for no fee)"),
     )
 
     # Trial Period
@@ -125,16 +128,16 @@ class SubscriptionPlan(models.Model):
         default=0,
         validators=[MaxValueValidator(365)],
         verbose_name=_("Trial Period (Days)"),
-        help_text=_("Number of free trial days before first charge (0 for no trial)")
+        help_text=_("Number of free trial days before first charge (0 for no trial)"),
     )
     trial_price = MoneyField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
-        default_currency='USD',
+        default_currency="USD",
         verbose_name=_("Trial Price"),
-        help_text=_("Optional reduced price during trial period (leave empty for free trial)")
+        help_text=_("Optional reduced price during trial period (leave empty for free trial)"),
     )
 
     # Limits
@@ -142,21 +145,25 @@ class SubscriptionPlan(models.Model):
         null=True,
         blank=True,
         verbose_name=_("Maximum Billing Cycles"),
-        help_text=_("Total number of billing cycles before subscription ends (leave empty for unlimited)")
+        help_text=_(
+            "Total number of billing cycles before subscription ends (leave empty for unlimited)"
+        ),
     )
 
     # Cancellation Policy
     cancellation_policy = models.CharField(
         max_length=25,
         choices=CANCELLATION_POLICY_CHOICES,
-        default='end_of_period',
+        default="end_of_period",
         verbose_name=_("Cancellation Policy"),
-        help_text=_("Policy for handling subscription cancellations")
+        help_text=_("Policy for handling subscription cancellations"),
     )
     minimum_commitment_cycles = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Minimum Commitment (Cycles)"),
-        help_text=_("Minimum billing cycles required before cancellation allowed (0 for no minimum)")
+        help_text=_(
+            "Minimum billing cycles required before cancellation allowed (0 for no minimum)"
+        ),
     )
 
     # Grace Periods
@@ -164,45 +171,47 @@ class SubscriptionPlan(models.Model):
         default=0,
         validators=[MaxValueValidator(90)],
         verbose_name=_("Grace Period (Days)"),
-        help_text=_("Days to keep access active after payment failure (0 for immediate suspension)")
+        help_text=_(
+            "Days to keep access active after payment failure (0 for immediate suspension)"
+        ),
     )
     reactivation_period_days = models.PositiveIntegerField(
         default=0,
         validators=[MaxValueValidator(90)],
         verbose_name=_("Reactivation Period (Days)"),
-        help_text=_("Days after cancellation during which customer can reactivate (0 to disable)")
+        help_text=_("Days after cancellation during which customer can reactivate (0 to disable)"),
     )
 
     # Plan Change Behavior
     PLAN_CHANGE_BEHAVIOR_CHOICES = [
-        ('immediate', _('Immediate')),
-        ('at_renewal', _('At Renewal')),
+        ("immediate", _("Immediate")),
+        ("at_renewal", _("At Renewal")),
     ]
     upgrade_behavior = models.CharField(
         max_length=20,
         choices=PLAN_CHANGE_BEHAVIOR_CHOICES,
-        default='immediate',
+        default="immediate",
         verbose_name=_("Upgrade Behavior"),
-        help_text=_("Upgrades to this plan: 'Immediate' with proration, 'At Renewal' deferred")
+        help_text=_("Upgrades to this plan: 'Immediate' with proration, 'At Renewal' deferred"),
     )
     downgrade_behavior = models.CharField(
         max_length=20,
         choices=PLAN_CHANGE_BEHAVIOR_CHOICES,
-        default='at_renewal',
+        default="at_renewal",
         verbose_name=_("Downgrade Behavior"),
-        help_text=_("Downgrades from this plan: 'Immediate' with credit, 'At Renewal' deferred")
+        help_text=_("Downgrades from this plan: 'Immediate' with credit, 'At Renewal' deferred"),
     )
 
     # Status
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Active"),
-        help_text=_("Whether this plan can be purchased by customers")
+        help_text=_("Whether this plan can be purchased by customers"),
     )
     is_public = models.BooleanField(
         default=True,
         verbose_name=_("Public"),
-        help_text=_("Show this plan on product pages and subscription lists")
+        help_text=_("Show this plan on product pages and subscription lists"),
     )
 
     # Provider Integration
@@ -210,7 +219,9 @@ class SubscriptionPlan(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Provider Plan IDs"),
-        help_text=_("Mapping of payment provider names to their plan IDs (e.g., {'stripe': 'price_xxx', 'paypal': 'P-xxx'})")
+        help_text=_(
+            "Mapping of payment provider names to their plan IDs (e.g., {'stripe': 'price_xxx', 'paypal': 'P-xxx'})"
+        ),
     )
 
     # Metadata
@@ -218,14 +229,14 @@ class SubscriptionPlan(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Metadata"),
-        help_text=_("Additional data for custom integrations")
+        help_text=_("Additional data for custom integrations"),
     )
 
     # Ordering
     sort_order = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Sort Order"),
-        help_text=_("Display order (lower numbers appear first)")
+        help_text=_("Display order (lower numbers appear first)"),
     )
 
     # Timestamps
@@ -235,11 +246,11 @@ class SubscriptionPlan(models.Model):
     class Meta:
         verbose_name = _("Subscription Plan")
         verbose_name_plural = _("Subscription Plans")
-        ordering = ['sort_order', 'name']
+        ordering = ["sort_order", "name"]
         indexes = [
-            models.Index(fields=['is_active', 'is_public']),
-            models.Index(fields=['pricing_model']),
-            models.Index(fields=['slug']),
+            models.Index(fields=["is_active", "is_public"]),
+            models.Index(fields=["pricing_model"]),
+            models.Index(fields=["slug"]),
         ]
 
     def __str__(self):
@@ -255,7 +266,7 @@ class SubscriptionPlan(models.Model):
 
     def get_active_subscriptions_count(self):
         """Return count of active and trial subscriptions"""
-        return self.subscriptions.filter(status__in=['active', 'trial']).count()
+        return self.subscriptions.filter(status__in=["active", "trial"]).count()
 
 
 class PlanPricingTier(models.Model):
@@ -277,35 +288,32 @@ class PlanPricingTier(models.Model):
 
     # Billing Cycle Choices
     BILLING_CYCLE_CHOICES = [
-        ('daily', _('Daily')),
-        ('weekly', _('Weekly')),
-        ('monthly', _('Monthly')),
-        ('quarterly', _('Quarterly')),  # Every 3 months
-        ('semiannual', _('Semi-Annual')),  # Every 6 months
-        ('annual', _('Annual')),
+        ("daily", _("Daily")),
+        ("weekly", _("Weekly")),
+        ("monthly", _("Monthly")),
+        ("quarterly", _("Quarterly")),  # Every 3 months
+        ("semiannual", _("Semi-Annual")),  # Every 6 months
+        ("annual", _("Annual")),
     ]
 
     # Identity
     tier_id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-        verbose_name=_("Tier ID")
+        primary_key=True, default=uuid.uuid4, editable=False, verbose_name=_("Tier ID")
     )
 
     # Relationship
     plan = models.ForeignKey(
         SubscriptionPlan,
         on_delete=models.CASCADE,
-        related_name='pricing_tiers',
-        verbose_name=_("Plan")
+        related_name="pricing_tiers",
+        verbose_name=_("Plan"),
     )
 
     # Tier Information
     tier_name = models.CharField(
         max_length=100,
         verbose_name=_("Tier Name"),
-        help_text=_("Display name (e.g., 'Monthly', 'Annual - Save 20%')")
+        help_text=_("Display name (e.g., 'Monthly', 'Annual - Save 20%')"),
     )
 
     # Translations
@@ -313,51 +321,51 @@ class PlanPricingTier(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Translations"),
-        help_text=_("Multilingual content for tier name")
+        help_text=_("Multilingual content for tier name"),
     )
 
     # Billing Configuration
     billing_cycle = models.CharField(
         max_length=20,
         choices=BILLING_CYCLE_CHOICES,
-        default='monthly',
+        default="monthly",
         verbose_name=_("Billing Cycle"),
-        help_text=_("How often the customer is billed")
+        help_text=_("How often the customer is billed"),
     )
     billing_interval = models.PositiveIntegerField(
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(24)],
         verbose_name=_("Billing Interval"),
-        help_text=_("Number of billing cycles between charges (e.g., '2' for 'every 2 months')")
+        help_text=_("Number of billing cycles between charges (e.g., '2' for 'every 2 months')"),
     )
 
     # Discount Configuration
     discount_percentage = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        default=Decimal('0.00'),
+        default=Decimal("0.00"),
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         verbose_name=_("Discount Percentage"),
-        help_text=_("Discount applied to product price (e.g., 10.00 for 10% off product price, 0.00 for full price)")
+        help_text=_(
+            "Discount applied to product price (e.g., 10.00 for 10% off product price, 0.00 for full price)"
+        ),
     )
 
     # Status
     is_default = models.BooleanField(
         default=False,
         verbose_name=_("Default Tier"),
-        help_text=_("Show this tier as the default option to customers")
+        help_text=_("Show this tier as the default option to customers"),
     )
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Active"),
-        help_text=_("Whether this tier can be selected by customers")
+        help_text=_("Whether this tier can be selected by customers"),
     )
 
     # Ordering
     sort_order = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Sort Order"),
-        help_text=_("Display order within the plan")
+        default=0, verbose_name=_("Sort Order"), help_text=_("Display order within the plan")
     )
 
     # Timestamps
@@ -367,11 +375,11 @@ class PlanPricingTier(models.Model):
     class Meta:
         verbose_name = _("Pricing Tier")
         verbose_name_plural = _("Pricing Tiers")
-        ordering = ['plan', 'sort_order', 'tier_name']
-        unique_together = [['plan', 'tier_name']]
+        ordering = ["plan", "sort_order", "tier_name"]
+        unique_together = [["plan", "tier_name"]]
         indexes = [
-            models.Index(fields=['plan', 'is_active']),
-            models.Index(fields=['plan', 'is_default']),
+            models.Index(fields=["plan", "is_active"]),
+            models.Index(fields=["plan", "is_default"]),
         ]
 
     def __str__(self):
@@ -394,13 +402,11 @@ class PlanPricingTier(models.Model):
         Returns:
             Money object with calculated price
         """
-        from djmoney.money import Money
-
         # Use variant price if provided, otherwise product price
         base_price = variant.price if variant else product.price
 
         # Apply discount percentage
-        discount_multiplier = Decimal('1.00') - (self.discount_percentage / Decimal('100'))
+        discount_multiplier = Decimal("1.00") - (self.discount_percentage / Decimal("100"))
         discounted_amount = base_price.amount * discount_multiplier
 
         return Money(discounted_amount, base_price.currency)
@@ -417,12 +423,12 @@ class PlanPricingTier(models.Model):
             Money object with approximate annual cost
         """
         cycle_multipliers = {
-            'daily': 365,
-            'weekly': 52,
-            'monthly': 12,
-            'quarterly': 4,
-            'semiannual': 2,
-            'annual': 1,
+            "daily": 365,
+            "weekly": 52,
+            "monthly": 12,
+            "quarterly": 4,
+            "semiannual": 2,
+            "annual": 1,
         }
 
         # Get discounted price per cycle
@@ -444,36 +450,30 @@ class PlanAddon(models.Model):
 
     # Billing Frequency Choices
     BILLING_FREQUENCY_CHOICES = [
-        ('per_cycle', _('Per Billing Cycle')),  # Charged every billing cycle
-        ('one_time', _('One-Time')),  # Charged once at subscription start
+        ("per_cycle", _("Per Billing Cycle")),  # Charged every billing cycle
+        ("one_time", _("One-Time")),  # Charged once at subscription start
     ]
 
     # Identity
     addon_id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-        verbose_name=_("Add-on ID")
+        primary_key=True, default=uuid.uuid4, editable=False, verbose_name=_("Add-on ID")
     )
 
     # Relationship
     plan = models.ForeignKey(
-        SubscriptionPlan,
-        on_delete=models.CASCADE,
-        related_name='addons',
-        verbose_name=_("Plan")
+        SubscriptionPlan, on_delete=models.CASCADE, related_name="addons", verbose_name=_("Plan")
     )
 
     # Add-on Information
     name = models.CharField(
         max_length=200,
         verbose_name=_("Add-on Name"),
-        help_text=_("Name displayed to customers (e.g., 'Priority Support', 'Extra Storage')")
+        help_text=_("Name displayed to customers (e.g., 'Priority Support', 'Extra Storage')"),
     )
     description = models.TextField(
         blank=True,
         verbose_name=_("Description"),
-        help_text=_("Detailed description of what this add-on provides")
+        help_text=_("Detailed description of what this add-on provides"),
     )
 
     # Translations
@@ -481,49 +481,45 @@ class PlanAddon(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Translations"),
-        help_text=_("Multilingual content for add-on name and description")
+        help_text=_("Multilingual content for add-on name and description"),
     )
 
     # Pricing
     price = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default_currency='USD',
+        default_currency="USD",
         verbose_name=_("Price"),
-        help_text=_("Add-on price per billing frequency")
+        help_text=_("Add-on price per billing frequency"),
     )
     billing_frequency = models.CharField(
         max_length=15,
         choices=BILLING_FREQUENCY_CHOICES,
-        default='per_cycle',
+        default="per_cycle",
         verbose_name=_("Billing Frequency"),
-        help_text=_("How often the add-on is charged")
+        help_text=_("How often the add-on is charged"),
     )
 
     # Quantity Support
     allow_quantity = models.BooleanField(
         default=False,
         verbose_name=_("Allow Quantity"),
-        help_text=_("Allow customers to select multiple units of this add-on")
+        help_text=_("Allow customers to select multiple units of this add-on"),
     )
 
     # Status
     is_required = models.BooleanField(
         default=False,
         verbose_name=_("Required"),
-        help_text=_("Automatically include this add-on in all new subscriptions")
+        help_text=_("Automatically include this add-on in all new subscriptions"),
     )
     is_active = models.BooleanField(
-        default=True,
-        verbose_name=_("Active"),
-        help_text=_("Whether this add-on can be purchased")
+        default=True, verbose_name=_("Active"), help_text=_("Whether this add-on can be purchased")
     )
 
     # Ordering
     sort_order = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Sort Order"),
-        help_text=_("Display order")
+        default=0, verbose_name=_("Sort Order"), help_text=_("Display order")
     )
 
     # Timestamps
@@ -533,9 +529,9 @@ class PlanAddon(models.Model):
     class Meta:
         verbose_name = _("Plan Add-on")
         verbose_name_plural = _("Plan Add-ons")
-        ordering = ['plan', 'sort_order', 'name']
+        ordering = ["plan", "sort_order", "name"]
         indexes = [
-            models.Index(fields=['plan', 'is_active']),
+            models.Index(fields=["plan", "is_active"]),
         ]
 
     def __str__(self):
@@ -551,33 +547,27 @@ class PaymentToken(models.Model):
 
     # Payment Method Type Choices
     PAYMENT_METHOD_TYPE_CHOICES = [
-        ('card', _('Credit/Debit Card')),
-        ('bank_account', _('Bank Account (ACH)')),
-        ('paypal', _('PayPal')),
-        ('apple_pay', _('Apple Pay')),
-        ('google_pay', _('Google Pay')),
+        ("card", _("Credit/Debit Card")),
+        ("bank_account", _("Bank Account (ACH)")),
+        ("paypal", _("PayPal")),
+        ("apple_pay", _("Apple Pay")),
+        ("google_pay", _("Google Pay")),
     ]
 
     # Token Identity
     token_id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        verbose_name=_("Token ID")
+        default=uuid.uuid4, unique=True, editable=False, verbose_name=_("Token ID")
     )
 
     # Ownership
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='payment_tokens',
-        verbose_name=_("User")
+        User, on_delete=models.CASCADE, related_name="payment_tokens", verbose_name=_("User")
     )
     provider_account = models.ForeignKey(
-        'payment_providers.PaymentProviderAccount',
+        "payment_providers.PaymentProviderAccount",
         on_delete=models.CASCADE,
-        related_name='payment_tokens',
-        verbose_name=_("Payment Provider Account")
+        related_name="payment_tokens",
+        verbose_name=_("Payment Provider Account"),
     )
 
     # Token Data
@@ -585,20 +575,20 @@ class PaymentToken(models.Model):
         max_length=200,
         blank=True,
         verbose_name=_("Gateway Customer ID"),
-        help_text=_("Customer ID in payment provider's system")
+        help_text=_("Customer ID in payment provider's system"),
     )
     gateway_token_id = models.CharField(
         max_length=200,
         verbose_name=_("Gateway Token ID"),
-        help_text=_("Payment method ID in payment provider's system")
+        help_text=_("Payment method ID in payment provider's system"),
     )
 
     # Payment Method Details
     payment_method_type = models.CharField(
         max_length=20,
         choices=PAYMENT_METHOD_TYPE_CHOICES,
-        default='card',
-        verbose_name=_("Payment Method Type")
+        default="card",
+        verbose_name=_("Payment Method Type"),
     )
 
     # Card-specific fields
@@ -606,28 +596,26 @@ class PaymentToken(models.Model):
         max_length=50,
         blank=True,
         verbose_name=_("Card Brand"),
-        help_text=_("e.g., Visa, Mastercard, Amex")
+        help_text=_("e.g., Visa, Mastercard, Amex"),
     )
-    card_last4 = models.CharField(
-        max_length=4,
-        blank=True,
-        verbose_name=_("Card Last 4 Digits")
-    )
+    card_last4 = models.CharField(max_length=4, blank=True, verbose_name=_("Card Last 4 Digits"))
     card_exp_month = models.PositiveIntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(12)],
-        verbose_name=_("Card Expiration Month")
+        verbose_name=_("Card Expiration Month"),
     )
     card_exp_year = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        verbose_name=_("Card Expiration Year")
+        null=True, blank=True, verbose_name=_("Card Expiration Year")
     )
 
     # Billing Address
-    billing_address_line1 = models.CharField(max_length=255, blank=True, verbose_name=_("Address Line 1"))
-    billing_address_line2 = models.CharField(max_length=255, blank=True, verbose_name=_("Address Line 2"))
+    billing_address_line1 = models.CharField(
+        max_length=255, blank=True, verbose_name=_("Address Line 1")
+    )
+    billing_address_line2 = models.CharField(
+        max_length=255, blank=True, verbose_name=_("Address Line 2")
+    )
     billing_city = models.CharField(max_length=100, blank=True, verbose_name=_("City"))
     billing_state = models.CharField(max_length=100, blank=True, verbose_name=_("State/Province"))
     billing_postal_code = models.CharField(max_length=20, blank=True, verbose_name=_("Postal Code"))
@@ -637,17 +625,17 @@ class PaymentToken(models.Model):
     is_default = models.BooleanField(
         default=False,
         verbose_name=_("Default Payment Method"),
-        help_text=_("Use this payment method for new subscriptions by default")
+        help_text=_("Use this payment method for new subscriptions by default"),
     )
     is_active = models.BooleanField(
         default=True,
         verbose_name=_("Active"),
-        help_text=_("Whether this payment method can be used for billing")
+        help_text=_("Whether this payment method can be used for billing"),
     )
     is_verified = models.BooleanField(
         default=False,
         verbose_name=_("Verified"),
-        help_text=_("Whether the payment method has been verified (e.g., bank account verified)")
+        help_text=_("Whether the payment method has been verified (e.g., bank account verified)"),
     )
 
     # Timestamps
@@ -657,26 +645,27 @@ class PaymentToken(models.Model):
     class Meta:
         verbose_name = _("Payment Token")
         verbose_name_plural = _("Payment Tokens")
-        ordering = ['-is_default', '-created_at']
+        ordering = ["-is_default", "-created_at"]
         indexes = [
-            models.Index(fields=['user', 'is_active']),
-            models.Index(fields=['provider_account', 'gateway_token_id']),
+            models.Index(fields=["user", "is_active"]),
+            models.Index(fields=["provider_account", "gateway_token_id"]),
         ]
 
     def __str__(self):
-        if self.payment_method_type == 'card':
+        if self.payment_method_type == "card":
             return f"{self.card_brand} •••• {self.card_last4}"
         return f"{self.get_payment_method_type_display()}"
 
     def is_expired(self):
         """Check if payment method is expired"""
-        if self.payment_method_type != 'card' or not (self.card_exp_month and self.card_exp_year):
+        if self.payment_method_type != "card" or not (self.card_exp_month and self.card_exp_year):
             return False
 
         now = timezone.now()
         # Card expires at end of expiration month
-        return (self.card_exp_year < now.year) or \
-               (self.card_exp_year == now.year and self.card_exp_month < now.month)
+        return (self.card_exp_year < now.year) or (
+            self.card_exp_year == now.year and self.card_exp_month < now.month
+        )
 
 
 class CustomerSubscription(models.Model):
@@ -688,84 +677,78 @@ class CustomerSubscription(models.Model):
 
     # Subscription Status Choices
     STATUS_CHOICES = [
-        ('trial', _('Trial')),  # In free/reduced trial period
-        ('active', _('Active')),  # Actively billing and providing service
-        ('past_due', _('Past Due')),  # Payment failed, retrying
-        ('paused', _('Paused')),  # Temporarily suspended by customer
-        ('canceled', _('Canceled')),  # Canceled, may still have access until period end
-        ('expired', _('Expired')),  # Subscription ended (trial expired, max cycles reached, etc.)
+        ("trial", _("Trial")),  # In free/reduced trial period
+        ("active", _("Active")),  # Actively billing and providing service
+        ("past_due", _("Past Due")),  # Payment failed, retrying
+        ("paused", _("Paused")),  # Temporarily suspended by customer
+        ("canceled", _("Canceled")),  # Canceled, may still have access until period end
+        ("expired", _("Expired")),  # Subscription ended (trial expired, max cycles reached, etc.)
     ]
 
     # Provider Mode Choices
     PROVIDER_MODE_CHOICES = [
-        ('native', _('Native Provider')),  # Stripe/PayPal manages billing
-        ('fallback', _('Fallback Provider')),  # Internal billing engine
+        ("native", _("Native Provider")),  # Stripe/PayPal manages billing
+        ("fallback", _("Fallback Provider")),  # Internal billing engine
     ]
 
     # Cancellation Type Choices
     CANCELLATION_TYPE_CHOICES = [
-        ('none', _('Not Canceled')),
-        ('immediate', _('Immediate Cancellation')),
-        ('end_of_period', _('Cancel at Period End')),
-        ('scheduled', _('Scheduled Cancellation')),
+        ("none", _("Not Canceled")),
+        ("immediate", _("Immediate Cancellation")),
+        ("end_of_period", _("Cancel at Period End")),
+        ("scheduled", _("Scheduled Cancellation")),
     ]
 
     # Identity
     subscription_id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        verbose_name=_("Subscription ID")
+        default=uuid.uuid4, unique=True, editable=False, verbose_name=_("Subscription ID")
     )
 
     # Relationships
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscriptions',
-        verbose_name=_("User")
+        User, on_delete=models.CASCADE, related_name="subscriptions", verbose_name=_("User")
     )
     plan = models.ForeignKey(
         SubscriptionPlan,
         on_delete=models.PROTECT,
-        related_name='subscriptions',
-        verbose_name=_("Plan")
+        related_name="subscriptions",
+        verbose_name=_("Plan"),
     )
     pricing_tier = models.ForeignKey(
         PlanPricingTier,
         on_delete=models.PROTECT,
-        related_name='subscriptions',
+        related_name="subscriptions",
         verbose_name=_("Pricing Tier"),
-        help_text=_("Which pricing tier the customer selected")
+        help_text=_("Which pricing tier the customer selected"),
     )
 
     # Product Linkage (subscriptions can be tied to catalog products)
     product = models.ForeignKey(
-        'catalog.Product',
+        "catalog.Product",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='subscriptions',
-        verbose_name=_("Product")
+        related_name="subscriptions",
+        verbose_name=_("Product"),
     )
     variant = models.ForeignKey(
-        'catalog.ProductVariant',
+        "catalog.ProductVariant",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='subscriptions',
-        verbose_name=_("Product Variant")
+        related_name="subscriptions",
+        verbose_name=_("Product Variant"),
     )
 
     # Order Linkage
     originating_order = models.ForeignKey(
-        'orders.Order',
+        "orders.Order",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='subscriptions_created',
+        related_name="subscriptions_created",
         verbose_name=_("Originating Order"),
-        help_text=_("The order from which this subscription was created")
+        help_text=_("The order from which this subscription was created"),
     )
 
     # Quantity (for per-seat pricing)
@@ -773,135 +756,112 @@ class CustomerSubscription(models.Model):
         default=1,
         validators=[MinValueValidator(1)],
         verbose_name=_("Quantity"),
-        help_text=_("Number of seats/units subscribed (for quantity-based pricing)")
+        help_text=_("Number of seats/units subscribed (for quantity-based pricing)"),
     )
 
     # Payment Configuration
     payment_provider_account = models.ForeignKey(
-        'payment_providers.PaymentProviderAccount',
+        "payment_providers.PaymentProviderAccount",
         on_delete=models.PROTECT,
-        related_name='subscriptions',
-        verbose_name=_("Payment Provider Account")
+        related_name="subscriptions",
+        verbose_name=_("Payment Provider Account"),
     )
     payment_token = models.ForeignKey(
         PaymentToken,
         on_delete=models.PROTECT,
-        related_name='subscriptions',
+        related_name="subscriptions",
         verbose_name=_("Payment Token"),
-        help_text=_("Payment method used for recurring billing")
+        help_text=_("Payment method used for recurring billing"),
     )
     provider_mode = models.CharField(
         max_length=20,
         choices=PROVIDER_MODE_CHOICES,
-        default='native',
-        verbose_name=_("Provider Mode")
+        default="native",
+        verbose_name=_("Provider Mode"),
     )
     provider_subscription_id = models.CharField(
         max_length=200,
         blank=True,
         verbose_name=_("Provider Subscription ID"),
-        help_text=_("Subscription ID in payment provider's system (for native mode)")
+        help_text=_("Subscription ID in payment provider's system (for native mode)"),
     )
 
     # Status
     status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='trial',
-        verbose_name=_("Status")
+        max_length=20, choices=STATUS_CHOICES, default="trial", verbose_name=_("Status")
     )
 
     # Billing Schedule
     current_period_start = models.DateTimeField(
-        verbose_name=_("Current Period Start"),
-        help_text=_("Start date of current billing period")
+        verbose_name=_("Current Period Start"), help_text=_("Start date of current billing period")
     )
     current_period_end = models.DateTimeField(
-        verbose_name=_("Current Period End"),
-        help_text=_("End date of current billing period")
+        verbose_name=_("Current Period End"), help_text=_("End date of current billing period")
     )
     next_billing_date = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Next Billing Date"),
-        help_text=_("Date of next scheduled billing attempt")
+        help_text=_("Date of next scheduled billing attempt"),
     )
     trial_end_date = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Trial End Date"),
-        help_text=_("End date of trial period")
+        help_text=_("End date of trial period"),
     )
 
     # Billing History
     billing_cycle_count = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Billing Cycle Count"),
-        help_text=_("Number of successful billing cycles completed")
+        help_text=_("Number of successful billing cycles completed"),
     )
     last_billing_date = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Last Billing Date")
+        null=True, blank=True, verbose_name=_("Last Billing Date")
     )
     last_billing_status = models.CharField(
-        max_length=20,
-        blank=True,
-        verbose_name=_("Last Billing Status")
+        max_length=20, blank=True, verbose_name=_("Last Billing Status")
     )
 
     # Cancellation
     cancellation_type = models.CharField(
         max_length=20,
         choices=CANCELLATION_TYPE_CHOICES,
-        default='none',
-        verbose_name=_("Cancellation Type")
+        default="none",
+        verbose_name=_("Cancellation Type"),
     )
-    canceled_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Canceled At")
-    )
-    cancellation_reason = models.TextField(
-        blank=True,
-        verbose_name=_("Cancellation Reason")
-    )
+    canceled_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Canceled At"))
+    cancellation_reason = models.TextField(blank=True, verbose_name=_("Cancellation Reason"))
 
     # Commitment & Grace Periods
     minimum_commitment_end_date = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Minimum Commitment End Date"),
-        help_text=_("Date when minimum commitment period ends")
+        help_text=_("Date when minimum commitment period ends"),
     )
     reactivation_deadline = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Reactivation Deadline"),
-        help_text=_("Deadline for reactivating canceled subscription")
+        help_text=_("Deadline for reactivating canceled subscription"),
     )
     grace_period_end_date = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Grace Period End Date"),
-        help_text=_("When grace period expires after payment failure (null = not in grace period)")
+        help_text=_("When grace period expires after payment failure (null = not in grace period)"),
     )
 
     # Pause/Resume
-    paused_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Paused At")
-    )
-    pause_reason = models.TextField(
-        blank=True,
-        verbose_name=_("Pause Reason")
-    )
+    paused_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Paused At"))
+    pause_reason = models.TextField(blank=True, verbose_name=_("Pause Reason"))
     auto_resume_date = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_("Auto Resume Date"),
-        help_text=_("Date to automatically resume paused subscription")
+        help_text=_("Date to automatically resume paused subscription"),
     )
 
     # Plan Changes & Proration
@@ -909,23 +869,19 @@ class CustomerSubscription(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Scheduled Plan Change"),
-        help_text=_("Scheduled tier/plan change for future date")
+        help_text=_("Scheduled tier/plan change for future date"),
     )
     proration_credit = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default=Decimal('0.00'),
-        default_currency='USD',
+        default=Decimal("0.00"),
+        default_currency="USD",
         verbose_name=_("Proration Credit"),
-        help_text=_("Credit from downgrades to be applied to next bill")
+        help_text=_("Credit from downgrades to be applied to next bill"),
     )
 
     # Metadata
-    metadata = models.JSONField(
-        default=dict,
-        blank=True,
-        verbose_name=_("Metadata")
-    )
+    metadata = models.JSONField(default=dict, blank=True, verbose_name=_("Metadata"))
 
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
@@ -934,14 +890,14 @@ class CustomerSubscription(models.Model):
     class Meta:
         verbose_name = _("Customer Subscription")
         verbose_name_plural = _("Customer Subscriptions")
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['user', 'status']),
-            models.Index(fields=['status', 'next_billing_date']),
-            models.Index(fields=['provider_subscription_id']),
-            models.Index(fields=['trial_end_date']),
-            models.Index(fields=['auto_resume_date']),
-            models.Index(fields=['status', 'grace_period_end_date']),
+            models.Index(fields=["user", "status"]),
+            models.Index(fields=["status", "next_billing_date"]),
+            models.Index(fields=["provider_subscription_id"]),
+            models.Index(fields=["trial_end_date"]),
+            models.Index(fields=["auto_resume_date"]),
+            models.Index(fields=["status", "grace_period_end_date"]),
         ]
 
     def __str__(self):
@@ -956,12 +912,14 @@ class CustomerSubscription(models.Model):
 
     def is_in_trial(self):
         """Check if subscription is currently in trial period"""
-        return self.status == 'trial' and self.trial_end_date and self.trial_end_date > timezone.now()
+        return (
+            self.status == "trial" and self.trial_end_date and self.trial_end_date > timezone.now()
+        )
 
     def is_in_grace_period(self):
         """Check if subscription is currently in a dunning grace period."""
         return (
-            self.status == 'past_due'
+            self.status == "past_due"
             and self.grace_period_end_date is not None
             and self.grace_period_end_date > timezone.now()
         )
@@ -973,11 +931,11 @@ class CustomerSubscription(models.Model):
     def cancel_scheduled_plan_change(self):
         """Cancel any pending scheduled plan change."""
         self.scheduled_plan_change = {}
-        self.save(update_fields=['scheduled_plan_change'])
+        self.save(update_fields=["scheduled_plan_change"])
 
     def can_reactivate(self):
         """Check if subscription can be reactivated"""
-        if self.status != 'canceled':
+        if self.status != "canceled":
             return False
         if not self.reactivation_deadline:
             return False
@@ -986,10 +944,11 @@ class CustomerSubscription(models.Model):
     def total_amount_paid(self):
         """Calculate total amount paid across all successful billing cycles"""
         from django.db.models import Sum
-        total = self.billing_logs.filter(status='successful').aggregate(
-            total=Sum('total_amount')
-        )['total']
-        return total if total else Decimal('0.00')
+
+        total = self.billing_logs.filter(status="successful").aggregate(total=Sum("total_amount"))[
+            "total"
+        ]
+        return total if total else Decimal("0.00")
 
 
 class CustomerSubscriptionAddon(models.Model):
@@ -998,56 +957,36 @@ class CustomerSubscriptionAddon(models.Model):
     """
 
     # Identity
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Relationships
     subscription = models.ForeignKey(
         CustomerSubscription,
         on_delete=models.CASCADE,
-        related_name='active_addons',
-        verbose_name=_("Subscription")
+        related_name="active_addons",
+        verbose_name=_("Subscription"),
     )
-    addon = models.ForeignKey(
-        PlanAddon,
-        on_delete=models.PROTECT,
-        verbose_name=_("Add-on")
-    )
+    addon = models.ForeignKey(PlanAddon, on_delete=models.PROTECT, verbose_name=_("Add-on"))
 
     # Quantity
     quantity = models.PositiveIntegerField(
-        default=1,
-        validators=[MinValueValidator(1)],
-        verbose_name=_("Quantity")
+        default=1, validators=[MinValueValidator(1)], verbose_name=_("Quantity")
     )
 
     # Status
-    is_active = models.BooleanField(
-        default=True,
-        verbose_name=_("Active")
-    )
+    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
 
     # Timestamps
-    activated_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Activated At")
-    )
-    deactivated_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Deactivated At")
-    )
+    activated_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Activated At"))
+    deactivated_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Deactivated At"))
 
     class Meta:
         verbose_name = _("Subscription Add-on")
         verbose_name_plural = _("Subscription Add-ons")
-        ordering = ['subscription', 'addon']
-        unique_together = [['subscription', 'addon']]
+        ordering = ["subscription", "addon"]
+        unique_together = [["subscription", "addon"]]
         indexes = [
-            models.Index(fields=['subscription', 'is_active']),
+            models.Index(fields=["subscription", "is_active"]),
         ]
 
     def __str__(self):
@@ -1067,31 +1006,27 @@ class SubscriptionDiscount(models.Model):
 
     # Discount Type Choices
     DISCOUNT_TYPE_CHOICES = [
-        ('percentage', _('Percentage Off')),  # e.g., 20% off
-        ('fixed_amount', _('Fixed Amount Off')),  # e.g., $10 off
-        ('fixed_price_override', _('Fixed Price Override')),  # e.g., $5/month instead of $10/month
+        ("percentage", _("Percentage Off")),  # e.g., 20% off
+        ("fixed_amount", _("Fixed Amount Off")),  # e.g., $10 off
+        ("fixed_price_override", _("Fixed Price Override")),  # e.g., $5/month instead of $10/month
     ]
 
     # Duration Type Choices
     DURATION_TYPE_CHOICES = [
-        ('once', _('Apply Once')),  # Apply to next billing cycle only
-        ('forever', _('Forever')),  # Apply to all future billing cycles
-        ('repeating', _('Repeating')),  # Apply for X months
+        ("once", _("Apply Once")),  # Apply to next billing cycle only
+        ("forever", _("Forever")),  # Apply to all future billing cycles
+        ("repeating", _("Repeating")),  # Apply for X months
     ]
 
     # Identity
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Relationship
     subscription = models.ForeignKey(
         CustomerSubscription,
         on_delete=models.CASCADE,
-        related_name='discounts',
-        verbose_name=_("Subscription")
+        related_name="discounts",
+        verbose_name=_("Subscription"),
     )
 
     # Coupon Information
@@ -1099,68 +1034,58 @@ class SubscriptionDiscount(models.Model):
         max_length=50,
         blank=True,
         verbose_name=_("Coupon Code"),
-        help_text=_("Coupon code used to apply this discount (if applicable)")
+        help_text=_("Coupon code used to apply this discount (if applicable)"),
     )
 
     # Discount Configuration
     discount_type = models.CharField(
         max_length=25,
         choices=DISCOUNT_TYPE_CHOICES,
-        default='percentage',
-        verbose_name=_("Discount Type")
+        default="percentage",
+        verbose_name=_("Discount Type"),
     )
     value = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(0)],
         verbose_name=_("Discount Value"),
-        help_text=_("Percentage (e.g., 20.00 for 20%), amount, or fixed price depending on type")
+        help_text=_("Percentage (e.g., 20.00 for 20%), amount, or fixed price depending on type"),
     )
 
     # Duration
     duration_type = models.CharField(
         max_length=15,
         choices=DURATION_TYPE_CHOICES,
-        default='once',
-        verbose_name=_("Duration Type")
+        default="once",
+        verbose_name=_("Duration Type"),
     )
     duration_months = models.PositiveIntegerField(
         null=True,
         blank=True,
         verbose_name=_("Duration (Months)"),
-        help_text=_("Number of months to apply discount (for repeating type)")
+        help_text=_("Number of months to apply discount (for repeating type)"),
     )
     remaining_cycles = models.PositiveIntegerField(
         null=True,
         blank=True,
         verbose_name=_("Remaining Cycles"),
-        help_text=_("Billing cycles remaining for this discount")
+        help_text=_("Billing cycles remaining for this discount"),
     )
 
     # Status
-    is_active = models.BooleanField(
-        default=True,
-        verbose_name=_("Active")
-    )
+    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
 
     # Timestamps
-    applied_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Applied At")
-    )
-    expires_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Expires At")
-    )
+    applied_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Applied At"))
+    expires_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Expires At"))
 
     class Meta:
         verbose_name = _("Subscription Discount")
         verbose_name_plural = _("Subscription Discounts")
-        ordering = ['subscription', '-applied_at']
+        ordering = ["subscription", "-applied_at"]
         indexes = [
-            models.Index(fields=['subscription', 'is_active']),
-            models.Index(fields=['coupon_code']),
+            models.Index(fields=["subscription", "is_active"]),
+            models.Index(fields=["coupon_code"]),
         ]
 
     def __str__(self):
@@ -1168,21 +1093,21 @@ class SubscriptionDiscount(models.Model):
 
     def get_discount_display(self):
         """Get human-readable discount description"""
-        if self.discount_type == 'percentage':
+        if self.discount_type == "percentage":
             return f"{self.value}% off"
-        elif self.discount_type == 'fixed_amount':
+        elif self.discount_type == "fixed_amount":
             return f"${self.value} off"
         else:
             return f"${self.value} fixed price"
 
     def calculate_discount_amount(self, base_amount):
         """Calculate discount amount for given base amount"""
-        if self.discount_type == 'percentage':
-            return base_amount * (self.value / Decimal('100'))
-        elif self.discount_type == 'fixed_amount':
+        if self.discount_type == "percentage":
+            return base_amount * (self.value / Decimal("100"))
+        elif self.discount_type == "fixed_amount":
             return min(self.value, base_amount)  # Can't discount more than base
         else:  # fixed_price_override
-            return max(Decimal('0'), base_amount - self.value)
+            return max(Decimal("0"), base_amount - self.value)
 
 
 class BillingCycleLog(models.Model):
@@ -1194,92 +1119,89 @@ class BillingCycleLog(models.Model):
 
     # Billing Status Choices
     STATUS_CHOICES = [
-        ('pending', _('Pending')),  # Scheduled but not yet attempted
-        ('processing', _('Processing')),  # Payment currently processing
-        ('successful', _('Successful')),  # Payment succeeded
-        ('failed', _('Failed')),  # Payment failed
-        ('retrying', _('Retrying')),  # Failed, will retry
+        ("pending", _("Pending")),  # Scheduled but not yet attempted
+        ("processing", _("Processing")),  # Payment currently processing
+        ("successful", _("Successful")),  # Payment succeeded
+        ("failed", _("Failed")),  # Payment failed
+        ("retrying", _("Retrying")),  # Failed, will retry
     ]
 
     # Identity
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Relationship
     subscription = models.ForeignKey(
         CustomerSubscription,
         on_delete=models.CASCADE,
-        related_name='billing_logs',
-        verbose_name=_("Subscription")
+        related_name="billing_logs",
+        verbose_name=_("Subscription"),
     )
 
     # Billing Information
     cycle_number = models.PositiveIntegerField(
         verbose_name=_("Cycle Number"),
-        help_text=_("Which billing cycle this is (1 = first billing)")
+        help_text=_("Which billing cycle this is (1 = first billing)"),
     )
     billing_date = models.DateTimeField(
-        verbose_name=_("Billing Date"),
-        help_text=_("Date billing was attempted")
+        verbose_name=_("Billing Date"), help_text=_("Date billing was attempted")
     )
 
     # Amount Breakdown
     base_amount = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default_currency='USD',
+        default_currency="USD",
         verbose_name=_("Base Amount"),
-        help_text=_("Plan price before quantity/addons/discounts")
+        help_text=_("Plan price before quantity/addons/discounts"),
     )
     quantity_amount = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default=Decimal('0.00'),
-        default_currency='USD',
+        default=Decimal("0.00"),
+        default_currency="USD",
         verbose_name=_("Quantity Amount"),
-        help_text=_("Additional charge for quantity (quantity × price)")
+        help_text=_("Additional charge for quantity (quantity × price)"),
     )
     addons_amount = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default=Decimal('0.00'),
-        default_currency='USD',
+        default=Decimal("0.00"),
+        default_currency="USD",
         verbose_name=_("Add-ons Amount"),
-        help_text=_("Total cost of active add-ons")
+        help_text=_("Total cost of active add-ons"),
     )
     discount_amount = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default=Decimal('0.00'),
-        default_currency='USD',
+        default=Decimal("0.00"),
+        default_currency="USD",
         verbose_name=_("Discount Amount"),
-        help_text=_("Total discounts applied")
+        help_text=_("Total discounts applied"),
     )
     tax_amount = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default=Decimal('0.00'),
-        default_currency='USD',
+        default=Decimal("0.00"),
+        default_currency="USD",
         verbose_name=_("Tax Amount"),
-        help_text=_("Calculated tax")
+        help_text=_("Calculated tax"),
     )
     proration_amount = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default=Decimal('0.00'),
-        default_currency='USD',
+        default=Decimal("0.00"),
+        default_currency="USD",
         verbose_name=_("Proration Amount"),
-        help_text=_("Proration credit/charge from plan changes")
+        help_text=_("Proration credit/charge from plan changes"),
     )
     total_amount = MoneyField(
         max_digits=10,
         decimal_places=2,
-        default_currency='USD',
+        default_currency="USD",
         verbose_name=_("Total Amount"),
-        help_text=_("Final amount charged (base + quantity + addons - discounts + tax + proration)")
+        help_text=_(
+            "Final amount charged (base + quantity + addons - discounts + tax + proration)"
+        ),
     )
 
     # Itemized Breakdown
@@ -1287,66 +1209,49 @@ class BillingCycleLog(models.Model):
         default=dict,
         blank=True,
         verbose_name=_("Billing Breakdown"),
-        help_text=_("Detailed itemized breakdown of charges")
+        help_text=_("Detailed itemized breakdown of charges"),
     )
 
     # Status
     status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending',
-        verbose_name=_("Status")
+        max_length=20, choices=STATUS_CHOICES, default="pending", verbose_name=_("Status")
     )
 
     # Transaction References
     transaction = models.ForeignKey(
-        'payment_providers.PaymentTransaction',
+        "payment_providers.PaymentTransaction",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='billing_logs',
-        verbose_name=_("Payment Transaction")
+        related_name="billing_logs",
+        verbose_name=_("Payment Transaction"),
     )
     order = models.ForeignKey(
-        'orders.Order',
+        "orders.Order",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='subscription_billing_logs',
-        verbose_name=_("Order")
+        related_name="subscription_billing_logs",
+        verbose_name=_("Order"),
     )
 
     # Retry Management
     retry_count = models.PositiveIntegerField(
         default=0,
         verbose_name=_("Retry Count"),
-        help_text=_("Number of times billing has been retried")
+        help_text=_("Number of times billing has been retried"),
     )
-    max_retries = models.PositiveIntegerField(
-        default=3,
-        verbose_name=_("Maximum Retries")
-    )
-    next_retry_date = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Next Retry Date")
-    )
+    max_retries = models.PositiveIntegerField(default=3, verbose_name=_("Maximum Retries"))
+    next_retry_date = models.DateTimeField(null=True, blank=True, verbose_name=_("Next Retry Date"))
 
     # Error Details
-    error_message = models.TextField(
-        blank=True,
-        verbose_name=_("Error Message")
-    )
-    error_code = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name=_("Error Code")
-    )
+    error_message = models.TextField(blank=True, verbose_name=_("Error Message"))
+    error_code = models.CharField(max_length=100, blank=True, verbose_name=_("Error Code"))
     provider_response = models.JSONField(
         default=dict,
         blank=True,
         verbose_name=_("Provider Response"),
-        help_text=_("Raw response from payment provider")
+        help_text=_("Raw response from payment provider"),
     )
 
     # Timestamps
@@ -1356,12 +1261,12 @@ class BillingCycleLog(models.Model):
     class Meta:
         verbose_name = _("Billing Cycle Log")
         verbose_name_plural = _("Billing Cycle Logs")
-        ordering = ['-created_at']
-        unique_together = [['subscription', 'cycle_number']]
+        ordering = ["-created_at"]
+        unique_together = [["subscription", "cycle_number"]]
         indexes = [
-            models.Index(fields=['-created_at']),
-            models.Index(fields=['subscription', 'status']),
-            models.Index(fields=['status', 'next_retry_date']),
+            models.Index(fields=["-created_at"]),
+            models.Index(fields=["subscription", "status"]),
+            models.Index(fields=["status", "next_retry_date"]),
         ]
 
     def __str__(self):
@@ -1370,9 +1275,9 @@ class BillingCycleLog(models.Model):
     def can_retry(self):
         """Check if this billing can be retried"""
         return (
-            self.status == 'failed' and
-            self.retry_count < self.max_retries and
-            self.subscription.status != 'canceled'
+            self.status == "failed"
+            and self.retry_count < self.max_retries
+            and self.subscription.status != "canceled"
         )
 
     def calculate_next_retry_date(self):
@@ -1393,15 +1298,15 @@ class SubscriptionWebhookEvent(models.Model):
     """
 
     SOURCE_CHOICES = [
-        ('webhook', _('Webhook')),
-        ('fallback', _('Fallback Engine')),
+        ("webhook", _("Webhook")),
+        ("fallback", _("Fallback Engine")),
     ]
 
     STATUS_CHOICES = [
-        ('pending', _('Pending')),
-        ('processed', _('Processed')),
-        ('failed', _('Failed')),
-        ('skipped', _('Skipped')),
+        ("pending", _("Pending")),
+        ("processed", _("Processed")),
+        ("failed", _("Failed")),
+        ("skipped", _("Skipped")),
     ]
 
     # Event identification
@@ -1409,98 +1314,85 @@ class SubscriptionWebhookEvent(models.Model):
         max_length=255,
         db_index=True,
         verbose_name=_("Event ID"),
-        help_text=_("Provider event ID or generated fallback ID")
+        help_text=_("Provider event ID or generated fallback ID"),
     )
     event_type = models.CharField(
         max_length=100,
         db_index=True,
         verbose_name=_("Event Type"),
-        help_text=_("Standardized event type (e.g. subscription.payment_succeeded)")
+        help_text=_("Standardized event type (e.g. subscription.payment_succeeded)"),
     )
     provider_event_type = models.CharField(
         max_length=100,
         blank=True,
-        default='',
+        default="",
         verbose_name=_("Provider Event Type"),
-        help_text=_("Original provider-specific event type")
+        help_text=_("Original provider-specific event type"),
     )
     source = models.CharField(
         max_length=20,
         choices=SOURCE_CHOICES,
         verbose_name=_("Source"),
-        help_text=_("Whether this event came from a webhook or fallback engine")
+        help_text=_("Whether this event came from a webhook or fallback engine"),
     )
 
     # Subscription linkage
     subscription = models.ForeignKey(
-        'subscriptions.CustomerSubscription',
+        "subscriptions.CustomerSubscription",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='webhook_events',
+        related_name="webhook_events",
         verbose_name=_("Subscription"),
-        help_text=_("Linked subscription (null if not yet matched)")
+        help_text=_("Linked subscription (null if not yet matched)"),
     )
     provider_subscription_id = models.CharField(
         max_length=200,
         db_index=True,
         blank=True,
-        default='',
+        default="",
         verbose_name=_("Provider Subscription ID"),
-        help_text=_("Provider's subscription ID for lookup")
+        help_text=_("Provider's subscription ID for lookup"),
     )
 
     # Event data
     event_data = models.JSONField(
-        default=dict,
-        verbose_name=_("Event Data"),
-        help_text=_("Full serialized SubscriptionEvent")
+        default=dict, verbose_name=_("Event Data"), help_text=_("Full serialized SubscriptionEvent")
     )
 
     # Processing status
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='pending',
+        default="pending",
         db_index=True,
-        verbose_name=_("Status")
+        verbose_name=_("Status"),
     )
     processing_error = models.TextField(
         blank=True,
-        default='',
+        default="",
         verbose_name=_("Processing Error"),
-        help_text=_("Error message if processing failed")
+        help_text=_("Error message if processing failed"),
     )
-    retry_count = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_("Retry Count")
-    )
+    retry_count = models.PositiveIntegerField(default=0, verbose_name=_("Retry Count"))
 
     # Timestamps
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Created At")
-    )
-    processed_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Processed At")
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    processed_at = models.DateTimeField(null=True, blank=True, verbose_name=_("Processed At"))
 
     class Meta:
         verbose_name = _("Subscription Webhook Event")
         verbose_name_plural = _("Subscription Webhook Events")
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         constraints = [
             models.UniqueConstraint(
-                fields=['event_id', 'source'],
-                name='unique_subscription_event'
+                fields=["event_id", "source"], name="unique_subscription_event"
             ),
         ]
         indexes = [
-            models.Index(fields=['-created_at']),
-            models.Index(fields=['status', 'retry_count']),
-            models.Index(fields=['provider_subscription_id', '-created_at']),
+            models.Index(fields=["-created_at"]),
+            models.Index(fields=["status", "retry_count"]),
+            models.Index(fields=["provider_subscription_id", "-created_at"]),
         ]
 
     def __str__(self):

@@ -25,20 +25,24 @@ User = get_user_model()
 
 
 class LoyaltyMemberModelTest(TestCase):
-    """Test LoyaltyMember model"""
+    """Test LoyaltyMember model.
+
+    NOTE: `loyalty.signals.create_loyalty_member_on_signup` auto-creates a
+    LoyaltyMember for every new non-staff user via a User post_save signal.
+    Tests therefore fetch the auto-created member rather than creating a new
+    one (which would trip the OneToOne unique constraint).
+    """
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
+        # Signal auto-creates a LoyaltyMember on user signup.
+        self.member = LoyaltyMember.objects.get(customer=self.user)
 
     def test_create_loyalty_member(self):
         """Test creating a loyalty member"""
-        member = LoyaltyMember.objects.create(
-            customer=self.user,
-        )
+        member = self.member
 
         self.assertEqual(member.customer, self.user)
         self.assertTrue(member.is_active)
@@ -48,49 +52,37 @@ class LoyaltyMemberModelTest(TestCase):
 
     def test_loyalty_member_str(self):
         """Test __str__ method"""
-        member = LoyaltyMember.objects.create(
-            customer=self.user,
-        )
+        member = self.member
         expected = f"{self.user.get_full_name() or self.user.username} - Member #{member.id}"
         self.assertEqual(str(member), expected)
 
     def test_loyalty_member_repr(self):
         """Test __repr__ method"""
-        member = LoyaltyMember.objects.create(
-            customer=self.user,
-        )
-        self.assertIn('LoyaltyMember', repr(member))
+        member = self.member
+        self.assertIn("LoyaltyMember", repr(member))
         self.assertIn(str(member.id), repr(member))
         self.assertIn(self.user.username, repr(member))
 
     def test_one_member_per_customer(self):
         """Test that each customer can only have one loyalty membership"""
-        LoyaltyMember.objects.create(customer=self.user)
-
+        # setUp already produced one member via the signal.
         with self.assertRaises(IntegrityError):
             LoyaltyMember.objects.create(customer=self.user)
 
     def test_uuid_is_unique(self):
         """Test that UUID is unique across members"""
-        member1 = LoyaltyMember.objects.create(
-            customer=self.user,
-        )
+        member1 = self.member
 
         user2 = User.objects.create_user(
-            username='testuser2',
-            email='test2@example.com',
-            password='testpass123'
+            username="testuser2", email="test2@example.com", password="testpass123"
         )
-        member2 = LoyaltyMember.objects.create(
-            customer=user2,
-        )
+        member2 = LoyaltyMember.objects.get(customer=user2)
 
         self.assertNotEqual(member1.uuid, member2.uuid)
 
     def test_cascade_delete_on_user_deletion(self):
         """Test that loyalty member is deleted when user is deleted"""
-        member = LoyaltyMember.objects.create(customer=self.user)
-        member_id = member.id
+        member_id = self.member.id
 
         self.user.delete()
 
@@ -102,11 +94,11 @@ class LoyaltyBalanceModelTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
-        self.member = LoyaltyMember.objects.create(customer=self.user)
+        # Signal auto-creates the LoyaltyMember; a LoyaltyBalance is created
+        # lazily by services, so the balance itself does not exist yet here.
+        self.member = LoyaltyMember.objects.get(customer=self.user)
 
     def test_create_loyalty_balance(self):
         """Test creating a loyalty balance"""
@@ -130,7 +122,7 @@ class LoyaltyBalanceModelTest(TestCase):
             member=self.member,
             available_points=100,
         )
-        self.assertIn('100 points', str(balance))
+        self.assertIn("100 points", str(balance))
 
     def test_balance_repr(self):
         """Test __repr__ method"""
@@ -138,8 +130,8 @@ class LoyaltyBalanceModelTest(TestCase):
             member=self.member,
             available_points=100,
         )
-        self.assertIn('LoyaltyBalance', repr(balance))
-        self.assertIn('available=100', repr(balance))
+        self.assertIn("LoyaltyBalance", repr(balance))
+        self.assertIn("available=100", repr(balance))
 
     def test_total_points_property(self):
         """Test total_points property calculation"""
@@ -184,17 +176,16 @@ class LoyaltyTransactionModelTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
         self.admin_user = User.objects.create_user(
-            username='admin',
-            email='admin@example.com',
-            password='adminpass123',
+            username="admin",
+            email="admin@example.com",
+            password="adminpass123",
             is_staff=True,
         )
-        self.member = LoyaltyMember.objects.create(customer=self.user)
+        # Signal auto-creates the member for the non-staff user.
+        self.member = LoyaltyMember.objects.get(customer=self.user)
 
     def test_create_earn_transaction(self):
         """Test creating an earn transaction"""
@@ -202,10 +193,10 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_EARN,
             points=100,
-            description='Earned 100 points from order #1234',
-            reason='Order #1234',
-            related_object_type='order',
-            related_object_id='1234',
+            description="Earned 100 points from order #1234",
+            reason="Order #1234",
+            related_object_type="order",
+            related_object_id="1234",
         )
 
         self.assertEqual(transaction.member, self.member)
@@ -220,7 +211,7 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_REDEEM,
             points=-50,
-            description='Redeemed 50 points for discount',
+            description="Redeemed 50 points for discount",
             status=LoyaltyTransaction.STATUS_REDEEMED,
         )
 
@@ -234,10 +225,10 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_EARN,
             points=100,
-            description='Test transaction',
+            description="Test transaction",
         )
-        self.assertIn('earn', str(transaction))
-        self.assertIn('100 points', str(transaction))
+        self.assertIn("earn", str(transaction))
+        self.assertIn("100 points", str(transaction))
 
     def test_transaction_immutability(self):
         """Test that transactions cannot be updated after creation"""
@@ -245,7 +236,7 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_EARN,
             points=100,
-            description='Test transaction',
+            description="Test transaction",
         )
 
         # Try to update the transaction
@@ -254,7 +245,7 @@ class LoyaltyTransactionModelTest(TestCase):
         with self.assertRaises(ValueError) as context:
             transaction.save()
 
-        self.assertIn('immutable', str(context.exception).lower())
+        self.assertIn("immutable", str(context.exception).lower())
 
     def test_transaction_with_expiration(self):
         """Test creating transaction with expiration date"""
@@ -264,7 +255,7 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_EARN,
             points=100,
-            description='Points expire in 1 year',
+            description="Points expire in 1 year",
             expires_at=expires_at,
         )
 
@@ -277,14 +268,14 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_EARN,
             points=100,
-            description='Original transaction',
+            description="Original transaction",
         )
 
         reversal = LoyaltyTransaction.objects.create(
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_REVOKE,
             points=-100,
-            description='Reversal of original transaction',
+            description="Reversal of original transaction",
             reversal_of=original,
         )
 
@@ -297,13 +288,13 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_ADJUSTMENT,
             points=50,
-            description='Manual adjustment by admin',
+            description="Manual adjustment by admin",
             created_by=self.admin_user,
-            admin_note='Goodwill gesture for customer complaint',
+            admin_note="Goodwill gesture for customer complaint",
         )
 
         self.assertEqual(transaction.created_by, self.admin_user)
-        self.assertIn('Goodwill', transaction.admin_note)
+        self.assertIn("Goodwill", transaction.admin_note)
 
     def test_protect_on_member_deletion(self):
         """Test that transactions are protected when member is deleted"""
@@ -311,7 +302,7 @@ class LoyaltyTransactionModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_EARN,
             points=100,
-            description='Test transaction',
+            description="Test transaction",
         )
 
         # Attempting to delete member with transactions should fail
@@ -325,39 +316,39 @@ class LoyaltyTierModelTest(TestCase):
     def test_create_tier(self):
         """Test creating a loyalty tier"""
         tier = LoyaltyTier.objects.create(
-            name='Gold',
-            slug='gold',
-            description='Gold tier benefits',
-            icon='fa-medal',
-            color='#FFD700',
+            name="Gold",
+            slug="gold",
+            description="Gold tier benefits",
+            icon="fa-medal",
+            color="#FFD700",
             rank=2,
-            min_spend=Decimal('500.00'),
+            min_spend=Decimal("500.00"),
             min_orders=10,
             min_points_earned=1000,
-            points_multiplier=Decimal('1.5'),
+            points_multiplier=Decimal("1.5"),
             has_free_shipping=True,
         )
 
-        self.assertEqual(tier.name, 'Gold')
-        self.assertEqual(tier.slug, 'gold')
+        self.assertEqual(tier.name, "Gold")
+        self.assertEqual(tier.slug, "gold")
         self.assertEqual(tier.rank, 2)
-        self.assertEqual(tier.points_multiplier, Decimal('1.5'))
+        self.assertEqual(tier.points_multiplier, Decimal("1.5"))
         self.assertTrue(tier.has_free_shipping)
 
     def test_tier_str(self):
         """Test __str__ method"""
         tier = LoyaltyTier.objects.create(
-            name='Silver',
-            slug='silver',
+            name="Silver",
+            slug="silver",
             rank=3,
         )
-        self.assertEqual(str(tier), 'Silver (Rank 3)')
+        self.assertEqual(str(tier), "Silver (Rank 3)")
 
     def test_tier_ordering(self):
         """Test that tiers are ordered by rank"""
-        bronze = LoyaltyTier.objects.create(name='Bronze', slug='bronze', rank=4)
-        platinum = LoyaltyTier.objects.create(name='Platinum', slug='platinum', rank=1)
-        gold = LoyaltyTier.objects.create(name='Gold', slug='gold', rank=2)
+        bronze = LoyaltyTier.objects.create(name="Bronze", slug="bronze", rank=4)
+        platinum = LoyaltyTier.objects.create(name="Platinum", slug="platinum", rank=1)
+        gold = LoyaltyTier.objects.create(name="Gold", slug="gold", rank=2)
 
         tiers = list(LoyaltyTier.objects.all())
         self.assertEqual(tiers[0], platinum)
@@ -366,17 +357,17 @@ class LoyaltyTierModelTest(TestCase):
 
     def test_unique_rank(self):
         """Test that rank must be unique"""
-        LoyaltyTier.objects.create(name='Gold', slug='gold', rank=1)
+        LoyaltyTier.objects.create(name="Gold", slug="gold", rank=1)
 
         with self.assertRaises(IntegrityError):
-            LoyaltyTier.objects.create(name='Silver', slug='silver', rank=1)
+            LoyaltyTier.objects.create(name="Silver", slug="silver", rank=1)
 
     def test_unique_slug(self):
         """Test that slug must be unique"""
-        LoyaltyTier.objects.create(name='Gold', slug='gold-tier', rank=1)
+        LoyaltyTier.objects.create(name="Gold", slug="gold-tier", rank=1)
 
         with self.assertRaises(IntegrityError):
-            LoyaltyTier.objects.create(name='Gold Plus', slug='gold-tier', rank=2)
+            LoyaltyTier.objects.create(name="Gold Plus", slug="gold-tier", rank=2)
 
 
 class LoyaltyBadgeModelTest(TestCase):
@@ -385,48 +376,48 @@ class LoyaltyBadgeModelTest(TestCase):
     def test_create_badge(self):
         """Test creating a loyalty badge"""
         badge = LoyaltyBadge.objects.create(
-            name='First Purchase',
-            slug='first-purchase',
-            description='Awarded on first purchase',
-            icon='fa-star',
-            criteria_type='first_purchase',
+            name="First Purchase",
+            slug="first-purchase",
+            description="Awarded on first purchase",
+            icon="fa-star",
+            criteria_type="first_purchase",
             criteria_value=1,
             points_reward=50,
         )
 
-        self.assertEqual(badge.name, 'First Purchase')
-        self.assertEqual(badge.slug, 'first-purchase')
-        self.assertEqual(badge.criteria_type, 'first_purchase')
+        self.assertEqual(badge.name, "First Purchase")
+        self.assertEqual(badge.slug, "first-purchase")
+        self.assertEqual(badge.criteria_type, "first_purchase")
         self.assertEqual(badge.points_reward, 50)
 
     def test_badge_str(self):
         """Test __str__ method"""
         badge = LoyaltyBadge.objects.create(
-            name='Social Butterfly',
-            slug='social-butterfly',
-            description='Shared 5 times',
-            icon='fa-share',
-            criteria_type='social_share',
+            name="Social Butterfly",
+            slug="social-butterfly",
+            description="Shared 5 times",
+            icon="fa-share",
+            criteria_type="social_share",
             criteria_value=5,
         )
-        self.assertEqual(str(badge), 'Social Butterfly')
+        self.assertEqual(str(badge), "Social Butterfly")
 
     def test_badge_ordering(self):
         """Test that badges are ordered by display_order then name"""
         badge1 = LoyaltyBadge.objects.create(
-            name='Zeta Badge',
-            slug='zeta',
-            description='Test',
-            icon='fa-star',
-            criteria_type='test',
+            name="Zeta Badge",
+            slug="zeta",
+            description="Test",
+            icon="fa-star",
+            criteria_type="test",
             display_order=2,
         )
         badge2 = LoyaltyBadge.objects.create(
-            name='Alpha Badge',
-            slug='alpha',
-            description='Test',
-            icon='fa-star',
-            criteria_type='test',
+            name="Alpha Badge",
+            slug="alpha",
+            description="Test",
+            icon="fa-star",
+            criteria_type="test",
             display_order=1,
         )
 
@@ -440,17 +431,16 @@ class LoyaltyMemberBadgeModelTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser", email="test@example.com", password="testpass123"
         )
-        self.member = LoyaltyMember.objects.create(customer=self.user)
+        # Signal auto-creates the member for the non-staff user.
+        self.member = LoyaltyMember.objects.get(customer=self.user)
         self.badge = LoyaltyBadge.objects.create(
-            name='Test Badge',
-            slug='test-badge',
-            description='Test badge',
-            icon='fa-trophy',
-            criteria_type='test',
+            name="Test Badge",
+            slug="test-badge",
+            description="Test badge",
+            icon="fa-trophy",
+            criteria_type=LoyaltyBadge.CRITERIA_PROGRAM_JOIN,
         )
 
     def test_create_member_badge(self):
@@ -470,7 +460,7 @@ class LoyaltyMemberBadgeModelTest(TestCase):
             member=self.member,
             badge=self.badge,
         )
-        self.assertIn('Test Badge', str(member_badge))
+        self.assertIn("Test Badge", str(member_badge))
 
     def test_unique_badge_per_member(self):
         """Test that a member cannot earn the same badge twice"""
@@ -491,7 +481,7 @@ class LoyaltyMemberBadgeModelTest(TestCase):
             member=self.member,
             transaction_type=LoyaltyTransaction.TYPE_BONUS,
             points=50,
-            description='Badge reward',
+            description="Badge reward",
         )
 
         member_badge = LoyaltyMemberBadge.objects.create(

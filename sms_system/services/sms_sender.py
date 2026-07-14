@@ -3,8 +3,9 @@ SMS Sending Service.
 
 Handles queuing and sending SMS/WhatsApp messages through configured providers.
 """
+
 import logging
-from typing import Dict, Any, Optional
+from typing import Any
 
 from django.utils import timezone
 
@@ -36,8 +37,8 @@ class SMSSendingService:
         phone: str,
         message: str,
         account=None,
-        message_type: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        message_type: str | None = None,
+    ) -> dict[str, Any]:
         """
         Send an SMS message.
 
@@ -50,15 +51,16 @@ class SMSSendingService:
         Returns:
             Dict with success status and details
         """
-        from sms_system.models import SMSProviderAccount, SMSOutbox
+        from sms_system.models import SMSOutbox, SMSProviderAccount
 
         # Check communication preferences if message_type provided
         if message_type:
-            from accounts.services.preference_service import PreferenceService
-            from accounts.models import CustomerProfile
             from django.contrib.auth import get_user_model
 
-            User = get_user_model()
+            from accounts.models import CustomerProfile
+            from accounts.services.preference_service import PreferenceService
+
+            get_user_model()
 
             try:
                 # Try to find user by phone number
@@ -75,18 +77,18 @@ class SMSSendingService:
                         # Create skipped outbox entry for tracking
                         outbox = SMSOutbox.objects.create(
                             account=account or SMSProviderAccount.get_default_sms_account(),
-                            message_type='sms',
+                            message_type="sms",
                             phone=phone,
                             message=message,
-                            status='skipped',
-                            skip_reason='user_preference_disabled',
+                            status="skipped",
+                            skip_reason="user_preference_disabled",
                         )
 
                         return {
-                            'success': False,
-                            'outbox_id': outbox.pk,
-                            'skipped': True,
-                            'reason': 'user_preference_disabled',
+                            "success": False,
+                            "outbox_id": outbox.pk,
+                            "skipped": True,
+                            "reason": "user_preference_disabled",
                         }
 
             except Exception as e:
@@ -101,40 +103,40 @@ class SMSSendingService:
         if not account:
             logger.error("No SMS account configured")
             return {
-                'success': False,
-                'error': 'NO_ACCOUNT',
-                'message': 'No SMS provider account configured',
+                "success": False,
+                "error": "NO_ACCOUNT",
+                "message": "No SMS provider account configured",
             }
 
         # Sandbox mode: enforce SMS whitelist
         from core.sandbox.sms_guard import sandbox_filter_sms_recipient
+
         action, phone = sandbox_filter_sms_recipient(phone)
-        if action == 'log':
+        if action == "log":
             outbox = SMSOutbox.objects.create(
                 account=account,
-                message_type='sms',
+                message_type="sms",
                 phone=phone,
-                message=f'[SANDBOX] {message}',
-                status='sandbox_logged',
+                message=f"[SANDBOX] {message}",
+                status="sandbox_logged",
             )
             logger.info(
-                f"[SANDBOX] SMS to {phone} sandbox-logged "
-                f"(not whitelisted), outbox_id={outbox.pk}"
+                f"[SANDBOX] SMS to {phone} sandbox-logged (not whitelisted), outbox_id={outbox.pk}"
             )
             return {
-                'success': False,
-                'outbox_id': outbox.pk,
-                'skipped': True,
-                'reason': 'sandbox_not_whitelisted',
+                "success": False,
+                "outbox_id": outbox.pk,
+                "skipped": True,
+                "reason": "sandbox_not_whitelisted",
             }
 
         # Create outbox entry
         outbox = SMSOutbox.objects.create(
             account=account,
-            message_type='sms',
+            message_type="sms",
             phone=phone,
             message=message,
-            status='pending',
+            status="pending",
         )
 
         # Send via provider
@@ -142,38 +144,38 @@ class SMSSendingService:
             provider = self._get_provider(account)
             result = provider.send_sms(phone, message)
 
-            if result.get('success'):
-                outbox.mark_sent(result.get('message_id', ''))
+            if result.get("success"):
+                outbox.mark_sent(result.get("message_id", ""))
                 logger.info(f"SMS sent to {phone}, message_id={result.get('message_id')}")
                 return {
-                    'success': True,
-                    'outbox_id': outbox.pk,
-                    'message_id': result.get('message_id'),
+                    "success": True,
+                    "outbox_id": outbox.pk,
+                    "message_id": result.get("message_id"),
                 }
             else:
-                outbox.mark_failed(result.get('error', 'Unknown error'))
+                outbox.mark_failed(result.get("error", "Unknown error"))
                 return {
-                    'success': False,
-                    'outbox_id': outbox.pk,
-                    'error': result.get('error'),
+                    "success": False,
+                    "outbox_id": outbox.pk,
+                    "error": result.get("error"),
                 }
 
         except Exception as e:
             logger.error(f"Failed to send SMS to {phone}: {e}", exc_info=True)
             outbox.mark_failed(str(e))
             return {
-                'success': False,
-                'outbox_id': outbox.pk,
-                'error': str(e),
+                "success": False,
+                "outbox_id": outbox.pk,
+                "error": str(e),
             }
 
     def send_whatsapp(
         self,
         phone: str,
         template_name: str,
-        template_params: Dict[str, str],
+        template_params: dict[str, str],
         account=None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Send a WhatsApp template message.
 
@@ -186,7 +188,7 @@ class SMSSendingService:
         Returns:
             Dict with success status and details
         """
-        from sms_system.models import SMSProviderAccount, SMSOutbox
+        from sms_system.models import SMSOutbox, SMSProviderAccount
 
         # Get account
         if not account:
@@ -195,32 +197,33 @@ class SMSSendingService:
         if not account:
             logger.error("No WhatsApp account configured")
             return {
-                'success': False,
-                'error': 'NO_ACCOUNT',
-                'message': 'No WhatsApp provider account configured',
+                "success": False,
+                "error": "NO_ACCOUNT",
+                "message": "No WhatsApp provider account configured",
             }
 
         # Sandbox mode: enforce SMS whitelist (applies to WhatsApp too)
         from core.sandbox.sms_guard import sandbox_filter_sms_recipient
+
         action, phone = sandbox_filter_sms_recipient(phone)
-        if action == 'log':
+        if action == "log":
             message_preview = f"[SANDBOX] [Template: {template_name}] {template_params}"
             outbox = SMSOutbox.objects.create(
                 account=account,
-                message_type='whatsapp',
+                message_type="whatsapp",
                 phone=phone,
                 message=message_preview,
-                status='sandbox_logged',
+                status="sandbox_logged",
             )
             logger.info(
                 f"[SANDBOX] WhatsApp to {phone} sandbox-logged "
                 f"(not whitelisted), outbox_id={outbox.pk}"
             )
             return {
-                'success': False,
-                'outbox_id': outbox.pk,
-                'skipped': True,
-                'reason': 'sandbox_not_whitelisted',
+                "success": False,
+                "outbox_id": outbox.pk,
+                "skipped": True,
+                "reason": "sandbox_not_whitelisted",
             }
 
         # Build message preview for logging
@@ -229,10 +232,10 @@ class SMSSendingService:
         # Create outbox entry
         outbox = SMSOutbox.objects.create(
             account=account,
-            message_type='whatsapp',
+            message_type="whatsapp",
             phone=phone,
             message=message_preview,
-            status='pending',
+            status="pending",
         )
 
         # Send via provider
@@ -240,38 +243,38 @@ class SMSSendingService:
             provider = self._get_provider(account)
             result = provider.send_whatsapp(phone, template_name, template_params)
 
-            if result.get('success'):
-                outbox.mark_sent(result.get('message_id', ''))
+            if result.get("success"):
+                outbox.mark_sent(result.get("message_id", ""))
                 logger.info(f"WhatsApp sent to {phone}, message_id={result.get('message_id')}")
                 return {
-                    'success': True,
-                    'outbox_id': outbox.pk,
-                    'message_id': result.get('message_id'),
+                    "success": True,
+                    "outbox_id": outbox.pk,
+                    "message_id": result.get("message_id"),
                 }
             else:
-                outbox.mark_failed(result.get('error', 'Unknown error'))
+                outbox.mark_failed(result.get("error", "Unknown error"))
                 return {
-                    'success': False,
-                    'outbox_id': outbox.pk,
-                    'error': result.get('error'),
+                    "success": False,
+                    "outbox_id": outbox.pk,
+                    "error": result.get("error"),
                 }
 
         except Exception as e:
             logger.error(f"Failed to send WhatsApp to {phone}: {e}", exc_info=True)
             outbox.mark_failed(str(e))
             return {
-                'success': False,
-                'outbox_id': outbox.pk,
-                'error': str(e),
+                "success": False,
+                "outbox_id": outbox.pk,
+                "error": str(e),
             }
 
     def send_template_sms(
         self,
         phone: str,
         template_type: str,
-        context: Dict[str, Any],
+        context: dict[str, Any],
         account=None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Send SMS using a template.
 
@@ -295,9 +298,9 @@ class SMSSendingService:
         except SMSTemplate.DoesNotExist:
             logger.error(f"SMS template not found: {template_type}")
             return {
-                'success': False,
-                'error': 'TEMPLATE_NOT_FOUND',
-                'message': f'SMS template not found: {template_type}',
+                "success": False,
+                "error": "TEMPLATE_NOT_FOUND",
+                "message": f"SMS template not found: {template_type}",
             }
 
         # Render message
@@ -306,7 +309,7 @@ class SMSSendingService:
         # Send with message_type for preference checking
         return self.send_sms(phone, message, account, message_type=template_type)
 
-    def test_connection(self, account) -> Dict[str, Any]:
+    def test_connection(self, account) -> dict[str, Any]:
         """
         Test connection to an SMS provider.
 
@@ -321,19 +324,19 @@ class SMSSendingService:
             result = provider.test_connection()
 
             # Update account status
-            account.connection_status = 'success' if result.get('success') else 'failed'
+            account.connection_status = "success" if result.get("success") else "failed"
             account.last_checked = timezone.now()
-            account.save(update_fields=['connection_status', 'last_checked'])
+            account.save(update_fields=["connection_status", "last_checked"])
 
             return result
 
         except Exception as e:
             logger.error(f"Connection test failed for {account}: {e}")
-            account.connection_status = 'failed'
+            account.connection_status = "failed"
             account.last_checked = timezone.now()
-            account.save(update_fields=['connection_status', 'last_checked'])
+            account.save(update_fields=["connection_status", "last_checked"])
 
             return {
-                'success': False,
-                'message': str(e),
+                "success": False,
+                "message": str(e),
             }

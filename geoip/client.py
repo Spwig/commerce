@@ -3,17 +3,17 @@ GeoIP Service Client for Django
 Provides integration with the JWT-authenticated GeoIP service
 """
 
-import json
 import hashlib
+import json
 import logging
-from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
+from typing import Any
 from urllib.parse import urljoin
 
+import jwt
 import requests
 from django.conf import settings
 from django.core.cache import cache
-import jwt
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +23,12 @@ class GeoIPClient:
 
     def __init__(
         self,
-        base_url: Optional[str] = None,
-        jwt_secret: Optional[str] = None,
-        jwt_algorithm: str = 'HS256',
-        jwt_issuer: str = 'spwig-platform',
+        base_url: str | None = None,
+        jwt_secret: str | None = None,
+        jwt_algorithm: str = "HS256",
+        jwt_issuer: str = "spwig-platform",
         timeout: int = 10,
-        cache_prefix: str = 'geoip:'
+        cache_prefix: str = "geoip:",
     ):
         """
         Initialize GeoIP client.
@@ -41,12 +41,13 @@ class GeoIPClient:
             timeout: Request timeout in seconds
             cache_prefix: Cache key prefix
         """
-        self.base_url = base_url or getattr(settings, 'GEOIP_SERVICE_URL', 'http://localhost:8003')
+        self.base_url = base_url or getattr(settings, "GEOIP_SERVICE_URL", "http://localhost:8003")
         # Use platform secrets helper to get JWT secret (checks DB first, then env)
         if jwt_secret:
             self.jwt_secret = jwt_secret
         else:
             from core.platform_secrets import get_geoip_secret
+
             self.jwt_secret = get_geoip_secret()
         self.jwt_algorithm = jwt_algorithm
         self.jwt_issuer = jwt_issuer
@@ -54,16 +55,15 @@ class GeoIPClient:
         self.cache_prefix = cache_prefix
 
         # Get merchant configuration from settings
-        self.merchant_id = getattr(settings, 'MERCHANT_ID', self._generate_merchant_id())
-        self.installation_uuid = getattr(settings, 'INSTALLATION_UUID', 'default')
-        self.tier = getattr(settings, 'GEOIP_TIER', 'standard')
+        self.merchant_id = getattr(settings, "MERCHANT_ID", self._generate_merchant_id())
+        self.installation_uuid = getattr(settings, "INSTALLATION_UUID", "default")
+        self.tier = getattr(settings, "GEOIP_TIER", "standard")
 
         # Session for connection pooling
         self.session = requests.Session()
-        self.session.headers.update({
-            'Content-Type': 'application/json',
-            'User-Agent': 'Spwig-GeoIP-Client/1.0'
-        })
+        self.session.headers.update(
+            {"Content-Type": "application/json", "User-Agent": "Spwig-GeoIP-Client/1.0"}
+        )
 
         # Get or generate JWT token
         self._ensure_token()
@@ -72,17 +72,15 @@ class GeoIPClient:
         """Generate merchant ID from license or domain"""
         # Try to get from license
         try:
-            license_path = '/opt/shop-platform/license/license.json'
-            with open(license_path, 'r') as f:
+            license_path = "/opt/shop-platform/license/license.json"
+            with open(license_path) as f:
                 license_data = json.load(f)
-                return hashlib.sha256(
-                    license_data.get('license_key', '').encode()
-                ).hexdigest()[:16]
-        except:
+                return hashlib.sha256(license_data.get("license_key", "").encode()).hexdigest()[:16]
+        except Exception:
             pass
 
         # Fallback to domain-based ID
-        domain = getattr(settings, 'ALLOWED_HOSTS', ['localhost'])[0]
+        domain = getattr(settings, "ALLOWED_HOSTS", ["localhost"])[0]
         return hashlib.sha256(domain.encode()).hexdigest()[:16]
 
     def _ensure_token(self):
@@ -98,43 +96,39 @@ class GeoIPClient:
             cache.set(cache_key, token, timeout=23 * 3600)
 
         if token:
-            self.session.headers['Authorization'] = f'Bearer {token}'
+            self.session.headers["Authorization"] = f"Bearer {token}"
 
     def _generate_token(self) -> str:
         """Generate JWT token for authentication"""
         now = datetime.utcnow()
         payload = {
-            'iss': self.jwt_issuer,
-            'sub': self.merchant_id,
-            'aud': 'geoip.spwig.com',
-            'exp': (now + timedelta(hours=24)).timestamp(),
-            'iat': now.timestamp(),
-            'installation_uuid': self.installation_uuid,
-            'tier': self.tier,
-            'rate_limit': self._get_rate_limit(),
-            'allowed_operations': self._get_allowed_operations()
+            "iss": self.jwt_issuer,
+            "sub": self.merchant_id,
+            "aud": "geoip.spwig.com",
+            "exp": (now + timedelta(hours=24)).timestamp(),
+            "iat": now.timestamp(),
+            "installation_uuid": self.installation_uuid,
+            "tier": self.tier,
+            "rate_limit": self._get_rate_limit(),
+            "allowed_operations": self._get_allowed_operations(),
         }
         return jwt.encode(payload, self.jwt_secret, algorithm=self.jwt_algorithm)
 
     def _get_rate_limit(self) -> int:
         """Get rate limit based on tier"""
-        limits = {
-            'standard': 1000,
-            'premium': 5000,
-            'enterprise': 20000
-        }
+        limits = {"standard": 1000, "premium": 5000, "enterprise": 20000}
         return limits.get(self.tier, 1000)
 
-    def _get_allowed_operations(self) -> List[str]:
+    def _get_allowed_operations(self) -> list[str]:
         """Get allowed operations based on tier"""
         operations = {
-            'standard': ['lookup', 'asn'],
-            'premium': ['lookup', 'asn', 'bulk'],
-            'enterprise': ['lookup', 'asn', 'bulk', 'analytics']
+            "standard": ["lookup", "asn"],
+            "premium": ["lookup", "asn", "bulk"],
+            "enterprise": ["lookup", "asn", "bulk", "analytics"],
         }
-        return operations.get(self.tier, ['lookup'])
+        return operations.get(self.tier, ["lookup"])
 
-    def lookup_ip(self, ip: str, use_cache: bool = True) -> Optional[Dict[str, Any]]:
+    def lookup_ip(self, ip: str, use_cache: bool = True) -> dict[str, Any] | None:
         """
         Lookup geolocation for a single IP address.
 
@@ -162,23 +156,17 @@ class GeoIPClient:
 
         try:
             # Make API request
-            url = urljoin(self.base_url, '/api/v1/lookup')
-            response = self.session.post(
-                url,
-                json={'ip': ip},
-                timeout=self.timeout
-            )
+            url = urljoin(self.base_url, "/api/v1/lookup")
+            response = self.session.post(url, json={"ip": ip}, timeout=self.timeout)
 
             if response.status_code == 200:
                 data = response.json()
 
                 # Cache result
                 if use_cache:
-                    cache_ttl = {
-                        'standard': 3600,
-                        'premium': 7200,
-                        'enterprise': 14400
-                    }.get(self.tier, 3600)
+                    cache_ttl = {"standard": 3600, "premium": 7200, "enterprise": 14400}.get(
+                        self.tier, 3600
+                    )
                     cache.set(cache_key, data, timeout=cache_ttl)
 
                 return data
@@ -190,20 +178,14 @@ class GeoIPClient:
                 cache.delete(token_cache_key)
                 self._ensure_token()
                 # Retry once with new token
-                response = self.session.post(
-                    url,
-                    json={'ip': ip},
-                    timeout=self.timeout
-                )
+                response = self.session.post(url, json={"ip": ip}, timeout=self.timeout)
                 if response.status_code == 200:
                     data = response.json()
                     if use_cache:
                         ip_cache_key = f"{self.cache_prefix}ip:{ip}"
-                        cache_ttl = {
-                            'standard': 3600,
-                            'premium': 7200,
-                            'enterprise': 14400
-                        }.get(self.tier, 3600)
+                        cache_ttl = {"standard": 3600, "premium": 7200, "enterprise": 14400}.get(
+                            self.tier, 3600
+                        )
                         cache.set(ip_cache_key, data, timeout=cache_ttl)
                     return data
                 return None
@@ -211,13 +193,14 @@ class GeoIPClient:
             elif response.status_code == 429:
                 # Community/paid tier hit its quota — cache the over-limit
                 # state so we short-circuit subsequent calls until reset.
-                retry_after = int(response.headers.get('Retry-After', 60))
+                retry_after = int(response.headers.get("Retry-After", 60))
                 cache.set(over_limit_key, True, timeout=retry_after)
                 # Log at DEBUG (not ERROR) — this is expected behaviour for
                 # Community merchants approaching the tier cap.
                 logger.debug(
                     "GeoIP over tier limit; retry after %ds. Response: %s",
-                    retry_after, response.text[:200],
+                    retry_after,
+                    response.text[:200],
                 )
                 return None
 
@@ -229,7 +212,7 @@ class GeoIPClient:
             logger.error(f"GeoIP request error: {e}")
             return None
 
-    def bulk_lookup(self, ips: List[str]) -> Dict[str, Dict[str, Any]]:
+    def bulk_lookup(self, ips: list[str]) -> dict[str, dict[str, Any]]:
         """
         Bulk lookup for multiple IP addresses.
 
@@ -250,23 +233,23 @@ class GeoIPClient:
             return {}
 
         try:
-            url = urljoin(self.base_url, '/api/v1/bulk')
+            url = urljoin(self.base_url, "/api/v1/bulk")
             response = self.session.post(
                 url,
-                json={'ips': ips},
-                timeout=self.timeout * 2  # Longer timeout for bulk
+                json={"ips": ips},
+                timeout=self.timeout * 2,  # Longer timeout for bulk
             )
 
             if response.status_code == 200:
                 data = response.json()
                 # Convert list to dict keyed by IP
                 result = {}
-                for item in data.get('results', []):
-                    result[item['ip']] = item
+                for item in data.get("results", []):
+                    result[item["ip"]] = item
                 return result
 
             elif response.status_code == 429:
-                retry_after = int(response.headers.get('Retry-After', 60))
+                retry_after = int(response.headers.get("Retry-After", 60))
                 cache.set(over_limit_key, True, timeout=retry_after)
                 logger.debug("GeoIP over tier limit on bulk; retry after %ds", retry_after)
                 return {}
@@ -279,7 +262,7 @@ class GeoIPClient:
             logger.error(f"Bulk lookup error: {e}")
             return {}
 
-    def get_asn_info(self, asn: int) -> Optional[Dict[str, Any]]:
+    def get_asn_info(self, asn: int) -> dict[str, Any] | None:
         """
         Get information about an Autonomous System Number.
 
@@ -296,7 +279,7 @@ class GeoIPClient:
             return cached
 
         try:
-            url = urljoin(self.base_url, f'/api/v1/asn/{asn}')
+            url = urljoin(self.base_url, f"/api/v1/asn/{asn}")
             response = self.session.get(url, timeout=self.timeout)
 
             if response.status_code == 200:
@@ -313,7 +296,7 @@ class GeoIPClient:
             logger.error(f"ASN lookup error: {e}")
             return None
 
-    def get_stats(self) -> Optional[Dict[str, Any]]:
+    def get_stats(self) -> dict[str, Any] | None:
         """
         Get GeoIP database statistics.
 
@@ -321,7 +304,7 @@ class GeoIPClient:
             Dictionary with statistics or None on error
         """
         try:
-            url = urljoin(self.base_url, '/api/v1/stats')
+            url = urljoin(self.base_url, "/api/v1/stats")
             response = self.session.get(url, timeout=self.timeout)
 
             if response.status_code == 200:
@@ -332,7 +315,7 @@ class GeoIPClient:
         except requests.RequestException:
             return None
 
-    def get_usage(self) -> Optional[Dict[str, Any]]:
+    def get_usage(self) -> dict[str, Any] | None:
         """
         Get usage statistics for the merchant.
 
@@ -340,7 +323,7 @@ class GeoIPClient:
             Dictionary with usage stats or None on error
         """
         try:
-            url = urljoin(self.base_url, '/api/v1/usage')
+            url = urljoin(self.base_url, "/api/v1/usage")
             response = self.session.get(url, timeout=self.timeout)
 
             if response.status_code == 200:
@@ -357,7 +340,7 @@ class GeoIPClient:
 
 
 # Convenience function for one-off lookups
-def lookup_ip(ip: str) -> Optional[Dict[str, Any]]:
+def lookup_ip(ip: str) -> dict[str, Any] | None:
     """
     Quick IP lookup using default client.
 

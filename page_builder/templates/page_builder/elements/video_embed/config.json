@@ -13,9 +13,7 @@
   "template_file": "template.html",
   "inherit_base": true,
   "css_files": ["page_builder/css/elements/video-embed.css"],
-  "scripts": [
-    "/static/page_builder/js/elements/video-embed.js"
-  ],
+  "scripts": ["/static/page_builder/js/elements/video-embed.js"],
   "disable_base_properties": ["text_color"],
   "tabs": {
     "basic": {
@@ -32,9 +30,9 @@
               "type": "select",
               "label": "Video Source",
               "options": [
-                {"value": "youtube", "label": "YouTube"},
-                {"value": "vimeo", "label": "Vimeo"},
-                {"value": "self_hosted", "label": "Self-Hosted / URL"}
+                { "value": "youtube", "label": "YouTube" },
+                { "value": "vimeo", "label": "Vimeo" },
+                { "value": "self_hosted", "label": "Self-Hosted / URL" }
               ],
               "default": "youtube"
             },
@@ -42,25 +40,25 @@
               "type": "url",
               "label": "YouTube URL",
               "help_text": "Paste a YouTube video URL (e.g., https://www.youtube.com/watch?v=...)",
-              "show_if": {"source_type": "youtube"}
+              "show_if": { "source_type": "youtube" }
             },
             "vimeo_url": {
               "type": "url",
               "label": "Vimeo URL",
               "help_text": "Paste a Vimeo video URL (e.g., https://vimeo.com/...)",
-              "show_if": {"source_type": "vimeo"}
+              "show_if": { "source_type": "vimeo" }
             },
             "video_url": {
               "type": "url",
               "label": "Video URL",
               "help_text": "Direct URL to video file (MP4, WebM, etc.)",
-              "show_if": {"source_type": "self_hosted"}
+              "show_if": { "source_type": "self_hosted" }
             },
             "poster_image": {
               "type": "image",
               "label": "Poster Image",
               "help_text": "Thumbnail image shown before video plays",
-              "show_if": {"source_type": "self_hosted"}
+              "show_if": { "source_type": "self_hosted" }
             }
           }
         },
@@ -161,12 +159,12 @@
               "type": "select",
               "label": "Aspect Ratio",
               "options": [
-                {"value": "16/9", "label": "16:9 (Widescreen)"},
-                {"value": "4/3", "label": "4:3 (Standard)"},
-                {"value": "21/9", "label": "21:9 (Ultrawide)"},
-                {"value": "1/1", "label": "1:1 (Square)"},
-                {"value": "9/16", "label": "9:16 (Vertical)"},
-                {"value": "auto", "label": "Auto"}
+                { "value": "16/9", "label": "16:9 (Widescreen)" },
+                { "value": "4/3", "label": "4:3 (Standard)" },
+                { "value": "21/9", "label": "21:9 (Ultrawide)" },
+                { "value": "1/1", "label": "1:1 (Square)" },
+                { "value": "9/16", "label": "9:16 (Vertical)" },
+                { "value": "auto", "label": "Auto" }
               ],
               "default": "16/9"
             },
@@ -174,11 +172,11 @@
               "type": "select",
               "label": "Max Width",
               "options": [
-                {"value": "100%", "label": "Full Width"},
-                {"value": "1200px", "label": "1200px"},
-                {"value": "960px", "label": "960px"},
-                {"value": "800px", "label": "800px"},
-                {"value": "640px", "label": "640px"}
+                { "value": "100%", "label": "Full Width" },
+                { "value": "1200px", "label": "1200px" },
+                { "value": "960px", "label": "960px" },
+                { "value": "800px", "label": "800px" },
+                { "value": "640px", "label": "640px" }
               ],
               "default": "100%"
             }
@@ -192,9 +190,9 @@
               "type": "select",
               "label": "Alignment",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "center", "label": "Center"},
-                {"value": "right", "label": "Right"}
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
               ],
               "default": "center"
             }
@@ -208,10 +206,10 @@
               "type": "select",
               "label": "Corners",
               "options": [
-                {"value": "", "label": "Square"},
-                {"value": "sm", "label": "Slightly Rounded"},
-                {"value": "md", "label": "Rounded"},
-                {"value": "lg", "label": "Very Rounded"}
+                { "value": "", "label": "Square" },
+                { "value": "sm", "label": "Slightly Rounded" },
+                { "value": "md", "label": "Rounded" },
+                { "value": "lg", "label": "Very Rounded" }
               ],
               "default": ""
             },
@@ -253,7 +251,7 @@
               "translatable": true,
               "rows": 2,
               "full_width": true,
-              "show_if": {"show_consent": true}
+              "show_if": { "show_consent": true }
             }
           }
         }
@@ -261,35 +259,57 @@
     }
   },
   "properties": {
-    "source_type": {"type": "select", "default": "youtube"},
-    "youtube_url": {"type": "url"},
-    "vimeo_url": {"type": "url"},
-    "video_url": {"type": "url"},
-    "poster_image": {"type": "image"},
-    "title": {"type": "string", "default": "", "translatable": true},
-    "autoplay": {"type": "boolean", "default": false},
-    "muted": {"type": "boolean", "default": false},
-    "loop": {"type": "boolean", "default": false},
-    "controls": {"type": "boolean", "default": true},
-    "start_time": {"type": "number", "default": 0},
-    "lazy_load": {"type": "boolean", "default": true},
-    "play_inline": {"type": "boolean", "default": true},
-    "aspect_ratio": {"type": "select", "default": "16/9"},
-    "max_width": {"type": "select", "default": "100%"},
-    "alignment": {"type": "select", "default": "center"},
-    "rounded": {"type": "select", "default": ""},
-    "shadow": {"type": "boolean", "default": false},
-    "use_nocookie": {"type": "boolean", "default": true},
-    "show_consent": {"type": "boolean", "default": false},
-    "consent_message": {"type": "textarea", "default": "Click to load video. This will connect to third-party servers.", "translatable": true}
+    "source_type": { "type": "select", "default": "youtube" },
+    "youtube_url": { "type": "url" },
+    "vimeo_url": { "type": "url" },
+    "video_url": { "type": "url" },
+    "poster_image": { "type": "image" },
+    "title": { "type": "string", "default": "", "translatable": true },
+    "autoplay": { "type": "boolean", "default": false },
+    "muted": { "type": "boolean", "default": false },
+    "loop": { "type": "boolean", "default": false },
+    "controls": { "type": "boolean", "default": true },
+    "start_time": { "type": "number", "default": 0 },
+    "lazy_load": { "type": "boolean", "default": true },
+    "play_inline": { "type": "boolean", "default": true },
+    "aspect_ratio": { "type": "select", "default": "16/9" },
+    "max_width": { "type": "select", "default": "100%" },
+    "alignment": { "type": "select", "default": "center" },
+    "rounded": { "type": "select", "default": "" },
+    "shadow": { "type": "boolean", "default": false },
+    "use_nocookie": { "type": "boolean", "default": true },
+    "show_consent": { "type": "boolean", "default": false },
+    "consent_message": {
+      "type": "textarea",
+      "default": "Click to load video. This will connect to third-party servers.",
+      "translatable": true
+    }
   },
   "translations": {
-    "en": {"name": "Video Embed", "description": "Embed videos from YouTube, Vimeo, or self-hosted sources"},
-    "es": {"name": "Video Incrustado", "description": "Incruste videos de YouTube, Vimeo o fuentes propias"},
-    "fr": {"name": "Vidéo Intégrée", "description": "Intégrez des vidéos YouTube, Vimeo ou auto-hébergées"},
-    "de": {"name": "Video Einbetten", "description": "Betten Sie Videos von YouTube, Vimeo oder selbst gehosteten Quellen ein"},
-    "pt": {"name": "Vídeo Incorporado", "description": "Incorpore vídeos do YouTube, Vimeo ou fontes próprias"},
-    "zh-hans": {"name": "视频嵌入", "description": "嵌入YouTube、Vimeo或自托管视频"},
-    "ja": {"name": "動画埋め込み", "description": "YouTube、Vimeo、または自己ホスト動画を埋め込む"}
+    "en": {
+      "name": "Video Embed",
+      "description": "Embed videos from YouTube, Vimeo, or self-hosted sources"
+    },
+    "es": {
+      "name": "Video Incrustado",
+      "description": "Incruste videos de YouTube, Vimeo o fuentes propias"
+    },
+    "fr": {
+      "name": "Vidéo Intégrée",
+      "description": "Intégrez des vidéos YouTube, Vimeo ou auto-hébergées"
+    },
+    "de": {
+      "name": "Video Einbetten",
+      "description": "Betten Sie Videos von YouTube, Vimeo oder selbst gehosteten Quellen ein"
+    },
+    "pt": {
+      "name": "Vídeo Incorporado",
+      "description": "Incorpore vídeos do YouTube, Vimeo ou fontes próprias"
+    },
+    "zh-hans": { "name": "视频嵌入", "description": "嵌入YouTube、Vimeo或自托管视频" },
+    "ja": {
+      "name": "動画埋め込み",
+      "description": "YouTube、Vimeo、または自己ホスト動画を埋め込む"
+    }
   }
 }

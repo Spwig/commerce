@@ -1,17 +1,25 @@
 """
 Subscription API Serializers
 """
-from rest_framework import serializers
+
+import logging
+from decimal import Decimal, InvalidOperation
+
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from .models import (
-    SubscriptionPlan,
-    PlanPricingTier,
-    PaymentToken,
-    CustomerSubscription,
-    BillingCycleLog
-)
+from rest_framework import serializers
+
 from payment_providers.models import PaymentProviderAccount
+
+logger = logging.getLogger(__name__)
+
+from .models import (
+    BillingCycleLog,
+    CustomerSubscription,
+    PaymentToken,
+    PlanPricingTier,
+    SubscriptionPlan,
+)
 from .provider_base import is_subscription_supported
 
 User = get_user_model()
@@ -21,25 +29,24 @@ class PlanPricingTierSerializer(serializers.ModelSerializer):
     """Serializer for pricing tiers (shows discount applied to product prices)"""
 
     billing_cycle_display = serializers.CharField(
-        source='get_billing_cycle_display',
-        read_only=True
+        source="get_billing_cycle_display", read_only=True
     )
 
     class Meta:
         model = PlanPricingTier
         fields = [
-            'tier_id',
-            'tier_name',
-            'billing_cycle',
-            'billing_cycle_display',
-            'billing_interval',
-            'discount_percentage',  # Discount applied to product price
-            'is_default',
-            'is_active',
+            "tier_id",
+            "tier_name",
+            "billing_cycle",
+            "billing_cycle_display",
+            "billing_interval",
+            "discount_percentage",  # Discount applied to product price
+            "is_default",
+            "is_active",
         ]
         read_only_fields = [
-            'tier_id',
-            'billing_cycle_display',
+            "tier_id",
+            "billing_cycle_display",
         ]
 
 
@@ -52,31 +59,31 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubscriptionPlan
         fields = [
-            'plan_id',
-            'name',
-            'slug',
-            'description',
-            'pricing_model',
-            'pricing_tiers',  # Available pricing tiers with discounts
-            'allow_quantity',
-            'minimum_quantity',
-            'maximum_quantity',
-            'trial_period_days',
-            'trial_price',
-            'trial_price_currency',
-            'trial_available',
-            'cancellation_policy',
-            'minimum_commitment_cycles',
-            'max_billing_cycles',
-            'is_active',
-            'is_public',
-            'created_at',
+            "plan_id",
+            "name",
+            "slug",
+            "description",
+            "pricing_model",
+            "pricing_tiers",  # Available pricing tiers with discounts
+            "allow_quantity",
+            "minimum_quantity",
+            "maximum_quantity",
+            "trial_period_days",
+            "trial_price",
+            "trial_price_currency",
+            "trial_available",
+            "cancellation_policy",
+            "minimum_commitment_cycles",
+            "max_billing_cycles",
+            "is_active",
+            "is_public",
+            "created_at",
         ]
         read_only_fields = [
-            'plan_id',
-            'trial_available',
-            'pricing_tiers',
-            'created_at',
+            "plan_id",
+            "trial_available",
+            "pricing_tiers",
+            "created_at",
         ]
 
     def get_trial_available(self, obj):
@@ -89,38 +96,40 @@ class PaymentTokenSerializer(serializers.ModelSerializer):
 
     payment_method_display = serializers.SerializerMethodField()
     is_expired = serializers.BooleanField(read_only=True)
-    provider_account_name = serializers.CharField(source='provider_account.display_name', read_only=True)
+    provider_account_name = serializers.CharField(
+        source="provider_account.display_name", read_only=True
+    )
 
     class Meta:
         model = PaymentToken
         fields = [
-            'token_id',
-            'provider_account',
-            'provider_account_name',
-            'payment_method_type',
-            'payment_method_display',
-            'card_brand',
-            'card_last4',
-            'card_exp_month',
-            'card_exp_year',
-            'is_default',
-            'is_active',
-            'is_verified',
-            'is_expired',
-            'created_at',
+            "token_id",
+            "provider_account",
+            "provider_account_name",
+            "payment_method_type",
+            "payment_method_display",
+            "card_brand",
+            "card_last4",
+            "card_exp_month",
+            "card_exp_year",
+            "is_default",
+            "is_active",
+            "is_verified",
+            "is_expired",
+            "created_at",
         ]
         read_only_fields = [
-            'token_id',
-            'payment_method_display',
-            'is_expired',
-            'provider_account_name',
-            'created_at',
+            "token_id",
+            "payment_method_display",
+            "is_expired",
+            "provider_account_name",
+            "created_at",
         ]
 
     def get_payment_method_display(self, obj):
         """Get display string for payment method"""
-        if obj.payment_method_type == 'card':
-            brand = obj.card_brand.upper() if obj.card_brand else 'Card'
+        if obj.payment_method_type == "card":
+            brand = obj.card_brand.upper() if obj.card_brand else "Card"
             return f"{brand} •••• {obj.card_last4}"
         return obj.get_payment_method_type_display()
 
@@ -128,42 +137,39 @@ class PaymentTokenSerializer(serializers.ModelSerializer):
 class BillingCycleLogSerializer(serializers.ModelSerializer):
     """Serializer for billing cycle logs"""
 
-    status_display = serializers.CharField(
-        source='get_status_display',
-        read_only=True
-    )
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
 
     can_retry = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = BillingCycleLog
         fields = [
-            'id',
-            'cycle_number',
-            'billing_date',
-            'total_amount',
-            'total_amount_currency',
-            'status',
-            'status_display',
-            'retry_count',
-            'max_retries',
-            'can_retry',
-            'next_retry_date',
-            'error_message',
-            'error_code',
+            "id",
+            "cycle_number",
+            "billing_date",
+            "total_amount",
+            "total_amount_currency",
+            "status",
+            "status_display",
+            "retry_count",
+            "max_retries",
+            "can_retry",
+            "next_retry_date",
+            "error_message",
+            "error_code",
         ]
         read_only_fields = (
-            'id',
-            'cycle_number',
-            'billing_date',
-            'total_amount',
-            'total_amount_currency',
-            'status',
-            'retry_count',
-            'max_retries',
-            'next_retry_date',
-            'error_message',
-            'error_code',
+            "id",
+            "cycle_number",
+            "billing_date",
+            "total_amount",
+            "total_amount_currency",
+            "status",
+            "retry_count",
+            "max_retries",
+            "next_retry_date",
+            "error_message",
+            "error_code",
         )
 
 
@@ -173,131 +179,138 @@ class CustomerSubscriptionSerializer(serializers.ModelSerializer):
     plan = SubscriptionPlanSerializer(read_only=True)
     payment_token = PaymentTokenSerializer(read_only=True)
 
-    status_display = serializers.CharField(
-        source='get_status_display',
-        read_only=True
-    )
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
     provider_mode_display = serializers.CharField(
-        source='get_provider_mode_display',
-        read_only=True
+        source="get_provider_mode_display", read_only=True
     )
     provider_account_name = serializers.CharField(
-        source='payment_provider_account.display_name',
-        read_only=True
+        source="payment_provider_account.display_name", read_only=True
     )
     days_until_next_billing = serializers.IntegerField(read_only=True)
-    total_amount_paid = serializers.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        read_only=True
-    )
+    total_amount_paid = serializers.SerializerMethodField()
     is_active_or_trial = serializers.SerializerMethodField()
     cancel_at_period_end = serializers.SerializerMethodField(
         help_text=_("Whether subscription will cancel at end of current period")
     )
     has_scheduled_plan_change = serializers.BooleanField(read_only=True)
     scheduled_plan_change = serializers.JSONField(read_only=True)
-    proration_credit = serializers.DecimalField(
-        max_digits=10, decimal_places=2, read_only=True
-    )
+    proration_credit = serializers.SerializerMethodField()
     proration_credit_currency = serializers.CharField(read_only=True)
     can_reactivate = serializers.SerializerMethodField()
 
     # Product information (optional)
-    product_name = serializers.CharField(
-        source='product.name',
-        read_only=True,
-        allow_null=True
-    )
-    variant_name = serializers.CharField(
-        source='variant.name',
-        read_only=True,
-        allow_null=True
-    )
+    product_name = serializers.CharField(source="product.name", read_only=True, allow_null=True)
+    variant_name = serializers.CharField(source="variant.name", read_only=True, allow_null=True)
 
     class Meta:
         model = CustomerSubscription
         fields = [
-            'subscription_id',
-            'plan',
-            'product_name',
-            'variant_name',
-            'payment_provider_account',
-            'provider_account_name',
-            'payment_token',
-            'provider_mode',
-            'provider_mode_display',
-            'provider_subscription_id',
-            'status',
-            'status_display',
-            'current_period_start',
-            'current_period_end',
-            'next_billing_date',
-            'days_until_next_billing',
-            'trial_end_date',
-            'billing_cycle_count',
-            'last_billing_date',
-            'last_billing_status',
-            'total_amount_paid',
-            'cancel_at_period_end',
-            'canceled_at',
-            'cancellation_reason',
-            'paused_at',
-            'pause_reason',
-            'auto_resume_date',
-            'has_scheduled_plan_change',
-            'scheduled_plan_change',
-            'proration_credit',
-            'proration_credit_currency',
-            'reactivation_deadline',
-            'can_reactivate',
-            'is_active_or_trial',
-            'created_at',
-            'updated_at',
+            "subscription_id",
+            "plan",
+            "product_name",
+            "variant_name",
+            "payment_provider_account",
+            "provider_account_name",
+            "payment_token",
+            "provider_mode",
+            "provider_mode_display",
+            "provider_subscription_id",
+            "status",
+            "status_display",
+            "current_period_start",
+            "current_period_end",
+            "next_billing_date",
+            "days_until_next_billing",
+            "trial_end_date",
+            "billing_cycle_count",
+            "last_billing_date",
+            "last_billing_status",
+            "total_amount_paid",
+            "cancel_at_period_end",
+            "canceled_at",
+            "cancellation_reason",
+            "paused_at",
+            "pause_reason",
+            "auto_resume_date",
+            "has_scheduled_plan_change",
+            "scheduled_plan_change",
+            "proration_credit",
+            "proration_credit_currency",
+            "reactivation_deadline",
+            "can_reactivate",
+            "is_active_or_trial",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'subscription_id',
-            'provider_subscription_id',
-            'status',
-            'status_display',
-            'provider_mode',
-            'provider_mode_display',
-            'current_period_start',
-            'current_period_end',
-            'next_billing_date',
-            'days_until_next_billing',
-            'trial_end_date',
-            'billing_cycle_count',
-            'last_billing_date',
-            'last_billing_status',
-            'total_amount_paid',
-            'canceled_at',
-            'paused_at',
-            'has_scheduled_plan_change',
-            'scheduled_plan_change',
-            'proration_credit',
-            'proration_credit_currency',
-            'reactivation_deadline',
-            'can_reactivate',
-            'is_active_or_trial',
-            'provider_account_name',
-            'product_name',
-            'variant_name',
-            'created_at',
-            'updated_at',
+            "subscription_id",
+            "provider_subscription_id",
+            "status",
+            "status_display",
+            "provider_mode",
+            "provider_mode_display",
+            "current_period_start",
+            "current_period_end",
+            "next_billing_date",
+            "days_until_next_billing",
+            "trial_end_date",
+            "billing_cycle_count",
+            "last_billing_date",
+            "last_billing_status",
+            "total_amount_paid",
+            "canceled_at",
+            "paused_at",
+            "has_scheduled_plan_change",
+            "scheduled_plan_change",
+            "proration_credit",
+            "proration_credit_currency",
+            "reactivation_deadline",
+            "can_reactivate",
+            "is_active_or_trial",
+            "provider_account_name",
+            "product_name",
+            "variant_name",
+            "created_at",
+            "updated_at",
         ]
 
     def get_is_active_or_trial(self, obj):
         """Check if subscription is in active or trial status"""
-        return obj.status in ('active', 'trial')
+        return obj.status in ("active", "trial")
 
     def get_cancel_at_period_end(self, obj):
         """Check if subscription will cancel at end of current period"""
-        return obj.cancellation_type == 'end_of_period'
+        return obj.cancellation_type == "end_of_period"
 
     def get_can_reactivate(self, obj):
         """Check if canceled subscription can be reactivated"""
         return obj.can_reactivate()
+
+    def get_total_amount_paid(self, obj):
+        """Total paid across successful billing cycles, as a decimal string.
+
+        `CustomerSubscription.total_amount_paid` returns Money when there are
+        successful billing logs and Decimal("0.00") when there are none, so
+        unwrap `.amount` where present. Coerce to Decimal so a future drift
+        in the model's return type (e.g. None, str) surfaces as a warning
+        rather than an HTTP 500 in DRF's rendering pipeline.
+        """
+        value = obj.total_amount_paid()
+        amount = getattr(value, "amount", value)
+        try:
+            return f"{Decimal(amount):.2f}"
+        except (TypeError, InvalidOperation):
+            logger.warning(
+                "CustomerSubscription.total_amount_paid returned non-numeric value "
+                "(%r) for subscription %s; falling back to 0.00",
+                value,
+                obj.subscription_id,
+            )
+            return "0.00"
+
+    def get_proration_credit(self, obj):
+        """Proration credit amount (unwrapped from MoneyField), as a decimal string."""
+        return f"{obj.proration_credit.amount:.2f}"
 
 
 class CreateSubscriptionSerializer(serializers.Serializer):
@@ -340,7 +353,7 @@ class CreateSubscriptionSerializer(serializers.Serializer):
 
     def validate_payment_token_id(self, value):
         """Validate payment token exists and is active"""
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         try:
             token = PaymentToken.objects.get(token_id=value, user=user)
@@ -359,47 +372,42 @@ class CreateSubscriptionSerializer(serializers.Serializer):
         """Cross-field validation"""
         # Validate pricing tier belongs to plan
         try:
-            plan = SubscriptionPlan.objects.get(plan_id=data['plan_id'])
-            tier = PlanPricingTier.objects.get(tier_id=data['pricing_tier_id'])
+            plan = SubscriptionPlan.objects.get(plan_id=data["plan_id"])
+            tier = PlanPricingTier.objects.get(tier_id=data["pricing_tier_id"])
 
             if tier.plan != plan:
-                raise serializers.ValidationError({
-                    'pricing_tier_id': "Pricing tier does not belong to the specified plan"
-                })
+                raise serializers.ValidationError(
+                    {"pricing_tier_id": "Pricing tier does not belong to the specified plan"}
+                )
         except (SubscriptionPlan.DoesNotExist, PlanPricingTier.DoesNotExist):
             pass  # Already validated in field validators
 
         # Validate product exists and is active
         from catalog.models import Product
+
         try:
-            product = Product.objects.get(id=data['product_id'])
+            product = Product.objects.get(id=data["product_id"])
 
             if not product.is_active:
-                raise serializers.ValidationError({
-                    'product_id': "Product is not active"
-                })
+                raise serializers.ValidationError({"product_id": "Product is not active"})
 
             # If variant specified, ensure it belongs to the product
-            if data.get('variant_id'):
+            if data.get("variant_id"):
                 from catalog.models import ProductVariant
+
                 try:
-                    variant = ProductVariant.objects.get(
-                        id=data['variant_id'],
-                        product=product
-                    )
+                    variant = ProductVariant.objects.get(id=data["variant_id"], product=product)
                     if not variant.is_active:
-                        raise serializers.ValidationError({
-                            'variant_id': "Product variant is not active"
-                        })
+                        raise serializers.ValidationError(
+                            {"variant_id": "Product variant is not active"}
+                        )
                 except ProductVariant.DoesNotExist:
-                    raise serializers.ValidationError({
-                        'variant_id': "Variant does not belong to the specified product"
-                    })
+                    raise serializers.ValidationError(
+                        {"variant_id": "Variant does not belong to the specified product"}
+                    )
 
         except Product.DoesNotExist:
-            raise serializers.ValidationError({
-                'product_id': "Product not found"
-            })
+            raise serializers.ValidationError({"product_id": "Product not found"})
 
         return data
 
@@ -425,7 +433,7 @@ class UpdatePaymentMethodSerializer(serializers.Serializer):
 
     def validate_payment_token_id(self, value):
         """Validate payment token exists and is active"""
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         try:
             token = PaymentToken.objects.get(token_id=value, user=user)
@@ -447,10 +455,12 @@ class ChangePlanSerializer(serializers.Serializer):
     new_plan_id = serializers.UUIDField(required=True)
     new_tier_id = serializers.UUIDField(required=True)
     mode = serializers.ChoiceField(
-        choices=['auto', 'immediate', 'at_renewal'],
-        default='auto',
+        choices=["auto", "immediate", "at_renewal"],
+        default="auto",
         required=False,
-        help_text=_("'auto' uses plan-configured behavior, 'immediate' forces immediate change, 'at_renewal' defers to next billing cycle")
+        help_text=_(
+            "'auto' uses plan-configured behavior, 'immediate' forces immediate change, 'at_renewal' defers to next billing cycle"
+        ),
     )
 
     def validate_new_plan_id(self, value):
@@ -480,13 +490,13 @@ class ChangePlanSerializer(serializers.Serializer):
     def validate(self, data):
         """Cross-field validation: tier must belong to plan"""
         try:
-            plan = SubscriptionPlan.objects.get(plan_id=data['new_plan_id'])
-            tier = PlanPricingTier.objects.get(tier_id=data['new_tier_id'])
+            plan = SubscriptionPlan.objects.get(plan_id=data["new_plan_id"])
+            tier = PlanPricingTier.objects.get(tier_id=data["new_tier_id"])
 
             if tier.plan != plan:
-                raise serializers.ValidationError({
-                    'new_tier_id': "Pricing tier does not belong to the specified plan"
-                })
+                raise serializers.ValidationError(
+                    {"new_tier_id": "Pricing tier does not belong to the specified plan"}
+                )
         except (SubscriptionPlan.DoesNotExist, PlanPricingTier.DoesNotExist):
             pass  # Already validated in field validators
 
@@ -495,6 +505,7 @@ class ChangePlanSerializer(serializers.Serializer):
 
 class CancelScheduledChangeSerializer(serializers.Serializer):
     """Serializer for canceling a scheduled plan change (empty body, POST only)"""
+
     pass
 
 
@@ -504,7 +515,7 @@ class ReactivateSubscriptionSerializer(serializers.Serializer):
     payment_token_id = serializers.UUIDField(
         required=False,
         allow_null=True,
-        help_text=_("Optional new payment token. Uses existing token if not provided.")
+        help_text=_("Optional new payment token. Uses existing token if not provided."),
     )
 
     def validate_payment_token_id(self, value):
@@ -512,7 +523,7 @@ class ReactivateSubscriptionSerializer(serializers.Serializer):
         if value is None:
             return value
 
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         try:
             token = PaymentToken.objects.get(token_id=value, user=user)

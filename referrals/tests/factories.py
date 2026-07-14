@@ -3,19 +3,21 @@ Test Data Factories
 
 Helper functions to create test instances for referral program testing.
 """
+
 from decimal import Decimal
+
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from datetime import timedelta
+
+from orders.models import Order
 
 from ..models import (
-    ReferralProgram,
-    ReferralIdentity,
     ReferralAttribution,
-    ReferralReward,
     ReferralEvent,
+    ReferralIdentity,
+    ReferralProgram,
+    ReferralReward,
 )
-from orders.models import Order
 
 User = get_user_model()
 
@@ -24,13 +26,14 @@ def create_user(email=None, **kwargs):
     """Create a test user."""
     if email is None:
         import uuid
+
         email = f"user_{uuid.uuid4().hex[:8]}@example.com"
 
     defaults = {
-        'username': email,
-        'email': email,
-        'first_name': 'Test',
-        'last_name': 'User',
+        "username": email,
+        "email": email,
+        "first_name": "Test",
+        "last_name": "User",
     }
     defaults.update(kwargs)
 
@@ -40,37 +43,31 @@ def create_user(email=None, **kwargs):
 def create_referral_program(**kwargs):
     """Create a test referral program."""
     defaults = {
-        'name': 'Test Referral Program',
-        'status': 'active',
-        'reward_config': {
-            'referrer': {
-                'kind': 'credit',
-                'amount': 10.00
-            },
-            'referee': {
-                'kind': 'coupon',
-                'amount': 10.00
-            }
+        "name": "Test Referral Program",
+        "status": "active",
+        "reward_config": {
+            "referrer": {"kind": "credit", "amount": 10.00},
+            "referee": {"kind": "coupon", "amount": 10.00},
         },
-        'terms_and_conditions': 'Test terms',
-        'eligibility_rules': {
-            'new_customer_only': True,
-            'min_order_value': 0,
+        "terms_and_conditions": "Test terms",
+        "eligibility_rules": {
+            "new_customer_only": True,
+            "min_order_value": 0,
         },
-        'caps_config': {
-            'referrer_monthly_cap': 10,
-            'referrer_lifetime_cap': 100,
+        "caps_config": {
+            "referrer_monthly_cap": 10,
+            "referrer_lifetime_cap": 100,
         },
-        'fraud_policy': {
-            'auto_approve_threshold': 30,
-            'auto_reject_threshold': 90,
-            'require_manual_review': True,
+        "fraud_policy": {
+            "auto_approve_threshold": 30,
+            "auto_reject_threshold": 90,
+            "require_manual_review": True,
         },
-        'tracking_config': {
-            'cookie_ttl_days': 30,
+        "tracking_config": {
+            "cookie_ttl_days": 30,
         },
-        'timing_config': {
-            'reward_on': 'first_purchase',
+        "timing_config": {
+            "reward_on": "first_purchase",
         },
     }
     defaults.update(kwargs)
@@ -87,14 +84,14 @@ def create_referral_identity(customer=None, **kwargs):
         customer = create_user()
 
     defaults = {
-        'customer': customer,
+        "customer": customer,
     }
     defaults.update(kwargs)
 
     return ReferralIdentity.objects.create(**defaults)
 
 
-def create_referral_event(referrer_identity=None, event_type='click', program=None, **kwargs):
+def create_referral_event(referrer_identity=None, event_type="click", program=None, **kwargs):
     """Create a test referral event."""
     if referrer_identity is None:
         referrer_identity = create_referral_identity()
@@ -103,12 +100,12 @@ def create_referral_event(referrer_identity=None, event_type='click', program=No
         program = create_referral_program()
 
     defaults = {
-        'program': program,
-        'referrer_identity': referrer_identity,
-        'event_type': event_type,
-        'ip_address': '192.168.1.1',
-        'user_agent': 'Mozilla/5.0',
-        'metadata': {},
+        "program": program,
+        "referrer_identity": referrer_identity,
+        "event_type": event_type,
+        "ip_address": "192.168.1.1",
+        "user_agent": "Mozilla/5.0",
+        "metadata": {},
     }
     defaults.update(kwargs)
 
@@ -121,18 +118,18 @@ def create_order(user=None, **kwargs):
         user = create_user()
 
     defaults = {
-        'user': user,
-        'status': 'delivered',
-        'total_amount': Decimal('50.00'),
-        'order_number': f'ORDER-{user.id}-{timezone.now().timestamp()}',
-        'email': user.email,
-        'shipping_name': user.get_full_name() or user.email,
-        'shipping_address1': '123 Test St',
-        'shipping_city': 'Test City',
-        'shipping_state': 'TS',
-        'shipping_postal_code': '12345',
-        'shipping_country': 'US',
-        'subtotal': Decimal('50.00'),
+        "user": user,
+        "status": "delivered",
+        "total_amount": Decimal("50.00"),
+        "order_number": f"ORDER-{user.id}-{timezone.now().timestamp()}",
+        "email": user.email,
+        "shipping_name": user.get_full_name() or user.email,
+        "shipping_address1": "123 Test St",
+        "shipping_city": "Test City",
+        "shipping_state": "TS",
+        "shipping_postal_code": "12345",
+        "shipping_country": "US",
+        "subtotal": Decimal("50.00"),
     }
     defaults.update(kwargs)
 
@@ -140,11 +137,7 @@ def create_order(user=None, **kwargs):
 
 
 def create_referral_attribution(
-    referrer_identity=None,
-    referee_customer=None,
-    first_order=None,
-    program=None,
-    **kwargs
+    referrer_identity=None, referee_customer=None, first_order=None, program=None, **kwargs
 ):
     """Create a test referral attribution."""
     if referrer_identity is None:
@@ -160,15 +153,15 @@ def create_referral_attribution(
         program = create_referral_program()
 
     defaults = {
-        'program': program,
-        'referrer_identity': referrer_identity,
-        'referee_customer': referee_customer,
-        'first_order': first_order,
-        'status': 'pending',
-        'risk_score': 25,
-        'validation_data': {
-            'ref_token': referrer_identity.token,
-            'clicked_at': timezone.now().isoformat(),
+        "program": program,
+        "referrer_identity": referrer_identity,
+        "referee_customer": referee_customer,
+        "first_order": first_order,
+        "status": "pending",
+        "risk_score": 25,
+        "validation_data": {
+            "ref_token": referrer_identity.token,
+            "clicked_at": timezone.now().isoformat(),
         },
     }
     defaults.update(kwargs)
@@ -176,12 +169,7 @@ def create_referral_attribution(
     return ReferralAttribution.objects.create(**defaults)
 
 
-def create_referral_reward(
-    attribution=None,
-    customer=None,
-    program=None,
-    **kwargs
-):
+def create_referral_reward(attribution=None, customer=None, program=None, **kwargs):
     """Create a test referral reward."""
     if attribution is None:
         attribution = create_referral_attribution()
@@ -193,14 +181,14 @@ def create_referral_reward(
         program = attribution.program
 
     defaults = {
-        'program': program,
-        'attribution': attribution,
-        'customer': customer,
-        'referrer_identity': attribution.referrer_identity,
-        'recipient_type': 'referrer',
-        'kind': 'credit',
-        'amount': Decimal('10.00'),
-        'status': 'pending',
+        "program": program,
+        "attribution": attribution,
+        "customer": customer,
+        "referrer_identity": attribution.referrer_identity,
+        "recipient_type": "referrer",
+        "kind": "credit",
+        "amount": Decimal("10.00"),
+        "status": "pending",
     }
     defaults.update(kwargs)
 
@@ -226,19 +214,19 @@ def create_complete_referral_flow():
     program = create_referral_program()
 
     # Create referrer
-    referrer = create_user(email='referrer@example.com')
+    referrer = create_user(email="referrer@example.com")
     referrer_identity = create_referral_identity(customer=referrer)
 
     # Create referee
-    referee = create_user(email='referee@example.com')
-    order = create_order(user=referee, total_amount=Decimal('100.00'))
+    referee = create_user(email="referee@example.com")
+    order = create_order(user=referee, total_amount=Decimal("100.00"))
 
     # Create attribution (approved)
     attribution = create_referral_attribution(
         referrer_identity=referrer_identity,
         referee_customer=referee,
         first_order=order,
-        status='approved',
+        status="approved",
         risk_score=15,
     )
 
@@ -247,29 +235,29 @@ def create_complete_referral_flow():
         attribution=attribution,
         customer=referrer,
         referrer_identity=referrer_identity,
-        recipient_type='referrer',
-        kind='credit',
-        amount=Decimal('10.00'),
-        status='issued',
+        recipient_type="referrer",
+        kind="credit",
+        amount=Decimal("10.00"),
+        status="issued",
     )
 
     referee_reward = create_referral_reward(
         attribution=attribution,
         customer=referee,
         referrer_identity=None,
-        recipient_type='referee',
-        kind='coupon',
-        amount=Decimal('10.00'),
-        status='issued',
+        recipient_type="referee",
+        kind="coupon",
+        amount=Decimal("10.00"),
+        status="issued",
     )
 
     return {
-        'program': program,
-        'referrer': referrer,
-        'referrer_identity': referrer_identity,
-        'referee': referee,
-        'order': order,
-        'attribution': attribution,
-        'referrer_reward': referrer_reward,
-        'referee_reward': referee_reward,
+        "program": program,
+        "referrer": referrer,
+        "referrer_identity": referrer_identity,
+        "referee": referee,
+        "order": order,
+        "attribution": attribution,
+        "referrer_reward": referrer_reward,
+        "referee_reward": referee_reward,
     }

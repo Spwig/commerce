@@ -10,10 +10,13 @@ Automatically selects optimal shipping packages for cart items based on:
 Supports both single-item and multi-item packing scenarios.
 """
 
-from decimal import Decimal
-from typing import List, Dict, Optional, Tuple
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
+from decimal import Decimal
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from shipping.models import ShippingPackage
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +24,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class PackableItem:
     """Represents an item to be packed"""
+
     id: str  # Unique identifier (e.g., "product_123" or "variant_456")
     name: str
     length: Decimal  # cm
@@ -34,7 +38,7 @@ class PackableItem:
         """Calculate item volume in cubic centimeters"""
         return self.length * self.width * self.height
 
-    def get_dimensions_sorted(self) -> Tuple[Decimal, Decimal, Decimal]:
+    def get_dimensions_sorted(self) -> tuple[Decimal, Decimal, Decimal]:
         """Return dimensions sorted largest to smallest"""
         return tuple(sorted([self.length, self.width, self.height], reverse=True))
 
@@ -42,8 +46,9 @@ class PackableItem:
 @dataclass
 class PackingResult:
     """Result of packing operation"""
-    package: 'ShippingPackage'  # The selected package
-    items: List[PackableItem]  # Items packed in this package
+
+    package: "ShippingPackage"  # The selected package
+    items: list[PackableItem]  # Items packed in this package
     total_weight: Decimal  # Total weight including package tare
     total_volume_used: Decimal  # Cubic cm used
     volume_utilization: Decimal  # Percentage of package volume used
@@ -70,7 +75,7 @@ class PackingAlgorithm:
     4. Cost optimization
     """
 
-    def __init__(self, available_packages: List['ShippingPackage']):
+    def __init__(self, available_packages: list["ShippingPackage"]):
         """
         Initialize packing algorithm with available packages.
 
@@ -80,13 +85,10 @@ class PackingAlgorithm:
         # Filter to active packages and sort by priority (desc) then volume (asc)
         self.packages = sorted(
             [p for p in available_packages if p.is_active],
-            key=lambda p: (-p.priority, p.get_volume())
+            key=lambda p: (-p.priority, p.get_volume()),
         )
 
-    def find_package_for_single_item(
-        self,
-        item: PackableItem
-    ) -> Optional['ShippingPackage']:
+    def find_package_for_single_item(self, item: PackableItem) -> Optional["ShippingPackage"]:
         """
         Find the smallest package that fits a single item.
 
@@ -104,7 +106,9 @@ class PackingAlgorithm:
             pkg_dims = sorted([package.length, package.width, package.height], reverse=True)
 
             # Check if item fits in any orientation
-            if all(item_dim <= pkg_dim for item_dim, pkg_dim in zip(item_dims, pkg_dims)):
+            if all(
+                item_dim <= pkg_dim for item_dim, pkg_dim in zip(item_dims, pkg_dims, strict=True)
+            ):
                 # Check weight constraint
                 if item.weight * item.quantity <= package.max_weight:
                     fitting_packages.append(package)
@@ -122,9 +126,9 @@ class PackingAlgorithm:
 
     def pack_items(
         self,
-        items: List[PackableItem],
-        optimize_for: str = 'cost'  # 'cost', 'volume', or 'count'
-    ) -> List[PackingResult]:
+        items: list[PackableItem],
+        optimize_for: str = "cost",  # 'cost', 'volume', or 'count'
+    ) -> list[PackingResult]:
         """
         Pack multiple items into optimal packages.
 
@@ -154,16 +158,12 @@ class PackingAlgorithm:
                     height=item.height,
                     weight=item.weight,
                     quantity=1,
-                    fragile=item.fragile
+                    fragile=item.fragile,
                 )
                 expanded_items.append(single_item)
 
         # Sort items by volume (largest first) - First-Fit Decreasing strategy
-        sorted_items = sorted(
-            expanded_items,
-            key=lambda x: x.get_volume(),
-            reverse=True
-        )
+        sorted_items = sorted(expanded_items, key=lambda x: x.get_volume(), reverse=True)
 
         # Try to pack all items into packages
         packing_results = []
@@ -171,16 +171,12 @@ class PackingAlgorithm:
 
         while remaining_items:
             # Try to pack as many items as possible into a single package
-            best_packing = self._find_best_packing(
-                remaining_items,
-                optimize_for=optimize_for
-            )
+            best_packing = self._find_best_packing(remaining_items, optimize_for=optimize_for)
 
             if best_packing is None:
                 # No package can fit even the largest remaining item
                 logger.error(
-                    f"Cannot pack item: {remaining_items[0].name} - "
-                    f"no suitable package available"
+                    f"Cannot pack item: {remaining_items[0].name} - no suitable package available"
                 )
                 break
 
@@ -193,10 +189,8 @@ class PackingAlgorithm:
         return packing_results
 
     def _find_best_packing(
-        self,
-        items: List[PackableItem],
-        optimize_for: str
-    ) -> Optional[PackingResult]:
+        self, items: list[PackableItem], optimize_for: str
+    ) -> PackingResult | None:
         """
         Find the best package and item combination for packing.
 
@@ -208,14 +202,12 @@ class PackingAlgorithm:
             PackingResult or None if no valid packing exists
         """
         best_result = None
-        best_score = float('inf')
+        best_score = float("inf")
 
         # Try each package
         for package in self.packages:
             # Try to fit as many items as possible into this package
-            packed_items, total_weight, total_volume = self._pack_into_package(
-                package, items
-            )
+            packed_items, total_weight, total_volume = self._pack_into_package(package, items)
 
             if not packed_items:
                 continue  # No items fit in this package
@@ -232,14 +224,11 @@ class PackingAlgorithm:
                 total_weight=weight_with_tare,
                 total_volume_used=total_volume,
                 volume_utilization=volume_utilization,
-                weight_utilization=weight_utilization
+                weight_utilization=weight_utilization,
             )
 
             # Score this packing based on optimization strategy
-            score = self._calculate_packing_score(
-                result,
-                optimize_for=optimize_for
-            )
+            score = self._calculate_packing_score(result, optimize_for=optimize_for)
 
             # Keep best result
             if score < best_score:
@@ -249,10 +238,8 @@ class PackingAlgorithm:
         return best_result
 
     def _pack_into_package(
-        self,
-        package: 'ShippingPackage',
-        items: List[PackableItem]
-    ) -> Tuple[List[PackableItem], Decimal, Decimal]:
+        self, package: "ShippingPackage", items: list[PackableItem]
+    ) -> tuple[list[PackableItem], Decimal, Decimal]:
         """
         Greedy packing: fit as many items as possible into a package.
 
@@ -270,8 +257,8 @@ class PackingAlgorithm:
             Tuple of (packed_items, total_weight, total_volume_used)
         """
         packed_items = []
-        total_weight = Decimal('0.00')
-        total_volume = Decimal('0.00')
+        total_weight = Decimal("0.00")
+        total_volume = Decimal("0.00")
 
         for item in items:
             # Check if item fits dimensionally
@@ -295,11 +282,7 @@ class PackingAlgorithm:
 
         return packed_items, total_weight, total_volume
 
-    def _calculate_packing_score(
-        self,
-        result: PackingResult,
-        optimize_for: str
-    ) -> float:
+    def _calculate_packing_score(self, result: PackingResult, optimize_for: str) -> float:
         """
         Calculate a score for a packing result (lower is better).
 
@@ -310,13 +293,13 @@ class PackingAlgorithm:
         Returns:
             Score (lower is better)
         """
-        if optimize_for == 'cost':
+        if optimize_for == "cost":
             # Minimize cost, prefer higher utilization
             cost_score = float(result.package.cost.amount if result.package.cost else 0)
             utilization_penalty = 100.0 - float(result.volume_utilization)
             return cost_score + (utilization_penalty * 0.01)
 
-        elif optimize_for == 'volume':
+        elif optimize_for == "volume":
             # Maximize volume utilization (minimize unused space)
             return 100.0 - float(result.volume_utilization)
 
@@ -326,7 +309,7 @@ class PackingAlgorithm:
             return -len(result.items)
 
 
-def pack_cart_items(cart_items, optimize_for: str = 'cost') -> List[PackingResult]:
+def pack_cart_items(cart_items, optimize_for: str = "cost") -> list[PackingResult]:
     """
     Convenience function to pack cart items into shipping packages.
 
@@ -365,28 +348,22 @@ def pack_cart_items(cart_items, optimize_for: str = 'cost') -> List[PackingResul
         else:
             source = cart_item.product
             weight = source.weight
-            dims = {
-                'length': source.length,
-                'width': source.width,
-                'height': source.height
-            }
+            dims = {"length": source.length, "width": source.width, "height": source.height}
 
         # Skip items without dimensions or weight
-        if not all([dims['length'], dims['width'], dims['height'], weight]):
-            logger.warning(
-                f"Skipping cart item {cart_item.id}: missing dimensions or weight"
-            )
+        if not all([dims["length"], dims["width"], dims["height"], weight]):
+            logger.warning(f"Skipping cart item {cart_item.id}: missing dimensions or weight")
             continue
 
         packable_item = PackableItem(
             id=f"{cart_item.id}",
             name=cart_item.product.name,
-            length=dims['length'],
-            width=dims['width'],
-            height=dims['height'],
+            length=dims["length"],
+            width=dims["width"],
+            height=dims["height"],
             weight=weight,
             quantity=cart_item.quantity,
-            fragile=False  # Could be added to Product model in future
+            fragile=False,  # Could be added to Product model in future
         )
         packable_items.append(packable_item)
 

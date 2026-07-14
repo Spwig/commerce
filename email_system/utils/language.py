@@ -5,6 +5,7 @@ Centralizes the fallback chain for determining which language to use
 when sending emails. All email-sending code should use these functions
 instead of reading user attributes directly.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -54,12 +55,12 @@ def get_order_email_language(order) -> str:
         ISO 639-1 language code string
     """
     # 1. Try order.language (captured at checkout)
-    order_lang = getattr(order, 'language', None)
+    order_lang = getattr(order, "language", None)
     if order_lang:
         return order_lang
 
     # 2. Fall back to user preference
-    user = getattr(order, 'user', None)
+    user = getattr(order, "user", None)
     return get_user_email_language(user)
 
 
@@ -72,9 +73,10 @@ def _get_site_default_language() -> str:
     """
     try:
         from core.models import SiteSettings
+
         settings = SiteSettings.get_settings()
         if settings.default_language:
             return settings.default_language
     except Exception:
         pass
-    return 'en'
+    return "en"

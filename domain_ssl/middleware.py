@@ -31,13 +31,14 @@ class DynamicAllowedHostsMiddleware:
 
     def __call__(self, request):
         # Read host directly from META to avoid DisallowedHost from get_host()
-        host = request.META.get('HTTP_HOST', request.META.get('SERVER_NAME', ''))
-        host = host.split(':')[0]
+        host = request.META.get("HTTP_HOST", request.META.get("SERVER_NAME", ""))
+        host = host.split(":")[0]
 
         # If the host is already allowed, skip the DB/cache lookup
         if host not in settings.ALLOWED_HOSTS:
             try:
                 from domain_ssl.services.domain_service import get_current_domain
+
                 domain = get_current_domain()
                 if domain and domain not in settings.ALLOWED_HOSTS:
                     # Remove any previously added dynamic host first
@@ -54,7 +55,7 @@ class DynamicAllowedHostsMiddleware:
                 pass
             except Exception:
                 logger.debug(
-                    'DynamicAllowedHostsMiddleware: failed to check domain',
+                    "DynamicAllowedHostsMiddleware: failed to check domain",
                     exc_info=True,
                 )
 

@@ -4,13 +4,15 @@ Settings Sync Orchestrator
 Orchestrates a complete settings sync operation between two Spwig instances.
 Handles dependency ordering, progress tracking, snapshot/rollback, and error handling.
 """
+
 import logging
 
-from .client import SpwigSyncClient, SyncClientError
+from migration.models import SyncJob, SyncStep
+
 from .category_registry import SYNC_CATEGORIES, resolve_dependencies
+from .client import SpwigSyncClient, SyncClientError
 from .diff_engine import SyncDiffEngine
 from .serializers import get_serializer_for_category
-from migration.models import SyncJob, SyncStep
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +43,8 @@ class SyncOrchestrator:
         Returns:
             dict: Complete diff preview
         """
-        self.job.status = 'previewing'
-        self.job.save(update_fields=['status'])
+        self.job.status = "previewing"
+        self.job.save(update_fields=["status"])
 
         try:
             ordered_categories = resolve_dependencies(self.job.selected_categories)
@@ -56,14 +58,14 @@ class SyncOrchestrator:
                     logger.warning(f"Could not export {category_key} from remote: {e}")
                     remote_data[category_key] = {}
 
-            if self.job.sync_mode == 'mirror':
+            if self.job.sync_mode == "mirror":
                 diff = self.diff_engine.generate_mirror_diff(self.job, remote_data)
             else:
                 diff = self.diff_engine.generate_job_diff(self.job, remote_data)
 
             self.job.diff_preview = diff
-            self.job.status = 'awaiting_confirmation'
-            self.job.save(update_fields=['diff_preview', 'status'])
+            self.job.status = "awaiting_confirmation"
+            self.job.save(update_fields=["diff_preview", "status"])
 
             return diff
 
@@ -101,7 +103,7 @@ class SyncOrchestrator:
 
         try:
             # Take rollback snapshots before any changes
-            if self.job.direction == 'pull':
+            if self.job.direction == "pull":
                 self.job.add_log_entry("Taking rollback snapshots...")
                 self._take_snapshots(ordered_categories)
 
@@ -112,21 +114,21 @@ class SyncOrchestrator:
                 # Update overall progress
                 progress = int((i / len(ordered_categories)) * 100)
                 config = SYNC_CATEGORIES.get(category_key, {})
-                label = str(config.get('label', category_key))
+                label = str(config.get("label", category_key))
                 self.job.update_progress(label, progress)
 
-                direction_verb = "Pulling" if self.job.direction == 'pull' else "Pushing"
+                direction_verb = "Pulling" if self.job.direction == "pull" else "Pushing"
                 self.job.add_log_entry(f"{direction_verb}: {label}")
 
                 try:
-                    if self.job.direction == 'pull':
+                    if self.job.direction == "pull":
                         result = self._pull_category(category_key, step)
                     else:
                         result = self._push_category(category_key, step)
 
-                    step.items_synced = result.get('synced', 0)
-                    step.items_skipped = result.get('skipped', 0)
-                    step.items_failed = result.get('failed', 0)
+                    step.items_synced = result.get("synced", 0)
+                    step.items_skipped = result.get("skipped", 0)
+                    step.items_failed = result.get("failed", 0)
                     step.items_total = step.items_synced + step.items_skipped + step.items_failed
                     step.complete()
 
@@ -140,8 +142,8 @@ class SyncOrchestrator:
                         f"({step.items_synced} synced, {step.items_failed} failed)"
                     )
 
-                    if result.get('errors'):
-                        all_errors.extend(result['errors'])
+                    if result.get("errors"):
+                        all_errors.extend(result["errors"])
 
                 except Exception as e:
                     step.fail(str(e))
@@ -157,7 +159,7 @@ class SyncOrchestrator:
             self.job.items_failed = total_failed
 
             if total_failed > 0 and total_synced == 0:
-                self.job.mark_failed('\n'.join(all_errors[:10]))
+                self.job.mark_failed("\n".join(all_errors[:10]))
             else:
                 self.job.mark_completed()
 
@@ -167,11 +169,11 @@ class SyncOrchestrator:
             raise
 
         return {
-            'total': total_items,
-            'synced': total_synced,
-            'skipped': total_skipped,
-            'failed': total_failed,
-            'errors': all_errors,
+            "total": total_items,
+            "synced": total_synced,
+            "skipped": total_skipped,
+            "failed": total_failed,
+            "errors": all_errors,
         }
 
     def rollback(self):
@@ -181,8 +183,8 @@ class SyncOrchestrator:
         if not self.job.is_rollbackable:
             raise ValueError("This sync job cannot be rolled back.")
 
-        self.job.status = 'rolling_back'
-        self.job.save(update_fields=['status'])
+        self.job.status = "rolling_back"
+        self.job.save(update_fields=["status"])
 
         errors = []
         restored = 0
@@ -193,17 +195,15 @@ class SyncOrchestrator:
                 serializer = get_serializer_for_category(category_key)
                 if serializer:
                     result = serializer.restore_snapshot(snapshot_data)
-                    restored += result.get('restored', 0)
-                    if result.get('errors'):
-                        errors.extend(result['errors'])
+                    restored += result.get("restored", 0)
+                    if result.get("errors"):
+                        errors.extend(result["errors"])
 
                     # Update step status
-                    step = SyncStep.objects.filter(
-                        job=self.job, category=category_key
-                    ).first()
+                    step = SyncStep.objects.filter(job=self.job, category=category_key).first()
                     if step:
-                        step.status = 'rolled_back'
-                        step.save(update_fields=['status'])
+                        step.status = "rolled_back"
+                        step.save(update_fields=["status"])
 
             except Exception as e:
                 errors.append(f"Rollback {category_key}: {e}")
@@ -213,14 +213,14 @@ class SyncOrchestrator:
         # If ALL categories failed to rollback, mark as failed instead
         total_categories = len(snapshots) if snapshots else 0
         if errors and len(errors) >= total_categories and total_categories > 0:
-            self.job.status = 'failed'
-            self.job.error_summary = 'Rollback failed: ' + '; '.join(errors[:5])
+            self.job.status = "failed"
+            self.job.error_summary = "Rollback failed: " + "; ".join(errors[:5])
         else:
-            self.job.status = 'rolled_back'
+            self.job.status = "rolled_back"
         self.job.can_rollback = False
-        self.job.save(update_fields=['status', 'can_rollback', 'error_summary'])
+        self.job.save(update_fields=["status", "can_rollback", "error_summary"])
 
-        return {'restored': restored, 'errors': errors}
+        return {"restored": restored, "errors": errors}
 
     # ---- Private Methods ----
 
@@ -230,11 +230,9 @@ class SyncOrchestrator:
         remote_data = self.client.export_category(category_key)
 
         # Import locally
-        serializer = get_serializer_for_category(
-            category_key, sync_job=self.job, sync_step=step
-        )
+        serializer = get_serializer_for_category(category_key, sync_job=self.job, sync_step=step)
         if not serializer:
-            return {'synced': 0, 'skipped': 0, 'failed': 0, 'errors': ['No serializer']}
+            return {"synced": 0, "skipped": 0, "failed": 0, "errors": ["No serializer"]}
 
         return serializer.import_data(
             remote_data,
@@ -245,19 +243,20 @@ class SyncOrchestrator:
     def _push_category(self, category_key, step):
         """Export data locally and push to remote."""
         # Export locally
-        serializer = get_serializer_for_category(
-            category_key, sync_job=self.job, sync_step=step
-        )
+        serializer = get_serializer_for_category(category_key, sync_job=self.job, sync_step=step)
         if not serializer:
-            return {'synced': 0, 'skipped': 0, 'failed': 0, 'errors': ['No serializer']}
+            return {"synced": 0, "skipped": 0, "failed": 0, "errors": ["No serializer"]}
 
-        local_data = serializer.export(credential_mode='decrypt')
+        local_data = serializer.export(credential_mode="decrypt")
 
         # Send to remote
-        result = self.client.import_category(category_key, {
-            **local_data,
-            'sync_mode': self.job.sync_mode,
-        })
+        result = self.client.import_category(
+            category_key,
+            {
+                **local_data,
+                "sync_mode": self.job.sync_mode,
+            },
+        )
 
         return result
 
@@ -273,4 +272,4 @@ class SyncOrchestrator:
                 logger.warning(f"Could not snapshot {category_key}: {e}")
 
         self.job.rollback_snapshot = snapshots
-        self.job.save(update_fields=['rollback_snapshot'])
+        self.job.save(update_fields=["rollback_snapshot"])

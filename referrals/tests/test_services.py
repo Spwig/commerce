@@ -3,46 +3,46 @@ Service Layer Tests
 
 Tests for referral services: tracking, validation, fraud, rewards, analytics.
 """
-from decimal import Decimal
-from django.test import TestCase, RequestFactory
-from django.utils import timezone
+
 from datetime import timedelta
-from unittest.mock import Mock, patch
+from decimal import Decimal
+
+from django.test import RequestFactory, TestCase
+from django.utils import timezone
 
 from ..services import (
-    # Tracking
-    generate_token,
-    track_click,
-    track_signup,
-    track_order,
-    hash_ip_address,
-    # Validation
-    validate_referral,
-    validate_attribution,
-    check_self_referral,
-    check_new_customer,
-    check_min_order_value,
-    check_disposable_email,
-    is_disposable_email,
     # Fraud
     calculate_risk_score,
-    is_high_risk,
+    check_disposable_email,
+    check_min_order_value,
+    check_new_customer,
+    check_self_referral,
     # Rewards
     create_rewards,
+    # Tracking
+    generate_token,
+    # Analytics
+    get_referral_dashboard_stats,
+    hash_ip_address,
+    is_disposable_email,
+    is_high_risk,
     issue_reward,
     redeem_reward,
     revoke_reward,
-    # Analytics
-    get_referral_dashboard_stats,
+    track_click,
+    track_signup,
+    validate_attribution,
+    # Validation
+    validate_referral,
 )
 from .factories import (
-    create_user,
-    create_referral_program,
-    create_referral_identity,
-    create_referral_attribution,
-    create_referral_reward,
-    create_order,
     create_complete_referral_flow,
+    create_order,
+    create_referral_attribution,
+    create_referral_identity,
+    create_referral_program,
+    create_referral_reward,
+    create_user,
 )
 
 
@@ -62,30 +62,30 @@ class TrackingServiceTest(TestCase):
     def test_track_click(self):
         """Test tracking referral link clicks."""
         identity = create_referral_identity()
-        request = self.factory.get('/', HTTP_USER_AGENT='TestBrowser')
-        request.META['REMOTE_ADDR'] = '127.0.0.1'
+        request = self.factory.get("/", HTTP_USER_AGENT="TestBrowser")
+        request.META["REMOTE_ADDR"] = "127.0.0.1"
 
         success, returned_identity, message = track_click(identity.token, request)
 
         self.assertTrue(success)
         self.assertEqual(returned_identity, identity)
-        self.assertIn('Click tracked', message)
+        self.assertIn("Click tracked", message)
 
         # Verify event was created
         from ..models import ReferralEvent
-        self.assertEqual(ReferralEvent.objects.filter(
-            referrer_identity=identity,
-            event_type='click'
-        ).count(), 1)
+
+        self.assertEqual(
+            ReferralEvent.objects.filter(referrer_identity=identity, event_type="click").count(), 1
+        )
 
     def test_track_click_invalid_token(self):
         """Test tracking with invalid token."""
-        request = self.factory.get('/')
-        success, identity, message = track_click('invalid', request)
+        request = self.factory.get("/")
+        success, identity, message = track_click("invalid", request)
 
         self.assertFalse(success)
         self.assertIsNone(identity)
-        self.assertIn('Invalid', message)
+        self.assertIn("Invalid", message)
 
     def test_track_signup(self):
         """Test tracking user signups."""
@@ -93,8 +93,8 @@ class TrackingServiceTest(TestCase):
         user = create_user()
 
         # Create request with referral cookie (cookie name is 'ref_token')
-        request = self.factory.get('/')
-        request.COOKIES = {'ref_token': identity.token}
+        request = self.factory.get("/")
+        request.COOKIES = {"ref_token": identity.token}
 
         success, returned_identity, message = track_signup(user, request)
 
@@ -103,14 +103,14 @@ class TrackingServiceTest(TestCase):
 
         # Verify event was created
         from ..models import ReferralEvent
-        self.assertEqual(ReferralEvent.objects.filter(
-            referrer_identity=identity,
-            event_type='signup'
-        ).count(), 1)
+
+        self.assertEqual(
+            ReferralEvent.objects.filter(referrer_identity=identity, event_type="signup").count(), 1
+        )
 
     def test_hash_ip_address(self):
         """Test IP address hashing."""
-        ip = '192.168.1.1'
+        ip = "192.168.1.1"
         hashed = hash_ip_address(ip)
 
         self.assertIsNotNone(hashed)
@@ -127,18 +127,16 @@ class ValidationServiceTest(TestCase):
 
     def test_validate_referral_success(self):
         """Test successful referral validation."""
-        referrer = create_user(email='referrer@example.com')
-        referee = create_user(email='referee@example.com')
+        referrer = create_user(email="referrer@example.com")
+        referee = create_user(email="referee@example.com")
         identity = create_referral_identity(customer=referrer)
-        order = create_order(user=referee, total_amount=Decimal('50.00'))
+        order = create_order(user=referee, total_amount=Decimal("50.00"))
 
-        is_valid, reason, validation_data = validate_referral(
-            order, identity, self.program
-        )
+        is_valid, reason, validation_data = validate_referral(order, identity, self.program)
 
         self.assertTrue(is_valid)
-        self.assertEqual(reason, 'ok')
-        self.assertIn('self_referral_check', validation_data)
+        self.assertEqual(reason, "ok")
+        self.assertIn("self_referral_check", validation_data)
 
     def test_check_self_referral(self):
         """Test self-referral detection."""
@@ -149,7 +147,7 @@ class ValidationServiceTest(TestCase):
         is_valid, reason = check_self_referral(order, identity)
 
         self.assertFalse(is_valid)
-        self.assertEqual(reason, 'self_referral')
+        self.assertEqual(reason, "self_referral")
 
     def test_check_new_customer(self):
         """Test new customer validation."""
@@ -172,12 +170,12 @@ class ValidationServiceTest(TestCase):
     def test_check_min_order_value(self):
         """Test minimum order value check."""
         # Set minimum
-        self.program.eligibility_rules['min_order_value'] = 50
+        self.program.eligibility_rules["min_order_value"] = 50
         self.program.save()
 
         user = create_user()
-        low_order = create_order(user=user, total_amount=Decimal('30.00'))
-        high_order = create_order(user=user, total_amount=Decimal('100.00'))
+        low_order = create_order(user=user, total_amount=Decimal("30.00"))
+        high_order = create_order(user=user, total_amount=Decimal("100.00"))
 
         # Low order should fail
         is_valid, reason = check_min_order_value(low_order, self.program)
@@ -190,18 +188,18 @@ class ValidationServiceTest(TestCase):
     def test_check_disposable_email(self):
         """Test disposable email detection."""
         # Valid email
-        is_valid, reason = check_disposable_email('user@gmail.com')
+        is_valid, reason = check_disposable_email("user@gmail.com")
         self.assertTrue(is_valid)
 
         # Disposable email
-        is_valid, reason = check_disposable_email('user@tempmail.com')
+        is_valid, reason = check_disposable_email("user@tempmail.com")
         self.assertFalse(is_valid)
 
     def test_is_disposable_email(self):
         """Test disposable email domain check."""
-        self.assertTrue(is_disposable_email('tempmail.com'))
-        self.assertTrue(is_disposable_email('guerrillamail.com'))
-        self.assertFalse(is_disposable_email('gmail.com'))
+        self.assertTrue(is_disposable_email("tempmail.com"))
+        self.assertTrue(is_disposable_email("guerrillamail.com"))
+        self.assertFalse(is_disposable_email("gmail.com"))
 
     def test_validate_attribution(self):
         """Test validate_attribution wrapper function."""
@@ -241,16 +239,12 @@ class FraudServiceTest(TestCase):
         # is_high_risk function takes (order, identity, program)
         # and returns (is_high_risk_bool, risk_score, fraud_signals)
         is_risky, score, signals = is_high_risk(
-            low_risk_attr.first_order,
-            low_risk_attr.referrer_identity,
-            self.program
+            low_risk_attr.first_order, low_risk_attr.referrer_identity, self.program
         )
         self.assertFalse(is_risky)
 
         is_risky, score, signals = is_high_risk(
-            high_risk_attr.first_order,
-            high_risk_attr.referrer_identity,
-            self.program
+            high_risk_attr.first_order, high_risk_attr.referrer_identity, self.program
         )
         # This might not always be True since it's calculated, just check return type
         self.assertIsInstance(is_risky, bool)
@@ -284,31 +278,31 @@ class RewardServiceTest(TestCase):
         """Test creating double-sided rewards."""
         # Ensure program has double-sided rewards
         self.program.reward_config = {
-            'referrer': {'kind': 'credit', 'amount': 10.00, 'currency': 'USD'},
-            'referee': {'kind': 'coupon', 'amount': 10.00, 'currency': 'USD'},
-            'double_sided': True,
+            "referrer": {"kind": "credit", "amount": 10.00, "currency": "USD"},
+            "referee": {"kind": "coupon", "amount": 10.00, "currency": "USD"},
+            "double_sided": True,
         }
         self.program.save()
 
-        attribution = create_referral_attribution(status='approved', program=self.program)
+        attribution = create_referral_attribution(status="approved", program=self.program)
 
         referrer_reward, referee_reward = create_rewards(attribution)
 
         self.assertIsNotNone(referrer_reward)
         self.assertIsNotNone(referee_reward)
-        self.assertEqual(referrer_reward.kind, 'credit')
-        self.assertEqual(referee_reward.kind, 'coupon')
+        self.assertEqual(referrer_reward.kind, "credit")
+        self.assertEqual(referee_reward.kind, "coupon")
 
     def test_create_rewards_referrer_only(self):
         """Test creating referrer-only rewards."""
         # Set reward_config to referrer-only
         self.program.reward_config = {
-            'referrer': {'kind': 'credit', 'amount': 10.00, 'currency': 'USD'},
-            'double_sided': False,
+            "referrer": {"kind": "credit", "amount": 10.00, "currency": "USD"},
+            "double_sided": False,
         }
         self.program.save()
 
-        attribution = create_referral_attribution(status='approved', program=self.program)
+        attribution = create_referral_attribution(status="approved", program=self.program)
 
         referrer_reward, referee_reward = create_rewards(attribution)
 
@@ -317,36 +311,36 @@ class RewardServiceTest(TestCase):
 
     def test_issue_reward(self):
         """Test issuing a reward."""
-        reward = create_referral_reward(status='pending')
+        reward = create_referral_reward(status="pending")
 
         result = issue_reward(reward)
 
         self.assertTrue(result)
         reward.refresh_from_db()
-        self.assertEqual(reward.status, 'issued')
+        self.assertEqual(reward.status, "issued")
         self.assertIsNotNone(reward.issued_at)
 
     def test_redeem_reward(self):
         """Test redeeming a reward."""
-        reward = create_referral_reward(status='issued')
+        reward = create_referral_reward(status="issued")
 
         result = redeem_reward(reward)
 
         self.assertTrue(result)
         reward.refresh_from_db()
-        self.assertEqual(reward.status, 'redeemed')
+        self.assertEqual(reward.status, "redeemed")
         self.assertIsNotNone(reward.redeemed_at)
 
     def test_revoke_reward(self):
         """Test revoking a reward."""
-        reward = create_referral_reward(status='issued')
+        reward = create_referral_reward(status="issued")
 
-        result = revoke_reward(reward, reason='test_revocation')
+        result = revoke_reward(reward, reason="test_revocation")
 
         self.assertTrue(result)
         reward.refresh_from_db()
-        self.assertEqual(reward.status, 'revoked')
-        self.assertIn('test_revocation', reward.revocation_reason)
+        self.assertEqual(reward.status, "revoked")
+        self.assertIn("test_revocation", reward.revocation_reason)
 
 
 class AnalyticsServiceTest(TestCase):
@@ -363,21 +357,21 @@ class AnalyticsServiceTest(TestCase):
         stats = get_referral_dashboard_stats()
 
         self.assertIsInstance(stats, dict)
-        self.assertIn('total_referrers', stats)
-        self.assertIn('total_conversions', stats)
-        self.assertIn('conversion_rate', stats)
-        self.assertIn('total_rewards_value', stats)
-        self.assertIn('funnel', stats)
-        self.assertIn('program_active', stats)
-        self.assertIn('program_name', stats)
+        self.assertIn("total_referrers", stats)
+        self.assertIn("total_conversions", stats)
+        self.assertIn("conversion_rate", stats)
+        self.assertIn("total_rewards_value", stats)
+        self.assertIn("funnel", stats)
+        self.assertIn("program_active", stats)
+        self.assertIn("program_name", stats)
 
     def test_get_referral_dashboard_stats_empty(self):
         """Test dashboard stats with no data."""
         stats = get_referral_dashboard_stats()
 
-        self.assertEqual(stats['total_referrers'], 0)
-        self.assertEqual(stats['total_conversions'], 0)
-        self.assertEqual(stats['conversion_rate'], 0)
+        self.assertEqual(stats["total_referrers"], 0)
+        self.assertEqual(stats["total_conversions"], 0)
+        self.assertEqual(stats["conversion_rate"], 0)
 
     def test_get_referral_dashboard_stats_date_range(self):
         """Test dashboard stats with date range."""
@@ -391,4 +385,4 @@ class AnalyticsServiceTest(TestCase):
         stats = get_referral_dashboard_stats(start_date, end_date)
 
         self.assertIsInstance(stats, dict)
-        self.assertGreaterEqual(stats['total_conversions'], 0)
+        self.assertGreaterEqual(stats["total_conversions"], 0)

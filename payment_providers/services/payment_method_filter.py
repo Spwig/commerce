@@ -8,12 +8,10 @@ Filters available payment methods at checkout based on:
 4. Merchant's enabled payment methods
 5. Currency compatibility
 """
-from typing import List, Dict, Optional, Any
-from decimal import Decimal
-import logging
 
-from django.db.models import Q
-from django.contrib.sites.models import Site
+import logging
+from decimal import Decimal
+from typing import Any
 
 from payment_providers.models import PaymentProviderAccount
 from shipping.models import ShippingCountry
@@ -45,7 +43,7 @@ class PaymentMethodFilter:
         from django_countries import countries
 
         if not country:
-            return ''
+            return ""
 
         # If already 2-letter code, just uppercase it
         if len(country) == 2:
@@ -61,10 +59,8 @@ class PaymentMethodFilter:
 
     @staticmethod
     def get_available_providers_for_checkout(
-        customer_country: str,
-        currency: str,
-        amount: Optional[Decimal] = None
-    ) -> List[PaymentProviderAccount]:
+        customer_country: str, currency: str, amount: Decimal | None = None
+    ) -> list[PaymentProviderAccount]:
         """
         Get list of payment provider accounts available for checkout.
 
@@ -88,28 +84,29 @@ class PaymentMethodFilter:
         customer_country = PaymentMethodFilter._normalize_country_code(customer_country)
         currency = currency.upper()
 
-        print(f"💳 Payment providers: country '{original_country}' → normalized '{customer_country}', currency={currency}")
+        print(
+            f"💳 Payment providers: country '{original_country}' → normalized '{customer_country}', currency={currency}"
+        )
         logger.info(
             f"Filtering payment providers for country={customer_country}, "
             f"currency={currency}, amount={amount}"
         )
 
         # Layer 1: Get active provider accounts
-        active_providers = PaymentProviderAccount.objects.filter(
-            is_active=True
-        ).select_related('component')
+        active_providers = PaymentProviderAccount.objects.filter(is_active=True).select_related(
+            "component"
+        )
 
         # Layer 2: Check if merchant ships to customer's country
         ships_to_country = ShippingCountry.objects.filter(
             site_id=1,  # Single-tenant - always site 1
             country_code=customer_country,
-            is_active=True
+            is_active=True,
         ).exists()
 
         if not ships_to_country:
             logger.warning(
-                f"Merchant does not ship to {customer_country}. "
-                f"No payment methods available."
+                f"Merchant does not ship to {customer_country}. No payment methods available."
             )
             return []
 
@@ -138,8 +135,7 @@ class PaymentMethodFilter:
             # Layer 5: Check currency support (via provider capabilities)
             if not PaymentMethodFilter._supports_currency(provider, currency):
                 logger.debug(
-                    f"Provider {provider.component.slug} does not support "
-                    f"currency {currency}"
+                    f"Provider {provider.component.slug} does not support currency {currency}"
                 )
                 continue
 
@@ -162,10 +158,7 @@ class PaymentMethodFilter:
         return available_providers
 
     @staticmethod
-    def get_enabled_payment_methods(
-        customer_country: str,
-        currency: str
-    ) -> Dict[str, List[str]]:
+    def get_enabled_payment_methods(customer_country: str, currency: str) -> dict[str, list[str]]:
         """
         Get enabled payment methods organized by provider.
 
@@ -180,8 +173,7 @@ class PaymentMethodFilter:
             Dictionary: {provider_slug: [method1, method2, ...], ...}
         """
         available_providers = PaymentMethodFilter.get_available_providers_for_checkout(
-            customer_country=customer_country,
-            currency=currency
+            customer_country=customer_country, currency=currency
         )
 
         methods_by_provider = {}
@@ -195,10 +187,7 @@ class PaymentMethodFilter:
 
     @staticmethod
     def is_payment_method_available(
-        provider_slug: str,
-        method_slug: str,
-        customer_country: str,
-        currency: str
+        provider_slug: str, method_slug: str, customer_country: str, currency: str
     ) -> bool:
         """
         Check if a specific payment method is available for checkout.
@@ -218,15 +207,12 @@ class PaymentMethodFilter:
         try:
             # Get the provider account
             provider = PaymentProviderAccount.objects.get(
-                component__slug=provider_slug,
-                is_active=True
+                component__slug=provider_slug, is_active=True
             )
 
             # Check merchant ships to country
             ships_to_country = ShippingCountry.objects.filter(
-                site_id=1,
-                country_code=customer_country,
-                is_active=True
+                site_id=1, country_code=customer_country, is_active=True
             ).exists()
 
             if not ships_to_country:
@@ -237,17 +223,14 @@ class PaymentMethodFilter:
                 return False
 
             # Check currency support
-            if not PaymentMethodFilter._supports_currency(provider, currency):
-                return False
-
-            return True
+            return PaymentMethodFilter._supports_currency(provider, currency)
 
         except PaymentProviderAccount.DoesNotExist:
             logger.warning(f"Provider {provider_slug} not found or not active")
             return False
 
     @staticmethod
-    def get_unsupported_countries() -> List[str]:
+    def get_unsupported_countries() -> list[str]:
         """
         Get list of countries where merchant has no payment methods available.
 
@@ -257,10 +240,9 @@ class PaymentMethodFilter:
             List of ISO 3166-1 alpha-2 country codes
         """
         # Get all shipping countries
-        shipping_countries = ShippingCountry.objects.filter(
-            site_id=1,
-            is_active=True
-        ).values_list('country_code', flat=True)
+        shipping_countries = ShippingCountry.objects.filter(site_id=1, is_active=True).values_list(
+            "country_code", flat=True
+        )
 
         # Get all active providers
         active_providers = PaymentProviderAccount.objects.filter(is_active=True)
@@ -282,7 +264,7 @@ class PaymentMethodFilter:
         return unsupported
 
     @staticmethod
-    def get_payment_method_coverage() -> Dict[str, Any]:
+    def get_payment_method_coverage() -> dict[str, Any]:
         """
         Get comprehensive payment method coverage statistics.
 
@@ -300,10 +282,11 @@ class PaymentMethodFilter:
             }
         """
         # Get all shipping countries
-        shipping_countries = list(ShippingCountry.objects.filter(
-            site_id=1,
-            is_active=True
-        ).values_list('country_code', flat=True))
+        shipping_countries = list(
+            ShippingCountry.objects.filter(site_id=1, is_active=True).values_list(
+                "country_code", flat=True
+            )
+        )
 
         # Get all active providers
         active_providers = PaymentProviderAccount.objects.filter(is_active=True)
@@ -322,9 +305,9 @@ class PaymentMethodFilter:
                     total_methods.update(enabled_methods)
 
             coverage_by_country[country_code] = {
-                'provider_count': provider_count,
-                'method_count': len(total_methods),
-                'methods': sorted(list(total_methods))
+                "provider_count": provider_count,
+                "method_count": len(total_methods),
+                "methods": sorted(total_methods),
             }
 
             if provider_count > 0:
@@ -332,22 +315,20 @@ class PaymentMethodFilter:
 
         total_countries = len(shipping_countries)
         unsupported = [
-            code for code, data in coverage_by_country.items()
-            if data['provider_count'] == 0
+            code for code, data in coverage_by_country.items() if data["provider_count"] == 0
         ]
 
         coverage_percentage = (
-            (countries_with_methods / total_countries * 100)
-            if total_countries > 0 else 0
+            (countries_with_methods / total_countries * 100) if total_countries > 0 else 0
         )
 
         return {
-            'total_shipping_countries': total_countries,
-            'countries_with_methods': countries_with_methods,
-            'countries_without_methods': len(unsupported),
-            'coverage_percentage': round(coverage_percentage, 2),
-            'coverage_by_country': coverage_by_country,
-            'unsupported_countries': unsupported
+            "total_shipping_countries": total_countries,
+            "countries_with_methods": countries_with_methods,
+            "countries_without_methods": len(unsupported),
+            "coverage_percentage": round(coverage_percentage, 2),
+            "coverage_by_country": coverage_by_country,
+            "unsupported_countries": unsupported,
         }
 
     @staticmethod
@@ -369,14 +350,14 @@ class PaymentMethodFilter:
             provider_instance = provider.get_provider_instance()
 
             # Check if provider has get_supported_currencies method
-            if hasattr(provider_instance, 'get_supported_currencies'):
+            if hasattr(provider_instance, "get_supported_currencies"):
                 supported_currencies = provider_instance.get_supported_currencies()
                 return currency.upper() in [c.upper() for c in supported_currencies]
 
             # Check capabilities for currency support
-            if hasattr(provider_instance, 'get_capabilities'):
+            if hasattr(provider_instance, "get_capabilities"):
                 capabilities = provider_instance.get_capabilities()
-                supported_currencies = capabilities.get('supported_currencies', [])
+                supported_currencies = capabilities.get("supported_currencies", [])
                 return currency.upper() in [c.upper() for c in supported_currencies]
 
             # If provider doesn't implement currency checking, assume supported
@@ -387,8 +368,6 @@ class PaymentMethodFilter:
             return True
 
         except Exception as e:
-            logger.error(
-                f"Error checking currency support for {provider.component.slug}: {e}"
-            )
+            logger.error(f"Error checking currency support for {provider.component.slug}: {e}")
             # On error, assume not supported for safety
             return False

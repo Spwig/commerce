@@ -3,7 +3,7 @@
 /* Configurator 3D Product Page Styles */
 
 .configurator-3d-section {
-    padding: var(--theme-spacing-section, 40px) 0;
+  padding: var(--theme-spacing-section, 40px) 0;
 }
 
 /* ==========================================================================
@@ -11,76 +11,80 @@
    ========================================================================== */
 
 .configurator-3d-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--theme-spacing-lg, 32px);
-    align-items: start;
-    overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--theme-spacing-lg, 32px);
+  align-items: start;
+  overflow: hidden;
 }
 
 /* Left: 3D Viewer */
 .configurator-3d-viewer-wrap {
-    position: sticky;
-    top: var(--theme-header-height, 80px);
-    min-width: 0;
+  position: sticky;
+  top: var(--theme-header-height, 80px);
+  min-width: 0;
 }
 
 .configurator-3d-viewer-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1;
-    background: var(--theme-color-surface-alt, #f5f5f5);
-    border-radius: var(--theme-border-radius, 8px);
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--theme-color-surface-alt, #f5f5f5);
+  border-radius: var(--theme-border-radius, 8px);
+  overflow: hidden;
 }
 
 .configurator-3d-viewer-container model-viewer {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .configurator-3d-loading {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--theme-color-surface-alt, #f5f5f5);
-    z-index: 1;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-color-surface-alt, #f5f5f5);
+  z-index: 1;
 }
 
 .configurator-3d-loading.hidden {
-    display: none;
+  display: none;
 }
 
 .configurator-3d-loading__spinner {
-    text-align: center;
-    color: var(--theme-color-text-muted, #999);
+  text-align: center;
+  color: var(--theme-color-text-muted, #999);
 }
 
 .configurator-3d-loading__spinner svg {
-    animation: spin-3d 1s linear infinite;
-    margin-bottom: 8px;
+  animation: spin-3d 1s linear infinite;
+  margin-bottom: 8px;
 }
 
 @keyframes spin-3d {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .configurator-3d-viewer-hint {
-    text-align: center;
-    padding: var(--theme-spacing-xs, 8px);
-    font-size: var(--theme-font-size-sm, 0.85rem);
-    color: var(--theme-color-text-muted, #999);
+  text-align: center;
+  padding: var(--theme-spacing-xs, 8px);
+  font-size: var(--theme-font-size-sm, 0.85rem);
+  color: var(--theme-color-text-muted, #999);
 }
 
 /* Right: Wizard + Summary */
 .configurator-3d-right {
-    display: flex;
-    flex-direction: column;
-    gap: var(--theme-spacing-md, 16px);
-    min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-spacing-md, 16px);
+  min-width: 0;
 }
 
 /* ==========================================================================
@@ -89,141 +93,141 @@
    ========================================================================== */
 
 .configurator-3d-section .configurator-panel__header {
-    margin-bottom: var(--theme-space-3, 0.75rem);
+  margin-bottom: var(--theme-space-3, 0.75rem);
 }
 
 .configurator-3d-section .configurator-panel__title {
-    font-size: var(--theme-font-size-lg, 1.25rem);
+  font-size: var(--theme-font-size-lg, 1.25rem);
 }
 
 .configurator-3d-section .configurator-panel__description {
-    font-size: var(--theme-font-size-sm, 0.85rem);
+  font-size: var(--theme-font-size-sm, 0.85rem);
 }
 
 .configurator-3d-section .configurator-steps {
-    margin-bottom: var(--theme-space-3, 0.75rem);
+  margin-bottom: var(--theme-space-3, 0.75rem);
 }
 
 .configurator-3d-section .configurator-options {
-    gap: var(--theme-space-2, 0.5rem);
+  gap: var(--theme-space-2, 0.5rem);
 }
 
 .configurator-3d-section .configurator-option {
-    padding: var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem);
-    gap: var(--theme-space-3, 0.75rem);
-    align-items: center;
+  padding: var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem);
+  gap: var(--theme-space-3, 0.75rem);
+  align-items: center;
 }
 
 .configurator-3d-section .configurator-option__image {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--theme-radius-sm, 4px);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--theme-radius-sm, 4px);
 }
 
 .configurator-3d-section .configurator-option__image i {
-    font-size: var(--theme-font-size-base, 1rem);
+  font-size: var(--theme-font-size-base, 1rem);
 }
 
 .configurator-3d-section .configurator-option__name {
-    font-size: var(--theme-font-size-sm, 0.85rem);
-    margin-bottom: 0;
-    padding-right: var(--theme-space-6, 1.5rem);
+  font-size: var(--theme-font-size-sm, 0.85rem);
+  margin-bottom: 0;
+  padding-right: var(--theme-space-6, 1.5rem);
 }
 
 .configurator-3d-section .configurator-option__price {
-    font-size: var(--theme-font-size-xs, 0.75rem);
-    margin-bottom: 0;
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  margin-bottom: 0;
 }
 
 .configurator-3d-section .configurator-option__check {
-    width: 20px;
-    height: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    right: var(--theme-space-2, 0.5rem);
-    font-size: 0.6rem;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  right: var(--theme-space-2, 0.5rem);
+  font-size: 0.6rem;
 }
 
 .configurator-3d-section .configurator-option__badges {
-    gap: var(--theme-space-1, 0.25rem);
+  gap: var(--theme-space-1, 0.25rem);
 }
 
 .configurator-3d-section .configurator-option__badge {
-    font-size: 0.65rem;
-    padding: 1px var(--theme-space-1, 0.25rem);
+  font-size: 0.65rem;
+  padding: 1px var(--theme-space-1, 0.25rem);
 }
 
 .configurator-3d-section .configurator-summary {
-    padding: var(--theme-space-3, 0.75rem);
+  padding: var(--theme-space-3, 0.75rem);
 }
 
 .configurator-3d-section .configurator-summary__header {
-    margin-bottom: var(--theme-space-2, 0.5rem);
+  margin-bottom: var(--theme-space-2, 0.5rem);
 }
 
 .configurator-3d-section .configurator-summary__title {
-    font-size: var(--theme-font-size-sm, 0.85rem);
+  font-size: var(--theme-font-size-sm, 0.85rem);
 }
 
 /* Product header in 3D view */
 .configurator-3d-header {
-    margin-bottom: var(--theme-spacing-sm, 8px);
+  margin-bottom: var(--theme-spacing-sm, 8px);
 }
 
 .configurator-3d-header__name {
-    font-size: var(--theme-font-size-xl, 1.5rem);
-    font-weight: var(--theme-font-weight-bold, 700);
-    color: var(--theme-color-text, #111);
-    margin: 0 0 var(--theme-spacing-xs, 8px);
+  font-size: var(--theme-font-size-xl, 1.5rem);
+  font-weight: var(--theme-font-weight-bold, 700);
+  color: var(--theme-color-text, #111);
+  margin: 0 0 var(--theme-spacing-xs, 8px);
 }
 
 .configurator-3d-header__desc {
-    font-size: var(--theme-font-size-base, 1rem);
-    color: var(--theme-color-text-secondary, #555);
-    line-height: 1.5;
+  font-size: var(--theme-font-size-base, 1rem);
+  color: var(--theme-color-text-secondary, #555);
+  line-height: 1.5;
 }
 
 /* Elements hidden by default — shown via JS class toggling */
 #presets-section-wrapper {
-    display: none;
+  display: none;
 }
 
 #presets-section-wrapper.visible {
-    display: block;
+  display: block;
 }
 
 /* AR Button — hidden by default, shown by JS when AR is supported */
 .configurator-3d-ar-btn {
-    display: none;
+  display: none;
 }
 
 /* Nav buttons — hidden by default via class, shown by JS */
 .configurator-nav .btn--hidden {
-    display: none;
+  display: none;
 }
 
 /* model-viewer background via CSS custom property */
 .configurator-3d-viewer-container model-viewer {
-    background: var(--viewer-bg, transparent);
+  background: var(--viewer-bg, transparent);
 }
 
 .configurator-3d-ar-btn.visible {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: var(--theme-spacing-sm, 8px);
-    padding: 8px 16px;
-    background: var(--theme-color-surface, #fff);
-    border: 1px solid var(--theme-color-border, #ddd);
-    border-radius: var(--theme-border-radius, 8px);
-    font-size: var(--theme-font-size-sm, 0.85rem);
-    color: var(--theme-color-text, #111);
-    cursor: pointer;
-    transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--theme-spacing-sm, 8px);
+  padding: 8px 16px;
+  background: var(--theme-color-surface, #fff);
+  border: 1px solid var(--theme-color-border, #ddd);
+  border-radius: var(--theme-border-radius, 8px);
+  font-size: var(--theme-font-size-sm, 0.85rem);
+  color: var(--theme-color-text, #111);
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .configurator-3d-ar-btn:hover {
-    background: var(--theme-color-surface-hover, #f0f0f0);
+  background: var(--theme-color-surface-hover, #f0f0f0);
 }
 
 /* ==========================================================================
@@ -232,7 +236,7 @@
 
 .config-3d-mobile-viewer,
 .config-sheet {
-    display: none;
+  display: none;
 }
 
 /* ==========================================================================
@@ -240,233 +244,238 @@
    ========================================================================== */
 
 @media (max-width: 1023px) {
+  /* Hide the desktop 2-column grid */
+  .configurator-3d-desktop-layout {
+    display: none;
+  }
 
-    /* Hide the desktop 2-column grid */
-    .configurator-3d-desktop-layout {
-        display: none;
-    }
+  /* Remove section padding — mobile uses full viewport */
+  .configurator-3d-section {
+    padding: 0;
+  }
 
-    /* Remove section padding — mobile uses full viewport */
-    .configurator-3d-section {
-        padding: 0;
-    }
+  /* Hide breadcrumb on mobile — sheet provides context */
+  .configurator-3d-section ~ .breadcrumb,
+  .configurator-3d-section .breadcrumb,
+  .breadcrumb + .configurator-3d-section ~ .breadcrumb {
+    display: none;
+  }
 
-    /* Hide breadcrumb on mobile — sheet provides context */
-    .configurator-3d-section ~ .breadcrumb,
-    .configurator-3d-section .breadcrumb,
-    .breadcrumb + .configurator-3d-section ~ .breadcrumb {
-        display: none;
-    }
+  /* Breadcrumb is a sibling before the section in page flow */
+  body:has(.config-sheet) .breadcrumb {
+    display: none;
+  }
 
-    /* Breadcrumb is a sibling before the section in page flow */
-    body:has(.config-sheet) .breadcrumb {
-        display: none;
-    }
+  /* Hide old mobile bottom bar when sheet is active */
+  .configurator-mobile-bar {
+    display: none !important;
+  }
 
-    /* Hide old mobile bottom bar when sheet is active */
-    .configurator-mobile-bar {
-        display: none !important;
-    }
+  /* ===== Fixed Full-Viewport 3D Viewer Background ===== */
 
-    /* ===== Fixed Full-Viewport 3D Viewer Background ===== */
+  .config-3d-mobile-viewer {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60vh; /* Complement of peek (40vh) — JS updates on snap */
+    z-index: 0;
+    background: var(--theme-color-surface-alt, #f5f5f5);
+    will-change: transform;
+    transform: translate3d(0, 0, 0); /* Force GPU compositor layer */
+    transition: height 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  }
 
-    .config-3d-mobile-viewer {
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 60vh; /* Complement of peek (40vh) — JS updates on snap */
-        z-index: 0;
-        background: var(--theme-color-surface-alt, #f5f5f5);
-        will-change: transform;
-        transform: translate3d(0, 0, 0); /* Force GPU compositor layer */
-        transition: height 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-    }
+  .config-3d-mobile-viewer model-viewer {
+    width: 100%;
+    height: 100%;
+  }
 
-    .config-3d-mobile-viewer model-viewer {
-        width: 100%;
-        height: 100%;
-    }
+  .config-3d-mobile-viewer .configurator-3d-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--theme-color-surface-alt, #f5f5f5);
+    z-index: 1;
+  }
 
-    .config-3d-mobile-viewer .configurator-3d-loading {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--theme-color-surface-alt, #f5f5f5);
-        z-index: 1;
-    }
+  /* Mobile viewer hint — positioned above the sheet */
+  .config-3d-mobile-hint {
+    position: fixed;
+    bottom: 62vh; /* Above the sheet in half state */
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 6px;
+    font-size: 0.75rem;
+    color: var(--theme-color-text-muted, #999);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.5s;
+    z-index: 5;
+  }
 
-    /* Mobile viewer hint — positioned above the sheet */
-    .config-3d-mobile-hint {
-        position: fixed;
-        bottom: 62vh; /* Above the sheet in half state */
-        left: 0;
-        right: 0;
-        text-align: center;
-        padding: 6px;
-        font-size: 0.75rem;
-        color: var(--theme-color-text-muted, #999);
-        pointer-events: none;
-        opacity: 1;
-        transition: opacity 0.5s;
-        z-index: 5;
-    }
+  .config-3d-mobile-hint.hidden {
+    opacity: 0;
+  }
 
-    .config-3d-mobile-hint.hidden {
-        opacity: 0;
-    }
+  /* ===== Bottom Sheet ===== */
 
-    /* ===== Bottom Sheet ===== */
+  .config-sheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60vh; /* Default: half snap */
+    max-height: 92vh;
+    min-height: 20vh;
+    background: var(--theme-color-background, #fff);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+    z-index: 10;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    transition: height 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  }
 
-    .config-sheet {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 60vh; /* Default: half snap */
-        max-height: 92vh;
-        min-height: 20vh;
-        background: var(--theme-color-background, #fff);
-        border-radius: 16px 16px 0 0;
-        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
-        z-index: 10;
-        will-change: transform;
-        transform: translate3d(0, 0, 0);
-        transition: height 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-    }
+  /* Snap point classes */
+  .config-sheet--peek {
+    height: 40vh;
+  }
+  .config-sheet--half {
+    height: 60vh;
+  }
+  .config-sheet--full {
+    height: 90vh;
+  }
 
-    /* Snap point classes */
-    .config-sheet--peek { height: 40vh; }
-    .config-sheet--half { height: 60vh; }
-    .config-sheet--full { height: 90vh; }
+  /* Disable transition during active drag */
+  .config-sheet--dragging {
+    transition: none !important;
+  }
 
-    /* Disable transition during active drag */
-    .config-sheet--dragging {
-        transition: none !important;
-    }
+  .config-sheet--dragging ~ .config-3d-mobile-viewer,
+  .config-3d-mobile-viewer--dragging {
+    transition: none !important;
+  }
 
-    .config-sheet--dragging ~ .config-3d-mobile-viewer,
-    .config-3d-mobile-viewer--dragging {
-        transition: none !important;
-    }
+  /* ===== Sheet Handle ===== */
 
-    /* ===== Sheet Handle ===== */
+  .config-sheet__handle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 0 4px;
+    cursor: grab;
+    flex-shrink: 0;
+    -webkit-user-select: none;
+    user-select: none;
+  }
 
-    .config-sheet__handle {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 12px 0 4px;
-        cursor: grab;
-        flex-shrink: 0;
-        -webkit-user-select: none;
-        user-select: none;
-    }
+  .config-sheet__handle:active {
+    cursor: grabbing;
+  }
 
-    .config-sheet__handle:active {
-        cursor: grabbing;
-    }
+  .config-sheet__handle-bar {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--theme-color-border, #ccc);
+    transition: background 0.2s;
+  }
 
-    .config-sheet__handle-bar {
-        width: 40px;
-        height: 4px;
-        border-radius: 2px;
-        background: var(--theme-color-border, #ccc);
-        transition: background 0.2s;
-    }
+  .config-sheet__handle:hover .config-sheet__handle-bar {
+    background: var(--theme-color-text-muted, #999);
+  }
 
-    .config-sheet__handle:hover .config-sheet__handle-bar {
-        background: var(--theme-color-text-muted, #999);
-    }
+  /* ===== Sheet Content (scrollable options area) ===== */
 
-    /* ===== Sheet Content (scrollable options area) ===== */
+  .config-sheet__content {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 var(--theme-space-4, 1rem) var(--theme-space-4, 1rem);
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
+  }
 
-    .config-sheet__content {
-        flex: 1;
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        padding: 0 var(--theme-space-4, 1rem) var(--theme-space-4, 1rem);
-        -webkit-overflow-scrolling: touch;
-        min-height: 0;
-    }
+  /* ===== Sheet Footer (sticky price + Add to Cart) ===== */
 
-    /* ===== Sheet Footer (sticky price + Add to Cart) ===== */
+  .config-sheet__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--theme-space-4, 1rem);
+    padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+    border-top: 1px solid var(--theme-color-border, #eee);
+    background: var(--theme-color-background, #fff);
+    flex-shrink: 0;
+  }
 
-    .config-sheet__footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--theme-space-4, 1rem);
-        padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
-        border-top: 1px solid var(--theme-color-border, #eee);
-        background: var(--theme-color-background, #fff);
-        flex-shrink: 0;
-    }
+  .config-sheet__footer-price {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .config-sheet__footer-price {
-        display: flex;
-        flex-direction: column;
-    }
+  .config-sheet__footer-label {
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    color: var(--theme-color-text-muted, #999);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 
-    .config-sheet__footer-label {
-        font-size: var(--theme-font-size-xs, 0.75rem);
-        color: var(--theme-color-text-muted, #999);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
+  .config-sheet__footer-amount {
+    font-size: var(--theme-font-size-xl, 1.5rem);
+    font-weight: var(--theme-font-weight-bold, 700);
+    color: var(--theme-color-text, #111);
+  }
 
-    .config-sheet__footer-amount {
-        font-size: var(--theme-font-size-xl, 1.5rem);
-        font-weight: var(--theme-font-weight-bold, 700);
-        color: var(--theme-color-text, #111);
-    }
+  /* ===== Sheet-Internal Layout Overrides ===== */
 
-    /* ===== Sheet-Internal Layout Overrides ===== */
+  /* Compact header when inside the sheet */
+  .config-sheet .configurator-3d-header {
+    margin-bottom: var(--theme-space-2, 0.5rem);
+  }
 
-    /* Compact header when inside the sheet */
-    .config-sheet .configurator-3d-header {
-        margin-bottom: var(--theme-space-2, 0.5rem);
-    }
+  .config-sheet .configurator-3d-header__name {
+    font-size: var(--theme-font-size-lg, 1.25rem);
+    margin-bottom: 2px;
+  }
 
-    .config-sheet .configurator-3d-header__name {
-        font-size: var(--theme-font-size-lg, 1.25rem);
-        margin-bottom: 2px;
-    }
+  .config-sheet .configurator-3d-header__desc {
+    font-size: var(--theme-font-size-sm, 0.85rem);
+  }
 
-    .config-sheet .configurator-3d-header__desc {
-        font-size: var(--theme-font-size-sm, 0.85rem);
-    }
+  /* Compact step navigation */
+  .config-sheet .configurator-steps {
+    margin-bottom: var(--theme-space-2, 0.5rem);
+  }
 
-    /* Compact step navigation */
-    .config-sheet .configurator-steps {
-        margin-bottom: var(--theme-space-2, 0.5rem);
-    }
+  /* Single-column options grid inside the sheet */
+  .config-sheet .configurator-options {
+    grid-template-columns: 1fr;
+  }
 
-    /* Single-column options grid inside the sheet */
-    .config-sheet .configurator-options {
-        grid-template-columns: 1fr;
-    }
+  /* Tighter option cards */
+  .config-sheet .configurator-option {
+    padding: var(--theme-space-3, 0.75rem);
+  }
 
-    /* Tighter option cards */
-    .config-sheet .configurator-option {
-        padding: var(--theme-space-3, 0.75rem);
-    }
+  /* Hide the desktop summary sidebar (sheet footer replaces it) */
+  .config-sheet .configurator-summary {
+    display: none;
+  }
 
-    /* Hide the desktop summary sidebar (sheet footer replaces it) */
-    .config-sheet .configurator-summary {
-        display: none;
-    }
-
-    /* Nav buttons: compact within sheet */
-    .config-sheet .configurator-nav {
-        margin-top: var(--theme-space-3, 0.75rem);
-        padding-top: var(--theme-space-3, 0.75rem);
-    }
+  /* Nav buttons: compact within sheet */
+  .config-sheet .configurator-nav {
+    margin-top: var(--theme-space-3, 0.75rem);
+    padding-top: var(--theme-space-3, 0.75rem);
+  }
 }
 
 /* ==========================================================================
@@ -474,13 +483,13 @@
    ========================================================================== */
 
 @media (max-width: 400px) {
-    .config-sheet__footer-amount {
-        font-size: var(--theme-font-size-lg, 1.25rem);
-    }
+  .config-sheet__footer-amount {
+    font-size: var(--theme-font-size-lg, 1.25rem);
+  }
 
-    .config-sheet .configurator-3d-header__name {
-        font-size: var(--theme-font-size-base, 1rem);
-    }
+  .config-sheet .configurator-3d-header__name {
+    font-size: var(--theme-font-size-base, 1rem);
+  }
 }
 
 /* ==========================================================================
@@ -488,98 +497,97 @@
    ========================================================================== */
 
 .configurator-3d-fullscreen-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 2;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.45);
-    color: #fff;
-    border: none;
-    border-radius: var(--theme-border-radius, 8px);
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
-    backdrop-filter: blur(4px);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border: none;
+  border-radius: var(--theme-border-radius, 8px);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+  backdrop-filter: blur(4px);
 }
 
 .configurator-3d-fullscreen-btn:hover {
-    background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.65);
 }
 
 /* Hide on mobile — bottom sheet is already full-viewport */
 @media (max-width: 1023px) {
-    .configurator-3d-fullscreen-btn {
-        display: none;
-    }
+  .configurator-3d-fullscreen-btn {
+    display: none;
+  }
 }
 
 /* --- Fullscreen state --- */
 
 .configurator-3d-section--fullscreen {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    padding: 0;
-    background: var(--theme-color-background, #fff);
-    overflow: hidden;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  padding: 0;
+  background: var(--theme-color-background, #fff);
+  overflow: hidden;
 }
 
 .configurator-3d-section--fullscreen .container {
-    max-width: none;
-    padding: 0;
+  max-width: none;
+  padding: 0;
 }
 
 .configurator-3d-section--fullscreen .configurator-3d-layout {
-    grid-template-columns: 1fr 360px;
-    height: 100vh;
-    gap: 0;
-    overflow: hidden;
+  grid-template-columns: 1fr 360px;
+  height: 100vh;
+  gap: 0;
+  overflow: hidden;
 }
 
 @media (min-width: 1400px) {
-    .configurator-3d-section--fullscreen .configurator-3d-layout {
-        grid-template-columns: 1fr 420px;
-    }
+  .configurator-3d-section--fullscreen .configurator-3d-layout {
+    grid-template-columns: 1fr 420px;
+  }
 }
 
 .configurator-3d-section--fullscreen .configurator-3d-viewer-wrap {
-    position: relative;
-    top: auto;
-    height: 100vh;
+  position: relative;
+  top: auto;
+  height: 100vh;
 }
 
 .configurator-3d-section--fullscreen .configurator-3d-viewer-container {
-    aspect-ratio: unset;
-    height: 100%;
-    border-radius: 0;
+  aspect-ratio: unset;
+  height: 100%;
+  border-radius: 0;
 }
 
 .configurator-3d-section--fullscreen .configurator-3d-viewer-hint {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 8px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.3));
-    color: rgba(255,255,255,0.8);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 8px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .configurator-3d-section--fullscreen .configurator-3d-right {
-    height: 100vh;
-    overflow-y: auto;
-    padding: var(--theme-space-4, 1rem) var(--theme-space-5, 1.25rem);
-    border-left: 1px solid var(--theme-color-border, #eee);
-    box-sizing: border-box;
+  height: 100vh;
+  overflow-y: auto;
+  padding: var(--theme-space-4, 1rem) var(--theme-space-5, 1.25rem);
+  border-left: 1px solid var(--theme-color-border, #eee);
+  box-sizing: border-box;
 }
 
 .configurator-3d-section--fullscreen .configurator-3d-fullscreen-btn {
-    top: 16px;
-    right: 16px;
+  top: 16px;
+  right: 16px;
 }
-

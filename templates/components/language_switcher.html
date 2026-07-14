@@ -1,0 +1,36 @@
+{% load i18n static language_tags %}
+
+<div class="language-switcher">
+    <div class="dropdown">
+        {% get_current_language as LANGUAGE_CODE %}
+        <button class="language-dropdown-toggle" type="button" id="languageDropdown" data-action="toggle-language-dropdown" aria-expanded="false">
+            <span class="current-flag">{{ LANGUAGE_CODE|language_flag }}</span>
+            <span class="current-lang-code">{{ LANGUAGE_CODE|upper }}</span>
+            <span class="dropdown-arrow">▼</span>
+        </button>
+        
+        <div class="language-dropdown-menu" id="languageDropdownMenu">
+            {% get_available_languages as LANGUAGES %}
+            {% for lang_code, lang_name in LANGUAGES %}
+                <form action="{% url 'set_language' %}" method="post" class="language-form">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                    <input name="language" type="hidden" value="{{ lang_code }}" />
+                    <button type="submit" class="language-option {% if lang_code == LANGUAGE_CODE %}active{% endif %}">
+                        <span class="flag">{{ lang_code|language_flag }}</span>
+                        <span class="lang-details">
+                            <span class="lang-name" dir="{{ lang_code|language_dir }}">
+                                {{ lang_code|language_native_name }}
+                            </span>
+                            <span class="lang-code">{{ lang_code|upper }}</span>
+                        </span>
+                        {% if lang_code == LANGUAGE_CODE %}
+                            <span class="checkmark">✓</span>
+                        {% endif %}
+                    </button>
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'core/js/components/language_switcher.js' %}"></script>

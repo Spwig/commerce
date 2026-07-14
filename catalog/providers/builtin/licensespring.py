@@ -14,7 +14,7 @@ License Spring provides:
 """
 
 import logging
-from typing import Dict, Tuple
+
 from catalog.providers.base import BaseLicenseProviderAdapter
 
 logger = logging.getLogger(__name__)
@@ -29,75 +29,75 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
     consumption-based, and floating licenses.
     """
 
-    provider_key = 'licensespring'
-    provider_name = 'License Spring'
+    provider_key = "licensespring"
+    provider_name = "License Spring"
 
     @property
-    def capabilities(self) -> Dict:
+    def capabilities(self) -> dict:
         """Return capability set for License Spring"""
         return {
-            'create_license': True,
-            'validate_license': True,
-            'activate_device': True,
-            'deactivate_device': True,
-            'suspend_license': True,
-            'revoke_license': True,
-            'webhooks': True,
-            'floating_licenses': True,
-            'consumption_tracking': True,
-            'trial_licenses': True,
-            'offline_validation': True,
-            'analytics': True,
+            "create_license": True,
+            "validate_license": True,
+            "activate_device": True,
+            "deactivate_device": True,
+            "suspend_license": True,
+            "revoke_license": True,
+            "webhooks": True,
+            "floating_licenses": True,
+            "consumption_tracking": True,
+            "trial_licenses": True,
+            "offline_validation": True,
+            "analytics": True,
         }
 
     @property
-    def credential_schema(self) -> Dict:
+    def credential_schema(self) -> dict:
         """Define required credentials for License Spring"""
         return {
-            'api_key': {
-                'type': 'string',
-                'title': 'Management API Key',
-                'required': True,
-                'secret': True,
-                'help_text': 'API key from License Spring management dashboard',
+            "api_key": {
+                "type": "string",
+                "title": "Management API Key",
+                "required": True,
+                "secret": True,
+                "help_text": "API key from License Spring management dashboard",
             },
-            'shared_key': {
-                'type': 'string',
-                'title': 'Shared Key',
-                'required': True,
-                'secret': True,
-                'help_text': 'Shared key for SDK license validation',
+            "shared_key": {
+                "type": "string",
+                "title": "Shared Key",
+                "required": True,
+                "secret": True,
+                "help_text": "Shared key for SDK license validation",
             },
-            'product_code': {
-                'type': 'string',
-                'title': 'Default Product Code',
-                'required': True,
-                'help_text': 'Default product code in License Spring',
+            "product_code": {
+                "type": "string",
+                "title": "Default Product Code",
+                "required": True,
+                "help_text": "Default product code in License Spring",
             },
-            'environment': {
-                'type': 'select',
-                'title': 'Environment',
-                'choices': [
-                    ('production', 'Production'),
-                    ('sandbox', 'Sandbox'),
+            "environment": {
+                "type": "select",
+                "title": "Environment",
+                "choices": [
+                    ("production", "Production"),
+                    ("sandbox", "Sandbox"),
                 ],
-                'default': 'production',
-                'help_text': 'Use sandbox for testing',
-            }
+                "default": "production",
+                "help_text": "Use sandbox for testing",
+            },
         }
 
     def _get_base_url(self) -> str:
         """Get base URL based on environment"""
-        environment = self.config.get('environment', 'production')
-        if environment == 'sandbox':
-            return 'https://saas-api-sandbox.licensespring.com'
-        return 'https://saas-api.licensespring.com'
+        environment = self.config.get("environment", "production")
+        if environment == "sandbox":
+            return "https://saas-api-sandbox.licensespring.com"
+        return "https://saas-api.licensespring.com"
 
-    def _get_auth_headers(self) -> Dict:
+    def _get_auth_headers(self) -> dict:
         """Get authentication headers for License Spring API"""
         return {
-            'Authorization': f'ApiKey {self.api_key}',
-            'Content-Type': 'application/json',
+            "Authorization": f"ApiKey {self.api_key}",
+            "Content-Type": "application/json",
         }
 
     def _get_product_code(self, product) -> str:
@@ -106,16 +106,16 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
 
         Merchants can map products in provider_config.
         """
-        product_mapping = self.config.get('product_mapping', {})
+        product_mapping = self.config.get("product_mapping", {})
         product_code = product_mapping.get(str(product.id))
 
         if not product_code:
             # Use default product code
-            product_code = self.config.get('product_code')
+            product_code = self.config.get("product_code")
 
         return product_code
 
-    def create_license(self, license_key, product, order) -> Tuple[bool, str, Dict]:
+    def create_license(self, license_key, product, order) -> tuple[bool, str, dict]:
         """
         Create license in License Spring.
 
@@ -132,51 +132,59 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         if not product_code:
             error_msg = f"No License Spring product mapping found for product {product.id}"
             logger.error(error_msg)
-            return False, '', {'error': error_msg}
+            return False, "", {"error": error_msg}
 
-        endpoint = '/api/v4/licenses'
+        endpoint = "/api/v4/licenses"
 
         data = {
-            'product_code': product_code,
-            'license_key': license_key.key,
-            'max_activations': license_key.max_activations,
-            'validity_period': None if license_key.is_lifetime else (
-                (license_key.expires_at - license_key.issued_at).days if license_key.expires_at else None
+            "product_code": product_code,
+            "license_key": license_key.key,
+            "max_activations": license_key.max_activations,
+            "validity_period": None
+            if license_key.is_lifetime
+            else (
+                (license_key.expires_at - license_key.issued_at).days
+                if license_key.expires_at
+                else None
             ),
-            'customer': {
-                'email': order.user.email,
-                'first_name': order.user.first_name,
-                'last_name': order.user.last_name,
-                'company_name': '',
+            "customer": {
+                "email": order.user.email,
+                "first_name": order.user.first_name,
+                "last_name": order.user.last_name,
+                "company_name": "",
             },
-            'license_type': 'perpetual' if license_key.is_lifetime else 'time_limited',
-            'custom_fields': {
-                'order_id': str(order.id),
-                'order_number': order.order_number,
-                'product_sku': product.sku,
-                'source': 'spwig',
-            }
+            "license_type": "perpetual" if license_key.is_lifetime else "time_limited",
+            "custom_fields": {
+                "order_id": str(order.id),
+                "order_number": order.order_number,
+                "product_sku": product.sku,
+                "source": "spwig",
+            },
         }
 
         # Override base URL for License Spring
         original_endpoint = self.api_endpoint
         self.api_endpoint = self._get_base_url()
 
-        success, response = self._make_request('POST', endpoint, data, headers=self._get_auth_headers())
+        success, response = self._make_request(
+            "POST", endpoint, data, headers=self._get_auth_headers()
+        )
 
         # Restore original endpoint
         self.api_endpoint = original_endpoint
 
         if success:
-            external_id = response.get('id', license_key.key)
-            logger.info(f"Successfully created license {license_key.key} in License Spring (ID: {external_id})")
+            external_id = response.get("id", license_key.key)
+            logger.info(
+                f"Successfully created license {license_key.key} in License Spring (ID: {external_id})"
+            )
             return True, str(external_id), response
 
-        error = response.get('message', 'Unknown error')
+        error = response.get("message", "Unknown error")
         logger.error(f"Failed to create license in License Spring: {error}")
-        return False, '', response
+        return False, "", response
 
-    def validate_license(self, key: str) -> Tuple[bool, Dict]:
+    def validate_license(self, key: str) -> tuple[bool, dict]:
         """
         Validate license with License Spring.
 
@@ -186,25 +194,27 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         Returns:
             Tuple of (is_valid: bool, validation_data: dict)
         """
-        endpoint = f'/api/v4/licenses/{key}/check'
+        endpoint = f"/api/v4/licenses/{key}/check"
 
         # Override base URL for License Spring
         original_endpoint = self.api_endpoint
         self.api_endpoint = self._get_base_url()
 
-        success, response = self._make_request('GET', endpoint, headers=self._get_auth_headers())
+        success, response = self._make_request("GET", endpoint, headers=self._get_auth_headers())
 
         # Restore original endpoint
         self.api_endpoint = original_endpoint
 
-        if success and response.get('is_valid'):
+        if success and response.get("is_valid"):
             logger.info(f"License {key} validated successfully in License Spring")
             return True, response
 
         logger.warning(f"License {key} validation failed in License Spring")
         return False, response
 
-    def activate_device(self, license_key, device_fingerprint: str, device_info: Dict) -> Tuple[bool, str, Dict]:
+    def activate_device(
+        self, license_key, device_fingerprint: str, device_info: dict
+    ) -> tuple[bool, str, dict]:
         """
         Activate a device in License Spring.
 
@@ -216,34 +226,36 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         Returns:
             Tuple of (success: bool, activation_id: str, response_data: dict)
         """
-        endpoint = f'/api/v4/licenses/{license_key.key}/activate'
+        endpoint = f"/api/v4/licenses/{license_key.key}/activate"
 
         data = {
-            'hardware_id': device_fingerprint,
-            'device_name': device_info.get('device_name', ''),
-            'os': device_info.get('platform', ''),
-            'os_version': device_info.get('os_version', ''),
+            "hardware_id": device_fingerprint,
+            "device_name": device_info.get("device_name", ""),
+            "os": device_info.get("platform", ""),
+            "os_version": device_info.get("os_version", ""),
         }
 
         # Override base URL for License Spring
         original_endpoint = self.api_endpoint
         self.api_endpoint = self._get_base_url()
 
-        success, response = self._make_request('POST', endpoint, data, headers=self._get_auth_headers())
+        success, response = self._make_request(
+            "POST", endpoint, data, headers=self._get_auth_headers()
+        )
 
         # Restore original endpoint
         self.api_endpoint = original_endpoint
 
         if success:
-            activation_id = response.get('activation_id', device_fingerprint)
+            activation_id = response.get("activation_id", device_fingerprint)
             logger.info(f"Successfully activated device {device_fingerprint} in License Spring")
             return True, str(activation_id), response
 
-        error = response.get('message', 'Unknown error')
+        error = response.get("message", "Unknown error")
         logger.error(f"Failed to activate device in License Spring: {error}")
-        return False, '', response
+        return False, "", response
 
-    def deactivate_device(self, license_key, device_fingerprint: str) -> Tuple[bool, Dict]:
+    def deactivate_device(self, license_key, device_fingerprint: str) -> tuple[bool, dict]:
         """
         Deactivate a device in License Spring.
 
@@ -254,17 +266,19 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         Returns:
             Tuple of (success: bool, response_data: dict)
         """
-        endpoint = f'/api/v4/licenses/{license_key.key}/deactivate'
+        endpoint = f"/api/v4/licenses/{license_key.key}/deactivate"
 
         data = {
-            'hardware_id': device_fingerprint,
+            "hardware_id": device_fingerprint,
         }
 
         # Override base URL for License Spring
         original_endpoint = self.api_endpoint
         self.api_endpoint = self._get_base_url()
 
-        success, response = self._make_request('POST', endpoint, data, headers=self._get_auth_headers())
+        success, response = self._make_request(
+            "POST", endpoint, data, headers=self._get_auth_headers()
+        )
 
         # Restore original endpoint
         self.api_endpoint = original_endpoint
@@ -273,11 +287,11 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
             logger.info(f"Successfully deactivated device {device_fingerprint} in License Spring")
             return True, response
 
-        error = response.get('message', 'Unknown error')
+        error = response.get("message", "Unknown error")
         logger.error(f"Failed to deactivate device in License Spring: {error}")
         return False, response
 
-    def suspend_license(self, license_key) -> Tuple[bool, Dict]:
+    def suspend_license(self, license_key) -> tuple[bool, dict]:
         """
         Suspend a license in License Spring.
 
@@ -287,17 +301,17 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         Returns:
             Tuple of (success: bool, response_data: dict)
         """
-        endpoint = f'/api/v4/licenses/{license_key.key}'
+        endpoint = f"/api/v4/licenses/{license_key.key}"
 
-        data = {
-            'is_enabled': False
-        }
+        data = {"is_enabled": False}
 
         # Override base URL for License Spring
         original_endpoint = self.api_endpoint
         self.api_endpoint = self._get_base_url()
 
-        success, response = self._make_request('PATCH', endpoint, data, headers=self._get_auth_headers())
+        success, response = self._make_request(
+            "PATCH", endpoint, data, headers=self._get_auth_headers()
+        )
 
         # Restore original endpoint
         self.api_endpoint = original_endpoint
@@ -306,11 +320,11 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
             logger.info(f"Successfully suspended license {license_key.key} in License Spring")
             return True, response
 
-        error = response.get('message', 'Unknown error')
+        error = response.get("message", "Unknown error")
         logger.error(f"Failed to suspend license in License Spring: {error}")
         return False, response
 
-    def revoke_license(self, license_key) -> Tuple[bool, Dict]:
+    def revoke_license(self, license_key) -> tuple[bool, dict]:
         """
         Revoke a license in License Spring.
 
@@ -322,13 +336,13 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         Returns:
             Tuple of (success: bool, response_data: dict)
         """
-        endpoint = f'/api/v4/licenses/{license_key.key}'
+        endpoint = f"/api/v4/licenses/{license_key.key}"
 
         # Override base URL for License Spring
         original_endpoint = self.api_endpoint
         self.api_endpoint = self._get_base_url()
 
-        success, response = self._make_request('DELETE', endpoint, headers=self._get_auth_headers())
+        success, response = self._make_request("DELETE", endpoint, headers=self._get_auth_headers())
 
         # Restore original endpoint
         self.api_endpoint = original_endpoint
@@ -337,11 +351,11 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
             logger.info(f"Successfully revoked license {license_key.key} in License Spring")
             return True, response
 
-        error = response.get('message', 'Unknown error')
+        error = response.get("message", "Unknown error")
         logger.error(f"Failed to revoke license in License Spring: {error}")
         return False, response
 
-    def get_license_info(self, external_id: str) -> Tuple[bool, Dict]:
+    def get_license_info(self, external_id: str) -> tuple[bool, dict]:
         """
         Retrieve license information from License Spring.
 
@@ -351,26 +365,28 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
         Returns:
             Tuple of (success: bool, license_data: dict)
         """
-        endpoint = f'/api/v4/licenses/{external_id}'
+        endpoint = f"/api/v4/licenses/{external_id}"
 
         # Override base URL for License Spring
         original_endpoint = self.api_endpoint
         self.api_endpoint = self._get_base_url()
 
-        success, response = self._make_request('GET', endpoint, headers=self._get_auth_headers())
+        success, response = self._make_request("GET", endpoint, headers=self._get_auth_headers())
 
         # Restore original endpoint
         self.api_endpoint = original_endpoint
 
         if success:
-            logger.info(f"Successfully retrieved license info for {external_id} from License Spring")
+            logger.info(
+                f"Successfully retrieved license info for {external_id} from License Spring"
+            )
             return True, response
 
-        error = response.get('message', 'Unknown error')
+        error = response.get("message", "Unknown error")
         logger.error(f"Failed to retrieve license info from License Spring: {error}")
         return False, response
 
-    def test_connection(self) -> Dict:
+    def test_connection(self) -> dict:
         """
         Test connection to License Spring API.
 
@@ -381,34 +397,36 @@ class LicenseSpringAdapter(BaseLicenseProviderAdapter):
             # Validate credentials first
             is_valid, error_msg = self.validate_credentials()
             if not is_valid:
-                return {'success': False, 'error': error_msg}
+                return {"success": False, "error": error_msg}
 
             # Try to get product info
-            product_code = self.config.get('product_code')
+            product_code = self.config.get("product_code")
             if not product_code:
-                return {'success': False, 'error': 'Missing product_code in configuration'}
+                return {"success": False, "error": "Missing product_code in configuration"}
 
-            endpoint = f'/api/v4/products/{product_code}'
+            endpoint = f"/api/v4/products/{product_code}"
 
             # Override base URL for License Spring
             original_endpoint = self.api_endpoint
             self.api_endpoint = self._get_base_url()
 
-            success, response = self._make_request('GET', endpoint, headers=self._get_auth_headers())
+            success, response = self._make_request(
+                "GET", endpoint, headers=self._get_auth_headers()
+            )
 
             # Restore original endpoint
             self.api_endpoint = original_endpoint
 
             if success:
-                product_name = response.get('product_name', 'Unknown')
+                product_name = response.get("product_name", "Unknown")
                 return {
-                    'success': True,
-                    'message': f'Connected to License Spring (Product: {product_name})'
+                    "success": True,
+                    "message": f"Connected to License Spring (Product: {product_name})",
                 }
             else:
-                error = response.get('message', 'Unknown error')
-                return {'success': False, 'error': f'Connection failed: {error}'}
+                error = response.get("message", "Unknown error")
+                return {"success": False, "error": f"Connection failed: {error}"}
 
         except Exception as e:
-            logger.exception(f"Connection test failed for License Spring")
-            return {'success': False, 'error': str(e)}
+            logger.exception("Connection test failed for License Spring")
+            return {"success": False, "error": str(e)}

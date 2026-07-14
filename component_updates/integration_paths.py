@@ -5,6 +5,7 @@ Single source of truth for integration directory structure.
 All provider loaders and registries import from here instead of
 hardcoding paths to avoid scattered path references.
 """
+
 import logging
 from pathlib import Path
 
@@ -12,10 +13,10 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-COMPONENTS_DATA = Path(settings.BASE_DIR) / 'components_data'
-INTEGRATIONS_DIR = COMPONENTS_DATA / 'integrations'
+COMPONENTS_DATA = Path(settings.BASE_DIR) / "components_data"
+INTEGRATIONS_DIR = COMPONENTS_DATA / "integrations"
 
-CACHE_MARKERS_DIR = COMPONENTS_DATA / '.cache_markers'
+CACHE_MARKERS_DIR = COMPONENTS_DATA / ".cache_markers"
 
 
 def touch_provider_cache_marker(component_type: str):
@@ -26,7 +27,7 @@ def touch_provider_cache_marker(component_type: str):
     """
     try:
         CACHE_MARKERS_DIR.mkdir(parents=True, exist_ok=True)
-        marker = CACHE_MARKERS_DIR / f'{component_type}.marker'
+        marker = CACHE_MARKERS_DIR / f"{component_type}.marker"
         marker.touch()
     except Exception as e:
         logger.warning(f"Could not write cache marker for {component_type}: {e}")
@@ -42,7 +43,7 @@ def provider_cache_is_stale(component_type: str, last_loaded_at: float) -> bool:
     Returns:
         True if the cache should be invalidated
     """
-    marker = CACHE_MARKERS_DIR / f'{component_type}.marker'
+    marker = CACHE_MARKERS_DIR / f"{component_type}.marker"
     try:
         if marker.exists():
             return marker.stat().st_mtime > last_loaded_at
@@ -77,8 +78,8 @@ def import_component_module(component_dir: Path, module_path: str, module_name: 
     Returns:
         Imported module
     """
-    import sys
     import importlib.util
+    import sys
 
     # Reloading a package leaves cached submodule entries in sys.modules
     # (e.g. `payment_provider_stripe.provider`). When __init__.py does
@@ -95,7 +96,7 @@ def import_component_module(component_dir: Path, module_path: str, module_name: 
     for name in [k for k in list(sys.modules) if k == module_name or k.startswith(prefix)]:
         del sys.modules[name]
 
-    init_file = component_dir / '__init__.py'
+    init_file = component_dir / "__init__.py"
     is_package = init_file.exists()
 
     parent_str = str(component_dir.parent)
@@ -105,21 +106,16 @@ def import_component_module(component_dir: Path, module_path: str, module_name: 
     try:
         if is_package:
             spec = importlib.util.spec_from_file_location(
-                module_name, init_file,
-                submodule_search_locations=[str(component_dir)]
+                module_name, init_file, submodule_search_locations=[str(component_dir)]
             )
         else:
-            if not module_path.endswith('.py'):
+            if not module_path.endswith(".py"):
                 module_path = f"{module_path}.py"
             module_file_path = component_dir / module_path
-            spec = importlib.util.spec_from_file_location(
-                module_name, module_file_path
-            )
+            spec = importlib.util.spec_from_file_location(module_name, module_file_path)
 
         if spec is None or spec.loader is None:
-            raise ImportError(
-                f"Could not load module spec from {component_dir}"
-            )
+            raise ImportError(f"Could not load module spec from {component_dir}")
 
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module

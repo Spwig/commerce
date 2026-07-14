@@ -1,5 +1,3 @@
-from django.utils.translation import gettext_lazy as _
-
 from catalog.models import ProductDependency
 
 
@@ -13,8 +11,9 @@ def check_hard_dependencies(product, user, cart=None):
     """
     hard_deps = list(
         ProductDependency.objects.filter(
-            product=product, dependency_type='requires',
-        ).select_related('required_product')
+            product=product,
+            dependency_type="requires",
+        ).select_related("required_product")
     )
     if not hard_deps:
         return True, []
@@ -38,8 +37,11 @@ def get_recommendations(product):
     """Return all 'recommends'-type dependencies (display-only)."""
     return list(
         ProductDependency.objects.filter(
-            product=product, dependency_type='recommends',
-        ).select_related('required_product').order_by('sort_order', 'id')
+            product=product,
+            dependency_type="recommends",
+        )
+        .select_related("required_product")
+        .order_by("sort_order", "id")
     )
 
 
@@ -49,24 +51,28 @@ def _user_owns_product(user, product_id):
     1. A paid (non-refunded) order containing the product.
     2. An active LicenseKey for the product.
     """
-    from orders.models import OrderItem
     from catalog.models import LicenseKey
+    from orders.models import OrderItem
 
     # Check order history
-    has_order = OrderItem.objects.filter(
-        order__user=user,
-        product_id=product_id,
-        order__payment_status__in=['paid', 'partially_refunded'],
-    ).exclude(
-        order__payment_status='refunded',
-    ).exists()
+    has_order = (
+        OrderItem.objects.filter(
+            order__user=user,
+            product_id=product_id,
+            order__payment_status__in=["paid", "partially_refunded"],
+        )
+        .exclude(
+            order__payment_status="refunded",
+        )
+        .exists()
+    )
     if has_order:
         return True
 
     # Check active license keys (linked through order_item → product)
     has_license = LicenseKey.objects.filter(
         user=user,
-        status='active',
+        status="active",
         order_item__product_id=product_id,
     ).exists()
     return has_license

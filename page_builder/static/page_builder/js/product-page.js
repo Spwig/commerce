@@ -5,44 +5,46 @@
  * Used by page_builder/templates/page_builder/page.html when page_type == 'product'.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    function initProductPage() {
-        var thumbnails = document.querySelectorAll('.thumbnail');
-        var mainImage = document.getElementById('main-product-image');
+  function initProductPage() {
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    const mainImage = document.getElementById('main-product-image');
 
-        if (mainImage && thumbnails.length) {
-            thumbnails.forEach(function (thumb) {
-                thumb.addEventListener('click', function () {
-                    mainImage.src = this.dataset.full;
-                    thumbnails.forEach(function (t) { t.classList.remove('active'); });
-                    this.classList.add('active');
-                });
-            });
-        }
-
-        var variantSelects = document.querySelectorAll('.variant-select');
-        if (variantSelects.length) {
-            variantSelects.forEach(function (select) {
-                select.addEventListener('change', updateProductInfo);
-            });
-        }
-
-        function updateProductInfo() {
-            var selectedVariants = {};
-            variantSelects.forEach(function (select) {
-                if (select.value) {
-                    selectedVariants[select.name] = select.value;
-                }
-            });
-            // Find matching variant and update display
-            // Implementation depends on your variant system
-        }
+    if (mainImage && thumbnails.length) {
+      thumbnails.forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+          mainImage.src = this.dataset.full;
+          thumbnails.forEach(function (t) {
+            t.classList.remove('active');
+          });
+          this.classList.add('active');
+        });
+      });
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initProductPage);
-    } else {
-        initProductPage();
+    const variantSelects = document.querySelectorAll('.variant-select');
+    if (variantSelects.length) {
+      variantSelects.forEach(function (select) {
+        select.addEventListener('change', updateProductInfo);
+      });
     }
+
+    function updateProductInfo() {
+      const selectedVariants = {};
+      variantSelects.forEach(function (select) {
+        if (select.value) {
+          selectedVariants[select.name] = select.value;
+        }
+      });
+      // Find matching variant and update display
+      // Implementation depends on your variant system
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProductPage);
+  } else {
+    initProductPage();
+  }
 })();

@@ -5,109 +5,109 @@
  * Handles expand/collapse behavior with optional animations
  */
 class FaqAccordion {
-    constructor(element) {
-        this.element = element;
-        this.config = this.parseConfig();
-        this.items = element.querySelectorAll('.faq-accordion__item');
+  constructor(element) {
+    this.element = element;
+    this.config = this.parseConfig();
+    this.items = element.querySelectorAll('.faq-accordion__item');
 
-        if (this.items.length === 0) {
-            return;
+    if (this.items.length === 0) {
+      return;
+    }
+
+    this.init();
+  }
+
+  parseConfig() {
+    return {
+      behavior: this.element.dataset.behavior || 'single',
+      animate: this.element.dataset.animate !== 'false',
+    };
+  }
+
+  init() {
+    this.items.forEach(item => {
+      const button = item.querySelector('.faq-accordion__question');
+
+      if (button) {
+        button.addEventListener('click', () => this.handleItemClick(item));
+      }
+    });
+  }
+
+  handleItemClick(item) {
+    const isOpen = item.classList.contains('faq-accordion__item--open');
+
+    // Close others if single behavior
+    if (this.config.behavior === 'single' && !isOpen) {
+      this.items.forEach(otherItem => {
+        if (otherItem !== item && otherItem.classList.contains('faq-accordion__item--open')) {
+          this.closeItem(otherItem);
         }
-
-        this.init();
+      });
     }
 
-    parseConfig() {
-        return {
-            behavior: this.element.dataset.behavior || 'single',
-            animate: this.element.dataset.animate !== 'false'
-        };
+    // Toggle current
+    if (isOpen) {
+      this.closeItem(item);
+    } else {
+      this.openItem(item);
     }
+  }
 
-    init() {
-        this.items.forEach(item => {
-            const button = item.querySelector('.faq-accordion__question');
+  openItem(item) {
+    const button = item.querySelector('.faq-accordion__question');
+    const answer = item.querySelector('.faq-accordion__answer');
 
-            if (button) {
-                button.addEventListener('click', () => this.handleItemClick(item));
-            }
-        });
+    if (!answer) return;
+
+    item.classList.add('faq-accordion__item--open');
+    button.setAttribute('aria-expanded', 'true');
+    answer.hidden = false;
+
+    if (this.config.animate) {
+      answer.style.maxHeight = '0';
+      answer.style.opacity = '0';
+      requestAnimationFrame(() => {
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        answer.style.opacity = '1';
+      });
     }
+  }
 
-    handleItemClick(item) {
-        const isOpen = item.classList.contains('faq-accordion__item--open');
+  closeItem(item) {
+    const button = item.querySelector('.faq-accordion__question');
+    const answer = item.querySelector('.faq-accordion__answer');
 
-        // Close others if single behavior
-        if (this.config.behavior === 'single' && !isOpen) {
-            this.items.forEach(otherItem => {
-                if (otherItem !== item && otherItem.classList.contains('faq-accordion__item--open')) {
-                    this.closeItem(otherItem);
-                }
-            });
-        }
+    if (!answer) return;
 
-        // Toggle current
-        if (isOpen) {
-            this.closeItem(item);
-        } else {
-            this.openItem(item);
-        }
+    item.classList.remove('faq-accordion__item--open');
+    button.setAttribute('aria-expanded', 'false');
+
+    if (this.config.animate) {
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        answer.style.maxHeight = '0';
+        answer.style.opacity = '0';
+        setTimeout(() => {
+          answer.hidden = true;
+          answer.style.maxHeight = '';
+          answer.style.opacity = '';
+        }, 300);
+      });
+    } else {
+      answer.hidden = true;
     }
-
-    openItem(item) {
-        const button = item.querySelector('.faq-accordion__question');
-        const answer = item.querySelector('.faq-accordion__answer');
-
-        if (!answer) return;
-
-        item.classList.add('faq-accordion__item--open');
-        button.setAttribute('aria-expanded', 'true');
-        answer.hidden = false;
-
-        if (this.config.animate) {
-            answer.style.maxHeight = '0';
-            answer.style.opacity = '0';
-            requestAnimationFrame(() => {
-                answer.style.maxHeight = answer.scrollHeight + 'px';
-                answer.style.opacity = '1';
-            });
-        }
-    }
-
-    closeItem(item) {
-        const button = item.querySelector('.faq-accordion__question');
-        const answer = item.querySelector('.faq-accordion__answer');
-
-        if (!answer) return;
-
-        item.classList.remove('faq-accordion__item--open');
-        button.setAttribute('aria-expanded', 'false');
-
-        if (this.config.animate) {
-            answer.style.maxHeight = answer.scrollHeight + 'px';
-            requestAnimationFrame(() => {
-                answer.style.maxHeight = '0';
-                answer.style.opacity = '0';
-                setTimeout(() => {
-                    answer.hidden = true;
-                    answer.style.maxHeight = '';
-                    answer.style.opacity = '';
-                }, 300);
-            });
-        } else {
-            answer.hidden = true;
-        }
-    }
+  }
 }
 
 // Self-initialize: Find all FAQ accordion elements and create instances
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('[data-faq-accordion]').forEach(element => {
-        new FaqAccordion(element);
-    });
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-faq-accordion]').forEach(element => {
+    new FaqAccordion(element);
+  });
 });
 
 // Export for potential external use
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = FaqAccordion;
+  module.exports = FaqAccordion;
 }

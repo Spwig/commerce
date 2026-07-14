@@ -11,6 +11,7 @@ where a slug lookup was attempting `PaymentProviderAccount.objects.get(
 provider_slug=...)` — `provider_slug` isn't a column on that model; the
 slug lives on the related `ComponentRegistry`.
 """
+
 from __future__ import annotations
 
 import importlib
@@ -34,9 +35,12 @@ pytestmark = pytest.mark.django_db
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _site_id() -> int:
     """Return the default site id (always 1 on single-tenant installs)."""
-    return Site.objects.get_or_create(pk=1, defaults={"domain": "example.com", "name": "Example"})[0].pk
+    return Site.objects.get_or_create(pk=1, defaults={"domain": "example.com", "name": "Example"})[
+        0
+    ].pk
 
 
 def _make_zone(countries, name="Test Zone", is_active=True) -> ShippingZone:
@@ -55,6 +59,7 @@ def _make_zone(countries, name="Test Zone", is_active=True) -> ShippingZone:
 # ---------------------------------------------------------------------------
 # Signal: post_save on ShippingZone
 # ---------------------------------------------------------------------------
+
 
 def test_first_save_creates_country_rows():
     site_id = _site_id()
@@ -115,8 +120,7 @@ def test_lowercase_and_whitespace_input_is_normalised():
     _make_zone(countries=["  sg ", "my", "SG"])  # dup + whitespace + lower
 
     codes = list(
-        ShippingCountry.objects
-        .filter(site_id=site_id)
+        ShippingCountry.objects.filter(site_id=site_id)
         .order_by("country_code")
         .values_list("country_code", flat=True)
     )
@@ -126,6 +130,7 @@ def test_lowercase_and_whitespace_input_is_normalised():
 # ---------------------------------------------------------------------------
 # Backfill migration is callable and idempotent
 # ---------------------------------------------------------------------------
+
 
 def test_backfill_migration_is_idempotent_when_called_twice():
     """The migration uses `get_or_create` so running it again on top of
@@ -137,18 +142,14 @@ def test_backfill_migration_is_idempotent_when_called_twice():
     site_id = _site_id()
     _make_zone(countries=["SG", "AU"])
     expected_before = set(
-        ShippingCountry.objects
-        .filter(site_id=site_id)
-        .values_list("country_code", flat=True)
+        ShippingCountry.objects.filter(site_id=site_id).values_list("country_code", flat=True)
     )
 
     _backfill_module.backfill_shipping_countries(apps, schema_editor=None)
     _backfill_module.backfill_shipping_countries(apps, schema_editor=None)
 
     expected_after = set(
-        ShippingCountry.objects
-        .filter(site_id=site_id)
-        .values_list("country_code", flat=True)
+        ShippingCountry.objects.filter(site_id=site_id).values_list("country_code", flat=True)
     )
     assert expected_after == expected_before
 
@@ -156,6 +157,7 @@ def test_backfill_migration_is_idempotent_when_called_twice():
 # ---------------------------------------------------------------------------
 # set_payment_method slug-resolution fix
 # ---------------------------------------------------------------------------
+
 
 def test_set_payment_method_resolves_provider_by_component_slug(client, django_user_model):
     """Regression for the cocosbotanica 500 — `cart.views.set_payment_method`
@@ -192,8 +194,7 @@ def test_set_payment_method_resolves_provider_by_component_slug(client, django_u
     # The fix lives on the view itself — exercise the same queryset to be
     # sure it resolves. Mirrors the new filter() chain.
     resolved = (
-        PaymentProviderAccount.objects
-        .filter(component__slug="stripe-test", is_active=True)
+        PaymentProviderAccount.objects.filter(component__slug="stripe-test", is_active=True)
         .order_by("-is_default", "sort_order", "created_at")
         .first()
     )
@@ -202,5 +203,6 @@ def test_set_payment_method_resolves_provider_by_component_slug(client, django_u
     # And the buggy original would raise FieldError. We assert it stays
     # broken-or-renamed so anyone reverting the fix is caught here.
     from django.core.exceptions import FieldError
+
     with pytest.raises(FieldError):
         PaymentProviderAccount.objects.filter(provider_slug="stripe-test").first()

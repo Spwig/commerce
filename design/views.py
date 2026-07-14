@@ -3,18 +3,17 @@ Theme system views for CSS generation and theme management
 """
 
 import hashlib
+import json
 import logging
-import os
 import re
 from pathlib import Path
 
-from django.http import HttpResponse, JsonResponse
-from django.views import View
-from django.core.cache import cache
-from django.shortcuts import get_object_or_404, render
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-import json
+from django.views import View
 
 from .theme_models import Theme, ThemeBranding
 from .theme_service import theme_service
@@ -35,17 +34,14 @@ class BrandCSSView(View):
             branding = ThemeBranding.objects.first()
             if not branding:
                 # Return empty CSS if no branding configured
-                return HttpResponse(
-                    "/* No branding configured */",
-                    content_type='text/css'
-                )
+                return HttpResponse("/* No branding configured */", content_type="text/css")
 
             # Generate CSS if not already generated or if hash is missing
             if not branding.generated_css or not branding.css_hash:
                 branding.generate_css()
 
             # Use hash-based cache key - new hash = new cache entry
-            cache_key = f'brand_css_{branding.css_hash}'
+            cache_key = f"brand_css_{branding.css_hash}"
             css_content = cache.get(cache_key)
 
             if css_content is None:
@@ -55,19 +51,17 @@ class BrandCSSView(View):
 
             # Return CSS with cache headers
             # URL includes ?v={hash} for cache busting, safe for long cache
-            response = HttpResponse(css_content, content_type='text/css')
-            response['Cache-Control'] = 'public, max-age=86400'  # 24h (hash-busted URL)
-            response['ETag'] = f'"{branding.css_hash}"'
-            response['Vary'] = 'Accept-Encoding'
-            response['X-Branding-Hash'] = branding.css_hash  # Debug header
+            response = HttpResponse(css_content, content_type="text/css")
+            response["Cache-Control"] = "public, max-age=86400"  # 24h (hash-busted URL)
+            response["ETag"] = f'"{branding.css_hash}"'
+            response["Vary"] = "Accept-Encoding"
+            response["X-Branding-Hash"] = branding.css_hash  # Debug header
 
             return response
 
         except Exception as e:
             return HttpResponse(
-                f"/* Error generating CSS: {str(e)} */",
-                content_type='text/css',
-                status=500
+                f"/* Error generating CSS: {str(e)} */", content_type="text/css", status=500
             )
 
 
@@ -78,9 +72,9 @@ class LayeredCSSView(View):
         """Generate complete CSS stack"""
         css_content = theme_service.generate_layered_css(request)
 
-        response = HttpResponse(css_content, content_type='text/css')
-        response['Cache-Control'] = 'public, max-age=3600'  # 1 hour
-        response['Vary'] = 'Accept-Encoding'
+        response = HttpResponse(css_content, content_type="text/css")
+        response["Cache-Control"] = "public, max-age=3600"  # 1 hour
+        response["Vary"] = "Accept-Encoding"
 
         return response
 
@@ -108,13 +102,11 @@ class ThemeCSSView(View):
         # Still empty? Return error CSS
         if not theme.compiled_css:
             return HttpResponse(
-                f"/* Theme '{slug}' has no compiled CSS */",
-                content_type='text/css',
-                status=404
+                f"/* Theme '{slug}' has no compiled CSS */", content_type="text/css", status=404
             )
 
         # Cache key includes hash - new hash = new cache entry
-        cache_key = f'theme_css_{slug}_{theme.css_hash}'
+        cache_key = f"theme_css_{slug}_{theme.css_hash}"
         cached_css = cache.get(cache_key)
 
         if cached_css:
@@ -123,10 +115,10 @@ class ThemeCSSView(View):
             css_content = theme.compiled_css
             cache.set(cache_key, css_content, 60 * 60)  # 1 hour
 
-        response = HttpResponse(css_content, content_type='text/css')
-        response['Cache-Control'] = 'public, max-age=86400'  # 24h (hash-busted URL)
-        response['ETag'] = f'"{theme.css_hash}"'
-        response['Vary'] = 'Accept-Encoding'
+        response = HttpResponse(css_content, content_type="text/css")
+        response["Cache-Control"] = "public, max-age=86400"  # 24h (hash-busted URL)
+        response["ETag"] = f'"{theme.css_hash}"'
+        response["Vary"] = "Accept-Encoding"
 
         return response
 
@@ -139,24 +131,16 @@ class ThemePreviewView(View):
         """Generate preview CSS with temporary tokens"""
         try:
             data = json.loads(request.body)
-            branding_tokens = data.get('tokens', {})
+            branding_tokens = data.get("tokens", {})
 
             preview_css = theme_service.preview_theme(theme_id, branding_tokens)
 
-            return HttpResponse(preview_css, content_type='text/css')
+            return HttpResponse(preview_css, content_type="text/css")
 
         except Theme.DoesNotExist:
-            return HttpResponse(
-                "/* Theme not found */",
-                content_type='text/css',
-                status=404
-            )
+            return HttpResponse("/* Theme not found */", content_type="text/css", status=404)
         except json.JSONDecodeError:
-            return HttpResponse(
-                "/* Invalid JSON data */",
-                content_type='text/css',
-                status=400
-            )
+            return HttpResponse("/* Invalid JSON data */", content_type="text/css", status=400)
 
 
 class ThemeTokenDiffView(View):
@@ -174,8 +158,12 @@ class ThemeTokenDiffView(View):
 
             if branding:
                 # Collect all brand tokens
-                for attr in ['color_tokens', 'typography_tokens',
-                             'spacing_tokens', 'border_tokens']:
+                for attr in [
+                    "color_tokens",
+                    "typography_tokens",
+                    "spacing_tokens",
+                    "border_tokens",
+                ]:
                     brand_tokens.update(getattr(branding, attr, {}))
 
             # Calculate differences
@@ -185,37 +173,29 @@ class ThemeTokenDiffView(View):
 
             for token, value in theme_tokens.items():
                 if token not in brand_tokens:
-                    new_tokens.append({
-                        'token': token,
-                        'theme_value': value
-                    })
+                    new_tokens.append({"token": token, "theme_value": value})
                 elif brand_tokens[token] != value:
-                    updated_tokens.append({
-                        'token': token,
-                        'brand_value': brand_tokens[token],
-                        'theme_value': value
-                    })
+                    updated_tokens.append(
+                        {"token": token, "brand_value": brand_tokens[token], "theme_value": value}
+                    )
                 else:
-                    kept_tokens.append({
-                        'token': token,
-                        'value': value
-                    })
+                    kept_tokens.append({"token": token, "value": value})
 
-            return JsonResponse({
-                'new_tokens': new_tokens,
-                'kept_tokens': kept_tokens,
-                'updated_tokens': updated_tokens,
-                'summary': {
-                    'new': len(new_tokens),
-                    'kept': len(kept_tokens),
-                    'updated': len(updated_tokens),
+            return JsonResponse(
+                {
+                    "new_tokens": new_tokens,
+                    "kept_tokens": kept_tokens,
+                    "updated_tokens": updated_tokens,
+                    "summary": {
+                        "new": len(new_tokens),
+                        "kept": len(kept_tokens),
+                        "updated": len(updated_tokens),
+                    },
                 }
-            })
+            )
 
         except Theme.DoesNotExist:
-            return JsonResponse({
-                'error': 'Theme not found'
-            }, status=404)
+            return JsonResponse({"error": "Theme not found"}, status=404)
 
 
 class AdoptThemePaletteView(View):
@@ -227,48 +207,44 @@ class AdoptThemePaletteView(View):
         try:
             theme = Theme.objects.get(id=theme_id)
             data = json.loads(request.body)
-            token_types = data.get('token_types', ['color'])
+            token_types = data.get("token_types", ["color"])
 
-            branding, created = ThemeBranding.objects.get_or_create(
-                theme=theme
-            )
+            branding, created = ThemeBranding.objects.get_or_create(theme=theme)
 
             theme_tokens = theme.get_tokens()
 
             # Update selected token types
             for token_type in token_types:
-                if token_type == 'color':
+                if token_type == "color":
                     branding.color_tokens = {
-                        k: v for k, v in theme_tokens.items()
-                        if k.startswith('color-') or k.startswith('brand-')
+                        k: v
+                        for k, v in theme_tokens.items()
+                        if k.startswith("color-") or k.startswith("brand-")
                     }
-                elif token_type == 'typography':
+                elif token_type == "typography":
                     branding.typography_tokens = {
-                        k: v for k, v in theme_tokens.items()
-                        if k.startswith('font-') or k.startswith('text-')
+                        k: v
+                        for k, v in theme_tokens.items()
+                        if k.startswith("font-") or k.startswith("text-")
                     }
-                elif token_type == 'spacing':
+                elif token_type == "spacing":
                     branding.spacing_tokens = {
-                        k: v for k, v in theme_tokens.items()
-                        if k.startswith('spacing-') or k.startswith('gap-')
+                        k: v
+                        for k, v in theme_tokens.items()
+                        if k.startswith("spacing-") or k.startswith("gap-")
                     }
 
             branding.save()
             branding.generate_css()
 
-            return JsonResponse({
-                'success': True,
-                'message': f"Adopted {', '.join(token_types)} tokens from theme"
-            })
+            return JsonResponse(
+                {"success": True, "message": f"Adopted {', '.join(token_types)} tokens from theme"}
+            )
 
         except Theme.DoesNotExist:
-            return JsonResponse({
-                'error': 'Theme not found'
-            }, status=404)
+            return JsonResponse({"error": "Theme not found"}, status=404)
         except json.JSONDecodeError:
-            return JsonResponse({
-                'error': 'Invalid JSON data'
-            }, status=400)
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
 
 # ---------------------------------------------------------------------------
@@ -276,7 +252,7 @@ class AdoptThemePaletteView(View):
 # Mirrors design/static/design/platform/components.css base styles
 # ---------------------------------------------------------------------------
 
-EDITOR_SCOPE = '.ck-content.ck-editor__editable'
+EDITOR_SCOPE = ".ck-content.ck-editor__editable"
 
 EDITOR_TYPOGRAPHY_CSS = f"""
 /* Typography rules — mirrors platform components.css */
@@ -451,38 +427,36 @@ class EditorContentCSSView(View):
         theme = get_active_theme_cached()
         branding = ThemeBranding.objects.first()
 
-        theme_hash = theme.css_hash if theme else ''
-        brand_hash = branding.css_hash if branding and branding.css_hash else ''
-        combined_hash = hashlib.md5(
-            f'{theme_hash}:{brand_hash}'.encode()
-        ).hexdigest()[:8]
+        theme_hash = theme.css_hash if theme else ""
+        brand_hash = branding.css_hash if branding and branding.css_hash else ""
+        combined_hash = hashlib.md5(f"{theme_hash}:{brand_hash}".encode()).hexdigest()[:8]
 
-        cache_key = f'editor_content_css_{combined_hash}'
+        cache_key = f"editor_content_css_{combined_hash}"
         css_content = cache.get(cache_key)
 
         if css_content is None:
             css_content = self._generate_css(theme, branding)
             cache.set(cache_key, css_content, 300)  # 5 min
 
-        response = HttpResponse(css_content, content_type='text/css')
-        response['Cache-Control'] = 'private, max-age=300'
-        response['ETag'] = f'"{combined_hash}"'
+        response = HttpResponse(css_content, content_type="text/css")
+        response["Cache-Control"] = "private, max-age=300"
+        response["ETag"] = f'"{combined_hash}"'
         return response
 
     def _generate_css(self, theme, branding):
         parts = [
-            '/* Editor Content Styles — auto-generated from active theme */',
-            '/* Scoped to .ck-content to avoid affecting admin UI */',
-            '',
+            "/* Editor Content Styles — auto-generated from active theme */",
+            "/* Scoped to .ck-content to avoid affecting admin UI */",
+            "",
         ]
 
         # 1. Theme token variables scoped to editor
         token_css = self._get_token_css(theme)
         if token_css:
             scoped = self._scope_root_to_editor(token_css)
-            parts.append('/* --- Theme token variables --- */')
+            parts.append("/* --- Theme token variables --- */")
             parts.append(scoped)
-            parts.append('')
+            parts.append("")
 
         # 2. Brand override variables
         if branding:
@@ -490,18 +464,18 @@ class EditorContentCSSView(View):
                 branding.generate_css()
             if branding.generated_css:
                 scoped_brand = self._scope_root_to_editor(branding.generated_css)
-                parts.append('/* --- Brand overrides --- */')
+                parts.append("/* --- Brand overrides --- */")
                 parts.append(scoped_brand)
-                parts.append('')
+                parts.append("")
 
         # 3. Typography rules
-        parts.append('/* --- Typography rules --- */')
+        parts.append("/* --- Typography rules --- */")
         parts.append(EDITOR_TYPOGRAPHY_CSS)
 
         # 4. Background/text overrides matching dark.css specificity
         parts.append(self._generate_background_overrides(theme))
 
-        return '\n'.join(parts)
+        return "\n".join(parts)
 
     def _generate_background_overrides(self, theme):
         """Generate background/text overrides that beat admin dark.css.
@@ -516,49 +490,50 @@ class EditorContentCSSView(View):
         """
         S = EDITOR_SCOPE
         lines = [
-            '',
-            '/* --- Editor background/text — storefront theme match --- */',
+            "",
+            "/* --- Editor background/text — storefront theme match --- */",
         ]
 
         if theme and theme.supports_dark_mode:
-            lines.extend([
-                f'[data-theme="dark"] .ck.ck-editor__main > {S} {{',
-                '  background: var(--theme-color-bg-primary,'
-                ' var(--theme-color-background, #0d0d0d)) !important;',
-                '  color: var(--theme-color-text-primary,'
-                ' var(--theme-color-text, #e0e0e0)) !important;',
-                '}',
-                f'[data-theme="light"] .ck.ck-editor__main > {S} {{',
-                '  background: var(--theme-color-background,'
-                ' #ffffff) !important;',
-                '  color: var(--theme-color-text,'
-                ' #1a1a1a) !important;',
-                '}',
-            ])
+            lines.extend(
+                [
+                    f'[data-theme="dark"] .ck.ck-editor__main > {S} {{',
+                    "  background: var(--theme-color-bg-primary,"
+                    " var(--theme-color-background, #0d0d0d)) !important;",
+                    "  color: var(--theme-color-text-primary,"
+                    " var(--theme-color-text, #e0e0e0)) !important;",
+                    "}",
+                    f'[data-theme="light"] .ck.ck-editor__main > {S} {{',
+                    "  background: var(--theme-color-background, #ffffff) !important;",
+                    "  color: var(--theme-color-text, #1a1a1a) !important;",
+                    "}",
+                ]
+            )
         else:
             # Theme has no dark mode — always show theme's base colors
-            lines.extend([
-                f'[data-theme="dark"] .ck.ck-editor__main > {S} {{',
-                '  background: var(--theme-color-background,'
-                ' #ffffff) !important;',
-                '  color: var(--theme-color-text,'
-                ' #1a1a1a) !important;',
-                '}',
-            ])
+            lines.extend(
+                [
+                    f'[data-theme="dark"] .ck.ck-editor__main > {S} {{',
+                    "  background: var(--theme-color-background, #ffffff) !important;",
+                    "  color: var(--theme-color-text, #1a1a1a) !important;",
+                    "}",
+                ]
+            )
 
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
     def _get_token_css(self, theme):
         """Get token CSS from theme, preferring tokens.json regeneration."""
         if not theme:
-            return ''
+            return ""
 
         # Primary: regenerate from tokens.json for clean output
         if theme.extracted_path:
-            tokens_json = Path(theme.extracted_path) / 'theme' / 'tokens.json'
+            tokens_json = Path(theme.extracted_path) / "theme" / "tokens.json"
             if tokens_json.exists():
                 try:
                     from .services.token_css_generator import generate_tokens_css
+
                     return generate_tokens_css(
                         tokens_json,
                         theme.name,
@@ -571,32 +546,32 @@ class EditorContentCSSView(View):
         if theme.compiled_css:
             return self._extract_root_blocks(theme.compiled_css)
 
-        return ''
+        return ""
 
     def _extract_root_blocks(self, css_text):
         """Extract :root { ... } blocks from compiled CSS."""
         blocks = []
         pos = 0
         while pos < len(css_text):
-            idx = css_text.find(':root', pos)
+            idx = css_text.find(":root", pos)
             if idx == -1:
                 break
             # Make sure this is actually a selector, not inside a comment
-            brace = css_text.find('{', idx)
+            brace = css_text.find("{", idx)
             if brace == -1:
                 break
             # Find matching closing brace
             depth = 1
             j = brace + 1
             while j < len(css_text) and depth > 0:
-                if css_text[j] == '{':
+                if css_text[j] == "{":
                     depth += 1
-                elif css_text[j] == '}':
+                elif css_text[j] == "}":
                     depth -= 1
                 j += 1
             blocks.append(css_text[idx:j])
             pos = j
-        return '\n\n'.join(blocks)
+        return "\n\n".join(blocks)
 
     def _scope_root_to_editor(self, css_text):
         """Replace :root and [data-theme] selectors with editor-scoped equivalents.
@@ -606,7 +581,7 @@ class EditorContentCSSView(View):
         2. [data-theme="dark"] {    -> [data-theme="dark"] EDITOR_SCOPE {
         3. [data-theme="light"] {   -> [data-theme="light"] EDITOR_SCOPE {
         """
-        result = re.sub(r':root\b', EDITOR_SCOPE, css_text)
+        result = re.sub(r":root\b", EDITOR_SCOPE, css_text)
         result = re.sub(
             r'\[data-theme="dark"\]\s*\{',
             f'[data-theme="dark"] {EDITOR_SCOPE} {{',

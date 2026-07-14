@@ -3,14 +3,14 @@ Custom template loader for theme system
 Allows dynamic loading of templates from theme packages
 """
 
-import os
+import logging
 from pathlib import Path
+
+from django.conf import settings
+from django.core.cache import cache
 from django.template import TemplateDoesNotExist
 from django.template.loaders.base import Loader
-from django.core.cache import cache
-from django.conf import settings
 from django.utils._os import safe_join
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -26,21 +26,18 @@ class ThemeTemplateLoader(Loader):
 
     def __init__(self, engine):
         super().__init__(engine)
-        self.theme_root = Path(settings.STATIC_ROOT) / 'themes'
+        self.theme_root = Path(settings.STATIC_ROOT) / "themes"
 
     def get_theme(self):
         """Get the currently active theme"""
         from .theme_models import Theme
 
         # Cache the active theme for performance
-        theme = cache.get('active_theme')
+        theme = cache.get("active_theme")
         if not theme:
-            theme = Theme.objects.filter(
-                is_active=True,
-                is_default=True
-            ).first()
+            theme = Theme.objects.filter(is_active=True, is_default=True).first()
             if theme:
-                cache.set('active_theme', theme, 300)  # Cache for 5 minutes
+                cache.set("active_theme", theme, 300)  # Cache for 5 minutes
         return theme
 
     def get_dirs(self):
@@ -50,12 +47,12 @@ class ThemeTemplateLoader(Loader):
         theme = self.get_theme()
         if theme and theme.extracted_path:
             # Add theme template directory
-            theme_template_dir = Path(theme.extracted_path) / 'templates'
+            theme_template_dir = Path(theme.extracted_path) / "templates"
             if theme_template_dir.exists():
                 dirs.append(str(theme_template_dir))
 
         # Add merchant override directory if configured
-        merchant_override_dir = getattr(settings, 'THEME_OVERRIDE_DIR', None)
+        merchant_override_dir = getattr(settings, "THEME_OVERRIDE_DIR", None)
         if merchant_override_dir:
             override_path = Path(merchant_override_dir)
             if override_path.exists():
@@ -85,7 +82,7 @@ class ThemeTemplateLoader(Loader):
         Return the template content from the origin
         """
         try:
-            with open(origin.name, encoding='utf-8') as f:
+            with open(origin.name, encoding="utf-8") as f:
                 return f.read()
         except FileNotFoundError:
             raise TemplateDoesNotExist(origin)
@@ -111,7 +108,7 @@ class ThemeTemplateLoader(Loader):
 
     def reset(self):
         """Reset the template cache when theme changes"""
-        cache.delete('active_theme')
+        cache.delete("active_theme")
         super().reset()
 
 
@@ -123,7 +120,7 @@ class ThemeOrigin(Origin):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.theme_name = kwargs.get('theme_name', None)
+        self.theme_name = kwargs.get("theme_name")
 
 
 class CachedThemeTemplateLoader(ThemeTemplateLoader):
@@ -135,18 +132,19 @@ class CachedThemeTemplateLoader(ThemeTemplateLoader):
     def __init__(self, engine):
         super().__init__(engine)
         self._cache = {}
-        self._cache_key_prefix = 'theme_template_'
+        self._cache_key_prefix = "theme_template_"
 
     def cache_key(self, template_name):
         """Generate cache key for template"""
         theme = self.get_theme()
-        theme_id = theme.id if theme else 'default'
+        theme_id = theme.id if theme else "default"
         return f"{self._cache_key_prefix}{theme_id}_{template_name}"
 
     def _is_dev_mode(self):
         """Check if theme dev mode is active (bypass caching)."""
-        return getattr(settings, 'DEBUG', False) and \
-               getattr(settings, 'THEME_DEV_SERVER', {}).get('ENABLED', False)
+        return getattr(settings, "DEBUG", False) and getattr(settings, "THEME_DEV_SERVER", {}).get(
+            "ENABLED", False
+        )
 
     def get_template(self, template_name, skip=None):
         """
@@ -199,16 +197,16 @@ class ThemeTemplateManager:
     """
 
     def __init__(self):
-        self.theme_root = Path(settings.STATIC_ROOT) / 'themes'
+        self.theme_root = Path(settings.STATIC_ROOT) / "themes"
 
     def list_theme_templates(self, theme):
         """List all templates available in a theme"""
         templates = []
 
         if theme and theme.extracted_path:
-            template_dir = Path(theme.extracted_path) / 'templates'
+            template_dir = Path(theme.extracted_path) / "templates"
             if template_dir.exists():
-                for template_file in template_dir.rglob('*.html'):
+                for template_file in template_dir.rglob("*.html"):
                     relative_path = template_file.relative_to(template_dir)
                     templates.append(str(relative_path))
 
@@ -219,22 +217,22 @@ class ThemeTemplateManager:
         from .theme_models import ThemeBranding
 
         context = {
-            'theme': theme,
-            'theme_static_url': f"/static/themes/{theme.slug}/" if theme else None,
+            "theme": theme,
+            "theme_static_url": f"/static/themes/{theme.slug}/" if theme else None,
         }
 
         # Add branding tokens
         try:
             branding = ThemeBranding.objects.filter(theme=theme).first()
             if branding:
-                context['brand_tokens'] = {
+                context["brand_tokens"] = {
                     **branding.color_tokens,
                     **branding.typography_tokens,
                     **branding.spacing_tokens,
                     **branding.border_tokens,
                 }
-                context['brand_css_url'] = branding.get_css_url()
-        except:
+                context["brand_css_url"] = branding.get_css_url()
+        except Exception:
             pass
 
         return context
@@ -244,18 +242,19 @@ class ThemeTemplateManager:
         Save merchant template override
         Returns the path where override was saved
         """
-        merchant_override_dir = getattr(settings, 'THEME_OVERRIDE_DIR', None)
+        merchant_override_dir = getattr(settings, "THEME_OVERRIDE_DIR", None)
         if not merchant_override_dir:
-            merchant_override_dir = Path(settings.BASE_DIR) / 'theme_overrides'
+            merchant_override_dir = Path(settings.BASE_DIR) / "theme_overrides"
 
         override_path = Path(merchant_override_dir) / template_name
         override_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(override_path, 'w', encoding='utf-8') as f:
+        with open(override_path, "w", encoding="utf-8") as f:
             f.write(content)
 
         # Clear template cache
         from django.template.loader import engines
+
         for engine in engines.all():
             engine.engine.template_loaders[0].reset()
 
@@ -269,37 +268,34 @@ class ThemeTemplateManager:
         chain = []
 
         # Check merchant overrides
-        merchant_override_dir = getattr(settings, 'THEME_OVERRIDE_DIR', None)
+        merchant_override_dir = getattr(settings, "THEME_OVERRIDE_DIR", None)
         if merchant_override_dir:
             override_path = Path(merchant_override_dir) / template_name
             if override_path.exists():
-                chain.append({
-                    'source': 'merchant_override',
-                    'path': str(override_path),
-                    'exists': True
-                })
+                chain.append(
+                    {"source": "merchant_override", "path": str(override_path), "exists": True}
+                )
 
         # Check theme templates
         from .theme_models import Theme
+
         theme = Theme.objects.filter(is_active=True, is_default=True).first()
         if theme and theme.extracted_path:
-            theme_path = Path(theme.extracted_path) / 'templates' / template_name
-            chain.append({
-                'source': f'theme_{theme.slug}',
-                'path': str(theme_path),
-                'exists': theme_path.exists()
-            })
+            theme_path = Path(theme.extracted_path) / "templates" / template_name
+            chain.append(
+                {
+                    "source": f"theme_{theme.slug}",
+                    "path": str(theme_path),
+                    "exists": theme_path.exists(),
+                }
+            )
 
         # Check app templates
         for app_config in settings.INSTALLED_APPS:
-            app_name = app_config.split('.')[-1]
-            app_path = Path(settings.BASE_DIR) / app_name / 'templates' / template_name
+            app_name = app_config.split(".")[-1]
+            app_path = Path(settings.BASE_DIR) / app_name / "templates" / template_name
             if app_path.exists():
-                chain.append({
-                    'source': f'app_{app_name}',
-                    'path': str(app_path),
-                    'exists': True
-                })
+                chain.append({"source": f"app_{app_name}", "path": str(app_path), "exists": True})
 
         return chain
 
@@ -317,26 +313,26 @@ def theme_context_processor(request):
     context = {}
 
     # Get active theme
-    theme = cache.get('active_theme_context')
+    theme = cache.get("active_theme_context")
     if not theme:
         theme = Theme.objects.filter(is_active=True, is_default=True).first()
         if theme:
-            cache.set('active_theme_context', theme, 300)
+            cache.set("active_theme_context", theme, 300)
 
     if theme:
-        context['active_theme'] = theme
-        context['theme_static_url'] = f"/static/themes/{theme.slug}/"
+        context["active_theme"] = theme
+        context["theme_static_url"] = f"/static/themes/{theme.slug}/"
 
         # Add theme CSS URL
         if theme.get_css_url():
-            context['theme_css_url'] = theme.get_css_url()
+            context["theme_css_url"] = theme.get_css_url()
 
         # Add branding CSS URL
         try:
             branding = ThemeBranding.objects.first()
             if branding:
-                context['brand_css_url'] = branding.get_css_url()
-        except:
+                context["brand_css_url"] = branding.get_css_url()
+        except Exception:
             pass
 
     return context

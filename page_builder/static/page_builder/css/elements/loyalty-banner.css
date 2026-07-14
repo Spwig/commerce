@@ -1,264 +1,267 @@
 /* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
 
 .loyalty-banner {
-    --loyalty-primary: var(--theme-color-warning, #f59e0b);
-    --loyalty-secondary: color-mix(in srgb, var(--loyalty-primary) 60%, #c2410c);
-    padding: 2rem 0;
+  --loyalty-primary: var(--theme-color-warning, #f59e0b);
+  --loyalty-secondary: color-mix(in srgb, var(--loyalty-primary) 60%, #c2410c);
+  padding: 2rem 0;
 }
 
 /* Card Style */
 .loyalty-banner--card .loyalty-banner__container {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    background: var(--theme-color-surface, #fff);
-    border-radius: var(--theme-radius-xl, 1rem);
-    padding: 2rem;
-    box-shadow: var(--theme-shadow-md, 0 4px 20px rgba(0, 0, 0, 0.08));
-    border-left: 4px solid var(--loyalty-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  background: var(--theme-color-surface, #fff);
+  border-radius: var(--theme-radius-xl, 1rem);
+  padding: 2rem;
+  box-shadow: var(--theme-shadow-md, 0 4px 20px rgba(0, 0, 0, 0.08));
+  border-left: 4px solid var(--loyalty-primary);
 }
 
 /* Banner Style */
 .loyalty-banner--banner .loyalty-banner__container {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    background: linear-gradient(135deg, var(--loyalty-primary), var(--loyalty-secondary));
-    border-radius: var(--theme-radius-xl, 1rem);
-    padding: 2rem 3rem;
-    color: var(--theme-color-text-inverse, #fff);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: linear-gradient(135deg, var(--loyalty-primary), var(--loyalty-secondary));
+  border-radius: var(--theme-radius-xl, 1rem);
+  padding: 2rem 3rem;
+  color: var(--theme-color-text-inverse, #fff);
 }
 
 .loyalty-banner--banner .loyalty-banner__title,
 .loyalty-banner--banner .loyalty-banner__description,
 .loyalty-banner--banner .loyalty-banner__benefit {
-    color: var(--theme-color-text-inverse, #fff);
+  color: var(--theme-color-text-inverse, #fff);
 }
 
 .loyalty-banner--banner .loyalty-banner__btn {
-    background: var(--theme-color-surface, #fff);
-    color: var(--loyalty-primary);
+  background: var(--theme-color-surface, #fff);
+  color: var(--loyalty-primary);
 }
 
 /* Floating Style */
 .loyalty-banner--floating .loyalty-banner__container {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 1.5rem;
-    max-width: 320px;
-    z-index: 100;
-    flex-direction: column;
-    text-align: center;
-    background: var(--theme-color-surface, #fff);
-    border-radius: var(--theme-radius-xl, 1rem);
-    padding: 1.5rem;
-    box-shadow: var(--theme-shadow-lg, 0 8px 30px rgba(0, 0, 0, 0.15));
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  max-width: 320px;
+  z-index: 100;
+  flex-direction: column;
+  text-align: center;
+  background: var(--theme-color-surface, #fff);
+  border-radius: var(--theme-radius-xl, 1rem);
+  padding: 1.5rem;
+  box-shadow: var(--theme-shadow-lg, 0 8px 30px rgba(0, 0, 0, 0.15));
 }
 
 /* Minimal Style */
 .loyalty-banner--minimal .loyalty-banner__container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--theme-color-border, #e5e5e5);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--theme-color-border, #e5e5e5);
 }
 
 .loyalty-banner--minimal .loyalty-banner__icon-wrapper {
-    font-size: var(--theme-font-size-2xl, 1.5rem);
+  font-size: var(--theme-font-size-2xl, 1.5rem);
 }
 
 .loyalty-banner--minimal .loyalty-banner__benefits {
-    display: none;
+  display: none;
 }
 
 /* Icon */
 .loyalty-banner__icon-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--loyalty-primary), var(--loyalty-secondary));
-    border-radius: var(--theme-radius-xl, 1rem);
-    color: var(--theme-color-text-inverse, #fff);
-    font-size: 1.75rem;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--loyalty-primary), var(--loyalty-secondary));
+  border-radius: var(--theme-radius-xl, 1rem);
+  color: var(--theme-color-text-inverse, #fff);
+  font-size: 1.75rem;
+  flex-shrink: 0;
 }
 
 /* Content */
 .loyalty-banner__content {
-    flex: 1;
+  flex: 1;
 }
 
 .loyalty-banner__greeting {
-    font-size: var(--theme-font-size-lg, 1.125rem);
-    font-weight: var(--theme-font-weight-medium, 500);
-    color: var(--theme-color-text-light, #666);
-    margin: 0 0 0.5rem;
+  font-size: var(--theme-font-size-lg, 1.125rem);
+  font-weight: var(--theme-font-weight-medium, 500);
+  color: var(--theme-color-text-light, #666);
+  margin: 0 0 0.5rem;
 }
 
 .loyalty-banner__title {
-    font-size: var(--theme-font-size-2xl, 1.5rem);
-    font-weight: var(--theme-font-weight-bold, 700);
-    color: var(--theme-color-text, #1a1a1a);
-    margin: 0 0 0.5rem;
+  font-size: var(--theme-font-size-2xl, 1.5rem);
+  font-weight: var(--theme-font-weight-bold, 700);
+  color: var(--theme-color-text, #1a1a1a);
+  margin: 0 0 0.5rem;
 }
 
 .loyalty-banner__description {
-    font-size: var(--theme-font-size-base, 1rem);
-    color: var(--theme-color-text-light, #666);
-    line-height: 1.5;
-    margin: 0 0 1rem;
+  font-size: var(--theme-font-size-base, 1rem);
+  color: var(--theme-color-text-light, #666);
+  line-height: 1.5;
+  margin: 0 0 1rem;
 }
 
 /* Points Display */
 .loyalty-banner__points-display {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .loyalty-banner__points-value {
-    font-size: 2.5rem;
-    font-weight: var(--theme-font-weight-bold, 800);
-    color: var(--loyalty-primary);
-    line-height: 1;
+  font-size: 2.5rem;
+  font-weight: var(--theme-font-weight-bold, 800);
+  color: var(--loyalty-primary);
+  line-height: 1;
 }
 
 .loyalty-banner__points-label {
-    font-size: var(--theme-font-size-base, 1rem);
-    color: var(--theme-color-text-light, #666);
+  font-size: var(--theme-font-size-base, 1rem);
+  color: var(--theme-color-text-light, #666);
 }
 
 .loyalty-banner__tier {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background: var(--loyalty-primary);
-    color: var(--theme-color-text-inverse, #fff);
-    font-size: var(--theme-font-size-xs, 0.75rem);
-    font-weight: var(--theme-font-weight-semibold, 600);
-    text-transform: uppercase;
-    border-radius: var(--theme-radius-xl, 1rem);
-    margin-bottom: 1rem;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--loyalty-primary);
+  color: var(--theme-color-text-inverse, #fff);
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  font-weight: var(--theme-font-weight-semibold, 600);
+  text-transform: uppercase;
+  border-radius: var(--theme-radius-xl, 1rem);
+  margin-bottom: 1rem;
 }
 
 /* Progress */
 .loyalty-banner__progress {
-    margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .loyalty-banner__progress-bar {
-    height: 8px;
-    background: var(--theme-color-border, #e5e5e5);
-    border-radius: 4px;
-    overflow: hidden;
+  height: 8px;
+  background: var(--theme-color-border, #e5e5e5);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .loyalty-banner__progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--loyalty-primary), var(--loyalty-secondary));
-    border-radius: 4px;
-    transition: width var(--theme-transition-duration-slow, 300ms) var(--theme-transition-easing-default, ease);
+  height: 100%;
+  background: linear-gradient(90deg, var(--loyalty-primary), var(--loyalty-secondary));
+  border-radius: 4px;
+  transition: width var(--theme-transition-duration-slow, 300ms)
+    var(--theme-transition-easing-default, ease);
 }
 
 .loyalty-banner__progress-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: var(--theme-font-size-xs, 0.75rem);
-    color: var(--theme-color-text-muted, #888);
-    margin-top: 0.375rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  color: var(--theme-color-text-muted, #888);
+  margin-top: 0.375rem;
 }
 
 .loyalty-banner__progress-text {
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    color: var(--theme-color-text-light, #666);
-    margin: 0 0 1rem;
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-text-light, #666);
+  margin: 0 0 1rem;
 }
 
 /* Benefits */
 .loyalty-banner__benefits {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
 }
 
 .loyalty-banner__benefit {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--theme-font-size-sm, 0.875rem);
-    color: var(--theme-color-text-light, #555);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-text-light, #555);
 }
 
 .loyalty-banner__benefit i {
-    color: var(--loyalty-primary);
-    width: 1rem;
+  color: var(--loyalty-primary);
+  width: 1rem;
 }
 
 /* Button */
 .loyalty-banner__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: var(--loyalty-primary);
-    color: var(--theme-color-text-inverse, #fff);
-    font-weight: var(--theme-font-weight-semibold, 600);
-    font-size: 0.9375rem;
-    text-decoration: none;
-    border-radius: var(--theme-radius-md, 0.5rem);
-    transition: all var(--theme-transition-duration-base, 200ms) var(--theme-transition-easing-default, ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--loyalty-primary);
+  color: var(--theme-color-text-inverse, #fff);
+  font-weight: var(--theme-font-weight-semibold, 600);
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border-radius: var(--theme-radius-md, 0.5rem);
+  transition: all var(--theme-transition-duration-base, 200ms)
+    var(--theme-transition-easing-default, ease);
 }
 
 .loyalty-banner__btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--loyalty-primary) 40%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--loyalty-primary) 40%, transparent);
 }
 
 .loyalty-banner__btn i {
-    transition: transform var(--theme-transition-duration-base, 200ms) var(--theme-transition-easing-default, ease);
+  transition: transform var(--theme-transition-duration-base, 200ms)
+    var(--theme-transition-easing-default, ease);
 }
 
 .loyalty-banner__btn:hover i {
-    transform: translateX(4px);
+  transform: translateX(4px);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .loyalty-banner--card .loyalty-banner__container,
-    .loyalty-banner--banner .loyalty-banner__container {
-        flex-direction: column;
-        text-align: center;
-    }
-    .loyalty-banner__benefits {
-        grid-template-columns: 1fr;
-        text-align: left;
-    }
-    .loyalty-banner__btn {
-        width: 100%;
-        justify-content: center;
-    }
-    .loyalty-banner--floating .loyalty-banner__container {
-        left: 1rem;
-        right: 1rem;
-        max-width: none;
-        bottom: 1rem;
-    }
+  .loyalty-banner--card .loyalty-banner__container,
+  .loyalty-banner--banner .loyalty-banner__container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .loyalty-banner__benefits {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  .loyalty-banner__btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .loyalty-banner--floating .loyalty-banner__container {
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+    bottom: 1rem;
+  }
 }
 
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
-    .loyalty-banner__btn,
-    .loyalty-banner__btn i,
-    .loyalty-banner__progress-fill {
-        transition: none;
-    }
-    .loyalty-banner__btn:hover {
-        transform: none;
-    }
+  .loyalty-banner__btn,
+  .loyalty-banner__btn i,
+  .loyalty-banner__progress-fill {
+    transition: none;
+  }
+  .loyalty-banner__btn:hover {
+    transform: none;
+  }
 }

@@ -1,19 +1,24 @@
 """
 Checkout Service - Business logic for checkout process
 """
-from django.db import transaction
-from django.utils.translation import gettext_lazy as _, get_language
-from django.utils import timezone
+
 from datetime import timedelta
-from typing import Tuple, Optional, List, Dict, Any
 from decimal import Decimal
-from ..models import Cart, CheckoutSession, ShippingMethod
-from orders.models import Address, Order, OrderItem
-from payment_providers.models import PaymentProviderAccount
-from payment_providers.services.payment_method_filter import PaymentMethodFilter
+from typing import Any
+
+from django.db import transaction
+from django.utils import timezone
+from django.utils.translation import get_language
+from django.utils.translation import gettext_lazy as _
+
 from catalog.models import CustomizationOption, CustomizationValue
 from catalog.services.stock_reservation import StockReservationService
 from core.utils import get_default_currency
+from orders.models import Address, Order, OrderItem
+from payment_providers.models import PaymentProviderAccount
+from payment_providers.services.payment_method_filter import PaymentMethodFilter
+
+from ..models import Cart, CheckoutSession, ShippingMethod
 
 
 class CheckoutService:
@@ -35,20 +40,22 @@ class CheckoutService:
         session, created = CheckoutSession.objects.get_or_create(
             cart=cart,
             defaults={
-                'expires_at': timezone.now() + timedelta(hours=CheckoutService.SESSION_EXPIRY_HOURS)
-            }
+                "expires_at": timezone.now() + timedelta(hours=CheckoutService.SESSION_EXPIRY_HOURS)
+            },
         )
 
         # Refresh expiry if session exists
         if not created:
-            session.expires_at = timezone.now() + timedelta(hours=CheckoutService.SESSION_EXPIRY_HOURS)
-            session.save(update_fields=['expires_at'])
+            session.expires_at = timezone.now() + timedelta(
+                hours=CheckoutService.SESSION_EXPIRY_HOURS
+            )
+            session.save(update_fields=["expires_at"])
 
         return session
 
     @staticmethod
     @transaction.atomic
-    def ensure_checkout_user(session: 'CheckoutSession', contact_data: Dict) -> Tuple[bool, str]:
+    def ensure_checkout_user(session: "CheckoutSession", contact_data: dict) -> tuple[bool, str]:
         """
         Ensure cart has a user based on account creation timing
 
@@ -59,47 +66,47 @@ class CheckoutService:
         Returns:
             Tuple of (success: bool, message: str)
         """
-        from core.utils import get_site_settings
         from accounts.services.account_creation_service import AccountCreationService
+        from core.utils import get_site_settings
 
         settings = get_site_settings()
         cart = session.cart
 
         # Already has full account
-        if cart.user and not cart.user.username.startswith('guest_'):
+        if cart.user and not cart.user.username.startswith("guest_"):
             return True, "Account exists"
 
         # Handle timing
-        if settings.account_creation_timing == 'before_checkout':
-            if not contact_data.get('password'):
+        if settings.account_creation_timing == "before_checkout":
+            if not contact_data.get("password"):
                 return False, _("Account creation required to proceed")
             # Create full account
             success, message, user = AccountCreationService.create_account_during_checkout(
-                email=contact_data['email'],
-                password=contact_data['password'],
-                first_name=contact_data.get('first_name', ''),
-                last_name=contact_data.get('last_name', '')
+                email=contact_data["email"],
+                password=contact_data["password"],
+                first_name=contact_data.get("first_name", ""),
+                last_name=contact_data.get("last_name", ""),
             )
             if success:
                 cart.user = user
                 cart.save()
             return success, message
 
-        elif settings.account_creation_timing == 'during_checkout':
-            if contact_data.get('password'):
+        elif settings.account_creation_timing == "during_checkout":
+            if contact_data.get("password"):
                 # User chose to create account
                 success, message, user = AccountCreationService.create_account_during_checkout(
-                    email=contact_data['email'],
-                    password=contact_data['password'],
-                    first_name=contact_data.get('first_name', ''),
-                    last_name=contact_data.get('last_name', '')
+                    email=contact_data["email"],
+                    password=contact_data["password"],
+                    first_name=contact_data.get("first_name", ""),
+                    last_name=contact_data.get("last_name", ""),
                 )
             else:
                 # Continue as guest
                 user = AccountCreationService.create_guest_user(
-                    email=contact_data['email'],
-                    first_name=contact_data.get('first_name', ''),
-                    last_name=contact_data.get('last_name', '')
+                    email=contact_data["email"],
+                    first_name=contact_data.get("first_name", ""),
+                    last_name=contact_data.get("last_name", ""),
                 )
                 success = True
                 message = "Guest checkout"
@@ -113,9 +120,9 @@ class CheckoutService:
             # Create guest user
             if not cart.user:
                 cart.user = AccountCreationService.create_guest_user(
-                    email=contact_data['email'],
-                    first_name=contact_data.get('first_name', ''),
-                    last_name=contact_data.get('last_name', '')
+                    email=contact_data["email"],
+                    first_name=contact_data.get("first_name", ""),
+                    last_name=contact_data.get("last_name", ""),
                 )
                 cart.save()
             return True, "Guest checkout"
@@ -124,10 +131,10 @@ class CheckoutService:
     @transaction.atomic
     def set_shipping_address(
         session: CheckoutSession,
-        address_id: Optional[int] = None,
-        address_data: Optional[Dict] = None,
-        email: Optional[str] = None
-    ) -> Tuple[bool, str]:
+        address_id: int | None = None,
+        address_data: dict | None = None,
+        email: str | None = None,
+    ) -> tuple[bool, str]:
         """
         Set shipping address for checkout session
 
@@ -162,15 +169,15 @@ class CheckoutService:
         if email:
             if not session.metadata:
                 session.metadata = {}
-            session.metadata['email'] = email
+            session.metadata["email"] = email
 
         # Clear previous shipping method selection when address changes
         session.selected_shipping_method = None
-        session.shipping_cost = Decimal('0.00')
+        session.shipping_cost = Decimal("0.00")
         session.estimated_delivery_date = None
         session.available_shipping_methods = []
 
-        session.step_completed = 'shipping_address'
+        session.step_completed = "shipping_address"
         session.save()
 
         # Recalculate totals
@@ -183,9 +190,9 @@ class CheckoutService:
     def set_billing_address(
         session: CheckoutSession,
         same_as_shipping: bool = True,
-        address_id: Optional[int] = None,
-        address_data: Optional[Dict] = None
-    ) -> Tuple[bool, str]:
+        address_id: int | None = None,
+        address_data: dict | None = None,
+    ) -> tuple[bool, str]:
         """
         Set billing address for checkout session
 
@@ -224,9 +231,8 @@ class CheckoutService:
 
     @staticmethod
     def get_available_shipping_methods(
-        session: CheckoutSession,
-        refresh: bool = False
-    ) -> List[Dict[str, Any]]:
+        session: CheckoutSession, refresh: bool = False
+    ) -> list[dict[str, Any]]:
         """
         Get available shipping methods for checkout session
 
@@ -246,10 +252,7 @@ class CheckoutService:
 
     @staticmethod
     @transaction.atomic
-    def set_shipping_method(
-        session: CheckoutSession,
-        shipping_method_id: int
-    ) -> Tuple[bool, str]:
+    def set_shipping_method(session: CheckoutSession, shipping_method_id: int) -> tuple[bool, str]:
         """
         Select shipping method for checkout
 
@@ -283,19 +286,20 @@ class CheckoutService:
 
         # Calculate shipping cost (with promotions/rules applied)
         from shipping.services.rule_service import ShippingPromotionService
+
         calculation = ShippingPromotionService.calculate_shipping_for_cart(
             cart=session.cart,
             shipping_method=shipping_method,
             address=address,
-            user=session.cart.user if session.cart.user_id else None
+            user=session.cart.user if session.cart.user_id else None,
         )
-        shipping_cost = calculation['final_cost'].amount
+        shipping_cost = calculation["final_cost"].amount
 
         # Set shipping method
         session.selected_shipping_method = shipping_method
         session.shipping_cost = shipping_cost
         session.estimated_delivery_date = shipping_method.get_estimated_delivery_date()
-        session.step_completed = 'shipping_method'
+        session.step_completed = "shipping_method"
         session.save()
 
         # Recalculate totals with new shipping cost
@@ -304,9 +308,7 @@ class CheckoutService:
         return True, _("Shipping method selected")
 
     @staticmethod
-    def get_available_payment_providers(
-        session: CheckoutSession
-    ) -> List[PaymentProviderAccount]:
+    def get_available_payment_providers(session: CheckoutSession) -> list[PaymentProviderAccount]:
         """
         Get payment providers available for checkout session.
 
@@ -329,26 +331,27 @@ class CheckoutService:
             return []
 
         # Get country from address (handle both Address object and dict)
-        customer_country = address.country if hasattr(address, 'country') else address.get('country')
+        customer_country = (
+            address.country if hasattr(address, "country") else address.get("country")
+        )
         if not customer_country:
             return []
 
         # Get cart currency from Money field
-        cart_currency = session.cart.total_amount.currency.code if session.cart.total_amount else get_default_currency()
+        cart_currency = (
+            session.cart.total_amount.currency.code
+            if session.cart.total_amount
+            else get_default_currency()
+        )
 
         # Use PaymentMethodFilter service to get available providers
         return PaymentMethodFilter.get_available_providers_for_checkout(
-            customer_country=customer_country,
-            currency=cart_currency,
-            amount=session.total_amount
+            customer_country=customer_country, currency=cart_currency, amount=session.total_amount
         )
 
     @staticmethod
     @transaction.atomic
-    def set_payment_method(
-        session: CheckoutSession,
-        payment_provider_id: str
-    ) -> Tuple[bool, str]:
+    def set_payment_method(session: CheckoutSession, payment_provider_id: str) -> tuple[bool, str]:
         """
         Select payment method for checkout
 
@@ -361,27 +364,32 @@ class CheckoutService:
         """
         try:
             payment_provider = PaymentProviderAccount.objects.get(
-                id=payment_provider_id,
-                is_active=True
+                id=payment_provider_id, is_active=True
             )
         except PaymentProviderAccount.DoesNotExist:
             return False, _("Payment provider not found")
 
         # Verify provider is connected
-        if payment_provider.connection_status != 'connected':
+        if payment_provider.connection_status != "connected":
             return False, _("Payment provider is not properly configured")
 
         # Verify provider is available for customer's country and currency
         address = session.shipping_address or session.shipping_address_data
         if address:
-            customer_country = address.country if hasattr(address, 'country') else address.get('country')
-            cart_currency = session.cart.total_amount.currency.code if session.cart.total_amount else get_default_currency()
+            customer_country = (
+                address.country if hasattr(address, "country") else address.get("country")
+            )
+            cart_currency = (
+                session.cart.total_amount.currency.code
+                if session.cart.total_amount
+                else get_default_currency()
+            )
 
             if customer_country:
                 available_providers = PaymentMethodFilter.get_available_providers_for_checkout(
                     customer_country=customer_country,
                     currency=cart_currency,
-                    amount=session.total_amount
+                    amount=session.total_amount,
                 )
 
                 # Check if selected provider is in the available list
@@ -391,13 +399,13 @@ class CheckoutService:
                     )
 
         session.payment_provider = payment_provider
-        session.step_completed = 'payment'
+        session.step_completed = "payment"
         session.save()
 
         return True, _("Payment method selected")
 
     @staticmethod
-    def validate_checkout(session: CheckoutSession) -> Tuple[bool, List[str]]:
+    def validate_checkout(session: CheckoutSession) -> tuple[bool, list[str]]:
         """
         Validate checkout session is ready for order creation
 
@@ -422,7 +430,7 @@ class CheckoutService:
                 errors.append(_("Shipping method is required"))
 
         # Check billing address (skip for marketplace orders — billing handled externally)
-        is_marketplace = session.metadata.get('marketplace', False) if session.metadata else False
+        is_marketplace = session.metadata.get("marketplace", False) if session.metadata else False
         billing_address = session.billing_address or session.billing_address_data
         if not is_marketplace and not billing_address and not session.billing_same_as_shipping:
             errors.append(_("Billing address is required"))
@@ -446,35 +454,42 @@ class CheckoutService:
                 address = session.shipping_address or session.shipping_address_data
                 if address:
                     from catalog.models import SalesRegion
-                    country_code = address.country if hasattr(address, 'country') else address.get('country')
+
+                    country_code = (
+                        address.country if hasattr(address, "country") else address.get("country")
+                    )
                     if country_code:
-                        regions = SalesRegion.objects.filter(is_active=True).order_by('-priority')
+                        regions = SalesRegion.objects.filter(is_active=True).order_by("-priority")
                         for r in regions:
                             if isinstance(r.countries, list) and country_code in r.countries:
                                 region = r
                                 break
 
                 availability = fulfillment_service.check_stock_availability(
-                    product=product,
-                    quantity=item.quantity,
-                    region=region,
-                    variant=item.variant
+                    product=product, quantity=item.quantity, region=region, variant=item.variant
                 )
 
-                if not availability['available']:
-                    errors.append(_("Insufficient stock for {product}").format(product=product.name))
+                if not availability["available"]:
+                    errors.append(
+                        _("Insufficient stock for {product}").format(product=product.name)
+                    )
 
         # Dependency re-validation
         from catalog.services.dependency_service import check_hard_dependencies
+
         for item in session.cart.items.filter(parent_bundle__isnull=True):
             satisfied, blocking = check_hard_dependencies(
-                product=item.product, user=session.cart.user, cart=session.cart,
+                product=item.product,
+                user=session.cart.user,
+                cart=session.cart,
             )
             if not satisfied:
                 dep = blocking[0]
-                errors.append(dep.customer_message or _(
-                    "\"%(product)s\" requires prior ownership of \"%(required)s\"."
-                ) % {'product': item.product.name, 'required': dep.required_product.name})
+                errors.append(
+                    dep.customer_message
+                    or _('"%(product)s" requires prior ownership of "%(required)s".')
+                    % {"product": item.product.name, "required": dep.required_product.name}
+                )
 
         return len(errors) == 0, errors
 
@@ -506,41 +521,44 @@ class CheckoutService:
                 continue
 
             # Extract value and price
-            value = customization_data.get('value')
-            calculated_price_str = customization_data.get('calculated_price', '0')
+            value = customization_data.get("value")
+            calculated_price_str = customization_data.get("calculated_price", "0")
 
             # Store value in appropriate field based on option type
             value_fields = {
-                'text_value': '',
-                'file_value': None,
-                'choice_value': '',
-                'number_value': None
+                "text_value": "",
+                "file_value": None,
+                "choice_value": "",
+                "number_value": None,
             }
 
-            if option.option_type in ('text', 'textarea'):
-                value_fields['text_value'] = str(value)
-            elif option.option_type == 'file':
+            if option.option_type in ("text", "textarea"):
+                value_fields["text_value"] = str(value)
+            elif option.option_type == "file":
                 # File value should be MediaAsset ID
                 from media_library.models import MediaAsset
+
                 try:
                     file_asset = MediaAsset.objects.get(id=int(value))
-                    value_fields['file_value'] = file_asset
+                    value_fields["file_value"] = file_asset
                 except (MediaAsset.DoesNotExist, ValueError, TypeError):
-                    value_fields['text_value'] = str(value)  # Fallback
-            elif option.option_type in ('select', 'color'):
-                value_fields['choice_value'] = str(value)
-            elif option.option_type == 'number':
+                    value_fields["text_value"] = str(value)  # Fallback
+            elif option.option_type in ("select", "color"):
+                value_fields["choice_value"] = str(value)
+            elif option.option_type == "number":
                 try:
-                    value_fields['number_value'] = Decimal(str(value))
+                    value_fields["number_value"] = Decimal(str(value))
                 except (ValueError, TypeError):
-                    value_fields['text_value'] = str(value)  # Fallback
+                    value_fields["text_value"] = str(value)  # Fallback
 
             # Create CustomizationValue record
             CustomizationValue.objects.create(
                 order_item=order_item,
                 customization_option=option,
-                calculated_price=Money(Decimal(calculated_price_str), order_item.total_price.currency),
-                **value_fields
+                calculated_price=Money(
+                    Decimal(calculated_price_str), order_item.total_price.currency
+                ),
+                **value_fields,
             )
 
     @staticmethod
@@ -551,9 +569,8 @@ class CheckoutService:
         """
         try:
             from customizable_product.models import DesignDraft, DesignSnapshot
-            from django.utils import timezone
 
-            token = design_data.get('token')
+            token = design_data.get("token")
             if not token:
                 return
 
@@ -572,6 +589,7 @@ class CheckoutService:
             # Queue async rendering task
             try:
                 from customizable_product.tasks import render_design_snapshot
+
                 render_design_snapshot.delay(snapshot.pk)
             except Exception:
                 pass  # Task queue may not be available
@@ -581,6 +599,7 @@ class CheckoutService:
 
         except Exception as e:
             import logging
+
             logging.getLogger(__name__).warning(
                 f"Failed to create design snapshot for order item {order_item.pk}: {e}"
             )
@@ -588,9 +607,8 @@ class CheckoutService:
     @staticmethod
     @transaction.atomic
     def create_order(
-        session: CheckoutSession,
-        clear_session: bool = True
-    ) -> Tuple[bool, str, Optional[Order]]:
+        session: CheckoutSession, clear_session: bool = True
+    ) -> tuple[bool, str, Order | None]:
         """
         Create order from checkout session
 
@@ -602,8 +620,9 @@ class CheckoutService:
         Returns:
             Tuple of (success: bool, message: str, order: Order)
         """
-        from catalog.services import fulfillment_service, InsufficientStockError
         import logging
+
+        from catalog.services import InsufficientStockError, fulfillment_service
 
         logger = logging.getLogger(__name__)
 
@@ -618,7 +637,11 @@ class CheckoutService:
         def get_address_field(address, field_name, default=""):
             if not address:
                 return default
-            return getattr(address, field_name, None) if hasattr(address, field_name) else address.get(field_name, default)
+            return (
+                getattr(address, field_name, None)
+                if hasattr(address, field_name)
+                else address.get(field_name, default)
+            )
 
         # Get address data (prefer JSONField during checkout)
         shipping_address = session.shipping_address or session.shipping_address_data
@@ -628,27 +651,26 @@ class CheckoutService:
         if not cart.user:
             # Get email from shipping address (name field often contains full name or email)
             # or extract from address data
-            email = get_address_field(shipping_address, 'email', '')
+            email = get_address_field(shipping_address, "email", "")
             if not email:
                 # Fallback: try to get from metadata or generate placeholder
-                email = session.metadata.get('email', '') if session.metadata else ''
+                email = session.metadata.get("email", "") if session.metadata else ""
 
             # Get name from shipping address
-            name = get_address_field(shipping_address, 'name', '')
-            first_name = ''
-            last_name = ''
+            name = get_address_field(shipping_address, "name", "")
+            first_name = ""
+            last_name = ""
             if name:
-                name_parts = name.split(' ', 1)
+                name_parts = name.split(" ", 1)
                 first_name = name_parts[0]
-                last_name = name_parts[1] if len(name_parts) > 1 else ''
+                last_name = name_parts[1] if len(name_parts) > 1 else ""
 
             if email:
                 # Create guest user
                 from accounts.services.account_creation_service import AccountCreationService
+
                 cart.user = AccountCreationService.create_guest_user(
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name
+                    email=email, first_name=first_name, last_name=last_name
                 )
                 cart.save()
                 logger.info(f"Created guest user {cart.user.username} for order creation")
@@ -657,85 +679,92 @@ class CheckoutService:
                 return False, _("Customer email is required"), None
 
         # Create order
-        order_kwargs = dict(
-            user=cart.user,
-            email=cart.user.email,
-            phone=get_address_field(shipping_address, 'phone'),
+        order_kwargs = {
+            "user": cart.user,
+            "email": cart.user.email,
+            "phone": get_address_field(shipping_address, "phone"),
             # Shipping address
-            shipping_name=get_address_field(shipping_address, 'name'),
-            shipping_address1=get_address_field(shipping_address, 'address1'),
-            shipping_address2=get_address_field(shipping_address, 'address2'),
-            shipping_city=get_address_field(shipping_address, 'city'),
-            shipping_state=get_address_field(shipping_address, 'state'),
-            shipping_postal_code=get_address_field(shipping_address, 'postal_code'),
-            shipping_country=get_address_field(shipping_address, 'country'),
+            "shipping_name": get_address_field(shipping_address, "name"),
+            "shipping_address1": get_address_field(shipping_address, "address1"),
+            "shipping_address2": get_address_field(shipping_address, "address2"),
+            "shipping_city": get_address_field(shipping_address, "city"),
+            "shipping_state": get_address_field(shipping_address, "state"),
+            "shipping_postal_code": get_address_field(shipping_address, "postal_code"),
+            "shipping_country": get_address_field(shipping_address, "country"),
             # Billing address
-            billing_same_as_shipping=session.billing_same_as_shipping,
-            billing_name=get_address_field(billing_address, 'name'),
-            billing_address1=get_address_field(billing_address, 'address1'),
-            billing_address2=get_address_field(billing_address, 'address2'),
-            billing_city=get_address_field(billing_address, 'city'),
-            billing_state=get_address_field(billing_address, 'state'),
-            billing_postal_code=get_address_field(billing_address, 'postal_code'),
-            billing_country=get_address_field(billing_address, 'country'),
+            "billing_same_as_shipping": session.billing_same_as_shipping,
+            "billing_name": get_address_field(billing_address, "name"),
+            "billing_address1": get_address_field(billing_address, "address1"),
+            "billing_address2": get_address_field(billing_address, "address2"),
+            "billing_city": get_address_field(billing_address, "city"),
+            "billing_state": get_address_field(billing_address, "state"),
+            "billing_postal_code": get_address_field(billing_address, "postal_code"),
+            "billing_country": get_address_field(billing_address, "country"),
             # Totals
-            subtotal=session.subtotal,
-            tax_amount=session.tax_amount,
-            shipping_cost=session.shipping_cost,
-            discount_amount=session.discount_amount,
-            gift_card_discount=cart.gift_card_discount_amount,
-            total_amount=session.total_amount,
+            "subtotal": session.subtotal,
+            "tax_amount": session.tax_amount,
+            "shipping_cost": session.shipping_cost,
+            "discount_amount": session.discount_amount,
+            "gift_card_discount": cart.gift_card_discount_amount,
+            "total_amount": session.total_amount,
             # Capture customer's browsing language at checkout
             # Prefer language from session metadata (set by spwig.com frontend)
             # over get_language() which is unreliable for external API calls
-            language=(session.metadata.get('language') if session.metadata else None)
-                     or get_language() or 'en',
-        )
+            "language": (session.metadata.get("language") if session.metadata else None)
+            or get_language()
+            or "en",
+        }
         # Copy metadata from checkout session to order
         if session.metadata:
-            order_kwargs['metadata'] = session.metadata
+            order_kwargs["metadata"] = session.metadata
         # Flag test orders in sandbox mode
         from core.license import is_sandbox_mode
+
         if is_sandbox_mode():
-            order_kwargs['is_test_order'] = True
+            order_kwargs["is_test_order"] = True
 
         # Add metadata for guest orders to prompt account creation post-purchase
-        if cart.user and cart.user.username.startswith('guest_'):
-            if 'metadata' not in order_kwargs:
-                order_kwargs['metadata'] = {}
-            order_kwargs['metadata']['is_guest_order'] = True
-            order_kwargs['metadata']['prompt_account_creation'] = True
+        if cart.user and cart.user.username.startswith("guest_"):
+            if "metadata" not in order_kwargs:
+                order_kwargs["metadata"] = {}
+            order_kwargs["metadata"]["is_guest_order"] = True
+            order_kwargs["metadata"]["prompt_account_creation"] = True
 
         order = Order.objects.create(**order_kwargs)
 
         # Capture FX data and compute base-currency equivalents
         from core.models import SiteSettings
+
         settings = SiteSettings.get_settings()
         store_base_currency = settings.default_currency
-        order_currency = str(session.total_amount.currency) if hasattr(session.total_amount, 'currency') else store_base_currency
+        order_currency = (
+            str(session.total_amount.currency)
+            if hasattr(session.total_amount, "currency")
+            else store_base_currency
+        )
 
         order.customer_currency = order_currency
         order.base_currency = store_base_currency
 
         # Display-only mode: force base currency, no FX conversion needed
-        if getattr(settings, 'multi_currency_checkout_mode', 'full') == 'display_only':
+        if getattr(settings, "multi_currency_checkout_mode", "full") == "display_only":
             order.customer_currency = store_base_currency
-            order.fx_policy = 'none'
+            order.fx_policy = "none"
         elif order_currency != store_base_currency and settings.enable_multi_currency:
             try:
                 from exchange_rates.services.exchange_service import ExchangeRateService
+
                 fx_service = ExchangeRateService()
                 rate = fx_service.get_rate(store_base_currency, order_currency)
                 snapshot = fx_service.snapshot_rate_for_order(
-                    from_currency=store_base_currency,
-                    to_currency=order_currency,
-                    order=order
+                    from_currency=store_base_currency, to_currency=order_currency, order=order
                 )
                 order.exchange_rate_used = rate
                 order.exchange_rate_provider = snapshot.provider_name
-                order.fx_policy = 'spot'
+                order.fx_policy = "spot"
             except Exception as e:
                 import logging
+
                 logger = logging.getLogger(__name__)
                 logger.error(
                     f"FX rate capture failed for cross-currency order {order.order_number} "
@@ -745,18 +774,28 @@ class CheckoutService:
                 # Do NOT set exchange_rate_used=1 for cross-currency orders -- that would
                 # produce silently wrong base amounts. Leave rate as None so base amounts
                 # remain NULL, clearly flagging this order for manual review.
-                order.fx_policy = 'spot'
+                order.fx_policy = "spot"
         else:
-            order.fx_policy = 'none'
+            order.fx_policy = "none"
 
         order.compute_base_amounts()
-        order.save(update_fields=[
-            'customer_currency', 'base_currency', 'exchange_rate_used',
-            'exchange_rate_provider', 'fx_policy',
-            'subtotal_base', 'tax_amount_base', 'shipping_cost_base',
-            'discount_amount_base', 'gift_card_discount_base',
-            'total_amount_base', 'amount_paid_base', 'amount_refunded_base',
-        ])
+        order.save(
+            update_fields=[
+                "customer_currency",
+                "base_currency",
+                "exchange_rate_used",
+                "exchange_rate_provider",
+                "fx_policy",
+                "subtotal_base",
+                "tax_amount_base",
+                "shipping_cost_base",
+                "discount_amount_base",
+                "gift_card_discount_base",
+                "total_amount_base",
+                "amount_paid_base",
+                "amount_refunded_base",
+            ]
+        )
 
         # Prepare cart items for warehouse selection and build index mapping.
         # order_items_data indices correspond to warehouse_allocation keys.
@@ -766,28 +805,31 @@ class CheckoutService:
         parent_cart_items = list(cart.items.filter(parent_bundle__isnull=True))
 
         for cart_item in parent_cart_items:
-            if cart_item.product.product_type in ('bundle', 'configurable'):
+            if cart_item.product.product_type in ("bundle", "configurable"):
                 for component in cart_item.component_items.all():
                     cart_item_index_map[component.pk] = len(order_items_data)
-                    order_items_data.append({
-                        'product': component.product,
-                        'variant': component.variant,
-                        'quantity': component.quantity
-                    })
+                    order_items_data.append(
+                        {
+                            "product": component.product,
+                            "variant": component.variant,
+                            "quantity": component.quantity,
+                        }
+                    )
             else:
                 cart_item_index_map[cart_item.pk] = len(order_items_data)
-                order_items_data.append({
-                    'product': cart_item.product,
-                    'variant': cart_item.variant,
-                    'quantity': cart_item.quantity
-                })
+                order_items_data.append(
+                    {
+                        "product": cart_item.product,
+                        "variant": cart_item.variant,
+                        "quantity": cart_item.quantity,
+                    }
+                )
 
         # Select optimal warehouse(s) for order fulfillment
         # Returns {index: warehouse} keyed by position in order_items_data
         try:
             warehouse_allocation = fulfillment_service.select_warehouse_for_order(
-                order=order,
-                order_items=order_items_data
+                order=order, order_items=order_items_data
             )
         except InsufficientStockError as e:
             order.delete()
@@ -813,17 +855,33 @@ class CheckoutService:
         # Helper to compute base-currency amounts on order items
         def _set_item_base_amounts(item):
             if not order.customer_currency or order.customer_currency == order.base_currency:
-                item.unit_price_base = item.unit_price.amount if hasattr(item.unit_price, 'amount') else Decimal(str(item.unit_price or 0))
-                item.total_price_base = item.total_price.amount if hasattr(item.total_price, 'amount') else Decimal(str(item.total_price or 0))
+                item.unit_price_base = (
+                    item.unit_price.amount
+                    if hasattr(item.unit_price, "amount")
+                    else Decimal(str(item.unit_price or 0))
+                )
+                item.total_price_base = (
+                    item.total_price.amount
+                    if hasattr(item.total_price, "amount")
+                    else Decimal(str(item.total_price or 0))
+                )
             else:
-                rate = order.exchange_rate_used or Decimal('1')
+                rate = order.exchange_rate_used or Decimal("1")
                 if rate == 0:
-                    rate = Decimal('1')
-                up = item.unit_price.amount if hasattr(item.unit_price, 'amount') else Decimal(str(item.unit_price or 0))
-                tp = item.total_price.amount if hasattr(item.total_price, 'amount') else Decimal(str(item.total_price or 0))
-                item.unit_price_base = (up / rate).quantize(Decimal('0.01'))
-                item.total_price_base = (tp / rate).quantize(Decimal('0.01'))
-            item.save(update_fields=['unit_price_base', 'total_price_base'])
+                    rate = Decimal("1")
+                up = (
+                    item.unit_price.amount
+                    if hasattr(item.unit_price, "amount")
+                    else Decimal(str(item.unit_price or 0))
+                )
+                tp = (
+                    item.total_price.amount
+                    if hasattr(item.total_price, "amount")
+                    else Decimal(str(item.total_price or 0))
+                )
+                item.unit_price_base = (up / rate).quantize(Decimal("0.01"))
+                item.total_price_base = (tp / rate).quantize(Decimal("0.01"))
+            item.save(update_fields=["unit_price_base", "total_price_base"])
 
         # Create order items and allocate stock
         for cart_item in parent_cart_items:
@@ -842,17 +900,19 @@ class CheckoutService:
                 warehouse=None,  # Set below for regular products; bundles stay None
                 stock_allocated=False,
                 stock_fulfilled=False,
-                parent_bundle=None
+                parent_bundle=None,
             )
             _set_item_base_amounts(parent_order_item)
 
             CheckoutService._create_customization_values(parent_order_item)
 
             # Create design snapshot for visual design editor orders
-            if cart_item.customizations and '_design' in cart_item.customizations:
-                CheckoutService._create_design_snapshot(parent_order_item, cart_item.customizations['_design'])
+            if cart_item.customizations and "_design" in cart_item.customizations:
+                CheckoutService._create_design_snapshot(
+                    parent_order_item, cart_item.customizations["_design"]
+                )
 
-            if cart_item.product.product_type in ('bundle', 'configurable'):
+            if cart_item.product.product_type in ("bundle", "configurable"):
                 for component_cart_item in cart_item.component_items.all():
                     component_warehouse = cart_item_warehouse.get(component_cart_item.pk)
                     component_order_item = OrderItem.objects.create(
@@ -860,8 +920,12 @@ class CheckoutService:
                         product=component_cart_item.product,
                         variant=component_cart_item.variant,
                         product_name=component_cart_item.product.name,
-                        variant_name=component_cart_item.variant.name if component_cart_item.variant else "",
-                        sku=component_cart_item.variant.sku if component_cart_item.variant else component_cart_item.product.sku,
+                        variant_name=component_cart_item.variant.name
+                        if component_cart_item.variant
+                        else "",
+                        sku=component_cart_item.variant.sku
+                        if component_cart_item.variant
+                        else component_cart_item.product.sku,
                         quantity=component_cart_item.quantity,
                         unit_price=component_cart_item.unit_price,
                         total_price=component_cart_item.total_price,
@@ -869,7 +933,7 @@ class CheckoutService:
                         warehouse=component_warehouse,
                         stock_allocated=False,
                         stock_fulfilled=False,
-                        parent_bundle=parent_order_item
+                        parent_bundle=parent_order_item,
                     )
                     _set_item_base_amounts(component_order_item)
 
@@ -883,19 +947,21 @@ class CheckoutService:
                         )
                         if converted:
                             component_order_item.stock_allocated = True
-                            component_order_item.save(update_fields=['stock_allocated'])
+                            component_order_item.save(update_fields=["stock_allocated"])
                         else:
                             raise Exception("reservation_mismatch")
                     except Exception:
                         try:
                             fulfillment_service.allocate_stock(
                                 order_item=component_order_item,
-                                warehouse=component_order_item.warehouse
+                                warehouse=component_order_item.warehouse,
                             )
                             component_order_item.stock_allocated = True
-                            component_order_item.save(update_fields=['stock_allocated'])
+                            component_order_item.save(update_fields=["stock_allocated"])
                         except InsufficientStockError as e:
-                            logger.error(f"Stock allocation failed for component {component_order_item.sku}: {e}")
+                            logger.error(
+                                f"Stock allocation failed for component {component_order_item.sku}: {e}"
+                            )
                             _rollback_allocated_stock()
                             order.delete()
                             return False, _("Insufficient stock to complete order"), None
@@ -908,7 +974,7 @@ class CheckoutService:
             else:
                 # Regular product — look up warehouse by cart_item pk
                 parent_order_item.warehouse = cart_item_warehouse.get(cart_item.pk)
-                parent_order_item.save(update_fields=['warehouse'])
+                parent_order_item.save(update_fields=["warehouse"])
 
                 try:
                     converted = StockReservationService.convert_reservation_to_order_allocation(
@@ -917,17 +983,16 @@ class CheckoutService:
                     )
                     if converted:
                         parent_order_item.stock_allocated = True
-                        parent_order_item.save(update_fields=['stock_allocated'])
+                        parent_order_item.save(update_fields=["stock_allocated"])
                     else:
                         raise Exception("reservation_mismatch")
                 except Exception:
                     try:
                         fulfillment_service.allocate_stock(
-                            order_item=parent_order_item,
-                            warehouse=parent_order_item.warehouse
+                            order_item=parent_order_item, warehouse=parent_order_item.warehouse
                         )
                         parent_order_item.stock_allocated = True
-                        parent_order_item.save(update_fields=['stock_allocated'])
+                        parent_order_item.save(update_fields=["stock_allocated"])
                     except InsufficientStockError as e:
                         logger.error(f"Stock allocation failed for {parent_order_item.sku}: {e}")
                         _rollback_allocated_stock()
@@ -972,8 +1037,9 @@ class CheckoutService:
         Returns:
             List of created subscription IDs
         """
-        from subscriptions.manager import SubscriptionManager
         import logging
+
+        from subscriptions.manager import SubscriptionManager
 
         logger = logging.getLogger(__name__)
         created_subscriptions = []
@@ -1004,7 +1070,7 @@ class CheckoutService:
                     payment_token=cart_item.payment_token,
                     product=cart_item.product,
                     variant=cart_item.variant,
-                    originating_order=order
+                    originating_order=order,
                 )
 
                 created_subscriptions.append(subscription.subscription_id)
@@ -1013,9 +1079,7 @@ class CheckoutService:
                 )
 
             except Exception as e:
-                logger.error(
-                    f"Failed to create subscription for cart item {cart_item.id}: {e}"
-                )
+                logger.error(f"Failed to create subscription for cart item {cart_item.id}: {e}")
                 # Continue processing other subscriptions even if one fails
 
         return created_subscriptions
@@ -1029,14 +1093,15 @@ class CheckoutService:
         converts the cart item into a confirmed Booking record.
         Also cleans up any slot reservations.
         """
-        from catalog.services.booking_service import BookingAvailabilityService
-        from datetime import datetime
         import logging
+        from datetime import datetime
+
+        from catalog.services.booking_service import BookingAvailabilityService
 
         logger = logging.getLogger(__name__)
         created_bookings = []
 
-        for cart_item in cart.items.filter(product__product_type='booking'):
+        for cart_item in cart.items.filter(product__product_type="booking"):
             if not cart_item.booking_data:
                 continue
 
@@ -1045,11 +1110,9 @@ class CheckoutService:
             # Parse datetime strings
             try:
                 start_dt = datetime.fromisoformat(
-                    booking_data['start_datetime'].replace('Z', '+00:00')
+                    booking_data["start_datetime"].replace("Z", "+00:00")
                 )
-                end_dt = datetime.fromisoformat(
-                    booking_data['end_datetime'].replace('Z', '+00:00')
-                )
+                end_dt = datetime.fromisoformat(booking_data["end_datetime"].replace("Z", "+00:00"))
             except (KeyError, ValueError) as e:
                 logger.error(f"Invalid booking data for cart item {cart_item.pk}: {e}")
                 continue
@@ -1062,17 +1125,17 @@ class CheckoutService:
 
             try:
                 booking_data_full = {
-                    'start_datetime': start_dt,
-                    'end_datetime': end_dt,
-                    'resource_id': booking_data.get('resource_id'),
-                    'persons': booking_data.get('persons', {}),
-                    'total_cost': cart_item.total_price.amount if cart_item.total_price else 0,
-                    'price_breakdown': booking_data.get('price_breakdown', {}),
-                    'customer_name': order.shipping_name or '',
-                    'customer_email': order.email or '',
-                    'customer_phone': order.phone or '',
-                    'customer_notes': cart_item.notes or '',
-                    'customer_timezone': booking_data.get('timezone', ''),
+                    "start_datetime": start_dt,
+                    "end_datetime": end_dt,
+                    "resource_id": booking_data.get("resource_id"),
+                    "persons": booking_data.get("persons", {}),
+                    "total_cost": cart_item.total_price.amount if cart_item.total_price else 0,
+                    "price_breakdown": booking_data.get("price_breakdown", {}),
+                    "customer_name": order.shipping_name or "",
+                    "customer_email": order.email or "",
+                    "customer_phone": order.phone or "",
+                    "customer_notes": cart_item.notes or "",
+                    "customer_timezone": booking_data.get("timezone", ""),
                 }
 
                 success, msg, booking = BookingAvailabilityService.confirm_booking(
@@ -1082,13 +1145,9 @@ class CheckoutService:
 
                 if success and booking:
                     created_bookings.append(booking.pk)
-                    logger.info(
-                        f"Created booking #{booking.pk} for order {order.order_number}"
-                    )
+                    logger.info(f"Created booking #{booking.pk} for order {order.order_number}")
                 else:
-                    logger.warning(
-                        f"Booking creation returned: {msg} for cart item {cart_item.pk}"
-                    )
+                    logger.warning(f"Booking creation returned: {msg} for cart item {cart_item.pk}")
 
             except Exception as e:
                 logger.error(f"Failed to create booking for cart item {cart_item.pk}: {e}")
@@ -1106,7 +1165,6 @@ class CheckoutService:
             cart: Cart instance with applied gift cards
             order: Order instance created from cart
         """
-        from catalog.models import GiftCard, GiftCardTransaction
         import logging
 
         logger = logging.getLogger(__name__)
@@ -1120,7 +1178,10 @@ class CheckoutService:
             try:
                 # Build notes with conversion info for foreign-currency gift cards
                 notes = f"Redeemed for order {order.order_number}"
-                if applied_gift_card.original_currency_amount and applied_gift_card.gc_exchange_rate:
+                if (
+                    applied_gift_card.original_currency_amount
+                    and applied_gift_card.gc_exchange_rate
+                ):
                     notes += (
                         f" | Base currency equivalent: {applied_gift_card.discount_amount}"
                         f" (rate: {applied_gift_card.gc_exchange_rate})"
@@ -1154,20 +1215,20 @@ class CheckoutService:
             cart: Cart instance with applied vouchers
             order: Order instance created from cart
         """
-        from vouchers.models import VoucherCode, VoucherUsage
-        from django.db.models import F
         import logging
+
+        from django.db.models import F
+
+        from vouchers.models import VoucherCode, VoucherUsage
 
         logger = logging.getLogger(__name__)
 
-        for applied_voucher in cart.applied_vouchers.select_related('voucher').all():
+        for applied_voucher in cart.applied_vouchers.select_related("voucher").all():
             voucher = applied_voucher.voucher
 
             try:
                 # Atomically increment current_uses to prevent race conditions
-                VoucherCode.objects.filter(pk=voucher.pk).update(
-                    current_uses=F('current_uses') + 1
-                )
+                VoucherCode.objects.filter(pk=voucher.pk).update(current_uses=F("current_uses") + 1)
 
                 # Create usage record for audit trail and per-customer limit checks
                 VoucherUsage.objects.create(
@@ -1176,7 +1237,7 @@ class CheckoutService:
                     order=order,
                     discount_amount=applied_voucher.discount_amount,
                     cart_total=cart.total_amount,
-                    session_key=getattr(cart, 'session_key', None),
+                    session_key=getattr(cart, "session_key", None),
                 )
 
                 logger.info(
@@ -1192,7 +1253,7 @@ class CheckoutService:
 
     @staticmethod
     @transaction.atomic
-    def process_payment_completion(order) -> Tuple[int, List[str]]:
+    def process_payment_completion(order) -> tuple[int, list[str]]:
         """
         Process actions after payment is confirmed for an order.
 
@@ -1207,8 +1268,9 @@ class CheckoutService:
         Returns:
             Tuple of (gift_cards_created: int, gift_card_codes: List[str])
         """
-        from catalog.services.gift_card_service import GiftCardService
         import logging
+
+        from catalog.services.gift_card_service import GiftCardService
 
         logger = logging.getLogger(__name__)
 
@@ -1226,9 +1288,7 @@ class CheckoutService:
         Clean up expired checkout sessions
         Should be run periodically via cron/celery
         """
-        expired_sessions = CheckoutSession.objects.filter(
-            expires_at__lt=timezone.now()
-        )
+        expired_sessions = CheckoutSession.objects.filter(expires_at__lt=timezone.now())
         count = expired_sessions.count()
         expired_sessions.delete()
         return count

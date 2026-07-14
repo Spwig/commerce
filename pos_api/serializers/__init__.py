@@ -1,19 +1,24 @@
-from .product import POSProductSerializer, POSProductListSerializer, POSCategorySerializer
-from .cart import POSCartSerializer, POSCartItemSerializer, POSAddToCartSerializer
-from .order import POSOrderSerializer, POSOrderListSerializer, POSReceiptSerializer
-from .customer import POSCustomerSerializer, POSCustomerSearchSerializer
-from .terminal import POSTerminalSerializer, POSTerminalConfigSerializer
+from .cart import POSAddToCartSerializer, POSCartItemSerializer, POSCartSerializer
+from .customer import POSCustomerSearchSerializer, POSCustomerSerializer
+from .inventory import POSCrossLocationStockSerializer, POSStockItemSerializer
+from .order import POSOrderListSerializer, POSOrderSerializer, POSReceiptSerializer
 from .payment import (
-    POSCashPaymentSerializer, POSCardPaymentSerializer,
-    POSGiftCardPaymentSerializer, POSSplitTenderSerializer
+    POSCardPaymentSerializer,
+    POSCashPaymentSerializer,
+    POSGiftCardPaymentSerializer,
+    POSSplitTenderSerializer,
 )
-from .shift import (
-    POSShiftSerializer, POSShiftOpenSerializer,
-    POSShiftCloseSerializer, POSCashMovementSerializer
-)
-from .inventory import POSStockItemSerializer, POSCrossLocationStockSerializer
-from .sync import (
-    POSOfflineTransactionSerializer, POSOfflineUploadSerializer,
-    POSSyncStatusSerializer
-)
+from .product import POSCategorySerializer, POSProductListSerializer, POSProductSerializer
 from .report import POSDailyReportSerializer, POSTopProductSerializer
+from .shift import (
+    POSCashMovementSerializer,
+    POSShiftCloseSerializer,
+    POSShiftOpenSerializer,
+    POSShiftSerializer,
+)
+from .sync import (
+    POSOfflineTransactionSerializer,
+    POSOfflineUploadSerializer,
+    POSSyncStatusSerializer,
+)
+from .terminal import POSTerminalConfigSerializer, POSTerminalSerializer

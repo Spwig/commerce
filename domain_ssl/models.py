@@ -1,6 +1,6 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class DomainConfiguration(models.Model):
@@ -10,36 +10,36 @@ class DomainConfiguration(models.Model):
     """
 
     class SSLMode(models.TextChoices):
-        NONE = 'none', _('None (HTTP only)')
-        LETSENCRYPT = 'letsencrypt', _("Let's Encrypt (HTTP-01)")
-        LETSENCRYPT_DNS = 'letsencrypt_dns', _("Let's Encrypt (DNS-01)")
-        CLOUDFLARE_ORIGIN = 'cloudflare_origin', _('Cloudflare Origin CA')
-        CUSTOM = 'custom', _('Custom Certificate')
-        SELF_SIGNED = 'self_signed', _('Self-Signed')
-        MANAGED_EXTERNALLY = 'managed_externally', _('Managed Externally')
+        NONE = "none", _("None (HTTP only)")
+        LETSENCRYPT = "letsencrypt", _("Let's Encrypt (HTTP-01)")
+        LETSENCRYPT_DNS = "letsencrypt_dns", _("Let's Encrypt (DNS-01)")
+        CLOUDFLARE_ORIGIN = "cloudflare_origin", _("Cloudflare Origin CA")
+        CUSTOM = "custom", _("Custom Certificate")
+        SELF_SIGNED = "self_signed", _("Self-Signed")
+        MANAGED_EXTERNALLY = "managed_externally", _("Managed Externally")
 
     class Status(models.TextChoices):
-        IDLE = 'idle', _('Idle')
-        VALIDATING_DNS = 'validating_dns', _('Validating DNS')
-        CONFIGURING = 'configuring', _('Configuring')
-        OBTAINING_CERT = 'obtaining_cert', _('Obtaining Certificate')
-        RELOADING = 'reloading', _('Reloading Services')
-        ERROR = 'error', _('Error')
+        IDLE = "idle", _("Idle")
+        VALIDATING_DNS = "validating_dns", _("Validating DNS")
+        CONFIGURING = "configuring", _("Configuring")
+        OBTAINING_CERT = "obtaining_cert", _("Obtaining Certificate")
+        RELOADING = "reloading", _("Reloading Services")
+        ERROR = "error", _("Error")
 
     # Domain
     domain = models.CharField(
         max_length=253,
         blank=True,
-        default='',
-        verbose_name=_('Domain'),
-        help_text=_('Fully qualified domain name (e.g., shop.example.com)')
+        default="",
+        verbose_name=_("Domain"),
+        help_text=_("Fully qualified domain name (e.g., shop.example.com)"),
     )
     previous_domain = models.CharField(
         max_length=253,
         blank=True,
-        default='',
-        verbose_name=_('Previous Domain'),
-        help_text=_('Domain before the last change, for rollback tracking')
+        default="",
+        verbose_name=_("Previous Domain"),
+        help_text=_("Domain before the last change, for rollback tracking"),
     )
 
     # SSL mode
@@ -47,57 +47,57 @@ class DomainConfiguration(models.Model):
         max_length=20,
         choices=SSLMode.choices,
         default=SSLMode.NONE,
-        verbose_name=_('SSL Mode'),
+        verbose_name=_("SSL Mode"),
     )
 
     # Certificate info
     cert_domain = models.CharField(
         max_length=253,
         blank=True,
-        default='',
-        verbose_name=_('Certificate Domain'),
+        default="",
+        verbose_name=_("Certificate Domain"),
     )
     cert_issuer = models.CharField(
         max_length=255,
         blank=True,
-        default='',
-        verbose_name=_('Certificate Issuer'),
+        default="",
+        verbose_name=_("Certificate Issuer"),
     )
     cert_expires_at = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name=_('Certificate Expiry'),
+        verbose_name=_("Certificate Expiry"),
     )
     cert_obtained_at = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name=_('Certificate Obtained'),
+        verbose_name=_("Certificate Obtained"),
     )
     is_wildcard = models.BooleanField(
         default=False,
-        verbose_name=_('Wildcard Certificate'),
+        verbose_name=_("Wildcard Certificate"),
     )
 
     # Cloudflare integration
     cloudflare_api_token = models.TextField(
         blank=True,
-        default='',
-        verbose_name=_('Cloudflare API Token'),
-        help_text=_('API token for DNS-01 challenges or Origin CA')
+        default="",
+        verbose_name=_("Cloudflare API Token"),
+        help_text=_("API token for DNS-01 challenges or Origin CA"),
     )
     cloudflare_zone_id = models.CharField(
         max_length=64,
         blank=True,
-        default='',
-        verbose_name=_('Cloudflare Zone ID'),
+        default="",
+        verbose_name=_("Cloudflare Zone ID"),
     )
 
     # Admin email for Let's Encrypt
     admin_email = models.EmailField(
         blank=True,
-        default='',
-        verbose_name=_('Admin Email'),
-        help_text=_("Contact email for Let's Encrypt notifications")
+        default="",
+        verbose_name=_("Admin Email"),
+        help_text=_("Contact email for Let's Encrypt notifications"),
     )
 
     # Task status
@@ -105,26 +105,26 @@ class DomainConfiguration(models.Model):
         max_length=20,
         choices=Status.choices,
         default=Status.IDLE,
-        verbose_name=_('Status'),
+        verbose_name=_("Status"),
     )
     last_error = models.TextField(
         blank=True,
-        default='',
-        verbose_name=_('Last Error'),
+        default="",
+        verbose_name=_("Last Error"),
     )
     task_id = models.CharField(
         max_length=255,
         blank=True,
-        default='',
-        verbose_name=_('Active Task ID'),
-        help_text=_('Celery task ID for the current operation')
+        default="",
+        verbose_name=_("Active Task ID"),
+        help_text=_("Celery task ID for the current operation"),
     )
 
     # Auto-renewal
     auto_renew = models.BooleanField(
         default=True,
-        verbose_name=_('Auto-Renew'),
-        help_text=_('Automatically renew certificates before expiry')
+        verbose_name=_("Auto-Renew"),
+        help_text=_("Automatically renew certificates before expiry"),
     )
 
     # Timestamps
@@ -132,13 +132,13 @@ class DomainConfiguration(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = _('Domain Configuration')
-        verbose_name_plural = _('Domain Configuration')
+        verbose_name = _("Domain Configuration")
+        verbose_name_plural = _("Domain Configuration")
 
     def __str__(self):
         if self.domain:
-            return f'{self.domain} ({self.get_ssl_mode_display()})'
-        return _('No domain configured')
+            return f"{self.domain} ({self.get_ssl_mode_display()})"
+        return _("No domain configured")
 
     @classmethod
     def get_instance(cls):
@@ -178,11 +178,11 @@ class DomainConfiguration(models.Model):
         """Set error status with message."""
         self.status = self.Status.ERROR
         self.last_error = message
-        self.save(update_fields=['status', 'last_error', 'updated_at'])
+        self.save(update_fields=["status", "last_error", "updated_at"])
 
     def set_status(self, status):
         """Update the status field."""
         self.status = status
         if status != self.Status.ERROR:
-            self.last_error = ''
-        self.save(update_fields=['status', 'last_error', 'updated_at'])
+            self.last_error = ""
+        self.save(update_fields=["status", "last_error", "updated_at"])

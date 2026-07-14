@@ -5,8 +5,10 @@ Tests validation of component packages against manifest schema and directory str
 """
 
 import json
-import pytest
 from pathlib import Path
+
+import pytest
+
 from design.component_schema_validator import (
     ComponentSchemaValidator,
     ComponentValidationError,
@@ -34,18 +36,11 @@ def valid_manifest():
         "regions": ["hero", "header"],
         "props_schema": {
             "type": "object",
-            "properties": {
-                "title": {
-                    "type": "string"
-                },
-                "subtitle": {
-                    "type": "string"
-                }
-            },
-            "required": ["title"]
+            "properties": {"title": {"type": "string"}, "subtitle": {"type": "string"}},
+            "required": ["title"],
         },
         "category": "hero",
-        "license": "Proprietary"
+        "license": "Proprietary",
     }
 
 
@@ -54,15 +49,8 @@ def valid_props_schema():
     """Return a valid props JSON schema."""
     return {
         "type": "object",
-        "properties": {
-            "title": {
-                "type": "string"
-            },
-            "subtitle": {
-                "type": "string"
-            }
-        },
-        "required": ["title"]
+        "properties": {"title": {"type": "string"}, "subtitle": {"type": "string"}},
+        "required": ["title"],
     }
 
 
@@ -71,19 +59,16 @@ def valid_component(temp_component_dir, valid_manifest, valid_props_schema):
     """Create a valid component directory structure."""
     # Write manifest
     manifest_path = temp_component_dir / "manifest.json"
-    with open(manifest_path, 'w', encoding='utf-8') as f:
+    with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(valid_manifest, f, indent=2)
 
     # Write template
     template_path = temp_component_dir / "template.html"
-    template_path.write_text(
-        "<div class='banner'><h1>{{ title }}</h1></div>",
-        encoding='utf-8'
-    )
+    template_path.write_text("<div class='banner'><h1>{{ title }}</h1></div>", encoding="utf-8")
 
     # Write schema
     schema_path = temp_component_dir / "schema.json"
-    with open(schema_path, 'w', encoding='utf-8') as f:
+    with open(schema_path, "w", encoding="utf-8") as f:
         json.dump(valid_props_schema, f, indent=2)
 
     return temp_component_dir
@@ -104,11 +89,8 @@ class TestComponentSchemaValidator:
         """Test validator with custom schema path."""
         # Create custom schema file
         custom_schema_path = tmp_path / "custom_schema.json"
-        schema = {
-            "$schema": "http://json-schema.org/draft-07/schema#",
-            "type": "object"
-        }
-        with open(custom_schema_path, 'w', encoding='utf-8') as f:
+        schema = {"$schema": "http://json-schema.org/draft-07/schema#", "type": "object"}
+        with open(custom_schema_path, "w", encoding="utf-8") as f:
             json.dump(schema, f)
 
         validator = ComponentSchemaValidator(schema_path=custom_schema_path)
@@ -234,7 +216,7 @@ class TestManifestValidation:
 
     def test_missing_required_field_fails(self, valid_manifest):
         """Test that missing required field fails validation."""
-        del valid_manifest['name']
+        del valid_manifest["name"]
 
         validator = ComponentSchemaValidator()
         is_valid, errors = validator.validate_manifest_only(valid_manifest)
@@ -243,7 +225,7 @@ class TestManifestValidation:
 
     def test_invalid_name_format_fails(self, valid_manifest):
         """Test that invalid component name format fails."""
-        valid_manifest['name'] = "Invalid-Name-With-Dashes"
+        valid_manifest["name"] = "Invalid-Name-With-Dashes"
 
         validator = ComponentSchemaValidator()
         is_valid, errors = validator.validate_manifest_only(valid_manifest)
@@ -252,7 +234,7 @@ class TestManifestValidation:
 
     def test_invalid_version_format_fails(self, valid_manifest):
         """Test that invalid version format fails."""
-        valid_manifest['version'] = "1.0"  # Should be x.y.z
+        valid_manifest["version"] = "1.0"  # Should be x.y.z
 
         validator = ComponentSchemaValidator()
         is_valid, errors = validator.validate_manifest_only(valid_manifest)
@@ -261,7 +243,7 @@ class TestManifestValidation:
 
     def test_invalid_tier_fails(self, valid_manifest):
         """Test that invalid tier value fails."""
-        valid_manifest['tier_compatibility'] = ["A", "D"]  # D is invalid
+        valid_manifest["tier_compatibility"] = ["A", "D"]  # D is invalid
 
         validator = ComponentSchemaValidator()
         is_valid, errors = validator.validate_manifest_only(valid_manifest)
@@ -270,7 +252,7 @@ class TestManifestValidation:
 
     def test_empty_regions_fails(self, valid_manifest):
         """Test that empty regions array fails."""
-        valid_manifest['regions'] = []
+        valid_manifest["regions"] = []
 
         validator = ComponentSchemaValidator()
         is_valid, errors = validator.validate_manifest_only(valid_manifest)
@@ -279,7 +261,7 @@ class TestManifestValidation:
 
     def test_invalid_category_fails(self, valid_manifest):
         """Test that invalid category fails."""
-        valid_manifest['category'] = "invalid_category"
+        valid_manifest["category"] = "invalid_category"
 
         validator = ComponentSchemaValidator()
         is_valid, errors = validator.validate_manifest_only(valid_manifest)
@@ -288,10 +270,10 @@ class TestManifestValidation:
 
     def test_valid_assets_passes(self, valid_manifest):
         """Test that valid assets declaration passes."""
-        valid_manifest['assets'] = {
-            'css': ['assets/style.css'],
-            'js': ['assets/script.js'],
-            'images': ['assets/icon.png']
+        valid_manifest["assets"] = {
+            "css": ["assets/style.css"],
+            "js": ["assets/script.js"],
+            "images": ["assets/icon.png"],
         }
 
         validator = ComponentSchemaValidator()
@@ -301,8 +283,8 @@ class TestManifestValidation:
 
     def test_invalid_asset_path_fails(self, valid_manifest):
         """Test that asset path not in assets/ directory fails."""
-        valid_manifest['assets'] = {
-            'css': ['style.css']  # Should be assets/style.css
+        valid_manifest["assets"] = {
+            "css": ["style.css"]  # Should be assets/style.css
         }
 
         validator = ComponentSchemaValidator()
@@ -312,12 +294,8 @@ class TestManifestValidation:
 
     def test_valid_dependencies_passes(self, valid_manifest):
         """Test that valid dependencies pass."""
-        valid_manifest['dependencies'] = [
-            {
-                'name': 'other_component',
-                'min_version': '1.0.0',
-                'max_version': '2.0.0'
-            }
+        valid_manifest["dependencies"] = [
+            {"name": "other_component", "min_version": "1.0.0", "max_version": "2.0.0"}
         ]
 
         validator = ComponentSchemaValidator()
@@ -327,12 +305,8 @@ class TestManifestValidation:
 
     def test_invalid_dependency_version_range_fails(self, valid_manifest):
         """Test that min_version > max_version fails."""
-        valid_manifest['dependencies'] = [
-            {
-                'name': 'other_component',
-                'min_version': '2.0.0',
-                'max_version': '1.0.0'
-            }
+        valid_manifest["dependencies"] = [
+            {"name": "other_component", "min_version": "2.0.0", "max_version": "1.0.0"}
         ]
 
         validator = ComponentSchemaValidator()
@@ -348,10 +322,7 @@ class TestAssetValidation:
     def test_declared_assets_exist_passes(self, valid_component, valid_manifest):
         """Test that validation passes when declared assets exist."""
         # Add assets to manifest
-        valid_manifest['assets'] = {
-            'css': ['assets/style.css'],
-            'js': ['assets/script.js']
-        }
+        valid_manifest["assets"] = {"css": ["assets/style.css"], "js": ["assets/script.js"]}
 
         # Create assets directory and files
         assets_dir = valid_component / "assets"
@@ -361,7 +332,7 @@ class TestAssetValidation:
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()
@@ -373,13 +344,11 @@ class TestAssetValidation:
     def test_missing_declared_asset_fails(self, valid_component, valid_manifest):
         """Test that validation fails when declared asset doesn't exist."""
         # Add assets to manifest but don't create files
-        valid_manifest['assets'] = {
-            'css': ['assets/missing.css']
-        }
+        valid_manifest["assets"] = {"css": ["assets/missing.css"]}
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()
@@ -395,7 +364,7 @@ class TestLocaleValidation:
     def test_declared_locales_exist_passes(self, valid_component, valid_manifest):
         """Test that validation passes when declared locales exist."""
         # Add locales to manifest
-        valid_manifest['locales'] = ['en', 'es']
+        valid_manifest["locales"] = ["en", "es"]
 
         # Create locales directory and files
         locales_dir = valid_component / "locales"
@@ -405,7 +374,7 @@ class TestLocaleValidation:
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()
@@ -417,7 +386,7 @@ class TestLocaleValidation:
     def test_missing_locale_file_fails(self, valid_component, valid_manifest):
         """Test that validation fails when declared locale file doesn't exist."""
         # Add locales to manifest but don't create files
-        valid_manifest['locales'] = ['en', 'es']
+        valid_manifest["locales"] = ["en", "es"]
 
         # Create locales directory but only one file
         locales_dir = valid_component / "locales"
@@ -426,7 +395,7 @@ class TestLocaleValidation:
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()
@@ -437,16 +406,16 @@ class TestLocaleValidation:
 
     def test_invalid_locale_json_fails(self, valid_component, valid_manifest):
         """Test that invalid JSON in locale file fails."""
-        valid_manifest['locales'] = ['en']
+        valid_manifest["locales"] = ["en"]
 
         # Create locales directory with invalid JSON
         locales_dir = valid_component / "locales"
         locales_dir.mkdir()
-        (locales_dir / "en.json").write_text('{ invalid }')
+        (locales_dir / "en.json").write_text("{ invalid }")
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()
@@ -462,15 +431,15 @@ class TestPreviewValidation:
     def test_declared_preview_exists_passes(self, valid_component, valid_manifest):
         """Test that validation passes when declared preview exists."""
         # Add preview to manifest
-        valid_manifest['preview'] = 'preview.png'
+        valid_manifest["preview"] = "preview.png"
 
         # Create preview file
         preview_path = valid_component / "preview.png"
-        preview_path.write_bytes(b'\x89PNG\r\n\x1a\n')  # Minimal PNG header
+        preview_path.write_bytes(b"\x89PNG\r\n\x1a\n")  # Minimal PNG header
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()
@@ -482,11 +451,11 @@ class TestPreviewValidation:
     def test_missing_declared_preview_fails(self, valid_component, valid_manifest):
         """Test that validation fails when declared preview doesn't exist."""
         # Add preview to manifest but don't create file
-        valid_manifest['preview'] = 'preview.png'
+        valid_manifest["preview"] = "preview.png"
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()
@@ -497,15 +466,15 @@ class TestPreviewValidation:
 
     def test_oversized_preview_fails(self, valid_component, valid_manifest):
         """Test that oversized preview image fails validation."""
-        valid_manifest['preview'] = 'preview.png'
+        valid_manifest["preview"] = "preview.png"
 
         # Create oversized file (> 5MB)
         preview_path = valid_component / "preview.png"
-        preview_path.write_bytes(b'\x00' * (6 * 1024 * 1024))  # 6 MB
+        preview_path.write_bytes(b"\x00" * (6 * 1024 * 1024))  # 6 MB
 
         # Update manifest file
         manifest_path = valid_component / "manifest.json"
-        with open(manifest_path, 'w', encoding='utf-8') as f:
+        with open(manifest_path, "w", encoding="utf-8") as f:
             json.dump(valid_manifest, f)
 
         validator = ComponentSchemaValidator()

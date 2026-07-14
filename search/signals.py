@@ -3,14 +3,15 @@ Cache invalidation signals for the search app.
 
 Handles automatic cache clearing when related models are updated.
 """
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
+
 from django.core.cache import cache
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 
-from .models import SearchSettings, Synonym, SearchRedirect
+from .models import SearchRedirect, SearchSettings, Synonym
 
 
-def invalidate_search_cache(prefix='search:'):
+def invalidate_search_cache(prefix="search:"):
     """
     Invalidate all search-related caches.
 
@@ -18,35 +19,35 @@ def invalidate_search_cache(prefix='search:'):
     otherwise clears specific known keys.
     """
     # Try to use cache.delete_pattern if available (Redis)
-    if hasattr(cache, 'delete_pattern'):
-        cache.delete_pattern(f'{prefix}*')
+    if hasattr(cache, "delete_pattern"):
+        cache.delete_pattern(f"{prefix}*")
     else:
         # Fallback: clear specific known cache keys
-        cache.delete('search:settings')
+        cache.delete("search:settings")
 
 
 def invalidate_autocomplete_cache(engine_slug=None):
     """Invalidate autocomplete caches, optionally for specific engine."""
-    if hasattr(cache, 'delete_pattern'):
+    if hasattr(cache, "delete_pattern"):
         if engine_slug:
-            cache.delete_pattern(f'search:auto:{engine_slug}:*')
+            cache.delete_pattern(f"search:auto:{engine_slug}:*")
         else:
-            cache.delete_pattern('search:auto:*')
+            cache.delete_pattern("search:auto:*")
 
 
 def invalidate_results_cache(engine_slug=None):
     """Invalidate full results caches, optionally for specific engine."""
-    if hasattr(cache, 'delete_pattern'):
+    if hasattr(cache, "delete_pattern"):
         if engine_slug:
-            cache.delete_pattern(f'search:results:{engine_slug}:*')
+            cache.delete_pattern(f"search:results:{engine_slug}:*")
         else:
-            cache.delete_pattern('search:results:*')
+            cache.delete_pattern("search:results:*")
 
 
 @receiver(post_save, sender=SearchSettings)
 def on_search_settings_save(sender, instance, **kwargs):
     """Clear settings cache when settings are updated."""
-    cache.delete('search:settings')
+    cache.delete("search:settings")
     # Also invalidate all search caches as weights/settings may have changed
     invalidate_search_cache()
 
@@ -64,12 +65,13 @@ def on_synonym_change(sender, instance, **kwargs):
 @receiver(post_delete, sender=SearchRedirect)
 def on_redirect_change(sender, instance, **kwargs):
     """Clear redirect cache when redirects change."""
-    if hasattr(cache, 'delete_pattern'):
-        cache.delete_pattern('search:redirect:*')
+    if hasattr(cache, "delete_pattern"):
+        cache.delete_pattern("search:redirect:*")
 
 
 # Product/Category/Brand/BlogPost signal handlers
 # These will be connected in apps.py ready() after catalog/blog apps are loaded
+
 
 def connect_content_signals():
     """
@@ -77,8 +79,8 @@ def connect_content_signals():
     Called from apps.py ready() to ensure models are loaded.
     """
     try:
-        from catalog.models import Product, Category, Brand
         from blog.models import BlogPost
+        from catalog.models import Brand, Category, Product
 
         @receiver(post_save, sender=Product)
         @receiver(post_delete, sender=Product)

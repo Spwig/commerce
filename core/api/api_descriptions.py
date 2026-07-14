@@ -4,6 +4,7 @@ Shared i18n-ready API description constants.
 Common OpenApiResponse description strings used across multiple API views.
 Centralized here to avoid duplication and ensure consistent translations.
 """
+
 from django.utils.translation import gettext_lazy as _
 
 # Common HTTP error responses

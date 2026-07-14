@@ -4,6 +4,7 @@ Admin Sidebar Audit Runner
 Discovers all links in the Django admin sidebar and visits each one,
 collecting health data via the audit engine.
 """
+
 import time
 
 from playwright.sync_api import Page
@@ -80,7 +81,7 @@ def run_admin_audit(
         if skipped and verbose:
             print(
                 f"  Skipping {len(skipped)} target=_blank links: "
-                f"{', '.join(l['text'] for l in skipped)}"
+                f"{', '.join(lang['text'] for lang in skipped)}"
             )
 
     if verbose:

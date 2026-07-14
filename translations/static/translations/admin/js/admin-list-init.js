@@ -4,8 +4,8 @@
  * Admin list view initialization
  * Applies dynamic widths from data-width attributes (CSP-safe)
  */
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('[data-width]').forEach(function(el) {
-        el.style.width = el.dataset.width + '%';
-    });
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-width]').forEach(function (el) {
+    el.style.width = el.dataset.width + '%';
+  });
 });

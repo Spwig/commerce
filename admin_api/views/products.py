@@ -3,44 +3,46 @@ Admin API Product Views
 
 Product and stock management endpoints for the merchant mobile app.
 """
+
 import logging
 import secrets
 from decimal import Decimal
-from django.db import models, IntegrityError, transaction
-from django.db.models import Q, Sum, F, Max, IntegerField
+
+from django.db import IntegrityError, transaction
+from django.db.models import F, IntegerField, Max, Q, Sum
 from django.db.models.functions import Coalesce
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter
 
+from admin_api.permissions import IsStaffWithWritePermission
+from admin_api.serializers.auth import ErrorResponseSerializer
+from admin_api.serializers.products import (
+    AdminProductDetailSerializer,
+    AdminProductListSerializer,
+    BulkProductCreateSerializer,
+    BulkProductUpdateSerializer,
+    LowStockProductSerializer,
+    ProductCreateSerializer,
+    ProductFilterSerializer,
+    ProductImageReorderSerializer,
+    ProductImageResponseSerializer,
+    ProductImageUpdateSerializer,
+    ProductImageUploadSerializer,
+    ProductStatusUpdateSerializer,
+    ProductUpdateSerializer,
+    StockAdjustmentSerializer,
+)
+from admin_api.services.audit_service import AuditService
+from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
 from catalog.models import Product, ProductImage, StockItem, Warehouse
 from core.utils import get_default_currency
 from media_library.models import MediaAsset
 from media_library.services import ImageProcessor
-from admin_api.permissions import IsStaffWithWritePermission
-from admin_api.throttling import AdminAPIThrottle, AdminSensitiveOperationThrottle
-from admin_api.services.audit_service import AuditService
-from admin_api.serializers.products import (
-    AdminProductListSerializer,
-    AdminProductDetailSerializer,
-    StockAdjustmentSerializer,
-    ProductStatusUpdateSerializer,
-    LowStockProductSerializer,
-    ProductFilterSerializer,
-    ProductImageUploadSerializer,
-    ProductImageUpdateSerializer,
-    ProductImageReorderSerializer,
-    ProductImageResponseSerializer,
-    ProductCreateSerializer,
-    ProductUpdateSerializer,
-    BulkProductCreateSerializer,
-    BulkProductUpdateSerializer,
-)
-from admin_api.serializers.auth import ErrorResponseSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +53,7 @@ def generate_error_reference():
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("List products"),
     description=_("""
     Get a paginated list of products with filtering and sorting.
@@ -78,81 +80,83 @@ def generate_error_reference():
     """),
     parameters=[
         OpenApiParameter(
-            name='status',
+            name="status",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Filter by product status: 'all', 'draft', 'published', 'discontinued'"),
             required=False,
-            default='all'
+            default="all",
         ),
         OpenApiParameter(
-            name='stock_status',
+            name="stock_status",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Filter by stock status: 'all', 'in_stock', 'low_stock', 'out_of_stock'"),
             required=False,
-            default='all'
+            default="all",
         ),
         OpenApiParameter(
-            name='search',
+            name="search",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Search by product name or SKU"),
-            required=False
+            required=False,
         ),
         OpenApiParameter(
-            name='low_stock_only',
+            name="low_stock_only",
             type=bool,
             location=OpenApiParameter.QUERY,
             description=_("Show only low stock products (deprecated, use stock_status=low_stock)"),
             required=False,
-            default=False
+            default=False,
         ),
         OpenApiParameter(
-            name='category_id',
+            name="category_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Filter by category ID"),
             required=False,
         ),
         OpenApiParameter(
-            name='brand_id',
+            name="brand_id",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Filter by brand ID"),
             required=False,
         ),
         OpenApiParameter(
-            name='ordering',
+            name="ordering",
             type=str,
             location=OpenApiParameter.QUERY,
-            description=_("Sort field: name, -name, stock_quantity, -stock_quantity, price, -price, -created_at, created_at, -updated_at, updated_at"),
+            description=_(
+                "Sort field: name, -name, stock_quantity, -stock_quantity, price, -price, -created_at, created_at, -updated_at, updated_at"
+            ),
             required=False,
-            default='name'
+            default="name",
         ),
         OpenApiParameter(
-            name='page',
+            name="page",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Page number"),
             required=False,
-            default=1
+            default=1,
         ),
         OpenApiParameter(
-            name='page_size',
+            name="page_size",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Items per page (max 100)"),
             required=False,
-            default=20
+            default=20,
         ),
     ],
     responses={
         200: AdminProductListSerializer(many=True),
         401: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def product_list(request):
@@ -162,101 +166,98 @@ def product_list(request):
     # Validate filter parameters
     filter_serializer = ProductFilterSerializer(data=request.query_params)
     if not filter_serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid filter parameters.'),
-                'reference': generate_error_reference(),
-                'details': filter_serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid filter parameters."),
+                    "reference": generate_error_reference(),
+                    "details": filter_serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     filters = filter_serializer.validated_data
 
     # Base queryset with stock annotation
-    queryset = Product.objects.select_related('category', 'brand').prefetch_related(
-        'images', 'stock_items'
-    ).annotate(
-        _available_stock=Coalesce(
-            Sum('stock_items__on_hand') - Sum('stock_items__allocated'),
-            0,
-            output_field=IntegerField()
+    queryset = (
+        Product.objects.select_related("category", "brand")
+        .prefetch_related("images", "stock_items")
+        .annotate(
+            _available_stock=Coalesce(
+                Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
+                0,
+                output_field=IntegerField(),
+            )
         )
     )
 
     # Apply product status filter (draft, published, discontinued)
-    product_status = filters.get('status', 'all')
-    if product_status != 'all':
+    product_status = filters.get("status", "all")
+    if product_status != "all":
         queryset = queryset.filter(status=product_status)
 
     # Apply search
-    search = filters.get('search', '').strip()
+    search = filters.get("search", "").strip()
     if search:
-        queryset = queryset.filter(
-            Q(name__icontains=search) |
-            Q(sku__icontains=search)
-        )
+        queryset = queryset.filter(Q(name__icontains=search) | Q(sku__icontains=search))
 
     # Apply category filter
-    category_id = filters.get('category_id')
+    category_id = filters.get("category_id")
     if category_id:
         queryset = queryset.filter(category_id=category_id)
 
     # Apply brand filter
-    brand_id = filters.get('brand_id')
+    brand_id = filters.get("brand_id")
     if brand_id:
         queryset = queryset.filter(brand_id=brand_id)
 
     # Apply stock status filter (in_stock, low_stock, out_of_stock)
-    stock_status = filters.get('stock_status', 'all')
-    if stock_status == 'in_stock':
+    stock_status = filters.get("stock_status", "all")
+    if stock_status == "in_stock":
         # In stock: available_stock > low_stock_threshold
         queryset = queryset.filter(
-            track_inventory=True,
-            _available_stock__gt=F('low_stock_threshold')
+            track_inventory=True, _available_stock__gt=F("low_stock_threshold")
         )
-    elif stock_status == 'low_stock':
+    elif stock_status == "low_stock":
         # Low stock: 0 < available_stock <= low_stock_threshold
         queryset = queryset.filter(
             track_inventory=True,
             _available_stock__gt=0,
-            _available_stock__lte=F('low_stock_threshold')
+            _available_stock__lte=F("low_stock_threshold"),
         )
-    elif stock_status == 'out_of_stock':
+    elif stock_status == "out_of_stock":
         # Out of stock: available_stock <= 0
-        queryset = queryset.filter(
-            track_inventory=True,
-            _available_stock__lte=0
-        )
+        queryset = queryset.filter(track_inventory=True, _available_stock__lte=0)
     # Backwards compatibility: low_stock_only parameter (deprecated)
-    elif filters.get('low_stock_only', False):
+    elif filters.get("low_stock_only", False):
         queryset = queryset.filter(
-            track_inventory=True,
-            _available_stock__lte=F('low_stock_threshold')
+            track_inventory=True, _available_stock__lte=F("low_stock_threshold")
         )
 
     # Apply sorting - support both 'ordering' (iOS) and 'sort' (legacy) parameters
-    ordering = filters.get('ordering') or filters.get('sort', 'name')
+    ordering = filters.get("ordering") or filters.get("sort", "name")
     # Map iOS parameter names to Django field names
-    if ordering == 'stock_quantity':
-        queryset = queryset.order_by('_available_stock')
-    elif ordering == '-stock_quantity':
-        queryset = queryset.order_by('-_available_stock')
-    elif ordering == 'available_stock':
-        queryset = queryset.order_by('_available_stock')
-    elif ordering == '-available_stock':
-        queryset = queryset.order_by('-_available_stock')
-    elif ordering == 'price':
-        queryset = queryset.order_by('price')
-    elif ordering == '-price':
-        queryset = queryset.order_by('-price')
+    if ordering == "stock_quantity":
+        queryset = queryset.order_by("_available_stock")
+    elif ordering == "-stock_quantity":
+        queryset = queryset.order_by("-_available_stock")
+    elif ordering == "available_stock":
+        queryset = queryset.order_by("_available_stock")
+    elif ordering == "-available_stock":
+        queryset = queryset.order_by("-_available_stock")
+    elif ordering == "price":
+        queryset = queryset.order_by("price")
+    elif ordering == "-price":
+        queryset = queryset.order_by("-price")
     else:
         queryset = queryset.order_by(ordering)
 
     # Pagination
-    page = filters.get('page', 1)
-    page_size = filters.get('page_size', 20)
+    page = filters.get("page", 1)
+    page_size = filters.get("page_size", 20)
     start = (page - 1) * page_size
     end = start + page_size
 
@@ -265,22 +266,25 @@ def product_list(request):
 
     serializer = AdminProductListSerializer(products, many=True)
 
-    return Response({
-        'success': True,
-        'data': {
-            'products': serializer.data,
-            'pagination': {
-                'page': page,
-                'page_size': page_size,
-                'total_count': total_count,
-                'total_pages': (total_count + page_size - 1) // page_size
-            }
-        }
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "data": {
+                "products": serializer.data,
+                "pagination": {
+                    "page": page,
+                    "page_size": page_size,
+                    "total_count": total_count,
+                    "total_pages": (total_count + page_size - 1) // page_size,
+                },
+            },
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Get product details"),
     description=_("""
     Get full details of a specific product including stock levels.
@@ -291,9 +295,9 @@ def product_list(request):
         200: AdminProductDetailSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def product_detail(request, product_id):
@@ -301,29 +305,31 @@ def product_detail(request, product_id):
     Get product details by ID.
     """
     try:
-        product = Product.objects.select_related('category', 'brand').prefetch_related(
-            'images', 'stock_items__warehouse'
-        ).get(id=product_id)
+        product = (
+            Product.objects.select_related("category", "brand")
+            .prefetch_related("images", "stock_items__warehouse")
+            .get(id=product_id)
+        )
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = AdminProductDetailSerializer(product)
 
-    return Response({
-        'success': True,
-        'data': serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Search product by SKU"),
     description=_("""
     Search for a product by exact SKU match.
@@ -334,61 +340,66 @@ def product_detail(request, product_id):
     """),
     parameters=[
         OpenApiParameter(
-            name='sku',
+            name="sku",
             type=str,
             location=OpenApiParameter.QUERY,
             description=_("Product SKU (exact match)"),
-            required=True
+            required=True,
         ),
     ],
     responses={
         200: AdminProductDetailSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def product_by_sku(request):
     """
     Get product by SKU (for barcode scanning).
     """
-    sku = request.query_params.get('sku', '').strip()
+    sku = request.query_params.get("sku", "").strip()
     if not sku:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('SKU parameter is required.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("SKU parameter is required."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
-        product = Product.objects.select_related('category', 'brand').prefetch_related(
-            'images', 'stock_items__warehouse'
-        ).get(sku=sku)
+        product = (
+            Product.objects.select_related("category", "brand")
+            .prefetch_related("images", "stock_items__warehouse")
+            .get(sku=sku)
+        )
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = AdminProductDetailSerializer(product)
 
-    return Response({
-        'success': True,
-        'data': serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Adjust stock quantity"),
     description=_("""
     Set the stock quantity for a product.
@@ -403,9 +414,9 @@ def product_by_sku(request):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def adjust_stock(request, product_id):
@@ -415,40 +426,49 @@ def adjust_stock(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     if not product.track_inventory:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('This product does not track inventory.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("This product does not track inventory."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     serializer = StockAdjustmentSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid stock adjustment.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid stock adjustment."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    new_quantity = serializer.validated_data['quantity']
-    warehouse_id = serializer.validated_data.get('warehouse_id')
-    reason = serializer.validated_data.get('reason', '')
+    new_quantity = serializer.validated_data["quantity"]
+    warehouse_id = serializer.validated_data.get("warehouse_id")
+    reason = serializer.validated_data.get("reason", "")
 
     # Get or create warehouse
     if warehouse_id:
@@ -457,21 +477,24 @@ def adjust_stock(request, product_id):
         # Get default warehouse
         warehouse = Warehouse.objects.filter(is_active=True).first()
         if not warehouse:
-            return Response({
-                'success': False,
-                'error': {
-                    'code': 400,
-                    'message': _('No active warehouse available.'),
-                    'reference': generate_error_reference()
-                }
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 400,
+                        "message": _("No active warehouse available."),
+                        "reference": generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     # Get or create stock item
     stock_item, created = StockItem.objects.get_or_create(
         product=product,
         warehouse=warehouse,
         variant=None,  # For simple products
-        defaults={'on_hand': 0, 'allocated': 0}
+        defaults={"on_hand": 0, "allocated": 0},
     )
 
     old_quantity = stock_item.on_hand
@@ -486,21 +509,24 @@ def adjust_stock(request, product_id):
         old_quantity=old_quantity,
         new_quantity=new_quantity,
         reason=reason,
-        request=request
+        request=request,
     )
 
     # Refresh product from DB
     product.refresh_from_db()
 
-    return Response({
-        'success': True,
-        'message': _('Stock adjusted successfully.'),
-        'data': AdminProductDetailSerializer(product).data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Stock adjusted successfully."),
+            "data": AdminProductDetailSerializer(product).data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Update product status"),
     description=_("""
     Update the status of a product (draft, published, discontinued).
@@ -513,9 +539,9 @@ def adjust_stock(request, product_id):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_product_status(request, product_id):
@@ -525,33 +551,36 @@ def update_product_status(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
-    serializer = ProductStatusUpdateSerializer(
-        data=request.data,
-        context={'product': product}
-    )
+    serializer = ProductStatusUpdateSerializer(data=request.data, context={"product": product})
 
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid status update.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid status update."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     old_status = product.status
-    new_status = serializer.validated_data['status']
+    new_status = serializer.validated_data["status"]
 
     product.status = new_status
     product.save()
@@ -562,18 +591,21 @@ def update_product_status(request, product_id):
         product=product,
         old_status=old_status,
         new_status=new_status,
-        request=request
+        request=request,
     )
 
-    return Response({
-        'success': True,
-        'message': _('Product status updated successfully.'),
-        'data': AdminProductDetailSerializer(product).data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Product status updated successfully."),
+            "data": AdminProductDetailSerializer(product).data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Get low stock products"),
     description=_("""
     Get a paginated list of products with stock at or below their low stock threshold.
@@ -584,28 +616,28 @@ def update_product_status(request, product_id):
     """),
     parameters=[
         OpenApiParameter(
-            name='page',
+            name="page",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Page number"),
             required=False,
-            default=1
+            default=1,
         ),
         OpenApiParameter(
-            name='page_size',
+            name="page_size",
             type=int,
             location=OpenApiParameter.QUERY,
             description=_("Items per page (max 100)"),
             required=False,
-            default=20
+            default=20,
         ),
     ],
     responses={
         200: LowStockProductSerializer(many=True),
         401: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def low_stock_products(request):
@@ -614,30 +646,32 @@ def low_stock_products(request):
     """
     # Parse pagination parameters
     try:
-        page = int(request.query_params.get('page', 1))
+        page = int(request.query_params.get("page", 1))
         page = max(1, page)
     except (ValueError, TypeError):
         page = 1
 
     try:
-        page_size = int(request.query_params.get('page_size', 20))
+        page_size = int(request.query_params.get("page_size", 20))
         page_size = min(max(1, page_size), 100)
     except (ValueError, TypeError):
         page_size = 20
 
     # Get products with low stock
-    queryset = Product.objects.filter(
-        track_inventory=True,
-        status='published'
-    ).select_related('category', 'brand').prefetch_related('images').annotate(
-        _available_stock=Coalesce(
-            Sum('stock_items__on_hand') - Sum('stock_items__allocated'),
-            0,
-            output_field=IntegerField()
+    queryset = (
+        Product.objects.filter(track_inventory=True, status="published")
+        .select_related("category", "brand")
+        .prefetch_related("images")
+        .annotate(
+            _available_stock=Coalesce(
+                Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
+                0,
+                output_field=IntegerField(),
+            )
         )
-    ).filter(
-        _available_stock__lte=F('low_stock_threshold')
-    ).order_by('_available_stock')
+        .filter(_available_stock__lte=F("low_stock_threshold"))
+        .order_by("_available_stock")
+    )
 
     # Pagination
     total_count = queryset.count()
@@ -647,22 +681,27 @@ def low_stock_products(request):
 
     serializer = LowStockProductSerializer(products, many=True)
 
-    return Response({
-        'success': True,
-        'data': {
-            'products': serializer.data,
-            'pagination': {
-                'page': page,
-                'page_size': page_size,
-                'total_count': total_count,
-                'total_pages': (total_count + page_size - 1) // page_size if total_count > 0 else 0
-            }
-        }
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "data": {
+                "products": serializer.data,
+                "pagination": {
+                    "page": page,
+                    "page_size": page_size,
+                    "total_count": total_count,
+                    "total_pages": (total_count + page_size - 1) // page_size
+                    if total_count > 0
+                    else 0,
+                },
+            },
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Get available warehouses"),
     description=_("""
     Get a list of active warehouses for stock adjustment.
@@ -672,27 +711,22 @@ def low_stock_products(request):
     responses={
         200: dict,
         401: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def warehouse_list(request):
     """
     Get list of active warehouses.
     """
-    warehouses = Warehouse.objects.filter(is_active=True).values(
-        'id', 'name', 'code', 'is_default'
-    )
+    warehouses = Warehouse.objects.filter(is_active=True).values("id", "name", "code", "is_default")
 
-    return Response({
-        'success': True,
-        'data': list(warehouses)
-    }, status=status.HTTP_200_OK)
+    return Response({"success": True, "data": list(warehouses)}, status=status.HTTP_200_OK)
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Get product counts by stock status"),
     description=_("""
     Get count of products by stock status for dashboard display.
@@ -708,26 +742,23 @@ def warehouse_list(request):
     responses={
         200: dict,
         401: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def product_counts(request):
     """
     Get product counts by stock status for dashboard display.
     """
-    from django.db.models import Case, When, Value, IntegerField
+    from django.db.models import IntegerField
 
     # Only count published products that track inventory
-    base_queryset = Product.objects.filter(
-        status='published',
-        track_inventory=True
-    ).annotate(
+    base_queryset = Product.objects.filter(status="published", track_inventory=True).annotate(
         _available_stock=Coalesce(
-            Sum(F('stock_items__on_hand') - F('stock_items__allocated')),
+            Sum(F("stock_items__on_hand") - F("stock_items__allocated")),
             0,
-            output_field=IntegerField()
+            output_field=IntegerField(),
         )
     )
 
@@ -738,32 +769,33 @@ def product_counts(request):
 
     # Low stock: 0 < available_stock <= low_stock_threshold
     low_stock = base_queryset.filter(
-        _available_stock__gt=0,
-        _available_stock__lte=F('low_stock_threshold')
+        _available_stock__gt=0, _available_stock__lte=F("low_stock_threshold")
     ).count()
 
     # In stock: available_stock > low_stock_threshold
-    in_stock = base_queryset.filter(
-        _available_stock__gt=F('low_stock_threshold')
-    ).count()
+    in_stock = base_queryset.filter(_available_stock__gt=F("low_stock_threshold")).count()
 
-    return Response({
-        'success': True,
-        'data': {
-            'total': total,
-            'in_stock': in_stock,
-            'low_stock': low_stock,
-            'out_of_stock': out_of_stock
-        }
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "data": {
+                "total": total,
+                "in_stock": in_stock,
+                "low_stock": low_stock,
+                "out_of_stock": out_of_stock,
+            },
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 # ============================================================================
 # Product Image Management Endpoints
 # ============================================================================
 
+
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Upload product image"),
     description=_("""
     Upload a new image for a product.
@@ -778,54 +810,62 @@ def product_counts(request):
     **Supported formats:** JPEG, PNG, GIF, WebP
     **Max file size:** 10MB (configurable)
     """),
-    request={'multipart/form-data': ProductImageUploadSerializer},
+    request={"multipart/form-data": ProductImageUploadSerializer},
     responses={
         201: ProductImageResponseSerializer,
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def upload_product_image(request, product_id):
     """
     Upload a new image for a product.
     """
-    from media_library.models import MediaThumbnail
+    import mimetypes
+
     from django.conf import settings
     from PIL import Image
-    import mimetypes
+
+    from media_library.models import MediaThumbnail
 
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = ProductImageUploadSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid image upload.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid image upload."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    image_file = serializer.validated_data['image']
-    alt_text = serializer.validated_data.get('alt_text', '')
-    is_primary = serializer.validated_data.get('is_primary', False)
-    position = serializer.validated_data.get('position')
+    image_file = serializer.validated_data["image"]
+    alt_text = serializer.validated_data.get("alt_text", "")
+    is_primary = serializer.validated_data.get("is_primary", False)
+    position = serializer.validated_data.get("position")
 
     try:
         # Extract image metadata
@@ -837,12 +877,12 @@ def upload_product_image(request, product_id):
         mime_type, _encoding = mimetypes.guess_type(image_file.name)
         if not mime_type:
             format_to_mime = {
-                'JPEG': 'image/jpeg',
-                'PNG': 'image/png',
-                'GIF': 'image/gif',
-                'WEBP': 'image/webp',
+                "JPEG": "image/jpeg",
+                "PNG": "image/png",
+                "GIF": "image/gif",
+                "WEBP": "image/webp",
             }
-            mime_type = format_to_mime.get(img.format, 'image/jpeg')
+            mime_type = format_to_mime.get(img.format, "image/jpeg")
 
         image_file.seek(0)
 
@@ -860,18 +900,21 @@ def upload_product_image(request, product_id):
 
         # Generate WebP version
         processor = ImageProcessor()
-        if mime_type != 'image/webp':
+        if mime_type != "image/webp":
             image_file.seek(0)
             webp_content = processor.convert_to_webp(image_file)
             if webp_content:
                 media_asset.webp_file.save(f"{media_asset.id}.webp", webp_content, save=True)
 
         # Generate thumbnails
-        thumbnail_sizes = getattr(settings, 'MEDIA_LIBRARY_SETTINGS', {}).get('THUMBNAIL_SIZES', {
-            'small': (150, 150),
-            'medium': (300, 300),
-            'large': (600, 600),
-        })
+        thumbnail_sizes = getattr(settings, "MEDIA_LIBRARY_SETTINGS", {}).get(
+            "THUMBNAIL_SIZES",
+            {
+                "small": (150, 150),
+                "medium": (300, 300),
+                "large": (600, 600),
+            },
+        )
 
         for size_name, (thumb_width, thumb_height) in thumbnail_sizes.items():
             try:
@@ -885,20 +928,25 @@ def upload_product_image(request, product_id):
                         media_asset=media_asset,
                         size_preset=size_name,
                         width=thumb_width,
-                        height=thumb_height
+                        height=thumb_height,
                     )
-                    thumbnail.file.save(f"{media_asset.id}_{size_name}.jpg", original_content, save=False)
+                    thumbnail.file.save(
+                        f"{media_asset.id}_{size_name}.jpg", original_content, save=False
+                    )
                     if webp_content:
-                        thumbnail.webp_file.save(f"{media_asset.id}_{size_name}.webp", webp_content, save=False)
+                        thumbnail.webp_file.save(
+                            f"{media_asset.id}_{size_name}.webp", webp_content, save=False
+                        )
                     thumbnail.save()
             except Exception as e:
                 import logging
+
                 logging.getLogger(__name__).error(f"Error generating thumbnail {size_name}: {e}")
                 continue
 
         # Auto-assign position if not provided
         if position is None:
-            max_position = product.images.aggregate(max_pos=Max('position'))['max_pos']
+            max_position = product.images.aggregate(max_pos=Max("position"))["max_pos"]
             position = (max_position or -1) + 1
 
         # If setting as primary, unset other primaries
@@ -917,41 +965,48 @@ def upload_product_image(request, product_id):
         # Log the action
         AuditService.log(
             user=request.user,
-            action='product_image.upload',
-            resource_type='product_image',
+            action="product_image.upload",
+            resource_type="product_image",
             resource_id=str(product_image.id),
             new_value={
-                'product_id': product_id,
-                'product_name': product.name,
-                'media_asset_id': str(media_asset.id),
-                'is_primary': is_primary,
+                "product_id": product_id,
+                "product_name": product.name,
+                "media_asset_id": str(media_asset.id),
+                "is_primary": is_primary,
             },
-            request=request
+            request=request,
         )
 
         response_serializer = ProductImageResponseSerializer(product_image)
 
-        return Response({
-            'success': True,
-            'message': _('Image uploaded successfully.'),
-            'data': response_serializer.data
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "success": True,
+                "message": _("Image uploaded successfully."),
+                "data": response_serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     except Exception as e:
         import logging
+
         logging.getLogger(__name__).error(f"Error uploading product image: {e}")
-        return Response({
-            'success': False,
-            'error': {
-                'code': 500,
-                'message': _('Failed to upload image.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 500,
+                    "message": _("Failed to upload image."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Delete product image"),
     description=_("""
     Delete an image from a product.
@@ -965,9 +1020,9 @@ def upload_product_image(request, product_id):
         200: dict,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['DELETE'])
+@api_view(["DELETE"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def delete_product_image(request, product_id, image_id):
@@ -977,26 +1032,32 @@ def delete_product_image(request, product_id, image_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     try:
         product_image = ProductImage.objects.get(id=image_id, product=product)
     except ProductImage.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Image not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Image not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     was_primary = product_image.is_primary
     media_asset = product_image.media_asset
@@ -1004,15 +1065,15 @@ def delete_product_image(request, product_id, image_id):
     # Log before deletion
     AuditService.log(
         user=request.user,
-        action='product_image.delete',
-        resource_type='product_image',
+        action="product_image.delete",
+        resource_type="product_image",
         resource_id=str(image_id),
         old_value={
-            'product_id': product_id,
-            'product_name': product.name,
-            'was_primary': was_primary,
+            "product_id": product_id,
+            "product_name": product.name,
+            "was_primary": was_primary,
         },
-        request=request
+        request=request,
     )
 
     # Delete the ProductImage
@@ -1020,7 +1081,7 @@ def delete_product_image(request, product_id, image_id):
 
     # If this was primary, set next image as primary
     if was_primary:
-        next_image = product.images.order_by('position').first()
+        next_image = product.images.order_by("position").first()
         if next_image:
             next_image.is_primary = True
             next_image.save()
@@ -1031,14 +1092,13 @@ def delete_product_image(request, product_id, image_id):
         if usage_count == 0:
             media_asset.delete()  # Soft delete via SoftDeleteModel
 
-    return Response({
-        'success': True,
-        'message': _('Image deleted successfully.')
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {"success": True, "message": _("Image deleted successfully.")}, status=status.HTTP_200_OK
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Set primary product image"),
     description=_("""
     Set an image as the primary/featured image for a product.
@@ -1052,9 +1112,9 @@ def delete_product_image(request, product_id, image_id):
         200: ProductImageResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def set_primary_image(request, product_id, image_id):
@@ -1064,26 +1124,32 @@ def set_primary_image(request, product_id, image_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     try:
         product_image = ProductImage.objects.get(id=image_id, product=product)
     except ProductImage.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Image not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Image not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     # Unset all other primaries for this product
     product.images.update(is_primary=False)
@@ -1095,27 +1161,26 @@ def set_primary_image(request, product_id, image_id):
     # Log the action
     AuditService.log(
         user=request.user,
-        action='product_image.set_primary',
-        resource_type='product_image',
+        action="product_image.set_primary",
+        resource_type="product_image",
         resource_id=str(image_id),
         new_value={
-            'product_id': product_id,
-            'product_name': product.name,
+            "product_id": product_id,
+            "product_name": product.name,
         },
-        request=request
+        request=request,
     )
 
     response_serializer = ProductImageResponseSerializer(product_image)
 
-    return Response({
-        'success': True,
-        'message': _('Primary image updated.'),
-        'data': response_serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {"success": True, "message": _("Primary image updated."), "data": response_serializer.data},
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Reorder product images"),
     description=_("""
     Reorder the images for a product.
@@ -1131,9 +1196,9 @@ def set_primary_image(request, product_id, image_id):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminAPIThrottle])
 def reorder_product_images(request, product_id):
@@ -1143,44 +1208,53 @@ def reorder_product_images(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = ProductImageReorderSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid reorder request.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid reorder request."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    image_ids = serializer.validated_data['image_ids']
+    image_ids = serializer.validated_data["image_ids"]
 
     # Verify all IDs belong to this product
-    product_image_ids = set(product.images.values_list('id', flat=True))
+    product_image_ids = set(product.images.values_list("id", flat=True))
     provided_ids = set(image_ids)
 
     if not provided_ids.issubset(product_image_ids):
         invalid_ids = provided_ids - product_image_ids
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Some image IDs do not belong to this product.'),
-                'reference': generate_error_reference(),
-                'details': {'invalid_ids': list(invalid_ids)}
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Some image IDs do not belong to this product."),
+                    "reference": generate_error_reference(),
+                    "details": {"invalid_ids": list(invalid_ids)},
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Update positions
     for position, image_id in enumerate(image_ids):
@@ -1189,29 +1263,32 @@ def reorder_product_images(request, product_id):
     # Log the action
     AuditService.log(
         user=request.user,
-        action='product_image.reorder',
-        resource_type='product',
+        action="product_image.reorder",
+        resource_type="product",
         resource_id=str(product_id),
         new_value={
-            'product_name': product.name,
-            'new_order': image_ids,
+            "product_name": product.name,
+            "new_order": image_ids,
         },
-        request=request
+        request=request,
     )
 
     # Get updated images
-    images = product.images.order_by('position')
+    images = product.images.order_by("position")
     response_serializer = ProductImageResponseSerializer(images, many=True)
 
-    return Response({
-        'success': True,
-        'message': _('Images reordered successfully.'),
-        'data': response_serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Images reordered successfully."),
+            "data": response_serializer.data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin'],
+    tags=["Admin"],
     summary=_("Update product image"),
     description=_("""
     Update metadata for a product image (alt text).
@@ -1224,9 +1301,9 @@ def reorder_product_images(request, product_id):
         400: ErrorResponseSerializer,
         401: ErrorResponseSerializer,
         404: ErrorResponseSerializer,
-    }
+    },
 )
-@api_view(['PATCH'])
+@api_view(["PATCH"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_product_image(request, product_id, image_id):
@@ -1236,42 +1313,51 @@ def update_product_image(request, product_id, image_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     try:
         product_image = ProductImage.objects.get(id=image_id, product=product)
     except ProductImage.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Image not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Image not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     serializer = ProductImageUpdateSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid update request.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid update request."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     # Update alt text on both ProductImage and MediaAsset
-    if 'alt_text' in serializer.validated_data:
-        new_alt_text = serializer.validated_data['alt_text']
+    if "alt_text" in serializer.validated_data:
+        new_alt_text = serializer.validated_data["alt_text"]
         product_image.alt_text = new_alt_text
         product_image.save()
 
@@ -1282,33 +1368,37 @@ def update_product_image(request, product_id, image_id):
     # Log the action
     AuditService.log(
         user=request.user,
-        action='product_image.update',
-        resource_type='product_image',
+        action="product_image.update",
+        resource_type="product_image",
         resource_id=str(image_id),
         new_value={
-            'product_id': product_id,
-            'product_name': product.name,
-            'updated_fields': list(serializer.validated_data.keys()),
+            "product_id": product_id,
+            "product_name": product.name,
+            "updated_fields": list(serializer.validated_data.keys()),
         },
-        request=request
+        request=request,
     )
 
     response_serializer = ProductImageResponseSerializer(product_image)
 
-    return Response({
-        'success': True,
-        'message': _('Image updated successfully.'),
-        'data': response_serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Image updated successfully."),
+            "data": response_serializer.data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 # --- Product CRUD Endpoints ---
+
 
 def _generate_unique_product_slug(name, exclude_id=None):
     """Generate a unique slug for a product, appending -2, -3, etc. if needed."""
     base_slug = slugify(name)
     if not base_slug:
-        base_slug = 'product'
+        base_slug = "product"
     slug = base_slug
     counter = 2
     while True:
@@ -1326,40 +1416,40 @@ def _create_single_product(data, user=None):
     Create a single product from validated data dict. Returns the Product instance.
     Used by both single create and bulk create to avoid duplication.
     """
-    currency = data.get('currency') or get_default_currency()
-    slug = _generate_unique_product_slug(data['name'])
+    currency = data.get("currency") or get_default_currency()
+    slug = _generate_unique_product_slug(data["name"])
 
     product = Product(
-        name=data['name'],
+        name=data["name"],
         slug=slug,
-        sku=data['sku'],
-        product_type=data.get('product_type', 'simple'),
-        status=data.get('status', 'draft'),
-        category_id=data['category_id'],
-        brand_id=data.get('brand_id'),
-        short_description=data.get('short_description', ''),
-        full_description=data.get('full_description', ''),
-        track_inventory=data.get('track_inventory', True),
-        low_stock_threshold=data.get('low_stock_threshold', 5),
-        allow_backorders=data.get('allow_backorders', False),
-        weight=data.get('weight'),
-        length=data.get('length'),
-        width=data.get('width'),
-        height=data.get('height'),
-        meta_title=data.get('meta_title', ''),
-        meta_description=data.get('meta_description', ''),
-        features=data.get('features', {}),
-        specifications=data.get('specifications', {}),
-        is_featured=data.get('is_featured', False),
-        sale_type=data.get('sale_type', 'none'),
-        sale_value=data.get('sale_value'),
-        external_id=data.get('external_id', ''),
+        sku=data["sku"],
+        product_type=data.get("product_type", "simple"),
+        status=data.get("status", "draft"),
+        category_id=data["category_id"],
+        brand_id=data.get("brand_id"),
+        short_description=data.get("short_description", ""),
+        full_description=data.get("full_description", ""),
+        track_inventory=data.get("track_inventory", True),
+        low_stock_threshold=data.get("low_stock_threshold", 5),
+        allow_backorders=data.get("allow_backorders", False),
+        weight=data.get("weight"),
+        length=data.get("length"),
+        width=data.get("width"),
+        height=data.get("height"),
+        meta_title=data.get("meta_title", ""),
+        meta_description=data.get("meta_description", ""),
+        features=data.get("features", {}),
+        specifications=data.get("specifications", {}),
+        is_featured=data.get("is_featured", False),
+        sale_type=data.get("sale_type", "none"),
+        sale_value=data.get("sale_value"),
+        external_id=data.get("external_id", ""),
     )
-    product.price = Money(Decimal(str(data['price'])), currency)
+    product.price = Money(Decimal(str(data["price"])), currency)
 
     # Include pre-generated translations if provided
-    if 'translations' in data and isinstance(data['translations'], dict):
-        product.translations = data['translations']
+    if "translations" in data and isinstance(data["translations"], dict):
+        product.translations = data["translations"]
 
     product.save()
 
@@ -1367,7 +1457,7 @@ def _create_single_product(data, user=None):
     if product.track_inventory:
         warehouse = Warehouse.objects.filter(is_active=True).first()
         if warehouse:
-            initial_stock = data.get('initial_stock', 0)
+            initial_stock = data.get("initial_stock", 0)
             StockItem.objects.create(
                 product=product,
                 warehouse=warehouse,
@@ -1380,7 +1470,7 @@ def _create_single_product(data, user=None):
 
 
 @extend_schema(
-    tags=['Admin - Products'],
+    tags=["Admin - Products"],
     summary=_("Create product"),
     description=_("""
     Create a new product. Images should be uploaded separately via the image upload endpoint.
@@ -1390,63 +1480,76 @@ def _create_single_product(data, user=None):
     **Rate Limit:** 30 requests per minute (sensitive operation)
     """),
     request=ProductCreateSerializer,
-    responses={201: AdminProductDetailSerializer, 400: ErrorResponseSerializer, 409: ErrorResponseSerializer}
+    responses={
+        201: AdminProductDetailSerializer,
+        400: ErrorResponseSerializer,
+        409: ErrorResponseSerializer,
+    },
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def create_product(request):
     """Create a new product."""
     serializer = ProductCreateSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid product data.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid product data."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
         with transaction.atomic():
             product = _create_single_product(serializer.validated_data, user=request.user)
     except IntegrityError:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 409,
-                'message': _('A product with this SKU or slug already exists.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_409_CONFLICT)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 409,
+                    "message": _("A product with this SKU or slug already exists."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_409_CONFLICT,
+        )
 
-    AuditService.log_product_create(
-        user=request.user,
-        product=product,
-        request=request
-    )
+    AuditService.log_product_create(user=request.user, product=product, request=request)
 
     # Re-fetch with annotations for response
-    product = Product.objects.select_related('category', 'brand').prefetch_related(
-        'images', 'stock_items', 'stock_items__warehouse'
-    ).annotate(
-        _available_stock=Coalesce(
-            Sum('stock_items__on_hand') - Sum('stock_items__allocated'), 0,
-            output_field=IntegerField()
+    product = (
+        Product.objects.select_related("category", "brand")
+        .prefetch_related("images", "stock_items", "stock_items__warehouse")
+        .annotate(
+            _available_stock=Coalesce(
+                Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
+                0,
+                output_field=IntegerField(),
+            )
         )
-    ).get(id=product.id)
+        .get(id=product.id)
+    )
 
-    return Response({
-        'success': True,
-        'message': _('Product created successfully.'),
-        'data': AdminProductDetailSerializer(product).data
-    }, status=status.HTTP_201_CREATED)
+    return Response(
+        {
+            "success": True,
+            "message": _("Product created successfully."),
+            "data": AdminProductDetailSerializer(product).data,
+        },
+        status=status.HTTP_201_CREATED,
+    )
 
 
 @extend_schema(
-    tags=['Admin - Products'],
+    tags=["Admin - Products"],
     summary=_("Update product"),
     description=_("""
     Partially update a product. Only provided fields will be changed.
@@ -1455,9 +1558,13 @@ def create_product(request):
     **Rate Limit:** 30 requests per minute (sensitive operation)
     """),
     request=ProductUpdateSerializer,
-    responses={200: AdminProductDetailSerializer, 400: ErrorResponseSerializer, 404: ErrorResponseSerializer}
+    responses={
+        200: AdminProductDetailSerializer,
+        400: ErrorResponseSerializer,
+        404: ErrorResponseSerializer,
+    },
 )
-@api_view(['PATCH'])
+@api_view(["PATCH"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def update_product(request, product_id):
@@ -1465,26 +1572,32 @@ def update_product(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
-    serializer = ProductUpdateSerializer(data=request.data, context={'product': product})
+    serializer = ProductUpdateSerializer(data=request.data, context={"product": product})
     if not serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid product data.'),
-                'reference': generate_error_reference(),
-                'details': serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid product data."),
+                    "reference": generate_error_reference(),
+                    "details": serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     data = serializer.validated_data
     old_values = {}
@@ -1493,11 +1606,26 @@ def update_product(request, product_id):
 
     # Simple fields
     simple_fields = [
-        'name', 'sku', 'product_type', 'status', 'short_description', 'full_description',
-        'track_inventory', 'low_stock_threshold', 'allow_backorders',
-        'weight', 'length', 'width', 'height',
-        'meta_title', 'meta_description', 'features', 'specifications',
-        'is_featured', 'sale_type', 'sale_value',
+        "name",
+        "sku",
+        "product_type",
+        "status",
+        "short_description",
+        "full_description",
+        "track_inventory",
+        "low_stock_threshold",
+        "allow_backorders",
+        "weight",
+        "length",
+        "width",
+        "height",
+        "meta_title",
+        "meta_description",
+        "features",
+        "specifications",
+        "is_featured",
+        "sale_type",
+        "sale_value",
     ]
     for field in simple_fields:
         if field in data:
@@ -1510,84 +1638,96 @@ def update_product(request, product_id):
             update_fields.append(field)
 
     # FK fields
-    if 'category_id' in data:
-        old_values['category_id'] = product.category_id
-        product.category_id = data['category_id']
-        new_values['category_id'] = data['category_id']
-        update_fields.append('category_id')
+    if "category_id" in data:
+        old_values["category_id"] = product.category_id
+        product.category_id = data["category_id"]
+        new_values["category_id"] = data["category_id"]
+        update_fields.append("category_id")
 
-    if 'brand_id' in data:
-        old_values['brand_id'] = product.brand_id
-        product.brand_id = data['brand_id']
-        new_values['brand_id'] = data['brand_id']
-        update_fields.append('brand_id')
+    if "brand_id" in data:
+        old_values["brand_id"] = product.brand_id
+        product.brand_id = data["brand_id"]
+        new_values["brand_id"] = data["brand_id"]
+        update_fields.append("brand_id")
 
     # Price (MoneyField)
-    if 'price' in data:
-        old_values['price'] = str(product.price.amount) if product.price else None
-        old_values['currency'] = str(product.price.currency) if product.price else None
-        currency = data.get('currency') or (str(product.price.currency) if product.price else get_default_currency())
-        product.price = Money(Decimal(str(data['price'])), currency)
-        new_values['price'] = str(data['price'])
-        new_values['currency'] = currency
-        update_fields.extend(['price', 'price_currency'])
+    if "price" in data:
+        old_values["price"] = str(product.price.amount) if product.price else None
+        old_values["currency"] = str(product.price.currency) if product.price else None
+        currency = data.get("currency") or (
+            str(product.price.currency) if product.price else get_default_currency()
+        )
+        product.price = Money(Decimal(str(data["price"])), currency)
+        new_values["price"] = str(data["price"])
+        new_values["currency"] = currency
+        update_fields.extend(["price", "price_currency"])
 
     # Slug regeneration
-    if 'name' in data:
-        old_values['slug'] = product.slug
-        product.slug = _generate_unique_product_slug(data['name'], exclude_id=product.id)
-        new_values['slug'] = product.slug
-        update_fields.append('slug')
+    if "name" in data:
+        old_values["slug"] = product.slug
+        product.slug = _generate_unique_product_slug(data["name"], exclude_id=product.id)
+        new_values["slug"] = product.slug
+        update_fields.append("slug")
 
     if update_fields:
         try:
-            product.save(update_fields=list(set(update_fields)) + ['updated_at'])
+            product.save(update_fields=list(set(update_fields)) + ["updated_at"])
         except IntegrityError:
-            return Response({
-                'success': False,
-                'error': {
-                    'code': 409,
-                    'message': _('A product with this SKU or slug already exists.'),
-                    'reference': generate_error_reference()
-                }
-            }, status=status.HTTP_409_CONFLICT)
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": 409,
+                        "message": _("A product with this SKU or slug already exists."),
+                        "reference": generate_error_reference(),
+                    },
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
 
         AuditService.log_product_update(
             user=request.user,
             product=product,
             old_values=old_values,
             new_values=new_values,
-            request=request
+            request=request,
         )
 
     # Re-fetch with annotations
-    product = Product.objects.select_related('category', 'brand').prefetch_related(
-        'images', 'stock_items', 'stock_items__warehouse'
-    ).annotate(
-        _available_stock=Coalesce(
-            Sum('stock_items__on_hand') - Sum('stock_items__allocated'), 0,
-            output_field=IntegerField()
+    product = (
+        Product.objects.select_related("category", "brand")
+        .prefetch_related("images", "stock_items", "stock_items__warehouse")
+        .annotate(
+            _available_stock=Coalesce(
+                Sum("stock_items__on_hand") - Sum("stock_items__allocated"),
+                0,
+                output_field=IntegerField(),
+            )
         )
-    ).get(id=product.id)
+        .get(id=product.id)
+    )
 
-    return Response({
-        'success': True,
-        'message': _('Product updated successfully.'),
-        'data': AdminProductDetailSerializer(product).data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _("Product updated successfully."),
+            "data": AdminProductDetailSerializer(product).data,
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin - Products'],
+    tags=["Admin - Products"],
     summary=_("Delete product"),
     description=_("""
     Soft-delete a product. The product will be hidden from all queries but can be restored.
 
     **Rate Limit:** 30 requests per minute (sensitive operation)
     """),
-    responses={200: None, 404: ErrorResponseSerializer}
+    responses={200: None, 404: ErrorResponseSerializer},
 )
-@api_view(['DELETE'])
+@api_view(["DELETE"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def delete_product(request, product_id):
@@ -1595,31 +1735,33 @@ def delete_product(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return Response({
-            'success': False,
-            'error': {
-                'code': 404,
-                'message': _('Product not found.'),
-                'reference': generate_error_reference()
-            }
-        }, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Product not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
-    AuditService.log_product_delete(
-        user=request.user,
-        product=product,
-        request=request
-    )
+    AuditService.log_product_delete(user=request.user, product=product, request=request)
 
     product.delete(user=request.user)
 
-    return Response({
-        'success': True,
-        'message': _('Product "%(name)s" deleted successfully.') % {'name': product.name},
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "success": True,
+            "message": _('Product "%(name)s" deleted successfully.') % {"name": product.name},
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @extend_schema(
-    tags=['Admin - Products'],
+    tags=["Admin - Products"],
     summary=_("Bulk create products"),
     description=_("""
     Create multiple products in a single request. Maximum 100 products per request.
@@ -1628,26 +1770,29 @@ def delete_product(request, product_id):
     **Rate Limit:** 30 requests per minute (sensitive operation)
     """),
     request=BulkProductCreateSerializer,
-    responses={201: None, 400: ErrorResponseSerializer}
+    responses={201: None, 400: ErrorResponseSerializer},
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def bulk_create_products(request):
     """Bulk create products."""
     wrapper_serializer = BulkProductCreateSerializer(data=request.data)
     if not wrapper_serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid bulk product data.'),
-                'reference': generate_error_reference(),
-                'details': wrapper_serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid bulk product data."),
+                    "reference": generate_error_reference(),
+                    "details": wrapper_serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    items = wrapper_serializer.validated_data['products']
+    items = wrapper_serializer.validated_data["products"]
     created_count = 0
     errors = []
 
@@ -1657,38 +1802,38 @@ def bulk_create_products(request):
                 _create_single_product(item_data, user=request.user)
                 created_count += 1
         except Exception as e:
-            errors.append({
-                'index': index,
-                'name': item_data.get('name', ''),
-                'sku': item_data.get('sku', ''),
-                'error': str(e)
-            })
+            errors.append(
+                {
+                    "index": index,
+                    "name": item_data.get("name", ""),
+                    "sku": item_data.get("sku", ""),
+                    "error": str(e),
+                }
+            )
 
     AuditService.log_bulk_operation(
         user=request.user,
-        action='product.bulk_create',
-        resource_type='product',
+        action="product.bulk_create",
+        resource_type="product",
         created_count=created_count,
         error_count=len(errors),
-        request=request
+        request=request,
     )
 
     status_code = status.HTTP_201_CREATED if created_count > 0 else status.HTTP_400_BAD_REQUEST
-    return Response({
-        'success': created_count > 0,
-        'message': _('Created %(created)d product(s). %(errors)d failed.') % {
-            'created': created_count, 'errors': len(errors)
+    return Response(
+        {
+            "success": created_count > 0,
+            "message": _("Created %(created)d product(s). %(errors)d failed.")
+            % {"created": created_count, "errors": len(errors)},
+            "data": {"created_count": created_count, "error_count": len(errors), "errors": errors},
         },
-        'data': {
-            'created_count': created_count,
-            'error_count': len(errors),
-            'errors': errors
-        }
-    }, status=status_code)
+        status=status_code,
+    )
 
 
 @extend_schema(
-    tags=['Admin - Products'],
+    tags=["Admin - Products"],
     summary=_("Bulk update products"),
     description=_("""
     Update multiple products in a single request. Maximum 100 products per request.
@@ -1698,114 +1843,121 @@ def bulk_create_products(request):
     **Rate Limit:** 30 requests per minute (sensitive operation)
     """),
     request=BulkProductUpdateSerializer,
-    responses={200: None, 400: ErrorResponseSerializer}
+    responses={200: None, 400: ErrorResponseSerializer},
 )
-@api_view(['PATCH'])
+@api_view(["PATCH"])
 @permission_classes([IsStaffWithWritePermission])
 @throttle_classes([AdminSensitiveOperationThrottle])
 def bulk_update_products(request):
     """Bulk update products."""
     wrapper_serializer = BulkProductUpdateSerializer(data=request.data)
     if not wrapper_serializer.is_valid():
-        return Response({
-            'success': False,
-            'error': {
-                'code': 400,
-                'message': _('Invalid bulk update data.'),
-                'reference': generate_error_reference(),
-                'details': wrapper_serializer.errors
-            }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": _("Invalid bulk update data."),
+                    "reference": generate_error_reference(),
+                    "details": wrapper_serializer.errors,
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    items = wrapper_serializer.validated_data['products']
+    items = wrapper_serializer.validated_data["products"]
     updated_count = 0
     errors = []
 
     for index, item_data in enumerate(items):
-        product_id = item_data.pop('id')
+        product_id = item_data.pop("id")
         try:
             with transaction.atomic():
                 product = Product.objects.get(id=product_id)
                 update_serializer = ProductUpdateSerializer(
-                    data=item_data, context={'product': product}
+                    data=item_data, context={"product": product}
                 )
                 if not update_serializer.is_valid():
-                    errors.append({
-                        'index': index,
-                        'id': product_id,
-                        'error': update_serializer.errors
-                    })
+                    errors.append(
+                        {"index": index, "id": product_id, "error": update_serializer.errors}
+                    )
                     continue
 
                 data = update_serializer.validated_data
                 update_fields = []
 
                 simple_fields = [
-                    'name', 'sku', 'product_type', 'status',
-                    'short_description', 'full_description',
-                    'track_inventory', 'low_stock_threshold', 'allow_backorders',
-                    'weight', 'length', 'width', 'height',
-                    'meta_title', 'meta_description', 'features', 'specifications',
-                    'is_featured', 'sale_type', 'sale_value',
+                    "name",
+                    "sku",
+                    "product_type",
+                    "status",
+                    "short_description",
+                    "full_description",
+                    "track_inventory",
+                    "low_stock_threshold",
+                    "allow_backorders",
+                    "weight",
+                    "length",
+                    "width",
+                    "height",
+                    "meta_title",
+                    "meta_description",
+                    "features",
+                    "specifications",
+                    "is_featured",
+                    "sale_type",
+                    "sale_value",
                 ]
                 for field in simple_fields:
                     if field in data:
                         setattr(product, field, data[field])
                         update_fields.append(field)
 
-                if 'category_id' in data:
-                    product.category_id = data['category_id']
-                    update_fields.append('category_id')
-                if 'brand_id' in data:
-                    product.brand_id = data['brand_id']
-                    update_fields.append('brand_id')
+                if "category_id" in data:
+                    product.category_id = data["category_id"]
+                    update_fields.append("category_id")
+                if "brand_id" in data:
+                    product.brand_id = data["brand_id"]
+                    update_fields.append("brand_id")
 
-                if 'price' in data:
-                    currency = data.get('currency') or (
+                if "price" in data:
+                    currency = data.get("currency") or (
                         str(product.price.currency) if product.price else get_default_currency()
                     )
-                    product.price = Money(Decimal(str(data['price'])), currency)
-                    update_fields.extend(['price', 'price_currency'])
+                    product.price = Money(Decimal(str(data["price"])), currency)
+                    update_fields.extend(["price", "price_currency"])
 
-                if 'name' in data:
-                    product.slug = _generate_unique_product_slug(data['name'], exclude_id=product.id)
-                    update_fields.append('slug')
+                if "name" in data:
+                    product.slug = _generate_unique_product_slug(
+                        data["name"], exclude_id=product.id
+                    )
+                    update_fields.append("slug")
 
                 if update_fields:
-                    product.save(update_fields=list(set(update_fields)) + ['updated_at'])
+                    product.save(update_fields=list(set(update_fields)) + ["updated_at"])
 
                 updated_count += 1
         except Product.DoesNotExist:
-            errors.append({
-                'index': index,
-                'id': product_id,
-                'error': 'Product not found.'
-            })
+            errors.append({"index": index, "id": product_id, "error": "Product not found."})
         except Exception as e:
-            errors.append({
-                'index': index,
-                'id': product_id,
-                'error': str(e)
-            })
+            errors.append({"index": index, "id": product_id, "error": str(e)})
 
     AuditService.log_bulk_operation(
         user=request.user,
-        action='product.bulk_update',
-        resource_type='product',
+        action="product.bulk_update",
+        resource_type="product",
         created_count=updated_count,
         error_count=len(errors),
-        request=request
+        request=request,
     )
 
     status_code = status.HTTP_200_OK if updated_count > 0 else status.HTTP_400_BAD_REQUEST
-    return Response({
-        'success': updated_count > 0,
-        'message': _('Updated %(updated)d product(s). %(errors)d failed.') % {
-            'updated': updated_count, 'errors': len(errors)
+    return Response(
+        {
+            "success": updated_count > 0,
+            "message": _("Updated %(updated)d product(s). %(errors)d failed.")
+            % {"updated": updated_count, "errors": len(errors)},
+            "data": {"updated_count": updated_count, "error_count": len(errors), "errors": errors},
         },
-        'data': {
-            'updated_count': updated_count,
-            'error_count': len(errors),
-            'errors': errors
-        }
-    }, status=status_code)
+        status=status_code,
+    )

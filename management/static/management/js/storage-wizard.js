@@ -1,190 +1,214 @@
 /* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
 (function () {
-    'use strict';
+  'use strict';
 
-    /* Translations loaded from a <script type="application/json"> block */
-    var T = {};
+  /* Translations loaded from a <script type="application/json"> block */
+  let T = {};
 
-    /* S3-compatible presets: maps preset value -> endpoint URL template */
-    var S3_PRESETS = {
-        backblaze_b2:        { endpoint: 'https://s3.{region}.backblazeb2.com', region: 'us-west-004' },
-        wasabi:              { endpoint: 'https://s3.{region}.wasabisys.com', region: 'us-east-1' },
-        digitalocean_spaces: { endpoint: 'https://{region}.digitaloceanspaces.com', region: 'nyc3' },
-        cloudflare_r2:       { endpoint: 'https://{account_id}.r2.cloudflarestorage.com', region: 'auto' },
-        vultr:               { endpoint: 'https://{region}.vultrobjects.com', region: 'ewr1' },
-        minio:               { endpoint: '', region: 'us-east-1' },
-    };
+  /* S3-compatible presets: maps preset value -> endpoint URL template */
+  const S3_PRESETS = {
+    backblaze_b2: { endpoint: 'https://s3.{region}.backblazeb2.com', region: 'us-west-004' },
+    wasabi: { endpoint: 'https://s3.{region}.wasabisys.com', region: 'us-east-1' },
+    digitalocean_spaces: { endpoint: 'https://{region}.digitaloceanspaces.com', region: 'nyc3' },
+    cloudflare_r2: { endpoint: 'https://{account_id}.r2.cloudflarestorage.com', region: 'auto' },
+    vultr: { endpoint: 'https://{region}.vultrobjects.com', region: 'ewr1' },
+    minio: { endpoint: '', region: 'us-east-1' },
+  };
 
-    function init() {
-        /* Load translations */
-        var tEl = document.getElementById('storage-wizard-translations');
-        if (tEl) {
-            try { T = JSON.parse(tEl.textContent); } catch (e) { /* noop */ }
+  function init() {
+    /* Load translations */
+    const tEl = document.getElementById('storage-wizard-translations');
+    if (tEl) {
+      try {
+        T = JSON.parse(tEl.textContent);
+      } catch (e) {
+        /* noop */
+      }
+    }
+
+    setupPresetSelector();
+    setupPasswordToggles();
+    setupTestConnection();
+    setupCopyRedirectUri();
+  }
+
+  /* ── Preset auto-fill (S3 provider) ─────────────────────────── */
+
+  function setupPresetSelector() {
+    const presetSelect = document.getElementById('setting_preset');
+    if (!presetSelect) return;
+
+    presetSelect.addEventListener('change', function () {
+      const preset = S3_PRESETS[this.value];
+      if (!preset) return;
+
+      const endpointInput = document.getElementById('setting_endpoint_url');
+      const regionInput = document.getElementById('setting_region');
+
+      if (endpointInput && preset.endpoint) {
+        /* Fill endpoint - user will replace {region} or {account_id} */
+        const region = regionInput ? regionInput.value : preset.region;
+        endpointInput.value = preset.endpoint.replace('{region}', region);
+      }
+      if (regionInput && preset.region) {
+        regionInput.value = preset.region;
+      }
+    });
+  }
+
+  /* ── Password visibility toggles ────────────────────────────── */
+
+  function setupPasswordToggles() {
+    document.querySelectorAll('.password-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const target = document.getElementById(this.dataset.target);
+        if (!target) return;
+        const icon = this.querySelector('i');
+        if (target.type === 'password') {
+          target.type = 'text';
+          icon.className = 'fas fa-eye-slash';
+        } else {
+          target.type = 'password';
+          icon.className = 'fas fa-eye';
         }
+      });
+    });
+  }
 
-        setupPresetSelector();
-        setupPasswordToggles();
-        setupTestConnection();
-        setupCopyRedirectUri();
-    }
+  /* ── Test Connection (AJAX) ──────────────────────────────────── */
 
-    /* ── Preset auto-fill (S3 provider) ─────────────────────────── */
+  function setupTestConnection() {
+    const btn = document.getElementById('btn-test-connection');
+    if (!btn) return;
 
-    function setupPresetSelector() {
-        var presetSelect = document.getElementById('setting_preset');
-        if (!presetSelect) return;
+    btn.addEventListener('click', function () {
+      const container = document.querySelector('.wizard-container');
+      const testUrl = container ? container.dataset.testUrl : '';
+      const providerType = container ? container.dataset.providerType : '';
+      if (!testUrl) return;
 
-        presetSelect.addEventListener('change', function () {
-            var preset = S3_PRESETS[this.value];
-            if (!preset) return;
+      /* Gather credential and setting values from the form */
+      const credentials = {};
+      document.querySelectorAll('[name^="cred_"]').forEach(function (el) {
+        const key = el.name.replace('cred_', '');
+        credentials[key] = el.value;
+      });
 
-            var endpointInput = document.getElementById('setting_endpoint_url');
-            var regionInput = document.getElementById('setting_region');
+      const settings = {};
+      document.querySelectorAll('[name^="setting_"]').forEach(function (el) {
+        const key = el.name.replace('setting_', '');
+        settings[key] = el.value;
+      });
 
-            if (endpointInput && preset.endpoint) {
-                /* Fill endpoint - user will replace {region} or {account_id} */
-                var region = regionInput ? regionInput.value : preset.region;
-                endpointInput.value = preset.endpoint.replace('{region}', region);
-            }
-            if (regionInput && preset.region) {
-                regionInput.value = preset.region;
-            }
-        });
-    }
+      /* Show loading state */
+      btn.disabled = true;
+      btn.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> ' + (T.testing || 'Testing connection...');
 
-    /* ── Password visibility toggles ────────────────────────────── */
+      const resultsDiv = document.getElementById('test-results');
+      resultsDiv.style.display = 'none';
 
-    function setupPasswordToggles() {
-        document.querySelectorAll('.password-toggle').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var target = document.getElementById(this.dataset.target);
-                if (!target) return;
-                var icon = this.querySelector('i');
-                if (target.type === 'password') {
-                    target.type = 'text';
-                    icon.className = 'fas fa-eye-slash';
-                } else {
-                    target.type = 'password';
-                    icon.className = 'fas fa-eye';
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+
+      fetch(testUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken ? csrfToken.value : '',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+          provider_type: providerType,
+          credentials: credentials,
+          settings: settings,
+        }),
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-plug"></i> ' + 'Test Connection';
+
+          resultsDiv.style.display = 'block';
+
+          if (data.success) {
+            resultsDiv.className = 'test-results success';
+            resultsDiv.innerHTML =
+              '<div class="test-result-icon"><i class="fas fa-check-circle"></i></div>' +
+              '<h3>' +
+              (T.testSuccess || 'Connection successful!') +
+              '</h3>' +
+              '<p>' +
+              escapeHtml(data.message) +
+              '</p>';
+
+            if (data.details) {
+              let detailsHtml = '<div class="test-details"><h4>Details</h4><dl>';
+              for (const key in data.details) {
+                if (data.details.hasOwnProperty(key)) {
+                  detailsHtml +=
+                    '<dt>' +
+                    escapeHtml(key) +
+                    '</dt><dd>' +
+                    escapeHtml(String(data.details[key])) +
+                    '</dd>';
                 }
-            });
+              }
+              detailsHtml += '</dl></div>';
+              resultsDiv.innerHTML += detailsHtml;
+            }
+          } else {
+            resultsDiv.className = 'test-results error';
+            resultsDiv.innerHTML =
+              '<div class="test-result-icon"><i class="fas fa-times-circle"></i></div>' +
+              '<h3>' +
+              (T.testFailed || 'Connection failed') +
+              '</h3>' +
+              '<p>' +
+              escapeHtml(data.message) +
+              '</p>';
+          }
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-plug"></i> ' + 'Test Connection';
+          resultsDiv.style.display = 'block';
+          resultsDiv.className = 'test-results error';
+          resultsDiv.innerHTML =
+            '<div class="test-result-icon"><i class="fas fa-times-circle"></i></div>' +
+            '<h3>' +
+            (T.networkError || 'Network error. Please try again.') +
+            '</h3>';
         });
-    }
+    });
+  }
 
-    /* ── Test Connection (AJAX) ──────────────────────────────────── */
+  /* ── Copy Redirect URI (OAuth providers) ──────────────────── */
 
-    function setupTestConnection() {
-        var btn = document.getElementById('btn-test-connection');
-        if (!btn) return;
+  function setupCopyRedirectUri() {
+    const btn = document.getElementById('btn-copy-redirect-uri');
+    if (!btn) return;
 
-        btn.addEventListener('click', function () {
-            var container = document.querySelector('.wizard-container');
-            var testUrl = container ? container.dataset.testUrl : '';
-            var providerType = container ? container.dataset.providerType : '';
-            if (!testUrl) return;
+    btn.addEventListener('click', function () {
+      const input = document.getElementById('oauth-redirect-uri');
+      if (!input) return;
 
-            /* Gather credential and setting values from the form */
-            var credentials = {};
-            document.querySelectorAll('[name^="cred_"]').forEach(function (el) {
-                var key = el.name.replace('cred_', '');
-                credentials[key] = el.value;
-            });
+      navigator.clipboard.writeText(input.value).then(function () {
+        const icon = btn.querySelector('i');
+        icon.className = 'fas fa-check';
+        setTimeout(function () {
+          icon.className = 'fas fa-copy';
+        }, 2000);
+      });
+    });
+  }
 
-            var settings = {};
-            document.querySelectorAll('[name^="setting_"]').forEach(function (el) {
-                var key = el.name.replace('setting_', '');
-                settings[key] = el.value;
-            });
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+  }
 
-            /* Show loading state */
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (T.testing || 'Testing connection...');
-
-            var resultsDiv = document.getElementById('test-results');
-            resultsDiv.style.display = 'none';
-
-            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-
-            fetch(testUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken ? csrfToken.value : '',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({
-                    provider_type: providerType,
-                    credentials: credentials,
-                    settings: settings,
-                }),
-            })
-            .then(function (response) { return response.json(); })
-            .then(function (data) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-plug"></i> ' + 'Test Connection';
-
-                resultsDiv.style.display = 'block';
-
-                if (data.success) {
-                    resultsDiv.className = 'test-results success';
-                    resultsDiv.innerHTML =
-                        '<div class="test-result-icon"><i class="fas fa-check-circle"></i></div>' +
-                        '<h3>' + (T.testSuccess || 'Connection successful!') + '</h3>' +
-                        '<p>' + escapeHtml(data.message) + '</p>';
-
-                    if (data.details) {
-                        var detailsHtml = '<div class="test-details"><h4>Details</h4><dl>';
-                        for (var key in data.details) {
-                            if (data.details.hasOwnProperty(key)) {
-                                detailsHtml += '<dt>' + escapeHtml(key) + '</dt><dd>' + escapeHtml(String(data.details[key])) + '</dd>';
-                            }
-                        }
-                        detailsHtml += '</dl></div>';
-                        resultsDiv.innerHTML += detailsHtml;
-                    }
-                } else {
-                    resultsDiv.className = 'test-results error';
-                    resultsDiv.innerHTML =
-                        '<div class="test-result-icon"><i class="fas fa-times-circle"></i></div>' +
-                        '<h3>' + (T.testFailed || 'Connection failed') + '</h3>' +
-                        '<p>' + escapeHtml(data.message) + '</p>';
-                }
-            })
-            .catch(function () {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-plug"></i> ' + 'Test Connection';
-                resultsDiv.style.display = 'block';
-                resultsDiv.className = 'test-results error';
-                resultsDiv.innerHTML =
-                    '<div class="test-result-icon"><i class="fas fa-times-circle"></i></div>' +
-                    '<h3>' + (T.networkError || 'Network error. Please try again.') + '</h3>';
-            });
-        });
-    }
-
-    /* ── Copy Redirect URI (OAuth providers) ──────────────────── */
-
-    function setupCopyRedirectUri() {
-        var btn = document.getElementById('btn-copy-redirect-uri');
-        if (!btn) return;
-
-        btn.addEventListener('click', function () {
-            var input = document.getElementById('oauth-redirect-uri');
-            if (!input) return;
-
-            navigator.clipboard.writeText(input.value).then(function () {
-                var icon = btn.querySelector('i');
-                icon.className = 'fas fa-check';
-                setTimeout(function () { icon.className = 'fas fa-copy'; }, 2000);
-            });
-        });
-    }
-
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(text));
-        return div.innerHTML;
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', init);
 })();

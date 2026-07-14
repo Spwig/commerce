@@ -6,6 +6,7 @@ Usage:
     ./manage.py generate_dkim_keys --domain example.com --selector mail2
     ./manage.py generate_dkim_keys --account-id 1
 """
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -14,37 +15,26 @@ from email_system.smtp_server.dkim_handler import DKIMHandler
 
 
 class Command(BaseCommand):
-    help = 'Generate DKIM keys for email sending domain'
+    help = "Generate DKIM keys for email sending domain"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--domain',
-            type=str,
-            help='Domain to generate DKIM keys for (e.g., example.com)'
+            "--domain", type=str, help="Domain to generate DKIM keys for (e.g., example.com)"
         )
         parser.add_argument(
-            '--selector',
-            type=str,
-            default='mail',
-            help='DKIM selector (default: mail)'
+            "--selector", type=str, default="mail", help="DKIM selector (default: mail)"
         )
+        parser.add_argument("--account-id", type=int, help="EmailAccount ID to associate keys with")
         parser.add_argument(
-            '--account-id',
-            type=int,
-            help='EmailAccount ID to associate keys with'
-        )
-        parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Force regenerate keys even if they already exist'
+            "--force", action="store_true", help="Force regenerate keys even if they already exist"
         )
 
     @transaction.atomic
     def handle(self, *args, **options):
-        domain = options.get('domain')
-        selector = options.get('selector') or 'mail'
-        account_id = options.get('account_id')
-        force = options.get('force', False)
+        domain = options.get("domain")
+        selector = options.get("selector") or "mail"
+        account_id = options.get("account_id")
+        force = options.get("force", False)
 
         # Get EmailAccount if specified
         account = None
@@ -52,18 +42,15 @@ class Command(BaseCommand):
             try:
                 account = EmailAccount.objects.get(pk=account_id)
                 # Extract domain from account if not provided
-                if not domain and account.from_email:
-                    if '@' in account.from_email:
-                        domain = account.from_email.split('@')[1]
-                        self.stdout.write(f"Using domain from account: {domain}")
+                if not domain and account.from_email and "@" in account.from_email:
+                    domain = account.from_email.split("@")[1]
+                    self.stdout.write(f"Using domain from account: {domain}")
 
             except EmailAccount.DoesNotExist:
                 raise CommandError(f"EmailAccount with ID {account_id} does not exist")
 
         if not domain:
-            raise CommandError(
-                "Either --domain or --account-id with valid from_email is required"
-            )
+            raise CommandError("Either --domain or --account-id with valid from_email is required")
 
         # Initialize DKIM handler
         handler = DKIMHandler(domain=domain, selector=selector)
@@ -99,9 +86,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING("=" * 80))
         self.stdout.write(self.style.WARNING("DNS Configuration Required"))
         self.stdout.write(self.style.WARNING("=" * 80))
-        self.stdout.write(f"\nAdd the following TXT record to your DNS:\n")
+        self.stdout.write("\nAdd the following TXT record to your DNS:\n")
         self.stdout.write(self.style.SUCCESS(f"Hostname: {dns_hostname}"))
-        self.stdout.write(self.style.SUCCESS(f"Type: TXT"))
+        self.stdout.write(self.style.SUCCESS("Type: TXT"))
         self.stdout.write(self.style.SUCCESS(f"Value: {dns_record}\n"))
 
         self.stdout.write(self.style.WARNING("=" * 80))
@@ -111,7 +98,11 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"  nslookup -type=TXT {dns_hostname}\n"))
 
         if account:
-            self.stdout.write(self.style.SUCCESS(f"Keys stored in EmailAccount: {account.name} (ID: {account.pk})"))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Keys stored in EmailAccount: {account.name} (ID: {account.pk})"
+                )
+            )
         else:
             self.stdout.write(
                 self.style.WARNING(

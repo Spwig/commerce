@@ -9,76 +9,82 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class PayoutStatus(Enum):
     """Standard payout status across all providers"""
-    PENDING = 'pending'
-    PROCESSING = 'processing'
-    COMPLETED = 'completed'
-    FAILED = 'failed'
-    CANCELLED = 'cancelled'
-    RETURNED = 'returned'
+
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    RETURNED = "returned"
 
 
 class PayoutMethod(Enum):
     """Supported payout methods"""
-    PAYPAL = 'paypal'
-    BANK_TRANSFER = 'bank_transfer'
-    BANK_TRANSFER_LOCAL = 'bank_transfer_local'
-    BANK_TRANSFER_SWIFT = 'bank_transfer_swift'
+
+    PAYPAL = "paypal"
+    BANK_TRANSFER = "bank_transfer"
+    BANK_TRANSFER_LOCAL = "bank_transfer_local"
+    BANK_TRANSFER_SWIFT = "bank_transfer_swift"
 
 
 @dataclass
 class PayoutRecipient:
     """Recipient information for a payout"""
+
     affiliate_id: int
-    email: Optional[str] = None
+    email: str | None = None
     # Bank transfer fields
-    bank_account_holder: Optional[str] = None
-    bank_account_number: Optional[str] = None
-    bank_routing_code: Optional[str] = None
-    bank_swift_code: Optional[str] = None
-    bank_country: Optional[str] = None
-    bank_currency: Optional[str] = None
+    bank_account_holder: str | None = None
+    bank_account_number: str | None = None
+    bank_routing_code: str | None = None
+    bank_swift_code: str | None = None
+    bank_country: str | None = None
+    bank_currency: str | None = None
     # Additional fields some providers may need
-    phone: Optional[str] = None
-    address: Optional[Dict[str, str]] = None
+    phone: str | None = None
+    address: dict[str, str] | None = None
 
 
 @dataclass
 class PayoutRequest:
     """Request to create a payout"""
+
     payout_id: int  # Internal Payout model ID
     recipient: PayoutRecipient
     amount: Decimal
     currency: str
     reference: str  # Unique reference for idempotency
-    note: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    note: str | None = None
+    metadata: dict[str, Any] | None = None
 
 
 @dataclass
 class PayoutResult:
     """Result from a payout operation"""
+
     success: bool
-    provider_reference: Optional[str] = None
+    provider_reference: str | None = None
     status: PayoutStatus = PayoutStatus.PENDING
-    message: Optional[str] = None
-    raw_response: Optional[Dict[str, Any]] = None
-    fee: Optional[Decimal] = None
-    estimated_arrival: Optional[str] = None
+    message: str | None = None
+    raw_response: dict[str, Any] | None = None
+    fee: Decimal | None = None
+    estimated_arrival: str | None = None
 
 
 @dataclass
 class BatchPayoutResult:
     """Result from a batch payout operation"""
+
     success: bool
-    batch_reference: Optional[str] = None
-    results: List[PayoutResult] = None
-    message: Optional[str] = None
-    raw_response: Optional[Dict[str, Any]] = None
+    batch_reference: str | None = None
+    results: list[PayoutResult] = None
+    message: str | None = None
+    raw_response: dict[str, Any] | None = None
 
     def __post_init__(self):
         if self.results is None:
@@ -93,7 +99,7 @@ class BasePayoutProvider(ABC):
     and implement the required abstract methods.
     """
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         """
         Initialize the provider with configuration.
 
@@ -116,19 +122,19 @@ class BasePayoutProvider(ABC):
 
     @property
     @abstractmethod
-    def supported_methods(self) -> List[PayoutMethod]:
+    def supported_methods(self) -> list[PayoutMethod]:
         """Return list of supported payout methods"""
         pass
 
     @property
     @abstractmethod
-    def supported_currencies(self) -> List[str]:
+    def supported_currencies(self) -> list[str]:
         """Return list of supported currency codes"""
         pass
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema for required credentials.
 
@@ -141,7 +147,7 @@ class BasePayoutProvider(ABC):
         pass
 
     @abstractmethod
-    def validate_credentials(self) -> Dict[str, Any]:
+    def validate_credentials(self) -> dict[str, Any]:
         """
         Validate the provider credentials.
 
@@ -151,7 +157,7 @@ class BasePayoutProvider(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test the connection to the provider API.
 
@@ -173,7 +179,7 @@ class BasePayoutProvider(ABC):
         """
         pass
 
-    def create_batch_payout(self, requests: List[PayoutRequest]) -> BatchPayoutResult:
+    def create_batch_payout(self, requests: list[PayoutRequest]) -> BatchPayoutResult:
         """
         Create multiple payouts in a batch.
 
@@ -196,9 +202,7 @@ class BasePayoutProvider(ABC):
                 all_success = False
 
         return BatchPayoutResult(
-            success=all_success,
-            results=results,
-            message=f"Processed {len(results)} payouts"
+            success=all_success, results=results, message=f"Processed {len(results)} payouts"
         )
 
     @abstractmethod
@@ -228,11 +232,7 @@ class BasePayoutProvider(ABC):
         pass
 
     @abstractmethod
-    def verify_webhook_signature(
-        self,
-        payload: bytes,
-        headers: Dict[str, str]
-    ) -> bool:
+    def verify_webhook_signature(self, payload: bytes, headers: dict[str, str]) -> bool:
         """
         Verify the authenticity of a webhook payload.
 
@@ -246,7 +246,7 @@ class BasePayoutProvider(ABC):
         pass
 
     @abstractmethod
-    def handle_webhook(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_webhook(self, event_data: dict[str, Any]) -> dict[str, Any]:
         """
         Process a webhook event from the provider.
 
@@ -263,7 +263,7 @@ class BasePayoutProvider(ABC):
         """
         pass
 
-    def get_recipient_fields(self, method: PayoutMethod) -> List[Dict[str, Any]]:
+    def get_recipient_fields(self, method: PayoutMethod) -> list[dict[str, Any]]:
         """
         Get required recipient fields for a payout method.
 
@@ -274,21 +274,53 @@ class BasePayoutProvider(ABC):
             List of field definitions with name, type, required, label
         """
         if method == PayoutMethod.PAYPAL:
+            return [{"name": "email", "type": "email", "required": True, "label": "PayPal Email"}]
+        elif method in (
+            PayoutMethod.BANK_TRANSFER,
+            PayoutMethod.BANK_TRANSFER_LOCAL,
+            PayoutMethod.BANK_TRANSFER_SWIFT,
+        ):
             return [
-                {"name": "email", "type": "email", "required": True, "label": "PayPal Email"}
-            ]
-        elif method in (PayoutMethod.BANK_TRANSFER, PayoutMethod.BANK_TRANSFER_LOCAL, PayoutMethod.BANK_TRANSFER_SWIFT):
-            return [
-                {"name": "bank_account_holder", "type": "string", "required": True, "label": "Account Holder Name"},
-                {"name": "bank_account_number", "type": "string", "required": True, "label": "Account Number"},
-                {"name": "bank_routing_code", "type": "string", "required": False, "label": "Routing Code"},
-                {"name": "bank_swift_code", "type": "string", "required": True, "label": "SWIFT/BIC Code"},
-                {"name": "bank_country", "type": "country", "required": True, "label": "Bank Country"},
-                {"name": "bank_currency", "type": "currency", "required": True, "label": "Account Currency"},
+                {
+                    "name": "bank_account_holder",
+                    "type": "string",
+                    "required": True,
+                    "label": "Account Holder Name",
+                },
+                {
+                    "name": "bank_account_number",
+                    "type": "string",
+                    "required": True,
+                    "label": "Account Number",
+                },
+                {
+                    "name": "bank_routing_code",
+                    "type": "string",
+                    "required": False,
+                    "label": "Routing Code",
+                },
+                {
+                    "name": "bank_swift_code",
+                    "type": "string",
+                    "required": True,
+                    "label": "SWIFT/BIC Code",
+                },
+                {
+                    "name": "bank_country",
+                    "type": "country",
+                    "required": True,
+                    "label": "Bank Country",
+                },
+                {
+                    "name": "bank_currency",
+                    "type": "currency",
+                    "required": True,
+                    "label": "Account Currency",
+                },
             ]
         return []
 
-    def estimate_fees(self, amount: Decimal, currency: str, method: PayoutMethod) -> Optional[Decimal]:
+    def estimate_fees(self, amount: Decimal, currency: str, method: PayoutMethod) -> Decimal | None:
         """
         Estimate fees for a payout. Override if provider supports fee estimation.
 
@@ -302,7 +334,7 @@ class BasePayoutProvider(ABC):
         """
         return None
 
-    def get_estimated_arrival(self, method: PayoutMethod, country: str) -> Optional[str]:
+    def get_estimated_arrival(self, method: PayoutMethod, country: str) -> str | None:
         """
         Get estimated arrival time for a payout.
 

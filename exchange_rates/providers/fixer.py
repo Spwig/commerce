@@ -5,16 +5,17 @@ https://fixer.io/
 API Documentation: https://fixer.io/documentation
 """
 
-import requests
 import logging
-from typing import Dict, Optional, List
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+
+import requests
 from django.utils.translation import gettext_lazy as _
+
 from exchange_rates.providers.base import (
-    ExchangeRateProviderBase,
     CurrencyNotSupported,
-    RateFetchError
+    ExchangeRateProviderBase,
+    RateFetchError,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,12 +46,14 @@ class FixerProvider(ExchangeRateProviderBase):
     paid_tier_requests = 1000  # Basic plan
 
     # Required credentials
-    required_credentials = ['access_key']
+    required_credentials = ["access_key"]
 
     # API Configuration
     API_BASE_URL = "http://data.fixer.io/api"  # Free tier uses HTTP, paid uses HTTPS
 
-    def get_rate(self, from_currency: str, to_currency: str, date: Optional[datetime] = None) -> Decimal:
+    def get_rate(
+        self, from_currency: str, to_currency: str, date: datetime | None = None
+    ) -> Decimal:
         """
         Get exchange rate between two currencies.
 
@@ -74,24 +77,24 @@ class FixerProvider(ExchangeRateProviderBase):
         # We need to calculate cross rates if from_currency is not EUR
 
         # Get rates with EUR as base
-        rates = self.get_rates('EUR', date)
+        rates = self.get_rates("EUR", date)
 
-        if from_currency not in rates and from_currency != 'EUR':
+        if from_currency not in rates and from_currency != "EUR":
             raise CurrencyNotSupported(f"Currency {from_currency} not supported")
 
-        if to_currency not in rates and to_currency != 'EUR':
+        if to_currency not in rates and to_currency != "EUR":
             raise CurrencyNotSupported(f"Currency {to_currency} not supported")
 
         # Calculate cross rate
-        if from_currency == 'EUR':
+        if from_currency == "EUR":
             return rates[to_currency]
-        elif to_currency == 'EUR':
-            return Decimal('1') / rates[from_currency]
+        elif to_currency == "EUR":
+            return Decimal("1") / rates[from_currency]
         else:
             # Convert from -> EUR -> to
             return rates[to_currency] / rates[from_currency]
 
-    def get_rates(self, base_currency: str, date: Optional[datetime] = None) -> Dict[str, Decimal]:
+    def get_rates(self, base_currency: str, date: datetime | None = None) -> dict[str, Decimal]:
         """
         Get all exchange rates for a base currency.
 
@@ -109,7 +112,7 @@ class FixerProvider(ExchangeRateProviderBase):
             CurrencyNotSupported: If base currency not supported
             RateFetchError: If API request fails
         """
-        if not self.credentials.get('access_key'):
+        if not self.credentials.get("access_key"):
             raise RateFetchError("Missing access_key credential")
 
         # Endpoint selection
@@ -118,7 +121,7 @@ class FixerProvider(ExchangeRateProviderBase):
                 logger.warning("Historical rates require paid plan, using latest rates")
                 endpoint = "latest"
             else:
-                date_str = date.strftime('%Y-%m-%d')
+                date_str = date.strftime("%Y-%m-%d")
                 endpoint = date_str
         else:
             endpoint = "latest"
@@ -126,13 +129,13 @@ class FixerProvider(ExchangeRateProviderBase):
         url = f"{self.API_BASE_URL}/{endpoint}"
 
         params = {
-            'access_key': self.credentials['access_key'],
+            "access_key": self.credentials["access_key"],
         }
 
         # Free tier only supports EUR as base, paid tier allows base parameter
         # We'll try to set base but it may be ignored on free tier
-        if base_currency != 'EUR':
-            params['base'] = base_currency
+        if base_currency != "EUR":
+            params["base"] = base_currency
 
         try:
             response = requests.get(url, params=params, timeout=10)
@@ -140,15 +143,15 @@ class FixerProvider(ExchangeRateProviderBase):
 
             data = response.json()
 
-            if not data.get('success', False):
-                error = data.get('error', {})
-                error_code = error.get('code', 'unknown')
-                error_msg = error.get('info', 'Unknown error')
+            if not data.get("success", False):
+                error = data.get("error", {})
+                error_code = error.get("code", "unknown")
+                error_msg = error.get("info", "Unknown error")
                 raise RateFetchError(f"API error ({error_code}): {error_msg}")
 
             # Fixer returns rates with EUR as base (or requested base on paid tier)
-            actual_base = data.get('base', 'EUR')
-            rates_data = data.get('rates', {})
+            actual_base = data.get("base", "EUR")
+            rates_data = data.get("rates", {})
 
             # Convert rates to Decimal
             rates = {code: Decimal(str(rate)) for code, rate in rates_data.items()}
@@ -165,12 +168,12 @@ class FixerProvider(ExchangeRateProviderBase):
                     cross_rates[code] = rate / base_rate
 
                 # Add actual base currency (EUR)
-                cross_rates[actual_base] = Decimal('1') / base_rate
+                cross_rates[actual_base] = Decimal("1") / base_rate
 
                 return cross_rates
             else:
                 # Add base currency itself
-                rates[actual_base] = Decimal('1')
+                rates[actual_base] = Decimal("1")
                 return rates
 
         except requests.exceptions.Timeout:
@@ -197,18 +200,18 @@ class FixerProvider(ExchangeRateProviderBase):
         """
         try:
             url = f"{self.API_BASE_URL}/latest"
-            params = {'access_key': self.credentials.get('access_key', '')}
+            params = {"access_key": self.credentials.get("access_key", "")}
 
             response = requests.get(url, params=params, timeout=10)
 
             if response.status_code == 200:
                 data = response.json()
 
-                if data.get('success', False):
+                if data.get("success", False):
                     return (True, "Credentials valid. Using ECB data source.")
                 else:
-                    error = data.get('error', {})
-                    error_msg = error.get('info', 'Unknown error')
+                    error = data.get("error", {})
+                    error_msg = error.get("info", "Unknown error")
                     return (False, f"API error: {error_msg}")
             elif response.status_code == 401:
                 return (False, "Invalid access_key")
@@ -224,7 +227,7 @@ class FixerProvider(ExchangeRateProviderBase):
         except Exception as e:
             return (False, f"Error: {str(e)}")
 
-    def get_supported_currencies(self) -> List[str]:
+    def get_supported_currencies(self) -> list[str]:
         """
         Get list of currency codes supported by this provider.
 
@@ -235,14 +238,14 @@ class FixerProvider(ExchangeRateProviderBase):
         # We can fetch from the symbols endpoint
         try:
             url = f"{self.API_BASE_URL}/symbols"
-            params = {'access_key': self.credentials.get('access_key', '')}
+            params = {"access_key": self.credentials.get("access_key", "")}
 
             response = requests.get(url, params=params, timeout=10)
 
             if response.status_code == 200:
                 data = response.json()
-                if data.get('success', False):
-                    symbols = data.get('symbols', {})
+                if data.get("success", False):
+                    symbols = data.get("symbols", {})
                     return list(symbols.keys())
 
         except Exception as e:
@@ -250,11 +253,56 @@ class FixerProvider(ExchangeRateProviderBase):
 
         # Fallback to common currencies if API fails
         return [
-            'EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
-            'MXN', 'SGD', 'HKD', 'NOK', 'KRW', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR',
-            'DKK', 'PLN', 'TWD', 'THB', 'MYR', 'IDR', 'HUF', 'CZK', 'ILS', 'CLP',
-            'PHP', 'AED', 'COP', 'SAR', 'RON', 'BGN', 'ARS', 'VND', 'UAH', 'BDT',
-            'ISK', 'HRK', 'EGP', 'PKR', 'LKR', 'MAD', 'NGN', 'KES', 'GHS', 'UGX'
+            "EUR",
+            "USD",
+            "GBP",
+            "JPY",
+            "AUD",
+            "CAD",
+            "CHF",
+            "CNY",
+            "SEK",
+            "NZD",
+            "MXN",
+            "SGD",
+            "HKD",
+            "NOK",
+            "KRW",
+            "TRY",
+            "RUB",
+            "INR",
+            "BRL",
+            "ZAR",
+            "DKK",
+            "PLN",
+            "TWD",
+            "THB",
+            "MYR",
+            "IDR",
+            "HUF",
+            "CZK",
+            "ILS",
+            "CLP",
+            "PHP",
+            "AED",
+            "COP",
+            "SAR",
+            "RON",
+            "BGN",
+            "ARS",
+            "VND",
+            "UAH",
+            "BDT",
+            "ISK",
+            "HRK",
+            "EGP",
+            "PKR",
+            "LKR",
+            "MAD",
+            "NGN",
+            "KES",
+            "GHS",
+            "UGX",
         ]
 
     @classmethod

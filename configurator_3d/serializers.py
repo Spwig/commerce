@@ -53,11 +53,13 @@ def serialize_scene_3d(scene):
         option_id = str(mapping.slot_option_id)
         if option_id not in mappings:
             mappings[option_id] = []
-        mappings[option_id].append({
-            "action": mapping.action_type,
-            "node": mapping.target_node,
-            "data": mapping.action_data,
-        })
+        mappings[option_id].append(
+            {
+                "action": mapping.action_type,
+                "node": mapping.target_node,
+                "data": mapping.action_data,
+            }
+        )
 
     # Geometry assets keyed by media_asset UUID
     geometry_assets = {}

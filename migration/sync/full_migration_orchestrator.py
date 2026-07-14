@@ -8,15 +8,21 @@ Extends the base SyncOrchestrator with additional handling for full system migra
 - ID mapping for relational integrity
 - Resume support after interruption
 """
+
 import logging
 
-from .orchestrator import SyncOrchestrator
-from .client import SpwigSyncClient, SyncClientError
-from .category_registry import SYNC_CATEGORIES, resolve_dependencies
-from .compatibility import check_version_compatibility, check_component_compatibility, get_local_version
-from .id_mapper import IDMapper
-from .serializers import get_serializer_for_category
 from migration.models import SyncJob, SyncStep
+
+from .category_registry import SYNC_CATEGORIES, resolve_dependencies
+from .client import SyncClientError
+from .compatibility import (
+    check_component_compatibility,
+    check_version_compatibility,
+    get_local_version,
+)
+from .id_mapper import IDMapper
+from .orchestrator import SyncOrchestrator
+from .serializers import get_serializer_for_category
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +55,10 @@ class FullMigrationOrchestrator(SyncOrchestrator):
         """
         # Get remote info
         remote_info = self.client.get_info()
-        remote_version = remote_info.get('version', 'unknown')
+        remote_version = remote_info.get("version", "unknown")
 
         # Version check
-        local_version = get_local_version() or 'unknown'
+        local_version = get_local_version() or "unknown"
         version_compat = check_version_compatibility(local_version, remote_version)
 
         # Component check via preflight
@@ -60,38 +66,39 @@ class FullMigrationOrchestrator(SyncOrchestrator):
         component_compat = {}
         try:
             preflight = self.client.get_preflight_info()
-            remote_components = preflight.get('components', [])
+            remote_components = preflight.get("components", [])
 
             # Get local components
             local_components = []
             try:
                 from component_updates.models import ComponentRegistry
+
                 for comp in ComponentRegistry.objects.all():
-                    local_components.append({
-                        'slug': comp.slug,
-                        'name': comp.name,
-                        'version': comp.version,
-                        'component_type': comp.component_type,
-                    })
+                    local_components.append(
+                        {
+                            "slug": comp.slug,
+                            "name": comp.name,
+                            "version": comp.version,
+                            "component_type": comp.component_type,
+                        }
+                    )
             except Exception:
                 pass
 
-            component_compat = check_component_compatibility(
-                local_components, remote_components
-            )
+            component_compat = check_component_compatibility(local_components, remote_components)
         except SyncClientError as e:
             logger.warning(f"Could not get preflight info: {e}")
 
         return {
-            'version': {
-                'compatible': bool(version_compat),
-                'message': version_compat.message,
-                'warnings': version_compat.warnings,
-                'local_version': local_version,
-                'remote_version': remote_version,
+            "version": {
+                "compatible": bool(version_compat),
+                "message": version_compat.message,
+                "warnings": version_compat.warnings,
+                "local_version": local_version,
+                "remote_version": remote_version,
             },
-            'components': component_compat,
-            'preflight': preflight,
+            "components": component_compat,
+            "preflight": preflight,
         }
 
     def execute_migration(self):
@@ -122,8 +129,7 @@ class FullMigrationOrchestrator(SyncOrchestrator):
         try:
             # Take rollback snapshots for settings categories (non-large-data)
             settings_categories = [
-                c for c in ordered_categories
-                if not SYNC_CATEGORIES.get(c, {}).get('large_data')
+                c for c in ordered_categories if not SYNC_CATEGORIES.get(c, {}).get("large_data")
             ]
             if settings_categories:
                 self.job.add_log_entry("Taking rollback snapshots...")
@@ -132,10 +138,10 @@ class FullMigrationOrchestrator(SyncOrchestrator):
             for i, category_key in enumerate(ordered_categories):
                 step = SyncStep.objects.get(job=self.job, category=category_key)
                 config = SYNC_CATEGORIES.get(category_key, {})
-                label = str(config.get('label', category_key))
+                label = str(config.get("label", category_key))
 
                 # Resume support: skip completed steps
-                if step.status == 'completed':
+                if step.status == "completed":
                     logger.info(f"Skipping already completed step: {category_key}")
                     self.job.add_log_entry(f"Resuming: skipping completed {label}")
                     # Aggregate previously completed step totals
@@ -144,8 +150,8 @@ class FullMigrationOrchestrator(SyncOrchestrator):
                     total_skipped += step.items_skipped
                     total_failed += step.items_failed
                     # Restore ID mappings from completed step
-                    if step.diff_data and step.diff_data.get('id_map'):
-                        stored_mapper = IDMapper.from_dict(step.diff_data['id_map'])
+                    if step.diff_data and step.diff_data.get("id_map"):
+                        stored_mapper = IDMapper.from_dict(step.diff_data["id_map"])
                         for model_key in stored_mapper._maps:
                             for src_id, tgt_id in stored_mapper._maps[model_key].items():
                                 self.id_mapper.add(model_key, src_id, tgt_id)
@@ -159,19 +165,19 @@ class FullMigrationOrchestrator(SyncOrchestrator):
                 self.job.add_log_entry(f"Migrating: {label}")
 
                 try:
-                    if config.get('large_data'):
+                    if config.get("large_data"):
                         result = self._migrate_large_data(category_key, step)
                     else:
                         result = self._migrate_category(category_key, step)
 
-                    step.items_synced = result.get('synced', 0)
-                    step.items_skipped = result.get('skipped', 0)
-                    step.items_failed = result.get('failed', 0)
+                    step.items_synced = result.get("synced", 0)
+                    step.items_skipped = result.get("skipped", 0)
+                    step.items_failed = result.get("failed", 0)
                     step.items_total = step.items_synced + step.items_skipped + step.items_failed
 
                     # Store ID mappings in step for resume/rollback
-                    if result.get('id_map'):
-                        step.diff_data = {'id_map': result['id_map']}
+                    if result.get("id_map"):
+                        step.diff_data = {"id_map": result["id_map"]}
 
                     step.complete()
 
@@ -185,8 +191,8 @@ class FullMigrationOrchestrator(SyncOrchestrator):
                         f"({step.items_synced} migrated, {step.items_failed} failed)"
                     )
 
-                    if result.get('errors'):
-                        all_errors.extend(result['errors'])
+                    if result.get("errors"):
+                        all_errors.extend(result["errors"])
 
                 except Exception as e:
                     step.fail(str(e))
@@ -202,7 +208,7 @@ class FullMigrationOrchestrator(SyncOrchestrator):
             self.job.items_failed = total_failed
 
             if total_failed > 0 and total_synced == 0:
-                self.job.mark_failed('\n'.join(all_errors[:10]))
+                self.job.mark_failed("\n".join(all_errors[:10]))
             else:
                 self.job.mark_completed()
 
@@ -212,11 +218,11 @@ class FullMigrationOrchestrator(SyncOrchestrator):
             raise
 
         return {
-            'total': total_items,
-            'synced': total_synced,
-            'skipped': total_skipped,
-            'failed': total_failed,
-            'errors': all_errors,
+            "total": total_items,
+            "synced": total_synced,
+            "skipped": total_skipped,
+            "failed": total_failed,
+            "errors": all_errors,
         }
 
     def _migrate_category(self, category_key, step):
@@ -224,26 +230,24 @@ class FullMigrationOrchestrator(SyncOrchestrator):
         Migrate a single category from remote to local.
         Handles pagination and ID mapping.
         """
-        serializer = get_serializer_for_category(
-            category_key, sync_job=self.job, sync_step=step
-        )
+        serializer = get_serializer_for_category(category_key, sync_job=self.job, sync_step=step)
         if not serializer:
-            return {'synced': 0, 'skipped': 0, 'failed': 0, 'errors': ['No serializer']}
+            return {"synced": 0, "skipped": 0, "failed": 0, "errors": ["No serializer"]}
 
         # Fetch all pages from remote
         all_items = list(self.client.export_category_all(category_key))
         remote_data = {
-            'category': category_key,
-            'sync_type': SYNC_CATEGORIES.get(category_key, {}).get('sync_type', 'collection'),
-            'items': all_items,
-            'total': len(all_items),
+            "category": category_key,
+            "sync_type": SYNC_CATEGORIES.get(category_key, {}).get("sync_type", "collection"),
+            "items": all_items,
+            "total": len(all_items),
         }
 
-        result = serializer.import_data(remote_data, dry_run=False, sync_mode='additive')
+        result = serializer.import_data(remote_data, dry_run=False, sync_mode="additive")
 
         # Store ID mappings if the serializer produced them
-        if hasattr(serializer, 'id_mapper') and serializer.id_mapper:
-            result['id_map'] = serializer.id_mapper.to_dict()
+        if hasattr(serializer, "id_mapper") and serializer.id_mapper:
+            result["id_map"] = serializer.id_mapper.to_dict()
             # Merge into the orchestrator's global mapper
             for model_key in serializer.id_mapper._maps:
                 for src_id, tgt_id in serializer.id_mapper._maps[model_key].items():
@@ -266,20 +270,18 @@ class FullMigrationOrchestrator(SyncOrchestrator):
         if not self.job.is_rollbackable:
             raise ValueError("This migration cannot be rolled back.")
 
-        self.job.status = 'rolling_back'
-        self.job.save(update_fields=['status'])
+        self.job.status = "rolling_back"
+        self.job.save(update_fields=["status"])
 
         errors = []
         deleted = 0
 
         # Get steps in reverse order
-        steps = self.job.steps.filter(
-            status='completed'
-        ).order_by('-id')
+        steps = self.job.steps.filter(status="completed").order_by("-id")
 
         for step in steps:
             try:
-                id_map_data = (step.diff_data or {}).get('id_map', {})
+                id_map_data = (step.diff_data or {}).get("id_map", {})
                 if id_map_data:
                     mapper = IDMapper.from_dict(id_map_data)
                     for model_key in mapper._maps:
@@ -288,8 +290,8 @@ class FullMigrationOrchestrator(SyncOrchestrator):
                             count = self._delete_by_ids(model_key, target_ids)
                             deleted += count
 
-                step.status = 'rolled_back'
-                step.save(update_fields=['status'])
+                step.status = "rolled_back"
+                step.save(update_fields=["status"])
 
             except Exception as e:
                 errors.append(f"Rollback {step.category}: {e}")
@@ -302,27 +304,28 @@ class FullMigrationOrchestrator(SyncOrchestrator):
                 serializer = get_serializer_for_category(category_key)
                 if serializer:
                     result = serializer.restore_snapshot(snapshot_data)
-                    deleted += result.get('restored', 0)
+                    deleted += result.get("restored", 0)
             except Exception as e:
                 errors.append(f"Restore {category_key}: {e}")
 
         # Only mark as rolled_back if at least some steps succeeded
         total_steps = steps.count() + len(snapshots)
         if errors and len(errors) >= total_steps and total_steps > 0:
-            self.job.status = 'failed'
-            self.job.error_summary = 'Rollback failed: ' + '; '.join(errors[:5])
+            self.job.status = "failed"
+            self.job.error_summary = "Rollback failed: " + "; ".join(errors[:5])
         else:
-            self.job.status = 'rolled_back'
+            self.job.status = "rolled_back"
         self.job.can_rollback = False
-        self.job.save(update_fields=['status', 'can_rollback', 'error_summary'])
+        self.job.save(update_fields=["status", "can_rollback", "error_summary"])
 
-        return {'deleted': deleted, 'errors': errors}
+        return {"deleted": deleted, "errors": errors}
 
     def _delete_by_ids(self, model_key, target_ids):
         """Delete objects by their IDs. model_key format: 'app.Model'."""
         try:
             from django.apps import apps
-            app_label, model_name = model_key.split('.')
+
+            app_label, model_name = model_key.split(".")
             model = apps.get_model(app_label, model_name)
             count, _ = model.objects.filter(pk__in=target_ids).delete()
             return count

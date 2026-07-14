@@ -12,17 +12,16 @@ Handles all redemption operations including:
 
 import random
 import string
-from decimal import Decimal
 from datetime import timedelta
+from decimal import Decimal
+
+from django.core.exceptions import ValidationError
 from django.db import transaction as db_transaction
 from django.utils import timezone
-from django.core.exceptions import ValidationError
 
 from loyalty.models import (
-    LoyaltyReward,
     LoyaltyRedemption,
-    LoyaltyMember,
-    LoyaltyTransaction,
+    LoyaltyReward,
 )
 from loyalty.services.ledger_service import LedgerService
 
@@ -45,8 +44,8 @@ class RedemptionEngine:
         Format: LOYALTY-XXXXX-XXXXX
         """
         while True:
-            part1 = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
-            part2 = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+            part1 = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+            part2 = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
             code = f"LOYALTY-{part1}-{part2}"
 
             # Check uniqueness
@@ -96,7 +95,7 @@ class RedemptionEngine:
             points_spent=reward.points_cost,
             status=LoyaltyRedemption.STATUS_PENDING,
             expires_at=expires_at,
-            admin_note=kwargs.get('admin_note', '')
+            admin_note=kwargs.get("admin_note", ""),
         )
 
         # Deduct points (creates transaction)
@@ -105,11 +104,11 @@ class RedemptionEngine:
                 member=member,
                 points=reward.points_cost,
                 description=f"Redeemed: {reward.name}",
-                redemption=redemption
+                redemption=redemption,
             )
 
             redemption.transaction = points_transaction
-            redemption.save(update_fields=['transaction'])
+            redemption.save(update_fields=["transaction"])
 
         except Exception as e:
             # If points deduction fails, delete redemption and re-raise
@@ -119,7 +118,7 @@ class RedemptionEngine:
         # Update reward quantity
         if reward.quantity_remaining is not None:
             reward.quantity_remaining -= 1
-            reward.save(update_fields=['quantity_remaining', 'updated_at'])
+            reward.save(update_fields=["quantity_remaining", "updated_at"])
 
         return redemption, True, "Redemption created successfully"
 
@@ -157,7 +156,7 @@ class RedemptionEngine:
         # Update status
         redemption.status = LoyaltyRedemption.STATUS_CONFIRMED
         redemption.confirmed_at = timezone.now()
-        redemption.save(update_fields=['status', 'confirmed_at', 'voucher_code', 'updated_at'])
+        redemption.save(update_fields=["status", "confirmed_at", "voucher_code", "updated_at"])
 
         return True, "Redemption confirmed successfully"
 
@@ -175,7 +174,10 @@ class RedemptionEngine:
         Returns:
             tuple: (success: bool, message: str)
         """
-        if redemption.status not in [LoyaltyRedemption.STATUS_PENDING, LoyaltyRedemption.STATUS_CONFIRMED]:
+        if redemption.status not in [
+            LoyaltyRedemption.STATUS_PENDING,
+            LoyaltyRedemption.STATUS_CONFIRMED,
+        ]:
             return False, f"Cannot fulfill redemption with status: {redemption.status}"
 
         # Update status
@@ -183,13 +185,15 @@ class RedemptionEngine:
         redemption.fulfilled_at = timezone.now()
 
         # Link to order if provided
-        if 'order' in kwargs:
-            redemption.order = kwargs['order']
+        if "order" in kwargs:
+            redemption.order = kwargs["order"]
 
-        if 'admin_note' in kwargs:
-            redemption.admin_note = kwargs['admin_note']
+        if "admin_note" in kwargs:
+            redemption.admin_note = kwargs["admin_note"]
 
-        redemption.save(update_fields=['status', 'fulfilled_at', 'order', 'admin_note', 'updated_at'])
+        redemption.save(
+            update_fields=["status", "fulfilled_at", "order", "admin_note", "updated_at"]
+        )
 
         return True, "Redemption fulfilled successfully"
 
@@ -216,7 +220,7 @@ class RedemptionEngine:
                     member=redemption.member,
                     points=redemption.points_spent,
                     reason=f"Refund for cancelled redemption: {redemption.redemption_code}",
-                    admin_user=None
+                    admin_user=None,
                 )
             except Exception as e:
                 return False, f"Failed to refund points: {str(e)}"
@@ -225,15 +229,20 @@ class RedemptionEngine:
         if redemption.reward.quantity_remaining is not None:
             reward = LoyaltyReward.objects.select_for_update().get(pk=redemption.reward.pk)
             reward.quantity_remaining += 1
-            reward.save(update_fields=['quantity_remaining', 'updated_at'])
+            reward.save(update_fields=["quantity_remaining", "updated_at"])
 
         # Update redemption status
         redemption.status = LoyaltyRedemption.STATUS_CANCELLED
         redemption.cancelled_at = timezone.now()
         redemption.cancellation_reason = reason or "Cancelled by admin"
-        redemption.save(update_fields=['status', 'cancelled_at', 'cancellation_reason', 'updated_at'])
+        redemption.save(
+            update_fields=["status", "cancelled_at", "cancellation_reason", "updated_at"]
+        )
 
-        return True, "Redemption cancelled and points refunded" if refund_points else "Redemption cancelled"
+        return (
+            True,
+            "Redemption cancelled and points refunded" if refund_points else "Redemption cancelled",
+        )
 
     @db_transaction.atomic
     def expire_redemption(self, redemption):
@@ -246,7 +255,10 @@ class RedemptionEngine:
         Returns:
             tuple: (success: bool, message: str)
         """
-        if redemption.status in [LoyaltyRedemption.STATUS_FULFILLED, LoyaltyRedemption.STATUS_CANCELLED]:
+        if redemption.status in [
+            LoyaltyRedemption.STATUS_FULFILLED,
+            LoyaltyRedemption.STATUS_CANCELLED,
+        ]:
             return False, "Redemption is already in a final state"
 
         # Refund points for expired redemptions
@@ -255,7 +267,7 @@ class RedemptionEngine:
                 member=redemption.member,
                 points=redemption.points_spent,
                 reason=f"Refund for expired redemption: {redemption.redemption_code}",
-                admin_user=None
+                admin_user=None,
             )
         except Exception as e:
             return False, f"Failed to refund points: {str(e)}"
@@ -264,11 +276,11 @@ class RedemptionEngine:
         if redemption.reward.quantity_remaining is not None:
             reward = LoyaltyReward.objects.select_for_update().get(pk=redemption.reward.pk)
             reward.quantity_remaining += 1
-            reward.save(update_fields=['quantity_remaining', 'updated_at'])
+            reward.save(update_fields=["quantity_remaining", "updated_at"])
 
         # Update status
         redemption.status = LoyaltyRedemption.STATUS_EXPIRED
-        redemption.save(update_fields=['status', 'updated_at'])
+        redemption.save(update_fields=["status", "updated_at"])
 
         return True, "Redemption expired and points refunded"
 
@@ -286,27 +298,27 @@ class RedemptionEngine:
         # Find expired redemptions
         expired_redemptions = LoyaltyRedemption.objects.filter(
             status__in=[LoyaltyRedemption.STATUS_PENDING, LoyaltyRedemption.STATUS_CONFIRMED],
-            expires_at__lte=now
+            expires_at__lte=now,
         )
 
         stats = {
-            'total_found': expired_redemptions.count(),
-            'processed': 0,
-            'failed': 0,
-            'errors': []
+            "total_found": expired_redemptions.count(),
+            "processed": 0,
+            "failed": 0,
+            "errors": [],
         }
 
         for redemption in expired_redemptions:
             try:
                 success, message = self.expire_redemption(redemption)
                 if success:
-                    stats['processed'] += 1
+                    stats["processed"] += 1
                 else:
-                    stats['failed'] += 1
-                    stats['errors'].append(f"{redemption.redemption_code}: {message}")
+                    stats["failed"] += 1
+                    stats["errors"].append(f"{redemption.redemption_code}: {message}")
             except Exception as e:
-                stats['failed'] += 1
-                stats['errors'].append(f"{redemption.redemption_code}: {str(e)}")
+                stats["failed"] += 1
+                stats["errors"].append(f"{redemption.redemption_code}: {str(e)}")
 
         return stats
 
@@ -331,25 +343,22 @@ class RedemptionEngine:
             voucher, created = Voucher.objects.get_or_create(
                 name=f"Loyalty Reward: {reward.name}",
                 defaults={
-                    'code_prefix': 'LOYALTY',
-                    'discount_type': reward.discount_type,
-                    'discount_value': reward.discount_value,
-                    'min_purchase_amount': reward.min_purchase_amount or Decimal('0.00'),
-                    'usage_limit_per_customer': 1,
-                    'is_active': True,
-                }
+                    "code_prefix": "LOYALTY",
+                    "discount_type": reward.discount_type,
+                    "discount_value": reward.discount_value,
+                    "min_purchase_amount": reward.min_purchase_amount or Decimal("0.00"),
+                    "usage_limit_per_customer": 1,
+                    "is_active": True,
+                },
             )
 
             # Generate unique code
-            code_suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            code_suffix = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
             code = f"{voucher.code_prefix}-{code_suffix}"
 
             # Create voucher code
             voucher_code = VoucherCode.objects.create(
-                voucher=voucher,
-                code=code,
-                usage_limit=1,
-                expires_at=redemption.expires_at
+                voucher=voucher, code=code, usage_limit=1, expires_at=redemption.expires_at
             )
 
             return voucher_code
@@ -372,9 +381,7 @@ class RedemptionEngine:
         Returns:
             QuerySet: Available rewards with eligibility info
         """
-        rewards = LoyaltyReward.objects.filter(
-            is_active=True
-        ).select_related('required_tier')
+        rewards = LoyaltyReward.objects.filter(is_active=True).select_related("required_tier")
 
         available_rewards = []
 
@@ -397,11 +404,11 @@ class RedemptionEngine:
         Returns:
             QuerySet: Member's redemptions
         """
-        queryset = LoyaltyRedemption.objects.filter(
-            member=member
-        ).select_related('reward', 'transaction', 'order', 'voucher_code')
+        queryset = LoyaltyRedemption.objects.filter(member=member).select_related(
+            "reward", "transaction", "order", "voucher_code"
+        )
 
         if status:
             queryset = queryset.filter(status=status)
 
-        return queryset.order_by('-created_at')
+        return queryset.order_by("-created_at")

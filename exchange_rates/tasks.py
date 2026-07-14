@@ -5,14 +5,16 @@ Scheduled tasks:
 - update_exchange_rates: Periodic rate updates (interval-configurable)
 """
 
-from celery import shared_task
+import logging
 from datetime import timedelta
+
+from celery import shared_task
 from django.contrib.sites.models import Site
 from django.utils import timezone
-from exchange_rates.services.exchange_service import ExchangeRateService
-from exchange_rates.models import ExchangeRateProviderAccount
+
 from core.models import SiteSettings
-import logging
+from exchange_rates.models import ExchangeRateProviderAccount
+from exchange_rates.services.exchange_service import ExchangeRateService
 
 logger = logging.getLogger(__name__)
 
@@ -20,13 +22,13 @@ logger = logging.getLogger(__name__)
 def _get_interval_delta(interval):
     """Return timedelta for a sync interval setting, or None for manual_only."""
     INTERVAL_DELTAS = {
-        'realtime': timedelta(minutes=15),
-        'hourly': timedelta(hours=1),
-        'daily': timedelta(hours=24),
-        'weekly': timedelta(weeks=1),
-        'monthly': timedelta(days=30),
-        'quarterly': timedelta(days=90),
-        'manual_only': None,
+        "realtime": timedelta(minutes=15),
+        "hourly": timedelta(hours=1),
+        "daily": timedelta(hours=24),
+        "weekly": timedelta(weeks=1),
+        "monthly": timedelta(days=30),
+        "quarterly": timedelta(days=90),
+        "manual_only": None,
     }
     return INTERVAL_DELTAS.get(interval)
 
@@ -56,8 +58,7 @@ def update_exchange_rates(self, site_id=None, base_currency=None, force=False):
         for site in sites:
             # Check for active providers first (cheapest short-circuit for fresh installs)
             active_providers = ExchangeRateProviderAccount.objects.filter(
-                site=site,
-                is_active=True
+                site=site, is_active=True
             ).count()
 
             if active_providers == 0:
@@ -72,17 +73,22 @@ def update_exchange_rates(self, site_id=None, base_currency=None, force=False):
                 continue
 
             # Check sync interval unless forced
-            sync_interval = getattr(settings, 'exchange_rate_sync_interval', 'daily')
+            sync_interval = getattr(settings, "exchange_rate_sync_interval", "daily")
 
-            if sync_interval == 'manual_only' and not force:
+            if sync_interval == "manual_only" and not force:
                 logger.debug("Sync interval is manual_only, skipping auto-sync")
                 continue
 
             if not force:
                 # Check if enough time has passed since last provider sync
-                last_sync = ExchangeRateProviderAccount.objects.filter(
-                    site=site, is_active=True, last_sync_at__isnull=False
-                ).order_by('-last_sync_at').values_list('last_sync_at', flat=True).first()
+                last_sync = (
+                    ExchangeRateProviderAccount.objects.filter(
+                        site=site, is_active=True, last_sync_at__isnull=False
+                    )
+                    .order_by("-last_sync_at")
+                    .values_list("last_sync_at", flat=True)
+                    .first()
+                )
 
                 if last_sync:
                     elapsed = timezone.now() - last_sync
@@ -101,16 +107,18 @@ def update_exchange_rates(self, site_id=None, base_currency=None, force=False):
             total_failure += failure_count
 
             # Update last_sync_at on active providers
-            ExchangeRateProviderAccount.objects.filter(
-                site=site, is_active=True
-            ).update(last_sync_at=timezone.now(), sync_status='success')
+            ExchangeRateProviderAccount.objects.filter(site=site, is_active=True).update(
+                last_sync_at=timezone.now(), sync_status="success"
+            )
 
-            logger.info(f"Updated rates for {site.name}: {success_count} success, {failure_count} failed")
+            logger.info(
+                f"Updated rates for {site.name}: {success_count} success, {failure_count} failed"
+            )
 
         result = {
-            'success': total_success,
-            'failed': total_failure,
-            'sites_processed': len(sites),
+            "success": total_success,
+            "failed": total_failure,
+            "sites_processed": len(sites),
         }
 
         if total_success > 0 or total_failure > 0:
@@ -122,7 +130,7 @@ def update_exchange_rates(self, site_id=None, base_currency=None, force=False):
     except Exception as exc:
         logger.error(f"Exchange rate update task failed: {exc}")
         # Retry task with exponential backoff
-        raise self.retry(exc=exc, countdown=60 * (2 ** self.request.retries))
+        raise self.retry(exc=exc, countdown=60 * (2**self.request.retries))
 
 
 @shared_task
@@ -142,11 +150,11 @@ def cleanup_stale_rates(days_old=7):
 
     cutoff_date = timezone.now() - timedelta(days=days_old)
 
-    deleted_count, _ = ExchangeRate.objects.filter(
-        fetched_at__lt=cutoff_date
-    ).delete()
+    deleted_count, _ = ExchangeRate.objects.filter(fetched_at__lt=cutoff_date).delete()
 
-    logger.info(f"Cleaned up {deleted_count} stale exchange rate records older than {days_old} days")
+    logger.info(
+        f"Cleaned up {deleted_count} stale exchange rate records older than {days_old} days"
+    )
 
     return deleted_count
 
@@ -169,26 +177,28 @@ def validate_provider_credentials(provider_account_id):
         provider = provider_account.get_provider_instance()
 
         test_result = provider.test_connection()
-        success = test_result.get('success', False)
-        message = test_result.get('message', '')
+        success = test_result.get("success", False)
+        message = test_result.get("message", "")
 
         result = {
-            'success': success,
-            'message': message,
-            'provider_name': provider_account.name,
+            "success": success,
+            "message": message,
+            "provider_name": provider_account.name,
         }
 
         if success:
             logger.info("Provider credentials validated: %s", provider_account.name)
         else:
-            logger.warning("Provider credential validation failed: %s - %s", provider_account.name, message)
+            logger.warning(
+                "Provider credential validation failed: %s - %s", provider_account.name, message
+            )
 
         return result
 
     except Exception as e:
         logger.error("Credential validation task failed: %s", e)
         return {
-            'success': False,
-            'message': str(e),
-            'provider_name': None,
+            "success": False,
+            "message": str(e),
+            "provider_name": None,
         }

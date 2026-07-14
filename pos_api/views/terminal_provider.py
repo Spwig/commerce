@@ -5,31 +5,32 @@ Handles terminal SDK operations: connection tokens, reader listing,
 PaymentIntent creation, capture, and cancellation.
 All endpoints require staff authentication and valid POS license.
 """
+
 import logging
 
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
 
 from admin_api.authentication import MobileTokenAuthentication
-from pos_api.permissions import IsStaffUser
 from core.api.api_descriptions import INVALID_AUTH_TOKEN, PERMISSION_DENIED
+from pos_api.permissions import IsStaffUser
 from pos_api.serializers.terminal_provider import (
-    CreatePaymentIntentSerializer,
-    CapturePaymentSerializer,
-    CancelPaymentSerializer,
-    InitiateCloudPaymentSerializer,
     CancelCloudPaymentSerializer,
+    CancelPaymentSerializer,
+    CapturePaymentSerializer,
     CloudPaymentInitiatedSerializer,
     CloudPaymentStatusSerializer,
+    ConnectionTokenResponseSerializer,
+    CreatePaymentIntentSerializer,
+    ErrorResponseSerializer,
+    InitiateCloudPaymentSerializer,
+    PaymentIntentResponseSerializer,
     ProviderConfigResponseSerializer,
     ReaderListResponseSerializer,
-    ErrorResponseSerializer,
     SuccessResponseSerializer,
-    ConnectionTokenResponseSerializer,
-    PaymentIntentResponseSerializer,
 )
 from pos_api.views.utils import get_terminal
 
@@ -47,15 +48,13 @@ def _get_provider_instance(terminal):
     from pos_app.models import POSTerminalProvider
 
     # Check if terminal has an assigned card reader
-    reader = getattr(terminal, 'card_reader', None)
+    reader = getattr(terminal, "card_reader", None)
     if reader and reader.provider and reader.provider.is_active:
         return reader.provider.get_provider_instance(), reader.provider
 
     # Fall back to active provider (prefer non-manual)
     provider_account = (
-        POSTerminalProvider.objects.filter(is_active=True)
-        .exclude(provider_key='manual')
-        .first()
+        POSTerminalProvider.objects.filter(is_active=True).exclude(provider_key="manual").first()
     )
     if provider_account:
         return provider_account.get_provider_instance(), provider_account
@@ -76,9 +75,9 @@ def _get_provider_instance(terminal):
         401: OpenApiResponse(description=INVALID_AUTH_TOKEN),
         403: OpenApiResponse(description=PERMISSION_DENIED),
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def provider_config(request):
@@ -87,37 +86,41 @@ def provider_config(request):
     if err:
         return err
 
-    reader = getattr(terminal, 'card_reader', None)
+    reader = getattr(terminal, "card_reader", None)
     if reader and reader.provider and reader.provider.is_active:
         provider_account = reader.provider
         try:
             provider_instance = provider_account.get_provider_instance()
             integration_mode = provider_instance.integration_mode
         except Exception:
-            integration_mode = 'sdk'
-        return Response({
-            'success': True,
-            'provider_key': provider_account.provider_key,
-            'provider_name': provider_account.display_name or provider_account.provider_key,
-            'integration_mode': integration_mode,
-            'has_reader': True,
-            'reader': {
-                'id': str(reader.id),
-                'provider_reader_id': reader.provider_reader_id,
-                'label': reader.reader_label,
-                'type': reader.reader_type,
-                'status': reader.status,
-            },
-        })
+            integration_mode = "sdk"
+        return Response(
+            {
+                "success": True,
+                "provider_key": provider_account.provider_key,
+                "provider_name": provider_account.display_name or provider_account.provider_key,
+                "integration_mode": integration_mode,
+                "has_reader": True,
+                "reader": {
+                    "id": str(reader.id),
+                    "provider_reader_id": reader.provider_reader_id,
+                    "label": reader.reader_label,
+                    "type": reader.reader_type,
+                    "status": reader.status,
+                },
+            }
+        )
 
-    return Response({
-        'success': True,
-        'provider_key': 'manual',
-        'provider_name': 'Manual Entry',
-        'integration_mode': 'manual',
-        'has_reader': False,
-        'reader': None,
-    })
+    return Response(
+        {
+            "success": True,
+            "provider_key": "manual",
+            "provider_name": "Manual Entry",
+            "integration_mode": "manual",
+            "has_reader": False,
+            "reader": None,
+        }
+    )
 
 
 @extend_schema(
@@ -136,9 +139,9 @@ def provider_config(request):
         404: ErrorResponseSerializer,
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def connection_token(request):
@@ -151,10 +154,10 @@ def connection_token(request):
     if not provider_instance:
         return Response(
             {
-                'success': False,
-                'error': {
-                    'code': 'NO_PROVIDER',
-                    'message': 'No terminal payment provider configured.',
+                "success": False,
+                "error": {
+                    "code": "NO_PROVIDER",
+                    "message": "No terminal payment provider configured.",
                 },
             },
             status=status.HTTP_404_NOT_FOUND,
@@ -162,21 +165,33 @@ def connection_token(request):
 
     try:
         result = provider_instance.create_connection_token()
-        if result.get('success'):
-            return Response({'success': True, 'secret': result['secret']})
+        if result.get("success"):
+            return Response({"success": True, "secret": result["secret"]})
         return Response(
-            {'success': False, 'error': {'code': 'TOKEN_FAILED', 'message': result.get('message', 'Unknown error')}},
+            {
+                "success": False,
+                "error": {
+                    "code": "TOKEN_FAILED",
+                    "message": result.get("message", "Unknown error"),
+                },
+            },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     except NotImplementedError:
         return Response(
-            {'success': False, 'error': {'code': 'NOT_SUPPORTED', 'message': 'Provider does not support SDK tokens.'}},
+            {
+                "success": False,
+                "error": {
+                    "code": "NOT_SUPPORTED",
+                    "message": "Provider does not support SDK tokens.",
+                },
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
     except Exception as e:
         logger.error(f"Connection token error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'TOKEN_ERROR', 'message': str(e)}},
+            {"success": False, "error": {"code": "TOKEN_ERROR", "message": str(e)}},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -193,9 +208,9 @@ def connection_token(request):
         401: OpenApiResponse(description=INVALID_AUTH_TOKEN),
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def list_readers(request):
@@ -206,7 +221,7 @@ def list_readers(request):
 
     provider_instance, provider_account = _get_provider_instance(terminal)
     if not provider_instance:
-        return Response({'success': True, 'readers': []})
+        return Response({"success": True, "readers": []})
 
     try:
         result = provider_instance.list_readers()
@@ -214,7 +229,7 @@ def list_readers(request):
     except Exception as e:
         logger.error(f"List readers error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'READER_ERROR', 'message': str(e)}, 'readers': []},
+            {"success": False, "error": {"code": "READER_ERROR", "message": str(e)}, "readers": []},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -235,9 +250,9 @@ def list_readers(request):
         404: ErrorResponseSerializer,
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def create_payment_intent(request):
@@ -249,13 +264,16 @@ def create_payment_intent(request):
     serializer = CreatePaymentIntentSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    amount = serializer.validated_data['amount']
-    currency = serializer.validated_data.get('currency') or terminal.effective_currency
+    amount = serializer.validated_data["amount"]
+    currency = serializer.validated_data.get("currency") or terminal.effective_currency
 
     provider_instance, provider_account = _get_provider_instance(terminal)
     if not provider_instance:
         return Response(
-            {'success': False, 'error': {'code': 'NO_PROVIDER', 'message': 'No terminal provider configured.'}},
+            {
+                "success": False,
+                "error": {"code": "NO_PROVIDER", "message": "No terminal provider configured."},
+            },
             status=status.HTTP_404_NOT_FOUND,
         )
 
@@ -264,32 +282,32 @@ def create_payment_intent(request):
             amount=amount,
             currency=currency,
             metadata={
-                'terminal_uuid': str(terminal.uuid),
-                'terminal_name': terminal.name,
-                'cashier': request.user.get_full_name() or request.user.username,
+                "terminal_uuid": str(terminal.uuid),
+                "terminal_name": terminal.name,
+                "cashier": request.user.get_full_name() or request.user.username,
             },
         )
-        if result.get('success'):
+        if result.get("success"):
             return Response(result)
 
         # Return structured error from provider
-        error_code = result.get('error_code', 'INTENT_FAILED')
+        error_code = result.get("error_code", "INTENT_FAILED")
         error_response = {
-            'success': False,
-            'error': {
-                'code': error_code,
-                'message': result.get('message', 'Unknown error'),
+            "success": False,
+            "error": {
+                "code": error_code,
+                "message": result.get("message", "Unknown error"),
             },
         }
         # Include currency in error for CURRENCY_NOT_SUPPORTED
-        if error_code == 'CURRENCY_NOT_SUPPORTED' and result.get('currency'):
-            error_response['error']['currency'] = result['currency']
+        if error_code == "CURRENCY_NOT_SUPPORTED" and result.get("currency"):
+            error_response["error"]["currency"] = result["currency"]
 
         return Response(error_response, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         logger.error(f"Create payment intent error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'INTENT_ERROR', 'message': str(e)}},
+            {"success": False, "error": {"code": "INTENT_ERROR", "message": str(e)}},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -308,9 +326,9 @@ def create_payment_intent(request):
         404: ErrorResponseSerializer,
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def capture_payment(request):
@@ -322,12 +340,15 @@ def capture_payment(request):
     serializer = CapturePaymentSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    payment_intent_id = serializer.validated_data['payment_intent_id']
+    payment_intent_id = serializer.validated_data["payment_intent_id"]
 
     provider_instance, provider_account = _get_provider_instance(terminal)
     if not provider_instance:
         return Response(
-            {'success': False, 'error': {'code': 'NO_PROVIDER', 'message': 'No terminal provider configured.'}},
+            {
+                "success": False,
+                "error": {"code": "NO_PROVIDER", "message": "No terminal provider configured."},
+            },
             status=status.HTTP_404_NOT_FOUND,
         )
 
@@ -337,7 +358,7 @@ def capture_payment(request):
     except Exception as e:
         logger.error(f"Capture payment error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'CAPTURE_ERROR', 'message': str(e)}},
+            {"success": False, "error": {"code": "CAPTURE_ERROR", "message": str(e)}},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -355,9 +376,9 @@ def capture_payment(request):
         404: ErrorResponseSerializer,
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def cancel_payment(request):
@@ -369,12 +390,15 @@ def cancel_payment(request):
     serializer = CancelPaymentSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    payment_intent_id = serializer.validated_data['payment_intent_id']
+    payment_intent_id = serializer.validated_data["payment_intent_id"]
 
     provider_instance, provider_account = _get_provider_instance(terminal)
     if not provider_instance:
         return Response(
-            {'success': False, 'error': {'code': 'NO_PROVIDER', 'message': 'No terminal provider configured.'}},
+            {
+                "success": False,
+                "error": {"code": "NO_PROVIDER", "message": "No terminal provider configured."},
+            },
             status=status.HTTP_404_NOT_FOUND,
         )
 
@@ -384,7 +408,7 @@ def cancel_payment(request):
     except Exception as e:
         logger.error(f"Cancel payment error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'CANCEL_ERROR', 'message': str(e)}},
+            {"success": False, "error": {"code": "CANCEL_ERROR", "message": str(e)}},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -408,9 +432,9 @@ def cancel_payment(request):
         404: ErrorResponseSerializer,
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def initiate_cloud_payment(request):
@@ -422,20 +446,29 @@ def initiate_cloud_payment(request):
     serializer = InitiateCloudPaymentSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    amount = serializer.validated_data['amount']
-    currency = serializer.validated_data.get('currency') or terminal.effective_currency
-    reader_id = serializer.validated_data['reader_id']
+    amount = serializer.validated_data["amount"]
+    currency = serializer.validated_data.get("currency") or terminal.effective_currency
+    reader_id = serializer.validated_data["reader_id"]
 
     provider_instance, provider_account = _get_provider_instance(terminal)
     if not provider_instance:
         return Response(
-            {'success': False, 'error': {'code': 'NO_PROVIDER', 'message': 'No terminal provider configured.'}},
+            {
+                "success": False,
+                "error": {"code": "NO_PROVIDER", "message": "No terminal provider configured."},
+            },
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    if provider_instance.integration_mode != 'cloud':
+    if provider_instance.integration_mode != "cloud":
         return Response(
-            {'success': False, 'error': {'code': 'WRONG_MODE', 'message': 'This provider uses SDK mode, not cloud mode.'}},
+            {
+                "success": False,
+                "error": {
+                    "code": "WRONG_MODE",
+                    "message": "This provider uses SDK mode, not cloud mode.",
+                },
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -445,27 +478,39 @@ def initiate_cloud_payment(request):
             currency=currency,
             reader_id=reader_id,
             metadata={
-                'terminal_uuid': str(terminal.uuid),
-                'terminal_name': terminal.name,
-                'cashier': request.user.get_full_name() or request.user.username,
+                "terminal_uuid": str(terminal.uuid),
+                "terminal_name": terminal.name,
+                "cashier": request.user.get_full_name() or request.user.username,
             },
         )
-        if result.get('success'):
+        if result.get("success"):
             return Response(result)
 
         return Response(
-            {'success': False, 'error': {'code': result.get('error_code', 'CLOUD_PAYMENT_FAILED'), 'message': result.get('message', 'Unknown error')}},
+            {
+                "success": False,
+                "error": {
+                    "code": result.get("error_code", "CLOUD_PAYMENT_FAILED"),
+                    "message": result.get("message", "Unknown error"),
+                },
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
     except NotImplementedError:
         return Response(
-            {'success': False, 'error': {'code': 'NOT_SUPPORTED', 'message': 'Provider does not support cloud payments.'}},
+            {
+                "success": False,
+                "error": {
+                    "code": "NOT_SUPPORTED",
+                    "message": "Provider does not support cloud payments.",
+                },
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
     except Exception as e:
         logger.error(f"Initiate cloud payment error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'CLOUD_PAYMENT_ERROR', 'message': str(e)}},
+            {"success": False, "error": {"code": "CLOUD_PAYMENT_ERROR", "message": str(e)}},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -481,10 +526,10 @@ def initiate_cloud_payment(request):
     ),
     parameters=[
         OpenApiParameter(
-            name='transaction_id',
+            name="transaction_id",
             type=str,
             location=OpenApiParameter.PATH,
-            description=_('Provider-specific transaction ID returned by initiate-cloud-payment'),
+            description=_("Provider-specific transaction ID returned by initiate-cloud-payment"),
             required=True,
         ),
     ],
@@ -495,9 +540,9 @@ def initiate_cloud_payment(request):
         404: ErrorResponseSerializer,
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['GET'])
+@api_view(["GET"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def check_payment_status(request, transaction_id):
@@ -509,7 +554,10 @@ def check_payment_status(request, transaction_id):
     provider_instance, provider_account = _get_provider_instance(terminal)
     if not provider_instance:
         return Response(
-            {'success': False, 'error': {'code': 'NO_PROVIDER', 'message': 'No terminal provider configured.'}},
+            {
+                "success": False,
+                "error": {"code": "NO_PROVIDER", "message": "No terminal provider configured."},
+            },
             status=status.HTTP_404_NOT_FOUND,
         )
 
@@ -518,13 +566,19 @@ def check_payment_status(request, transaction_id):
         return Response(result)
     except NotImplementedError:
         return Response(
-            {'success': False, 'error': {'code': 'NOT_SUPPORTED', 'message': 'Provider does not support payment status checks.'}},
+            {
+                "success": False,
+                "error": {
+                    "code": "NOT_SUPPORTED",
+                    "message": "Provider does not support payment status checks.",
+                },
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
     except Exception as e:
         logger.error(f"Check payment status error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'STATUS_ERROR', 'message': str(e)}},
+            {"success": False, "error": {"code": "STATUS_ERROR", "message": str(e)}},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -543,9 +597,9 @@ def check_payment_status(request, transaction_id):
         404: ErrorResponseSerializer,
         500: ErrorResponseSerializer,
     },
-    tags=['POS - Terminal'],
+    tags=["POS - Terminal"],
 )
-@api_view(['POST'])
+@api_view(["POST"])
 @authentication_classes([MobileTokenAuthentication])
 @permission_classes([IsStaffUser])
 def cancel_cloud_payment(request):
@@ -557,12 +611,15 @@ def cancel_cloud_payment(request):
     serializer = CancelCloudPaymentSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    transaction_id = serializer.validated_data['transaction_id']
+    transaction_id = serializer.validated_data["transaction_id"]
 
     provider_instance, provider_account = _get_provider_instance(terminal)
     if not provider_instance:
         return Response(
-            {'success': False, 'error': {'code': 'NO_PROVIDER', 'message': 'No terminal provider configured.'}},
+            {
+                "success": False,
+                "error": {"code": "NO_PROVIDER", "message": "No terminal provider configured."},
+            },
             status=status.HTTP_404_NOT_FOUND,
         )
 
@@ -571,12 +628,18 @@ def cancel_cloud_payment(request):
         return Response(result)
     except NotImplementedError:
         return Response(
-            {'success': False, 'error': {'code': 'NOT_SUPPORTED', 'message': 'Provider does not support cloud payment cancellation.'}},
+            {
+                "success": False,
+                "error": {
+                    "code": "NOT_SUPPORTED",
+                    "message": "Provider does not support cloud payment cancellation.",
+                },
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
     except Exception as e:
         logger.error(f"Cancel cloud payment error: {e}")
         return Response(
-            {'success': False, 'error': {'code': 'CANCEL_ERROR', 'message': str(e)}},
+            {"success": False, "error": {"code": "CANCEL_ERROR", "message": str(e)}},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

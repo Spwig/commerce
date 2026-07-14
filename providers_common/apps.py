@@ -5,9 +5,9 @@ from django.utils.translation import gettext_lazy as _
 class ProvidersCommonConfig(AppConfig):
     """Configuration for the Providers Common app."""
 
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'providers_common'
-    verbose_name = _('Provider Common Components')
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "providers_common"
+    verbose_name = _("Provider Common Components")
 
     def ready(self):
         """

@@ -4,11 +4,12 @@ Context Processors for Design App
 Provides utility assets and other data to design templates (branding builder, header builder, etc.).
 """
 
-from typing import Dict, Any
+from typing import Any
+
 from django.http import HttpRequest
 
 
-def design_settings(request: HttpRequest) -> Dict[str, Any]:
+def design_settings(request: HttpRequest) -> dict[str, Any]:
     """
     Provide global design settings to all templates.
 
@@ -24,12 +25,12 @@ def design_settings(request: HttpRequest) -> Dict[str, Any]:
 
     try:
         settings = GlobalDesignSettings.get_settings()
-        return {'design_settings': settings}
+        return {"design_settings": settings}
     except Exception:
-        return {'design_settings': None}
+        return {"design_settings": None}
 
 
-def utility_assets(request: HttpRequest) -> Dict[str, Any]:
+def utility_assets(request: HttpRequest) -> dict[str, Any]:
     """
     Provide utility CSS and JS assets to design templates.
 
@@ -48,6 +49,6 @@ def utility_assets(request: HttpRequest) -> Dict[str, Any]:
     assets = get_utility_assets()
 
     return {
-        'utility_css_files': assets.get('css', []),
-        'utility_js_files': assets.get('js', []),
+        "utility_css_files": assets.get("css", []),
+        "utility_js_files": assets.get("js", []),
     }

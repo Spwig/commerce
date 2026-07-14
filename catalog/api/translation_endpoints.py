@@ -1,14 +1,14 @@
 """
 Translation API endpoints for Product model
 """
+
 import json
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
+
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from django.http import JsonResponse
 from django.utils.html import strip_tags
-from django.conf import settings
+from django.views.decorators.http import require_http_methods
+
 from catalog.models import Product
 from translations.models import SiteLanguage
 
@@ -35,20 +35,11 @@ def get_product_translations(request, product_id):
     try:
         product = Product.objects.get(pk=product_id)
 
-        return JsonResponse({
-            'success': True,
-            'translations': product.translations or {}
-        })
+        return JsonResponse({"success": True, "translations": product.translations or {}})
     except Product.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'error': 'Product not found'
-        }, status=404)
+        return JsonResponse({"success": False, "error": "Product not found"}, status=404)
     except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 @staff_member_required
@@ -76,33 +67,29 @@ def save_product_translation(request, product_id):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({
-                'success': False,
-                'error': 'Invalid JSON data'
-            }, status=400)
+            return JsonResponse({"success": False, "error": "Invalid JSON data"}, status=400)
 
-        language = data.get('language')
-        field = data.get('field')
-        value = data.get('value')
-        html_value = data.get('html_value')
+        language = data.get("language")
+        field = data.get("field")
+        value = data.get("value")
+        html_value = data.get("html_value")
 
         if not language or not field:
-            return JsonResponse({
-                'success': False,
-                'error': 'Missing required fields: language, field'
-            }, status=400)
+            return JsonResponse(
+                {"success": False, "error": "Missing required fields: language, field"}, status=400
+            )
 
         # Handle rich text fields (description and short_description)
-        if field in ['description', 'short_description']:
+        if field in ["description", "short_description"]:
             # Save HTML version
             if html_value is not None:
-                product.set_translation(language, f'{field}_html', html_value)
+                product.set_translation(language, f"{field}_html", html_value)
                 # Auto-generate plain text from HTML
                 plain_text = strip_tags(html_value)
-                product.set_translation(language, f'{field}_text', plain_text)
+                product.set_translation(language, f"{field}_text", plain_text)
             # If only plain text provided, save it to text field
             elif value is not None:
-                product.set_translation(language, f'{field}_text', value)
+                product.set_translation(language, f"{field}_text", value)
         else:
             # Regular text fields (name, meta_title, meta_description)
             if value is not None:
@@ -110,21 +97,12 @@ def save_product_translation(request, product_id):
 
         product.save()
 
-        return JsonResponse({
-            'success': True,
-            'translations': product.translations
-        })
+        return JsonResponse({"success": True, "translations": product.translations})
 
     except Product.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'error': 'Product not found'
-        }, status=404)
+        return JsonResponse({"success": False, "error": "Product not found"}, status=404)
     except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 @staff_member_required
@@ -153,48 +131,35 @@ def save_all_product_translations(request, product_id):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({
-                'success': False,
-                'error': 'Invalid JSON data'
-            }, status=400)
+            return JsonResponse({"success": False, "error": "Invalid JSON data"}, status=400)
 
-        translations = data.get('translations')
+        translations = data.get("translations")
 
         if not isinstance(translations, dict):
-            return JsonResponse({
-                'success': False,
-                'error': 'translations must be a dictionary'
-            }, status=400)
+            return JsonResponse(
+                {"success": False, "error": "translations must be a dictionary"}, status=400
+            )
 
         # Auto-generate plain text from HTML for description fields
-        for lang_code, fields in translations.items():
+        for _lang_code, fields in translations.items():
             if isinstance(fields, dict):
                 # Generate plain text from description_html if present
-                if 'description_html' in fields and 'description_text' not in fields:
-                    fields['description_text'] = strip_tags(fields['description_html'])
+                if "description_html" in fields and "description_text" not in fields:
+                    fields["description_text"] = strip_tags(fields["description_html"])
 
                 # Generate plain text from short_description_html if present
-                if 'short_description_html' in fields and 'short_description_text' not in fields:
-                    fields['short_description_text'] = strip_tags(fields['short_description_html'])
+                if "short_description_html" in fields and "short_description_text" not in fields:
+                    fields["short_description_text"] = strip_tags(fields["short_description_html"])
 
         product.translations = translations
         product.save()
 
-        return JsonResponse({
-            'success': True,
-            'translations': product.translations
-        })
+        return JsonResponse({"success": True, "translations": product.translations})
 
     except Product.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'error': 'Product not found'
-        }, status=404)
+        return JsonResponse({"success": False, "error": "Product not found"}, status=404)
     except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 @staff_member_required
@@ -229,26 +194,18 @@ def get_available_languages(request):
     """
     try:
         # Get active languages from translations app (merchant-configured)
-        site_languages = SiteLanguage.objects.filter(
-            is_active=True
-        ).order_by('order', 'name')
+        site_languages = SiteLanguage.objects.filter(is_active=True).order_by("order", "name")
 
         languages = [
             {
-                'code': lang.code,
-                'name': lang.name,
-                'native_name': lang.native_name,
-                'rtl': getattr(lang, 'rtl', False),  # Text direction
+                "code": lang.code,
+                "name": lang.name,
+                "native_name": lang.native_name,
+                "rtl": getattr(lang, "rtl", False),  # Text direction
             }
             for lang in site_languages
         ]
 
-        return JsonResponse({
-            'success': True,
-            'languages': languages
-        })
+        return JsonResponse({"success": True, "languages": languages})
     except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

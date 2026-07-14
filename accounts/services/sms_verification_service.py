@@ -4,12 +4,13 @@ SMS Verification Service
 Handles SMS double opt-in verification with 6-digit OTP codes for TCPA compliance.
 Includes rate limiting and security features.
 """
+
 import logging
 import secrets
 from datetime import timedelta
-from typing import Dict
-from django.utils import timezone
+
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -43,11 +44,11 @@ class SMSVerificationService:
             str: 6-digit numeric code
         """
         # Generate 6 random digits using secrets
-        code = ''.join(str(secrets.randbelow(10)) for _ in range(cls.CODE_LENGTH))
+        code = "".join(str(secrets.randbelow(10)) for _ in range(cls.CODE_LENGTH))
         return code
 
     @classmethod
-    def send_verification_code(cls, user, phone_number: str) -> Dict:
+    def send_verification_code(cls, user, phone_number: str) -> dict:
         """
         Generate and send verification code via SMS.
 
@@ -58,7 +59,6 @@ class SMSVerificationService:
         Returns:
             Dict with success status, expiry time, and last 4 digits of phone
         """
-        from accounts.models import CommunicationPreference
         from accounts.services.preference_service import PreferenceService
 
         try:
@@ -70,30 +70,38 @@ class SMSVerificationService:
                 time_since_last = timezone.now() - prefs.sms_verification_sent_at
                 cooldown_remaining = timedelta(minutes=cls.COOLDOWN_MINUTES) - time_since_last
 
-                if cooldown_remaining.total_seconds() > 0 and prefs.sms_verification_attempts >= cls.MAX_ATTEMPTS:
+                if (
+                    cooldown_remaining.total_seconds() > 0
+                    and prefs.sms_verification_attempts >= cls.MAX_ATTEMPTS
+                ):
                     return {
-                        'success': False,
-                        'error': 'Too many attempts. Please try again later.',
-                        'cooldown_seconds': int(cooldown_remaining.total_seconds()),
+                        "success": False,
+                        "error": "Too many attempts. Please try again later.",
+                        "cooldown_seconds": int(cooldown_remaining.total_seconds()),
                     }
 
             # Generate code
             code = cls.generate_verification_code()
 
             # Reset attempts if cooldown period has passed
-            if prefs.sms_verification_sent_at and \
-               timezone.now() - prefs.sms_verification_sent_at > timedelta(minutes=cls.COOLDOWN_MINUTES):
+            if (
+                prefs.sms_verification_sent_at
+                and timezone.now() - prefs.sms_verification_sent_at
+                > timedelta(minutes=cls.COOLDOWN_MINUTES)
+            ):
                 prefs.sms_verification_attempts = 0
 
             # Store code and timestamp
             prefs.sms_verification_code = code
             prefs.sms_verification_sent_at = timezone.now()
-            prefs.save(update_fields=[
-                'sms_verification_code',
-                'sms_verification_sent_at',
-                'sms_verification_attempts',
-                'updated_at'
-            ])
+            prefs.save(
+                update_fields=[
+                    "sms_verification_code",
+                    "sms_verification_sent_at",
+                    "sms_verification_attempts",
+                    "updated_at",
+                ]
+            )
 
             # Send SMS
             from sms_system.services.sms_sender import SMSSendingService
@@ -101,41 +109,40 @@ class SMSVerificationService:
             # Use template for verification code SMS
             result = SMSSendingService.send_template_sms(
                 phone=phone_number,
-                template_type='verification_code',
+                template_type="verification_code",
                 context={
-                    'code': code,
-                    'expiry_minutes': cls.CODE_TTL_MINUTES,
+                    "code": code,
+                    "expiry_minutes": cls.CODE_TTL_MINUTES,
                 },
             )
 
-            if not result.get('success'):
+            if not result.get("success"):
                 return {
-                    'success': False,
-                    'error': result.get('error', 'Failed to send SMS'),
+                    "success": False,
+                    "error": result.get("error", "Failed to send SMS"),
                 }
 
             expiry_time = timezone.now() + timedelta(minutes=cls.CODE_TTL_MINUTES)
 
-            logger.info(
-                f"Sent SMS verification code to {phone_number[-4:]} for user {user.id}"
-            )
+            logger.info(f"Sent SMS verification code to {phone_number[-4:]} for user {user.id}")
 
             return {
-                'success': True,
-                'expires_at': expiry_time,
-                'phone_last_4': phone_number[-4:] if len(phone_number) >= 4 else phone_number,
+                "success": True,
+                "expires_at": expiry_time,
+                "phone_last_4": phone_number[-4:] if len(phone_number) >= 4 else phone_number,
             }
 
         except Exception as e:
             logger.error(f"Error sending SMS verification code: {e}", exc_info=True)
             return {
-                'success': False,
-                'error': str(e),
+                "success": False,
+                "error": str(e),
             }
 
     @classmethod
-    def verify_code(cls, user, code: str, phone_number: str,
-                    ip_address: str = None, user_agent: str = None) -> Dict:
+    def verify_code(
+        cls, user, code: str, phone_number: str, ip_address: str = None, user_agent: str = None
+    ) -> dict:
         """
         Verify SMS code with security measures.
 
@@ -149,9 +156,9 @@ class SMSVerificationService:
         Returns:
             Dict with success status
         """
-        from accounts.models import CommunicationPreference, CustomerProfile
-        from accounts.services.preference_service import PreferenceService
+        from accounts.models import CustomerProfile
         from accounts.services.preference_audit_service import PreferenceAuditService
+        from accounts.services.preference_service import PreferenceService
 
         try:
             # Get preference
@@ -160,8 +167,8 @@ class SMSVerificationService:
             # Check if code exists
             if not prefs.sms_verification_code:
                 return {
-                    'success': False,
-                    'error': 'No verification code found. Please request a new code.',
+                    "success": False,
+                    "error": "No verification code found. Please request a new code.",
                 }
 
             # Check TTL (15 minutes)
@@ -169,32 +176,32 @@ class SMSVerificationService:
                 time_since_sent = timezone.now() - prefs.sms_verification_sent_at
                 if time_since_sent > timedelta(minutes=cls.CODE_TTL_MINUTES):
                     # Clear expired code
-                    prefs.sms_verification_code = ''
-                    prefs.save(update_fields=['sms_verification_code', 'updated_at'])
+                    prefs.sms_verification_code = ""
+                    prefs.save(update_fields=["sms_verification_code", "updated_at"])
 
                     return {
-                        'success': False,
-                        'error': 'Verification code has expired. Please request a new code.',
+                        "success": False,
+                        "error": "Verification code has expired. Please request a new code.",
                     }
 
             # Verify code with constant-time comparison (security best practice)
             if not secrets.compare_digest(prefs.sms_verification_code, code):
                 # Increment failed attempts
                 prefs.sms_verification_attempts += 1
-                prefs.save(update_fields=['sms_verification_attempts', 'updated_at'])
+                prefs.save(update_fields=["sms_verification_attempts", "updated_at"])
 
                 remaining_attempts = cls.MAX_ATTEMPTS - prefs.sms_verification_attempts
 
                 if remaining_attempts <= 0:
                     return {
-                        'success': False,
-                        'error': f'Too many failed attempts. Please wait {cls.COOLDOWN_MINUTES} minutes and request a new code.',
+                        "success": False,
+                        "error": f"Too many failed attempts. Please wait {cls.COOLDOWN_MINUTES} minutes and request a new code.",
                     }
 
                 return {
-                    'success': False,
-                    'error': 'Invalid verification code.',
-                    'attempts_remaining': remaining_attempts,
+                    "success": False,
+                    "error": "Invalid verification code.",
+                    "attempts_remaining": remaining_attempts,
                 }
 
             # Success! Mark as verified
@@ -202,7 +209,7 @@ class SMSVerificationService:
             prefs.sms_verified_at = timezone.now()
 
             # Clear verification code and reset attempts
-            prefs.sms_verification_code = ''
+            prefs.sms_verification_code = ""
             prefs.sms_verification_attempts = 0
 
             # Update consent tracking
@@ -217,35 +224,35 @@ class SMSVerificationService:
             try:
                 profile = CustomerProfile.objects.get(user=user)
                 profile.phone = phone_number
-                profile.save(update_fields=['phone', 'updated_at'])
+                profile.save(update_fields=["phone", "updated_at"])
             except CustomerProfile.DoesNotExist:
                 pass
 
             # Create audit log
             PreferenceAuditService.log_verification(
                 preference=prefs,
-                channel='sms',
+                channel="sms",
             )
 
             # Invalidate caches
-            PreferenceService.invalidate_cache(user.id, 'sms')
+            PreferenceService.invalidate_cache(user.id, "sms")
 
             logger.info(f"SMS verified for user {user.id}")
 
             return {
-                'success': True,
-                'message': 'SMS number verified successfully',
+                "success": True,
+                "message": "SMS number verified successfully",
             }
 
         except Exception as e:
             logger.error(f"Error verifying SMS code: {e}", exc_info=True)
             return {
-                'success': False,
-                'error': str(e),
+                "success": False,
+                "error": str(e),
             }
 
     @classmethod
-    def resend_code(cls, user, phone_number: str) -> Dict:
+    def resend_code(cls, user, phone_number: str) -> dict:
         """
         Resend verification code (clears old code first).
 
@@ -263,8 +270,8 @@ class SMSVerificationService:
             prefs, _ = PreferenceService.get_or_create_for_user(user)
 
             # Clear old code
-            prefs.sms_verification_code = ''
-            prefs.save(update_fields=['sms_verification_code', 'updated_at'])
+            prefs.sms_verification_code = ""
+            prefs.save(update_fields=["sms_verification_code", "updated_at"])
 
             # Send new code
             return cls.send_verification_code(user, phone_number)
@@ -272,6 +279,6 @@ class SMSVerificationService:
         except Exception as e:
             logger.error(f"Error resending SMS code: {e}", exc_info=True)
             return {
-                'success': False,
-                'error': str(e),
+                "success": False,
+                "error": str(e),
             }

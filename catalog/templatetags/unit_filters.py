@@ -2,8 +2,10 @@
 Template filters for unit conversion and formatting.
 Automatically converts units based on customer location.
 """
+
 from django import template
 from django.utils.safestring import mark_safe
+
 from core.models import SiteSettings
 from core.utils.units import UnitConverter
 
@@ -59,7 +61,7 @@ def convert_weight(value, customer_country=None):
 
         return UnitConverter.format_weight(value, admin_unit)
 
-    except Exception as e:
+    except Exception:
         # Fallback to simple display if something goes wrong
         return f"{value} {getattr(settings, 'default_weight_unit', 'kg')}"
 
@@ -113,7 +115,7 @@ def convert_dimension(value, customer_country=None):
 
         return UnitConverter.format_length(value, admin_unit)
 
-    except Exception as e:
+    except Exception:
         # Fallback to simple display if something goes wrong
         return f"{value} {getattr(settings, 'default_length_unit', 'cm')}"
 
@@ -187,7 +189,7 @@ def format_dimensions(length, width, height, customer_country=None):
         h_str = UnitConverter.format_length(height, admin_unit)
         return mark_safe(f"{l_str} × {w_str} × {h_str}")
 
-    except Exception as e:
+    except Exception:
         # Fallback to simple display
         return f"{length} × {width} × {height} {getattr(settings, 'default_length_unit', 'cm')}"
 
@@ -241,7 +243,7 @@ def convert_volume(value, customer_country=None):
 
         return UnitConverter.format_volume(value, admin_unit)
 
-    except Exception as e:
+    except Exception:
         # Fallback to simple display if something goes wrong
         return f"{value} {getattr(settings, 'default_volume_unit', 'ml')}"
 
@@ -295,7 +297,7 @@ def convert_area(value, customer_country=None):
 
         return UnitConverter.format_area(value, admin_unit)
 
-    except Exception as e:
+    except Exception:
         # Fallback to simple display if something goes wrong
         return f"{value} {getattr(settings, 'default_area_unit', 'sq_m')}"
 
@@ -349,7 +351,7 @@ def convert_temperature(value, customer_country=None):
 
         return UnitConverter.format_temperature(value, admin_unit)
 
-    except Exception as e:
+    except Exception:
         # Fallback to simple display if something goes wrong
         return f"{value} {getattr(settings, 'default_temperature_unit', 'c')}"
 

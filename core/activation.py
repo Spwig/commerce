@@ -15,18 +15,16 @@ Flow:
 8. Clear caches so middleware stops redirecting
 """
 
+import hashlib
+import hmac
 import json
+import logging
 import os
 import secrets
-import hmac
-import hashlib
-import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import requests as http_requests
-from django.conf import settings
 from django.core.cache import cache
 
 import core
@@ -38,12 +36,13 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ActivationResult:
     """Result of an activation attempt."""
+
     success: bool
-    error: Optional[str] = None
-    admin_username: Optional[str] = None
-    admin_password: Optional[str] = None
-    license_type: Optional[str] = None
-    owner_name: Optional[str] = None
+    error: str | None = None
+    admin_username: str | None = None
+    admin_password: str | None = None
+    license_type: str | None = None
+    owner_name: str | None = None
 
 
 def validate_setup_token(token_str: str) -> dict:
@@ -65,11 +64,7 @@ def validate_setup_token(token_str: str) -> dict:
     validate_url = f"{update_config.server_url}/api/v1/setup-tokens/validate/"
 
     try:
-        response = http_requests.post(
-            validate_url,
-            json={'token': token_str},
-            timeout=30
-        )
+        response = http_requests.post(validate_url, json={"token": token_str}, timeout=30)
     except http_requests.exceptions.Timeout:
         raise ActivationError("Connection to update server timed out. Please try again.")
     except http_requests.exceptions.ConnectionError:
@@ -80,17 +75,17 @@ def validate_setup_token(token_str: str) -> dict:
     if response.status_code != 200:
         error_data = _safe_json(response)
         raise ActivationError(
-            error_data.get('reason', error_data.get('error', 'Token validation failed'))
+            error_data.get("reason", error_data.get("error", "Token validation failed"))
         )
 
     data = response.json()
-    if not data.get('valid'):
-        raise ActivationError(data.get('reason', 'Invalid setup token'))
+    if not data.get("valid"):
+        raise ActivationError(data.get("reason", "Invalid setup token"))
 
     return data
 
 
-def activate_license(license_key: str, domain: str, setup_token_id: str = '') -> dict:
+def activate_license(license_key: str, domain: str, setup_token_id: str = "") -> dict:
     """
     Activate a license via the update server using challenge-response.
 
@@ -119,17 +114,17 @@ def activate_license(license_key: str, domain: str, setup_token_id: str = '') ->
     activation_url = f"{update_config.server_url}/api/v1/licenses/activate/"
 
     payload = {
-        'license_key': license_key,
-        'installation_uuid': installation_uuid,
-        'domain': domain,
-        'platform_version': platform_version,
-        'environment_type': 'production',
-        'challenge': challenge,
+        "license_key": license_key,
+        "installation_uuid": installation_uuid,
+        "domain": domain,
+        "platform_version": platform_version,
+        "environment_type": "production",
+        "challenge": challenge,
     }
 
     # Include setup_token_id for provenance tracking (ignored by old servers)
     if setup_token_id:
-        payload['setup_token_id'] = setup_token_id
+        payload["setup_token_id"] = setup_token_id
 
     try:
         response = http_requests.post(activation_url, json=payload, timeout=30)
@@ -142,26 +137,24 @@ def activate_license(license_key: str, domain: str, setup_token_id: str = '') ->
 
     if response.status_code != 200:
         error_data = _safe_json(response)
-        error_msg = error_data.get('message', error_data.get('error', 'Activation failed'))
+        error_msg = error_data.get("message", error_data.get("error", "Activation failed"))
         raise ActivationError(f"Activation failed: {error_msg}")
 
     activation_data = response.json()
 
     # Verify challenge response (prevents MITM)
     expected_response = hmac.new(
-        license_key.encode(),
-        (challenge + installation_uuid).encode(),
-        hashlib.sha256
+        license_key.encode(), (challenge + installation_uuid).encode(), hashlib.sha256
     ).hexdigest()
 
-    received_response = activation_data.get('challenge_response', '')
+    received_response = activation_data.get("challenge_response", "")
     if received_response != expected_response:
         raise ActivationError("Challenge verification failed. Possible security issue.")
 
     # Build license data object
     license_data = {
-        'license': activation_data['license'],
-        'signature': activation_data['signature'],
+        "license": activation_data["license"],
+        "signature": activation_data["signature"],
     }
 
     # Verify signature locally
@@ -178,7 +171,7 @@ def write_license_file(license_data: dict) -> Path:
     license_path = Path(license_manager.license_path)
     license_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(license_path, 'w') as f:
+    with open(license_path, "w") as f:
         json.dump(license_data, f, indent=2)
 
     return license_path
@@ -196,7 +189,7 @@ def create_admin_user(email: str, owner_name: str) -> tuple:
     User = get_user_model()
 
     # Generate username from email (before @)
-    username = email.split('@')[0].lower()
+    username = email.split("@")[0].lower()
     # Ensure it's unique
     base_username = username
     counter = 1
@@ -208,11 +201,11 @@ def create_admin_user(email: str, owner_name: str) -> tuple:
     password = secrets.token_urlsafe(12)
 
     # Split owner_name into first/last
-    name_parts = owner_name.strip().split(' ', 1)
-    first_name = name_parts[0] if name_parts else ''
-    last_name = name_parts[1] if len(name_parts) > 1 else ''
+    name_parts = owner_name.strip().split(" ", 1)
+    first_name = name_parts[0] if name_parts else ""
+    last_name = name_parts[1] if len(name_parts) > 1 else ""
 
-    user = User.objects.create_superuser(
+    User.objects.create_superuser(
         username=username,
         email=email,
         password=password,
@@ -224,7 +217,7 @@ def create_admin_user(email: str, owner_name: str) -> tuple:
     return username, password
 
 
-def activate_with_token(token_str: str, domain: str = 'localhost') -> ActivationResult:
+def activate_with_token(token_str: str, domain: str = "localhost") -> ActivationResult:
     """
     Full activation flow: validate token → activate license → create admin user.
 
@@ -239,13 +232,15 @@ def activate_with_token(token_str: str, domain: str = 'localhost') -> Activation
         # Step 1: Validate the setup token
         token_data = validate_setup_token(token_str.strip())
 
-        license_key = token_data.get('license_key')
-        email = token_data.get('email', '')
-        owner_name = token_data.get('owner_name', '')
-        setup_token_id = token_data.get('token_id', '')
+        license_key = token_data.get("license_key")
+        email = token_data.get("email", "")
+        owner_name = token_data.get("owner_name", "")
+        setup_token_id = token_data.get("token_id", "")
 
         if not license_key:
-            return ActivationResult(success=False, error="Setup token does not contain a license key.")
+            return ActivationResult(
+                success=False, error="Setup token does not contain a license key."
+            )
 
         # Step 2: Activate the license (pass setup_token_id for provenance tracking)
         license_data = activate_license(license_key, domain, setup_token_id=setup_token_id)
@@ -255,6 +250,7 @@ def activate_with_token(token_str: str, domain: str = 'localhost') -> Activation
 
         # Step 4: Store license key in UpdateServerConfig
         from component_updates.models import UpdateServerConfig
+
         update_config = UpdateServerConfig.get_instance()
         update_config.license_key = license_key
         update_config.jwt_token = token_str.strip()
@@ -265,13 +261,14 @@ def activate_with_token(token_str: str, domain: str = 'localhost') -> Activation
 
         # Step 6: Clear activation cache
         from core.middleware.activation import ACTIVATION_CACHE_KEY
+
         cache.set(ACTIVATION_CACHE_KEY, True, 60 * 60 * 24)
 
         # Step 7: Create admin user (skip for hosted — merchant-ctl handles it
         # with the merchant's actual password from checkout)
         admin_username = None
         admin_password = None
-        if email and not os.environ.get('SPWIG_HOSTED'):
+        if email and not os.environ.get("SPWIG_HOSTED"):
             try:
                 admin_username, admin_password = create_admin_user(email, owner_name)
             except Exception as e:
@@ -281,12 +278,12 @@ def activate_with_token(token_str: str, domain: str = 'localhost') -> Activation
         # Step 8: Store token-derived settings for setup wizard
         _store_setup_defaults(token_data)
 
-        license_info = license_data.get('license', {})
+        license_info = license_data.get("license", {})
         return ActivationResult(
             success=True,
             admin_username=admin_username,
             admin_password=admin_password,
-            license_type=license_info.get('license_type', 'unknown'),
+            license_type=license_info.get("license_type", "unknown"),
             owner_name=owner_name,
         )
 
@@ -301,8 +298,9 @@ def activate_with_token(token_str: str, domain: str = 'localhost') -> Activation
 def _store_setup_defaults(token_data: dict):
     """Store token-derived settings so the setup wizard can pre-populate fields."""
     try:
-        from core.models import SiteSettings
         from django.contrib.sites.models import Site
+
+        from core.models import SiteSettings
 
         site_settings = SiteSettings.get_settings()
         if not site_settings:
@@ -311,31 +309,31 @@ def _store_setup_defaults(token_data: dict):
         update_fields = []
 
         # site_name: use token's site_name, fall back to "{owner_name}'s Store"
-        token_site_name = token_data.get('site_name', '').strip()
-        if token_site_name and site_settings.site_name == 'My E-commerce Store':
+        token_site_name = token_data.get("site_name", "").strip()
+        if token_site_name and site_settings.site_name == "My E-commerce Store":
             site_settings.site_name = token_site_name
-            update_fields.append('site_name')
-        elif token_data.get('owner_name') and site_settings.site_name == 'My E-commerce Store':
+            update_fields.append("site_name")
+        elif token_data.get("owner_name") and site_settings.site_name == "My E-commerce Store":
             site_settings.site_name = f"{token_data['owner_name']}'s Store"
-            update_fields.append('site_name')
+            update_fields.append("site_name")
 
         # admin_email
-        email = token_data.get('email', '').strip()
+        email = token_data.get("email", "").strip()
         if email and not site_settings.admin_email:
             site_settings.admin_email = email
-            update_fields.append('admin_email')
+            update_fields.append("admin_email")
 
         # site_url from domain
-        domain = token_data.get('domain', '').strip()
-        if domain and site_settings.site_url == 'https://example.com':
+        domain = token_data.get("domain", "").strip()
+        if domain and site_settings.site_url == "https://example.com":
             site_settings.site_url = f"https://{domain}"
-            update_fields.append('site_url')
+            update_fields.append("site_url")
 
         # default_language from shop_language
-        shop_lang = token_data.get('shop_language', '').strip()
-        if shop_lang and site_settings.default_language == 'en':
+        shop_lang = token_data.get("shop_language", "").strip()
+        if shop_lang and site_settings.default_language == "en":
             site_settings.default_language = shop_lang
-            update_fields.append('default_language')
+            update_fields.append("default_language")
 
         if update_fields:
             site_settings.save(update_fields=update_fields)
@@ -344,33 +342,42 @@ def _store_setup_defaults(token_data: dict):
         if domain:
             site = Site.objects.get(pk=1)
             changed = False
-            if site.domain == 'example.com':
+            if site.domain == "example.com":
                 site.domain = domain
                 changed = True
-            if site.name == 'My E-commerce Store' and (token_site_name or token_data.get('owner_name')):
+            if site.name == "My E-commerce Store" and (
+                token_site_name or token_data.get("owner_name")
+            ):
                 site.name = token_site_name or f"{token_data['owner_name']}'s Store"
                 changed = True
             if changed:
                 site.save()
 
         # For hosted instances: configure SSL as managed externally (Cloudflare)
-        if os.environ.get('SPWIG_HOSTED'):
+        if os.environ.get("SPWIG_HOSTED"):
             try:
                 from domain_ssl.models import DomainConfiguration
+
                 config = DomainConfiguration.get_instance()
                 if config.ssl_mode == DomainConfiguration.SSLMode.NONE:
                     config.ssl_mode = DomainConfiguration.SSLMode.MANAGED_EXTERNALLY
-                    config.cert_domain = '*.myspwig.com'
-                    config.cert_issuer = 'Cloudflare Origin CA'
+                    config.cert_domain = "*.myspwig.com"
+                    config.cert_issuer = "Cloudflare Origin CA"
                     config.status = DomainConfiguration.Status.IDLE
-                    config.last_error = ''
+                    config.last_error = ""
                     if domain:
                         config.domain = domain
-                    config.save(update_fields=[
-                        'ssl_mode', 'cert_domain', 'cert_issuer',
-                        'status', 'last_error', 'domain',
-                    ])
-                    logger.info('SSL configured as managed externally (hosted)')
+                    config.save(
+                        update_fields=[
+                            "ssl_mode",
+                            "cert_domain",
+                            "cert_issuer",
+                            "status",
+                            "last_error",
+                            "domain",
+                        ]
+                    )
+                    logger.info("SSL configured as managed externally (hosted)")
             except Exception as ssl_err:
                 logger.debug(f"Could not configure hosted SSL: {ssl_err}")
 
@@ -381,7 +388,7 @@ def _store_setup_defaults(token_data: dict):
 def _safe_json(response) -> dict:
     """Safely parse JSON from a response, returning empty dict on failure."""
     try:
-        if response.headers.get('content-type', '').startswith('application/json'):
+        if response.headers.get("content-type", "").startswith("application/json"):
             return response.json()
     except Exception:
         pass
@@ -390,4 +397,5 @@ def _safe_json(response) -> dict:
 
 class ActivationError(Exception):
     """Raised when activation fails."""
+
     pass

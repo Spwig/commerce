@@ -4,42 +4,50 @@
  * Intercepts console.log/warn/error/info into a circular buffer so the
  * Bug Report Wizard can include console output in reports.
  */
-(function() {
-    var buffer = [];
-    var MAX = 50;
-    var original = {
-        log: console.log,
-        warn: console.warn,
-        error: console.error,
-        info: console.info
+(function () {
+  const buffer = [];
+  const MAX = 50;
+  const original = {
+    log: console.log,
+    warn: console.warn,
+    error: console.error,
+    info: console.info,
+  };
+
+  ['log', 'warn', 'error', 'info'].forEach(function (level) {
+    console[level] = function () {
+      const args = Array.prototype.slice.call(arguments);
+      const message = args
+        .map(function (v) {
+          if (v === null) return 'null';
+          if (v === undefined) return 'undefined';
+          if (typeof v === 'object') {
+            try {
+              return JSON.stringify(v);
+            } catch (e) {
+              return String(v);
+            }
+          }
+          return String(v);
+        })
+        .join(' ');
+
+      buffer.push({
+        level: level,
+        message: message.substring(0, 500),
+        timestamp: new Date().toISOString(),
+      });
+      if (buffer.length > MAX) buffer.shift();
+
+      original[level].apply(console, args);
     };
+  });
 
-    ['log', 'warn', 'error', 'info'].forEach(function(level) {
-        console[level] = function() {
-            var args = Array.prototype.slice.call(arguments);
-            var message = args.map(function(v) {
-                if (v === null) return 'null';
-                if (v === undefined) return 'undefined';
-                if (typeof v === 'object') {
-                    try { return JSON.stringify(v); } catch (e) { return String(v); }
-                }
-                return String(v);
-            }).join(' ');
-
-            buffer.push({
-                level: level,
-                message: message.substring(0, 500),
-                timestamp: new Date().toISOString()
-            });
-            if (buffer.length > MAX) buffer.shift();
-
-            original[level].apply(console, args);
-        };
-    });
-
-    window.__spwig_console_buffer = buffer;
-    window.__spwig_nav_breadcrumbs = [{
-        url: location.href,
-        timestamp: new Date().toISOString()
-    }];
+  window.__spwig_console_buffer = buffer;
+  window.__spwig_nav_breadcrumbs = [
+    {
+      url: location.href,
+      timestamp: new Date().toISOString(),
+    },
+  ];
 })();

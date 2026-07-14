@@ -6,9 +6,10 @@ material names, and hierarchy. This information is stored in SceneConfig.node_tr
 and used by the admin mapping UI to let merchants map configurator options
 to 3D scene nodes.
 """
+
 import logging
-import tempfile
 import os
+import tempfile
 
 logger = logging.getLogger(__name__)
 
@@ -46,25 +47,31 @@ def parse_glb(file_obj):
         from pygltflib import GLTF2
     except ImportError:
         logger.error("pygltflib not installed. Run: pip install pygltflib")
-        return {"error": "pygltflib not installed", "version": 1, "root_nodes": [], "nodes": {}, "materials": {}}
+        return {
+            "error": "pygltflib not installed",
+            "version": 1,
+            "root_nodes": [],
+            "nodes": {},
+            "materials": {},
+        }
 
     # Write to temp file if needed (pygltflib needs a file path for GLB)
     tmp_path = None
     try:
-        if hasattr(file_obj, 'path'):
+        if hasattr(file_obj, "path"):
             # Direct file on disk
             file_path = file_obj.path
-        elif hasattr(file_obj, 'temporary_file_path'):
+        elif hasattr(file_obj, "temporary_file_path"):
             # Django temp upload
             file_path = file_obj.temporary_file_path()
         else:
             # In-memory file — write to temp
-            suffix = '.glb'
-            if hasattr(file_obj, 'name') and file_obj.name:
+            suffix = ".glb"
+            if hasattr(file_obj, "name") and file_obj.name:
                 _, ext = os.path.splitext(file_obj.name)
                 if ext:
                     suffix = ext
-            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)  # noqa: SIM115  # delete=False; path passed to GLTF loader
             file_obj.seek(0)
             for chunk in _iter_chunks(file_obj):
                 tmp.write(chunk)
@@ -85,7 +92,7 @@ def parse_glb(file_obj):
 
 def _iter_chunks(file_obj, chunk_size=8192):
     """Iterate over file-like object in chunks."""
-    if hasattr(file_obj, 'chunks'):
+    if hasattr(file_obj, "chunks"):
         yield from file_obj.chunks()
     else:
         while True:
@@ -106,16 +113,16 @@ def _extract_scene_graph(gltf):
 
     # Known glTF extensions to detect on materials
     _KNOWN_EXTENSIONS = {
-        'KHR_materials_clearcoat',
-        'KHR_materials_transmission',
-        'KHR_materials_ior',
-        'KHR_materials_unlit',
-        'KHR_materials_sheen',
-        'KHR_materials_specular',
-        'KHR_materials_iridescence',
-        'KHR_materials_anisotropy',
-        'KHR_materials_volume',
-        'KHR_materials_emissive_strength',
+        "KHR_materials_clearcoat",
+        "KHR_materials_transmission",
+        "KHR_materials_ior",
+        "KHR_materials_unlit",
+        "KHR_materials_sheen",
+        "KHR_materials_specular",
+        "KHR_materials_iridescence",
+        "KHR_materials_anisotropy",
+        "KHR_materials_volume",
+        "KHR_materials_emissive_strength",
     }
 
     # Parse materials
@@ -155,7 +162,9 @@ def _extract_scene_graph(gltf):
                 if pbr.roughnessFactor is not None:
                     mat_data["roughness"] = pbr.roughnessFactor
                 mat_data["has_base_color_texture"] = pbr.baseColorTexture is not None
-                mat_data["has_metallic_roughness_texture"] = pbr.metallicRoughnessTexture is not None
+                mat_data["has_metallic_roughness_texture"] = (
+                    pbr.metallicRoughnessTexture is not None
+                )
 
             # Emissive properties
             if mat.emissiveFactor and any(c > 0 for c in mat.emissiveFactor):
@@ -164,10 +173,10 @@ def _extract_scene_graph(gltf):
 
             # KHR_materials_emissive_strength extension
             mat_ext = mat.extensions or {}
-            if 'KHR_materials_emissive_strength' in mat_ext:
-                ext = mat_ext['KHR_materials_emissive_strength']
-                if isinstance(ext, dict) and 'emissiveStrength' in ext:
-                    mat_data["emissive_strength"] = float(ext['emissiveStrength'])
+            if "KHR_materials_emissive_strength" in mat_ext:
+                ext = mat_ext["KHR_materials_emissive_strength"]
+                if isinstance(ext, dict) and "emissiveStrength" in ext:
+                    mat_data["emissive_strength"] = float(ext["emissiveStrength"])
 
             # Alpha properties
             if mat.alphaMode:

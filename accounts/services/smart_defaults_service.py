@@ -4,12 +4,13 @@ Smart Defaults Service
 Provides rule-based recommendations for optimal communication frequency
 based on customer engagement heuristics (no ML infrastructure).
 """
+
 import logging
-from typing import Dict
-from django.contrib.auth import get_user_model
-from django.db.models import Sum, Count, Max
-from django.utils import timezone
 from datetime import timedelta
+
+from django.contrib.auth import get_user_model
+from django.db.models import Max, Sum
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -33,7 +34,7 @@ class SmartDefaultsService:
     WEIGHT_EMAIL_ENGAGEMENT = 10
 
     @classmethod
-    def calculate_engagement_score(cls, user) -> Dict:
+    def calculate_engagement_score(cls, user) -> dict:
         """
         Calculate engagement score (0-100) for a user.
 
@@ -51,9 +52,9 @@ class SmartDefaultsService:
         # 1. Order Frequency (40 points max)
         ninety_days_ago = timezone.now() - timedelta(days=90)
         order_count_90d = Order.objects.filter(
-            customer=user,
+            user=user,
             created_at__gte=ninety_days_ago,
-            status__in=['completed', 'processing', 'shipped']
+            status__in=["completed", "processing", "shipped"],
         ).count()
 
         if order_count_90d >= 3:  # ≥1 order/month
@@ -64,16 +65,15 @@ class SmartDefaultsService:
             frequency_score = cls.WEIGHT_ORDER_FREQUENCY * 0.25
 
         score += frequency_score
-        breakdown['order_frequency'] = {
-            'score': frequency_score,
-            'orders_90d': order_count_90d,
+        breakdown["order_frequency"] = {
+            "score": frequency_score,
+            "orders_90d": order_count_90d,
         }
 
         # 2. Recency (30 points max)
         last_order = Order.objects.filter(
-            customer=user,
-            status__in=['completed', 'processing', 'shipped']
-        ).aggregate(Max('created_at'))['created_at__max']
+            user=user, status__in=["completed", "processing", "shipped"]
+        ).aggregate(Max("created_at"))["created_at__max"]
 
         if last_order:
             days_since = (timezone.now() - last_order).days
@@ -87,43 +87,47 @@ class SmartDefaultsService:
             else:
                 recency_score = cls.WEIGHT_RECENCY * 0.17
 
-            breakdown['recency'] = {
-                'score': recency_score,
-                'days_since_last_order': days_since,
+            breakdown["recency"] = {
+                "score": recency_score,
+                "days_since_last_order": days_since,
             }
         else:
             recency_score = 0
-            breakdown['recency'] = {
-                'score': 0,
-                'days_since_last_order': None,
+            breakdown["recency"] = {
+                "score": 0,
+                "days_since_last_order": None,
             }
 
         score += recency_score
 
         # 3. Customer Tier (20 points max)
-        total_spent = Order.objects.filter(
-            customer=user,
-            status='completed'
-        ).aggregate(Sum('total'))['total__sum'] or 0
+        total_spent_agg = Order.objects.filter(user=user, status="completed").aggregate(
+            Sum("total_amount")
+        )["total_amount__sum"]
+        # Aggregate returns Money when rows exist, None when empty. Unwrap to
+        # Decimal so plain-number comparisons and float() work.
+        total_spent = (
+            total_spent_agg.amount if hasattr(total_spent_agg, "amount") else (total_spent_agg or 0)
+        )
 
         if total_spent >= 1000:  # VIP
             tier_score = cls.WEIGHT_CUSTOMER_TIER
-            tier = 'VIP'
+            tier = "VIP"
         elif total_spent >= 500:  # High value
             tier_score = cls.WEIGHT_CUSTOMER_TIER * 0.75
-            tier = 'High Value'
+            tier = "High Value"
         elif total_spent >= 100:  # Regular
             tier_score = cls.WEIGHT_CUSTOMER_TIER * 0.5
-            tier = 'Regular'
+            tier = "Regular"
         else:
             tier_score = cls.WEIGHT_CUSTOMER_TIER * 0.25
-            tier = 'New'
+            tier = "New"
 
         score += tier_score
-        breakdown['customer_tier'] = {
-            'score': tier_score,
-            'tier': tier,
-            'total_spent': float(total_spent),
+        breakdown["customer_tier"] = {
+            "score": tier_score,
+            "tier": tier,
+            "total_spent": float(total_spent),
         }
 
         # 4. Email Engagement (10 points max)
@@ -137,28 +141,28 @@ class SmartDefaultsService:
             else:
                 engagement_score = 0
 
-            breakdown['email_engagement'] = {
-                'score': engagement_score,
-                'opted_in': prefs.email_marketing,
-                'verified': prefs.email_verified,
+            breakdown["email_engagement"] = {
+                "score": engagement_score,
+                "opted_in": prefs.email_marketing,
+                "verified": prefs.email_verified,
             }
         except CommunicationPreference.DoesNotExist:
             engagement_score = 0
-            breakdown['email_engagement'] = {
-                'score': 0,
-                'opted_in': False,
-                'verified': False,
+            breakdown["email_engagement"] = {
+                "score": 0,
+                "opted_in": False,
+                "verified": False,
             }
 
         score += engagement_score
 
         return {
-            'total_score': round(score, 2),
-            'breakdown': breakdown,
+            "total_score": round(score, 2),
+            "breakdown": breakdown,
         }
 
     @classmethod
-    def get_recommended_frequency(cls, user) -> Dict:
+    def get_recommended_frequency(cls, user) -> dict:
         """
         Get recommended communication frequency based on engagement.
 
@@ -169,27 +173,27 @@ class SmartDefaultsService:
             Dict with frequency and reasoning
         """
         engagement = cls.calculate_engagement_score(user)
-        score = engagement['total_score']
+        score = engagement["total_score"]
 
         if score >= 80:
-            frequency = 'immediate'
-            reasoning = 'High engagement - active customer with frequent orders'
+            frequency = "immediate"
+            reasoning = "High engagement - active customer with frequent orders"
         elif score >= 50:
-            frequency = 'weekly'
-            reasoning = 'Moderate engagement - regular customer, weekly digest recommended'
+            frequency = "weekly"
+            reasoning = "Moderate engagement - regular customer, weekly digest recommended"
         else:
-            frequency = 'monthly'
-            reasoning = 'Lower engagement - reduce frequency to avoid fatigue'
+            frequency = "monthly"
+            reasoning = "Lower engagement - reduce frequency to avoid fatigue"
 
         return {
-            'frequency': frequency,
-            'reasoning': reasoning,
-            'engagement_score': score,
-            'breakdown': engagement['breakdown'],
+            "frequency": frequency,
+            "reasoning": reasoning,
+            "engagement_score": score,
+            "breakdown": engagement["breakdown"],
         }
 
     @classmethod
-    def get_app_recommendations(cls, user) -> Dict:
+    def get_app_recommendations(cls, user) -> dict:
         """
         Get recommendations for app-specific preferences.
 
@@ -204,47 +208,49 @@ class SmartDefaultsService:
         recommendations = {}
 
         # Get order stats
-        total_orders = Order.objects.filter(
-            customer=user,
-            status='completed'
-        ).count()
+        total_orders = Order.objects.filter(user=user, status="completed").count()
 
-        total_spent = Order.objects.filter(
-            customer=user,
-            status='completed'
-        ).aggregate(Sum('total'))['total__sum'] or 0
+        total_spent_agg = Order.objects.filter(user=user, status="completed").aggregate(
+            Sum("total_amount")
+        )["total_amount__sum"]
+        total_spent = (
+            total_spent_agg.amount if hasattr(total_spent_agg, "amount") else (total_spent_agg or 0)
+        )
 
         # Blog: Recommend if ≥2 orders (engaged customer)
-        recommendations['blog'] = {
-            'recommended': total_orders >= 2,
-            'reason': 'Engaged customer - would likely appreciate blog content' if total_orders >= 2
-                     else 'Build more order history first',
+        recommendations["blog"] = {
+            "recommended": total_orders >= 2,
+            "reason": "Engaged customer - would likely appreciate blog content"
+            if total_orders >= 2
+            else "Build more order history first",
         }
 
         # Loyalty: Recommend if ≥$100 spent
-        recommendations['loyalty'] = {
-            'recommended': total_spent >= 100,
-            'reason': f'Spent ${total_spent:.2f} - loyalty rewards would add value' if total_spent >= 100
-                     else f'Spend threshold not met (${total_spent:.2f} < $100)',
+        recommendations["loyalty"] = {
+            "recommended": total_spent >= 100,
+            "reason": f"Spent ${total_spent:.2f} - loyalty rewards would add value"
+            if total_spent >= 100
+            else f"Spend threshold not met (${total_spent:.2f} < $100)",
         }
 
         # Referrals: Always recommend (win-win program)
-        recommendations['referrals'] = {
-            'recommended': True,
-            'reason': 'Win-win program - earn rewards by referring friends',
+        recommendations["referrals"] = {
+            "recommended": True,
+            "reason": "Win-win program - earn rewards by referring friends",
         }
 
         # Affiliate: Recommend if ≥$500 spent AND ≥5 orders (strong advocate)
-        recommendations['affiliate'] = {
-            'recommended': total_spent >= 500 and total_orders >= 5,
-            'reason': 'Strong customer advocate - good affiliate candidate' if (total_spent >= 500 and total_orders >= 5)
-                     else 'Not enough engagement for affiliate program yet',
+        recommendations["affiliate"] = {
+            "recommended": total_spent >= 500 and total_orders >= 5,
+            "reason": "Strong customer advocate - good affiliate candidate"
+            if (total_spent >= 500 and total_orders >= 5)
+            else "Not enough engagement for affiliate program yet",
         }
 
         return recommendations
 
     @classmethod
-    def get_recommendations_for_preference_center(cls, user) -> Dict:
+    def get_recommendations_for_preference_center(cls, user) -> dict:
         """
         Get complete recommendations for preference center display.
 
@@ -258,7 +264,7 @@ class SmartDefaultsService:
         app_recs = cls.get_app_recommendations(user)
 
         return {
-            'frequency': frequency_rec,
-            'apps': app_recs,
-            'show_suggestions': True,  # Can be toggled per user preference
+            "frequency": frequency_rec,
+            "apps": app_recs,
+            "show_suggestions": True,  # Can be toggled per user preference
         }

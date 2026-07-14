@@ -11,42 +11,42 @@
  *   data-csrf-token     - CSRF token for the request
  *   data-confirm-msg    - Confirmation message to display
  */
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize progress bar widths from data attributes
-        document.querySelectorAll('[data-initial-width]').forEach(function(el) {
-            el.style.width = el.dataset.initialWidth + '%';
-        });
-
-        // Delegated rollback handler
-        document.addEventListener('click', function(e) {
-            var btn = e.target.closest('.js-rollback-btn');
-            if (!btn) return;
-
-            e.preventDefault();
-
-            var msg = btn.dataset.confirmMsg ||
-                'Rollback this sync? This will restore the previous state.';
-            var url = btn.dataset.rollbackUrl;
-            var csrfToken = btn.dataset.csrfToken;
-
-            if (!url || !csrfToken) return;
-
-            AdminModal.confirm({
-                message: msg,
-                danger: true,
-                confirmText: 'Rollback'
-            }).then(function(confirmed) {
-                if (!confirmed) return;
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': csrfToken }
-                }).then(function() {
-                    location.reload();
-                });
-            });
-        });
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize progress bar widths from data attributes
+    document.querySelectorAll('[data-initial-width]').forEach(function (el) {
+      el.style.width = el.dataset.initialWidth + '%';
     });
+
+    // Delegated rollback handler
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('.js-rollback-btn');
+      if (!btn) return;
+
+      e.preventDefault();
+
+      const msg =
+        btn.dataset.confirmMsg || 'Rollback this sync? This will restore the previous state.';
+      const url = btn.dataset.rollbackUrl;
+      const csrfToken = btn.dataset.csrfToken;
+
+      if (!url || !csrfToken) return;
+
+      AdminModal.confirm({
+        message: msg,
+        danger: true,
+        confirmText: 'Rollback',
+      }).then(function (confirmed) {
+        if (!confirmed) return;
+        fetch(url, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrfToken },
+        }).then(function () {
+          location.reload();
+        });
+      });
+    });
+  });
 })();

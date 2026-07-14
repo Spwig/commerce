@@ -11,13 +11,21 @@ Usage in tests:
     def domestic_merchant(db):
         return domestic_us_merchant()
 """
+
 from decimal import Decimal
+
 from tests.factories import (
-    ShippingZoneFactory, ShippingMethodFactory, TaxRateFactory,
-    SalesRegionFactory, WarehouseFactory, ProductFactory,
-    ProductVariantFactory, StockItemFactory,
-    ShippingCountryFactory, CountryWarehouseFallbackFactory,
     CategoryFactory,
+    CountryWarehouseFallbackFactory,
+    ProductFactory,
+    ProductVariantFactory,
+    SalesRegionFactory,
+    ShippingCountryFactory,
+    ShippingMethodFactory,
+    ShippingZoneFactory,
+    StockItemFactory,
+    TaxRateFactory,
+    WarehouseFactory,
 )
 
 
@@ -29,44 +37,55 @@ def domestic_us_merchant():
     - Express Shipping: $14.99 (1-3 days)
     - Free Shipping: $0 but requires min_order_value=$100
     """
-    zone = ShippingZoneFactory(name='US Domestic', countries=['US'])
+    zone = ShippingZoneFactory(name="US Domestic", countries=["US"])
 
     standard = ShippingMethodFactory(
-        name='Standard Shipping',
-        flat_rate_cost=Decimal('5.99'),
+        name="Standard Shipping",
+        flat_rate_cost=Decimal("5.99"),
         min_delivery_days=5,
         max_delivery_days=7,
         zones=[zone],
     )
     express = ShippingMethodFactory(
-        name='Express Shipping',
-        flat_rate_cost=Decimal('14.99'),
+        name="Express Shipping",
+        flat_rate_cost=Decimal("14.99"),
         min_delivery_days=1,
         max_delivery_days=3,
         zones=[zone],
     )
+    # NOTE: The ShippingMethod model no longer has min_order_value / free_shipping
+    # method_type fields. Free-shipping-with-threshold logic lives elsewhere now.
+    # Kept as a $0 flat_rate method to preserve the scenario shape.
     free = ShippingMethodFactory(
-        name='Free Shipping',
-        method_type='free_shipping',
-        flat_rate_cost=Decimal('0.00'),
-        min_order_value=Decimal('100.00'),
-        min_order_value_currency='USD',
+        name="Free Shipping",
+        flat_rate_cost=Decimal("0.00"),
         min_delivery_days=7,
         max_delivery_days=10,
         zones=[zone],
     )
 
     # ShippingCountry record (needed by payment method filter)
-    us_country = ShippingCountryFactory(country_code='US')
+    # Use get_or_create semantics to avoid IntegrityError when the seed DB
+    # already carries a US ShippingCountry from previous fixture runs.
+    from django.contrib.sites.models import Site
+
+    from shipping.models import ShippingCountry
+
+    site = Site.objects.get_or_create(id=1, defaults={"domain": "localhost", "name": "Test"})[0]
+    us_country, _ = ShippingCountry.objects.get_or_create(
+        site=site,
+        country_code="US",
+        defaults={"is_active": True, "priority": 0},
+    )
 
     tax_ny = TaxRateFactory(ny=True)
     tax_ca = TaxRateFactory(ca=True)
 
     return {
-        'zone': zone,
-        'methods': {'standard': standard, 'express': express, 'free': free},
-        'taxes': {'ny': tax_ny, 'ca': tax_ca},
-        'shipping_country': us_country,
+        "zone": zone,
+        "methods": {"standard": standard, "express": express, "free": free},
+        "taxes": {"ny": tax_ny, "ca": tax_ca},
+        "shipping_country": us_country,
     }
 
 
@@ -82,35 +101,35 @@ def international_merchant():
     Tax: UK VAT 20%, DE VAT 19%
     """
     na_zone = ShippingZoneFactory(
-        name='North America',
-        countries=['US', 'CA', 'MX'],
+        name="North America",
+        countries=["US", "CA", "MX"],
     )
     eu_zone = ShippingZoneFactory(
-        name='Europe',
-        countries=['GB', 'DE', 'FR', 'ES', 'IT', 'NL'],
+        name="Europe",
+        countries=["GB", "DE", "FR", "ES", "IT", "NL"],
     )
     apac_zone = ShippingZoneFactory(
-        name='Asia Pacific',
-        countries=['JP', 'AU', 'SG', 'KR'],
+        name="Asia Pacific",
+        countries=["JP", "AU", "SG", "KR"],
     )
 
     domestic = ShippingMethodFactory(
-        name='Domestic Standard',
-        flat_rate_cost=Decimal('5.99'),
+        name="Domestic Standard",
+        flat_rate_cost=Decimal("5.99"),
         min_delivery_days=3,
         max_delivery_days=7,
         zones=[na_zone],
     )
     intl_standard = ShippingMethodFactory(
-        name='International Standard',
-        flat_rate_cost=Decimal('19.99'),
+        name="International Standard",
+        flat_rate_cost=Decimal("19.99"),
         min_delivery_days=7,
         max_delivery_days=14,
         zones=[eu_zone, apac_zone],
     )
     intl_express = ShippingMethodFactory(
-        name='International Express',
-        flat_rate_cost=Decimal('39.99'),
+        name="International Express",
+        flat_rate_cost=Decimal("39.99"),
         min_delivery_days=3,
         max_delivery_days=5,
         zones=[eu_zone, apac_zone],
@@ -120,13 +139,13 @@ def international_merchant():
     de_vat = TaxRateFactory(de_vat=True)
 
     return {
-        'zones': {'na': na_zone, 'eu': eu_zone, 'apac': apac_zone},
-        'methods': {
-            'domestic': domestic,
-            'intl_standard': intl_standard,
-            'intl_express': intl_express,
+        "zones": {"na": na_zone, "eu": eu_zone, "apac": apac_zone},
+        "methods": {
+            "domestic": domestic,
+            "intl_standard": intl_standard,
+            "intl_express": intl_express,
         },
-        'taxes': {'uk_vat': uk_vat, 'de_vat': de_vat},
+        "taxes": {"uk_vat": uk_vat, "de_vat": de_vat},
     }
 
 
@@ -137,29 +156,27 @@ def free_shipping_threshold_merchant():
     Uses a free_shipping method type with min_order_value.
     Standard paid option always available.
     """
-    zone = ShippingZoneFactory(name='Worldwide', countries=[])
+    zone = ShippingZoneFactory(name="Worldwide", countries=[])
 
     standard = ShippingMethodFactory(
-        name='Standard Shipping',
-        flat_rate_cost=Decimal('7.99'),
+        name="Standard Shipping",
+        flat_rate_cost=Decimal("7.99"),
         min_delivery_days=5,
         max_delivery_days=10,
         zones=[zone],
     )
+    # NOTE: min_order_value / free_shipping method_type no longer exist on model.
     free = ShippingMethodFactory(
-        name='Free Shipping (Orders $75+)',
-        method_type='free_shipping',
-        flat_rate_cost=Decimal('0.00'),
-        min_order_value=Decimal('75.00'),
-        min_order_value_currency='USD',
+        name="Free Shipping (Orders $75+)",
+        flat_rate_cost=Decimal("0.00"),
         min_delivery_days=7,
         max_delivery_days=14,
         zones=[zone],
     )
 
     return {
-        'zone': zone,
-        'methods': {'standard': standard, 'free': free},
+        "zone": zone,
+        "methods": {"standard": standard, "free": free},
     }
 
 
@@ -191,47 +208,69 @@ def multi_warehouse_merchant():
 
     # Deactivate any pre-existing regions/warehouses from migrations
     # so they don't interfere with our test data
-    SalesRegion.objects.exclude(code__in=['NAM', 'EUR']).update(is_active=False)
-    Warehouse.objects.exclude(code__in=['US-EAST', 'EU-WEST']).update(is_active=False)
+    SalesRegion.objects.exclude(code__in=["NAM", "EUR"]).update(is_active=False)
+    Warehouse.objects.exclude(code__in=["US-EAST", "EU-WEST"]).update(is_active=False)
 
-    category = CategoryFactory(name='Fulfillment Test', slug='fulfillment-test')
+    category = CategoryFactory(name="Fulfillment Test", slug="fulfillment-test")
 
     # Regions
     us_region = SalesRegionFactory(
-        name='North America', code='NAM', countries=['US', 'CA'],
-        default_currency='USD', priority=80,
+        name="North America",
+        code="NAM",
+        countries=["US", "CA"],
+        default_currency="USD",
+        priority=80,
     )
     eu_region = SalesRegionFactory(
-        name='Europe', code='EUR', countries=['GB', 'DE', 'FR'],
-        default_currency='EUR', priority=60,
+        name="Europe",
+        code="EUR",
+        countries=["GB", "DE", "FR"],
+        default_currency="EUR",
+        priority=60,
     )
 
     # Warehouses
     wh_us = WarehouseFactory(
-        name='US East Warehouse', code='US-EAST',
+        name="US East Warehouse",
+        code="US-EAST",
         region=us_region,
-        address_line1='100 Warehouse Dr', city='Newark',
-        state_province='NJ', postal_code='07102', country='US',
+        address_line1="100 Warehouse Dr",
+        city="Newark",
+        state_province="NJ",
+        postal_code="07102",
+        country="US",
         fulfillment_priority=80,
-        latitude=Decimal('40.735657'), longitude=Decimal('-74.172363'),
+        latitude=Decimal("40.735657"),
+        longitude=Decimal("-74.172363"),
     )
     wh_eu = WarehouseFactory(
-        name='EU West Warehouse', code='EU-WEST',
+        name="EU West Warehouse",
+        code="EU-WEST",
         region=eu_region,
-        address_line1='10 Lager Str', city='Frankfurt',
-        state_province='Hessen', postal_code='60311', country='DE',
+        address_line1="10 Lager Str",
+        city="Frankfurt",
+        state_province="Hessen",
+        postal_code="60311",
+        country="DE",
         fulfillment_priority=60,
-        latitude=Decimal('50.110924'), longitude=Decimal('8.682127'),
+        latitude=Decimal("50.110924"),
+        longitude=Decimal("8.682127"),
     )
 
     # Simple products
     product_a = ProductFactory(
-        name='Widget A', slug='widget-a', category=category,
-        track_inventory=True, price=Decimal('25.00'),
+        name="Widget A",
+        slug="widget-a",
+        category=category,
+        track_inventory=True,
+        price=Decimal("25.00"),
     )
     product_b = ProductFactory(
-        name='Widget B', slug='widget-b', category=category,
-        track_inventory=True, price=Decimal('35.00'),
+        name="Widget B",
+        slug="widget-b",
+        category=category,
+        track_inventory=True,
+        price=Decimal("35.00"),
     )
 
     # Stock for simple products
@@ -242,63 +281,90 @@ def multi_warehouse_merchant():
 
     # Variable product with variants
     variable_product = ProductFactory(
-        name='T-Shirt', slug='t-shirt', category=category,
-        product_type='variable', track_inventory=True, price=Decimal('29.99'),
+        name="T-Shirt",
+        slug="t-shirt",
+        category=category,
+        product_type="variable",
+        track_inventory=True,
+        price=Decimal("29.99"),
     )
     variant_red = ProductVariantFactory(
-        product=variable_product, name='Red', sku='TSHIRT-RED',
+        product=variable_product,
+        name="Red",
+        sku="TSHIRT-RED",
     )
     variant_blue = ProductVariantFactory(
-        product=variable_product, name='Blue', sku='TSHIRT-BLUE',
+        product=variable_product,
+        name="Blue",
+        sku="TSHIRT-BLUE",
     )
 
     # Stock for variants
     stock_red_us = StockItemFactory(
-        product=variable_product, warehouse=wh_us,
-        variant=variant_red, on_hand=50,
+        product=variable_product,
+        warehouse=wh_us,
+        variant=variant_red,
+        on_hand=50,
     )
     stock_red_eu = StockItemFactory(
-        product=variable_product, warehouse=wh_eu,
-        variant=variant_red, on_hand=0,
+        product=variable_product,
+        warehouse=wh_eu,
+        variant=variant_red,
+        on_hand=0,
     )
     stock_blue_us = StockItemFactory(
-        product=variable_product, warehouse=wh_us,
-        variant=variant_blue, on_hand=0,
+        product=variable_product,
+        warehouse=wh_us,
+        variant=variant_blue,
+        on_hand=0,
     )
     stock_blue_eu = StockItemFactory(
-        product=variable_product, warehouse=wh_eu,
-        variant=variant_blue, on_hand=40,
+        product=variable_product,
+        warehouse=wh_eu,
+        variant=variant_blue,
+        on_hand=40,
     )
 
     # ShippingCountry + Fallbacks for AU (no region)
     from django.contrib.sites.models import Site
-    site = Site.objects.get_or_create(id=1, defaults={'domain': 'localhost', 'name': 'Test'})[0]
+
+    site = Site.objects.get_or_create(id=1, defaults={"domain": "localhost", "name": "Test"})[0]
 
     au_country = ShippingCountryFactory(
-        site=site, country_code='AU', source_warehouse=None,
+        site=site,
+        country_code="AU",
+        source_warehouse=None,
     )
     fallback_au_1 = CountryWarehouseFallbackFactory(
-        country=au_country, warehouse=wh_eu, priority=0,
+        country=au_country,
+        warehouse=wh_eu,
+        priority=0,
     )
     fallback_au_2 = CountryWarehouseFallbackFactory(
-        country=au_country, warehouse=wh_us, priority=1,
+        country=au_country,
+        warehouse=wh_us,
+        priority=1,
     )
 
     return {
-        'regions': {'us': us_region, 'eu': eu_region},
-        'warehouses': {'us': wh_us, 'eu': wh_eu},
-        'products': {
-            'a': product_a,
-            'b': product_b,
-            'variable': variable_product,
+        "regions": {"us": us_region, "eu": eu_region},
+        "warehouses": {"us": wh_us, "eu": wh_eu},
+        "products": {
+            "a": product_a,
+            "b": product_b,
+            "variable": variable_product,
         },
-        'variants': {'red': variant_red, 'blue': variant_blue},
-        'stock': {
-            'a_us': stock_a_us, 'a_eu': stock_a_eu,
-            'b_us': stock_b_us, 'b_eu': stock_b_eu,
-            'red_us': stock_red_us, 'red_eu': stock_red_eu,
-            'blue_us': stock_blue_us, 'blue_eu': stock_blue_eu,
+        "variants": {"red": variant_red, "blue": variant_blue},
+        "stock": {
+            "a_us": stock_a_us,
+            "a_eu": stock_a_eu,
+            "b_us": stock_b_us,
+            "b_eu": stock_b_eu,
+            "red_us": stock_red_us,
+            "red_eu": stock_red_eu,
+            "blue_us": stock_blue_us,
+            "blue_eu": stock_blue_eu,
         },
-        'shipping_countries': {'au': au_country},
-        'fallbacks': {'au_1': fallback_au_1, 'au_2': fallback_au_2},
+        "shipping_countries": {"au": au_country},
+        "fallbacks": {"au_1": fallback_au_1, "au_2": fallback_au_2},
     }

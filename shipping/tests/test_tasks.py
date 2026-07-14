@@ -4,26 +4,25 @@ Tests for Shipping Celery Tasks
 Tests the task infrastructure, retry logic, and basic functionality.
 Provider API integration will be tested when providers are implemented.
 """
-from django.test import TestCase, override_settings
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-from decimal import Decimal
-from unittest.mock import patch, MagicMock
-import uuid
 
-from shipping.models import Shipment, TrackingEvent, WebhookLog, CarrierPreset, ProviderAccount
-from shipping.jobs.tasks import fetch_rates, buy_label, poll_tracking, process_webhook
-from shipping.jobs.utils import (
-    validate_shipment_data,
-    format_rate_response,
-    hash_tracking_event,
-    should_poll_shipment,
-    get_retry_delay,
-    sanitize_webhook_payload,
-    parse_tracking_status,
-)
-from orders.models import Order
+import uuid
+from decimal import Decimal
+
+from django.contrib.auth import get_user_model
+from django.test import TestCase, override_settings
+
 from component_updates.models import ComponentRegistry
+from orders.models import Order
+from shipping.jobs.tasks import buy_label, fetch_rates, poll_tracking, process_webhook
+from shipping.jobs.utils import (
+    get_retry_delay,
+    hash_tracking_event,
+    parse_tracking_status,
+    sanitize_webhook_payload,
+    should_poll_shipment,
+    validate_shipment_data,
+)
+from shipping.models import CarrierPreset, ProviderAccount, Shipment, WebhookLog
 
 User = get_user_model()
 
@@ -33,43 +32,34 @@ class ShipmentDataValidationTests(TestCase):
 
     def test_valid_shipment_data(self):
         """Test validation with valid data"""
-        data = {
-            'origin_country': 'US',
-            'dest_country': 'GB',
-            'weight': '2.5',
-            'weight_unit': 'kg'
-        }
+        data = {"origin_country": "US", "dest_country": "GB", "weight": "2.5", "weight_unit": "kg"}
         is_valid, error = validate_shipment_data(data)
         self.assertTrue(is_valid)
         self.assertIsNone(error)
 
     def test_missing_required_fields(self):
         """Test validation with missing fields"""
-        data = {'origin_country': 'US'}
+        data = {"origin_country": "US"}
         is_valid, error = validate_shipment_data(data)
         self.assertFalse(is_valid)
-        self.assertIn('dest_country', error)
+        self.assertIn("dest_country", error)
 
     def test_invalid_country_code(self):
         """Test validation with invalid country code"""
         data = {
-            'origin_country': 'USA',  # Should be 2 chars
-            'dest_country': 'GB',
+            "origin_country": "USA",  # Should be 2 chars
+            "dest_country": "GB",
         }
         is_valid, error = validate_shipment_data(data)
         self.assertFalse(is_valid)
-        self.assertIn('origin_country', error)
+        self.assertIn("origin_country", error)
 
     def test_invalid_weight(self):
         """Test validation with invalid weight"""
-        data = {
-            'origin_country': 'US',
-            'dest_country': 'GB',
-            'weight': '-5'
-        }
+        data = {"origin_country": "US", "dest_country": "GB", "weight": "-5"}
         is_valid, error = validate_shipment_data(data)
         self.assertFalse(is_valid)
-        self.assertIn('weight', error)
+        self.assertIn("weight", error)
 
 
 class TrackingEventUtilsTests(TestCase):
@@ -78,22 +68,22 @@ class TrackingEventUtilsTests(TestCase):
     def test_hash_tracking_event(self):
         """Test event hash generation"""
         event1 = {
-            'status': 'in_transit',
-            'description': 'Package in transit',
-            'location': 'New York, NY',
-            'occurred_at': '2025-10-20T10:00:00Z'
+            "status": "in_transit",
+            "description": "Package in transit",
+            "location": "New York, NY",
+            "occurred_at": "2025-10-20T10:00:00Z",
         }
         event2 = {
-            'status': 'in_transit',
-            'description': 'Package in transit',
-            'location': 'New York, NY',
-            'occurred_at': '2025-10-20T10:00:00Z'
+            "status": "in_transit",
+            "description": "Package in transit",
+            "location": "New York, NY",
+            "occurred_at": "2025-10-20T10:00:00Z",
         }
         event3 = {
-            'status': 'delivered',
-            'description': 'Package delivered',
-            'location': 'London, UK',
-            'occurred_at': '2025-10-21T14:00:00Z'
+            "status": "delivered",
+            "description": "Package delivered",
+            "location": "London, UK",
+            "occurred_at": "2025-10-21T14:00:00Z",
         }
 
         hash1 = hash_tracking_event(event1)
@@ -107,11 +97,11 @@ class TrackingEventUtilsTests(TestCase):
 
     def test_parse_tracking_status(self):
         """Test status parsing"""
-        self.assertEqual(parse_tracking_status('Delivered', 'test'), 'delivered')
-        self.assertEqual(parse_tracking_status('Out for delivery', 'test'), 'out_for_delivery')
-        self.assertEqual(parse_tracking_status('IN TRANSIT', 'test'), 'in_transit')
-        self.assertEqual(parse_tracking_status('Exception occurred', 'test'), 'exception')
-        self.assertEqual(parse_tracking_status('Package returned', 'test'), 'returned')
+        self.assertEqual(parse_tracking_status("Delivered", "test"), "delivered")
+        self.assertEqual(parse_tracking_status("Out for delivery", "test"), "out_for_delivery")
+        self.assertEqual(parse_tracking_status("IN TRANSIT", "test"), "in_transit")
+        self.assertEqual(parse_tracking_status("Exception occurred", "test"), "exception")
+        self.assertEqual(parse_tracking_status("Package returned", "test"), "returned")
 
 
 class RetryLogicTests(TestCase):
@@ -120,7 +110,7 @@ class RetryLogicTests(TestCase):
     def test_exponential_backoff(self):
         """Test exponential backoff calculation"""
         # With base_delay=60
-        self.assertEqual(get_retry_delay(0, base_delay=60), 60)   # 60 * 2^0
+        self.assertEqual(get_retry_delay(0, base_delay=60), 60)  # 60 * 2^0
         self.assertEqual(get_retry_delay(1, base_delay=60), 120)  # 60 * 2^1
         self.assertEqual(get_retry_delay(2, base_delay=60), 240)  # 60 * 2^2
         self.assertEqual(get_retry_delay(3, base_delay=60), 480)  # 60 * 2^3
@@ -137,22 +127,19 @@ class WebhookUtilsTests(TestCase):
     def test_sanitize_webhook_payload(self):
         """Test webhook payload sanitization"""
         payload = {
-            'tracking_id': '1234567890',
-            'api_key': 'secret_key_123',
-            'status': 'delivered',
-            'nested': {
-                'password': 'secret_pass',
-                'data': 'safe_value'
-            }
+            "tracking_id": "1234567890",
+            "api_key": "secret_key_123",
+            "status": "delivered",
+            "nested": {"password": "secret_pass", "data": "safe_value"},
         }
 
-        sanitized = sanitize_webhook_payload(payload, 'test')
+        sanitized = sanitize_webhook_payload(payload, "test")
 
-        self.assertEqual(sanitized['tracking_id'], '1234567890')
-        self.assertEqual(sanitized['api_key'], '*** REDACTED ***')
-        self.assertEqual(sanitized['status'], 'delivered')
-        self.assertEqual(sanitized['nested']['password'], '*** REDACTED ***')
-        self.assertEqual(sanitized['nested']['data'], 'safe_value')
+        self.assertEqual(sanitized["tracking_id"], "1234567890")
+        self.assertEqual(sanitized["api_key"], "*** REDACTED ***")
+        self.assertEqual(sanitized["status"], "delivered")
+        self.assertEqual(sanitized["nested"]["password"], "*** REDACTED ***")
+        self.assertEqual(sanitized["nested"]["data"], "safe_value")
 
 
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
@@ -161,24 +148,20 @@ class FetchRatesTaskTests(TestCase):
 
     def test_fetch_rates_task_structure(self):
         """Test that fetch_rates task is properly configured"""
-        self.assertEqual(fetch_rates.name, 'shipping.fetch_rates')
+        self.assertEqual(fetch_rates.name, "shipping.fetch_rates")
         self.assertEqual(fetch_rates.max_retries, 3)
         self.assertTrue(fetch_rates.autoretry_for)
 
     def test_fetch_rates_basic_execution(self):
         """Test basic fetch_rates execution (skeleton)"""
-        shipment_data = {
-            'origin_country': 'US',
-            'dest_country': 'GB',
-            'weight': '2.5'
-        }
+        shipment_data = {"origin_country": "US", "dest_country": "GB", "weight": "2.5"}
 
         result = fetch_rates.delay(shipment_data).get()
 
-        self.assertTrue(result['success'])
-        self.assertIn('rates', result)
-        self.assertIn('errors', result)
-        self.assertIn('fetched_at', result)
+        self.assertTrue(result["success"])
+        self.assertIn("rates", result)
+        self.assertIn("errors", result)
+        self.assertIn("fetched_at", result)
 
 
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
@@ -187,48 +170,50 @@ class BuyLabelTaskTests(TestCase):
 
     def setUp(self):
         """Set up test data"""
-        self.user = User.objects.create_user(username='testuser', password='testpass123')
+        self.user = User.objects.create_user(username="testuser", password="testpass123")
         self.carrier = CarrierPreset.objects.get_or_create(
-            slug='test-carrier',
-            defaults={'name': 'Test Carrier'}
+            slug="test-carrier", defaults={"name": "Test Carrier"}
         )[0]
         self.order = Order.objects.create(
             user=self.user,
-            order_number='TEST-001',
-            subtotal=Decimal('100.00'),
-            total_amount=Decimal('100.00'),
-            status='processing'
+            order_number="TEST-001",
+            subtotal=Decimal("100.00"),
+            total_amount=Decimal("100.00"),
+            status="processing",
         )
         self.shipment = Shipment.objects.create(
             order=self.order,
             user=self.user,
             carrier_preset=self.carrier,
-            origin_country='US',
-            dest_country='GB',
-            status='created'
+            origin_country="US",
+            dest_country="GB",
+            status="created",
         )
 
     def test_buy_label_task_structure(self):
         """Test that buy_label task is properly configured"""
-        self.assertEqual(buy_label.name, 'shipping.buy_label')
+        self.assertEqual(buy_label.name, "shipping.buy_label")
         self.assertEqual(buy_label.max_retries, 3)
 
-    def test_buy_label_with_valid_shipment(self):
-        """Test buy_label with valid shipment"""
+    def test_buy_label_with_valid_shipment_missing_provider_account(self):
+        """Test buy_label with valid shipment but no provider_account attached"""
+        # buy_label now requires a provider_account on the shipment to
+        # actually purchase a label. Our setUp creates a shipment without one,
+        # so the task should fail with a specific error message.
         result = buy_label.delay(str(self.shipment.id)).get()
 
-        self.assertFalse(result['success'])  # Skeleton returns False
-        self.assertEqual(result['shipment_id'], str(self.shipment.id))
-        self.assertIn('error', result)
-        self.assertIn('skeleton', result['error'].lower())
+        self.assertFalse(result["success"])
+        self.assertEqual(result["shipment_id"], str(self.shipment.id))
+        self.assertIn("error", result)
+        self.assertIn("provider_account", result["error"].lower())
 
     def test_buy_label_with_invalid_shipment(self):
         """Test buy_label with non-existent shipment"""
         fake_id = str(uuid.uuid4())
         result = buy_label.delay(fake_id).get()
 
-        self.assertFalse(result['success'])
-        self.assertIn('not found', result['error'].lower())
+        self.assertFalse(result["success"])
+        self.assertIn("not found", result["error"].lower())
 
 
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
@@ -237,62 +222,62 @@ class PollTrackingTaskTests(TestCase):
 
     def setUp(self):
         """Set up test data"""
-        self.user = User.objects.create_user(username='testuser', password='testpass123')
+        self.user = User.objects.create_user(username="testuser", password="testpass123")
 
         # Create component registry for provider
         self.component = ComponentRegistry.objects.create(
-            component_type='shipping_provider',
-            slug='test-provider',
-            name='Test Provider',
-            current_version='1.0.0',
+            component_type="shipping_provider",
+            slug="test-provider",
+            name="Test Provider",
+            current_version="1.0.0",
         )
 
         # Create provider account
         self.provider = ProviderAccount.objects.create(
             user=self.user,
             component=self.component,
-            credentials_encrypted={'api_key': 'test'},
-            is_active=True
+            credentials_encrypted={"api_key": "test"},
+            is_active=True,
         )
 
         self.order = Order.objects.create(
             user=self.user,
-            order_number='TEST-002',
-            subtotal=Decimal('100.00'),
-            total_amount=Decimal('100.00'),
-            status='processing'
+            order_number="TEST-002",
+            subtotal=Decimal("100.00"),
+            total_amount=Decimal("100.00"),
+            status="processing",
         )
 
         self.shipment = Shipment.objects.create(
             order=self.order,
             user=self.user,
             provider_account=self.provider,
-            tracking_id='TRACK123',
-            origin_country='US',
-            dest_country='GB',
-            status='in_transit'
+            tracking_id="TRACK123",
+            origin_country="US",
+            dest_country="GB",
+            status="in_transit",
         )
 
     def test_poll_tracking_task_structure(self):
         """Test that poll_tracking task is properly configured"""
-        self.assertEqual(poll_tracking.name, 'shipping.poll_tracking')
+        self.assertEqual(poll_tracking.name, "shipping.poll_tracking")
         self.assertEqual(poll_tracking.max_retries, 3)
 
     def test_poll_tracking_single_shipment(self):
         """Test polling a single shipment"""
         result = poll_tracking.delay(str(self.shipment.id)).get()
 
-        self.assertIn('shipments_polled', result)
-        self.assertIn('shipments_updated', result)
-        self.assertIn('new_events', result)
-        self.assertIn('errors', result)
+        self.assertIn("shipments_polled", result)
+        self.assertIn("shipments_updated", result)
+        self.assertIn("new_events", result)
+        self.assertIn("errors", result)
 
     def test_poll_tracking_batch(self):
         """Test batch polling"""
         result = poll_tracking.delay(batch_size=100).get()
 
-        self.assertIn('shipments_polled', result)
-        self.assertTrue(result['success'])
+        self.assertIn("shipments_polled", result)
+        self.assertTrue(result["success"])
 
     def test_should_poll_shipment_logic(self):
         """Test should_poll_shipment utility"""
@@ -300,11 +285,11 @@ class PollTrackingTaskTests(TestCase):
         self.assertTrue(should_poll_shipment(self.shipment))
 
         # Should not poll: delivered
-        self.shipment.status = 'delivered'
+        self.shipment.status = "delivered"
         self.assertFalse(should_poll_shipment(self.shipment))
 
         # Should not poll: no provider (manual)
-        self.shipment.status = 'in_transit'
+        self.shipment.status = "in_transit"
         self.shipment.provider_account = None
         self.assertFalse(should_poll_shipment(self.shipment))
 
@@ -315,53 +300,53 @@ class ProcessWebhookTaskTests(TestCase):
 
     def setUp(self):
         """Set up test data"""
-        self.user = User.objects.create_user(username='testuser', password='testpass123')
+        self.user = User.objects.create_user(username="testuser", password="testpass123")
 
         self.component = ComponentRegistry.objects.create(
-            component_type='shipping_provider',
-            slug='test-provider',
-            name='Test Provider',
-            current_version='1.0.0',
+            component_type="shipping_provider",
+            slug="test-provider",
+            name="Test Provider",
+            current_version="1.0.0",
         )
 
         self.provider = ProviderAccount.objects.create(
             user=self.user,
             component=self.component,
-            credentials_encrypted={'api_key': 'test'},
-            is_active=True
+            credentials_encrypted={"api_key": "test"},
+            is_active=True,
         )
 
         self.webhook_log = WebhookLog.objects.create(
-            provider_key='test-provider',
-            endpoint='/webhooks/test-provider',
-            payload={'tracking_id': 'TRACK123'},
-            headers={'Content-Type': 'application/json'},
-            processing_status='pending'
+            provider_key="test-provider",
+            endpoint="/webhooks/test-provider",
+            payload={"tracking_id": "TRACK123"},
+            headers={"Content-Type": "application/json"},
+            processing_status="pending",
         )
 
     def test_process_webhook_task_structure(self):
         """Test that process_webhook task is properly configured"""
-        self.assertEqual(process_webhook.name, 'shipping.process_webhook')
+        self.assertEqual(process_webhook.name, "shipping.process_webhook")
         self.assertEqual(process_webhook.max_retries, 5)
 
     def test_process_webhook_with_valid_log(self):
         """Test processing valid webhook log"""
         result = process_webhook.delay(str(self.webhook_log.id)).get()
 
-        self.assertFalse(result['success'])  # Skeleton returns False
-        self.assertEqual(result['webhook_log_id'], str(self.webhook_log.id))
+        self.assertFalse(result["success"])  # Skeleton returns False
+        self.assertEqual(result["webhook_log_id"], str(self.webhook_log.id))
 
         # Verify webhook log status was updated
         self.webhook_log.refresh_from_db()
-        self.assertEqual(self.webhook_log.processing_status, 'pending')  # Skeleton sets to pending
+        self.assertEqual(self.webhook_log.processing_status, "pending")  # Skeleton sets to pending
 
     def test_process_webhook_with_invalid_log(self):
         """Test processing non-existent webhook log"""
         fake_id = str(uuid.uuid4())
         result = process_webhook.delay(fake_id).get()
 
-        self.assertFalse(result['success'])
-        self.assertIn('not found', result['error'].lower())
+        self.assertFalse(result["success"])
+        self.assertIn("not found", result["error"].lower())
 
 
 class TaskRegistrationTests(TestCase):
@@ -369,10 +354,10 @@ class TaskRegistrationTests(TestCase):
 
     def test_all_tasks_have_names(self):
         """Test that all tasks have correct names"""
-        self.assertEqual(fetch_rates.name, 'shipping.fetch_rates')
-        self.assertEqual(buy_label.name, 'shipping.buy_label')
-        self.assertEqual(poll_tracking.name, 'shipping.poll_tracking')
-        self.assertEqual(process_webhook.name, 'shipping.process_webhook')
+        self.assertEqual(fetch_rates.name, "shipping.fetch_rates")
+        self.assertEqual(buy_label.name, "shipping.buy_label")
+        self.assertEqual(poll_tracking.name, "shipping.poll_tracking")
+        self.assertEqual(process_webhook.name, "shipping.process_webhook")
 
     def test_all_tasks_have_retry_config(self):
         """Test that all tasks have retry configuration"""
@@ -386,13 +371,19 @@ class TaskRegistrationTests(TestCase):
     def test_tasks_are_importable(self):
         """Test that tasks can be imported from jobs package"""
         from shipping.jobs import (
-            fetch_rates as fr,
             buy_label as bl,
+        )
+        from shipping.jobs import (
+            fetch_rates as fr,
+        )
+        from shipping.jobs import (
             poll_tracking as pt,
-            process_webhook as pw
+        )
+        from shipping.jobs import (
+            process_webhook as pw,
         )
 
-        self.assertEqual(fr.name, 'shipping.fetch_rates')
-        self.assertEqual(bl.name, 'shipping.buy_label')
-        self.assertEqual(pt.name, 'shipping.poll_tracking')
-        self.assertEqual(pw.name, 'shipping.process_webhook')
+        self.assertEqual(fr.name, "shipping.fetch_rates")
+        self.assertEqual(bl.name, "shipping.buy_label")
+        self.assertEqual(pt.name, "shipping.poll_tracking")
+        self.assertEqual(pw.name, "shipping.process_webhook")

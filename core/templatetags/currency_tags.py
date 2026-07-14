@@ -12,14 +12,13 @@ Usage in templates:
     {% show_price product show_original=True %}
 """
 
+import logging
+from decimal import Decimal
+
+from babel.numbers import format_currency as babel_format_currency
 from django import template
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _
 from djmoney.money import Money
-from decimal import Decimal
-from babel.numbers import format_currency as babel_format_currency
-import logging
 
 register = template.Library()
 logger = logging.getLogger(__name__)
@@ -51,6 +50,7 @@ def money(value, currency_code=None):
                 return _format_money_display(value.amount, str(value.currency))
             # Convert to different currency
             from exchange_rates.services.exchange_service import ExchangeRateService
+
             service = ExchangeRateService()
             converted = service.convert(value.amount, str(value.currency), currency_code)
             return _format_money_display(converted, currency_code)
@@ -90,12 +90,11 @@ def convert_currency(money_obj, target_currency):
 
     try:
         from exchange_rates.services.exchange_service import ExchangeRateService
+
         service = ExchangeRateService()
 
         converted_amount = service.convert(
-            money_obj.amount,
-            str(money_obj.currency),
-            target_currency
+            money_obj.amount, str(money_obj.currency), target_currency
         )
 
         return Money(converted_amount, target_currency)
@@ -125,13 +124,14 @@ def show_price(context, product, show_original=False, css_class=""):
     Returns:
         HTML string with formatted price
     """
-    request = context.get('request')
+    request = context.get("request")
     if not request:
         return ""
 
-    currency = getattr(request, 'currency', None)
+    currency = getattr(request, "currency", None)
     if not currency:
         from core.models import SiteSettings
+
         currency = SiteSettings.get_settings().default_currency
 
     try:
@@ -148,16 +148,13 @@ def show_price(context, product, show_original=False, css_class=""):
 
         # Show original price if converted and requested
         if show_original and str(product.price.currency) != currency:
-            original_html = _format_money_display(
-                product.price.amount,
-                str(product.price.currency)
-            )
+            original_html = _format_money_display(product.price.amount, str(product.price.currency))
             return format_html(
                 '<span class="{converted_class}">{converted}</span> '
                 '<span class="original-price text-muted small">({original})</span>',
                 converted_class=" ".join(classes + ["converted-price"]),
                 converted=price_html,
-                original=original_html
+                original=original_html,
             )
 
         return format_html('<span class="{}">{}</span>', " ".join(classes), price_html)
@@ -184,18 +181,19 @@ def show_sale_price(context, product, show_original=False):
     Returns:
         HTML string with formatted price and sale price
     """
-    request = context.get('request')
+    request = context.get("request")
     if not request:
         return ""
 
-    currency = getattr(request, 'currency', None)
+    currency = getattr(request, "currency", None)
     if not currency:
         from core.models import SiteSettings
+
         currency = SiteSettings.get_settings().default_currency
 
     try:
         # Check if product has sale price
-        if not hasattr(product, 'sale_price') or not product.sale_price:
+        if not hasattr(product, "sale_price") or not product.sale_price:
             # No sale, just show regular price
             return show_price(context, product, show_original=show_original)
 
@@ -203,16 +201,15 @@ def show_sale_price(context, product, show_original=False):
         regular_price = product.get_price_in_currency(currency)
 
         # Get sale price - check if it's a fixed price or needs conversion
-        if hasattr(product, 'get_sale_price_in_currency'):
+        if hasattr(product, "get_sale_price_in_currency"):
             sale_price = product.get_sale_price_in_currency(currency)
         else:
             # Fallback: convert sale price
             from exchange_rates.services.exchange_service import ExchangeRateService
+
             service = ExchangeRateService()
             sale_amount = service.convert(
-                product.sale_price.amount,
-                str(product.sale_price.currency),
-                currency
+                product.sale_price.amount, str(product.sale_price.currency), currency
             )
             sale_price = Money(sale_amount, currency)
 
@@ -224,9 +221,9 @@ def show_sale_price(context, product, show_original=False):
             '<span class="price-wrapper">'
             '<span class="price sale-price">{sale}</span> '
             '<span class="price regular-price text-muted"><del>{regular}</del></span>'
-            '</span>',
+            "</span>",
             sale=sale_html,
-            regular=regular_html
+            regular=regular_html,
         )
 
     except Exception as e:
@@ -291,6 +288,7 @@ def product_compare_price(product, currency_code):
         return str(product.price)
     try:
         from exchange_rates.services.exchange_service import ExchangeRateService
+
         base_price = product.price
         if str(base_price.currency) == currency_code:
             return _format_money_display(base_price.amount, currency_code)
@@ -322,7 +320,7 @@ def currency_symbol(currency_code):
     try:
         if currency_code in CURRENCIES:
             currency_obj = CURRENCIES[currency_code]
-            return getattr(currency_obj, 'symbol', currency_code)
+            return getattr(currency_obj, "symbol", currency_code)
         return currency_code
     except Exception as e:
         logger.error(f"Error getting currency symbol: {e}")
@@ -374,6 +372,7 @@ def get_exchange_rate(context, from_currency, to_currency):
     """
     try:
         from exchange_rates.services.exchange_service import ExchangeRateService
+
         service = ExchangeRateService()
         rate = service.get_rate(from_currency, to_currency)
         return rate
@@ -395,43 +394,42 @@ def _format_money_display(amount, currency_code, locale=None):
     Returns:
         Formatted money string (e.g., "$19.99", "€19,99")
     """
-    from core.models import SiteSettings
     from django.utils.translation import get_language
+
+    from core.models import SiteSettings
 
     try:
         # Get locale from current language or settings
         if not locale:
-            locale = get_language() or 'en'
+            locale = get_language() or "en"
 
         # Get decimal places for currency
         from core.utils.currency_helpers import get_currency_decimal_places
+
         decimal_places = get_currency_decimal_places(currency_code)
 
         # Round to appropriate decimal places
         if decimal_places == 0:
-            amount = amount.quantize(Decimal('1'))
+            amount = amount.quantize(Decimal("1"))
         elif decimal_places == 3:
-            amount = amount.quantize(Decimal('0.001'))
+            amount = amount.quantize(Decimal("0.001"))
         elif decimal_places == 4:
-            amount = amount.quantize(Decimal('0.0001'))
+            amount = amount.quantize(Decimal("0.0001"))
         else:  # default 2 decimal places
-            amount = amount.quantize(Decimal('0.01'))
+            amount = amount.quantize(Decimal("0.01"))
 
         # Check if locale formatting is enabled
         settings = SiteSettings.get_settings()
         if settings.enable_locale_formatting:
             # Use Babel for locale-aware formatting
-            formatted = babel_format_currency(
-                amount,
-                currency_code,
-                locale=locale
-            )
+            formatted = babel_format_currency(amount, currency_code, locale=locale)
             return formatted
         else:
             # Simple formatting with currency symbol
             from moneyed import CURRENCIES
+
             if currency_code in CURRENCIES:
-                symbol = getattr(CURRENCIES[currency_code], 'symbol', currency_code)
+                symbol = getattr(CURRENCIES[currency_code], "symbol", currency_code)
                 return f"{symbol}{amount:,.{decimal_places}f}"
             else:
                 return f"{currency_code} {amount:,.{decimal_places}f}"

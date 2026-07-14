@@ -11,24 +11,25 @@ This middleware handles two separate concerns:
 
 import logging
 import re
+
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
-from django.contrib import messages
 from django.utils.translation import gettext as _
 
 logger = logging.getLogger(__name__)
 
 # Cookie name for trusted devices
-TRUSTED_DEVICE_COOKIE = 'spwig_trusted_device'
+TRUSTED_DEVICE_COOKIE = "spwig_trusted_device"
 
 # Session key to track MFA verification status
-MFA_VERIFIED_SESSION_KEY = 'mfa_verified_at'
+MFA_VERIFIED_SESSION_KEY = "mfa_verified_at"
 
 # Match admin paths with or without language prefix
 # e.g. /admin/, /en/admin/, /de/admin/login/
-ADMIN_PATH_RE = re.compile(r'^(/[a-z]{2})?/admin/')
+ADMIN_PATH_RE = re.compile(r"^(/[a-z]{2})?/admin/")
 
 
 class MFAEnforcementMiddleware(MiddlewareMixin):
@@ -50,28 +51,28 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
 
     # Paths that are always exempt from MFA enforcement (no language prefix)
     EXEMPT_PATHS_NO_PREFIX = [
-        '/static/',
-        '/media/',
-        '/api/',
-        '/i18n/',
-        '/oidc/',
+        "/static/",
+        "/media/",
+        "/api/",
+        "/i18n/",
+        "/oidc/",
     ]
 
     # Paths that may have a language prefix (e.g. /en/accounts/mfa/)
     EXEMPT_PATH_PATTERNS = [
-        re.compile(r'^(/[a-z]{2})?/accounts/mfa/'),
-        re.compile(r'^(/[a-z]{2})?/accounts/2fa/'),
-        re.compile(r'^(/[a-z]{2})?/account/2fa/'),
-        re.compile(r'^(/[a-z]{2})?/accounts/login/'),
-        re.compile(r'^(/[a-z]{2})?/accounts/logout/'),
-        re.compile(r'^(/[a-z]{2})?/admin/login/'),
-        re.compile(r'^(/[a-z]{2})?/admin/logout/'),
-        re.compile(r'^(/[a-z]{2})?/admin/jsi18n/'),
+        re.compile(r"^(/[a-z]{2})?/accounts/mfa/"),
+        re.compile(r"^(/[a-z]{2})?/accounts/2fa/"),
+        re.compile(r"^(/[a-z]{2})?/account/2fa/"),
+        re.compile(r"^(/[a-z]{2})?/accounts/login/"),
+        re.compile(r"^(/[a-z]{2})?/accounts/logout/"),
+        re.compile(r"^(/[a-z]{2})?/admin/login/"),
+        re.compile(r"^(/[a-z]{2})?/admin/logout/"),
+        re.compile(r"^(/[a-z]{2})?/admin/jsi18n/"),
     ]
 
     # Additional path patterns to check (for paths that vary by app)
     EXEMPT_PATH_CONTAINS = [
-        '/mfa/verify/',         # Admin MFA verification page (under any app)
+        "/mfa/verify/",  # Admin MFA verification page (under any app)
     ]
 
     def process_request(self, request):
@@ -107,25 +108,26 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
         user_has_2fa = self._user_has_2fa(request.user)
 
         # FIRST: If user has 2FA, verify they've completed MFA verification this session
-        if user_has_2fa:
-            if not self._is_mfa_verified(request):
-                # Check for trusted device first
-                from core.models import SiteSettings
-                try:
-                    settings = SiteSettings.get_settings()
-                    if settings.allow_trusted_devices:
-                        if self._is_trusted_device(request, request.user, settings):
-                            # Trusted device - mark as verified and continue
-                            self._mark_mfa_verified(request)
-                            return None
-                except Exception:
-                    pass
+        if user_has_2fa and not self._is_mfa_verified(request):
+            # Check for trusted device first
+            from core.models import SiteSettings
 
-                # Redirect to MFA verification
-                return self._redirect_to_mfa_verification(request)
+            try:
+                settings = SiteSettings.get_settings()
+                if settings.allow_trusted_devices:
+                    if self._is_trusted_device(request, request.user, settings):
+                        # Trusted device - mark as verified and continue
+                        self._mark_mfa_verified(request)
+                        return None
+            except Exception:
+                pass
+
+            # Redirect to MFA verification
+            return self._redirect_to_mfa_verification(request)
 
         # Get site settings for enforcement checks
         from core.models import SiteSettings
+
         try:
             settings = SiteSettings.get_settings()
         except Exception as e:
@@ -134,10 +136,10 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
 
         # Check if enforcement is enabled
         enforcement_level = settings.staff_2fa_enforcement
-        if enforcement_level == 'disabled':
+        if enforcement_level == "disabled":
             return None
 
-        if enforcement_level == 'recommended':
+        if enforcement_level == "recommended":
             # Just show a recommendation, don't block
             if not user_has_2fa and not self._has_dismissed_recommendation(request):
                 self._show_recommendation(request)
@@ -158,10 +160,12 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
         """Check if user has MFA enabled."""
         try:
             from allauth.mfa.utils import is_mfa_enabled
+
             return is_mfa_enabled(user)
         except ImportError:
             try:
                 from allauth.mfa.adapter import get_adapter
+
                 adapter = get_adapter()
                 return adapter.is_mfa_enabled(user)
             except Exception as e:
@@ -235,34 +239,34 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
 
     def _has_dismissed_recommendation(self, request):
         """Check if user has dismissed the 2FA recommendation."""
-        return request.session.get('2fa_recommendation_dismissed', False)
+        return request.session.get("2fa_recommendation_dismissed", False)
 
     def _show_recommendation(self, request):
         """Show a recommendation to set up 2FA."""
-        if not hasattr(request, '_mfa_recommendation_shown'):
+        if not hasattr(request, "_mfa_recommendation_shown"):
             messages.info(
                 request,
-                _("For better security, we recommend enabling two-factor authentication. "
-                  "You can set this up in your account settings.")
+                _(
+                    "For better security, we recommend enabling two-factor authentication. "
+                    "You can set this up in your account settings."
+                ),
             )
             request._mfa_recommendation_shown = True
 
     def _show_setup_reminder(self, request, settings):
         """Show a reminder to set up 2FA during grace period."""
-        if not hasattr(request, '_mfa_reminder_shown'):
+        if not hasattr(request, "_mfa_reminder_shown"):
             days_remaining = self._get_grace_days_remaining(request.user, settings)
-            if days_remaining <= 3:
-                level = messages.WARNING
-            else:
-                level = messages.INFO
+            level = messages.WARNING if days_remaining <= 3 else messages.INFO
 
             messages.add_message(
                 request,
                 level,
-                _("Two-factor authentication will be required in %(days)s day(s). "
-                  "Please set up 2FA in your account settings to continue accessing the admin.") % {
-                    'days': days_remaining
-                }
+                _(
+                    "Two-factor authentication will be required in %(days)s day(s). "
+                    "Please set up 2FA in your account settings to continue accessing the admin."
+                )
+                % {"days": days_remaining},
             )
             request._mfa_reminder_shown = True
 
@@ -270,15 +274,17 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
         """Redirect user to MFA setup page."""
         messages.error(
             request,
-            _("Two-factor authentication is required for admin access. "
-              "Please set up 2FA to continue.")
+            _(
+                "Two-factor authentication is required for admin access. "
+                "Please set up 2FA to continue."
+            ),
         )
         # Redirect to allauth MFA setup
         try:
-            setup_url = reverse('mfa_activate_totp')
+            setup_url = reverse("mfa_activate_totp")
         except Exception:
             # Fallback URL
-            setup_url = '/accounts/2fa/totp/activate/'
+            setup_url = "/accounts/2fa/totp/activate/"
 
         # Include next parameter to return after setup
         next_url = request.get_full_path()
@@ -299,13 +305,8 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
 
         # Check allauth's authentication records for MFA verification
         # Allauth stores authentication methods in session when MFA is completed
-        auth_methods = request.session.get('account_authentication_methods', [])
-        for method in auth_methods:
-            if method.get('method') == 'mfa':
-                # MFA was verified via allauth's flow
-                return True
-
-        return False
+        auth_methods = request.session.get("account_authentication_methods", [])
+        return any(method.get("method") == "mfa" for method in auth_methods)
 
     def _mark_mfa_verified(self, request):
         """Mark MFA as verified for this session."""
@@ -315,11 +316,11 @@ class MFAEnforcementMiddleware(MiddlewareMixin):
     def _redirect_to_mfa_verification(self, request):
         """Redirect user to MFA verification page."""
         # Store the next URL in session for redirect after verification
-        request.session['mfa_next_url'] = request.get_full_path()
+        request.session["mfa_next_url"] = request.get_full_path()
 
         try:
-            verify_url = reverse('admin:mfa_verify')
+            verify_url = reverse("admin:mfa_verify")
         except Exception:
-            verify_url = '/admin/mfa/verify/'
+            verify_url = "/admin/mfa/verify/"
 
         return HttpResponseRedirect(verify_url)

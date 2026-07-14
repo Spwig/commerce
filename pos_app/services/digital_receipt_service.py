@@ -4,12 +4,12 @@ Digital Receipt Service for POS Orders.
 Handles sending receipts via email, SMS, and WhatsApp to customers
 after POS transactions.
 """
+
 import logging
 import secrets
 from decimal import Decimal
-from typing import Optional, Dict, Any
+from typing import Any
 
-from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -44,23 +44,23 @@ class DigitalReceiptService:
         # Ensure order has a receipt token
         if not order.receipt_token:
             order.receipt_token = self.generate_receipt_token()
-            order.save(update_fields=['receipt_token'])
+            order.save(update_fields=["receipt_token"])
 
         # Build the URL path
-        receipt_path = reverse('public_receipt', kwargs={'token': order.receipt_token})
+        receipt_path = reverse("public_receipt", kwargs={"token": order.receipt_token})
 
         if request:
             return request.build_absolute_uri(receipt_path)
 
         # Fallback to site settings domain
         site_settings = SiteSettings.get_settings()
-        domain = site_settings.site_url if site_settings else ''
+        domain = site_settings.site_url if site_settings else ""
         if domain:
             return f"{domain.rstrip('/')}{receipt_path}"
 
         return receipt_path
 
-    def build_email_context(self, order: Order, request=None) -> Dict[str, Any]:
+    def build_email_context(self, order: Order, request=None) -> dict[str, Any]:
         """
         Build context dictionary for the POS receipt email template.
 
@@ -75,23 +75,23 @@ class DigitalReceiptService:
         currency = str(order.total_amount.currency)
 
         # Store info
-        store_name = site_settings.site_name if site_settings else 'Store'
+        store_name = site_settings.site_name if site_settings else "Store"
         store_address_parts = []
         if site_settings:
             for part in [
-                getattr(site_settings, 'address_line_1', ''),
-                getattr(site_settings, 'city', ''),
-                getattr(site_settings, 'state_province', ''),
-                getattr(site_settings, 'postal_code', ''),
-                getattr(site_settings, 'country', ''),
+                getattr(site_settings, "address_line_1", ""),
+                getattr(site_settings, "city", ""),
+                getattr(site_settings, "state_province", ""),
+                getattr(site_settings, "postal_code", ""),
+                getattr(site_settings, "country", ""),
             ]:
                 if part:
                     store_address_parts.append(str(part))
-        store_address = ', '.join(store_address_parts)
-        store_phone = str(getattr(site_settings, 'phone_number', '')) if site_settings else ''
+        store_address = ", ".join(store_address_parts)
+        store_phone = str(getattr(site_settings, "phone_number", "")) if site_settings else ""
 
         # Store logo URL
-        store_logo_url = ''
+        store_logo_url = ""
         if site_settings and site_settings.site_logo:
             try:
                 logo = site_settings.site_logo
@@ -99,7 +99,7 @@ class DigitalReceiptService:
                     if request:
                         store_logo_url = request.build_absolute_uri(logo.file.url)
                     else:
-                        domain = site_settings.site_url if site_settings else ''
+                        domain = site_settings.site_url if site_settings else ""
                         if domain:
                             store_logo_url = f"{domain.rstrip('/')}{logo.file.url}"
             except Exception as e:
@@ -109,6 +109,7 @@ class DigitalReceiptService:
         receipt_template = None
         try:
             from pos_app.models import ReceiptTemplate
+
             warehouse = order.pos_terminal.warehouse if order.pos_terminal else None
             if warehouse:
                 receipt_template = ReceiptTemplate.objects.filter(warehouse=warehouse).first()
@@ -120,50 +121,81 @@ class DigitalReceiptService:
         # Order items
         items = []
         for item in order.items.all():
-            unit_price = item.unit_price.amount if hasattr(item.unit_price, 'amount') else Decimal(str(item.unit_price))
-            line_total = item.total_price.amount if hasattr(item.total_price, 'amount') else Decimal(str(item.total_price))
+            unit_price = (
+                item.unit_price.amount
+                if hasattr(item.unit_price, "amount")
+                else Decimal(str(item.unit_price))
+            )
+            line_total = (
+                item.total_price.amount
+                if hasattr(item.total_price, "amount")
+                else Decimal(str(item.total_price))
+            )
 
-            items.append({
-                'name': f"{item.product_name}{' - ' + item.variant_name if item.variant_name else ''}",
-                'product_name': item.product_name,
-                'variant_name': item.variant_name or '',
-                'sku': item.sku,
-                'quantity': item.quantity,
-                'unit_price': format_money(unit_price, currency),
-                'line_total': format_money(line_total, currency),
-            })
+            items.append(
+                {
+                    "name": f"{item.product_name}{' - ' + item.variant_name if item.variant_name else ''}",
+                    "product_name": item.product_name,
+                    "variant_name": item.variant_name or "",
+                    "sku": item.sku,
+                    "quantity": item.quantity,
+                    "unit_price": format_money(unit_price, currency),
+                    "line_total": format_money(line_total, currency),
+                }
+            )
 
         # Payments
         payments = []
-        total_change = Decimal('0')
+        total_change = Decimal("0")
 
         for p in order.pos_payments.all():
-            change = Decimal('0')
+            change = Decimal("0")
             if p.change_given:
-                change = p.change_given.amount if hasattr(p.change_given, 'amount') else Decimal(str(p.change_given))
+                change = (
+                    p.change_given.amount
+                    if hasattr(p.change_given, "amount")
+                    else Decimal(str(p.change_given))
+                )
                 total_change += change
 
-            amount = p.amount.amount if hasattr(p.amount, 'amount') else Decimal(str(p.amount))
+            amount = p.amount.amount if hasattr(p.amount, "amount") else Decimal(str(p.amount))
 
-            payments.append({
-                'method': p.get_method_display(),
-                'amount': format_money(amount, currency),
-                'card_last4': p.card_last_four or '',
-            })
+            payments.append(
+                {
+                    "method": p.get_method_display(),
+                    "amount": format_money(amount, currency),
+                    "card_last4": p.card_last_four or "",
+                }
+            )
 
         # Totals
-        subtotal = order.subtotal.amount if hasattr(order.subtotal, 'amount') else Decimal(str(order.subtotal))
-        tax_amount = order.tax_amount.amount if hasattr(order.tax_amount, 'amount') else Decimal('0')
-        discount_amount = order.discount_amount.amount if hasattr(order.discount_amount, 'amount') else Decimal('0')
-        total = order.total_amount.amount if hasattr(order.total_amount, 'amount') else Decimal(str(order.total_amount))
+        subtotal = (
+            order.subtotal.amount
+            if hasattr(order.subtotal, "amount")
+            else Decimal(str(order.subtotal))
+        )
+        tax_amount = (
+            order.tax_amount.amount if hasattr(order.tax_amount, "amount") else Decimal("0")
+        )
+        discount_amount = (
+            order.discount_amount.amount
+            if hasattr(order.discount_amount, "amount")
+            else Decimal("0")
+        )
+        total = (
+            order.total_amount.amount
+            if hasattr(order.total_amount, "amount")
+            else Decimal(str(order.total_amount))
+        )
 
         # Loyalty points earned (if applicable)
         loyalty_points_earned = None
         try:
             from loyalty.models import PointsTransaction
+
             points_transaction = PointsTransaction.objects.filter(
                 order=order,
-                transaction_type='earned',
+                transaction_type="earned",
             ).first()
             if points_transaction:
                 loyalty_points_earned = points_transaction.points
@@ -171,43 +203,45 @@ class DigitalReceiptService:
             pass
 
         # Shop URL for assets
-        shop_url = site_settings.site_url.rstrip('/') if site_settings and site_settings.site_url else ''
+        shop_url = (
+            site_settings.site_url.rstrip("/") if site_settings and site_settings.site_url else ""
+        )
 
         # Build context
         context = {
             # Store info
-            'store_name': receipt_template.get_effective_header() if receipt_template else store_name,
-            'store_address': receipt_template.get_effective_address() if receipt_template else store_address,
-            'store_phone': receipt_template.get_effective_phone() if receipt_template else store_phone,
-            'store_logo_url': store_logo_url,
-            'shop_url': shop_url,
-
+            "store_name": receipt_template.get_effective_header()
+            if receipt_template
+            else store_name,
+            "store_address": receipt_template.get_effective_address()
+            if receipt_template
+            else store_address,
+            "store_phone": receipt_template.get_effective_phone()
+            if receipt_template
+            else store_phone,
+            "store_logo_url": store_logo_url,
+            "shop_url": shop_url,
             # Order details
-            'order_number': order.order_number,
-            'order_date': order.created_at.strftime('%b %d, %Y at %I:%M %p'),
-            'cashier_name': order.cashier.get_full_name() if order.cashier else '',
-            'terminal_name': order.pos_terminal.name if order.pos_terminal else '',
-
+            "order_number": order.order_number,
+            "order_date": order.created_at.strftime("%b %d, %Y at %I:%M %p"),
+            "cashier_name": order.cashier.get_full_name() if order.cashier else "",
+            "terminal_name": order.pos_terminal.name if order.pos_terminal else "",
             # Items
-            'items': items,
-
+            "items": items,
             # Totals
-            'subtotal': format_money(subtotal, currency),
-            'discount_amount': format_money(discount_amount, currency) if discount_amount else None,
-            'tax_amount': format_money(tax_amount, currency) if tax_amount else None,
-            'total': format_money(total, currency),
-            'currency': currency,
-
+            "subtotal": format_money(subtotal, currency),
+            "discount_amount": format_money(discount_amount, currency) if discount_amount else None,
+            "tax_amount": format_money(tax_amount, currency) if tax_amount else None,
+            "total": format_money(total, currency),
+            "currency": currency,
             # Payments
-            'payments': payments,
-            'change_given': format_money(total_change, currency) if total_change else None,
-
+            "payments": payments,
+            "change_given": format_money(total_change, currency) if total_change else None,
             # Loyalty
-            'loyalty_points_earned': loyalty_points_earned,
-
+            "loyalty_points_earned": loyalty_points_earned,
             # Footer
-            'return_policy': receipt_template.return_policy if receipt_template else '',
-            'receipt_url': self.get_receipt_url(order, request),
+            "return_policy": receipt_template.return_policy if receipt_template else "",
+            "receipt_url": self.get_receipt_url(order, request),
         }
 
         return context
@@ -215,10 +249,10 @@ class DigitalReceiptService:
     def send_email_receipt(
         self,
         order: Order,
-        email: Optional[str] = None,
+        email: str | None = None,
         request=None,
-        language: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        language: str | None = None,
+    ) -> dict[str, Any]:
         """
         Send receipt email for a POS order.
 
@@ -237,9 +271,9 @@ class DigitalReceiptService:
         recipient_email = email or order.email
         if not recipient_email:
             return {
-                'success': False,
-                'error': 'NO_EMAIL',
-                'message': 'No email address provided',
+                "success": False,
+                "error": "NO_EMAIL",
+                "message": "No email address provided",
             }
 
         # Build context
@@ -248,16 +282,16 @@ class DigitalReceiptService:
         except Exception as e:
             logger.error(f"Failed to build email context for order {order.pk}: {e}", exc_info=True)
             return {
-                'success': False,
-                'error': 'CONTEXT_ERROR',
-                'message': str(e),
+                "success": False,
+                "error": "CONTEXT_ERROR",
+                "message": str(e),
             }
 
         # Send via email system
         try:
             outbox = EmailSendingService.send_template_email(
                 to_email=recipient_email,
-                template_type='pos_receipt',
+                template_type="pos_receipt",
                 context=context,
                 language=language,
             )
@@ -266,22 +300,24 @@ class DigitalReceiptService:
             order.receipt_email_sent_at = timezone.now()
             if not order.email:
                 order.email = recipient_email
-            order.save(update_fields=['receipt_email_sent_at', 'email'])
+            order.save(update_fields=["receipt_email_sent_at", "email"])
 
-            logger.info(f"Queued POS receipt email for order {order.order_number} to {recipient_email}")
+            logger.info(
+                f"Queued POS receipt email for order {order.order_number} to {recipient_email}"
+            )
 
             return {
-                'success': True,
-                'outbox_id': outbox.id,
-                'email': recipient_email,
+                "success": True,
+                "outbox_id": outbox.id,
+                "email": recipient_email,
             }
 
         except Exception as e:
             logger.error(f"Failed to send receipt email for order {order.pk}: {e}", exc_info=True)
             return {
-                'success': False,
-                'error': 'SEND_ERROR',
-                'message': str(e),
+                "success": False,
+                "error": "SEND_ERROR",
+                "message": str(e),
             }
 
     def build_sms_message(self, order: Order, request=None) -> str:
@@ -296,9 +332,13 @@ class DigitalReceiptService:
             SMS message text
         """
         site_settings = SiteSettings.get_settings()
-        store_name = site_settings.site_name if site_settings else 'Store'
+        store_name = site_settings.site_name if site_settings else "Store"
         currency = str(order.total_amount.currency)
-        total = order.total_amount.amount if hasattr(order.total_amount, 'amount') else Decimal(str(order.total_amount))
+        total = (
+            order.total_amount.amount
+            if hasattr(order.total_amount, "amount")
+            else Decimal(str(order.total_amount))
+        )
 
         receipt_url = self.get_receipt_url(order, request)
 
@@ -314,9 +354,9 @@ class DigitalReceiptService:
     def send_sms_receipt(
         self,
         order: Order,
-        phone: Optional[str] = None,
+        phone: str | None = None,
         request=None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Send receipt via SMS.
 
@@ -332,9 +372,9 @@ class DigitalReceiptService:
         recipient_phone = phone or order.phone
         if not recipient_phone:
             return {
-                'success': False,
-                'error': 'NO_PHONE',
-                'message': 'No phone number provided',
+                "success": False,
+                "error": "NO_PHONE",
+                "message": "No phone number provided",
             }
 
         # Build message
@@ -343,9 +383,9 @@ class DigitalReceiptService:
         except Exception as e:
             logger.error(f"Failed to build SMS message for order {order.pk}: {e}", exc_info=True)
             return {
-                'success': False,
-                'error': 'MESSAGE_ERROR',
-                'message': str(e),
+                "success": False,
+                "error": "MESSAGE_ERROR",
+                "message": str(e),
             }
 
         # Send via SMS system
@@ -358,38 +398,40 @@ class DigitalReceiptService:
                 message=message,
             )
 
-            if result.get('success'):
+            if result.get("success"):
                 # Update order tracking
                 order.receipt_sms_sent_at = timezone.now()
                 if not order.phone:
                     order.phone = recipient_phone
-                order.save(update_fields=['receipt_sms_sent_at', 'phone'])
+                order.save(update_fields=["receipt_sms_sent_at", "phone"])
 
-                logger.info(f"Sent POS receipt SMS for order {order.order_number} to {recipient_phone}")
+                logger.info(
+                    f"Sent POS receipt SMS for order {order.order_number} to {recipient_phone}"
+                )
 
             return result
 
         except ImportError:
             logger.warning("SMS system not available")
             return {
-                'success': False,
-                'error': 'SMS_NOT_CONFIGURED',
-                'message': 'SMS sending is not configured',
+                "success": False,
+                "error": "SMS_NOT_CONFIGURED",
+                "message": "SMS sending is not configured",
             }
         except Exception as e:
             logger.error(f"Failed to send receipt SMS for order {order.pk}: {e}", exc_info=True)
             return {
-                'success': False,
-                'error': 'SEND_ERROR',
-                'message': str(e),
+                "success": False,
+                "error": "SEND_ERROR",
+                "message": str(e),
             }
 
     def send_whatsapp_receipt(
         self,
         order: Order,
-        phone: Optional[str] = None,
+        phone: str | None = None,
         request=None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Send receipt via WhatsApp.
 
@@ -405,16 +447,20 @@ class DigitalReceiptService:
         recipient_phone = phone or order.phone
         if not recipient_phone:
             return {
-                'success': False,
-                'error': 'NO_PHONE',
-                'message': 'No phone number provided',
+                "success": False,
+                "error": "NO_PHONE",
+                "message": "No phone number provided",
             }
 
         # Build context for WhatsApp template
         site_settings = SiteSettings.get_settings()
-        store_name = site_settings.site_name if site_settings else 'Store'
+        store_name = site_settings.site_name if site_settings else "Store"
         currency = str(order.total_amount.currency)
-        total = order.total_amount.amount if hasattr(order.total_amount, 'amount') else Decimal(str(order.total_amount))
+        total = (
+            order.total_amount.amount
+            if hasattr(order.total_amount, "amount")
+            else Decimal(str(order.total_amount))
+        )
         receipt_url = self.get_receipt_url(order, request)
 
         # Send via SMS system (WhatsApp provider)
@@ -424,39 +470,43 @@ class DigitalReceiptService:
             sms_service = SMSSendingService()
             result = sms_service.send_whatsapp(
                 phone=recipient_phone,
-                template_name='pos_receipt',
+                template_name="pos_receipt",
                 template_params={
-                    '1': store_name,
-                    '2': order.order_number,
-                    '3': format_money(total, currency),
-                    '4': receipt_url,
+                    "1": store_name,
+                    "2": order.order_number,
+                    "3": format_money(total, currency),
+                    "4": receipt_url,
                 },
             )
 
-            if result.get('success'):
+            if result.get("success"):
                 # Update order tracking (use SMS field for now)
                 order.receipt_sms_sent_at = timezone.now()
                 if not order.phone:
                     order.phone = recipient_phone
-                order.save(update_fields=['receipt_sms_sent_at', 'phone'])
+                order.save(update_fields=["receipt_sms_sent_at", "phone"])
 
-                logger.info(f"Sent POS receipt WhatsApp for order {order.order_number} to {recipient_phone}")
+                logger.info(
+                    f"Sent POS receipt WhatsApp for order {order.order_number} to {recipient_phone}"
+                )
 
             return result
 
         except ImportError:
             logger.warning("SMS/WhatsApp system not available")
             return {
-                'success': False,
-                'error': 'WHATSAPP_NOT_CONFIGURED',
-                'message': 'WhatsApp sending is not configured',
+                "success": False,
+                "error": "WHATSAPP_NOT_CONFIGURED",
+                "message": "WhatsApp sending is not configured",
             }
         except Exception as e:
-            logger.error(f"Failed to send receipt WhatsApp for order {order.pk}: {e}", exc_info=True)
+            logger.error(
+                f"Failed to send receipt WhatsApp for order {order.pk}: {e}", exc_info=True
+            )
             return {
-                'success': False,
-                'error': 'SEND_ERROR',
-                'message': str(e),
+                "success": False,
+                "error": "SEND_ERROR",
+                "message": str(e),
             }
 
 

@@ -15,10 +15,10 @@ Covers:
 The tests build their CSV/XLSX bytes in-memory so they don't depend on
 fixture files on disk.
 """
+
 from __future__ import annotations
 
 import io
-from datetime import datetime
 from decimal import Decimal
 
 import openpyxl
@@ -26,7 +26,6 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
-from djmoney.money import Money
 
 from migration.models import MigrationJob
 from tests.factories import UserFactory
@@ -42,13 +41,13 @@ from vouchers.services.voucher_importer import (
     partition_rows,
 )
 
-
 pytestmark = pytest.mark.django_db
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _csv_upload(text: str, name: str = "vouchers.csv") -> SimpleUploadedFile:
     return SimpleUploadedFile(
@@ -70,9 +69,7 @@ def _xlsx_upload(headers, rows, name="vouchers.xlsx") -> SimpleUploadedFile:
     return SimpleUploadedFile(
         name,
         buf.read(),
-        content_type=(
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        ),
+        content_type=("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     )
 
 
@@ -91,13 +88,9 @@ def _batch_settings() -> dict:
 # Parsing
 # ---------------------------------------------------------------------------
 
+
 def test_parse_csv_strips_whitespace_and_drops_blank_rows():
-    csv_body = (
-        "Voucher Code,Member ID,Notes\n"
-        "BD-001 , 1001 , Alice\n"
-        "\n"
-        "  BD-002,1002,Bob\n"
-    )
+    csv_body = "Voucher Code,Member ID,Notes\nBD-001 , 1001 , Alice\n\n  BD-002,1002,Bob\n"
     parsed = parse_file(_csv_upload(csv_body))
     assert parsed.row_count == 2
     assert parsed.headers == ["Voucher Code", "Member ID", "Notes"]
@@ -126,6 +119,7 @@ def test_parse_rejects_unsupported_extension():
 # Mapping
 # ---------------------------------------------------------------------------
 
+
 def test_auto_detect_mapping_matches_aliases():
     detected = auto_detect_mapping(["Voucher Code", "Member Name", "Member ID", "Birthday"])
     assert detected["code"] == "Voucher Code"
@@ -139,12 +133,13 @@ def test_auto_detect_mapping_matches_aliases():
 # Validation / partition
 # ---------------------------------------------------------------------------
 
+
 def test_partition_rejects_blank_codes_and_overlength_codes_and_dupes_in_batch():
     rows = [
         {"Code": "BD-001"},
-        {"Code": "   "},                       # blank → invalid
-        {"Code": "X" * 60},                    # too long → invalid
-        {"Code": "BD-001"},                    # duplicate within file → invalid
+        {"Code": "   "},  # blank → invalid
+        {"Code": "X" * 60},  # too long → invalid
+        {"Code": "BD-001"},  # duplicate within file → invalid
         {"Code": "BD-002"},
     ]
     valid, invalid = partition_rows(rows, mapping={"code": "Code"})
@@ -159,6 +154,7 @@ def test_partition_rejects_blank_codes_and_overlength_codes_and_dupes_in_batch()
 # Import: duplicate strategies
 # ---------------------------------------------------------------------------
 
+
 def _parsed_from_codes(codes):
     rows = [{"Code": c, "Member": f"M{i}"} for i, c in enumerate(codes)]
     csv_text = "Code,Member\n" + "\n".join(f"{r['Code']},{r['Member']}" for r in rows)
@@ -169,8 +165,12 @@ def test_import_skip_strategy_keeps_existing_and_creates_new(db):
     user = UserFactory()
     # Pre-existing voucher with one of our codes:
     VoucherCode.objects.create(
-        code="BD-001", name="Existing", discount_type="percentage",
-        discount_value=Decimal("50.00"), application_scope="cart", created_by=user,
+        code="BD-001",
+        name="Existing",
+        discount_type="percentage",
+        discount_value=Decimal("50.00"),
+        application_scope="cart",
+        created_by=user,
     )
 
     parsed = _parsed_from_codes(["BD-001", "BD-002", "BD-003"])
@@ -193,8 +193,12 @@ def test_import_skip_strategy_keeps_existing_and_creates_new(db):
 def test_import_overwrite_strategy_updates_existing_settings_without_touching_identity(db):
     user = UserFactory()
     existing = VoucherCode.objects.create(
-        code="BD-001", name="Existing", discount_type="fixed",
-        discount_value=Decimal("5.00"), application_scope="cart", created_by=user,
+        code="BD-001",
+        name="Existing",
+        discount_type="fixed",
+        discount_value=Decimal("5.00"),
+        application_scope="cart",
+        created_by=user,
         current_uses=3,
     )
     original_created_at = existing.created_at
@@ -207,8 +211,8 @@ def test_import_overwrite_strategy_updates_existing_settings_without_touching_id
         dup_strategy="overwrite",
         user=user,
     )
-    assert result.imported == 1   # BD-002
-    assert result.updated == 1    # BD-001
+    assert result.imported == 1  # BD-002
+    assert result.updated == 1  # BD-001
 
     updated = VoucherCode.objects.get(code="BD-001")
     assert updated.discount_type == "percentage"
@@ -221,8 +225,12 @@ def test_import_overwrite_strategy_updates_existing_settings_without_touching_id
 def test_import_fail_strategy_aborts_entire_batch_on_any_duplicate(db):
     user = UserFactory()
     VoucherCode.objects.create(
-        code="BD-001", name="Existing", discount_type="percentage",
-        discount_value=Decimal("50.00"), application_scope="cart", created_by=user,
+        code="BD-001",
+        name="Existing",
+        discount_type="percentage",
+        discount_value=Decimal("50.00"),
+        application_scope="cart",
+        created_by=user,
     )
     parsed = _parsed_from_codes(["BD-001", "BD-002", "BD-003"])
 
@@ -242,13 +250,10 @@ def test_import_fail_strategy_aborts_entire_batch_on_any_duplicate(db):
 # Linkage + uniform settings
 # ---------------------------------------------------------------------------
 
+
 def test_batch_settings_applied_uniformly_and_external_id_mapped(db):
     user = UserFactory()
-    csv_text = (
-        "Code,Member ID\n"
-        "BD-100,1001\n"
-        "BD-101,1002\n"
-    )
+    csv_text = "Code,Member ID\nBD-100,1001\nBD-101,1002\n"
     parsed = parse_file(_csv_upload(csv_text))
     settings = _batch_settings()
     settings["max_uses_per_customer"] = 2
@@ -278,23 +283,28 @@ def test_batch_settings_applied_uniformly_and_external_id_mapped(db):
 # Preview surfaces duplicates and invalid rows
 # ---------------------------------------------------------------------------
 
+
 def test_build_preview_counts_duplicates_and_invalid_rows(db):
     user = UserFactory()
     VoucherCode.objects.create(
-        code="BD-001", name="x", discount_type="percentage",
-        discount_value=Decimal("10.00"), application_scope="cart", created_by=user,
+        code="BD-001",
+        name="x",
+        discount_type="percentage",
+        discount_value=Decimal("10.00"),
+        application_scope="cart",
+        created_by=user,
     )
     csv_text = (
         "Code\n"
         "BD-001\n"
         "BD-002\n"
-        "BD-002\n"        # duplicate in batch → invalid
+        "BD-002\n"  # duplicate in batch → invalid
         "\n"
         "" + ("X" * 60) + "\n"  # too long → invalid
     )
     parsed = parse_file(_csv_upload(csv_text))
     preview = build_preview(parsed, mapping={"code": "Code"})
-    assert preview.valid_count == 2   # BD-001 + BD-002
+    assert preview.valid_count == 2  # BD-001 + BD-002
     assert preview.duplicate_count == 1
     assert preview.new_count == 1
     assert any("more than once" in r.reason for r in preview.invalid_rows)
@@ -304,6 +314,7 @@ def test_build_preview_counts_duplicates_and_invalid_rows(db):
 # ---------------------------------------------------------------------------
 # Export + roundtrip
 # ---------------------------------------------------------------------------
+
 
 def test_export_columns_cover_every_mappable_import_field():
     # If an importer-mappable field isn't represented on export, the
@@ -316,12 +327,20 @@ def test_export_xlsx_round_trips_through_overwrite(db):
     user = UserFactory()
     # Seed two vouchers
     VoucherCode.objects.create(
-        code="RT-001", name="One", discount_type="percentage",
-        discount_value=Decimal("15.00"), application_scope="cart", created_by=user,
+        code="RT-001",
+        name="One",
+        discount_type="percentage",
+        discount_value=Decimal("15.00"),
+        application_scope="cart",
+        created_by=user,
     )
     VoucherCode.objects.create(
-        code="RT-002", name="Two", discount_type="percentage",
-        discount_value=Decimal("25.00"), application_scope="cart", created_by=user,
+        code="RT-002",
+        name="Two",
+        discount_type="percentage",
+        discount_value=Decimal("25.00"),
+        application_scope="cart",
+        created_by=user,
     )
 
     queryset = VoucherCode.objects.filter(code__in=["RT-001", "RT-002"]).order_by("code")

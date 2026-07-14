@@ -8,8 +8,8 @@ Signal handlers for core functionality including:
 """
 
 import logging
-from django.db.models.signals import pre_save, post_save, post_delete
-from django.dispatch import receiver
+
+from django.db.models.signals import post_delete, post_save, pre_save
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 # MAINTENANCE MODE CACHE INVALIDATION
 # =============================================================================
+
 
 def warn_on_currency_change(sender, instance, **kwargs):
     """
@@ -33,8 +34,10 @@ def warn_on_currency_change(sender, instance, **kwargs):
                 "Default currency changed from %s to %s. Existing records "
                 "retain their original currency. To bulk-update, run: "
                 "manage.py fix_currency_defaults --from-currency %s --to-currency %s",
-                old.default_currency, instance.default_currency,
-                old.default_currency, instance.default_currency,
+                old.default_currency,
+                instance.default_currency,
+                old.default_currency,
+                instance.default_currency,
             )
     except sender.DoesNotExist:
         pass
@@ -48,6 +51,7 @@ def invalidate_maintenance_cache_on_save(sender, instance, **kwargs):
     rather than waiting for the cache to expire.
     """
     from core.middleware.maintenance import invalidate_maintenance_cache
+
     try:
         invalidate_maintenance_cache()
         logger.debug("Maintenance mode cache invalidated after SiteSettings save")
@@ -63,6 +67,7 @@ def revoke_trusted_devices_on_password_change(sender, instance, **kwargs):
     and then changed, any previously trusted devices are invalidated.
     """
     from django.contrib.auth import get_user_model
+
     User = get_user_model()
 
     # Only process for User model
@@ -76,10 +81,8 @@ def revoke_trusted_devices_on_password_change(sender, instance, **kwargs):
             if old_instance.password != instance.password:
                 # Password has changed - revoke all trusted devices
                 from core.models import TrustedDevice
-                count = TrustedDevice.revoke_all_for_user(
-                    instance,
-                    reason='Password changed'
-                )
+
+                count = TrustedDevice.revoke_all_for_user(instance, reason="Password changed")
                 if count:
                     logger.info(
                         f"Revoked {count} trusted device(s) for user {instance.email} "
@@ -101,14 +104,11 @@ def revoke_trusted_devices_on_mfa_removed(sender, request, user, authenticator, 
     """
     try:
         from core.models import TrustedDevice
-        count = TrustedDevice.revoke_all_for_user(
-            user,
-            reason='2FA deactivated'
-        )
+
+        count = TrustedDevice.revoke_all_for_user(user, reason="2FA deactivated")
         if count:
             logger.info(
-                f"Revoked {count} trusted device(s) for user {user.email} "
-                f"due to MFA removal"
+                f"Revoked {count} trusted device(s) for user {user.email} due to MFA removal"
             )
     except Exception as e:
         logger.error(f"Error revoking trusted devices on MFA removal: {e}")
@@ -118,6 +118,7 @@ def revoke_trusted_devices_on_mfa_removed(sender, request, user, authenticator, 
 # DOMAIN SYNC ON SITE_URL CHANGE
 # =============================================================================
 
+
 def sync_domain_on_site_url_change(sender, instance, **kwargs):
     """
     When SiteSettings.site_url changes, sync the domain to
@@ -126,47 +127,51 @@ def sync_domain_on_site_url_change(sender, instance, **kwargs):
     """
     try:
         from urllib.parse import urlparse
+
         parsed = urlparse(instance.site_url)
-        domain = parsed.hostname or ''
+        domain = parsed.hostname or ""
     except Exception:
         return
 
-    if not domain or domain in ('example.com', 'localhost', '127.0.0.1'):
+    if not domain or domain in ("example.com", "localhost", "127.0.0.1"):
         return
 
     # Check if this is actually a change by comparing to the current value
-    update_fields = kwargs.get('update_fields')
+    update_fields = kwargs.get("update_fields")
 
     # If update_fields is specified and site_url isn't in it, skip
-    if update_fields is not None and 'site_url' not in update_fields:
+    if update_fields is not None and "site_url" not in update_fields:
         return
 
     # Sync to DomainConfiguration.domain (create row if it doesn't exist yet)
     try:
         from domain_ssl.models import DomainConfiguration
+
         config, _ = DomainConfiguration.objects.get_or_create(pk=1)
         if config.domain != domain:
             config.domain = domain
-            config.save(update_fields=['domain', 'updated_at'])
-            logger.info('Synced DomainConfiguration.domain to %s', domain)
+            config.save(update_fields=["domain", "updated_at"])
+            logger.info("Synced DomainConfiguration.domain to %s", domain)
     except Exception as e:
-        logger.debug('Could not sync DomainConfiguration.domain: %s', e)
+        logger.debug("Could not sync DomainConfiguration.domain: %s", e)
 
     # Sync to Site.domain (django.contrib.sites)
     try:
         from django.contrib.sites.models import Site
+
         site = Site.objects.filter(pk=1).first()
         if site and site.domain != domain:
             site.domain = domain
-            site.save(update_fields=['domain'])
-            logger.info('Synced Site.domain to %s', domain)
+            site.save(update_fields=["domain"])
+            logger.info("Synced Site.domain to %s", domain)
     except Exception as e:
-        logger.debug('Could not sync Site.domain: %s', e)
+        logger.debug("Could not sync Site.domain: %s", e)
 
 
 # =============================================================================
 # HELP TOPIC SEMANTIC SEARCH INDEXING
 # =============================================================================
+
 
 def reindex_help_topic_on_save(sender, instance, created, **kwargs):
     """
@@ -178,16 +183,17 @@ def reindex_help_topic_on_save(sender, instance, created, **kwargs):
     or when containers restart and re-run startup commands.
     """
     # Allow callers to suppress reindexing (e.g. bulk sync operations)
-    if getattr(instance, '_skip_reindex', False):
+    if getattr(instance, "_skip_reindex", False):
         return
 
     if instance.is_published:
         try:
             from django.core.cache import cache
+
             from core.tasks import index_help_topic_async
 
             # Dedup: skip if a reindex task was already queued recently
-            cache_key = f'help_reindex_queued:{instance.id}'
+            cache_key = f"help_reindex_queued:{instance.id}"
             if cache.get(cache_key):
                 logger.debug(f"Skipping duplicate reindex for help topic: {instance.slug}")
                 return
@@ -215,21 +221,23 @@ def connect_signals():
     This should be called from core.apps.CoreConfig.ready()
     """
     from django.contrib.auth import get_user_model
+
     User = get_user_model()
 
     # Connect password change signal
     pre_save.connect(
         revoke_trusted_devices_on_password_change,
         sender=User,
-        dispatch_uid='core_revoke_trusted_devices_on_password_change'
+        dispatch_uid="core_revoke_trusted_devices_on_password_change",
     )
 
     # Connect MFA removed signal (from django-allauth)
     try:
         from allauth.mfa.signals import authenticator_removed
+
         authenticator_removed.connect(
             revoke_trusted_devices_on_mfa_removed,
-            dispatch_uid='core_revoke_trusted_devices_on_mfa_removed'
+            dispatch_uid="core_revoke_trusted_devices_on_mfa_removed",
         )
         logger.debug("Connected MFA removal signal handler")
     except ImportError:
@@ -237,38 +245,36 @@ def connect_signals():
 
     # Connect maintenance cache invalidation signal
     from core.models import SiteSettings
+
     post_save.connect(
         invalidate_maintenance_cache_on_save,
         sender=SiteSettings,
-        dispatch_uid='core_invalidate_maintenance_cache_on_save'
+        dispatch_uid="core_invalidate_maintenance_cache_on_save",
     )
     logger.debug("Connected maintenance cache invalidation signal handler")
 
     # Connect currency change warning signal
     pre_save.connect(
-        warn_on_currency_change,
-        sender=SiteSettings,
-        dispatch_uid='core_warn_on_currency_change'
+        warn_on_currency_change, sender=SiteSettings, dispatch_uid="core_warn_on_currency_change"
     )
 
     # Connect domain sync signal (site_url → DomainConfiguration + Site)
     post_save.connect(
         sync_domain_on_site_url_change,
         sender=SiteSettings,
-        dispatch_uid='core_sync_domain_on_site_url_change'
+        dispatch_uid="core_sync_domain_on_site_url_change",
     )
     logger.debug("Connected domain sync signal handler")
 
     # Connect help topic indexing signals
     from core.models import HelpTopic
+
     post_save.connect(
-        reindex_help_topic_on_save,
-        sender=HelpTopic,
-        dispatch_uid='core_reindex_help_topic_on_save'
+        reindex_help_topic_on_save, sender=HelpTopic, dispatch_uid="core_reindex_help_topic_on_save"
     )
     post_delete.connect(
         cleanup_help_index_on_delete,
         sender=HelpTopic,
-        dispatch_uid='core_cleanup_help_index_on_delete'
+        dispatch_uid="core_cleanup_help_index_on_delete",
     )
     logger.debug("Connected help topic semantic search signal handlers")

@@ -42,8 +42,8 @@
               "type": "select",
               "label": "Data Source",
               "options": [
-                {"value": "dynamic", "label": "Auto-detect Related"},
-                {"value": "static", "label": "Manual Selection"}
+                { "value": "dynamic", "label": "Auto-detect Related" },
+                { "value": "static", "label": "Manual Selection" }
               ],
               "default": "dynamic"
             },
@@ -51,30 +51,30 @@
               "type": "select",
               "label": "Relation Type",
               "options": [
-                {"value": "auto", "label": "Auto (Category + Tags)"},
-                {"value": "category", "label": "Same Category Only"},
-                {"value": "tags", "label": "Shared Tags Only"}
+                { "value": "auto", "label": "Auto (Category + Tags)" },
+                { "value": "category", "label": "Same Category Only" },
+                { "value": "tags", "label": "Shared Tags Only" }
               ],
               "default": "auto",
-              "show_if": {"data_source": "dynamic"},
+              "show_if": { "data_source": "dynamic" },
               "help_text": "How to determine related posts"
             },
             "current_post_source": {
               "type": "select",
               "label": "Current Post",
               "options": [
-                {"value": "context", "label": "From Page Context"},
-                {"value": "slug", "label": "Specific Post Slug"}
+                { "value": "context", "label": "From Page Context" },
+                { "value": "slug", "label": "Specific Post Slug" }
               ],
               "default": "context",
-              "show_if": {"data_source": "dynamic"},
+              "show_if": { "data_source": "dynamic" },
               "help_text": "How to identify the current post for finding related ones"
             },
             "post_slug": {
               "type": "string",
               "label": "Post Slug",
               "help_text": "The slug of the post to find related posts for",
-              "show_if": {"current_post_source": "slug", "data_source": "dynamic"}
+              "show_if": { "current_post_source": "slug", "data_source": "dynamic" }
             },
             "max_posts": {
               "type": "number",
@@ -82,7 +82,7 @@
               "default": 3,
               "min": 1,
               "max": 6,
-              "show_if": {"data_source": "dynamic"}
+              "show_if": { "data_source": "dynamic" }
             }
           }
         },
@@ -90,7 +90,7 @@
           "type": "property_group",
           "label": "Static Posts",
           "columns": 1,
-          "show_if": {"data_source": "static"},
+          "show_if": { "data_source": "static" },
           "properties": {
             "posts": {
               "type": "array",
@@ -99,11 +99,11 @@
               "item_schema": {
                 "type": "object",
                 "properties": {
-                  "title": {"type": "string", "label": "Title", "translatable": true},
-                  "image": {"type": "image", "label": "Image"},
-                  "url": {"type": "url", "label": "URL", "link_selector": true},
-                  "category": {"type": "string", "label": "Category"},
-                  "date": {"type": "string", "label": "Date"}
+                  "title": { "type": "string", "label": "Title", "translatable": true },
+                  "image": { "type": "image", "label": "Image" },
+                  "url": { "type": "url", "label": "URL", "link_selector": true },
+                  "category": { "type": "string", "label": "Category" },
+                  "date": { "type": "string", "label": "Date" }
                 }
               }
             }
@@ -124,9 +124,9 @@
               "type": "select",
               "label": "Layout",
               "options": [
-                {"value": "grid", "label": "Grid"},
-                {"value": "list", "label": "Compact List"},
-                {"value": "cards", "label": "Cards"}
+                { "value": "grid", "label": "Grid" },
+                { "value": "list", "label": "Compact List" },
+                { "value": "cards", "label": "Cards" }
               ],
               "default": "grid"
             },
@@ -134,20 +134,20 @@
               "type": "select",
               "label": "Columns",
               "options": [
-                {"value": "2", "label": "2 Columns"},
-                {"value": "3", "label": "3 Columns"},
-                {"value": "4", "label": "4 Columns"}
+                { "value": "2", "label": "2 Columns" },
+                { "value": "3", "label": "3 Columns" },
+                { "value": "4", "label": "4 Columns" }
               ],
               "default": "3",
-              "show_if": {"layout": "grid"}
+              "show_if": { "layout": "grid" }
             },
             "image_ratio": {
               "type": "select",
               "label": "Image Ratio",
               "options": [
-                {"value": "16/9", "label": "16:9"},
-                {"value": "4/3", "label": "4:3"},
-                {"value": "1/1", "label": "1:1"}
+                { "value": "16/9", "label": "16:9" },
+                { "value": "4/3", "label": "4:3" },
+                { "value": "1/1", "label": "1:1" }
               ],
               "default": "16/9"
             }
@@ -157,38 +157,53 @@
           "type": "property_group",
           "label": "Show/Hide Elements",
           "properties": {
-            "show_image": {"type": "boolean", "label": "Show Image", "default": true},
-            "show_category": {"type": "boolean", "label": "Show Category", "default": true},
-            "show_date": {"type": "boolean", "label": "Show Date", "default": true},
-            "show_excerpt": {"type": "boolean", "label": "Show Excerpt", "default": false}
+            "show_image": { "type": "boolean", "label": "Show Image", "default": true },
+            "show_category": { "type": "boolean", "label": "Show Category", "default": true },
+            "show_date": { "type": "boolean", "label": "Show Date", "default": true },
+            "show_excerpt": { "type": "boolean", "label": "Show Excerpt", "default": false }
           }
         }
       }
     }
   },
   "properties": {
-    "title": {"type": "string", "default": "Related Posts", "translatable": true},
-    "data_source": {"type": "select", "default": "dynamic"},
-    "relation_type": {"type": "select", "default": "auto"},
-    "current_post_source": {"type": "select", "default": "context"},
-    "post_slug": {"type": "string"},
-    "max_posts": {"type": "number", "default": 3},
-    "posts": {"type": "array"},
-    "layout": {"type": "select", "default": "grid"},
-    "columns": {"type": "select", "default": "3"},
-    "show_image": {"type": "boolean", "default": true},
-    "show_category": {"type": "boolean", "default": true},
-    "show_date": {"type": "boolean", "default": true},
-    "show_excerpt": {"type": "boolean", "default": false},
-    "image_ratio": {"type": "select", "default": "16/9"}
+    "title": { "type": "string", "default": "Related Posts", "translatable": true },
+    "data_source": { "type": "select", "default": "dynamic" },
+    "relation_type": { "type": "select", "default": "auto" },
+    "current_post_source": { "type": "select", "default": "context" },
+    "post_slug": { "type": "string" },
+    "max_posts": { "type": "number", "default": 3 },
+    "posts": { "type": "array" },
+    "layout": { "type": "select", "default": "grid" },
+    "columns": { "type": "select", "default": "3" },
+    "show_image": { "type": "boolean", "default": true },
+    "show_category": { "type": "boolean", "default": true },
+    "show_date": { "type": "boolean", "default": true },
+    "show_excerpt": { "type": "boolean", "default": false },
+    "image_ratio": { "type": "select", "default": "16/9" }
   },
   "translations": {
-    "en": {"name": "Related Posts", "description": "Display related blog posts based on category or tags"},
-    "es": {"name": "Posts Relacionados", "description": "Mostrar publicaciones de blog relacionadas por categoría o etiquetas"},
-    "fr": {"name": "Articles Connexes", "description": "Afficher les articles de blog connexes par catégorie ou tags"},
-    "de": {"name": "Verwandte Beiträge", "description": "Zeigen Sie verwandte Blog-Beiträge nach Kategorie oder Tags an"},
-    "pt": {"name": "Posts Relacionados", "description": "Exibir posts de blog relacionados por categoria ou tags"},
-    "zh-hans": {"name": "相关文章", "description": "根据分类或标签显示相关博客文章"},
-    "ja": {"name": "関連記事", "description": "カテゴリまたはタグに基づいて関連ブログ記事を表示"}
+    "en": {
+      "name": "Related Posts",
+      "description": "Display related blog posts based on category or tags"
+    },
+    "es": {
+      "name": "Posts Relacionados",
+      "description": "Mostrar publicaciones de blog relacionadas por categoría o etiquetas"
+    },
+    "fr": {
+      "name": "Articles Connexes",
+      "description": "Afficher les articles de blog connexes par catégorie ou tags"
+    },
+    "de": {
+      "name": "Verwandte Beiträge",
+      "description": "Zeigen Sie verwandte Blog-Beiträge nach Kategorie oder Tags an"
+    },
+    "pt": {
+      "name": "Posts Relacionados",
+      "description": "Exibir posts de blog relacionados por categoria ou tags"
+    },
+    "zh-hans": { "name": "相关文章", "description": "根据分类或标签显示相关博客文章" },
+    "ja": { "name": "関連記事", "description": "カテゴリまたはタグに基づいて関連ブログ記事を表示" }
   }
 }

@@ -8,7 +8,7 @@ import logging
 from decimal import Decimal
 
 from django.conf import settings
-from django.db.models import Sum, Q
+from django.db.models import Q, Sum
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
@@ -19,16 +19,18 @@ logger = logging.getLogger(__name__)
 
 def bell_token_required(view_func):
     """Simple bearer token auth for the sales bell endpoint."""
-    def wrapper(request, *args, **kwargs):
-        token = getattr(settings, 'SALES_BELL_TOKEN', '')
-        if not token:
-            return JsonResponse({'error': 'Sales bell not configured'}, status=503)
 
-        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-        if not auth_header.startswith('Bearer ') or auth_header[7:] != token:
-            return JsonResponse({'error': 'Unauthorized'}, status=401)
+    def wrapper(request, *args, **kwargs):
+        token = getattr(settings, "SALES_BELL_TOKEN", "")
+        if not token:
+            return JsonResponse({"error": "Sales bell not configured"}, status=503)
+
+        auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+        if not auth_header.startswith("Bearer ") or auth_header[7:] != token:
+            return JsonResponse({"error": "Unauthorized"}, status=401)
 
         return view_func(request, *args, **kwargs)
+
     return wrapper
 
 
@@ -40,7 +42,7 @@ def bell_events(request):
 
     Returns new events since the given ID, plus running totals.
     """
-    since_id = request.GET.get('since')
+    since_id = request.GET.get("since")
 
     # Fetch new events
     qs = SalesBellEvent.objects.all()
@@ -51,34 +53,37 @@ def bell_events(request):
             pass
 
     events = list(
-        qs.order_by('-id')[:50]
-        .values('id', 'event_type', 'subtype', 'name', 'product', 'amount', 'currency', 'created_at')
+        qs.order_by("-id")[:50].values(
+            "id", "event_type", "subtype", "name", "product", "amount", "currency", "created_at"
+        )
     )
 
     # Serialize events for JSON
     for event in events:
-        event['amount'] = float(event['amount'])
-        event['created_at'] = event['created_at'].isoformat()
+        event["amount"] = float(event["amount"])
+        event["created_at"] = event["created_at"].isoformat()
         # Map field names to match the Pi app's expected format
-        event['type'] = event.pop('event_type')
-        event['timestamp'] = event.pop('created_at')
+        event["type"] = event.pop("event_type")
+        event["timestamp"] = event.pop("created_at")
 
     # Running totals (computed from all events, not just since)
     totals = SalesBellEvent.objects.aggregate(
-        total_revenue=Sum('amount', filter=Q(event_type='sale')),
-        total_refunded=Sum('amount', filter=Q(event_type='refund')),
-        total_sales=Sum(1, filter=Q(event_type='sale')),
-        total_refunds=Sum(1, filter=Q(event_type='refund')),
-        developer_signups=Sum(1, filter=Q(event_type='developer_signup')),
+        total_revenue=Sum("amount", filter=Q(event_type="sale")),
+        total_refunded=Sum("amount", filter=Q(event_type="refund")),
+        total_sales=Sum(1, filter=Q(event_type="sale")),
+        total_refunds=Sum(1, filter=Q(event_type="refund")),
+        developer_signups=Sum(1, filter=Q(event_type="developer_signup")),
     )
 
-    sale_revenue = totals['total_revenue'] or Decimal('0')
-    refund_total = totals['total_refunded'] or Decimal('0')
+    sale_revenue = totals["total_revenue"] or Decimal("0")
+    refund_total = totals["total_refunded"] or Decimal("0")
 
-    return JsonResponse({
-        'events': events,
-        'total_revenue': float(sale_revenue - refund_total),
-        'total_sales': totals['total_sales'] or 0,
-        'total_refunds': totals['total_refunds'] or 0,
-        'developer_signups': totals['developer_signups'] or 0,
-    })
+    return JsonResponse(
+        {
+            "events": events,
+            "total_revenue": float(sale_revenue - refund_total),
+            "total_sales": totals["total_sales"] or 0,
+            "total_refunds": totals["total_refunds"] or 0,
+            "developer_signups": totals["developer_signups"] or 0,
+        }
+    )

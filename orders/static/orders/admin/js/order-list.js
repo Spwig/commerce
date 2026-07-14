@@ -5,32 +5,32 @@
  * Initializes flatpickr date pickers and admin table toggle for the order change list.
  */
 (function () {
-    'use strict';
+  'use strict';
 
-    function init() {
-        // Initialize date pickers
-        if (typeof flatpickr !== 'undefined') {
-            var dateFrom = document.getElementById('date-from');
-            var dateTo = document.getElementById('date-to');
-            if (dateFrom) flatpickr(dateFrom, { dateFormat: 'Y-m-d' });
-            if (dateTo) flatpickr(dateTo, { dateFormat: 'Y-m-d' });
-        }
-
-        // Show admin table view
-        var showAdminTableBtn = document.getElementById('show-admin-table-btn');
-        if (showAdminTableBtn) {
-            showAdminTableBtn.addEventListener('click', function () {
-                var container = document.querySelector('.orders-management-container');
-                var tableView = document.getElementById('admin-table-view');
-                if (container) container.classList.add('hidden');
-                if (tableView) tableView.classList.add('visible');
-            });
-        }
+  function init() {
+    // Initialize date pickers
+    if (typeof flatpickr !== 'undefined') {
+      const dateFrom = document.getElementById('date-from');
+      const dateTo = document.getElementById('date-to');
+      if (dateFrom) flatpickr(dateFrom, { dateFormat: 'Y-m-d' });
+      if (dateTo) flatpickr(dateTo, { dateFormat: 'Y-m-d' });
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
+    // Show admin table view
+    const showAdminTableBtn = document.getElementById('show-admin-table-btn');
+    if (showAdminTableBtn) {
+      showAdminTableBtn.addEventListener('click', function () {
+        const container = document.querySelector('.orders-management-container');
+        const tableView = document.getElementById('admin-table-view');
+        if (container) container.classList.add('hidden');
+        if (tableView) tableView.classList.add('visible');
+      });
     }
-}());
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

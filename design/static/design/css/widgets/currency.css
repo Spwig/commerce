@@ -5,387 +5,456 @@
 /* Uses widget-specific tokens: --theme-widget-currency-{property} */
 
 .widget-currency {
-    position: relative;
-    display: inline-block;
-    font-family: var(--theme-font-sans, inherit);
-    font-size: var(--theme-widget-currency-select-font-size, var(--theme-font-size-sm, 0.875rem));
-    line-height: 1.5;
+  position: relative;
+  display: inline-block;
+  font-family: var(--theme-font-sans, inherit);
+  font-size: var(--theme-widget-currency-select-font-size, var(--theme-font-size-sm, 0.875rem));
+  line-height: 1.5;
 }
 
 /* ===== Compact Mode: Button + Dropdown ===== */
 
 .currency-button {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--theme-widget-currency-button-gap, var(--theme-space-2, 0.5rem));
-    padding: var(--theme-widget-currency-button-padding-y, var(--theme-space-2, 0.5rem)) var(--theme-widget-currency-button-padding-x, var(--theme-space-3, 0.75rem));
-    border: none;
-    border-radius: var(--theme-widget-currency-button-radius, var(--theme-radius-md, 0.375rem));
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    font-size: inherit;
-    font-family: inherit;
-    transition: all var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
-    white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-widget-currency-button-gap, var(--theme-space-2, 0.5rem));
+  padding: var(--theme-widget-currency-button-padding-y, var(--theme-space-2, 0.5rem))
+    var(--theme-widget-currency-button-padding-x, var(--theme-space-3, 0.75rem));
+  border: none;
+  border-radius: var(--theme-widget-currency-button-radius, var(--theme-radius-md, 0.375rem));
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  transition: all var(--theme-transition-duration-fast, 150ms)
+    var(--theme-transition-easing-default, ease);
+  white-space: nowrap;
 }
 
 .currency-button:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 .currency-button:focus {
-    outline: 2px solid var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #3B82F6));
-    outline-offset: 2px;
+  outline: 2px solid
+    var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #3b82f6));
+  outline-offset: 2px;
 }
 
 /* Button Style: Solid */
 .currency-button-solid {
-    background: var(--theme-widget-currency-button-solid-bg, var(--theme-color-primary, #3B82F6));
-    color: var(--theme-widget-currency-button-solid-color, var(--theme-color-text-inverse, #fff));
-    border: 1px solid var(--theme-widget-currency-button-solid-border, var(--theme-color-primary, #3B82F6));
+  background: var(--theme-widget-currency-button-solid-bg, var(--theme-color-primary, #3b82f6));
+  color: var(--theme-widget-currency-button-solid-color, var(--theme-color-text-inverse, #fff));
+  border: 1px solid
+    var(--theme-widget-currency-button-solid-border, var(--theme-color-primary, #3b82f6));
 }
 
 /* Button Style: Outline */
 .currency-button-outline {
-    background: var(--theme-widget-currency-button-outline-bg, transparent);
-    color: inherit;
-    border: 1px solid var(--theme-widget-currency-button-outline-border, var(--theme-color-border, #e0e0e0));
+  background: var(--theme-widget-currency-button-outline-bg, transparent);
+  color: inherit;
+  border: 1px solid
+    var(--theme-widget-currency-button-outline-border, var(--theme-color-border, #e0e0e0));
 }
 
 .currency-button-outline:hover {
-    background: var(--theme-widget-currency-button-outline-hover-bg, var(--theme-color-surface-hover, rgba(0, 0, 0, 0.05)));
+  background: var(
+    --theme-widget-currency-button-outline-hover-bg,
+    var(--theme-color-surface-hover, rgba(0, 0, 0, 0.05))
+  );
 }
 
 /* Button Style: Ghost */
 .currency-button-ghost {
-    background: var(--theme-widget-currency-button-ghost-bg, transparent);
-    color: inherit;
-    border: 1px solid var(--theme-widget-currency-button-ghost-border, transparent);
+  background: var(--theme-widget-currency-button-ghost-bg, transparent);
+  color: inherit;
+  border: 1px solid var(--theme-widget-currency-button-ghost-border, transparent);
 }
 
 .currency-button-ghost:hover {
-    background: var(--theme-widget-currency-button-ghost-hover-bg, var(--theme-color-surface-hover, rgba(0, 0, 0, 0.05)));
+  background: var(
+    --theme-widget-currency-button-ghost-hover-bg,
+    var(--theme-color-surface-hover, rgba(0, 0, 0, 0.05))
+  );
 }
 
 .currency-current {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--theme-space-1, 0.375rem);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-1, 0.375rem);
 }
 
 .currency-chevron {
-    color: var(--theme-widget-currency-chevron-color, var(--theme-color-text-muted, #6b7280));
-    transition: transform var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+  color: var(--theme-widget-currency-chevron-color, var(--theme-color-text-muted, #6b7280));
+  transition: transform var(--theme-transition-duration-fast, 150ms)
+    var(--theme-transition-easing-default, ease);
 }
 
-.currency-button[aria-expanded="true"] .currency-chevron {
-    transform: rotate(180deg);
+.currency-button[aria-expanded='true'] .currency-chevron {
+  transform: rotate(180deg);
 }
 
 /* ===== Dropdown ===== */
 
 .currency-dropdown {
-    position: absolute;
-    z-index: var(--theme-z-dropdown, 1000);
-    min-width: var(--theme-widget-currency-dropdown-min-width, 200px);
-    margin-top: var(--theme-widget-currency-dropdown-margin, var(--theme-space-1, 0.25rem));
-    background: var(--theme-widget-currency-dropdown-bg, var(--theme-color-surface, #fff));
-    border: 1px solid var(--theme-widget-currency-dropdown-border, var(--theme-color-border, #e0e0e0));
-    border-radius: var(--theme-widget-currency-dropdown-radius, var(--theme-radius-lg, 0.5rem));
-    box-shadow: var(--theme-widget-currency-dropdown-shadow, var(--theme-shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.1)));
-    overflow: hidden;
+  position: absolute;
+  z-index: var(--theme-z-dropdown, 1000);
+  min-width: var(--theme-widget-currency-dropdown-min-width, 200px);
+  margin-top: var(--theme-widget-currency-dropdown-margin, var(--theme-space-1, 0.25rem));
+  background: var(--theme-widget-currency-dropdown-bg, var(--theme-color-surface, #fff));
+  border: 1px solid var(--theme-widget-currency-dropdown-border, var(--theme-color-border, #e0e0e0));
+  border-radius: var(--theme-widget-currency-dropdown-radius, var(--theme-radius-lg, 0.5rem));
+  box-shadow: var(
+    --theme-widget-currency-dropdown-shadow,
+    var(--theme-shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.1))
+  );
+  overflow: hidden;
 }
 
 .currency-dropdown-top {
-    bottom: 100%;
-    margin-bottom: var(--theme-widget-currency-dropdown-margin, var(--theme-space-1, 0.25rem));
-    margin-top: 0;
+  bottom: 100%;
+  margin-bottom: var(--theme-widget-currency-dropdown-margin, var(--theme-space-1, 0.25rem));
+  margin-top: 0;
 }
 
 .currency-dropdown-inner {
-    max-height: var(--theme-widget-currency-dropdown-max-height, 300px);
-    overflow-y: auto;
-    padding: var(--theme-widget-currency-dropdown-padding, var(--theme-space-1, 0.25rem));
+  max-height: var(--theme-widget-currency-dropdown-max-height, 300px);
+  overflow-y: auto;
+  padding: var(--theme-widget-currency-dropdown-padding, var(--theme-space-1, 0.25rem));
 }
 
 /* Custom scrollbar */
 .currency-dropdown-inner::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .currency-dropdown-inner::-webkit-scrollbar-track {
-    background: var(--theme-color-surface-muted, #f1f1f1);
-    border-radius: var(--theme-radius-sm, 0.25rem);
+  background: var(--theme-color-surface-muted, #f1f1f1);
+  border-radius: var(--theme-radius-sm, 0.25rem);
 }
 
 .currency-dropdown-inner::-webkit-scrollbar-thumb {
-    background: var(--theme-color-border, #c1c1c1);
-    border-radius: var(--theme-radius-sm, 0.25rem);
+  background: var(--theme-color-border, #c1c1c1);
+  border-radius: var(--theme-radius-sm, 0.25rem);
 }
 
 .currency-dropdown-inner::-webkit-scrollbar-thumb:hover {
-    background: var(--theme-color-text-muted, #a1a1a1);
+  background: var(--theme-color-text-muted, #a1a1a1);
 }
 
 /* ===== Dropdown Options ===== */
 
 .currency-option {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--theme-widget-currency-option-gap, var(--theme-space-2, 0.5rem));
-    width: 100%;
-    padding: var(--theme-widget-currency-option-padding-y, var(--theme-space-2, 0.625rem)) var(--theme-widget-currency-option-padding-x, var(--theme-space-3, 0.75rem));
-    border: none;
-    border-radius: var(--theme-widget-currency-option-radius, var(--theme-radius-md, 0.375rem));
-    background: transparent;
-    color: var(--theme-widget-currency-select-color, var(--theme-color-text, currentColor));
-    cursor: pointer;
-    font-size: var(--theme-widget-currency-select-font-size, var(--theme-font-size-sm, 0.875rem));
-    font-family: inherit;
-    text-align: left;
-    transition: background var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--theme-widget-currency-option-gap, var(--theme-space-2, 0.5rem));
+  width: 100%;
+  padding: var(--theme-widget-currency-option-padding-y, var(--theme-space-2, 0.625rem))
+    var(--theme-widget-currency-option-padding-x, var(--theme-space-3, 0.75rem));
+  border: none;
+  border-radius: var(--theme-widget-currency-option-radius, var(--theme-radius-md, 0.375rem));
+  background: transparent;
+  color: var(--theme-widget-currency-select-color, var(--theme-color-text, currentColor));
+  cursor: pointer;
+  font-size: var(--theme-widget-currency-select-font-size, var(--theme-font-size-sm, 0.875rem));
+  font-family: inherit;
+  text-align: left;
+  transition: background var(--theme-transition-duration-fast, 150ms)
+    var(--theme-transition-easing-default, ease);
 }
 
 .currency-option:hover {
-    background: var(--theme-widget-currency-option-hover-bg, var(--theme-color-surface-hover, #f3f4f6));
+  background: var(
+    --theme-widget-currency-option-hover-bg,
+    var(--theme-color-surface-hover, #f3f4f6)
+  );
 }
 
 .currency-option-active {
-    background: var(--theme-widget-currency-option-active-bg, var(--theme-color-primary-light, #eff6ff));
-    color: var(--theme-widget-currency-option-active-color, var(--theme-color-primary, #1d4ed8));
-    font-weight: var(--theme-widget-currency-option-active-font-weight, var(--theme-font-weight-medium, 500));
+  background: var(
+    --theme-widget-currency-option-active-bg,
+    var(--theme-color-primary-light, #eff6ff)
+  );
+  color: var(--theme-widget-currency-option-active-color, var(--theme-color-primary, #1d4ed8));
+  font-weight: var(
+    --theme-widget-currency-option-active-font-weight,
+    var(--theme-font-weight-medium, 500)
+  );
 }
 
 .currency-option-active:hover {
-    background: var(--theme-widget-currency-option-active-bg, var(--theme-color-primary-light, #dbeafe));
+  background: var(
+    --theme-widget-currency-option-active-bg,
+    var(--theme-color-primary-light, #dbeafe)
+  );
 }
 
 .currency-check {
-    flex-shrink: 0;
-    color: var(--theme-widget-currency-check-color, var(--theme-color-primary, #1d4ed8));
+  flex-shrink: 0;
+  color: var(--theme-widget-currency-check-color, var(--theme-color-primary, #1d4ed8));
 }
 
 /* ===== Full Mode: Select Dropdown ===== */
 
 .currency-select-wrapper {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .currency-select {
-    appearance: none;
-    padding: var(--theme-widget-currency-select-padding-y, var(--theme-space-2, 0.5rem)) var(--theme-space-8, 2.25rem) var(--theme-widget-currency-select-padding-y, var(--theme-space-2, 0.5rem)) var(--theme-widget-currency-select-padding-x, var(--theme-space-3, 0.75rem));
-    border: 1px solid var(--theme-widget-currency-select-border, var(--theme-color-border, #d1d5db));
-    border-radius: var(--theme-widget-currency-select-radius, var(--theme-radius-md, 0.375rem));
-    background: var(--theme-widget-currency-select-bg, var(--theme-color-surface, #fff));
-    color: var(--theme-widget-currency-select-color, var(--theme-color-text, currentColor));
-    font-size: var(--theme-widget-currency-select-font-size, var(--theme-font-size-sm, 0.875rem));
-    font-family: inherit;
-    font-weight: var(--theme-widget-currency-code-font-weight, var(--theme-font-weight-medium, 500));
-    cursor: pointer;
-    transition: all var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
-    min-width: var(--theme-widget-currency-select-min-width, 120px);
+  appearance: none;
+  padding: var(--theme-widget-currency-select-padding-y, var(--theme-space-2, 0.5rem))
+    var(--theme-space-8, 2.25rem)
+    var(--theme-widget-currency-select-padding-y, var(--theme-space-2, 0.5rem))
+    var(--theme-widget-currency-select-padding-x, var(--theme-space-3, 0.75rem));
+  border: 1px solid var(--theme-widget-currency-select-border, var(--theme-color-border, #d1d5db));
+  border-radius: var(--theme-widget-currency-select-radius, var(--theme-radius-md, 0.375rem));
+  background: var(--theme-widget-currency-select-bg, var(--theme-color-surface, #fff));
+  color: var(--theme-widget-currency-select-color, var(--theme-color-text, currentColor));
+  font-size: var(--theme-widget-currency-select-font-size, var(--theme-font-size-sm, 0.875rem));
+  font-family: inherit;
+  font-weight: var(--theme-widget-currency-code-font-weight, var(--theme-font-weight-medium, 500));
+  cursor: pointer;
+  transition: all var(--theme-transition-duration-fast, 150ms)
+    var(--theme-transition-easing-default, ease);
+  min-width: var(--theme-widget-currency-select-min-width, 120px);
 }
 
 .currency-select:hover {
-    border-color: var(--theme-widget-currency-select-hover-border, var(--theme-color-border-hover, #9ca3af));
-    background-color: var(--theme-widget-currency-select-hover-bg, var(--theme-color-surface-hover, #f5f5f5));
+  border-color: var(
+    --theme-widget-currency-select-hover-border,
+    var(--theme-color-border-hover, #9ca3af)
+  );
+  background-color: var(
+    --theme-widget-currency-select-hover-bg,
+    var(--theme-color-surface-hover, #f5f5f5)
+  );
 }
 
 .currency-select:focus {
-    outline: none;
-    border-color: var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #3b82f6));
-    box-shadow: var(--theme-widget-currency-select-focus-shadow, 0 0 0 3px var(--theme-color-primary-light, rgba(59, 130, 246, 0.1)));
+  outline: none;
+  border-color: var(
+    --theme-widget-currency-select-focus-border,
+    var(--theme-color-primary, #3b82f6)
+  );
+  box-shadow: var(
+    --theme-widget-currency-select-focus-shadow,
+    0 0 0 3px var(--theme-color-primary-light, rgba(59, 130, 246, 0.1))
+  );
 }
 
 .currency-select-chevron {
-    position: absolute;
-    right: var(--theme-widget-currency-select-padding-x, var(--theme-space-3, 0.75rem));
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--theme-widget-currency-chevron-color, var(--theme-color-text-muted, #6b7280));
+  position: absolute;
+  right: var(--theme-widget-currency-select-padding-x, var(--theme-space-3, 0.75rem));
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--theme-widget-currency-chevron-color, var(--theme-color-text-muted, #6b7280));
 }
 
 /* ===== Common Elements ===== */
 
 .currency-flag {
-    font-size: var(--theme-widget-currency-flag-size, 1.125rem);
-    line-height: 1;
-    flex-shrink: 0;
+  font-size: var(--theme-widget-currency-flag-size, 1.125rem);
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .currency-symbol {
-    font-weight: var(--theme-widget-currency-symbol-font-weight, var(--theme-font-weight-medium, 500));
-    flex-shrink: 0;
+  font-weight: var(
+    --theme-widget-currency-symbol-font-weight,
+    var(--theme-font-weight-medium, 500)
+  );
+  flex-shrink: 0;
 }
 
 .currency-code {
-    font-weight: var(--theme-widget-currency-code-font-weight, var(--theme-font-weight-medium, 500));
-    letter-spacing: 0.025em;
-    text-transform: uppercase;
-    flex-shrink: 0;
+  font-weight: var(--theme-widget-currency-code-font-weight, var(--theme-font-weight-medium, 500));
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .currency-name {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ===== Loading Spinner ===== */
 
 .currency-loading {
-    position: absolute;
-    right: var(--theme-space-2, 0.5rem);
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
+  position: absolute;
+  right: var(--theme-space-2, 0.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .currency-spinner {
-    animation: currency-spin 1s linear infinite;
-    color: var(--theme-widget-currency-loading-color, var(--theme-color-primary, #3b82f6));
+  animation: currency-spin 1s linear infinite;
+  color: var(--theme-widget-currency-loading-color, var(--theme-color-primary, #3b82f6));
 }
 
 @keyframes currency-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ===== Dark Mode Support ===== */
 
-[data-theme="dark"] .currency-dropdown,
+[data-theme='dark'] .currency-dropdown,
 .dark .currency-dropdown {
-    background: var(--theme-widget-currency-dropdown-bg, var(--theme-color-surface, #1f2937));
-    border-color: var(--theme-widget-currency-dropdown-border, var(--theme-color-border, #374151));
+  background: var(--theme-widget-currency-dropdown-bg, var(--theme-color-surface, #1f2937));
+  border-color: var(--theme-widget-currency-dropdown-border, var(--theme-color-border, #374151));
 }
 
-[data-theme="dark"] .currency-option,
+[data-theme='dark'] .currency-option,
 .dark .currency-option {
-    color: var(--theme-widget-currency-select-color, var(--theme-color-text, #e5e7eb));
+  color: var(--theme-widget-currency-select-color, var(--theme-color-text, #e5e7eb));
 }
 
-[data-theme="dark"] .currency-option:hover,
+[data-theme='dark'] .currency-option:hover,
 .dark .currency-option:hover {
-    background: var(--theme-widget-currency-option-hover-bg, var(--theme-color-surface-hover, #374151));
+  background: var(
+    --theme-widget-currency-option-hover-bg,
+    var(--theme-color-surface-hover, #374151)
+  );
 }
 
-[data-theme="dark"] .currency-option-active,
+[data-theme='dark'] .currency-option-active,
 .dark .currency-option-active {
-    background: var(--theme-widget-currency-option-active-bg, var(--theme-color-primary-dark, #1e3a8a));
-    color: var(--theme-widget-currency-option-active-color, var(--theme-color-primary-light, #93c5fd));
+  background: var(
+    --theme-widget-currency-option-active-bg,
+    var(--theme-color-primary-dark, #1e3a8a)
+  );
+  color: var(
+    --theme-widget-currency-option-active-color,
+    var(--theme-color-primary-light, #93c5fd)
+  );
 }
 
-[data-theme="dark"] .currency-option-active:hover,
+[data-theme='dark'] .currency-option-active:hover,
 .dark .currency-option-active:hover {
-    background: var(--theme-widget-currency-option-active-bg, var(--theme-color-primary, #1e40af));
+  background: var(--theme-widget-currency-option-active-bg, var(--theme-color-primary, #1e40af));
 }
 
-[data-theme="dark"] .currency-select,
+[data-theme='dark'] .currency-select,
 .dark .currency-select {
-    background: var(--theme-widget-currency-select-bg, var(--theme-color-surface, #1f2937));
-    border-color: var(--theme-widget-currency-select-border, var(--theme-color-border, #374151));
-    color: var(--theme-widget-currency-select-color, var(--theme-color-text, #e5e7eb));
+  background: var(--theme-widget-currency-select-bg, var(--theme-color-surface, #1f2937));
+  border-color: var(--theme-widget-currency-select-border, var(--theme-color-border, #374151));
+  color: var(--theme-widget-currency-select-color, var(--theme-color-text, #e5e7eb));
 }
 
-[data-theme="dark"] .currency-select:hover,
+[data-theme='dark'] .currency-select:hover,
 .dark .currency-select:hover {
-    border-color: var(--theme-widget-currency-select-hover-border, var(--theme-color-border-hover, #4b5563));
+  border-color: var(
+    --theme-widget-currency-select-hover-border,
+    var(--theme-color-border-hover, #4b5563)
+  );
 }
 
-[data-theme="dark"] .currency-select:focus,
+[data-theme='dark'] .currency-select:focus,
 .dark .currency-select:focus {
-    border-color: var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #60a5fa));
-    box-shadow: var(--theme-widget-currency-select-focus-shadow, 0 0 0 3px rgba(96, 165, 250, 0.2));
+  border-color: var(
+    --theme-widget-currency-select-focus-border,
+    var(--theme-color-primary, #60a5fa)
+  );
+  box-shadow: var(--theme-widget-currency-select-focus-shadow, 0 0 0 3px rgba(96, 165, 250, 0.2));
 }
 
-[data-theme="dark"] .currency-select-chevron,
+[data-theme='dark'] .currency-select-chevron,
 .dark .currency-select-chevron,
-[data-theme="dark"] .currency-chevron,
+[data-theme='dark'] .currency-chevron,
 .dark .currency-chevron {
-    color: var(--theme-widget-currency-chevron-color, var(--theme-color-text-muted, #9ca3af));
+  color: var(--theme-widget-currency-chevron-color, var(--theme-color-text-muted, #9ca3af));
 }
 
-[data-theme="dark"] .currency-dropdown-inner::-webkit-scrollbar-track,
+[data-theme='dark'] .currency-dropdown-inner::-webkit-scrollbar-track,
 .dark .currency-dropdown-inner::-webkit-scrollbar-track {
-    background: var(--theme-color-surface-muted, #374151);
+  background: var(--theme-color-surface-muted, #374151);
 }
 
-[data-theme="dark"] .currency-dropdown-inner::-webkit-scrollbar-thumb,
+[data-theme='dark'] .currency-dropdown-inner::-webkit-scrollbar-thumb,
 .dark .currency-dropdown-inner::-webkit-scrollbar-thumb {
-    background: var(--theme-color-border, #4b5563);
+  background: var(--theme-color-border, #4b5563);
 }
 
-[data-theme="dark"] .currency-dropdown-inner::-webkit-scrollbar-thumb:hover,
+[data-theme='dark'] .currency-dropdown-inner::-webkit-scrollbar-thumb:hover,
 .dark .currency-dropdown-inner::-webkit-scrollbar-thumb:hover {
-    background: var(--theme-color-text-muted, #6b7280);
+  background: var(--theme-color-text-muted, #6b7280);
 }
 
 /* ===== Responsive Design ===== */
 
 @media (max-width: 768px) {
-    .currency-dropdown {
-        position: fixed;
-        left: 50%;
-        bottom: 20px;
-        transform: translateX(-50%);
-        min-width: min(90vw, 320px);
-        margin-top: 0;
-    }
+  .currency-dropdown {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    min-width: min(90vw, 320px);
+    margin-top: 0;
+  }
 
-    .currency-dropdown-top {
-        bottom: 20px;
-        margin-bottom: 0;
-    }
+  .currency-dropdown-top {
+    bottom: 20px;
+    margin-bottom: 0;
+  }
 
-    /* Hide code and name in the button for compactness (show symbol only) */
-    .currency-button .currency-code {
-        display: none;
-    }
+  /* Hide code and name in the button for compactness (show symbol only) */
+  .currency-button .currency-code {
+    display: none;
+  }
 
-    .currency-button .currency-name {
-        display: none;
-    }
+  .currency-button .currency-name {
+    display: none;
+  }
 
-    /* Tighter button padding on mobile */
-    .currency-button {
-        padding: var(--theme-space-2, 0.5rem);
-        gap: var(--theme-space-1, 0.25rem);
-    }
+  /* Tighter button padding on mobile */
+  .currency-button {
+    padding: var(--theme-space-2, 0.5rem);
+    gap: var(--theme-space-1, 0.25rem);
+  }
 
-    /* Reduce select min-width for full mode */
-    .currency-select {
-        min-width: 80px;
-    }
+  /* Reduce select min-width for full mode */
+  .currency-select {
+    min-width: 80px;
+  }
 }
 
 /* ===== Accessibility ===== */
 
 .currency-button:focus-visible,
 .currency-select:focus-visible {
-    outline: 2px solid var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #3b82f6));
-    outline-offset: 2px;
+  outline: 2px solid
+    var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #3b82f6));
+  outline-offset: 2px;
 }
 
 .currency-option:focus-visible {
-    outline: 2px solid var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #3b82f6));
-    outline-offset: -2px;
+  outline: 2px solid
+    var(--theme-widget-currency-select-focus-border, var(--theme-color-primary, #3b82f6));
+  outline-offset: -2px;
 }
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-    .currency-button,
-    .currency-option,
-    .currency-select,
-    .currency-chevron {
-        transition: none;
-    }
+  .currency-button,
+  .currency-option,
+  .currency-select,
+  .currency-chevron {
+    transition: none;
+  }
 
-    .currency-spinner {
-        animation: none;
-    }
+  .currency-spinner {
+    animation: none;
+  }
 }

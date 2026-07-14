@@ -17,9 +17,10 @@ Supports two integration modes:
 Much simpler than PaymentProviderBase — no webhooks, no hosted checkout,
 no subscriptions.
 """
+
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
 from decimal import Decimal
+from typing import Any
 
 
 class TerminalProviderBase(ABC):
@@ -37,7 +38,7 @@ class TerminalProviderBase(ABC):
     provider_key: str = None
     provider_name: str = None
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         if not self.provider_key:
             raise ValueError("provider_key must be set by subclass")
         if not self.provider_name:
@@ -60,23 +61,23 @@ class TerminalProviderBase(ABC):
             'cloud' - Backend pushes payment to reader via cloud API.
                       Uses initiate_cloud_payment() and check_payment_status().
         """
-        return 'sdk'
+        return "sdk"
 
     # ── Credential & Connection ──────────────────────────────────────
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """JSON schema describing required credentials for admin forms."""
         pass
 
     @abstractmethod
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """Validate credentials. Raise ValueError if invalid."""
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test API connection.
 
@@ -87,7 +88,7 @@ class TerminalProviderBase(ABC):
 
     # ── Frontend SDK Support (sdk mode) ───────────────────────────────
 
-    def create_connection_token(self) -> Dict[str, Any]:
+    def create_connection_token(self) -> dict[str, Any]:
         """
         Create a short-lived connection token for the frontend SDK.
 
@@ -105,7 +106,7 @@ class TerminalProviderBase(ABC):
     # ── Reader Management ────────────────────────────────────────────
 
     @abstractmethod
-    def list_readers(self, location_id: Optional[str] = None) -> Dict[str, Any]:
+    def list_readers(self, location_id: str | None = None) -> dict[str, Any]:
         """
         List available readers from the provider.
 
@@ -114,21 +115,21 @@ class TerminalProviderBase(ABC):
         """
         pass
 
-    def register_reader(self, registration_code: str, label: str,
-                        location_id: Optional[str] = None) -> Dict[str, Any]:
+    def register_reader(
+        self, registration_code: str, label: str, location_id: str | None = None
+    ) -> dict[str, Any]:
         """Register a new reader device. Optional — not all providers require this."""
         raise NotImplementedError(f"{self.provider_name} does not support reader registration")
 
-    def create_location(self, display_name: str, address: Dict[str, str]) -> Dict[str, Any]:
+    def create_location(self, display_name: str, address: dict[str, str]) -> dict[str, Any]:
         """Create a Location object. Optional — Stripe-specific."""
         raise NotImplementedError(f"{self.provider_name} does not require locations")
 
     # ── Payment Operations (sdk mode) ─────────────────────────────────
 
     def create_payment_intent(
-        self, amount: Decimal, currency: str,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, amount: Decimal, currency: str, metadata: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Create a PaymentIntent for card_present collection on the terminal.
 
@@ -148,7 +149,7 @@ class TerminalProviderBase(ABC):
             f"(integration_mode='{self.integration_mode}')"
         )
 
-    def capture_payment_intent(self, payment_intent_id: str) -> Dict[str, Any]:
+    def capture_payment_intent(self, payment_intent_id: str) -> dict[str, Any]:
         """
         Retrieve and verify a completed PaymentIntent.
 
@@ -169,7 +170,7 @@ class TerminalProviderBase(ABC):
             f"(integration_mode='{self.integration_mode}')"
         )
 
-    def cancel_payment_intent(self, payment_intent_id: str) -> Dict[str, Any]:
+    def cancel_payment_intent(self, payment_intent_id: str) -> dict[str, Any]:
         """
         Cancel a pending PaymentIntent (e.g. customer cancelled).
 
@@ -179,17 +180,17 @@ class TerminalProviderBase(ABC):
         Returns:
             {'success': True}
         """
-        raise NotImplementedError(
-            f"{self.provider_name} does not support payment cancellation"
-        )
+        raise NotImplementedError(f"{self.provider_name} does not support payment cancellation")
 
     # ── Payment Operations (cloud mode) ───────────────────────────────
 
     def initiate_cloud_payment(
-        self, amount: Decimal, currency: str,
+        self,
+        amount: Decimal,
+        currency: str,
         reader_id: str,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Push a payment request to a reader via the provider's cloud API.
 
@@ -215,7 +216,7 @@ class TerminalProviderBase(ABC):
             f"(integration_mode='{self.integration_mode}')"
         )
 
-    def check_payment_status(self, transaction_id: str) -> Dict[str, Any]:
+    def check_payment_status(self, transaction_id: str) -> dict[str, Any]:
         """
         Check the status of a cloud-initiated payment.
 
@@ -239,7 +240,7 @@ class TerminalProviderBase(ABC):
             f"(integration_mode='{self.integration_mode}')"
         )
 
-    def cancel_cloud_payment(self, transaction_id: str) -> Dict[str, Any]:
+    def cancel_cloud_payment(self, transaction_id: str) -> dict[str, Any]:
         """
         Cancel a pending cloud payment.
 
@@ -255,8 +256,9 @@ class TerminalProviderBase(ABC):
 
     # ── Refunds ───────────────────────────────────────────────────────
 
-    def refund_payment(self, payment_intent_id: str,
-                       amount: Optional[Decimal] = None) -> Dict[str, Any]:
+    def refund_payment(
+        self, payment_intent_id: str, amount: Decimal | None = None
+    ) -> dict[str, Any]:
         """
         Refund a terminal payment. amount=None means full refund.
         Optional — not all providers support terminal refunds.

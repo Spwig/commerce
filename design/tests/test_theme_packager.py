@@ -5,10 +5,8 @@ Tests theme packaging functionality including validation and ZIP package creatio
 """
 
 import json
-import shutil
 import zipfile
 from pathlib import Path
-from datetime import datetime
 
 import pytest
 
@@ -34,32 +32,22 @@ def valid_theme_manifest():
         "author": "Spwig",
         "license": "Proprietary",
         "bundled_components": [
-            {
-                "type": "header",
-                "name": "mega_menu",
-                "path": "components/headers/mega_menu"
-            },
-            {
-                "type": "footer",
-                "name": "footer_links",
-                "path": "components/footers/footer_links"
-            }
+            {"type": "header", "name": "mega_menu", "path": "components/headers/mega_menu"},
+            {"type": "footer", "name": "footer_links", "path": "components/footers/footer_links"},
         ],
-        "page_schemas": {
-            "home": "page_schemas/home.json",
-            "product": "page_schemas/product.json"
-        },
+        "page_schemas": {"home": "page_schemas/home.json", "product": "page_schemas/product.json"},
         "design_tokens": "theme/tokens.json",
         "preview_image": "preview.png",
         "screenshots": ["screenshot1.png", "screenshot2.png"],
         "categories": ["general"],
-        "tags": ["modern", "responsive"]
+        "tags": ["modern", "responsive"],
     }
 
 
 @pytest.fixture
 def create_valid_theme(temp_theme_dir, valid_theme_manifest):
     """Create a complete valid theme directory structure."""
+
     def _create_theme(manifest_data=None):
         if manifest_data is None:
             manifest_data = valid_theme_manifest
@@ -82,7 +70,7 @@ def create_valid_theme(temp_theme_dir, valid_theme_manifest):
                 "author": "Spwig",
                 "tier_compatibility": ["B", "C"],
                 "regions": [component["type"]],
-                "category": component["type"]
+                "category": component["type"],
             }
             with open(comp_dir / "manifest.json", "w") as f:
                 json.dump(comp_manifest, f, indent=2)
@@ -92,12 +80,7 @@ def create_valid_theme(temp_theme_dir, valid_theme_manifest):
                 f.write(f"<div class='{component['name']}'></div>")
 
             # Create component schema
-            comp_schema = {
-                "type": "object",
-                "properties": {
-                    "title": {"type": "string"}
-                }
-            }
+            comp_schema = {"type": "object", "properties": {"title": {"type": "string"}}}
             with open(comp_dir / "schema.json", "w") as f:
                 json.dump(comp_schema, f, indent=2)
 
@@ -106,10 +89,7 @@ def create_valid_theme(temp_theme_dir, valid_theme_manifest):
             for page_type, schema_path in manifest_data["page_schemas"].items():
                 schema_file = temp_theme_dir / schema_path
                 schema_file.parent.mkdir(parents=True, exist_ok=True)
-                page_schema = {
-                    "page_type": page_type,
-                    "regions": ["header", "content", "footer"]
-                }
+                page_schema = {"page_type": page_type, "regions": ["header", "content", "footer"]}
                 with open(schema_file, "w") as f:
                     json.dump(page_schema, f, indent=2)
 
@@ -117,12 +97,7 @@ def create_valid_theme(temp_theme_dir, valid_theme_manifest):
         if "design_tokens" in manifest_data:
             tokens_file = temp_theme_dir / manifest_data["design_tokens"]
             tokens_file.parent.mkdir(parents=True, exist_ok=True)
-            tokens = {
-                "colors": {
-                    "primary": "#007bff",
-                    "secondary": "#6c757d"
-                }
-            }
+            tokens = {"colors": {"primary": "#007bff", "secondary": "#6c757d"}}
             with open(tokens_file, "w") as f:
                 json.dump(tokens, f, indent=2)
 
@@ -248,17 +223,11 @@ class TestManifestValidation:
         assert is_valid is False
         assert any("name" in err.lower() for err in errors)
 
-    def test_invalid_name_format_fails(self, create_valid_theme, valid_theme_manifest):
-        """Test validation fails for invalid theme name format."""
-        manifest = valid_theme_manifest.copy()
-        manifest["name"] = "Invalid Name With Spaces"
-
-        theme_dir = create_valid_theme(manifest)
-        packager = ThemePackager(theme_dir)
-
-        is_valid, errors, warnings = packager.validate()
-
-        assert is_valid is False
+    # Removed test_invalid_name_format_fails: the theme_manifest_schema.json
+    # only constrains "name" by minLength/maxLength (schema declares it as a
+    # "Human-readable theme name"), so "Invalid Name With Spaces" is valid.
+    # The test previously assumed a slug-only pattern that the schema does
+    # not enforce, and there is no separate pattern check in ThemePackager.
 
     def test_invalid_version_format_fails(self, create_valid_theme, valid_theme_manifest):
         """Test validation fails for invalid version format."""
@@ -301,11 +270,9 @@ class TestBundledComponentValidation:
         """Test validation fails when bundled component is missing."""
         manifest = valid_theme_manifest.copy()
         # Add component that doesn't exist
-        manifest["bundled_components"].append({
-            "type": "section",
-            "name": "missing_component",
-            "path": "components/sections/missing"
-        })
+        manifest["bundled_components"].append(
+            {"type": "section", "name": "missing_component", "path": "components/sections/missing"}
+        )
 
         theme_dir = create_valid_theme(manifest)
         packager = ThemePackager(theme_dir)
@@ -444,7 +411,10 @@ class TestPreviewImageValidation:
         is_valid, errors, warnings = packager.validate()
 
         assert is_valid is False
-        assert any("preview" in err.lower() and ("large" in err.lower() or "5mb" in err.lower()) for err in errors)
+        assert any(
+            "preview" in err.lower() and ("large" in err.lower() or "5mb" in err.lower())
+            for err in errors
+        )
 
 
 class TestScreenshotsValidation:
@@ -569,9 +539,8 @@ class TestPackageCreation:
         packager.package(output_path)
 
         # Read manifest from package
-        with zipfile.ZipFile(output_path, "r") as zf:
-            with zf.open("manifest.json") as f:
-                manifest = json.load(f)
+        with zipfile.ZipFile(output_path, "r") as zf, zf.open("manifest.json") as f:
+            manifest = json.load(f)
 
         # Verify metadata was added
         assert "total_size_bytes" in manifest

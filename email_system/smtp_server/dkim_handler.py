@@ -4,18 +4,17 @@ DKIM Handler for Email Signing
 Manages DKIM key generation, storage, and email signature generation
 using the dkimpy library.
 """
+
 import logging
+
 import dkim
-from pathlib import Path
-from typing import Dict, Optional, Tuple
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
-from django.conf import settings
 from django.core.cache import cache
 
 from email_system.models import EmailAccount
-from email_system.utils.encryption import encrypt_credentials, decrypt_credentials
+from email_system.utils.encryption import decrypt_credentials, encrypt_credentials
 
 logger = logging.getLogger(__name__)
 
@@ -32,11 +31,11 @@ class DKIMHandler:
     """
 
     # DKIM configuration
-    DEFAULT_SELECTOR = 'mail'
+    DEFAULT_SELECTOR = "mail"
     KEY_SIZE = 2048
     CACHE_TTL = 3600  # 1 hour
 
-    def __init__(self, domain: str, selector: Optional[str] = None):
+    def __init__(self, domain: str, selector: str | None = None):
         """
         Initialize DKIM handler for a domain.
 
@@ -46,42 +45,44 @@ class DKIMHandler:
         """
         self.domain = domain.lower().strip()
         self.selector = selector or self.DEFAULT_SELECTOR
-        self.cache_key = f'dkim_keys_{self.domain}_{self.selector}'
+        self.cache_key = f"dkim_keys_{self.domain}_{self.selector}"
 
-    def generate_key_pair(self) -> Tuple[bytes, bytes]:
+    def generate_key_pair(self) -> tuple[bytes, bytes]:
         """
         Generate a new RSA 2048-bit DKIM key pair.
 
         Returns:
             Tuple of (private_key_pem, public_key_pem)
         """
-        logger.info(f"Generating new DKIM key pair for domain: {self.domain}, selector: {self.selector}")
+        logger.info(
+            f"Generating new DKIM key pair for domain: {self.domain}, selector: {self.selector}"
+        )
 
         # Generate RSA private key
         private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=self.KEY_SIZE,
-            backend=default_backend()
+            public_exponent=65537, key_size=self.KEY_SIZE, backend=default_backend()
         )
 
         # Serialize private key to PEM format
         private_pem = private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
+            encryption_algorithm=serialization.NoEncryption(),
         )
 
         # Get public key and serialize
         public_key = private_key.public_key()
         public_pem = public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
         )
 
         logger.info(f"DKIM key pair generated successfully for {self.domain}")
         return private_pem, public_pem
 
-    def store_keys(self, private_key: bytes, public_key: bytes, account: Optional[EmailAccount] = None):
+    def store_keys(
+        self, private_key: bytes, public_key: bytes, account: EmailAccount | None = None
+    ):
         """
         Store DKIM keys in the database.
 
@@ -96,21 +97,23 @@ class DKIMHandler:
         # Store in EmailAccount credentials
         if account:
             credentials = decrypt_credentials(account.credentials) if account.credentials else {}
-            credentials['dkim_private_key'] = private_key.decode('utf-8')
-            credentials['dkim_public_key'] = public_key.decode('utf-8')
-            credentials['dkim_selector'] = self.selector
+            credentials["dkim_private_key"] = private_key.decode("utf-8")
+            credentials["dkim_public_key"] = public_key.decode("utf-8")
+            credentials["dkim_selector"] = self.selector
             account.credentials = encrypt_credentials(credentials)
             account.save()
             logger.info(f"DKIM keys stored for account: {account.name}")
         else:
             # Store in Django settings (for default built-in server)
             # In production, this should be stored in database or secure key management
-            logger.warning("Storing DKIM keys without EmailAccount - consider using database storage")
+            logger.warning(
+                "Storing DKIM keys without EmailAccount - consider using database storage"
+            )
 
         # Clear cache
         cache.delete(self.cache_key)
 
-    def get_private_key(self, account: Optional[EmailAccount] = None) -> Optional[bytes]:
+    def get_private_key(self, account: EmailAccount | None = None) -> bytes | None:
         """
         Retrieve the private key from decrypted credentials.
 
@@ -121,20 +124,22 @@ class DKIMHandler:
             Private key PEM bytes or None if not found
         """
         # Check cache first
-        cached = cache.get(f'{self.cache_key}_private')
+        cached = cache.get(f"{self.cache_key}_private")
         if cached:
             return cached
 
         if account:
             try:
                 # Decrypt the entire credentials dict
-                credentials = decrypt_credentials(account.credentials) if account.credentials else {}
-                private_key_str = credentials.get('dkim_private_key')
+                credentials = (
+                    decrypt_credentials(account.credentials) if account.credentials else {}
+                )
+                private_key_str = credentials.get("dkim_private_key")
 
                 if private_key_str:
-                    private_key = private_key_str.encode('utf-8')
+                    private_key = private_key_str.encode("utf-8")
                     # Cache for performance
-                    cache.set(f'{self.cache_key}_private', private_key, self.CACHE_TTL)
+                    cache.set(f"{self.cache_key}_private", private_key, self.CACHE_TTL)
                     return private_key
             except Exception as e:
                 logger.error(f"Failed to retrieve DKIM private key: {e}")
@@ -142,7 +147,7 @@ class DKIMHandler:
 
         return None
 
-    def get_public_key(self, account: Optional[EmailAccount] = None) -> Optional[str]:
+    def get_public_key(self, account: EmailAccount | None = None) -> str | None:
         """
         Retrieve the public key from decrypted credentials.
 
@@ -153,19 +158,21 @@ class DKIMHandler:
             Public key PEM string or None if not found
         """
         # Check cache first
-        cached = cache.get(f'{self.cache_key}_public')
+        cached = cache.get(f"{self.cache_key}_public")
         if cached:
             return cached
 
         if account:
             try:
                 # Decrypt the entire credentials dict
-                credentials = decrypt_credentials(account.credentials) if account.credentials else {}
-                public_key = credentials.get('dkim_public_key')
+                credentials = (
+                    decrypt_credentials(account.credentials) if account.credentials else {}
+                )
+                public_key = credentials.get("dkim_public_key")
 
                 if public_key:
                     # Cache for performance
-                    cache.set(f'{self.cache_key}_public', public_key, self.CACHE_TTL)
+                    cache.set(f"{self.cache_key}_public", public_key, self.CACHE_TTL)
                     return public_key
             except Exception as e:
                 logger.error(f"Failed to retrieve DKIM public key: {e}")
@@ -173,7 +180,7 @@ class DKIMHandler:
 
         return None
 
-    def get_dns_record(self, account: Optional[EmailAccount] = None) -> Optional[str]:
+    def get_dns_record(self, account: EmailAccount | None = None) -> str | None:
         """
         Generate the DNS TXT record value for DKIM.
 
@@ -188,18 +195,15 @@ class DKIMHandler:
             return None
 
         # Extract the base64 portion (remove PEM headers/footers and newlines)
-        lines = public_key.split('\n')
-        key_data = ''.join([
-            line for line in lines
-            if line and not line.startswith('-----')
-        ])
+        lines = public_key.split("\n")
+        key_data = "".join([line for line in lines if line and not line.startswith("-----")])
 
         # Format as DKIM DNS record
         dns_record = f"v=DKIM1; k=rsa; p={key_data}"
 
         return dns_record
 
-    def sign_message(self, message: bytes, account: Optional[EmailAccount] = None) -> bytes:
+    def sign_message(self, message: bytes, account: EmailAccount | None = None) -> bytes:
         """
         Sign an email message with DKIM.
 
@@ -220,13 +224,17 @@ class DKIMHandler:
             # Sign the message using dkimpy
             signature = dkim.sign(
                 message=message,
-                selector=self.selector.encode('utf-8'),
-                domain=self.domain.encode('utf-8'),
+                selector=self.selector.encode("utf-8"),
+                domain=self.domain.encode("utf-8"),
                 privkey=private_key,
                 include_headers=[
-                    b'from', b'to', b'subject', b'date',
-                    b'message-id', b'content-type'
-                ]
+                    b"from",
+                    b"to",
+                    b"subject",
+                    b"date",
+                    b"message-id",
+                    b"content-type",
+                ],
             )
 
             # Prepend DKIM-Signature header to message
@@ -258,8 +266,9 @@ class DKIMHandler:
             return False
 
     @classmethod
-    def ensure_keys_exist(cls, domain: str, selector: Optional[str] = None,
-                          account: Optional[EmailAccount] = None) -> 'DKIMHandler':
+    def ensure_keys_exist(
+        cls, domain: str, selector: str | None = None, account: EmailAccount | None = None
+    ) -> "DKIMHandler":
         """
         Ensure DKIM keys exist for a domain, generating them if needed.
 

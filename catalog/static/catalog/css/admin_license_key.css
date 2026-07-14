@@ -7,116 +7,118 @@
 
 /* License Key Display */
 .field-key_display code {
-    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-    user-select: all;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  user-select: all;
 }
 
 .copy-license-key {
-    background: var(--primary, #417690);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+  background: var(--primary, #417690);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .copy-license-key:hover {
-    background: var(--primary-dark, #2f5a6f);
-    transform: scale(1.05);
+  background: var(--primary-dark, #2f5a6f);
+  transform: scale(1.05);
 }
 
 .copy-license-key:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 /* Status Badges */
 .field-status_badge span {
-    font-weight: 500;
-    white-space: nowrap;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 /* Activation Status */
 .field-activation_status {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 /* Activation List Table */
 .field-activation_list_display table {
-    margin-top: 8px;
-    border: 1px solid var(--hairline-color, #e8e8e8);
-    border-radius: 4px;
-    overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid var(--hairline-color, #e8e8e8);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .field-activation_list_display table thead tr {
-    border-bottom: 2px solid var(--hairline-color, #e8e8e8);
+  border-bottom: 2px solid var(--hairline-color, #e8e8e8);
 }
 
 .field-activation_list_display table tbody tr:hover {
-    background: var(--darkened-bg, #f8f9fa);
+  background: var(--darkened-bg, #f8f9fa);
 }
 
 /* Links */
 .field-digital_asset_link a,
 .field-user_link a,
 .field-order_link a {
-    color: var(--link-fg, #447e9b);
-    text-decoration: none;
-    font-weight: 500;
+  color: var(--link-fg, #447e9b);
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .field-digital_asset_link a:hover,
 .field-user_link a:hover,
 .field-order_link a:hover {
-    color: var(--link-hover-color, #036);
-    text-decoration: underline;
+  color: var(--link-hover-color, #036);
+  text-decoration: underline;
 }
 
 .field-digital_asset_link small {
-    display: block;
-    margin-top: 2px;
-    font-weight: normal;
+  display: block;
+  margin-top: 2px;
+  font-weight: normal;
 }
 
 /* Utility class for hidden config elements */
-.license-pool-hidden { display: none; }
+.license-pool-hidden {
+  display: none;
+}
 
 /* License Pool Progress Bar - uses CSS custom property for dynamic width */
 .progress-bar-fill {
-    width: var(--progress-width, 0%);
+  width: var(--progress-width, 0%);
 }
 
-.progress-bar-fill[data-status="full"] {
-    background: var(--error-fg);
+.progress-bar-fill[data-status='full'] {
+  background: var(--error-fg);
 }
 
-.progress-bar-fill[data-status="active"] {
-    background: var(--success-fg);
+.progress-bar-fill[data-status='active'] {
+  background: var(--success-fg);
 }
 
-.progress-bar-fill[data-status="normal"] {
-    background: var(--primary);
+.progress-bar-fill[data-status='normal'] {
+  background: var(--primary);
 }
 
 /* License Pool Stat Value - conditional color via data-status */
-.list-row-card-stat-value[data-status="complete"] {
-    color: var(--success-fg);
+.list-row-card-stat-value[data-status='complete'] {
+  color: var(--success-fg);
 }
 
-.list-row-card-stat-value[data-status="default"] {
-    color: var(--body-quiet-color);
+.list-row-card-stat-value[data-status='default'] {
+  color: var(--body-quiet-color);
 }
 
 /* Dark Theme */
 @media (prefers-color-scheme: dark) {
-    .copy-license-key {
-        background: var(--primary, #5ca0c5);
-    }
+  .copy-license-key {
+    background: var(--primary, #5ca0c5);
+  }
 
-    .copy-license-key:hover {
-        background: var(--primary-dark, #4a8aa8);
-    }
+  .copy-license-key:hover {
+    background: var(--primary-dark, #4a8aa8);
+  }
 
-    .field-activation_list_display table tbody tr:hover {
-        background: var(--darkened-bg, #2d2d2d);
-    }
+  .field-activation_list_display table tbody tr:hover {
+    background: var(--darkened-bg, #2d2d2d);
+  }
 }

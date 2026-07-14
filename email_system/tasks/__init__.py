@@ -10,7 +10,7 @@ from celery import shared_task
 from django.db import transaction
 from django.utils import timezone
 
-logger = logging.getLogger('email_system')
+logger = logging.getLogger("email_system")
 
 
 @shared_task
@@ -31,13 +31,15 @@ def process_scheduled_emails():
     with transaction.atomic():
         pending_ids = list(
             ScheduledEmail.objects.filter(
-                status='pending',
+                status="pending",
                 scheduled_for__lte=now,
-            ).select_for_update(skip_locked=True).values_list('id', flat=True)
+            )
+            .select_for_update(skip_locked=True)
+            .values_list("id", flat=True)
         )
         if pending_ids:
             ScheduledEmail.objects.filter(id__in=pending_ids).update(
-                status='sent',  # Claim them; failures get corrected below
+                status="sent",  # Claim them; failures get corrected below
             )
 
     sent = 0
@@ -50,25 +52,29 @@ def process_scheduled_emails():
                 template_type=scheduled.template_type,
                 context=scheduled.context_json,
             )
-            if outbox and outbox.status == 'queued':
+            if outbox and outbox.status == "queued":
                 EmailSendingService.send_email(str(outbox.id))
 
             scheduled.sent_at = timezone.now()
-            scheduled.save(update_fields=['status', 'sent_at'])
+            scheduled.save(update_fields=["status", "sent_at"])
             sent += 1
 
         except Exception as e:
             logger.error(
-                'Failed to send scheduled email %d (%s → %s): %s',
-                scheduled.id, scheduled.template_type,
-                scheduled.recipient_email, e,
+                "Failed to send scheduled email %d (%s → %s): %s",
+                scheduled.id,
+                scheduled.template_type,
+                scheduled.recipient_email,
+                e,
             )
-            scheduled.status = 'failed'
+            scheduled.status = "failed"
             scheduled.error_message = str(e)[:1000]
-            scheduled.save(update_fields=['status', 'error_message'])
+            scheduled.save(update_fields=["status", "error_message"])
             failed += 1
 
     if sent or failed:
         logger.info(
-            'Processed scheduled emails: %d sent, %d failed', sent, failed,
+            "Processed scheduled emails: %d sent, %d failed",
+            sent,
+            failed,
         )

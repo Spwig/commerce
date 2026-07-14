@@ -4,19 +4,21 @@ Media downloader for WooCommerce product images
 Downloads images from WooCommerce products and processes them through the media library.
 Handles duplicate detection, retry logic, and progress tracking.
 """
-import os
-import requests
+
 import hashlib
+import logging
 import mimetypes
-from typing import Dict, List, Optional, Tuple, Callable
+import os
+from collections.abc import Callable
 from io import BytesIO
-from django.core.files.base import ContentFile
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db import transaction
+
+import requests
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
+from django.db import transaction
+
 from media_library.models import MediaAsset, MediaFolder
 from media_library.services import ImageProcessor
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +26,7 @@ logger = logging.getLogger(__name__)
 class MediaDownloader:
     """Download and process images from external sources"""
 
-    def __init__(self, migration_job, user: Optional[User] = None):
+    def __init__(self, migration_job, user: User | None = None):
         """
         Initialize media downloader
 
@@ -36,25 +38,23 @@ class MediaDownloader:
         self.user = user
         self.image_processor = ImageProcessor()
         self.session = requests.Session()
-        self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (compatible; ShopMigration/1.0)'
-        })
+        self.session.headers.update({"User-Agent": "Mozilla/5.0 (compatible; ShopMigration/1.0)"})
 
         # Stats tracking
         self.stats = {
-            'total': 0,
-            'downloaded': 0,
-            'skipped': 0,
-            'failed': 0,
-            'duplicates': 0,
+            "total": 0,
+            "downloaded": 0,
+            "skipped": 0,
+            "failed": 0,
+            "duplicates": 0,
         }
 
     def download_product_images(
         self,
-        product_data: Dict,
-        folder_name: str = 'migration',
-        progress_callback: Optional[Callable] = None
-    ) -> List[MediaAsset]:
+        product_data: dict,
+        folder_name: str = "migration",
+        progress_callback: Callable | None = None,
+    ) -> list[MediaAsset]:
         """
         Download all images for a WooCommerce product
 
@@ -72,39 +72,46 @@ class MediaDownloader:
         folder = self._get_or_create_folder(folder_name)
 
         # Process featured image
-        if product_data.get('images'):
-            images = product_data['images']
-            self.stats['total'] += len(images)
+        if product_data.get("images"):
+            images = product_data["images"]
+            self.stats["total"] += len(images)
 
             for idx, image_data in enumerate(images):
                 try:
                     # Download and process image
                     asset = self._download_and_process_image(
-                        image_url=image_data.get('src'),
-                        image_name=image_data.get('name') or f"product_{product_data['id']}_image_{idx}",
-                        alt_text=image_data.get('alt', ''),
-                        folder=folder
+                        image_url=image_data.get("src"),
+                        image_name=image_data.get("name")
+                        or f"product_{product_data['id']}_image_{idx}",
+                        alt_text=image_data.get("alt", ""),
+                        folder=folder,
                     )
 
                     if asset:
                         media_assets.append(asset)
-                        self.stats['downloaded'] += 1
-                        logger.info(f"Downloaded image {idx + 1}/{len(images)} for product {product_data['id']}")
+                        self.stats["downloaded"] += 1
+                        logger.info(
+                            f"Downloaded image {idx + 1}/{len(images)} for product {product_data['id']}"
+                        )
                     else:
-                        self.stats['failed'] += 1
-                        logger.warning(f"Failed to download image {idx + 1} for product {product_data['id']}")
+                        self.stats["failed"] += 1
+                        logger.warning(
+                            f"Failed to download image {idx + 1} for product {product_data['id']}"
+                        )
 
                     # Progress callback
                     if progress_callback:
                         progress_callback(
-                            current=self.stats['downloaded'],
-                            total=self.stats['total'],
-                            status=f"Downloaded {self.stats['downloaded']}/{self.stats['total']} images"
+                            current=self.stats["downloaded"],
+                            total=self.stats["total"],
+                            status=f"Downloaded {self.stats['downloaded']}/{self.stats['total']} images",
                         )
 
                 except Exception as e:
-                    self.stats['failed'] += 1
-                    logger.error(f"Error downloading image {idx} for product {product_data['id']}: {e}")
+                    self.stats["failed"] += 1
+                    logger.error(
+                        f"Error downloading image {idx} for product {product_data['id']}: {e}"
+                    )
                     continue
 
         return media_assets
@@ -113,9 +120,9 @@ class MediaDownloader:
         self,
         image_url: str,
         image_name: str,
-        alt_text: str = '',
-        folder: Optional[MediaFolder] = None
-    ) -> Optional[MediaAsset]:
+        alt_text: str = "",
+        folder: MediaFolder | None = None,
+    ) -> MediaAsset | None:
         """
         Download a single image and create MediaAsset
 
@@ -136,24 +143,24 @@ class MediaDownloader:
 
             # Check for duplicates using content hash
             file_hash = hashlib.md5(image_data).hexdigest()
-            existing = MediaAsset.objects.filter(metadata__contains={'hash': file_hash}).first()
+            existing = MediaAsset.objects.filter(metadata__contains={"hash": file_hash}).first()
 
             if existing:
                 logger.info(f"Image already exists (duplicate): {image_name}")
-                self.stats['duplicates'] += 1
+                self.stats["duplicates"] += 1
                 return existing
 
             # Determine file extension and mime type
-            ext = self._get_extension_from_url(image_url) or '.jpg'
-            mime_type = content_type or mimetypes.guess_type(image_url)[0] or 'image/jpeg'
+            ext = self._get_extension_from_url(image_url) or ".jpg"
+            mime_type = content_type or mimetypes.guess_type(image_url)[0] or "image/jpeg"
 
             # Create file object
             image_file = ContentFile(image_data, name=f"{image_name}{ext}")
 
             # Extract metadata
             metadata = self.image_processor.extract_metadata(BytesIO(image_data))
-            metadata['source_url'] = image_url
-            metadata['migration_job_id'] = str(self.job.id)
+            metadata["source_url"] = image_url
+            metadata["migration_job_id"] = str(self.job.id)
 
             # Get dimensions
             dimensions = self.image_processor.get_image_dimensions(BytesIO(image_data))
@@ -177,18 +184,14 @@ class MediaDownloader:
                     focal_point_x=focal_x,
                     focal_point_y=focal_y,
                     uploaded_by=self.user,
-                    is_public=True
+                    is_public=True,
                 )
 
                 # Convert to WebP
                 try:
                     webp_content = self.image_processor.convert_to_webp(BytesIO(image_data))
                     if webp_content:
-                        media_asset.webp_file.save(
-                            f"{image_name}.webp",
-                            webp_content,
-                            save=False
-                        )
+                        media_asset.webp_file.save(f"{image_name}.webp", webp_content, save=False)
                         logger.info(f"Generated WebP version for {image_name}")
                 except Exception as e:
                     logger.warning(f"Failed to generate WebP for {image_name}: {e}")
@@ -206,11 +209,8 @@ class MediaDownloader:
             return None
 
     def _download_file(
-        self,
-        url: str,
-        max_retries: int = 3,
-        timeout: int = 30
-    ) -> Tuple[Optional[bytes], Optional[str]]:
+        self, url: str, max_retries: int = 3, timeout: int = 30
+    ) -> tuple[bytes | None, str | None]:
         """
         Download file from URL with retry logic
 
@@ -233,8 +233,8 @@ class MediaDownloader:
                         if chunk:
                             chunks.append(chunk)
 
-                    file_data = b''.join(chunks)
-                    content_type = response.headers.get('Content-Type')
+                    file_data = b"".join(chunks)
+                    content_type = response.headers.get("Content-Type")
 
                     return file_data, content_type
 
@@ -276,9 +276,9 @@ class MediaDownloader:
         folder, created = MediaFolder.objects.get_or_create(
             name=folder_name,
             defaults={
-                'description': f'Images imported from WooCommerce migration job {self.job.id}',
-                'created_by': self.user
-            }
+                "description": f"Images imported from WooCommerce migration job {self.job.id}",
+                "created_by": self.user,
+            },
         )
 
         if created:
@@ -302,14 +302,11 @@ class MediaDownloader:
             for preset in presets:
                 try:
                     # Open original file
-                    media_asset.original_file.open('rb')
+                    media_asset.original_file.open("rb")
 
                     # Generate thumbnail
                     thumb_content, webp_content = self.image_processor.generate_thumbnail(
-                        media_asset.original_file,
-                        preset.width,
-                        preset.height,
-                        preset.crop_mode
+                        media_asset.original_file, preset.width, preset.height, preset.crop_mode
                     )
 
                     if thumb_content:
@@ -317,24 +314,17 @@ class MediaDownloader:
                         thumbnail, created = MediaThumbnail.objects.get_or_create(
                             media_asset=media_asset,
                             size_preset=preset.slug,
-                            defaults={
-                                'width': preset.width,
-                                'height': preset.height
-                            }
+                            defaults={"width": preset.width, "height": preset.height},
                         )
 
                         # Save files
                         thumbnail.file.save(
-                            f"{media_asset.id}_{preset.slug}.jpg",
-                            thumb_content,
-                            save=False
+                            f"{media_asset.id}_{preset.slug}.jpg", thumb_content, save=False
                         )
 
                         if webp_content:
                             thumbnail.webp_file.save(
-                                f"{media_asset.id}_{preset.slug}.webp",
-                                webp_content,
-                                save=False
+                                f"{media_asset.id}_{preset.slug}.webp", webp_content, save=False
                             )
 
                         thumbnail.save()
@@ -343,13 +333,15 @@ class MediaDownloader:
                     media_asset.original_file.close()
 
                 except Exception as e:
-                    logger.warning(f"Failed to generate thumbnail {preset.slug} for {media_asset.id}: {e}")
+                    logger.warning(
+                        f"Failed to generate thumbnail {preset.slug} for {media_asset.id}: {e}"
+                    )
                     continue
 
         except Exception as e:
             logger.error(f"Error generating thumbnails for {media_asset.id}: {e}")
 
-    def _get_extension_from_url(self, url: str) -> Optional[str]:
+    def _get_extension_from_url(self, url: str) -> str | None:
         """
         Extract file extension from URL
 
@@ -361,19 +353,19 @@ class MediaDownloader:
         """
         try:
             # Remove query parameters
-            path = url.split('?')[0]
+            path = url.split("?")[0]
             ext = os.path.splitext(path)[1].lower()
 
             # Validate extension
-            valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']
+            valid_extensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"]
             if ext in valid_extensions:
                 return ext
 
             return None
-        except:
+        except Exception:
             return None
 
-    def get_stats(self) -> Dict:
+    def get_stats(self) -> dict:
         """
         Get download statistics
 
@@ -382,10 +374,11 @@ class MediaDownloader:
         """
         return {
             **self.stats,
-            'success_rate': (
-                (self.stats['downloaded'] / self.stats['total'] * 100)
-                if self.stats['total'] > 0 else 0
-            )
+            "success_rate": (
+                (self.stats["downloaded"] / self.stats["total"] * 100)
+                if self.stats["total"] > 0
+                else 0
+            ),
         }
 
     def cleanup(self):
@@ -396,12 +389,7 @@ class MediaDownloader:
 class BatchMediaDownloader:
     """Download media for multiple products in batch with concurrency control"""
 
-    def __init__(
-        self,
-        migration_job,
-        user: Optional[User] = None,
-        max_concurrent: int = 5
-    ):
+    def __init__(self, migration_job, user: User | None = None, max_concurrent: int = 5):
         """
         Initialize batch downloader
 
@@ -416,10 +404,8 @@ class BatchMediaDownloader:
         self.downloader = MediaDownloader(migration_job, user)
 
     def download_products_media(
-        self,
-        products: List[Dict],
-        progress_callback: Optional[Callable] = None
-    ) -> Dict[str, List[MediaAsset]]:
+        self, products: list[dict], progress_callback: Callable | None = None
+    ) -> dict[str, list[MediaAsset]]:
         """
         Download images for multiple products
 
@@ -435,13 +421,13 @@ class BatchMediaDownloader:
 
         for idx, product in enumerate(products):
             try:
-                product_id = str(product.get('id'))
+                product_id = str(product.get("id"))
 
                 # Download images for this product
                 assets = self.downloader.download_product_images(
                     product_data=product,
                     folder_name=f"migration_{self.migration_job.id}",
-                    progress_callback=None  # Use outer progress callback instead
+                    progress_callback=None,  # Use outer progress callback instead
                 )
 
                 results[product_id] = assets
@@ -452,17 +438,17 @@ class BatchMediaDownloader:
                         current=idx + 1,
                         total=total,
                         product_id=product_id,
-                        assets_count=len(assets)
+                        assets_count=len(assets),
                     )
 
             except Exception as e:
                 logger.error(f"Error downloading media for product {product.get('id')}: {e}")
-                results[str(product.get('id'))] = []
+                results[str(product.get("id"))] = []
                 continue
 
         return results
 
-    def get_stats(self) -> Dict:
+    def get_stats(self) -> dict:
         """Get aggregated download statistics"""
         return self.downloader.get_stats()
 

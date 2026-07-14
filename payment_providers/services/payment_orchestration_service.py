@@ -9,22 +9,21 @@ Flow:
 2. Customer pays via provider (hosted/embedded)
 3. handle_payment_success() → Updates Order to 'paid'
 """
-from decimal import Decimal
-from typing import Dict, Any, Tuple, Optional
-from datetime import timedelta
 
+import logging
+from datetime import timedelta
+from typing import Any
+
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings
-from django.core.exceptions import ValidationError
-import logging
 
 from cart.models import CheckoutSession
 from orders.models import Order
 from payment_providers.models import (
-    PaymentProviderAccount,
     PaymentIntent,
+    PaymentProviderAccount,
     PaymentTransaction,
 )
 from payment_providers.providers.registry import ProviderRegistry
@@ -52,9 +51,9 @@ class PaymentOrchestrationService:
         provider_account: PaymentProviderAccount,
         return_url: str,
         cancel_url: str,
-        saved_method_id: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Tuple[bool, Optional[PaymentIntent], str]:
+        saved_method_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> tuple[bool, PaymentIntent | None, str]:
         """
         Create order and payment intent for checkout.
 
@@ -82,14 +81,18 @@ class PaymentOrchestrationService:
         if not provider_account.is_active:
             return False, None, _("Payment provider is not active")
 
-        if provider_account.connection_status != 'connected':
+        if provider_account.connection_status != "connected":
             return False, None, _("Payment provider is not properly configured")
 
         # Check for existing unpaid order for this session
-        existing_intent = PaymentIntent.objects.filter(
-            checkout_session=checkout_session,
-            status__in=['created', 'requires_payment_method', 'requires_action', 'processing']
-        ).select_related('order').first()
+        existing_intent = (
+            PaymentIntent.objects.filter(
+                checkout_session=checkout_session,
+                status__in=["created", "requires_payment_method", "requires_action", "processing"],
+            )
+            .select_related("order")
+            .first()
+        )
 
         if existing_intent and existing_intent.order:
             # Reuse existing order, create new intent
@@ -101,13 +104,12 @@ class PaymentOrchestrationService:
                 if not checkout_session.metadata:
                     checkout_session.metadata = {}
                 checkout_session.metadata.update(metadata)
-                checkout_session.save(update_fields=['metadata'])
+                checkout_session.save(update_fields=["metadata"])
 
             # Create new order with payment_status='unpaid'
             # Pass clear_session=False to keep session active
             success, message, order = CheckoutService.create_order(
-                checkout_session,
-                clear_session=False
+                checkout_session, clear_session=False
             )
 
             if not success:
@@ -130,31 +132,34 @@ class PaymentOrchestrationService:
 
         # Build metadata
         intent_metadata = {
-            'order_id': str(order.id),
-            'order_number': order.order_number,
-            'checkout_session_id': str(checkout_session.id),
-            **(metadata or {})
+            "order_id": str(order.id),
+            "order_number": order.order_number,
+            "checkout_session_id": str(checkout_session.id),
+            **(metadata or {}),
         }
 
         # Get customer email and name
         customer_email = order.email or (order.user.email if order.user else None)
-        customer_name = order.shipping_name or order.billing_name or ''
+        customer_name = order.shipping_name or order.billing_name or ""
 
         # Get customer country from shipping/billing address
         from core.utils import get_default_country
+
         customer_country = order.shipping_country or order.billing_country or get_default_country()
 
         # Look up enabled payment methods for customer's country.
         # Country-specific config takes priority; falls back to _global config.
         # If neither exists, pass None so providers show all available methods.
-        enabled_methods = provider_account.get_enabled_methods_for_country(
-            customer_country
-        ) if customer_country else []
+        enabled_methods = (
+            provider_account.get_enabled_methods_for_country(customer_country)
+            if customer_country
+            else []
+        )
         payment_method_types = enabled_methods if enabled_methods else None
 
         # Call provider to create payment intent
         try:
-            if hasattr(provider, 'create_payment_intent_for_checkout'):
+            if hasattr(provider, "create_payment_intent_for_checkout"):
                 provider_response = provider.create_payment_intent_for_checkout(
                     amount=amount,
                     currency=currency,
@@ -164,7 +169,7 @@ class PaymentOrchestrationService:
                     customer_name=customer_name,
                     customer_country=customer_country,
                     payment_method_types=payment_method_types,
-                    metadata=intent_metadata
+                    metadata=intent_metadata,
                 )
             else:
                 # Fallback to standard create_payment_intent if method not implemented
@@ -172,41 +177,45 @@ class PaymentOrchestrationService:
                     amount=float(amount),
                     currency=currency,
                     order_id=order.id,
-                    metadata=intent_metadata
+                    metadata=intent_metadata,
                 )
         except Exception as e:
             logger.error(f"Provider create_payment_intent failed: {e}")
-            return False, None, _("Failed to create payment with provider: {error}").format(error=str(e))
+            return (
+                False,
+                None,
+                _("Failed to create payment with provider: {error}").format(error=str(e)),
+            )
 
-        if not provider_response.get('success'):
-            error_msg = provider_response.get('message', 'Payment intent creation failed')
+        if not provider_response.get("success"):
+            error_msg = provider_response.get("message", "Payment intent creation failed")
             return False, None, error_msg
 
         # Calculate expiry
         expires_at = timezone.now() + timedelta(hours=DEFAULT_INTENT_EXPIRY_HOURS)
-        if provider_response.get('expires_at'):
-            expires_at = provider_response['expires_at']
+        if provider_response.get("expires_at"):
+            expires_at = provider_response["expires_at"]
 
         # Determine status based on provider response
-        status = 'created'
-        if provider_response.get('requires_action'):
-            status = 'requires_action'
-        elif provider_response.get('status'):
+        status = "created"
+        if provider_response.get("requires_action"):
+            status = "requires_action"
+        elif provider_response.get("status"):
             # Map provider status to our status
             status_map = {
-                'requires_payment_method': 'requires_payment_method',
-                'requires_confirmation': 'requires_confirmation',
-                'requires_action': 'requires_action',
-                'processing': 'processing',
-                'succeeded': 'succeeded',
-                'canceled': 'canceled',
-                'failed': 'failed',
+                "requires_payment_method": "requires_payment_method",
+                "requires_confirmation": "requires_confirmation",
+                "requires_action": "requires_action",
+                "processing": "processing",
+                "succeeded": "succeeded",
+                "canceled": "canceled",
+                "failed": "failed",
             }
-            status = status_map.get(provider_response['status'], 'created')
+            status = status_map.get(provider_response["status"], "created")
 
         # Create PaymentIntent record
         # Safely extract action data (handle case where 'action' key exists but is None)
-        action = provider_response.get('action') or {}
+        action = provider_response.get("action") or {}
 
         # `.get(key, default)` only returns the default when the key is
         # absent — a present `None` slips through. Providers (e.g. Stripe's
@@ -219,17 +228,19 @@ class PaymentOrchestrationService:
             checkout_session=checkout_session,
             provider_account=provider_account,
             order=order,
-            provider_intent_id=provider_response.get('provider_intent_id') or '',
-            client_secret=provider_response.get('client_secret') or '',
-            checkout_url=provider_response.get('checkout_url') or '',
+            provider_intent_id=provider_response.get("provider_intent_id") or "",
+            client_secret=provider_response.get("client_secret") or "",
+            checkout_url=provider_response.get("checkout_url") or "",
             status=status,
             amount=checkout_session.total_amount,
-            requires_action=provider_response.get('requires_action', False),
-            action_type=action.get('type') or '',
-            action_url=action.get('url') or '',
-            action_data=action.get('data') or {},
+            requires_action=provider_response.get("requires_action", False),
+            action_type=action.get("type") or "",
+            action_url=action.get("url") or "",
+            action_data=action.get("data") or {},
             metadata=intent_metadata,
-            provider_response=PaymentIntent._json_safe(provider_response.get('raw_response', provider_response)),
+            provider_response=PaymentIntent._json_safe(
+                provider_response.get("raw_response", provider_response)
+            ),
             expires_at=expires_at,
         )
 
@@ -241,7 +252,7 @@ class PaymentOrchestrationService:
         return True, payment_intent, _("Payment intent created successfully")
 
     @staticmethod
-    def get_payment_intent_status(intent: PaymentIntent) -> Dict[str, Any]:
+    def get_payment_intent_status(intent: PaymentIntent) -> dict[str, Any]:
         """
         Get current payment intent status from provider.
 
@@ -254,7 +265,7 @@ class PaymentOrchestrationService:
         try:
             provider = intent.provider_account.get_provider_instance()
 
-            if hasattr(provider, 'retrieve_payment_intent'):
+            if hasattr(provider, "retrieve_payment_intent"):
                 status_response = provider.retrieve_payment_intent(
                     intent_id=intent.provider_intent_id
                 )
@@ -264,23 +275,20 @@ class PaymentOrchestrationService:
                 )
 
             return {
-                'success': True,
-                'status': status_response.get('status'),
-                'provider_status': status_response.get('provider_status'),
-                'requires_action': status_response.get('requires_action', False),
-                'error': status_response.get('error'),
-                'provider_data': status_response
+                "success": True,
+                "status": status_response.get("status"),
+                "provider_status": status_response.get("provider_status"),
+                "requires_action": status_response.get("requires_action", False),
+                "error": status_response.get("error"),
+                "provider_data": status_response,
             }
 
         except Exception as e:
             logger.error(f"Error getting payment intent status: {e}")
-            return {
-                'success': False,
-                'error': str(e)
-            }
+            return {"success": False, "error": str(e)}
 
     @staticmethod
-    def verify_and_sync_payment_status(intent: PaymentIntent) -> Dict[str, Any]:
+    def verify_and_sync_payment_status(intent: PaymentIntent) -> dict[str, Any]:
         """
         Verify payment status with provider and trigger webhook handlers
         if the remote status differs from local. Safe to call on any intent —
@@ -292,61 +300,60 @@ class PaymentOrchestrationService:
             Dict with 'status', 'synced' (bool), and optionally 'error'
         """
         if intent.is_terminal():
-            return {'status': intent.status, 'synced': False}
+            return {"status": intent.status, "synced": False}
 
         if not intent.provider_intent_id or not intent.provider_account:
-            return {'status': intent.status, 'synced': False}
+            return {"status": intent.status, "synced": False}
 
         try:
             remote = PaymentOrchestrationService.get_payment_intent_status(intent)
-            if not remote.get('success'):
-                return {'status': intent.status, 'synced': False, 'error': remote.get('error')}
+            if not remote.get("success"):
+                return {"status": intent.status, "synced": False, "error": remote.get("error")}
 
-            remote_status = remote.get('status', '')
+            remote_status = remote.get("status", "")
             provider_slug = (
                 intent.provider_account.component.slug
                 if intent.provider_account and intent.provider_account.component
-                else 'unknown'
+                else "unknown"
             )
 
-            if remote_status == 'succeeded' and intent.status != 'succeeded':
+            if remote_status == "succeeded" and intent.status != "succeeded":
                 logger.info(
                     f"Payment verification: provider reports succeeded for intent {intent.id}, "
                     f"triggering payment success handling"
                 )
                 from payment_providers.services.webhook_service import WebhookService
+
                 WebhookService.handle_payment_intent_succeeded(
                     provider_slug=provider_slug,
                     provider_intent_id=intent.provider_intent_id,
-                    event_data=remote.get('provider_data', {}),
+                    event_data=remote.get("provider_data", {}),
                 )
                 intent.refresh_from_db()
-                return {'status': intent.status, 'synced': True}
+                return {"status": intent.status, "synced": True}
 
-            elif remote_status == 'failed' and intent.status != 'failed':
-                logger.info(
-                    f"Payment verification: provider reports failed for intent {intent.id}"
-                )
+            elif remote_status == "failed" and intent.status != "failed":
+                logger.info(f"Payment verification: provider reports failed for intent {intent.id}")
                 from payment_providers.services.webhook_service import WebhookService
+
                 WebhookService.handle_payment_intent_failed(
                     provider_slug=provider_slug,
                     provider_intent_id=intent.provider_intent_id,
-                    error_data=remote.get('provider_data', {}),
+                    error_data=remote.get("provider_data", {}),
                 )
                 intent.refresh_from_db()
-                return {'status': intent.status, 'synced': True}
+                return {"status": intent.status, "synced": True}
 
-            return {'status': intent.status, 'synced': False}
+            return {"status": intent.status, "synced": False}
 
         except Exception as e:
             logger.warning(f"Payment verification failed for intent {intent.id}: {e}")
-            return {'status': intent.status, 'synced': False, 'error': str(e)}
+            return {"status": intent.status, "synced": False, "error": str(e)}
 
     @staticmethod
     def confirm_payment_intent(
-        intent: PaymentIntent,
-        confirmation_data: Optional[Dict[str, Any]] = None
-    ) -> Tuple[bool, str]:
+        intent: PaymentIntent, confirmation_data: dict[str, Any] | None = None
+    ) -> tuple[bool, str]:
         """
         Confirm payment intent after 3DS or other action.
 
@@ -363,42 +370,38 @@ class PaymentOrchestrationService:
         try:
             provider = intent.provider_account.get_provider_instance()
 
-            if hasattr(provider, 'confirm_payment_intent'):
+            if hasattr(provider, "confirm_payment_intent"):
                 response = provider.confirm_payment_intent(
-                    intent_id=intent.provider_intent_id,
-                    confirmation_data=confirmation_data
+                    intent_id=intent.provider_intent_id, confirmation_data=confirmation_data
                 )
             else:
                 return False, _("Provider does not support payment confirmation")
 
-            if response.get('success'):
+            if response.get("success"):
                 # Update intent status
-                new_status = response.get('status', 'processing')
-                if new_status == 'succeeded':
+                new_status = response.get("status", "processing")
+                if new_status == "succeeded":
                     intent.mark_succeeded(response)
                     # Handle payment success
-                    PaymentOrchestrationService.handle_payment_success(
-                        intent,
-                        response
-                    )
-                elif response.get('requires_action'):
+                    PaymentOrchestrationService.handle_payment_success(intent, response)
+                elif response.get("requires_action"):
                     intent.mark_requires_action(
-                        action_type=response.get('action', {}).get('type', ''),
-                        action_url=response.get('action', {}).get('url', ''),
-                        action_data=response.get('action', {}).get('data')
+                        action_type=response.get("action", {}).get("type", ""),
+                        action_url=response.get("action", {}).get("url", ""),
+                        action_data=response.get("action", {}).get("data"),
                     )
                 else:
                     intent.status = new_status
                     intent.provider_response = PaymentIntent._json_safe(response)
-                    intent.save(update_fields=['status', 'provider_response', 'updated_at'])
+                    intent.save(update_fields=["status", "provider_response", "updated_at"])
 
                 return True, _("Payment confirmed")
             else:
-                error_msg = response.get('message', 'Confirmation failed')
+                error_msg = response.get("message", "Confirmation failed")
                 intent.mark_failed(
-                    error_code=response.get('error_code', ''),
+                    error_code=response.get("error_code", ""),
                     error_message=error_msg,
-                    provider_data=response
+                    provider_data=response,
                 )
                 return False, error_msg
 
@@ -408,9 +411,8 @@ class PaymentOrchestrationService:
 
     @staticmethod
     def handle_payment_success(
-        intent: PaymentIntent,
-        provider_data: Dict[str, Any]
-    ) -> Tuple[bool, str]:
+        intent: PaymentIntent, provider_data: dict[str, Any]
+    ) -> tuple[bool, str]:
         """
         Handle successful payment.
 
@@ -428,11 +430,13 @@ class PaymentOrchestrationService:
         # --- Atomic block: core payment state ---
         with transaction.atomic():
             # Re-fetch with row lock to prevent duplicate processing from concurrent polls
-            intent = PaymentIntent.objects.select_for_update(of=('self',)).select_related(
-                'order', 'provider_account', 'checkout_session'
-            ).get(pk=intent.pk)
+            intent = (
+                PaymentIntent.objects.select_for_update(of=("self",))
+                .select_related("order", "provider_account", "checkout_session")
+                .get(pk=intent.pk)
+            )
 
-            if intent.status == 'succeeded':
+            if intent.status == "succeeded":
                 logger.info(f"Payment intent {intent.id} already marked as succeeded")
                 return True, _("Payment already processed")
 
@@ -442,35 +446,55 @@ class PaymentOrchestrationService:
             intent.mark_succeeded(provider_data)
 
             # Update order payment status
-            order.payment_status = 'paid'
+            order.payment_status = "paid"
             order.paid_at = timezone.now()
             order.amount_paid = intent.amount
             order.payment_provider = intent.provider_account
 
             # Compute base-currency equivalent for amount_paid
             from decimal import Decimal
-            if order.customer_currency and order.customer_currency != order.base_currency and order.exchange_rate_used:
+
+            if (
+                order.customer_currency
+                and order.customer_currency != order.base_currency
+                and order.exchange_rate_used
+            ):
                 rate = order.exchange_rate_used
                 if rate and rate != 0:
-                    paid_amt = intent.amount.amount if hasattr(intent.amount, 'amount') else Decimal(str(intent.amount or 0))
-                    order.amount_paid_base = (paid_amt / rate).quantize(Decimal('0.01'))
+                    paid_amt = (
+                        intent.amount.amount
+                        if hasattr(intent.amount, "amount")
+                        else Decimal(str(intent.amount or 0))
+                    )
+                    order.amount_paid_base = (paid_amt / rate).quantize(Decimal("0.01"))
             else:
-                order.amount_paid_base = intent.amount.amount if hasattr(intent.amount, 'amount') else Decimal(str(intent.amount or 0))
+                order.amount_paid_base = (
+                    intent.amount.amount
+                    if hasattr(intent.amount, "amount")
+                    else Decimal(str(intent.amount or 0))
+                )
 
             # Extract payment method info from provider response
-            payment_method_type = provider_data.get('payment_method_type', '')
-            payment_method_last4 = provider_data.get('payment_method_last4', '')
+            payment_method_type = provider_data.get("payment_method_type", "")
+            payment_method_last4 = provider_data.get("payment_method_last4", "")
 
             if payment_method_type:
                 order.payment_method_type = payment_method_type
             if payment_method_last4:
                 order.payment_method_last4 = payment_method_last4
 
-            order.save(update_fields=[
-                'payment_status', 'paid_at', 'amount_paid', 'amount_paid_base',
-                'payment_provider', 'payment_method_type', 'payment_method_last4',
-                'updated_at'
-            ])
+            order.save(
+                update_fields=[
+                    "payment_status",
+                    "paid_at",
+                    "amount_paid",
+                    "amount_paid_base",
+                    "payment_provider",
+                    "payment_method_type",
+                    "payment_method_last4",
+                    "updated_at",
+                ]
+            )
 
             # Create PaymentTransaction record
             PaymentTransaction.objects.create(
@@ -479,15 +503,15 @@ class PaymentOrchestrationService:
                 transaction_id=f"txn_{intent.id.hex[:16]}",
                 provider_transaction_id=intent.provider_intent_id,
                 amount=intent.amount,
-                status='completed',
-                transaction_type='charge',
+                status="completed",
+                transaction_type="charge",
                 customer_email=order.email,
                 customer_name=order.shipping_name,
                 payment_method_type=payment_method_type,
                 payment_method_last4=payment_method_last4,
                 provider_response=PaymentIntent._json_safe(provider_data),
                 metadata=intent.metadata,
-                completed_at=timezone.now()
+                completed_at=timezone.now(),
             )
 
             # Create subscriptions and clear checkout session
@@ -496,9 +520,12 @@ class PaymentOrchestrationService:
                 if cart:
                     try:
                         from cart.services.checkout_service import CheckoutService
+
                         CheckoutService._create_subscriptions(cart, order)
                     except Exception as e:
-                        logger.error(f"Failed to create subscriptions for order {order.order_number}: {e}")
+                        logger.error(
+                            f"Failed to create subscriptions for order {order.order_number}: {e}"
+                        )
 
                     cart.items.all().delete()
                     cart.applied_vouchers.all().delete()
@@ -515,9 +542,9 @@ class PaymentOrchestrationService:
     @staticmethod
     def handle_payment_failure(
         intent: PaymentIntent,
-        error_code: str = '',
-        error_message: str = '',
-        provider_data: Optional[Dict[str, Any]] = None
+        error_code: str = "",
+        error_message: str = "",
+        provider_data: dict[str, Any] | None = None,
     ) -> None:
         """
         Handle payment failure.
@@ -532,18 +559,14 @@ class PaymentOrchestrationService:
             provider_data: Optional full provider response
         """
         intent.mark_failed(
-            error_code=error_code,
-            error_message=error_message,
-            provider_data=provider_data
+            error_code=error_code, error_message=error_message, provider_data=provider_data
         )
 
-        logger.warning(
-            f"Payment failed for intent {intent.id}: {error_code} - {error_message}"
-        )
+        logger.warning(f"Payment failed for intent {intent.id}: {error_code} - {error_message}")
 
     @staticmethod
     @transaction.atomic
-    def cancel_payment_intent(intent: PaymentIntent) -> Tuple[bool, str]:
+    def cancel_payment_intent(intent: PaymentIntent) -> tuple[bool, str]:
         """
         Cancel payment intent and optionally cancel the order.
 
@@ -560,25 +583,23 @@ class PaymentOrchestrationService:
             # Try to cancel with provider
             provider = intent.provider_account.get_provider_instance()
 
-            if hasattr(provider, 'cancel_payment_intent'):
-                response = provider.cancel_payment_intent(
-                    intent_id=intent.provider_intent_id
-                )
-                if not response.get('success'):
+            if hasattr(provider, "cancel_payment_intent"):
+                response = provider.cancel_payment_intent(intent_id=intent.provider_intent_id)
+                if not response.get("success"):
                     logger.warning(
                         f"Provider cancel failed for intent {intent.id}: {response.get('message')}"
                     )
 
             # Update intent status
-            intent.status = 'canceled'
-            intent.save(update_fields=['status', 'updated_at'])
+            intent.status = "canceled"
+            intent.save(update_fields=["status", "updated_at"])
 
             # Update order status if this is the only intent
             order = intent.order
-            other_intents = PaymentIntent.objects.filter(
-                order=order
-            ).exclude(id=intent.id).exclude(
-                status__in=['canceled', 'failed']
+            other_intents = (
+                PaymentIntent.objects.filter(order=order)
+                .exclude(id=intent.id)
+                .exclude(status__in=["canceled", "failed"])
             )
 
             if not other_intents.exists():
@@ -589,13 +610,13 @@ class PaymentOrchestrationService:
                     try:
                         fulfillment_service.release_stock(item, item.warehouse)
                         item.stock_allocated = False
-                        item.save(update_fields=['stock_allocated'])
+                        item.save(update_fields=["stock_allocated"])
                     except Exception as e:
                         logger.error(f"Failed to release stock for item {item.id}: {e}")
 
-                order.status = 'cancelled'
-                order.payment_status = 'cancelled'
-                order.save(update_fields=['status', 'payment_status', 'updated_at'])
+                order.status = "cancelled"
+                order.payment_status = "cancelled"
+                order.save(update_fields=["status", "payment_status", "updated_at"])
 
             logger.info(f"Payment intent {intent.id} cancelled")
             return True, _("Payment cancelled")
@@ -619,13 +640,15 @@ class PaymentOrchestrationService:
         # Trigger outbound webhooks
         try:
             from webhooks.services import trigger_webhook
-            trigger_webhook('order.paid', instance=order)
+
+            trigger_webhook("order.paid", instance=order)
         except Exception as e:
             logger.error(f"Failed to trigger order.paid webhook: {e}")
 
         # Award loyalty points if applicable
         try:
             from loyalty.services import award_order_points
+
             award_order_points(order)
         except Exception as e:
             logger.error(f"Failed to award loyalty points: {e}")
@@ -633,79 +656,93 @@ class PaymentOrchestrationService:
         # Update product sales statistics
         try:
             from orders.services.sales_stats_service import update_product_sales_counts
+
             update_product_sales_counts(order)
         except Exception as e:
-            logger.error(f"Failed to update product sales counts for order {order.order_number}: {e}")
+            logger.error(
+                f"Failed to update product sales counts for order {order.order_number}: {e}"
+            )
 
         # Update customer metrics (skip guest orders)
-        if order.user and not order.user.username.startswith('guest_'):
+        if order.user and not order.user.username.startswith("guest_"):
             try:
                 from customers.models import CustomerMetrics
+
                 CustomerMetrics.calculate_for_user(order.user)
             except Exception as e:
-                logger.error(f"Failed to update customer metrics for order {order.order_number}: {e}")
+                logger.error(
+                    f"Failed to update customer metrics for order {order.order_number}: {e}"
+                )
 
         # Log to Sales Bell (HQ only)
-        if getattr(settings, 'SPWIG_IS_HQ', False):
+        if getattr(settings, "SPWIG_IS_HQ", False):
             try:
                 from core.models import SalesBellEvent
+
                 meta = order.metadata or {}
-                if meta.get('marketplace'):
-                    subtype = 'marketplace'
-                elif meta.get('dev_license_purchase'):
-                    subtype = 'dev_license'
+                if meta.get("marketplace"):
+                    subtype = "marketplace"
+                elif meta.get("dev_license_purchase"):
+                    subtype = "dev_license"
                 else:
-                    subtype = 'license'
+                    subtype = "license"
                 SalesBellEvent.log_sale(order, subtype=subtype)
             except Exception as e:
                 logger.error(f"Failed to log sales bell event: {e}")
 
         # Grant marketplace component entitlement (HQ only)
-        if getattr(settings, 'SPWIG_IS_HQ', False) and order.metadata.get('marketplace'):
+        if getattr(settings, "SPWIG_IS_HQ", False) and order.metadata.get("marketplace"):
             try:
                 from marketplace_checkout.services import grant_component_entitlement
+
                 grant_component_entitlement(order)
             except Exception as e:
                 logger.error(f"Failed to grant marketplace entitlement: {e}")
                 # Flag the order and schedule retry via Celery
-                order.metadata['entitlement_grant_failed'] = True
-                order.metadata['entitlement_grant_error'] = str(e)[:500]
-                order.save(update_fields=['metadata'])
+                order.metadata["entitlement_grant_failed"] = True
+                order.metadata["entitlement_grant_error"] = str(e)[:500]
+                order.save(update_fields=["metadata"])
                 try:
                     from marketplace_checkout.tasks import retry_grant_entitlement
+
                     retry_grant_entitlement.delay(str(order.id))
                 except Exception as task_err:
                     logger.error(f"Failed to schedule entitlement retry: {task_err}")
 
         # Provision developer license after purchase (HQ only)
-        if getattr(settings, 'SPWIG_IS_HQ', False) and order.metadata.get('dev_license_purchase'):
+        if getattr(settings, "SPWIG_IS_HQ", False) and order.metadata.get("dev_license_purchase"):
             try:
-                from developer_portal.services.license_provisioning import provision_paid_dev_license
+                from developer_portal.services.license_provisioning import (
+                    provision_paid_dev_license,
+                )
+
                 provision_paid_dev_license(order)
             except Exception as e:
                 logger.error(f"Failed to provision dev license: {e}")
-                order.metadata['dev_license_provision_failed'] = True
-                order.metadata['dev_license_provision_error'] = str(e)[:500]
-                order.save(update_fields=['metadata'])
+                order.metadata["dev_license_provision_failed"] = True
+                order.metadata["dev_license_provision_error"] = str(e)[:500]
+                order.save(update_fields=["metadata"])
 
         # Provision license checkout purchase (HQ only)
-        if getattr(settings, 'SPWIG_IS_HQ', False) and order.metadata.get('license_checkout'):
+        if getattr(settings, "SPWIG_IS_HQ", False) and order.metadata.get("license_checkout"):
             try:
                 from license_checkout.services import provision_paid_license
+
                 provision_paid_license(order)
             except Exception as e:
                 logger.error(f"Failed to provision license checkout: {e}")
-                order.metadata['license_provision_failed'] = True
-                order.metadata['license_provision_error'] = str(e)[:500]
-                order.save(update_fields=['metadata'])
+                order.metadata["license_provision_failed"] = True
+                order.metadata["license_provision_error"] = str(e)[:500]
+                order.save(update_fields=["metadata"])
 
         # Provision hosted subscription purchase (HQ only)
-        if getattr(settings, 'SPWIG_IS_HQ', False) and order.metadata.get('hosted_checkout'):
+        if getattr(settings, "SPWIG_IS_HQ", False) and order.metadata.get("hosted_checkout"):
             try:
                 from license_checkout.services import provision_hosted_subscription
+
                 provision_hosted_subscription(order)
             except Exception as e:
                 logger.error(f"Failed to provision hosted subscription: {e}")
-                order.metadata['hosted_provision_failed'] = True
-                order.metadata['hosted_provision_error'] = str(e)[:500]
-                order.save(update_fields=['metadata'])
+                order.metadata["hosted_provision_failed"] = True
+                order.metadata["hosted_provision_error"] = str(e)[:500]
+                order.save(update_fields=["metadata"])

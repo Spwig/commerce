@@ -18,21 +18,20 @@ Architecture:
 """
 
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Any
+
 from django.core.cache import cache
-from django.template import Template, Context
-from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
 
-from .models import PageTier, ComponentStore
-from .schema_registry import PageSchemaRegistry, SchemaValidationError
 from .content_sanitizer import ContentSanitizer
+from .schema_registry import PageSchemaRegistry, SchemaValidationError
 
 logger = logging.getLogger(__name__)
 
 
 class LayoutRenderError(Exception):
     """Raised when layout rendering fails"""
+
     pass
 
 
@@ -59,20 +58,15 @@ class LayoutRenderer:
 
     # Cache timeout for rendered layouts (1 minute)
     CACHE_TIMEOUT = 60
-    CACHE_KEY_PREFIX = 'layout_render'
+    CACHE_KEY_PREFIX = "layout_render"
 
     # CSS isolation classes for preview mode
     ISOLATION_CLASSES = {
-        'brand_builder': 'hf-content-preview',
-        'page_editor': 'pb-content-preview',
+        "brand_builder": "hf-content-preview",
+        "page_editor": "pb-content-preview",
     }
 
-    def __init__(
-        self,
-        page_type: str,
-        tier: str,
-        context: Optional[Dict[str, Any]] = None
-    ):
+    def __init__(self, page_type: str, tier: str, context: dict[str, Any] | None = None):
         """
         Initialize renderer with page type and tier.
 
@@ -85,7 +79,7 @@ class LayoutRenderer:
             ValueError: If tier is invalid
             SchemaValidationError: If page type not found
         """
-        if tier not in ['A', 'B', 'C']:
+        if tier not in ["A", "B", "C"]:
             raise ValueError(f"Invalid tier: {tier}. Must be 'A', 'B', or 'C'")
 
         self.page_type = page_type
@@ -93,8 +87,8 @@ class LayoutRenderer:
         self.context = context or {}
 
         # Detect preview mode and isolation settings (before other initialization)
-        self.preview_mode = self.context.get('preview_mode', False)
-        self.isolation_type = self.context.get('isolation_type', 'page_editor')
+        self.preview_mode = self.context.get("preview_mode", False)
+        self.isolation_type = self.context.get("isolation_type", "page_editor")
 
         # Initialize services
         self.schema_registry = PageSchemaRegistry()
@@ -103,9 +97,7 @@ class LayoutRenderer:
         # Load page tier configuration
         self.page_tier = self.schema_registry.get_page_tier(page_type)
         if not self.page_tier:
-            raise SchemaValidationError(
-                f"Page type '{page_type}' not found in schema registry"
-            )
+            raise SchemaValidationError(f"Page type '{page_type}' not found in schema registry")
 
         logger.debug(
             f"LayoutRenderer initialized: page_type={page_type}, "
@@ -141,18 +133,13 @@ class LayoutRenderer:
             # Get page schema
             schema = self.page_tier.schema
             if not schema:
-                raise LayoutRenderError(
-                    f"No schema defined for page type '{self.page_type}'"
-                )
+                raise LayoutRenderError(f"No schema defined for page type '{self.page_type}'")
 
             # Render regions
             regions_html = {}
-            for region_id in schema.get('regions', {}):
-                region_config = schema['regions'][region_id]
-                regions_html[region_id] = self.render_region(
-                    region_id,
-                    region_config
-                )
+            for region_id in schema.get("regions", {}):
+                region_config = schema["regions"][region_id]
+                regions_html[region_id] = self.render_region(region_id, region_config)
 
             # Build complete layout
             html = self._assemble_layout(regions_html, render_context)
@@ -165,25 +152,15 @@ class LayoutRenderer:
             if not self.preview_mode:
                 self._cache_render(html)
 
-            logger.info(
-                f"Rendered {self.page_type} layout (tier {self.tier}, "
-                f"{len(html)} bytes)"
-            )
+            logger.info(f"Rendered {self.page_type} layout (tier {self.tier}, {len(html)} bytes)")
             return html
 
         except Exception as e:
-            logger.error(
-                f"Failed to render {self.page_type}: {e}",
-                exc_info=True
-            )
+            logger.error(f"Failed to render {self.page_type}: {e}", exc_info=True)
             # Return fallback HTML instead of crashing
             return self._get_fallback_html(str(e))
 
-    def render_region(
-        self,
-        region_id: str,
-        region_config: Dict[str, Any]
-    ) -> str:
+    def render_region(self, region_id: str, region_config: dict[str, Any]) -> str:
         """
         Render a specific region with components.
 
@@ -200,11 +177,11 @@ class LayoutRenderer:
         """
         try:
             # Check if region is locked (cannot be modified)
-            if region_config.get('locked', False):
+            if region_config.get("locked", False):
                 logger.debug(f"Rendering locked region: {region_id}")
 
             # Get components for this region
-            components = region_config.get('components', [])
+            components = region_config.get("components", [])
 
             # Render each component
             component_htmls = []
@@ -214,21 +191,19 @@ class LayoutRenderer:
                     component_htmls.append(component_html)
 
             # Assemble region HTML
-            region_html = '\n'.join(component_htmls)
+            region_html = "\n".join(component_htmls)
 
             # Wrap in region container (always wrap for consistent structure)
-            region_classes = region_config.get('classes', '')
+            region_classes = region_config.get("classes", "")
             region_html = (
-                f'<div class="region region-{region_id} {region_classes}">'
-                f'{region_html}'
-                f'</div>'
+                f'<div class="region region-{region_id} {region_classes}">{region_html}</div>'
             )
 
             return region_html
 
         except Exception as e:
             logger.error(f"Failed to render region {region_id}: {e}", exc_info=True)
-            return f'<!-- Region {region_id} failed to render: {e} -->'
+            return f"<!-- Region {region_id} failed to render: {e} -->"
 
     def enforce_tier_restrictions(self, component_type: str) -> bool:
         """
@@ -250,7 +225,7 @@ class LayoutRenderer:
             self.schema_registry.validate_component_placement(
                 page_type=self.page_type,
                 component_type=component_type,
-                region=None  # Region check is separate
+                region=None,  # Region check is separate
             )
             return True
 
@@ -275,16 +250,16 @@ class LayoutRenderer:
         """
         return self.ISOLATION_CLASSES.get(
             self.isolation_type,
-            self.ISOLATION_CLASSES['page_editor']  # Default
+            self.ISOLATION_CLASSES["page_editor"],  # Default
         )
 
-    def _build_render_context(self) -> Dict[str, Any]:
+    def _build_render_context(self) -> dict[str, Any]:
         """Build rendering context with all necessary data."""
         context = {
-            'page_type': self.page_type,
-            'tier': self.tier,
-            'preview_mode': self.preview_mode,
-            'schema': self.page_tier.schema,
+            "page_type": self.page_type,
+            "tier": self.tier,
+            "preview_mode": self.preview_mode,
+            "schema": self.page_tier.schema,
         }
 
         # Merge user-provided context
@@ -292,7 +267,7 @@ class LayoutRenderer:
 
         return context
 
-    def _render_component(self, component_config: Dict[str, Any]) -> str:
+    def _render_component(self, component_config: dict[str, Any]) -> str:
         """
         Render a single component.
 
@@ -302,26 +277,22 @@ class LayoutRenderer:
         Returns:
             Rendered component HTML
         """
-        component_type = component_config.get('type')
+        component_type = component_config.get("type")
         if not component_type:
             logger.warning("Component missing 'type' field")
-            return ''
+            return ""
 
         # Check tier restrictions
         if not self.enforce_tier_restrictions(component_type):
             logger.debug(f"Component {component_type} blocked by tier restrictions")
-            return ''
+            return ""
 
         # For now, return a placeholder
         # Task 2 (Component Resolution Service) will handle actual rendering
-        component_data = component_config.get('data', {})
-        return f'<!-- Component: {component_type} (data: {component_data}) -->'
+        component_data = component_config.get("data", {})
+        return f"<!-- Component: {component_type} (data: {component_data}) -->"
 
-    def _assemble_layout(
-        self,
-        regions_html: Dict[str, str],
-        context: Dict[str, Any]
-    ) -> str:
+    def _assemble_layout(self, regions_html: dict[str, str], context: dict[str, Any]) -> str:
         """
         Assemble complete layout from rendered regions.
 
@@ -335,23 +306,23 @@ class LayoutRenderer:
         # Build basic HTML structure
         # This will be replaced with actual theme template rendering in later tasks
         parts = []
-        parts.append('<!DOCTYPE html>')
+        parts.append("<!DOCTYPE html>")
         parts.append('<html lang="en">')
-        parts.append('<head>')
-        parts.append(f'<title>{self.page_type.title()} - Tier {self.tier}</title>')
+        parts.append("<head>")
+        parts.append(f"<title>{self.page_type.title()} - Tier {self.tier}</title>")
         parts.append('<meta charset="UTF-8">')
         parts.append('<meta name="viewport" content="width=device-width, initial-scale=1.0">')
-        parts.append('</head>')
-        parts.append('<body>')
+        parts.append("</head>")
+        parts.append("<body>")
 
         # Add regions
-        for region_id, region_html in regions_html.items():
+        for _region_id, region_html in regions_html.items():
             parts.append(region_html)
 
-        parts.append('</body>')
-        parts.append('</html>')
+        parts.append("</body>")
+        parts.append("</html>")
 
-        return '\n'.join(parts)
+        return "\n".join(parts)
 
     def _wrap_with_isolation(self, html: str) -> str:
         """
@@ -371,11 +342,7 @@ class LayoutRenderer:
         isolation_class = self.get_css_isolation_class()
 
         # Wrap in isolation container with forced light theme
-        wrapped = (
-            f'<div class="{isolation_class}" data-theme="light">\n'
-            f'{html}\n'
-            f'</div>'
-        )
+        wrapped = f'<div class="{isolation_class}" data-theme="light">\n{html}\n</div>'
 
         logger.debug(f"Wrapped HTML with isolation class: {isolation_class}")
         return wrapped
@@ -395,25 +362,25 @@ class LayoutRenderer:
         if self.preview_mode:
             return (
                 f'<div class="layout-render-error">\n'
-                f'<h2>Layout Rendering Error</h2>\n'
-                f'<p>Failed to render {self.page_type} layout (tier {self.tier})</p>\n'
-                f'<pre>{error_msg}</pre>\n'
-                f'</div>'
+                f"<h2>Layout Rendering Error</h2>\n"
+                f"<p>Failed to render {self.page_type} layout (tier {self.tier})</p>\n"
+                f"<pre>{error_msg}</pre>\n"
+                f"</div>"
             )
         else:
             return (
-                f'<div class="layout-render-error">\n'
-                f'<p>This page is temporarily unavailable. Please try again later.</p>\n'
-                f'</div>'
+                '<div class="layout-render-error">\n'
+                "<p>This page is temporarily unavailable. Please try again later.</p>\n"
+                "</div>"
             )
 
-    def _get_cached_render(self) -> Optional[str]:
+    def _get_cached_render(self) -> str | None:
         """Get cached render if available."""
-        cache_key = f'{self.CACHE_KEY_PREFIX}:{self.page_type}:{self.tier}'
+        cache_key = f"{self.CACHE_KEY_PREFIX}:{self.page_type}:{self.tier}"
         return cache.get(cache_key)
 
     def _cache_render(self, html: str) -> None:
         """Cache rendered HTML."""
-        cache_key = f'{self.CACHE_KEY_PREFIX}:{self.page_type}:{self.tier}'
+        cache_key = f"{self.CACHE_KEY_PREFIX}:{self.page_type}:{self.tier}"
         cache.set(cache_key, html, self.CACHE_TIMEOUT)
         logger.debug(f"Cached render for {self.page_type} (tier {self.tier})")

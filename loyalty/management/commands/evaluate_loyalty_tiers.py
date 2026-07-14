@@ -12,37 +12,33 @@ from loyalty.services.tiering_service import TieringService
 
 
 class Command(BaseCommand):
-    help = 'Evaluate and update loyalty tiers for all active members'
+    help = "Evaluate and update loyalty tiers for all active members"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--limit',
+            "--limit",
             type=int,
             default=None,
-            help='Limit number of members to process (for testing)'
+            help="Limit number of members to process (for testing)",
         )
 
         parser.add_argument(
-            '--dry-run',
-            action='store_true',
-            help='Run without making any changes (preview only)'
+            "--dry-run", action="store_true", help="Run without making any changes (preview only)"
         )
 
     def handle(self, *args, **options):
-        limit = options.get('limit')
-        dry_run = options.get('dry_run')
+        limit = options.get("limit")
+        dry_run = options.get("dry_run")
 
         self.stdout.write(
-            self.style.SUCCESS(f'Starting loyalty tier evaluation at {timezone.now()}')
+            self.style.SUCCESS(f"Starting loyalty tier evaluation at {timezone.now()}")
         )
 
         if dry_run:
-            self.stdout.write(
-                self.style.WARNING('DRY RUN MODE - No changes will be saved')
-            )
+            self.stdout.write(self.style.WARNING("DRY RUN MODE - No changes will be saved"))
 
         if limit:
-            self.stdout.write(f'Processing limit: {limit} members')
+            self.stdout.write(f"Processing limit: {limit} members")
 
         # Initialize tiering service
         tiering_service = TieringService()
@@ -50,42 +46,34 @@ class Command(BaseCommand):
         try:
             # Run batch evaluation
             if dry_run:
-                self.stdout.write('Dry run not fully implemented - would evaluate tiers')
+                self.stdout.write("Dry run not fully implemented - would evaluate tiers")
                 stats = {
-                    'total_processed': 0,
-                    'promotions': 0,
-                    'demotions': 0,
-                    'no_change': 0,
-                    'errors': 0,
+                    "total_processed": 0,
+                    "promotions": 0,
+                    "demotions": 0,
+                    "no_change": 0,
+                    "errors": 0,
                 }
             else:
                 stats = tiering_service.batch_evaluate_all_members(limit=limit)
 
             # Display results
-            self.stdout.write('\n' + '=' * 60)
-            self.stdout.write(self.style.SUCCESS('Tier Evaluation Complete'))
-            self.stdout.write('=' * 60)
+            self.stdout.write("\n" + "=" * 60)
+            self.stdout.write(self.style.SUCCESS("Tier Evaluation Complete"))
+            self.stdout.write("=" * 60)
             self.stdout.write(f"Total Processed: {stats['total_processed']}")
-            self.stdout.write(
-                self.style.SUCCESS(f"Promotions: {stats['promotions']}")
-            )
-            self.stdout.write(
-                self.style.WARNING(f"Demotions: {stats['demotions']}")
-            )
+            self.stdout.write(self.style.SUCCESS(f"Promotions: {stats['promotions']}"))
+            self.stdout.write(self.style.WARNING(f"Demotions: {stats['demotions']}"))
             self.stdout.write(f"No Change: {stats['no_change']}")
 
-            if stats['errors'] > 0:
-                self.stdout.write(
-                    self.style.ERROR(f"Errors: {stats['errors']}")
-                )
+            if stats["errors"] > 0:
+                self.stdout.write(self.style.ERROR(f"Errors: {stats['errors']}"))
 
-            self.stdout.write('=' * 60)
+            self.stdout.write("=" * 60)
 
             # Exit code based on errors
-            if stats['errors'] > 0:
-                raise CommandError(
-                    f"Completed with {stats['errors']} error(s)"
-                )
+            if stats["errors"] > 0:
+                raise CommandError(f"Completed with {stats['errors']} error(s)")
 
         except Exception as e:
-            raise CommandError(f'Tier evaluation failed: {str(e)}')
+            raise CommandError(f"Tier evaluation failed: {str(e)}")

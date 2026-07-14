@@ -2,14 +2,16 @@
 Refund Service - Handles payment refunds
 Supports full and partial refunds
 """
+
+import logging
+import uuid
 from decimal import Decimal
-from typing import Tuple, Optional, Dict, Any
+from typing import Any
+
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-import uuid
-import logging
 
 from payment_providers.models import PaymentIntent, PaymentTransaction
 from payment_providers.providers.registry import ProviderRegistry
@@ -24,9 +26,8 @@ class RefundService:
 
     @staticmethod
     def validate_refund_amount(
-        original_transaction: PaymentTransaction,
-        refund_amount: Decimal
-    ) -> Tuple[bool, str]:
+        original_transaction: PaymentTransaction, refund_amount: Decimal
+    ) -> tuple[bool, str]:
         """
         Validate refund amount against original transaction
 
@@ -44,11 +45,9 @@ class RefundService:
         already_refunded = PaymentTransaction.objects.filter(
             provider_account=original_transaction.provider_account,
             order=original_transaction.order,
-            transaction_type='refund',
-            status='succeeded'
-        ).aggregate(
-            total=sum('amount')
-        )['total'] or Decimal('0')
+            transaction_type="refund",
+            status="succeeded",
+        ).aggregate(total=sum("amount"))["total"] or Decimal("0")
 
         # Check if refund amount exceeds available amount
         available_for_refund = original_transaction.amount - already_refunded
@@ -63,10 +62,10 @@ class RefundService:
     @transaction.atomic
     def create_refund(
         original_transaction: PaymentTransaction,
-        refund_amount: Optional[Decimal] = None,
-        reason: str = '',
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Tuple[bool, Optional[PaymentTransaction], str]:
+        refund_amount: Decimal | None = None,
+        reason: str = "",
+        metadata: dict[str, Any] | None = None,
+    ) -> tuple[bool, PaymentTransaction | None, str]:
         """
         Create a refund for a successful payment
 
@@ -80,10 +79,10 @@ class RefundService:
             Tuple of (success: bool, refund_transaction: PaymentTransaction|None, message: str)
         """
         # Validate original transaction can be refunded
-        if original_transaction.status != 'succeeded':
+        if original_transaction.status != "succeeded":
             return False, None, _("Only successful payments can be refunded")
 
-        if original_transaction.transaction_type != 'charge':
+        if original_transaction.transaction_type != "charge":
             return False, None, _("Only charge transactions can be refunded")
 
         # Default to full refund
@@ -113,7 +112,6 @@ class RefundService:
             provider_instance = provider_class(provider_account)
 
             # Check if provider supports partial refunds
-            is_partial = refund_amount < original_transaction.amount
             # capabilities = provider_instance.get_capabilities()
             # if is_partial and not capabilities.get('supports_partial_refunds'):
             #     return False, None, _("Provider does not support partial refunds")
@@ -123,11 +121,11 @@ class RefundService:
                 transaction_id=original_transaction.provider_transaction_id,
                 amount=float(refund_amount),
                 reason=reason,
-                metadata=metadata or {}
+                metadata=metadata or {},
             )
 
-            if not refund_response.get('success'):
-                return False, None, refund_response.get('message', _("Refund failed"))
+            if not refund_response.get("success"):
+                return False, None, refund_response.get("message", _("Refund failed"))
 
             # Create refund transaction record
             refund_transaction = PaymentTransaction.objects.create(
@@ -136,24 +134,25 @@ class RefundService:
                 order=original_transaction.order,
                 amount=refund_amount,
                 amount_currency=original_transaction.amount_currency,
-                status='succeeded',
-                transaction_type='refund',
-                provider_transaction_id=refund_response.get('provider_refund_id', ''),
+                status="succeeded",
+                transaction_type="refund",
+                provider_transaction_id=refund_response.get("provider_refund_id", ""),
                 provider_response=PaymentIntent._json_safe(refund_response),
                 metadata={
                     **(metadata or {}),
-                    'original_transaction_id': original_transaction.transaction_id,
-                    'refund_reason': reason
+                    "original_transaction_id": original_transaction.transaction_id,
+                    "refund_reason": reason,
                 },
                 customer_name=original_transaction.customer_name,
                 customer_email=original_transaction.customer_email,
-                completed_at=timezone.now()
+                completed_at=timezone.now(),
             )
 
             # Log to Sales Bell (HQ only)
-            if getattr(settings, 'SPWIG_IS_HQ', False):
+            if getattr(settings, "SPWIG_IS_HQ", False):
                 try:
                     from core.models import SalesBellEvent
+
                     SalesBellEvent.log_refund(refund_transaction)
                 except Exception as e:
                     logger.error(f"Failed to log sales bell refund event: {e}")
@@ -164,22 +163,18 @@ class RefundService:
 
                 # Calculate total refunded amount
                 total_refunded = PaymentTransaction.objects.filter(
-                    order=order,
-                    transaction_type='refund',
-                    status='succeeded'
-                ).aggregate(
-                    total=sum('amount')
-                )['total'] or Decimal('0')
+                    order=order, transaction_type="refund", status="succeeded"
+                ).aggregate(total=sum("amount"))["total"] or Decimal("0")
 
                 order.amount_refunded = total_refunded
 
                 # Update payment status
                 if total_refunded >= order.amount_paid:
-                    order.payment_status = 'refunded'
+                    order.payment_status = "refunded"
                 else:
-                    order.payment_status = 'partially_refunded'
+                    order.payment_status = "partially_refunded"
 
-                order.save(update_fields=['amount_refunded', 'payment_status'])
+                order.save(update_fields=["amount_refunded", "payment_status"])
 
             logger.info(
                 f"Refund created: {refund_transaction_id} for original transaction "
@@ -193,7 +188,7 @@ class RefundService:
             return False, None, _("Refund processing error: {error}").format(error=str(e))
 
     @staticmethod
-    def get_refund_status(refund_transaction: PaymentTransaction) -> Dict[str, Any]:
+    def get_refund_status(refund_transaction: PaymentTransaction) -> dict[str, Any]:
         """
         Get refund status from provider
 
@@ -203,11 +198,8 @@ class RefundService:
         Returns:
             Dict with refund status information
         """
-        if refund_transaction.transaction_type != 'refund':
-            return {
-                'success': False,
-                'error': _("Transaction is not a refund")
-            }
+        if refund_transaction.transaction_type != "refund":
+            return {"success": False, "error": _("Transaction is not a refund")}
 
         try:
             provider_class = ProviderRegistry.get_provider(
@@ -221,20 +213,17 @@ class RefundService:
             )
 
             return {
-                'success': True,
-                'status': status_response.get('status'),
-                'amount': status_response.get('amount'),
-                'currency': status_response.get('currency'),
-                'reason': status_response.get('reason'),
-                'provider_data': status_response
+                "success": True,
+                "status": status_response.get("status"),
+                "amount": status_response.get("amount"),
+                "currency": status_response.get("currency"),
+                "reason": status_response.get("reason"),
+                "provider_data": status_response,
             }
 
         except Exception as e:
             logger.error(f"Error getting refund status: {str(e)}", exc_info=True)
-            return {
-                'success': False,
-                'error': str(e)
-            }
+            return {"success": False, "error": str(e)}
 
     @staticmethod
     def get_refundable_amount(transaction: PaymentTransaction) -> Decimal:
@@ -247,20 +236,18 @@ class RefundService:
         Returns:
             Amount available for refund
         """
-        if transaction.status != 'succeeded' or transaction.transaction_type != 'charge':
-            return Decimal('0')
+        if transaction.status != "succeeded" or transaction.transaction_type != "charge":
+            return Decimal("0")
 
         # Calculate already refunded amount
         already_refunded = PaymentTransaction.objects.filter(
             provider_account=transaction.provider_account,
             order=transaction.order,
-            transaction_type='refund',
-            status='succeeded'
-        ).aggregate(
-            total=sum('amount')
-        )['total'] or Decimal('0')
+            transaction_type="refund",
+            status="succeeded",
+        ).aggregate(total=sum("amount"))["total"] or Decimal("0")
 
-        return max(Decimal('0'), transaction.amount - already_refunded)
+        return max(Decimal("0"), transaction.amount - already_refunded)
 
     @staticmethod
     def get_refund_history(order) -> list:
@@ -273,7 +260,6 @@ class RefundService:
         Returns:
             List of refund transactions
         """
-        return PaymentTransaction.objects.filter(
-            order=order,
-            transaction_type='refund'
-        ).order_by('-created_at')
+        return PaymentTransaction.objects.filter(order=order, transaction_type="refund").order_by(
+            "-created_at"
+        )

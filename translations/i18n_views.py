@@ -2,6 +2,7 @@
 Custom set_language view that supports any active SiteLanguage,
 not just those in settings.LANGUAGES.
 """
+
 import re
 from urllib.parse import urlsplit, urlunsplit
 
@@ -10,11 +11,11 @@ from django.http import HttpResponseRedirect
 from django.urls import translate_url
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import activate
-from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 
 # Matches a language prefix like /en/, /es/, /zh-hans/ at the start of a path.
-_LANG_PREFIX_RE = re.compile(r'^/([a-z]{2,3}(?:-[a-z]{1,8})*)/(.*)$', re.IGNORECASE)
+_LANG_PREFIX_RE = re.compile(r"^/([a-z]{2,3}(?:-[a-z]{1,8})*)/(.*)$", re.IGNORECASE)
 
 
 @csrf_protect
@@ -26,21 +27,21 @@ def merchant_set_language(request):
     Like Django's set_language but also accepts language codes from
     SiteLanguage records (not just settings.LANGUAGES).
     """
-    next_url = request.POST.get('next', request.GET.get('next'))
+    next_url = request.POST.get("next", request.GET.get("next"))
     if not url_has_allowed_host_and_scheme(
         url=next_url,
         allowed_hosts={request.get_host()},
         require_https=request.is_secure(),
     ):
-        next_url = request.META.get('HTTP_REFERER')
+        next_url = request.META.get("HTTP_REFERER")
         if not url_has_allowed_host_and_scheme(
             url=next_url,
             allowed_hosts={request.get_host()},
             require_https=request.is_secure(),
         ):
-            next_url = '/'
+            next_url = "/"
 
-    lang_code = request.POST.get('language')
+    lang_code = request.POST.get("language")
 
     # Check if language is valid: either in LANGUAGES or in active SiteLanguage
     if lang_code and _is_valid_language(lang_code):
@@ -65,11 +66,11 @@ def merchant_set_language(request):
             settings.LANGUAGE_COOKIE_NAME,
             lang_code,
             max_age=settings.LANGUAGE_COOKIE_AGE or 365 * 24 * 60 * 60,
-            path=settings.LANGUAGE_COOKIE_PATH or '/',
+            path=settings.LANGUAGE_COOKIE_PATH or "/",
             domain=settings.LANGUAGE_COOKIE_DOMAIN,
             secure=settings.LANGUAGE_COOKIE_SECURE,
             httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
-            samesite=settings.LANGUAGE_COOKIE_SAMESITE or 'Lax',
+            samesite=settings.LANGUAGE_COOKIE_SAMESITE or "Lax",
         )
 
         return response
@@ -82,6 +83,7 @@ def _ensure_in_settings_languages(lang_code):
     existing_codes = {code for code, _ in settings.LANGUAGES}
     if lang_code not in existing_codes:
         from translations.models import SiteLanguage
+
         try:
             sl = SiteLanguage.objects.get(code=lang_code, is_active=True)
             settings.LANGUAGES.append((sl.code, sl.name))
@@ -106,15 +108,12 @@ def _swap_language_prefix(url, lang_code):
         existing_code = match.group(1).lower()
         rest = match.group(2)
         if existing_code in known_codes or existing_code == lang_code.lower():
-            new_path = '/%s/%s' % (lang_code, rest)
+            new_path = f"/{lang_code}/{rest}"
         else:
-            new_path = '/%s%s' % (lang_code, path)
+            new_path = f"/{lang_code}{path}"
     else:
-        # No language prefix found; prepend one
-        if path.startswith('/'):
-            new_path = '/%s%s' % (lang_code, path)
-        else:
-            new_path = '/%s/%s' % (lang_code, path)
+        # No language prefix found; prepend one (with or without extra slash)
+        new_path = f"/{lang_code}{path}" if path.startswith("/") else f"/{lang_code}/{path}"
 
     return urlunsplit((parsed.scheme, parsed.netloc, new_path, parsed.query, parsed.fragment))
 
@@ -129,6 +128,7 @@ def _is_valid_language(lang_code):
     # Check active SiteLanguage records
     try:
         from translations.models import SiteLanguage
+
         return SiteLanguage.objects.filter(code=lang_code, is_active=True).exists()
     except Exception:
         return False

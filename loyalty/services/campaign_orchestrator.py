@@ -5,18 +5,14 @@ Handles campaign triggering, condition evaluation, and execution orchestration.
 Integrates with CampaignActionExecutor for action processing.
 """
 
-from django.db import transaction
-from django.utils import timezone
-from datetime import timedelta
 import logging
 import random
+from datetime import timedelta
 
-from loyalty.models import (
-    LoyaltyCampaign,
-    LoyaltyCampaignExecution,
-    LoyaltyMember,
-    LoyaltySegment
-)
+from django.db import transaction
+from django.utils import timezone
+
+from loyalty.models import LoyaltyCampaign, LoyaltyCampaignExecution, LoyaltyMember
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +51,8 @@ class CampaignOrchestrator:
             campaign_type=LoyaltyCampaign.TYPE_TRIGGER,
             trigger_event=event,
             is_active=True,
-            status=LoyaltyCampaign.STATUS_ACTIVE
-        ).prefetch_related('target_tiers')
+            status=LoyaltyCampaign.STATUS_ACTIVE,
+        ).prefetch_related("target_tiers")
 
         triggered_count = 0
         skipped_count = 0
@@ -100,11 +96,11 @@ class CampaignOrchestrator:
                 skipped_count += 1
 
         return {
-            'event': event,
-            'member_id': member.id,
-            'triggered': triggered_count,
-            'skipped': skipped_count,
-            'results': results
+            "event": event,
+            "member_id": member.id,
+            "triggered": triggered_count,
+            "skipped": skipped_count,
+            "results": results,
         }
 
     def execute_campaign(self, campaign: LoyaltyCampaign, member: LoyaltyMember, context: dict):
@@ -128,18 +124,15 @@ class CampaignOrchestrator:
 
         # Queue campaign execution via Celery
         from loyalty.tasks import trigger_campaign
+
         trigger_campaign.delay(campaign.id, member.id, context)
 
         # Update campaign statistics
         campaign.total_triggered += 1
         campaign.last_triggered_at = timezone.now()
-        campaign.save(update_fields=['total_triggered', 'last_triggered_at'])
+        campaign.save(update_fields=["total_triggered", "last_triggered_at"])
 
-        return {
-            'campaign_id': campaign.id,
-            'execution_id': execution.id,
-            'status': 'queued'
-        }
+        return {"campaign_id": campaign.id, "execution_id": execution.id, "status": "queued"}
 
     @transaction.atomic
     def _create_execution(self, campaign: LoyaltyCampaign, member: LoyaltyMember, context: dict):
@@ -155,7 +148,7 @@ class CampaignOrchestrator:
             LoyaltyCampaignExecution: Created execution
         """
         # A/B variant assignment
-        ab_variant = ''
+        ab_variant = ""
         if campaign.is_ab_test:
             ab_variant = campaign.ab_variant
 
@@ -164,7 +157,7 @@ class CampaignOrchestrator:
             member=member,
             status=LoyaltyCampaignExecution.STATUS_PENDING,
             trigger_context=context,
-            ab_variant_assigned=ab_variant
+            ab_variant_assigned=ab_variant,
         )
 
         logger.debug(f"Created execution {execution.id} for campaign {campaign.id}")
@@ -187,47 +180,53 @@ class CampaignOrchestrator:
         conditions = campaign.trigger_conditions
 
         # Evaluate min_order_amount
-        if 'min_order_amount' in conditions:
-            order_total = context.get('order_total', 0)
-            if float(order_total) < float(conditions['min_order_amount']):
-                logger.debug(f"Order total {order_total} below minimum {conditions['min_order_amount']}")
+        if "min_order_amount" in conditions:
+            order_total = context.get("order_total", 0)
+            if float(order_total) < float(conditions["min_order_amount"]):
+                logger.debug(
+                    f"Order total {order_total} below minimum {conditions['min_order_amount']}"
+                )
                 return False
 
         # Evaluate max_order_amount
-        if 'max_order_amount' in conditions:
-            order_total = context.get('order_total', 0)
-            if float(order_total) > float(conditions['max_order_amount']):
-                logger.debug(f"Order total {order_total} above maximum {conditions['max_order_amount']}")
+        if "max_order_amount" in conditions:
+            order_total = context.get("order_total", 0)
+            if float(order_total) > float(conditions["max_order_amount"]):
+                logger.debug(
+                    f"Order total {order_total} above maximum {conditions['max_order_amount']}"
+                )
                 return False
 
         # Evaluate category_ids (order contains items from specific categories)
-        if 'category_ids' in conditions:
-            order_category_ids = context.get('category_ids', [])
-            required_categories = conditions['category_ids']
+        if "category_ids" in conditions:
+            order_category_ids = context.get("category_ids", [])
+            required_categories = conditions["category_ids"]
             if not any(cat_id in required_categories for cat_id in order_category_ids):
-                logger.debug(f"No matching categories")
+                logger.debug("No matching categories")
                 return False
 
         # Evaluate product_ids (order contains specific products)
-        if 'product_ids' in conditions:
-            order_product_ids = context.get('product_ids', [])
-            required_products = conditions['product_ids']
+        if "product_ids" in conditions:
+            order_product_ids = context.get("product_ids", [])
+            required_products = conditions["product_ids"]
             if not any(prod_id in required_products for prod_id in order_product_ids):
-                logger.debug(f"No matching products")
+                logger.debug("No matching products")
                 return False
 
         # Evaluate nth_purchase
-        if 'nth_purchase' in conditions:
-            order_count = context.get('order_count', 0)
-            if order_count != conditions['nth_purchase']:
+        if "nth_purchase" in conditions:
+            order_count = context.get("order_count", 0)
+            if order_count != conditions["nth_purchase"]:
                 logger.debug(f"Not nth purchase: {order_count} != {conditions['nth_purchase']}")
                 return False
 
         # Evaluate min_days_inactive
-        if 'min_days_inactive' in conditions:
-            days_inactive = context.get('days_inactive', 0)
-            if days_inactive < conditions['min_days_inactive']:
-                logger.debug(f"Not inactive long enough: {days_inactive} < {conditions['min_days_inactive']}")
+        if "min_days_inactive" in conditions:
+            days_inactive = context.get("days_inactive", 0)
+            if days_inactive < conditions["min_days_inactive"]:
+                logger.debug(
+                    f"Not inactive long enough: {days_inactive} < {conditions['min_days_inactive']}"
+                )
                 return False
 
         # All conditions passed
@@ -248,18 +247,14 @@ class CampaignOrchestrator:
         logger.info(f"Processing actions for execution {execution.id}")
 
         execution.status = LoyaltyCampaignExecution.STATUS_PROCESSING
-        execution.save(update_fields=['status'])
+        execution.save(update_fields=["status"])
 
         campaign = execution.campaign
         member = execution.member
         context = execution.trigger_context
 
         executor = CampaignActionExecutor()
-        results = {
-            'actions_completed': 0,
-            'actions_failed': 0,
-            'errors': []
-        }
+        results = {"actions_completed": 0, "actions_failed": 0, "errors": []}
 
         # Determine which actions to execute
         if campaign.is_journey:
@@ -273,25 +268,25 @@ class CampaignOrchestrator:
         for action in actions:
             try:
                 result = executor.execute_action(action, member, context)
-                execution.add_action_result(action['type'], result)
+                execution.add_action_result(action["type"], result)
 
                 # Track results
-                if action['type'] == 'award_points' and result.get('success'):
-                    execution.points_awarded += result.get('points', 0)
-                elif action['type'] == 'issue_reward' and result.get('success'):
-                    execution.rewards_issued.append(result.get('reward_id'))
-                elif action['type'] == 'send_email' and result.get('success'):
-                    execution.emails_sent.append(action.get('template'))
+                if action["type"] == "award_points" and result.get("success"):
+                    execution.points_awarded += result.get("points", 0)
+                elif action["type"] == "issue_reward" and result.get("success"):
+                    execution.rewards_issued.append(result.get("reward_id"))
+                elif action["type"] == "send_email" and result.get("success"):
+                    execution.emails_sent.append(action.get("template"))
 
-                results['actions_completed'] += 1
+                results["actions_completed"] += 1
 
             except Exception as e:
                 logger.error(f"Action {action['type']} failed: {str(e)}")
-                results['actions_failed'] += 1
-                results['errors'].append(str(e))
+                results["actions_failed"] += 1
+                results["errors"].append(str(e))
 
         # Save execution results
-        execution.save(update_fields=['points_awarded', 'rewards_issued', 'emails_sent'])
+        execution.save(update_fields=["points_awarded", "rewards_issued", "emails_sent"])
 
         # Handle journey next step scheduling
         if campaign.is_journey:
@@ -300,7 +295,7 @@ class CampaignOrchestrator:
             # Mark as completed
             execution.mark_completed()
             campaign.total_completed += 1
-            campaign.save(update_fields=['total_completed'])
+            campaign.save(update_fields=["total_completed"])
 
         return results
 
@@ -319,16 +314,13 @@ class CampaignOrchestrator:
             return []
 
         for step in campaign.journey_steps:
-            if step.get('step') == step_number:
-                return step.get('actions', [])
+            if step.get("step") == step_number:
+                return step.get("actions", [])
 
         return []
 
     def _evaluate_journey_step_conditions(
-        self,
-        step_config: dict,
-        member: 'LoyaltyMember',
-        execution: LoyaltyCampaignExecution
+        self, step_config: dict, member: "LoyaltyMember", execution: LoyaltyCampaignExecution
     ) -> bool:
         """
         Evaluate conditions for a journey step.
@@ -349,16 +341,16 @@ class CampaignOrchestrator:
         Returns:
             bool: True if conditions pass
         """
-        conditions = step_config.get('conditions', {})
+        conditions = step_config.get("conditions", {})
 
         if not conditions:
             return True
 
         # Points threshold
-        if 'points_threshold' in conditions:
+        if "points_threshold" in conditions:
             try:
                 balance = member.balance
-                if balance.available_points < conditions['points_threshold']:
+                if balance.available_points < conditions["points_threshold"]:
                     logger.debug(
                         f"Member {member.id} below points threshold: "
                         f"{balance.available_points} < {conditions['points_threshold']}"
@@ -369,22 +361,20 @@ class CampaignOrchestrator:
                 return False
 
         # Tier requirement
-        if 'tier_required' in conditions:
-            if not member.current_tier or member.current_tier.id != conditions['tier_required']:
+        if "tier_required" in conditions:
+            if not member.current_tier or member.current_tier.id != conditions["tier_required"]:
                 logger.debug(f"Member {member.id} not in required tier")
                 return False
 
         # Orders since journey started
-        if 'orders_since_start' in conditions:
+        if "orders_since_start" in conditions:
             from orders.models import Order
 
             orders_count = Order.objects.filter(
-                user=member.customer,
-                status='completed',
-                created_at__gte=execution.triggered_at
+                user=member.customer, status="completed", created_at__gte=execution.triggered_at
             ).count()
 
-            if orders_count < conditions['orders_since_start']:
+            if orders_count < conditions["orders_since_start"]:
                 logger.debug(
                     f"Member {member.id} insufficient orders since start: "
                     f"{orders_count} < {conditions['orders_since_start']}"
@@ -392,17 +382,19 @@ class CampaignOrchestrator:
                 return False
 
         # Spend since journey started
-        if 'spent_since_start' in conditions:
-            from orders.models import Order
+        if "spent_since_start" in conditions:
             from django.db.models import Sum
 
-            total_spent = Order.objects.filter(
-                user=member.customer,
-                status='completed',
-                created_at__gte=execution.triggered_at
-            ).aggregate(total=Sum('total_amount'))['total'] or 0
+            from orders.models import Order
 
-            if total_spent < conditions['spent_since_start']:
+            total_spent = (
+                Order.objects.filter(
+                    user=member.customer, status="completed", created_at__gte=execution.triggered_at
+                ).aggregate(total=Sum("total_amount"))["total"]
+                or 0
+            )
+
+            if total_spent < conditions["spent_since_start"]:
                 logger.debug(
                     f"Member {member.id} insufficient spend since start: "
                     f"{total_spent} < {conditions['spent_since_start']}"
@@ -410,28 +402,22 @@ class CampaignOrchestrator:
                 return False
 
         # Has redeemed since start
-        if 'has_redeemed_since_start' in conditions:
+        if "has_redeemed_since_start" in conditions:
             from loyalty.models import LoyaltyRedemption
 
             has_redeemed = LoyaltyRedemption.objects.filter(
-                member=member,
-                created_at__gte=execution.triggered_at
+                member=member, created_at__gte=execution.triggered_at
             ).exists()
 
-            if conditions['has_redeemed_since_start'] != has_redeemed:
-                logger.debug(
-                    f"Member {member.id} redemption requirement not met"
-                )
+            if conditions["has_redeemed_since_start"] != has_redeemed:
+                logger.debug(f"Member {member.id} redemption requirement not met")
                 return False
 
         # All conditions passed
         return True
 
     def _get_next_journey_step(
-        self,
-        campaign: LoyaltyCampaign,
-        execution: LoyaltyCampaignExecution,
-        current_step: int
+        self, campaign: LoyaltyCampaign, execution: LoyaltyCampaignExecution, current_step: int
     ) -> tuple:
         """
         Determine the next journey step, supporting branching logic.
@@ -447,7 +433,7 @@ class CampaignOrchestrator:
         # Find current step configuration
         step_config = None
         for step in campaign.journey_steps:
-            if step.get('step') == current_step:
+            if step.get("step") == current_step:
                 step_config = step
                 break
 
@@ -456,29 +442,24 @@ class CampaignOrchestrator:
             return (None, None)
 
         # Check for exit conditions
-        exit_conditions = step_config.get('exit_conditions', {})
-        if exit_conditions:
-            if self._evaluate_journey_step_conditions(
-                {'conditions': exit_conditions},
-                execution.member,
-                execution
-            ):
-                logger.info(f"Exit conditions met for execution {execution.id}")
-                return (None, None)
+        exit_conditions = step_config.get("exit_conditions", {})
+        if exit_conditions and self._evaluate_journey_step_conditions(
+            {"conditions": exit_conditions}, execution.member, execution
+        ):
+            logger.info(f"Exit conditions met for execution {execution.id}")
+            return (None, None)
 
         # Check for branching
-        branches = step_config.get('branches', [])
+        branches = step_config.get("branches", [])
         if branches:
             for branch in branches:
-                branch_conditions = branch.get('conditions', {})
+                branch_conditions = branch.get("conditions", {})
                 if self._evaluate_journey_step_conditions(
-                    {'conditions': branch_conditions},
-                    execution.member,
-                    execution
+                    {"conditions": branch_conditions}, execution.member, execution
                 ):
                     # Branch conditions met - go to branch step
-                    next_step = branch.get('next_step')
-                    delay_days = branch.get('delay_days', 0)
+                    next_step = branch.get("next_step")
+                    delay_days = branch.get("delay_days", 0)
                     logger.info(
                         f"Branch conditions met for execution {execution.id}: "
                         f"going to step {next_step}"
@@ -486,7 +467,7 @@ class CampaignOrchestrator:
                     return (next_step, delay_days)
 
         # No branching or conditions not met - use default next step
-        next_step_delay_days = step_config.get('next_step_delay_days')
+        next_step_delay_days = step_config.get("next_step_delay_days")
 
         if next_step_delay_days is None:
             # No next step defined - journey complete
@@ -495,7 +476,9 @@ class CampaignOrchestrator:
         next_step_number = current_step + 1
         return (next_step_number, next_step_delay_days)
 
-    def _schedule_next_journey_step(self, campaign: LoyaltyCampaign, execution: LoyaltyCampaignExecution):
+    def _schedule_next_journey_step(
+        self, campaign: LoyaltyCampaign, execution: LoyaltyCampaignExecution
+    ):
         """
         Schedule the next step in a multi-step journey.
 
@@ -513,13 +496,11 @@ class CampaignOrchestrator:
         # Mark current step as completed
         if current_step not in execution.steps_completed:
             execution.steps_completed.append(current_step)
-            execution.save(update_fields=['steps_completed'])
+            execution.save(update_fields=["steps_completed"])
 
         # Determine next step using branching logic
         next_step_number, delay_days = self._get_next_journey_step(
-            campaign,
-            execution,
-            current_step
+            campaign, execution, current_step
         )
 
         if next_step_number is None:
@@ -527,7 +508,7 @@ class CampaignOrchestrator:
             logger.info(f"Journey completed for execution {execution.id} at step {current_step}")
             execution.mark_completed()
             campaign.total_completed += 1
-            campaign.save(update_fields=['total_completed'])
+            campaign.save(update_fields=["total_completed"])
             return
 
         # Schedule next step
@@ -535,7 +516,7 @@ class CampaignOrchestrator:
 
         execution.current_step = next_step_number
         execution.next_step_at = next_step_at
-        execution.save(update_fields=['current_step', 'next_step_at'])
+        execution.save(update_fields=["current_step", "next_step_at"])
 
         logger.info(
             f"Scheduled step {next_step_number} for execution {execution.id} at {next_step_at} "
@@ -554,29 +535,31 @@ class CampaignOrchestrator:
             dict: Processing result
         """
         try:
-            execution = LoyaltyCampaignExecution.objects.select_related('campaign', 'member').get(id=execution_id)
+            execution = LoyaltyCampaignExecution.objects.select_related("campaign", "member").get(
+                id=execution_id
+            )
         except LoyaltyCampaignExecution.DoesNotExist:
             logger.error(f"Execution {execution_id} not found")
-            return {'success': False, 'error': 'Execution not found'}
+            return {"success": False, "error": "Execution not found"}
 
         logger.info(f"Processing journey step {step_number} for execution {execution_id}")
 
         # Verify step number matches
         if execution.current_step != step_number:
             logger.warning(f"Step mismatch: expected {execution.current_step}, got {step_number}")
-            return {'success': False, 'error': 'Step number mismatch'}
+            return {"success": False, "error": "Step number mismatch"}
 
         # Evaluate step conditions
         campaign = execution.campaign
         step_config = None
         for step in campaign.journey_steps:
-            if step.get('step') == step_number:
+            if step.get("step") == step_number:
                 step_config = step
                 break
 
         if not step_config:
             logger.error(f"Step {step_number} config not found")
-            return {'success': False, 'error': 'Step config not found'}
+            return {"success": False, "error": "Step config not found"}
 
         # Check step conditions
         if not self._evaluate_journey_step_conditions(step_config, execution.member, execution):
@@ -584,14 +567,14 @@ class CampaignOrchestrator:
             # Mark as completed but skip to next step
             if step_number not in execution.steps_completed:
                 execution.steps_completed.append(step_number)
-                execution.save(update_fields=['steps_completed'])
+                execution.save(update_fields=["steps_completed"])
             self._schedule_next_journey_step(campaign, execution)
-            return {'success': True, 'skipped': True}
+            return {"success": True, "skipped": True}
 
         # Process actions for this step
         result = self.process_campaign_actions(execution)
 
-        return {'success': True, 'result': result}
+        return {"success": True, "result": result}
 
     def _evaluate_step_conditions(self, member: LoyaltyMember, conditions: dict) -> bool:
         """
@@ -605,19 +588,19 @@ class CampaignOrchestrator:
             bool: True if conditions are met
         """
         # Check min_orders
-        if 'min_orders' in conditions:
-            order_count = member.customer.orders.filter(status='completed').count()
-            if order_count < conditions['min_orders']:
+        if "min_orders" in conditions:
+            order_count = member.customer.orders.filter(status="completed").count()
+            if order_count < conditions["min_orders"]:
                 return False
 
         # Check min_points
-        if 'min_points' in conditions:
-            if member.balance.available_points < conditions['min_points']:
+        if "min_points" in conditions:
+            if member.balance.available_points < conditions["min_points"]:
                 return False
 
         # Check tier_required
-        if 'tier_required' in conditions:
-            if not member.current_tier or member.current_tier.id != conditions['tier_required']:
+        if "tier_required" in conditions:
+            if not member.current_tier or member.current_tier.id != conditions["tier_required"]:
                 return False
 
         return True

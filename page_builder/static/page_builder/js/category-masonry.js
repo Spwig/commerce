@@ -5,56 +5,56 @@
  * Applies data-attribute driven column/gap settings and handles
  * responsive recalculation.
  */
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    document.querySelectorAll('.cat-masonry').forEach(initMasonry);
+  document.querySelectorAll('.cat-masonry').forEach(initMasonry);
 
-    function initMasonry(container) {
-        var columns = container.dataset.columns || '3';
-        var gap = container.dataset.gap || 'md';
+  function initMasonry(container) {
+    const columns = container.dataset.columns || '3';
+    const gap = container.dataset.gap || 'md';
 
-        // Apply modifier classes based on data attributes
-        container.classList.add('cat-masonry--cols-' + columns);
-        container.classList.add('cat-masonry--gap-' + gap);
+    // Apply modifier classes based on data attributes
+    container.classList.add('cat-masonry--cols-' + columns);
+    container.classList.add('cat-masonry--gap-' + gap);
 
-        // Stagger animation on load
-        var items = container.querySelectorAll('.cat-masonry__item');
-        items.forEach(function(item, index) {
-            item.style.animationDelay = (index * 50) + 'ms';
-            item.classList.add('cat-masonry__item--animate');
-        });
+    // Stagger animation on load
+    const items = container.querySelectorAll('.cat-masonry__item');
+    items.forEach(function (item, index) {
+      item.style.animationDelay = index * 50 + 'ms';
+      item.classList.add('cat-masonry__item--animate');
+    });
 
-        // Handle image loading to prevent layout shifts
-        var images = container.querySelectorAll('.cat-masonry__image');
-        var loadedCount = 0;
+    // Handle image loading to prevent layout shifts
+    const images = container.querySelectorAll('.cat-masonry__image');
+    let loadedCount = 0;
 
-        if (images.length === 0) return;
+    if (images.length === 0) return;
 
-        images.forEach(function(img) {
-            if (img.complete) {
-                loadedCount++;
-                if (loadedCount === images.length) {
-                    onAllImagesLoaded();
-                }
-            } else {
-                img.addEventListener('load', function() {
-                    loadedCount++;
-                    if (loadedCount === images.length) {
-                        onAllImagesLoaded();
-                    }
-                });
-                img.addEventListener('error', function() {
-                    loadedCount++;
-                    if (loadedCount === images.length) {
-                        onAllImagesLoaded();
-                    }
-                });
-            }
-        });
-
-        function onAllImagesLoaded() {
-            container.classList.add('cat-masonry--loaded');
+    images.forEach(function (img) {
+      if (img.complete) {
+        loadedCount++;
+        if (loadedCount === images.length) {
+          onAllImagesLoaded();
         }
+      } else {
+        img.addEventListener('load', function () {
+          loadedCount++;
+          if (loadedCount === images.length) {
+            onAllImagesLoaded();
+          }
+        });
+        img.addEventListener('error', function () {
+          loadedCount++;
+          if (loadedCount === images.length) {
+            onAllImagesLoaded();
+          }
+        });
+      }
+    });
+
+    function onAllImagesLoaded() {
+      container.classList.add('cat-masonry--loaded');
     }
+  }
 })();

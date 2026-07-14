@@ -5,9 +5,10 @@ All feed format implementations (XML, CSV, JSON) must inherit from this class.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional, Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any
 
 
 @dataclass
@@ -17,6 +18,7 @@ class ProductFeedItem:
 
     Maps Spwig product fields to common feed attributes.
     """
+
     # Required identifiers
     id: str
     title: str
@@ -57,7 +59,7 @@ class ProductFeedItem:
     tax: str = ""
 
     # Additional images (up to 10)
-    additional_image_links: List[str] = None
+    additional_image_links: list[str] = None
 
     # Custom labels for merchant segmentation (0-4)
     custom_label_0: str = ""
@@ -70,7 +72,7 @@ class ProductFeedItem:
     quantity: int = 0
 
     # Additional custom attributes
-    custom_attributes: Dict[str, Any] = None
+    custom_attributes: dict[str, Any] = None
 
     def __post_init__(self):
         if self.additional_image_links is None:
@@ -90,7 +92,7 @@ class BaseFeedFormatter(ABC):
     content_type: str = None  # e.g., 'application/xml', 'text/csv'
     file_extension: str = None  # e.g., 'xml', 'csv', 'json'
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """
         Initialize formatter with optional configuration.
 
@@ -100,7 +102,9 @@ class BaseFeedFormatter(ABC):
         self.config = config or {}
 
     @abstractmethod
-    def format_feed(self, items: List[ProductFeedItem], metadata: Optional[Dict[str, Any]] = None) -> str:
+    def format_feed(
+        self, items: list[ProductFeedItem], metadata: dict[str, Any] | None = None
+    ) -> str:
         """
         Format list of products into feed string.
 
@@ -126,7 +130,9 @@ class BaseFeedFormatter(ABC):
         """
         pass
 
-    def stream_feed(self, items: Iterator[ProductFeedItem], metadata: Optional[Dict[str, Any]] = None) -> Iterator[str]:
+    def stream_feed(
+        self, items: Iterator[ProductFeedItem], metadata: dict[str, Any] | None = None
+    ) -> Iterator[str]:
         """
         Stream feed content for large feeds.
 
@@ -145,13 +151,13 @@ class BaseFeedFormatter(ABC):
 
     def get_content_type(self) -> str:
         """Get MIME content type for this format."""
-        return self.content_type or 'text/plain'
+        return self.content_type or "text/plain"
 
     def get_file_extension(self) -> str:
         """Get file extension for this format."""
-        return self.file_extension or 'txt'
+        return self.file_extension or "txt"
 
-    def validate_item(self, item: ProductFeedItem) -> List[str]:
+    def validate_item(self, item: ProductFeedItem) -> list[str]:
         """
         Validate a product item for required fields.
 

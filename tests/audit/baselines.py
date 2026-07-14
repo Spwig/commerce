@@ -4,6 +4,7 @@ Baseline Comparison for Site Health Audits
 Save audit results as baselines and compare future runs against them
 to detect regressions.
 """
+
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,6 +17,7 @@ BASELINE_DIR = Path(__file__).parent / "baselines"
 @dataclass
 class Regression:
     """A single regression detected between baseline and current run."""
+
     url: str
     label: str
     field: str
@@ -80,24 +82,39 @@ def compare_to_baseline(report: AuditReport, baseline: dict) -> list[Regression]
 
         # Status code regression
         if b["status_code"] == 200 and r.status_code and r.status_code >= 400:
-            regressions.append(Regression(
-                r.url, label, "status_code",
-                b["status_code"], r.status_code,
-            ))
+            regressions.append(
+                Regression(
+                    r.url,
+                    label,
+                    "status_code",
+                    b["status_code"],
+                    r.status_code,
+                )
+            )
 
         # New console errors
         if len(r.console_errors) > b["console_error_count"]:
-            regressions.append(Regression(
-                r.url, label, "console_errors",
-                b["console_error_count"], len(r.console_errors),
-            ))
+            regressions.append(
+                Regression(
+                    r.url,
+                    label,
+                    "console_errors",
+                    b["console_error_count"],
+                    len(r.console_errors),
+                )
+            )
 
         # New failed requests
         if len(r.failed_requests) > b["failed_request_count"]:
-            regressions.append(Regression(
-                r.url, label, "failed_requests",
-                b["failed_request_count"], len(r.failed_requests),
-            ))
+            regressions.append(
+                Regression(
+                    r.url,
+                    label,
+                    "failed_requests",
+                    b["failed_request_count"],
+                    len(r.failed_requests),
+                )
+            )
 
         # Significant slowdown (>2x baseline AND above absolute threshold)
         if (
@@ -105,10 +122,15 @@ def compare_to_baseline(report: AuditReport, baseline: dict) -> list[Regression]
             and r.load_time_ms > b["load_time_ms"] * 2
             and r.load_time_ms > 3000
         ):
-            regressions.append(Regression(
-                r.url, label, "load_time_ms",
-                b["load_time_ms"], r.load_time_ms,
-            ))
+            regressions.append(
+                Regression(
+                    r.url,
+                    label,
+                    "load_time_ms",
+                    b["load_time_ms"],
+                    r.load_time_ms,
+                )
+            )
 
     return regressions
 

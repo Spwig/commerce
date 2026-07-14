@@ -4,10 +4,10 @@ API Endpoint Health Audit Runner
 Checks API endpoints via plain HTTP (no browser needed).
 Verifies endpoints exist, respond, and don't crash.
 """
+
 import requests as http_requests
 
 from tests.audit.engine import AuditReport, PageResult, print_result_line, visit_url_http
-
 
 # ── Endpoint definitions ─────────────────────────────────────
 
@@ -45,11 +45,15 @@ def _get_session(base_url: str, username: str, password: str) -> http_requests.S
     csrf = session.cookies.get("csrftoken", "")
 
     # Login
-    session.post(login_url, data={
-        "username": username,
-        "password": password,
-        "csrfmiddlewaretoken": csrf,
-    }, headers={"Referer": login_url})
+    session.post(
+        login_url,
+        data={
+            "username": username,
+            "password": password,
+            "csrfmiddlewaretoken": csrf,
+        },
+        headers={"Referer": login_url},
+    )
 
     return session
 
@@ -98,9 +102,8 @@ def run_api_audit(
             if result.status_code >= 500:
                 if not result.console_errors:
                     result.console_errors.append(f"Server error: {result.status_code}")
-            elif result.status_code == 404:
-                if not result.console_errors:
-                    result.console_errors.append(f"Endpoint not found: 404")
+            elif result.status_code == 404 and not result.console_errors:
+                result.console_errors.append("Endpoint not found: 404")
 
         results.append(result)
         if verbose:

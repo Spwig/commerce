@@ -8,6 +8,6 @@ from catalog.providers.base import BaseLicenseProviderAdapter
 from catalog.providers.registry import LicenseProviderRegistry
 
 __all__ = [
-    'BaseLicenseProviderAdapter',
-    'LicenseProviderRegistry',
+    "BaseLicenseProviderAdapter",
+    "LicenseProviderRegistry",
 ]

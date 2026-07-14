@@ -3,14 +3,15 @@ JWT Authentication for Address Autocomplete Service
 Allows merchant installations to authenticate using JWT tokens
 """
 
-import jwt
 import hashlib
 import logging
-from datetime import datetime, timedelta, timezone as tz
-from typing import Optional, Dict, Any, Tuple
+from datetime import timedelta
+from typing import Any
+
+import jwt
 from django.conf import settings
-from django.utils import timezone
 from django.core.cache import cache
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -23,16 +24,18 @@ class GeocoderJWTAuth:
 
     def __init__(self):
         # JWT Configuration
-        self.secret_key = getattr(settings, 'GEOCODER_JWT_SECRET_KEY', settings.SECRET_KEY)
-        self.algorithm = getattr(settings, 'GEOCODER_JWT_ALGORITHM', 'HS256')
-        self.expiry_hours = getattr(settings, 'GEOCODER_JWT_EXPIRY_HOURS', 24)
-        self.issuer = getattr(settings, 'GEOCODER_JWT_ISSUER', 'spwig-platform')
+        self.secret_key = getattr(settings, "GEOCODER_JWT_SECRET_KEY", settings.SECRET_KEY)
+        self.algorithm = getattr(settings, "GEOCODER_JWT_ALGORITHM", "HS256")
+        self.expiry_hours = getattr(settings, "GEOCODER_JWT_EXPIRY_HOURS", 24)
+        self.issuer = getattr(settings, "GEOCODER_JWT_ISSUER", "spwig-platform")
 
-    def generate_merchant_token(self,
-                                merchant_id: str,
-                                installation_uuid: str,
-                                tier: str = 'standard',
-                                custom_claims: Optional[Dict] = None) -> Dict[str, Any]:
+    def generate_merchant_token(
+        self,
+        merchant_id: str,
+        installation_uuid: str,
+        tier: str = "standard",
+        custom_claims: dict | None = None,
+    ) -> dict[str, Any]:
         """
         Generate JWT token for a merchant installation.
 
@@ -52,19 +55,18 @@ class GeocoderJWTAuth:
         # Build payload
         payload = {
             # Standard JWT claims
-            'iss': self.issuer,                    # Issuer
-            'sub': merchant_id,                    # Subject (merchant ID)
-            'aud': 'geocoder.spwig.com',          # Audience
-            'exp': exp_time.timestamp(),          # Expiration
-            'iat': now.timestamp(),               # Issued at
-            'nbf': now.timestamp(),               # Not before
-
+            "iss": self.issuer,  # Issuer
+            "sub": merchant_id,  # Subject (merchant ID)
+            "aud": "geocoder.spwig.com",  # Audience
+            "exp": exp_time.timestamp(),  # Expiration
+            "iat": now.timestamp(),  # Issued at
+            "nbf": now.timestamp(),  # Not before
             # Custom claims
-            'installation_uuid': installation_uuid,
-            'tier': tier,
-            'rate_limit': self._get_rate_limit(tier),
-            'cache_ttl': self._get_cache_ttl(tier),
-            'allowed_operations': self._get_allowed_operations(tier),
+            "installation_uuid": installation_uuid,
+            "tier": tier,
+            "rate_limit": self._get_rate_limit(tier),
+            "cache_ttl": self._get_cache_ttl(tier),
+            "allowed_operations": self._get_allowed_operations(tier),
         }
 
         # Add any custom claims
@@ -75,14 +77,14 @@ class GeocoderJWTAuth:
         token = jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
 
         return {
-            'token': token,
-            'expires_at': exp_time.isoformat(),
-            'expires_in': self.expiry_hours * 3600,
-            'tier': tier,
-            'rate_limit': payload['rate_limit']
+            "token": token,
+            "expires_at": exp_time.isoformat(),
+            "expires_in": self.expiry_hours * 3600,
+            "tier": tier,
+            "rate_limit": payload["rate_limit"],
         }
 
-    def verify_token(self, token: str) -> Tuple[bool, Optional[Dict]]:
+    def verify_token(self, token: str) -> tuple[bool, dict | None]:
         """
         Verify and decode JWT token.
 
@@ -95,8 +97,8 @@ class GeocoderJWTAuth:
         try:
             # Check token cache (for revoked tokens)
             token_hash = hashlib.sha256(token.encode()).hexdigest()
-            if cache.get(f'revoked_token:{token_hash}'):
-                logger.warning(f"Attempted use of revoked token")
+            if cache.get(f"revoked_token:{token_hash}"):
+                logger.warning("Attempted use of revoked token")
                 return False, None
 
             # Decode and verify
@@ -104,33 +106,33 @@ class GeocoderJWTAuth:
                 token,
                 self.secret_key,
                 algorithms=[self.algorithm],
-                audience='geocoder.spwig.com',
-                issuer=self.issuer
+                audience="geocoder.spwig.com",
+                issuer=self.issuer,
             )
 
             # Additional validation
-            if 'installation_uuid' not in payload:
+            if "installation_uuid" not in payload:
                 logger.warning("Token missing installation_uuid")
                 return False, None
 
             # Cache valid token for faster subsequent checks
             cache.set(
-                f'valid_token:{token_hash}',
+                f"valid_token:{token_hash}",
                 payload,
-                timeout=300  # Cache for 5 minutes
+                timeout=300,  # Cache for 5 minutes
             )
 
             return True, payload
 
         except jwt.ExpiredSignatureError:
             logger.debug("Token expired")
-            return False, {'error': 'Token expired'}
+            return False, {"error": "Token expired"}
         except jwt.InvalidTokenError as e:
             logger.debug(f"Invalid token: {e}")
-            return False, {'error': 'Invalid token'}
+            return False, {"error": "Invalid token"}
         except Exception as e:
             logger.error(f"Token verification error: {e}")
-            return False, {'error': 'Verification failed'}
+            return False, {"error": "Verification failed"}
 
     def revoke_token(self, token: str, reason: str = "manual"):
         """
@@ -148,23 +150,23 @@ class GeocoderJWTAuth:
                 token,
                 self.secret_key,
                 algorithms=[self.algorithm],
-                options={"verify_signature": False, "verify_exp": False}
+                options={"verify_signature": False, "verify_exp": False},
             )
-            exp = payload.get('exp', 0)
+            exp = payload.get("exp", 0)
             ttl = max(0, exp - timezone.now().timestamp())
 
             # Add to revocation cache
             cache.set(
-                f'revoked_token:{token_hash}',
-                {'reason': reason, 'revoked_at': timezone.now().isoformat()},
-                timeout=int(ttl)
+                f"revoked_token:{token_hash}",
+                {"reason": reason, "revoked_at": timezone.now().isoformat()},
+                timeout=int(ttl),
             )
             logger.info(f"Token revoked for {payload.get('sub')}: {reason}")
 
         except Exception as e:
             logger.error(f"Error revoking token: {e}")
 
-    def refresh_token(self, token: str) -> Optional[Dict[str, Any]]:
+    def refresh_token(self, token: str) -> dict[str, Any] | None:
         """
         Refresh an existing token if valid.
 
@@ -180,7 +182,7 @@ class GeocoderJWTAuth:
             return None
 
         # Check if token is eligible for refresh (not too old)
-        iat = payload.get('iat', 0)
+        iat = payload.get("iat", 0)
         now = timezone.now().timestamp()
         max_refresh_age = 7 * 24 * 3600  # 7 days
 
@@ -190,37 +192,44 @@ class GeocoderJWTAuth:
 
         # Generate new token with same claims
         return self.generate_merchant_token(
-            merchant_id=payload['sub'],
-            installation_uuid=payload['installation_uuid'],
-            tier=payload.get('tier', 'standard')
+            merchant_id=payload["sub"],
+            installation_uuid=payload["installation_uuid"],
+            tier=payload.get("tier", "standard"),
         )
 
     def _get_rate_limit(self, tier: str) -> int:
         """Get rate limit based on tier"""
         limits = {
-            'standard': 100,     # 100 requests per minute
-            'premium': 500,      # 500 requests per minute
-            'enterprise': 2000   # 2000 requests per minute
+            "standard": 100,  # 100 requests per minute
+            "premium": 500,  # 500 requests per minute
+            "enterprise": 2000,  # 2000 requests per minute
         }
         return limits.get(tier, 100)
 
     def _get_cache_ttl(self, tier: str) -> int:
         """Get cache TTL based on tier"""
         ttls = {
-            'standard': 300,     # 5 minutes
-            'premium': 600,      # 10 minutes
-            'enterprise': 1800   # 30 minutes
+            "standard": 300,  # 5 minutes
+            "premium": 600,  # 10 minutes
+            "enterprise": 1800,  # 30 minutes
         }
         return ttls.get(tier, 300)
 
     def _get_allowed_operations(self, tier: str) -> list:
         """Get allowed operations based on tier"""
         operations = {
-            'standard': ['autocomplete', 'validate'],
-            'premium': ['autocomplete', 'validate', 'normalize', 'reverse'],
-            'enterprise': ['autocomplete', 'validate', 'normalize', 'reverse', 'batch', 'analytics']
+            "standard": ["autocomplete", "validate"],
+            "premium": ["autocomplete", "validate", "normalize", "reverse"],
+            "enterprise": [
+                "autocomplete",
+                "validate",
+                "normalize",
+                "reverse",
+                "batch",
+                "analytics",
+            ],
         }
-        return operations.get(tier, ['autocomplete', 'validate'])
+        return operations.get(tier, ["autocomplete", "validate"])
 
 
 class GeocoderJWTMiddleware:
@@ -231,41 +240,34 @@ class GeocoderJWTMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.auth = GeocoderJWTAuth()
-        self.protected_paths = [
-            '/geocoder/api/',
-            '/address_autocomplete/api/'
-        ]
+        self.protected_paths = ["/geocoder/api/", "/address_autocomplete/api/"]
 
     def __call__(self, request):
         # Check if path requires authentication
         if any(request.path.startswith(path) for path in self.protected_paths):
             # Extract token from Authorization header
-            auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+            auth_header = request.META.get("HTTP_AUTHORIZATION", "")
 
-            if auth_header.startswith('Bearer '):
+            if auth_header.startswith("Bearer "):
                 token = auth_header[7:]
                 is_valid, payload = self.auth.verify_token(token)
 
                 if is_valid:
                     # Attach merchant info to request
-                    request.merchant_id = payload['sub']
-                    request.installation_uuid = payload['installation_uuid']
-                    request.tier = payload.get('tier', 'standard')
+                    request.merchant_id = payload["sub"]
+                    request.installation_uuid = payload["installation_uuid"]
+                    request.tier = payload.get("tier", "standard")
                     request.jwt_payload = payload
                 else:
                     # Return 401 Unauthorized
                     from django.http import JsonResponse
-                    return JsonResponse(
-                        {'error': 'Invalid or expired token'},
-                        status=401
-                    )
+
+                    return JsonResponse({"error": "Invalid or expired token"}, status=401)
             else:
                 # No token provided
                 from django.http import JsonResponse
-                return JsonResponse(
-                    {'error': 'Authorization required'},
-                    status=401
-                )
+
+                return JsonResponse({"error": "Authorization required"}, status=401)
 
         response = self.get_response(request)
         return response

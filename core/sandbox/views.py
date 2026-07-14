@@ -35,11 +35,11 @@ def tamper_report(request):
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
-        return HttpResponseBadRequest('Invalid JSON')
+        return HttpResponseBadRequest("Invalid JSON")
 
-    event = data.get('event', 'unknown')
-    url = data.get('url', '')
-    timestamp = data.get('ts', 0)
+    event = data.get("event", "unknown")
+    url = data.get("url", "")
+    timestamp = data.get("ts", 0)
 
     logger.warning(
         f"[SANDBOX TAMPER] event={event}, url={url}, ts={timestamp}, "
@@ -49,10 +49,11 @@ def tamper_report(request):
     # Forward to update server asynchronously
     try:
         from core.sandbox.tasks import report_tamper_to_server
+
         report_tamper_to_server.delay(
             event=event,
             url=url,
-            ip=request.META.get('REMOTE_ADDR', ''),
+            ip=request.META.get("REMOTE_ADDR", ""),
         )
     except Exception:
         # Don't fail if Celery isn't available

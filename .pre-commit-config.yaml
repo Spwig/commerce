@@ -1,0 +1,40 @@
+# Pre-commit hook config. Contributors run `pre-commit install` once and every
+# subsequent `git commit` runs the same lint checks the CI enforces.
+#
+# Mirror of .github/workflows/lint.yml. When you bump a tool version there,
+# bump the matching rev here too.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.1
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.8.1
+    hooks:
+      - id: prettier
+        additional_dependencies:
+          - prettier@3.8.1
+        files: \.(js|jsx|ts|tsx|json|css|scss)$
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: npx eslint
+        language: system
+        files: \.(js|jsx|ts|tsx)$
+        exclude: |
+          (?x)^(
+            node_modules/|
+            staticfiles/|
+            .*/vendor/|
+            .*/ckeditor5/|
+            .*\.min\.js|
+            pos_app/dist/|
+            pos_app/frontend/node_modules/|
+            pos_app/frontend_build/|
+            .*/migrations/
+          )

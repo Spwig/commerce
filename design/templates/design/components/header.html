@@ -1,0 +1,316 @@
+{% load i18n static theme_tags announcements_tags merchant_trans %}
+{# Dynamic Header Component - Renders widgets from HeaderTemplate #}
+{# Supports page-specific header selection and hidden state #}
+
+{# If hidden is True, don't render anything #}
+{% if hidden %}
+    {# Header hidden for this page #}
+{% elif header %}
+<header class="site-header header-preset-{{ header.layout_type }} {{ header.css_classes }}" role="banner"
+        {% if header.is_sticky %}data-sticky="true" data-sticky-offset="{{ header.sticky_offset }}"{% endif %}>
+
+    {# Notification Zone — above all other zones #}
+    {% if header.enable_notification_zone %}
+    {% get_active_announcements as announcements %}
+    {% if announcements %}
+    {% with nz_config=header.get_notification_zone_config %}
+    <div class="header-zone header-zone--notification"{% with override_style=zone_overrides|zone_override_styles:'notification' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+        <div class="widget-announcement"
+             data-display-mode="{{ nz_config.display_mode|default:'scroll_horizontal' }}"
+             data-scroll-speed="{{ nz_config.scroll_speed|default:'20' }}"
+             data-cycle-duration="{{ nz_config.cycle_duration|default:'5' }}"
+             data-pause-hover="{{ nz_config.pause_on_hover|default:'true' }}">
+
+            <div class="announcement-viewport">
+                <div class="announcement-track">
+                    {% for ann in announcements %}
+                    <div class="announcement-item"
+                         {% if ann.show_modal %}data-modal-id="{{ ann.id }}"{% endif %}
+                         {% if ann.show_modal %}role="button" tabindex="0"{% endif %}>
+                        {% if not ann.show_modal and ann.resolved_url %}
+                            <a href="{{ ann.resolved_url }}" class="announcement-item-text announcement-link">{{ ann.title|safe }}</a>
+                        {% else %}
+                            <span class="announcement-item-text">{{ ann.title|safe }}</span>
+                        {% endif %}
+                        {% if ann.show_modal and ann.link_text %}
+                            <button type="button" class="announcement-modal-trigger" data-announcement-id="{{ ann.id }}">{{ ann.link_text }}</button>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if nz_config.dismissible %}
+            <button type="button" class="announcement-close" aria-label="{% mtrans 'Close announcement' %}">&times;</button>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Announcement modal — rendered once per page #}
+    <div id="announcement-modal" class="announcement-modal-backdrop" aria-hidden="true">
+        <div class="announcement-modal" role="dialog" aria-modal="true">
+            <button type="button" class="announcement-modal-close" aria-label="{% mtrans 'Close' %}">&times;</button>
+            <div class="announcement-modal-content"></div>
+        </div>
+    </div>
+    {% endwith %}
+    {% endif %}
+    {% endif %}
+
+    {# Top Bar Zone #}
+    {% if header.has_top_bar or zones.top_bar_left or zones.top_bar_center or zones.top_bar_right or zones.top_bar_full %}
+    <div class="header-zone header-zone--top-bar"{% with override_style=zone_overrides|zone_override_styles:'top-bar' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+        <div class="container">
+            <div class="header-zone__inner">
+                {% if zones.top_bar_left %}
+                <div class="header-zone__section header-zone__section--left">
+                    {% for placement in zones.top_bar_left %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.top_bar_center %}
+                <div class="header-zone__section header-zone__section--center">
+                    {% for placement in zones.top_bar_center %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.top_bar_right %}
+                <div class="header-zone__section header-zone__section--right">
+                    {% for placement in zones.top_bar_right %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.top_bar_full %}
+                <div class="header-zone__section header-zone__section--full">
+                    {% for placement in zones.top_bar_full %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Main Header Zone #}
+    <div class="header-zone header-zone--main"{% with override_style=zone_overrides|zone_override_styles:'main-header' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+        <div class="container">
+            <div class="header-zone__inner">
+                {# Mobile menu toggle - left position #}
+                {% if header.mobile_menu_position == 'left' %}
+                <button type="button"
+                        class="header-mobile-toggle header-mobile-toggle--left"
+                        data-menu-toggle
+                        aria-label="{% mtrans 'Toggle menu' %}"
+                        aria-expanded="false"
+                        aria-controls="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                {% endif %}
+
+                {% if zones.main_header_left %}
+                <div class="header-zone__section header-zone__section--left">
+                    {% for placement in zones.main_header_left %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.main_header_center %}
+                <div class="header-zone__section header-zone__section--center">
+                    {% for placement in zones.main_header_center %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.main_header_right %}
+                <div class="header-zone__section header-zone__section--right">
+                    {% for placement in zones.main_header_right %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.main_header_full %}
+                <div class="header-zone__section header-zone__section--full">
+                    {% for placement in zones.main_header_full %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {# Mobile menu toggle - right position (default) #}
+                {% if header.mobile_menu_position != 'left' %}
+                <button type="button"
+                        class="header-mobile-toggle"
+                        data-menu-toggle
+                        aria-label="{% mtrans 'Toggle menu' %}"
+                        aria-expanded="false"
+                        aria-controls="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Bottom Bar Zone #}
+    {% if zones.bottom_bar_left or zones.bottom_bar_center or zones.bottom_bar_right or zones.bottom_bar_full %}
+    <div class="header-zone header-zone--bottom-bar"{% with override_style=zone_overrides|zone_override_styles:'bottom-bar' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+        <div class="container">
+            <div class="header-zone__inner">
+                {% if zones.bottom_bar_left %}
+                <div class="header-zone__section header-zone__section--left">
+                    {% for placement in zones.bottom_bar_left %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.bottom_bar_center %}
+                <div class="header-zone__section header-zone__section--center">
+                    {% for placement in zones.bottom_bar_center %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.bottom_bar_right %}
+                <div class="header-zone__section header-zone__section--right">
+                    {% for placement in zones.bottom_bar_right %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.bottom_bar_full %}
+                <div class="header-zone__section header-zone__section--full">
+                    {% for placement in zones.bottom_bar_full %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Mega Menu Bar Zone #}
+    {% if zones.mega_menu_bar_left or zones.mega_menu_bar_center or zones.mega_menu_bar_right or zones.mega_menu_bar_full %}
+    <div class="header-zone header-zone--mega-menu-bar"{% with override_style=zone_overrides|zone_override_styles:'mega-menu-bar' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+        <div class="container">
+            <div class="header-zone__inner">
+                {% if zones.mega_menu_bar_left %}
+                <div class="header-zone__section header-zone__section--left">
+                    {% for placement in zones.mega_menu_bar_left %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.mega_menu_bar_center %}
+                <div class="header-zone__section header-zone__section--center">
+                    {% for placement in zones.mega_menu_bar_center %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.mega_menu_bar_right %}
+                <div class="header-zone__section header-zone__section--right">
+                    {% for placement in zones.mega_menu_bar_right %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if zones.mega_menu_bar_full %}
+                <div class="header-zone__section header-zone__section--full">
+                    {% for placement in zones.mega_menu_bar_full %}
+                        <div class="widget-wrapper"{% if not placement.widget.show_on_mobile %} data-hide-mobile="true"{% endif %}{% if not placement.widget.show_on_tablet %} data-hide-tablet="true"{% endif %}{% if not placement.widget.show_on_desktop %} data-hide-desktop="true"{% endif %}>{% render_widget placement %}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Mobile Menu - Slide out panel #}
+    <div id="mobile-menu" class="mobile-menu" data-mobile-menu aria-hidden="true">
+        <div class="mobile-menu__header">
+            <span class="mobile-menu__title">{% mtrans 'Menu' %}</span>
+            <button type="button" class="mobile-menu__close" data-menu-close aria-label="{% mtrans 'Close menu' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-menu__content">
+            {# Mobile search with autocomplete #}
+            <form class="mobile-menu__search" action="/search/" method="get" role="search">
+                <input type="search"
+                       name="q"
+                       placeholder="{% mtrans 'Search...' %}"
+                       class="mobile-menu__search-input"
+                       autocomplete="off"
+                       aria-label="{% mtrans 'Search' %}"
+                       data-search-autocomplete
+                       data-search-engine="shop"
+                       data-search-max-results="6">
+                <button type="submit" class="mobile-menu__search-btn" aria-label="{% mtrans 'Submit search' %}">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+
+            {# Mobile navigation - render menu widgets #}
+            <nav class="mobile-menu__nav" role="navigation" aria-label="{% mtrans 'Mobile navigation' %}">
+                {# Default mobile navigation links #}
+                <a href="{% url 'page_builder:home' %}" class="mobile-menu__link">
+                    <i class="fas fa-home"></i>
+                    {% mtrans 'Home' %}
+                </a>
+                <a href="{% url 'page_builder:category_list' %}" class="mobile-menu__link">
+                    <i class="fas fa-th-large"></i>
+                    {% mtrans 'Shop' %}
+                </a>
+
+                <div class="mobile-menu__divider"></div>
+
+                {% if user.is_authenticated %}
+                <a href="/account/" class="mobile-menu__link">
+                    <i class="fas fa-user"></i>
+                    {% mtrans 'My Account' %}
+                </a>
+                <a href="/account/logout/" class="mobile-menu__link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    {% mtrans 'Logout' %}
+                </a>
+                {% else %}
+                <a href="/account/login/" class="mobile-menu__link">
+                    <i class="fas fa-sign-in-alt"></i>
+                    {% mtrans 'Login' %}
+                </a>
+                <a href="/account/signup/" class="mobile-menu__link">
+                    <i class="fas fa-user-plus"></i>
+                    {% mtrans 'Sign Up' %}
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+
+    {# Custom CSS #}
+    {% if header.custom_css %}
+    <style>{{ header.custom_css|safe }}</style>
+    {% endif %}
+</header>
+{% else %}
+{# Fallback: Static header when no HeaderTemplate is configured #}
+{% include 'page_builder/components/header_static.html' %}
+{% endif %}

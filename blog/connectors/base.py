@@ -5,47 +5,54 @@ All social connector packages must inherit from BaseSocialConnector
 and implement the required methods.
 
 """
+
+import logging
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 from enum import Enum
-import logging
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from blog.models import SocialConnectorAccount
 
 logger = logging.getLogger(__name__)
 
 
 class ConnectorCapability(Enum):
     """Capabilities that a social connector can support."""
-    POST_TEXT = 'post_text'
-    POST_IMAGE = 'post_image'
-    POST_VIDEO = 'post_video'
-    POST_LINK = 'post_link'
-    SCHEDULE_POST = 'schedule_post'
-    DELETE_POST = 'delete_post'
-    GET_ANALYTICS = 'get_analytics'
-    REFRESH_TOKEN = 'refresh_token'
+
+    POST_TEXT = "post_text"
+    POST_IMAGE = "post_image"
+    POST_VIDEO = "post_video"
+    POST_LINK = "post_link"
+    SCHEDULE_POST = "schedule_post"
+    DELETE_POST = "delete_post"
+    GET_ANALYTICS = "get_analytics"
+    REFRESH_TOKEN = "refresh_token"
 
 
 @dataclass
 class PostResult:
     """Result of a social media post operation."""
+
     success: bool
-    post_id: Optional[str] = None
-    post_url: Optional[str] = None
-    error_message: Optional[str] = None
-    error_code: Optional[str] = None
-    platform_data: Optional[Dict] = None
+    post_id: str | None = None
+    post_url: str | None = None
+    error_message: str | None = None
+    error_code: str | None = None
+    platform_data: dict | None = None
 
 
 @dataclass
 class ConnectorInfo:
     """Metadata about a social connector."""
+
     provider_key: str
     display_name: str
     description: str
     icon: str  # Path to icon file relative to package
-    oauth_scopes: List[str]
-    capabilities: List[ConnectorCapability]
+    oauth_scopes: list[str]
+    capabilities: list[ConnectorCapability]
     max_text_length: int
     supports_hashtags: bool
     supports_mentions: bool
@@ -98,11 +105,7 @@ class BaseSocialConnector(ABC):
         pass
 
     @abstractmethod
-    def handle_oauth_callback(
-        self,
-        code: str,
-        redirect_uri: str
-    ) -> Dict[str, Any]:
+    def handle_oauth_callback(self, code: str, redirect_uri: str) -> dict[str, Any]:
         """
         Handle OAuth callback and exchange code for tokens.
 
@@ -125,12 +128,12 @@ class BaseSocialConnector(ABC):
     @abstractmethod
     def post(
         self,
-        account: 'SocialConnectorAccount',
+        account: "SocialConnectorAccount",
         text: str,
-        link: Optional[str] = None,
-        image_url: Optional[str] = None,
-        video_url: Optional[str] = None,
-        scheduled_time: Optional[str] = None
+        link: str | None = None,
+        image_url: str | None = None,
+        video_url: str | None = None,
+        scheduled_time: str | None = None,
     ) -> PostResult:
         """
         Post content to the social platform.
@@ -148,11 +151,7 @@ class BaseSocialConnector(ABC):
         """
         pass
 
-    def delete_post(
-        self,
-        account: 'SocialConnectorAccount',
-        post_id: str
-    ) -> bool:
+    def delete_post(self, account: "SocialConnectorAccount", post_id: str) -> bool:
         """
         Delete a previously created post.
 
@@ -165,7 +164,7 @@ class BaseSocialConnector(ABC):
         """
         raise NotImplementedError("delete_post not supported by this connector")
 
-    def refresh_token(self, account: 'SocialConnectorAccount') -> Dict[str, Any]:
+    def refresh_token(self, account: "SocialConnectorAccount") -> dict[str, Any]:
         """
         Refresh OAuth access token.
 
@@ -177,11 +176,7 @@ class BaseSocialConnector(ABC):
         """
         raise NotImplementedError("refresh_token not supported by this connector")
 
-    def get_analytics(
-        self,
-        account: 'SocialConnectorAccount',
-        post_id: str
-    ) -> Dict[str, Any]:
+    def get_analytics(self, account: "SocialConnectorAccount", post_id: str) -> dict[str, Any]:
         """
         Get analytics for a specific post.
 
@@ -194,7 +189,7 @@ class BaseSocialConnector(ABC):
         """
         raise NotImplementedError("get_analytics not supported by this connector")
 
-    def validate_credentials(self, account: 'SocialConnectorAccount') -> bool:
+    def validate_credentials(self, account: "SocialConnectorAccount") -> bool:
         """
         Validate that account credentials are still valid.
 
@@ -207,16 +202,11 @@ class BaseSocialConnector(ABC):
         # Default implementation - attempt a simple API call
         try:
             credentials = account.get_credentials()
-            return bool(credentials.get('access_token'))
+            return bool(credentials.get("access_token"))
         except Exception:
             return False
 
-    def format_text(
-        self,
-        text: str,
-        hashtags: List[str] = None,
-        mentions: List[str] = None
-    ) -> str:
+    def format_text(self, text: str, hashtags: list[str] = None, mentions: list[str] = None) -> str:
         """
         Format text with hashtags and mentions for the platform.
 
@@ -232,16 +222,16 @@ class BaseSocialConnector(ABC):
         formatted = text
 
         if hashtags and info.supports_hashtags:
-            hashtag_str = ' '.join(f'#{tag}' for tag in hashtags)
+            hashtag_str = " ".join(f"#{tag}" for tag in hashtags)
             formatted = f"{formatted}\n\n{hashtag_str}"
 
         if mentions and info.supports_mentions:
-            mention_str = ' '.join(f'@{user}' for user in mentions)
+            mention_str = " ".join(f"@{user}" for user in mentions)
             formatted = f"{mention_str} {formatted}"
 
         # Truncate if needed
         if len(formatted) > info.max_text_length:
-            formatted = formatted[:info.max_text_length - 3] + '...'
+            formatted = formatted[: info.max_text_length - 3] + "..."
 
         return formatted
 
@@ -252,7 +242,8 @@ class SocialConnectorRegistry:
 
     Connectors are loaded dynamically from installed component packages.
     """
-    _connectors: Dict[str, BaseSocialConnector] = {}
+
+    _connectors: dict[str, BaseSocialConnector] = {}
 
     @classmethod
     def register(cls, connector: BaseSocialConnector):
@@ -269,17 +260,17 @@ class SocialConnectorRegistry:
             logger.info(f"Unregistered social connector: {provider_key}")
 
     @classmethod
-    def get(cls, provider_key: str) -> Optional[BaseSocialConnector]:
+    def get(cls, provider_key: str) -> BaseSocialConnector | None:
         """Get a connector by provider key."""
         return cls._connectors.get(provider_key)
 
     @classmethod
-    def get_all(cls) -> Dict[str, BaseSocialConnector]:
+    def get_all(cls) -> dict[str, BaseSocialConnector]:
         """Get all registered connectors."""
         return cls._connectors.copy()
 
     @classmethod
-    def get_available_providers(cls) -> List[ConnectorInfo]:
+    def get_available_providers(cls) -> list[ConnectorInfo]:
         """Get info about all available connectors."""
         return [connector.get_info() for connector in cls._connectors.values()]
 
@@ -292,29 +283,33 @@ class SocialConnectorRegistry:
         and loads their connector classes via components_data/.
         """
         try:
+            from component_updates.integration_paths import (
+                INTEGRATIONS_DIR,
+                import_component_module,
+            )
             from component_updates.models import ComponentRegistry
-            from component_updates.integration_paths import INTEGRATIONS_DIR, import_component_module
 
             # Find installed social connector components
             connectors = ComponentRegistry.objects.filter(
-                component_type='social_connector',
-                is_enabled=True
+                component_type="social_connector", is_enabled=True
             )
 
             for component in connectors:
                 try:
                     # Load from components_data via file-path-based import
-                    provider_dir = INTEGRATIONS_DIR / 'social_connector' / component.component_key
-                    current_path = provider_dir / 'current'
+                    provider_dir = INTEGRATIONS_DIR / "social_connector" / component.component_key
+                    current_path = provider_dir / "current"
                     if not current_path.exists():
-                        logger.warning(f"No current version for social connector {component.component_key}")
+                        logger.warning(
+                            f"No current version for social connector {component.component_key}"
+                        )
                         continue
 
                     module_name = f"social_connector_{component.component_key}"
-                    module = import_component_module(current_path, 'connector', module_name)
+                    module = import_component_module(current_path, "connector", module_name)
 
                     # Get the connector class (should be named <Name>Connector)
-                    connector_class = getattr(module, 'Connector', None)
+                    connector_class = getattr(module, "Connector", None)
                     if connector_class:
                         connector = connector_class()
                         cls.register(connector)

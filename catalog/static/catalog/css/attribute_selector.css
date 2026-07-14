@@ -9,152 +9,153 @@
    Attribute Selector Widget
    =========================== */
 .attribute-selector-widget {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ===========================
    Attribute Group
    =========================== */
 .attribute-group {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .attribute-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
 }
 
 .attribute-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #111827;
-    margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  margin: 0;
 }
 
 .dark .attribute-label {
-    color: #F9FAFB;
+  color: #f9fafb;
 }
 
 .selected-value {
-    font-size: 0.875rem;
-    color: #6B7280;
-    margin-left: 0.5rem;
-    font-weight: normal;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+  font-weight: normal;
 }
 
 .dark .selected-value {
-    color: #9CA3AF;
+  color: #9ca3af;
 }
 
 /* ===========================
    Attribute Values Container
    =========================== */
 .attribute-values {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 /* ===========================
    Base Attribute Option
    =========================== */
 .attribute-option {
-    position: relative;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: none;
-    background: white;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  background: white;
 }
 
 .dark .attribute-option {
-    background: #1F2937;
+  background: #1f2937;
 }
 
 .attribute-option:focus {
-    outline: 2px solid #3B82F6;
-    outline-offset: 2px;
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 .attribute-option:focus-visible {
-    outline: 2px solid #3B82F6;
-    outline-offset: 2px;
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 .attribute-option.disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .attribute-option.disabled:hover {
-    border-color: inherit !important;
+  border-color: inherit !important;
 }
 
 /* ===========================
    Color Swatch Type
    =========================== */
 .attribute-option-color {
-    padding: 0;
-    border: none;
-    background: transparent;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .color-swatch {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    border: 2px solid #D1D5DB;
-    display: block;
-    transition: all 0.2s ease;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  display: block;
+  transition: all 0.2s ease;
 }
 
 .dark .color-swatch {
-    border-color: #4B5563;
+  border-color: #4b5563;
 }
 
 .attribute-option-color:hover:not(.disabled) .color-swatch {
-    border-color: #9CA3AF;
-    transform: scale(1.1);
+  border-color: #9ca3af;
+  transform: scale(1.1);
 }
 
 .dark .attribute-option-color:hover:not(.disabled) .color-swatch {
-    border-color: #6B7280;
+  border-color: #6b7280;
 }
 
 .attribute-option-color.selected .color-swatch {
-    border-color: #3B82F6 !important;
-    border-width: 3px;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6 !important;
+  border-width: 3px;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .color-checkmark {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 .color-tooltip {
-    position: absolute;
-    top: -2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #111827;
-    color: white;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 10;
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #111827;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .attribute-option-color:hover .color-tooltip {
-    opacity: 1;
+  opacity: 1;
 }
 
 /* ===========================
@@ -162,260 +163,260 @@
    =========================== */
 .attribute-option-button,
 .attribute-option-text {
-    padding: 0.5rem 1rem;
-    border: 2px solid #D1D5DB;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #374151;
-    transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s ease;
 }
 
 .dark .attribute-option-button,
 .dark .attribute-option-text {
-    border-color: #4B5563;
-    color: #D1D5DB;
+  border-color: #4b5563;
+  color: #d1d5db;
 }
 
 .attribute-option-button:hover:not(.disabled),
 .attribute-option-text:hover:not(.disabled) {
-    border-color: #3B82F6;
-    background-color: #EFF6FF;
+  border-color: #3b82f6;
+  background-color: #eff6ff;
 }
 
 .dark .attribute-option-button:hover:not(.disabled),
 .dark .attribute-option-text:hover:not(.disabled) {
-    border-color: #60A5FA;
-    background-color: rgba(59, 130, 246, 0.1);
+  border-color: #60a5fa;
+  background-color: rgba(59, 130, 246, 0.1);
 }
 
 .attribute-option-button.selected,
 .attribute-option-text.selected {
-    border-color: #3B82F6 !important;
-    background-color: #EFF6FF !important;
-    color: #2563EB !important;
+  border-color: #3b82f6 !important;
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
 }
 
 .dark .attribute-option-button.selected,
 .dark .attribute-option-text.selected {
-    border-color: #60A5FA !important;
-    background-color: rgba(59, 130, 246, 0.15) !important;
-    color: #60A5FA !important;
+  border-color: #60a5fa !important;
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #60a5fa !important;
 }
 
 /* ===========================
    Image Type
    =========================== */
 .attribute-option-image {
-    width: 4rem;
-    height: 4rem;
-    border: 2px solid #D1D5DB;
-    border-radius: 0.375rem;
-    overflow: hidden;
-    padding: 0;
-    transition: all 0.2s ease;
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  padding: 0;
+  transition: all 0.2s ease;
 }
 
 .dark .attribute-option-image {
-    border-color: #4B5563;
+  border-color: #4b5563;
 }
 
 .attribute-option-image:hover:not(.disabled) {
-    border-color: #3B82F6;
-    transform: scale(1.05);
+  border-color: #3b82f6;
+  transform: scale(1.05);
 }
 
 .dark .attribute-option-image:hover:not(.disabled) {
-    border-color: #60A5FA;
+  border-color: #60a5fa;
 }
 
 .attribute-option-image.selected {
-    border-color: #3B82F6 !important;
-    border-width: 3px;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6 !important;
+  border-width: 3px;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .attribute-option-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .image-checkmark {
-    position: absolute;
-    inset: 0;
-    background-color: rgba(59, 130, 246, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ===========================
    Error Messages
    =========================== */
 .attribute-error {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: #DC2626;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #dc2626;
 }
 
 .dark .attribute-error {
-    color: #F87171;
+  color: #f87171;
 }
 
 /* ===========================
    Availability Message
    =========================== */
 .availability-message {
-    padding: 0.75rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    border-width: 1px;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  border-width: 1px;
 }
 
 .availability-message .message-text {
-    flex: 1;
+  flex: 1;
 }
 
 /* ===========================
    Selected Variant Info
    =========================== */
 .selected-variant-info {
-    margin-top: 0.75rem;
-    padding: 1rem;
-    background-color: #EFF6FF;
-    border: 1px solid #BFDBFE;
-    border-radius: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
 }
 
 .dark .selected-variant-info {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: #1E40AF;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: #1e40af;
 }
 
 .variant-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #111827;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
 }
 
 .dark .variant-name {
-    color: #F9FAFB;
+  color: #f9fafb;
 }
 
 .variant-sku {
-    font-size: 0.75rem;
-    color: #6B7280;
-    margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
 }
 
 .dark .variant-sku {
-    color: #9CA3AF;
+  color: #9ca3af;
 }
 
 .variant-price {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #2563EB;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2563eb;
 }
 
 .dark .variant-price {
-    color: #60A5FA;
+  color: #60a5fa;
 }
 
 .variant-stock {
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 }
 
 /* ===========================
    Responsive Design
    =========================== */
 @media (max-width: 640px) {
-    .attribute-option-button,
-    .attribute-option-text {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.8125rem;
-    }
+  .attribute-option-button,
+  .attribute-option-text {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+  }
 
-    .color-swatch {
-        width: 2.25rem;
-        height: 2.25rem;
-    }
+  .color-swatch {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
 
-    .attribute-option-image {
-        width: 3.5rem;
-        height: 3.5rem;
-    }
+  .attribute-option-image {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
 
-    .selected-variant-info {
-        padding: 0.75rem;
-    }
+  .selected-variant-info {
+    padding: 0.75rem;
+  }
 
-    .variant-price {
-        font-size: 1rem;
-    }
+  .variant-price {
+    font-size: 1rem;
+  }
 }
 
 /* ===========================
    Loading State
    =========================== */
 .attribute-selector-widget.loading {
-    opacity: 0.6;
-    pointer-events: none;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .attribute-selector-widget.loading::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dark .attribute-selector-widget.loading::after {
-    background: rgba(17, 24, 39, 0.8);
+  background: rgba(17, 24, 39, 0.8);
 }
 
 /* ===========================
    Accessibility Enhancements
    =========================== */
 @media (prefers-reduced-motion: reduce) {
-    .attribute-option,
-    .color-swatch,
-    .color-tooltip {
-        transition: none;
-    }
+  .attribute-option,
+  .color-swatch,
+  .color-tooltip {
+    transition: none;
+  }
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-    .attribute-option {
-        border-width: 2px;
-    }
+  .attribute-option {
+    border-width: 2px;
+  }
 
-    .attribute-option.selected {
-        border-width: 3px;
-    }
+  .attribute-option.selected {
+    border-width: 3px;
+  }
 }
 
 /* Focus visible for keyboard navigation */
 .attribute-option:focus-visible {
-    outline: 2px solid #3B82F6;
-    outline-offset: 2px;
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 /* Screen reader only text */
 .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

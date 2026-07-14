@@ -4,7 +4,7 @@ Admin API Authentication
 Custom authentication backend for mobile app token authentication.
 Supports access tokens with expiry and device tracking.
 """
-from django.utils import timezone
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import authentication, exceptions
 
@@ -26,7 +26,8 @@ class MobileTokenAuthentication(authentication.BaseAuthentication):
     Headers:
         Authorization: Bearer <access_token>
     """
-    keyword = 'Bearer'
+
+    keyword = "Bearer"
     model = None
 
     def get_model(self):
@@ -34,6 +35,7 @@ class MobileTokenAuthentication(authentication.BaseAuthentication):
         if self.model is not None:
             return self.model
         from admin_api.models import MobileAuthToken
+
         return MobileAuthToken
 
     def authenticate(self, request):
@@ -46,10 +48,10 @@ class MobileTokenAuthentication(authentication.BaseAuthentication):
             return None
 
         try:
-            auth_parts = auth_header.decode('utf-8').split()
+            auth_parts = auth_header.decode("utf-8").split()
         except UnicodeDecodeError:
             raise exceptions.AuthenticationFailed(
-                _('Invalid token header. Token string should not contain invalid characters.')
+                _("Invalid token header. Token string should not contain invalid characters.")
             )
 
         if len(auth_parts) == 0:
@@ -61,11 +63,11 @@ class MobileTokenAuthentication(authentication.BaseAuthentication):
 
         if len(auth_parts) == 1:
             raise exceptions.AuthenticationFailed(
-                _('Invalid token header. No credentials provided.')
+                _("Invalid token header. No credentials provided.")
             )
         elif len(auth_parts) > 2:
             raise exceptions.AuthenticationFailed(
-                _('Invalid token header. Token string should not contain spaces.')
+                _("Invalid token header. Token string should not contain spaces.")
             )
 
         token = auth_parts[1]
@@ -78,27 +80,24 @@ class MobileTokenAuthentication(authentication.BaseAuthentication):
         model = self.get_model()
 
         try:
-            token = model.objects.select_related('user').get(
-                token=key,
-                token_type='access'
-            )
+            token = model.objects.select_related("user").get(token=key, token_type="access")
         except model.DoesNotExist:
-            raise exceptions.AuthenticationFailed(_('Invalid token.'))
+            raise exceptions.AuthenticationFailed(_("Invalid token."))
 
         # Check if token is revoked
         if token.is_revoked:
-            raise exceptions.AuthenticationFailed(_('Token has been revoked.'))
+            raise exceptions.AuthenticationFailed(_("Token has been revoked."))
 
         # Check if token is expired
         if token.is_expired:
-            raise exceptions.AuthenticationFailed(_('Token has expired.'))
+            raise exceptions.AuthenticationFailed(_("Token has expired."))
 
         # Check if user is active and staff
         if not token.user.is_active:
-            raise exceptions.AuthenticationFailed(_('User account is disabled.'))
+            raise exceptions.AuthenticationFailed(_("User account is disabled."))
 
         if not token.user.is_staff:
-            raise exceptions.AuthenticationFailed(_('Staff access required.'))
+            raise exceptions.AuthenticationFailed(_("Staff access required."))
 
         # Update last used timestamp
         ip_address = self._get_client_ip(request)
@@ -110,10 +109,10 @@ class MobileTokenAuthentication(authentication.BaseAuthentication):
         """Extract client IP from request."""
         if not request:
             return None
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
-            return x_forwarded_for.split(',')[0].strip()
-        return request.META.get('REMOTE_ADDR')
+            return x_forwarded_for.split(",")[0].strip()
+        return request.META.get("REMOTE_ADDR")
 
     def authenticate_header(self, request):
         """
@@ -130,10 +129,12 @@ class RefreshTokenAuthentication(authentication.BaseAuthentication):
     Headers:
         Authorization: Refresh <refresh_token>
     """
-    keyword = 'Refresh'
+
+    keyword = "Refresh"
 
     def get_model(self):
         from admin_api.models import MobileAuthToken
+
         return MobileAuthToken
 
     def authenticate(self, request):
@@ -146,11 +147,9 @@ class RefreshTokenAuthentication(authentication.BaseAuthentication):
             return None
 
         try:
-            auth_parts = auth_header.decode('utf-8').split()
+            auth_parts = auth_header.decode("utf-8").split()
         except UnicodeDecodeError:
-            raise exceptions.AuthenticationFailed(
-                _('Invalid token header.')
-            )
+            raise exceptions.AuthenticationFailed(_("Invalid token header."))
 
         if len(auth_parts) == 0:
             return None
@@ -159,9 +158,7 @@ class RefreshTokenAuthentication(authentication.BaseAuthentication):
             return None
 
         if len(auth_parts) != 2:
-            raise exceptions.AuthenticationFailed(
-                _('Invalid refresh token header.')
-            )
+            raise exceptions.AuthenticationFailed(_("Invalid refresh token header."))
 
         token = auth_parts[1]
         return self.authenticate_credentials(token)
@@ -173,24 +170,21 @@ class RefreshTokenAuthentication(authentication.BaseAuthentication):
         model = self.get_model()
 
         try:
-            token = model.objects.select_related('user').get(
-                token=key,
-                token_type='refresh'
-            )
+            token = model.objects.select_related("user").get(token=key, token_type="refresh")
         except model.DoesNotExist:
-            raise exceptions.AuthenticationFailed(_('Invalid refresh token.'))
+            raise exceptions.AuthenticationFailed(_("Invalid refresh token."))
 
         if token.is_revoked:
-            raise exceptions.AuthenticationFailed(_('Refresh token has been revoked.'))
+            raise exceptions.AuthenticationFailed(_("Refresh token has been revoked."))
 
         if token.is_expired:
-            raise exceptions.AuthenticationFailed(_('Refresh token has expired.'))
+            raise exceptions.AuthenticationFailed(_("Refresh token has expired."))
 
         if not token.user.is_active:
-            raise exceptions.AuthenticationFailed(_('User account is disabled.'))
+            raise exceptions.AuthenticationFailed(_("User account is disabled."))
 
         if not token.user.is_staff:
-            raise exceptions.AuthenticationFailed(_('Staff access required.'))
+            raise exceptions.AuthenticationFailed(_("Staff access required."))
 
         return (token.user, token)
 

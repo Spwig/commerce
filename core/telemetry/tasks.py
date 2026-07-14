@@ -24,14 +24,16 @@ def send_daily_telemetry(self):
     ``SPWIG_TELEMETRY=0`` in the environment fully disables both the
     scheduled task and manual invocations.
     """
-    if not getattr(settings, 'SPWIG_TELEMETRY_ENABLED', True):
+    if not getattr(settings, "SPWIG_TELEMETRY_ENABLED", True):
         logger.debug("Telemetry disabled; task exit")
         return
 
     # Jitter: sleep up to 1 hour so pings spread across a full window.
     # No random import overhead if disabled.
     import time
+
     time.sleep(random.uniform(0, 3600))
 
     from core.telemetry.client import send_telemetry
+
     send_telemetry()

@@ -3,10 +3,11 @@ Django signals for shipping app
 Handles bidirectional sync between Order and Shipment models
 """
 
+import logging
+
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import Signal, receiver
-from django.utils.translation import gettext_lazy as _
-import logging
+
 from core.utils import get_shipping_origin_country
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,8 @@ shipment_exception = Signal()  # Args: shipment, error
 # Signal Receivers - Order/Shipment Sync
 # ============================================================================
 
-@receiver(post_save, sender='shipping.Shipment')
+
+@receiver(post_save, sender="shipping.Shipment")
 def sync_tracking_to_order(sender, instance, created, **kwargs):
     """
     When Shipment.tracking_id changes, update Order.tracking_number
@@ -40,16 +42,15 @@ def sync_tracking_to_order(sender, instance, created, **kwargs):
         if instance.order.tracking_number != instance.tracking_id:
             # Use update() to avoid triggering signals
             from orders.models import Order
-            Order.objects.filter(pk=instance.order.pk).update(
-                tracking_number=instance.tracking_id
-            )
+
+            Order.objects.filter(pk=instance.order.pk).update(tracking_number=instance.tracking_id)
             logger.info(
                 f"Synced tracking {instance.tracking_id} from Shipment {instance.pk} "
                 f"to Order {instance.order.order_number}"
             )
 
 
-@receiver(pre_save, sender='orders.Order')
+@receiver(pre_save, sender="orders.Order")
 def sync_tracking_from_order(sender, instance, **kwargs):
     """
     When Order.tracking_number changes manually (e.g., in admin),
@@ -64,6 +65,7 @@ def sync_tracking_from_order(sender, instance, **kwargs):
     # Get the old instance to compare
     try:
         from orders.models import Order
+
         old_instance = Order.objects.get(pk=instance.pk)
     except Order.DoesNotExist:
         return
@@ -77,19 +79,17 @@ def sync_tracking_from_order(sender, instance, **kwargs):
         return
 
     # Import here to avoid circular imports
-    from shipping.models import Shipment, CarrierPreset
+    from shipping.models import CarrierPreset, Shipment
 
     # Check if a shipment already exists for this order
-    existing_shipment = Shipment.objects.filter(
-        order=instance
-    ).order_by('-created_at').first()
+    existing_shipment = Shipment.objects.filter(order=instance).order_by("-created_at").first()
 
     if existing_shipment:
         # Update existing shipment if tracking_id doesn't match
         if existing_shipment.tracking_id != instance.tracking_number:
             existing_shipment.tracking_id = instance.tracking_number
             # Use update_fields to avoid triggering signals unnecessarily
-            existing_shipment.save(update_fields=['tracking_id', 'updated_at'])
+            existing_shipment.save(update_fields=["tracking_id", "updated_at"])
             logger.info(
                 f"Updated Shipment {existing_shipment.pk} tracking to {instance.tracking_number} "
                 f"from Order {instance.order_number}"
@@ -111,7 +111,7 @@ def sync_tracking_from_order(sender, instance, **kwargs):
                 origin_country=get_shipping_origin_country(),
                 dest_country=instance.shipping_country,
                 tracking_id=instance.tracking_number,
-                status='in_transit',  # Assume in transit if tracking added
+                status="in_transit",  # Assume in transit if tracking added
             )
             logger.info(
                 f"Created Shipment {shipment.pk} with tracking {instance.tracking_number} "
@@ -128,6 +128,7 @@ def sync_tracking_from_order(sender, instance, **kwargs):
 # Custom Signal Handlers (for future use)
 # ============================================================================
 
+
 @receiver(shipment_created)
 def log_shipment_created(sender, shipment, **kwargs):
     """Log when a new shipment is created"""
@@ -141,27 +142,30 @@ def update_order_status_on_label(sender, shipment, **kwargs):
     1. Update Order status to 'shipped'
     2. Fulfill stock (reduce on_hand and allocated at warehouse)
     """
-    if shipment.order and shipment.order.status != 'shipped':
-        from orders.models import Order
+    if shipment.order and shipment.order.status != "shipped":
         from catalog.services import fulfillment_service
+        from orders.models import Order
 
         # Update order status
-        Order.objects.filter(pk=shipment.order.pk).update(status='shipped')
+        Order.objects.filter(pk=shipment.order.pk).update(status="shipped")
         logger.info(f"Updated Order {shipment.order.order_number} status to 'shipped'")
 
         # Fulfill stock for all order items
         order = shipment.order
         for order_item in order.items.all():
             # Only fulfill if stock was allocated and not yet fulfilled
-            if order_item.stock_allocated and not order_item.stock_fulfilled and order_item.warehouse:
+            if (
+                order_item.stock_allocated
+                and not order_item.stock_fulfilled
+                and order_item.warehouse
+            ):
                 try:
                     fulfillment_service.fulfill_stock(
-                        order_item=order_item,
-                        warehouse=order_item.warehouse
+                        order_item=order_item, warehouse=order_item.warehouse
                     )
                     # Mark as fulfilled
                     order_item.stock_fulfilled = True
-                    order_item.save(update_fields=['stock_fulfilled'])
+                    order_item.save(update_fields=["stock_fulfilled"])
                     logger.info(
                         f"Fulfilled stock for {order_item.sku} at {order_item.warehouse.code} "
                         f"(Order: {order.order_number})"
@@ -187,9 +191,10 @@ def log_tracking_updated(sender, shipment, events=None, **kwargs):
 @receiver(shipment_delivered)
 def update_order_status_on_delivery(sender, shipment, **kwargs):
     """When shipment is delivered, update Order status to 'completed'"""
-    if shipment.order and shipment.order.status != 'completed':
+    if shipment.order and shipment.order.status != "completed":
         from orders.models import Order
-        Order.objects.filter(pk=shipment.order.pk).update(status='completed')
+
+        Order.objects.filter(pk=shipment.order.pk).update(status="completed")
         logger.info(f"Updated Order {shipment.order.order_number} status to 'completed'")
 
 
@@ -203,7 +208,8 @@ def log_shipment_exception(sender, shipment, error=None, **kwargs):
 # Carrier URL Feedback System
 # ============================================================================
 
-@receiver(post_save, sender='shipping.CarrierPreset')
+
+@receiver(post_save, sender="shipping.CarrierPreset")
 def report_carrier_url_change(sender, instance, created, **kwargs):
     """
     Report URL override changes to update server for crowdsourced improvements.
@@ -228,11 +234,7 @@ def report_carrier_url_change(sender, instance, created, **kwargs):
         from django.utils import timezone
 
         try:
-            from component_updates.utils import (
-                get_installation_uuid,
-                get_update_server_url,
-                get_jwt_token
-            )
+            from component_updates.utils import get_jwt_token, get_update_server_url
         except ImportError:
             logger.warning(
                 f"component_updates not installed - skipping carrier URL feedback for {instance.slug}"
@@ -240,22 +242,24 @@ def report_carrier_url_change(sender, instance, created, **kwargs):
             return
 
         feedback_data = {
-            'carrier_slug': instance.slug,
-            'carrier_name': instance.name,
-            'country_code': instance.country_of_operation.code if instance.country_of_operation else '',
-            'original_url': instance.tracking_url_template,
-            'suggested_url': instance.tracking_url_template_override,
-            'timestamp': timezone.now().isoformat(),
+            "carrier_slug": instance.slug,
+            "carrier_name": instance.name,
+            "country_code": instance.country_of_operation.code
+            if instance.country_of_operation
+            else "",
+            "original_url": instance.tracking_url_template,
+            "suggested_url": instance.tracking_url_template_override,
+            "timestamp": timezone.now().isoformat(),
         }
 
         response = requests.post(
-            f'{get_update_server_url()}/api/v1/feedback/carrier-url/',
+            f"{get_update_server_url()}/api/v1/feedback/carrier-url/",
             json=feedback_data,
             headers={
-                'Authorization': f'Bearer {get_jwt_token()}',
-                'Content-Type': 'application/json'
+                "Authorization": f"Bearer {get_jwt_token()}",
+                "Content-Type": "application/json",
             },
-            timeout=5  # Quick timeout to not block saves
+            timeout=5,  # Quick timeout to not block saves
         )
 
         if response.status_code == 201:
@@ -282,7 +286,8 @@ def report_carrier_url_change(sender, instance, created, **kwargs):
 # Signal Receivers - Shipping Zone ↔ Shipping Country reconciliation
 # ============================================================================
 
-@receiver(post_save, sender='shipping.ShippingZone')
+
+@receiver(post_save, sender="shipping.ShippingZone")
 def reconcile_shipping_countries_from_zone(sender, instance, **kwargs):
     """
     Auto-create / reactivate ShippingCountry rows for every country a
@@ -343,5 +348,6 @@ def reconcile_shipping_countries_from_zone(sender, instance, **kwargs):
             country.save(update_fields=["is_active", "updated_at"])
             logger.info(
                 "ShippingCountry %s reactivated by ShippingZone %s save",
-                code, instance.pk,
+                code,
+                instance.pk,
             )

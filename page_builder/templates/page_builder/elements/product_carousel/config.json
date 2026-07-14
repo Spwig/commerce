@@ -11,9 +11,7 @@
   "translation_domain": "product_carousel_element",
   "template_file": "template.html",
   "inherit_base": true,
-  "scripts": [
-    "/static/page_builder/js/elements/product-carousel.js"
-  ],
+  "scripts": ["/static/page_builder/js/elements/product-carousel.js"],
   "disable_base_properties": ["text_color"],
   "tabs": {
     "basic": {
@@ -54,15 +52,34 @@
               "item_schema": {
                 "type": "object",
                 "properties": {
-                  "name": {"type": "string", "label": "Product Name", "translatable": true},
-                  "image": {"type": "image", "label": "Product Image"},
-                  "price": {"type": "string", "label": "Price"},
-                  "original_price": {"type": "string", "label": "Original Price (optional)"},
-                  "description": {"type": "textarea", "label": "Short Description", "translatable": true, "rows": 2},
-                  "rating": {"type": "select", "label": "Rating", "options": [{"value": "1", "label": "1 Star"}, {"value": "2", "label": "2 Stars"}, {"value": "3", "label": "3 Stars"}, {"value": "4", "label": "4 Stars"}, {"value": "5", "label": "5 Stars"}]},
-                  "badge": {"type": "string", "label": "Badge (Sale, New, etc.)", "translatable": true},
-                  "link": {"type": "url", "label": "Product Link", "link_selector": true},
-                  "sku": {"type": "string", "label": "SKU/Product ID"}
+                  "name": { "type": "string", "label": "Product Name", "translatable": true },
+                  "image": { "type": "image", "label": "Product Image" },
+                  "price": { "type": "string", "label": "Price" },
+                  "original_price": { "type": "string", "label": "Original Price (optional)" },
+                  "description": {
+                    "type": "textarea",
+                    "label": "Short Description",
+                    "translatable": true,
+                    "rows": 2
+                  },
+                  "rating": {
+                    "type": "select",
+                    "label": "Rating",
+                    "options": [
+                      { "value": "1", "label": "1 Star" },
+                      { "value": "2", "label": "2 Stars" },
+                      { "value": "3", "label": "3 Stars" },
+                      { "value": "4", "label": "4 Stars" },
+                      { "value": "5", "label": "5 Stars" }
+                    ]
+                  },
+                  "badge": {
+                    "type": "string",
+                    "label": "Badge (Sale, New, etc.)",
+                    "translatable": true
+                  },
+                  "link": { "type": "url", "label": "Product Link", "link_selector": true },
+                  "sku": { "type": "string", "label": "SKU/Product ID" }
                 }
               }
             }
@@ -83,11 +100,11 @@
               "type": "select",
               "label": "Products Per View",
               "options": [
-                {"value": "1", "label": "1 Product"},
-                {"value": "2", "label": "2 Products"},
-                {"value": "3", "label": "3 Products"},
-                {"value": "4", "label": "4 Products"},
-                {"value": "5", "label": "5 Products"}
+                { "value": "1", "label": "1 Product" },
+                { "value": "2", "label": "2 Products" },
+                { "value": "3", "label": "3 Products" },
+                { "value": "4", "label": "4 Products" },
+                { "value": "5", "label": "5 Products" }
               ],
               "default": "4"
             },
@@ -177,28 +194,118 @@
     }
   },
   "properties": {
-    "title": {"type": "string", "label": "Section Title", "default": "Featured Products", "translatable": true},
-    "subtitle": {"type": "textarea", "label": "Section Subtitle", "default": "Discover our best-selling products", "translatable": true, "rows": 2},
-    "products_per_view": {"type": "select", "label": "Products Per View", "options": [{"value": "1", "label": "1 Product"}, {"value": "2", "label": "2 Products"}, {"value": "3", "label": "3 Products"}, {"value": "4", "label": "4 Products"}, {"value": "5", "label": "5 Products"}], "default": "4"},
-    "auto_play": {"type": "boolean", "label": "Auto Play", "default": true},
-    "play_interval": {"type": "number", "label": "Auto Play Interval (seconds)", "default": 4, "min": 1, "max": 10},
-    "show_arrows": {"type": "boolean", "label": "Show Navigation Arrows", "default": true},
-    "show_dots": {"type": "boolean", "label": "Show Pagination Dots", "default": true},
-    "infinite_loop": {"type": "boolean", "label": "Infinite Loop", "default": true},
-    "products": {"type": "array", "label": "Products", "item_schema": {"type": "object", "properties": {"name": {"type": "string", "label": "Product Name", "translatable": true}, "image": {"type": "image", "label": "Product Image"}, "price": {"type": "string", "label": "Price"}, "original_price": {"type": "string", "label": "Original Price (optional)"}, "description": {"type": "textarea", "label": "Short Description", "translatable": true, "rows": 2}, "rating": {"type": "select", "label": "Rating", "options": [{"value": "1", "label": "1 Star"}, {"value": "2", "label": "2 Stars"}, {"value": "3", "label": "3 Stars"}, {"value": "4", "label": "4 Stars"}, {"value": "5", "label": "5 Stars"}]}, "badge": {"type": "string", "label": "Badge (Sale, New, etc.)", "translatable": true}, "link": {"type": "url", "label": "Product Link", "link_selector": true}, "sku": {"type": "string", "label": "SKU/Product ID"}}}},
-    "show_rating": {"type": "boolean", "label": "Show Product Ratings", "default": true},
-    "show_description": {"type": "boolean", "label": "Show Product Descriptions", "default": false},
-    "show_badges": {"type": "boolean", "label": "Show Product Badges", "default": true},
-    "button_text": {"type": "string", "label": "Add to Cart Button Text", "default": "Add to Cart", "translatable": true}
+    "title": {
+      "type": "string",
+      "label": "Section Title",
+      "default": "Featured Products",
+      "translatable": true
+    },
+    "subtitle": {
+      "type": "textarea",
+      "label": "Section Subtitle",
+      "default": "Discover our best-selling products",
+      "translatable": true,
+      "rows": 2
+    },
+    "products_per_view": {
+      "type": "select",
+      "label": "Products Per View",
+      "options": [
+        { "value": "1", "label": "1 Product" },
+        { "value": "2", "label": "2 Products" },
+        { "value": "3", "label": "3 Products" },
+        { "value": "4", "label": "4 Products" },
+        { "value": "5", "label": "5 Products" }
+      ],
+      "default": "4"
+    },
+    "auto_play": { "type": "boolean", "label": "Auto Play", "default": true },
+    "play_interval": {
+      "type": "number",
+      "label": "Auto Play Interval (seconds)",
+      "default": 4,
+      "min": 1,
+      "max": 10
+    },
+    "show_arrows": { "type": "boolean", "label": "Show Navigation Arrows", "default": true },
+    "show_dots": { "type": "boolean", "label": "Show Pagination Dots", "default": true },
+    "infinite_loop": { "type": "boolean", "label": "Infinite Loop", "default": true },
+    "products": {
+      "type": "array",
+      "label": "Products",
+      "item_schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "label": "Product Name", "translatable": true },
+          "image": { "type": "image", "label": "Product Image" },
+          "price": { "type": "string", "label": "Price" },
+          "original_price": { "type": "string", "label": "Original Price (optional)" },
+          "description": {
+            "type": "textarea",
+            "label": "Short Description",
+            "translatable": true,
+            "rows": 2
+          },
+          "rating": {
+            "type": "select",
+            "label": "Rating",
+            "options": [
+              { "value": "1", "label": "1 Star" },
+              { "value": "2", "label": "2 Stars" },
+              { "value": "3", "label": "3 Stars" },
+              { "value": "4", "label": "4 Stars" },
+              { "value": "5", "label": "5 Stars" }
+            ]
+          },
+          "badge": { "type": "string", "label": "Badge (Sale, New, etc.)", "translatable": true },
+          "link": { "type": "url", "label": "Product Link", "link_selector": true },
+          "sku": { "type": "string", "label": "SKU/Product ID" }
+        }
+      }
+    },
+    "show_rating": { "type": "boolean", "label": "Show Product Ratings", "default": true },
+    "show_description": {
+      "type": "boolean",
+      "label": "Show Product Descriptions",
+      "default": false
+    },
+    "show_badges": { "type": "boolean", "label": "Show Product Badges", "default": true },
+    "button_text": {
+      "type": "string",
+      "label": "Add to Cart Button Text",
+      "default": "Add to Cart",
+      "translatable": true
+    }
   },
   "translations": {
-    "en": {"name": "Product Carousel", "description": "Sliding carousel showcasing products with images, prices, and add-to-cart functionality"},
-    "es": {"name": "Carrusel de Productos", "description": "Carrusel deslizante que muestra productos con imágenes, precios y funcionalidad de agregar al carrito"},
-    "fr": {"name": "Carrousel de Produits", "description": "Carrousel coulissant présentant des produits avec images, prix et fonctionnalité d'ajout au panier"},
-    "de": {"name": "Produktkarussell", "description": "Gleitendes Karussell mit Produkten, Bildern, Preisen und Warenkorb-Funktionalität"},
-    "pt": {"name": "Carrossel de Produtos", "description": "Carrossel deslizante exibindo produtos com imagens, preços e funcionalidade de adicionar ao carrinho"},
-    "zh-hans": {"name": "产品轮播", "description": "滑动轮播展示产品图片、价格和添加到购物车功能"},
-    "ja": {"name": "商品カルーセル", "description": "画像、価格、カート追加機能付きの商品を表示するスライディングカルーセル"}
+    "en": {
+      "name": "Product Carousel",
+      "description": "Sliding carousel showcasing products with images, prices, and add-to-cart functionality"
+    },
+    "es": {
+      "name": "Carrusel de Productos",
+      "description": "Carrusel deslizante que muestra productos con imágenes, precios y funcionalidad de agregar al carrito"
+    },
+    "fr": {
+      "name": "Carrousel de Produits",
+      "description": "Carrousel coulissant présentant des produits avec images, prix et fonctionnalité d'ajout au panier"
+    },
+    "de": {
+      "name": "Produktkarussell",
+      "description": "Gleitendes Karussell mit Produkten, Bildern, Preisen und Warenkorb-Funktionalität"
+    },
+    "pt": {
+      "name": "Carrossel de Produtos",
+      "description": "Carrossel deslizante exibindo produtos com imagens, preços e funcionalidade de adicionar ao carrinho"
+    },
+    "zh-hans": {
+      "name": "产品轮播",
+      "description": "滑动轮播展示产品图片、价格和添加到购物车功能"
+    },
+    "ja": {
+      "name": "商品カルーセル",
+      "description": "画像、価格、カート追加機能付きの商品を表示するスライディングカルーセル"
+    }
   },
   "defaults": {
     "title": "Product Carousel",

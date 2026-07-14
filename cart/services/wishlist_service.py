@@ -1,11 +1,13 @@
 """
 Wishlist Service - Business logic for wishlist operations
 """
+
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
-from typing import Tuple, Optional
-from ..models import Wishlist, WishlistItem
+
 from catalog.models import Product, ProductVariant
+
+from ..models import Wishlist, WishlistItem
 
 
 class WishlistService:
@@ -23,9 +25,7 @@ class WishlistService:
             Wishlist instance
         """
         wishlist, created = Wishlist.objects.get_or_create(
-            user=user,
-            name=_("My Wishlist"),
-            defaults={'name': _("My Wishlist")}
+            user=user, name=_("My Wishlist"), defaults={"name": _("My Wishlist")}
         )
         return wishlist
 
@@ -34,12 +34,12 @@ class WishlistService:
     def add_item(
         wishlist: Wishlist,
         product_id: int,
-        variant_id: Optional[int] = None,
+        variant_id: int | None = None,
         notes: str = "",
         priority: str = "medium",
         notify_when_available: bool = False,
-        notify_when_on_sale: bool = False
-    ) -> Tuple[bool, str, Optional[WishlistItem]]:
+        notify_when_on_sale: bool = False,
+    ) -> tuple[bool, str, WishlistItem | None]:
         """
         Add item to wishlist
 
@@ -69,9 +69,7 @@ class WishlistService:
 
         # Check if item already exists
         existing_item = WishlistItem.objects.filter(
-            wishlist=wishlist,
-            product=product,
-            variant=variant
+            wishlist=wishlist, product=product, variant=variant
         ).first()
 
         if existing_item:
@@ -91,14 +89,14 @@ class WishlistService:
             notes=notes,
             priority=priority,
             notify_when_available=notify_when_available,
-            notify_when_on_sale=notify_when_on_sale
+            notify_when_on_sale=notify_when_on_sale,
         )
 
         return True, _("Item added to wishlist"), wishlist_item
 
     @staticmethod
     @transaction.atomic
-    def remove_item(wishlist_item: WishlistItem) -> Tuple[bool, str]:
+    def remove_item(wishlist_item: WishlistItem) -> tuple[bool, str]:
         """
         Remove item from wishlist
 
@@ -113,7 +111,7 @@ class WishlistService:
 
     @staticmethod
     @transaction.atomic
-    def move_to_cart(wishlist_item: WishlistItem, cart, quantity: int = 1) -> Tuple[bool, str]:
+    def move_to_cart(wishlist_item: WishlistItem, cart, quantity: int = 1) -> tuple[bool, str]:
         """
         Move wishlist item to cart
 
@@ -131,7 +129,7 @@ class WishlistService:
             cart=cart,
             product_id=wishlist_item.product.id,
             quantity=quantity,
-            variant_id=wishlist_item.variant.id if wishlist_item.variant else None
+            variant_id=wishlist_item.variant.id if wishlist_item.variant else None,
         )
 
         if success:
@@ -142,7 +140,7 @@ class WishlistService:
 
     @staticmethod
     @transaction.atomic
-    def clear_wishlist(wishlist: Wishlist) -> Tuple[bool, str]:
+    def clear_wishlist(wishlist: Wishlist) -> tuple[bool, str]:
         """
         Clear all items from wishlist
 
@@ -156,7 +154,9 @@ class WishlistService:
         return True, _("Wishlist cleared")
 
     @staticmethod
-    def create_wishlist(user, name: str, is_public: bool = False) -> Tuple[bool, str, Optional[Wishlist]]:
+    def create_wishlist(
+        user, name: str, is_public: bool = False
+    ) -> tuple[bool, str, Wishlist | None]:
         """
         Create new wishlist for user
 
@@ -172,22 +172,19 @@ class WishlistService:
         if Wishlist.objects.filter(user=user, name=name).exists():
             return False, _("Wishlist with this name already exists"), None
 
-        wishlist = Wishlist.objects.create(
-            user=user,
-            name=name,
-            is_public=is_public
-        )
+        wishlist = Wishlist.objects.create(user=user, name=name, is_public=is_public)
 
         # Generate share slug if public
         if is_public:
             import uuid
+
             wishlist.share_slug = str(uuid.uuid4())[:8]
-            wishlist.save(update_fields=['share_slug'])
+            wishlist.save(update_fields=["share_slug"])
 
         return True, _("Wishlist created"), wishlist
 
     @staticmethod
-    def get_public_wishlist(share_slug: str) -> Optional[Wishlist]:
+    def get_public_wishlist(share_slug: str) -> Wishlist | None:
         """
         Get public wishlist by share slug
 

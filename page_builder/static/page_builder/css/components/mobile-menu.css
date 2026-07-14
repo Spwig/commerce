@@ -1,0 +1,69 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/** Mobile Menu Styles */
+
+.mobile-menu {
+  display: none;
+  background-color: var(--theme-color-surface, #fff);
+  border-top: 1px solid var(--theme-color-border, #e5e7eb);
+  padding: var(--theme-space-4, 1rem) 0;
+}
+
+.mobile-menu.is-open {
+  display: block;
+}
+
+.mobile-menu__search {
+  margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.mobile-menu__nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-menu__link {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-3, 0.75rem);
+  padding: var(--theme-space-3, 0.75rem) 0;
+  color: var(--theme-color-text, #1f2937);
+  font-weight: var(--theme-font-weight-medium, 500);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.mobile-menu__link:hover {
+  color: var(--theme-color-primary, #2563eb);
+}
+
+.mobile-menu__link--sub {
+  padding-left: var(--theme-space-8, 2rem);
+  font-weight: var(--theme-font-weight-normal, 400);
+  color: var(--theme-color-text-muted, #6b7280);
+}
+
+.mobile-menu__link i {
+  width: 1.25rem;
+  text-align: center;
+}
+
+.mobile-menu__divider {
+  height: 1px;
+  background-color: var(--theme-color-border, #e5e7eb);
+  margin: var(--theme-space-4, 1rem) 0;
+}
+
+/* Hide elements on mobile/desktop */
+@media (min-width: 768px) {
+  .mobile-menu,
+  .site-header__menu-toggle {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .site-header__nav {
+    display: none;
+  }
+}

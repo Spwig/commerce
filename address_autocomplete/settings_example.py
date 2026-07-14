@@ -8,7 +8,7 @@ Add these to your settings.py or settings/production.py
 # ============================================
 
 # Service URL (use HTTPS in production)
-ADDRESS_AUTOCOMPLETE_URL = 'http://geocoder.spwig.com'  # Change to https:// when SSL is configured
+ADDRESS_AUTOCOMPLETE_URL = "http://geocoder.spwig.com"  # Change to https:// when SSL is configured
 
 # API Key Authentication (required if API key is enabled on server)
 # Generate with: openssl rand -hex 32
@@ -24,9 +24,9 @@ ADDRESS_AUTOCOMPLETE_CACHE_TTL = 300  # Cache results for 5 minutes
 
 # Rate Limiting by User Tier
 ADDRESS_AUTOCOMPLETE_RATE_LIMITS = {
-    'anonymous': 60,      # 60 requests per minute for anonymous users
-    'registered': 300,    # 300 requests per minute for registered users
-    'premium': 1000,      # 1000 requests per minute for premium users
+    "anonymous": 60,  # 60 requests per minute for anonymous users
+    "registered": 300,  # 300 requests per minute for registered users
+    "premium": 1000,  # 1000 requests per minute for premium users
 }
 
 # Feature Flags
@@ -36,18 +36,18 @@ ADDRESS_AUTOCOMPLETE_LOG_USAGE = True  # Log usage for analytics
 
 # Widget Configuration
 ADDRESS_AUTOCOMPLETE_WIDGET = {
-    'min_chars': 3,  # Minimum characters before triggering autocomplete
-    'delay': 300,    # Milliseconds to wait after typing stops
-    'max_suggestions': 5,  # Maximum number of suggestions to show
-    'auto_select_single': True,  # Auto-select if only one result
-    'show_coordinates': False,  # Show lat/lon in suggestions
+    "min_chars": 3,  # Minimum characters before triggering autocomplete
+    "delay": 300,  # Milliseconds to wait after typing stops
+    "max_suggestions": 5,  # Maximum number of suggestions to show
+    "auto_select_single": True,  # Auto-select if only one result
+    "show_coordinates": False,  # Show lat/lon in suggestions
 }
 
 # Geo-biasing Configuration
 ADDRESS_AUTOCOMPLETE_GEO_BIAS = {
-    'use_geoip': True,  # Use GeoIP to bias results to user's country
-    'default_country': 'SG',  # Default country code if GeoIP fails
-    'search_radius_km': 50,  # Bias results within this radius when coordinates available
+    "use_geoip": True,  # Use GeoIP to bias results to user's country
+    "default_country": "SG",  # Default country code if GeoIP fails
+    "search_radius_km": 50,  # Bias results within this radius when coordinates available
 }
 
 # ============================================

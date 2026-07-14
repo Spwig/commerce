@@ -2,14 +2,16 @@
 Celery Tasks for Catalog App
 Handles scheduled gift card email delivery.
 """
+
+import logging
+
 from celery import shared_task
 from django.utils import timezone
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name='catalog.send_scheduled_gift_card_emails', ignore_result=True)
+@shared_task(name="catalog.send_scheduled_gift_card_emails", ignore_result=True)
 def send_scheduled_gift_card_emails():
     """
     Send gift card emails that are scheduled for delivery.
@@ -27,10 +29,8 @@ def send_scheduled_gift_card_emails():
 
     # Find gift cards scheduled for delivery
     scheduled_gift_cards = GiftCard.objects.filter(
-        scheduled_send_at__lte=now,
-        issued_at__isnull=True,
-        is_active=True
-    ).select_related('product')
+        scheduled_send_at__lte=now, issued_at__isnull=True, is_active=True
+    ).select_related("product")
 
     total = scheduled_gift_cards.count()
 
@@ -51,9 +51,11 @@ def send_scheduled_gift_card_emails():
             if success:
                 # Mark as issued
                 gift_card.issued_at = now
-                gift_card.save(update_fields=['issued_at'])
+                gift_card.save(update_fields=["issued_at"])
                 sent_count += 1
-                logger.info(f"Sent scheduled gift card {gift_card.code} to {gift_card.recipient_email}")
+                logger.info(
+                    f"Sent scheduled gift card {gift_card.code} to {gift_card.recipient_email}"
+                )
             else:
                 failed_count += 1
                 logger.error(f"Failed to send scheduled gift card {gift_card.code}")
@@ -62,16 +64,18 @@ def send_scheduled_gift_card_emails():
             logger.exception(f"Error sending scheduled gift card {gift_card.code}: {str(e)}")
             failed_count += 1
 
-    logger.info(f"Scheduled gift card delivery complete: {sent_count} sent, {failed_count} failed out of {total}")
+    logger.info(
+        f"Scheduled gift card delivery complete: {sent_count} sent, {failed_count} failed out of {total}"
+    )
 
     return {
-        'total': total,
-        'sent': sent_count,
-        'failed': failed_count,
+        "total": total,
+        "sent": sent_count,
+        "failed": failed_count,
     }
 
 
-@shared_task(name='catalog.send_gift_card_email')
+@shared_task(name="catalog.send_gift_card_email")
 def send_gift_card_email_task(gift_card_id: int):
     """
     Send a single gift card email immediately.
@@ -84,32 +88,32 @@ def send_gift_card_email_task(gift_card_id: int):
     from .services.gift_card_service import GiftCardService
 
     try:
-        gift_card = GiftCard.objects.select_related('product').get(id=gift_card_id)
+        gift_card = GiftCard.objects.select_related("product").get(id=gift_card_id)
 
         if gift_card.issued_at:
             logger.warning(f"Gift card {gift_card.code} already issued at {gift_card.issued_at}")
-            return {'status': 'already_issued'}
+            return {"status": "already_issued"}
 
         success = GiftCardService._send_gift_card_email(gift_card)
 
         if success:
             gift_card.issued_at = timezone.now()
-            gift_card.save(update_fields=['issued_at'])
+            gift_card.save(update_fields=["issued_at"])
             logger.info(f"Sent gift card {gift_card.code} to {gift_card.recipient_email}")
-            return {'status': 'sent', 'code': gift_card.code}
+            return {"status": "sent", "code": gift_card.code}
         else:
             logger.error(f"Failed to send gift card {gift_card.code}")
-            return {'status': 'failed', 'code': gift_card.code}
+            return {"status": "failed", "code": gift_card.code}
 
     except GiftCard.DoesNotExist:
         logger.error(f"Gift card with ID {gift_card_id} not found")
-        return {'status': 'not_found'}
+        return {"status": "not_found"}
     except Exception as e:
         logger.exception(f"Error sending gift card {gift_card_id}: {str(e)}")
-        return {'status': 'error', 'error': str(e)}
+        return {"status": "error", "error": str(e)}
 
 
-@shared_task(name='catalog.release_expired_stock_reservations', ignore_result=True)
+@shared_task(name="catalog.release_expired_stock_reservations", ignore_result=True)
 def release_expired_stock_reservations():
     """
     Release stock reservations that have passed their expiry time.
@@ -124,13 +128,13 @@ def release_expired_stock_reservations():
         released = StockReservationService.release_expired_reservations()
         if released > 0:
             logger.info(f"Released {released} expired stock reservations")
-        return {'released': released}
+        return {"released": released}
     except Exception as e:
         logger.exception(f"Error releasing expired stock reservations: {e}")
-        return {'released': 0, 'error': str(e)}
+        return {"released": 0, "error": str(e)}
 
 
-@shared_task(name='catalog.cleanup_cart_items_for_deleted_products')
+@shared_task(name="catalog.cleanup_cart_items_for_deleted_products")
 def cleanup_cart_items_for_deleted_products():
     """
     Remove cart items for soft-deleted products.
@@ -140,31 +144,28 @@ def cleanup_cart_items_for_deleted_products():
     cart items that reference products that have been deleted.
     """
     from cart.models import CartItem
+
     from .models import Product
 
     try:
         # Get all deleted product IDs
-        deleted_product_ids = Product.all_objects.filter(
-            is_deleted=True
-        ).values_list('id', flat=True)
+        deleted_product_ids = Product.all_objects.filter(is_deleted=True).values_list(
+            "id", flat=True
+        )
 
         # Delete cart items for deleted products
-        deleted_count, _ = CartItem.objects.filter(
-            product_id__in=deleted_product_ids
-        ).delete()
+        deleted_count, _ = CartItem.objects.filter(product_id__in=deleted_product_ids).delete()
 
         if deleted_count > 0:
             logger.info(f"Cleaned up {deleted_count} cart items for deleted products")
 
-        return {
-            'deleted_count': deleted_count
-        }
+        return {"deleted_count": deleted_count}
     except Exception as e:
         logger.exception(f"Error cleaning up cart items for deleted products: {e}")
-        return {'deleted_count': 0, 'error': str(e)}
+        return {"deleted_count": 0, "error": str(e)}
 
 
-@shared_task(name='catalog.release_expired_booking_slot_reservations', ignore_result=True)
+@shared_task(name="catalog.release_expired_booking_slot_reservations", ignore_result=True)
 def release_expired_booking_slot_reservations():
     """
     Release booking slot reservations that have passed their expiry time.
@@ -176,13 +177,13 @@ def release_expired_booking_slot_reservations():
         released = BookingAvailabilityService.cleanup_expired_reservations()
         if released > 0:
             logger.info(f"Released {released} expired booking slot reservations")
-        return {'released': released}
+        return {"released": released}
     except Exception as e:
         logger.exception(f"Error releasing expired booking slot reservations: {e}")
-        return {'released': 0, 'error': str(e)}
+        return {"released": 0, "error": str(e)}
 
 
-@shared_task(name='catalog.send_booking_reminders', ignore_result=True)
+@shared_task(name="catalog.send_booking_reminders", ignore_result=True)
 def send_booking_reminders():
     """
     Send email reminders for upcoming bookings.
@@ -192,6 +193,7 @@ def send_booking_reminders():
     and sends reminders at the configured intervals (e.g., 1hr, 24hr, 168hr before).
     """
     from django.utils import timezone as tz
+
     from .models import Booking, BookingConfig
 
     now = tz.now()
@@ -200,10 +202,10 @@ def send_booking_reminders():
     try:
         # Get bookings that are confirmed and upcoming
         upcoming = Booking.objects.filter(
-            status='confirmed',
+            status="confirmed",
             start_datetime__gt=now,
             reminder_sent_at__isnull=True,
-        ).select_related('product')
+        ).select_related("product")
 
         for booking in upcoming:
             try:
@@ -221,20 +223,21 @@ def send_booking_reminders():
                 if hours_until <= reminder_hours:
                     # Send email reminder via lifecycle service
                     from catalog.services.booking_service import BookingLifecycleService
+
                     BookingLifecycleService.send_booking_email(
-                        booking, 'booking_reminder',
-                        {'hours_until': round(hours_until)},
+                        booking,
+                        "booking_reminder",
+                        {"hours_until": round(hours_until)},
                     )
                     booking.reminder_sent_at = now
-                    booking.save(update_fields=['reminder_sent_at'])
+                    booking.save(update_fields=["reminder_sent_at"])
                     sent_count += 1
                     logger.info(
-                        f"Booking reminder sent for #{booking.pk} "
-                        f"({reminder_hours}h before)"
+                        f"Booking reminder sent for #{booking.pk} ({reminder_hours}h before)"
                     )
                     break
 
-        return {'sent': sent_count}
+        return {"sent": sent_count}
     except Exception as e:
         logger.exception(f"Error sending booking reminders: {e}")
-        return {'sent': sent_count, 'error': str(e)}
+        return {"sent": sent_count, "error": str(e)}

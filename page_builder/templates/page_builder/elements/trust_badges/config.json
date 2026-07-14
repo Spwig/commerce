@@ -50,16 +50,16 @@
                     "type": "select",
                     "label": "Badge Type",
                     "options": [
-                      {"value": "custom", "label": "Custom"},
-                      {"value": "secure_checkout", "label": "Secure Checkout"},
-                      {"value": "money_back", "label": "Money-Back Guarantee"},
-                      {"value": "free_shipping", "label": "Free Shipping"},
-                      {"value": "fast_delivery", "label": "Fast Delivery"},
-                      {"value": "support_24_7", "label": "24/7 Support"},
-                      {"value": "quality", "label": "Quality Guaranteed"},
-                      {"value": "ssl", "label": "SSL Secure"},
-                      {"value": "satisfaction", "label": "100% Satisfaction"},
-                      {"value": "verified", "label": "Verified Seller"}
+                      { "value": "custom", "label": "Custom" },
+                      { "value": "secure_checkout", "label": "Secure Checkout" },
+                      { "value": "money_back", "label": "Money-Back Guarantee" },
+                      { "value": "free_shipping", "label": "Free Shipping" },
+                      { "value": "fast_delivery", "label": "Fast Delivery" },
+                      { "value": "support_24_7", "label": "24/7 Support" },
+                      { "value": "quality", "label": "Quality Guaranteed" },
+                      { "value": "ssl", "label": "SSL Secure" },
+                      { "value": "satisfaction", "label": "100% Satisfaction" },
+                      { "value": "verified", "label": "Verified Seller" }
                     ],
                     "default": "custom"
                   },
@@ -67,13 +67,13 @@
                     "type": "icon_picker",
                     "label": "Icon",
                     "help_text": "Choose a Font Awesome icon",
-                    "show_if": {"type": "custom"}
+                    "show_if": { "type": "custom" }
                   },
                   "image": {
                     "type": "image",
                     "label": "Badge Image",
                     "help_text": "Upload a custom badge image (optional)",
-                    "show_if": {"type": "custom"}
+                    "show_if": { "type": "custom" }
                   },
                   "title": {
                     "type": "string",
@@ -89,10 +89,26 @@
                 }
               },
               "default": [
-                {"type": "secure_checkout", "title": "Secure Checkout", "description": "Your payment information is encrypted and secure"},
-                {"type": "money_back", "title": "30-Day Returns", "description": "Not satisfied? Get a full refund within 30 days"},
-                {"type": "free_shipping", "title": "Free Shipping", "description": "Free shipping on orders over $50"},
-                {"type": "support_24_7", "title": "24/7 Support", "description": "Our team is here to help anytime"}
+                {
+                  "type": "secure_checkout",
+                  "title": "Secure Checkout",
+                  "description": "Your payment information is encrypted and secure"
+                },
+                {
+                  "type": "money_back",
+                  "title": "30-Day Returns",
+                  "description": "Not satisfied? Get a full refund within 30 days"
+                },
+                {
+                  "type": "free_shipping",
+                  "title": "Free Shipping",
+                  "description": "Free shipping on orders over $50"
+                },
+                {
+                  "type": "support_24_7",
+                  "title": "24/7 Support",
+                  "description": "Our team is here to help anytime"
+                }
               ]
             }
           }
@@ -112,9 +128,9 @@
               "type": "select",
               "label": "Layout",
               "options": [
-                {"value": "inline", "label": "Inline Row"},
-                {"value": "grid", "label": "Grid"},
-                {"value": "stacked", "label": "Stacked Vertical"}
+                { "value": "inline", "label": "Inline Row" },
+                { "value": "grid", "label": "Grid" },
+                { "value": "stacked", "label": "Stacked Vertical" }
               ],
               "default": "inline"
             },
@@ -122,23 +138,23 @@
               "type": "select",
               "label": "Grid Columns",
               "options": [
-                {"value": "2", "label": "2 Columns"},
-                {"value": "3", "label": "3 Columns"},
-                {"value": "4", "label": "4 Columns"},
-                {"value": "5", "label": "5 Columns"},
-                {"value": "6", "label": "6 Columns"}
+                { "value": "2", "label": "2 Columns" },
+                { "value": "3", "label": "3 Columns" },
+                { "value": "4", "label": "4 Columns" },
+                { "value": "5", "label": "5 Columns" },
+                { "value": "6", "label": "6 Columns" }
               ],
               "default": "4",
-              "show_if": {"layout": "grid"}
+              "show_if": { "layout": "grid" }
             },
             "alignment": {
               "type": "select",
               "label": "Alignment",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "center", "label": "Center"},
-                {"value": "right", "label": "Right"},
-                {"value": "space-between", "label": "Space Between"}
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" },
+                { "value": "space-between", "label": "Space Between" }
               ],
               "default": "center"
             }
@@ -152,9 +168,9 @@
               "type": "select",
               "label": "Badge Size",
               "options": [
-                {"value": "sm", "label": "Small"},
-                {"value": "md", "label": "Medium"},
-                {"value": "lg", "label": "Large"}
+                { "value": "sm", "label": "Small" },
+                { "value": "md", "label": "Medium" },
+                { "value": "lg", "label": "Large" }
               ],
               "default": "md"
             },
@@ -162,10 +178,10 @@
               "type": "select",
               "label": "Style",
               "options": [
-                {"value": "minimal", "label": "Minimal (Icon + Text)"},
-                {"value": "boxed", "label": "Boxed"},
-                {"value": "outlined", "label": "Outlined"},
-                {"value": "icon_only", "label": "Icon Only"}
+                { "value": "minimal", "label": "Minimal (Icon + Text)" },
+                { "value": "boxed", "label": "Boxed" },
+                { "value": "outlined", "label": "Outlined" },
+                { "value": "icon_only", "label": "Icon Only" }
               ],
               "default": "minimal"
             }
@@ -230,27 +246,57 @@
     }
   },
   "properties": {
-    "title": {"type": "string", "default": "", "translatable": true},
-    "badges": {"type": "array", "item_schema": {"type": "object", "properties": {"type": {"type": "select", "default": "custom"}, "icon": {"type": "icon_picker"}, "image": {"type": "image"}, "title": {"type": "string", "translatable": true}, "description": {"type": "string", "translatable": true}}}},
-    "layout": {"type": "select", "default": "inline"},
-    "columns": {"type": "select", "default": "4"},
-    "size": {"type": "select", "default": "md"},
-    "style": {"type": "select", "default": "minimal"},
-    "alignment": {"type": "select", "default": "center"},
-    "show_descriptions": {"type": "boolean", "default": false},
-    "show_tooltips": {"type": "boolean", "default": true},
-    "icon_color": {"type": "color_advanced", "default": ""},
-    "text_color": {"type": "color_advanced", "default": ""},
-    "badge_background": {"type": "color_advanced", "default": ""},
-    "border_color": {"type": "color_advanced", "default": ""}
+    "title": { "type": "string", "default": "", "translatable": true },
+    "badges": {
+      "type": "array",
+      "item_schema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "select", "default": "custom" },
+          "icon": { "type": "icon_picker" },
+          "image": { "type": "image" },
+          "title": { "type": "string", "translatable": true },
+          "description": { "type": "string", "translatable": true }
+        }
+      }
+    },
+    "layout": { "type": "select", "default": "inline" },
+    "columns": { "type": "select", "default": "4" },
+    "size": { "type": "select", "default": "md" },
+    "style": { "type": "select", "default": "minimal" },
+    "alignment": { "type": "select", "default": "center" },
+    "show_descriptions": { "type": "boolean", "default": false },
+    "show_tooltips": { "type": "boolean", "default": true },
+    "icon_color": { "type": "color_advanced", "default": "" },
+    "text_color": { "type": "color_advanced", "default": "" },
+    "badge_background": { "type": "color_advanced", "default": "" },
+    "border_color": { "type": "color_advanced", "default": "" }
   },
   "translations": {
-    "en": {"name": "Trust Badges", "description": "Display trust indicators like secure checkout, money-back guarantee, and shipping badges"},
-    "es": {"name": "Insignias de Confianza", "description": "Muestre indicadores de confianza como pago seguro, garantía de devolución y envío"},
-    "fr": {"name": "Badges de Confiance", "description": "Affichez des indicateurs de confiance comme le paiement sécurisé et la garantie"},
-    "de": {"name": "Vertrauensabzeichen", "description": "Zeigen Sie Vertrauensindikatoren wie sichere Zahlung und Geld-zurück-Garantie"},
-    "pt": {"name": "Selos de Confiança", "description": "Exiba indicadores de confiança como checkout seguro e garantia de devolução"},
-    "zh-hans": {"name": "信任徽章", "description": "展示安全结账、退款保证和配送徽章等信任标识"},
-    "ja": {"name": "トラストバッジ", "description": "安全なチェックアウト、返金保証、配送バッジなどの信頼指標を表示"}
+    "en": {
+      "name": "Trust Badges",
+      "description": "Display trust indicators like secure checkout, money-back guarantee, and shipping badges"
+    },
+    "es": {
+      "name": "Insignias de Confianza",
+      "description": "Muestre indicadores de confianza como pago seguro, garantía de devolución y envío"
+    },
+    "fr": {
+      "name": "Badges de Confiance",
+      "description": "Affichez des indicateurs de confiance comme le paiement sécurisé et la garantie"
+    },
+    "de": {
+      "name": "Vertrauensabzeichen",
+      "description": "Zeigen Sie Vertrauensindikatoren wie sichere Zahlung und Geld-zurück-Garantie"
+    },
+    "pt": {
+      "name": "Selos de Confiança",
+      "description": "Exiba indicadores de confiança como checkout seguro e garantia de devolução"
+    },
+    "zh-hans": { "name": "信任徽章", "description": "展示安全结账、退款保证和配送徽章等信任标识" },
+    "ja": {
+      "name": "トラストバッジ",
+      "description": "安全なチェックアウト、返金保証、配送バッジなどの信頼指標を表示"
+    }
   }
 }

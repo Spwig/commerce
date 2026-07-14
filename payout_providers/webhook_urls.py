@@ -6,11 +6,12 @@ These must be outside i18n_patterns (external services don't use language prefix
 """
 
 from django.urls import path
+
 from . import views
 
-app_name = 'payout_webhooks'
+app_name = "payout_webhooks"
 
 urlpatterns = [
-    path('paypal/', views.paypal_webhook, name='webhook_paypal'),
-    path('airwallex/', views.airwallex_webhook, name='webhook_airwallex'),
+    path("paypal/", views.paypal_webhook, name="webhook_paypal"),
+    path("airwallex/", views.airwallex_webhook, name="webhook_airwallex"),
 ]

@@ -4,11 +4,12 @@ Media Helper Utilities for Migration.
 Provides helper functions for downloading and creating media assets
 during WordPress/WooCommerce migration.
 """
-import logging
+
 import hashlib
-import requests
-from typing import Optional
+import logging
 from urllib.parse import urlparse
+
+import requests
 from django.core.files.base import ContentFile
 from django.utils import timezone
 
@@ -19,12 +20,12 @@ logger = logging.getLogger(__name__)
 
 def download_and_create_media_asset(
     url: str,
-    alt_text: str = '',
-    title: str = '',
+    alt_text: str = "",
+    title: str = "",
     timeout: int = 30,
     max_file_size: int = 10 * 1024 * 1024,  # 10MB
     migration_job=None,
-) -> Optional[MediaAsset]:
+) -> MediaAsset | None:
     """
     Download an image from a URL and create a MediaAsset.
 
@@ -44,9 +45,7 @@ def download_and_create_media_asset(
         url_hash = hashlib.md5(url.encode()).hexdigest()
 
         # Check for existing asset by URL hash
-        existing = MediaAsset.objects.filter(
-            external_id=f"wp_media_{url_hash}"
-        ).first()
+        existing = MediaAsset.objects.filter(external_id=f"wp_media_{url_hash}").first()
 
         if existing:
             logger.debug(f"Found existing asset for {url}")
@@ -57,7 +56,7 @@ def download_and_create_media_asset(
         response.raise_for_status()
 
         # Check content length
-        content_length = int(response.headers.get('Content-Length', 0))
+        content_length = int(response.headers.get("Content-Length", 0))
         if content_length > max_file_size:
             logger.warning(f"Image too large ({content_length} bytes): {url}")
             return None
@@ -67,18 +66,18 @@ def download_and_create_media_asset(
 
         # Get filename from URL
         parsed = urlparse(url)
-        filename = parsed.path.split('/')[-1]
-        if not filename or '.' not in filename:
+        filename = parsed.path.split("/")[-1]
+        if not filename or "." not in filename:
             filename = f"image_{url_hash[:8]}.jpg"
 
         # Clean up title
         if not title:
-            title = filename.rsplit('.', 1)[0].replace('-', ' ').replace('_', ' ').title()
+            title = filename.rsplit(".", 1)[0].replace("-", " ").replace("_", " ").title()
 
         # Detect mime type
-        content_type = response.headers.get('Content-Type', 'image/jpeg')
-        if ';' in content_type:
-            content_type = content_type.split(';')[0].strip()
+        content_type = response.headers.get("Content-Type", "image/jpeg")
+        if ";" in content_type:
+            content_type = content_type.split(";")[0].strip()
 
         # Create MediaAsset
         media_asset = MediaAsset.objects.create(
@@ -92,11 +91,7 @@ def download_and_create_media_asset(
         )
 
         # Save the file
-        media_asset.original_file.save(
-            filename,
-            ContentFile(content),
-            save=True
-        )
+        media_asset.original_file.save(filename, ContentFile(content), save=True)
 
         # Try to generate WebP and thumbnails
         _generate_variants(media_asset)
@@ -120,16 +115,15 @@ def _generate_variants(media_asset: MediaAsset) -> None:
         media_asset: MediaAsset instance
     """
     try:
+        from media_library.models import ImageSizePreset, MediaThumbnail
         from media_library.services import ImageProcessor
-        from media_library.models import MediaThumbnail
-        from media_library.models import ImageSizePreset
 
         # Skip non-images
-        if not media_asset.mime_type.startswith('image/'):
+        if not media_asset.mime_type.startswith("image/"):
             return
 
         # Skip SVGs
-        if 'svg' in media_asset.mime_type:
+        if "svg" in media_asset.mime_type:
             return
 
         processor = ImageProcessor()
@@ -150,25 +144,21 @@ def _generate_variants(media_asset: MediaAsset) -> None:
                     media_asset.original_file,
                     preset.width,
                     preset.height,
-                    crop_mode=preset.crop_mode
+                    crop_mode=preset.crop_mode,
                 )
                 if original_content:
                     thumbnail = MediaThumbnail.objects.create(
                         media_asset=media_asset,
                         size_preset=preset.slug,
                         width=preset.width,
-                        height=preset.height
+                        height=preset.height,
                     )
                     thumbnail.file.save(
-                        f"{media_asset.id}_{preset.slug}.jpg",
-                        original_content,
-                        save=False
+                        f"{media_asset.id}_{preset.slug}.jpg", original_content, save=False
                     )
                     if webp_content:
                         thumbnail.webp_file.save(
-                            f"{media_asset.id}_{preset.slug}.webp",
-                            webp_content,
-                            save=False
+                            f"{media_asset.id}_{preset.slug}.webp", webp_content, save=False
                         )
                     thumbnail.save()
         except Exception as e:

@@ -4,14 +4,17 @@ Celery tasks for accounts app.
 Background tasks for:
 - Cleaning up expired preference change logs (GDPR retention)
 """
+
 import logging
+
 from celery import shared_task
+
 from core.celery_utils import BackgroundDBTask
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name='accounts.cleanup_old_preference_logs', base=BackgroundDBTask, ignore_result=True)
+@shared_task(name="accounts.cleanup_old_preference_logs", base=BackgroundDBTask, ignore_result=True)
 def cleanup_old_preference_logs(days=90):
     """
     Clean up preference change logs older than specified days.
@@ -30,21 +33,16 @@ def cleanup_old_preference_logs(days=90):
     try:
         deleted_count = PreferenceChangeLog.cleanup_old_logs(days=days)
 
-        logger.info(
-            f"Cleaned up {deleted_count} preference change logs older than {days} days"
-        )
+        logger.info(f"Cleaned up {deleted_count} preference change logs older than {days} days")
 
         return deleted_count
 
     except Exception as e:
-        logger.error(
-            f"Error cleaning up preference logs: {e}",
-            exc_info=True
-        )
+        logger.error(f"Error cleaning up preference logs: {e}", exc_info=True)
         return 0
 
 
-@shared_task(name='accounts.cleanup_expired_sms_codes', base=BackgroundDBTask, ignore_result=True)
+@shared_task(name="accounts.cleanup_expired_sms_codes", base=BackgroundDBTask, ignore_result=True)
 def cleanup_expired_sms_codes():
     """
     Clean up expired SMS verification codes.
@@ -55,8 +53,10 @@ def cleanup_expired_sms_codes():
     Returns:
         int: Number of codes cleared
     """
-    from django.utils import timezone
     from datetime import timedelta
+
+    from django.utils import timezone
+
     from accounts.models import CommunicationPreference
 
     try:
@@ -65,25 +65,18 @@ def cleanup_expired_sms_codes():
 
         # Find preferences with expired codes
         expired_prefs = CommunicationPreference.objects.filter(
-            sms_verification_sent_at__lt=cutoff_time,
-            sms_verification_code__isnull=False
-        ).exclude(sms_verification_code='')
+            sms_verification_sent_at__lt=cutoff_time, sms_verification_code__isnull=False
+        ).exclude(sms_verification_code="")
 
         count = expired_prefs.count()
 
         # Clear codes
-        expired_prefs.update(
-            sms_verification_code='',
-            updated_at=timezone.now()
-        )
+        expired_prefs.update(sms_verification_code="", updated_at=timezone.now())
 
         logger.info(f"Cleaned up {count} expired SMS verification codes")
 
         return count
 
     except Exception as e:
-        logger.error(
-            f"Error cleaning up SMS codes: {e}",
-            exc_info=True
-        )
+        logger.error(f"Error cleaning up SMS codes: {e}", exc_info=True)
         return 0

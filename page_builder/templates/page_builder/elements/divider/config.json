@@ -33,14 +33,14 @@
               "type": "select",
               "label": "Style",
               "options": [
-                {"value": "solid", "label": "Solid"},
-                {"value": "dashed", "label": "Dashed"},
-                {"value": "dotted", "label": "Dotted"},
-                {"value": "double", "label": "Double"},
-                {"value": "groove", "label": "Groove"},
-                {"value": "ridge", "label": "Ridge"},
-                {"value": "gradient", "label": "Gradient Fade"},
-                {"value": "shadow", "label": "Shadow Line"}
+                { "value": "solid", "label": "Solid" },
+                { "value": "dashed", "label": "Dashed" },
+                { "value": "dotted", "label": "Dotted" },
+                { "value": "double", "label": "Double" },
+                { "value": "groove", "label": "Groove" },
+                { "value": "ridge", "label": "Ridge" },
+                { "value": "gradient", "label": "Gradient Fade" },
+                { "value": "shadow", "label": "Shadow Line" }
               ],
               "default": "solid"
             },
@@ -71,11 +71,11 @@
               "type": "select",
               "label": "Width",
               "options": [
-                {"value": "100%", "label": "Full Width"},
-                {"value": "75%", "label": "75%"},
-                {"value": "50%", "label": "50%"},
-                {"value": "33%", "label": "33%"},
-                {"value": "25%", "label": "25%"}
+                { "value": "100%", "label": "Full Width" },
+                { "value": "75%", "label": "75%" },
+                { "value": "50%", "label": "50%" },
+                { "value": "33%", "label": "33%" },
+                { "value": "25%", "label": "25%" }
               ],
               "default": "100%"
             },
@@ -83,9 +83,9 @@
               "type": "select",
               "label": "Alignment",
               "options": [
-                {"value": "left", "label": "Left"},
-                {"value": "center", "label": "Center"},
-                {"value": "right", "label": "Right"}
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
               ],
               "default": "center"
             }
@@ -119,19 +119,89 @@
     }
   },
   "properties": {
-    "style": {"type": "select", "label": "Line Style", "options": [{"value": "solid", "label": "Solid"}, {"value": "dashed", "label": "Dashed"}, {"value": "dotted", "label": "Dotted"}, {"value": "double", "label": "Double"}, {"value": "groove", "label": "Groove"}, {"value": "ridge", "label": "Ridge"}, {"value": "gradient", "label": "Gradient Fade"}, {"value": "shadow", "label": "Shadow Line"}], "default": "solid"},
-    "thickness": {"type": "number", "label": "Thickness (px)", "default": null, "placeholder": "Theme default", "min": 1, "max": 20},
-    "line_color": {"type": "color_advanced", "label": "Line Color", "utility": "color_picker", "default": null, "placeholder": "Theme default"},
-    "width": {"type": "select", "label": "Width", "options": [{"value": "100%", "label": "Full Width"}, {"value": "75%", "label": "75%"}, {"value": "50%", "label": "50%"}, {"value": "33%", "label": "33%"}, {"value": "25%", "label": "25%"}], "default": "100%"},
-    "alignment": {"type": "select", "label": "Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "center"},
-    "margin_top": {"type": "number", "label": "Top Margin (px)", "default": null, "placeholder": "Theme default", "min": 0, "max": 200},
-    "margin_bottom": {"type": "number", "label": "Bottom Margin (px)", "default": null, "placeholder": "Theme default", "min": 0, "max": 200}
+    "style": {
+      "type": "select",
+      "label": "Line Style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "dashed", "label": "Dashed" },
+        { "value": "dotted", "label": "Dotted" },
+        { "value": "double", "label": "Double" },
+        { "value": "groove", "label": "Groove" },
+        { "value": "ridge", "label": "Ridge" },
+        { "value": "gradient", "label": "Gradient Fade" },
+        { "value": "shadow", "label": "Shadow Line" }
+      ],
+      "default": "solid"
+    },
+    "thickness": {
+      "type": "number",
+      "label": "Thickness (px)",
+      "default": null,
+      "placeholder": "Theme default",
+      "min": 1,
+      "max": 20
+    },
+    "line_color": {
+      "type": "color_advanced",
+      "label": "Line Color",
+      "utility": "color_picker",
+      "default": null,
+      "placeholder": "Theme default"
+    },
+    "width": {
+      "type": "select",
+      "label": "Width",
+      "options": [
+        { "value": "100%", "label": "Full Width" },
+        { "value": "75%", "label": "75%" },
+        { "value": "50%", "label": "50%" },
+        { "value": "33%", "label": "33%" },
+        { "value": "25%", "label": "25%" }
+      ],
+      "default": "100%"
+    },
+    "alignment": {
+      "type": "select",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    "margin_top": {
+      "type": "number",
+      "label": "Top Margin (px)",
+      "default": null,
+      "placeholder": "Theme default",
+      "min": 0,
+      "max": 200
+    },
+    "margin_bottom": {
+      "type": "number",
+      "label": "Bottom Margin (px)",
+      "default": null,
+      "placeholder": "Theme default",
+      "min": 0,
+      "max": 200
+    }
   },
   "translations": {
-    "en": {"name": "Divider", "description": "Horizontal line to separate content sections"},
-    "es": {"name": "Divisor", "description": "Linea horizontal para separar secciones de contenido"},
-    "fr": {"name": "Diviseur", "description": "Ligne horizontale pour separer les sections de contenu"},
-    "de": {"name": "Trenner", "description": "Horizontale Linie zur Trennung von Inhaltsabschnitten"},
-    "ar": {"name": "fasl", "description": "kht afqy lfsl aqsam almhtwy"}
+    "en": { "name": "Divider", "description": "Horizontal line to separate content sections" },
+    "es": {
+      "name": "Divisor",
+      "description": "Linea horizontal para separar secciones de contenido"
+    },
+    "fr": {
+      "name": "Diviseur",
+      "description": "Ligne horizontale pour separer les sections de contenu"
+    },
+    "de": {
+      "name": "Trenner",
+      "description": "Horizontale Linie zur Trennung von Inhaltsabschnitten"
+    },
+    "ar": { "name": "fasl", "description": "kht afqy lfsl aqsam almhtwy" }
   }
 }

@@ -16,34 +16,32 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = 'Refresh license.json from the update server'
+    help = "Refresh license.json from the update server"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Force write license.json even if data is unchanged',
+            "--force",
+            action="store_true",
+            help="Force write license.json even if data is unchanged",
         )
         parser.add_argument(
-            '--status',
-            action='store_true',
-            help='Show current license status without refreshing',
+            "--status",
+            action="store_true",
+            help="Show current license status without refreshing",
         )
 
     def handle(self, *args, **options):
-        from core.license import get_license_manager, is_sandbox_mode
+        from core.license import is_sandbox_mode
 
         if is_sandbox_mode():
-            self.stdout.write(self.style.WARNING(
-                "Sandbox mode — no license to refresh."
-            ))
+            self.stdout.write(self.style.WARNING("Sandbox mode — no license to refresh."))
             return
 
-        if options['status']:
+        if options["status"]:
             self._show_status()
             return
 
-        self._do_refresh(force=options['force'])
+        self._do_refresh(force=options["force"])
 
     def _show_status(self):
         """Display current license status."""
@@ -64,17 +62,17 @@ class Command(BaseCommand):
         self.stdout.write("")
         self.stdout.write("  Maintenance")
         self.stdout.write(f"    Active:        {info.get('maintenance_active', 'N/A')}")
-        expires = info.get('maintenance_expires_at')
+        expires = info.get("maintenance_expires_at")
         if expires:
             self.stdout.write(f"    Expires:       {expires}")
         else:
-            self.stdout.write(f"    Expires:       Perpetual")
-        days = info.get('maintenance_days_remaining')
+            self.stdout.write("    Expires:       Perpetual")
+        days = info.get("maintenance_days_remaining")
         if days is not None:
             self.stdout.write(f"    Days left:     {days}")
 
         # Revocation
-        if info.get('revocation_pending'):
+        if info.get("revocation_pending"):
             self.stdout.write("")
             self.stdout.write(self.style.WARNING("  Revocation Pending"))
             self.stdout.write(f"    Reason:        {info.get('revocation_reason')}")
@@ -95,39 +93,35 @@ class Command(BaseCommand):
             self.stderr.write(self.style.ERROR(f"Refresh failed: {e}"))
             return
 
-        if result.get('error'):
-            error = result['error']
-            if error in ('license_revoked', 'license_expired'):
-                self.stderr.write(self.style.ERROR(
-                    f"License {error}: {result.get('message', '')}"
-                ))
-            elif error == 'sandbox_mode':
+        if result.get("error"):
+            error = result["error"]
+            if error in ("license_revoked", "license_expired"):
+                self.stderr.write(self.style.ERROR(f"License {error}: {result.get('message', '')}"))
+            elif error == "sandbox_mode":
                 self.stdout.write(self.style.WARNING("Sandbox mode — skipped."))
-            elif error.startswith('auth_failed'):
-                self.stderr.write(self.style.ERROR(
-                    f"Authentication failed: {error}"
-                ))
+            elif error.startswith("auth_failed"):
+                self.stderr.write(self.style.ERROR(f"Authentication failed: {error}"))
             else:
                 self.stderr.write(self.style.WARNING(f"Refresh issue: {error}"))
             return
 
-        if result.get('refreshed'):
-            changes = result.get('changes', [])
-            self.stdout.write(self.style.SUCCESS(
-                f"License refreshed. Changed fields: {', '.join(changes) if changes else 'force_write'}"
-            ))
+        if result.get("refreshed"):
+            changes = result.get("changes", [])
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"License refreshed. Changed fields: {', '.join(changes) if changes else 'force_write'}"
+                )
+            )
 
-            maint = result.get('maintenance_status', {})
+            maint = result.get("maintenance_status", {})
             if maint:
-                active = maint.get('active', False)
+                active = maint.get("active", False)
                 style = self.style.SUCCESS if active else self.style.WARNING
-                self.stdout.write(style(
-                    f"  Maintenance: {'active' if active else 'inactive'}"
-                ))
-                expires = maint.get('expires_at')
+                self.stdout.write(style(f"  Maintenance: {'active' if active else 'inactive'}"))
+                expires = maint.get("expires_at")
                 if expires:
                     self.stdout.write(f"  Expires: {expires}")
                 elif active:
-                    self.stdout.write(f"  Expires: Perpetual")
+                    self.stdout.write("  Expires: Perpetual")
         else:
             self.stdout.write("No changes detected — license is up to date.")

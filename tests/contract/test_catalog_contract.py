@@ -6,20 +6,15 @@ detects breaking changes before they reach production.
 
 Reference implementation showing all contract test patterns.
 """
-import pytest
-from tests.conftest import simple_product, category
-from tests.contract.conftest import (
-    contract_client,
-    auth_contract_client,
-    load_schema_baseline,
-    save_schema_baseline
-)
-from tests.contract.utils.contract_validator import (
-    validate_response_against_schema,
-    extract_response_schema
-)
-from tests.contract.utils.breaking_change_detector import detect_breaking_changes
 
+import pytest
+
+from tests.contract.conftest import load_schema_baseline
+from tests.contract.utils.breaking_change_detector import detect_breaking_changes
+from tests.contract.utils.contract_validator import (
+    extract_response_schema,
+    validate_response_against_schema,
+)
 
 pytestmark = [pytest.mark.django_db, pytest.mark.contract]
 
@@ -27,9 +22,9 @@ pytestmark = [pytest.mark.django_db, pytest.mark.contract]
 class TestProductListContract:
     """Contract tests for Product List API"""
 
-    API_ENDPOINT = '/api/catalog/products/'
-    SCHEMA_MODULE = 'catalog'
-    SERIALIZER_NAME = 'ProductListSerializer'
+    API_ENDPOINT = "/api/catalog/products/"
+    SCHEMA_MODULE = "catalog"
+    SERIALIZER_NAME = "ProductListSerializer"
 
     def test_product_list_matches_contract(self, contract_client, simple_product):
         """
@@ -40,27 +35,26 @@ class TestProductListContract:
         assert response.status_code == 200, f"API returned {response.status_code}"
 
         data = response.json()
-        assert 'results' in data, "Paginated response missing 'results' key"
-        assert len(data['results']) > 0, "No products in response"
+        assert "results" in data, "Paginated response missing 'results' key"
+        assert len(data["results"]) > 0, "No products in response"
 
         # Extract first product for schema validation
-        product_data = data['results'][0]
+        product_data = data["results"][0]
 
         try:
             # Load baseline schema
-            baseline_schema = load_schema_baseline(
-                self.SCHEMA_MODULE,
-                self.SERIALIZER_NAME
-            )
+            baseline_schema = load_schema_baseline(self.SCHEMA_MODULE, self.SERIALIZER_NAME)
 
             # Validate response against baseline
             result = validate_response_against_schema(product_data, baseline_schema)
 
             # Assert validation passed
             assert result.is_valid, (
-                f"Product list response does not match contract.\n"
-                f"Errors:\n  " + "\n  ".join(result.errors) + "\n"
-                f"Warnings:\n  " + "\n  ".join(result.warnings) if result.warnings else ""
+                "Product list response does not match contract.\n"
+                "Errors:\n  " + "\n  ".join(result.errors) + "\n"
+                "Warnings:\n  " + "\n  ".join(result.warnings)
+                if result.warnings
+                else ""
             )
 
         except FileNotFoundError as e:
@@ -79,28 +73,27 @@ class TestProductListContract:
         assert response.status_code == 200
 
         data = response.json()
-        product_data = data['results'][0]
+        product_data = data["results"][0]
 
         # Generate schema from current response
         current_schema = extract_response_schema(product_data)
 
         try:
             # Load baseline schema
-            baseline_schema = load_schema_baseline(
-                self.SCHEMA_MODULE,
-                self.SERIALIZER_NAME
-            )
+            baseline_schema = load_schema_baseline(self.SCHEMA_MODULE, self.SERIALIZER_NAME)
 
             # Detect breaking changes
             change_report = detect_breaking_changes(baseline_schema, current_schema)
 
             # Assert no breaking changes
             assert not change_report.has_breaking_changes, (
-                f"Breaking changes detected in {self.SERIALIZER_NAME}:\n" +
-                "\n".join([
-                    f"  - {change.field_path}: {change.description}"
-                    for change in change_report.breaking_changes
-                ])
+                f"Breaking changes detected in {self.SERIALIZER_NAME}:\n"
+                + "\n".join(
+                    [
+                        f"  - {change.field_path}: {change.description}"
+                        for change in change_report.breaking_changes
+                    ]
+                )
             )
 
             # Log non-breaking changes as info (doesn't fail test)
@@ -120,18 +113,18 @@ class TestProductListContract:
         response = contract_client.get(self.API_ENDPOINT)
         assert response.status_code == 200
 
-        product_data = response.json()['results'][0]
+        product_data = response.json()["results"][0]
 
         # Define critical fields that must always be present
         # Note: API uses price_amount/price_currency for multi-currency support
         required_fields = [
-            'id',
-            'name',
-            'slug',
-            'price_amount',
-            'price_currency',
-            'product_type',
-            'sku',
+            "id",
+            "name",
+            "slug",
+            "price_amount",
+            "price_currency",
+            "product_type",
+            "sku",
         ]
 
         for field in required_fields:
@@ -146,18 +139,18 @@ class TestProductListContract:
         response = contract_client.get(self.API_ENDPOINT)
         assert response.status_code == 200
 
-        product_data = response.json()['results'][0]
+        product_data = response.json()["results"][0]
 
         # Define expected types for current API design
         type_expectations = {
-            'id': int,
-            'name': str,
-            'slug': str,
-            'price_amount': str,  # DecimalField serialized as string
-            'price_currency': str,
-            'product_type': str,
-            'is_in_stock': bool,
-            'is_featured': bool,
+            "id": int,
+            "name": str,
+            "slug": str,
+            "price_amount": str,  # DecimalField serialized as string
+            "price_currency": str,
+            "product_type": str,
+            "is_in_stock": bool,
+            "is_featured": bool,
         }
 
         for field, expected_type in type_expectations.items():
@@ -176,24 +169,28 @@ class TestProductListContract:
         data = response.json()
 
         # Pagination wrapper schema
-        assert 'count' in data, "Missing 'count' in paginated response"
-        assert 'next' in data, "Missing 'next' in paginated response"
-        assert 'previous' in data, "Missing 'previous' in paginated response"
-        assert 'results' in data, "Missing 'results' in paginated response"
+        assert "count" in data, "Missing 'count' in paginated response"
+        assert "next" in data, "Missing 'next' in paginated response"
+        assert "previous" in data, "Missing 'previous' in paginated response"
+        assert "results" in data, "Missing 'results' in paginated response"
 
         # Type checks
-        assert isinstance(data['count'], int), "count should be integer"
-        assert isinstance(data['results'], list), "results should be array"
-        assert data['next'] is None or isinstance(data['next'], str), "next should be string or null"
-        assert data['previous'] is None or isinstance(data['previous'], str), "previous should be string or null"
+        assert isinstance(data["count"], int), "count should be integer"
+        assert isinstance(data["results"], list), "results should be array"
+        assert data["next"] is None or isinstance(data["next"], str), (
+            "next should be string or null"
+        )
+        assert data["previous"] is None or isinstance(data["previous"], str), (
+            "previous should be string or null"
+        )
 
 
 class TestProductDetailContract:
     """Contract tests for Product Detail API"""
 
-    API_ENDPOINT_TEMPLATE = '/api/catalog/products/{slug}/'
-    SCHEMA_MODULE = 'catalog'
-    SERIALIZER_NAME = 'ProductDetailSerializer'
+    API_ENDPOINT_TEMPLATE = "/api/catalog/products/{slug}/"
+    SCHEMA_MODULE = "catalog"
+    SERIALIZER_NAME = "ProductDetailSerializer"
 
     def test_product_detail_matches_contract(self, contract_client, simple_product):
         """
@@ -207,17 +204,14 @@ class TestProductDetailContract:
 
         try:
             # Load baseline schema
-            baseline_schema = load_schema_baseline(
-                self.SCHEMA_MODULE,
-                self.SERIALIZER_NAME
-            )
+            baseline_schema = load_schema_baseline(self.SCHEMA_MODULE, self.SERIALIZER_NAME)
 
             # Validate response
             result = validate_response_against_schema(data, baseline_schema)
 
             assert result.is_valid, (
-                f"Product detail response does not match contract.\n"
-                f"Errors:\n  " + "\n  ".join(result.errors)
+                "Product detail response does not match contract.\n"
+                "Errors:\n  " + "\n  ".join(result.errors)
             )
 
         except FileNotFoundError:
@@ -229,8 +223,8 @@ class TestProductDetailContract:
         Detail view may expand simple fields into full objects (e.g., category_name -> category).
         """
         # Get list view
-        list_response = contract_client.get('/api/catalog/products/')
-        list_fields = set(list_response.json()['results'][0].keys())
+        list_response = contract_client.get("/api/catalog/products/")
+        list_fields = set(list_response.json()["results"][0].keys())
 
         # Get detail view
         detail_endpoint = self.API_ENDPOINT_TEMPLATE.format(slug=simple_product.slug)
@@ -240,9 +234,9 @@ class TestProductDetailContract:
         # Map of list fields that are expanded in detail view
         # Format: {list_field: detail_field}
         field_expansions = {
-            'category_name': 'category',  # Simple string -> Full object
-            'brand_name': 'brand',        # Simple string -> Full object
-            'primary_image': 'images',    # Single image -> Full images array
+            "category_name": "category",  # Simple string -> Full object
+            "brand_name": "brand",  # Simple string -> Full object
+            "primary_image": "images",  # Single image -> Full images array
         }
 
         # Check that all list fields are present in detail (or have expanded equivalents)
@@ -261,8 +255,7 @@ class TestProductDetailContract:
             missing_fields.append(list_field)
 
         assert not missing_fields, (
-            "Detail view missing fields present in list view: "
-            f"{missing_fields}"
+            f"Detail view missing fields present in list view: {missing_fields}"
         )
 
         # Detail should have additional fields beyond the list view
@@ -274,22 +267,22 @@ class TestProductDetailContract:
         """
         Verify 404 error response structure is consistent
         """
-        response = contract_client.get('/api/catalog/products/nonexistent-product/')
+        response = contract_client.get("/api/catalog/products/nonexistent-product/")
         assert response.status_code == 404
 
         data = response.json()
 
         # DRF error response should have 'detail' key
-        assert 'detail' in data, "404 response missing 'detail' key"
-        assert isinstance(data['detail'], str), "'detail' should be a string"
+        assert "detail" in data, "404 response missing 'detail' key"
+        assert isinstance(data["detail"], str), "'detail' should be a string"
 
 
 class TestCategoryListContract:
     """Contract tests for Category List API"""
 
-    API_ENDPOINT = '/api/catalog/categories/'
-    SCHEMA_MODULE = 'catalog'
-    SERIALIZER_NAME = 'CategoryListSerializer'
+    API_ENDPOINT = "/api/catalog/categories/"
+    SCHEMA_MODULE = "catalog"
+    SERIALIZER_NAME = "CategoryListSerializer"
 
     def test_category_list_matches_contract(self, contract_client, category):
         """
@@ -299,22 +292,19 @@ class TestCategoryListContract:
         assert response.status_code == 200
 
         data = response.json()
-        assert 'results' in data
-        assert len(data['results']) > 0
+        assert "results" in data
+        assert len(data["results"]) > 0
 
-        category_data = data['results'][0]
+        category_data = data["results"][0]
 
         try:
-            baseline_schema = load_schema_baseline(
-                self.SCHEMA_MODULE,
-                self.SERIALIZER_NAME
-            )
+            baseline_schema = load_schema_baseline(self.SCHEMA_MODULE, self.SERIALIZER_NAME)
 
             result = validate_response_against_schema(category_data, baseline_schema)
 
             assert result.is_valid, (
-                f"Category list response does not match contract.\n"
-                f"Errors:\n  " + "\n  ".join(result.errors)
+                "Category list response does not match contract.\n"
+                "Errors:\n  " + "\n  ".join(result.errors)
             )
 
         except FileNotFoundError:
@@ -325,15 +315,15 @@ class TestCategoryListContract:
         Verify category response includes hierarchical fields
         """
         response = contract_client.get(self.API_ENDPOINT)
-        category_data = response.json()['results'][0]
+        category_data = response.json()["results"][0]
 
         # Categories should support hierarchy
-        hierarchical_fields = ['parent', 'level', 'path']
+        hierarchical_fields = ["parent", "level", "path"]
 
         for field in hierarchical_fields:
             # Field might not exist if category is root, but structure should support it
             # This is a structural check, not a required field check
             if field in category_data:
-                assert category_data[field] is not None or field == 'parent', (
+                assert category_data[field] is not None or field == "parent", (
                     f"Hierarchical field '{field}' has unexpected None value"
                 )

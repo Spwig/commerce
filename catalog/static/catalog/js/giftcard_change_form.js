@@ -5,35 +5,34 @@
  * Handles save buttons only.
  * Tab switching is handled by the global AdminTabs utility (admin-tabs.js).
  */
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        initSaveButtons();
-    });
+  document.addEventListener('DOMContentLoaded', function () {
+    initSaveButtons();
+  });
 
-    function initSaveButtons() {
-        var form = document.getElementById('giftcard_form');
-        if (!form) return;
+  function initSaveButtons() {
+    const form = document.getElementById('giftcard_form');
+    if (!form) return;
 
-        var saveContinueBtn = document.getElementById('gc-save-continue-btn');
-        if (saveContinueBtn) {
-            saveContinueBtn.addEventListener('click', function() {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = '_continue';
-                input.value = '1';
-                form.appendChild(input);
-                form.submit();
-            });
-        }
-
-        var saveBtn = document.getElementById('gc-save-btn');
-        if (saveBtn) {
-            saveBtn.addEventListener('click', function() {
-                form.submit();
-            });
-        }
+    const saveContinueBtn = document.getElementById('gc-save-continue-btn');
+    if (saveContinueBtn) {
+      saveContinueBtn.addEventListener('click', function () {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = '_continue';
+        input.value = '1';
+        form.appendChild(input);
+        form.submit();
+      });
     }
 
+    const saveBtn = document.getElementById('gc-save-btn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        form.submit();
+      });
+    }
+  }
 })();

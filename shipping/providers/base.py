@@ -4,10 +4,9 @@ Base provider interface for shipping integrations.
 All shipping provider implementations must inherit from ProviderBase
 and implement all abstract methods defined here.
 """
+
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any
-from decimal import Decimal
-from datetime import datetime
+from typing import Any
 
 
 class ProviderBase(ABC):
@@ -32,7 +31,7 @@ class ProviderBase(ABC):
     provider_key: str = None
     provider_name: str = None
 
-    def __init__(self, credentials: Dict[str, Any], config: Optional[Dict[str, Any]] = None):
+    def __init__(self, credentials: dict[str, Any], config: dict[str, Any] | None = None):
         """
         Initialize provider with credentials and configuration.
 
@@ -56,7 +55,7 @@ class ProviderBase(ABC):
 
     @property
     @abstractmethod
-    def capabilities(self) -> Dict[str, bool]:
+    def capabilities(self) -> dict[str, bool]:
         """
         Return dictionary of provider capabilities.
 
@@ -79,7 +78,7 @@ class ProviderBase(ABC):
 
     @property
     @abstractmethod
-    def credential_schema(self) -> Dict[str, Any]:
+    def credential_schema(self) -> dict[str, Any]:
         """
         Return JSON schema describing required credentials.
 
@@ -111,7 +110,7 @@ class ProviderBase(ABC):
         pass
 
     @abstractmethod
-    def validate_credentials(self, credentials: Dict[str, Any]) -> None:
+    def validate_credentials(self, credentials: dict[str, Any]) -> None:
         """
         Validate credentials against schema and business logic.
 
@@ -124,7 +123,7 @@ class ProviderBase(ABC):
         pass
 
     @abstractmethod
-    def redact_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    def redact_credentials(self, credentials: dict[str, Any]) -> dict[str, Any]:
         """
         Redact sensitive credential values for logging.
 
@@ -137,7 +136,7 @@ class ProviderBase(ABC):
         pass
 
     @abstractmethod
-    def test_connection(self) -> Dict[str, Any]:
+    def test_connection(self) -> dict[str, Any]:
         """
         Test API connection and credential validity.
 
@@ -160,11 +159,11 @@ class ProviderBase(ABC):
     @abstractmethod
     def get_rates(
         self,
-        origin: Dict[str, str],
-        destination: Dict[str, str],
-        parcels: List[Dict[str, Any]],
-        options: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+        origin: dict[str, str],
+        destination: dict[str, str],
+        parcels: list[dict[str, Any]],
+        options: dict[str, Any] | None = None,
+    ) -> list[dict[str, Any]]:
         """
         Get shipping rates for a shipment.
 
@@ -215,11 +214,8 @@ class ProviderBase(ABC):
 
     @abstractmethod
     def buy_label(
-        self,
-        shipment_id: str,
-        rate: Dict[str, Any],
-        options: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, shipment_id: str, rate: dict[str, Any], options: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Purchase shipping label for selected rate.
 
@@ -253,7 +249,7 @@ class ProviderBase(ABC):
         pass
 
     @abstractmethod
-    def cancel_label(self, tracking_number: str, reason: Optional[str] = None) -> Dict[str, Any]:
+    def cancel_label(self, tracking_number: str, reason: str | None = None) -> dict[str, Any]:
         """
         Cancel a shipping label and request refund.
 
@@ -278,7 +274,7 @@ class ProviderBase(ABC):
         pass
 
     @abstractmethod
-    def get_tracking(self, tracking_number: str) -> Dict[str, Any]:
+    def get_tracking(self, tracking_number: str) -> dict[str, Any]:
         """
         Get tracking information for a shipment.
 
@@ -332,7 +328,7 @@ class ProviderBase(ABC):
         pass
 
     @abstractmethod
-    def handle_webhook(self, event_type: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_webhook(self, event_type: str, payload: dict[str, Any]) -> dict[str, Any]:
         """
         Process webhook event from provider.
 
@@ -373,7 +369,7 @@ class ProviderBase(ABC):
         """
         return self.capabilities.get(capability, False)
 
-    def get_required_credentials(self) -> List[str]:
+    def get_required_credentials(self) -> list[str]:
         """
         Get list of required credential field names.
 
@@ -383,9 +379,9 @@ class ProviderBase(ABC):
         schema = self.credential_schema
         required = []
 
-        if 'properties' in schema:
-            for field_name, field_spec in schema['properties'].items():
-                if field_spec.get('required', False):
+        if "properties" in schema:
+            for field_name, field_spec in schema["properties"].items():
+                if field_spec.get("required", False):
                     required.append(field_name)
 
         return required

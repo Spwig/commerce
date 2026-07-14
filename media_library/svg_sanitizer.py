@@ -4,35 +4,61 @@ SVG Sanitizer - Remove potentially malicious content from SVG files
 Strips out JavaScript, event handlers, and external references while preserving
 the visual appearance of the SVG for use as logos, icons, etc.
 """
-import re
-from lxml import etree
-from io import BytesIO
+
 import logging
+from io import BytesIO
+
+from lxml import etree
 
 logger = logging.getLogger(__name__)
 
 # Dangerous SVG elements that can execute scripts
 DANGEROUS_ELEMENTS = {
-    'script',
-    'foreignObject',
-    'iframe',
-    'embed',
-    'object',
-    'animate',  # Can be used for timing attacks
-    'animateMotion',
-    'animateTransform',
-    'set',
+    "script",
+    "foreignObject",
+    "iframe",
+    "embed",
+    "object",
+    "animate",  # Can be used for timing attacks
+    "animateMotion",
+    "animateTransform",
+    "set",
 }
 
 # Event handler attributes (onclick, onload, etc.)
 EVENT_HANDLERS = [
-    'onload', 'onclick', 'onmouseover', 'onmouseout', 'onmousemove',
-    'onmousedown', 'onmouseup', 'onfocus', 'onblur', 'onchange',
-    'onsubmit', 'onreset', 'onselect', 'onkeydown', 'onkeyup',
-    'onkeypress', 'onerror', 'onabort', 'ondblclick', 'ondrag',
-    'ondragend', 'ondragenter', 'ondragleave', 'ondragover',
-    'ondragstart', 'ondrop', 'onscroll', 'onwheel', 'ontouchstart',
-    'ontouchend', 'ontouchmove', 'ontouchcancel'
+    "onload",
+    "onclick",
+    "onmouseover",
+    "onmouseout",
+    "onmousemove",
+    "onmousedown",
+    "onmouseup",
+    "onfocus",
+    "onblur",
+    "onchange",
+    "onsubmit",
+    "onreset",
+    "onselect",
+    "onkeydown",
+    "onkeyup",
+    "onkeypress",
+    "onerror",
+    "onabort",
+    "ondblclick",
+    "ondrag",
+    "ondragend",
+    "ondragenter",
+    "ondragleave",
+    "ondragover",
+    "ondragstart",
+    "ondrop",
+    "onscroll",
+    "onwheel",
+    "ontouchstart",
+    "ontouchend",
+    "ontouchmove",
+    "ontouchcancel",
 ]
 
 
@@ -57,7 +83,7 @@ def sanitize_svg(svg_content: bytes) -> bytes:
             resolve_entities=False,  # Prevent XXE attacks
             no_network=True,  # Prevent external entity fetching
         )
-        
+
         tree = etree.parse(BytesIO(svg_content), parser)
         root = tree.getroot()
 
@@ -65,7 +91,7 @@ def sanitize_svg(svg_content: bytes) -> bytes:
         elements_to_remove = []
         for element in root.iter():
             # Get tag name without namespace
-            tag_name = element.tag.split('}')[-1] if '}' in element.tag else element.tag
+            tag_name = element.tag.split("}")[-1] if "}" in element.tag else element.tag
 
             if tag_name.lower() in DANGEROUS_ELEMENTS:
                 logger.warning(f"Removing dangerous SVG element: {tag_name}")
@@ -86,30 +112,27 @@ def sanitize_svg(svg_content: bytes) -> bytes:
                     del element.attrib[attr]
 
             # Check for javascript: in href and xlink:href
-            for attr in ['href', '{http://www.w3.org/1999/xlink}href']:
+            for attr in ["href", "{http://www.w3.org/1999/xlink}href"]:
                 if attr in element.attrib:
                     value = element.attrib[attr]
-                    if value.strip().lower().startswith('javascript:'):
+                    if value.strip().lower().startswith("javascript:"):
                         logger.warning(f"Removing javascript: URL from {attr}")
                         del element.attrib[attr]
                     # Also block data: URIs with script content
-                    elif value.strip().lower().startswith('data:') and 'script' in value.lower():
+                    elif value.strip().lower().startswith("data:") and "script" in value.lower():
                         logger.warning(f"Removing suspicious data: URI from {attr}")
                         del element.attrib[attr]
 
             # Remove any remaining script-like content in attributes
             for attr, value in list(element.attrib.items()):
                 # Check for inline scripts in style attributes
-                if attr == 'style' and 'expression(' in value.lower():
-                    logger.warning(f"Removing expression() from style attribute")
+                if attr == "style" and "expression(" in value.lower():
+                    logger.warning("Removing expression() from style attribute")
                     del element.attrib[attr]
 
         # Convert back to bytes
         sanitized_svg = etree.tostring(
-            tree,
-            encoding='utf-8',
-            xml_declaration=True,
-            pretty_print=False
+            tree, encoding="utf-8", xml_declaration=True, pretty_print=False
         )
 
         logger.info("SVG sanitized successfully")
@@ -134,16 +157,16 @@ def is_svg_safe(svg_content: bytes) -> tuple[bool, str]:
     content_lower = svg_content.lower()
 
     # Check for script tags
-    if b'<script' in content_lower:
+    if b"<script" in content_lower:
         return False, "Contains <script> tags"
 
     # Check for javascript: URLs
-    if b'javascript:' in content_lower:
+    if b"javascript:" in content_lower:
         return False, "Contains javascript: URLs"
 
     # Check for event handlers
     for handler in EVENT_HANDLERS:
-        if f' {handler}='.encode().lower() in content_lower:
+        if f" {handler}=".encode().lower() in content_lower:
             return False, f"Contains {handler} event handler"
 
     return True, "No obvious threats detected"

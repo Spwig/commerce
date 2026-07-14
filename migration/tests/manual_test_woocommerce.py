@@ -8,8 +8,8 @@ Or in Django shell:
     from migration.tests.manual_test_woocommerce import test_woocommerce_connection
     test_woocommerce_connection('https://yourstore.com', 'ck_xxx', 'cs_xxx')
 """
+
 import requests
-from pprint import pprint
 
 
 def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
@@ -32,17 +32,13 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
     print("WooCommerce API Connection Test")
     print("=" * 80)
 
-    base_url = store_url.rstrip('/')
+    base_url = store_url.rstrip("/")
     auth = (consumer_key, consumer_secret)
 
     # Test 1: System Status
     print("\n[1] Testing System Status Endpoint...")
     try:
-        response = requests.get(
-            f"{base_url}/wp-json/wc/v3/system_status",
-            auth=auth,
-            timeout=10
-        )
+        response = requests.get(f"{base_url}/wp-json/wc/v3/system_status", auth=auth, timeout=10)
         print(f"Status Code: {response.status_code}")
         if response.status_code == 200:
             data = response.json()
@@ -73,15 +69,12 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
     print("\n[2] Testing Products Endpoint...")
     try:
         response = requests.get(
-            f"{base_url}/wp-json/wc/v3/products",
-            auth=auth,
-            params={'per_page': 5},
-            timeout=10
+            f"{base_url}/wp-json/wc/v3/products", auth=auth, params={"per_page": 5}, timeout=10
         )
         print(f"Status Code: {response.status_code}")
         if response.status_code == 200:
             products = response.json()
-            total_products = response.headers.get('X-WP-Total', 'N/A')
+            total_products = response.headers.get("X-WP-Total", "N/A")
             print(f"✓ Products accessible! Total: {total_products}")
             if products:
                 print(f"  Sample product: {products[0]['name']}")
@@ -96,13 +89,13 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
         response = requests.get(
             f"{base_url}/wp-json/wc/v3/products/categories",
             auth=auth,
-            params={'per_page': 5},
-            timeout=10
+            params={"per_page": 5},
+            timeout=10,
         )
         print(f"Status Code: {response.status_code}")
         if response.status_code == 200:
             categories = response.json()
-            total_categories = response.headers.get('X-WP-Total', 'N/A')
+            total_categories = response.headers.get("X-WP-Total", "N/A")
             print(f"✓ Categories accessible! Total: {total_categories}")
             if categories:
                 print(f"  Sample category: {categories[0]['name']}")
@@ -115,15 +108,12 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
     print("\n[4] Testing Customers Endpoint...")
     try:
         response = requests.get(
-            f"{base_url}/wp-json/wc/v3/customers",
-            auth=auth,
-            params={'per_page': 5},
-            timeout=10
+            f"{base_url}/wp-json/wc/v3/customers", auth=auth, params={"per_page": 5}, timeout=10
         )
         print(f"Status Code: {response.status_code}")
         if response.status_code == 200:
             customers = response.json()
-            total_customers = response.headers.get('X-WP-Total', 'N/A')
+            total_customers = response.headers.get("X-WP-Total", "N/A")
             print(f"✓ Customers accessible! Total: {total_customers}")
             if customers:
                 print(f"  Sample customer: {customers[0].get('email', 'N/A')}")
@@ -136,15 +126,12 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
     print("\n[5] Testing Orders Endpoint...")
     try:
         response = requests.get(
-            f"{base_url}/wp-json/wc/v3/orders",
-            auth=auth,
-            params={'per_page': 5},
-            timeout=10
+            f"{base_url}/wp-json/wc/v3/orders", auth=auth, params={"per_page": 5}, timeout=10
         )
         print(f"Status Code: {response.status_code}")
         if response.status_code == 200:
             orders = response.json()
-            total_orders = response.headers.get('X-WP-Total', 'N/A')
+            total_orders = response.headers.get("X-WP-Total", "N/A")
             print(f"✓ Orders accessible! Total: {total_orders}")
             if orders:
                 print(f"  Sample order: #{orders[0].get('number', 'N/A')}")
@@ -157,10 +144,7 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
     print("\n[6] Fetching Sample Product Details...")
     try:
         response = requests.get(
-            f"{base_url}/wp-json/wc/v3/products",
-            auth=auth,
-            params={'per_page': 1},
-            timeout=10
+            f"{base_url}/wp-json/wc/v3/products", auth=auth, params={"per_page": 1}, timeout=10
         )
         if response.status_code == 200 and response.json():
             product = response.json()[0]
@@ -176,10 +160,10 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
             print(f"  Images: {len(product.get('images', []))}")
             print(f"  Meta Data: {len(product.get('meta_data', []))}")
 
-            if product.get('images'):
+            if product.get("images"):
                 print(f"  Sample Image URL: {product['images'][0].get('src', 'N/A')}")
 
-            if product.get('meta_data'):
+            if product.get("meta_data"):
                 print(f"  Sample Meta Keys: {[m['key'] for m in product['meta_data'][:3]]}")
     except Exception as e:
         print(f"✗ Error: {e}")
@@ -192,13 +176,13 @@ def test_woocommerce_connection(store_url, consumer_key, consumer_secret):
 
 # Example usage for testing
 if __name__ == "__main__":
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("WooCommerce API Test Script")
-    print("="*80)
+    print("=" * 80)
     print("\nTo test your WooCommerce connection, run:")
     print("\n  from migration.tests.manual_test_woocommerce import test_woocommerce_connection")
     print("  test_woocommerce_connection('https://yourstore.com', 'ck_xxx', 'cs_xxx')")
-    print("\n" + "="*80 + "\n")
+    print("\n" + "=" * 80 + "\n")
 
     # Uncomment and fill in your credentials to test:
     # test_woocommerce_connection(

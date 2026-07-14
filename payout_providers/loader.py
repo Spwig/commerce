@@ -10,8 +10,6 @@ import json
 import logging
 import sys
 import time
-from pathlib import Path
-from typing import Dict, List, Optional, Type
 
 logger = logging.getLogger(__name__)
 
@@ -24,14 +22,14 @@ class PayoutProviderLoader:
     and loads them dynamically based on their manifest.json.
     """
 
-    COMPONENT_TYPE = 'payout_provider'
+    COMPONENT_TYPE = "payout_provider"
 
-    _providers: Dict[str, Type] = {}
+    _providers: dict[str, type] = {}
     _loaded = False
     _last_loaded_at: float = 0
 
     @classmethod
-    def discover_providers(cls) -> Dict[str, Type]:
+    def discover_providers(cls) -> dict[str, type]:
         """
         Discover and load all payout providers from components.
 
@@ -49,7 +47,7 @@ class PayoutProviderLoader:
         # Then discover component providers (can override built-in)
         from component_updates.integration_paths import INTEGRATIONS_DIR, import_component_module
 
-        components_path = INTEGRATIONS_DIR / 'payout_provider'
+        components_path = INTEGRATIONS_DIR / "payout_provider"
 
         if not components_path.exists():
             logger.debug(f"Components path not found: {components_path}")
@@ -62,13 +60,13 @@ class PayoutProviderLoader:
                 continue
 
             # Look for 'current' symlink pointing to version
-            current_path = provider_dir / 'current'
+            current_path = provider_dir / "current"
             if not current_path.exists() or not current_path.is_symlink():
                 logger.debug(f"Skipping {provider_dir.name} - no 'current' symlink")
                 continue
 
             # Load manifest
-            manifest_path = current_path / 'manifest.json'
+            manifest_path = current_path / "manifest.json"
             if not manifest_path.exists():
                 logger.warning(f"No manifest found for {provider_dir.name}")
                 continue
@@ -77,12 +75,12 @@ class PayoutProviderLoader:
                 with open(manifest_path) as f:
                     manifest = json.load(f)
 
-                provider_key = manifest['provider_key']
-                entry_point = manifest.get('entry_point', 'provider')
-                class_name = manifest['class_name']
+                provider_key = manifest["provider_key"]
+                entry_point = manifest.get("entry_point", "provider")
+                class_name = manifest["class_name"]
 
                 # Remove .py extension if present
-                if entry_point.endswith('.py'):
+                if entry_point.endswith(".py"):
                     entry_point = entry_point[:-3]
 
                 # Import provider module using file-path-based loading
@@ -112,6 +110,7 @@ class PayoutProviderLoader:
         """Check if provider files on disk are newer than our in-memory cache."""
         try:
             from component_updates.integration_paths import provider_cache_is_stale
+
             return provider_cache_is_stale(cls.COMPONENT_TYPE, cls._last_loaded_at)
         except Exception:
             return False
@@ -122,8 +121,8 @@ class PayoutProviderLoader:
         from .providers.base import BasePayoutProvider
 
         builtin_providers = {
-            'paypal': ('payout_providers.providers.paypal', 'PayPalPayoutProvider'),
-            'airwallex': ('payout_providers.providers.airwallex', 'AirwallexPayoutProvider'),
+            "paypal": ("payout_providers.providers.paypal", "PayPalPayoutProvider"),
+            "airwallex": ("payout_providers.providers.airwallex", "AirwallexPayoutProvider"),
         }
 
         for provider_key, (module_path, class_name) in builtin_providers.items():
@@ -145,7 +144,7 @@ class PayoutProviderLoader:
                 logger.error(f"Failed to load built-in provider {provider_key}: {e}")
 
     @classmethod
-    def get_provider(cls, provider_key: str) -> Optional[Type]:
+    def get_provider(cls, provider_key: str) -> type | None:
         """
         Get a specific provider by key.
 
@@ -164,7 +163,7 @@ class PayoutProviderLoader:
         return cls._providers.get(provider_key)
 
     @classmethod
-    def list_providers(cls) -> List[Dict]:
+    def list_providers(cls) -> list[dict]:
         """
         List all available providers with metadata.
 
@@ -181,22 +180,26 @@ class PayoutProviderLoader:
             try:
                 # Create temporary instance with empty config to get metadata
                 temp_instance = provider_class({})
-                providers.append({
-                    'key': key,
-                    'name': temp_instance.display_name,
-                    'provider_name': temp_instance.provider_name,
-                    'supported_methods': [m.value for m in temp_instance.supported_methods],
-                    'supported_currencies': temp_instance.supported_currencies,
-                })
+                providers.append(
+                    {
+                        "key": key,
+                        "name": temp_instance.display_name,
+                        "provider_name": temp_instance.provider_name,
+                        "supported_methods": [m.value for m in temp_instance.supported_methods],
+                        "supported_currencies": temp_instance.supported_currencies,
+                    }
+                )
             except Exception as e:
                 logger.warning(f"Could not instantiate {key} for metadata: {e}")
-                providers.append({
-                    'key': key,
-                    'name': key.title(),
-                    'provider_name': key,
-                    'supported_methods': [],
-                    'supported_currencies': [],
-                })
+                providers.append(
+                    {
+                        "key": key,
+                        "name": key.title(),
+                        "provider_name": key,
+                        "supported_methods": [],
+                        "supported_currencies": [],
+                    }
+                )
 
         return providers
 
@@ -214,8 +217,9 @@ class PayoutProviderLoader:
 
         # Clear Python's module cache for component provider modules
         modules_to_remove = [
-            module_name for module_name in list(sys.modules.keys())
-            if module_name.startswith('payout_provider_')
+            module_name
+            for module_name in list(sys.modules.keys())
+            if module_name.startswith("payout_provider_")
         ]
 
         for module_name in modules_to_remove:
@@ -232,7 +236,7 @@ class PayoutProviderLoader:
 ProviderRegistry = PayoutProviderLoader
 
 
-def get_provider_class(provider_type: str, component=None) -> Optional[Type]:
+def get_provider_class(provider_type: str, component=None) -> type | None:
     """
     Get the provider class for a given provider type.
 
@@ -260,10 +264,10 @@ def get_default_provider_for_method(method: str):
 
     # Map methods to provider types
     method_to_provider = {
-        'paypal': 'paypal',
-        'bank_transfer': 'airwallex',
-        'bank_transfer_local': 'airwallex',
-        'bank_transfer_swift': 'airwallex',
+        "paypal": "paypal",
+        "bank_transfer": "airwallex",
+        "bank_transfer_local": "airwallex",
+        "bank_transfer_swift": "airwallex",
     }
 
     provider_type = method_to_provider.get(method)
@@ -271,9 +275,7 @@ def get_default_provider_for_method(method: str):
         return None
 
     return PayoutProviderAccount.objects.filter(
-        provider_type=provider_type,
-        is_active=True,
-        is_default=True
+        provider_type=provider_type, is_active=True, is_default=True
     ).first()
 
 

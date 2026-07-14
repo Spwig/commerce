@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 class POSShiftSerializer(serializers.Serializer):
     """Shift data for POS display."""
+
     id = serializers.IntegerField()
     terminal_name = serializers.CharField()
     cashier_name = serializers.CharField()
@@ -23,17 +24,20 @@ class POSShiftSerializer(serializers.Serializer):
 
 class POSShiftOpenSerializer(serializers.Serializer):
     """Open a new shift."""
+
     opening_cash = serializers.DecimalField(max_digits=10, decimal_places=2, default=0)
 
 
 class POSShiftCloseSerializer(serializers.Serializer):
     """Close the current shift."""
+
     closing_cash = serializers.DecimalField(max_digits=10, decimal_places=2)
     notes = serializers.CharField(required=False, allow_blank=True)
 
 
 class POSCashMovementSerializer(serializers.Serializer):
     """Record a cash movement."""
-    movement_type = serializers.ChoiceField(choices=['in', 'out'])
+
+    movement_type = serializers.ChoiceField(choices=["in", "out"])
     amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0.01)
     reason = serializers.CharField(max_length=200)
