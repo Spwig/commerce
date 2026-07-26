@@ -220,6 +220,37 @@
   color: #f44336;
 }
 
+/* The template emits the raw status as a class, so every member of
+   MigrationJob.STATUS_CHOICES needs a rule here. Without one the pill renders
+   transparent and unlabelled, making the states indistinguishable. */
+.migration-status.connecting,
+.migration-status.previewing,
+.migration-status.rolling_back {
+  background: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+}
+.migration-status.paused,
+.migration-status.cancelled {
+  background: rgba(120, 120, 128, 0.14);
+  color: #6c6c74;
+}
+.migration-status.rolled_back {
+  background: rgba(156, 39, 176, 0.1);
+  color: #9c27b0;
+}
+.migration-status.rollback_failed {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+/* Shown while a stop has been requested but the worker has not yet reached a
+   batch boundary. Without it the badge keeps saying "Importing" and the
+   operator assumes their click did nothing. */
+.migration-status.stopping {
+  background: rgba(255, 152, 0, 0.14);
+  color: #e65100;
+}
+
 /* ==========================================================================
    Progress Bar
    ========================================================================== */
@@ -318,6 +349,24 @@
   min-width: 180px;
 }
 
+/* State-changing actions post a CSRF-protected form. `display: contents` keeps
+   the button itself as the flex item of .migration-actions-col, so the wrapping
+   form does not disturb the column gap or the responsive row layout below. */
+.migration-action-form {
+  display: contents;
+}
+
+/* Links rendered from the admin list_display cell. Replaces inline style
+   attributes, which Content Security Policy blocks. */
+.migration-action-link {
+  margin-right: 5px;
+}
+
+.migration-action-link.primary {
+  background: var(--button-primary, #1a73e8);
+  color: var(--button-fg, #ffffff);
+}
+
 .action-btn {
   display: inline-flex;
   align-items: center;
@@ -326,6 +375,7 @@
   padding: 10px 16px;
   border-radius: 6px;
   text-decoration: none;
+  font-family: inherit;
   font-weight: 600;
   font-size: 13px;
   transition: all 0.2s;

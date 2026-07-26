@@ -16,6 +16,8 @@ Non-breaking changes include:
 from enum import Enum
 from typing import Any
 
+from tests.contract.utils.contract_validator import UNPINNED_TYPE
+
 
 class ChangeType(Enum):
     """Type of API change"""
@@ -140,6 +142,14 @@ def detect_breaking_changes(
 
         old_type = old_props[field].get("type")
         new_type = new_props[field].get("type")
+
+        # "any" is the unpinned sentinel written by
+        # tests.contract.conftest._unpin_nulls for fields that were null in the
+        # recorded sample. The sample cannot tell us what type such a field
+        # takes when populated, so any concrete type is compatible with it —
+        # comparing them would report a break that never happened.
+        if UNPINNED_TYPE in (old_type, new_type):
+            continue
 
         if old_type != new_type:
             report.add_breaking(

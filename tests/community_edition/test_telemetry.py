@@ -2,9 +2,28 @@
 Client-side telemetry tests.
 """
 
+import contextlib
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+
+@contextlib.contextmanager
+def fake_path_exists(existing):
+    """
+    Patch pathlib.Path.exists so that ONLY the paths in ``existing`` report
+    True. Lets us drive each branch of detect_install_source() deterministically
+    without depending on the real filesystem (e.g. a stray /.dockerenv).
+    """
+    wanted = {str(p) for p in existing}
+
+    def _exists(self):
+        return str(self) in wanted
+
+    with patch.object(Path, "exists", _exists):
+        yield
+
 
 # ---------------------------------------------------------------------------
 # Bucket function
@@ -140,3 +159,177 @@ def test_send_telemetry_swallows_network_errors(settings):
         result = send_telemetry()
 
     assert result is False  # graceful failure, no exception
+
+
+# ---------------------------------------------------------------------------
+# Install-source detection
+# ---------------------------------------------------------------------------
+
+
+def test_detect_install_source_official_image_via_manifest_real_file(settings, tmp_path):
+    """An integrity manifest at the project root marks an official image."""
+    from core.telemetry.client import detect_install_source
+
+    settings.BASE_DIR = str(tmp_path)
+    (tmp_path / ".integrity_manifest.json").write_text("{}")
+
+    assert detect_install_source() == "official-image"
+
+
+def test_detect_install_source_official_image_via_manifest(settings):
+    """The manifest check short-circuits before any other signal is examined."""
+    from core.telemetry.client import detect_install_source
+
+    settings.BASE_DIR = "/srv/app"
+    with fake_path_exists({"/srv/app/.integrity_manifest.json"}):
+        assert detect_install_source() == "official-image"
+
+
+def test_detect_install_source_official_image_via_compiled_license(settings, monkeypatch):
+    """
+    Belt-and-braces: with no manifest, a core.license compiled to a native
+    extension (.so) still classifies the install as an official image.
+    """
+    import core.license as license_module
+    from core.telemetry.client import detect_install_source
+
+    settings.BASE_DIR = "/srv/app"
+    monkeypatch.setattr(license_module, "__file__", "/srv/app/core/license.so")
+
+    # No manifest, not in Docker — the .so signal must carry the decision.
+    with fake_path_exists(set()):
+        assert detect_install_source() == "official-image"
+
+
+def test_detect_install_source_source_docker(settings):
+    """Public source tree running inside Docker → source-docker."""
+    from core.telemetry.client import detect_install_source
+
+    settings.BASE_DIR = "/srv/app"
+    # No manifest; real core.license is a .py module; /.dockerenv present.
+    with fake_path_exists({"/.dockerenv"}):
+        assert detect_install_source() == "source-docker"
+
+
+def test_detect_install_source_bare_metal(settings):
+    """Public source tree on bare metal (no manifest, no Docker) → source."""
+    from core.telemetry.client import detect_install_source
+
+    settings.BASE_DIR = "/srv/app"
+    with fake_path_exists(set()):
+        assert detect_install_source() == "source"
+
+
+def test_detect_install_source_unknown_on_failure(settings):
+    """Detection never raises — an internal error yields 'unknown'."""
+    from core.telemetry.client import detect_install_source
+
+    # Path(None) raises TypeError inside the try block.
+    settings.BASE_DIR = None
+    assert detect_install_source() == "unknown"
+
+
+# ---------------------------------------------------------------------------
+# Install method
+# ---------------------------------------------------------------------------
+
+
+def test_get_install_method_reads_setting(settings):
+    from core.telemetry.client import get_install_method
+
+    settings.SPWIG_INSTALL_METHOD = "installer"
+    assert get_install_method() == "installer"
+
+
+def test_get_install_method_defaults_blank(settings):
+    from core.telemetry.client import get_install_method
+
+    settings.SPWIG_INSTALL_METHOD = ""
+    assert get_install_method() == ""
+
+
+def test_get_install_method_none_becomes_blank(settings):
+    """A None setting must not leak into the payload as the string 'None'."""
+    from core.telemetry.client import get_install_method
+
+    settings.SPWIG_INSTALL_METHOD = None
+    assert get_install_method() == ""
+
+
+# ---------------------------------------------------------------------------
+# Payload — install provenance is carried through
+# ---------------------------------------------------------------------------
+
+
+def test_build_payload_includes_install_provenance(settings):
+    """metrics carries install_source and install_method from the new helpers."""
+    from core.telemetry.client import build_payload
+
+    settings.SPWIG_INSTALL_METHOD = "installer"
+
+    with (
+        patch("core.license.get_license_manager") as get_lm,
+        patch("core.telemetry.client.detect_install_source", return_value="source-docker"),
+    ):
+        get_lm.return_value.get_edition.return_value = "community"
+        payload = build_payload()
+
+    metrics = payload["metrics"]
+    assert metrics["install_source"] == "source-docker"
+    assert metrics["install_method"] == "installer"
+
+
+# ---------------------------------------------------------------------------
+# Regression: the payload enumerates REAL DB rows.
+#
+# _installed_components() and _payment_providers_configured() previously
+# imported nonexistent models and always returned empty. These tests create
+# real rows and assert they surface in the payload, so a re-broken import
+# (which the try/except would silently swallow) turns the build red.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_build_payload_lists_installed_components():
+    from core.telemetry.client import build_payload
+    from tests.factories import ComponentRegistryFactory
+
+    ComponentRegistryFactory(
+        component_type="widget",
+        slug="hero-banner",
+        name="Hero Banner",
+        current_version="2.1.0",
+    )
+
+    with patch("core.license.get_license_manager") as get_lm:
+        get_lm.return_value.get_edition.return_value = "community"
+        payload = build_payload()
+
+    assert payload["installed_components"].get("hero-banner") == "2.1.0"
+
+
+@pytest.mark.django_db
+def test_build_payload_lists_active_payment_providers():
+    from core.telemetry.client import build_payload
+    from tests.factories import ComponentRegistryFactory, PaymentProviderAccountFactory
+
+    active = PaymentProviderAccountFactory(is_active=True)  # component slug "stripe"
+
+    inactive_component = ComponentRegistryFactory(
+        component_type="payment_provider",
+        slug="paypal_checkout",
+        name="PayPal Checkout",
+    )
+    PaymentProviderAccountFactory(
+        is_active=False,
+        is_default=False,
+        component=inactive_component,
+    )
+
+    with patch("core.license.get_license_manager") as get_lm:
+        get_lm.return_value.get_edition.return_value = "community"
+        payload = build_payload()
+
+    configured = payload["metrics"]["payment_providers_configured"]
+    assert active.component.slug in configured  # active provider surfaces
+    assert "paypal_checkout" not in configured  # inactive account is filtered out

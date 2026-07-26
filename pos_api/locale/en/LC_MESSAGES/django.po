@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,382 +18,477 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: apps.py:8
 msgid "POS API"
 msgstr ""
 
+#: middleware.py:30
 msgid "A valid POS license is required to access this endpoint."
 msgstr ""
 
+#: permissions.py:12
 msgid "POS access requires a staff account."
 msgstr ""
 
+#: permissions.py:24
 msgid "You are not assigned to this terminal."
 msgstr ""
 
+#: permissions.py:72
 #, python-format
 msgid "You do not have permission: %(label)s."
 msgstr ""
 
+#: serializers/cart.py:48
 msgid "Bundle variant selections: {bundle_item_id: variant_id}"
 msgstr ""
 
+#: serializers/cart.py:54
 msgid "List of optional BundleItem IDs to exclude"
 msgstr ""
 
+#: serializers/customer.py:22
 msgid "Search by email, phone, or name"
 msgstr ""
 
+#: serializers/inventory.py:46
 msgid "ID of the product to adjust stock for."
 msgstr ""
 
+#: serializers/inventory.py:50
 msgid "ID of the variant (required for variable products)."
 msgstr ""
 
+#: serializers/inventory.py:55
 msgid ""
 "Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
 "removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
 "\"return\" adds stock back (e.g. customer return)."
 msgstr ""
 
+#: serializers/inventory.py:65
 msgid ""
 "For receive/return: units to add. For damage: units to remove. For recount: "
 "new absolute on_hand count."
 msgstr ""
 
+#: serializers/inventory.py:71
 msgid "Required explanation for this adjustment (audit trail)."
 msgstr ""
 
+#: serializers/inventory.py:74
 msgid "Optional UUID for offline deduplication."
 msgstr ""
 
+#: serializers/inventory.py:88
 msgid "Signed quantity delta."
 msgstr ""
 
+#: serializers/payment.py:19
 msgid "Last four digits of card number (digits only)"
 msgstr ""
 
+#: serializers/payment.py:32
 msgid "Amount to charge. If not provided, charges the full remaining balance."
 msgstr ""
 
+#: serializers/terminal_provider.py:10
 msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
 msgstr ""
 
+#: serializers/terminal_provider.py:57
 msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
 msgstr ""
 
+#: serializers/terminal_provider.py:72
 msgid "Provider-specific transaction ID for status polling"
 msgstr ""
 
+#: serializers/terminal_provider.py:77
 msgid ""
 "Initial status -- typically \"pending\" for async providers, \"succeeded\" "
 "for sync (Adyen)"
 msgstr ""
 
+#: serializers/terminal_provider.py:91
 msgid "Current payment status"
 msgstr ""
 
+#: serializers/terminal_provider.py:97
 msgid "Provider payment ID (when succeeded)"
 msgstr ""
 
+#: serializers/terminal_provider.py:100
 msgid "Reason for cancellation (when canceled)"
 msgstr ""
 
+#: views/auth.py:19
 msgid "POS staff login"
 msgstr ""
 
+#: views/auth.py:21
 msgid ""
 "Authenticate a staff member for POS access. Returns access and refresh "
 "tokens. Uses the same token system as the Admin API "
 "(MobileTokenAuthentication)."
 msgstr ""
 
+#: views/auth.py:40
 msgid "Login successful, returns tokens and terminal config"
 msgstr ""
 
+#: views/auth.py:41
 msgid "Invalid credentials"
 msgstr ""
 
+#: views/auth.py:42
 msgid "User is not a staff member"
 msgstr ""
 
+#: views/auth.py:183
 msgid "Refresh POS access token"
 msgstr ""
 
+#: views/auth.py:184
 msgid "Exchange a refresh token for a new access token."
 msgstr ""
 
+#: views/auth.py:195
 msgid "New access token"
 msgstr ""
 
+#: views/auth.py:196
 msgid "Invalid or expired refresh token"
 msgstr ""
 
+#: views/auth.py:259
 msgid "POS logout"
 msgstr ""
 
+#: views/auth.py:260
 msgid "Invalidate the current access and refresh tokens."
 msgstr ""
 
+#: views/auth.py:262
 msgid "Logged out successfully"
 msgstr ""
 
+#: views/cart.py:37
 msgid "Get current POS cart"
 msgstr ""
 
+#: views/cart.py:39
 msgid ""
 "Returns the current cart for the authenticated cashier. Creates a new cart "
 "if one does not exist. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:67
 msgid "Add item to POS cart"
 msgstr ""
 
+#: views/cart.py:69
 msgid ""
 "Add a product to the cashier's cart. Supports adding by product ID or "
 "barcode. When barcode is provided without product_id, it resolves the "
 "product automatically. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:76
 msgid "Invalid product, variant, or insufficient stock"
 msgstr ""
 
+#: views/cart.py:194
 msgid "Update cart item quantity"
 msgstr ""
 
+#: views/cart.py:196
 msgid ""
 "Update the quantity of a cart item. Set quantity to 0 to remove the item. "
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:202
 msgid "Invalid quantity or insufficient stock"
 msgstr ""
 
+#: views/cart.py:205 views/cart.py:274 views/cart.py:553 views/cart.py:695
+#: views/cart.py:1017
 msgid "Cart item not found"
 msgstr ""
 
+#: views/cart.py:266
 msgid "Remove item from cart"
 msgstr ""
 
+#: views/cart.py:268
 msgid ""
 "Remove a specific item from the cart. Requires staff authentication and "
 "valid POS license."
 msgstr ""
 
+#: views/cart.py:321
 msgid "Apply voucher to cart"
 msgstr ""
 
+#: views/cart.py:323
 msgid ""
 "Apply a voucher/discount code to the cart. Only one voucher can be active at "
 "a time. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:330
 msgid "Invalid or expired voucher code"
 msgstr ""
 
+#: views/cart.py:382
 msgid "Remove voucher from cart"
 msgstr ""
 
+#: views/cart.py:384
 msgid ""
 "Remove the applied voucher from the cart. Requires staff authentication and "
 "valid POS license."
 msgstr ""
 
+#: views/cart.py:389
 msgid "No voucher applied"
 msgstr ""
 
-msgid "Apply gift card to cart"
-msgstr ""
-
-msgid ""
-"Apply a gift card code to the cart to cover part or all of the total. "
-"Requires staff authentication and valid POS license."
-msgstr ""
-
-msgid "Invalid gift card or insufficient balance"
-msgstr ""
-
+#: views/cart.py:428
 msgid "Clear all items from cart"
 msgstr ""
 
+#: views/cart.py:430
 msgid ""
-"Remove all items, vouchers, and gift cards from the cart. Requires staff "
-"authentication and valid POS license."
+"Remove all items and vouchers from the cart. Requires staff authentication "
+"and valid POS license."
 msgstr ""
 
+#: views/cart.py:533
 msgid "Apply manual discount to cart item"
 msgstr ""
 
+#: views/cart.py:535
 msgid ""
 "Apply a staff manual discount to a specific cart item. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:549 views/cart.py:759
 msgid "Discount applied or requires approval"
 msgstr ""
 
+#: views/cart.py:550 views/cart.py:760
 msgid "Invalid discount or not authorized"
 msgstr ""
 
+#: views/cart.py:686
 msgid "Remove manual discount from cart item"
 msgstr ""
 
+#: views/cart.py:688
 msgid ""
 "Remove a staff manual discount from a specific cart item. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:692 views/cart.py:893
 msgid "Discount removed"
 msgstr ""
 
+#: views/cart.py:743
 msgid "Apply manual discount to cart"
 msgstr ""
 
+#: views/cart.py:745
 msgid ""
 "Apply a staff manual discount to the entire cart. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:887
 msgid "Remove manual discount from cart"
 msgstr ""
 
+#: views/cart.py:889
 msgid ""
 "Remove the staff manual discount from the cart. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:934
 msgid "Verify manager PIN"
 msgstr ""
 
+#: views/cart.py:936
 msgid ""
 "Verify if a PIN is valid for a manager who can approve discounts. Returns "
 "the manager's name if valid. Requires staff authentication and valid POS "
 "license."
 msgstr ""
 
+#: views/cart.py:948
 msgid "PIN verification result"
 msgstr ""
 
+#: views/cart.py:992
 msgid "Approve discount with manager PIN"
 msgstr ""
 
+#: views/cart.py:994
 msgid ""
 "Apply a discount that exceeds staff limits with manager approval. Requires a "
 "valid manager PIN to proceed. Requires staff authentication and valid POS "
 "license."
 msgstr ""
 
+#: views/cart.py:1013
 msgid "Discount approved and applied"
 msgstr ""
 
+#: views/cart.py:1014
 msgid "Invalid PIN or discount parameters"
 msgstr ""
 
+#: views/cart.py:1182
 msgid "Park current cart"
 msgstr ""
 
+#: views/cart.py:1184
 msgid ""
 "Save the current cart state for later restoration. Used when a customer "
 "needs to step away and another customer needs to be served. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:1195
 msgid "Cart parked successfully"
 msgstr ""
 
+#: views/cart.py:1196
 msgid "Cart is empty or cannot be parked"
 msgstr ""
 
+#: views/cart.py:1290
 msgid "List parked carts"
 msgstr ""
 
+#: views/cart.py:1292
 msgid ""
 "Get all parked carts for the current terminal. Requires staff authentication "
 "and valid POS license."
 msgstr ""
 
+#: views/cart.py:1296
 msgid "List of parked carts"
 msgstr ""
 
+#: views/cart.py:1345
 msgid "Restore parked cart"
 msgstr ""
 
+#: views/cart.py:1347
 msgid ""
 "Restore a parked cart, replacing the current cart contents. The current cart "
 "will be cleared before restoration. Requires staff authentication and valid "
 "POS license."
 msgstr ""
 
+#: views/cart.py:1352
 msgid "Cart restored successfully"
 msgstr ""
 
+#: views/cart.py:1353
 msgid "Current cart is not empty"
 msgstr ""
 
+#: views/cart.py:1356 views/cart.py:1477
 msgid "Parked cart not found"
 msgstr ""
 
+#: views/cart.py:1468
 msgid "Delete parked cart"
 msgstr ""
 
+#: views/cart.py:1470
 msgid ""
 "Permanently delete a parked cart. This cannot be undone. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/cart.py:1474
 msgid "Parked cart deleted"
 msgstr ""
 
+#: views/catalog.py:527
 msgid "List POS products"
 msgstr ""
 
+#: views/catalog.py:529
 msgid ""
 "Returns products available for in-store sale, filtered by sales channel. "
 "Includes warehouse-specific stock levels when a terminal is identified. "
 "Products with images appear first, ordered by per-warehouse popularity."
 msgstr ""
 
+#: views/catalog.py:534
 msgid "Search by name, SKU, or barcode"
 msgstr ""
 
+#: views/catalog.py:535
 msgid "Filter by category ID"
 msgstr ""
 
+#: views/catalog.py:537
 msgid "Warehouse for stock levels"
 msgstr ""
 
+#: views/catalog.py:539 views/inventory.py:90 views/inventory.py:691
+#: views/orders.py:131 views/sync.py:67 views/sync.py:158 views/sync.py:723
 msgid "Page number (default: 1)"
 msgstr ""
 
+#: views/catalog.py:541 views/inventory.py:92
 msgid "Items per page (default: 50, max: 200)"
 msgstr ""
 
+#: views/catalog.py:641
 msgid "Get product detail"
 msgstr ""
 
+#: views/catalog.py:642
 msgid "Returns full product details including variants and warehouse stock."
 msgstr ""
 
+#: views/catalog.py:695
 msgid "Barcode lookup"
 msgstr ""
 
+#: views/catalog.py:696
 msgid ""
 "Look up a product or variant by barcode. Fast, indexed lookup for scanning."
 msgstr ""
 
+#: views/catalog.py:699
 msgid "No product found with this barcode"
 msgstr ""
 
+#: views/catalog.py:763
 msgid "List categories"
 msgstr ""
 
+#: views/catalog.py:764
 msgid "Returns the category tree for POS product navigation."
 msgstr ""
 
+#: views/checkout.py:499
 msgid "Process cash payment"
 msgstr ""
 
+#: views/checkout.py:501
 msgid ""
 "Complete a POS transaction with cash payment. Validates that the amount "
 "tendered covers the order total and calculates change. Creates an Order with "
@@ -401,12 +496,15 @@ msgid ""
 "terminal. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/checkout.py:510
 msgid "Empty cart or insufficient cash tendered"
 msgstr ""
 
+#: views/checkout.py:599
 msgid "Process card payment"
 msgstr ""
 
+#: views/checkout.py:601
 msgid ""
 "Complete a POS transaction with card payment. Card processing is assumed to "
 "be handled by an external card terminal. This endpoint records the card "
@@ -414,27 +512,34 @@ msgid ""
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/checkout.py:610
 msgid "Empty cart"
 msgstr ""
 
+#: views/checkout.py:680
 msgid "Check gift card balance"
 msgstr ""
 
+#: views/checkout.py:682
 msgid ""
 "Check the balance of a gift card for POS checkout. Returns the current "
 "balance if valid, or an error message if invalid. Requires staff "
 "authentication."
 msgstr ""
 
+#: views/checkout.py:696
 msgid "Gift card balance info"
 msgstr ""
 
+#: views/checkout.py:697
 msgid "Invalid gift card or missing code"
 msgstr ""
 
+#: views/checkout.py:742
 msgid "Process gift card payment"
 msgstr ""
 
+#: views/checkout.py:744
 msgid ""
 "Complete a POS transaction using a gift card. Validates the gift card has "
 "sufficient balance. If the gift card balance is less than the order total, "
@@ -442,12 +547,15 @@ msgid ""
 "terminal. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/checkout.py:754
 msgid "Empty cart, invalid gift card, or insufficient balance"
 msgstr ""
 
+#: views/checkout.py:911
 msgid "Process split tender payment"
 msgstr ""
 
+#: views/checkout.py:913
 msgid ""
 "Complete a POS transaction using multiple payment methods (split tender). "
 "The total of all payments must cover the order total. Change is calculated "
@@ -456,12 +564,15 @@ msgid ""
 "license."
 msgstr ""
 
+#: views/checkout.py:922
 msgid "Empty cart, invalid payments, or insufficient total"
 msgstr ""
 
+#: views/checkout.py:1117
 msgid "Process terminal card payment"
 msgstr ""
 
+#: views/checkout.py:1119
 msgid ""
 "Complete a POS transaction with an integrated card terminal payment. The "
 "frontend must have already collected payment via the terminal SDK and "
@@ -470,27 +581,34 @@ msgid ""
 "shift on the terminal. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/checkout.py:1129
 msgid "Empty cart or payment verification failed"
 msgstr ""
 
+#: views/customer.py:65
 msgid "Search customers"
 msgstr ""
 
+#: views/customer.py:67
 msgid ""
 "Search for customers by email, phone, first name, or last name. Returns up "
 "to 20 matching results. Minimum 2 characters required. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/customer.py:76
 msgid "Search query (email, phone, or name). Minimum 2 characters."
 msgstr ""
 
+#: views/customer.py:81
 msgid "Search query too short"
 msgstr ""
 
+#: views/customer.py:121
 msgid "Create walk-in customer"
 msgstr ""
 
+#: views/customer.py:123
 msgid ""
 "Create a new customer for a walk-in sale. If a customer with the given email "
 "already exists, returns the existing customer instead of creating a "
@@ -498,50 +616,63 @@ msgid ""
 "staff authentication and valid POS license."
 msgstr ""
 
+#: views/customer.py:131
 msgid "Existing customer found with this email"
 msgstr ""
 
+#: views/customer.py:201
 msgid "Get customer details"
 msgstr ""
 
+#: views/customer.py:203
 msgid ""
 "Retrieve customer details including contact info and recent order history. "
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/inventory.py:72
 msgid "List stock levels for warehouse"
 msgstr ""
 
+#: views/inventory.py:74
 msgid ""
 "Returns paginated stock levels for the terminal's warehouse. Supports search "
 "by product name or SKU and filtering for low-stock or no-stock items. "
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/inventory.py:79
 msgid "Search by product name or SKU"
 msgstr ""
 
+#: views/inventory.py:83
 msgid "Only return items at or below low stock threshold"
 msgstr ""
 
+#: views/inventory.py:88
 msgid "Only return items with zero available stock"
 msgstr ""
 
+#: views/inventory.py:97 views/inventory.py:286 views/inventory.py:698
 msgid "Warehouse not determined"
 msgstr ""
 
+#: views/inventory.py:278
 msgid "Get product stock detail"
 msgstr ""
 
+#: views/inventory.py:280
 msgid ""
 "Returns stock levels for a specific product in the terminal's warehouse, "
 "including variant-level breakdown. Requires staff authentication and valid "
 "POS license."
 msgstr ""
 
+#: views/inventory.py:351
 msgid "Check stock across all locations"
 msgstr ""
 
+#: views/inventory.py:353
 msgid ""
 "Returns stock levels for a product across all warehouse locations. Useful "
 "for checking if an out-of-stock item is available at another location. The "
@@ -549,9 +680,11 @@ msgid ""
 "authentication and valid POS license."
 msgstr ""
 
+#: views/inventory.py:501
 msgid "Adjust stock levels"
 msgstr ""
 
+#: views/inventory.py:503
 msgid ""
 "Adjust stock for a product in the terminal's warehouse. Supports four "
 "adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
@@ -561,21 +694,27 @@ msgid ""
 "license, and pos_stock_adjustment permission."
 msgstr ""
 
+#: views/inventory.py:515
 msgid "Stock adjusted successfully"
 msgstr ""
 
+#: views/inventory.py:516
 msgid "Validation error or warehouse not determined"
 msgstr ""
 
+#: views/inventory.py:518
 msgid "Permission denied or POS license required"
 msgstr ""
 
+#: views/inventory.py:519
 msgid "Product or stock item not found"
 msgstr ""
 
+#: views/inventory.py:673
 msgid "List stock movement history"
 msgstr ""
 
+#: views/inventory.py:675
 msgid ""
 "Returns paginated stock movement records for the terminal's warehouse. "
 "Useful for auditing recent stock changes (adjustments, damage, recounts, "
@@ -583,50 +722,62 @@ msgid ""
 "authentication and valid POS license."
 msgstr ""
 
+#: views/inventory.py:684
 msgid "Filter movements by product ID"
 msgstr ""
 
+#: views/inventory.py:689
 msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
 msgstr ""
 
+#: views/inventory.py:693 views/orders.py:133
 msgid "Items per page (default: 20, max: 100)"
 msgstr ""
 
+#: views/loyalty.py:20
 msgid "Get customer loyalty info"
 msgstr ""
 
+#: views/loyalty.py:22
 msgid ""
 "Retrieve loyalty membership status, tier, and points balance for a customer. "
 "Returns `is_member: false` if the customer has no active loyalty membership. "
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/loyalty.py:29
 msgid ""
 "Loyalty membership info. `is_member` indicates whether the customer has an "
 "active membership. When true, includes `tier_name`, `tier_color`, and "
 "`available_points`."
 msgstr ""
 
+#: views/loyalty.py:105
 msgid "Preview loyalty points for cart"
 msgstr ""
 
+#: views/loyalty.py:107
 msgid ""
 "Calculate the loyalty points a customer would earn for a given cart total. "
 "Returns 0 if the customer has no active loyalty membership. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/loyalty.py:115
 msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
 msgstr ""
 
+#: views/loyalty.py:121
 msgid ""
 "Points preview. `points_preview` is the number of points the customer would "
 "earn for the given cart total."
 msgstr ""
 
+#: views/orders.py:77
 msgid "List POS orders"
 msgstr ""
 
+#: views/orders.py:79
 msgid ""
 "Returns orders with advanced filtering for date range, origin, customer, "
 "cashier, and search. Supports viewing web orders for return scenarios. "
@@ -636,56 +787,69 @@ msgid ""
 "valid POS license."
 msgstr ""
 
+#: views/orders.py:91
 msgid ""
 "Start date for range filter (ISO format, default: today). Ignored when "
 "search is provided."
 msgstr ""
 
+#: views/orders.py:98
 msgid ""
 "End date for range filter (ISO format, default: today). Ignored when search "
 "is provided."
 msgstr ""
 
+#: views/orders.py:106
 msgid ""
 "Order origin filter: this_terminal (default), all_pos, all (includes web). "
 "Ignored when search is provided."
 msgstr ""
 
+#: views/orders.py:112
 msgid "Filter by customer user ID. Ignored when search is provided."
 msgstr ""
 
+#: views/orders.py:117
 msgid "Filter by cashier staff ID. Ignored when search is provided."
 msgstr ""
 
+#: views/orders.py:123
 msgid ""
 "Search across ALL orders by order number, customer name, email, or phone. "
 "Bypasses date/origin filters."
 msgstr ""
 
+#: views/orders.py:129
 msgid "Filter by order status (applies in both modes)"
 msgstr ""
 
+#: views/orders.py:342
 msgid "Get order details"
 msgstr ""
 
+#: views/orders.py:344
 msgid ""
 "Returns full order details including items and payment breakdown. Supports "
 "both POS and web orders (for return scenarios). Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/orders.py:388
 msgid "Get receipt data for printing"
 msgstr ""
 
+#: views/orders.py:390
 msgid ""
 "Returns receipt-formatted data for a POS order including store info, items, "
 "payments, and footer text. Designed for ESC/POS thermal printers. Requires "
 "staff authentication and valid POS license."
 msgstr ""
 
+#: views/orders.py:653
 msgid "Process order refund"
 msgstr ""
 
+#: views/orders.py:655
 msgid ""
 "Process a full or partial refund for a POS order. For partial refunds, "
 "specify the items and quantities to refund. Creates a Refund record and "
@@ -693,15 +857,19 @@ msgid ""
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/orders.py:700
 msgid "Refund processed successfully"
 msgstr ""
 
+#: views/orders.py:701
 msgid "Invalid refund request or order already refunded"
 msgstr ""
 
+#: views/orders.py:897
 msgid "Void a POS order"
 msgstr ""
 
+#: views/orders.py:899
 msgid ""
 "Cancel a POS order from the current shift. Only orders placed during the "
 "current open shift can be voided. This creates a full refund and reverses "
@@ -709,50 +877,63 @@ msgid ""
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/orders.py:906
 msgid "Order voided successfully"
 msgstr ""
 
+#: views/orders.py:907
 msgid "Order cannot be voided (not from current shift)"
 msgstr ""
 
+#: views/orders.py:1092
 msgid "List POS cashiers"
 msgstr ""
 
+#: views/orders.py:1094
 msgid ""
 "Returns list of staff members who have processed POS orders. Used to "
 "populate the cashier filter dropdown. Requires staff authentication and "
 "valid POS license."
 msgstr ""
 
+#: views/orders.py:1100
 msgid "List of cashiers"
 msgstr ""
 
+#: views/receipts.py:28
 msgid "Send digital receipt"
 msgstr ""
 
+#: views/receipts.py:30
 msgid ""
 "Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
 "receipt is sent asynchronously via Celery task. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/receipts.py:57
 msgid "Receipt queued for sending"
 msgstr ""
 
+#: views/receipts.py:200
 msgid "Get receipt sending status"
 msgstr ""
 
+#: views/receipts.py:202
 msgid ""
 "Check which digital receipts have been sent for an order. Returns timestamps "
 "for email and SMS/WhatsApp deliveries."
 msgstr ""
 
+#: views/receipts.py:207
 msgid "Receipt status"
 msgstr ""
 
+#: views/reports.py:86
 msgid "Get current shift summary"
 msgstr ""
 
+#: views/reports.py:88
 msgid ""
 "Returns the open shift summary for the current cashier on the terminal, "
 "including totals, transaction count, and payment method breakdown. Returns "
@@ -760,71 +941,89 @@ msgid ""
 "license."
 msgstr ""
 
+#: views/reports.py:128
 msgid "Open a new shift"
 msgstr ""
 
+#: views/reports.py:130
 msgid ""
 "Start a new shift on the terminal. Only one open shift is allowed per "
 "terminal at any time. Records the opening cash amount. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/reports.py:137
 msgid "Invalid opening cash amount"
 msgstr ""
 
+#: views/reports.py:140
 msgid "A shift is already open on this terminal"
 msgstr ""
 
+#: views/reports.py:193
 msgid "Close current shift"
 msgstr ""
 
+#: views/reports.py:195
 msgid ""
 "Close the current open shift. Records the closing cash amount and calculates "
 "the expected vs actual cash difference. Requires staff authentication and "
 "valid POS license."
 msgstr ""
 
+#: views/reports.py:262
 msgid "Record cash movement"
 msgstr ""
 
+#: views/reports.py:264
 msgid ""
 "Record a cash-in or cash-out movement during the shift. Examples: adding "
 "float, removing for deposit, petty cash. Requires an open shift on the "
 "terminal. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/reports.py:271
 msgid "Cash movement recorded"
 msgstr ""
 
+#: views/reports.py:272
 msgid "Invalid movement data"
 msgstr ""
 
+#: views/reports.py:329
 msgid "Get daily sales report"
 msgstr ""
 
+#: views/reports.py:331
 msgid ""
 "Returns an aggregated daily sales report for the terminal including totals, "
 "transaction count, average transaction value, and payment method breakdown. "
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/reports.py:340 views/reports.py:450
 msgid "Report date (ISO format, default: today)"
 msgstr ""
 
+#: views/reports.py:440
 msgid "Get top selling products"
 msgstr ""
 
+#: views/reports.py:442
 msgid ""
 "Returns the top selling products for the terminal on a given date, ranked by "
 "quantity sold. Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/reports.py:455
 msgid "Number of products to return (default: 10, max: 50)"
 msgstr ""
 
+#: views/sync.py:54
 msgid "Sync products since timestamp"
 msgstr ""
 
+#: views/sync.py:56
 msgid ""
 "Returns products that have been created or updated since the given "
 "timestamp. Used for incremental product sync to the POS terminal's local "
@@ -832,27 +1031,34 @@ msgid ""
 "authentication and valid POS license."
 msgstr ""
 
+#: views/sync.py:65 views/sync.py:156
 msgid "ISO timestamp to fetch changes since. Omit for full sync."
 msgstr ""
 
+#: views/sync.py:69 views/sync.py:160 views/sync.py:725
 msgid "Items per page (default: 100, max: 200)"
 msgstr ""
 
+#: views/sync.py:146
 msgid "Sync customers since timestamp"
 msgstr ""
 
+#: views/sync.py:148
 msgid ""
 "Returns customers that have been created or have placed orders since the "
 "given timestamp. Used for offline customer lookup. Requires staff "
 "authentication and valid POS license."
 msgstr ""
 
+#: views/sync.py:164
 msgid "Customer sync data"
 msgstr ""
 
+#: views/sync.py:225
 msgid "Upload offline transactions"
 msgstr ""
 
+#: views/sync.py:227
 msgid ""
 "Batch upload transactions that were processed while the terminal was "
 "offline. Each transaction creates an Order with items and payments. Uses "
@@ -860,31 +1066,39 @@ msgid ""
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/sync.py:234
 msgid "Upload results with success/failure per transaction"
 msgstr ""
 
+#: views/sync.py:412
 msgid "Get sync status"
 msgstr ""
 
+#: views/sync.py:414
 msgid ""
 "Returns the current server time and database counts for sync planning. "
 "Requires staff authentication and valid POS license."
 msgstr ""
 
+#: views/sync.py:457
 msgid "Get sync version info"
 msgstr ""
 
+#: views/sync.py:459
 msgid ""
 "Returns API version and data schema version for client compatibility checks. "
 "Clients should clear and resync when schema version increases."
 msgstr ""
 
+#: views/sync.py:463
 msgid "Version information"
 msgstr ""
 
+#: views/sync.py:483
 msgid "Upload offline stock adjustments"
 msgstr ""
 
+#: views/sync.py:485
 msgid ""
 "Batch upload stock adjustments that were queued while the terminal was "
 "offline. Each adjustment uses an idempotency key to prevent duplicates. "
@@ -892,15 +1106,19 @@ msgid ""
 "permission."
 msgstr ""
 
+#: views/sync.py:491
 msgid "Upload results with success/failure per adjustment"
 msgstr ""
 
+#: views/sync.py:494
 msgid "POS license or permission required"
 msgstr ""
 
+#: views/sync.py:710
 msgid "Sync orders for offline cache"
 msgstr ""
 
+#: views/sync.py:712
 msgid ""
 "Returns orders for offline caching on the POS terminal. POS orders are "
 "prioritised over web orders up to the terminal's sync limit. Supports delta "
@@ -908,65 +1126,83 @@ msgid ""
 "license."
 msgstr ""
 
+#: views/sync.py:721
 msgid "ISO timestamp for delta sync. Omit for full sync."
 msgstr ""
 
+#: views/terminal.py:57
 msgid "Register POS terminal"
 msgstr ""
 
+#: views/terminal.py:59
 msgid ""
 "Register a new device as a POS terminal using a pairing code. The pairing "
 "code is generated in the admin panel when creating a terminal."
 msgstr ""
 
+#: views/terminal.py:65
 msgid "Terminal registered successfully, returns terminal config"
 msgstr ""
 
+#: views/terminal.py:67
 msgid "Invalid or expired pairing code"
 msgstr ""
 
+#: views/terminal.py:113
 msgid "Get terminal configuration"
 msgstr ""
 
+#: views/terminal.py:114
 msgid ""
 "Returns the current terminal's configuration including hardware settings."
 msgstr ""
 
+#: views/terminal.py:163
 msgid "Terminal heartbeat"
 msgstr ""
 
+#: views/terminal.py:164
 msgid "Report that the terminal is online. Should be called every 60 seconds."
 msgstr ""
 
+#: views/terminal.py:166
 msgid "Heartbeat recorded"
 msgstr ""
 
+#: views/terminal.py:187
 msgid "Get receipt template"
 msgstr ""
 
+#: views/terminal.py:189
 msgid ""
 "Returns the receipt template for the terminal's warehouse. Falls back to the "
 "default template (no warehouse assigned) if the warehouse has no specific "
 "template. Returns sensible defaults if no template exists at all."
 msgstr ""
 
+#: views/terminal.py:195
 msgid "Receipt template data"
 msgstr ""
 
+#: views/terminal.py:328
 msgid "Get promo slides"
 msgstr ""
 
+#: views/terminal.py:330
 msgid ""
 "Returns promotional slides for the terminal's warehouse. Slides are "
 "displayed on the customer-facing display during idle periods."
 msgstr ""
 
+#: views/terminal.py:334
 msgid "List of promo slides with image URLs"
 msgstr ""
 
+#: views/terminal.py:408
 msgid "Generate display pairing code"
 msgstr ""
 
+#: views/terminal.py:410
 msgid ""
 "Generate a short-lived 6-digit pairing code for customer display "
 "authentication. The code expires after 5 minutes and can only be used once. "
@@ -974,98 +1210,126 @@ msgid ""
 "terminal."
 msgstr ""
 
+#: views/terminal.py:415
 msgid "Pairing code generated"
 msgstr ""
 
+#: views/terminal.py:464
 msgid "List managers for unlock override"
 msgstr ""
 
+#: views/terminal.py:465
 msgid ""
 "Return list of managers (id and name) for the manager override unlock flow."
 msgstr ""
 
+#: views/terminal.py:467
 msgid "List of managers"
 msgstr ""
 
+#: views/terminal.py:503
 msgid "Verify unlock PIN"
 msgstr ""
 
+#: views/terminal.py:505
 msgid ""
 "Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
 "attempts, only manager PIN will be accepted. All attempts are logged for "
 "audit purposes."
 msgstr ""
 
+#: views/terminal.py:537
 msgid "PIN verified successfully"
 msgstr ""
 
+#: views/terminal.py:538
 msgid "Invalid PIN"
 msgstr ""
 
+#: views/terminal.py:700
 msgid "Log terminal lock event"
 msgstr ""
 
+#: views/terminal.py:702
 msgid ""
 "Log when a terminal is locked (manually or via auto-lock timeout). This "
 "endpoint is for audit logging only and does not change terminal state."
 msgstr ""
 
+#: views/terminal.py:717
 msgid "Event logged successfully"
 msgstr ""
 
+#: views/terminal.py:718
 msgid "Invalid event type"
 msgstr ""
 
+#: views/terminal.py:784
 msgid "Verify unlock card"
 msgstr ""
 
+#: views/terminal.py:786
 msgid ""
 "Verify a staff ID card swipe to unlock the terminal. Card data is hashed and "
 "compared against stored card hashes. After 3 failed PIN attempts, only "
 "manager cards are accepted."
 msgstr ""
 
+#: views/terminal.py:805
 msgid "Card verified successfully"
 msgstr ""
 
+#: views/terminal.py:806
 msgid "Card not recognized"
 msgstr ""
 
+#: views/terminal.py:951
 msgid "Register staff unlock card"
 msgstr ""
 
+#: views/terminal.py:952
 msgid "Register a card swipe for the current user's quick terminal unlock."
 msgstr ""
 
+#: views/terminal.py:963
 msgid "Card registered successfully"
 msgstr ""
 
+#: views/terminal.py:964
 msgid "Card already registered to another user"
 msgstr ""
 
+#: views/terminal.py:1013
 msgid "Remove staff unlock card"
 msgstr ""
 
+#: views/terminal.py:1014
 msgid "Remove the current user's registered unlock card."
 msgstr ""
 
+#: views/terminal.py:1016
 msgid "Card removed successfully"
 msgstr ""
 
+#: views/terminal.py:1038
 msgid "Set cashier PIN"
 msgstr ""
 
+#: views/terminal.py:1040
 msgid ""
 "Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
 "must be 4-6 digits. Both pin and pin_confirm must match."
 msgstr ""
 
+#: views/terminal.py:1057
 msgid "PIN set successfully"
 msgstr ""
 
+#: views/terminal_provider.py:66
 msgid "Get terminal provider config"
 msgstr ""
 
+#: views/terminal_provider.py:68
 msgid ""
 "Returns the terminal provider configuration for the current terminal, "
 "including the integration mode (sdk, cloud, or manual) and connected reader "
@@ -1073,9 +1337,11 @@ msgid ""
 "card reader is available and which payment flow to use."
 msgstr ""
 
+#: views/terminal_provider.py:127
 msgid "Create connection token"
 msgstr ""
 
+#: views/terminal_provider.py:129
 msgid ""
 "Creates a short-lived connection token for SDK-mode terminal providers (e.g. "
 "Stripe Terminal JS SDK). The frontend calls this endpoint when initializing "
@@ -1084,18 +1350,22 @@ msgid ""
 "support SDK tokens."
 msgstr ""
 
+#: views/terminal_provider.py:200
 msgid "List card readers"
 msgstr ""
 
+#: views/terminal_provider.py:202
 msgid ""
 "List available card readers from the terminal provider. Works for both SDK-"
 "mode and cloud-mode providers. Each reader object contains: id, label, type, "
 "serial_number, and status."
 msgstr ""
 
+#: views/terminal_provider.py:238
 msgid "Create payment intent for terminal"
 msgstr ""
 
+#: views/terminal_provider.py:240
 msgid ""
 "Creates a PaymentIntent for card_present collection on the terminal reader. "
 "The frontend uses the returned client_secret to collect payment via the SDK. "
@@ -1103,25 +1373,31 @@ msgid ""
 "omitted, defaults to the terminal's configured currency."
 msgstr ""
 
+#: views/terminal_provider.py:316
 msgid "Capture/verify terminal payment"
 msgstr ""
 
+#: views/terminal_provider.py:318
 msgid ""
 "Verifies that a PaymentIntent was successfully processed on the terminal "
 "reader and returns card details (brand, last4) from the provider. SDK only."
 msgstr ""
 
+#: views/terminal_provider.py:367
 msgid "Cancel terminal payment"
 msgstr ""
 
+#: views/terminal_provider.py:369
 msgid ""
 "Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
 "cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
 msgstr ""
 
+#: views/terminal_provider.py:420
 msgid "Initiate cloud payment on reader"
 msgstr ""
 
+#: views/terminal_provider.py:422
 msgid ""
 "Sends a payment request to a card reader via the provider's cloud API. For "
 "cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
@@ -1129,9 +1405,11 @@ msgid ""
 "defaults to the terminal's configured currency."
 msgstr ""
 
+#: views/terminal_provider.py:519
 msgid "Check cloud payment status"
 msgstr ""
 
+#: views/terminal_provider.py:521
 msgid ""
 "Poll the status of a cloud-initiated payment. Returns the current status: "
 "pending, succeeded, failed, or canceled. When status is 'succeeded', the "
@@ -1140,60 +1418,77 @@ msgid ""
 "until status is no longer 'pending'."
 msgstr ""
 
+#: views/terminal_provider.py:532
 msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
 msgstr ""
 
+#: views/terminal_provider.py:587
 msgid "Cancel cloud payment"
 msgstr ""
 
+#: views/terminal_provider.py:589
 msgid ""
 "Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior "
 "varies by provider."
 msgstr ""
 
+#: views/webauthn.py:66
 msgid "Begin WebAuthn registration"
 msgstr ""
 
+#: views/webauthn.py:68
 msgid ""
 "Generate registration options for biometric enrollment. Returns challenge "
 "and credential creation options."
 msgstr ""
 
+#: views/webauthn.py:70
 msgid "Registration options"
 msgstr ""
 
+#: views/webauthn.py:136
 msgid "Complete WebAuthn registration"
 msgstr ""
 
+#: views/webauthn.py:137
 msgid "Verify attestation and store credential for biometric unlock."
 msgstr ""
 
+#: views/webauthn.py:150
 msgid "Credential registered"
 msgstr ""
 
+#: views/webauthn.py:151 views/webauthn.py:335
 msgid "Verification failed"
 msgstr ""
 
+#: views/webauthn.py:222
 msgid "Begin WebAuthn authentication"
 msgstr ""
 
+#: views/webauthn.py:224
 msgid ""
 "Generate authentication challenge for biometric unlock. Returns "
 "allowCredentials for the locked-by user and all managers. If failed_attempts "
 ">= 3, only manager credentials are included."
 msgstr ""
 
+#: views/webauthn.py:238
 msgid "Authentication options"
 msgstr ""
 
+#: views/webauthn.py:239
 msgid "No credentials registered"
 msgstr ""
 
+#: views/webauthn.py:319
 msgid "Complete WebAuthn authentication"
 msgstr ""
 
+#: views/webauthn.py:320
 msgid "Verify biometric assertion and unlock terminal."
 msgstr ""
 
+#: views/webauthn.py:334
 msgid "Authentication successful"
 msgstr ""

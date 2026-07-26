@@ -48,5 +48,23 @@
     },
   };
 
+  // Confirm-then-submit for state-changing wizard actions posted as forms
+  // (Stop Import on step 5). The dashboard has its own copy in
+  // migration_list.js; that file is not loaded inside the wizard.
+  document.addEventListener('click', async function (e) {
+    const button = e.target.closest('[data-action="confirm-submit"]');
+    if (!button) return;
+    const form = button.closest('form');
+    if (!form || form.dataset.confirmed === 'true') return;
+    e.preventDefault();
+    const msg = button.dataset.confirmMsg || 'Are you sure?';
+    const ok = window.AdminModal ? await window.AdminModal.confirm(msg) : window.confirm(msg);
+    if (ok) {
+      form.dataset.confirmed = 'true';
+      button.disabled = true;
+      form.submit();
+    }
+  });
+
   document.addEventListener('DOMContentLoaded', init);
 })();

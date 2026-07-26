@@ -1,6 +1,15 @@
-{#
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% comment %}
 ==============================================================================
 LEGACY TEMPLATE - SCHEDULED FOR RETIREMENT
+
+NB: {% templatetag openblock %} extends {% templatetag closeblock %} must be the
+first TAG in a template, so it sits above this note. This block is a comment TAG
+rather than {# #} because Django's hash comments are single-line only — as a
+multi-line {# #} it was parsed as live code, and the duplicate block tags in the
+second block below made this file fail to compile outright.
 ==============================================================================
 
 This template has been DEPRECATED and replaced by the modular checkout system
@@ -28,10 +37,7 @@ It will be removed in a future release.
 
 Last Updated: 2026-02-15
 ==============================================================================
-#}
-
-{% extends "page_builder/base.html" %}
-{% load i18n %}
+{% endcomment %}
 
 {% block title %}Checkout Template Retired{% endblock %}
 
@@ -72,9 +78,15 @@ Last Updated: 2026-02-15
 </div>
 {% endblock %}
 
-{#
+{% comment %}
 ==============================================================================
 ORIGINAL CODE COMMENTED OUT FOR REFERENCE
+
+NB: comment TAG, not {# #}. Django's hash comments are single-line only, so
+this block used to be parsed as live template code — the duplicate
+{% templatetag openblock %} block title {% templatetag closeblock %} below
+made the whole template fail to compile, which meant this "retired" file
+raised a 500 instead of showing the retirement notice it exists to show.
 ==============================================================================
 
 {% extends "page_builder/base.html" %}
@@ -94,4 +106,4 @@ ORIGINAL CODE COMMENTED OUT FOR REFERENCE
 ==============================================================================
 END OF COMMENTED CODE
 ==============================================================================
-#}
+{% endcomment %}

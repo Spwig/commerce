@@ -9,7 +9,6 @@ keywords:
   - discount codes
   - promo codes
   - coupon codes
-  - gift cards
   - free shipping
   - percentage discount
   - fixed discount
@@ -18,10 +17,13 @@ url_patterns:
 related:
   - sales-promotions
   - loyalty-program
+  - gift-cards
 published: true
 ---
 
-Voucher Codes let you create discount codes, coupons, and gift cards that customers enter at checkout to receive a discount. Navigate to **Marketing > Vouchers** in the admin sidebar.
+Voucher Codes let you create discount codes and coupons that customers enter at checkout to receive a discount. Navigate to **Marketing > Vouchers** in the admin sidebar.
+
+Looking to sell store credit instead of a discount? That's a gift card, managed separately under **Products > Gift Cards** — see the **Gift Cards** help topic.
 
 ![Voucher list](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 

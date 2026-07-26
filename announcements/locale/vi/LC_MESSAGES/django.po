@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Vietnamese <LL@li.org>\n"
@@ -18,12 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "Nội dung"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "Hình ảnh"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -31,15 +34,19 @@ msgstr ""
 "Hình ảnh tùy chọn để hiển thị trong modal. Chọn giữa banner (trên nội dung) "
 "hoặc nền (sau văn bản với lớp phủ)."
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "Liên kết"
 
+#: admin.py:78
 msgid "Display"
 msgstr "Hiển thị"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "Quy tắc hiển thị"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
@@ -47,24 +54,33 @@ msgstr ""
 "Tùy chọn: giới hạn thời điểm hiển thị thông báo này dựa trên các điều kiện "
 "nâng cao."
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "Tiêu đề"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "Không hết hạn"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "Đã hết hạn"
 
+#: admin.py:121
 msgid "Active"
 msgstr "Đang hoạt động"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "Trạng thái"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "Liệt kê thông báo đang hoạt động"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -74,12 +90,15 @@ msgstr ""
 "sắp xếp theo độ ưu tiên tăng dần, sau đó là created_at giảm dần. Được sử "
 "dụng bởi tiện ích hiển thị thông báo trên cửa hàng."
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "Danh sách thông báo đang hoạt động"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "Lấy chi tiết thông báo"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -89,54 +108,73 @@ msgstr ""
 "URL hình ảnh và chế độ hiển thị cho cửa sổ modal cửa hàng. Trả về 404 nếu "
 "thông báo không hoạt động, đã hết hạn hoặc không tồn tại."
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "Khóa chính thông báo"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "Chi tiết thông báo"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "Không tìm thấy, không hoạt động hoặc đã hết hạn"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "Thông báo"
 
+#: models.py:15
 msgid "No Link"
 msgstr "Không có liên kết"
 
+#: models.py:16
 msgid "Product"
 msgstr "Sản phẩm"
 
+#: models.py:17
 msgid "Category"
 msgstr "Danh mục"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "Bài viết blog"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "Trang"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "URL tùy chỉnh"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "Hình ảnh banner (trên nội dung)"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "Hình nền (kèm lớp phủ)"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr "Tiêu đề thông báo - hỗ trợ kiểu dáng cơ bản (dậm, nghiêng, màu sắc)"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "Nội dung chi tiết tùy chọn để hiển thị trong modal"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "Hình ảnh tùy chọn để hiển thị modal"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "Cách hiển thị hình ảnh trong modal"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
@@ -144,27 +182,35 @@ msgstr ""
 "Độ mờ của lớp phủ khi hình ảnh được sử dụng làm nền (0 = trong suốt, 1 = "
 "không trong suốt)"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "Loại liên kết cho thông báo này"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "Sản phẩm để liên kết đến"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "Danh mục để liên kết đến"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "Bài viết blog để liên kết đến"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "Trang để liên kết đến"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "URL tùy chỉnh cho liên kết"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "Văn bản nút cho liên kết modal, ví dụ: \"Mua sắm ngay\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
@@ -172,9 +218,11 @@ msgstr ""
 "Nếu được bật, việc nhấp vào thông báo sẽ mở một modal với nội dung đầy đủ. "
 "Nếu bị tắt, việc nhấp sẽ chuyển hướng trực tiếp đến URL liên kết."
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "Bật hoặc tắt thông báo này"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
@@ -182,177 +230,238 @@ msgstr ""
 "Thông báo sẽ tự động dừng hiển thị sau thời gian/ngày này. Để trống nếu "
 "không muốn hết hạn."
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr "Số nhỏ hơn = độ ưu tiên cao hơn (hiển thị trước)"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "Quy tắc hiển thị điều kiện"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "Dịch nội dung thông báo"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "Thông báo"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "Chỉnh sửa thông báo"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "Thêm thông báo"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "Vui lòng sửa các lỗi dưới đây."
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "Tiêu đề thông báo — hỗ trợ đậm, nghiêng và màu chữ."
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "Nội dung"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "Văn bản chi tiết tùy chọn được hiển thị trong cửa sổ modal."
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "Loại liên kết"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "Văn bản nút"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "Ví dụ: \\\""
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "Hiển thị modal"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "Mở chi tiết trong cửa sổ popup thay vì chuyển hướng."
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "Tùy chọn"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr ""
 "Hình ảnh cho cửa sổ popup modal. Hiển thị khi khách truy cập nhấp vào thông "
 "báo."
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "Chế độ hiển thị"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "Độ mờ lớp phủ"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = trong suốt, 1 = không trong suốt"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "Đã kích hoạt"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "Ưu tiên"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "Số nhỏ hơn sẽ được hiển thị trước"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "Hết hạn vào lúc"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "Để trống nếu không muốn hết hạn."
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "Được tạo"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "Đã cập nhật"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "Nâng cao"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr ""
 "Giới hạn thời điểm hiển thị thông báo này. Để trống để hiển thị cho tất cả "
 "mọi người."
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "Giữ Ctrl / Cmd để chọn nhiều mục."
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "Lưu"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "Lưu và tiếp tục"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "Lưu và thêm nữa"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "Xóa"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr ""
 "Quản lý các thông báo cửa hàng được hiển thị trong phần đầu và chân trang"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "Tất cả"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "Bị tắt"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "Tìm kiếm thông báo..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "thông báo"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "Trước"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "của"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "Tiếp theo"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "Không tìm thấy thông báo nào"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "Không có thông báo nào phù hợp với truy vấn tìm kiếm của bạn."
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr ""
 "Tạo thông báo đầu tiên của bạn để hiển thị trong phần đầu hoặc chân trang "
 "của cửa hàng."
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "Tạo thông báo"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "Mở modal khi nhấp"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "Modal"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "Liên kết trực tiếp khi nhấp"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "Liên kết trực tiếp"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "Cập nhật lần cuối"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "trước"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "Hết hạn"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "Có hình ảnh"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "Chỉnh sửa"

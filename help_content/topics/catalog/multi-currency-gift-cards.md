@@ -31,6 +31,8 @@ If you sell to customers in multiple countries, you can issue gift cards in spec
 
 This feature requires multi-currency to be enabled with at least one exchange rate provider configured.
 
+> **Gift card sales are temporarily paused** while we finish the automatic delivery flow — see the **Gift Cards** help topic for details. You can still configure a **Gift Card Currency** on a product now so it's ready to sell the moment sales reopen, and you can issue a currency-specific card by hand today the same way you'd issue any other gift card (set the **Initial Value** in the currency you want the card denominated in).
+
 ## How it works
 
 When you set a **Gift Card Currency** on a gift card product, the system converts the product price into the target currency at the time of purchase using the current exchange rate. The resulting gift card is denominated in that currency and can only be redeemed by customers shopping in the same currency.

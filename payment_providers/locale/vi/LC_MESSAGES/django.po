@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Vietnamese <LL@li.org>\n"
@@ -18,9 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:71
 msgid "Provider Information"
 msgstr "Thông tin nhà cung cấp"
 
+#: admin.py:75
 msgid ""
 "Component and User cannot be changed after creation for security and audit "
 "purposes."
@@ -28,54 +30,59 @@ msgstr ""
 "Thành phần và Người dùng không thể thay đổi sau khi tạo vì lý do bảo mật và "
 "kiểm toán."
 
-msgid "Payment Configuration"
-msgstr "Cấu hình thanh toán"
-
-msgid ""
-"Configure which payment methods are offered to customers. Leave empty to "
-"show all available methods."
-msgstr ""
-"Cấu hình phương thức thanh toán được cung cấp cho khách hàng. Để trống để "
-"hiển thị tất cả phương thức khả dụng."
-
+#: admin.py:79
 msgid "Configuration"
 msgstr "Cấu hình"
 
+#: admin.py:80 admin.py:172
+#: templates/admin/payment_providers/payment_dashboard.html:417
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:73
 msgid "Status"
 msgstr "Trạng thái"
 
+#: admin.py:82
 msgid "Payment Method Synchronization"
 msgstr "Đồng bộ phương thức thanh toán"
 
+#: admin.py:92
 msgid "Payment methods can be synced from your provider account. "
 msgstr ""
-"Phương thức thanh toán có thể được đồng bộ từ tài khoản nhà cung cấp của bạn."
+"Phương thức thanh toán có thể được đồng bộ từ tài khoản nhà cung cấp của "
+"bạn."
 
+#: admin.py:96
 msgid "Sync Payment Methods Now"
 msgstr "Đồng bộ phương thức thanh toán ngay"
 
+#: admin.py:100
 msgid "Save the account first to enable payment method synchronization."
 msgstr "Lưu tài khoản trước để bật tính năng đồng bộ phương thức thanh toán."
 
+#: admin.py:104
 msgid "Connection Health"
 msgstr "Tình trạng kết nối"
 
+#: admin.py:109
 msgid ""
-"Connection health is automatically updated when you test the connection from "
-"the wizard."
+"Connection health is automatically updated when you test the connection from"
+" the wizard."
 msgstr ""
 "Tình trạng kết nối sẽ được cập nhật tự động khi bạn kiểm tra kết nối từ "
 "hướng dẫn."
 
+#: admin.py:113
 msgid "Metadata"
 msgstr "Metadata"
 
+#: admin.py:120
 msgid "Create Provider"
 msgstr "Tạo nhà cung cấp"
 
+#: admin.py:127
 msgid "Please use the Payment Provider Connection Wizard"
 msgstr "Vui lòng sử dụng Hướng dẫn Kết nối Nhà cung cấp Thanh toán"
 
+#: admin.py:131
 #, python-format
 msgid ""
 "For the best experience, please use the <a href=\"%(url)s\">Provider "
@@ -84,44 +91,70 @@ msgstr ""
 "Để có trải nghiệm tốt nhất, vui lòng sử dụng <a href=\"%(url)s\">Provider "
 "Connection Wizard</a> để thiết lập nhà cung cấp mới."
 
+#: admin.py:148
 msgid "Name"
 msgstr "Tên"
 
+#: admin.py:164
 msgid "Connection"
 msgstr "Kết nối"
 
+#: admin.py:180 templates/admin/payment_providers/payment_dashboard.html:334
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:79
 msgid "Default"
 msgstr "Mặc định"
 
+#: admin.py:192
+#: templates/admin/payment_providers/wizard/step3_credentials.html:195
 msgid "Checkout Mode"
 msgstr "Chế độ thanh toán"
 
+#: admin.py:194
 msgid "Environment"
 msgstr "Môi trường"
 
+#: admin.py:330
 msgid "Connection test completed"
 msgstr "Kiểm tra kết nối đã hoàn thành"
 
+#: admin.py:336 admin.py:359 admin.py:383 admin.py:446 admin.py:539
+#: admin.py:598 admin.py:648 admin.py:688 services/webhook_service.py:114
 msgid "Provider account not found"
 msgstr "Không tìm thấy tài khoản nhà cung cấp"
 
+#: admin.py:342
 #, python-format
 msgid "Connection test failed: %(error)s"
 msgstr "Kiểm tra kết nối thất bại: %(error)s"
 
+#: admin.py:356
 msgid "Set as default provider"
 msgstr "Đặt làm nhà cung cấp mặc định"
 
+#: admin.py:366 admin.py:389 admin.py:544 admin.py:615 admin.py:664
 msgid "Method not allowed"
 msgstr "Phương thức không được phép"
 
+#: admin.py:376
+#| msgid "Provider not installed"
+msgid "Provider enabled"
+msgstr "Cung cấp được bật"
+
+#: admin.py:378
+#| msgid "Provider not installed"
+msgid "Provider disabled"
+msgstr "Cung cấp bị tắt"
+
+#: admin.py:402
 msgid "This provider does not support payment method synchronization"
 msgstr "Nhà cung cấp này không hỗ trợ đồng bộ phương thức thanh toán"
 
+#: admin.py:410
 #, python-format
 msgid "Failed to load provider: %(error)s"
 msgstr "Không thể tải nhà cung cấp: %(error)s"
 
+#: admin.py:426
 #, python-format
 msgid ""
 "Successfully synced %(methods)d payment methods across %(countries)d "
@@ -130,97 +163,161 @@ msgstr ""
 "Đã đồng bộ thành công %(methods)d phương thức thanh toán trên %(countries)d "
 "quốc gia"
 
+#: admin.py:441
 msgid "Synchronization failed"
 msgstr "Đồng bộ thất bại"
 
+#: admin.py:450
 #, python-format
 msgid "Unexpected error: %(error)s"
 msgstr "Lỗi bất ngờ: %(error)s"
 
+#: admin.py:481
+#| msgid "All Countries"
+msgid "Global (All Countries)"
+msgstr "Toàn cầu (Tất cả các quốc gia)"
+
+#: admin.py:528
 #, python-format
 msgid "Configure Payment Methods - %(provider)s"
 msgstr "Cấu hình phương thức thanh toán - %(provider)s"
 
+#: admin.py:558
 msgid "Missing required parameters"
 msgstr "Thiếu tham số bắt buộc"
 
+#: admin.py:564 admin.py:626
+msgid "Invalid country code"
+msgstr "Mã quốc gia không hợp lệ"
+
+#: admin.py:570
+#| msgid "enabled payment methods"
+msgid "Invalid payment method identifier"
+msgstr "Mã phương thức thanh toán không hợp lệ"
+
+#: admin.py:576
+#| msgid "Invalid request"
+msgid "Invalid enabled value"
+msgstr "Giá trị bật không hợp lệ"
+
+#: admin.py:583
 #, python-format
 msgid "Enabled %(method)s for %(country)s"
 msgstr "Đã bật %(method)s cho %(country)s"
 
+#: admin.py:589
 #, python-format
 msgid "Disabled %(method)s for %(country)s"
 msgstr "Đã tắt %(method)s cho %(country)s"
 
+#: admin.py:603 admin.py:651
+#| msgid "Invalid request"
+msgid "Invalid request body"
+msgstr "Nội dung yêu cầu không hợp lệ"
+
+#: admin.py:609 admin.py:657
+#| msgid "Unexpected error: %(error)s"
+msgid "An unexpected error occurred"
+msgstr "Đã xảy ra một lỗi bất ngờ"
+
+#: admin.py:640
+#, python-format
+msgid "Country override removed. Global settings will apply for %(country)s."
+msgstr ""
+"Đã gỡ bỏ cài đặt quốc gia. Cài đặt toàn cầu sẽ được áp dụng cho %(country)s."
+
+#: admin.py:676
 msgid ""
 "Cannot delete provider with existing transactions. Deactivate it instead."
 msgstr ""
 "Không thể xóa nhà cung cấp có giao dịch hiện tại. Thay vào đó, hãy ngừng "
 "hoạt động nó."
 
+#: admin.py:684
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:332
 msgid "Provider deleted successfully"
 msgstr "Cung cấp đã được xóa thành công"
 
+#: admin.py:739
 msgid "Transaction Information"
 msgstr "Thông tin giao dịch"
 
+#: admin.py:752
 msgid "Payment Details"
 msgstr "Chi tiết thanh toán"
 
+#: admin.py:756 admin.py:776 admin.py:982
 msgid "Provider Response"
 msgstr "Phản hồi từ nhà cung cấp"
 
+#: admin.py:760
 msgid "Error Information"
 msgstr "Thông tin lỗi"
 
+#: admin.py:764 admin.py:985
 msgid "Timestamps"
 msgstr "Thời gian"
 
+#: admin.py:774
 msgid "No response data"
 msgstr "Không có dữ liệu phản hồi"
 
+#: admin.py:850
 msgid "Webhook Information"
 msgstr "Thông tin webhook"
 
+#: admin.py:863
 msgid "Payload"
 msgstr "Nội dung"
 
+#: admin.py:864
 msgid "Headers"
 msgstr "Header"
 
+#: admin.py:866 models.py:511 models.py:1006
 msgid "Processing"
 msgstr "Xử lý"
 
+#: admin.py:872
 msgid "System Information"
 msgstr "Thông tin hệ thống"
 
+#: admin.py:880
 msgid "No payload data"
 msgstr "Không có dữ liệu nội dung"
 
+#: admin.py:882
 msgid "Webhook Payload"
 msgstr "Nội dung webhook"
 
+#: admin.py:889
 msgid "No headers data"
 msgstr "Không có dữ liệu header"
 
+#: admin.py:891
 msgid "HTTP Headers"
 msgstr "Header HTTP"
 
+#: admin.py:957
 msgid "Intent Information"
 msgstr "Thông tin Ý định"
 
+#: admin.py:971
 msgid "Checkout Details"
 msgstr "Chi tiết thanh toán"
 
+#: admin.py:975
 msgid "3DS / Authentication"
 msgstr "3DS / Xác thực"
 
+#: api_serializers.py:21
 msgid ""
 "Checkout session ID. If not provided, uses current user's active session."
 msgstr ""
 "ID phiên thanh toán. Nếu không được cung cấp, sẽ sử dụng phiên đang hoạt "
 "động của người dùng hiện tại."
 
+#: api_serializers.py:26
 msgid ""
 "Payment provider account ID. If not provided, uses session's selected "
 "provider."
@@ -228,102 +325,135 @@ msgstr ""
 "ID tài khoản nhà cung cấp thanh toán. Nếu không được cung cấp, sẽ sử dụng "
 "nhà cung cấp đã chọn trong phiên."
 
+#: api_serializers.py:30
 msgid "Saved payment method ID for returning customers."
 msgstr "ID phương thức thanh toán đã lưu dành cho khách hàng quay lại."
 
+#: api_serializers.py:33
 msgid "URL to redirect after successful payment."
 msgstr "URL để chuyển hướng sau khi thanh toán thành công."
 
+#: api_serializers.py:36
 msgid "URL to redirect on payment cancellation."
 msgstr "URL để chuyển hướng khi hủy thanh toán."
 
+#: api_serializers.py:39
 msgid "Additional metadata to attach to the payment."
 msgstr "Thông tin metadata bổ sung để đính kèm vào thanh toán."
 
+#: api_serializers.py:49 models.py:1092
 msgid "Type of action required (redirect, 3ds_challenge, etc.)"
 msgstr "Loại hành động cần thiết (chuyển hướng, 3ds_challenge, v.v.)."
 
+#: api_serializers.py:52
 msgid "URL to redirect for action completion."
 msgstr "URL để chuyển hướng để hoàn thành hành động."
 
+#: api_serializers.py:55
 msgid "Provider-specific action data for SDK handling."
 msgstr "Dữ liệu hành động cụ thể của nhà cung cấp để xử lý bởi SDK."
 
+#: api_serializers.py:64
 msgid "Whether the operation succeeded."
 msgstr "Liệu thao tác có thành công không."
 
+#: api_serializers.py:65 api_serializers.py:413
 msgid "Payment intent ID."
 msgstr "ID ý định thanh toán."
 
+#: api_serializers.py:67
 msgid "Order ID (created with 'unpaid' status)."
 msgstr "ID đơn hàng (tạo với trạng thái 'chưa thanh toán')."
 
+#: api_serializers.py:70 api_serializers.py:422
 msgid "Order number for display."
 msgstr "Số đơn hàng để hiển thị."
 
+#: api_serializers.py:72 api_serializers.py:414
 msgid "Current payment intent status."
 msgstr "Trạng thái hiện tại của ý định thanh toán."
 
+#: api_serializers.py:74
 msgid "Type of checkout flow (hosted or embedded)."
 msgstr "Loại quy trình thanh toán (hosted hoặc embedded)."
 
+#: api_serializers.py:80
 msgid "Hosted checkout redirect URL (for hosted checkout)."
 msgstr "URL chuyển hướng thanh toán hosted (dành cho thanh toán hosted)."
 
+#: api_serializers.py:86
 msgid "Client secret for provider SDK (for embedded checkout)."
 msgstr "Mật khẩu bí mật cho SDK nhà cung cấp (dành cho thanh toán embedded)."
 
+#: api_serializers.py:89
 msgid "Provider's publishable key for SDK initialization."
 msgstr "Khóa có thể xuất bản của nhà cung cấp để khởi tạo SDK."
 
+#: api_serializers.py:92
 msgid "URL to provider's checkout handler JavaScript."
 msgstr "URL đến tệp JavaScript xử lý thanh toán của nhà cung cấp."
 
+#: api_serializers.py:95
 msgid "Configuration data for handler initialization."
 msgstr "Dữ liệu cấu hình cho việc khởi tạo xử lý."
 
+#: api_serializers.py:98
 msgid "External SDK URLs required by provider."
 msgstr "Các URL SDK bên ngoài được nhà cung cấp yêu cầu."
 
+#: api_serializers.py:101
 msgid "Provider identifier (slug) for handler lookup."
 msgstr "Mã định danh nhà cung cấp (slug) để tra cứu xử lý."
 
+#: api_serializers.py:104
 msgid "Whether customer action is required (3DS, etc.)."
 msgstr "Liệu hành động của khách hàng có cần thiết không (3DS, v.v.)."
 
+#: api_serializers.py:107 api_serializers.py:426
 msgid "Action details if requires_action is true."
 msgstr "Chi tiết hành động nếu requires_action là true."
 
+#: api_serializers.py:109
 msgid "When this payment intent expires."
 msgstr "Khi ý định thanh toán này hết hạn."
 
+#: api_serializers.py:110 api_serializers.py:428
 msgid "Error details if payment failed."
 msgstr "Chi tiết lỗi nếu thanh toán thất bại."
 
+#: api_serializers.py:416
 msgid "Order ID."
 msgstr "ID đơn hàng."
 
+#: api_serializers.py:424
 msgid "Whether customer action is required."
 msgstr "Liệu hành động của khách hàng có cần thiết không."
 
+#: api_serializers.py:455
 msgid "Provider-specific payment method data for confirmation."
 msgstr "Dữ liệu phương thức thanh toán cụ thể của nhà cung cấp để xác nhận."
 
+#: api_serializers.py:468
 msgid "Optional reason for cancellation."
 msgstr "Lý do hủy (tùy chọn)."
 
+#: api_serializers.py:516
 msgid "Payment provider account ID."
 msgstr "ID tài khoản nhà cung cấp thanh toán."
 
+#: api_serializers.py:518
 msgid "Token from provider SDK representing the payment method."
 msgstr "Token từ SDK nhà cung cấp đại diện cho phương thức thanh toán."
 
+#: api_serializers.py:521
 msgid "Whether to set this as the default payment method."
 msgstr "Liệu có nên đặt đây là phương thức thanh toán mặc định không."
 
+#: api_views.py:53
 msgid "Create payment intent"
 msgstr "Tạo ý định thanh toán"
 
+#: api_views.py:54
 msgid ""
 "\n"
 "Create a payment intent for checkout.\n"
@@ -340,8 +470,7 @@ msgid ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -365,8 +494,7 @@ msgstr ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -375,21 +503,28 @@ msgstr ""
 "- Amounts are validated against checkout session totals\n"
 "        "
 
+#: api_views.py:81 services/payment_orchestration_service.py:265
+#: services/payment_service.py:131
 msgid "Payment intent created successfully"
 msgstr "Tạo ý định thanh toán thành công"
 
+#: api_views.py:84
 msgid "Invalid request, checkout not ready, or validation failed"
 msgstr "Yêu cầu không hợp lệ, thanh toán chưa sẵn sàng hoặc xác thực thất bại"
 
+#: api_views.py:86 api_views.py:102
 msgid "Checkout session not found"
 msgstr "Không tìm thấy phiên thanh toán"
 
+#: api_views.py:110
 msgid "Payment provider not found or not configured"
 msgstr "Không tìm thấy nhà cung cấp thanh toán hoặc chưa được cấu hình"
 
+#: api_views.py:205
 msgid "Get payment intent status"
 msgstr "Lấy trạng thái ý định thanh toán"
 
+#: api_views.py:206
 msgid ""
 "\n"
 "        Get the current status of a payment intent.\n"
@@ -427,9 +562,11 @@ msgstr ""
 "        - `canceled`: Payment was canceled\n"
 "        "
 
+#: api_views.py:228
 msgid "Payment intent UUID"
 msgstr "UUID ý định thanh toán"
 
+#: api_views.py:235
 msgid ""
 "Payment intent details (full handler data for active intents, status-only "
 "for terminal states)"
@@ -437,12 +574,15 @@ msgstr ""
 "Chi tiết mục tiêu thanh toán (dữ liệu xử lý đầy đủ cho các mục tiêu đang "
 "hoạt động, chỉ trạng thái cho các trạng thái cuối cùng)"
 
+#: api_views.py:238 api_views.py:287 api_views.py:342
 msgid "Payment intent not found"
 msgstr "Không tìm thấy ý định thanh toán"
 
+#: api_views.py:270
 msgid "Confirm payment intent"
 msgstr "Xác nhận ý định thanh toán"
 
+#: api_views.py:271
 msgid ""
 "\n"
 "        Confirm a payment intent after customer completes required action.\n"
@@ -452,8 +592,7 @@ msgid ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 msgstr ""
 "\n"
@@ -464,19 +603,22 @@ msgstr ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 
+#: api_views.py:284
 msgid "Confirmation result"
 msgstr "Kết quả xác nhận"
 
+#: api_views.py:286
 msgid "Confirmation failed"
 msgstr "Xác nhận thất bại"
 
+#: api_views.py:327
 msgid "Cancel payment intent"
 msgstr "Hủy ý định thanh toán"
 
+#: api_views.py:328
 msgid ""
 "\n"
 "        Cancel a payment intent.\n"
@@ -486,8 +628,7 @@ msgid ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 msgstr ""
 "\n"
@@ -498,29 +639,35 @@ msgstr ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 
+#: api_views.py:340
 msgid "Payment canceled successfully"
 msgstr "Hủy thanh toán thành công"
 
+#: api_views.py:341
 msgid "Cannot cancel this payment"
 msgstr "Không thể hủy thanh toán này"
 
+#: api_views.py:367
 msgid "List saved payment methods"
 msgstr "Liệt kê phương thức thanh toán đã lưu"
 
+#: api_views.py:368
 msgid "List all saved payment methods for the authenticated user."
 msgstr ""
 "Liệt kê tất cả phương thức thanh toán đã lưu cho người dùng đã xác thực."
 
+#: api_views.py:372
 msgid "List of saved payment methods"
 msgstr "Danh sách phương thức thanh toán đã lưu"
 
+#: api_views.py:390
 msgid "Save a new payment method"
 msgstr "Lưu phương thức thanh toán mới"
 
+#: api_views.py:391
 msgid ""
 "\n"
 "        Save a new payment method for future use.\n"
@@ -536,42 +683,55 @@ msgstr ""
 "        after collecting card details on the client side.\n"
 "        "
 
+#: api_views.py:401
 msgid "Payment method saved successfully"
 msgstr "Lưu phương thức thanh toán thành công"
 
+#: api_views.py:403
 msgid "Invalid request"
 msgstr "Yêu cầu không hợp lệ"
 
+#: api_views.py:422 services/payment_orchestration_service.py:122
 msgid "Payment provider not found"
 msgstr "Không tìm thấy nhà cung cấp thanh toán"
 
+#: api_views.py:434
 msgid "Provider does not support saved payment methods"
 msgstr "Nhà cung cấp không hỗ trợ phương thức thanh toán đã lưu"
 
+#: api_views.py:494
 msgid "Get saved payment method details"
 msgstr "Lấy chi tiết phương thức thanh toán đã lưu"
 
+#: api_views.py:497
 msgid "Payment method details"
 msgstr "Chi tiết phương thức thanh toán"
 
+#: api_views.py:499 api_views.py:519 api_views.py:551
 msgid "Payment method not found"
 msgstr "Không tìm thấy phương thức thanh toán"
 
+#: api_views.py:516
 msgid "Delete saved payment method"
 msgstr "Xóa phương thức thanh toán đã lưu"
 
+#: api_views.py:518 api_views.py:536
 msgid "Payment method deleted"
 msgstr "Phương thức thanh toán đã bị xóa"
 
+#: api_views.py:548
 msgid "Set default payment method"
 msgstr "Thiết lập phương thức thanh toán mặc định"
 
+#: api_views.py:550 api_views.py:566
 msgid "Default payment method updated"
 msgstr "Phương thức thanh toán mặc định đã được cập nhật"
 
+#: api_views.py:579
 msgid "Report payment SDK failure"
 msgstr "Báo cáo lỗi SDK thanh toán"
 
+#: api_views.py:580
 msgid ""
 "\n"
 "Report a payment SDK loading failure. Used by the checkout frontend\n"
@@ -593,1101 +753,1764 @@ msgstr ""
 "**Authentication:** Not required (supports guest checkout).\n"
 "        "
 
+#: api_views.py:590
 msgid "Failure reported"
 msgstr "Đã báo cáo lỗi"
 
+#: apps.py:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:6
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:4
 msgid "Payment Providers"
 msgstr "Nhà cung cấp thanh toán"
 
-msgid "Enabled Payment Methods"
-msgstr "Phương thức thanh toán đã bật"
-
-msgid ""
-"Select payment methods to offer customers. Leave empty for all available "
-"methods."
-msgstr ""
-"Chọn phương thức thanh toán để cung cấp cho khách hàng. Để trống để hiển thị "
-"tất cả phương thức khả dụng."
-
+#: management/commands/sync_payment_methods.py:17
 msgid "Sync payment methods from payment provider APIs"
 msgstr "Đồng bộ phương thức thanh toán từ API nhà cung cấp thanh toán"
 
+#: models.py:27
 msgid "component"
 msgstr "thành phần"
 
+#: models.py:28
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:170
 msgid "Installed payment provider component"
 msgstr "Thành phần nhà cung cấp thanh toán đã cài đặt"
 
+#: models.py:35
 msgid "user"
 msgstr "người dùng"
 
+#: models.py:36
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:184
 msgid "User who owns this provider account"
 msgstr "Người dùng sở hữu tài khoản nhà cung cấp này"
 
+#: models.py:42
 msgid "display name"
 msgstr "tên hiển thị"
 
+#: models.py:43
 msgid "Friendly name for this connection (e.g., \"My Payment Provider\")"
 msgstr "Tên thân thiện cho kết nối này (ví dụ: \"My Payment Provider\")"
 
+#: models.py:49 templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "credentials"
 msgstr "thông tin xác thực"
 
+#: models.py:50
 msgid "Encrypted API credentials (never stored in plain text)"
 msgstr ""
 "Thông tin xác thực API đã mã hóa (không bao giờ lưu dưới dạng văn bản rõ)"
 
+#: models.py:56
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "settings"
 msgstr "cài đặt"
 
+#: models.py:57
 msgid "Provider-specific configuration (checkout mode, features, etc.)"
 msgstr "Cấu hình cụ thể của nhà cung cấp (chế độ thanh toán, tính năng, v.v.)"
 
+#: models.py:63
 msgid "signup URL"
 msgstr "URL đăng ký"
 
+#: models.py:64
 msgid "Link for merchants to create provider account (may be affiliate link)"
 msgstr ""
-"Liên kết cho các nhà bán hàng tạo tài khoản nhà cung cấp (có thể là liên kết "
-"đại lý)"
+"Liên kết cho các nhà bán hàng tạo tài khoản nhà cung cấp (có thể là liên kết"
+" đại lý)"
 
+#: models.py:69
 msgid "is active"
 msgstr "đang hoạt động"
 
+#: models.py:70
 msgid "Whether this provider connection is active for checkout"
 msgstr ""
 "Liệu kết nối nhà cung cấp này có đang hoạt động cho quy trình thanh toán "
 "không"
 
+#: models.py:75
 msgid "is default"
 msgstr "là mặc định"
 
+#: models.py:76
 msgid "Use this provider as default for payment processing"
 msgstr "Sử dụng nhà cung cấp này làm mặc định cho xử lý thanh toán"
 
+#: models.py:83
 msgid "Hosted - Redirect to provider"
 msgstr "Được lưu trữ - Chuyển hướng đến nhà cung cấp"
 
+#: models.py:84
+#: templates/admin/payment_providers/wizard/step3_credentials.html:200
 msgid "Integrated - On-site checkout"
 msgstr "Tích hợp - Thanh toán tại chỗ"
 
+#: models.py:87
 msgid "checkout mode"
 msgstr "chế độ thanh toán"
 
+#: models.py:88
 msgid "How customers will complete payment"
 msgstr "Cách khách hàng hoàn tất thanh toán"
 
+#: models.py:94
 msgid "sort order"
 msgstr "thứ tự sắp xếp"
 
+#: models.py:95
 msgid "Display order in checkout (lower numbers appear first)"
 msgstr ""
 "Thứ tự hiển thị trong quy trình thanh toán (số nhỏ hơn sẽ hiển thị trước)"
 
+#: models.py:102
 msgid "last tested at"
 msgstr "Lần kiểm tra cuối cùng lúc"
 
+#: models.py:103
 msgid "Last successful connection test"
 msgstr "Lần kiểm tra kết nối thành công cuối cùng"
 
+#: models.py:109
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:238
 msgid "Unknown"
 msgstr "Không xác định"
 
+#: models.py:110
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:57
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:62
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:118
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:230
 msgid "Connected"
 msgstr "Kết nối"
 
+#: models.py:111
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:288
 msgid "Connection Error"
 msgstr "Lỗi kết nối"
 
+#: models.py:114
 msgid "connection status"
 msgstr "trạng thái kết nối"
 
+#: models.py:118
 msgid "connection error"
 msgstr "lỗi kết nối"
 
+#: models.py:118
 msgid "Last connection error message"
 msgstr "Thông báo lỗi kết nối cuối cùng"
 
+#: models.py:125
 msgid "available payment methods"
 msgstr "phương thức thanh toán có sẵn"
 
+#: models.py:127
+#| msgid ""
+#| "Payment methods available from provider API, organized by country. Format: "
+#| "{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgid ""
-"Payment methods available from provider API, organized by country. Format: "
-"{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"Payment methods available from provider API, organized by country. Use "
+"\"_global\" key for methods available regardless of country. Format: "
+"{\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgstr ""
-"Phương thức thanh toán có sẵn từ API nhà cung cấp, được tổ chức theo quốc "
-"gia. Định dạng: {\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", "
+"Các phương thức thanh toán có sẵn từ API nhà cung cấp, được tổ chức theo "
+"quốc gia. Sử dụng khóa \"_global\" cho các phương thức có sẵn bất kể quốc "
+"gia. Định dạng: {\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", "
 "\"paynow\"]}"
 
+#: models.py:136
 msgid "enabled payment methods"
 msgstr "phương thức thanh toán đã bật"
 
+#: models.py:138
+#| msgid ""
+#| "Payment methods enabled by merchant for each country. Format: {\"US\": "
+#| "[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
 msgid ""
-"Payment methods enabled by merchant for each country. Format: {\"US\": "
-"[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
+"Payment methods enabled by merchant. Use \"_global\" for all countries, or "
+"per-country keys to override. Format: {\"_global\": [\"card\", "
+"\"apple_pay\"], \"SG\": [\"card\"]}"
 msgstr ""
-"Phương thức thanh toán được bật bởi nhà bán hàng cho mỗi quốc gia. Định "
-"dạng: {\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
+"Các phương thức thanh toán được kích hoạt bởi thương nhân. Sử dụng "
+"\"_global\" cho tất cả các quốc gia, hoặc các khóa theo quốc gia để ghi đè. "
+"Định dạng: {\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
 
+#: models.py:147
 msgid "last method sync at"
 msgstr "Lần đồng bộ phương thức cuối cùng lúc"
 
+#: models.py:148
 msgid "When payment methods were last synced from provider"
 msgstr ""
 "Thời điểm phương thức thanh toán cuối cùng được đồng bộ từ nhà cung cấp"
 
+#: models.py:154
 msgid "Pending - Not synced yet"
 msgstr "Chờ xử lý - Chưa đồng bộ"
 
+#: models.py:155
 msgid "Syncing - In progress"
 msgstr "Đang đồng bộ - Tiến hành"
 
+#: models.py:156
 msgid "Success - Synced successfully"
 msgstr "Thành công - Đồng bộ thành công"
 
+#: models.py:157
 msgid "Error - Sync failed"
 msgstr "Lỗi - Đồng bộ thất bại"
 
+#: models.py:160
 msgid "method sync status"
 msgstr "trạng thái đồng bộ phương thức"
 
+#: models.py:161
 msgid "Status of payment method synchronization"
 msgstr "Trạng thái đồng bộ phương thức thanh toán"
 
+#: models.py:166
 msgid "method sync error"
 msgstr "lỗi đồng bộ phương thức"
 
+#: models.py:167
 msgid "Last payment method sync error message"
 msgstr "Thông báo lỗi đồng bộ phương thức thanh toán lần cuối"
 
+#: models.py:171 models.py:757 models.py:1134
 msgid "created at"
 msgstr "Tạo lúc"
 
+#: models.py:172 models.py:758 models.py:1135
 msgid "updated at"
 msgstr "Cập nhật lúc"
 
+#: models.py:176
 msgid "payment provider account"
 msgstr "Tài khoản nhà cung cấp thanh toán"
 
+#: models.py:177
 msgid "payment provider accounts"
 msgstr "Tài khoản nhà cung cấp thanh toán"
 
+#: models.py:313
 msgid "Provider does not support payment method synchronization"
 msgstr "Nhà cung cấp không hỗ trợ đồng bộ phương thức thanh toán"
 
+#: models.py:345
 msgid "Payment methods synced successfully"
 msgstr "Phương thức thanh toán đã đồng bộ thành công"
 
+#: models.py:510
+#: templates/admin/payment_providers/partials/webhook_cards.html:28
 msgid "Pending"
 msgstr "Chờ xử lý"
 
+#: models.py:512
 msgid "Authorized - Not captured"
 msgstr "Đã phê duyệt - Chưa thu tiền"
 
+#: models.py:513
 msgid "Completed - Payment successful"
 msgstr "Hoàn tất - Thanh toán thành công"
 
+#: models.py:514 models.py:1009
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:61
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:40
 msgid "Failed"
 msgstr "Thất bại"
 
+#: models.py:515
 msgid "Voided - Authorization canceled"
 msgstr "Hủy bỏ - Phê duyệt bị hủy"
 
+#: models.py:516
 msgid "Refunded - Full refund"
 msgstr "Hoàn tiền - Hoàn tiền đầy đủ"
 
+#: models.py:517
 msgid "Partially Refunded"
 msgstr "Hoàn tiền một phần"
 
+#: models.py:521
 msgid "Charge - Immediate payment"
 msgstr "Thanh toán - Thanh toán ngay lập tức"
 
+#: models.py:522
 msgid "Authorize - Hold funds"
 msgstr "Phê duyệt - Giữ tiền"
 
+#: models.py:523
 msgid "Capture - Collect authorized funds"
 msgstr "Thu tiền - Thu tiền đã phê duyệt"
 
+#: models.py:524
 msgid "Void - Cancel authorization"
 msgstr "Hủy bỏ - Hủy phê duyệt"
 
+#: models.py:525
 msgid "Refund - Return payment"
 msgstr "Hoàn tiền - Trả lại tiền"
 
+#: models.py:547
+#| msgid "Payment Providers"
+msgid "Payment provider"
+msgstr "Nhà cung cấp thanh toán"
+
+#: models.py:548
+msgid "Gift Card"
+msgstr "Thẻ quà tặng"
+
+#: models.py:549
+msgid "Store Credit"
+msgstr "Tiền tín dụng cửa hàng"
+
+#: models.py:550
+msgid "Cash"
+msgstr "Tiền mặt"
+
+#: models.py:551
+msgid "Card (Terminal)"
+msgstr "Thẻ (Thiết bị cuối)"
+
+#: models.py:552
+msgid "Card (Manual)"
+msgstr "Thẻ (Thủ công)"
+
+#: models.py:568 models.py:872 models.py:1029
 msgid "provider account"
 msgstr "tài khoản nhà cung cấp"
 
+#: models.py:569
 msgid "Payment provider account used for this transaction"
 msgstr "Tài khoản nhà cung cấp thanh toán được sử dụng cho giao dịch này"
 
+#: models.py:579 models.py:1037
 msgid "order"
 msgstr "đơn hàng"
 
+#: models.py:587
 msgid "transaction ID"
 msgstr "ID giao dịch"
 
+#: models.py:588
 msgid "Internal transaction ID"
 msgstr "ID giao dịch nội bộ"
 
+#: models.py:595
 msgid "provider transaction ID"
 msgstr "ID giao dịch nhà cung cấp"
 
+#: models.py:596
 msgid "Provider transaction ID (charge ID, payment intent ID, etc.)"
 msgstr "ID giao dịch của nhà cung cấp (charge ID, payment intent ID, v.v.)"
 
+#: models.py:604
 msgid "authorization ID"
 msgstr "ID phê duyệt"
 
+#: models.py:605
 msgid "Provider authorization ID (if applicable)"
 msgstr "ID phê duyệt nhà cung cấp (nếu có)"
 
+#: models.py:613 models.py:1077
 msgid "amount"
 msgstr "Số tiền"
 
+#: models.py:614
 msgid "Transaction amount"
 msgstr "Số tiền giao dịch"
 
+#: models.py:618 models.py:1069
 msgid "status"
 msgstr "Trạng thái"
 
+#: models.py:622
 msgid "type"
 msgstr "Loại"
 
+#: models.py:633
+#| msgid "event type"
+msgid "tender type"
+msgstr "loại phương thức thanh toán"
+
+#: models.py:634
+msgid "How this payment was made"
+msgstr "Cách thức thanh toán này được thực hiện"
+
+#: models.py:643
+msgid "gift card"
+msgstr "thẻ quà tặng"
+
+#: models.py:644
+msgid "Gift card this tender draws on"
+msgstr "Thẻ quà tặng mà phương thức thanh toán này sử dụng"
+
+#: models.py:656
+#| msgid "Wallets"
+msgid "wallet"
+msgstr "ví"
+
+#: models.py:657
+msgid "Customer wallet this tender draws on"
+msgstr "Ví khách hàng mà phương thức thanh toán này sử dụng"
+
+#: models.py:669 models.py:1021
+msgid "checkout session"
+msgstr "Phiên thanh toán"
+
+#: models.py:681
+#| msgid "payment transaction"
+msgid "parent transaction"
+msgstr "giao dịch cha"
+
+#: models.py:694
+#| msgid "Payment amount"
+msgid "settlement amount"
+msgstr "số tiền thanh toán"
+
+#: models.py:695
+msgid "This tender's value in the order's currency"
+msgstr "Giá trị của phương thức thanh toán này theo tiền tệ của đơn hàng"
+
+#: models.py:703
+msgid "exchange rate"
+msgstr "tỷ giá hối đoái"
+
+#: models.py:704
+msgid "Rate used to convert amount into settlement_amount"
+msgstr "Tỷ lệ được sử dụng để chuyển đổi số tiền thành settlement_amount"
+
+#: models.py:708
 msgid "customer email"
 msgstr "Email khách hàng"
 
+#: models.py:710
 msgid "customer name"
 msgstr "Tên khách hàng"
 
+#: models.py:716
 msgid "payment method type"
 msgstr "Loại phương thức thanh toán"
 
+#: models.py:717
 msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
 msgstr ""
 "Loại phương thức thanh toán được sử dụng (credit_card, bank_transfer, v.v.)"
 
+#: models.py:723
 msgid "last 4 digits"
 msgstr "4 chữ số cuối"
 
+#: models.py:724
 msgid "Last 4 digits of card/account"
 msgstr "4 chữ số cuối của thẻ/tài khoản"
 
+#: models.py:731 models.py:1113
 msgid "metadata"
 msgstr "Thông tin bổ sung"
 
+#: models.py:732
 msgid "Additional transaction metadata"
 msgstr "Thông tin bổ sung của giao dịch"
 
+#: models.py:739 models.py:1120
 msgid "provider response"
 msgstr "Phản hồi từ nhà cung cấp thanh toán"
 
+#: models.py:740 models.py:1121
 msgid "Raw response from payment provider"
 msgstr "Phản hồi thô từ nhà cung cấp thanh toán"
 
+#: models.py:744 models.py:1127
 msgid "error message"
 msgstr "Thông báo lỗi"
 
+#: models.py:746 models.py:1125
 msgid "error code"
 msgstr "Mã lỗi"
 
+#: models.py:752 models.py:1131
 msgid "expires at"
 msgstr "Hết hạn lúc"
 
+#: models.py:753
 msgid "When authorization expires (if applicable)"
 msgstr "Khi ủy quyền hết hạn (nếu áp dụng)"
 
+#: models.py:759
 msgid "completed at"
 msgstr "Hoàn thành lúc"
 
+#: models.py:763
 msgid "payment transaction"
 msgstr "Giao dịch thanh toán"
 
+#: models.py:764
 msgid "payment transactions"
 msgstr "Các giao dịch thanh toán"
 
+#: models.py:881
 msgid "provider slug"
 msgstr "Định danh nhà cung cấp"
 
+#: models.py:882
 msgid "Provider identifier for routing"
 msgstr "Định danh nhà cung cấp để định tuyến"
 
+#: models.py:891
 msgid "event ID"
 msgstr "ID sự kiện"
 
+#: models.py:892
 msgid "Provider webhook event ID"
 msgstr "ID sự kiện webhook của nhà cung cấp"
 
+#: models.py:900
 msgid "event type"
 msgstr "Loại sự kiện"
 
+#: models.py:901
 msgid "Type of webhook event"
 msgstr "Loại sự kiện webhook"
 
+#: models.py:905
 msgid "payload"
 msgstr "Nội dung"
 
+#: models.py:905
 msgid "Complete webhook payload"
 msgstr "Nội dung đầy đủ của webhook"
 
+#: models.py:910
 msgid "headers"
 msgstr "Đầu HTTP từ yêu cầu webhook"
 
+#: models.py:911
 msgid "HTTP headers from webhook request"
 msgstr "Đầu HTTP từ yêu cầu webhook"
 
+#: models.py:918
 msgid "processed"
 msgstr "Đã xử lý"
 
+#: models.py:919
 msgid "Whether webhook has been processed"
 msgstr "Liệu webhook có được xử lý hay không"
 
+#: models.py:925
 msgid "processing result"
 msgstr "Kết quả xử lý"
 
+#: models.py:926
 msgid "Result from webhook handler"
 msgstr "Kết quả từ xử lý webhook"
 
+#: models.py:931
 msgid "processing error"
 msgstr "Thông báo lỗi xử lý"
 
+#: models.py:932
 msgid "Error message if processing failed"
 msgstr "Thông báo lỗi nếu xử lý thất bại"
 
+#: models.py:938
 msgid "signature verified"
 msgstr "Xác nhận chữ ký"
 
+#: models.py:939
 msgid "Whether webhook signature was verified"
 msgstr "Liệu chữ ký webhook có được xác nhận hay không"
 
+#: models.py:947
 msgid "idempotency key"
 msgstr "Khóa chống trùng lặp"
 
+#: models.py:948
 msgid "Key to prevent duplicate processing"
 msgstr "Khóa để ngăn xử lý trùng lặp"
 
+#: models.py:952
 msgid "received at"
 msgstr "Nhận lúc"
 
+#: models.py:953
 msgid "processed at"
 msgstr "Xử lý lúc"
 
+#: models.py:957
 msgid "payment webhook"
 msgstr "Webhook thanh toán"
 
+#: models.py:958
 msgid "payment webhooks"
 msgstr "Các webhook thanh toán"
 
+#: models.py:1002
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:41
 msgid "Created"
 msgstr "Đã tạo"
 
+#: models.py:1003
 msgid "Requires Payment Method"
 msgstr "Yêu cầu phương thức thanh toán"
 
+#: models.py:1004
 msgid "Requires Confirmation"
 msgstr "Yêu cầu xác nhận"
 
+#: models.py:1005
 msgid "Requires Action"
 msgstr "Yêu cầu hành động"
 
+#: models.py:1007
 msgid "Succeeded"
 msgstr "Thành công"
 
+#: models.py:1008
 msgid "Canceled"
 msgstr "Đã hủy"
 
-msgid "checkout session"
-msgstr "Phiên thanh toán"
-
+#: models.py:1022
 msgid "Checkout session this payment intent was created for"
 msgstr "Phiên thanh toán mà intent thanh toán này được tạo ra"
 
+#: models.py:1030
 msgid "Payment provider account used for this intent"
 msgstr "Tài khoản nhà cung cấp thanh toán được sử dụng cho intent này"
 
+#: models.py:1038
 msgid "Order this payment intent is for"
 msgstr "Đơn hàng mà intent thanh toán này được tạo cho"
 
+#: models.py:1045
 msgid "provider intent ID"
 msgstr "ID ý định thanh toán của nhà cung cấp"
 
+#: models.py:1046
 msgid "Provider payment intent ID (e.g., Stripe pi_xxx, AirWallex int_xxx)"
 msgstr ""
 "ID intent thanh toán của nhà cung cấp (ví dụ: Stripe pi_xxx, AirWallex "
 "int_xxx)"
 
+#: models.py:1052
 msgid "client secret"
 msgstr "Bí mật khách hàng"
 
+#: models.py:1053
 msgid "Client secret for embedded checkout (never expose in logs)"
 msgstr ""
 "Mật khẩu bí mật cho thanh toán embedded (không bao giờ hiển thị trong nhật "
 "ký)"
 
+#: models.py:1059
 msgid "checkout URL"
 msgstr "URL thanh toán"
 
+#: models.py:1060
 msgid "Hosted checkout redirect URL"
 msgstr "URL chuyển hướng thanh toán được lưu trữ"
 
+#: models.py:1078
 msgid "Payment amount"
 msgstr "Số tiền thanh toán"
 
+#: models.py:1084
 msgid "requires action"
 msgstr "Yêu cầu hành động"
 
+#: models.py:1085
 msgid "Whether customer action is required (e.g., 3DS)"
 msgstr "Liệu hành động của khách hàng có cần thiết không (ví dụ: 3DS)"
 
+#: models.py:1091
 msgid "action type"
 msgstr "Loại hành động"
 
+#: models.py:1098
 msgid "action URL"
 msgstr "URL hành động"
 
+#: models.py:1099
 msgid "URL to redirect for action (3DS, verification, etc.)"
 msgstr "URL để chuyển hướng cho hành động (3DS, xác minh, v.v.)"
 
+#: models.py:1105
 msgid "action data"
 msgstr "Dữ liệu hành động"
 
+#: models.py:1106
 msgid "Provider-specific action data for SDK handling"
 msgstr "Dữ liệu hành động cụ thể của nhà cung cấp để xử lý SDK"
 
+#: models.py:1114
 msgid "Additional intent metadata"
 msgstr "Thông tin bổ sung về ý định thanh toán"
 
+#: models.py:1131
 msgid "When this payment intent expires"
 msgstr "Khi ý định thanh toán này hết hạn"
 
+#: models.py:1139
 msgid "payment intent"
 msgstr "ý định thanh toán"
 
+#: models.py:1140
 msgid "payment intents"
 msgstr "ý định thanh toán"
 
+#: services/payment_orchestration_service.py:82 services/payment_service.py:76
 msgid "Payment provider is not active"
 msgstr "Nhà cung cấp thanh toán không hoạt động"
 
+#: services/payment_orchestration_service.py:85 services/payment_service.py:79
 msgid "Payment provider is not properly configured"
 msgstr "Nhà cung cấp thanh toán không được cấu hình đúng cách"
 
+#: services/payment_orchestration_service.py:127
 msgid "Failed to initialize payment provider"
 msgstr "Không thể khởi tạo nhà cung cấp thanh toán"
 
+#: services/payment_orchestration_service.py:197
 #, python-brace-format
 msgid "Failed to create payment with provider: {error}"
 msgstr "Không thể tạo thanh toán với nhà cung cấp: {error}"
 
+#: services/payment_orchestration_service.py:381
+#: services/payment_orchestration_service.py:592
 msgid "Payment intent is already in terminal state"
 msgstr "Ý định thanh toán đã ở trạng thái cuối cùng"
 
+#: services/payment_orchestration_service.py:391
 msgid "Provider does not support payment confirmation"
 msgstr "Nhà cung cấp không hỗ trợ xác nhận thanh toán"
 
+#: services/payment_orchestration_service.py:411
 msgid "Payment confirmed"
 msgstr "Xác nhận thanh toán"
 
+#: services/payment_orchestration_service.py:454
 msgid "Payment already processed"
 msgstr "Thanh toán đã được xử lý"
 
+#: services/payment_orchestration_service.py:552
 msgid "Payment processed successfully"
 msgstr "Xử lý thanh toán thành công"
 
+#: services/payment_orchestration_service.py:634
 msgid "Payment cancelled"
 msgstr "Hủy thanh toán"
 
+#: services/payment_service.py:44
 msgid "Payment amount must be greater than zero"
 msgstr "Số tiền thanh toán phải lớn hơn không"
 
+#: services/payment_service.py:48
 msgid "Payment amount exceeds maximum allowed"
 msgstr "Số tiền thanh toán vượt quá mức cho phép"
 
+#: services/payment_service.py:93 services/refund_service.py:131
 msgid "Payment provider not found in registry"
 msgstr "Nhà cung cấp thanh toán không được tìm thấy trong sổ đăng ký"
 
+#: services/payment_service.py:107
 msgid "Payment intent creation failed"
 msgstr "Tạo ý định thanh toán thất bại"
 
+#: services/payment_service.py:135
 #, python-brace-format
 msgid "Payment processing error: {error}"
 msgstr "Lỗi xử lý thanh toán: {error}"
 
+#: services/payment_service.py:153
 msgid "Payment transaction is not in pending state"
 msgstr "Giao dịch thanh toán không ở trạng thái chờ"
 
+#: services/payment_service.py:169
 msgid "Authorization failed"
 msgstr "Xác thực thất bại"
 
+#: services/payment_service.py:189
 msgid "Payment authorized successfully"
 msgstr "Xác thực thanh toán thành công"
 
+#: services/payment_service.py:196
 #, python-brace-format
 msgid "Payment authorization error: {error}"
 msgstr "Lỗi xác thực thanh toán: {error}"
 
+#: services/payment_service.py:214
 msgid "Payment transaction is not authorized"
 msgstr "Giao dịch thanh toán không được xác thực"
 
+#: services/payment_service.py:221
 msgid "Capture amount exceeds authorized amount"
 msgstr "Số tiền thu giữ vượt quá số tiền được xác thực"
 
+#: services/payment_service.py:235
 msgid "Capture failed"
 msgstr "Thu giữ thất bại"
 
+#: services/payment_service.py:256
 msgid "Payment captured successfully"
 msgstr "Thu giữ thanh toán thành công"
 
+#: services/payment_service.py:260
 #, python-brace-format
 msgid "Payment capture error: {error}"
 msgstr "Lỗi thu tiền thanh toán: {error}"
 
+#: services/payment_service.py:310
 msgid "Only pending or authorized payments can be cancelled"
 msgstr ""
 "Chỉ các khoản thanh toán đang chờ hoặc được phê duyệt mới có thể bị hủy"
 
+#: services/payment_service.py:325
 msgid "Cancellation failed"
 msgstr "Hủy thất bại"
 
+#: services/payment_service.py:340
 msgid "Payment cancelled successfully"
 msgstr "Hủy thanh toán thành công"
 
+#: services/payment_service.py:344
 #, python-brace-format
 msgid "Payment cancellation error: {error}"
 msgstr "Lỗi hủy thanh toán: {error}"
 
+#: services/refund_service.py:43
 msgid "Refund amount must be greater than zero"
 msgstr "Số tiền hoàn tiền phải lớn hơn không"
 
+#: services/refund_service.py:66
 #, python-brace-format
 msgid "Refund amount ({amount}) exceeds available amount ({available})"
 msgstr ""
 "Số tiền hoàn tiền ({amount}) vượt quá số tiền có thể hoàn ({available})"
 
+#: services/refund_service.py:102
 msgid "Only successful payments can be refunded"
 msgstr "Chỉ các khoản thanh toán thành công mới có thể được hoàn tiền"
 
+#: services/refund_service.py:105
 msgid "Only charge transactions can be refunded"
 msgstr "Chỉ các giao dịch thu phí mới có thể được hoàn tiền"
 
+#: services/refund_service.py:149
 msgid "Refund failed"
 msgstr "Hoàn tiền thất bại"
 
+#: services/refund_service.py:213
 msgid "Refund processed successfully"
 msgstr "Xử lý hoàn tiền thành công"
 
+#: services/refund_service.py:217
 #, python-brace-format
 msgid "Refund processing error: {error}"
 msgstr "Lỗi xử lý hoàn tiền: {error}"
 
+#: services/refund_service.py:231
 msgid "Transaction is not a refund"
 msgstr "Giao dịch không phải là hoàn tiền"
 
+#: services/webhook_service.py:103
 msgid "Webhook already processed"
 msgstr "Webhook đã được xử lý"
 
+#: services/webhook_service.py:197
 msgid "Webhook processed successfully"
 msgstr "Xử lý webhook thành công"
 
+#: services/webhook_service.py:546
 msgid "Webhook already processed successfully"
 msgstr "Webhook đã được xử lý thành công"
 
+#: services/webhook_service.py:560
 msgid "Webhook not found"
 msgstr "Webhook không tìm thấy"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:4
+#: templates/admin/payment_providers/configure_payment_methods.html:17
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:243
 msgid "Configure Payment Methods"
 msgstr "Cấu hình phương thức thanh toán"
 
-msgid "Enable or disable payment methods per country"
-msgstr "Bật hoặc tắt phương thức thanh toán theo quốc gia"
+#: templates/admin/payment_providers/configure_payment_methods.html:19
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid "Configure which payment methods are available at checkout"
+msgstr "Cấu hình các phương thức thanh toán nào có sẵn tại bước thanh toán"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:23
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:246
+#| msgid "Back to Provider"
+msgid "Sync from Provider"
+msgstr "Đồng bộ từ nhà cung cấp"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:26
 msgid "Back to Provider"
 msgstr "Quay lại nhà cung cấp"
 
-msgid "No Shipping Countries Configured"
-msgstr "Không có quốc gia giao hàng được cấu hình"
+#: templates/admin/payment_providers/configure_payment_methods.html:35
+#| msgid "No Payment Providers Available"
+msgid "No Payment Methods Available"
+msgstr "Không có phương thức thanh toán nào có sẵn"
 
-msgid ""
-"Configure shipping countries first to set up payment methods per country."
+#: templates/admin/payment_providers/configure_payment_methods.html:36
+#| msgid "Sync payment methods from payment provider APIs"
+msgid "Sync payment methods from your provider first using the button above."
 msgstr ""
-"Cấu hình các quốc gia giao hàng trước để thiết lập phương thức thanh toán "
-"theo quốc gia."
+"Hãy đồng bộ các phương thức thanh toán từ nhà cung cấp của bạn trước bằng "
+"nút phía trên."
 
+#: templates/admin/payment_providers/configure_payment_methods.html:43
 msgid "How it works"
 msgstr "Cách hoạt động"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:44
 msgid ""
-"Toggle payment methods on or off for each country. Changes are saved "
-"automatically."
+"The Global section applies to all customers. Add country-specific overrides "
+"below to customize methods for particular countries — country overrides take"
+" priority over global settings. Changes are saved automatically."
 msgstr ""
-"Bật hoặc tắt phương thức thanh toán cho từng quốc gia. Các thay đổi được lưu "
-"tự động."
+"Phần Global áp dụng cho tất cả khách hàng. Thêm các cài đặt theo quốc gia cụ"
+" thể bên dưới để tùy chỉnh phương thức cho các quốc gia cụ thể — các cài đặt"
+" theo quốc gia có quyền ưu tiên cao hơn cài đặt toàn cầu. Các thay đổi được "
+"lưu tự động."
 
+#: templates/admin/payment_providers/configure_payment_methods.html:53
 msgid ""
-"No payment methods available. Try syncing payment methods from the provider "
-"first."
+"These payment methods are available to customers in all countries unless "
+"overridden below."
 msgstr ""
-"Không có phương thức thanh toán nào có sẵn. Hãy thử đồng bộ phương thức "
-"thanh toán từ nhà cung cấp trước."
+"Các phương thức thanh toán này có sẵn cho khách hàng ở tất cả các quốc gia, "
+"trừ khi bị ghi đè bên dưới."
 
+#: templates/admin/payment_providers/configure_payment_methods.html:58
+#: templates/admin/payment_providers/configure_payment_methods.html:110
+#| msgid "Enable"
+msgid "Enable All"
+msgstr "Kích hoạt tất cả"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:61
+#: templates/admin/payment_providers/configure_payment_methods.html:113
+#| msgid "Disable"
+msgid "Disable All"
+msgstr "Vô hiệu hóa tất cả"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:80
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid "No payment methods available. Try syncing from the provider first."
+msgstr ""
+"Không có phương thức thanh toán nào sẵn sàng. Hãy thử đồng bộ từ nhà cung "
+"cấp trước."
+
+#: templates/admin/payment_providers/configure_payment_methods.html:88
+#| msgid "All Countries"
+msgid "Country Overrides"
+msgstr "Ghi đè quốc gia"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:89
+msgid "(optional)"
+msgstr "(tùy chọn)"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:91
+msgid ""
+"Add country-specific configurations that override the global settings above."
+" Useful if certain payment methods are only available or should be "
+"restricted in specific countries."
+msgstr ""
+"Thêm các cấu hình theo quốc gia cụ thể để ghi đè cài đặt toàn cầu ở trên. "
+"Hữu ích nếu các phương thức thanh toán nhất định chỉ có sẵn hoặc nên bị hạn "
+"chế ở các quốc gia cụ thể."
+
+#: templates/admin/payment_providers/configure_payment_methods.html:102
+msgid "Remove override — will fall back to global"
+msgstr "Loại bỏ ghi đè — sẽ quay lại toàn cầu"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:103
+msgid "Remove"
+msgstr "Loại bỏ"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:132
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid ""
+"No payment methods available for this country. Methods from the global "
+"section will apply."
+msgstr ""
+"Không có phương thức thanh toán nào sẵn sàng cho quốc gia này. Các phương "
+"thức từ phần toàn cầu sẽ được áp dụng."
+
+#: templates/admin/payment_providers/configure_payment_methods.html:144
 msgid "Saved"
 msgstr "Đã lưu"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:145
 msgid "Error saving change"
 msgstr "Lỗi khi lưu thay đổi"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:17
 msgid "Unknown Provider"
 msgstr "Nhà cung cấp không xác định"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:69
+#: templates/admin/payment_providers/payment_dashboard.html:413
 msgid "Order"
 msgstr "Thứ tự"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:76
+#: templates/admin/payment_providers/partials/webhook_cards.html:65
 msgid "View"
 msgstr "Xem"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:89
 msgid "No transactions found."
 msgstr "Không tìm thấy giao dịch nào."
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:91
+#: templates/admin/payment_providers/partials/webhook_cards.html:80
 msgid "Try adjusting your filters or search terms."
 msgstr "Hãy thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm của bạn."
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:24
+#: templates/admin/payment_providers/partials/webhook_cards.html:52
+#: templates/admin/payment_providers/payment_dashboard.html:482
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:86
 msgid "Processed"
 msgstr "Đã xử lý"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:45
 msgid "Verified"
 msgstr "Đã xác minh"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:39
 msgid "Unverified"
 msgstr "Chưa xác minh"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:78
 msgid "No webhooks found."
 msgstr "Không tìm thấy webhook nào."
 
+#: templates/admin/payment_providers/payment_dashboard.html:4
+#: templates/admin/payment_providers/payment_dashboard.html:19
+#: templates/admin/payment_providers/payment_dashboard.html:30
+#: views/payment_dashboard.py:94
 msgid "Payment Dashboard"
 msgstr "Bảng điều khiển thanh toán"
 
+#: templates/admin/payment_providers/payment_dashboard.html:18
+#: templates/admin/payment_providers/providers/browse.html:26
 msgid "Home"
 msgstr "Trang chủ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:33
 msgid "Monitor payment performance, provider health, and transaction metrics"
 msgstr ""
 "Theo dõi hiệu suất thanh toán, tình trạng nhà cung cấp và các chỉ số giao "
 "dịch"
 
+#: templates/admin/payment_providers/payment_dashboard.html:42
 msgid "Period"
 msgstr "Khoảng thời gian"
 
+#: templates/admin/payment_providers/payment_dashboard.html:54
 msgid "From"
 msgstr "Từ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:60
 msgid "To"
 msgstr "Đến"
 
+#: templates/admin/payment_providers/payment_dashboard.html:72
 msgid "Compare with previous period"
 msgstr "So sánh với khoảng thời gian trước"
 
+#: templates/admin/payment_providers/payment_dashboard.html:83
 msgid "Quick Navigation"
 msgstr "Điều hướng nhanh"
 
+#: templates/admin/payment_providers/payment_dashboard.html:86
 msgid "Jump to section..."
 msgstr "Chuyển đến phần..."
 
+#: templates/admin/payment_providers/payment_dashboard.html:87
+#: templates/admin/payment_providers/payment_dashboard.html:103
 msgid "Actions Required"
 msgstr "Hành động cần thực hiện"
 
+#: templates/admin/payment_providers/payment_dashboard.html:88
 msgid "Revenue Over Time"
 msgstr "Doanh thu theo thời gian"
 
+#: templates/admin/payment_providers/payment_dashboard.html:89
+#: templates/admin/payment_providers/payment_dashboard.html:179
 msgid "Payment Performance"
 msgstr "Hiệu suất thanh toán"
 
+#: templates/admin/payment_providers/payment_dashboard.html:90
+#: templates/admin/payment_providers/payment_dashboard.html:266
 msgid "Refund Metrics"
 msgstr "Chỉ số hoàn tiền"
 
+#: templates/admin/payment_providers/payment_dashboard.html:91
 msgid "Provider Performance"
 msgstr "Hiệu suất nhà cung cấp"
 
+#: templates/admin/payment_providers/payment_dashboard.html:92
 msgid "Transaction Status"
 msgstr "Trạng thái giao dịch"
 
+#: templates/admin/payment_providers/payment_dashboard.html:93
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:212
 msgid "Payment Methods"
 msgstr "Phương thức thanh toán"
 
+#: templates/admin/payment_providers/payment_dashboard.html:94
+#: templates/admin/payment_providers/payment_dashboard.html:406
 msgid "Recent Transactions"
 msgstr "Giao dịch gần đây"
 
+#: templates/admin/payment_providers/payment_dashboard.html:95
+#: templates/admin/payment_providers/payment_dashboard.html:464
 msgid "Webhook Statistics"
 msgstr "Thống kê webhook"
 
+#: templates/admin/payment_providers/payment_dashboard.html:111
 msgid "Failed Transactions (7d)"
 msgstr "Giao dịch thất bại (7 ngày)"
 
+#: templates/admin/payment_providers/payment_dashboard.html:119
 msgid "Pending Captures"
 msgstr "Chưa thu tiền"
 
+#: templates/admin/payment_providers/payment_dashboard.html:127
 msgid "Pending Refunds"
 msgstr "Chưa hoàn tiền"
 
+#: templates/admin/payment_providers/payment_dashboard.html:135
 msgid "Connection Errors"
 msgstr "Lỗi kết nối"
 
+#: templates/admin/payment_providers/payment_dashboard.html:143
 msgid "Unprocessed Webhooks"
 msgstr "Webhook chưa xử lý"
 
+#: templates/admin/payment_providers/payment_dashboard.html:153
 msgid "Payment Revenue Over Time"
 msgstr "Doanh thu thanh toán theo thời gian"
 
+#: templates/admin/payment_providers/payment_dashboard.html:157
 msgid "Group by"
 msgstr "Nhóm theo"
 
+#: templates/admin/payment_providers/payment_dashboard.html:160
 msgid "Day"
 msgstr "Ngày"
 
+#: templates/admin/payment_providers/payment_dashboard.html:163
 msgid "Week"
 msgstr "Tuần"
 
+#: templates/admin/payment_providers/payment_dashboard.html:166
 msgid "Month"
 msgstr "Tháng"
 
+#: templates/admin/payment_providers/payment_dashboard.html:187
 msgid "Total Revenue"
 msgstr "Tổng doanh thu"
 
+#: templates/admin/payment_providers/payment_dashboard.html:203
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:30
 msgid "Total Transactions"
 msgstr "Tổng số giao dịch"
 
+#: templates/admin/payment_providers/payment_dashboard.html:219
+#: templates/admin/payment_providers/payment_dashboard.html:354
 msgid "Success Rate"
 msgstr "Tỷ lệ thành công"
 
+#: templates/admin/payment_providers/payment_dashboard.html:235
 msgid "Average Transaction"
 msgstr "Giao dịch trung bình"
 
+#: templates/admin/payment_providers/payment_dashboard.html:245
 msgid "Authorized (Not Captured)"
 msgstr "Đã phê duyệt (chưa thu tiền)"
 
+#: templates/admin/payment_providers/payment_dashboard.html:255
+#: templates/admin/payment_providers/payment_dashboard.html:274
 msgid "Total Refunded"
 msgstr "Tổng số tiền hoàn tiền"
 
+#: templates/admin/payment_providers/payment_dashboard.html:290
 msgid "Refund Count"
 msgstr "Số lượng hoàn tiền"
 
+#: templates/admin/payment_providers/payment_dashboard.html:306
 msgid "Refund Rate"
 msgstr "Tỷ lệ hoàn tiền"
 
+#: templates/admin/payment_providers/payment_dashboard.html:317
 msgid "Provider Performance Comparison"
 msgstr "So sánh hiệu suất nhà cung cấp"
 
+#: templates/admin/payment_providers/payment_dashboard.html:337
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:127
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:253
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:339
 msgid "Active"
 msgstr "Kích hoạt"
 
+#: templates/admin/payment_providers/payment_dashboard.html:339
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:72
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:257
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:340
 msgid "Inactive"
 msgstr "Không kích hoạt"
 
+#: templates/admin/payment_providers/payment_dashboard.html:346
 msgid "Revenue"
 msgstr "Doanh thu"
 
+#: templates/admin/payment_providers/payment_dashboard.html:350
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:125
 msgid "Transactions"
 msgstr "Giao dịch"
 
+#: templates/admin/payment_providers/payment_dashboard.html:360
 msgid "Avg Amount"
 msgstr "Số tiền trung bình"
 
+#: templates/admin/payment_providers/payment_dashboard.html:368
 msgid "No payment providers configured"
 msgstr "Chưa cấu hình nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/payment_dashboard.html:370
 msgid "Setup First Provider"
 msgstr "Thiết lập nhà cung cấp đầu tiên"
 
+#: templates/admin/payment_providers/payment_dashboard.html:383
 msgid "Transaction Status Breakdown"
 msgstr "Phân tích trạng thái giao dịch"
 
+#: templates/admin/payment_providers/payment_dashboard.html:393
 msgid "Payment Methods Distribution"
 msgstr "Phân phối phương thức thanh toán"
 
+#: templates/admin/payment_providers/payment_dashboard.html:412
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:65
 msgid "Transaction ID"
 msgstr "Mã giao dịch"
 
+#: templates/admin/payment_providers/payment_dashboard.html:414
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:99
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:73
 msgid "Provider"
 msgstr "Nhà cung cấp"
 
+#: templates/admin/payment_providers/payment_dashboard.html:415
 msgid "Amount"
 msgstr "Số tiền"
 
+#: templates/admin/payment_providers/payment_dashboard.html:416
 msgid "Payment Method"
 msgstr "Phương thức thanh toán"
 
+#: templates/admin/payment_providers/payment_dashboard.html:418
 msgid "Date"
 msgstr "Ngày"
 
+#: templates/admin/payment_providers/payment_dashboard.html:451
 msgid "No recent transactions"
 msgstr "Không có giao dịch gần đây"
 
+#: templates/admin/payment_providers/payment_dashboard.html:472
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:30
 msgid "Total Webhooks"
 msgstr "Tổng số webhook"
 
+#: templates/admin/payment_providers/payment_dashboard.html:492
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:40
 msgid "Unprocessed"
 msgstr "Chưa xử lý"
 
+#: templates/admin/payment_providers/payment_dashboard.html:502
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:98
 msgid "Signature Verified"
 msgstr "Xác thực chữ ký"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
 msgid "Add Payment Provider"
 msgstr "Thêm nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:46
 msgid "Last Tested"
 msgstr "Lần kiểm tra cuối cùng"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:86
+#| msgid "Hosted Mode"
+msgid "Test Mode"
+msgstr "Chế độ kiểm tra"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:90
+msgid "Live"
+msgstr "Sống"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:97
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:87
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:215
 msgid "Hosted"
 msgstr "Được lưu trữ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:99
 msgid "Embedded"
 msgstr "Chèn"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:109
 msgid "Settings"
 msgstr "Cài đặt"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:113
 msgid "Status & Health"
 msgstr "Trạng thái và sức khỏe"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:117
 msgid "Advanced"
 msgstr "Nâng cao"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:133
+#| msgid "Webhook Information"
+msgid "Webhook Endpoint"
+msgstr "Điểm cuối Webhook"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:135
+msgid ""
+"Configure this URL in your payment provider's dashboard to receive payment "
+"notifications."
+msgstr ""
+"Cấu hình URL này trong bảng điều khiển của nhà cung cấp thanh toán của bạn "
+"để nhận thông báo thanh toán."
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:138
+msgid "Copy to clipboard"
+msgstr "Sao chép vào clipboard"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:149
+#| msgid "Payment Dashboard"
+msgid "Provider Dashboard"
+msgstr "Bảng điều khiển nhà cung cấp"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:163
 msgid "Component"
 msgstr "Thành phần"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:177
 msgid "User"
 msgstr "Người dùng"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:215
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid ""
+"Configure which payment methods are shown to customers at checkout, "
+"organized by country."
+msgstr ""
+"Cấu hình các phương thức thanh toán được hiển thị cho khách hàng khi thanh "
+"toán, được tổ chức theo quốc gia."
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:221
+#| msgid "Last tested:"
+msgid "Last synced:"
+msgstr "Đồng bộ lần cuối:"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:227
+#| msgid "Basic Configuration"
+msgid "Global configuration active"
+msgstr "Cấu hình toàn cầu đang hoạt động"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:232
+#| msgid "No payment providers configured"
+msgid "countries configured"
+msgstr "các quốc gia được cấu hình"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:237
+msgid "Not configured — all available methods will be shown"
+msgstr "Chưa được cấu hình — tất cả phương thức khả dụng sẽ được hiển thị"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:277
 msgid "Connection Status"
 msgstr "Trạng thái kết nối"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:300
 msgid "Last Tested At"
 msgstr "Lần kiểm tra cuối cùng lúc"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:311
 msgid "Payment Method Sync Status"
 msgstr "Trạng thái đồng bộ phương thức thanh toán"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:322
 msgid "Last Method Sync At"
 msgstr "Lần đồng bộ phương thức cuối cùng lúc"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:334
 msgid "Method Sync Error"
 msgstr "Lỗi đồng bộ phương thức"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:369
+#: templates/admin/payment_providers/wizard/step3_credentials.html:46
+msgid "API Credentials"
+msgstr "Thông tin xác thực API"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:371
+msgid ""
+"API credentials are encrypted and managed through the setup wizard for "
+"security. To update your API keys or secrets, use the wizard to reconfigure "
+"this provider."
+msgstr ""
+"Thông tin xác thực API được mã hóa và quản lý thông qua chương trình hướng "
+"dẫn cài đặt để đảm bảo an toàn. Để cập nhật các khóa API hoặc mật khẩu của "
+"bạn, hãy sử dụng chương trình hướng dẫn để cấu hình lại nhà cung cấp này."
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:373
+#| msgid "Enter Your Credentials"
+msgid "Reconfigure Credentials"
+msgstr "Cấu hình lại thông tin xác thực"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:380
 msgid "Created At"
 msgstr "Tạo lúc"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:390
 msgid "Updated At"
 msgstr "Cập nhật lúc"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:400
 msgid "Save"
 msgstr "Lưu"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:401
 msgid "Save and continue editing"
 msgstr "Lưu và tiếp tục chỉnh sửa"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:403
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:293
 msgid "Delete"
 msgstr "Xóa"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:418
 msgid "Select All"
 msgstr "Chọn tất cả"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:419
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:117
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:115
 msgid "Clear All"
 msgstr "Xóa tất cả"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:18
+#: templates/admin/payment_providers/providers/browse.html:27
 msgid "Payment Provider Accounts"
 msgstr "Tài khoản nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:20
 msgid "Manage payment gateway integrations and API connections"
 msgstr "Quản lý tích hợp cổng thanh toán và kết nối API"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:22
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s nhà cung cấp"
 msgstr[1] "%(counter)s nhà cung cấp"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:23
 msgid "active"
 msgstr "hoạt động"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:24
 msgid "connected"
 msgstr "kết nối"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:29
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:305
+#: templates/admin/payment_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr "Duyệt nhà cung cấp"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:32
 msgid "Setup New Provider"
 msgstr "Thiết lập nhà cung cấp mới"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:51
 msgid "Search providers..."
 msgstr "Tìm nhà cung cấp..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:60
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:76
 msgid "All Statuses"
 msgstr "Tất cả trạng thái"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:65
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:234
 msgid "Error"
 msgstr "Lỗi"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:74
 msgid "All Active Status"
 msgstr "Tất cả trạng thái hoạt động"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:76
 msgid "Active Only"
 msgstr "Chỉ trạng thái hoạt động"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:79
 msgid "Inactive Only"
 msgstr "Chỉ trạng thái không hoạt động"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:85
 msgid "All Checkout Modes"
 msgstr "Tất cả chế độ thanh toán"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:90
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:219
 msgid "Integrated"
 msgstr "Được tích hợp"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:97
 msgid "All Provider Types"
 msgstr "Tất cả loại nhà cung cấp"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:136
 msgid "Hosted Mode"
 msgstr "Chế độ được lưu trữ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:145
 msgid "Integrated Mode"
 msgstr "Chế độ được tích hợp"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:155
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:184
 msgid "Default Provider"
 msgstr "Nhà cung cấp mặc định"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:199
 msgid "Provider:"
 msgstr "Nhà cung cấp:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "Last tested:"
 msgstr "Lần kiểm tra cuối cùng:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "ago"
 msgstr "trước"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:267
 msgid "Edit"
 msgstr "Chỉnh sửa"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:272
+#: templates/admin/payment_providers/wizard/base.html:46
+#: templates/admin/payment_providers/wizard/step4_test.html:13
 msgid "Test Connection"
 msgstr "Kiểm tra kết nối"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:338
 msgid "Disable"
 msgstr "Vô hiệu hóa"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:337
 msgid "Enable"
 msgstr "Kích hoạt"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:288
 msgid "Set as Default"
 msgstr "Đặt làm mặc định"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:302
 msgid "No Payment Providers Connected"
 msgstr "Không có nhà cung cấp thanh toán nào được kết nối"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:303
 msgid "Get started by connecting your first payment provider"
 msgstr "Bắt đầu bằng cách kết nối nhà cung cấp thanh toán đầu tiên của bạn"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:308
 msgid "Setup Your First Provider"
 msgstr "Thiết lập nhà cung cấp đầu tiên của bạn"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:318
 msgid "providers"
 msgstr "nhà cung cấp"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:327
 msgid "Testing..."
 msgstr "Đang kiểm tra..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:328
 msgid "Setting..."
 msgstr "Đang thiết lập..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:329
 msgid "Deleting..."
 msgstr "Đang xóa..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:330
 msgid "Connection test failed"
 msgstr "Kiểm tra kết nối thất bại"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:331
 msgid "Failed to set default"
 msgstr "Thất bại khi đặt làm mặc định"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:333
 msgid "Failed to delete"
 msgstr "Thất bại khi xóa"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:334
 msgid "Set this provider as the default payment provider?"
-msgstr "Bạn có muốn đặt nhà cung cấp này làm nhà cung cấp thanh toán mặc định?"
+msgstr ""
+"Bạn có muốn đặt nhà cung cấp này làm nhà cung cấp thanh toán mặc định?"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:335
 msgid ""
-"Are you sure you want to delete this payment provider? This action cannot be "
-"undone."
+"Are you sure you want to delete this payment provider? This action cannot be"
+" undone."
 msgstr ""
 "Bạn có chắc muốn xóa nhà cung cấp thanh toán này? Hành động này không thể "
 "hoàn tác."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:336
+#| msgid "Failed to initialize payment provider"
+msgid "Failed to toggle provider"
+msgstr "Thất bại khi chuyển đổi nhà cung cấp"
+
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:4
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:18
 msgid "Payment Transactions"
 msgstr "Giao dịch thanh toán"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:20
 msgid "View and track all payment transactions"
 msgstr "Xem và theo dõi tất cả các giao dịch thanh toán"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:25
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:25
 msgid "Overview"
 msgstr "Tổng quan"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:35
 msgid "Successful"
 msgstr "Thành công"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:45
 msgid "Refunded"
 msgstr "Hoàn tiền"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:54
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:54
 msgid "Filters"
 msgstr "Lọc"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:67
 msgid "Search by transaction ID..."
 msgstr "Tìm theo mã giao dịch..."
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:86
 msgid "Type"
 msgstr "Loại"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:89
 msgid "All Types"
 msgstr "Tất cả loại"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:102
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:76
 msgid "All Providers"
 msgstr "Tất cả nhà cung cấp"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:114
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:112
 msgid "Apply Filters"
 msgstr "Áp dụng bộ lọc"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:128
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:126
 msgid "entries"
 msgstr "mục"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:137
 msgid "Loading transactions..."
 msgstr "Đang tải giao dịch..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:4
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:18
 msgid "Payment Webhooks"
 msgstr "Webhook thanh toán"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:20
 msgid "Monitor incoming payment provider webhooks"
 msgstr "Theo dõi webhook đến từ nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:65
 msgid "Event ID / Type"
 msgstr "ID / Loại sự kiện"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:67
 msgid "Search by event ID or type..."
 msgstr "Tìm kiếm theo ID sự kiện hoặc loại..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:89
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:101
 msgid "All"
 msgstr "Tất cả"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:90
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:102
 msgid "Yes"
 msgstr "Có"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:91
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:103
 msgid "No"
 msgstr "Không"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:123
+#: templates/admin/payment_providers/providers/browse.html:281
 msgid "Webhooks"
 msgstr "Webhook"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:135
 msgid "Loading webhooks..."
 msgstr "Đang tải webhook..."
 
+#: templates/admin/payment_providers/providers/browse.html:4
+#: templates/admin/payment_providers/providers/browse.html:37
+#: views/provider_browse.py:212
 msgid "Browse Payment Providers"
 msgstr "Duyệt nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr "Quản trị trang web"
 
+#: templates/admin/payment_providers/providers/browse.html:39
 msgid ""
 "Choose a payment provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -1695,19 +2518,23 @@ msgstr ""
 "Chọn nhà cung cấp thanh toán để tích hợp với cửa hàng của bạn. Cài đặt các "
 "nhà cung cấp mới hoặc cấu hình các nhà cung cấp hiện có."
 
+#: templates/admin/payment_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr "Máy chủ cập nhật không khả dụng"
 
+#: templates/admin/payment_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr ""
-"Không thể kết nối đến máy chủ cập nhật. Chỉ hiển thị các nhà cung cấp đã cài "
-"đặt cục bộ."
+"Không thể kết nối đến máy chủ cập nhật. Chỉ hiển thị các nhà cung cấp đã cài"
+" đặt cục bộ."
 
+#: templates/admin/payment_providers/providers/browse.html:58
 msgid "Payment Provider Marketplace"
 msgstr "Thị trường nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payment providers to accept payments from "
 "customers worldwide, including credit cards, digital wallets, and local "
@@ -1717,38 +2544,50 @@ msgstr ""
 "nhận thanh toán từ khách hàng toàn cầu, bao gồm thẻ tín dụng, ví số, và "
 "phương thức thanh toán địa phương."
 
+#: templates/admin/payment_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr "Bạn có thể làm gì:"
 
+#: templates/admin/payment_providers/providers/browse.html:82
 msgid "Browse available payment providers by country and payment methods"
 msgstr ""
 "Duyệt các nhà cung cấp thanh toán có sẵn theo quốc gia và phương thức thanh "
 "toán"
 
+#: templates/admin/payment_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr "Cài đặt các nhà cung cấp mới chỉ với một cú nhấp chuột"
 
+#: templates/admin/payment_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr "Cập nhật các nhà cung cấp đã cài đặt lên phiên bản mới nhất"
 
+#: templates/admin/payment_providers/providers/browse.html:94
 msgid "Configure provider settings and API credentials"
 msgstr "Cấu hình cài đặt nhà cung cấp và thông tin xác thực API"
 
+#: templates/admin/payment_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr "Bắt đầu:"
 
+#: templates/admin/payment_providers/providers/browse.html:105
 msgid "Browse providers below and find your payment processor"
-msgstr "Duyệt các nhà cung cấp bên dưới và tìm nhà cung cấp thanh toán của bạn"
+msgstr ""
+"Duyệt các nhà cung cấp bên dưới và tìm nhà cung cấp thanh toán của bạn"
 
+#: templates/admin/payment_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Nhấp vào 'Cài đặt' để thêm nhà cung cấp vào cửa hàng của bạn"
 
+#: templates/admin/payment_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr "Di chuyển đến Cài đặt để cấu hình thông tin xác thực API"
 
+#: templates/admin/payment_providers/providers/browse.html:108
 msgid "Test the provider with a sample transaction"
 msgstr "Kiểm tra nhà cung cấp với một giao dịch mẫu"
 
+#: templates/admin/payment_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -1767,6 +2606,7 @@ msgstr[1] ""
 "                    Currently: %(total)s provider available\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:121
 #, python-format
 msgid ""
 "\n"
@@ -1785,63 +2625,86 @@ msgstr[1] ""
 "                    %(installed)s installed\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:136
 msgid "Filter by Country:"
 msgstr "Lọc theo quốc gia:"
 
+#: templates/admin/payment_providers/providers/browse.html:142
 msgid "All Countries"
 msgstr "Tất cả quốc gia"
 
+#: templates/admin/payment_providers/providers/browse.html:156
 msgid "Active Filter:"
 msgstr "Bộ lọc đang hoạt động:"
 
+#: templates/admin/payment_providers/providers/browse.html:163
 msgid "Clear filter"
 msgstr "Xóa bộ lọc"
 
+#: templates/admin/payment_providers/providers/browse.html:181
 msgid "Update Available"
 msgstr "Cập nhật có sẵn"
 
+#: templates/admin/payment_providers/providers/browse.html:207
 msgid "Installed"
 msgstr "Đã cài đặt"
 
+#: templates/admin/payment_providers/providers/browse.html:222
 msgid "Available"
 msgstr "Khả dụng"
 
+#: templates/admin/payment_providers/providers/browse.html:245
 msgid "Cards"
 msgstr "Thẻ"
 
+#: templates/admin/payment_providers/providers/browse.html:250
 msgid "Bank"
 msgstr "Ngân hàng"
 
+#: templates/admin/payment_providers/providers/browse.html:255
 msgid "Wallets"
 msgstr "Ví tiền"
 
+#: templates/admin/payment_providers/providers/browse.html:260
 msgid "Local"
 msgstr "Địa phương"
 
+#: templates/admin/payment_providers/providers/browse.html:271
+#: templates/admin/payment_providers/wizard/step1_select.html:94
 msgid "3D Secure"
 msgstr "3D Secure"
 
+#: templates/admin/payment_providers/providers/browse.html:276
+#: templates/admin/payment_providers/wizard/step1_select.html:82
 msgid "Refunds"
 msgstr "Hoàn tiền"
 
+#: templates/admin/payment_providers/providers/browse.html:314
 msgid "Update"
 msgstr "Cập nhật"
 
+#: templates/admin/payment_providers/providers/browse.html:320
+#: templates/admin/payment_providers/wizard/base.html:54
 msgid "Configure"
 msgstr "Cấu hình"
 
+#: templates/admin/payment_providers/providers/browse.html:328
 msgid "Install"
 msgstr "Cài đặt"
 
+#: templates/admin/payment_providers/providers/browse.html:338
 msgid "View Details"
 msgstr "Xem chi tiết"
 
+#: templates/admin/payment_providers/providers/browse.html:347
 msgid "Learn More"
 msgstr "Tìm hiểu thêm"
 
+#: templates/admin/payment_providers/providers/browse.html:361
 msgid "No Providers Available"
 msgstr "Không có nhà cung cấp nào sẵn có"
 
+#: templates/admin/payment_providers/providers/browse.html:362
 msgid ""
 "No payment providers are currently available. Please check your update "
 "server connection or contact support."
@@ -1849,44 +2712,97 @@ msgstr ""
 "Hiện tại không có nhà cung cấp thanh toán nào có sẵn. Vui lòng kiểm tra kết "
 "nối máy chủ cập nhật của bạn hoặc liên hệ hỗ trợ."
 
+#: templates/admin/payment_providers/providers/browse.html:371
 msgid "Installing provider..."
 msgstr "Đang cài đặt nhà cung cấp..."
 
+#: templates/admin/payment_providers/wizard/base.html:13
 msgid "Connect Payment Provider"
 msgstr "Kết nối nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/wizard/base.html:14
 msgid "Follow these steps to connect your payment provider account"
 msgstr ""
 "Hãy làm theo các bước sau để kết nối tài khoản nhà cung cấp thanh toán của "
 "bạn"
 
+#: templates/admin/payment_providers/wizard/base.html:22
 msgid "Select Provider"
 msgstr "Chọn nhà cung cấp"
 
+#: templates/admin/payment_providers/wizard/base.html:30
 msgid "Setup Instructions"
 msgstr "Hướng dẫn thiết lập"
 
+#: templates/admin/payment_providers/wizard/base.html:38
 msgid "Enter Credentials"
 msgstr "Nhập thông tin xác thực"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:6
 msgid "Select a Payment Provider"
 msgstr "Chọn nhà cung cấp thanh toán"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:7
 msgid "Choose the payment provider you want to connect to your store."
 msgstr "Chọn nhà cung cấp thanh toán bạn muốn kết nối với cửa hàng của mình."
 
+#: templates/admin/payment_providers/wizard/step1_select.html:20
+#, python-format
+#| msgid ""
+#| "\n"
+#| "                    Currently: %(total)s provider available\n"
+#| "                "
+#| msgid_plural ""
+#| "\n"
+#| "                    Currently: %(total)s providers available\n"
+#| "                "
+msgid ""
+"\n"
+"                %(counter)s payment provider needs repair\n"
+"                "
+msgid_plural ""
+"\n"
+"                %(counter)s payment providers need repair\n"
+"                "
+msgstr[0] ""
+"\n"
+"                %(counter)s nhà cung cấp thanh toán cần sửa chữa\n"
+"                "
+msgstr[1] ""
+"\n"
+"                    Currently: %(total)s provider available\n"
+"                "
+
+#: templates/admin/payment_providers/wizard/step1_select.html:27
+msgid ""
+"These providers are registered but their files are missing on disk. Click "
+"Reinstall to download a fresh copy from the update server."
+msgstr ""
+"Những nhà cung cấp này đã được đăng ký nhưng các tệp của họ đang bị thiếu "
+"trên đĩa. Nhấp vào \"Cài lại\" để tải về bản sao mới từ máy chủ cập nhật."
+
+#: templates/admin/payment_providers/wizard/step1_select.html:39
+#| msgid "Install"
+msgid "Reinstall"
+msgstr "Cài lại"
+
+#: templates/admin/payment_providers/wizard/step1_select.html:76
 msgid "Recurring"
 msgstr "Lặp lại"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:88
 msgid "International"
 msgstr "Quốc tế"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:100
 msgid "Digital Wallets"
 msgstr "Ví điện tử"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:115
 msgid "No Payment Providers Available"
 msgstr "Không có nhà cung cấp thanh toán nào sẵn có"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:116
 msgid ""
 "Install payment provider components from the Component Manager to get "
 "started."
@@ -1894,39 +2810,54 @@ msgstr ""
 "Cài đặt các thành phần nhà cung cấp thanh toán từ Quản lý Thành phần để bắt "
 "đầu."
 
+#: templates/admin/payment_providers/wizard/step1_select.html:118
 msgid "Browse Components"
 msgstr "Xem các thành phần"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:130
 msgid "Cancel"
 msgstr "Hủy"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:133
+#: templates/admin/payment_providers/wizard/step2_setup.html:80
+#: templates/admin/payment_providers/wizard/step3_credentials.html:223
+#: templates/admin/payment_providers/wizard/step4_test.html:119
 msgid "Continue"
 msgstr "Tiếp tục"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:14
 msgid "Follow these instructions to set up your account"
 msgstr "Hãy làm theo các hướng dẫn này để thiết lập tài khoản của bạn"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:24
 msgid "Setup Information"
 msgstr "Thông tin thiết lập"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:31
 msgid "Create an Account"
 msgstr "Tạo tài khoản"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "If you don't already have an account with"
 msgstr "Nếu bạn chưa có tài khoản với"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "you'll need to create one."
 msgstr "bạn sẽ cần tạo một tài khoản."
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:36
 msgid "Sign Up for"
 msgstr "Đăng ký cho"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:45
 msgid "Get Your API Credentials"
 msgstr "Lấy thông tin xác thực API của bạn"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid "Log in to your"
 msgstr "Đăng nhập vào tài khoản của bạn"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid ""
 "dashboard and navigate to the API or Developer section to obtain your "
 "credentials."
@@ -1934,17 +2865,21 @@ msgstr ""
 "bảng điều khiển và di chuyển đến phần API hoặc Nhà phát triển để lấy thông "
 "tin xác thực của bạn."
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:53
 msgid "Copy Your Credentials"
 msgstr "Sao chép thông tin xác thực của bạn"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:54
 msgid "Have your API credentials ready. You'll need them in the next step."
 msgstr ""
 "Hãy chuẩn bị sẵn thông tin xác thực API của bạn. Bạn sẽ cần chúng ở bước "
 "tiếp theo."
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:62
 msgid "Security Note"
 msgstr "Lưu ý bảo mật"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:63
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored. They are never stored in plain text."
@@ -1953,45 +2888,61 @@ msgstr ""
 "trước khi được lưu trữ. Chúng không bao giờ được lưu trữ dưới dạng văn bản "
 "rõ."
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:75
+#: templates/admin/payment_providers/wizard/step3_credentials.html:220
+#: templates/admin/payment_providers/wizard/step4_test.html:116
+#: templates/admin/payment_providers/wizard/step5_configure.html:196
 msgid "Back"
 msgstr "Quay lại"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:13
 msgid "Enter Your Credentials"
 msgstr "Nhập thông tin xác thực của bạn"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "Provide your"
 msgstr "Cung cấp tài khoản của bạn"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "API credentials"
 msgstr "Thông tin xác thực API"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:25
+#: templates/admin/payment_providers/wizard/step5_configure.html:25
 msgid "Please correct the errors below:"
 msgstr "Vui lòng sửa các lỗi dưới đây:"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:38
+#: templates/admin/payment_providers/wizard/step3_credentials.html:231
 msgid "TEST MODE"
 msgstr "CHẾ ĐỘ THỬ NGHIỆM"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:39
+#: templates/admin/payment_providers/wizard/step3_credentials.html:232
 msgid "Using test credentials - no real transactions"
 msgstr "Sử dụng thông tin xác thực kiểm tra - không có giao dịch thực tế"
 
-msgid "API Credentials"
-msgstr "Thông tin xác thực API"
-
+#: templates/admin/payment_providers/wizard/step3_credentials.html:166
 msgid "This provider does not require additional credentials."
 msgstr "Nhà cung cấp này không yêu cầu thông tin xác thực bổ sung."
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:173
 msgid "Basic Configuration"
 msgstr "Cấu hình cơ bản"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:178
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:189
 msgid "A friendly name to identify this payment provider connection"
 msgstr "Tên thân thiện để nhận biết kết nối nhà cung cấp thanh toán này"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:199
 msgid "Hosted - Redirect to provider (recommended)"
 msgstr "Được lưu trữ - Chuyển hướng đến nhà cung cấp (khuyến nghị)"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:204
 msgid ""
 "How customers will complete payment. Hosted mode is more secure and easier "
 "to maintain."
@@ -1999,105 +2950,135 @@ msgstr ""
 "Cách khách hàng sẽ hoàn tất thanh toán. Chế độ được lưu trữ an toàn hơn và "
 "dễ bảo trì hơn."
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:211
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database. They are never stored in plain text."
 msgstr ""
 "Thông tin xác thực của bạn sẽ được mã hóa bằng thuật toán mã hóa AES-256 "
-"trước khi được lưu trữ trong cơ sở dữ liệu. Chúng không bao giờ được lưu trữ "
-"dưới dạng văn bản rõ."
+"trước khi được lưu trữ trong cơ sở dữ liệu. Chúng không bao giờ được lưu trữ"
+" dưới dạng văn bản rõ."
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:233
 msgid "PRODUCTION MODE"
 msgstr "CHẾ ĐỘ SẢN XUẤT"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:234
 msgid "Using live credentials - real transactions!"
 msgstr "Sử dụng thông tin xác thực thực tế - có giao dịch thực tế!"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "Verify your"
 msgstr "Xác minh tài khoản của bạn"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:26
 msgid "Connection Successful!"
 msgstr "Kết nối thành công!"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "Your"
 msgstr "Tài khoản của bạn"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "account has been verified and is ready to use."
 msgstr "tài khoản đã được xác minh và sẵn sàng để sử dụng."
 
+#: templates/admin/payment_providers/wizard/step4_test.html:31
 msgid "Account Information"
 msgstr "Thông tin tài khoản"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:34
 msgid "Account ID"
 msgstr "ID tài khoản"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:39
 msgid "Email"
 msgstr "Email"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:44
 msgid "Country"
 msgstr "Quốc gia"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:49
 msgid "Default Currency"
 msgstr "Đơn vị tiền tệ mặc định"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:54
 msgid "Account Status"
 msgstr "Trạng thái tài khoản"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:68
 msgid "Connection Failed"
 msgstr "Kết nối thất bại"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:69
 msgid ""
-"Unable to connect to the payment provider. Please check your credentials and "
-"try again."
+"Unable to connect to the payment provider. Please check your credentials and"
+" try again."
 msgstr ""
 "Không thể kết nối đến nhà cung cấp thanh toán. Vui lòng kiểm tra thông tin "
 "xác thực của bạn và thử lại."
 
+#: templates/admin/payment_providers/wizard/step4_test.html:73
 msgid "Technical Details"
 msgstr "Chi tiết kỹ thuật"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:79
 msgid "Troubleshooting Tips"
 msgstr "Gợi ý khắc phục sự cố"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:81
 msgid "Verify that your API credentials are correct"
 msgstr "Xác minh rằng thông tin xác thực API của bạn là chính xác"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:82
 msgid "Check that your account is active with the payment provider"
 msgstr ""
 "Kiểm tra tài khoản của bạn có đang hoạt động với nhà cung cấp thanh toán "
 "không"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:83
 msgid "Ensure you're using the correct environment (test/production)"
 msgstr "Đảm bảo bạn đang sử dụng môi trường đúng (thử nghiệm/sản xuất)"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:84
 msgid "Verify that your IP address is not blocked by the provider"
 msgstr "Xác minh rằng địa chỉ IP của bạn không bị nhà cung cấp chặn"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:97
 msgid "Testing Connection..."
 msgstr "Đang kiểm tra kết nối..."
 
+#: templates/admin/payment_providers/wizard/step4_test.html:98
 msgid "Please wait while we verify your credentials with"
 msgstr ""
 "Vui lòng đợi trong khi chúng tôi xác minh thông tin xác thực của bạn với"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:123
 msgid "Edit Credentials"
 msgstr "Chỉnh sửa thông tin xác thực"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:126
 msgid "Retry Test"
 msgstr "Thử lại"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:13
 msgid "Configure Provider"
 msgstr "Cấu hình nhà cung cấp"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "Finalize your"
 msgstr "Hoàn tất của bạn"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:33
 msgid "Activation"
 msgstr "Kích hoạt"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:42
 msgid "Enable this payment provider for checkout"
 msgstr "Bật nhà cung cấp thanh toán này để thanh toán"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:46
 msgid ""
 "When enabled, customers will be able to use this payment method during "
 "checkout."
@@ -2105,35 +3086,43 @@ msgstr ""
 "Khi được bật, khách hàng sẽ có thể sử dụng phương thức thanh toán này trong "
 "quá trình thanh toán."
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:56
 msgid "Set as default payment provider"
 msgstr "Đặt làm nhà cung cấp thanh toán mặc định"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:60
 msgid ""
-"The default provider will be pre-selected during checkout. You can only have "
-"one default provider."
+"The default provider will be pre-selected during checkout. You can only have"
+" one default provider."
 msgstr ""
 "Nhà cung cấp mặc định sẽ được chọn sẵn trong quá trình thanh toán. Bạn chỉ "
 "có thể có một nhà cung cấp mặc định."
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:67
 msgid "Display Order"
 msgstr "Thứ tự hiển thị"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:72
 msgid "Sort Order"
 msgstr "Thứ tự sắp xếp"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:82
 msgid ""
 "Lower numbers appear first in the checkout payment method list. Use this to "
 "control the order of payment options."
 msgstr ""
-"Số nhỏ hơn sẽ xuất hiện trước trong danh sách phương thức thanh toán tại quá "
-"trình thanh toán. Sử dụng để kiểm soát thứ tự các phương thức thanh toán."
+"Số nhỏ hơn sẽ xuất hiện trước trong danh sách phương thức thanh toán tại quá"
+" trình thanh toán. Sử dụng để kiểm soát thứ tự các phương thức thanh toán."
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:90
 msgid "Advanced Settings"
 msgstr "Cài đặt nâng cao"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:167
 msgid "Webhook Configuration"
 msgstr "Cấu hình Webhook"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid ""
 "To receive real-time payment notifications, configure the following webhook "
 "URL in your"
@@ -2141,33 +3130,41 @@ msgstr ""
 "Để nhận thông báo thanh toán thời gian thực, hãy cấu hình URL webhook sau "
 "trong tài khoản của bạn"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid "dashboard:"
 msgstr "bảng điều khiển:"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:176
 msgid "Copy"
 msgstr "Sao chép"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:183
 msgid "Important"
 msgstr "Quan trọng"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:184
 msgid ""
-"Webhooks allow your store to receive instant notifications when payments are "
-"completed, refunded, or encounter issues. Configure this in your payment "
+"Webhooks allow your store to receive instant notifications when payments are"
+" completed, refunded, or encounter issues. Configure this in your payment "
 "provider's dashboard to ensure smooth operation."
 msgstr ""
 "Webhooks cho phép cửa hàng của bạn nhận thông báo tức thì khi các giao dịch "
 "được hoàn tất, hoàn tiền hoặc gặp sự cố. Hãy cấu hình điều này trong bảng "
 "điều khiển của nhà cung cấp thanh toán để đảm bảo hoạt động trơn tru."
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:199
 msgid "Complete Setup"
 msgstr "Hoàn tất thiết lập"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:208
 msgid "Copied!"
 msgstr "Đã sao chép!"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:209
 msgid "Failed to copy to clipboard. Please copy manually."
 msgstr "Không thể sao chép vào clipboard. Vui lòng sao chép thủ công."
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:210
 msgid ""
 "Setting this as the default will remove the default status from any other "
 "payment provider. Continue?"
@@ -2175,47 +3172,62 @@ msgstr ""
 "Việc thiết lập đây làm mặc định sẽ xóa trạng thái mặc định khỏi bất kỳ nhà "
 "cung cấp thanh toán nào khác. Tiếp tục?"
 
-msgid "Cannot set as default while inactive. Please enable the provider first."
+#: templates/admin/payment_providers/wizard/step5_configure.html:211
+msgid ""
+"Cannot set as default while inactive. Please enable the provider first."
 msgstr ""
 "Không thể thiết lập làm mặc định khi đang không hoạt động. Vui lòng bật nhà "
 "cung cấp trước."
 
+#: views/handlers.py:111
 msgid "Provider not found"
 msgstr "Không tìm thấy nhà cung cấp"
 
+#: views/payment_dashboard.py:118
 msgid "Today"
 msgstr "Hôm nay"
 
+#: views/payment_dashboard.py:119
 msgid "Yesterday"
 msgstr "Hôm qua"
 
+#: views/payment_dashboard.py:120
 msgid "Last 7 Days"
 msgstr "7 ngày trước"
 
+#: views/payment_dashboard.py:121
 msgid "Last 30 Days"
 msgstr "30 ngày trước"
 
+#: views/payment_dashboard.py:122
 msgid "This Month"
 msgstr "Tháng này"
 
+#: views/payment_dashboard.py:123
 msgid "Last Month"
 msgstr "Tháng trước"
 
+#: views/payment_dashboard.py:124
 msgid "This Quarter"
 msgstr "Quý này"
 
+#: views/payment_dashboard.py:125
 msgid "Last Quarter"
 msgstr "Quý trước"
 
+#: views/payment_dashboard.py:126
 msgid "This Year / YTD"
 msgstr "Năm nay / Tính đến nay"
 
+#: views/payment_dashboard.py:127
 msgid "Last Year"
 msgstr "Năm trước"
 
+#: views/payment_dashboard.py:128
 msgid "Custom Range"
 msgstr "Phạm vi tùy chỉnh"
 
+#: views/provider_browse.py:62
 msgid ""
 "Could not fetch providers from update server. Showing installed providers "
 "only."
@@ -2223,97 +3235,184 @@ msgstr ""
 "Không thể lấy danh sách nhà cung cấp từ máy chủ cập nhật. Chỉ hiển thị các "
 "nhà cung cấp đã cài đặt."
 
+#: views/provider_browse.py:269
 msgid "Provider is already installed"
 msgstr "Nhà cung cấp đã được cài đặt"
 
+#: views/provider_browse.py:306
 msgid "Provider not found on update server."
 msgstr "Không tìm thấy nhà cung cấp trên máy chủ cập nhật."
 
+#: views/provider_browse.py:316
 msgid "Could not determine provider version."
 msgstr "Không thể xác định phiên bản nhà cung cấp."
 
+#: views/provider_browse.py:338
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Không thể tải xuống nhà cung cấp: %(error)s"
 
+#: views/provider_browse.py:351
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Không thể cài đặt nhà cung cấp: %(error)s"
 
+#: views/provider_browse.py:389
 #, python-format
 msgid "Provider %(name)s installed successfully"
 msgstr "Nhà cung cấp %(name)s đã được cài đặt thành công"
 
+#: views/provider_browse.py:398
 #, python-format
 msgid "Installation failed: %(error)s"
 msgstr "Cài đặt thất bại: %(error)s"
 
+#: views/provider_browse.py:424
 msgid "Provider not installed"
 msgstr "Nhà cung cấp chưa được cài đặt"
 
+#: views/provider_browse.py:437
 msgid "Could not find latest version on update server"
 msgstr "Không thể tìm thấy phiên bản mới nhất trên máy chủ cập nhật"
 
+#: views/provider_browse.py:450
 #, python-format
 msgid "Provider updated successfully to v%(version)s"
 msgstr "Nhà cung cấp đã được cập nhật thành công lên phiên bản v%(version)s"
 
+#: views/provider_browse.py:456
 msgid "Update failed"
 msgstr "Cập nhật thất bại"
 
+#: views/wizard.py:104
+msgid "Provider files missing on disk"
+msgstr "Tệp cung cấp bị thiếu trên đĩa"
+
+#: views/wizard.py:115
+#| msgid "Provider account not found"
+msgid "Provider manifest could not be loaded"
+msgstr "Không thể tải tệp mô tả nhà cung cấp"
+
+#: views/wizard.py:127
+#| msgid "Provider not installed"
+msgid "Provider manifest is empty or invalid"
+msgstr "Tệp mô tả nhà cung cấp trống hoặc không hợp lệ"
+
+#: views/wizard.py:144
 msgid "Connect Payment Provider - Select Provider"
 msgstr "Kết nối Nhà cung cấp Thanh toán - Chọn Nhà cung cấp"
 
+#: views/wizard.py:157
 msgid "Please select a provider."
 msgstr "Vui lòng chọn một nhà cung cấp."
 
+#: views/wizard.py:165
 msgid "Invalid provider selected."
 msgstr "Nhà cung cấp đã chọn không hợp lệ."
 
+#: views/wizard.py:193 views/wizard.py:262
 msgid "Please select a provider first."
 msgstr "Vui lòng chọn một nhà cung cấp trước."
 
+#: views/wizard.py:222 views/wizard.py:279
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Lỗi khi tải nhà cung cấp: %(error)s"
 
+#: views/wizard.py:232
 msgid "Connect Payment Provider - Setup Instructions"
 msgstr "Kết nối Nhà cung cấp Thanh toán - Hướng dẫn Cài đặt"
 
+#: views/wizard.py:273
 msgid "Could not load provider configuration."
 msgstr "Không thể tải cấu hình nhà cung cấp."
 
+#: views/wizard.py:293
 msgid "Connect Payment Provider - Enter Credentials"
 msgstr "Kết nối Nhà cung cấp Thanh toán - Nhập Thông tin Đăng nhập"
 
+#: views/wizard.py:321
 msgid "Error loading provider configuration."
 msgstr "Lỗi khi tải cấu hình nhà cung cấp."
 
+#: views/wizard.py:333
 msgid "Display name is required."
 msgstr "Tên hiển thị là bắt buộc."
 
+#: views/wizard.py:364
 msgid "Please complete previous steps first."
 msgstr "Vui lòng hoàn thành các bước trước đó trước."
 
+#: views/wizard.py:377 views/wizard.py:495
 msgid "Provider not found."
 msgstr "Không tìm thấy nhà cung cấp."
 
+#: views/wizard.py:381
 msgid "Connect Payment Provider - Test Connection"
 msgstr "Kết nối Nhà cung cấp Thanh toán - Kiểm tra Kết nối"
 
+#: views/wizard.py:408
 msgid "Provider implementation not found."
 msgstr "Không tìm thấy triển khai nhà cung cấp."
 
+#: views/wizard.py:478
 msgid "Please complete all previous steps."
 msgstr "Vui lòng hoàn thành tất cả các bước trước đó."
 
+#: views/wizard.py:499
 msgid "Connect Payment Provider - Configure"
 msgstr "Kết nối Nhà cung cấp Thanh toán - Cấu hình"
 
+#: views/wizard.py:578
 #, python-format
 msgid "Payment provider \"%(name)s\" connected successfully!"
 msgstr "Nhà cung cấp thanh toán \"%(name)s\" đã được kết nối thành công!"
 
+#: views/wizard.py:603
+#, python-format
+msgid ""
+"Provider was saved but payment methods could not be auto-synced (%(error)s)."
+" The provider will not appear at checkout until methods are synced — try the"
+" \"Sync methods\" action on the provider list."
+msgstr ""
+"Nhà cung cấp đã được lưu nhưng các phương thức thanh toán không thể được "
+"đồng bộ tự động (%(error)s). Nhà cung cấp sẽ không hiển thị tại bước thanh "
+"toán cho đến khi các phương thức được đồng bộ — hãy thử hành động \"Đồng bộ "
+"phương thức\" trên danh sách nhà cung cấp."
+
+#: views/wizard.py:618
 #, python-format
 msgid "Error saving provider: %(error)s"
 msgstr "Lỗi khi lưu nhà cung cấp: %(error)s"
+
+#~ msgid "Payment Configuration"
+#~ msgstr "Cấu hình thanh toán"
+
+#~ msgid "Enabled Payment Methods"
+#~ msgstr "Phương thức thanh toán đã bật"
+
+#~ msgid ""
+#~ "Select payment methods to offer customers. Leave empty for all available "
+#~ "methods."
+#~ msgstr ""
+#~ "Chọn phương thức thanh toán để cung cấp cho khách hàng. Để trống để hiển thị"
+#~ " tất cả phương thức khả dụng."
+
+#~ msgid "Enable or disable payment methods per country"
+#~ msgstr "Bật hoặc tắt phương thức thanh toán theo quốc gia"
+
+#~ msgid "No Shipping Countries Configured"
+#~ msgstr "Không có quốc gia giao hàng được cấu hình"
+
+#~ msgid ""
+#~ "Configure shipping countries first to set up payment methods per country."
+#~ msgstr ""
+#~ "Cấu hình các quốc gia giao hàng trước để thiết lập phương thức thanh toán "
+#~ "theo quốc gia."
+
+#~ msgid ""
+#~ "Toggle payment methods on or off for each country. Changes are saved "
+#~ "automatically."
+#~ msgstr ""
+#~ "Bật hoặc tắt phương thức thanh toán cho từng quốc gia. Các thay đổi được lưu"
+#~ " tự động."

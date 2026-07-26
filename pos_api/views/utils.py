@@ -368,12 +368,5 @@ def serialize_cart(cart, currency=None, request=None):
         "total": str(total_decimal),
         "currency": currency,
         "voucher_code": voucher_code,
-        "gift_card_applied": str(
-            cart.gift_card_discount_amount.amount
-            if hasattr(cart.gift_card_discount_amount, "amount")
-            else cart.gift_card_discount_amount
-        )
-        if cart.gift_card_discount_amount
-        else "0.00",
         "manual_discount": cart_manual_discount,
     }

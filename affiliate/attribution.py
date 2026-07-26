@@ -314,6 +314,21 @@ class AttributionEngine:
             logger.error(f"Error creating commission for order {self.order.id}: {str(e)}")
             return None
 
+    def _commissionable_subtotal(self, order):
+        """
+        The part of an order an affiliate can earn a percentage of.
+
+        Subtotal, less any gift card lines. Tax and shipping are excluded by
+        using subtotal rather than total_amount: the merchant remits the tax
+        and pays the carrier, so neither is theirs to share.
+        """
+        subtotal = order.subtotal.amount
+        gift_cards = Decimal("0")
+        for item in order.items.select_related("product").all():
+            if getattr(item.product, "product_type", None) == "gift_card":
+                gift_cards += item.total_price.amount
+        return max(subtotal - gift_cards, Decimal("0"))
+
     def _calculate_commission_amount(self, program, order):
         """
         Calculate commission amount based on program settings.
@@ -326,8 +341,21 @@ class AttributionEngine:
             Decimal: Commission amount
         """
         if program.commission_type == "percentage":
-            # Calculate percentage of order total
-            order_total = getattr(order, "total", Decimal("0"))
+            # Commission is a percentage of the COMMISSIONABLE SUBTOTAL.
+            #
+            # This read `getattr(order, "total", Decimal("0"))`, and Order has
+            # no `total` attribute — it is `total_amount`. So the getattr
+            # default fired every time and every percentage commission ever
+            # computed was 0.00. Fixed forward only; existing rows are
+            # immutable by the affiliate subsystem's own invariant.
+            #
+            # Subtotal rather than total_amount: an affiliate should not earn a
+            # percentage of tax the merchant remits, nor of shipping. Gift card
+            # lines are excluded for the same reason loyalty excludes them —
+            # selling stored value is not a sale of goods, and paying
+            # commission on both the card and what it later buys pays twice for
+            # one pound.
+            order_total = self._commissionable_subtotal(order)
             percentage = program.commission_value / Decimal("100")
             amount = order_total * percentage
 

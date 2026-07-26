@@ -90,7 +90,22 @@
           barEl.style.width = data.overall_progress + '%';
         }
         if (statusEl) {
-          statusEl.textContent = data.status_display;
+          // A stop request is acted on at the next batch boundary, so the job
+          // is still "running" for a while after Cancel. Reflect that, or the
+          // operator sees "Importing" and assumes the click was ignored.
+          // The translated label rides on a data attribute: there is no
+          // jsi18n catalog loaded here, so gettext() is not available.
+          const stoppingLabel = statusEl.dataset.stoppingLabel || 'Stopping…';
+          statusEl.textContent =
+            data.status === 'running' && data.cancel_requested
+              ? stoppingLabel
+              : data.status_display;
+        }
+
+        // Hide the cancel control once a stop is already pending.
+        const cancelForm = document.getElementById('cancel-import-form');
+        if (cancelForm && data.cancel_requested) {
+          cancelForm.style.display = 'none';
         }
         if (statsEl) {
           const totalProcessed = data.total_imported + data.total_skipped + data.total_failed;
@@ -147,6 +162,10 @@
               } else if (step.status === 'failed') {
                 icon.style.background = 'var(--error-fg, #f44336)';
                 icon.style.color = '#fff';
+              } else if (step.status === 'cancelled') {
+                // A step interrupted by a deliberate stop is not a failure.
+                icon.style.background = 'var(--body-quiet-color, #6c6c74)';
+                icon.style.color = '#fff';
               } else if (step.status === 'running') {
                 icon.style.background = 'var(--primary)';
                 icon.style.color = '#fff';
@@ -186,7 +205,10 @@
           }
         }
 
-        if (data.status === 'completed' || data.status === 'failed') {
+        // Every terminal state must stop the poll. Checking only for completed
+        // and failed left a cancelled or rolled-back job polling for ever.
+        const TERMINAL = ['completed', 'failed', 'cancelled', 'rolled_back', 'rollback_failed'];
+        if (TERMINAL.includes(data.status)) {
           clearInterval(updateInterval);
           const actionButtons = document.getElementById('action-buttons');
           if (actionButtons) {

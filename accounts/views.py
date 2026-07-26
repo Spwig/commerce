@@ -618,6 +618,18 @@ def dashboard(request):
         except Exception:
             pass
 
+    # Store credit card (D2): show the wallet where its money lands, or the
+    # dashboard mints value the customer can never find. filter().first(),
+    # never get_or_create — a page view must not create a ledger.
+    try:
+        from wallet.models import CustomerWallet
+
+        context["customer_wallet"] = CustomerWallet.objects.filter(
+            customer=request.user, is_active=True
+        ).first()
+    except Exception:
+        context["customer_wallet"] = None
+
     return render(request, "accounts/dashboard.html", context)
 
 
@@ -1353,6 +1365,48 @@ def guest_orders_view(request, uidb64, token):
 
 
 # ========== Customer Bookings ==========
+
+
+@login_required
+def gift_card_list(request):
+    """
+    Gift cards this customer BOUGHT (order_item__order__user), masked.
+
+    Deliberately shows the last four characters only, never the full code.
+    A gift card is a bearer instrument and P2.4 settled that the RECIPIENT is
+    the entitled party: the buyer may well have given the card away, and
+    re-showing them the code here would silently re-arm them as a bearer of
+    someone else's money. Deliberately no "cards I received" view either —
+    that would need ownership-by-email-string guesswork; recipients use the
+    public balance page from their delivery email.
+    """
+    from catalog.models import GiftCard
+
+    cards = (
+        GiftCard.objects.filter(order_item__order__user=request.user)
+        .select_related("product")
+        .order_by("-created_at")
+    )
+    return render(request, "accounts/gift_cards/list.html", {"gift_cards": cards})
+
+
+@login_required
+def wallet_detail(request):
+    """
+    The customer's store credit: balance and full transaction history.
+
+    filter().first(), never get_or_create — a page view must not create a
+    ledger. No wallet renders an honest empty state.
+    """
+    from wallet.models import CustomerWallet
+
+    wallet = CustomerWallet.objects.filter(customer=request.user, is_active=True).first()
+    transactions = wallet.transactions.order_by("-created_at")[:50] if wallet else []
+    return render(
+        request,
+        "accounts/wallet/detail.html",
+        {"wallet": wallet, "transactions": transactions},
+    )
 
 
 @login_required

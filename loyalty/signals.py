@@ -109,11 +109,31 @@ def revoke_points_on_cancellation(sender, instance, **kwargs):
         return
 
     # Check if status changed to cancelled or refunded
-    if old_order.status == instance.status:
-        return  # Status didn't change
+    # Watch BOTH status and payment_status.
+    #
+    # RefundService writes only payment_status (refunded / partially_refunded)
+    # and never touches status, so gating on status alone meant a refunded order
+    # clawed back nothing — the customer kept every point earned on money that
+    # was given back.
+    status_changed = old_order.status != instance.status
+    payment_changed = old_order.payment_status != instance.payment_status
+    if not (status_changed or payment_changed):
+        return
 
-    if instance.status not in ["cancelled", "refunded"]:
-        return  # Not a cancellation/refund
+    # Claw back only on a FULL refund or cancellation, not a partial refund.
+    #
+    # create_reversal reverses the whole earn transaction and refuses a second
+    # reversal, so firing it on "partially_refunded" reverses ALL the points for
+    # even a $0.01 refund. Proper proration would need cumulative partial
+    # reversals in the ledger service — deferred. Until then, a partial refund
+    # leaves the points in place (a bounded under-claw, customer-favourable),
+    # and the full clawback still fires if the order later becomes fully
+    # refunded.
+    is_reversal = instance.status in ["cancelled", "refunded"] or (
+        instance.payment_status == "refunded"
+    )
+    if not is_reversal:
+        return
 
     # Check if customer is a loyalty member
     try:

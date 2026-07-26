@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Indonesian <LL@li.org>\n"
@@ -18,2366 +18,3090 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:88
 msgid "Data Migrations"
 msgstr "Migrasi Data"
 
-msgid "🚀 Start New Migration"
-msgstr "🚀 Mulai Migrasi Baru"
+#: admin.py:91 templates/admin/migration/migrationjob/change_list.html:68
+#: templates/admin/migration/wizard/step6_complete.html:388
+msgid "Start New Migration"
+msgstr "Mulai Migrasi Baru"
 
-msgid "Migrate from WooCommerce, Shopify, or CSV files"
-msgstr "Migrasikan dari WooCommerce, Shopify, atau file CSV"
+#: admin.py:93
+msgid "Migrate from WooCommerce, Shopify, Magento, or CSV files"
+msgstr "Migrasikan dari WooCommerce, Shopify, Magento, atau file CSV"
 
-msgid "📊 Migration History"
-msgstr "📊 Riwayat Migrasi"
+#: admin.py:98
+msgid "Migration History"
+msgstr "Sejarah Migrasi"
 
+#: admin.py:100
 msgid "View all past migrations"
 msgstr "Lihat semua migrasi sebelumnya"
 
+#: admin.py:140 sync_admin.py:262
 msgid "ID"
 msgstr "ID"
 
+#: admin.py:163 admin.py:2234 templates/admin/migration/wizard/base.html:38
 msgid "Platform"
 msgstr "Platform"
 
+#: admin.py:202 admin.py:2235 admin.py:2294 sync_admin.py:72 sync_admin.py:311
+#: templates/admin/migration/fullmig/step5_results.html:74
+#: templates/admin/migration/wizard/step3_preview.html:184
 msgid "Status"
 msgstr "Status"
 
+#: admin.py:228 sync_admin.py:330 templates/admin/migration/sync/base.html:58
+#: templates/admin/migration/sync/base.html:79
 msgid "Progress"
 msgstr "Progres"
 
+#: admin.py:248 templates/admin/migration/fullmig/step3_preflight.html:111
 msgid "Items"
 msgstr "Barang"
 
+#: admin.py:276 models/log.py:85 sync_admin.py:349
+#: templates/admin/migration/sync/token_management.html:76
 msgid "Created"
 msgstr "Dibuat"
 
+#: admin.py:311 sync_admin.py:88 sync_admin.py:373
 msgid "Actions"
 msgstr "Tindakan"
 
+#: admin.py:464
 msgid "Please select a platform."
 msgstr "Silakan pilih sebuah platform."
 
+#: admin.py:469 admin.py:490
 msgid "Migration Wizard - Choose Platform"
 msgstr "Panduan Migrasi - Pilih Platform"
 
+#: admin.py:483
 msgid "Migration job created. Please configure the connection."
 msgstr "Tugas migrasi telah dibuat. Silakan konfigurasikan koneksi."
 
+#: admin.py:508 admin.py:545 admin.py:575
 msgid "Please fill in all required fields."
 msgstr "Harap isi semua bidang yang diperlukan."
 
+#: admin.py:513 admin.py:550 admin.py:580 admin.py:629 admin.py:644
+#: admin.py:666 admin.py:683
 msgid "Migration Wizard - Connection"
 msgstr "Panduan Migrasi - Koneksi"
 
+#: admin.py:531 admin.py:567 admin.py:599
 msgid "Connection configured successfully."
 msgstr "Koneksi dikonfigurasi dengan sukses."
 
+#: admin.py:623
 msgid "{} CSV has no headers."
 msgstr "{}} CSV tidak memiliki header."
 
+#: admin.py:638
 msgid "{} CSV could not be read: {}"
 msgstr "\"{}\" CSV tidak dapat dibaca: {}"
 
+#: admin.py:661
 msgid "Products CSV is required."
 msgstr "CSV Produk diperlukan."
 
+#: admin.py:676
 msgid "CSV files uploaded successfully."
 msgstr "Berkas CSV diunggah dengan sukses."
 
+#: admin.py:747 admin.py:780 admin.py:843
 msgid "Failed to fetch preview data: {}"
 msgstr "Gagal mengambil data pratinjau: {}"
 
+#: admin.py:866
 msgid "Failed to read CSV files: {}"
 msgstr "Gagal membaca file CSV: {}"
 
+#: admin.py:945
 msgid "Import options saved."
 msgstr "Opsi impor disimpan."
 
+#: admin.py:952
 msgid "Migration Wizard - Preview Data"
 msgstr "Panduan Migrasi - Pratinjau Data"
 
+#: admin.py:1027
 msgid "Field mappings configured successfully."
 msgstr "Pemetaan bidang dikonfigurasi dengan sukses."
 
+#: admin.py:1149
 msgid "Could not analyze custom fields. You can still proceed with the import."
 msgstr ""
 "Tidak dapat menganalisis bidang khusus. Anda tetap dapat melanjutkan dengan "
 "impor."
 
+#: admin.py:1167 models/step.py:31
+#: templates/admin/migration/confirm_rollback.html:67
+#: templates/admin/migration/wizard/step3_preview.html:17
+#: templates/admin/migration/wizard/step3_preview.html:74
+#: templates/admin/migration/wizard/step4_mapping.html:85
+#: templates/admin/migration/wizard/step5_import.html:111
+#: templates/admin/migration/wizard/step6_complete.html:17
+#: templates/admin/migration/wizard/step6_complete.html:348
 msgid "Products"
 msgstr "Produk"
 
+#: admin.py:1168 models/step.py:29
+#: templates/admin/migration/confirm_rollback.html:63
+#: templates/admin/migration/fullmig/step1_connection.html:114
+#: templates/admin/migration/sync/base.html:71
+#: templates/admin/migration/sync/step1_connection.html:134
+#: templates/admin/migration/sync/step2_categories.html:82
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
+#: templates/admin/migration/wizard/step4_mapping.html:82
+#: templates/admin/migration/wizard/step5_import.html:91
+#: templates/admin/migration/wizard/step6_complete.html:21
+#: templates/admin/migration/wizard/step6_complete.html:354
 msgid "Categories"
 msgstr "Kategori"
 
+#: admin.py:1169 models/step.py:34
+#: templates/admin/migration/confirm_rollback.html:71
+#: templates/admin/migration/wizard/step3_preview.html:25
+#: templates/admin/migration/wizard/step3_preview.html:83
+#: templates/admin/migration/wizard/step4_mapping.html:88
+#: templates/admin/migration/wizard/step5_import.html:131
+#: templates/admin/migration/wizard/step6_complete.html:25
+#: templates/admin/migration/wizard/step6_complete.html:360
 msgid "Customers"
 msgstr "Pelanggan"
 
+#: admin.py:1170 models/step.py:36
+#: templates/admin/migration/confirm_rollback.html:75
+#: templates/admin/migration/wizard/step3_preview.html:29
+#: templates/admin/migration/wizard/step3_preview.html:92
+#: templates/admin/migration/wizard/step4_mapping.html:91
+#: templates/admin/migration/wizard/step5_import.html:151
+#: templates/admin/migration/wizard/step6_complete.html:29
+#: templates/admin/migration/wizard/step6_complete.html:366
 msgid "Orders"
 msgstr "Pemesanan"
 
+#: admin.py:1171 models/step.py:38
+#: templates/admin/migration/confirm_rollback.html:79
+#: templates/admin/migration/wizard/step3_preview.html:34
+#: templates/admin/migration/wizard/step3_preview.html:102
+#: templates/admin/migration/wizard/step4_mapping.html:94
+#: templates/admin/migration/wizard/step5_import.html:171
+#: templates/admin/migration/wizard/step6_complete.html:33
 msgid "Reviews"
 msgstr "Ulasan"
 
+#: admin.py:1203
 msgid "Migration Wizard - Field Mapping"
 msgstr "Panduan Migrasi - Pemetaan Bidang"
 
+#: admin.py:1239
 msgid ""
-"Migration started! You can safely close this window and check back later."
+"Migration started. You can safely close this window and check back later."
 msgstr ""
-"Migrasi dimulai! Anda dapat aman menutup jendela ini dan memeriksa kembali "
-"nanti."
+"Migrasi telah dimulai. Anda dapat aman menutup jendela ini dan memeriksa "
+"kembali nanti."
 
+#: admin.py:1245
 msgid "Failed to start import: {}"
 msgstr "Gagal memulai impor: {}"
 
+#: admin.py:1259
+msgid "This migration has already been started."
+msgstr "Migrasi ini sudah dimulai."
+
+#: admin.py:1278
 msgid "Migration Wizard - Importing"
 msgstr "Panduan Migrasi - Mengimpor"
 
+#: admin.py:1344 templates/admin/migration/fullmig/step5_results.html:10
 msgid "Migration Complete"
 msgstr "Migrasi Selesai"
 
+#: admin.py:1483
 msgid "This migration cannot be rolled back."
 msgstr "Migrasi ini tidak dapat dikembalikan."
 
-msgid "Migration rolled back successfully!"
-msgstr "Migrasi dikembalikan dengan sukses!"
+#: admin.py:1498
+msgid "This rollback is already running."
+msgstr "Rollback ini sudah berjalan."
 
-msgid "Rollback failed: {}"
-msgstr "Rollback gagal: {}"
+#: admin.py:1517
+msgid "Spwig could not start the rollback. Nothing has been removed."
+msgstr "Spwig tidak dapat memulai rollback. Tidak ada yang telah dihapus."
 
+#: admin.py:1524
+msgid ""
+"Rollback started. This runs in the background — check back shortly to see "
+"what was removed and what was kept."
+msgstr ""
+"Rollback dimulai. Ini berjalan di latar belakang — periksa kembali sebentar "
+"lagi untuk melihat apa yang dihapus dan apa yang tetap ada."
+
+#: admin.py:1543
+msgid ""
+"Spwig could not calculate this in advance. The rollback itself will still "
+"report what it removed and what it kept."
+msgstr ""
+"Spwig tidak dapat menghitung ini sebelumnya. Rollback itu sendiri masih akan "
+"melaporkan apa yang dihapus dan apa yang tetap ada."
+
+#: admin.py:1551 templates/admin/migration/confirm_rollback.html:4
+#: templates/admin/migration/confirm_rollback.html:13
 msgid "Confirm Rollback"
 msgstr "Konfirmasi Rollback"
 
+#: admin.py:1575
 msgid "Only failed migrations can be retried."
 msgstr "Hanya migrasi yang gagal yang dapat dicoba kembali."
 
-msgid "Migration restarted! Redirecting to progress page..."
-msgstr "Migrasi dimulai kembali! Mengarahkan ke halaman kemajuan..."
+#: admin.py:1600
+msgid ""
+"Migration restarted. It runs from the beginning and skips items that have "
+"already been imported."
+msgstr ""
+"Migrasi dimulai kembali. Ia berjalan dari awal dan melewati item yang sudah "
+"diimpor."
 
+#: admin.py:1608
 msgid "Failed to restart migration: {}"
 msgstr "Gagal memulai ulang migrasi: {}"
 
+#: admin.py:1629
 msgid "Only running migrations can be cancelled."
 msgstr "Hanya migrasi yang sedang berjalan yang dapat dibatalkan."
 
-msgid "Migration cancelled by user"
-msgstr "Migrasi dibatalkan oleh pengguna"
-
+#: admin.py:1641
 msgid "Migration cancelled by {}"
 msgstr "Migrasi dibatalkan oleh {}"
 
-msgid "Migration cancelled successfully."
-msgstr "Migrasi dibatalkan dengan sukses."
-
-msgid "Only pending, failed, or running migrations can be deleted."
-msgstr ""
-"Hanya migrasi yang menunggu, gagal, atau sedang berjalan yang dapat dihapus."
-
+#: admin.py:1649
 msgid ""
-"Deleted a running migration. If this was stuck, the operation has been "
-"cleaned up."
+"Stopping this import. It finishes the batch it is working on and then stops, "
+"so this can take a moment. Anything already imported stays in your store — "
+"you can roll it back afterwards if you don't want it."
 msgstr ""
-"Migrasi yang sedang berjalan telah dihapus. Jika ini terjebak, operasi telah "
-"dibersihkan."
+"Menghentikan impor ini. Spwig menyelesaikan batch yang sedang diproses "
+"kemudian berhenti, sehingga ini dapat memakan waktu beberapa saat. Apapun "
+"yang sudah diimpor tetap ada di toko Anda — Anda dapat membatalkannya "
+"setelahnya jika tidak ingin tetap ada."
 
-msgid "Migration deleted successfully."
-msgstr "Migrasi dihapus dengan sukses."
+#: admin.py:1691
+msgid ""
+"This migration can't be deleted yet. Cancel it first, and once it has "
+"finished stopping you'll be able to remove the record."
+msgstr ""
+"Pengimporan ini belum dapat dihapus. Batalkan dulu, dan setelah selesai "
+"berhenti, Anda akan dapat menghapus catatannya."
 
+#: admin.py:1708
+msgid ""
+"Migration record deleted. Anything this import added is still in your store "
+"— deleting the record does not remove it."
+msgstr ""
+"Catatan migrasi telah dihapus. Apa pun yang ditambahkan oleh impor ini tetap "
+"ada di toko Anda — menghapus catatan tidak menghapusnya."
+
+#: admin.py:1713
+msgid "Migration record deleted."
+msgstr "Catatan migrasi dihapus."
+
+#: admin.py:2233
 msgid "Job ID"
 msgstr "ID Tugas"
 
+#: admin.py:2236
 msgid "Started"
 msgstr "Dimulai"
 
+#: admin.py:2238 models/job.py:87 models/step.py:55 models/sync_job.py:78
+#: models/sync_step.py:32
+#: templates/admin/migration/migrationjob/change_list.html:44
+#: templates/admin/migration/syncjob/change_list.html:40
 msgid "Completed"
 msgstr "Selesai"
 
+#: admin.py:2241
 msgid "Duration"
 msgstr "Durasi"
 
+#: admin.py:2242
 msgid "Success Rate"
 msgstr "Rasio Kesuksesan"
 
+#: admin.py:2260 templates/admin/migration/sync/step3_preview.html:16
 msgid "Summary"
 msgstr "Ringkasan"
 
+#: admin.py:2262
 msgid "Total Items"
 msgstr "Total Item"
 
+#: admin.py:2262 admin.py:2294
+#: templates/admin/migration/migrationjob/change_list.html:174
+#: templates/admin/migration/wizard/step6_complete.html:64
 msgid "Imported"
 msgstr "Diimpor"
 
+#: admin.py:2262 admin.py:2294 models/content_link.py:123 models/log.py:87
+#: models/step.py:57 models/sync_step.py:34
+#: templates/admin/migration/fullmig/step4_progress.html:52
+#: templates/admin/migration/fullmig/step5_results.html:47
+#: templates/admin/migration/fullmig/step5_results.html:95
+#: templates/admin/migration/migrationjob/change_list.html:178
+#: templates/admin/migration/sync/step4_progress.html:52
+#: templates/admin/migration/syncjob/change_list.html:149
+#: templates/admin/migration/wizard/step6_complete.html:65
+#: templates/admin/migration/wizard/step6_complete.html:208
 msgid "Skipped"
 msgstr "Dilewati"
 
+#: admin.py:2262 admin.py:2294 models/job.py:88 models/step.py:56
+#: models/sync_job.py:79 models/sync_step.py:33
+#: templates/admin/migration/fullmig/step4_progress.html:56
+#: templates/admin/migration/fullmig/step5_results.html:51
+#: templates/admin/migration/fullmig/step5_results.html:76
+#: templates/admin/migration/fullmig/step5_results.html:91
+#: templates/admin/migration/migrationjob/change_list.html:60
+#: templates/admin/migration/migrationjob/change_list.html:182
+#: templates/admin/migration/sync/step4_progress.html:56
+#: templates/admin/migration/syncjob/change_list.html:50
+#: templates/admin/migration/syncjob/change_list.html:153
+#: templates/admin/migration/wizard/step6_complete.html:66
 msgid "Failed"
 msgstr "Gagal"
 
+#: admin.py:2292
 msgid "Step Breakdown"
 msgstr "Pembreakdownan Langkah"
 
+#: admin.py:2294 templates/admin/migration/wizard/step2_connection.html:293
 msgid "Step"
 msgstr "Langkah"
 
+#: admin.py:2294 templates/admin/migration/fullmig/step4_progress.html:60
+#: templates/admin/migration/fullmig/step5_results.html:55
+#: templates/admin/migration/fullmig/step5_results.html:77
+#: templates/admin/migration/migrationjob/change_list.html:170
+#: templates/admin/migration/sync/step4_progress.html:60
+#: templates/admin/migration/syncjob/change_list.html:141
+#: templates/admin/migration/wizard/step6_complete.html:67
+#: templates/admin/migration/wizard/step6_complete.html:94
 msgid "Total"
 msgstr "Total"
 
+#: admin.py:2334 templates/admin/migration/sync/step4_progress.html:127
 msgid "Errors"
 msgstr "Kesalahan"
 
+#: admin.py:2412
 msgid "Message"
 msgstr "Pesan"
 
+#: admin.py:2434 templates/admin/migration/wizard/base.html:50
 msgid "Mapping"
 msgstr "Pemetaan"
 
+#: models/content_link.py:24 models/log.py:24 models/mapping.py:24
+#: models/staged_item.py:41 models/step.py:25
 msgid "Parent migration job"
 msgstr "Pekerjaan migrasi induk"
 
+#: models/content_link.py:29
 msgid "Product - Full Description"
 msgstr "Produk - Deskripsi Lengkap"
 
+#: models/content_link.py:30
 msgid "Product - Short Description"
 msgstr "Produk - Deskripsi Singkat"
 
+#: models/content_link.py:31
 msgid "Blog Post - Content"
 msgstr "Posting Blog - Konten"
 
+#: models/content_link.py:32
 msgid "Category - Description"
 msgstr "Kategori - Deskripsi"
 
+#: models/content_link.py:35
 msgid "Which content field contains this link"
 msgstr "Bidang konten mana yang berisi tautan ini"
 
+#: models/content_link.py:63
 msgid "Title of the source object (for display)"
 msgstr "Judul objek sumber (untuk tampilan)"
 
+#: models/content_link.py:68
 msgid "Original URL found in the HTML content"
 msgstr "URL asli ditemukan dalam konten HTML"
 
+#: models/content_link.py:71
 msgid "Visible link text (anchor text)"
 msgstr "Teks tautan yang terlihat (anchor text)"
 
+#: models/content_link.py:76
 msgid "Auto-suggested replacement URL"
 msgstr "URL pengganti yang disarankan secara otomatis"
 
+#: models/content_link.py:80
 msgid "Stored Permalink Match"
 msgstr "Pertandingan Permalink yang Disimpan"
 
+#: models/content_link.py:81
 msgid "Exact Slug Match"
 msgstr "Pertandingan Slug yang Tepat"
 
+#: models/content_link.py:82
 msgid "External ID Match"
 msgstr "Pertandingan ID Eksternal"
 
+#: models/content_link.py:83
 msgid "URL Path Pattern Match"
 msgstr "Pertandingan Pola Jalur URL"
 
+#: models/content_link.py:84
 msgid "Slug Fallback Match"
 msgstr "Pertandingan Slug Cadangan"
 
+#: models/content_link.py:85
 msgid "No Match Found"
 msgstr "Tidak Ditemukan Pertandingan"
 
+#: models/content_link.py:91
 msgid "How the suggested URL was matched"
 msgstr "Bagaimana URL yang disarankan cocok"
 
+#: models/content_link.py:95 models/mapping.py:29 models/mapping.py:53
+#: models/staged_item.py:19
 msgid "Product"
 msgstr "Produk"
 
+#: models/content_link.py:96 models/mapping.py:31 models/mapping.py:55
+#: models/staged_item.py:20
+#: templates/admin/migration/fullmig/step3_preflight.html:110
+#: templates/admin/migration/fullmig/step5_results.html:73
 msgid "Category"
 msgstr "Kategori"
 
+#: models/content_link.py:97 models/mapping.py:35 models/mapping.py:59
 msgid "Blog Post"
 msgstr "Pos Blog"
 
+#: models/content_link.py:98 models/mapping.py:36 models/mapping.py:60
 msgid "Blog Category"
 msgstr "Kategori Blog"
 
+#: models/content_link.py:99
 msgid "Collection"
 msgstr "Koleksi"
 
+#: models/content_link.py:100
 msgid "Page"
 msgstr "Halaman"
 
+#: models/content_link.py:101
 msgid "Unknown"
 msgstr "Tidak diketahui"
 
+#: models/content_link.py:107
 msgid "Type of Spwig object the URL was matched to"
 msgstr "Jenis objek Spwig yang URL cocok dengannya"
 
+#: models/content_link.py:110
 msgid "ID of the matched Spwig object"
 msgstr "ID objek Spwig yang cocok"
 
+#: models/content_link.py:115
 msgid "Match confidence: 0.0 (no match) to 1.0 (exact match)"
 msgstr "Keyakinan cocok: 0.0 (tidak cocok) hingga 1.0 (cocok tepat)"
 
+#: models/content_link.py:120 models/staged_item.py:73
 msgid "Pending Review"
 msgstr "Menunggu Tinjauan"
 
+#: models/content_link.py:121
+#: templates/admin/migration/wizard/step6_complete.html:210
 msgid "Approved"
 msgstr "Disetujui"
 
+#: models/content_link.py:122
 msgid "Modified by Merchant"
 msgstr "Diubah oleh Pedagang"
 
+#: models/content_link.py:124
+#: templates/admin/migration/wizard/step6_complete.html:206
 msgid "Applied"
 msgstr "Diajukan"
 
+#: models/content_link.py:125
 msgid "Apply Failed"
 msgstr "Penerapan Gagal"
 
+#: models/content_link.py:137
 msgid "URL manually entered by merchant (overrides suggested_url)"
 msgstr ""
 "URL yang dimasukkan secara manual oleh pedagang (mengatasi suggested_url)"
 
+#: models/content_link.py:140
 msgid "Error message if apply failed"
 msgstr "Pesan kesalahan jika penerapan gagal"
 
+#: models/content_link.py:146
 msgid "Content Link"
 msgstr "Tautan Konten"
 
+#: models/content_link.py:147
 msgid "Content Links"
 msgstr "Tautan Konten"
 
+#: models/job.py:34
 msgid "User who initiated this migration"
 msgstr "Pengguna yang memulai migrasi ini"
 
+#: models/job.py:39
 msgid "WooCommerce"
 msgstr "WooCommerce"
 
+#: models/job.py:40
 msgid "Shopify"
 msgstr "Shopify"
 
+#: models/job.py:41
 msgid "Magento"
 msgstr "Magento"
 
+#: models/job.py:42
 msgid "CSV Files"
 msgstr "File CSV"
 
+#: models/job.py:45
 msgid "Source e-commerce platform"
 msgstr "Platform e-commerce sumber"
 
+#: models/job.py:49
 msgid "REST API"
 msgstr "REST API"
 
+#: models/job.py:50
 msgid "CSV Upload"
 msgstr "Unggah CSV"
 
+#: models/job.py:51
 msgid "Direct Database"
 msgstr "Basis Data Langsung"
 
+#: models/job.py:54
 msgid "Migration method used"
 msgstr "Metode migrasi yang digunakan"
 
+#: models/job.py:60
 msgid "Connection configuration (API keys, URLs, etc.)"
 msgstr "Konfigurasi koneksi (kunci API, URL, dll.)"
 
+#: models/job.py:74
 msgid "Import blog posts, categories, and tags from WordPress"
 msgstr "Impor posting blog, kategori, dan tag dari WordPress"
 
+#: models/job.py:77
 msgid "Import affiliate data via Spwig Migration Bridge plugin"
 msgstr "Impor data afiliasi melalui plugin Spwig Migration Bridge"
 
+#: models/job.py:82 models/step.py:53 models/sync_job.py:74
+#: models/sync_step.py:30
 msgid "Pending"
 msgstr "Menunggu"
 
+#: models/job.py:83
 msgid "Testing Connection"
 msgstr "Menguji Koneksi"
 
+#: models/job.py:84
 msgid "Previewing Data"
 msgstr "Melihat Pratinjau Data"
 
+#: models/job.py:85
 msgid "Importing"
 msgstr "Mengimpor"
 
+#: models/job.py:86
 msgid "Paused"
 msgstr "Dijeda"
 
+#: models/job.py:89 models/step.py:61 models/sync_job.py:82
+msgid "Cancelled"
+msgstr "Dibatalkan"
+
+#: models/job.py:90 models/sync_job.py:80
 msgid "Rolling Back"
 msgstr "Mengembalikan"
 
+#: models/job.py:91 models/step.py:62 models/sync_job.py:81
+#: models/sync_step.py:35
 msgid "Rolled Back"
 msgstr "Dikembalikan"
 
-msgid "Transaction ID for rollback tracking"
-msgstr "ID Transaksi untuk pelacakan pengembalian"
+#: models/job.py:92
+msgid "Rollback Failed"
+msgstr "Rollback Gagal"
 
+#: models/job.py:99
 msgid "Whether this migration can be rolled back"
 msgstr "Apakah migrasi ini dapat dikembalikan"
 
-msgid "Deadline for manual rollback (24 hours after completion)"
-msgstr "Batas waktu untuk rollback manual (24 jam setelah selesai)"
+#: models/job.py:105
+msgid ""
+"Point after which this migration can no longer be rolled back. Empty means "
+"it never expires."
+msgstr ""
+"Titik setelahnya migrasi ini tidak dapat dikembalikan lagi. Kosong berarti "
+"tidak pernah kedaluwarsa."
 
+#: models/job.py:112
+msgid "If the import fails, automatically remove everything it imported"
+msgstr "Jika impor gagal, secara otomatis hapus semua yang diimpor"
+
+#: models/job.py:126
+msgid "Set when an operator asks for a running import to stop"
+msgstr ""
+"Atur saat operator meminta pengimporan yang sedang berjalan untuk dihentikan"
+
+#: models/job.py:131
 msgid "Current import step being processed"
 msgstr "Langkah impor saat ini yang sedang diproses"
 
+#: models/job.py:134 models/sync_job.py:92
 msgid "Overall progress percentage (0-100)"
 msgstr "Persentase kemajuan secara keseluruhan (0-100)"
 
+#: models/job.py:225
 msgid "Total migration duration in seconds"
 msgstr "Durasi migrasi total dalam detik"
 
+#: models/job.py:232
 msgid "Summary of errors encountered"
 msgstr "Ringkasan kesalahan yang ditemukan"
 
+#: models/job.py:233
 msgid "Summary of warnings encountered"
 msgstr "Ringkasan peringatan yang ditemukan"
 
+#: models/job.py:240
 msgid "Generated migration report (CSV/PDF)"
 msgstr "Laporan migrasi yang dihasilkan (CSV/PDF)"
 
+#: models/job.py:245
 msgid "Migration Job"
 msgstr "Pekerjaan Migrasi"
 
+#: models/job.py:246
 msgid "Migration Jobs"
 msgstr "Pekerjaan Migrasi"
 
+#: models/log.py:33
 msgid "Migration step this log belongs to"
 msgstr "Langkah migrasi yang log ini termasuk dalam"
 
+#: models/log.py:37
 msgid "When this log entry was created"
 msgstr "Kapan entri log ini dibuat"
 
+#: models/log.py:41
 msgid "Debug"
 msgstr "Debug"
 
+#: models/log.py:42
 msgid "Info"
 msgstr "Info"
 
+#: models/log.py:43
 msgid "Warning"
 msgstr "Peringatan"
 
+#: models/log.py:44 models/log.py:88
 msgid "Error"
 msgstr "Kesalahan"
 
+#: models/log.py:45
 msgid "Critical"
 msgstr "Kritis"
 
+#: models/log.py:48
 msgid "Log severity level"
 msgstr "Tingkat keparahan log"
 
+#: models/log.py:51
 msgid "Log message"
 msgstr "Pesan log"
 
+#: models/log.py:55
 msgid "Source data type (e.g., 'woocommerce_product')"
 msgstr "Jenis data sumber (misalnya, 'woocommerce_product')"
 
+#: models/log.py:58
 msgid "ID from source system"
 msgstr "ID dari sistem sumber"
 
+#: models/log.py:61
 msgid "Name/title of source item"
 msgstr "Nama/judul item sumber"
 
+#: models/log.py:70
 msgid "Type of created object"
 msgstr "Jenis objek yang dibuat"
 
+#: models/log.py:73
 msgid "ID of created object"
 msgstr "ID objek yang dibuat"
 
+#: models/log.py:78
 msgid "Additional context data"
 msgstr "Data konteks tambahan"
 
+#: models/log.py:82
 msgid "Fetched"
 msgstr "Diambil"
 
+#: models/log.py:83
 msgid "Validated"
 msgstr "Diverifikasi"
 
+#: models/log.py:84
 msgid "Mapped"
 msgstr "Dipetakan"
 
+#: models/log.py:86
 msgid "Updated"
 msgstr "Diperbarui"
 
+#: models/log.py:91
 msgid "Action performed"
 msgstr "Tindakan yang dilakukan"
 
+#: models/log.py:96
 msgid "Migration Log"
 msgstr "Log Migrasi"
 
+#: models/log.py:97
 msgid "Migration Logs"
 msgstr "Log Migrasi"
 
+#: models/mapping.py:30 models/mapping.py:54
 msgid "Product Variant"
 msgstr "Varian Produk"
 
+#: models/mapping.py:32 models/mapping.py:56 models/staged_item.py:21
 msgid "Customer"
 msgstr "Pelanggan"
 
+#: models/mapping.py:33 models/mapping.py:57 models/staged_item.py:22
 msgid "Order"
 msgstr "Pemesanan"
 
+#: models/mapping.py:34 models/mapping.py:58 models/staged_item.py:23
 msgid "Review"
 msgstr "Tinjau"
 
+#: models/mapping.py:37 models/mapping.py:61
 msgid "Blog Tag"
 msgstr "Tag Blog"
 
+#: models/mapping.py:40
 msgid "Type of source data"
 msgstr "Jenis data sumber"
 
+#: models/mapping.py:44
 msgid "Source field name (e.g., '_custom_brand', 'metafields.brand')"
 msgstr "Nama bidang sumber (misalnya, '_custom_brand', 'metafields.brand')"
 
+#: models/mapping.py:48
 msgid "Human-readable label for source field"
 msgstr "Label yang dapat dibaca manusia untuk bidang sumber"
 
+#: models/mapping.py:64
 msgid "Destination model name"
 msgstr "Nama model tujuan"
 
+#: models/mapping.py:68
 msgid "Destination field name (e.g., 'brand', 'short_description')"
 msgstr "Nama bidang tujuan (misalnya, 'brand', 'short_description')"
 
+#: models/mapping.py:72
 msgid "Human-readable label for destination field"
 msgstr "Label yang dapat dibaca manusia untuk bidang tujuan"
 
+#: models/mapping.py:77
 msgid "No Transformation"
 msgstr "Tidak Ada Transformasi"
 
+#: models/mapping.py:78
 msgid "Convert to String"
 msgstr "Konversi ke Teks"
 
+#: models/mapping.py:79
 msgid "Convert to Integer"
 msgstr "Konversi ke Bilangan Bulat"
 
+#: models/mapping.py:80
 msgid "Convert to Decimal"
 msgstr "Konversi ke Desimal"
 
+#: models/mapping.py:81
 msgid "Convert to Boolean"
 msgstr "Konversi ke Boolean"
 
+#: models/mapping.py:82
 msgid "Parse JSON"
 msgstr "Parse JSON"
 
+#: models/mapping.py:83
 msgid "Parse Date"
 msgstr "Parse Tanggal"
 
+#: models/mapping.py:84
 msgid "Validate URL"
 msgstr "Validasi URL"
 
+#: models/mapping.py:85
 msgid "Validate Email"
 msgstr "Validasi Email"
 
+#: models/mapping.py:87
 msgid "Convert to Money"
 msgstr "Konversi ke Uang"
 
+#: models/mapping.py:88
 msgid "Integer (allow null)"
 msgstr "Bilangan Bulat (boleh null)"
 
+#: models/mapping.py:89
 msgid "Decimal (allow null)"
 msgstr "Desimal (boleh null)"
 
+#: models/mapping.py:90
 msgid "WooCommerce Status"
 msgstr "Status WooCommerce"
 
+#: models/mapping.py:91
 msgid "WooCommerce Product Type"
 msgstr "Jenis Produk WooCommerce"
 
+#: models/mapping.py:92
 msgid "WooCommerce Backorders"
 msgstr "Pemesanan Kembali WooCommerce"
 
+#: models/mapping.py:93
 msgid "Meta Data Array"
 msgstr "Array Data Meta"
 
+#: models/mapping.py:94
 msgid "Category Array"
 msgstr "Array Kategori"
 
+#: models/mapping.py:95
 msgid "Image Array"
 msgstr "Array Gambar"
 
+#: models/mapping.py:96
 msgid "Category Parent Resolution"
 msgstr "Resolusi Orang Tua Kategori"
 
+#: models/mapping.py:97
 msgid "Custom Function"
 msgstr "Fungsi Kustom"
 
+#: models/mapping.py:99
 msgid "Shopify Product Status"
 msgstr "Status Produk Shopify"
 
+#: models/mapping.py:100
 msgid "Shopify Order Status"
 msgstr "Status Pemesanan Shopify"
 
+#: models/mapping.py:101
 msgid "Shopify Discount Type"
 msgstr "Jenis Diskon Shopify"
 
+#: models/mapping.py:102
 msgid "Shopify Discount Value"
 msgstr "Nilai Diskon Shopify"
 
+#: models/mapping.py:103
 msgid "Shopify Inventory Tracked"
 msgstr "Persediaan yang Dilacak Shopify"
 
+#: models/mapping.py:104
 msgid "Shopify Inventory Policy"
 msgstr "Kebijakan Persediaan Shopify"
 
+#: models/mapping.py:105
 msgid "Comma-Separated to List"
 msgstr "Dari Terpisah oleh Koma ke Daftar"
 
+#: models/mapping.py:107
+msgid "Magento Product Status"
+msgstr "Status Produk Magento"
+
+#: models/mapping.py:108
+msgid "Magento Product Visibility"
+msgstr "Keterlihatan Produk Magento"
+
+#: models/mapping.py:109
+msgid "Magento Order Status"
+msgstr "Status Pesanan Magento"
+
+#: models/mapping.py:110
+msgid "Magento Discount Type"
+msgstr "Jenis Diskon Magento"
+
+#: models/mapping.py:116
 msgid "Data transformation to apply"
 msgstr "Transformasi data yang akan diterapkan"
 
+#: models/mapping.py:121
 msgid "Python function name for custom transformation"
 msgstr "Nama fungsi Python untuk transformasi khusus"
 
+#: models/mapping.py:126
 msgid "Default value if source field is missing or empty"
 msgstr "Nilai default jika bidang sumber hilang atau kosong"
 
+#: models/mapping.py:131
 msgid "Whether this field is required (skip item if missing)"
 msgstr "Apakah bidang ini diperlukan (lewati item jika hilang)"
 
+#: models/mapping.py:135
 msgid "Skip entire item if this field is empty"
 msgstr "Lewati item seluruhnya jika bidang ini kosong"
 
+#: models/mapping.py:140
 msgid "Number of times this mapping was applied"
 msgstr "Jumlah kali pemetaan ini diterapkan"
 
+#: models/mapping.py:144
 msgid "Number of times transformation failed"
 msgstr "Jumlah kali transformasi gagal"
 
+#: models/mapping.py:149
 msgid "Whether this mapping was auto-detected from data"
 msgstr "Apakah pemetaan ini terdeteksi secara otomatis dari data"
 
+#: models/mapping.py:156
 msgid "Migration Mapping"
 msgstr "Pemetaan Migrasi"
 
+#: models/mapping.py:157
 msgid "Migration Mappings"
 msgstr "Pemetaan Migrasi"
 
+#: models/staged_item.py:27
 msgid "Missing Required Field"
 msgstr "Field Wajib Hilang"
 
+#: models/staged_item.py:28
 msgid "Invalid Data Format"
 msgstr "Format Data Tidak Valid"
 
+#: models/staged_item.py:29
 msgid "Missing Relationship"
 msgstr "Hubungan Hilang"
 
+#: models/staged_item.py:30
 msgid "Data Transformation Failed"
 msgstr "Transformasi Data Gagal"
 
+#: models/staged_item.py:31
 msgid "Duplicate Entry"
 msgstr "Entri Duplikat"
 
+#: models/staged_item.py:32
 msgid "Validation Failed"
 msgstr "Validasi Gagal"
 
+#: models/staged_item.py:33
 msgid "Unknown Error"
 msgstr "Kesalahan Tidak Diketahui"
 
+#: models/staged_item.py:46
 msgid "Original ID from source platform"
 msgstr "ID Asli dari Platform Sumber"
 
+#: models/staged_item.py:49
 msgid "Original data from WooCommerce/Shopify"
 msgstr "Data Asli dari WooCommerce/Shopify"
 
+#: models/staged_item.py:53
 msgid "Data after transformation, ready for model creation"
 msgstr "Data setelah transformasi, siap untuk pembuatan model"
 
+#: models/staged_item.py:58
 msgid "Why this item failed to import"
 msgstr "Mengapa item ini gagal diimpor"
 
+#: models/staged_item.py:61
 msgid "Detailed error message"
 msgstr "Pesan Kesalahan Rinci"
 
+#: models/staged_item.py:64
 msgid "Specific field that caused the error"
 msgstr "Bidang spesifik yang menyebabkan kesalahan"
 
+#: models/staged_item.py:74
 msgid "Being Fixed"
 msgstr "Sedang Diperbaiki"
 
+#: models/staged_item.py:75
 msgid "Ready to Retry"
 msgstr "Siap Dicoba Kembali"
 
+#: models/staged_item.py:76
 msgid "Successfully Imported"
 msgstr "Berhasil Diimpor"
 
+#: models/staged_item.py:77
 msgid "Skipped by Admin"
 msgstr "Dilewati oleh Admin"
 
+#: models/staged_item.py:81
 msgid "Admin notes about fixing this item"
 msgstr "Catatan admin tentang memperbaiki item ini"
 
+#: models/staged_item.py:92
 msgid "Staged Item"
 msgstr "Item yang Disediakan"
 
+#: models/staged_item.py:93
 msgid "Staged Items"
 msgstr "Item yang Disediakan"
 
+#: models/step.py:30
 msgid "Brands"
 msgstr "Merek"
 
+#: models/step.py:32
 msgid "Product Images"
 msgstr "Gambar Produk"
 
+#: models/step.py:33
 msgid "Product Variants"
 msgstr "Variasi Produk"
 
+#: models/step.py:35
 msgid "Customer Addresses"
 msgstr "Alamat Pelanggan"
 
+#: models/step.py:37
 msgid "Order Items"
 msgstr "Item Pemesanan"
 
+#: models/step.py:39 templates/admin/migration/confirm_rollback.html:83
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
+#: templates/admin/migration/wizard/step4_mapping.html:97
+#: templates/admin/migration/wizard/step5_import.html:191
+#: templates/admin/migration/wizard/step6_complete.html:37
 msgid "Coupons"
 msgstr "Kupon"
 
+#: models/step.py:40
 msgid "Blog"
 msgstr "Blog"
 
+#: models/step.py:41
 msgid "Shipping Zones"
 msgstr "Zona Pengiriman"
 
+#: models/step.py:42
 msgid "Tax Rates"
 msgstr "Tarif Pajak"
 
+#: models/step.py:43 templates/admin/migration/wizard/step6_complete.html:117
 msgid "Link Rewriting"
 msgstr "Penulisan Ulang Tautan"
 
+#: models/step.py:44 templates/admin/migration/wizard/step3_preview.html:50
+#: templates/admin/migration/wizard/step3_preview.html:141
+#: templates/admin/migration/wizard/step5_import.html:231
+#: templates/admin/migration/wizard/step6_complete.html:42
 msgid "Affiliates"
 msgstr "Afiliasi"
 
+#: models/step.py:45 templates/admin/migration/wizard/step5_import.html:251
+#: templates/admin/migration/wizard/step6_complete.html:48
 msgid "Commissions"
 msgstr "Komisi"
 
+#: models/step.py:46 templates/admin/migration/wizard/step5_import.html:271
 msgid "Payouts"
 msgstr "Pembayaran"
 
+#: models/step.py:49
 msgid "Type of data being imported in this step"
 msgstr "Jenis data yang diimpor dalam langkah ini"
 
+#: models/step.py:54 models/sync_job.py:77 models/sync_step.py:31
 msgid "Running"
 msgstr "Berjalan"
 
-msgid "Database savepoint ID for this step"
-msgstr "ID titik penyimpanan database untuk langkah ini"
-
+#: models/step.py:69
 msgid "Total items to import in this step"
 msgstr "Total item untuk diimpor dalam langkah ini"
 
+#: models/step.py:70
 msgid "Items successfully imported"
 msgstr "Item Berhasil Diimpor"
 
+#: models/step.py:72
 msgid "Items skipped (duplicates, validation failures)"
 msgstr "Item Dilewati (duplikat, kegagalan validasi)"
 
+#: models/step.py:74
 msgid "Items that failed to import"
 msgstr "Item yang Gagal Diimpor"
 
+#: models/step.py:77
 msgid "When this step started"
 msgstr "Kapan Langkah Ini Dimulai"
 
+#: models/step.py:79
 msgid "When this step completed"
 msgstr "Kapan Langkah Ini Selesai"
 
+#: models/step.py:82
 msgid "Duration of this step in seconds"
 msgstr "Durasi langkah ini dalam detik"
 
+#: models/step.py:86
 msgid "Error message if step failed"
 msgstr "Pesan Kesalahan Jika Langkah Gagal"
 
+#: models/step.py:88
 msgid "Number of errors encountered in this step"
 msgstr "Jumlah kesalahan yang dihadapi dalam langkah ini"
 
+#: models/step.py:91
 msgid "Number of warnings encountered in this step"
 msgstr "Jumlah peringatan yang dihadapi dalam langkah ini"
 
+#: models/step.py:96
 msgid "Currently processing item (for progress display)"
 msgstr "Item yang sedang diproses (untuk tampilan kemajuan)"
 
+#: models/step.py:101
 msgid "Migration Step"
 msgstr "Langkah Migrasi"
 
+#: models/step.py:102
 msgid "Migration Steps"
 msgstr "Langkah Migrasi"
 
+#: models/sync_connection.py:24
 msgid "Descriptive name (e.g., 'Production Server', 'Staging')"
-msgstr ""
+msgstr "Nama deskriptif (misalnya, 'Production Server', 'Staging')"
 
-#, fuzzy
-#| msgid "Product"
+#: models/sync_connection.py:28
+#: templates/admin/migration/sync/step1_connection.html:92
 msgid "Production"
-msgstr "Produk"
+msgstr "Produksi"
 
+#: models/sync_connection.py:29
+#: templates/admin/migration/sync/step1_connection.html:91
 msgid "Staging"
-msgstr ""
+msgstr "Staging"
 
-#, fuzzy
-#| msgid "Back"
+#: models/sync_connection.py:30
+#: templates/admin/migration/sync/step1_connection.html:93
 msgid "Backup"
-msgstr "Kembali"
+msgstr "Cadangan"
 
+#: models/sync_connection.py:31
+#: templates/admin/migration/sync/step1_connection.html:94
 msgid "Other"
-msgstr ""
+msgstr "Lainnya"
 
+#: models/sync_connection.py:37
 msgid "Role of the remote instance"
-msgstr ""
+msgstr "Peran instance jarak jauh"
 
+#: models/sync_connection.py:41
 msgid ""
 "Base URL of the remote Spwig instance (e.g., https://merchant-store.com)"
 msgstr ""
+"URL dasar dari instance Spwig jarak jauh (misalnya, https://merchant-store."
+"com)"
 
+#: models/sync_connection.py:46
 msgid "SyncToken for the remote instance (stored encrypted)"
 msgstr ""
+"SyncToken untuk instance jarak jauh (disimpan dalam bentuk terenkripsi)"
 
+#: models/sync_connection.py:51
 msgid "Spwig version running on the remote instance"
-msgstr ""
+msgstr "Versi Spwig yang berjalan pada instance jarak jauh"
 
+#: models/sync_connection.py:54
 msgid "Site name of the remote instance"
-msgstr ""
+msgstr "Nama situs dari instance jarak jauh"
 
+#: models/sync_connection.py:58
 msgid "Whether the connection has been verified"
-msgstr ""
+msgstr "Apakah koneksi telah diverifikasi"
 
+#: models/sync_connection.py:61
 msgid "Last successful connection test"
-msgstr ""
+msgstr "Uji koneksi sukses terakhir"
 
+#: models/sync_connection.py:64
 msgid "Last time a sync was performed using this connection"
-msgstr ""
+msgstr "Waktu terakhir sinkronisasi dilakukan menggunakan koneksi ini"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_connection.py:72
 msgid "User who created this connection"
-msgstr "Pengguna yang memulai migrasi ini"
+msgstr "Pengguna yang membuat koneksi ini"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:79
 msgid "Sync Connection"
-msgstr "Koneksi"
+msgstr "Koneksi Sinkronisasi"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:80
 msgid "Sync Connections"
-msgstr "Koneksi"
+msgstr "Sinkronisasi Koneksi"
 
-#, fuzzy
-#| msgid "Settings"
+#: models/sync_job.py:26 templates/admin/migration/sync/base.html:34
 msgid "Settings Sync"
-msgstr "Pengaturan"
+msgstr "Sinkronisasi Pengaturan"
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: models/sync_job.py:27 templates/admin/migration/sync/base.html:32
 msgid "Full System Migration"
-msgstr "Mulai Migrasi Baru"
+msgstr "Migrasi Sistem Penuh"
 
-#, fuzzy
-#| msgid "Type of source data"
+#: models/sync_job.py:30
 msgid "Type of sync operation"
-msgstr "Jenis data sumber"
+msgstr "Jenis Operasi Sinkronisasi"
 
+#: models/sync_job.py:34
 msgid "Pull from Remote"
-msgstr ""
+msgstr "Tarik dari Jarak Jauh"
 
+#: models/sync_job.py:35
 msgid "Push to Remote"
-msgstr ""
+msgstr "Kirim ke Jarak Jauh"
 
+#: models/sync_job.py:38
 msgid "Direction of data flow"
-msgstr ""
+msgstr "Arah aliran data"
 
+#: models/sync_job.py:46
 msgid "Connection to the remote instance"
-msgstr ""
+msgstr "Koneksi ke instance jarak jauh"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_job.py:54
 msgid "User who initiated this sync"
-msgstr "Pengguna yang memulai migrasi ini"
+msgstr "Pengguna yang Memulai Sinkronisasi Ini"
 
+#: models/sync_job.py:59
 msgid "List of sync category keys selected for this job"
-msgstr ""
+msgstr "Daftar kunci kategori sinkronisasi yang dipilih untuk pekerjaan ini"
 
+#: models/sync_job.py:63
 msgid "Add & Update Only"
-msgstr ""
+msgstr "Hanya Tambah & Perbarui"
 
+#: models/sync_job.py:64
 msgid "Full Mirror"
-msgstr ""
+msgstr "Cermin Penuh"
 
+#: models/sync_job.py:70
 msgid "Sync behaviour: additive (no deletions) or mirror (exact copy)"
 msgstr ""
+"Perilaku sinkronisasi: aditif (tanpa penghapusan) atau cermin (salinan yang "
+"tepat)"
 
-#, fuzzy
-#| msgid "pending review"
+#: models/sync_job.py:75
 msgid "Generating Preview"
-msgstr "menunggu tinjauan"
+msgstr "Membuat Preview"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: models/sync_job.py:76
 msgid "Awaiting Confirmation"
-msgstr "Menguji Koneksi"
+msgstr "Menunggu Konfirmasi"
 
-#, fuzzy
-#| msgid "Cancel"
-msgid "Cancelled"
-msgstr "Batal"
-
+#: models/sync_job.py:88
 msgid "Current status of the sync operation"
-msgstr ""
+msgstr "Status saat ini dari operasi sinkronisasi"
 
+#: models/sync_job.py:95
 msgid "Name of the currently executing step"
-msgstr ""
+msgstr "Nama langkah yang sedang dijalankan"
 
+#: models/sync_job.py:100
 msgid "Structured diff from preview step"
-msgstr ""
+msgstr "Perbedaan terstruktur dari langkah pratinjau"
 
+#: models/sync_job.py:105
 msgid "Whether the merchant confirmed production overwrite"
-msgstr ""
+msgstr "Apakah pedagang telah mengonfirmasi penggantian produksi"
 
+#: models/sync_job.py:110
 msgid "Pre-sync state snapshot for rollback"
-msgstr ""
+msgstr "Snapshoot state sebelum sinkronisasi untuk rollback"
 
-#, fuzzy
-#| msgid "Whether this migration can be rolled back"
+#: models/sync_job.py:113
 msgid "Whether this job can be rolled back"
-msgstr "Apakah migrasi ini dapat dikembalikan"
+msgstr "Apakah pekerjaan ini dapat dikembalikan"
 
-#, fuzzy
-#| msgid "Deadline for manual rollback (24 hours after completion)"
+#: models/sync_job.py:116
 msgid "Deadline for rollback (24 hours after completion)"
-msgstr "Batas waktu untuk rollback manual (24 jam setelah selesai)"
+msgstr "Batas waktu untuk pengembalian (24 jam setelah selesai)"
 
+#: models/sync_job.py:136
 msgid "Recent activity log entries [{ts, msg}, ...] (last 50)"
-msgstr ""
+msgstr "Entri log aktivitas terbaru [{ts, msg}, ...] (terakhir 50)"
 
+#: models/sync_job.py:143
 msgid "Sync Job"
-msgstr ""
+msgstr "Tugas Sinkronisasi"
 
+#: models/sync_job.py:144
 msgid "Sync Jobs"
-msgstr ""
+msgstr "Tugas Sinkronisasi"
 
-#, fuzzy
-#| msgid "Parent migration job"
+#: models/sync_step.py:21
 msgid "Parent sync job"
-msgstr "Pekerjaan migrasi induk"
+msgstr "Tugas Sinkronisasi Induk"
 
+#: models/sync_step.py:26
 msgid "Sync category key (e.g., 'email_config', 'design_theme')"
-msgstr ""
+msgstr "Kunci kategori sinkronisasi (misalnya, 'email_config', 'design_theme')"
 
+#: models/sync_step.py:52
 msgid "Diff data, created object IDs, or ID mappings for this step"
-msgstr ""
+msgstr "Data perbedaan, ID objek yang dibuat, atau peta ID untuk langkah ini"
 
+#: models/sync_step.py:59
 msgid "Extra progress data for the UI (e.g., bytes transferred for media)"
 msgstr ""
+"Data kemajuan tambahan untuk UI (misalnya, byte yang ditransfer untuk media)"
 
-#, fuzzy
-#| msgid "Step"
+#: models/sync_step.py:64
 msgid "Sync Step"
-msgstr "Langkah"
+msgstr "Langkah Sinkronisasi"
 
-#, fuzzy
-#| msgid "Next Steps"
+#: models/sync_step.py:65
 msgid "Sync Steps"
-msgstr "Langkah Berikutnya"
+msgstr "Langkah-langkah Sinkronisasi"
 
+#: sync/authentication.py:40
 msgid "HTTPS is required for sync API requests."
-msgstr ""
+msgstr "HTTPS diperlukan untuk permintaan API sinkronisasi."
 
+#: sync/authentication.py:46
 msgid "Missing or invalid Authorization header. Expected: SyncToken <token>"
 msgstr ""
+"Header Otorisasi hilang atau tidak valid. Diharapkan: SyncToken <token>"
 
+#: sync/authentication.py:51
 msgid "Empty sync token."
-msgstr ""
+msgstr "Token sinkronisasi kosong."
 
+#: sync/authentication.py:61
 msgid "Invalid or expired sync token."
-msgstr ""
+msgstr "Token sinkronisasi tidak valid atau telah kedaluwarsa."
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:25
 msgid "Site Settings"
-msgstr "Pengaturan"
+msgstr "Pengaturan Situs"
 
+#: sync/category_registry.py:27
 msgid ""
 "Core site configuration: name, branding, currency, checkout, SEO, maintenance"
 msgstr ""
+"Konfigurasi situs inti: nama, branding, mata uang, checkout, SEO, "
+"pemeliharaan"
 
+#: sync/category_registry.py:41
 msgid "Design & Theme"
-msgstr ""
+msgstr "Desain & Tema"
 
+#: sync/category_registry.py:42
 msgid "Active theme, design tokens, custom CSS, theme branding"
-msgstr ""
+msgstr "Tema aktif, token desain, CSS kustom, branding tema"
 
+#: sync/category_registry.py:61
 msgid "Headers, Footers & Menus"
-msgstr ""
+msgstr "Header, Footer & Menu"
 
+#: sync/category_registry.py:62
 msgid "Header/footer templates, widgets, navigation menus"
-msgstr ""
+msgstr "Templat header/footer, widget, dan menu navigasi"
 
-#, fuzzy
-#| msgid "Total Migrations"
+#: sync/category_registry.py:81
 msgid "Email Configuration"
-msgstr "Total Migrasi"
+msgstr "Konfigurasi Email"
 
+#: sync/category_registry.py:82
 msgid "Email provider accounts, templates, and template translations"
-msgstr ""
+msgstr "Akun penyedia email, template, dan terjemahan template"
 
+#: sync/category_registry.py:99
 msgid "SMS & WhatsApp Configuration"
-msgstr ""
+msgstr "Konfigurasi SMS & WhatsApp"
 
+#: sync/category_registry.py:100
 msgid "SMS/WhatsApp provider accounts and message templates"
-msgstr ""
+msgstr "Akun penyedia SMS/WhatsApp dan template pesan"
 
+#: sync/category_registry.py:113
 msgid "Payment Providers"
-msgstr ""
+msgstr "Pemroses Pembayaran"
 
+#: sync/category_registry.py:114
 msgid "Payment provider accounts (Stripe, PayPal, etc.)"
-msgstr ""
+msgstr "Akun penyedia pembayaran (Stripe, PayPal, dll.)"
 
+#: sync/category_registry.py:123
 msgid "Sandbox/test credentials will NOT be synced to production."
-msgstr ""
+msgstr "Kredensial sandbox/test TIDAK akan disinkronkan ke produksi."
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:130
 msgid "Shipping Configuration"
-msgstr "Migrasi Shopify"
+msgstr "Konfigurasi Pengiriman"
 
+#: sync/category_registry.py:132
 msgid ""
-"Shipping providers, zones, methods, rules, rate tables, packages, carrier "
-"presets, locations"
+"Shipping providers, zones, methods, promotions, rate tables, packages, "
+"carrier presets, locations"
 msgstr ""
+"Penyedia pengiriman, zona, metode, promosi, tabel tarif, paket, pengaturan "
+"awal pengirim, lokasi"
 
+#: sync/category_registry.py:156
 msgid "Tax & Currency"
-msgstr ""
+msgstr "Pajak & Mata Uang"
 
+#: sync/category_registry.py:158
 msgid "Supported currencies, exchange rate providers, manual exchange rates"
-msgstr ""
+msgstr "Mata uang yang didukung, penyedia tarif tukar, tarif tukar manual"
 
-#, fuzzy
-#| msgid "Tax Rates"
+#: sync/category_registry.py:176
 msgid "Tax Rates & Presets"
-msgstr "Tarif Pajak"
+msgstr "Tarif Pajak & Preset"
 
+#: sync/category_registry.py:177
 msgid "Tax rates, tax preset groups and preset rates"
-msgstr ""
+msgstr "Tarif pajak, grup pengaturan awal pajak dan tarif pengaturan awal"
 
+#: sync/category_registry.py:193
 msgid "Languages & Translations"
-msgstr ""
+msgstr "Bahasa & Terjemahan"
 
+#: sync/category_registry.py:194
 msgid "Site languages, translation providers, UI translation overrides"
-msgstr ""
+msgstr "Bahasa situs, penyedia terjemahan, penggantian terjemahan UI"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:210
 msgid "Blog Settings"
-msgstr "Pengaturan"
+msgstr "Pengaturan Blog"
 
+#: sync/category_registry.py:211
 msgid "Blog configuration (posts per page, RSS, subscriptions)"
-msgstr ""
+msgstr "Konfigurasi blog (posting per halaman, RSS, langganan)"
 
+#: sync/category_registry.py:223
 msgid "Social Sharing"
-msgstr ""
+msgstr "Berbagi Sosial"
 
+#: sync/category_registry.py:224
 msgid "Social sharing button configuration and platform settings"
-msgstr ""
+msgstr "Konfigurasi tombol berbagi sosial dan pengaturan platform"
 
+#: sync/category_registry.py:236
 msgid "Sales Regions & Warehouses"
-msgstr ""
+msgstr "Wilayah Penjualan & Gudang"
 
+#: sync/category_registry.py:238
 msgid "Sales regions, warehouse locations, and fulfillment configuration"
-msgstr ""
+msgstr "Wilayah penjualan, lokasi gudang, dan konfigurasi penyelesaian"
 
-#, fuzzy
-#| msgid "Collections"
+#: sync/category_registry.py:251
 msgid "Product Collections"
-msgstr "Koleksi"
+msgstr "Koleksi Produk"
 
+#: sync/category_registry.py:252
 msgid "Curated and automatic product collections"
-msgstr ""
+msgstr "Koleksi Produk yang Disusun dan Otomatis"
 
-#, fuzzy
-#| msgid "WooCommerce Status"
+#: sync/category_registry.py:265
 msgid "Commerce Rules"
-msgstr "Status WooCommerce"
+msgstr "Aturan Komersial"
 
+#: sync/category_registry.py:267
 msgid "Vouchers, promotions, loyalty program, subscriptions, referral program"
-msgstr ""
+msgstr "Kupon, promosi, program loyalitas, langganan, program referensi"
 
-#, fuzzy
-#| msgid "Webhooks API Version"
+#: sync/category_registry.py:293
 msgid "Webhooks & Integrations"
-msgstr "Versi API Webhooks"
+msgstr "Webhooks & Integrasi"
 
+#: sync/category_registry.py:294
 msgid "Webhook endpoints and OAuth provider settings"
-msgstr ""
+msgstr "Titik akhir webhook dan pengaturan penyedia OAuth"
 
+#: sync/category_registry.py:307
+#: templates/admin/migration/wizard/step4_mapping.html:154
 msgid "Custom Fields"
 msgstr "Lapangan Kustom"
 
+#: sync/category_registry.py:308
 msgid "Custom field groups and field definitions"
-msgstr ""
+msgstr "Kelompok bidang kustom dan definisi bidang"
 
+#: sync/category_registry.py:320
 msgid "Staff Roles"
-msgstr ""
+msgstr "Peran Staf"
 
+#: sync/category_registry.py:321
 msgid "Staff role definitions and permissions"
-msgstr ""
+msgstr "Definisi Peran Staf dan Hak Akses"
 
+#: sync/category_registry.py:333
 msgid "Forms"
-msgstr ""
+msgstr "Formulir"
 
+#: sync/category_registry.py:334
 msgid "Form builder forms and configurations"
-msgstr ""
+msgstr "Formulir Pembuat Formulir dan Konfigurasi"
 
+#: sync/category_registry.py:346
 msgid "Pages & Templates"
-msgstr ""
+msgstr "Halaman & Template"
 
+#: sync/category_registry.py:347
 msgid "Page builder pages, page templates, element templates"
-msgstr ""
+msgstr "Halaman pembuat halaman, template halaman, template elemen"
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: sync/category_registry.py:364
 msgid "Blog Posts & Categories"
-msgstr "Kategori Blog"
+msgstr "Posting Blog & Kategori"
 
-#, fuzzy
-#| msgid "Import blog posts, categories, and tags from WordPress"
+#: sync/category_registry.py:365
 msgid "Blog posts, categories, and tags"
-msgstr "Impor posting blog, kategori, dan tag dari WordPress"
+msgstr "Pos blog, kategori, dan tag"
 
+#: sync/category_registry.py:377
 msgid "Announcements"
-msgstr ""
+msgstr "Pengumuman"
 
+#: sync/category_registry.py:378
 msgid "Site announcements and notification banners"
-msgstr ""
+msgstr "Pengumuman Situs dan Banner Pemberitahuan"
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:391
 msgid "Search Configuration"
-msgstr "Migrasi Shopify"
+msgstr "Konfigurasi Pencarian"
 
+#: sync/category_registry.py:392
 msgid "Search redirects and search settings"
-msgstr ""
+msgstr "Redirect Pencarian dan Pengaturan Pencarian"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:404
 msgid "SEO Providers"
-msgstr "Pemesanan"
+msgstr "Pemroses SEO"
 
+#: sync/category_registry.py:405
 msgid "SEO generator provider accounts and configuration"
-msgstr ""
+msgstr "Akun penyedia generator SEO dan konfigurasi"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:418
 msgid "Product Feed Providers"
-msgstr "Bidang Produk"
+msgstr "Pemroses Feed Produk"
 
+#: sync/category_registry.py:419
 msgid "Product feed provider accounts for Google Shopping, Meta, etc."
-msgstr ""
+msgstr "Akun penyedia umpan produk untuk Google Shopping, Meta, dll."
 
+#: sync/category_registry.py:432
 msgid "Blog Social Connectors"
-msgstr ""
+msgstr "Konektor Sosial Blog"
 
+#: sync/category_registry.py:433
 msgid "Social media connector accounts for blog auto-sharing"
-msgstr ""
+msgstr "Akun konektor media sosial untuk berbagi otomatis blog"
 
+#: sync/category_registry.py:442
 msgid "OAuth tokens will need to be re-authorized on the destination."
-msgstr ""
+msgstr "Token OAuth akan perlu diotorisasi kembali di tujuan."
 
+#: sync/category_registry.py:449
 msgid "Customer Analytics Configuration"
-msgstr ""
+msgstr "Konfigurasi Analitik Pelanggan"
 
+#: sync/category_registry.py:450
 msgid "Customer segments, LTV settings, and category multipliers"
-msgstr ""
+msgstr "Segmentasi pelanggan, pengaturan LTV, dan pengali kategori"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:466
 msgid "Affiliate Program Configuration"
-msgstr "Data Program Afiliasi"
+msgstr "Konfigurasi Program Afiliasi"
 
+#: sync/category_registry.py:467
 msgid "Affiliate program settings, report settings, and programs"
-msgstr ""
+msgstr "Pengaturan program afiliasi, pengaturan laporan, dan program"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: sync/category_registry.py:483
 msgid "POS Configuration"
-msgstr "Konfigurasikan Koneksi"
+msgstr "Konfigurasi POS"
 
+#: sync/category_registry.py:485
 msgid ""
 "Store groups, terminals, receipt templates, promo slides, staff discounts"
-msgstr ""
+msgstr "Grup toko, terminal, template struk, slide promo, diskon staf"
 
+#: sync/category_registry.py:510
 msgid "Installed Components"
-msgstr ""
+msgstr "Komponen yang Terinstal"
 
+#: sync/category_registry.py:512
 msgid ""
 "Installed themes, provider integrations, and utility components with "
 "filesystem packages"
 msgstr ""
+"Tema yang terinstal, integrasi penyedia, dan komponen utilitas dengan paket "
+"sistem file"
 
-#, fuzzy
-#| msgid "Product Variants"
+#: sync/category_registry.py:531
 msgid "Products, Categories & Brands"
-msgstr "Variasi Produk"
+msgstr "Produk, Kategori & Merek"
 
-#, fuzzy
-#| msgid "Import products with images, variants, and attributes"
+#: sync/category_registry.py:532
 msgid "Products, variants, images, categories, brands, attributes"
-msgstr "Impor produk dengan gambar, variasi, dan atribut"
+msgstr "Produk, variasi, gambar, kategori, merek, atribut"
 
+#: sync/category_registry.py:555
 msgid "Media Library"
-msgstr ""
+msgstr "Perpustakaan Media"
 
+#: sync/category_registry.py:556
 msgid "Media assets, thumbnails, and uploaded files"
-msgstr ""
+msgstr "Aset media, gambar mini, dan file yang diunggah"
 
-#, fuzzy
-#| msgid "Customer Addresses"
+#: sync/category_registry.py:570
 msgid "Customers & Addresses"
-msgstr "Alamat Pelanggan"
+msgstr "Pelanggan & Alamat"
 
-#, fuzzy
-#| msgid "Import customer accounts and addresses"
+#: sync/category_registry.py:571
 msgid "Customer accounts, profiles, and addresses"
-msgstr "Impor akun pelanggan dan alamat"
+msgstr "Akun pelanggan, profil, dan alamat"
 
-#, fuzzy
-#| msgid "Order Fields"
+#: sync/category_registry.py:588
 msgid "Order History"
-msgstr "Bidang Pesanan"
+msgstr "Riwayat Pesanan"
 
-#, fuzzy
-#| msgid "Import order history and transactions"
+#: sync/category_registry.py:589
 msgid "Orders, order items, and transaction records"
-msgstr "Impor riwayat pesanan dan transaksi"
+msgstr "Pemesanan, item pemesanan, dan catatan transaksi"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:601
 msgid "Product Reviews"
-msgstr "Bidang Produk"
+msgstr "Ulasan Produk"
 
-#, fuzzy
-#| msgid "Import product reviews and ratings"
+#: sync/category_registry.py:602
 msgid "Product reviews and ratings"
-msgstr "Impor ulasan dan penilaian produk"
+msgstr "Ulasan dan Penilaian Produk"
 
+#: sync/category_registry.py:614
 msgid "Stock Levels"
-msgstr ""
+msgstr "Tingkat Stok"
 
+#: sync/category_registry.py:616
 msgid "Per-warehouse stock quantities, reserved stock, and reorder points"
-msgstr ""
+msgstr "Kuantitas stok per gudang, stok yang disisihkan, dan titik pesan ulang"
 
+#: sync/category_registry.py:629
 msgid "Digital Products & Licenses"
-msgstr ""
+msgstr "Produk Digital & Lisensi"
 
+#: sync/category_registry.py:631
 msgid "Digital assets, license key templates, license pools, license providers"
 msgstr ""
+"Aset digital, template kunci lisensi, kumpulan lisensi, penyedia lisensi"
 
+#: sync/category_registry.py:651
 msgid "Gift Cards & Voucher Usage"
-msgstr ""
+msgstr "Kartu Hadiah & Penggunaan Voucher"
 
+#: sync/category_registry.py:652
 msgid "Gift card balances, transactions, voucher usage records"
-msgstr ""
+msgstr "Saldo kartu hadiah, transaksi, dan catatan penggunaan voucher"
 
+#: sync/category_registry.py:669
 msgid "Store Credit & Wallets"
-msgstr ""
+msgstr "Kredit Toko & Dompet"
 
+#: sync/category_registry.py:670
 msgid "Customer wallet balances and transaction history"
-msgstr ""
+msgstr "Saldo dompet pelanggan dan riwayat transaksi"
 
+#: sync/category_registry.py:682
 msgid "Loyalty Program Members"
-msgstr ""
+msgstr "Anggota Program Loyalitas"
 
+#: sync/category_registry.py:684
 msgid "Loyalty members, points balances, transactions, redemptions, badges"
-msgstr ""
+msgstr "Anggota loyalitas, saldo poin, transaksi, penggunaan poin, dan badge"
 
+#: sync/category_registry.py:705
 msgid "Active Subscriptions"
-msgstr ""
+msgstr "Langganan Aktif"
 
+#: sync/category_registry.py:707
 msgid ""
 "Subscription plans pricing, active subscriptions, billing cycles, payment "
 "tokens"
 msgstr ""
+"Harga rencana langganan, langganan aktif, siklus pembayaran, token pembayaran"
 
+#: sync/category_registry.py:724
 msgid ""
 "Payment tokens may not be valid across different payment provider "
 "installations."
 msgstr ""
+"Token pembayaran mungkin tidak valid di antara instalasi pemroses pembayaran "
+"yang berbeda."
 
+#: sync/category_registry.py:731
 msgid "Shipments & Tracking"
-msgstr ""
+msgstr "Pengiriman & Pelacakan"
 
+#: sync/category_registry.py:732
 msgid "Shipment records and tracking event history"
-msgstr ""
+msgstr "Catatan pengiriman dan sejarah kejadian pelacakan"
 
+#: sync/category_registry.py:744
 msgid "Refunds, Returns & Order Notes"
-msgstr ""
+msgstr "Pengembalian Dana, Pengembalian Barang & Catatan Pesanan"
 
+#: sync/category_registry.py:745
 msgid "Refund records, return requests, and order notes"
 msgstr ""
+"Catatan pengembalian dana, permintaan pengembalian, dan catatan pesanan"
 
-#, fuzzy
-#| msgid "Customer Fields"
+#: sync/category_registry.py:757
 msgid "Customer Wishlists"
-msgstr "Bidang Pelanggan"
+msgstr "Daftar Keinginan Pelanggan"
 
+#: sync/category_registry.py:758
 msgid "Customer wishlists and wishlist items"
-msgstr ""
+msgstr "Daftar Keinginan Pelanggan dan Item Daftar Keinginan"
 
+#: sync/category_registry.py:770
 msgid "Blog Subscribers"
-msgstr ""
+msgstr "Langganan Blog"
 
+#: sync/category_registry.py:771
 msgid "Blog email subscribers and category subscriptions"
-msgstr ""
+msgstr "Pelanggan email blog dan langganan kategori"
 
-#, fuzzy
-#| msgid "Commissions"
+#: sync/category_registry.py:783
 msgid "Form Submissions"
-msgstr "Komisi"
+msgstr "Pengajuan Formulir"
 
+#: sync/category_registry.py:784
 msgid "Form response data and submission history"
-msgstr ""
+msgstr "Data respons formulir dan sejarah pengiriman"
 
+#: sync/category_registry.py:796
 msgid "Customer Analytics & History"
-msgstr ""
+msgstr "Analitik Pelanggan & Riwayat"
 
+#: sync/category_registry.py:797
 msgid "Customer notes, abandoned carts, cohort data, preference logs"
 msgstr ""
+"Catatan pelanggan, keranjang yang ditinggalkan, data kohort, log preferensi"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:815
 msgid "Affiliate Member Data"
-msgstr "Data Program Afiliasi"
+msgstr "Data Anggota Afiliasi"
 
+#: sync/category_registry.py:817
 msgid "Affiliate accounts, program memberships, links, commissions, payouts"
-msgstr ""
+msgstr "Akun afiliasi, keanggotaan program, tautan, komisi, pembayaran"
 
-#, fuzzy
-#| msgid "📊 Migration History"
+#: sync/category_registry.py:836
 msgid "POS Transaction History"
-msgstr "📊 Riwayat Migrasi"
+msgstr "Riwayat Transaksi POS"
 
+#: sync/category_registry.py:837
 msgid "POS shifts, cash movements, payments, and parked carts"
 msgstr ""
+"Pergantian POS, pergerakan uang tunai, pembayaran, dan keranjang yang ditahan"
 
+#: sync/category_registry.py:854
 msgid "Software License Keys"
-msgstr ""
+msgstr "Kunci Lisensi Perangkat Lunak"
 
+#: sync/category_registry.py:855
 msgid "License keys, activations, and device registrations"
-msgstr ""
+msgstr "Kunci lisensi, aktivasi, dan pendaftaran perangkat"
 
-#, fuzzy
-#| msgid "Platform"
+#: sync/category_registry.py:870
 msgid "Platform License"
-msgstr "Platform"
+msgstr "Lisensi Platform"
 
+#: sync/category_registry.py:871
 msgid "Platform license transfer and EULA acceptance history"
-msgstr ""
+msgstr "Riwayat transfer lisensi platform dan penerimaan EULA"
 
+#: sync/category_registry.py:880
 msgid ""
 "This will deactivate the license on the source installation. The source "
 "installation will stop working after transfer."
 msgstr ""
+"Ini akan menonaktifkan lisensi pada instalasi sumber. Instalasi sumber akan "
+"berhenti berfungsi setelah transfer."
 
+#: sync/category_registry.py:895
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "Settings"
 msgstr "Pengaturan"
 
+#: sync/category_registry.py:897
 msgid "Core site settings, currencies, languages"
-msgstr ""
+msgstr "Pengaturan Situs Inti, Mata Uang, Bahasa"
 
+#: sync/category_registry.py:903
 msgid "Design"
-msgstr ""
+msgstr "Desain"
 
+#: sync/category_registry.py:905
 msgid "Theme, layout, menus, widgets"
-msgstr ""
+msgstr "Tema, Tata Letak, Menu, Widget"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:911
 msgid "Providers"
-msgstr "Pemesanan"
+msgstr "Pemroses"
 
+#: sync/category_registry.py:913
 msgid "Email, SMS, payment, shipping providers"
-msgstr ""
+msgstr "Pemelihara Email, SMS, Pembayaran, Penyedia Pengiriman"
 
-#, fuzzy
-#| msgid "WooCommerce"
+#: sync/category_registry.py:919
 msgid "Commerce"
-msgstr "WooCommerce"
+msgstr "Perdagangan"
 
+#: sync/category_registry.py:921
 msgid "Vouchers, promotions, loyalty, subscriptions"
-msgstr ""
+msgstr "Voucher, Promosi, Loyalitas, Langganan"
 
-#, fuzzy
-#| msgid "Content Link"
+#: sync/category_registry.py:927
 msgid "Content"
-msgstr "Tautan Konten"
+msgstr "Konten"
 
+#: sync/category_registry.py:929
 msgid "Pages, blog posts, forms"
-msgstr ""
+msgstr "Halaman, Posting Blog, Formulir"
 
-#, fuzzy
-#| msgid "Data Type"
+#: sync/category_registry.py:935
 msgid "Data"
-msgstr "Jenis Data"
+msgstr "Data"
 
+#: sync/category_registry.py:937
 msgid "Products, customers, orders, media"
-msgstr ""
+msgstr "Produk, Pelanggan, Pesanan, Media"
 
-#, fuzzy
-#| msgid ""
-#| "Could not analyze custom fields. You can still proceed with the import."
+#: sync/compatibility.py:82
 msgid "Could not determine local version. Proceeding with caution."
-msgstr ""
-"Tidak dapat menganalisis bidang khusus. Anda tetap dapat melanjutkan dengan "
-"impor."
+msgstr "Tidak dapat menentukan versi lokal. Melanjutkan dengan hati-hati."
 
+#: sync/compatibility.py:83
 msgid "Local version could not be determined."
-msgstr ""
+msgstr "Versi lokal tidak dapat ditentukan."
 
+#: sync/compatibility.py:89
 msgid "Could not determine remote version. Proceeding with caution."
-msgstr ""
+msgstr "Tidak dapat menentukan versi jarak jauh. Lanjutkan dengan hati-hati."
 
+#: sync/compatibility.py:90
 msgid "Remote version could not be determined."
-msgstr ""
+msgstr "Versi jarak jauh tidak dapat ditentukan."
 
+#: sync/diff_engine.py:89
 msgid "Credentials will be re-encrypted on the target instance."
-msgstr ""
+msgstr "Kredensial akan dienkripsi ulang pada instance target."
 
+#: sync_admin.py:65 templates/admin/migration/sync/step1_connection.html:89
 msgid "Role"
-msgstr ""
+msgstr "Peran"
 
+#: sync_admin.py:79
 msgid "Last Sync"
-msgstr ""
+msgstr "Sinkronisasi Terakhir"
 
+#: sync_admin.py:130 templates/admin/migration/syncjob/change_list.html:4
+#: templates/admin/migration/syncjob/change_list.html:24
 msgid "Spwig-to-Spwig Sync"
-msgstr ""
+msgstr "Sinkronisasi Spwig ke Spwig"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync_admin.py:133
 msgid "Sync Settings"
-msgstr "Pengaturan"
+msgstr "Pengaturan Sinkronisasi"
 
+#: sync_admin.py:135
 msgid "Sync settings between staging and production"
-msgstr ""
+msgstr "Sinkronisasi pengaturan antara lingkungan pengujian dan produksi"
 
-#, fuzzy
-#| msgid "Rollback Migration"
+#: sync_admin.py:140
 msgid "Full Migration"
-msgstr "Rollback Migrasi"
+msgstr "Migrasi Penuh"
 
+#: sync_admin.py:142
 msgid "Migrate entire system to a new installation"
-msgstr ""
+msgstr "Migrasikan seluruh sistem ke instalasi baru"
 
+#: sync_admin.py:147
 msgid "Manage Tokens"
-msgstr ""
+msgstr "Kelola Token"
 
+#: sync_admin.py:149
 msgid "Generate and manage sync tokens"
-msgstr ""
+msgstr "Buat dan kelola token sinkronisasi"
 
-#, fuzzy
-#| msgid "Type:"
+#: sync_admin.py:279
 msgid "Type"
-msgstr "Jenis:"
+msgstr "Jenis"
 
-#, fuzzy
-#| msgid "section"
+#: sync_admin.py:289 templates/admin/migration/sync/step2_categories.html:22
 msgid "Direction"
-msgstr "bagian"
+msgstr "Arah"
 
+#: sync_admin.py:344
 msgid "Synced/Failed/Total"
-msgstr ""
+msgstr "Sudah Disinkronisasi/Gagal/Jumlah Total"
 
+#: sync_admin.py:400 sync_admin.py:565
 msgid "Sync token is required for new connections."
-msgstr ""
+msgstr "Token sinkronisasi diperlukan untuk koneksi baru."
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: sync_admin.py:425
 msgid "Settings Sync - Connection"
-msgstr "Menguji Koneksi"
+msgstr "Sinkronisasi Pengaturan - Koneksi"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:446
 msgid "Please select at least one category to sync."
-msgstr "Silakan pilih setidaknya satu jenis data untuk diimpor."
+msgstr "Silakan pilih setidaknya satu kategori untuk disinkronkan."
 
+#: sync_admin.py:468
 msgid "Settings Sync - Select Categories"
-msgstr ""
+msgstr "Sinkronisasi Pengaturan - Pilih Kategori"
 
+#: sync_admin.py:486
 msgid "You must confirm production overwrite."
-msgstr ""
+msgstr "Anda harus mengonfirmasi penggantian produksi."
 
-#, fuzzy
-#| msgid "Migration job created. Please configure the connection."
+#: sync_admin.py:505
 msgid "Preview generation failed. Please check the connection and try again."
-msgstr "Tugas migrasi telah dibuat. Silakan konfigurasikan koneksi."
+msgstr "Pembuatan pratinjau gagal. Silakan periksa koneksi dan coba lagi."
 
+#: sync_admin.py:513
 msgid "Settings Sync - Preview Changes"
-msgstr ""
+msgstr "Sinkronisasi Pengaturan - Pratinjau Perubahan"
 
+#: sync_admin.py:533
 msgid "Settings Sync - Progress"
-msgstr ""
+msgstr "Sinkronisasi Pengaturan - Kemajuan"
 
-#, fuzzy
-#| msgid "Migration Wizard - Connection"
+#: sync_admin.py:589
 msgid "Full Migration - Connection"
-msgstr "Panduan Migrasi - Koneksi"
+msgstr "Migrasi Penuh - Koneksi"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:609
 msgid "Please select at least one category to migrate."
-msgstr "Silakan pilih setidaknya satu jenis data untuk diimpor."
+msgstr "Silakan pilih setidaknya satu kategori untuk dimigrasikan."
 
-#, fuzzy
-#| msgid "Migration Step"
+#: sync_admin.py:621
 msgid "Full Migration - Select Scope"
-msgstr "Langkah Migrasi"
+msgstr "Migrasi Penuh - Pilih Ruang Lingkup"
 
+#: sync_admin.py:646
 msgid "Compatibility check failed. Please verify the connection and try again."
 msgstr ""
+"Pemeriksaan kompatibilitas gagal. Silakan periksa koneksi dan coba lagi."
 
+#: sync_admin.py:657
 msgid "Full Migration - Pre-flight Check"
-msgstr ""
+msgstr "Migrasi Penuh - Pemeriksaan Awal"
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: sync_admin.py:676
 msgid "Full Migration - Progress"
-msgstr "Log Migrasi"
+msgstr "Migrasi Penuh - Kemajuan"
 
-#, fuzzy
-#| msgid "No Migrations Yet"
+#: sync_admin.py:695
 msgid "Full Migration - Results"
-msgstr "Belum Ada Migrasi"
+msgstr "Migrasi Penuh - Hasil"
 
+#: sync_admin.py:874
 msgid "Token generated. Copy it now — it will not be shown again:"
 msgstr ""
+"Token telah dihasilkan. Salin sekarang — token ini tidak akan ditampilkan "
+"lagi:"
 
+#: sync_admin.py:882
 msgid "Token revoked."
-msgstr ""
+msgstr "Token telah dicabut."
 
+#: sync_admin.py:884
 msgid "Invalid token ID."
-msgstr ""
+msgstr "ID token tidak valid."
 
+#: sync_admin.py:893 templates/admin/migration/sync/token_management.html:4
+#: templates/admin/migration/sync/token_management.html:27
 msgid "Sync Token Management"
-msgstr ""
+msgstr "Manajemen Token Sinkronisasi"
 
+#: templates/admin/migration/confirm_rollback.html:18
 msgid "Warning: This action cannot be undone!"
 msgstr "Peringatan: Tindakan ini tidak dapat dikembalikan!"
 
+#: templates/admin/migration/confirm_rollback.html:21
 msgid "You are about to rollback the migration job:"
 msgstr "Anda segera mengembalikan tugas migrasi:"
 
-msgid "This will:"
-msgstr "Ini akan:"
+#: templates/admin/migration/confirm_rollback.html:25
+msgid "Spwig will remove:"
+msgstr "Spwig akan menghapus:"
 
-msgid "Delete all products imported from this migration"
-msgstr "Hapus semua produk yang diimpor dari migrasi ini"
+#: templates/admin/migration/confirm_rollback.html:33
+msgid "Nothing — there is nothing left from this import that can be removed."
+msgstr ""
+"Tidak ada — tidak ada lagi yang tersisa dari impor ini yang dapat dihapus."
 
-msgid "Delete all categories imported from this migration"
-msgstr "Hapus semua kategori yang diimpor dari migrasi ini"
+#: templates/admin/migration/confirm_rollback.html:37
+msgid "Spwig will keep:"
+msgstr "Spwig akan mempertahankan:"
 
-msgid "Delete all customers imported from this migration"
-msgstr "Hapus semua pelanggan yang diimpor dari migrasi ini"
+#: templates/admin/migration/confirm_rollback.html:38
+msgid ""
+"These were created by the import, but other things in your store now depend "
+"on them. Removing them would damage real orders or customer activity, so "
+"they stay."
+msgstr ""
+"Ini dibuat oleh impor, tetapi hal-hal lain di toko Anda kini bergantung pada "
+"mereka. Menghapusnya akan merusak pesanan nyata atau aktivitas pelanggan, "
+"jadi mereka tetap ada."
 
-msgid "Delete all orders imported from this migration"
-msgstr "Hapus semua pesanan yang diimpor dari migrasi ini"
+#: templates/admin/migration/confirm_rollback.html:41
+msgid "still referenced by"
+msgstr "masih dirujuk oleh"
 
-msgid "Delete all reviews imported from this migration"
-msgstr "Hapus semua ulasan yang diimpor dari migrasi ini"
+#: templates/admin/migration/confirm_rollback.html:48
+msgid "Spwig could not calculate exactly what this rollback would remove."
+msgstr ""
+"Spwig tidak dapat menghitung secara tepat apa yang akan dihapus oleh "
+"rollback ini."
 
-msgid "Delete all coupons imported from this migration"
-msgstr "Hapus semua kupon yang diimpor dari migrasi ini"
+#: templates/admin/migration/confirm_rollback.html:54
+msgid "This operation is PERMANENT and cannot be reversed."
+msgstr "Operasi ini PERMANENT dan tidak dapat dibatalkan."
 
-msgid "Delete all associated media assets"
-msgstr "Hapus semua aset media terkait"
-
-msgid "Mark the migration job as 'rolled_back'"
-msgstr "Tandai pekerjaan migrasi sebagai 'rolled_back'"
-
-msgid "This operation is PERMANENT and cannot be reversed!"
-msgstr "Operasi ini PERMANEN dan tidak dapat dikembalikan!"
-
+#: templates/admin/migration/confirm_rollback.html:59
 msgid "Items to be Deleted"
 msgstr "Item yang Akan Dihapus"
 
+#: templates/admin/migration/confirm_rollback.html:93
 msgid "Yes, Rollback Migration"
 msgstr "Ya, Rollback Migrasi"
 
+#: templates/admin/migration/confirm_rollback.html:96
+#: templates/admin/migration/fullmig/step1_connection.html:95
+#: templates/admin/migration/migrationjob/change_list.html:216
+#: templates/admin/migration/sync/step1_connection.html:115
+#: templates/admin/migration/wizard/step1_platform.html:65
 msgid "Cancel"
 msgstr "Batal"
 
+#: templates/admin/migration/fullmig/step1_connection.html:8
 msgid "Connect to Source Instance"
-msgstr ""
+msgstr "Koneksikan ke Instance Sumber"
 
+#: templates/admin/migration/fullmig/step1_connection.html:10
 msgid ""
 "Connect to the Spwig instance you want to migrate from. All data will be "
 "pulled from the remote instance to this one."
 msgstr ""
+"Koneksikan ke instance Spwig yang ingin Anda migrasikan. Semua data akan "
+"diambil dari instance jarak jauh ke instance ini."
 
-#, fuzzy
-#| msgid "Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:19
+#: templates/admin/migration/sync/step1_connection.html:19
 msgid "Saved Connections"
-msgstr "Koneksi"
+msgstr "Koneksi yang Disimpan"
 
+#: templates/admin/migration/fullmig/step1_connection.html:34
+#: templates/admin/migration/sync/step1_connection.html:34
 msgid "Verified"
-msgstr ""
+msgstr "Telah Diverifikasi"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:43
+#: templates/admin/migration/sync/step1_connection.html:47
 msgid "or configure a new connection"
-msgstr "Konfigurasikan Koneksi"
+msgstr "atau konfigurasikan koneksi baru"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:50
+#: templates/admin/migration/sync/step1_connection.html:54
 msgid "Connection Details"
-msgstr "Koneksi gagal"
+msgstr "Detail Koneksi"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:55
+#: templates/admin/migration/sync/step1_connection.html:59
 msgid "Connection Name"
-msgstr "Koneksi gagal"
+msgstr "Nama Koneksi"
 
+#: templates/admin/migration/fullmig/step1_connection.html:57
 msgid "e.g., Old Server"
-msgstr ""
+msgstr "Contoh: Server Lama"
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/fullmig/step1_connection.html:61
 msgid "Source URL"
-msgstr "URL Toko"
+msgstr "URL Sumber"
 
+#: templates/admin/migration/fullmig/step1_connection.html:67
+#: templates/admin/migration/sync/step1_connection.html:79
 msgid "Sync Token"
-msgstr ""
+msgstr "Token Sinkronisasi"
 
+#: templates/admin/migration/fullmig/step1_connection.html:69
 msgid "Paste the sync token from the source instance"
-msgstr ""
+msgstr "Tempelkan token sinkronisasi dari instance sumber"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:78
+#: templates/admin/migration/sync/step1_connection.html:106
 msgid "Test Connection"
-msgstr "Menguji Koneksi"
+msgstr "Uji Koneksi"
 
-#, fuzzy
-#| msgid "View All Migrations"
+#: templates/admin/migration/fullmig/step1_connection.html:87
 msgid "How Full Migration Works"
-msgstr "Lihat Semua Migrasi"
+msgstr "Bagaimana Migrasi Penuh Bekerja"
 
+#: templates/admin/migration/fullmig/step1_connection.html:88
 msgid ""
 "Full migration pulls all data from the source instance: settings, products, "
 "customers, orders, media files, and content. This is typically used when "
 "moving to a new server or creating a staging copy."
 msgstr ""
+"Migrasi penuh menarik semua data dari instance sumber: pengaturan, produk, "
+"pelanggan, pesanan, file media, dan konten. Ini biasanya digunakan saat "
+"pindah ke server baru atau membuat salinan staging."
 
+#: templates/admin/migration/fullmig/step1_connection.html:98
 msgid "Next: Select Scope"
-msgstr ""
+msgstr "Selanjutnya: Pilih Ruang Lingkup"
 
+#: templates/admin/migration/fullmig/step1_connection.html:109
+#: templates/admin/migration/sync/step1_connection.html:129
+#: templates/admin/migration/wizard/step2_connection.html:479
 msgid "Testing connection..."
 msgstr "Menguji koneksi..."
 
-#, fuzzy
-#| msgid "Connection successful"
+#: templates/admin/migration/fullmig/step1_connection.html:110
+#: templates/admin/migration/sync/step1_connection.html:130
 msgid "Connection successful!"
-msgstr "Koneksi Berhasil"
+msgstr "Koneksi Berhasil!"
 
+#: templates/admin/migration/fullmig/step1_connection.html:111
+#: templates/admin/migration/sync/step1_connection.html:131
+#: templates/admin/migration/wizard/step2_connection.html:488
 msgid "Connection failed"
 msgstr "Koneksi gagal"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step1_connection.html:112
+#: templates/admin/migration/sync/step1_connection.html:132
 msgid "Version"
 msgstr "Versi"
 
-#, fuzzy
-#| msgid "Name"
+#: templates/admin/migration/fullmig/step1_connection.html:113
+#: templates/admin/migration/sync/step1_connection.html:133
 msgid "Site Name"
-msgstr "Nama"
+msgstr "Nama Situs"
 
-#, fuzzy
-#| msgid "Migration Step"
+#: templates/admin/migration/fullmig/step2_scope.html:8
 msgid "Select Migration Scope"
-msgstr "Langkah Migrasi"
+msgstr "Pilih Ruang Lingkup Migrasi"
 
+#: templates/admin/migration/fullmig/step2_scope.html:10
 msgid ""
 "Choose which data categories to include in the migration. Dependencies will "
 "be automatically included."
 msgstr ""
+"Pilih kategori data yang akan dimasukkan dalam migrasi. Ketergantungan akan "
+"secara otomatis dimasukkan."
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: templates/admin/migration/fullmig/step2_scope.html:20
 msgid "Select All Categories"
-msgstr "Kategori Blog"
+msgstr "Pilih Semua Kategori"
 
-#, fuzzy
-#| msgid "Parse Date"
+#: templates/admin/migration/fullmig/step2_scope.html:41
 msgid "Large Data"
-msgstr "Parse Tanggal"
+msgstr "Data Besar"
 
-#, fuzzy
-#| msgid "Credentials"
+#: templates/admin/migration/fullmig/step2_scope.html:46
+#: templates/admin/migration/sync/step2_categories.html:109
 msgid "Has Credentials"
-msgstr "Kredensial"
+msgstr "Mempunyai Kredensial"
 
+#: templates/admin/migration/fullmig/step2_scope.html:51
 msgid "Requires:"
-msgstr ""
+msgstr "Membutuhkan:"
 
+#: templates/admin/migration/fullmig/step2_scope.html:65
+#: templates/admin/migration/fullmig/step3_preflight.html:165
+#: templates/admin/migration/sync/step2_categories.html:133
+#: templates/admin/migration/sync/step3_preview.html:119
+#: templates/admin/migration/wizard/step2_connection.html:460
+#: templates/admin/migration/wizard/step3_preview.html:269
+#: templates/admin/migration/wizard/step4_mapping.html:297
 msgid "Back"
 msgstr "Kembali"
 
+#: templates/admin/migration/fullmig/step2_scope.html:68
 msgid "Next: Pre-flight Check"
-msgstr ""
+msgstr "Selanjutnya: Pemeriksaan Awal"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:8
 msgid "Pre-flight Check"
-msgstr ""
+msgstr "Pemeriksaan Awal"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:10
 msgid ""
 "Verifying compatibility between source and target instances before migration."
 msgstr ""
+"Memverifikasi kompatibilitas antara instance sumber dan target sebelum "
+"migrasi."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:16
 msgid "Version Compatibility"
-msgstr ""
+msgstr "Kesesuaian Versi"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:21
 msgid "Versions Compatible"
-msgstr ""
+msgstr "Versi Sesuai"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:23
+#: templates/admin/migration/fullmig/step3_preflight.html:43
 msgid "Local:"
-msgstr ""
+msgstr "Lokal:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:25
+#: templates/admin/migration/fullmig/step3_preflight.html:45
 msgid "Remote:"
-msgstr ""
+msgstr "Jarak Jauh:"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step3_preflight.html:40
 msgid "Version Mismatch"
-msgstr "Versi"
+msgstr "Tidak Cocok Versi"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:55
 msgid "Component Compatibility"
-msgstr ""
+msgstr "Kesesuaian Komponen"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:61
 msgid "Components Missing on Target"
-msgstr ""
+msgstr "Komponen yang Hilang di Target"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:62
 msgid ""
 "These components are installed on the source but not on this instance. "
 "Install them via the Component Store before migrating."
 msgstr ""
+"Komponen-komponen ini terinstal di sumber tetapi tidak pada instance ini. "
+"Instal mereka melalui Component Store sebelum melakukan migrasi."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:76
 msgid "Component Version Differences"
-msgstr ""
+msgstr "Perbedaan Versi Komponen"
 
-#, fuzzy
-#| msgid "Source"
+#: templates/admin/migration/fullmig/step3_preflight.html:81
 msgid "source"
-msgstr "Sumber"
+msgstr "sumber"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:82
 msgid "target"
-msgstr ""
+msgstr "target"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:94
 msgid "All Components Match"
-msgstr ""
+msgstr "Semua Komponen Cocok"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:95
 msgid "Installed components are compatible between source and target."
-msgstr ""
+msgstr "Komponen yang terinstal kompatibel antara sumber dan target."
 
-#, fuzzy
-#| msgid "Import Summary"
+#: templates/admin/migration/fullmig/step3_preflight.html:105
 msgid "Source Data Summary"
-msgstr "Ringkasan Impor"
+msgstr "Ringkasan Data Sumber"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:129
 msgid "Media Storage"
-msgstr ""
+msgstr "Penyimpanan Media"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:130
 msgid "Total media size on source:"
-msgstr ""
+msgstr "Total ukuran media di sumber:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:142
 msgid "Pre-flight Check Failed"
-msgstr ""
+msgstr "Pemeriksaan Awal Gagal"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:143
 msgid ""
 "Could not connect to the remote instance to perform compatibility checks. "
 "Please verify the connection and try again."
 msgstr ""
+"Tidak dapat terhubung ke instance jarak jauh untuk melakukan pemeriksaan "
+"kompatibilitas. Silakan verifikasi koneksi dan coba lagi."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:154
 msgid "License Reminder"
-msgstr ""
+msgstr "Pengingat Lisensi"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:155
 msgid ""
 "This installation requires its own license. After migration, you will need "
 "to activate a separate license for this instance."
 msgstr ""
+"Instalasi ini memerlukan lisensinya sendiri. Setelah migrasi, Anda perlu "
+"mengaktifkan lisensi terpisah untuk instance ini."
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: templates/admin/migration/fullmig/step3_preflight.html:170
 msgid "Start Migration"
-msgstr "Mulai Migrasi Baru"
+msgstr "Mulai Migrasi"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:175
 msgid "Cannot Proceed (Version Incompatible)"
-msgstr ""
+msgstr "Tidak Dapat Melanjutkan (Versi Tidak Kompatibel)"
 
+#: templates/admin/migration/fullmig/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The migration will continue in "
 "the background."
 msgstr ""
+"Anda dapat aman meninggalkan halaman ini. Migrasi akan terus berlangsung di "
+"latar belakang."
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: templates/admin/migration/fullmig/step4_progress.html:13
 msgid "Migration Progress"
-msgstr "Log Migrasi"
+msgstr "Kemajuan Migrasi"
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step4_progress.html:17
+#: templates/admin/migration/fullmig/step4_progress.html:149
 msgid "Migration completed."
-msgstr "Migrasi Selesai"
+msgstr "Migrasi selesai."
 
-#, fuzzy
-#| msgid "Migration cancelled by user"
+#: templates/admin/migration/fullmig/step4_progress.html:19
+#: templates/admin/migration/fullmig/step4_progress.html:150
 msgid "Migration encountered errors."
-msgstr "Migrasi dibatalkan oleh pengguna"
+msgstr "Migrasi mengalami kesalahan."
 
+#: templates/admin/migration/fullmig/step4_progress.html:21
+#: templates/admin/migration/fullmig/step4_progress.html:151
 msgid "Migrating data from source instance..."
-msgstr ""
+msgstr "Mengimigrasikan data dari instance sumber..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:28
+#: templates/admin/migration/sync/step4_progress.html:28
+#: templates/admin/migration/wizard/step5_import.html:54
 msgid "Overall Progress"
 msgstr "Progres Keseluruhan"
 
+#: templates/admin/migration/fullmig/step4_progress.html:39
+#: templates/admin/migration/fullmig/step4_progress.html:155
+#: templates/admin/migration/sync/step4_progress.html:39
+#: templates/admin/migration/sync/step4_progress.html:167
 msgid "Elapsed:"
-msgstr ""
+msgstr "Berlalu:"
 
+#: templates/admin/migration/fullmig/step4_progress.html:40
+#: templates/admin/migration/fullmig/step4_progress.html:156
+#: templates/admin/migration/sync/step4_progress.html:40
+#: templates/admin/migration/sync/step4_progress.html:168
 msgid "Remaining:"
-msgstr ""
+msgstr "Sisa:"
 
-#, fuzzy
-#| msgid "Migration Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:48
+#: templates/admin/migration/fullmig/step5_results.html:43
+#: templates/admin/migration/fullmig/step5_results.html:75
 msgid "Migrated"
-msgstr "Migrasi Gagal"
+msgstr "Telah Dimigrasikan"
 
-#, fuzzy
-#| msgid "Category Array"
+#: templates/admin/migration/fullmig/step4_progress.html:67
+#: templates/admin/migration/sync/step4_progress.html:67
 msgid "Category Progress"
-msgstr "Array Kategori"
+msgstr "Kemajuan Kategori"
 
-#, fuzzy
-#| msgid "Created"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:146
 msgid "migrated"
-msgstr "Dibuat"
+msgstr "dimigrasikan"
 
-#, fuzzy
-#| msgid "Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:147
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:159
 msgid "failed"
-msgstr "Gagal"
+msgstr "gagal"
 
-#, fuzzy
-#| msgid "Total"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:148
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:160
 msgid "total"
-msgstr "Total"
+msgstr "total"
 
+#: templates/admin/migration/fullmig/step4_progress.html:112
+#: templates/admin/migration/sync/step4_progress.html:112
 msgid "Activity Log"
-msgstr ""
+msgstr "Log Aktivitas"
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:117
+#: templates/admin/migration/sync/step4_progress.html:117
 msgid "Waiting for activity..."
-msgstr "Menunggu..."
+msgstr "Menunggu aktivitas..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:125
+#: templates/admin/migration/syncjob/change_list.html:176
+#: templates/admin/migration/wizard/step5_import.html:309
 msgid "View Results"
 msgstr "Lihat Hasil"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/fullmig/step4_progress.html:131
+#: templates/admin/migration/fullmig/step4_progress.html:152
+#: templates/admin/migration/fullmig/step5_results.html:155
+#: templates/admin/migration/sync/step4_progress.html:138
+#: templates/admin/migration/sync/step4_progress.html:164
 msgid "Back to Dashboard"
-msgstr "Mulai dari Dashboard Dev"
+msgstr "Kembali ke Dashboard"
 
+#: templates/admin/migration/fullmig/step4_progress.html:153
+#: templates/admin/migration/fullmig/step5_results.html:163
+#: templates/admin/migration/wizard/step6_complete.html:280
 msgid "Rollback Migration"
 msgstr "Rollback Migrasi"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step4_progress.html:154
 msgid ""
 "Are you sure you want to rollback this migration? This will delete all "
 "migrated data."
 msgstr ""
 "Apakah Anda yakin ingin mengembalikan migrasi ini? Ini akan menghapus semua "
-"data yang diimpor."
+"data yang telah dimigrasikan."
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:157
+#: templates/admin/migration/sync/step4_progress.html:169
 msgid "calculating..."
-msgstr "Menunggu..."
+msgstr "menghitung..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:158
+#: templates/admin/migration/sync/step4_progress.html:170
 msgid "Connection lost, retrying..."
-msgstr ""
+msgstr "Koneksi terputus, mencoba kembali..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:159
+#: templates/admin/migration/sync/step4_progress.html:171
 msgid "Reconnected"
-msgstr ""
+msgstr "Koneksi Kembali"
 
-#, fuzzy
-#| msgid "Your data has been successfully imported from"
+#: templates/admin/migration/fullmig/step5_results.html:11
 msgid "All selected data has been successfully migrated to this installation."
-msgstr "Data Anda telah berhasil diimpor dari"
+msgstr "Semua data yang dipilih telah berhasil dimigrasikan ke instalasi ini."
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step5_results.html:20
 msgid "Migration Completed with Errors"
-msgstr "Migrasi Selesai"
+msgstr "Migrasi Selesai dengan Kesalahan"
 
+#: templates/admin/migration/fullmig/step5_results.html:21
 msgid "Some items could not be migrated. Review the details below."
-msgstr ""
+msgstr "Beberapa item tidak dapat dimigrasikan. Periksa detail di bawah ini."
 
+#: templates/admin/migration/fullmig/step5_results.html:30
+#: templates/admin/migration/wizard/step6_complete.html:298
 msgid "Migration Failed"
 msgstr "Migrasi Gagal"
 
-#, fuzzy
-#| msgid "Migration Wizard"
+#: templates/admin/migration/fullmig/step5_results.html:39
 msgid "Migration Summary"
-msgstr "Panduan Migrasi"
+msgstr "Ringkasan Migrasi"
 
-#, fuzzy
-#| msgid "Duration"
+#: templates/admin/migration/fullmig/step5_results.html:62
 msgid "Duration:"
-msgstr "Durasi"
+msgstr "Durasi:"
 
-#, fuzzy
-#| msgid "Categories"
+#: templates/admin/migration/fullmig/step5_results.html:69
 msgid "Category Results"
-msgstr "Kategori"
+msgstr "Hasil Kategori"
 
+#: templates/admin/migration/fullmig/step5_results.html:87
 msgid "Done"
-msgstr ""
+msgstr "Selesai"
 
+#: templates/admin/migration/fullmig/step5_results.html:121
+#: templates/admin/migration/wizard/step6_complete.html:398
 msgid "Next Steps"
 msgstr "Langkah Berikutnya"
 
+#: templates/admin/migration/fullmig/step5_results.html:126
 msgid "Activate your license on this installation"
-msgstr ""
+msgstr "Aktifkan lisensi Anda pada instalasi ini"
 
+#: templates/admin/migration/fullmig/step5_results.html:130
 msgid "Re-enter any payment provider credentials that were skipped"
-msgstr ""
+msgstr "Masukkan kembali kredensial pemroses pembayaran yang terlewat"
 
-#, fuzzy
-#| msgid "When you're ready to go live, point your domain to this platform."
+#: templates/admin/migration/fullmig/step5_results.html:134
 msgid "Configure DNS to point your domain to this server"
-msgstr ""
-"Ketika Anda siap untuk diluncurkan, arahkan domain Anda ke platform ini."
+msgstr "Konfigurasikan DNS untuk mengarahkan domain Anda ke server ini"
 
+#: templates/admin/migration/fullmig/step5_results.html:138
 msgid "Test the checkout flow with a test order"
-msgstr ""
+msgstr "Uji alur checkout dengan pesanan uji"
 
+#: templates/admin/migration/fullmig/step5_results.html:142
 msgid "Verify email sending works correctly"
-msgstr ""
+msgstr "Verifikasi pengiriman email berfungsi dengan benar"
 
+#: templates/admin/migration/fullmig/step5_results.html:146
 msgid "Check that media files and images are loading correctly"
-msgstr ""
+msgstr "Periksa apakah file media dan gambar memuat dengan benar"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step5_results.html:161
 msgid "Are you sure? This will delete all migrated data."
 msgstr ""
-"Apakah Anda yakin ingin mengembalikan migrasi ini? Ini akan menghapus semua "
-"data yang diimpor."
+"Apakah Anda yakin? Ini akan menghapus semua data yang telah dimigrasikan."
 
-#, fuzzy
-#| msgid "Shopify Developer Dashboard"
+#: templates/admin/migration/fullmig/step5_results.html:168
+msgid "Rollback available until"
+msgstr "Rollback tersedia hingga"
+
+#: templates/admin/migration/fullmig/step5_results.html:174
 msgid "Go to Dashboard"
-msgstr "Dashboard Pengembang Shopify"
+msgstr "Ke Dashboard"
 
+#: templates/admin/migration/migrationjob/change_list.html:4
+#: templates/admin/migration/migrationjob/change_list.html:23
 msgid "Data Import & Export"
 msgstr "Impor dan Ekspor Data"
 
+#: templates/admin/migration/migrationjob/change_list.html:25
 msgid ""
 "Migrate from WooCommerce, Shopify, Magento, or import/export via CSV files"
 msgstr ""
 "Migrasikan dari WooCommerce, Shopify, Magento, atau impor/ekspor melalui "
 "file CSV"
 
+#: templates/admin/migration/migrationjob/change_list.html:36
 msgid "Total Migrations"
 msgstr "Total Migrasi"
 
+#: templates/admin/migration/migrationjob/change_list.html:52
+#: templates/admin/migration/syncjob/change_list.html:45
 msgid "In Progress"
 msgstr "Sedang Berlangsung"
 
-msgid "Start New Migration"
-msgstr "Mulai Migrasi Baru"
-
+#: templates/admin/migration/migrationjob/change_list.html:73
 msgid "View Logs"
 msgstr "Lihat Log"
 
+#: templates/admin/migration/migrationjob/change_list.html:78
 msgid "Field Mappings"
 msgstr "Pemetaan Field"
 
+#: templates/admin/migration/migrationjob/change_list.html:114
+#: templates/admin/migration/wizard/step5_import.html:60
+msgid "Stopping…"
+msgstr "Berhenti…"
+
+#: templates/admin/migration/migrationjob/change_list.html:192
 msgid "Resume"
 msgstr "Lanjutkan"
 
+#: templates/admin/migration/migrationjob/change_list.html:202
+msgid ""
+"Run this import again? It starts from the beginning and skips items that "
+"have already been imported."
+msgstr ""
+"Lakukan impor ini lagi? Mulai dari awal dan lewati item yang sudah diimpor "
+"sebelumnya."
+
+#: templates/admin/migration/migrationjob/change_list.html:203
 msgid "Retry"
 msgstr "Coba Lagi"
 
-msgid "Are you sure you want to cancel this migration?"
-msgstr "Apakah Anda yakin ingin membatalkan migrasi ini?"
+#: templates/admin/migration/migrationjob/change_list.html:215
+msgid ""
+"Stop this import? It finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store."
+msgstr ""
+"Hentikan impor ini? Ia menyelesaikan batch yang sedang diproses, lalu "
+"berhenti. Apa pun yang sudah diimpor tetap ada di toko Anda."
 
+#: templates/admin/migration/migrationjob/change_list.html:223
+#: templates/admin/migration/migrationjob/change_list.html:227
+#: templates/admin/migration/migrationjob/change_list.html:231
 msgid "View"
 msgstr "Lihat"
 
+#: templates/admin/migration/migrationjob/change_list.html:239
 msgid ""
-"Are you sure you want to rollback this migration? This will delete all "
-"imported data."
+"Review the rollback details? Rolling back removes what this import created, "
+"keeping anything your store now depends on. You will see exactly what it "
+"will remove before you confirm."
 msgstr ""
-"Apakah Anda yakin ingin mengembalikan migrasi ini? Ini akan menghapus semua "
-"data yang diimpor."
+"Lihat detail pengembalian (rollback)? Pengembalian akan menghapus apa yang "
+"telah diimpor ini buat, tetapi menjaga apa pun yang toko Anda kini "
+"bergantung. Anda akan melihat secara tepat apa yang akan dihapus sebelum "
+"Anda mengonfirmasi."
 
+#: templates/admin/migration/migrationjob/change_list.html:240
+#: templates/admin/migration/sync/step4_progress.html:144
+#: templates/admin/migration/sync/step4_progress.html:165
+#: templates/admin/migration/syncjob/change_list.html:185
 msgid "Rollback"
 msgstr "Rollback"
 
+#: templates/admin/migration/migrationjob/change_list.html:250
 msgid ""
-"Are you sure you want to force delete this migration? This cannot be undone."
+"Delete this migration record? This does not remove anything that was "
+"imported. Spwig will lose its record of which items came from this import, "
+"so you will not be able to roll it back afterwards."
 msgstr ""
-"Apakah Anda yakin ingin menghapus paksa migrasi ini? Ini tidak dapat "
-"dikembalikan."
+"Hapus catatan migrasi ini? Ini tidak menghapus apa pun yang telah diimpor. "
+"Spwig akan kehilangan catatan mengenai item mana yang berasal dari impor "
+"ini, sehingga Anda tidak akan dapat mengembalikan perubahan setelahnya."
 
+#: templates/admin/migration/migrationjob/change_list.html:251
 msgid "Delete"
 msgstr "Hapus"
 
+#: templates/admin/migration/migrationjob/change_list.html:262
 msgid "No Migrations Yet"
 msgstr "Belum Ada Migrasi"
 
+#: templates/admin/migration/migrationjob/change_list.html:263
 msgid "Get started by creating your first data migration"
 msgstr "Mulailah dengan membuat migrasi data pertama Anda"
 
+#: templates/admin/migration/migrationjob/change_list.html:266
 msgid "Create First Migration"
 msgstr "Buat Migrasi Pertama"
 
+#: templates/admin/migration/sync/base.html:4
 msgid "Spwig Sync"
-msgstr ""
+msgstr "Spwig Sinkronisasi"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/sync/base.html:20
+#: templates/admin/migration/sync/token_management.html:21
 msgid "Back to Sync Dashboard"
-msgstr "Mulai dari Dashboard Dev"
+msgstr "Kembali ke Dashboard Sinkronisasi"
 
+#: templates/admin/migration/sync/base.html:46
+#: templates/admin/migration/sync/base.html:67
+#: templates/admin/migration/wizard/base.html:42
 msgid "Connection"
 msgstr "Koneksi"
 
+#: templates/admin/migration/sync/base.html:50
+#: templates/admin/migration/wizard/step2_connection.html:214
 msgid "Scope"
 msgstr "Ruang Lingkup"
 
+#: templates/admin/migration/sync/base.html:54
 msgid "Pre-flight"
-msgstr ""
+msgstr "Pre-flight"
 
-#, fuzzy
-#| msgid "View Results"
+#: templates/admin/migration/sync/base.html:62
 msgid "Results"
-msgstr "Lihat Hasil"
+msgstr "Hasil"
 
+#: templates/admin/migration/sync/base.html:75
+#: templates/admin/migration/wizard/base.html:46
 msgid "Preview"
 msgstr "Pratinjau"
 
+#: templates/admin/migration/sync/step1_connection.html:8
 msgid "Connect to Remote Instance"
-msgstr ""
+msgstr "Koneksikan ke Instance Remote"
 
+#: templates/admin/migration/sync/step1_connection.html:10
 msgid ""
 "Connect to another Spwig installation to sync settings. You can use a saved "
 "connection or set up a new one."
 msgstr ""
+"Koneksikan ke instalasi Spwig lain untuk menyinkronkan pengaturan. Anda "
+"dapat menggunakan koneksi yang disimpan atau membuat koneksi baru."
 
-#, fuzzy
-#| msgid "Credentials verified"
+#: templates/admin/migration/sync/step1_connection.html:39
 msgid "Not verified"
-msgstr "Kredensial diverifikasi"
+msgstr "Tidak diverifikasi"
 
+#: templates/admin/migration/sync/step1_connection.html:61
 msgid "e.g., Production Server"
-msgstr ""
+msgstr "Contoh, Server Produksi"
 
+#: templates/admin/migration/sync/step1_connection.html:64
 msgid "A friendly name to identify this connection."
-msgstr ""
+msgstr "Nama ramah untuk mengidentifikasi koneksi ini."
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/sync/step1_connection.html:69
 msgid "Remote URL"
-msgstr "URL Toko"
+msgstr "URL Jarak Jauh"
 
+#: templates/admin/migration/sync/step1_connection.html:74
 msgid "The full URL of the remote Spwig installation."
-msgstr ""
+msgstr "URL lengkap dari instalasi Spwig jarak jauh."
 
+#: templates/admin/migration/sync/step1_connection.html:81
 msgid "Paste the sync token from the remote instance"
-msgstr ""
+msgstr "Tempelkan token sinkronisasi dari instansi jarak jauh"
 
+#: templates/admin/migration/sync/step1_connection.html:84
 msgid ""
 "Generate a sync token on the remote instance under Sync Dashboard > Manage "
 "Tokens."
 msgstr ""
+"Buat token sinkronisasi di instansi jarak jauh di bawah Sync Dashboard > "
+"Kelola Token."
 
+#: templates/admin/migration/sync/step1_connection.html:98
 msgid ""
 "Marking a connection as 'Production' enables additional safety checks when "
 "pushing changes."
 msgstr ""
+"Menandai koneksi sebagai 'Production' mengaktifkan pemeriksaan keamanan "
+"tambahan saat mendorong perubahan."
 
-#, fuzzy
-#| msgid "Create new categories"
+#: templates/admin/migration/sync/step1_connection.html:118
 msgid "Next: Select Categories"
-msgstr "Buat kategori baru"
+msgstr "Berikutnya: Pilih Kategori"
 
-#, fuzzy
-#| msgid "Category - Description"
+#: templates/admin/migration/sync/step2_categories.html:8
 msgid "Select Categories & Direction"
-msgstr "Kategori - Deskripsi"
+msgstr "Pilih Kategori & Arah"
 
+#: templates/admin/migration/sync/step2_categories.html:10
 msgid "Choose which settings to sync and the direction of data flow."
-msgstr ""
+msgstr "Pilih pengaturan apa yang akan disinkronkan dan arah aliran data."
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/sync/step2_categories.html:18
 msgid "Sync Configuration"
-msgstr "Konfigurasikan Koneksi"
+msgstr "Konfigurasi Sinkronisasi"
 
+#: templates/admin/migration/sync/step2_categories.html:29
 msgid "Pull"
-msgstr ""
+msgstr "Tarik"
 
-msgid "Remote → Local"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:30
+msgid "From connected store to this store"
+msgstr "Dari toko terhubung ke toko ini"
 
+#: templates/admin/migration/sync/step2_categories.html:38
 msgid "Push"
-msgstr ""
+msgstr "Kirim"
 
-msgid "Local → Remote"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:39
+msgid "From this store to connected store"
+msgstr "Dari toko ini ke toko terhubung"
 
+#: templates/admin/migration/sync/step2_categories.html:47
 msgid "Sync Mode"
-msgstr ""
+msgstr "Mode Sinkronisasi"
 
-#, fuzzy
-#| msgid "Updated"
+#: templates/admin/migration/sync/step2_categories.html:54
 msgid "Add & Update"
-msgstr "Diperbarui"
+msgstr "Tambah & Perbarui"
 
-#, fuzzy
-#| msgid "Skip existing items"
+#: templates/admin/migration/sync/step2_categories.html:55
 msgid "Never deletes existing items"
-msgstr "Lewati item yang sudah ada"
+msgstr "Tidak pernah menghapus item yang sudah ada"
 
-msgid "Makes target match source exactly"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:62
+msgid "Exact Copy"
+msgstr "Salinan Persis"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/sync/step2_categories.html:63
+msgid "Adds, updates, and removes items to match the source"
+msgstr "Menambahkan, memperbarui, dan menghapus item untuk cocok dengan sumber"
+
+#: templates/admin/migration/sync/step2_categories.html:73
 msgid "Production Connection"
-msgstr "Menguji Koneksi"
+msgstr "Koneksi Produksi"
 
+#: templates/admin/migration/sync/step2_categories.html:74
 msgid ""
 "This connection is marked as production. Pushing changes will modify your "
 "live store settings."
 msgstr ""
+"Koneksi ini ditandai sebagai produksi. Mengirim perubahan akan memodifikasi "
+"pengaturan toko aktif Anda."
 
+#: templates/admin/migration/sync/step2_categories.html:83
 msgid "Select which categories to include in this sync."
-msgstr ""
+msgstr "Pilih kategori yang ingin Anda sertakan dalam sinkronisasi ini."
 
-#, fuzzy
-#| msgid "Select"
+#: templates/admin/migration/sync/step2_categories.html:88
 msgid "Select All"
-msgstr "Pilih"
+msgstr "Pilih Semua"
 
-#, fuzzy
-#| msgid "CSV Files"
+#: templates/admin/migration/sync/step2_categories.html:114
 msgid "Has Files"
-msgstr "File CSV"
+msgstr "Memiliki File"
 
-#, fuzzy
-#| msgid "Next: Preview Data"
+#: templates/admin/migration/sync/step2_categories.html:136
 msgid "Next: Preview Changes"
-msgstr "Berikutnya: Pratinjau Data"
+msgstr "Berikutnya: Pratinjau Perubahan"
 
-#, fuzzy
-#| msgid "Preview"
+#: templates/admin/migration/sync/step3_preview.html:8
 msgid "Preview Changes"
-msgstr "Pratinjau"
+msgstr "Pratinjau Perubahan"
 
+#: templates/admin/migration/sync/step3_preview.html:10
 msgid "Review the changes that will be applied before confirming."
-msgstr ""
+msgstr "Periksa perubahan yang akan diterapkan sebelum mengonfirmasi."
 
+#: templates/admin/migration/sync/step3_preview.html:32
 msgid "Add"
-msgstr ""
+msgstr "Tambahkan"
 
+#: templates/admin/migration/sync/step3_preview.html:34
 msgid "Modify"
-msgstr ""
+msgstr "Modifikasi"
 
+#: templates/admin/migration/sync/step3_preview.html:36
 msgid "Remove"
-msgstr ""
+msgstr "Hapus"
 
-#, fuzzy
-#| msgid "Field Mappings"
+#: templates/admin/migration/sync/step3_preview.html:44
 msgid "Field changes"
-msgstr "Pemetaan Field"
+msgstr "Perubahan Bidang"
 
-#, fuzzy
-#| msgid "Meta Fields"
+#: templates/admin/migration/sync/step3_preview.html:48
 msgid "Field"
-msgstr "Bidang Meta"
+msgstr "Bidang"
 
+#: templates/admin/migration/sync/step3_preview.html:49
 msgid "Current"
-msgstr ""
+msgstr "Saat Ini"
 
+#: templates/admin/migration/sync/step3_preview.html:50
 msgid "New"
-msgstr ""
+msgstr "Baru"
 
-#, fuzzy
-#| msgid "Warning"
+#: templates/admin/migration/sync/step3_preview.html:77
 msgid "Warnings"
 msgstr "Peringatan"
 
+#: templates/admin/migration/sync/step3_preview.html:91
 msgid "No Changes Detected"
-msgstr ""
+msgstr "Tidak Ada Perubahan Terdeteksi"
 
+#: templates/admin/migration/sync/step3_preview.html:92
 msgid "The selected categories are already in sync. There is nothing to apply."
 msgstr ""
+"Kategori yang dipilih sudah dalam sinkronisasi. Tidak ada yang perlu "
+"diterapkan."
 
-#, fuzzy
-#| msgid "Product Variant"
+#: templates/admin/migration/sync/step3_preview.html:105
 msgid "Production Warning"
-msgstr "Varian Produk"
+msgstr "Peringatan Produksi"
 
+#: templates/admin/migration/sync/step3_preview.html:106
 msgid ""
 "You are about to push changes to a production instance. This will modify "
 "live store settings."
 msgstr ""
+"Anda segera akan mengirim perubahan ke instance produksi. Ini akan "
+"memodifikasi pengaturan toko aktif."
 
+#: templates/admin/migration/sync/step3_preview.html:109
 msgid "I understand this will modify production settings and want to proceed."
 msgstr ""
+"Saya memahami ini akan memodifikasi pengaturan produksi dan ingin "
+"melanjutkan."
 
+#: templates/admin/migration/sync/step3_preview.html:124
 msgid "Start Sync"
-msgstr ""
+msgstr "Mulai Sinkronisasi"
 
+#: templates/admin/migration/sync/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The sync will continue in the "
 "background."
 msgstr ""
+"Anda dapat aman beralih dari halaman ini. Sinkronisasi akan terus "
+"berlangsung di latar belakang."
 
-#, fuzzy
-#| msgid "In Progress"
+#: templates/admin/migration/sync/step4_progress.html:13
 msgid "Sync Progress"
-msgstr "Sedang Berlangsung"
+msgstr "Kemajuan Sinkronisasi"
 
-#, fuzzy
-#| msgid "Migration Completed Successfully!"
+#: templates/admin/migration/sync/step4_progress.html:17
+#: templates/admin/migration/sync/step4_progress.html:161
 msgid "Sync completed successfully."
-msgstr "Migrasi Selesai Dengan Sukses!"
+msgstr "Sinkronisasi selesai dengan sukses."
 
+#: templates/admin/migration/sync/step4_progress.html:19
+#: templates/admin/migration/sync/step4_progress.html:162
 msgid "Sync encountered errors."
-msgstr ""
+msgstr "Sinkronisasi mengalami kesalahan."
 
-#, fuzzy
-#| msgid "Counting categories"
+#: templates/admin/migration/sync/step4_progress.html:21
+#: templates/admin/migration/sync/step4_progress.html:163
 msgid "Syncing selected categories..."
-msgstr "Menghitung kategori"
+msgstr "Sinkronisasi kategori yang dipilih..."
 
+#: templates/admin/migration/sync/step4_progress.html:48
+#: templates/admin/migration/syncjob/change_list.html:145
 msgid "Synced"
-msgstr ""
+msgstr "Sinkronisasi"
 
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:158
 msgid "synced"
-msgstr ""
+msgstr "sinkronisasi"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/sync/step4_progress.html:166
 msgid ""
 "Are you sure you want to rollback this sync? This will restore the previous "
 "state."
 msgstr ""
-"Apakah Anda yakin ingin mengembalikan migrasi ini? Ini akan menghapus semua "
-"data yang diimpor."
+"Apakah Anda yakin ingin mengembalikan sinkronisasi ini? Ini akan memulihkan "
+"keadaan sebelumnya."
 
+#: templates/admin/migration/sync/token_management.html:33
 msgid "About Sync Tokens"
-msgstr ""
+msgstr "Tentang Token Sinkronisasi"
 
+#: templates/admin/migration/sync/token_management.html:34
 msgid ""
 "Sync tokens allow other Spwig instances to connect to this installation. "
 "Generate a token here and provide it to the remote instance."
 msgstr ""
+"Token sinkronisasi memungkinkan instansi Spwig lain untuk terhubung ke "
+"instalasi ini. Buat token di sini dan berikan ke instansi jarak jauh."
 
+#: templates/admin/migration/sync/token_management.html:38
 msgid "Security"
-msgstr ""
+msgstr "Keamanan"
 
+#: templates/admin/migration/sync/token_management.html:39
 msgid ""
 "Tokens grant read and write access to settings data. Only share them with "
 "trusted administrators. Revoke tokens immediately if compromised."
 msgstr ""
+"Token memberi akses baca dan tulis terhadap data pengaturan. Hanya bagikan "
+"dengan administrator yang terpercaya. Batalkan token segera jika terjadi "
+"kebocoran."
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:45
 msgid "Generate New Token"
-msgstr "Buat tautan"
+msgstr "Buat Token Baru"
 
+#: templates/admin/migration/sync/token_management.html:50
 msgid "Token Name"
-msgstr ""
+msgstr "Nama Token"
 
+#: templates/admin/migration/sync/token_management.html:52
 msgid "e.g., Staging Server Token"
-msgstr ""
+msgstr "Contoh: Token Server Pengujian"
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:56
 msgid "Generate Token"
-msgstr "Buat tautan"
+msgstr "Buat Token"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:62
 msgid "Active Tokens"
-msgstr "Tindakan"
+msgstr "Token Aktif"
 
-msgid "Name"
-msgstr "Nama"
+#: templates/admin/migration/sync/token_management.html:81
+msgid "Last used"
+msgstr "Terakhir Digunakan"
 
-#, fuzzy
-#| msgid "Preview"
-msgid "Token Preview"
-msgstr "Pratinjau"
+#: templates/admin/migration/sync/token_management.html:83
+msgid "Never used"
+msgstr "Tidak pernah digunakan"
 
-msgid "Last Used"
-msgstr ""
-
-msgid "Revoke this token? Any connections using it will stop working."
-msgstr ""
-
+#: templates/admin/migration/sync/token_management.html:96
 msgid "Revoke"
-msgstr ""
+msgstr "Batalkan"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:106
 msgid "No Active Tokens"
-msgstr "Tindakan"
+msgstr "Tidak Ada Token Aktif"
 
+#: templates/admin/migration/sync/token_management.html:107
 msgid "Generate a token to allow remote Spwig instances to connect."
-msgstr ""
+msgstr "Buat token untuk memungkinkan instance Spwig jarak jauh terhubung."
 
+#: templates/admin/migration/syncjob/change_list.html:26
 msgid "Sync settings between instances or perform full system migrations"
-msgstr ""
+msgstr "Sinkronkan pengaturan antar instance atau lakukan migrasi sistem penuh"
 
-#, fuzzy
-#| msgid "Total Items"
+#: templates/admin/migration/syncjob/change_list.html:35
 msgid "Total Jobs"
-msgstr "Total Item"
+msgstr "Total Tugas"
 
-#, fuzzy
-#| msgid "Progress"
+#: templates/admin/migration/syncjob/change_list.html:164
 msgid "View Progress"
-msgstr "Progres"
+msgstr "Lihat Kemajuan"
 
+#: templates/admin/migration/syncjob/change_list.html:170
 msgid "Review & Confirm"
-msgstr ""
+msgstr "Periksa & Konfirmasi"
 
+#: templates/admin/migration/syncjob/change_list.html:184
+msgid "Rollback this sync? This will restore the previous state."
+msgstr "Membatalkan sinkronisasi ini? Ini akan memulihkan keadaan sebelumnya."
+
+#: templates/admin/migration/syncjob/change_list.html:195
 msgid "No Sync Jobs Yet"
-msgstr ""
+msgstr "Belum ada pekerjaan sinkronisasi"
 
+#: templates/admin/migration/syncjob/change_list.html:196
 msgid "Start a settings sync or full migration to see job history here."
 msgstr ""
+"Mulai sinkronisasi pengaturan atau migrasi penuh untuk melihat riwayat "
+"pekerjaan di sini."
 
+#: templates/admin/migration/syncjob/change_list.html:199
 msgid "Start Settings Sync"
-msgstr ""
+msgstr "Mulai Sinkronisasi Pengaturan"
 
-msgid "Rollback this sync? This will restore the previous state."
-msgstr ""
-
+#: templates/admin/migration/wizard/base.html:4
+#: templates/admin/migration/wizard/base.html:28
 msgid "Migration Wizard"
 msgstr "Panduan Migrasi"
 
+#: templates/admin/migration/wizard/base.html:21
 msgid "Back to Migrations"
 msgstr "Kembali ke Migrasi"
 
+#: templates/admin/migration/wizard/base.html:54
 msgid "Import"
 msgstr "Impor"
 
+#: templates/admin/migration/wizard/base.html:58
 msgid "Complete"
 msgstr "Selesai"
 
+#: templates/admin/migration/wizard/base.html:71
 msgid "Copied!"
 msgstr "Salinan berhasil!"
 
+#: templates/admin/migration/wizard/step1_platform.html:8
 msgid "Select Source Platform"
 msgstr "Pilih Platform Sumber"
 
+#: templates/admin/migration/wizard/step1_platform.html:10
 msgid ""
 "Choose the e-commerce platform you're migrating from. We'll guide you "
 "through the process of importing your data."
@@ -2385,24 +3109,31 @@ msgstr ""
 "Pilih platform e-commerce yang Anda migrasikan dari. Kami akan memandu Anda "
 "melalui proses mengimpor data Anda."
 
+#: templates/admin/migration/wizard/step1_platform.html:23
 msgid "WordPress + WooCommerce stores"
 msgstr "Toko WordPress + WooCommerce"
 
+#: templates/admin/migration/wizard/step1_platform.html:32
 msgid "Shopify stores using Admin API"
 msgstr "Toko Shopify yang menggunakan Admin API"
 
-msgid "Magento/Adobe Commerce (coming soon)"
-msgstr "Magento/Adobe Commerce (segera hadir)"
+#: templates/admin/migration/wizard/step1_platform.html:41
+msgid "Magento 2 / Adobe Commerce stores"
+msgstr "Toko Magento 2 / Adobe Commerce"
 
+#: templates/admin/migration/wizard/step1_platform.html:50
 msgid "Import from CSV files"
 msgstr "Impor dari file CSV"
 
+#: templates/admin/migration/wizard/step1_platform.html:68
 msgid "Next: Configure Connection"
 msgstr "Berikutnya: Konfigurasikan Koneksi"
 
+#: templates/admin/migration/wizard/step1_platform.html:78
 msgid "WooCommerce Migration"
 msgstr "Migrasi WooCommerce"
 
+#: templates/admin/migration/wizard/step1_platform.html:79
 msgid ""
 "We will connect to your WooCommerce store using the REST API. You will need "
 "to provide your store URL and API credentials in the next step."
@@ -2410,9 +3141,11 @@ msgstr ""
 "Kami akan terhubung ke toko WooCommerce Anda menggunakan REST API. Anda "
 "perlu menyediakan URL toko dan kredensial API Anda di langkah berikutnya."
 
+#: templates/admin/migration/wizard/step1_platform.html:82
 msgid "Shopify Migration"
 msgstr "Migrasi Shopify"
 
+#: templates/admin/migration/wizard/step1_platform.html:83
 msgid ""
 "We will connect to your Shopify store using the Admin API. You will need to "
 "create a private app in the Shopify Developer Dashboard and provide your "
@@ -2422,19 +3155,25 @@ msgstr ""
 "membuat aplikasi pribadi di Dashboard Pengembang Shopify dan menyediakan "
 "Client ID dan Client Secret Anda pada langkah berikutnya."
 
+#: templates/admin/migration/wizard/step1_platform.html:86
 msgid "Magento Migration"
 msgstr "Migrasi Magento"
 
+#: templates/admin/migration/wizard/step1_platform.html:87
 msgid ""
-"Magento migration is coming soon. We will support database access and API "
-"methods."
+"We will connect to your Magento 2 store using the REST API. You will need to "
+"create an Integration in your Magento admin and provide the Access Token in "
+"the next step."
 msgstr ""
-"Migrasi Magento akan segera hadir. Kami akan mendukung akses database dan "
-"metode API."
+"Kami akan terhubung ke toko Magento 2 Anda menggunakan REST API. Anda perlu "
+"membuat Integrasi di admin Magento Anda dan menyediakan Token Akses di "
+"langkah berikutnya."
 
+#: templates/admin/migration/wizard/step1_platform.html:90
 msgid "CSV Import"
 msgstr "Impor CSV"
 
+#: templates/admin/migration/wizard/step1_platform.html:91
 msgid ""
 "Import your data from CSV files. We will provide templates in the next step "
 "for products, customers, orders, and other data."
@@ -2442,54 +3181,72 @@ msgstr ""
 "Impor data Anda dari file CSV. Kami akan menyediakan template di langkah "
 "berikutnya untuk produk, pelanggan, pesanan, dan data lainnya."
 
+#: templates/admin/migration/wizard/step1_platform.html:95
 msgid "Please select a platform to continue."
 msgstr "Silakan pilih platform untuk melanjutkan."
 
+#: templates/admin/migration/wizard/step2_connection.html:8
 msgid "Configure Connection"
 msgstr "Konfigurasikan Koneksi"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "Provide the connection details for your"
 msgstr "Sediakan detail koneksi untuk"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "store."
 msgstr "toko."
 
+#: templates/admin/migration/wizard/step2_connection.html:19
 msgid "WooCommerce REST API"
 msgstr "WooCommerce REST API"
 
+#: templates/admin/migration/wizard/step2_connection.html:23
+#: templates/admin/migration/wizard/step2_connection.html:325
 msgid "Store URL"
 msgstr "URL Toko"
 
+#: templates/admin/migration/wizard/step2_connection.html:31
 msgid "Your WooCommerce store URL (e.g., https://yourstore.com)"
 msgstr "URL toko WooCommerce Anda (contoh, https://yourstore.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:36
 msgid "Consumer Key"
 msgstr "Kunci Konsumen"
 
+#: templates/admin/migration/wizard/step2_connection.html:44
 msgid "Your WooCommerce REST API consumer key"
 msgstr "Kunci konsumen REST API WooCommerce Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:49
 msgid "Consumer Secret"
 msgstr "Rahasia Konsumen"
 
+#: templates/admin/migration/wizard/step2_connection.html:57
 msgid "Your WooCommerce REST API consumer secret"
 msgstr "Rahasia konsumen REST API WooCommerce Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:63
 msgid "How to get API credentials"
 msgstr "Bagaimana mendapatkan kredensial API"
 
+#: templates/admin/migration/wizard/step2_connection.html:65
 msgid "Log in to your WordPress admin panel"
 msgstr "Masuk ke panel administrasi WordPress Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:66
 msgid "Go to WooCommerce > Settings > Advanced > REST API"
 msgstr "Pergi ke WooCommerce > Pengaturan > Lanjutan > REST API"
 
+#: templates/admin/migration/wizard/step2_connection.html:67
 msgid "Click 'Add key' and create a new API key with Read permissions"
 msgstr "Klik 'Tambahkan kunci' dan buat kunci API baru dengan izin Baca"
 
+#: templates/admin/migration/wizard/step2_connection.html:68
 msgid "Copy the Consumer Key and Consumer Secret here"
 msgstr "Salin Kunci Konsumen dan Rahasia Konsumen di sini"
 
+#: templates/admin/migration/wizard/step2_connection.html:71
 msgid ""
 "Note: Read-only permissions are sufficient for data migration. We will not "
 "modify your WooCommerce store."
@@ -2497,33 +3254,46 @@ msgstr ""
 "Catatan: Izin hanya baca sudah cukup untuk migrasi data. Kami tidak akan "
 "memodifikasi toko WooCommerce Anda."
 
+#: templates/admin/migration/wizard/step2_connection.html:79
+#: templates/admin/migration/wizard/step2_connection.html:313
+#: templates/admin/migration/wizard/step2_connection.html:372
 msgid "Test connection before proceeding"
 msgstr "Uji koneksi sebelum melanjutkan"
 
+#: templates/admin/migration/wizard/step2_connection.html:87
 msgid "Shopify Admin API"
 msgstr "API Admin Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:91
 msgid "Store Domain"
 msgstr "Domain Toko"
 
+#: templates/admin/migration/wizard/step2_connection.html:99
 msgid "Your Shopify store domain (e.g., yourstore.myshopify.com)"
 msgstr "Domain toko Shopify Anda (misalnya, yourstore.myshopify.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:104
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Client ID"
 msgstr "ID Klien"
 
+#: templates/admin/migration/wizard/step2_connection.html:112
 msgid "Client ID from your Shopify app's Settings page"
 msgstr "ID Klien dari halaman Pengaturan aplikasi Shopify Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:117
 msgid "Client Secret"
 msgstr "Rahasia Klien"
 
+#: templates/admin/migration/wizard/step2_connection.html:125
 msgid "Secret from your Shopify app's Settings page"
 msgstr "Rahasia dari halaman Pengaturan aplikasi Shopify Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:131
 msgid "Need help getting your API credentials?"
 msgstr "Butuh bantuan untuk mendapatkan kredensial API Anda?"
 
+#: templates/admin/migration/wizard/step2_connection.html:133
 msgid ""
 "Setting up a Shopify app takes about 10 minutes. Our step-by-step guide with "
 "screenshots will walk you through it."
@@ -2532,25 +3302,32 @@ msgstr ""
 "demi langkah kami dengan tangkapan layar akan membimbing Anda melalui "
 "prosesnya."
 
+#: templates/admin/migration/wizard/step2_connection.html:137
 msgid "Open Setup Guide"
 msgstr "Buka Panduan Pengaturan"
 
+#: templates/admin/migration/wizard/step2_connection.html:148
 msgid "Shopify API Setup Guide"
 msgstr "Panduan Pengaturan API Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:158
 msgid "Open the Shopify Developer Dashboard"
 msgstr "Buka Dashboard Pengembang Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:160
 msgid "Sign in with the same account you use to manage your store."
 msgstr ""
 "Masuk dengan akun yang sama yang Anda gunakan untuk mengelola toko Anda."
 
+#: templates/admin/migration/wizard/step2_connection.html:162
 msgid "Go to"
 msgstr "Pergi ke"
 
+#: templates/admin/migration/wizard/step2_connection.html:163
 msgid "Sign in with your Shopify account"
 msgstr "Masuk dengan akun Shopify Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:167
 msgid ""
 "If this is your first time visiting the Developer Dashboard, Shopify may ask "
 "you to agree to developer terms. This is normal — accept and continue."
@@ -2559,123 +3336,168 @@ msgstr ""
 "mungkin meminta Anda untuk menyetujui syarat-syarat pengembang. Ini adalah "
 "hal yang wajar — terima dan lanjutkan."
 
+#: templates/admin/migration/wizard/step2_connection.html:169
 msgid "Shopify Developer Dashboard"
 msgstr "Dashboard Pengembang Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:176
 msgid "Create a New App"
 msgstr "Buat Aplikasi Baru"
 
+#: templates/admin/migration/wizard/step2_connection.html:178
 msgid "Create a private app that Spwig will use to read your store data."
 msgstr ""
 "Buat aplikasi pribadi yang akan digunakan Spwig untuk membaca data toko Anda."
 
+#: templates/admin/migration/wizard/step2_connection.html:180
+#: templates/admin/migration/wizard/step2_connection.html:197
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "In the left sidebar, click"
 msgstr "Di bagian sisi kiri, klik"
 
+#: templates/admin/migration/wizard/step2_connection.html:180
 msgid "Apps"
 msgstr "Aplikasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Click the"
 msgstr "Klik tombol"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Create app"
 msgstr "Buat aplikasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "button (top-right corner)"
 msgstr "tombol (sudut kanan atas)"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Scroll past 'Start with Shopify CLI' to the"
 msgstr "Gulir melewati 'Mulai dengan Shopify CLI' ke"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Start from Dev Dashboard"
 msgstr "Mulai dari Dashboard Dev"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "section"
 msgstr "bagian"
 
+#: templates/admin/migration/wizard/step2_connection.html:183
 msgid "Enter app name:"
 msgstr "Masukkan nama aplikasi:"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
+#: templates/admin/migration/wizard/step2_connection.html:198
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Click"
 msgstr "Klik"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
 msgid "Create"
 msgstr "Buat"
 
+#: templates/admin/migration/wizard/step2_connection.html:186
 msgid "Create app in Dev Dashboard"
 msgstr "Buat aplikasi di Dashboard Dev"
 
+#: templates/admin/migration/wizard/step2_connection.html:193
 msgid "Create an App Version with Permissions"
 msgstr "Buat Versi Aplikasi dengan Izin"
 
+#: templates/admin/migration/wizard/step2_connection.html:195
 msgid "Configure which data the app can access. We only need read-only access."
 msgstr ""
 "Konfigurasikan data yang dapat diakses oleh aplikasi. Kita hanya membutuhkan "
 "akses baca saja."
 
+#: templates/admin/migration/wizard/step2_connection.html:197
 msgid "Versions"
 msgstr "Versi"
 
+#: templates/admin/migration/wizard/step2_connection.html:198
 msgid "Create version"
 msgstr "Buat versi"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "Set the"
 msgstr "Atur"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "App URL"
 msgstr "URL Aplikasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "to:"
 msgstr "ke:"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Select the newest"
 msgstr "Pilih yang terbaru"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Webhooks API Version"
 msgstr "Versi API Webhooks"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Scroll to"
 msgstr "Gulir ke"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "Access — Scopes"
 msgstr "Akses — Ruang Lingkup"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "and paste:"
 msgstr "dan tempel:"
 
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Release"
 msgstr "Rilis"
 
+#: templates/admin/migration/wizard/step2_connection.html:209
 msgid "Scope input field"
 msgstr "Bidang masukan ruang lingkup"
 
+#: templates/admin/migration/wizard/step2_connection.html:215
 msgid "What it accesses"
 msgstr "Apa yang diakses"
 
+#: templates/admin/migration/wizard/step2_connection.html:219
 msgid "Products, variants, images, collections"
 msgstr "Produk, variasi, gambar, koleksi"
 
+#: templates/admin/migration/wizard/step2_connection.html:220
 msgid "Customer names, emails, addresses"
 msgstr "Nama pelanggan, email, alamat"
 
+#: templates/admin/migration/wizard/step2_connection.html:221
 msgid "Orders from the last 60 days"
 msgstr "Pemesanan dari 60 hari terakhir"
 
+#: templates/admin/migration/wizard/step2_connection.html:222
 msgid "Blog posts and pages"
 msgstr "Posting blog dan halaman"
 
+#: templates/admin/migration/wizard/step2_connection.html:223
 msgid "Discount codes and rules"
 msgstr "Kode diskon dan aturan"
 
+#: templates/admin/migration/wizard/step2_connection.html:224
 msgid "Uploaded media files"
 msgstr "File media yang diunggah"
 
+#: templates/admin/migration/wizard/step2_connection.html:228
 msgid "Scope selection UI"
 msgstr "UI pemilihan ruang lingkup"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid "Want to migrate your full order history? Add"
 msgstr "Ingin memigrasikan riwayat pemesanan lengkap Anda? Tambahkan"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid ""
 "to the scopes above. Without it, only orders from the last 60 days are "
 "accessible."
@@ -2683,36 +3505,47 @@ msgstr ""
 "kecakupan di atas. Tanpa itu, hanya pesanan dari 60 hari terakhir yang dapat "
 "diakses."
 
+#: templates/admin/migration/wizard/step2_connection.html:240
 msgid "Copy Your Client ID and Secret"
 msgstr "Salin ID Klien dan Rahasia Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:242
 msgid "These are the two values you will paste into Spwig."
 msgstr "Ini adalah dua nilai yang akan Anda tempelkan ke Spwig."
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Find the"
 msgstr "Cari"
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Credentials"
 msgstr "Kredensial"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Copy the"
 msgstr "Salin"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "(click the copy icon)"
 msgstr "(klik ikon salin)"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Click the eye icon to reveal the"
 msgstr "Klik ikon mata untuk menampilkan"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Secret"
 msgstr "Rahasia"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid ", then copy it"
 msgstr ", lalu salin"
 
+#: templates/admin/migration/wizard/step2_connection.html:249
 msgid "App credentials page"
 msgstr "Halaman kredensial aplikasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:252
 msgid ""
 "Treat the Secret like a password. Spwig encrypts it and only uses it during "
 "migration. You can delete the app from Shopify after your migration is "
@@ -2722,64 +3555,85 @@ msgstr ""
 "menggunakan saat migrasi. Anda dapat menghapus aplikasi dari Shopify setelah "
 "migrasi Anda selesai."
 
+#: templates/admin/migration/wizard/step2_connection.html:260
 msgid "Set Up Distribution and Install"
 msgstr "Atur Distribusi dan Pasang"
 
+#: templates/admin/migration/wizard/step2_connection.html:262
 msgid "Your app needs to be installed on your store before it can access data."
 msgstr ""
 "Aplikasi Anda perlu diinstal di toko Anda sebelum dapat mengakses data."
 
+#: templates/admin/migration/wizard/step2_connection.html:264
 msgid "Click your app name to return to the overview page"
 msgstr "Klik nama aplikasi Anda untuk kembali ke halaman overview"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Distribution"
 msgstr "Distribusi"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "and click"
 msgstr "dan klik"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
+#: templates/admin/migration/wizard/step2_connection.html:267
 msgid "Select distribution method"
 msgstr "Pilih metode distribusi"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Select"
 msgstr "Pilih"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Custom distribution"
 msgstr "Distribusi khusus"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "and confirm"
 msgstr "dan konfirmasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:271
 msgid "Custom distribution option"
 msgstr "Opsi distribusi kustom"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Enter your store domain (e.g.,"
 msgstr "Masukkan domain toko Anda (misalnya,"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid ") and click"
 msgstr ") dan klik"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Generate link"
 msgstr "Buat tautan"
 
+#: templates/admin/migration/wizard/step2_connection.html:275
 msgid "Generate install link"
 msgstr "Buat tautan instal"
 
+#: templates/admin/migration/wizard/step2_connection.html:277
 msgid "Copy the install link and paste it into your browser"
 msgstr "Salin tautan instal dan tempelkannya ke browser Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:279
 msgid "Copy the generated link"
 msgstr "Salin tautan yang dihasilkan"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "On your Shopify admin, review the permissions and click"
 msgstr "Di admin Shopify Anda, tinjau izin dan klik"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "Install"
 msgstr "Pasang"
 
+#: templates/admin/migration/wizard/step2_connection.html:283
 msgid "Install app permissions screen"
 msgstr "Layar izin pemasangan aplikasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:286
 msgid ""
 "Done! Your app is now installed. Return to this page and paste your Client "
 "ID and Secret into the fields above."
@@ -2787,21 +3641,87 @@ msgstr ""
 "Selesai! Aplikasi Anda sekarang telah terinstal. Kembali ke halaman ini dan "
 "tempelkan Client ID dan Secret Anda ke dalam bidang di atas."
 
+#: templates/admin/migration/wizard/step2_connection.html:297
 msgid "Previous"
 msgstr "Sebelumnya"
 
+#: templates/admin/migration/wizard/step2_connection.html:300
 msgid "Next"
 msgstr "Berikutnya"
 
+#: templates/admin/migration/wizard/step2_connection.html:303
 msgid "Got it"
 msgstr "Diterima"
 
+#: templates/admin/migration/wizard/step2_connection.html:321
+msgid "Magento 2 REST API"
+msgstr "Magento 2 REST API"
+
+#: templates/admin/migration/wizard/step2_connection.html:333
+msgid "Your Magento store URL (e.g., https://yourstore.com)"
+msgstr "URL toko Magento Anda (contoh, https://yourstore.com)"
+
+#: templates/admin/migration/wizard/step2_connection.html:338
+msgid "Access Token"
+msgstr "Token Akses"
+
+#: templates/admin/migration/wizard/step2_connection.html:346
+msgid "Integration Access Token from your Magento admin"
+msgstr "Token Akses Integrasi dari admin Magento Anda"
+
+#: templates/admin/migration/wizard/step2_connection.html:352
+msgid "How to get your Access Token"
+msgstr "Cara mendapatkan Token Akses Anda"
+
+#: templates/admin/migration/wizard/step2_connection.html:354
+msgid "Log in to your Magento admin panel"
+msgstr "Masuk ke panel administrasi Magento Anda"
+
+#: templates/admin/migration/wizard/step2_connection.html:355
+msgid "Go to System > Integrations"
+msgstr "Pergi ke Sistem > Integrasi"
+
+#: templates/admin/migration/wizard/step2_connection.html:356
+msgid "Click 'Add New Integration'"
+msgstr "Klik 'Tambahkan Integrasi Baru'"
+
+#: templates/admin/migration/wizard/step2_connection.html:357
+msgid "Set the name to"
+msgstr "Atur nama ke"
+
+#: templates/admin/migration/wizard/step2_connection.html:358
+msgid "Under the API tab, set Resource Access to 'All'"
+msgstr "Di bawah tab API, atur Akses Sumber Daya menjadi 'Semua'"
+
+#: templates/admin/migration/wizard/step2_connection.html:359
+msgid "Save and click 'Activate'"
+msgstr "Simpan dan klik 'Aktifkan'"
+
+#: templates/admin/migration/wizard/step2_connection.html:360
+msgid "Click 'Allow' on the confirmation popup"
+msgstr "Klik 'Izinkan' pada pop-up konfirmasi"
+
+#: templates/admin/migration/wizard/step2_connection.html:361
+msgid "Copy the Access Token value and paste it above"
+msgstr "Salin nilai Token Akses dan tempelkan di atas"
+
+#: templates/admin/migration/wizard/step2_connection.html:364
+msgid ""
+"Note: Read-only access is sufficient. We will not modify your Magento store. "
+"You can revoke the integration after migration."
+msgstr ""
+"Catatan: Akses baca saja sudah cukup. Kami tidak akan mengubah toko Magento "
+"Anda. Anda dapat membatalkan integrasi setelah migrasi."
+
+#: templates/admin/migration/wizard/step2_connection.html:380
 msgid "CSV File Upload"
 msgstr "Unggah File CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:385
 msgid "CSV Import Instructions"
 msgstr "Petunjuk Impor CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:386
 msgid ""
 "Upload CSV files for each data type you want to import. You can import some "
 "or all of the following:"
@@ -2809,221 +3729,308 @@ msgstr ""
 "Unggah file CSV untuk setiap jenis data yang ingin Anda impor. Anda dapat "
 "mengimpor beberapa atau semua dari berikut ini:"
 
+#: templates/admin/migration/wizard/step2_connection.html:388
 msgid "Products (required)"
 msgstr "Produk (wajib)"
 
+#: templates/admin/migration/wizard/step2_connection.html:389
 msgid "Categories (optional)"
 msgstr "Kategori (opsional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:390
 msgid "Customers (optional)"
 msgstr "Pelanggan (opsional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:391
 msgid "Orders (optional)"
 msgstr "Pemesanan (opsional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:392
 msgid "Reviews (optional)"
 msgstr "Ulasan (opsional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:399
 msgid "Products CSV"
 msgstr "CSV Produk"
 
+#: templates/admin/migration/wizard/step2_connection.html:403
 msgid "CSV file containing your products"
 msgstr "File CSV yang berisi produk Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:405
+#: templates/admin/migration/wizard/step2_connection.html:416
+#: templates/admin/migration/wizard/step2_connection.html:427
+#: templates/admin/migration/wizard/step2_connection.html:438
+#: templates/admin/migration/wizard/step2_connection.html:449
 msgid "Download Template"
 msgstr "Unduh Template"
 
+#: templates/admin/migration/wizard/step2_connection.html:411
 msgid "Categories CSV"
 msgstr "CSV Kategori"
 
+#: templates/admin/migration/wizard/step2_connection.html:414
 msgid "Optional: CSV file containing your product categories"
 msgstr "Opsional: File CSV yang berisi kategori produk Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:422
 msgid "Customers CSV"
 msgstr "CSV Pelanggan"
 
+#: templates/admin/migration/wizard/step2_connection.html:425
 msgid "Optional: CSV file containing your customers"
 msgstr "Opsional: File CSV yang berisi pelanggan Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:433
 msgid "Orders CSV"
 msgstr "CSV Pemesanan"
 
+#: templates/admin/migration/wizard/step2_connection.html:436
 msgid "Optional: CSV file containing your orders"
 msgstr "Opsional: File CSV yang berisi pesanan Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:444
 msgid "Reviews CSV"
 msgstr "CSV Ulasan"
 
+#: templates/admin/migration/wizard/step2_connection.html:447
 msgid "Optional: CSV file containing your product reviews"
 msgstr "Opsional: File CSV yang berisi ulasan produk Anda"
 
+#: templates/admin/migration/wizard/step2_connection.html:463
 msgid "Next: Preview Data"
 msgstr "Berikutnya: Pratinjau Data"
 
+#: templates/admin/migration/wizard/step2_connection.html:476
 msgid "Saving..."
 msgstr "Menyimpan..."
 
+#: templates/admin/migration/wizard/step2_connection.html:477
+#: templates/admin/migration/wizard/step3_preview.html:299
 msgid "Processing..."
 msgstr "Memproses..."
 
+#: templates/admin/migration/wizard/step2_connection.html:478
 msgid "Loading preview..."
 msgstr "Memuat pratinjau..."
 
+#: templates/admin/migration/wizard/step2_connection.html:480
 msgid "Verifying API credentials"
 msgstr "Memverifikasi kredensial API"
 
+#: templates/admin/migration/wizard/step2_connection.html:481
 msgid "Counting products"
 msgstr "Menghitung produk"
 
+#: templates/admin/migration/wizard/step2_connection.html:482
 msgid "Counting categories"
 msgstr "Menghitung kategori"
 
+#: templates/admin/migration/wizard/step2_connection.html:483
 msgid "Counting customers"
 msgstr "Menghitung pelanggan"
 
+#: templates/admin/migration/wizard/step2_connection.html:484
 msgid "Counting orders"
 msgstr "Menghitung pemesanan"
 
+#: templates/admin/migration/wizard/step2_connection.html:485
 msgid "Counting blog posts"
 msgstr "Menghitung posting blog"
 
+#: templates/admin/migration/wizard/step2_connection.html:486
 msgid "Preparing the next step"
 msgstr "Menyiapkan langkah berikutnya"
 
+#: templates/admin/migration/wizard/step2_connection.html:487
 msgid "Connection successful"
 msgstr "Koneksi Berhasil"
 
+#: templates/admin/migration/wizard/step2_connection.html:489
 msgid "Connection error"
 msgstr "Kesalahan koneksi"
 
+#: templates/admin/migration/wizard/step2_connection.html:490
 msgid "Credentials verified"
 msgstr "Kredensial diverifikasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:491
 msgid "Products counted"
 msgstr "Produk dihitung"
 
+#: templates/admin/migration/wizard/step2_connection.html:492
 msgid "Categories counted"
 msgstr "Kategori dihitung"
 
+#: templates/admin/migration/wizard/step2_connection.html:493
 msgid "Customers counted"
 msgstr "Pelanggan dihitung"
 
+#: templates/admin/migration/wizard/step2_connection.html:494
 msgid "Orders counted"
 msgstr "Pemesanan dihitung"
 
+#: templates/admin/migration/wizard/step2_connection.html:495
 msgid "Blog posts counted"
 msgstr "Posting blog dihitung"
 
+#: templates/admin/migration/wizard/step2_connection.html:496
 msgid "Retry Connection"
 msgstr "Coba Koneksi Kembali"
 
+#: templates/admin/migration/wizard/step2_connection.html:497
 msgid "Exchanging credentials for access token"
 msgstr "Menukar kredensial untuk token akses"
 
+#: templates/admin/migration/wizard/step2_connection.html:498
 msgid "Access token obtained"
 msgstr "Token akses diperoleh"
 
+#: templates/admin/migration/wizard/step2_connection.html:499
 msgid "Verifying API access"
 msgstr "Memverifikasi akses API"
 
+#: templates/admin/migration/wizard/step2_connection.html:500
 msgid "API access verified"
 msgstr "Akses API telah diverifikasi"
 
+#: templates/admin/migration/wizard/step2_connection.html:501
 msgid "Scanning store data"
 msgstr "Memindai data toko"
 
+#: templates/admin/migration/wizard/step2_connection.html:502
 msgid "Store scan complete"
 msgstr "Pemindaian toko selesai"
 
+#: templates/admin/migration/wizard/step2_connection.html:503
 msgid "Counting collections"
 msgstr "Menghitung koleksi"
 
+#: templates/admin/migration/wizard/step2_connection.html:504
 msgid "Collections counted"
 msgstr "Koleksi telah dihitung"
 
+#: templates/admin/migration/wizard/step2_connection.html:505
 msgid "Counting discounts"
 msgstr "Menghitung diskon"
 
+#: templates/admin/migration/wizard/step2_connection.html:506
 msgid "Discounts counted"
 msgstr "Diskon telah dihitung"
 
+#: templates/admin/migration/wizard/step3_preview.html:8
 msgid "Preview Import Data"
 msgstr "Pratinjau Data Impor"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "Review what will be imported from your"
 msgstr "Periksa apa yang akan diimpor dari"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "store. You can select which data types to import."
 msgstr "toko. Anda dapat memilih jenis data apa yang ingin diimpor."
 
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
 msgid "Collections"
 msgstr "Koleksi"
 
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
 msgid "Discounts"
 msgstr "Diskon"
 
+#: templates/admin/migration/wizard/step3_preview.html:44
+#: templates/admin/migration/wizard/step3_preview.html:122
+#: templates/admin/migration/wizard/step4_mapping.html:100
+#: templates/admin/migration/wizard/step5_import.html:211
 msgid "Blog Posts"
 msgstr "Pos Blog"
 
+#: templates/admin/migration/wizard/step3_preview.html:60
 msgid "Select Data to Import"
 msgstr "Pilih Data untuk Diimpor"
 
+#: templates/admin/migration/wizard/step3_preview.html:66
+#: templates/admin/migration/wizard/step3_preview.html:75
+#: templates/admin/migration/wizard/step3_preview.html:84
+#: templates/admin/migration/wizard/step3_preview.html:93
+#: templates/admin/migration/wizard/step3_preview.html:103
+#: templates/admin/migration/wizard/step3_preview.html:113
 msgid "found"
 msgstr "ditemukan"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import collections as product categories"
 msgstr "Impor koleksi sebagai kategori produk"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import product categories and their hierarchy"
 msgstr "Impor kategori produk dan hierarkinya"
 
+#: templates/admin/migration/wizard/step3_preview.html:77
 msgid "Import products with images, variants, and attributes"
 msgstr "Impor produk dengan gambar, variasi, dan atribut"
 
+#: templates/admin/migration/wizard/step3_preview.html:86
 msgid "Import customer accounts and addresses"
 msgstr "Impor akun pelanggan dan alamat"
 
+#: templates/admin/migration/wizard/step3_preview.html:95
 msgid "Import order history and transactions"
 msgstr "Impor riwayat pesanan dan transaksi"
 
+#: templates/admin/migration/wizard/step3_preview.html:105
 msgid "Import product reviews and ratings"
 msgstr "Impor ulasan dan penilaian produk"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount codes and price rules"
 msgstr "Impor kode diskon dan aturan harga"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount coupons and vouchers"
 msgstr "Impor kupon diskon dan voucer"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "posts"
 msgstr "posting"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "categories"
 msgstr "kategori"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "tags"
 msgstr "tag"
 
+#: templates/admin/migration/wizard/step3_preview.html:125
 msgid ""
 "Import blog posts with categories, tags, featured images, and content images"
 msgstr ""
 "Impor posting blog dengan kategori, tag, gambar utama, dan gambar konten"
 
+#: templates/admin/migration/wizard/step3_preview.html:135
 msgid "Affiliate Program Data"
 msgstr "Data Program Afiliasi"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "affiliates"
 msgstr "afiliasi"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "commissions"
 msgstr "komisi"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "payouts"
 msgstr "pembayaran"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "plans"
 msgstr "rencana"
 
+#: templates/admin/migration/wizard/step3_preview.html:144
 msgid ""
 "Import affiliate profiles, commission records, and payout history. Requires "
 "orders and customers to be imported first."
@@ -3031,9 +4038,11 @@ msgstr ""
 "Impor profil afiliasi, catatan komisi, dan sejarah pembayaran. Memerlukan "
 "pesanan dan pelanggan untuk diimpor terlebih dahulu."
 
+#: templates/admin/migration/wizard/step3_preview.html:153
 msgid "Affiliate Data Available"
 msgstr "Data Afiliasi Tersedia"
 
+#: templates/admin/migration/wizard/step3_preview.html:154
 msgid ""
 "To import your affiliate program data (affiliates, commissions, payouts), "
 "install the Spwig Migration Bridge plugin on your WordPress site:"
@@ -3041,15 +4050,19 @@ msgstr ""
 "Untuk mengimpor data program afiliasi Anda (afiliasi, komisi, pembayaran), "
 "pasang plugin Spwig Migration Bridge di situs WordPress Anda:"
 
+#: templates/admin/migration/wizard/step3_preview.html:156
 msgid "Download the plugin ZIP using the button below"
 msgstr "Unduh ZIP plugin menggunakan tombol di bawah ini"
 
+#: templates/admin/migration/wizard/step3_preview.html:157
 msgid "Go to your WordPress admin → Plugins → Add New → Upload Plugin"
 msgstr "Buka admin WordPress Anda → Plugins → Tambahkan Baru → Unggah Plugin"
 
+#: templates/admin/migration/wizard/step3_preview.html:158
 msgid "Upload and activate the plugin"
 msgstr "Unggah dan aktifkan plugin"
 
+#: templates/admin/migration/wizard/step3_preview.html:159
 msgid ""
 "Return here and refresh this page — the affiliate data will appear "
 "automatically"
@@ -3057,114 +4070,176 @@ msgstr ""
 "Kembali ke sini dan segarkan halaman ini — data afiliasi akan muncul secara "
 "otomatis"
 
+#: templates/admin/migration/wizard/step3_preview.html:163
 msgid "Download Bridge Plugin"
 msgstr "Unduh Plugin Bridge"
 
+#: templates/admin/migration/wizard/step3_preview.html:175
 msgid "Sample Products"
 msgstr "Produk Contoh"
 
+#: templates/admin/migration/wizard/step3_preview.html:176
 msgid "Here are a few example products that will be imported:"
 msgstr "Berikut adalah beberapa contoh produk yang akan diimpor:"
 
+#: templates/admin/migration/wizard/step3_preview.html:181
+msgid "Name"
+msgstr "Nama"
+
+#: templates/admin/migration/wizard/step3_preview.html:182
 msgid "SKU"
 msgstr "SKU"
 
+#: templates/admin/migration/wizard/step3_preview.html:183
 msgid "Price"
 msgstr "Harga"
 
+#: templates/admin/migration/wizard/step3_preview.html:195
 msgid "Active"
 msgstr "Aktif"
 
+#: templates/admin/migration/wizard/step3_preview.html:197
 msgid "Archived"
 msgstr "Diarik"
 
+#: templates/admin/migration/wizard/step3_preview.html:199
 msgid "Draft"
 msgstr "Draf"
 
+#: templates/admin/migration/wizard/step3_preview.html:211
 msgid "Import Options"
 msgstr "Opsi Impor"
 
+#: templates/admin/migration/wizard/step3_preview.html:216
 msgid "Skip existing items"
 msgstr "Lewati item yang sudah ada"
 
+#: templates/admin/migration/wizard/step3_preview.html:218
 msgid "Don't import items that already exist (matched by SKU, email, etc.)"
 msgstr "Jangan impor item yang sudah ada (cocok berdasarkan SKU, email, dll.)"
 
+#: templates/admin/migration/wizard/step3_preview.html:225
+msgid "If the import fails, automatically remove what was imported"
+msgstr "Jika impor gagal, secara otomatis hapus apa yang telah diimpor"
+
+#: templates/admin/migration/wizard/step3_preview.html:227
+msgid ""
+"Leave this off to keep partial data so you can fix the problem and run the "
+"import again — anything already imported will be skipped."
+msgstr ""
+"Biarkan ini dimatikan untuk mempertahankan data parsial sehingga Anda dapat "
+"memperbaiki masalah dan menjalankan impor kembali — apapun yang sudah "
+"diimpor akan dilewati."
+
+#: templates/admin/migration/wizard/step3_preview.html:233
 msgid "Import product images"
 msgstr "Impor gambar produk"
 
+#: templates/admin/migration/wizard/step3_preview.html:235
 msgid "Download and import product images (may increase import time)"
 msgstr "Unduh dan impor gambar produk (mungkin akan meningkatkan waktu impor)"
 
+#: templates/admin/migration/wizard/step3_preview.html:241
 msgid "Preserve original IDs where possible"
 msgstr "Jaga ID asli sebisa mungkin"
 
+#: templates/admin/migration/wizard/step3_preview.html:243
 msgid "Attempt to keep original IDs for products and orders (not recommended)"
 msgstr ""
 "Coba untuk mempertahankan ID asli untuk produk dan pesanan (tidak disarankan)"
 
+#: templates/admin/migration/wizard/step3_preview.html:247
 msgid "Batch size"
 msgstr "Ukuran Batch"
 
+#: templates/admin/migration/wizard/step3_preview.html:249
+#: templates/admin/migration/wizard/step3_preview.html:250
+#: templates/admin/migration/wizard/step3_preview.html:251
+#: templates/admin/migration/wizard/step3_preview.html:252
 msgid "items per batch"
 msgstr "item per batch"
 
+#: templates/admin/migration/wizard/step3_preview.html:254
 msgid "Larger batches are faster but use more memory"
 msgstr ""
 "Batch yang lebih besar lebih cepat tetapi menggunakan lebih banyak memori"
 
+#: templates/admin/migration/wizard/step3_preview.html:261
 msgid "Data Safety"
 msgstr "Keamanan Data"
 
+#: templates/admin/migration/wizard/step3_preview.html:262
 msgid ""
-"All data will be imported within a database transaction. If anything goes "
-"wrong, the entire import will be rolled back automatically. You'll also have "
-"24 hours to manually rollback if needed."
+"Spwig imports your data one item at a time, and each item is saved as it is "
+"imported. If the import stops part way through, the items already imported "
+"stay in your store unless you tick the option above. You can roll an import "
+"back at any time from the Migrations list — whether it finished, failed or "
+"was stopped. Rollback removes what the import added, but keeps anything your "
+"store has since come to depend on, such as an imported product that now "
+"appears on a real customer's order. Take a full backup before you begin."
 msgstr ""
-"Semua data akan diimpor dalam transaksi database. Jika terjadi kesalahan, "
-"seluruh impor akan secara otomatis dikembalikan. Anda juga akan memiliki 24 "
-"jam untuk melakukan rollback manual jika diperlukan."
+"Spwig mengimpor data Anda satu item demi satu, dan setiap item disimpan saat "
+"diimpor. Jika proses impor berhenti sebelum selesai, item yang sudah diimpor "
+"akan tetap ada di toko Anda, kecuali Anda centang opsi di atas. Anda dapat "
+"mengembalikan (rollback) impor kapan saja dari daftar Migrations — apakah "
+"impor tersebut selesai, gagal, atau dihentikan. Rollback menghapus apa yang "
+"telah ditambahkan oleh impor, tetapi tetap mempertahankan hal-hal yang toko "
+"Anda telah bergantung padanya, seperti produk yang diimpor yang kini muncul "
+"dalam pesanan pelanggan nyata. Ambil cadangan penuh sebelum Anda memulai."
 
+#: templates/admin/migration/wizard/step3_preview.html:272
 msgid "Next: Configure Mapping"
 msgstr "Berikutnya: Konfigurasi Pemetaan"
 
+#: templates/admin/migration/wizard/step3_preview.html:282
 msgid "Generating Field Mappings..."
 msgstr "Membuat Pemetaan Bidang..."
 
+#: templates/admin/migration/wizard/step3_preview.html:283
 msgid ""
 "Analyzing your data and creating field mappings. This may take a moment..."
 msgstr ""
 "Menganalisis data Anda dan membuat pemetaan bidang. Ini mungkin memakan "
 "waktu sejenak..."
 
+#: templates/admin/migration/wizard/step3_preview.html:288
 msgid "Preparing..."
 msgstr "Mempersiapkan..."
 
+#: templates/admin/migration/wizard/step3_preview.html:298
 msgid "Please select at least one data type to import."
 msgstr "Silakan pilih setidaknya satu jenis data untuk diimpor."
 
+#: templates/admin/migration/wizard/step3_preview.html:300
 msgid "Fetching sample data..."
 msgstr "Mengambil data contoh..."
 
+#: templates/admin/migration/wizard/step3_preview.html:301
 msgid "Detecting custom fields..."
 msgstr "Mendeteksi bidang khusus..."
 
+#: templates/admin/migration/wizard/step3_preview.html:302
 msgid "Creating field mappings..."
 msgstr "Membuat pemetaan bidang..."
 
+#: templates/admin/migration/wizard/step4_mapping.html:8
 msgid "Configure Field Mapping"
 msgstr "Konfigurasi Pemetaan Bidang"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "Review and customize how data from"
 msgstr "Periksa dan sesuaikan cara data dari"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "maps to your platform. Most fields are mapped automatically."
 msgstr ""
 "peta ke platform Anda. Sebagian besar bidang dipetakan secara otomatis."
 
+#: templates/admin/migration/wizard/step4_mapping.html:21
 msgid "CSV Column Mapping"
 msgstr "Pemetaan Kolom CSV"
 
+#: templates/admin/migration/wizard/step4_mapping.html:23
 msgid ""
 "Map the columns in your CSV files to the expected fields. We've auto-"
 "detected some matches — review and adjust as needed."
@@ -3172,39 +4247,50 @@ msgstr ""
 "Peta kolom di file CSV Anda ke bidang yang diharapkan. Kami telah mendeteksi "
 "beberapa cocok secara otomatis — periksa dan sesuaikan jika diperlukan."
 
+#: templates/admin/migration/wizard/step4_mapping.html:34
 msgid "CSV Column"
 msgstr "Kolom CSV"
 
+#: templates/admin/migration/wizard/step4_mapping.html:35
 msgid "Maps To"
 msgstr "Dipetakan Ke"
 
+#: templates/admin/migration/wizard/step4_mapping.html:46
 msgid "Skip this column"
 msgstr "Lewati kolom ini"
 
+#: templates/admin/migration/wizard/step4_mapping.html:70
 msgid "Automatic Mappings"
 msgstr "Pemetaan Otomatis"
 
+#: templates/admin/migration/wizard/step4_mapping.html:72
 msgid ""
 "These fields will be mapped automatically based on standard field names:"
 msgstr ""
 "Bidang-bidang ini akan dipetakan secara otomatis berdasarkan nama bidang "
 "standar:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:103
 msgid "Blog Categories"
 msgstr "Kategori Blog"
 
+#: templates/admin/migration/wizard/step4_mapping.html:106
 msgid "Blog Tags"
 msgstr "Tag Blog"
 
+#: templates/admin/migration/wizard/step4_mapping.html:114
 msgid "Source"
 msgstr "Sumber"
 
+#: templates/admin/migration/wizard/step4_mapping.html:116
 msgid "Destination"
 msgstr "Tujuan"
 
+#: templates/admin/migration/wizard/step4_mapping.html:144
 msgid "No automatic mappings available."
 msgstr "Tidak ada pemetaan otomatis yang tersedia."
 
+#: templates/admin/migration/wizard/step4_mapping.html:156
 msgid ""
 "We detected custom fields in your source data. Map them to your platform's "
 "fields or skip them:"
@@ -3212,72 +4298,101 @@ msgstr ""
 "Kami mendeteksi bidang khusus dalam data sumber Anda. Peta mereka ke bidang "
 "platform Anda atau lewati:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:171
 msgid "Meta Fields"
 msgstr "Bidang Meta"
 
+#: templates/admin/migration/wizard/step4_mapping.html:181
 msgid "Type:"
 msgstr "Jenis:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:183
 msgid "Example:"
 msgstr "Contoh:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:190
 msgid "Map to:"
 msgstr "Peta ke:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:192
 msgid "— Skip this field —"
 msgstr "— Lewati bidang ini —"
 
+#: templates/admin/migration/wizard/step4_mapping.html:194
 msgid "Product Fields"
 msgstr "Bidang Produk"
 
+#: templates/admin/migration/wizard/step4_mapping.html:195
+#: templates/admin/migration/wizard/step4_mapping.html:202
+#: templates/admin/migration/wizard/step4_mapping.html:208
 msgid "Custom Field 1"
 msgstr "Bidang Khusus 1"
 
+#: templates/admin/migration/wizard/step4_mapping.html:196
+#: templates/admin/migration/wizard/step4_mapping.html:203
+#: templates/admin/migration/wizard/step4_mapping.html:209
 msgid "Custom Field 2"
 msgstr "Bidang Khusus 2"
 
+#: templates/admin/migration/wizard/step4_mapping.html:197
 msgid "Custom Field 3"
 msgstr "Bidang Khusus 3"
 
+#: templates/admin/migration/wizard/step4_mapping.html:198
+#: templates/admin/migration/wizard/step4_mapping.html:204
+#: templates/admin/migration/wizard/step4_mapping.html:210
 msgid "Meta Data (JSON)"
 msgstr "Data Meta (JSON)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:201
 msgid "Customer Fields"
 msgstr "Bidang Pelanggan"
 
+#: templates/admin/migration/wizard/step4_mapping.html:207
 msgid "Order Fields"
 msgstr "Bidang Pesanan"
 
+#: templates/admin/migration/wizard/step4_mapping.html:217
 msgid "Transform:"
 msgstr "Ubah:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:219
 msgid "As Text (String)"
 msgstr "Sebagai Teks (String)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:220
 msgid "As Number (Integer)"
 msgstr "Sebagai Angka (Integer)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:221
 msgid "As Decimal"
 msgstr "Sebagai Desimal"
 
+#: templates/admin/migration/wizard/step4_mapping.html:222
 msgid "As True/False (Boolean)"
 msgstr "Sebagai Benar/Salah (Boolean)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:223
 msgid "As JSON"
 msgstr "Sebagai JSON"
 
+#: templates/admin/migration/wizard/step4_mapping.html:224
 msgid "As Date"
 msgstr "Sebagai Tanggal"
 
+#: templates/admin/migration/wizard/step4_mapping.html:225
 msgid "As URL"
 msgstr "Sebagai URL"
 
+#: templates/admin/migration/wizard/step4_mapping.html:226
 msgid "As Email"
 msgstr "Sebagai Email"
 
+#: templates/admin/migration/wizard/step4_mapping.html:240
 msgid "No custom fields detected"
 msgstr "Tidak ada bidang khusus yang terdeteksi"
 
+#: templates/admin/migration/wizard/step4_mapping.html:241
 msgid ""
 "All fields in your source data can be mapped automatically. You can proceed "
 "to the import step."
@@ -3285,73 +4400,60 @@ msgstr ""
 "Semua bidang dalam data sumber Anda dapat dipetakan secara otomatis. Anda "
 "dapat melanjutkan ke langkah impor."
 
-msgid "Category Mapping"
-msgstr "Pemetaan Kategori"
+#: templates/admin/migration/wizard/step4_mapping.html:255
+msgid "Pricing"
+msgstr "Penentuan Harga"
 
+#: templates/admin/migration/wizard/step4_mapping.html:261
 msgid ""
-"Some categories from your source don't have direct matches. Choose how to "
-"handle them:"
+"Tax rates and shipping zones are not imported. Tax rules differ enough "
+"between platforms that copying them across unreviewed would risk charging "
+"your customers the wrong amount, so Spwig leaves them to you."
 msgstr ""
-"Beberapa kategori dari sumber Anda tidak memiliki cocok langsung. Pilih cara "
-"menangani mereka:"
+"Tarif pajak dan zona pengiriman tidak diimpor. Aturan pajak berbeda cukup "
+"banyak antar platform sehingga menyalinnya tanpa tinjauan berisiko "
+"membebankan jumlah yang salah kepada pelanggan Anda, sehingga Spwig "
+"membiarkannya kepada Anda."
 
-msgid "Create new categories"
-msgstr "Buat kategori baru"
-
-msgid "Create new categories in your platform for unmapped categories"
+#: templates/admin/migration/wizard/step4_mapping.html:262
+msgid ""
+"Set them up in Settings → Tax & Currency and Settings → Shipping once the "
+"import has finished."
 msgstr ""
-"Buat kategori baru di platform Anda untuk kategori yang tidak dipetakan"
+"Atur mereka di Pengaturan → Pajak & Mata Uang dan Pengaturan → Pengiriman "
+"setelah proses impor selesai."
 
-msgid "Assign to default category"
-msgstr "Tetapkan ke kategori default"
-
-msgid "Put all unmapped items in a default 'Uncategorized' category"
-msgstr ""
-"Masukkan semua item yang tidak dipetakan ke kategori default 'Uncategorized'"
-
-msgid "Skip items with unmapped categories"
-msgstr "Lewati item dengan kategori yang tidak dipetakan"
-
-msgid "Don't import items that belong to unmapped categories"
-msgstr "Jangan impor barang yang termasuk dalam kategori yang tidak terpeta"
-
-msgid "Tax & Shipping Settings"
-msgstr "Pengaturan Pajak & Pengiriman"
-
-msgid "Import tax settings"
-msgstr "Impor pengaturan pajak"
-
-msgid "Import tax rates and rules from your source platform"
-msgstr "Impor tingkat pajak dan aturan dari platform sumber Anda"
-
-msgid "Import shipping zones and methods"
-msgstr "Impor zona pengiriman dan metode"
-
-msgid "Import shipping configuration from your source platform"
-msgstr "Impor konfigurasi pengiriman dari platform sumber Anda"
-
+#: templates/admin/migration/wizard/step4_mapping.html:267
 msgid "Price adjustment"
 msgstr "Penyesuaian Harga"
 
+#: templates/admin/migration/wizard/step4_mapping.html:270
+#: templates/admin/migration/wizard/step6_complete.html:218
 msgid "None"
 msgstr "Tidak ada"
 
+#: templates/admin/migration/wizard/step4_mapping.html:271
 msgid "Percentage"
 msgstr "Persentase"
 
+#: templates/admin/migration/wizard/step4_mapping.html:272
 msgid "Fixed Amount"
 msgstr "Jumlah Tetap"
 
+#: templates/admin/migration/wizard/step4_mapping.html:280
 #, python-format
 msgid "(e.g., +10 for 10%% increase or -5 for 5%% decrease)"
 msgstr "(contoh, +10 untuk kenaikan 10%% atau -5 untuk penurunan 5%%)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:282
 msgid "Optionally adjust all prices during import"
 msgstr "Secara opsional sesuaikan semua harga selama proses impor"
 
+#: templates/admin/migration/wizard/step4_mapping.html:289
 msgid "Pro Tip"
 msgstr "Tips Profesional"
 
+#: templates/admin/migration/wizard/step4_mapping.html:290
 msgid ""
 "Field mappings are saved and can be reused for future migrations. You can "
 "also edit mappings after the import is complete."
@@ -3359,15 +4461,32 @@ msgstr ""
 "Pemetaan bidang disimpan dan dapat digunakan kembali untuk migrasi masa "
 "depan. Anda juga dapat mengedit pemetaan setelah proses impor selesai."
 
+#: templates/admin/migration/wizard/step4_mapping.html:300
+#: templates/admin/migration/wizard/step5_import.html:16
 msgid "Start Import"
 msgstr "Mulai Impor"
 
+#: templates/admin/migration/wizard/step5_import.html:9
+msgid "Ready to Import"
+msgstr "Siap untuk Impor"
+
+#: templates/admin/migration/wizard/step5_import.html:11
+msgid ""
+"This migration is configured but has not started yet. Starting it will begin "
+"importing data into your store."
+msgstr ""
+"Migrasi ini sudah dikonfigurasi tetapi belum dimulai. Memulainya akan "
+"memulai proses pengimporan data ke toko Anda."
+
+#: templates/admin/migration/wizard/step5_import.html:24
 msgid "Import in Progress"
 msgstr "Impor Sedang Berlangsung"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid "Importing data from"
 msgstr "Mengimpor data dari"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid ""
 ". This process is running in the background - you can safely close this "
 "window and check back later."
@@ -3375,54 +4494,102 @@ msgstr ""
 ". Proses ini berjalan di latar belakang - Anda dapat aman menutup jendela "
 "ini dan memeriksa kembali nanti."
 
+#: templates/admin/migration/wizard/step5_import.html:36
+msgid ""
+"Stop this import? Spwig finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store — cancelling does not remove "
+"it."
+msgstr ""
+"Hentikan impor ini? Spwig menyelesaikan batch yang sedang diproses kemudian "
+"berhenti. Apapun yang sudah diimpor tetap ada di toko Anda — membatalkannya "
+"tidak menghapusnya."
+
+#: templates/admin/migration/wizard/step5_import.html:38
+msgid "Stop Import"
+msgstr "Berhenti Impor"
+
+#: templates/admin/migration/wizard/step5_import.html:44
+msgid "Stopping — Spwig finishes the batch it is working on, then stops."
+msgstr ""
+"Berhenti — Spwig menyelesaikan batch yang sedang dikerjakan, kemudian "
+"berhenti."
+
+#: templates/admin/migration/wizard/step5_import.html:60
 msgid "Initializing..."
 msgstr "Menginisialisasi..."
 
+#: templates/admin/migration/wizard/step5_import.html:70
 msgid "Starting import..."
 msgstr "Memulai impor..."
 
+#: templates/admin/migration/wizard/step5_import.html:79
 msgid "Import Steps"
 msgstr "Langkah Impor"
 
+#: templates/admin/migration/wizard/step5_import.html:98
+#: templates/admin/migration/wizard/step5_import.html:118
+#: templates/admin/migration/wizard/step5_import.html:138
+#: templates/admin/migration/wizard/step5_import.html:158
+#: templates/admin/migration/wizard/step5_import.html:178
+#: templates/admin/migration/wizard/step5_import.html:198
+#: templates/admin/migration/wizard/step5_import.html:218
+#: templates/admin/migration/wizard/step5_import.html:238
+#: templates/admin/migration/wizard/step5_import.html:258
+#: templates/admin/migration/wizard/step5_import.html:278
 msgid "Waiting..."
 msgstr "Menunggu..."
 
+#: templates/admin/migration/wizard/step5_import.html:290
 msgid "Import Log"
 msgstr "Log Impor"
 
+#: templates/admin/migration/wizard/step5_import.html:293
+#: templates/admin/migration/wizard/step5_import.html:321
 msgid "Show Details"
 msgstr "Tampilkan Detail"
 
+#: templates/admin/migration/wizard/step5_import.html:306
+#: templates/admin/migration/wizard/step6_complete.html:484
 msgid "View All Migrations"
 msgstr "Lihat Semua Migrasi"
 
+#: templates/admin/migration/wizard/step5_import.html:320
 msgid "Hide Details"
 msgstr "Sembunyikan Detail"
 
+#: templates/admin/migration/wizard/step5_import.html:322
 msgid "View Error Report"
 msgstr "Lihat Laporan Kesalahan"
 
+#: templates/admin/migration/wizard/step6_complete.html:9
 msgid "Migration Completed Successfully!"
 msgstr "Migrasi Selesai Dengan Sukses!"
 
+#: templates/admin/migration/wizard/step6_complete.html:10
 msgid "Your data has been successfully imported from"
 msgstr "Data Anda telah berhasil diimpor dari"
 
+#: templates/admin/migration/wizard/step6_complete.html:57
 msgid "Import Summary"
 msgstr "Ringkasan Impor"
 
+#: templates/admin/migration/wizard/step6_complete.html:63
 msgid "Data Type"
 msgstr "Jenis Data"
 
+#: templates/admin/migration/wizard/step6_complete.html:119
 msgid "links found"
 msgstr "tautan ditemukan"
 
+#: templates/admin/migration/wizard/step6_complete.html:121
 msgid "pending review"
 msgstr "menunggu tinjauan"
 
+#: templates/admin/migration/wizard/step6_complete.html:124
 msgid "applied"
 msgstr "diterapkan"
 
+#: templates/admin/migration/wizard/step6_complete.html:132
 msgid ""
 "We found internal links in your imported content pointing to your old site. "
 "Review the suggestions below and approve the replacements."
@@ -3430,95 +4597,158 @@ msgstr ""
 "Kami menemukan tautan internal dalam konten yang diimpor Anda yang mengarah "
 "ke situs lama Anda. Periksa saran di bawah ini dan persetujui penggantinya."
 
+#: templates/admin/migration/wizard/step6_complete.html:135
 msgid "links have high-confidence matches and can be auto-approved."
 msgstr ""
 "tautan memiliki cocokan tingkat kepercayaan tinggi dan dapat disetujui "
 "secara otomatis."
 
+#: templates/admin/migration/wizard/step6_complete.html:146
 msgid "Auto-approve high confidence"
 msgstr "Otomatis Approve Tingkat Kepercayaan Tinggi"
 
+#: templates/admin/migration/wizard/step6_complete.html:152
 msgid "Apply Approved Links"
 msgstr "Terapkan Tautan yang Disetujui"
 
+#: templates/admin/migration/wizard/step6_complete.html:168
 msgid "links"
 msgstr "tautan"
 
+#: templates/admin/migration/wizard/step6_complete.html:171
 msgid "Edit"
 msgstr "Edit"
 
+#: templates/admin/migration/wizard/step6_complete.html:179
 msgid "Original URL"
 msgstr "URL Asli"
 
+#: templates/admin/migration/wizard/step6_complete.html:180
 msgid "Anchor Text"
 msgstr "Teks Anker"
 
+#: templates/admin/migration/wizard/step6_complete.html:181
 msgid "Suggested URL"
 msgstr "URL yang Disarankan"
 
+#: templates/admin/migration/wizard/step6_complete.html:182
 msgid "Match"
 msgstr "cocok"
 
+#: templates/admin/migration/wizard/step6_complete.html:183
 msgid "Action"
 msgstr "Tindakan"
 
+#: templates/admin/migration/wizard/step6_complete.html:226
 msgid "Approve"
 msgstr "Setujui"
 
+#: templates/admin/migration/wizard/step6_complete.html:231
 msgid "Skip"
 msgstr "Lewati"
 
+#: templates/admin/migration/wizard/step6_complete.html:258
 msgid "Rollback Available"
 msgstr "Rollback Tersedia"
 
-msgid "You can rollback this migration until"
-msgstr "Anda dapat mengembalikan migrasi ini hingga"
+#: templates/admin/migration/wizard/step6_complete.html:261
+#, python-format
+msgid "You can roll this migration back until <strong>%(deadline)s</strong>."
+msgstr ""
+"Anda dapat membatalkan migrasi ini hingga <strong>%(deadline)s</strong>."
 
+#: templates/admin/migration/wizard/step6_complete.html:263
+msgid "You can roll this migration back from the Migrations list."
+msgstr "Anda dapat mengembalikan migrasi ini dari daftar Migrasi."
+
+#: templates/admin/migration/wizard/step6_complete.html:269
 msgid "Important"
 msgstr "Penting"
 
+#: templates/admin/migration/wizard/step6_complete.html:270
 msgid ""
-"Rolling back will remove all imported data. This action cannot be undone. "
-"Make sure to backup any changes you've made since the migration."
+"Rolling back removes the products, categories, customers, orders, media and "
+"store-extension data this import created, and it cannot be undone. Anything "
+"your store has since come to depend on — an imported product that now "
+"appears on a real order, for example — is kept rather than removed, and "
+"Spwig lists what it kept. You will see exactly what will be removed before "
+"you confirm."
 msgstr ""
-"Mengembalikan akan menghapus semua data yang diimpor. Tindakan ini tidak "
-"dapat dikembalikan. Pastikan untuk membuat cadangan perubahan apa pun yang "
-"telah Anda lakukan sejak migrasi."
+"Mengembalikan ke versi sebelumnya akan menghapus data produk, kategori, "
+"pelanggan, pesanan, media, dan ekstensi toko yang dibuat oleh impor ini, dan "
+"tindakan ini tidak dapat dibatalkan. Apapun yang toko Anda telah bergantung "
+"sejak saat itu — misalnya, produk yang diimpor yang kini muncul di pesanan "
+"nyata — akan tetap dipertahankan daripada dihapus, dan Spwig akan "
+"mencantumkan apa yang tetap dipertahankan. Anda akan melihat secara tepat "
+"apa yang akan dihapus sebelum Anda mengonfirmasi."
 
+#: templates/admin/migration/wizard/step6_complete.html:278
 msgid ""
-"Are you sure you want to rollback this migration? This will remove all "
-"imported data and cannot be undone."
+"Roll back this migration? This removes what the import created, keeping "
+"anything your store now depends on. It cannot be undone."
 msgstr ""
-"Apakah Anda yakin ingin mengembalikan migrasi ini? Ini akan menghapus semua "
-"data yang diimpor dan tidak dapat dikembalikan."
+"Kembalikan migrasi ini? Ini akan menghapus apa yang dibuat oleh impor, "
+"tetapi akan mempertahankan hal-hal yang toko Anda sekarang bergantung. "
+"Tindakan ini tidak dapat dibatalkan."
 
+#: templates/admin/migration/wizard/step6_complete.html:290
+msgid "Migration Stopped"
+msgstr "Migrasi Berhenti"
+
+#: templates/admin/migration/wizard/step6_complete.html:291
 msgid ""
-"There was an error during the import process. The migration has been rolled "
-"back automatically."
+"You stopped this import. The items imported before it stopped are still in "
+"your store — nothing was removed. You can roll the import back to remove "
+"them, or run it again, in which case anything already imported will be "
+"skipped."
 msgstr ""
-"Ada kesalahan selama proses impor. Migrasi telah dikembalikan secara "
-"otomatis."
+"Anda telah menghentikan impor ini. Barang yang sudah diimpor sebelumnya "
+"tetap ada di toko Anda — tidak ada yang dihapus. Anda dapat melakukan "
+"pengembalian (rollback) untuk menghapusnya, atau menjalankannya lagi, dalam "
+"hal ini barang yang sudah diimpor akan diabaikan."
 
+#: templates/admin/migration/wizard/step6_complete.html:299
+msgid ""
+"Spwig could not finish this import. Items imported before the error are "
+"still in your store — nothing has been removed automatically. Review the "
+"details below, then fix the problem at source and run the import again. "
+"Items that were already imported will be skipped."
+msgstr ""
+"Spwig tidak dapat menyelesaikan impor ini. Item yang telah diimpor sebelum "
+"kesalahan masih ada di toko Anda — tidak ada yang dihapus secara otomatis. "
+"Periksa detail di bawah ini, lalu perbaiki masalah di sumber dan jalankan "
+"impor kembali. Item yang telah diimpor sebelumnya akan diabaikan."
+
+#: templates/admin/migration/wizard/step6_complete.html:306
 msgid "Error Details"
 msgstr "Detail Kesalahan"
 
+#: templates/admin/migration/wizard/step6_complete.html:322
 msgid "Show technical details"
 msgstr "Tampilkan Detail Teknis"
 
+#: templates/admin/migration/wizard/step6_complete.html:331
 msgid "No detailed error information available."
 msgstr "Tidak tersedia informasi kesalahan terperinci."
 
+#: templates/admin/migration/wizard/step6_complete.html:340
 msgid "Partial Import Results"
 msgstr "Hasil Impor Parsial"
 
+#: templates/admin/migration/wizard/step6_complete.html:342
 msgid ""
-"The following data was imported before the error occurred (all rolled back):"
+"The following items were imported before the error occurred. They are live "
+"in your store:"
 msgstr ""
-"Data berikut telah diimpor sebelum terjadi kesalahan (semua dikembalikan):"
+"Item berikut telah diimpor sebelum terjadinya kesalahan. Mereka sedang aktif "
+"di toko Anda:"
 
+#: templates/admin/migration/wizard/step6_complete.html:377
+#: templates/admin/migration/wizard/step6_complete.html:494
 msgid "Try Again"
 msgstr "Coba Lagi"
 
+#: templates/admin/migration/wizard/step6_complete.html:379
 msgid ""
 "You can start a new migration with the same settings or adjust your "
 "configuration."
@@ -3526,12 +4756,15 @@ msgstr ""
 "Anda dapat memulai migrasi baru dengan pengaturan yang sama atau "
 "menyesuaikan konfigurasi Anda."
 
+#: templates/admin/migration/wizard/step6_complete.html:384
 msgid "Adjust Settings"
 msgstr "Atur Pengaturan"
 
+#: templates/admin/migration/wizard/step6_complete.html:404
 msgid "Review your imported data"
 msgstr "Tinjau data yang diimpor"
 
+#: templates/admin/migration/wizard/step6_complete.html:406
 msgid ""
 "Check your products, customers, and orders to ensure everything imported "
 "correctly."
@@ -3539,71 +4772,330 @@ msgstr ""
 "Periksa produk, pelanggan, dan pesanan Anda untuk memastikan semuanya "
 "diimpor dengan benar."
 
+#: templates/admin/migration/wizard/step6_complete.html:410
 msgid "View Products"
 msgstr "Lihat Produk"
 
+#: templates/admin/migration/wizard/step6_complete.html:413
 msgid "View Customers"
 msgstr "Lihat Pelanggan"
 
+#: templates/admin/migration/wizard/step6_complete.html:416
 msgid "View Orders"
 msgstr "Lihat Pesanan"
 
+#: templates/admin/migration/wizard/step6_complete.html:422
 msgid "Configure your store settings"
 msgstr "Konfigurasikan pengaturan toko Anda"
 
+#: templates/admin/migration/wizard/step6_complete.html:424
 msgid "Review and adjust shipping, tax, and payment settings for your store."
 msgstr ""
 "Periksa dan sesuaikan pengaturan pengiriman, pajak, dan pembayaran untuk "
 "toko Anda."
 
+#: templates/admin/migration/wizard/step6_complete.html:429
 msgid "Test your checkout process"
 msgstr "Uji proses checkout Anda"
 
+#: templates/admin/migration/wizard/step6_complete.html:431
 msgid "Place a test order to ensure everything works correctly."
 msgstr "Buat pesanan uji untuk memastikan semuanya berfungsi dengan benar."
 
+#: templates/admin/migration/wizard/step6_complete.html:436
 msgid "Update your DNS settings"
 msgstr "Perbarui pengaturan DNS Anda"
 
+#: templates/admin/migration/wizard/step6_complete.html:438
 msgid "When you're ready to go live, point your domain to this platform."
 msgstr ""
 "Ketika Anda siap untuk diluncurkan, arahkan domain Anda ke platform ini."
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Review the error logs"
 msgstr "Tinjau log kesalahan"
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Understand what went wrong during the migration"
 msgstr "Pahami apa yang salah selama migrasi"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Check your source data"
 msgstr "Periksa data sumber Anda"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Ensure your data is valid and accessible"
 msgstr "Pastikan data Anda valid dan dapat diakses"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "Contact support"
 msgstr "Hubungi Dukungan"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "If you need help, our team is here to assist"
 msgstr "Jika Anda membutuhkan bantuan, tim kami siap membantu"
 
+#: templates/admin/migration/wizard/step6_complete.html:460
 msgid "Download Report"
 msgstr "Unduh Laporan"
 
+#: templates/admin/migration/wizard/step6_complete.html:462
 msgid "Download a detailed report of this migration for your records."
 msgstr "Unduh laporan rinci tentang migrasi ini untuk catatan Anda."
 
+#: templates/admin/migration/wizard/step6_complete.html:467
 msgid "Download PDF"
 msgstr "Unduh PDF"
 
+#: templates/admin/migration/wizard/step6_complete.html:471
 msgid "Download CSV"
 msgstr "Unduh CSV"
 
+#: templates/admin/migration/wizard/step6_complete.html:475
 msgid "Download Logs"
 msgstr "Unduh Log"
 
+#: templates/admin/migration/wizard/step6_complete.html:489
 msgid "Start Another Migration"
 msgstr "Mulai Migrasi Lainnya"
+
+#~ msgid "Transaction ID for rollback tracking"
+#~ msgstr "ID Transaksi untuk pelacakan pengembalian"
+
+#~ msgid "Database savepoint ID for this step"
+#~ msgstr "ID titik penyimpanan database untuk langkah ini"
+
+#~ msgid "Category Mapping"
+#~ msgstr "Pemetaan Kategori"
+
+#~ msgid ""
+#~ "Some categories from your source don't have direct matches. Choose how to "
+#~ "handle them:"
+#~ msgstr ""
+#~ "Beberapa kategori dari sumber Anda tidak memiliki cocok langsung. Pilih "
+#~ "cara menangani mereka:"
+
+#~ msgid "Create new categories"
+#~ msgstr "Buat kategori baru"
+
+#~ msgid "Create new categories in your platform for unmapped categories"
+#~ msgstr ""
+#~ "Buat kategori baru di platform Anda untuk kategori yang tidak dipetakan"
+
+#~ msgid "Assign to default category"
+#~ msgstr "Tetapkan ke kategori default"
+
+#~ msgid "Put all unmapped items in a default 'Uncategorized' category"
+#~ msgstr ""
+#~ "Masukkan semua item yang tidak dipetakan ke kategori default "
+#~ "'Uncategorized'"
+
+#~ msgid "Skip items with unmapped categories"
+#~ msgstr "Lewati item dengan kategori yang tidak dipetakan"
+
+#~ msgid "Don't import items that belong to unmapped categories"
+#~ msgstr "Jangan impor barang yang termasuk dalam kategori yang tidak terpeta"
+
+#~ msgid "Tax & Shipping Settings"
+#~ msgstr "Pengaturan Pajak & Pengiriman"
+
+#~ msgid "Import tax settings"
+#~ msgstr "Impor pengaturan pajak"
+
+#~ msgid "Import tax rates and rules from your source platform"
+#~ msgstr "Impor tingkat pajak dan aturan dari platform sumber Anda"
+
+#~ msgid "Import shipping zones and methods"
+#~ msgstr "Impor zona pengiriman dan metode"
+
+#~ msgid "Import shipping configuration from your source platform"
+#~ msgstr "Impor konfigurasi pengiriman dari platform sumber Anda"
+
+#~ msgid "Deadline for manual rollback (24 hours after completion)"
+#~ msgstr "Batas waktu untuk rollback manual (24 jam setelah selesai)"
+
+#~ msgid "Migration cancelled by user"
+#~ msgstr "Migrasi dibatalkan oleh pengguna"
+
+#~ msgid ""
+#~ "Migration marked as cancelled. The background import may keep running for "
+#~ "a while longer, so imported counts can continue to rise. Anything already "
+#~ "imported stays in your store."
+#~ msgstr ""
+#~ "Migrasi ditandai sebagai dibatalkan. Impor latar belakang mungkin masih "
+#~ "berjalan selama beberapa waktu lagi, sehingga jumlah yang diimpor dapat "
+#~ "terus meningkat. Apa pun yang sudah diimpor tetap ada di toko Anda."
+
+#~ msgid ""
+#~ "Only pending or failed migrations can be deleted. A running migration "
+#~ "must be cancelled first."
+#~ msgstr ""
+#~ "Hanya migrasi yang tertunda atau gagal yang dapat dihapus. Migrasi yang "
+#~ "sedang berjalan harus dibatalkan terlebih dahulu."
+
+#~ msgid "This will NOT remove:"
+#~ msgstr "Ini TIDAK akan menghapus:"
+
+#~ msgid ""
+#~ "Subscription plans, booking resources or other data created by store "
+#~ "extensions"
+#~ msgstr ""
+#~ "Rencana langganan, sumber daya pemesanan, atau data lain yang dibuat oleh "
+#~ "ekstensi toko"
+
+#~ msgid ""
+#~ "Review the rollback details? Rolling back removes what this import "
+#~ "created, and also removes all orders belonging to imported customers — "
+#~ "including any placed since the import."
+#~ msgstr ""
+#~ "Lihat detail rollback? Rollback menghapus apa yang telah dibuat oleh "
+#~ "impor ini, dan juga menghapus semua pesanan yang dimiliki oleh pelanggan "
+#~ "yang diimpor — termasuk pesanan yang ditempatkan sejak impor."
+
+#~ msgid "Migration rolled back successfully!"
+#~ msgstr "Migrasi dikembalikan dengan sukses!"
+
+#~ msgid ""
+#~ "The products, categories, reviews, coupons and media this import created"
+#~ msgstr ""
+#~ "Produk, kategori, ulasan, kupon, dan media yang dibuat oleh impor ini"
+
+#~ msgid ""
+#~ "The customer accounts this import created, along with their addresses and "
+#~ "loyalty history"
+#~ msgstr ""
+#~ "Akun pelanggan yang dibuat oleh impor ini, beserta alamat dan sejarah "
+#~ "loyalitas mereka"
+
+#~ msgid ""
+#~ "Every order belonging to an imported customer — including orders they "
+#~ "have placed since the import, not only the imported ones"
+#~ msgstr ""
+#~ "Setiap pesanan yang dimiliki oleh pelanggan yang diimpor — termasuk "
+#~ "pesanan yang telah mereka tempatkan sejak proses impor, bukan hanya "
+#~ "pesanan yang diimpor saja"
+
+#~ msgid ""
+#~ "Imported products from orders placed by your other customers, which "
+#~ "leaves those orders with missing items and incorrect totals"
+#~ msgstr ""
+#~ "Produk yang diimpor dari pesanan yang ditempatkan oleh pelanggan lain "
+#~ "Anda, yang menyebabkan pesanan tersebut memiliki item yang hilang dan "
+#~ "total yang tidak benar"
+
+#~ msgid "Affiliates, commissions or payouts created by this import"
+#~ msgstr "Afiliasi, komisi, atau pembayaran yang dibuat oleh impor ini"
+
+#~ msgid ""
+#~ "Because rollback reaches beyond the data this import created, it is only "
+#~ "safe immediately after a migration — before any real trading has "
+#~ "happened. This operation is PERMANENT and cannot be reversed."
+#~ msgstr ""
+#~ "Karena rollback mencakup data yang lebih luas dari data yang diimpor, ini "
+#~ "hanya aman segera setelah migrasi — sebelum terjadinya transaksi nyata. "
+#~ "Operasi ini PERMANENT dan tidak dapat dibatalkan."
+
+#~ msgid "🚀 Start New Migration"
+#~ msgstr "🚀 Mulai Migrasi Baru"
+
+#~ msgid "Migration restarted! Redirecting to progress page..."
+#~ msgstr "Migrasi dimulai kembali! Mengarahkan ke halaman kemajuan..."
+
+#~ msgid "Migration cancelled successfully."
+#~ msgstr "Migrasi dibatalkan dengan sukses."
+
+#~ msgid ""
+#~ "Deleted a running migration. If this was stuck, the operation has been "
+#~ "cleaned up."
+#~ msgstr ""
+#~ "Migrasi yang sedang berjalan telah dihapus. Jika ini terjebak, operasi "
+#~ "telah dibersihkan."
+
+#~ msgid "Migration deleted successfully."
+#~ msgstr "Migrasi dihapus dengan sukses."
+
+#~ msgid "Delete all products imported from this migration"
+#~ msgstr "Hapus semua produk yang diimpor dari migrasi ini"
+
+#~ msgid "Delete all categories imported from this migration"
+#~ msgstr "Hapus semua kategori yang diimpor dari migrasi ini"
+
+#~ msgid "Delete all customers imported from this migration"
+#~ msgstr "Hapus semua pelanggan yang diimpor dari migrasi ini"
+
+#~ msgid "Delete all orders imported from this migration"
+#~ msgstr "Hapus semua pesanan yang diimpor dari migrasi ini"
+
+#~ msgid "Delete all reviews imported from this migration"
+#~ msgstr "Hapus semua ulasan yang diimpor dari migrasi ini"
+
+#~ msgid "Delete all coupons imported from this migration"
+#~ msgstr "Hapus semua kupon yang diimpor dari migrasi ini"
+
+#~ msgid "Delete all associated media assets"
+#~ msgstr "Hapus semua aset media terkait"
+
+#~ msgid "Mark the migration job as 'rolled_back'"
+#~ msgstr "Tandai pekerjaan migrasi sebagai 'rolled_back'"
+
+#~ msgid "Are you sure you want to cancel this migration?"
+#~ msgstr "Apakah Anda yakin ingin membatalkan migrasi ini?"
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will delete all "
+#~ "imported data."
+#~ msgstr ""
+#~ "Apakah Anda yakin ingin mengembalikan migrasi ini? Ini akan menghapus "
+#~ "semua data yang diimpor."
+
+#~ msgid ""
+#~ "Are you sure you want to force delete this migration? This cannot be "
+#~ "undone."
+#~ msgstr ""
+#~ "Apakah Anda yakin ingin menghapus paksa migrasi ini? Ini tidak dapat "
+#~ "dikembalikan."
+
+#, fuzzy
+#~ msgid "Token Preview"
+#~ msgstr "Pratinjau"
+
+#~ msgid ""
+#~ "Magento migration is coming soon. We will support database access and API "
+#~ "methods."
+#~ msgstr ""
+#~ "Migrasi Magento akan segera hadir. Kami akan mendukung akses database dan "
+#~ "metode API."
+
+#~ msgid ""
+#~ "All data will be imported within a database transaction. If anything goes "
+#~ "wrong, the entire import will be rolled back automatically. You'll also "
+#~ "have 24 hours to manually rollback if needed."
+#~ msgstr ""
+#~ "Semua data akan diimpor dalam transaksi database. Jika terjadi kesalahan, "
+#~ "seluruh impor akan secara otomatis dikembalikan. Anda juga akan memiliki "
+#~ "24 jam untuk melakukan rollback manual jika diperlukan."
+
+#~ msgid ""
+#~ "Rolling back will remove all imported data. This action cannot be undone. "
+#~ "Make sure to backup any changes you've made since the migration."
+#~ msgstr ""
+#~ "Mengembalikan akan menghapus semua data yang diimpor. Tindakan ini tidak "
+#~ "dapat dikembalikan. Pastikan untuk membuat cadangan perubahan apa pun "
+#~ "yang telah Anda lakukan sejak migrasi."
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will remove all "
+#~ "imported data and cannot be undone."
+#~ msgstr ""
+#~ "Apakah Anda yakin ingin mengembalikan migrasi ini? Ini akan menghapus "
+#~ "semua data yang diimpor dan tidak dapat dikembalikan."
+
+#~ msgid ""
+#~ "There was an error during the import process. The migration has been "
+#~ "rolled back automatically."
+#~ msgstr ""
+#~ "Ada kesalahan selama proses impor. Migrasi telah dikembalikan secara "
+#~ "otomatis."
 
 #~ msgid ""
 #~ "Shopify migration is coming soon. We will support both API and CSV import "

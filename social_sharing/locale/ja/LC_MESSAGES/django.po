@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,691 +18,963 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:68 admin.py:164 templates/admin/social_sharing/dashboard.html:256
+#: templates/admin/social_sharing/dashboard.html:308
+#: templates/admin/social_sharing/dashboard.html:381
+#: templates/admin/social_sharing/sharecount/change_list.html:52
+#: templates/admin/social_sharing/socialshare/change_list.html:52
 msgid "Platform"
 msgstr "プラットフォーム"
 
+#: admin.py:76
 msgid "Shared Content"
 msgstr "共有コンテンツ"
 
+#: admin.py:86 templates/admin/social_sharing/dashboard.html:322
+#: templates/admin/social_sharing/partials/share_cards.html:78
 msgid "Anonymous"
 msgstr "匿名"
 
+#: admin.py:88 templates/admin/social_sharing/dashboard.html:208
+#: templates/admin/social_sharing/dashboard.html:307
 msgid "User"
 msgstr "ユーザー"
 
+#: admin.py:172 templates/admin/social_sharing/dashboard.html:309
+#: templates/admin/social_sharing/dashboard.html:380
 msgid "Content"
 msgstr "コンテンツ"
 
+#: admin.py:183 models.py:192
 msgid "Share Count"
 msgstr "共有数"
 
+#: admin.py:243
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:66
 msgid "Placement"
 msgstr "配置"
 
+#: admin.py:252
 msgid "Configure where social share buttons appear automatically"
 msgstr "ソーシャルシェアボタンが自動的に表示される場所を設定"
 
+#: admin.py:256
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:70
 msgid "Appearance"
 msgstr "外観"
 
+#: admin.py:269
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:74
 msgid "Tracking"
 msgstr "トラッキング"
 
+#: admin.py:278
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:211
 msgid "Metadata"
 msgstr "メタデータ"
 
+#: api/serializers.py:17
 msgid "Model name (lowercase) - e.g., 'product', 'page', 'post'"
 msgstr "モデル名（小文字） - 例: 'product', 'page', 'post'"
 
+#: api/serializers.py:20
 msgid "ID of the content being shared"
 msgstr "共有されるコンテンツのID"
 
+#: api/serializers.py:25
 msgid "Social media platform"
 msgstr "ソーシャルメディアプラットフォーム"
 
+#: api/serializers.py:27
 msgid "Full URL being shared"
 msgstr "共有されている完全なURL"
 
+#: api/views.py:147
 msgid "Track social media share"
 msgstr "ソーシャルメディア共有を追跡"
 
+#: api/views.py:148
 msgid ""
-"Track a social media share event for a product or other content. Records "
-"platform, URL, user, session, IP, and device type.\n"
+"Track a social media share event for a product or other content. Records platform, URL, user, session, IP, and device type.\n"
 "\n"
-"    Use this endpoint when a user shares content to social media platforms. "
-"Helps measure content virality and track most-shared products.\n"
+"    Use this endpoint when a user shares content to social media platforms. Helps measure content virality and track most-shared products.\n"
 "\n"
-"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"    **Security**: Authentication required to prevent spam and database "
-"pollution. Rate limited to 50 requests/hour per user.\n"
+"    **Security**: Authentication required to prevent spam and database pollution. Rate limited to 50 requests/hour per user.\n"
 "\n"
-"    **Use Case**: Call when user clicks a social share button to track "
-"sharing behavior and measure content engagement."
+"    **Use Case**: Call when user clicks a social share button to track sharing behavior and measure content engagement."
 msgstr ""
-"製品やその他のコンテンツのソーシャルメディア共有イベントをトラッキングしま"
-"す。プラットフォーム、URL、ユーザー、セッション、IPアドレス、デバイスの種類を"
-"記録します。\n"
+"製品やその他のコンテンツのソーシャルメディア共有イベントをトラッキングします。プラットフォーム、URL、ユーザー、セッション、IPアドレス、デバイスの種類を記録します。\n"
 "\n"
-"ユーザーがコンテンツをソーシャルメディアプラットフォームに共有するときにこの"
-"エンドポイントを使用してください。コンテンツの拡散性を測定し、最も共有された"
-"製品を追跡するのに役立ちます。\n"
+"ユーザーがコンテンツをソーシャルメディアプラットフォームに共有するときにこのエンドポイントを使用してください。コンテンツの拡散性を測定し、最も共有された製品を追跡するのに役立ちます。\n"
 "\n"
-"**サポートされているプラットフォーム**: facebook, twitter, linkedin, "
-"pinterest, whatsapp, telegram, email\n"
+"**サポートされているプラットフォーム**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"**セキュリティ**: スパムやデータベースの汚染を防ぐために認証が必要です。ユー"
-"ザーごとに1時間あたり50リクエストまでレート制限が適用されます。\n"
+"**セキュリティ**: スパムやデータベースの汚染を防ぐために認証が必要です。ユーザーごとに1時間あたり50リクエストまでレート制限が適用されます。\n"
 "\n"
-"**使用例**: ユーザーがソーシャル共有ボタンをクリックしたときに、共有の行動を"
-"トラッキングし、コンテンツのエンゲージメントを測定するために呼び出してくださ"
-"い。"
+"**使用例**: ユーザーがソーシャル共有ボタンをクリックしたときに、共有の行動をトラッキングし、コンテンツのエンゲージメントを測定するために呼び出してください。"
 
+#: api/views.py:168 api/views.py:283
 msgid "Invalid request, missing required fields, or invalid platform"
-msgstr ""
-"無効なリクエスト、必要なフィールドが欠けている、または無効なプラットフォーム"
+msgstr "無効なリクエスト、必要なフィールドが欠けている、または無効なプラットフォーム"
 
+#: api/views.py:170 api/views.py:286 api/views.py:422 api/views.py:486
 msgid "Internal server error"
 msgstr "内部サーバーエラー"
 
+#: api/views.py:264
+#| msgid "Track social media share"
+msgid "Track social media share (anonymous)"
+msgstr "ソーシャルメディアの共有を追跡（匿名）"
+
+#: api/views.py:265
+msgid ""
+"Anonymous variant of the share tracking endpoint for guest visitors.\n"
+"\n"
+"    Identical payload to the authenticated endpoint, but does not require a logged-in user. The resulting `SocialShare` row is stored with `user=None` and is linked only via the visitor's session key, IP, user agent, and device type.\n"
+"\n"
+"    **Security**: No authentication required, but aggressively rate-limited (20 requests/hour per IP) to prevent spam and database pollution. Bots are not filtered at the endpoint level — consumers should apply their own bot detection if needed.\n"
+"\n"
+"    **Use Case**: Headless storefronts where most visitors sharing content (product pages, blog posts) are not logged in. The authenticated `track_share` endpoint would exclude all guest shares from analytics, which is the majority of real traffic."
+msgstr ""
+"ゲスト訪問者の共有追跡エンドポイントの匿名バリアント。\n"
+"\n"
+"認証済みエンドポイントと同じペイロードですが、ログインユーザーは不要です。結果として生成される`SocialShare`レコードは`user=None`で保存され、訪問者のセッションキー、IPアドレス、ユーザーエージェント、デバイスタイプのみで関連付けられます。\n"
+"\n"
+"**セキュリティ**: 認証は必要ありませんが、スパムやデータベースの汚染を防ぐためにIPごとに1時間あたり20リクエストまで厳しくレート制限されています。エンドポイントレベルでのボットフィルタリングは行われていません—必要に応じて消費者側でボット検出を実装してください。\n"
+"\n"
+"**使用例**: 多くの訪問者がログインせずにコンテンツ（商品ページ、ブログ投稿）を共有するヘッドレスショッピングモール。認証済みの`track_share`エンドポイントは、ゲストの共有を分析から除外するため、実際のトラフィックの大部分をカバーしません。"
+
+#: api/views.py:285
+msgid "Rate limit exceeded"
+msgstr "レート制限を超えました"
+
+#: api/views.py:401
 msgid "Get share counts for content"
 msgstr "コンテンツの共有数を取得"
 
+#: api/views.py:402
 msgid ""
 "Get aggregated share counts by platform for a specific piece of content.\n"
 "\n"
-"    Returns counts for each social platform plus a total. Useful for "
-"displaying share counts on product pages, blog posts, etc.\n"
+"    Returns counts for each social platform plus a total. Useful for displaying share counts on product pages, blog posts, etc.\n"
 "\n"
 "    **No authentication required** - share counts are public data."
 msgstr ""
-"特定のコンテンツに対してプラットフォームごとの集計された共有数を取得できま"
-"す。\n"
+"特定のコンテンツに対してプラットフォームごとの集計された共有数を取得できます。\n"
 "\n"
-"各ソーシャルプラットフォームごとの数値に加え、合計数も返されます。製品ページ"
-"やブログ投稿などに共有数を表示するのに役立ちます。\n"
+"各ソーシャルプラットフォームごとの数値に加え、合計数も返されます。製品ページやブログ投稿などに共有数を表示するのに役立ちます。\n"
 "\n"
 "**認証不要** - 共有数は公開データです。"
 
+#: api/views.py:421
 msgid "Invalid content type"
 msgstr "無効なコンテンツタイプ"
 
+#: api/views.py:472
 msgid "Get current user's share history"
 msgstr "現在のユーザーの共有履歴を取得"
 
+#: api/views.py:473
 msgid ""
-"Get the authenticated user's social sharing history, including total shares, "
-"breakdown by platform, and recent share events.\n"
+"Get the authenticated user's social sharing history, including total shares, breakdown by platform, and recent share events.\n"
 "\n"
 "    **Authentication required.**"
 msgstr ""
-"認証済みユーザーのソーシャル共有履歴を取得できます。総共有数、プラットフォー"
-"ムごとの詳細、および最近の共有イベントが含まれます。\n"
+"認証済みユーザーのソーシャル共有履歴を取得できます。総共有数、プラットフォームごとの詳細、および最近の共有イベントが含まれます。\n"
 "\n"
 "**認証が必要です。**"
 
+#: api/views.py:485
 msgid "Authentication required"
 msgstr "認証が必要です"
 
+#: apps.py:8
 msgid "Social Sharing"
 msgstr "ソーシャル共有"
 
+#: forms.py:27 settings_models.py:152
 msgid "Enabled Platforms"
 msgstr "有効なプラットフォーム"
 
+#: forms.py:29
 msgid ""
 "Select which platforms to show. If none selected, all platforms will be "
 "shown."
-msgstr ""
-"表示するプラットフォームを選択してください。選択されていない場合、すべてのプ"
-"ラットフォームが表示されます。"
+msgstr "表示するプラットフォームを選択してください。選択されていない場合、すべてのプラットフォームが表示されます。"
 
+#: models.py:35 templates/admin/social_sharing/partials/share_cards.html:39
+#: templates/admin/social_sharing/partials/sharecount_cards.html:39
+#: templates/admin/social_sharing/sharecount/change_list.html:56
+#: templates/admin/social_sharing/socialshare/change_list.html:56
 msgid "Facebook"
 msgstr "フェイスブック"
 
+#: models.py:36 templates/admin/social_sharing/sharecount/change_list.html:57
+#: templates/admin/social_sharing/socialshare/change_list.html:57
 msgid "Twitter/X"
 msgstr "ツイッター/X"
 
+#: models.py:37 templates/admin/social_sharing/partials/share_cards.html:43
+#: templates/admin/social_sharing/partials/sharecount_cards.html:43
+#: templates/admin/social_sharing/sharecount/change_list.html:58
+#: templates/admin/social_sharing/socialshare/change_list.html:58
 msgid "LinkedIn"
 msgstr "リンクトイン"
 
+#: models.py:38 templates/admin/social_sharing/partials/share_cards.html:45
+#: templates/admin/social_sharing/partials/sharecount_cards.html:45
+#: templates/admin/social_sharing/sharecount/change_list.html:59
+#: templates/admin/social_sharing/socialshare/change_list.html:59
 msgid "Pinterest"
 msgstr "Pinterest"
 
+#: models.py:39 templates/admin/social_sharing/partials/share_cards.html:47
+#: templates/admin/social_sharing/partials/sharecount_cards.html:47
+#: templates/admin/social_sharing/sharecount/change_list.html:60
+#: templates/admin/social_sharing/socialshare/change_list.html:60
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: models.py:40 templates/admin/social_sharing/partials/share_cards.html:49
+#: templates/admin/social_sharing/partials/sharecount_cards.html:49
+#: templates/admin/social_sharing/sharecount/change_list.html:61
+#: templates/admin/social_sharing/socialshare/change_list.html:61
 msgid "Telegram"
 msgstr "テレグラム"
 
+#: models.py:41 templates/admin/social_sharing/partials/share_cards.html:51
+#: templates/admin/social_sharing/partials/sharecount_cards.html:51
+#: templates/admin/social_sharing/sharecount/change_list.html:62
+#: templates/admin/social_sharing/socialshare/change_list.html:62
 msgid "Email"
 msgstr "メール"
 
+#: models.py:51 templates/admin/social_sharing/socialshare/change_list.html:86
 msgid "Desktop"
 msgstr "デスクトップ"
 
+#: models.py:52 templates/admin/social_sharing/socialshare/change_list.html:87
 msgid "Mobile"
 msgstr "モバイル"
 
+#: models.py:53 templates/admin/social_sharing/socialshare/change_list.html:88
 msgid "Tablet"
 msgstr "タブレット"
 
+#: models.py:54
 msgid "Unknown"
 msgstr "不明"
 
+#: models.py:61 models.py:170
 msgid "content type"
 msgstr "コンテンツタイプ"
 
+#: models.py:62
 msgid "Type of content shared (Product, Category, etc.)"
 msgstr "共有されたコンテンツの種類（商品、カテゴリなど）"
 
+#: models.py:65 models.py:172
 msgid "object ID"
 msgstr "オブジェクトID"
 
+#: models.py:65
 msgid "ID of the shared object"
 msgstr "共有オブジェクトのID"
 
+#: models.py:74 models.py:177
 msgid "platform"
 msgstr "プラットフォーム"
 
+#: models.py:75
 msgid "Social platform used for sharing"
 msgstr "共有に使用されるソーシャルプラットフォーム"
 
+#: models.py:79
 msgid "shared URL"
 msgstr "共有されたURL"
 
+#: models.py:79
 msgid "URL that was shared"
 msgstr "共有されたURL"
 
+#: models.py:85
 msgid "referrer"
 msgstr "リファラ"
 
+#: models.py:86
 msgid "Page from which share was initiated"
 msgstr "共有が開始されたページ"
 
+#: models.py:96
 msgid "user"
 msgstr "ユーザー"
 
+#: models.py:97
 msgid "User who shared (if logged in)"
 msgstr "共有したユーザー（ログインしている場合）"
 
+#: models.py:104
 msgid "session ID"
 msgstr "セッションID"
 
+#: models.py:105
 msgid "Session identifier for anonymous users"
 msgstr "匿名ユーザーのセッション識別子"
 
+#: models.py:111
 msgid "IP address"
 msgstr "IPアドレス"
 
+#: models.py:112
 msgid "IP address of sharer (for analytics and fraud detection)"
 msgstr "共有者のIPアドレス（分析および不正検出用）"
 
+#: models.py:116
 msgid "user agent"
 msgstr "ユーザーエージェント"
 
+#: models.py:116
 msgid "Browser user agent string"
 msgstr "ブラウザユーザーエージェント文字列"
 
+#: models.py:123
 msgid "device type"
 msgstr "デバイスタイプ"
 
+#: models.py:124
 msgid "Type of device used for sharing"
 msgstr "共有に使用されたデバイスの種類"
 
+#: models.py:131
 msgid "shared at"
 msgstr "共有日時"
 
+#: models.py:132
 msgid "When the share occurred"
 msgstr "共有が発生した時刻"
 
+#: models.py:135 models.py:189
 msgid "created at"
 msgstr "作成日時"
 
+#: models.py:137
 msgid "updated at"
 msgstr "更新日時"
 
+#: models.py:140
 msgid "Social Share"
 msgstr "ソーシャル共有"
 
+#: models.py:141 templates/admin/social_sharing/dashboard.html:138
+#: templates/admin/social_sharing/socialshare/change_list.html:4
+#: templates/admin/social_sharing/socialshare/change_list.html:19
 msgid "Social Shares"
 msgstr "ソーシャルシェア"
 
+#: models.py:182
 msgid "share count"
 msgstr "共有数"
 
+#: models.py:183
 msgid "Number of times shared on this platform"
 msgstr "このプラットフォームでの共有回数"
 
+#: models.py:187
 msgid "last updated"
 msgstr "最終更新"
 
+#: models.py:193 templates/admin/social_sharing/dashboard.html:149
+#: templates/admin/social_sharing/sharecount/change_list.html:4
+#: templates/admin/social_sharing/sharecount/change_list.html:19
 msgid "Share Counts"
 msgstr "共有数"
 
+#: settings_models.py:22 settings_models.py:23 settings_models.py:197
+#: templates/admin/social_sharing/dashboard.html:450
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:4
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:20
 msgid "Social Sharing Settings"
 msgstr "ソーシャル共有設定"
 
+#: settings_models.py:28
 msgid "Enable on Products"
 msgstr "商品で有効"
 
+#: settings_models.py:29
 msgid "Automatically show share buttons on product detail pages"
 msgstr "商品詳細ページに共有ボタンを自動的に表示"
 
+#: settings_models.py:34
 msgid "Enable on Categories"
 msgstr "カテゴリで有効"
 
+#: settings_models.py:35
 msgid "Automatically show share buttons on category pages"
 msgstr "カテゴリページに共有ボタンを自動的に表示"
 
+#: settings_models.py:40
 msgid "Enable on Blog Posts"
 msgstr "ブログ投稿で有効"
 
+#: settings_models.py:41
 msgid "Automatically show share buttons on blog post pages"
 msgstr "ブログ投稿ページに共有ボタンを自動的に表示"
 
+#: settings_models.py:46
 msgid "Enable on Custom Pages"
 msgstr "カスタムページで有効"
 
+#: settings_models.py:47
 msgid "Automatically show share buttons on custom pages"
 msgstr "カスタムページに共有ボタンを自動的に表示"
 
+#: settings_models.py:52
 msgid "Above Content"
 msgstr "コンテンツの上"
 
+#: settings_models.py:53
 msgid "Below Content"
 msgstr "コンテンツの下"
 
+#: settings_models.py:54
 msgid "Sidebar"
 msgstr "サイドバー"
 
+#: settings_models.py:55
 msgid "Floating (sticky)"
 msgstr "フローティング（sticky）"
 
+#: settings_models.py:62
 msgid "Placement Position"
 msgstr "配置位置"
 
+#: settings_models.py:63
 msgid "Where to display share buttons on the page"
 msgstr "ページ上に共有ボタンを表示する場所"
 
+#: settings_models.py:68
 msgid "Icon Only"
 msgstr "アイコンのみ"
 
+#: settings_models.py:69
 msgid "Icon + Label"
 msgstr "アイコン＋ラベル"
 
+#: settings_models.py:70
 msgid "Label Only"
 msgstr "ラベルのみ"
 
+#: settings_models.py:77
 msgid "Button Style"
 msgstr "ボタンスタイル"
 
+#: settings_models.py:78
 msgid "How share buttons are displayed"
 msgstr "共有ボタンの表示方法"
 
+#: settings_models.py:83
 msgid "Small"
 msgstr "小"
 
+#: settings_models.py:84
 msgid "Medium"
 msgstr "中"
 
+#: settings_models.py:85
 msgid "Large"
 msgstr "大"
 
+#: settings_models.py:92
 msgid "Button Size"
 msgstr "ボタンサイズ"
 
+#: settings_models.py:93
 msgid "Size of the share buttons"
 msgstr "共有ボタンのサイズ"
 
+#: settings_models.py:98
 msgid "Horizontal"
 msgstr "水平"
 
+#: settings_models.py:99
 msgid "Vertical"
 msgstr "垂直"
 
+#: settings_models.py:106
 msgid "Layout Direction"
 msgstr "レイアウト方向"
 
+#: settings_models.py:107
 msgid "Arrange share buttons horizontally or vertically"
 msgstr "共有ボタンを水平または垂直に配置します。"
 
+#: settings_models.py:113
 msgid "Show Title"
 msgstr "タイトルを表示"
 
+#: settings_models.py:114
 msgid "Show the 'Share' heading above the buttons"
 msgstr "ボタンの上に「共有」の見出しを表示します。"
 
+#: settings_models.py:119
 msgid "Always Show"
 msgstr "常に表示"
 
+#: settings_models.py:120
 msgid "Hide on Mobile"
 msgstr "モバイルで非表示"
 
+#: settings_models.py:121
 msgid "Mobile Only"
 msgstr "モバイル専用"
 
+#: settings_models.py:128
 msgid "Mobile Visibility"
 msgstr "モバイルでの可視性"
 
+#: settings_models.py:129
 msgid "Control whether share buttons appear on mobile devices"
 msgstr "モバイルデバイスに共有ボタンが表示されるかどうかを管理します。"
 
+#: settings_models.py:136
 msgid "Widget Slug"
 msgstr "ウィジェットスラグ"
 
+#: settings_models.py:137
 msgid "Slug of the widget package to use for rendering"
 msgstr "レンダリングに使用するウィジェットパッケージのスラッグ"
 
+#: settings_models.py:144
 msgid "Default Widget Configuration"
 msgstr "デフォルトのウィジェット設定"
 
+#: settings_models.py:145
 msgid ""
 "Override default widget configuration (display_style, button_size, etc.)"
 msgstr "デフォルトのウィジェット設定を上書き（display_style、button_sizeなど）"
 
+#: settings_models.py:153
 msgid "List of enabled platforms. Leave empty to use widget defaults."
-msgstr ""
-"有効なプラットフォームのリスト。デフォルトのウィジェット設定を使用する場合は"
-"空にしてください。"
+msgstr "有効なプラットフォームのリスト。デフォルトのウィジェット設定を使用する場合は空にしてください。"
 
+#: settings_models.py:159 templates/admin/social_sharing/dashboard.html:514
 msgid "Show Share Counts"
 msgstr "共有数を表示"
 
+#: settings_models.py:160
 msgid "Display number of shares for each platform"
 msgstr "各プラットフォームの共有数を表示"
 
+#: settings_models.py:165
 msgid "Track Shares"
 msgstr "共有を追跡"
 
+#: settings_models.py:166
 msgid "Track share events and award loyalty badges"
 msgstr "共有イベントを追跡し、ロイヤルティバッジを付与"
 
+#: settings_models.py:170
 msgid "Updated At"
 msgstr "更新日時"
 
+#: settings_models.py:173
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:221
 msgid "Updated By"
 msgstr "更新者"
 
+#: templates/admin/social_sharing/dashboard.html:4
+#: templates/admin/social_sharing/dashboard.html:22
 msgid "Social Sharing Dashboard"
 msgstr "ソーシャル共有ダッシュボード"
 
+#: templates/admin/social_sharing/dashboard.html:4
 msgid "Site Admin"
 msgstr "サイト管理者"
 
+#: templates/admin/social_sharing/dashboard.html:25
 #, python-format
 msgid ""
 "\n"
-"            Analytics and settings for the last 30 days (%(start)s - "
-"%(end)s)\n"
+"            Analytics and settings for the last 30 days (%(start)s - %(end)s)\n"
 "            "
 msgstr ""
 "\n"
-"            過去30日の分析と設定 (%(start)s - %(end)s)過去30日の分析と設定 "
-"(%(start)s - %(end)s)\n"
+"            過去30日の分析と設定 (%(start)s - %(end)s)過去30日の分析と設定 (%(start)s - %(end)s)\n"
 "            "
 
+#: templates/admin/social_sharing/dashboard.html:38
 msgid "Total Shares"
 msgstr "合計共有数"
 
+#: templates/admin/social_sharing/dashboard.html:45
 msgid "Shares Today"
 msgstr "今日の共有数"
 
+#: templates/admin/social_sharing/dashboard.html:52
 msgid "Shares This Month"
 msgstr "今月の共有数"
 
+#: templates/admin/social_sharing/dashboard.html:77
 msgid "Top Platform"
 msgstr "トッププラットフォーム"
 
+#: templates/admin/social_sharing/dashboard.html:92
+#: templates/admin/social_sharing/dashboard.html:100
 msgid "Top Product"
 msgstr "トップ商品"
 
+#: templates/admin/social_sharing/dashboard.html:110
+#: templates/admin/social_sharing/dashboard.html:118
 msgid "Most Active Sharer"
 msgstr "最も活発な共有者"
 
+#: templates/admin/social_sharing/dashboard.html:130
 msgid "Quick Actions"
 msgstr "クイックアクション"
 
+#: templates/admin/social_sharing/dashboard.html:139
 msgid "View individual share events"
 msgstr "個別の共有イベントを表示"
 
+#: templates/admin/social_sharing/dashboard.html:141
+#: templates/admin/social_sharing/dashboard.html:152
 msgid "Manage"
 msgstr "管理"
 
+#: templates/admin/social_sharing/dashboard.html:150
 msgid "Aggregated share statistics"
 msgstr "集約された共有統計"
 
+#: templates/admin/social_sharing/dashboard.html:160
 msgid "Settings"
 msgstr "設定"
 
+#: templates/admin/social_sharing/dashboard.html:161
 msgid "Configure social sharing"
 msgstr "ソーシャル共有を構成"
 
+#: templates/admin/social_sharing/dashboard.html:163
 msgid "Configure"
 msgstr "設定"
 
+#: templates/admin/social_sharing/dashboard.html:178
 msgid "Shares Over Time (Last 30 Days)"
 msgstr "時間ごとの共有数（過去30日間）"
 
+#: templates/admin/social_sharing/dashboard.html:187
 msgid "Shares by Platform"
 msgstr "プラットフォーム別シェア数"
 
+#: templates/admin/social_sharing/dashboard.html:200
 msgid "Top 10 Sharers (Last 30 Days)"
 msgstr "過去30日間の上位10人の共有者"
 
+#: templates/admin/social_sharing/dashboard.html:207
+#: templates/admin/social_sharing/dashboard.html:255
+#: templates/admin/social_sharing/dashboard.html:379
 msgid "Rank"
 msgstr "ランク"
 
+#: templates/admin/social_sharing/dashboard.html:209
+#: templates/admin/social_sharing/dashboard.html:257
+#: templates/admin/social_sharing/dashboard.html:382
+#: templates/admin/social_sharing/dashboard.html:542
 msgid "Shares"
 msgstr "シェア"
 
+#: templates/admin/social_sharing/dashboard.html:232
+#: templates/admin/social_sharing/dashboard.html:280
+#: templates/admin/social_sharing/dashboard.html:426
+#: templates/admin/social_sharing/dashboard.html:544
+#: templates/admin/social_sharing/partials/sharecount_cards.html:68
 msgid "shares"
 msgstr "シェア"
 
+#: templates/admin/social_sharing/dashboard.html:240
 msgid "No sharers in the selected period."
 msgstr "選択された期間に共有者はいません。"
 
+#: templates/admin/social_sharing/dashboard.html:248
 msgid "Top 5 Platforms"
 msgstr "上位5つのプラットフォーム"
 
+#: templates/admin/social_sharing/dashboard.html:288
 msgid "No platform data available."
 msgstr "利用可能なプラットフォームデータがありません。"
 
+#: templates/admin/social_sharing/dashboard.html:299
 msgid "Recent Shares"
 msgstr "最近のシェア"
 
+#: templates/admin/social_sharing/dashboard.html:306
 msgid "Date"
 msgstr "日付"
 
+#: templates/admin/social_sharing/dashboard.html:348
+#: templates/admin/social_sharing/dashboard.html:417
 msgid "Content deleted"
 msgstr "コンテンツが削除されました"
 
+#: templates/admin/social_sharing/dashboard.html:357
 msgid "No recent shares."
 msgstr "最近のシェアはありません。"
 
+#: templates/admin/social_sharing/dashboard.html:363
 msgid "View All Shares"
 msgstr "すべてのシェアを表示"
 
+#: templates/admin/social_sharing/dashboard.html:372
 msgid "Top 5 Most Shared Content"
 msgstr "最もシェアされたコンテンツ上位5件"
 
+#: templates/admin/social_sharing/dashboard.html:434
 msgid "No shared content yet."
 msgstr "まだシェアされたコンテンツはありません。"
 
+#: templates/admin/social_sharing/dashboard.html:440
 msgid "View All Share Counts"
 msgstr "すべてのシェア数を表示"
 
+#: templates/admin/social_sharing/dashboard.html:468
 msgid "Enable Social Sharing On"
 msgstr "ソーシャルシェアを有効にする"
 
+#: templates/admin/social_sharing/dashboard.html:473
 msgid "Products"
 msgstr "商品"
 
+#: templates/admin/social_sharing/dashboard.html:479
 msgid "Categories"
 msgstr "カテゴリ"
 
+#: templates/admin/social_sharing/dashboard.html:485
 msgid "Blog Posts"
 msgstr "ブログ投稿"
 
+#: templates/admin/social_sharing/dashboard.html:491
 msgid "Pages"
 msgstr "ページ"
 
+#: templates/admin/social_sharing/dashboard.html:499
 msgid "Display Settings"
 msgstr "表示設定"
 
+#: templates/admin/social_sharing/dashboard.html:502
 msgid "Button Placement"
 msgstr "ボタンの配置"
 
+#: templates/admin/social_sharing/dashboard.html:520
 msgid "Track Share Events"
 msgstr "シェアイベントを追跡"
 
+#: templates/admin/social_sharing/dashboard.html:529
 msgid "Save Settings"
 msgstr "設定を保存"
 
+#: templates/admin/social_sharing/dashboard.html:543
+#: templates/admin/social_sharing/partials/sharecount_cards.html:66
 msgid "share"
 msgstr "シェア"
 
+#: templates/admin/social_sharing/partials/share_cards.html:41
+#: templates/admin/social_sharing/partials/sharecount_cards.html:41
 msgid "Twitter"
 msgstr "Twitter"
 
+#: templates/admin/social_sharing/partials/share_cards.html:128
 msgid "No social shares found matching your filters."
 msgstr "指定したフィルターに一致するソーシャル共有は見つかりませんでした。"
 
+#: templates/admin/social_sharing/partials/share_cards.html:132
+#: templates/admin/social_sharing/partials/sharecount_cards.html:119
 msgid "Clear Filters"
 msgstr "フィルタをクリア"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:76
 msgid "Updated"
 msgstr "更新済み"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:115
 msgid "No share counts found matching your filters."
 msgstr "指定したフィルターに一致する共有数は見つかりませんでした。"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:21
 msgid "Track social media sharing statistics across platforms"
 msgstr "プラットフォームごとのソーシャルメディア共有統計を追跡"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:31
+#: templates/admin/social_sharing/socialshare/change_list.html:31
 msgid "Filters"
 msgstr "フィルター"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:35
+#: templates/admin/social_sharing/socialshare/change_list.html:35
 msgid "Toggle Filters"
 msgstr "フィルタを切り替え"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:44
+#: templates/admin/social_sharing/socialshare/change_list.html:44
 msgid "Search"
 msgstr "検索"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:46
 msgid "Search by content ID..."
 msgstr "コンテンツIDで検索..."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:55
+#: templates/admin/social_sharing/socialshare/change_list.html:55
 msgid "All Platforms"
 msgstr "すべてのプラットフォーム"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:69
+#: templates/admin/social_sharing/socialshare/change_list.html:69
 msgid "Content Type"
 msgstr "コンテンツタイプ"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:72
+#: templates/admin/social_sharing/socialshare/change_list.html:72
 msgid "All Types"
 msgstr "すべてのタイプ"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:82
 msgid "Min. Share Count"
 msgstr "最小シェア数"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:84
 msgid "Minimum shares"
 msgstr "最小シェア数"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:90
 msgid "Sort By"
 msgstr "並び順"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:93
 msgid "Most Shares"
 msgstr "最多シェア"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:94
 msgid "Least Shares"
 msgstr "最少シェア"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:95
 msgid "Recently Updated"
 msgstr "最近更新された"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:96
 msgid "Oldest Updated"
 msgstr "最も古い更新"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:104
+#: templates/admin/social_sharing/socialshare/change_list.html:112
 msgid "Active:"
 msgstr "アクティブ:"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:111
+#: templates/admin/social_sharing/socialshare/change_list.html:119
 msgid "Clear All"
 msgstr "すべてクリア"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:115
+#: templates/admin/social_sharing/socialshare/change_list.html:123
 msgid "Apply Filters"
 msgstr "フィルターを適用"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "Showing"
 msgstr "表示中"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "results"
 msgstr "結果"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:21
 msgid "Monitor individual share events and user engagement"
 msgstr "個別の共有イベントとユーザーのエンゲージメントを監視"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:46
 msgid "Search by user, URL..."
 msgstr "ユーザー、URLで検索..."
 
+#: templates/admin/social_sharing/socialshare/change_list.html:82
 msgid "Device"
 msgstr "デバイス"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:85
 msgid "All Devices"
 msgstr "すべてのデバイス"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:95
 msgid "Date From"
 msgstr "日付（から）"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:103
 msgid "Date To"
 msgstr "日付（まで）"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:25
 msgid "Configure automatic social sharing buttons across your store"
 msgstr "店舗全体で自動的にソーシャル共有ボタンを構成します。"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:30
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:234
 msgid "Save and continue editing"
 msgstr "保存して編集を続ける"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:33
 msgid "Save settings"
 msgstr "設定を保存"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:50
 msgid "Please correct the errors below"
 msgstr "下のエラーを修正してください"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:83
 msgid "Automatic Placement"
 msgstr "自動配置"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:84
 msgid ""
 "Configure where social share buttons appear automatically across your store."
 msgstr "店舗全体でソーシャル共有ボタンが自動的に表示される場所を構成します。"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:129
 msgid "Platforms"
 msgstr "プラットフォーム"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:130
 msgid ""
 "Select which social platforms to show. If none are selected, all platforms "
 "will be displayed."
-msgstr ""
-"表示するソーシャルプラットフォームを選択してください。選択されていない場合、"
-"すべてのプラットフォームが表示されます。"
+msgstr "表示するソーシャルプラットフォームを選択してください。選択されていない場合、すべてのプラットフォームが表示されます。"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:140
 msgid "Button Appearance"
 msgstr "ボタンの外観"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:141
 msgid "Control how the share buttons look on your store."
 msgstr "ストアに表示される共有ボタンの見た目を管理します。"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:186
 msgid "Tracking & Analytics"
 msgstr "トラッキング＆アナリティクス"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:187
 msgid "Control share tracking and count display."
 msgstr "共有のトラッキングとカウントの表示を管理します。"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:215
 msgid "Last Updated"
 msgstr "最終更新"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:233
 msgid "Save"
 msgstr "保存"
 
+#: views.py:214
 msgid "Social sharing settings updated successfully."
 msgstr "ソーシャルシェアリング設定が正常に更新されました。"

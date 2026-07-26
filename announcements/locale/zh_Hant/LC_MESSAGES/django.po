@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "內容"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "圖片"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -31,38 +34,51 @@ msgstr ""
 "可選的彈窗顯示圖片。請選擇橫幅（位於內容上方）或背景（位於文字後方並帶遮罩"
 "層）。"
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "連結"
 
+#: admin.py:78
 msgid "Display"
 msgstr "顯示"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "顯示規則"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
 msgstr "可選：根據高級條件限制此公告的顯示時間。"
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "標題"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "無過期時間"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "已過期"
 
+#: admin.py:121
 msgid "Active"
 msgstr "啟用"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "狀態"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "列出活動公告"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -71,12 +87,15 @@ msgstr ""
 "公開端點。傳回所有已啟用且未過期的公告，依優先順序由低到高排序，再依 "
 "created_at 時間由新到舊排序。用於商店前端的公告小部件。"
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "活動公告清單"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "取得公告詳細資料"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -85,258 +104,348 @@ msgstr ""
 "公開端點。傳回完整的公告資料，包含正文 HTML、圖片 URL 和商店前端模態視窗的顯"
 "示模式。如果公告處於非活動狀態、已過期或不存在，則會傳回 404。"
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "公告主要鍵"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "公告詳情"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "未找到、已停用或已過期"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "公告"
 
+#: models.py:15
 msgid "No Link"
 msgstr "無連結"
 
+#: models.py:16
 msgid "Product"
 msgstr "商品"
 
+#: models.py:17
 msgid "Category"
 msgstr "分類"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "部落格文章"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "頁面"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "自訂 URL"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "橫幅圖片（內容上方）"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "背景圖片（帶遮罩）"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr "公告標題 - 支援基本樣式（粗體、斜體、顏色）"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "可選的彈窗顯示詳細內容"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "用於彈窗顯示的選用圖片"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "如何在彈窗中顯示圖片"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
 msgstr "當圖片用作背景時的遮罩透明度（0 = 完全透明，1 = 完全不透明）"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "此公告的連結類型"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "要連結的商品"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "要連結的分類"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "要連結的部落格文章"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "要連結的頁面"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "連結的自訂 URL"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "彈窗連結的按鈕文字，例如 \"立即購物\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
 msgstr ""
 "若啟用，點擊公告將開啟包含完整內容的彈窗。若停用，點擊將直接導向連結 URL。"
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "啟用或停用此公告"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
 msgstr "公告將在這日期/時間後自動停止顯示。留空表示無到期日。"
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr "數字越小，優先級越高（會先顯示）"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "條件顯示的可見性規則"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "公告內容的翻譯"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "公告"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "編輯公告"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "新增公告"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "請修正以下錯誤。"
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "公告標題 — 支援粗體、斜體和字體顏色。"
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "內容"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "彈窗中顯示的可選詳細文字。"
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "連結類型"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "按鈕文字"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "例如 \""
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "顯示彈窗"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "在彈窗中顯示詳細資訊，而不是導向連結。"
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "可選"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr "彈窗的圖片。當訪客點擊公告時會顯示。"
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "顯示模式"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "遮罩透明度"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = 完全透明，1 = 完全不透明"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "已啟用"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "優先級"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "較低 = 顯示在前"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "過期時間"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "留空表示無過期時間。"
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "建立時間"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "已更新"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "高級"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr "限制此公告的顯示時間。留空表示對所有人顯示。"
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "按住 Ctrl / Cmd 鍵可多選。"
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "儲存"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "儲存並繼續"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "儲存並新增另一個"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "刪除"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr "管理顯示在頁首和頁尾的商店公告"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "全部"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "已停用"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "搜尋公告..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "公告"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "上一步"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "的"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "下一步"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "未找到公告"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "沒有符合您搜尋條件的公告。"
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr "建立您的第一個公告，以顯示在商店的頁首或頁尾。"
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "建立公告"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "點擊時彈出視窗"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "視窗"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "點擊時直接連結"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "直接連結"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "最後更新"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "前"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "到期日"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "有圖片"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "編輯"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,18 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: admin.py:16
 msgid "Enter client secret (leave blank to keep current)"
 msgstr "Müşteri gizli bilgisini girin (boş bırakın mevcut olanı korumak için)"
 
+#: admin.py:20
 msgid "Client Secret"
 msgstr "İstemci Gizli"
 
+#: admin.py:21
 msgid ""
 "Application/Client secret from your identity provider. Stored encrypted."
 msgstr ""
 "Kimlik sağlayıcınızdan gelen Uygulama/Müşteri gizli bilgisi. Şifrelenerek "
 "saklanır."
 
+#: admin.py:55
 msgid ""
 "A client secret is currently configured. Leave blank to keep it, or enter a "
 "new value to replace it."
@@ -37,137 +41,177 @@ msgstr ""
 "Şu anda bir müşteri gizli bilgisi yapılandırılmıştır. Boş bırakarak mevcut "
 "olanı koruyabilir ya da yeni bir değer girerek değiştirebilirsiniz."
 
+#: admin.py:75
 msgid "Provider"
 msgstr "Provider"
 
+#: admin.py:81
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:101
 msgid "OIDC Discovery"
 msgstr "OIDC Keşfi"
 
+#: admin.py:87
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:238
 msgid "OIDC Endpoints"
 msgstr "OIDC Noktaları"
 
+#: admin.py:99
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:127
 msgid "Client Credentials"
 msgstr "İstemci Kimlik Bilgileri"
 
+#: admin.py:105
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:180
 msgid "Claims Mapping"
 msgstr "İddia Haritalama"
 
+#: admin.py:111
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:216
 msgid "Role Mapping"
 msgstr "Rol Haritalama"
 
+#: admin.py:117
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:270
 msgid "Scopes & Behavior"
 msgstr "Kapsamlar & Davranış"
 
+#: models.py:23
 msgid "Provider Name"
 msgstr "Provider Adı"
 
+#: models.py:25
 msgid ""
-"Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google "
-"Workspace'"
+"Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google Workspace'"
 msgstr ""
 "SSO butonu için görünür ad, örneğin 'Microsoft', 'Okta', 'Google Workspace'"
 
+#: models.py:33
 msgid "OIDC Discovery URL"
 msgstr "OIDC Keşif URL'si"
 
+#: models.py:35
 #, python-brace-format
 msgid ""
-"OpenID Connect discovery endpoint (e.g. "
-"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-"
-"configuration)"
+"OpenID Connect discovery endpoint (e.g. https://login.microsoftonline.com/"
+"{tenant}/v2.0/.well-known/openid-configuration)"
 msgstr ""
-"OpenID Connect keşif noktası (örneğin "
-"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-"
-"configuration)"
+"OpenID Connect keşif noktası (örneğin https://login.microsoftonline.com/"
+"{tenant}/v2.0/.well-known/openid-configuration)"
 
+#: models.py:41
 msgid "Authorization Endpoint"
 msgstr "Yetkilendirme Noktası"
 
+#: models.py:46
 msgid "Token Endpoint"
 msgstr "Token Noktası"
 
+#: models.py:51
 msgid "UserInfo Endpoint"
 msgstr "UserInfo Noktası"
 
+#: models.py:56
 msgid "JWKS Endpoint"
 msgstr "JWKS Noktası"
 
+#: models.py:61
 msgid "End Session Endpoint"
 msgstr "Sesiyon Sonlandırma Noktası"
 
+#: models.py:62
 msgid "Used for single sign-out (optional)"
 msgstr "Tekli oturum kapatmak için kullanılır (isteğe bağlı)"
 
+#: models.py:69
 msgid "Client ID"
 msgstr "İstemci Kimliği"
 
+#: models.py:70
 msgid "Application/Client ID from your identity provider"
 msgstr "Kimlik sağlayıcınızdan gelen Uygulama/Müşteri Kimliği"
 
+#: models.py:75
 msgid "Client Secret (Encrypted)"
 msgstr "İstemci Gizli (Şifrelenmiş)"
 
+#: models.py:82
 msgid "Email Claim"
 msgstr "E-posta İddiası"
 
+#: models.py:83
 msgid "OIDC claim field for user email address"
 msgstr "Kullanıcı e-posta adresi için OIDC talep alanı"
 
+#: models.py:88
 msgid "First Name Claim"
 msgstr "İsim İddiası"
 
+#: models.py:89
 msgid "OIDC claim field for first name"
 msgstr "İsime ilişkin OIDC talep alanı"
 
+#: models.py:94
 msgid "Last Name Claim"
 msgstr "Soyisim Talebi"
 
+#: models.py:95
 msgid "OIDC claim field for last name"
 msgstr "Soyisime ilişkin OIDC talep alanı"
 
+#: models.py:101
 msgid "Groups Claim"
 msgstr "Grup Talebi"
 
+#: models.py:103
 msgid ""
-"OIDC claim field for group memberships (leave blank to disable group "
-"mapping)"
+"OIDC claim field for group memberships (leave blank to disable group mapping)"
 msgstr ""
 "Grup üyelikleri için OIDC talep alanı (boş bırakarak grup eşlemesini devre "
 "dışı bırakın)"
 
+#: models.py:110
 msgid "Staff Groups"
 msgstr "Personel Grupları"
 
+#: models.py:111
 msgid "Comma-separated group names or IDs that grant staff status"
 msgstr ""
 "Personel statüsü veren grup isimleri veya kimliklerini virgülle ayırarak"
 
+#: models.py:115
 msgid "Superuser Groups"
 msgstr "Süper Kullanıcı Grupları"
 
+#: models.py:116
 msgid "Comma-separated group names or IDs that grant superuser status"
 msgstr ""
 "Süper kullanıcı statüsü veren virgülle ayrılmış grup adları veya kimlikler"
 
+#: models.py:123
 msgid "OIDC Scopes"
 msgstr "OIDC Kapsamları"
 
+#: models.py:124
 msgid "Space-separated OIDC scopes to request"
 msgstr "İstek için boşlukla ayrılmış OIDC kapsamları"
 
+#: models.py:130
 msgid "Auto-Create Users"
 msgstr "Kullanıcıları Otomatik Oluştur"
 
+#: models.py:132
 msgid ""
 "Automatically create a user account when an SSO user signs in for the first "
 "time"
 msgstr ""
-"SSO kullanıcısının ilk kez oturum açması durumunda kullanıcı hesabı otomatik"
-" olarak oluşturulacak"
+"SSO kullanıcısının ilk kez oturum açması durumunda kullanıcı hesabı otomatik "
+"olarak oluşturulacak"
 
+#: models.py:137
 msgid "Restrict to Staff"
 msgstr "Personel'e Sınırla"
 
+#: models.py:139
 msgid ""
 "Only allow existing staff users to sign in via SSO. Disable to allow SSO "
 "user auto-creation."
@@ -175,36 +219,51 @@ msgstr ""
 "Mevcut personel kullanıcılarının yalnızca SSO aracılığıyla oturum açmasına "
 "izin ver. Otomatik oluşturma için devre dışı bırak."
 
+#: models.py:144 models.py:145
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:4
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:19
 msgid "SSO Provider Configuration"
 msgstr "SSO Sağlayıcı Yapılandırması"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:24
 msgid "Configured"
 msgstr "Yapılandırıldı"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:28
 msgid "Not Configured"
 msgstr "Yapılandırılmadı"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:34
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:308
 msgid "Save and continue editing"
 msgstr "Kaydet ve düzenleme devam et"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:37
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:307
 msgid "Save"
 msgstr "Kaydet"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:48
 msgid "Please correct the errors below"
 msgstr "Aşağıdaki hataları düzeltiniz"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:73
 msgid "Connection"
 msgstr "Bağlantı"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:77
 msgid "Claims & Roles"
 msgstr "Talepler & Roller"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:81
 msgid "Advanced"
 msgstr "Gelişmiş"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:90
 msgid "Identity Provider"
 msgstr "Kimlik Sağlayıcısı"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:102
 msgid ""
 "Enter the OIDC Discovery URL and click Auto-Discover to populate the "
 "endpoint fields automatically."
@@ -212,66 +271,85 @@ msgstr ""
 "OIDC Keşif URL'sini girin ve otomatik keşfetme butonuna tıklayarak uç nokta "
 "alanlarını otomatik olarak doldurun."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:111
 msgid "Please enter a Discovery URL first."
 msgstr "İlk olarak bir Keşif URL'si girin."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:112
 msgid "Discovering..."
 msgstr "Keşfediliyor..."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:113
 msgid "Discovery failed:"
 msgstr "Keşif başarısız oldu:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:114
 msgid "Discovery successful!"
 msgstr "Keşif Başarılı!"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:115
 msgid "endpoints populated."
 msgstr "uç noktaları dolduruldu."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:116
 msgid "Discovery request failed:"
 msgstr "Keşif isteği başarısız oldu:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:117
 msgid "Auto-Discover"
 msgstr "Otomatik Keşfet"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:138
 msgid "Secret is configured"
 msgstr "Gizli ayarlanmıştır"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:142
 msgid "No secret configured"
 msgstr "Gizli ayarlanmamış"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:154
 msgid "Quick Setup Guide"
 msgstr "Hızlı Kurulum Kılavuzu"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:157
 msgid "Redirect URI"
 msgstr "Yönlendirme URI"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:161
 msgid "Microsoft Entra ID:"
 msgstr "Microsoft Entra ID:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:162
 msgid "App registrations > New > Web platform > Redirect URI"
 msgstr "Uygulama kayıtları > Yeni > Web platformu > Yönlendirme URI'si"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:165
 msgid "Google Workspace:"
 msgstr "Google Workspace:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:166
 msgid ""
 "Cloud Console > APIs & Services > Credentials > OAuth 2.0 > Redirect URI"
 msgstr ""
 "Bulut Konsolu > API'ler & Hizmetler > Kimlik Bilgileri > OAuth 2.0 > "
 "Yönlendirme URI'si"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:169
 msgid "Okta:"
 msgstr "Okta:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:170
 msgid "Applications > New App > OIDC Web > Sign-in redirect URI"
 msgstr ""
 "Uygulamalar > Yeni Uygulama > OIDC Web > Oturum açma yönlendirme URI'si"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:181
 msgid "Map OIDC claims to user fields. The defaults work for most providers."
 msgstr ""
 "OIDC iddialarını kullanıcı alanlarına haritalayın. Varsayılanlar çoğu "
 "sağlayıcı için çalışır."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:217
 msgid ""
 "Map identity provider groups to staff permissions. Enter comma-separated "
 "group names or IDs."
@@ -279,6 +357,7 @@ msgstr ""
 "Kimlik sağlayıcı gruplarını personel izinlerine haritalayın. Virgülle "
 "ayrılmış grup adları veya kimlikler girin."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:239
 msgid ""
 "These are auto-populated from the Discovery URL. Only edit manually if "
 "needed."
@@ -286,6 +365,7 @@ msgstr ""
 "Bu alanlar Keşif URL'sinden otomatik olarak doldurulur. Gerekirse el ile "
 "düzenleyebilirsiniz."
 
+#: views.py:40
 msgid "SSO authentication failed. Please try again or use local login."
 msgstr ""
 "SSO kimlik doğrulaması başarısız oldu. Lütfen tekrar deneyin veya yerel "

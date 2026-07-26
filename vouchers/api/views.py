@@ -518,38 +518,15 @@ class GiftCardViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
                 {"error": "This voucher is not a gift card"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-    @action(detail=True, methods=["post"], url_path="redeem")
-    def redeem(self, request, pk=None):
-        """
-        Redeem amount from gift card
-        POST /api/gift-cards/{id}/redeem/
-        Body: {"amount": "25.00"}
-        """
-        gift_card = self.get_object()
-        amount = request.data.get("amount")
-
-        if not amount:
-            return Response({"error": "amount is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            amount_decimal = float(amount)
-            if gift_card.redeem_amount(amount_decimal):
-                return Response(
-                    {
-                        "success": True,
-                        "redeemed_amount": amount,
-                        "remaining_balance": str(gift_card.balance.amount)
-                        if gift_card.balance
-                        else "0.00",
-                    }
-                )
-            else:
-                return Response(
-                    {"error": "Insufficient balance"}, status=status.HTTP_400_BAD_REQUEST
-                )
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    # The "redeem" action that lived here is gone, deliberately.
+    #
+    # It moved stored value with float(amount) arithmetic, no row lock, and no
+    # PaymentTransaction — bypassing every idempotency and capacity guard the
+    # tender rail enforces. It served the LEGACY vouchers.GiftCard model (the
+    # vestigial second gift card system R3 retires), so nothing storefront
+    # calls it and SDK 2.0.0 drops its wrapper; but a float-math redemption
+    # endpoint should not survive in an AGPL codebase others clone, even
+    # against a near-empty model. Balance checks and listing remain.
 
 
 @extend_schema_view(

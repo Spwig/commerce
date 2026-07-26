@@ -100,10 +100,25 @@ def mark_commission_paid_on_order_refund(sender, instance, created, **kwargs):
     if created:
         return
 
-    # Check if order was refunded/cancelled (adjust status values as needed)
+    # Check if order was refunded/cancelled.
+    #
+    # payment_status is included because that is the only field RefundService
+    # writes; gating on status alone left commission payable on money the
+    # merchant had already returned.
+    # Reverse commission only on a FULL refund or cancellation, not a partial.
+    #
+    # A partial refund reverses the WHOLE commission here (the loop flips every
+    # pending/approved row to "reversed"), so a $1 refund on a $500 order wiped
+    # the affiliate's entire commission. Prorating would mean writing a
+    # compensating partial-reversal row — deferred with the loyalty equivalent.
+    # A later full refund still reverses everything.
     refunded_statuses = ["refunded", "cancelled", "canceled", "returned"]
+    refunded_payment_statuses = ["refunded"]
 
-    if instance.status not in refunded_statuses:
+    if (
+        instance.status not in refunded_statuses
+        and instance.payment_status not in refunded_payment_statuses
+    ):
         return
 
     # Find and reverse any approved/pending commissions for this order

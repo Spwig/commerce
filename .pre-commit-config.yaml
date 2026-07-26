@@ -11,16 +11,16 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.8.1
-    hooks:
-      - id: prettier
-        additional_dependencies:
-          - prettier@3.8.1
-        files: \.(js|jsx|ts|tsx|json|css|scss)$
-
   - repo: local
     hooks:
+      # The mirrors-prettier repo is archived and has no tags past v3.1.0,
+      # so prettier runs as a local hook against the repo's own installed
+      # version — the exact binary `npm run format:check` uses in CI.
+      - id: prettier
+        name: prettier
+        entry: npx prettier --write --ignore-unknown
+        language: system
+        files: \.(js|jsx|ts|tsx|json|css|scss)$
       - id: eslint
         name: eslint
         entry: npx eslint
@@ -38,3 +38,10 @@ repos:
             pos_app/frontend_build/|
             .*/migrations/
           )
+
+      - id: check-public-docs
+        name: check-public-docs (CLAUDE.md ships publicly)
+        entry: python scripts/check_public_docs.py
+        language: system
+        pass_filenames: false
+        files: ^CLAUDE\.md$

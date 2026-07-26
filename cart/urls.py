@@ -70,6 +70,11 @@ urlpatterns = [
     # Checkout endpoints
     path("checkout/", CheckoutViewSet.as_view({"get": "list"}), name="checkout-session"),
     path(
+        "checkout/contact/",
+        CheckoutViewSet.as_view({"post": "contact"}),
+        name="checkout-contact",
+    ),
+    path(
         "checkout/shipping-address/",
         CheckoutViewSet.as_view({"post": "set_shipping_address"}),
         name="checkout-shipping-address",
@@ -103,6 +108,32 @@ urlpatterns = [
         "checkout/validate/",
         CheckoutViewSet.as_view({"post": "validate"}),
         name="checkout-validate",
+    ),
+    # Tenders (gift card / wallet payments against the checkout).
+    #
+    # Wired explicitly. CheckoutViewSet and CartViewSet are NOT router-
+    # registered, so an @action decorator alone routes nothing — that is how
+    # /api/cart/apply-gift-card/ ended up dead while the published SDK called
+    # it. tests/integration/test_cart_action_routing.py guards against a repeat.
+    path(
+        "checkout/tenders/",
+        CheckoutViewSet.as_view({"get": "list_tenders"}),
+        name="checkout-tenders",
+    ),
+    path(
+        "checkout/tenders/wallet/",
+        CheckoutViewSet.as_view({"post": "add_wallet_tender"}),
+        name="checkout-tenders-wallet",
+    ),
+    path(
+        "checkout/tenders/gift-card/",
+        CheckoutViewSet.as_view({"post": "add_gift_card_tender"}),
+        name="checkout-tender-gift-card",
+    ),
+    path(
+        "checkout/tenders/<uuid:tender_id>/",
+        CheckoutViewSet.as_view({"delete": "remove_tender"}),
+        name="checkout-tender-remove",
     ),
     path(
         "checkout/complete/",

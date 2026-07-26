@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean <LL@li.org>\n"
@@ -18,78 +18,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:328
 msgid "Action and method IDs required"
 msgstr "작업 및 메서드 ID가 필요합니다"
 
+#: admin.py:336
 msgid "{} method(s) enabled"
 msgstr "\"{} 방법이 활성화됨\""
 
+#: admin.py:340
 msgid "{} method(s) disabled"
 msgstr "\"{} 방법이 비활성화됨\""
 
+#: admin.py:344
 msgid "{} method(s) deleted"
 msgstr "{} 개의 메서드가 삭제되었습니다."
 
+#: admin.py:347
 msgid "Unknown action"
 msgstr "알 수 없는 작업"
 
+#: admin.py:353 mini_cart_api.py:469
 msgid "Invalid request data"
 msgstr "잘못된 요청 데이터"
 
+#: admin.py:358
 msgid "An unexpected error occurred. Please try again."
 msgstr "예기치 못한 오류가 발생했습니다. 다시 시도해 주세요."
 
+#: admin.py:376 templates/admin/cart/method_wizard/step1_basics.html:21
+#: templates/admin/cart/shippingmethod/change_form.html:118
+#: templates/admin/cart/taxrate/change_form.html:111
 msgid "Basic Information"
 msgstr "기본 정보"
 
+#: admin.py:383 templates/admin/cart/taxrate/change_form.html:141
 msgid "Geographic Scope"
 msgstr "지리적 범위"
 
+#: admin.py:387 templates/admin/cart/taxrate/change_form.html:163
 msgid "Application Rules"
 msgstr "적용 규칙"
 
+#: admin.py:391 templates/admin/cart/taxrate/change_form.html:193
 msgid "Product Exemptions"
 msgstr "제품 예외"
 
+#: admin.py:397 templates/admin/cart/shippingmethod/change_form.html:107
+#: templates/admin/cart/shippingmethod/change_form.html:321
+#: templates/admin/cart/taxrate/change_form.html:100
+#: templates/admin/cart/taxrate/change_form.html:216
 msgid "Timestamps"
 msgstr "타임스탬프"
 
+#: admin.py:409
 msgid "Rate %"
 msgstr "율 %"
 
+#: apps.py:8 models.py:735 models.py:1599
 msgid "Cart"
 msgstr "장바구니"
 
+#: forms.py:34
 msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
 msgstr "백분율로 입력 (예: 8.25로 8.25%)"
 
+#: forms.py:35
 msgid "Rate (%)"
 msgstr "율 (%)"
 
+#: method_wizard.py:106
 msgid "Please complete Step 1 first"
 msgstr "먼저 단계 1을 완료하세요"
 
+#: method_wizard.py:146 method_wizard.py:193 method_wizard.py:266
 msgid "Please complete the wizard steps"
 msgstr "마법사 단계를 완료하세요"
 
+#: method_wizard.py:354
 #, python-format
 msgid "Shipping method \"%(name)s\" created successfully!"
 msgstr "배송 방법 \"%(name)s\"이(가) 성공적으로 생성되었습니다!"
 
+#: method_wizard.py:360
 msgid "Please configure rate tables for this method."
 msgstr "이 방법에 대한 요금표를 구성하십시오."
 
+#: method_wizard.py:368
 #, python-format
 msgid "Failed to create shipping method: %(error)s"
 msgstr "배송 방법을 생성하는 데 실패했습니다: %(error)s"
 
+#: mini_cart_api.py:281
 msgid "Get mini-cart data"
 msgstr "미니 카트 데이터 가져오기"
 
+#: mini_cart_api.py:282
 msgid ""
 "\n"
-"    Retrieve the current cart contents formatted for the mini-cart "
-"component.\n"
+"    Retrieve the current cart contents formatted for the mini-cart component.\n"
 "\n"
 "    Works for both authenticated users (cart linked to user account) and\n"
 "    anonymous users (cart linked to session). Cart data includes all items\n"
@@ -104,20 +131,18 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    마이니카트 구성 요소에 맞게 현재 장바구니 내용을 검색합니다. 인증된 사용"
-"자(사용자 계정에 연결된 장바구니)와 익명 사용자(세션에 연결된 장바구니) 모두"
-"에 적용됩니다. 장바구니 데이터에는 제품 세부 정보, 수량, 가격 및 이미지가 포"
-"함된 모든 항목이 포함됩니다. **사용 사례:** - 페이지에 처음 마이니카트를 로드"
-"할 때 - 외부 변경 후 장바구니 새로 고침 - 체크아웃 전 장바구니 상태 확인 **인"
-"증:** 필요 없음(익명 사용자에게는 세션을 사용합니다)\n"
+"    마이니카트 구성 요소에 맞게 현재 장바구니 내용을 검색합니다. 인증된 사용자(사용자 계정에 연결된 장바구니)와 익명 사용자(세션에 연결된 장바구니) 모두에 적용됩니다. 장바구니 데이터에는 제품 세부 정보, 수량, 가격 및 이미지가 포함된 모든 항목이 포함됩니다. **사용 사례:** - 페이지에 처음 마이니카트를 로드할 때 - 외부 변경 후 장바구니 새로 고침 - 체크아웃 전 장바구니 상태 확인 **인증:** 필요 없음(익명 사용자에게는 세션을 사용합니다)\n"
 "    "
 
+#: mini_cart_api.py:300
 msgid "Cart data retrieved successfully"
 msgstr "카트 데이터가 성공적으로 검색되었습니다."
 
+#: mini_cart_api.py:352
 msgid "Update cart item quantity"
 msgstr "카트 항목 수량 업데이트"
 
+#: mini_cart_api.py:353
 msgid ""
 "\n"
 "    Update the quantity of an item in the cart.\n"
@@ -130,8 +155,7 @@ msgid ""
 "    - Direct quantity input changes\n"
 "    - Removing items (quantity=0)\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "\n"
 "    **Validation:**\n"
 "    - Item must exist in user's cart\n"
@@ -140,26 +164,26 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    장바구니에 있는 항목의 수량을 업데이트합니다. 수량을 0으로 설정하여 항목"
-"을 완전히 제거할 수 있습니다. 업데이트 전에 재고 가용성을 검증하고 전체 업데"
-"이트된 장바구니를 반환합니다. **사용 사례:** - 마이니카트의 수량 증가/감소 버"
-"튼 - 직접 수량 입력 변경 - 항목 제거(수량=0) **인증:** 필요 없음(항목이 사용"
-"자의 장바구니에 속하는지 확인) **검증:** - 항목은 사용자의 장바구니에 있어야 "
-"함 - 수량은 음수가 아닌 정수여야 함 - 재고 추적 제품의 재고 가용성을 확인\n"
+"    장바구니에 있는 항목의 수량을 업데이트합니다. 수량을 0으로 설정하여 항목을 완전히 제거할 수 있습니다. 업데이트 전에 재고 가용성을 검증하고 전체 업데이트된 장바구니를 반환합니다. **사용 사례:** - 마이니카트의 수량 증가/감소 버튼 - 직접 수량 입력 변경 - 항목 제거(수량=0) **인증:** 필요 없음(항목이 사용자의 장바구니에 속하는지 확인) **검증:** - 항목은 사용자의 장바구니에 있어야 함 - 수량은 음수가 아닌 정수여야 함 - 재고 추적 제품의 재고 가용성을 확인\n"
 "    "
 
+#: mini_cart_api.py:375
 msgid "Cart updated successfully"
 msgstr "카트가 성공적으로 업데이트되었습니다."
 
+#: mini_cart_api.py:379
 msgid "Invalid request data or insufficient stock"
 msgstr "잘못된 요청 데이터 또는 재고 부족"
 
+#: mini_cart_api.py:392 mini_cart_api.py:472
 msgid "Cart item not found"
 msgstr "카트 항목을 찾을 수 없습니다."
 
+#: mini_cart_api.py:450
 msgid "Remove item from cart"
 msgstr "카트에서 항목 제거"
 
+#: mini_cart_api.py:451
 msgid ""
 "\n"
 "    Remove an item from the cart entirely.\n"
@@ -170,37 +194,34 @@ msgid ""
 "    - Delete button on cart items\n"
 "    - Clearing specific items\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "    "
 msgstr ""
 "\n"
-"    카트에서 항목을 완전히 제거합니다. 제거 후 업데이트된 카트 데이터를 반환"
-"합니다. **사용 사례:** - 카트 항목의 삭제 버튼 - 특정 항목 삭제 **인증:** 필"
-"요 없음 (항목이 사용자의 카트에 속하는지 검증)\n"
+"    카트에서 항목을 완전히 제거합니다. 제거 후 업데이트된 카트 데이터를 반환합니다. **사용 사례:** - 카트 항목의 삭제 버튼 - 특정 항목 삭제 **인증:** 필요 없음 (항목이 사용자의 카트에 속하는지 검증)\n"
 "    "
 
+#: mini_cart_api.py:466
 msgid "Item removed successfully"
 msgstr "항목이 성공적으로 제거되었습니다."
 
+#: mini_cart_api.py:515
 msgid "Get empty cart recommendations"
 msgstr "비어 있는 카트 추천 가져오기"
 
+#: mini_cart_api.py:516
 msgid ""
 "\n"
 "    Get intelligent product recommendations for the empty cart state.\n"
 "\n"
-"    Returns personalized suggestions organized into labeled sections based "
-"on:\n"
-"    - **Recently viewed**: Products the user has browsed (session-based for "
-"anonymous users)\n"
+"    Returns personalized suggestions organized into labeled sections based on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for anonymous users)\n"
 "    - **Related**: Products in the same categories as recently viewed items\n"
 "    - **On sale**: Currently discounted products\n"
 "    - **Trending**: Popular products by views/sales\n"
 "    - **Featured**: Editor-picked products as fallback\n"
 "\n"
-"    All returned products are verified to be in stock and available for "
-"purchase.\n"
+"    All returned products are verified to be in stock and available for purchase.\n"
 "\n"
 "    **Use Cases:**\n"
 "    - Empty cart state in mini-cart\n"
@@ -215,2172 +236,2707 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    빈 장바구니 상태에 맞춘 지능형 제품 추천을 가져옵니다. 사용자가 본 제품"
-"을 기반으로 (익명 사용자의 경우 세션 기반) **최근 본 상품**, **관련 상품**(최"
-"근 본 상품과 동일한 카테고리의 상품), **할인 중인 상품**, **트렌딩 상품**(조"
-"회/판매 기준으로 인기 있는 상품), **추천 상품**(편집자가 선정한 상품)으로 라"
-"벨이 지정된 섹션에 맞춰 개인화된 추천을 반환합니다. 모든 반환된 제품은 재고"
-"가 확보되어 구매 가능한 것으로 확인되었습니다. **사용 사례:** - 미니 장바구니"
-"의 빈 상태 - \"당신이 좋아할 만한 상품\" 섹션 - 교차 판매 기회 **인증:** 필"
-"요 없음 (익명 사용자의 경우 세션을 사용함) **개인화:** - 익명 사용자: 세션 기"
-"반으로 최근 본 상품을 기준으로 함 - 인증된 사용자: 계정 이력 및 선호도를 기준"
-"으로 함\n"
+"    빈 장바구니 상태에 맞춘 지능형 제품 추천을 가져옵니다. 사용자가 본 제품을 기반으로 (익명 사용자의 경우 세션 기반) **최근 본 상품**, **관련 상품**(최근 본 상품과 동일한 카테고리의 상품), **할인 중인 상품**, **트렌딩 상품**(조회/판매 기준으로 인기 있는 상품), **추천 상품**(편집자가 선정한 상품)으로 라벨이 지정된 섹션에 맞춰 개인화된 추천을 반환합니다. 모든 반환된 제품은 재고가 확보되어 구매 가능한 것으로 확인되었습니다. **사용 사례:** - 미니 장바구니의 빈 상태 - \"당신이 좋아할 만한 상품\" 섹션 - 교차 판매 기회 **인증:** 필요 없음 (익명 사용자의 경우 세션을 사용함) **개인화:** - 익명 사용자: 세션 기반으로 최근 본 상품을 기준으로 함 - 인증된 사용자: 계정 이력 및 선호도를 기준으로 함\n"
 "    "
 
+#: mini_cart_api.py:545
 msgid "Maximum number of products to return (default: 6, max: 12)"
 msgstr "반환할 제품의 최대 수량 (기본값: 6, 최대: 12)"
 
+#: mini_cart_api.py:556
 msgid "Recommendations retrieved successfully"
 msgstr "추천이 성공적으로 검색되었습니다."
 
+#: models.py:18 models.py:964 models.py:1068
 msgid "User"
 msgstr "사용자"
 
+#: models.py:21 models.py:1071
 msgid "Session Key"
 msgstr "세션 키"
 
+#: models.py:31
 msgid "Cart Currency"
 msgstr "카트 통화"
 
+#: models.py:33
 msgid ""
 "Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
 "default currency."
-msgstr ""
-"이 장바구니에 있는 모든 항목에 적용되는 통화 코드 (예: EUR, NZD). 빈 값은 상"
-"점의 기본 통화를 의미합니다."
+msgstr "이 장바구니에 있는 모든 항목에 적용되는 통화 코드 (예: EUR, NZD). 빈 값은 상점의 기본 통화를 의미합니다."
 
+#: models.py:40
 msgid "Default Layout"
 msgstr "기본 레이아웃"
 
+#: models.py:41 models.py:971
 msgid "Compact View"
 msgstr "간결한 보기"
 
+#: models.py:42 models.py:972
 msgid "Detailed View"
 msgstr "상세 보기"
 
+#: models.py:43
 msgid "Minimal View"
 msgstr "최소 보기"
 
+#: models.py:44
 msgid "Sidebar Cart"
 msgstr "사이드바 장바구니"
 
+#: models.py:45
 msgid "Overlay Cart"
 msgstr "오버레이 장바구니"
 
+#: models.py:52
 msgid "How the cart is displayed"
 msgstr "장바구니의 표시 방식"
 
+#: models.py:53
 msgid "Cart Layout"
 msgstr "장바구니 레이아웃"
 
+#: models.py:57
 msgid "Show Product Images"
 msgstr "제품 이미지 표시"
 
+#: models.py:59
 msgid "Show Product Variants"
 msgstr "제품 변형 표시"
 
+#: models.py:61
 msgid "Show Remove Button"
 msgstr "제거 버튼 표시"
 
+#: models.py:63
 msgid "Show Quantity Controls"
 msgstr "수량 조절 표시"
 
+#: models.py:67
 msgid "Show Item Totals"
 msgstr "아이템 합계 표시"
 
+#: models.py:68
 msgid "Show Cart Summary"
 msgstr "장바구니 요약 표시"
 
+#: models.py:69
 msgid "Show Savings"
 msgstr "할인 금액 표시"
 
+#: models.py:75
 msgid "Single Page Checkout"
 msgstr "단일 페이지 결제"
 
+#: models.py:76
 msgid "Multi-Step Checkout"
 msgstr "다단계 결제"
 
+#: models.py:77
 msgid "Accordion Style"
 msgstr "에코던 스타일"
 
+#: models.py:78
 msgid "Wizard Style"
 msgstr "마법사 스타일"
 
+#: models.py:81
 msgid "Checkout Flow"
 msgstr "결제 흐름"
 
+#: models.py:91 models.py:1609 models.py:1739
 msgid "Shipping Address"
 msgstr "배송 주소"
 
+#: models.py:99 models.py:1214 models.py:1740
+#: templates/admin/cart/cart/change_list.html:93
 msgid "Shipping Method"
 msgstr "배송 방식"
 
+#: models.py:107
 msgid "Calculated shipping cost"
 msgstr "계산된 배송 비용"
 
+#: models.py:108 models.py:1660
 msgid "Shipping Cost"
 msgstr "배송 비용"
 
+#: models.py:112 models.py:1664
 msgid "Estimated Delivery Date"
 msgstr "예상 배송일"
 
+#: models.py:115
 msgid "Shipping Notes"
 msgstr "배송 메모"
 
+#: models.py:119 models.py:846
 msgid "None"
 msgstr "없음"
 
+#: models.py:120 models.py:847
 msgid "Percentage"
 msgstr "백분율"
 
+#: models.py:121 models.py:848
 msgid "Fixed Amount"
 msgstr "고정 금액"
 
+#: models.py:124
 msgid "POS manual discount type"
 msgstr "POS 수동 할인 유형"
 
+#: models.py:127
 msgid "POS manual discount value"
 msgstr "POS 수동 할인 금액"
 
+#: models.py:131 models.py:858
 msgid "Discount value (percentage or fixed amount)"
 msgstr "할인 금액 (백분율 또는 고정 금액)"
 
+#: models.py:139
 msgid "POS discount applied by"
 msgstr "POS 할인 적용자"
 
+#: models.py:147
 msgid "POS discount approved by"
 msgstr "POS 할인 승인자"
 
+#: models.py:148 models.py:875
 msgid "Manager who approved the discount if it exceeded staff limit"
 msgstr "직원 한도를 초과한 경우 할인을 승인한 관리자"
 
+#: models.py:151
 msgid "POS discount reason"
 msgstr "POS 할인 사유"
 
+#: models.py:154 models.py:879 models.py:992 models.py:1052 models.py:1210
+#: models.py:1447 models.py:1526 models.py:1756
 msgid "Created At"
 msgstr "생성 시간"
 
+#: models.py:155 models.py:880 models.py:993 models.py:1211 models.py:1448
+#: models.py:1757
 msgid "Updated At"
 msgstr "업데이트 시간"
 
+#: models.py:158
 msgid "Shopping Cart"
 msgstr "쇼핑 장바구니"
 
+#: models.py:159 templates/admin/cart/cart/change_list.html:4
+#: templates/admin/cart/cart/change_list.html:20
+#: templates/admin/cart/cart/change_list.html:175
 msgid "Shopping Carts"
 msgstr "쇼핑 장바구니들"
 
+#: models.py:186
 #, python-brace-format
 msgid "Cart for {username}"
 msgstr "{username}의 장바구니"
 
+#: models.py:187
 #, python-brace-format
 msgid "Cart (Session: {session})"
 msgstr "장바구니 (세션: {session})"
 
+#: models.py:455
 msgid "No shipping required"
 msgstr "배송 필요 없음"
 
+#: models.py:465
 msgid "Shipping address required"
 msgstr "배송 주소 필요"
 
+#: models.py:505
 msgid "Available shipping methods retrieved"
 msgstr "사용 가능한 배송 방식 불러옴"
 
+#: models.py:526
 msgid "Shipping calculated successfully"
 msgstr "배송 비용 계산 완료"
 
-msgid "Invalid gift card code"
-msgstr "무효한 선물 카드 코드"
-
-msgid "Gift card already applied"
-msgstr "이미 적용된 선물 카드"
-
-msgid "Gift card is not active"
-msgstr "활성화되지 않은 선물 카드"
-
-msgid "Gift card has expired"
-msgstr "만료된 선물 카드"
-
-msgid "Gift card has been fully redeemed"
-msgstr "선물 카드가 완전히 사용되었습니다."
-
-msgid "Gift card cannot be used"
-msgstr "사용할 수 없는 선물 카드"
-
-#, python-brace-format
-msgid ""
-"Currency mismatch. Gift card is in {card_currency}, cart is in "
-"{cart_currency}"
-msgstr ""
-"통화 불일치. 선물 카드는 {card_currency}입니다. 장바구니는 {cart_currency}입"
-"니다."
-
-#, python-brace-format
-msgid ""
-"This gift card is in {card_currency}. Please switch your currency to "
-"{card_currency} to use it."
-msgstr ""
-"이 기프트 카드는 {card_currency}입니다. 사용하려면 화면의 통화를 "
-"{card_currency}로 전환하세요."
-
-msgid "Gift cards cannot be used to purchase other gift cards"
-msgstr "선물 카드는 다른 선물 카드를 구매하는 데 사용할 수 없습니다."
-
-msgid "Cart total is already covered"
-msgstr "카트 총액은 이미 커버됨"
-
-msgid "Unable to process gift card currency conversion"
-msgstr "선물 카드 통화 변환을 처리할 수 없습니다"
-
-msgid "Gift card applied successfully"
-msgstr "선물 카드가 성공적으로 적용됨"
-
+#: models.py:740 models.py:1023 models.py:1074
 msgid "Product"
 msgstr "상품"
 
+#: models.py:747 models.py:1030
 msgid "Variant"
 msgstr "옵션"
 
+#: models.py:751
 msgid "Quantity"
 msgstr "수량"
 
+#: models.py:753
 msgid "Unit Price"
 msgstr "단위 가격"
 
+#: models.py:761
 msgid ""
 "Product customizations with calculated prices: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
 msgstr ""
-"계산된 가격이 있는 제품 커스터마이징: {customization_option_id: {'value': "
-"'...', 'calculated_price': '10.00'}}"
+"계산된 가격이 있는 제품 커스터마이징: {customization_option_id: {'value': '...', "
+"'calculated_price': '10.00'}}"
 
+#: models.py:763
 msgid "Customizations"
 msgstr "맞춤 설정"
 
+#: models.py:769
 msgid "Is Subscription"
 msgstr "구독 여부"
 
+#: models.py:770
 msgid "Whether this item will be purchased as a subscription"
 msgstr "이 항목이 구독으로 구매될지 여부"
 
+#: models.py:777
 msgid "Subscription Plan"
 msgstr "구독 계획"
 
+#: models.py:778
 msgid "Selected subscription plan for recurring billing"
 msgstr "정기 결제를 위한 선택된 구독 플랜"
 
+#: models.py:785
 msgid "Pricing Tier"
 msgstr "가격 계층"
 
+#: models.py:786
 msgid "Selected pricing tier (billing frequency) for subscription"
 msgstr "구독용으로 선택된 가격 계층(청구 빈도)"
 
+#: models.py:793
 msgid "Payment Token"
 msgstr "결제 토큰"
 
+#: models.py:794
 msgid ""
 "Saved payment method for subscription billing (required for subscriptions)"
 msgstr "구독 결제를 위한 저장된 결제 수단 (구독이 필요한 경우 필수)"
 
+#: models.py:804
 msgid "Parent Bundle"
 msgstr "상위 번들"
 
+#: models.py:805
 msgid "If this is a bundle component, reference to bundle CartItem"
 msgstr "이 항목이 번들 구성 요소인 경우 번들 CartItem에 대한 참조"
 
+#: models.py:813
 msgid ""
 "Booking details: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
 msgstr ""
-"예약 세부 정보: {start_datetime, end_datetime, resource_id, persons, "
-"timezone}"
+"예약 세부 정보: {start_datetime, end_datetime, resource_id, persons, timezone}"
 
+#: models.py:815
 msgid "Booking Data"
 msgstr "예약 데이터"
 
+#: models.py:833
+msgid ""
+"Gift card purchase details: {recipient_email, recipient_name, sender_name, "
+"message, scheduled_send_at, amount}"
+msgstr ""
+"선물 카드 구매 세부 정보: {recipient_email, recipient_name, sender_name, message, "
+"scheduled_send_at, amount}"
+
+#: models.py:836
+#| msgid "Gift Card"
+msgid "Gift Card Data"
+msgstr "선물 카드 데이터"
+
+#: models.py:841
 msgid "Customer notes for this item"
 msgstr "이 항목에 대한 고객 메모"
 
+#: models.py:841 models.py:1034 models.py:1573
 msgid "Notes"
 msgstr "메모"
 
+#: models.py:851
 msgid "manual discount type"
 msgstr "수동 할인 유형"
 
+#: models.py:854
 msgid "manual discount value"
 msgstr "수동 할인 금액"
 
+#: models.py:866
 msgid "discount applied by"
 msgstr "할인 적용자"
 
+#: models.py:874
 msgid "discount approved by"
 msgstr "할인 승인자"
 
+#: models.py:877
 msgid "discount reason"
 msgstr "할인 사유"
 
+#: models.py:883
 msgid "Cart Item"
 msgstr "카트 항목"
 
+#: models.py:884
 msgid "Cart Items"
 msgstr "카트 항목들"
 
+#: models.py:965 services/wishlist_service.py:28
 msgid "My Wishlist"
 msgstr "내 위시리스트"
 
+#: models.py:965 models.py:1108 models.py:1367 models.py:1506
+#: templates/admin/cart/shippingmethod/change_form.html:276
 msgid "Name"
 msgstr "이름"
 
+#: models.py:969
 msgid "Grid Layout"
 msgstr "그리드 레이아웃"
 
+#: models.py:970
 msgid "List Layout"
 msgstr "리스트 레이아웃"
 
+#: models.py:979
 msgid "How wishlist items are displayed"
 msgstr "위시리스트 항목의 표시 방식"
 
+#: models.py:980
 msgid "Wishlist Layout"
 msgstr "위시리스트 레이아웃"
 
+#: models.py:984
 msgid "Is Public"
 msgstr "공개 여부"
 
+#: models.py:985
 msgid "Share Slug"
 msgstr "공유 슬러그"
 
+#: models.py:988
 msgid "Show Prices"
 msgstr "가격 표시"
 
+#: models.py:989
 msgid "Show Availability"
 msgstr "재고 표시"
 
+#: models.py:990
 msgid "Show Add to Cart"
 msgstr "카트에 추가 표시"
 
+#: models.py:996 models.py:1020
 msgid "Wishlist"
 msgstr "위시리스트"
 
+#: models.py:997
 msgid "Wishlists"
 msgstr "위시리스트들"
 
+#: models.py:1038
 msgid "Low"
 msgstr "낮음"
 
+#: models.py:1039
 msgid "Medium"
 msgstr "중간"
 
+#: models.py:1040
 msgid "High"
 msgstr "높음"
 
+#: models.py:1043 models.py:1442
+#: templates/admin/cart/shippingmethod/change_form.html:279
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:51
 msgid "Priority"
 msgstr "우선순위"
 
+#: models.py:1048
 msgid "Notify When Available"
 msgstr "재고가 있을 때 알림"
 
+#: models.py:1050
 msgid "Notify When On Sale"
 msgstr "할인 중일 때 알림"
 
+#: models.py:1055
 msgid "Wishlist Item"
 msgstr "위시리스트 항목"
 
+#: models.py:1056
 msgid "Wishlist Items"
 msgstr "위시리스트 항목들"
 
+#: models.py:1077
 msgid "Viewed At"
 msgstr "조회 시간"
 
+#: models.py:1078
 msgid "View Count"
 msgstr "조회 횟수"
 
+#: models.py:1081
 msgid "Recently Viewed Product"
 msgstr "최근 본 상품"
 
+#: models.py:1082
 msgid "Recently Viewed Products"
 msgstr "최근 본 상품들"
 
+#: models.py:1094
 #, python-brace-format
 msgid "Session: {session}"
 msgstr "세션: {session}"
 
+#: models.py:1098
 #, python-brace-format
 msgid "{product} viewed by {user}"
 msgstr "{user}이(가) {product}를(을) 조회했습니다."
 
+#: models.py:1109 models.py:1507
+#: templates/admin/cart/method_wizard/step1_basics.html:44
 msgid "Description"
 msgstr "설명"
 
+#: models.py:1113 templates/admin/cart/shippingmethod/change_list.html:78
 msgid "Flat Rate"
 msgstr "고정 배송비"
 
-msgid "Free Shipping"
-msgstr "무료 배송"
-
-msgid "Weight Based"
-msgstr "중량 기반"
-
-msgid "Price Based"
-msgstr "가격 기반"
-
+#: models.py:1114
 msgid "Real-Time Carrier Rates"
 msgstr "실시간 운송사 요금"
 
+#: models.py:1115 templates/admin/cart/shippingmethod/change_list.html:84
 msgid "Local Pickup"
 msgstr "현지 픽업"
 
+#: models.py:1116 templates/admin/cart/shippingmethod/change_list.html:87
 msgid "Table Rate"
 msgstr "표 기반 요금"
 
+#: models.py:1119 templates/admin/cart/method_wizard/step1_basics.html:111
 msgid "Method Type"
 msgstr "방법 유형"
 
+#: models.py:1129
 msgid "Fixed shipping cost (for flat_rate type)"
 msgstr "고정된 배송 비용 (flat_rate 유형에 해당)"
 
+#: models.py:1130 templates/admin/cart/method_wizard/step1_basics.html:146
 msgid "Flat Rate Cost"
 msgstr "고정 요금"
 
-msgid "Minimum cart value to qualify"
-msgstr "적격 최소 장바구니 금액"
-
-msgid "Minimum Order Value"
-msgstr "최소 주문 금액"
-
-msgid "Maximum cart value to qualify"
-msgstr "적격 최대 장바구니 금액"
-
-msgid "Maximum Order Value"
-msgstr "최대 주문 금액"
-
-msgid "Minimum cart weight (kg)"
-msgstr "적격 최소 장바구니 무게 (kg)"
-
-msgid "Minimum Weight"
-msgstr "최소 무게"
-
-msgid "Maximum cart weight (kg)"
-msgstr "적격 최대 장바구니 무게 (kg)"
-
-msgid "Maximum Weight"
-msgstr "최대 무게"
-
+#: models.py:1138 templates/admin/cart/method_wizard/step3_coverage.html:17
 msgid "Shipping Zones"
 msgstr "배송 지역"
 
+#: models.py:1140
 msgid ""
-"Zones where this shipping method is available. If empty, legacy country/"
-"state restrictions apply."
-msgstr ""
-"이 배송 방법이 제공되는 지역. 비어 있는 경우 기존 국가/주 제한이 적용됩니다."
+"Zones where this shipping method is available. If empty, legacy "
+"country/state restrictions apply."
+msgstr "이 배송 방법이 제공되는 지역. 비어 있는 경우 기존 국가/주 제한이 적용됩니다."
 
+#: models.py:1149 templates/admin/cart/method_wizard/step4_features.html:19
 msgid "Pickup Locations"
 msgstr "픽업 장소"
 
+#: models.py:1151
 msgid ""
 "Locations where customers can pick up orders using this shipping method. "
 "Only applies to 'local_pickup' method type."
-msgstr ""
-"이 배송 방법을 사용하여 고객이 주문을 수령할 수 있는 위치. 이는 "
-"'local_pickup' 방법 유형에만 적용됩니다."
+msgstr "이 배송 방법을 사용하여 고객이 주문을 수령할 수 있는 위치. 이는 'local_pickup' 방법 유형에만 적용됩니다."
 
+#: models.py:1158
 msgid "Minimum delivery time in business days"
 msgstr "영업일 기준 최소 배송 시간"
 
+#: models.py:1159 templates/admin/cart/method_wizard/step4_features.html:176
 msgid "Minimum Delivery Days"
 msgstr "최소 배송 일수"
 
+#: models.py:1164
 msgid "Maximum delivery time in business days"
 msgstr "영업일 기준 최대 배송 시간"
 
+#: models.py:1165 templates/admin/cart/method_wizard/step4_features.html:193
 msgid "Maximum Delivery Days"
 msgstr "최대 배송 일수"
 
+#: models.py:1172
 msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
 msgstr "Font Awesome 아이콘 클래스 (예: 'fa-truck', 'fa-box')"
 
+#: models.py:1173 models.py:1512
 msgid "Icon"
 msgstr "아이콘"
 
+#: models.py:1183
 msgid ""
 "Custom shipping method image from media library. If provided, this takes "
 "priority over icon."
-msgstr ""
-"미디어 라이브러리에서 가져온 사용자 정의 배송 방법 이미지. 제공된 경우 아이콘"
-"보다 우선 적용됩니다."
+msgstr "미디어 라이브러리에서 가져온 사용자 정의 배송 방법 이미지. 제공된 경우 아이콘보다 우선 적용됩니다."
 
+#: models.py:1185
 msgid "Image"
 msgstr "이미지"
 
+#: models.py:1188 templates/admin/cart/method_wizard/step4_features.html:234
 msgid "Sort Order"
 msgstr "정렬 순서"
 
+#: models.py:1189 models.py:1445 models.py:1518 models.py:1575
 msgid "Is Active"
 msgstr "활성 상태"
 
+#: models.py:1197
 msgid "Custom Carrier"
 msgstr "사용자 정의 운송사"
 
+#: models.py:1200 templates/admin/cart/method_wizard/step1_basics.html:185
+#: templates/admin/cart/shippingmethod/change_form.html:98
 msgid "Carrier"
 msgstr "운송사"
 
+#: models.py:1206
 msgid "Carrier-specific service code"
 msgstr "운송사별 서비스 코드"
 
+#: models.py:1207
 msgid "Carrier Service Code"
 msgstr "운송사 서비스 코드"
 
+#: models.py:1215 templates/admin/cart/shippingmethod/change_list.html:4
+#: templates/admin/cart/shippingmethod/change_list.html:19
 msgid "Shipping Methods"
 msgstr "배송 방법"
 
+#: models.py:1236
 msgid "Shipping method is not active"
 msgstr "배송 방법이 비활성화됨"
 
-#, python-brace-format
-msgid "Minimum order value {value} required"
-msgstr "최소 주문 금액 {value}이(가) 필요합니다."
-
-#, python-brace-format
-msgid "Maximum order value {value} exceeded"
-msgstr "최대 주문 금액 {value}을(를) 초과했습니다."
-
-#, python-brace-format
-msgid "Minimum weight {weight}kg required"
-msgstr "최소 무게 {weight}kg이(가) 필요합니다."
-
-#, python-brace-format
-msgid "Maximum weight {weight}kg exceeded"
-msgstr "최대 무게 {weight}kg을(를) 초과했습니다."
-
+#: models.py:1240
 msgid "Cart contains only digital products"
 msgstr "장바구니에 디지털 제품만 포함됨"
 
+#: models.py:1266
+#| msgid "No pricing tier available for this plan"
+msgid "Not available for this cart"
+msgstr "이 장바구니에는 사용할 수 없습니다."
+
+#: models.py:1268
 msgid "Available"
 msgstr "사용 가능"
 
+#: models.py:1291
 msgid "No geographic restrictions"
 msgstr "지리적 제한 없음"
 
+#: models.py:1299
 #, python-brace-format
 msgid "Available in {zone}"
 msgstr "{zone}에서 사용 가능"
 
+#: models.py:1302
 msgid "Not available in your location"
 msgstr "당신의 위치에서는 이용할 수 없음"
 
+#: models.py:1305
 msgid "Available worldwide"
 msgstr "전 세계에서 이용 가능"
 
+#: models.py:1371 models.py:1550
 msgid "ISO 3166-1 alpha-2 country code"
 msgstr "ISO 3166-1 알파-2 국가 코드"
 
+#: models.py:1371 templates/admin/cart/taxrate/change_list.html:67
 msgid "Country"
 msgstr "국가"
 
+#: models.py:1375
 msgid "State/Province/Region"
 msgstr "주 / 도 / 지역"
 
+#: models.py:1375
 msgid "State"
 msgstr "주"
 
+#: models.py:1379
 msgid "City name (optional)"
 msgstr "도시 이름 (선택 사항)"
 
+#: models.py:1379
 msgid "City"
 msgstr "도시"
 
+#: models.py:1385
 msgid "List of specific postal codes (optional)"
 msgstr "구체적인 우편번호 목록 (선택 사항)"
 
+#: models.py:1386
 msgid "Postal Codes"
 msgstr "우편번호"
 
+#: models.py:1393
 msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
 msgstr "세율을 소수로 표시 (예: 0.0825로 8.25%)"
 
+#: models.py:1394 models.py:1564
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:47
 msgid "Rate"
 msgstr "요금"
 
+#: models.py:1399 templates/admin/cart/taxrate/change_list.html:79
 msgid "Sales Tax"
 msgstr "판매세"
 
+#: models.py:1402
 msgid "Custom Tax"
 msgstr "사용자 정의 세금"
 
+#: models.py:1405 models.py:1567
+#: templates/admin/cart/taxrate/change_list.html:76
 msgid "Tax Type"
 msgstr "세금 유형"
 
+#: models.py:1411
 msgid "Apply tax to shipping costs"
 msgstr "배송 비용에 세금 적용"
 
+#: models.py:1412
 msgid "Applies to Shipping"
 msgstr "배송에 적용됨"
 
+#: models.py:1417
 msgid "Calculate on top of other taxes (compound tax)"
 msgstr "기타 세금 위에 계산 (복합 세금)"
 
+#: models.py:1418
 msgid "Compound Tax"
 msgstr "복합 세금"
 
-msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
-msgstr "이 세금에서 면제되는 제품 유형 (예: ['digital', 'service'])"
+#: models.py:1426
+msgid ""
+"Product types exempt from this tax. Gift cards are exempt by default: "
+"selling stored value is not a taxable supply in most jurisdictions, and tax "
+"falls due when the card is spent. Confirm with your accountant."
+msgstr ""
+"이 세금에서 면제되는 제품 유형입니다. 선물 카드는 기본적으로 면제됩니다: 대부분의 지역에서는 저장된 가치를 판매하는 것이 과세 대상이 "
+"아니며, 카드가 사용될 때 세금이 부과됩니다. 회계사와 확인하세요."
 
+#: models.py:1430
 msgid "Exempt Product Types"
 msgstr "세금 면제 제품 유형"
 
+#: models.py:1436
 msgid "Categories exempt from this tax"
 msgstr "이 세금에서 면제된 카테고리"
 
+#: models.py:1437
 msgid "Exempt Categories"
 msgstr "면제 카테고리"
 
+#: models.py:1442
 msgid "Higher priority rules take precedence"
 msgstr "우선순위가 높은 규칙이 우선 적용됨"
 
+#: models.py:1451
 msgid "Tax Rate"
 msgstr "세율"
 
+#: models.py:1452 templates/admin/cart/taxrate/change_list.html:4
+#: templates/admin/cart/taxrate/change_list.html:17
 msgid "Tax Rates"
 msgstr "세율"
 
+#: models.py:1465
 #, python-brace-format
 msgid "{name} ({location}) - {rate}%"
 msgstr "{name} ({location}) - {rate}%"
 
+#: models.py:1491
 msgid "Europe"
 msgstr "유럽"
 
+#: models.py:1492
 msgid "North America"
 msgstr "북미"
 
+#: models.py:1493
 msgid "Asia Pacific"
 msgstr "아시아 태평양"
 
+#: models.py:1494
 msgid "Middle East"
 msgstr "중동"
 
+#: models.py:1495
 msgid "Africa"
 msgstr "아프리카"
 
+#: models.py:1496
 msgid "Latin America"
 msgstr "라틴아메리카"
 
+#: models.py:1497
 msgid "Oceania"
 msgstr "오세아니아"
 
+#: models.py:1503
 msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
 msgstr "유일한 식별자 (예: eu_vat, us_sales_tax)"
 
+#: models.py:1504
 msgid "Key"
 msgstr "키"
 
+#: models.py:1511
 msgid "Font Awesome icon class"
 msgstr "Font Awesome 아이콘 클래스"
 
+#: models.py:1515
 msgid "Default Tax Type"
 msgstr "기본 세금 유형"
 
+#: models.py:1517
 msgid "Region"
 msgstr "지역"
 
+#: models.py:1522
 msgid "Version for tracking rate updates"
 msgstr "율 업데이트 추적을 위한 버전"
 
+#: models.py:1523
 msgid "Version"
 msgstr "버전"
 
+#: models.py:1525
 msgid "Last Updated"
 msgstr "마지막 업데이트"
 
+#: models.py:1529
 msgid "Tax Preset Group"
 msgstr "세금 사전 설정 그룹"
 
+#: models.py:1530
 msgid "Tax Preset Groups"
 msgstr "세금 사전 설정 그룹들"
 
+#: models.py:1547
 msgid "Preset Group"
 msgstr "사전 설정 그룹"
 
+#: models.py:1550
 msgid "Country Code"
 msgstr "국가 코드"
 
+#: models.py:1552
 msgid "Country Name"
 msgstr "국가 이름"
 
+#: models.py:1556
 msgid "State/province code (for US/CA presets)"
 msgstr "주/도 코드 (미국/캐나다 사전 설정용)"
 
+#: models.py:1557
 msgid "State Code"
 msgstr "주 코드"
 
+#: models.py:1559
 msgid "State Name"
 msgstr "주 이름"
 
+#: models.py:1563
 msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
 msgstr "세율을 소수로 표시 (예: 0.20로 20%)"
 
+#: models.py:1572
 #, python-format
 msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
 msgstr "선택적 메모 (예: '2025년 7월에 22% 상승')"
 
+#: models.py:1578
 msgid "Tax Preset Rate"
 msgstr "세금 사전 설정율"
 
+#: models.py:1579
 msgid "Tax Preset Rates"
 msgstr "세금 사전 설정율들"
 
+#: models.py:1618
 msgid "Billing Address"
 msgstr "청구 주소"
 
+#: models.py:1622
 msgid "Billing Same as Shipping"
 msgstr "배송 주소와 동일"
 
+#: models.py:1630
 msgid "Shipping Address Data"
 msgstr "배송 주소 데이터"
 
+#: models.py:1632
 msgid ""
 "Temporary shipping address data (not saved to Address model until order "
 "placed)"
 msgstr "임시 배송 주소 데이터 (주문 완료 전에는 Address 모델에 저장되지 않음)"
 
+#: models.py:1639
 msgid "Billing Address Data"
 msgstr "청구 주소 데이터"
 
+#: models.py:1641
 msgid ""
 "Temporary billing address data (not saved to Address model until order "
 "placed)"
 msgstr "임시 요금 주소 데이터 (주문 완료 전에는 Address 모델에 저장되지 않음)"
 
+#: models.py:1651
 msgid "Selected Shipping Method"
 msgstr "선택된 배송 방식"
 
+#: models.py:1671
 msgid "Cached list of available shipping methods with rates"
 msgstr "가용 배송 방법과 요금의 캐시 목록"
 
+#: models.py:1672
 msgid "Available Shipping Methods"
 msgstr "가용 배송 방식"
 
+#: models.py:1679
 msgid "Detailed tax breakdown by jurisdiction"
 msgstr "관할 구역별 세금 세부 정보"
 
+#: models.py:1680
 msgid "Tax Breakdown"
 msgstr "세금 세부 정보"
 
+#: models.py:1688
 msgid "Tax Amount"
 msgstr "세금 금액"
 
+#: models.py:1698
 msgid "Payment Provider"
 msgstr "결제 제공업체"
 
+#: models.py:1707
 msgid "Subtotal"
 msgstr "소계"
 
+#: models.py:1715
 msgid "Discount Amount"
 msgstr "할인 금액"
 
+#: models.py:1723
 msgid "Gift Card Discount"
 msgstr "선물 카드 할인"
 
+#: models.py:1724
 msgid "Total discount from applied gift cards"
 msgstr "적용된 선물 카드에서의 총 할인 금액"
 
+#: models.py:1732
 msgid "Final total: subtotal + shipping + tax - discounts"
 msgstr "최종 합계: 소계 + 배송 + 세금 - 할인"
 
+#: models.py:1733
 msgid "Total Amount"
 msgstr "총 금액"
 
+#: models.py:1738
 msgid "Cart Review"
 msgstr "장바구니 검토"
 
+#: models.py:1741
 msgid "Billing Information"
 msgstr "청구 정보"
 
+#: models.py:1742
 msgid "Payment Method"
 msgstr "결제 수단"
 
+#: models.py:1743
 msgid "Order Review"
 msgstr "주문 검토"
 
+#: models.py:1746
 msgid "Step Completed"
 msgstr "단계 완료"
 
+#: models.py:1749
 msgid "Expires At"
 msgstr "만료 시간"
 
+#: models.py:1753
 msgid "Metadata"
 msgstr "메타데이터"
 
+#: models.py:1754
 msgid "Extra metadata (e.g., marketplace purchase info)"
 msgstr "추가 메타데이터 (예: 마켓플레이스 구매 정보)"
 
+#: models.py:1760
 msgid "Checkout Session"
 msgstr "체크아웃 세션"
 
+#: models.py:1761
 msgid "Checkout Sessions"
 msgstr "체크아웃 세션들"
 
+#: models.py:1768
 #, python-brace-format
 msgid "Checkout for {cart}"
 msgstr "{cart} 결제"
 
-msgid "Gift Card"
-msgstr "선물 카드"
-
-msgid "Amount in base currency (used for cart calculations)"
-msgstr "기본 통화 금액 (카트 계산에 사용됨)"
-
-msgid "Original Currency Amount"
-msgstr "원래 통화 금액"
-
-msgid ""
-"Discount in the gift card's native currency (for foreign-currency gift cards)"
-msgstr "선물 카드의 원래 통화로 표시된 할인 (외화 선물 카드용)"
-
-msgid "Exchange Rate"
-msgstr "환율"
-
-msgid "Rate: gift card currency -> base currency at time of application"
-msgstr "환율: 선물 카드 통화 -> 신청 시점의 기본 통화"
-
-msgid "Applied At"
-msgstr "적용 시간"
-
-msgid "Applied Gift Card"
-msgstr "적용된 선물 카드"
-
-msgid "Applied Gift Cards"
-msgstr "적용된 선물 카드들"
-
-msgid "This gift card cannot be used"
-msgstr "이 선물 카드는 사용할 수 없습니다."
-
-msgid "Discount amount exceeds gift card balance"
-msgstr "할인 금액이 선물 카드 잔액을 초과합니다."
-
+#: serializers.py:34
 msgid "Total customization price (per unit)"
 msgstr "총 커스터마이징 가격 (단위당)"
 
+#: serializers.py:43
 msgid "'instant' for digital items, 'shipping' for physical items"
 msgstr "디지털 항목에는 'instant', 물리 항목에는 'shipping'"
 
+#: serializers.py:46
 msgid "True if this item is a component of a bundle"
 msgstr "이 항목이 묶음의 구성 요소인지 여부"
 
+#: serializers.py:49
 msgid "ID of parent bundle CartItem if this is a component"
 msgstr "이 항목이 구성 요소인 경우 상위 묶음 CartItem의 ID"
 
+#: serializers.py:52
 msgid "Child items if this is a bundle parent"
 msgstr "이 항목이 번들 부모인 경우 자식 항목"
 
+#: serializers.py:591
+#| msgid "Remove gift card"
+msgid "Where to deliver the gift card"
+msgstr "선물 카드를 어디로 배송할까요"
+
+#: serializers.py:605
+msgid "Offset-aware ISO-8601. Omit to deliver as soon as payment clears."
+msgstr "오프셋 인식 ISO-8601. 지급이 완료되는 즉시 배송하려면 생략하세요."
+
+#: serializers.py:612
+msgid "Face value, for products that let the customer choose."
+msgstr "고객이 선택할 수 있는 제품에 대한 표면 가격입니다."
+
+#: serializers.py:621
+#| msgid "Gift card is not active"
+msgid "Gift card details must be an object."
+msgstr "선물 카드 세부 정보는 객체여야 합니다."
+
+#: serializers.py:626
+#, python-format
+msgid "Unknown field(s): %(keys)s"
+msgstr "알 수 없는 필드(들): %(keys)s"
+
+#: serializers.py:638
+msgid "Message cannot contain HTML or markup."
+msgstr "메시지에는 HTML 또는 마크업이 포함될 수 없습니다."
+
+#: serializers.py:647
+msgid "Include a UTC offset so the send time is unambiguous."
+msgstr "UTC 오프셋을 포함하여 발송 시간이 모호하지 않도록 합니다."
+
+#: serializers.py:651
+msgid "Scheduled delivery must be in the future."
+msgstr "예약 배송은 미래의 시간이어야 합니다."
+
+#: serializers.py:654
+msgid "Scheduled delivery cannot be more than a year away."
+msgstr "예약 배송은 최대 1년 이내여야 합니다."
+
+#: serializers.py:673
 msgid "Map of bundle_item_id to variant_id for customer-selected variants"
 msgstr "고객이 선택한 변형에 대한 bundle_item_id를 variant_id로 매핑"
 
+#: serializers.py:680
 msgid ""
-"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+"List of bundle_item_ids to exclude (for optional items customer doesn't "
+"want)"
 msgstr "제외할 bundle_item_ids 목록(고객이 원하지 않는 선택 사항 항목용)"
 
-msgid "Map of slot_id to list of selected option_ids for configurable products"
-msgstr ""
-"구성 가능한 제품에 대한 선택된 option_ids의 목록을 slot_id에 매핑한 내용"
+#: serializers.py:689
+msgid ""
+"Map of slot_id to list of selected option_ids for configurable products"
+msgstr "구성 가능한 제품에 대한 선택된 option_ids의 목록을 slot_id에 매핑한 내용"
 
+#: serializers.py:694
 msgid "Configuration preset ID used as starting point"
 msgstr "설정 사전 설정 ID는 시작 지점으로 사용됩니다"
 
+#: serializers.py:706
 msgid ""
-"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+"Booking details: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
 msgstr ""
 "예약 세부 정보: start_datetime, end_datetime, resource_id, persons, timezone"
 
+#: serializers.py:719
 msgid "Quantity must be at least 1"
 msgstr "수량은 최소 1이어야 합니다."
 
+#: serializers.py:737
 msgid "Subscription plan is required for subscription purchases"
 msgstr "구독 구매에는 구독 플랜이 필요합니다"
 
+#: serializers.py:743
 msgid "Payment token is required for subscription purchases"
 msgstr "구독 구매에는 결제 토큰이 필요합니다"
 
+#: serializers.py:752 services/cart_service.py:991
+#: services/wishlist_service.py:61
 msgid "Product not found"
 msgstr "제품을 찾을 수 없습니다"
 
+#: serializers.py:756
 msgid "This product does not support subscriptions"
 msgstr "이 상품은 구독을 지원하지 않습니다"
 
+#: serializers.py:768
 msgid "Invalid or inactive subscription plan"
 msgstr "잘못된 또는 비활성화된 구독 계획"
 
+#: serializers.py:773
 msgid "This plan is not available for this product"
 msgstr "이 플랜은 이 제품에 사용할 수 없습니다."
 
+#: serializers.py:790
 msgid "Invalid or inactive payment token"
 msgstr "잘못된 또는 비활성화된 결제 토큰"
 
+#: serializers.py:805
 msgid "Pricing tier not found or does not belong to selected plan"
 msgstr "가격 계층이 발견되지 않거나 선택된 플랜에 속하지 않습니다."
 
+#: serializers.py:813
 msgid "No pricing tier available for this plan"
 msgstr "이 플랜에 가격 계층이 없습니다"
 
+#: serializers.py:830
 msgid "Quantity cannot be negative"
 msgstr "수량은 음수가 될 수 없습니다"
 
-msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
-msgstr "선물 카드 코드 (예: GC-XXXX-XXXX-XXXX)"
-
-msgid "Amount applied from this gift card (in base currency)"
-msgstr "이 기프트 카드에서 적용된 금액 (기본 통화 기준)"
-
-msgid "Remaining balance on gift card after this application"
-msgstr "이 적용 후 선물 카드의 잔액"
-
-msgid "Base currency code"
-msgstr "기본 통화 코드"
-
-msgid "Gift card's native currency code"
-msgstr "기프트 카드의 본래 통화 코드"
-
-msgid ""
-"Discount in gift card's native currency (for foreign-currency gift cards)"
-msgstr "기프트 카드의 본화 통화로 표시된 할인 금액 (외화 기프트 카드용)"
-
+#: serializers.py:1355
 #, python-brace-format
 msgid ""
-"Either address_id or complete address details are required. Missing: {fields}"
+"Either address_id or complete address details are required. Missing: "
+"{fields}"
 msgstr "address_id 또는 전체 주소 정보가 필요합니다. 누락됨: {fields}"
 
+#: serializers.py:1388
+#, python-brace-format
+#| msgid ""
+#| "Either address_id or complete address details are required. Missing: "
+#| "{fields}"
+msgid "Complete billing address details are required. Missing: {fields}"
+msgstr "결제 주소 정보가 필요합니다. 누락된 항목: {fields}"
+
+#: serializers.py:1406
+#| msgid "Payment provider is not properly configured"
+msgid "Either payment_provider_id or provider slug is required."
+msgstr "payment_provider_id 또는 provider slug 중 하나가 필요합니다."
+
+#: services/cart_service.py:128 services/cart_service.py:130
+msgid "Choose an amount for this gift card."
+msgstr "이 기프트 카드에 금액을 선택하세요."
+
+#: services/cart_service.py:136
+msgid "Gift card amount must be greater than zero."
+msgstr "기프트 카드 금액은 0보다 �야 합니다."
+
+#: services/cart_service.py:140 services/cart_service.py:156
+#| msgid "This plan is not available for this product"
+msgid "That is not an available gift card amount."
+msgstr "이 금액은 사용 가능한 선물 카드 금액이 아닙니다."
+
+#: services/cart_service.py:151
+#, python-format
+msgid "Minimum gift card amount is %(min)s."
+msgstr "최소 선물 카드 금액은 %(min)s입니다."
+
+#: services/cart_service.py:153
+#, python-format
+msgid "Maximum gift card amount is %(max)s."
+msgstr "선물 카드의 최대 금액은 %(max)s입니다."
+
+#: services/cart_service.py:199
 msgid "This product requires customization"
 msgstr "이 제품은 맞춤 설정이 필요합니다"
 
+#: services/cart_service.py:207
 msgid "Invalid design token"
 msgstr "잘못된 디자인 토큰"
 
+#: services/cart_service.py:235
 msgid "Design not found or expired"
 msgstr "디자인을 찾을 수 없거나 만료됨"
 
+#: services/cart_service.py:239
 msgid "This product does not support customization"
 msgstr "이 제품은 커스터마이징을 지원하지 않습니다."
 
+#: services/cart_service.py:252
 msgid "Invalid customization option"
 msgstr "잘못된 맞춤 설정 옵션"
 
+#: services/cart_service.py:261
 #, python-brace-format
 msgid "Customization '{name}': {error}"
 msgstr "사양 '{name}': {error}"
 
+#: services/cart_service.py:280
 #, python-brace-format
 msgid "Required customization '{name}' is missing"
 msgstr "필수 사양 '{name}'이(가) 누락되었습니다."
 
+#: services/cart_service.py:343
 msgid "Insufficient stock"
 msgstr "재고가 부족합니다"
 
+#: services/cart_service.py:386
 msgid "Bundle has no components configured"
 msgstr "번들에 구성 요소가 설정되지 않았습니다"
 
+#: services/cart_service.py:395
 #, python-brace-format
 msgid "Cannot exclude non-optional bundle component: {name}"
 msgstr "선택이 필수인 번들 구성 요소: {name}을(를) 제외할 수 없습니다."
 
+#: services/cart_service.py:414
+msgid "Bundles cannot contain gift cards."
+msgstr "바우처에는 선물 카드를 포함할 수 없습니다."
+
+#: services/cart_service.py:424
 #, python-brace-format
 msgid "Variant selection required for: {name}"
 msgstr "{name}에 대한 변형 선택이 필요합니다."
 
+#: services/cart_service.py:436
 #, python-brace-format
 msgid "Invalid variant selected for: {name}"
 msgstr "{name}에 대한 유효하지 않은 변형이 선택되었습니다."
 
+#: services/cart_service.py:465
 #, python-brace-format
 msgid "Insufficient stock for bundle component: {name}"
 msgstr "번들 구성 요소 {name}의 재고가 부족합니다."
 
+#: services/cart_service.py:514
 msgid "Bundle quantity updated in cart"
 msgstr "번들 수량이 장바구니에 업데이트되었습니다"
 
+#: services/cart_service.py:544
 msgid "Bundle added to cart"
 msgstr "번들이 장바구니에 추가되었습니다"
 
+#: services/cart_service.py:581
 #, python-brace-format
 msgid "Required slot '{name}' has no selection."
 msgstr "필수 슬롯 '{name}'에 선택된 항목이 없습니다."
 
+#: services/cart_service.py:590
 #, python-brace-format
 msgid "Slot '{name}' requires at least {min} selection(s)."
 msgstr "슬롯 '{name}'은(는) 최소 {min}개의 선택 항목이 필요합니다."
 
+#: services/cart_service.py:598
 #, python-brace-format
 msgid "Slot '{name}' allows at most {max} selection(s)."
 msgstr "슬롯 '{name}'은(는) 최대 {max}개의 선택 항목을 허용합니다."
 
+#: services/cart_service.py:609
 #, python-brace-format
 msgid "Invalid slot ID: {id}"
 msgstr "잘못된 슬롯 ID: {id}"
 
+#: services/cart_service.py:619
 #, python-brace-format
 msgid "Option {opt_id} is not valid for slot '{slot}'."
 msgstr "슬롯 '{slot}'에 대해 옵션 {opt_id}은(는) 유효하지 않습니다."
 
+#: services/cart_service.py:656
 #, python-brace-format
 msgid ""
 "Incompatible selection in slot '{slot}'. Some options are not compatible "
 "with your other choices."
-msgstr ""
-"슬롯 '{slot}'의 선택이 호환되지 않습니다. 다른 선택과 호환되지 않는 옵션이 있"
-"습니다."
+msgstr "슬롯 '{slot}'의 선택이 호환되지 않습니다. 다른 선택과 호환되지 않는 옵션이 있습니다."
 
+#: services/cart_service.py:667
 #, python-brace-format
 msgid ""
 "Excluded selection in slot '{slot}'. Some options conflict with your other "
 "choices."
-msgstr ""
-"슬롯 '{slot}'의 선택이 제외되었습니다. 다른 선택과 충돌하는 옵션이 있습니다."
+msgstr "슬롯 '{slot}'의 선택이 제외되었습니다. 다른 선택과 충돌하는 옵션이 있습니다."
 
+#: services/cart_service.py:767 services/cart_service.py:1386
 #, python-brace-format
 msgid "Insufficient stock for component: {name}"
 msgstr "구성 요소 {name}의 재고가 부족합니다."
 
+#: services/cart_service.py:827
 msgid "Configured product added to cart"
 msgstr "설정된 제품이 장바구니에 추가되었습니다"
 
+#: services/cart_service.py:887
 msgid "Either user or session_key must be provided"
 msgstr "사용자 또는 session_key 중 하나가 제공되어야 합니다."
 
+#: services/cart_service.py:995
 msgid "This product is no longer available"
 msgstr "이 상품은 더 이상 제공되지 않습니다"
 
+#: services/cart_service.py:1023
 msgid "You must be logged in to purchase this product."
 msgstr "이 제품을 구매하려면 로그인해야 합니다."
 
+#: services/cart_service.py:1026
 #, python-format
 msgid "This product requires you to own \"%(required)s\" first."
 msgstr "이 제품은 먼저 \"%(required)s\"를 소유해야 합니다."
 
+#: services/cart_service.py:1035 services/wishlist_service.py:68
 msgid "Product variant not found"
 msgstr "제품 변형을 찾을 수 없습니다"
 
+#: services/cart_service.py:1040
 msgid "Configuration is required for configurable products"
 msgstr "설정 가능한 제품에는 설정이 필요합니다."
 
+#: services/cart_service.py:1159
 msgid "Booking added to cart"
 msgstr "예약이 장바구니에 추가됨"
 
+#: services/cart_service.py:1192
+#| msgid "Item added to cart"
+msgid "Gift card added to cart"
+msgstr "기프트 카드가 장바구니에 추가되었습니다"
+
+#: services/cart_service.py:1231
 msgid "Insufficient stock for requested quantity"
 msgstr "요청한 수량에 대한 재고가 부족합니다"
 
+#: services/cart_service.py:1234
 msgid "Cart item quantity updated"
 msgstr "장바구니 항목 수량이 업데이트되었습니다"
 
+#: services/cart_service.py:1256
 msgid "Item added to cart"
 msgstr "항목이 장바구니에 추가되었습니다"
 
+#: services/cart_service.py:1303
 msgid ""
 "Component quantities cannot be changed directly. Update the parent product "
 "instead."
-msgstr ""
-"구성 요소의 수량은 직접 변경할 수 없습니다. 대신 부모 제품을 업데이트하십시"
-"오."
+msgstr "구성 요소의 수량은 직접 변경할 수 없습니다. 대신 부모 제품을 업데이트하십시오."
 
+#: services/cart_service.py:1318 services/cart_service.py:1499
 #, python-format
 msgid ""
 "Item removed from cart. Also removed %(names)s (required product no longer "
 "in cart)."
-msgstr ""
-"카트에서 항목이 제거되었습니다. 또한 %(names)s도 제거되었습니다(필수품이 더 "
-"이상 카트에 없습니다)."
+msgstr "카트에서 항목이 제거되었습니다. 또한 %(names)s도 제거되었습니다(필수품이 더 이상 카트에 없습니다)."
 
+#: services/cart_service.py:1320 services/cart_service.py:1501
 msgid "Item removed from cart"
 msgstr "항목이 장바구니에서 제거되었습니다"
 
+#: services/cart_service.py:1410
 msgid "Cart item updated"
 msgstr "장바구니 항목이 업데이트되었습니다"
 
+#: services/cart_service.py:1469 views.py:286
 msgid ""
 "Component items cannot be removed directly. Remove the parent product "
 "instead."
-msgstr ""
-"구성 요소 항목은 직접 제거할 수 없습니다. 대신 부모 제품을 제거하십시오."
+msgstr "구성 요소 항목은 직접 제거할 수 없습니다. 대신 부모 제품을 제거하십시오."
 
+#: services/cart_service.py:1556
 msgid "Cart cleared"
 msgstr "장바구니가 비워졌습니다"
 
+#: services/cart_service.py:1593
 msgid "Voucher removed"
 msgstr "쿠폰이 제거되었습니다"
 
+#: services/cart_service.py:1594
 msgid "Voucher not found in cart"
 msgstr "장바구니에서 쿠폰을 찾을 수 없습니다"
 
-msgid "Gift card removed"
-msgstr "기프트 카드가 제거되었습니다"
-
-msgid "Gift card not found in cart"
-msgstr "장바구니에 선물 카드가 없습니다."
-
+#: services/cart_service.py:1666
 #, python-brace-format
 msgid "{count} items merged into cart"
 msgstr "{count}개 항목이 장바구니에 병합되었습니다."
 
+#: services/checkout_service.py:94
 msgid "Account creation required to proceed"
 msgstr "계정 생성이 필요합니다"
 
+#: services/checkout_service.py:169 services/checkout_service.py:233
 msgid "Address not found"
 msgstr "주소를 찾을 수 없습니다"
 
+#: services/checkout_service.py:178
 msgid "Either address_id or address_data must be provided"
 msgstr "address_id 또는 address_data 중 하나가 제공되어야 합니다."
 
+#: services/checkout_service.py:198
 msgid "Shipping address set"
 msgstr "배송 주소가 설정되었습니다"
 
+#: services/checkout_service.py:239
 msgid "Billing address must be provided"
 msgstr "청구 주소가 제공되어야 합니다"
 
+#: services/checkout_service.py:242
 msgid "Billing address set"
 msgstr "청구 주소가 설정되었습니다"
 
+#: services/checkout_service.py:282
 msgid "Shipping address must be set first"
 msgstr "배송 주소를 먼저 설정해야 합니다."
 
+#: services/checkout_service.py:287
 msgid "Shipping method not found"
 msgstr "배송 방법을 찾을 수 없습니다"
 
+#: services/checkout_service.py:320
 msgid "Shipping method selected"
 msgstr "배송 방법이 선택되었습니다"
 
+#: services/checkout_service.py:382
 msgid "Payment provider not found"
 msgstr "결제 제공업체를 찾을 수 없습니다"
 
+#: services/checkout_service.py:386
 msgid "Payment provider is not properly configured"
 msgstr "결제 제공업체가 올바르게 구성되지 않았습니다."
 
+#: services/checkout_service.py:410
 msgid "Payment provider is not available for your location or currency"
 msgstr "귀하의 위치 또는 통화에 대해 결제 제공업체가 사용할 수 없습니다."
 
+#: services/checkout_service.py:417
 msgid "Payment method selected"
 msgstr "결제 방법이 선택되었습니다"
 
+#: services/checkout_service.py:434
 msgid "Cart is empty"
 msgstr "장바구니가 비어 있습니다"
 
+#: services/checkout_service.py:440
 msgid "Shipping address is required"
 msgstr "배송 주소가 필요합니다"
 
+#: services/checkout_service.py:442
 msgid "Shipping method is required"
 msgstr "배송 방법이 필요합니다"
 
+#: services/checkout_service.py:448
 msgid "Billing address is required"
 msgstr "청구 주소가 필요합니다"
 
+#: services/checkout_service.py:455
 msgid "Payment method is required"
 msgstr "결제 방법이 필요합니다"
 
+#: services/checkout_service.py:459
 msgid "Checkout session has expired"
 msgstr "체크아웃 세션이 만료되었습니다"
 
+#: services/checkout_service.py:489
 #, python-brace-format
 msgid "Insufficient stock for {product}"
 msgstr "{product}의 재고가 부족합니다."
 
+#: services/checkout_service.py:505
 #, python-format
 msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
 msgstr "\"%(product)s\"은(는) \"%(required)s\"의 사전 소유가 필요합니다."
 
+#: services/checkout_service.py:694
 msgid "Customer email is required"
 msgstr "고객 이메일이 필요합니다"
 
+#: services/checkout_service.py:854
 msgid "Unable to allocate warehouse for order. Please contact support."
 msgstr "주문을 위한 창고를 할당할 수 없습니다. 지원팀에 문의하십시오."
 
+#: services/checkout_service.py:985 services/checkout_service.py:1018
 msgid "Insufficient stock to complete order"
 msgstr "주문을 완료할 수 있는 재고가 부족합니다"
 
+#: services/checkout_service.py:990 services/checkout_service.py:1023
 msgid "Error processing order. Please try again."
 msgstr "주문 처리 중 오류가 발생했습니다. 다시 시도하십시오."
 
+#: services/checkout_service.py:1072
 msgid "Order created successfully"
 msgstr "주문이 성공적으로 생성되었습니다"
 
+#: services/checkout_service.py:1322
+#, python-format
+msgid "The voucher %(code)s has just been fully used."
+msgstr "바우처 %(code)s가 완전히 사용되었습니다."
+
+#: services/checkout_service.py:1328
+#, python-format
+#| msgid "This product is no longer available"
+msgid "The voucher %(code)s is no longer valid."
+msgstr "바우처 %(code)s는 더 이상 유효하지 않습니다."
+
+#: services/wishlist_service.py:82
 msgid "Wishlist item updated"
 msgstr "위시리스트 항목이 업데이트되었습니다"
 
+#: services/wishlist_service.py:95
 msgid "Item added to wishlist"
 msgstr "항목이 위시리스트에 추가되었습니다"
 
+#: services/wishlist_service.py:110
 msgid "Item removed from wishlist"
 msgstr "항목이 위시리스트에서 제거되었습니다"
 
+#: services/wishlist_service.py:137
 msgid "Item moved to cart"
 msgstr "항목이 장바구니로 이동했습니다"
 
+#: services/wishlist_service.py:154
 msgid "Wishlist cleared"
 msgstr "위시리스트가 비워졌습니다"
 
+#: services/wishlist_service.py:173
 msgid "Wishlist with this name already exists"
 msgstr "이 이름의 위시리스트가 이미 존재합니다."
 
+#: services/wishlist_service.py:184
 msgid "Wishlist created"
 msgstr "위시리스트가 생성되었습니다"
 
+#: templates/admin/cart/cart/change_list.html:22
 msgid "Monitor active and abandoned customer carts"
 msgstr "활성 및 포기된 고객의 장바구니를 모니터링합니다."
 
+#: templates/admin/cart/cart/change_list.html:33
 msgid "Add"
 msgstr "추가"
 
+#: templates/admin/cart/cart/change_list.html:33
+#: templates/admin/cart/cart/change_list.html:178
 msgid "cart"
 msgstr "장바구니"
 
+#: templates/admin/cart/cart/change_list.html:45
+#: templates/admin/cart/taxrate/change_list.html:59
 msgid "Filters"
 msgstr "필터"
 
+#: templates/admin/cart/cart/change_list.html:56
+#: templates/admin/cart/taxrate/change_list.html:63
 msgid "Search"
 msgstr "검색"
 
+#: templates/admin/cart/cart/change_list.html:61
 msgid "Search by user, session, or email..."
 msgstr "사용자, 세션 또는 이메일로 검색..."
 
+#: templates/admin/cart/cart/change_list.html:68
 msgid "User Type"
 msgstr "사용자 유형"
 
+#: templates/admin/cart/cart/change_list.html:71
 msgid "All Carts"
 msgstr "모든 장바구니"
 
+#: templates/admin/cart/cart/change_list.html:72
 msgid "Registered Users"
 msgstr "등록된 사용자"
 
+#: templates/admin/cart/cart/change_list.html:73
 msgid "Guest Carts"
 msgstr "방문자 장바구니"
 
+#: templates/admin/cart/cart/change_list.html:80
 msgid "Cart Status"
 msgstr "장바구니 상태"
 
+#: templates/admin/cart/cart/change_list.html:83
+#: templates/admin/cart/cart/change_list.html:96
+#: templates/admin/cart/taxrate/change_list.html:88
 msgid "All"
 msgstr "모두"
 
+#: templates/admin/cart/cart/change_list.html:84
 msgid "Active (< 24h)"
 msgstr "활성 상태 (<24시간)"
 
+#: templates/admin/cart/cart/change_list.html:85
 msgid "Abandoned (> 24h)"
 msgstr "포기됨 (>24시간)"
 
+#: templates/admin/cart/cart/change_list.html:86
+#: templates/admin/cart/partials/cart_cards.html:50
 msgid "Empty"
 msgstr "비어 있음"
 
+#: templates/admin/cart/cart/change_list.html:97
 msgid "Has Shipping"
 msgstr "배송 포함"
 
+#: templates/admin/cart/cart/change_list.html:98
 msgid "No Shipping"
 msgstr "배송 없음"
 
+#: templates/admin/cart/cart/change_list.html:105
 msgid "Min Cart Value"
 msgstr "최소 장바구니 금액"
 
+#: templates/admin/cart/cart/change_list.html:110
 msgid "Min value"
 msgstr "최소 금액"
 
+#: templates/admin/cart/cart/change_list.html:117
 msgid "Max Cart Value"
 msgstr "최대 장바구니 금액"
 
+#: templates/admin/cart/cart/change_list.html:122
 msgid "Max value"
 msgstr "최대 금액"
 
+#: templates/admin/cart/cart/change_list.html:130
 msgid "Created From"
 msgstr "생성일 (시작)"
 
+#: templates/admin/cart/cart/change_list.html:139
 msgid "Created To"
 msgstr "생성일 (종료)"
 
+#: templates/admin/cart/cart/change_list.html:151
 msgid "Apply Filters"
 msgstr "필터 적용"
 
+#: templates/admin/cart/cart/change_list.html:154
 msgid "Clear All"
 msgstr "모두 지우기"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Run the selected action"
 msgstr "선택된 작업 실행"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Go"
 msgstr "시작"
 
+#: templates/admin/cart/cart/change_list.html:168
 msgid "of"
 msgstr "의"
 
+#: templates/admin/cart/cart/change_list.html:195
 #, python-format
 msgid "1 cart"
 msgid_plural "%(counter)s carts"
 msgstr[0] "%(counter)s 장바구니"
 msgstr[1] "%(counter)s 장바구니"
 
+#: templates/admin/cart/cart/change_list.html:197
 msgid "carts"
 msgstr "장바구니"
 
+#: templates/admin/cart/cart/change_list.html:201
 msgid "Show all"
 msgstr "모두 보기"
 
+#: templates/admin/cart/cart/change_list.html:205
+#: templates/admin/cart/shippingmethod/change_form.html:43
+#: templates/admin/cart/shippingmethod/change_form.html:343
+#: templates/admin/cart/taxrate/change_form.html:44
+#: templates/admin/cart/taxrate/change_form.html:238
 msgid "Save"
 msgstr "저장"
 
+#: templates/admin/cart/method_wizard/base.html:4
+#: templates/admin/cart/method_wizard/base.html:17
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:24
 msgid "Add Shipping Method"
 msgstr "배송 방법 추가"
 
+#: templates/admin/cart/method_wizard/base.html:18
 msgid "Configure a new shipping method for your store"
 msgstr "쇼핑몰에 새 배송 방법을 구성하십시오."
 
+#: templates/admin/cart/method_wizard/base.html:25
+#: templates/admin/cart/method_wizard/step1_basics.html:10
+#: templates/admin/cart/method_wizard/step5_review.html:18
 msgid "Method Basics"
 msgstr "기본 정보"
 
+#: templates/admin/cart/method_wizard/base.html:31
 msgid "Eligibility"
 msgstr "적용 조건"
 
+#: templates/admin/cart/method_wizard/base.html:37
+#: templates/admin/cart/shippingmethod/change_form.html:90
 msgid "Coverage"
 msgstr "범위"
 
+#: templates/admin/cart/method_wizard/base.html:43
 msgid "Features"
 msgstr "기능"
 
+#: templates/admin/cart/method_wizard/base.html:49
 msgid "Review"
 msgstr "검토"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:13
 msgid "Define the core identity and type of this shipping method."
 msgstr "이 배송 방법의 핵심 식별자 및 유형을 정의합니다."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:27
 msgid "Method Name"
 msgstr "배송 방법 이름"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:35
 msgid "e.g., Standard Shipping, Express Delivery"
 msgstr "예: 표준 배송, 익스프레스 배송"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:38
 msgid "Customer-facing name for this shipping method"
 msgstr "이 배송 방법에 대한 고객용 이름"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:49
 msgid "Optional description of this shipping method"
 msgstr "이 배송 방법의 선택적 설명"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:54
 msgid "Display Icon"
 msgstr "아이콘 표시"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:58
+#: templates/admin/cart/shippingmethod/change_form.html:227
 msgid ""
 "Select an image from the media library or choose a Font Awesome icon. Image "
 "takes priority if both are provided."
 msgstr ""
-"미디어 라이브러리에서 이미지를 선택하거나 Font Awesome 아이콘을 선택하세요. "
-"두 가지 모두 제공할 경우 이미지가 우선 적용됩니다."
+"미디어 라이브러리에서 이미지를 선택하거나 Font Awesome 아이콘을 선택하세요. 두 가지 모두 제공할 경우 이미지가 우선 "
+"적용됩니다."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:63
+#: templates/admin/cart/method_wizard/step5_review.html:48
 msgid "Custom Image"
 msgstr "사용자 정의 이미지"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:74
 msgid "Font Awesome Icon"
 msgstr "Font Awesome 아이콘"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:78
 msgid "Choose an icon from Font Awesome library"
 msgstr "Font Awesome 라이브러리에서 아이콘을 선택하세요"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:94
+#: templates/admin/cart/method_wizard/step5_review.html:62
+#: templates/admin/cart/shippingmethod/change_form.html:32
+#: templates/admin/cart/shippingmethod/change_form.html:294
+#: templates/admin/cart/shippingmethod/change_list.html:67
+#: templates/admin/cart/shippingmethod/method_card.html:122
+#: templates/admin/cart/taxrate/change_form.html:33
+#: templates/admin/cart/taxrate/change_list.html:42
+#: templates/admin/cart/taxrate/change_list.html:89
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:26
 msgid "Active"
 msgstr "활성"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:98
 msgid "Make this method available to customers immediately"
 msgstr "이 방법을 즉시 고객에게 제공하세요"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:105
 msgid "Method Type & Pricing"
 msgstr "배송 방법 유형 및 가격"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:114
 msgid "Select method type..."
 msgstr "배송 방법 유형 선택..."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:116
 msgid "Flat Rate - Fixed shipping cost"
 msgstr "고정 배송비 - 플랫 레이트"
 
-msgid "Free Shipping - No charge"
-msgstr "무료 배송 - 요금 없음"
-
-msgid "Weight Based - Calculate by cart weight"
-msgstr "중량 기반 - 장바구니 중량으로 계산"
-
-msgid "Price Based - Calculate by cart subtotal"
-msgstr "가격 기반 - 장바구니 소계로 계산"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:119
 msgid "Real-Time Carrier Rates - Live rates from carriers"
 msgstr "실시간 운송업체 비용 - 운송업체에서 제공하는 실시간 비용"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:122
 msgid "Local Pickup - Customer picks up at location"
 msgstr "현지 픽업 - 고객이 위치에서 수령"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:125
 msgid "Table Rate - Complex rules based on weight/price/destination"
 msgstr "테이블 기반 - 중량/가격/목적지에 기반한 복잡한 규칙"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:133
 msgid "Method Types:"
 msgstr "배송 방법 유형:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Flat Rate:"
 msgstr "고정 요금:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Fixed shipping cost regardless of order"
 msgstr "주문과 무관한 고정 배송비"
 
-msgid "Free Shipping:"
-msgstr "무료 배송:"
-
-msgid "No shipping charge"
-msgstr "배송 요금 없음"
-
-msgid "Weight/Price Based:"
-msgstr "무게/가격 기반:"
-
-msgid "Calculate using rate tables"
-msgstr "요금표를 사용하여 계산"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Real-Time:"
 msgstr "실시간:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Get live rates from USPS, FedEx, UPS, or DHL"
 msgstr "USPS, FedEx, UPS 또는 DHL에서 실시간 비용을 받아옵니다"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Local Pickup:"
 msgstr "현지 픽업:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Customer picks up at your location"
 msgstr "고객이 귀하의 위치에서 수령"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate"
+msgid "Table Rate:"
+msgstr "테이블 요금:"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate - Complex rules based on weight/price/destination"
+msgid "Complex rules based on weight, price, or destination"
+msgstr "중량, 가격 또는 목적지에 기반한 복잡한 규칙"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:158
 msgid "Fixed shipping cost charged to customer"
 msgstr "고객에게 부과되는 고정 배송비"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:168
 msgid "No Configured Providers"
 msgstr "설정된 제공업체 없음"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:170
 msgid ""
-"You need to configure at least one shipping provider that supports real-time "
-"rates before you can use this method type."
-msgstr ""
-"이 방법 유형을 사용하기 전에 실시간 비용을 지원하는 최소한 하나의 배송 제공업"
-"체를 구성해야 합니다."
+"You need to configure at least one shipping provider that supports real-time"
+" rates before you can use this method type."
+msgstr "이 방법 유형을 사용하기 전에 실시간 비용을 지원하는 최소한 하나의 배송 제공업체를 구성해야 합니다."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:174
 msgid "Connect Provider"
 msgstr "제공업체 연결"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:177
 msgid "Manage Providers"
 msgstr "제공업체 관리"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:190
 msgid "Select a configured shipping provider"
 msgstr "설정된 배송 제공업체 선택"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:202
+#: templates/admin/cart/method_wizard/step4_features.html:252
 msgid "Tip:"
 msgstr "팁:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:203
 msgid ""
 "Only providers that are configured and support real-time rates are shown "
 "above."
-msgstr ""
-"위에 표시된 제공업체는 구성되어 있고 실시간 비용을 지원하는 제공업체입니다."
+msgstr "위에 표시된 제공업체는 구성되어 있고 실시간 비용을 지원하는 제공업체입니다."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:204
 msgid "Manage providers"
 msgstr "제공업체 관리"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:209
 msgid "Service Code"
 msgstr "서비스 코드"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:213
 msgid "Specific service code from carrier (optional)"
 msgstr "운송업체에서 제공하는 특정 서비스 코드(선택 사항)"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:230
 msgid "Cancel"
 msgstr "취소"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:233
+#: templates/admin/cart/method_wizard/step2_conditions.html:53
+#: templates/admin/cart/method_wizard/step3_coverage.html:102
 msgid "Next Step"
 msgstr "다음 단계"
 
-msgid "Eligibility Conditions"
-msgstr "적용 조건"
-
-msgid ""
-"Define when this shipping method should be available based on cart value and "
-"weight."
-msgstr ""
-"장바구니의 가치와 중량을 기반으로 이 배송 방법이 언제 사용 가능한지 정의합니"
-"다."
-
-msgid "Order Value Restrictions"
-msgstr "주문 금액 제한"
-
-msgid "Set minimum or maximum cart subtotal requirements for this method."
-msgstr "이 방법에 대한 장바구니 소계의 최소값 또는 최대값을 설정합니다."
-
-msgid "Method only available if cart subtotal is at least this amount"
-msgstr "장바구니 소계가 이 금액 이상일 때만 이 방법이 사용 가능합니다"
-
-msgid "No maximum"
-msgstr "최대 제한 없음"
-
-msgid "Method only available if cart subtotal is below this amount"
-msgstr "장바구니 소계가 이 금액 미만일 때만 이 방법이 사용 가능합니다"
-
-msgid "Examples:"
-msgstr "예시:"
-
-msgid "Free shipping for orders over $50: Set minimum to 50.00"
-msgstr "$50 이상 주문에 대한 무료 배송: 최소값을 50.00으로 설정"
-
-msgid "Economy shipping for orders under $100: Set maximum to 100.00"
-msgstr "$100 미만 주문에 대한 경제 배송: 최대값을 100.00으로 설정"
-
-msgid "Standard shipping for $25-$200: Set both minimum and maximum"
-msgstr "$25-$200 주문에 대한 표준 배송: 최소값과 최대값 모두 설정"
-
-msgid "Weight Restrictions"
-msgstr "무게 제한"
-
-msgid "Set minimum or maximum total cart weight requirements for this method."
-msgstr "이 방법에 대한 총 장바구니 중량의 최소값 또는 최대값을 설정합니다."
-
-msgid "Minimum Weight (kg)"
-msgstr "최소 무게 (kg)"
-
-msgid "Method only available if total cart weight is at least this value"
-msgstr "총 장바구니 중량이 이 값 이상일 때만 이 방법이 사용 가능합니다"
-
-msgid "Maximum Weight (kg)"
-msgstr "최대 무게 (kg)"
-
-msgid "Method only available if total cart weight is below this value"
-msgstr "총 장바구니 중량이 이 값 미만일 때만 이 방법이 사용 가능합니다"
-
-msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
-msgstr "2kg 미만의 패키지에 대한 가벼운 배송: 최대값을 2.00으로 설정"
-
-msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
-msgstr "20kg 이상의 패키지에 대한 무거운 화물: 최소값을 20.00으로 설정"
-
-msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
-msgstr "0.5kg-10kg의 패키지에 대한 표준 배송: 최소값과 최대값 모두 설정"
-
+#: templates/admin/cart/method_wizard/step2_conditions.html:6
+#: templates/admin/cart/method_wizard/step2_conditions.html:27
+#: templates/admin/cart/method_wizard/step5_review.html:93
 msgid "Additional Options"
 msgstr "추가 옵션"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:9
+#| msgid "Optional description of this shipping method"
+msgid "Configure additional options for this shipping method."
+msgstr "이 배송 방식에 대한 추가 옵션을 구성합니다."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:19
+msgid "Eligibility Conditions"
+msgstr "적용 조건"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:20
+msgid ""
+"Order value and weight eligibility conditions are now configured through "
+"Shipping Promotions with visibility control. Go to Shipping Promotions to "
+"set up conditions that control when this method is shown to customers."
+msgstr ""
+"주문 금액 및 무게 자격 조건은 이제 시각적 제어가 가능한 배송 프로모션을 통해 설정됩니다. 이 방법이 고객에게 표시되는 시점을 제어하는"
+" 조건을 설정하려면 배송 프로모션으로 이동하세요."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:36
 msgid "Requires Shipping Address"
 msgstr "배송 주소 필요"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:40
 msgid ""
 "Customer must provide a shipping address for this method (disable for "
 "digital goods or local pickup)"
-msgstr ""
-"이 방법을 사용하려면 고객이 배송 주소를 제공해야 합니다(디지털 상품 또는 현"
-"지 픽업의 경우 비활성화 가능)"
+msgstr "이 방법을 사용하려면 고객이 배송 주소를 제공해야 합니다(디지털 상품 또는 현지 픽업의 경우 비활성화 가능)"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:50
+#: templates/admin/cart/method_wizard/step3_coverage.html:99
+#: templates/admin/cart/method_wizard/step4_features.html:263
+#: templates/admin/cart/method_wizard/step5_review.html:228
 msgid "Previous"
 msgstr "이전"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:117
+#: templates/admin/cart/shippingmethod/change_form.html:169
 msgid "Geographic Coverage"
 msgstr "지리적 범위"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:9
+#: templates/admin/cart/shippingmethod/change_form.html:170
 msgid "Define where this shipping method is available using shipping zones."
 msgstr "배송 구역을 사용하여 이 배송 방법이 제공되는 위치를 정의합니다."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:23
 msgid "Zone-Based Coverage:"
 msgstr "지역 기반 배송 범위:"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:24
 msgid ""
 "Use shipping zones for flexible, rule-based geographic coverage. This "
 "approach works seamlessly with shipping rules and allows precise control "
 "over where your methods are available."
 msgstr ""
-"유연한, 규칙 기반의 지리적 범위를 위해 배송 구역을 사용하세요. 이 접근 방식"
-"은 배송 규칙과 완벽하게 호환되며, 제공되는 방법의 위치를 정확하게 제어할 수 "
-"있습니다."
+"유연한, 규칙 기반의 지리적 범위를 위해 배송 구역을 사용하세요. 이 접근 방식은 배송 규칙과 완벽하게 호환되며, 제공되는 방법의 위치를"
+" 정확하게 제어할 수 있습니다."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:29
 msgid "Select Shipping Zones"
 msgstr "배송 지역 선택"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:32
 msgid ""
 "Choose which shipping zones this method is available for. Leave empty to "
 "make available worldwide."
-msgstr ""
-"이 방법이 제공되는 배송 구역을 선택하세요. 전 세계적으로 제공하려면 비워 두세"
-"요."
+msgstr "이 방법이 제공되는 배송 구역을 선택하세요. 전 세계적으로 제공하려면 비워 두세요."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:38
 msgid "Available Zones"
 msgstr "사용 가능한 지역"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:49
 msgid "Add selected zones"
 msgstr "선택한 지역 추가"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:52
 msgid "Add all zones"
 msgstr "모든 지역 추가"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:55
 msgid "Remove selected zones"
 msgstr "선택한 지역 제거"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:58
 msgid "Remove all zones"
 msgstr "모든 지역 제거"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:64
 msgid "Selected Zones"
 msgstr "선택한 지역"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:83
 msgid "No shipping zones found!"
 msgstr "배송 지역을 찾을 수 없습니다!"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:84
 msgid "You need to create shipping zones first."
 msgstr "먼저 배송 구역을 생성해야 합니다."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:86
 msgid "Create a shipping zone"
 msgstr "배송 지역 생성"
 
+#: templates/admin/cart/method_wizard/step4_features.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:154
 msgid "Method Features"
 msgstr "방법 기능"
 
+#: templates/admin/cart/method_wizard/step4_features.html:9
 msgid ""
 "Configure delivery estimates, display order, and method-specific features."
 msgstr "배송 예상 시간, 표시 순서, 방법별 기능을 구성합니다."
 
-msgid "Select the physical locations where customers can pick up their orders."
+#: templates/admin/cart/method_wizard/step4_features.html:23
+msgid ""
+"Select the physical locations where customers can pick up their orders."
 msgstr "고객이 주문을 수령할 수 있는 물리적 위치를 선택하세요."
 
+#: templates/admin/cart/method_wizard/step4_features.html:27
 msgid "Available Pickup Locations"
 msgstr "사용 가능한 픽업 위치"
 
+#: templates/admin/cart/method_wizard/step4_features.html:32
 msgid "Available Locations"
 msgstr "사용 가능한 위치"
 
+#: templates/admin/cart/method_wizard/step4_features.html:60
 msgid "Selected Locations"
 msgstr "선택한 위치"
 
+#: templates/admin/cart/method_wizard/step4_features.html:79
 msgid "No pickup locations found!"
 msgstr "픽업 위치를 찾을 수 없습니다!"
 
+#: templates/admin/cart/method_wizard/step4_features.html:80
 msgid "You need to create pickup locations first for local pickup methods."
 msgstr "현지 픽업 방법을 위해 먼저 픽업 위치를 생성해야 합니다."
 
+#: templates/admin/cart/method_wizard/step4_features.html:82
 msgid "Create a pickup location"
 msgstr "픽업 위치 생성"
 
+#: templates/admin/cart/method_wizard/step4_features.html:95
 msgid "Carrier API Status"
 msgstr "운송업체 API 상태"
 
+#: templates/admin/cart/method_wizard/step4_features.html:101
+#: templates/admin/cart/method_wizard/step5_review.html:79
+#: templates/admin/cart/shippingmethod/method_card.html:96
 msgid "Carrier:"
 msgstr "운송업체:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:103
 msgid "Service Code:"
 msgstr "서비스 코드:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:109
 msgid "API Configuration Status"
 msgstr "API 구성 상태"
 
+#: templates/admin/cart/method_wizard/step4_features.html:113
 msgid "Checking API credentials..."
 msgstr "API 인증 정보 확인 중..."
 
+#: templates/admin/cart/method_wizard/step4_features.html:119
 msgid ""
 "Ensure your carrier API credentials are configured in the shipping provider "
 "settings."
-msgstr ""
-"배송 제공업체 설정에 운송업체 API 자격 증명이 구성되어 있는지 확인하세요."
+msgstr "배송 제공업체 설정에 운송업체 API 자격 증명이 구성되어 있는지 확인하세요."
 
+#: templates/admin/cart/method_wizard/step4_features.html:129
 msgid "Enable Rate Caching"
 msgstr "요금 캐싱 활성화"
 
+#: templates/admin/cart/method_wizard/step4_features.html:133
 msgid ""
 "Cache carrier rates for 15 minutes to improve performance and reduce API "
 "calls"
-msgstr ""
-"성능을 향상시키고 API 호출을 줄이기 위해 운송업체 비용을 15분 동안 캐시합니다"
+msgstr "성능을 향상시키고 API 호출을 줄이기 위해 운송업체 비용을 15분 동안 캐시합니다"
 
+#: templates/admin/cart/method_wizard/step4_features.html:143
 msgid "Rate Table Configuration"
 msgstr "요금표 구성"
 
-msgid "Weight-Based Rates:"
-msgstr "중량 기반 요금:"
+#: templates/admin/cart/method_wizard/step4_features.html:149
+#| msgid "Table Rate"
+msgid "Table Rates:"
+msgstr "테이블 요금:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:150
+#| msgid ""
+#| "You'll be able to configure tiered rates based on cart weight after the "
+#| "method is created."
 msgid ""
-"You'll be able to configure tiered rates based on cart weight after the "
-"method is created."
-msgstr ""
-"방법이 생성된 후 장바구니 중량 기반의 계층형 비용을 구성할 수 있습니다."
+"You'll be able to configure tiered rates based on weight, price, or "
+"destination after the method is created."
+msgstr "메서드가 생성된 후에는 무게, 가격 또는 목적지 기반의 계층별 요금을 구성할 수 있습니다."
 
-msgid "Price-Based Rates:"
-msgstr "가격 기반 요금:"
-
-msgid ""
-"You'll be able to configure tiered rates based on cart subtotal after the "
-"method is created."
-msgstr ""
-"방법이 생성된 후 장바구니 소계 기반의 계층형 비용을 구성할 수 있습니다."
-
+#: templates/admin/cart/method_wizard/step4_features.html:156
 msgid "Rate tables can be managed from the method's edit page after creation."
 msgstr "생성 후 방법의 편집 페이지에서 비용 표을 관리할 수 있습니다."
 
+#: templates/admin/cart/method_wizard/step4_features.html:165
 msgid "Delivery Time Estimate"
 msgstr "배송 시간 추정"
 
+#: templates/admin/cart/method_wizard/step4_features.html:169
 msgid "Provide customers with an estimated delivery timeframe."
 msgstr "고객에게 예상 배송 시간을 제공합니다."
 
+#: templates/admin/cart/method_wizard/step4_features.html:186
 msgid "Fastest delivery time in business days"
 msgstr "영업일 기준 가장 빠른 배송 시간"
 
+#: templates/admin/cart/method_wizard/step4_features.html:203
 msgid "Slowest delivery time in business days"
 msgstr "영업일 기준 가장 느린 배송 시간"
 
+#: templates/admin/cart/method_wizard/step4_features.html:211
+msgid "Examples:"
+msgstr "예시:"
+
+#: templates/admin/cart/method_wizard/step4_features.html:213
 msgid "Standard shipping: 3-5 business days"
 msgstr "표준 배송: 3-5 영업일"
 
+#: templates/admin/cart/method_wizard/step4_features.html:214
 msgid "Express shipping: 1-2 business days"
 msgstr "익스프레스 배송: 1-2 영업일"
 
+#: templates/admin/cart/method_wizard/step4_features.html:215
 msgid "International shipping: 7-14 business days"
 msgstr "국제 배송: 7-14 영업일"
 
+#: templates/admin/cart/method_wizard/step4_features.html:229
 msgid "Display Settings"
 msgstr "표시 설정"
 
+#: templates/admin/cart/method_wizard/step4_features.html:245
 msgid ""
 "Lower numbers appear first. Use this to control the order methods are "
 "displayed to customers."
-msgstr ""
-"작은 숫자가 먼저 표시됩니다. 이 기능을 사용하여 고객에게 방법이 표시되는 순서"
-"를 제어할 수 있습니다."
+msgstr "작은 숫자가 먼저 표시됩니다. 이 기능을 사용하여 고객에게 방법이 표시되는 순서를 제어할 수 있습니다."
 
+#: templates/admin/cart/method_wizard/step4_features.html:253
 msgid ""
 "Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
 "of new methods between existing ones."
-msgstr ""
-"기존 방법들 사이에 새로운 방법을 쉽게 삽입할 수 있도록 10 단위(0, 10, 20)로 "
-"정렬 순서를 할당합니다."
+msgstr "기존 방법들 사이에 새로운 방법을 쉽게 삽입할 수 있도록 10 단위(0, 10, 20)로 정렬 순서를 할당합니다."
 
+#: templates/admin/cart/method_wizard/step4_features.html:266
+#: templates/admin/cart/method_wizard/step5_review.html:6
 msgid "Review & Create"
 msgstr "검토 및 생성"
 
+#: templates/admin/cart/method_wizard/step4_features.html:275
 msgid "API credentials verified successfully"
 msgstr "API 인증 정보가 성공적으로 확인되었습니다"
 
+#: templates/admin/cart/method_wizard/step5_review.html:9
 msgid "Review your shipping method configuration and create it."
 msgstr "배송 방법 설정을 검토하고 생성하세요."
 
+#: templates/admin/cart/method_wizard/step5_review.html:20
+#: templates/admin/cart/method_wizard/step5_review.html:95
+#: templates/admin/cart/method_wizard/step5_review.html:119
+#: templates/admin/cart/method_wizard/step5_review.html:156
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:62
 msgid "Edit"
 msgstr "편집"
 
+#: templates/admin/cart/method_wizard/step5_review.html:26
 msgid "Name:"
 msgstr "이름:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:30
 msgid "Method Type:"
 msgstr "방법 유형:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:39
 msgid "Description:"
 msgstr "설명:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:45
+#: templates/admin/cart/method_wizard/step5_review.html:53
 msgid "Display Icon:"
 msgstr "표시 아이콘:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:58
 msgid "Status:"
 msgstr "상태:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:66
+#: templates/admin/cart/shippingmethod/change_form.html:34
+#: templates/admin/cart/shippingmethod/change_list.html:70
+#: templates/admin/cart/shippingmethod/method_card.html:124
+#: templates/admin/cart/taxrate/change_form.html:35
+#: templates/admin/cart/taxrate/change_list.html:90
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:30
 msgid "Inactive"
 msgstr "비활성"
 
+#: templates/admin/cart/method_wizard/step5_review.html:73
 msgid "Flat Rate Cost:"
 msgstr "고정 요금:"
 
-msgid "Min Order Value:"
-msgstr "최소 주문 금액:"
-
-msgid "Max Order Value:"
-msgstr "최대 주문 금액:"
-
-msgid "Min Weight:"
-msgstr "최소 무게:"
-
-msgid "Max Weight:"
-msgstr "최대 무게:"
-
+#: templates/admin/cart/method_wizard/step5_review.html:101
 msgid "Requires Shipping Address:"
 msgstr "배송 주소 필요:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:104
 msgid "Yes"
 msgstr "예"
 
+#: templates/admin/cart/method_wizard/step5_review.html:106
 msgid "No"
 msgstr "아니오"
 
-msgid ""
-"No eligibility conditions set - method available for all cart values and "
-"weights"
-msgstr ""
-"적격 조건이 설정되지 않았습니다 - 모든 장바구니 값 및 무게에 대해 방법이 사"
-"용 가능합니다."
-
+#: templates/admin/cart/method_wizard/step5_review.html:126
 msgid "Shipping Zones:"
 msgstr "배송 지역:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:141
+#: templates/admin/cart/shippingmethod/method_card.html:76
 msgid "Coverage:"
 msgstr "범위:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:143
 msgid "Worldwide (No zones selected)"
 msgstr "전 세계 (지역 선택 없음)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:164
 msgid "Pickup Locations:"
 msgstr "픽업 위치:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:167
+#: templates/admin/cart/shippingmethod/method_card.html:87
 msgid "location"
 msgstr "위치"
 
+#: templates/admin/cart/method_wizard/step5_review.html:172
 msgid "Delivery Time:"
 msgstr "배송 시간:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:174
+#: templates/admin/cart/shippingmethod/method_card.html:110
 msgid "Instant Pickup"
 msgstr "즉시 픽업"
 
+#: templates/admin/cart/method_wizard/step5_review.html:179
 msgid "Delivery Estimate:"
 msgstr "배송 추정:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:182
+#: templates/admin/cart/shippingmethod/method_card.html:112
 msgid "business days"
 msgstr "영업일"
 
+#: templates/admin/cart/method_wizard/step5_review.html:188
 msgid "Sort Order:"
 msgstr "정렬 순서:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:194
 msgid "Rate Caching:"
 msgstr "요금 캐싱:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:196
 msgid "Enabled"
 msgstr "활성화됨"
 
+#: templates/admin/cart/method_wizard/step5_review.html:208
 msgid "What happens next:"
 msgstr "다음 단계:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:210
 msgid "Your shipping method will be created with the settings above"
 msgstr "위의 설정으로 배송 방법이 생성됩니다."
 
+#: templates/admin/cart/method_wizard/step5_review.html:212
 msgid "You'll be redirected to configure rate tables for this method"
 msgstr "이 방법의 요금표를 구성하도록 리디렉션됩니다."
 
+#: templates/admin/cart/method_wizard/step5_review.html:215
 msgid ""
 "The method will be immediately available to customers (if eligibility "
 "conditions are met)"
 msgstr "고객에게 즉시 제공됩니다(적격 조건이 충족될 경우)."
 
+#: templates/admin/cart/method_wizard/step5_review.html:217
 msgid "The method will be created as inactive - activate it when ready"
 msgstr "이 방법은 비활성 상태로 생성됩니다 - 준비가 되면 이를 활성화하십시오."
 
+#: templates/admin/cart/method_wizard/step5_review.html:231
 msgid "Create Shipping Method"
 msgstr "배송 방법 생성"
 
+#: templates/admin/cart/method_wizard/step5_review.html:240
 msgid "Creating..."
 msgstr "생성 중..."
 
+#: templates/admin/cart/partials/cart_cards.html:29
 msgid "Session"
 msgstr "세션"
 
+#: templates/admin/cart/partials/cart_cards.html:36
 msgid "Registered"
 msgstr "등록됨"
 
+#: templates/admin/cart/partials/cart_cards.html:40
 msgid "Guest"
 msgstr "방문자"
 
+#: templates/admin/cart/partials/cart_cards.html:46
 msgid "item"
 msgstr "항목"
 
+#: templates/admin/cart/partials/cart_cards.html:56
 msgid "Shipping Set"
 msgstr "배송 설정"
 
+#: templates/admin/cart/partials/cart_cards.html:69
 msgid "Cart Total"
 msgstr "장바구니 합계"
 
+#: templates/admin/cart/partials/cart_cards.html:75
 msgid "Items"
 msgstr "항목"
 
+#: templates/admin/cart/partials/cart_cards.html:80
 msgid "Savings"
 msgstr "할인 금액"
 
+#: templates/admin/cart/partials/cart_cards.html:88
 msgid "Shipping"
 msgstr "배송"
 
+#: templates/admin/cart/partials/cart_cards.html:95
 msgid "Grand Total"
 msgstr "총 합계"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "Updated"
 msgstr "업데이트됨"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "ago"
 msgstr "전"
 
+#: templates/admin/cart/partials/cart_cards.html:109
+#: templates/admin/cart/shippingmethod/change_form.html:30
+#: templates/admin/cart/shippingmethod/method_card.html:128
 msgid "Created"
 msgstr "생성일"
 
+#: templates/admin/cart/partials/cart_cards.html:120
 msgid "Est. Delivery"
 msgstr "예상 배송"
 
+#: templates/admin/cart/partials/cart_cards.html:129
 msgid "View cart details"
 msgstr "장바구니 상세 보기"
 
+#: templates/admin/cart/partials/cart_cards.html:134
 msgid "Edit cart"
 msgstr "장바구니 편집"
 
+#: templates/admin/cart/partials/cart_cards.html:140
 msgid "Delete cart"
 msgstr "장바구니 삭제"
 
+#: templates/admin/cart/partials/cart_cards.html:143
 msgid "Are you sure you want to clear this cart?"
 msgstr "이 장바구니를 비우시겠습니까?"
 
+#: templates/admin/cart/partials/cart_cards.html:154
 msgid "No shopping carts found matching your criteria."
 msgstr "기준에 맞는 쇼핑 카트를 찾을 수 없습니다."
 
+#: templates/admin/cart/partials/cart_cards.html:156
 msgid "Try adjusting your filters or search terms."
 msgstr "필터 또는 검색어를 조정해 보세요."
 
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:22
 msgid "Edit Shipping Method"
 msgstr "배송 방식 편집"
 
+#: templates/admin/cart/shippingmethod/change_form.html:40
+#: templates/admin/cart/shippingmethod/change_form.html:344
+#: templates/admin/cart/taxrate/change_form.html:41
+#: templates/admin/cart/taxrate/change_form.html:239
 msgid "Save and continue editing"
 msgstr "저장하고 편집 계속"
 
+#: templates/admin/cart/shippingmethod/change_form.html:56
+#: templates/admin/cart/taxrate/change_form.html:57
 msgid "Please correct the errors below"
 msgstr "아래의 오류를 수정해 주세요"
 
+#: templates/admin/cart/shippingmethod/change_form.html:82
+#: templates/admin/cart/taxrate/change_form.html:83
 msgid "Basic"
 msgstr "기본"
 
+#: templates/admin/cart/shippingmethod/change_form.html:86
+#: templates/admin/cart/shippingmethod/change_form.html:148
 msgid "Pricing"
 msgstr "가격"
 
+#: templates/admin/cart/shippingmethod/change_form.html:94
 msgid "Display"
 msgstr "표시"
 
-msgid "Optional: Restrict availability based on order value or weight."
-msgstr "선택 사항: 주문 금액 또는 무게에 따라 가용성을 제한합니다."
+#: templates/admin/cart/shippingmethod/change_form.html:103
+#| msgid "Product Exemptions"
+msgid "Promotions"
+msgstr "프로모션"
 
+#: templates/admin/cart/shippingmethod/change_form.html:185
 msgid "Delivery Time"
 msgstr "배송 시간"
 
+#: templates/admin/cart/shippingmethod/change_form.html:226
 msgid "Display Options"
 msgstr "표시 옵션"
 
+#: templates/admin/cart/shippingmethod/change_form.html:248
 msgid "Carrier Integration"
 msgstr "운송업체 통합"
 
+#: templates/admin/cart/shippingmethod/change_form.html:249
 msgid "Configure carrier-specific settings for real-time rate lookups."
 msgstr "실시간 요금 조회를 위한 운송사별 설정을 구성합니다."
 
+#: templates/admin/cart/shippingmethod/change_form.html:269
+msgid "Active Promotions"
+msgstr "활성 프로모션"
+
+#: templates/admin/cart/shippingmethod/change_form.html:270
+msgid ""
+"Shipping promotions that currently affect this method. Promotions with no "
+"method restrictions apply to all methods."
+msgstr "현재 이 방법에 영향을 주는 배송 프로모션입니다. 방법 제한이 없는 프로모션은 모든 방법에 적용됩니다."
+
+#: templates/admin/cart/shippingmethod/change_form.html:277
+#| msgid "Tax Type"
+msgid "Type"
+msgstr "유형"
+
+#: templates/admin/cart/shippingmethod/change_form.html:278
+msgid "Value"
+msgstr "가치"
+
+#: templates/admin/cart/shippingmethod/change_form.html:280
+#: templates/admin/cart/taxrate/change_list.html:86
+msgid "Status"
+msgstr "상태"
+
+#: templates/admin/cart/shippingmethod/change_form.html:302
+#| msgid "Optional description of this shipping method"
+msgid "No active promotions affect this shipping method."
+msgstr "이 배송 방식에 영향을 주는 활성 프로모션이 없습니다."
+
+#: templates/admin/cart/shippingmethod/change_form.html:308
+#| msgid "Created From"
+msgid "Create New Promotion"
+msgstr "새로운 프로모션 생성"
+
+#: templates/admin/cart/shippingmethod/change_list.html:21
 msgid "Configure shipping options, rates, and delivery methods"
 msgstr "배송 옵션, 요금 및 배송 방법을 구성하세요."
 
+#: templates/admin/cart/shippingmethod/change_list.html:23
 msgid "method"
 msgstr "방법"
 
+#: templates/admin/cart/shippingmethod/change_list.html:24
 msgid "active"
 msgstr "활성"
 
+#: templates/admin/cart/shippingmethod/change_list.html:29
 msgid "Add Method"
 msgstr "방법 추가"
 
+#: templates/admin/cart/shippingmethod/change_list.html:48
 msgid "Bulk Actions"
 msgstr "대량 작업"
 
+#: templates/admin/cart/shippingmethod/change_list.html:49
 msgid "Enable Selected"
 msgstr "선택한 항목 활성화"
 
+#: templates/admin/cart/shippingmethod/change_list.html:50
 msgid "Disable Selected"
 msgstr "선택한 항목 비활성화"
 
+#: templates/admin/cart/shippingmethod/change_list.html:51
 msgid "Delete Selected"
 msgstr "선택한 항목 삭제"
 
+#: templates/admin/cart/shippingmethod/change_list.html:53
 msgid "Apply"
 msgstr "적용"
 
+#: templates/admin/cart/shippingmethod/change_list.html:55
 msgid "selected"
 msgstr "선택됨"
 
+#: templates/admin/cart/shippingmethod/change_list.html:65
 msgid "All Status"
 msgstr "모든 상태"
 
+#: templates/admin/cart/shippingmethod/change_list.html:76
+#: templates/admin/cart/taxrate/change_list.html:78
 msgid "All Types"
 msgstr "모든 유형"
 
+#: templates/admin/cart/shippingmethod/change_list.html:81
 msgid "Real-Time Rates"
 msgstr "실시간 요금"
 
+#: templates/admin/cart/shippingmethod/change_list.html:92
 msgid "Clear all filters"
 msgstr "모든 필터 초기화"
 
+#: templates/admin/cart/shippingmethod/change_list.html:93
 msgid "Clear Filters"
 msgstr "필터 초기화"
 
+#: templates/admin/cart/shippingmethod/change_list.html:101
 msgid "Search methods..."
 msgstr "방법 검색..."
 
+#: templates/admin/cart/shippingmethod/change_list.html:112
 msgid "Select All"
 msgstr "모두 선택"
 
+#: templates/admin/cart/shippingmethod/change_list.html:130
 #, python-format
 msgid "%(counter)s method"
 msgid_plural "%(counter)s methods"
 msgstr[0] "%(counter)s 방법"
 msgstr[1] "%(counter)s 방법"
 
+#: templates/admin/cart/shippingmethod/change_list.html:139
 msgid "No shipping methods found"
 msgstr "배송 방법을 찾을 수 없습니다"
 
+#: templates/admin/cart/shippingmethod/change_list.html:142
 msgid "Try adjusting your filters or search query."
 msgstr "필터를 조정하거나 검색 쿼리를 시도해 보세요."
 
+#: templates/admin/cart/shippingmethod/change_list.html:144
 msgid "Get started by creating your first shipping method."
 msgstr "첫 번째 배송 방법을 생성하여 시작하세요."
 
+#: templates/admin/cart/shippingmethod/change_list.html:149
 msgid "Add First Method"
 msgstr "첫 번째 방법 추가"
 
+#: templates/admin/cart/shippingmethod/change_list.html:160
 msgid "Loading..."
 msgstr "로딩 중..."
 
-msgid "Order Value:"
-msgstr "주문 금액:"
-
-msgid "Weight:"
-msgstr "무게:"
-
+#: templates/admin/cart/shippingmethod/method_card.html:60
 msgid "Zones:"
 msgstr "지역:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:62
 msgid "zone"
 msgstr "지역"
 
+#: templates/admin/cart/shippingmethod/method_card.html:68
 msgid "Countries:"
 msgstr "국가:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:70
 msgid "country"
 msgstr "국가"
 
+#: templates/admin/cart/shippingmethod/method_card.html:77
 msgid "Worldwide"
 msgstr "전 세계"
 
+#: templates/admin/cart/shippingmethod/method_card.html:85
 msgid "Pickup:"
 msgstr "픽업:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:107
 msgid "Delivery:"
 msgstr "배송:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:137
 msgid "Edit method"
 msgstr "방법 편집"
 
+#: templates/admin/cart/shippingmethod/method_card.html:143
 msgid "Toggle active status"
 msgstr "활성 상태 전환"
 
+#: templates/admin/cart/shippingmethod/method_card.html:149
 msgid "Delete method"
 msgstr "방법 삭제"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:22
 msgid "Edit Tax Rate"
 msgstr "세율 편집"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:24
+#: templates/admin/cart/taxrate/change_list.html:26
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:82
 msgid "Add Tax Rate"
 msgstr "세율 추가"
 
+#: templates/admin/cart/taxrate/change_form.html:87
 msgid "Geography"
 msgstr "지리"
 
+#: templates/admin/cart/taxrate/change_form.html:91
 msgid "Rules"
 msgstr "규칙"
 
+#: templates/admin/cart/taxrate/change_form.html:95
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:55
 msgid "Exemptions"
 msgstr "면제 항목"
 
+#: templates/admin/cart/taxrate/change_form.html:142
 msgid ""
 "Define where this tax rate applies. Leave state/city empty for country-wide "
 "rates."
-msgstr ""
-"이 세율이 적용되는 곳을 정의합니다. 국가 전체에 적용되는 세율의 경우 주/도시"
-"를 비워 두세요."
+msgstr "이 세율이 적용되는 곳을 정의합니다. 국가 전체에 적용되는 세율의 경우 주/도시를 비워 두세요."
 
+#: templates/admin/cart/taxrate/change_form.html:194
 msgid "Exclude specific product types or categories from this tax rate."
 msgstr "이 세율에서 특정 상품 유형 또는 범주를 제외합니다."
 
+#: templates/admin/cart/taxrate/change_list.html:18
 msgid ""
 "Configure tax rules for your store. Tax rates are matched to customer "
 "addresses during checkout."
-msgstr ""
-"상점을 위한 세금 규칙을 구성하세요. 체크아웃 시 세율이 고객 주소와 일치합니"
-"다."
+msgstr "상점을 위한 세금 규칙을 구성하세요. 체크아웃 시 세율이 고객 주소와 일치합니다."
 
+#: templates/admin/cart/taxrate/change_list.html:22
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:79
 msgid "Load Presets"
 msgstr "사전 설정 불러오기"
 
+#: templates/admin/cart/taxrate/change_list.html:37
 msgid "Total Rules"
 msgstr "총 규칙"
 
+#: templates/admin/cart/taxrate/change_list.html:47
 msgid "Countries"
 msgstr "국가"
 
+#: templates/admin/cart/taxrate/change_list.html:52
 msgid "Tax Types"
 msgstr "세금 유형"
 
+#: templates/admin/cart/taxrate/change_list.html:64
 msgid "Search by name, country, state..."
 msgstr "이름, 국가, 주로 검색..."
 
+#: templates/admin/cart/taxrate/change_list.html:69
 msgid "All Countries"
 msgstr "모든 국가"
 
+#: templates/admin/cart/taxrate/change_list.html:82
 msgid "Custom"
 msgstr "사용자 정의"
 
-msgid "Status"
-msgstr "상태"
-
+#: templates/admin/cart/taxrate/change_list.html:97
 msgid "Clear"
 msgstr "지우기"
 
+#: templates/admin/cart/taxrate/change_list.html:104
 msgid "Tax Rules"
 msgstr "세금 규칙"
 
+#: templates/admin/cart/taxrate/change_list.html:107
 msgid "rules"
 msgstr "규칙"
 
+#: templates/admin/cart/taxrate/change_list.html:120
 msgid "Load Tax Rate Presets"
 msgstr "세율 사전설정 불러오기"
 
+#: templates/admin/cart/taxrate/change_list.html:121
 msgid ""
 "Quickly add standard tax rates for your region. Existing rates will not be "
 "duplicated."
-msgstr ""
-"지역에 대한 표준 세율을 빠르게 추가하세요. 기존 세율은 중복되지 않습니다."
+msgstr "지역에 대한 표준 세율을 빠르게 추가하세요. 기존 세율은 중복되지 않습니다."
 
+#: templates/admin/cart/taxrate/change_list.html:141
 msgid "rates"
 msgstr "세율"
 
+#: templates/admin/cart/taxrate/change_list.html:147
 msgid "Load"
 msgstr "불러오기"
 
+#: templates/admin/cart/taxrate/change_list.html:158
 msgid "Close"
 msgstr "닫기"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:17
 msgid "postal codes"
 msgstr "우편번호"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:35
 msgid "Shipping Taxed"
 msgstr "배송 세금"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:40
 msgid "Compound"
 msgstr "복합"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:65
 msgid "Delete"
 msgstr "삭제"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:75
 msgid "No tax rates configured"
 msgstr "설정된 세율이 없습니다"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:76
 msgid ""
 "Use 'Load Presets' to quickly add standard rates for your region, or add "
 "rates manually."
-msgstr ""
-"'사전 설정 불러오기'를 사용하여 지역에 대한 표준 세율을 빠르게 추가하거나 수"
-"동으로 추가할 수 있습니다."
+msgstr "'사전 설정 불러오기'를 사용하여 지역에 대한 표준 세율을 빠르게 추가하거나 수동으로 추가할 수 있습니다."
 
+#: views.py:57
 msgid "Get current cart"
 msgstr "현재 카트 가져오기"
 
+#: views.py:59
 msgid ""
 "Get the current cart for authenticated user or session. Returns cart items, "
 "subtotal, discounts, taxes, and total. Automatically creates cart if it "
 "doesn't exist."
 msgstr ""
-"인증된 사용자 또는 세션의 현재 카트를 가져옵니다. 카트 항목, 소계, 할인, 세"
-"금 및 총액을 반환합니다. 카트가 존재하지 않으면 자동으로 생성합니다."
+"인증된 사용자 또는 세션의 현재 카트를 가져옵니다. 카트 항목, 소계, 할인, 세금 및 총액을 반환합니다. 카트가 존재하지 않으면 "
+"자동으로 생성합니다."
 
+#: views.py:64
 msgid "Add item to cart"
 msgstr "항목을 카트에 추가"
 
+#: views.py:66
 msgid ""
 "Add a product to cart with specified quantity. Optionally include variant "
 "ID, customizations, and notes. Validates stock availability and merges with "
@@ -2388,305 +2944,709 @@ msgid ""
 "include is_subscription=true with subscription_plan_id, payment_token_id, "
 "and optionally pricing_tier_id."
 msgstr ""
-"지정된 수량으로 제품을 장바구니에 추가합니다. 선택적으로 변형 ID, 맞춤 설정 "
-"및 메모를 포함할 수 있습니다. 재고 가용성을 검증하고, 동일한 제품/변형의 기"
-"존 장바구니 항목과 병합합니다. 구독 제품인 경우 subscription_plan_id, "
-"payment_token_id와 함께 is_subscription=true를 포함하고, 선택적으로 "
-"pricing_tier_id도 포함할 수 있습니다."
+"지정된 수량으로 제품을 장바구니에 추가합니다. 선택적으로 변형 ID, 맞춤 설정 및 메모를 포함할 수 있습니다. 재고 가용성을 검증하고,"
+" 동일한 제품/변형의 기존 장바구니 항목과 병합합니다. 구독 제품인 경우 subscription_plan_id, "
+"payment_token_id와 함께 is_subscription=true를 포함하고, 선택적으로 pricing_tier_id도 포함할 "
+"수 있습니다."
 
+#: views.py:72
 msgid "Update cart item"
 msgstr "카트 항목 업데이트"
 
+#: views.py:74
 msgid ""
 "Update cart item quantity, customizations, or notes. Validates new quantity "
 "against stock availability. Returns updated cart with recalculated totals."
 msgstr ""
-"카트 항목의 수량, 커스터마이제이션 또는 메모를 업데이트합니다. 새 수량이 재"
-"고 가용성과 일치하는지 검증합니다. 업데이트된 카트와 재계산된 총액을 반환합니"
-"다."
+"카트 항목의 수량, 커스터마이제이션 또는 메모를 업데이트합니다. 새 수량이 재고 가용성과 일치하는지 검증합니다. 업데이트된 카트와 "
+"재계산된 총액을 반환합니다."
 
+#: views.py:79
 msgid "Remove cart item"
 msgstr "장바구니 항목 삭제"
 
+#: views.py:81
 msgid ""
 "Remove a specific item from cart. Recalculates cart totals and revalidates "
 "any applied vouchers against new cart total."
-msgstr ""
-"카트에서 특정 항목을 제거합니다. 카트 총액을 재계산하고, 새 카트 총액에 따라 "
-"적용된 바우처를 다시 검증합니다."
+msgstr "카트에서 특정 항목을 제거합니다. 카트 총액을 재계산하고, 새 카트 총액에 따라 적용된 바우처를 다시 검증합니다."
 
+#: views.py:86
 msgid "Clear cart"
 msgstr "장바구니 비우기"
 
+#: views.py:88
 msgid ""
 "Remove all items from cart. Also removes any applied vouchers. Cart object "
 "persists but becomes empty."
-msgstr ""
-"장바구니에서 모든 항목을 제거합니다. 적용된 할인 쿠폰도 함께 제거됩니다. 장바"
-"구니 객체는 유지되지만 내용물은 비게 됩니다."
+msgstr "장바구니에서 모든 항목을 제거합니다. 적용된 할인 쿠폰도 함께 제거됩니다. 장바구니 객체는 유지되지만 내용물은 비게 됩니다."
 
+#: views.py:93
 msgid "Apply voucher code"
 msgstr "할인 코드 적용"
 
+#: views.py:95
 msgid ""
 "Apply a voucher code to cart. Validates voucher eligibility, minimum "
 "purchase requirements, and usage limits. Calculates and applies discount to "
 "cart total."
 msgstr ""
-"장바구니에 할인 쿠폰 코드를 적용합니다. 쿠폰 사용 가능 여부, 최소 구매 금액, "
-"사용 횟수 제한 등을 검증한 후 장바구니 총액에 할인을 적용합니다."
+"장바구니에 할인 쿠폰 코드를 적용합니다. 쿠폰 사용 가능 여부, 최소 구매 금액, 사용 횟수 제한 등을 검증한 후 장바구니 총액에 할인을"
+" 적용합니다."
 
+#: views.py:100
 msgid "Remove voucher"
 msgstr "할인 쿠폰 삭제"
 
+#: views.py:102
 msgid ""
-"Remove a specific voucher from cart by code. Recalculates cart total without "
-"the voucher discount. User can reapply the voucher later if eligible."
+"Remove a specific voucher from cart by code. Recalculates cart total without"
+" the voucher discount. User can reapply the voucher later if eligible."
 msgstr ""
-"코드를 통해 장바구니에서 특정 바우처를 제거합니다. 바우처 할인 없이 장바구니 "
-"총액을 재계산합니다. 사용자가 자격이 있을 경우 이후에 다시 바우처를 적용할 "
-"수 있습니다."
+"코드를 통해 장바구니에서 특정 바우처를 제거합니다. 바우처 할인 없이 장바구니 총액을 재계산합니다. 사용자가 자격이 있을 경우 이후에 "
+"다시 바우처를 적용할 수 있습니다."
 
-msgid "Apply gift card"
-msgstr "선물 카드 적용"
-
-msgid ""
-"Apply a gift card code to cart. Validates gift card status, balance, and "
-"currency. Gift cards cannot be used to purchase other gift cards. Amount "
-"applied is limited to gift card balance or remaining cart total."
-msgstr ""
-"장바구니에 선물 카드 코드를 적용합니다. 선물 카드의 상태, 잔액 및 통화를 검증"
-"합니다. 선물 카드는 다른 선물 카드를 구매하는 데 사용할 수 없습니다. 적용 금"
-"액은 선물 카드 잔액 또는 남은 장바구니 총액에 한합니다."
-
-msgid "Remove gift card"
-msgstr "선물 카드 삭제"
-
-msgid ""
-"Remove a specific gift card from cart by code. The gift card balance is not "
-"affected until checkout is completed. User can reapply the gift card."
-msgstr ""
-"코드를 통해 장바구니에서 특정 선물 카드를 제거합니다. 결제가 완료되기 전까지 "
-"선물 카드 잔액은 영향을 받지 않습니다. 사용자는 선물 카드를 다시 적용할 수 있"
-"습니다."
-
+#: views.py:107
 msgid "Get cart summary"
 msgstr "장바구니 요약 가져오기"
 
+#: views.py:109
 msgid ""
 "Get lightweight cart summary with item count, subtotal, and total. Faster "
-"than full cart endpoint. Useful for header cart badge or quick total display."
+"than full cart endpoint. Useful for header cart badge or quick total "
+"display."
 msgstr ""
-"아이템 수량, 소계 및 총액을 포함한 가벼운 장바구니 요약 정보를 가져옵니다. 전"
-"체 장바구니 엔드포인트보다 더 빠릅니다. 헤더 장바구니 배지나 빠른 총액 표시"
-"에 유용합니다."
+"아이템 수량, 소계 및 총액을 포함한 가벼운 장바구니 요약 정보를 가져옵니다. 전체 장바구니 엔드포인트보다 더 빠릅니다. 헤더 장바구니 "
+"배지나 빠른 총액 표시에 유용합니다."
 
+#: views.py:246
 msgid ""
 "Component items cannot be modified directly. Update the parent product "
 "instead."
-msgstr ""
-"구성 요소 항목은 직접 수정할 수 없습니다. 대신 부모 제품을 업데이트하세요."
+msgstr "구성 요소 항목은 직접 수정할 수 없습니다. 대신 부모 제품을 업데이트하세요."
 
+#: views.py:360
 msgid "List user wishlists"
 msgstr "사용자 위시리스트 목록"
 
+#: views.py:362
 msgid ""
 "Get all wishlists for the authenticated user. Users can have multiple "
 "wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
 "Returns wishlist names, item counts, and privacy settings."
 msgstr ""
-"인증된 사용자의 모든 위시리스트를 가져옵니다. 사용자는 '생일', '결혼식', '아"
-"이디어'와 같은 다양한 목적에 따라 여러 개의 위시리스트를 가질 수 있습니다. 위"
-"시리스트 이름, 항목 수, 프라이버시 설정을 반환합니다."
+"인증된 사용자의 모든 위시리스트를 가져옵니다. 사용자는 '생일', '결혼식', '아이디어'와 같은 다양한 목적에 따라 여러 개의 "
+"위시리스트를 가질 수 있습니다. 위시리스트 이름, 항목 수, 프라이버시 설정을 반환합니다."
 
+#: views.py:367
 msgid "Create wishlist"
 msgstr "위시리스트 생성"
 
+#: views.py:369
 msgid ""
-"Create a new wishlist for the authenticated user. Specify name, description, "
-"and privacy setting (public/private). Public wishlists can be shared via URL."
+"Create a new wishlist for the authenticated user. Specify name, description,"
+" and privacy setting (public/private). Public wishlists can be shared via "
+"URL."
 msgstr ""
-"인증된 사용자를 위한 새로운 위시리스트를 생성합니다. 이름, 설명, 프라이버시 "
-"설정(공개/비공개)을 지정합니다. 공개 위시리스트는 URL을 통해 공유할 수 있습니"
-"다."
+"인증된 사용자를 위한 새로운 위시리스트를 생성합니다. 이름, 설명, 프라이버시 설정(공개/비공개)을 지정합니다. 공개 위시리스트는 "
+"URL을 통해 공유할 수 있습니다."
 
+#: views.py:374
 msgid "Get wishlist details"
 msgstr "위시리스트 세부 정보 가져오기"
 
+#: views.py:376
 msgid ""
 "Get detailed information about a specific wishlist including all items, "
 "prices, availability, and sharing settings. Only accessible to wishlist "
 "owner unless publicly shared."
 msgstr ""
-"특정 위시리스트에 대한 상세 정보를 가져옵니다. 모든 항목, 가격, 재고 상태 및 "
-"공유 설정이 포함됩니다. 공유된 경우에만 외부 사용자에게 접근 가능하며, 그렇"
-"지 않으면 위시리스트 소유자만 접근할 수 있습니다."
+"특정 위시리스트에 대한 상세 정보를 가져옵니다. 모든 항목, 가격, 재고 상태 및 공유 설정이 포함됩니다. 공유된 경우에만 외부 "
+"사용자에게 접근 가능하며, 그렇지 않으면 위시리스트 소유자만 접근할 수 있습니다."
 
+#: views.py:381
 msgid "Update wishlist"
 msgstr "위시리스트 업데이트"
 
+#: views.py:383
 msgid ""
 "Update wishlist information including name, description, or privacy "
 "settings. Can make wishlist public or private. Only owner can update."
 msgstr ""
-"위시리스트의 이름, 설명, 또는 개인정보 설정을 포함한 정보를 업데이트합니다. "
-"위시리스트를 공개 또는 비공개로 설정할 수 있습니다. 업데이트는 위시리스트 소"
-"유자만 수행할 수 있습니다."
+"위시리스트의 이름, 설명, 또는 개인정보 설정을 포함한 정보를 업데이트합니다. 위시리스트를 공개 또는 비공개로 설정할 수 있습니다. "
+"업데이트는 위시리스트 소유자만 수행할 수 있습니다."
 
+#: views.py:388
 msgid "Partially update wishlist"
 msgstr "위시리스트 부분 업데이트"
 
+#: views.py:390
 msgid ""
 "Update specific wishlist fields without sending full wishlist data. Useful "
 "for toggling privacy or renaming wishlist."
 msgstr ""
-"전체 위시리스트 데이터를 보내지 않고 특정 위시리스트 필드를 업데이트합니다. "
-"개인정보 보호 설정 변경이나 위시리스트 이름 변경 등에 유용합니다."
+"전체 위시리스트 데이터를 보내지 않고 특정 위시리스트 필드를 업데이트합니다. 개인정보 보호 설정 변경이나 위시리스트 이름 변경 등에 "
+"유용합니다."
 
+#: views.py:395
 msgid "Delete wishlist"
 msgstr "위시리스트 삭제"
 
+#: views.py:397
 msgid ""
 "Permanently delete a wishlist and all its items. Cannot be undone. Only "
 "owner can delete."
-msgstr ""
-"위시리스트와 모든 항목을 영구적으로 삭제합니다. 되돌릴 수 없습니다. 오직 소유"
-"자만 삭제할 수 있습니다."
+msgstr "위시리스트와 모든 항목을 영구적으로 삭제합니다. 되돌릴 수 없습니다. 오직 소유자만 삭제할 수 있습니다."
 
+#: views.py:402
 msgid "Add item to wishlist"
 msgstr "아이템을 위시리스트에 추가"
 
+#: views.py:404
 msgid ""
 "Add a product to wishlist with optional variant, quantity, and notes. "
 "Prevents duplicates. Can add to default wishlist or specify wishlist ID."
 msgstr ""
-"선택적으로 변형, 수량 및 메모를 포함하여 제품을 위시리스트에 추가합니다. 중복"
-"을 방지합니다. 기본 위시리스트에 추가하거나 위시리스트 ID를 지정할 수 있습니"
-"다."
+"선택적으로 변형, 수량 및 메모를 포함하여 제품을 위시리스트에 추가합니다. 중복을 방지합니다. 기본 위시리스트에 추가하거나 위시리스트 "
+"ID를 지정할 수 있습니다."
 
+#: views.py:409
 msgid "Remove item from wishlist"
 msgstr "아이템을 위시리스트에서 제거"
 
+#: views.py:411
 msgid ""
-"Remove a specific item from wishlist. Item can be added back later. Does not "
-"affect product availability."
-msgstr ""
-"위시리스트에서 특정 항목을 제거합니다. 이후 다시 추가할 수 있습니다. 제품의 "
-"가용성에는 영향을 주지 않습니다."
+"Remove a specific item from wishlist. Item can be added back later. Does not"
+" affect product availability."
+msgstr "위시리스트에서 특정 항목을 제거합니다. 이후 다시 추가할 수 있습니다. 제품의 가용성에는 영향을 주지 않습니다."
 
+#: views.py:416
 msgid "Move item to cart"
 msgstr "아이템을 장바구니로 이동"
 
+#: views.py:418
 msgid ""
 "Move a wishlist item directly to shopping cart. Validates stock "
 "availability. Item is removed from wishlist after successful cart addition."
 msgstr ""
-"위시리스트 항목을 바로 쇼핑 카트로 이동합니다. 재고 가용성을 확인합니다. 카트"
-"에 성공적으로 추가된 후 위시리스트에서 항목이 제거됩니다."
+"위시리스트 항목을 바로 쇼핑 카트로 이동합니다. 재고 가용성을 확인합니다. 카트에 성공적으로 추가된 후 위시리스트에서 항목이 제거됩니다."
 
+#: views.py:423
 msgid "Get public wishlist by share slug"
 msgstr "공유 슬러그로 공개 위시리스트 가져오기"
 
+#: views.py:425
 msgid ""
 "View a public wishlist using its share URL slug. Anyone with the link can "
-"view public wishlists. Useful for gift registries and wish lists shared with "
-"family/friends."
+"view public wishlists. Useful for gift registries and wish lists shared with"
+" family/friends."
 msgstr ""
-"공유 URL 슬러그를 사용하여 공개 위시리스트를 보세요. 링크를 가진 사람은 누구"
-"나 공개 위시리스트를 볼 수 있습니다. 선물 등록 및 가족/친구와 공유하는 위시리"
-"스트에 유용합니다."
+"공유 URL 슬러그를 사용하여 공개 위시리스트를 보세요. 링크를 가진 사람은 누구나 공개 위시리스트를 볼 수 있습니다. 선물 등록 및 "
+"가족/친구와 공유하는 위시리스트에 유용합니다."
 
+#: views.py:430
+#| msgid "Get wishlist details"
+msgid "Get wishlisted product IDs"
+msgstr "위시리스트에 있는 제품 ID 가져오기"
+
+#: views.py:432
+msgid ""
+"Returns a mapping of product IDs to wishlist item IDs for the current user's"
+" default wishlist. Used by the storefront to show wishlist heart icons on "
+"product listings without fetching full wishlist data."
+msgstr ""
+"현재 사용자의 기본 위시리스트에 대한 제품 ID를 위시리스트 항목 ID로 매핑하는 것을 반환합니다. 프론트스토어는 전체 위시리스트 "
+"데이터를 가져올 필요 없이 제품 목록에 위시리스트 하트 아이콘을 표시하기 위해 이 매핑을 사용합니다."
+
+#: views.py:436
+msgid "Map of product IDs to wishlist item IDs"
+msgstr "제품 ID를 위시리스트 항목 ID에 매핑한 목록"
+
+#: views.py:444
+msgid "Keys are product IDs (as strings), values are wishlist item IDs"
+msgstr "키는 제품 ID(문자열로), 값은 위시리스트 항목 ID입니다"
+
+#: views.py:451
+#| msgid "Account creation required to proceed"
+msgid "Authentication required"
+msgstr "인증이 필요합니다"
+
+#: views.py:523
 msgid "ID of the wishlist item to remove"
 msgstr "삭제할 위시리스트 항목의 ID"
 
+#: views.py:542
 msgid "ID of the wishlist item to move to cart"
 msgstr "카트로 이동할 위시리스트 항목의 ID"
 
+#: views.py:573
 msgid "Share slug of the public wishlist"
 msgstr "공개 위시리스트의 공유 슬러그"
 
+#: views.py:589
 msgid "Wishlist not found"
 msgstr "위시리스트를 찾을 수 없습니다"
 
+#: views.py:612
 msgid "Get checkout session"
 msgstr "체크아웃 세션 가져오기"
 
+#: views.py:613
 msgid "Set shipping address"
 msgstr "배송 주소 설정"
 
+#: views.py:614
 msgid "Set billing address"
 msgstr "청구 주소 설정"
 
+#: views.py:616
 msgid "Get available shipping methods"
 msgstr "사용 가능한 배송 방식 가져오기"
 
+#: views.py:620
 msgid "Get available payment providers"
 msgstr "사용 가능한 결제 제공업체 가져오기"
 
+#: views.py:622
 msgid ""
-"Returns payment providers available for the customer's country and currency. "
-"Filters based on shipping countries, provider capabilities, and merchant "
+"Returns payment providers available for the customer's country and currency."
+" Filters based on shipping countries, provider capabilities, and merchant "
 "configuration."
 msgstr ""
-"고객의 국가 및 통화에 사용 가능한 결제 제공업체를 반환합니다. 배송 국가, 제공"
-"업체 기능 및 상인 설정을 기준으로 필터링됩니다."
+"고객의 국가 및 통화에 사용 가능한 결제 제공업체를 반환합니다. 배송 국가, 제공업체 기능 및 상인 설정을 기준으로 필터링됩니다."
 
+#: views.py:625
 msgid "Set shipping method"
 msgstr "배송 방식 설정"
 
+#: views.py:626
 msgid "Set payment method"
 msgstr "결제 방식 설정"
 
+#: views.py:627
 msgid "Validate checkout"
 msgstr "체크아웃 검증"
 
+#: views.py:628
 msgid "Complete checkout"
 msgstr "체크아웃 완료"
 
+#: views.py:631
+#| msgid "discount applied by"
+msgid "List applied tenders"
+msgstr "적용된 결제 수단 목록"
+
+#: views.py:633
+msgid ""
+"Gift card and store credit holds against this checkout, plus the amount "
+"still due. amount_due — not total_amount — is what a payment provider should"
+" be asked to charge; it can legitimately be zero when tenders cover the "
+"whole order. Includes the signed-in customer's spendable wallet balance "
+"(null for guests, missing wallets, frozen wallets, or a currency mismatch)."
+msgstr ""
+"이 체크아웃에 대한 선물 카드 및 상점 신용 잔액, 그리고 아직 남은 금액입니다. amount_due — total_amount가 아닌 "
+"—는 결제 제공업체에게 청구해야 할 금액이며, 결제 수단이 전체 주문을 커버할 경우 정당하게 0이 될 수 있습니다. 로그인한 고객의 사용"
+" 가능한 지갑 잔액을 포함합니다 (게스트, 누락된 지갑, 동결된 지갑, 또는 통화 불일치의 경우 null입니다)."
+
+#: views.py:643
+#| msgid "Apply gift card"
+msgid "Apply a gift card"
+msgstr "기프트 카드 적용"
+
+#: views.py:645
+msgid ""
+"Places a hold on the card as a PAYMENT, not a discount: it settles the post-"
+"tax total and never reduces the tax base. Nothing is debited until payment "
+"is confirmed, so an abandoned checkout costs the customer nothing. Error "
+"messages are deliberately uniform — this endpoint sits on stored value and "
+"must not act as an enumeration oracle."
+msgstr ""
+"할인으로 아니라 결제로 카드에 잔금을 설정합니다: 세금 이후의 총액을 정산하고 세금 기초를 줄이지 않습니다. 결제가 확인되기 전에는 "
+"아무것도 차감되지 않으므로, 포기한 체크아웃은 고객에게 아무런 비용도 들지 않습니다. 오류 메시지는 의도적으로 동일하게 유지되어 있으며,"
+" 이 엔드포인트는 저장된 값에 기반하고 있으므로 열거 오рак클로 작동해서는 안 됩니다."
+
+#: views.py:655
+#| msgid "Apply gift card"
+msgid "Apply store credit"
+msgstr "상점 크레딧 적용"
+
+#: views.py:657
+msgid ""
+"Holds the signed-in customer's wallet balance against this checkout, up to "
+"the amount due. Guests receive 403 — wallets belong to accounts. Single-"
+"currency: a wallet cannot part-pay an order in another currency."
+msgstr ""
+"로그인한 고객의 지갑 잔액을 이 체크아웃에 대비하여 보유합니다. 최대 지급 금액까지만 적용됩니다. 게스트는 403 오류를 받습니다 — "
+"지갑은 계정에 속합니다. 단일 통화: 다른 통화의 주문에 대해 지갑으로 부분 지불이 불가능합니다."
+
+#: views.py:665
+#| msgid "Remove all zones"
+msgid "Remove a tender"
+msgstr "결제 수단 제거"
+
+#: views.py:667
+msgid ""
+"Releases a hold. Nothing was debited, so this only frees the reservation; "
+"the checkout's amount_due rises accordingly."
+msgstr ""
+"예약을 해제합니다. 아무것도 차감되지 않았으므로 이는 예약을 해제하는 것뿐이며, 체크아웃의 amount_due는 상응하게 증가합니다."
+
+#: views.py:972
+msgid "Store credit"
+msgstr "상점 신용"
+
+#: views.py:999
+#| msgid "Gift card has expired"
+msgid "Gift card code is required"
+msgstr "선물 카드 코드가 필요합니다"
+
+#: views.py:1010 views.py:1064
+msgid "This order is already fully paid"
+msgstr "이 주문은 이미 전체적으로 지불되었습니다"
+
+#: views.py:1054
+msgid "Sign in to pay with your wallet"
+msgstr "지갑으로 결제하려면 로그인하세요"
+
+#: views.py:1093
+#| msgid "Address not found"
+msgid "Tender not found"
+msgstr "결제 수단을 찾을 수 없습니다"
+
+#: views.py:1120
 msgid "Get recently viewed products"
 msgstr "최근 본 상품 가져오기"
 
+#: views.py:1121
 msgid "Get recently viewed details"
 msgstr "최근 본 상세 정보 가져오기"
 
+#: views.py:1150
 msgid "List shipping methods"
 msgstr "배송 방법 목록"
 
+#: views.py:1151
 msgid "Get shipping method details"
 msgstr "배송 방법 상세 정보 가져오기"
 
+#: views.py:1174
 msgid "List tax rates"
 msgstr "세율 목록"
 
+#: views.py:1175
 msgid "Get tax rate details"
 msgstr "세율 세부 정보 가져오기"
 
+#: views.py:1176
 msgid "Create tax rate"
 msgstr "세율 생성"
 
+#: views.py:1177
 msgid "Update tax rate"
 msgstr "세율 업데이트"
 
+#: views.py:1178
 msgid "Partial update tax rate"
 msgstr "세율 부분 업데이트"
 
+#: views.py:1179
 msgid "Delete tax rate"
 msgstr "세율 삭제"
 
+#: views.py:1190
 msgid "Calculate applicable taxes"
 msgstr "적용 가능한 세금 계산"
 
+#: views.py:1235
 msgid "Tax rates grouped by country"
 msgstr "국가별로 그룹화된 세율"
 
+#: views.py:1254
 msgid "Load preset tax rates"
 msgstr "사전 설정 세율 로드"
 
+#: views.py:1285
 msgid "List tax preset groups"
 msgstr "세율 사전 설정 그룹 목록"
 
+#: views.py:1286
 msgid "Get preset group details"
 msgstr "사전 설정 그룹 세부 정보 가져오기"
 
+#: views.py:1297
 msgid "List rates in a preset group"
 msgstr "사전 정의된 그룹에 있는 요율을 목록으로 표시"
+
+#~ msgid "Invalid gift card code"
+#~ msgstr "무효한 선물 카드 코드"
+
+#~ msgid "Gift card already applied"
+#~ msgstr "이미 적용된 선물 카드"
+
+#~ msgid "Gift card has been fully redeemed"
+#~ msgstr "선물 카드가 완전히 사용되었습니다."
+
+#~ msgid "Gift card cannot be used"
+#~ msgstr "사용할 수 없는 선물 카드"
+
+#, python-brace-format
+#~ msgid ""
+#~ "Currency mismatch. Gift card is in {card_currency}, cart is in "
+#~ "{cart_currency}"
+#~ msgstr "통화 불일치. 선물 카드는 {card_currency}입니다. 장바구니는 {cart_currency}입니다."
+
+#, python-brace-format
+#~ msgid ""
+#~ "This gift card is in {card_currency}. Please switch your currency to "
+#~ "{card_currency} to use it."
+#~ msgstr "이 기프트 카드는 {card_currency}입니다. 사용하려면 화면의 통화를 {card_currency}로 전환하세요."
+
+#~ msgid "Gift cards cannot be used to purchase other gift cards"
+#~ msgstr "선물 카드는 다른 선물 카드를 구매하는 데 사용할 수 없습니다."
+
+#~ msgid "Cart total is already covered"
+#~ msgstr "카트 총액은 이미 커버됨"
+
+#~ msgid "Unable to process gift card currency conversion"
+#~ msgstr "선물 카드 통화 변환을 처리할 수 없습니다"
+
+#~ msgid "Gift card applied successfully"
+#~ msgstr "선물 카드가 성공적으로 적용됨"
+
+#~ msgid "Free Shipping"
+#~ msgstr "무료 배송"
+
+#~ msgid "Weight Based"
+#~ msgstr "중량 기반"
+
+#~ msgid "Price Based"
+#~ msgstr "가격 기반"
+
+#~ msgid "Minimum cart value to qualify"
+#~ msgstr "적격 최소 장바구니 금액"
+
+#~ msgid "Minimum Order Value"
+#~ msgstr "최소 주문 금액"
+
+#~ msgid "Maximum cart value to qualify"
+#~ msgstr "적격 최대 장바구니 금액"
+
+#~ msgid "Maximum Order Value"
+#~ msgstr "최대 주문 금액"
+
+#~ msgid "Minimum cart weight (kg)"
+#~ msgstr "적격 최소 장바구니 무게 (kg)"
+
+#~ msgid "Minimum Weight"
+#~ msgstr "최소 무게"
+
+#~ msgid "Maximum cart weight (kg)"
+#~ msgstr "적격 최대 장바구니 무게 (kg)"
+
+#~ msgid "Maximum Weight"
+#~ msgstr "최대 무게"
+
+#, python-brace-format
+#~ msgid "Minimum order value {value} required"
+#~ msgstr "최소 주문 금액 {value}이(가) 필요합니다."
+
+#, python-brace-format
+#~ msgid "Maximum order value {value} exceeded"
+#~ msgstr "최대 주문 금액 {value}을(를) 초과했습니다."
+
+#, python-brace-format
+#~ msgid "Minimum weight {weight}kg required"
+#~ msgstr "최소 무게 {weight}kg이(가) 필요합니다."
+
+#, python-brace-format
+#~ msgid "Maximum weight {weight}kg exceeded"
+#~ msgstr "최대 무게 {weight}kg을(를) 초과했습니다."
+
+#~ msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+#~ msgstr "이 세금에서 면제되는 제품 유형 (예: ['digital', 'service'])"
+
+#~ msgid "Amount in base currency (used for cart calculations)"
+#~ msgstr "기본 통화 금액 (카트 계산에 사용됨)"
+
+#~ msgid "Original Currency Amount"
+#~ msgstr "원래 통화 금액"
+
+#~ msgid ""
+#~ "Discount in the gift card's native currency (for foreign-currency gift "
+#~ "cards)"
+#~ msgstr "선물 카드의 원래 통화로 표시된 할인 (외화 선물 카드용)"
+
+#~ msgid "Exchange Rate"
+#~ msgstr "환율"
+
+#~ msgid "Rate: gift card currency -> base currency at time of application"
+#~ msgstr "환율: 선물 카드 통화 -> 신청 시점의 기본 통화"
+
+#~ msgid "Applied At"
+#~ msgstr "적용 시간"
+
+#~ msgid "Applied Gift Card"
+#~ msgstr "적용된 선물 카드"
+
+#~ msgid "Applied Gift Cards"
+#~ msgstr "적용된 선물 카드들"
+
+#~ msgid "This gift card cannot be used"
+#~ msgstr "이 선물 카드는 사용할 수 없습니다."
+
+#~ msgid "Discount amount exceeds gift card balance"
+#~ msgstr "할인 금액이 선물 카드 잔액을 초과합니다."
+
+#~ msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+#~ msgstr "선물 카드 코드 (예: GC-XXXX-XXXX-XXXX)"
+
+#~ msgid "Amount applied from this gift card (in base currency)"
+#~ msgstr "이 기프트 카드에서 적용된 금액 (기본 통화 기준)"
+
+#~ msgid "Remaining balance on gift card after this application"
+#~ msgstr "이 적용 후 선물 카드의 잔액"
+
+#~ msgid "Base currency code"
+#~ msgstr "기본 통화 코드"
+
+#~ msgid "Gift card's native currency code"
+#~ msgstr "기프트 카드의 본래 통화 코드"
+
+#~ msgid ""
+#~ "Discount in gift card's native currency (for foreign-currency gift cards)"
+#~ msgstr "기프트 카드의 본화 통화로 표시된 할인 금액 (외화 기프트 카드용)"
+
+#~ msgid "Gift card removed"
+#~ msgstr "기프트 카드가 제거되었습니다"
+
+#~ msgid "Gift card not found in cart"
+#~ msgstr "장바구니에 선물 카드가 없습니다."
+
+#~ msgid "Free Shipping - No charge"
+#~ msgstr "무료 배송 - 요금 없음"
+
+#~ msgid "Weight Based - Calculate by cart weight"
+#~ msgstr "중량 기반 - 장바구니 중량으로 계산"
+
+#~ msgid "Price Based - Calculate by cart subtotal"
+#~ msgstr "가격 기반 - 장바구니 소계로 계산"
+
+#~ msgid "Free Shipping:"
+#~ msgstr "무료 배송:"
+
+#~ msgid "No shipping charge"
+#~ msgstr "배송 요금 없음"
+
+#~ msgid "Weight/Price Based:"
+#~ msgstr "무게/가격 기반:"
+
+#~ msgid "Calculate using rate tables"
+#~ msgstr "요금표를 사용하여 계산"
+
+#~ msgid ""
+#~ "Define when this shipping method should be available based on cart value and"
+#~ " weight."
+#~ msgstr "장바구니의 가치와 중량을 기반으로 이 배송 방법이 언제 사용 가능한지 정의합니다."
+
+#~ msgid "Order Value Restrictions"
+#~ msgstr "주문 금액 제한"
+
+#~ msgid "Set minimum or maximum cart subtotal requirements for this method."
+#~ msgstr "이 방법에 대한 장바구니 소계의 최소값 또는 최대값을 설정합니다."
+
+#~ msgid "Method only available if cart subtotal is at least this amount"
+#~ msgstr "장바구니 소계가 이 금액 이상일 때만 이 방법이 사용 가능합니다"
+
+#~ msgid "No maximum"
+#~ msgstr "최대 제한 없음"
+
+#~ msgid "Method only available if cart subtotal is below this amount"
+#~ msgstr "장바구니 소계가 이 금액 미만일 때만 이 방법이 사용 가능합니다"
+
+#~ msgid "Free shipping for orders over $50: Set minimum to 50.00"
+#~ msgstr "$50 이상 주문에 대한 무료 배송: 최소값을 50.00으로 설정"
+
+#~ msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+#~ msgstr "$100 미만 주문에 대한 경제 배송: 최대값을 100.00으로 설정"
+
+#~ msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+#~ msgstr "$25-$200 주문에 대한 표준 배송: 최소값과 최대값 모두 설정"
+
+#~ msgid "Weight Restrictions"
+#~ msgstr "무게 제한"
+
+#~ msgid "Set minimum or maximum total cart weight requirements for this method."
+#~ msgstr "이 방법에 대한 총 장바구니 중량의 최소값 또는 최대값을 설정합니다."
+
+#~ msgid "Minimum Weight (kg)"
+#~ msgstr "최소 무게 (kg)"
+
+#~ msgid "Method only available if total cart weight is at least this value"
+#~ msgstr "총 장바구니 중량이 이 값 이상일 때만 이 방법이 사용 가능합니다"
+
+#~ msgid "Maximum Weight (kg)"
+#~ msgstr "최대 무게 (kg)"
+
+#~ msgid "Method only available if total cart weight is below this value"
+#~ msgstr "총 장바구니 중량이 이 값 미만일 때만 이 방법이 사용 가능합니다"
+
+#~ msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+#~ msgstr "2kg 미만의 패키지에 대한 가벼운 배송: 최대값을 2.00으로 설정"
+
+#~ msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+#~ msgstr "20kg 이상의 패키지에 대한 무거운 화물: 최소값을 20.00으로 설정"
+
+#~ msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+#~ msgstr "0.5kg-10kg의 패키지에 대한 표준 배송: 최소값과 최대값 모두 설정"
+
+#~ msgid "Weight-Based Rates:"
+#~ msgstr "중량 기반 요금:"
+
+#~ msgid "Price-Based Rates:"
+#~ msgstr "가격 기반 요금:"
+
+#~ msgid ""
+#~ "You'll be able to configure tiered rates based on cart subtotal after the "
+#~ "method is created."
+#~ msgstr "방법이 생성된 후 장바구니 소계 기반의 계층형 비용을 구성할 수 있습니다."
+
+#~ msgid "Min Order Value:"
+#~ msgstr "최소 주문 금액:"
+
+#~ msgid "Max Order Value:"
+#~ msgstr "최대 주문 금액:"
+
+#~ msgid "Min Weight:"
+#~ msgstr "최소 무게:"
+
+#~ msgid "Max Weight:"
+#~ msgstr "최대 무게:"
+
+#~ msgid ""
+#~ "No eligibility conditions set - method available for all cart values and "
+#~ "weights"
+#~ msgstr "적격 조건이 설정되지 않았습니다 - 모든 장바구니 값 및 무게에 대해 방법이 사용 가능합니다."
+
+#~ msgid "Optional: Restrict availability based on order value or weight."
+#~ msgstr "선택 사항: 주문 금액 또는 무게에 따라 가용성을 제한합니다."
+
+#~ msgid "Order Value:"
+#~ msgstr "주문 금액:"
+
+#~ msgid "Weight:"
+#~ msgstr "무게:"
+
+#~ msgid ""
+#~ "Apply a gift card code to cart. Validates gift card status, balance, and "
+#~ "currency. Gift cards cannot be used to purchase other gift cards. Amount "
+#~ "applied is limited to gift card balance or remaining cart total."
+#~ msgstr ""
+#~ "장바구니에 선물 카드 코드를 적용합니다. 선물 카드의 상태, 잔액 및 통화를 검증합니다. 선물 카드는 다른 선물 카드를 구매하는 데 "
+#~ "사용할 수 없습니다. 적용 금액은 선물 카드 잔액 또는 남은 장바구니 총액에 한합니다."
+
+#~ msgid ""
+#~ "Remove a specific gift card from cart by code. The gift card balance is not "
+#~ "affected until checkout is completed. User can reapply the gift card."
+#~ msgstr ""
+#~ "코드를 통해 장바구니에서 특정 선물 카드를 제거합니다. 결제가 완료되기 전까지 선물 카드 잔액은 영향을 받지 않습니다. 사용자는 선물 "
+#~ "카드를 다시 적용할 수 있습니다."

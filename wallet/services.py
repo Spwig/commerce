@@ -27,17 +27,82 @@ class WalletFrozen(Exception):
     """Raised when an operation is attempted on a frozen wallet."""
 
 
+class WalletCurrencyMismatch(Exception):
+    """
+    Raised when a movement's currency differs from the wallet's.
+
+    Deliberately a hard error rather than a conversion: converting silently is
+    how $100 + €50 became €150 before this existed.
+    """
+
+
 class WalletService:
     @staticmethod
-    def get_or_create_wallet(user):
+    def get_or_create_wallet(user, currency=None):
         """
         Get or create a wallet for the given user.
+
+        A new wallet is opened in the **store's** default currency, not USD.
+        The MoneyField declarations hardcode ``default_currency="USD"``, so
+        every wallet used to be born holding USD regardless of where the shop
+        trades. That was invisible while credit() silently re-stamped the
+        currency on first use — but once mixing is refused (see
+        :meth:`_assert_currency`), a EUR store's first referral credit would
+        hit a USD wallet and raise. The guard is right; this is what had to
+        change with it.
+
+        Args:
+            user: Customer the wallet belongs to.
+            currency: Override the currency for a new wallet. Ignored if the
+                wallet already exists — an existing wallet's currency is never
+                changed by a lookup.
 
         Returns:
             CustomerWallet
         """
-        wallet, _ = CustomerWallet.objects.get_or_create(customer=user)
+        from djmoney.money import Money
+
+        wallet = CustomerWallet.objects.filter(customer=user).first()
+        if wallet is not None:
+            return wallet
+
+        currency = str(currency or get_default_currency())
+        zero = Money(Decimal("0"), currency)
+        wallet, _ = CustomerWallet.objects.get_or_create(
+            customer=user,
+            defaults={
+                "available_balance": zero,
+                "pending_balance": zero,
+                "lifetime_credited": zero,
+                "lifetime_used": zero,
+            },
+        )
         return wallet
+
+    @staticmethod
+    def _assert_currency(wallet, currency):
+        """
+        Refuse to mix currencies in one wallet.
+
+        Both credit() and debit() used to add the incoming *number* to the
+        stored balance and then re-stamp the wallet with the incoming currency.
+        Crediting €50 to a wallet holding $100 produced **€150** — the
+        customer's dollars silently became euros, with no error and no log.
+
+        A wallet holds one currency. Converting would need a rate, a record of
+        that rate, and a decision about who absorbs the spread; none of that
+        exists here, so the only safe answer is to refuse. Callers converting
+        deliberately should debit in the old currency and credit in the new,
+        leaving both movements on the ledger.
+        """
+        wallet_currency = str(wallet.available_balance.currency)
+        incoming = str(currency)
+        if wallet_currency != incoming:
+            raise WalletCurrencyMismatch(
+                f"Wallet for {wallet.customer_id} holds {wallet_currency}; "
+                f"refusing a {incoming} movement. A wallet holds one currency — "
+                f"converting requires an explicit debit + credit pair."
+            )
 
     @staticmethod
     @transaction.atomic
@@ -67,6 +132,12 @@ class WalletService:
 
         if not wallet.is_active:
             raise WalletFrozen(f"Wallet for {user.email} is frozen")
+
+        WalletService._assert_currency(wallet, currency)
+        # Use the WALLET's currency from here on, not the caller's. They are now
+        # guaranteed equal, but reading it from the wallet means a future change
+        # cannot reintroduce the re-stamping bug.
+        currency = str(wallet.available_balance.currency)
 
         new_balance = wallet.available_balance.amount + amount
 
@@ -133,6 +204,12 @@ class WalletService:
 
         if not wallet.is_active:
             raise WalletFrozen(f"Wallet for {user.email} is frozen")
+
+        # Before the sufficiency check: comparing a EUR amount against a USD
+        # balance is meaningless, so a mismatch must fail as a mismatch rather
+        # than as "insufficient funds".
+        WalletService._assert_currency(wallet, currency)
+        currency = str(wallet.available_balance.currency)
 
         if wallet.available_balance.amount < amount:
             raise InsufficientBalance(
@@ -201,9 +278,26 @@ class WalletService:
         # Lock the wallet row to prevent concurrent balance corruption
         wallet = CustomerWallet.objects.select_for_update().get(pk=original_txn.wallet_id)
         amount = original_txn.amount.amount
-        currency = str(original_txn.amount.currency)
 
-        new_balance = max(wallet.available_balance.amount - amount, Decimal("0"))
+        # Take the currency from the WALLET, and assert the transaction agrees.
+        # Reading it from the transaction and writing it onto the wallet is how
+        # the re-stamping bug worked; a reversal must never change what currency
+        # a wallet holds.
+        WalletService._assert_currency(wallet, original_txn.amount.currency)
+        currency = str(wallet.available_balance.currency)
+
+        new_balance = wallet.available_balance.amount - amount
+        if new_balance < 0:
+            # Previously clamped to zero with max(), which quietly destroyed the
+            # difference: reversing a credit the customer had already spent left
+            # the books short with no record. Surface it instead — this needs a
+            # human decision (claw back, write off, or chase), not a silent
+            # rounding to zero.
+            raise InsufficientBalance(
+                f"Reversing {original_txn.amount} would take the wallet to "
+                f"{Money(new_balance, currency)}. The credit has already been "
+                f"spent — resolve manually rather than clamping to zero."
+            )
 
         reversal = WalletTransaction.objects.create(
             wallet=wallet,

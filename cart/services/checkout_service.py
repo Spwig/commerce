@@ -21,6 +21,18 @@ from payment_providers.services.payment_method_filter import PaymentMethodFilter
 from ..models import Cart, CheckoutSession, ShippingMethod
 
 
+class VoucherNoLongerValid(Exception):
+    """
+    A voucher passed validation when applied to the cart but not at checkout.
+
+    Raised from inside ``create_order``'s transaction so the whole order rolls
+    back — no order, no charge, and the customer returns to the cart to see why.
+    Deliberately NOT swallowed: the previous code caught every exception here
+    and continued, which would make any cap enforcement inert and leave a
+    single-use code unboundedly spendable.
+    """
+
+
 class CheckoutService:
     """Service class for checkout operations"""
 
@@ -128,12 +140,34 @@ class CheckoutService:
             return True, "Guest checkout"
 
     @staticmethod
+    def grant_guest_order_access(request, order) -> None:
+        """Allow this browser session to view ``order``'s confirmation page.
+
+        Guest checkout creates a guest ``User`` server-side but never
+        authenticates the browser, and the confirmation view 404s anonymous
+        visitors. Without an allow-list a guest who just paid can't see their
+        own confirmation. We record the order number in the session (capped, so
+        it can't grow unbounded) rather than exposing every order by number.
+        """
+        if request is None or order is None:
+            return
+        user = getattr(request, "user", None)
+        if user is not None and user.is_authenticated:
+            return
+        numbers = request.session.get("guest_order_numbers", [])
+        if order.order_number not in numbers:
+            numbers.append(order.order_number)
+            request.session["guest_order_numbers"] = numbers[-20:]
+            request.session.modified = True
+
+    @staticmethod
     @transaction.atomic
     def set_shipping_address(
         session: CheckoutSession,
         address_id: int | None = None,
         address_data: dict | None = None,
         email: str | None = None,
+        phone: str | None = None,
     ) -> tuple[bool, str]:
         """
         Set shipping address for checkout session
@@ -143,18 +177,43 @@ class CheckoutService:
             address_id: Existing address ID (optional)
             address_data: New address data dict (optional)
             email: Customer email (optional, for guest checkout persistence)
+            phone: Supplemental phone for a saved address that has none
+                (carriers need a delivery contact number)
 
         Returns:
             Tuple of (success: bool, message: str)
         """
+        # Remember the destination we had before this call so we can tell a
+        # real address change (rates differ → the method must be re-chosen)
+        # apart from a no-op re-submit of the same saved address — e.g. a
+        # returning customer only attaching a supplemental phone, which never
+        # affects shipping rates. Blindly clearing the method in that case
+        # bounces express-checkout customers back to re-pick shipping before
+        # the payment form can mount.
+        previous_address_id = session.shipping_address_id
+
         if address_id:
             # Use saved address (authenticated users only)
             try:
                 address = Address.objects.get(id=address_id, user=session.cart.user)
-                session.shipping_address = address
-                session.shipping_address_data = None  # Clear JSON data when using saved address
             except Address.DoesNotExist:
                 return False, _("Address not found")
+
+            # Shipping needs a delivery contact number. Older saved
+            # addresses may predate the phone requirement — accept a
+            # supplemental phone and complete the saved record with it.
+            if not address.phone:
+                phone = (phone or "").strip()
+                if not phone:
+                    return False, _(
+                        "This saved address has no phone number. Please add one so the "
+                        "carrier can contact you about delivery."
+                    )
+                address.phone = phone[:20]
+                address.save(update_fields=["phone", "updated_at"])
+
+            session.shipping_address = address
+            session.shipping_address_data = None  # Clear JSON data when using saved address
 
         elif address_data:
             # Store address data in JSON field (don't create Address record yet)
@@ -171,11 +230,16 @@ class CheckoutService:
                 session.metadata = {}
             session.metadata["email"] = email
 
-        # Clear previous shipping method selection when address changes
-        session.selected_shipping_method = None
-        session.shipping_cost = Decimal("0.00")
-        session.estimated_delivery_date = None
-        session.available_shipping_methods = []
+        # Clear the previous shipping method selection only when the
+        # destination actually changed. Re-submitting the same saved address
+        # (to complete it with a phone number) leaves rates untouched, so the
+        # method — and the customer's place in the flow — is preserved.
+        destination_unchanged = bool(address_id) and address_id == previous_address_id
+        if not destination_unchanged:
+            session.selected_shipping_method = None
+            session.shipping_cost = Decimal("0.00")
+            session.estimated_delivery_date = None
+            session.available_shipping_methods = []
 
         session.step_completed = "shipping_address"
         session.save()
@@ -192,6 +256,8 @@ class CheckoutService:
         same_as_shipping: bool = True,
         address_id: int | None = None,
         address_data: dict | None = None,
+        contact_name: str | None = None,
+        email: str | None = None,
     ) -> tuple[bool, str]:
         """
         Set billing address for checkout session
@@ -201,11 +267,30 @@ class CheckoutService:
             same_as_shipping: Use shipping address for billing
             address_id: Existing address ID (optional)
             address_data: New address data dict (optional)
+            contact_name: Customer's full name when no address carries one
+                (digital-only carts skip the shipping form, so guest
+                checkouts would otherwise reach payment nameless)
 
         Returns:
             Tuple of (success: bool, message: str)
         """
         session.billing_same_as_shipping = same_as_shipping
+
+        # Persist the contact name so order creation (billing_name, guest
+        # user) and payment providers get a customer name even when no
+        # billing/shipping address is collected (digital-only carts).
+        if contact_name and contact_name.strip():
+            if not session.metadata:
+                session.metadata = {}
+            session.metadata["contact_name"] = contact_name.strip()[:200]
+
+        # Persist the email too — digital-only carts skip the shipping step
+        # that would otherwise record it, so guest order creation (which reads
+        # metadata['email']) would have nothing without this.
+        if email and email.strip():
+            if not session.metadata:
+                session.metadata = {}
+            session.metadata["email"] = email.strip()[:254]
 
         if same_as_shipping:
             # Copy both FK and JSON data from shipping
@@ -308,32 +393,73 @@ class CheckoutService:
         return True, _("Shipping method selected")
 
     @staticmethod
-    def get_available_payment_providers(session: CheckoutSession) -> list[PaymentProviderAccount]:
+    def get_customer_country(session: CheckoutSession, fallback_country: str = "") -> str:
+        """
+        Resolve the customer's country for payment provider filtering.
+
+        Order: shipping address → billing address → fallback (typically the
+        GeoIP country supplied by the calling view). Carts with no shippable
+        items never collect a shipping address, so billing (a minimal
+        country/postal collected at the payment step) or GeoIP is all there
+        is until the customer types something.
+
+        Args:
+            session: CheckoutSession instance
+            fallback_country: Country to use when no address carries one
+
+        Returns:
+            Country string ("" when nothing is known). May be an ISO code or
+            a full name — PaymentMethodFilter normalizes either.
+        """
+        for address in (
+            session.shipping_address or session.shipping_address_data,
+            session.billing_address or session.billing_address_data,
+        ):
+            if not address:
+                continue
+            country = address.country if hasattr(address, "country") else address.get("country")
+            if country:
+                return str(country)
+        return fallback_country or ""
+
+    @staticmethod
+    def get_available_payment_providers(
+        session: CheckoutSession, fallback_country: str = ""
+    ) -> list[PaymentProviderAccount]:
         """
         Get payment providers available for checkout session.
 
         Filters providers based on:
-        - Customer's shipping country
+        - Customer's country (shipping address; billing/GeoIP for carts
+          with no shippable items)
         - Cart currency
         - Provider availability and enablement
         - Currency support
 
         Args:
             session: CheckoutSession instance
+            fallback_country: GeoIP country from the calling view — used only
+                for no-shipping carts that have no address on file yet
 
         Returns:
             List of available PaymentProviderAccount instances
         """
-        # Get address - use JSONField data if ForeignKey is not set
-        address = session.shipping_address or session.shipping_address_data
+        cart_requires_shipping = session.cart.requires_shipping
 
-        if not address:
-            return []
+        if cart_requires_shipping:
+            # Shipping carts: the shipping address drives everything —
+            # without one there is nothing meaningful to offer yet.
+            address = session.shipping_address or session.shipping_address_data
+            if not address:
+                return []
+            customer_country = (
+                address.country if hasattr(address, "country") else address.get("country")
+            )
+        else:
+            # No-shipping carts (digital / booking only): billing country if
+            # collected, else the caller's GeoIP fallback.
+            customer_country = CheckoutService.get_customer_country(session, fallback_country)
 
-        # Get country from address (handle both Address object and dict)
-        customer_country = (
-            address.country if hasattr(address, "country") else address.get("country")
-        )
         if not customer_country:
             return []
 
@@ -344,9 +470,13 @@ class CheckoutService:
             else get_default_currency()
         )
 
-        # Use PaymentMethodFilter service to get available providers
+        # Use PaymentMethodFilter service to get available providers.
+        # The merchant's ships-to gate only applies to carts that ship.
         return PaymentMethodFilter.get_available_providers_for_checkout(
-            customer_country=customer_country, currency=cart_currency, amount=session.total_amount
+            customer_country=customer_country,
+            currency=cart_currency,
+            amount=session.total_amount,
+            require_ships_to=cart_requires_shipping,
         )
 
     @staticmethod
@@ -373,30 +503,33 @@ class CheckoutService:
         if payment_provider.connection_status != "connected":
             return False, _("Payment provider is not properly configured")
 
-        # Verify provider is available for customer's country and currency
-        address = session.shipping_address or session.shipping_address_data
-        if address:
-            customer_country = (
-                address.country if hasattr(address, "country") else address.get("country")
-            )
+        # Verify provider is available for customer's country and currency.
+        # Same country source as get_available_payment_providers: shipping
+        # address, else billing (no-shipping carts collect only that). When
+        # no country is known yet — a no-shipping cart selects its provider
+        # BEFORE the billing step submits a country — the check is skipped,
+        # matching the pre-existing behaviour for address-less sessions.
+        # This is a merchant-config/UX filter, not an authorization
+        # boundary: currency and method acceptance are enforced by the
+        # gateway when the intent is created.
+        customer_country = CheckoutService.get_customer_country(session)
+        if customer_country:
             cart_currency = (
                 session.cart.total_amount.currency.code
                 if session.cart.total_amount
                 else get_default_currency()
             )
 
-            if customer_country:
-                available_providers = PaymentMethodFilter.get_available_providers_for_checkout(
-                    customer_country=customer_country,
-                    currency=cart_currency,
-                    amount=session.total_amount,
-                )
+            available_providers = PaymentMethodFilter.get_available_providers_for_checkout(
+                customer_country=customer_country,
+                currency=cart_currency,
+                amount=session.total_amount,
+                require_ships_to=session.cart.requires_shipping,
+            )
 
-                # Check if selected provider is in the available list
-                if payment_provider not in available_providers:
-                    return False, _(
-                        "Payment provider is not available for your location or currency"
-                    )
+            # Check if selected provider is in the available list
+            if payment_provider not in available_providers:
+                return False, _("Payment provider is not available for your location or currency")
 
         session.payment_provider = payment_provider
         session.step_completed = "payment"
@@ -432,11 +565,32 @@ class CheckoutService:
         # Check billing address (skip for marketplace orders — billing handled externally)
         is_marketplace = session.metadata.get("marketplace", False) if session.metadata else False
         billing_address = session.billing_address or session.billing_address_data
-        if not is_marketplace and not billing_address and not session.billing_same_as_shipping:
-            errors.append(_("Billing address is required"))
 
-        # Check payment method
-        if not session.payment_provider:
+        def _addr_field(addr, field):
+            if not addr:
+                return ""
+            return (getattr(addr, field, "") if hasattr(addr, field) else addr.get(field, "")) or ""
+
+        if not is_marketplace:
+            if not session.cart.requires_shipping:
+                # Nothing ships, so "billing same as shipping" is meaningless
+                # (there is no shipping address to mirror). Require a real,
+                # complete billing address — this is the server-side backstop
+                # for the full billing form the UI now collects, so a headless
+                # or stale client can't create an order with blank billing.
+                required = ["name", "address1", "city", "postal_code", "country"]
+                if not billing_address or any(
+                    not str(_addr_field(billing_address, f)).strip() for f in required
+                ):
+                    errors.append(_("A complete billing address is required"))
+            elif not billing_address and not session.billing_same_as_shipping:
+                errors.append(_("Billing address is required"))
+
+        # Check payment method — unless tenders already cover the whole order.
+        # amount_due can legitimately be zero (gift cards / wallet credit), and
+        # demanding a provider then would force the customer to mount a gateway
+        # widget for 0.00 that create_payment_intent has no zero guard against.
+        if not session.payment_provider and session.amount_due.amount > 0:
             errors.append(_("Payment method is required"))
 
         # Check session expiry
@@ -607,7 +761,7 @@ class CheckoutService:
     @staticmethod
     @transaction.atomic
     def create_order(
-        session: CheckoutSession, clear_session: bool = True
+        session: CheckoutSession, clear_session: bool = True, channel: str = "web"
     ) -> tuple[bool, str, Order | None]:
         """
         Create order from checkout session
@@ -616,6 +770,9 @@ class CheckoutService:
             session: CheckoutSession instance
             clear_session: Whether to clear cart items and delete session after order creation.
                           Set to False when using payment orchestration (session cleared after payment).
+            channel: Sales channel to stamp on the Order ("web", "pos", "agent"). An
+                     unrecognised value falls back to "web" so a caller can never write
+                     an invalid channel.
 
         Returns:
             Tuple of (success: bool, message: str, order: Order)
@@ -656,8 +813,13 @@ class CheckoutService:
                 # Fallback: try to get from metadata or generate placeholder
                 email = session.metadata.get("email", "") if session.metadata else ""
 
-            # Get name from shipping address
-            name = get_address_field(shipping_address, "name", "")
+            # Get name from shipping address, else billing, else the
+            # contact name captured for digital-only carts
+            name = (
+                get_address_field(shipping_address, "name", "")
+                or get_address_field(billing_address, "name", "")
+                or (session.metadata.get("contact_name", "") if session.metadata else "")
+            )
             first_name = ""
             last_name = ""
             if name:
@@ -678,11 +840,17 @@ class CheckoutService:
                 # No email found - this should not happen if validation passed
                 return False, _("Customer email is required"), None
 
+        # Contact name captured at the billing/contact step for carts with
+        # no shipping form (digital-only) — billing_name must not be empty
+        # on the order, payment providers reject nameless customers.
+        contact_name = session.metadata.get("contact_name", "") if session.metadata else ""
+
         # Create order
         order_kwargs = {
             "user": cart.user,
             "email": cart.user.email,
-            "phone": get_address_field(shipping_address, "phone"),
+            "phone": get_address_field(shipping_address, "phone")
+            or get_address_field(billing_address, "phone"),
             # Shipping address
             "shipping_name": get_address_field(shipping_address, "name"),
             "shipping_address1": get_address_field(shipping_address, "address1"),
@@ -691,21 +859,22 @@ class CheckoutService:
             "shipping_state": get_address_field(shipping_address, "state"),
             "shipping_postal_code": get_address_field(shipping_address, "postal_code"),
             "shipping_country": get_address_field(shipping_address, "country"),
+            "shipping_phone": get_address_field(shipping_address, "phone"),
             # Billing address
             "billing_same_as_shipping": session.billing_same_as_shipping,
-            "billing_name": get_address_field(billing_address, "name"),
+            "billing_name": get_address_field(billing_address, "name") or contact_name,
             "billing_address1": get_address_field(billing_address, "address1"),
             "billing_address2": get_address_field(billing_address, "address2"),
             "billing_city": get_address_field(billing_address, "city"),
             "billing_state": get_address_field(billing_address, "state"),
             "billing_postal_code": get_address_field(billing_address, "postal_code"),
             "billing_country": get_address_field(billing_address, "country"),
+            "billing_phone": get_address_field(billing_address, "phone"),
             # Totals
             "subtotal": session.subtotal,
             "tax_amount": session.tax_amount,
             "shipping_cost": session.shipping_cost,
             "discount_amount": session.discount_amount,
-            "gift_card_discount": cart.gift_card_discount_amount,
             "total_amount": session.total_amount,
             # Capture customer's browsing language at checkout
             # Prefer language from session metadata (set by spwig.com frontend)
@@ -713,6 +882,8 @@ class CheckoutService:
             "language": (session.metadata.get("language") if session.metadata else None)
             or get_language()
             or "en",
+            # Sales channel (validated against the model choices; unknown -> web).
+            "channel": (channel if channel in dict(Order.CHANNEL_CHOICES) else "web"),
         }
         # Copy metadata from checkout session to order
         if session.metadata:
@@ -897,6 +1068,10 @@ class CheckoutService:
                 unit_price=cart_item.unit_price,
                 total_price=cart_item.total_price,
                 customizations=cart_item.customizations,
+                # Carries gift card recipient/schedule across to the order. The
+                # cart is deleted below, so without this the post-payment
+                # issuance receiver has nothing to read.
+                gift_card_data=cart_item.gift_card_data,
                 warehouse=None,  # Set below for regular products; bundles stay None
                 stock_allocated=False,
                 stock_fulfilled=False,
@@ -1004,11 +1179,28 @@ class CheckoutService:
                         order.delete()
                         return False, _("Error processing order. Please try again."), None
 
-        # Process applied gift cards - redeem them
-        CheckoutService._process_gift_card_redemptions(cart, order)
+        # Re-home gift card holds from the checkout session onto the order.
+        #
+        # MUST happen before `session.delete()` below. Holds reference the
+        # session with on_delete=SET_NULL, so deleting it would leave them with
+        # neither a session nor an order — orphaned, invisible to
+        # GiftCardTenderService.capture_for_order, and never settled. The
+        # customer's card would silently never be debited.
+        CheckoutService._attach_tenders_to_order(session, order)
 
         # Process applied vouchers - increment usage counters and create usage records
-        CheckoutService._process_voucher_usage(cart, order)
+        #
+        # A voucher that has been fully used since it was applied to the cart
+        # aborts the whole order. set_rollback keeps create_order's documented
+        # (success, message, order) contract — every caller unpacks that tuple,
+        # so raising out of here would turn a refused checkout into a 500 —
+        # while still discarding the order, its items, and its tender holds.
+        try:
+            CheckoutService._process_voucher_usage(cart, order)
+        except VoucherNoLongerValid as exc:
+            transaction.set_rollback(True)
+            logger.warning(f"Checkout refused for cart {cart.pk}: {exc}")
+            return False, str(exc), None
 
         # Create bookings for booking items
         CheckoutService._create_bookings(cart, order)
@@ -1020,10 +1212,93 @@ class CheckoutService:
             CheckoutService._create_subscriptions(cart, order)
             cart.items.all().delete()
             cart.applied_vouchers.all().delete()
-            cart.applied_gift_cards.all().delete()
             session.delete()
 
+        # Zero-due: tenders cover the whole order, so there is nothing to charge.
+        #
+        # Done AFTER the session is cleared so the order is in its final state,
+        # and deliberately by marking it paid rather than sending a zero-value
+        # charge to a provider — PaymentService.validate_payment_amount rejects
+        # `amount <= 0`, correctly, because a gateway has no business being
+        # asked for nothing. Marking paid fires the post_save receiver, which
+        # captures the holds and debits the cards.
+        CheckoutService._settle_if_fully_tendered(order)
+
         return True, _("Order created successfully"), order
+
+    @staticmethod
+    def _settle_if_fully_tendered(order):
+        """
+        Mark an order paid when its tenders already cover the total.
+
+        Returns:
+            bool: True if the order was marked paid here.
+        """
+        import logging
+
+        from djmoney.money import Money
+
+        from payment_providers.models import PaymentTransaction
+
+        logger = logging.getLogger(__name__)
+
+        if order.payment_status == "paid":
+            return False
+
+        currency = order.total_amount.currency
+        held = PaymentTransaction.objects.filter(
+            order=order,
+            transaction_type="authorize",
+            status="authorized",
+        ).values_list("settlement_amount", "settlement_amount_currency")
+
+        tendered = Money(Decimal("0"), currency)
+        for amount, amount_currency in held:
+            if amount is None or str(amount_currency) != str(currency):
+                # Anything unexpected here means we cannot be confident the
+                # order is covered — fall through to normal payment rather
+                # than marking an order paid on a figure we do not trust.
+                return False
+            tendered += Money(amount, currency)
+
+        if tendered < order.total_amount:
+            return False
+
+        from django.utils import timezone
+
+        order.payment_status = "paid"
+        order.paid_at = timezone.now()
+        order.amount_paid = order.total_amount
+        # Full save, not update_fields: the settlement receiver keys off
+        # post_save, and this is the transition it exists to catch.
+        order.save()
+
+        logger.info(
+            f"Order {order.order_number} fully covered by tenders "
+            f"({tendered}) — marked paid without a gateway charge"
+        )
+        return True
+
+    @staticmethod
+    def _attach_tenders_to_order(session, order):
+        """
+        Point this session's live tender holds at the order.
+
+        Holds are created against a CheckoutSession because the order does not
+        exist yet. Once it does, they belong to the order — the session is
+        transient and is deleted at the end of create_order.
+
+        Returns:
+            int: number of holds re-homed.
+        """
+        from payment_providers.models import PaymentTransaction
+
+        return PaymentTransaction.objects.filter(
+            checkout_session=session,
+            transaction_type="authorize",
+            status="authorized",
+            order__isnull=True,
+        ).update(order=order)
 
     @staticmethod
     def _create_subscriptions(cart, order):
@@ -1155,55 +1430,6 @@ class CheckoutService:
         return created_bookings
 
     @staticmethod
-    def _process_gift_card_redemptions(cart, order):
-        """
-        Process gift card redemptions for an order.
-
-        Creates redemption transactions for all applied gift cards.
-
-        Args:
-            cart: Cart instance with applied gift cards
-            order: Order instance created from cart
-        """
-        import logging
-
-        logger = logging.getLogger(__name__)
-
-        for applied_gift_card in cart.applied_gift_cards.all():
-            gift_card = applied_gift_card.gift_card
-            # Use the gift card's native currency amount for redemption (for foreign-currency GCs)
-            # Falls back to discount_amount for base-currency gift cards
-            redemption_amount = applied_gift_card.redemption_amount
-
-            try:
-                # Build notes with conversion info for foreign-currency gift cards
-                notes = f"Redeemed for order {order.order_number}"
-                if (
-                    applied_gift_card.original_currency_amount
-                    and applied_gift_card.gc_exchange_rate
-                ):
-                    notes += (
-                        f" | Base currency equivalent: {applied_gift_card.discount_amount}"
-                        f" (rate: {applied_gift_card.gc_exchange_rate})"
-                    )
-
-                # Redeem the gift card in its native currency
-                gift_card.redeem(
-                    amount=redemption_amount,
-                    order=order,
-                    notes=notes,
-                )
-                logger.info(
-                    f"Redeemed {redemption_amount} from gift card {gift_card.code} "
-                    f"for order {order.order_number}"
-                )
-            except Exception as e:
-                logger.error(
-                    f"Failed to redeem gift card {gift_card.code} for order {order.order_number}: {e}"
-                )
-                # Continue processing other gift cards even if one fails
-
-    @staticmethod
     def _process_voucher_usage(cart, order):
         """
         Process applied vouchers for an order.
@@ -1226,61 +1452,50 @@ class CheckoutService:
         for applied_voucher in cart.applied_vouchers.select_related("voucher").all():
             voucher = applied_voucher.voucher
 
-            try:
-                # Atomically increment current_uses to prevent race conditions
-                VoucherCode.objects.filter(pk=voucher.pk).update(current_uses=F("current_uses") + 1)
+            # Lock, re-check, THEN increment.
+            #
+            # The old code called an unconditional F() increment "atomic to
+            # prevent race conditions". Atomic incrementing is not the same as
+            # enforcing a cap: max_uses_total was checked when the voucher was
+            # applied to the cart, minutes earlier, and never again. Two carts
+            # holding the same single-use code both passed that check and both
+            # incremented, so the code was spent twice. Nothing re-validated
+            # expiry or per-customer limits at checkout either.
+            #
+            # Same shape as LedgerService.record_redemption, fixed in R1.
+            locked = VoucherCode.objects.select_for_update().get(pk=voucher.pk)
 
-                # Create usage record for audit trail and per-customer limit checks
-                VoucherUsage.objects.create(
-                    voucher=voucher,
-                    user=cart.user if cart.user and cart.user.is_authenticated else None,
-                    order=order,
-                    discount_amount=applied_voucher.discount_amount,
-                    cart_total=cart.total_amount,
-                    session_key=getattr(cart, "session_key", None),
+            if locked.max_uses_total is not None and (locked.current_uses >= locked.max_uses_total):
+                # Refuse the order rather than silently dropping the voucher and
+                # charging full price: the customer authorised a specific
+                # amount, and billing more than they agreed to is worse than
+                # sending them back to the cart. Raising rolls back
+                # create_order, so no order and no charge results.
+                raise VoucherNoLongerValid(
+                    _("The voucher %(code)s has just been fully used.") % {"code": locked.code}
                 )
 
-                logger.info(
-                    f"Recorded usage of voucher {voucher.code} for order {order.order_number} "
-                    f"(discount: {applied_voucher.discount_amount})"
+            if not locked.is_valid:
+                raise VoucherNoLongerValid(
+                    _("The voucher %(code)s is no longer valid.") % {"code": locked.code}
                 )
-            except Exception as e:
-                logger.error(
-                    f"Failed to record voucher usage for {voucher.code} "
-                    f"on order {order.order_number}: {e}"
-                )
-                # Continue processing other vouchers even if one fails
 
-    @staticmethod
-    @transaction.atomic
-    def process_payment_completion(order) -> tuple[int, list[str]]:
-        """
-        Process actions after payment is confirmed for an order.
+            locked.current_uses = F("current_uses") + 1
+            locked.save(update_fields=["current_uses"])
 
-        This method should be called when payment status becomes 'completed'.
-        It handles:
-        - Creating gift cards for gift card products in the order
-        - Sending gift card delivery emails
+            VoucherUsage.objects.create(
+                voucher=voucher,
+                user=cart.user if cart.user and cart.user.is_authenticated else None,
+                order=order,
+                discount_amount=applied_voucher.discount_amount,
+                cart_total=cart.total_amount,
+                session_key=getattr(cart, "session_key", None),
+            )
 
-        Args:
-            order: Order instance with confirmed payment
-
-        Returns:
-            Tuple of (gift_cards_created: int, gift_card_codes: List[str])
-        """
-        import logging
-
-        from catalog.services.gift_card_service import GiftCardService
-
-        logger = logging.getLogger(__name__)
-
-        # Create gift cards for any gift card products in the order
-        count, codes = GiftCardService.create_gift_cards_for_order(order)
-
-        if count > 0:
-            logger.info(f"Created {count} gift card(s) for order {order.order_number}: {codes}")
-
-        return count, codes
+            logger.info(
+                f"Recorded usage of voucher {voucher.code} for order {order.order_number} "
+                f"(discount: {applied_voucher.discount_amount})"
+            )
 
     @staticmethod
     def cleanup_expired_sessions():

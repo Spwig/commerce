@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish <LL@li.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:47
 msgid "Provider Information"
 msgstr "Sağlayıcı Bilgisi"
 
+#: admin.py:48
 msgid "Configuration"
 msgstr "Yapılandırma"
 
+#: admin.py:50 admin.py:110
 msgid "Credentials"
 msgstr "Kimlik Bilgileri"
 
+#: admin.py:54
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
@@ -34,57 +38,76 @@ msgstr ""
 "Kimlik bilgileri sağlayıcı sihirbazı aracılığıyla şifrelenir ve yönetilir. "
 "Kimlik bilgilerini güncellemek için sağlayıcıyı yeniden yükleyin."
 
+#: admin.py:60 admin.py:75 models.py:82
 msgid "Sync Status"
 msgstr "Senkronizasyon Durumu"
 
+#: admin.py:66 admin.py:323
 msgid "Timestamps"
 msgstr "Zaman Damgaları"
 
+#: admin.py:69
 msgid "Name"
 msgstr "İsim"
 
+#: admin.py:88 admin.py:269 admin.py:336
 msgid "Status"
 msgstr "Durum"
 
+#: admin.py:102
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:88
 msgid "Primary"
 msgstr "Öncelikli"
 
+#: admin.py:118
 msgid "Credentials are encrypted and stored securely"
 msgstr "Kimlik bilgileri şifrelenerek güvenli bir şekilde saklanır"
 
+#: admin.py:125
 msgid "No credentials configured"
 msgstr "Kimlik bilgisi yapılandırılmadı"
 
+#: admin.py:265 admin.py:283 admin.py:320 admin.py:332
 msgid "Currency Pair"
 msgstr "Para Birimi Çifti"
 
+#: admin.py:272
 msgid "Stale"
 msgstr "Güncel Değil"
 
+#: admin.py:273
 msgid "Fresh"
 msgstr "Yeni"
 
+#: admin.py:287 models.py:220
 msgid "Order"
 msgstr "Sipariş"
 
+#: admin.py:321
 msgid "Rate"
 msgstr "Kur"
 
+#: admin.py:322
 msgid "Settings"
 msgstr "Ayarlar"
 
+#: admin.py:341
 msgid "ACTIVE"
 msgstr "AKTİF"
 
+#: admin.py:345
 msgid "INACTIVE"
 msgstr "YAŞIMSIZ"
 
+#: admin.py:348 models.py:285
 msgid "Notes"
 msgstr "Notlar"
 
+#: api_views.py:38
 msgid "List manual exchange rates"
 msgstr "Elle kur oranlarını listele"
 
+#: api_views.py:40
 msgid ""
 "Returns all manual exchange rates for the current site. Staff authentication "
 "required."
@@ -92,9 +115,11 @@ msgstr ""
 "Mevcut site için tüm el ile kur bilgilerini döndürür. Personel kimlik "
 "doğrulaması gerekli."
 
+#: api_views.py:46
 msgid "Create a manual exchange rate"
 msgstr "Elle kur oranı oluştur"
 
+#: api_views.py:48
 msgid ""
 "Create a new manual exchange rate for a currency pair. Only one rate per "
 "currency pair is allowed. Manual rates take precedence over provider rates "
@@ -104,30 +129,39 @@ msgstr ""
 "birimi çifti için yalnızca bir kur izni verilir. Aktif olduğunda, manuel "
 "kur, sağlayıcı kurunun önüne geçer."
 
+#: api_views.py:54
 msgid "Rate created successfully"
 msgstr "Kur başarıyla oluşturuldu"
 
+#: api_views.py:56
 msgid "Validation error (duplicate pair, invalid rate, etc.)"
 msgstr "Doğrulama hatası (çift çift, geçersiz oran vb.)"
 
+#: api_views.py:62
 msgid "Get manual exchange rate details"
 msgstr "Elle kur oranı detaylarını al"
 
+#: api_views.py:63
 msgid "Retrieve a specific manual exchange rate by ID."
 msgstr "ID ile belirli bir el ile kur bilgisini al."
 
+#: api_views.py:68
 msgid "Update a manual exchange rate"
 msgstr "Elle kur oranı güncelle"
 
+#: api_views.py:69
 msgid "Fully update a manual exchange rate. All fields required."
 msgstr "El ile bir kurun tamamen güncelleyin. Tüm alanlar gerekli."
 
+#: api_views.py:72 api_views.py:85
 msgid "Rate updated successfully"
 msgstr "Kur başarıyla güncellendi"
 
+#: api_views.py:78
 msgid "Partially update a manual exchange rate"
 msgstr "El ile bir kurun kısmen güncelleyin"
 
+#: api_views.py:80
 msgid ""
 "Update specific fields of a manual exchange rate. Commonly used to update "
 "just the rate value."
@@ -135,9 +169,11 @@ msgstr ""
 "El ile bir kurun belirli alanlarını güncelleyin. Genellikle sadece oran "
 "değerini güncellemek için kullanılır."
 
+#: api_views.py:91
 msgid "Delete a manual exchange rate"
 msgstr "Elle kur oranı sil"
 
+#: api_views.py:93
 msgid ""
 "Permanently delete a manual exchange rate. The system will fall back to "
 "provider rates for this currency pair."
@@ -145,27 +181,35 @@ msgstr ""
 "Bir manuel kuru kalıcı olarak sil. Sistem, bu para birimi çifti için "
 "sağlayıcı kuruna geri döner."
 
+#: api_views.py:97
 msgid "Rate deleted successfully"
 msgstr "Kur başarıyla silindi"
 
+#: api_views.py:143
 msgid "Manual exchange rate created successfully."
 msgstr "El ile kur başarıyla oluşturuldu."
 
+#: api_views.py:151
 msgid "Failed to create manual exchange rate."
 msgstr "El ile döviz kuru oluşturulamadı."
 
+#: api_views.py:172
 msgid "Manual exchange rate updated successfully."
 msgstr "El ile kur başarıyla güncellendi."
 
+#: api_views.py:180
 msgid "Failed to update manual exchange rate."
 msgstr "El ile döviz kuru güncellenemedi."
 
+#: api_views.py:193
 msgid "Manual exchange rate deleted successfully."
 msgstr "El ile kur başarıyla silindi."
 
+#: api_views.py:199
 msgid "Toggle manual rate active status"
 msgstr "Elle kur aktif durumunu değiştir"
 
+#: api_views.py:201
 msgid ""
 "Toggle the active/inactive status of a manual exchange rate. When "
 "deactivated, the system falls back to provider rates."
@@ -173,21 +217,27 @@ msgstr ""
 "Bir manuel kurunun aktif/aktif olmayan durumunu değiştir. Devre dışı "
 "bırakıldığında, sistem sağlayıcı kuruna geri döner."
 
+#: api_views.py:205
 msgid "Status toggled successfully"
 msgstr "Durum başarıyla değiştirildi"
 
+#: api_views.py:220 views/admin_views.py:448 views/admin_views.py:477
 msgid "Rate {} successfully"
 msgstr "{} başarıyla"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "activated"
 msgstr "etkinleştirildi"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "deactivated"
 msgstr "devre dışı bırakıldı"
 
+#: api_views.py:231
 msgid "Bulk create or update manual rates"
 msgstr "El ile kur bilgilerini toplu olarak oluştur veya güncelle"
 
+#: api_views.py:233
 msgid ""
 "Create or update multiple manual exchange rates in a single request. Each "
 "rate is identified by its base_currency + target_currency pair. If a rate "
@@ -219,32 +269,41 @@ msgstr ""
 "  ]\n"
 "} ```"
 
+#: api_views.py:249
 msgid "Bulk operation completed"
 msgstr "Toplu işlem tamamlandı"
 
+#: api_views.py:261
 msgid "Invalid request data."
 msgstr "Geçersiz istek verisi."
 
+#: api_views.py:284
 msgid "base_currency, target_currency, and rate are required."
 msgstr "base_currency, target_currency ve rate zorunludur."
 
+#: api_views.py:294 models.py:312 serializers.py:68
 msgid "Base and target currencies must be different."
 msgstr "Temel ve hedef dövizler farklı olmalıdır."
 
+#: api_views.py:307 models.py:315 serializers.py:59
 msgid "Exchange rate must be greater than zero."
 msgstr "Döviz kuru sıfırdan büyük olmalıdır."
 
+#: api_views.py:312
 msgid "Invalid rate value."
 msgstr "Geçersiz kur değeri."
 
+#: api_views.py:336
 #, python-format
 msgid "Bulk operation completed: %(created)d created, %(updated)d updated."
 msgstr ""
 "Toplu işlem tamamlandı: %(created)d oluşturuldu, %(updated)d güncellendi."
 
+#: api_views.py:348
 msgid "Sync manual rates from provider"
 msgstr "Tedarikçiden elle kur oranlarını senkronize et"
 
+#: api_views.py:350
 msgid ""
 "Auto-populate manual exchange rates from the latest provider rates. Rates "
 "marked as locked (exclude_from_auto_sync) will be skipped. Creates new "
@@ -255,19 +314,24 @@ msgstr ""
 "oranları atlanır. Yeni el ile kur oranları oluşturur veya mevcut "
 "kilitlemelerden muaf olanları günceller."
 
+#: api_views.py:355
 msgid "Sync completed"
 msgstr "Sincronizasyon tamamlandı"
 
+#: api_views.py:356
 msgid "Sync failed"
 msgstr "Sincronizasyon başarısız oldu"
 
+#: api_views.py:412
 msgid "No provider rate available"
 msgstr "Sağlayıcı kuru mevcut değil"
 
+#: api_views.py:426 views/admin_views.py:559
 #, python-format
 msgid "Synced from provider on %(date)s"
 msgstr "%(date)s tarihinde sağlayıcıdan senkronize edildi"
 
+#: api_views.py:448 views/admin_views.py:578
 #, python-format
 msgid ""
 "Sync complete: %(created)d created, %(updated)d updated, %(skipped)d locked "
@@ -276,152 +340,210 @@ msgstr ""
 "Senkronizasyon tamamlandı: %(created)d oluşturuldu, %(updated)d güncellendi, "
 "%(skipped)d kilitli (atlandı)"
 
+#: api_views.py:467 views/admin_views.py:591
 msgid "An error occurred during sync."
 msgstr "Sincronizasyon sırasında bir hata oluştu."
 
+#: apps.py:8 models.py:169
 msgid "Exchange Rates"
 msgstr "Döviz Kuru"
 
+#: models.py:15 models.py:245
 msgid "Site"
 msgstr "Site"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "Bu sağlayıcı hesabı ait olduğu site"
 
+#: models.py:24
 msgid "Provider Component"
 msgstr "Sağlayıcı Bileşeni"
 
+#: models.py:25
 msgid "Exchange rate provider component from update system"
 msgstr "Güncelleme sisteminden alınan kur değişim sağlayıcısı bileşeni"
 
+#: models.py:30
 msgid "Account Name"
 msgstr "Hesap Adı"
 
+#: models.py:32
 msgid ""
 "Friendly name for this provider account (e.g., 'Main Exchange Rate Provider')"
 msgstr ""
 "Bu sağlayıcı hesabı için dostane isim (örneğin, 'Ana Kur Değişim "
 "Sağlayıcısı')"
 
+#: models.py:37
 msgid "Encrypted Credentials"
 msgstr "Şifrelenmiş Kimlik Bilgileri"
 
+#: models.py:38
 msgid "Encrypted API credentials for this provider"
 msgstr "Bu sağlayıcı için şifrelenmiş API kimlik bilgileri"
 
+#: models.py:43 models.py:270 models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:88
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:77
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:90
+#: views/admin_views.py:451
 msgid "Active"
 msgstr "Aktif"
 
+#: models.py:44
 msgid ""
 "Whether this provider account is active and should be used for rate fetching"
 msgstr ""
 "Bu sağlayıcı hesabı aktif olup olmadığını ve kur alımı için kullanılması "
 "gerekip gerekmediğini belirtir"
 
+#: models.py:49
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:23
 msgid "Primary Provider"
 msgstr "Ana Sağlayıcı"
 
+#: models.py:50
 msgid "Use this provider as primary source for exchange rates"
 msgstr "Bu sağlayıcıyı kur değişimlerinin ana kaynağı olarak kullan"
 
+#: models.py:55
 msgid "Priority"
 msgstr "Öncelik"
 
+#: models.py:56
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "Yedekleme zinciri için öncelik (daha düşük = daha yüksek öncelik)"
 
+#: models.py:62
 msgid "Provider Settings"
 msgstr "Sağlayıcı Ayarları"
 
+#: models.py:63
 msgid "Provider-specific settings and configuration"
 msgstr "Sağlayıcıya özel ayarlar ve yapılandırma"
 
+#: models.py:70
 msgid "Last Sync At"
 msgstr "Son Senkronizasyon Zamanı"
 
+#: models.py:71
 msgid "When rates were last successfully fetched"
 msgstr "Kur değişimlerinin son başarılı şekilde alındığı tarih"
 
+#: models.py:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:80
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:68
 msgid "Pending"
 msgstr "Bekleyen"
 
+#: models.py:78
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:74
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:60
 msgid "Success"
 msgstr "Başarılı"
 
+#: models.py:79
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:64
+#: templates/admin/exchange_rates/wizard/step4_test.html:76
 msgid "Error"
 msgstr "Hata"
 
+#: models.py:87
 msgid "Sync Error Message"
 msgstr "Senkronizasyon Hata Mesajı"
 
+#: models.py:88
 msgid "Error message from last sync attempt"
 msgstr "Son senkronizasyon denemesinden gelen hata mesajı"
 
+#: models.py:95
 msgid "Exchange Rate Provider Account"
 msgstr "Döviz Kuru Sağlayıcısı Hesabı"
 
+#: models.py:96
 msgid "Exchange Rate Provider Accounts"
 msgstr "Döviz Kuru Sağlayıcıları Hesapları"
 
+#: models.py:138
 msgid "Provider Account"
 msgstr "Sağlayıcı Hesabı"
 
+#: models.py:144 models.py:195 models.py:251
 msgid "Base Currency"
 msgstr "Temel Para Birimi"
 
+#: models.py:145 models.py:252
 msgid "Base currency code (e.g., 'USD')"
 msgstr "Temel para birimi kodu (örneğin, 'USD')"
 
+#: models.py:150 models.py:197 models.py:257
 msgid "Target Currency"
 msgstr "Hedef Para Birimi"
 
+#: models.py:151 models.py:258
 msgid "Target currency code (e.g., 'EUR')"
 msgstr "Hedef para birimi kodu (örneğin, 'EUR')"
 
+#: models.py:157 models.py:168 models.py:199 models.py:264
 msgid "Exchange Rate"
 msgstr "Döviz Kuru"
 
+#: models.py:158
 msgid "Exchange rate from base to target (e.g., 0.85 means 1 USD = 0.85 EUR)"
 msgstr ""
 "Temel para biriminden hedef para birimine kur değişim oranı (örneğin, 0.85 1 "
 "USD = 0.85 EUR anlamına gelir)"
 
+#: models.py:163
 msgid "Fetched At"
 msgstr "Alındığı Zaman"
 
+#: models.py:164
 msgid "When this rate was last fetched from provider"
 msgstr "Bu kur değişim oranının sağlayıcıdan son alınma tarihi"
 
+#: models.py:203
 msgid "Provider Name"
 msgstr "Sağlayıcı Adı"
 
+#: models.py:204
 msgid "Name of exchange rate provider used"
 msgstr "Kullanılan kur değişim sağlayıcısının adı"
 
+#: models.py:209
 msgid "Created At"
 msgstr "Oluşturulma Tarihi"
 
+#: models.py:210
 msgid "When this rate snapshot was created"
 msgstr "Bu kur değişim oranı görüntüsünün oluşturulma tarihi"
 
+#: models.py:224 models.py:225
 msgid "Exchange Rate History"
 msgstr "Döviz Kuru Geçmişi"
 
+#: models.py:246
 msgid "Site this manual rate belongs to"
 msgstr "Bu el ile kuru hangi siteye aittir"
 
+#: models.py:265
 msgid ""
 "Exchange rate from base to target (e.g., 0.85 means 1 base = 0.85 target)"
 msgstr ""
 "Temel'den hedef'e kur (örneğin, 0.85 demek 1 temel = 0.85 hedef anlamına "
 "gelir)"
 
+#: models.py:271
 msgid "Whether this manual rate is active and should be used for conversions"
 msgstr "Bu el ile kuru aktif mi ve çevirilerde kullanılmalı mı"
 
+#: models.py:276
 msgid "Locked (Exclude from Auto-Sync)"
 msgstr "Kilitli (Otomatik Senkronizasyon'dan Dışarıda Bırak)"
 
+#: models.py:278
 msgid ""
 "When enabled, this rate will not be overwritten by provider sync operations. "
 "Use for rates you manage manually."
@@ -429,21 +551,32 @@ msgstr ""
 "Etkinleştirildiğinde, bu oran sağlayıcı senkronizasyon işlemleri tarafından "
 "üzerine yazılmayacak. Manuel olarak yönettiğiniz oranlar için kullanın."
 
+#: models.py:286
 msgid ""
 "Optional notes about this rate (e.g., 'Fixed rate for wholesale customers')"
 msgstr ""
 "Bu kuruyla ilgili isteğe bağlı notlar (örneğin, 'Tedarikçi müşteriler için "
 "sabit oran')"
 
+#: models.py:293
 msgid "Manual Exchange Rate"
 msgstr "Elle Kur"
 
+#: models.py:294
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:22
 msgid "Manual Exchange Rates"
 msgstr "Elle Kurlar"
 
+#: models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:91
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:81
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:92
+#: views/admin_views.py:452
 msgid "Inactive"
 msgstr "Pasif"
 
+#: providers/fixer.py:316
 msgid ""
 "\n"
 "        <h3>Fixer.io Setup</h3>\n"
@@ -480,6 +613,7 @@ msgstr ""
 "strong> ECB uyumluluğu gereken Avrupa tabanlı mağazalar için</p>\n"
 "        "
 
+#: providers/openexchangerates.py:289
 msgid ""
 "\n"
 "        <h3>Open Exchange Rates Setup</h3>\n"
@@ -513,6 +647,7 @@ msgstr ""
 "birimi desteği için ücretli planlar gereklidir.</p>\n"
 "        "
 
+#: serializers.py:82
 msgid ""
 "List of rate objects with base_currency, target_currency, rate, and optional "
 "is_active/notes"
@@ -520,126 +655,180 @@ msgstr ""
 "base_currency, target_currency, rate ve isteğe bağlı is_active/notes "
 "alanlarını içeren oran nesneleri listesi"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:24
 msgid "Exchange Rate Providers"
 msgstr "Döviz Kuru Sağlayıcıları"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/providers/browse.html:4
 msgid "Site Admin"
 msgstr "Site Yöneticisi"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:26
 msgid "Manage currency exchange rate provider integrations"
 msgstr "Para birimi kur değişim sağlayıcı entegrasyonlarını yönet"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:28
 msgid "provider"
 msgstr "sağlayıcı"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:29
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:27
 msgid "active"
 msgstr "aktif"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:34
+#: templates/admin/exchange_rates/providers/browse.html:27
 msgid "Browse Providers"
 msgstr "Tedarikçileri Gözat"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:53
 msgid "Bulk Actions"
 msgstr "Toplu İşlemler"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:54
 msgid "Enable Selected"
 msgstr "Seçiliyi Etkinleştir"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:55
 msgid "Disable Selected"
 msgstr "Seçiliyi Devre Dışı Bırak"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:56
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:119
 msgid "Set as Primary"
 msgstr "Öncelikli Olarak Ayarla"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:57
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:103
 msgid "Sync Rates"
 msgstr "Kur Senkronize Et"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:58
 msgid "Delete Selected"
 msgstr "Seçili Yazıyı Sil"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:60
 msgid "Apply"
 msgstr "Uygula"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:62
 msgid "selected"
 msgstr "seçili"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:72
 msgid "All Sync Statuses"
 msgstr "Tüm Senkronizasyon Durumları"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:86
 msgid "All Active Status"
 msgstr "Tüm Aktif Durumlar"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:98
 msgid "All Providers"
 msgstr "Tüm Tedarikçiler"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:114
 msgid "Search providers..."
 msgstr "Sağlayıcıları ara..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:124
 msgid "Select All"
 msgstr "Tümünü Seç"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:142
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s sağlayıcı"
 msgstr[1] "%(counter)s sağlayıcı"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:151
+#: views/admin_views.py:86
 msgid "No provider accounts found"
 msgstr "Hiçbir sağlayıcı hesabı bulunamadı"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:154
+#: views/admin_views.py:87
 msgid "Try adjusting your filters or search query."
 msgstr "Filtrelerinizi veya arama sorgunuzu ayarlayarak deneyin."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:156
 msgid "Get started by connecting your first exchange rate provider."
 msgstr "İlk kur değişim sağlayıcınızı bağlayarak başlayın."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:161
 msgid "Browse & Install Providers"
 msgstr "Sağlayıcıları Gözat & Yükle"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:172
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:38
 msgid "Provider:"
 msgstr "Sağlayıcı:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
 msgid "Last synced:"
 msgstr "Son senkronizasyon:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "ago"
 msgstr "önce"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:51
 msgid "Never synced"
 msgstr "Asla senkronize edilmedi"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:98
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:119
 msgid "Edit"
 msgstr "Düzenle"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Disable"
 msgstr "Devre Dışı Bırak"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Enable"
 msgstr "Etkinleştir"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:124
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:124
 msgid "Delete"
 msgstr "Sil"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:24
 msgid "Set and manage exchange rates manually for currency conversions"
 msgstr "Para birimi çevirileri için el ile döviz kurlarını ayarla ve yönet"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:26
 msgid "rate"
 msgstr "kur"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:28
 msgid "inactive"
 msgstr "devre dışı"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:29
+#: views/admin_views.py:478
 msgid "locked"
 msgstr "kilitli"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:35
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:144
 msgid "Sync from Provider"
 msgstr "Sağlayıcıdan Sincronize Et"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:38
 msgid "Add Rate"
 msgstr "Kur Ekle"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:55
 msgid ""
 "Manual rates take precedence over provider-fetched rates. Lock rates to "
 "prevent them from being overwritten during provider sync."
@@ -648,27 +837,36 @@ msgstr ""
 "senkronizasyonları sırasında üzerine yazılmasını önlemek için oranları "
 "kilitleyin."
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "Updated"
 msgstr "Güncellendi"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:95
+#: views/admin_views.py:480
 msgid "Locked"
 msgstr "Kilitli"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Unlock (allow auto-sync)"
 msgstr "Kilitini Aç (otomatik senkronizasyonu izin ver)"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Lock (exclude from auto-sync)"
 msgstr "Kilitle (otomatik senkronizasyon'dan dışarıda bırak)"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Deactivate"
 msgstr "Devre Dışı Bırak"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Activate"
 msgstr "Etkinleştir"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:139
 msgid "No manual exchange rates"
 msgstr "Elle kur yok"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:140
 msgid ""
 "Add manual exchange rates to define fixed conversion rates between "
 "currencies."
@@ -676,26 +874,35 @@ msgstr ""
 "Para birimleri arasında sabit çevirme oranlarını tanımlamak için el ile "
 "döviz kurları ekle."
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:147
 msgid "Add Your First Rate"
 msgstr "İlk Kurunu Ekle"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:160
 msgid "Syncing from Provider"
 msgstr "Sağlayıcıdan Sincronize Ediliyor"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:161
 msgid "Fetching latest provider rates and updating unlocked manual rates..."
 msgstr ""
 "En son sağlayıcı oranlarını alıyor ve kilidi açılmış el ile oranları "
 "güncelliyor..."
 
+#: templates/admin/exchange_rates/providers/browse.html:4
+#: templates/admin/exchange_rates/providers/browse.html:36
+#: views/provider_browse.py:158
 msgid "Browse Exchange Rate Providers"
 msgstr "Döviz Kuru Sağlayıcılarını Gözat"
 
+#: templates/admin/exchange_rates/providers/browse.html:25
 msgid "Home"
 msgstr "Anasayfa"
 
+#: templates/admin/exchange_rates/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "Sağlayıcı Hesapları"
 
+#: templates/admin/exchange_rates/providers/browse.html:38
 msgid ""
 "Choose an exchange rate provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -703,9 +910,11 @@ msgstr ""
 "Mağazanızla entegre etmek için bir döviz kuru sağlayıcısı seçin. Yeni "
 "sağlayıcılar yükleyin veya mevcut olanları yapılandırın."
 
+#: templates/admin/exchange_rates/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Güncelleme Sunucusu Kullanılamıyor"
 
+#: templates/admin/exchange_rates/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -713,9 +922,11 @@ msgstr ""
 "Güncelleme sunucusuna bağlanılamadı. Yerel olarak yüklenen sağlayıcılar "
 "yalnızca gösteriliyor."
 
+#: templates/admin/exchange_rates/providers/browse.html:57
 msgid "Exchange Rate Provider Marketplace"
 msgstr "Döviz Kuru Sağlayıcı Pazarı"
 
+#: templates/admin/exchange_rates/providers/browse.html:69
 msgid ""
 "Here you can discover and install exchange rate providers to automate your "
 "currency conversion, including live rates, historical data, and multi-"
@@ -725,38 +936,49 @@ msgstr ""
 "döviz çevirinizi otomatikleştirebilirsiniz. Canlı kur, tarihî veri ve çoklu "
 "döviz desteği içerir."
 
+#: templates/admin/exchange_rates/providers/browse.html:76
 msgid "What you can do:"
 msgstr "Ne yapabilirsiniz:"
 
+#: templates/admin/exchange_rates/providers/browse.html:81
 msgid "Browse available exchange rate providers by feature and pricing"
 msgstr ""
 "Özellik ve fiyatlandırma göre kullanılabilir döviz kuru sağlayıcılarını "
 "keşfleyin"
 
+#: templates/admin/exchange_rates/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "Bir tıklamayla yeni sağlayıcılar yükleyin"
 
+#: templates/admin/exchange_rates/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "Yüklü sağlayıcıları en yeni sürümlere güncelleyin"
 
+#: templates/admin/exchange_rates/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "Yükleme sonrasında sağlayıcı ayarlarını yapılandır"
 
+#: templates/admin/exchange_rates/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "Başlangıç:"
 
+#: templates/admin/exchange_rates/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "Aşağıdaki sağlayıcıları keşfleyin ve size uygun olanı bulun"
 
+#: templates/admin/exchange_rates/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Sağlayıcıyı mağazanıza eklemek için 'Yükle'yi tıklayın"
 
+#: templates/admin/exchange_rates/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "API kimlik bilgilerini yapılandırmak için Ayarlar'a gidin"
 
+#: templates/admin/exchange_rates/providers/browse.html:107
 msgid "Test the provider connection and sync exchange rates"
 msgstr "Sağlayıcı bağlantısını test edin ve döviz kurlarını senkronize edin"
 
+#: templates/admin/exchange_rates/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -775,54 +997,78 @@ msgstr[1] ""
 "                    Şu an: %(counter)s sağlayıcı mevcut\n"
 "                "
 
+#: templates/admin/exchange_rates/providers/browse.html:134
 msgid "Update Available"
 msgstr "Güncelleme Mevcut"
 
+#: templates/admin/exchange_rates/providers/browse.html:160
 msgid "Installed"
 msgstr "Yüklendi"
 
+#: templates/admin/exchange_rates/providers/browse.html:175
 msgid "Available"
 msgstr "Mevcut"
 
+#: templates/admin/exchange_rates/providers/browse.html:198
+#: templates/admin/exchange_rates/wizard/step1_select.html:46
 msgid "Live Rates"
 msgstr "Anlık Kur"
 
+#: templates/admin/exchange_rates/providers/browse.html:203
+#: templates/admin/exchange_rates/wizard/step1_select.html:51
 msgid "Historical"
 msgstr "Tarihi"
 
+#: templates/admin/exchange_rates/providers/browse.html:208
+#: templates/admin/exchange_rates/wizard/step1_select.html:56
 msgid "Crypto"
 msgstr "Kripto Para"
 
+#: templates/admin/exchange_rates/providers/browse.html:213
+#: templates/admin/exchange_rates/wizard/step1_select.html:61
 msgid "Commodities"
 msgstr "Mallar"
 
+#: templates/admin/exchange_rates/providers/browse.html:218
+#: templates/admin/exchange_rates/wizard/step1_select.html:66
 msgid "Any Base Currency"
 msgstr "Herhangi Bir Temel Para Birimi"
 
+#: templates/admin/exchange_rates/providers/browse.html:223
+#: templates/admin/exchange_rates/wizard/step1_select.html:71
 msgid "Batch Requests"
 msgstr "Toplu Talepler"
 
+#: templates/admin/exchange_rates/providers/browse.html:241
 msgid "Free"
 msgstr "Ücretsiz"
 
+#: templates/admin/exchange_rates/providers/browse.html:261
 msgid "Update"
 msgstr "Güncelle"
 
+#: templates/admin/exchange_rates/providers/browse.html:267
 msgid "Configure"
 msgstr "Yapılandır"
 
+#: templates/admin/exchange_rates/providers/browse.html:275
 msgid "Install"
 msgstr "Yükle"
 
+#: templates/admin/exchange_rates/providers/browse.html:285
 msgid "View Details"
 msgstr "Detayları Görüntüle"
 
+#: templates/admin/exchange_rates/providers/browse.html:294
 msgid "Learn More"
 msgstr "Daha Fazlasını Öğren"
 
+#: templates/admin/exchange_rates/providers/browse.html:308
+#: templates/admin/exchange_rates/wizard/step1_select.html:88
 msgid "No Providers Available"
 msgstr "Ayarlayıcı Mevcut Değil"
 
+#: templates/admin/exchange_rates/providers/browse.html:309
 msgid ""
 "No exchange rate providers are currently available. Please check your update "
 "server connection or contact support."
@@ -830,36 +1076,50 @@ msgstr ""
 "Şu anda döviz kuru sağlayıcısı bulunmamaktadır. Lütfen güncelleme sunucu "
 "bağlantınızı kontrol edin veya destek ile iletişime geçin."
 
+#: templates/admin/exchange_rates/providers/browse.html:318
 msgid "Installing provider..."
 msgstr "Ayarlayıcı Yüklüyor..."
 
+#: templates/admin/exchange_rates/wizard/base.html:14
 msgid "Connect Exchange Rate Provider"
 msgstr "Döviz Kuru Sağlayıcısına Bağlan"
 
+#: templates/admin/exchange_rates/wizard/base.html:15
 msgid "Follow these steps to connect your exchange rate provider account"
 msgstr "Döviz kuru sağlayıcınız hesabını bağlamak için bu adımları izleyin"
 
+#: templates/admin/exchange_rates/wizard/base.html:24
 msgid "Select Provider"
 msgstr "Ayarlayıcı Seç"
 
+#: templates/admin/exchange_rates/wizard/base.html:33
+#: templates/admin/exchange_rates/wizard/step2_setup.html:13
 msgid "Setup Instructions"
 msgstr "Kurulum Talimatları"
 
+#: templates/admin/exchange_rates/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "Kimlik Bilgilerini Girin"
 
+#: templates/admin/exchange_rates/wizard/base.html:51
+#: templates/admin/exchange_rates/wizard/step4_test.html:7
+#: templates/admin/exchange_rates/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "Bağlantıyı Test Et"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:6
 msgid "Select an Exchange Rate Provider"
 msgstr "Bir Döviz Kuru Sağlayıcısı Seçin"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:7
 msgid "Choose the exchange rate provider you want to connect to your store."
 msgstr "Mağazanıza bağlamak istediğiniz döviz kuru sağlayıcısını seçin."
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:89
 msgid "No exchange rate provider components are currently installed."
 msgstr "Şu anda döviz kuru sağlayıcısı bileşenleri yüklenmemiş."
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:90
 msgid ""
 "Please download and install exchange rate provider components from the "
 "component registry."
@@ -867,15 +1127,20 @@ msgstr ""
 "Lütfen bileşen kayıt defterinden döviz kuru sağlayıcısı bileşenlerini "
 "indirin ve yükleyin."
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:92
 msgid "Browse Components"
 msgstr "Bileşenleri Gözat"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:103
 msgid "Cancel"
 msgstr "İptal"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:106
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "İleri"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:16
 #, python-format
 msgid ""
 "\n"
@@ -888,9 +1153,11 @@ msgstr ""
 "adımlarını inceleyin.\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:28
 msgid "Setup Instructions Not Available"
 msgstr "Kurulum Talimatları Mevcut Değil"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:30
 #, python-format
 msgid ""
 "\n"
@@ -906,15 +1173,21 @@ msgstr ""
 "olmadığını kontrol edin.\n"
 "                    "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:49
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:120
+#: templates/admin/exchange_rates/wizard/step4_test.html:58
 msgid "Back"
 msgstr "Geri"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:52
 msgid "Continue to Credentials"
 msgstr "Kimlik Bilgilerine Devam Et"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "API Kimlik Bilgilerini Girin"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -927,24 +1200,31 @@ msgstr ""
 "güvenli şekilde şifrelenerek saklanacaktır.\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "Henüz bir hesabınız yok mu?"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "API kimlik bilgileri almak için bir hesaba ihtiyacınız olacak."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "Buradan Kaydol"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "API Kimlik Bilgileri"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "Seç..."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "Bu sağlayıcı için kimlik bilgisi alanları yapılandırılmadı."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
@@ -952,6 +1232,7 @@ msgstr ""
 "Kimlik bilgileriniz, veritabanına kaydedilmeden önce AES-256 şifrelemesi "
 "kullanılarak şifrelenir."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -964,240 +1245,318 @@ msgstr ""
 "olduğundan emin olun.\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:21
+#: templates/admin/exchange_rates/wizard/step4_test.html:70
 msgid "Testing connection..."
 msgstr "Bağlantı Test Ediliyor..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:22
+#: templates/admin/exchange_rates/wizard/step4_test.html:71
 msgid "Please wait while we verify your credentials."
 msgstr "Kimlik bilgilerinizi doğruluyoruz. Lütfen bekleyin."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "Girdiğiniz kimlik bilgileriyle bağlantıyı test etmek için tıklayın."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:42
+#: templates/admin/exchange_rates/wizard/step4_test.html:72
 msgid "Connection Successful!"
 msgstr "Bağlantı Başarılı!"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:46
 msgid "Connection Details"
 msgstr "Bağlantı Detayları"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:61
+#: templates/admin/exchange_rates/wizard/step4_test.html:80
 msgid "Save & Finish"
 msgstr "Kaydet ve Bitir"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:73
 msgid "Your credentials were verified successfully."
 msgstr "Kimlik bilgileriniz başarıyla doğrulandı."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:74
 msgid "Connection Failed"
 msgstr "Bağlantı Başarısız"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:75
 msgid "Could not connect to the provider API."
 msgstr "Sağlayıcı API'sine bağlanılamadı."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:77
+#: views/admin_views.py:296 views/wizard.py:515
 msgid "An unexpected error occurred."
 msgstr "Beklenmeyen bir hata oluştu."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:78
 msgid "Saving..."
 msgstr "Kaydediliyor..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:79
 msgid "Failed to save provider account."
 msgstr "Sağlayıcı hesabı kaydedilemedi."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:81
 msgid "An error occurred while saving."
 msgstr "Kaydederken bir hata oluştu."
 
+#: views/admin_views.py:114
 msgid "Provider {} successfully"
 msgstr "Sağlayıcı {} başarıyla"
 
+#: views/admin_views.py:115
 msgid "enabled"
 msgstr "etkinleştirildi"
 
+#: views/admin_views.py:115
 msgid "disabled"
 msgstr "devre dışı bırakıldı"
 
+#: views/admin_views.py:122
 msgid "An error occurred while updating the provider."
 msgstr "Sağlayıcının güncellenmesi sırasında bir hata oluştu."
 
+#: views/admin_views.py:146 views/admin_views.py:372
 msgid "\"{}\" set as primary provider"
 msgstr "\"{}\" ana sağlayıcı olarak ayarlandı"
 
+#: views/admin_views.py:156
 msgid "An error occurred while setting the primary provider."
 msgstr "Ana sağlayıcı ayarlanırken bir hata oluştu."
 
+#: views/admin_views.py:174
 msgid "Provider implementation not found"
 msgstr "Sağlayıcı uygulaması bulunamadı"
 
+#: views/admin_views.py:191
 msgid ""
 "Failed to decrypt provider credentials. Please reconfigure the provider."
 msgstr ""
 "Sağlayıcı kimlik bilgileri şifresi çözülemedi. Lütfen sağlayıcıyı yeniden "
 "yapılandırın."
 
+#: views/admin_views.py:209
 msgid "Site settings not configured"
 msgstr "Site ayarları yapılandırılmadı"
 
+#: views/admin_views.py:223 views/admin_views.py:227
 msgid "No rates returned from provider"
 msgstr "Sağlayıcıdan kur bilgisi döndürülmemiş"
 
+#: views/admin_views.py:262
 msgid "Successfully synced {} exchange rate(s)"
 msgstr "{} döviz kuru(leri) başarıyla senkronize edildi"
 
+#: views/admin_views.py:285
 msgid "Failed to sync exchange rates. Check the provider configuration."
 msgstr ""
 "Döviz kurlarının senkronize edilmesi başarısız oldu. Sağlayıcı "
 "yapılandırmasını kontrol edin."
 
+#: views/admin_views.py:313
 msgid "Provider \"{}\" successfully deleted"
 msgstr "Sağlayıcı \"{}\" başarıyla silindi"
 
+#: views/admin_views.py:319
 msgid "An error occurred while deleting the provider."
 msgstr "Sağlayıcının silinmesi sırasında bir hata oluştu."
 
+#: views/admin_views.py:335
 msgid "Invalid action or no providers selected"
 msgstr "Geçersiz işlem veya seçilmiş sağlayıcı yok"
 
+#: views/admin_views.py:343
 msgid "{} provider(s) enabled"
 msgstr "{} sağlayıcı(lar) etkinleştirildi"
 
+#: views/admin_views.py:347
 msgid "{} provider(s) disabled"
 msgstr "{} sağlayıcı(lar) devre dışı bırakıldı"
 
+#: views/admin_views.py:354
 msgid "Please select exactly one provider to set as primary"
 msgstr ""
 "Lütfen bir sağlayıcıyı ana olarak ayarlamak için tam olarak bir sağlayıcı "
 "seçin"
 
+#: views/admin_views.py:402
 msgid "{} provider(s) queued for sync, {} errors: {}"
 msgstr "{} sağlayıcı(lar) senkronizasyon için kuyrukta, {} hata: {}"
 
+#: views/admin_views.py:406
 msgid "{} provider(s) queued for sync"
 msgstr "{} sağlayıcı(lar) senkronizasyon için kuyrukta"
 
+#: views/admin_views.py:411
 msgid "{} provider(s) deleted"
 msgstr "{} sağlayıcı(lar) silindi"
 
+#: views/admin_views.py:415
 msgid "Unknown action: {}"
 msgstr "Bilinmeyen eylem: {}"
 
+#: views/admin_views.py:423
 msgid "An error occurred while performing the bulk action."
 msgstr "Toplu işlem sırasında bir hata oluştu."
 
+#: views/admin_views.py:458 views/admin_views.py:487
 msgid "An error occurred while updating the rate."
 msgstr "Kur güncellenirken bir hata oluştu."
 
+#: views/admin_views.py:478
 msgid "unlocked"
 msgstr "kilit açıldı"
 
+#: views/admin_views.py:481
 msgid "Unlocked"
 msgstr "Kilitli Değil"
 
+#: views/provider_browse.py:197
 msgid "Provider is already installed. Configure it now."
 msgstr "Sağlayıcı zaten yüklüdür. Şimdi onu yapılandırın."
 
+#: views/provider_browse.py:226 views/provider_browse.py:367
 msgid "Provider not found on update server."
 msgstr "Güncelleme sunucusunda sağlayıcı bulunamadı."
 
+#: views/provider_browse.py:236
 msgid "Could not determine provider version."
 msgstr "Sağlayıcı sürümü belirlenemedi."
 
+#: views/provider_browse.py:260
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Sağlayıcı indirilemedi: %(error)s"
 
+#: views/provider_browse.py:273
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Sağlayıcı kurulamadı: %(error)s"
 
+#: views/provider_browse.py:306
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "\"%(name)s\" sağlayıcısı başarıyla kuruldu! Şimdi onu yapılandırın."
 
+#: views/provider_browse.py:315
 msgid "An unexpected error occurred during installation."
 msgstr "Yükleme sırasında beklenmeyen bir hata oluştu."
 
+#: views/provider_browse.py:337
 msgid "Provider not installed."
 msgstr "Sağlayıcı yüklü değil."
 
+#: views/provider_browse.py:353
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Güncelleme sunucusuna bağlanılamadı: %(error)s"
 
+#: views/provider_browse.py:376
 msgid "Could not determine latest version."
 msgstr "En son sürüm belirlenemedi."
 
+#: views/provider_browse.py:385
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "\"%(name)s\" sağlayıcısı zaten güncel (v%(version)s)."
 
+#: views/provider_browse.py:400
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Güncelleme indirilemedi: %(error)s"
 
+#: views/provider_browse.py:412
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Güncelleme kurulamadı: %(error)s"
 
+#: views/provider_browse.py:449
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "\"%(name)s\" sağlayıcısı v%(version)s'ye başarıyla güncellendi!"
 
+#: views/provider_browse.py:458
 msgid "An unexpected error occurred during the update."
 msgstr "Güncelleme sırasında beklenmeyen bir hata oluştu."
 
+#: views/wizard.py:153
 msgid "Connect Exchange Rate Provider - Select Provider"
 msgstr "Kur Değişim Sağlayıcısı Bağla - Sağlayıcı Seç"
 
+#: views/wizard.py:166
 msgid "Please select a provider."
 msgstr "Lütfen bir sağlayıcı seçin."
 
+#: views/wizard.py:174
 msgid "Invalid provider selected."
 msgstr "Geçersiz sağlayıcı seçildi."
 
+#: views/wizard.py:202 views/wizard.py:282
 msgid "Please select a provider first."
 msgstr "Lütfen önce bir sağlayıcı seçin."
 
+#: views/wizard.py:235
 #, python-format
 msgid "Setup instructions not found for %(provider)s. Please contact support."
 msgstr ""
 "%(provider)s için kurulum talimatları bulunamadı. Lütfen destek ekibiyle "
 "iletişime geçin."
 
+#: views/wizard.py:240 views/wizard.py:304
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Sağlayıcı yükleneirken hata oluştu: %(error)s"
 
+#: views/wizard.py:250
 msgid "Connect Exchange Rate Provider - Setup Instructions"
 msgstr "Kur Değişim Sağlayıcısı Bağla - Kurulum Talimatları"
 
+#: views/wizard.py:297
 msgid "Could not load provider configuration."
 msgstr "Sağlayıcı yapılandırması yüklenemedi."
 
+#: views/wizard.py:308
 msgid "Connect Exchange Rate Provider - Enter Credentials"
 msgstr "Kur Değişim Sağlayıcısı Bağla - Kimlik Bilgilerini Gir"
 
+#: views/wizard.py:338
 msgid "Error loading provider configuration."
 msgstr "Sağlayıcı yapılandırması yüklenirken hata oluştu."
 
+#: views/wizard.py:372
 msgid "Please complete previous steps first."
 msgstr "Lütfen önceki adımları tamamlayın."
 
+#: views/wizard.py:380
 msgid "Provider not found."
 msgstr "Sağlayıcı bulunamadı."
 
+#: views/wizard.py:384
 msgid "Connect Exchange Rate Provider - Test Connection"
 msgstr "Kur Değişim Sağlayıcısı Bağla - Bağlantıyı Test Et"
 
+#: views/wizard.py:413
 msgid "Provider implementation not found."
 msgstr "Sağlayıcı uygulaması bulunamadı."
 
+#: views/wizard.py:435
 msgid "An error occurred while testing the connection."
 msgstr "Bağlantı testi sırasında bir hata oluştu."
 
+#: views/wizard.py:449
 msgid "Site not configured."
 msgstr "Site yapılandırılmadı."
 
+#: views/wizard.py:460
 msgid "Connection test failed"
 msgstr "Bağlantı testi başarısız oldu"
 
+#: views/wizard.py:491
 msgid "Provider connected successfully!"
 msgstr "Tedarikçi başarıyla bağlandı!"
 
+#: views/wizard.py:504
 msgid "An error occurred while saving the provider."
 msgstr "Sağlayıcının kaydedilmesi sırasında bir hata oluştu."

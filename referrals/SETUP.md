@@ -32,19 +32,17 @@ Add the following middleware to your `MIDDLEWARE` setting in `core/settings.py`:
 
 ```python
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # ... your other middleware ...
-
     # Referral tracking middleware (add near the end)
-    'referrals.middleware.RequestContextMiddleware',  # Must be AFTER authentication
-    'referrals.middleware.ReferralTrackingMiddleware',
+    "referrals.middleware.RequestContextMiddleware",  # Must be AFTER authentication
+    "referrals.middleware.ReferralTrackingMiddleware",
 ]
 ```
 
@@ -113,10 +111,10 @@ curl -I "http://localhost:8000/?ref=YOUR_REFERRAL_TOKEN"
 from referrals.models import ReferralEvent
 
 # Check recent click events
-ReferralEvent.objects.filter(event_type='click').order_by('-created_at')[:10]
+ReferralEvent.objects.filter(event_type="click").order_by("-created_at")[:10]
 
 # Check signup events
-ReferralEvent.objects.filter(event_type='signup').order_by('-created_at')[:10]
+ReferralEvent.objects.filter(event_type="signup").order_by("-created_at")[:10]
 ```
 
 ## Troubleshooting
@@ -159,7 +157,7 @@ from django.contrib.auth import get_user_model
 from referrals.models import ReferralAttribution
 
 User = get_user_model()
-user = User.objects.get(email='customer@example.com')
+user = User.objects.get(email="customer@example.com")
 
 # Check if attribution exists
 ReferralAttribution.objects.filter(referee_customer=user)
@@ -179,7 +177,7 @@ The default cookie expiration is 30 days, but this can be customized in the Refe
 from referrals.models import ReferralProgram
 
 program = ReferralProgram.get_program()
-program.settings['cookie_ttl_days'] = 60  # 60 days
+program.settings["cookie_ttl_days"] = 60  # 60 days
 program.save()
 ```
 
@@ -190,12 +188,12 @@ In production with HTTPS, the cookie `secure` flag should be enabled. Update the
 ```python
 # referrals/services/tracking.py - set_ref_cookie() function
 response.set_cookie(
-    key='ref_token',
+    key="ref_token",
     value=token,
     max_age=max_age,
     expires=expires,
     httponly=True,
-    samesite='Lax',
+    samesite="Lax",
     secure=True,  # Enable in production with HTTPS
 )
 ```

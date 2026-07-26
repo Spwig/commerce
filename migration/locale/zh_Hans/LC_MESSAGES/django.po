@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,2366 +18,3033 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:88
 msgid "Data Migrations"
 msgstr "数据迁移"
 
-msgid "🚀 Start New Migration"
-msgstr "🚀 开始新迁移"
+#: admin.py:91 templates/admin/migration/migrationjob/change_list.html:68
+#: templates/admin/migration/wizard/step6_complete.html:388
+msgid "Start New Migration"
+msgstr "开始新迁移"
 
-msgid "Migrate from WooCommerce, Shopify, or CSV files"
-msgstr "从 WooCommerce、Shopify 或 CSV 文件迁移"
+#: admin.py:93
+msgid "Migrate from WooCommerce, Shopify, Magento, or CSV files"
+msgstr "从 WooCommerce、Shopify、Magento 或 CSV 文件迁移"
 
-msgid "📊 Migration History"
-msgstr "📊 迁移历史"
+#: admin.py:98
+msgid "Migration History"
+msgstr "迁移历史"
 
+#: admin.py:100
 msgid "View all past migrations"
 msgstr "查看所有过去的迁移"
 
+#: admin.py:140 sync_admin.py:262
 msgid "ID"
 msgstr "ID"
 
+#: admin.py:163 admin.py:2234 templates/admin/migration/wizard/base.html:38
 msgid "Platform"
 msgstr "平台"
 
+#: admin.py:202 admin.py:2235 admin.py:2294 sync_admin.py:72 sync_admin.py:311
+#: templates/admin/migration/fullmig/step5_results.html:74
+#: templates/admin/migration/wizard/step3_preview.html:184
 msgid "Status"
 msgstr "状态"
 
+#: admin.py:228 sync_admin.py:330 templates/admin/migration/sync/base.html:58
+#: templates/admin/migration/sync/base.html:79
 msgid "Progress"
 msgstr "进度"
 
+#: admin.py:248 templates/admin/migration/fullmig/step3_preflight.html:111
 msgid "Items"
 msgstr "商品"
 
+#: admin.py:276 models/log.py:85 sync_admin.py:349
+#: templates/admin/migration/sync/token_management.html:76
 msgid "Created"
 msgstr "已创建"
 
+#: admin.py:311 sync_admin.py:88 sync_admin.py:373
 msgid "Actions"
 msgstr "操作"
 
+#: admin.py:464
 msgid "Please select a platform."
 msgstr "请选择一个平台。"
 
+#: admin.py:469 admin.py:490
 msgid "Migration Wizard - Choose Platform"
 msgstr "迁移向导 - 选择平台"
 
+#: admin.py:483
 msgid "Migration job created. Please configure the connection."
 msgstr "迁移任务已创建。请配置连接。"
 
+#: admin.py:508 admin.py:545 admin.py:575
 msgid "Please fill in all required fields."
 msgstr "请填写所有必填字段。"
 
+#: admin.py:513 admin.py:550 admin.py:580 admin.py:629 admin.py:644
+#: admin.py:666 admin.py:683
 msgid "Migration Wizard - Connection"
 msgstr "迁移向导 - 连接"
 
+#: admin.py:531 admin.py:567 admin.py:599
 msgid "Connection configured successfully."
 msgstr "连接配置成功。"
 
+#: admin.py:623
 msgid "{} CSV has no headers."
 msgstr "\"{} CSV 文件没有标题。\""
 
+#: admin.py:638
 msgid "{} CSV could not be read: {}"
 msgstr "\"{}\" CSV 无法读取：{}"
 
+#: admin.py:661
 msgid "Products CSV is required."
 msgstr "需要产品 CSV 文件。"
 
+#: admin.py:676
 msgid "CSV files uploaded successfully."
 msgstr "CSV 文件上传成功。"
 
+#: admin.py:747 admin.py:780 admin.py:843
 msgid "Failed to fetch preview data: {}"
 msgstr "无法获取预览数据：{}"
 
+#: admin.py:866
 msgid "Failed to read CSV files: {}"
 msgstr "未能读取 CSV 文件：{}"
 
+#: admin.py:945
 msgid "Import options saved."
 msgstr "导入选项已保存。"
 
+#: admin.py:952
 msgid "Migration Wizard - Preview Data"
 msgstr "迁移向导 - 预览数据"
 
+#: admin.py:1027
 msgid "Field mappings configured successfully."
 msgstr "字段映射配置成功。"
 
+#: admin.py:1149
 msgid "Could not analyze custom fields. You can still proceed with the import."
 msgstr "无法分析自定义字段。您仍然可以继续导入。"
 
+#: admin.py:1167 models/step.py:31
+#: templates/admin/migration/confirm_rollback.html:67
+#: templates/admin/migration/wizard/step3_preview.html:17
+#: templates/admin/migration/wizard/step3_preview.html:74
+#: templates/admin/migration/wizard/step4_mapping.html:85
+#: templates/admin/migration/wizard/step5_import.html:111
+#: templates/admin/migration/wizard/step6_complete.html:17
+#: templates/admin/migration/wizard/step6_complete.html:348
 msgid "Products"
 msgstr "商品"
 
+#: admin.py:1168 models/step.py:29
+#: templates/admin/migration/confirm_rollback.html:63
+#: templates/admin/migration/fullmig/step1_connection.html:114
+#: templates/admin/migration/sync/base.html:71
+#: templates/admin/migration/sync/step1_connection.html:134
+#: templates/admin/migration/sync/step2_categories.html:82
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
+#: templates/admin/migration/wizard/step4_mapping.html:82
+#: templates/admin/migration/wizard/step5_import.html:91
+#: templates/admin/migration/wizard/step6_complete.html:21
+#: templates/admin/migration/wizard/step6_complete.html:354
 msgid "Categories"
 msgstr "分类"
 
+#: admin.py:1169 models/step.py:34
+#: templates/admin/migration/confirm_rollback.html:71
+#: templates/admin/migration/wizard/step3_preview.html:25
+#: templates/admin/migration/wizard/step3_preview.html:83
+#: templates/admin/migration/wizard/step4_mapping.html:88
+#: templates/admin/migration/wizard/step5_import.html:131
+#: templates/admin/migration/wizard/step6_complete.html:25
+#: templates/admin/migration/wizard/step6_complete.html:360
 msgid "Customers"
 msgstr "客户"
 
+#: admin.py:1170 models/step.py:36
+#: templates/admin/migration/confirm_rollback.html:75
+#: templates/admin/migration/wizard/step3_preview.html:29
+#: templates/admin/migration/wizard/step3_preview.html:92
+#: templates/admin/migration/wizard/step4_mapping.html:91
+#: templates/admin/migration/wizard/step5_import.html:151
+#: templates/admin/migration/wizard/step6_complete.html:29
+#: templates/admin/migration/wizard/step6_complete.html:366
 msgid "Orders"
 msgstr "订单"
 
+#: admin.py:1171 models/step.py:38
+#: templates/admin/migration/confirm_rollback.html:79
+#: templates/admin/migration/wizard/step3_preview.html:34
+#: templates/admin/migration/wizard/step3_preview.html:102
+#: templates/admin/migration/wizard/step4_mapping.html:94
+#: templates/admin/migration/wizard/step5_import.html:171
+#: templates/admin/migration/wizard/step6_complete.html:33
 msgid "Reviews"
 msgstr "评论"
 
+#: admin.py:1203
 msgid "Migration Wizard - Field Mapping"
 msgstr "迁移向导 - 字段映射"
 
+#: admin.py:1239
 msgid ""
-"Migration started! You can safely close this window and check back later."
-msgstr "迁移已开始！您可以安全地关闭此窗口，并稍后查看进度。"
+"Migration started. You can safely close this window and check back later."
+msgstr "迁移已开始。您可以安全地关闭此窗口，并稍后返回查看。"
 
+#: admin.py:1245
 msgid "Failed to start import: {}"
 msgstr "启动导入失败: {}"
 
+#: admin.py:1259
+msgid "This migration has already been started."
+msgstr "此迁移已开始。"
+
+#: admin.py:1278
 msgid "Migration Wizard - Importing"
 msgstr "迁移向导 - 导入中"
 
+#: admin.py:1344 templates/admin/migration/fullmig/step5_results.html:10
 msgid "Migration Complete"
 msgstr "迁移完成"
 
+#: admin.py:1483
 msgid "This migration cannot be rolled back."
 msgstr "此迁移无法回滚。"
 
-msgid "Migration rolled back successfully!"
-msgstr "迁移已成功回滚！"
+#: admin.py:1498
+msgid "This rollback is already running."
+msgstr "此回滚操作已经在运行。"
 
-msgid "Rollback failed: {}"
-msgstr "回滚失败: {}"
+#: admin.py:1517
+msgid "Spwig could not start the rollback. Nothing has been removed."
+msgstr "Spwig 无法启动回滚。未删除任何内容。"
 
+#: admin.py:1524
+msgid ""
+"Rollback started. This runs in the background — check back shortly to see "
+"what was removed and what was kept."
+msgstr ""
+"回滚已开始。此操作在后台运行 — 请稍后查看哪些内容被删除，哪些内容被保留。"
+
+#: admin.py:1543
+msgid ""
+"Spwig could not calculate this in advance. The rollback itself will still "
+"report what it removed and what it kept."
+msgstr ""
+"Spwig 无法提前计算这些内容。回滚本身仍会报告哪些内容被删除，哪些内容被保留。"
+
+#: admin.py:1551 templates/admin/migration/confirm_rollback.html:4
+#: templates/admin/migration/confirm_rollback.html:13
 msgid "Confirm Rollback"
 msgstr "确认回滚"
 
+#: admin.py:1575
 msgid "Only failed migrations can be retried."
 msgstr "只有失败的迁移可以重试。"
 
-msgid "Migration restarted! Redirecting to progress page..."
-msgstr "迁移已重新启动！正在跳转到进度页面..."
+#: admin.py:1600
+msgid ""
+"Migration restarted. It runs from the beginning and skips items that have "
+"already been imported."
+msgstr "迁移已重新启动。它将从头开始运行，并跳过已导入的项目。"
 
+#: admin.py:1608
 msgid "Failed to restart migration: {}"
 msgstr "重启迁移失败: {}"
 
+#: admin.py:1629
 msgid "Only running migrations can be cancelled."
 msgstr "只有正在进行的迁移可以取消。"
 
-msgid "Migration cancelled by user"
-msgstr "迁移已被用户取消"
-
+#: admin.py:1641
 msgid "Migration cancelled by {}"
 msgstr "迁移已被 {} 取消"
 
-msgid "Migration cancelled successfully."
-msgstr "迁移已成功取消。"
-
-msgid "Only pending, failed, or running migrations can be deleted."
-msgstr "只有待处理、失败或正在进行的迁移可以删除。"
-
+#: admin.py:1649
 msgid ""
-"Deleted a running migration. If this was stuck, the operation has been "
-"cleaned up."
-msgstr "已删除正在进行的迁移。如果迁移卡住了，操作已被清理。"
+"Stopping this import. It finishes the batch it is working on and then stops, "
+"so this can take a moment. Anything already imported stays in your store — "
+"you can roll it back afterwards if you don't want it."
+msgstr ""
+"停止此导入。它会完成当前正在处理的批次，然后停止，因此可能需要一些时间。已导"
+"入的任何内容都会保留在您的商店中 — 如果您不想保留，之后可以回滚。"
 
-msgid "Migration deleted successfully."
-msgstr "迁移已成功删除。"
+#: admin.py:1691
+msgid ""
+"This migration can't be deleted yet. Cancel it first, and once it has "
+"finished stopping you'll be able to remove the record."
+msgstr ""
+"此迁移记录目前还不能删除。请先取消该迁移，待其停止完成后，您就可以删除该记录"
+"了。"
 
+#: admin.py:1708
+msgid ""
+"Migration record deleted. Anything this import added is still in your store "
+"— deleting the record does not remove it."
+msgstr ""
+"迁移记录已删除。此导入添加的任何内容仍然保留在您的商店中——删除记录不会将其移"
+"除。"
+
+#: admin.py:1713
+msgid "Migration record deleted."
+msgstr "迁移记录已删除。"
+
+#: admin.py:2233
 msgid "Job ID"
 msgstr "\"任务 ID\""
 
+#: admin.py:2236
 msgid "Started"
 msgstr "\"已开始\""
 
+#: admin.py:2238 models/job.py:87 models/step.py:55 models/sync_job.py:78
+#: models/sync_step.py:32
+#: templates/admin/migration/migrationjob/change_list.html:44
+#: templates/admin/migration/syncjob/change_list.html:40
 msgid "Completed"
 msgstr "已完成"
 
+#: admin.py:2241
 msgid "Duration"
 msgstr "时长"
 
+#: admin.py:2242
 msgid "Success Rate"
 msgstr "成功率"
 
+#: admin.py:2260 templates/admin/migration/sync/step3_preview.html:16
 msgid "Summary"
 msgstr "概要"
 
+#: admin.py:2262
 msgid "Total Items"
 msgstr "总项目数"
 
+#: admin.py:2262 admin.py:2294
+#: templates/admin/migration/migrationjob/change_list.html:174
+#: templates/admin/migration/wizard/step6_complete.html:64
 msgid "Imported"
 msgstr "已导入"
 
+#: admin.py:2262 admin.py:2294 models/content_link.py:123 models/log.py:87
+#: models/step.py:57 models/sync_step.py:34
+#: templates/admin/migration/fullmig/step4_progress.html:52
+#: templates/admin/migration/fullmig/step5_results.html:47
+#: templates/admin/migration/fullmig/step5_results.html:95
+#: templates/admin/migration/migrationjob/change_list.html:178
+#: templates/admin/migration/sync/step4_progress.html:52
+#: templates/admin/migration/syncjob/change_list.html:149
+#: templates/admin/migration/wizard/step6_complete.html:65
+#: templates/admin/migration/wizard/step6_complete.html:208
 msgid "Skipped"
 msgstr "已跳过"
 
+#: admin.py:2262 admin.py:2294 models/job.py:88 models/step.py:56
+#: models/sync_job.py:79 models/sync_step.py:33
+#: templates/admin/migration/fullmig/step4_progress.html:56
+#: templates/admin/migration/fullmig/step5_results.html:51
+#: templates/admin/migration/fullmig/step5_results.html:76
+#: templates/admin/migration/fullmig/step5_results.html:91
+#: templates/admin/migration/migrationjob/change_list.html:60
+#: templates/admin/migration/migrationjob/change_list.html:182
+#: templates/admin/migration/sync/step4_progress.html:56
+#: templates/admin/migration/syncjob/change_list.html:50
+#: templates/admin/migration/syncjob/change_list.html:153
+#: templates/admin/migration/wizard/step6_complete.html:66
 msgid "Failed"
 msgstr "失败"
 
+#: admin.py:2292
 msgid "Step Breakdown"
 msgstr "\"步骤分解\""
 
+#: admin.py:2294 templates/admin/migration/wizard/step2_connection.html:293
 msgid "Step"
 msgstr "步骤"
 
+#: admin.py:2294 templates/admin/migration/fullmig/step4_progress.html:60
+#: templates/admin/migration/fullmig/step5_results.html:55
+#: templates/admin/migration/fullmig/step5_results.html:77
+#: templates/admin/migration/migrationjob/change_list.html:170
+#: templates/admin/migration/sync/step4_progress.html:60
+#: templates/admin/migration/syncjob/change_list.html:141
+#: templates/admin/migration/wizard/step6_complete.html:67
+#: templates/admin/migration/wizard/step6_complete.html:94
 msgid "Total"
 msgstr "总计"
 
+#: admin.py:2334 templates/admin/migration/sync/step4_progress.html:127
 msgid "Errors"
 msgstr "错误"
 
+#: admin.py:2412
 msgid "Message"
 msgstr "消息"
 
+#: admin.py:2434 templates/admin/migration/wizard/base.html:50
 msgid "Mapping"
 msgstr "映射"
 
+#: models/content_link.py:24 models/log.py:24 models/mapping.py:24
+#: models/staged_item.py:41 models/step.py:25
 msgid "Parent migration job"
 msgstr "父迁移任务"
 
+#: models/content_link.py:29
 msgid "Product - Full Description"
 msgstr "产品 - 完整描述"
 
+#: models/content_link.py:30
 msgid "Product - Short Description"
 msgstr "产品 - 简短描述"
 
+#: models/content_link.py:31
 msgid "Blog Post - Content"
 msgstr "博客文章 - 内容"
 
+#: models/content_link.py:32
 msgid "Category - Description"
 msgstr "分类 - 描述"
 
+#: models/content_link.py:35
 msgid "Which content field contains this link"
 msgstr "哪个内容字段包含此链接"
 
+#: models/content_link.py:63
 msgid "Title of the source object (for display)"
 msgstr "源对象的标题（用于显示）"
 
+#: models/content_link.py:68
 msgid "Original URL found in the HTML content"
 msgstr "在 HTML 内容中找到的原始 URL"
 
+#: models/content_link.py:71
 msgid "Visible link text (anchor text)"
 msgstr "可见链接文本（锚文本）"
 
+#: models/content_link.py:76
 msgid "Auto-suggested replacement URL"
 msgstr "自动建议的替代URL"
 
+#: models/content_link.py:80
 msgid "Stored Permalink Match"
 msgstr "存储的永久链接匹配"
 
+#: models/content_link.py:81
 msgid "Exact Slug Match"
 msgstr "精确slug匹配"
 
+#: models/content_link.py:82
 msgid "External ID Match"
 msgstr "外部ID匹配"
 
+#: models/content_link.py:83
 msgid "URL Path Pattern Match"
 msgstr "URL路径模式匹配"
 
+#: models/content_link.py:84
 msgid "Slug Fallback Match"
 msgstr "slug回退匹配"
 
+#: models/content_link.py:85
 msgid "No Match Found"
 msgstr "未找到匹配项"
 
+#: models/content_link.py:91
 msgid "How the suggested URL was matched"
 msgstr "建议的 URL 是如何匹配的"
 
+#: models/content_link.py:95 models/mapping.py:29 models/mapping.py:53
+#: models/staged_item.py:19
 msgid "Product"
 msgstr "产品"
 
+#: models/content_link.py:96 models/mapping.py:31 models/mapping.py:55
+#: models/staged_item.py:20
+#: templates/admin/migration/fullmig/step3_preflight.html:110
+#: templates/admin/migration/fullmig/step5_results.html:73
 msgid "Category"
 msgstr "分类"
 
+#: models/content_link.py:97 models/mapping.py:35 models/mapping.py:59
 msgid "Blog Post"
 msgstr "博客文章"
 
+#: models/content_link.py:98 models/mapping.py:36 models/mapping.py:60
 msgid "Blog Category"
 msgstr "博客分类"
 
+#: models/content_link.py:99
 msgid "Collection"
 msgstr "集合"
 
+#: models/content_link.py:100
 msgid "Page"
 msgstr "页面"
 
+#: models/content_link.py:101
 msgid "Unknown"
 msgstr "未知"
 
+#: models/content_link.py:107
 msgid "Type of Spwig object the URL was matched to"
 msgstr "URL 匹配到的 Spwig 对象类型"
 
+#: models/content_link.py:110
 msgid "ID of the matched Spwig object"
 msgstr "匹配到的 Spwig 对象的 ID"
 
+#: models/content_link.py:115
 msgid "Match confidence: 0.0 (no match) to 1.0 (exact match)"
 msgstr "匹配置信度：0.0（无匹配）到 1.0（完全匹配）"
 
+#: models/content_link.py:120 models/staged_item.py:73
 msgid "Pending Review"
 msgstr "待审核"
 
+#: models/content_link.py:121
+#: templates/admin/migration/wizard/step6_complete.html:210
 msgid "Approved"
 msgstr "已批准"
 
+#: models/content_link.py:122
 msgid "Modified by Merchant"
 msgstr "由商家修改"
 
+#: models/content_link.py:124
+#: templates/admin/migration/wizard/step6_complete.html:206
 msgid "Applied"
 msgstr "已应用"
 
+#: models/content_link.py:125
 msgid "Apply Failed"
 msgstr "应用失败"
 
+#: models/content_link.py:137
 msgid "URL manually entered by merchant (overrides suggested_url)"
 msgstr "商户手动输入的 URL（覆盖建议的 URL）"
 
+#: models/content_link.py:140
 msgid "Error message if apply failed"
 msgstr "应用失败时的错误信息"
 
+#: models/content_link.py:146
 msgid "Content Link"
 msgstr "内容链接"
 
+#: models/content_link.py:147
 msgid "Content Links"
 msgstr "内容链接"
 
+#: models/job.py:34
 msgid "User who initiated this migration"
 msgstr "发起此迁移的用户"
 
+#: models/job.py:39
 msgid "WooCommerce"
 msgstr "WooCommerce"
 
+#: models/job.py:40
 msgid "Shopify"
 msgstr "Shopify"
 
+#: models/job.py:41
 msgid "Magento"
 msgstr "Magento"
 
+#: models/job.py:42
 msgid "CSV Files"
 msgstr "CSV 文件"
 
+#: models/job.py:45
 msgid "Source e-commerce platform"
 msgstr "源电商平台"
 
+#: models/job.py:49
 msgid "REST API"
 msgstr "REST API"
 
+#: models/job.py:50
 msgid "CSV Upload"
 msgstr "CSV 上传"
 
+#: models/job.py:51
 msgid "Direct Database"
 msgstr "直接数据库"
 
+#: models/job.py:54
 msgid "Migration method used"
 msgstr "使用的迁移方法"
 
+#: models/job.py:60
 msgid "Connection configuration (API keys, URLs, etc.)"
 msgstr "连接配置（API 密钥、URL 等）"
 
+#: models/job.py:74
 msgid "Import blog posts, categories, and tags from WordPress"
 msgstr "从 WordPress 导入博客文章、分类和标签"
 
+#: models/job.py:77
 msgid "Import affiliate data via Spwig Migration Bridge plugin"
 msgstr "通过 Spwig 迁移桥接插件导入联盟数据"
 
+#: models/job.py:82 models/step.py:53 models/sync_job.py:74
+#: models/sync_step.py:30
 msgid "Pending"
 msgstr "待处理"
 
+#: models/job.py:83
 msgid "Testing Connection"
 msgstr "测试连接"
 
+#: models/job.py:84
 msgid "Previewing Data"
 msgstr "预览数据"
 
+#: models/job.py:85
 msgid "Importing"
 msgstr "导入中"
 
+#: models/job.py:86
 msgid "Paused"
 msgstr "已暂停"
 
+#: models/job.py:89 models/step.py:61 models/sync_job.py:82
+msgid "Cancelled"
+msgstr "已取消"
+
+#: models/job.py:90 models/sync_job.py:80
 msgid "Rolling Back"
 msgstr "回滚中"
 
+#: models/job.py:91 models/step.py:62 models/sync_job.py:81
+#: models/sync_step.py:35
 msgid "Rolled Back"
 msgstr "已回滚"
 
-msgid "Transaction ID for rollback tracking"
-msgstr "用于回滚跟踪的事务 ID"
+#: models/job.py:92
+msgid "Rollback Failed"
+msgstr "回滚失败"
 
+#: models/job.py:99
 msgid "Whether this migration can be rolled back"
 msgstr "此迁移是否可以回滚"
 
-msgid "Deadline for manual rollback (24 hours after completion)"
-msgstr "手动回滚截止时间（完成 24 小时后）"
+#: models/job.py:105
+msgid ""
+"Point after which this migration can no longer be rolled back. Empty means "
+"it never expires."
+msgstr "从此点之后，此迁移将无法回滚。留空表示永不过期。"
 
+#: models/job.py:112
+msgid "If the import fails, automatically remove everything it imported"
+msgstr "如果导入失败，自动删除所有已导入的内容"
+
+#: models/job.py:126
+msgid "Set when an operator asks for a running import to stop"
+msgstr "当操作员要求停止正在进行的导入时设置"
+
+#: models/job.py:131
 msgid "Current import step being processed"
 msgstr "当前正在处理的导入步骤"
 
+#: models/job.py:134 models/sync_job.py:92
 msgid "Overall progress percentage (0-100)"
 msgstr "总体进度百分比（0-100）"
 
+#: models/job.py:225
 msgid "Total migration duration in seconds"
 msgstr "总迁移时间（以秒为单位）"
 
+#: models/job.py:232
 msgid "Summary of errors encountered"
 msgstr "遇到的错误摘要"
 
+#: models/job.py:233
 msgid "Summary of warnings encountered"
 msgstr "遇到的警告摘要"
 
+#: models/job.py:240
 msgid "Generated migration report (CSV/PDF)"
 msgstr "生成的迁移报告（CSV/PDF）"
 
+#: models/job.py:245
 msgid "Migration Job"
 msgstr "迁移任务"
 
+#: models/job.py:246
 msgid "Migration Jobs"
 msgstr "迁移任务"
 
+#: models/log.py:33
 msgid "Migration step this log belongs to"
 msgstr "此日志所属的迁移步骤"
 
+#: models/log.py:37
 msgid "When this log entry was created"
 msgstr "此日志条目创建时间"
 
+#: models/log.py:41
 msgid "Debug"
 msgstr "调试"
 
+#: models/log.py:42
 msgid "Info"
 msgstr "信息"
 
+#: models/log.py:43
 msgid "Warning"
 msgstr "警告"
 
+#: models/log.py:44 models/log.py:88
 msgid "Error"
 msgstr "错误"
 
+#: models/log.py:45
 msgid "Critical"
 msgstr "严重"
 
+#: models/log.py:48
 msgid "Log severity level"
 msgstr "日志严重级别"
 
+#: models/log.py:51
 msgid "Log message"
 msgstr "日志消息"
 
+#: models/log.py:55
 msgid "Source data type (e.g., 'woocommerce_product')"
 msgstr "源数据类型（例如 'woocommerce_product'）"
 
+#: models/log.py:58
 msgid "ID from source system"
 msgstr "来自源系统的ID"
 
+#: models/log.py:61
 msgid "Name/title of source item"
 msgstr "源项目名称/标题"
 
+#: models/log.py:70
 msgid "Type of created object"
 msgstr "创建对象的类型"
 
+#: models/log.py:73
 msgid "ID of created object"
 msgstr "创建对象的ID"
 
+#: models/log.py:78
 msgid "Additional context data"
 msgstr "附加上下文数据"
 
+#: models/log.py:82
 msgid "Fetched"
 msgstr "已获取"
 
+#: models/log.py:83
 msgid "Validated"
 msgstr "已验证"
 
+#: models/log.py:84
 msgid "Mapped"
 msgstr "已映射"
 
+#: models/log.py:86
 msgid "Updated"
 msgstr "已更新"
 
+#: models/log.py:91
 msgid "Action performed"
 msgstr "执行的操作"
 
+#: models/log.py:96
 msgid "Migration Log"
 msgstr "迁移日志"
 
+#: models/log.py:97
 msgid "Migration Logs"
 msgstr "迁移日志"
 
+#: models/mapping.py:30 models/mapping.py:54
 msgid "Product Variant"
 msgstr "产品变体"
 
+#: models/mapping.py:32 models/mapping.py:56 models/staged_item.py:21
 msgid "Customer"
 msgstr "客户"
 
+#: models/mapping.py:33 models/mapping.py:57 models/staged_item.py:22
 msgid "Order"
 msgstr "订单"
 
+#: models/mapping.py:34 models/mapping.py:58 models/staged_item.py:23
 msgid "Review"
 msgstr "审核"
 
+#: models/mapping.py:37 models/mapping.py:61
 msgid "Blog Tag"
 msgstr "博客标签"
 
+#: models/mapping.py:40
 msgid "Type of source data"
 msgstr "源数据类型"
 
+#: models/mapping.py:44
 msgid "Source field name (e.g., '_custom_brand', 'metafields.brand')"
 msgstr "源字段名称（例如：'_custom_brand', 'metafields.brand'）"
 
+#: models/mapping.py:48
 msgid "Human-readable label for source field"
 msgstr "源字段的人类可读标签"
 
+#: models/mapping.py:64
 msgid "Destination model name"
 msgstr "目标模型名称"
 
+#: models/mapping.py:68
 msgid "Destination field name (e.g., 'brand', 'short_description')"
 msgstr "目标字段名称（例如：'brand', 'short_description'）"
 
+#: models/mapping.py:72
 msgid "Human-readable label for destination field"
 msgstr "目标字段的人类可读标签"
 
+#: models/mapping.py:77
 msgid "No Transformation"
 msgstr "无转换"
 
+#: models/mapping.py:78
 msgid "Convert to String"
 msgstr "转换为字符串"
 
+#: models/mapping.py:79
 msgid "Convert to Integer"
 msgstr "转换为整数"
 
+#: models/mapping.py:80
 msgid "Convert to Decimal"
 msgstr "转换为小数"
 
+#: models/mapping.py:81
 msgid "Convert to Boolean"
 msgstr "转换为布尔值"
 
+#: models/mapping.py:82
 msgid "Parse JSON"
 msgstr "解析 JSON"
 
+#: models/mapping.py:83
 msgid "Parse Date"
 msgstr "解析日期"
 
+#: models/mapping.py:84
 msgid "Validate URL"
 msgstr "验证URL"
 
+#: models/mapping.py:85
 msgid "Validate Email"
 msgstr "验证电子邮件"
 
+#: models/mapping.py:87
 msgid "Convert to Money"
 msgstr "转换为货币"
 
+#: models/mapping.py:88
 msgid "Integer (allow null)"
 msgstr "整数（允许为空）"
 
+#: models/mapping.py:89
 msgid "Decimal (allow null)"
 msgstr "小数（允许为空）"
 
+#: models/mapping.py:90
 msgid "WooCommerce Status"
 msgstr "WooCommerce状态"
 
+#: models/mapping.py:91
 msgid "WooCommerce Product Type"
 msgstr "WooCommerce产品类型"
 
+#: models/mapping.py:92
 msgid "WooCommerce Backorders"
 msgstr "WooCommerce缺货订单"
 
+#: models/mapping.py:93
 msgid "Meta Data Array"
 msgstr "元数据数组"
 
+#: models/mapping.py:94
 msgid "Category Array"
 msgstr "分类数组"
 
+#: models/mapping.py:95
 msgid "Image Array"
 msgstr "图片数组"
 
+#: models/mapping.py:96
 msgid "Category Parent Resolution"
 msgstr "分类父级解析"
 
+#: models/mapping.py:97
 msgid "Custom Function"
 msgstr "自定义函数"
 
+#: models/mapping.py:99
 msgid "Shopify Product Status"
 msgstr "Shopify 产品状态"
 
+#: models/mapping.py:100
 msgid "Shopify Order Status"
 msgstr "Shopify 订单状态"
 
+#: models/mapping.py:101
 msgid "Shopify Discount Type"
 msgstr "Shopify 优惠类型"
 
+#: models/mapping.py:102
 msgid "Shopify Discount Value"
 msgstr "Shopify 优惠值"
 
+#: models/mapping.py:103
 msgid "Shopify Inventory Tracked"
 msgstr "Shopify 库存追踪"
 
+#: models/mapping.py:104
 msgid "Shopify Inventory Policy"
 msgstr "Shopify 库存策略"
 
+#: models/mapping.py:105
 msgid "Comma-Separated to List"
 msgstr "逗号分隔转列表"
 
+#: models/mapping.py:107
+msgid "Magento Product Status"
+msgstr "Magento 产品状态"
+
+#: models/mapping.py:108
+msgid "Magento Product Visibility"
+msgstr "Magento 产品可见性"
+
+#: models/mapping.py:109
+msgid "Magento Order Status"
+msgstr "Magento 订单状态"
+
+#: models/mapping.py:110
+msgid "Magento Discount Type"
+msgstr "Magento 折扣类型"
+
+#: models/mapping.py:116
 msgid "Data transformation to apply"
 msgstr "要应用的数据转换"
 
+#: models/mapping.py:121
 msgid "Python function name for custom transformation"
 msgstr "自定义转换的 Python 函数名称"
 
+#: models/mapping.py:126
 msgid "Default value if source field is missing or empty"
 msgstr "如果源字段缺失或为空时的默认值"
 
+#: models/mapping.py:131
 msgid "Whether this field is required (skip item if missing)"
 msgstr "此字段是否为必填项（若缺失则跳过该项）"
 
+#: models/mapping.py:135
 msgid "Skip entire item if this field is empty"
 msgstr "如果此字段为空，则跳过整个条目"
 
+#: models/mapping.py:140
 msgid "Number of times this mapping was applied"
 msgstr "此映射应用的次数"
 
+#: models/mapping.py:144
 msgid "Number of times transformation failed"
 msgstr "转换失败次数"
 
+#: models/mapping.py:149
 msgid "Whether this mapping was auto-detected from data"
 msgstr "此映射是否从数据中自动检测"
 
+#: models/mapping.py:156
 msgid "Migration Mapping"
 msgstr "迁移映射"
 
+#: models/mapping.py:157
 msgid "Migration Mappings"
 msgstr "迁移映射"
 
+#: models/staged_item.py:27
 msgid "Missing Required Field"
 msgstr "缺少必填字段"
 
+#: models/staged_item.py:28
 msgid "Invalid Data Format"
 msgstr "数据格式无效"
 
+#: models/staged_item.py:29
 msgid "Missing Relationship"
 msgstr "缺少关系"
 
+#: models/staged_item.py:30
 msgid "Data Transformation Failed"
 msgstr "数据转换失败"
 
+#: models/staged_item.py:31
 msgid "Duplicate Entry"
 msgstr "重复条目"
 
+#: models/staged_item.py:32
 msgid "Validation Failed"
 msgstr "验证失败"
 
+#: models/staged_item.py:33
 msgid "Unknown Error"
 msgstr "未知错误"
 
+#: models/staged_item.py:46
 msgid "Original ID from source platform"
 msgstr "来自源平台的原始ID"
 
+#: models/staged_item.py:49
 msgid "Original data from WooCommerce/Shopify"
 msgstr "来自 WooCommerce/Shopify 的原始数据"
 
+#: models/staged_item.py:53
 msgid "Data after transformation, ready for model creation"
 msgstr "转换后的数据，可用于模型创建"
 
+#: models/staged_item.py:58
 msgid "Why this item failed to import"
 msgstr "此条目导入失败的原因"
 
+#: models/staged_item.py:61
 msgid "Detailed error message"
 msgstr "详细错误信息"
 
+#: models/staged_item.py:64
 msgid "Specific field that caused the error"
 msgstr "导致错误的具体字段"
 
+#: models/staged_item.py:74
 msgid "Being Fixed"
 msgstr "正在修复"
 
+#: models/staged_item.py:75
 msgid "Ready to Retry"
 msgstr "准备重试"
 
+#: models/staged_item.py:76
 msgid "Successfully Imported"
 msgstr "成功导入"
 
+#: models/staged_item.py:77
 msgid "Skipped by Admin"
 msgstr "被管理员跳过"
 
+#: models/staged_item.py:81
 msgid "Admin notes about fixing this item"
 msgstr "管理员关于修复此条目的备注"
 
+#: models/staged_item.py:92
 msgid "Staged Item"
 msgstr "已暂存项目"
 
+#: models/staged_item.py:93
 msgid "Staged Items"
 msgstr "已暂存项目"
 
+#: models/step.py:30
 msgid "Brands"
 msgstr "品牌"
 
+#: models/step.py:32
 msgid "Product Images"
 msgstr "商品图片"
 
+#: models/step.py:33
 msgid "Product Variants"
 msgstr "商品变体"
 
+#: models/step.py:35
 msgid "Customer Addresses"
 msgstr "客户地址"
 
+#: models/step.py:37
 msgid "Order Items"
 msgstr "订单项目"
 
+#: models/step.py:39 templates/admin/migration/confirm_rollback.html:83
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
+#: templates/admin/migration/wizard/step4_mapping.html:97
+#: templates/admin/migration/wizard/step5_import.html:191
+#: templates/admin/migration/wizard/step6_complete.html:37
 msgid "Coupons"
 msgstr "优惠券"
 
+#: models/step.py:40
 msgid "Blog"
 msgstr "博客"
 
+#: models/step.py:41
 msgid "Shipping Zones"
 msgstr "配送区域"
 
+#: models/step.py:42
 msgid "Tax Rates"
 msgstr "税率"
 
+#: models/step.py:43 templates/admin/migration/wizard/step6_complete.html:117
 msgid "Link Rewriting"
 msgstr "链接重写"
 
+#: models/step.py:44 templates/admin/migration/wizard/step3_preview.html:50
+#: templates/admin/migration/wizard/step3_preview.html:141
+#: templates/admin/migration/wizard/step5_import.html:231
+#: templates/admin/migration/wizard/step6_complete.html:42
 msgid "Affiliates"
 msgstr "联盟成员"
 
+#: models/step.py:45 templates/admin/migration/wizard/step5_import.html:251
+#: templates/admin/migration/wizard/step6_complete.html:48
 msgid "Commissions"
 msgstr "佣金"
 
+#: models/step.py:46 templates/admin/migration/wizard/step5_import.html:271
 msgid "Payouts"
 msgstr "付款"
 
+#: models/step.py:49
 msgid "Type of data being imported in this step"
 msgstr "此步骤中正在导入的数据类型"
 
+#: models/step.py:54 models/sync_job.py:77 models/sync_step.py:31
 msgid "Running"
 msgstr "正在运行"
 
-msgid "Database savepoint ID for this step"
-msgstr "此步骤的数据库保存点 ID"
-
+#: models/step.py:69
 msgid "Total items to import in this step"
 msgstr "此步骤中要导入的总条目数"
 
+#: models/step.py:70
 msgid "Items successfully imported"
 msgstr "成功导入的项目"
 
+#: models/step.py:72
 msgid "Items skipped (duplicates, validation failures)"
 msgstr "跳过的项目（重复项、验证失败）"
 
+#: models/step.py:74
 msgid "Items that failed to import"
 msgstr "导入失败的项目"
 
+#: models/step.py:77
 msgid "When this step started"
 msgstr "此步骤开始时间"
 
+#: models/step.py:79
 msgid "When this step completed"
 msgstr "此步骤完成时间"
 
+#: models/step.py:82
 msgid "Duration of this step in seconds"
 msgstr "此步骤的持续时间（以秒为单位）"
 
+#: models/step.py:86
 msgid "Error message if step failed"
 msgstr "如果此步骤失败的错误信息"
 
+#: models/step.py:88
 msgid "Number of errors encountered in this step"
 msgstr "此步骤中遇到的错误数"
 
+#: models/step.py:91
 msgid "Number of warnings encountered in this step"
 msgstr "此步骤中遇到的警告数"
 
+#: models/step.py:96
 msgid "Currently processing item (for progress display)"
 msgstr "当前正在处理的条目（用于进度显示）"
 
+#: models/step.py:101
 msgid "Migration Step"
 msgstr "迁移步骤"
 
+#: models/step.py:102
 msgid "Migration Steps"
 msgstr "迁移步骤"
 
+#: models/sync_connection.py:24
 msgid "Descriptive name (e.g., 'Production Server', 'Staging')"
-msgstr ""
+msgstr "描述性名称（例如：'生产服务器'、'预发布'）"
 
-#, fuzzy
-#| msgid "Product"
+#: models/sync_connection.py:28
+#: templates/admin/migration/sync/step1_connection.html:92
 msgid "Production"
-msgstr "产品"
+msgstr "生产环境"
 
+#: models/sync_connection.py:29
+#: templates/admin/migration/sync/step1_connection.html:91
 msgid "Staging"
-msgstr ""
+msgstr "预发布"
 
-#, fuzzy
-#| msgid "Back"
+#: models/sync_connection.py:30
+#: templates/admin/migration/sync/step1_connection.html:93
 msgid "Backup"
-msgstr "返回"
+msgstr "备份"
 
+#: models/sync_connection.py:31
+#: templates/admin/migration/sync/step1_connection.html:94
 msgid "Other"
-msgstr ""
+msgstr "其他"
 
+#: models/sync_connection.py:37
 msgid "Role of the remote instance"
-msgstr ""
+msgstr "远程实例的角色"
 
+#: models/sync_connection.py:41
 msgid ""
 "Base URL of the remote Spwig instance (e.g., https://merchant-store.com)"
-msgstr ""
+msgstr "远程 Spwig 实例的基础 URL（例如：https://merchant-store.com）"
 
+#: models/sync_connection.py:46
 msgid "SyncToken for the remote instance (stored encrypted)"
-msgstr ""
+msgstr "远程实例的同步令牌（加密存储）"
 
+#: models/sync_connection.py:51
 msgid "Spwig version running on the remote instance"
-msgstr ""
+msgstr "远程实例上运行的 Spwig 版本"
 
+#: models/sync_connection.py:54
 msgid "Site name of the remote instance"
-msgstr ""
+msgstr "远程实例的站点名称"
 
+#: models/sync_connection.py:58
 msgid "Whether the connection has been verified"
-msgstr ""
+msgstr "是否已验证连接"
 
+#: models/sync_connection.py:61
 msgid "Last successful connection test"
-msgstr ""
+msgstr "最后一次成功的连接测试"
 
+#: models/sync_connection.py:64
 msgid "Last time a sync was performed using this connection"
-msgstr ""
+msgstr "上次使用此连接执行同步的时间"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_connection.py:72
 msgid "User who created this connection"
-msgstr "发起此迁移的用户"
+msgstr "创建此连接的用户"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:79
 msgid "Sync Connection"
-msgstr "连接"
+msgstr "同步连接"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:80
 msgid "Sync Connections"
-msgstr "连接"
+msgstr "同步连接"
 
-#, fuzzy
-#| msgid "Settings"
+#: models/sync_job.py:26 templates/admin/migration/sync/base.html:34
 msgid "Settings Sync"
-msgstr "设置"
+msgstr "设置同步"
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: models/sync_job.py:27 templates/admin/migration/sync/base.html:32
 msgid "Full System Migration"
-msgstr "开始新迁移"
+msgstr "完整系统迁移"
 
-#, fuzzy
-#| msgid "Type of source data"
+#: models/sync_job.py:30
 msgid "Type of sync operation"
-msgstr "源数据类型"
+msgstr "同步操作类型"
 
+#: models/sync_job.py:34
 msgid "Pull from Remote"
-msgstr ""
+msgstr "从远程拉取"
 
+#: models/sync_job.py:35
 msgid "Push to Remote"
-msgstr ""
+msgstr "推送到远程"
 
+#: models/sync_job.py:38
 msgid "Direction of data flow"
-msgstr ""
+msgstr "数据流向"
 
+#: models/sync_job.py:46
 msgid "Connection to the remote instance"
-msgstr ""
+msgstr "与远程实例的连接"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_job.py:54
 msgid "User who initiated this sync"
-msgstr "发起此迁移的用户"
+msgstr "启动此同步的用户"
 
+#: models/sync_job.py:59
 msgid "List of sync category keys selected for this job"
-msgstr ""
+msgstr "为此任务选择的同步分类键列表"
 
+#: models/sync_job.py:63
 msgid "Add & Update Only"
-msgstr ""
+msgstr "仅添加和更新"
 
+#: models/sync_job.py:64
 msgid "Full Mirror"
-msgstr ""
+msgstr "完整镜像"
 
+#: models/sync_job.py:70
 msgid "Sync behaviour: additive (no deletions) or mirror (exact copy)"
-msgstr ""
+msgstr "同步行为：附加（无删除）或镜像（精确复制）"
 
-#, fuzzy
-#| msgid "pending review"
+#: models/sync_job.py:75
 msgid "Generating Preview"
-msgstr "待审核"
+msgstr "生成预览"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: models/sync_job.py:76
 msgid "Awaiting Confirmation"
-msgstr "测试连接"
+msgstr "等待确认"
 
-#, fuzzy
-#| msgid "Cancel"
-msgid "Cancelled"
-msgstr "取消"
-
+#: models/sync_job.py:88
 msgid "Current status of the sync operation"
-msgstr ""
+msgstr "同步操作的当前状态"
 
+#: models/sync_job.py:95
 msgid "Name of the currently executing step"
-msgstr ""
+msgstr "当前执行步骤的名称"
 
+#: models/sync_job.py:100
 msgid "Structured diff from preview step"
-msgstr ""
+msgstr "从预览步骤生成的结构化差异"
 
+#: models/sync_job.py:105
 msgid "Whether the merchant confirmed production overwrite"
-msgstr ""
+msgstr "商户是否确认覆盖生产环境"
 
+#: models/sync_job.py:110
 msgid "Pre-sync state snapshot for rollback"
-msgstr ""
+msgstr "预同步状态快照用于回滚"
 
-#, fuzzy
-#| msgid "Whether this migration can be rolled back"
+#: models/sync_job.py:113
 msgid "Whether this job can be rolled back"
-msgstr "此迁移是否可以回滚"
+msgstr "此任务是否可以回滚"
 
-#, fuzzy
-#| msgid "Deadline for manual rollback (24 hours after completion)"
+#: models/sync_job.py:116
 msgid "Deadline for rollback (24 hours after completion)"
-msgstr "手动回滚截止时间（完成 24 小时后）"
+msgstr "回滚截止时间（完成后的24小时内）"
 
+#: models/sync_job.py:136
 msgid "Recent activity log entries [{ts, msg}, ...] (last 50)"
-msgstr ""
+msgstr "最近的活动日志条目 [{ts, msg}, ...]（最近50条）"
 
+#: models/sync_job.py:143
 msgid "Sync Job"
-msgstr ""
+msgstr "同步任务"
 
+#: models/sync_job.py:144
 msgid "Sync Jobs"
-msgstr ""
+msgstr "同步任务"
 
-#, fuzzy
-#| msgid "Parent migration job"
+#: models/sync_step.py:21
 msgid "Parent sync job"
-msgstr "父迁移任务"
+msgstr "父同步任务"
 
+#: models/sync_step.py:26
 msgid "Sync category key (e.g., 'email_config', 'design_theme')"
-msgstr ""
+msgstr "同步类别键（例如，'email_config', 'design_theme'）"
 
+#: models/sync_step.py:52
 msgid "Diff data, created object IDs, or ID mappings for this step"
-msgstr ""
+msgstr "此步骤的差异数据、创建的对象ID或ID映射"
 
+#: models/sync_step.py:59
 msgid "Extra progress data for the UI (e.g., bytes transferred for media)"
-msgstr ""
+msgstr "用于UI的额外进度数据（例如，媒体传输的字节数）"
 
-#, fuzzy
-#| msgid "Step"
+#: models/sync_step.py:64
 msgid "Sync Step"
-msgstr "步骤"
+msgstr "同步步骤"
 
-#, fuzzy
-#| msgid "Next Steps"
+#: models/sync_step.py:65
 msgid "Sync Steps"
-msgstr "下一步"
+msgstr "同步步骤"
 
+#: sync/authentication.py:40
 msgid "HTTPS is required for sync API requests."
-msgstr ""
+msgstr "同步API请求需要HTTPS。"
 
+#: sync/authentication.py:46
 msgid "Missing or invalid Authorization header. Expected: SyncToken <token>"
-msgstr ""
+msgstr "缺少或无效的授权头。预期格式：SyncToken <token>"
 
+#: sync/authentication.py:51
 msgid "Empty sync token."
-msgstr ""
+msgstr "同步令牌为空。"
 
+#: sync/authentication.py:61
 msgid "Invalid or expired sync token."
-msgstr ""
+msgstr "无效或已过期的同步令牌。"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:25
 msgid "Site Settings"
-msgstr "设置"
+msgstr "网站设置"
 
+#: sync/category_registry.py:27
 msgid ""
 "Core site configuration: name, branding, currency, checkout, SEO, maintenance"
-msgstr ""
+msgstr "核心网站配置：名称、品牌、货币、结账、SEO、维护"
 
+#: sync/category_registry.py:41
 msgid "Design & Theme"
-msgstr ""
+msgstr "设计与主题"
 
+#: sync/category_registry.py:42
 msgid "Active theme, design tokens, custom CSS, theme branding"
-msgstr ""
+msgstr "当前主题、设计令牌、自定义CSS、主题品牌"
 
+#: sync/category_registry.py:61
 msgid "Headers, Footers & Menus"
-msgstr ""
+msgstr "页眉、页脚与菜单"
 
+#: sync/category_registry.py:62
 msgid "Header/footer templates, widgets, navigation menus"
-msgstr ""
+msgstr "页眉/页脚模板、小部件、导航菜单"
 
-#, fuzzy
-#| msgid "Total Migrations"
+#: sync/category_registry.py:81
 msgid "Email Configuration"
-msgstr "总迁移数"
+msgstr "电子邮件配置"
 
+#: sync/category_registry.py:82
 msgid "Email provider accounts, templates, and template translations"
-msgstr ""
+msgstr "电子邮件提供商账户、模板及模板翻译"
 
+#: sync/category_registry.py:99
 msgid "SMS & WhatsApp Configuration"
-msgstr ""
+msgstr "短信与WhatsApp配置"
 
+#: sync/category_registry.py:100
 msgid "SMS/WhatsApp provider accounts and message templates"
-msgstr ""
+msgstr "短信/WhatsApp提供商账户及消息模板"
 
+#: sync/category_registry.py:113
 msgid "Payment Providers"
-msgstr ""
+msgstr "支付提供商"
 
+#: sync/category_registry.py:114
 msgid "Payment provider accounts (Stripe, PayPal, etc.)"
-msgstr ""
+msgstr "支付提供商账户（如Stripe、PayPal等）"
 
+#: sync/category_registry.py:123
 msgid "Sandbox/test credentials will NOT be synced to production."
-msgstr ""
+msgstr "沙盒/测试凭证将不会同步到生产环境。"
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:130
 msgid "Shipping Configuration"
-msgstr "Shopify 迁移"
+msgstr "配送配置"
 
+#: sync/category_registry.py:132
 msgid ""
-"Shipping providers, zones, methods, rules, rate tables, packages, carrier "
-"presets, locations"
-msgstr ""
+"Shipping providers, zones, methods, promotions, rate tables, packages, "
+"carrier presets, locations"
+msgstr "运输提供商、区域、方法、促销活动、费率表、包裹、承运商预设、位置"
 
+#: sync/category_registry.py:156
 msgid "Tax & Currency"
-msgstr ""
+msgstr "税收与货币"
 
+#: sync/category_registry.py:158
 msgid "Supported currencies, exchange rate providers, manual exchange rates"
-msgstr ""
+msgstr "支持的货币、汇率提供商、手动汇率"
 
-#, fuzzy
-#| msgid "Tax Rates"
+#: sync/category_registry.py:176
 msgid "Tax Rates & Presets"
-msgstr "税率"
+msgstr "税率与预设"
 
+#: sync/category_registry.py:177
 msgid "Tax rates, tax preset groups and preset rates"
-msgstr ""
+msgstr "税率、预设税率组和预设税率"
 
+#: sync/category_registry.py:193
 msgid "Languages & Translations"
-msgstr ""
+msgstr "语言与翻译"
 
+#: sync/category_registry.py:194
 msgid "Site languages, translation providers, UI translation overrides"
-msgstr ""
+msgstr "网站语言、翻译提供商、UI翻译覆盖"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:210
 msgid "Blog Settings"
-msgstr "设置"
+msgstr "博客设置"
 
+#: sync/category_registry.py:211
 msgid "Blog configuration (posts per page, RSS, subscriptions)"
-msgstr ""
+msgstr "博客配置（每页文章数、RSS、订阅）"
 
+#: sync/category_registry.py:223
 msgid "Social Sharing"
-msgstr ""
+msgstr "社交分享"
 
+#: sync/category_registry.py:224
 msgid "Social sharing button configuration and platform settings"
-msgstr ""
+msgstr "社交分享按钮配置和平台设置"
 
+#: sync/category_registry.py:236
 msgid "Sales Regions & Warehouses"
-msgstr ""
+msgstr "销售区域与仓库"
 
+#: sync/category_registry.py:238
 msgid "Sales regions, warehouse locations, and fulfillment configuration"
-msgstr ""
+msgstr "销售区域、仓库位置和履约配置"
 
-#, fuzzy
-#| msgid "Collections"
+#: sync/category_registry.py:251
 msgid "Product Collections"
-msgstr "集合"
+msgstr "产品集合"
 
+#: sync/category_registry.py:252
 msgid "Curated and automatic product collections"
-msgstr ""
+msgstr "精选和自动产品集合"
 
-#, fuzzy
-#| msgid "WooCommerce Status"
+#: sync/category_registry.py:265
 msgid "Commerce Rules"
-msgstr "WooCommerce状态"
+msgstr "商业规则"
 
+#: sync/category_registry.py:267
 msgid "Vouchers, promotions, loyalty program, subscriptions, referral program"
-msgstr ""
+msgstr "优惠券、促销活动、忠诚度计划、订阅、推荐计划"
 
-#, fuzzy
-#| msgid "Webhooks API Version"
+#: sync/category_registry.py:293
 msgid "Webhooks & Integrations"
-msgstr "Webhooks API 版本"
+msgstr "网络钩子与集成"
 
+#: sync/category_registry.py:294
 msgid "Webhook endpoints and OAuth provider settings"
-msgstr ""
+msgstr "Webhook端点和OAuth提供商设置"
 
+#: sync/category_registry.py:307
+#: templates/admin/migration/wizard/step4_mapping.html:154
 msgid "Custom Fields"
 msgstr "自定义字段"
 
+#: sync/category_registry.py:308
 msgid "Custom field groups and field definitions"
-msgstr ""
+msgstr "自定义字段组和字段定义"
 
+#: sync/category_registry.py:320
 msgid "Staff Roles"
-msgstr ""
+msgstr "员工角色"
 
+#: sync/category_registry.py:321
 msgid "Staff role definitions and permissions"
-msgstr ""
+msgstr "员工角色定义和权限"
 
+#: sync/category_registry.py:333
 msgid "Forms"
-msgstr ""
+msgstr "表单"
 
+#: sync/category_registry.py:334
 msgid "Form builder forms and configurations"
-msgstr ""
+msgstr "表单构建器表单和配置"
 
+#: sync/category_registry.py:346
 msgid "Pages & Templates"
-msgstr ""
+msgstr "页面与模板"
 
+#: sync/category_registry.py:347
 msgid "Page builder pages, page templates, element templates"
-msgstr ""
+msgstr "页面构建器页面、页面模板、元素模板"
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: sync/category_registry.py:364
 msgid "Blog Posts & Categories"
-msgstr "博客分类"
+msgstr "博客文章与分类"
 
-#, fuzzy
-#| msgid "Import blog posts, categories, and tags from WordPress"
+#: sync/category_registry.py:365
 msgid "Blog posts, categories, and tags"
-msgstr "从 WordPress 导入博客文章、分类和标签"
+msgstr "博客文章、分类和标签"
 
+#: sync/category_registry.py:377
 msgid "Announcements"
-msgstr ""
+msgstr "公告"
 
+#: sync/category_registry.py:378
 msgid "Site announcements and notification banners"
-msgstr ""
+msgstr "网站公告和通知横幅"
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:391
 msgid "Search Configuration"
-msgstr "Shopify 迁移"
+msgstr "搜索配置"
 
+#: sync/category_registry.py:392
 msgid "Search redirects and search settings"
-msgstr ""
+msgstr "搜索重定向和搜索设置"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:404
 msgid "SEO Providers"
-msgstr "订单"
+msgstr "SEO提供商"
 
+#: sync/category_registry.py:405
 msgid "SEO generator provider accounts and configuration"
-msgstr ""
+msgstr "SEO生成器提供商账户及配置"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:418
 msgid "Product Feed Providers"
-msgstr "商品字段"
+msgstr "产品馈送提供商"
 
+#: sync/category_registry.py:419
 msgid "Product feed provider accounts for Google Shopping, Meta, etc."
-msgstr ""
+msgstr "用于Google Shopping、Meta等的产品数据馈送提供商账户"
 
+#: sync/category_registry.py:432
 msgid "Blog Social Connectors"
-msgstr ""
+msgstr "博客社交连接器"
 
+#: sync/category_registry.py:433
 msgid "Social media connector accounts for blog auto-sharing"
-msgstr ""
+msgstr "用于博客自动分享的社交媒体连接器账户"
 
+#: sync/category_registry.py:442
 msgid "OAuth tokens will need to be re-authorized on the destination."
-msgstr ""
+msgstr "OAuth令牌需要在目标端重新授权。"
 
+#: sync/category_registry.py:449
 msgid "Customer Analytics Configuration"
-msgstr ""
+msgstr "客户分析配置"
 
+#: sync/category_registry.py:450
 msgid "Customer segments, LTV settings, and category multipliers"
-msgstr ""
+msgstr "客户分群、LTV设置和分类乘数"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:466
 msgid "Affiliate Program Configuration"
-msgstr "联盟计划数据"
+msgstr "联盟计划配置"
 
+#: sync/category_registry.py:467
 msgid "Affiliate program settings, report settings, and programs"
-msgstr ""
+msgstr "联盟计划设置、报告设置和计划"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: sync/category_registry.py:483
 msgid "POS Configuration"
-msgstr "配置连接"
+msgstr "POS配置"
 
+#: sync/category_registry.py:485
 msgid ""
 "Store groups, terminals, receipt templates, promo slides, staff discounts"
-msgstr ""
+msgstr "商店组、终端、收据模板、促销幻灯片、员工折扣"
 
+#: sync/category_registry.py:510
 msgid "Installed Components"
-msgstr ""
+msgstr "已安装组件"
 
+#: sync/category_registry.py:512
 msgid ""
 "Installed themes, provider integrations, and utility components with "
 "filesystem packages"
-msgstr ""
+msgstr "已安装的主题、提供商集成以及带有文件系统包的实用组件"
 
-#, fuzzy
-#| msgid "Product Variants"
+#: sync/category_registry.py:531
 msgid "Products, Categories & Brands"
-msgstr "商品变体"
+msgstr "产品、分类与品牌"
 
-#, fuzzy
-#| msgid "Import products with images, variants, and attributes"
+#: sync/category_registry.py:532
 msgid "Products, variants, images, categories, brands, attributes"
-msgstr "导入带有图片、变体和属性的产品"
+msgstr "产品、变体、图片、分类、品牌、属性"
 
+#: sync/category_registry.py:555
 msgid "Media Library"
-msgstr ""
+msgstr "媒体库"
 
+#: sync/category_registry.py:556
 msgid "Media assets, thumbnails, and uploaded files"
-msgstr ""
+msgstr "媒体资源、缩略图和上传的文件"
 
-#, fuzzy
-#| msgid "Customer Addresses"
+#: sync/category_registry.py:570
 msgid "Customers & Addresses"
-msgstr "客户地址"
+msgstr "客户与地址"
 
-#, fuzzy
-#| msgid "Import customer accounts and addresses"
+#: sync/category_registry.py:571
 msgid "Customer accounts, profiles, and addresses"
-msgstr "导入客户账户和地址"
+msgstr "客户账户、个人资料和地址"
 
-#, fuzzy
-#| msgid "Order Fields"
+#: sync/category_registry.py:588
 msgid "Order History"
-msgstr "订单字段"
+msgstr "订单历史"
 
-#, fuzzy
-#| msgid "Import order history and transactions"
+#: sync/category_registry.py:589
 msgid "Orders, order items, and transaction records"
-msgstr "导入订单历史和交易"
+msgstr "订单、订单项和交易记录"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:601
 msgid "Product Reviews"
-msgstr "商品字段"
+msgstr "产品评论"
 
-#, fuzzy
-#| msgid "Import product reviews and ratings"
+#: sync/category_registry.py:602
 msgid "Product reviews and ratings"
-msgstr "导入产品评论和评分"
+msgstr "产品评论和评分"
 
+#: sync/category_registry.py:614
 msgid "Stock Levels"
-msgstr ""
+msgstr "库存水平"
 
+#: sync/category_registry.py:616
 msgid "Per-warehouse stock quantities, reserved stock, and reorder points"
-msgstr ""
+msgstr "按仓库的库存数量、预留库存和补货点"
 
+#: sync/category_registry.py:629
 msgid "Digital Products & Licenses"
-msgstr ""
+msgstr "数字产品与许可证"
 
+#: sync/category_registry.py:631
 msgid "Digital assets, license key templates, license pools, license providers"
-msgstr ""
+msgstr "数字资产、许可证密钥模板、许可证池、许可证提供商"
 
+#: sync/category_registry.py:651
 msgid "Gift Cards & Voucher Usage"
-msgstr ""
+msgstr "礼品卡与优惠券使用"
 
+#: sync/category_registry.py:652
 msgid "Gift card balances, transactions, voucher usage records"
-msgstr ""
+msgstr "礼品卡余额、交易记录、优惠券使用记录"
 
+#: sync/category_registry.py:669
 msgid "Store Credit & Wallets"
-msgstr ""
+msgstr "店铺信用与钱包"
 
+#: sync/category_registry.py:670
 msgid "Customer wallet balances and transaction history"
-msgstr ""
+msgstr "客户钱包余额和交易历史"
 
+#: sync/category_registry.py:682
 msgid "Loyalty Program Members"
-msgstr ""
+msgstr "忠诚计划会员"
 
+#: sync/category_registry.py:684
 msgid "Loyalty members, points balances, transactions, redemptions, badges"
-msgstr ""
+msgstr "忠诚会员、积分余额、交易、兑换、徽章"
 
+#: sync/category_registry.py:705
 msgid "Active Subscriptions"
-msgstr ""
+msgstr "活跃订阅"
 
+#: sync/category_registry.py:707
 msgid ""
 "Subscription plans pricing, active subscriptions, billing cycles, payment "
 "tokens"
-msgstr ""
+msgstr "订阅计划定价、活跃订阅、账单周期、支付令牌"
 
+#: sync/category_registry.py:724
 msgid ""
 "Payment tokens may not be valid across different payment provider "
 "installations."
-msgstr ""
+msgstr "支付令牌在不同的支付提供商安装中可能无效。"
 
+#: sync/category_registry.py:731
 msgid "Shipments & Tracking"
-msgstr ""
+msgstr "发货与追踪"
 
+#: sync/category_registry.py:732
 msgid "Shipment records and tracking event history"
-msgstr ""
+msgstr "发货记录和跟踪事件历史"
 
+#: sync/category_registry.py:744
 msgid "Refunds, Returns & Order Notes"
-msgstr ""
+msgstr "退款、退货与订单备注"
 
+#: sync/category_registry.py:745
 msgid "Refund records, return requests, and order notes"
-msgstr ""
+msgstr "退款记录、退货请求和订单备注"
 
-#, fuzzy
-#| msgid "Customer Fields"
+#: sync/category_registry.py:757
 msgid "Customer Wishlists"
-msgstr "客户字段"
+msgstr "客户心愿单"
 
+#: sync/category_registry.py:758
 msgid "Customer wishlists and wishlist items"
-msgstr ""
+msgstr "客户心愿单及心愿单商品"
 
+#: sync/category_registry.py:770
 msgid "Blog Subscribers"
-msgstr ""
+msgstr "博客订阅者"
 
+#: sync/category_registry.py:771
 msgid "Blog email subscribers and category subscriptions"
-msgstr ""
+msgstr "博客电子邮件订阅者和分类订阅"
 
-#, fuzzy
-#| msgid "Commissions"
+#: sync/category_registry.py:783
 msgid "Form Submissions"
-msgstr "佣金"
+msgstr "表单提交"
 
+#: sync/category_registry.py:784
 msgid "Form response data and submission history"
-msgstr ""
+msgstr "表单响应数据和提交历史"
 
+#: sync/category_registry.py:796
 msgid "Customer Analytics & History"
-msgstr ""
+msgstr "客户分析与历史记录"
 
+#: sync/category_registry.py:797
 msgid "Customer notes, abandoned carts, cohort data, preference logs"
-msgstr ""
+msgstr "客户备注、未完成的购物车、群体数据、偏好日志"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:815
 msgid "Affiliate Member Data"
-msgstr "联盟计划数据"
+msgstr "联盟会员数据"
 
+#: sync/category_registry.py:817
 msgid "Affiliate accounts, program memberships, links, commissions, payouts"
-msgstr ""
+msgstr "联盟账户、计划成员资格、链接、佣金和付款"
 
-#, fuzzy
-#| msgid "📊 Migration History"
+#: sync/category_registry.py:836
 msgid "POS Transaction History"
-msgstr "📊 迁移历史"
+msgstr "POS交易历史"
 
+#: sync/category_registry.py:837
 msgid "POS shifts, cash movements, payments, and parked carts"
-msgstr ""
+msgstr "POS班次、现金流动、付款和暂存购物车"
 
+#: sync/category_registry.py:854
 msgid "Software License Keys"
-msgstr ""
+msgstr "软件许可证密钥"
 
+#: sync/category_registry.py:855
 msgid "License keys, activations, and device registrations"
-msgstr ""
+msgstr "许可证密钥、激活和设备注册"
 
-#, fuzzy
-#| msgid "Platform"
+#: sync/category_registry.py:870
 msgid "Platform License"
-msgstr "平台"
+msgstr "平台许可证"
 
+#: sync/category_registry.py:871
 msgid "Platform license transfer and EULA acceptance history"
-msgstr ""
+msgstr "平台许可证转移和EULA接受历史"
 
+#: sync/category_registry.py:880
 msgid ""
 "This will deactivate the license on the source installation. The source "
 "installation will stop working after transfer."
-msgstr ""
+msgstr "这将使源安装的许可证失效。转移后，源安装将停止工作。"
 
+#: sync/category_registry.py:895
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "Settings"
 msgstr "设置"
 
+#: sync/category_registry.py:897
 msgid "Core site settings, currencies, languages"
-msgstr ""
+msgstr "核心站点设置、货币、语言"
 
+#: sync/category_registry.py:903
 msgid "Design"
-msgstr ""
+msgstr "设计"
 
+#: sync/category_registry.py:905
 msgid "Theme, layout, menus, widgets"
-msgstr ""
+msgstr "主题、布局、菜单、小部件"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:911
 msgid "Providers"
-msgstr "订单"
+msgstr "提供商"
 
+#: sync/category_registry.py:913
 msgid "Email, SMS, payment, shipping providers"
-msgstr ""
+msgstr "电子邮件、短信、支付、配送提供商"
 
-#, fuzzy
-#| msgid "WooCommerce"
+#: sync/category_registry.py:919
 msgid "Commerce"
-msgstr "WooCommerce"
+msgstr "电商"
 
+#: sync/category_registry.py:921
 msgid "Vouchers, promotions, loyalty, subscriptions"
-msgstr ""
+msgstr "优惠券、促销、忠诚度、订阅"
 
-#, fuzzy
-#| msgid "Content Link"
+#: sync/category_registry.py:927
 msgid "Content"
-msgstr "内容链接"
+msgstr "内容"
 
+#: sync/category_registry.py:929
 msgid "Pages, blog posts, forms"
-msgstr ""
+msgstr "页面、博客文章、表单"
 
-#, fuzzy
-#| msgid "Data Type"
+#: sync/category_registry.py:935
 msgid "Data"
-msgstr "数据类型"
+msgstr "数据"
 
+#: sync/category_registry.py:937
 msgid "Products, customers, orders, media"
-msgstr ""
+msgstr "产品、客户、订单、媒体"
 
-#, fuzzy
-#| msgid ""
-#| "Could not analyze custom fields. You can still proceed with the import."
+#: sync/compatibility.py:82
 msgid "Could not determine local version. Proceeding with caution."
-msgstr "无法分析自定义字段。您仍然可以继续导入。"
+msgstr "无法确定本地版本。将谨慎继续。"
 
+#: sync/compatibility.py:83
 msgid "Local version could not be determined."
-msgstr ""
+msgstr "无法确定本地版本。"
 
+#: sync/compatibility.py:89
 msgid "Could not determine remote version. Proceeding with caution."
-msgstr ""
+msgstr "无法确定远程版本。将谨慎继续。"
 
+#: sync/compatibility.py:90
 msgid "Remote version could not be determined."
-msgstr ""
+msgstr "无法确定远程版本。"
 
+#: sync/diff_engine.py:89
 msgid "Credentials will be re-encrypted on the target instance."
-msgstr ""
+msgstr "凭据将在目标实例上重新加密。"
 
+#: sync_admin.py:65 templates/admin/migration/sync/step1_connection.html:89
 msgid "Role"
-msgstr ""
+msgstr "角色"
 
+#: sync_admin.py:79
 msgid "Last Sync"
-msgstr ""
+msgstr "上次同步"
 
+#: sync_admin.py:130 templates/admin/migration/syncjob/change_list.html:4
+#: templates/admin/migration/syncjob/change_list.html:24
 msgid "Spwig-to-Spwig Sync"
-msgstr ""
+msgstr "Spwig 到 Spwig 同步"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync_admin.py:133
 msgid "Sync Settings"
-msgstr "设置"
+msgstr "同步设置"
 
+#: sync_admin.py:135
 msgid "Sync settings between staging and production"
-msgstr ""
+msgstr "预发布与生产环境之间的同步设置"
 
-#, fuzzy
-#| msgid "Rollback Migration"
+#: sync_admin.py:140
 msgid "Full Migration"
-msgstr "回滚迁移"
+msgstr "完整迁移"
 
+#: sync_admin.py:142
 msgid "Migrate entire system to a new installation"
-msgstr ""
+msgstr "将整个系统迁移到新安装"
 
+#: sync_admin.py:147
 msgid "Manage Tokens"
-msgstr ""
+msgstr "管理令牌"
 
+#: sync_admin.py:149
 msgid "Generate and manage sync tokens"
-msgstr ""
+msgstr "生成和管理同步令牌"
 
-#, fuzzy
-#| msgid "Type:"
+#: sync_admin.py:279
 msgid "Type"
-msgstr "类型："
+msgstr "类型"
 
-#, fuzzy
-#| msgid "section"
+#: sync_admin.py:289 templates/admin/migration/sync/step2_categories.html:22
 msgid "Direction"
-msgstr "部分"
+msgstr "方向"
 
+#: sync_admin.py:344
 msgid "Synced/Failed/Total"
-msgstr ""
+msgstr "已同步/失败/总数"
 
+#: sync_admin.py:400 sync_admin.py:565
 msgid "Sync token is required for new connections."
-msgstr ""
+msgstr "新连接需要同步令牌。"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: sync_admin.py:425
 msgid "Settings Sync - Connection"
-msgstr "测试连接"
+msgstr "设置同步 - 连接"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:446
 msgid "Please select at least one category to sync."
-msgstr "请选择至少一种数据类型进行导入。"
+msgstr "请选择至少一个类别进行同步。"
 
+#: sync_admin.py:468
 msgid "Settings Sync - Select Categories"
-msgstr ""
+msgstr "设置同步 - 选择类别"
 
+#: sync_admin.py:486
 msgid "You must confirm production overwrite."
-msgstr ""
+msgstr "您必须确认覆盖生产环境。"
 
-#, fuzzy
-#| msgid "Migration job created. Please configure the connection."
+#: sync_admin.py:505
 msgid "Preview generation failed. Please check the connection and try again."
-msgstr "迁移任务已创建。请配置连接。"
+msgstr "预览生成失败。请检查连接并重试。"
 
+#: sync_admin.py:513
 msgid "Settings Sync - Preview Changes"
-msgstr ""
+msgstr "设置同步 - 预览更改"
 
+#: sync_admin.py:533
 msgid "Settings Sync - Progress"
-msgstr ""
+msgstr "设置同步 - 进度"
 
-#, fuzzy
-#| msgid "Migration Wizard - Connection"
+#: sync_admin.py:589
 msgid "Full Migration - Connection"
-msgstr "迁移向导 - 连接"
+msgstr "完整迁移 - 连接"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:609
 msgid "Please select at least one category to migrate."
-msgstr "请选择至少一种数据类型进行导入。"
+msgstr "请选择至少一个要迁移的类别。"
 
-#, fuzzy
-#| msgid "Migration Step"
+#: sync_admin.py:621
 msgid "Full Migration - Select Scope"
-msgstr "迁移步骤"
+msgstr "完整迁移 - 选择范围"
 
+#: sync_admin.py:646
 msgid "Compatibility check failed. Please verify the connection and try again."
-msgstr ""
+msgstr "兼容性检查失败。请验证连接并重试。"
 
+#: sync_admin.py:657
 msgid "Full Migration - Pre-flight Check"
-msgstr ""
+msgstr "完整迁移 - 预检"
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: sync_admin.py:676
 msgid "Full Migration - Progress"
-msgstr "迁移日志"
+msgstr "完整迁移 - 进度"
 
-#, fuzzy
-#| msgid "No Migrations Yet"
+#: sync_admin.py:695
 msgid "Full Migration - Results"
-msgstr "尚无迁移"
+msgstr "完整迁移 - 结果"
 
+#: sync_admin.py:874
 msgid "Token generated. Copy it now — it will not be shown again:"
-msgstr ""
+msgstr "令牌已生成。现在复制它——它将不再显示："
 
+#: sync_admin.py:882
 msgid "Token revoked."
-msgstr ""
+msgstr "令牌已被撤销。"
 
+#: sync_admin.py:884
 msgid "Invalid token ID."
-msgstr ""
+msgstr "无效的令牌ID。"
 
+#: sync_admin.py:893 templates/admin/migration/sync/token_management.html:4
+#: templates/admin/migration/sync/token_management.html:27
 msgid "Sync Token Management"
-msgstr ""
+msgstr "同步令牌管理"
 
+#: templates/admin/migration/confirm_rollback.html:18
 msgid "Warning: This action cannot be undone!"
 msgstr "警告：此操作无法撤销！"
 
+#: templates/admin/migration/confirm_rollback.html:21
 msgid "You are about to rollback the migration job:"
 msgstr "您即将回滚迁移任务："
 
-msgid "This will:"
-msgstr "这将："
+#: templates/admin/migration/confirm_rollback.html:25
+msgid "Spwig will remove:"
+msgstr "Spwig 将移除："
 
-msgid "Delete all products imported from this migration"
-msgstr "删除从此迁移导入的所有产品"
+#: templates/admin/migration/confirm_rollback.html:33
+msgid "Nothing — there is nothing left from this import that can be removed."
+msgstr "无 — 此导入已无任何可移除的内容。"
 
-msgid "Delete all categories imported from this migration"
-msgstr "删除从此迁移导入的所有分类"
+#: templates/admin/migration/confirm_rollback.html:37
+msgid "Spwig will keep:"
+msgstr "Spwig 将保留："
 
-msgid "Delete all customers imported from this migration"
-msgstr "删除从此迁移导入的所有客户"
+#: templates/admin/migration/confirm_rollback.html:38
+msgid ""
+"These were created by the import, but other things in your store now depend "
+"on them. Removing them would damage real orders or customer activity, so "
+"they stay."
+msgstr ""
+"这些是由导入操作创建的，但您商店中的其他内容现在依赖于它们。删除它们可能会损"
+"害真实订单或客户活动，因此它们会保留。"
 
-msgid "Delete all orders imported from this migration"
-msgstr "删除从此次迁移导入的所有订单"
+#: templates/admin/migration/confirm_rollback.html:41
+msgid "still referenced by"
+msgstr "仍被引用于"
 
-msgid "Delete all reviews imported from this migration"
-msgstr "删除从此次迁移导入的所有评论"
+#: templates/admin/migration/confirm_rollback.html:48
+msgid "Spwig could not calculate exactly what this rollback would remove."
+msgstr "Spwig 无法精确计算此回滚操作将移除的内容。"
 
-msgid "Delete all coupons imported from this migration"
-msgstr "删除从此次迁移导入的所有优惠券"
+#: templates/admin/migration/confirm_rollback.html:54
+msgid "This operation is PERMANENT and cannot be reversed."
+msgstr "此操作为 PERMANENT，且无法撤销。"
 
-msgid "Delete all associated media assets"
-msgstr "删除所有相关媒体资源"
-
-msgid "Mark the migration job as 'rolled_back'"
-msgstr "将迁移任务标记为'已回滚'"
-
-msgid "This operation is PERMANENT and cannot be reversed!"
-msgstr "此操作是永久性的，无法撤销！"
-
+#: templates/admin/migration/confirm_rollback.html:59
 msgid "Items to be Deleted"
 msgstr "待删除项目"
 
+#: templates/admin/migration/confirm_rollback.html:93
 msgid "Yes, Rollback Migration"
 msgstr "是，回滚迁移"
 
+#: templates/admin/migration/confirm_rollback.html:96
+#: templates/admin/migration/fullmig/step1_connection.html:95
+#: templates/admin/migration/migrationjob/change_list.html:216
+#: templates/admin/migration/sync/step1_connection.html:115
+#: templates/admin/migration/wizard/step1_platform.html:65
 msgid "Cancel"
 msgstr "取消"
 
+#: templates/admin/migration/fullmig/step1_connection.html:8
 msgid "Connect to Source Instance"
-msgstr ""
+msgstr "连接到源实例"
 
+#: templates/admin/migration/fullmig/step1_connection.html:10
 msgid ""
 "Connect to the Spwig instance you want to migrate from. All data will be "
 "pulled from the remote instance to this one."
-msgstr ""
+msgstr "连接到您要从中迁移的 Spwig 实例。所有数据将从远程实例拉取到此实例。"
 
-#, fuzzy
-#| msgid "Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:19
+#: templates/admin/migration/sync/step1_connection.html:19
 msgid "Saved Connections"
-msgstr "连接"
+msgstr "已保存的连接"
 
+#: templates/admin/migration/fullmig/step1_connection.html:34
+#: templates/admin/migration/sync/step1_connection.html:34
 msgid "Verified"
-msgstr ""
+msgstr "已验证"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:43
+#: templates/admin/migration/sync/step1_connection.html:47
 msgid "or configure a new connection"
-msgstr "配置连接"
+msgstr "或配置新连接"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:50
+#: templates/admin/migration/sync/step1_connection.html:54
 msgid "Connection Details"
-msgstr "连接失败"
+msgstr "连接详情"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:55
+#: templates/admin/migration/sync/step1_connection.html:59
 msgid "Connection Name"
-msgstr "连接失败"
+msgstr "连接名称"
 
+#: templates/admin/migration/fullmig/step1_connection.html:57
 msgid "e.g., Old Server"
-msgstr ""
+msgstr "例如，旧服务器"
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/fullmig/step1_connection.html:61
 msgid "Source URL"
-msgstr "店铺网址"
+msgstr "源 URL"
 
+#: templates/admin/migration/fullmig/step1_connection.html:67
+#: templates/admin/migration/sync/step1_connection.html:79
 msgid "Sync Token"
-msgstr ""
+msgstr "同步令牌"
 
+#: templates/admin/migration/fullmig/step1_connection.html:69
 msgid "Paste the sync token from the source instance"
-msgstr ""
+msgstr "粘贴来自源实例的同步令牌"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:78
+#: templates/admin/migration/sync/step1_connection.html:106
 msgid "Test Connection"
 msgstr "测试连接"
 
-#, fuzzy
-#| msgid "View All Migrations"
+#: templates/admin/migration/fullmig/step1_connection.html:87
 msgid "How Full Migration Works"
-msgstr "查看所有迁移"
+msgstr "完整迁移的工作原理"
 
+#: templates/admin/migration/fullmig/step1_connection.html:88
 msgid ""
 "Full migration pulls all data from the source instance: settings, products, "
 "customers, orders, media files, and content. This is typically used when "
 "moving to a new server or creating a staging copy."
 msgstr ""
+"完整迁移会从源实例拉取所有数据：设置、产品、客户、订单、媒体文件和内容。这通"
+"常用于迁移到新服务器或创建预发布副本。"
 
+#: templates/admin/migration/fullmig/step1_connection.html:98
 msgid "Next: Select Scope"
-msgstr ""
+msgstr "下一步：选择范围"
 
+#: templates/admin/migration/fullmig/step1_connection.html:109
+#: templates/admin/migration/sync/step1_connection.html:129
+#: templates/admin/migration/wizard/step2_connection.html:479
 msgid "Testing connection..."
 msgstr "正在测试连接..."
 
-#, fuzzy
-#| msgid "Connection successful"
+#: templates/admin/migration/fullmig/step1_connection.html:110
+#: templates/admin/migration/sync/step1_connection.html:130
 msgid "Connection successful!"
-msgstr "连接成功"
+msgstr "连接成功！"
 
+#: templates/admin/migration/fullmig/step1_connection.html:111
+#: templates/admin/migration/sync/step1_connection.html:131
+#: templates/admin/migration/wizard/step2_connection.html:488
 msgid "Connection failed"
 msgstr "连接失败"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step1_connection.html:112
+#: templates/admin/migration/sync/step1_connection.html:132
 msgid "Version"
 msgstr "版本"
 
-#, fuzzy
-#| msgid "Name"
+#: templates/admin/migration/fullmig/step1_connection.html:113
+#: templates/admin/migration/sync/step1_connection.html:133
 msgid "Site Name"
-msgstr "名称"
+msgstr "站点名称"
 
-#, fuzzy
-#| msgid "Migration Step"
+#: templates/admin/migration/fullmig/step2_scope.html:8
 msgid "Select Migration Scope"
-msgstr "迁移步骤"
+msgstr "选择迁移范围"
 
+#: templates/admin/migration/fullmig/step2_scope.html:10
 msgid ""
 "Choose which data categories to include in the migration. Dependencies will "
 "be automatically included."
-msgstr ""
+msgstr "选择要包含在迁移中的数据类别。依赖项将自动包含。"
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: templates/admin/migration/fullmig/step2_scope.html:20
 msgid "Select All Categories"
-msgstr "博客分类"
+msgstr "选择所有分类"
 
-#, fuzzy
-#| msgid "Parse Date"
+#: templates/admin/migration/fullmig/step2_scope.html:41
 msgid "Large Data"
-msgstr "解析日期"
+msgstr "大量数据"
 
-#, fuzzy
-#| msgid "Credentials"
+#: templates/admin/migration/fullmig/step2_scope.html:46
+#: templates/admin/migration/sync/step2_categories.html:109
 msgid "Has Credentials"
-msgstr "凭证"
+msgstr "具有凭证"
 
+#: templates/admin/migration/fullmig/step2_scope.html:51
 msgid "Requires:"
-msgstr ""
+msgstr "需要："
 
+#: templates/admin/migration/fullmig/step2_scope.html:65
+#: templates/admin/migration/fullmig/step3_preflight.html:165
+#: templates/admin/migration/sync/step2_categories.html:133
+#: templates/admin/migration/sync/step3_preview.html:119
+#: templates/admin/migration/wizard/step2_connection.html:460
+#: templates/admin/migration/wizard/step3_preview.html:269
+#: templates/admin/migration/wizard/step4_mapping.html:297
 msgid "Back"
 msgstr "返回"
 
+#: templates/admin/migration/fullmig/step2_scope.html:68
 msgid "Next: Pre-flight Check"
-msgstr ""
+msgstr "下一步：预检"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:8
 msgid "Pre-flight Check"
-msgstr ""
+msgstr "预检"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:10
 msgid ""
 "Verifying compatibility between source and target instances before migration."
-msgstr ""
+msgstr "在迁移之前，正在验证源实例和目标实例之间的兼容性。"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:16
 msgid "Version Compatibility"
-msgstr ""
+msgstr "版本兼容性"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:21
 msgid "Versions Compatible"
-msgstr ""
+msgstr "版本兼容"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:23
+#: templates/admin/migration/fullmig/step3_preflight.html:43
 msgid "Local:"
-msgstr ""
+msgstr "本地："
 
+#: templates/admin/migration/fullmig/step3_preflight.html:25
+#: templates/admin/migration/fullmig/step3_preflight.html:45
 msgid "Remote:"
-msgstr ""
+msgstr "远程："
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step3_preflight.html:40
 msgid "Version Mismatch"
-msgstr "版本"
+msgstr "版本不匹配"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:55
 msgid "Component Compatibility"
-msgstr ""
+msgstr "组件兼容性"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:61
 msgid "Components Missing on Target"
-msgstr ""
+msgstr "目标端缺少组件"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:62
 msgid ""
 "These components are installed on the source but not on this instance. "
 "Install them via the Component Store before migrating."
 msgstr ""
+"这些组件已安装在源系统中，但未安装在此实例中。在迁移前，请通过组件商店安装它"
+"们。"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:76
 msgid "Component Version Differences"
-msgstr ""
+msgstr "组件版本差异"
 
-#, fuzzy
-#| msgid "Source"
+#: templates/admin/migration/fullmig/step3_preflight.html:81
 msgid "source"
-msgstr "来源"
+msgstr "源"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:82
 msgid "target"
-msgstr ""
+msgstr "目标"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:94
 msgid "All Components Match"
-msgstr ""
+msgstr "所有组件匹配"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:95
 msgid "Installed components are compatible between source and target."
-msgstr ""
+msgstr "已安装的组件在源和目标之间是兼容的。"
 
-#, fuzzy
-#| msgid "Import Summary"
+#: templates/admin/migration/fullmig/step3_preflight.html:105
 msgid "Source Data Summary"
-msgstr "导入摘要"
+msgstr "源数据概览"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:129
 msgid "Media Storage"
-msgstr ""
+msgstr "媒体存储"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:130
 msgid "Total media size on source:"
-msgstr ""
+msgstr "源站媒体总大小："
 
+#: templates/admin/migration/fullmig/step3_preflight.html:142
 msgid "Pre-flight Check Failed"
-msgstr ""
+msgstr "预检失败"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:143
 msgid ""
 "Could not connect to the remote instance to perform compatibility checks. "
 "Please verify the connection and try again."
-msgstr ""
+msgstr "无法连接到远程实例以执行兼容性检查。请验证连接并重试。"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:154
 msgid "License Reminder"
-msgstr ""
+msgstr "许可证提醒"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:155
 msgid ""
 "This installation requires its own license. After migration, you will need "
 "to activate a separate license for this instance."
-msgstr ""
+msgstr "此安装需要自己的许可证。迁移后，您需要为该实例激活一个独立的许可证。"
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: templates/admin/migration/fullmig/step3_preflight.html:170
 msgid "Start Migration"
-msgstr "开始新迁移"
+msgstr "开始迁移"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:175
 msgid "Cannot Proceed (Version Incompatible)"
-msgstr ""
+msgstr "无法继续（版本不兼容）"
 
+#: templates/admin/migration/fullmig/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The migration will continue in "
 "the background."
-msgstr ""
+msgstr "您可以安全地离开此页面。迁移将在后台继续进行。"
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: templates/admin/migration/fullmig/step4_progress.html:13
 msgid "Migration Progress"
-msgstr "迁移日志"
+msgstr "迁移进度"
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step4_progress.html:17
+#: templates/admin/migration/fullmig/step4_progress.html:149
 msgid "Migration completed."
-msgstr "迁移完成"
+msgstr "迁移完成。"
 
-#, fuzzy
-#| msgid "Migration cancelled by user"
+#: templates/admin/migration/fullmig/step4_progress.html:19
+#: templates/admin/migration/fullmig/step4_progress.html:150
 msgid "Migration encountered errors."
-msgstr "迁移已被用户取消"
+msgstr "迁移过程中遇到错误。"
 
+#: templates/admin/migration/fullmig/step4_progress.html:21
+#: templates/admin/migration/fullmig/step4_progress.html:151
 msgid "Migrating data from source instance..."
-msgstr ""
+msgstr "正在从源实例迁移数据..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:28
+#: templates/admin/migration/sync/step4_progress.html:28
+#: templates/admin/migration/wizard/step5_import.html:54
 msgid "Overall Progress"
 msgstr "总体进度"
 
+#: templates/admin/migration/fullmig/step4_progress.html:39
+#: templates/admin/migration/fullmig/step4_progress.html:155
+#: templates/admin/migration/sync/step4_progress.html:39
+#: templates/admin/migration/sync/step4_progress.html:167
 msgid "Elapsed:"
-msgstr ""
+msgstr "已用时间："
 
+#: templates/admin/migration/fullmig/step4_progress.html:40
+#: templates/admin/migration/fullmig/step4_progress.html:156
+#: templates/admin/migration/sync/step4_progress.html:40
+#: templates/admin/migration/sync/step4_progress.html:168
 msgid "Remaining:"
-msgstr ""
+msgstr "剩余："
 
-#, fuzzy
-#| msgid "Migration Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:48
+#: templates/admin/migration/fullmig/step5_results.html:43
+#: templates/admin/migration/fullmig/step5_results.html:75
 msgid "Migrated"
-msgstr "迁移失败"
+msgstr "已迁移"
 
-#, fuzzy
-#| msgid "Category Array"
+#: templates/admin/migration/fullmig/step4_progress.html:67
+#: templates/admin/migration/sync/step4_progress.html:67
 msgid "Category Progress"
-msgstr "分类数组"
+msgstr "分类进度"
 
-#, fuzzy
-#| msgid "Created"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:146
 msgid "migrated"
-msgstr "已创建"
+msgstr "已迁移"
 
-#, fuzzy
-#| msgid "Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:147
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:159
 msgid "failed"
 msgstr "失败"
 
-#, fuzzy
-#| msgid "Total"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:148
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:160
 msgid "total"
 msgstr "总计"
 
+#: templates/admin/migration/fullmig/step4_progress.html:112
+#: templates/admin/migration/sync/step4_progress.html:112
 msgid "Activity Log"
-msgstr ""
+msgstr "活动日志"
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:117
+#: templates/admin/migration/sync/step4_progress.html:117
 msgid "Waiting for activity..."
-msgstr "等待中..."
+msgstr "等待活动..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:125
+#: templates/admin/migration/syncjob/change_list.html:176
+#: templates/admin/migration/wizard/step5_import.html:309
 msgid "View Results"
 msgstr "查看结果"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/fullmig/step4_progress.html:131
+#: templates/admin/migration/fullmig/step4_progress.html:152
+#: templates/admin/migration/fullmig/step5_results.html:155
+#: templates/admin/migration/sync/step4_progress.html:138
+#: templates/admin/migration/sync/step4_progress.html:164
 msgid "Back to Dashboard"
-msgstr "从开发仪表盘开始"
+msgstr "返回仪表盘"
 
+#: templates/admin/migration/fullmig/step4_progress.html:153
+#: templates/admin/migration/fullmig/step5_results.html:163
+#: templates/admin/migration/wizard/step6_complete.html:280
 msgid "Rollback Migration"
 msgstr "回滚迁移"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step4_progress.html:154
 msgid ""
 "Are you sure you want to rollback this migration? This will delete all "
 "migrated data."
-msgstr "您确定要回滚此次迁移吗？这将删除所有导入的数据。"
+msgstr "确定要回滚此迁移吗？这将删除所有已迁移的数据。"
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:157
+#: templates/admin/migration/sync/step4_progress.html:169
 msgid "calculating..."
-msgstr "等待中..."
+msgstr "计算中..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:158
+#: templates/admin/migration/sync/step4_progress.html:170
 msgid "Connection lost, retrying..."
-msgstr ""
+msgstr "连接丢失，正在重试..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:159
+#: templates/admin/migration/sync/step4_progress.html:171
 msgid "Reconnected"
-msgstr ""
+msgstr "已重新连接"
 
-#, fuzzy
-#| msgid "Your data has been successfully imported from"
+#: templates/admin/migration/fullmig/step5_results.html:11
 msgid "All selected data has been successfully migrated to this installation."
-msgstr "您的数据已成功从以下来源导入"
+msgstr "所有选中的数据已成功迁移到此安装。"
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step5_results.html:20
 msgid "Migration Completed with Errors"
-msgstr "迁移完成"
+msgstr "迁移完成但存在错误"
 
+#: templates/admin/migration/fullmig/step5_results.html:21
 msgid "Some items could not be migrated. Review the details below."
-msgstr ""
+msgstr "某些项目未能迁移。请查看下面的详细信息。"
 
+#: templates/admin/migration/fullmig/step5_results.html:30
+#: templates/admin/migration/wizard/step6_complete.html:298
 msgid "Migration Failed"
 msgstr "迁移失败"
 
-#, fuzzy
-#| msgid "Migration Wizard"
+#: templates/admin/migration/fullmig/step5_results.html:39
 msgid "Migration Summary"
-msgstr "迁移向导"
+msgstr "迁移摘要"
 
-#, fuzzy
-#| msgid "Duration"
+#: templates/admin/migration/fullmig/step5_results.html:62
 msgid "Duration:"
-msgstr "时长"
+msgstr "持续时间："
 
-#, fuzzy
-#| msgid "Categories"
+#: templates/admin/migration/fullmig/step5_results.html:69
 msgid "Category Results"
-msgstr "分类"
+msgstr "分类结果"
 
+#: templates/admin/migration/fullmig/step5_results.html:87
 msgid "Done"
-msgstr ""
+msgstr "完成"
 
+#: templates/admin/migration/fullmig/step5_results.html:121
+#: templates/admin/migration/wizard/step6_complete.html:398
 msgid "Next Steps"
 msgstr "下一步"
 
+#: templates/admin/migration/fullmig/step5_results.html:126
 msgid "Activate your license on this installation"
-msgstr ""
+msgstr "在此安装中激活您的许可证"
 
+#: templates/admin/migration/fullmig/step5_results.html:130
 msgid "Re-enter any payment provider credentials that were skipped"
-msgstr ""
+msgstr "重新输入任何被跳过的支付提供商凭据"
 
-#, fuzzy
-#| msgid "When you're ready to go live, point your domain to this platform."
+#: templates/admin/migration/fullmig/step5_results.html:134
 msgid "Configure DNS to point your domain to this server"
-msgstr "当您准备上线时，请将您的域名指向此平台。"
+msgstr "配置DNS以将您的域名指向此服务器"
 
+#: templates/admin/migration/fullmig/step5_results.html:138
 msgid "Test the checkout flow with a test order"
-msgstr ""
+msgstr "使用测试订单测试结账流程"
 
+#: templates/admin/migration/fullmig/step5_results.html:142
 msgid "Verify email sending works correctly"
-msgstr ""
+msgstr "验证电子邮件发送是否正常工作"
 
+#: templates/admin/migration/fullmig/step5_results.html:146
 msgid "Check that media files and images are loading correctly"
-msgstr ""
+msgstr "检查媒体文件和图片是否能正确加载"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step5_results.html:161
 msgid "Are you sure? This will delete all migrated data."
-msgstr "您确定要回滚此次迁移吗？这将删除所有导入的数据。"
+msgstr "确定？这将删除所有迁移的数据。"
 
-#, fuzzy
-#| msgid "Shopify Developer Dashboard"
+#: templates/admin/migration/fullmig/step5_results.html:168
+msgid "Rollback available until"
+msgstr "可回滚至"
+
+#: templates/admin/migration/fullmig/step5_results.html:174
 msgid "Go to Dashboard"
-msgstr "Shopify 开发者仪表盘"
+msgstr "前往仪表盘"
 
+#: templates/admin/migration/migrationjob/change_list.html:4
+#: templates/admin/migration/migrationjob/change_list.html:23
 msgid "Data Import & Export"
 msgstr "数据导入与导出"
 
+#: templates/admin/migration/migrationjob/change_list.html:25
 msgid ""
 "Migrate from WooCommerce, Shopify, Magento, or import/export via CSV files"
 msgstr "从 WooCommerce、Shopify、Magento 迁移，或通过 CSV 文件导入/导出"
 
+#: templates/admin/migration/migrationjob/change_list.html:36
 msgid "Total Migrations"
 msgstr "总迁移数"
 
+#: templates/admin/migration/migrationjob/change_list.html:52
+#: templates/admin/migration/syncjob/change_list.html:45
 msgid "In Progress"
 msgstr "进行中"
 
-msgid "Start New Migration"
-msgstr "开始新迁移"
-
+#: templates/admin/migration/migrationjob/change_list.html:73
 msgid "View Logs"
 msgstr "查看日志"
 
+#: templates/admin/migration/migrationjob/change_list.html:78
 msgid "Field Mappings"
 msgstr "字段映射"
 
+#: templates/admin/migration/migrationjob/change_list.html:114
+#: templates/admin/migration/wizard/step5_import.html:60
+msgid "Stopping…"
+msgstr "停止中…"
+
+#: templates/admin/migration/migrationjob/change_list.html:192
 msgid "Resume"
 msgstr "继续"
 
+#: templates/admin/migration/migrationjob/change_list.html:202
+msgid ""
+"Run this import again? It starts from the beginning and skips items that "
+"have already been imported."
+msgstr "再次运行此导入？它将从头开始，并跳过已导入的项目。"
+
+#: templates/admin/migration/migrationjob/change_list.html:203
 msgid "Retry"
 msgstr "重试"
 
-msgid "Are you sure you want to cancel this migration?"
-msgstr "您确定要取消此次迁移吗？"
+#: templates/admin/migration/migrationjob/change_list.html:215
+msgid ""
+"Stop this import? It finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store."
+msgstr ""
+"停止此导入？它将完成当前正在处理的批次，然后停止。已导入的任何内容都会保留在"
+"您的商店中。"
 
+#: templates/admin/migration/migrationjob/change_list.html:223
+#: templates/admin/migration/migrationjob/change_list.html:227
+#: templates/admin/migration/migrationjob/change_list.html:231
 msgid "View"
 msgstr "查看"
 
+#: templates/admin/migration/migrationjob/change_list.html:239
 msgid ""
-"Are you sure you want to rollback this migration? This will delete all "
-"imported data."
-msgstr "您确定要回滚此次迁移吗？这将删除所有导入的数据。"
+"Review the rollback details? Rolling back removes what this import created, "
+"keeping anything your store now depends on. You will see exactly what it "
+"will remove before you confirm."
+msgstr ""
+"查看回滚详情？回滚将删除此导入创建的内容，保留您商店当前依赖的任何内容。在确"
+"认之前，您将看到确切的删除内容。"
 
+#: templates/admin/migration/migrationjob/change_list.html:240
+#: templates/admin/migration/sync/step4_progress.html:144
+#: templates/admin/migration/sync/step4_progress.html:165
+#: templates/admin/migration/syncjob/change_list.html:185
 msgid "Rollback"
 msgstr "回滚"
 
+#: templates/admin/migration/migrationjob/change_list.html:250
 msgid ""
-"Are you sure you want to force delete this migration? This cannot be undone."
-msgstr "您确定要强制删除此次迁移吗？此操作无法撤销。"
+"Delete this migration record? This does not remove anything that was "
+"imported. Spwig will lose its record of which items came from this import, "
+"so you will not be able to roll it back afterwards."
+msgstr ""
+"删除此迁移记录？这不会删除任何已导入的内容。Spwig 将失去记录哪些物品来自此导"
+"入，因此之后您将无法回滚。"
 
+#: templates/admin/migration/migrationjob/change_list.html:251
 msgid "Delete"
 msgstr "删除"
 
+#: templates/admin/migration/migrationjob/change_list.html:262
 msgid "No Migrations Yet"
 msgstr "尚无迁移"
 
+#: templates/admin/migration/migrationjob/change_list.html:263
 msgid "Get started by creating your first data migration"
 msgstr "通过创建您的第一个数据迁移来开始"
 
+#: templates/admin/migration/migrationjob/change_list.html:266
 msgid "Create First Migration"
 msgstr "创建第一个迁移"
 
+#: templates/admin/migration/sync/base.html:4
 msgid "Spwig Sync"
-msgstr ""
+msgstr "Spwig 同步"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/sync/base.html:20
+#: templates/admin/migration/sync/token_management.html:21
 msgid "Back to Sync Dashboard"
-msgstr "从开发仪表盘开始"
+msgstr "返回同步仪表盘"
 
+#: templates/admin/migration/sync/base.html:46
+#: templates/admin/migration/sync/base.html:67
+#: templates/admin/migration/wizard/base.html:42
 msgid "Connection"
 msgstr "连接"
 
+#: templates/admin/migration/sync/base.html:50
+#: templates/admin/migration/wizard/step2_connection.html:214
 msgid "Scope"
 msgstr "作用域"
 
+#: templates/admin/migration/sync/base.html:54
 msgid "Pre-flight"
-msgstr ""
+msgstr "预检"
 
-#, fuzzy
-#| msgid "View Results"
+#: templates/admin/migration/sync/base.html:62
 msgid "Results"
-msgstr "查看结果"
+msgstr "结果"
 
+#: templates/admin/migration/sync/base.html:75
+#: templates/admin/migration/wizard/base.html:46
 msgid "Preview"
 msgstr "预览"
 
+#: templates/admin/migration/sync/step1_connection.html:8
 msgid "Connect to Remote Instance"
-msgstr ""
+msgstr "连接到远程实例"
 
+#: templates/admin/migration/sync/step1_connection.html:10
 msgid ""
 "Connect to another Spwig installation to sync settings. You can use a saved "
 "connection or set up a new one."
 msgstr ""
+"连接到另一个 Spwig 安装以同步设置。您可以使用已保存的连接或设置一个新的连接。"
 
-#, fuzzy
-#| msgid "Credentials verified"
+#: templates/admin/migration/sync/step1_connection.html:39
 msgid "Not verified"
-msgstr "凭证已验证"
+msgstr "未验证"
 
+#: templates/admin/migration/sync/step1_connection.html:61
 msgid "e.g., Production Server"
-msgstr ""
+msgstr "例如，生产服务器"
 
+#: templates/admin/migration/sync/step1_connection.html:64
 msgid "A friendly name to identify this connection."
-msgstr ""
+msgstr "用于标识此连接的友好名称。"
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/sync/step1_connection.html:69
 msgid "Remote URL"
-msgstr "店铺网址"
+msgstr "远程URL"
 
+#: templates/admin/migration/sync/step1_connection.html:74
 msgid "The full URL of the remote Spwig installation."
-msgstr ""
+msgstr "远程 Spwig 安装的完整 URL。"
 
+#: templates/admin/migration/sync/step1_connection.html:81
 msgid "Paste the sync token from the remote instance"
-msgstr ""
+msgstr "从远程实例粘贴同步令牌"
 
+#: templates/admin/migration/sync/step1_connection.html:84
 msgid ""
 "Generate a sync token on the remote instance under Sync Dashboard > Manage "
 "Tokens."
-msgstr ""
+msgstr "在远程实例的同步仪表板 > 管理令牌下生成一个同步令牌。"
 
+#: templates/admin/migration/sync/step1_connection.html:98
 msgid ""
 "Marking a connection as 'Production' enables additional safety checks when "
 "pushing changes."
-msgstr ""
+msgstr "将连接标记为'生产环境'会在推送更改时启用额外的安全检查。"
 
-#, fuzzy
-#| msgid "Create new categories"
+#: templates/admin/migration/sync/step1_connection.html:118
 msgid "Next: Select Categories"
-msgstr "创建新分类"
+msgstr "下一步：选择分类"
 
-#, fuzzy
-#| msgid "Category - Description"
+#: templates/admin/migration/sync/step2_categories.html:8
 msgid "Select Categories & Direction"
-msgstr "分类 - 描述"
+msgstr "选择分类与方向"
 
+#: templates/admin/migration/sync/step2_categories.html:10
 msgid "Choose which settings to sync and the direction of data flow."
-msgstr ""
+msgstr "选择要同步的设置以及数据流的方向。"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/sync/step2_categories.html:18
 msgid "Sync Configuration"
-msgstr "配置连接"
+msgstr "同步配置"
 
+#: templates/admin/migration/sync/step2_categories.html:29
 msgid "Pull"
-msgstr ""
+msgstr "拉取"
 
-msgid "Remote → Local"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:30
+msgid "From connected store to this store"
+msgstr "从已连接的商店到此商店"
 
+#: templates/admin/migration/sync/step2_categories.html:38
 msgid "Push"
-msgstr ""
+msgstr "推送"
 
-msgid "Local → Remote"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:39
+msgid "From this store to connected store"
+msgstr "从此商店到已连接的商店"
 
+#: templates/admin/migration/sync/step2_categories.html:47
 msgid "Sync Mode"
-msgstr ""
+msgstr "同步模式"
 
-#, fuzzy
-#| msgid "Updated"
+#: templates/admin/migration/sync/step2_categories.html:54
 msgid "Add & Update"
-msgstr "已更新"
+msgstr "添加与更新"
 
-#, fuzzy
-#| msgid "Skip existing items"
+#: templates/admin/migration/sync/step2_categories.html:55
 msgid "Never deletes existing items"
-msgstr "跳过已有项目"
+msgstr "不会删除现有项目"
 
-msgid "Makes target match source exactly"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:62
+msgid "Exact Copy"
+msgstr "精确复制"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/sync/step2_categories.html:63
+msgid "Adds, updates, and removes items to match the source"
+msgstr "添加、更新和删除项目以与源匹配"
+
+#: templates/admin/migration/sync/step2_categories.html:73
 msgid "Production Connection"
-msgstr "测试连接"
+msgstr "生产环境连接"
 
+#: templates/admin/migration/sync/step2_categories.html:74
 msgid ""
 "This connection is marked as production. Pushing changes will modify your "
 "live store settings."
-msgstr ""
+msgstr "此连接标记为生产环境。推送更改将修改您的实时商店设置。"
 
+#: templates/admin/migration/sync/step2_categories.html:83
 msgid "Select which categories to include in this sync."
-msgstr ""
+msgstr "选择要包含在此同步中的分类。"
 
-#, fuzzy
-#| msgid "Select"
+#: templates/admin/migration/sync/step2_categories.html:88
 msgid "Select All"
-msgstr "选择"
+msgstr "全选"
 
-#, fuzzy
-#| msgid "CSV Files"
+#: templates/admin/migration/sync/step2_categories.html:114
 msgid "Has Files"
-msgstr "CSV 文件"
+msgstr "包含文件"
 
-#, fuzzy
-#| msgid "Next: Preview Data"
+#: templates/admin/migration/sync/step2_categories.html:136
 msgid "Next: Preview Changes"
-msgstr "下一步：预览数据"
+msgstr "下一步：预览更改"
 
-#, fuzzy
-#| msgid "Preview"
+#: templates/admin/migration/sync/step3_preview.html:8
 msgid "Preview Changes"
-msgstr "预览"
+msgstr "预览更改"
 
+#: templates/admin/migration/sync/step3_preview.html:10
 msgid "Review the changes that will be applied before confirming."
-msgstr ""
+msgstr "在确认之前，请查看将要应用的更改。"
 
+#: templates/admin/migration/sync/step3_preview.html:32
 msgid "Add"
-msgstr ""
+msgstr "添加"
 
+#: templates/admin/migration/sync/step3_preview.html:34
 msgid "Modify"
-msgstr ""
+msgstr "修改"
 
+#: templates/admin/migration/sync/step3_preview.html:36
 msgid "Remove"
-msgstr ""
+msgstr "移除"
 
-#, fuzzy
-#| msgid "Field Mappings"
+#: templates/admin/migration/sync/step3_preview.html:44
 msgid "Field changes"
-msgstr "字段映射"
+msgstr "字段更改"
 
-#, fuzzy
-#| msgid "Meta Fields"
+#: templates/admin/migration/sync/step3_preview.html:48
 msgid "Field"
-msgstr "元字段"
+msgstr "字段"
 
+#: templates/admin/migration/sync/step3_preview.html:49
 msgid "Current"
-msgstr ""
+msgstr "当前"
 
+#: templates/admin/migration/sync/step3_preview.html:50
 msgid "New"
-msgstr ""
+msgstr "新"
 
-#, fuzzy
-#| msgid "Warning"
+#: templates/admin/migration/sync/step3_preview.html:77
 msgid "Warnings"
 msgstr "警告"
 
+#: templates/admin/migration/sync/step3_preview.html:91
 msgid "No Changes Detected"
-msgstr ""
+msgstr "未检测到更改"
 
+#: templates/admin/migration/sync/step3_preview.html:92
 msgid "The selected categories are already in sync. There is nothing to apply."
-msgstr ""
+msgstr "所选分类已同步，无需应用任何更改。"
 
-#, fuzzy
-#| msgid "Product Variant"
+#: templates/admin/migration/sync/step3_preview.html:105
 msgid "Production Warning"
-msgstr "产品变体"
+msgstr "生产环境警告"
 
+#: templates/admin/migration/sync/step3_preview.html:106
 msgid ""
 "You are about to push changes to a production instance. This will modify "
 "live store settings."
-msgstr ""
+msgstr "您即将向生产环境推送更改。这将修改实时商店设置。"
 
+#: templates/admin/migration/sync/step3_preview.html:109
 msgid "I understand this will modify production settings and want to proceed."
-msgstr ""
+msgstr "我理解这将修改生产环境设置，并希望继续。"
 
+#: templates/admin/migration/sync/step3_preview.html:124
 msgid "Start Sync"
-msgstr ""
+msgstr "开始同步"
 
+#: templates/admin/migration/sync/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The sync will continue in the "
 "background."
-msgstr ""
+msgstr "您可以安全地离开此页面。同步将在后台继续进行。"
 
-#, fuzzy
-#| msgid "In Progress"
+#: templates/admin/migration/sync/step4_progress.html:13
 msgid "Sync Progress"
-msgstr "进行中"
+msgstr "同步进度"
 
-#, fuzzy
-#| msgid "Migration Completed Successfully!"
+#: templates/admin/migration/sync/step4_progress.html:17
+#: templates/admin/migration/sync/step4_progress.html:161
 msgid "Sync completed successfully."
-msgstr "迁移成功完成！"
+msgstr "同步已完成。"
 
+#: templates/admin/migration/sync/step4_progress.html:19
+#: templates/admin/migration/sync/step4_progress.html:162
 msgid "Sync encountered errors."
-msgstr ""
+msgstr "同步时遇到错误。"
 
-#, fuzzy
-#| msgid "Counting categories"
+#: templates/admin/migration/sync/step4_progress.html:21
+#: templates/admin/migration/sync/step4_progress.html:163
 msgid "Syncing selected categories..."
-msgstr "统计分类"
+msgstr "正在同步所选分类..."
 
+#: templates/admin/migration/sync/step4_progress.html:48
+#: templates/admin/migration/syncjob/change_list.html:145
 msgid "Synced"
-msgstr ""
+msgstr "已同步"
 
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:158
 msgid "synced"
-msgstr ""
+msgstr "已同步"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/sync/step4_progress.html:166
 msgid ""
 "Are you sure you want to rollback this sync? This will restore the previous "
 "state."
-msgstr "您确定要回滚此次迁移吗？这将删除所有导入的数据。"
+msgstr "您确定要回滚此同步吗？这将恢复之前的状态。"
 
+#: templates/admin/migration/sync/token_management.html:33
 msgid "About Sync Tokens"
-msgstr ""
+msgstr "关于同步令牌"
 
+#: templates/admin/migration/sync/token_management.html:34
 msgid ""
 "Sync tokens allow other Spwig instances to connect to this installation. "
 "Generate a token here and provide it to the remote instance."
 msgstr ""
+"同步令牌允许其他 Spwig 实例连接到此安装。在此生成令牌，并将其提供给远程实例。"
 
+#: templates/admin/migration/sync/token_management.html:38
 msgid "Security"
-msgstr ""
+msgstr "安全"
 
+#: templates/admin/migration/sync/token_management.html:39
 msgid ""
 "Tokens grant read and write access to settings data. Only share them with "
 "trusted administrators. Revoke tokens immediately if compromised."
 msgstr ""
+"令牌授予对设置数据的读写权限。仅与可信赖的管理员共享。如果令牌泄露，请立即撤"
+"销。"
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:45
 msgid "Generate New Token"
-msgstr "生成链接"
+msgstr "生成新令牌"
 
+#: templates/admin/migration/sync/token_management.html:50
 msgid "Token Name"
-msgstr ""
+msgstr "令牌名称"
 
+#: templates/admin/migration/sync/token_management.html:52
 msgid "e.g., Staging Server Token"
-msgstr ""
+msgstr "例如，预发布服务器令牌"
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:56
 msgid "Generate Token"
-msgstr "生成链接"
+msgstr "生成令牌"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:62
 msgid "Active Tokens"
-msgstr "操作"
+msgstr "活动令牌"
 
-msgid "Name"
-msgstr "名称"
+#: templates/admin/migration/sync/token_management.html:81
+msgid "Last used"
+msgstr "最后使用时间"
 
-#, fuzzy
-#| msgid "Preview"
-msgid "Token Preview"
-msgstr "预览"
+#: templates/admin/migration/sync/token_management.html:83
+msgid "Never used"
+msgstr "从未使用"
 
-msgid "Last Used"
-msgstr ""
-
-msgid "Revoke this token? Any connections using it will stop working."
-msgstr ""
-
+#: templates/admin/migration/sync/token_management.html:96
 msgid "Revoke"
-msgstr ""
+msgstr "撤销"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:106
 msgid "No Active Tokens"
-msgstr "操作"
+msgstr "无活动令牌"
 
+#: templates/admin/migration/sync/token_management.html:107
 msgid "Generate a token to allow remote Spwig instances to connect."
-msgstr ""
+msgstr "生成一个令牌，以允许远程 Spwig 实例进行连接。"
 
+#: templates/admin/migration/syncjob/change_list.html:26
 msgid "Sync settings between instances or perform full system migrations"
-msgstr ""
+msgstr "在实例之间同步设置或执行完整的系统迁移"
 
-#, fuzzy
-#| msgid "Total Items"
+#: templates/admin/migration/syncjob/change_list.html:35
 msgid "Total Jobs"
-msgstr "总项目数"
+msgstr "总任务数"
 
-#, fuzzy
-#| msgid "Progress"
+#: templates/admin/migration/syncjob/change_list.html:164
 msgid "View Progress"
-msgstr "进度"
+msgstr "查看进度"
 
+#: templates/admin/migration/syncjob/change_list.html:170
 msgid "Review & Confirm"
-msgstr ""
+msgstr "审核并确认"
 
-msgid "No Sync Jobs Yet"
-msgstr ""
-
-msgid "Start a settings sync or full migration to see job history here."
-msgstr ""
-
-msgid "Start Settings Sync"
-msgstr ""
-
+#: templates/admin/migration/syncjob/change_list.html:184
 msgid "Rollback this sync? This will restore the previous state."
-msgstr ""
+msgstr "回滚此同步？这将恢复到之前的状态。"
 
+#: templates/admin/migration/syncjob/change_list.html:195
+msgid "No Sync Jobs Yet"
+msgstr "尚无同步任务"
+
+#: templates/admin/migration/syncjob/change_list.html:196
+msgid "Start a settings sync or full migration to see job history here."
+msgstr "启动设置同步或完整迁移以在此处查看任务历史。"
+
+#: templates/admin/migration/syncjob/change_list.html:199
+msgid "Start Settings Sync"
+msgstr "开始设置同步"
+
+#: templates/admin/migration/wizard/base.html:4
+#: templates/admin/migration/wizard/base.html:28
 msgid "Migration Wizard"
 msgstr "迁移向导"
 
+#: templates/admin/migration/wizard/base.html:21
 msgid "Back to Migrations"
 msgstr "返回迁移"
 
+#: templates/admin/migration/wizard/base.html:54
 msgid "Import"
 msgstr "导入"
 
+#: templates/admin/migration/wizard/base.html:58
 msgid "Complete"
 msgstr "完成"
 
+#: templates/admin/migration/wizard/base.html:71
 msgid "Copied!"
 msgstr "已复制！"
 
+#: templates/admin/migration/wizard/step1_platform.html:8
 msgid "Select Source Platform"
 msgstr "选择源平台"
 
+#: templates/admin/migration/wizard/step1_platform.html:10
 msgid ""
 "Choose the e-commerce platform you're migrating from. We'll guide you "
 "through the process of importing your data."
 msgstr "选择您要从中迁移的电子商务平台。我们将引导您完成导入数据的过程。"
 
+#: templates/admin/migration/wizard/step1_platform.html:23
 msgid "WordPress + WooCommerce stores"
 msgstr "WordPress + WooCommerce 商店"
 
+#: templates/admin/migration/wizard/step1_platform.html:32
 msgid "Shopify stores using Admin API"
 msgstr "使用 Admin API 的 Shopify 商店"
 
-msgid "Magento/Adobe Commerce (coming soon)"
-msgstr "Magento/Adobe Commerce（即将推出）"
+#: templates/admin/migration/wizard/step1_platform.html:41
+msgid "Magento 2 / Adobe Commerce stores"
+msgstr "Magento 2 / Adobe Commerce 商店"
 
+#: templates/admin/migration/wizard/step1_platform.html:50
 msgid "Import from CSV files"
 msgstr "从 CSV 文件导入"
 
+#: templates/admin/migration/wizard/step1_platform.html:68
 msgid "Next: Configure Connection"
 msgstr "下一步：配置连接"
 
+#: templates/admin/migration/wizard/step1_platform.html:78
 msgid "WooCommerce Migration"
 msgstr "WooCommerce 迁移"
 
+#: templates/admin/migration/wizard/step1_platform.html:79
 msgid ""
 "We will connect to your WooCommerce store using the REST API. You will need "
 "to provide your store URL and API credentials in the next step."
@@ -2385,9 +3052,11 @@ msgstr ""
 "我们将使用 REST API 连接到您的 WooCommerce 商店。您需要在下一步中提供商店 "
 "URL 和 API 凭据。"
 
+#: templates/admin/migration/wizard/step1_platform.html:82
 msgid "Shopify Migration"
 msgstr "Shopify 迁移"
 
+#: templates/admin/migration/wizard/step1_platform.html:83
 msgid ""
 "We will connect to your Shopify store using the Admin API. You will need to "
 "create a private app in the Shopify Developer Dashboard and provide your "
@@ -2396,17 +3065,24 @@ msgstr ""
 "我们将使用 Shopify Admin API 连接到您的 Shopify 商店。您需要在 Shopify 开发者"
 "仪表盘中创建一个私有应用，并在下一步中提供您的客户端 ID 和客户端密钥。"
 
+#: templates/admin/migration/wizard/step1_platform.html:86
 msgid "Magento Migration"
 msgstr "Magento 迁移"
 
+#: templates/admin/migration/wizard/step1_platform.html:87
 msgid ""
-"Magento migration is coming soon. We will support database access and API "
-"methods."
-msgstr "Magento 迁移即将推出。我们将支持数据库访问和 API 方法。"
+"We will connect to your Magento 2 store using the REST API. You will need to "
+"create an Integration in your Magento admin and provide the Access Token in "
+"the next step."
+msgstr ""
+"我们将使用 REST API 连接到您的 Magento 2 商店。您需要在 Magento 后台创建一个"
+"集成，并在下一步提供访问令牌。"
 
+#: templates/admin/migration/wizard/step1_platform.html:90
 msgid "CSV Import"
 msgstr "CSV 导入"
 
+#: templates/admin/migration/wizard/step1_platform.html:91
 msgid ""
 "Import your data from CSV files. We will provide templates in the next step "
 "for products, customers, orders, and other data."
@@ -2414,86 +3090,117 @@ msgstr ""
 "从 CSV 文件导入您的数据。下一步我们将为您提供产品、客户、订单和其他数据的模"
 "板。"
 
+#: templates/admin/migration/wizard/step1_platform.html:95
 msgid "Please select a platform to continue."
 msgstr "请选择一个平台以继续。"
 
+#: templates/admin/migration/wizard/step2_connection.html:8
 msgid "Configure Connection"
 msgstr "配置连接"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "Provide the connection details for your"
 msgstr "提供您的连接详细信息"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "store."
 msgstr "店铺。"
 
+#: templates/admin/migration/wizard/step2_connection.html:19
 msgid "WooCommerce REST API"
 msgstr "WooCommerce REST API"
 
+#: templates/admin/migration/wizard/step2_connection.html:23
+#: templates/admin/migration/wizard/step2_connection.html:325
 msgid "Store URL"
 msgstr "店铺网址"
 
+#: templates/admin/migration/wizard/step2_connection.html:31
 msgid "Your WooCommerce store URL (e.g., https://yourstore.com)"
 msgstr "您的 WooCommerce 商店 URL（例如：https://yourstore.com）"
 
+#: templates/admin/migration/wizard/step2_connection.html:36
 msgid "Consumer Key"
 msgstr "消费者密钥"
 
+#: templates/admin/migration/wizard/step2_connection.html:44
 msgid "Your WooCommerce REST API consumer key"
 msgstr "您的 WooCommerce REST API 消费者密钥"
 
+#: templates/admin/migration/wizard/step2_connection.html:49
 msgid "Consumer Secret"
 msgstr "消费者密钥（秘密）"
 
+#: templates/admin/migration/wizard/step2_connection.html:57
 msgid "Your WooCommerce REST API consumer secret"
 msgstr "您的 WooCommerce REST API 消费者密钥密文"
 
+#: templates/admin/migration/wizard/step2_connection.html:63
 msgid "How to get API credentials"
 msgstr "如何获取 API 凭据"
 
+#: templates/admin/migration/wizard/step2_connection.html:65
 msgid "Log in to your WordPress admin panel"
 msgstr "登录到您的 WordPress 管理面板"
 
+#: templates/admin/migration/wizard/step2_connection.html:66
 msgid "Go to WooCommerce > Settings > Advanced > REST API"
 msgstr "前往 WooCommerce > 设置 > 高级 > REST API"
 
+#: templates/admin/migration/wizard/step2_connection.html:67
 msgid "Click 'Add key' and create a new API key with Read permissions"
 msgstr "点击 '添加密钥' 并创建一个具有读取权限的新 API 密钥"
 
+#: templates/admin/migration/wizard/step2_connection.html:68
 msgid "Copy the Consumer Key and Consumer Secret here"
 msgstr "在此处复制消费者密钥和消费者密钥密文"
 
+#: templates/admin/migration/wizard/step2_connection.html:71
 msgid ""
 "Note: Read-only permissions are sufficient for data migration. We will not "
 "modify your WooCommerce store."
 msgstr "注意：只读权限足以完成数据迁移。我们不会修改您的 WooCommerce 商店。"
 
+#: templates/admin/migration/wizard/step2_connection.html:79
+#: templates/admin/migration/wizard/step2_connection.html:313
+#: templates/admin/migration/wizard/step2_connection.html:372
 msgid "Test connection before proceeding"
 msgstr "在继续之前测试连接"
 
+#: templates/admin/migration/wizard/step2_connection.html:87
 msgid "Shopify Admin API"
 msgstr "Shopify 管理员 API"
 
+#: templates/admin/migration/wizard/step2_connection.html:91
 msgid "Store Domain"
 msgstr "店铺域名"
 
+#: templates/admin/migration/wizard/step2_connection.html:99
 msgid "Your Shopify store domain (e.g., yourstore.myshopify.com)"
 msgstr "您的 Shopify 商店域名（例如：yourstore.myshopify.com）"
 
+#: templates/admin/migration/wizard/step2_connection.html:104
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Client ID"
 msgstr "客户端 ID"
 
+#: templates/admin/migration/wizard/step2_connection.html:112
 msgid "Client ID from your Shopify app's Settings page"
 msgstr "客户端 ID 请从你的 Shopify 应用的 设置 页面获取"
 
+#: templates/admin/migration/wizard/step2_connection.html:117
 msgid "Client Secret"
 msgstr "客户端密钥"
 
+#: templates/admin/migration/wizard/step2_connection.html:125
 msgid "Secret from your Shopify app's Settings page"
 msgstr "密钥 请从你的 Shopify 应用的 设置 页面获取"
 
+#: templates/admin/migration/wizard/step2_connection.html:131
 msgid "Need help getting your API credentials?"
 msgstr "需要帮助获取您的 API 凭证吗？"
 
+#: templates/admin/migration/wizard/step2_connection.html:133
 msgid ""
 "Setting up a Shopify app takes about 10 minutes. Our step-by-step guide with "
 "screenshots will walk you through it."
@@ -2501,24 +3208,31 @@ msgstr ""
 "设置 Shopify 应用大约需要 10 分钟。我们的分步指南附带截图，将引导您完成整个过"
 "程。"
 
+#: templates/admin/migration/wizard/step2_connection.html:137
 msgid "Open Setup Guide"
 msgstr "打开设置指南"
 
+#: templates/admin/migration/wizard/step2_connection.html:148
 msgid "Shopify API Setup Guide"
 msgstr "Shopify API 设置指南"
 
+#: templates/admin/migration/wizard/step2_connection.html:158
 msgid "Open the Shopify Developer Dashboard"
 msgstr "打开 Shopify 开发者仪表盘"
 
+#: templates/admin/migration/wizard/step2_connection.html:160
 msgid "Sign in with the same account you use to manage your store."
 msgstr "使用您用于管理商店的同一账户登录。"
 
+#: templates/admin/migration/wizard/step2_connection.html:162
 msgid "Go to"
 msgstr "前往"
 
+#: templates/admin/migration/wizard/step2_connection.html:163
 msgid "Sign in with your Shopify account"
 msgstr "使用您的 Shopify 账户登录"
 
+#: templates/admin/migration/wizard/step2_connection.html:167
 msgid ""
 "If this is your first time visiting the Developer Dashboard, Shopify may ask "
 "you to agree to developer terms. This is normal — accept and continue."
@@ -2526,155 +3240,211 @@ msgstr ""
 "如果您第一次访问开发者仪表盘，Shopify 可能会要求您同意开发者条款。这是正常的 "
 "— 请接受并继续。"
 
+#: templates/admin/migration/wizard/step2_connection.html:169
 msgid "Shopify Developer Dashboard"
 msgstr "Shopify 开发者仪表盘"
 
+#: templates/admin/migration/wizard/step2_connection.html:176
 msgid "Create a New App"
 msgstr "创建新应用"
 
+#: templates/admin/migration/wizard/step2_connection.html:178
 msgid "Create a private app that Spwig will use to read your store data."
 msgstr "创建一个 Spwig 将用来读取您店铺数据的私有应用。"
 
+#: templates/admin/migration/wizard/step2_connection.html:180
+#: templates/admin/migration/wizard/step2_connection.html:197
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "In the left sidebar, click"
 msgstr "在左侧边栏中，点击"
 
+#: templates/admin/migration/wizard/step2_connection.html:180
 msgid "Apps"
 msgstr "应用"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Click the"
 msgstr "点击"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Create app"
 msgstr "创建应用"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "button (top-right corner)"
 msgstr "按钮（右上角）"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Scroll past 'Start with Shopify CLI' to the"
 msgstr "滚动到 \"Start with Shopify CLI\" 之后的"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Start from Dev Dashboard"
 msgstr "从开发仪表盘开始"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "section"
 msgstr "部分"
 
+#: templates/admin/migration/wizard/step2_connection.html:183
 msgid "Enter app name:"
 msgstr "输入应用名称："
 
+#: templates/admin/migration/wizard/step2_connection.html:184
+#: templates/admin/migration/wizard/step2_connection.html:198
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Click"
 msgstr "点击"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
 msgid "Create"
 msgstr "创建"
 
+#: templates/admin/migration/wizard/step2_connection.html:186
 msgid "Create app in Dev Dashboard"
 msgstr "在开发仪表盘中创建应用"
 
+#: templates/admin/migration/wizard/step2_connection.html:193
 msgid "Create an App Version with Permissions"
 msgstr "创建带有权限的应用版本"
 
+#: templates/admin/migration/wizard/step2_connection.html:195
 msgid "Configure which data the app can access. We only need read-only access."
 msgstr "配置应用程序可以访问的数据。我们只需要只读访问权限。"
 
+#: templates/admin/migration/wizard/step2_connection.html:197
 msgid "Versions"
 msgstr "版本"
 
+#: templates/admin/migration/wizard/step2_connection.html:198
 msgid "Create version"
 msgstr "创建版本"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "Set the"
 msgstr "设置"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "App URL"
 msgstr "应用网址"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "to:"
 msgstr "至："
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Select the newest"
 msgstr "选择最新版本"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Webhooks API Version"
 msgstr "Webhooks API 版本"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Scroll to"
 msgstr "滚动到"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "Access — Scopes"
 msgstr "访问权限 — 范围"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "and paste:"
 msgstr "并粘贴："
 
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Release"
 msgstr "发布"
 
+#: templates/admin/migration/wizard/step2_connection.html:209
 msgid "Scope input field"
 msgstr "作用域输入字段"
 
+#: templates/admin/migration/wizard/step2_connection.html:215
 msgid "What it accesses"
 msgstr "它可访问的内容"
 
+#: templates/admin/migration/wizard/step2_connection.html:219
 msgid "Products, variants, images, collections"
 msgstr "产品、变体、图片、集合"
 
+#: templates/admin/migration/wizard/step2_connection.html:220
 msgid "Customer names, emails, addresses"
 msgstr "客户姓名、电子邮件和地址"
 
+#: templates/admin/migration/wizard/step2_connection.html:221
 msgid "Orders from the last 60 days"
 msgstr "最近60天的订单"
 
+#: templates/admin/migration/wizard/step2_connection.html:222
 msgid "Blog posts and pages"
 msgstr "博客文章和页面"
 
+#: templates/admin/migration/wizard/step2_connection.html:223
 msgid "Discount codes and rules"
 msgstr "折扣码和规则"
 
+#: templates/admin/migration/wizard/step2_connection.html:224
 msgid "Uploaded media files"
 msgstr "已上传的媒体文件"
 
+#: templates/admin/migration/wizard/step2_connection.html:228
 msgid "Scope selection UI"
 msgstr "范围选择界面"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid "Want to migrate your full order history? Add"
 msgstr "想要迁移完整的订单历史记录？请添加"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid ""
 "to the scopes above. Without it, only orders from the last 60 days are "
 "accessible."
 msgstr "到上面的作用域中。否则，仅可访问最近60天的订单。"
 
+#: templates/admin/migration/wizard/step2_connection.html:240
 msgid "Copy Your Client ID and Secret"
 msgstr "复制您的客户端ID和密钥"
 
+#: templates/admin/migration/wizard/step2_connection.html:242
 msgid "These are the two values you will paste into Spwig."
 msgstr "这两个值需要粘贴到 Spwig 中。"
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Find the"
 msgstr "查找"
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Credentials"
 msgstr "凭证"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Copy the"
 msgstr "复制"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "(click the copy icon)"
 msgstr "(点击复制图标)"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Click the eye icon to reveal the"
 msgstr "点击眼睛图标以显示"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Secret"
 msgstr "密钥"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid ", then copy it"
 msgstr "，然后复制它"
 
+#: templates/admin/migration/wizard/step2_connection.html:249
 msgid "App credentials page"
 msgstr "应用凭证页面"
 
+#: templates/admin/migration/wizard/step2_connection.html:252
 msgid ""
 "Treat the Secret like a password. Spwig encrypts it and only uses it during "
 "migration. You can delete the app from Shopify after your migration is "
@@ -2683,63 +3453,84 @@ msgstr ""
 "将 Secret 视为密码。Spwig 会对其进行加密，并仅在迁移过程中使用。迁移完成后，"
 "您可以从 Shopify 删除该应用。"
 
+#: templates/admin/migration/wizard/step2_connection.html:260
 msgid "Set Up Distribution and Install"
 msgstr "设置分发并安装"
 
+#: templates/admin/migration/wizard/step2_connection.html:262
 msgid "Your app needs to be installed on your store before it can access data."
 msgstr "在您的应用能够访问数据之前，需要先将其安装到您的店铺中。"
 
+#: templates/admin/migration/wizard/step2_connection.html:264
 msgid "Click your app name to return to the overview page"
 msgstr "点击您的应用名称返回概览页面"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Distribution"
 msgstr "分配"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "and click"
 msgstr "并点击"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
+#: templates/admin/migration/wizard/step2_connection.html:267
 msgid "Select distribution method"
 msgstr "选择分发方式"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Select"
 msgstr "选择"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Custom distribution"
 msgstr "自定义分配"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "and confirm"
 msgstr "并确认"
 
+#: templates/admin/migration/wizard/step2_connection.html:271
 msgid "Custom distribution option"
 msgstr "自定义分配选项"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Enter your store domain (e.g.,"
 msgstr "请输入您的商店域名（例如，"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid ") and click"
 msgstr ")并点击"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Generate link"
 msgstr "生成链接"
 
+#: templates/admin/migration/wizard/step2_connection.html:275
 msgid "Generate install link"
 msgstr "生成安装链接"
 
+#: templates/admin/migration/wizard/step2_connection.html:277
 msgid "Copy the install link and paste it into your browser"
 msgstr "复制安装链接并粘贴到您的浏览器中"
 
+#: templates/admin/migration/wizard/step2_connection.html:279
 msgid "Copy the generated link"
 msgstr "复制生成的链接"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "On your Shopify admin, review the permissions and click"
 msgstr "在您的Shopify管理后台中，查看权限并点击"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "Install"
 msgstr "安装"
 
+#: templates/admin/migration/wizard/step2_connection.html:283
 msgid "Install app permissions screen"
 msgstr "安装应用权限屏幕"
 
+#: templates/admin/migration/wizard/step2_connection.html:286
 msgid ""
 "Done! Your app is now installed. Return to this page and paste your Client "
 "ID and Secret into the fields above."
@@ -2747,248 +3538,403 @@ msgstr ""
 "完成！您的应用现已安装。返回此页面，并将您的 Client ID 和 Secret 粘贴到上方的"
 "字段中。"
 
+#: templates/admin/migration/wizard/step2_connection.html:297
 msgid "Previous"
 msgstr "上一步"
 
+#: templates/admin/migration/wizard/step2_connection.html:300
 msgid "Next"
 msgstr "下一步"
 
+#: templates/admin/migration/wizard/step2_connection.html:303
 msgid "Got it"
 msgstr "明白了"
 
+#: templates/admin/migration/wizard/step2_connection.html:321
+msgid "Magento 2 REST API"
+msgstr "Magento 2 REST API"
+
+#: templates/admin/migration/wizard/step2_connection.html:333
+msgid "Your Magento store URL (e.g., https://yourstore.com)"
+msgstr "您的 Magento 商店网址（例如，https://yourstore.com）"
+
+#: templates/admin/migration/wizard/step2_connection.html:338
+msgid "Access Token"
+msgstr "访问令牌"
+
+#: templates/admin/migration/wizard/step2_connection.html:346
+msgid "Integration Access Token from your Magento admin"
+msgstr "来自您的 Magento 管理员的集成访问令牌"
+
+#: templates/admin/migration/wizard/step2_connection.html:352
+msgid "How to get your Access Token"
+msgstr "如何获取您的访问令牌"
+
+#: templates/admin/migration/wizard/step2_connection.html:354
+msgid "Log in to your Magento admin panel"
+msgstr "登录到您的 Magento 后台管理面板"
+
+#: templates/admin/migration/wizard/step2_connection.html:355
+msgid "Go to System > Integrations"
+msgstr "前往 系统 > 集成"
+
+#: templates/admin/migration/wizard/step2_connection.html:356
+msgid "Click 'Add New Integration'"
+msgstr "点击“添加新集成”"
+
+#: templates/admin/migration/wizard/step2_connection.html:357
+msgid "Set the name to"
+msgstr "设置名称为"
+
+#: templates/admin/migration/wizard/step2_connection.html:358
+msgid "Under the API tab, set Resource Access to 'All'"
+msgstr "在API选项卡下，将资源访问权限设置为'全部'"
+
+#: templates/admin/migration/wizard/step2_connection.html:359
+msgid "Save and click 'Activate'"
+msgstr "保存并点击“激活”"
+
+#: templates/admin/migration/wizard/step2_connection.html:360
+msgid "Click 'Allow' on the confirmation popup"
+msgstr "在确认弹窗中点击'允许'"
+
+#: templates/admin/migration/wizard/step2_connection.html:361
+msgid "Copy the Access Token value and paste it above"
+msgstr "复制访问令牌的值并粘贴到上方"
+
+#: templates/admin/migration/wizard/step2_connection.html:364
+msgid ""
+"Note: Read-only access is sufficient. We will not modify your Magento store. "
+"You can revoke the integration after migration."
+msgstr ""
+"注意：只读访问权限就足够了。我们不会修改您的 Magento 商店。迁移后您可以撤销该"
+"集成。"
+
+#: templates/admin/migration/wizard/step2_connection.html:380
 msgid "CSV File Upload"
 msgstr "CSV 文件上传"
 
+#: templates/admin/migration/wizard/step2_connection.html:385
 msgid "CSV Import Instructions"
 msgstr "CSV 导入说明"
 
+#: templates/admin/migration/wizard/step2_connection.html:386
 msgid ""
 "Upload CSV files for each data type you want to import. You can import some "
 "or all of the following:"
 msgstr "上传您要导入的每种数据类型的CSV文件。您可以导入以下部分或全部内容："
 
+#: templates/admin/migration/wizard/step2_connection.html:388
 msgid "Products (required)"
 msgstr "商品（必填）"
 
+#: templates/admin/migration/wizard/step2_connection.html:389
 msgid "Categories (optional)"
 msgstr "分类（可选）"
 
+#: templates/admin/migration/wizard/step2_connection.html:390
 msgid "Customers (optional)"
 msgstr "客户（可选）"
 
+#: templates/admin/migration/wizard/step2_connection.html:391
 msgid "Orders (optional)"
 msgstr "订单（可选）"
 
+#: templates/admin/migration/wizard/step2_connection.html:392
 msgid "Reviews (optional)"
 msgstr "评价（可选）"
 
+#: templates/admin/migration/wizard/step2_connection.html:399
 msgid "Products CSV"
 msgstr "商品 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:403
 msgid "CSV file containing your products"
 msgstr "包含您商品的 CSV 文件"
 
+#: templates/admin/migration/wizard/step2_connection.html:405
+#: templates/admin/migration/wizard/step2_connection.html:416
+#: templates/admin/migration/wizard/step2_connection.html:427
+#: templates/admin/migration/wizard/step2_connection.html:438
+#: templates/admin/migration/wizard/step2_connection.html:449
 msgid "Download Template"
 msgstr "下载模板"
 
+#: templates/admin/migration/wizard/step2_connection.html:411
 msgid "Categories CSV"
 msgstr "分类 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:414
 msgid "Optional: CSV file containing your product categories"
 msgstr "可选：包含您产品类别的CSV文件"
 
+#: templates/admin/migration/wizard/step2_connection.html:422
 msgid "Customers CSV"
 msgstr "客户 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:425
 msgid "Optional: CSV file containing your customers"
 msgstr "可选：包含您客户的CSV文件"
 
+#: templates/admin/migration/wizard/step2_connection.html:433
 msgid "Orders CSV"
 msgstr "订单 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:436
 msgid "Optional: CSV file containing your orders"
 msgstr "可选：包含您订单的CSV文件"
 
+#: templates/admin/migration/wizard/step2_connection.html:444
 msgid "Reviews CSV"
 msgstr "评价 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:447
 msgid "Optional: CSV file containing your product reviews"
 msgstr "可选：包含您产品评论的CSV文件"
 
+#: templates/admin/migration/wizard/step2_connection.html:463
 msgid "Next: Preview Data"
 msgstr "下一步：预览数据"
 
+#: templates/admin/migration/wizard/step2_connection.html:476
 msgid "Saving..."
 msgstr "正在保存..."
 
+#: templates/admin/migration/wizard/step2_connection.html:477
+#: templates/admin/migration/wizard/step3_preview.html:299
 msgid "Processing..."
 msgstr "处理中..."
 
+#: templates/admin/migration/wizard/step2_connection.html:478
 msgid "Loading preview..."
 msgstr "正在加载预览..."
 
+#: templates/admin/migration/wizard/step2_connection.html:480
 msgid "Verifying API credentials"
 msgstr "验证API凭证"
 
+#: templates/admin/migration/wizard/step2_connection.html:481
 msgid "Counting products"
 msgstr "统计产品"
 
+#: templates/admin/migration/wizard/step2_connection.html:482
 msgid "Counting categories"
 msgstr "统计分类"
 
+#: templates/admin/migration/wizard/step2_connection.html:483
 msgid "Counting customers"
 msgstr "统计客户"
 
+#: templates/admin/migration/wizard/step2_connection.html:484
 msgid "Counting orders"
 msgstr "统计订单"
 
+#: templates/admin/migration/wizard/step2_connection.html:485
 msgid "Counting blog posts"
 msgstr "统计博客文章"
 
+#: templates/admin/migration/wizard/step2_connection.html:486
 msgid "Preparing the next step"
 msgstr "准备下一步"
 
+#: templates/admin/migration/wizard/step2_connection.html:487
 msgid "Connection successful"
 msgstr "连接成功"
 
+#: templates/admin/migration/wizard/step2_connection.html:489
 msgid "Connection error"
 msgstr "连接错误"
 
+#: templates/admin/migration/wizard/step2_connection.html:490
 msgid "Credentials verified"
 msgstr "凭证已验证"
 
+#: templates/admin/migration/wizard/step2_connection.html:491
 msgid "Products counted"
 msgstr "产品已统计"
 
+#: templates/admin/migration/wizard/step2_connection.html:492
 msgid "Categories counted"
 msgstr "分类已统计"
 
+#: templates/admin/migration/wizard/step2_connection.html:493
 msgid "Customers counted"
 msgstr "客户已统计"
 
+#: templates/admin/migration/wizard/step2_connection.html:494
 msgid "Orders counted"
 msgstr "订单已统计"
 
+#: templates/admin/migration/wizard/step2_connection.html:495
 msgid "Blog posts counted"
 msgstr "博客文章已统计"
 
+#: templates/admin/migration/wizard/step2_connection.html:496
 msgid "Retry Connection"
 msgstr "重试连接"
 
+#: templates/admin/migration/wizard/step2_connection.html:497
 msgid "Exchanging credentials for access token"
 msgstr "正在用凭证换取访问令牌"
 
+#: templates/admin/migration/wizard/step2_connection.html:498
 msgid "Access token obtained"
 msgstr "已获取访问令牌"
 
+#: templates/admin/migration/wizard/step2_connection.html:499
 msgid "Verifying API access"
 msgstr "验证API访问"
 
+#: templates/admin/migration/wizard/step2_connection.html:500
 msgid "API access verified"
 msgstr "API 访问已验证"
 
+#: templates/admin/migration/wizard/step2_connection.html:501
 msgid "Scanning store data"
 msgstr "正在扫描商店数据"
 
+#: templates/admin/migration/wizard/step2_connection.html:502
 msgid "Store scan complete"
 msgstr "商店扫描完成"
 
+#: templates/admin/migration/wizard/step2_connection.html:503
 msgid "Counting collections"
 msgstr "统计集合"
 
+#: templates/admin/migration/wizard/step2_connection.html:504
 msgid "Collections counted"
 msgstr "已统计集合"
 
+#: templates/admin/migration/wizard/step2_connection.html:505
 msgid "Counting discounts"
 msgstr "正在统计折扣"
 
+#: templates/admin/migration/wizard/step2_connection.html:506
 msgid "Discounts counted"
 msgstr "已统计折扣"
 
+#: templates/admin/migration/wizard/step3_preview.html:8
 msgid "Preview Import Data"
 msgstr "预览导入数据"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "Review what will be imported from your"
 msgstr "查看将从您的"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "store. You can select which data types to import."
 msgstr "商店导入的内容。您可以选择要导入的数据类型。"
 
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
 msgid "Collections"
 msgstr "集合"
 
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
 msgid "Discounts"
 msgstr "折扣"
 
+#: templates/admin/migration/wizard/step3_preview.html:44
+#: templates/admin/migration/wizard/step3_preview.html:122
+#: templates/admin/migration/wizard/step4_mapping.html:100
+#: templates/admin/migration/wizard/step5_import.html:211
 msgid "Blog Posts"
 msgstr "博客文章"
 
+#: templates/admin/migration/wizard/step3_preview.html:60
 msgid "Select Data to Import"
 msgstr "选择要导入的数据"
 
+#: templates/admin/migration/wizard/step3_preview.html:66
+#: templates/admin/migration/wizard/step3_preview.html:75
+#: templates/admin/migration/wizard/step3_preview.html:84
+#: templates/admin/migration/wizard/step3_preview.html:93
+#: templates/admin/migration/wizard/step3_preview.html:103
+#: templates/admin/migration/wizard/step3_preview.html:113
 msgid "found"
 msgstr "已找到"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import collections as product categories"
 msgstr "将集合导入为产品分类"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import product categories and their hierarchy"
 msgstr "导入产品类别及其层级结构"
 
+#: templates/admin/migration/wizard/step3_preview.html:77
 msgid "Import products with images, variants, and attributes"
 msgstr "导入带有图片、变体和属性的产品"
 
+#: templates/admin/migration/wizard/step3_preview.html:86
 msgid "Import customer accounts and addresses"
 msgstr "导入客户账户和地址"
 
+#: templates/admin/migration/wizard/step3_preview.html:95
 msgid "Import order history and transactions"
 msgstr "导入订单历史和交易"
 
+#: templates/admin/migration/wizard/step3_preview.html:105
 msgid "Import product reviews and ratings"
 msgstr "导入产品评论和评分"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount codes and price rules"
 msgstr "导入折扣码和价格规则"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount coupons and vouchers"
 msgstr "导入折扣券和优惠券"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "posts"
 msgstr "文章"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "categories"
 msgstr "分类"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "tags"
 msgstr "标签"
 
+#: templates/admin/migration/wizard/step3_preview.html:125
 msgid ""
 "Import blog posts with categories, tags, featured images, and content images"
 msgstr "导入带有类别、标签、特色图片和内容图片的博客文章"
 
+#: templates/admin/migration/wizard/step3_preview.html:135
 msgid "Affiliate Program Data"
 msgstr "联盟计划数据"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "affiliates"
 msgstr "联盟成员"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "commissions"
 msgstr "佣金"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "payouts"
 msgstr "付款"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "plans"
 msgstr "计划"
 
+#: templates/admin/migration/wizard/step3_preview.html:144
 msgid ""
 "Import affiliate profiles, commission records, and payout history. Requires "
 "orders and customers to be imported first."
 msgstr "导入联盟会员资料、佣金记录和付款历史。需要先导入订单和客户信息。"
 
+#: templates/admin/migration/wizard/step3_preview.html:153
 msgid "Affiliate Data Available"
 msgstr "可用联盟数据"
 
+#: templates/admin/migration/wizard/step3_preview.html:154
 msgid ""
 "To import your affiliate program data (affiliates, commissions, payouts), "
 "install the Spwig Migration Bridge plugin on your WordPress site:"
@@ -2996,122 +3942,185 @@ msgstr ""
 "要导入您的联盟计划数据（联盟会员、佣金、付款），请在您的 WordPress 站点上安"
 "装 Spwig Migration Bridge 插件："
 
+#: templates/admin/migration/wizard/step3_preview.html:156
 msgid "Download the plugin ZIP using the button below"
 msgstr "使用下面的按钮下载插件 ZIP 文件"
 
+#: templates/admin/migration/wizard/step3_preview.html:157
 msgid "Go to your WordPress admin → Plugins → Add New → Upload Plugin"
 msgstr "前往您的 WordPress 后台 → 插件 → 添加新插件 → 上传插件"
 
+#: templates/admin/migration/wizard/step3_preview.html:158
 msgid "Upload and activate the plugin"
 msgstr "上传并激活插件"
 
+#: templates/admin/migration/wizard/step3_preview.html:159
 msgid ""
 "Return here and refresh this page — the affiliate data will appear "
 "automatically"
 msgstr "返回此处并刷新此页面 — 联盟数据将自动出现"
 
+#: templates/admin/migration/wizard/step3_preview.html:163
 msgid "Download Bridge Plugin"
 msgstr "下载桥接插件"
 
+#: templates/admin/migration/wizard/step3_preview.html:175
 msgid "Sample Products"
 msgstr "示例产品"
 
+#: templates/admin/migration/wizard/step3_preview.html:176
 msgid "Here are a few example products that will be imported:"
 msgstr "以下是一些将被导入的示例产品："
 
+#: templates/admin/migration/wizard/step3_preview.html:181
+msgid "Name"
+msgstr "名称"
+
+#: templates/admin/migration/wizard/step3_preview.html:182
 msgid "SKU"
 msgstr "SKU"
 
+#: templates/admin/migration/wizard/step3_preview.html:183
 msgid "Price"
 msgstr "价格"
 
+#: templates/admin/migration/wizard/step3_preview.html:195
 msgid "Active"
 msgstr "已激活"
 
+#: templates/admin/migration/wizard/step3_preview.html:197
 msgid "Archived"
 msgstr "已归档"
 
+#: templates/admin/migration/wizard/step3_preview.html:199
 msgid "Draft"
 msgstr "草稿"
 
+#: templates/admin/migration/wizard/step3_preview.html:211
 msgid "Import Options"
 msgstr "导入选项"
 
+#: templates/admin/migration/wizard/step3_preview.html:216
 msgid "Skip existing items"
 msgstr "跳过已有项目"
 
+#: templates/admin/migration/wizard/step3_preview.html:218
 msgid "Don't import items that already exist (matched by SKU, email, etc.)"
 msgstr "不要导入已存在的项目（通过SKU、电子邮件等匹配）"
 
+#: templates/admin/migration/wizard/step3_preview.html:225
+msgid "If the import fails, automatically remove what was imported"
+msgstr "如果导入失败，自动删除已导入的内容"
+
+#: templates/admin/migration/wizard/step3_preview.html:227
+msgid ""
+"Leave this off to keep partial data so you can fix the problem and run the "
+"import again — anything already imported will be skipped."
+msgstr ""
+"关闭此选项可保留部分数据，以便您解决问题并重新运行导入操作 — 已经导入的内容将"
+"被跳过。"
+
+#: templates/admin/migration/wizard/step3_preview.html:233
 msgid "Import product images"
 msgstr "导入产品图片"
 
+#: templates/admin/migration/wizard/step3_preview.html:235
 msgid "Download and import product images (may increase import time)"
 msgstr "下载并导入产品图片（可能会增加导入时间）"
 
+#: templates/admin/migration/wizard/step3_preview.html:241
 msgid "Preserve original IDs where possible"
 msgstr "尽可能保留原始ID"
 
+#: templates/admin/migration/wizard/step3_preview.html:243
 msgid "Attempt to keep original IDs for products and orders (not recommended)"
 msgstr "尝试保留产品和订单的原始ID（不推荐）"
 
+#: templates/admin/migration/wizard/step3_preview.html:247
 msgid "Batch size"
 msgstr "批次大小"
 
+#: templates/admin/migration/wizard/step3_preview.html:249
+#: templates/admin/migration/wizard/step3_preview.html:250
+#: templates/admin/migration/wizard/step3_preview.html:251
+#: templates/admin/migration/wizard/step3_preview.html:252
 msgid "items per batch"
 msgstr "每批次项目数"
 
+#: templates/admin/migration/wizard/step3_preview.html:254
 msgid "Larger batches are faster but use more memory"
 msgstr "更大的批次更快但会使用更多内存"
 
+#: templates/admin/migration/wizard/step3_preview.html:261
 msgid "Data Safety"
 msgstr "数据安全"
 
+#: templates/admin/migration/wizard/step3_preview.html:262
 msgid ""
-"All data will be imported within a database transaction. If anything goes "
-"wrong, the entire import will be rolled back automatically. You'll also have "
-"24 hours to manually rollback if needed."
+"Spwig imports your data one item at a time, and each item is saved as it is "
+"imported. If the import stops part way through, the items already imported "
+"stay in your store unless you tick the option above. You can roll an import "
+"back at any time from the Migrations list — whether it finished, failed or "
+"was stopped. Rollback removes what the import added, but keeps anything your "
+"store has since come to depend on, such as an imported product that now "
+"appears on a real customer's order. Take a full backup before you begin."
 msgstr ""
-"所有数据将在数据库事务中导入。如果出现问题，整个导入将自动回滚。如有需要，您"
-"还将有24小时手动回滚的时间。"
+"Spwig 会逐项导入您的数据，每导入一项就会保存该项。如果导入中途停止，已导入的"
+"项目会保留在您的商店中，除非您勾选了上方的选项。您可以在“迁移”列表中随时回滚"
+"导入操作，无论导入是完成、失败还是被停止。回滚会删除导入添加的内容，但会保留"
+"商店自那以后所依赖的任何内容，例如现在出现在真实客户订单中的已导入产品。开始"
+"之前请务必备份整个数据。"
 
+#: templates/admin/migration/wizard/step3_preview.html:272
 msgid "Next: Configure Mapping"
 msgstr "下一步：配置映射"
 
+#: templates/admin/migration/wizard/step3_preview.html:282
 msgid "Generating Field Mappings..."
 msgstr "生成字段映射..."
 
+#: templates/admin/migration/wizard/step3_preview.html:283
 msgid ""
 "Analyzing your data and creating field mappings. This may take a moment..."
 msgstr "正在分析您的数据并创建字段映射。这可能需要片刻时间..."
 
+#: templates/admin/migration/wizard/step3_preview.html:288
 msgid "Preparing..."
 msgstr "准备中..."
 
+#: templates/admin/migration/wizard/step3_preview.html:298
 msgid "Please select at least one data type to import."
 msgstr "请选择至少一种数据类型进行导入。"
 
+#: templates/admin/migration/wizard/step3_preview.html:300
 msgid "Fetching sample data..."
 msgstr "获取示例数据..."
 
+#: templates/admin/migration/wizard/step3_preview.html:301
 msgid "Detecting custom fields..."
 msgstr "检测自定义字段..."
 
+#: templates/admin/migration/wizard/step3_preview.html:302
 msgid "Creating field mappings..."
 msgstr "创建字段映射..."
 
+#: templates/admin/migration/wizard/step4_mapping.html:8
 msgid "Configure Field Mapping"
 msgstr "配置字段映射"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "Review and customize how data from"
 msgstr "查看并自定义来自"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "maps to your platform. Most fields are mapped automatically."
 msgstr "的数据如何映射到您的平台。大多数字段会自动映射。"
 
+#: templates/admin/migration/wizard/step4_mapping.html:21
 msgid "CSV Column Mapping"
 msgstr "\"CSV 列映射\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:23
 msgid ""
 "Map the columns in your CSV files to the expected fields. We've auto-"
 "detected some matches — review and adjust as needed."
@@ -3119,408 +4128,785 @@ msgstr ""
 "将CSV文件中的列映射到预期的字段。我们已自动检测到一些匹配项 — 请查看并根据需"
 "要进行调整。"
 
+#: templates/admin/migration/wizard/step4_mapping.html:34
 msgid "CSV Column"
 msgstr "\"CSV 列\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:35
 msgid "Maps To"
 msgstr "映射到"
 
+#: templates/admin/migration/wizard/step4_mapping.html:46
 msgid "Skip this column"
 msgstr "跳过此列"
 
+#: templates/admin/migration/wizard/step4_mapping.html:70
 msgid "Automatic Mappings"
 msgstr "自动映射"
 
+#: templates/admin/migration/wizard/step4_mapping.html:72
 msgid ""
 "These fields will be mapped automatically based on standard field names:"
 msgstr "这些字段将基于标准字段名称自动映射："
 
+#: templates/admin/migration/wizard/step4_mapping.html:103
 msgid "Blog Categories"
 msgstr "博客分类"
 
+#: templates/admin/migration/wizard/step4_mapping.html:106
 msgid "Blog Tags"
 msgstr "博客标签"
 
+#: templates/admin/migration/wizard/step4_mapping.html:114
 msgid "Source"
 msgstr "来源"
 
+#: templates/admin/migration/wizard/step4_mapping.html:116
 msgid "Destination"
 msgstr "目标"
 
+#: templates/admin/migration/wizard/step4_mapping.html:144
 msgid "No automatic mappings available."
 msgstr "没有可用的自动映射。"
 
+#: templates/admin/migration/wizard/step4_mapping.html:156
 msgid ""
 "We detected custom fields in your source data. Map them to your platform's "
 "fields or skip them:"
 msgstr ""
 "我们在您的源数据中检测到自定义字段。将它们映射到您的平台字段或跳过它们："
 
+#: templates/admin/migration/wizard/step4_mapping.html:171
 msgid "Meta Fields"
 msgstr "元字段"
 
+#: templates/admin/migration/wizard/step4_mapping.html:181
 msgid "Type:"
 msgstr "类型："
 
+#: templates/admin/migration/wizard/step4_mapping.html:183
 msgid "Example:"
 msgstr "示例："
 
+#: templates/admin/migration/wizard/step4_mapping.html:190
 msgid "Map to:"
 msgstr "映射到："
 
+#: templates/admin/migration/wizard/step4_mapping.html:192
 msgid "— Skip this field —"
 msgstr "— 跳过此字段 —"
 
+#: templates/admin/migration/wizard/step4_mapping.html:194
 msgid "Product Fields"
 msgstr "商品字段"
 
+#: templates/admin/migration/wizard/step4_mapping.html:195
+#: templates/admin/migration/wizard/step4_mapping.html:202
+#: templates/admin/migration/wizard/step4_mapping.html:208
 msgid "Custom Field 1"
 msgstr "自定义字段 1"
 
+#: templates/admin/migration/wizard/step4_mapping.html:196
+#: templates/admin/migration/wizard/step4_mapping.html:203
+#: templates/admin/migration/wizard/step4_mapping.html:209
 msgid "Custom Field 2"
 msgstr "自定义字段 2"
 
+#: templates/admin/migration/wizard/step4_mapping.html:197
 msgid "Custom Field 3"
 msgstr "自定义字段 3"
 
+#: templates/admin/migration/wizard/step4_mapping.html:198
+#: templates/admin/migration/wizard/step4_mapping.html:204
+#: templates/admin/migration/wizard/step4_mapping.html:210
 msgid "Meta Data (JSON)"
 msgstr "元数据 (JSON)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:201
 msgid "Customer Fields"
 msgstr "客户字段"
 
+#: templates/admin/migration/wizard/step4_mapping.html:207
 msgid "Order Fields"
 msgstr "订单字段"
 
+#: templates/admin/migration/wizard/step4_mapping.html:217
 msgid "Transform:"
 msgstr "转换为："
 
+#: templates/admin/migration/wizard/step4_mapping.html:219
 msgid "As Text (String)"
 msgstr "作为文本 (字符串)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:220
 msgid "As Number (Integer)"
 msgstr "作为数字 (整数)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:221
 msgid "As Decimal"
 msgstr "作为小数"
 
+#: templates/admin/migration/wizard/step4_mapping.html:222
 msgid "As True/False (Boolean)"
 msgstr "作为真/假 (布尔值)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:223
 msgid "As JSON"
 msgstr "作为 JSON"
 
+#: templates/admin/migration/wizard/step4_mapping.html:224
 msgid "As Date"
 msgstr "作为日期"
 
+#: templates/admin/migration/wizard/step4_mapping.html:225
 msgid "As URL"
 msgstr "作为 URL"
 
+#: templates/admin/migration/wizard/step4_mapping.html:226
 msgid "As Email"
 msgstr "作为电子邮件"
 
+#: templates/admin/migration/wizard/step4_mapping.html:240
 msgid "No custom fields detected"
 msgstr "未检测到自定义字段"
 
+#: templates/admin/migration/wizard/step4_mapping.html:241
 msgid ""
 "All fields in your source data can be mapped automatically. You can proceed "
 "to the import step."
 msgstr "您源数据中的所有字段都可以自动映射。您可以继续进行导入步骤。"
 
-msgid "Category Mapping"
-msgstr "分类映射"
+#: templates/admin/migration/wizard/step4_mapping.html:255
+msgid "Pricing"
+msgstr "定价"
 
+#: templates/admin/migration/wizard/step4_mapping.html:261
 msgid ""
-"Some categories from your source don't have direct matches. Choose how to "
-"handle them:"
-msgstr "来自您源数据的某些类别没有直接匹配项。请选择如何处理它们："
+"Tax rates and shipping zones are not imported. Tax rules differ enough "
+"between platforms that copying them across unreviewed would risk charging "
+"your customers the wrong amount, so Spwig leaves them to you."
+msgstr ""
+"税率和运费区域未被导入。由于不同平台之间的税率规则差异较大，未经审核地复制这"
+"些规则可能会导致向客户收取错误的金额，因此 Spwig 将其留待您自行处理。"
 
-msgid "Create new categories"
-msgstr "创建新分类"
+#: templates/admin/migration/wizard/step4_mapping.html:262
+msgid ""
+"Set them up in Settings → Tax & Currency and Settings → Shipping once the "
+"import has finished."
+msgstr "在导入完成后，在 设置 → 税务与货币 和 设置 → 运输 中设置它们。"
 
-msgid "Create new categories in your platform for unmapped categories"
-msgstr "为未映射的类别在您的平台中创建新类别"
-
-msgid "Assign to default category"
-msgstr "分配到默认分类"
-
-msgid "Put all unmapped items in a default 'Uncategorized' category"
-msgstr "将所有未映射的项目放入默认的'未分类'类别"
-
-msgid "Skip items with unmapped categories"
-msgstr "跳过未映射分类的项目"
-
-msgid "Don't import items that belong to unmapped categories"
-msgstr "不要导入属于未映射类别的项目"
-
-msgid "Tax & Shipping Settings"
-msgstr "税费与运费设置"
-
-msgid "Import tax settings"
-msgstr "导入税费设置"
-
-msgid "Import tax rates and rules from your source platform"
-msgstr "从您的源平台导入税率和规则"
-
-msgid "Import shipping zones and methods"
-msgstr "导入运费区域和方式"
-
-msgid "Import shipping configuration from your source platform"
-msgstr "从您的源平台导入运费配置"
-
+#: templates/admin/migration/wizard/step4_mapping.html:267
 msgid "Price adjustment"
 msgstr "价格调整"
 
+#: templates/admin/migration/wizard/step4_mapping.html:270
+#: templates/admin/migration/wizard/step6_complete.html:218
 msgid "None"
 msgstr "无"
 
+#: templates/admin/migration/wizard/step4_mapping.html:271
 msgid "Percentage"
 msgstr "百分比"
 
+#: templates/admin/migration/wizard/step4_mapping.html:272
 msgid "Fixed Amount"
 msgstr "固定金额"
 
+#: templates/admin/migration/wizard/step4_mapping.html:280
 #, python-format
 msgid "(e.g., +10 for 10%% increase or -5 for 5%% decrease)"
 msgstr "(例如，+10 表示增加 10%%，或 -5 表示减少 5%%)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:282
 msgid "Optionally adjust all prices during import"
 msgstr "在导入过程中可选择调整所有价格"
 
+#: templates/admin/migration/wizard/step4_mapping.html:289
 msgid "Pro Tip"
 msgstr "专业提示"
 
+#: templates/admin/migration/wizard/step4_mapping.html:290
 msgid ""
 "Field mappings are saved and can be reused for future migrations. You can "
 "also edit mappings after the import is complete."
 msgstr "字段映射已保存，可以用于未来的迁移。您还可以在导入完成后编辑映射。"
 
+#: templates/admin/migration/wizard/step4_mapping.html:300
+#: templates/admin/migration/wizard/step5_import.html:16
 msgid "Start Import"
 msgstr "开始导入"
 
+#: templates/admin/migration/wizard/step5_import.html:9
+msgid "Ready to Import"
+msgstr "准备导入"
+
+#: templates/admin/migration/wizard/step5_import.html:11
+msgid ""
+"This migration is configured but has not started yet. Starting it will begin "
+"importing data into your store."
+msgstr "此迁移已配置但尚未开始。启动它将开始将数据导入您的商店。"
+
+#: templates/admin/migration/wizard/step5_import.html:24
 msgid "Import in Progress"
 msgstr "正在导入"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid "Importing data from"
 msgstr "正在从...导入数据"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid ""
 ". This process is running in the background - you can safely close this "
 "window and check back later."
 msgstr "。此过程在后台运行 - 您可以安全地关闭此窗口，并稍后返回查看。"
 
+#: templates/admin/migration/wizard/step5_import.html:36
+msgid ""
+"Stop this import? Spwig finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store — cancelling does not remove "
+"it."
+msgstr ""
+"停止此导入？Spwig 会完成当前正在处理的批次，然后停止。已导入的任何内容都会保"
+"留在您的商店中 — 取消操作不会将其删除。"
+
+#: templates/admin/migration/wizard/step5_import.html:38
+msgid "Stop Import"
+msgstr "停止导入"
+
+#: templates/admin/migration/wizard/step5_import.html:44
+msgid "Stopping — Spwig finishes the batch it is working on, then stops."
+msgstr "停止 — Spwig 完成正在处理的批次后停止。"
+
+#: templates/admin/migration/wizard/step5_import.html:60
 msgid "Initializing..."
 msgstr "初始化中..."
 
+#: templates/admin/migration/wizard/step5_import.html:70
 msgid "Starting import..."
 msgstr "正在开始导入..."
 
+#: templates/admin/migration/wizard/step5_import.html:79
 msgid "Import Steps"
 msgstr "导入步骤"
 
+#: templates/admin/migration/wizard/step5_import.html:98
+#: templates/admin/migration/wizard/step5_import.html:118
+#: templates/admin/migration/wizard/step5_import.html:138
+#: templates/admin/migration/wizard/step5_import.html:158
+#: templates/admin/migration/wizard/step5_import.html:178
+#: templates/admin/migration/wizard/step5_import.html:198
+#: templates/admin/migration/wizard/step5_import.html:218
+#: templates/admin/migration/wizard/step5_import.html:238
+#: templates/admin/migration/wizard/step5_import.html:258
+#: templates/admin/migration/wizard/step5_import.html:278
 msgid "Waiting..."
 msgstr "等待中..."
 
+#: templates/admin/migration/wizard/step5_import.html:290
 msgid "Import Log"
 msgstr "导入日志"
 
+#: templates/admin/migration/wizard/step5_import.html:293
+#: templates/admin/migration/wizard/step5_import.html:321
 msgid "Show Details"
 msgstr "显示详情"
 
+#: templates/admin/migration/wizard/step5_import.html:306
+#: templates/admin/migration/wizard/step6_complete.html:484
 msgid "View All Migrations"
 msgstr "查看所有迁移"
 
+#: templates/admin/migration/wizard/step5_import.html:320
 msgid "Hide Details"
 msgstr "隐藏详情"
 
+#: templates/admin/migration/wizard/step5_import.html:322
 msgid "View Error Report"
 msgstr "查看错误报告"
 
+#: templates/admin/migration/wizard/step6_complete.html:9
 msgid "Migration Completed Successfully!"
 msgstr "迁移成功完成！"
 
+#: templates/admin/migration/wizard/step6_complete.html:10
 msgid "Your data has been successfully imported from"
 msgstr "您的数据已成功从以下来源导入"
 
+#: templates/admin/migration/wizard/step6_complete.html:57
 msgid "Import Summary"
 msgstr "导入摘要"
 
+#: templates/admin/migration/wizard/step6_complete.html:63
 msgid "Data Type"
 msgstr "数据类型"
 
+#: templates/admin/migration/wizard/step6_complete.html:119
 msgid "links found"
 msgstr "找到链接"
 
+#: templates/admin/migration/wizard/step6_complete.html:121
 msgid "pending review"
 msgstr "待审核"
 
+#: templates/admin/migration/wizard/step6_complete.html:124
 msgid "applied"
 msgstr "已应用"
 
+#: templates/admin/migration/wizard/step6_complete.html:132
 msgid ""
 "We found internal links in your imported content pointing to your old site. "
 "Review the suggestions below and approve the replacements."
 msgstr ""
 "我们在导入的内容中发现了指向您旧网站的内部链接。请查看以下建议并批准替换。"
 
+#: templates/admin/migration/wizard/step6_complete.html:135
 msgid "links have high-confidence matches and can be auto-approved."
 msgstr "链接具有高置信度匹配，可以自动批准。"
 
+#: templates/admin/migration/wizard/step6_complete.html:146
 msgid "Auto-approve high confidence"
 msgstr "自动批准高置信度"
 
+#: templates/admin/migration/wizard/step6_complete.html:152
 msgid "Apply Approved Links"
 msgstr "应用已批准的链接"
 
+#: templates/admin/migration/wizard/step6_complete.html:168
 msgid "links"
 msgstr "链接"
 
+#: templates/admin/migration/wizard/step6_complete.html:171
 msgid "Edit"
 msgstr "编辑"
 
+#: templates/admin/migration/wizard/step6_complete.html:179
 msgid "Original URL"
 msgstr "原始URL"
 
+#: templates/admin/migration/wizard/step6_complete.html:180
 msgid "Anchor Text"
 msgstr "锚文本"
 
+#: templates/admin/migration/wizard/step6_complete.html:181
 msgid "Suggested URL"
 msgstr "建议URL"
 
+#: templates/admin/migration/wizard/step6_complete.html:182
 msgid "Match"
 msgstr "匹配"
 
+#: templates/admin/migration/wizard/step6_complete.html:183
 msgid "Action"
 msgstr "操作"
 
+#: templates/admin/migration/wizard/step6_complete.html:226
 msgid "Approve"
 msgstr "批准"
 
+#: templates/admin/migration/wizard/step6_complete.html:231
 msgid "Skip"
 msgstr "跳过"
 
+#: templates/admin/migration/wizard/step6_complete.html:258
 msgid "Rollback Available"
 msgstr "可回滚"
 
-msgid "You can rollback this migration until"
-msgstr "您可以在此迁移之前回滚"
+#: templates/admin/migration/wizard/step6_complete.html:261
+#, python-format
+msgid "You can roll this migration back until <strong>%(deadline)s</strong>."
+msgstr "您可以在<strong>%(deadline)s</strong>之前回滚此迁移。"
 
+#: templates/admin/migration/wizard/step6_complete.html:263
+msgid "You can roll this migration back from the Migrations list."
+msgstr "您可以从迁移列表中回滚此迁移。"
+
+#: templates/admin/migration/wizard/step6_complete.html:269
 msgid "Important"
 msgstr "重要"
 
+#: templates/admin/migration/wizard/step6_complete.html:270
 msgid ""
-"Rolling back will remove all imported data. This action cannot be undone. "
-"Make sure to backup any changes you've made since the migration."
+"Rolling back removes the products, categories, customers, orders, media and "
+"store-extension data this import created, and it cannot be undone. Anything "
+"your store has since come to depend on — an imported product that now "
+"appears on a real order, for example — is kept rather than removed, and "
+"Spwig lists what it kept. You will see exactly what will be removed before "
+"you confirm."
 msgstr ""
-"回滚将删除所有导入的数据。此操作无法撤销。请确保备份迁移后所做的任何更改。"
+"回滚将删除此次导入创建的产品、分类、客户、订单、媒体和商店扩展数据，且此操作"
+"无法撤销。自导入后，您的商店所依赖的任何内容（例如现在出现在真实订单中的导入"
+"产品）将被保留而非删除，Spwig 会列出保留的内容。在确认之前，您将看到确切的删"
+"除内容。"
 
+#: templates/admin/migration/wizard/step6_complete.html:278
 msgid ""
-"Are you sure you want to rollback this migration? This will remove all "
-"imported data and cannot be undone."
-msgstr "您确定要回滚此迁移吗？这将删除所有导入的数据，且无法撤销。"
+"Roll back this migration? This removes what the import created, keeping "
+"anything your store now depends on. It cannot be undone."
+msgstr ""
+"撤销此迁移？这将删除导入操作创建的内容，保留您商店现在依赖的任何内容。此操作"
+"无法撤销。"
 
+#: templates/admin/migration/wizard/step6_complete.html:290
+msgid "Migration Stopped"
+msgstr "迁移已停止"
+
+#: templates/admin/migration/wizard/step6_complete.html:291
 msgid ""
-"There was an error during the import process. The migration has been rolled "
-"back automatically."
-msgstr "在导入过程中发生了错误。迁移已自动回滚。"
+"You stopped this import. The items imported before it stopped are still in "
+"your store — nothing was removed. You can roll the import back to remove "
+"them, or run it again, in which case anything already imported will be "
+"skipped."
+msgstr ""
+"您已停止此导入。在停止之前导入的项目仍然保留在您的商店中——没有任何内容被删"
+"除。您可以回滚导入以删除它们，或者再次运行导入，在这种情况下，已导入的任何内"
+"容都将被跳过。"
 
+#: templates/admin/migration/wizard/step6_complete.html:299
+msgid ""
+"Spwig could not finish this import. Items imported before the error are "
+"still in your store — nothing has been removed automatically. Review the "
+"details below, then fix the problem at source and run the import again. "
+"Items that were already imported will be skipped."
+msgstr ""
+"Spwig 无法完成此导入。错误发生前导入的项目仍保留在您的商店中——没有任何内容会"
+"被自动删除。请查看下面的详细信息，然后在源处解决问题并重新运行导入。已导入的"
+"项目将被跳过。"
+
+#: templates/admin/migration/wizard/step6_complete.html:306
 msgid "Error Details"
 msgstr "错误详情"
 
+#: templates/admin/migration/wizard/step6_complete.html:322
 msgid "Show technical details"
 msgstr "显示技术细节"
 
+#: templates/admin/migration/wizard/step6_complete.html:331
 msgid "No detailed error information available."
 msgstr "没有可用的详细错误信息。"
 
+#: templates/admin/migration/wizard/step6_complete.html:340
 msgid "Partial Import Results"
 msgstr "部分导入结果"
 
+#: templates/admin/migration/wizard/step6_complete.html:342
 msgid ""
-"The following data was imported before the error occurred (all rolled back):"
-msgstr "在发生错误之前导入了以下数据（所有数据已回滚）："
+"The following items were imported before the error occurred. They are live "
+"in your store:"
+msgstr "在发生错误之前，以下项目已导入。它们已在您的商店中上线："
 
+#: templates/admin/migration/wizard/step6_complete.html:377
+#: templates/admin/migration/wizard/step6_complete.html:494
 msgid "Try Again"
 msgstr "重试"
 
+#: templates/admin/migration/wizard/step6_complete.html:379
 msgid ""
 "You can start a new migration with the same settings or adjust your "
 "configuration."
 msgstr "您可以使用相同的设置开始新的迁移，或调整您的配置。"
 
+#: templates/admin/migration/wizard/step6_complete.html:384
 msgid "Adjust Settings"
 msgstr "调整设置"
 
+#: templates/admin/migration/wizard/step6_complete.html:404
 msgid "Review your imported data"
 msgstr "查看已导入的数据"
 
+#: templates/admin/migration/wizard/step6_complete.html:406
 msgid ""
 "Check your products, customers, and orders to ensure everything imported "
 "correctly."
 msgstr "检查您的产品、客户和订单，确保所有内容已正确导入。"
 
+#: templates/admin/migration/wizard/step6_complete.html:410
 msgid "View Products"
 msgstr "查看商品"
 
+#: templates/admin/migration/wizard/step6_complete.html:413
 msgid "View Customers"
 msgstr "查看客户"
 
+#: templates/admin/migration/wizard/step6_complete.html:416
 msgid "View Orders"
 msgstr "查看订单"
 
+#: templates/admin/migration/wizard/step6_complete.html:422
 msgid "Configure your store settings"
 msgstr "配置商店设置"
 
+#: templates/admin/migration/wizard/step6_complete.html:424
 msgid "Review and adjust shipping, tax, and payment settings for your store."
 msgstr "审查并调整您商店的运费、税率和支付设置。"
 
+#: templates/admin/migration/wizard/step6_complete.html:429
 msgid "Test your checkout process"
 msgstr "测试结账流程"
 
+#: templates/admin/migration/wizard/step6_complete.html:431
 msgid "Place a test order to ensure everything works correctly."
 msgstr "下一份测试订单以确保一切正常运作。"
 
+#: templates/admin/migration/wizard/step6_complete.html:436
 msgid "Update your DNS settings"
 msgstr "更新DNS设置"
 
+#: templates/admin/migration/wizard/step6_complete.html:438
 msgid "When you're ready to go live, point your domain to this platform."
 msgstr "当您准备上线时，请将您的域名指向此平台。"
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Review the error logs"
 msgstr "查看错误日志"
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Understand what went wrong during the migration"
 msgstr "了解迁移过程中哪里出错了"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Check your source data"
 msgstr "检查您的源数据"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Ensure your data is valid and accessible"
 msgstr "确保您的数据有效且可访问"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "Contact support"
 msgstr "联系支持"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "If you need help, our team is here to assist"
 msgstr "如果您需要帮助，我们的团队随时为您提供协助"
 
+#: templates/admin/migration/wizard/step6_complete.html:460
 msgid "Download Report"
 msgstr "下载报告"
 
+#: templates/admin/migration/wizard/step6_complete.html:462
 msgid "Download a detailed report of this migration for your records."
 msgstr "下载此迁移的详细报告以备记录。"
 
+#: templates/admin/migration/wizard/step6_complete.html:467
 msgid "Download PDF"
 msgstr "下载PDF"
 
+#: templates/admin/migration/wizard/step6_complete.html:471
 msgid "Download CSV"
 msgstr "下载CSV"
 
+#: templates/admin/migration/wizard/step6_complete.html:475
 msgid "Download Logs"
 msgstr "下载日志"
 
+#: templates/admin/migration/wizard/step6_complete.html:489
 msgid "Start Another Migration"
 msgstr "开始另一次迁移"
+
+#~ msgid "Transaction ID for rollback tracking"
+#~ msgstr "用于回滚跟踪的事务 ID"
+
+#~ msgid "Database savepoint ID for this step"
+#~ msgstr "此步骤的数据库保存点 ID"
+
+#~ msgid "Category Mapping"
+#~ msgstr "分类映射"
+
+#~ msgid ""
+#~ "Some categories from your source don't have direct matches. Choose how to "
+#~ "handle them:"
+#~ msgstr "来自您源数据的某些类别没有直接匹配项。请选择如何处理它们："
+
+#~ msgid "Create new categories"
+#~ msgstr "创建新分类"
+
+#~ msgid "Create new categories in your platform for unmapped categories"
+#~ msgstr "为未映射的类别在您的平台中创建新类别"
+
+#~ msgid "Assign to default category"
+#~ msgstr "分配到默认分类"
+
+#~ msgid "Put all unmapped items in a default 'Uncategorized' category"
+#~ msgstr "将所有未映射的项目放入默认的'未分类'类别"
+
+#~ msgid "Skip items with unmapped categories"
+#~ msgstr "跳过未映射分类的项目"
+
+#~ msgid "Don't import items that belong to unmapped categories"
+#~ msgstr "不要导入属于未映射类别的项目"
+
+#~ msgid "Tax & Shipping Settings"
+#~ msgstr "税费与运费设置"
+
+#~ msgid "Import tax settings"
+#~ msgstr "导入税费设置"
+
+#~ msgid "Import tax rates and rules from your source platform"
+#~ msgstr "从您的源平台导入税率和规则"
+
+#~ msgid "Import shipping zones and methods"
+#~ msgstr "导入运费区域和方式"
+
+#~ msgid "Import shipping configuration from your source platform"
+#~ msgstr "从您的源平台导入运费配置"
+
+#~ msgid "Deadline for manual rollback (24 hours after completion)"
+#~ msgstr "手动回滚截止时间（完成 24 小时后）"
+
+#~ msgid "Migration cancelled by user"
+#~ msgstr "迁移已被用户取消"
+
+#~ msgid ""
+#~ "Migration marked as cancelled. The background import may keep running for "
+#~ "a while longer, so imported counts can continue to rise. Anything already "
+#~ "imported stays in your store."
+#~ msgstr ""
+#~ "迁移标记为已取消。后台导入可能还会继续运行一段时间，因此导入数量可能会继续"
+#~ "增加。已导入的内容会保留在您的商店中。"
+
+#~ msgid ""
+#~ "Only pending or failed migrations can be deleted. A running migration "
+#~ "must be cancelled first."
+#~ msgstr "只有待处理或失败的迁移可以被删除。正在运行的迁移必须先取消。"
+
+#~ msgid "This will NOT remove:"
+#~ msgstr "这将不会删除："
+
+#~ msgid ""
+#~ "Subscription plans, booking resources or other data created by store "
+#~ "extensions"
+#~ msgstr "通过商店扩展创建的订阅计划、预订资源或其他数据"
+
+#~ msgid ""
+#~ "Review the rollback details? Rolling back removes what this import "
+#~ "created, and also removes all orders belonging to imported customers — "
+#~ "including any placed since the import."
+#~ msgstr ""
+#~ "查看回滚详细信息？回滚将删除此导入创建的内容，并删除所有属于已导入客户的订"
+#~ "单——包括导入后放置的订单。"
+
+#~ msgid "Migration rolled back successfully!"
+#~ msgstr "迁移已成功回滚！"
+
+#~ msgid ""
+#~ "The products, categories, reviews, coupons and media this import created"
+#~ msgstr "此导入创建的产品、分类、评价、优惠券和媒体内容"
+
+#~ msgid ""
+#~ "The customer accounts this import created, along with their addresses and "
+#~ "loyalty history"
+#~ msgstr "此导入创建的客户账户，以及他们的地址和忠诚度历史记录"
+
+#~ msgid ""
+#~ "Every order belonging to an imported customer — including orders they "
+#~ "have placed since the import, not only the imported ones"
+#~ msgstr ""
+#~ "属于已导入客户的每笔订单——包括自导入以来他们下过的订单，而不仅仅是已导入的"
+#~ "订单"
+
+#~ msgid ""
+#~ "Imported products from orders placed by your other customers, which "
+#~ "leaves those orders with missing items and incorrect totals"
+#~ msgstr ""
+#~ "从您其他客户下单中导入的产品，这会导致这些订单出现缺失的商品和不正确的总额"
+
+#~ msgid "Affiliates, commissions or payouts created by this import"
+#~ msgstr "通过此导入创建的联盟、佣金或付款"
+
+#~ msgid ""
+#~ "Because rollback reaches beyond the data this import created, it is only "
+#~ "safe immediately after a migration — before any real trading has "
+#~ "happened. This operation is PERMANENT and cannot be reversed."
+#~ msgstr ""
+#~ "由于回滚会超出此次导入所创建的数据范围，因此仅在迁移后立即执行时是安全的——"
+#~ "在任何实际交易发生之前。此操作是永久性的，无法撤销。"
+
+#~ msgid "🚀 Start New Migration"
+#~ msgstr "🚀 开始新迁移"
+
+#~ msgid "Migration restarted! Redirecting to progress page..."
+#~ msgstr "迁移已重新启动！正在跳转到进度页面..."
+
+#~ msgid "Migration cancelled successfully."
+#~ msgstr "迁移已成功取消。"
+
+#~ msgid ""
+#~ "Deleted a running migration. If this was stuck, the operation has been "
+#~ "cleaned up."
+#~ msgstr "已删除正在进行的迁移。如果迁移卡住了，操作已被清理。"
+
+#~ msgid "Migration deleted successfully."
+#~ msgstr "迁移已成功删除。"
+
+#~ msgid "Delete all products imported from this migration"
+#~ msgstr "删除从此迁移导入的所有产品"
+
+#~ msgid "Delete all categories imported from this migration"
+#~ msgstr "删除从此迁移导入的所有分类"
+
+#~ msgid "Delete all customers imported from this migration"
+#~ msgstr "删除从此迁移导入的所有客户"
+
+#~ msgid "Delete all orders imported from this migration"
+#~ msgstr "删除从此次迁移导入的所有订单"
+
+#~ msgid "Delete all reviews imported from this migration"
+#~ msgstr "删除从此次迁移导入的所有评论"
+
+#~ msgid "Delete all coupons imported from this migration"
+#~ msgstr "删除从此次迁移导入的所有优惠券"
+
+#~ msgid "Delete all associated media assets"
+#~ msgstr "删除所有相关媒体资源"
+
+#~ msgid "Mark the migration job as 'rolled_back'"
+#~ msgstr "将迁移任务标记为'已回滚'"
+
+#~ msgid "Are you sure you want to cancel this migration?"
+#~ msgstr "您确定要取消此次迁移吗？"
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will delete all "
+#~ "imported data."
+#~ msgstr "您确定要回滚此次迁移吗？这将删除所有导入的数据。"
+
+#~ msgid ""
+#~ "Are you sure you want to force delete this migration? This cannot be "
+#~ "undone."
+#~ msgstr "您确定要强制删除此次迁移吗？此操作无法撤销。"
+
+#, fuzzy
+#~ msgid "Token Preview"
+#~ msgstr "预览"
+
+#~ msgid ""
+#~ "Magento migration is coming soon. We will support database access and API "
+#~ "methods."
+#~ msgstr "Magento 迁移即将推出。我们将支持数据库访问和 API 方法。"
+
+#~ msgid ""
+#~ "All data will be imported within a database transaction. If anything goes "
+#~ "wrong, the entire import will be rolled back automatically. You'll also "
+#~ "have 24 hours to manually rollback if needed."
+#~ msgstr ""
+#~ "所有数据将在数据库事务中导入。如果出现问题，整个导入将自动回滚。如有需要，"
+#~ "您还将有24小时手动回滚的时间。"
+
+#~ msgid ""
+#~ "Rolling back will remove all imported data. This action cannot be undone. "
+#~ "Make sure to backup any changes you've made since the migration."
+#~ msgstr ""
+#~ "回滚将删除所有导入的数据。此操作无法撤销。请确保备份迁移后所做的任何更改。"
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will remove all "
+#~ "imported data and cannot be undone."
+#~ msgstr "您确定要回滚此迁移吗？这将删除所有导入的数据，且无法撤销。"
+
+#~ msgid ""
+#~ "There was an error during the import process. The migration has been "
+#~ "rolled back automatically."
+#~ msgstr "在导入过程中发生了错误。迁移已自动回滚。"
 
 #~ msgid ""
 #~ "Shopify migration is coming soon. We will support both API and CSV import "

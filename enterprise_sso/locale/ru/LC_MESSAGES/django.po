@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,21 +16,27 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
+#: admin.py:16
 msgid "Enter client secret (leave blank to keep current)"
 msgstr ""
 "Введите секретный ключ клиента (оставьте пустым, чтобы сохранить текущий)"
 
+#: admin.py:20
 msgid "Client Secret"
 msgstr "Секретный ключ клиента"
 
+#: admin.py:21
 msgid ""
 "Application/Client secret from your identity provider. Stored encrypted."
 msgstr ""
 "Секретный ключ приложения/клиента от вашего провайдера идентификации. "
 "Хранится в зашифрованном виде."
 
+#: admin.py:55
 msgid ""
 "A client secret is currently configured. Leave blank to keep it, or enter a "
 "new value to replace it."
@@ -38,130 +44,168 @@ msgstr ""
 "Секретный ключ клиента в настоящее время настроен. Оставьте поле пустым, "
 "чтобы сохранить его, или введите новое значение, чтобы заменить его."
 
+#: admin.py:75
 msgid "Provider"
 msgstr "Поставщик"
 
+#: admin.py:81
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:101
 msgid "OIDC Discovery"
 msgstr "OIDC Обнаружение"
 
+#: admin.py:87
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:238
 msgid "OIDC Endpoints"
 msgstr "OIDC Конечные точки"
 
+#: admin.py:99
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:127
 msgid "Client Credentials"
 msgstr "Учетные данные клиента"
 
+#: admin.py:105
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:180
 msgid "Claims Mapping"
 msgstr "Сопоставление утверждений"
 
+#: admin.py:111
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:216
 msgid "Role Mapping"
 msgstr "Сопоставление ролей"
 
+#: admin.py:117
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:270
 msgid "Scopes & Behavior"
 msgstr "Области и поведение"
 
+#: models.py:23
 msgid "Provider Name"
 msgstr "Имя поставщика"
 
+#: models.py:25
 msgid ""
-"Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google "
-"Workspace'"
+"Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google Workspace'"
 msgstr ""
 "Отображаемое имя для кнопки SSO, например 'Microsoft', 'Okta', 'Google "
 "Workspace'\""
 
+#: models.py:33
 msgid "OIDC Discovery URL"
 msgstr "URL OIDC Discovery"
 
+#: models.py:35
 #, python-brace-format
 msgid ""
-"OpenID Connect discovery endpoint (e.g. "
-"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-"
-"configuration)"
+"OpenID Connect discovery endpoint (e.g. https://login.microsoftonline.com/"
+"{tenant}/v2.0/.well-known/openid-configuration)"
 msgstr ""
-"Точка открытия OpenID Connect (например, "
-"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-"
-"configuration)"
+"Точка открытия OpenID Connect (например, https://login.microsoftonline.com/"
+"{tenant}/v2.0/.well-known/openid-configuration)"
 
+#: models.py:41
 msgid "Authorization Endpoint"
 msgstr "Точка авторизации"
 
+#: models.py:46
 msgid "Token Endpoint"
 msgstr "Точка токена"
 
+#: models.py:51
 msgid "UserInfo Endpoint"
 msgstr "Эндпоинт UserInfo"
 
+#: models.py:56
 msgid "JWKS Endpoint"
 msgstr "Эндпоинт JWKS"
 
+#: models.py:61
 msgid "End Session Endpoint"
 msgstr "Эндпоинт End Session"
 
+#: models.py:62
 msgid "Used for single sign-out (optional)"
 msgstr "Используется для однократного выхода (опционально)"
 
+#: models.py:69
 msgid "Client ID"
 msgstr "ИД клиента"
 
+#: models.py:70
 msgid "Application/Client ID from your identity provider"
 msgstr "Идентификатор приложения/клиента из вашего провайдера идентификации\""
 
+#: models.py:75
 msgid "Client Secret (Encrypted)"
 msgstr "Секрет клиента (зашифрован)"
 
+#: models.py:82
 msgid "Email Claim"
 msgstr "Утверждение электронной почты"
 
+#: models.py:83
 msgid "OIDC claim field for user email address"
 msgstr "Поле утверждения OIDC для адреса электронной почты пользователя\""
 
+#: models.py:88
 msgid "First Name Claim"
 msgstr "Утверждение имени"
 
+#: models.py:89
 msgid "OIDC claim field for first name"
 msgstr "Поле утверждения OIDC для имени"
 
+#: models.py:94
 msgid "Last Name Claim"
 msgstr "Утверждение фамилии"
 
+#: models.py:95
 msgid "OIDC claim field for last name"
 msgstr "Поле утверждения OIDC для фамилии"
 
+#: models.py:101
 msgid "Groups Claim"
 msgstr "Утверждение групп"
 
+#: models.py:103
 msgid ""
-"OIDC claim field for group memberships (leave blank to disable group "
-"mapping)"
+"OIDC claim field for group memberships (leave blank to disable group mapping)"
 msgstr ""
 "Поле утверждения OIDC для членства в группах (оставьте пустым, чтобы "
 "отключить сопоставление групп)"
 
+#: models.py:110
 msgid "Staff Groups"
 msgstr "Группы сотрудников"
 
+#: models.py:111
 msgid "Comma-separated group names or IDs that grant staff status"
 msgstr ""
 "Имена или идентификаторы групп, разделённые запятой, которые предоставляют "
 "статус сотрудника"
 
+#: models.py:115
 msgid "Superuser Groups"
 msgstr "Группы суперпользователей"
 
+#: models.py:116
 msgid "Comma-separated group names or IDs that grant superuser status"
 msgstr ""
 "Имена или идентификаторы групп, разделённые запятой, которые предоставляют "
 "статус суперпользователя"
 
+#: models.py:123
 msgid "OIDC Scopes"
 msgstr "OIDC-области"
 
+#: models.py:124
 msgid "Space-separated OIDC scopes to request"
 msgstr "OIDC-области, разделенные пробелами, которые требуется запросить"
 
+#: models.py:130
 msgid "Auto-Create Users"
 msgstr "Автоматическое создание пользователей"
 
+#: models.py:132
 msgid ""
 "Automatically create a user account when an SSO user signs in for the first "
 "time"
@@ -169,9 +213,11 @@ msgstr ""
 "Автоматически создавать учётную запись пользователя, когда пользователь SSO "
 "впервые войдёт в систему"
 
+#: models.py:137
 msgid "Restrict to Staff"
 msgstr "Ограничить для сотрудников"
 
+#: models.py:139
 msgid ""
 "Only allow existing staff users to sign in via SSO. Disable to allow SSO "
 "user auto-creation."
@@ -179,36 +225,51 @@ msgstr ""
 "Разрешить только существующим сотрудникам входить через SSO. Отключите, "
 "чтобы разрешить автоматическое создание пользователей SSO."
 
+#: models.py:144 models.py:145
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:4
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:19
 msgid "SSO Provider Configuration"
 msgstr "Настройка провайдера SSO"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:24
 msgid "Configured"
 msgstr "Настроено"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:28
 msgid "Not Configured"
 msgstr "Не настроено"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:34
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:308
 msgid "Save and continue editing"
 msgstr "Сохранить и продолжить редактирование"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:37
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:307
 msgid "Save"
 msgstr "Сохранить"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:48
 msgid "Please correct the errors below"
 msgstr "Пожалуйста, исправьте ошибки ниже"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:73
 msgid "Connection"
 msgstr "Соединение"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:77
 msgid "Claims & Roles"
 msgstr "Утверждения и роли"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:81
 msgid "Advanced"
 msgstr "Расширенные"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:90
 msgid "Identity Provider"
 msgstr "Поставщик удостоверений"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:102
 msgid ""
 "Enter the OIDC Discovery URL and click Auto-Discover to populate the "
 "endpoint fields automatically."
@@ -216,66 +277,85 @@ msgstr ""
 "Введите URL OIDC Discovery и нажмите Авто-открытие, чтобы автоматически "
 "заполнить поля конечных точек."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:111
 msgid "Please enter a Discovery URL first."
 msgstr "Сначала введите URL Discovery."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:112
 msgid "Discovering..."
 msgstr "Обнаружение..."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:113
 msgid "Discovery failed:"
 msgstr "Не удалось обнаружить:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:114
 msgid "Discovery successful!"
 msgstr "Обнаружение успешно!"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:115
 msgid "endpoints populated."
 msgstr "точек конечных точек заполнены."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:116
 msgid "Discovery request failed:"
 msgstr "Не удалось выполнить запрос обнаружения:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:117
 msgid "Auto-Discover"
 msgstr "Автоматическое обнаружение"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:138
 msgid "Secret is configured"
 msgstr "Секрет настроен"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:142
 msgid "No secret configured"
 msgstr "Секрет не настроен"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:154
 msgid "Quick Setup Guide"
 msgstr "Быстрое руководство по настройке"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:157
 msgid "Redirect URI"
 msgstr "URI перенаправления"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:161
 msgid "Microsoft Entra ID:"
 msgstr "Microsoft Entra ID:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:162
 msgid "App registrations > New > Web platform > Redirect URI"
 msgstr "Регистрации приложений > Новое > Веб-платформа > URI перенаправления"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:165
 msgid "Google Workspace:"
 msgstr "Google Workspace:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:166
 msgid ""
 "Cloud Console > APIs & Services > Credentials > OAuth 2.0 > Redirect URI"
 msgstr ""
 "Облако Консоль > API и Сервисы > Учетные данные > OAuth 2.0 > URI "
 "перенаправления"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:169
 msgid "Okta:"
 msgstr "Okta:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:170
 msgid "Applications > New App > OIDC Web > Sign-in redirect URI"
 msgstr ""
 "Приложения > Новое приложение > OIDC Web > URI перенаправления для входа"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:181
 msgid "Map OIDC claims to user fields. The defaults work for most providers."
 msgstr ""
 "Сопоставьте утверждения OIDC с полями пользователя. По умолчанию они "
 "работают для большинства провайдеров."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:217
 msgid ""
 "Map identity provider groups to staff permissions. Enter comma-separated "
 "group names or IDs."
@@ -283,6 +363,7 @@ msgstr ""
 "Сопоставьте группы провайдера удостоверений с разрешениями сотрудников. "
 "Введите имена или идентификаторы групп, разделённые запятыми."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:239
 msgid ""
 "These are auto-populated from the Discovery URL. Only edit manually if "
 "needed."
@@ -290,7 +371,7 @@ msgstr ""
 "Эти данные автоматически заполняются из URL-адреса Discovery. Редактируйте "
 "вручную только в случае необходимости."
 
+#: views.py:40
 msgid "SSO authentication failed. Please try again or use local login."
 msgstr ""
-"Ошибка аутентификации SSO. Попробуйте еще раз или используйте локальный "
-"вход."
+"Ошибка аутентификации SSO. Попробуйте еще раз или используйте локальный вход."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Thai <LL@li.org>\n"
@@ -18,78 +18,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:328
 msgid "Action and method IDs required"
 msgstr "ต้องการ ID การกระทำและวิธีการ"
 
+#: admin.py:336
 msgid "{} method(s) enabled"
 msgstr "{} วิธีการเปิดใช้งานแล้ว"
 
+#: admin.py:340
 msgid "{} method(s) disabled"
 msgstr "{} วิธีการปิดใช้งานแล้ว"
 
+#: admin.py:344
 msgid "{} method(s) deleted"
 msgstr "{} วิธีการถูกลบแล้ว"
 
+#: admin.py:347
 msgid "Unknown action"
 msgstr "การกระทำไม่รู้จัก"
 
+#: admin.py:353 mini_cart_api.py:469
 msgid "Invalid request data"
 msgstr "ข้อมูลคำขอไม่ถูกต้อง"
 
+#: admin.py:358
 msgid "An unexpected error occurred. Please try again."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้ง"
 
+#: admin.py:376 templates/admin/cart/method_wizard/step1_basics.html:21
+#: templates/admin/cart/shippingmethod/change_form.html:118
+#: templates/admin/cart/taxrate/change_form.html:111
 msgid "Basic Information"
 msgstr "ข้อมูลพื้นฐาน"
 
+#: admin.py:383 templates/admin/cart/taxrate/change_form.html:141
 msgid "Geographic Scope"
 msgstr "ขอบเขตทางภูมิศาสตร์"
 
+#: admin.py:387 templates/admin/cart/taxrate/change_form.html:163
 msgid "Application Rules"
 msgstr "กฎการใช้งาน"
 
+#: admin.py:391 templates/admin/cart/taxrate/change_form.html:193
 msgid "Product Exemptions"
 msgstr "ข้อยกเว้นของสินค้า"
 
+#: admin.py:397 templates/admin/cart/shippingmethod/change_form.html:107
+#: templates/admin/cart/shippingmethod/change_form.html:321
+#: templates/admin/cart/taxrate/change_form.html:100
+#: templates/admin/cart/taxrate/change_form.html:216
 msgid "Timestamps"
 msgstr "เวลาที่บันทึก"
 
+#: admin.py:409
 msgid "Rate %"
 msgstr "อัตรา %"
 
+#: apps.py:8 models.py:735 models.py:1599
 msgid "Cart"
 msgstr "ตะกร้าสินค้า"
 
+#: forms.py:34
 msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
 msgstr "กรอกเป็นเปอร์เซ็นต์ (เช่น 8.25 สำหรับ 8.25%)"
 
+#: forms.py:35
 msgid "Rate (%)"
 msgstr "อัตรา (%)"
 
+#: method_wizard.py:106
 msgid "Please complete Step 1 first"
 msgstr "กรุณาทำขั้นตอนที่ 1 ก่อน"
 
+#: method_wizard.py:146 method_wizard.py:193 method_wizard.py:266
 msgid "Please complete the wizard steps"
 msgstr "กรุณาทำตามขั้นตอนของเวิร์ดไวซาร์ด"
 
+#: method_wizard.py:354
 #, python-format
 msgid "Shipping method \"%(name)s\" created successfully!"
 msgstr "สร้างวิธีการจัดส่ง \"%(name)s\" สำเร็จ!"
 
+#: method_wizard.py:360
 msgid "Please configure rate tables for this method."
 msgstr "โปรดตั้งค่าตารางอัตราสำหรับวิธีนี้"
 
+#: method_wizard.py:368
 #, python-format
 msgid "Failed to create shipping method: %(error)s"
 msgstr "ไม่สามารถสร้างวิธีการจัดส่งได้: %(error)s"
 
+#: mini_cart_api.py:281
 msgid "Get mini-cart data"
 msgstr "ดึงข้อมูลตะกร้าสินค้าขนาดย่อ"
 
+#: mini_cart_api.py:282
 msgid ""
 "\n"
-"    Retrieve the current cart contents formatted for the mini-cart "
-"component.\n"
+"    Retrieve the current cart contents formatted for the mini-cart component.\n"
 "\n"
 "    Works for both authenticated users (cart linked to user account) and\n"
 "    anonymous users (cart linked to session). Cart data includes all items\n"
@@ -104,20 +131,18 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    ดึงเนื้อหาตะกร้าสินค้าในรูปแบบที่ใช้กับองค์ประกอบ mini-cart "
-"ใช้ได้กับผู้ใช้ที่ได้รับการยืนยันตัวตน (ตะกร้าที่เชื่อมโยงกับบัญชีผู้ใช้) และผู้ใช้ทั่วไป "
-"(ตะกร้าที่เชื่อมโยงกับเซสชัน) ข้อมูลตะกร้าจะรวมสินค้าทั้งหมดพร้อมรายละเอียดสินค้า จำนวน สินค้า "
-"และรูปภาพ **กรณีใช้งาน:** - โหลด mini-cart เริ่มต้นเมื่อเปิดหน้า - "
-"อัปเดตตะกร้าหลังมีการเปลี่ยนแปลงจากภายนอก - ตรวจสอบสถานะตะกร้าก่อนชำระเงิน "
-"**การยืนยันตัวตน:** ไม่จำเป็น (ใช้เซสชันสำหรับผู้ใช้ทั่วไป)\n"
+"    ดึงเนื้อหาตะกร้าสินค้าในรูปแบบที่ใช้กับองค์ประกอบ mini-cart ใช้ได้กับผู้ใช้ที่ได้รับการยืนยันตัวตน (ตะกร้าที่เชื่อมโยงกับบัญชีผู้ใช้) และผู้ใช้ทั่วไป (ตะกร้าที่เชื่อมโยงกับเซสชัน) ข้อมูลตะกร้าจะรวมสินค้าทั้งหมดพร้อมรายละเอียดสินค้า จำนวน สินค้า และรูปภาพ **กรณีใช้งาน:** - โหลด mini-cart เริ่มต้นเมื่อเปิดหน้า - อัปเดตตะกร้าหลังมีการเปลี่ยนแปลงจากภายนอก - ตรวจสอบสถานะตะกร้าก่อนชำระเงิน **การยืนยันตัวตน:** ไม่จำเป็น (ใช้เซสชันสำหรับผู้ใช้ทั่วไป)\n"
 "    "
 
+#: mini_cart_api.py:300
 msgid "Cart data retrieved successfully"
 msgstr "ดึงข้อมูลตะกร้าสำเร็จ"
 
+#: mini_cart_api.py:352
 msgid "Update cart item quantity"
 msgstr "ปรับปรุงจำนวนสินค้าในตะกร้า"
 
+#: mini_cart_api.py:353
 msgid ""
 "\n"
 "    Update the quantity of an item in the cart.\n"
@@ -130,8 +155,7 @@ msgid ""
 "    - Direct quantity input changes\n"
 "    - Removing items (quantity=0)\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "\n"
 "    **Validation:**\n"
 "    - Item must exist in user's cart\n"
@@ -140,26 +164,26 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    อัปเดตจำนวนของสินค้าในตะกร้า ตั้งค่าจำนวนเป็น 0 เพื่อลบสินค้าออกทั้งหมด "
-"ปลายทางจะตรวจสอบความพร้อมของสินค้าก่อนอัปเดตและคืนตะกร้าที่อัปเดตครบถ้วน **กรณีใช้งาน:** "
-"- ปุ่มเพิ่ม/ลดจำนวนใน mini-cart - การเปลี่ยนจำนวนโดยตรง - การลบสินค้า (จำนวน = 0) "
-"**การยืนยันตัวตน:** ไม่จำเป็น (ตรวจสอบว่าสินค้าอยู่ในตะกร้าของผู้ใช้) **การตรวจสอบ:** - "
-"สินค้าต้องอยู่ในตะกร้าของผู้ใช้ - จำนวนต้องเป็นจำนวนเต็มที่ไม่ติดลบ - "
-"ตรวจสอบความพร้อมของสินค้าสำหรับสินค้าที่ติดตามสต็อก\n"
+"    อัปเดตจำนวนของสินค้าในตะกร้า ตั้งค่าจำนวนเป็น 0 เพื่อลบสินค้าออกทั้งหมด ปลายทางจะตรวจสอบความพร้อมของสินค้าก่อนอัปเดตและคืนตะกร้าที่อัปเดตครบถ้วน **กรณีใช้งาน:** - ปุ่มเพิ่ม/ลดจำนวนใน mini-cart - การเปลี่ยนจำนวนโดยตรง - การลบสินค้า (จำนวน = 0) **การยืนยันตัวตน:** ไม่จำเป็น (ตรวจสอบว่าสินค้าอยู่ในตะกร้าของผู้ใช้) **การตรวจสอบ:** - สินค้าต้องอยู่ในตะกร้าของผู้ใช้ - จำนวนต้องเป็นจำนวนเต็มที่ไม่ติดลบ - ตรวจสอบความพร้อมของสินค้าสำหรับสินค้าที่ติดตามสต็อก\n"
 "    "
 
+#: mini_cart_api.py:375
 msgid "Cart updated successfully"
 msgstr "อัปเดตตะกร้าสำเร็จ"
 
+#: mini_cart_api.py:379
 msgid "Invalid request data or insufficient stock"
 msgstr "ข้อมูลคำขอไม่ถูกต้องหรือสต็อกไม่เพียงพอ"
 
+#: mini_cart_api.py:392 mini_cart_api.py:472
 msgid "Cart item not found"
 msgstr "ไม่พบสินค้าในตะกร้า"
 
+#: mini_cart_api.py:450
 msgid "Remove item from cart"
 msgstr "ลบสินค้าออกจากตะกร้า"
 
+#: mini_cart_api.py:451
 msgid ""
 "\n"
 "    Remove an item from the cart entirely.\n"
@@ -170,37 +194,34 @@ msgid ""
 "    - Delete button on cart items\n"
 "    - Clearing specific items\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "    "
 msgstr ""
 "\n"
-"    ลบสินค้าออกจากตะกร้าทั้งหมด คืนข้อมูลตะกร้าที่ได้รับการอัปเดตหลังการลบ **กรณีการใช้งาน:** "
-"- ปุ่มลบสินค้าในตะกร้า - การลบสินค้าเฉพาะ **การตรวจสอบสิทธิ์:** ไม่จำเป็น "
-"(ตรวจสอบว่าสินค้าเป็นของตะกร้าผู้ใช้)\n"
+"    ลบสินค้าออกจากตะกร้าทั้งหมด คืนข้อมูลตะกร้าที่ได้รับการอัปเดตหลังการลบ **กรณีการใช้งาน:** - ปุ่มลบสินค้าในตะกร้า - การลบสินค้าเฉพาะ **การตรวจสอบสิทธิ์:** ไม่จำเป็น (ตรวจสอบว่าสินค้าเป็นของตะกร้าผู้ใช้)\n"
 "    "
 
+#: mini_cart_api.py:466
 msgid "Item removed successfully"
 msgstr "ลบสินค้าสำเร็จ"
 
+#: mini_cart_api.py:515
 msgid "Get empty cart recommendations"
 msgstr "ดึงคำแนะนำตะกร้าสินค้าว่าง"
 
+#: mini_cart_api.py:516
 msgid ""
 "\n"
 "    Get intelligent product recommendations for the empty cart state.\n"
 "\n"
-"    Returns personalized suggestions organized into labeled sections based "
-"on:\n"
-"    - **Recently viewed**: Products the user has browsed (session-based for "
-"anonymous users)\n"
+"    Returns personalized suggestions organized into labeled sections based on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for anonymous users)\n"
 "    - **Related**: Products in the same categories as recently viewed items\n"
 "    - **On sale**: Currently discounted products\n"
 "    - **Trending**: Popular products by views/sales\n"
 "    - **Featured**: Editor-picked products as fallback\n"
 "\n"
-"    All returned products are verified to be in stock and available for "
-"purchase.\n"
+"    All returned products are verified to be in stock and available for purchase.\n"
 "\n"
 "    **Use Cases:**\n"
 "    - Empty cart state in mini-cart\n"
@@ -215,34 +236,30 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    ได้รับข้อเสนอแนะสินค้าอัจฉริยะสำหรับสถานะตะกร้าสินค้าว่าง "
-"คืนคำแนะนำที่ปรับแต่งตามส่วนที่ระบุไว้ตาม: - **ดูเร็ว ๆ นี้**: สินค้าที่ผู้ใช้ได้รับชม "
-"(สำหรับผู้ใช้ไม่ระบุตัวตนเป็นพื้นฐานของเซสชัน) - **สินค้าที่เกี่ยวข้อง**: "
-"สินค้าในหมวดหมู่เดียวกันกับสินค้าที่ดูเร็ว ๆ นี้ - **สินค้าลดราคา**: สินค้าที่ลดราคาในขณะนี้ - "
-"**สินค้าที่น่าสนใจ**: สินค้าที่ได้รับความนิยมตามจำนวนการดู/การขาย - **สินค้าแนะนำ**: "
-"สินค้าที่เลือกโดยบรรณาธิการเป็นตัวเลือกสำรอง "
-"สินค้าทั้งหมดที่คืนมาได้รับการตรวจสอบว่ามีสต็อกและสามารถซื้อได้จริง **กรณีการใช้งาน:** - "
-"สถานะตะกร้าสินค้าว่างในตะกร้าขนาดเล็ก - ส่วน \"คุณอาจชอบ\" - โอกาสในการขายข้ามสินค้า "
-"**การตรวจสอบสิทธิ์:** ไม่จำเป็น (ใช้เซสชันสำหรับผู้ใช้ไม่ระบุตัวตน) **การปรับแต่ง:** - "
-"ผู้ใช้ไม่ระบุตัวตน: เนื่องจากสินค้าที่ดูเร็ว ๆ ของเซสชัน - ผู้ใช้ที่ผ่านการยืนยันตัวตน: "
-"เนื่องจากประวัติบัญชีและการตั้งค่า\n"
+"    ได้รับข้อเสนอแนะสินค้าอัจฉริยะสำหรับสถานะตะกร้าสินค้าว่าง คืนคำแนะนำที่ปรับแต่งตามส่วนที่ระบุไว้ตาม: - **ดูเร็ว ๆ นี้**: สินค้าที่ผู้ใช้ได้รับชม (สำหรับผู้ใช้ไม่ระบุตัวตนเป็นพื้นฐานของเซสชัน) - **สินค้าที่เกี่ยวข้อง**: สินค้าในหมวดหมู่เดียวกันกับสินค้าที่ดูเร็ว ๆ นี้ - **สินค้าลดราคา**: สินค้าที่ลดราคาในขณะนี้ - **สินค้าที่น่าสนใจ**: สินค้าที่ได้รับความนิยมตามจำนวนการดู/การขาย - **สินค้าแนะนำ**: สินค้าที่เลือกโดยบรรณาธิการเป็นตัวเลือกสำรอง สินค้าทั้งหมดที่คืนมาได้รับการตรวจสอบว่ามีสต็อกและสามารถซื้อได้จริง **กรณีการใช้งาน:** - สถานะตะกร้าสินค้าว่างในตะกร้าขนาดเล็ก - ส่วน \"คุณอาจชอบ\" - โอกาสในการขายข้ามสินค้า **การตรวจสอบสิทธิ์:** ไม่จำเป็น (ใช้เซสชันสำหรับผู้ใช้ไม่ระบุตัวตน) **การปรับแต่ง:** - ผู้ใช้ไม่ระบุตัวตน: เนื่องจากสินค้าที่ดูเร็ว ๆ ของเซสชัน - ผู้ใช้ที่ผ่านการยืนยันตัวตน: เนื่องจากประวัติบัญชีและการตั้งค่า\n"
 "    "
 
+#: mini_cart_api.py:545
 msgid "Maximum number of products to return (default: 6, max: 12)"
 msgstr "จำนวนสินค้าสูงสุดที่จะคืน (ค่าเริ่มต้น: 6, ค่าสูงสุด: 12)"
 
+#: mini_cart_api.py:556
 msgid "Recommendations retrieved successfully"
 msgstr "ดึงข้อมูลแนะนำสำเร็จ"
 
+#: models.py:18 models.py:964 models.py:1068
 msgid "User"
 msgstr "ผู้ใช้"
 
+#: models.py:21 models.py:1071
 msgid "Session Key"
 msgstr "คีย์เซสชัน"
 
+#: models.py:31
 msgid "Cart Currency"
 msgstr "สกุลเงินตะกร้าสินค้า"
 
+#: models.py:33
 msgid ""
 "Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
 "default currency."
@@ -250,202 +267,214 @@ msgstr ""
 "รหัสสกุลเงินสำหรับสินค้าทั้งหมดในตะกร้า (ตัวอย่างเช่น EUR, NZD) "
 "หากว่างหมายถึงสกุลเงินเริ่มต้นของร้านค้า"
 
+#: models.py:40
 msgid "Default Layout"
 msgstr "เค้าโครงเริ่มต้น"
 
+#: models.py:41 models.py:971
 msgid "Compact View"
 msgstr "มุมมองแบบกระชับ"
 
+#: models.py:42 models.py:972
 msgid "Detailed View"
 msgstr "มุมมองแบบละเอียด"
 
+#: models.py:43
 msgid "Minimal View"
 msgstr "มุมมองแบบเรียบง่าย"
 
+#: models.py:44
 msgid "Sidebar Cart"
 msgstr "ตะกร้าสินค้าแบบแถบด้านข้าง"
 
+#: models.py:45
 msgid "Overlay Cart"
 msgstr "ตะกร้าสินค้าแบบแสดงทับ"
 
+#: models.py:52
 msgid "How the cart is displayed"
 msgstr "วิธีการแสดงผลตะกร้าสินค้า"
 
+#: models.py:53
 msgid "Cart Layout"
 msgstr "เค้าโครงตะกร้าสินค้า"
 
+#: models.py:57
 msgid "Show Product Images"
 msgstr "แสดงรูปภาพสินค้า"
 
+#: models.py:59
 msgid "Show Product Variants"
 msgstr "แสดงตัวเลือกของสินค้า"
 
+#: models.py:61
 msgid "Show Remove Button"
 msgstr "แสดงปุ่มลบ"
 
+#: models.py:63
 msgid "Show Quantity Controls"
 msgstr "แสดงตัวควบคุมจำนวน"
 
+#: models.py:67
 msgid "Show Item Totals"
 msgstr "แสดงยอดรวมรายการ"
 
+#: models.py:68
 msgid "Show Cart Summary"
 msgstr "แสดงสรุปตะกร้าสินค้า"
 
+#: models.py:69
 msgid "Show Savings"
 msgstr "แสดงเงินคืน/ส่วนลด"
 
+#: models.py:75
 msgid "Single Page Checkout"
 msgstr "ขั้นตอนชำระเงินแบบหน้าเดียว"
 
+#: models.py:76
 msgid "Multi-Step Checkout"
 msgstr "ขั้นตอนชำระเงินแบบหลายขั้นตอน"
 
+#: models.py:77
 msgid "Accordion Style"
 msgstr "สไตล์แบบพับ"
 
+#: models.py:78
 msgid "Wizard Style"
 msgstr "สไตล์แบบเวิร์ดไวซาร์ด"
 
+#: models.py:81
 msgid "Checkout Flow"
 msgstr "การดำเนินขั้นตอนชำระเงิน"
 
+#: models.py:91 models.py:1609 models.py:1739
 msgid "Shipping Address"
 msgstr "ที่อยู่จัดส่ง"
 
+#: models.py:99 models.py:1214 models.py:1740
+#: templates/admin/cart/cart/change_list.html:93
 msgid "Shipping Method"
 msgstr "วิธีการจัดส่ง"
 
+#: models.py:107
 msgid "Calculated shipping cost"
 msgstr "ค่าจัดส่งที่คำนวณแล้ว"
 
+#: models.py:108 models.py:1660
 msgid "Shipping Cost"
 msgstr "ค่าจัดส่ง"
 
+#: models.py:112 models.py:1664
 msgid "Estimated Delivery Date"
 msgstr "วันจัดส่งที่คาดการณ์"
 
+#: models.py:115
 msgid "Shipping Notes"
 msgstr "หมายเหตุการจัดส่ง"
 
+#: models.py:119 models.py:846
 msgid "None"
 msgstr "ไม่มี"
 
+#: models.py:120 models.py:847
 msgid "Percentage"
 msgstr "เปอร์เซ็นต์"
 
+#: models.py:121 models.py:848
 msgid "Fixed Amount"
 msgstr "จำนวนคงที่"
 
+#: models.py:124
 msgid "POS manual discount type"
 msgstr "ประเภทส่วนลดมือถือ (POS)"
 
+#: models.py:127
 msgid "POS manual discount value"
 msgstr "ค่าส่วนลดมือถือ (POS)"
 
+#: models.py:131 models.py:858
 msgid "Discount value (percentage or fixed amount)"
 msgstr "ค่าส่วนลด (เปอร์เซ็นต์หรือจำนวนคงที่)"
 
+#: models.py:139
 msgid "POS discount applied by"
 msgstr "ผู้ใช้ส่วนลดมือถือ (POS)"
 
+#: models.py:147
 msgid "POS discount approved by"
 msgstr "ผู้อนุมัติส่วนลดมือถือ (POS)"
 
+#: models.py:148 models.py:875
 msgid "Manager who approved the discount if it exceeded staff limit"
 msgstr "ผู้จัดการที่อนุมัติส่วนลด หากเกินขีดจำกัดของพนักงาน"
 
+#: models.py:151
 msgid "POS discount reason"
 msgstr "เหตุผลส่วนลดมือถือ (POS)"
 
+#: models.py:154 models.py:879 models.py:992 models.py:1052 models.py:1210
+#: models.py:1447 models.py:1526 models.py:1756
 msgid "Created At"
 msgstr "สร้างเมื่อ"
 
+#: models.py:155 models.py:880 models.py:993 models.py:1211 models.py:1448
+#: models.py:1757
 msgid "Updated At"
 msgstr "อัปเดตเมื่อ"
 
+#: models.py:158
 msgid "Shopping Cart"
 msgstr "ตะกร้าสินค้า"
 
+#: models.py:159 templates/admin/cart/cart/change_list.html:4
+#: templates/admin/cart/cart/change_list.html:20
+#: templates/admin/cart/cart/change_list.html:175
 msgid "Shopping Carts"
 msgstr "ตะกร้าสินค้า"
 
+#: models.py:186
 #, python-brace-format
 msgid "Cart for {username}"
 msgstr "ตะกร้าของ {username}"
 
+#: models.py:187
 #, python-brace-format
 msgid "Cart (Session: {session})"
 msgstr "ตะกร้า (เซสชัน: {session})"
 
+#: models.py:455
 msgid "No shipping required"
 msgstr "ไม่จำเป็นต้องจัดส่ง"
 
+#: models.py:465
 msgid "Shipping address required"
 msgstr "ต้องระบุที่อยู่จัดส่ง"
 
+#: models.py:505
 msgid "Available shipping methods retrieved"
 msgstr "วิธีการจัดส่งที่สามารถใช้งานได้ถูกเรียกข้อมูลแล้ว"
 
+#: models.py:526
 msgid "Shipping calculated successfully"
 msgstr "การคำนวณค่าจัดส่งสำเร็จ"
 
-msgid "Invalid gift card code"
-msgstr "รหัสบัตรของขวัญไม่ถูกต้อง"
-
-msgid "Gift card already applied"
-msgstr "บัตรของขวัญถูกใช้แล้ว"
-
-msgid "Gift card is not active"
-msgstr "บัตรของขวัญไม่ได้เปิดใช้งาน"
-
-msgid "Gift card has expired"
-msgstr "บัตรของขวัญหมดอายุแล้ว"
-
-msgid "Gift card has been fully redeemed"
-msgstr "บัตรของขวัญถูกใช้หมดแล้ว"
-
-msgid "Gift card cannot be used"
-msgstr "ไม่สามารถใช้บัตรของขวัญได้"
-
-#, python-brace-format
-msgid ""
-"Currency mismatch. Gift card is in {card_currency}, cart is in "
-"{cart_currency}"
-msgstr "สกุลเงินไม่ตรงกัน บัตรของขวัญอยู่ใน {card_currency} ตะกร้าอยู่ใน {cart_currency}"
-
-#, python-brace-format
-msgid ""
-"This gift card is in {card_currency}. Please switch your currency to "
-"{card_currency} to use it."
-msgstr ""
-"บัตรของขวัญนี้อยู่ใน {card_currency} กรุณาเปลี่ยนสกุลเงินของคุณเป็น {card_currency} "
-"เพื่อใช้งาน"
-
-msgid "Gift cards cannot be used to purchase other gift cards"
-msgstr "บัตรของขวัญไม่สามารถใช้ซื้อบัตรของขวัญอื่นได้"
-
-msgid "Cart total is already covered"
-msgstr "ยอดรวมในตะกร้าถูกครอบคลุมแล้ว"
-
-msgid "Unable to process gift card currency conversion"
-msgstr "ไม่สามารถประมวลผลการแปลงสกุลเงินของบัตรของขวัญได้"
-
-msgid "Gift card applied successfully"
-msgstr "บัตรของขวัญถูกใช้สำเร็จแล้ว"
-
+#: models.py:740 models.py:1023 models.py:1074
 msgid "Product"
 msgstr "สินค้า"
 
+#: models.py:747 models.py:1030
 msgid "Variant"
 msgstr "รุ่นสินค้า"
 
+#: models.py:751
 msgid "Quantity"
 msgstr "จำนวน"
 
+#: models.py:753
 msgid "Unit Price"
 msgstr "ราคาต่อหน่วย"
 
+#: models.py:761
 msgid ""
 "Product customizations with calculated prices: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
@@ -453,40 +482,53 @@ msgstr ""
 "การกำหนดค่าสินค้าที่มีราคาคำนวณ: {customization_option_id: {'value': '...', "
 "'calculated_price': '10.00'}}"
 
+#: models.py:763
 msgid "Customizations"
 msgstr "การปรับแต่ง"
 
+#: models.py:769
 msgid "Is Subscription"
 msgstr "เป็นสมาชิก"
 
+#: models.py:770
 msgid "Whether this item will be purchased as a subscription"
 msgstr "ว่ารายการนี้จะถูกซื้อเป็นสมาชิกหรือไม่"
 
+#: models.py:777
 msgid "Subscription Plan"
 msgstr "แผนสมาชิก"
 
+#: models.py:778
 msgid "Selected subscription plan for recurring billing"
 msgstr "แผนสมาชิกที่เลือกสำหรับการเรียกเก็บเงินซ้ำ"
 
+#: models.py:785
 msgid "Pricing Tier"
 msgstr "ระดับราคา"
 
+#: models.py:786
 msgid "Selected pricing tier (billing frequency) for subscription"
 msgstr "ระดับราคาที่เลือก (ความถี่ในการเรียกเก็บเงิน) สำหรับการสมัครสมาชิก"
 
+#: models.py:793
 msgid "Payment Token"
 msgstr "โทเคนการชำระเงิน"
 
+#: models.py:794
 msgid ""
 "Saved payment method for subscription billing (required for subscriptions)"
-msgstr "วิธีการชำระเงินที่บันทึกไว้สำหรับการเรียกเก็บเงินสมาชิก (จำเป็นสำหรับสมาชิก)"
+msgstr ""
+"วิธีการชำระเงินที่บันทึกไว้สำหรับการเรียกเก็บเงินสมาชิก (จำเป็นสำหรับสมาชิก)"
 
+#: models.py:804
 msgid "Parent Bundle"
 msgstr "ชุดพื้นฐาน"
 
+#: models.py:805
 msgid "If this is a bundle component, reference to bundle CartItem"
 msgstr "หากนี่คือส่วนประกอบของชุด โปรดอ้างอิงไปยัง CartItem ของชุด"
 
+#: models.py:813
 msgid ""
 "Booking details: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
@@ -494,1266 +536,1637 @@ msgstr ""
 "รายละเอียดการจอง: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
 
+#: models.py:815
 msgid "Booking Data"
 msgstr "ข้อมูลการจอง"
 
+#: models.py:833
+msgid ""
+"Gift card purchase details: {recipient_email, recipient_name, sender_name, "
+"message, scheduled_send_at, amount}"
+msgstr ""
+"รายละเอียดการซื้อบัตรของขวัญ: {recipient_email, recipient_name, sender_name,"
+" message, scheduled_send_at, amount}"
+
+#: models.py:836
+#| msgid "Gift Card"
+msgid "Gift Card Data"
+msgstr "ข้อมูลบัตรของขวัญ"
+
+#: models.py:841
 msgid "Customer notes for this item"
 msgstr "หมายเหตุลูกค้าสำหรับสินค้าชิ้นนี้"
 
+#: models.py:841 models.py:1034 models.py:1573
 msgid "Notes"
 msgstr "หมายเหตุ"
 
+#: models.py:851
 msgid "manual discount type"
 msgstr "ประเภทส่วนลดแบบกำหนดเอง"
 
+#: models.py:854
 msgid "manual discount value"
 msgstr "ค่าส่วนลดแบบกำหนดเอง"
 
+#: models.py:866
 msgid "discount applied by"
 msgstr "ส่วนลดถูกใช้โดย"
 
+#: models.py:874
 msgid "discount approved by"
 msgstr "ส่วนลดได้รับการอนุมัติโดย"
 
+#: models.py:877
 msgid "discount reason"
 msgstr "เหตุผลของส่วนลด"
 
+#: models.py:883
 msgid "Cart Item"
 msgstr "รายการในตะกร้า"
 
+#: models.py:884
 msgid "Cart Items"
 msgstr "รายการในตะกร้า"
 
+#: models.py:965 services/wishlist_service.py:28
 msgid "My Wishlist"
 msgstr "รายการสินค้าที่ต้องการ"
 
+#: models.py:965 models.py:1108 models.py:1367 models.py:1506
+#: templates/admin/cart/shippingmethod/change_form.html:276
 msgid "Name"
 msgstr "ชื่อ"
 
+#: models.py:969
 msgid "Grid Layout"
 msgstr "รูปแบบตาราง"
 
+#: models.py:970
 msgid "List Layout"
 msgstr "รูปแบบรายการ"
 
+#: models.py:979
 msgid "How wishlist items are displayed"
 msgstr "วิธีแสดงรายการสินค้าที่ต้องการ"
 
+#: models.py:980
 msgid "Wishlist Layout"
 msgstr "รูปแบบรายการสินค้าที่ต้องการ"
 
+#: models.py:984
 msgid "Is Public"
 msgstr "เป็นสาธารณะ"
 
+#: models.py:985
 msgid "Share Slug"
 msgstr "ลิงก์แชร์"
 
+#: models.py:988
 msgid "Show Prices"
 msgstr "แสดงราคา"
 
+#: models.py:989
 msgid "Show Availability"
 msgstr "แสดงสถานะสินค้า"
 
+#: models.py:990
 msgid "Show Add to Cart"
 msgstr "แสดงปุ่มเพิ่มลงตะกร้า"
 
+#: models.py:996 models.py:1020
 msgid "Wishlist"
 msgstr "รายการสินค้าที่ต้องการ"
 
+#: models.py:997
 msgid "Wishlists"
 msgstr "รายการสินค้าที่ต้องการ"
 
+#: models.py:1038
 msgid "Low"
 msgstr "ต่ำ"
 
+#: models.py:1039
 msgid "Medium"
 msgstr "ปานกลาง"
 
+#: models.py:1040
 msgid "High"
 msgstr "สูง"
 
+#: models.py:1043 models.py:1442
+#: templates/admin/cart/shippingmethod/change_form.html:279
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:51
 msgid "Priority"
 msgstr "ลำดับความสำคัญ"
 
+#: models.py:1048
 msgid "Notify When Available"
 msgstr "แจ้งเมื่อมีสินค้า"
 
+#: models.py:1050
 msgid "Notify When On Sale"
 msgstr "แจ้งเมื่อมีการลดราคา"
 
+#: models.py:1055
 msgid "Wishlist Item"
 msgstr "รายการสินค้าที่ต้องการ"
 
+#: models.py:1056
 msgid "Wishlist Items"
 msgstr "รายการสินค้าที่ต้องการ"
 
+#: models.py:1077
 msgid "Viewed At"
 msgstr "ดูเมื่อ"
 
+#: models.py:1078
 msgid "View Count"
 msgstr "จำนวนครั้งที่ดู"
 
+#: models.py:1081
 msgid "Recently Viewed Product"
 msgstr "สินค้าที่ดูล่าสุด"
 
+#: models.py:1082
 msgid "Recently Viewed Products"
 msgstr "สินค้าที่ดูล่าสุด"
 
+#: models.py:1094
 #, python-brace-format
 msgid "Session: {session}"
 msgstr "เซสชัน: {session}"
 
+#: models.py:1098
 #, python-brace-format
 msgid "{product} viewed by {user}"
 msgstr "{product} ถูกดูโดย {user}"
 
+#: models.py:1109 models.py:1507
+#: templates/admin/cart/method_wizard/step1_basics.html:44
 msgid "Description"
 msgstr "คำอธิบาย"
 
+#: models.py:1113 templates/admin/cart/shippingmethod/change_list.html:78
 msgid "Flat Rate"
 msgstr "อัตราคงที่"
 
-msgid "Free Shipping"
-msgstr "การจัดส่งฟรี"
-
-msgid "Weight Based"
-msgstr "ตามน้ำหนัก"
-
-msgid "Price Based"
-msgstr "ตามราคา"
-
+#: models.py:1114
 msgid "Real-Time Carrier Rates"
 msgstr "อัตราค่าส่งแบบเรียลไทม์จากผู้ให้บริการ"
 
+#: models.py:1115 templates/admin/cart/shippingmethod/change_list.html:84
 msgid "Local Pickup"
 msgstr "รับของที่ร้าน"
 
+#: models.py:1116 templates/admin/cart/shippingmethod/change_list.html:87
 msgid "Table Rate"
 msgstr "อัตราตามตาราง"
 
+#: models.py:1119 templates/admin/cart/method_wizard/step1_basics.html:111
 msgid "Method Type"
 msgstr "ประเภทวิธี"
 
+#: models.py:1129
 msgid "Fixed shipping cost (for flat_rate type)"
 msgstr "ค่าจัดส่งคงที่ (สำหรับประเภท flat_rate)"
 
+#: models.py:1130 templates/admin/cart/method_wizard/step1_basics.html:146
 msgid "Flat Rate Cost"
 msgstr "ค่าใช้จ่ายแบบคงที่"
 
-msgid "Minimum cart value to qualify"
-msgstr "ค่ามินิมัมของตะกร้าเพื่อคุ้มค่า"
-
-msgid "Minimum Order Value"
-msgstr "ค่าสั่งซื้อขั้นต่ำ"
-
-msgid "Maximum cart value to qualify"
-msgstr "ค่าแม็กซิมัมของตะกร้าเพื่อคุ้มค่า"
-
-msgid "Maximum Order Value"
-msgstr "ค่าสั่งซื้อสูงสุด"
-
-msgid "Minimum cart weight (kg)"
-msgstr "น้ำหนักตะกร้าขั้นต่ำ (กิโลกรัม)"
-
-msgid "Minimum Weight"
-msgstr "น้ำหนักขั้นต่ำ"
-
-msgid "Maximum cart weight (kg)"
-msgstr "น้ำหนักตะกร้าสูงสุด (กิโลกรัม)"
-
-msgid "Maximum Weight"
-msgstr "น้ำหนักสูงสุด"
-
+#: models.py:1138 templates/admin/cart/method_wizard/step3_coverage.html:17
 msgid "Shipping Zones"
 msgstr "โซนการจัดส่ง"
 
+#: models.py:1140
 msgid ""
-"Zones where this shipping method is available. If empty, legacy country/"
-"state restrictions apply."
-msgstr "โซนที่วิธีการจัดส่งนี้สามารถใช้งานได้ หากว่าง ข้อจำกัดตามประเทศ/รัฐแบบเดิมจะถูกนำไปใช้"
+"Zones where this shipping method is available. If empty, legacy "
+"country/state restrictions apply."
+msgstr ""
+"โซนที่วิธีการจัดส่งนี้สามารถใช้งานได้ หากว่าง "
+"ข้อจำกัดตามประเทศ/รัฐแบบเดิมจะถูกนำไปใช้"
 
+#: models.py:1149 templates/admin/cart/method_wizard/step4_features.html:19
 msgid "Pickup Locations"
 msgstr "จุดรับของ"
 
+#: models.py:1151
 msgid ""
 "Locations where customers can pick up orders using this shipping method. "
 "Only applies to 'local_pickup' method type."
 msgstr ""
-"สถานที่ที่ลูกค้าสามารถรับสินค้าได้ด้วยวิธีการจัดส่งนี้ ใช้ได้เฉพาะกับประเภทวิธีการจัดส่ง "
-"'local_pickup' เท่านั้น"
+"สถานที่ที่ลูกค้าสามารถรับสินค้าได้ด้วยวิธีการจัดส่งนี้ "
+"ใช้ได้เฉพาะกับประเภทวิธีการจัดส่ง 'local_pickup' เท่านั้น"
 
+#: models.py:1158
 msgid "Minimum delivery time in business days"
 msgstr "เวลาจัดส่งขั้นต่ำในวันทำการ"
 
+#: models.py:1159 templates/admin/cart/method_wizard/step4_features.html:176
 msgid "Minimum Delivery Days"
 msgstr "จำนวนวันจัดส่งขั้นต่ำ"
 
+#: models.py:1164
 msgid "Maximum delivery time in business days"
 msgstr "เวลาจัดส่งสูงสุดในวันทำการ"
 
+#: models.py:1165 templates/admin/cart/method_wizard/step4_features.html:193
 msgid "Maximum Delivery Days"
 msgstr "จำนวนวันจัดส่งสูงสุด"
 
+#: models.py:1172
 msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
 msgstr "คลาสไอคอน Font Awesome (เช่น 'fa-truck', 'fa-box')"
 
+#: models.py:1173 models.py:1512
 msgid "Icon"
 msgstr "ไอคอน"
 
+#: models.py:1183
 msgid ""
 "Custom shipping method image from media library. If provided, this takes "
 "priority over icon."
-msgstr "รูปภาพวิธีการจัดส่งแบบกำหนดเองจากไลบรารีสื่อ หากมีการระบุ จะมีความสำคัญเหนือไอคอน"
+msgstr ""
+"รูปภาพวิธีการจัดส่งแบบกำหนดเองจากไลบรารีสื่อ หากมีการระบุ "
+"จะมีความสำคัญเหนือไอคอน"
 
+#: models.py:1185
 msgid "Image"
 msgstr "รูปภาพ"
 
+#: models.py:1188 templates/admin/cart/method_wizard/step4_features.html:234
 msgid "Sort Order"
 msgstr "ลำดับการจัดเรียง"
 
+#: models.py:1189 models.py:1445 models.py:1518 models.py:1575
 msgid "Is Active"
 msgstr "เปิดใช้งาน"
 
+#: models.py:1197
 msgid "Custom Carrier"
 msgstr "ผู้ให้บริการแบบกำหนดเอง"
 
+#: models.py:1200 templates/admin/cart/method_wizard/step1_basics.html:185
+#: templates/admin/cart/shippingmethod/change_form.html:98
 msgid "Carrier"
 msgstr "ผู้ให้บริการ"
 
+#: models.py:1206
 msgid "Carrier-specific service code"
 msgstr "รหัสบริการเฉพาะผู้ให้บริการ"
 
+#: models.py:1207
 msgid "Carrier Service Code"
 msgstr "รหัสบริการผู้ให้บริการ"
 
+#: models.py:1215 templates/admin/cart/shippingmethod/change_list.html:4
+#: templates/admin/cart/shippingmethod/change_list.html:19
 msgid "Shipping Methods"
 msgstr "วิธีการจัดส่ง"
 
+#: models.py:1236
 msgid "Shipping method is not active"
 msgstr "วิธีการจัดส่งไม่ได้เปิดใช้งาน"
 
-#, python-brace-format
-msgid "Minimum order value {value} required"
-msgstr "ต้องมีมูลค่าคำสั่งซื้อขั้นต่ำ {value}"
-
-#, python-brace-format
-msgid "Maximum order value {value} exceeded"
-msgstr "มูลค่าคำสั่งซื้อเกิน {value}"
-
-#, python-brace-format
-msgid "Minimum weight {weight}kg required"
-msgstr "ต้องมีน้ำหนักขั้นต่ำ {weight}kg"
-
-#, python-brace-format
-msgid "Maximum weight {weight}kg exceeded"
-msgstr "น้ำหนักเกิน {weight}kg"
-
+#: models.py:1240
 msgid "Cart contains only digital products"
 msgstr "ตะกร้ามีเพียงสินค้าดิจิทัลเท่านั้น"
 
+#: models.py:1266
+#| msgid "No pricing tier available for this plan"
+msgid "Not available for this cart"
+msgstr "ไม่สามารถใช้ได้กับตะกร้านี้"
+
+#: models.py:1268
 msgid "Available"
 msgstr "พร้อมใช้งาน"
 
+#: models.py:1291
 msgid "No geographic restrictions"
 msgstr "ไม่มีข้อจำกัดด้านภูมิศาสตร์"
 
+#: models.py:1299
 #, python-brace-format
 msgid "Available in {zone}"
 msgstr "มีจำหน่ายใน {zone}"
 
+#: models.py:1302
 msgid "Not available in your location"
 msgstr "ไม่สามารถใช้งานได้ในพื้นที่ของคุณ"
 
+#: models.py:1305
 msgid "Available worldwide"
 msgstr "ใช้งานได้ทั่วโลก"
 
+#: models.py:1371 models.py:1550
 msgid "ISO 3166-1 alpha-2 country code"
 msgstr "รหัสประเทศตามมาตรฐาน ISO 3166-1 alpha-2"
 
+#: models.py:1371 templates/admin/cart/taxrate/change_list.html:67
 msgid "Country"
 msgstr "ประเทศ"
 
+#: models.py:1375
 msgid "State/Province/Region"
 msgstr "รัฐ / จังหวัด / ภูมิภาค"
 
+#: models.py:1375
 msgid "State"
 msgstr "รัฐ"
 
+#: models.py:1379
 msgid "City name (optional)"
 msgstr "ชื่อเมือง (ไม่บังคับ)"
 
+#: models.py:1379
 msgid "City"
 msgstr "เมือง"
 
+#: models.py:1385
 msgid "List of specific postal codes (optional)"
 msgstr "รายการรหัสไปรษณีย์เฉพาะ (ไม่บังคับ)"
 
+#: models.py:1386
 msgid "Postal Codes"
 msgstr "รหัสไปรษณีย์"
 
+#: models.py:1393
 msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
 msgstr "อัตราภาษีเป็นทศนิยม (เช่น 0.0825 สำหรับ 8.25%)"
 
+#: models.py:1394 models.py:1564
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:47
 msgid "Rate"
 msgstr "อัตรา"
 
+#: models.py:1399 templates/admin/cart/taxrate/change_list.html:79
 msgid "Sales Tax"
 msgstr "ภาษีขาย"
 
+#: models.py:1402
 msgid "Custom Tax"
 msgstr "ภาษีแบบกำหนดเอง"
 
+#: models.py:1405 models.py:1567
+#: templates/admin/cart/taxrate/change_list.html:76
 msgid "Tax Type"
 msgstr "ประเภทภาษี"
 
+#: models.py:1411
 msgid "Apply tax to shipping costs"
 msgstr "ใช้ภาษีกับค่าใช้จ่ายการจัดส่ง"
 
+#: models.py:1412
 msgid "Applies to Shipping"
 msgstr "ใช้กับค่าจัดส่ง"
 
+#: models.py:1417
 msgid "Calculate on top of other taxes (compound tax)"
 msgstr "คำนวณเพิ่มเติมจากภาษีอื่น (ภาษีแบบผสม)"
 
+#: models.py:1418
 msgid "Compound Tax"
 msgstr "ภาษีแบบผสม"
 
-msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
-msgstr "ประเภทสินค้าที่ยกเว้นภาษีนี้ (เช่น ['digital', 'service'])"
+#: models.py:1426
+msgid ""
+"Product types exempt from this tax. Gift cards are exempt by default: "
+"selling stored value is not a taxable supply in most jurisdictions, and tax "
+"falls due when the card is spent. Confirm with your accountant."
+msgstr ""
+"ประเภทสินค้าที่ได้รับการยกเว้นภาษีนี้ บัตรของขวัญจะได้รับการยกเว้นโดยปริยาย:"
+" การขายมูลค่าที่เก็บไว้ไม่ถือเป็นการจ่ายภาษีในเขตอำนาจศาลส่วนใหญ่ "
+"และภาษีจะเกิดขึ้นเมื่อใช้บัตรนั้น โปรดยืนยันกับบัญชีของคุณ"
 
+#: models.py:1430
 msgid "Exempt Product Types"
 msgstr "ประเภทสินค้าที่ยกเว้นภาษี"
 
+#: models.py:1436
 msgid "Categories exempt from this tax"
 msgstr "หมวดหมู่ที่ยกเว้นภาษีนี้"
 
+#: models.py:1437
 msgid "Exempt Categories"
 msgstr "หมวดหมู่ที่ยกเว้นภาษี"
 
+#: models.py:1442
 msgid "Higher priority rules take precedence"
 msgstr "กฎที่มีลำดับความสำคัญสูงกว่าจะถูกนำมาใช้ก่อน"
 
+#: models.py:1451
 msgid "Tax Rate"
 msgstr "อัตราภาษี"
 
+#: models.py:1452 templates/admin/cart/taxrate/change_list.html:4
+#: templates/admin/cart/taxrate/change_list.html:17
 msgid "Tax Rates"
 msgstr "อัตราภาษี"
 
+#: models.py:1465
 #, python-brace-format
 msgid "{name} ({location}) - {rate}%"
 msgstr "{name} ({location}) - {rate}%"
 
+#: models.py:1491
 msgid "Europe"
 msgstr "ยุโรป"
 
+#: models.py:1492
 msgid "North America"
 msgstr "อเมริกาเหนือ"
 
+#: models.py:1493
 msgid "Asia Pacific"
 msgstr "เอเชียแปซิฟิก"
 
+#: models.py:1494
 msgid "Middle East"
 msgstr "ตะวันออกกลาง"
 
+#: models.py:1495
 msgid "Africa"
 msgstr "แอฟริกา"
 
+#: models.py:1496
 msgid "Latin America"
 msgstr "อเมริกาละติน"
 
+#: models.py:1497
 msgid "Oceania"
 msgstr "โอเชเลีย"
 
+#: models.py:1503
 msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
 msgstr "ตัวระบุที่ไม่ซ้ำกัน (ตัวอย่างเช่น eu_vat, us_sales_tax)"
 
+#: models.py:1504
 msgid "Key"
 msgstr "คีย์"
 
+#: models.py:1511
 msgid "Font Awesome icon class"
 msgstr "คลาสไอคอน Font Awesome"
 
+#: models.py:1515
 msgid "Default Tax Type"
 msgstr "ประเภทภาษีเริ่มต้น"
 
+#: models.py:1517
 msgid "Region"
 msgstr "ภูมิภาค"
 
+#: models.py:1522
 msgid "Version for tracking rate updates"
 msgstr "เวอร์ชันสำหรับติดตามการอัปเดตอัตรา"
 
+#: models.py:1523
 msgid "Version"
 msgstr "เวอร์ชัน"
 
+#: models.py:1525
 msgid "Last Updated"
 msgstr "อัปเดตล่าสุด"
 
+#: models.py:1529
 msgid "Tax Preset Group"
 msgstr "กลุ่มการตั้งค่าภาษีล่วงหน้า"
 
+#: models.py:1530
 msgid "Tax Preset Groups"
 msgstr "กลุ่มการตั้งค่าภาษีล่วงหน้า"
 
+#: models.py:1547
 msgid "Preset Group"
 msgstr "กลุ่มการตั้งค่าล่วงหน้า"
 
+#: models.py:1550
 msgid "Country Code"
 msgstr "รหัสประเทศ"
 
+#: models.py:1552
 msgid "Country Name"
 msgstr "ชื่อประเทศ"
 
+#: models.py:1556
 msgid "State/province code (for US/CA presets)"
 msgstr "รหัสรัฐ/จังหวัด (สำหรับการตั้งค่าล่วงหน้าของสหรัฐอเมริกา/แคนาดา)"
 
+#: models.py:1557
 msgid "State Code"
 msgstr "รหัสรัฐ"
 
+#: models.py:1559
 msgid "State Name"
 msgstr "ชื่อรัฐ"
 
+#: models.py:1563
 msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
 msgstr "อัตราภาษีเป็นทศนิยม (เช่น 0.20 สำหรับ 20%)"
 
+#: models.py:1572
 #, python-format
 msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
 msgstr "หมายเหตุเพิ่มเติม (เช่น, 'เพิ่มขึ้นจาก 22% ในเดือนกรกฎาคม 2025')"
 
+#: models.py:1578
 msgid "Tax Preset Rate"
 msgstr "อัตราภาษีการตั้งค่าล่วงหน้า"
 
+#: models.py:1579
 msgid "Tax Preset Rates"
 msgstr "อัตราภาษีการตั้งค่าล่วงหน้า"
 
+#: models.py:1618
 msgid "Billing Address"
 msgstr "ที่อยู่สำหรับการเรียกเก็บเงิน"
 
+#: models.py:1622
 msgid "Billing Same as Shipping"
 msgstr "ที่อยู่การเรียกเก็บเงินเหมือนกับที่อยู่จัดส่ง"
 
+#: models.py:1630
 msgid "Shipping Address Data"
 msgstr "ข้อมูลที่อยู่สำหรับการจัดส่ง"
 
+#: models.py:1632
 msgid ""
 "Temporary shipping address data (not saved to Address model until order "
 "placed)"
-msgstr "ข้อมูลที่อยู่จัดส่งชั่วคราว (จะไม่ถูกบันทึกในโมเดล Address จนกว่าจะมีการสั่งซื้อ)"
+msgstr ""
+"ข้อมูลที่อยู่จัดส่งชั่วคราว (จะไม่ถูกบันทึกในโมเดล Address "
+"จนกว่าจะมีการสั่งซื้อ)"
 
+#: models.py:1639
 msgid "Billing Address Data"
 msgstr "ข้อมูลที่อยู่สำหรับการเรียกเก็บเงิน"
 
+#: models.py:1641
 msgid ""
 "Temporary billing address data (not saved to Address model until order "
 "placed)"
-msgstr "ข้อมูลที่อยู่การเรียกเก็บเงินชั่วคราว (จะไม่ถูกบันทึกในโมเดล Address จนกว่าจะมีการสั่งซื้อ)"
+msgstr ""
+"ข้อมูลที่อยู่การเรียกเก็บเงินชั่วคราว (จะไม่ถูกบันทึกในโมเดล Address "
+"จนกว่าจะมีการสั่งซื้อ)"
 
+#: models.py:1651
 msgid "Selected Shipping Method"
 msgstr "วิธีจัดส่งที่เลือก"
 
+#: models.py:1671
 msgid "Cached list of available shipping methods with rates"
 msgstr "รายการวิธีการจัดส่งที่มีอยู่พร้อมอัตราที่ถูกแคชไว้"
 
+#: models.py:1672
 msgid "Available Shipping Methods"
 msgstr "วิธีจัดส่งที่สามารถใช้ได้"
 
+#: models.py:1679
 msgid "Detailed tax breakdown by jurisdiction"
 msgstr "การแยกประเภทภาษีโดยละเอียดตามเขตอำนาจ"
 
+#: models.py:1680
 msgid "Tax Breakdown"
 msgstr "การแยกประเภทภาษี"
 
+#: models.py:1688
 msgid "Tax Amount"
 msgstr "จำนวนเงินภาษี"
 
+#: models.py:1698
 msgid "Payment Provider"
 msgstr "ผู้ให้บริการชำระเงิน"
 
+#: models.py:1707
 msgid "Subtotal"
 msgstr "ยอดรวมย่อย"
 
+#: models.py:1715
 msgid "Discount Amount"
 msgstr "จำนวนเงินส่วนลด"
 
+#: models.py:1723
 msgid "Gift Card Discount"
 msgstr "ส่วนลดจากบัตรของขวัญ"
 
+#: models.py:1724
 msgid "Total discount from applied gift cards"
 msgstr "ส่วนลดรวมจากบัตรของขวัญที่ใช้แล้ว"
 
+#: models.py:1732
 msgid "Final total: subtotal + shipping + tax - discounts"
 msgstr "ยอดรวมสุดท้าย: ยอดย่อย + ค่าจัดส่ง + ภาษี - ส่วนลด"
 
+#: models.py:1733
 msgid "Total Amount"
 msgstr "ยอดรวมทั้งหมด"
 
+#: models.py:1738
 msgid "Cart Review"
 msgstr "รีวิวตะกร้าสินค้า"
 
+#: models.py:1741
 msgid "Billing Information"
 msgstr "ข้อมูลการเรียกเก็บเงิน"
 
+#: models.py:1742
 msgid "Payment Method"
 msgstr "วิธีการชำระเงิน"
 
+#: models.py:1743
 msgid "Order Review"
 msgstr "รีวิวคำสั่งซื้อ"
 
+#: models.py:1746
 msgid "Step Completed"
 msgstr "ขั้นตอนเสร็จสิ้น"
 
+#: models.py:1749
 msgid "Expires At"
 msgstr "หมดอายุที่"
 
+#: models.py:1753
 msgid "Metadata"
 msgstr "ข้อมูลเมตา"
 
+#: models.py:1754
 msgid "Extra metadata (e.g., marketplace purchase info)"
 msgstr "ข้อมูลเพิ่มเติม (เช่น ข้อมูลการซื้อในตลาด)"
 
+#: models.py:1760
 msgid "Checkout Session"
 msgstr "เซสชันการชำระเงิน"
 
+#: models.py:1761
 msgid "Checkout Sessions"
 msgstr "เซสชันการชำระเงิน"
 
+#: models.py:1768
 #, python-brace-format
 msgid "Checkout for {cart}"
 msgstr "ชำระเงินสำหรับ {cart}"
 
-msgid "Gift Card"
-msgstr "บัตรของขวัญ"
-
-msgid "Amount in base currency (used for cart calculations)"
-msgstr "จำนวนเงินในสกุลเงินพื้นฐาน (ใช้สำหรับการคำนวณในตะกร้า)"
-
-msgid "Original Currency Amount"
-msgstr "จำนวนเงินในสกุลเงินเดิม"
-
-msgid ""
-"Discount in the gift card's native currency (for foreign-currency gift cards)"
-msgstr "ส่วนลดในสกุลเงินพื้นเดิมของบัตรของขวัญ (สำหรับบัตรของขวัญที่ใช้สกุลเงินต่างประเทศ)"
-
-msgid "Exchange Rate"
-msgstr "อัตราแลกเปลี่ยน"
-
-msgid "Rate: gift card currency -> base currency at time of application"
-msgstr "อัตรา: สกุลเงินบัตรของขวัญ -> สกุลเงินพื้นฐาน ณ ขณะที่ใช้งาน"
-
-msgid "Applied At"
-msgstr "ใช้งานที่"
-
-msgid "Applied Gift Card"
-msgstr "บัตรของขวัญที่ใช้งานแล้ว"
-
-msgid "Applied Gift Cards"
-msgstr "บัตรของขวัญที่ใช้งานแล้ว"
-
-msgid "This gift card cannot be used"
-msgstr "บัตรของขวัญนี้ไม่สามารถใช้ได้"
-
-msgid "Discount amount exceeds gift card balance"
-msgstr "จำนวนส่วนลดเกินยอดคงเหลือของบัตรของขวัญ"
-
+#: serializers.py:34
 msgid "Total customization price (per unit)"
 msgstr "ราคาการปรับแต่งทั้งหมด (ต่อหน่วย)"
 
+#: serializers.py:43
 msgid "'instant' for digital items, 'shipping' for physical items"
 msgstr "'instant' สำหรับสินค้าดิจิทัล, 'shipping' สำหรับสินค้าทางกายภาพ"
 
+#: serializers.py:46
 msgid "True if this item is a component of a bundle"
 msgstr "เป็นจริงหากสินค้านี้เป็นส่วนประกอบของชุด"
 
+#: serializers.py:49
 msgid "ID of parent bundle CartItem if this is a component"
 msgstr "ID ของ CartItem ชุดหลัก หากสิ่งนี้เป็นส่วนประกอบ"
 
+#: serializers.py:52
 msgid "Child items if this is a bundle parent"
 msgstr "รายการสินค้าย่อย หากเป็นผู้ปกครองของชุดสินค้า"
 
+#: serializers.py:591
+#| msgid "Remove gift card"
+msgid "Where to deliver the gift card"
+msgstr "ที่อยู่ในการส่งบัตรของขวัญ"
+
+#: serializers.py:605
+msgid "Offset-aware ISO-8601. Omit to deliver as soon as payment clears."
+msgstr ""
+"ISO-8601 ที่มี Offset ระบุ "
+"ถ้าไม่ระบุจะส่งสินค้าทันทีหลังการชำระเงินเสร็จสิ้น"
+
+#: serializers.py:612
+msgid "Face value, for products that let the customer choose."
+msgstr "ค่าที่แสดง สำหรับสินค้าที่ให้ลูกค้าเลือกเอง"
+
+#: serializers.py:621
+#| msgid "Gift card is not active"
+msgid "Gift card details must be an object."
+msgstr "รายละเอียดบัตรของขวัญต้องเป็นวัตถุ"
+
+#: serializers.py:626
+#, python-format
+msgid "Unknown field(s): %(keys)s"
+msgstr "พบฟิลด์ไม่รู้จัก: %(keys)s"
+
+#: serializers.py:638
+msgid "Message cannot contain HTML or markup."
+msgstr "ข้อความไม่สามารถมี HTML หรือโค้ดกำหนดรูปแบบได้"
+
+#: serializers.py:647
+msgid "Include a UTC offset so the send time is unambiguous."
+msgstr "โปรดระบุชั่วโมงที่แตกต่างจาก UTC เพื่อให้เวลาการส่งมีความชัดเจน"
+
+#: serializers.py:651
+msgid "Scheduled delivery must be in the future."
+msgstr "เวลาจัดส่งที่กำหนดไว้ต้องอยู่ในอนาคต"
+
+#: serializers.py:654
+msgid "Scheduled delivery cannot be more than a year away."
+msgstr "เวลาจัดส่งที่กำหนดไว้ไม่สามารถเกินหนึ่งปีได้"
+
+#: serializers.py:673
 msgid "Map of bundle_item_id to variant_id for customer-selected variants"
 msgstr "แผนที่ของ bundle_item_id ไปยัง variant_id สำหรับตัวแปรที่ลูกค้าเลือก"
 
+#: serializers.py:680
 msgid ""
-"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
-msgstr "รายการของ bundle_item_ids ที่ต้องการยกเว้น (สำหรับสินค้าเสริมที่ลูกค้าไม่ต้องการ)"
+"List of bundle_item_ids to exclude (for optional items customer doesn't "
+"want)"
+msgstr ""
+"รายการของ bundle_item_ids ที่ต้องการยกเว้น "
+"(สำหรับสินค้าเสริมที่ลูกค้าไม่ต้องการ)"
 
-msgid "Map of slot_id to list of selected option_ids for configurable products"
-msgstr "แผนที่ของ slot_id ไปยังรายการ option_ids ที่เลือกสำหรับผลิตภัณฑ์ที่กำหนดค่าได้"
+#: serializers.py:689
+msgid ""
+"Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"แผนที่ของ slot_id ไปยังรายการ option_ids "
+"ที่เลือกสำหรับผลิตภัณฑ์ที่กำหนดค่าได้"
 
+#: serializers.py:694
 msgid "Configuration preset ID used as starting point"
 msgstr "ID ตั้งค่าเริ่มต้นที่ใช้เป็นจุดเริ่มต้น"
 
+#: serializers.py:706
 msgid ""
-"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+"Booking details: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
 msgstr ""
-"รายละเอียดการจอง: start_datetime, end_datetime, resource_id, persons, timezone"
+"รายละเอียดการจอง: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
 
+#: serializers.py:719
 msgid "Quantity must be at least 1"
 msgstr "จำนวนต้องอย่างน้อย 1"
 
+#: serializers.py:737
 msgid "Subscription plan is required for subscription purchases"
 msgstr "จำเป็นต้องมีแผนการสมัครสมาชิกสำหรับการซื้อการสมัครสมาชิก"
 
+#: serializers.py:743
 msgid "Payment token is required for subscription purchases"
 msgstr "ต้องการโทเคนการชำระเงินสำหรับการซื้อแบบสมัครสมาชิก"
 
+#: serializers.py:752 services/cart_service.py:991
+#: services/wishlist_service.py:61
 msgid "Product not found"
 msgstr "ไม่พบสินค้า"
 
+#: serializers.py:756
 msgid "This product does not support subscriptions"
 msgstr "สินค้านี้ไม่รองรับการสมัครสมาชิก"
 
+#: serializers.py:768
 msgid "Invalid or inactive subscription plan"
 msgstr "แผนการสมัครสมาชิกไม่ถูกต้องหรือไม่ได้ใช้งาน"
 
+#: serializers.py:773
 msgid "This plan is not available for this product"
 msgstr "แผนนี้ไม่สามารถใช้ได้กับสินค้านี้"
 
+#: serializers.py:790
 msgid "Invalid or inactive payment token"
 msgstr "โทเคนการชำระเงินไม่ถูกต้องหรือไม่ได้ใช้งาน"
 
+#: serializers.py:805
 msgid "Pricing tier not found or does not belong to selected plan"
 msgstr "ไม่พบระดับราคา หรือไม่ได้เกี่ยวข้องกับแผนที่เลือก"
 
+#: serializers.py:813
 msgid "No pricing tier available for this plan"
 msgstr "ไม่มีระดับราคาสำหรับแผนนี้"
 
+#: serializers.py:830
 msgid "Quantity cannot be negative"
 msgstr "จำนวนไม่สามารถเป็นลบได้"
 
-msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
-msgstr "รหัสบัตรของขวัญ (ตัวอย่างเช่น GC-XXXX-XXXX-XXXX)"
-
-msgid "Amount applied from this gift card (in base currency)"
-msgstr "จำนวนเงินที่ใช้จากบัตรของขวัญนี้ (ในสกุลเงินหลัก)"
-
-msgid "Remaining balance on gift card after this application"
-msgstr "ยอดคงเหลือบนบัตรของขวัญหลังจากใช้ครั้งนี้"
-
-msgid "Base currency code"
-msgstr "รหัสสกุลเงินพื้นฐาน"
-
-msgid "Gift card's native currency code"
-msgstr "รหัสสกุลเงินพื้นฐานของบัตรของขวัญ"
-
-msgid ""
-"Discount in gift card's native currency (for foreign-currency gift cards)"
-msgstr "ส่วนลดในสกุลเงินของบัตรของขวัญ (สำหรับบัตรของขวัญที่ใช้สกุลเงินต่างประเทศ)"
-
+#: serializers.py:1355
 #, python-brace-format
 msgid ""
-"Either address_id or complete address details are required. Missing: {fields}"
+"Either address_id or complete address details are required. Missing: "
+"{fields}"
 msgstr "ต้องการ address_id หรือรายละเอียดที่อยู่ครบถ้วน ขาดหายไป: {fields}"
 
+#: serializers.py:1388
+#, python-brace-format
+#| msgid ""
+#| "Either address_id or complete address details are required. Missing: "
+#| "{fields}"
+msgid "Complete billing address details are required. Missing: {fields}"
+msgstr "จำเป็นต้องระบุรายละเอียดที่อยู่การจัดส่งให้ครบถ้วน ขาดหายไป: {fields}"
+
+#: serializers.py:1406
+#| msgid "Payment provider is not properly configured"
+msgid "Either payment_provider_id or provider slug is required."
+msgstr "จำเป็นต้องระบุ payment_provider_id หรือ provider slug"
+
+#: services/cart_service.py:128 services/cart_service.py:130
+msgid "Choose an amount for this gift card."
+msgstr "เลือกจำนวนเงินสำหรับบัตรของขวัญนี้"
+
+#: services/cart_service.py:136
+msgid "Gift card amount must be greater than zero."
+msgstr "จำนวนเงินของบัตรของขวัญต้องมากกว่าศูนย์"
+
+#: services/cart_service.py:140 services/cart_service.py:156
+#| msgid "This plan is not available for this product"
+msgid "That is not an available gift card amount."
+msgstr "จำนวนบัตรของขวัญนั้นไม่สามารถใช้ได้"
+
+#: services/cart_service.py:151
+#, python-format
+msgid "Minimum gift card amount is %(min)s."
+msgstr "จำนวนขั้นต่ำของบัตรของขวัญคือ %(min)s."
+
+#: services/cart_service.py:153
+#, python-format
+msgid "Maximum gift card amount is %(max)s."
+msgstr "จำนวนเงินบัตรของขวัญสูงสุดคือ %(max)s。"
+
+#: services/cart_service.py:199
 msgid "This product requires customization"
 msgstr "สินค้านี้ต้องการการปรับแต่ง"
 
+#: services/cart_service.py:207
 msgid "Invalid design token"
 msgstr "โทเคนการออกแบบไม่ถูกต้อง"
 
+#: services/cart_service.py:235
 msgid "Design not found or expired"
 msgstr "ไม่พบหรือหมดอายุของดีไซน์"
 
+#: services/cart_service.py:239
 msgid "This product does not support customization"
 msgstr "สินค้านี้ไม่รองรับการกำหนดค่าเฉพาะ"
 
+#: services/cart_service.py:252
 msgid "Invalid customization option"
 msgstr "ตัวเลือกการปรับแต่งไม่ถูกต้อง"
 
+#: services/cart_service.py:261
 #, python-brace-format
 msgid "Customization '{name}': {error}"
 msgstr "การปรับแต่ง '{name}': {error}"
 
+#: services/cart_service.py:280
 #, python-brace-format
 msgid "Required customization '{name}' is missing"
 msgstr "การปรับแต่งที่จำเป็น '{name}' หายไป"
 
+#: services/cart_service.py:343
 msgid "Insufficient stock"
 msgstr "สต็อกไม่เพียงพอ"
 
+#: services/cart_service.py:386
 msgid "Bundle has no components configured"
 msgstr "ชุดสินค้ายังไม่มีส่วนประกอบที่ตั้งค่า"
 
+#: services/cart_service.py:395
 #, python-brace-format
 msgid "Cannot exclude non-optional bundle component: {name}"
 msgstr "ไม่สามารถยกเว้นองค์ประกอบชุดที่ไม่ใช่ตัวเลือก: {name}"
 
+#: services/cart_service.py:414
+msgid "Bundles cannot contain gift cards."
+msgstr "ไม่สามารถรวมบัตรของขวัญในชุดได้"
+
+#: services/cart_service.py:424
 #, python-brace-format
 msgid "Variant selection required for: {name}"
 msgstr "ต้องเลือกตัวแปรสำหรับ: {name}"
 
+#: services/cart_service.py:436
 #, python-brace-format
 msgid "Invalid variant selected for: {name}"
 msgstr "เลือกตัวแปรที่ไม่ถูกต้องสำหรับ: {name}"
 
+#: services/cart_service.py:465
 #, python-brace-format
 msgid "Insufficient stock for bundle component: {name}"
 msgstr "สต็อกไม่เพียงพอสำหรับองค์ประกอบชุด: {name}"
 
+#: services/cart_service.py:514
 msgid "Bundle quantity updated in cart"
 msgstr "ปริมาณชุดสินค้าในตะกร้าถูกอัปเดต"
 
+#: services/cart_service.py:544
 msgid "Bundle added to cart"
 msgstr "ชุดสินค้าถูกเพิ่มลงในตะกร้า"
 
+#: services/cart_service.py:581
 #, python-brace-format
 msgid "Required slot '{name}' has no selection."
 msgstr "ช่องที่จำเป็น '{name}' ไม่มีการเลือก"
 
+#: services/cart_service.py:590
 #, python-brace-format
 msgid "Slot '{name}' requires at least {min} selection(s)."
 msgstr "ช่อง '{name}' ต้องการอย่างน้อย {min} การเลือก"
 
+#: services/cart_service.py:598
 #, python-brace-format
 msgid "Slot '{name}' allows at most {max} selection(s)."
 msgstr "ช่อง '{name}' อนุญาตให้เลือกได้สูงสุด {max} รายการ"
 
+#: services/cart_service.py:609
 #, python-brace-format
 msgid "Invalid slot ID: {id}"
 msgstr "ID ช่องไม่ถูกต้อง: {id}"
 
+#: services/cart_service.py:619
 #, python-brace-format
 msgid "Option {opt_id} is not valid for slot '{slot}'."
 msgstr "ตัวเลือก {opt_id} ไม่ถูกต้องสำหรับช่อง '{slot}'"
 
+#: services/cart_service.py:656
 #, python-brace-format
 msgid ""
 "Incompatible selection in slot '{slot}'. Some options are not compatible "
 "with your other choices."
-msgstr "การเลือกที่ไม่เข้ากันในช่อง '{slot}'. บางตัวเลือกไม่เข้ากับการเลือกอื่นของคุณ"
+msgstr ""
+"การเลือกที่ไม่เข้ากันในช่อง '{slot}'. "
+"บางตัวเลือกไม่เข้ากับการเลือกอื่นของคุณ"
 
+#: services/cart_service.py:667
 #, python-brace-format
 msgid ""
 "Excluded selection in slot '{slot}'. Some options conflict with your other "
 "choices."
-msgstr "การเลือกที่ถูกยกเว้นในช่อง '{slot}'. บางตัวเลือกขัดแย้งกับการเลือกอื่นของคุณ"
+msgstr ""
+"การเลือกที่ถูกยกเว้นในช่อง '{slot}'. บางตัวเลือกขัดแย้งกับการเลือกอื่นของคุณ"
 
+#: services/cart_service.py:767 services/cart_service.py:1386
 #, python-brace-format
 msgid "Insufficient stock for component: {name}"
 msgstr "สต็อกไม่เพียงพอสำหรับองค์ประกอบ: {name}"
 
+#: services/cart_service.py:827
 msgid "Configured product added to cart"
 msgstr "สินค้าที่ตั้งค่าแล้วถูกเพิ่มลงในตะกร้า"
 
+#: services/cart_service.py:887
 msgid "Either user or session_key must be provided"
 msgstr "ต้องระบุผู้ใช้หรือ session_key"
 
+#: services/cart_service.py:995
 msgid "This product is no longer available"
 msgstr "สินค้านี้ไม่มีให้บริการอีกต่อไป"
 
+#: services/cart_service.py:1023
 msgid "You must be logged in to purchase this product."
 msgstr "คุณต้องเข้าสู่ระบบเพื่อซื้อสินค้านี้"
 
+#: services/cart_service.py:1026
 #, python-format
 msgid "This product requires you to own \"%(required)s\" first."
 msgstr "สินค้านี้ต้องการให้คุณเป็นเจ้าของ \"\" ก่อน %(required)s"
 
+#: services/cart_service.py:1035 services/wishlist_service.py:68
 msgid "Product variant not found"
 msgstr "ไม่พบตัวเลือกสินค้า"
 
+#: services/cart_service.py:1040
 msgid "Configuration is required for configurable products"
 msgstr "จำเป็นต้องตั้งค่าสำหรับสินค้าที่กำหนดเองได้"
 
+#: services/cart_service.py:1159
 msgid "Booking added to cart"
 msgstr "การจองถูกเพิ่มลงในตะกร้า"
 
+#: services/cart_service.py:1192
+#| msgid "Item added to cart"
+msgid "Gift card added to cart"
+msgstr "บัตรของขวัญถูกเพิ่มเข้าไปในตะกร้าแล้ว"
+
+#: services/cart_service.py:1231
 msgid "Insufficient stock for requested quantity"
 msgstr "สต็อกไม่เพียงพอสำหรับจำนวนที่ต้องการ"
 
+#: services/cart_service.py:1234
 msgid "Cart item quantity updated"
 msgstr "ปริมาณรายการในตะกร้าถูกอัปเดต"
 
+#: services/cart_service.py:1256
 msgid "Item added to cart"
 msgstr "รายการถูกเพิ่มลงในตะกร้า"
 
+#: services/cart_service.py:1303
 msgid ""
 "Component quantities cannot be changed directly. Update the parent product "
 "instead."
 msgstr "จำนวนส่วนประกอบไม่สามารถเปลี่ยนโดยตรงได้ โปรดอัปเดตสินค้าหลักแทน"
 
+#: services/cart_service.py:1318 services/cart_service.py:1499
 #, python-format
 msgid ""
 "Item removed from cart. Also removed %(names)s (required product no longer "
 "in cart)."
-msgstr "สินค้าถูกนำออกจากตะกร้า รวมถึง %(names)s (สินค้าที่จำเป็นไม่มีอยู่ในตะกร้าแล้ว)"
+msgstr ""
+"สินค้าถูกนำออกจากตะกร้า รวมถึง %(names)s "
+"(สินค้าที่จำเป็นไม่มีอยู่ในตะกร้าแล้ว)"
 
+#: services/cart_service.py:1320 services/cart_service.py:1501
 msgid "Item removed from cart"
 msgstr "รายการถูกลบออกจากตะกร้า"
 
+#: services/cart_service.py:1410
 msgid "Cart item updated"
 msgstr "รายการในตะกร้าถูกอัปเดต"
 
+#: services/cart_service.py:1469 views.py:286
 msgid ""
 "Component items cannot be removed directly. Remove the parent product "
 "instead."
 msgstr "รายการส่วนประกอบไม่สามารถลบโดยตรงได้ โปรดลบสินค้าหลักแทน"
 
+#: services/cart_service.py:1556
 msgid "Cart cleared"
 msgstr "ตะกร้าถูกล้าง"
 
+#: services/cart_service.py:1593
 msgid "Voucher removed"
 msgstr "คูปองถูกลบ"
 
+#: services/cart_service.py:1594
 msgid "Voucher not found in cart"
 msgstr "ไม่พบคูปองในตะกร้า"
 
-msgid "Gift card removed"
-msgstr "บัตรของขวัญถูกลบ"
-
-msgid "Gift card not found in cart"
-msgstr "ไม่พบบัตรของขวัญในตะกร้า"
-
+#: services/cart_service.py:1666
 #, python-brace-format
 msgid "{count} items merged into cart"
 msgstr "รวม {count} สินค้าเข้าตะกร้า"
 
+#: services/checkout_service.py:94
 msgid "Account creation required to proceed"
 msgstr "จำเป็นต้องสร้างบัญชีเพื่อดำเนินการต่อ"
 
+#: services/checkout_service.py:169 services/checkout_service.py:233
 msgid "Address not found"
 msgstr "ไม่พบที่อยู่"
 
+#: services/checkout_service.py:178
 msgid "Either address_id or address_data must be provided"
 msgstr "ต้องระบุ address_id หรือ address_data"
 
+#: services/checkout_service.py:198
 msgid "Shipping address set"
 msgstr "ที่อยู่สำหรับการจัดส่งถูกตั้งค่า"
 
+#: services/checkout_service.py:239
 msgid "Billing address must be provided"
 msgstr "ต้องระบุที่อยู่สำหรับการเรียกเก็บเงิน"
 
+#: services/checkout_service.py:242
 msgid "Billing address set"
 msgstr "ที่อยู่สำหรับการเรียกเก็บเงินถูกตั้งค่า"
 
+#: services/checkout_service.py:282
 msgid "Shipping address must be set first"
 msgstr "ต้องตั้งค่าที่อยู่จัดส่งก่อน"
 
+#: services/checkout_service.py:287
 msgid "Shipping method not found"
 msgstr "ไม่พบวิธีการจัดส่ง"
 
+#: services/checkout_service.py:320
 msgid "Shipping method selected"
 msgstr "วิธีการจัดส่งถูกเลือก"
 
+#: services/checkout_service.py:382
 msgid "Payment provider not found"
 msgstr "ไม่พบผู้ให้บริการชำระเงิน"
 
+#: services/checkout_service.py:386
 msgid "Payment provider is not properly configured"
 msgstr "ผู้ให้บริการชำระเงินไม่ได้ตั้งค่าอย่างถูกต้อง"
 
+#: services/checkout_service.py:410
 msgid "Payment provider is not available for your location or currency"
 msgstr "ผู้ให้บริการชำระเงินไม่สามารถใช้งานได้สำหรับตำแหน่งหรือสกุลเงินของคุณ"
 
+#: services/checkout_service.py:417
 msgid "Payment method selected"
 msgstr "วิธีการชำระเงินถูกเลือก"
 
+#: services/checkout_service.py:434
 msgid "Cart is empty"
 msgstr "ตะกร้าว่าง"
 
+#: services/checkout_service.py:440
 msgid "Shipping address is required"
 msgstr "ต้องระบุที่อยู่สำหรับการจัดส่ง"
 
+#: services/checkout_service.py:442
 msgid "Shipping method is required"
 msgstr "ต้องระบุวิธีการจัดส่ง"
 
+#: services/checkout_service.py:448
 msgid "Billing address is required"
 msgstr "ต้องระบุที่อยู่สำหรับการเรียกเก็บเงิน"
 
+#: services/checkout_service.py:455
 msgid "Payment method is required"
 msgstr "ต้องระบุวิธีการชำระเงิน"
 
+#: services/checkout_service.py:459
 msgid "Checkout session has expired"
 msgstr "เซสชันการชำระเงินหมดอายุ"
 
+#: services/checkout_service.py:489
 #, python-brace-format
 msgid "Insufficient stock for {product}"
 msgstr "สต็อกไม่เพียงพอสำหรับ {product}"
 
+#: services/checkout_service.py:505
 #, python-format
 msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
 msgstr "\"%(product)s\" ต้องการการเป็นเจ้าของ \"\" ก่อน %(required)s"
 
+#: services/checkout_service.py:694
 msgid "Customer email is required"
 msgstr "อีเมลของลูกค้าเป็นข้อมูลที่จำเป็น"
 
+#: services/checkout_service.py:854
 msgid "Unable to allocate warehouse for order. Please contact support."
 msgstr "ไม่สามารถจัดสรรคลังสินค้าสำหรับคำสั่งซื้อได้ โปรดติดต่อฝ่ายสนับสนุน"
 
+#: services/checkout_service.py:985 services/checkout_service.py:1018
 msgid "Insufficient stock to complete order"
 msgstr "สต็อกไม่เพียงพอสำหรับการสั่งซื้อ"
 
+#: services/checkout_service.py:990 services/checkout_service.py:1023
 msgid "Error processing order. Please try again."
 msgstr "เกิดข้อผิดพลาดในการประมวลผลคำสั่งซื้อ โปรดลองอีกครั้ง"
 
+#: services/checkout_service.py:1072
 msgid "Order created successfully"
 msgstr "สร้างคำสั่งซื้อสำเร็จ"
 
+#: services/checkout_service.py:1322
+#, python-format
+msgid "The voucher %(code)s has just been fully used."
+msgstr "ตั๋ว %(code)s ถูกใช้หมดแล้ว"
+
+#: services/checkout_service.py:1328
+#, python-format
+#| msgid "This product is no longer available"
+msgid "The voucher %(code)s is no longer valid."
+msgstr "คูปอง %(code)s ไม่สามารถใช้งานได้แล้ว"
+
+#: services/wishlist_service.py:82
 msgid "Wishlist item updated"
 msgstr "รายการในรายการโปรดถูกอัปเดต"
 
+#: services/wishlist_service.py:95
 msgid "Item added to wishlist"
 msgstr "รายการถูกเพิ่มลงในรายการโปรด"
 
+#: services/wishlist_service.py:110
 msgid "Item removed from wishlist"
 msgstr "รายการถูกลบออกจากรายการโปรด"
 
+#: services/wishlist_service.py:137
 msgid "Item moved to cart"
 msgstr "รายการถูกย้ายไปยังตะกร้า"
 
+#: services/wishlist_service.py:154
 msgid "Wishlist cleared"
 msgstr "รายการโปรดถูกล้าง"
 
+#: services/wishlist_service.py:173
 msgid "Wishlist with this name already exists"
 msgstr "รายการโปรดชื่อนี้มีอยู่แล้ว"
 
+#: services/wishlist_service.py:184
 msgid "Wishlist created"
 msgstr "สร้างรายการโปรดสำเร็จ"
 
+#: templates/admin/cart/cart/change_list.html:22
 msgid "Monitor active and abandoned customer carts"
 msgstr "ติดตามตะกร้าสินค้าของลูกค้าที่ใช้งานและถูกทิ้งไว้"
 
+#: templates/admin/cart/cart/change_list.html:33
 msgid "Add"
 msgstr "เพิ่ม"
 
+#: templates/admin/cart/cart/change_list.html:33
+#: templates/admin/cart/cart/change_list.html:178
 msgid "cart"
 msgstr "ตะกร้า"
 
+#: templates/admin/cart/cart/change_list.html:45
+#: templates/admin/cart/taxrate/change_list.html:59
 msgid "Filters"
 msgstr "ตัวกรอง"
 
+#: templates/admin/cart/cart/change_list.html:56
+#: templates/admin/cart/taxrate/change_list.html:63
 msgid "Search"
 msgstr "ค้นหา"
 
+#: templates/admin/cart/cart/change_list.html:61
 msgid "Search by user, session, or email..."
 msgstr "ค้นหาผ่านผู้ใช้, session หรืออีเมล..."
 
+#: templates/admin/cart/cart/change_list.html:68
 msgid "User Type"
 msgstr "ประเภทผู้ใช้"
 
+#: templates/admin/cart/cart/change_list.html:71
 msgid "All Carts"
 msgstr "ตะกร้าทั้งหมด"
 
+#: templates/admin/cart/cart/change_list.html:72
 msgid "Registered Users"
 msgstr "ผู้ใช้ที่ลงทะเบียนแล้ว"
 
+#: templates/admin/cart/cart/change_list.html:73
 msgid "Guest Carts"
 msgstr "ตะกร้าของผู้เยี่ยมชม"
 
+#: templates/admin/cart/cart/change_list.html:80
 msgid "Cart Status"
 msgstr "สถานะตะกร้า"
 
+#: templates/admin/cart/cart/change_list.html:83
+#: templates/admin/cart/cart/change_list.html:96
+#: templates/admin/cart/taxrate/change_list.html:88
 msgid "All"
 msgstr "ทั้งหมด"
 
+#: templates/admin/cart/cart/change_list.html:84
 msgid "Active (< 24h)"
 msgstr "ใช้งานอยู่ (<24 ชม.)"
 
+#: templates/admin/cart/cart/change_list.html:85
 msgid "Abandoned (> 24h)"
 msgstr "ถูกทิ้ง (>24 ชม.)"
 
+#: templates/admin/cart/cart/change_list.html:86
+#: templates/admin/cart/partials/cart_cards.html:50
 msgid "Empty"
 msgstr "ว่างเปล่า"
 
+#: templates/admin/cart/cart/change_list.html:97
 msgid "Has Shipping"
 msgstr "มีการจัดส่ง"
 
+#: templates/admin/cart/cart/change_list.html:98
 msgid "No Shipping"
 msgstr "ไม่มีการจัดส่ง"
 
+#: templates/admin/cart/cart/change_list.html:105
 msgid "Min Cart Value"
 msgstr "ค่ามินิมัมของตะกร้า"
 
+#: templates/admin/cart/cart/change_list.html:110
 msgid "Min value"
 msgstr "ค่ามินิมัม"
 
+#: templates/admin/cart/cart/change_list.html:117
 msgid "Max Cart Value"
 msgstr "ค่าแมกซิมัมของตะกร้า"
 
+#: templates/admin/cart/cart/change_list.html:122
 msgid "Max value"
 msgstr "ค่าแมกซิมัม"
 
+#: templates/admin/cart/cart/change_list.html:130
 msgid "Created From"
 msgstr "สร้างจาก"
 
+#: templates/admin/cart/cart/change_list.html:139
 msgid "Created To"
 msgstr "สร้างถึง"
 
+#: templates/admin/cart/cart/change_list.html:151
 msgid "Apply Filters"
 msgstr "ใช้ตัวกรอง"
 
+#: templates/admin/cart/cart/change_list.html:154
 msgid "Clear All"
 msgstr "ล้างทั้งหมด"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Run the selected action"
 msgstr "ดำเนินการตามที่เลือก"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Go"
 msgstr "ดำเนินการ"
 
+#: templates/admin/cart/cart/change_list.html:168
 msgid "of"
 msgstr "ของ"
 
+#: templates/admin/cart/cart/change_list.html:195
 #, python-format
 msgid "1 cart"
 msgid_plural "%(counter)s carts"
 msgstr[0] "%(counter)s ตะกร้า"
 msgstr[1] "%(counter)s ตะกร้า"
 
+#: templates/admin/cart/cart/change_list.html:197
 msgid "carts"
 msgstr "ตะกร้าสินค้า"
 
+#: templates/admin/cart/cart/change_list.html:201
 msgid "Show all"
 msgstr "แสดงทั้งหมด"
 
+#: templates/admin/cart/cart/change_list.html:205
+#: templates/admin/cart/shippingmethod/change_form.html:43
+#: templates/admin/cart/shippingmethod/change_form.html:343
+#: templates/admin/cart/taxrate/change_form.html:44
+#: templates/admin/cart/taxrate/change_form.html:238
 msgid "Save"
 msgstr "บันทึก"
 
+#: templates/admin/cart/method_wizard/base.html:4
+#: templates/admin/cart/method_wizard/base.html:17
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:24
 msgid "Add Shipping Method"
 msgstr "เพิ่มวิธีการจัดส่ง"
 
+#: templates/admin/cart/method_wizard/base.html:18
 msgid "Configure a new shipping method for your store"
 msgstr "ตั้งค่าวิธีการจัดส่งใหม่สำหรับร้านค้าของคุณ"
 
+#: templates/admin/cart/method_wizard/base.html:25
+#: templates/admin/cart/method_wizard/step1_basics.html:10
+#: templates/admin/cart/method_wizard/step5_review.html:18
 msgid "Method Basics"
 msgstr "ข้อมูลพื้นฐานของวิธี"
 
+#: templates/admin/cart/method_wizard/base.html:31
 msgid "Eligibility"
 msgstr "คุณสมบัติ"
 
+#: templates/admin/cart/method_wizard/base.html:37
+#: templates/admin/cart/shippingmethod/change_form.html:90
 msgid "Coverage"
 msgstr "การครอบคลุม"
 
+#: templates/admin/cart/method_wizard/base.html:43
 msgid "Features"
 msgstr "คุณสมบัติ"
 
+#: templates/admin/cart/method_wizard/base.html:49
 msgid "Review"
 msgstr "ตรวจสอบ"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:13
 msgid "Define the core identity and type of this shipping method."
 msgstr "กำหนดตัวตนหลักและประเภทของวิธีการจัดส่งนี้"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:27
 msgid "Method Name"
 msgstr "ชื่อวิธี"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:35
 msgid "e.g., Standard Shipping, Express Delivery"
 msgstr "ตัวอย่างเช่น จัดส่งมาตรฐาน, การจัดส่งแบบเร่งด่วน"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:38
 msgid "Customer-facing name for this shipping method"
 msgstr "ชื่อวิธีการจัดส่งสำหรับลูกค้า"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:49
 msgid "Optional description of this shipping method"
 msgstr "คำอธิบายเพิ่มเติมสำหรับวิธีการจัดส่งนี้ (ไม่จำเป็น)"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:54
 msgid "Display Icon"
 msgstr "ไอคอนแสดงผล"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:58
+#: templates/admin/cart/shippingmethod/change_form.html:227
 msgid ""
 "Select an image from the media library or choose a Font Awesome icon. Image "
 "takes priority if both are provided."
 msgstr ""
-"เลือกภาพจากไลบรารีสื่อหรือเลือกไอคอนจาก Font Awesome. ถ้าเลือกทั้งสอง ภาพจะมีความสำคัญกว่า"
+"เลือกภาพจากไลบรารีสื่อหรือเลือกไอคอนจาก Font Awesome. ถ้าเลือกทั้งสอง "
+"ภาพจะมีความสำคัญกว่า"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:63
+#: templates/admin/cart/method_wizard/step5_review.html:48
 msgid "Custom Image"
 msgstr "ภาพที่กำหนดเอง"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:74
 msgid "Font Awesome Icon"
 msgstr "ไอคอน Font Awesome"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:78
 msgid "Choose an icon from Font Awesome library"
 msgstr "เลือกไอคอนจากไลบรารี Font Awesome"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:94
+#: templates/admin/cart/method_wizard/step5_review.html:62
+#: templates/admin/cart/shippingmethod/change_form.html:32
+#: templates/admin/cart/shippingmethod/change_form.html:294
+#: templates/admin/cart/shippingmethod/change_list.html:67
+#: templates/admin/cart/shippingmethod/method_card.html:122
+#: templates/admin/cart/taxrate/change_form.html:33
+#: templates/admin/cart/taxrate/change_list.html:42
+#: templates/admin/cart/taxrate/change_list.html:89
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:26
 msgid "Active"
 msgstr "ใช้งาน"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:98
 msgid "Make this method available to customers immediately"
 msgstr "เปิดใช้งานวิธีการนี้ให้ลูกค้าใช้ทันที"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:105
 msgid "Method Type & Pricing"
 msgstr "ประเภทและราคาของวิธี"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:114
 msgid "Select method type..."
 msgstr "เลือกประเภทวิธี..."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:116
 msgid "Flat Rate - Fixed shipping cost"
 msgstr "อัตราค่าจัดส่งคงที่ - ค่าจัดส่งคงที่"
 
-msgid "Free Shipping - No charge"
-msgstr "การจัดส่งฟรี - ไม่มีค่าใช้จ่าย"
-
-msgid "Weight Based - Calculate by cart weight"
-msgstr "คำนวณตามน้ำหนักตะกร้าสินค้า"
-
-msgid "Price Based - Calculate by cart subtotal"
-msgstr "คำนวณตามมูลค่ารวมตะกร้าสินค้า"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:119
 msgid "Real-Time Carrier Rates - Live rates from carriers"
 msgstr "อัตราค่าจัดส่งแบบเรียลไทม์ - อัตราค่าจัดส่งแบบสดจากผู้ให้บริการจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:122
 msgid "Local Pickup - Customer picks up at location"
 msgstr "รับสินค้าที่ร้าน - ลูกค้ารับสินค้าที่จุดรับสินค้า"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:125
 msgid "Table Rate - Complex rules based on weight/price/destination"
-msgstr "อัตราค่าจัดส่งแบบตาราง - กฎที่ซับซ้อนโดยพิจารณาจากน้ำหนัก/ราคา/จุดหมาย"
+msgstr ""
+"อัตราค่าจัดส่งแบบตาราง - กฎที่ซับซ้อนโดยพิจารณาจากน้ำหนัก/ราคา/จุดหมาย"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:133
 msgid "Method Types:"
 msgstr "ประเภทวิธี:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Flat Rate:"
 msgstr "อัตราคงที่:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Fixed shipping cost regardless of order"
 msgstr "ค่าจัดส่งคงที่ไม่ว่าจะสั่งซื้อเท่าไร"
 
-msgid "Free Shipping:"
-msgstr "การจัดส่งฟรี:"
-
-msgid "No shipping charge"
-msgstr "ไม่มีค่าใช้จ่ายในการจัดส่ง"
-
-msgid "Weight/Price Based:"
-msgstr "คำนวณตามน้ำหนัก/ราคา:"
-
-msgid "Calculate using rate tables"
-msgstr "คำนวณโดยใช้ตารางอัตรา"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Real-Time:"
 msgstr "แบบเรียลไทม์:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Get live rates from USPS, FedEx, UPS, or DHL"
 msgstr "รับอัตราค่าจัดส่งแบบเรียลไทม์จาก USPS, FedEx, UPS หรือ DHL"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Local Pickup:"
 msgstr "รับของที่ร้าน:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Customer picks up at your location"
 msgstr "ลูกค้ารับสินค้าที่จุดรับสินค้าของคุณ"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate"
+msgid "Table Rate:"
+msgstr "อัตราตาราง:"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate - Complex rules based on weight/price/destination"
+msgid "Complex rules based on weight, price, or destination"
+msgstr "กฎที่ซับซ้อนที่พิจารณาจากน้ำหนัก ราคา หรือจุดหมายปลายทาง"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:158
 msgid "Fixed shipping cost charged to customer"
 msgstr "ค่าจัดส่งคงที่ที่คิดกับลูกค้า"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:168
 msgid "No Configured Providers"
 msgstr "ไม่มีผู้ให้บริการที่ตั้งค่าไว้"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:170
 msgid ""
-"You need to configure at least one shipping provider that supports real-time "
-"rates before you can use this method type."
-msgstr "คุณจำเป็นต้องตั้งค่าวิธีการจัดส่งอย่างน้อยหนึ่งวิธีที่รองรับอัตราค่าจัดส่งแบบเรียลไทม์ก่อนที่คุณจะสามารถใช้วิธีการนี้ได้"
+"You need to configure at least one shipping provider that supports real-time"
+" rates before you can use this method type."
+msgstr ""
+"คุณจำเป็นต้องตั้งค่าวิธีการจัดส่งอย่างน้อยหนึ่งวิธีที่รองรับอัตราค่าจัดส่งแบบเรียลไทม์ก่อนที่คุณจะสามารถใช้วิธีการนี้ได้"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:174
 msgid "Connect Provider"
 msgstr "เชื่อมต่อกับผู้ให้บริการ"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:177
 msgid "Manage Providers"
 msgstr "จัดการผู้ให้บริการ"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:190
 msgid "Select a configured shipping provider"
 msgstr "เลือกผู้ให้บริการจัดส่งที่ตั้งค่าไว้"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:202
+#: templates/admin/cart/method_wizard/step4_features.html:252
 msgid "Tip:"
 msgstr "เคล็ดลับ:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:203
 msgid ""
 "Only providers that are configured and support real-time rates are shown "
 "above."
-msgstr "เฉพาะผู้ให้บริการที่ตั้งค่าแล้วและรองรับอัตราค่าจัดส่งแบบเรียลไทม์ที่แสดงข้างบน"
+msgstr ""
+"เฉพาะผู้ให้บริการที่ตั้งค่าแล้วและรองรับอัตราค่าจัดส่งแบบเรียลไทม์ที่แสดงข้างบน"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:204
 msgid "Manage providers"
 msgstr "จัดการผู้ให้บริการ"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:209
 msgid "Service Code"
 msgstr "รหัสบริการ"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:213
 msgid "Specific service code from carrier (optional)"
 msgstr "รหัสบริการเฉพาะจากผู้ให้บริการ (ไม่จำเป็น)"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:230
 msgid "Cancel"
 msgstr "ยกเลิก"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:233
+#: templates/admin/cart/method_wizard/step2_conditions.html:53
+#: templates/admin/cart/method_wizard/step3_coverage.html:102
 msgid "Next Step"
 msgstr "ขั้นตอนถัดไป"
 
-msgid "Eligibility Conditions"
-msgstr "เงื่อนไขคุณสมบัติ"
-
-msgid ""
-"Define when this shipping method should be available based on cart value and "
-"weight."
-msgstr "กำหนดเมื่อใดวิธีการจัดส่งนี้ควรเปิดใช้งาน โดยพิจารณาจากมูลค่าตะกร้าสินค้าและน้ำหนัก"
-
-msgid "Order Value Restrictions"
-msgstr "ข้อจำกัดของค่าคำสั่งซื้อ"
-
-msgid "Set minimum or maximum cart subtotal requirements for this method."
-msgstr "ตั้งค่าข้อกำหนดมูลค่ารวมตะกร้าสินค้าขั้นต่ำหรือสูงสุดสำหรับวิธีการนี้"
-
-msgid "Method only available if cart subtotal is at least this amount"
-msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อมูลค่ารวมตะกร้าสินค้าอย่างน้อยเท่านี้"
-
-msgid "No maximum"
-msgstr "ไม่มีค่าสูงสุด"
-
-msgid "Method only available if cart subtotal is below this amount"
-msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อมูลค่ารวมตะกร้าสินค้าต่ำกว่าเท่านี้"
-
-msgid "Examples:"
-msgstr "ตัวอย่าง:"
-
-msgid "Free shipping for orders over $50: Set minimum to 50.00"
-msgstr "การจัดส่งฟรีสำหรับการสั่งซื้อเกิน $50: ตั้งค่าขั้นต่ำเป็น 50.00"
-
-msgid "Economy shipping for orders under $100: Set maximum to 100.00"
-msgstr "การจัดส่งประหยัดสำหรับการสั่งซื้อต่ำกว่า $100: ตั้งค่าสูงสุดเป็น 100.00"
-
-msgid "Standard shipping for $25-$200: Set both minimum and maximum"
-msgstr "การจัดส่งมาตรฐานสำหรับ $25-$200: ตั้งค่าทั้งขั้นต่ำและสูงสุด"
-
-msgid "Weight Restrictions"
-msgstr "ข้อจำกัดของน้ำหนัก"
-
-msgid "Set minimum or maximum total cart weight requirements for this method."
-msgstr "ตั้งค่าข้อกำหนดน้ำหนักรวมตะกร้าสินค้าขั้นต่ำหรือสูงสุดสำหรับวิธีการนี้"
-
-msgid "Minimum Weight (kg)"
-msgstr "น้ำหนักขั้นต่ำ (กิโลกรัม)"
-
-msgid "Method only available if total cart weight is at least this value"
-msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อน้ำหนักรวมตะกร้าสินค้าอย่างน้อยเท่านี้"
-
-msgid "Maximum Weight (kg)"
-msgstr "น้ำหนักสูงสุด (กิโลกรัม)"
-
-msgid "Method only available if total cart weight is below this value"
-msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อน้ำหนักรวมตะกร้าสินค้าต่ำกว่าเท่านี้"
-
-msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
-msgstr "การจัดส่งสินค้าเบาสำหรับสินค้าน้ำหนักต่ำกว่า 2 กก.: ตั้งค่าสูงสุดเป็น 2.00"
-
-msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
-msgstr "การจัดส่งสินค้าหนักสำหรับสินค้าน้ำหนักเกิน 20 กก.: ตั้งค่าขั้นต่ำเป็น 20.00"
-
-msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
-msgstr "การจัดส่งมาตรฐานสำหรับ 0.5 กก.-10 กก.: ตั้งค่าทั้งขั้นต่ำและสูงสุด"
-
+#: templates/admin/cart/method_wizard/step2_conditions.html:6
+#: templates/admin/cart/method_wizard/step2_conditions.html:27
+#: templates/admin/cart/method_wizard/step5_review.html:93
 msgid "Additional Options"
 msgstr "ตัวเลือกเพิ่มเติม"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:9
+#| msgid "Optional description of this shipping method"
+msgid "Configure additional options for this shipping method."
+msgstr "ตั้งค่าตัวเลือกเพิ่มเติมสำหรับวิธีการจัดส่งนี้"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:19
+msgid "Eligibility Conditions"
+msgstr "เงื่อนไขคุณสมบัติ"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:20
+msgid ""
+"Order value and weight eligibility conditions are now configured through "
+"Shipping Promotions with visibility control. Go to Shipping Promotions to "
+"set up conditions that control when this method is shown to customers."
+msgstr ""
+"เงื่อนไขคุณสมบัติของค่าสั่งซื้อและน้ำหนักตอนนี้ถูกตั้งค่าผ่านโปรโมชั่นการจัดส่งที่มีการควบคุมการมองเห็น"
+" "
+"ไปที่โปรโมชั่นการจัดส่งเพื่อตั้งค่าเงื่อนไขที่ควบคุมว่าเมื่อใดที่วิธีนี้จะแสดงให้ลูกค้าเห็น"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:36
 msgid "Requires Shipping Address"
 msgstr "ต้องการที่อยู่จัดส่ง"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:40
 msgid ""
 "Customer must provide a shipping address for this method (disable for "
 "digital goods or local pickup)"
-msgstr "ลูกค้าต้องระบุที่อยู่จัดส่งสำหรับวิธีการนี้ (ปิดใช้งานสำหรับสินค้าดิจิทัลหรือรับสินค้าที่ร้าน)"
+msgstr ""
+"ลูกค้าต้องระบุที่อยู่จัดส่งสำหรับวิธีการนี้ "
+"(ปิดใช้งานสำหรับสินค้าดิจิทัลหรือรับสินค้าที่ร้าน)"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:50
+#: templates/admin/cart/method_wizard/step3_coverage.html:99
+#: templates/admin/cart/method_wizard/step4_features.html:263
+#: templates/admin/cart/method_wizard/step5_review.html:228
 msgid "Previous"
 msgstr "ก่อนหน้า"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:117
+#: templates/admin/cart/shippingmethod/change_form.html:169
 msgid "Geographic Coverage"
 msgstr "พื้นที่ครอบคลุมทางภูมิศาสตร์"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:9
+#: templates/admin/cart/shippingmethod/change_form.html:170
 msgid "Define where this shipping method is available using shipping zones."
 msgstr "กำหนดว่าวิธีการจัดส่งนี้ใช้ได้ที่ใด โดยใช้โซนจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:23
 msgid "Zone-Based Coverage:"
 msgstr "การให้บริการตามโซน:"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:24
 msgid ""
 "Use shipping zones for flexible, rule-based geographic coverage. This "
 "approach works seamlessly with shipping rules and allows precise control "
@@ -1763,150 +2176,203 @@ msgstr ""
 "วิธีนี้ทำงานได้อย่างราบรื่นกับกฎการจัดส่ง "
 "และช่วยให้คุณควบคุมได้อย่างแม่นยำว่าวิธีการของคุณมีการใช้งานได้ที่ใด"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:29
 msgid "Select Shipping Zones"
 msgstr "เลือกโซนการจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:32
 msgid ""
 "Choose which shipping zones this method is available for. Leave empty to "
 "make available worldwide."
-msgstr "เลือกว่าโซนจัดส่งใดที่วิธีการนี้สามารถใช้ได้ ถ้าไม่เลือกจะเปิดใช้งานทั่วโลก"
+msgstr ""
+"เลือกว่าโซนจัดส่งใดที่วิธีการนี้สามารถใช้ได้ ถ้าไม่เลือกจะเปิดใช้งานทั่วโลก"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:38
 msgid "Available Zones"
 msgstr "โซนที่สามารถใช้งานได้"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:49
 msgid "Add selected zones"
 msgstr "เพิ่มโซนที่เลือกไว้"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:52
 msgid "Add all zones"
 msgstr "เพิ่มโซนทั้งหมด"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:55
 msgid "Remove selected zones"
 msgstr "ลบโซนที่เลือกไว้"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:58
 msgid "Remove all zones"
 msgstr "ลบโซนทั้งหมด"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:64
 msgid "Selected Zones"
 msgstr "โซนที่เลือกไว้"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:83
 msgid "No shipping zones found!"
 msgstr "ไม่พบโซนการจัดส่ง!"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:84
 msgid "You need to create shipping zones first."
 msgstr "คุณจำเป็นต้องสร้างโซนจัดส่งก่อน"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:86
 msgid "Create a shipping zone"
 msgstr "สร้างโซนการจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step4_features.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:154
 msgid "Method Features"
 msgstr "คุณสมบัติของวิธีการ"
 
+#: templates/admin/cart/method_wizard/step4_features.html:9
 msgid ""
 "Configure delivery estimates, display order, and method-specific features."
 msgstr "ตั้งค่าการประมาณการจัดส่ง ลำดับการแสดง และคุณสมบัติเฉพาะของวิธีการ"
 
-msgid "Select the physical locations where customers can pick up their orders."
+#: templates/admin/cart/method_wizard/step4_features.html:23
+msgid ""
+"Select the physical locations where customers can pick up their orders."
 msgstr "เลือกสถานที่ทางกายภาพที่ลูกค้าสามารถรับสินค้าได้"
 
+#: templates/admin/cart/method_wizard/step4_features.html:27
 msgid "Available Pickup Locations"
 msgstr "สถานที่รับของที่สามารถใช้งานได้"
 
+#: templates/admin/cart/method_wizard/step4_features.html:32
 msgid "Available Locations"
 msgstr "สถานที่ที่สามารถใช้งานได้"
 
+#: templates/admin/cart/method_wizard/step4_features.html:60
 msgid "Selected Locations"
 msgstr "สถานที่ที่เลือกไว้"
 
+#: templates/admin/cart/method_wizard/step4_features.html:79
 msgid "No pickup locations found!"
 msgstr "ไม่พบสถานที่รับของ!"
 
+#: templates/admin/cart/method_wizard/step4_features.html:80
 msgid "You need to create pickup locations first for local pickup methods."
 msgstr "คุณจำเป็นต้องสร้างจุดรับสินค้าก่อนสำหรับวิธีการรับสินค้าที่ร้าน"
 
+#: templates/admin/cart/method_wizard/step4_features.html:82
 msgid "Create a pickup location"
 msgstr "สร้างสถานที่รับของ"
 
+#: templates/admin/cart/method_wizard/step4_features.html:95
 msgid "Carrier API Status"
 msgstr "สถานะ API ของผู้ให้บริการจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step4_features.html:101
+#: templates/admin/cart/method_wizard/step5_review.html:79
+#: templates/admin/cart/shippingmethod/method_card.html:96
 msgid "Carrier:"
 msgstr "ผู้ให้บริการจัดส่ง:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:103
 msgid "Service Code:"
 msgstr "รหัสบริการ:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:109
 msgid "API Configuration Status"
 msgstr "สถานะการตั้งค่า API"
 
+#: templates/admin/cart/method_wizard/step4_features.html:113
 msgid "Checking API credentials..."
 msgstr "กำลังตรวจสอบข้อมูลการเข้าถึง API..."
 
+#: templates/admin/cart/method_wizard/step4_features.html:119
 msgid ""
 "Ensure your carrier API credentials are configured in the shipping provider "
 "settings."
 msgstr ""
-"ตรวจสอบให้แน่ใจว่าคุณได้ตั้งค่าข้อมูลผู้ให้สิทธิ์ API ของผู้ให้บริการจัดส่งในตั้งค่าวิธีการจัดส่งแล้ว"
+"ตรวจสอบให้แน่ใจว่าคุณได้ตั้งค่าข้อมูลผู้ให้สิทธิ์ API "
+"ของผู้ให้บริการจัดส่งในตั้งค่าวิธีการจัดส่งแล้ว"
 
+#: templates/admin/cart/method_wizard/step4_features.html:129
 msgid "Enable Rate Caching"
 msgstr "เปิดการจัดเก็บอัตราค่าจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step4_features.html:133
 msgid ""
 "Cache carrier rates for 15 minutes to improve performance and reduce API "
 "calls"
 msgstr ""
-"เก็บอัตราค่าจัดส่งของผู้ให้บริการไว้เป็นเวลา 15 นาที เพื่อเพิ่มประสิทธิภาพและลดการเรียกใช้ API"
+"เก็บอัตราค่าจัดส่งของผู้ให้บริการไว้เป็นเวลา 15 นาที "
+"เพื่อเพิ่มประสิทธิภาพและลดการเรียกใช้ API"
 
+#: templates/admin/cart/method_wizard/step4_features.html:143
 msgid "Rate Table Configuration"
 msgstr "การตั้งค่าตารางอัตราค่าจัดส่ง"
 
-msgid "Weight-Based Rates:"
-msgstr "อัตราค่าจัดส่งตามน้ำหนัก:"
+#: templates/admin/cart/method_wizard/step4_features.html:149
+#| msgid "Table Rate"
+msgid "Table Rates:"
+msgstr "อัตราตาราง:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:150
+#| msgid ""
+#| "You'll be able to configure tiered rates based on cart weight after the "
+#| "method is created."
 msgid ""
-"You'll be able to configure tiered rates based on cart weight after the "
-"method is created."
-msgstr "คุณจะสามารถตั้งค่าอัตราค่าจัดส่งแบบหลายระดับตามน้ำหนักตะกร้าสินค้าหลังจากสร้างวิธีการแล้ว"
+"You'll be able to configure tiered rates based on weight, price, or "
+"destination after the method is created."
+msgstr ""
+"คุณจะสามารถตั้งค่าอัตราตามระดับที่แตกต่างกันได้โดยพิจารณาจากน้ำหนัก ราคา "
+"หรือจุดหมายปลายทางหลังจากสร้างวิธีการแล้ว"
 
-msgid "Price-Based Rates:"
-msgstr "อัตราค่าจัดส่งตามราคา:"
-
-msgid ""
-"You'll be able to configure tiered rates based on cart subtotal after the "
-"method is created."
-msgstr "คุณจะสามารถตั้งค่าอัตราค่าจัดส่งแบบหลายระดับตามมูลค่ารวมตะกร้าสินค้าหลังจากสร้างวิธีการแล้ว"
-
+#: templates/admin/cart/method_wizard/step4_features.html:156
 msgid "Rate tables can be managed from the method's edit page after creation."
 msgstr "ตารางอัตราค่าจัดส่งสามารถจัดการได้จากหน้าแก้ไขวิธีการหลังจากสร้างแล้ว"
 
+#: templates/admin/cart/method_wizard/step4_features.html:165
 msgid "Delivery Time Estimate"
 msgstr "ประมาณการเวลาจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step4_features.html:169
 msgid "Provide customers with an estimated delivery timeframe."
 msgstr "ให้ลูกค้าทราบประมาณการเวลาจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step4_features.html:186
 msgid "Fastest delivery time in business days"
 msgstr "เวลาจัดส่งเร็วที่สุดในวันทำการ"
 
+#: templates/admin/cart/method_wizard/step4_features.html:203
 msgid "Slowest delivery time in business days"
 msgstr "เวลาจัดส่งช้าที่สุดในวันทำการ"
 
+#: templates/admin/cart/method_wizard/step4_features.html:211
+msgid "Examples:"
+msgstr "ตัวอย่าง:"
+
+#: templates/admin/cart/method_wizard/step4_features.html:213
 msgid "Standard shipping: 3-5 business days"
 msgstr "การจัดส่งแบบมาตรฐาน: 3-5 วันทำการ"
 
+#: templates/admin/cart/method_wizard/step4_features.html:214
 msgid "Express shipping: 1-2 business days"
 msgstr "การจัดส่งแบบเร่งด่วน: 1-2 วันทำการ"
 
+#: templates/admin/cart/method_wizard/step4_features.html:215
 msgid "International shipping: 7-14 business days"
 msgstr "การจัดส่งระหว่างประเทศ: 7-14 วันทำการ"
 
+#: templates/admin/cart/method_wizard/step4_features.html:229
 msgid "Display Settings"
 msgstr "การตั้งค่าการแสดงผล"
 
+#: templates/admin/cart/method_wizard/step4_features.html:245
 msgid ""
 "Lower numbers appear first. Use this to control the order methods are "
 "displayed to customers."
-msgstr "ตัวเลขที่ต่ำกว่าจะแสดงก่อน ใช้เพื่อควบคุมลำดับการจัดแสดงวิธีการต่าง ๆ ให้ลูกค้า"
+msgstr ""
+"ตัวเลขที่ต่ำกว่าจะแสดงก่อน ใช้เพื่อควบคุมลำดับการจัดแสดงวิธีการต่าง ๆ "
+"ให้ลูกค้า"
 
+#: templates/admin/cart/method_wizard/step4_features.html:253
 msgid ""
 "Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
 "of new methods between existing ones."
@@ -1914,439 +2380,621 @@ msgstr ""
 "กำหนดลำดับการจัดเรียงเป็นช่วงของ 10 (0, 10, 20) "
 "เพื่อให้สามารถแทรกวิธีการใหม่ระหว่างวิธีการที่มีอยู่ได้ง่าย"
 
+#: templates/admin/cart/method_wizard/step4_features.html:266
+#: templates/admin/cart/method_wizard/step5_review.html:6
 msgid "Review & Create"
 msgstr "ตรวจสอบและสร้าง"
 
+#: templates/admin/cart/method_wizard/step4_features.html:275
 msgid "API credentials verified successfully"
 msgstr "ข้อมูลการเข้าถึง API ได้รับการตรวจสอบแล้วอย่างถูกต้อง"
 
+#: templates/admin/cart/method_wizard/step5_review.html:9
 msgid "Review your shipping method configuration and create it."
 msgstr "ตรวจสอบการตั้งค่าวิธีการจัดส่งของคุณและสร้างมัน"
 
+#: templates/admin/cart/method_wizard/step5_review.html:20
+#: templates/admin/cart/method_wizard/step5_review.html:95
+#: templates/admin/cart/method_wizard/step5_review.html:119
+#: templates/admin/cart/method_wizard/step5_review.html:156
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:62
 msgid "Edit"
 msgstr "แก้ไข"
 
+#: templates/admin/cart/method_wizard/step5_review.html:26
 msgid "Name:"
 msgstr "ชื่อ:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:30
 msgid "Method Type:"
 msgstr "ประเภทวิธีการ:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:39
 msgid "Description:"
 msgstr "คำอธิบาย:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:45
+#: templates/admin/cart/method_wizard/step5_review.html:53
 msgid "Display Icon:"
 msgstr "ไอคอนแสดงผล:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:58
 msgid "Status:"
 msgstr "สถานะ:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:66
+#: templates/admin/cart/shippingmethod/change_form.html:34
+#: templates/admin/cart/shippingmethod/change_list.html:70
+#: templates/admin/cart/shippingmethod/method_card.html:124
+#: templates/admin/cart/taxrate/change_form.html:35
+#: templates/admin/cart/taxrate/change_list.html:90
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:30
 msgid "Inactive"
 msgstr "ไม่ใช้งาน"
 
+#: templates/admin/cart/method_wizard/step5_review.html:73
 msgid "Flat Rate Cost:"
 msgstr "ค่าใช้จ่ายคงที่:"
 
-msgid "Min Order Value:"
-msgstr "ค่าสั่งซื้อขั้นต่ำ:"
-
-msgid "Max Order Value:"
-msgstr "ค่าสั่งซื้อสูงสุด:"
-
-msgid "Min Weight:"
-msgstr "น้ำหนักขั้นต่ำ:"
-
-msgid "Max Weight:"
-msgstr "น้ำหนักสูงสุด:"
-
+#: templates/admin/cart/method_wizard/step5_review.html:101
 msgid "Requires Shipping Address:"
 msgstr "ต้องการที่อยู่จัดส่ง:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:104
 msgid "Yes"
 msgstr "ใช่"
 
+#: templates/admin/cart/method_wizard/step5_review.html:106
 msgid "No"
 msgstr "ไม่"
 
-msgid ""
-"No eligibility conditions set - method available for all cart values and "
-"weights"
-msgstr "ไม่ได้ตั้งค่าเงื่อนไขการคุ้มครอง - วิธีนี้สามารถใช้ได้กับค่าและน้ำหนักตะกร้าทั้งหมด"
-
+#: templates/admin/cart/method_wizard/step5_review.html:126
 msgid "Shipping Zones:"
 msgstr "โซนการจัดส่ง:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:141
+#: templates/admin/cart/shippingmethod/method_card.html:76
 msgid "Coverage:"
 msgstr "พื้นที่ให้บริการ:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:143
 msgid "Worldwide (No zones selected)"
 msgstr "ทั่วโลก (ไม่มีโซนใดถูกเลือก)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:164
 msgid "Pickup Locations:"
 msgstr "สถานที่รับของ:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:167
+#: templates/admin/cart/shippingmethod/method_card.html:87
 msgid "location"
 msgstr "สถานที่"
 
+#: templates/admin/cart/method_wizard/step5_review.html:172
 msgid "Delivery Time:"
 msgstr "เวลาจัดส่ง:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:174
+#: templates/admin/cart/shippingmethod/method_card.html:110
 msgid "Instant Pickup"
 msgstr "รับของทันที"
 
+#: templates/admin/cart/method_wizard/step5_review.html:179
 msgid "Delivery Estimate:"
 msgstr "ประมาณการเวลาจัดส่ง:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:182
+#: templates/admin/cart/shippingmethod/method_card.html:112
 msgid "business days"
 msgstr "วันทำการ"
 
+#: templates/admin/cart/method_wizard/step5_review.html:188
 msgid "Sort Order:"
 msgstr "ลำดับการจัดเรียง:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:194
 msgid "Rate Caching:"
 msgstr "การแคชอัตรา:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:196
 msgid "Enabled"
 msgstr "เปิดใช้งาน"
 
+#: templates/admin/cart/method_wizard/step5_review.html:208
 msgid "What happens next:"
 msgstr "สิ่งที่เกิดขึ้นต่อไป:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:210
 msgid "Your shipping method will be created with the settings above"
 msgstr "วิธีการจัดส่งของคุณจะถูกสร้างขึ้นด้วยการตั้งค่าด้านบน"
 
+#: templates/admin/cart/method_wizard/step5_review.html:212
 msgid "You'll be redirected to configure rate tables for this method"
 msgstr "คุณจะถูกเปลี่ยนเส้นทางไปตั้งค่าตารางอัตราสำหรับวิธีนี้"
 
+#: templates/admin/cart/method_wizard/step5_review.html:215
 msgid ""
 "The method will be immediately available to customers (if eligibility "
 "conditions are met)"
 msgstr "วิธีนี้จะพร้อมใช้งานทันทีสำหรับลูกค้า (ถ้าตรงตามเงื่อนไขการคุ้มครอง)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:217
 msgid "The method will be created as inactive - activate it when ready"
 msgstr "วิธีนี้จะถูกสร้างขึ้นในสถานะไม่ใช้งาน - เปิดใช้งานเมื่อพร้อม"
 
+#: templates/admin/cart/method_wizard/step5_review.html:231
 msgid "Create Shipping Method"
 msgstr "สร้างวิธีการจัดส่ง"
 
+#: templates/admin/cart/method_wizard/step5_review.html:240
 msgid "Creating..."
 msgstr "กำลังสร้าง..."
 
+#: templates/admin/cart/partials/cart_cards.html:29
 msgid "Session"
 msgstr "เซสชัน"
 
+#: templates/admin/cart/partials/cart_cards.html:36
 msgid "Registered"
 msgstr "ผู้ลงทะเบียน"
 
+#: templates/admin/cart/partials/cart_cards.html:40
 msgid "Guest"
 msgstr "ผู้เยี่ยมชม"
 
+#: templates/admin/cart/partials/cart_cards.html:46
 msgid "item"
 msgstr "สินค้า"
 
+#: templates/admin/cart/partials/cart_cards.html:56
 msgid "Shipping Set"
 msgstr "ชุดการจัดส่ง"
 
+#: templates/admin/cart/partials/cart_cards.html:69
 msgid "Cart Total"
 msgstr "ยอดรวมตะกร้า"
 
+#: templates/admin/cart/partials/cart_cards.html:75
 msgid "Items"
 msgstr "สินค้า"
 
+#: templates/admin/cart/partials/cart_cards.html:80
 msgid "Savings"
 msgstr "เงินคืน"
 
+#: templates/admin/cart/partials/cart_cards.html:88
 msgid "Shipping"
 msgstr "การจัดส่ง"
 
+#: templates/admin/cart/partials/cart_cards.html:95
 msgid "Grand Total"
 msgstr "ยอดรวมทั้งหมด"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "Updated"
 msgstr "อัปเดตแล้ว"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "ago"
 msgstr "ที่ผ่านมา"
 
+#: templates/admin/cart/partials/cart_cards.html:109
+#: templates/admin/cart/shippingmethod/change_form.html:30
+#: templates/admin/cart/shippingmethod/method_card.html:128
 msgid "Created"
 msgstr "สร้างขึ้น"
 
+#: templates/admin/cart/partials/cart_cards.html:120
 msgid "Est. Delivery"
 msgstr "เวลาจัดส่งประมาณ"
 
+#: templates/admin/cart/partials/cart_cards.html:129
 msgid "View cart details"
 msgstr "ดูรายละเอียดตะกร้า"
 
+#: templates/admin/cart/partials/cart_cards.html:134
 msgid "Edit cart"
 msgstr "แก้ไขตะกร้า"
 
+#: templates/admin/cart/partials/cart_cards.html:140
 msgid "Delete cart"
 msgstr "ลบตะกร้า"
 
+#: templates/admin/cart/partials/cart_cards.html:143
 msgid "Are you sure you want to clear this cart?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการล้างตะกร้านี้?"
 
+#: templates/admin/cart/partials/cart_cards.html:154
 msgid "No shopping carts found matching your criteria."
 msgstr "ไม่พบตะกร้าซื้อสินค้าที่ตรงกับเงื่อนไขของคุณ"
 
+#: templates/admin/cart/partials/cart_cards.html:156
 msgid "Try adjusting your filters or search terms."
 msgstr "ลองปรับตัวกรองหรือคำค้นหาของคุณ"
 
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:22
 msgid "Edit Shipping Method"
 msgstr "แก้ไขวิธีการจัดส่ง"
 
+#: templates/admin/cart/shippingmethod/change_form.html:40
+#: templates/admin/cart/shippingmethod/change_form.html:344
+#: templates/admin/cart/taxrate/change_form.html:41
+#: templates/admin/cart/taxrate/change_form.html:239
 msgid "Save and continue editing"
 msgstr "บันทึกและดำเนินการแก้ไขต่อ"
 
+#: templates/admin/cart/shippingmethod/change_form.html:56
+#: templates/admin/cart/taxrate/change_form.html:57
 msgid "Please correct the errors below"
 msgstr "กรุณาแก้ไขข้อผิดพลาดด้านล่าง"
 
+#: templates/admin/cart/shippingmethod/change_form.html:82
+#: templates/admin/cart/taxrate/change_form.html:83
 msgid "Basic"
 msgstr "พื้นฐาน"
 
+#: templates/admin/cart/shippingmethod/change_form.html:86
+#: templates/admin/cart/shippingmethod/change_form.html:148
 msgid "Pricing"
 msgstr "ราคา"
 
+#: templates/admin/cart/shippingmethod/change_form.html:94
 msgid "Display"
 msgstr "แสดง"
 
-msgid "Optional: Restrict availability based on order value or weight."
-msgstr "ตัวเลือก: จำกัดความพร้อมใช้งานตามมูลค่าคำสั่งซื้อหรือน้ำหนัก"
+#: templates/admin/cart/shippingmethod/change_form.html:103
+#| msgid "Product Exemptions"
+msgid "Promotions"
+msgstr "โปรโมชั่น"
 
+#: templates/admin/cart/shippingmethod/change_form.html:185
 msgid "Delivery Time"
 msgstr "เวลาจัดส่ง"
 
+#: templates/admin/cart/shippingmethod/change_form.html:226
 msgid "Display Options"
 msgstr "ตัวเลือกการแสดงผล"
 
+#: templates/admin/cart/shippingmethod/change_form.html:248
 msgid "Carrier Integration"
 msgstr "การผสานรวมผู้ให้บริการขนส่ง"
 
+#: templates/admin/cart/shippingmethod/change_form.html:249
 msgid "Configure carrier-specific settings for real-time rate lookups."
-msgstr "กำหนดการตั้งค่าเฉพาะผู้ให้บริการสำหรับการค้นหาอัตราค่าจัดส่งแบบเรียลไทม์"
+msgstr ""
+"กำหนดการตั้งค่าเฉพาะผู้ให้บริการสำหรับการค้นหาอัตราค่าจัดส่งแบบเรียลไทม์"
 
+#: templates/admin/cart/shippingmethod/change_form.html:269
+msgid "Active Promotions"
+msgstr "โปรโมชั่นที่ใช้งานอยู่"
+
+#: templates/admin/cart/shippingmethod/change_form.html:270
+msgid ""
+"Shipping promotions that currently affect this method. Promotions with no "
+"method restrictions apply to all methods."
+msgstr ""
+"โปรโมชั่นการจัดส่งที่มีผลต่อวิธีนี้ในปัจจุบัน "
+"โปรโมชั่นที่ไม่มีข้อจำกัดด้านวิธีจะใช้กับวิธีทั้งหมด"
+
+#: templates/admin/cart/shippingmethod/change_form.html:277
+#| msgid "Tax Type"
+msgid "Type"
+msgstr "ประเภท"
+
+#: templates/admin/cart/shippingmethod/change_form.html:278
+msgid "Value"
+msgstr "ค่า"
+
+#: templates/admin/cart/shippingmethod/change_form.html:280
+#: templates/admin/cart/taxrate/change_list.html:86
+msgid "Status"
+msgstr "สถานะ"
+
+#: templates/admin/cart/shippingmethod/change_form.html:302
+#| msgid "Optional description of this shipping method"
+msgid "No active promotions affect this shipping method."
+msgstr "ไม่มีโปรโมชั่นที่ใช้งานอยู่ที่มีผลต่อวิธีการจัดส่งนี้"
+
+#: templates/admin/cart/shippingmethod/change_form.html:308
+#| msgid "Created From"
+msgid "Create New Promotion"
+msgstr "สร้างโปรโมชั่นใหม่"
+
+#: templates/admin/cart/shippingmethod/change_list.html:21
 msgid "Configure shipping options, rates, and delivery methods"
 msgstr "ตั้งค่าวิธีการจัดส่ง ค่าธรรมเนียม และวิธีการส่งมอบ"
 
+#: templates/admin/cart/shippingmethod/change_list.html:23
 msgid "method"
 msgstr "วิธี"
 
+#: templates/admin/cart/shippingmethod/change_list.html:24
 msgid "active"
 msgstr "ใช้งานอยู่"
 
+#: templates/admin/cart/shippingmethod/change_list.html:29
 msgid "Add Method"
 msgstr "เพิ่มวิธี"
 
+#: templates/admin/cart/shippingmethod/change_list.html:48
 msgid "Bulk Actions"
 msgstr "การดำเนินการแบบกลุ่ม"
 
+#: templates/admin/cart/shippingmethod/change_list.html:49
 msgid "Enable Selected"
 msgstr "เปิดใช้งานที่เลือก"
 
+#: templates/admin/cart/shippingmethod/change_list.html:50
 msgid "Disable Selected"
 msgstr "ปิดใช้งานที่เลือก"
 
+#: templates/admin/cart/shippingmethod/change_list.html:51
 msgid "Delete Selected"
 msgstr "ลบที่เลือก"
 
+#: templates/admin/cart/shippingmethod/change_list.html:53
 msgid "Apply"
 msgstr "ประยุกต์ใช้"
 
+#: templates/admin/cart/shippingmethod/change_list.html:55
 msgid "selected"
 msgstr "เลือกแล้ว"
 
+#: templates/admin/cart/shippingmethod/change_list.html:65
 msgid "All Status"
 msgstr "ทั้งหมดสถานะ"
 
+#: templates/admin/cart/shippingmethod/change_list.html:76
+#: templates/admin/cart/taxrate/change_list.html:78
 msgid "All Types"
 msgstr "ทุกประเภท"
 
+#: templates/admin/cart/shippingmethod/change_list.html:81
 msgid "Real-Time Rates"
 msgstr "อัตราเวลาจริง"
 
+#: templates/admin/cart/shippingmethod/change_list.html:92
 msgid "Clear all filters"
 msgstr "ล้างตัวกรองทั้งหมด"
 
+#: templates/admin/cart/shippingmethod/change_list.html:93
 msgid "Clear Filters"
 msgstr "ล้างตัวกรอง"
 
+#: templates/admin/cart/shippingmethod/change_list.html:101
 msgid "Search methods..."
 msgstr "ค้นหาวิธี..."
 
+#: templates/admin/cart/shippingmethod/change_list.html:112
 msgid "Select All"
 msgstr "เลือกทั้งหมด"
 
+#: templates/admin/cart/shippingmethod/change_list.html:130
 #, python-format
 msgid "%(counter)s method"
 msgid_plural "%(counter)s methods"
 msgstr[0] "%(counter)s วิธี"
 msgstr[1] "%(counter)s วิธี"
 
+#: templates/admin/cart/shippingmethod/change_list.html:139
 msgid "No shipping methods found"
 msgstr "ไม่พบวิธีการจัดส่ง"
 
+#: templates/admin/cart/shippingmethod/change_list.html:142
 msgid "Try adjusting your filters or search query."
 msgstr "ลองปรับแต่งตัวกรองหรือคำค้นหาของคุณ"
 
+#: templates/admin/cart/shippingmethod/change_list.html:144
 msgid "Get started by creating your first shipping method."
 msgstr "เริ่มต้นด้วยการสร้างวิธีการจัดส่งแรกของคุณ"
 
+#: templates/admin/cart/shippingmethod/change_list.html:149
 msgid "Add First Method"
 msgstr "เพิ่มวิธีแรก"
 
+#: templates/admin/cart/shippingmethod/change_list.html:160
 msgid "Loading..."
 msgstr "กำลังโหลด..."
 
-msgid "Order Value:"
-msgstr "มูลค่าคำสั่งซื้อ:"
-
-msgid "Weight:"
-msgstr "น้ำหนัก:"
-
+#: templates/admin/cart/shippingmethod/method_card.html:60
 msgid "Zones:"
 msgstr "โซน:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:62
 msgid "zone"
 msgstr "โซน"
 
+#: templates/admin/cart/shippingmethod/method_card.html:68
 msgid "Countries:"
 msgstr "ประเทศ:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:70
 msgid "country"
 msgstr "ประเทศ"
 
+#: templates/admin/cart/shippingmethod/method_card.html:77
 msgid "Worldwide"
 msgstr "ทั่วโลก"
 
+#: templates/admin/cart/shippingmethod/method_card.html:85
 msgid "Pickup:"
 msgstr "รับสินค้า:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:107
 msgid "Delivery:"
 msgstr "จัดส่ง:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:137
 msgid "Edit method"
 msgstr "แก้ไขวิธี"
 
+#: templates/admin/cart/shippingmethod/method_card.html:143
 msgid "Toggle active status"
 msgstr "สลับสถานะการใช้งาน"
 
+#: templates/admin/cart/shippingmethod/method_card.html:149
 msgid "Delete method"
 msgstr "ลบวิธี"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:22
 msgid "Edit Tax Rate"
 msgstr "แก้ไขอัตราภาษี"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:24
+#: templates/admin/cart/taxrate/change_list.html:26
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:82
 msgid "Add Tax Rate"
 msgstr "เพิ่มอัตราภาษี"
 
+#: templates/admin/cart/taxrate/change_form.html:87
 msgid "Geography"
 msgstr "ภูมิศาสตร์"
 
+#: templates/admin/cart/taxrate/change_form.html:91
 msgid "Rules"
 msgstr "กฎ"
 
+#: templates/admin/cart/taxrate/change_form.html:95
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:55
 msgid "Exemptions"
 msgstr "ข้อยกเว้น"
 
+#: templates/admin/cart/taxrate/change_form.html:142
 msgid ""
 "Define where this tax rate applies. Leave state/city empty for country-wide "
 "rates."
-msgstr "กำหนดว่าอัตราภาษีนี้ใช้ได้ที่ใด ทิ้งชื่อจังหวัด/เมืองว่างไว้หากต้องการอัตราภาษีทั่วประเทศ"
+msgstr ""
+"กำหนดว่าอัตราภาษีนี้ใช้ได้ที่ใด "
+"ทิ้งชื่อจังหวัด/เมืองว่างไว้หากต้องการอัตราภาษีทั่วประเทศ"
 
+#: templates/admin/cart/taxrate/change_form.html:194
 msgid "Exclude specific product types or categories from this tax rate."
 msgstr "ยกเว้นประเภทหรือหมวดหมู่สินค้าเฉพาะจากอัตราภาษีนี้"
 
+#: templates/admin/cart/taxrate/change_list.html:18
 msgid ""
 "Configure tax rules for your store. Tax rates are matched to customer "
 "addresses during checkout."
-msgstr "ตั้งค่ากฎภาษีสำหรับร้านค้าของคุณ อัตราภาษีจะถูกจับคู่กับที่อยู่ลูกค้าในระหว่างการชำระเงิน"
+msgstr ""
+"ตั้งค่ากฎภาษีสำหรับร้านค้าของคุณ "
+"อัตราภาษีจะถูกจับคู่กับที่อยู่ลูกค้าในระหว่างการชำระเงิน"
 
+#: templates/admin/cart/taxrate/change_list.html:22
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:79
 msgid "Load Presets"
 msgstr "โหลดการตั้งค่าล่วงหน้า"
 
+#: templates/admin/cart/taxrate/change_list.html:37
 msgid "Total Rules"
 msgstr "กฎทั้งหมด"
 
+#: templates/admin/cart/taxrate/change_list.html:47
 msgid "Countries"
 msgstr "ประเทศ"
 
+#: templates/admin/cart/taxrate/change_list.html:52
 msgid "Tax Types"
 msgstr "ประเภทภาษี"
 
+#: templates/admin/cart/taxrate/change_list.html:64
 msgid "Search by name, country, state..."
 msgstr "ค้นหาตามชื่อ, ประเทศ, รัฐ..."
 
+#: templates/admin/cart/taxrate/change_list.html:69
 msgid "All Countries"
 msgstr "ทั้งหมดประเทศ"
 
+#: templates/admin/cart/taxrate/change_list.html:82
 msgid "Custom"
 msgstr "กำหนดเอง"
 
-msgid "Status"
-msgstr "สถานะ"
-
+#: templates/admin/cart/taxrate/change_list.html:97
 msgid "Clear"
 msgstr "ล้าง"
 
+#: templates/admin/cart/taxrate/change_list.html:104
 msgid "Tax Rules"
 msgstr "กฎภาษี"
 
+#: templates/admin/cart/taxrate/change_list.html:107
 msgid "rules"
 msgstr "กฎ"
 
+#: templates/admin/cart/taxrate/change_list.html:120
 msgid "Load Tax Rate Presets"
 msgstr "โหลดการตั้งค่าอัตราภาษี"
 
+#: templates/admin/cart/taxrate/change_list.html:121
 msgid ""
 "Quickly add standard tax rates for your region. Existing rates will not be "
 "duplicated."
-msgstr "เพิ่มอัตราภาษีมาตรฐานสำหรับภูมิภาคของคุณอย่างรวดเร็ว อัตราภาษีที่มีอยู่จะไม่ถูกซ้ำ"
+msgstr ""
+"เพิ่มอัตราภาษีมาตรฐานสำหรับภูมิภาคของคุณอย่างรวดเร็ว "
+"อัตราภาษีที่มีอยู่จะไม่ถูกซ้ำ"
 
+#: templates/admin/cart/taxrate/change_list.html:141
 msgid "rates"
 msgstr "อัตรา"
 
+#: templates/admin/cart/taxrate/change_list.html:147
 msgid "Load"
 msgstr "โหลด"
 
+#: templates/admin/cart/taxrate/change_list.html:158
 msgid "Close"
 msgstr "ปิด"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:17
 msgid "postal codes"
 msgstr "รหัสไปรษณีย์"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:35
 msgid "Shipping Taxed"
 msgstr "ภาษีการจัดส่ง"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:40
 msgid "Compound"
 msgstr "ผสม"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:65
 msgid "Delete"
 msgstr "ลบ"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:75
 msgid "No tax rates configured"
 msgstr "ไม่ได้ตั้งค่าอัตราภาษี"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:76
 msgid ""
 "Use 'Load Presets' to quickly add standard rates for your region, or add "
 "rates manually."
 msgstr ""
-"ใช้ 'โหลดค่าเริ่มต้น' เพื่อเพิ่มอัตราภาษีมาตรฐานสำหรับภูมิภาคของคุณอย่างรวดเร็ว "
+"ใช้ 'โหลดค่าเริ่มต้น' "
+"เพื่อเพิ่มอัตราภาษีมาตรฐานสำหรับภูมิภาคของคุณอย่างรวดเร็ว "
 "หรือเพิ่มอัตราภาษีด้วยตนเอง"
 
+#: views.py:57
 msgid "Get current cart"
 msgstr "ดึงตะกร้าสินค้าปัจจุบัน"
 
+#: views.py:59
 msgid ""
 "Get the current cart for authenticated user or session. Returns cart items, "
 "subtotal, discounts, taxes, and total. Automatically creates cart if it "
 "doesn't exist."
 msgstr ""
-"ดึงตะกร้าสินค้าสำหรับผู้ใช้หรือเซสชันที่ได้รับการตรวจสอบสิทธิ์ คืนรายการสินค้า ยอดรวม ส่วนลด ภาษี "
-"และยอดรวมทั้งหมด สร้างตะกร้าอัตโนมัติหากยังไม่มี"
+"ดึงตะกร้าสินค้าสำหรับผู้ใช้หรือเซสชันที่ได้รับการตรวจสอบสิทธิ์ "
+"คืนรายการสินค้า ยอดรวม ส่วนลด ภาษี และยอดรวมทั้งหมด "
+"สร้างตะกร้าอัตโนมัติหากยังไม่มี"
 
+#: views.py:64
 msgid "Add item to cart"
 msgstr "เพิ่มสินค้าลงในตะกร้า"
 
+#: views.py:66
 msgid ""
 "Add a product to cart with specified quantity. Optionally include variant "
 "ID, customizations, and notes. Validates stock availability and merges with "
@@ -2354,24 +3002,30 @@ msgid ""
 "include is_subscription=true with subscription_plan_id, payment_token_id, "
 "and optionally pricing_tier_id."
 msgstr ""
-"เพิ่มสินค้าลงในตะกร้าพร้อมจำนวนที่ระบุไว้ อาจเพิ่ม ID รูปแบบ, การปรับแต่ง, และหมายเหตุได้ "
-"ตรวจสอบความพร้อมของสต็อกและรวมกับรายการตะกร้าที่มีอยู่หากเป็นสินค้า/รูปแบบเดียวกัน "
-"สำหรับสินค้าแบบสมัครสมาชิก ให้รวม is_subscription=true พร้อม subscription_plan_id, "
-"payment_token_id และ pricing_tier_id ได้ตามต้องการ"
+"เพิ่มสินค้าลงในตะกร้าพร้อมจำนวนที่ระบุไว้ อาจเพิ่ม ID รูปแบบ, การปรับแต่ง, "
+"และหมายเหตุได้ "
+"ตรวจสอบความพร้อมของสต็อกและรวมกับรายการตะกร้าที่มีอยู่หากเป็นสินค้า/รูปแบบเดียวกัน"
+" สำหรับสินค้าแบบสมัครสมาชิก ให้รวม is_subscription=true พร้อม "
+"subscription_plan_id, payment_token_id และ pricing_tier_id ได้ตามต้องการ"
 
+#: views.py:72
 msgid "Update cart item"
 msgstr "อัปเดตสินค้าในตะกร้า"
 
+#: views.py:74
 msgid ""
 "Update cart item quantity, customizations, or notes. Validates new quantity "
 "against stock availability. Returns updated cart with recalculated totals."
 msgstr ""
 "ปรับปรุงจำนวนสินค้า ข้อกำหนดพิเศษ หรือหมายเหตุในตะกร้า "
-"ตรวจสอบความถูกต้องของจำนวนสินค้าใหม่กับสต็อกที่มีอยู่ คืนตะกร้าที่อัปเดตพร้อมคำนวณยอดรวมใหม่"
+"ตรวจสอบความถูกต้องของจำนวนสินค้าใหม่กับสต็อกที่มีอยู่ "
+"คืนตะกร้าที่อัปเดตพร้อมคำนวณยอดรวมใหม่"
 
+#: views.py:79
 msgid "Remove cart item"
 msgstr "ลบสินค้าในตะกร้า"
 
+#: views.py:81
 msgid ""
 "Remove a specific item from cart. Recalculates cart totals and revalidates "
 "any applied vouchers against new cart total."
@@ -2379,132 +3033,137 @@ msgstr ""
 "ลบสินค้าชิ้นหนึ่งออกจากตะกร้า "
 "คำนวณยอดรวมตะกร้าใหม่และตรวจสอบคูปองที่ใช้ใหม่ตามยอดรวมตะกร้าใหม่"
 
+#: views.py:86
 msgid "Clear cart"
 msgstr "ล้างตะกร้า"
 
+#: views.py:88
 msgid ""
 "Remove all items from cart. Also removes any applied vouchers. Cart object "
 "persists but becomes empty."
 msgstr ""
-"ลบสินค้าทั้งหมดออกจากตะกร้า รวมถึงคูปองที่ถูกใช้งานแล้ว วัตถุตะกร้าจะยังคงอยู่แต่จะกลายเป็นว่าง"
+"ลบสินค้าทั้งหมดออกจากตะกร้า รวมถึงคูปองที่ถูกใช้งานแล้ว "
+"วัตถุตะกร้าจะยังคงอยู่แต่จะกลายเป็นว่าง"
 
+#: views.py:93
 msgid "Apply voucher code"
 msgstr "ใช้โค้ดส่วนลด"
 
+#: views.py:95
 msgid ""
 "Apply a voucher code to cart. Validates voucher eligibility, minimum "
 "purchase requirements, and usage limits. Calculates and applies discount to "
 "cart total."
 msgstr ""
-"ใช้คูปองกับตะกร้า ตรวจสอบคุณสมบัติของคูปอง ข้อกำหนดการซื้อขั้นต่ำ และข้อจำกัดการใช้งาน "
-"คำนวณและใช้ส่วนลดกับยอดรวมตะกร้า"
+"ใช้คูปองกับตะกร้า ตรวจสอบคุณสมบัติของคูปอง ข้อกำหนดการซื้อขั้นต่ำ "
+"และข้อจำกัดการใช้งาน คำนวณและใช้ส่วนลดกับยอดรวมตะกร้า"
 
+#: views.py:100
 msgid "Remove voucher"
 msgstr "ลบคูปอง"
 
+#: views.py:102
 msgid ""
-"Remove a specific voucher from cart by code. Recalculates cart total without "
-"the voucher discount. User can reapply the voucher later if eligible."
+"Remove a specific voucher from cart by code. Recalculates cart total without"
+" the voucher discount. User can reapply the voucher later if eligible."
 msgstr ""
 "ลบคูปองเฉพาะจากตะกร้าโดยใช้รหัส คำนวณใหม่ยอดรวมตะกร้าโดยไม่มีส่วนลดคูปอง "
 "ผู้ใช้สามารถใช้คูปองอีกครั้งในภายหลังหากมีคุณสมบัติสอดคล้อง"
 
-msgid "Apply gift card"
-msgstr "ใช้บัตรของขวัญ"
-
-msgid ""
-"Apply a gift card code to cart. Validates gift card status, balance, and "
-"currency. Gift cards cannot be used to purchase other gift cards. Amount "
-"applied is limited to gift card balance or remaining cart total."
-msgstr ""
-"ใช้รหัสบัตรของขวัญกับตะกร้า ตรวจสอบสถานะ ยอดคงเหลือ และสกุลเงินของบัตรของขวัญ "
-"บัตรของขวัญไม่สามารถใช้ซื้อบัตรของขวัญอื่นได้ "
-"จำนวนเงินที่ใช้ได้ถูกจำกัดด้วยยอดคงเหลือของบัตรของขวัญหรือยอดรวมตะกร้าที่เหลืออยู่"
-
-msgid "Remove gift card"
-msgstr "ลบบัตรของขวัญ"
-
-msgid ""
-"Remove a specific gift card from cart by code. The gift card balance is not "
-"affected until checkout is completed. User can reapply the gift card."
-msgstr ""
-"ลบบัตรของขวัญเฉพาะจากตะกร้าโดยใช้รหัส "
-"ยอดคงเหลือของบัตรของขวัญจะไม่ได้รับผลกระทบจนกว่าการชำระเงินจะเสร็จสิ้น "
-"ผู้ใช้สามารถใช้บัตรของขวัญอีกครั้งได้"
-
+#: views.py:107
 msgid "Get cart summary"
 msgstr "ดูสรุปตะกร้าสินค้า"
 
+#: views.py:109
 msgid ""
 "Get lightweight cart summary with item count, subtotal, and total. Faster "
-"than full cart endpoint. Useful for header cart badge or quick total display."
+"than full cart endpoint. Useful for header cart badge or quick total "
+"display."
 msgstr ""
 "รับสรุปตะกร้าที่มีน้ำหนักเบา พร้อมจำนวนสินค้า ยอดรวมย่อย และยอดรวมทั้งหมด "
 "ทำงานได้เร็วกว่าการเรียกข้อมูลตะกร้าแบบเต็มรูปแบบ "
 "เหมาะสำหรับแสดงผลในป้ายตะกร้าส่วนหัวหรือแสดงยอดรวมอย่างรวดเร็ว"
 
+#: views.py:246
 msgid ""
 "Component items cannot be modified directly. Update the parent product "
 "instead."
 msgstr "สินค้าประกอบไม่สามารถแก้ไขโดยตรงได้ ให้อัปเดตสินค้าหลักแทน"
 
+#: views.py:360
 msgid "List user wishlists"
 msgstr "รายการรายการสินค้าที่ต้องการของผู้ใช้"
 
+#: views.py:362
 msgid ""
 "Get all wishlists for the authenticated user. Users can have multiple "
 "wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
 "Returns wishlist names, item counts, and privacy settings."
 msgstr ""
 "ดึงรายการสิ่งที่อยากได้ทั้งหมดสำหรับผู้ใช้ที่ผ่านการยืนยันตัวตน "
-"ผู้ใช้สามารถมีรายการสิ่งที่อยากได้หลายรายการสำหรับวัตถุประสงค์ต่างกัน (เช่น 'วันเกิด', "
-"'วันแต่งงาน', 'ไอเดีย') คืนค่าชื่อรายการสิ่งที่อยากได้ จำนวนสินค้า และการตั้งค่าความเป็นส่วนตัว"
+"ผู้ใช้สามารถมีรายการสิ่งที่อยากได้หลายรายการสำหรับวัตถุประสงค์ต่างกัน (เช่น "
+"'วันเกิด', 'วันแต่งงาน', 'ไอเดีย') คืนค่าชื่อรายการสิ่งที่อยากได้ "
+"จำนวนสินค้า และการตั้งค่าความเป็นส่วนตัว"
 
+#: views.py:367
 msgid "Create wishlist"
 msgstr "สร้างรายการต้องการ"
 
+#: views.py:369
 msgid ""
-"Create a new wishlist for the authenticated user. Specify name, description, "
-"and privacy setting (public/private). Public wishlists can be shared via URL."
+"Create a new wishlist for the authenticated user. Specify name, description,"
+" and privacy setting (public/private). Public wishlists can be shared via "
+"URL."
 msgstr ""
-"สร้างรายการสิ่งที่อยากได้ใหม่สำหรับผู้ใช้ที่ผ่านการยืนยันตัวตน ระบุชื่อ คำอธิบาย "
-"และการตั้งค่าความเป็นส่วนตัว (สาธารณะ/ส่วนตัว) รายการสิ่งที่อยากได้แบบสาธารณะสามารถแชร์ผ่าน "
-"URL ได้"
+"สร้างรายการสิ่งที่อยากได้ใหม่สำหรับผู้ใช้ที่ผ่านการยืนยันตัวตน ระบุชื่อ "
+"คำอธิบาย และการตั้งค่าความเป็นส่วนตัว (สาธารณะ/ส่วนตัว) "
+"รายการสิ่งที่อยากได้แบบสาธารณะสามารถแชร์ผ่าน URL ได้"
 
+#: views.py:374
 msgid "Get wishlist details"
 msgstr "ดูรายละเอียดรายการสินค้าที่ต้องการ"
 
+#: views.py:376
 msgid ""
 "Get detailed information about a specific wishlist including all items, "
 "prices, availability, and sharing settings. Only accessible to wishlist "
 "owner unless publicly shared."
 msgstr ""
-"ดึงข้อมูลรายละเอียดของรายการที่ต้องการโดยเฉพาะ รวมถึงสินค้า ราคา ความพร้อมใช้งาน "
-"และการตั้งค่าการแชร์ สามารถเข้าถึงได้เฉพาะเจ้าของรายการเว้นแต่รายการนั้นถูกแชร์สาธารณะ"
+"ดึงข้อมูลรายละเอียดของรายการที่ต้องการโดยเฉพาะ รวมถึงสินค้า ราคา "
+"ความพร้อมใช้งาน และการตั้งค่าการแชร์ "
+"สามารถเข้าถึงได้เฉพาะเจ้าของรายการเว้นแต่รายการนั้นถูกแชร์สาธารณะ"
 
+#: views.py:381
 msgid "Update wishlist"
 msgstr "อัปเดตรายการต้องการ"
 
+#: views.py:383
 msgid ""
 "Update wishlist information including name, description, or privacy "
 "settings. Can make wishlist public or private. Only owner can update."
 msgstr ""
-"อัปเดตข้อมูลรายการที่ต้องการ รวมถึงชื่อ คำอธิบาย หรือการตั้งค่าความเป็นส่วนตัว "
-"สามารถตั้งค่ารายการให้เป็นสาธารณะหรือส่วนตัวได้ เฉพาะเจ้าของรายการเท่านั้นที่สามารถอัปเดตได้"
+"อัปเดตข้อมูลรายการที่ต้องการ รวมถึงชื่อ คำอธิบาย "
+"หรือการตั้งค่าความเป็นส่วนตัว "
+"สามารถตั้งค่ารายการให้เป็นสาธารณะหรือส่วนตัวได้ "
+"เฉพาะเจ้าของรายการเท่านั้นที่สามารถอัปเดตได้"
 
+#: views.py:388
 msgid "Partially update wishlist"
 msgstr "อัปเดตรายการต้องการบางส่วน"
 
+#: views.py:390
 msgid ""
 "Update specific wishlist fields without sending full wishlist data. Useful "
 "for toggling privacy or renaming wishlist."
 msgstr ""
-"อัปเดตฟิลด์รายการต้องการเฉพาะโดยไม่ต้องส่งข้อมูลรายการต้องการทั้งหมด ใช้ได้ดีสำหรับการเปิด/"
-"ปิดโหมดความเป็นส่วนตัวหรือเปลี่ยนชื่อรายการต้องการ"
+"อัปเดตฟิลด์รายการต้องการเฉพาะโดยไม่ต้องส่งข้อมูลรายการต้องการทั้งหมด "
+"ใช้ได้ดีสำหรับการเปิด/ปิดโหมดความเป็นส่วนตัวหรือเปลี่ยนชื่อรายการต้องการ"
 
+#: views.py:395
 msgid "Delete wishlist"
 msgstr "ลบรายการต้องการ"
 
+#: views.py:397
 msgid ""
 "Permanently delete a wishlist and all its items. Cannot be undone. Only "
 "owner can delete."
@@ -2512,139 +3171,597 @@ msgstr ""
 "ลบรายการต้องการของคุณและสิ่งของทั้งหมดในนั้นอย่างถาวร ไม่สามารถยกเลิกได้ "
 "ผู้ที่สามารถลบได้คือเจ้าของเท่านั้น"
 
+#: views.py:402
 msgid "Add item to wishlist"
 msgstr "เพิ่มสินค้าลงในรายการต้องการ"
 
+#: views.py:404
 msgid ""
 "Add a product to wishlist with optional variant, quantity, and notes. "
 "Prevents duplicates. Can add to default wishlist or specify wishlist ID."
 msgstr ""
-"เพิ่มสินค้าลงในรายการต้องการ โดยสามารถระบุตัวเลือก จำนวน และหมายเหตุได้ ป้องกันการเพิ่มซ้ำ "
-"สามารถเพิ่มลงในรายการต้องการเริ่มต้น หรือระบุ ID ของรายการต้องการได้"
+"เพิ่มสินค้าลงในรายการต้องการ โดยสามารถระบุตัวเลือก จำนวน และหมายเหตุได้ "
+"ป้องกันการเพิ่มซ้ำ สามารถเพิ่มลงในรายการต้องการเริ่มต้น หรือระบุ ID "
+"ของรายการต้องการได้"
 
+#: views.py:409
 msgid "Remove item from wishlist"
 msgstr "ลบสินค้าออกจากรายการต้องการ"
 
+#: views.py:411
 msgid ""
-"Remove a specific item from wishlist. Item can be added back later. Does not "
-"affect product availability."
+"Remove a specific item from wishlist. Item can be added back later. Does not"
+" affect product availability."
 msgstr ""
 "ลบรายการเฉพาะจากรายการต้องการ. สามารถเพิ่มรายการนี้กลับมาได้ในภายหลัง. "
 "ไม่ส่งผลต่อความพร้อมของสินค้า."
 
+#: views.py:416
 msgid "Move item to cart"
 msgstr "ย้ายสินค้าไปยังตะกร้า"
 
+#: views.py:418
 msgid ""
 "Move a wishlist item directly to shopping cart. Validates stock "
 "availability. Item is removed from wishlist after successful cart addition."
 msgstr ""
-"ย้ายรายการจากรายการต้องการไปยังตะกร้าช้อปปิ้งโดยตรง. ตรวจสอบความพร้อมของสินค้า. "
-"หลังจากเพิ่มรายการลงตะกร้าสำเร็จ รายการจะถูกลบออกจากรายการต้องการ."
+"ย้ายรายการจากรายการต้องการไปยังตะกร้าช้อปปิ้งโดยตรง. "
+"ตรวจสอบความพร้อมของสินค้า. หลังจากเพิ่มรายการลงตะกร้าสำเร็จ "
+"รายการจะถูกลบออกจากรายการต้องการ."
 
+#: views.py:423
 msgid "Get public wishlist by share slug"
 msgstr "ดึงรายการต้องการสาธารณะโดยใช้ share slug"
 
+#: views.py:425
 msgid ""
 "View a public wishlist using its share URL slug. Anyone with the link can "
-"view public wishlists. Useful for gift registries and wish lists shared with "
-"family/friends."
+"view public wishlists. Useful for gift registries and wish lists shared with"
+" family/friends."
 msgstr ""
 "ดูรายการสิ่งที่ต้องการของสาธารณะโดยใช้ URL ที่แชร์ "
 "ผู้ที่มีลิงก์สามารถดูรายการสิ่งที่ต้องการของสาธารณะได้ "
 "มีประโยชน์สำหรับการลงทะเบียนของขวัญและรายการสิ่งที่ต้องการที่แชร์กับครอบครัว/เพื่อน"
 
+#: views.py:430
+#| msgid "Get wishlist details"
+msgid "Get wishlisted product IDs"
+msgstr "ดึง ID สินค้าที่ถูกเพิ่มในรายการต้องการ"
+
+#: views.py:432
+msgid ""
+"Returns a mapping of product IDs to wishlist item IDs for the current user's"
+" default wishlist. Used by the storefront to show wishlist heart icons on "
+"product listings without fetching full wishlist data."
+msgstr ""
+"คืนค่าการจับคู่ระหว่าง ID ของสินค้ากับ ID "
+"ของรายการในรายการสินค้าที่ต้องการของผู้ใช้ทั่วไป "
+"ใช้โดยหน้าร้านเพื่อแสดงไอคอนหัวใจของรายการสินค้าที่ต้องการบนรายการสินค้าโดยไม่จำเป็นต้องดึงข้อมูลรายการสินค้าทั้งหมด"
+
+#: views.py:436
+msgid "Map of product IDs to wishlist item IDs"
+msgstr "แผนที่ของ ID สินค้าไปยัง ID รายการในรายการต้องการ"
+
+#: views.py:444
+msgid "Keys are product IDs (as strings), values are wishlist item IDs"
+msgstr "คีย์คือ ID สินค้า (ในรูปแบบสตริง) ค่าคือ ID สินค้าในรายการต้องการ"
+
+#: views.py:451
+#| msgid "Account creation required to proceed"
+msgid "Authentication required"
+msgstr "ต้องการการตรวจสอบความถูกต้อง"
+
+#: views.py:523
 msgid "ID of the wishlist item to remove"
 msgstr "ID ของรายการสินค้าในรายการต้องการที่ต้องการลบ"
 
+#: views.py:542
 msgid "ID of the wishlist item to move to cart"
 msgstr "ID ของรายการสินค้าในรายการต้องการที่ต้องการย้ายไปยังตะกร้า"
 
+#: views.py:573
 msgid "Share slug of the public wishlist"
 msgstr "Share slug ของรายการต้องการสาธารณะ"
 
+#: views.py:589
 msgid "Wishlist not found"
 msgstr "ไม่พบรายการโปรด"
 
+#: views.py:612
 msgid "Get checkout session"
 msgstr "เริ่มต้นการชำระเงิน"
 
+#: views.py:613
 msgid "Set shipping address"
 msgstr "ตั้งค่าที่อยู่จัดส่ง"
 
+#: views.py:614
 msgid "Set billing address"
 msgstr "ตั้งค่าที่อยู่ออกใบแจ้งหนี้"
 
+#: views.py:616
 msgid "Get available shipping methods"
 msgstr "ดึงวิธีการจัดส่งที่มีอยู่"
 
+#: views.py:620
 msgid "Get available payment providers"
 msgstr "ดึงผู้ให้บริการชำระเงินที่ใช้ได้"
 
+#: views.py:622
 msgid ""
-"Returns payment providers available for the customer's country and currency. "
-"Filters based on shipping countries, provider capabilities, and merchant "
+"Returns payment providers available for the customer's country and currency."
+" Filters based on shipping countries, provider capabilities, and merchant "
 "configuration."
 msgstr ""
 "คืนค่าตัวเลือกการชำระเงินที่สามารถใช้ได้สำหรับประเทศและสกุลเงินของลูกค้า "
-"ตัวกรองจะพิจารณาจากประเทศที่ส่งของ ความสามารถของผู้ให้บริการ และการตั้งค่าของผู้ขาย"
+"ตัวกรองจะพิจารณาจากประเทศที่ส่งของ ความสามารถของผู้ให้บริการ "
+"และการตั้งค่าของผู้ขาย"
 
+#: views.py:625
 msgid "Set shipping method"
 msgstr "ตั้งค่าวิธีการจัดส่ง"
 
+#: views.py:626
 msgid "Set payment method"
 msgstr "ตั้งค่าวิธีการชำระเงิน"
 
+#: views.py:627
 msgid "Validate checkout"
 msgstr "ตรวจสอบขั้นตอนการชำระเงิน"
 
+#: views.py:628
 msgid "Complete checkout"
 msgstr "สรุปขั้นตอนการชำระเงิน"
 
+#: views.py:631
+#| msgid "discount applied by"
+msgid "List applied tenders"
+msgstr "รายการการใช้สิทธิ์ลดราคาที่ใช้แล้ว"
+
+#: views.py:633
+msgid ""
+"Gift card and store credit holds against this checkout, plus the amount "
+"still due. amount_due — not total_amount — is what a payment provider should"
+" be asked to charge; it can legitimately be zero when tenders cover the "
+"whole order. Includes the signed-in customer's spendable wallet balance "
+"(null for guests, missing wallets, frozen wallets, or a currency mismatch)."
+msgstr ""
+"การเก็บเงินค่าบัตรของขวัญและเครดิตร้านค้าสำหรับการชำระเงินนี้ "
+"รวมถึงจำนวนเงินที่ยังคงต้องชำระ จำนวนเงินที่ต้องชำระ (amount_due) — "
+"ไม่ใช่จำนวนเงินทั้งหมด (total_amount) — "
+"คือจำนวนเงินที่ผู้ให้บริการชำระเงินควรได้รับการเรียกเก็บ; "
+"จำนวนเงินนี้สามารถเป็นศูนย์ได้อย่างถูกต้องเมื่อการชำระเงินครอบคลุมคำสั่งซื้อทั้งหมด"
+" รวมถึงยอดเงินที่สามารถใช้ได้ในกระเป๋าเงินของลูกค้าที่เข้าสู่ระบบ (null "
+"สำหรับลูกค้าที่ไม่ได้ลงชื่อเข้าใช้ กระเป๋าเงินที่หายไป "
+"กระเป๋าเงินที่ถูกแช่แข็ง หรือไม่ตรงกับสกุลเงิน)"
+
+#: views.py:643
+#| msgid "Apply gift card"
+msgid "Apply a gift card"
+msgstr "ใช้บัตรของขวัญ"
+
+#: views.py:645
+msgid ""
+"Places a hold on the card as a PAYMENT, not a discount: it settles the post-"
+"tax total and never reduces the tax base. Nothing is debited until payment "
+"is confirmed, so an abandoned checkout costs the customer nothing. Error "
+"messages are deliberately uniform — this endpoint sits on stored value and "
+"must not act as an enumeration oracle."
+msgstr ""
+"การเก็บเงินค่าบัตรนี้ถูกจัดประเภทเป็นการชำระเงิน ไม่ใช่ส่วนลด: "
+"มันจะชำระยอดรวมหลังหักภาษีและไม่เคยลดฐานภาษี ไม่มีการหักเงินใดๆ "
+"จนกว่าการชำระเงินจะได้รับการยืนยัน "
+"ดังนั้นการยกเลิกการชำระเงินจะไม่เกิดค่าใช้จ่ายใดๆ ให้กับลูกค้า "
+"ข้อความข้อผิดพลาดถูกออกแบบให้เหมือนกันทั้งหมด — "
+"ปลายทางนี้อยู่บนค่าที่เก็บไว้และไม่ควรทำหน้าที่เป็นตัวจัดการการนับ"
+
+#: views.py:655
+#| msgid "Apply gift card"
+msgid "Apply store credit"
+msgstr "ใช้เครดิตร้านค้า"
+
+#: views.py:657
+msgid ""
+"Holds the signed-in customer's wallet balance against this checkout, up to "
+"the amount due. Guests receive 403 — wallets belong to accounts. Single-"
+"currency: a wallet cannot part-pay an order in another currency."
+msgstr ""
+"เก็บยอดเงินในกระเป๋าของลูกค้าที่เข้าสู่ระบบไว้สำหรับการชำระเงินนี้ "
+"จนถึงจำนวนเงินที่ต้องชำระ ผู้ใช้ที่ไม่ได้เข้าสู่ระบบจะได้รับข้อความ 403 — "
+"กระเป๋าเงินเป็นของบัญชีเท่านั้น ระบบรับเงินเดียว: "
+"กระเป๋าเงินไม่สามารถชำระเงินบางส่วนสำหรับคำสั่งซื้อที่ใช้สกุลเงินอื่นได้"
+
+#: views.py:665
+#| msgid "Remove all zones"
+msgid "Remove a tender"
+msgstr "ลบสิทธิ์ลดราคา"
+
+#: views.py:667
+msgid ""
+"Releases a hold. Nothing was debited, so this only frees the reservation; "
+"the checkout's amount_due rises accordingly."
+msgstr ""
+"ปลดการจอง ไม่มีการหักเงินใด ๆ ดังนั้นการกระทำนี้จะปลดการจองเพียงอย่างเดียว "
+"จำนวนเงินที่ต้องจ่ายในขั้นตอนชำระเงินจะเพิ่มขึ้นตามลำดับ"
+
+#: views.py:972
+msgid "Store credit"
+msgstr "เครดิตร้านค้า"
+
+#: views.py:999
+#| msgid "Gift card has expired"
+msgid "Gift card code is required"
+msgstr "จำเป็นต้องระบุรหัสบัตรของขวัญ"
+
+#: views.py:1010 views.py:1064
+msgid "This order is already fully paid"
+msgstr "คำสั่งซื้อนี้ได้ชำระเงินครบแล้ว"
+
+#: views.py:1054
+msgid "Sign in to pay with your wallet"
+msgstr "เข้าสู่ระบบเพื่อชำระเงินด้วยกระเป๋าเงินของคุณ"
+
+#: views.py:1093
+#| msgid "Address not found"
+msgid "Tender not found"
+msgstr "ไม่พบการชำระเงิน"
+
+#: views.py:1120
 msgid "Get recently viewed products"
 msgstr "ดึงสินค้าที่ดูล่าสุด"
 
+#: views.py:1121
 msgid "Get recently viewed details"
 msgstr "ดูรายละเอียดที่ดูล่าสุด"
 
+#: views.py:1150
 msgid "List shipping methods"
 msgstr "รายการวิธีการจัดส่ง"
 
+#: views.py:1151
 msgid "Get shipping method details"
 msgstr "ดูรายละเอียดวิธีการจัดส่ง"
 
+#: views.py:1174
 msgid "List tax rates"
 msgstr "รายการอัตราภาษี"
 
+#: views.py:1175
 msgid "Get tax rate details"
 msgstr "ดูรายละเอียดอัตราภาษี"
 
+#: views.py:1176
 msgid "Create tax rate"
 msgstr "สร้างอัตราภาษี"
 
+#: views.py:1177
 msgid "Update tax rate"
 msgstr "อัปเดตอัตราภาษี"
 
+#: views.py:1178
 msgid "Partial update tax rate"
 msgstr "อัปเดตอัตราภาษีบางส่วน"
 
+#: views.py:1179
 msgid "Delete tax rate"
 msgstr "ลบอัตราภาษี"
 
+#: views.py:1190
 msgid "Calculate applicable taxes"
 msgstr "คำนวณภาษีที่ใช้ได้"
 
+#: views.py:1235
 msgid "Tax rates grouped by country"
 msgstr "อัตราภาษีที่จัดกลุ่มตามประเทศ"
 
+#: views.py:1254
 msgid "Load preset tax rates"
 msgstr "โหลดอัตราภาษีที่ตั้งไว้ล่วงหน้า"
 
+#: views.py:1285
 msgid "List tax preset groups"
 msgstr "รายการกลุ่มอัตราภาษีที่ตั้งไว้ล่วงหน้า"
 
+#: views.py:1286
 msgid "Get preset group details"
 msgstr "ดึงรายละเอียดกลุ่มที่ตั้งไว้ล่วงหน้า"
 
+#: views.py:1297
 msgid "List rates in a preset group"
 msgstr "รายการอัตราในกลุ่มที่ตั้งไว้ล่วงหน้า"
+
+#~ msgid "Invalid gift card code"
+#~ msgstr "รหัสบัตรของขวัญไม่ถูกต้อง"
+
+#~ msgid "Gift card already applied"
+#~ msgstr "บัตรของขวัญถูกใช้แล้ว"
+
+#~ msgid "Gift card has been fully redeemed"
+#~ msgstr "บัตรของขวัญถูกใช้หมดแล้ว"
+
+#~ msgid "Gift card cannot be used"
+#~ msgstr "ไม่สามารถใช้บัตรของขวัญได้"
+
+#, python-brace-format
+#~ msgid ""
+#~ "Currency mismatch. Gift card is in {card_currency}, cart is in "
+#~ "{cart_currency}"
+#~ msgstr ""
+#~ "สกุลเงินไม่ตรงกัน บัตรของขวัญอยู่ใน {card_currency} ตะกร้าอยู่ใน "
+#~ "{cart_currency}"
+
+#, python-brace-format
+#~ msgid ""
+#~ "This gift card is in {card_currency}. Please switch your currency to "
+#~ "{card_currency} to use it."
+#~ msgstr ""
+#~ "บัตรของขวัญนี้อยู่ใน {card_currency} กรุณาเปลี่ยนสกุลเงินของคุณเป็น "
+#~ "{card_currency} เพื่อใช้งาน"
+
+#~ msgid "Gift cards cannot be used to purchase other gift cards"
+#~ msgstr "บัตรของขวัญไม่สามารถใช้ซื้อบัตรของขวัญอื่นได้"
+
+#~ msgid "Cart total is already covered"
+#~ msgstr "ยอดรวมในตะกร้าถูกครอบคลุมแล้ว"
+
+#~ msgid "Unable to process gift card currency conversion"
+#~ msgstr "ไม่สามารถประมวลผลการแปลงสกุลเงินของบัตรของขวัญได้"
+
+#~ msgid "Gift card applied successfully"
+#~ msgstr "บัตรของขวัญถูกใช้สำเร็จแล้ว"
+
+#~ msgid "Free Shipping"
+#~ msgstr "การจัดส่งฟรี"
+
+#~ msgid "Weight Based"
+#~ msgstr "ตามน้ำหนัก"
+
+#~ msgid "Price Based"
+#~ msgstr "ตามราคา"
+
+#~ msgid "Minimum cart value to qualify"
+#~ msgstr "ค่ามินิมัมของตะกร้าเพื่อคุ้มค่า"
+
+#~ msgid "Minimum Order Value"
+#~ msgstr "ค่าสั่งซื้อขั้นต่ำ"
+
+#~ msgid "Maximum cart value to qualify"
+#~ msgstr "ค่าแม็กซิมัมของตะกร้าเพื่อคุ้มค่า"
+
+#~ msgid "Maximum Order Value"
+#~ msgstr "ค่าสั่งซื้อสูงสุด"
+
+#~ msgid "Minimum cart weight (kg)"
+#~ msgstr "น้ำหนักตะกร้าขั้นต่ำ (กิโลกรัม)"
+
+#~ msgid "Minimum Weight"
+#~ msgstr "น้ำหนักขั้นต่ำ"
+
+#~ msgid "Maximum cart weight (kg)"
+#~ msgstr "น้ำหนักตะกร้าสูงสุด (กิโลกรัม)"
+
+#~ msgid "Maximum Weight"
+#~ msgstr "น้ำหนักสูงสุด"
+
+#, python-brace-format
+#~ msgid "Minimum order value {value} required"
+#~ msgstr "ต้องมีมูลค่าคำสั่งซื้อขั้นต่ำ {value}"
+
+#, python-brace-format
+#~ msgid "Maximum order value {value} exceeded"
+#~ msgstr "มูลค่าคำสั่งซื้อเกิน {value}"
+
+#, python-brace-format
+#~ msgid "Minimum weight {weight}kg required"
+#~ msgstr "ต้องมีน้ำหนักขั้นต่ำ {weight}kg"
+
+#, python-brace-format
+#~ msgid "Maximum weight {weight}kg exceeded"
+#~ msgstr "น้ำหนักเกิน {weight}kg"
+
+#~ msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+#~ msgstr "ประเภทสินค้าที่ยกเว้นภาษีนี้ (เช่น ['digital', 'service'])"
+
+#~ msgid "Amount in base currency (used for cart calculations)"
+#~ msgstr "จำนวนเงินในสกุลเงินพื้นฐาน (ใช้สำหรับการคำนวณในตะกร้า)"
+
+#~ msgid "Original Currency Amount"
+#~ msgstr "จำนวนเงินในสกุลเงินเดิม"
+
+#~ msgid ""
+#~ "Discount in the gift card's native currency (for foreign-currency gift "
+#~ "cards)"
+#~ msgstr ""
+#~ "ส่วนลดในสกุลเงินพื้นเดิมของบัตรของขวัญ "
+#~ "(สำหรับบัตรของขวัญที่ใช้สกุลเงินต่างประเทศ)"
+
+#~ msgid "Exchange Rate"
+#~ msgstr "อัตราแลกเปลี่ยน"
+
+#~ msgid "Rate: gift card currency -> base currency at time of application"
+#~ msgstr "อัตรา: สกุลเงินบัตรของขวัญ -> สกุลเงินพื้นฐาน ณ ขณะที่ใช้งาน"
+
+#~ msgid "Applied At"
+#~ msgstr "ใช้งานที่"
+
+#~ msgid "Applied Gift Card"
+#~ msgstr "บัตรของขวัญที่ใช้งานแล้ว"
+
+#~ msgid "Applied Gift Cards"
+#~ msgstr "บัตรของขวัญที่ใช้งานแล้ว"
+
+#~ msgid "This gift card cannot be used"
+#~ msgstr "บัตรของขวัญนี้ไม่สามารถใช้ได้"
+
+#~ msgid "Discount amount exceeds gift card balance"
+#~ msgstr "จำนวนส่วนลดเกินยอดคงเหลือของบัตรของขวัญ"
+
+#~ msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+#~ msgstr "รหัสบัตรของขวัญ (ตัวอย่างเช่น GC-XXXX-XXXX-XXXX)"
+
+#~ msgid "Amount applied from this gift card (in base currency)"
+#~ msgstr "จำนวนเงินที่ใช้จากบัตรของขวัญนี้ (ในสกุลเงินหลัก)"
+
+#~ msgid "Remaining balance on gift card after this application"
+#~ msgstr "ยอดคงเหลือบนบัตรของขวัญหลังจากใช้ครั้งนี้"
+
+#~ msgid "Base currency code"
+#~ msgstr "รหัสสกุลเงินพื้นฐาน"
+
+#~ msgid "Gift card's native currency code"
+#~ msgstr "รหัสสกุลเงินพื้นฐานของบัตรของขวัญ"
+
+#~ msgid ""
+#~ "Discount in gift card's native currency (for foreign-currency gift cards)"
+#~ msgstr ""
+#~ "ส่วนลดในสกุลเงินของบัตรของขวัญ (สำหรับบัตรของขวัญที่ใช้สกุลเงินต่างประเทศ)"
+
+#~ msgid "Gift card removed"
+#~ msgstr "บัตรของขวัญถูกลบ"
+
+#~ msgid "Gift card not found in cart"
+#~ msgstr "ไม่พบบัตรของขวัญในตะกร้า"
+
+#~ msgid "Free Shipping - No charge"
+#~ msgstr "การจัดส่งฟรี - ไม่มีค่าใช้จ่าย"
+
+#~ msgid "Weight Based - Calculate by cart weight"
+#~ msgstr "คำนวณตามน้ำหนักตะกร้าสินค้า"
+
+#~ msgid "Price Based - Calculate by cart subtotal"
+#~ msgstr "คำนวณตามมูลค่ารวมตะกร้าสินค้า"
+
+#~ msgid "Free Shipping:"
+#~ msgstr "การจัดส่งฟรี:"
+
+#~ msgid "No shipping charge"
+#~ msgstr "ไม่มีค่าใช้จ่ายในการจัดส่ง"
+
+#~ msgid "Weight/Price Based:"
+#~ msgstr "คำนวณตามน้ำหนัก/ราคา:"
+
+#~ msgid "Calculate using rate tables"
+#~ msgstr "คำนวณโดยใช้ตารางอัตรา"
+
+#~ msgid ""
+#~ "Define when this shipping method should be available based on cart value and"
+#~ " weight."
+#~ msgstr ""
+#~ "กำหนดเมื่อใดวิธีการจัดส่งนี้ควรเปิดใช้งาน "
+#~ "โดยพิจารณาจากมูลค่าตะกร้าสินค้าและน้ำหนัก"
+
+#~ msgid "Order Value Restrictions"
+#~ msgstr "ข้อจำกัดของค่าคำสั่งซื้อ"
+
+#~ msgid "Set minimum or maximum cart subtotal requirements for this method."
+#~ msgstr "ตั้งค่าข้อกำหนดมูลค่ารวมตะกร้าสินค้าขั้นต่ำหรือสูงสุดสำหรับวิธีการนี้"
+
+#~ msgid "Method only available if cart subtotal is at least this amount"
+#~ msgstr ""
+#~ "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อมูลค่ารวมตะกร้าสินค้าอย่างน้อยเท่านี้"
+
+#~ msgid "No maximum"
+#~ msgstr "ไม่มีค่าสูงสุด"
+
+#~ msgid "Method only available if cart subtotal is below this amount"
+#~ msgstr ""
+#~ "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อมูลค่ารวมตะกร้าสินค้าต่ำกว่าเท่านี้"
+
+#~ msgid "Free shipping for orders over $50: Set minimum to 50.00"
+#~ msgstr "การจัดส่งฟรีสำหรับการสั่งซื้อเกิน $50: ตั้งค่าขั้นต่ำเป็น 50.00"
+
+#~ msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+#~ msgstr ""
+#~ "การจัดส่งประหยัดสำหรับการสั่งซื้อต่ำกว่า $100: ตั้งค่าสูงสุดเป็น 100.00"
+
+#~ msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+#~ msgstr "การจัดส่งมาตรฐานสำหรับ $25-$200: ตั้งค่าทั้งขั้นต่ำและสูงสุด"
+
+#~ msgid "Weight Restrictions"
+#~ msgstr "ข้อจำกัดของน้ำหนัก"
+
+#~ msgid "Set minimum or maximum total cart weight requirements for this method."
+#~ msgstr ""
+#~ "ตั้งค่าข้อกำหนดน้ำหนักรวมตะกร้าสินค้าขั้นต่ำหรือสูงสุดสำหรับวิธีการนี้"
+
+#~ msgid "Minimum Weight (kg)"
+#~ msgstr "น้ำหนักขั้นต่ำ (กิโลกรัม)"
+
+#~ msgid "Method only available if total cart weight is at least this value"
+#~ msgstr ""
+#~ "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อน้ำหนักรวมตะกร้าสินค้าอย่างน้อยเท่านี้"
+
+#~ msgid "Maximum Weight (kg)"
+#~ msgstr "น้ำหนักสูงสุด (กิโลกรัม)"
+
+#~ msgid "Method only available if total cart weight is below this value"
+#~ msgstr ""
+#~ "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อน้ำหนักรวมตะกร้าสินค้าต่ำกว่าเท่านี้"
+
+#~ msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+#~ msgstr ""
+#~ "การจัดส่งสินค้าเบาสำหรับสินค้าน้ำหนักต่ำกว่า 2 กก.: ตั้งค่าสูงสุดเป็น 2.00"
+
+#~ msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+#~ msgstr ""
+#~ "การจัดส่งสินค้าหนักสำหรับสินค้าน้ำหนักเกิน 20 กก.: ตั้งค่าขั้นต่ำเป็น 20.00"
+
+#~ msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+#~ msgstr "การจัดส่งมาตรฐานสำหรับ 0.5 กก.-10 กก.: ตั้งค่าทั้งขั้นต่ำและสูงสุด"
+
+#~ msgid "Weight-Based Rates:"
+#~ msgstr "อัตราค่าจัดส่งตามน้ำหนัก:"
+
+#~ msgid "Price-Based Rates:"
+#~ msgstr "อัตราค่าจัดส่งตามราคา:"
+
+#~ msgid ""
+#~ "You'll be able to configure tiered rates based on cart subtotal after the "
+#~ "method is created."
+#~ msgstr ""
+#~ "คุณจะสามารถตั้งค่าอัตราค่าจัดส่งแบบหลายระดับตามมูลค่ารวมตะกร้าสินค้าหลังจากสร้างวิธีการแล้ว"
+
+#~ msgid "Min Order Value:"
+#~ msgstr "ค่าสั่งซื้อขั้นต่ำ:"
+
+#~ msgid "Max Order Value:"
+#~ msgstr "ค่าสั่งซื้อสูงสุด:"
+
+#~ msgid "Min Weight:"
+#~ msgstr "น้ำหนักขั้นต่ำ:"
+
+#~ msgid "Max Weight:"
+#~ msgstr "น้ำหนักสูงสุด:"
+
+#~ msgid ""
+#~ "No eligibility conditions set - method available for all cart values and "
+#~ "weights"
+#~ msgstr ""
+#~ "ไม่ได้ตั้งค่าเงื่อนไขการคุ้มครอง - "
+#~ "วิธีนี้สามารถใช้ได้กับค่าและน้ำหนักตะกร้าทั้งหมด"
+
+#~ msgid "Optional: Restrict availability based on order value or weight."
+#~ msgstr "ตัวเลือก: จำกัดความพร้อมใช้งานตามมูลค่าคำสั่งซื้อหรือน้ำหนัก"
+
+#~ msgid "Order Value:"
+#~ msgstr "มูลค่าคำสั่งซื้อ:"
+
+#~ msgid "Weight:"
+#~ msgstr "น้ำหนัก:"
+
+#~ msgid ""
+#~ "Apply a gift card code to cart. Validates gift card status, balance, and "
+#~ "currency. Gift cards cannot be used to purchase other gift cards. Amount "
+#~ "applied is limited to gift card balance or remaining cart total."
+#~ msgstr ""
+#~ "ใช้รหัสบัตรของขวัญกับตะกร้า ตรวจสอบสถานะ ยอดคงเหลือ "
+#~ "และสกุลเงินของบัตรของขวัญ บัตรของขวัญไม่สามารถใช้ซื้อบัตรของขวัญอื่นได้ "
+#~ "จำนวนเงินที่ใช้ได้ถูกจำกัดด้วยยอดคงเหลือของบัตรของขวัญหรือยอดรวมตะกร้าที่เหลืออยู่"
+
+#~ msgid ""
+#~ "Remove a specific gift card from cart by code. The gift card balance is not "
+#~ "affected until checkout is completed. User can reapply the gift card."
+#~ msgstr ""
+#~ "ลบบัตรของขวัญเฉพาะจากตะกร้าโดยใช้รหัส "
+#~ "ยอดคงเหลือของบัตรของขวัญจะไม่ได้รับผลกระทบจนกว่าการชำระเงินจะเสร็จสิ้น "
+#~ "ผู้ใช้สามารถใช้บัตรของขวัญอีกครั้งได้"

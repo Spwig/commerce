@@ -1,4 +1,4 @@
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 
 from admin_api.authentication import MobileTokenAuthentication
 
@@ -6,9 +6,14 @@ from admin_api.authentication import MobileTokenAuthentication
 class HeadlessAPIMixin:
     """Mixin for public storefront API views accessed by headless frontends.
 
-    Excludes SessionAuthentication so that CSRF is never enforced on API
-    requests.  Token-based auth (Bearer / Token) still works for endpoints
-    that require an authenticated customer.
+    Authentication order: mobile token, then DRF token (both for headless
+    clients), then session — so a customer logged in to the storefront in a
+    browser is recognised by the cart/checkout APIs instead of being treated
+    as an anonymous visitor with a separate session cart. DRF enforces CSRF
+    only on session-AUTHENTICATED unsafe requests (anonymous storefront
+    POSTs remain CSRF-exempt, as before), and every storefront JS caller
+    sends X-CSRFToken from the base template's csrf-token meta tag, so
+    token-based headless clients remain CSRF-free.
 
     Also stamps every response with strict no-cache headers. Cart, checkout,
     account, and similar endpoints are per-visitor and must never be served
@@ -22,7 +27,7 @@ class HeadlessAPIMixin:
             ...
     """
 
-    authentication_classes = [MobileTokenAuthentication, TokenAuthentication]
+    authentication_classes = [MobileTokenAuthentication, TokenAuthentication, SessionAuthentication]
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)

@@ -1,7 +1,10 @@
 """
 MigrationStep Model
 Tracks individual steps within a migration job (products, customers, orders, etc.)
-Used for savepoint management and granular rollback.
+
+Steps record progress for display only. They are not a dispatch, transaction or
+resume boundary: the whole import runs as a single call, and a retry re-runs it
+from the beginning rather than resuming from the last completed step.
 """
 
 from django.db import models
@@ -13,7 +16,6 @@ class MigrationStep(models.Model):
     """
     Tracks individual steps within a migration job.
     Each step represents importing one data type (e.g., products, customers).
-    Used for transaction savepoint management.
     """
 
     job = models.ForeignKey(
@@ -53,15 +55,14 @@ class MigrationStep(models.Model):
         ("completed", _("Completed")),
         ("failed", _("Failed")),
         ("skipped", _("Skipped")),
+        # A step that was in flight when the operator cancelled. Without this it
+        # stays "running" forever and the progress page shows a step that will
+        # never finish.
+        ("cancelled", _("Cancelled")),
         ("rolled_back", _("Rolled Back")),
     ]
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="pending", db_index=True
-    )
-
-    # Transaction Management
-    savepoint_id = models.CharField(
-        max_length=100, blank=True, help_text=_("Database savepoint ID for this step")
     )
 
     # Statistics

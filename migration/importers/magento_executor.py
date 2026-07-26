@@ -16,6 +16,7 @@ from decimal import Decimal
 import requests
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
+from django.db import transaction
 from django.utils import timezone
 from tqdm import tqdm
 
@@ -30,6 +31,8 @@ from catalog.models import (
 )
 from media_library.models import MediaAsset
 from migration.fetchers.magento_api import MagentoAPIClient
+from migration.importers.cancellation import CancellationMixin, MigrationCancelled
+from migration.importers.dedup import should_skip_existing, try_replace_existing
 from migration.mappers.magento import (
     MagentoCategoryMapper,
     MagentoCmsPageMapper,
@@ -41,6 +44,7 @@ from migration.mappers.magento import (
 )
 from migration.models import MigrationJob, MigrationLog, MigrationStagedItem, MigrationStep
 from migration.utils.magento_transformers import resolve_attribute_label
+from migration.utils.pricing import apply_price_adjustment, get_adjustment
 from migration.utils.transformers import safe_money
 from orders.models import Order, OrderItem
 from vouchers.models import VoucherCode
@@ -50,7 +54,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-class MagentoImportExecutor:
+class MagentoImportExecutor(CancellationMixin):
     """
     Magento 2 import executor that orchestrates the entire migration process.
 
@@ -233,7 +237,7 @@ class MagentoImportExecutor:
         try:
             self.job.status = "running"
             self.job.started_at = timezone.now()
-            self.job.save()
+            self.job.save(update_fields=["status", "started_at"])
 
             logger.info(f"Starting Magento import for job {self.job.id}")
 
@@ -246,44 +250,51 @@ class MagentoImportExecutor:
                     "info", f"Cached {len(self._attribute_options_cache)} attribute option sets"
                 )
 
-            # Execute imports in order
+            # Execute imports in order. Between phases is the safest place to
+            # stop: no step is running, so unwinding cannot strand one.
             if self.job.import_categories:
+                self._check_cancelled()
                 self._import_categories()
 
             if self.job.import_products:
+                self._check_cancelled()
                 self._import_products()
 
             if self.job.import_customers:
+                self._check_cancelled()
                 self._import_customers()
 
             if self.job.import_orders:
+                self._check_cancelled()
                 self._import_orders()
 
             if self.job.import_reviews:
+                self._check_cancelled()
                 self._import_reviews()
 
             if self.job.import_coupons:
+                self._check_cancelled()
                 self._import_coupons()
 
             if self.job.import_blog:
+                self._check_cancelled()
                 self._import_cms_pages()
 
             # Post-import: scan content for internal links
             self._scan_content_links()
 
-            # Mark job as complete
-            self.job.status = "completed"
-            self.job.completed_at = timezone.now()
-            self.job.duration_seconds = int(
-                (self.job.completed_at - self.job.started_at).total_seconds()
-            )
-            self.job.progress_percent = 100
-            self.job.can_rollback = True
-            self.job.rollback_deadline = timezone.now() + timezone.timedelta(hours=24)
-            self.job.save()
+            # Completion goes through the shared helper, which is conditional so
+            # a cancelled or reaped job cannot be resurrected as "completed".
+            #
+            # This also drops the 24-hour rollback_deadline Magento alone used
+            # to stamp here. All platforms now leave it unset, which the model
+            # reads as "no expiry" — the deadline becomes configurable rather
+            # than hard-coded on one platform.
+            self._mark_completed()
 
-            logger.info(f"Magento import completed for job {self.job.id}")
-            self._update_overall_progress()
+        except MigrationCancelled:
+            self._mark_cancelled()
+            raise
 
         except Exception as e:
             logger.error(f"Magento import failed: {e}", exc_info=True)
@@ -294,7 +305,14 @@ class MagentoImportExecutor:
                 self.job.duration_seconds = int(
                     (self.job.completed_at - self.job.started_at).total_seconds()
                 )
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "status",
+                    "error_summary",
+                    "completed_at",
+                    "duration_seconds",
+                ]
+            )
             raise
 
     # ──────────────────────────────────────────────
@@ -366,7 +384,13 @@ class MagentoImportExecutor:
             self.job.categories_imported = step.items_imported
             self.job.categories_failed = step.items_failed
             self.job.categories_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "categories_imported",
+                    "categories_failed",
+                    "categories_skipped",
+                ]
+            )
             self._update_overall_progress()
 
             self._log(
@@ -389,8 +413,10 @@ class MagentoImportExecutor:
         external_id = str(cat_data.get("id"))
 
         existing = Category.objects.filter(external_id=external_id).first()
-        if existing:
-            # Ensure previously-imported categories are active (re-import fix)
+        if existing and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             if not existing.is_active:
                 existing.is_active = True
                 existing.save(update_fields=["is_active"])
@@ -401,19 +427,42 @@ class MagentoImportExecutor:
 
         mapped = mapper.map(cat_data)
 
-        category = Category.objects.create(
-            external_id=external_id,
-            migration_job=self.job,
-            name=mapped.get("name", ""),
-            slug=self._get_unique_slug(mapped.get("slug", ""), Category),
-            description=mapped.get("description", ""),
-            is_active=mapped.get("is_active", True),
-            imported_meta={
-                "magento_id": external_id,
-                "magento_level": cat_data.get("level"),
-            },
-        )
+        # The delete (if replacing) and the create that follows share one
+        # transaction, so a failure partway through creation rolls the
+        # delete back too. Without this, a crash right after deleting the
+        # old category and before the new one exists would leave the slot
+        # empty with nothing to fill it — silent data loss, not a skip.
+        with transaction.atomic():
+            if existing and not try_replace_existing(existing):
+                # Blocked: something else in the store (a product still
+                # filed under this category) still depends on it. Nothing
+                # was written — try_replace_existing's own delete runs in
+                # its own savepoint — so returning from inside this block
+                # is safe.
+                if not existing.is_active:
+                    existing.is_active = True
+                    existing.save(update_fields=["is_active"])
+                    logger.info(f"Reactivated previously-imported category: {existing.name}")
+                self._step_increment(step, "items_skipped")
+                self.category_map[external_id] = existing
+                return existing
+            # else: no existing row, or it was deleted — create it fresh.
 
+            category = Category.objects.create(
+                external_id=external_id,
+                migration_job=self.job,
+                name=mapped.get("name", ""),
+                slug=self._get_unique_slug(mapped.get("slug", ""), Category),
+                description=mapped.get("description", ""),
+                is_active=mapped.get("is_active", True),
+                imported_meta={
+                    "magento_id": external_id,
+                    "magento_level": cat_data.get("level"),
+                },
+            )
+
+        # Counted after the transaction commits, never inside it — a rolled
+        # back attempt must never leave a phantom increment.
         self.category_map[external_id] = category
         self._step_increment(step, "items_imported")
         return category
@@ -530,7 +579,13 @@ class MagentoImportExecutor:
             self.job.products_imported = step.items_imported
             self.job.products_failed = step.items_failed
             self.job.products_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "products_imported",
+                    "products_failed",
+                    "products_skipped",
+                ]
+            )
             self._update_overall_progress()
 
             self._log(
@@ -577,7 +632,10 @@ class MagentoImportExecutor:
         external_id = str(product_data.get("id"))
 
         existing = Product.objects.filter(external_id=external_id).first()
-        if existing:
+        if existing and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             self._step_increment(step, "items_skipped")
             self.product_map[external_id] = existing
             return existing
@@ -585,14 +643,28 @@ class MagentoImportExecutor:
         mapped = mapper.map(product_data)
         sku = self._get_unique_sku(mapped.get("sku", ""))
 
-        # Compute sale fields (sale_type + sale_value from sale_price)
+        # Compute sale fields (sale_type + sale_value from sale_price).
+        #
+        # The across-the-board price adjustment from step 4 was previously not
+        # applied on Magento at all — a merchant who set "+15%" got the source
+        # prices unchanged. It is applied here to the regular price, the sale
+        # value, and (below) custom variant prices, matching WooCommerce and
+        # Shopify. Order prices are never adjusted; those are historical.
+        adj_type, adj_value = get_adjustment(self.job.connection_config)
+
         sale_type = "none"
         sale_value_decimal = None
         regular_price = mapped.get("regular_price") or mapped.get("price")
         sale_price = mapped.get("sale_price")
         if sale_price and regular_price and Decimal(str(sale_price)) < Decimal(str(regular_price)):
             sale_type = "fixed_price"
-            sale_value_decimal = Decimal(str(sale_price))
+            sale_value_decimal = apply_price_adjustment(
+                Decimal(str(sale_price)), adj_type, adj_value
+            )
+
+        regular_price = apply_price_adjustment(
+            Decimal(str(regular_price)) if regular_price else None, adj_type, adj_value
+        )
 
         # Short description (truncate to avoid field limits)
         short_desc = mapped.get("short_description", "")
@@ -602,61 +674,81 @@ class MagentoImportExecutor:
         # Resolve primary category (required FK)
         category = self._get_product_category(product_data, mapped)
 
-        product = Product.objects.create(
-            external_id=external_id,
-            migration_job=self.job,
-            name=mapped.get("name", ""),
-            slug=self._get_unique_slug(mapped.get("slug", ""), Product),
-            sku=sku,
-            product_type=mapped.get("product_type", "simple"),
-            category=category,
-            short_description=short_desc,
-            full_description=mapped.get("full_description", ""),
-            price=Decimal(str(regular_price)) if regular_price else Decimal("0"),
-            sale_type=sale_type,
-            sale_value=sale_value_decimal,
-            status=mapped.get("status", "draft"),
-            is_digital=mapped.get("is_digital", False),
-            track_inventory=mapped.get("track_inventory", False),
-            allow_backorders=mapped.get("allow_backorders", False),
-            weight=mapped.get("weight"),
-            meta_title=mapped.get("meta_title", ""),
-            meta_description=mapped.get("meta_description", ""),
-            imported_meta={
-                "magento_id": external_id,
-                "magento_type": product_data.get("type_id"),
-                "magento_visibility": product_data.get("visibility"),
-                "attributes": mapped.get("attributes", {}),
-            },
-        )
+        # The delete (if replacing) and the create that follows share one
+        # transaction, so a failure partway through creation rolls the
+        # delete back too. Without this, a crash right after deleting the
+        # old product and before the new one exists would leave the slot
+        # empty with nothing to fill it — silent data loss, not a skip.
+        with transaction.atomic():
+            if existing and not try_replace_existing(existing):
+                # Blocked: a real order (or bundle, gift card, dependency…)
+                # still references this product. Nothing was written —
+                # try_replace_existing's own delete runs in its own
+                # savepoint — so returning from inside this block is safe.
+                self._step_increment(step, "items_skipped")
+                self.product_map[external_id] = existing
+                return existing
+            # else: no existing row, or it was deleted — create it fresh.
+            # ProductVariant.product is CASCADE, so a successful replace also
+            # removed the old variants, images and stock items.
 
+            product = Product.objects.create(
+                external_id=external_id,
+                migration_job=self.job,
+                name=mapped.get("name", ""),
+                slug=self._get_unique_slug(mapped.get("slug", ""), Product),
+                sku=sku,
+                product_type=mapped.get("product_type", "simple"),
+                category=category,
+                short_description=short_desc,
+                full_description=mapped.get("full_description", ""),
+                price=regular_price if regular_price else Decimal("0"),
+                sale_type=sale_type,
+                sale_value=sale_value_decimal,
+                status=mapped.get("status", "draft"),
+                is_digital=mapped.get("is_digital", False),
+                track_inventory=mapped.get("track_inventory", False),
+                allow_backorders=mapped.get("allow_backorders", False),
+                weight=mapped.get("weight"),
+                meta_title=mapped.get("meta_title", ""),
+                meta_description=mapped.get("meta_description", ""),
+                imported_meta={
+                    "magento_id": external_id,
+                    "magento_type": product_data.get("type_id"),
+                    "magento_visibility": product_data.get("visibility"),
+                    "attributes": mapped.get("attributes", {}),
+                },
+            )
+
+            # Store additional category mappings in imported_meta
+            additional_cat_ids = []
+            for cat_ext_id in mapped.get("category_ids", []):
+                cat = self.category_map.get(str(cat_ext_id))
+                if cat and cat.id != category.id:
+                    additional_cat_ids.append(str(cat_ext_id))
+            if additional_cat_ids:
+                meta = product.imported_meta or {}
+                meta["additional_categories"] = additional_cat_ids
+                product.imported_meta = meta
+                product.save(update_fields=["imported_meta"])
+
+            # Import stock
+            if self.default_warehouse and mapped.get("track_inventory"):
+                StockItem.objects.update_or_create(
+                    product=product,
+                    warehouse=self.default_warehouse,
+                    defaults={
+                        "on_hand": mapped.get("stock_quantity", 0),
+                        "low_stock_threshold": mapped.get("low_stock_threshold", 5),
+                    },
+                )
+
+        # Counted after the transaction commits, never inside it — a rolled
+        # back attempt must never leave a phantom increment.
         self.product_map[external_id] = product
-
-        # Store additional category mappings in imported_meta
-        additional_cat_ids = []
-        for cat_ext_id in mapped.get("category_ids", []):
-            cat = self.category_map.get(str(cat_ext_id))
-            if cat and cat.id != category.id:
-                additional_cat_ids.append(str(cat_ext_id))
-        if additional_cat_ids:
-            meta = product.imported_meta or {}
-            meta["additional_categories"] = additional_cat_ids
-            product.imported_meta = meta
-            product.save(update_fields=["imported_meta"])
 
         # Import images
         self._import_product_images(product, mapped.get("images", []))
-
-        # Import stock
-        if self.default_warehouse and mapped.get("track_inventory"):
-            StockItem.objects.update_or_create(
-                product=product,
-                warehouse=self.default_warehouse,
-                defaults={
-                    "on_hand": mapped.get("stock_quantity", 0),
-                    "low_stock_threshold": mapped.get("low_stock_threshold", 5),
-                },
-            )
 
         # Handle configurable products: fetch and create variants
         if product_data.get("type_id") == "configurable":
@@ -672,6 +764,8 @@ class MagentoImportExecutor:
         parent_sku = parent_data.get("sku", "")
         if not parent_sku:
             return
+
+        adj_type, adj_value = get_adjustment(self.job.connection_config)
 
         children = self.client.fetch_configurable_children(parent_sku)
         if not children:
@@ -695,7 +789,13 @@ class MagentoImportExecutor:
                         label = resolve_attribute_label(value, code, self._attribute_options_cache)
                         option_values[code] = label
 
-                child_price = Decimal(str(child.get("price", 0) or 0))
+                # Adjust the child price the same way as the parent so a custom
+                # variant price moves with a "+15%". The parent price is already
+                # adjusted, so comparing the two preserves the inherit/custom
+                # decision.
+                child_price = apply_price_adjustment(
+                    Decimal(str(child.get("price", 0) or 0)), adj_type, adj_value
+                )
                 parent_price = parent_product.price or Decimal("0")
                 pricing_strategy = "inherit" if child_price == parent_price else "custom"
 
@@ -915,7 +1015,13 @@ class MagentoImportExecutor:
             self.job.customers_imported = step.items_imported
             self.job.customers_failed = step.items_failed
             self.job.customers_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "customers_imported",
+                    "customers_failed",
+                    "customers_skipped",
+                ]
+            )
             self._update_overall_progress()
 
             self._log(
@@ -941,27 +1047,63 @@ class MagentoImportExecutor:
             self._step_increment(step, "items_skipped")
             return
 
-        existing = User.objects.filter(email=email).first()
-        if existing:
+        external_id = mapped.get("source_id", "")
+
+        # Check if already imported by this migration. Only when external_id
+        # is genuinely present — Magento's mapper can leave it blank, and a
+        # blank-to-blank match would treat every such customer as the same
+        # "already imported" row.
+        existing_profile = (
+            CustomerProfile.objects.filter(external_id=external_id).first() if external_id else None
+        )
+        if existing_profile and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             self._step_increment(step, "items_skipped")
             return
 
-        user = User.objects.create_user(
-            email=email,
-            username=mapped.get("username", email.split("@")[0]),
-            first_name=mapped.get("first_name", ""),
-            last_name=mapped.get("last_name", ""),
-        )
-        user.set_unusable_password()
-        user.save()
+        # The delete (if replacing) and the create that follows share one
+        # transaction, so a failure partway through creation rolls the
+        # delete back too. Without this, a crash right after deleting the
+        # old account and before the new one exists would strand the
+        # customer with neither record.
+        with transaction.atomic():
+            if existing_profile and not try_replace_existing(existing_profile.user):
+                # Blocked: something else in the store still depends on this
+                # account. Nothing was written — try_replace_existing's own
+                # delete runs in its own savepoint — so returning from
+                # inside this block is safe.
+                self._step_increment(step, "items_skipped")
+                return
+            # else: no previously-imported record, or it was just removed —
+            # fall through to identity resolution / creation.
 
-        CustomerProfile.objects.update_or_create(
-            user=user,
-            defaults={
-                "migration_job": self.job,
-                "external_id": mapped.get("source_id", ""),
-            },
-        )
+            # Check if a user with this email already exists. Identity
+            # resolution, not re-import bookkeeping — never affected by
+            # skip_existing: an account not created by this migration
+            # belongs to the merchant and must never be replaced.
+            existing = User.objects.filter(email=email).first()
+            if existing:
+                self._step_increment(step, "items_skipped")
+                return
+
+            user = User.objects.create_user(
+                email=email,
+                username=mapped.get("username", email.split("@")[0]),
+                first_name=mapped.get("first_name", ""),
+                last_name=mapped.get("last_name", ""),
+            )
+            user.set_unusable_password()
+            user.save()
+
+            CustomerProfile.objects.update_or_create(
+                user=user,
+                defaults={
+                    "migration_job": self.job,
+                    "external_id": external_id,
+                },
+            )
 
         self._step_increment(step, "items_imported")
 
@@ -1014,7 +1156,7 @@ class MagentoImportExecutor:
             self.job.orders_imported = step.items_imported
             self.job.orders_failed = step.items_failed
             self.job.orders_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["orders_imported", "orders_failed", "orders_skipped"])
             self._update_overall_progress()
 
             self._log(
@@ -1051,75 +1193,81 @@ class MagentoImportExecutor:
         billing = mapped.get("billing_address", {})
         shipping = mapped.get("shipping_address", {})
 
-        order = Order.objects.create(
-            external_id=external_id,
-            migration_job=self.job,
-            order_number=mapped.get("order_number", ""),
-            user=customer,
-            email=customer_email or billing.get("email", ""),
-            phone=billing.get("phone", ""),
-            status=mapped.get("status", "pending"),
-            payment_status=mapped.get("payment_status", "pending"),
-            payment_method_type=mapped.get("payment_method", ""),
-            # Shipping address
-            shipping_name=f"{shipping.get('first_name', '')} {shipping.get('last_name', '')}".strip(),
-            shipping_address1=shipping.get("address_1", ""),
-            shipping_address2=shipping.get("address_2", ""),
-            shipping_city=shipping.get("city", ""),
-            shipping_state=shipping.get("state", ""),
-            shipping_postal_code=shipping.get("postcode", ""),
-            shipping_country=shipping.get("country", ""),
-            shipping_phone=shipping.get("phone", ""),
-            # Billing address
-            billing_same_as_shipping=False,
-            billing_name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
-            billing_address1=billing.get("address_1", ""),
-            billing_address2=billing.get("address_2", ""),
-            billing_city=billing.get("city", ""),
-            billing_state=billing.get("state", ""),
-            billing_postal_code=billing.get("postcode", ""),
-            billing_country=billing.get("country", ""),
-            billing_phone=billing.get("phone", ""),
-            # Totals (use safe_money to guarantee non-null for required MoneyFields)
-            subtotal=safe_money(mapped.get("subtotal"), currency),
-            discount_amount=safe_money(mapped.get("discount_total"), currency),
-            shipping_cost=safe_money(mapped.get("shipping_total"), currency),
-            tax_amount=safe_money(mapped.get("tax_total"), currency),
-            total_amount=safe_money(mapped.get("total"), currency),
-            # Currency info
-            customer_currency=currency,
-            base_currency=currency,
-            # Notes
-            notes=mapped.get("customer_note", ""),
-        )
-
-        # Import line items
-        for item in mapped.get("line_items", []):
-            product_ext_id = str(item.get("product_id", ""))
-            product = self.product_map.get(product_ext_id)
-
-            # Try SKU lookup if product_map miss
-            if not product:
-                sku = item.get("sku", "")
-                if sku:
-                    product = Product.objects.filter(sku=sku, migration_job=self.job).first()
-
-            if not product:
-                self._log(
-                    "warning",
-                    f"Order {external_id}: skipping line item '{item.get('name')}' - product not found (ext_id={product_ext_id})",
-                )
-                continue
-
-            OrderItem.objects.create(
-                order=order,
-                product=product,
-                product_name=item.get("name", ""),
-                sku=item.get("sku", ""),
-                quantity=item.get("quantity", 1),
-                unit_price=safe_money(item.get("price"), currency),
-                total_price=safe_money(item.get("total"), currency),
+        # Unlike WooCommerce/Shopify, Magento's line-item loop below has no
+        # per-item try/except — a bad line item is meant to fail the whole
+        # order, not be skipped. So the order and all its items share one
+        # transaction: a failure partway through leaves nothing behind
+        # instead of a partial order with only some items.
+        with transaction.atomic():
+            order = Order.objects.create(
+                external_id=external_id,
+                migration_job=self.job,
+                order_number=mapped.get("order_number", ""),
+                user=customer,
+                email=customer_email or billing.get("email", ""),
+                phone=billing.get("phone", ""),
+                status=mapped.get("status", "pending"),
+                payment_status=mapped.get("payment_status", "pending"),
+                payment_method_type=mapped.get("payment_method", ""),
+                # Shipping address
+                shipping_name=f"{shipping.get('first_name', '')} {shipping.get('last_name', '')}".strip(),
+                shipping_address1=shipping.get("address_1", ""),
+                shipping_address2=shipping.get("address_2", ""),
+                shipping_city=shipping.get("city", ""),
+                shipping_state=shipping.get("state", ""),
+                shipping_postal_code=shipping.get("postcode", ""),
+                shipping_country=shipping.get("country", ""),
+                shipping_phone=shipping.get("phone", ""),
+                # Billing address
+                billing_same_as_shipping=False,
+                billing_name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
+                billing_address1=billing.get("address_1", ""),
+                billing_address2=billing.get("address_2", ""),
+                billing_city=billing.get("city", ""),
+                billing_state=billing.get("state", ""),
+                billing_postal_code=billing.get("postcode", ""),
+                billing_country=billing.get("country", ""),
+                billing_phone=billing.get("phone", ""),
+                # Totals (use safe_money to guarantee non-null for required MoneyFields)
+                subtotal=safe_money(mapped.get("subtotal"), currency),
+                discount_amount=safe_money(mapped.get("discount_total"), currency),
+                shipping_cost=safe_money(mapped.get("shipping_total"), currency),
+                tax_amount=safe_money(mapped.get("tax_total"), currency),
+                total_amount=safe_money(mapped.get("total"), currency),
+                # Currency info
+                customer_currency=currency,
+                base_currency=currency,
+                # Notes
+                notes=mapped.get("customer_note", ""),
             )
+
+            # Import line items
+            for item in mapped.get("line_items", []):
+                product_ext_id = str(item.get("product_id", ""))
+                product = self.product_map.get(product_ext_id)
+
+                # Try SKU lookup if product_map miss
+                if not product:
+                    sku = item.get("sku", "")
+                    if sku:
+                        product = Product.objects.filter(sku=sku, migration_job=self.job).first()
+
+                if not product:
+                    self._log(
+                        "warning",
+                        f"Order {external_id}: skipping line item '{item.get('name')}' - product not found (ext_id={product_ext_id})",
+                    )
+                    continue
+
+                OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    product_name=item.get("name", ""),
+                    sku=item.get("sku", ""),
+                    quantity=item.get("quantity", 1),
+                    unit_price=safe_money(item.get("price"), currency),
+                    total_price=safe_money(item.get("total"), currency),
+                )
 
         self._step_increment(step, "items_imported")
 
@@ -1204,7 +1352,7 @@ class MagentoImportExecutor:
             self.job.reviews_imported = step.items_imported
             self.job.reviews_failed = step.items_failed
             self.job.reviews_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["reviews_imported", "reviews_failed", "reviews_skipped"])
             self._update_overall_progress()
 
         except Exception as e:
@@ -1278,7 +1426,7 @@ class MagentoImportExecutor:
             self.job.coupons_imported = step.items_imported
             self.job.coupons_failed = step.items_failed
             self.job.coupons_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["coupons_imported", "coupons_failed", "coupons_skipped"])
             self._update_overall_progress()
 
         except Exception as e:
@@ -1399,7 +1547,13 @@ class MagentoImportExecutor:
             self.job.blog_posts_imported = step.items_imported
             self.job.blog_posts_failed = step.items_failed
             self.job.blog_posts_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "blog_posts_imported",
+                    "blog_posts_failed",
+                    "blog_posts_skipped",
+                ]
+            )
             self._update_overall_progress()
 
         except Exception as e:

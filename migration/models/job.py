@@ -1,6 +1,10 @@
 """
 MigrationJob Model
-Tracks complete migration jobs from start to finish with transaction-based rollback support.
+Tracks complete migration jobs from start to finish.
+
+Rollback is compensating, not transactional: it deletes the rows the job created
+after the fact (see migration/utils/rollback.py). The import itself is not run
+inside a transaction.
 """
 
 import uuid
@@ -17,7 +21,7 @@ User = get_user_model()
 class MigrationJob(models.Model):
     """
     Tracks a complete migration job from start to finish.
-    Supports transaction-based rollback.
+    Supports compensating rollback (see module docstring).
     """
 
     # Identification
@@ -63,8 +67,9 @@ class MigrationJob(models.Model):
     import_orders = models.BooleanField(default=True)
     import_reviews = models.BooleanField(default=True)
     import_coupons = models.BooleanField(default=True)
-    import_shipping_zones = models.BooleanField(default=False)
-    import_tax_rates = models.BooleanField(default=False)
+    # import_shipping_zones and import_tax_rates were declared here and read
+    # nowhere — no importer ever looked at them. Removed rather than wired up:
+    # tax and shipping configuration is deliberately left to the merchant.
     import_blog = models.BooleanField(
         default=False, help_text=_("Import blog posts, categories, and tags from WordPress")
     )
@@ -81,24 +86,42 @@ class MigrationJob(models.Model):
         ("paused", _("Paused")),
         ("completed", _("Completed")),
         ("failed", _("Failed")),
+        ("cancelled", _("Cancelled")),
         ("rolling_back", _("Rolling Back")),
         ("rolled_back", _("Rolled Back")),
+        ("rollback_failed", _("Rollback Failed")),
     ]
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="pending", db_index=True
     )
 
-    # Transaction Control for Rollback
-    transaction_id = models.CharField(
-        max_length=100, blank=True, help_text=_("Transaction ID for rollback tracking")
-    )
     can_rollback = models.BooleanField(
         default=True, help_text=_("Whether this migration can be rolled back")
     )
     rollback_deadline = models.DateTimeField(
         null=True,
         blank=True,
-        help_text=_("Deadline for manual rollback (24 hours after completion)"),
+        help_text=_(
+            "Point after which this migration can no longer be rolled back. "
+            "Empty means it never expires."
+        ),
+    )
+    auto_rollback_on_failure = models.BooleanField(
+        default=False,
+        help_text=_("If the import fails, automatically remove everything it imported"),
+    )
+
+    # Cancellation
+    #
+    # Written ONLY via MigrationJob.objects.filter(pk=...).update(...), never
+    # through an ORM instance. The executors hold a job instance in memory for
+    # hours; a bare instance.save() writes every column and would reset this
+    # flag to False on the next progress update, silently discarding the
+    # operator's request.
+    cancel_requested = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text=_("Set when an operator asks for a running import to stop"),
     )
 
     # Progress Tracking
@@ -199,6 +222,9 @@ class MigrationJob(models.Model):
     duration_seconds = models.IntegerField(
         null=True, blank=True, help_text=_("Total migration duration in seconds")
     )
+    # Doubles as the worker's heartbeat: every progress write refreshes it, so a
+    # job still marked "running" with a stale updated_at has lost its worker.
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
 
     # Logs (cached summaries for quick access)
     error_summary = models.TextField(blank=True, help_text=_("Summary of errors encountered"))
@@ -222,15 +248,42 @@ class MigrationJob(models.Model):
             models.Index(fields=["platform", "-created_at"]),
         ]
 
+    def save(self, *args, **kwargs):
+        """Keep updated_at current even on partial saves.
+
+        The executors write progress with save(update_fields=[...]) so they
+        cannot clobber cancel_requested. Django only writes an auto_now field
+        when it appears in update_fields, so without this the heartbeat would
+        silently stop advancing and the stalled-job reaper would treat every
+        live import as dead.
+        """
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = {*update_fields, "updated_at"}
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.get_platform_display()} Migration - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+    # Rollback is offered from these states.
+    #
+    # "failed" and "cancelled" are included deliberately. An import that stopped
+    # part way through is exactly the case where unwanted partial data exists,
+    # and it used to be the one case where the button was withheld — the
+    # situation most needing an undo was the situation that offered none.
+    # Rollback only deletes what the import created and keeps anything the store
+    # has come to depend on, so offering it on a partial import is safe.
+    #
+    # "rollback_failed" is included so a rollback that could not finish can be
+    # retried, rather than stranding the job with no route back.
+    ROLLBACKABLE_STATUSES = ("completed", "failed", "cancelled", "rollback_failed")
 
     @property
     def is_rollbackable(self):
         """Check if this migration can be rolled back"""
         if not self.can_rollback:
             return False
-        if self.status != "completed":
+        if self.status not in self.ROLLBACKABLE_STATUSES:
             return False
         return not (self.rollback_deadline and timezone.now() > self.rollback_deadline)
 
@@ -309,6 +362,53 @@ class MigrationJob(models.Model):
             return 0
         return round((self.total_imported / self.total_items) * 100, 2)
 
+    # Every field of the form <thing>_{total,imported,skipped,failed}. Derived
+    # by introspection rather than hand-listed so a new statistic is reset on
+    # retry automatically — the previous hand-written list missed eight whole
+    # data types and every *_total, which left success_rate reading wrong after
+    # a retry.
+    _STAT_SUFFIXES = ("_total", "_imported", "_skipped", "_failed")
+
+    @classmethod
+    def _statistic_field_names(cls):
+        return [
+            f.name
+            for f in cls._meta.get_fields()
+            if getattr(f, "name", "").endswith(cls._STAT_SUFFIXES)
+        ]
+
+    def reset_for_retry(self):
+        """Return the job to a clean pending state for a fresh run.
+
+        Zeros every statistic, clears the progress/timing/cancellation fields,
+        re-opens rollback, and drops the previous attempt's steps, logs and
+        quarantined items. Persists in one save.
+        """
+        for name in self._statistic_field_names():
+            setattr(self, name, 0)
+
+        self.status = "pending"
+        self.progress_percent = 0
+        self.current_step = ""
+        self.error_summary = ""
+        self.warning_summary = ""
+        self.started_at = None
+        self.completed_at = None
+        self.duration_seconds = None
+        # A stop request left over from the previous attempt would abort the
+        # retried run at its first checkpoint.
+        self.cancel_requested = False
+        # The retried run is rollbackable again once it completes.
+        self.can_rollback = True
+        self.rollback_deadline = None
+        self.save()
+
+        # Forensic history and quarantined items from the previous attempt.
+        # staged_items in particular used to accumulate across every retry.
+        self.steps.all().delete()
+        self.logs.all().delete()
+        self.staged_items.all().delete()
+
     def update_progress(self, step, percent):
         """Update current progress"""
         self.current_step = step
@@ -326,7 +426,17 @@ class MigrationJob(models.Model):
         # Set rollback deadline to 24 hours from now
         self.rollback_deadline = timezone.now() + timedelta(hours=24)
         self.progress_percent = 100
-        self.save()
+        # Narrow, like every other write to a job a worker may be holding: a
+        # full save would reset cancel_requested from a stale instance.
+        self.save(
+            update_fields=[
+                "status",
+                "completed_at",
+                "duration_seconds",
+                "rollback_deadline",
+                "progress_percent",
+            ]
+        )
 
     def mark_failed(self, error_message):
         """Mark migration as failed"""
@@ -337,11 +447,10 @@ class MigrationJob(models.Model):
             self.duration_seconds = int((self.completed_at - self.started_at).total_seconds())
 
         self.error_summary = error_message
-        self.can_rollback = False  # Failed migrations auto-rollback
-        self.save()
+        self.save(update_fields=["status", "completed_at", "duration_seconds", "error_summary"])
 
     def start_migration(self):
         """Mark migration as started"""
         self.status = "running"
         self.started_at = timezone.now()
-        self.save()
+        self.save(update_fields=["status", "started_at"])

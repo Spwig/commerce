@@ -1377,10 +1377,9 @@ class ProductAdmin(
                     "gift_card_min_amount",
                     "gift_card_max_amount",
                     "gift_card_expires_days",
-                    "gift_card_currency",
                 ),
                 "description": _(
-                    "Configure gift card options. Choose fixed denominations, custom amounts, or both. Set expiration period (0 = never expires). Optionally set a specific currency for multi-currency stores."
+                    "Configure gift card options. Choose fixed denominations, custom amounts, or both. Set expiration period (0 = never expires). Cards are issued in the currency the customer pays in and can only be spent in that currency — to sell in another currency, create a separate gift card product priced in it."
                 ),
                 "classes": ("collapse",),
             },
@@ -1483,7 +1482,18 @@ class ProductAdmin(
                 ),
             },
         ),
-        (_("Status"), {"fields": ("status", "is_featured", "is_digital", "hide_from_storefront")}),
+        (
+            _("Status"),
+            {
+                "fields": (
+                    "status",
+                    "is_featured",
+                    "is_digital",
+                    "requires_shipping",
+                    "hide_from_storefront",
+                )
+            },
+        ),
         (
             _("Licensing"),
             {
@@ -1631,23 +1641,6 @@ class ProductAdmin(
                 inlines.append(StockItemInline)
 
         return inlines
-
-    def get_form(self, request, obj=None, **kwargs):
-        """Override for gift card currency choices (MoneyField handling via mixin)"""
-        form = super().get_form(request, obj, **kwargs)
-
-        # Populate gift_card_currency choices from enabled currencies
-        if "gift_card_currency" in form.base_fields:
-            from core.utils.currency_helpers import get_enabled_currencies
-
-            currency_choices = get_enabled_currencies()
-            gc_currency_choices = [("", _("Store base currency (default)"))]
-            gc_currency_choices.extend((code, label) for code, label in currency_choices)
-            form.base_fields["gift_card_currency"].widget = forms.Select(
-                choices=gc_currency_choices
-            )
-
-        return form
 
     def changelist_view(self, request, extra_context=None):
         """Add custom context data for the product list view"""
@@ -5943,6 +5936,106 @@ class GiftCardAdmin(admin.ModelAdmin):
     inlines = [GiftCardTransactionInline]
     actions = ["mark_as_inactive", "send_gift_card_email"]
     date_hierarchy = "created_at"
+
+    # Fields a merchant fills in when issuing a card by hand. `product` is the
+    # real FK (not the product_link display method used on the change form) —
+    # GiftCard.product is non-nullable PROTECT, so without it no add can ever
+    # save. `code` and `current_balance` are derived in save_model.
+    add_fieldsets = [
+        (
+            _("Gift Card"),
+            {
+                "fields": ["product", "initial_value", "expires_at", "is_active"],
+                "description": _(
+                    "The code is generated automatically and the starting "
+                    "balance is set from the initial value."
+                ),
+            },
+        ),
+        (
+            _("Recipient"),
+            {
+                "fields": [
+                    "recipient_email",
+                    "recipient_name",
+                    "sender_name",
+                    "message",
+                    "scheduled_send_at",
+                ],
+            },
+        ),
+    ]
+
+    def get_fieldsets(self, request, obj=None):
+        """
+        Use a dedicated add form.
+
+        The change fieldsets show `product_link` / `order_item_link`, which are
+        read-only display methods, and mark `initial_value` / `current_balance`
+        read-only so an issued card's value cannot be edited behind the ledger's
+        back. That is right for editing and impossible for adding, which is why
+        adding needs its own set.
+        """
+        if obj is None:
+            return self.add_fieldsets
+        return super().get_fieldsets(request, obj)
+
+    def get_readonly_fields(self, request, obj=None):
+        """
+        Nothing is read-only on the add form.
+
+        `readonly_fields` protects an *existing* card's identity and balance;
+        applied to a new one it left no writable field for the required
+        columns, so the Add button rendered a form that could never save.
+        """
+        if obj is None:
+            return []
+        return super().get_readonly_fields(request, obj)
+
+    def get_inlines(self, request, obj=None):
+        """Transactions inline needs a saved card to hang off."""
+        if obj is None:
+            return []
+        return super().get_inlines(request, obj)
+
+    def save_model(self, request, obj, form, change):
+        """
+        Derive the generated fields when issuing a card by hand.
+
+        On create: mint the code, open the balance at the initial value, and
+        record who issued it. On edit: leave balance alone — money moves through
+        redeem()/refund()/adjust_balance() so that every change lands in the
+        GiftCardTransaction ledger.
+        """
+        if not change:
+            if not obj.code:
+                obj.code = GiftCard.generate_code()
+            if not obj.current_balance:
+                obj.current_balance = obj.initial_value
+            if not obj.created_by_id:
+                obj.created_by = request.user
+
+        super().save_model(request, obj, form, change)
+
+        if not change:
+            # Open the ledger with the balance this card was created holding.
+            # Without it, a hand-issued card carries spendable value that no
+            # GiftCardTransaction accounts for, so summing the ledger no longer
+            # reconciles to outstanding liability — which is the property that
+            # makes stored value auditable. GiftCard.issue() writes this row
+            # too, but only when the card is emailed, and a merchant may create
+            # a card without ever sending one.
+            GiftCardTransaction.objects.get_or_create(
+                gift_card=obj,
+                transaction_type="issue",
+                defaults={
+                    "amount": obj.initial_value,
+                    "balance_after": obj.current_balance,
+                    "created_by": request.user,
+                    "notes": _("Gift card created manually by %(user)s")
+                    % {"user": request.user.get_username()},
+                },
+            )
 
     class Media:
         css = {"all": ("catalog/css/admin_gift_card.css", "catalog/css/giftcard_change_form.css")}

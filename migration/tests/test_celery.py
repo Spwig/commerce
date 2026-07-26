@@ -44,7 +44,8 @@ class CeleryConfigTest(TestCase):
         # Check tasks are registered
         self.assertIn("migration.run_migration_job", celery_app.tasks)
         self.assertIn("migration.rollback_migration", celery_app.tasks)
-        self.assertIn("migration.cleanup_old_jobs", celery_app.tasks)
+        self.assertIn("migration.cleanup_migration_history", celery_app.tasks)
+        self.assertIn("migration.reap_stalled_migrations", celery_app.tasks)
 
     def test_migration_task_has_generous_time_limit(self):
         """Migration task needs extended time for large imports"""

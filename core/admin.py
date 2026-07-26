@@ -970,6 +970,7 @@ class SiteSettingsAdmin(TranslatableAdminMixin, admin.ModelAdmin):
             # E-commerce tab (Inventory & Stock)
             "enable_inventory_tracking": "ecommerce",
             "enable_multi_warehouse": "ecommerce",
+            "public_gift_card_balance_enabled": "ecommerce",
             "enable_low_stock_alerts": "ecommerce",
             "low_stock_threshold": "ecommerce",
             "allow_backorders_by_default": "ecommerce",
@@ -1604,6 +1605,9 @@ class APITokenAdmin(admin.ModelAdmin):
     including Help System, external services, webhooks, and custom applications.
     """
 
+    from core.apitoken_admin import APITokenAdminForm
+
+    form = APITokenAdminForm
     change_list_template = "admin/core/apitoken/change_list.html"
 
     list_display = [
@@ -1628,6 +1632,7 @@ class APITokenAdmin(admin.ModelAdmin):
     readonly_fields = [
         "token",
         "full_token_display",
+        "scope_summary_display",
         "created_by",
         "created_at",
         "last_used_at",
@@ -1659,7 +1664,21 @@ class APITokenAdmin(admin.ModelAdmin):
             },
         ),
         (
-            _("Status & Permissions"),
+            _("API Access"),
+            {
+                "fields": [
+                    "scopes",
+                    "scope_summary_display",
+                ],
+                "description": _(
+                    "Grant this token access to specific admin APIs. Read allows "
+                    "GET requests; Read & Write also allows create/update/delete. "
+                    "A token with no scopes cannot reach any API."
+                ),
+            },
+        ),
+        (
+            _("Status & Restrictions"),
             {
                 "fields": [
                     "is_active",
@@ -1710,11 +1729,20 @@ class APITokenAdmin(admin.ModelAdmin):
             "integration": '<i class="fas fa-plug"></i>',
             "webhook": '<i class="fas fa-webhook"></i>',
             "custom": '<i class="fas fa-code"></i>',
+            "sync": '<i class="fas fa-sync"></i>',
         }
         icon = icons.get(obj.token_type, '<i class="fas fa-key"></i>')
         return format_html("{} {}", mark_safe(icon), obj.get_token_type_display())
 
     token_type_display.short_description = _("Type")
+
+    def scope_summary_display(self, obj):
+        """Read-only 'This token can access:' summary from granted scopes."""
+        from core.apitoken_admin import render_scope_summary
+
+        return render_scope_summary(obj)
+
+    scope_summary_display.short_description = _("Access summary")
 
     def masked_token_display(self, obj):
         """Display masked token in list view"""

@@ -2,8 +2,15 @@
 Serializers for Cart, Wishlist, Checkout, and Shipping models
 """
 
+import logging
+from datetime import timedelta
+
+from django.utils import timezone
+from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+
+logger = logging.getLogger(__name__)
 
 from catalog.serializers import ProductListSerializer, ProductVariantSerializer
 from subscriptions.serializers import SubscriptionPlanSerializer
@@ -349,19 +356,15 @@ class CartSerializer(serializers.ModelSerializer):
 
     items = serializers.SerializerMethodField()
     applied_vouchers = CartAppliedVoucherSerializer(many=True, read_only=True)
-    # Applied gift cards as a parallel array to applied_vouchers. The
-    # apply/remove gift card endpoints emit this same shape in their
-    # response envelope; exposing it on the cart serializer means the
-    # storefront's chip list survives a GET /api/cart/ refresh without
-    # needing to also re-call apply.
-    applied_gift_cards = serializers.SerializerMethodField()
+
+    # No applied_gift_cards here. Gift cards are a payment tender held against
+    # a CheckoutSession, not cart state — see /api/checkout/tenders/.
 
     # Calculated fields - use SerializerMethodField to handle Money objects
     total_items = serializers.SerializerMethodField()
     total_amount = serializers.SerializerMethodField()
     total_savings = serializers.SerializerMethodField()
     voucher_discount_amount = serializers.SerializerMethodField()
-    gift_card_discount_amount = serializers.SerializerMethodField()
     final_amount = serializers.SerializerMethodField()
     requires_shipping = serializers.BooleanField(read_only=True)
     total_weight = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
@@ -391,15 +394,6 @@ class CartSerializer(serializers.ModelSerializer):
         """Extract decimal from Money object"""
         amount = obj.voucher_discount_amount
         return str(amount.amount) if hasattr(amount, "amount") else str(amount)
-
-    def get_gift_card_discount_amount(self, obj):
-        """Extract decimal from Money object"""
-        amount = obj.gift_card_discount_amount
-        return str(amount.amount) if hasattr(amount, "amount") else str(amount)
-
-    def get_applied_gift_cards(self, obj):
-        """Return the cart's applied gift cards in the SDK chip shape."""
-        return obj.get_gift_card_summary()
 
     def get_final_amount(self, obj):
         """Extract decimal from Money object"""
@@ -458,12 +452,10 @@ class CartSerializer(serializers.ModelSerializer):
             "shipping_notes",
             "items",
             "applied_vouchers",
-            "applied_gift_cards",
             "total_items",
             "total_amount",
             "total_savings",
             "voucher_discount_amount",
-            "gift_card_discount_amount",
             "final_amount",
             "requires_shipping",
             "total_weight",
@@ -484,7 +476,6 @@ class CartSerializer(serializers.ModelSerializer):
             "total_amount",
             "total_savings",
             "voucher_discount_amount",
-            "gift_card_discount_amount",
             "final_amount",
             "requires_shipping",
             "total_weight",
@@ -562,6 +553,110 @@ class CartSummarySerializer(serializers.ModelSerializer):
         ]
 
 
+class GiftCardDataSerializer(serializers.Serializer):
+    """
+    Validates the gift card purchase details a customer supplies at add-to-cart.
+
+    This is a trust boundary, not a formality. Every value here is interpolated
+    into an email delivered to a THIRD PARTY the buyer names — someone who never
+    visited the store and cannot be assumed to have consented to receive
+    anything. So:
+
+    * Unknown keys are rejected rather than passed through. Without this, a
+      buyer can smuggle arbitrary JSON into the issuance path.
+    * ``message`` is stripped of tags and refused if stripping changed it. The
+      email body is rendered by interpolating into MJML *source* before it is
+      compiled to HTML, so autoescape is the only barrier between a customer
+      string and injected markup — belt and braces here.
+    * Lengths match ``catalog.GiftCard`` EXACTLY (recipient_name and sender_name
+      are max_length=255 there). A longer value validated here would raise
+      DataError at mint time — i.e. AFTER the customer has paid.
+    * ``scheduled_send_at`` must be offset-aware and in the future. A naive
+      datetime silently means "server timezone", which is not the buyer's.
+
+    Deliberately no ``recipient_language``: the delivery email uses the store
+    default and there is no field to carry an answer. Deliberately no
+    ``customer_timezone``: an offset-aware datetime already carries that, and a
+    second field would be a second source of truth for one fact.
+    """
+
+    ALLOWED_KEYS = {
+        "recipient_email",
+        "recipient_name",
+        "sender_name",
+        "message",
+        "scheduled_send_at",
+        "amount",
+    }
+
+    recipient_email = serializers.EmailField(
+        required=True,
+        help_text=_("Where to deliver the gift card"),
+    )
+    recipient_name = serializers.CharField(
+        required=False, allow_blank=True, max_length=255, trim_whitespace=True
+    )
+    sender_name = serializers.CharField(
+        required=False, allow_blank=True, max_length=255, trim_whitespace=True
+    )
+    message = serializers.CharField(
+        required=False, allow_blank=True, max_length=500, trim_whitespace=True
+    )
+    scheduled_send_at = serializers.DateTimeField(
+        required=False,
+        allow_null=True,
+        help_text=_("Offset-aware ISO-8601. Omit to deliver as soon as payment clears."),
+    )
+    amount = serializers.DecimalField(
+        required=False,
+        allow_null=True,
+        max_digits=10,
+        decimal_places=2,
+        help_text=_("Face value, for products that let the customer choose."),
+    )
+
+    # A year is arbitrary but bounded; the point is to refuse "send in 2124",
+    # which would sit in the sweeper's queryset forever.
+    MAX_SCHEDULE_AHEAD = timedelta(days=365)
+
+    def to_internal_value(self, data):
+        if not isinstance(data, dict):
+            raise serializers.ValidationError(_("Gift card details must be an object."))
+        unknown = set(data) - self.ALLOWED_KEYS
+        if unknown:
+            raise serializers.ValidationError(
+                {
+                    "gift_card_data": _("Unknown field(s): %(keys)s")
+                    % {"keys": ", ".join(sorted(unknown))}
+                }
+            )
+        return super().to_internal_value(data)
+
+    def validate_recipient_email(self, value):
+        return value.strip().lower()
+
+    def validate_message(self, value):
+        if value and strip_tags(value) != value:
+            raise serializers.ValidationError(_("Message cannot contain HTML or markup."))
+        return value
+
+    def validate_scheduled_send_at(self, value):
+        if value is None:
+            return value
+        if timezone.is_naive(value):
+            raise serializers.ValidationError(
+                _("Include a UTC offset so the send time is unambiguous.")
+            )
+        now = timezone.now()
+        if value <= now:
+            raise serializers.ValidationError(_("Scheduled delivery must be in the future."))
+        if value > now + self.MAX_SCHEDULE_AHEAD:
+            raise serializers.ValidationError(
+                _("Scheduled delivery cannot be more than a year away.")
+            )
+        return value
+
+
 class AddToCartSerializer(serializers.Serializer):
     """Serializer for adding items to cart"""
 
@@ -599,6 +694,10 @@ class AddToCartSerializer(serializers.Serializer):
         allow_null=True,
         help_text=_("Configuration preset ID used as starting point"),
     )
+
+    # Gift card purchase details - for gift_card products.
+    # Validated, unlike booking_data below, because it reaches a third party.
+    gift_card_data = GiftCardDataSerializer(required=False, allow_null=True)
 
     # Booking configuration - for booking products
     booking_data = serializers.JSONField(
@@ -737,44 +836,6 @@ class ApplyVoucherSerializer(serializers.Serializer):
     """Serializer for applying voucher code"""
 
     code = serializers.CharField(required=True, max_length=50)
-
-
-class ApplyGiftCardSerializer(serializers.Serializer):
-    """Serializer for applying gift card code"""
-
-    code = serializers.CharField(
-        required=True, max_length=50, help_text=_("Gift card code (e.g., GC-XXXX-XXXX-XXXX)")
-    )
-
-
-class AppliedGiftCardSerializer(serializers.Serializer):
-    """Serializer for applied gift card display"""
-
-    code = serializers.CharField(read_only=True)
-    discount_amount = serializers.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        read_only=True,
-        help_text=_("Amount applied from this gift card (in base currency)"),
-    )
-    remaining_balance = serializers.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        read_only=True,
-        help_text=_("Remaining balance on gift card after this application"),
-    )
-    currency = serializers.CharField(read_only=True, help_text=_("Base currency code"))
-    gift_card_currency = serializers.CharField(
-        read_only=True, help_text=_("Gift card's native currency code")
-    )
-    original_discount_amount = serializers.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        read_only=True,
-        required=False,
-        allow_null=True,
-        help_text=_("Discount in gift card's native currency (for foreign-currency gift cards)"),
-    )
 
 
 class WishlistItemSerializer(serializers.ModelSerializer):
@@ -1198,6 +1259,31 @@ class CheckoutSessionSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
     currency = serializers.SerializerMethodField()
 
+    # Tender-aware charge figures. `total_amount` is what the order costs;
+    # `amount_due` is what a payment gateway should actually be asked for after
+    # gift-card / store-credit holds are subtracted, and can legitimately be
+    # zero when tenders cover the whole order. A headless or agent client that
+    # charges `total_amount` instead of `amount_due` double-charges the tendered
+    # portion — the class of bug commit 4faa2d256 fixed for the web flow.
+    tendered_amount = serializers.SerializerMethodField(
+        help_text=_(
+            "Value already covered by authorized gift-card or store-credit "
+            "tenders held against this checkout, as a decimal string in the "
+            "cart currency. null if it cannot be determined (a tender row in a "
+            "mismatched currency); treat null as indeterminate, not zero."
+        )
+    )
+    amount_due = serializers.SerializerMethodField(
+        help_text=_(
+            "The figure to charge a payment gateway: total_amount minus tenders "
+            "already held, as a decimal string in the cart currency, floored at "
+            "zero. Charge this, NOT total_amount — charging the gross total "
+            "double-bills the tendered portion. Can legitimately be '0.00' when "
+            "tenders cover the whole order. null means indeterminate; do not "
+            "charge on it."
+        )
+    )
+
     class Meta:
         model = CheckoutSession
         fields = [
@@ -1219,6 +1305,8 @@ class CheckoutSessionSerializer(serializers.ModelSerializer):
             "subtotal",
             "discount_amount",
             "total_amount",
+            "tendered_amount",
+            "amount_due",
             "tax",
             "discount",
             "total",
@@ -1238,6 +1326,8 @@ class CheckoutSessionSerializer(serializers.ModelSerializer):
             "subtotal",
             "discount_amount",
             "total_amount",
+            "tendered_amount",
+            "amount_due",
             "tax",
             "discount",
             "total",
@@ -1267,6 +1357,64 @@ class CheckoutSessionSerializer(serializers.ModelSerializer):
     def get_currency(self, obj):
         return obj.cart.effective_currency
 
+    def get_tendered_amount(self, obj):
+        return self._safe_charge_figure(obj, "tendered_amount")
+
+    def get_amount_due(self, obj):
+        return self._safe_charge_figure(obj, "amount_due")
+
+    @staticmethod
+    def _safe_charge_figure(obj, attr):
+        """
+        Serialize `tendered_amount` / `amount_due` as a plain decimal string.
+
+        Both properties **raise ValueError** when a tender row settles in a
+        currency other than the order's — `settlement_amount` is by definition
+        in the order currency, so a mismatch means a wrong figure was written,
+        and the property refuses to guess rather than understate what is owed.
+
+        We must not let that surface as a bare 500, and must never emit a
+        plausible-but-wrong number. On the raise we log (the mismatch is a real
+        data-integrity problem worth a human) and return `null`. A `null`
+        `amount_due` means *indeterminate* — a client must not treat it as zero
+        and must not charge on it.
+        """
+        try:
+            amount = getattr(obj, attr)
+        except ValueError:
+            logger.error(
+                "CheckoutSession %s: %s is indeterminate (tender currency "
+                "mismatch); returning null rather than a wrong charge figure.",
+                obj.pk,
+                attr,
+            )
+            return None
+        return str(amount.amount) if hasattr(amount, "amount") else str(amount)
+
+
+def validate_lenient_phone(value: str) -> str:
+    """
+    Lenient, international-friendly phone check.
+
+    Accepts digits with optional leading +, and common separators
+    (spaces, hyphens, dots, slashes, parentheses). Requires at least
+    5 digits so carriers get something dialable, without rejecting any
+    real-world national format.
+
+    Returns the stripped value; raises serializers.ValidationError with a
+    customer-friendly message otherwise.
+    """
+    phone = (value or "").strip()
+    if not phone:
+        return phone
+    import re
+
+    if not re.fullmatch(r"\+?[0-9()\-./\s]+", phone) or len(re.sub(r"\D", "", phone)) < 5:
+        raise serializers.ValidationError(
+            _("Please enter a valid phone number (digits, and optionally +, spaces or dashes).")
+        )
+    return phone
+
 
 class SetShippingAddressSerializer(serializers.Serializer):
     """Serializer for setting shipping address during checkout"""
@@ -1284,8 +1432,17 @@ class SetShippingAddressSerializer(serializers.Serializer):
     phone = serializers.CharField(required=False, allow_blank=True, max_length=20)
     email = serializers.EmailField(required=False, allow_blank=True)
 
+    def validate_phone(self, value):
+        return validate_lenient_phone(value)
+
     def validate(self, data):
-        """Ensure either address_id or full address is provided"""
+        """Ensure either address_id or full address is provided.
+
+        Phone is required with a full address: carriers need a contact
+        number for delivery. The address_id path is checked against the
+        saved address in CheckoutService (a supplemental phone may be
+        sent alongside address_id to fill a gap in the saved record).
+        """
         if not data.get("address_id"):
             required_fields = ["name", "address1", "city", "postal_code", "country"]
             missing_fields = [f for f in required_fields if not data.get(f)]
@@ -1294,6 +1451,10 @@ class SetShippingAddressSerializer(serializers.Serializer):
                     _(
                         "Either address_id or complete address details are required. Missing: {fields}"
                     ).format(fields=", ".join(missing_fields))
+                )
+            if not (data.get("phone") or "").strip():
+                raise serializers.ValidationError(
+                    _("A phone number is required so the carrier can contact you about delivery.")
                 )
         return data
 
@@ -1309,6 +1470,9 @@ class SetBillingAddressSerializer(serializers.Serializer):
 
     same_as_shipping = serializers.BooleanField(required=False, default=True)
     address_id = serializers.IntegerField(required=False, allow_null=True)
+    # Email travels with billing so guest order creation can persist it on the
+    # no-shipping path, where no shipping step runs to record it.
+    email = serializers.EmailField(required=False, allow_blank=True)
     name = serializers.CharField(required=False, max_length=200)
     company = serializers.CharField(required=False, allow_blank=True, max_length=200)
     address1 = serializers.CharField(required=False, max_length=200)
@@ -1319,9 +1483,19 @@ class SetBillingAddressSerializer(serializers.Serializer):
     country = serializers.CharField(required=False, max_length=100)
     phone = serializers.CharField(required=False, allow_blank=True, max_length=20)
 
+    def validate_phone(self, value):
+        return validate_lenient_phone(value)
+
     def validate(self, data):
         if not data.get("same_as_shipping", True) and not data.get("address_id"):
-            required_fields = ["name", "address1", "city", "postal_code", "country"]
+            # Carts with no shippable items collect only a minimal billing
+            # record at the payment step: name + country (postal optional,
+            # for AVS). Demanding street/city for a download or booking
+            # would resurrect the address form the flow just removed.
+            if self.context.get("cart_requires_shipping", True):
+                required_fields = ["name", "address1", "city", "postal_code", "country"]
+            else:
+                required_fields = ["name", "country"]
             missing_fields = [f for f in required_fields if not data.get(f)]
             if missing_fields:
                 raise serializers.ValidationError(

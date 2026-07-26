@@ -118,14 +118,14 @@
                         id="sku_pattern"
                         class="sku-input"
                         placeholder="e.g., {product_sku}-{size}-{color}"
-                        value="{{ product.sku }}-{% for assignment in assignments %}{{{ assignment.attribute.slug }}}{% if not forloop.last %}-{% endif %}{% endfor %}"
+                        value="{{ product.sku }}-{% for assignment in assignments %}{% templatetag openbrace %}{{ assignment.attribute.slug }}{% templatetag closebrace %}{% if not forloop.last %}-{% endif %}{% endfor %}"
                     >
                     <div class="help-text">
                         <strong>{% trans "Available placeholders:" %}</strong>
                         <ul class="placeholder-list">
                             <li><code>{product_sku}</code> or <code>{sku}</code> → {{ product.sku }}</li>
                             {% for assignment in assignments %}
-                            <li><code>{{{ assignment.attribute.slug }}}</code> → {% trans "Attribute value" %}</li>
+                            <li><code>{% templatetag openbrace %}{{ assignment.attribute.slug }}{% templatetag closebrace %}</code> → {% trans "Attribute value" %}</li>
                             {% endfor %}
                         </ul>
                     </div>

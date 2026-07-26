@@ -27,9 +27,16 @@
         msgEl.style.display = 'none';
       }
 
+      // CSRF token from the base template's meta tag (the cookie is
+      // HttpOnly); required for logged-in customers now that the storefront
+      // API session-authenticates
+      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
       fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfMeta ? csrfMeta.content : '',
+        },
         body: JSON.stringify({ email: email }),
       })
         .then(function (r) {

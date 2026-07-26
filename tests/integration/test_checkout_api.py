@@ -96,6 +96,7 @@ class TestShippingAddress:
                 "state": "NY",
                 "postal_code": "10013",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
         assert resp.status_code == 200
@@ -133,6 +134,7 @@ class TestShippingAddress:
                 "state": "NY",
                 "postal_code": "10001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
         # Set shipping method
@@ -157,6 +159,7 @@ class TestShippingAddress:
                 "state": "CA",
                 "postal_code": "90001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
 
@@ -165,6 +168,61 @@ class TestShippingAddress:
         session = resp.json()["session"]
         assert session["selected_shipping_method"] is None
         assert Decimal(session["shipping_cost"]) == Decimal("0.00")
+
+    def test_resubmit_same_saved_address_preserves_shipping_method(
+        self, auth_client, cart_with_item, customer_user
+    ):
+        """Re-submitting the SAME saved address — e.g. a returning customer
+        attaching a supplemental phone to an address recorded before phone
+        became required — must NOT wipe the already-chosen shipping method.
+
+        Regression: clearing it here dead-ended express checkout, which only
+        mounts the payment form once a shipping method is selected.
+        """
+        zone = ShippingZoneFactory(countries=["US"])
+        method = ShippingMethodFactory(zones=[zone])
+        # Saved address with no phone on record (predates the requirement)
+        addr = AddressFactory(user=customer_user, country="US", phone="")
+
+        # Adopt it, completing it with the supplemental phone, then pick a method
+        r = auth_client.post(
+            "/api/checkout/shipping-address/",
+            {"address_id": addr.id, "phone": "+1 212 555 0100"},
+        )
+        assert r.status_code == 200
+        auth_client.post("/api/checkout/shipping-method/", {"shipping_method_id": method.id})
+        assert (
+            auth_client.get("/api/checkout/").json()["session"]["selected_shipping_method"]
+            is not None
+        )
+
+        # Re-submit the very same address — the destination is unchanged, so
+        # the method (and the customer's place in the flow) must survive.
+        r = auth_client.post("/api/checkout/shipping-address/", {"address_id": addr.id})
+        assert r.status_code == 200
+        session = auth_client.get("/api/checkout/").json()["session"]
+        assert session["selected_shipping_method"] is not None
+
+    def test_switching_to_different_saved_address_clears_method(
+        self, auth_client, cart_with_item, customer_user
+    ):
+        """Switching to a genuinely different saved address still clears the
+        method — rates may differ, so it must be re-chosen."""
+        zone = ShippingZoneFactory(countries=["US"])
+        method = ShippingMethodFactory(zones=[zone])
+        addr_a = AddressFactory(user=customer_user, country="US")
+        addr_b = AddressFactory(user=customer_user, country="US")
+
+        auth_client.post("/api/checkout/shipping-address/", {"address_id": addr_a.id})
+        auth_client.post("/api/checkout/shipping-method/", {"shipping_method_id": method.id})
+        assert (
+            auth_client.get("/api/checkout/").json()["session"]["selected_shipping_method"]
+            is not None
+        )
+
+        auth_client.post("/api/checkout/shipping-address/", {"address_id": addr_b.id})
+        session = auth_client.get("/api/checkout/").json()["session"]
+        assert session["selected_shipping_method"] is None
 
 
 # ============================================================
@@ -186,6 +244,7 @@ class TestShippingMethods:
                 "state": "NY",
                 "postal_code": "10001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
 
@@ -209,6 +268,7 @@ class TestShippingMethods:
                 "state": "London",
                 "postal_code": "SW1A 2AA",
                 "country": "GB",
+                "phone": "+1 212 555 0100",
             },
         )
 
@@ -235,6 +295,7 @@ class TestShippingMethods:
                 "state": "SP",
                 "postal_code": "01310-100",
                 "country": "BR",
+                "phone": "+1 212 555 0100",
             },
         )
 
@@ -274,6 +335,7 @@ class TestShippingMethods:
                 "state": "NY",
                 "postal_code": "10001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
         resp = auth_client.post(
@@ -311,6 +373,7 @@ class TestTotalsRecalculation:
                 "state": "NY",
                 "postal_code": "10001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
         auth_client.post(
@@ -334,6 +397,7 @@ class TestTotalsRecalculation:
                 "state": "CA",
                 "postal_code": "90001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
 
@@ -398,6 +462,7 @@ class TestCheckoutValidation:
                 "state": "NY",
                 "postal_code": "10001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
 
@@ -421,6 +486,7 @@ class TestCheckoutValidation:
                 "state": "NY",
                 "postal_code": "10001",
                 "country": "US",
+                "phone": "+1 212 555 0100",
             },
         )
         auth_client.post(
@@ -484,8 +550,22 @@ class TestCheckoutSecurity:
     def test_order_confirmation_owner_only(
         self, client, customer_user, customer_user_uk, admin_user
     ):
-        """Order confirmation page only accessible to order owner or staff."""
+        """Confirmation page is visible only to the order's owner and staff;
+        a different authenticated user and an anonymous browser (with no guest
+        allow-list entry) both get 404."""
+        from tests.factories import OrderFactory
 
-        # This test would need an actual order — placeholder for now
-        # The view checks: order.user == request.user or request.user.is_staff
-        pass
+        order = OrderFactory(user=customer_user)
+        url = f"/en/checkout/confirmation/{order.order_number}/"
+
+        client.force_login(customer_user)
+        assert client.get(url).status_code == 200, "owner must see their confirmation"
+
+        client.force_login(customer_user_uk)
+        assert client.get(url).status_code == 404, "a different user must not"
+
+        client.force_login(admin_user)
+        assert client.get(url).status_code == 200, "staff may view any order"
+
+        client.logout()
+        assert client.get(url).status_code == 404, "anonymous without allow-list must not"

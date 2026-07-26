@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Indonesian <LL@li.org>\n"
@@ -18,12 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "Konten"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "Gambar"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -31,15 +34,19 @@ msgstr ""
 "Gambar opsional untuk tampilan modal. Pilih antara banner (di atas konten) "
 "atau latar belakang (di belakang teks dengan lapisan)."
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "Tautan"
 
+#: admin.py:78
 msgid "Display"
 msgstr "Tampilan"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "Aturan Visibilitas"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
@@ -47,24 +54,33 @@ msgstr ""
 "Opsional: batasi kapan pengumuman ini ditampilkan berdasarkan kondisi "
 "lanjutan."
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "Judul"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "Tidak ada masa berlaku"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "Sudah Berakhir"
 
+#: admin.py:121
 msgid "Active"
 msgstr "Aktif"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "Status"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "Daftar pengumuman aktif"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -74,12 +90,15 @@ msgstr ""
 "kedaluwarsa, diurutkan berdasarkan prioritas secara ascending, kemudian "
 "created_at secara descending. Digunakan oleh widget pengumuman toko online."
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "Daftar pengumuman aktif"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "Dapatkan detail pengumuman"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -89,54 +108,73 @@ msgstr ""
 "URL gambar, dan mode tampilan untuk modal toko online. Mengembalikan 404 "
 "jika pengumuman tidak aktif, sudah kedaluwarsa, atau tidak ada."
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "Kunci utama pengumuman"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "Detail pengumuman"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "Tidak ditemukan, tidak aktif, atau sudah kedaluwarsa"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "Pengumuman"
 
+#: models.py:15
 msgid "No Link"
 msgstr "Tidak Ada Tautan"
 
+#: models.py:16
 msgid "Product"
 msgstr "Produk"
 
+#: models.py:17
 msgid "Category"
 msgstr "Kategori"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "Posting Blog"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "Halaman"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "URL Kustom"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "Gambar Banner (di atas konten)"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "Gambar Latar Belakang (dengan lapisan)"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr "Judul pengumuman - mendukung gaya dasar (tebal, miring, warna)"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "Konten rinci opsional untuk tampilan modal"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "Gambar opsional untuk tampilan modal"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "Cara menampilkan gambar dalam modal"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
@@ -144,27 +182,35 @@ msgstr ""
 "Ketebalan lapisan overlay ketika gambar digunakan sebagai latar belakang (0 "
 "= transparan, 1 = tidak transparan)"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "Jenis tautan untuk pengumuman ini"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "Produk untuk dikaitkan"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "Kategori untuk dikaitkan"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "Posting blog untuk dikaitkan"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "Halaman untuk dikaitkan"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "URL kustom untuk tautan"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "Teks tombol untuk tautan modal, contoh: \"Beli Sekarang\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
@@ -172,9 +218,11 @@ msgstr ""
 "Jika diaktifkan, mengklik pengumuman akan membuka modal dengan konten "
 "lengkap. Jika dinonaktifkan, mengklik akan langsung mengarah ke URL tautan."
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "Aktifkan atau nonaktifkan pengumuman ini"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
@@ -182,176 +230,237 @@ msgstr ""
 "Pengumuman akan secara otomatis berhenti ditampilkan setelah tanggal/waktu "
 "ini. Biarkan kosong untuk tidak berakhir."
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr ""
 "Angka yang lebih rendah = prioritas lebih tinggi (ditampilkan lebih dulu)"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "Aturan visibilitas untuk tampilan kondisional"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "Terjemahan untuk konten pengumuman"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "Pengumuman"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "Ubah Pengumuman"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "Tambahkan Pengumuman"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "Silakan perbaiki kesalahan di bawah ini."
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "Judul pengumuman — mendukung tebal, miring, dan warna font."
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "Isi"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "Teks detail opsional yang ditampilkan dalam popup modal."
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "Jenis Tautan"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "Teks Tombol"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "Contoh. "
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "Tampilkan Modal"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "Buka detail dalam popup alih-alih menavigasi."
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "Opsional"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr ""
 "Gambar untuk popup modal. Ditampilkan ketika pengunjung mengklik pengumuman."
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "Mode Tampilan"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "Ketebalan Lapisan"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = transparan, 1 = tidak transparan"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "Diaktifkan"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "Prioritas"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "Lebih rendah = ditampilkan terlebih dahulu"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "Berakhir Pada"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "Biarkan kosong jika tidak ada tanggal kedaluwarsa."
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "Dibuat"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "Diperbarui"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "Lanjut"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr ""
 "Batasi kapan pengumuman ini ditampilkan. Biarkan kosong untuk menampilkan ke "
 "semua orang."
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "Tahan Ctrl / Cmd untuk memilih beberapa."
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "Simpan"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "Simpan & Lanjutkan"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "Simpan & Tambahkan Lainnya"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "Hapus"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr "Kelola pengumuman toko yang ditampilkan di header dan footer"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "Semua"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "Dinonaktifkan"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "Cari pengumuman..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "pengumuman"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "Sebelumnya"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "dari"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "Berikutnya"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "Tidak Ada Pengumuman Ditemukan"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "Tidak ada pengumuman yang cocok dengan query pencarian Anda."
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr ""
 "Buat pengumuman pertama Anda untuk ditampilkan di header atau footer toko "
 "Anda."
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "Buat Pengumuman"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "Buka modal saat diklik"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "Modal"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "Tautan langsung saat diklik"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "Tautan Langsung"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "Terakhir Diperbarui"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "yang lalu"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "Berakhir"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "Mempunyai Gambar"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "Edit"

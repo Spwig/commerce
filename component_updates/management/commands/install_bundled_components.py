@@ -35,7 +35,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--type",
-            choices=["theme", "utility", "all"],
+            choices=["theme", "utility", "payment_provider", "all"],
             default="all",
             help="Component type to install (default: all)",
         )
@@ -88,6 +88,16 @@ class Command(BaseCommand):
                 failed += 1
                 continue
 
+            # Integrity: the build stamps a SHA-256 per package — refuse to
+            # extract anything that doesn't match it
+            expected = entry.get("checksum")
+            if expected and self._sha256(package_path) != expected:
+                self.stdout.write(
+                    self.style.ERROR(f"  ! Checksum mismatch for {package_rel}, refusing install")
+                )
+                failed += 1
+                continue
+
             # Check if already installed at this version
             if not force and self._is_installed(comp_type, slug, version):
                 self.stdout.write(f"  = {comp_type}: {slug} v{version} (already installed)")
@@ -99,6 +109,8 @@ class Command(BaseCommand):
                     result = self._install_theme(package_path, entry)
                 elif comp_type == "utility":
                     result = self._install_utility(package_path, entry)
+                elif comp_type == "payment_provider":
+                    result = self._install_payment_provider(package_path, entry)
                 else:
                     self.stdout.write(self.style.WARNING(f"  ! Unknown type: {comp_type}"))
                     skipped += 1
@@ -118,6 +130,12 @@ class Command(BaseCommand):
             except Exception as e:
                 failed += 1
                 self.stdout.write(self.style.ERROR(f"  x {comp_type}: {slug} v{version} - {e}"))
+
+        # Account bootstrap runs on every boot, not just the install that
+        # unpacked the files: at first boot the merchant admin may not exist
+        # yet (activation creates it), so this must be retryable
+        if any(c["type"] == "payment_provider" and c["slug"] == "test_gateway" for c in components):
+            self._ensure_test_gateway_account()
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -171,6 +189,74 @@ class Command(BaseCommand):
 
             return result
 
+    def _install_payment_provider(self, package_path: Path, entry: dict) -> dict:
+        """Install a bundled payment provider from a ZIP package."""
+        from component_updates.installers import install_provider_from_package
+
+        with tempfile.TemporaryDirectory() as extract_dir:
+            extract_path = Path(extract_dir)
+            with zipfile.ZipFile(package_path, "r") as zf:
+                zf.extractall(extract_path)
+
+            manifest = self._read_manifest(extract_path, entry)
+            return install_provider_from_package(
+                extract_path, manifest, component_type="payment_provider"
+            )
+
+    def _ensure_test_gateway_account(self):
+        """Create the Test Gateway account so a fresh store can checkout.
+
+        Active only in sandbox mode (no production licence): a live store
+        gets the account pre-created but DISABLED, so enabling the simulated
+        gateway is always a deliberate merchant action.
+        """
+        from django.contrib.auth import get_user_model
+
+        from component_updates.models import ComponentRegistry
+        from core.license import is_sandbox_mode
+        from payment_providers.models import PaymentProviderAccount
+        from payment_providers.utils.encryption import encrypt_credentials
+
+        registry_entry = ComponentRegistry.objects.filter(
+            component_type="payment_provider", slug="test_gateway"
+        ).first()
+        if registry_entry is None:
+            return
+
+        if PaymentProviderAccount.objects.filter(component=registry_entry).exists():
+            return
+
+        # The account belongs to the store owner. At very first boot the
+        # admin may not exist yet — skip quietly; this runs again next boot.
+        owner = (
+            get_user_model()
+            .objects.filter(is_superuser=True, is_active=True)
+            .order_by("id")
+            .first()
+        )
+        if owner is None:
+            self.stdout.write("  = test gateway account deferred: no admin user exists yet")
+            return
+
+        PaymentProviderAccount.objects.create(
+            component=registry_entry,
+            user=owner,
+            display_name="Test Payments (Simulated)",
+            credentials_encrypted=encrypt_credentials({"test_mode": True}),
+            is_active=is_sandbox_mode(),
+            connection_status="connected",
+            # The checkout filter requires available AND merchant-enabled
+            # methods per country; the simulated card works everywhere
+            available_payment_methods={"_global": ["card"]},
+            enabled_payment_methods={"_global": ["card"]},
+        )
+        self.stdout.write(
+            self.style.SUCCESS(
+                "  + payment account: Test Payments (Simulated)"
+                + ("" if is_sandbox_mode() else " [created disabled — production licence]")
+            )
+        )
+
     def _read_manifest(self, extract_path: Path, entry: dict) -> dict:
         """Read manifest.json from extracted package, falling back to entry data."""
         manifest_path = extract_path / "manifest.json"
@@ -191,6 +277,16 @@ class Command(BaseCommand):
             "version": entry["version"],
             "author": "Spwig",
         }
+
+    @staticmethod
+    def _sha256(path: Path) -> str:
+        import hashlib
+
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                h.update(chunk)
+        return h.hexdigest()
 
     def _is_installed(self, component_type: str, slug: str, version: str) -> bool:
         """Check if a component is already installed at the given version."""

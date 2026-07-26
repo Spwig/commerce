@@ -220,6 +220,15 @@
 
         <div class="form-row">
             <label>
+                <input type="checkbox" name="auto_rollback_on_failure"
+                       {% if job.auto_rollback_on_failure %}checked{% endif %}>
+                {% trans "If the import fails, automatically remove what was imported" %}
+            </label>
+            <div class="help">{% trans "Leave this off to keep partial data so you can fix the problem and run the import again — anything already imported will be skipped." %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
                 <input type="checkbox" name="import_images" checked>
                 {% trans "Import product images" %}
             </label>
@@ -250,7 +259,7 @@
         <i class="fas fa-shield-alt"></i>
         <div>
             <strong>{% trans "Data Safety" %}</strong>
-            <p>{% trans "All data will be imported within a database transaction. If anything goes wrong, the entire import will be rolled back automatically. You'll also have 24 hours to manually rollback if needed." %}</p>
+            <p>{% trans "Spwig imports your data one item at a time, and each item is saved as it is imported. If the import stops part way through, the items already imported stay in your store unless you tick the option above. You can roll an import back at any time from the Migrations list — whether it finished, failed or was stopped. Rollback removes what the import added, but keeps anything your store has since come to depend on, such as an imported product that now appears on a real customer's order. Take a full backup before you begin." %}</p>
         </div>
     </div>
 

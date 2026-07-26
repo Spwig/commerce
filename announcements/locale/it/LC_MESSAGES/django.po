@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Italian <LL@li.org>\n"
@@ -18,12 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "Contenuto"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "Immagine"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -31,15 +34,19 @@ msgstr ""
 "Immagine facoltativa per la visualizzazione in modal. Scegli tra banner "
 "(sopra il contenuto) o background (dietro il testo con sovrapposizione)."
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "Link"
 
+#: admin.py:78
 msgid "Display"
 msgstr "Mostra"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "Regole di visibilità"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
@@ -47,24 +54,33 @@ msgstr ""
 "Facoltativo: limita quando questa annuncio viene visualizzato in base a "
 "condizioni avanzate."
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "Titolo"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "Nessuna scadenza"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "Scaduto"
 
+#: admin.py:121
 msgid "Active"
 msgstr "Attivo"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "Stato"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "Elenca annunci attivi"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -75,12 +91,15 @@ msgstr ""
 "in ordine discendente. Utilizzato dal widget delle comunicazioni del negozio "
 "online."
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "Elenco degli annunci attivi"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "Ottieni dettaglio annuncio"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -91,55 +110,74 @@ msgstr ""
 "il modal del negozio online. Restituisce 404 se la comunicazione non è "
 "attiva, è scaduta o non esiste."
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "Chiave primaria dell'annuncio"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "Dettaglio annuncio"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "Non trovato, inattivo o scaduto"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "Annunci"
 
+#: models.py:15
 msgid "No Link"
 msgstr "Nessun link"
 
+#: models.py:16
 msgid "Product"
 msgstr "Prodotto"
 
+#: models.py:17
 msgid "Category"
 msgstr "Categoria"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "Post del blog"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "Pagina"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "URL personalizzato"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "Immagine del banner (sopra il contenuto)"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "Immagine di sfondo (con sovrapposizione)"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr ""
 "Titolo dell'annuncio - supporta lo stile di base (grassetto, corsivo, colore)"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "Contenuto dettagliato facoltativo per la visualizzazione in modal"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "Immagine opzionale per la visualizzazione modale"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "Come visualizzare l'immagine nella modal"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
@@ -147,27 +185,35 @@ msgstr ""
 "Opacità del sovrapposizione quando l'immagine viene utilizzata come "
 "background (0 = trasparente, 1 = opaco)"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "Tipo di link per questa annuncio"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "Prodotto a cui collegarsi"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "Categoria a cui collegarsi"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "Post del blog a cui collegarsi"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "Pagina a cui collegarsi"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "URL personalizzato per il link"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "Testo del pulsante per il link della modal, ad es. \"Acquista Ora\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
@@ -175,9 +221,11 @@ msgstr ""
 "Se abilitato, fare clic sull'annuncio apre una modal con il contenuto "
 "completo. Se disabilitato, fare clic si naviga direttamente all'URL del link."
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "Abilita o disabilita questo annuncio"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
@@ -185,177 +233,238 @@ msgstr ""
 "L'annuncio smetterà automaticamente di essere visualizzato dopo questa data/"
 "ora. Lasciare vuoto per non impostare una scadenza."
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr "Numero più basso = priorità più alta (visualizzato per primo)"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "Regole di visibilità per la visualizzazione condizionale"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "Traduzioni del contenuto dell'annuncio"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "Annuncio"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "Modifica annuncio"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "Aggiungi annuncio"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "Correggi gli errori qui sotto."
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "Titolo dell'annuncio — supporta grassetto, corsivo e colore del font."
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "Corpo"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "Testo dettagliato facoltativo visualizzato nella finestra modale."
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "Tipo di link"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "Testo del pulsante"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "E.g. \""
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "Mostra modale"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "Apri i dettagli in una finestra pop-up invece di navigare."
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "Opzionale"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr ""
 "Immagine per la finestra pop-up. Visualizzata quando un visitatore fa clic "
 "sull'annuncio."
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "Modalità di visualizzazione"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "Opacità della sovrapposizione"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = trasparente, 1 = opaco"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "Abilitato"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "Priorità"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "Minore = mostrato per primo"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "Scade il"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "Lascia vuoto per nessuna scadenza."
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "Creato"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "Aggiornato"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "Avanzato"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr ""
 "Limita quando questa annuncio viene visualizzato. Lasciare vuoto per "
 "visualizzarlo a tutti."
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "Mantieni premuto Ctrl / Cmd per selezionare più elementi."
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "Salva"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "Salva e continua"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "Salva e aggiungi un altro"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "Elimina"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr ""
 "Gestisci le annuncio del negozio visualizzate negli header e nei footer"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "Tutti"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "Disattivato"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "Cerca annunci..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "annunci"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "Precedente"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "di"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "Avanti"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "Nessun annuncio trovato"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "Nessuna annuncio corrisponde alla tua query di ricerca."
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr ""
 "Crea la tua prima annuncio per visualizzarla nell'header o nel footer del "
 "tuo negozio."
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "Crea annuncio"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "Apri modale al clic"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "Modale"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "Link diretto al clic"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "Link diretto"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "Ultimo aggiornamento"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "fa"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "Scade"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "Ha immagine"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "Modifica"

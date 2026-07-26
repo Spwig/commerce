@@ -1,6 +1,5 @@
 import json
-import secrets
-import string
+import logging
 from datetime import timedelta
 from decimal import Decimal
 
@@ -11,6 +10,10 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from djmoney.money import Money
+
+from core.utils.codes import generate_unique_code
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -144,10 +147,37 @@ class VoucherCode(models.Model):
         help_text=_("Original gift card value"),
     )
 
+    # Issued currency — vouchers and gift cards are only redeemable against
+    # carts operating in the currency they were issued in; there is no
+    # cross-currency conversion, by design.
+    currency = models.CharField(
+        max_length=3,
+        blank=True,
+        verbose_name=_("Issued Currency"),
+        help_text=_(
+            "Currency this voucher was issued in. It can only be applied to "
+            "orders in the same currency."
+        ),
+    )
+
     # Admin and status
     is_active = models.BooleanField(default=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="created_vouchers"
+    )
+
+    issued_to = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="issued_vouchers",
+        verbose_name=_("Issued To"),
+        help_text=_(
+            "Restrict this code to one customer. Used for codes earned by a "
+            "specific person (loyalty redemptions, referral rewards). Leave "
+            "blank for a general promotional code."
+        ),
     )
 
     created_at = models.DateTimeField(default=timezone.now)
@@ -189,15 +219,43 @@ class VoucherCode(models.Model):
             if not self.gift_card_balance:
                 self.gift_card_balance = self.original_gift_card_value
 
+        # Derive the issued currency when unset: from the monetary fields if
+        # any carry one, else the store default at issuance time.
+        if not self.currency:
+            for money in (
+                self.original_gift_card_value,
+                self.min_order_value,
+                self.max_discount_amount,
+            ):
+                if money is not None:
+                    self.currency = str(money.currency)
+                    break
+            else:
+                from core.utils import get_default_currency
+
+                self.currency = str(get_default_currency())
+
+        # The issued currency is authoritative for every monetary field
+        from djmoney.money import Money as _Money
+
+        for field_name in (
+            "max_discount_amount",
+            "min_order_value",
+            "gift_card_balance",
+            "original_gift_card_value",
+        ):
+            money = getattr(self, field_name)
+            if money is not None and str(money.currency) != self.currency:
+                setattr(self, field_name, _Money(money.amount, self.currency))
+
         super().save(*args, **kwargs)
 
     def generate_unique_code(self, length=8):
         """Generate a unique voucher code"""
-        characters = string.ascii_uppercase + string.digits
-        while True:
-            code = "".join(secrets.choice(characters) for _ in range(length))
-            if not VoucherCode.objects.filter(code=code).exists():
-                return code
+        return generate_unique_code(
+            exists=lambda code: VoucherCode.objects.filter(code=code).exists(),
+            length=length,
+        )
 
     @property
     def is_valid(self):
@@ -251,16 +309,32 @@ class VoucherCode(models.Model):
         if not self.is_valid:
             return False, _("Voucher is not valid")
 
+        # A guest (user=None or AnonymousUser) has no identity to check
+        # per-customer rules against. Callers must not skip this method for
+        # guests — treat "no identity" as failing any rule that needs one,
+        # rather than as passing it.
+        is_identified = bool(user is not None and getattr(user, "is_authenticated", False))
+
+        # Check recipient binding. A code earned by a specific customer
+        # (loyalty redemption, referral reward) must not be usable by whoever
+        # else learns the string — max_uses_total=1 alone would make it
+        # first-come-first-served, so the earner can lose their own reward.
+        if self.issued_to_id is not None:
+            if not is_identified or user.pk != self.issued_to_id:
+                return False, _("This voucher was issued to a different customer")
+
         # Check first-time customer restriction
         if self.first_time_customers_only and (
-            user.is_authenticated
+            is_identified
             and hasattr(user, "orders")
             and user.orders.filter(status="delivered").exists()
         ):
             return False, _("This voucher is only for first-time customers")
 
-        # Check per-customer usage limit
-        if self.max_uses_per_customer:
+        # Check per-customer usage limit. Only meaningful for an identified
+        # customer — VoucherUsage rows for guests carry user=None, so counting
+        # them would pool every guest together.
+        if self.max_uses_per_customer and is_identified:
             customer_uses = VoucherUsage.objects.filter(voucher=self, user=user).count()
             if customer_uses >= self.max_uses_per_customer:
                 return False, _("You have reached the usage limit for this voucher")
@@ -270,13 +344,27 @@ class VoucherCode(models.Model):
             if order_total < self.min_order_value:
                 return False, _("Order total does not meet the minimum required for this voucher")
 
-        # Evaluate advanced restrictions
+        # Evaluate advanced restrictions.
+        #
+        # NOTE: these are only evaluated when the caller supplies `context`.
+        # Cart apply, the order-apply util, the order admin form and the voucher
+        # API all currently pass none, so shipping-country, payment-method,
+        # day-of-week, time-of-day, user-group and email-domain restrictions are
+        # NOT enforced on those paths. Do not describe this method as enforcing
+        # "all" restrictions without also passing context — see the callers.
         if context is not None:
             ctx = dict(context)
             ctx.setdefault("user", user)
             for restriction in self.restrictions.all():
                 if not restriction.evaluate(ctx):
                     return False, _("This voucher cannot be used due to restrictions")
+        elif self.restrictions.exists():
+            logger.warning(
+                "Voucher %s has %d restriction(s) that were not evaluated: caller "
+                "passed no context. Restriction rules are unenforced on this path.",
+                self.code,
+                self.restrictions.count(),
+            )
 
         return True, _("Valid")
 

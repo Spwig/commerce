@@ -28,10 +28,10 @@
                             <i class="fas fa-user-plus"></i> {% trans "Become an Affiliate" context "action" %}
                         </button>
                     {% endif %}
-                    {# Affiliate Login is always shown for non-affiliates (guests AND
+                    {% comment %} Affiliate Login is always shown for non-affiliates (guests AND
                        logged-in non-affiliate users) so returning affiliates can
                        reach their dashboard without having to spot the small Login
-                       link in the corner of the nav. #}
+                       link in the corner of the nav. {% endcomment %}
                     <a href="{% url 'account_login' %}?next={% url 'affiliate:dashboard' %}"
                        class="btn {% if can_register %}btn-outline{% else %}btn-primary{% endif %} btn-lg">
                         <i class="fas fa-sign-in-alt"></i> {% trans "Affiliate Login" context "action" %}

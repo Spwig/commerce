@@ -98,6 +98,9 @@ class WooCommerceExtensionImportService:
             max_billing_cycles=max_cycles if max_cycles > 0 else None,
             is_active=True,
             is_public=True,
+            # Provenance, so a rollback can find this plan. Unlike the other
+            # extension models it has no product to cascade from.
+            migration_job=self.job,
         )
 
         # Create the billing tier

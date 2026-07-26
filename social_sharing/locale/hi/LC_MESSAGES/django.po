@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <LL@li.org>\n"
@@ -18,684 +18,972 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:68 admin.py:164 templates/admin/social_sharing/dashboard.html:256
+#: templates/admin/social_sharing/dashboard.html:308
+#: templates/admin/social_sharing/dashboard.html:381
+#: templates/admin/social_sharing/sharecount/change_list.html:52
+#: templates/admin/social_sharing/socialshare/change_list.html:52
 msgid "Platform"
 msgstr "प्लेटफॉर्म"
 
+#: admin.py:76
 msgid "Shared Content"
 msgstr "साझा किया गया सामग्री"
 
+#: admin.py:86 templates/admin/social_sharing/dashboard.html:322
+#: templates/admin/social_sharing/partials/share_cards.html:78
 msgid "Anonymous"
 msgstr "अनामिक"
 
+#: admin.py:88 templates/admin/social_sharing/dashboard.html:208
+#: templates/admin/social_sharing/dashboard.html:307
 msgid "User"
 msgstr "उपयोगकर्ता"
 
+#: admin.py:172 templates/admin/social_sharing/dashboard.html:309
+#: templates/admin/social_sharing/dashboard.html:380
 msgid "Content"
 msgstr "सामग्री"
 
+#: admin.py:183 models.py:192
 msgid "Share Count"
 msgstr "साझा की गई गिनती"
 
+#: admin.py:243
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:66
 msgid "Placement"
 msgstr "स्थान"
 
+#: admin.py:252
 msgid "Configure where social share buttons appear automatically"
 msgstr "सोशल शेयर बटन कहाँ दिखाई देंगे, इसका स्वचालित रूप से विन्यास करें"
 
+#: admin.py:256
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:70
 msgid "Appearance"
 msgstr "दिखावट"
 
+#: admin.py:269
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:74
 msgid "Tracking"
 msgstr "ट्रैकिंग"
 
+#: admin.py:278
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:211
 msgid "Metadata"
 msgstr "मेटाडेटा"
 
+#: api/serializers.py:17
 msgid "Model name (lowercase) - e.g., 'product', 'page', 'post'"
 msgstr "मॉडल का नाम (लॉवरकेस) - उदाहरण के लिए, 'product', 'page', 'post'"
 
+#: api/serializers.py:20
 msgid "ID of the content being shared"
 msgstr "साझा किए जा रहे सामग्री का ID"
 
+#: api/serializers.py:25
 msgid "Social media platform"
 msgstr "सोशल मीडिया प्लेटफॉर्म"
 
+#: api/serializers.py:27
 msgid "Full URL being shared"
 msgstr "साझा किए जा रहे पूरा URL"
 
+#: api/views.py:147
 msgid "Track social media share"
 msgstr "सोशल मीडिया साझा करें"
 
+#: api/views.py:148
 msgid ""
-"Track a social media share event for a product or other content. Records "
-"platform, URL, user, session, IP, and device type.\n"
+"Track a social media share event for a product or other content. Records platform, URL, user, session, IP, and device type.\n"
 "\n"
-"    Use this endpoint when a user shares content to social media platforms. "
-"Helps measure content virality and track most-shared products.\n"
+"    Use this endpoint when a user shares content to social media platforms. Helps measure content virality and track most-shared products.\n"
 "\n"
-"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"    **Security**: Authentication required to prevent spam and database "
-"pollution. Rate limited to 50 requests/hour per user.\n"
+"    **Security**: Authentication required to prevent spam and database pollution. Rate limited to 50 requests/hour per user.\n"
 "\n"
-"    **Use Case**: Call when user clicks a social share button to track "
-"sharing behavior and measure content engagement."
+"    **Use Case**: Call when user clicks a social share button to track sharing behavior and measure content engagement."
 msgstr ""
-"एक उत्पाद या अन्य सामग्री के लिए सोशल मीडिया के एक साझा घटना का ट्रैक करें। प्लेटफॉर्म, "
-"URL, उपयोगकर्ता, सेशन, IP और डिवाइस प्रकार के रिकॉर्ड करता है।\n"
+"एक उत्पाद या अन्य सामग्री के लिए सोशल मीडिया के एक साझा घटना का ट्रैक करें। प्लेटफॉर्म, URL, उपयोगकर्ता, सेशन, IP और डिवाइस प्रकार के रिकॉर्ड करता है।\n"
 "\n"
-"जब एक उपयोगकर्ता सामग्री को सोशल मीडिया प्लेटफॉर्म पर साझा करता है तो इस एंडपॉइंट का "
-"उपयोग करें। सामग्री के वायरल होने के मापन और सबसे अधिक साझा किए गए उत्पादों के ट्रैक करने "
-"में मदद करता है।\n"
+"जब एक उपयोगकर्ता सामग्री को सोशल मीडिया प्लेटफॉर्म पर साझा करता है तो इस एंडपॉइंट का उपयोग करें। सामग्री के वायरल होने के मापन और सबसे अधिक साझा किए गए उत्पादों के ट्रैक करने में मदद करता है।\n"
 "\n"
 "**समर्थित प्लेटफॉर्म**: फेसबुक, ट्विटर, लिंक्डइन, पिंटरेस्ट, व्हाट्सएप, टेलीग्राम, ईमेल\n"
 "\n"
-"**सुरक्षा**: ईमेल और डेटाबेस के प्रदूषण को रोकने के लिए प्रमाणिकरण की आवश्यकता होती है। "
-"प्रति उपयोगकर्ता 50 अनुरोध/घंटा के लिए दर सीमित।\n"
+"**सुरक्षा**: ईमेल और डेटाबेस के प्रदूषण को रोकने के लिए प्रमाणिकरण की आवश्यकता होती है। प्रति उपयोगकर्ता 50 अनुरोध/घंटा के लिए दर सीमित।\n"
 "\n"
-"**उपयोग केस**: जब उपयोगकर्ता सोशल साझा बटन पर क्लिक करता है तो बुलाएं शेयरिंग व्यवहार "
-"को ट्रैक करने और सामग्री भागीदारी के मापन के लिए।"
+"**उपयोग केस**: जब उपयोगकर्ता सोशल साझा बटन पर क्लिक करता है तो बुलाएं शेयरिंग व्यवहार को ट्रैक करने और सामग्री भागीदारी के मापन के लिए।"
 
+#: api/views.py:168 api/views.py:283
 msgid "Invalid request, missing required fields, or invalid platform"
 msgstr "अमान्य अनुरोध, आवश्यक क्षेत्र लुप्त हैं, या अमान्य प्लेटफॉर्म"
 
+#: api/views.py:170 api/views.py:286 api/views.py:422 api/views.py:486
 msgid "Internal server error"
 msgstr "आंतरिक सर्वर त्रुटि"
 
+#: api/views.py:264
+#| msgid "Track social media share"
+msgid "Track social media share (anonymous)"
+msgstr "सोशल मीडिया शेयर ट्रैक करें (अज्ञात)"
+
+#: api/views.py:265
+msgid ""
+"Anonymous variant of the share tracking endpoint for guest visitors.\n"
+"\n"
+"    Identical payload to the authenticated endpoint, but does not require a logged-in user. The resulting `SocialShare` row is stored with `user=None` and is linked only via the visitor's session key, IP, user agent, and device type.\n"
+"\n"
+"    **Security**: No authentication required, but aggressively rate-limited (20 requests/hour per IP) to prevent spam and database pollution. Bots are not filtered at the endpoint level — consumers should apply their own bot detection if needed.\n"
+"\n"
+"    **Use Case**: Headless storefronts where most visitors sharing content (product pages, blog posts) are not logged in. The authenticated `track_share` endpoint would exclude all guest shares from analytics, which is the majority of real traffic."
+msgstr ""
+"अतिथि आगंतुकों के लिए साझा करने के ट्रैकिंग एंडपॉइंट का अनामिक रूप।\n"
+"\n"
+"प्रमाणित एंडपॉइंट के समान पेलोड होता है, लेकिन एक लॉग-इन कर चुके उपयोगकर्ता की आवश्यकता नहीं होती। परिणामस्वरूप `SocialShare` पंक्ति `user=None` के साथ संग्रहित की जाती है और केवल आगंतुक के सेशन कुंजी, आईपी, यूज़र एजेंट और उपकरण प्रकार के माध्यम से जुड़ी रहती है।\n"
+"\n"
+"**सुरक्षा**: प्रमाणिकरण की आवश्यकता नहीं होती, लेकिन एक आईपी प्रति घंटा 20 अनुरोध के साथ गंभीर रूप से दर-सीमित किया जाता है ताकि स्पैम और डेटाबेस के अतिरिक्त आंकड़ों को रोका जा सके। एंडपॉइंट स्तर पर बॉट फिल्टर नहीं किया गया है - उपभोक्ताओं को अपने बॉट अनुमान के लिए अपना अपना बॉट अनुमान लागू करने की आवश्यकता हो सकती है।\n"
+"\n"
+"**उपयोग केस**: अधिकांश आगंतुक अपनी लेख या ब्लॉग पोस्ट के सामग्री को साझा करते हैं जो लॉग-इन नहीं करते हैं, ऐसे हेडलेस स्टोरफ्रंट में। प्रमाणित `track_share` एंडपॉइंट अपने अपने अतिथि साझा को एनालिटिक्स से बाहर रख देगा, जो वास्तविक ट्रैफिक का अधिकांश हिस्सा है।"
+
+#: api/views.py:285
+msgid "Rate limit exceeded"
+msgstr "दर सीमा को पार कर दिया गया"
+
+#: api/views.py:401
 msgid "Get share counts for content"
 msgstr "कंटेंट के लिए शेयर काउंट्स प्राप्त करें"
 
+#: api/views.py:402
 msgid ""
 "Get aggregated share counts by platform for a specific piece of content.\n"
 "\n"
-"    Returns counts for each social platform plus a total. Useful for "
-"displaying share counts on product pages, blog posts, etc.\n"
+"    Returns counts for each social platform plus a total. Useful for displaying share counts on product pages, blog posts, etc.\n"
 "\n"
 "    **No authentication required** - share counts are public data."
 msgstr ""
 "एक विशिष्ट कंटेंट के लिए प्लेटफॉर्म के आधार पर एग्रिगेटेड शेयर काउंट्स प्राप्त करें।\n"
 "\n"
-"प्रत्येक सोशल प्लेटफॉर्म के लिए काउंट्स और कुल काउंट लौटाता है। उत्पाद पृष्ठों, ब्लॉग पोस्टों "
-"आदि पर शेयर काउंट्स दिखाने के लिए उपयोगी है।\n"
+"प्रत्येक सोशल प्लेटफॉर्म के लिए काउंट्स और कुल काउंट लौटाता है। उत्पाद पृष्ठों, ब्लॉग पोस्टों आदि पर शेयर काउंट्स दिखाने के लिए उपयोगी है।\n"
 "\n"
 "**कोई प्रमाणीकरण आवश्यक नहीं** - शेयर काउंट्स सार्वजनिक डेटा हैं।"
 
+#: api/views.py:421
 msgid "Invalid content type"
 msgstr "अमान्य कंटेंट प्रकार"
 
+#: api/views.py:472
 msgid "Get current user's share history"
 msgstr "वर्तमान उपयोगकर्ता के साझा इतिहास को प्राप्त करें"
 
+#: api/views.py:473
 msgid ""
-"Get the authenticated user's social sharing history, including total shares, "
-"breakdown by platform, and recent share events.\n"
+"Get the authenticated user's social sharing history, including total shares, breakdown by platform, and recent share events.\n"
 "\n"
 "    **Authentication required.**"
 msgstr ""
-"प्रमाणित उपयोगकर्ता के सोशल शेयरिंग इतिहास को प्राप्त करें, जिसमें कुल शेयर, प्लेटफॉर्म "
-"द्वारा विभाजन और हालिया शेयर घटनाएं शामिल हैं।\n"
+"प्रमाणित उपयोगकर्ता के सोशल शेयरिंग इतिहास को प्राप्त करें, जिसमें कुल शेयर, प्लेटफॉर्म द्वारा विभाजन और हालिया शेयर घटनाएं शामिल हैं।\n"
 "\n"
 "**प्रमाणीकरण आवश्यक है।**"
 
+#: api/views.py:485
 msgid "Authentication required"
 msgstr "अधिकृत करने की आवश्यकता है"
 
+#: apps.py:8
 msgid "Social Sharing"
 msgstr "सोशल शेयरिंग"
 
+#: forms.py:27 settings_models.py:152
 msgid "Enabled Platforms"
 msgstr "योग्य प्लेटफॉर्म"
 
+#: forms.py:29
 msgid ""
 "Select which platforms to show. If none selected, all platforms will be "
 "shown."
 msgstr ""
-"कौन-से प्लेटफॉर्म दिखाए जाएं, चुनें। यदि कोई चुना नहीं गया है, तो सभी प्लेटफॉर्म दिखाए "
-"जाएंगे।"
+"कौन-से प्लेटफॉर्म दिखाए जाएं, चुनें। यदि कोई चुना नहीं गया है, तो सभी "
+"प्लेटफॉर्म दिखाए जाएंगे।"
 
+#: models.py:35 templates/admin/social_sharing/partials/share_cards.html:39
+#: templates/admin/social_sharing/partials/sharecount_cards.html:39
+#: templates/admin/social_sharing/sharecount/change_list.html:56
+#: templates/admin/social_sharing/socialshare/change_list.html:56
 msgid "Facebook"
 msgstr "फेसबुक"
 
+#: models.py:36 templates/admin/social_sharing/sharecount/change_list.html:57
+#: templates/admin/social_sharing/socialshare/change_list.html:57
 msgid "Twitter/X"
 msgstr "ट्विटर/एक्स"
 
+#: models.py:37 templates/admin/social_sharing/partials/share_cards.html:43
+#: templates/admin/social_sharing/partials/sharecount_cards.html:43
+#: templates/admin/social_sharing/sharecount/change_list.html:58
+#: templates/admin/social_sharing/socialshare/change_list.html:58
 msgid "LinkedIn"
 msgstr "लिंक्डइन"
 
+#: models.py:38 templates/admin/social_sharing/partials/share_cards.html:45
+#: templates/admin/social_sharing/partials/sharecount_cards.html:45
+#: templates/admin/social_sharing/sharecount/change_list.html:59
+#: templates/admin/social_sharing/socialshare/change_list.html:59
 msgid "Pinterest"
 msgstr "पिनटरेस्ट"
 
+#: models.py:39 templates/admin/social_sharing/partials/share_cards.html:47
+#: templates/admin/social_sharing/partials/sharecount_cards.html:47
+#: templates/admin/social_sharing/sharecount/change_list.html:60
+#: templates/admin/social_sharing/socialshare/change_list.html:60
 msgid "WhatsApp"
 msgstr "व्हाट्सएप"
 
+#: models.py:40 templates/admin/social_sharing/partials/share_cards.html:49
+#: templates/admin/social_sharing/partials/sharecount_cards.html:49
+#: templates/admin/social_sharing/sharecount/change_list.html:61
+#: templates/admin/social_sharing/socialshare/change_list.html:61
 msgid "Telegram"
 msgstr "टेलीग्राम"
 
+#: models.py:41 templates/admin/social_sharing/partials/share_cards.html:51
+#: templates/admin/social_sharing/partials/sharecount_cards.html:51
+#: templates/admin/social_sharing/sharecount/change_list.html:62
+#: templates/admin/social_sharing/socialshare/change_list.html:62
 msgid "Email"
 msgstr "ईमेल"
 
+#: models.py:51 templates/admin/social_sharing/socialshare/change_list.html:86
 msgid "Desktop"
 msgstr "डेस्कटॉप"
 
+#: models.py:52 templates/admin/social_sharing/socialshare/change_list.html:87
 msgid "Mobile"
 msgstr "मोबाइल"
 
+#: models.py:53 templates/admin/social_sharing/socialshare/change_list.html:88
 msgid "Tablet"
 msgstr "टैबलेट"
 
+#: models.py:54
 msgid "Unknown"
 msgstr "अज्ञात"
 
+#: models.py:61 models.py:170
 msgid "content type"
 msgstr "सामग्री प्रकार"
 
+#: models.py:62
 msgid "Type of content shared (Product, Category, etc.)"
 msgstr "शेयर किए गए सामग्री के प्रकार (उत्पाद, श्रेणी, आदि)"
 
+#: models.py:65 models.py:172
 msgid "object ID"
 msgstr "वस्तु की पहचान संख्या"
 
+#: models.py:65
 msgid "ID of the shared object"
 msgstr "साझा किए गए वस्तु की पहचान संख्या"
 
+#: models.py:74 models.py:177
 msgid "platform"
 msgstr "प्लेटफॉर्म"
 
+#: models.py:75
 msgid "Social platform used for sharing"
 msgstr "साझा के लिए उपयोग किया गया सामाजिक प्लेटफॉर्म"
 
+#: models.py:79
 msgid "shared URL"
 msgstr "साझा किया गया URL"
 
+#: models.py:79
 msgid "URL that was shared"
 msgstr "साझा किया गया URL"
 
+#: models.py:85
 msgid "referrer"
 msgstr "संदर्भकर्ता"
 
+#: models.py:86
 msgid "Page from which share was initiated"
 msgstr "शेयर के शुरू होने के लिए पृष्ठ"
 
+#: models.py:96
 msgid "user"
 msgstr "उपयोगकर्ता"
 
+#: models.py:97
 msgid "User who shared (if logged in)"
 msgstr "जो शेयर करता है (यदि लॉग इन किया गया है)"
 
+#: models.py:104
 msgid "session ID"
 msgstr "सेशन पहचान संख्या"
 
+#: models.py:105
 msgid "Session identifier for anonymous users"
 msgstr "अज्ञात उपयोगकर्ताओं के लिए सेशन पहचान संख्या"
 
+#: models.py:111
 msgid "IP address"
 msgstr "IP पता"
 
+#: models.py:112
 msgid "IP address of sharer (for analytics and fraud detection)"
 msgstr "शेयर करने वाले का IP पता (विश्लेषण और धोखाधड़ी के पता लगाने के लिए)"
 
+#: models.py:116
 msgid "user agent"
 msgstr "उपयोगकर्ता एजेंट"
 
+#: models.py:116
 msgid "Browser user agent string"
 msgstr "ब्राउज़र उपयोगकर्ता एजेंट स्ट्रिंग"
 
+#: models.py:123
 msgid "device type"
 msgstr "उपकरण प्रकार"
 
+#: models.py:124
 msgid "Type of device used for sharing"
 msgstr "शेयर करने के लिए उपयोग किए गए उपकरण के प्रकार"
 
+#: models.py:131
 msgid "shared at"
 msgstr "साझा किया गया"
 
+#: models.py:132
 msgid "When the share occurred"
 msgstr "जब साझा किया गया था"
 
+#: models.py:135 models.py:189
 msgid "created at"
 msgstr "बनाया गया समय"
 
+#: models.py:137
 msgid "updated at"
 msgstr "अपडेट करें"
 
+#: models.py:140
 msgid "Social Share"
 msgstr "सामाजिक साझा"
 
+#: models.py:141 templates/admin/social_sharing/dashboard.html:138
+#: templates/admin/social_sharing/socialshare/change_list.html:4
+#: templates/admin/social_sharing/socialshare/change_list.html:19
 msgid "Social Shares"
 msgstr "सोशल शेयर"
 
+#: models.py:182
 msgid "share count"
 msgstr "साझा गिनती"
 
+#: models.py:183
 msgid "Number of times shared on this platform"
 msgstr "इस प्लेटफॉर्म पर शेयर करने की बारंबारता"
 
+#: models.py:187
 msgid "last updated"
 msgstr "अंतिम अपडेट"
 
+#: models.py:193 templates/admin/social_sharing/dashboard.html:149
+#: templates/admin/social_sharing/sharecount/change_list.html:4
+#: templates/admin/social_sharing/sharecount/change_list.html:19
 msgid "Share Counts"
 msgstr "साझा करें गिनती"
 
+#: settings_models.py:22 settings_models.py:23 settings_models.py:197
+#: templates/admin/social_sharing/dashboard.html:450
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:4
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:20
 msgid "Social Sharing Settings"
 msgstr "सोशल साझा करें सेटिंग्स"
 
+#: settings_models.py:28
 msgid "Enable on Products"
 msgstr "उत्पादों पर योग्य करें"
 
+#: settings_models.py:29
 msgid "Automatically show share buttons on product detail pages"
 msgstr "उत्पाद विवरण पृष्ठों पर स्वचालित रूप से शेयर बटन दिखाएं"
 
+#: settings_models.py:34
 msgid "Enable on Categories"
 msgstr "श्रेणियों पर योग्य करें"
 
+#: settings_models.py:35
 msgid "Automatically show share buttons on category pages"
 msgstr "श्रेणी पृष्ठों पर स्वचालित रूप से शेयर बटन दिखाएं"
 
+#: settings_models.py:40
 msgid "Enable on Blog Posts"
 msgstr "ब्लॉग पोस्ट पर योग्य करें"
 
+#: settings_models.py:41
 msgid "Automatically show share buttons on blog post pages"
 msgstr "ब्लॉग पोस्ट पृष्ठों पर स्वचालित रूप से शेयर बटन दिखाएं"
 
+#: settings_models.py:46
 msgid "Enable on Custom Pages"
 msgstr "कस्टम पृष्ठों पर योग्य करें"
 
+#: settings_models.py:47
 msgid "Automatically show share buttons on custom pages"
 msgstr "कस्टम पृष्ठों पर स्वचालित रूप से शेयर बटन दिखाएं"
 
+#: settings_models.py:52
 msgid "Above Content"
 msgstr "सामग्री के ऊपर"
 
+#: settings_models.py:53
 msgid "Below Content"
 msgstr "सामग्री के नीचे"
 
+#: settings_models.py:54
 msgid "Sidebar"
 msgstr "साइडबार"
 
+#: settings_models.py:55
 msgid "Floating (sticky)"
 msgstr "फ्लोटिंग (चिपका हुआ)"
 
+#: settings_models.py:62
 msgid "Placement Position"
 msgstr "स्थिति स्थान"
 
+#: settings_models.py:63
 msgid "Where to display share buttons on the page"
 msgstr "पृष्ठ पर शेयर बटन कहाँ दिखाए जाएं"
 
+#: settings_models.py:68
 msgid "Icon Only"
 msgstr "केवल आइकॉन"
 
+#: settings_models.py:69
 msgid "Icon + Label"
 msgstr "आइकॉन + लेबल"
 
+#: settings_models.py:70
 msgid "Label Only"
 msgstr "केवल लेबल"
 
+#: settings_models.py:77
 msgid "Button Style"
 msgstr "बटन स्टाइल"
 
+#: settings_models.py:78
 msgid "How share buttons are displayed"
 msgstr "शेयर बटन कैसे दिखाए जाएं"
 
+#: settings_models.py:83
 msgid "Small"
 msgstr "छोटा"
 
+#: settings_models.py:84
 msgid "Medium"
 msgstr "माध्यम"
 
+#: settings_models.py:85
 msgid "Large"
 msgstr "बड़ा"
 
+#: settings_models.py:92
 msgid "Button Size"
 msgstr "बटन का आकार"
 
+#: settings_models.py:93
 msgid "Size of the share buttons"
 msgstr "शेयर बटन का आकार"
 
+#: settings_models.py:98
 msgid "Horizontal"
 msgstr "क्षैतिज"
 
+#: settings_models.py:99
 msgid "Vertical"
 msgstr "ऊर्ध्वाधर"
 
+#: settings_models.py:106
 msgid "Layout Direction"
 msgstr "लेआउट दिशा"
 
+#: settings_models.py:107
 msgid "Arrange share buttons horizontally or vertically"
 msgstr "साझा करें बटन क्षैतिज या ऊर्ध्वाधर रूप से व्यवस्थित करें"
 
+#: settings_models.py:113
 msgid "Show Title"
 msgstr "शीर्षक दिखाएं"
 
+#: settings_models.py:114
 msgid "Show the 'Share' heading above the buttons"
 msgstr "बटनों के ऊपर 'साझा' के शीर्षक को दिखाएं"
 
+#: settings_models.py:119
 msgid "Always Show"
 msgstr "हमेशा दिखाएं"
 
+#: settings_models.py:120
 msgid "Hide on Mobile"
 msgstr "मोबाइल पर छिपाएं"
 
+#: settings_models.py:121
 msgid "Mobile Only"
 msgstr "केवल मोबाइल"
 
+#: settings_models.py:128
 msgid "Mobile Visibility"
 msgstr "मोबाइल दृश्यता"
 
+#: settings_models.py:129
 msgid "Control whether share buttons appear on mobile devices"
 msgstr "मोबाइल उपकरणों पर साझा करें बटन दिखाई दें या नहीं, इसका नियंत्रण करें"
 
+#: settings_models.py:136
 msgid "Widget Slug"
 msgstr "विजेट स्लग"
 
+#: settings_models.py:137
 msgid "Slug of the widget package to use for rendering"
 msgstr "रेंडरिंग के लिए उपयोग करने वाले विजेट पैकेज का स्लग"
 
+#: settings_models.py:144
 msgid "Default Widget Configuration"
 msgstr "डिफ़ॉल्ट विजेट संfiguration"
 
+#: settings_models.py:145
 msgid ""
 "Override default widget configuration (display_style, button_size, etc.)"
-msgstr "डिफ़ॉल्ट विजेट विन्यास को ओवरराइड करें (display_style, button_size, आदि)"
+msgstr ""
+"डिफ़ॉल्ट विजेट विन्यास को ओवरराइड करें (display_style, button_size, आदि)"
 
+#: settings_models.py:153
 msgid "List of enabled platforms. Leave empty to use widget defaults."
-msgstr "सक्रिय प्लेटफॉर्मों की सूची। डिफ़ॉल्ट विजेट का उपयोग करने के लिए खाली छोड़ दें।"
+msgstr ""
+"सक्रिय प्लेटफॉर्मों की सूची। डिफ़ॉल्ट विजेट का उपयोग करने के लिए खाली छोड़ "
+"दें।"
 
+#: settings_models.py:159 templates/admin/social_sharing/dashboard.html:514
 msgid "Show Share Counts"
 msgstr "साझा गिनती दिखाएं"
 
+#: settings_models.py:160
 msgid "Display number of shares for each platform"
 msgstr "प्रत्येक प्लेटफॉर्म के लिए शेयर की संख्या दिखाएं"
 
+#: settings_models.py:165
 msgid "Track Shares"
 msgstr "साझा के ट्रैक करें"
 
+#: settings_models.py:166
 msgid "Track share events and award loyalty badges"
 msgstr "शेयर ईवेंट का पालन करें और लॉयल्टी बैज दें"
 
+#: settings_models.py:170
 msgid "Updated At"
 msgstr "अपडेट कर दिया गया"
 
+#: settings_models.py:173
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:221
 msgid "Updated By"
 msgstr "अपडेट किया गया"
 
+#: templates/admin/social_sharing/dashboard.html:4
+#: templates/admin/social_sharing/dashboard.html:22
 msgid "Social Sharing Dashboard"
 msgstr "सामाजिक साझा डैशबोर्ड"
 
+#: templates/admin/social_sharing/dashboard.html:4
 msgid "Site Admin"
 msgstr "वेबसाइट एडमिन"
 
+#: templates/admin/social_sharing/dashboard.html:25
 #, python-format
 msgid ""
 "\n"
-"            Analytics and settings for the last 30 days (%(start)s - "
-"%(end)s)\n"
+"            Analytics and settings for the last 30 days (%(start)s - %(end)s)\n"
 "            "
 msgstr ""
 "\n"
-"            अगले 30 दिनों के एनालिटिक्स और सेटिंग्स (%(start)s - %(end)s)अगले 30 "
-"दिनों के एनालिटिक्स और सेटिंग्स (%(start)s - %(end)s)\n"
+"            अगले 30 दिनों के एनालिटिक्स और सेटिंग्स (%(start)s - %(end)s)अगले 30 दिनों के एनालिटिक्स और सेटिंग्स (%(start)s - %(end)s)\n"
 "            "
 
+#: templates/admin/social_sharing/dashboard.html:38
 msgid "Total Shares"
 msgstr "कुल साझा"
 
+#: templates/admin/social_sharing/dashboard.html:45
 msgid "Shares Today"
 msgstr "आज के साझा"
 
+#: templates/admin/social_sharing/dashboard.html:52
 msgid "Shares This Month"
 msgstr "इस महीने के साझा"
 
+#: templates/admin/social_sharing/dashboard.html:77
 msgid "Top Platform"
 msgstr "शीर्ष प्लेटफॉर्म"
 
+#: templates/admin/social_sharing/dashboard.html:92
+#: templates/admin/social_sharing/dashboard.html:100
 msgid "Top Product"
 msgstr "शीर्ष उत्पाद"
 
+#: templates/admin/social_sharing/dashboard.html:110
+#: templates/admin/social_sharing/dashboard.html:118
 msgid "Most Active Sharer"
 msgstr "सबसे अधिक सक्रिय शेयर कर्ता"
 
+#: templates/admin/social_sharing/dashboard.html:130
 msgid "Quick Actions"
 msgstr "त्वरित कार्रवाई"
 
+#: templates/admin/social_sharing/dashboard.html:139
 msgid "View individual share events"
 msgstr "व्यक्तिगत शेयर घटनाओं को देखें"
 
+#: templates/admin/social_sharing/dashboard.html:141
+#: templates/admin/social_sharing/dashboard.html:152
 msgid "Manage"
 msgstr "प्रबंधित करें"
 
+#: templates/admin/social_sharing/dashboard.html:150
 msgid "Aggregated share statistics"
 msgstr "संकलित शेयर सांख्यिकी"
 
+#: templates/admin/social_sharing/dashboard.html:160
 msgid "Settings"
 msgstr "सेटिंग्स"
 
+#: templates/admin/social_sharing/dashboard.html:161
 msgid "Configure social sharing"
 msgstr "सोशल साझा करें कॉन्फ़िगर करें"
 
+#: templates/admin/social_sharing/dashboard.html:163
 msgid "Configure"
 msgstr "सेट करें"
 
+#: templates/admin/social_sharing/dashboard.html:178
 msgid "Shares Over Time (Last 30 Days)"
 msgstr "समय के साथ शेयर (अंतिम 30 दिन)"
 
+#: templates/admin/social_sharing/dashboard.html:187
 msgid "Shares by Platform"
 msgstr "प्लेटफॉर्म द्वारा शेयर"
 
+#: templates/admin/social_sharing/dashboard.html:200
 msgid "Top 10 Sharers (Last 30 Days)"
 msgstr "शीर्ष 10 शेयर करने वाले (अंतिम 30 दिन)"
 
+#: templates/admin/social_sharing/dashboard.html:207
+#: templates/admin/social_sharing/dashboard.html:255
+#: templates/admin/social_sharing/dashboard.html:379
 msgid "Rank"
 msgstr "रैंक"
 
+#: templates/admin/social_sharing/dashboard.html:209
+#: templates/admin/social_sharing/dashboard.html:257
+#: templates/admin/social_sharing/dashboard.html:382
+#: templates/admin/social_sharing/dashboard.html:542
 msgid "Shares"
 msgstr "शेयर"
 
+#: templates/admin/social_sharing/dashboard.html:232
+#: templates/admin/social_sharing/dashboard.html:280
+#: templates/admin/social_sharing/dashboard.html:426
+#: templates/admin/social_sharing/dashboard.html:544
+#: templates/admin/social_sharing/partials/sharecount_cards.html:68
 msgid "shares"
 msgstr "शेयर"
 
+#: templates/admin/social_sharing/dashboard.html:240
 msgid "No sharers in the selected period."
 msgstr "चयनित अवधि में कोई शेयर करने वाला नहीं।"
 
+#: templates/admin/social_sharing/dashboard.html:248
 msgid "Top 5 Platforms"
 msgstr "शीर्ष 5 प्लेटफॉर्म"
 
+#: templates/admin/social_sharing/dashboard.html:288
 msgid "No platform data available."
 msgstr "कोई प्लेटफॉर्म डेटा उपलब्ध नहीं है।"
 
+#: templates/admin/social_sharing/dashboard.html:299
 msgid "Recent Shares"
 msgstr "हालिया शेयर"
 
+#: templates/admin/social_sharing/dashboard.html:306
 msgid "Date"
 msgstr "तारीख"
 
+#: templates/admin/social_sharing/dashboard.html:348
+#: templates/admin/social_sharing/dashboard.html:417
 msgid "Content deleted"
 msgstr "सामग्री हटा दी गई"
 
+#: templates/admin/social_sharing/dashboard.html:357
 msgid "No recent shares."
 msgstr "कोई हालिया शेयर नहीं।"
 
+#: templates/admin/social_sharing/dashboard.html:363
 msgid "View All Shares"
 msgstr "सभी शेयर देखें"
 
+#: templates/admin/social_sharing/dashboard.html:372
 msgid "Top 5 Most Shared Content"
 msgstr "शीर्ष 5 सबसे अधिक शेयर की गई सामग्री"
 
+#: templates/admin/social_sharing/dashboard.html:434
 msgid "No shared content yet."
 msgstr "अभी तक कोई शेयर की गई सामग्री नहीं है।"
 
+#: templates/admin/social_sharing/dashboard.html:440
 msgid "View All Share Counts"
 msgstr "सभी शेयर गिनती देखें"
 
+#: templates/admin/social_sharing/dashboard.html:468
 msgid "Enable Social Sharing On"
 msgstr "सोशल शेयरिंग को चालू करें"
 
+#: templates/admin/social_sharing/dashboard.html:473
 msgid "Products"
 msgstr "उत्पाद"
 
+#: templates/admin/social_sharing/dashboard.html:479
 msgid "Categories"
 msgstr "श्रेणियाँ"
 
+#: templates/admin/social_sharing/dashboard.html:485
 msgid "Blog Posts"
 msgstr "ब्लॉग पोस्ट"
 
+#: templates/admin/social_sharing/dashboard.html:491
 msgid "Pages"
 msgstr "पेज"
 
+#: templates/admin/social_sharing/dashboard.html:499
 msgid "Display Settings"
 msgstr "प्रदर्शन सेटिंग्स"
 
+#: templates/admin/social_sharing/dashboard.html:502
 msgid "Button Placement"
 msgstr "बटन स्थिति"
 
+#: templates/admin/social_sharing/dashboard.html:520
 msgid "Track Share Events"
 msgstr "शेयर घटनाओं के ट्रैक करें"
 
+#: templates/admin/social_sharing/dashboard.html:529
 msgid "Save Settings"
 msgstr "सेटिंग्स सहेजें"
 
+#: templates/admin/social_sharing/dashboard.html:543
+#: templates/admin/social_sharing/partials/sharecount_cards.html:66
 msgid "share"
 msgstr "शेयर"
 
+#: templates/admin/social_sharing/partials/share_cards.html:41
+#: templates/admin/social_sharing/partials/sharecount_cards.html:41
 msgid "Twitter"
 msgstr "ट्विटर"
 
+#: templates/admin/social_sharing/partials/share_cards.html:128
 msgid "No social shares found matching your filters."
 msgstr "आपके फ़िल्टर के साथ कोई सोशल शेयर नहीं मिला।"
 
+#: templates/admin/social_sharing/partials/share_cards.html:132
+#: templates/admin/social_sharing/partials/sharecount_cards.html:119
 msgid "Clear Filters"
 msgstr "फ़िल्टर क्लियर करें"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:76
 msgid "Updated"
 msgstr "अपडेट किया गया"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:115
 msgid "No share counts found matching your filters."
 msgstr "आपके फ़िल्टर के साथ कोई शेयर गिनती नहीं मिली।"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:21
 msgid "Track social media sharing statistics across platforms"
 msgstr "प्लेटफॉर्मों के बीच सोशल मीडिया शेयर सांख्यिकी ट्रैक करें"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:31
+#: templates/admin/social_sharing/socialshare/change_list.html:31
 msgid "Filters"
 msgstr "फ़िल्टर"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:35
+#: templates/admin/social_sharing/socialshare/change_list.html:35
 msgid "Toggle Filters"
 msgstr "फ़िल्टर टॉगल करें"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:44
+#: templates/admin/social_sharing/socialshare/change_list.html:44
 msgid "Search"
 msgstr "खोज"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:46
 msgid "Search by content ID..."
 msgstr "सामग्री ID द्वारा खोजें..."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:55
+#: templates/admin/social_sharing/socialshare/change_list.html:55
 msgid "All Platforms"
 msgstr "सभी प्लेटफॉर्म"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:69
+#: templates/admin/social_sharing/socialshare/change_list.html:69
 msgid "Content Type"
 msgstr "सामग्री प्रकार"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:72
+#: templates/admin/social_sharing/socialshare/change_list.html:72
 msgid "All Types"
 msgstr "सभी प्रकार"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:82
 msgid "Min. Share Count"
 msgstr "न्यूनतम शेयर गिनती"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:84
 msgid "Minimum shares"
 msgstr "न्यूनतम शेयर"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:90
 msgid "Sort By"
 msgstr "द्वारा व्यवस्थित करें"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:93
 msgid "Most Shares"
 msgstr "अधिकतम शेयर"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:94
 msgid "Least Shares"
 msgstr "कम से कम शेयर"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:95
 msgid "Recently Updated"
 msgstr "हालिया अपडेट"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:96
 msgid "Oldest Updated"
 msgstr "पुराना अपडेट"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:104
+#: templates/admin/social_sharing/socialshare/change_list.html:112
 msgid "Active:"
 msgstr "सक्रिय:"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:111
+#: templates/admin/social_sharing/socialshare/change_list.html:119
 msgid "Clear All"
 msgstr "सभी को साफ करें"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:115
+#: templates/admin/social_sharing/socialshare/change_list.html:123
 msgid "Apply Filters"
 msgstr "फ़िल्टर लागू करें"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "Showing"
 msgstr "दिखाए जा रहे"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "results"
 msgstr "परिणाम"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:21
 msgid "Monitor individual share events and user engagement"
 msgstr "व्यक्तिगत शेयर ईवेंट और उपयोगकर्ता भागीदारी का निर्माण करें"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:46
 msgid "Search by user, URL..."
 msgstr "उपयोगकर्ता, URL द्वारा खोजें..."
 
+#: templates/admin/social_sharing/socialshare/change_list.html:82
 msgid "Device"
 msgstr "उपकरण"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:85
 msgid "All Devices"
 msgstr "सभी उपकरण"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:95
 msgid "Date From"
 msgstr "तारीख से"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:103
 msgid "Date To"
 msgstr "तारीख तक"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:25
 msgid "Configure automatic social sharing buttons across your store"
 msgstr "अपने स्टोर में सोशल शेयरिंग बटनों के स्वचालित नियंत्रण करें।"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:30
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:234
 msgid "Save and continue editing"
 msgstr "सहेजें और संपादन जारी रखें"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:33
 msgid "Save settings"
 msgstr "सेटिंग्स सहेजें"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:50
 msgid "Please correct the errors below"
 msgstr "कृपया नीचे दिए गए त्रुटियों को सुधारें"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:83
 msgid "Automatic Placement"
 msgstr "स्वचालित स्थिति"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:84
 msgid ""
 "Configure where social share buttons appear automatically across your store."
-msgstr "अपने स्टोर में सोशल शेयरिंग बटनों के स्वचालित प्रदर्शन के स्थान को नियंत्रण करें।"
+msgstr ""
+"अपने स्टोर में सोशल शेयरिंग बटनों के स्वचालित प्रदर्शन के स्थान को नियंत्रण "
+"करें।"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:129
 msgid "Platforms"
 msgstr "प्लेटफॉर्म"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:130
 msgid ""
 "Select which social platforms to show. If none are selected, all platforms "
 "will be displayed."
 msgstr ""
-"कौन-से सोशल प्लेटफॉर्म दिखाए जाएं, चुनें। यदि कोई चुना नहीं गया है, तो सभी प्लेटफॉर्म "
-"दिखाए जाएंगे।"
+"कौन-से सोशल प्लेटफॉर्म दिखाए जाएं, चुनें। यदि कोई चुना नहीं गया है, तो सभी "
+"प्लेटफॉर्म दिखाए जाएंगे।"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:140
 msgid "Button Appearance"
 msgstr "बटन दिखावट"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:141
 msgid "Control how the share buttons look on your store."
 msgstr "अपने स्टोर पर साझा करें बटन कैसे दिखते हैं, इसका नियंत्रण करें।"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:186
 msgid "Tracking & Analytics"
 msgstr "ट्रैकिंग एवं विश्लेषण"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:187
 msgid "Control share tracking and count display."
 msgstr "साझा करें ट्रैकिंग और गिनती प्रदर्शन को नियंत्रित करें।"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:215
 msgid "Last Updated"
 msgstr "अंतिम अपडेट"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:233
 msgid "Save"
 msgstr "सहेजें"
 
+#: views.py:214
 msgid "Social sharing settings updated successfully."
 msgstr "सोशल शेयरिंग सेटिंग्स सफलतापूर्वक अपडेट कर दिए गए हैं।"

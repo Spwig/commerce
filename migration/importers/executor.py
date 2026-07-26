@@ -10,6 +10,7 @@ from typing import Any
 import requests
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
+from django.db import transaction
 from django.utils import timezone
 from django.utils.html import strip_tags
 from tqdm import tqdm
@@ -28,11 +29,14 @@ from media_library.models import MediaAsset
 from migration.fetchers.spwig_bridge_api import SpwigBridgeAPIClient
 from migration.fetchers.woocommerce_api import WooCommerceAPIClient
 from migration.importers.affiliate_importer import AffiliateImporter
+from migration.importers.cancellation import CancellationMixin, MigrationCancelled
+from migration.importers.dedup import should_skip_existing, try_replace_existing
 from migration.importers.wordpress_blog import WordPressBlogImporter
 from migration.mapping_config import IGNORE_META_PREFIXES
 from migration.models import MigrationJob, MigrationLog, MigrationStagedItem, MigrationStep
 from migration.services.attribute_service import AttributeService
 from migration.services.extension_import_service import WooCommerceExtensionImportService
+from migration.utils.pricing import apply_price_adjustment, get_adjustment
 from migration.utils.transformers import (
     detect_addon_product,
     detect_booking_product,
@@ -59,7 +63,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-class ImportExecutor:
+class ImportExecutor(CancellationMixin):
     """
     Main import executor that orchestrates the entire migration process
 
@@ -149,18 +153,22 @@ class ImportExecutor:
             # Update job status
             self.job.status = "running"
             self.job.started_at = timezone.now()
-            self.job.save()
+            self.job.save(update_fields=["status", "started_at"])
 
             logger.info(f"Starting import for job {self.job.id}")
 
             # Get import settings from step 3
             config = self.job.connection_config or {}
 
-            # Execute imports in order
+            # Execute imports in order. The check between phases is the cheapest
+            # and safest cancellation point in the file: no step is running, so
+            # unwinding here can never strand one.
             if config.get("import_categories", False):
+                self._check_cancelled()
                 self._import_categories()
 
             if config.get("import_products", False):
+                self._check_cancelled()
                 self._import_products()
                 # Resolve deferred bundle/composite references
                 resolved = self.extension_service.resolve_deferred_extensions()
@@ -171,37 +179,41 @@ class ImportExecutor:
                     )
 
             if config.get("import_customers", False):
+                self._check_cancelled()
                 self._import_customers()
 
             if config.get("import_orders", False):
+                self._check_cancelled()
                 self._import_orders()
 
             if config.get("import_reviews", False):
+                self._check_cancelled()
                 self._import_reviews()
 
             if config.get("import_coupons", False):
+                self._check_cancelled()
                 self._import_coupons()
 
             if config.get("import_blog", False):
+                self._check_cancelled()
                 self._import_blog()
 
             if config.get("import_affiliates", False):
+                self._check_cancelled()
                 self._import_affiliates()
 
             # Post-import: scan content for internal links that need rewriting
             self._scan_content_links()
 
-            # Mark job as complete
-            self.job.status = "completed"
-            self.job.completed_at = timezone.now()
-            self.job.duration_seconds = int(
-                (self.job.completed_at - self.job.started_at).total_seconds()
-            )
-            self.job.progress_percent = 100
-            self.job.save()
+            self._mark_completed()
 
-            logger.info(f"Import completed successfully for job {self.job.id}")
-            self._update_overall_progress()
+        except MigrationCancelled:
+            # Must precede the generic handler, or a deliberate stop is recorded
+            # as a failure. MigrationCancelled derives from BaseException, so it
+            # would not be caught below in any case — this arm exists to record
+            # the outcome, and it re-raises so the task can report it too.
+            self._mark_cancelled()
+            raise
 
         except Exception as e:
             logger.error(f"Import failed: {e}", exc_info=True)
@@ -211,10 +223,17 @@ class ImportExecutor:
             self.job.error_summary = str(e)
             self.job.completed_at = timezone.now()
             if self.job.started_at:
-                self.job.duration_seconds = (
-                    self.job.completed_at - self.job.started_at
-                ).total_seconds()
-            self.job.save()
+                self.job.duration_seconds = int(
+                    (self.job.completed_at - self.job.started_at).total_seconds()
+                )
+            self.job.save(
+                update_fields=[
+                    "status",
+                    "error_summary",
+                    "completed_at",
+                    "duration_seconds",
+                ]
+            )
 
             raise
 
@@ -298,7 +317,13 @@ class ImportExecutor:
             self.job.categories_imported = step.items_imported
             self.job.categories_failed = step.items_failed
             self.job.categories_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "categories_imported",
+                    "categories_failed",
+                    "categories_skipped",
+                ]
+            )
 
             # Update overall progress
             self._update_overall_progress()
@@ -317,11 +342,12 @@ class ImportExecutor:
     def _import_single_category(self, cat_data: dict, step: MigrationStep) -> Category | None:
         """Import a single category"""
         external_id = str(cat_data.get("id"))
-
-        # Check if already imported
         existing = Category.objects.filter(external_id=external_id).first()
-        if existing:
-            # Ensure previously-imported categories are active (re-import fix)
+
+        if existing and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             if not existing.is_active:
                 existing.is_active = True
                 existing.save(update_fields=["is_active"])
@@ -334,20 +360,40 @@ class ImportExecutor:
         # Apply field mappings
         mapped_data = self._apply_mappings(cat_data, "category")
 
-        # Create category
-        category = Category.objects.create(
-            external_id=external_id,
-            migration_job=self.job,
-            name=mapped_data.get("name", cat_data.get("name")),
-            slug=self._get_unique_slug(mapped_data.get("slug", cat_data.get("slug")), Category),
-            description=mapped_data.get("description", cat_data.get("description", "")),
-            is_active=True,
-            imported_meta=filter_meta_data(cat_data.get("meta_data", []), IGNORE_META_PREFIXES),
-        )
+        # The delete (if replacing) and the create that follows share one
+        # transaction, so a failure partway through creation rolls the delete
+        # back too. Without this, a crash right after deleting the old
+        # category and before the new one exists would leave the slot empty
+        # with nothing to fill it — silent data loss, not a skip.
+        with transaction.atomic():
+            if existing and not try_replace_existing(existing):
+                # Blocked: something else in the store (a product still filed
+                # under this category) still depends on it. Nothing was
+                # written — try_replace_existing's own delete runs in its own
+                # savepoint — so returning from inside this block is safe.
+                if not existing.is_active:
+                    existing.is_active = True
+                    existing.save(update_fields=["is_active"])
+                    logger.info(f"Reactivated previously-imported category: {existing.name}")
+                logger.debug(f"Category {external_id} already imported, skipping")
+                step.items_skipped += 1
+                step.save()
+                return existing
 
-        # Store in category map
+            # Create category
+            category = Category.objects.create(
+                external_id=external_id,
+                migration_job=self.job,
+                name=mapped_data.get("name", cat_data.get("name")),
+                slug=self._get_unique_slug(mapped_data.get("slug", cat_data.get("slug")), Category),
+                description=mapped_data.get("description", cat_data.get("description", "")),
+                is_active=True,
+                imported_meta=filter_meta_data(cat_data.get("meta_data", []), IGNORE_META_PREFIXES),
+            )
+
+        # Counted after the transaction commits, never inside it — a rolled
+        # back attempt must never leave a phantom increment.
         self.category_map[external_id] = category
-
         step.items_imported += 1
         step.save()
 
@@ -493,7 +539,13 @@ class ImportExecutor:
             self.job.products_imported = step.items_imported
             self.job.products_failed = step.items_failed
             self.job.products_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "products_imported",
+                    "products_failed",
+                    "products_skipped",
+                ]
+            )
 
             # Update overall progress
             self._update_overall_progress()
@@ -516,7 +568,10 @@ class ImportExecutor:
 
         # Check if already imported
         existing = Product.objects.filter(external_id=external_id).first()
-        if existing:
+        if existing and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             logger.debug(f"Product {external_id} already imported, skipping")
             step.items_skipped += 1
             step.save()
@@ -545,21 +600,16 @@ class ImportExecutor:
                 # Missing price data - skip this product
                 raise ValueError("Product has no price")
 
-        # Apply price adjustment if configured
-        price_adjustment_type = self.job.connection_config.get("price_adjustment_type", "none")
-        if price_adjustment_type != "none":
-            adjustment_value = Decimal(
-                self.job.connection_config.get("price_adjustment_value", "0")
-            )
-            if price_adjustment_type == "percentage":
-                price = price * (1 + adjustment_value / 100)
-            elif price_adjustment_type == "fixed":
-                price = price + adjustment_value
+        # Apply the optional across-the-board price adjustment.
+        adj_type, adj_value = get_adjustment(self.job.connection_config)
+        price = apply_price_adjustment(price, adj_type, adj_value)
 
-        # Transform sale price
+        # Transform sale price, and adjust it too so a discount stays
+        # proportional when the regular price is marked up.
         compare_at_price = None
         if product_data.get("sale_price"):
             compare_at_price = transform_money(product_data.get("sale_price"), self._get_currency())
+            compare_at_price = apply_price_adjustment(compare_at_price, adj_type, adj_value)
 
         # Prepare short description (truncate to 500 chars)
         short_desc = mapped_data.get("short_description", product_data.get("short_description", ""))
@@ -640,42 +690,65 @@ class ImportExecutor:
             sale_type = "fixed_price"
             sale_value_decimal = compare_at_price.amount  # Money → Decimal
 
-        # Create product
-        product = Product.objects.create(
-            external_id=external_id,
-            migration_job=self.job,
-            name=mapped_data.get("name", product_data.get("name")),
-            slug=self._get_unique_slug(mapped_data.get("slug", product_data.get("slug")), Product),
-            sku=self._get_unique_sku(mapped_data.get("sku", product_data.get("sku", ""))),
-            product_type=product_type,
-            category=category,
-            full_description=mapped_data.get(
-                "full_description", product_data.get("description", "")
-            ),
-            short_description=short_desc,
-            price=price,
-            sale_type=sale_type,
-            sale_value=sale_value_decimal,
-            status=transform_woocommerce_status(product_data.get("status", "publish")),
-            is_featured=product_data.get("featured", False),
-            track_inventory=product_data.get("manage_stock", True),
-            allow_backorders=transform_woocommerce_backorders(product_data.get("backorders", "no")),
-            weight=transform_decimal_nullable(product_data.get("weight")),
-            length=transform_decimal_nullable(product_data.get("dimensions", {}).get("length")),
-            width=transform_decimal_nullable(product_data.get("dimensions", {}).get("width")),
-            height=transform_decimal_nullable(product_data.get("dimensions", {}).get("height")),
-            imported_meta=imported_meta,
-        )
+        # The delete (if replacing) and the create that follows share one
+        # transaction, so a failure partway through creation rolls the delete
+        # back too. Without this, a crash right after deleting the old
+        # product and before the new one exists would leave the slot empty
+        # with nothing to fill it — silent data loss, not a skip.
+        with transaction.atomic():
+            if existing and not try_replace_existing(existing):
+                # Blocked: a real order (or bundle, gift card, dependency…)
+                # still references this product. Nothing was written —
+                # try_replace_existing's own delete runs in its own
+                # savepoint — so returning from inside this block is safe.
+                logger.debug(f"Product {external_id} already imported, skipping")
+                step.items_skipped += 1
+                step.save()
+                return existing
+            # else: no existing row, or it was deleted — create it fresh.
+            # ProductVariant.product is CASCADE, so a successful replace also
+            # removed the old variants, images and stock items.
 
-        # Create stock item for inventory tracking
-        if self.default_warehouse and product_data.get("manage_stock", False):
-            stock_qty = transform_integer_nullable(product_data.get("stock_quantity")) or 0
-            StockItem.objects.create(
-                product=product,
-                warehouse=self.default_warehouse,
-                on_hand=stock_qty,
-                allocated=0,
+            # Create product
+            product = Product.objects.create(
+                external_id=external_id,
+                migration_job=self.job,
+                name=mapped_data.get("name", product_data.get("name")),
+                slug=self._get_unique_slug(
+                    mapped_data.get("slug", product_data.get("slug")), Product
+                ),
+                sku=self._get_unique_sku(mapped_data.get("sku", product_data.get("sku", ""))),
+                product_type=product_type,
+                category=category,
+                full_description=mapped_data.get(
+                    "full_description", product_data.get("description", "")
+                ),
+                short_description=short_desc,
+                price=price,
+                sale_type=sale_type,
+                sale_value=sale_value_decimal,
+                status=transform_woocommerce_status(product_data.get("status", "publish")),
+                is_featured=product_data.get("featured", False),
+                track_inventory=product_data.get("manage_stock", True),
+                allow_backorders=transform_woocommerce_backorders(
+                    product_data.get("backorders", "no")
+                ),
+                weight=transform_decimal_nullable(product_data.get("weight")),
+                length=transform_decimal_nullable(product_data.get("dimensions", {}).get("length")),
+                width=transform_decimal_nullable(product_data.get("dimensions", {}).get("width")),
+                height=transform_decimal_nullable(product_data.get("dimensions", {}).get("height")),
+                imported_meta=imported_meta,
             )
+
+            # Create stock item for inventory tracking
+            if self.default_warehouse and product_data.get("manage_stock", False):
+                stock_qty = transform_integer_nullable(product_data.get("stock_quantity")) or 0
+                StockItem.objects.create(
+                    product=product,
+                    warehouse=self.default_warehouse,
+                    on_hand=stock_qty,
+                    allocated=0,
+                )
 
         # Import product images
         if product_data.get("images"):
@@ -1065,6 +1138,12 @@ class ImportExecutor:
             variation_data.get("regular_price") or variation_data.get("price"), currency
         )
 
+        # Apply the same across-the-board adjustment to a custom variant price.
+        # An "inherit" variant has no price of its own — it follows the parent,
+        # which was already adjusted — so there is nothing to do there.
+        adj_type, adj_value = get_adjustment(self.job.connection_config)
+        regular_price = apply_price_adjustment(regular_price, adj_type, adj_value)
+
         # Determine pricing strategy
         pricing_strategy = "inherit"
         variant_price = None
@@ -1309,7 +1388,13 @@ class ImportExecutor:
             self.job.customers_imported = step.items_imported
             self.job.customers_failed = step.items_failed
             self.job.customers_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "customers_imported",
+                    "customers_failed",
+                    "customers_skipped",
+                ]
+            )
 
             # Update overall progress
             self._update_overall_progress()
@@ -1336,123 +1421,164 @@ class ImportExecutor:
 
         # Check if customer already imported by external_id
         existing_profile = CustomerProfile.objects.filter(external_id=external_id).first()
-        if existing_profile:
+        if existing_profile and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             logger.debug(f"Customer {external_id} already imported, skipping")
             step.items_skipped += 1
             step.save()
             return existing_profile.user
 
-        # Check if user with this email already exists
-        existing_user = User.objects.filter(email=email).first()
-        if existing_user:
-            # User exists but wasn't imported as a customer yet - link it
-            profile, created = CustomerProfile.objects.get_or_create(
-                user=existing_user,
-                defaults={
-                    "external_id": external_id,
-                    "migration_job": self.job,
-                    "phone": customer_data.get("billing", {}).get("phone", ""),
-                },
-            )
-            if not created:
-                # Profile already exists, just update external_id if not set
-                if not profile.external_id:
-                    profile.external_id = external_id
-                    profile.migration_job = self.job
-                    profile.save()
+        # The delete (if replacing) and whatever follows it — linking to a
+        # pre-existing account, or creating a fresh one — share one
+        # transaction, so a failure partway through rolls the delete back
+        # too. Without this, a crash right after deleting the old account
+        # and before its replacement exists would strand the customer with
+        # neither record.
+        skipped = False
+        linked_existing = False
+        with transaction.atomic():
+            if existing_profile and not try_replace_existing(existing_profile.user):
+                # Blocked: the customer has since traded (a real order, a
+                # POS role…) and the delete was blocked. Never forced
+                # regardless of the setting. try_replace_existing's own
+                # delete runs in its own savepoint, so nothing was written.
+                skipped = True
+                user = existing_profile.user
+            else:
+                # else: no previously-imported record, or it was just
+                # removed — fall through to identity resolution / creation.
 
-            # Count as imported (not skipped) since we successfully linked the customer data
-            step.items_imported += 1
+                # Check if user with this email already exists. This is
+                # identity resolution, not re-import bookkeeping, and is
+                # never affected by skip_existing: an account not created by
+                # this migration belongs to the merchant and must never be
+                # replaced.
+                existing_user = User.objects.filter(email=email).first()
+                if existing_user:
+                    # This account already existed in Spwig — the import is only linking
+                    # it to its counterpart in the source store, not creating it.
+                    #
+                    # Deliberately NOT stamping migration_job here. That field is the
+                    # provenance a rollback deletes by, and this customer belongs to the
+                    # merchant, not to the migration. Claiming it would let a rollback
+                    # destroy a pre-existing account — including a staff or superuser
+                    # account that happens to share an email with a source-store
+                    # customer, taking its payment credentials and other migration
+                    # records with it.
+                    profile, created = CustomerProfile.objects.get_or_create(
+                        user=existing_user,
+                        defaults={
+                            "external_id": external_id,
+                            "phone": customer_data.get("billing", {}).get("phone", ""),
+                        },
+                    )
+                    if not created:
+                        # Profile already exists, just update external_id if not set
+                        if not profile.external_id:
+                            profile.external_id = external_id
+                            profile.save()
+                    linked_existing = True
+                    user = existing_user
+                else:
+                    # Generate username from email or use WooCommerce username
+                    username = customer_data.get("username") or email.split("@")[0]
+
+                    # Ensure username is unique
+                    original_username = username
+                    counter = 1
+                    while User.objects.filter(username=username).exists():
+                        username = f"{original_username}{counter}"
+                        counter += 1
+
+                    # Create User
+                    user = User.objects.create(
+                        username=username,
+                        email=email,
+                        first_name=customer_data.get("first_name", ""),
+                        last_name=customer_data.get("last_name", ""),
+                        date_joined=timezone.datetime.fromisoformat(
+                            customer_data.get("date_created", "").replace("Z", "+00:00")
+                        )
+                        if customer_data.get("date_created")
+                        else timezone.now(),
+                        is_active=True,
+                    )
+
+                    # Set unusable password (users will need to reset)
+                    user.set_unusable_password()
+                    user.save()
+
+                    # Create CustomerProfile with external_id
+                    CustomerProfile.objects.create(
+                        user=user,
+                        external_id=external_id,
+                        migration_job=self.job,
+                        phone=customer_data.get("billing", {}).get("phone", ""),
+                    )
+
+                    # Create billing address if provided
+                    billing = customer_data.get("billing", {})
+                    if billing.get("address_1"):
+                        Address.objects.create(
+                            user=user,
+                            address_type="billing",
+                            name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
+                            company=billing.get("company", ""),
+                            address1=billing.get("address_1", ""),
+                            address2=billing.get("address_2", ""),
+                            city=billing.get("city", ""),
+                            state=billing.get("state", ""),
+                            postal_code=billing.get("postcode", ""),
+                            country=billing.get("country", ""),
+                            phone=billing.get("phone", ""),
+                            is_default=True,
+                        )
+
+                    # Create shipping address if provided and different from billing
+                    shipping = customer_data.get("shipping", {})
+                    if shipping.get("address_1"):
+                        # Check if shipping is different from billing
+                        is_different = (
+                            shipping.get("address_1") != billing.get("address_1")
+                            or shipping.get("city") != billing.get("city")
+                            or shipping.get("postcode") != billing.get("postcode")
+                        )
+
+                        if is_different:
+                            Address.objects.create(
+                                user=user,
+                                address_type="shipping",
+                                name=f"{shipping.get('first_name', '')} {shipping.get('last_name', '')}".strip(),
+                                company=shipping.get("company", ""),
+                                address1=shipping.get("address_1", ""),
+                                address2=shipping.get("address_2", ""),
+                                city=shipping.get("city", ""),
+                                state=shipping.get("state", ""),
+                                postal_code=shipping.get("postcode", ""),
+                                country=shipping.get("country", ""),
+                                phone=billing.get(
+                                    "phone", ""
+                                ),  # Use billing phone as shipping often doesn't have one
+                                is_default=True,
+                            )
+
+        # Counted after the transaction commits, never inside it — a rolled
+        # back attempt must never leave a phantom increment.
+        if skipped:
+            logger.debug(f"Customer {external_id} already imported, skipping")
+            step.items_skipped += 1
             step.save()
-            logger.debug(f"Linked existing user {email} to WooCommerce customer {external_id}")
-            return existing_user
-
-        # Generate username from email or use WooCommerce username
-        username = customer_data.get("username") or email.split("@")[0]
-
-        # Ensure username is unique
-        original_username = username
-        counter = 1
-        while User.objects.filter(username=username).exists():
-            username = f"{original_username}{counter}"
-            counter += 1
-
-        # Create User
-        user = User.objects.create(
-            username=username,
-            email=email,
-            first_name=customer_data.get("first_name", ""),
-            last_name=customer_data.get("last_name", ""),
-            date_joined=timezone.datetime.fromisoformat(
-                customer_data.get("date_created", "").replace("Z", "+00:00")
-            )
-            if customer_data.get("date_created")
-            else timezone.now(),
-            is_active=True,
-        )
-
-        # Set unusable password (users will need to reset)
-        user.set_unusable_password()
-        user.save()
-
-        # Create CustomerProfile with external_id
-        CustomerProfile.objects.create(
-            user=user,
-            external_id=external_id,
-            migration_job=self.job,
-            phone=customer_data.get("billing", {}).get("phone", ""),
-        )
-
-        # Create billing address if provided
-        billing = customer_data.get("billing", {})
-        if billing.get("address_1"):
-            Address.objects.create(
-                user=user,
-                address_type="billing",
-                name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
-                company=billing.get("company", ""),
-                address1=billing.get("address_1", ""),
-                address2=billing.get("address_2", ""),
-                city=billing.get("city", ""),
-                state=billing.get("state", ""),
-                postal_code=billing.get("postcode", ""),
-                country=billing.get("country", ""),
-                phone=billing.get("phone", ""),
-                is_default=True,
-            )
-
-        # Create shipping address if provided and different from billing
-        shipping = customer_data.get("shipping", {})
-        if shipping.get("address_1"):
-            # Check if shipping is different from billing
-            is_different = (
-                shipping.get("address_1") != billing.get("address_1")
-                or shipping.get("city") != billing.get("city")
-                or shipping.get("postcode") != billing.get("postcode")
-            )
-
-            if is_different:
-                Address.objects.create(
-                    user=user,
-                    address_type="shipping",
-                    name=f"{shipping.get('first_name', '')} {shipping.get('last_name', '')}".strip(),
-                    company=shipping.get("company", ""),
-                    address1=shipping.get("address_1", ""),
-                    address2=shipping.get("address_2", ""),
-                    city=shipping.get("city", ""),
-                    state=shipping.get("state", ""),
-                    postal_code=shipping.get("postcode", ""),
-                    country=shipping.get("country", ""),
-                    phone=billing.get(
-                        "phone", ""
-                    ),  # Use billing phone as shipping often doesn't have one
-                    is_default=True,
-                )
+            return user
 
         step.items_imported += 1
         step.save()
 
-        logger.debug(f"Imported customer: {user.email}")
+        if linked_existing:
+            logger.debug(f"Linked existing user {email} to WooCommerce customer {external_id}")
+        else:
+            logger.debug(f"Imported customer: {user.email}")
         return user
 
     def _import_orders(self):
@@ -1518,7 +1644,7 @@ class ImportExecutor:
             self.job.orders_imported = step.items_imported
             self.job.orders_failed = step.items_failed
             self.job.orders_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["orders_imported", "orders_failed", "orders_skipped"])
 
             # Update overall progress
             self._update_overall_progress()
@@ -1560,26 +1686,6 @@ class ImportExecutor:
                 if email:
                     user = User.objects.filter(email=email).first()
 
-        # If no user found, create a guest user
-        if not user:
-            email = order_data.get("billing", {}).get("email", f"guest_{external_id}@example.com")
-            username = f"guest_{external_id}"
-
-            # Check if guest user already exists (from previous import attempts)
-            existing_guest = User.objects.filter(username=username).first()
-            if existing_guest:
-                user = existing_guest
-            else:
-                user = User.objects.create(
-                    username=username,
-                    email=email,
-                    first_name=order_data.get("billing", {}).get("first_name", "Guest"),
-                    last_name=order_data.get("billing", {}).get("last_name", ""),
-                    is_active=False,  # Guest users are inactive per django-SHOP best practices
-                )
-                user.set_unusable_password()
-                user.save()
-
         # Map WooCommerce status to platform status
         status_mapping = {
             "pending": "pending",
@@ -1595,52 +1701,80 @@ class ImportExecutor:
         # Get currency
         currency = order_data.get("currency") or self._get_currency()
 
-        # Create Order
         billing = order_data.get("billing", {})
         shipping = order_data.get("shipping", {})
 
-        order = Order.objects.create(
-            order_number=order_data.get("number", external_id),
-            user=user,
-            external_id=external_id,
-            migration_job=self.job,
-            status=status,
-            email=billing.get("email", ""),
-            phone=billing.get("phone", ""),
-            # Shipping address
-            shipping_name=f"{shipping.get('first_name', '')} {shipping.get('last_name', '')}".strip()
-            or billing.get("first_name", ""),
-            shipping_address1=shipping.get("address_1", "") or billing.get("address_1", ""),
-            shipping_address2=shipping.get("address_2", ""),
-            shipping_city=shipping.get("city", "") or billing.get("city", ""),
-            shipping_state=shipping.get("state", "") or billing.get("state", ""),
-            shipping_postal_code=shipping.get("postcode", "") or billing.get("postcode", ""),
-            shipping_country=shipping.get("country", "") or billing.get("country", ""),
-            # Billing address
-            billing_same_as_shipping=False,
-            billing_name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
-            billing_address1=billing.get("address_1", ""),
-            billing_address2=billing.get("address_2", ""),
-            billing_city=billing.get("city", ""),
-            billing_state=billing.get("state", ""),
-            billing_postal_code=billing.get("postcode", ""),
-            billing_country=billing.get("country", ""),
-            # Totals
-            subtotal=transform_money(order_data.get("total", 0), currency),
-            tax_amount=transform_money(order_data.get("total_tax", 0), currency),
-            shipping_cost=transform_money(order_data.get("shipping_total", 0), currency),
-            discount_amount=transform_money(order_data.get("discount_total", 0), currency),
-            total_amount=transform_money(order_data.get("total", 0), currency),
-            # Notes
-            special_instructions=order_data.get("customer_note", ""),
-            # Language — use source data if available, otherwise site default
-            language=order_data.get("language", "") or self._get_site_default_language(),
-            created_at=timezone.datetime.fromisoformat(
-                order_data.get("date_created", "").replace("Z", "+00:00")
+        # The guest-user create (if needed) and the order create share one
+        # transaction, so a failure partway through the order never leaves a
+        # guest account with no order behind it. Line items are deliberately
+        # NOT inside this block — a bad line item is meant to be skipped
+        # without losing the rest of the order, and that only works if its
+        # failure can't roll back what came before it.
+        with transaction.atomic():
+            # If no user found, create a guest user
+            if not user:
+                email = order_data.get("billing", {}).get(
+                    "email", f"guest_{external_id}@example.com"
+                )
+                username = f"guest_{external_id}"
+
+                # Check if guest user already exists (from previous import attempts)
+                existing_guest = User.objects.filter(username=username).first()
+                if existing_guest:
+                    user = existing_guest
+                else:
+                    user = User.objects.create(
+                        username=username,
+                        email=email,
+                        first_name=order_data.get("billing", {}).get("first_name", "Guest"),
+                        last_name=order_data.get("billing", {}).get("last_name", ""),
+                        is_active=False,  # Guest users are inactive per django-SHOP best practices
+                    )
+                    user.set_unusable_password()
+                    user.save()
+
+            order = Order.objects.create(
+                order_number=order_data.get("number", external_id),
+                user=user,
+                external_id=external_id,
+                migration_job=self.job,
+                status=status,
+                email=billing.get("email", ""),
+                phone=billing.get("phone", ""),
+                # Shipping address
+                shipping_name=f"{shipping.get('first_name', '')} {shipping.get('last_name', '')}".strip()
+                or billing.get("first_name", ""),
+                shipping_address1=shipping.get("address_1", "") or billing.get("address_1", ""),
+                shipping_address2=shipping.get("address_2", ""),
+                shipping_city=shipping.get("city", "") or billing.get("city", ""),
+                shipping_state=shipping.get("state", "") or billing.get("state", ""),
+                shipping_postal_code=shipping.get("postcode", "") or billing.get("postcode", ""),
+                shipping_country=shipping.get("country", "") or billing.get("country", ""),
+                # Billing address
+                billing_same_as_shipping=False,
+                billing_name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
+                billing_address1=billing.get("address_1", ""),
+                billing_address2=billing.get("address_2", ""),
+                billing_city=billing.get("city", ""),
+                billing_state=billing.get("state", ""),
+                billing_postal_code=billing.get("postcode", ""),
+                billing_country=billing.get("country", ""),
+                # Totals
+                subtotal=transform_money(order_data.get("total", 0), currency),
+                tax_amount=transform_money(order_data.get("total_tax", 0), currency),
+                shipping_cost=transform_money(order_data.get("shipping_total", 0), currency),
+                discount_amount=transform_money(order_data.get("discount_total", 0), currency),
+                total_amount=transform_money(order_data.get("total", 0), currency),
+                # Notes
+                special_instructions=order_data.get("customer_note", ""),
+                # Language — use source data if available, otherwise site default
+                language=order_data.get("language", "") or self._get_site_default_language(),
+                created_at=timezone.datetime.fromisoformat(
+                    order_data.get("date_created", "").replace("Z", "+00:00")
+                )
+                if order_data.get("date_created")
+                else timezone.now(),
             )
-            if order_data.get("date_created")
-            else timezone.now(),
-        )
 
         # Import order line items
         line_items = order_data.get("line_items", [])
@@ -1763,7 +1897,7 @@ class ImportExecutor:
             self.job.reviews_imported = step.items_imported
             self.job.reviews_failed = step.items_failed
             self.job.reviews_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["reviews_imported", "reviews_failed", "reviews_skipped"])
 
             # Update overall progress
             self._update_overall_progress()
@@ -1925,7 +2059,7 @@ class ImportExecutor:
             self.job.coupons_imported = step.items_imported
             self.job.coupons_failed = step.items_failed
             self.job.coupons_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["coupons_imported", "coupons_failed", "coupons_skipped"])
 
             # Update overall progress
             self._update_overall_progress()
@@ -1977,46 +2111,51 @@ class ImportExecutor:
                 coupon_data.get("date_expires").replace("Z", "+00:00")
             )
 
-        # Create VoucherCode
-        voucher = VoucherCode.objects.create(
-            code=code.upper(),  # Store codes in uppercase
-            name=coupon_data.get("description", code) or code,
-            description=coupon_data.get("description", ""),
-            external_id=external_id,
-            migration_job=self.job,
-            discount_type=discount_type,
-            discount_value=Decimal(coupon_data.get("amount", 0)),
-            max_discount_amount=transform_money(coupon_data.get("maximum_amount", 0), currency)
-            if coupon_data.get("maximum_amount")
-            else None,
-            application_scope="cart",  # WooCommerce coupons apply to cart
-            end_date=end_date,
-            max_uses_total=coupon_data.get("usage_limit")
-            if coupon_data.get("usage_limit")
-            else None,
-            max_uses_per_customer=coupon_data.get("usage_limit_per_user")
-            if coupon_data.get("usage_limit_per_user")
-            else None,
-            current_uses=coupon_data.get("usage_count", 0),
-            min_order_value=transform_money(coupon_data.get("minimum_amount", 0), currency)
-            if coupon_data.get("minimum_amount")
-            else None,
-            exclude_sale_items=coupon_data.get("exclude_sale_items", False),
-            cannot_combine_with_other_vouchers=coupon_data.get("individual_use", False),
-            is_active=True,
-        )
+        # The voucher create and its eligible-products/categories links share
+        # one transaction, so a failure partway through never leaves a
+        # voucher live with only some of its scoping rules attached.
+        with transaction.atomic():
+            voucher = VoucherCode.objects.create(
+                code=code.upper(),  # Store codes in uppercase
+                name=coupon_data.get("description", code) or code,
+                description=coupon_data.get("description", ""),
+                external_id=external_id,
+                migration_job=self.job,
+                discount_type=discount_type,
+                discount_value=Decimal(coupon_data.get("amount", 0)),
+                max_discount_amount=transform_money(coupon_data.get("maximum_amount", 0), currency)
+                if coupon_data.get("maximum_amount")
+                else None,
+                application_scope="cart",  # WooCommerce coupons apply to cart
+                end_date=end_date,
+                max_uses_total=coupon_data.get("usage_limit")
+                if coupon_data.get("usage_limit")
+                else None,
+                max_uses_per_customer=coupon_data.get("usage_limit_per_user")
+                if coupon_data.get("usage_limit_per_user")
+                else None,
+                current_uses=coupon_data.get("usage_count", 0),
+                min_order_value=transform_money(coupon_data.get("minimum_amount", 0), currency)
+                if coupon_data.get("minimum_amount")
+                else None,
+                exclude_sale_items=coupon_data.get("exclude_sale_items", False),
+                cannot_combine_with_other_vouchers=coupon_data.get("individual_use", False),
+                is_active=True,
+            )
 
-        # Link eligible products if specified
-        product_ids = coupon_data.get("product_ids", [])
-        if product_ids:
-            products = Product.objects.filter(external_id__in=[str(pid) for pid in product_ids])
-            voucher.eligible_products.set(products)
+            # Link eligible products if specified
+            product_ids = coupon_data.get("product_ids", [])
+            if product_ids:
+                products = Product.objects.filter(external_id__in=[str(pid) for pid in product_ids])
+                voucher.eligible_products.set(products)
 
-        # Link eligible categories if specified
-        category_ids = coupon_data.get("product_categories", [])
-        if category_ids:
-            categories = Category.objects.filter(external_id__in=[str(cid) for cid in category_ids])
-            voucher.eligible_categories.set(categories)
+            # Link eligible categories if specified
+            category_ids = coupon_data.get("product_categories", [])
+            if category_ids:
+                categories = Category.objects.filter(
+                    external_id__in=[str(cid) for cid in category_ids]
+                )
+                voucher.eligible_categories.set(categories)
 
         step.items_imported += 1
         step.save()
@@ -2171,7 +2310,7 @@ class ImportExecutor:
         steps = self.job.steps.all()
         if not steps.exists():
             self.job.progress_percent = 0
-            self.job.save()
+            self.job.save(update_fields=["progress_percent"])
             return
 
         # Calculate based on total items across ALL imports, not average of steps
@@ -2185,7 +2324,7 @@ class ImportExecutor:
         else:
             self.job.progress_percent = 0
 
-        self.job.save()
+        self.job.save(update_fields=["progress_percent"])
 
     def _import_blog(self):
         """Import WordPress blog posts, categories, and tags"""
@@ -2302,7 +2441,23 @@ class ImportExecutor:
             self.job.media_imported = (self.job.media_imported or 0) + media_stats.get(
                 "imported", 0
             )
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "blog_categories_total",
+                    "blog_categories_imported",
+                    "blog_categories_skipped",
+                    "blog_categories_failed",
+                    "blog_tags_total",
+                    "blog_tags_imported",
+                    "blog_tags_skipped",
+                    "blog_tags_failed",
+                    "blog_posts_total",
+                    "blog_posts_imported",
+                    "blog_posts_skipped",
+                    "blog_posts_failed",
+                    "media_imported",
+                ]
+            )
 
             # Update overall progress
             self._update_overall_progress()
@@ -2452,7 +2607,22 @@ class ImportExecutor:
             self.job.payouts_skipped = pay_stats.get("skipped", 0)
             self.job.payouts_failed = pay_stats.get("errors", 0)
 
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "affiliates_total",
+                    "affiliates_imported",
+                    "affiliates_skipped",
+                    "affiliates_failed",
+                    "commissions_total",
+                    "commissions_imported",
+                    "commissions_skipped",
+                    "commissions_failed",
+                    "payouts_total",
+                    "payouts_imported",
+                    "payouts_skipped",
+                    "payouts_failed",
+                ]
+            )
             self._update_overall_progress()
 
             self._log(

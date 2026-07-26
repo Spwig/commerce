@@ -843,19 +843,92 @@ def initiate_refund(request, order_number):
     if not refund_amount:
         refund_amount = order.amount_paid.amount - order.amount_refunded.amount
 
-    # Update order (simplified - actual refund would involve payment provider)
-    order.amount_refunded.amount += refund_amount
+    # Actually refund the customer.
+    #
+    # This used to increment order.amount_refunded and set the status, with a
+    # comment conceding it was "simplified - actual refund would involve payment
+    # provider". Nothing moved: a merchant refunded from the phone, the app and
+    # the order both said "refunded", and the customer received nothing. The
+    # only signal anything was wrong would have been the customer complaining.
+    #
+    # Refund.execute() splits across the tenders that paid (gift card before
+    # gateway), writes the ledger rows, and recomputes amount_refunded from
+    # those rows rather than incrementing a field.
+    from django.db import transaction as db_transaction
+    from djmoney.money import Money
 
-    # Update status based on refund
-    if order.amount_refunded.amount >= order.amount_paid.amount:
-        order.status = "refunded"
-        order.payment_status = "refunded"
-    else:
-        order.payment_status = "partially_refunded"
+    from orders.models import Order as OrderModel
+    from orders.models import Refund
+    from orders.services.tender_refund_allocator import RefundAllocationError
+
+    # Create the Refund under the order lock, refusing if one is already in
+    # flight. Without this, a double-tapped refund button creates two Refund
+    # rows, and two execute() calls can each plan against the same free capacity
+    # before the other's rows commit — an over-refund. The allocator now holds
+    # the lock across its own money movement too; this is the second layer, so a
+    # duplicate never reaches execution in the first place.
+    try:
+        with db_transaction.atomic():
+            locked_order = OrderModel.objects.select_for_update().get(pk=order.pk)
+            if locked_order.refunds.filter(
+                status__in=("requested", "approved", "processing")
+            ).exists():
+                return Response(
+                    {
+                        "success": False,
+                        "error": {
+                            "code": 409,
+                            "message": _("A refund is already in progress for this order."),
+                            "reference": generate_error_reference(),
+                        },
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+            refund = Refund.objects.create(
+                order=locked_order,
+                refund_type="full"
+                if refund_amount
+                >= (locked_order.amount_paid.amount - locked_order.amount_refunded.amount)
+                else "partial",
+                reason="customer_request",
+                status="processing",
+                total_amount=Money(refund_amount, locked_order.amount_paid.currency),
+                processed_by=request.user,
+                staff_notes=reason or "",
+            )
+    except OrderModel.DoesNotExist:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 404,
+                    "message": _("Order not found."),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    try:
+        refund.execute(reason=reason)
+    except RefundAllocationError as exc:
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": 400,
+                    "message": str(exc),
+                    "reference": generate_error_reference(),
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    order.refresh_from_db()
 
     if reason:
         order.notes = f"{order.notes}\n\n[{timezone.now().strftime('%Y-%m-%d %H:%M')}] Refund initiated ({refund_amount}): {reason}".strip()
-    order.save()
+        order.save(update_fields=["notes"])
 
     # Audit log
     AuditService.log(

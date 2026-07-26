@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Indonesian <LL@li.org>\n"
@@ -18,15 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:58
 msgid "-- Select Provider --"
 msgstr "-- Pilih Penyedia --"
 
+#: admin.py:200 admin.py:212
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:149
+#: templates/admin/sms_system/wizard/step3_credentials.html:33
 msgid "Provider Credentials"
 msgstr "Kredensial Penyedia"
 
+#: admin.py:203
 msgid "Enter your provider API credentials."
 msgstr "Masukkan kredensial API penyedia Anda."
 
+#: admin.py:216
 msgid ""
 "Select a provider above to see credential fields, or use the Setup Wizard "
 "for a guided experience."
@@ -34,249 +40,384 @@ msgstr ""
 "Pilih penyedia di atas untuk melihat bidang kredensial, atau gunakan Setup "
 "Wizard untuk pengalaman yang diarahkan."
 
+#: admin.py:226
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:178
+#: templates/admin/sms_system/wizard/step4_test.html:53
 msgid "Default Settings"
 msgstr "Pengaturan Default"
 
+#: admin.py:237 models.py:92
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:202
 msgid "Connection Status"
 msgstr "Status Koneksi"
 
+#: admin.py:248 admin.py:347
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:228
 msgid "Timestamps"
 msgstr "Timestamp"
 
+#: admin.py:273 models.py:76 models.py:251
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:32
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:69
+#: templates/admin/sms_system/smstemplate/change_list.html:82
 msgid "Active"
 msgstr "Aktif"
 
+#: admin.py:274
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:34
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:73
+#: templates/admin/sms_system/smstemplate/change_list.html:86
 msgid "Inactive"
 msgstr "Tidak Aktif"
 
+#: admin.py:276 admin.py:410 models.py:334
+#: templates/admin/sms_system/smsoutbox/change_list.html:76
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:108
+#: templates/admin/sms_system/wizard/complete.html:30
 msgid "Status"
 msgstr "Status"
 
+#: admin.py:281
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:37
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:79
+#: templates/admin/sms_system/wizard/complete.html:40
 msgid "Default SMS"
 msgstr "SMS Default"
 
+#: admin.py:284 models.py:290
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:56
+#: templates/admin/sms_system/provider_browse.html:130
+#: templates/admin/sms_system/smsoutbox/change_list.html:96
 msgid "SMS"
 msgstr "SMS"
 
+#: admin.py:290
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:40
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:85
+#: templates/admin/sms_system/wizard/complete.html:50
 msgid "Default WhatsApp"
 msgstr "WhatsApp Default"
 
+#: admin.py:294 models.py:291
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:52
+#: templates/admin/sms_system/provider_browse.html:135
+#: templates/admin/sms_system/smsoutbox/change_list.html:97
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: admin.py:308
 msgid "Connection"
 msgstr "Koneksi"
 
+#: admin.py:338
 msgid "Message Content"
 msgstr "Isi Pesan"
 
+#: admin.py:342
 #, python-brace-format
 msgid ""
 "Use {variable} syntax for placeholders. Example: \"Hello {name}, your order "
 "#{order_number} is ready.\""
 msgstr ""
-"Gunakan sintaks {variable} untuk placeholder. Contoh: \"Halo {name}, pesanan "
-"Anda #{order_number} siap.\""
+"Gunakan sintaks {variable} untuk placeholder. Contoh: \"Halo {name}, pesanan"
+" Anda #{order_number} siap.\""
 
+#: apps.py:8
 msgid "SMS System"
 msgstr "Sistem SMS"
 
+#: models.py:39
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:47
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:99
 msgid "Untested"
 msgstr "Belum diuji"
 
+#: models.py:40
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:43
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:91
+#: templates/admin/sms_system/wizard/complete.html:33
 msgid "Connected"
 msgstr "Terhubung"
 
+#: models.py:41
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:24
 msgid "Connection Failed"
 msgstr "Koneksi Gagal"
 
+#: models.py:52 templates/admin/sms_system/wizard/complete.html:26
 msgid "Provider"
 msgstr "Penyedia"
 
+#: models.py:53
 msgid "SMS/messaging service provider"
 msgstr "Penyedia Layanan SMS/Pesan"
 
+#: models.py:62
 msgid "Provider Component"
 msgstr "Komponen Penyedia"
 
+#: models.py:63
 msgid "Reference to installed provider component"
 msgstr "Referensi ke komponen penyedia yang terinstal"
 
+#: models.py:67 templates/admin/sms_system/wizard/complete.html:22
+#: templates/admin/sms_system/wizard/step3_credentials.html:20
 msgid "Display Name"
 msgstr "Nama Tampilan"
 
+#: models.py:68
 msgid "Friendly name for this account"
 msgstr "Nama ramah untuk akun ini"
 
+#: models.py:71
 msgid "Encrypted Credentials"
 msgstr "Kredensial Terenkripsi"
 
+#: models.py:72
 msgid "Encrypted API credentials for this provider"
 msgstr "Kredensial API terenkripsi untuk penyedia ini"
 
+#: models.py:80
 msgid "Default SMS Account"
 msgstr "Akun SMS Default"
 
+#: models.py:81
 msgid "Use this account for sending SMS by default"
 msgstr "Gunakan akun ini untuk mengirim SMS secara default"
 
+#: models.py:85
 msgid "Default WhatsApp Account"
 msgstr "Akun WhatsApp Default"
 
+#: models.py:86
 msgid "Use this account for sending WhatsApp messages by default"
 msgstr "Gunakan akun ini untuk mengirim pesan WhatsApp secara default"
 
+#: models.py:97
 msgid "Last Checked"
 msgstr "Terakhir Diperiksa"
 
+#: models.py:103
 msgid "SMS Provider Account"
 msgstr "Akun Penyedia SMS"
 
+#: models.py:104
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:21
 msgid "SMS Provider Accounts"
 msgstr "Akun Penyedia SMS"
 
+#: models.py:225
 msgid "POS Receipt"
 msgstr "Struk POS"
 
+#: models.py:226
 msgid "Order Confirmation"
 msgstr "Konfirmasi Pesanan"
 
+#: models.py:227
 msgid "Shipping Update"
 msgstr "Pembaruan Pengiriman"
 
+#: models.py:228
 msgid "Delivery Notification"
 msgstr "Pemberitahuan Pengiriman"
 
+#: models.py:229
 msgid "Password Reset"
 msgstr "Atur Ulang Kata Sandi"
 
+#: models.py:230
 msgid "Verification Code"
 msgstr "Kode Verifikasi"
 
+#: models.py:231
 msgid "Marketing"
 msgstr "Pemasaran"
 
+#: models.py:232
 msgid "Custom"
 msgstr "Kustom"
 
+#: models.py:239
 msgid "Template Type"
 msgstr "Jenis Template"
 
+#: models.py:243
 msgid "Name"
 msgstr "Nama"
 
+#: models.py:246 models.py:328
 msgid "Message"
 msgstr "Pesan"
 
+#: models.py:247
 #, python-brace-format
 msgid "Message template. Use {variable} syntax for placeholders."
 msgstr "Template pesan. Gunakan sintaks {variable} untuk placeholder."
 
+#: models.py:257
 msgid "SMS Template"
 msgstr "Template SMS"
 
+#: models.py:258 templates/admin/sms_system/smstemplate/change_list.html:4
+#: templates/admin/sms_system/smstemplate/change_list.html:21
 msgid "SMS Templates"
 msgstr "Template SMS"
 
+#: models.py:280 templates/admin/sms_system/partials/smsoutbox_cards.html:26
+#: templates/admin/sms_system/smsoutbox/change_list.html:80
 msgid "Pending"
 msgstr "Menunggu"
 
+#: models.py:281 templates/admin/sms_system/partials/smsoutbox_cards.html:30
+#: templates/admin/sms_system/smsoutbox/change_list.html:81
 msgid "Queued"
 msgstr "Diantrikan"
 
+#: models.py:282 templates/admin/sms_system/partials/smsoutbox_cards.html:34
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsoutbox/change_list.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:82
 msgid "Sent"
 msgstr "Dikirim"
 
+#: models.py:283 templates/admin/sms_system/partials/smsoutbox_cards.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:43
+#: templates/admin/sms_system/smsoutbox/change_list.html:83
 msgid "Delivered"
 msgstr "Diterima"
 
+#: models.py:284 templates/admin/sms_system/partials/smsoutbox_cards.html:42
+#: templates/admin/sms_system/smsoutbox/change_list.html:48
+#: templates/admin/sms_system/smsoutbox/change_list.html:84
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:45
 msgid "Failed"
 msgstr "Gagal"
 
+#: models.py:285 templates/admin/sms_system/partials/smsoutbox_cards.html:46
+#: templates/admin/sms_system/smsoutbox/change_list.html:85
 msgid "Skipped"
 msgstr "Dilewati"
 
+#: models.py:286
+msgid "Sandbox Logged"
+msgstr "Terdaftar di Sandbox"
+
+#: models.py:306
 msgid "Provider Account"
 msgstr "Akun Penyedia"
 
+#: models.py:314
 msgid "Template"
 msgstr "Template"
 
+#: models.py:320 templates/admin/sms_system/smsoutbox/change_list.html:92
 msgid "Message Type"
 msgstr "Jenis Pesan"
 
+#: models.py:324
 msgid "Phone Number"
 msgstr "Nomor Telepon"
 
+#: models.py:325
 msgid "Recipient phone number in E.164 format"
 msgstr "Nomor telepon penerima dalam format E.164"
 
+#: models.py:339
 msgid "Provider Message ID"
 msgstr "ID Pesan Penyedia"
 
+#: models.py:340
 msgid "Message ID from the SMS provider"
 msgstr "ID pesan dari penyedia SMS"
 
+#: models.py:344
 msgid "Error Message"
 msgstr "Pesan Kesalahan"
 
+#: models.py:349
 msgid "Skip Reason"
 msgstr "Alasan Melewatkan"
 
+#: models.py:350
 msgid ""
 "Reason why SMS was skipped (e.g., user_preference_disabled, unsubscribed)"
 msgstr ""
 "Alasan mengapa SMS dilewati (misalnya, user_preference_disabled, "
 "unsubscribed)"
 
+#: models.py:354
 msgid "Retry Count"
 msgstr "Jumlah Ulangi"
 
+#: models.py:360
 msgid "Queued At"
 msgstr "Diantrikan Pada"
 
+#: models.py:365
 msgid "Sent At"
 msgstr "Dikirim Pada"
 
+#: models.py:370
 msgid "Delivered At"
 msgstr "Diterima Pada"
 
+#: models.py:374 models.py:375
 msgid "SMS Outbox"
 msgstr "Kotak Keluar SMS"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:64
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "ago"
 msgstr "yang lalu"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:75
 #, python-format
 msgid "%(counter)s retry"
 msgid_plural "%(counter)s retries"
 msgstr[0] "%(counter)s ulang"
 msgstr[1] "%(counter)s ulang"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:88
 msgid "View"
 msgstr "Lihat"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:100
 msgid "No messages found matching your criteria."
 msgstr "Tidak ada pesan yang cocok dengan kriteria Anda."
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:101
 msgid "Try adjusting your filters or search terms."
 msgstr "Coba sesuaikan filter atau kata kunci pencarian Anda."
 
+#: templates/admin/sms_system/provider_browse.html:4
+#: templates/admin/sms_system/provider_browse.html:36
 msgid "Browse SMS Providers"
 msgstr "Lihat Penyedia SMS"
 
+#: templates/admin/sms_system/provider_browse.html:4
 msgid "Site Admin"
 msgstr "Admin Situs"
 
+#: templates/admin/sms_system/provider_browse.html:25
 msgid "Home"
 msgstr "Beranda"
 
+#: templates/admin/sms_system/provider_browse.html:26
 msgid "SMS Accounts"
 msgstr "Akun SMS"
 
+#: templates/admin/sms_system/provider_browse.html:27
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:33
+#: templates/admin/sms_system/wizard/step1_select.html:58
 msgid "Browse Providers"
 msgstr "Lihat Penyedia"
 
+#: templates/admin/sms_system/provider_browse.html:38
 msgid ""
 "Choose an SMS provider to integrate with your store. Send transactional SMS "
 "and WhatsApp messages to your customers."
@@ -284,9 +425,11 @@ msgstr ""
 "Pilih penyedia SMS untuk diintegrasikan dengan toko Anda. Kirim pesan SMS "
 "dan WhatsApp transaksional kepada pelanggan Anda."
 
+#: templates/admin/sms_system/provider_browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Server Pembaruan Tidak Tersedia"
 
+#: templates/admin/sms_system/provider_browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -294,9 +437,11 @@ msgstr ""
 "Tidak dapat terhubung ke server pembaruan. Hanya menampilkan penyedia yang "
 "terinstal lokal."
 
+#: templates/admin/sms_system/provider_browse.html:57
 msgid "SMS Provider Marketplace"
 msgstr "Pasar Penyedia SMS"
 
+#: templates/admin/sms_system/provider_browse.html:69
 msgid ""
 "Here you can discover and configure SMS providers to send transactional "
 "messages, including order confirmations, shipping updates, and delivery "
@@ -306,36 +451,47 @@ msgstr ""
 "pesan transaksional, termasuk konfirmasi pesanan, pembaruan pengiriman, dan "
 "pemberitahuan pengiriman."
 
+#: templates/admin/sms_system/provider_browse.html:76
 msgid "Capabilities:"
 msgstr "Kemampuan:"
 
+#: templates/admin/sms_system/provider_browse.html:81
 msgid "Send SMS order confirmations and shipping notifications"
 msgstr "Kirim konfirmasi pesanan SMS dan pemberitahuan pengiriman"
 
+#: templates/admin/sms_system/provider_browse.html:85
 msgid "WhatsApp Business messaging support"
 msgstr "Dukungan Pesan Bisnis WhatsApp"
 
+#: templates/admin/sms_system/provider_browse.html:89
 msgid "Delivery status tracking and webhooks"
 msgstr "Pelacakan Status Pengiriman dan Webhooks"
 
+#: templates/admin/sms_system/provider_browse.html:93
 msgid "POS digital receipts via SMS"
 msgstr "Struk Digital POS melalui SMS"
 
+#: templates/admin/sms_system/provider_browse.html:101
 msgid "Getting Started:"
 msgstr "Memulai:"
 
+#: templates/admin/sms_system/provider_browse.html:104
 msgid "Browse providers below and select your SMS service"
 msgstr "Lihat penyedia di bawah ini dan pilih layanan SMS Anda"
 
+#: templates/admin/sms_system/provider_browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Klik 'Pasang' untuk menambahkan penyedia ke toko Anda"
 
+#: templates/admin/sms_system/provider_browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr "Ikuti wizard pengaturan untuk mengonfigurasi kredensial API"
 
+#: templates/admin/sms_system/provider_browse.html:107
 msgid "Test the connection and start sending messages"
 msgstr "Uji koneksi dan mulai mengirim pesan"
 
+#: templates/admin/sms_system/provider_browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -354,51 +510,70 @@ msgstr[1] ""
 "                    %(counter)s provider installed\n"
 "                "
 
+#: templates/admin/sms_system/provider_browse.html:140
 msgid "MMS"
 msgstr "MMS"
 
+#: templates/admin/sms_system/provider_browse.html:143
 msgid "Filter"
 msgstr "Saring"
 
+#: templates/admin/sms_system/provider_browse.html:145
 msgid "Clear"
 msgstr "Hapus"
 
+#: templates/admin/sms_system/provider_browse.html:157
 msgid "Installed Providers"
 msgstr "Penyedia yang Terinstal"
 
+#: templates/admin/sms_system/provider_browse.html:168
 msgid "Update Available"
 msgstr "Pembaruan Tersedia"
 
+#: templates/admin/sms_system/provider_browse.html:191
 msgid "Installed"
 msgstr "Terinstal"
 
+#: templates/admin/sms_system/provider_browse.html:234
 msgid "Delivery Reports"
 msgstr "Laporan Pengiriman"
 
+#: templates/admin/sms_system/provider_browse.html:260
 msgid "Update"
 msgstr "Perbarui"
 
+#: templates/admin/sms_system/provider_browse.html:265
 msgid "Configure"
 msgstr "Konfigurasi"
 
+#: templates/admin/sms_system/provider_browse.html:274
+#: templates/admin/sms_system/provider_browse.html:377
 msgid "View Details"
 msgstr "Lihat Detail"
 
+#: templates/admin/sms_system/provider_browse.html:282
+#: templates/admin/sms_system/provider_browse.html:385
 msgid "Learn More"
 msgstr "Pelajari Lebih Lanjut"
 
+#: templates/admin/sms_system/provider_browse.html:298
 msgid "Available from Marketplace"
 msgstr "Tersedia dari Pasar"
 
+#: templates/admin/sms_system/provider_browse.html:324
 msgid "Available"
 msgstr "Tersedia"
 
+#: templates/admin/sms_system/provider_browse.html:369
 msgid "Install"
 msgstr "Instal"
 
+#: templates/admin/sms_system/provider_browse.html:402
+#: templates/admin/sms_system/wizard/step1_select.html:55
 msgid "No Providers Available"
 msgstr "Tidak Ada Penyedia Tersedia"
 
+#: templates/admin/sms_system/provider_browse.html:403
 msgid ""
 "No SMS providers are currently available. Please check your update server "
 "connection or contact support."
@@ -406,200 +581,279 @@ msgstr ""
 "Tidak ada penyedia SMS yang tersedia saat ini. Silakan periksa koneksi "
 "server pembaruan Anda atau hubungi dukungan."
 
+#: templates/admin/sms_system/provider_browse.html:412
 msgid "Installing provider..."
 msgstr "Memasang penyedia..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:4
+#: templates/admin/sms_system/smsoutbox/change_list.html:21
 msgid "Message Log"
 msgstr "Log Pesan"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:23
 msgid "Track sent SMS and WhatsApp messages"
 msgstr "Lacak SMS dan pesan WhatsApp yang telah dikirim"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:28
 msgid "Overview"
 msgstr "Gambaran"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:33
 msgid "Total Messages"
 msgstr "Total Pesan"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:57
 msgid "Filters"
 msgstr "Filter"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:68
 msgid "Search"
 msgstr "Cari"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:70
 msgid "Phone number or message..."
 msgstr "Nomor telepon atau pesan..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:79
 msgid "All Statuses"
 msgstr "Semua Status"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:95
 msgid "All Types"
 msgstr "Semua Tipe"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:106
 msgid "Apply Filters"
 msgstr "Terapkan Filter"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:109
 msgid "Clear All"
 msgstr "Bersihkan Semua"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:117
 msgid "Messages"
 msgstr "Pesan"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:120
 msgid "messages"
 msgstr "pesan"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:130
 msgid "Loading messages..."
 msgstr "Memuat pesan..."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:22
 msgid "Edit SMS Provider"
 msgstr "Sunting Pemberi Layanan SMS"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:24
 msgid "Add SMS Provider"
 msgstr "Tambah Pemberi Layanan SMS"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:30
 msgid "Created"
 msgstr "Dibuat"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:53
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:253
 msgid "Save and continue editing"
 msgstr "Simpan dan lanjutkan mengedit"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:56
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:252
 msgid "Save"
 msgstr "Simpan"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:69
 msgid "Please correct the errors below"
 msgstr "Silakan perbaiki kesalahan di bawah ini"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:95
 msgid "Basic"
 msgstr "Dasar"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:99
+#: templates/admin/sms_system/wizard/base.html:45
 msgid "Credentials"
 msgstr "Kredensial"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:103
 msgid "Defaults"
 msgstr "Pengaturan Default"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:119
 msgid "Basic Information"
 msgstr "Informasi Dasar"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:165
 msgid "Select a provider in the Basic tab to see credential fields."
 msgstr "Pilih penyedia di tab Basic untuk melihat bidang kredensial."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:179
 msgid "Configure which messaging channels use this provider by default."
 msgstr ""
 "Konfigurasikan saluran pesan mana yang menggunakan penyedia ini sebagai "
 "default."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:23
 msgid "Manage your SMS and WhatsApp provider connections"
 msgstr "Kelola koneksi penyedia SMS dan WhatsApp Anda"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:28
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:131
 msgid "Setup Wizard"
 msgstr "Panduan Setup"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:42
 msgid "Provider Accounts"
 msgstr "Akun Penyedia"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:45
 msgid "accounts"
 msgstr "akun"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
 msgid "Last checked"
 msgstr "Terakhir diperiksa"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:115
+#: templates/admin/sms_system/smstemplate/change_list.html:100
 msgid "Edit"
 msgstr "Sunting"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:127
 msgid "No provider accounts configured."
 msgstr "Tidak ada akun penyedia yang dikonfigurasikan."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:128
 msgid "Use the Setup Wizard to add one."
 msgstr "Gunakan Setup Wizard untuk menambahkannya."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:23
 msgid "Manage message templates for SMS and WhatsApp notifications"
 msgstr "Kelola template pesan untuk notifikasi SMS dan WhatsApp"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:27
+#: templates/admin/sms_system/smstemplate/change_list.html:118
 msgid "Add Template"
 msgstr "Tambah Template"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:35
 msgid "Templates"
 msgstr "Template"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:38
 msgid "templates"
 msgstr "templates"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "Updated"
 msgstr "Diperbarui"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:103
 msgid "Delete"
 msgstr "Hapus"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:115
 msgid "No SMS templates configured yet."
 msgstr "Belum ada template SMS yang dikonfigurasikan."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:116
 msgid "Create a template to get started with SMS notifications."
 msgstr "Buat template untuk memulai notifikasi SMS."
 
+#: templates/admin/sms_system/wizard/base.html:4
 msgid "SMS Provider Setup"
 msgstr "Pengaturan Pemasok SMS"
 
+#: templates/admin/sms_system/wizard/base.html:17
 msgid "SMS Provider Setup Wizard"
 msgstr "Panduan Pengaturan Penyedia SMS"
 
+#: templates/admin/sms_system/wizard/base.html:18
 msgid "Follow these steps to connect your SMS provider"
 msgstr "Ikuti langkah-langkah ini untuk menghubungkan penyedia SMS Anda"
 
+#: templates/admin/sms_system/wizard/base.html:27
 msgid "Select"
 msgstr "Pilih"
 
+#: templates/admin/sms_system/wizard/base.html:36
 msgid "Instructions"
 msgstr "Petunjuk"
 
+#: templates/admin/sms_system/wizard/base.html:54
 msgid "Test"
 msgstr "Uji"
 
+#: templates/admin/sms_system/wizard/base.html:61
 msgid "Complete"
 msgstr "Selesaikan"
 
+#: templates/admin/sms_system/wizard/complete.html:4
+#: templates/admin/sms_system/wizard/complete.html:5 views.py:365
 msgid "Setup Complete"
 msgstr "Setup Selesai"
 
+#: templates/admin/sms_system/wizard/complete.html:11
 msgid "Your SMS provider has been configured!"
 msgstr "Penyedia SMS Anda telah dikonfigurasi!"
 
+#: templates/admin/sms_system/wizard/complete.html:12
 msgid "You can now send SMS and WhatsApp messages from your store."
 msgstr "Anda sekarang dapat mengirim SMS dan pesan WhatsApp dari toko Anda."
 
+#: templates/admin/sms_system/wizard/complete.html:19
+#: templates/admin/sms_system/wizard/step4_test.html:37
 msgid "Account Details"
 msgstr "Detail Akun"
 
+#: templates/admin/sms_system/wizard/complete.html:43
+#: templates/admin/sms_system/wizard/complete.html:53
 msgid "Yes"
 msgstr "Ya"
 
+#: templates/admin/sms_system/wizard/complete.html:45
+#: templates/admin/sms_system/wizard/complete.html:55
 msgid "No"
 msgstr "Tidak"
 
+#: templates/admin/sms_system/wizard/complete.html:65
 msgid "What's Next?"
 msgstr "Apa Selanjutnya?"
 
+#: templates/admin/sms_system/wizard/complete.html:71
 msgid "Configure SMS templates"
 msgstr "Konfigurasi Template SMS"
 
+#: templates/admin/sms_system/wizard/complete.html:75
 msgid "View message logs"
 msgstr "Lihat Log Pesan"
 
+#: templates/admin/sms_system/wizard/complete.html:79
 msgid "Add another provider"
 msgstr "Tambahkan Penyedia Lain"
 
+#: templates/admin/sms_system/wizard/complete.html:90
 msgid "View All Accounts"
 msgstr "Lihat Semua Akun"
 
+#: templates/admin/sms_system/wizard/step1_select.html:4
+#: templates/admin/sms_system/wizard/step1_select.html:5 views.py:85
 msgid "Select SMS Provider"
 msgstr "Pilih Penyedia SMS"
 
+#: templates/admin/sms_system/wizard/step1_select.html:9
 msgid "Select a Provider"
 msgstr "Pilih Penyedia"
 
+#: templates/admin/sms_system/wizard/step1_select.html:10
 msgid "Choose the SMS provider you want to configure."
 msgstr "Pilih penyedia SMS yang ingin Anda konfigurasikan."
 
+#: templates/admin/sms_system/wizard/step1_select.html:56
 msgid ""
 "No SMS providers are installed. Install providers from the provider browse "
 "page."
@@ -607,73 +861,106 @@ msgstr ""
 "Tidak ada penyedia SMS yang terinstal. Instal penyedia dari halaman lihat "
 "penyedia."
 
+#: templates/admin/sms_system/wizard/step1_select.html:68
 msgid "Cancel"
 msgstr "Batal"
 
+#: templates/admin/sms_system/wizard/step1_select.html:72
+#: templates/admin/sms_system/wizard/step2_instructions.html:46
+#: templates/admin/sms_system/wizard/step3_credentials.html:98
 msgid "Next"
 msgstr "Lanjut"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:4
+#: templates/admin/sms_system/wizard/step2_instructions.html:5
+#: templates/admin/sms_system/wizard/step2_instructions.html:9 views.py:148
 msgid "Setup Instructions"
 msgstr "Instruksi Setup"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:10
 msgid "Follow these instructions to set up your provider account."
 msgstr "Ikuti instruksi ini untuk mengatur akun penyedia Anda."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:27
 msgid "No specific setup instructions available"
 msgstr "Tidak tersedia instruksi setup khusus"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:28
 msgid "Please proceed to enter your credentials."
 msgstr "Silakan lanjutkan untuk memasukkan kredensial Anda."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:43
+#: templates/admin/sms_system/wizard/step3_credentials.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:94
 msgid "Back"
 msgstr "Kembali"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:4
+#: templates/admin/sms_system/wizard/step3_credentials.html:5
+#: templates/admin/sms_system/wizard/step3_credentials.html:9 views.py:193
 msgid "Enter Credentials"
 msgstr "Masukkan Kredensial"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:10
 #, python-format
 msgid "Enter the credentials from your %(name)s account."
 msgstr "Masukkan kredensial dari akun %(name)s Anda."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:17
 msgid "Account Name"
 msgstr "Nama Akun"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:26
 msgid "A friendly name to identify this account."
 msgstr "Nama ramah untuk mengidentifikasi akun ini."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:86
 msgid "Your credentials are encrypted before being stored."
 msgstr "Kredensial Anda dienkripsi sebelum disimpan."
 
+#: templates/admin/sms_system/wizard/step4_test.html:4
+#: templates/admin/sms_system/wizard/step4_test.html:5
+#: templates/admin/sms_system/wizard/step4_test.html:9 views.py:281
 msgid "Test Connection"
 msgstr "Uji Koneksi"
 
+#: templates/admin/sms_system/wizard/step4_test.html:10
 msgid "We've tested the connection to your provider."
 msgstr "Kami telah menguji koneksi ke penyedia Anda."
 
+#: templates/admin/sms_system/wizard/step4_test.html:22
 msgid "Connection Successful"
 msgstr "Koneksi Berhasil"
 
+#: templates/admin/sms_system/wizard/step4_test.html:29
 msgid "Successfully connected to the SMS provider."
 msgstr "Berhasil terhubung ke penyedia SMS."
 
+#: templates/admin/sms_system/wizard/step4_test.html:31
 msgid "Failed to connect to the SMS provider."
 msgstr "Gagal terhubung ke penyedia SMS."
 
+#: templates/admin/sms_system/wizard/step4_test.html:40
 msgid "Account"
 msgstr "Akun"
 
+#: templates/admin/sms_system/wizard/step4_test.html:55
 msgid "Configure how this account should be used."
 msgstr "Konfigurasikan bagaimana akun ini harus digunakan."
 
+#: templates/admin/sms_system/wizard/step4_test.html:60
 msgid "Set as default for SMS messages"
 msgstr "Setel sebagai default untuk pesan SMS"
 
+#: templates/admin/sms_system/wizard/step4_test.html:68
 msgid "Set as default for WhatsApp messages"
 msgstr "Setel sebagai default untuk pesan WhatsApp"
 
+#: templates/admin/sms_system/wizard/step4_test.html:78
 msgid "Connection test failed"
 msgstr "Uji koneksi gagal"
 
+#: templates/admin/sms_system/wizard/step4_test.html:79
 msgid ""
 "Check your credentials and try again, or save anyway if you're sure they're "
 "correct."
@@ -681,85 +968,110 @@ msgstr ""
 "Periksa kredensial Anda dan coba lagi, atau simpan tetap jika Anda yakin "
 "mereka benar."
 
+#: templates/admin/sms_system/wizard/step4_test.html:82
 msgid "Save account anyway (not recommended)"
 msgstr "Simpan akun tetap (tidak disarankan)"
 
+#: templates/admin/sms_system/wizard/step4_test.html:97
 msgid "Create Account"
 msgstr "Buat Akun"
 
+#: views.py:97
 msgid "Please select a provider"
 msgstr "Silakan pilih penyedia"
 
+#: views.py:102
 msgid "Selected provider is not available"
 msgstr "Penyedia yang dipilih tidak tersedia"
 
+#: views.py:131 views.py:183
 msgid "Provider not found"
 msgstr "Penyedia tidak ditemukan"
 
+#: views.py:211
 msgid "Unable to get credential schema"
 msgstr "Tidak dapat mendapatkan skema kredensial"
 
+#: views.py:228
 #, python-format
 msgid "Missing required fields: %(fields)s"
 msgstr "Kolom yang diperlukan tidak terisi: %(fields)s"
 
+#: views.py:304
 msgid "Connection test failed. Check your credentials and try again."
 msgstr "Uji koneksi gagal. Periksa kredensial Anda dan coba lagi."
 
+#: views.py:328
 msgid "SMS provider account created successfully!"
 msgstr "Akun penyedia SMS berhasil dibuat!"
 
+#: views.py:333
 #, python-format
 msgid "Failed to create account: %(error)s"
 msgstr "Gagal membuat akun: %(error)s"
 
+#: views.py:424
 msgid "SMS Providers"
 msgstr "Penyedia SMS"
 
+#: views.py:525
 msgid "Provider is already installed. Configure it now."
 msgstr "Penyedia sudah terinstal. Konfigurasikan sekarang."
 
+#: views.py:554 views.py:701
 msgid "Provider not found on update server."
 msgstr "Penyedia tidak ditemukan di server pembaruan."
 
+#: views.py:567
 msgid "Could not determine provider version."
 msgstr "Tidak dapat menentukan versi penyedia."
 
+#: views.py:590
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Gagal mengunduh provider: %(error)s"
 
+#: views.py:602
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Gagal menginstal provider: %(error)s"
 
+#: views.py:630
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr ""
-"Provider \"%(name)s\" telah terinstal dengan sukses! Konfigurasikan sekarang."
+"Provider \"%(name)s\" telah terinstal dengan sukses! Konfigurasikan "
+"sekarang."
 
+#: views.py:669
 msgid "Provider not installed."
 msgstr "Penyedia tidak terinstal."
 
+#: views.py:686
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Tidak dapat terhubung ke server pembaruan: %(error)s"
 
+#: views.py:713
 msgid "Could not determine latest version."
 msgstr "Tidak dapat menentukan versi terbaru."
 
+#: views.py:723
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "Provider \"%(name)s\" sudah mutakhir (v%(version)s)."
 
+#: views.py:739
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Gagal mengunduh pembaruan: %(error)s"
 
+#: views.py:750
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Gagal menginstal pembaruan: %(error)s"
 
+#: views.py:780
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "Provider \"%(name)s\" telah diperbarui dengan sukses ke v%(version)s!"

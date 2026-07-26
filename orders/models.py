@@ -393,6 +393,7 @@ class Order(CustomFieldsMixin, DesignMixin):
     CHANNEL_CHOICES = [
         ("web", _("Online Store")),
         ("pos", _("Point of Sale")),
+        ("agent", _("AI Assistant")),
     ]
     channel = models.CharField(
         max_length=20,
@@ -631,6 +632,15 @@ class OrderItem(models.Model):
 
     # Product customizations at time of order
     customizations = models.JSONField(default=dict, blank=True)
+
+    # Gift card purchase details, copied from the CartItem at order creation.
+    #
+    # This copy is what makes post-payment issuance possible at all. Cards must
+    # be funded only AFTER payment, and by then the cart is gone —
+    # CheckoutService.create_order deletes cart.items when clear_session=True.
+    # Bookings avoid the problem by being created pre-payment from the cart,
+    # which is not an option for stored value.
+    gift_card_data = models.JSONField(default=dict, blank=True)
 
     # Bundle tracking
     parent_bundle = models.ForeignKey(
@@ -1089,8 +1099,71 @@ class Refund(models.Model):
         self.processed_at = timezone.now()
         self.save()
 
+    def execute(self, reason=""):
+        """
+        Actually move the money, then mark this refund completed.
+
+        This is the single money-movement event for a refund. Everything else —
+        the admin action, the mobile admin API, a return request — creates a
+        Refund row and calls this, so there is one place where refunds happen
+        and one place to get right.
+
+        Before P2.4 nothing moved money at all. ``complete()`` set a status and
+        saved; the mobile API incremented ``order.amount_refunded`` with a
+        comment admitting it was "simplified - actual refund would involve
+        payment provider". A merchant could mark a refund complete, the order
+        would read "refunded", and the customer would never receive a penny.
+
+        Splitting across tenders is the allocator's job: gift card before
+        gateway, capped per capture row. See
+        orders.services.tender_refund_allocator.
+
+        Raises:
+            RefundAllocationError: the ledger cannot fund it. The refund is
+                marked failed rather than left half-done.
+        """
+        from orders.services.tender_refund_allocator import (
+            RefundAllocationError,
+            TenderRefundAllocator,
+        )
+
+        if self.status == "completed":
+            # Idempotent: re-running a completed refund must not pay twice.
+            return []
+
+        try:
+            transactions = TenderRefundAllocator.execute(
+                self.order,
+                self.total_amount,
+                reason=reason or self.get_reason_display(),
+                refund=self,
+            )
+        except RefundAllocationError as exc:
+            self.fail(notes=str(exc))
+            raise
+
+        self.status = "completed"
+        self.completed_at = timezone.now()
+        self.save(update_fields=["status", "completed_at"])
+        return transactions
+
     def complete(self):
-        """Mark refund as completed"""
+        """
+        Mark refund as completed.
+
+        .. deprecated:: P2.4
+           Use :meth:`execute`, which moves the money. This only ever set a
+           status, so a refund "completed" through it returned nothing to the
+           customer while the order reported itself refunded.
+        """
+        import warnings
+
+        warnings.warn(
+            "Refund.complete() marks a refund completed without moving any "
+            "money. Use Refund.execute().",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         self.status = "completed"
         self.completed_at = timezone.now()
         self.save()

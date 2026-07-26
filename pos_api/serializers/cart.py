@@ -65,9 +65,3 @@ class POSApplyDiscountSerializer(serializers.Serializer):
     """Apply voucher/discount code."""
 
     code = serializers.CharField(max_length=50)
-
-
-class POSApplyGiftCardSerializer(serializers.Serializer):
-    """Apply gift card to cart."""
-
-    code = serializers.CharField(max_length=50)

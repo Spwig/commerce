@@ -228,3 +228,161 @@
   color: var(--theme-color-text-muted, #6b7280);
   margin-bottom: var(--theme-space-4, 1rem);
 }
+
+/* ==========================================================================
+   Voucher / discount code (order summary)
+   ========================================================================== */
+
+.express__voucher {
+  margin-top: var(--theme-space-4, 1rem);
+  padding-top: var(--theme-space-4, 1rem);
+  border-top: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.express__voucher-row {
+  display: flex;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.express__voucher-row .checkout-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.express__voucher-msg {
+  margin: var(--theme-space-2, 0.5rem) 0 0;
+  font-size: 0.875rem;
+  color: var(--theme-color-success, #16a34a);
+}
+
+.express__voucher-msg--error {
+  color: var(--theme-color-error, #dc2626);
+}
+
+/* ==========================================================================
+   Two-column layout — form left, always-visible summary right (desktop)
+   ========================================================================== */
+
+.express__main {
+  min-width: 0;
+}
+
+.express__summary-toggle {
+  display: none;
+}
+
+/* Single-column flow on all viewports; the summary sits above the payment
+   step. (Two-column variant removed: it squashed the form.) */
+
+/* Mobile: the summary collapses behind a toggle bar */
+@media (max-width: 1023px) {
+  .express__summary-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--theme-space-2, 0.5rem);
+    width: 100%;
+    padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-md, 8px);
+    background: var(--theme-color-background-secondary, #f9fafb);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .express__summary-toggle .fa-chevron-down {
+    transition: transform 200ms ease;
+  }
+
+  .express__aside--open .express__summary-toggle .fa-chevron-down {
+    transform: rotate(180deg);
+  }
+
+  .express__aside #express-summary-section,
+  .express__aside .express__trust-badges {
+    display: none;
+  }
+
+  .express__aside--open #express-summary-section,
+  .express__aside--open .express__trust-badges {
+    display: block;
+  }
+}
+
+/* Collapsed provider list: one selected gateway + a change link */
+.express__change-provider-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-1, 0.25rem);
+  margin-bottom: var(--theme-space-3, 0.75rem);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--theme-color-primary, #2563eb);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Order summary totals — labels left, amounts right, Total emphasised
+   ========================================================================== */
+
+.express__totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-space-2, 0.5rem);
+  padding-top: var(--theme-space-3, 0.75rem);
+  border-top: 1px solid var(--theme-color-border-light, #e5e7eb);
+}
+
+.express__totals-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--theme-space-4, 1rem);
+}
+
+.express__totals-row > span:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.express__totals-row--total {
+  margin-top: var(--theme-space-2, 0.5rem);
+  padding-top: var(--theme-space-3, 0.75rem);
+  border-top: 1px solid var(--theme-color-border, #d1d5db);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.express__totals-row--discount > span:last-child {
+  color: var(--theme-color-success, #16a34a);
+}
+
+/* Payment card stand-in shown when payment can't be mounted yet (e.g. the
+   shipping address still needs a delivery phone). Reads as a prompt, not a
+   confirmed selection. */
+.express__saved-card-content--pending {
+  color: var(--theme-color-text-muted, #6b7280);
+  font-size: 0.9375rem;
+}
+
+/* Summary cards that double as a "Change" control: signal they're tappable
+   and give keyboard focus a clear ring. */
+.express__saved-card[data-change-target] {
+  cursor: pointer;
+  border-radius: var(--theme-border-radius, 8px);
+  transition: background-color 0.15s ease;
+}
+
+.express__saved-card[data-change-target]:hover {
+  background-color: var(--theme-color-surface-hover, rgba(0, 0, 0, 0.03));
+}
+
+.express__saved-card[data-change-target]:focus-visible {
+  outline: 2px solid var(--theme-color-primary, #2563eb);
+  outline-offset: 2px;
+}

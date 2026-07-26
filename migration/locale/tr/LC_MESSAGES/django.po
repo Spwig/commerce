@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish <LL@li.org>\n"
@@ -18,2358 +18,3084 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:88
 msgid "Data Migrations"
 msgstr "Veri Göçü"
 
-msgid "🚀 Start New Migration"
-msgstr "🚀 Yeni Göç Başlat"
+#: admin.py:91 templates/admin/migration/migrationjob/change_list.html:68
+#: templates/admin/migration/wizard/step6_complete.html:388
+msgid "Start New Migration"
+msgstr "Yeni Göçü Başlat"
 
-msgid "Migrate from WooCommerce, Shopify, or CSV files"
-msgstr "WooCommerce, Shopify veya CSV dosyalarından geçir"
+#: admin.py:93
+msgid "Migrate from WooCommerce, Shopify, Magento, or CSV files"
+msgstr "WooCommerce, Shopify, Magento veya CSV dosyalarından geçiş yapın"
 
-msgid "📊 Migration History"
-msgstr "📊 Göç Geçmişi"
+#: admin.py:98
+msgid "Migration History"
+msgstr "Göç Tarihi"
 
+#: admin.py:100
 msgid "View all past migrations"
 msgstr "Tüm geçmiş göçleri görüntüle"
 
+#: admin.py:140 sync_admin.py:262
 msgid "ID"
 msgstr "ID"
 
+#: admin.py:163 admin.py:2234 templates/admin/migration/wizard/base.html:38
 msgid "Platform"
 msgstr "Platform"
 
+#: admin.py:202 admin.py:2235 admin.py:2294 sync_admin.py:72 sync_admin.py:311
+#: templates/admin/migration/fullmig/step5_results.html:74
+#: templates/admin/migration/wizard/step3_preview.html:184
 msgid "Status"
 msgstr "Durum"
 
+#: admin.py:228 sync_admin.py:330 templates/admin/migration/sync/base.html:58
+#: templates/admin/migration/sync/base.html:79
 msgid "Progress"
 msgstr "İlerleme"
 
+#: admin.py:248 templates/admin/migration/fullmig/step3_preflight.html:111
 msgid "Items"
 msgstr "Ürünler"
 
+#: admin.py:276 models/log.py:85 sync_admin.py:349
+#: templates/admin/migration/sync/token_management.html:76
 msgid "Created"
 msgstr "Oluşturuldu"
 
+#: admin.py:311 sync_admin.py:88 sync_admin.py:373
 msgid "Actions"
 msgstr "İşlemler"
 
+#: admin.py:464
 msgid "Please select a platform."
 msgstr "Lütfen bir platform seçin."
 
+#: admin.py:469 admin.py:490
 msgid "Migration Wizard - Choose Platform"
 msgstr "Göç Sihiri - Platform Seç"
 
+#: admin.py:483
 msgid "Migration job created. Please configure the connection."
 msgstr "Geçiş işi oluşturuldu. Lütfen bağlantıyı yapılandırın."
 
+#: admin.py:508 admin.py:545 admin.py:575
 msgid "Please fill in all required fields."
 msgstr "Lütfen tüm gerekli alanları doldurun."
 
+#: admin.py:513 admin.py:550 admin.py:580 admin.py:629 admin.py:644
+#: admin.py:666 admin.py:683
 msgid "Migration Wizard - Connection"
 msgstr "Göç Sihiri - Bağlantı"
 
+#: admin.py:531 admin.py:567 admin.py:599
 msgid "Connection configured successfully."
 msgstr "Bağlantı başarıyla yapılandırıldı."
 
+#: admin.py:623
 msgid "{} CSV has no headers."
 msgstr "\"{} CSV başlık içeriyor değil.\""
 
+#: admin.py:638
 msgid "{} CSV could not be read: {}"
 msgstr "\"{}\" CSV dosyası okunamadı: {}"
 
+#: admin.py:661
 msgid "Products CSV is required."
 msgstr "\"Ürünler CSV gerekli.\""
 
+#: admin.py:676
 msgid "CSV files uploaded successfully."
 msgstr "CSV dosyaları başarıyla yüklendi."
 
+#: admin.py:747 admin.py:780 admin.py:843
 msgid "Failed to fetch preview data: {}"
 msgstr "Önizleme verisi alınırken hata oluştu: {}"
 
+#: admin.py:866
 msgid "Failed to read CSV files: {}"
 msgstr "CSV dosyaları okunamadı: {}"
 
+#: admin.py:945
 msgid "Import options saved."
 msgstr "İçe aktarma seçenekleri kaydedildi."
 
+#: admin.py:952
 msgid "Migration Wizard - Preview Data"
 msgstr "Göç Sihiri - Veri Önizleme"
 
+#: admin.py:1027
 msgid "Field mappings configured successfully."
 msgstr "Alan eşlemeleri başarıyla yapılandırıldı."
 
+#: admin.py:1149
 msgid "Could not analyze custom fields. You can still proceed with the import."
 msgstr "Özel alanlar analiz edilemedi. İmportu hala devam ettirebilirsiniz."
 
+#: admin.py:1167 models/step.py:31
+#: templates/admin/migration/confirm_rollback.html:67
+#: templates/admin/migration/wizard/step3_preview.html:17
+#: templates/admin/migration/wizard/step3_preview.html:74
+#: templates/admin/migration/wizard/step4_mapping.html:85
+#: templates/admin/migration/wizard/step5_import.html:111
+#: templates/admin/migration/wizard/step6_complete.html:17
+#: templates/admin/migration/wizard/step6_complete.html:348
 msgid "Products"
 msgstr "Ürünler"
 
+#: admin.py:1168 models/step.py:29
+#: templates/admin/migration/confirm_rollback.html:63
+#: templates/admin/migration/fullmig/step1_connection.html:114
+#: templates/admin/migration/sync/base.html:71
+#: templates/admin/migration/sync/step1_connection.html:134
+#: templates/admin/migration/sync/step2_categories.html:82
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
+#: templates/admin/migration/wizard/step4_mapping.html:82
+#: templates/admin/migration/wizard/step5_import.html:91
+#: templates/admin/migration/wizard/step6_complete.html:21
+#: templates/admin/migration/wizard/step6_complete.html:354
 msgid "Categories"
 msgstr "Kategoriler"
 
+#: admin.py:1169 models/step.py:34
+#: templates/admin/migration/confirm_rollback.html:71
+#: templates/admin/migration/wizard/step3_preview.html:25
+#: templates/admin/migration/wizard/step3_preview.html:83
+#: templates/admin/migration/wizard/step4_mapping.html:88
+#: templates/admin/migration/wizard/step5_import.html:131
+#: templates/admin/migration/wizard/step6_complete.html:25
+#: templates/admin/migration/wizard/step6_complete.html:360
 msgid "Customers"
 msgstr "Müşteriler"
 
+#: admin.py:1170 models/step.py:36
+#: templates/admin/migration/confirm_rollback.html:75
+#: templates/admin/migration/wizard/step3_preview.html:29
+#: templates/admin/migration/wizard/step3_preview.html:92
+#: templates/admin/migration/wizard/step4_mapping.html:91
+#: templates/admin/migration/wizard/step5_import.html:151
+#: templates/admin/migration/wizard/step6_complete.html:29
+#: templates/admin/migration/wizard/step6_complete.html:366
 msgid "Orders"
 msgstr "Siparişler"
 
+#: admin.py:1171 models/step.py:38
+#: templates/admin/migration/confirm_rollback.html:79
+#: templates/admin/migration/wizard/step3_preview.html:34
+#: templates/admin/migration/wizard/step3_preview.html:102
+#: templates/admin/migration/wizard/step4_mapping.html:94
+#: templates/admin/migration/wizard/step5_import.html:171
+#: templates/admin/migration/wizard/step6_complete.html:33
 msgid "Reviews"
 msgstr "İncelemeler"
 
+#: admin.py:1203
 msgid "Migration Wizard - Field Mapping"
 msgstr "Göç Sihiri - Alan Eşlemesi"
 
+#: admin.py:1239
 msgid ""
-"Migration started! You can safely close this window and check back later."
+"Migration started. You can safely close this window and check back later."
 msgstr ""
-"Geçiş başladı! Bu pencereyi güvenle kapatıp daha sonra tekrar kontrol "
-"edebilirsiniz."
+"Göç başladı. Bu pencereyi güvenli bir şekilde kapatıp daha sonra tekrar "
+"kontrol edebilirsiniz."
 
+#: admin.py:1245
 msgid "Failed to start import: {}"
 msgstr "İçe aktarma başlatılamadı: {}"
 
+#: admin.py:1259
+msgid "This migration has already been started."
+msgstr "Bu göç zaten başlatıldı."
+
+#: admin.py:1278
 msgid "Migration Wizard - Importing"
 msgstr "Göç Sihiri - İçe Aktarma"
 
+#: admin.py:1344 templates/admin/migration/fullmig/step5_results.html:10
 msgid "Migration Complete"
 msgstr "Göç Tamamlandı"
 
+#: admin.py:1483
 msgid "This migration cannot be rolled back."
 msgstr "Bu geçiş geri alınamaz."
 
-msgid "Migration rolled back successfully!"
-msgstr "Göç başarıyla geri alınan!"
+#: admin.py:1498
+msgid "This rollback is already running."
+msgstr "Bu geri alma işlemi zaten çalışıyor."
 
-msgid "Rollback failed: {}"
-msgstr "Geri alma başarısız oldu: {}"
+#: admin.py:1517
+msgid "Spwig could not start the rollback. Nothing has been removed."
+msgstr "Spwig geri alma işlemini başlatamadı. Hiçbir şey kaldırılmadı."
 
+#: admin.py:1524
+msgid ""
+"Rollback started. This runs in the background — check back shortly to see "
+"what was removed and what was kept."
+msgstr ""
+"Geri alma işlemi başladı. Bu arka planda çalışır — kısa süre sonra ne "
+"kaldırıldığını ve ne kaldığını görmek için tekrar kontrol edin."
+
+#: admin.py:1543
+msgid ""
+"Spwig could not calculate this in advance. The rollback itself will still "
+"report what it removed and what it kept."
+msgstr ""
+"Spwig bunu önceden hesaplayamadı. Geri alma işlemi kendisi hala ne "
+"kaldırıldığını ve ne kaldığını bildirecektir."
+
+#: admin.py:1551 templates/admin/migration/confirm_rollback.html:4
+#: templates/admin/migration/confirm_rollback.html:13
 msgid "Confirm Rollback"
 msgstr "Geri Alma'yı Onayla"
 
+#: admin.py:1575
 msgid "Only failed migrations can be retried."
 msgstr "Yalnızca başarısız olan geçişler yeniden denenebilir."
 
-msgid "Migration restarted! Redirecting to progress page..."
-msgstr "Geçiş yeniden başlatıldı! İlerleme sayfasına yönlendiriliyor..."
+#: admin.py:1600
+msgid ""
+"Migration restarted. It runs from the beginning and skips items that have "
+"already been imported."
+msgstr ""
+"Göç yeniden başlatıldı. Göç, baştan başlar ve zaten aktarılmış olan öğeleri "
+"atlar."
 
+#: admin.py:1608
 msgid "Failed to restart migration: {}"
 msgstr "Göçün yeniden başlatılması başarısız oldu: {}"
 
+#: admin.py:1629
 msgid "Only running migrations can be cancelled."
 msgstr "Yalnızca çalışan geçişler iptal edilebilir."
 
-msgid "Migration cancelled by user"
-msgstr "Göç kullanıcı tarafından iptal edildi"
-
+#: admin.py:1641
 msgid "Migration cancelled by {}"
 msgstr "Göç {} tarafından iptal edildi"
 
-msgid "Migration cancelled successfully."
-msgstr "Göç başarıyla iptal edildi."
-
-msgid "Only pending, failed, or running migrations can be deleted."
-msgstr "Yalnızca bekleyen, başarısız veya çalışan geçişler silinebilir."
-
+#: admin.py:1649
 msgid ""
-"Deleted a running migration. If this was stuck, the operation has been "
-"cleaned up."
-msgstr "Çalışan bir geçiş silindi. Eğer işlem takılıyorsa, işlem temizlendi."
+"Stopping this import. It finishes the batch it is working on and then stops, "
+"so this can take a moment. Anything already imported stays in your store — "
+"you can roll it back afterwards if you don't want it."
+msgstr ""
+"Bu içeri aktarma durduruluyor. İşlemi tamamladıktan sonra durur, bu nedenle "
+"bir an sürebilir. Zaten içeri aktarılmış olan her şey mağazanızda kalır — "
+"istemiyorsanız bunu daha sonra geri alabilirsiniz."
 
-msgid "Migration deleted successfully."
-msgstr "Göç başarıyla silindi."
+#: admin.py:1691
+msgid ""
+"This migration can't be deleted yet. Cancel it first, and once it has "
+"finished stopping you'll be able to remove the record."
+msgstr ""
+"Bu göç işlemi hâlâ silinemez. Önce iptal edin, sonra durma işlemi "
+"tamamlandığında kaydı silme imkanınız olacak."
 
+#: admin.py:1708
+msgid ""
+"Migration record deleted. Anything this import added is still in your store "
+"— deleting the record does not remove it."
+msgstr ""
+"Göç kaydı silindi. Bu içeri aktarma işlemiyle eklenen her şey hâlâ "
+"mağazanızda — kaydı silmek onu silmez."
+
+#: admin.py:1713
+msgid "Migration record deleted."
+msgstr "Göç kaydı silindi."
+
+#: admin.py:2233
 msgid "Job ID"
 msgstr "\"İş Kimliği\""
 
+#: admin.py:2236
 msgid "Started"
 msgstr "\"Başlatıldı\""
 
+#: admin.py:2238 models/job.py:87 models/step.py:55 models/sync_job.py:78
+#: models/sync_step.py:32
+#: templates/admin/migration/migrationjob/change_list.html:44
+#: templates/admin/migration/syncjob/change_list.html:40
 msgid "Completed"
 msgstr "Tamamlandı"
 
+#: admin.py:2241
 msgid "Duration"
 msgstr "\"Süre\""
 
+#: admin.py:2242
 msgid "Success Rate"
 msgstr "\"Başarı Oranı\""
 
+#: admin.py:2260 templates/admin/migration/sync/step3_preview.html:16
 msgid "Summary"
 msgstr "\"Özet\""
 
+#: admin.py:2262
 msgid "Total Items"
 msgstr "\"Toplam Öğeler\""
 
+#: admin.py:2262 admin.py:2294
+#: templates/admin/migration/migrationjob/change_list.html:174
+#: templates/admin/migration/wizard/step6_complete.html:64
 msgid "Imported"
 msgstr "İçe Aktarıldı"
 
+#: admin.py:2262 admin.py:2294 models/content_link.py:123 models/log.py:87
+#: models/step.py:57 models/sync_step.py:34
+#: templates/admin/migration/fullmig/step4_progress.html:52
+#: templates/admin/migration/fullmig/step5_results.html:47
+#: templates/admin/migration/fullmig/step5_results.html:95
+#: templates/admin/migration/migrationjob/change_list.html:178
+#: templates/admin/migration/sync/step4_progress.html:52
+#: templates/admin/migration/syncjob/change_list.html:149
+#: templates/admin/migration/wizard/step6_complete.html:65
+#: templates/admin/migration/wizard/step6_complete.html:208
 msgid "Skipped"
 msgstr "Atlandı"
 
+#: admin.py:2262 admin.py:2294 models/job.py:88 models/step.py:56
+#: models/sync_job.py:79 models/sync_step.py:33
+#: templates/admin/migration/fullmig/step4_progress.html:56
+#: templates/admin/migration/fullmig/step5_results.html:51
+#: templates/admin/migration/fullmig/step5_results.html:76
+#: templates/admin/migration/fullmig/step5_results.html:91
+#: templates/admin/migration/migrationjob/change_list.html:60
+#: templates/admin/migration/migrationjob/change_list.html:182
+#: templates/admin/migration/sync/step4_progress.html:56
+#: templates/admin/migration/syncjob/change_list.html:50
+#: templates/admin/migration/syncjob/change_list.html:153
+#: templates/admin/migration/wizard/step6_complete.html:66
 msgid "Failed"
 msgstr "Başarısız"
 
+#: admin.py:2292
 msgid "Step Breakdown"
 msgstr "\"Aşama Ayrımı\""
 
+#: admin.py:2294 templates/admin/migration/wizard/step2_connection.html:293
 msgid "Step"
 msgstr "Adım"
 
+#: admin.py:2294 templates/admin/migration/fullmig/step4_progress.html:60
+#: templates/admin/migration/fullmig/step5_results.html:55
+#: templates/admin/migration/fullmig/step5_results.html:77
+#: templates/admin/migration/migrationjob/change_list.html:170
+#: templates/admin/migration/sync/step4_progress.html:60
+#: templates/admin/migration/syncjob/change_list.html:141
+#: templates/admin/migration/wizard/step6_complete.html:67
+#: templates/admin/migration/wizard/step6_complete.html:94
 msgid "Total"
 msgstr "Toplam"
 
+#: admin.py:2334 templates/admin/migration/sync/step4_progress.html:127
 msgid "Errors"
 msgstr "\"Hatalar\""
 
+#: admin.py:2412
 msgid "Message"
 msgstr "Mesaj"
 
+#: admin.py:2434 templates/admin/migration/wizard/base.html:50
 msgid "Mapping"
 msgstr "Eşleme"
 
+#: models/content_link.py:24 models/log.py:24 models/mapping.py:24
+#: models/staged_item.py:41 models/step.py:25
 msgid "Parent migration job"
 msgstr "Ana göç işi"
 
+#: models/content_link.py:29
 msgid "Product - Full Description"
 msgstr "Ürün - Tam Açıklama"
 
+#: models/content_link.py:30
 msgid "Product - Short Description"
 msgstr "Ürün - Kısa Açıklama"
 
+#: models/content_link.py:31
 msgid "Blog Post - Content"
 msgstr "Blog Yazısı - İçerik"
 
+#: models/content_link.py:32
 msgid "Category - Description"
 msgstr "Kategori - Açıklama"
 
+#: models/content_link.py:35
 msgid "Which content field contains this link"
 msgstr "Bu bağlantı hangi içerik alanında bulunuyor"
 
+#: models/content_link.py:63
 msgid "Title of the source object (for display)"
 msgstr "Kaynak nesnesinin başlığı (gösterim için)"
 
+#: models/content_link.py:68
 msgid "Original URL found in the HTML content"
 msgstr "HTML içerikte bulunan orijinal URL"
 
+#: models/content_link.py:71
 msgid "Visible link text (anchor text)"
 msgstr "Görünür bağlantı metni (ankor metni)"
 
+#: models/content_link.py:76
 msgid "Auto-suggested replacement URL"
 msgstr "Otomatik önerilen değiştirme URL'si"
 
+#: models/content_link.py:80
 msgid "Stored Permalink Match"
 msgstr "Depolanan Kalıcı Bağlantı Eşleşmesi"
 
+#: models/content_link.py:81
 msgid "Exact Slug Match"
 msgstr "Tam Slug Eşleşmesi"
 
+#: models/content_link.py:82
 msgid "External ID Match"
 msgstr "Dış ID Eşleşmesi"
 
+#: models/content_link.py:83
 msgid "URL Path Pattern Match"
 msgstr "URL Yolu Desen Eşleşmesi"
 
+#: models/content_link.py:84
 msgid "Slug Fallback Match"
 msgstr "Slug Geri Dönüş Eşleşmesi"
 
+#: models/content_link.py:85
 msgid "No Match Found"
 msgstr "Eşleşme Bulunamadı"
 
+#: models/content_link.py:91
 msgid "How the suggested URL was matched"
 msgstr "Önerilen URL'nin nasıl eşlendiği"
 
+#: models/content_link.py:95 models/mapping.py:29 models/mapping.py:53
+#: models/staged_item.py:19
 msgid "Product"
 msgstr "Ürün"
 
+#: models/content_link.py:96 models/mapping.py:31 models/mapping.py:55
+#: models/staged_item.py:20
+#: templates/admin/migration/fullmig/step3_preflight.html:110
+#: templates/admin/migration/fullmig/step5_results.html:73
 msgid "Category"
 msgstr "Kategori"
 
+#: models/content_link.py:97 models/mapping.py:35 models/mapping.py:59
 msgid "Blog Post"
 msgstr "Blog Yazısı"
 
+#: models/content_link.py:98 models/mapping.py:36 models/mapping.py:60
 msgid "Blog Category"
 msgstr "Blog Kategorisi"
 
+#: models/content_link.py:99
 msgid "Collection"
 msgstr "Koleksiyon"
 
+#: models/content_link.py:100
 msgid "Page"
 msgstr "Sayfa"
 
+#: models/content_link.py:101
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
+#: models/content_link.py:107
 msgid "Type of Spwig object the URL was matched to"
 msgstr "URL'nin eşlendiği Spwig nesnesi türü"
 
+#: models/content_link.py:110
 msgid "ID of the matched Spwig object"
 msgstr "Eşleşen Spwig nesnesinin kimliği"
 
+#: models/content_link.py:115
 msgid "Match confidence: 0.0 (no match) to 1.0 (exact match)"
 msgstr "Eşleşme güveni: 0.0 (eşleşme yok) ile 1.0 (kesin eşleşme)"
 
+#: models/content_link.py:120 models/staged_item.py:73
 msgid "Pending Review"
 msgstr "İnceleme Bekliyor"
 
+#: models/content_link.py:121
+#: templates/admin/migration/wizard/step6_complete.html:210
 msgid "Approved"
 msgstr "Onaylandı"
 
+#: models/content_link.py:122
 msgid "Modified by Merchant"
 msgstr "Tüccar Tarafından Düzenlendi"
 
+#: models/content_link.py:124
+#: templates/admin/migration/wizard/step6_complete.html:206
 msgid "Applied"
 msgstr "Başvuruldu"
 
+#: models/content_link.py:125
 msgid "Apply Failed"
 msgstr "Uygulama Başarısız Oldu"
 
+#: models/content_link.py:137
 msgid "URL manually entered by merchant (overrides suggested_url)"
 msgstr "Satıcı tarafından elle girilen URL (önerilen_url'i geçersiz kılar)"
 
+#: models/content_link.py:140
 msgid "Error message if apply failed"
 msgstr "Uygulama başarısız olduğunda hata mesajı"
 
+#: models/content_link.py:146
 msgid "Content Link"
 msgstr "İçerik Bağlantısı"
 
+#: models/content_link.py:147
 msgid "Content Links"
 msgstr "İçerik Bağlantıları"
 
+#: models/job.py:34
 msgid "User who initiated this migration"
 msgstr "Bu göçü başlatan kullanıcı"
 
+#: models/job.py:39
 msgid "WooCommerce"
 msgstr "WooCommerce"
 
+#: models/job.py:40
 msgid "Shopify"
 msgstr "Shopify"
 
+#: models/job.py:41
 msgid "Magento"
 msgstr "Magento"
 
+#: models/job.py:42
 msgid "CSV Files"
 msgstr "CSV Dosyaları"
 
+#: models/job.py:45
 msgid "Source e-commerce platform"
 msgstr "Kaynak E-ticaret Platformu"
 
+#: models/job.py:49
 msgid "REST API"
 msgstr "REST API"
 
+#: models/job.py:50
 msgid "CSV Upload"
 msgstr "CSV Yükleme"
 
+#: models/job.py:51
 msgid "Direct Database"
 msgstr "Doğrudan Veritabanı"
 
+#: models/job.py:54
 msgid "Migration method used"
 msgstr "Kullanılan Göç Yöntemi"
 
+#: models/job.py:60
 msgid "Connection configuration (API keys, URLs, etc.)"
 msgstr "Bağlantı yapılandırması (API anahtarları, URL'ler vs.)"
 
+#: models/job.py:74
 msgid "Import blog posts, categories, and tags from WordPress"
 msgstr "WordPress'ten blog yazılarını, kategorileri ve etiketleri içe aktar"
 
+#: models/job.py:77
 msgid "Import affiliate data via Spwig Migration Bridge plugin"
 msgstr "Spwig Migration Bridge eklentisi üzerinden ortak verileri içe aktarın"
 
+#: models/job.py:82 models/step.py:53 models/sync_job.py:74
+#: models/sync_step.py:30
 msgid "Pending"
 msgstr "Bekleyen"
 
+#: models/job.py:83
 msgid "Testing Connection"
 msgstr "Bağlantı Testi"
 
+#: models/job.py:84
 msgid "Previewing Data"
 msgstr "Veri Önizlemesi"
 
+#: models/job.py:85
 msgid "Importing"
 msgstr "İçeri Aktarma"
 
+#: models/job.py:86
 msgid "Paused"
 msgstr "Durduruldu"
 
+#: models/job.py:89 models/step.py:61 models/sync_job.py:82
+msgid "Cancelled"
+msgstr "İptal Edildi"
+
+#: models/job.py:90 models/sync_job.py:80
 msgid "Rolling Back"
 msgstr "Geri Alma"
 
+#: models/job.py:91 models/step.py:62 models/sync_job.py:81
+#: models/sync_step.py:35
 msgid "Rolled Back"
 msgstr "Geri Alındı"
 
-msgid "Transaction ID for rollback tracking"
-msgstr "Geri Alma Takibi İçin İşlem Kimliği"
+#: models/job.py:92
+msgid "Rollback Failed"
+msgstr "Geri Alma Başarısız Oldu"
 
+#: models/job.py:99
 msgid "Whether this migration can be rolled back"
 msgstr "Bu geçişin geri alınabilir olup olmadığı"
 
-msgid "Deadline for manual rollback (24 hours after completion)"
-msgstr "El ile geri alma sonu (tamamlanma sonrası 24 saat)"
+#: models/job.py:105
+msgid ""
+"Point after which this migration can no longer be rolled back. Empty means "
+"it never expires."
+msgstr ""
+"Bu göçün geri alınamaz hale gelmesine neden olan nokta. Boş bırakıldığında "
+"asla sona ermeyen anlamına gelir."
 
+#: models/job.py:112
+msgid "If the import fails, automatically remove everything it imported"
+msgstr ""
+"İçe aktarma başarısız olursa, içe aktarılan her şeyi otomatik olarak kaldır"
+
+#: models/job.py:126
+msgid "Set when an operator asks for a running import to stop"
+msgstr "Operatör bir çalışan aktarımdan durdurulmasını istiğinde ayarlanır"
+
+#: models/job.py:131
 msgid "Current import step being processed"
 msgstr "İçeri Aktarma Aşaması"
 
+#: models/job.py:134 models/sync_job.py:92
 msgid "Overall progress percentage (0-100)"
 msgstr "Genel İlerleme Yüzdesi (0-100)"
 
+#: models/job.py:225
 msgid "Total migration duration in seconds"
 msgstr "Toplam Göç Süresi (Saniye)"
 
+#: models/job.py:232
 msgid "Summary of errors encountered"
 msgstr "Çıkan Hataların Özeti"
 
+#: models/job.py:233
 msgid "Summary of warnings encountered"
 msgstr "Çıkan Uyarıların Özeti"
 
+#: models/job.py:240
 msgid "Generated migration report (CSV/PDF)"
 msgstr "Oluşturulan Göç Raporu (CSV/PDF)"
 
+#: models/job.py:245
 msgid "Migration Job"
 msgstr "Göç Görevi"
 
+#: models/job.py:246
 msgid "Migration Jobs"
 msgstr "Göç Görevleri"
 
+#: models/log.py:33
 msgid "Migration step this log belongs to"
 msgstr "Bu günlük kaydın ait olduğu geçiş adımı"
 
+#: models/log.py:37
 msgid "When this log entry was created"
 msgstr "Bu günlük kaydın oluşturulma zamanı"
 
+#: models/log.py:41
 msgid "Debug"
 msgstr "Hata Ayıklama"
 
+#: models/log.py:42
 msgid "Info"
 msgstr "Bilgi"
 
+#: models/log.py:43
 msgid "Warning"
 msgstr "Uyarı"
 
+#: models/log.py:44 models/log.py:88
 msgid "Error"
 msgstr "Hata"
 
+#: models/log.py:45
 msgid "Critical"
 msgstr "Kritik"
 
+#: models/log.py:48
 msgid "Log severity level"
 msgstr "Günlüğün Şiddet Seviyesi"
 
+#: models/log.py:51
 msgid "Log message"
 msgstr "Günlük Mesajı"
 
+#: models/log.py:55
 msgid "Source data type (e.g., 'woocommerce_product')"
 msgstr "Kaynak Veri Türü (örneğin, 'woocommerce_product')"
 
+#: models/log.py:58
 msgid "ID from source system"
 msgstr "Kaynak Sisteminden ID"
 
+#: models/log.py:61
 msgid "Name/title of source item"
 msgstr "Kaynak Öğesinin Adı/Başlığı"
 
+#: models/log.py:70
 msgid "Type of created object"
 msgstr "Oluşturulan Nesne Türü"
 
+#: models/log.py:73
 msgid "ID of created object"
 msgstr "Oluşturulan Nesne ID'si"
 
+#: models/log.py:78
 msgid "Additional context data"
 msgstr "Ek Bağlam Verisi"
 
+#: models/log.py:82
 msgid "Fetched"
 msgstr "Alındı"
 
+#: models/log.py:83
 msgid "Validated"
 msgstr "Doğrulandı"
 
+#: models/log.py:84
 msgid "Mapped"
 msgstr "Haritalandı"
 
+#: models/log.py:86
 msgid "Updated"
 msgstr "Güncellendi"
 
+#: models/log.py:91
 msgid "Action performed"
 msgstr "Yapılan İşlem"
 
+#: models/log.py:96
 msgid "Migration Log"
 msgstr "Göç Günlüğü"
 
+#: models/log.py:97
 msgid "Migration Logs"
 msgstr "Göç Günlükleri"
 
+#: models/mapping.py:30 models/mapping.py:54
 msgid "Product Variant"
 msgstr "Ürün Değişimi"
 
+#: models/mapping.py:32 models/mapping.py:56 models/staged_item.py:21
 msgid "Customer"
 msgstr "Müşteri"
 
+#: models/mapping.py:33 models/mapping.py:57 models/staged_item.py:22
 msgid "Order"
 msgstr "Sipariş"
 
+#: models/mapping.py:34 models/mapping.py:58 models/staged_item.py:23
 msgid "Review"
 msgstr "İncele"
 
+#: models/mapping.py:37 models/mapping.py:61
 msgid "Blog Tag"
 msgstr "Blog Etiketi"
 
+#: models/mapping.py:40
 msgid "Type of source data"
 msgstr "Kaynak Veri Türü"
 
+#: models/mapping.py:44
 msgid "Source field name (e.g., '_custom_brand', 'metafields.brand')"
 msgstr "Kaynak alan adı (örneğin, '_custom_brand', 'metafields.brand')"
 
+#: models/mapping.py:48
 msgid "Human-readable label for source field"
 msgstr "Kaynak Alanı İçin Okunabilir Etiket"
 
+#: models/mapping.py:64
 msgid "Destination model name"
 msgstr "Hedef Model Adı"
 
+#: models/mapping.py:68
 msgid "Destination field name (e.g., 'brand', 'short_description')"
 msgstr "Hedef alan adı (örneğin, 'brand', 'short_description')"
 
+#: models/mapping.py:72
 msgid "Human-readable label for destination field"
 msgstr "Hedef Alan İçin Okunabilir Etiket"
 
+#: models/mapping.py:77
 msgid "No Transformation"
 msgstr "Dönüşüm Yok"
 
+#: models/mapping.py:78
 msgid "Convert to String"
 msgstr "Dizeye Çevir"
 
+#: models/mapping.py:79
 msgid "Convert to Integer"
 msgstr "Tamsayıya Çevir"
 
+#: models/mapping.py:80
 msgid "Convert to Decimal"
 msgstr "Ondalığa Çevir"
 
+#: models/mapping.py:81
 msgid "Convert to Boolean"
 msgstr "Boole Değere Çevir"
 
+#: models/mapping.py:82
 msgid "Parse JSON"
 msgstr "JSON Parse Et"
 
+#: models/mapping.py:83
 msgid "Parse Date"
 msgstr "Tarih Parse Et"
 
+#: models/mapping.py:84
 msgid "Validate URL"
 msgstr "URL Doğrula"
 
+#: models/mapping.py:85
 msgid "Validate Email"
 msgstr "E-posta Doğrula"
 
+#: models/mapping.py:87
 msgid "Convert to Money"
 msgstr "Para Birimine Çevir"
 
+#: models/mapping.py:88
 msgid "Integer (allow null)"
 msgstr "Tamsayı (null izin ver)"
 
+#: models/mapping.py:89
 msgid "Decimal (allow null)"
 msgstr "Ondalık (null izin ver)"
 
+#: models/mapping.py:90
 msgid "WooCommerce Status"
 msgstr "WooCommerce Durumu"
 
+#: models/mapping.py:91
 msgid "WooCommerce Product Type"
 msgstr "WooCommerce Ürün Tipi"
 
+#: models/mapping.py:92
 msgid "WooCommerce Backorders"
 msgstr "WooCommerce Geri Siparişler"
 
+#: models/mapping.py:93
 msgid "Meta Data Array"
 msgstr "Meta Veri Dizisi"
 
+#: models/mapping.py:94
 msgid "Category Array"
 msgstr "Kategori Dizisi"
 
+#: models/mapping.py:95
 msgid "Image Array"
 msgstr "Görsel Dizisi"
 
+#: models/mapping.py:96
 msgid "Category Parent Resolution"
 msgstr "Kategori Ebeveyn Çözümü"
 
+#: models/mapping.py:97
 msgid "Custom Function"
 msgstr "Özel Fonksiyon"
 
+#: models/mapping.py:99
 msgid "Shopify Product Status"
 msgstr "Shopify Ürün Durumu"
 
+#: models/mapping.py:100
 msgid "Shopify Order Status"
 msgstr "Shopify Sipariş Durumu"
 
+#: models/mapping.py:101
 msgid "Shopify Discount Type"
 msgstr "Shopify İndirim Türü"
 
+#: models/mapping.py:102
 msgid "Shopify Discount Value"
 msgstr "Shopify İndirim Değeri"
 
+#: models/mapping.py:103
 msgid "Shopify Inventory Tracked"
 msgstr "Shopify Stok Takibi"
 
+#: models/mapping.py:104
 msgid "Shopify Inventory Policy"
 msgstr "Shopify Stok Politikası"
 
+#: models/mapping.py:105
 msgid "Comma-Separated to List"
 msgstr "Virgülle Ayrılıp Listeye"
 
+#: models/mapping.py:107
+msgid "Magento Product Status"
+msgstr "Magento Ürün Durumu"
+
+#: models/mapping.py:108
+msgid "Magento Product Visibility"
+msgstr "Magento Ürün Görünürlüğü"
+
+#: models/mapping.py:109
+msgid "Magento Order Status"
+msgstr "Magento Sipariş Durumu"
+
+#: models/mapping.py:110
+msgid "Magento Discount Type"
+msgstr "Magento İndirim Türü"
+
+#: models/mapping.py:116
 msgid "Data transformation to apply"
 msgstr "Uygulanacak Veri Dönüşümü"
 
+#: models/mapping.py:121
 msgid "Python function name for custom transformation"
 msgstr "Özel dönüşüm için Python fonksiyon adı"
 
+#: models/mapping.py:126
 msgid "Default value if source field is missing or empty"
 msgstr "Kaynak alan eksik ya da boşsa varsayılan değer"
 
+#: models/mapping.py:131
 msgid "Whether this field is required (skip item if missing)"
 msgstr "Bu alanın gerekli olup olmadığı (eksikse öğeyi atla)"
 
+#: models/mapping.py:135
 msgid "Skip entire item if this field is empty"
 msgstr "Bu alan boşsa tüm öğeyi atla"
 
+#: models/mapping.py:140
 msgid "Number of times this mapping was applied"
 msgstr "Bu eşleme kaç kez uygulandı"
 
+#: models/mapping.py:144
 msgid "Number of times transformation failed"
 msgstr "Dönüşümün Başarısız Olduğu Sayı"
 
+#: models/mapping.py:149
 msgid "Whether this mapping was auto-detected from data"
 msgstr "Bu eşleme veriden otomatik olarak algılanmış mı"
 
+#: models/mapping.py:156
 msgid "Migration Mapping"
 msgstr "Göç Haritalaması"
 
+#: models/mapping.py:157
 msgid "Migration Mappings"
 msgstr "Göç Haritalamaları"
 
+#: models/staged_item.py:27
 msgid "Missing Required Field"
 msgstr "Gerekli Alan Eksik"
 
+#: models/staged_item.py:28
 msgid "Invalid Data Format"
 msgstr "Geçersiz Veri Biçimi"
 
+#: models/staged_item.py:29
 msgid "Missing Relationship"
 msgstr "İlişki Eksik"
 
+#: models/staged_item.py:30
 msgid "Data Transformation Failed"
 msgstr "Veri Dönüşümü Başarısız Oldu"
 
+#: models/staged_item.py:31
 msgid "Duplicate Entry"
 msgstr "Yinelenen Giriş"
 
+#: models/staged_item.py:32
 msgid "Validation Failed"
 msgstr "Doğrulama Başarısız"
 
+#: models/staged_item.py:33
 msgid "Unknown Error"
 msgstr "Bilinmeyen Hata"
 
+#: models/staged_item.py:46
 msgid "Original ID from source platform"
 msgstr "Kaynak Platformdan Orijinal Kimlik"
 
+#: models/staged_item.py:49
 msgid "Original data from WooCommerce/Shopify"
 msgstr "WooCommerce/Shopify'den Orijinal Veri"
 
+#: models/staged_item.py:53
 msgid "Data after transformation, ready for model creation"
 msgstr "Dönüşüm sonrası, model oluşturma için hazır veri"
 
+#: models/staged_item.py:58
 msgid "Why this item failed to import"
 msgstr "Bu öğenin içe aktarılması nedeniyle başarısız oldu"
 
+#: models/staged_item.py:61
 msgid "Detailed error message"
 msgstr "Detaylı hata mesajı"
 
+#: models/staged_item.py:64
 msgid "Specific field that caused the error"
 msgstr "Hata nedeni olan özel alan"
 
+#: models/staged_item.py:74
 msgid "Being Fixed"
 msgstr "İyileştiriliyor"
 
+#: models/staged_item.py:75
 msgid "Ready to Retry"
 msgstr "Yeniden Deneme Hazır"
 
+#: models/staged_item.py:76
 msgid "Successfully Imported"
 msgstr "Başarıyla İçe Aktarıldı"
 
+#: models/staged_item.py:77
 msgid "Skipped by Admin"
 msgstr "Yöneticisi Tarafından Atlandı"
 
+#: models/staged_item.py:81
 msgid "Admin notes about fixing this item"
 msgstr "Bu öğeyi düzeltebilirken yönetici notları"
 
+#: models/staged_item.py:92
 msgid "Staged Item"
 msgstr "Aşamalı Öğe"
 
+#: models/staged_item.py:93
 msgid "Staged Items"
 msgstr "Aşamalı Öğeler"
 
+#: models/step.py:30
 msgid "Brands"
 msgstr "Markalar"
 
+#: models/step.py:32
 msgid "Product Images"
 msgstr "Ürün Görselleri"
 
+#: models/step.py:33
 msgid "Product Variants"
 msgstr "Ürün Değişkenleri"
 
+#: models/step.py:35
 msgid "Customer Addresses"
 msgstr "Müşteri Adresleri"
 
+#: models/step.py:37
 msgid "Order Items"
 msgstr "Sipariş Öğeleri"
 
+#: models/step.py:39 templates/admin/migration/confirm_rollback.html:83
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
+#: templates/admin/migration/wizard/step4_mapping.html:97
+#: templates/admin/migration/wizard/step5_import.html:191
+#: templates/admin/migration/wizard/step6_complete.html:37
 msgid "Coupons"
 msgstr "Kuponlar"
 
+#: models/step.py:40
 msgid "Blog"
 msgstr "Blog"
 
+#: models/step.py:41
 msgid "Shipping Zones"
 msgstr "Kargo Bölgesi"
 
+#: models/step.py:42
 msgid "Tax Rates"
 msgstr "Vergi Oranları"
 
+#: models/step.py:43 templates/admin/migration/wizard/step6_complete.html:117
 msgid "Link Rewriting"
 msgstr "Bağlantı Yeniden Yazımı"
 
+#: models/step.py:44 templates/admin/migration/wizard/step3_preview.html:50
+#: templates/admin/migration/wizard/step3_preview.html:141
+#: templates/admin/migration/wizard/step5_import.html:231
+#: templates/admin/migration/wizard/step6_complete.html:42
 msgid "Affiliates"
 msgstr "Affiliateler"
 
+#: models/step.py:45 templates/admin/migration/wizard/step5_import.html:251
+#: templates/admin/migration/wizard/step6_complete.html:48
 msgid "Commissions"
 msgstr "Komisyonlar"
 
+#: models/step.py:46 templates/admin/migration/wizard/step5_import.html:271
 msgid "Payouts"
 msgstr "Ödemeler"
 
+#: models/step.py:49
 msgid "Type of data being imported in this step"
 msgstr "Bu adımda içe aktarılan veri türü"
 
+#: models/step.py:54 models/sync_job.py:77 models/sync_step.py:31
 msgid "Running"
 msgstr "Çalışıyor"
 
-msgid "Database savepoint ID for this step"
-msgstr "Bu adımda veritabanı savepoint kimliği"
-
+#: models/step.py:69
 msgid "Total items to import in this step"
 msgstr "Bu adımda içe aktarılacak toplam öğeler"
 
+#: models/step.py:70
 msgid "Items successfully imported"
 msgstr "Başarıyla İçe Aktarılan Öğeler"
 
+#: models/step.py:72
 msgid "Items skipped (duplicates, validation failures)"
 msgstr "Atlanan Öğeler (yinelenenler, doğrulama başarısızlıkları)"
 
+#: models/step.py:74
 msgid "Items that failed to import"
 msgstr "İçe Aktarılamayan Öğeler"
 
+#: models/step.py:77
 msgid "When this step started"
 msgstr "Bu adımın başlangıç zamanı"
 
+#: models/step.py:79
 msgid "When this step completed"
 msgstr "Bu adımın tamamlanma zamanı"
 
+#: models/step.py:82
 msgid "Duration of this step in seconds"
 msgstr "Bu adımdaki süre (saniye cinsinden)"
 
+#: models/step.py:86
 msgid "Error message if step failed"
 msgstr "Adım başarısız olursa hata mesajı"
 
+#: models/step.py:88
 msgid "Number of errors encountered in this step"
 msgstr "Bu adımda karşılaşılan hata sayısı"
 
+#: models/step.py:91
 msgid "Number of warnings encountered in this step"
 msgstr "Bu adımda karşılaşılan uyarı sayısı"
 
+#: models/step.py:96
 msgid "Currently processing item (for progress display)"
 msgstr "Şu anda işlenen öğe (ilerleme gösterimi için)"
 
+#: models/step.py:101
 msgid "Migration Step"
 msgstr "Göç Adımı"
 
+#: models/step.py:102
 msgid "Migration Steps"
 msgstr "Göç Adımları"
 
+#: models/sync_connection.py:24
 msgid "Descriptive name (e.g., 'Production Server', 'Staging')"
-msgstr ""
+msgstr "Açıklamalı isim (örn. 'Üretim Sunucusu', 'Staging')"
 
-#, fuzzy
-#| msgid "Product"
+#: models/sync_connection.py:28
+#: templates/admin/migration/sync/step1_connection.html:92
 msgid "Production"
-msgstr "Ürün"
+msgstr "Üretim"
 
+#: models/sync_connection.py:29
+#: templates/admin/migration/sync/step1_connection.html:91
 msgid "Staging"
-msgstr ""
+msgstr "Staj"
 
-#, fuzzy
-#| msgid "Back"
+#: models/sync_connection.py:30
+#: templates/admin/migration/sync/step1_connection.html:93
 msgid "Backup"
-msgstr "Geri"
+msgstr "Yedek"
 
+#: models/sync_connection.py:31
+#: templates/admin/migration/sync/step1_connection.html:94
 msgid "Other"
-msgstr ""
+msgstr "Diğer"
 
+#: models/sync_connection.py:37
 msgid "Role of the remote instance"
-msgstr ""
+msgstr "Uzak örneğin rolü"
 
+#: models/sync_connection.py:41
 msgid ""
 "Base URL of the remote Spwig instance (e.g., https://merchant-store.com)"
-msgstr ""
+msgstr "Uzak Spwig örneğinin temel URL'si (örn. https://merchant-store.com)"
 
+#: models/sync_connection.py:46
 msgid "SyncToken for the remote instance (stored encrypted)"
-msgstr ""
+msgstr "Uzak örneğe ait SyncToken (şifrelenerek saklanır)"
 
+#: models/sync_connection.py:51
 msgid "Spwig version running on the remote instance"
-msgstr ""
+msgstr "Uzak örnekte çalışan Spwig sürümü"
 
+#: models/sync_connection.py:54
 msgid "Site name of the remote instance"
-msgstr ""
+msgstr "Uzak örneğin site adı"
 
+#: models/sync_connection.py:58
 msgid "Whether the connection has been verified"
-msgstr ""
+msgstr "Bağlantının doğrulanmış olup olmadığı"
 
+#: models/sync_connection.py:61
 msgid "Last successful connection test"
-msgstr ""
+msgstr "Son başarılı bağlantı testi"
 
+#: models/sync_connection.py:64
 msgid "Last time a sync was performed using this connection"
-msgstr ""
+msgstr "Bu bağlantı ile son senkronizasyonun yapıldığı zaman"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_connection.py:72
 msgid "User who created this connection"
-msgstr "Bu göçü başlatan kullanıcı"
+msgstr "Bu bağlantıyı oluşturan kullanıcı"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:79
 msgid "Sync Connection"
-msgstr "Bağlantı"
+msgstr "Senkronizasyon Bağlantısı"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:80
 msgid "Sync Connections"
-msgstr "Bağlantı"
+msgstr "Senkronizasyon Bağlantıları"
 
-#, fuzzy
-#| msgid "Settings"
+#: models/sync_job.py:26 templates/admin/migration/sync/base.html:34
 msgid "Settings Sync"
-msgstr "Ayarlar"
+msgstr "Ayar Senkronizasyonu"
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: models/sync_job.py:27 templates/admin/migration/sync/base.html:32
 msgid "Full System Migration"
-msgstr "Yeni Göçü Başlat"
+msgstr "Tam Sistem Göçü"
 
-#, fuzzy
-#| msgid "Type of source data"
+#: models/sync_job.py:30
 msgid "Type of sync operation"
-msgstr "Kaynak Veri Türü"
+msgstr "Senkronizasyon İşlem Türü"
 
+#: models/sync_job.py:34
 msgid "Pull from Remote"
-msgstr ""
+msgstr "Uzaktan Çek"
 
+#: models/sync_job.py:35
 msgid "Push to Remote"
-msgstr ""
+msgstr "Uzak Sunucuya Gönder"
 
+#: models/sync_job.py:38
 msgid "Direction of data flow"
-msgstr ""
+msgstr "Veri akışı yönü"
 
+#: models/sync_job.py:46
 msgid "Connection to the remote instance"
-msgstr ""
+msgstr "Uzak örnekle bağlantı"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_job.py:54
 msgid "User who initiated this sync"
-msgstr "Bu göçü başlatan kullanıcı"
+msgstr "Bu senkronizasyonu başlatan kullanıcı"
 
+#: models/sync_job.py:59
 msgid "List of sync category keys selected for this job"
-msgstr ""
+msgstr "Bu görev için seçilen senkronizasyon kategorisi anahtarlarının listesi"
 
+#: models/sync_job.py:63
 msgid "Add & Update Only"
-msgstr ""
+msgstr "Sadece Ekle & Güncelle"
 
+#: models/sync_job.py:64
 msgid "Full Mirror"
-msgstr ""
+msgstr "Tam Ayna"
 
+#: models/sync_job.py:70
 msgid "Sync behaviour: additive (no deletions) or mirror (exact copy)"
-msgstr ""
+msgstr "Senkronizasyon davranışı: eklemeli (silme yok) veya aynalama (kopya)"
 
-#, fuzzy
-#| msgid "pending review"
+#: models/sync_job.py:75
 msgid "Generating Preview"
-msgstr "değerlendirme bekliyor"
+msgstr "Önizleme Oluşturma"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: models/sync_job.py:76
 msgid "Awaiting Confirmation"
-msgstr "Bağlantı Testi"
+msgstr "Onay Bekleniyor"
 
-#, fuzzy
-#| msgid "Cancel"
-msgid "Cancelled"
-msgstr "İptal"
-
+#: models/sync_job.py:88
 msgid "Current status of the sync operation"
-msgstr ""
+msgstr "Senkronizasyon işlemi mevcut durumu"
 
+#: models/sync_job.py:95
 msgid "Name of the currently executing step"
-msgstr ""
+msgstr "Şu anda yürütülen adımın adı"
 
+#: models/sync_job.py:100
 msgid "Structured diff from preview step"
-msgstr ""
+msgstr "Önizleme adımı üzerinden yapılandırılmış fark"
 
+#: models/sync_job.py:105
 msgid "Whether the merchant confirmed production overwrite"
-msgstr ""
+msgstr "Satıcı üretimi yazma işlemini onayladı mı"
 
+#: models/sync_job.py:110
 msgid "Pre-sync state snapshot for rollback"
-msgstr ""
+msgstr "Geri alma için önceden senkronizasyon durumu anlık görüntüsü"
 
-#, fuzzy
-#| msgid "Whether this migration can be rolled back"
+#: models/sync_job.py:113
 msgid "Whether this job can be rolled back"
-msgstr "Bu geçişin geri alınabilir olup olmadığı"
+msgstr "Bu işin geri alınabilmesi"
 
-#, fuzzy
-#| msgid "Deadline for manual rollback (24 hours after completion)"
+#: models/sync_job.py:116
 msgid "Deadline for rollback (24 hours after completion)"
-msgstr "El ile geri alma sonu (tamamlanma sonrası 24 saat)"
+msgstr "Geri alma sonu (tamamlanma sonrası 24 saat)"
 
+#: models/sync_job.py:136
 msgid "Recent activity log entries [{ts, msg}, ...] (last 50)"
-msgstr ""
+msgstr "Son etkinlik günlüğü girdileri [{ts, msg}, ...] (son 50)"
 
+#: models/sync_job.py:143
 msgid "Sync Job"
-msgstr ""
+msgstr "Senkronizasyon Görevi"
 
+#: models/sync_job.py:144
 msgid "Sync Jobs"
-msgstr ""
+msgstr "Senkronizasyon Görevleri"
 
-#, fuzzy
-#| msgid "Parent migration job"
+#: models/sync_step.py:21
 msgid "Parent sync job"
-msgstr "Ana göç işi"
+msgstr "Ana senkronizasyon işi"
 
+#: models/sync_step.py:26
 msgid "Sync category key (e.g., 'email_config', 'design_theme')"
 msgstr ""
+"Senkronizasyon kategorisi anahtarı (örn. 'email_config', 'design_theme')"
 
+#: models/sync_step.py:52
 msgid "Diff data, created object IDs, or ID mappings for this step"
 msgstr ""
+"Bu adımı için fark verisi, oluşturulan nesne kimlikleri veya kimlik "
+"eşlemeleri"
 
+#: models/sync_step.py:59
 msgid "Extra progress data for the UI (e.g., bytes transferred for media)"
-msgstr ""
+msgstr "UI için ek ilerleme verisi (örn. medya için aktarılan bayt)"
 
-#, fuzzy
-#| msgid "Step"
+#: models/sync_step.py:64
 msgid "Sync Step"
-msgstr "Adım"
+msgstr "Senkronizasyon Adımı"
 
-#, fuzzy
-#| msgid "Next Steps"
+#: models/sync_step.py:65
 msgid "Sync Steps"
-msgstr "Sonraki Adımlar"
+msgstr "Senkronizasyon Adımları"
 
+#: sync/authentication.py:40
 msgid "HTTPS is required for sync API requests."
-msgstr ""
+msgstr "Senkronizasyon API istekleri için HTTPS gerekli."
 
+#: sync/authentication.py:46
 msgid "Missing or invalid Authorization header. Expected: SyncToken <token>"
 msgstr ""
+"Eksik veya geçersiz Authorization üstbilgisi. Beklenen: SyncToken <token>"
 
+#: sync/authentication.py:51
 msgid "Empty sync token."
-msgstr ""
+msgstr "Boş senkronizasyon tokenu."
 
+#: sync/authentication.py:61
 msgid "Invalid or expired sync token."
-msgstr ""
+msgstr "Geçersiz veya süresi dolmuş senkronizasyon tokenu."
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:25
 msgid "Site Settings"
-msgstr "Ayarlar"
+msgstr "Site Ayarları"
 
+#: sync/category_registry.py:27
 msgid ""
 "Core site configuration: name, branding, currency, checkout, SEO, maintenance"
 msgstr ""
+"Kök site yapılandırması: isim, markalaştırma, para birimi, ödeme, SEO, bakım"
 
+#: sync/category_registry.py:41
 msgid "Design & Theme"
-msgstr ""
+msgstr "Tasarım & Tema"
 
+#: sync/category_registry.py:42
 msgid "Active theme, design tokens, custom CSS, theme branding"
-msgstr ""
+msgstr "Aktif tema, tasarım token'ları, özel CSS, tema markalama"
 
+#: sync/category_registry.py:61
 msgid "Headers, Footers & Menus"
-msgstr ""
+msgstr "Başlık, Altbilgi & Menüler"
 
+#: sync/category_registry.py:62
 msgid "Header/footer templates, widgets, navigation menus"
-msgstr ""
+msgstr "Başlık/altbilgi şablonları, widget'lar, navigasyon menüleri"
 
-#, fuzzy
-#| msgid "Total Migrations"
+#: sync/category_registry.py:81
 msgid "Email Configuration"
-msgstr "Toplam Göçler"
+msgstr "E-posta Yapılandırması"
 
+#: sync/category_registry.py:82
 msgid "Email provider accounts, templates, and template translations"
-msgstr ""
+msgstr "E-posta sağlayıcı hesapları, şablonlar ve şablon çevirileri"
 
+#: sync/category_registry.py:99
 msgid "SMS & WhatsApp Configuration"
-msgstr ""
+msgstr "SMS & WhatsApp Ayarları"
 
+#: sync/category_registry.py:100
 msgid "SMS/WhatsApp provider accounts and message templates"
-msgstr ""
+msgstr "SMS/WhatsApp sağlayıcı hesapları ve mesaj şablonları"
 
+#: sync/category_registry.py:113
 msgid "Payment Providers"
-msgstr ""
+msgstr "Ödeme Sağlayıcıları"
 
+#: sync/category_registry.py:114
 msgid "Payment provider accounts (Stripe, PayPal, etc.)"
-msgstr ""
+msgstr "Ödeme sağlayıcı hesapları (Stripe, PayPal vs.)"
 
+#: sync/category_registry.py:123
 msgid "Sandbox/test credentials will NOT be synced to production."
 msgstr ""
+"Sandbox/test kimlik bilgileri ÜRETİME SENKRONİZASYONU İŞLEME ALINMAYACAKTIR."
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:130
 msgid "Shipping Configuration"
-msgstr "Shopify Göçü"
+msgstr "Kargo Yapılandırması"
 
+#: sync/category_registry.py:132
 msgid ""
-"Shipping providers, zones, methods, rules, rate tables, packages, carrier "
-"presets, locations"
+"Shipping providers, zones, methods, promotions, rate tables, packages, "
+"carrier presets, locations"
 msgstr ""
+"Gönderim sağlayıcıları, bölgeler, yöntemler, kampanyalar, oran tabloları, "
+"paketler, taşıyıcı ön ayarları, konumlar"
 
+#: sync/category_registry.py:156
 msgid "Tax & Currency"
-msgstr ""
+msgstr "Vergi & Para Birimi"
 
+#: sync/category_registry.py:158
 msgid "Supported currencies, exchange rate providers, manual exchange rates"
 msgstr ""
+"Desteklenen para birimleri, döviz kuru sağlayıcıları, el ile döviz kurları"
 
-#, fuzzy
-#| msgid "Tax Rates"
+#: sync/category_registry.py:176
 msgid "Tax Rates & Presets"
-msgstr "Vergi Oranları"
+msgstr "Vergi Oranları & Önceden Ayarlanmışlar"
 
+#: sync/category_registry.py:177
 msgid "Tax rates, tax preset groups and preset rates"
-msgstr ""
+msgstr "Vergi oranları, vergi ön ayar grupları ve ön ayar oranları"
 
+#: sync/category_registry.py:193
 msgid "Languages & Translations"
-msgstr ""
+msgstr "Diller & Çeviriler"
 
+#: sync/category_registry.py:194
 msgid "Site languages, translation providers, UI translation overrides"
-msgstr ""
+msgstr "Site dilleri, çeviri sağlayıcıları, UI çeviri geçersizleştirme"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:210
 msgid "Blog Settings"
-msgstr "Ayarlar"
+msgstr "Blog Ayarları"
 
+#: sync/category_registry.py:211
 msgid "Blog configuration (posts per page, RSS, subscriptions)"
-msgstr ""
+msgstr "Blog yapılandırması (sayfa başına gönderiler, RSS, abonelikler)"
 
+#: sync/category_registry.py:223
 msgid "Social Sharing"
-msgstr ""
+msgstr "Sosyal Paylaşım"
 
+#: sync/category_registry.py:224
 msgid "Social sharing button configuration and platform settings"
-msgstr ""
+msgstr "Sosyal paylaşım butonu yapılandırması ve platform ayarları"
 
+#: sync/category_registry.py:236
 msgid "Sales Regions & Warehouses"
-msgstr ""
+msgstr "Satış Bölgeleri & Depolar"
 
+#: sync/category_registry.py:238
 msgid "Sales regions, warehouse locations, and fulfillment configuration"
-msgstr ""
+msgstr "Satış bölgeleri, depo konumları ve teslimat yapılandırması"
 
-#, fuzzy
-#| msgid "Collections"
+#: sync/category_registry.py:251
 msgid "Product Collections"
-msgstr "Koleksiyonlar"
+msgstr "Ürün Koleksiyonları"
 
+#: sync/category_registry.py:252
 msgid "Curated and automatic product collections"
-msgstr ""
+msgstr "Özel ve Otomatik Ürün Koleksiyonları"
 
-#, fuzzy
-#| msgid "WooCommerce Status"
+#: sync/category_registry.py:265
 msgid "Commerce Rules"
-msgstr "WooCommerce Durumu"
+msgstr "Ticaret Kuralları"
 
+#: sync/category_registry.py:267
 msgid "Vouchers, promotions, loyalty program, subscriptions, referral program"
 msgstr ""
+"Kuponlar, kampanyalar, sadakat programı, abonelikler, referans programı"
 
-#, fuzzy
-#| msgid "Webhooks API Version"
+#: sync/category_registry.py:293
 msgid "Webhooks & Integrations"
-msgstr "Webhooks API Sürümü"
+msgstr "Webhook'lar & Entegrasyonlar"
 
+#: sync/category_registry.py:294
 msgid "Webhook endpoints and OAuth provider settings"
-msgstr ""
+msgstr "Webhook uç noktaları ve OAuth sağlayıcı ayarları"
 
+#: sync/category_registry.py:307
+#: templates/admin/migration/wizard/step4_mapping.html:154
 msgid "Custom Fields"
 msgstr "Özel Alanlar"
 
+#: sync/category_registry.py:308
 msgid "Custom field groups and field definitions"
-msgstr ""
+msgstr "Özel alan grupları ve alan tanımları"
 
+#: sync/category_registry.py:320
 msgid "Staff Roles"
-msgstr ""
+msgstr "Personel Rollerİ"
 
+#: sync/category_registry.py:321
 msgid "Staff role definitions and permissions"
-msgstr ""
+msgstr "Personel Rol Tanımları ve İzinler"
 
+#: sync/category_registry.py:333
 msgid "Forms"
-msgstr ""
+msgstr "Formlar"
 
+#: sync/category_registry.py:334
 msgid "Form builder forms and configurations"
-msgstr ""
+msgstr "Form Oluşturma Formları ve Ayarları"
 
+#: sync/category_registry.py:346
 msgid "Pages & Templates"
-msgstr ""
+msgstr "Sayfalar & Şablonlar"
 
+#: sync/category_registry.py:347
 msgid "Page builder pages, page templates, element templates"
-msgstr ""
+msgstr "Sayfa oluşturucu sayfaları, sayfa şablonları, öğe şablonları"
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: sync/category_registry.py:364
 msgid "Blog Posts & Categories"
-msgstr "Blog Kategorileri"
+msgstr "Blog Yazıları & Kategoriler"
 
-#, fuzzy
-#| msgid "Import blog posts, categories, and tags from WordPress"
+#: sync/category_registry.py:365
 msgid "Blog posts, categories, and tags"
-msgstr "WordPress'ten blog yazılarını, kategorileri ve etiketleri içe aktar"
+msgstr "Blog Yazıları, Kategoriler ve Etiketler"
 
+#: sync/category_registry.py:377
 msgid "Announcements"
-msgstr ""
+msgstr "Duyurular"
 
+#: sync/category_registry.py:378
 msgid "Site announcements and notification banners"
-msgstr ""
+msgstr "Site Duyuruları ve Bildirim Bantları"
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:391
 msgid "Search Configuration"
-msgstr "Shopify Göçü"
+msgstr "Arama Yapılandırması"
 
+#: sync/category_registry.py:392
 msgid "Search redirects and search settings"
-msgstr ""
+msgstr "Arama Yönlendirmeleri ve Arama Ayarları"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:404
 msgid "SEO Providers"
-msgstr "Siparişler"
+msgstr "SEO Sağlayıcıları"
 
+#: sync/category_registry.py:405
 msgid "SEO generator provider accounts and configuration"
-msgstr ""
+msgstr "SEO üretici sağlayıcı hesapları ve yapılandırması"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:418
 msgid "Product Feed Providers"
-msgstr "Ürün Alanları"
+msgstr "Ürün Besleme Sağlayıcıları"
 
+#: sync/category_registry.py:419
 msgid "Product feed provider accounts for Google Shopping, Meta, etc."
-msgstr ""
+msgstr "Google Shopping, Meta vb. için ürün besleme sağlayıcı hesapları"
 
+#: sync/category_registry.py:432
 msgid "Blog Social Connectors"
-msgstr ""
+msgstr "Blog Sosyal Bağlantılar"
 
+#: sync/category_registry.py:433
 msgid "Social media connector accounts for blog auto-sharing"
-msgstr ""
+msgstr "Blog otomatik paylaşımı için sosyal medya bağlayıcı hesapları"
 
+#: sync/category_registry.py:442
 msgid "OAuth tokens will need to be re-authorized on the destination."
-msgstr ""
+msgstr "OAuth token'ları hedefte yeniden yetkilendirilmelidir."
 
+#: sync/category_registry.py:449
 msgid "Customer Analytics Configuration"
-msgstr ""
+msgstr "Müşteri Analitiği Ayarları"
 
+#: sync/category_registry.py:450
 msgid "Customer segments, LTV settings, and category multipliers"
-msgstr ""
+msgstr "Müşteri segmentleri, LTV ayarları ve kategori çarpanları"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:466
 msgid "Affiliate Program Configuration"
-msgstr "Ortaklık Programı Verileri"
+msgstr "Affiliate Programı Yapılandırması"
 
+#: sync/category_registry.py:467
 msgid "Affiliate program settings, report settings, and programs"
-msgstr ""
+msgstr "Ortaklık programı ayarları, rapor ayarları ve programlar"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: sync/category_registry.py:483
 msgid "POS Configuration"
-msgstr "Bağlantıyı Yapılandır"
+msgstr "POS Yapılandırması"
 
+#: sync/category_registry.py:485
 msgid ""
 "Store groups, terminals, receipt templates, promo slides, staff discounts"
 msgstr ""
+"Mağaza grupları, terminaller, fatura şablonları, promosyon kayan yazıları, "
+"personel indirimleri"
 
+#: sync/category_registry.py:510
 msgid "Installed Components"
-msgstr ""
+msgstr "Yüklü Bileşenler"
 
+#: sync/category_registry.py:512
 msgid ""
 "Installed themes, provider integrations, and utility components with "
 "filesystem packages"
 msgstr ""
+"Yüklü temalar, sağlayıcı entegrasyonları ve dosya sistemi paketleriyle "
+"birlikte yardımcı bileşenler"
 
-#, fuzzy
-#| msgid "Product Variants"
+#: sync/category_registry.py:531
 msgid "Products, Categories & Brands"
-msgstr "Ürün Değişkenleri"
+msgstr "Ürünler, Kategoriler & Markalar"
 
-#, fuzzy
-#| msgid "Import products with images, variants, and attributes"
+#: sync/category_registry.py:532
 msgid "Products, variants, images, categories, brands, attributes"
-msgstr ""
-"Resimlerle, varyasyonlarla ve özniteliklerle birlikte ürünleri içeri aktar"
+msgstr "Ürünler, varyasyonlar, resimler, kategoriler, markalar, öznitelikler"
 
+#: sync/category_registry.py:555
 msgid "Media Library"
-msgstr ""
+msgstr "Medya Kütüphanesi"
 
+#: sync/category_registry.py:556
 msgid "Media assets, thumbnails, and uploaded files"
-msgstr ""
+msgstr "Medya varlıkları, küçük resimler ve yüklü dosyalar"
 
-#, fuzzy
-#| msgid "Customer Addresses"
+#: sync/category_registry.py:570
 msgid "Customers & Addresses"
-msgstr "Müşteri Adresleri"
+msgstr "Müşteriler & Adresler"
 
-#, fuzzy
-#| msgid "Import customer accounts and addresses"
+#: sync/category_registry.py:571
 msgid "Customer accounts, profiles, and addresses"
-msgstr "Müşteri hesaplarını ve adresleri içe aktar"
+msgstr "Müşteri hesapları, profiller ve adresler"
 
-#, fuzzy
-#| msgid "Order Fields"
+#: sync/category_registry.py:588
 msgid "Order History"
-msgstr "Sipariş Alanları"
+msgstr "Sipariş Geçmişi"
 
-#, fuzzy
-#| msgid "Import order history and transactions"
+#: sync/category_registry.py:589
 msgid "Orders, order items, and transaction records"
-msgstr "Sipariş geçmişini ve işlemleri içe aktar"
+msgstr "Siparişler, sipariş kalemleri ve işlem kayıtları"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:601
 msgid "Product Reviews"
-msgstr "Ürün Alanları"
+msgstr "Ürün Değerlendirmeleri"
 
-#, fuzzy
-#| msgid "Import product reviews and ratings"
+#: sync/category_registry.py:602
 msgid "Product reviews and ratings"
-msgstr "Ürün yorumlarını ve puanlamaları içe aktar"
+msgstr "Ürün Değerlendirmeleri ve Puanlamalar"
 
+#: sync/category_registry.py:614
 msgid "Stock Levels"
-msgstr ""
+msgstr "Stok Seviyeleri"
 
+#: sync/category_registry.py:616
 msgid "Per-warehouse stock quantities, reserved stock, and reorder points"
 msgstr ""
+"Depo bazlı stok miktarları, rezerv edilen stok ve yeniden sipariş noktaları"
 
+#: sync/category_registry.py:629
 msgid "Digital Products & Licenses"
-msgstr ""
+msgstr "Dijital Ürünler & Lisanslar"
 
+#: sync/category_registry.py:631
 msgid "Digital assets, license key templates, license pools, license providers"
 msgstr ""
+"Diijital varlıklar, lisans anahtarı şablonları, lisans havuzları, lisans "
+"sağlayıcıları"
 
+#: sync/category_registry.py:651
 msgid "Gift Cards & Voucher Usage"
-msgstr ""
+msgstr "Hediye Çekleri & Voucher Kullanımı"
 
+#: sync/category_registry.py:652
 msgid "Gift card balances, transactions, voucher usage records"
-msgstr ""
+msgstr "Hediyelik kart bakiyeleri, işlemler, kupon kullanım kayıtları"
 
+#: sync/category_registry.py:669
 msgid "Store Credit & Wallets"
-msgstr ""
+msgstr "Mağaza Kredisi & Cüzdanlar"
 
+#: sync/category_registry.py:670
 msgid "Customer wallet balances and transaction history"
-msgstr ""
+msgstr "Müşteri cüzdan bakiyeleri ve işlem geçmişi"
 
+#: sync/category_registry.py:682
 msgid "Loyalty Program Members"
-msgstr ""
+msgstr "Sadakat Programı Üyeleri"
 
+#: sync/category_registry.py:684
 msgid "Loyalty members, points balances, transactions, redemptions, badges"
 msgstr ""
+"Sadakat programı üyeleri, puan bakiyeleri, işlemler, puan kullanımları, puan "
+"kırmızı kartları"
 
+#: sync/category_registry.py:705
 msgid "Active Subscriptions"
-msgstr ""
+msgstr "Aktif Abonelikler"
 
+#: sync/category_registry.py:707
 msgid ""
 "Subscription plans pricing, active subscriptions, billing cycles, payment "
 "tokens"
 msgstr ""
+"Abonelik planları fiyatlandırması, aktif abonelikler, fatura dönemleri, "
+"ödeme token'ları"
 
+#: sync/category_registry.py:724
 msgid ""
 "Payment tokens may not be valid across different payment provider "
 "installations."
 msgstr ""
+"Ödeme token'ları, farklı ödeme sağlayıcı kurulumları arasında geçersiz "
+"olabilir."
 
+#: sync/category_registry.py:731
 msgid "Shipments & Tracking"
-msgstr ""
+msgstr "Gönderiler & Takip"
 
+#: sync/category_registry.py:732
 msgid "Shipment records and tracking event history"
-msgstr ""
+msgstr "Gönderi kayıtları ve takip olay tarihi"
 
+#: sync/category_registry.py:744
 msgid "Refunds, Returns & Order Notes"
-msgstr ""
+msgstr "İadeler, İptaller & Sipariş Notları"
 
+#: sync/category_registry.py:745
 msgid "Refund records, return requests, and order notes"
-msgstr ""
+msgstr "İade kayıtları, iade talepleri ve sipariş notları"
 
-#, fuzzy
-#| msgid "Customer Fields"
+#: sync/category_registry.py:757
 msgid "Customer Wishlists"
-msgstr "Müşteri Alanları"
+msgstr "Müşteri Beklenen Ürün Listeleri"
 
+#: sync/category_registry.py:758
 msgid "Customer wishlists and wishlist items"
-msgstr ""
+msgstr "Müşteri istek listeleri ve istek listesi öğeleri"
 
+#: sync/category_registry.py:770
 msgid "Blog Subscribers"
-msgstr ""
+msgstr "Blog Aboneleri"
 
+#: sync/category_registry.py:771
 msgid "Blog email subscribers and category subscriptions"
-msgstr ""
+msgstr "Blog e-posta aboneleri ve kategori abonelikleri"
 
-#, fuzzy
-#| msgid "Commissions"
+#: sync/category_registry.py:783
 msgid "Form Submissions"
-msgstr "Komisyonlar"
+msgstr "Form Gönderimleri"
 
+#: sync/category_registry.py:784
 msgid "Form response data and submission history"
-msgstr ""
+msgstr "Form yanıt verileri ve gönderim tarihi"
 
+#: sync/category_registry.py:796
 msgid "Customer Analytics & History"
-msgstr ""
+msgstr "Müşteri Analitiği & Tarih"
 
+#: sync/category_registry.py:797
 msgid "Customer notes, abandoned carts, cohort data, preference logs"
 msgstr ""
+"Müşteri notları, terk edilen sepetler, kohort verileri, tercih günlükleri"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:815
 msgid "Affiliate Member Data"
-msgstr "Ortaklık Programı Verileri"
+msgstr "Affiliate Üyeleri Verileri"
 
+#: sync/category_registry.py:817
 msgid "Affiliate accounts, program memberships, links, commissions, payouts"
 msgstr ""
+"Afilasyon hesapları, program üyelikleri, bağlantılar, komisyonlar, ödemeler"
 
-#, fuzzy
-#| msgid "📊 Migration History"
+#: sync/category_registry.py:836
 msgid "POS Transaction History"
-msgstr "📊 Göç Geçmişi"
+msgstr "POS İşlem Geçmişi"
 
+#: sync/category_registry.py:837
 msgid "POS shifts, cash movements, payments, and parked carts"
-msgstr ""
+msgstr "POS vardiyaları, nakit hareketleri, ödemeler ve duraklatılmış sepetler"
 
+#: sync/category_registry.py:854
 msgid "Software License Keys"
-msgstr ""
+msgstr "Yazılım Lisans Anahtarları"
 
+#: sync/category_registry.py:855
 msgid "License keys, activations, and device registrations"
-msgstr ""
+msgstr "Lisans anahtarları, aktıvations ve cihaz kayıtları"
 
-#, fuzzy
-#| msgid "Platform"
+#: sync/category_registry.py:870
 msgid "Platform License"
-msgstr "Platform"
+msgstr "Platform Lisansı"
 
+#: sync/category_registry.py:871
 msgid "Platform license transfer and EULA acceptance history"
-msgstr ""
+msgstr "Platform lisansı transferi ve EULA kabul tarihi"
 
+#: sync/category_registry.py:880
 msgid ""
 "This will deactivate the license on the source installation. The source "
 "installation will stop working after transfer."
 msgstr ""
+"Bu, kaynak yüklemenizdeki lisansı devre dışı bırakacaktır. Transfer "
+"işleminden sonra kaynak yüklemeniz çalışmayacaktır."
 
+#: sync/category_registry.py:895
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "Settings"
 msgstr "Ayarlar"
 
+#: sync/category_registry.py:897
 msgid "Core site settings, currencies, languages"
-msgstr ""
+msgstr "Kern site ayarları, diller, para birimleri"
 
+#: sync/category_registry.py:903
 msgid "Design"
-msgstr ""
+msgstr "Tasarım"
 
+#: sync/category_registry.py:905
 msgid "Theme, layout, menus, widgets"
-msgstr ""
+msgstr "Tema, düzen, menüler, widget'lar"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:911
 msgid "Providers"
-msgstr "Siparişler"
+msgstr "Sağlayıcılar"
 
+#: sync/category_registry.py:913
 msgid "Email, SMS, payment, shipping providers"
-msgstr ""
+msgstr "E-posta, SMS, ödeme, kargo sağlayıcıları"
 
-#, fuzzy
-#| msgid "WooCommerce"
+#: sync/category_registry.py:919
 msgid "Commerce"
-msgstr "WooCommerce"
+msgstr "Ticaret"
 
+#: sync/category_registry.py:921
 msgid "Vouchers, promotions, loyalty, subscriptions"
-msgstr ""
+msgstr "Voucher'lar, kampanyalar, sadakat, abonelikler"
 
-#, fuzzy
-#| msgid "Content Link"
+#: sync/category_registry.py:927
 msgid "Content"
-msgstr "İçerik Bağlantısı"
+msgstr "İçerik"
 
+#: sync/category_registry.py:929
 msgid "Pages, blog posts, forms"
-msgstr ""
+msgstr "Sayfalar, blog gönderileri, formlar"
 
-#, fuzzy
-#| msgid "Data Type"
+#: sync/category_registry.py:935
 msgid "Data"
-msgstr "Veri Türü"
+msgstr "Veri"
 
+#: sync/category_registry.py:937
 msgid "Products, customers, orders, media"
-msgstr ""
+msgstr "Ürünler, müşteriler, siparişler, medya"
 
-#, fuzzy
-#| msgid ""
-#| "Could not analyze custom fields. You can still proceed with the import."
+#: sync/compatibility.py:82
 msgid "Could not determine local version. Proceeding with caution."
-msgstr "Özel alanlar analiz edilemedi. İmportu hala devam ettirebilirsiniz."
+msgstr "Yerel sürüm tespit edilemedi. Dikkatli şekilde ilerleniyor."
 
+#: sync/compatibility.py:83
 msgid "Local version could not be determined."
-msgstr ""
+msgstr "Yerel sürüm belirlenemedi."
 
+#: sync/compatibility.py:89
 msgid "Could not determine remote version. Proceeding with caution."
-msgstr ""
+msgstr "Uzak sürüm belirlenemedi. Dikkatle devam ediliyor."
 
+#: sync/compatibility.py:90
 msgid "Remote version could not be determined."
-msgstr ""
+msgstr "Uzak sürüm belirlenemedi."
 
+#: sync/diff_engine.py:89
 msgid "Credentials will be re-encrypted on the target instance."
-msgstr ""
+msgstr "Kimlik bilgileri hedef örnekte tekrar şifrelenir."
 
+#: sync_admin.py:65 templates/admin/migration/sync/step1_connection.html:89
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
+#: sync_admin.py:79
 msgid "Last Sync"
-msgstr ""
+msgstr "Son Senkronizasyon"
 
+#: sync_admin.py:130 templates/admin/migration/syncjob/change_list.html:4
+#: templates/admin/migration/syncjob/change_list.html:24
 msgid "Spwig-to-Spwig Sync"
-msgstr ""
+msgstr "Spwig'den Spwig'e Senkronizasyon"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync_admin.py:133
 msgid "Sync Settings"
-msgstr "Ayarlar"
+msgstr "Senkronizasyon Ayarları"
 
+#: sync_admin.py:135
 msgid "Sync settings between staging and production"
-msgstr ""
+msgstr "Staj ve üretim arasındaki senkronizasyon ayarları"
 
-#, fuzzy
-#| msgid "Rollback Migration"
+#: sync_admin.py:140
 msgid "Full Migration"
-msgstr "Göçü Geri Al"
+msgstr "Tam Göç"
 
+#: sync_admin.py:142
 msgid "Migrate entire system to a new installation"
-msgstr ""
+msgstr "Tüm sistemi yeni bir yüklemeye geçir"
 
+#: sync_admin.py:147
 msgid "Manage Tokens"
-msgstr ""
+msgstr "Token'leri Yönet"
 
+#: sync_admin.py:149
 msgid "Generate and manage sync tokens"
-msgstr ""
+msgstr "Senkronizasyon token'ları oluşturun ve yönetin"
 
-#, fuzzy
-#| msgid "Type:"
+#: sync_admin.py:279
 msgid "Type"
-msgstr "Tip:"
+msgstr "Tip"
 
-#, fuzzy
-#| msgid "section"
+#: sync_admin.py:289 templates/admin/migration/sync/step2_categories.html:22
 msgid "Direction"
-msgstr "bölüm"
+msgstr "Yönlendirme"
 
+#: sync_admin.py:344
 msgid "Synced/Failed/Total"
-msgstr ""
+msgstr "Başarılı/Başarısız/Toplam"
 
+#: sync_admin.py:400 sync_admin.py:565
 msgid "Sync token is required for new connections."
-msgstr ""
+msgstr "Yeni bağlantılar için senkronizasyon tokenı gerekli."
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: sync_admin.py:425
 msgid "Settings Sync - Connection"
-msgstr "Bağlantı Testi"
+msgstr "Ayarlar Senkronizasyonu - Bağlantı"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:446
 msgid "Please select at least one category to sync."
-msgstr "En az bir veri türü seçin."
+msgstr "Senkronize etmek için en az bir kategori seçin."
 
+#: sync_admin.py:468
 msgid "Settings Sync - Select Categories"
-msgstr ""
+msgstr "Ayarlar Senkronizasyonu - Kategorileri Seç"
 
+#: sync_admin.py:486
 msgid "You must confirm production overwrite."
-msgstr ""
+msgstr "Üretim ortamını geçersiz kılma işlemini onaylamalısınız."
 
-#, fuzzy
-#| msgid "Migration job created. Please configure the connection."
+#: sync_admin.py:505
 msgid "Preview generation failed. Please check the connection and try again."
-msgstr "Geçiş işi oluşturuldu. Lütfen bağlantıyı yapılandırın."
+msgstr "Önizleme oluşturulamadı. Bağlantıyı kontrol edin ve tekrar deneyin."
 
+#: sync_admin.py:513
 msgid "Settings Sync - Preview Changes"
-msgstr ""
+msgstr "Ayarlar Senkronizasyonu - Değişiklikleri Önizle"
 
+#: sync_admin.py:533
 msgid "Settings Sync - Progress"
-msgstr ""
+msgstr "Ayarlar Senkronizasyonu - İlerleme"
 
-#, fuzzy
-#| msgid "Migration Wizard - Connection"
+#: sync_admin.py:589
 msgid "Full Migration - Connection"
-msgstr "Göç Sihiri - Bağlantı"
+msgstr "Tam Göç - Bağlantı"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:609
 msgid "Please select at least one category to migrate."
-msgstr "En az bir veri türü seçin."
+msgstr "Göçütmek için en az bir kategori seçin."
 
-#, fuzzy
-#| msgid "Migration Step"
+#: sync_admin.py:621
 msgid "Full Migration - Select Scope"
-msgstr "Göç Adımı"
+msgstr "Tam Göç - Kapsam Seç"
 
+#: sync_admin.py:646
 msgid "Compatibility check failed. Please verify the connection and try again."
 msgstr ""
+"Uyumluluk kontrolü başarısız oldu. Bağlantıyı kontrol edin ve tekrar deneyin."
 
+#: sync_admin.py:657
 msgid "Full Migration - Pre-flight Check"
-msgstr ""
+msgstr "Tam Göç - Ön Kontrol"
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: sync_admin.py:676
 msgid "Full Migration - Progress"
-msgstr "Göç Günlükleri"
+msgstr "Tam Göç - İlerleme"
 
-#, fuzzy
-#| msgid "No Migrations Yet"
+#: sync_admin.py:695
 msgid "Full Migration - Results"
-msgstr "Henüz Göç Yok"
+msgstr "Tam Göç - Sonuçlar"
 
+#: sync_admin.py:874
 msgid "Token generated. Copy it now — it will not be shown again:"
-msgstr ""
+msgstr "Token oluşturuldu. Şimdi kopyalayın — tekrar gösterilmeyecektir:"
 
+#: sync_admin.py:882
 msgid "Token revoked."
-msgstr ""
+msgstr "Token geri alınmış."
 
+#: sync_admin.py:884
 msgid "Invalid token ID."
-msgstr ""
+msgstr "Geçersiz token kimliği."
 
+#: sync_admin.py:893 templates/admin/migration/sync/token_management.html:4
+#: templates/admin/migration/sync/token_management.html:27
 msgid "Sync Token Management"
-msgstr ""
+msgstr "Senkronizasyon Token Yönetimi"
 
+#: templates/admin/migration/confirm_rollback.html:18
 msgid "Warning: This action cannot be undone!"
 msgstr "Uyarı: Bu işlem geri alınamaz!"
 
+#: templates/admin/migration/confirm_rollback.html:21
 msgid "You are about to rollback the migration job:"
 msgstr "Geçiş işini geri almak üzeresiniz:"
 
-msgid "This will:"
-msgstr "Bunun anlamı:"
+#: templates/admin/migration/confirm_rollback.html:25
+msgid "Spwig will remove:"
+msgstr "Spwig kaldıracak:"
 
-msgid "Delete all products imported from this migration"
-msgstr "Bu geçişten içe aktarılan tüm ürünleri sil"
+#: templates/admin/migration/confirm_rollback.html:33
+msgid "Nothing — there is nothing left from this import that can be removed."
+msgstr "Hiçbir şey — bu ithalatın kaldırılabilecek hiçbir şeyi kalmamıştır."
 
-msgid "Delete all categories imported from this migration"
-msgstr "Bu geçişten içe aktarılan tüm kategorileri sil"
+#: templates/admin/migration/confirm_rollback.html:37
+msgid "Spwig will keep:"
+msgstr "Spwig koruyacak:"
 
-msgid "Delete all customers imported from this migration"
-msgstr "Bu geçişten içe aktarılan tüm müşterileri sil"
+#: templates/admin/migration/confirm_rollback.html:38
+msgid ""
+"These were created by the import, but other things in your store now depend "
+"on them. Removing them would damage real orders or customer activity, so "
+"they stay."
+msgstr ""
+"Bu öğeler içeri aktarma ile oluşturuldu, ancak mağazadaki diğer şeyler artık "
+"bunlara bağlıdır. Onları kaldırırsanız gerçek siparişler ya da müşteri "
+"etkinlikleri zarar görebilir, bu yüzden onlar kalmaya devam ediyor."
 
-msgid "Delete all orders imported from this migration"
-msgstr "Bu geçişten içe aktarılan tüm siparişleri sil"
+#: templates/admin/migration/confirm_rollback.html:41
+msgid "still referenced by"
+msgstr "hâlâ tarafından referans veriliyor"
 
-msgid "Delete all reviews imported from this migration"
-msgstr "Bu göçten alınan tüm incelemeleri sil"
+#: templates/admin/migration/confirm_rollback.html:48
+msgid "Spwig could not calculate exactly what this rollback would remove."
+msgstr ""
+"Spwig, bu geri alma işleminin neyi kaldıracağını tam olarak hesaplayamadı."
 
-msgid "Delete all coupons imported from this migration"
-msgstr "Bu göçten alınan tüm kuponları sil"
+#: templates/admin/migration/confirm_rollback.html:54
+msgid "This operation is PERMANENT and cannot be reversed."
+msgstr "Bu işlem GERÇEKLEŞTİRİLMİŞTİR ve geri alınamaz."
 
-msgid "Delete all associated media assets"
-msgstr "Tüm ilişkili medya varlıklarını sil"
-
-msgid "Mark the migration job as 'rolled_back'"
-msgstr "Göç görevini 'rolled_back' olarak işaretle"
-
-msgid "This operation is PERMANENT and cannot be reversed!"
-msgstr "Bu işlem GERÇEKLEŞTİRİLMİŞTİR ve geri alınamaz!"
-
+#: templates/admin/migration/confirm_rollback.html:59
 msgid "Items to be Deleted"
 msgstr "Silinecek Öğeler"
 
+#: templates/admin/migration/confirm_rollback.html:93
 msgid "Yes, Rollback Migration"
 msgstr "Evet, Göçü Geri Al"
 
+#: templates/admin/migration/confirm_rollback.html:96
+#: templates/admin/migration/fullmig/step1_connection.html:95
+#: templates/admin/migration/migrationjob/change_list.html:216
+#: templates/admin/migration/sync/step1_connection.html:115
+#: templates/admin/migration/wizard/step1_platform.html:65
 msgid "Cancel"
 msgstr "İptal"
 
+#: templates/admin/migration/fullmig/step1_connection.html:8
 msgid "Connect to Source Instance"
-msgstr ""
+msgstr "Kaynak Örneğine Bağlan"
 
+#: templates/admin/migration/fullmig/step1_connection.html:10
 msgid ""
 "Connect to the Spwig instance you want to migrate from. All data will be "
 "pulled from the remote instance to this one."
 msgstr ""
+"Göç yapmak istediğiniz Spwig örneğine bağlanın. Tüm veriler uzak örnektenden "
+"bu örneğe çekilecektir."
 
-#, fuzzy
-#| msgid "Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:19
+#: templates/admin/migration/sync/step1_connection.html:19
 msgid "Saved Connections"
-msgstr "Bağlantı"
+msgstr "Kaydedilmiş Bağlantılar"
 
+#: templates/admin/migration/fullmig/step1_connection.html:34
+#: templates/admin/migration/sync/step1_connection.html:34
 msgid "Verified"
-msgstr ""
+msgstr "Doğrulanmış"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:43
+#: templates/admin/migration/sync/step1_connection.html:47
 msgid "or configure a new connection"
-msgstr "Bağlantıyı Yapılandır"
+msgstr "veya yeni bir bağlantı yapılandır"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:50
+#: templates/admin/migration/sync/step1_connection.html:54
 msgid "Connection Details"
-msgstr "Bağlantı başarısız oldu"
+msgstr "Bağlantı Detayları"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:55
+#: templates/admin/migration/sync/step1_connection.html:59
 msgid "Connection Name"
-msgstr "Bağlantı başarısız oldu"
+msgstr "Bağlantı Adı"
 
+#: templates/admin/migration/fullmig/step1_connection.html:57
 msgid "e.g., Old Server"
-msgstr ""
+msgstr "örn., Eski Sunucu"
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/fullmig/step1_connection.html:61
 msgid "Source URL"
-msgstr "Mağaza URL'si"
+msgstr "Kaynak URL"
 
+#: templates/admin/migration/fullmig/step1_connection.html:67
+#: templates/admin/migration/sync/step1_connection.html:79
 msgid "Sync Token"
-msgstr ""
+msgstr "Senkronizasyon Tokenı"
 
+#: templates/admin/migration/fullmig/step1_connection.html:69
 msgid "Paste the sync token from the source instance"
-msgstr ""
+msgstr "Kaynak örneğinden senkronizasyon token'ını yapıştırın"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:78
+#: templates/admin/migration/sync/step1_connection.html:106
 msgid "Test Connection"
-msgstr "Bağlantı Testi"
+msgstr "Bağlantıyı Test Et"
 
-#, fuzzy
-#| msgid "View All Migrations"
+#: templates/admin/migration/fullmig/step1_connection.html:87
 msgid "How Full Migration Works"
-msgstr "Tüm Göçü Görüntüle"
+msgstr "Tam Göç Nasıl Çalışır"
 
+#: templates/admin/migration/fullmig/step1_connection.html:88
 msgid ""
 "Full migration pulls all data from the source instance: settings, products, "
 "customers, orders, media files, and content. This is typically used when "
 "moving to a new server or creating a staging copy."
 msgstr ""
+"Tam göç, kaynak örneğinden tüm verileri çeker: ayarlar, ürünler, müşteriler, "
+"siparişler, medya dosyaları ve içerik. Bu, yeni bir sunucuya geçiş yaparken "
+"veya bir staging kopyası oluştururken genellikle kullanılır."
 
+#: templates/admin/migration/fullmig/step1_connection.html:98
 msgid "Next: Select Scope"
-msgstr ""
+msgstr "Sonraki: Kapsamı Seç"
 
+#: templates/admin/migration/fullmig/step1_connection.html:109
+#: templates/admin/migration/sync/step1_connection.html:129
+#: templates/admin/migration/wizard/step2_connection.html:479
 msgid "Testing connection..."
 msgstr "Bağlantı Test Ediliyor..."
 
-#, fuzzy
-#| msgid "Connection successful"
+#: templates/admin/migration/fullmig/step1_connection.html:110
+#: templates/admin/migration/sync/step1_connection.html:130
 msgid "Connection successful!"
-msgstr "Bağlantı Başarılı"
+msgstr "Bağlantı Başarılı!"
 
+#: templates/admin/migration/fullmig/step1_connection.html:111
+#: templates/admin/migration/sync/step1_connection.html:131
+#: templates/admin/migration/wizard/step2_connection.html:488
 msgid "Connection failed"
 msgstr "Bağlantı başarısız oldu"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step1_connection.html:112
+#: templates/admin/migration/sync/step1_connection.html:132
 msgid "Version"
-msgstr "Sürümler"
+msgstr "Sürüm"
 
-#, fuzzy
-#| msgid "Name"
+#: templates/admin/migration/fullmig/step1_connection.html:113
+#: templates/admin/migration/sync/step1_connection.html:133
 msgid "Site Name"
-msgstr "İsim"
+msgstr "Site Adı"
 
-#, fuzzy
-#| msgid "Migration Step"
+#: templates/admin/migration/fullmig/step2_scope.html:8
 msgid "Select Migration Scope"
-msgstr "Göç Adımı"
+msgstr "Göçün Kapsamını Seçin"
 
+#: templates/admin/migration/fullmig/step2_scope.html:10
 msgid ""
 "Choose which data categories to include in the migration. Dependencies will "
 "be automatically included."
 msgstr ""
+"Göçte dahil edilecek veri kategorilerini seçin. Bağımlılıklar otomatik "
+"olarak dahil edilecektir."
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: templates/admin/migration/fullmig/step2_scope.html:20
 msgid "Select All Categories"
-msgstr "Blog Kategorileri"
+msgstr "Tüm Kategorileri Seç"
 
-#, fuzzy
-#| msgid "Parse Date"
+#: templates/admin/migration/fullmig/step2_scope.html:41
 msgid "Large Data"
-msgstr "Tarih Parse Et"
+msgstr "Büyük Veri"
 
-#, fuzzy
-#| msgid "Credentials"
+#: templates/admin/migration/fullmig/step2_scope.html:46
+#: templates/admin/migration/sync/step2_categories.html:109
 msgid "Has Credentials"
-msgstr "Kimlik Bilgileri"
+msgstr "Kimlik Bilgisi Var"
 
+#: templates/admin/migration/fullmig/step2_scope.html:51
 msgid "Requires:"
-msgstr ""
+msgstr "Gerekli:"
 
+#: templates/admin/migration/fullmig/step2_scope.html:65
+#: templates/admin/migration/fullmig/step3_preflight.html:165
+#: templates/admin/migration/sync/step2_categories.html:133
+#: templates/admin/migration/sync/step3_preview.html:119
+#: templates/admin/migration/wizard/step2_connection.html:460
+#: templates/admin/migration/wizard/step3_preview.html:269
+#: templates/admin/migration/wizard/step4_mapping.html:297
 msgid "Back"
 msgstr "Geri"
 
+#: templates/admin/migration/fullmig/step2_scope.html:68
 msgid "Next: Pre-flight Check"
-msgstr ""
+msgstr "Sonraki: Ön Kontrol"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:8
 msgid "Pre-flight Check"
-msgstr ""
+msgstr "Ön Kontrol"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:10
 msgid ""
 "Verifying compatibility between source and target instances before migration."
 msgstr ""
+"Göçten önce kaynak ve hedef örnekler arasındaki uyumluluk doğrulanıyor."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:16
 msgid "Version Compatibility"
-msgstr ""
+msgstr "Sürüm Uyumluluğu"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:21
 msgid "Versions Compatible"
-msgstr ""
+msgstr "Uyumlu Sürümler"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:23
+#: templates/admin/migration/fullmig/step3_preflight.html:43
 msgid "Local:"
-msgstr ""
+msgstr "Yerel:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:25
+#: templates/admin/migration/fullmig/step3_preflight.html:45
 msgid "Remote:"
-msgstr ""
+msgstr "Uzak:"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step3_preflight.html:40
 msgid "Version Mismatch"
-msgstr "Sürümler"
+msgstr "Sürüm Uyuşmazlığı"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:55
 msgid "Component Compatibility"
-msgstr ""
+msgstr "Bileşen Uyumluluğu"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:61
 msgid "Components Missing on Target"
-msgstr ""
+msgstr "Hedefte Eksik Bileşenler"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:62
 msgid ""
 "These components are installed on the source but not on this instance. "
 "Install them via the Component Store before migrating."
 msgstr ""
+"Bu bileşenler kaynağından yüklenebilir ancak bu örnekte değil. Göç yapmadan "
+"önce Bileşen Mağazası aracılığıyla bunları yükleyin."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:76
 msgid "Component Version Differences"
-msgstr ""
+msgstr "Bileşen Sürüm Farkları"
 
-#, fuzzy
-#| msgid "Source"
+#: templates/admin/migration/fullmig/step3_preflight.html:81
 msgid "source"
-msgstr "Kaynak"
+msgstr "kaynak"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:82
 msgid "target"
-msgstr ""
+msgstr "hedef"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:94
 msgid "All Components Match"
-msgstr ""
+msgstr "Tüm Bileşenler Eşleşiyor"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:95
 msgid "Installed components are compatible between source and target."
-msgstr ""
+msgstr "Yüklü bileşenler kaynak ve hedef arasında uyumludur."
 
-#, fuzzy
-#| msgid "Import Summary"
+#: templates/admin/migration/fullmig/step3_preflight.html:105
 msgid "Source Data Summary"
-msgstr "İçe Aktarma Özeti"
+msgstr "Kaynak Veri Özeti"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:129
 msgid "Media Storage"
-msgstr ""
+msgstr "Medya Depolama"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:130
 msgid "Total media size on source:"
-msgstr ""
+msgstr "Kaynakta Toplam Medya Boyutu:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:142
 msgid "Pre-flight Check Failed"
-msgstr ""
+msgstr "Hazırlık Kontrolü Başarısız Oldu"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:143
 msgid ""
 "Could not connect to the remote instance to perform compatibility checks. "
 "Please verify the connection and try again."
 msgstr ""
+"Uyumluluk kontrolleri yapmak için uzak örneğe bağlanılamadı. Bağlantıyı "
+"kontrol edin ve tekrar deneyin."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:154
 msgid "License Reminder"
-msgstr ""
+msgstr "Lisans Hatıranı"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:155
 msgid ""
 "This installation requires its own license. After migration, you will need "
 "to activate a separate license for this instance."
 msgstr ""
+"Bu kurulum, kendi lisansı gerektirir. Göçten sonra, bu örneğe yönelik ayrı "
+"bir lisans etkinleştirmeniz gerekir."
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: templates/admin/migration/fullmig/step3_preflight.html:170
 msgid "Start Migration"
-msgstr "Yeni Göçü Başlat"
+msgstr "Göçü Başlat"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:175
 msgid "Cannot Proceed (Version Incompatible)"
-msgstr ""
+msgstr "Devam Edilemiyor (Sürüm Uyuşmuyor)"
 
+#: templates/admin/migration/fullmig/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The migration will continue in "
 "the background."
-msgstr ""
+msgstr "Bu sayfadan güvenle ayrılabilirsiniz. Göç arka planda devam edecektir."
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: templates/admin/migration/fullmig/step4_progress.html:13
 msgid "Migration Progress"
-msgstr "Göç Günlükleri"
+msgstr "Göç İlerlemesi"
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step4_progress.html:17
+#: templates/admin/migration/fullmig/step4_progress.html:149
 msgid "Migration completed."
-msgstr "Göç Tamamlandı"
+msgstr "Göç tamamlandı."
 
-#, fuzzy
-#| msgid "Migration cancelled by user"
+#: templates/admin/migration/fullmig/step4_progress.html:19
+#: templates/admin/migration/fullmig/step4_progress.html:150
 msgid "Migration encountered errors."
-msgstr "Göç kullanıcı tarafından iptal edildi"
+msgstr "Göç sırasında hatalar oluştu."
 
+#: templates/admin/migration/fullmig/step4_progress.html:21
+#: templates/admin/migration/fullmig/step4_progress.html:151
 msgid "Migrating data from source instance..."
-msgstr ""
+msgstr "Kaynak örneğinden veri geçiriliyor..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:28
+#: templates/admin/migration/sync/step4_progress.html:28
+#: templates/admin/migration/wizard/step5_import.html:54
 msgid "Overall Progress"
 msgstr "Genel İlerleme"
 
+#: templates/admin/migration/fullmig/step4_progress.html:39
+#: templates/admin/migration/fullmig/step4_progress.html:155
+#: templates/admin/migration/sync/step4_progress.html:39
+#: templates/admin/migration/sync/step4_progress.html:167
 msgid "Elapsed:"
-msgstr ""
+msgstr "Geçen Süre:"
 
+#: templates/admin/migration/fullmig/step4_progress.html:40
+#: templates/admin/migration/fullmig/step4_progress.html:156
+#: templates/admin/migration/sync/step4_progress.html:40
+#: templates/admin/migration/sync/step4_progress.html:168
 msgid "Remaining:"
-msgstr ""
+msgstr "Kalan Süre:"
 
-#, fuzzy
-#| msgid "Migration Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:48
+#: templates/admin/migration/fullmig/step5_results.html:43
+#: templates/admin/migration/fullmig/step5_results.html:75
 msgid "Migrated"
-msgstr "Göç Başarısız Oldu"
+msgstr "Göçü Yapıldı"
 
-#, fuzzy
-#| msgid "Category Array"
+#: templates/admin/migration/fullmig/step4_progress.html:67
+#: templates/admin/migration/sync/step4_progress.html:67
 msgid "Category Progress"
-msgstr "Kategori Dizisi"
+msgstr "Kategori İlerlemesi"
 
-#, fuzzy
-#| msgid "Created"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:146
 msgid "migrated"
-msgstr "Oluşturuldu"
+msgstr "göçü yapıldı"
 
-#, fuzzy
-#| msgid "Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:147
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:159
 msgid "failed"
-msgstr "Başarısız"
+msgstr "başarısız"
 
-#, fuzzy
-#| msgid "Total"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:148
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:160
 msgid "total"
-msgstr "Toplam"
+msgstr "toplam"
 
+#: templates/admin/migration/fullmig/step4_progress.html:112
+#: templates/admin/migration/sync/step4_progress.html:112
 msgid "Activity Log"
-msgstr ""
+msgstr "Aktivite Günlüğü"
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:117
+#: templates/admin/migration/sync/step4_progress.html:117
 msgid "Waiting for activity..."
-msgstr "Bekleniyor..."
+msgstr "Etkinlik bekleniyor..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:125
+#: templates/admin/migration/syncjob/change_list.html:176
+#: templates/admin/migration/wizard/step5_import.html:309
 msgid "View Results"
 msgstr "Sonuçları Görüntüle"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/fullmig/step4_progress.html:131
+#: templates/admin/migration/fullmig/step4_progress.html:152
+#: templates/admin/migration/fullmig/step5_results.html:155
+#: templates/admin/migration/sync/step4_progress.html:138
+#: templates/admin/migration/sync/step4_progress.html:164
 msgid "Back to Dashboard"
-msgstr "Dev Dashboard'tan Başla"
+msgstr "Gösterge Paneline Dön"
 
+#: templates/admin/migration/fullmig/step4_progress.html:153
+#: templates/admin/migration/fullmig/step5_results.html:163
+#: templates/admin/migration/wizard/step6_complete.html:280
 msgid "Rollback Migration"
 msgstr "Göçü Geri Al"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step4_progress.html:154
 msgid ""
 "Are you sure you want to rollback this migration? This will delete all "
 "migrated data."
 msgstr ""
-"Bu göçü geri almak istediğinizden emin misiniz? Bu, tüm alınan verileri "
+"Bu göçü geri almak istediğinizden emin misiniz? Bu, tüm göçürülmüş verileri "
 "siler."
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:157
+#: templates/admin/migration/sync/step4_progress.html:169
 msgid "calculating..."
-msgstr "Bekleniyor..."
+msgstr "Hesaplanıyor..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:158
+#: templates/admin/migration/sync/step4_progress.html:170
 msgid "Connection lost, retrying..."
-msgstr ""
+msgstr "Bağlantı kayıp, yeniden deneniyor..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:159
+#: templates/admin/migration/sync/step4_progress.html:171
 msgid "Reconnected"
-msgstr ""
+msgstr "Bağlantı kuruldu"
 
-#, fuzzy
-#| msgid "Your data has been successfully imported from"
+#: templates/admin/migration/fullmig/step5_results.html:11
 msgid "All selected data has been successfully migrated to this installation."
-msgstr "Verileriniz şu kaynaktan başarıyla içeri aktarıldı"
+msgstr "Tüm seçilen veriler bu kuruluma başarıyla geçiş yaptı."
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step5_results.html:20
 msgid "Migration Completed with Errors"
-msgstr "Göç Tamamlandı"
+msgstr "Hatalarla Göç Tamamlandı"
 
+#: templates/admin/migration/fullmig/step5_results.html:21
 msgid "Some items could not be migrated. Review the details below."
-msgstr ""
+msgstr "Bazı öğeler göçürülemedi. Aşağıdaki detayları inceleyin."
 
+#: templates/admin/migration/fullmig/step5_results.html:30
+#: templates/admin/migration/wizard/step6_complete.html:298
 msgid "Migration Failed"
 msgstr "Göç Başarısız Oldu"
 
-#, fuzzy
-#| msgid "Migration Wizard"
+#: templates/admin/migration/fullmig/step5_results.html:39
 msgid "Migration Summary"
-msgstr "Göç Sihirbazı"
+msgstr "Göç Özeti"
 
-#, fuzzy
-#| msgid "Duration"
+#: templates/admin/migration/fullmig/step5_results.html:62
 msgid "Duration:"
-msgstr "\"Süre\""
+msgstr "Süre:"
 
-#, fuzzy
-#| msgid "Categories"
+#: templates/admin/migration/fullmig/step5_results.html:69
 msgid "Category Results"
-msgstr "Kategoriler"
+msgstr "Kategori Sonuçları"
 
+#: templates/admin/migration/fullmig/step5_results.html:87
 msgid "Done"
-msgstr ""
+msgstr "Tamamlandı"
 
+#: templates/admin/migration/fullmig/step5_results.html:121
+#: templates/admin/migration/wizard/step6_complete.html:398
 msgid "Next Steps"
 msgstr "Sonraki Adımlar"
 
+#: templates/admin/migration/fullmig/step5_results.html:126
 msgid "Activate your license on this installation"
-msgstr ""
+msgstr "Bu kurulumda lisansınızı etkinleştirin"
 
+#: templates/admin/migration/fullmig/step5_results.html:130
 msgid "Re-enter any payment provider credentials that were skipped"
-msgstr ""
+msgstr "Atlanan herhangi bir ödeme sağlayıcısı kimlik bilgilerini tekrar girin"
 
-#, fuzzy
-#| msgid "When you're ready to go live, point your domain to this platform."
+#: templates/admin/migration/fullmig/step5_results.html:134
 msgid "Configure DNS to point your domain to this server"
-msgstr ""
-"Canlı hale getirmeye hazırsanız, alan adınızı bu platforma yönlendirin."
+msgstr "DNS'i bu sunucuya yönlendirmek için yapılandırın"
 
+#: templates/admin/migration/fullmig/step5_results.html:138
 msgid "Test the checkout flow with a test order"
-msgstr ""
+msgstr "Bir test siparişiyle ödeme akışını test edin"
 
+#: templates/admin/migration/fullmig/step5_results.html:142
 msgid "Verify email sending works correctly"
-msgstr ""
+msgstr "E-posta gönderiminin doğru çalıştığını doğrula"
 
+#: templates/admin/migration/fullmig/step5_results.html:146
 msgid "Check that media files and images are loading correctly"
 msgstr ""
+"Medya dosyalarının ve resimlerin doğru şekilde yüklendiğini kontrol edin"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step5_results.html:161
 msgid "Are you sure? This will delete all migrated data."
-msgstr ""
-"Bu göçü geri almak istediğinizden emin misiniz? Bu, tüm alınan verileri "
-"siler."
+msgstr "Emin misiniz? Bu, tüm geçiş verilerini siler."
 
-#, fuzzy
-#| msgid "Shopify Developer Dashboard"
+#: templates/admin/migration/fullmig/step5_results.html:168
+msgid "Rollback available until"
+msgstr "Geri Alma, Bu Tarihe Kadar Mevcut"
+
+#: templates/admin/migration/fullmig/step5_results.html:174
 msgid "Go to Dashboard"
-msgstr "Shopify Geliştirici Dashboard"
+msgstr "Gösterge Paneline Git"
 
+#: templates/admin/migration/migrationjob/change_list.html:4
+#: templates/admin/migration/migrationjob/change_list.html:23
 msgid "Data Import & Export"
 msgstr "Veri İmport ve Ekspor"
 
+#: templates/admin/migration/migrationjob/change_list.html:25
 msgid ""
 "Migrate from WooCommerce, Shopify, Magento, or import/export via CSV files"
 msgstr ""
 "WooCommerce, Shopify, Magento'dan göç yapın veya CSV dosyaları üzerinden "
 "içeri/çıkış yapın"
 
+#: templates/admin/migration/migrationjob/change_list.html:36
 msgid "Total Migrations"
 msgstr "Toplam Göçler"
 
+#: templates/admin/migration/migrationjob/change_list.html:52
+#: templates/admin/migration/syncjob/change_list.html:45
 msgid "In Progress"
 msgstr "Devam Ediyor"
 
-msgid "Start New Migration"
-msgstr "Yeni Göçü Başlat"
-
+#: templates/admin/migration/migrationjob/change_list.html:73
 msgid "View Logs"
 msgstr "Günlükleri Görüntüle"
 
+#: templates/admin/migration/migrationjob/change_list.html:78
 msgid "Field Mappings"
 msgstr "Alan Haritalamaları"
 
+#: templates/admin/migration/migrationjob/change_list.html:114
+#: templates/admin/migration/wizard/step5_import.html:60
+msgid "Stopping…"
+msgstr "Durduruluyor…"
+
+#: templates/admin/migration/migrationjob/change_list.html:192
 msgid "Resume"
 msgstr "Devret"
 
+#: templates/admin/migration/migrationjob/change_list.html:202
+msgid ""
+"Run this import again? It starts from the beginning and skips items that "
+"have already been imported."
+msgstr ""
+"Bu içeriği tekrar çalıştırın mı? Başından başlayarak çalışır ve zaten içe "
+"aktarılan öğeleri atlar."
+
+#: templates/admin/migration/migrationjob/change_list.html:203
 msgid "Retry"
 msgstr "Yeniden Deney"
 
-msgid "Are you sure you want to cancel this migration?"
-msgstr "Bu göçü iptal etmek istediğinizden emin misiniz?"
+#: templates/admin/migration/migrationjob/change_list.html:215
+msgid ""
+"Stop this import? It finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store."
+msgstr ""
+"Bu içeriği durdurmak ister misiniz? İşlemi tamamladıktan sonra durur. Zaten "
+"içeriği导入 edilmiş öğeler mağazanızda kalmaya devam eder."
 
+#: templates/admin/migration/migrationjob/change_list.html:223
+#: templates/admin/migration/migrationjob/change_list.html:227
+#: templates/admin/migration/migrationjob/change_list.html:231
 msgid "View"
 msgstr "Görüntüle"
 
+#: templates/admin/migration/migrationjob/change_list.html:239
 msgid ""
-"Are you sure you want to rollback this migration? This will delete all "
-"imported data."
+"Review the rollback details? Rolling back removes what this import created, "
+"keeping anything your store now depends on. You will see exactly what it "
+"will remove before you confirm."
 msgstr ""
-"Bu göçü geri almak istediğinizden emin misiniz? Bu, tüm alınan verileri "
-"siler."
+"Geri alma ayrıntılarını incelemek ister misiniz? Geri alma, bu içeriğin "
+"oluşturduğu öğeleri kaldırır, ancak mağazanızın artık bağlı olduğu her şeyi "
+"korur. Onaylamadan önce ne kaldıracağını tam olarak göreceksiniz."
 
+#: templates/admin/migration/migrationjob/change_list.html:240
+#: templates/admin/migration/sync/step4_progress.html:144
+#: templates/admin/migration/sync/step4_progress.html:165
+#: templates/admin/migration/syncjob/change_list.html:185
 msgid "Rollback"
 msgstr "Geri Al"
 
+#: templates/admin/migration/migrationjob/change_list.html:250
 msgid ""
-"Are you sure you want to force delete this migration? This cannot be undone."
+"Delete this migration record? This does not remove anything that was "
+"imported. Spwig will lose its record of which items came from this import, "
+"so you will not be able to roll it back afterwards."
 msgstr ""
-"Bu göçü zorla silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+"Bu geçiş kaydını silmek ister misiniz? Bu, içeri aktarılan herhangi bir şeyi "
+"silmez. Spwig, bu içeri aktarmanın hangi öğelerden geldiğini kaybedecektir, "
+"bu nedenle sonrasında geri alamayacaksınız."
 
+#: templates/admin/migration/migrationjob/change_list.html:251
 msgid "Delete"
 msgstr "Sil"
 
+#: templates/admin/migration/migrationjob/change_list.html:262
 msgid "No Migrations Yet"
 msgstr "Henüz Göç Yok"
 
+#: templates/admin/migration/migrationjob/change_list.html:263
 msgid "Get started by creating your first data migration"
 msgstr "İlk veri göçünüzü oluşturarak başlayın"
 
+#: templates/admin/migration/migrationjob/change_list.html:266
 msgid "Create First Migration"
 msgstr "İlk Göçü Oluştur"
 
+#: templates/admin/migration/sync/base.html:4
 msgid "Spwig Sync"
-msgstr ""
+msgstr "Spwig Senkronizasyonu"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/sync/base.html:20
+#: templates/admin/migration/sync/token_management.html:21
 msgid "Back to Sync Dashboard"
-msgstr "Dev Dashboard'tan Başla"
+msgstr "Senkronizasyon Gösterge Paneline Geri Dön"
 
+#: templates/admin/migration/sync/base.html:46
+#: templates/admin/migration/sync/base.html:67
+#: templates/admin/migration/wizard/base.html:42
 msgid "Connection"
 msgstr "Bağlantı"
 
+#: templates/admin/migration/sync/base.html:50
+#: templates/admin/migration/wizard/step2_connection.html:214
 msgid "Scope"
 msgstr "Kapsam"
 
+#: templates/admin/migration/sync/base.html:54
 msgid "Pre-flight"
-msgstr ""
+msgstr "Hazırlık"
 
-#, fuzzy
-#| msgid "View Results"
+#: templates/admin/migration/sync/base.html:62
 msgid "Results"
-msgstr "Sonuçları Görüntüle"
+msgstr "Sonuçlar"
 
+#: templates/admin/migration/sync/base.html:75
+#: templates/admin/migration/wizard/base.html:46
 msgid "Preview"
 msgstr "Önizleme"
 
+#: templates/admin/migration/sync/step1_connection.html:8
 msgid "Connect to Remote Instance"
-msgstr ""
+msgstr "Uzak Örnekle Bağlan"
 
+#: templates/admin/migration/sync/step1_connection.html:10
 msgid ""
 "Connect to another Spwig installation to sync settings. You can use a saved "
 "connection or set up a new one."
 msgstr ""
+"Ayarları senkronize etmek için başka bir Spwig kurulumuna bağlanın. "
+"Kaydedilmiş bir bağlantı kullanabilir veya yeni bir bağlantı kurabilirsiniz."
 
-#, fuzzy
-#| msgid "Credentials verified"
+#: templates/admin/migration/sync/step1_connection.html:39
 msgid "Not verified"
-msgstr "Kimlik bilgileri doğrulandı"
+msgstr "Onaylanmamış"
 
+#: templates/admin/migration/sync/step1_connection.html:61
 msgid "e.g., Production Server"
-msgstr ""
+msgstr "örn. Üretim Sunucusu"
 
+#: templates/admin/migration/sync/step1_connection.html:64
 msgid "A friendly name to identify this connection."
-msgstr ""
+msgstr "Bu bağlantıyı tanımlamak için kullanıcı dostu bir isim."
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/sync/step1_connection.html:69
 msgid "Remote URL"
-msgstr "Mağaza URL'si"
+msgstr "Uzak URL"
 
+#: templates/admin/migration/sync/step1_connection.html:74
 msgid "The full URL of the remote Spwig installation."
-msgstr ""
+msgstr "Uzak Spwig kurulumunun tam URL'si."
 
+#: templates/admin/migration/sync/step1_connection.html:81
 msgid "Paste the sync token from the remote instance"
-msgstr ""
+msgstr "Uzak örneğin senkronizasyon token'ını yapıştırın"
 
+#: templates/admin/migration/sync/step1_connection.html:84
 msgid ""
 "Generate a sync token on the remote instance under Sync Dashboard > Manage "
 "Tokens."
 msgstr ""
+"Senkronizasyon Paneli > Token'ları Yönet altında uzak örnekte bir "
+"senkronizasyon token'ı oluşturun."
 
+#: templates/admin/migration/sync/step1_connection.html:98
 msgid ""
 "Marking a connection as 'Production' enables additional safety checks when "
 "pushing changes."
 msgstr ""
+"Bir bağlantıyı 'Üretim' olarak işaretlemek, değişiklikler itilirken ek "
+"güvenlik kontrollerini etkinleştirir."
 
-#, fuzzy
-#| msgid "Create new categories"
+#: templates/admin/migration/sync/step1_connection.html:118
 msgid "Next: Select Categories"
-msgstr "Yeni kategoriler oluştur"
+msgstr "Sonraki: Kategorileri Seç"
 
-#, fuzzy
-#| msgid "Category - Description"
+#: templates/admin/migration/sync/step2_categories.html:8
 msgid "Select Categories & Direction"
-msgstr "Kategori - Açıklama"
+msgstr "Kategorileri & Yön Seç"
 
+#: templates/admin/migration/sync/step2_categories.html:10
 msgid "Choose which settings to sync and the direction of data flow."
-msgstr ""
+msgstr "Senkronize edilecek ayarları ve veri akışı yönünü seçin."
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/sync/step2_categories.html:18
 msgid "Sync Configuration"
-msgstr "Bağlantıyı Yapılandır"
+msgstr "Senkronizasyon Yapılandırması"
 
+#: templates/admin/migration/sync/step2_categories.html:29
 msgid "Pull"
-msgstr ""
+msgstr "Çek"
 
-msgid "Remote → Local"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:30
+msgid "From connected store to this store"
+msgstr "Bağlı mağazadan bu mağazaya"
 
+#: templates/admin/migration/sync/step2_categories.html:38
 msgid "Push"
-msgstr ""
+msgstr "İt"
 
-msgid "Local → Remote"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:39
+msgid "From this store to connected store"
+msgstr "Bu mağazadan bağlı mağazaya"
 
+#: templates/admin/migration/sync/step2_categories.html:47
 msgid "Sync Mode"
-msgstr ""
+msgstr "Senkronizasyon Modu"
 
-#, fuzzy
-#| msgid "Updated"
+#: templates/admin/migration/sync/step2_categories.html:54
 msgid "Add & Update"
-msgstr "Güncellendi"
+msgstr "Ekle & Güncelle"
 
-#, fuzzy
-#| msgid "Skip existing items"
+#: templates/admin/migration/sync/step2_categories.html:55
 msgid "Never deletes existing items"
-msgstr "Mevcut öğeleri atla"
+msgstr "Mevcut öğeleri asla silmez"
 
-msgid "Makes target match source exactly"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:62
+msgid "Exact Copy"
+msgstr "Kopya"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/sync/step2_categories.html:63
+msgid "Adds, updates, and removes items to match the source"
+msgstr "Kaynakla eşleşecek şekilde öğeler ekler, günceller ve kaldırır"
+
+#: templates/admin/migration/sync/step2_categories.html:73
 msgid "Production Connection"
-msgstr "Bağlantı Testi"
+msgstr "Üretim Bağlantısı"
 
+#: templates/admin/migration/sync/step2_categories.html:74
 msgid ""
 "This connection is marked as production. Pushing changes will modify your "
 "live store settings."
 msgstr ""
+"Bu bağlantı üretim olarak işaretlenmiş. Değişiklikleri itmek, canlı mağaza "
+"ayarlarınızı değiştirecektir."
 
+#: templates/admin/migration/sync/step2_categories.html:83
 msgid "Select which categories to include in this sync."
-msgstr ""
+msgstr "Bu senkronizasyonun içine dahil edilecek kategorileri seçin."
 
-#, fuzzy
-#| msgid "Select"
+#: templates/admin/migration/sync/step2_categories.html:88
 msgid "Select All"
-msgstr "Seç"
+msgstr "Tümünü Seç"
 
-#, fuzzy
-#| msgid "CSV Files"
+#: templates/admin/migration/sync/step2_categories.html:114
 msgid "Has Files"
-msgstr "CSV Dosyaları"
+msgstr "Dosyaları Var"
 
-#, fuzzy
-#| msgid "Next: Preview Data"
+#: templates/admin/migration/sync/step2_categories.html:136
 msgid "Next: Preview Changes"
-msgstr "Sonraki: Veriyi Önizle"
+msgstr "Sonraki: Değişiklikleri Önizle"
 
-#, fuzzy
-#| msgid "Preview"
+#: templates/admin/migration/sync/step3_preview.html:8
 msgid "Preview Changes"
-msgstr "Önizleme"
+msgstr "Değişiklikleri Önizle"
 
+#: templates/admin/migration/sync/step3_preview.html:10
 msgid "Review the changes that will be applied before confirming."
-msgstr ""
+msgstr "Onaylamadan önce uygulanacak değişiklikleri inceleyin."
 
+#: templates/admin/migration/sync/step3_preview.html:32
 msgid "Add"
-msgstr ""
+msgstr "Ekle"
 
+#: templates/admin/migration/sync/step3_preview.html:34
 msgid "Modify"
-msgstr ""
+msgstr "Düzenle"
 
+#: templates/admin/migration/sync/step3_preview.html:36
 msgid "Remove"
-msgstr ""
+msgstr "Kaldır"
 
-#, fuzzy
-#| msgid "Field Mappings"
+#: templates/admin/migration/sync/step3_preview.html:44
 msgid "Field changes"
-msgstr "Alan Haritalamaları"
+msgstr "Alan değişiklikleri"
 
-#, fuzzy
-#| msgid "Meta Fields"
+#: templates/admin/migration/sync/step3_preview.html:48
 msgid "Field"
-msgstr "Meta Alanlar"
+msgstr "Alan"
 
+#: templates/admin/migration/sync/step3_preview.html:49
 msgid "Current"
-msgstr ""
+msgstr "Mevcut"
 
+#: templates/admin/migration/sync/step3_preview.html:50
 msgid "New"
-msgstr ""
+msgstr "Yeni"
 
-#, fuzzy
-#| msgid "Warning"
+#: templates/admin/migration/sync/step3_preview.html:77
 msgid "Warnings"
-msgstr "Uyarı"
+msgstr "Uyarılar"
 
+#: templates/admin/migration/sync/step3_preview.html:91
 msgid "No Changes Detected"
-msgstr ""
+msgstr "Değişiklik Tespit Edilmedi"
 
+#: templates/admin/migration/sync/step3_preview.html:92
 msgid "The selected categories are already in sync. There is nothing to apply."
 msgstr ""
+"Seçilen kategoriler zaten senkronizasyon halinde. Uygulanacak bir şey yok."
 
-#, fuzzy
-#| msgid "Product Variant"
+#: templates/admin/migration/sync/step3_preview.html:105
 msgid "Production Warning"
-msgstr "Ürün Değişimi"
+msgstr "Üretim Uyarısı"
 
+#: templates/admin/migration/sync/step3_preview.html:106
 msgid ""
 "You are about to push changes to a production instance. This will modify "
 "live store settings."
 msgstr ""
+"Bir üretim örneğine değişiklikler itmek üzeresiniz. Bu, canlı mağaza "
+"ayarlarınızı değiştirecektir."
 
+#: templates/admin/migration/sync/step3_preview.html:109
 msgid "I understand this will modify production settings and want to proceed."
 msgstr ""
+"Bu, üretim ayarlarını değiştireceğini anlıyorum ve devam etmek istiyorum."
 
+#: templates/admin/migration/sync/step3_preview.html:124
 msgid "Start Sync"
-msgstr ""
+msgstr "Senkronizasyonu Başlat"
 
+#: templates/admin/migration/sync/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The sync will continue in the "
 "background."
 msgstr ""
+"Bu sayfadan güvenle ayrılabilirsiniz. Senkronizasyon arka planda devam "
+"edecektir."
 
-#, fuzzy
-#| msgid "In Progress"
+#: templates/admin/migration/sync/step4_progress.html:13
 msgid "Sync Progress"
-msgstr "Devam Ediyor"
+msgstr "Senkronizasyon İlerlemesi"
 
-#, fuzzy
-#| msgid "Migration Completed Successfully!"
+#: templates/admin/migration/sync/step4_progress.html:17
+#: templates/admin/migration/sync/step4_progress.html:161
 msgid "Sync completed successfully."
-msgstr "Göç Başarıyla Tamamlandı!"
+msgstr "Senkronizasyon başarıyla tamamlandı."
 
+#: templates/admin/migration/sync/step4_progress.html:19
+#: templates/admin/migration/sync/step4_progress.html:162
 msgid "Sync encountered errors."
-msgstr ""
+msgstr "Senkronizasyon sırasında hatalar oluştu."
 
-#, fuzzy
-#| msgid "Counting categories"
+#: templates/admin/migration/sync/step4_progress.html:21
+#: templates/admin/migration/sync/step4_progress.html:163
 msgid "Syncing selected categories..."
-msgstr "Kategoriler sayılıyor"
+msgstr "Seçilen kategoriler senkronize ediliyor..."
 
+#: templates/admin/migration/sync/step4_progress.html:48
+#: templates/admin/migration/syncjob/change_list.html:145
 msgid "Synced"
-msgstr ""
+msgstr "Senkronize Edildi"
 
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:158
 msgid "synced"
-msgstr ""
+msgstr "senkronize edildi"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/sync/step4_progress.html:166
 msgid ""
 "Are you sure you want to rollback this sync? This will restore the previous "
 "state."
 msgstr ""
-"Bu göçü geri almak istediğinizden emin misiniz? Bu, tüm alınan verileri "
-"siler."
+"Bu senkronizasyonu geri almak istediğinizden emin misiniz? Bu, önceki durumu "
+"geri yükler."
 
+#: templates/admin/migration/sync/token_management.html:33
 msgid "About Sync Tokens"
-msgstr ""
+msgstr "Senkronizasyon Token'ları Hakkında"
 
+#: templates/admin/migration/sync/token_management.html:34
 msgid ""
 "Sync tokens allow other Spwig instances to connect to this installation. "
 "Generate a token here and provide it to the remote instance."
 msgstr ""
+"Senkronizasyon token'ları, diğer Spwig örneklerinin bu kuruma bağlanmasına "
+"olanak tanır. Buradan bir token oluşturun ve uzak örneğe sağlayın."
 
+#: templates/admin/migration/sync/token_management.html:38
 msgid "Security"
-msgstr ""
+msgstr "Güvenlik"
 
+#: templates/admin/migration/sync/token_management.html:39
 msgid ""
 "Tokens grant read and write access to settings data. Only share them with "
 "trusted administrators. Revoke tokens immediately if compromised."
 msgstr ""
+"Token'lar, ayar verilerine okuma ve yazma erişimi sağlar. Sadece güvenilir "
+"yöneticiлерle paylaşın. Token'lar komşullanırsa hemen iptal edin."
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:45
 msgid "Generate New Token"
-msgstr "Bağlantı oluştur"
+msgstr "Yeni Token Oluştur"
 
+#: templates/admin/migration/sync/token_management.html:50
 msgid "Token Name"
-msgstr ""
+msgstr "Token Adı"
 
+#: templates/admin/migration/sync/token_management.html:52
 msgid "e.g., Staging Server Token"
-msgstr ""
+msgstr "örn. Staj Sunucusu Token"
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:56
 msgid "Generate Token"
-msgstr "Bağlantı oluştur"
+msgstr "Token Oluştur"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:62
 msgid "Active Tokens"
-msgstr "İşlemler"
+msgstr "Aktif Token'ler"
 
-msgid "Name"
-msgstr "İsim"
+#: templates/admin/migration/sync/token_management.html:81
+msgid "Last used"
+msgstr "Son Kullanım"
 
-#, fuzzy
-#| msgid "Preview"
-msgid "Token Preview"
-msgstr "Önizleme"
+#: templates/admin/migration/sync/token_management.html:83
+msgid "Never used"
+msgstr "Asla Kullanılmadı"
 
-msgid "Last Used"
-msgstr ""
-
-msgid "Revoke this token? Any connections using it will stop working."
-msgstr ""
-
+#: templates/admin/migration/sync/token_management.html:96
 msgid "Revoke"
-msgstr ""
+msgstr "İptal Et"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:106
 msgid "No Active Tokens"
-msgstr "İşlemler"
+msgstr "Aktif Token Yok"
 
+#: templates/admin/migration/sync/token_management.html:107
 msgid "Generate a token to allow remote Spwig instances to connect."
 msgstr ""
+"Uzak Spwig örneklerinin bağlanmasına izin vermek için bir token oluşturun."
 
+#: templates/admin/migration/syncjob/change_list.html:26
 msgid "Sync settings between instances or perform full system migrations"
 msgstr ""
+"Örnekler arasında ayarları senkronize edin veya tam sistem geçişleri "
+"gerçekleştirin"
 
-#, fuzzy
-#| msgid "Total Items"
+#: templates/admin/migration/syncjob/change_list.html:35
 msgid "Total Jobs"
-msgstr "\"Toplam Öğeler\""
+msgstr "Toplam İşler"
 
-#, fuzzy
-#| msgid "Progress"
+#: templates/admin/migration/syncjob/change_list.html:164
 msgid "View Progress"
-msgstr "İlerleme"
+msgstr "İlerlemeyi Görüntüle"
 
+#: templates/admin/migration/syncjob/change_list.html:170
 msgid "Review & Confirm"
-msgstr ""
+msgstr "İncele ve Onayla"
 
-msgid "No Sync Jobs Yet"
-msgstr ""
-
-msgid "Start a settings sync or full migration to see job history here."
-msgstr ""
-
-msgid "Start Settings Sync"
-msgstr ""
-
+#: templates/admin/migration/syncjob/change_list.html:184
 msgid "Rollback this sync? This will restore the previous state."
 msgstr ""
+"Bu senkronizasyonu geri almak istiyor musunuz? Bu, önceki durumu geri "
+"yükleyecektir."
 
+#: templates/admin/migration/syncjob/change_list.html:195
+msgid "No Sync Jobs Yet"
+msgstr "Henüz Senkronizasyon İşleri Yok"
+
+#: templates/admin/migration/syncjob/change_list.html:196
+msgid "Start a settings sync or full migration to see job history here."
+msgstr ""
+"İş geçmişini burada görmek için ayar senkronizasyonu veya tam geçiş başlatın."
+
+#: templates/admin/migration/syncjob/change_list.html:199
+msgid "Start Settings Sync"
+msgstr "Ayar Senkronizasyonunu Başlat"
+
+#: templates/admin/migration/wizard/base.html:4
+#: templates/admin/migration/wizard/base.html:28
 msgid "Migration Wizard"
 msgstr "Göç Sihirbazı"
 
+#: templates/admin/migration/wizard/base.html:21
 msgid "Back to Migrations"
 msgstr "Göçlere Geri Dön"
 
+#: templates/admin/migration/wizard/base.html:54
 msgid "Import"
 msgstr "İçe Aktar"
 
+#: templates/admin/migration/wizard/base.html:58
 msgid "Complete"
 msgstr "Tamamla"
 
+#: templates/admin/migration/wizard/base.html:71
 msgid "Copied!"
 msgstr "Kopyalandı!"
 
+#: templates/admin/migration/wizard/step1_platform.html:8
 msgid "Select Source Platform"
 msgstr "Kaynak Platformu Seç"
 
+#: templates/admin/migration/wizard/step1_platform.html:10
 msgid ""
 "Choose the e-commerce platform you're migrating from. We'll guide you "
 "through the process of importing your data."
@@ -2377,24 +3103,31 @@ msgstr ""
 "Verilerinizi içeri aktarmak için göç yapmak istediğiniz e-ticaret "
 "platformunu seçin. Verilerinizi içeri aktarma sürecini size kılavuzlayacağız."
 
+#: templates/admin/migration/wizard/step1_platform.html:23
 msgid "WordPress + WooCommerce stores"
 msgstr "WordPress + WooCommerce mağazaları"
 
+#: templates/admin/migration/wizard/step1_platform.html:32
 msgid "Shopify stores using Admin API"
 msgstr "Admin API kullanan Shopify mağazaları"
 
-msgid "Magento/Adobe Commerce (coming soon)"
-msgstr "Magento/Adobe Commerce (yakında)"
+#: templates/admin/migration/wizard/step1_platform.html:41
+msgid "Magento 2 / Adobe Commerce stores"
+msgstr "Magento 2 / Adobe Commerce mağazaları"
 
+#: templates/admin/migration/wizard/step1_platform.html:50
 msgid "Import from CSV files"
 msgstr "CSV dosyalarından içeri aktar"
 
+#: templates/admin/migration/wizard/step1_platform.html:68
 msgid "Next: Configure Connection"
 msgstr "Sonraki: Bağlantıyı Yapılandır"
 
+#: templates/admin/migration/wizard/step1_platform.html:78
 msgid "WooCommerce Migration"
 msgstr "WooCommerce Göçü"
 
+#: templates/admin/migration/wizard/step1_platform.html:79
 msgid ""
 "We will connect to your WooCommerce store using the REST API. You will need "
 "to provide your store URL and API credentials in the next step."
@@ -2402,9 +3135,11 @@ msgstr ""
 "REST API kullanarak WooCommerce mağazanıza bağlanacağız. Bir sonraki adımda "
 "mağaza URL'nizi ve API kimlik bilgilerinizi sağlamanız gerekir."
 
+#: templates/admin/migration/wizard/step1_platform.html:82
 msgid "Shopify Migration"
 msgstr "Shopify Göçü"
 
+#: templates/admin/migration/wizard/step1_platform.html:83
 msgid ""
 "We will connect to your Shopify store using the Admin API. You will need to "
 "create a private app in the Shopify Developer Dashboard and provide your "
@@ -2414,19 +3149,25 @@ msgstr ""
 "adımda Client ID ve Client Secret değerlerinizi sağlamanız için Shopify "
 "Developer Dashboard'da özel bir uygulama oluşturmanız gerekir."
 
+#: templates/admin/migration/wizard/step1_platform.html:86
 msgid "Magento Migration"
 msgstr "Magento Göçü"
 
+#: templates/admin/migration/wizard/step1_platform.html:87
 msgid ""
-"Magento migration is coming soon. We will support database access and API "
-"methods."
+"We will connect to your Magento 2 store using the REST API. You will need to "
+"create an Integration in your Magento admin and provide the Access Token in "
+"the next step."
 msgstr ""
-"Magento göçü yakında gelecek. Veritabanı erişimi ve API yöntemlerini "
-"destekleyeceğiz."
+"REST API kullanarak Magento 2 mağazanıza bağlanacağız. Magento admin "
+"paneline girmeniz ve bir Entegrasyon oluşturmanız gerekir ve bir sonraki "
+"adımda Erişim Tokenı sağlamanız gerekecek."
 
+#: templates/admin/migration/wizard/step1_platform.html:90
 msgid "CSV Import"
 msgstr "CSV İçe Aktarma"
 
+#: templates/admin/migration/wizard/step1_platform.html:91
 msgid ""
 "Import your data from CSV files. We will provide templates in the next step "
 "for products, customers, orders, and other data."
@@ -2434,56 +3175,74 @@ msgstr ""
 "Verilerinizi CSV dosyalarından içeri aktarın. Ürünler, müşteriler, "
 "siparişler ve diğer veriler için bir sonraki adımda şablonlar sağlayacağız."
 
+#: templates/admin/migration/wizard/step1_platform.html:95
 msgid "Please select a platform to continue."
 msgstr "Devam etmek için bir platform seçin."
 
+#: templates/admin/migration/wizard/step2_connection.html:8
 msgid "Configure Connection"
 msgstr "Bağlantıyı Yapılandır"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "Provide the connection details for your"
 msgstr "Bağlantı ayrıntılarını sağlayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "store."
 msgstr "mağaza."
 
+#: templates/admin/migration/wizard/step2_connection.html:19
 msgid "WooCommerce REST API"
 msgstr "WooCommerce REST API"
 
+#: templates/admin/migration/wizard/step2_connection.html:23
+#: templates/admin/migration/wizard/step2_connection.html:325
 msgid "Store URL"
 msgstr "Mağaza URL'si"
 
+#: templates/admin/migration/wizard/step2_connection.html:31
 msgid "Your WooCommerce store URL (e.g., https://yourstore.com)"
 msgstr "WooCommerce mağaza URL'niz (örneğin, https://yourstore.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:36
 msgid "Consumer Key"
 msgstr "Tüketici Anahtarı"
 
+#: templates/admin/migration/wizard/step2_connection.html:44
 msgid "Your WooCommerce REST API consumer key"
 msgstr "WooCommerce REST API tüketicisi anahtarı"
 
+#: templates/admin/migration/wizard/step2_connection.html:49
 msgid "Consumer Secret"
 msgstr "Tüketici Gizli"
 
+#: templates/admin/migration/wizard/step2_connection.html:57
 msgid "Your WooCommerce REST API consumer secret"
 msgstr "WooCommerce REST API tüketicisi gizli anahtarı"
 
+#: templates/admin/migration/wizard/step2_connection.html:63
 msgid "How to get API credentials"
 msgstr "API kimlik bilgilerini nasıl alın"
 
+#: templates/admin/migration/wizard/step2_connection.html:65
 msgid "Log in to your WordPress admin panel"
 msgstr "WordPress yönetici panelinize girin"
 
+#: templates/admin/migration/wizard/step2_connection.html:66
 msgid "Go to WooCommerce > Settings > Advanced > REST API"
 msgstr "WooCommerce > Ayarlar > Gelişmiş > REST API'ye gidin"
 
+#: templates/admin/migration/wizard/step2_connection.html:67
 msgid "Click 'Add key' and create a new API key with Read permissions"
 msgstr ""
 "Yeni bir API anahtarı oluşturmak için 'Anahtar Ekle'ye tıklayın ve Okuma "
 "iznine sahip olun"
 
+#: templates/admin/migration/wizard/step2_connection.html:68
 msgid "Copy the Consumer Key and Consumer Secret here"
 msgstr "Tüketici Anahtarını ve Tüketici Gizli Anahtarını buraya kopyalayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:71
 msgid ""
 "Note: Read-only permissions are sufficient for data migration. We will not "
 "modify your WooCommerce store."
@@ -2491,33 +3250,46 @@ msgstr ""
 "Not: Veri göçü için sadece okuma izni yeterlidir. WooCommerce mağazanızı "
 "değiştirmeyeceğiz."
 
+#: templates/admin/migration/wizard/step2_connection.html:79
+#: templates/admin/migration/wizard/step2_connection.html:313
+#: templates/admin/migration/wizard/step2_connection.html:372
 msgid "Test connection before proceeding"
 msgstr "Devam etmeden önce bağlantı testi yapın"
 
+#: templates/admin/migration/wizard/step2_connection.html:87
 msgid "Shopify Admin API"
 msgstr "Shopify Admin API"
 
+#: templates/admin/migration/wizard/step2_connection.html:91
 msgid "Store Domain"
 msgstr "Mağaza Alan Adı"
 
+#: templates/admin/migration/wizard/step2_connection.html:99
 msgid "Your Shopify store domain (e.g., yourstore.myshopify.com)"
 msgstr "Shopify mağazanızın alan adı (örneğin, yourstore.myshopify.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:104
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Client ID"
 msgstr "Müşteri Kimliği"
 
+#: templates/admin/migration/wizard/step2_connection.html:112
 msgid "Client ID from your Shopify app's Settings page"
 msgstr "Shopify uygulamanızın Ayarlar sayfasından alınan Client ID"
 
+#: templates/admin/migration/wizard/step2_connection.html:117
 msgid "Client Secret"
 msgstr "Müşteri Gizli"
 
+#: templates/admin/migration/wizard/step2_connection.html:125
 msgid "Secret from your Shopify app's Settings page"
 msgstr "Shopify uygulamanızın Ayarlar sayfasından alınan Gizli (Secret)"
 
+#: templates/admin/migration/wizard/step2_connection.html:131
 msgid "Need help getting your API credentials?"
 msgstr "API kimlik bilgilerinizi almakta yardım mı istiyorsunuz?"
 
+#: templates/admin/migration/wizard/step2_connection.html:133
 msgid ""
 "Setting up a Shopify app takes about 10 minutes. Our step-by-step guide with "
 "screenshots will walk you through it."
@@ -2525,25 +3297,32 @@ msgstr ""
 "Bir Shopify uygulaması kurmak yaklaşık 10 dakika sürer. Ekran görüntülü adım "
 "adım kılavuzumuz, size bunu nasıl yapacağınızı gösterecektir."
 
+#: templates/admin/migration/wizard/step2_connection.html:137
 msgid "Open Setup Guide"
 msgstr "Kurulum Kılavuzu'nu Aç"
 
+#: templates/admin/migration/wizard/step2_connection.html:148
 msgid "Shopify API Setup Guide"
 msgstr "Shopify API Kurulum Kılavuzu"
 
+#: templates/admin/migration/wizard/step2_connection.html:158
 msgid "Open the Shopify Developer Dashboard"
 msgstr "Shopify Geliştirici Dashboard'ı Aç"
 
+#: templates/admin/migration/wizard/step2_connection.html:160
 msgid "Sign in with the same account you use to manage your store."
 msgstr ""
 "Mağazanızı yönetmek için kullandığınız aynı hesabı kullanarak oturum açın."
 
+#: templates/admin/migration/wizard/step2_connection.html:162
 msgid "Go to"
 msgstr "Git"
 
+#: templates/admin/migration/wizard/step2_connection.html:163
 msgid "Sign in with your Shopify account"
 msgstr "Shopify hesabınızla oturum açın"
 
+#: templates/admin/migration/wizard/step2_connection.html:167
 msgid ""
 "If this is your first time visiting the Developer Dashboard, Shopify may ask "
 "you to agree to developer terms. This is normal — accept and continue."
@@ -2551,124 +3330,169 @@ msgstr ""
 "İlk kez Geliştirici Paneli'ne giriyorsanız, Shopify geliştirici terimlerini "
 "onaylamanızı isteyebilir. Bu normaldir — onaylayın ve devam edin."
 
+#: templates/admin/migration/wizard/step2_connection.html:169
 msgid "Shopify Developer Dashboard"
 msgstr "Shopify Geliştirici Dashboard"
 
+#: templates/admin/migration/wizard/step2_connection.html:176
 msgid "Create a New App"
 msgstr "Yeni Bir Uygulama Oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:178
 msgid "Create a private app that Spwig will use to read your store data."
 msgstr ""
 "Spwig'in mağaza verilerinizi okumak için kullanacağı özel bir uygulama "
 "oluşturun."
 
+#: templates/admin/migration/wizard/step2_connection.html:180
+#: templates/admin/migration/wizard/step2_connection.html:197
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "In the left sidebar, click"
 msgstr "Sol menüde tıkla"
 
+#: templates/admin/migration/wizard/step2_connection.html:180
 msgid "Apps"
 msgstr "Uygulamalar"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Click the"
 msgstr "Tıkla"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Create app"
 msgstr "Uygulama Oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "button (top-right corner)"
 msgstr "düğme (üst sağ köşe)"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Scroll past 'Start with Shopify CLI' to the"
 msgstr "'Shopify CLI ile Başla' kısmından sonra kaydırın"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Start from Dev Dashboard"
 msgstr "Dev Dashboard'tan Başla"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "section"
 msgstr "bölüm"
 
+#: templates/admin/migration/wizard/step2_connection.html:183
 msgid "Enter app name:"
 msgstr "Uygulama adı girin:"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
+#: templates/admin/migration/wizard/step2_connection.html:198
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Click"
 msgstr "Tıkla"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
 msgid "Create"
 msgstr "Oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:186
 msgid "Create app in Dev Dashboard"
 msgstr "Dev Dashboard'da Uygulama Oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:193
 msgid "Create an App Version with Permissions"
 msgstr "İzinlerle Bir Uygulama Sürümü Oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:195
 msgid "Configure which data the app can access. We only need read-only access."
 msgstr ""
 "Uygulamanın erişebileceği verileri yapılandırın. Sadece salt okunur erişim "
 "gerekiyor."
 
+#: templates/admin/migration/wizard/step2_connection.html:197
 msgid "Versions"
 msgstr "Sürümler"
 
+#: templates/admin/migration/wizard/step2_connection.html:198
 msgid "Create version"
 msgstr "Sürüm Oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "Set the"
 msgstr "Ayarla"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "App URL"
 msgstr "Uygulama URL"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "to:"
 msgstr "kime:"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Select the newest"
 msgstr "Yeni sürümü seç"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Webhooks API Version"
 msgstr "Webhooks API Sürümü"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Scroll to"
 msgstr "Kaydır"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "Access — Scopes"
 msgstr "Erişim — Kapsamlar"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "and paste:"
 msgstr "ve yapıştır:"
 
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Release"
 msgstr "Yayınla"
 
+#: templates/admin/migration/wizard/step2_connection.html:209
 msgid "Scope input field"
 msgstr "Kapsam girişi alanı"
 
+#: templates/admin/migration/wizard/step2_connection.html:215
 msgid "What it accesses"
 msgstr "Ne erişir"
 
+#: templates/admin/migration/wizard/step2_connection.html:219
 msgid "Products, variants, images, collections"
 msgstr "Ürünler, varyasyonlar, görüntüler, koleksiyonlar"
 
+#: templates/admin/migration/wizard/step2_connection.html:220
 msgid "Customer names, emails, addresses"
 msgstr "Müşteri isimleri, e-postaları, adresler"
 
+#: templates/admin/migration/wizard/step2_connection.html:221
 msgid "Orders from the last 60 days"
 msgstr "Son 60 gün içindeki siparişler"
 
+#: templates/admin/migration/wizard/step2_connection.html:222
 msgid "Blog posts and pages"
 msgstr "Blog gönderileri ve sayfalar"
 
+#: templates/admin/migration/wizard/step2_connection.html:223
 msgid "Discount codes and rules"
 msgstr "İndirim kodları ve kurallar"
 
+#: templates/admin/migration/wizard/step2_connection.html:224
 msgid "Uploaded media files"
 msgstr "Yüklenen medya dosyaları"
 
+#: templates/admin/migration/wizard/step2_connection.html:228
 msgid "Scope selection UI"
 msgstr "Kapsam seçimi kullanıcı arayüzü"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid "Want to migrate your full order history? Add"
 msgstr "Tamamı sipariş geçmişinizi göçerştirmek istiyor musunuz? Ekleyin"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid ""
 "to the scopes above. Without it, only orders from the last 60 days are "
 "accessible."
@@ -2676,36 +3500,47 @@ msgstr ""
 "Yukarıdaki kapsamalarla birlikte olmazsa, yalnızca son 60 gün içindeki "
 "siparişlere erişilebilir."
 
+#: templates/admin/migration/wizard/step2_connection.html:240
 msgid "Copy Your Client ID and Secret"
 msgstr "Müşteri Kimliğinizi ve Gizli Anahtarınızı Kopyalayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:242
 msgid "These are the two values you will paste into Spwig."
 msgstr "Bunlar Spwig'a yapıştıracak olduğunuz iki değerdir."
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Find the"
 msgstr "Bul"
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Credentials"
 msgstr "Kimlik Bilgileri"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Copy the"
 msgstr "Kopyala"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "(click the copy icon)"
 msgstr "(kopyalama ikonunu tıklayın)"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Click the eye icon to reveal the"
 msgstr "Gizli alanı göstermek için göz simgesine tıklayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Secret"
 msgstr "Gizli"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid ", then copy it"
 msgstr ", ardından kopyalayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:249
 msgid "App credentials page"
 msgstr "Uygulama Kimlik Bilgileri Sayfası"
 
+#: templates/admin/migration/wizard/step2_connection.html:252
 msgid ""
 "Treat the Secret like a password. Spwig encrypts it and only uses it during "
 "migration. You can delete the app from Shopify after your migration is "
@@ -2715,63 +3550,84 @@ msgstr ""
 "geçiş sırasında kullanır. Geçişiniz tamamlandıktan sonra Shopify'den "
 "uygulamayı silmekten çekinmeyin."
 
+#: templates/admin/migration/wizard/step2_connection.html:260
 msgid "Set Up Distribution and Install"
 msgstr "Dağıtım Kurulumu ve Yükleme"
 
+#: templates/admin/migration/wizard/step2_connection.html:262
 msgid "Your app needs to be installed on your store before it can access data."
 msgstr "Uygulamanın verilere erişebilmesi için mağazanıza kurulması gerekir."
 
+#: templates/admin/migration/wizard/step2_connection.html:264
 msgid "Click your app name to return to the overview page"
 msgstr "Genel bakış sayfasına dönmek için uygulama adınıza tıklayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Distribution"
 msgstr "Dağıtım"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "and click"
 msgstr "ve tıklayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
+#: templates/admin/migration/wizard/step2_connection.html:267
 msgid "Select distribution method"
 msgstr "Dağıtım yöntemini seçin"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Select"
 msgstr "Seç"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Custom distribution"
 msgstr "Özel Dağıtım"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "and confirm"
 msgstr "ve onaylayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:271
 msgid "Custom distribution option"
 msgstr "Özel Dağıtım Seçeneği"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Enter your store domain (e.g.,"
 msgstr "Mağazanızın alan adını girin (örneğin,"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid ") and click"
 msgstr ") ve tıklayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Generate link"
 msgstr "Bağlantı oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:275
 msgid "Generate install link"
 msgstr "Yükleme bağlantısı oluştur"
 
+#: templates/admin/migration/wizard/step2_connection.html:277
 msgid "Copy the install link and paste it into your browser"
 msgstr "Yükleme bağlantısını kopyalayın ve tarayıcınıza yapıştırın"
 
+#: templates/admin/migration/wizard/step2_connection.html:279
 msgid "Copy the generated link"
 msgstr "Oluşturulan bağlantıyı kopyalayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "On your Shopify admin, review the permissions and click"
 msgstr "Shopify yönetici panelinizde izinleri gözden geçirin ve tıklayın"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "Install"
 msgstr "Yükle"
 
+#: templates/admin/migration/wizard/step2_connection.html:283
 msgid "Install app permissions screen"
 msgstr "Uygulama izinleri ekranını yükle"
 
+#: templates/admin/migration/wizard/step2_connection.html:286
 msgid ""
 "Done! Your app is now installed. Return to this page and paste your Client "
 "ID and Secret into the fields above."
@@ -2779,21 +3635,87 @@ msgstr ""
 "Tamam! Uygulamanız artık yüklendi. Bu sayfaya geri dönün ve Client ID ve "
 "Secret değerlerinizi yukarıdaki alanlara yapıştırın."
 
+#: templates/admin/migration/wizard/step2_connection.html:297
 msgid "Previous"
 msgstr "Önceki"
 
+#: templates/admin/migration/wizard/step2_connection.html:300
 msgid "Next"
 msgstr "İleri"
 
+#: templates/admin/migration/wizard/step2_connection.html:303
 msgid "Got it"
 msgstr "Anladım"
 
+#: templates/admin/migration/wizard/step2_connection.html:321
+msgid "Magento 2 REST API"
+msgstr "Magento 2 REST API"
+
+#: templates/admin/migration/wizard/step2_connection.html:333
+msgid "Your Magento store URL (e.g., https://yourstore.com)"
+msgstr "Magento mağazanızın URL'si (örn. https://yourstore.com)"
+
+#: templates/admin/migration/wizard/step2_connection.html:338
+msgid "Access Token"
+msgstr "Erişim Tokenı"
+
+#: templates/admin/migration/wizard/step2_connection.html:346
+msgid "Integration Access Token from your Magento admin"
+msgstr "Magento admin panelinizden entegrasyon erişim tokenı"
+
+#: templates/admin/migration/wizard/step2_connection.html:352
+msgid "How to get your Access Token"
+msgstr "Erişim Tokenınızı nasıl alın"
+
+#: templates/admin/migration/wizard/step2_connection.html:354
+msgid "Log in to your Magento admin panel"
+msgstr "Magento yönetici panelinize giriş yapın"
+
+#: templates/admin/migration/wizard/step2_connection.html:355
+msgid "Go to System > Integrations"
+msgstr "System > Integrations'a Git"
+
+#: templates/admin/migration/wizard/step2_connection.html:356
+msgid "Click 'Add New Integration'"
+msgstr "'Yeni Entegrasyon Ekle'yi Tıkla"
+
+#: templates/admin/migration/wizard/step2_connection.html:357
+msgid "Set the name to"
+msgstr "Adı şu şekilde ayarla"
+
+#: templates/admin/migration/wizard/step2_connection.html:358
+msgid "Under the API tab, set Resource Access to 'All'"
+msgstr "API sekmesi altında Kaynak Erişimi'ni 'Tümü' olarak ayarlayın"
+
+#: templates/admin/migration/wizard/step2_connection.html:359
+msgid "Save and click 'Activate'"
+msgstr "Kaydet ve 'Aktif Et'yi Tıkla"
+
+#: templates/admin/migration/wizard/step2_connection.html:360
+msgid "Click 'Allow' on the confirmation popup"
+msgstr "Onay penceresinde 'İzin Ver' butonuna tıklayın"
+
+#: templates/admin/migration/wizard/step2_connection.html:361
+msgid "Copy the Access Token value and paste it above"
+msgstr "Erişim Tokenı değerini kopyalayın ve yukarıya yapıştırın"
+
+#: templates/admin/migration/wizard/step2_connection.html:364
+msgid ""
+"Note: Read-only access is sufficient. We will not modify your Magento store. "
+"You can revoke the integration after migration."
+msgstr ""
+"Not: Sadece okuma erişimi yeterlidir. Magento mağazanızı değiştirmeyeceğiz. "
+"Göçten sonra entegrasyonu iptal edebilirsiniz."
+
+#: templates/admin/migration/wizard/step2_connection.html:380
 msgid "CSV File Upload"
 msgstr "CSV Dosyası Yükleme"
 
+#: templates/admin/migration/wizard/step2_connection.html:385
 msgid "CSV Import Instructions"
 msgstr "CSV İçe Aktarma Talimatları"
 
+#: templates/admin/migration/wizard/step2_connection.html:386
 msgid ""
 "Upload CSV files for each data type you want to import. You can import some "
 "or all of the following:"
@@ -2801,223 +3723,310 @@ msgstr ""
 "İçeri aktarmak istediğiniz her veri türü için CSV dosyaları yükleyin. "
 "Aşağıdakilerden bazılarını veya hepsini içeri aktarabilirsiniz:"
 
+#: templates/admin/migration/wizard/step2_connection.html:388
 msgid "Products (required)"
 msgstr "Ürünler (zorunludur)"
 
+#: templates/admin/migration/wizard/step2_connection.html:389
 msgid "Categories (optional)"
 msgstr "Kategoriler (isteğe bağlı)"
 
+#: templates/admin/migration/wizard/step2_connection.html:390
 msgid "Customers (optional)"
 msgstr "Müşteriler (isteğe bağlı)"
 
+#: templates/admin/migration/wizard/step2_connection.html:391
 msgid "Orders (optional)"
 msgstr "Siparişler (isteğe bağlı)"
 
+#: templates/admin/migration/wizard/step2_connection.html:392
 msgid "Reviews (optional)"
 msgstr "Değerlendirmeler (isteğe bağlı)"
 
+#: templates/admin/migration/wizard/step2_connection.html:399
 msgid "Products CSV"
 msgstr "Ürünler CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:403
 msgid "CSV file containing your products"
 msgstr "Ürünlerinizi içeren CSV dosyası"
 
+#: templates/admin/migration/wizard/step2_connection.html:405
+#: templates/admin/migration/wizard/step2_connection.html:416
+#: templates/admin/migration/wizard/step2_connection.html:427
+#: templates/admin/migration/wizard/step2_connection.html:438
+#: templates/admin/migration/wizard/step2_connection.html:449
 msgid "Download Template"
 msgstr "Şablonu İndir"
 
+#: templates/admin/migration/wizard/step2_connection.html:411
 msgid "Categories CSV"
 msgstr "Kategoriler CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:414
 msgid "Optional: CSV file containing your product categories"
 msgstr "İsteğe bağlı: Ürün kategorilerini içeren CSV dosyası"
 
+#: templates/admin/migration/wizard/step2_connection.html:422
 msgid "Customers CSV"
 msgstr "Müşteriler CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:425
 msgid "Optional: CSV file containing your customers"
 msgstr "İsteğe bağlı: Müşterilerinizi içeren CSV dosyası"
 
+#: templates/admin/migration/wizard/step2_connection.html:433
 msgid "Orders CSV"
 msgstr "Siparişler CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:436
 msgid "Optional: CSV file containing your orders"
 msgstr "İsteğe bağlı: Siparişlerinizi içeren CSV dosyası"
 
+#: templates/admin/migration/wizard/step2_connection.html:444
 msgid "Reviews CSV"
 msgstr "Değerlendirmeler CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:447
 msgid "Optional: CSV file containing your product reviews"
 msgstr "İsteğe bağlı: Ürün incelemelerinizi içeren CSV dosyası"
 
+#: templates/admin/migration/wizard/step2_connection.html:463
 msgid "Next: Preview Data"
 msgstr "Sonraki: Veriyi Önizle"
 
+#: templates/admin/migration/wizard/step2_connection.html:476
 msgid "Saving..."
 msgstr "Kaydediliyor..."
 
+#: templates/admin/migration/wizard/step2_connection.html:477
+#: templates/admin/migration/wizard/step3_preview.html:299
 msgid "Processing..."
 msgstr "İşleniyor..."
 
+#: templates/admin/migration/wizard/step2_connection.html:478
 msgid "Loading preview..."
 msgstr "Önizleme yükleniyor..."
 
+#: templates/admin/migration/wizard/step2_connection.html:480
 msgid "Verifying API credentials"
 msgstr "API kimlik bilgileri doğrulanıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:481
 msgid "Counting products"
 msgstr "Ürünler sayılıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:482
 msgid "Counting categories"
 msgstr "Kategoriler sayılıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:483
 msgid "Counting customers"
 msgstr "Müşteriler sayılıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:484
 msgid "Counting orders"
 msgstr "Siparişler sayılıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:485
 msgid "Counting blog posts"
 msgstr "Blog yazıları sayılıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:486
 msgid "Preparing the next step"
 msgstr "Sonraki adımı hazırlama"
 
+#: templates/admin/migration/wizard/step2_connection.html:487
 msgid "Connection successful"
 msgstr "Bağlantı Başarılı"
 
+#: templates/admin/migration/wizard/step2_connection.html:489
 msgid "Connection error"
 msgstr "Bağlantı hatası"
 
+#: templates/admin/migration/wizard/step2_connection.html:490
 msgid "Credentials verified"
 msgstr "Kimlik bilgileri doğrulandı"
 
+#: templates/admin/migration/wizard/step2_connection.html:491
 msgid "Products counted"
 msgstr "Ürünler sayıldı"
 
+#: templates/admin/migration/wizard/step2_connection.html:492
 msgid "Categories counted"
 msgstr "Kategoriler sayıldı"
 
+#: templates/admin/migration/wizard/step2_connection.html:493
 msgid "Customers counted"
 msgstr "Müşteriler sayıldı"
 
+#: templates/admin/migration/wizard/step2_connection.html:494
 msgid "Orders counted"
 msgstr "Siparişler sayıldı"
 
+#: templates/admin/migration/wizard/step2_connection.html:495
 msgid "Blog posts counted"
 msgstr "Blog yazıları sayıldı"
 
+#: templates/admin/migration/wizard/step2_connection.html:496
 msgid "Retry Connection"
 msgstr "Bağlantıyı tekrar deneyin"
 
+#: templates/admin/migration/wizard/step2_connection.html:497
 msgid "Exchanging credentials for access token"
 msgstr "Erişim tokenı için kimlik bilgileri değiştiriliyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:498
 msgid "Access token obtained"
 msgstr "Erişim tokenı elde edildi"
 
+#: templates/admin/migration/wizard/step2_connection.html:499
 msgid "Verifying API access"
 msgstr "API erişimi doğrulanıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:500
 msgid "API access verified"
 msgstr "API erişimi doğrulandı"
 
+#: templates/admin/migration/wizard/step2_connection.html:501
 msgid "Scanning store data"
 msgstr "Mağaza verileri taranıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:502
 msgid "Store scan complete"
 msgstr "Mağaza taraması tamamlandı"
 
+#: templates/admin/migration/wizard/step2_connection.html:503
 msgid "Counting collections"
 msgstr "Koleksiyonlar sayılıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:504
 msgid "Collections counted"
 msgstr "Koleksiyonlar sayıldı"
 
+#: templates/admin/migration/wizard/step2_connection.html:505
 msgid "Counting discounts"
 msgstr "İndirimler sayılıyor"
 
+#: templates/admin/migration/wizard/step2_connection.html:506
 msgid "Discounts counted"
 msgstr "İndirimler sayıldı"
 
+#: templates/admin/migration/wizard/step3_preview.html:8
 msgid "Preview Import Data"
 msgstr "İçe Aktarma Verisini Önizle"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "Review what will be imported from your"
 msgstr "Mağazanızdan ne içeri aktarılacağını gözden geçirin"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "store. You can select which data types to import."
 msgstr ". Hangi veri türlerini içeri aktarmak istediğinizi seçebilirsiniz."
 
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
 msgid "Collections"
 msgstr "Koleksiyonlar"
 
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
 msgid "Discounts"
 msgstr "İndirimler"
 
+#: templates/admin/migration/wizard/step3_preview.html:44
+#: templates/admin/migration/wizard/step3_preview.html:122
+#: templates/admin/migration/wizard/step4_mapping.html:100
+#: templates/admin/migration/wizard/step5_import.html:211
 msgid "Blog Posts"
 msgstr "Blog Yazıları"
 
+#: templates/admin/migration/wizard/step3_preview.html:60
 msgid "Select Data to Import"
 msgstr "İçe Aktarılacak Veriyi Seç"
 
+#: templates/admin/migration/wizard/step3_preview.html:66
+#: templates/admin/migration/wizard/step3_preview.html:75
+#: templates/admin/migration/wizard/step3_preview.html:84
+#: templates/admin/migration/wizard/step3_preview.html:93
+#: templates/admin/migration/wizard/step3_preview.html:103
+#: templates/admin/migration/wizard/step3_preview.html:113
 msgid "found"
 msgstr "bulundu"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import collections as product categories"
 msgstr "Koleksiyonları ürün kategorileri olarak içe aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import product categories and their hierarchy"
 msgstr "Ürün kategorilerini ve hiyerarşilerini içeri aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:77
 msgid "Import products with images, variants, and attributes"
 msgstr ""
 "Resimlerle, varyasyonlarla ve özniteliklerle birlikte ürünleri içeri aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:86
 msgid "Import customer accounts and addresses"
 msgstr "Müşteri hesaplarını ve adresleri içe aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:95
 msgid "Import order history and transactions"
 msgstr "Sipariş geçmişini ve işlemleri içe aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:105
 msgid "Import product reviews and ratings"
 msgstr "Ürün yorumlarını ve puanlamaları içe aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount codes and price rules"
 msgstr "İndirim kodlarını ve fiyat kurallarını içe aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount coupons and vouchers"
 msgstr "İndirim kuponlarını ve biletleri içe aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "posts"
 msgstr "yazılar"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "categories"
 msgstr "kategoriler"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "tags"
 msgstr "etiketler"
 
+#: templates/admin/migration/wizard/step3_preview.html:125
 msgid ""
 "Import blog posts with categories, tags, featured images, and content images"
 msgstr ""
 "Kategorilerle, etiketlerle, öne çıkan resimlerle ve içerik resimleriyle "
 "birlikte blog gönderilerini içeri aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:135
 msgid "Affiliate Program Data"
 msgstr "Ortaklık Programı Verileri"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "affiliates"
 msgstr "ortaklar"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "commissions"
 msgstr "komisyonlar"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "payouts"
 msgstr "ödemeler"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "plans"
 msgstr "planlar"
 
+#: templates/admin/migration/wizard/step3_preview.html:144
 msgid ""
 "Import affiliate profiles, commission records, and payout history. Requires "
 "orders and customers to be imported first."
@@ -3025,9 +4034,11 @@ msgstr ""
 "Ortak profil, komisyon kayıtları ve ödeme geçmişi içeri aktarın. İlk olarak "
 "siparişler ve müşterilerin içeri aktarılması gerekir."
 
+#: templates/admin/migration/wizard/step3_preview.html:153
 msgid "Affiliate Data Available"
 msgstr "Ortaklık Verileri Mevcut"
 
+#: templates/admin/migration/wizard/step3_preview.html:154
 msgid ""
 "To import your affiliate program data (affiliates, commissions, payouts), "
 "install the Spwig Migration Bridge plugin on your WordPress site:"
@@ -3036,16 +4047,20 @@ msgstr ""
 "aktarmak için WordPress sitesinizde Spwig Migration Bridge eklentisini "
 "yükleyin:"
 
+#: templates/admin/migration/wizard/step3_preview.html:156
 msgid "Download the plugin ZIP using the button below"
 msgstr "Aşağıdaki düğme kullanarak eklenti ZIP dosyasını indirin"
 
+#: templates/admin/migration/wizard/step3_preview.html:157
 msgid "Go to your WordPress admin → Plugins → Add New → Upload Plugin"
 msgstr ""
 "WordPress admin panelinize gidin → Eklentiler → Yeni Ekle → Eklenti Yükle"
 
+#: templates/admin/migration/wizard/step3_preview.html:158
 msgid "Upload and activate the plugin"
 msgstr "Eklentiyi Yükle ve Etkinleştir"
 
+#: templates/admin/migration/wizard/step3_preview.html:159
 msgid ""
 "Return here and refresh this page — the affiliate data will appear "
 "automatically"
@@ -3053,115 +4068,177 @@ msgstr ""
 "Buraya geri dönün ve sayfayı yenileyin — ortak veriler otomatik olarak "
 "görünecektir"
 
+#: templates/admin/migration/wizard/step3_preview.html:163
 msgid "Download Bridge Plugin"
 msgstr "Bridge Eklentisini İndir"
 
+#: templates/admin/migration/wizard/step3_preview.html:175
 msgid "Sample Products"
 msgstr "Örnek Ürünler"
 
+#: templates/admin/migration/wizard/step3_preview.html:176
 msgid "Here are a few example products that will be imported:"
 msgstr "İçeri aktarılacak birkaç örnek ürün aşağıdadır:"
 
+#: templates/admin/migration/wizard/step3_preview.html:181
+msgid "Name"
+msgstr "İsim"
+
+#: templates/admin/migration/wizard/step3_preview.html:182
 msgid "SKU"
 msgstr "SKU"
 
+#: templates/admin/migration/wizard/step3_preview.html:183
 msgid "Price"
 msgstr "Fiyat"
 
+#: templates/admin/migration/wizard/step3_preview.html:195
 msgid "Active"
 msgstr "Aktif"
 
+#: templates/admin/migration/wizard/step3_preview.html:197
 msgid "Archived"
 msgstr "Arşivlendi"
 
+#: templates/admin/migration/wizard/step3_preview.html:199
 msgid "Draft"
 msgstr "Taslak"
 
+#: templates/admin/migration/wizard/step3_preview.html:211
 msgid "Import Options"
 msgstr "İçe Aktarma Seçenekleri"
 
+#: templates/admin/migration/wizard/step3_preview.html:216
 msgid "Skip existing items"
 msgstr "Mevcut öğeleri atla"
 
+#: templates/admin/migration/wizard/step3_preview.html:218
 msgid "Don't import items that already exist (matched by SKU, email, etc.)"
 msgstr ""
 "Zaten var olan öğeleri (SKU, e-posta vb. ile eşleşenler) içeri aktarmayın"
 
+#: templates/admin/migration/wizard/step3_preview.html:225
+msgid "If the import fails, automatically remove what was imported"
+msgstr ""
+"İçe aktarma başarısız olursa, içe aktarılan şeyi otomatik olarak kaldır"
+
+#: templates/admin/migration/wizard/step3_preview.html:227
+msgid ""
+"Leave this off to keep partial data so you can fix the problem and run the "
+"import again — anything already imported will be skipped."
+msgstr ""
+"Bu seçeneği açık bırakarak eksik verileri koruyabilir ve sorunu düzeltip "
+"içeriği tekrar aktarım yapabilirsiniz — zaten aktarılan her şey atlanacaktır."
+
+#: templates/admin/migration/wizard/step3_preview.html:233
 msgid "Import product images"
 msgstr "Ürün resimlerini içe aktar"
 
+#: templates/admin/migration/wizard/step3_preview.html:235
 msgid "Download and import product images (may increase import time)"
 msgstr ""
 "Ürün resimlerini indirin ve içeri aktarın (içeri aktarma süresini "
 "artırabilir)"
 
+#: templates/admin/migration/wizard/step3_preview.html:241
 msgid "Preserve original IDs where possible"
 msgstr "Mümkünse orijinal kimlikleri koru"
 
+#: templates/admin/migration/wizard/step3_preview.html:243
 msgid "Attempt to keep original IDs for products and orders (not recommended)"
 msgstr ""
 "Ürünler ve siparişler için orijinal kimlikleri korumaya çalışın (önerilmez)"
 
+#: templates/admin/migration/wizard/step3_preview.html:247
 msgid "Batch size"
 msgstr "Toplu boyut"
 
+#: templates/admin/migration/wizard/step3_preview.html:249
+#: templates/admin/migration/wizard/step3_preview.html:250
+#: templates/admin/migration/wizard/step3_preview.html:251
+#: templates/admin/migration/wizard/step3_preview.html:252
 msgid "items per batch"
 msgstr "Toplu başına öğeler"
 
+#: templates/admin/migration/wizard/step3_preview.html:254
 msgid "Larger batches are faster but use more memory"
 msgstr "Daha büyük toplamlar daha hızlıdır ancak daha fazla bellek kullanır"
 
+#: templates/admin/migration/wizard/step3_preview.html:261
 msgid "Data Safety"
 msgstr "Veri Güvenliği"
 
+#: templates/admin/migration/wizard/step3_preview.html:262
 msgid ""
-"All data will be imported within a database transaction. If anything goes "
-"wrong, the entire import will be rolled back automatically. You'll also have "
-"24 hours to manually rollback if needed."
+"Spwig imports your data one item at a time, and each item is saved as it is "
+"imported. If the import stops part way through, the items already imported "
+"stay in your store unless you tick the option above. You can roll an import "
+"back at any time from the Migrations list — whether it finished, failed or "
+"was stopped. Rollback removes what the import added, but keeps anything your "
+"store has since come to depend on, such as an imported product that now "
+"appears on a real customer's order. Take a full backup before you begin."
 msgstr ""
-"Tüm veriler bir veritabanı işlemi içinde içeri aktarılacaktır. Herhangi bir "
-"şey yanlış giderse, tüm içeri aktarma otomatik olarak geri alınacaktır. "
-"Ayrıca, gerekirse 24 saat içinde el ile geri alma yapabilirsiniz."
+"Spwig, verilerinizi birer birer aktarır ve her öğe, aktarılırken kaydedilir. "
+"Aktarım yarılarda durursa, yukarıdaki seçeneği işaretlemeyinca zaten "
+"aktarılmış öğeler mağazanızda kalır. Aktarımı herhangi bir zaman "
+"Migrasyonlar listesinden geri alabilirsiniz — tamamlandı, başarısız oldu "
+"veya durduruldu. Geri alma, aktarımın eklediği şeyleri kaldırır ancak "
+"mağazanızın artık bağımlılığı olan şeyleri korur, örneğin bir ürün aktarıldı "
+"ve şu anda gerçek bir müşteri siparişinde görünüyor. Başlamadan önce tam bir "
+"yedek alınız."
 
+#: templates/admin/migration/wizard/step3_preview.html:272
 msgid "Next: Configure Mapping"
 msgstr "Sonraki: Haritalamayı Yapılandır"
 
+#: templates/admin/migration/wizard/step3_preview.html:282
 msgid "Generating Field Mappings..."
 msgstr "Alan Haritalamaları Oluşturuluyor..."
 
+#: templates/admin/migration/wizard/step3_preview.html:283
 msgid ""
 "Analyzing your data and creating field mappings. This may take a moment..."
 msgstr ""
 "Verilerinizi analiz ediyor ve alan eşlemeleri oluşturuyoruz. Bu biraz zaman "
 "alabilir..."
 
+#: templates/admin/migration/wizard/step3_preview.html:288
 msgid "Preparing..."
 msgstr "Hazırlanıyor..."
 
+#: templates/admin/migration/wizard/step3_preview.html:298
 msgid "Please select at least one data type to import."
 msgstr "En az bir veri türü seçin."
 
+#: templates/admin/migration/wizard/step3_preview.html:300
 msgid "Fetching sample data..."
 msgstr "Örnek veri alınıyor..."
 
+#: templates/admin/migration/wizard/step3_preview.html:301
 msgid "Detecting custom fields..."
 msgstr "Özel alanlar tespit ediliyor..."
 
+#: templates/admin/migration/wizard/step3_preview.html:302
 msgid "Creating field mappings..."
 msgstr "Alan haritalamaları oluşturuluyor..."
 
+#: templates/admin/migration/wizard/step4_mapping.html:8
 msgid "Configure Field Mapping"
 msgstr "Alan Haritalamasını Yapılandır"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "Review and customize how data from"
 msgstr "Verilerin nasıl özelleştirileceğini gözden geçirin"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "maps to your platform. Most fields are mapped automatically."
 msgstr ". Platformunuza. Çoğu alan otomatik olarak eşlenir."
 
+#: templates/admin/migration/wizard/step4_mapping.html:21
 msgid "CSV Column Mapping"
 msgstr "\"CSV Sütun Haritalama\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:23
 msgid ""
 "Map the columns in your CSV files to the expected fields. We've auto-"
 "detected some matches — review and adjust as needed."
@@ -3169,37 +4246,48 @@ msgstr ""
 "CSV dosyalarındaki sütunları beklenen alanlara eşleyin. Bazı eşleşmeleri "
 "otomatik tespit ettik — gerekirse inceleyin ve düzenleyin."
 
+#: templates/admin/migration/wizard/step4_mapping.html:34
 msgid "CSV Column"
 msgstr "\"CSV Sütunu\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:35
 msgid "Maps To"
 msgstr "\"Haritalanacak\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:46
 msgid "Skip this column"
 msgstr "\"Bu sütunu atla\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:70
 msgid "Automatic Mappings"
 msgstr "Otomatik Haritalamalar"
 
+#: templates/admin/migration/wizard/step4_mapping.html:72
 msgid ""
 "These fields will be mapped automatically based on standard field names:"
 msgstr "Bu alanlar standart alan adlarına göre otomatik olarak eşlenecektir:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:103
 msgid "Blog Categories"
 msgstr "Blog Kategorileri"
 
+#: templates/admin/migration/wizard/step4_mapping.html:106
 msgid "Blog Tags"
 msgstr "Blog Etiketleri"
 
+#: templates/admin/migration/wizard/step4_mapping.html:114
 msgid "Source"
 msgstr "Kaynak"
 
+#: templates/admin/migration/wizard/step4_mapping.html:116
 msgid "Destination"
 msgstr "Hedef"
 
+#: templates/admin/migration/wizard/step4_mapping.html:144
 msgid "No automatic mappings available."
 msgstr "Otomatik haritalama mevcut değil."
 
+#: templates/admin/migration/wizard/step4_mapping.html:156
 msgid ""
 "We detected custom fields in your source data. Map them to your platform's "
 "fields or skip them:"
@@ -3207,72 +4295,101 @@ msgstr ""
 "Kaynak verilerinizde özel alanlar tespit ettik. Bunları platformunuzdaki "
 "alanlara eşleyin veya atlayın:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:171
 msgid "Meta Fields"
 msgstr "Meta Alanlar"
 
+#: templates/admin/migration/wizard/step4_mapping.html:181
 msgid "Type:"
 msgstr "Tip:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:183
 msgid "Example:"
 msgstr "Örnek:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:190
 msgid "Map to:"
 msgstr "Aşağıdakilerden birine haritala:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:192
 msgid "— Skip this field —"
 msgstr "— Bu alanı atla —"
 
+#: templates/admin/migration/wizard/step4_mapping.html:194
 msgid "Product Fields"
 msgstr "Ürün Alanları"
 
+#: templates/admin/migration/wizard/step4_mapping.html:195
+#: templates/admin/migration/wizard/step4_mapping.html:202
+#: templates/admin/migration/wizard/step4_mapping.html:208
 msgid "Custom Field 1"
 msgstr "Özel Alan 1"
 
+#: templates/admin/migration/wizard/step4_mapping.html:196
+#: templates/admin/migration/wizard/step4_mapping.html:203
+#: templates/admin/migration/wizard/step4_mapping.html:209
 msgid "Custom Field 2"
 msgstr "Özel Alan 2"
 
+#: templates/admin/migration/wizard/step4_mapping.html:197
 msgid "Custom Field 3"
 msgstr "Özel Alan 3"
 
+#: templates/admin/migration/wizard/step4_mapping.html:198
+#: templates/admin/migration/wizard/step4_mapping.html:204
+#: templates/admin/migration/wizard/step4_mapping.html:210
 msgid "Meta Data (JSON)"
 msgstr "Meta Veri (JSON)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:201
 msgid "Customer Fields"
 msgstr "Müşteri Alanları"
 
+#: templates/admin/migration/wizard/step4_mapping.html:207
 msgid "Order Fields"
 msgstr "Sipariş Alanları"
 
+#: templates/admin/migration/wizard/step4_mapping.html:217
 msgid "Transform:"
 msgstr "Dönüştür:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:219
 msgid "As Text (String)"
 msgstr "Metin olarak (Dize)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:220
 msgid "As Number (Integer)"
 msgstr "Sayı olarak (Tamsayı)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:221
 msgid "As Decimal"
 msgstr "Ondalık olarak"
 
+#: templates/admin/migration/wizard/step4_mapping.html:222
 msgid "As True/False (Boolean)"
 msgstr "Doğru/Yanlış olarak (Boole)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:223
 msgid "As JSON"
 msgstr "JSON olarak"
 
+#: templates/admin/migration/wizard/step4_mapping.html:224
 msgid "As Date"
 msgstr "Tarih olarak"
 
+#: templates/admin/migration/wizard/step4_mapping.html:225
 msgid "As URL"
 msgstr "URL olarak"
 
+#: templates/admin/migration/wizard/step4_mapping.html:226
 msgid "As Email"
 msgstr "E-posta olarak"
 
+#: templates/admin/migration/wizard/step4_mapping.html:240
 msgid "No custom fields detected"
 msgstr "Özel alan tespit edilemedi"
 
+#: templates/admin/migration/wizard/step4_mapping.html:241
 msgid ""
 "All fields in your source data can be mapped automatically. You can proceed "
 "to the import step."
@@ -3280,75 +4397,61 @@ msgstr ""
 "Kaynak verilerinizdeki tüm alanlar otomatik olarak eşlenebilir. İçeri "
 "aktarma adımı yapmaya devam edebilirsiniz."
 
-msgid "Category Mapping"
-msgstr "Kategori Haritalaması"
+#: templates/admin/migration/wizard/step4_mapping.html:255
+msgid "Pricing"
+msgstr "Fiyatlandırma"
 
+#: templates/admin/migration/wizard/step4_mapping.html:261
 msgid ""
-"Some categories from your source don't have direct matches. Choose how to "
-"handle them:"
+"Tax rates and shipping zones are not imported. Tax rules differ enough "
+"between platforms that copying them across unreviewed would risk charging "
+"your customers the wrong amount, so Spwig leaves them to you."
 msgstr ""
-"Kaynak verilerinizden bazı kategorilerin doğrudan eşleşmeleri yok. Onlarla "
-"nasıl başa çıkacağınızı seçin:"
+"Vergi oranları ve kargo bölgeleri dışa aktarılmamıştır. Vergi kuralları "
+"platformlar arasında yeterince farklıdır, bu nedenle onları gözden "
+"geçirmeden kopyalayarak müşterilerinize yanlış miktarda ücret tahsil etme "
+"riski olabilir, bu yüzden Spwig bunları size bırakmıştır."
 
-msgid "Create new categories"
-msgstr "Yeni kategoriler oluştur"
-
-msgid "Create new categories in your platform for unmapped categories"
+#: templates/admin/migration/wizard/step4_mapping.html:262
+msgid ""
+"Set them up in Settings → Tax & Currency and Settings → Shipping once the "
+"import has finished."
 msgstr ""
-"Haritalanmamış kategoriler için platformunuzda yeni kategoriler oluşturun"
+"İçe aktarma tamamlandıktan sonra Ayarlar → Vergi & Para Birimi ve Ayarlar → "
+"Kargo altında bunları ayarlayın."
 
-msgid "Assign to default category"
-msgstr "Varsayılan kategoriye atama"
-
-msgid "Put all unmapped items in a default 'Uncategorized' category"
-msgstr ""
-"Tüm haritalanmamış öğeleri varsayılan bir 'Kategorize Edilmemiş' "
-"kategorisine koyun"
-
-msgid "Skip items with unmapped categories"
-msgstr "Haritalanmamış kategorilere sahip öğeleri atla"
-
-msgid "Don't import items that belong to unmapped categories"
-msgstr "Haritalanmamış kategorilere ait öğeleri içeri aktarmayın"
-
-msgid "Tax & Shipping Settings"
-msgstr "Vergi & Kargo Ayarları"
-
-msgid "Import tax settings"
-msgstr "Vergi ayarlarını içe aktar"
-
-msgid "Import tax rates and rules from your source platform"
-msgstr "Kaynak platformunuzdan vergi oranlarını ve kuralları içeri aktarın"
-
-msgid "Import shipping zones and methods"
-msgstr "Kargo bölgelerini ve yöntemlerini içe aktar"
-
-msgid "Import shipping configuration from your source platform"
-msgstr "Kaynak platformunuzdan kargo yapılandırmasını içeri aktarın"
-
+#: templates/admin/migration/wizard/step4_mapping.html:267
 msgid "Price adjustment"
 msgstr "Fiyat Ayarlama"
 
+#: templates/admin/migration/wizard/step4_mapping.html:270
+#: templates/admin/migration/wizard/step6_complete.html:218
 msgid "None"
 msgstr "Hiçbiri"
 
+#: templates/admin/migration/wizard/step4_mapping.html:271
 msgid "Percentage"
 msgstr "Yüzde"
 
+#: templates/admin/migration/wizard/step4_mapping.html:272
 msgid "Fixed Amount"
 msgstr "Sabit Tutar"
 
+#: templates/admin/migration/wizard/step4_mapping.html:280
 #, python-format
 msgid "(e.g., +10 for 10%% increase or -5 for 5%% decrease)"
 msgstr "(örneğin, +10: %%10 artış veya -5: %%5 azalış)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:282
 msgid "Optionally adjust all prices during import"
 msgstr ""
 "İçeri aktarma sırasında tüm fiyatları isteğe bağlı olarak ayarlayabilirsiniz"
 
+#: templates/admin/migration/wizard/step4_mapping.html:289
 msgid "Pro Tip"
 msgstr "Profesyonel İpucu"
 
+#: templates/admin/migration/wizard/step4_mapping.html:290
 msgid ""
 "Field mappings are saved and can be reused for future migrations. You can "
 "also edit mappings after the import is complete."
@@ -3357,15 +4460,32 @@ msgstr ""
 "kullanılabilir. İçeri aktarma tamamlandıktan sonra eşlemeleri "
 "düzenleyebilirsiniz."
 
+#: templates/admin/migration/wizard/step4_mapping.html:300
+#: templates/admin/migration/wizard/step5_import.html:16
 msgid "Start Import"
 msgstr "İçe Aktarma Başlat"
 
+#: templates/admin/migration/wizard/step5_import.html:9
+msgid "Ready to Import"
+msgstr "İçe Aktarma Hazır"
+
+#: templates/admin/migration/wizard/step5_import.html:11
+msgid ""
+"This migration is configured but has not started yet. Starting it will begin "
+"importing data into your store."
+msgstr ""
+"Bu göç yapılandırılmış ancak henüz başlatılmadı. Başlatıldığında, verilerin "
+"mağazanıza aktarımına başlanacaktır."
+
+#: templates/admin/migration/wizard/step5_import.html:24
 msgid "Import in Progress"
 msgstr "İçe Aktarma Devam Ediyor"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid "Importing data from"
 msgstr "Veri İçe Aktarılıyor"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid ""
 ". This process is running in the background - you can safely close this "
 "window and check back later."
@@ -3373,54 +4493,100 @@ msgstr ""
 ". Bu işlem arka planda çalışmaktadır - bu pencereyi güvenli bir şekilde "
 "kapatıp daha sonra tekrar kontrol edebilirsiniz."
 
+#: templates/admin/migration/wizard/step5_import.html:36
+msgid ""
+"Stop this import? Spwig finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store — cancelling does not remove "
+"it."
+msgstr ""
+"Bu içeri aktarmayı durdurmak ister misiniz? Spwig, işlemi tamamladıktan "
+"sonra durur. Zaten içeri aktarılmış olan her şey mağazanızda kalır — iptal "
+"etmek bunu silmez."
+
+#: templates/admin/migration/wizard/step5_import.html:38
+msgid "Stop Import"
+msgstr "İçe Yükleme Durdur"
+
+#: templates/admin/migration/wizard/step5_import.html:44
+msgid "Stopping — Spwig finishes the batch it is working on, then stops."
+msgstr "Durduruluyor — Spwig üzerinde çalıştığı partiyi tamamlar, sonra durur."
+
+#: templates/admin/migration/wizard/step5_import.html:60
 msgid "Initializing..."
 msgstr "Başlatılıyor..."
 
+#: templates/admin/migration/wizard/step5_import.html:70
 msgid "Starting import..."
 msgstr "İçe aktarma başlatılıyor..."
 
+#: templates/admin/migration/wizard/step5_import.html:79
 msgid "Import Steps"
 msgstr "İçe Aktarma Aşamaları"
 
+#: templates/admin/migration/wizard/step5_import.html:98
+#: templates/admin/migration/wizard/step5_import.html:118
+#: templates/admin/migration/wizard/step5_import.html:138
+#: templates/admin/migration/wizard/step5_import.html:158
+#: templates/admin/migration/wizard/step5_import.html:178
+#: templates/admin/migration/wizard/step5_import.html:198
+#: templates/admin/migration/wizard/step5_import.html:218
+#: templates/admin/migration/wizard/step5_import.html:238
+#: templates/admin/migration/wizard/step5_import.html:258
+#: templates/admin/migration/wizard/step5_import.html:278
 msgid "Waiting..."
 msgstr "Bekleniyor..."
 
+#: templates/admin/migration/wizard/step5_import.html:290
 msgid "Import Log"
 msgstr "İçe Aktarma Günlüğü"
 
+#: templates/admin/migration/wizard/step5_import.html:293
+#: templates/admin/migration/wizard/step5_import.html:321
 msgid "Show Details"
 msgstr "Detayları Göster"
 
+#: templates/admin/migration/wizard/step5_import.html:306
+#: templates/admin/migration/wizard/step6_complete.html:484
 msgid "View All Migrations"
 msgstr "Tüm Göçü Görüntüle"
 
+#: templates/admin/migration/wizard/step5_import.html:320
 msgid "Hide Details"
 msgstr "Detayları Gizle"
 
+#: templates/admin/migration/wizard/step5_import.html:322
 msgid "View Error Report"
 msgstr "Hata Raporunu Görüntüle"
 
+#: templates/admin/migration/wizard/step6_complete.html:9
 msgid "Migration Completed Successfully!"
 msgstr "Göç Başarıyla Tamamlandı!"
 
+#: templates/admin/migration/wizard/step6_complete.html:10
 msgid "Your data has been successfully imported from"
 msgstr "Verileriniz şu kaynaktan başarıyla içeri aktarıldı"
 
+#: templates/admin/migration/wizard/step6_complete.html:57
 msgid "Import Summary"
 msgstr "İçe Aktarma Özeti"
 
+#: templates/admin/migration/wizard/step6_complete.html:63
 msgid "Data Type"
 msgstr "Veri Türü"
 
+#: templates/admin/migration/wizard/step6_complete.html:119
 msgid "links found"
 msgstr "bağlantı bulundu"
 
+#: templates/admin/migration/wizard/step6_complete.html:121
 msgid "pending review"
 msgstr "değerlendirme bekliyor"
 
+#: templates/admin/migration/wizard/step6_complete.html:124
 msgid "applied"
 msgstr "uygulandı"
 
+#: templates/admin/migration/wizard/step6_complete.html:132
 msgid ""
 "We found internal links in your imported content pointing to your old site. "
 "Review the suggestions below and approve the replacements."
@@ -3428,93 +4594,157 @@ msgstr ""
 "İçeri aktarılan içerikteki iç bağlantılar eski sitesine yönlendiriyor. "
 "Aşağıdaki önerileri inceleyin ve değiştirilmeleri onaylayın."
 
+#: templates/admin/migration/wizard/step6_complete.html:135
 msgid "links have high-confidence matches and can be auto-approved."
 msgstr ""
 "bağlantılar yüksek güvenilirlikle eşleşmeleri ve otomatik onaylanabilirler."
 
+#: templates/admin/migration/wizard/step6_complete.html:146
 msgid "Auto-approve high confidence"
 msgstr "Yüksek güven seviyesi otomatik onayla"
 
+#: templates/admin/migration/wizard/step6_complete.html:152
 msgid "Apply Approved Links"
 msgstr "Onaylanan Bağlantıları Uygula"
 
+#: templates/admin/migration/wizard/step6_complete.html:168
 msgid "links"
 msgstr "bağlantılar"
 
+#: templates/admin/migration/wizard/step6_complete.html:171
 msgid "Edit"
 msgstr "Düzenle"
 
+#: templates/admin/migration/wizard/step6_complete.html:179
 msgid "Original URL"
 msgstr "Orijinal URL"
 
+#: templates/admin/migration/wizard/step6_complete.html:180
 msgid "Anchor Text"
 msgstr "Ankör Metni"
 
+#: templates/admin/migration/wizard/step6_complete.html:181
 msgid "Suggested URL"
 msgstr "Önerilen URL"
 
+#: templates/admin/migration/wizard/step6_complete.html:182
 msgid "Match"
 msgstr "Eşleşme"
 
+#: templates/admin/migration/wizard/step6_complete.html:183
 msgid "Action"
 msgstr "Eylem"
 
+#: templates/admin/migration/wizard/step6_complete.html:226
 msgid "Approve"
 msgstr "Onayla"
 
+#: templates/admin/migration/wizard/step6_complete.html:231
 msgid "Skip"
 msgstr "Atla"
 
+#: templates/admin/migration/wizard/step6_complete.html:258
 msgid "Rollback Available"
 msgstr "Geri Alma Mevcut"
 
-msgid "You can rollback this migration until"
-msgstr "Bu geçişe geri dönmek için şuna kadar zamanınız vardır"
+#: templates/admin/migration/wizard/step6_complete.html:261
+#, python-format
+msgid "You can roll this migration back until <strong>%(deadline)s</strong>."
+msgstr ""
+"Bu geçişi <strong>%(deadline)s</strong> tarihine kadar geri alabilirsiniz."
 
+#: templates/admin/migration/wizard/step6_complete.html:263
+msgid "You can roll this migration back from the Migrations list."
+msgstr "Bu geçişi Geçiş Listesinden geri alabilirsiniz."
+
+#: templates/admin/migration/wizard/step6_complete.html:269
 msgid "Important"
 msgstr "Önemli"
 
+#: templates/admin/migration/wizard/step6_complete.html:270
 msgid ""
-"Rolling back will remove all imported data. This action cannot be undone. "
-"Make sure to backup any changes you've made since the migration."
+"Rolling back removes the products, categories, customers, orders, media and "
+"store-extension data this import created, and it cannot be undone. Anything "
+"your store has since come to depend on — an imported product that now "
+"appears on a real order, for example — is kept rather than removed, and "
+"Spwig lists what it kept. You will see exactly what will be removed before "
+"you confirm."
 msgstr ""
-"Geri dönmek tüm içeri aktarılan verileri siler. Bu işlem geri alınamaz. "
-"Geçişten beri yaptığınız değişiklikleri yedekleyin."
+"Geri alma, bu ithalatın oluşturduğu ürünler, kategoriler, müşteriler, "
+"siparişler, medya ve mağaza uzantısı verilerini kaldırır ve bu işlem geri "
+"alınamaz. Mağazanın daha sonra bağımlılığı olan her şey — örneğin, şimdi "
+"gerçek bir siparişte görünen bir ithalat ürününü — kaldırılmaz ve Spwig "
+"neyin korunduğunu listeler. Onaylamadan önce neyin kaldırılacağını tam "
+"olarak göreceksiniz."
 
+#: templates/admin/migration/wizard/step6_complete.html:278
 msgid ""
-"Are you sure you want to rollback this migration? This will remove all "
-"imported data and cannot be undone."
+"Roll back this migration? This removes what the import created, keeping "
+"anything your store now depends on. It cannot be undone."
 msgstr ""
-"Bu geçidi geri almak istediğinizden emin misiniz? Bu, tüm içeri aktarılan "
-"verileri siler ve geri alınamaz."
+"Bu göçü geri almak istiyor musunuz? Bu, içeriğin oluşturduğu şeyleri "
+"kaldırır, mağazanın şu anda bağlı olduğu her şeyi korur. Bu işlem geri "
+"alınamaz."
 
+#: templates/admin/migration/wizard/step6_complete.html:290
+msgid "Migration Stopped"
+msgstr "Göç Durduruldu"
+
+#: templates/admin/migration/wizard/step6_complete.html:291
 msgid ""
-"There was an error during the import process. The migration has been rolled "
-"back automatically."
+"You stopped this import. The items imported before it stopped are still in "
+"your store — nothing was removed. You can roll the import back to remove "
+"them, or run it again, in which case anything already imported will be "
+"skipped."
 msgstr ""
-"İçeri aktarma işlemi sırasında bir hata oluştu. Geçiş otomatik olarak geri "
-"alınmıştır."
+"Bu içeriği durdurdunuz. Durdurulmadan önce içeriği导入 edilen öğeler hala "
+"mağazanızda — hiçbir şey kaldırılmadı. Onları kaldırmak için içeriği geri "
+"alabilir ya da tekrar çalıştırabilirsiniz, bu durumda zaten içeriği导入 "
+"edilmiş her şey atlanacaktır."
 
+#: templates/admin/migration/wizard/step6_complete.html:299
+msgid ""
+"Spwig could not finish this import. Items imported before the error are "
+"still in your store — nothing has been removed automatically. Review the "
+"details below, then fix the problem at source and run the import again. "
+"Items that were already imported will be skipped."
+msgstr ""
+"Spwig bu içeriği tamamlayamadı. Hata oluşmadan önce içeriğin bir kısmı "
+"mağazanızda hala bulunmaktadır — otomatik olarak hiçbir şey kaldırılmadı. "
+"Aşağıdaki detayları inceleyin, ardından sorunu kaynağında çözün ve içeriği "
+"tekrar çalıştırın. Zaten içeriğin bir kısmı导入 edilmiştir, bu öğeler "
+"atlanacaktır."
+
+#: templates/admin/migration/wizard/step6_complete.html:306
 msgid "Error Details"
 msgstr "Hata Detayları"
 
+#: templates/admin/migration/wizard/step6_complete.html:322
 msgid "Show technical details"
 msgstr "Teknik detayları göster"
 
+#: templates/admin/migration/wizard/step6_complete.html:331
 msgid "No detailed error information available."
 msgstr "Detaylı hata bilgisi mevcut değil."
 
+#: templates/admin/migration/wizard/step6_complete.html:340
 msgid "Partial Import Results"
 msgstr "Kısmi İçe Aktarma Sonuçları"
 
+#: templates/admin/migration/wizard/step6_complete.html:342
 msgid ""
-"The following data was imported before the error occurred (all rolled back):"
+"The following items were imported before the error occurred. They are live "
+"in your store:"
 msgstr ""
-"Hata oluşmadan önce aşağıdaki veriler içeri aktarıldı (tümü geri alınmıştır):"
+"Hata oluşmadan önce aşağıdaki öğeler içeri aktarıldı. Onlar mağazanızda "
+"aktif durumda:"
 
+#: templates/admin/migration/wizard/step6_complete.html:377
+#: templates/admin/migration/wizard/step6_complete.html:494
 msgid "Try Again"
 msgstr "Tekrar Deneyin"
 
+#: templates/admin/migration/wizard/step6_complete.html:379
 msgid ""
 "You can start a new migration with the same settings or adjust your "
 "configuration."
@@ -3522,12 +4752,15 @@ msgstr ""
 "Aynı ayarlarda yeni bir geçiş başlatabilir veya yapılandırmayı "
 "düzenleyebilirsiniz."
 
+#: templates/admin/migration/wizard/step6_complete.html:384
 msgid "Adjust Settings"
 msgstr "Ayarları Ayarla"
 
+#: templates/admin/migration/wizard/step6_complete.html:404
 msgid "Review your imported data"
 msgstr "İçe aktarılan verileri inceleyin"
 
+#: templates/admin/migration/wizard/step6_complete.html:406
 msgid ""
 "Check your products, customers, and orders to ensure everything imported "
 "correctly."
@@ -3535,71 +4768,330 @@ msgstr ""
 "Ürünlerinizi, müşterilerinizi ve siparişlerinizi kontrol edin, her şeyin "
 "doğru şekilde içeri aktarıldığından emin olun."
 
+#: templates/admin/migration/wizard/step6_complete.html:410
 msgid "View Products"
 msgstr "Ürünleri Görüntüle"
 
+#: templates/admin/migration/wizard/step6_complete.html:413
 msgid "View Customers"
 msgstr "Müşterileri Görüntüle"
 
+#: templates/admin/migration/wizard/step6_complete.html:416
 msgid "View Orders"
 msgstr "Siparişleri Görüntüle"
 
+#: templates/admin/migration/wizard/step6_complete.html:422
 msgid "Configure your store settings"
 msgstr "Mağazanızın ayarlarını yapılandırın"
 
+#: templates/admin/migration/wizard/step6_complete.html:424
 msgid "Review and adjust shipping, tax, and payment settings for your store."
 msgstr ""
 "Mağazanız için kargo, vergi ve ödeme ayarlarını inceleyin ve düzenleyin."
 
+#: templates/admin/migration/wizard/step6_complete.html:429
 msgid "Test your checkout process"
 msgstr "Ödeme işlemini test edin"
 
+#: templates/admin/migration/wizard/step6_complete.html:431
 msgid "Place a test order to ensure everything works correctly."
 msgstr ""
 "Her şeyin düzgün çalıştığından emin olmak için bir test siparişi verin."
 
+#: templates/admin/migration/wizard/step6_complete.html:436
 msgid "Update your DNS settings"
 msgstr "DNS ayarlarınızı güncelleyin"
 
+#: templates/admin/migration/wizard/step6_complete.html:438
 msgid "When you're ready to go live, point your domain to this platform."
 msgstr ""
 "Canlı hale getirmeye hazırsanız, alan adınızı bu platforma yönlendirin."
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Review the error logs"
 msgstr "Hata günlüklerini inceleyin"
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Understand what went wrong during the migration"
 msgstr "Geçiş sırasında neyin yanlış gittiğini anlayın"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Check your source data"
 msgstr "Kaynak verilerinizi kontrol edin"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Ensure your data is valid and accessible"
 msgstr "Verilerinizin geçerli ve erişilebilir olduğundan emin olun"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "Contact support"
 msgstr "Destekle iletişime geçin"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "If you need help, our team is here to assist"
 msgstr "Yardım ihtiyacınız varsa, ekibimiz burada yardımcı olmak için hazır"
 
+#: templates/admin/migration/wizard/step6_complete.html:460
 msgid "Download Report"
 msgstr "Raporu İndir"
 
+#: templates/admin/migration/wizard/step6_complete.html:462
 msgid "Download a detailed report of this migration for your records."
 msgstr "Bu geçişin ayrıntılı raporunu kaydınız için indirin."
 
+#: templates/admin/migration/wizard/step6_complete.html:467
 msgid "Download PDF"
 msgstr "PDF İndir"
 
+#: templates/admin/migration/wizard/step6_complete.html:471
 msgid "Download CSV"
 msgstr "CSV İndir"
 
+#: templates/admin/migration/wizard/step6_complete.html:475
 msgid "Download Logs"
 msgstr "Günlükleri İndir"
 
+#: templates/admin/migration/wizard/step6_complete.html:489
 msgid "Start Another Migration"
 msgstr "Başka Bir Göçü Başlat"
+
+#~ msgid "Transaction ID for rollback tracking"
+#~ msgstr "Geri Alma Takibi İçin İşlem Kimliği"
+
+#~ msgid "Database savepoint ID for this step"
+#~ msgstr "Bu adımda veritabanı savepoint kimliği"
+
+#~ msgid "Category Mapping"
+#~ msgstr "Kategori Haritalaması"
+
+#~ msgid ""
+#~ "Some categories from your source don't have direct matches. Choose how to "
+#~ "handle them:"
+#~ msgstr ""
+#~ "Kaynak verilerinizden bazı kategorilerin doğrudan eşleşmeleri yok. "
+#~ "Onlarla nasıl başa çıkacağınızı seçin:"
+
+#~ msgid "Create new categories"
+#~ msgstr "Yeni kategoriler oluştur"
+
+#~ msgid "Create new categories in your platform for unmapped categories"
+#~ msgstr ""
+#~ "Haritalanmamış kategoriler için platformunuzda yeni kategoriler oluşturun"
+
+#~ msgid "Assign to default category"
+#~ msgstr "Varsayılan kategoriye atama"
+
+#~ msgid "Put all unmapped items in a default 'Uncategorized' category"
+#~ msgstr ""
+#~ "Tüm haritalanmamış öğeleri varsayılan bir 'Kategorize Edilmemiş' "
+#~ "kategorisine koyun"
+
+#~ msgid "Skip items with unmapped categories"
+#~ msgstr "Haritalanmamış kategorilere sahip öğeleri atla"
+
+#~ msgid "Don't import items that belong to unmapped categories"
+#~ msgstr "Haritalanmamış kategorilere ait öğeleri içeri aktarmayın"
+
+#~ msgid "Tax & Shipping Settings"
+#~ msgstr "Vergi & Kargo Ayarları"
+
+#~ msgid "Import tax settings"
+#~ msgstr "Vergi ayarlarını içe aktar"
+
+#~ msgid "Import tax rates and rules from your source platform"
+#~ msgstr "Kaynak platformunuzdan vergi oranlarını ve kuralları içeri aktarın"
+
+#~ msgid "Import shipping zones and methods"
+#~ msgstr "Kargo bölgelerini ve yöntemlerini içe aktar"
+
+#~ msgid "Import shipping configuration from your source platform"
+#~ msgstr "Kaynak platformunuzdan kargo yapılandırmasını içeri aktarın"
+
+#~ msgid "Deadline for manual rollback (24 hours after completion)"
+#~ msgstr "El ile geri alma sonu (tamamlanma sonrası 24 saat)"
+
+#~ msgid "Migration cancelled by user"
+#~ msgstr "Göç kullanıcı tarafından iptal edildi"
+
+#~ msgid ""
+#~ "Migration marked as cancelled. The background import may keep running for "
+#~ "a while longer, so imported counts can continue to rise. Anything already "
+#~ "imported stays in your store."
+#~ msgstr ""
+#~ "Göç, iptal olarak işaretlendi. Arka planda yapılan içeri aktarma biraz "
+#~ "daha sürecek, bu nedenle içeri aktarılan sayılar hala artabilir. Zaten "
+#~ "içeri aktarılmış olan her şey mağazanızda kalmaya devam eder."
+
+#~ msgid ""
+#~ "Only pending or failed migrations can be deleted. A running migration "
+#~ "must be cancelled first."
+#~ msgstr ""
+#~ "Sadece bekleyen veya başarısız olan göçler silinebilir. Çalışan bir göçün "
+#~ "silinmesi önce iptal edilmelidir."
+
+#~ msgid "This will NOT remove:"
+#~ msgstr "Bu kaldırılmayacak: "
+
+#~ msgid ""
+#~ "Subscription plans, booking resources or other data created by store "
+#~ "extensions"
+#~ msgstr ""
+#~ "Mağaza uzantıları tarafından oluşturulan abonelik planları, rezervasyon "
+#~ "kaynakları veya diğer veriler"
+
+#~ msgid ""
+#~ "Review the rollback details? Rolling back removes what this import "
+#~ "created, and also removes all orders belonging to imported customers — "
+#~ "including any placed since the import."
+#~ msgstr ""
+#~ "Geri alma ayrıntılarını incelemek istiyor musunuz? Geri alma, bu içe "
+#~ "aktarma tarafından oluşturulan şeyleri siler ve aynı zamanda içe "
+#~ "aktarılmış müşterilere ait tüm siparişleri de siler — içe aktarma "
+#~ "sırasında yapılan tüm siparişler dahil."
+
+#~ msgid "Migration rolled back successfully!"
+#~ msgstr "Göç başarıyla geri alınan!"
+
+#~ msgid ""
+#~ "The products, categories, reviews, coupons and media this import created"
+#~ msgstr ""
+#~ "Bu ithalatın oluşturduğu ürünler, kategoriler, incelemeler, kuponlar ve "
+#~ "medya"
+
+#~ msgid ""
+#~ "The customer accounts this import created, along with their addresses and "
+#~ "loyalty history"
+#~ msgstr ""
+#~ "Bu ithalatın oluşturduğu müşteri hesapları, adresleri ve sadakat geçmişi"
+
+#~ msgid ""
+#~ "Every order belonging to an imported customer — including orders they "
+#~ "have placed since the import, not only the imported ones"
+#~ msgstr ""
+#~ "İçe aktarılan bir müşteriye ait olan tüm siparişler — içe aktarım "
+#~ "işleminden sonra müşteri tarafından verilen siparişler dahil, yalnızca "
+#~ "içe aktarılan siparişler değil"
+
+#~ msgid ""
+#~ "Imported products from orders placed by your other customers, which "
+#~ "leaves those orders with missing items and incorrect totals"
+#~ msgstr ""
+#~ "Diğer müşterilerinizin vermiş olduğu siparişlerden içe aktarılan ürünler, "
+#~ "bu da bu siparişlerin eksik ürünler ve yanlış toplamlarla kalmasına neden "
+#~ "olur"
+
+#~ msgid "Affiliates, commissions or payouts created by this import"
+#~ msgstr "Bu ithalatın oluşturduğu ortaklar, komisyonlar veya ödemeler"
+
+#~ msgid ""
+#~ "Because rollback reaches beyond the data this import created, it is only "
+#~ "safe immediately after a migration — before any real trading has "
+#~ "happened. This operation is PERMANENT and cannot be reversed."
+#~ msgstr ""
+#~ "Ger倒 (geri alma) işlemi, bu ithalatın oluşturduğu verilerin ötesine "
+#~ "gider, bu nedenle sadece bir göçten hemen sonra — gerçek ticaretin "
+#~ "başlamadan önce — güvenli olur. Bu işlem PERMANENT (kalıcı) olup geri "
+#~ "alınamaz."
+
+#~ msgid "🚀 Start New Migration"
+#~ msgstr "🚀 Yeni Göç Başlat"
+
+#~ msgid "Migration restarted! Redirecting to progress page..."
+#~ msgstr "Geçiş yeniden başlatıldı! İlerleme sayfasına yönlendiriliyor..."
+
+#~ msgid "Migration cancelled successfully."
+#~ msgstr "Göç başarıyla iptal edildi."
+
+#~ msgid ""
+#~ "Deleted a running migration. If this was stuck, the operation has been "
+#~ "cleaned up."
+#~ msgstr ""
+#~ "Çalışan bir geçiş silindi. Eğer işlem takılıyorsa, işlem temizlendi."
+
+#~ msgid "Migration deleted successfully."
+#~ msgstr "Göç başarıyla silindi."
+
+#~ msgid "Delete all products imported from this migration"
+#~ msgstr "Bu geçişten içe aktarılan tüm ürünleri sil"
+
+#~ msgid "Delete all categories imported from this migration"
+#~ msgstr "Bu geçişten içe aktarılan tüm kategorileri sil"
+
+#~ msgid "Delete all customers imported from this migration"
+#~ msgstr "Bu geçişten içe aktarılan tüm müşterileri sil"
+
+#~ msgid "Delete all orders imported from this migration"
+#~ msgstr "Bu geçişten içe aktarılan tüm siparişleri sil"
+
+#~ msgid "Delete all reviews imported from this migration"
+#~ msgstr "Bu göçten alınan tüm incelemeleri sil"
+
+#~ msgid "Delete all coupons imported from this migration"
+#~ msgstr "Bu göçten alınan tüm kuponları sil"
+
+#~ msgid "Delete all associated media assets"
+#~ msgstr "Tüm ilişkili medya varlıklarını sil"
+
+#~ msgid "Mark the migration job as 'rolled_back'"
+#~ msgstr "Göç görevini 'rolled_back' olarak işaretle"
+
+#~ msgid "Are you sure you want to cancel this migration?"
+#~ msgstr "Bu göçü iptal etmek istediğinizden emin misiniz?"
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will delete all "
+#~ "imported data."
+#~ msgstr ""
+#~ "Bu göçü geri almak istediğinizden emin misiniz? Bu, tüm alınan verileri "
+#~ "siler."
+
+#~ msgid ""
+#~ "Are you sure you want to force delete this migration? This cannot be "
+#~ "undone."
+#~ msgstr ""
+#~ "Bu göçü zorla silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+
+#, fuzzy
+#~ msgid "Token Preview"
+#~ msgstr "Önizleme"
+
+#~ msgid ""
+#~ "Magento migration is coming soon. We will support database access and API "
+#~ "methods."
+#~ msgstr ""
+#~ "Magento göçü yakında gelecek. Veritabanı erişimi ve API yöntemlerini "
+#~ "destekleyeceğiz."
+
+#~ msgid ""
+#~ "All data will be imported within a database transaction. If anything goes "
+#~ "wrong, the entire import will be rolled back automatically. You'll also "
+#~ "have 24 hours to manually rollback if needed."
+#~ msgstr ""
+#~ "Tüm veriler bir veritabanı işlemi içinde içeri aktarılacaktır. Herhangi "
+#~ "bir şey yanlış giderse, tüm içeri aktarma otomatik olarak geri "
+#~ "alınacaktır. Ayrıca, gerekirse 24 saat içinde el ile geri alma "
+#~ "yapabilirsiniz."
+
+#~ msgid ""
+#~ "Rolling back will remove all imported data. This action cannot be undone. "
+#~ "Make sure to backup any changes you've made since the migration."
+#~ msgstr ""
+#~ "Geri dönmek tüm içeri aktarılan verileri siler. Bu işlem geri alınamaz. "
+#~ "Geçişten beri yaptığınız değişiklikleri yedekleyin."
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will remove all "
+#~ "imported data and cannot be undone."
+#~ msgstr ""
+#~ "Bu geçidi geri almak istediğinizden emin misiniz? Bu, tüm içeri aktarılan "
+#~ "verileri siler ve geri alınamaz."
+
+#~ msgid ""
+#~ "There was an error during the import process. The migration has been "
+#~ "rolled back automatically."
+#~ msgstr ""
+#~ "İçeri aktarma işlemi sırasında bir hata oluştu. Geçiş otomatik olarak "
+#~ "geri alınmıştır."
 
 #~ msgid ""
 #~ "Shopify migration is coming soon. We will support both API and CSV import "

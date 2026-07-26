@@ -182,7 +182,7 @@ class TestPaymentGuard:
                 )
 
     def test_allows_all_providers_with_test_environment(self):
-        """All 6 providers pass with test/sandbox/demo environment."""
+        """All 5 providers pass with test/sandbox/demo environment."""
         from core.sandbox.payment_guard import validate_provider_credentials
 
         with patch("core.sandbox.payment_guard.is_sandbox_mode", return_value=True):
@@ -192,7 +192,6 @@ class TestPaymentGuard:
                 ("paypal", "sandbox"),
                 ("square", "sandbox"),
                 ("revolut", "sandbox"),
-                ("adyen", "test"),
             ]:
                 validate_provider_credentials(slug, {"environment": env})
 

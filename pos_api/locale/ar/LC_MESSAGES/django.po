@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,37 +18,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
+#: apps.py:8
 msgid "POS API"
 msgstr "واجهة POS"
 
+#: middleware.py:30
 msgid "A valid POS license is required to access this endpoint."
 msgstr "يتطلب الوصول إلى هذا النقطة نهاية مصادقة POS."
 
+#: permissions.py:12
 msgid "POS access requires a staff account."
 msgstr "يتطلب الوصول إلى POS حساب موظف."
 
+#: permissions.py:24
 msgid "You are not assigned to this terminal."
 msgstr "ليس لديك تعيين لهذا المحطة."
 
+#: permissions.py:72
 #, python-format
 msgid "You do not have permission: %(label)s."
 msgstr "ليس لديك إذن: %(label)s."
 
+#: serializers/cart.py:48
 msgid "Bundle variant selections: {bundle_item_id: variant_id}"
 msgstr "خيارات المتغيرات المجمعة: {bundle_item_id: variant_id}"
 
+#: serializers/cart.py:54
 msgid "List of optional BundleItem IDs to exclude"
 msgstr "قائمة بأيدي BundleItem (العناصر المجمعة) الاختيارية لاستبعادها"
 
+#: serializers/customer.py:22
 msgid "Search by email, phone, or name"
 msgstr "ابحث عبر البريد الإلكتروني أو الهاتف أو الاسم"
 
+#: serializers/inventory.py:46
 msgid "ID of the product to adjust stock for."
 msgstr "معرّف المنتج الذي سيتم تعديل مخزنه."
 
+#: serializers/inventory.py:50
 msgid "ID of the variant (required for variable products)."
 msgstr "رقم معرف التباين (مطلوب للمنتجات القابلة للتغيير)."
 
+#: serializers/inventory.py:55
 msgid ""
 "Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
 "removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
@@ -58,6 +69,7 @@ msgstr ""
 "المخزون (مثلاً: عنصر مكسور)، \"recount\" يضبط العدد الفعلي لـ on_hand، "
 "\"return\" يعيد إضافة المخزون (مثلاً: إرجاع العميل)."
 
+#: serializers/inventory.py:65
 msgid ""
 "For receive/return: units to add. For damage: units to remove. For recount: "
 "new absolute on_hand count."
@@ -65,31 +77,40 @@ msgstr ""
 "لـ receive/return: الوحدات المضافة. لـ damage: الوحدات المحذوفة. لـ recount:"
 " العدد الفعلي الجديد لـ on_hand."
 
+#: serializers/inventory.py:71
 msgid "Required explanation for this adjustment (audit trail)."
 msgstr "التفسير المطلوب لهذه المراجعة (مسار التدقيق)."
 
+#: serializers/inventory.py:74
 msgid "Optional UUID for offline deduplication."
 msgstr "UUID اختياري لتجنب التكرار عند العمل خارج الإنترنت."
 
+#: serializers/inventory.py:88
 msgid "Signed quantity delta."
 msgstr "الفرق في الكمية الموقعة."
 
+#: serializers/payment.py:19
 msgid "Last four digits of card number (digits only)"
 msgstr "الرقم الأخير من أربعة أرقام لرقم البطاقة (أرقام فقط)"
 
+#: serializers/payment.py:32
 msgid "Amount to charge. If not provided, charges the full remaining balance."
 msgstr ""
 "المبلغ المطلوب للشحن. إذا لم يتم تقديمه، يتم شحن المبلغ المتبقي بالكامل."
 
+#: serializers/terminal_provider.py:10
 msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
 msgstr "مُعرف الدفع من مزود الطرف النهائي (مثال: مُعرف Stripe PaymentIntent)"
 
+#: serializers/terminal_provider.py:57
 msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
 msgstr "مُعرف قارئ مُحدد للمزود (مثال: Adyen POIID، Square device_id)"
 
+#: serializers/terminal_provider.py:72
 msgid "Provider-specific transaction ID for status polling"
 msgstr "معرّف المعاملة الخاص بالمزود لاستطلاع الحالة"
 
+#: serializers/terminal_provider.py:77
 msgid ""
 "Initial status -- typically \"pending\" for async providers, \"succeeded\" "
 "for sync (Adyen)"
@@ -97,18 +118,23 @@ msgstr ""
 "الحالة الأولية - عادة ما تكون \"معلقة\" للمزودين غير المتزامنين، و\"تمت\" "
 "للمزودين المتزامنين (Adyen)"
 
+#: serializers/terminal_provider.py:91
 msgid "Current payment status"
 msgstr "حالة الدفع الحالية"
 
+#: serializers/terminal_provider.py:97
 msgid "Provider payment ID (when succeeded)"
 msgstr "معرّف دفع مزود الخدمة (عند نجاح الدفع)"
 
+#: serializers/terminal_provider.py:100
 msgid "Reason for cancellation (when canceled)"
 msgstr "السبب في الإلغاء (عند إلغاء الدفع)"
 
+#: views/auth.py:19
 msgid "POS staff login"
 msgstr "تسجيل دخول موظف POS"
 
+#: views/auth.py:21
 msgid ""
 "Authenticate a staff member for POS access. Returns access and refresh "
 "tokens. Uses the same token system as the Admin API "
@@ -118,39 +144,51 @@ msgstr ""
 "تستخدم نفس نظام الرموز المستخدم في واجهة API المدارة "
 "(MobileTokenAuthentication)."
 
+#: views/auth.py:40
 msgid "Login successful, returns tokens and terminal config"
 msgstr "تسجيل الدخول ناجح، يرجع الرموز التأكيدية وتكوين المحطة"
 
+#: views/auth.py:41
 msgid "Invalid credentials"
 msgstr "بيانات الاعتماد غير صحيحة"
 
+#: views/auth.py:42
 msgid "User is not a staff member"
 msgstr "العضو ليس من موظفي الفريق"
 
+#: views/auth.py:183
 msgid "Refresh POS access token"
 msgstr "تحديث رمز وصول POS"
 
+#: views/auth.py:184
 msgid "Exchange a refresh token for a new access token."
 msgstr "استبدل رمز التحديث برمز الوصول الجديد."
 
+#: views/auth.py:195
 msgid "New access token"
 msgstr "رمز وصول جديد"
 
+#: views/auth.py:196
 msgid "Invalid or expired refresh token"
 msgstr "رمز التحديث غير صحيح أو منتهي الصلاحية"
 
+#: views/auth.py:259
 msgid "POS logout"
 msgstr "تسجيل خروج POS"
 
+#: views/auth.py:260
 msgid "Invalidate the current access and refresh tokens."
 msgstr "إبطال رموز الوصول والتحديث الحالية."
 
+#: views/auth.py:262
 msgid "Logged out successfully"
 msgstr "تم تسجيل الخروج بنجاح"
 
+#: views/cart.py:37
 msgid "Get current POS cart"
 msgstr "احصل على سلة POS الحالية"
 
+#: views/cart.py:39
 msgid ""
 "Returns the current cart for the authenticated cashier. Creates a new cart "
 "if one does not exist. Requires staff authentication and valid POS license."
@@ -158,9 +196,11 @@ msgstr ""
 "تُرجع السلة الحالية للمُصادق عليه من البائعين. تنشئ سلة جديدة إذا لم تكن "
 "موجودة. تتطلب صلاحية العامل وترخيص POS سارٍ."
 
+#: views/cart.py:67
 msgid "Add item to POS cart"
 msgstr "أضف عنصرًا إلى سلة POS"
 
+#: views/cart.py:69
 msgid ""
 "Add a product to the cashier's cart. Supports adding by product ID or "
 "barcode. When barcode is provided without product_id, it resolves the "
@@ -170,12 +210,15 @@ msgstr ""
 "يتم تقديم شفرة دون product_id، يتم تحديد المنتج تلقائيًا. يتطلب 인증 موظف "
 "ورخصة POS صالحة."
 
+#: views/cart.py:76
 msgid "Invalid product, variant, or insufficient stock"
 msgstr "منتج غير صالح، أو نوع غير صالح، أو مخزون غير كافٍ"
 
+#: views/cart.py:194
 msgid "Update cart item quantity"
 msgstr "تحديث كمية عنصر السلة"
 
+#: views/cart.py:196
 msgid ""
 "Update the quantity of a cart item. Set quantity to 0 to remove the item. "
 "Requires staff authentication and valid POS license."
@@ -183,23 +226,30 @@ msgstr ""
 "تحديث كمية عنصر في العربة. ضع الكمية على 0 لإزالة العنصر. يتطلب إثبات هوية "
 "الموظف ورخصة POS صالحة."
 
+#: views/cart.py:202
 msgid "Invalid quantity or insufficient stock"
 msgstr "كمية غير صحيحة أو مخزون غير كافٍ"
 
+#: views/cart.py:205 views/cart.py:274 views/cart.py:553 views/cart.py:695
+#: views/cart.py:1017
 msgid "Cart item not found"
 msgstr "لم يتم العثور على عنصر السلة"
 
+#: views/cart.py:266
 msgid "Remove item from cart"
 msgstr "إزالة المنتج من السلة"
 
+#: views/cart.py:268
 msgid ""
 "Remove a specific item from the cart. Requires staff authentication and "
 "valid POS license."
 msgstr "إزالة عنصر معين من السلة. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/cart.py:321
 msgid "Apply voucher to cart"
 msgstr "تطبيق كوبون على السلة"
 
+#: views/cart.py:323
 msgid ""
 "Apply a voucher/discount code to the cart. Only one voucher can be active at"
 " a time. Requires staff authentication and valid POS license."
@@ -207,47 +257,44 @@ msgstr ""
 "تطبيق كود قسيمة/خصم على السلة. يمكن أن يكون فقط كود قسيمة واحد نشط في الوقت "
 "نفسه. يتطلب 인증 موظف وترخيص POS صالح."
 
+#: views/cart.py:330
 msgid "Invalid or expired voucher code"
 msgstr "كود كوبون غير صحيح أو منتهي الصلاحية"
 
+#: views/cart.py:382
 msgid "Remove voucher from cart"
 msgstr "إزالة كوبون من السلة"
 
+#: views/cart.py:384
 msgid ""
 "Remove the applied voucher from the cart. Requires staff authentication and "
 "valid POS license."
 msgstr ""
 "إزالة القيمة المُطبَّقة من السلة. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/cart.py:389
 msgid "No voucher applied"
 msgstr "لا يوجد كوبون مطبق"
 
-msgid "Apply gift card to cart"
-msgstr "تطبيق بطاقة هدية على السلة"
-
-msgid ""
-"Apply a gift card code to the cart to cover part or all of the total. "
-"Requires staff authentication and valid POS license."
-msgstr ""
-"تطبيق كود بطاقة هدية على السلة لتغطية جزء أو كل إجمالي الطلب. يتطلب إثبات "
-"هوية الموظف وترخيص POS صالح."
-
-msgid "Invalid gift card or insufficient balance"
-msgstr "بطاقة هدية غير صحيحة أو رصيد غير كافٍ"
-
+#: views/cart.py:428
 msgid "Clear all items from cart"
 msgstr "حذف جميع العناصر من السلة"
 
+#: views/cart.py:430
+#| msgid ""
+#| "Remove the applied voucher from the cart. Requires staff authentication and "
+#| "valid POS license."
 msgid ""
-"Remove all items, vouchers, and gift cards from the cart. Requires staff "
-"authentication and valid POS license."
+"Remove all items and vouchers from the cart. Requires staff authentication "
+"and valid POS license."
 msgstr ""
-"إزالة جميع العناصر والقسائم و بطاقات الهدايا من السلة. يتطلب 인증 الموظف و "
-"رخصة POS صالحة."
+"إزالة جميع العناصر والقسائم من السلة. يتطلب 인증 الموظف ورخصة POS صالحة."
 
+#: views/cart.py:533
 msgid "Apply manual discount to cart item"
 msgstr "تطبيق خصم يدوي على عنصر سلة التسوق"
 
+#: views/cart.py:535
 msgid ""
 "Apply a staff manual discount to a specific cart item. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -257,15 +304,19 @@ msgstr ""
 "requires_approval=true إذا تجاوز الخصم حدود الموظف. يتطلب إثبات هوية الموظف "
 "ورخصة POS صالحة."
 
+#: views/cart.py:549 views/cart.py:759
 msgid "Discount applied or requires approval"
 msgstr "تم تطبيق الخصم أو يحتاج إلى موافقة"
 
+#: views/cart.py:550 views/cart.py:760
 msgid "Invalid discount or not authorized"
 msgstr "خصم غير صحيح أو غير مصرح به"
 
+#: views/cart.py:686
 msgid "Remove manual discount from cart item"
 msgstr "إزالة الخصم اليدوي من عنصر سلة التسوق"
 
+#: views/cart.py:688
 msgid ""
 "Remove a staff manual discount from a specific cart item. Requires staff "
 "authentication and valid POS license."
@@ -273,12 +324,15 @@ msgstr ""
 "إزالة خصم يدوي من موظف من عنصر محدد في السلة. يتطلب مصادقة الموظف وترخيص POS"
 " действителен."
 
+#: views/cart.py:692 views/cart.py:893
 msgid "Discount removed"
 msgstr "تم إزالة الخصم"
 
+#: views/cart.py:743
 msgid "Apply manual discount to cart"
 msgstr "تطبيق خصم يدوي على السلة"
 
+#: views/cart.py:745
 msgid ""
 "Apply a staff manual discount to the entire cart. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -287,17 +341,21 @@ msgstr ""
 "تطبيق خصم يدوي من موظف على السلة بأكملها. يرجع requires_approval=true إذا "
 "تجاوز الخصم حدود الموظفين. يتطلب مصادقة الموظف وترخيص POS действителен."
 
+#: views/cart.py:887
 msgid "Remove manual discount from cart"
 msgstr "إزالة الخصم اليدوي من السلة"
 
+#: views/cart.py:889
 msgid ""
 "Remove the staff manual discount from the cart. Requires staff "
 "authentication and valid POS license."
 msgstr "إزالة الخصم اليدوي للموظف من السلة. يتطلب 인증 الموظف ورخصة POS صالحة."
 
+#: views/cart.py:934
 msgid "Verify manager PIN"
 msgstr "التحقق من رمز PIN للمدير"
 
+#: views/cart.py:936
 msgid ""
 "Verify if a PIN is valid for a manager who can approve discounts. Returns "
 "the manager's name if valid. Requires staff authentication and valid POS "
@@ -306,12 +364,15 @@ msgstr ""
 "التحقق من صحة رمز PIN لإدارة يمكنها الموافقة على الخصومات. يعود اسم المدير "
 "إذا كان PIN صحيحًا. يتطلب المصادقة على الموظف ورخصة POS صالحة."
 
+#: views/cart.py:948
 msgid "PIN verification result"
 msgstr "نتيجة التحقق من رمز PIN"
 
+#: views/cart.py:992
 msgid "Approve discount with manager PIN"
 msgstr "الموافقة على الخصم باستخدام رمز PIN للمدير"
 
+#: views/cart.py:994
 msgid ""
 "Apply a discount that exceeds staff limits with manager approval. Requires a"
 " valid manager PIN to proceed. Requires staff authentication and valid POS "
@@ -320,15 +381,19 @@ msgstr ""
 "الموافقة على خصم يتجاوز حدود الموظفين مع موافقة المدير. يتطلب رمز PIN صحيحاً"
 " للمدير للمتابعة. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/cart.py:1013
 msgid "Discount approved and applied"
 msgstr "تمت الموافقة على الخصم وتطبيقه"
 
+#: views/cart.py:1014
 msgid "Invalid PIN or discount parameters"
 msgstr "رمز PIN غير صحيح أو معلمات خصم غير صحيحة"
 
+#: views/cart.py:1182
 msgid "Park current cart"
 msgstr "تجميد السلة الحالية"
 
+#: views/cart.py:1184
 msgid ""
 "Save the current cart state for later restoration. Used when a customer "
 "needs to step away and another customer needs to be served. Requires staff "
@@ -337,15 +402,19 @@ msgstr ""
 "احفظ حالة السلة الحالية لاستعادتها لاحقًا. يستخدم عندما يحتاج العميل إلى "
 "الابتعاد وتحتاج خدمة عميل آخر. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/cart.py:1195
 msgid "Cart parked successfully"
 msgstr "تم ركن السلة بنجاح"
 
+#: views/cart.py:1196
 msgid "Cart is empty or cannot be parked"
 msgstr "السلة فارغة أو لا يمكن إيقافها"
 
+#: views/cart.py:1290
 msgid "List parked carts"
 msgstr "قائمة السلات المركنة"
 
+#: views/cart.py:1292
 msgid ""
 "Get all parked carts for the current terminal. Requires staff authentication"
 " and valid POS license."
@@ -353,12 +422,15 @@ msgstr ""
 "احصل على جميع السلات الموقوفة للنهاية الحالية. يتطلب إثبات هوية الموظف ورخصة"
 " POS صالحة."
 
+#: views/cart.py:1296
 msgid "List of parked carts"
 msgstr "قائمة السلات المركنة"
 
+#: views/cart.py:1345
 msgid "Restore parked cart"
 msgstr "استعادة السلة المركنة"
 
+#: views/cart.py:1347
 msgid ""
 "Restore a parked cart, replacing the current cart contents. The current cart"
 " will be cleared before restoration. Requires staff authentication and valid"
@@ -367,18 +439,23 @@ msgstr ""
 "استعد سلة مُوقفة، مع استبدال محتويات السلة الحالية. سيتم مسح السلة الحالية "
 "قبل الاستعادة. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/cart.py:1352
 msgid "Cart restored successfully"
 msgstr "تم استعادة السلة بنجاح"
 
+#: views/cart.py:1353
 msgid "Current cart is not empty"
 msgstr "السلة الحالية ليست فارغة"
 
+#: views/cart.py:1356 views/cart.py:1477
 msgid "Parked cart not found"
 msgstr "لم يتم العثور على عربة الموقف"
 
+#: views/cart.py:1468
 msgid "Delete parked cart"
 msgstr "حذف عربة الموقف"
 
+#: views/cart.py:1470
 msgid ""
 "Permanently delete a parked cart. This cannot be undone. Requires staff "
 "authentication and valid POS license."
@@ -386,12 +463,15 @@ msgstr ""
 "حذف عربة التسوق المؤقتة بشكل دائم. لا يمكن التراجع عن هذا الإجراء. يتطلب "
 "تأكيدًا من موظف ورخصة POS صالحة."
 
+#: views/cart.py:1474
 msgid "Parked cart deleted"
 msgstr "تم حذف عربة الموقف"
 
+#: views/catalog.py:527
 msgid "List POS products"
 msgstr "عرض منتجات نقاط البيع"
 
+#: views/catalog.py:529
 msgid ""
 "Returns products available for in-store sale, filtered by sales channel. "
 "Includes warehouse-specific stock levels when a terminal is identified. "
@@ -401,47 +481,62 @@ msgstr ""
 "مستويات المخزون الخاصة بالمستودن عند تحديد المحطة. تظهر المنتجات التي تحتوي "
 "على صور أولاً، مرتبة حسب شعبية كل مستودن."
 
+#: views/catalog.py:534
 msgid "Search by name, SKU, or barcode"
 msgstr "البحث حسب الاسم أو SKU أو رمز الشريط"
 
+#: views/catalog.py:535
 msgid "Filter by category ID"
 msgstr "الفلترة حسب معرف الفئة"
 
+#: views/catalog.py:537
 msgid "Warehouse for stock levels"
 msgstr "مستودع لمستويات المخزون"
 
+#: views/catalog.py:539 views/inventory.py:90 views/inventory.py:691
+#: views/orders.py:131 views/sync.py:67 views/sync.py:158 views/sync.py:723
 msgid "Page number (default: 1)"
 msgstr "رقم الصفحة (القيمة الافتراضية: 1)"
 
+#: views/catalog.py:541 views/inventory.py:92
 msgid "Items per page (default: 50, max: 200)"
 msgstr "عدد العناصر في الصفحة (الافتراضي: 50، الأقصى: 200)"
 
+#: views/catalog.py:641
 msgid "Get product detail"
 msgstr "الحصول على تفاصيل المنتج"
 
+#: views/catalog.py:642
 msgid "Returns full product details including variants and warehouse stock."
 msgstr "تُعيد تفاصيل المنتج الكاملة بما في ذلك المتغيرات ومخزون المستودع."
 
+#: views/catalog.py:695
 msgid "Barcode lookup"
 msgstr "بحث الشفرة الشريطية"
 
+#: views/catalog.py:696
 msgid ""
 "Look up a product or variant by barcode. Fast, indexed lookup for scanning."
 msgstr ""
 "ابحث عن منتج أو عنصر متنوع باستخدام رمز الشريط. بحث سريع ومرجع مفهرس للمسح."
 
+#: views/catalog.py:699
 msgid "No product found with this barcode"
 msgstr "لم يتم العثور على منتج بهذا رمز الشريط"
 
+#: views/catalog.py:763
 msgid "List categories"
 msgstr "قائمة التصنيفات"
 
+#: views/catalog.py:764
 msgid "Returns the category tree for POS product navigation."
 msgstr "تُعيد شجرة الفئات لnavigation المنتجات POS."
 
+#: views/checkout.py:499
 msgid "Process cash payment"
 msgstr "معالجة دفع النقود"
 
+#: views/checkout.py:501
 msgid ""
 "Complete a POS transaction with cash payment. Validates that the amount "
 "tendered covers the order total and calculates change. Creates an Order with"
@@ -452,12 +547,15 @@ msgstr ""
 "ويحسب الفلوس. ينشئ طلبًا بقناة 'pos' وتسجيلًا لدفع POS. يتطلب فتح دورية على "
 "المحطة. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/checkout.py:510
 msgid "Empty cart or insufficient cash tendered"
 msgstr "سلة شراء فارغة أو مبلغ نقد مقدم غير كافٍ"
 
+#: views/checkout.py:599
 msgid "Process card payment"
 msgstr "معالجة دفع البطاقة"
 
+#: views/checkout.py:601
 msgid ""
 "Complete a POS transaction with card payment. Card processing is assumed to "
 "be handled by an external card terminal. This endpoint records the card "
@@ -468,12 +566,15 @@ msgstr ""
 " قبل جهاز بطاقة خارجي. يسجل هذا النقطة مرجعاً للبطاقة وأربعة أرقام أخيرة. "
 "يتطلب فتح دورية على المحطة. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/checkout.py:610
 msgid "Empty cart"
 msgstr "عربة التسوق الفارغة"
 
+#: views/checkout.py:680
 msgid "Check gift card balance"
 msgstr "التحقق من رصيد بطاقة الهدايا"
 
+#: views/checkout.py:682
 msgid ""
 "Check the balance of a gift card for POS checkout. Returns the current "
 "balance if valid, or an error message if invalid. Requires staff "
@@ -482,15 +583,19 @@ msgstr ""
 "تحقق من رصيد بطاقة هدية للدفع عبر نقاط البيع (POS). يعيد الرصيد الحالي إذا "
 "كانت البطاقة صحيحة، أو رسالة خطأ إذا كانت غير صحيحة. يتطلب 인증 الموظف."
 
+#: views/checkout.py:696
 msgid "Gift card balance info"
 msgstr "معلومات رصيد بطاقة الهدايا"
 
+#: views/checkout.py:697
 msgid "Invalid gift card or missing code"
 msgstr "بطاقة هدية غير صالحة أو رمز مفقود"
 
+#: views/checkout.py:742
 msgid "Process gift card payment"
 msgstr "معالجة دفع بطاقة الهدايا"
 
+#: views/checkout.py:744
 msgid ""
 "Complete a POS transaction using a gift card. Validates the gift card has "
 "sufficient balance. If the gift card balance is less than the order total, "
@@ -502,12 +607,15 @@ msgstr ""
 "نهاية التقسيم بدلاً من ذلك. يتطلب نشاطًا مفتوحًا على المحطة. يتطلب إثبات "
 "هوية الموظف وترخيص POS действителен."
 
+#: views/checkout.py:754
 msgid "Empty cart, invalid gift card, or insufficient balance"
 msgstr "سلة شراء فارغة، بطاقة هدية غير صالحة، أو رصيد غير كافٍ"
 
+#: views/checkout.py:911
 msgid "Process split tender payment"
 msgstr "معالجة دفع مُقسّم"
 
+#: views/checkout.py:913
 msgid ""
 "Complete a POS transaction using multiple payment methods (split tender). "
 "The total of all payments must cover the order total. Change is calculated "
@@ -520,12 +628,15 @@ msgstr ""
 " تجاوز الإجمالي مبلغ الطلب. يتطلب وجود نوبة عمل مفتوحة على المحطة. يتطلب 인증 "
 "الموظف ورخصة POS صالحة."
 
+#: views/checkout.py:922
 msgid "Empty cart, invalid payments, or insufficient total"
 msgstr "عربة شراء فارغة، دفعات غير صحيحة، أو إجمالي غير كافٍ"
 
+#: views/checkout.py:1117
 msgid "Process terminal card payment"
 msgstr "معالجة دفع بطاقة المحطة"
 
+#: views/checkout.py:1119
 msgid ""
 "Complete a POS transaction with an integrated card terminal payment. The "
 "frontend must have already collected payment via the terminal SDK and "
@@ -539,12 +650,15 @@ msgstr ""
 "إنشاء الطلب. يتطلب وجود نوبة عمل مفتوحة على المحطة. يتطلب 인증 الموظف ورخصة "
 "POS صالحة."
 
+#: views/checkout.py:1129
 msgid "Empty cart or payment verification failed"
 msgstr "عربة شراء فارغة أو فشل تحقق الدفع"
 
+#: views/customer.py:65
 msgid "Search customers"
 msgstr "البحث عن العملاء"
 
+#: views/customer.py:67
 msgid ""
 "Search for customers by email, phone, first name, or last name. Returns up "
 "to 20 matching results. Minimum 2 characters required. Requires staff "
@@ -554,16 +668,20 @@ msgstr ""
 "الأخير. يعيد ما يصل إلى 20 نتيجة متطابقة. مطلوب الحد الأدنى من 2 أحرف. يتطلب"
 " المصادقة على العامل ورخصة POS الصالحة."
 
+#: views/customer.py:76
 msgid "Search query (email, phone, or name). Minimum 2 characters."
 msgstr ""
 "استعلام البحث (البريد الإلكتروني، الهاتف، أو الاسم). الحد الأدنى 2 أحرف."
 
+#: views/customer.py:81
 msgid "Search query too short"
 msgstr "البحث قصير جداً"
 
+#: views/customer.py:121
 msgid "Create walk-in customer"
 msgstr "إنشاء عميل مجهول الهوية"
 
+#: views/customer.py:123
 msgid ""
 "Create a new customer for a walk-in sale. If a customer with the given email"
 " already exists, returns the existing customer instead of creating a "
@@ -575,12 +693,15 @@ msgstr ""
 "إنشاء نسخة مكررة. البريد الإلكتروني اختياري للعملاء المجهولين الذين يأتون "
 "إلى المتجر. يتطلب المصادقة على العامل ورخصة POS الصالحة."
 
+#: views/customer.py:131
 msgid "Existing customer found with this email"
 msgstr "تم العثور على عميل قديم بهذا البريد الإلكتروني"
 
+#: views/customer.py:201
 msgid "Get customer details"
 msgstr "الحصول على تفاصيل العميل"
 
+#: views/customer.py:203
 msgid ""
 "Retrieve customer details including contact info and recent order history. "
 "Requires staff authentication and valid POS license."
@@ -588,9 +709,11 @@ msgstr ""
 "استرداد تفاصيل العميل بما في ذلك معلومات الاتصال وتاريخ الطلب الأخير. يتطلب "
 "인증 الموظف ورخصة POS صالحة."
 
+#: views/inventory.py:72
 msgid "List stock levels for warehouse"
 msgstr "عرض مستويات المخزون للمخزن"
 
+#: views/inventory.py:74
 msgid ""
 "Returns paginated stock levels for the terminal's warehouse. Supports search"
 " by product name or SKU and filtering for low-stock or no-stock items. "
@@ -600,21 +723,27 @@ msgstr ""
 "أو SKU وفلترة العناصر ذات المخزون المنخفض أو عدم وجود مخزون. يتطلب إثبات "
 "هوية الموظف ورخصة POS صالحة."
 
+#: views/inventory.py:79
 msgid "Search by product name or SKU"
 msgstr "ابحث حسب اسم المنتج أو SKU"
 
+#: views/inventory.py:83
 msgid "Only return items at or below low stock threshold"
 msgstr "العودة فقط بالعناصر التي تصل أو تقل عن عتبة المخزون المنخفض"
 
+#: views/inventory.py:88
 msgid "Only return items with zero available stock"
 msgstr "العودة فقط بالعناصر التي يبلغ عدد الوحدات المتوفرة الخاصة بها صفرًا"
 
+#: views/inventory.py:97 views/inventory.py:286 views/inventory.py:698
 msgid "Warehouse not determined"
 msgstr "لم يتم تحديد المخزن"
 
+#: views/inventory.py:278
 msgid "Get product stock detail"
 msgstr "الحصول على تفاصيل مخزون المنتج"
 
+#: views/inventory.py:280
 msgid ""
 "Returns stock levels for a specific product in the terminal's warehouse, "
 "including variant-level breakdown. Requires staff authentication and valid "
@@ -623,9 +752,11 @@ msgstr ""
 "تُعيد مستويات المخزون للمواد الخام لمنتج معين في مستودن الطرف النهائي، بما "
 "في ذلك تفاصيل المستوى المتغير. يتطلب 인증 الموظف وترخيص POS действительный."
 
+#: views/inventory.py:351
 msgid "Check stock across all locations"
 msgstr "التحقق من المخزون عبر جميع المواقع"
 
+#: views/inventory.py:353
 msgid ""
 "Returns stock levels for a product across all warehouse locations. Useful "
 "for checking if an out-of-stock item is available at another location. The "
@@ -636,9 +767,11 @@ msgstr ""
 "عنصر نفkest من المخزون متاحًا في موقع آخر. يتم пометка مستودن الطرف الحالي "
 "بـ is_current=true. يتطلب 인증 الموظف وترخيص POS действительный."
 
+#: views/inventory.py:501
 msgid "Adjust stock levels"
 msgstr "تعديل مستويات المخزون"
 
+#: views/inventory.py:503
 msgid ""
 "Adjust stock for a product in the terminal's warehouse. Supports four "
 "adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
@@ -653,21 +786,27 @@ msgstr ""
 "(إعادة المخزون من إرجاع العميل). ينشئ سجل مراجعة StockMovement غير القابل "
 "للتعديل. يتطلب مصادقة الموظف، رخصة POS صالحة، وصلاحية pos_stock_adjustment."
 
+#: views/inventory.py:515
 msgid "Stock adjusted successfully"
 msgstr "تم تعديل المخزون بنجاح"
 
+#: views/inventory.py:516
 msgid "Validation error or warehouse not determined"
 msgstr "خطأ في التحقق أو لم يتم تحديد المستودع"
 
+#: views/inventory.py:518
 msgid "Permission denied or POS license required"
 msgstr "الوصول ممنوع أو يتطلب ترخيص POS"
 
+#: views/inventory.py:519
 msgid "Product or stock item not found"
 msgstr "لم يتم العثور على منتج أو عنصر من المخزون"
 
+#: views/inventory.py:673
 msgid "List stock movement history"
 msgstr "عرض سجل حركة المخزون"
 
+#: views/inventory.py:675
 msgid ""
 "Returns paginated stock movement records for the terminal's warehouse. "
 "Useful for auditing recent stock changes (adjustments, damage, recounts, "
@@ -679,18 +818,23 @@ msgstr ""
 "الإرجاعات). تدعم التصفية حسب المنتج ونوع الحركة. تتطلب 인증 الموظف ورخصة POS "
 "صالحة."
 
+#: views/inventory.py:684
 msgid "Filter movements by product ID"
 msgstr "تصفية الحركات حسب معرف المنتج"
 
+#: views/inventory.py:689
 msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
 msgstr "أنواع الحركات المفصولة بفواصل (مثال: 'تعدي، إعادة العد')"
 
+#: views/inventory.py:693 views/orders.py:133
 msgid "Items per page (default: 20, max: 100)"
 msgstr "عدد العناصر في الصفحة (الافتراضي: 20، الأقصى: 100)"
 
+#: views/loyalty.py:20
 msgid "Get customer loyalty info"
 msgstr "احصل على معلومات الولاء للعميل"
 
+#: views/loyalty.py:22
 msgid ""
 "Retrieve loyalty membership status, tier, and points balance for a customer."
 " Returns `is_member: false` if the customer has no active loyalty "
@@ -699,6 +843,7 @@ msgstr ""
 "احصل على حالة عضوية الولاء، الدرجة، ورصيد النقاط للعميل. تُعيد `is_member: "
 "false` إذا لم يكن للعميل عضوية ولاء نشطة. تتطلب 인증 الموظف ورخصة POS صالحة."
 
+#: views/loyalty.py:29
 msgid ""
 "Loyalty membership info. `is_member` indicates whether the customer has an "
 "active membership. When true, includes `tier_name`, `tier_color`, and "
@@ -707,9 +852,11 @@ msgstr ""
 "معلومات العضوية الولائية. يشير `is_member` إلى ما إذا كان لدى العميل عضوية "
 "نشطة. عند أن يكون True، تشمل `tier_name`، `tier_color`، و`available_points`."
 
+#: views/loyalty.py:105
 msgid "Preview loyalty points for cart"
 msgstr "عرض نقاط الولاء للمقتصد"
 
+#: views/loyalty.py:107
 msgid ""
 "Calculate the loyalty points a customer would earn for a given cart total. "
 "Returns 0 if the customer has no active loyalty membership. Requires staff "
@@ -719,9 +866,11 @@ msgstr ""
 "يعود 0 إذا لم يكن لدى العميل عضوية ولاء نشطة. يتطلب 인증 الموظف ورخصة POS "
 "صالحة."
 
+#: views/loyalty.py:115
 msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
 msgstr "إجمالي السلة كسلسلة عددية (مثلاً '49.99'). الافتراضي هو '0'."
 
+#: views/loyalty.py:121
 msgid ""
 "Points preview. `points_preview` is the number of points the customer would "
 "earn for the given cart total."
@@ -729,9 +878,11 @@ msgstr ""
 "معاينة النقاط. `points_preview` هو عدد النقاط التي سيكسبها العميل لقيمة "
 "السلة المحددة."
 
+#: views/orders.py:77
 msgid "List POS orders"
 msgstr "عرض طلبات نقاط البيع"
 
+#: views/orders.py:79
 msgid ""
 "Returns orders with advanced filtering for date range, origin, customer, "
 "cashier, and search. Supports viewing web orders for return scenarios. "
@@ -746,6 +897,7 @@ msgstr ""
 "التاريخ/الأصل/الكاشير للعثور على أي طلب حسب الرقم، اسم العميل، البريد "
 "الإلكتروني، أو الهاتف. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/orders.py:91
 msgid ""
 "Start date for range filter (ISO format, default: today). Ignored when "
 "search is provided."
@@ -753,6 +905,7 @@ msgstr ""
 "تاريخ البدء لفلتر المدى (بتنسيق ISO، الافتراضي: اليوم). يتم تجاهله عند توفير"
 " بحث."
 
+#: views/orders.py:98
 msgid ""
 "End date for range filter (ISO format, default: today). Ignored when search "
 "is provided."
@@ -760,6 +913,7 @@ msgstr ""
 "تاريخ الانتهاء لفلتر المدى (بتنسيق ISO، الافتراضي: اليوم). يتم تجاهله عند "
 "توفير بحث."
 
+#: views/orders.py:106
 msgid ""
 "Order origin filter: this_terminal (default), all_pos, all (includes web). "
 "Ignored when search is provided."
@@ -767,12 +921,15 @@ msgstr ""
 "фильтр источника заказа: this_terminal (по умолчанию), all_pos, all "
 "(включает веб). Игнорируется, когда предоставлен поиск."
 
+#: views/orders.py:112
 msgid "Filter by customer user ID. Ignored when search is provided."
 msgstr "فلتر حسب معرف مستخدم العميل. يتم تجاهله عند تقديم بحث."
 
+#: views/orders.py:117
 msgid "Filter by cashier staff ID. Ignored when search is provided."
 msgstr "فلتر حسب معرف موظف الخزينة. يتم تجاهله عند تقديم بحث."
 
+#: views/orders.py:123
 msgid ""
 "Search across ALL orders by order number, customer name, email, or phone. "
 "Bypasses date/origin filters."
@@ -780,12 +937,15 @@ msgstr ""
 "البحث في جميع الطلبات حسب رقم الطلب، اسم العميل، البريد الإلكتروني أو رقم "
 "الهاتف. يتجاهل فلاتر التاريخ / الأصل."
 
+#: views/orders.py:129
 msgid "Filter by order status (applies in both modes)"
 msgstr "فلتر حسب حالة الطلب (يُطبَّق في الوضعين)"
 
+#: views/orders.py:342
 msgid "Get order details"
 msgstr "احصل على تفاصيل الطلب"
 
+#: views/orders.py:344
 msgid ""
 "Returns full order details including items and payment breakdown. Supports "
 "both POS and web orders (for return scenarios). Requires staff "
@@ -795,9 +955,11 @@ msgstr ""
 "نقاط البيع والطلبات عبر الإنترنت (للحالات المرتجعة). تتطلب مصادقة الموظفين "
 "ورخصة POS صالحة."
 
+#: views/orders.py:388
 msgid "Get receipt data for printing"
 msgstr "احصل على بيانات الفاتورة للطباعة"
 
+#: views/orders.py:390
 msgid ""
 "Returns receipt-formatted data for a POS order including store info, items, "
 "payments, and footer text. Designed for ESC/POS thermal printers. Requires "
@@ -807,9 +969,11 @@ msgstr ""
 "المتجر، والبضائع، والدفعات، والنص في الجزء السفلي. تم تصميمها لطابعات حرارية"
 " ESC/POS. تتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/orders.py:653
 msgid "Process order refund"
 msgstr "معالجة استرجاع الطلب"
 
+#: views/orders.py:655
 msgid ""
 "Process a full or partial refund for a POS order. For partial refunds, "
 "specify the items and quantities to refund. Creates a Refund record and "
@@ -821,15 +985,19 @@ msgstr ""
 "الطلب ومحفظة التغيير. تتطلب فتح محفظة التغيير على المحطة. تتطلب مصادقة "
 "الموظف ورخصة POS صالحة."
 
+#: views/orders.py:700
 msgid "Refund processed successfully"
 msgstr "تم معالجة الاسترجاع بنجاح"
 
+#: views/orders.py:701
 msgid "Invalid refund request or order already refunded"
 msgstr "طلب استرجاع غير صحيح أو الطلب تم استرجاعه بالفعل"
 
+#: views/orders.py:897
 msgid "Void a POS order"
 msgstr "إلغاء طلب نقاط البيع"
 
+#: views/orders.py:899
 msgid ""
 "Cancel a POS order from the current shift. Only orders placed during the "
 "current open shift can be voided. This creates a full refund and reverses "
@@ -841,15 +1009,19 @@ msgstr ""
 "التغييرات في الدفع والمخزون. يتطلب وجود دفعة مفتوحة على المحطة. يتطلب 인증 "
 "الموظف وترخيص POS действителен."
 
+#: views/orders.py:906
 msgid "Order voided successfully"
 msgstr "تم إلغاء الطلب بنجاح"
 
+#: views/orders.py:907
 msgid "Order cannot be voided (not from current shift)"
 msgstr "لا يمكن إلغاء الطلب (ليس من الدفعة الحالية)"
 
+#: views/orders.py:1092
 msgid "List POS cashiers"
 msgstr "قائمة خزّافات نقاط البيع"
 
+#: views/orders.py:1094
 msgid ""
 "Returns list of staff members who have processed POS orders. Used to "
 "populate the cashier filter dropdown. Requires staff authentication and "
@@ -858,12 +1030,15 @@ msgstr ""
 "يعرض قائمة الموظفين الذين قاموا بمعالجة طلبات POS. يستخدم لملء قائمة تصفية "
 "الخزينة. يتطلب إثبات هوية الموظف وترخيص POS действителен."
 
+#: views/orders.py:1100
 msgid "List of cashiers"
 msgstr "قائمة الخزّافين"
 
+#: views/receipts.py:28
 msgid "Send digital receipt"
 msgstr "إرسال وصل إلكتروني"
 
+#: views/receipts.py:30
 msgid ""
 "Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
 "receipt is sent asynchronously via Celery task. Requires staff "
@@ -873,12 +1048,15 @@ msgstr ""
 "واتساب. يتم إرسال الاستلام بشكل غير متزامن عبر مهمة Celery. يتطلب 인증 موظف "
 "و执照 POS صالحة."
 
+#: views/receipts.py:57
 msgid "Receipt queued for sending"
 msgstr "تم تqueuing إيصال للإرسال"
 
+#: views/receipts.py:200
 msgid "Get receipt sending status"
 msgstr "الحصول على حالة إرسال الإيصال"
 
+#: views/receipts.py:202
 msgid ""
 "Check which digital receipts have been sent for an order. Returns timestamps"
 " for email and SMS/WhatsApp deliveries."
@@ -886,12 +1064,15 @@ msgstr ""
 "تحقق من أي استلامات رقمية تم إرسالها للطلب. ترجع توقيتات الإرسال عبر البريد "
 "الإلكتروني والرسائل القصيرة (SMS)/واتساب."
 
+#: views/receipts.py:207
 msgid "Receipt status"
 msgstr "حالة الإيصال"
 
+#: views/reports.py:86
 msgid "Get current shift summary"
 msgstr "الحصول على ملخص الوردية الحالية"
 
+#: views/reports.py:88
 msgid ""
 "Returns the open shift summary for the current cashier on the terminal, "
 "including totals, transaction count, and payment method breakdown. Returns "
@@ -902,9 +1083,11 @@ msgstr ""
 "الإجماليات، عدد المعاملات، وتحليل طريقة الدفع. تُرجع وردية فارغة إذا لم تكن "
 "هناك وردية مفتوحة. يتطلب 인증 الموظف ورخصة POS صالحة."
 
+#: views/reports.py:128
 msgid "Open a new shift"
 msgstr "فتح وردية جديدة"
 
+#: views/reports.py:130
 msgid ""
 "Start a new shift on the terminal. Only one open shift is allowed per "
 "terminal at any time. Records the opening cash amount. Requires staff "
@@ -913,15 +1096,19 @@ msgstr ""
 "ابدأ وردية جديدة على المحطة. تسمح فقط بوردية واحدة مفتوحة لكل محطة في أي "
 "وقت. تسجل مبلغ النقد عند البدء. يتطلب إثبات هوية الموظف ورخصة POS صالحة."
 
+#: views/reports.py:137
 msgid "Invalid opening cash amount"
 msgstr "مبلغ المال المفتوح غير صحيح"
 
+#: views/reports.py:140
 msgid "A shift is already open on this terminal"
 msgstr "هناك دفعة مفتوحة بالفعل على هذا المحطة"
 
+#: views/reports.py:193
 msgid "Close current shift"
 msgstr "إغلاق الوردية الحالية"
 
+#: views/reports.py:195
 msgid ""
 "Close the current open shift. Records the closing cash amount and calculates"
 " the expected vs actual cash difference. Requires staff authentication and "
@@ -930,9 +1117,11 @@ msgstr ""
 "إغلاق الوردية المفتوحة الحالية. تسجيل مبلغ النقد عند الإغلاق وحساب الفرق بين"
 " المبلغ المتوقع والمبلغ الفعلي. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/reports.py:262
 msgid "Record cash movement"
 msgstr "تسجيل حركة النقد"
 
+#: views/reports.py:264
 msgid ""
 "Record a cash-in or cash-out movement during the shift. Examples: adding "
 "float, removing for deposit, petty cash. Requires an open shift on the "
@@ -942,15 +1131,19 @@ msgstr ""
 "للوديعة، نقود صغيرة. يتطلب وردية مفتوحة على المحطة. يتطلب مصادقة الموظف "
 "ورخصة POS صالحة."
 
+#: views/reports.py:271
 msgid "Cash movement recorded"
 msgstr "تم تسجيل حركة النقد"
 
+#: views/reports.py:272
 msgid "Invalid movement data"
 msgstr "بيانات الحركة غير صحيحة"
 
+#: views/reports.py:329
 msgid "Get daily sales report"
 msgstr "احصل على تقرير المبيعات اليومية"
 
+#: views/reports.py:331
 msgid ""
 "Returns an aggregated daily sales report for the terminal including totals, "
 "transaction count, average transaction value, and payment method breakdown. "
@@ -960,12 +1153,15 @@ msgstr ""
 "المعاملات، قيمة المعاملة المتوسطة، وتحليل وسائل الدفع. يتطلب 인증 الموظف ورخصة"
 " POS صالحة."
 
+#: views/reports.py:340 views/reports.py:450
 msgid "Report date (ISO format, default: today)"
 msgstr "تاريخ التقرير (التنسيق ISO، الافتراضي: اليوم)"
 
+#: views/reports.py:440
 msgid "Get top selling products"
 msgstr "احصل على المنتجات الأكثر مبيعًا"
 
+#: views/reports.py:442
 msgid ""
 "Returns the top selling products for the terminal on a given date, ranked by"
 " quantity sold. Requires staff authentication and valid POS license."
@@ -973,12 +1169,15 @@ msgstr ""
 "تُرجع المنتجات الأكثر مبيعًا للنقطة الطرفية في تاريخ معين، مرتبة حسب الكمية "
 "المباعة. يتطلب 인증 الموظف ورخصة POS صالحة."
 
+#: views/reports.py:455
 msgid "Number of products to return (default: 10, max: 50)"
 msgstr "عدد المنتجات المراد إرجاعها (الافتراضي: 10، الأقصى: 50)"
 
+#: views/sync.py:54
 msgid "Sync products since timestamp"
 msgstr "동기화 제품 이전 타임스탬프"
 
+#: views/sync.py:56
 msgid ""
 "Returns products that have been created or updated since the given "
 "timestamp. Used for incremental product sync to the POS terminal's local "
@@ -990,17 +1189,21 @@ msgstr ""
 "(sync_token) للمتطلبات التزامنية التالية. يتطلب المصادقة كموظف وترخيص POS "
 "ساري المفعول."
 
+#: views/sync.py:65 views/sync.py:156
 msgid "ISO timestamp to fetch changes since. Omit for full sync."
 msgstr ""
 "مُ光阴 ISO لاسترجاع التغييرات منذ ذلك الحين. اتركه فارغًا للحصول على مزامنة "
 "كاملة."
 
+#: views/sync.py:69 views/sync.py:160 views/sync.py:725
 msgid "Items per page (default: 100, max: 200)"
 msgstr "عدد العناصر لكل صفحة (القيمة الافتراضية: 100، القصوى: 200)"
 
+#: views/sync.py:146
 msgid "Sync customers since timestamp"
 msgstr "동기화 고객 이전 타임스탬프"
 
+#: views/sync.py:148
 msgid ""
 "Returns customers that have been created or have placed orders since the "
 "given timestamp. Used for offline customer lookup. Requires staff "
@@ -1010,12 +1213,15 @@ msgstr ""
 "المحدد. تُستخدم للبحث عن العملاء بشكل غير متصل. يتطلب المصادقة كموظف وترخيص "
 "POS ساري المفعول."
 
+#: views/sync.py:164
 msgid "Customer sync data"
 msgstr "고객 동기화 데이터"
 
+#: views/sync.py:225
 msgid "Upload offline transactions"
 msgstr "오프라인 거래 업로드"
 
+#: views/sync.py:227
 msgid ""
 "Batch upload transactions that were processed while the terminal was "
 "offline. Each transaction creates an Order with items and payments. Uses "
@@ -1026,12 +1232,15 @@ msgstr ""
 "طلبًا مع العناصر والمدفوعات. يستخدم local_id لضمان عدم التكرار - يتم اكتشاف "
 "التحميلات المتكررة وإخطارها. يتطلب مصادقة الموظف ورخصة POS صالحة."
 
+#: views/sync.py:234
 msgid "Upload results with success/failure per transaction"
 msgstr "تحميل النتائج مع نتائج النجاح/الفشل لكل عملية"
 
+#: views/sync.py:412
 msgid "Get sync status"
 msgstr "동기화 상태 가져오기"
 
+#: views/sync.py:414
 msgid ""
 "Returns the current server time and database counts for sync planning. "
 "Requires staff authentication and valid POS license."
@@ -1039,9 +1248,11 @@ msgstr ""
 "يعيد وقت الخادم الحالي وعدد قواعد البيانات لخطط التزامن. يتطلب مصادقة الموظف"
 " ورخصة POS صالحة."
 
+#: views/sync.py:457
 msgid "Get sync version info"
 msgstr "동기화 버전 정보 가져오기"
 
+#: views/sync.py:459
 msgid ""
 "Returns API version and data schema version for client compatibility checks."
 " Clients should clear and resync when schema version increases."
@@ -1049,12 +1260,15 @@ msgstr ""
 "تُرجع إصدار API ونسخة مخطط البيانات لإجراء فحوصات توافق العميل. يجب على "
 "العملاء مسح البيانات وإعادة التزامن عندما تزيد نسخة المخطط."
 
+#: views/sync.py:463
 msgid "Version information"
 msgstr "معلومات الإصدار"
 
+#: views/sync.py:483
 msgid "Upload offline stock adjustments"
 msgstr "تحميل تعديلات المخزون غير المتصلة"
 
+#: views/sync.py:485
 msgid ""
 "Batch upload stock adjustments that were queued while the terminal was "
 "offline. Each adjustment uses an idempotency key to prevent duplicates. "
@@ -1065,15 +1279,19 @@ msgstr ""
 "المحطة. يستخدم كل تعديل مفتاحًا لإعادة التشغيل لمنع التكرار. يتطلب 인증 "
 "الموظفين ورخصة POS صالحة وتصريح تعديل المخزون."
 
+#: views/sync.py:491
 msgid "Upload results with success/failure per adjustment"
 msgstr "تحميل النتائج مع نتائج النجاح/الفشل لكل تعديل"
 
+#: views/sync.py:494
 msgid "POS license or permission required"
 msgstr " требуется رخصة أو إذن POS"
 
+#: views/sync.py:710
 msgid "Sync orders for offline cache"
 msgstr "مزامنة الطلبات للمخزن المؤقت غير المتصل"
 
+#: views/sync.py:712
 msgid ""
 "Returns orders for offline caching on the POS terminal. POS orders are "
 "prioritised over web orders up to the terminal's sync limit. Supports delta "
@@ -1084,12 +1302,15 @@ msgstr ""
 "من نقاط البيع (POS) على الطلبات من الويب حتى حد التزامن لجهاز نقاط البيع. "
 "تدعم التزامن التفاضلي عبر معلمة 'since'. تتطلب 인증 الموظفين وترخيص POS صالح."
 
+#: views/sync.py:721
 msgid "ISO timestamp for delta sync. Omit for full sync."
 msgstr "مفتاح توقيت ISO للازامنة الجزئية. اتركه فارغًا للازامنة الكاملة."
 
+#: views/terminal.py:57
 msgid "Register POS terminal"
 msgstr "تسجيل محطة POS"
 
+#: views/terminal.py:59
 msgid ""
 "Register a new device as a POS terminal using a pairing code. The pairing "
 "code is generated in the admin panel when creating a terminal."
@@ -1097,31 +1318,40 @@ msgstr ""
 "سجّل جهازًا جديدًا كجهاز نقاط البيع (POS) باستخدام رمز الربط. يتم إنشاء رمز "
 "الربط في لوحة التحكم الإدارية عند إنشاء جهاز نقاط البيع."
 
+#: views/terminal.py:65
 msgid "Terminal registered successfully, returns terminal config"
 msgstr "تم تسجيل المحطة بنجاح، ترجع إعدادات المحطة"
 
+#: views/terminal.py:67
 msgid "Invalid or expired pairing code"
 msgstr "كود التزاوج غير صحيح أو منتهي الصلاحية"
 
+#: views/terminal.py:113
 msgid "Get terminal configuration"
 msgstr "احصل على إعدادات المحطة"
 
+#: views/terminal.py:114
 msgid ""
 "Returns the current terminal's configuration including hardware settings."
 msgstr "تُرجع إعدادات المحطة الحالية بما في ذلك إعدادات الأجهزة."
 
+#: views/terminal.py:163
 msgid "Terminal heartbeat"
 msgstr "نبض المحطة"
 
+#: views/terminal.py:164
 msgid "Report that the terminal is online. Should be called every 60 seconds."
 msgstr "تقرير أن المحطة متصلة بالإنترنت. يجب أن يتم استدعاؤه كل 60 ثانية."
 
+#: views/terminal.py:166
 msgid "Heartbeat recorded"
 msgstr "تم تسجيل النبض"
 
+#: views/terminal.py:187
 msgid "Get receipt template"
 msgstr "احصل على نموذج الفاتورة"
 
+#: views/terminal.py:189
 msgid ""
 "Returns the receipt template for the terminal's warehouse. Falls back to the"
 " default template (no warehouse assigned) if the warehouse has no specific "
@@ -1131,12 +1361,15 @@ msgstr ""
 "للمستودع، يتم الاعتماد على القالب الافتراضي (لا يوجد مستودع مخصص). وإذا لم "
 "يكن هناك أي قالب على الإطلاق، يتم إرجاع الافتراضات المناسبة."
 
+#: views/terminal.py:195
 msgid "Receipt template data"
 msgstr "بيانات نموذج الفاتورة"
 
+#: views/terminal.py:328
 msgid "Get promo slides"
 msgstr "احصل على شرائح الترويج"
 
+#: views/terminal.py:330
 msgid ""
 "Returns promotional slides for the terminal's warehouse. Slides are "
 "displayed on the customer-facing display during idle periods."
@@ -1144,12 +1377,15 @@ msgstr ""
 "يعيد شرائح الإعلانات الخاصة بمستودع المحطة. تُعرض الشرائح على الشاشة الخاصة "
 "بالعميل خلال فترات الانتظار."
 
+#: views/terminal.py:334
 msgid "List of promo slides with image URLs"
 msgstr "قائمة بمقاطع الترويج مع عناوين URLs للصور"
 
+#: views/terminal.py:408
 msgid "Generate display pairing code"
 msgstr "إنشاء رمز الاقتران للمشاهدة"
 
+#: views/terminal.py:410
 msgid ""
 "Generate a short-lived 6-digit pairing code for customer display "
 "authentication. The code expires after 5 minutes and can only be used once. "
@@ -1160,23 +1396,29 @@ msgstr ""
 "صلاحية الكود بعد 5 دقائق ويمكن استخدامه مرة واحدة فقط. إنشاء كود جديد يجعل "
 "أي كودات قديمة لم تستخدم بعد لهذا المحطة باطلة."
 
+#: views/terminal.py:415
 msgid "Pairing code generated"
 msgstr "تم إنشاء رمز الاقتران"
 
+#: views/terminal.py:464
 msgid "List managers for unlock override"
 msgstr "قائمة المدراء لتجاوز القفل"
 
+#: views/terminal.py:465
 msgid ""
 "Return list of managers (id and name) for the manager override unlock flow."
 msgstr ""
 "العودة إلى قائمة المدراء (المعرف والاسم) لتدفق إلغاء قفل تجاوز المدير."
 
+#: views/terminal.py:467
 msgid "List of managers"
 msgstr "قائمة المدراء"
 
+#: views/terminal.py:503
 msgid "Verify unlock PIN"
 msgstr "تأكيد رمز PIN لفتح القفل"
 
+#: views/terminal.py:505
 msgid ""
 "Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
 "attempts, only manager PIN will be accepted. All attempts are logged for "
@@ -1185,15 +1427,19 @@ msgstr ""
 "التحقق من رمز PIN للخزّين أو المدير لفتح المحطة. بعد 3 محاولات فاشلة، سيتم "
 "قبول رمز PIN للمدير فقط. يتم تسجيل جميع المحاولات لأغراض المراجعة."
 
+#: views/terminal.py:537
 msgid "PIN verified successfully"
 msgstr "تم تأكيد رمز PIN بنجاح"
 
+#: views/terminal.py:538
 msgid "Invalid PIN"
 msgstr "PIN غير صالح"
 
+#: views/terminal.py:700
 msgid "Log terminal lock event"
 msgstr "تسجيل حدث قفل المحطة"
 
+#: views/terminal.py:702
 msgid ""
 "Log when a terminal is locked (manually or via auto-lock timeout). This "
 "endpoint is for audit logging only and does not change terminal state."
@@ -1202,15 +1448,19 @@ msgstr ""
 "التلقائي). هذا النقطة النهائية مخصصة فقط لتسجيل المراجعة ولا تغير حالة "
 "المحطة."
 
+#: views/terminal.py:717
 msgid "Event logged successfully"
 msgstr "تم تسجيل الحدث بنجاح"
 
+#: views/terminal.py:718
 msgid "Invalid event type"
 msgstr "نوع الحدث غير صالح"
 
+#: views/terminal.py:784
 msgid "Verify unlock card"
 msgstr "تأكيد بطاقة الإلغاء"
 
+#: views/terminal.py:786
 msgid ""
 "Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
 " compared against stored card hashes. After 3 failed PIN attempts, only "
@@ -1220,36 +1470,47 @@ msgstr ""
 "ومقارنتها بالقيم المخزنة لبطاقات التجزئة. وبعد 3 محاولات فاشلة لرمز PIN، "
 "سيتم قبول بطاقة المدير فقط."
 
+#: views/terminal.py:805
 msgid "Card verified successfully"
 msgstr "تم تأكيد البطاقة بنجاح"
 
+#: views/terminal.py:806
 msgid "Card not recognized"
 msgstr "بطاقة غير معترف بها"
 
+#: views/terminal.py:951
 msgid "Register staff unlock card"
 msgstr "تسجيل بطاقة فك قفل الموظف"
 
+#: views/terminal.py:952
 msgid "Register a card swipe for the current user's quick terminal unlock."
 msgstr "تسجيل مسح البطاقة لفتح مُحرّك المستخدم الحالي بسرعة."
 
+#: views/terminal.py:963
 msgid "Card registered successfully"
 msgstr "تم تسجيل البطاقة بنجاح"
 
+#: views/terminal.py:964
 msgid "Card already registered to another user"
 msgstr "البطاقة مسجلة بالفعل لمستخدم آخر"
 
+#: views/terminal.py:1013
 msgid "Remove staff unlock card"
 msgstr "إزالة بطاقة فك قفل الموظف"
 
+#: views/terminal.py:1014
 msgid "Remove the current user's registered unlock card."
 msgstr "إزالة بطاقة فتح المستخدم الحالي المسجلة."
 
+#: views/terminal.py:1016
 msgid "Card removed successfully"
 msgstr "تم إزالة البطاقة بنجاح"
 
+#: views/terminal.py:1038
 msgid "Set cashier PIN"
 msgstr "تعيين رمز PIN لل kasir"
 
+#: views/terminal.py:1040
 msgid ""
 "Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
 "must be 4-6 digits. Both pin and pin_confirm must match."
@@ -1257,12 +1518,15 @@ msgstr ""
 "تحديد أو تحديث رمز PIN للمستخدم الحالي لقفل / فتح المحطة. يجب أن يكون PIN من"
 " 4 إلى 6 أرقام. يجب أن يتطابق PIN وpin_confirm."
 
+#: views/terminal.py:1057
 msgid "PIN set successfully"
 msgstr "تم تعيين PIN بنجاح"
 
+#: views/terminal_provider.py:66
 msgid "Get terminal provider config"
 msgstr "احصل على تكوين مزود المحطة"
 
+#: views/terminal_provider.py:68
 msgid ""
 "Returns the terminal provider configuration for the current terminal, "
 "including the integration mode (sdk, cloud, or manual) and connected reader "
@@ -1274,9 +1538,11 @@ msgstr ""
 " POS عند بدء التشغيل لتحديد ما إذا كان هناك قارئ بطاقة متكامل متاح وما هي "
 "طريقة الدفع التي يجب استخدامها."
 
+#: views/terminal_provider.py:127
 msgid "Create connection token"
 msgstr "أنشئ رمز الاتصال"
 
+#: views/terminal_provider.py:129
 msgid ""
 "Creates a short-lived connection token for SDK-mode terminal providers (e.g."
 " Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
@@ -1289,9 +1555,11 @@ msgstr ""
 "مباشر مع القارئ. ينطبق فقط على SDK. لا تستخدم مزودي السحابة رموز الاتصال. "
 "يعود 400 إذا لم يدعم المزود رموز SDK."
 
+#: views/terminal_provider.py:200
 msgid "List card readers"
 msgstr "قائمة قارئات البطاقات"
 
+#: views/terminal_provider.py:202
 msgid ""
 "List available card readers from the terminal provider. Works for both SDK-"
 "mode and cloud-mode providers. Each reader object contains: id, label, type,"
@@ -1300,9 +1568,11 @@ msgstr ""
 "قائمة القراءات البطاقية المتاحة من مزود المحطة. تعمل على كلا نمط SDK ونمط "
 "السحابة. يحتوي كل كائن قارئ على: id، وعلامة، ونوع، ورقم التسلسل، والحالة."
 
+#: views/terminal_provider.py:238
 msgid "Create payment intent for terminal"
 msgstr "أنشئ نية دفع للمحطة"
 
+#: views/terminal_provider.py:240
 msgid ""
 "Creates a PaymentIntent for card_present collection on the terminal reader. "
 "The frontend uses the returned client_secret to collect payment via the SDK."
@@ -1314,9 +1584,11 @@ msgstr ""
 "SDK. يجب على مزودي السحابة استخدام initiate-cloud-payment. إذا تم تجاهل "
 "العملة، يُستخدم الافتراضي للمحطة المُكوَّن."
 
+#: views/terminal_provider.py:316
 msgid "Capture/verify terminal payment"
 msgstr "التقاط/التحقق من دفع المحطة"
 
+#: views/terminal_provider.py:318
 msgid ""
 "Verifies that a PaymentIntent was successfully processed on the terminal "
 "reader and returns card details (brand, last4) from the provider. SDK only."
@@ -1324,9 +1596,11 @@ msgstr ""
 "يؤكد أن دفعة PaymentIntent تم معالجتها بنجاح على قارئ الطرف المضيف ويُرجع "
 "تفاصيل البطاقة (العلامة، آخر 4 أرقام) من المزود. فقط SDK."
 
+#: views/terminal_provider.py:367
 msgid "Cancel terminal payment"
 msgstr "إلغاء دفع المحطة"
 
+#: views/terminal_provider.py:369
 msgid ""
 "Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
 "cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
@@ -1334,9 +1608,11 @@ msgstr ""
 "إلغاء دفعة PaymentIntent المعلقة على قارئ الطرف المضيف (مثلاً: عميل قام "
 "بإلغائها). فقط SDK. يجب على مزودي السحابة استخدام cancel-cloud-payment."
 
+#: views/terminal_provider.py:420
 msgid "Initiate cloud payment on reader"
 msgstr "بدء دفع السحابة على القارئ"
 
+#: views/terminal_provider.py:422
 msgid ""
 "Sends a payment request to a card reader via the provider's cloud API. For "
 "cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
@@ -1349,9 +1625,11 @@ msgstr ""
 "يستخدم وضع SDK. إذا تم حذف العملة، فسيتم استخدام العملة المُكوّنة مسبقًا في "
 "الجهاز كافتراض."
 
+#: views/terminal_provider.py:519
 msgid "Check cloud payment status"
 msgstr "التحقق من حالة دفع السحابة"
 
+#: views/terminal_provider.py:521
 msgid ""
 "Poll the status of a cloud-initiated payment. Returns the current status: "
 "pending, succeeded, failed, or canceled. When status is 'succeeded', the "
@@ -1364,13 +1642,16 @@ msgstr ""
 "last4، و payment_id الخاصة بالمزود. عند أن تكون 'ملغى'، يشمل السبب. يجب أن "
 "يقوم الجانب الأمامي بتتبع كل 2 ثانية حتى تصبح الحالة لم تعد 'معلقة'."
 
+#: views/terminal_provider.py:532
 msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
 msgstr ""
 "معرّف المعاملة الخاص بالبائع الذي يتم إرجاعه بواسطة initiate-cloud-payment"
 
+#: views/terminal_provider.py:587
 msgid "Cancel cloud payment"
 msgstr "إلغاء دفع السحابة"
 
+#: views/terminal_provider.py:589
 msgid ""
 "Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
 " varies by provider."
@@ -1378,33 +1659,42 @@ msgstr ""
 "إلغاء دفع تم إنشاؤه من السحابة وقيد الانتظار على القارئ. السحابة فقط. يتغير "
 "السلوك حسب البائع."
 
+#: views/webauthn.py:66
 msgid "Begin WebAuthn registration"
 msgstr "ابدأ تسجيل WebAuthn"
 
+#: views/webauthn.py:68
 msgid ""
 "Generate registration options for biometric enrollment. Returns challenge "
 "and credential creation options."
 msgstr ""
 "إنشاء خيارات التسجيل لتسجيل بصمة الوجه. يُرجع تحديات وخيارات إنشاء المؤهلات."
 
+#: views/webauthn.py:70
 msgid "Registration options"
 msgstr "خيارات التسجيل"
 
+#: views/webauthn.py:136
 msgid "Complete WebAuthn registration"
 msgstr "إكمال تسجيل WebAuthn"
 
+#: views/webauthn.py:137
 msgid "Verify attestation and store credential for biometric unlock."
 msgstr "التحقق من الإقرار وتخزين المفتاح للمصادقة البيومترية."
 
+#: views/webauthn.py:150
 msgid "Credential registered"
 msgstr "تم تسجيل المصادقة"
 
+#: views/webauthn.py:151 views/webauthn.py:335
 msgid "Verification failed"
 msgstr "فشل التحقق"
 
+#: views/webauthn.py:222
 msgid "Begin WebAuthn authentication"
 msgstr "ابدأ المصادقة عبر WebAuthn"
 
+#: views/webauthn.py:224
 msgid ""
 "Generate authentication challenge for biometric unlock. Returns "
 "allowCredentials for the locked-by user and all managers. If failed_attempts"
@@ -1414,17 +1704,42 @@ msgstr ""
 "المُغلق والمسؤولين جميعًا. إذا كانت محاولات الفشل >= 3، يتم تضمين بيانات "
 "الاعتماد فقط للمدراء."
 
+#: views/webauthn.py:238
 msgid "Authentication options"
 msgstr "خيارات المصادقة"
 
+#: views/webauthn.py:239
 msgid "No credentials registered"
 msgstr "لم يتم تسجيل أي مصادقة"
 
+#: views/webauthn.py:319
 msgid "Complete WebAuthn authentication"
 msgstr "إكمال 인증 WebAuthn"
 
+#: views/webauthn.py:320
 msgid "Verify biometric assertion and unlock terminal."
 msgstr "التحقق من الإدعاء البيومترية وإلغاء قفل المحطة."
 
+#: views/webauthn.py:334
 msgid "Authentication successful"
 msgstr "تمت عملية المصادقة بنجاح"
+
+#~ msgid "Apply gift card to cart"
+#~ msgstr "تطبيق بطاقة هدية على السلة"
+
+#~ msgid ""
+#~ "Apply a gift card code to the cart to cover part or all of the total. "
+#~ "Requires staff authentication and valid POS license."
+#~ msgstr ""
+#~ "تطبيق كود بطاقة هدية على السلة لتغطية جزء أو كل إجمالي الطلب. يتطلب إثبات "
+#~ "هوية الموظف وترخيص POS صالح."
+
+#~ msgid "Invalid gift card or insufficient balance"
+#~ msgstr "بطاقة هدية غير صحيحة أو رصيد غير كافٍ"
+
+#~ msgid ""
+#~ "Remove all items, vouchers, and gift cards from the cart. Requires staff "
+#~ "authentication and valid POS license."
+#~ msgstr ""
+#~ "إزالة جميع العناصر والقسائم و بطاقات الهدايا من السلة. يتطلب 인증 الموظف و "
+#~ "رخصة POS صالحة."

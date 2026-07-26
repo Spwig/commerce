@@ -128,6 +128,14 @@ for the same Order (stock remains allocated).
                 {"success": False, "message": str(message)}, status=status.HTTP_400_BAD_REQUEST
             )
 
+        # The order is created now (unpaid); a guest browser isn't
+        # authenticated, so allow-list the order for the confirmation page it
+        # will be redirected to after payment.
+        if intent is not None and getattr(intent, "order", None) is not None:
+            from cart.services import CheckoutService
+
+            CheckoutService.grant_guest_order_access(request, intent.order)
+
         # Serialize response
         response_data = PaymentIntentResponseSerializer(intent).data
         response_data["success"] = True

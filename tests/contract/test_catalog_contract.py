@@ -9,7 +9,7 @@ Reference implementation showing all contract test patterns.
 
 import pytest
 
-from tests.contract.conftest import load_schema_baseline
+from tests.contract.conftest import load_schema_baseline, record_or_skip
 from tests.contract.utils.breaking_change_detector import detect_breaking_changes
 from tests.contract.utils.contract_validator import (
     extract_response_schema,
@@ -57,12 +57,8 @@ class TestProductListContract:
                 else ""
             )
 
-        except FileNotFoundError as e:
-            # Baseline doesn't exist yet - generate it for first run
-            pytest.skip(
-                f"Baseline schema not found: {e}\n"
-                f"Generate baseline with: python scripts/generate_contract_baselines.py"
-            )
+        except FileNotFoundError:
+            record_or_skip(self.SCHEMA_MODULE, self.SERIALIZER_NAME, product_data)
 
     def test_no_breaking_changes(self, contract_client, simple_product):
         """
@@ -104,7 +100,7 @@ class TestProductListContract:
                 print("=" * 40)
 
         except FileNotFoundError:
-            pytest.skip("Baseline schema not found - run baseline generator first")
+            record_or_skip(self.SCHEMA_MODULE, self.SERIALIZER_NAME, product_data)
 
     def test_required_fields_present(self, contract_client, simple_product):
         """
@@ -215,7 +211,7 @@ class TestProductDetailContract:
             )
 
         except FileNotFoundError:
-            pytest.skip("Baseline schema not found - run baseline generator first")
+            record_or_skip(self.SCHEMA_MODULE, self.SERIALIZER_NAME, data)
 
     def test_detail_has_more_fields_than_list(self, contract_client, simple_product):
         """
@@ -308,7 +304,7 @@ class TestCategoryListContract:
             )
 
         except FileNotFoundError:
-            pytest.skip("Baseline schema not found")
+            record_or_skip(self.SCHEMA_MODULE, self.SERIALIZER_NAME, category_data)
 
     def test_category_has_hierarchical_structure(self, contract_client, category):
         """

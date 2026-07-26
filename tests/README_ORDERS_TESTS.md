@@ -124,13 +124,13 @@ return_request.approve(user=staff)
 ```python
 # BEFORE (INCORRECT):
 return_request.mark_label_sent(
-    tracking_number='RET-123456',
-    label_url='https://example.com/label.pdf',
+    tracking_number="RET-123456",
+    label_url="https://example.com/label.pdf",
 )
 
 # AFTER (FIXED):
-return_request.return_tracking_number = 'RET-123456'
-return_request.return_label_url = 'https://example.com/label.pdf'
+return_request.return_tracking_number = "RET-123456"
+return_request.return_label_url = "https://example.com/label.pdf"
 return_request.return_label_generated = True
 return_request.mark_label_sent()
 ```
@@ -142,14 +142,14 @@ return_request.mark_label_sent()
 # BEFORE (INCORRECT):
 return_request.mark_inspected(
     inspected_by=staff,
-    condition='good',
-    notes='Items are in good condition',
+    condition="good",
+    notes="Items are in good condition",
 )
 
 # AFTER (FIXED):
 return_request.mark_inspected(
-    condition='good',
-    inspection_notes='Items are in good condition',
+    condition="good",
+    inspection_notes="Items are in good condition",
     user=staff,
 )
 ```
@@ -160,17 +160,17 @@ return_request.mark_inspected(
 ```python
 # BEFORE (INCORRECT):
 refund = return_request.process_refund(
-    refund_amount=Decimal('100.00'),
+    refund_amount=Decimal("100.00"),
 )
 
 # AFTER (FIXED):
 refund_data = {
-    'total_amount': Decimal('100.00'),
-    'shipping_refund_amount': Decimal('5.99'),
-    'tax_refund_amount': Decimal('8.88'),
-    'items_json': [],
-    'customer_notes': '',
-    'staff_notes': '',
+    "total_amount": Decimal("100.00"),
+    "shipping_refund_amount": Decimal("5.99"),
+    "tax_refund_amount": Decimal("8.88"),
+    "items_json": [],
+    "customer_notes": "",
+    "staff_notes": "",
 }
 refund = return_request.process_refund(refund_data)
 ```
@@ -180,7 +180,7 @@ refund = return_request.process_refund(refund_data)
 **Problem**: Method takes no parameters, but test tried to pass `reason`
 ```python
 # BEFORE (INCORRECT):
-return_request.cancel(reason='Customer changed mind')
+return_request.cancel(reason="Customer changed mind")
 
 # AFTER (FIXED):
 return_request.cancel()

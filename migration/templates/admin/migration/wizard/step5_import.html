@@ -2,13 +2,52 @@
 {% load i18n static %}
 
 {% block wizard_content %}
+{% if job.status == 'pending' %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-play"></i>
+        {% trans "Ready to Import" %}
+    </h3>
+    <p>{% trans "This migration is configured but has not started yet. Starting it will begin importing data into your store." %}</p>
+    <form method="post" action="{% url 'admin:migration_job_start' job.id %}" class="mt-16">
+        {% csrf_token %}
+        <button type="submit" class="button primary">
+            <i class="fas fa-play"></i>
+            {% trans "Start Import" %}
+        </button>
+    </form>
+</div>
+{% else %}
 <div class="content-box">
     <h3>
         <i class="fas fa-download"></i>
         {% trans "Import in Progress" %}
     </h3>
     <p>{% trans "Importing data from" %} {{ job.get_platform_display }}{% trans ". This process is running in the background - you can safely close this window and check back later." %}</p>
+
+    {% comment %}
+    The place an operator actually reaches for Cancel: the page they are
+    watching. Previously it existed only on the migrations dashboard.
+    {% endcomment %}
+    {% if job.status == 'running' and not job.cancel_requested %}
+    <form method="post" action="{% url 'admin:migration_job_cancel' job.id %}"
+          id="cancel-import-form" class="mt-16">
+        {% csrf_token %}
+        <button type="submit" class="button danger"
+                data-action="confirm-submit"
+                data-confirm-msg="{% trans 'Stop this import? Spwig finishes the batch it is working on and then stops. Anything already imported stays in your store — cancelling does not remove it.' %}">
+            <i class="fas fa-stop"></i>
+            {% trans "Stop Import" %}
+        </button>
+    </form>
+    {% elif job.cancel_requested %}
+    <p class="text-muted">
+        <i class="fas fa-hourglass-half"></i>
+        {% trans "Stopping — Spwig finishes the batch it is working on, then stops." %}
+    </p>
+    {% endif %}
 </div>
+{% endif %}
 
 <!-- Overall Progress -->
 <div class="content-box">
@@ -20,7 +59,7 @@
     <div class="my-20">
         <div class="import-progress-header">
             <span class="text-body font-semibold">
-                <span id="overall-status">{% trans "Initializing..." %}</span>
+                <span id="overall-status" data-stopping-label="{% trans 'Stopping…' %}">{% trans "Initializing..." %}</span>
             </span>
             <span class="text-body font-semibold">
                 <span id="overall-percentage">0</span>%

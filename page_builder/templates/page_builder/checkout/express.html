@@ -11,7 +11,40 @@
      data-fallback-template="{{ template_options.fallback_template|default:'accordion' }}">
 
     <div class="express__wrapper">
+        <div class="express__main">
+        <!-- Contact email: always visible and editable — payment providers
+             and the order confirmation both require it -->
+        <div class="express__section">
+            <div class="express__section-header">
+                <h2 class="express__section-title">
+                    <i class="fas fa-envelope"></i>
+                    {% mtrans 'Email' %}
+                </h2>
+            </div>
+            <div class="checkout-form-group">
+                <input type="email" id="checkout-email" class="checkout-input" required
+                       value="{{ user_email }}"
+                       placeholder="{% mtrans 'Email' %}" autocomplete="email">
+            </div>
+            {% if not cart_requires_shipping %}
+            <!-- Digital-only carts never reach the shipping form, so the
+                 customer's name is collected here — orders and payment
+                 providers require one -->
+            <div class="checkout-form-group">
+                <label for="checkout-name">{% mtrans 'Full Name' %} <span class="required">*</span></label>
+                <input type="text" id="checkout-name" class="checkout-input" required
+                       value="{{ user_full_name }}" autocomplete="name">
+            </div>
 
+            <!-- Digital carts have no shipping section: the billing address is
+                 the customer's primary address, so it sits here under contact
+                 rather than inside the payment step. -->
+            {% include "page_builder/checkout/_billing_address.html" %}
+            {% endif %}
+        </div>
+
+
+        {% if cart_requires_shipping %}
         <!-- Saved Shipping Address -->
         <div class="express__section" id="express-address-section">
             <div class="express__section-header">
@@ -20,13 +53,18 @@
                     {% mtrans 'Shipping Address' %}
                 </h2>
                 <button type="button" class="express__change-link" id="express-change-address"
-                        data-target="express-address-picker">
+                        data-target="express-address-picker"
+                        aria-label="{% mtrans 'Change shipping address' %}">
                     {% mtrans 'Change' %}
                 </button>
             </div>
 
-            <!-- Default address card (populated by JS from saved_addresses) -->
-            <div class="express__saved-card" id="express-default-address">
+            <!-- Default address card (populated by JS from saved_addresses).
+                 The card is itself a Change affordance (see checkout-express.js)
+                 — a bigger tap target than the header link, esp. on mobile. -->
+            <div class="express__saved-card" id="express-default-address"
+                 data-change-target="express-address-picker" role="button" tabindex="0"
+                 aria-label="{% mtrans 'Change shipping address' %}">
                 {% if default_address %}
                 <div class="express__saved-card-content">
                     <p class="express__saved-card-name">{{ default_address.name }}</p>
@@ -50,6 +88,7 @@
                     {% for addr in saved_addresses %}
                     <label class="saved-address-card{% if addr.is_default %} saved-address-card--selected{% endif %}">
                         <input type="radio" name="saved_address" value="{{ addr.id }}"
+                               data-has-phone="{% if addr.phone %}1{% else %}0{% endif %}"
                                {% if addr.is_default %}checked{% endif %}>
                         <div class="saved-address-card__info">
                             <div>
@@ -59,11 +98,19 @@
                             <div>{{ addr.address1 }}{% if addr.address2 %}, {{ addr.address2 }}{% endif %}</div>
                             <div>{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</div>
                             <div>{{ addr.country }}</div>
+                            {% if addr.phone %}<div>{{ addr.phone }}</div>{% endif %}
                         </div>
                     </label>
                     {% endfor %}
                 </div>
                 {% endif %}
+
+                <!-- Supplemental phone for saved addresses recorded without one -->
+                <div class="checkout-form-group" id="saved-address-phone-group" hidden>
+                    <label for="saved-address-phone">{% mtrans 'Phone' %} <span class="required">*</span></label>
+                    <input type="tel" id="saved-address-phone" class="checkout-input" autocomplete="tel">
+                    <div class="checkout-help">{% mtrans 'This address needs a phone number so the carrier can contact you about delivery.' %}</div>
+                </div>
 
                 <button type="button" class="new-address-toggle" id="express-new-address-toggle">
                     <i class="fas fa-plus"></i> {% mtrans 'Use a different address' %}
@@ -116,13 +163,19 @@
                         </div>
                         <div class="checkout-form-group">
                             <label for="shipping-country">{% mtrans 'Country' %} <span class="required">*</span></label>
-                            <input type="text" id="shipping-country" class="checkout-input" required>
+                            <select id="shipping-country" class="checkout-input" required>
+                                <option value="">{% mtrans 'Select country' %}</option>
+                                {% for code, name in shipping_countries %}
+                                <option value="{{ code }}"{% if code == geo_country %} selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
 
                     <div class="checkout-form-group">
-                        <label for="shipping-phone">{% mtrans 'Phone' %}</label>
-                        <input type="tel" id="shipping-phone" class="checkout-input">
+                        <label for="shipping-phone">{% mtrans 'Phone' %} <span class="required">*</span></label>
+                        <input type="tel" id="shipping-phone" class="checkout-input" required autocomplete="tel">
+                        <div class="checkout-help">{% mtrans 'Used by the carrier to contact you about delivery.' %}</div>
                     </div>
                 </div>
 
@@ -145,13 +198,17 @@
                     {% mtrans 'Shipping Method' %}
                 </h2>
                 <button type="button" class="express__change-link" id="express-change-shipping-method"
-                        data-target="express-shipping-method-picker">
+                        data-target="express-shipping-method-picker"
+                        aria-label="{% mtrans 'Change shipping method' %}">
                     {% mtrans 'Change' %}
                 </button>
             </div>
 
-            <!-- Selected shipping method (populated by JS) -->
-            <div class="express__saved-card" id="express-selected-shipping-method">
+            <!-- Selected shipping method (populated by JS). Card is tappable to
+                 change (see checkout-express.js). -->
+            <div class="express__saved-card" id="express-selected-shipping-method"
+                 data-change-target="express-shipping-method-picker" role="button" tabindex="0"
+                 aria-label="{% mtrans 'Change shipping method' %}">
                 <div class="express__empty-state">
                     <i class="fas fa-spinner fa-spin"></i>
                     <p>{% mtrans 'Loading shipping methods...' %}</p>
@@ -176,45 +233,21 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         <!-- Payment Method -->
-        <div class="express__section" id="express-payment-section">
-            <div class="express__section-header">
-                <h2 class="express__section-title">
-                    <i class="fas fa-credit-card"></i>
-                    {% mtrans 'Payment' %}
-                </h2>
-                <button type="button" class="express__change-link" id="express-change-payment"
-                        data-target="express-payment-picker">
-                    {% mtrans 'Change' %}
-                </button>
-            </div>
-
-            <!-- Last used payment method (populated by JS) -->
-            <div class="express__saved-card" id="express-selected-payment">
-                <div class="express__empty-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>{% mtrans 'Loading payment methods...' %}</p>
-                </div>
-            </div>
-
-            <!-- Payment picker (hidden, shown on "Change" click) -->
-            <div class="express__change-panel" id="express-payment-picker" hidden>
-                {% include "page_builder/checkout/_step_payment.html" %}
-                <div class="express__change-panel-actions">
-                    <button type="button" class="btn btn--sm" id="express-confirm-payment">
-                        {% mtrans 'Use this method' %}
-                    </button>
-                    <button type="button" class="btn btn--sm btn--ghost" id="express-cancel-payment">
-                        {% mtrans 'Cancel' %}
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Contact / Email (hidden field, auto-populated for returning customers) -->
-        <input type="hidden" id="checkout-email" value="{{ user_email }}">
-
+        {% comment %}
+        Single column: the order summary sits directly above the
+        payment step so the customer confirms what they pay for
+        right before paying. Collapsible on mobile via the toggle.
+        {% endcomment %}
+        <aside class="express__aside" id="express-aside">
+            <button type="button" class="express__summary-toggle" id="express-summary-toggle"
+                    aria-expanded="false" aria-controls="express-summary-section">
+                <span><i class="fas fa-receipt"></i> {% mtrans 'Order Summary' %}</span>
+                <span class="express__summary-toggle-total" id="express-summary-toggle-total"></span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
         <!-- Compact Order Summary -->
         {% if template_options.show_order_summary %}
         <div class="express__section" id="express-summary-section">
@@ -234,10 +267,12 @@
                         <span>{% mtrans 'Subtotal' %}</span>
                         <span id="summary-subtotal"></span>
                     </div>
+                    {% if cart_requires_shipping %}
                     <div class="express__totals-row" id="summary-shipping-row">
                         <span>{% mtrans 'Shipping' %}</span>
                         <span id="summary-shipping">{% mtrans 'Calculated next' %}</span>
                     </div>
+                    {% endif %}
                     <div class="express__totals-row express__totals-row--discount" id="summary-discount-row" hidden>
                         <span>{% mtrans 'Discount' %}</span>
                         <span id="summary-discount"></span>
@@ -251,6 +286,19 @@
                         <span id="summary-total"></span>
                     </div>
                 </div>
+
+                <!-- Voucher / discount code -->
+                <div class="express__voucher">
+                    <div class="express__voucher-row">
+                        <input type="text" id="express-voucher-code" class="checkout-input"
+                               placeholder="{% mtrans 'Voucher Code' %}"
+                               autocomplete="off" autocapitalize="characters" spellcheck="false">
+                        <button type="button" class="btn btn--secondary" id="express-apply-voucher">
+                            {% mtrans 'Apply' %}
+                        </button>
+                    </div>
+                    <p class="express__voucher-msg" id="express-voucher-msg" role="alert" hidden></p>
+                </div>
             </div>
         </div>
         {% endif %}
@@ -262,12 +310,50 @@
         </div>
         {% endif %}
 
-        <!-- Place Order -->
-        <div class="express__place-order">
-            <button type="button" class="btn btn--primary btn--lg btn--full" data-action="place-order" id="place-order-btn">
-                <i class="fas fa-lock"></i>
-                {% mtrans 'Place Order' %}
-            </button>
+        {% comment %}
+        No generic Place Order button: the mounted payment form's own button
+        completes the order (embedded gateways), the zero-due tenders panel
+        renders its own Place Order, and hosted providers redirect. A second
+        CTA that does nothing else would only compete with the real one.
+        {% endcomment %}
+
+        </aside>
+
+        <div class="express__section" id="express-payment-section">
+            <div class="express__section-header">
+                <h2 class="express__section-title">
+                    <i class="fas fa-credit-card"></i>
+                    {% mtrans 'Payment' %}
+                </h2>
+                <button type="button" class="express__change-link" id="express-change-payment"
+                        data-target="express-payment-picker"
+                        aria-label="{% mtrans 'Change payment method' %}">
+                    {% mtrans 'Change' %}
+                </button>
+            </div>
+
+            {% comment %}
+            Tenders live OUTSIDE the change panel: a customer holding a gift
+            card or store credit must see where to apply it without
+            discovering the "Change" button first.
+            {% endcomment %}
+            {% include "page_builder/checkout/_step_payment_tenders.html" %}
+
+            <!-- Last used payment method (populated by JS) -->
+            <div class="express__saved-card" id="express-selected-payment">
+                <div class="express__empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>{% mtrans 'Loading payment methods...' %}</p>
+                </div>
+            </div>
+
+            <!-- Payment picker: selecting a provider applies immediately and
+                 mounts its payment form; auto-opened on load -->
+            <div class="express__change-panel" id="express-payment-picker" hidden>
+                {% include "page_builder/checkout/_step_payment.html" with skip_tenders=True billing_in_contact=True %}
+            </div>
+        </div>
+
         </div>
 
     </div>

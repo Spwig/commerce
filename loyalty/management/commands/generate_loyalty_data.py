@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
+from core.utils.codes import generate_unique_code
 from loyalty.models import (
     LoyaltyBalance,
     LoyaltyCampaign,
@@ -589,7 +590,6 @@ class Command(BaseCommand):
     @transaction.atomic
     def generate_redemptions(self, members, rewards):
         """Generate realistic redemption history"""
-        import string
 
         redemption_count = 0
 
@@ -629,9 +629,22 @@ class Command(BaseCommand):
                 days_ago = random.randint(1, 90)
                 redeemed_at = timezone.now() - timedelta(days=days_ago)
 
-                # Generate unique redemption code
-                code_suffix = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
-                redemption_code = f"LOYALTY-{code_suffix[:5]}-{code_suffix[5:]}"
+                # Generate unique redemption code.
+                #
+                # Uses the shared secrets-backed generator, and a DEMO prefix so
+                # seeded rows are distinguishable from real customer codes. This
+                # previously used random.choices with no uniqueness check and
+                # the *production* LOYALTY-XXXXX-XXXXX format, producing
+                # predictable codes indistinguishable from genuine ones — the
+                # sibling seed commands already prefix theirs (-SC-/-SCD-).
+                redemption_code = generate_unique_code(
+                    exists=lambda code: LoyaltyRedemption.objects.filter(
+                        redemption_code=code
+                    ).exists(),
+                    length=5,
+                    groups=2,
+                    prefix="LOYALTY-DEMO",
+                )
 
                 # 90% fulfilled, 5% confirmed, 5% pending
                 status_roll = random.random()

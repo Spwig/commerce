@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,357 +16,498 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14) ? 2 : 3);\n"
 
+#: admin.py:43
 msgid "Provider Information"
 msgstr "Информация о провайдере"
 
+#: admin.py:44 admin.py:431 admin.py:454
 msgid "Status"
 msgstr "Статус"
 
+#: admin.py:46 models.py:102
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:62
 msgid "Connection Status"
 msgstr "Состояние соединения"
 
+#: admin.py:53
 msgid "Configuration"
 msgstr "Настройка"
 
+#: admin.py:56 admin.py:433
 msgid "Timestamps"
 msgstr "Временные метки"
 
+#: admin.py:113
 msgid "Provider"
 msgstr "Провайдер"
 
+#: admin.py:139
 msgid "Connection"
 msgstr "Соединение"
 
+#: admin.py:144 admin.py:147 models.py:91
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:75
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:179
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:87
 msgid "Active"
 msgstr "Активный"
 
+#: admin.py:145
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:76
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:180
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:91
 msgid "Inactive"
 msgstr "Неактивный"
 
+#: admin.py:153 admin.py:156 models.py:95
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:98
 msgid "Default"
 msgstr "По умолчанию"
 
+#: admin.py:159
 msgid "Test connection for selected providers"
 msgstr "Тестирование соединения для выбранных провайдеров"
 
+#: admin.py:175
 #, python-format
 msgid "Successfully connected to %(count)d provider(s)."
 msgstr "Успешно подключено %(count)d провайдер(а)(ов)."
 
+#: admin.py:181
 #, python-format
 msgid "Failed to connect to %(count)d provider(s). Check error messages."
 msgstr ""
-"Не удалось подключиться к %(count)d провайдер(а)(ов). Проверьте сообщения об"
-" ошибках."
+"Не удалось подключиться к %(count)d провайдер(а)(ов). Проверьте сообщения об "
+"ошибках."
 
+#: admin.py:227
 msgid "Provider {} successfully."
 msgstr "Провайдер {} успешно."
 
+#: admin.py:228
 msgid "enabled"
 msgstr "включен"
 
+#: admin.py:228
 msgid "disabled"
 msgstr "отключен"
 
+#: admin.py:233 admin.py:264 admin.py:292
 msgid "Provider not found"
 msgstr "Провайдер не найден"
 
+#: admin.py:237 admin.py:268 admin.py:296 admin.py:384
+#: templates/admin/payout_providers/wizard/step4_test.html:77
+#: views/wizard.py:540
 msgid "An unexpected error occurred."
 msgstr "Случилась неожиданная ошибка."
 
+#: admin.py:260
 #, python-format
 msgid "%(name)s set as default provider."
 msgstr "%(name)s установлен как провайдер по умолчанию."
 
+#: admin.py:284
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:185
 msgid "Connection test successful!"
 msgstr "Тест соединения успешен!"
 
+#: admin.py:289
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:186
+#: views/wizard.py:473
 msgid "Connection test failed"
 msgstr "Тест подключения завершился неудачно"
 
+#: admin.py:311
 msgid "Action and provider IDs required"
 msgstr "Требуются идентификаторы действия и провайдера"
 
+#: admin.py:319
 #, python-format
 msgid "%(count)d provider(s) enabled."
 msgstr "Включено %(count)d провайдер(а)(ов)."
 
+#: admin.py:323
 #, python-format
 msgid "%(count)d provider(s) disabled."
 msgstr "Отключено %(count)d провайдер(а)(ов)."
 
+#: admin.py:330
 msgid "Select exactly one provider to set as default"
 msgstr "Выберите ровно одного поставщика для установки как основного"
 
+#: admin.py:339
 msgid "Default provider updated."
 msgstr "По умолчанию провайдер обновлен."
 
+#: admin.py:351
 #, python-format
 msgid "Tested %(count)d provider(s): %(success)d succeeded, %(fail)d failed."
 msgstr ""
 "Проведено тестирование %(count)d провайдер(а)(ов): %(success)d прошли "
 "успешно, %(fail)d завершились с ошибкой."
 
+#: admin.py:359
 msgid "You do not have permission to delete providers."
 msgstr "У вас нет разрешения на удаление поставщиков."
 
+#: admin.py:364
 #, python-format
 msgid "%(count)d provider(s) deleted."
 msgstr "Удалено %(count)d провайдер(а)(ов)."
 
+#: admin.py:370
 #, python-format
 msgid "Unknown action: %(action)s"
 msgstr "Неизвестное действие: %(action)s"
 
+#: admin.py:379
 msgid "Invalid request data."
 msgstr "Неверные данные запроса."
 
+#: admin.py:420
 msgid "Event Information"
 msgstr "Информация об событии"
 
+#: admin.py:432 models.py:269
 msgid "Payload"
 msgstr "Полезная нагрузка"
 
+#: admin.py:439
 msgid "Not Checked"
 msgstr "Не проверено"
 
+#: admin.py:441
 msgid "Valid"
 msgstr "Действительный"
 
+#: admin.py:442
 msgid "Invalid"
 msgstr "Недопустимый"
 
+#: admin.py:444
 msgid "Signature"
 msgstr "Подпись"
 
+#: admin.py:449 models.py:278
 msgid "Processed"
 msgstr "Обработано"
 
+#: admin.py:451 templates/admin/payout_providers/wizard/step4_test.html:76
 msgid "Error"
 msgstr "Ошибка"
 
+#: admin.py:452
 msgid "Pending"
 msgstr "В ожидании"
 
+#: apps.py:8
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:4
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:20
 msgid "Payout Providers"
 msgstr "Провайдеры выплат"
 
+#: models.py:28
 msgid "PayPal"
 msgstr "PayPal"
 
+#: models.py:29
 msgid "Airwallex"
 msgstr "Airwallex"
 
+#: models.py:30
 msgid "Wise"
 msgstr "Wise"
 
+#: models.py:34
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:67
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:78
 msgid "Untested"
 msgstr "Не протестировано"
 
+#: models.py:35
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:65
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:66
 msgid "Connected"
 msgstr "Подключен"
 
+#: models.py:36 templates/admin/payout_providers/wizard/step4_test.html:74
 msgid "Connection Failed"
 msgstr "Соединение не удалось"
 
+#: models.py:37
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:74
 msgid "Invalid Credentials"
 msgstr "Неверные учетные данные"
 
+#: models.py:42 models.py:254
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:82
 msgid "Provider Type"
 msgstr "Тип провайдера"
 
+#: models.py:45
 msgid "The payout provider service"
 msgstr "Сервис провайдера выплат"
 
+#: models.py:55
 msgid "Installed provider component from the component registry"
 msgstr "Установленный компонент поставщика из реестра компонентов"
 
+#: models.py:60
+#: templates/admin/payout_providers/wizard/step3_credentials.html:111
+#: templates/admin/payout_providers/wizard/step4_test.html:84
 msgid "Account Name"
 msgstr "Имя аккаунта"
 
+#: models.py:62
 msgid "A friendly name for this account (e.g., \"Primary PayPal\")"
-msgstr "Дружественное имя для этой учетной записи (например, \"Основной PayPal\")"
+msgstr ""
+"Дружественное имя для этой учетной записи (например, \"Основной PayPal\")"
 
+#: models.py:67
 msgid "Credentials"
 msgstr "Учетные данные"
 
+#: models.py:70
 msgid "Encrypted API credentials (never stored in plain text)"
 msgstr ""
 "Шифрованные учетные данные API (никогда не хранятся в виде обычного текста)"
 
+#: models.py:75
 msgid "Settings"
 msgstr "Настройки"
 
+#: models.py:78
 msgid "Provider-specific configuration settings"
 msgstr "Настройки конфигурации, специфичные для провайдера"
 
+#: models.py:83
 msgid "Supported Methods"
 msgstr "Поддерживаемые методы"
 
+#: models.py:86
 msgid "List of payout methods this account supports"
 msgstr "Список методов выплат, которые поддерживает эта учетная запись"
 
+#: models.py:91
 msgid "Whether this provider account is active"
 msgstr "Активна ли эта учетная запись поставщика"
 
+#: models.py:97
 msgid "Whether this is the default provider for its supported methods"
 msgstr ""
 "Является ли это по умолчанию поставщиком для его поддерживаемых методов"
 
+#: models.py:105
 msgid "Last Tested"
 msgstr "Последний тест"
 
+#: models.py:108
 msgid "Last Error"
 msgstr "Последняя ошибка"
 
+#: models.py:108
 msgid "Last connection error message"
 msgstr "Последнее сообщение об ошибке подключения"
 
+#: models.py:112
 msgid "Created"
 msgstr "Создано"
 
+#: models.py:113
 msgid "Updated"
 msgstr "Обновлено"
 
+#: models.py:116
 msgid "Payout Provider Account"
 msgstr "Учетная запись провайдера выплат"
 
+#: models.py:117 templates/admin/payout_providers/providers/browse.html:27
 msgid "Payout Provider Accounts"
 msgstr "Учетные записи провайдера выплат"
 
+#: models.py:168
 #, python-format
 msgid "There is already a default account for %(provider)s: %(name)s"
 msgstr "Уже существует учетная запись по умолчанию для %(provider)s: %(name)s"
 
+#: models.py:254
 msgid "Provider that sent the webhook"
 msgstr "Провайдер, отправивший вебхук"
 
+#: models.py:258
 msgid "Event Type"
 msgstr "Тип события"
 
+#: models.py:258
 msgid "Type of webhook event"
 msgstr "Тип события веб-хука"
 
+#: models.py:262
 msgid "Event ID"
 msgstr "Идентификатор события"
 
+#: models.py:266
 msgid "Provider's unique event identifier"
 msgstr "Уникальный идентификатор события провайдера"
 
+#: models.py:269
 msgid "Full webhook payload"
 msgstr "Полная нагрузка вебхука"
 
+#: models.py:271
 msgid "Headers"
 msgstr "Заголовки"
 
+#: models.py:271
 msgid "Request headers"
 msgstr "Заголовки запроса"
 
+#: models.py:274
 msgid "Signature Valid"
 msgstr "Подпись действительна"
 
+#: models.py:274
 msgid "Whether signature verification passed"
 msgstr "Проверка подписи прошла успешно"
 
+#: models.py:278
 msgid "Whether the webhook was successfully processed"
 msgstr "Был ли вебхук успешно обработан"
 
+#: models.py:282
 msgid "Processing Error"
 msgstr "Ошибка обработки"
 
+#: models.py:285
 msgid "Error message if processing failed"
 msgstr "Сообщение об ошибке, если обработка провалилась"
 
+#: models.py:290
 msgid "Payout Reference"
 msgstr "Ссылка на выплату"
 
+#: models.py:293
 msgid "Received"
 msgstr "Получено"
 
+#: models.py:294
 msgid "Processed At"
 msgstr "Обработано в"
 
+#: models.py:297
 msgid "Payout Webhook Log"
 msgstr "Журнал веб-хука выплаты"
 
+#: models.py:298
 msgid "Payout Webhook Logs"
 msgstr "Журналы веб-хуков выплаты"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:22
 msgid "Manage payout provider accounts for affiliate payments"
 msgstr ""
 "Управление учетными записями поставщиков выплат для партнерских платежей"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:24
 msgid "provider"
 msgstr "поставщик"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:25
 msgid "active"
 msgstr "активный"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:26
 msgid "connected"
 msgstr "подключен"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:31
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:159
 msgid "Browse & Install Providers"
 msgstr "Просмотреть и установить провайдеров"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:48
 msgid "Filters"
 msgstr "Фильтры"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:57
 msgid "Search"
 msgstr "Поиск"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:58
 msgid "Search providers..."
 msgstr "Поиск поставщиков..."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:64
 msgid "All Statuses"
 msgstr "Все статусы"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:66
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:70
 msgid "Failed"
 msgstr "Не пройдено"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:72
 msgid "Active Status"
 msgstr "Активный статус"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:74
 msgid "All"
 msgstr "Все"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:84
 msgid "All Provider Types"
 msgstr "Все типы провайдеров"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:96
 msgid "Apply Filters"
 msgstr "Применить фильтры"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:99
 msgid "Clear All"
 msgstr "Очистить всё"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:110
 msgid "Bulk Actions"
 msgstr "Пакетные действия"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:111
 msgid "Enable Selected"
 msgstr "Включить выбранные"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:112
 msgid "Disable Selected"
 msgstr "Отключить выбранные"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:113
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:129
 msgid "Set as Default"
 msgstr "Установить по умолчанию"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:114
 msgid "Test Connections"
 msgstr "Тестировать соединения"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:115
 msgid "Delete Selected"
 msgstr "Удалить выбранные"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:117
 msgid "Apply"
 msgstr "Применить"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:119
 msgid "selected"
 msgstr "выбранные"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:129
 msgid "Select All"
 msgstr "Выбрать все"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:147
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
@@ -375,38 +516,52 @@ msgstr[1] "%(counter)s провайдера"
 msgstr[2] "%(counter)s провайдеров"
 msgstr[3] "%(counter)s провайдеров"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:156
+#: templates/admin/payout_providers/payoutprovideraccount/partials/provider_cards.html:11
 msgid "No payout provider accounts found"
 msgstr "Аккаунты поставщиков выплат не найдены"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:157
 msgid ""
 "Get started by connecting your first payout provider for affiliate payments."
 msgstr ""
 "Начните с подключения первого поставщика выплат для партнерских платежей."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:169
 msgid "Loading..."
 msgstr "Загрузка..."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:181
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:119
 msgid "Enable"
 msgstr "Включить"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:182
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:119
 msgid "Disable"
 msgstr "Отключить"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:183
 msgid "Failed to toggle provider status"
 msgstr "Не удалось переключить статус поставщика"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:184
 msgid "Failed to set default provider"
 msgstr "Не удалось установить поставщика по умолчанию"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:187
 msgid "An error occurred during connection test."
 msgstr "Произошла ошибка во время теста подключения."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:188
 msgid "An error occurred. Please try again."
 msgstr "Произошла ошибка. Пожалуйста, попробуйте еще раз."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:189
 msgid "Please select an action and at least one provider"
 msgstr "Пожалуйста, выберите действие и как минимум одного поставщика"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:190
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {count} provider(s)? This action cannot be "
@@ -415,63 +570,86 @@ msgstr ""
 "Вы уверены, что хотите удалить {count} поставщика(ов)? Это действие нельзя "
 "отменить."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:191
 msgid "Please select exactly one provider to set as default"
 msgstr ""
 "Пожалуйста, выберите ровно одного поставщика, чтобы установить его по "
 "умолчанию"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:192
 msgid "Bulk action failed"
 msgstr "Пакетное действие не удалось"
 
+#: templates/admin/payout_providers/payoutprovideraccount/partials/provider_cards.html:12
 msgid "Try adjusting your filters or search terms."
 msgstr "Попробуйте изменить фильтры или ключевые слова поиска."
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:29
 msgid "Default Provider"
 msgstr "Провайдер по умолчанию"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:44
 msgid "Provider:"
 msgstr "Поставщик:"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:52
 msgid "Last tested:"
 msgstr "Последний тест:"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:52
 msgid "ago"
 msgstr "назад"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:57
 msgid "Never tested"
 msgstr "Никогда не тестировалось"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:108
 msgid "Edit"
 msgstr "Редактировать"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:113
+#: templates/admin/payout_providers/wizard/base.html:51
+#: templates/admin/payout_providers/wizard/step4_test.html:7
+#: templates/admin/payout_providers/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "Проверить соединение"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:134
 msgid "Delete"
 msgstr "Удалить"
 
+#: templates/admin/payout_providers/providers/browse.html:4
+#: templates/admin/payout_providers/providers/browse.html:37
+#: views/provider_browse.py:142
 msgid "Browse Payout Providers"
 msgstr "Просмотреть поставщиков выплат"
 
+#: templates/admin/payout_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr "Администратор сайта"
 
+#: templates/admin/payout_providers/providers/browse.html:26
 msgid "Home"
 msgstr "Главная"
 
+#: templates/admin/payout_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr "Просмотреть поставщиков"
 
+#: templates/admin/payout_providers/providers/browse.html:39
 msgid ""
-"Choose a payout provider to integrate with your store. Install new providers"
-" or configure existing ones for affiliate payments."
+"Choose a payout provider to integrate with your store. Install new providers "
+"or configure existing ones for affiliate payments."
 msgstr ""
 "Выберите поставщика выплат для интеграции со своим магазином. Установите "
 "новые поставщики или настройте существующие для партнерских платежей."
 
+#: templates/admin/payout_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr "Сервер обновления недоступен"
 
+#: templates/admin/payout_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -479,9 +657,11 @@ msgstr ""
 "Невозможно подключиться к серверу обновлений. Показываются только локально "
 "установленные поставщики."
 
+#: templates/admin/payout_providers/providers/browse.html:58
 msgid "Payout Provider Marketplace"
 msgstr "Рынок поставщиков выплат"
 
+#: templates/admin/payout_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payout providers to automate affiliate "
 "payments, vendor payouts, and commission disbursements."
@@ -489,37 +669,48 @@ msgstr ""
 "Здесь вы можете найти и установить поставщиков выплат для автоматизации "
 "партнерских платежей, выплат поставщикам и выплаты комиссий."
 
+#: templates/admin/payout_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr "Что вы можете сделать:"
 
+#: templates/admin/payout_providers/providers/browse.html:82
 msgid "Browse available payout providers"
 msgstr "Просмотреть доступных поставщиков выплат"
 
+#: templates/admin/payout_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr "Установите новые поставщики с одного щелчка"
 
+#: templates/admin/payout_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr "Обновите установленных поставщиков до последних версий"
 
+#: templates/admin/payout_providers/providers/browse.html:94
 msgid "Configure provider settings after installation"
 msgstr "Настройте параметры поставщика после установки"
 
+#: templates/admin/payout_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr "Начало работы:"
 
+#: templates/admin/payout_providers/providers/browse.html:105
 msgid "Browse providers below and find your preferred payout method"
 msgstr ""
 "Просматривайте поставщиков ниже и выберите предпочитаемый метод выплаты"
 
+#: templates/admin/payout_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Нажмите «Установить», чтобы добавить провайдера в ваш магазин"
 
+#: templates/admin/payout_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr "Перейдите в Настройки, чтобы настроить учетные данные API"
 
+#: templates/admin/payout_providers/providers/browse.html:108
 msgid "Test the provider with a sample payout"
 msgstr "Проверьте поставщика с помощью тестовой выплаты"
 
+#: templates/admin/payout_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -546,126 +737,170 @@ msgstr[3] ""
 "                    Currently: %(counter)s provider available\n"
 "                "
 
+#: templates/admin/payout_providers/providers/browse.html:122
 msgid "installed"
 msgstr "установлено"
 
+#: templates/admin/payout_providers/providers/browse.html:139
 msgid "Update Available"
 msgstr "Доступно обновление"
 
+#: templates/admin/payout_providers/providers/browse.html:165
+#: templates/admin/payout_providers/providers/browse.html:331
 msgid "Installed"
 msgstr "Установлено"
 
+#: templates/admin/payout_providers/providers/browse.html:180
 msgid "Available"
 msgstr "Доступно"
 
+#: templates/admin/payout_providers/providers/browse.html:203
+#: templates/admin/payout_providers/wizard/step1_select.html:46
 msgid "Batch Payouts"
 msgstr "Пакетные выплаты"
 
+#: templates/admin/payout_providers/providers/browse.html:208
 msgid "Instant Payouts"
 msgstr "Мгновенные выплаты"
 
+#: templates/admin/payout_providers/providers/browse.html:213
 msgid "Multi-Currency"
 msgstr "Многократная валюта"
 
+#: templates/admin/payout_providers/providers/browse.html:218
+#: templates/admin/payout_providers/wizard/step1_select.html:56
 msgid "Webhooks"
 msgstr "Вебхуки"
 
+#: templates/admin/payout_providers/providers/browse.html:223
 msgid "International"
 msgstr "Международный"
 
+#: templates/admin/payout_providers/providers/browse.html:252
 msgid "Update"
 msgstr "Обновить"
 
+#: templates/admin/payout_providers/providers/browse.html:258
+#: templates/admin/payout_providers/providers/browse.html:332
 msgid "Configure"
 msgstr "Настроить"
 
+#: templates/admin/payout_providers/providers/browse.html:266
 msgid "Install"
 msgstr "Установить"
 
+#: templates/admin/payout_providers/providers/browse.html:276
 msgid "View Details"
 msgstr "Посмотреть детали"
 
+#: templates/admin/payout_providers/providers/browse.html:285
 msgid "Learn More"
 msgstr "Узнать больше"
 
+#: templates/admin/payout_providers/providers/browse.html:299
+#: templates/admin/payout_providers/wizard/step1_select.html:99
 msgid "No Providers Available"
 msgstr "Поставщики недоступны"
 
+#: templates/admin/payout_providers/providers/browse.html:300
 msgid ""
-"No payout providers are currently available. Please check your update server"
-" connection or contact support."
+"No payout providers are currently available. Please check your update server "
+"connection or contact support."
 msgstr ""
 "В настоящее время поставщики выплат недоступны. Пожалуйста, проверьте "
 "соединение с сервером обновлений или обратитесь в службу поддержки."
 
+#: templates/admin/payout_providers/providers/browse.html:309
 msgid "Installing provider..."
 msgstr "Установка провайдера..."
 
+#: templates/admin/payout_providers/providers/browse.html:327
 msgid "Installing..."
 msgstr "Установка..."
 
+#: templates/admin/payout_providers/providers/browse.html:328
 msgid "Provider installed successfully!"
 msgstr "Поставщик успешно установлен!"
 
+#: templates/admin/payout_providers/providers/browse.html:329
 msgid "Failed to install provider."
 msgstr "Не удалось установить поставщика."
 
+#: templates/admin/payout_providers/providers/browse.html:330
 msgid "An error occurred during installation."
 msgstr "Произошла ошибка во время установки."
 
+#: templates/admin/payout_providers/providers/browse.html:333
 msgid "Updating..."
 msgstr "Обновление..."
 
+#: templates/admin/payout_providers/providers/browse.html:334
 msgid "Provider updated successfully!"
 msgstr "Поставщик успешно обновлен!"
 
+#: templates/admin/payout_providers/providers/browse.html:335
 msgid "Failed to update provider."
 msgstr "Не удалось обновить поставщика."
 
+#: templates/admin/payout_providers/providers/browse.html:336
 msgid "An error occurred during update."
 msgstr "Произошла ошибка во время обновления."
 
+#: templates/admin/payout_providers/providers/browse.html:337
 #, python-brace-format
 msgid "Install {name}?"
 msgstr "Установить {name}?"
 
+#: templates/admin/payout_providers/providers/browse.html:338
 #, python-brace-format
 msgid "Update {name} to the latest version?"
 msgstr "Обновить {name} до последней версии?"
 
+#: templates/admin/payout_providers/wizard/base.html:4
+#: templates/admin/payout_providers/wizard/base.html:16
 msgid "Connect Payout Provider"
 msgstr "Подключить поставщика выплат"
 
+#: templates/admin/payout_providers/wizard/base.html:17
 msgid "Follow these steps to connect your payout provider account"
-msgstr ""
-"Следуйте этим шагам, чтобы подключить учетную запись поставщика выплат"
+msgstr "Следуйте этим шагам, чтобы подключить учетную запись поставщика выплат"
 
+#: templates/admin/payout_providers/wizard/base.html:26
 msgid "Select Provider"
 msgstr "Выбрать поставщика"
 
+#: templates/admin/payout_providers/wizard/base.html:35
+#: templates/admin/payout_providers/wizard/step2_setup.html:8
 msgid "Setup Instructions"
 msgstr "Инструкции по настройке"
 
+#: templates/admin/payout_providers/wizard/base.html:44
 msgid "Enter Credentials"
 msgstr "Введите учетные данные"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:6
 msgid "Select a Payout Provider"
 msgstr "Выберите поставщика выплат"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:7
 msgid "Choose the payout provider you want to connect for affiliate payments."
 msgstr ""
 "Выберите поставщика выплат, который вы хотите подключить для партнерских "
 "платежей."
 
+#: templates/admin/payout_providers/wizard/step1_select.html:51
 msgid "Single Payouts"
 msgstr "Единичные выплаты"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:61
 msgid "Cancellation"
 msgstr "Отмена"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:100
 msgid "No payout provider components are currently installed."
 msgstr "В настоящее время компоненты поставщиков выплат не установлены."
 
+#: templates/admin/payout_providers/wizard/step1_select.html:101
 msgid ""
 "Please download and install payout provider components from the component "
 "registry."
@@ -673,79 +908,108 @@ msgstr ""
 "Пожалуйста, загрузите и установите компоненты поставщиков выплат из реестра "
 "компонентов."
 
+#: templates/admin/payout_providers/wizard/step1_select.html:103
 msgid "Browse Components"
 msgstr "Просмотр компонентов"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:114
 msgid "Cancel"
 msgstr "Отменить"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:117
+#: templates/admin/payout_providers/wizard/step3_credentials.html:141
 msgid "Next"
 msgstr "Следующий"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:11
 #, python-format
 msgid ""
 "\n"
-"        Before entering credentials, review these setup steps for %(provider)s.\n"
+"        Before entering credentials, review these setup steps for "
+"%(provider)s.\n"
 "        "
 msgstr ""
 "\n"
-"        Перед вводом учетных данных просмотрите эти шаги настройки для %(provider)s.\n"
+"        Перед вводом учетных данных просмотрите эти шаги настройки для "
+"%(provider)s.\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:23
 msgid "Setup Instructions Not Available"
 msgstr "Инструкции по настройке недоступны"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:25
 #, python-format
 msgid ""
 "\n"
-"                    Setup instructions are not available for this version of %(provider)s.\n"
-"                    Please contact support for assistance or check for an updated version.\n"
+"                    Setup instructions are not available for this version of "
+"%(provider)s.\n"
+"                    Please contact support for assistance or check for an "
+"updated version.\n"
 "                    "
 msgstr ""
 "\n"
-"                    Инструкции по настройке недоступны для этой версии %(provider)s. Пожалуйста, свяжитесь с поддержкой для получения помощи или проверьте наличие обновленной версии.\n"
+"                    Инструкции по настройке недоступны для этой версии "
+"%(provider)s. Пожалуйста, свяжитесь с поддержкой для получения помощи или "
+"проверьте наличие обновленной версии.\n"
 "                    "
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:44
+#: templates/admin/payout_providers/wizard/step3_credentials.html:138
+#: templates/admin/payout_providers/wizard/step4_test.html:58
 msgid "Back"
 msgstr "Назад"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:47
 msgid "Continue to Credentials"
 msgstr "Перейти к учетным данным"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "Введите учетные данные API"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
-"        Enter your API credentials for %(provider)s. These will be securely encrypted and stored.\n"
+"        Enter your API credentials for %(provider)s. These will be securely "
+"encrypted and stored.\n"
 "        "
 msgstr ""
 "\n"
-"        Введите свои учетные данные API для %(provider)s. Они будут безопасно зашифрованы и сохранены.\n"
+"        Введите свои учетные данные API для %(provider)s. Они будут "
+"безопасно зашифрованы и сохранены.\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "Еще нет аккаунта?"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "Для получения учетных данных API вам понадобится аккаунт."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "Зарегистрироваться здесь"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "Учетные данные API"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "Выберите..."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "Для этого провайдера не настроены поля учетных данных."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:114
 msgid "Display Name"
 msgstr "Отображаемое имя"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:122
 msgid ""
 "Optional friendly name to identify this account. Defaults to provider name "
 "if not specified."
@@ -753,6 +1017,7 @@ msgstr ""
 "Необязательное дружественное имя для идентификации этой учетной записи. По "
 "умолчанию используется имя поставщика, если оно не указано."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:129
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
@@ -760,163 +1025,216 @@ msgstr ""
 "Ваши учетные данные будут зашифрованы с использованием шифрования AES-256 "
 "перед сохранением в базе данных."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
-"        Test the connection to %(provider)s to verify your credentials are correct.\n"
+"        Test the connection to %(provider)s to verify your credentials are "
+"correct.\n"
 "        "
 msgstr ""
 "\n"
-"        Проверьте соединение с %(provider)s, чтобы убедиться, что ваши учетные данные корректны.\n"
+"        Проверьте соединение с %(provider)s, чтобы убедиться, что ваши "
+"учетные данные корректны.\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step4_test.html:21
+#: templates/admin/payout_providers/wizard/step4_test.html:70
 msgid "Testing connection..."
 msgstr "Тестирование соединения..."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:22
+#: templates/admin/payout_providers/wizard/step4_test.html:71
 msgid "Please wait while we verify your credentials."
 msgstr "Пожалуйста, подождите, пока мы проверим ваши учетные данные."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr ""
 "Нажмите, чтобы протестировать соединение с введенными учетными данными."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:42
+#: templates/admin/payout_providers/wizard/step4_test.html:72
 msgid "Connection Successful!"
 msgstr "Соединение успешно!"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:46
 msgid "Connection Details"
 msgstr "Детали соединения"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:61
+#: templates/admin/payout_providers/wizard/step4_test.html:80
 msgid "Save & Finish"
 msgstr "Сохранить и завершить"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:73
 msgid "Your credentials were verified successfully."
 msgstr "Ваши учетные данные успешно проверены."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:75
 msgid "Could not connect to the provider API."
 msgstr "Невозможно подключиться к API провайдера."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:78
 msgid "Saving..."
 msgstr "Сохранение..."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:79
 msgid "Failed to save provider account."
 msgstr "Не удалось сохранить учетную запись провайдера."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:81
 msgid "An error occurred while saving."
 msgstr "Произошла ошибка при сохранении."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:82
 msgid "Environment"
 msgstr "Среда"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:83
 msgid "Account ID"
 msgstr "Идентификатор счета"
 
+#: views/provider_browse.py:177
 msgid "Provider is already installed. Configure it now."
 msgstr "Провайдер уже установлен. Настройте его сейчас."
 
+#: views/provider_browse.py:206 views/provider_browse.py:346
 msgid "Provider not found on update server."
 msgstr "Провайдер не найден на сервере обновлений."
 
+#: views/provider_browse.py:216
 msgid "Could not determine provider version."
 msgstr "Не удалось определить версию провайдера."
 
+#: views/provider_browse.py:238
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Не удалось загрузить провайдера: %(error)s"
 
+#: views/provider_browse.py:251
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Не удалось установить провайдера: %(error)s"
 
+#: views/provider_browse.py:284
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "Провайдер \"%(name)s\" успешно установлен! Настройте его сейчас."
 
+#: views/provider_browse.py:293
 msgid "An unexpected error occurred during installation."
 msgstr "Произошла непредвиденная ошибка во время установки."
 
+#: views/provider_browse.py:316
 msgid "Provider not installed."
 msgstr "Провайдер не установлен."
 
+#: views/provider_browse.py:332
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Не удалось подключиться к серверу обновлений: %(error)s"
 
+#: views/provider_browse.py:355
 msgid "Could not determine latest version."
 msgstr "Не удалось определить последнюю версию."
 
+#: views/provider_browse.py:364
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "Провайдер \"%(name)s\" уже актуален (v%(version)s)."
 
+#: views/provider_browse.py:379
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Не удалось загрузить обновление: %(error)s"
 
+#: views/provider_browse.py:391
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Не удалось установить обновление: %(error)s"
 
+#: views/provider_browse.py:428
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "Провайдер \"%(name)s\" успешно обновлен до версии v%(version)s!"
 
+#: views/provider_browse.py:437
 msgid "An unexpected error occurred during update."
 msgstr "Произошла непредвиденная ошибка во время обновления."
 
+#: views/wizard.py:147
 msgid "Connect Payout Provider - Select Provider"
 msgstr "Подключить поставщика выплат - Выбрать поставщика"
 
+#: views/wizard.py:160
 msgid "Please select a provider."
 msgstr "Пожалуйста, выберите провайдера."
 
+#: views/wizard.py:168
 msgid "Invalid provider selected."
 msgstr "Выбран недопустимый провайдер."
 
+#: views/wizard.py:196 views/wizard.py:287
 msgid "Please select a provider first."
 msgstr "Сначала выберите провайдера."
 
+#: views/wizard.py:241
 #, python-format
 msgid "Setup instructions not found for %(provider)s. Please contact support."
 msgstr ""
-"Инструкции по настройке не найдены для %(provider)s. Пожалуйста, свяжитесь с"
-" поддержкой."
+"Инструкции по настройке не найдены для %(provider)s. Пожалуйста, свяжитесь с "
+"поддержкой."
 
+#: views/wizard.py:246 views/wizard.py:309
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Ошибка загрузки провайдера: %(error)s"
 
+#: views/wizard.py:256
 msgid "Connect Payout Provider - Setup Instructions"
 msgstr "Подключить поставщика выплат - Инструкции по настройке"
 
+#: views/wizard.py:302
 msgid "Could not load provider configuration."
 msgstr "Не удалось загрузить конфигурацию провайдера."
 
+#: views/wizard.py:313
 msgid "Connect Payout Provider - Enter Credentials"
 msgstr "Подключить поставщика выплат - Ввести учетные данные"
 
+#: views/wizard.py:343
 msgid "Error loading provider configuration."
 msgstr "Ошибка загрузки конфигурации поставщика."
 
+#: views/wizard.py:391
 msgid "Please complete previous steps first."
 msgstr "Сначала завершите предыдущие шаги."
 
+#: views/wizard.py:399
 msgid "Provider not found."
 msgstr "Поставщик не найден."
 
+#: views/wizard.py:403
 msgid "Connect Payout Provider - Test Connection"
 msgstr "Подключить поставщика выплат - Проверить соединение"
 
+#: views/wizard.py:433
 msgid "Provider implementation not found."
 msgstr "Реализация поставщика не найдена."
 
+#: views/wizard.py:457
 msgid "An unexpected error occurred during connection test."
 msgstr "Произошла непредвиденная ошибка во время тестирования соединения."
 
+#: views/wizard.py:516
 msgid "Provider connected successfully!"
 msgstr "Поставщик успешно подключен!"
 
+#: views/wizard.py:529
 msgid "An unexpected error occurred while saving."
 msgstr "При сохранении произошла непредвиденная ошибка."
 
+#: views/wizard.py:535
 msgid "Invalid action"
 msgstr "Недопустимое действие"

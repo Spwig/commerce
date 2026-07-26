@@ -421,13 +421,15 @@
    Responsive Adjustments
    ========================================================================== */
 @media (max-width: 767px) {
-  .site-header {
-    overflow-x: hidden;
-  }
-
+  /* NB: do NOT put overflow-x on .site-header. `overflow-x: hidden` computes
+     overflow-y to `auto`, turning the header into a scroll container, which
+     clips every dropdown that hangs below it (account menu, search
+     autocomplete, nav dropdowns). Contain overflow on the flex rows instead —
+     an absolutely-positioned dropdown escapes those. */
   .header-zone__inner {
     flex-wrap: wrap;
     gap: var(--theme-space-2, 0.5rem);
+    max-width: 100%;
   }
 
   .header-zone__section {
@@ -527,7 +529,7 @@
   right: 0;
   bottom: 0;
   background-color: var(--theme-color-surface, #fff);
-  z-index: var(--theme-z-modal, 1000);
+  z-index: var(--theme-z-modal, 1050);
   overflow-y: auto;
   transform: translateX(-100%);
   transition: transform 0.3s ease;

@@ -123,19 +123,12 @@ Added comprehensive factory support for all media library models:
 **Usage Example:**
 ```python
 # Create JPEG asset in folder with tags
-asset = MediaAssetFactory(
-    jpeg=True,
-    in_folder=True,
-    uploaded_by=admin_user
-)
-asset.tags.add(TagFactory(name='product'))
+asset = MediaAssetFactory(jpeg=True, in_folder=True, uploaded_by=admin_user)
+asset.tags.add(TagFactory(name="product"))
 
 # Create complete thumbnail set
-for size in ['small', 'medium', 'large']:
-    ThumbnailFactory(
-        media_asset=asset,
-        **{size: True}
-    )
+for size in ["small", "medium", "large"]:
+    ThumbnailFactory(media_asset=asset, **{size: True})
 ```
 
 ## Running Tests

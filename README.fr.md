@@ -41,6 +41,9 @@
   <a href="https://github.com/Spwig/commerce/actions"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Spwig/commerce/test.yml?branch=main&label=tests"></a>
   <a href="https://github.com/Spwig/commerce/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Spwig/commerce"></a>
   <a href="https://github.com/Spwig/commerce/discussions"><img alt="Discussions" src="https://img.shields.io/github/discussions/Spwig/commerce"></a>
+  <a href="https://spwig.com"><img alt="Installs" src="https://spwig.com/badges/installs.svg"></a>
+  <a href="https://spwig.com"><img alt="Live stores" src="https://spwig.com/badges/stores.svg"></a>
+  <a href="https://github.com/Spwig/commerce"><img alt="Clones (14d)" src="https://spwig.com/badges/clones.svg"></a>
 </p>
 
 ## Qu'est-ce que Spwig ?

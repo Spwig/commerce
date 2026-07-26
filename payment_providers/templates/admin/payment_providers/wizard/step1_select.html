@@ -6,9 +6,9 @@
     <h2 class="step-title">{% trans "Select a Payment Provider" %}</h2>
     <p class="step-description">{% trans "Choose the payment provider you want to connect to your store." %}</p>
 
-    {# Broken providers — registry row exists but files missing/unreadable.
+    {% comment %} Broken providers — registry row exists but files missing/unreadable.
        Without this banner these used to silently disappear from the list,
-       making it look like Stripe (or whichever) wasn't installed at all. #}
+       making it look like Stripe (or whichever) wasn't installed at all. {% endcomment %}
     {% if broken_providers %}
     <div class="broken-providers-warning" role="alert">
         <div class="broken-providers-warning__icon">

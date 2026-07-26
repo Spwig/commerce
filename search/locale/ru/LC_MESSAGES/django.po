@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,27 +20,43 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14) ? 2 : 3);\n"
 
+#: admin.py:26 templates/admin/search/searchsettings/change_form.html:23
 msgid "General"
 msgstr "Общие"
 
+#: admin.py:33 templates/admin/search/searchsettings/change_form.html:27
+#: templates/admin/search/searchsettings/change_form.html:78
 msgid "Autocomplete"
 msgstr "Автодополнение"
 
+#: admin.py:45
 msgid "Autocomplete Display"
 msgstr "Отображение автодополнения"
 
+#: admin.py:65 admin.py:242 models.py:305
+#: templates/admin/search/searchsettings/change_form.html:31
+#: templates/admin/search/wizard/base.html:34
+#: templates/admin/search/wizard/step2_content.html:6
+#: templates/admin/search/wizard/step4_review.html:38
 msgid "Content Types"
 msgstr "Типы контента"
 
+#: admin.py:77 templates/admin/search/searchsettings/change_form.html:35
+#: templates/admin/search/searchsettings/change_form.html:247
 msgid "Deep Indexing"
 msgstr "Глубокий индекс"
 
+#: admin.py:90 templates/admin/search/searchsettings/change_form.html:39
 msgid "Fuzzy Matching"
 msgstr "Нечеткое совпадение"
 
+#: admin.py:101 templates/admin/search/searchsettings/change_form.html:318
+#: templates/admin/search/wizard/step3_weights.html:6
+#: templates/admin/search/wizard/step4_review.html:62
 msgid "Relevance Weights"
 msgstr "Веса релевантности"
 
+#: admin.py:115
 msgid ""
 "Adjust the relevance weights for different content types. Higher values (up "
 "to 2.0) increase importance."
@@ -48,71 +64,102 @@ msgstr ""
 "Настройте веса релевантности для различных типов контента. Более высокие "
 "значения (до 2.0) увеличивают важность."
 
+#: admin.py:120 templates/admin/search/searchsettings/change_form.html:47
 msgid "Caching"
 msgstr "Кэширование"
 
+#: admin.py:130 templates/admin/search/searchsettings/change_form.html:51
 msgid "Analytics"
 msgstr "Аналитика"
 
+#: admin.py:141
 msgid "Pagination"
 msgstr "Пагинация"
 
+#: admin.py:204 templates/admin/search/searchengine/change_form.html:111
+#: templates/admin/search/wizard/step1_basic.html:6
+#: templates/admin/search/wizard/step4_review.html:15
 msgid "Basic Information"
 msgstr "Базовая информация"
 
+#: admin.py:211 templates/admin/search/searchengine/change_form.html:141
 msgid "Content Configuration"
 msgstr "Настройка контента"
 
+#: admin.py:218 templates/admin/search/searchengine/change_form.html:95
+#: templates/admin/search/searchengine/change_form.html:163
 msgid "Exclusions"
 msgstr "Исключения"
 
+#: admin.py:225 templates/admin/search/searchengine/change_form.html:100
+#: templates/admin/search/searchengine/change_form.html:186
 msgid "Metadata"
 msgstr "Метаданные"
 
+#: admin.py:240 admin.py:300
+#: templates/admin/search/searchengine/change_list.html:59
+#: templates/admin/search/searchredirect/change_list.html:83
+#: templates/admin/search/synonym/change_list.html:96
 msgid "All"
 msgstr "Все"
 
+#: admin.py:279 admin.py:341
 msgid "Scope"
 msgstr "Область"
 
+#: admin.py:283
 msgid "Optionally limit this synonym to a specific language or search engine."
 msgstr ""
 "Опционально ограничьте это синонимом для конкретного языка или поискового "
 "движка."
 
+#: admin.py:297 models.py:352 models.py:384
+#: templates/admin/search/synonym/change_list.html:118
 msgid "Synonyms"
 msgstr "Синонимы"
 
+#: admin.py:302 models.py:363 models.py:497
+#: templates/admin/search/synonym/change_list.html:66
 msgid "Language"
 msgstr "Язык"
 
+#: admin.py:335
 msgid "Redirect"
 msgstr "Перенаправление"
 
+#: admin.py:348
 msgid "Statistics"
 msgstr "Статистика"
 
+#: admin.py:363 models.py:426
 msgid "Redirect URL"
 msgstr "URL перенаправления"
 
+#: admin.py:509
 msgid "Text Preview"
 msgstr "Предварительный просмотр текста"
 
+#: api_views.py:66 api_views.py:139 api_views.py:396
 msgid "Search query"
 msgstr "Запрос поиска"
 
+#: api_views.py:68
 msgid "Language code (e.g., en, es, fr)"
 msgstr "Код языка (например, en, es, fr)"
 
+#: api_views.py:71 api_views.py:142 api_views.py:292
 msgid "Search engine slug"
 msgstr "URL-псевдоним поисковой системы"
 
+#: api_views.py:73
 msgid "Max results per type"
 msgstr "Максимальное количество результатов на тип"
 
+#: api_views.py:77
 msgid "Autocomplete search"
 msgstr "Автодополнение поиска"
 
+#: api_views.py:79
 msgid ""
 "Fast predictive search suggestions. Returns products, categories, brands, "
 "and blog posts."
@@ -120,378 +167,515 @@ msgstr ""
 "Быстрые предиктивные предложения поиска. Возвращает продукты, категории, "
 "бренды и посты блога."
 
+#: api_views.py:140 api_views.py:291 api_views.py:397
 msgid "Language code"
 msgstr "Код языка"
 
+#: api_views.py:146
 msgid "Filter by type (product/category/brand/blog_post)"
 msgstr "Фильтр по типу (товар/категория/бренд/блог_пост)"
 
+#: api_views.py:149
 msgid "Filter by category ID"
 msgstr "Фильтр по ID категории"
 
+#: api_views.py:150
 msgid "Filter by brand ID"
 msgstr "Фильтр по ID бренда"
 
+#: api_views.py:151
 msgid "Minimum price"
 msgstr "Минимальная цена"
 
+#: api_views.py:152
 msgid "Maximum price"
 msgstr "Максимальная цена"
 
+#: api_views.py:153
 msgid "Only in-stock items"
 msgstr "Только товары в наличии"
 
+#: api_views.py:156
 msgid "Sort order (relevance/price_asc/price_desc/newest)"
 msgstr ""
 "Порядок сортировки (релевантность/цена_по_возрастанию/цена_по_убыванию/новые)"
 
+#: api_views.py:159
 msgid "Page number"
 msgstr "Номер страницы"
 
+#: api_views.py:160
 msgid "Results per page"
 msgstr "Результатов на страницу"
 
+#: api_views.py:164
 msgid "Full search results"
 msgstr "Полные результаты поиска"
 
+#: api_views.py:165
 msgid "Paginated search results with facets and filtering."
 msgstr "Разбитые на страницы результаты поиска с фасетами и фильтрацией."
 
+#: api_views.py:294
 msgid "Number of days to analyze"
 msgstr "Количество дней для анализа"
 
+#: api_views.py:296
 msgid "Max results"
 msgstr "Макс. результатов"
 
+#: api_views.py:300
 msgid "Trending searches"
 msgstr "Популярные поиски"
 
+#: api_views.py:301
 msgid "Popular search queries over the specified period."
 msgstr "Популярные запросы поиска за указанный период."
 
+#: api_views.py:346
 msgid "Search settings"
 msgstr "Настройки поиска"
 
+#: api_views.py:347
 msgid "Public search configuration for frontend JS."
 msgstr "Общая конфигурация поиска для frontend JS."
 
+#: api_views.py:366
 msgid "Track click"
 msgstr "Отслеживать клик"
 
+#: api_views.py:367
 msgid "Record a click on a search result for analytics."
 msgstr "Записать клик по результату поиска для аналитики."
 
+#: api_views.py:401
 msgid "Spelling suggestions"
 msgstr "Рекомендации по правописанию"
 
+#: api_views.py:402
 msgid "Suggest spelling corrections for misspelled queries."
 msgstr "Предложить исправления орфографии для неправильно написанных запросов."
 
+#: api_views.py:443
 msgid "List search engines"
 msgstr "Список поисковых систем"
 
+#: api_views.py:444
 msgid "Get list of available search engines."
 msgstr "Получить список доступных поисковых систем."
 
+#: apps.py:8 templates/admin/search/searchengine/change_list.html:48
+#: templates/admin/search/searchredirect/change_list.html:45
+#: templates/admin/search/synonym/change_list.html:45
 msgid "Search"
 msgstr "Поиск"
 
+#: models.py:17
 msgid "Search Enabled"
 msgstr "Поиск включен"
 
+#: models.py:19
 msgid "Enable or disable search functionality globally"
 msgstr "Включить или отключить функциональность поиска глобально"
 
+#: models.py:22
 msgid "Minimum Query Length"
 msgstr "Минимальная длина запроса"
 
+#: models.py:24
 msgid "Minimum number of characters required to trigger search"
 msgstr "Минимальное количество символов, необходимое для запуска поиска"
 
+#: models.py:29
 msgid "Autocomplete Enabled"
 msgstr "Автодополнение включено"
 
+#: models.py:31
 msgid "Show predictive search suggestions as user types"
 msgstr "Показывать предсказания поиска при вводе пользователя"
 
+#: models.py:34
 msgid "Autocomplete Max Results"
 msgstr "Максимальное количество результатов автодополнения"
 
+#: models.py:36
 msgid "Maximum number of suggestions per content type"
 msgstr "Максимальное количество предложений на тип контента"
 
+#: models.py:39
 msgid "Autocomplete Debounce (ms)"
 msgstr "Задержка автодополнения (мс)"
 
+#: models.py:41
 msgid "Delay in milliseconds before triggering autocomplete"
 msgstr "Задержка в миллисекундах перед запуском автодополнения"
 
+#: models.py:44
 msgid "Show Thumbnails"
 msgstr "Показывать миниатюры"
 
+#: models.py:46
 msgid "Display product/content thumbnails in search results"
 msgstr "Отображать миниатюры продукта/контента в результатах поиска"
 
+#: models.py:51
 msgid "Show Product Thumbnail"
 msgstr "Показывать миниатюру продукта"
 
+#: models.py:53
 msgid "Display product images in autocomplete dropdown"
 msgstr "Отображать изображения продукта в выпадающем списке автодополнения"
 
+#: models.py:56
 msgid "Show Product Description"
 msgstr "Показывать описание продукта"
 
+#: models.py:58
 msgid "Display short description in autocomplete dropdown"
 msgstr "Отображать краткое описание в выпадающем списке автодополнения"
 
+#: models.py:61
 msgid "Show Product Price"
 msgstr "Показывать цену продукта"
 
+#: models.py:61
 msgid "Display price in autocomplete dropdown"
 msgstr "Отображать цену в выпадающем списке автодополнения"
 
+#: models.py:64
 msgid "Show Product SKU"
 msgstr "Показывать SKU продукта"
 
+#: models.py:64
 msgid "Display SKU in autocomplete dropdown"
 msgstr "Отображать SKU в выпадающем списке автодополнения"
 
+#: models.py:67
 msgid "Show Product Stock Status"
 msgstr "Показывать статус наличия товара"
 
+#: models.py:69
 msgid "Display stock availability badge in autocomplete dropdown"
 msgstr "Отображать статус наличия товара в выпадающем списке автодополнения"
 
+#: models.py:74
 msgid "Show Blog Featured Image"
 msgstr "Показывать изображение блога"
 
+#: models.py:76
 msgid "Display featured image in blog post autocomplete results"
 msgstr ""
 "Отображать основное изображение в результатах автодополнения постов блога"
 
+#: models.py:79
 msgid "Show Blog Excerpt"
 msgstr "Показывать выдержку из блога"
 
+#: models.py:81
 msgid "Display excerpt in blog post autocomplete results"
 msgstr "Отображать выдержку в результатах автодополнения постов блога"
 
+#: models.py:84
 msgid "Blog Excerpt Length"
 msgstr "Длина выдержки блога"
 
+#: models.py:86
 msgid "Maximum characters to show for blog excerpts"
 msgstr "Максимальное количество символов для отображения выдержек блога"
 
+#: models.py:91
 msgid "Show Category Thumbnail"
 msgstr "Показывать миниатюру категории"
 
+#: models.py:93
 msgid "Display category image in autocomplete dropdown"
 msgstr "Отображать изображение категории в выпадающем списке автодополнения"
 
+#: models.py:96
 msgid "Show Category Product Count"
 msgstr "Показывать количество товаров в категории"
 
+#: models.py:98
 msgid "Display product count in category autocomplete results"
 msgstr "Отображать количество продуктов в результатах автодополнения категории"
 
+#: models.py:103
 msgid "Show Brand Logo"
 msgstr "Показывать логотип бренда"
 
+#: models.py:105
 msgid "Display brand logo in autocomplete dropdown"
 msgstr "Отображать логотип бренда в выпадающем списке автодополнения"
 
+#: models.py:108
 msgid "Show Brand Product Count"
 msgstr "Показывать количество товаров бренда"
 
+#: models.py:110
 msgid "Display product count in brand autocomplete results"
 msgstr "Отображать количество продуктов в результатах автодополнения бренда"
 
+#: models.py:115
 msgid "Search Products"
 msgstr "Поиск продуктов"
 
+#: models.py:115 views/engine_wizard.py:18
 msgid "Include products in search results"
 msgstr "Включать товары в результаты поиска"
 
+#: models.py:118
 msgid "Search Categories"
 msgstr "Поиск категорий"
 
+#: models.py:118 views/engine_wizard.py:19
 msgid "Include categories in search results"
 msgstr "Включать категории в результаты поиска"
 
+#: models.py:121
 msgid "Search Brands"
 msgstr "Поиск брендов"
 
+#: models.py:121 views/engine_wizard.py:20
 msgid "Include brands in search results"
 msgstr "Включать бренды в результаты поиска"
 
+#: models.py:124
 msgid "Search Blog Posts"
 msgstr "Поиск записей блога"
 
+#: models.py:124 views/engine_wizard.py:21
 msgid "Include blog posts in search results"
 msgstr "Включить посты блога в результаты поиска"
 
+#: models.py:129
 msgid "Index SKUs"
 msgstr "Индексировать артикульные номера (SKU)"
 
+#: models.py:129
 msgid "Include product SKUs in search"
 msgstr "Включать артикульные номера товаров в поиск"
 
+#: models.py:132
 msgid "Index Attributes"
 msgstr "Индексировать атрибуты"
 
+#: models.py:134
 msgid "Include product attributes (color, size, etc.) in search"
 msgstr "Включить атрибуты продукта (цвет, размер и т.д.) в поиск"
 
+#: models.py:137
 msgid "Index Custom Fields"
 msgstr "Индексировать пользовательские поля"
 
+#: models.py:139
 msgid "Include custom product fields in search"
 msgstr "Включить пользовательские поля продукта в поиск"
 
+#: models.py:142
 msgid "Index Reviews"
 msgstr "Индексировать отзывы"
 
+#: models.py:142
 msgid "Include product review content in search"
 msgstr "Включить содержимое отзывов о продуктах в поиск"
 
+#: models.py:145
 msgid "Index Documents"
 msgstr "Индексировать документы"
 
+#: models.py:147
 msgid "Index text content from digital asset documents (PDFs, Office files)"
 msgstr ""
 "Индексировать текстовое содержимое из цифровых документов (PDF, офисные "
 "файлы)"
 
+#: models.py:152
 msgid "Fuzzy Matching Enabled"
 msgstr "Включить размытое совпадение"
 
+#: models.py:154
 msgid "Enable typo tolerance in search queries"
 msgstr "Включить допуск опечаток в поисковых запросах"
 
+#: models.py:157
 msgid "Fuzzy Threshold"
 msgstr "Порог размытого совпадения"
 
+#: models.py:162
 msgid "Similarity threshold for fuzzy matching (0-1, higher = stricter)"
 msgstr "Порог схожести для нечеткого совпадения (0-1, выше = строже)"
 
+#: models.py:165
 msgid "Fuzzy Max Edits"
 msgstr "Максимальное количество изменений для размытого совпадения"
 
+#: models.py:167
 msgid "Maximum character edits allowed for fuzzy matching"
 msgstr ""
 "Максимальное количество изменений символов, разрешенных для нечеткого "
 "соответствия"
 
+#: models.py:172 views/engine_wizard.py:26
 msgid "Name Weight"
 msgstr "Вес названия"
 
+#: models.py:177 views/engine_wizard.py:26
 msgid "Relevance weight for product/item names"
 msgstr "Вес релевантности названий товаров/предметов"
 
+#: models.py:180 views/engine_wizard.py:27
 msgid "SKU Weight"
 msgstr "SKU Вес"
 
+#: models.py:185 views/engine_wizard.py:27
 msgid "Relevance weight for SKUs"
 msgstr "Вес релевантности для SKU"
 
+#: models.py:188 views/engine_wizard.py:28
 msgid "Description Weight"
 msgstr "Вес описания"
 
+#: models.py:193 views/engine_wizard.py:28
 msgid "Relevance weight for descriptions"
 msgstr "Вес релевантности для описаний"
 
+#: models.py:196 views/engine_wizard.py:31
 msgid "Attributes Weight"
 msgstr "Вес атрибутов"
 
+#: models.py:201
 msgid "Relevance weight for product attributes and custom fields"
 msgstr "Вес релевантности для атрибутов продукта и пользовательских полей"
 
+#: models.py:204
 msgid "Reviews Weight"
 msgstr "Вес отзывов"
 
+#: models.py:209
 msgid "Relevance weight for review content"
 msgstr "Вес релевантности для содержимого отзывов"
 
+#: models.py:212 views/engine_wizard.py:35
 msgid "Categories Weight"
 msgstr "Вес категорий"
 
+#: models.py:217 views/engine_wizard.py:35
 msgid "Relevance weight for category names"
 msgstr "Вес релевантности для названий категорий"
 
+#: models.py:220 views/engine_wizard.py:36
 msgid "Brands Weight"
 msgstr "Вес брендов"
 
+#: models.py:225 views/engine_wizard.py:36
 msgid "Relevance weight for brand names"
 msgstr "Вес релевантности для названий брендов"
 
+#: models.py:228
 msgid "Blog Posts Weight"
 msgstr "Вес блог-постов"
 
+#: models.py:233
 msgid "Relevance weight for blog post content"
 msgstr "Вес релевантности для содержимого блога"
 
+#: models.py:238
 msgid "Autocomplete Cache TTL"
 msgstr "Время жизни кэша автодополнения"
 
+#: models.py:240
 msgid "Time to live for autocomplete cache in seconds"
 msgstr "Время жизни кэша автозаполнения в секундах"
 
+#: models.py:243
 msgid "Results Cache TTL"
 msgstr "Время жизни кэша результатов"
 
+#: models.py:245
 msgid "Time to live for full search results cache in seconds"
 msgstr "Время жизни кэша полных результатов поиска в секундах"
 
+#: models.py:250
 msgid "Track Search Queries"
 msgstr "Отслеживать поисковые запросы"
 
+#: models.py:252
 msgid "Store search queries for analytics and trending searches"
 msgstr "Хранить запросы поиска для аналитики и популярных поисков"
 
+#: models.py:255
 msgid "Track Clicks"
 msgstr "Отслеживать клики"
 
+#: models.py:255
 msgid "Track clicks on search results for analytics"
 msgstr "Отслеживать клики по результатам поиска для аналитики"
 
+#: models.py:258
 msgid "Track Zero Results"
 msgstr "Отслеживать нулевые результаты"
 
+#: models.py:260
 msgid "Flag and track queries that return no results"
 msgstr "Отмечать и отслеживать запросы, возвращающие нулевые результаты"
 
+#: models.py:265
 msgid "Results Per Page"
 msgstr "Результатов на страницу"
 
+#: models.py:265
 msgid "Number of results to display per page"
 msgstr "Количество результатов для отображения на странице"
 
+#: models.py:268 models.py:333 models.py:379 models.py:451 models.py:514
+#: models.py:564 models.py:609
 msgid "Created At"
 msgstr "Создано в"
 
+#: models.py:269 models.py:334 models.py:380 models.py:452 models.py:515
+#: models.py:565
 msgid "Updated At"
 msgstr "Обновлено в"
 
+#: models.py:272 models.py:273 models.py:276
+#: templates/admin/search/searchsettings/change_form.html:4
+#: templates/admin/search/searchsettings/change_form.html:14
 msgid "Search Settings"
 msgstr "Настройки поиска"
 
+#: models.py:296
 msgid "Name"
 msgstr "Название"
 
+#: models.py:296
 msgid "Engine name (e.g., \"Shop Search\", \"Blog Search\")"
 msgstr "Название движка (например, \"Shop Search\", \"Blog Search\")"
 
+#: models.py:299 templates/admin/search/wizard/step1_basic.html:25
 msgid "Slug"
 msgstr "Slug"
 
+#: models.py:299
 msgid "URL-safe identifier"
 msgstr "Идентификатор, безопасный для URL"
 
+#: models.py:302 models.py:361 models.py:437
+#: templates/admin/search/partials/engine_cards.html:25
+#: templates/admin/search/partials/synonym_cards.html:39
+#: templates/admin/search/searchengine/change_form.html:36
+#: templates/admin/search/searchengine/change_list.html:60
+#: templates/admin/search/searchredirect/change_list.html:84
+#: templates/admin/search/synonym/change_list.html:97
+#: templates/admin/search/wizard/step1_basic.html:38
+#: templates/admin/search/wizard/step4_review.html:27
 msgid "Active"
 msgstr "Активный"
 
+#: models.py:302
 msgid "Enable or disable this search engine"
 msgstr "Включить или отключить этот движок поиска"
 
+#: models.py:309
 msgid ""
 "List of searchable content types for this engine (e.g., [\"product\", "
 "\"category\"])"
@@ -499,328 +683,456 @@ msgstr ""
 "Список типов контента, доступных для поиска в этом движке (например, "
 "[\"product\", \"category\"])"
 
+#: models.py:313
 msgid "Weight Overrides"
 msgstr "Переопределение веса"
 
+#: models.py:316
 msgid "Engine-specific weight adjustments (e.g., {\"weight_name\": 2.0})"
 msgstr ""
 "Настройки веса, специфичные для движка (например, {\"weight_name\": 2.0})"
 
+#: models.py:322
 msgid "Excluded Categories"
 msgstr "Исключенные категории"
 
+#: models.py:323
 msgid "Categories to exclude from this engine"
 msgstr "Категории, которые нужно исключить из этого движка"
 
+#: models.py:329
 msgid "Excluded Brands"
 msgstr "Исключенные бренды"
 
+#: models.py:330
 msgid "Brands to exclude from this engine"
 msgstr "Бренды, которые нужно исключить из этого движка"
 
+#: models.py:337 models.py:375 models.py:447 models.py:505
 msgid "Search Engine"
 msgstr "Поисковая система"
 
+#: models.py:338 templates/admin/search/searchengine/change_list.html:4
+#: templates/admin/search/searchengine/change_list.html:19
 msgid "Search Engines"
 msgstr "Поисковые системы"
 
+#: models.py:350
 msgid "Term"
 msgstr "Термин"
 
+#: models.py:350
 msgid "Original search term"
 msgstr "Оригинальный поисковый запрос"
 
+#: models.py:354
 msgid "List of equivalent terms (e.g., [\"sweater\", \"pullover\"])"
 msgstr "Список эквивалентных терминов (например, [\"sweater\", \"pullover\"])"
 
+#: models.py:357 templates/admin/search/partials/synonym_cards.html:49
 msgid "Bidirectional"
 msgstr "Бидirectional"
 
+#: models.py:359
 msgid "Apply mapping both ways (e.g., jumper ↔ sweater)"
 msgstr "Применять сопоставление в обе стороны (например, jumper ↔ sweater)"
 
+#: models.py:367
 msgid "Language code (e.g., \"en\", \"es\"). Leave blank for all languages."
 msgstr ""
 "Код языка (например, \"en\", \"es\"). Оставьте пустым, чтобы применить ко "
 "всем языкам."
 
+#: models.py:376 models.py:448
 msgid "Apply to specific engine only. Leave blank for all engines."
 msgstr ""
 "Применять только к конкретному движку. Оставьте пустым, чтобы применить ко "
 "всем двигателям."
 
+#: models.py:383
 msgid "Synonym"
 msgstr "Синоним"
 
+#: models.py:404
 msgid "Exact Match"
 msgstr "Точное совпадение"
 
+#: models.py:405 templates/admin/search/searchredirect/change_list.html:58
 msgid "Contains"
 msgstr "Содержит"
 
+#: models.py:406 templates/admin/search/searchredirect/change_list.html:59
 msgid "Starts With"
 msgstr "Начинается с"
 
+#: models.py:407
 msgid "Regular Expression"
 msgstr "Регулярное выражение"
 
+#: models.py:411
 msgid "Temporary (302)"
 msgstr "Временный (302)"
 
+#: models.py:412
 msgid "Permanent (301)"
 msgstr "Постоянный (301)"
 
+#: models.py:416
 msgid "Search Term"
 msgstr "Поисковый запрос"
 
+#: models.py:416
 msgid "Search term to trigger redirect"
 msgstr "Поисковый запрос для запуска перенаправления"
 
+#: models.py:419 templates/admin/search/searchredirect/change_list.html:53
 msgid "Match Type"
 msgstr "Тип совпадения"
 
+#: models.py:423
 msgid "How to match the search term"
 msgstr "Как сопоставлять терм поиска"
 
+#: models.py:428
 msgid "Target URL (can be relative like /products/sale/ or absolute)"
 msgstr ""
 "Целевая URL (может быть относительной, например /products/sale/ или "
 "абсолютной)"
 
+#: models.py:431
 msgid "Redirect Type"
 msgstr "Тип перенаправления"
 
+#: models.py:435
 msgid "HTTP redirect status code"
 msgstr "Код состояния HTTP-перенаправления"
 
+#: models.py:439
 msgid "Hit Count"
 msgstr "Количество совпадений"
 
+#: models.py:439
 msgid "Number of times this redirect was triggered"
 msgstr "Количество раз, когда был активирован этот редирект"
 
+#: models.py:455
 msgid "Search Redirect"
 msgstr "Перенаправление поиска"
 
+#: models.py:456 templates/admin/search/searchredirect/change_list.html:4
+#: templates/admin/search/searchredirect/change_list.html:19
 msgid "Search Redirects"
 msgstr "Перенаправления поиска"
 
+#: models.py:475
 msgid "Query"
 msgstr "Запрос"
 
+#: models.py:475
 msgid "Original search query"
 msgstr "Оригинальный поисковый запрос"
 
+#: models.py:477
 msgid "Normalized Query"
 msgstr "Нормализованный запрос"
 
+#: models.py:480
 msgid "Lowercase, trimmed query for aggregation"
 msgstr "Запрос в нижнем регистре, обрезанный для агрегации"
 
+#: models.py:483
 msgid "Result Count"
 msgstr "Количество результатов"
 
+#: models.py:483
 msgid "Number of results returned"
 msgstr "Количество возвращенных результатов"
 
+#: models.py:491 models.py:560
 msgid "User"
 msgstr "Пользователь"
 
+#: models.py:494 models.py:562
 msgid "Session Key"
 msgstr "Ключ сеанса"
 
+#: models.py:494
 msgid "For anonymous user tracking"
 msgstr "Для отслеживания анонимных пользователей"
 
+#: models.py:497
 msgid "Language code of the search"
 msgstr "Код языка поиска"
 
+#: models.py:508 templates/admin/search/partials/query_cards.html:20
 msgid "Zero Results"
 msgstr "Нет результатов"
 
+#: models.py:508
 msgid "Whether this query returned no results"
 msgstr "Вернет ли этот запрос нулевые результаты"
 
+#: models.py:511
 msgid "Response Time (ms)"
 msgstr "Время ответа (мс)"
 
+#: models.py:511
 msgid "Search response time in milliseconds"
 msgstr "Время ответа поиска в миллисекундах"
 
+#: models.py:518 models.py:544
+#: templates/admin/search/searchquery/change_list.html:86
 msgid "Search Query"
 msgstr "Поисковый запрос"
 
+#: models.py:519
 msgid "Search Queries"
 msgstr "Запросы поиска"
 
+#: models.py:547 models.py:594
 msgid "Content Type"
 msgstr "Тип содержимого"
 
+#: models.py:549 models.py:596
 msgid "Object ID"
 msgstr "ID объекта"
 
+#: models.py:552
 msgid "Position"
 msgstr "Позиция"
 
+#: models.py:552
 msgid "Position of the clicked item in search results"
 msgstr "Позиция кликнутого элемента в результатах поиска"
 
+#: models.py:568
 msgid "Search Click"
 msgstr "Клик по поиску"
 
+#: models.py:569
 msgid "Search Clicks"
 msgstr "Клики по поиску"
 
+#: models.py:586
 msgid "PDF"
 msgstr "PDF"
 
+#: models.py:587
 msgid "Word Document"
 msgstr "Документ Word"
 
+#: models.py:588
 msgid "Excel Spreadsheet"
 msgstr "Таблица Excel"
 
+#: models.py:589
 msgid "Text File"
 msgstr "Текстовый файл"
 
+#: models.py:590
 msgid "Other"
 msgstr "Другое"
 
+#: models.py:599
 msgid "Extracted Text"
 msgstr "Извлеченный текст"
 
+#: models.py:599
 msgid "Text content extracted from the document"
 msgstr "Текстовое содержимое, извлеченное из документа"
 
+#: models.py:602
 msgid "File Type"
 msgstr "Тип файла"
 
+#: models.py:605
 msgid "Checksum"
 msgstr "Контрольная сумма"
 
+#: models.py:605
 msgid "File checksum for change detection"
 msgstr "Контрольная сумма файла для обнаружения изменений"
 
+#: models.py:608
 msgid "Indexed At"
 msgstr "Индексировано в"
 
+#: models.py:612
 msgid "Search Index"
 msgstr "Индекс поиска"
 
+#: models.py:613
 msgid "Search Indexes"
 msgstr "Индексы поиска"
 
+#: templates/admin/search/partials/engine_cards.html:27
+#: templates/admin/search/partials/redirect_cards.html:32
+#: templates/admin/search/partials/synonym_cards.html:43
+#: templates/admin/search/searchengine/change_form.html:38
+#: templates/admin/search/searchengine/change_list.html:61
+#: templates/admin/search/searchredirect/change_list.html:85
+#: templates/admin/search/synonym/change_list.html:98
+#: templates/admin/search/wizard/step4_review.html:29
 msgid "Inactive"
 msgstr "Неактивный"
 
+#: templates/admin/search/partials/engine_cards.html:34
+#: templates/admin/search/searchredirect/change_list.html:56
 msgid "All Types"
 msgstr "Все типы"
 
+#: templates/admin/search/partials/engine_cards.html:40
 msgid "Custom Weights"
 msgstr "Пользовательские веса"
 
+#: templates/admin/search/partials/engine_cards.html:45
 msgid "excluded categories"
 msgstr "исключенные категории"
 
+#: templates/admin/search/partials/engine_cards.html:50
 msgid "excluded brands"
 msgstr "исключенные бренды"
 
+#: templates/admin/search/partials/engine_cards.html:54
+#: templates/admin/search/partials/synonym_cards.html:89
 msgid "Updated"
 msgstr "Обновлено"
 
+#: templates/admin/search/partials/engine_cards.html:60
+#: templates/admin/search/partials/redirect_cards.html:48
 msgid "Edit"
 msgstr "Редактировать"
 
+#: templates/admin/search/partials/engine_cards.html:63
+#: templates/admin/search/partials/redirect_cards.html:51
 msgid "Delete"
 msgstr "Удалить"
 
+#: templates/admin/search/partials/engine_cards.html:76
 msgid "No search engines found."
 msgstr "Поисковые машины не найдены."
 
+#: templates/admin/search/partials/engine_cards.html:78
 msgid "Create your first engine with the wizard"
 msgstr "Создайте свой первый движок с помощью мастера"
 
+#: templates/admin/search/partials/query_cards.html:10
 msgid "searches"
 msgstr "поиски"
 
+#: templates/admin/search/partials/query_cards.html:16
 msgid "Avg Results"
 msgstr "Среднее количество результатов"
 
+#: templates/admin/search/partials/query_cards.html:24
 msgid "CTR"
 msgstr "CTR"
 
+#: templates/admin/search/partials/query_cards.html:28
 msgid "Avg Response"
 msgstr "Среднее время ответа"
 
+#: templates/admin/search/partials/query_cards.html:35
+#: templates/admin/search/synonym/change_list.html:25
 msgid "Add Synonym"
 msgstr "Добавить синоним"
 
+#: templates/admin/search/partials/query_cards.html:38
+#: templates/admin/search/searchredirect/change_list.html:25
 msgid "Add Redirect"
 msgstr "Добавить перенаправление"
 
+#: templates/admin/search/partials/query_cards.html:47
 msgid "No search queries found matching your filters."
 msgstr "Не найдено запросов поиска, соответствующих вашим фильтрам."
 
+#: templates/admin/search/partials/redirect_cards.html:37
 msgid "Hits:"
 msgstr "Попадания:"
 
+#: templates/admin/search/partials/redirect_cards.html:64
 msgid "No redirects found matching your filters."
 msgstr "Не найдено перенаправлений, соответствующих вашим фильтрам."
 
+#: templates/admin/search/partials/synonym_cards.html:53
 msgid "One-way"
 msgstr "Односторонний"
 
+#: templates/admin/search/partials/synonym_cards.html:58
+#: templates/admin/search/synonym/change_list.html:121
+#: templates/admin/search/synonym/change_list.html:137
 msgid "synonym"
 msgstr "синоним"
 
+#: templates/admin/search/partials/synonym_cards.html:71
 msgid "All languages"
 msgstr "Все языки"
 
+#: templates/admin/search/partials/synonym_cards.html:83
 msgid "All engines"
 msgstr "Все движки"
 
+#: templates/admin/search/partials/synonym_cards.html:89
 msgid "ago"
 msgstr "назад"
 
+#: templates/admin/search/partials/synonym_cards.html:97
 msgid "Edit synonym"
 msgstr "Редактировать синоним"
 
+#: templates/admin/search/partials/synonym_cards.html:102
 msgid "Delete synonym"
 msgstr "Удалить синоним"
 
+#: templates/admin/search/partials/synonym_cards.html:112
 msgid "No synonyms found matching your criteria."
 msgstr "Не найдены синонимы, соответствующие вашим критериям."
 
+#: templates/admin/search/partials/synonym_cards.html:114
 msgid "Try adjusting your filters or"
 msgstr "Попробуйте настроить свои фильтры или"
 
+#: templates/admin/search/partials/synonym_cards.html:115
 msgid "add a new synonym"
 msgstr "добавить новый синоним"
 
+#: templates/admin/search/searchengine/change_form.html:4
+#: templates/admin/search/searchengine/change_form.html:27
 msgid "Edit Search Engine"
 msgstr "Редактировать поисковую систему"
 
+#: templates/admin/search/searchengine/change_form.html:4
+#: templates/admin/search/searchengine/change_form.html:29
 msgid "Add Search Engine"
 msgstr "Добавить поисковую систему"
 
+#: templates/admin/search/searchengine/change_form.html:40
 msgid "Created"
 msgstr "Создано"
 
+#: templates/admin/search/searchengine/change_form.html:45
+#: templates/admin/search/searchengine/change_form.html:220
 msgid "Save and continue editing"
 msgstr "Сохранить и продолжить редактирование"
 
+#: templates/admin/search/searchengine/change_form.html:48
+#: templates/admin/search/searchengine/change_form.html:219
 msgid "Save"
 msgstr "Сохранить"
 
+#: templates/admin/search/searchengine/change_form.html:61
 msgid "Please correct the errors below"
 msgstr "Пожалуйста, исправьте ошибки ниже"
 
+#: templates/admin/search/searchengine/change_form.html:87
 msgid "Basic"
 msgstr "Базовый"
 
+#: templates/admin/search/searchengine/change_form.html:91
 msgid "Content"
 msgstr "Контент"
 
+#: templates/admin/search/searchengine/change_form.html:142
 msgid ""
 "Configure which content types this engine searches and adjust relevance "
 "weights."
@@ -828,12 +1140,14 @@ msgstr ""
 "Настройте, какие типы контента ищет этот движок, и скорректируйте веса "
 "релевантности."
 
+#: templates/admin/search/searchengine/change_form.html:164
 msgid ""
 "Exclude specific categories or brands from this search engine's results."
 msgstr ""
 "Исключите определенные категории или бренды из результатов этого поискового "
 "движка."
 
+#: templates/admin/search/searchengine/change_list.html:21
 msgid ""
 "Configure different search engines for different contexts (e.g., shop "
 "search, blog search). Each engine can have its own content types, weights, "
@@ -843,81 +1157,121 @@ msgstr ""
 "магазине, поиск в блоге). Каждый движок может иметь свои собственные типы "
 "контента, веса и исключения."
 
+#: templates/admin/search/searchengine/change_list.html:25
 msgid "Setup Wizard"
 msgstr "Мастер настройки"
 
+#: templates/admin/search/searchengine/change_list.html:28
 msgid "Add Engine"
 msgstr "Добавить движок"
 
+#: templates/admin/search/searchengine/change_list.html:37
+#: templates/admin/search/searchredirect/change_list.html:34
+#: templates/admin/search/synonym/change_list.html:34
 msgid "Filters"
 msgstr "Фильтры"
 
+#: templates/admin/search/searchengine/change_list.html:50
 msgid "Filter by name..."
 msgstr "Фильтр по названию..."
 
+#: templates/admin/search/searchengine/change_list.html:56
+#: templates/admin/search/searchredirect/change_list.html:80
+#: templates/admin/search/synonym/change_list.html:93
 msgid "Status"
 msgstr "Статус"
 
+#: templates/admin/search/searchengine/change_list.html:70
+#: templates/admin/search/searchredirect/change_list.html:94
+#: templates/admin/search/synonym/change_list.html:107
 msgid "Apply Filters"
 msgstr "Применить фильтры"
 
+#: templates/admin/search/searchengine/change_list.html:73
+#: templates/admin/search/searchredirect/change_list.html:97
+#: templates/admin/search/synonym/change_list.html:110
 msgid "Clear All"
 msgstr "Очистить все"
 
+#: templates/admin/search/searchengine/change_list.html:81
 msgid "Engines"
 msgstr "Двиги"
 
+#: templates/admin/search/searchengine/change_list.html:84
+#: templates/admin/search/searchengine/change_list.html:100
 msgid "engine"
 msgstr "двиг"
 
+#: templates/admin/search/searchengine/change_list.html:93
 msgid "Loading engines..."
 msgstr "Загрузка движков..."
 
+#: templates/admin/search/searchquery/change_list.html:4
+#: templates/admin/search/searchquery/change_list.html:17
 msgid "Search Analytics"
 msgstr "Аналитика поиска"
 
+#: templates/admin/search/searchquery/change_list.html:21
 msgid "Export CSV"
 msgstr "Экспортировать CSV"
 
+#: templates/admin/search/searchquery/change_list.html:32
 msgid "Total Searches"
 msgstr "Общее количество поисков"
 
+#: templates/admin/search/searchquery/change_list.html:39
 msgid "Unique Queries"
 msgstr "Уникальные запросы"
 
+#: templates/admin/search/searchquery/change_list.html:46
 msgid "Zero Result Rate"
 msgstr "Доля запросов без результатов"
 
+#: templates/admin/search/searchquery/change_list.html:53
 msgid "Avg Response Time"
 msgstr "Среднее время отклика"
 
+#: templates/admin/search/searchquery/change_list.html:60
 msgid "Click-Through Rate"
 msgstr "Доля кликов"
 
+#: templates/admin/search/searchquery/change_list.html:69
 msgid "From"
 msgstr "От"
 
+#: templates/admin/search/searchquery/change_list.html:73
 msgid "To"
 msgstr "До"
 
+#: templates/admin/search/searchquery/change_list.html:77
+#: templates/admin/search/searchredirect/change_list.html:67
+#: templates/admin/search/synonym/change_list.html:53
 msgid "Engine"
 msgstr "Двиг"
 
+#: templates/admin/search/searchquery/change_list.html:79
+#: templates/admin/search/searchredirect/change_list.html:70
+#: templates/admin/search/synonym/change_list.html:56
 msgid "All Engines"
 msgstr "Все двигати"
 
+#: templates/admin/search/searchquery/change_list.html:88
 msgid "Filter by query..."
 msgstr "Фильтр по запросу..."
 
+#: templates/admin/search/searchquery/change_list.html:93
 msgid "Zero results only"
 msgstr "Только запросы без результатов"
 
+#: templates/admin/search/searchquery/change_list.html:96
 msgid "Apply"
 msgstr "Применить"
 
+#: templates/admin/search/searchquery/change_list.html:103
 msgid "Loading..."
 msgstr "Загрузка..."
 
+#: templates/admin/search/searchredirect/change_list.html:21
 msgid ""
 "Redirects automatically send users to a specific page when they search for "
 "certain terms. Great for promotional campaigns or common misspellings."
@@ -926,33 +1280,45 @@ msgstr ""
 "страницу, когда они ищут определенные термины. Отлично подходит для "
 "рекламных кампаний или распространенных опечаток."
 
+#: templates/admin/search/searchredirect/change_list.html:47
 msgid "Filter by term or URL..."
 msgstr "Фильтр по термину или URL..."
 
+#: templates/admin/search/searchredirect/change_list.html:57
 msgid "Exact"
 msgstr "Точное совпадение"
 
+#: templates/admin/search/searchredirect/change_list.html:60
 msgid "Regex"
 msgstr "Регулярное выражение"
 
+#: templates/admin/search/searchredirect/change_list.html:105
 msgid "Redirects"
 msgstr "Перенаправления"
 
+#: templates/admin/search/searchredirect/change_list.html:108
+#: templates/admin/search/searchredirect/change_list.html:124
 msgid "redirect"
 msgstr "перенаправление"
 
+#: templates/admin/search/searchredirect/change_list.html:117
 msgid "Loading redirects..."
 msgstr "Загрузка перенаправлений..."
 
+#: templates/admin/search/searchsettings/change_form.html:43
+#: templates/admin/search/wizard/base.html:43
 msgid "Weights"
 msgstr "Веса"
 
+#: templates/admin/search/searchsettings/change_form.html:59
 msgid "General Settings"
 msgstr "Общие настройки"
 
+#: templates/admin/search/searchsettings/change_form.html:105
 msgid "Autocomplete Display Settings"
 msgstr "Настройки отображения автодополнения"
 
+#: templates/admin/search/searchsettings/change_form.html:106
 msgid ""
 "Configure which information to display for each content type in autocomplete "
 "results."
@@ -960,37 +1326,47 @@ msgstr ""
 "Настройте, какую информацию отображать для каждого типа контента в "
 "результатах автодополнения."
 
+#: templates/admin/search/searchsettings/change_form.html:108
 msgid "Product Display"
 msgstr "Отображение продукта"
 
+#: templates/admin/search/searchsettings/change_form.html:147
 msgid "Blog Post Display"
 msgstr "Отображение поста блога"
 
+#: templates/admin/search/searchsettings/change_form.html:172
 msgid "Category Display"
 msgstr "Отображение категории"
 
+#: templates/admin/search/searchsettings/change_form.html:190
 msgid "Brand Display"
 msgstr "Отображение бренда"
 
+#: templates/admin/search/searchsettings/change_form.html:211
 msgid "Searchable Content Types"
 msgstr "Типы контента, доступные для поиска"
 
+#: templates/admin/search/searchsettings/change_form.html:212
 msgid "Choose which content types to include in search results."
 msgstr "Выберите, какие типы контента включить в результаты поиска."
 
+#: templates/admin/search/searchsettings/change_form.html:248
 msgid ""
 "Configure which additional content fields to include in the search index."
 msgstr ""
 "Настройте, какие дополнительные поля контента включить в индекс поиска."
 
+#: templates/admin/search/searchsettings/change_form.html:295
 msgid "Fuzzy Matching (Typo Tolerance)"
 msgstr "Нечеткое совпадение (толерантность к опечаткам)"
 
+#: templates/admin/search/searchsettings/change_form.html:296
 msgid "Configure how tolerant the search is to spelling mistakes and typos."
 msgstr ""
 "Настройте, насколько поисковый движок устойчив к ошибкам в написании и "
 "опечаткам."
 
+#: templates/admin/search/searchsettings/change_form.html:319
 msgid ""
 "Adjust how much each field contributes to search relevance. Higher values "
 "mean more importance."
@@ -998,26 +1374,34 @@ msgstr ""
 "Настройте, насколько каждый поле влияет на релевантность поиска. Более "
 "высокие значения означают большее значение."
 
+#: templates/admin/search/searchsettings/change_form.html:339
 msgid "Cache Settings"
 msgstr "Настройки кэша"
 
+#: templates/admin/search/searchsettings/change_form.html:340
 msgid "Configure how long search results are cached for faster performance."
 msgstr ""
 "Настройте, как долго результаты поиска кэшируются для повышения "
 "производительности."
 
+#: templates/admin/search/searchsettings/change_form.html:357
 msgid "Analytics & Tracking"
 msgstr "Аналитика и отслеживание"
 
+#: templates/admin/search/searchsettings/change_form.html:358
 msgid "Configure what search data to collect for analytics."
 msgstr "Настройте, какие данные поиска собирать для аналитики."
 
+#: templates/admin/search/searchsettings/change_form.html:391
 msgid "Save Settings"
 msgstr "Сохранить настройки"
 
+#: templates/admin/search/synonym/change_list.html:4
+#: templates/admin/search/synonym/change_list.html:19
 msgid "Search Synonyms"
 msgstr "Синонимы поиска"
 
+#: templates/admin/search/synonym/change_list.html:21
 msgid ""
 "Synonyms allow search queries to match related terms. For example, 'laptop' "
 "can also match 'notebook' and 'portable computer'."
@@ -1025,28 +1409,37 @@ msgstr ""
 "Синонимы позволяют запросам поиска совпадать с связанными терминами. "
 "Например, «laptop» также может совпадать с «notebook» и «portable computer»."
 
+#: templates/admin/search/synonym/change_list.html:47
 msgid "Filter by term..."
 msgstr "Фильтр по термину..."
 
+#: templates/admin/search/synonym/change_list.html:69
 msgid "All Languages"
 msgstr "Все языки"
 
+#: templates/admin/search/synonym/change_list.html:130
 msgid "Loading synonyms..."
 msgstr "Загрузка синонимов..."
 
+#: templates/admin/search/wizard/base.html:4
+#: templates/admin/search/wizard/base.html:15
 msgid "Search Engine Setup"
 msgstr "Настройка поискового движка"
 
+#: templates/admin/search/wizard/base.html:16
 msgid "Configure a new search engine for your store in a few simple steps."
 msgstr ""
 "Настройте новый движок поиска для вашего магазина за несколько простых шагов."
 
+#: templates/admin/search/wizard/base.html:25
 msgid "Basic Info"
 msgstr "Базовая информация"
 
+#: templates/admin/search/wizard/base.html:50
 msgid "Review"
 msgstr "Просмотр"
 
+#: templates/admin/search/wizard/step1_basic.html:7
 msgid ""
 "Give your search engine a name and identifier. The slug will be used in URLs "
 "and API calls."
@@ -1054,29 +1447,38 @@ msgstr ""
 "Дайте своему движку поиска имя и идентификатор. Slug будет использоваться в "
 "URL и вызовах API."
 
+#: templates/admin/search/wizard/step1_basic.html:14
 msgid "Engine Name"
 msgstr "Имя движка"
 
+#: templates/admin/search/wizard/step1_basic.html:17
 msgid "e.g., Shop Search, Blog Search"
 msgstr "Например, Shop Search, Blog Search"
 
+#: templates/admin/search/wizard/step1_basic.html:20
 msgid "A friendly name to identify this search engine."
 msgstr "Дружественное имя для идентификации этого движка поиска."
 
+#: templates/admin/search/wizard/step1_basic.html:28
 msgid "e.g., shop-search, blog-search"
 msgstr "Например, shop-search, blog-search"
 
+#: templates/admin/search/wizard/step1_basic.html:31
 msgid "URL-safe identifier. Leave blank to auto-generate from the name."
 msgstr ""
 "Идентификатор, безопасный для URL. Оставьте поле пустым, чтобы сгенерировать "
 "его автоматически из имени."
 
+#: templates/admin/search/wizard/step1_basic.html:42
 msgid "Inactive engines won't be available for search queries."
 msgstr "Неактивные движки не будут доступны для запросов поиска."
 
+#: templates/admin/search/wizard/step1_basic.html:50
+#: templates/admin/search/wizard/step3_weights.html:57
 msgid "Tip"
 msgstr "Совет"
 
+#: templates/admin/search/wizard/step1_basic.html:51
 msgid ""
 "You can create multiple engines for different purposes. For example, a 'Shop "
 "Search' for products and a 'Blog Search' for articles."
@@ -1084,12 +1486,17 @@ msgstr ""
 "Вы можете создать несколько движков для разных целей. Например, «Shop "
 "Search» для продуктов и «Blog Search» для статей."
 
+#: templates/admin/search/wizard/step1_basic.html:61
 msgid "Cancel"
 msgstr "Отменить"
 
+#: templates/admin/search/wizard/step1_basic.html:64
+#: templates/admin/search/wizard/step2_content.html:47
+#: templates/admin/search/wizard/step3_weights.html:73
 msgid "Next"
 msgstr "Следующий"
 
+#: templates/admin/search/wizard/step2_content.html:7
 msgid ""
 "Select which content types this search engine will index and include in "
 "results."
@@ -1097,9 +1504,11 @@ msgstr ""
 "Выберите, какие типы контента будет индексировать этот движок поиска и "
 "включать в результаты."
 
+#: templates/admin/search/wizard/step2_content.html:16
 msgid "Note"
 msgstr "Примечание"
 
+#: templates/admin/search/wizard/step2_content.html:17
 msgid ""
 "Leave all unchecked to search all content types. Select specific types to "
 "limit what this engine searches."
@@ -1107,9 +1516,13 @@ msgstr ""
 "Оставьте все неотмеченными, чтобы искать все типы контента. Выберите "
 "конкретные типы, чтобы ограничить, что ищет этот движок."
 
+#: templates/admin/search/wizard/step2_content.html:44
+#: templates/admin/search/wizard/step3_weights.html:70
+#: templates/admin/search/wizard/step4_review.html:97
 msgid "Back"
 msgstr "Назад"
 
+#: templates/admin/search/wizard/step3_weights.html:7
 msgid ""
 "Optionally customize how different fields contribute to search relevance. "
 "Higher values mean more importance."
@@ -1117,9 +1530,11 @@ msgstr ""
 "По желанию настройте, как разные поля влияют на релевантность поиска. Более "
 "высокие значения означают большее значение."
 
+#: templates/admin/search/wizard/step3_weights.html:17
 msgid "Use custom weights for this engine"
 msgstr "Использовать пользовательские веса для этого движка"
 
+#: templates/admin/search/wizard/step3_weights.html:21
 msgid ""
 "When disabled, the engine uses the global weight settings from Search "
 "Settings."
@@ -1127,9 +1542,11 @@ msgstr ""
 "Когда это отключено, движок использует глобальные настройки весов из "
 "Настроек поиска."
 
+#: templates/admin/search/wizard/step3_weights.html:28
 msgid "Weight Configuration"
 msgstr "Настройка веса"
 
+#: templates/admin/search/wizard/step3_weights.html:58
 msgid ""
 "Higher weights (up to 2.0) make matches in that field more important. A "
 "weight of 0 excludes the field from relevance scoring. Default values work "
@@ -1139,33 +1556,43 @@ msgstr ""
 "0 исключает поле из оценки релевантности. Значения по умолчанию хорошо "
 "работают для большинства случаев использования."
 
+#: templates/admin/search/wizard/step4_review.html:6
 msgid "Review & Create"
 msgstr "Просмотреть и создать"
 
+#: templates/admin/search/wizard/step4_review.html:7
 msgid "Review your search engine configuration before creating it."
 msgstr "Проверьте настройки поискового движка перед его созданием."
 
+#: templates/admin/search/wizard/step4_review.html:18
 msgid "Name:"
 msgstr "Имя:"
 
+#: templates/admin/search/wizard/step4_review.html:21
 msgid "Slug:"
 msgstr "Slug:"
 
+#: templates/admin/search/wizard/step4_review.html:24
 msgid "Status:"
 msgstr "Статус:"
 
+#: templates/admin/search/wizard/step4_review.html:53
 msgid "All Content Types"
 msgstr "Все типы контента"
 
+#: templates/admin/search/wizard/step4_review.html:71
 msgid "default:"
 msgstr "по умолчанию:"
 
+#: templates/admin/search/wizard/step4_review.html:78
 msgid "Using global weight settings from Search Settings."
 msgstr "Используются глобальные настройки весов из Настроек поиска."
 
+#: templates/admin/search/wizard/step4_review.html:86
 msgid "Ready to create"
 msgstr "Готов к созданию"
 
+#: templates/admin/search/wizard/step4_review.html:87
 msgid ""
 "Click 'Create Engine' to create this search engine. You can edit the "
 "configuration later, including adding category and brand exclusions."
@@ -1174,13 +1601,16 @@ msgstr ""
 "можете редактировать конфигурацию, включая добавление исключений по "
 "категориям и брендам."
 
+#: templates/admin/search/wizard/step4_review.html:100
 msgid "Create Engine"
 msgstr "Создать движок"
 
+#: templates/search/search_results.html:4
 #, python-format
 msgid "Search Results for \"%(q)s\""
 msgstr "Результаты поиска для \"%(q)s\""
 
+#: templates/search/search_results.html:17
 #, python-format
 msgid ""
 "\n"
@@ -1207,10 +1637,12 @@ msgstr[3] ""
 "                    %(counter)s result for \"%(q)s\"\n"
 "                "
 
+#: templates/search/search_results.html:29
 #, python-format
 msgid "Search completed in %(time)sms"
 msgstr "Поиск завершён за %(time)sмс"
 
+#: templates/search/search_results.html:142
 #, python-format
 msgid ""
 "We couldn't find anything matching \"%(q)s\". Try different keywords or "
@@ -1219,6 +1651,7 @@ msgstr ""
 "Ничего не найдено, соответствующего \"%(q)s\". Попробуйте другие ключевые "
 "слова или посетите наши категории."
 
+#: templates/search/search_results.html:211
 #, python-format
 msgid "%(count)s product"
 msgid_plural "%(count)s products"
@@ -1227,37 +1660,48 @@ msgstr[1] "%(count)s продукта"
 msgstr[2] "%(count)s продуктов"
 msgstr[3] "%(count)s продуктов"
 
+#: views/engine_wizard.py:18
 msgid "Products"
 msgstr "Товары"
 
+#: views/engine_wizard.py:19
 msgid "Categories"
 msgstr "Категории"
 
+#: views/engine_wizard.py:20
 msgid "Brands"
 msgstr "Бренды"
 
+#: views/engine_wizard.py:21
 msgid "Blog Posts"
 msgstr "Посты блога"
 
+#: views/engine_wizard.py:33
 msgid "Relevance weight for product attributes"
 msgstr "Вес релевантности для атрибутов продукта"
 
+#: views/engine_wizard.py:94
 msgid "Engine name is required."
 msgstr "Требуется имя движка."
 
+#: views/engine_wizard.py:103
 msgid "An engine with this slug already exists."
 msgstr "Движок с таким slug уже существует."
 
+#: views/engine_wizard.py:129
 msgid "Please complete Step 1 first."
 msgstr "Сначала завершите шаг 1."
 
+#: views/engine_wizard.py:166 views/engine_wizard.py:216
 msgid "Please complete the wizard steps."
 msgstr "Пожалуйста, завершите шаги мастера."
 
+#: views/engine_wizard.py:246
 #, python-format
 msgid "Search engine \"%(name)s\" created successfully!"
 msgstr "Поисковый движок \"%(name)s\" успешно создан!"
 
+#: views/engine_wizard.py:252
 #, python-format
 msgid "Failed to create engine: %(error)s"
 msgstr "Не удалось создать движок: %(error)s"

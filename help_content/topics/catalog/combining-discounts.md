@@ -25,6 +25,8 @@ published: true
 
 The platform offers four types of discounts that can work together: product sales, promotions, voucher codes, and gift cards. Understanding how they interact helps you run effective campaigns without unexpected results or unintended double-discounting.
 
+> **Gift cards can't be applied at online checkout yet.** The design described below — gift card applied last, after all other discounts — is how it will work once that feature ships. Right now a gift card can only be redeemed in person at **Point of Sale**, so the interactions described for the online storefront don't yet apply to gift cards specifically. See the **Gift Cards** help topic for the current state.
+
 ## The Four Discount Layers
 
 Each discount type operates at a different level and is visible to customers in different ways.
@@ -34,7 +36,7 @@ Each discount type operates at a different level and is visible to customers in 
 | **Product Sale** | Product edit form > Sale section | Automatically changes the displayed price | Yes — shown as a crossed-out original price |
 | **Promotion** | Marketing > Sales & Promotions | Automatically applied to matching products | Yes — shown as a sale price on product cards |
 | **Voucher Code** | Marketing > Vouchers | Customer enters a code at checkout | Only at checkout after entering the code |
-| **Gift Card** | Applied at checkout from a gift card balance | Reduces the payment total | Only at checkout |
+| **Gift Card** | Redeemed against a gift card balance | Reduces the payment total | Only at Point of Sale for now (see note above) |
 
 ## How Priority Works
 
@@ -57,7 +59,7 @@ The following table shows which discount combinations are allowed and how to con
 | Promotion + Voucher Code | Yes | Promotion discounts the product price, voucher discounts the cart total separately |
 | Voucher + Voucher | Configurable | The voucher's **"Cannot combine with other vouchers"** flag controls this (enabled by default) |
 | Voucher + Sale Items | Configurable | The voucher's **"Exclude sale items"** flag controls this |
-| Gift Card + Any Discount | Yes — always | Gift cards are applied last, reducing the final payment amount after all other discounts |
+| Gift Card + Any Discount | Yes — always | Gift cards are applied last, reducing the final payment amount after all other discounts. Currently only possible at Point of Sale — see note above |
 
 ## Common Scenarios
 
@@ -89,7 +91,7 @@ The following table shows which discount combinations are allowed and how to con
 | Move seasonal inventory | **Promotion** (category or collection targeting) | Automatic, no customer action needed, visible on product cards |
 | Reward a specific customer | **Voucher Code** (single use, per-customer limit) | Targeted, trackable, feels personal |
 | Quick single-product deal | **Product Sale** (on the product edit form) | Fastest to set up, no promotion wizard needed |
-| Store credit or gift | **Gift Card** | Balance-based, customer manages their own credit |
+| Store credit or gift | **Gift Card** | Balance-based; currently redeemable at Point of Sale only |
 | Sitewide event | **Promotion** (all products targeting) | Maximum reach, one setup covers everything |
 | Win-back campaign | **Voucher Code** (first-time or returning customer restrictions) | Can target specific customer segments |
 

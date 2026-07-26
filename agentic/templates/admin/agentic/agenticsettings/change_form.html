@@ -1,0 +1,58 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "AI Shopping" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block content %}
+{% if original and readiness %}
+<div class="agentic-readiness">
+
+  {# Verdict — reuses the admin message banner (theme-aware). #}
+  <ul class="messagelist">
+    <li class="{% if readiness.verdict == 'ready' %}success{% elif readiness.verdict == 'browse_only' %}warning{% else %}info{% endif %}">
+      {% if readiness.verdict == 'ready' %}<i class="fas fa-circle-check"></i>
+      {% elif readiness.verdict == 'browse_only' %}<i class="fas fa-eye"></i>
+      {% elif readiness.verdict == 'stopped' %}<i class="fas fa-hand"></i>
+      {% else %}<i class="fas fa-circle-minus"></i>{% endif %}
+      {{ readiness.headline }}
+    </li>
+  </ul>
+
+  {# Stats — reuses the shared dashboard cards from admin-base.css. #}
+  <div class="dashboard-stats-grid">
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-box-open"></i></div>
+      <div class="value">{{ readiness.products.ready }}</div>
+      <div class="label">{% trans "Products assistants can sell" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-eye-slash"></i></div>
+      <div class="value">{{ readiness.products.hidden }}</div>
+      <div class="label">{% trans "Hidden from assistants" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-robot"></i></div>
+      <div class="value">{{ readiness.agents.total }}</div>
+      <div class="label">{% trans "Assistants seen" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+      <div class="icon"><i class="fas fa-ban"></i></div>
+      <div class="value">{{ readiness.agents.blocked }}</div>
+      <div class="label">{% trans "Assistants blocked" %}</div>
+    </div>
+  </div>
+
+  {# Checklist — each check is a message banner (green when done, amber when not). #}
+  <ul class="messagelist">
+    {% for check in readiness.checks %}
+    <li class="{% if check.ok %}success{% else %}warning{% endif %}">
+      {% if check.ok %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-triangle-exclamation"></i>{% endif %}
+      <strong>{{ check.label }}</strong>{% if check.hint %} — {{ check.hint }}{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}

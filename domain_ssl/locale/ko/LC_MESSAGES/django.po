@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,113 +18,310 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "사용자 정의 도메인"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "도메인 및 SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "없음 (HTTP만)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "사용자 정의 인증서"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "자체 서명"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "외부에서 관리됨"
 
+#: models.py:22
 msgid "Idle"
 msgstr "대기 중"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "DNS 검증 중"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "설정 중"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "인증서 획득 중"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "서비스 재로딩"
 
+#: models.py:27
 msgid "Error"
 msgstr "오류"
 
+#: models.py:34
 msgid "Domain"
 msgstr "도메인"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "완전한 도메인 이름 (예: shop.example.com)"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "이전 도메인"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr "마지막 변경 전 도메인, 롤백 추적용"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "SSL 모드"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "인증서 도메인"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "인증서 발급자"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "인증서 만료"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "인증서 취득"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "와일드카드 인증서"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "클라우드플레어 API 토큰"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "DNS-01 도전 또는 Origin CA용 API 토큰"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "클라우드플레어 존 ID"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "관리자 이메일"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "Let's Encrypt 알림을 위한 연락 이메일"
 
+#: models.py:108
 msgid "Status"
 msgstr "상태"
 
+#: models.py:113
 msgid "Last Error"
 msgstr "최근 오류"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "활성 태스크 ID"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "현재 작업의 Celery 작업 ID"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "자동 갱신"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "만료 전에 인증서를 자동으로 갱신합니다"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "도메인 설정"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "설정된 도메인이 없습니다"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "귀하의 스토어 도메인"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "도메인 설정 로딩 중..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "현재 URL"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "사용자 정의 도메인 활성화"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "사용자 정의 도메인 제거"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "자신의 도메인 연결"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr "기본 myspwig.com 주소 대신 자신의 도메인 이름을 사용하세요."
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "귀하의 도메인 이름"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr "전체 도메인을 입력하세요 (예: www.yourstore.com 또는 shop.yourdomain.com)"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "계속"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "자신의 도메인을 가게로 연결하세요"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr "도메인 등록업체의 설정에 이 두 개의 DNS 레코드를 추가하세요:"
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "도메인 포인터"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "타입"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "이름"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "복사"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "값"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "소유권 검증"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "DNS 레코드를 어떻게 추가할 수 있나요?"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr "도메인 등록업체(도메인을 구입한 곳)에 로그인하여 DNS 설정을 찾으세요. 일반적인 등록업체:"
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr "내 상품 > DNS > 관리"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "도메인 목록 > 관리 > 고급 DNS"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > 기록 > 기록 추가"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > 사용자 정의 레코드"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr "DNS 변경은 전 세계적으로 최대 24시간까지 전파될 수 있지만, 일반적으로 몇 분 안에 적용됩니다."
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "이 기록을 추가했습니다 - 확인"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "취소"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "DNS 기록을 확인 중입니다..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "도메인 연결됨!"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "귀하의 상점은 다음 주소에서 이용 가능합니다"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "일찍."
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "SSL 인증서 제공에는 몇 분이 소요될 수 있습니다."
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "기록을 아직 찾지 못했습니다"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr "DNS 변경은 최대 24시간까지 걸릴 수 있습니다. 이 페이지에서 나중에 다시 시도할 수 있습니다."
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "다시 시도"

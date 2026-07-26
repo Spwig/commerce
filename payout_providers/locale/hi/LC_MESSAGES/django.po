@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <LL@li.org>\n"
@@ -18,385 +18,537 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:43
 msgid "Provider Information"
 msgstr "प्रोवाइडर जानकारी"
 
+#: admin.py:44 admin.py:431 admin.py:454
 msgid "Status"
 msgstr "स्थिति"
 
+#: admin.py:46 models.py:102
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:62
 msgid "Connection Status"
 msgstr "कनेक्शन स्थिति"
 
+#: admin.py:53
 msgid "Configuration"
 msgstr "संfiguration"
 
+#: admin.py:56 admin.py:433
 msgid "Timestamps"
 msgstr "टाइमस्टैंप"
 
+#: admin.py:113
 msgid "Provider"
 msgstr "प्रदाता"
 
+#: admin.py:139
 msgid "Connection"
 msgstr "कनेक्शन"
 
+#: admin.py:144 admin.py:147 models.py:91
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:75
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:179
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:87
 msgid "Active"
 msgstr "सक्रिय"
 
+#: admin.py:145
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:76
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:180
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:91
 msgid "Inactive"
 msgstr "असक्रिय"
 
+#: admin.py:153 admin.py:156 models.py:95
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:98
 msgid "Default"
 msgstr "डिफ़ॉल्ट"
 
+#: admin.py:159
 msgid "Test connection for selected providers"
 msgstr "चयनित प्रदाताओं के लिए कनेक्शन परीक्षण करें"
 
+#: admin.py:175
 #, python-format
 msgid "Successfully connected to %(count)d provider(s)."
 msgstr "सफलतापूर्वक %(count)d प्रदाता(ओं) से जुड़ गए।"
 
+#: admin.py:181
 #, python-format
 msgid "Failed to connect to %(count)d provider(s). Check error messages."
 msgstr "%(count)d प्रदाता(ओं) से जुड़ने में विफल रहे। त्रुटि संदेश देखें।"
 
+#: admin.py:227
 msgid "Provider {} successfully."
 msgstr "प्रदाता {} सफलतापूर्वक।"
 
+#: admin.py:228
 msgid "enabled"
 msgstr "सक्रिय"
 
+#: admin.py:228
 msgid "disabled"
 msgstr "असक्रिय"
 
+#: admin.py:233 admin.py:264 admin.py:292
 msgid "Provider not found"
 msgstr "प्रदाता नहीं मिला"
 
+#: admin.py:237 admin.py:268 admin.py:296 admin.py:384
+#: templates/admin/payout_providers/wizard/step4_test.html:77
+#: views/wizard.py:540
 msgid "An unexpected error occurred."
 msgstr "अप्रत्याशित त्रुटि हुई।"
 
+#: admin.py:260
 #, python-format
 msgid "%(name)s set as default provider."
 msgstr "%(name)s को डिफ़ॉल्ट प्रदाता के रूप में सेट कर दिया गया।"
 
+#: admin.py:284
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:185
 msgid "Connection test successful!"
 msgstr "कनेक्शन परीक्षण सफल!"
 
+#: admin.py:289
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:186
+#: views/wizard.py:473
 msgid "Connection test failed"
 msgstr "कनेक्शन परीक्षण विफल"
 
+#: admin.py:311
 msgid "Action and provider IDs required"
 msgstr "कार्रवाई और प्रदाता IDs की आवश्यकता है"
 
+#: admin.py:319
 #, python-format
 msgid "%(count)d provider(s) enabled."
 msgstr "%(count)d प्रदाता(ओं) को एनेबल कर दिया गया।"
 
+#: admin.py:323
 #, python-format
 msgid "%(count)d provider(s) disabled."
 msgstr "%(count)d प्रदाता(ओं) को डिसएबल कर दिया गया।"
 
+#: admin.py:330
 msgid "Select exactly one provider to set as default"
 msgstr "केवल एक प्रदाता का चयन करें डिफ़ॉल्ट के रूप में सेट करें"
 
+#: admin.py:339
 msgid "Default provider updated."
 msgstr "डिफ़ॉल्ट प्रदाता अपडेट किया गया।"
 
+#: admin.py:351
 #, python-format
 msgid "Tested %(count)d provider(s): %(success)d succeeded, %(fail)d failed."
 msgstr "%(count)d प्रदाता(ओं) के परीक्षण किया गया: %(success)d सफल, %(fail)d विफल।"
 
+#: admin.py:359
 msgid "You do not have permission to delete providers."
 msgstr "आपके पास प्रदाताओं को हटाने की अनुमति नहीं है।"
 
+#: admin.py:364
 #, python-format
 msgid "%(count)d provider(s) deleted."
 msgstr "%(count)d प्रदाता(ओं) को हटा दिया गया।"
 
+#: admin.py:370
 #, python-format
 msgid "Unknown action: %(action)s"
 msgstr "अज्ञात कार्य: %(action)s"
 
+#: admin.py:379
 msgid "Invalid request data."
 msgstr "अमान्य अनुरोध डेटा।"
 
+#: admin.py:420
 msgid "Event Information"
 msgstr "इवेंट जानकारी"
 
+#: admin.py:432 models.py:269
 msgid "Payload"
 msgstr "पेलोड"
 
+#: admin.py:439
 msgid "Not Checked"
 msgstr "अनचेक किया गया"
 
+#: admin.py:441
 msgid "Valid"
 msgstr "वैध"
 
+#: admin.py:442
 msgid "Invalid"
 msgstr "अमान्य"
 
+#: admin.py:444
 msgid "Signature"
 msgstr "हस्ताक्षर"
 
+#: admin.py:449 models.py:278
 msgid "Processed"
 msgstr "प्रक्रिया में"
 
+#: admin.py:451 templates/admin/payout_providers/wizard/step4_test.html:76
 msgid "Error"
 msgstr "त्रुटि"
 
+#: admin.py:452
 msgid "Pending"
 msgstr "लेट रहा है"
 
+#: apps.py:8
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:4
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:20
 msgid "Payout Providers"
 msgstr "पैदल प्रदाता"
 
+#: models.py:28
 msgid "PayPal"
 msgstr "पेपैल"
 
+#: models.py:29
 msgid "Airwallex"
 msgstr "एयरवैलेक्स"
 
+#: models.py:30
 msgid "Wise"
 msgstr "वाईज"
 
+#: models.py:34
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:67
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:78
 msgid "Untested"
 msgstr "अपरीक्षित"
 
+#: models.py:35
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:65
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:66
 msgid "Connected"
 msgstr "कनेक्ट करें"
 
+#: models.py:36 templates/admin/payout_providers/wizard/step4_test.html:74
 msgid "Connection Failed"
 msgstr "कनेक्शन विफल"
 
+#: models.py:37
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:74
 msgid "Invalid Credentials"
 msgstr "अमान्य ज्ञान"
 
+#: models.py:42 models.py:254
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:82
 msgid "Provider Type"
 msgstr "प्रदाता प्रकार"
 
+#: models.py:45
 msgid "The payout provider service"
 msgstr "पैदल प्रदाता सेवा"
 
+#: models.py:55
 msgid "Installed provider component from the component registry"
 msgstr "कम्पोनेंट रजिस्ट्री से प्रदाता कम्पोनेंट इंस्टॉल किया गया है"
 
+#: models.py:60
+#: templates/admin/payout_providers/wizard/step3_credentials.html:111
+#: templates/admin/payout_providers/wizard/step4_test.html:84
 msgid "Account Name"
 msgstr "खाता नाम"
 
+#: models.py:62
 msgid "A friendly name for this account (e.g., \"Primary PayPal\")"
 msgstr "इस खाते के लिए एक मित्रतापूर्ण नाम (उदा., \"मुख्य पेपैल\")"
 
+#: models.py:67
 msgid "Credentials"
 msgstr "ज्ञान"
 
+#: models.py:70
 msgid "Encrypted API credentials (never stored in plain text)"
 msgstr "एन्क्रिप्टेड API योग्यता (कभी भी सामान्य पाठ में नहीं संग्रहित किया जाता)"
 
+#: models.py:75
 msgid "Settings"
 msgstr "सेटिंग्स"
 
+#: models.py:78
 msgid "Provider-specific configuration settings"
 msgstr "प्रदाता-विशिष्ट विन्यास सेटिंग्स"
 
+#: models.py:83
 msgid "Supported Methods"
 msgstr "समर्थित विधियाँ"
 
+#: models.py:86
 msgid "List of payout methods this account supports"
 msgstr "इस खाते द्वारा समर्थित भुगतान विधियों की सूची"
 
+#: models.py:91
 msgid "Whether this provider account is active"
 msgstr "क्या यह प्रदाता खाता सक्रिय है"
 
+#: models.py:97
 msgid "Whether this is the default provider for its supported methods"
 msgstr "क्या यह अपनी समर्थित विधियों के लिए डिफ़ॉल्ट प्रदाता है"
 
+#: models.py:105
 msgid "Last Tested"
 msgstr "अंतिम परीक्षण"
 
+#: models.py:108
 msgid "Last Error"
 msgstr "अंतिम त्रुटि"
 
+#: models.py:108
 msgid "Last connection error message"
 msgstr "अंतिम कनेक्शन त्रुटि संदेश"
 
+#: models.py:112
 msgid "Created"
 msgstr "बनाया गया"
 
+#: models.py:113
 msgid "Updated"
 msgstr "अपडेट किया गया"
 
+#: models.py:116
 msgid "Payout Provider Account"
 msgstr "पैदल प्रदाता खाता"
 
+#: models.py:117 templates/admin/payout_providers/providers/browse.html:27
 msgid "Payout Provider Accounts"
 msgstr "पैदल प्रदाता खाता"
 
+#: models.py:168
 #, python-format
 msgid "There is already a default account for %(provider)s: %(name)s"
 msgstr "%(provider)s के लिए पहले से ही एक डिफ़ॉल्ट खाता है: %(name)s"
 
+#: models.py:254
 msgid "Provider that sent the webhook"
 msgstr "वह प्रदाता जो वेबहॉक भेजा"
 
+#: models.py:258
 msgid "Event Type"
 msgstr "इवेंट प्रकार"
 
+#: models.py:258
 msgid "Type of webhook event"
 msgstr "वेबहॉक इवेंट के प्रकार"
 
+#: models.py:262
 msgid "Event ID"
 msgstr "इवेंट ID"
 
+#: models.py:266
 msgid "Provider's unique event identifier"
 msgstr "प्रदाता का अद्वितीय इवेंट पहचानकर्ता"
 
+#: models.py:269
 msgid "Full webhook payload"
 msgstr "पूरा वेबहॉक पेलोड"
 
+#: models.py:271
 msgid "Headers"
 msgstr "हेडर"
 
+#: models.py:271
 msgid "Request headers"
 msgstr "अनुरोध हेडर्स"
 
+#: models.py:274
 msgid "Signature Valid"
 msgstr "हस्ताक्षर वैध"
 
+#: models.py:274
 msgid "Whether signature verification passed"
 msgstr "क्या हस्ताक्षर सत्यापन पारित हुआ"
 
+#: models.py:278
 msgid "Whether the webhook was successfully processed"
 msgstr "क्या वेबहॉक को सफलतापूर्वक प्रक्रिया किया गया था"
 
+#: models.py:282
 msgid "Processing Error"
 msgstr "प्रसंस्करण त्रुटि"
 
+#: models.py:285
 msgid "Error message if processing failed"
 msgstr "प्रोसेसिंग विफल होने पर त्रुटि संदेश"
 
+#: models.py:290
 msgid "Payout Reference"
 msgstr "पैदल संदर्भ"
 
+#: models.py:293
 msgid "Received"
 msgstr "प्राप्त"
 
+#: models.py:294
 msgid "Processed At"
 msgstr "प्रसंस्करण के समय"
 
+#: models.py:297
 msgid "Payout Webhook Log"
 msgstr "पैदल वेबहॉक लॉग"
 
+#: models.py:298
 msgid "Payout Webhook Logs"
 msgstr "पैदल वेबहॉक लॉग्स"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:22
 msgid "Manage payout provider accounts for affiliate payments"
 msgstr "अफिलिएट भुगतान के लिए भुगतान प्रदाता खातों के प्रबंधन करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:24
 msgid "provider"
 msgstr "प्रदाता"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:25
 msgid "active"
 msgstr "सक्रिय"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:26
 msgid "connected"
 msgstr "जुड़ा हुआ"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:31
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:159
 msgid "Browse & Install Providers"
 msgstr "प्रदाताओं की जांच और इंस्टॉल करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:48
 msgid "Filters"
 msgstr "फ़िल्टर"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:57
 msgid "Search"
 msgstr "खोज"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:58
 msgid "Search providers..."
 msgstr "प्रदाताओं की तलाश करें..."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:64
 msgid "All Statuses"
 msgstr "सभी स्थितियाँ"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:66
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:70
 msgid "Failed"
 msgstr "विफल"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:72
 msgid "Active Status"
 msgstr "सक्रिय स्थिति"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:74
 msgid "All"
 msgstr "सभी"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:84
 msgid "All Provider Types"
 msgstr "सभी प्रदाता प्रकार"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:96
 msgid "Apply Filters"
 msgstr "फ़िल्टर लागू करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:99
 msgid "Clear All"
 msgstr "सभी को साफ करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:110
 msgid "Bulk Actions"
 msgstr "बैच कार्रवाई"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:111
 msgid "Enable Selected"
 msgstr "चयनित को सक्रिय करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:112
 msgid "Disable Selected"
 msgstr "चयनित को असक्रिय करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:113
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:129
 msgid "Set as Default"
 msgstr "डिफ़ॉल्ट के रूप में सेट करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:114
 msgid "Test Connections"
 msgstr "कनेक्शन परीक्षण करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:115
 msgid "Delete Selected"
 msgstr "चयनित को हटाएं"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:117
 msgid "Apply"
 msgstr "लागू करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:119
 msgid "selected"
 msgstr "चयनित"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:129
 msgid "Select All"
 msgstr "सभी चुनें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:147
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s प्रदाता"
 msgstr[1] "%(counter)s प्रदाता"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:156
+#: templates/admin/payout_providers/payoutprovideraccount/partials/provider_cards.html:11
 msgid "No payout provider accounts found"
 msgstr "कोई भुगतान प्रदाता खाता नहीं मिला"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:157
 msgid ""
 "Get started by connecting your first payout provider for affiliate payments."
 msgstr "अफिलिएट भुगतान के लिए अपना पहला भुगतान प्रदाता जोड़कर शुरू करें।"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:169
 msgid "Loading..."
 msgstr "लोड हो रहा है..."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:181
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:119
 msgid "Enable"
 msgstr "सक्रिय करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:182
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:119
 msgid "Disable"
 msgstr "अक्षम करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:183
 msgid "Failed to toggle provider status"
 msgstr "प्रोवाइडर की स्थिति को टॉगल करने में विफल"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:184
 msgid "Failed to set default provider"
 msgstr "डिफ़ॉल्ट प्रोवाइडर सेट करने में विफल"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:187
 msgid "An error occurred during connection test."
 msgstr "कनेक्शन टेस्ट के दौरान एक त्रुटि हुई।"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:188
 msgid "An error occurred. Please try again."
 msgstr "एक त्रुटि हुई। कृपया पुनः प्रयास करें।"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:189
 msgid "Please select an action and at least one provider"
 msgstr "कृपया एक कार्रवाई और कम से कम एक प्रदाता चुनें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:190
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {count} provider(s)? This action cannot be "
@@ -404,51 +556,72 @@ msgid ""
 msgstr ""
 "क्या आप {count} प्रदाता(ओं) को हटाना चाहते हैं? यह कार्रवाई वापस ली जा नहीं सकती।"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:191
 msgid "Please select exactly one provider to set as default"
 msgstr "कृपया डिफ़ॉल्ट के रूप में सेट करने के लिए ठीक एक प्रदाता चुनें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:192
 msgid "Bulk action failed"
 msgstr "बैच कार्य विफल"
 
+#: templates/admin/payout_providers/payoutprovideraccount/partials/provider_cards.html:12
 msgid "Try adjusting your filters or search terms."
 msgstr "अपने फ़िल्टर या खोज शब्दों को समायोजित करने की कोशिश करें।"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:29
 msgid "Default Provider"
 msgstr "डिफ़ॉल्ट प्रदाता"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:44
 msgid "Provider:"
 msgstr "प्रदाता:"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:52
 msgid "Last tested:"
 msgstr "अंतिम परीक्षण:"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:52
 msgid "ago"
 msgstr "पहले"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:57
 msgid "Never tested"
 msgstr "कभी भी परीक्षण नहीं किया गया"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:108
 msgid "Edit"
 msgstr "संपादित करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:113
+#: templates/admin/payout_providers/wizard/base.html:51
+#: templates/admin/payout_providers/wizard/step4_test.html:7
+#: templates/admin/payout_providers/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "कनेक्शन परीक्षण करें"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:134
 msgid "Delete"
 msgstr "हटाएं"
 
+#: templates/admin/payout_providers/providers/browse.html:4
+#: templates/admin/payout_providers/providers/browse.html:37
+#: views/provider_browse.py:142
 msgid "Browse Payout Providers"
 msgstr "भुगतान प्रदाता जांचें"
 
+#: templates/admin/payout_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr "साइट प्रशासक"
 
+#: templates/admin/payout_providers/providers/browse.html:26
 msgid "Home"
 msgstr "होम"
 
+#: templates/admin/payout_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr "प्रदाताओं की जांच करें"
 
+#: templates/admin/payout_providers/providers/browse.html:39
 msgid ""
 "Choose a payout provider to integrate with your store. Install new providers "
 "or configure existing ones for affiliate payments."
@@ -456,9 +629,11 @@ msgstr ""
 "अपने स्टोर के साथ एकीकृत करने के लिए एक भुगतान प्रदाता चुनें। अफिलिएट भुगतान के लिए नए "
 "प्रदाताओं की इंस्टॉल करें या मौजूदा के निर्माण करें।"
 
+#: templates/admin/payout_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr "अपडेट सर्वर अस्वीकृत"
 
+#: templates/admin/payout_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -466,9 +641,11 @@ msgstr ""
 "अपडेट सर्वर के साथ कनेक्शन नहीं हो सका। केवल स्थानीय रूप से इंस्टॉल किए गए प्रदाताओं का "
 "दिखावट किया जा रहा है।"
 
+#: templates/admin/payout_providers/providers/browse.html:58
 msgid "Payout Provider Marketplace"
 msgstr "भुगतान प्रदाता बाजार"
 
+#: templates/admin/payout_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payout providers to automate affiliate "
 "payments, vendor payouts, and commission disbursements."
@@ -476,36 +653,47 @@ msgstr ""
 "यहां आप अफिलिएट भुगतान, वेंडर भुगतान और कमीशन वितरण को स्वचालित करने के लिए भुगतान "
 "प्रदाताओं का पता लगा सकते हैं और इंस्टॉल कर सकते हैं।"
 
+#: templates/admin/payout_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr "आप क्या कर सकते हैं:"
 
+#: templates/admin/payout_providers/providers/browse.html:82
 msgid "Browse available payout providers"
 msgstr "उपलब्ध भुगतान प्रदाता जांचें"
 
+#: templates/admin/payout_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr "एक क्लिक के साथ नए प्रदाताओं की इंस्टॉल करें"
 
+#: templates/admin/payout_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr "इंस्टॉल किए गए प्रदाताओं को नवीनतम संस्करणों में अपडेट करें"
 
+#: templates/admin/payout_providers/providers/browse.html:94
 msgid "Configure provider settings after installation"
 msgstr "इंस्टॉल करने के बाद प्रदाता सेटिंग्स कॉन्फ़िगर करें"
 
+#: templates/admin/payout_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr "शुरू करना:"
 
+#: templates/admin/payout_providers/providers/browse.html:105
 msgid "Browse providers below and find your preferred payout method"
 msgstr "नीचे प्रदाताओं की जांच करें और अपनी पसंद की भुगतान विधि ढूंढें"
 
+#: templates/admin/payout_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr "प्रदाता को अपने स्टोर में जोड़ने के लिए 'इंस्टॉल' पर क्लिक करें"
 
+#: templates/admin/payout_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr "API आधार विवरण के सेटिंग के लिए 'सेटिंग' तक जाएं"
 
+#: templates/admin/payout_providers/providers/browse.html:108
 msgid "Test the provider with a sample payout"
 msgstr "एक नमूना भुगतान के साथ प्रदाता का परीक्षण करें"
 
+#: templates/admin/payout_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -524,51 +712,72 @@ msgstr[1] ""
 "                    वर्तमान में: %(counter)s प्रदाता उपलब्ध\n"
 "                "
 
+#: templates/admin/payout_providers/providers/browse.html:122
 msgid "installed"
 msgstr "इंस्टॉल किया गया"
 
+#: templates/admin/payout_providers/providers/browse.html:139
 msgid "Update Available"
 msgstr "अपडेट उपलब्ध है"
 
+#: templates/admin/payout_providers/providers/browse.html:165
+#: templates/admin/payout_providers/providers/browse.html:331
 msgid "Installed"
 msgstr "इंस्टॉल किया गया"
 
+#: templates/admin/payout_providers/providers/browse.html:180
 msgid "Available"
 msgstr "उपलब्ध"
 
+#: templates/admin/payout_providers/providers/browse.html:203
+#: templates/admin/payout_providers/wizard/step1_select.html:46
 msgid "Batch Payouts"
 msgstr "बैच भुगतान"
 
+#: templates/admin/payout_providers/providers/browse.html:208
 msgid "Instant Payouts"
 msgstr "तत्काल भुगतान"
 
+#: templates/admin/payout_providers/providers/browse.html:213
 msgid "Multi-Currency"
 msgstr "बहु-मुद्रा"
 
+#: templates/admin/payout_providers/providers/browse.html:218
+#: templates/admin/payout_providers/wizard/step1_select.html:56
 msgid "Webhooks"
 msgstr "वेबहॉक्स"
 
+#: templates/admin/payout_providers/providers/browse.html:223
 msgid "International"
 msgstr "अंतर्राष्ट्रीय"
 
+#: templates/admin/payout_providers/providers/browse.html:252
 msgid "Update"
 msgstr "अपडेट करें"
 
+#: templates/admin/payout_providers/providers/browse.html:258
+#: templates/admin/payout_providers/providers/browse.html:332
 msgid "Configure"
 msgstr "सेट करें"
 
+#: templates/admin/payout_providers/providers/browse.html:266
 msgid "Install"
 msgstr "इंस्टॉल करें"
 
+#: templates/admin/payout_providers/providers/browse.html:276
 msgid "View Details"
 msgstr "विवरण देखें"
 
+#: templates/admin/payout_providers/providers/browse.html:285
 msgid "Learn More"
 msgstr "अधिक जानें"
 
+#: templates/admin/payout_providers/providers/browse.html:299
+#: templates/admin/payout_providers/wizard/step1_select.html:99
 msgid "No Providers Available"
 msgstr "कोई प्रदाता उपलब्ध नहीं"
 
+#: templates/admin/payout_providers/providers/browse.html:300
 msgid ""
 "No payout providers are currently available. Please check your update server "
 "connection or contact support."
@@ -576,85 +785,114 @@ msgstr ""
 "वर्तमान में कोई भुगतान प्रदाता उपलब्ध नहीं है। कृपया अपने अपडेट सर्वर कनेक्शन की जांच करें या "
 "समर्थन से संपर्क करें।"
 
+#: templates/admin/payout_providers/providers/browse.html:309
 msgid "Installing provider..."
 msgstr "प्रदाता इंस्टॉल कर रहा है..."
 
+#: templates/admin/payout_providers/providers/browse.html:327
 msgid "Installing..."
 msgstr "इंस्टॉल कर रहा है..."
 
+#: templates/admin/payout_providers/providers/browse.html:328
 msgid "Provider installed successfully!"
 msgstr "प्रोवाइडर सफलता से इंस्टॉल किया गया!"
 
+#: templates/admin/payout_providers/providers/browse.html:329
 msgid "Failed to install provider."
 msgstr "प्रोवाइडर को इंस्टॉल करने में विफल।"
 
+#: templates/admin/payout_providers/providers/browse.html:330
 msgid "An error occurred during installation."
 msgstr "इंस्टॉल के दौरान एक त्रुटि हुई।"
 
+#: templates/admin/payout_providers/providers/browse.html:333
 msgid "Updating..."
 msgstr "अपडेट कर रहा है..."
 
+#: templates/admin/payout_providers/providers/browse.html:334
 msgid "Provider updated successfully!"
 msgstr "प्रोवाइडर सफलता से अपडेट किया गया!"
 
+#: templates/admin/payout_providers/providers/browse.html:335
 msgid "Failed to update provider."
 msgstr "प्रोवाइडर के अपडेट करने में विफल रहा।"
 
+#: templates/admin/payout_providers/providers/browse.html:336
 msgid "An error occurred during update."
 msgstr "अपडेट के दौरान एक त्रुटि आई।"
 
+#: templates/admin/payout_providers/providers/browse.html:337
 #, python-brace-format
 msgid "Install {name}?"
 msgstr "{name} इंस्टॉल करें?"
 
+#: templates/admin/payout_providers/providers/browse.html:338
 #, python-brace-format
 msgid "Update {name} to the latest version?"
 msgstr "{name} को नवीनतम संस्करण में अपडेट करें?"
 
+#: templates/admin/payout_providers/wizard/base.html:4
+#: templates/admin/payout_providers/wizard/base.html:16
 msgid "Connect Payout Provider"
 msgstr "भुगतान प्रदाता कनेक्ट करें"
 
+#: templates/admin/payout_providers/wizard/base.html:17
 msgid "Follow these steps to connect your payout provider account"
 msgstr "अपने भुगतान प्रदाता खाते को जोड़ने के लिए इन चरणों का पालन करें"
 
+#: templates/admin/payout_providers/wizard/base.html:26
 msgid "Select Provider"
 msgstr "प्रदाता चुनें"
 
+#: templates/admin/payout_providers/wizard/base.html:35
+#: templates/admin/payout_providers/wizard/step2_setup.html:8
 msgid "Setup Instructions"
 msgstr "स्थापना निर्देश"
 
+#: templates/admin/payout_providers/wizard/base.html:44
 msgid "Enter Credentials"
 msgstr "सीधा आधार दर्ज करें"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:6
 msgid "Select a Payout Provider"
 msgstr "एक भुगतान प्रदाता चुनें"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:7
 msgid "Choose the payout provider you want to connect for affiliate payments."
 msgstr "अफिलिएट भुगतान के लिए जोड़े जाने वाले भुगतान प्रदाता का चयन करें।"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:51
 msgid "Single Payouts"
 msgstr "एकल भुगतान"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:61
 msgid "Cancellation"
 msgstr "रद्द करें"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:100
 msgid "No payout provider components are currently installed."
 msgstr "वर्तमान में कोई भुगतान प्रदाता कम्पोनेंट इंस्टॉल नहीं है।"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:101
 msgid ""
 "Please download and install payout provider components from the component "
 "registry."
 msgstr "कृपया कम्पोनेंट रजिस्ट्री से भुगतान प्रदाता कम्पोनेंट डाउनलोड और इंस्टॉल करें।"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:103
 msgid "Browse Components"
 msgstr "कॉम्पोनेंट्स की जांच करें"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:114
 msgid "Cancel"
 msgstr "रद्द करें"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:117
+#: templates/admin/payout_providers/wizard/step3_credentials.html:141
 msgid "Next"
 msgstr "अगला"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:11
 #, python-format
 msgid ""
 "\n"
@@ -663,13 +901,15 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        %(provider)s के लिए इन स्थापना चरणों की जांच करें।"
-"%(provider)s के लिए इन स्थापना चरणों की जांच करें।\n"
+"        %(provider)s के लिए इन स्थापना चरणों की जांच करें।%(provider)s के लिए इन "
+"स्थापना चरणों की जांच करें।\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:23
 msgid "Setup Instructions Not Available"
 msgstr "स्थापना निर्देश उपलब्ध नहीं हैं"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:25
 #, python-format
 msgid ""
 "\n"
@@ -680,18 +920,25 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    %(provider)s के इस संस्करण के लिए स्थापना निर्देश उपलब्ध नहीं हैं। कृपया सहायता के लिए समर्थन से संपर्क करें या एक अपडेटेड संस्करण की जांच करें।\n"
+"                    %(provider)s के इस संस्करण के लिए स्थापना निर्देश उपलब्ध नहीं हैं। "
+"कृपया सहायता के लिए समर्थन से संपर्क करें या एक अपडेटेड संस्करण की जांच करें।\n"
 "                    "
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:44
+#: templates/admin/payout_providers/wizard/step3_credentials.html:138
+#: templates/admin/payout_providers/wizard/step4_test.html:58
 msgid "Back"
 msgstr "पीछे"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:47
 msgid "Continue to Credentials"
 msgstr "अधिकार पत्र में जारी रहें"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "API अधिकार पत्र दर्ज करें"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -700,30 +947,39 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        %(provider)s के लिए अपने API लॉगिन विवरण दर्ज करें। ये सुरक्षित रूप से एन्क्रिप्ट करके संग्रहित किए जाएंगे।\n"
+"        %(provider)s के लिए अपने API लॉगिन विवरण दर्ज करें। ये सुरक्षित रूप से एन्क्रिप्ट "
+"करके संग्रहित किए जाएंगे।\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "अभी तक खाता नहीं है?"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "आपको API प्रमाणपत्र प्राप्त करने के लिए एक खाता चाहिए।"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "यहां रजिस्टर करें"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "API प्रमाणपत्र"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "चुनें..."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "इस प्रदाता के लिए कोई प्रमाणपत्र क्षेत्र निर्धारित नहीं है।"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:114
 msgid "Display Name"
 msgstr "प्रदर्शन नाम"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:122
 msgid ""
 "Optional friendly name to identify this account. Defaults to provider name "
 "if not specified."
@@ -731,6 +987,7 @@ msgstr ""
 "इस खाते की पहचान के लिए एक वैकल्पिक मित्रतापूर्ण नाम। यदि निर्दिष्ट नहीं है तो डिफ़ॉल्ट "
 "रूप से प्रदाता के नाम पर आधारित होता है।"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:129
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
@@ -738,6 +995,7 @@ msgstr ""
 "आपके प्रमाणपत्रों को डेटाबेस में संग्रहित करने से पहले AES-256 एन्क्रिप्शन का उपयोग करके "
 "एन्क्रिप्ट किया जाएगा।"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -750,150 +1008,200 @@ msgstr ""
 "%(provider)s के कनेक्शन का परीक्षण करें ताकि आपके लॉगिन विवरण सही हैं या नहीं।\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step4_test.html:21
+#: templates/admin/payout_providers/wizard/step4_test.html:70
 msgid "Testing connection..."
 msgstr "कनेक्शन का परीक्षण कर रहा है..."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:22
+#: templates/admin/payout_providers/wizard/step4_test.html:71
 msgid "Please wait while we verify your credentials."
 msgstr "कृपया प्रतीक्षा करें जब तक हम आपके प्रमाणपत्रों की जांच करते हैं।"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "अपने प्रविष्ट प्रमाणपत्रों के साथ कनेक्शन का परीक्षण करने के लिए क्लिक करें।"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:42
+#: templates/admin/payout_providers/wizard/step4_test.html:72
 msgid "Connection Successful!"
 msgstr "कनेक्शन सफल!"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:46
 msgid "Connection Details"
 msgstr "कनेक्शन विवरण"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:61
+#: templates/admin/payout_providers/wizard/step4_test.html:80
 msgid "Save & Finish"
 msgstr "सहेजें और समाप्त करें"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:73
 msgid "Your credentials were verified successfully."
 msgstr "आपके अधिकार पत्र सफलतापूर्वक सत्यापित कर दिए गए हैं।"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:75
 msgid "Could not connect to the provider API."
 msgstr "प्रदाता API से कनेक्ट करने में विफल रहा।"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:78
 msgid "Saving..."
 msgstr "सहेज रहा है..."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:79
 msgid "Failed to save provider account."
 msgstr "प्रदाता खाता सहेजन में विफल रहा।"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:81
 msgid "An error occurred while saving."
 msgstr "सहेजते समय एक त्रुटि हुई।"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:82
 msgid "Environment"
 msgstr "वातावरण"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:83
 msgid "Account ID"
 msgstr "खाता आईडी"
 
+#: views/provider_browse.py:177
 msgid "Provider is already installed. Configure it now."
 msgstr "प्रदाता पहले से ही इंस्टॉल है। अब इसे निर्माण करें।"
 
+#: views/provider_browse.py:206 views/provider_browse.py:346
 msgid "Provider not found on update server."
 msgstr "अपडेट सर्वर पर प्रदाता नहीं मिला।"
 
+#: views/provider_browse.py:216
 msgid "Could not determine provider version."
 msgstr "प्रदाता के वर्जन का पता लगाया नहीं जा सका।"
 
+#: views/provider_browse.py:238
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "प्रदाता डाउनलोड करने में विफल: %(error)s"
 
+#: views/provider_browse.py:251
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "प्रदाता इंस्टॉल करने में विफल: %(error)s"
 
+#: views/provider_browse.py:284
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "प्रदाता \"%(name)s\" सफलतापूर्वक इंस्टॉल कर दिया गया! अब इसे सेट करें।"
 
+#: views/provider_browse.py:293
 msgid "An unexpected error occurred during installation."
 msgstr "इस्तालन के दौरान अप्रत्याशित त्रुटि हुई।"
 
+#: views/provider_browse.py:316
 msgid "Provider not installed."
 msgstr "प्रदाता इंस्टॉल नहीं किया गया।"
 
+#: views/provider_browse.py:332
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "अपडेट सर्वर से कनेक्ट नहीं कर सका: %(error)s"
 
+#: views/provider_browse.py:355
 msgid "Could not determine latest version."
 msgstr "नवीनतम संस्करण निर्धारित नहीं किया जा सका।"
 
+#: views/provider_browse.py:364
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "प्रदाता \"%(name)s\" पहले से ही अप-टू-डेट है (v%(version)s)"
 
+#: views/provider_browse.py:379
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "अपडेट डाउनलोड करने में विफल रहे: %(error)s"
 
+#: views/provider_browse.py:391
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "अपडेट इंस्टॉल करने में विफल रहे: %(error)s"
 
+#: views/provider_browse.py:428
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "प्रदाता \"%(name)s\" को सफलतापूर्वक v%(version)s तक अपडेट कर दिया गया!"
 
+#: views/provider_browse.py:437
 msgid "An unexpected error occurred during update."
 msgstr "अद्यतन के दौरान अप्रत्याशित त्रुटि हुई।"
 
+#: views/wizard.py:147
 msgid "Connect Payout Provider - Select Provider"
 msgstr "भुगतान प्रदाता कनेक्ट करें - प्रदाता चुनें"
 
+#: views/wizard.py:160
 msgid "Please select a provider."
 msgstr "कृपया एक प्रदाता चुनें।"
 
+#: views/wizard.py:168
 msgid "Invalid provider selected."
 msgstr "अमान्य प्रदाता चुना गया है।"
 
+#: views/wizard.py:196 views/wizard.py:287
 msgid "Please select a provider first."
 msgstr "कृपया पहले एक प्रदाता चुनें।"
 
+#: views/wizard.py:241
 #, python-format
 msgid "Setup instructions not found for %(provider)s. Please contact support."
 msgstr "%(provider)s के लिए स्थापना निर्देश नहीं मिले। कृपया समर्थन से संपर्क करें।"
 
+#: views/wizard.py:246 views/wizard.py:309
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "प्रदाता लोड करने में त्रुटि: %(error)s"
 
+#: views/wizard.py:256
 msgid "Connect Payout Provider - Setup Instructions"
 msgstr "भुगतान प्रदाता कनेक्ट करें - स्थापना निर्देश"
 
+#: views/wizard.py:302
 msgid "Could not load provider configuration."
 msgstr "प्रदाता के सेटअप को लोड करने में विफल रहा।"
 
+#: views/wizard.py:313
 msgid "Connect Payout Provider - Enter Credentials"
 msgstr "भुगतान प्रदाता कनेक्ट करें - प्रमाणपत्र प्रविष्ट करें"
 
+#: views/wizard.py:343
 msgid "Error loading provider configuration."
 msgstr "प्रदाता के सेटअप को लोड करते समय त्रुटि हुई।"
 
+#: views/wizard.py:391
 msgid "Please complete previous steps first."
 msgstr "कृपया पहले पिछले चरण पूरा करें।"
 
+#: views/wizard.py:399
 msgid "Provider not found."
 msgstr "प्रदाता नहीं मिला।"
 
+#: views/wizard.py:403
 msgid "Connect Payout Provider - Test Connection"
 msgstr "भुगतान प्रदाता कनेक्ट करें - कनेक्शन परीक्षण करें"
 
+#: views/wizard.py:433
 msgid "Provider implementation not found."
 msgstr "प्रदाता के लेआउट को नहीं मिला।"
 
+#: views/wizard.py:457
 msgid "An unexpected error occurred during connection test."
 msgstr "कनेक्शन टेस्ट के दौरान अप्रत्याशित त्रुटि हुई।"
 
+#: views/wizard.py:516
 msgid "Provider connected successfully!"
 msgstr "प्रदाता सफलतापूर्वक कनेक्ट कर दिया गया है!"
 
+#: views/wizard.py:529
 msgid "An unexpected error occurred while saving."
 msgstr "बचाते समय अप्रत्याशित त्रुटि हुई।"
 
+#: views/wizard.py:535
 msgid "Invalid action"
 msgstr "अमान्य कार्रवाई"

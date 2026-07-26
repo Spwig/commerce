@@ -2,137 +2,144 @@
 title: Hediyelik Kartlar
 ---
 
-Hediyelik kartlar, müşterilerinize bir hediye olarak gönderilebilecek veya kişisel kullanım için saklanabilecek mağaza kredisi satın almak için olan bir yöntemdir. Alıcılar, checkout sırasında kullanabilecekleri benzersiz bir kod alırlar.
+Hediyelik kartlar, müşterilerin başkaları için ya da kendileri için satın alabileceği mağaza kredisidir. Bu kartlar, benzersiz bir kupon kodu olarak e-posta ile gönderilir. Ayrıca, bir müşteri satın alma olmadan admin panelinden doğrudan bir hediyelik kartı da çıkarabilirsiniz.
+
+Hediyelik kartları satışa sunulmuştur. Bir müşteri bir hediyelik kartı satın alırsa, ödeme onaylandığında kart otomatik olarak oluşturulur ve e-posta ile gönderilir. Ödemenin başarısız olması durumunda hiçbir kişi bir kod alamaz.
+
+Hediyelik kartı ürününü etkinleştirmeden önce bilmeniz gereken birkaç şey:
+
+- **Hediyelik kartı para, bir indirim değildir.** Vergi ve kargo ücretlerinden sonra fatura üzerinden düşer ve vergi borcunuzu azaltmaz. Bu, ürün fiyatını düşüren bir kuponun aksine çalışır.
+- **Kartlar tek bir para birimine sahiptir.** Euroda satın alınan bir kart sadece euro tutarlı bir siparişte kullanılabilir. Birden fazla para birimiyle satış yaparsanız, her biri için ayrı bir hediyelik kartı ürünü oluşturun. Bu, bir yıl boyunca harcanmayan bir bakiyeye döviz kuru değişimlerinden korur.
+- **Hediyelik kartları indirimle alınamaz.** Bir kupon, hediyelik kartı satırına uygulanamaz çünkü 100 £ kredi 80 £ karşılığında satmak her satışta 20 £ kaybetmenize neden olur.
+- **Bir hediyelik kartı başka bir hediyelik kartı satın alamaz.** Bu, çalınan kart bilgilerini yıkamak için kullanılan bir yolu kapatır.
+- **Bir hediyelik kartı satın almak sadakat puanı kazandırmaz.** Puanlar, kartın ürünlerde harcanmasıyla kazanılır, bu nedenle aynı para üzerinden iki kez puan kazanmak mümkün değildir.
 
 ![Hediyelik kart yönetimi](/static/core/admin/img/help/gift-cards/gift-card-list.webp)
 
-## Adet Türleri
+## Miktara Göre Türler
 
-Müşterilerin hediyelik kartı tutarını nasıl seçebileceğini kontrol edin:
+Bu ayarlar, bir müşteri hediyelik kartı satın alırken miktarı nasıl seçebileceğini kontrol eder:
 
 | Tür | Açıklama |
 |------|-------------|
-| **Sabit Adetler** | Müşteriler, önceden belirlenmiş tutarlardan (örneğin, $25, $50, $100) seçim yapar |
-| **Özel Tutar** | Müşteriler, min/max aralığı içinde herhangi bir tutar girer |
-| **Her İkisi** | Önceden belirlenmiş adetler ve özel tutar seçeneği sunulur |
+| **Sabit Miktarda** | Müşteriler, önceden belirlenmiş miktarlardan (örneğin, $25, $50, $100) seçim yapar |
+| **Özel Miktarda** | Müşteriler, minimum ve maksimum aralığındaki herhangi bir miktar girer |
+| **Her İkisi** | Önceden belirlenmiş miktarlara ek olarak özel bir miktar seçeneği sunar |
 
-## Hediyelik Kart Ürünü Oluşturma
+## Hediyelik Kartı Ürünü Oluşturma
 
-### Adım 1: Ürünü Kurun
+Her hediyelik kartı, sonunda satılacak ya da bugün elle verilecek olsa bile, arkasında bir Hediyelik Kartı türünden ürün olmalıdır.
+
+### Adım 1: Ürünü Ayarla
 
 1. **Ürünler > Tüm Ürünler** menüsüne gidin ve **+ Ürün Ekle**'ye tıklayın
-2. **Ürün Türünü** **Hediyelik Kart** olarak ayarlayın
+2. **Ürün Türünü** **Hediyelik Kartı** olarak ayarlayın
 3. Ürün adını ve açıklamasını doldurun
-4. Adet ayarlarını yapılandırın:
-   - **Adet Türünü** seçin (Sabit, Özel veya Her İkisi)
-   - Sabit için: kullanılabilir adet tutarlarını ayarlayın
-   - Özel için: **Minimum** ve **Maksimum** izin verilen tutarları ayarlayın
-5. **Son kullanma tarihi (gün)** ayarlayın (0 = asla sona ermeyen) — bu, hediyelik kartlarının satın alınmasından sonra geçerli olma süresini belirler
+4. Miktara ilişkin ayarları yapılandırın:
+   - **Miktar Türünü** seçin (Sabit, Özel veya Her İkisi)
+   - Sabit için, kullanılabilir miktarları ayarlayın
+   - Özel için, **Minimum** ve **Maksimum** izin verilen miktarları ayarlayın
+5. **Son Kullanma Tarihi (Gün)** ayarlayın (0 = asla sona ermeyen) — bu, hediyelik kartlarının satın alınmasından sonra geçerli olduğu süreyi belirler
 6. Ürünü kaydedin ve yayınlayın
 
-### Adım 2: Yayınla ve Sat
+### Adım 2: Yayınla
 
-Yayınlandığında, hediyelik kart ürününüz mağaza ön yüzünde diğer ürünler gibi görünür. Müşteriler, ürününüzü tarayarak, bir tutar seçerek ve sepetine ekleyerek erişebilir.
+Ürünü satmaya hazır olduğunuzda yayınlayın. Müşteriler, hemen mağazanızdan satın alabilir ve ödeme onaylandığında kart otomatik olarak e-posta ile gönderilir.
 
-## Hediyelik Kart Yaşam Döngüsü
+Bu ürün, elle bir kart çıkarırken seçebileceğiniz şeydir — bu nedenle, sadece bir kez kartlar verme planı olanlara bile değerli olur.
 
-Bir hediyelik kartı şu yaşam döngüsünü takip eder:
+## Elle Hediyelik Kartı Oluşturma
 
-1. **Satın Alma** — Müşteri hediyelik kartı ürününü satın alır ve alıcı detaylarını sağlar
-2. **Teslimat** — Hediyelik kart kodu ile bir e-posta otomatik olarak alıcıya gönderilir
-3. **Kullanım** — Alıcı, checkout sırasında kodu girerek bakiyeyi uygular
-4. **Bakiye Takibi** — Her kullanım bakiyeden düşülür ve sıfıra ulaşana kadar devam eder
+Şu anda bir fonlanmış hediyelik kartı oluşturmanın tek yolu budur ve şu anda tamamen çalışır.
 
-## Müşteri Satın Alma Akışı
+1. **Ürünler > Hediyelik Kartlar** menüsüne gidin ve **+ Hediyelik Kartı Ekle**'ye tıklayın
+2. **Ürünü** seçin — bu, mevcut bir Hediyelik Kartı türünden ürün olmalıdır (yukarıdaki adımları inceleyin)
+3. **Başlangıç Değeri** girin — bu, seçtiğiniz miktarla başlangıç bakiyesidir. Müşteri satın almasından farklı olarak, bu ürünün miktar ayarlarına sınırlı değildir
+4. İsteğe bağlı olarak **Son Kullanma Tarihi** tarihini ayarlayabilir ve **Aktif** kutusunu işaretleyerek kartın kupon olarak kullanılabilmesini sağlayabilirsiniz
+5. Aynı sayfada daha aşağıda yer alan **Alıcı** bölümüne bilgileri girin:
+   - **Alıcı E-postası** — zorunludur; gönderim e-postasının gönderileceği yer
+   - **Alıcı Adı**, **Gönderen Adı** ve **Kişisel Mesaj** — hepsi isteğe bağlıdır
+   - **Planlı Gönderim Tarihi** — isteğe bağlıdır; boş bırakın ve her zaman gönderin ya da gelecekteki bir tarih ve saat ayarlayın (örneğin, bir doğum günü)
+6. **Kaydet**'e tıklayın
 
-Bir müşteri hediyelik kartı satın alırken:
+Kupon kodu otomatik olarak oluşturulur ve başlangıç bakiyesi, Başlangıç Değeri'nden ayarlanır — bunlardan hiçbiri kendiniz tarafından doldurulmaz.
 
-1. **Tutar Seçin** — Bir adet seçin veya özel bir tutar girin
-2. **Alıcı Bilgileri** — Alıcının e-posta adresini ve ismini girin
-3. **Kişisel Mesaj** — Teslimat e-postasına eklemek için isteğe bağlı bir mesaj ekleyin
-4. **Gönderen Adı** — E-posta için gönderenin adını sağlayın
-5. **Planlı Teslimat** — İsteğe bağlı olarak e-postayı gelecekteki bir tarihe (örneğin, bir doğum günü) planlayabilirsiniz
-6. **Ödeme Yapın** — Diğer ürünler gibi satın alımı tamamlayın
+**Kartı kaydetmek e-posta göndermez.** Göndermek için hediye kartı listesine geri dönün, kartın onay kutusunu seçin, **Hediye kartı e-postaları gönder** seçeneğini **Eylemler** açılır menüsünden seçin ve **Git**'e tıklayın.
 
-## Otomatik Teslimat
+Aynı eylem, daha sonra e-postayı yeniden göndermek isterseniz e-postayı yeniden gönderir.
 
-Satın alma sonrası, hediyelik kartı otomatik olarak teslim edilir:
+## Yönetici'de Hediye Kartlarını Yönetme
 
-- Alıcıya stilize edilmiş bir e-posta gönderilir ve şu bilgileri içerir:
-  - Benzersiz hediyelik kart kodu
-  - Hediyelik kart değeri
-  - Gönderenden gelen kişisel mesaj
-  - Kalan bakiyeyi kontrol etmek için bir bağlantı
-- Eğer planlı teslimat ayarlandıysa, e-posta belirtilen tarih ve saatte gönderilir
-- Gönderen, hediyelik kart detaylarını içeren bir sipariş onayı alır
+**Ürünler > Hediye Kartları**'na giderek tüm hediye kartlarını yönetin:
 
-## Yönetici Hediyelik Kartları
+### İstatistik Panosu
 
-**Ürünler > Hediyelik Kartlar** menüsüne giderek tüm hediyelik kartlarınızı yönetin:
+Sayfa üstünde dört kart, ana ölçüleri gösterir:
 
-### İstatistikler Paneli
-
-Sayfa üstünde dört kart, anahtar ölçüleri gösterir:
-
-- **Toplam Hediyelik Kartlar** — Toplam olarak verilen hediyelik kart sayısı
-- **Aktif** — Mevcut bakiye ile aktif kartlar
+- **Toplam Hediye Kartları** — Verilen toplam hediye kartları sayısı
+- **Aktif** — Mevcut bakiyesi olan aktif kartlar
 - **Toplam Bakiye** — Tüm kartlarda kalan toplam bakiye
-- **Kısmen Kullanılmış** — Kısmen kullanılmış kartlar
+- **Kısmen Kullanılmış** — Kısmen kuponlanan kartlar
 
 ### Filtreler
 
-Hediyelik kartlarını şu kriterlerle filtreleyin:
+Hediye kartlarını aşağıdaki kriterlere göre filtreleyin:
 
-- **Arama** — Kod, e-posta veya alıcı adı ile bulun
-- **Durum** — Aktif, Pasif, Süresi Dolmuş, Tamamen Kullanılmış veya Kısmen Kullanılmış
+- **Arama** — Kod, e-posta veya alıcı adı ile arama yapın
+- **Durum** — Aktif, Pasif, Süresi Dolmuş, Tamamen Kuponlanan veya Kısmen Kullanılmış
 - **Bakiye** — Bakiye Var veya Bakiyesiz
 - **Oluşturulma Tarihi** — Zaman aralığı (Bugün, Bu Hafta, Bu Ay, Bu Yıl)
 
-### Hediyelik Kart Detayları
+### Hediye Kartı Detayları
 
-Her hediyelik kartı şu bilgileri gösterir:
+Her hediye kartı aşağıdaki bilgileri gösterir:
 
-- **Kod** — Benzersiz kullanım kodu (örneğin, GC-XXXX-XXXX-XXXX)
+- **Kod** — Tekil kuponlama kodu (örneğin, GC-XXXX-XXXX-XXXX)
 - **Alıcı** — E-posta ve isim
-- **Durum** — Mevcut durum ve renk kodlaması ile durum etiketleri
-- **Bakiye / Başlangıç / Kullanılan** — Finansal özeti ve kullanılan yüzdelik oran
-- **Anahtar Tarihler** — Oluşturulma, verilme ve ilk kullanım tarihi
-- **Gönderen** — Hediyelik kartı satın alan kişi
+- **Durum pankartları** — Renk kodlamalı mevcut durum
+- **Bakiye / Başlangıç / Kuponlanan** — Yüzdelik kullanım ile finansal özeti
+- **Ana tarihler** — Oluşturulma, kuponlanma, ilk kullanım
+- **Gönderen** — Hediye kartını satın alan (veya kuponlayan) kişi
 
 ### Eylemler
 
-Her hediyelik kartı için şu işlemleri yapabilirsiniz:
+- Bir hediye kartını seçerek **düzeltme** detaylarını ve tam **işlem geçmişini** aynı sayfada inline olarak görüntüleyin
+- Bir veya daha fazla kartı seçin ve **Eylemler** açılır menüsünü kullanarak **Hediye kartı e-postaları gönder** (gönderir veya e-postayı yeniden gönderir) veya **Seçilen hediye kartlarını pasif yap** (pasif hale getirir — bakiye korunur ancak kart artık kuponlanamaz)
 
-- **Düzenle** — Hediyelik kartı detaylarını görüntüleyin ve düzenleyin
-- **İşlemleri Görüntüle** — Tam işlem geçmişini görüntüleyin
-- **E-postayı Yeniden Gönder** — Alıcıya teslimat e-postasını yeniden gönderin
-- **Devre Dışı Bırak** — Kartı devre dışı bırakın (bakiye korunur ancak kullanılamaz)
+## Bugün Kuponlama
 
-## Ödeme sırasında Kullanım
+**Mağazada**, Satış Noktası terminalinizde:
 
-Bir müşteri checkout sırasında bir hediyelik kart kodu girerken:
+1. Kasiyer, ödeme adımı sırasında kodu alır
+2. Kod doğrulanır — aktif, süresi dolmamış, bakiye var ve satışın aynı para biriminde
+3. Bakiye, ödenecek toplam tutara uygulanır, vergi ve kargo dahil
+4. Eğer bakiye tüm satış tutarını karşılamıyorsa, müşteri kalan kısmı başka bir şekilde öder
+5. Bakiye düşer ve işlem kaydedilir
 
-1. Kod doğrulanır (aktif, süresi dolmamış ve bakiye var)
-2. Mevcut bakiye görüntülenir
-3. Bakiye sipariş toplamına uygulanır
-4. Eğer bakiye siparişin tamamını karşılıyorsa, ekstra ödeme gerekmez
-5. Eğer bakiye sipariş toplamından azsa, müşteri kalan kısmını öder
-6. İşlem kaydedilir ve bakiye güncellenir
+Kasiyer, **ödeme** sırasında kodu alır, sepeti oluştururken değil. Hediye kartı, müşteri tarafından zaten verilen para olduğu için faturayı kapatır, ürünleri indirmez.
 
-## İade İşlemi
+**Çevrimiçi**, ödeme adımı sırasında ödeme aşamasında hediye kartı alanı vardır. Müşteri kodunu girer, bakiye, vergi ve kargo sonrası olan tutardan düşülür ve kalan tutar normal şekilde kartına yüklenir. Eğer kart tüm siparişi karşılıyorsa, başka bir ödeme gerekmez. Bakiye, ödeme onaylandıktan sonra gerçekten düşer, bu nedenle terk edilen bir ödeme, kartı asla etkilemez.
 
-Bir hediyelik kartı kullanılarak yapılan siparişlerin iadesi sırasında:
+Alıcılar, teslimat e-postasındaki bağlantı üzerinden her zaman kalan bakiyelerini kontrol edebilir.
 
-- **Kullanılmamış hediyelik kartlar** — Hediyelik kartı tamamen devre dışı bırakılır
-- **Kısmen kullanılan kartlar** — Bakiye, bir işlem aracılığıyla manuel olarak ayarlanmalıdır
-- **Tam iade** — İade işlemi aracılığıyla hediyelik kart bakiyesine tutarın kredisi verilir
+## İade İşlemleri
+
+Hediye kartı kullanan siparişler veya satışları iade ettiğinizde:
+
+- **Müşteri tarafından satın alınmış, henüz kullanılmamış bir hediye kartı** — kart pasif hale getirilir ve bakiyesi sıfırlanır, bu nedenle kredi de iade ile birlikte kaybolur.
+- **Müşteri tarafından satın alınmış ve kısmen harcanmış bir hediye kartı** — bu, kararınıza bağlıdır. Pasif hale getirmek, zaten harcanan krediyi geri alır, bu nedenle bakiye olduğu gibi bırakılır ve el ile ayarlamak için işaretlenir.
+- **İade edilen siparişi ödemek için kullanılan bir hediye kartı** — iade, önce kart üzerine yapılır, ardından herhangi bir kart veya banka ödemesi. Bankaya iade edilen para, satıcı tarafından asla toplanmamışsa daha kötü bir hata olur ve değer, geldiği yerden geri alınmakta, bilinen bir dolandırıcılık yolu da kapatılır. Eğer orijinal kart artık süresi dolduysa veya pasif hale getirildiysa, aynı alıcıya süresiz bir kart verilir.
+- **Tam iade** — İade işlemi aracılığıyla hediye kartı bakiyesine tutarı geri yazın
 
 ## İpuçları
 
-- Yerel hediyelik kart yönetmeliklerine uygun olmak için, akıllıca son kullanma sürelerini ayarlayın (örneğin, 365 gün) — bazı yerel yönetmelikler minimum geçerlilik süreleri gerektirir.
-- **Her İkisi** adet türünü kullanarak hem kolaylık (önceden belirlenmiş tutarlar) hem de esneklik (özel tutarlar) sunun.
-- Toplam Bakiye ölçümünü düzenli olarak izleyin — bu, kitabınızdaki bir borç olarak temsil eder.
-- Mevsimsel kampanyalar için planlı teslimatı kullanın — müşteriler erken hediyelik kart satın alabilir ve tam tarihte teslim edilebilir.
-- Lansman öncesi, test siparişi ile tam akışı (satın alma, e-posta teslimatı, kullanım) test edin.
-- Eğer birden fazla ülkeye müşteri satıyorsanız, belirli döviz birimlerinde hediyelik kartlar çıkarabilirsiniz — **Çok Dövizli Hediyelik Kartlar** yardım konusunu inceleyin.
+Tüm markdown biçimlendirmesini, resim yollarını, kod bloklarını ve teknik terimleri koruyun.
 
+- İyiliyet kredileri, müşteri hizmetleri çözümleri veya bir müşteriye mağaza kredisi vermek isterseniz, el ile dağıtım kullanın.
+- Yerel hediye kartı düzenlemelerine uyum sağlamak için makul bir son kullanma periyodu belirleyin (örneğin 365 gün) — bazı yerel düzenlemeler minimum geçerlilik süreleri gerektirir.
+- Kolaylık (ön tanımlı tutarlar) ve esneklik (özel bir tutar) sunmak için "Her İkisi" adet türünü kullanın.
+- Toplam Bakiye metrik değerini düzenli olarak izleyin — bu, defterlerinizdeki bir borç olarak kabul edilir.
+- Kart, hem çevrimiçi hem de fiziksel olarak aynı şekilde harcanır — web ödeme sırasında ödeme adımı veya kasada.
+
+Teslimat e-postası, alıcıların herhangi bir zaman kullanabileceği bakiye kontrolü bağlantısı içerir.
+- Birden fazla ülkeye müşteri satıyorsanız, belirli dövizlerde hediye kartları çıkarabilirsiniz — ayrıntılar için **Çok Dövizli Hediye Kartları** yardım konusuna bakın.

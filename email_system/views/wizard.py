@@ -1233,9 +1233,17 @@ class ProviderWizardStep4View(WizardSessionMixin, View):
 
             return render(request, self.template_name, context)
 
-        except Exception as e:
+        except Exception:
+            # Log the underlying error for diagnostics, but never surface raw
+            # framework exception text to the merchant.
+            logger.exception("Failed to load DNS configuration for email wizard step 4")
             messages.error(
-                request, _("Error loading DNS configuration: %(error)s") % {"error": str(e)}
+                request,
+                _(
+                    "Spwig could not load the DNS configuration for this email "
+                    "provider. Please try again, or contact support if the "
+                    "problem continues."
+                ),
             )
             return redirect("email_system:wizard_step3")
 

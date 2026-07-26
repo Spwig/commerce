@@ -243,62 +243,26 @@
     </div>
     {% endif %}
 
-    <!-- Category mapping -->
-    {% if category_mapping_needed %}
+    {% comment %}
+    The category-handling radios that used to sit here were never read by any
+    importer — every unmapped category was created regardless of the choice.
+    Removed rather than implemented; a control that silently does nothing is
+    worse than no control.
+    {% endcomment %}
+
+    <!-- Pricing -->
     <div class="content-box">
         <h3>
-            <i class="fas fa-folder-tree"></i>
-            {% trans "Category Mapping" %}
-        </h3>
-        <p>{% trans "Some categories from your source don't have direct matches. Choose how to handle them:" %}</p>
-
-        <div class="form-row">
-            <label>
-                <input type="radio" name="unmapped_category_action" value="create" checked>
-                {% trans "Create new categories" %}
-            </label>
-            <div class="help">{% trans "Create new categories in your platform for unmapped categories" %}</div>
-        </div>
-
-        <div class="form-row">
-            <label>
-                <input type="radio" name="unmapped_category_action" value="default">
-                {% trans "Assign to default category" %}
-            </label>
-            <div class="help">{% trans "Put all unmapped items in a default 'Uncategorized' category" %}</div>
-        </div>
-
-        <div class="form-row">
-            <label>
-                <input type="radio" name="unmapped_category_action" value="skip">
-                {% trans "Skip items with unmapped categories" %}
-            </label>
-            <div class="help">{% trans "Don't import items that belong to unmapped categories" %}</div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Tax and shipping mapping -->
-    <div class="content-box">
-        <h3>
-            <i class="fas fa-calculator"></i>
-            {% trans "Tax & Shipping Settings" %}
+            <i class="fas fa-tags"></i>
+            {% trans "Pricing" %}
         </h3>
 
-        <div class="form-row">
-            <label>
-                <input type="checkbox" name="import_tax_settings" checked>
-                {% trans "Import tax settings" %}
-            </label>
-            <div class="help">{% trans "Import tax rates and rules from your source platform" %}</div>
-        </div>
-
-        <div class="form-row">
-            <label>
-                <input type="checkbox" name="import_shipping_settings" checked>
-                {% trans "Import shipping zones and methods" %}
-            </label>
-            <div class="help">{% trans "Import shipping configuration from your source platform" %}</div>
+        <div class="alert-info">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <p>{% trans "Tax rates and shipping zones are not imported. Tax rules differ enough between platforms that copying them across unreviewed would risk charging your customers the wrong amount, so Spwig leaves them to you." %}</p>
+                <p>{% trans "Set them up in Settings → Tax & Currency and Settings → Shipping once the import has finished." %}</p>
+            </div>
         </div>
 
         <div class="form-row">

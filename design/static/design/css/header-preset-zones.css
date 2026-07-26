@@ -686,10 +686,13 @@
    Applied when header is sticky
    ============================================ */
 
+/* Token is --theme-z-sticky; --theme-z-index-sticky is never emitted by the
+   generator and silently fell back to the literal, so a merchant raising the
+   sticky token would have split the header across two z-layers. */
 .site-header[data-sticky='true'] {
   position: sticky;
   top: 0;
-  z-index: var(--theme-z-index-sticky, 1020);
+  z-index: var(--theme-z-sticky, 1020);
 }
 
 .site-header[data-sticky='true'].is-scrolled .header-zone--main {
@@ -785,6 +788,20 @@
 /* ============================================
    GLASS EFFECT
    Applied via data attribute
+
+   INERT: no template renders `data-glass-effect`. The builder stores
+   `glass_effect` in zone config (header-footer-builder.js) but
+   design/templates/design/components/header.html never emits the attribute,
+   and zone_override_styles() in design/templatetags/theme_tags.py whitelists
+   only background/color/min-height/padding/border-color/font-size.
+
+   Before wiring it up, read this: `backdrop-filter` makes the zone the
+   containing block for every position:fixed descendant, which collapses a
+   full-screen overlay into the zone's box. Verified in both Blink and WebKit —
+   a full-viewport search backdrop became 390x76 at an iPhone viewport. The
+   search overlay is now portaled to body level so it is immune, but any NEW
+   fixed overlay added inside a header zone would not be. Keep viewport-level
+   overlays outside <header> — see the comment in components/header.html.
    ============================================ */
 
 .header-zone[data-glass-effect='true'] {

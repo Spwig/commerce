@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <LL@li.org>\n"
@@ -18,12 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "सामग्री"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "चित्र"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -31,38 +34,51 @@ msgstr ""
 "मोडल डिस्प्ले के लिए वैकल्पिक छवि। बैनर (कंटेंट के ऊपर) या पृष्ठभूमि (टेक्स्ट के पीछे ओवरले के "
 "साथ) के बीच चुनें।"
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "लिंक"
 
+#: admin.py:78
 msgid "Display"
 msgstr "प्रदर्शन"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "दृश्यता के नियम"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
 msgstr "वैकल्पिक: उन्नत शर्तों के आधार पर इस घोषणा के दिखाए जाने के समय को सीमित करें।"
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "शीर्षक"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "कोई अवधि नहीं"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "मौजूदा तिथि"
 
+#: admin.py:121
 msgid "Active"
 msgstr "सक्रिय"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "स्थिति"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "सक्रिय घोषणाओं की सूची"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -72,12 +88,15 @@ msgstr ""
 "आरोही के अनुसार, फिर created_at अवरोही के अनुसार क्रमबद्ध होता है। स्टोरफ्रंट घोषणा "
 "विजेट द्वारा उपयोग किया जाता है।"
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "सक्रिय घोषणाओं की सूची"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "घोषणा विवरण प्राप्त करें"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -87,54 +106,73 @@ msgstr ""
 "पूर्ण घोषणा डेटा प्राप्त करता है। यदि घोषणा अक्रिय, अमृत्त या मौजूद नहीं है, तो 404 "
 "लौटाता है।"
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "घोषणा प्राथमिक कुंजी"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "अनुच्छेद विवरण"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "पाया नहीं गया, बंद है, या अमान्य हो गया"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "अधिसूचनाएं"
 
+#: models.py:15
 msgid "No Link"
 msgstr "कोई लिंक नहीं"
 
+#: models.py:16
 msgid "Product"
 msgstr "उत्पाद"
 
+#: models.py:17
 msgid "Category"
 msgstr "श्रेणी"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "ब्लॉग पोस्ट"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "पेज"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "अनुकूलित URL"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "बैनर चित्र (सामग्री के ऊपर)"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "पृष्ठभूमि चित्र (ओवरले के साथ)"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr "घोषणा का शीर्षक - मूल डिज़ाइन (बोल्ड, इतालवी, रंग) का समर्थन करता है"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "मोडल डिस्प्ले के लिए वैकल्पिक विस्तृत सामग्री"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "मोडल प्रदर्शन के लिए वैकल्पिक चित्र"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "मोडल में छवि के डिस्प्ले के तरीका"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
@@ -142,27 +180,35 @@ msgstr ""
 "जब छवि पृष्ठभूमि के रूप में उपयोग की जाती है तो ओवरले के अपारदर्शिता (0 = अपारदर्शी, 1 = "
 "अपारदर्शी)"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "इस घोषणा के लिए लिंक के प्रकार"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "लिंक करने के लिए उत्पाद"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "लिंक करने के लिए श्रेणी"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "लिंक करने के लिए ब्लॉग पोस्ट"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "लिंक करने के लिए पृष्ठ"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "लिंक के लिए अनुकूलित URL"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "मोडल लिंक के लिए बटन टेक्स्ट, उदाहरण के लिए \"Shop Now\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
@@ -170,9 +216,11 @@ msgstr ""
 "यदि यह चालू है, तो घोषणा के क्लिक करने पर फुल कंटेंट के साथ एक मोडल खोलता है। यदि बंद है, "
 "तो क्लिक करने पर तुरंत लिंक URL पर नेविगेट करता है।"
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "इस अधिसूचना को सक्षम या अक्षम करें"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
@@ -180,172 +228,233 @@ msgstr ""
 "इस तारीख / समय के बाद घोषणा स्वत: डिस्प्ले करना बंद कर देगा। अपरिमित के लिए रिक्त छोड़ "
 "दें।"
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr "कम संख्या = उच्च प्राथमिकता (पहले दिखाया जाता है)"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "शर्ती दिखाई देने के लिए दृश्यता नियम"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "अनुच्छेद के लिए अनुवाद"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "अनुच्छेद"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "अनुच्छेद संपादित करें"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "अनुच्छेद जोड़ें"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "कृपया नीचे दिए गए त्रुटियों को सुधारें।"
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "घोषणा का शीर्षक — बोल्ड, इतालवी और फॉन्ट रंग का समर्थन करता है।"
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "शरीर"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "मोडल पॉपअप में दिखाए गए वैकल्पिक विस्तार टेक्स्ट।"
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "लिंक प्रकार"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "बटन पाठ"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "उदाहरण के लिए \""
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "मोडल दिखाएं"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "नेविगेट के बजाय पॉपअप में विस्तार खोलें।"
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "वैकल्पिक"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr ""
 "मोडल पॉपअप के लिए छवि। जब एक योजक घोषणा के क्लिक करता है तो यह दिखाया जाता है।"
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "प्रदर्शन मोड"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "ओवरले अपाचिटी"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = अपारदर्शी, 1 = अपारदर्शी"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "सक्रिय"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "अधिकता"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "नीचे = पहले दिखाया जाता है"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "अवधि समाप्त होती है"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "कोई अवधि नहीं होने के लिए खाली छोड़ें।"
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "बनाया गया"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "अपडेट किया गया"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "उन्नत"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr ""
 "इस घोषणा के दिखाए जाने के समय को सीमित करें। सभी के लिए दिखाए जाने के लिए रिक्त छोड़ दें।"
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "कई का चयन करने के लिए Ctrl / Cmd दबाए रखें।"
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "सहेजें"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "सहेजें और जारी रखें"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "सहेजें और एक और जोड़ें"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "हटाएं"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr "हेडर और फूटर में दिखाए गए स्टोर घोषणा का प्रबंधन करें"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "सभी"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "अक्षम"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "अनुप्रेषण खोजें..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "अनुप्रेषण"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "पिछला"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "के"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "अगला"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "कोई अनुप्रेषण नहीं मिला"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "आपके खोज प्रश्न के अनुसार कोई घोषणा नहीं मिला।"
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr "अपनी स्टोर के हेडर या फूटर में दिखाने के लिए अपनी पहली घोषणा बनाएं।"
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "अनुप्रेषण बनाएं"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "क्लिक करने पर मोडल खोलें"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "मोडल"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "क्लिक करने पर सीधा लिंक"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "सीधा लिंक"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "अंतिम अपडेट"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "पहले"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "मौजूदा तिथि"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "छवि है"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "संपादित करें"

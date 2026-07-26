@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,2367 +18,3116 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:88
 msgid "Data Migrations"
 msgstr "Migrações de Dados"
 
-msgid "🚀 Start New Migration"
-msgstr "🚀 Iniciar Nova Migração"
+#: admin.py:91 templates/admin/migration/migrationjob/change_list.html:68
+#: templates/admin/migration/wizard/step6_complete.html:388
+msgid "Start New Migration"
+msgstr "Iniciar Nova Migração"
 
-msgid "Migrate from WooCommerce, Shopify, or CSV files"
-msgstr "Migrar de WooCommerce, Shopify ou arquivos CSV"
+#: admin.py:93
+msgid "Migrate from WooCommerce, Shopify, Magento, or CSV files"
+msgstr "Migrar de WooCommerce, Shopify, Magento ou arquivos CSV"
 
-msgid "📊 Migration History"
-msgstr "📊 Histórico de Migrações"
+#: admin.py:98
+msgid "Migration History"
+msgstr "Histórico de Migração"
 
+#: admin.py:100
 msgid "View all past migrations"
 msgstr "Ver todas as migrações anteriores"
 
+#: admin.py:140 sync_admin.py:262
 msgid "ID"
 msgstr "ID"
 
+#: admin.py:163 admin.py:2234 templates/admin/migration/wizard/base.html:38
 msgid "Platform"
 msgstr "Plataforma"
 
+#: admin.py:202 admin.py:2235 admin.py:2294 sync_admin.py:72 sync_admin.py:311
+#: templates/admin/migration/fullmig/step5_results.html:74
+#: templates/admin/migration/wizard/step3_preview.html:184
 msgid "Status"
 msgstr "Status"
 
+#: admin.py:228 sync_admin.py:330 templates/admin/migration/sync/base.html:58
+#: templates/admin/migration/sync/base.html:79
 msgid "Progress"
 msgstr "Progresso"
 
+#: admin.py:248 templates/admin/migration/fullmig/step3_preflight.html:111
 msgid "Items"
 msgstr "Itens"
 
+#: admin.py:276 models/log.py:85 sync_admin.py:349
+#: templates/admin/migration/sync/token_management.html:76
 msgid "Created"
 msgstr "Criado"
 
+#: admin.py:311 sync_admin.py:88 sync_admin.py:373
 msgid "Actions"
 msgstr "Ações"
 
+#: admin.py:464
 msgid "Please select a platform."
 msgstr "Por favor, selecione uma plataforma."
 
+#: admin.py:469 admin.py:490
 msgid "Migration Wizard - Choose Platform"
 msgstr "Assistente de Migração - Escolher Plataforma"
 
+#: admin.py:483
 msgid "Migration job created. Please configure the connection."
 msgstr "Tarefa de migração criada. Por favor, configure a conexão."
 
+#: admin.py:508 admin.py:545 admin.py:575
 msgid "Please fill in all required fields."
 msgstr "Por favor, preencha todos os campos obrigatórios."
 
+#: admin.py:513 admin.py:550 admin.py:580 admin.py:629 admin.py:644
+#: admin.py:666 admin.py:683
 msgid "Migration Wizard - Connection"
 msgstr "Assistente de Migração - Conexão"
 
+#: admin.py:531 admin.py:567 admin.py:599
 msgid "Connection configured successfully."
 msgstr "Conexão configurada com sucesso."
 
+#: admin.py:623
 msgid "{} CSV has no headers."
 msgstr "{}} CSV não possui cabeçalhos."
 
+#: admin.py:638
 msgid "{} CSV could not be read: {}"
 msgstr "\"{}\" CSV não pôde ser lido: {}"
 
+#: admin.py:661
 msgid "Products CSV is required."
 msgstr "CSV de Produtos é obrigatório."
 
+#: admin.py:676
 msgid "CSV files uploaded successfully."
 msgstr "Arquivos CSV carregados com sucesso."
 
+#: admin.py:747 admin.py:780 admin.py:843
 msgid "Failed to fetch preview data: {}"
 msgstr "Falha ao buscar dados de pré-visualização: {}"
 
+#: admin.py:866
 msgid "Failed to read CSV files: {}"
 msgstr "Falha ao ler os arquivos CSV: {}"
 
+#: admin.py:945
 msgid "Import options saved."
 msgstr "Opções de importação salvas."
 
+#: admin.py:952
 msgid "Migration Wizard - Preview Data"
 msgstr "Assistente de Migração - Visualizar Dados"
 
+#: admin.py:1027
 msgid "Field mappings configured successfully."
 msgstr "Mapeamentos de campos configurados com sucesso."
 
+#: admin.py:1149
 msgid "Could not analyze custom fields. You can still proceed with the import."
 msgstr ""
 "Não foi possível analisar os campos personalizados. Você ainda pode "
 "prosseguir com a importação."
 
+#: admin.py:1167 models/step.py:31
+#: templates/admin/migration/confirm_rollback.html:67
+#: templates/admin/migration/wizard/step3_preview.html:17
+#: templates/admin/migration/wizard/step3_preview.html:74
+#: templates/admin/migration/wizard/step4_mapping.html:85
+#: templates/admin/migration/wizard/step5_import.html:111
+#: templates/admin/migration/wizard/step6_complete.html:17
+#: templates/admin/migration/wizard/step6_complete.html:348
 msgid "Products"
 msgstr "Produtos"
 
+#: admin.py:1168 models/step.py:29
+#: templates/admin/migration/confirm_rollback.html:63
+#: templates/admin/migration/fullmig/step1_connection.html:114
+#: templates/admin/migration/sync/base.html:71
+#: templates/admin/migration/sync/step1_connection.html:134
+#: templates/admin/migration/sync/step2_categories.html:82
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
+#: templates/admin/migration/wizard/step4_mapping.html:82
+#: templates/admin/migration/wizard/step5_import.html:91
+#: templates/admin/migration/wizard/step6_complete.html:21
+#: templates/admin/migration/wizard/step6_complete.html:354
 msgid "Categories"
 msgstr "Categorias"
 
+#: admin.py:1169 models/step.py:34
+#: templates/admin/migration/confirm_rollback.html:71
+#: templates/admin/migration/wizard/step3_preview.html:25
+#: templates/admin/migration/wizard/step3_preview.html:83
+#: templates/admin/migration/wizard/step4_mapping.html:88
+#: templates/admin/migration/wizard/step5_import.html:131
+#: templates/admin/migration/wizard/step6_complete.html:25
+#: templates/admin/migration/wizard/step6_complete.html:360
 msgid "Customers"
 msgstr "Clientes"
 
+#: admin.py:1170 models/step.py:36
+#: templates/admin/migration/confirm_rollback.html:75
+#: templates/admin/migration/wizard/step3_preview.html:29
+#: templates/admin/migration/wizard/step3_preview.html:92
+#: templates/admin/migration/wizard/step4_mapping.html:91
+#: templates/admin/migration/wizard/step5_import.html:151
+#: templates/admin/migration/wizard/step6_complete.html:29
+#: templates/admin/migration/wizard/step6_complete.html:366
 msgid "Orders"
 msgstr "Pedidos"
 
+#: admin.py:1171 models/step.py:38
+#: templates/admin/migration/confirm_rollback.html:79
+#: templates/admin/migration/wizard/step3_preview.html:34
+#: templates/admin/migration/wizard/step3_preview.html:102
+#: templates/admin/migration/wizard/step4_mapping.html:94
+#: templates/admin/migration/wizard/step5_import.html:171
+#: templates/admin/migration/wizard/step6_complete.html:33
 msgid "Reviews"
 msgstr "Avaliações"
 
+#: admin.py:1203
 msgid "Migration Wizard - Field Mapping"
 msgstr "Assistente de Migração - Mapeamento de Campos"
 
+#: admin.py:1239
 msgid ""
-"Migration started! You can safely close this window and check back later."
+"Migration started. You can safely close this window and check back later."
 msgstr ""
-"Migração iniciada! Você pode fechar esta janela com segurança e verificar "
-"mais tarde."
+"A migração foi iniciada. Você pode fechar esta janela com segurança e "
+"verificar mais tarde."
 
+#: admin.py:1245
 msgid "Failed to start import: {}"
 msgstr "Falha ao iniciar a importação: {}"
 
+#: admin.py:1259
+msgid "This migration has already been started."
+msgstr "Esta migração já foi iniciada."
+
+#: admin.py:1278
 msgid "Migration Wizard - Importing"
 msgstr "Assistente de Migração - Importando"
 
+#: admin.py:1344 templates/admin/migration/fullmig/step5_results.html:10
 msgid "Migration Complete"
 msgstr "Migração Completa"
 
+#: admin.py:1483
 msgid "This migration cannot be rolled back."
 msgstr "Esta migração não pode ser revertida."
 
-msgid "Migration rolled back successfully!"
-msgstr "Migração revertida com sucesso!"
+#: admin.py:1498
+msgid "This rollback is already running."
+msgstr "Este rollback já está em execução."
 
-msgid "Rollback failed: {}"
-msgstr "Reversão falhou: {}"
+#: admin.py:1517
+msgid "Spwig could not start the rollback. Nothing has been removed."
+msgstr "O Spwig não pôde iniciar o rollback. Nada foi removido."
 
+#: admin.py:1524
+msgid ""
+"Rollback started. This runs in the background — check back shortly to see "
+"what was removed and what was kept."
+msgstr ""
+"Rollback iniciado. Isso é executado em segundo plano — volte em breve para "
+"ver o que foi removido e o que foi mantido."
+
+#: admin.py:1543
+msgid ""
+"Spwig could not calculate this in advance. The rollback itself will still "
+"report what it removed and what it kept."
+msgstr ""
+"O Spwig não pôde calcular isso com antecedência. O rollback em si ainda "
+"relatará o que foi removido e o que foi mantido."
+
+#: admin.py:1551 templates/admin/migration/confirm_rollback.html:4
+#: templates/admin/migration/confirm_rollback.html:13
 msgid "Confirm Rollback"
 msgstr "Confirmar Reversão"
 
+#: admin.py:1575
 msgid "Only failed migrations can be retried."
 msgstr "Apenas migrações com falha podem ser refeitas."
 
-msgid "Migration restarted! Redirecting to progress page..."
-msgstr "Migração reiniciada! Redirecionando para a página de progresso..."
+#: admin.py:1600
+msgid ""
+"Migration restarted. It runs from the beginning and skips items that have "
+"already been imported."
+msgstr ""
+"Migração reiniciada. Ela começa do início e pula itens que já foram "
+"importados."
 
+#: admin.py:1608
 msgid "Failed to restart migration: {}"
 msgstr "Falha ao reiniciar a migração: {}"
 
+#: admin.py:1629
 msgid "Only running migrations can be cancelled."
 msgstr "Apenas migrações em execução podem ser canceladas."
 
-msgid "Migration cancelled by user"
-msgstr "Migração cancelada pelo usuário"
-
+#: admin.py:1641
 msgid "Migration cancelled by {}"
 msgstr "Migração cancelada por {}"
 
-msgid "Migration cancelled successfully."
-msgstr "Migração cancelada com sucesso."
-
-msgid "Only pending, failed, or running migrations can be deleted."
-msgstr ""
-"Apenas migrações pendentes, com falha ou em execução podem ser excluídas."
-
+#: admin.py:1649
 msgid ""
-"Deleted a running migration. If this was stuck, the operation has been "
-"cleaned up."
+"Stopping this import. It finishes the batch it is working on and then stops, "
+"so this can take a moment. Anything already imported stays in your store — "
+"you can roll it back afterwards if you don't want it."
 msgstr ""
-"Excluída uma migração em execução. Se estivesse travada, a operação foi "
-"limpa."
+"Parando esta importação. Ela termina o lote no qual está trabalhando e "
+"depois para, então isso pode levar um momento. Qualquer coisa já importada "
+"permanece em sua loja — você pode reverter isso depois se não quiser."
 
-msgid "Migration deleted successfully."
-msgstr "Migração excluída com sucesso."
+#: admin.py:1691
+msgid ""
+"This migration can't be deleted yet. Cancel it first, and once it has "
+"finished stopping you'll be able to remove the record."
+msgstr ""
+"Esta migração não pode ser excluída ainda. Cancele-a primeiro, e uma vez que "
+"ela tenha terminado de parar, você poderá remover o registro."
 
+#: admin.py:1708
+msgid ""
+"Migration record deleted. Anything this import added is still in your store "
+"— deleting the record does not remove it."
+msgstr ""
+"Registro de migração excluído. Qualquer coisa que essa importação adicionou "
+"ainda está em sua loja — excluir o registro não a remove."
+
+#: admin.py:1713
+msgid "Migration record deleted."
+msgstr "Registro de migração excluído."
+
+#: admin.py:2233
 msgid "Job ID"
 msgstr "ID do Trabalho"
 
+#: admin.py:2236
 msgid "Started"
 msgstr "Iniciado"
 
+#: admin.py:2238 models/job.py:87 models/step.py:55 models/sync_job.py:78
+#: models/sync_step.py:32
+#: templates/admin/migration/migrationjob/change_list.html:44
+#: templates/admin/migration/syncjob/change_list.html:40
 msgid "Completed"
 msgstr "Concluído"
 
+#: admin.py:2241
 msgid "Duration"
 msgstr "Duração"
 
+#: admin.py:2242
 msgid "Success Rate"
 msgstr "Taxa de Sucesso"
 
+#: admin.py:2260 templates/admin/migration/sync/step3_preview.html:16
 msgid "Summary"
 msgstr "Resumo"
 
+#: admin.py:2262
 msgid "Total Items"
 msgstr "Itens Totais"
 
+#: admin.py:2262 admin.py:2294
+#: templates/admin/migration/migrationjob/change_list.html:174
+#: templates/admin/migration/wizard/step6_complete.html:64
 msgid "Imported"
 msgstr "Importado"
 
+#: admin.py:2262 admin.py:2294 models/content_link.py:123 models/log.py:87
+#: models/step.py:57 models/sync_step.py:34
+#: templates/admin/migration/fullmig/step4_progress.html:52
+#: templates/admin/migration/fullmig/step5_results.html:47
+#: templates/admin/migration/fullmig/step5_results.html:95
+#: templates/admin/migration/migrationjob/change_list.html:178
+#: templates/admin/migration/sync/step4_progress.html:52
+#: templates/admin/migration/syncjob/change_list.html:149
+#: templates/admin/migration/wizard/step6_complete.html:65
+#: templates/admin/migration/wizard/step6_complete.html:208
 msgid "Skipped"
 msgstr "Pulado"
 
+#: admin.py:2262 admin.py:2294 models/job.py:88 models/step.py:56
+#: models/sync_job.py:79 models/sync_step.py:33
+#: templates/admin/migration/fullmig/step4_progress.html:56
+#: templates/admin/migration/fullmig/step5_results.html:51
+#: templates/admin/migration/fullmig/step5_results.html:76
+#: templates/admin/migration/fullmig/step5_results.html:91
+#: templates/admin/migration/migrationjob/change_list.html:60
+#: templates/admin/migration/migrationjob/change_list.html:182
+#: templates/admin/migration/sync/step4_progress.html:56
+#: templates/admin/migration/syncjob/change_list.html:50
+#: templates/admin/migration/syncjob/change_list.html:153
+#: templates/admin/migration/wizard/step6_complete.html:66
 msgid "Failed"
 msgstr "Falhou"
 
+#: admin.py:2292
 msgid "Step Breakdown"
 msgstr "Quebra de Etapas"
 
+#: admin.py:2294 templates/admin/migration/wizard/step2_connection.html:293
 msgid "Step"
 msgstr "Passo"
 
+#: admin.py:2294 templates/admin/migration/fullmig/step4_progress.html:60
+#: templates/admin/migration/fullmig/step5_results.html:55
+#: templates/admin/migration/fullmig/step5_results.html:77
+#: templates/admin/migration/migrationjob/change_list.html:170
+#: templates/admin/migration/sync/step4_progress.html:60
+#: templates/admin/migration/syncjob/change_list.html:141
+#: templates/admin/migration/wizard/step6_complete.html:67
+#: templates/admin/migration/wizard/step6_complete.html:94
 msgid "Total"
 msgstr "Total"
 
+#: admin.py:2334 templates/admin/migration/sync/step4_progress.html:127
 msgid "Errors"
 msgstr "Erros"
 
+#: admin.py:2412
 msgid "Message"
 msgstr "Mensagem"
 
+#: admin.py:2434 templates/admin/migration/wizard/base.html:50
 msgid "Mapping"
 msgstr "Mapeamento"
 
+#: models/content_link.py:24 models/log.py:24 models/mapping.py:24
+#: models/staged_item.py:41 models/step.py:25
 msgid "Parent migration job"
 msgstr "Tarefa de migração principal"
 
+#: models/content_link.py:29
 msgid "Product - Full Description"
 msgstr "Produto - Descrição Completa"
 
+#: models/content_link.py:30
 msgid "Product - Short Description"
 msgstr "Produto - Descrição Curta"
 
+#: models/content_link.py:31
 msgid "Blog Post - Content"
 msgstr "Postagem de Blog - Conteúdo"
 
+#: models/content_link.py:32
 msgid "Category - Description"
 msgstr "Categoria - Descrição"
 
+#: models/content_link.py:35
 msgid "Which content field contains this link"
 msgstr "Qual campo de conteúdo contém este link"
 
+#: models/content_link.py:63
 msgid "Title of the source object (for display)"
 msgstr "Título do objeto de origem (para exibição)"
 
+#: models/content_link.py:68
 msgid "Original URL found in the HTML content"
 msgstr "URL original encontrada no conteúdo HTML"
 
+#: models/content_link.py:71
 msgid "Visible link text (anchor text)"
 msgstr "Texto visível do link (texto de âncora)"
 
+#: models/content_link.py:76
 msgid "Auto-suggested replacement URL"
 msgstr "URL de substituição sugerida automaticamente"
 
+#: models/content_link.py:80
 msgid "Stored Permalink Match"
 msgstr "Correspondência de Permalink Armazenada"
 
+#: models/content_link.py:81
 msgid "Exact Slug Match"
 msgstr "Correspondência de Slug Exata"
 
+#: models/content_link.py:82
 msgid "External ID Match"
 msgstr "Correspondência de ID Externo"
 
+#: models/content_link.py:83
 msgid "URL Path Pattern Match"
 msgstr "Correspondência de Padrão de Caminho da URL"
 
+#: models/content_link.py:84
 msgid "Slug Fallback Match"
 msgstr "Correspondência de Fallback de Slug"
 
+#: models/content_link.py:85
 msgid "No Match Found"
 msgstr "Nenhuma Correspondência Encontrada"
 
+#: models/content_link.py:91
 msgid "How the suggested URL was matched"
 msgstr "Como a URL sugerida foi correspondida"
 
+#: models/content_link.py:95 models/mapping.py:29 models/mapping.py:53
+#: models/staged_item.py:19
 msgid "Product"
 msgstr "Produto"
 
+#: models/content_link.py:96 models/mapping.py:31 models/mapping.py:55
+#: models/staged_item.py:20
+#: templates/admin/migration/fullmig/step3_preflight.html:110
+#: templates/admin/migration/fullmig/step5_results.html:73
 msgid "Category"
 msgstr "Categoria"
 
+#: models/content_link.py:97 models/mapping.py:35 models/mapping.py:59
 msgid "Blog Post"
 msgstr "Postagem do Blog"
 
+#: models/content_link.py:98 models/mapping.py:36 models/mapping.py:60
 msgid "Blog Category"
 msgstr "Categoria de Blog"
 
+#: models/content_link.py:99
 msgid "Collection"
 msgstr "Coleção"
 
+#: models/content_link.py:100
 msgid "Page"
 msgstr "Página"
 
+#: models/content_link.py:101
 msgid "Unknown"
 msgstr "Desconhecido"
 
+#: models/content_link.py:107
 msgid "Type of Spwig object the URL was matched to"
 msgstr "Tipo de objeto Spwig ao qual a URL foi correspondida"
 
+#: models/content_link.py:110
 msgid "ID of the matched Spwig object"
 msgstr "ID do objeto Spwig correspondido"
 
+#: models/content_link.py:115
 msgid "Match confidence: 0.0 (no match) to 1.0 (exact match)"
 msgstr ""
 "Confiança na correspondência: 0.0 (não há correspondência) até 1.0 "
 "(correspondência exata)"
 
+#: models/content_link.py:120 models/staged_item.py:73
 msgid "Pending Review"
 msgstr "Aguardando Revisão"
 
+#: models/content_link.py:121
+#: templates/admin/migration/wizard/step6_complete.html:210
 msgid "Approved"
 msgstr "Aprovado"
 
+#: models/content_link.py:122
 msgid "Modified by Merchant"
 msgstr "Modificado pelo Comerciante"
 
+#: models/content_link.py:124
+#: templates/admin/migration/wizard/step6_complete.html:206
 msgid "Applied"
 msgstr "Aplicado"
 
+#: models/content_link.py:125
 msgid "Apply Failed"
 msgstr "Falha ao Aplicar"
 
+#: models/content_link.py:137
 msgid "URL manually entered by merchant (overrides suggested_url)"
 msgstr "URL inserida manualmente pelo comerciante (sobrescreve suggested_url)"
 
+#: models/content_link.py:140
 msgid "Error message if apply failed"
 msgstr "Mensagem de erro se a aplicação falhar"
 
+#: models/content_link.py:146
 msgid "Content Link"
 msgstr "Link de Conteúdo"
 
+#: models/content_link.py:147
 msgid "Content Links"
 msgstr "Links de Conteúdo"
 
+#: models/job.py:34
 msgid "User who initiated this migration"
 msgstr "Usuário que iniciou essa migração"
 
+#: models/job.py:39
 msgid "WooCommerce"
 msgstr "WooCommerce"
 
+#: models/job.py:40
 msgid "Shopify"
 msgstr "Shopify"
 
+#: models/job.py:41
 msgid "Magento"
 msgstr "Magento"
 
+#: models/job.py:42
 msgid "CSV Files"
 msgstr "Arquivos CSV"
 
+#: models/job.py:45
 msgid "Source e-commerce platform"
 msgstr "Plataforma de comércio eletrônico de origem"
 
+#: models/job.py:49
 msgid "REST API"
 msgstr "REST API"
 
+#: models/job.py:50
 msgid "CSV Upload"
 msgstr "Carregamento CSV"
 
+#: models/job.py:51
 msgid "Direct Database"
 msgstr "Banco de dados direto"
 
+#: models/job.py:54
 msgid "Migration method used"
 msgstr "Método de migração usado"
 
+#: models/job.py:60
 msgid "Connection configuration (API keys, URLs, etc.)"
 msgstr "Configuração da conexão (chaves API, URLs, etc.)"
 
+#: models/job.py:74
 msgid "Import blog posts, categories, and tags from WordPress"
 msgstr "Importar posts de blog, categorias e tags do WordPress"
 
+#: models/job.py:77
 msgid "Import affiliate data via Spwig Migration Bridge plugin"
 msgstr "Importar dados de afiliado via plugin Spwig Migration Bridge"
 
+#: models/job.py:82 models/step.py:53 models/sync_job.py:74
+#: models/sync_step.py:30
 msgid "Pending"
 msgstr "Pendente"
 
+#: models/job.py:83
 msgid "Testing Connection"
 msgstr "Testando conexão"
 
+#: models/job.py:84
 msgid "Previewing Data"
 msgstr "Visualizando dados"
 
+#: models/job.py:85
 msgid "Importing"
 msgstr "Importando"
 
+#: models/job.py:86
 msgid "Paused"
 msgstr "Pausada"
 
+#: models/job.py:89 models/step.py:61 models/sync_job.py:82
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#: models/job.py:90 models/sync_job.py:80
 msgid "Rolling Back"
 msgstr "Revertendo"
 
+#: models/job.py:91 models/step.py:62 models/sync_job.py:81
+#: models/sync_step.py:35
 msgid "Rolled Back"
 msgstr "Revertido"
 
-msgid "Transaction ID for rollback tracking"
-msgstr "ID da transação para rastreamento de reversão"
+#: models/job.py:92
+msgid "Rollback Failed"
+msgstr "Rollback Falhou"
 
+#: models/job.py:99
 msgid "Whether this migration can be rolled back"
 msgstr "Se esta migração pode ser revertida"
 
-msgid "Deadline for manual rollback (24 hours after completion)"
-msgstr "Prazo para reversão manual (24 horas após o término)"
+#: models/job.py:105
+msgid ""
+"Point after which this migration can no longer be rolled back. Empty means "
+"it never expires."
+msgstr ""
+"Ponto após o qual essa migração não pode mais ser desfeita. Vazio significa "
+"que nunca expira."
 
+#: models/job.py:112
+msgid "If the import fails, automatically remove everything it imported"
+msgstr "Se a importação falhar, remova automaticamente tudo que foi importado"
+
+#: models/job.py:126
+msgid "Set when an operator asks for a running import to stop"
+msgstr ""
+"Definir quando um operador solicitar que uma importação em andamento pare"
+
+#: models/job.py:131
 msgid "Current import step being processed"
 msgstr "Etapa atual de importação sendo processada"
 
+#: models/job.py:134 models/sync_job.py:92
 msgid "Overall progress percentage (0-100)"
 msgstr "Porcentagem de progresso geral (0-100)"
 
+#: models/job.py:225
 msgid "Total migration duration in seconds"
 msgstr "Duração total da migração em segundos"
 
+#: models/job.py:232
 msgid "Summary of errors encountered"
 msgstr "Resumo dos erros encontrados"
 
+#: models/job.py:233
 msgid "Summary of warnings encountered"
 msgstr "Resumo dos avisos encontrados"
 
+#: models/job.py:240
 msgid "Generated migration report (CSV/PDF)"
 msgstr "Relatório de migração gerado (CSV/PDF)"
 
+#: models/job.py:245
 msgid "Migration Job"
 msgstr "Trabalho de migração"
 
+#: models/job.py:246
 msgid "Migration Jobs"
 msgstr "Trabalhos de migração"
 
+#: models/log.py:33
 msgid "Migration step this log belongs to"
 msgstr "Etapa de migração a qual este log pertence"
 
+#: models/log.py:37
 msgid "When this log entry was created"
 msgstr "Quando esta entrada de log foi criada"
 
+#: models/log.py:41
 msgid "Debug"
 msgstr "Depurar"
 
+#: models/log.py:42
 msgid "Info"
 msgstr "Informação"
 
+#: models/log.py:43
 msgid "Warning"
 msgstr "Aviso"
 
+#: models/log.py:44 models/log.py:88
 msgid "Error"
 msgstr "Erro"
 
+#: models/log.py:45
 msgid "Critical"
 msgstr "Crítico"
 
+#: models/log.py:48
 msgid "Log severity level"
 msgstr "Nível de severidade do log"
 
+#: models/log.py:51
 msgid "Log message"
 msgstr "Mensagem do log"
 
+#: models/log.py:55
 msgid "Source data type (e.g., 'woocommerce_product')"
 msgstr "Tipo de dado de origem (ex: 'woocommerce_product')"
 
+#: models/log.py:58
 msgid "ID from source system"
 msgstr "ID do sistema de origem"
 
+#: models/log.py:61
 msgid "Name/title of source item"
 msgstr "Nome/título do item de origem"
 
+#: models/log.py:70
 msgid "Type of created object"
 msgstr "Tipo do objeto criado"
 
+#: models/log.py:73
 msgid "ID of created object"
 msgstr "ID do objeto criado"
 
+#: models/log.py:78
 msgid "Additional context data"
 msgstr "Dados de contexto adicionais"
 
+#: models/log.py:82
 msgid "Fetched"
 msgstr "Recuperado"
 
+#: models/log.py:83
 msgid "Validated"
 msgstr "Validado"
 
+#: models/log.py:84
 msgid "Mapped"
 msgstr "Mapeado"
 
+#: models/log.py:86
 msgid "Updated"
 msgstr "Atualizado"
 
+#: models/log.py:91
 msgid "Action performed"
 msgstr "Ação realizada"
 
+#: models/log.py:96
 msgid "Migration Log"
 msgstr "Log de migração"
 
+#: models/log.py:97
 msgid "Migration Logs"
 msgstr "Logs de migração"
 
+#: models/mapping.py:30 models/mapping.py:54
 msgid "Product Variant"
 msgstr "Variação de produto"
 
+#: models/mapping.py:32 models/mapping.py:56 models/staged_item.py:21
 msgid "Customer"
 msgstr "Cliente"
 
+#: models/mapping.py:33 models/mapping.py:57 models/staged_item.py:22
 msgid "Order"
 msgstr "Ordem"
 
+#: models/mapping.py:34 models/mapping.py:58 models/staged_item.py:23
 msgid "Review"
 msgstr "Revisão"
 
+#: models/mapping.py:37 models/mapping.py:61
 msgid "Blog Tag"
 msgstr "Tag de blog"
 
+#: models/mapping.py:40
 msgid "Type of source data"
 msgstr "Tipo de dado de origem"
 
+#: models/mapping.py:44
 msgid "Source field name (e.g., '_custom_brand', 'metafields.brand')"
 msgstr "Nome do campo de origem (ex: '_custom_brand', 'metafields.brand')"
 
+#: models/mapping.py:48
 msgid "Human-readable label for source field"
 msgstr "Rótulo legível por humanos para o campo de origem"
 
+#: models/mapping.py:64
 msgid "Destination model name"
 msgstr "Nome do modelo de destino"
 
+#: models/mapping.py:68
 msgid "Destination field name (e.g., 'brand', 'short_description')"
 msgstr "Nome do campo de destino (ex: 'brand', 'short_description')"
 
+#: models/mapping.py:72
 msgid "Human-readable label for destination field"
 msgstr "Rótulo legível por humanos para o campo de destino"
 
+#: models/mapping.py:77
 msgid "No Transformation"
 msgstr "Nenhuma transformação"
 
+#: models/mapping.py:78
 msgid "Convert to String"
 msgstr "Converter para String"
 
+#: models/mapping.py:79
 msgid "Convert to Integer"
 msgstr "Converter para Inteiro"
 
+#: models/mapping.py:80
 msgid "Convert to Decimal"
 msgstr "Converter para Decimal"
 
+#: models/mapping.py:81
 msgid "Convert to Boolean"
 msgstr "Converter para Booleano"
 
+#: models/mapping.py:82
 msgid "Parse JSON"
 msgstr "Analisar JSON"
 
+#: models/mapping.py:83
 msgid "Parse Date"
 msgstr "Parsear Data"
 
+#: models/mapping.py:84
 msgid "Validate URL"
 msgstr "Validar URL"
 
+#: models/mapping.py:85
 msgid "Validate Email"
 msgstr "Validar Email"
 
+#: models/mapping.py:87
 msgid "Convert to Money"
 msgstr "Converter para Moeda"
 
+#: models/mapping.py:88
 msgid "Integer (allow null)"
 msgstr "Inteiro (permitir nulo)"
 
+#: models/mapping.py:89
 msgid "Decimal (allow null)"
 msgstr "Decimal (permitir nulo)"
 
+#: models/mapping.py:90
 msgid "WooCommerce Status"
 msgstr "Status do WooCommerce"
 
+#: models/mapping.py:91
 msgid "WooCommerce Product Type"
 msgstr "Tipo de Produto do WooCommerce"
 
+#: models/mapping.py:92
 msgid "WooCommerce Backorders"
 msgstr "Pedidos de Produtos em Faltante do WooCommerce"
 
+#: models/mapping.py:93
 msgid "Meta Data Array"
 msgstr "Array de Dados de Metadados"
 
+#: models/mapping.py:94
 msgid "Category Array"
 msgstr "Array de Categorias"
 
+#: models/mapping.py:95
 msgid "Image Array"
 msgstr "Array de Imagens"
 
+#: models/mapping.py:96
 msgid "Category Parent Resolution"
 msgstr "Resolução do Pai da Categoria"
 
+#: models/mapping.py:97
 msgid "Custom Function"
 msgstr "Função Personalizada"
 
+#: models/mapping.py:99
 msgid "Shopify Product Status"
 msgstr "Status do Produto Shopify"
 
+#: models/mapping.py:100
 msgid "Shopify Order Status"
 msgstr "Status do Pedido Shopify"
 
+#: models/mapping.py:101
 msgid "Shopify Discount Type"
 msgstr "Tipo de Desconto Shopify"
 
+#: models/mapping.py:102
 msgid "Shopify Discount Value"
 msgstr "Valor do Desconto Shopify"
 
+#: models/mapping.py:103
 msgid "Shopify Inventory Tracked"
 msgstr "Inventário Rastreado Shopify"
 
+#: models/mapping.py:104
 msgid "Shopify Inventory Policy"
 msgstr "Política de Inventário Shopify"
 
+#: models/mapping.py:105
 msgid "Comma-Separated to List"
 msgstr "De Separado por Vírgula para Lista"
 
+#: models/mapping.py:107
+msgid "Magento Product Status"
+msgstr "Status do Produto Magento"
+
+#: models/mapping.py:108
+msgid "Magento Product Visibility"
+msgstr "Visibilidade do Produto Magento"
+
+#: models/mapping.py:109
+msgid "Magento Order Status"
+msgstr "Status do Pedido Magento"
+
+#: models/mapping.py:110
+msgid "Magento Discount Type"
+msgstr "Tipo de Desconto Magento"
+
+#: models/mapping.py:116
 msgid "Data transformation to apply"
 msgstr "Transformação de dados a ser aplicada"
 
+#: models/mapping.py:121
 msgid "Python function name for custom transformation"
 msgstr "Nome da função Python para transformação personalizada"
 
+#: models/mapping.py:126
 msgid "Default value if source field is missing or empty"
 msgstr "Valor padrão se o campo de origem estiver faltando ou vazio"
 
+#: models/mapping.py:131
 msgid "Whether this field is required (skip item if missing)"
 msgstr "Se este campo é obrigatório (pular item se faltar)"
 
+#: models/mapping.py:135
 msgid "Skip entire item if this field is empty"
 msgstr "Pular o item inteiro se este campo estiver vazio"
 
+#: models/mapping.py:140
 msgid "Number of times this mapping was applied"
 msgstr "Número de vezes que esta mapeação foi aplicada"
 
+#: models/mapping.py:144
 msgid "Number of times transformation failed"
 msgstr "Número de vezes que a transformação falhou"
 
+#: models/mapping.py:149
 msgid "Whether this mapping was auto-detected from data"
 msgstr "Se esta mapeação foi detectada automaticamente a partir dos dados"
 
+#: models/mapping.py:156
 msgid "Migration Mapping"
 msgstr "Mapeamento de Migração"
 
+#: models/mapping.py:157
 msgid "Migration Mappings"
 msgstr "Mapeamentos de Migração"
 
+#: models/staged_item.py:27
 msgid "Missing Required Field"
 msgstr "Campo Obrigatório Faltando"
 
+#: models/staged_item.py:28
 msgid "Invalid Data Format"
 msgstr "Formato de Dados Inválido"
 
+#: models/staged_item.py:29
 msgid "Missing Relationship"
 msgstr "Relação Faltando"
 
+#: models/staged_item.py:30
 msgid "Data Transformation Failed"
 msgstr "Transformação de Dados Falhou"
 
+#: models/staged_item.py:31
 msgid "Duplicate Entry"
 msgstr "Entrada Duplicada"
 
+#: models/staged_item.py:32
 msgid "Validation Failed"
 msgstr "Validação Falhou"
 
+#: models/staged_item.py:33
 msgid "Unknown Error"
 msgstr "Erro Desconhecido"
 
+#: models/staged_item.py:46
 msgid "Original ID from source platform"
 msgstr "ID Original da Plataforma de Fonte"
 
+#: models/staged_item.py:49
 msgid "Original data from WooCommerce/Shopify"
 msgstr "Dados Originais do WooCommerce/Shopify"
 
+#: models/staged_item.py:53
 msgid "Data after transformation, ready for model creation"
 msgstr "Dados após a transformação, prontos para criação do modelo"
 
+#: models/staged_item.py:58
 msgid "Why this item failed to import"
 msgstr "Por que este item falhou na importação"
 
+#: models/staged_item.py:61
 msgid "Detailed error message"
 msgstr "Mensagem de erro detalhada"
 
+#: models/staged_item.py:64
 msgid "Specific field that caused the error"
 msgstr "Campo específico que causou o erro"
 
+#: models/staged_item.py:74
 msgid "Being Fixed"
 msgstr "Em Correção"
 
+#: models/staged_item.py:75
 msgid "Ready to Retry"
 msgstr "Pronto para Tentar Novamente"
 
+#: models/staged_item.py:76
 msgid "Successfully Imported"
 msgstr "Importado com Sucesso"
 
+#: models/staged_item.py:77
 msgid "Skipped by Admin"
 msgstr "Pulado pelo Administrador"
 
+#: models/staged_item.py:81
 msgid "Admin notes about fixing this item"
 msgstr "Notas do administrador sobre a correção deste item"
 
+#: models/staged_item.py:92
 msgid "Staged Item"
 msgstr "Item em Etapa"
 
+#: models/staged_item.py:93
 msgid "Staged Items"
 msgstr "Itens em Etapa"
 
+#: models/step.py:30
 msgid "Brands"
 msgstr "Marcas"
 
+#: models/step.py:32
 msgid "Product Images"
 msgstr "Imagens de Produtos"
 
+#: models/step.py:33
 msgid "Product Variants"
 msgstr "Variações de Produtos"
 
+#: models/step.py:35
 msgid "Customer Addresses"
 msgstr "Endereços de Clientes"
 
+#: models/step.py:37
 msgid "Order Items"
 msgstr "Itens de Pedidos"
 
+#: models/step.py:39 templates/admin/migration/confirm_rollback.html:83
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
+#: templates/admin/migration/wizard/step4_mapping.html:97
+#: templates/admin/migration/wizard/step5_import.html:191
+#: templates/admin/migration/wizard/step6_complete.html:37
 msgid "Coupons"
 msgstr "Cupons"
 
+#: models/step.py:40
 msgid "Blog"
 msgstr "Blog"
 
+#: models/step.py:41
 msgid "Shipping Zones"
 msgstr "Zonas de Envio"
 
+#: models/step.py:42
 msgid "Tax Rates"
 msgstr "Taxas de Imposto"
 
+#: models/step.py:43 templates/admin/migration/wizard/step6_complete.html:117
 msgid "Link Rewriting"
 msgstr "Reescrita de Links"
 
+#: models/step.py:44 templates/admin/migration/wizard/step3_preview.html:50
+#: templates/admin/migration/wizard/step3_preview.html:141
+#: templates/admin/migration/wizard/step5_import.html:231
+#: templates/admin/migration/wizard/step6_complete.html:42
 msgid "Affiliates"
 msgstr "Afiliados"
 
+#: models/step.py:45 templates/admin/migration/wizard/step5_import.html:251
+#: templates/admin/migration/wizard/step6_complete.html:48
 msgid "Commissions"
 msgstr "Comissões"
 
+#: models/step.py:46 templates/admin/migration/wizard/step5_import.html:271
 msgid "Payouts"
 msgstr "Pagamentos"
 
+#: models/step.py:49
 msgid "Type of data being imported in this step"
 msgstr "Tipo de dados sendo importados nesta etapa"
 
+#: models/step.py:54 models/sync_job.py:77 models/sync_step.py:31
 msgid "Running"
 msgstr "Em Execução"
 
-msgid "Database savepoint ID for this step"
-msgstr "ID do ponto de salvamento do banco de dados para esta etapa"
-
+#: models/step.py:69
 msgid "Total items to import in this step"
 msgstr "Total de itens a importar nesta etapa"
 
+#: models/step.py:70
 msgid "Items successfully imported"
 msgstr "Itens importados com sucesso"
 
+#: models/step.py:72
 msgid "Items skipped (duplicates, validation failures)"
 msgstr "Itens pulados (duplicados, falhas de validação)"
 
+#: models/step.py:74
 msgid "Items that failed to import"
 msgstr "Itens que falharam na importação"
 
+#: models/step.py:77
 msgid "When this step started"
 msgstr "Quando este passo começou"
 
+#: models/step.py:79
 msgid "When this step completed"
 msgstr "Quando este passo foi concluído"
 
+#: models/step.py:82
 msgid "Duration of this step in seconds"
 msgstr "Duração desta etapa em segundos"
 
+#: models/step.py:86
 msgid "Error message if step failed"
 msgstr "Mensagem de erro se o passo falhou"
 
+#: models/step.py:88
 msgid "Number of errors encountered in this step"
 msgstr "Número de erros encontrados nesta etapa"
 
+#: models/step.py:91
 msgid "Number of warnings encountered in this step"
 msgstr "Número de avisos encontrados nesta etapa"
 
+#: models/step.py:96
 msgid "Currently processing item (for progress display)"
 msgstr "Item atualmente sendo processado (para exibição de progresso)"
 
+#: models/step.py:101
 msgid "Migration Step"
 msgstr "Passo de Migração"
 
+#: models/step.py:102
 msgid "Migration Steps"
 msgstr "Etapas de Migração"
 
+#: models/sync_connection.py:24
 msgid "Descriptive name (e.g., 'Production Server', 'Staging')"
-msgstr ""
+msgstr "Nome descritivo (ex., 'Servidor de Produção', 'Ambiente de Teste')"
 
-#, fuzzy
-#| msgid "Product"
+#: models/sync_connection.py:28
+#: templates/admin/migration/sync/step1_connection.html:92
 msgid "Production"
-msgstr "Produto"
+msgstr "Produção"
 
+#: models/sync_connection.py:29
+#: templates/admin/migration/sync/step1_connection.html:91
 msgid "Staging"
-msgstr ""
+msgstr "Ambiente de Teste"
 
-#, fuzzy
-#| msgid "Back"
+#: models/sync_connection.py:30
+#: templates/admin/migration/sync/step1_connection.html:93
 msgid "Backup"
-msgstr "Voltar"
+msgstr "Backup"
 
+#: models/sync_connection.py:31
+#: templates/admin/migration/sync/step1_connection.html:94
 msgid "Other"
-msgstr ""
+msgstr "Outro"
 
+#: models/sync_connection.py:37
 msgid "Role of the remote instance"
-msgstr ""
+msgstr "Papel da instância remota"
 
+#: models/sync_connection.py:41
 msgid ""
 "Base URL of the remote Spwig instance (e.g., https://merchant-store.com)"
-msgstr ""
+msgstr "URL base da instância remota Spwig (ex., https://merchant-store.com)"
 
+#: models/sync_connection.py:46
 msgid "SyncToken for the remote instance (stored encrypted)"
-msgstr ""
+msgstr "SyncToken para a instância remota (armazenado criptografado)"
 
+#: models/sync_connection.py:51
 msgid "Spwig version running on the remote instance"
-msgstr ""
+msgstr "Versão Spwig em execução na instância remota"
 
+#: models/sync_connection.py:54
 msgid "Site name of the remote instance"
-msgstr ""
+msgstr "Nome do site da instância remota"
 
+#: models/sync_connection.py:58
 msgid "Whether the connection has been verified"
-msgstr ""
+msgstr "Se a conexão foi verificada"
 
+#: models/sync_connection.py:61
 msgid "Last successful connection test"
-msgstr ""
+msgstr "Último teste de conexão bem-sucedido"
 
+#: models/sync_connection.py:64
 msgid "Last time a sync was performed using this connection"
-msgstr ""
+msgstr "Última vez que uma sincronização foi realizada usando esta conexão"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_connection.py:72
 msgid "User who created this connection"
-msgstr "Usuário que iniciou essa migração"
+msgstr "Usuário que criou essa conexão"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:79
 msgid "Sync Connection"
-msgstr "Conexão"
+msgstr "Conexão de Sincronização"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:80
 msgid "Sync Connections"
-msgstr "Conexão"
+msgstr "Conexões de Sincronização"
 
-#, fuzzy
-#| msgid "Settings"
+#: models/sync_job.py:26 templates/admin/migration/sync/base.html:34
 msgid "Settings Sync"
-msgstr "Configurações"
+msgstr "Sincronização de Configurações"
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: models/sync_job.py:27 templates/admin/migration/sync/base.html:32
 msgid "Full System Migration"
-msgstr "Iniciar Nova Migração"
+msgstr "Migração do Sistema Completo"
 
-#, fuzzy
-#| msgid "Type of source data"
+#: models/sync_job.py:30
 msgid "Type of sync operation"
-msgstr "Tipo de dado de origem"
+msgstr "Tipo de operação de sincronização"
 
+#: models/sync_job.py:34
 msgid "Pull from Remote"
-msgstr ""
+msgstr "Puxar da Remota"
 
+#: models/sync_job.py:35
 msgid "Push to Remote"
-msgstr ""
+msgstr "Empurrar para Remota"
 
+#: models/sync_job.py:38
 msgid "Direction of data flow"
-msgstr ""
+msgstr "Direção do fluxo de dados"
 
+#: models/sync_job.py:46
 msgid "Connection to the remote instance"
-msgstr ""
+msgstr "Conexão com a instância remota"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_job.py:54
 msgid "User who initiated this sync"
-msgstr "Usuário que iniciou essa migração"
+msgstr "Usuário que iniciou esta sincronização"
 
+#: models/sync_job.py:59
 msgid "List of sync category keys selected for this job"
 msgstr ""
+"Lista das chaves de categoria de sincronização selecionadas para esta tarefa"
 
+#: models/sync_job.py:63
 msgid "Add & Update Only"
-msgstr ""
+msgstr "Adicionar e Atualizar Apenas"
 
+#: models/sync_job.py:64
 msgid "Full Mirror"
-msgstr ""
+msgstr "Espelho Completo"
 
+#: models/sync_job.py:70
 msgid "Sync behaviour: additive (no deletions) or mirror (exact copy)"
 msgstr ""
+"Comportamento da sincronização: aditivo (sem exclusões) ou espelho (cópia "
+"exata)"
 
-#, fuzzy
-#| msgid "pending review"
+#: models/sync_job.py:75
 msgid "Generating Preview"
-msgstr "pendentes de revisão"
+msgstr "Gerando Pré-visualização"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: models/sync_job.py:76
 msgid "Awaiting Confirmation"
-msgstr "Testando conexão"
+msgstr "Aguardando Confirmação"
 
-#, fuzzy
-#| msgid "Cancel"
-msgid "Cancelled"
-msgstr "Cancelar"
-
+#: models/sync_job.py:88
 msgid "Current status of the sync operation"
-msgstr ""
+msgstr "Status atual da operação de sincronização"
 
+#: models/sync_job.py:95
 msgid "Name of the currently executing step"
-msgstr ""
+msgstr "Nome do passo atualmente em execução"
 
+#: models/sync_job.py:100
 msgid "Structured diff from preview step"
-msgstr ""
+msgstr "Diferença estruturada do passo de pré-visualização"
 
+#: models/sync_job.py:105
 msgid "Whether the merchant confirmed production overwrite"
-msgstr ""
+msgstr "Se o vendedor confirmou a substituição em produção"
 
+#: models/sync_job.py:110
 msgid "Pre-sync state snapshot for rollback"
-msgstr ""
+msgstr "Captura de estado antes da sincronização para rollback"
 
-#, fuzzy
-#| msgid "Whether this migration can be rolled back"
+#: models/sync_job.py:113
 msgid "Whether this job can be rolled back"
-msgstr "Se esta migração pode ser revertida"
+msgstr "Se esta tarefa pode ser revertida"
 
-#, fuzzy
-#| msgid "Deadline for manual rollback (24 hours after completion)"
+#: models/sync_job.py:116
 msgid "Deadline for rollback (24 hours after completion)"
-msgstr "Prazo para reversão manual (24 horas após o término)"
+msgstr "Prazo para reversão (24 horas após a conclusão)"
 
+#: models/sync_job.py:136
 msgid "Recent activity log entries [{ts, msg}, ...] (last 50)"
-msgstr ""
+msgstr "Entradas recentes do log de atividades [{ts, msg}, ...] (últimas 50)"
 
+#: models/sync_job.py:143
 msgid "Sync Job"
-msgstr ""
+msgstr "Tarefa de Sincronização"
 
+#: models/sync_job.py:144
 msgid "Sync Jobs"
-msgstr ""
+msgstr "Tarefas de Sincronização"
 
-#, fuzzy
-#| msgid "Parent migration job"
+#: models/sync_step.py:21
 msgid "Parent sync job"
-msgstr "Tarefa de migração principal"
+msgstr "Tarefa de sincronização principal"
 
+#: models/sync_step.py:26
 msgid "Sync category key (e.g., 'email_config', 'design_theme')"
 msgstr ""
+"Chave de categoria de sincronização (ex., 'email_config', 'design_theme')"
 
+#: models/sync_step.py:52
 msgid "Diff data, created object IDs, or ID mappings for this step"
 msgstr ""
+"Dados de diferença, IDs de objetos criados ou mapeamentos de ID para este "
+"passo"
 
+#: models/sync_step.py:59
 msgid "Extra progress data for the UI (e.g., bytes transferred for media)"
 msgstr ""
+"Dados de progresso adicionais para a interface do usuário (ex., bytes "
+"transferidos para mídia)"
 
-#, fuzzy
-#| msgid "Step"
+#: models/sync_step.py:64
 msgid "Sync Step"
-msgstr "Passo"
+msgstr "Etapa de Sincronização"
 
-#, fuzzy
-#| msgid "Next Steps"
+#: models/sync_step.py:65
 msgid "Sync Steps"
-msgstr "Próximos passos"
+msgstr "Etapas de Sincronização"
 
+#: sync/authentication.py:40
 msgid "HTTPS is required for sync API requests."
-msgstr ""
+msgstr "HTTPS é necessário para requisições da API de sincronização."
 
+#: sync/authentication.py:46
 msgid "Missing or invalid Authorization header. Expected: SyncToken <token>"
 msgstr ""
+"Cabeçalho de Autorização ausente ou inválido. Esperado: SyncToken <token>"
 
+#: sync/authentication.py:51
 msgid "Empty sync token."
-msgstr ""
+msgstr "Token de sincronização vazio."
 
+#: sync/authentication.py:61
 msgid "Invalid or expired sync token."
-msgstr ""
+msgstr "Token de sincronização inválido ou expirado."
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:25
 msgid "Site Settings"
-msgstr "Configurações"
+msgstr "Configurações do Site"
 
+#: sync/category_registry.py:27
 msgid ""
 "Core site configuration: name, branding, currency, checkout, SEO, maintenance"
 msgstr ""
+"Configuração do site principal: nome, branding, moeda, checkout, SEO, "
+"manutenção"
 
+#: sync/category_registry.py:41
 msgid "Design & Theme"
-msgstr ""
+msgstr "Design e Tema"
 
+#: sync/category_registry.py:42
 msgid "Active theme, design tokens, custom CSS, theme branding"
-msgstr ""
+msgstr "Tema ativo, tokens de design, CSS personalizado, marcação de tema"
 
+#: sync/category_registry.py:61
 msgid "Headers, Footers & Menus"
-msgstr ""
+msgstr "Cabeçalhos, Rodapés e Menus"
 
+#: sync/category_registry.py:62
 msgid "Header/footer templates, widgets, navigation menus"
-msgstr ""
+msgstr "Modelos de cabeçalho/rodapé, widgets e menus de navegação"
 
-#, fuzzy
-#| msgid "Total Migrations"
+#: sync/category_registry.py:81
 msgid "Email Configuration"
-msgstr "Total de Migrações"
+msgstr "Configuração de E-mail"
 
+#: sync/category_registry.py:82
 msgid "Email provider accounts, templates, and template translations"
-msgstr ""
+msgstr "Contas de provedor de e-mail, modelos e traduções de modelos"
 
+#: sync/category_registry.py:99
 msgid "SMS & WhatsApp Configuration"
-msgstr ""
+msgstr "Configuração de SMS e WhatsApp"
 
+#: sync/category_registry.py:100
 msgid "SMS/WhatsApp provider accounts and message templates"
-msgstr ""
+msgstr "Contas de provedor de SMS/WhatsApp e modelos de mensagens"
 
+#: sync/category_registry.py:113
 msgid "Payment Providers"
-msgstr ""
+msgstr "Fornecedores de Pagamento"
 
+#: sync/category_registry.py:114
 msgid "Payment provider accounts (Stripe, PayPal, etc.)"
-msgstr ""
+msgstr "Contas de provedor de pagamento (Stripe, PayPal, etc.)"
 
+#: sync/category_registry.py:123
 msgid "Sandbox/test credentials will NOT be synced to production."
 msgstr ""
+"As credenciais de ambiente de areia/teste NÃO serão sincronizadas com a "
+"produção."
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:130
 msgid "Shipping Configuration"
-msgstr "Migração Shopify"
+msgstr "Configuração de Envio"
 
+#: sync/category_registry.py:132
 msgid ""
-"Shipping providers, zones, methods, rules, rate tables, packages, carrier "
-"presets, locations"
+"Shipping providers, zones, methods, promotions, rate tables, packages, "
+"carrier presets, locations"
 msgstr ""
+"Provedores de envio, zonas, métodos, promoções, tabelas de taxa, pacotes, "
+"configurações pré-definidas do transportador, localizações"
 
+#: sync/category_registry.py:156
 msgid "Tax & Currency"
-msgstr ""
+msgstr "Imposto e Moeda"
 
+#: sync/category_registry.py:158
 msgid "Supported currencies, exchange rate providers, manual exchange rates"
 msgstr ""
+"Moedas suportadas, provedores de taxa de câmbio, taxas de câmbio manuais"
 
-#, fuzzy
-#| msgid "Tax Rates"
+#: sync/category_registry.py:176
 msgid "Tax Rates & Presets"
-msgstr "Taxas de Imposto"
+msgstr "Alíquotas e Predefinições de Imposto"
 
+#: sync/category_registry.py:177
 msgid "Tax rates, tax preset groups and preset rates"
-msgstr ""
+msgstr "Taxas de imposto, grupos de taxas pré-definidas e taxas pré-definidas"
 
+#: sync/category_registry.py:193
 msgid "Languages & Translations"
-msgstr ""
+msgstr "Idiomas e Traduções"
 
+#: sync/category_registry.py:194
 msgid "Site languages, translation providers, UI translation overrides"
 msgstr ""
+"Idiomas do site, provedores de tradução, substituições de tradução da "
+"interface do usuário"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:210
 msgid "Blog Settings"
-msgstr "Configurações"
+msgstr "Configurações do Blog"
 
+#: sync/category_registry.py:211
 msgid "Blog configuration (posts per page, RSS, subscriptions)"
-msgstr ""
+msgstr "Configuração do blog (posts por página, RSS, assinaturas)"
 
+#: sync/category_registry.py:223
 msgid "Social Sharing"
-msgstr ""
+msgstr "Compartilhamento Social"
 
+#: sync/category_registry.py:224
 msgid "Social sharing button configuration and platform settings"
 msgstr ""
+"Configuração do botão de compartilhamento social e configurações da "
+"plataforma"
 
+#: sync/category_registry.py:236
 msgid "Sales Regions & Warehouses"
-msgstr ""
+msgstr "Regiões de Venda e Depósitos"
 
+#: sync/category_registry.py:238
 msgid "Sales regions, warehouse locations, and fulfillment configuration"
 msgstr ""
+"Regiões de venda, localizações do armazém e configuração de atendimento"
 
-#, fuzzy
-#| msgid "Collections"
+#: sync/category_registry.py:251
 msgid "Product Collections"
-msgstr "Coleções"
+msgstr "Coleções de Produtos"
 
+#: sync/category_registry.py:252
 msgid "Curated and automatic product collections"
-msgstr ""
+msgstr "Coleções de Produtos Selecionadas e Automáticas"
 
-#, fuzzy
-#| msgid "WooCommerce Status"
+#: sync/category_registry.py:265
 msgid "Commerce Rules"
-msgstr "Status do WooCommerce"
+msgstr "Regras de Comércio"
 
+#: sync/category_registry.py:267
 msgid "Vouchers, promotions, loyalty program, subscriptions, referral program"
 msgstr ""
+"Vales, promoções, programa de fidelidade, assinaturas, programa de indicação"
 
-#, fuzzy
-#| msgid "Webhooks API Version"
+#: sync/category_registry.py:293
 msgid "Webhooks & Integrations"
-msgstr "Versão da API Webhooks"
+msgstr "Webhooks e Integrações"
 
+#: sync/category_registry.py:294
 msgid "Webhook endpoints and OAuth provider settings"
-msgstr ""
+msgstr "Pontos de extremidade de webhook e configurações do provedor OAuth"
 
+#: sync/category_registry.py:307
+#: templates/admin/migration/wizard/step4_mapping.html:154
 msgid "Custom Fields"
 msgstr "Campos Personalizados"
 
+#: sync/category_registry.py:308
 msgid "Custom field groups and field definitions"
-msgstr ""
+msgstr "Grupos de campos personalizados e definições de campos"
 
+#: sync/category_registry.py:320
 msgid "Staff Roles"
-msgstr ""
+msgstr "Papeis da Equipe"
 
+#: sync/category_registry.py:321
 msgid "Staff role definitions and permissions"
-msgstr ""
+msgstr "Definições de Papeis da Equipe e Permissões"
 
+#: sync/category_registry.py:333
 msgid "Forms"
-msgstr ""
+msgstr "Formulários"
 
+#: sync/category_registry.py:334
 msgid "Form builder forms and configurations"
-msgstr ""
+msgstr "Formulários e Configurações do Construtor de Formulários"
 
+#: sync/category_registry.py:346
 msgid "Pages & Templates"
-msgstr ""
+msgstr "Páginas e Modelos"
 
+#: sync/category_registry.py:347
 msgid "Page builder pages, page templates, element templates"
 msgstr ""
+"Páginas do construtor de páginas, modelos de página, modelos de elementos"
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: sync/category_registry.py:364
 msgid "Blog Posts & Categories"
-msgstr "Categorias do Blog"
+msgstr "Posts e Categorias do Blog"
 
-#, fuzzy
-#| msgid "Import blog posts, categories, and tags from WordPress"
+#: sync/category_registry.py:365
 msgid "Blog posts, categories, and tags"
-msgstr "Importar posts de blog, categorias e tags do WordPress"
+msgstr "Posts de blog, categorias e tags"
 
+#: sync/category_registry.py:377
 msgid "Announcements"
-msgstr ""
+msgstr "Anúncios"
 
+#: sync/category_registry.py:378
 msgid "Site announcements and notification banners"
-msgstr ""
+msgstr "Anúncios do Site e Banners de Notificação"
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:391
 msgid "Search Configuration"
-msgstr "Migração Shopify"
+msgstr "Configuração de Pesquisa"
 
+#: sync/category_registry.py:392
 msgid "Search redirects and search settings"
-msgstr ""
+msgstr "Redirecionamentos de Pesquisa e Configurações de Pesquisa"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:404
 msgid "SEO Providers"
-msgstr "Pedidos"
+msgstr "Fornecedores de SEO"
 
+#: sync/category_registry.py:405
 msgid "SEO generator provider accounts and configuration"
-msgstr ""
+msgstr "Contas de provedores de gerador de SEO e configurações"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:418
 msgid "Product Feed Providers"
-msgstr "Campos do Produto"
+msgstr "Fornecedores de Feeds de Produtos"
 
+#: sync/category_registry.py:419
 msgid "Product feed provider accounts for Google Shopping, Meta, etc."
 msgstr ""
+"Contas de provedores de feeds de produtos para Google Shopping, Meta, etc."
 
+#: sync/category_registry.py:432
 msgid "Blog Social Connectors"
-msgstr ""
+msgstr "Conectores Sociais do Blog"
 
+#: sync/category_registry.py:433
 msgid "Social media connector accounts for blog auto-sharing"
 msgstr ""
+"Contas de conectores de mídia social para compartilhamento automático de "
+"blogs"
 
+#: sync/category_registry.py:442
 msgid "OAuth tokens will need to be re-authorized on the destination."
-msgstr ""
+msgstr "Os tokens OAuth precisarão ser reautorizados no destino."
 
+#: sync/category_registry.py:449
 msgid "Customer Analytics Configuration"
-msgstr ""
+msgstr "Configuração de Análise de Clientes"
 
+#: sync/category_registry.py:450
 msgid "Customer segments, LTV settings, and category multipliers"
 msgstr ""
+"Segmentos de cliente, configurações de LTV e multiplicadores de categoria"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:466
 msgid "Affiliate Program Configuration"
-msgstr "Dados do Programa de Afiliados"
+msgstr "Configuração do Programa de Afiliados"
 
+#: sync/category_registry.py:467
 msgid "Affiliate program settings, report settings, and programs"
 msgstr ""
+"Configurações do programa de afiliados, configurações de relatórios e "
+"programas"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: sync/category_registry.py:483
 msgid "POS Configuration"
-msgstr "Configurar Conexão"
+msgstr "Configuração POS"
 
+#: sync/category_registry.py:485
 msgid ""
 "Store groups, terminals, receipt templates, promo slides, staff discounts"
 msgstr ""
+"Grupos de loja, terminais, modelos de recibos, slides promocionais e "
+"descontos para funcionários"
 
+#: sync/category_registry.py:510
 msgid "Installed Components"
-msgstr ""
+msgstr "Componentes Instalados"
 
+#: sync/category_registry.py:512
 msgid ""
 "Installed themes, provider integrations, and utility components with "
 "filesystem packages"
 msgstr ""
+"Temas instalados, integrações de provedores e componentes utilitários com "
+"pacotes de sistema de arquivos"
 
-#, fuzzy
-#| msgid "Product Variants"
+#: sync/category_registry.py:531
 msgid "Products, Categories & Brands"
-msgstr "Variações de Produtos"
+msgstr "Produtos, Categorias e Marcas"
 
-#, fuzzy
-#| msgid "Import products with images, variants, and attributes"
+#: sync/category_registry.py:532
 msgid "Products, variants, images, categories, brands, attributes"
-msgstr "Importar produtos com imagens, variações e atributos"
+msgstr "Produtos, variantes, imagens, categorias, marcas, atributos"
 
+#: sync/category_registry.py:555
 msgid "Media Library"
-msgstr ""
+msgstr "Biblioteca de Mídia"
 
+#: sync/category_registry.py:556
 msgid "Media assets, thumbnails, and uploaded files"
-msgstr ""
+msgstr "Ativos de mídia, miniaturas e arquivos carregados"
 
-#, fuzzy
-#| msgid "Customer Addresses"
+#: sync/category_registry.py:570
 msgid "Customers & Addresses"
-msgstr "Endereços de Clientes"
+msgstr "Clientes e Endereços"
 
-#, fuzzy
-#| msgid "Import customer accounts and addresses"
+#: sync/category_registry.py:571
 msgid "Customer accounts, profiles, and addresses"
-msgstr "Importar contas de clientes e endereços"
+msgstr "Contas de clientes, perfis e endereços"
 
-#, fuzzy
-#| msgid "Order Fields"
+#: sync/category_registry.py:588
 msgid "Order History"
-msgstr "Campos do Pedido"
+msgstr "Histórico de Pedidos"
 
-#, fuzzy
-#| msgid "Import order history and transactions"
+#: sync/category_registry.py:589
 msgid "Orders, order items, and transaction records"
-msgstr "Importar histórico de pedidos e transações"
+msgstr "Pedidos, itens de pedido e registros de transação"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:601
 msgid "Product Reviews"
-msgstr "Campos do Produto"
+msgstr "Avaliações de Produtos"
 
-#, fuzzy
-#| msgid "Import product reviews and ratings"
+#: sync/category_registry.py:602
 msgid "Product reviews and ratings"
-msgstr "Importar avaliações e classificações de produtos"
+msgstr "Avaliações e notas de produtos"
 
+#: sync/category_registry.py:614
 msgid "Stock Levels"
-msgstr ""
+msgstr "Níveis de Estoque"
 
+#: sync/category_registry.py:616
 msgid "Per-warehouse stock quantities, reserved stock, and reorder points"
 msgstr ""
+"Quantidades de estoque por depósito, estoque reservado e pontos de reposição"
 
+#: sync/category_registry.py:629
 msgid "Digital Products & Licenses"
-msgstr ""
+msgstr "Produtos Digitais & Licenças"
 
+#: sync/category_registry.py:631
 msgid "Digital assets, license key templates, license pools, license providers"
 msgstr ""
+"Ativos digitais, modelos de chaves de licença, pools de licenças e "
+"provedores de licenças"
 
+#: sync/category_registry.py:651
 msgid "Gift Cards & Voucher Usage"
-msgstr ""
+msgstr "Cartões-presente & Uso de Vouchers"
 
+#: sync/category_registry.py:652
 msgid "Gift card balances, transactions, voucher usage records"
-msgstr ""
+msgstr "Saldos de cartões-presente, transações e registros de uso de vouchers"
 
+#: sync/category_registry.py:669
 msgid "Store Credit & Wallets"
-msgstr ""
+msgstr "Crédito da Loja & Carteiras"
 
+#: sync/category_registry.py:670
 msgid "Customer wallet balances and transaction history"
-msgstr ""
+msgstr "Saldo da carteira do cliente e histórico de transações"
 
+#: sync/category_registry.py:682
 msgid "Loyalty Program Members"
-msgstr ""
+msgstr "Membros do Programa de Fidelidade"
 
+#: sync/category_registry.py:684
 msgid "Loyalty members, points balances, transactions, redemptions, badges"
 msgstr ""
+"Membros de fidelidade, saldos de pontos, transações, redemptions e badgens"
 
+#: sync/category_registry.py:705
 msgid "Active Subscriptions"
-msgstr ""
+msgstr "Assinaturas Ativas"
 
+#: sync/category_registry.py:707
 msgid ""
 "Subscription plans pricing, active subscriptions, billing cycles, payment "
 "tokens"
 msgstr ""
+"Preços dos planos de assinatura, assinaturas ativas, ciclos de faturamento, "
+"tokens de pagamento"
 
+#: sync/category_registry.py:724
 msgid ""
 "Payment tokens may not be valid across different payment provider "
 "installations."
 msgstr ""
+"Tokens de pagamento podem não ser válidos em diferentes instalações de "
+"provedores de pagamento."
 
+#: sync/category_registry.py:731
 msgid "Shipments & Tracking"
-msgstr ""
+msgstr "Envios & Rastreamento"
 
+#: sync/category_registry.py:732
 msgid "Shipment records and tracking event history"
-msgstr ""
+msgstr "Registros de envio e histórico de eventos de rastreamento"
 
+#: sync/category_registry.py:744
 msgid "Refunds, Returns & Order Notes"
-msgstr ""
+msgstr "Estornos, Devoluções & Notas de Pedido"
 
+#: sync/category_registry.py:745
 msgid "Refund records, return requests, and order notes"
-msgstr ""
+msgstr "Registros de reembolso, solicitações de devolução e notas de pedido"
 
-#, fuzzy
-#| msgid "Customer Fields"
+#: sync/category_registry.py:757
 msgid "Customer Wishlists"
-msgstr "Campos do Cliente"
+msgstr "Listas de Desejos do Cliente"
 
+#: sync/category_registry.py:758
 msgid "Customer wishlists and wishlist items"
-msgstr ""
+msgstr "Listas de Desejos do Cliente e Itens da Lista de Desejos"
 
+#: sync/category_registry.py:770
 msgid "Blog Subscribers"
-msgstr ""
+msgstr "Assinantes do Blog"
 
+#: sync/category_registry.py:771
 msgid "Blog email subscribers and category subscriptions"
-msgstr ""
+msgstr "Assinantes de e-mail do blog e assinaturas de categorias"
 
-#, fuzzy
-#| msgid "Commissions"
+#: sync/category_registry.py:783
 msgid "Form Submissions"
-msgstr "Comissões"
+msgstr "Submissões de Formulários"
 
+#: sync/category_registry.py:784
 msgid "Form response data and submission history"
-msgstr ""
+msgstr "Dados de respostas de formulário e histórico de submissões"
 
+#: sync/category_registry.py:796
 msgid "Customer Analytics & History"
-msgstr ""
+msgstr "Análise do Cliente & Histórico"
 
+#: sync/category_registry.py:797
 msgid "Customer notes, abandoned carts, cohort data, preference logs"
 msgstr ""
+"Notas do cliente, carrinhos abandonados, dados de coorte, logs de "
+"preferências"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:815
 msgid "Affiliate Member Data"
-msgstr "Dados do Programa de Afiliados"
+msgstr "Dados de Membros de Afiliados"
 
+#: sync/category_registry.py:817
 msgid "Affiliate accounts, program memberships, links, commissions, payouts"
 msgstr ""
+"Contas de afiliados, membros de programas, links, comissões, pagamentos"
 
-#, fuzzy
-#| msgid "📊 Migration History"
+#: sync/category_registry.py:836
 msgid "POS Transaction History"
-msgstr "📊 Histórico de Migrações"
+msgstr "Histórico de Transações POS"
 
+#: sync/category_registry.py:837
 msgid "POS shifts, cash movements, payments, and parked carts"
-msgstr ""
+msgstr "Turnos do POS, movimentos de dinheiro, pagamentos e carrinhos parados"
 
+#: sync/category_registry.py:854
 msgid "Software License Keys"
-msgstr ""
+msgstr "Chaves de Licença de Software"
 
+#: sync/category_registry.py:855
 msgid "License keys, activations, and device registrations"
-msgstr ""
+msgstr "Chaves de licença, ativações e registros de dispositivos"
 
-#, fuzzy
-#| msgid "Platform"
+#: sync/category_registry.py:870
 msgid "Platform License"
-msgstr "Plataforma"
+msgstr "Licença da Plataforma"
 
+#: sync/category_registry.py:871
 msgid "Platform license transfer and EULA acceptance history"
 msgstr ""
+"Histórico de transferência de licença da plataforma e aceitação do EULA"
 
+#: sync/category_registry.py:880
 msgid ""
 "This will deactivate the license on the source installation. The source "
 "installation will stop working after transfer."
 msgstr ""
+"Isso desativará a licença na instalação de origem. A instalação de origem "
+"deixará de funcionar após a transferência."
 
+#: sync/category_registry.py:895
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "Settings"
 msgstr "Configurações"
 
+#: sync/category_registry.py:897
 msgid "Core site settings, currencies, languages"
-msgstr ""
+msgstr "Configurações Principais do Site, Moedas, Idiomas"
 
+#: sync/category_registry.py:903
 msgid "Design"
-msgstr ""
+msgstr "Design"
 
+#: sync/category_registry.py:905
 msgid "Theme, layout, menus, widgets"
-msgstr ""
+msgstr "Tema, layout, menus, widgets"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:911
 msgid "Providers"
-msgstr "Pedidos"
+msgstr "Fornecedores"
 
+#: sync/category_registry.py:913
 msgid "Email, SMS, payment, shipping providers"
-msgstr ""
+msgstr "Fornecedores de E-mail, SMS, pagamento, envio"
 
-#, fuzzy
-#| msgid "WooCommerce"
+#: sync/category_registry.py:919
 msgid "Commerce"
-msgstr "WooCommerce"
+msgstr "Comércio"
 
+#: sync/category_registry.py:921
 msgid "Vouchers, promotions, loyalty, subscriptions"
-msgstr ""
+msgstr "Vouchers, promoções, fidelidade, assinaturas"
 
-#, fuzzy
-#| msgid "Content Link"
+#: sync/category_registry.py:927
 msgid "Content"
-msgstr "Link de Conteúdo"
+msgstr "Conteúdo"
 
+#: sync/category_registry.py:929
 msgid "Pages, blog posts, forms"
-msgstr ""
+msgstr "Páginas, posts do blog, formulários"
 
-#, fuzzy
-#| msgid "Data Type"
+#: sync/category_registry.py:935
 msgid "Data"
-msgstr "Tipo de Dado"
+msgstr "Dados"
 
+#: sync/category_registry.py:937
 msgid "Products, customers, orders, media"
-msgstr ""
+msgstr "Produtos, clientes, pedidos, mídia"
 
-#, fuzzy
-#| msgid ""
-#| "Could not analyze custom fields. You can still proceed with the import."
+#: sync/compatibility.py:82
 msgid "Could not determine local version. Proceeding with caution."
-msgstr ""
-"Não foi possível analisar os campos personalizados. Você ainda pode "
-"prosseguir com a importação."
+msgstr "Não foi possível determinar a versão local. Prosseguindo com cuidado."
 
+#: sync/compatibility.py:83
 msgid "Local version could not be determined."
-msgstr ""
+msgstr "Não foi possível determinar a versão local."
 
+#: sync/compatibility.py:89
 msgid "Could not determine remote version. Proceeding with caution."
-msgstr ""
+msgstr "Não foi possível determinar a versão remota. Prosseguindo com cautela."
 
+#: sync/compatibility.py:90
 msgid "Remote version could not be determined."
-msgstr ""
+msgstr "Não foi possível determinar a versão remota."
 
+#: sync/diff_engine.py:89
 msgid "Credentials will be re-encrypted on the target instance."
-msgstr ""
+msgstr "As credenciais serão recriptografadas na instância de destino."
 
+#: sync_admin.py:65 templates/admin/migration/sync/step1_connection.html:89
 msgid "Role"
-msgstr ""
+msgstr "Papel"
 
+#: sync_admin.py:79
 msgid "Last Sync"
-msgstr ""
+msgstr "Última Sincronização"
 
+#: sync_admin.py:130 templates/admin/migration/syncjob/change_list.html:4
+#: templates/admin/migration/syncjob/change_list.html:24
 msgid "Spwig-to-Spwig Sync"
-msgstr ""
+msgstr "Sincronização Spwig para Spwig"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync_admin.py:133
 msgid "Sync Settings"
-msgstr "Configurações"
+msgstr "Configurações de Sincronização"
 
+#: sync_admin.py:135
 msgid "Sync settings between staging and production"
-msgstr ""
+msgstr "Configurações de sincronização entre ambiente de teste e produção"
 
-#, fuzzy
-#| msgid "Rollback Migration"
+#: sync_admin.py:140
 msgid "Full Migration"
-msgstr "Reverter migração"
+msgstr "Migração Completa"
 
+#: sync_admin.py:142
 msgid "Migrate entire system to a new installation"
-msgstr ""
+msgstr "Migrar todo o sistema para uma nova instalação"
 
+#: sync_admin.py:147
 msgid "Manage Tokens"
-msgstr ""
+msgstr "Gerenciar Tokens"
 
+#: sync_admin.py:149
 msgid "Generate and manage sync tokens"
-msgstr ""
+msgstr "Gerar e gerenciar tokens de sincronização"
 
-#, fuzzy
-#| msgid "Type:"
+#: sync_admin.py:279
 msgid "Type"
-msgstr "Tipo:"
+msgstr "Tipo"
 
-#, fuzzy
-#| msgid "section"
+#: sync_admin.py:289 templates/admin/migration/sync/step2_categories.html:22
 msgid "Direction"
-msgstr "seção"
+msgstr "Direção"
 
+#: sync_admin.py:344
 msgid "Synced/Failed/Total"
-msgstr ""
+msgstr "Sincronizados/Falhados/Total"
 
+#: sync_admin.py:400 sync_admin.py:565
 msgid "Sync token is required for new connections."
-msgstr ""
+msgstr "Um token de sincronização é necessário para novas conexões."
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: sync_admin.py:425
 msgid "Settings Sync - Connection"
-msgstr "Testando conexão"
+msgstr "Sincronização de Configurações - Conexão"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:446
 msgid "Please select at least one category to sync."
-msgstr "Por favor, selecione pelo menos um tipo de dado para importar."
+msgstr "Por favor, selecione pelo menos uma categoria para sincronizar."
 
+#: sync_admin.py:468
 msgid "Settings Sync - Select Categories"
-msgstr ""
+msgstr "Sincronização de Configurações - Selecione Categorias"
 
+#: sync_admin.py:486
 msgid "You must confirm production overwrite."
-msgstr ""
+msgstr "Você deve confirmar a substituição em produção."
 
-#, fuzzy
-#| msgid "Migration job created. Please configure the connection."
+#: sync_admin.py:505
 msgid "Preview generation failed. Please check the connection and try again."
-msgstr "Tarefa de migração criada. Por favor, configure a conexão."
+msgstr ""
+"A geração da pré-visualização falhou. Por favor, verifique a conexão e tente "
+"novamente."
 
+#: sync_admin.py:513
 msgid "Settings Sync - Preview Changes"
-msgstr ""
+msgstr "Sincronização de Configurações - Visualizar Alterações"
 
+#: sync_admin.py:533
 msgid "Settings Sync - Progress"
-msgstr ""
+msgstr "Sincronização de Configurações - Progresso"
 
-#, fuzzy
-#| msgid "Migration Wizard - Connection"
+#: sync_admin.py:589
 msgid "Full Migration - Connection"
-msgstr "Assistente de Migração - Conexão"
+msgstr "Migração Completa - Conexão"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:609
 msgid "Please select at least one category to migrate."
-msgstr "Por favor, selecione pelo menos um tipo de dado para importar."
+msgstr "Por favor, selecione pelo menos uma categoria para migrar."
 
-#, fuzzy
-#| msgid "Migration Step"
+#: sync_admin.py:621
 msgid "Full Migration - Select Scope"
-msgstr "Passo de Migração"
+msgstr "Migração Completa - Selecionar Escopo"
 
+#: sync_admin.py:646
 msgid "Compatibility check failed. Please verify the connection and try again."
 msgstr ""
+"A verificação de compatibilidade falhou. Por favor, verifique a conexão e "
+"tente novamente."
 
+#: sync_admin.py:657
 msgid "Full Migration - Pre-flight Check"
-msgstr ""
+msgstr "Migração Completa - Verificação Pré-voô"
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: sync_admin.py:676
 msgid "Full Migration - Progress"
-msgstr "Logs de migração"
+msgstr "Migração Completa - Progresso"
 
-#, fuzzy
-#| msgid "No Migrations Yet"
+#: sync_admin.py:695
 msgid "Full Migration - Results"
-msgstr "Nenhuma Migração Ainda"
+msgstr "Migração Completa - Resultados"
 
+#: sync_admin.py:874
 msgid "Token generated. Copy it now — it will not be shown again:"
-msgstr ""
+msgstr "Token gerado. Copie-o agora — ele não será mostrado novamente:"
 
+#: sync_admin.py:882
 msgid "Token revoked."
-msgstr ""
+msgstr "Token revogado."
 
+#: sync_admin.py:884
 msgid "Invalid token ID."
-msgstr ""
+msgstr "ID de token inválido."
 
+#: sync_admin.py:893 templates/admin/migration/sync/token_management.html:4
+#: templates/admin/migration/sync/token_management.html:27
 msgid "Sync Token Management"
-msgstr ""
+msgstr "Gerenciamento de Token de Sincronização"
 
+#: templates/admin/migration/confirm_rollback.html:18
 msgid "Warning: This action cannot be undone!"
 msgstr "Aviso: Esta ação não pode ser desfeita!"
 
+#: templates/admin/migration/confirm_rollback.html:21
 msgid "You are about to rollback the migration job:"
 msgstr "Você está prestes a reverter o trabalho de migração:"
 
-msgid "This will:"
-msgstr "Isso fará:"
+#: templates/admin/migration/confirm_rollback.html:25
+msgid "Spwig will remove:"
+msgstr "Spwig removerá:"
 
-msgid "Delete all products imported from this migration"
-msgstr "Excluir todos os produtos importados desta migração"
+#: templates/admin/migration/confirm_rollback.html:33
+msgid "Nothing — there is nothing left from this import that can be removed."
+msgstr "Nada — não há mais nada restante deste importe que possa ser removido."
 
-msgid "Delete all categories imported from this migration"
-msgstr "Excluir todas as categorias importadas desta migração"
+#: templates/admin/migration/confirm_rollback.html:37
+msgid "Spwig will keep:"
+msgstr "Spwig manterá:"
 
-msgid "Delete all customers imported from this migration"
-msgstr "Excluir todos os clientes importados desta migração"
+#: templates/admin/migration/confirm_rollback.html:38
+msgid ""
+"These were created by the import, but other things in your store now depend "
+"on them. Removing them would damage real orders or customer activity, so "
+"they stay."
+msgstr ""
+"Esses foram criados pela importação, mas outras coisas em sua loja agora "
+"dependem deles. Removê-los prejudicaria pedidos reais ou a atividade dos "
+"clientes, por isso eles permanecem."
 
-msgid "Delete all orders imported from this migration"
-msgstr "Excluir todos os pedidos importados desta migração"
+#: templates/admin/migration/confirm_rollback.html:41
+msgid "still referenced by"
+msgstr "ainda referenciado por"
 
-msgid "Delete all reviews imported from this migration"
-msgstr "Excluir todas as avaliações importadas desta migração"
+#: templates/admin/migration/confirm_rollback.html:48
+msgid "Spwig could not calculate exactly what this rollback would remove."
+msgstr ""
+"O Spwig não conseguiu calcular exatamente o que este rollback removeria."
 
-msgid "Delete all coupons imported from this migration"
-msgstr "Excluir todos os cupons importados desta migração"
+#: templates/admin/migration/confirm_rollback.html:54
+msgid "This operation is PERMANENT and cannot be reversed."
+msgstr "Esta operação é PERMANENTE e não pode ser revertida."
 
-msgid "Delete all associated media assets"
-msgstr "Excluir todos os ativos de mídia associados"
-
-msgid "Mark the migration job as 'rolled_back'"
-msgstr "Marcar o trabalho de migração como 'rolled_back'"
-
-msgid "This operation is PERMANENT and cannot be reversed!"
-msgstr "Essa operação é PERMANENTE e não pode ser revertida!"
-
+#: templates/admin/migration/confirm_rollback.html:59
 msgid "Items to be Deleted"
 msgstr "Itens a serem excluídos"
 
+#: templates/admin/migration/confirm_rollback.html:93
 msgid "Yes, Rollback Migration"
 msgstr "Sim, Reverter Migração"
 
+#: templates/admin/migration/confirm_rollback.html:96
+#: templates/admin/migration/fullmig/step1_connection.html:95
+#: templates/admin/migration/migrationjob/change_list.html:216
+#: templates/admin/migration/sync/step1_connection.html:115
+#: templates/admin/migration/wizard/step1_platform.html:65
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: templates/admin/migration/fullmig/step1_connection.html:8
 msgid "Connect to Source Instance"
-msgstr ""
+msgstr "Conectar à Instância de Origem"
 
+#: templates/admin/migration/fullmig/step1_connection.html:10
 msgid ""
 "Connect to the Spwig instance you want to migrate from. All data will be "
 "pulled from the remote instance to this one."
 msgstr ""
+"Conecte-se à instância Spwig da qual deseja migrar. Todos os dados serão "
+"puxados da instância remota para esta."
 
-#, fuzzy
-#| msgid "Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:19
+#: templates/admin/migration/sync/step1_connection.html:19
 msgid "Saved Connections"
-msgstr "Conexão"
+msgstr "Conexões Salvas"
 
+#: templates/admin/migration/fullmig/step1_connection.html:34
+#: templates/admin/migration/sync/step1_connection.html:34
 msgid "Verified"
-msgstr ""
+msgstr "Verificado"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:43
+#: templates/admin/migration/sync/step1_connection.html:47
 msgid "or configure a new connection"
-msgstr "Configurar Conexão"
+msgstr "ou configure uma nova conexão"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:50
+#: templates/admin/migration/sync/step1_connection.html:54
 msgid "Connection Details"
-msgstr "Conexão falhou"
+msgstr "Detalhes da Conexão"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:55
+#: templates/admin/migration/sync/step1_connection.html:59
 msgid "Connection Name"
-msgstr "Conexão falhou"
+msgstr "Nome da Conexão"
 
+#: templates/admin/migration/fullmig/step1_connection.html:57
 msgid "e.g., Old Server"
-msgstr ""
+msgstr "ex., Servidor Antigo"
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/fullmig/step1_connection.html:61
 msgid "Source URL"
-msgstr "URL da Loja"
+msgstr "URL da Fonte"
 
+#: templates/admin/migration/fullmig/step1_connection.html:67
+#: templates/admin/migration/sync/step1_connection.html:79
 msgid "Sync Token"
-msgstr ""
+msgstr "Token de Sincronização"
 
+#: templates/admin/migration/fullmig/step1_connection.html:69
 msgid "Paste the sync token from the source instance"
-msgstr ""
+msgstr "Cole o token de sincronização da instância de origem"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:78
+#: templates/admin/migration/sync/step1_connection.html:106
 msgid "Test Connection"
-msgstr "Testando conexão"
+msgstr "Testar Conexão"
 
-#, fuzzy
-#| msgid "View All Migrations"
+#: templates/admin/migration/fullmig/step1_connection.html:87
 msgid "How Full Migration Works"
-msgstr "Ver Todas as Migrações"
+msgstr "Como Funciona a Migração Completa"
 
+#: templates/admin/migration/fullmig/step1_connection.html:88
 msgid ""
 "Full migration pulls all data from the source instance: settings, products, "
 "customers, orders, media files, and content. This is typically used when "
 "moving to a new server or creating a staging copy."
 msgstr ""
+"A migração completa puxa todos os dados da instância de origem: "
+"configurações, produtos, clientes, pedidos, arquivos de mídia e conteúdo. "
+"Isso é normalmente usado ao migrar para um novo servidor ou ao criar uma "
+"cópia de ambiente de teste."
 
+#: templates/admin/migration/fullmig/step1_connection.html:98
 msgid "Next: Select Scope"
-msgstr ""
+msgstr "Próximo: Selecione o Escopo"
 
+#: templates/admin/migration/fullmig/step1_connection.html:109
+#: templates/admin/migration/sync/step1_connection.html:129
+#: templates/admin/migration/wizard/step2_connection.html:479
 msgid "Testing connection..."
 msgstr "Testando conexão..."
 
-#, fuzzy
-#| msgid "Connection successful"
+#: templates/admin/migration/fullmig/step1_connection.html:110
+#: templates/admin/migration/sync/step1_connection.html:130
 msgid "Connection successful!"
-msgstr "Conexão bem-sucedida"
+msgstr "Conexão bem-sucedida!"
 
+#: templates/admin/migration/fullmig/step1_connection.html:111
+#: templates/admin/migration/sync/step1_connection.html:131
+#: templates/admin/migration/wizard/step2_connection.html:488
 msgid "Connection failed"
 msgstr "Conexão falhou"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step1_connection.html:112
+#: templates/admin/migration/sync/step1_connection.html:132
 msgid "Version"
-msgstr "Versões"
+msgstr "Versão"
 
-#, fuzzy
-#| msgid "Name"
+#: templates/admin/migration/fullmig/step1_connection.html:113
+#: templates/admin/migration/sync/step1_connection.html:133
 msgid "Site Name"
-msgstr "Nome"
+msgstr "Nome do Site"
 
-#, fuzzy
-#| msgid "Migration Step"
+#: templates/admin/migration/fullmig/step2_scope.html:8
 msgid "Select Migration Scope"
-msgstr "Passo de Migração"
+msgstr "Selecione o Escopo da Migração"
 
+#: templates/admin/migration/fullmig/step2_scope.html:10
 msgid ""
 "Choose which data categories to include in the migration. Dependencies will "
 "be automatically included."
 msgstr ""
+"Escolha quais categorias de dados incluir na migração. As dependências serão "
+"incluídas automaticamente."
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: templates/admin/migration/fullmig/step2_scope.html:20
 msgid "Select All Categories"
-msgstr "Categorias do Blog"
+msgstr "Selecione Todas as Categorias"
 
-#, fuzzy
-#| msgid "Parse Date"
+#: templates/admin/migration/fullmig/step2_scope.html:41
 msgid "Large Data"
-msgstr "Parsear Data"
+msgstr "Dados Grandes"
 
-#, fuzzy
-#| msgid "Credentials"
+#: templates/admin/migration/fullmig/step2_scope.html:46
+#: templates/admin/migration/sync/step2_categories.html:109
 msgid "Has Credentials"
-msgstr "Credenciais"
+msgstr "Tem Credenciais"
 
+#: templates/admin/migration/fullmig/step2_scope.html:51
 msgid "Requires:"
-msgstr ""
+msgstr "Requer:"
 
+#: templates/admin/migration/fullmig/step2_scope.html:65
+#: templates/admin/migration/fullmig/step3_preflight.html:165
+#: templates/admin/migration/sync/step2_categories.html:133
+#: templates/admin/migration/sync/step3_preview.html:119
+#: templates/admin/migration/wizard/step2_connection.html:460
+#: templates/admin/migration/wizard/step3_preview.html:269
+#: templates/admin/migration/wizard/step4_mapping.html:297
 msgid "Back"
 msgstr "Voltar"
 
+#: templates/admin/migration/fullmig/step2_scope.html:68
 msgid "Next: Pre-flight Check"
-msgstr ""
+msgstr "Próximo: Verificação Pré-voô"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:8
 msgid "Pre-flight Check"
-msgstr ""
+msgstr "Verificação Pré-voô"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:10
 msgid ""
 "Verifying compatibility between source and target instances before migration."
 msgstr ""
+"Verificando a compatibilidade entre as instâncias de origem e destino antes "
+"da migração."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:16
 msgid "Version Compatibility"
-msgstr ""
+msgstr "Compatibilidade de Versão"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:21
 msgid "Versions Compatible"
-msgstr ""
+msgstr "Versões Compatíveis"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:23
+#: templates/admin/migration/fullmig/step3_preflight.html:43
 msgid "Local:"
-msgstr ""
+msgstr "Local:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:25
+#: templates/admin/migration/fullmig/step3_preflight.html:45
 msgid "Remote:"
-msgstr ""
+msgstr "Remoto:"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step3_preflight.html:40
 msgid "Version Mismatch"
-msgstr "Versões"
+msgstr "Incompatibilidade de Versão"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:55
 msgid "Component Compatibility"
-msgstr ""
+msgstr "Compatibilidade de Componente"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:61
 msgid "Components Missing on Target"
-msgstr ""
+msgstr "Componentes Faltando no Alvo"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:62
 msgid ""
 "These components are installed on the source but not on this instance. "
 "Install them via the Component Store before migrating."
 msgstr ""
+"Esses componentes estão instalados na fonte, mas não nesta instância. "
+"Instale-os via Loja de Componentes antes de migrar."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:76
 msgid "Component Version Differences"
-msgstr ""
+msgstr "Diferenças de Versão de Componente"
 
-#, fuzzy
-#| msgid "Source"
+#: templates/admin/migration/fullmig/step3_preflight.html:81
 msgid "source"
-msgstr "Fonte"
+msgstr "fonte"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:82
 msgid "target"
-msgstr ""
+msgstr "alvo"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:94
 msgid "All Components Match"
-msgstr ""
+msgstr "Todos os Componentes Correspondem"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:95
 msgid "Installed components are compatible between source and target."
-msgstr ""
+msgstr "Os componentes instalados são compatíveis entre a origem e o destino."
 
-#, fuzzy
-#| msgid "Import Summary"
+#: templates/admin/migration/fullmig/step3_preflight.html:105
 msgid "Source Data Summary"
-msgstr "Resumo da Importação"
+msgstr "Resumo dos Dados da Fonte"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:129
 msgid "Media Storage"
-msgstr ""
+msgstr "Armazenamento de Mídia"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:130
 msgid "Total media size on source:"
-msgstr ""
+msgstr "Tamanho total de mídia na fonte:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:142
 msgid "Pre-flight Check Failed"
-msgstr ""
+msgstr "Verificação Pré-voo Falhou"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:143
 msgid ""
 "Could not connect to the remote instance to perform compatibility checks. "
 "Please verify the connection and try again."
 msgstr ""
+"Não foi possível se conectar à instância remota para realizar verificações "
+"de compatibilidade. Verifique a conexão e tente novamente."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:154
 msgid "License Reminder"
-msgstr ""
+msgstr "Lembrete de Licença"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:155
 msgid ""
 "This installation requires its own license. After migration, you will need "
 "to activate a separate license for this instance."
 msgstr ""
+"Esta instalação requer sua própria licença. Após a migração, você precisará "
+"ativar uma licença separada para esta instância."
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: templates/admin/migration/fullmig/step3_preflight.html:170
 msgid "Start Migration"
-msgstr "Iniciar Nova Migração"
+msgstr "Iniciar Migração"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:175
 msgid "Cannot Proceed (Version Incompatible)"
-msgstr ""
+msgstr "Não é possível prosseguir (versão incompatível)"
 
+#: templates/admin/migration/fullmig/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The migration will continue in "
 "the background."
 msgstr ""
+"Você pode navegar seguramente para fora desta página. A migração continuará "
+"em segundo plano."
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: templates/admin/migration/fullmig/step4_progress.html:13
 msgid "Migration Progress"
-msgstr "Logs de migração"
+msgstr "Progresso da Migração"
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step4_progress.html:17
+#: templates/admin/migration/fullmig/step4_progress.html:149
 msgid "Migration completed."
-msgstr "Migração Completa"
+msgstr "Migração concluída."
 
-#, fuzzy
-#| msgid "Migration cancelled by user"
+#: templates/admin/migration/fullmig/step4_progress.html:19
+#: templates/admin/migration/fullmig/step4_progress.html:150
 msgid "Migration encountered errors."
-msgstr "Migração cancelada pelo usuário"
+msgstr "A migração encontrou erros."
 
+#: templates/admin/migration/fullmig/step4_progress.html:21
+#: templates/admin/migration/fullmig/step4_progress.html:151
 msgid "Migrating data from source instance..."
-msgstr ""
+msgstr "Migrando dados da instância de origem..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:28
+#: templates/admin/migration/sync/step4_progress.html:28
+#: templates/admin/migration/wizard/step5_import.html:54
 msgid "Overall Progress"
 msgstr "Progresso Geral"
 
+#: templates/admin/migration/fullmig/step4_progress.html:39
+#: templates/admin/migration/fullmig/step4_progress.html:155
+#: templates/admin/migration/sync/step4_progress.html:39
+#: templates/admin/migration/sync/step4_progress.html:167
 msgid "Elapsed:"
-msgstr ""
+msgstr "Transcorrido:"
 
+#: templates/admin/migration/fullmig/step4_progress.html:40
+#: templates/admin/migration/fullmig/step4_progress.html:156
+#: templates/admin/migration/sync/step4_progress.html:40
+#: templates/admin/migration/sync/step4_progress.html:168
 msgid "Remaining:"
-msgstr ""
+msgstr "Restante:"
 
-#, fuzzy
-#| msgid "Migration Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:48
+#: templates/admin/migration/fullmig/step5_results.html:43
+#: templates/admin/migration/fullmig/step5_results.html:75
 msgid "Migrated"
-msgstr "Migração falhou"
+msgstr "Migração realizada"
 
-#, fuzzy
-#| msgid "Category Array"
+#: templates/admin/migration/fullmig/step4_progress.html:67
+#: templates/admin/migration/sync/step4_progress.html:67
 msgid "Category Progress"
-msgstr "Array de Categorias"
+msgstr "Progresso da Categoria"
 
-#, fuzzy
-#| msgid "Created"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:146
 msgid "migrated"
-msgstr "Criado"
+msgstr "migração realizada"
 
-#, fuzzy
-#| msgid "Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:147
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:159
 msgid "failed"
-msgstr "Falhou"
+msgstr "falhou"
 
-#, fuzzy
-#| msgid "Total"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:148
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:160
 msgid "total"
-msgstr "Total"
+msgstr "total"
 
+#: templates/admin/migration/fullmig/step4_progress.html:112
+#: templates/admin/migration/sync/step4_progress.html:112
 msgid "Activity Log"
-msgstr ""
+msgstr "Log de Atividade"
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:117
+#: templates/admin/migration/sync/step4_progress.html:117
 msgid "Waiting for activity..."
-msgstr "Aguardando..."
+msgstr "Aguardando atividade..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:125
+#: templates/admin/migration/syncjob/change_list.html:176
+#: templates/admin/migration/wizard/step5_import.html:309
 msgid "View Results"
 msgstr "Ver Resultados"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/fullmig/step4_progress.html:131
+#: templates/admin/migration/fullmig/step4_progress.html:152
+#: templates/admin/migration/fullmig/step5_results.html:155
+#: templates/admin/migration/sync/step4_progress.html:138
+#: templates/admin/migration/sync/step4_progress.html:164
 msgid "Back to Dashboard"
-msgstr "Comece no Painel de Desenvolvimento"
+msgstr "Voltar ao Painel"
 
+#: templates/admin/migration/fullmig/step4_progress.html:153
+#: templates/admin/migration/fullmig/step5_results.html:163
+#: templates/admin/migration/wizard/step6_complete.html:280
 msgid "Rollback Migration"
 msgstr "Reverter migração"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step4_progress.html:154
 msgid ""
 "Are you sure you want to rollback this migration? This will delete all "
 "migrated data."
 msgstr ""
-"Tem certeza de que deseja desfazer esta migração? Isso excluirá todos os "
-"dados importados."
+"Tem certeza de que deseja reverter esta migração? Isso excluirá todos os "
+"dados migrados."
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:157
+#: templates/admin/migration/sync/step4_progress.html:169
 msgid "calculating..."
-msgstr "Aguardando..."
+msgstr "calculando..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:158
+#: templates/admin/migration/sync/step4_progress.html:170
 msgid "Connection lost, retrying..."
-msgstr ""
+msgstr "Conexão perdida, tentando novamente..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:159
+#: templates/admin/migration/sync/step4_progress.html:171
 msgid "Reconnected"
-msgstr ""
+msgstr "Reconectado"
 
-#, fuzzy
-#| msgid "Your data has been successfully imported from"
+#: templates/admin/migration/fullmig/step5_results.html:11
 msgid "All selected data has been successfully migrated to this installation."
-msgstr "Seus dados foram importados com sucesso de"
-
-#, fuzzy
-#| msgid "Migration Complete"
-msgid "Migration Completed with Errors"
-msgstr "Migração Completa"
-
-msgid "Some items could not be migrated. Review the details below."
 msgstr ""
+"Todos os dados selecionados foram migrados com sucesso para esta instalação."
 
+#: templates/admin/migration/fullmig/step5_results.html:20
+msgid "Migration Completed with Errors"
+msgstr "Migração Concluída com Erros"
+
+#: templates/admin/migration/fullmig/step5_results.html:21
+msgid "Some items could not be migrated. Review the details below."
+msgstr "Alguns itens não puderam ser migrados. Revise os detalhes abaixo."
+
+#: templates/admin/migration/fullmig/step5_results.html:30
+#: templates/admin/migration/wizard/step6_complete.html:298
 msgid "Migration Failed"
 msgstr "Migração falhou"
 
-#, fuzzy
-#| msgid "Migration Wizard"
+#: templates/admin/migration/fullmig/step5_results.html:39
 msgid "Migration Summary"
-msgstr "Assistente de Migração"
+msgstr "Resumo da Migração"
 
-#, fuzzy
-#| msgid "Duration"
+#: templates/admin/migration/fullmig/step5_results.html:62
 msgid "Duration:"
-msgstr "Duração"
+msgstr "Duração:"
 
-#, fuzzy
-#| msgid "Categories"
+#: templates/admin/migration/fullmig/step5_results.html:69
 msgid "Category Results"
-msgstr "Categorias"
+msgstr "Resultados da Categoria"
 
+#: templates/admin/migration/fullmig/step5_results.html:87
 msgid "Done"
-msgstr ""
+msgstr "Concluído"
 
+#: templates/admin/migration/fullmig/step5_results.html:121
+#: templates/admin/migration/wizard/step6_complete.html:398
 msgid "Next Steps"
 msgstr "Próximos passos"
 
+#: templates/admin/migration/fullmig/step5_results.html:126
 msgid "Activate your license on this installation"
-msgstr ""
+msgstr "Ative sua licença nesta instalação"
 
+#: templates/admin/migration/fullmig/step5_results.html:130
 msgid "Re-enter any payment provider credentials that were skipped"
-msgstr ""
+msgstr "Reinsira as credenciais do provedor de pagamento que foram puladas"
 
-#, fuzzy
-#| msgid "When you're ready to go live, point your domain to this platform."
+#: templates/admin/migration/fullmig/step5_results.html:134
 msgid "Configure DNS to point your domain to this server"
-msgstr ""
-"Quando você estiver pronto para ir ao ar, direcione seu domínio para esta "
-"plataforma."
+msgstr "Configure o DNS para direcionar seu domínio a este servidor"
 
+#: templates/admin/migration/fullmig/step5_results.html:138
 msgid "Test the checkout flow with a test order"
-msgstr ""
+msgstr "Teste o fluxo de checkout com um pedido de teste"
 
+#: templates/admin/migration/fullmig/step5_results.html:142
 msgid "Verify email sending works correctly"
-msgstr ""
+msgstr "Verifique se o envio de e-mails funciona corretamente"
 
+#: templates/admin/migration/fullmig/step5_results.html:146
 msgid "Check that media files and images are loading correctly"
 msgstr ""
+"Verifique se os arquivos de mídia e imagens estão carregando corretamente"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step5_results.html:161
 msgid "Are you sure? This will delete all migrated data."
-msgstr ""
-"Tem certeza de que deseja desfazer esta migração? Isso excluirá todos os "
-"dados importados."
+msgstr "Tem certeza? Isso excluirá todos os dados migrados."
 
-#, fuzzy
-#| msgid "Shopify Developer Dashboard"
+#: templates/admin/migration/fullmig/step5_results.html:168
+msgid "Rollback available until"
+msgstr "Rollback disponível até"
+
+#: templates/admin/migration/fullmig/step5_results.html:174
 msgid "Go to Dashboard"
-msgstr "Painel de Desenvolvedor Shopify"
+msgstr "Ir para o Dashboard"
 
+#: templates/admin/migration/migrationjob/change_list.html:4
+#: templates/admin/migration/migrationjob/change_list.html:23
 msgid "Data Import & Export"
 msgstr "Importação e Exportação de Dados"
 
+#: templates/admin/migration/migrationjob/change_list.html:25
 msgid ""
 "Migrate from WooCommerce, Shopify, Magento, or import/export via CSV files"
 msgstr ""
 "Migrar de WooCommerce, Shopify, Magento ou importar/exportar via arquivos CSV"
 
+#: templates/admin/migration/migrationjob/change_list.html:36
 msgid "Total Migrations"
 msgstr "Total de Migrações"
 
+#: templates/admin/migration/migrationjob/change_list.html:52
+#: templates/admin/migration/syncjob/change_list.html:45
 msgid "In Progress"
 msgstr "Em Progresso"
 
-msgid "Start New Migration"
-msgstr "Iniciar Nova Migração"
-
+#: templates/admin/migration/migrationjob/change_list.html:73
 msgid "View Logs"
 msgstr "Ver Logs"
 
+#: templates/admin/migration/migrationjob/change_list.html:78
 msgid "Field Mappings"
 msgstr "Mapeamentos de Campos"
 
+#: templates/admin/migration/migrationjob/change_list.html:114
+#: templates/admin/migration/wizard/step5_import.html:60
+msgid "Stopping…"
+msgstr "Parando…"
+
+#: templates/admin/migration/migrationjob/change_list.html:192
 msgid "Resume"
 msgstr "Resumir"
 
+#: templates/admin/migration/migrationjob/change_list.html:202
+msgid ""
+"Run this import again? It starts from the beginning and skips items that "
+"have already been imported."
+msgstr ""
+"Executar esta importação novamente? Ela começa do início e pula os itens que "
+"já foram importados."
+
+#: templates/admin/migration/migrationjob/change_list.html:203
 msgid "Retry"
 msgstr "Tentar Novamente"
 
-msgid "Are you sure you want to cancel this migration?"
-msgstr "Tem certeza de que deseja cancelar esta migração?"
+#: templates/admin/migration/migrationjob/change_list.html:215
+msgid ""
+"Stop this import? It finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store."
+msgstr ""
+"Parar esta importação? Ela finaliza o lote no qual está trabalhando e depois "
+"para. Anything já importado permanece em sua loja."
 
+#: templates/admin/migration/migrationjob/change_list.html:223
+#: templates/admin/migration/migrationjob/change_list.html:227
+#: templates/admin/migration/migrationjob/change_list.html:231
 msgid "View"
 msgstr "Ver"
 
+#: templates/admin/migration/migrationjob/change_list.html:239
 msgid ""
-"Are you sure you want to rollback this migration? This will delete all "
-"imported data."
+"Review the rollback details? Rolling back removes what this import created, "
+"keeping anything your store now depends on. You will see exactly what it "
+"will remove before you confirm."
 msgstr ""
-"Tem certeza de que deseja desfazer esta migração? Isso excluirá todos os "
-"dados importados."
+"Revisar os detalhes do rollback? Reverter remove o que esta importação "
+"criou, mantendo anything em que sua loja agora depende. Você verá exatamente "
+"o que será removido antes de confirmar."
 
+#: templates/admin/migration/migrationjob/change_list.html:240
+#: templates/admin/migration/sync/step4_progress.html:144
+#: templates/admin/migration/sync/step4_progress.html:165
+#: templates/admin/migration/syncjob/change_list.html:185
 msgid "Rollback"
 msgstr "Reverter"
 
+#: templates/admin/migration/migrationjob/change_list.html:250
 msgid ""
-"Are you sure you want to force delete this migration? This cannot be undone."
+"Delete this migration record? This does not remove anything that was "
+"imported. Spwig will lose its record of which items came from this import, "
+"so you will not be able to roll it back afterwards."
 msgstr ""
-"Tem certeza de que deseja excluir forçadamente esta migração? Isso não pode "
-"ser desfeito."
+"Excluir este registro de migração? Isso não removerá nada que foi importado. "
+"O Spwig perderá o registro de quais itens vieram dessa importação, então "
+"você não poderá reverter isso depois."
 
+#: templates/admin/migration/migrationjob/change_list.html:251
 msgid "Delete"
 msgstr "Excluir"
 
+#: templates/admin/migration/migrationjob/change_list.html:262
 msgid "No Migrations Yet"
 msgstr "Nenhuma Migração Ainda"
 
+#: templates/admin/migration/migrationjob/change_list.html:263
 msgid "Get started by creating your first data migration"
 msgstr "Comece criando sua primeira migração de dados"
 
+#: templates/admin/migration/migrationjob/change_list.html:266
 msgid "Create First Migration"
 msgstr "Criar Primeira Migração"
 
+#: templates/admin/migration/sync/base.html:4
 msgid "Spwig Sync"
-msgstr ""
+msgstr "Sincronização Spwig"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/sync/base.html:20
+#: templates/admin/migration/sync/token_management.html:21
 msgid "Back to Sync Dashboard"
-msgstr "Comece no Painel de Desenvolvimento"
+msgstr "Voltar para o Dashboard de Sincronização"
 
+#: templates/admin/migration/sync/base.html:46
+#: templates/admin/migration/sync/base.html:67
+#: templates/admin/migration/wizard/base.html:42
 msgid "Connection"
 msgstr "Conexão"
 
+#: templates/admin/migration/sync/base.html:50
+#: templates/admin/migration/wizard/step2_connection.html:214
 msgid "Scope"
 msgstr "Escopo"
 
+#: templates/admin/migration/sync/base.html:54
 msgid "Pre-flight"
-msgstr ""
+msgstr "Pre-voo"
 
-#, fuzzy
-#| msgid "View Results"
+#: templates/admin/migration/sync/base.html:62
 msgid "Results"
-msgstr "Ver Resultados"
+msgstr "Resultados"
 
+#: templates/admin/migration/sync/base.html:75
+#: templates/admin/migration/wizard/base.html:46
 msgid "Preview"
 msgstr "Visualizar"
 
+#: templates/admin/migration/sync/step1_connection.html:8
 msgid "Connect to Remote Instance"
-msgstr ""
+msgstr "Conectar a Instância Remota"
 
+#: templates/admin/migration/sync/step1_connection.html:10
 msgid ""
 "Connect to another Spwig installation to sync settings. You can use a saved "
 "connection or set up a new one."
 msgstr ""
+"Conecte-se a outra instalação do Spwig para sincronizar configurações. Você "
+"pode usar uma conexão salva ou configurar uma nova."
 
-#, fuzzy
-#| msgid "Credentials verified"
+#: templates/admin/migration/sync/step1_connection.html:39
 msgid "Not verified"
-msgstr "Credenciais verificadas"
+msgstr "Não verificado"
 
+#: templates/admin/migration/sync/step1_connection.html:61
 msgid "e.g., Production Server"
-msgstr ""
+msgstr "ex., Servidor de Produção"
 
+#: templates/admin/migration/sync/step1_connection.html:64
 msgid "A friendly name to identify this connection."
-msgstr ""
+msgstr "Um nome amigável para identificar esta conexão."
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/sync/step1_connection.html:69
 msgid "Remote URL"
-msgstr "URL da Loja"
+msgstr "URL Remota"
 
+#: templates/admin/migration/sync/step1_connection.html:74
 msgid "The full URL of the remote Spwig installation."
-msgstr ""
+msgstr "O URL completo da instalação remota do Spwig."
 
+#: templates/admin/migration/sync/step1_connection.html:81
 msgid "Paste the sync token from the remote instance"
-msgstr ""
+msgstr "Cole o token de sincronização da instância remota"
 
+#: templates/admin/migration/sync/step1_connection.html:84
 msgid ""
 "Generate a sync token on the remote instance under Sync Dashboard > Manage "
 "Tokens."
 msgstr ""
+"Gerar um token de sincronização na instância remota em Painel de "
+"Sincronização > Gerenciar Tokens."
 
+#: templates/admin/migration/sync/step1_connection.html:98
 msgid ""
 "Marking a connection as 'Production' enables additional safety checks when "
 "pushing changes."
 msgstr ""
+"Marcar uma conexão como 'Produção' habilita verificaçãoes de segurança "
+"adicionais ao empurrar alterações."
 
-#, fuzzy
-#| msgid "Create new categories"
+#: templates/admin/migration/sync/step1_connection.html:118
 msgid "Next: Select Categories"
-msgstr "Criar novas categorias"
+msgstr "Próximo: Selecione Categorias"
 
-#, fuzzy
-#| msgid "Category - Description"
+#: templates/admin/migration/sync/step2_categories.html:8
 msgid "Select Categories & Direction"
-msgstr "Categoria - Descrição"
+msgstr "Selecione Categorias e Direção"
 
+#: templates/admin/migration/sync/step2_categories.html:10
 msgid "Choose which settings to sync and the direction of data flow."
-msgstr ""
+msgstr "Escolha quais configurações sincronizar e a direção do fluxo de dados."
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/sync/step2_categories.html:18
 msgid "Sync Configuration"
-msgstr "Configurar Conexão"
+msgstr "Configuração de Sincronização"
 
+#: templates/admin/migration/sync/step2_categories.html:29
 msgid "Pull"
-msgstr ""
+msgstr "Puxar"
 
-msgid "Remote → Local"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:30
+msgid "From connected store to this store"
+msgstr "Do armazém conectado para este armazém"
 
+#: templates/admin/migration/sync/step2_categories.html:38
 msgid "Push"
-msgstr ""
+msgstr "Empurrar"
 
-msgid "Local → Remote"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:39
+msgid "From this store to connected store"
+msgstr "Do armazém atual para o armazém conectado"
 
+#: templates/admin/migration/sync/step2_categories.html:47
 msgid "Sync Mode"
-msgstr ""
+msgstr "Modo de Sincronização"
 
-#, fuzzy
-#| msgid "Updated"
+#: templates/admin/migration/sync/step2_categories.html:54
 msgid "Add & Update"
-msgstr "Atualizado"
+msgstr "Adicionar & Atualizar"
 
-#, fuzzy
-#| msgid "Skip existing items"
+#: templates/admin/migration/sync/step2_categories.html:55
 msgid "Never deletes existing items"
-msgstr "Pular itens existentes"
+msgstr "Nunca exclui itens existentes"
 
-msgid "Makes target match source exactly"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:62
+msgid "Exact Copy"
+msgstr "Cópia Exata"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/sync/step2_categories.html:63
+msgid "Adds, updates, and removes items to match the source"
+msgstr "Adiciona, atualiza e remove itens para corresponder à fonte"
+
+#: templates/admin/migration/sync/step2_categories.html:73
 msgid "Production Connection"
-msgstr "Testando conexão"
+msgstr "Conexão de Produção"
 
+#: templates/admin/migration/sync/step2_categories.html:74
 msgid ""
 "This connection is marked as production. Pushing changes will modify your "
 "live store settings."
 msgstr ""
+"Esta conexão está marcada como produção. Empurrar alterações modificará as "
+"configurações do seu armazém em funcionamento."
 
+#: templates/admin/migration/sync/step2_categories.html:83
 msgid "Select which categories to include in this sync."
-msgstr ""
+msgstr "Selecione quais categorias incluir nesta sincronização."
 
-#, fuzzy
-#| msgid "Select"
+#: templates/admin/migration/sync/step2_categories.html:88
 msgid "Select All"
-msgstr "Selecionar"
+msgstr "Selecionar Tudo"
 
-#, fuzzy
-#| msgid "CSV Files"
+#: templates/admin/migration/sync/step2_categories.html:114
 msgid "Has Files"
-msgstr "Arquivos CSV"
+msgstr "Tem Arquivos"
 
-#, fuzzy
-#| msgid "Next: Preview Data"
+#: templates/admin/migration/sync/step2_categories.html:136
 msgid "Next: Preview Changes"
-msgstr "Próximo: Visualizar Dados"
+msgstr "Próximo: Visualizar Alterações"
 
-#, fuzzy
-#| msgid "Preview"
+#: templates/admin/migration/sync/step3_preview.html:8
 msgid "Preview Changes"
-msgstr "Visualizar"
+msgstr "Visualizar Alterações"
 
+#: templates/admin/migration/sync/step3_preview.html:10
 msgid "Review the changes that will be applied before confirming."
-msgstr ""
+msgstr "Revise as alterações que serão aplicadas antes de confirmar."
 
+#: templates/admin/migration/sync/step3_preview.html:32
 msgid "Add"
-msgstr ""
+msgstr "Adicionar"
 
+#: templates/admin/migration/sync/step3_preview.html:34
 msgid "Modify"
-msgstr ""
+msgstr "Modificar"
 
+#: templates/admin/migration/sync/step3_preview.html:36
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
-#, fuzzy
-#| msgid "Field Mappings"
+#: templates/admin/migration/sync/step3_preview.html:44
 msgid "Field changes"
-msgstr "Mapeamentos de Campos"
+msgstr "Alterações no Campo"
 
-#, fuzzy
-#| msgid "Meta Fields"
+#: templates/admin/migration/sync/step3_preview.html:48
 msgid "Field"
-msgstr "Campos de Meta"
+msgstr "Campo"
 
+#: templates/admin/migration/sync/step3_preview.html:49
 msgid "Current"
-msgstr ""
+msgstr "Atual"
 
+#: templates/admin/migration/sync/step3_preview.html:50
 msgid "New"
-msgstr ""
+msgstr "Novo"
 
-#, fuzzy
-#| msgid "Warning"
+#: templates/admin/migration/sync/step3_preview.html:77
 msgid "Warnings"
-msgstr "Aviso"
+msgstr "Avisos"
 
+#: templates/admin/migration/sync/step3_preview.html:91
 msgid "No Changes Detected"
-msgstr ""
+msgstr "Nenhuma Alteração Detectada"
 
+#: templates/admin/migration/sync/step3_preview.html:92
 msgid "The selected categories are already in sync. There is nothing to apply."
 msgstr ""
+"As categorias selecionadas já estão em sincronização. Não há nada para "
+"aplicar."
 
-#, fuzzy
-#| msgid "Product Variant"
+#: templates/admin/migration/sync/step3_preview.html:105
 msgid "Production Warning"
-msgstr "Variação de produto"
+msgstr "Aviso de Produção"
 
+#: templates/admin/migration/sync/step3_preview.html:106
 msgid ""
 "You are about to push changes to a production instance. This will modify "
 "live store settings."
 msgstr ""
+"Você está prestes a empurrar alterações para uma instância de produção. Isso "
+"modificará as configurações do armazém em funcionamento."
 
+#: templates/admin/migration/sync/step3_preview.html:109
 msgid "I understand this will modify production settings and want to proceed."
 msgstr ""
+"Entendo que isso modificará as configurações de produção e quero continuar."
 
+#: templates/admin/migration/sync/step3_preview.html:124
 msgid "Start Sync"
-msgstr ""
+msgstr "Iniciar Sincronização"
 
+#: templates/admin/migration/sync/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The sync will continue in the "
 "background."
 msgstr ""
+"Você pode navegar com segurança para longe desta página. A sincronização "
+"continuará em segundo plano."
 
-#, fuzzy
-#| msgid "In Progress"
+#: templates/admin/migration/sync/step4_progress.html:13
 msgid "Sync Progress"
-msgstr "Em Progresso"
+msgstr "Progresso da Sincronização"
 
-#, fuzzy
-#| msgid "Migration Completed Successfully!"
+#: templates/admin/migration/sync/step4_progress.html:17
+#: templates/admin/migration/sync/step4_progress.html:161
 msgid "Sync completed successfully."
-msgstr "Migração Concluída com Sucesso!"
+msgstr "Sincronização concluída com sucesso."
 
+#: templates/admin/migration/sync/step4_progress.html:19
+#: templates/admin/migration/sync/step4_progress.html:162
 msgid "Sync encountered errors."
-msgstr ""
+msgstr "A sincronização encontrou erros."
 
-#, fuzzy
-#| msgid "Counting categories"
+#: templates/admin/migration/sync/step4_progress.html:21
+#: templates/admin/migration/sync/step4_progress.html:163
 msgid "Syncing selected categories..."
-msgstr "Contando categorias"
+msgstr "Sincronizando categorias selecionadas..."
 
+#: templates/admin/migration/sync/step4_progress.html:48
+#: templates/admin/migration/syncjob/change_list.html:145
 msgid "Synced"
-msgstr ""
+msgstr "Sincronizado"
 
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:158
 msgid "synced"
-msgstr ""
+msgstr "sincronizado"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/sync/step4_progress.html:166
 msgid ""
 "Are you sure you want to rollback this sync? This will restore the previous "
 "state."
 msgstr ""
-"Tem certeza de que deseja desfazer esta migração? Isso excluirá todos os "
-"dados importados."
+"Tem certeza de que deseja desfazer esta sincronização? Isso restaurará o "
+"estado anterior."
 
+#: templates/admin/migration/sync/token_management.html:33
 msgid "About Sync Tokens"
-msgstr ""
+msgstr "Sobre Tokens de Sincronização"
 
+#: templates/admin/migration/sync/token_management.html:34
 msgid ""
 "Sync tokens allow other Spwig instances to connect to this installation. "
 "Generate a token here and provide it to the remote instance."
 msgstr ""
+"Tokens de sincronização permitem que outras instâncias do Spwig se conectem "
+"a esta instalação. Gere um token aqui e forneça-o à instância remota."
 
+#: templates/admin/migration/sync/token_management.html:38
 msgid "Security"
-msgstr ""
+msgstr "Segurança"
 
+#: templates/admin/migration/sync/token_management.html:39
 msgid ""
 "Tokens grant read and write access to settings data. Only share them with "
 "trusted administrators. Revoke tokens immediately if compromised."
 msgstr ""
+"Tokens concedem acesso de leitura e escrita aos dados de configuração. "
+"Compartilhe-os apenas com administradores confiáveis. Revogue os tokens "
+"imediatamente se comprometidos."
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:45
 msgid "Generate New Token"
-msgstr "Gerar link"
+msgstr "Gerar Novo Token"
 
+#: templates/admin/migration/sync/token_management.html:50
 msgid "Token Name"
-msgstr ""
+msgstr "Nome do Token"
 
+#: templates/admin/migration/sync/token_management.html:52
 msgid "e.g., Staging Server Token"
-msgstr ""
+msgstr "ex., Token do Servidor de Teste"
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:56
 msgid "Generate Token"
-msgstr "Gerar link"
+msgstr "Gerar Token"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:62
 msgid "Active Tokens"
-msgstr "Ações"
+msgstr "Tokens Ativos"
 
-msgid "Name"
-msgstr "Nome"
+#: templates/admin/migration/sync/token_management.html:81
+msgid "Last used"
+msgstr "Última utilização"
 
-#, fuzzy
-#| msgid "Preview"
-msgid "Token Preview"
-msgstr "Visualizar"
+#: templates/admin/migration/sync/token_management.html:83
+msgid "Never used"
+msgstr "Nunca usado"
 
-msgid "Last Used"
-msgstr ""
-
-msgid "Revoke this token? Any connections using it will stop working."
-msgstr ""
-
+#: templates/admin/migration/sync/token_management.html:96
 msgid "Revoke"
-msgstr ""
+msgstr "Revogar"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:106
 msgid "No Active Tokens"
-msgstr "Ações"
+msgstr "Nenhum Token Ativo"
 
+#: templates/admin/migration/sync/token_management.html:107
 msgid "Generate a token to allow remote Spwig instances to connect."
 msgstr ""
+"Gerar um token para permitir que instâncias remotas do Spwig se conectem."
 
+#: templates/admin/migration/syncjob/change_list.html:26
 msgid "Sync settings between instances or perform full system migrations"
 msgstr ""
+"Sincronizar configurações entre instâncias ou executar migrações completas "
+"do sistema"
 
-#, fuzzy
-#| msgid "Total Items"
+#: templates/admin/migration/syncjob/change_list.html:35
 msgid "Total Jobs"
-msgstr "Itens Totais"
+msgstr "Total de Tarefas"
 
-#, fuzzy
-#| msgid "Progress"
+#: templates/admin/migration/syncjob/change_list.html:164
 msgid "View Progress"
-msgstr "Progresso"
+msgstr "Ver Progresso"
 
+#: templates/admin/migration/syncjob/change_list.html:170
 msgid "Review & Confirm"
-msgstr ""
+msgstr "Revisar e Confirmar"
 
+#: templates/admin/migration/syncjob/change_list.html:184
+msgid "Rollback this sync? This will restore the previous state."
+msgstr "Reverter esta sincronização? Isso restaurará o estado anterior."
+
+#: templates/admin/migration/syncjob/change_list.html:195
 msgid "No Sync Jobs Yet"
-msgstr ""
+msgstr "Nenhuma Tarefa de Sincronização Ainda"
 
+#: templates/admin/migration/syncjob/change_list.html:196
 msgid "Start a settings sync or full migration to see job history here."
 msgstr ""
+"Iniciar uma sincronização de configurações ou uma migração completa para ver "
+"o histórico de tarefas aqui."
 
+#: templates/admin/migration/syncjob/change_list.html:199
 msgid "Start Settings Sync"
-msgstr ""
+msgstr "Iniciar Sincronização de Configurações"
 
-msgid "Rollback this sync? This will restore the previous state."
-msgstr ""
-
+#: templates/admin/migration/wizard/base.html:4
+#: templates/admin/migration/wizard/base.html:28
 msgid "Migration Wizard"
 msgstr "Assistente de Migração"
 
+#: templates/admin/migration/wizard/base.html:21
 msgid "Back to Migrations"
 msgstr "Voltar para Migrações"
 
+#: templates/admin/migration/wizard/base.html:54
 msgid "Import"
 msgstr "Importar"
 
+#: templates/admin/migration/wizard/base.html:58
 msgid "Complete"
 msgstr "Concluir"
 
+#: templates/admin/migration/wizard/base.html:71
 msgid "Copied!"
 msgstr "Copiado!"
 
+#: templates/admin/migration/wizard/step1_platform.html:8
 msgid "Select Source Platform"
 msgstr "Selecionar Plataforma de Fonte"
 
+#: templates/admin/migration/wizard/step1_platform.html:10
 msgid ""
 "Choose the e-commerce platform you're migrating from. We'll guide you "
 "through the process of importing your data."
@@ -2386,24 +3135,31 @@ msgstr ""
 "Escolha a plataforma de comércio eletrônico da qual está migrando. Nós o "
 "guiaremos pelo processo de importação de seus dados."
 
+#: templates/admin/migration/wizard/step1_platform.html:23
 msgid "WordPress + WooCommerce stores"
 msgstr "Lojas WordPress + WooCommerce"
 
+#: templates/admin/migration/wizard/step1_platform.html:32
 msgid "Shopify stores using Admin API"
 msgstr "Lojas Shopify usando API de Admin"
 
-msgid "Magento/Adobe Commerce (coming soon)"
-msgstr "Magento/Adobe Commerce (em breve)"
+#: templates/admin/migration/wizard/step1_platform.html:41
+msgid "Magento 2 / Adobe Commerce stores"
+msgstr "Lojas Magento 2 / Adobe Commerce"
 
+#: templates/admin/migration/wizard/step1_platform.html:50
 msgid "Import from CSV files"
 msgstr "Importar de Arquivos CSV"
 
+#: templates/admin/migration/wizard/step1_platform.html:68
 msgid "Next: Configure Connection"
 msgstr "Próximo: Configurar Conexão"
 
+#: templates/admin/migration/wizard/step1_platform.html:78
 msgid "WooCommerce Migration"
 msgstr "Migração WooCommerce"
 
+#: templates/admin/migration/wizard/step1_platform.html:79
 msgid ""
 "We will connect to your WooCommerce store using the REST API. You will need "
 "to provide your store URL and API credentials in the next step."
@@ -2411,9 +3167,11 @@ msgstr ""
 "Conectaremos ao seu armazém WooCommerce usando a API REST. Você precisará "
 "fornecer o URL do seu armazém e as credenciais da API no próximo passo."
 
+#: templates/admin/migration/wizard/step1_platform.html:82
 msgid "Shopify Migration"
 msgstr "Migração Shopify"
 
+#: templates/admin/migration/wizard/step1_platform.html:83
 msgid ""
 "We will connect to your Shopify store using the Admin API. You will need to "
 "create a private app in the Shopify Developer Dashboard and provide your "
@@ -2423,19 +3181,25 @@ msgstr ""
 "criar um aplicativo privado no Dashboard do Desenvolvedor Shopify e fornecer "
 "seu ID do Cliente e Segredo do Cliente no próximo passo."
 
+#: templates/admin/migration/wizard/step1_platform.html:86
 msgid "Magento Migration"
 msgstr "Migração Magento"
 
+#: templates/admin/migration/wizard/step1_platform.html:87
 msgid ""
-"Magento migration is coming soon. We will support database access and API "
-"methods."
+"We will connect to your Magento 2 store using the REST API. You will need to "
+"create an Integration in your Magento admin and provide the Access Token in "
+"the next step."
 msgstr ""
-"A migração Magento está chegando em breve. Nós suportaremos acesso ao banco "
-"de dados e métodos API."
+"Vamos nos conectar à sua loja Magento 2 usando a API REST. Você precisará "
+"criar uma Integração no seu administrador Magento e fornecer o Token de "
+"Acesso na próxima etapa."
 
+#: templates/admin/migration/wizard/step1_platform.html:90
 msgid "CSV Import"
 msgstr "Importação CSV"
 
+#: templates/admin/migration/wizard/step1_platform.html:91
 msgid ""
 "Import your data from CSV files. We will provide templates in the next step "
 "for products, customers, orders, and other data."
@@ -2443,56 +3207,74 @@ msgstr ""
 "Importe seus dados de arquivos CSV. Nós forneceremos modelos no próximo "
 "passo para produtos, clientes, pedidos e outros dados."
 
+#: templates/admin/migration/wizard/step1_platform.html:95
 msgid "Please select a platform to continue."
 msgstr "Por favor, selecione uma plataforma para continuar."
 
+#: templates/admin/migration/wizard/step2_connection.html:8
 msgid "Configure Connection"
 msgstr "Configurar Conexão"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "Provide the connection details for your"
 msgstr "Forneça os detalhes de conexão para o seu"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "store."
 msgstr "loja."
 
+#: templates/admin/migration/wizard/step2_connection.html:19
 msgid "WooCommerce REST API"
 msgstr "WooCommerce REST API"
 
+#: templates/admin/migration/wizard/step2_connection.html:23
+#: templates/admin/migration/wizard/step2_connection.html:325
 msgid "Store URL"
 msgstr "URL da Loja"
 
+#: templates/admin/migration/wizard/step2_connection.html:31
 msgid "Your WooCommerce store URL (e.g., https://yourstore.com)"
 msgstr "O URL do seu armazém WooCommerce (ex.: https://yourstore.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:36
 msgid "Consumer Key"
 msgstr "Chave do Consumidor"
 
+#: templates/admin/migration/wizard/step2_connection.html:44
 msgid "Your WooCommerce REST API consumer key"
 msgstr "Sua chave de consumidor da API REST WooCommerce"
 
+#: templates/admin/migration/wizard/step2_connection.html:49
 msgid "Consumer Secret"
 msgstr "Segredo do Consumidor"
 
+#: templates/admin/migration/wizard/step2_connection.html:57
 msgid "Your WooCommerce REST API consumer secret"
 msgstr "Seu segredo de consumidor da API REST WooCommerce"
 
+#: templates/admin/migration/wizard/step2_connection.html:63
 msgid "How to get API credentials"
 msgstr "Como obter credenciais da API"
 
+#: templates/admin/migration/wizard/step2_connection.html:65
 msgid "Log in to your WordPress admin panel"
 msgstr "Faça login no painel de administração do WordPress"
 
+#: templates/admin/migration/wizard/step2_connection.html:66
 msgid "Go to WooCommerce > Settings > Advanced > REST API"
 msgstr "Vá para WooCommerce > Configurações > Avançado > API REST"
 
+#: templates/admin/migration/wizard/step2_connection.html:67
 msgid "Click 'Add key' and create a new API key with Read permissions"
 msgstr ""
 "Clique em 'Adicionar chave' e crie uma nova chave de API com permissões de "
 "Leitura"
 
+#: templates/admin/migration/wizard/step2_connection.html:68
 msgid "Copy the Consumer Key and Consumer Secret here"
 msgstr "Copie a Chave de Consumidor e o Segredo de Consumidor aqui"
 
+#: templates/admin/migration/wizard/step2_connection.html:71
 msgid ""
 "Note: Read-only permissions are sufficient for data migration. We will not "
 "modify your WooCommerce store."
@@ -2500,33 +3282,46 @@ msgstr ""
 "Nota: Permissões de leitura são suficientes para migração de dados. Não "
 "modificaremos seu armazém WooCommerce."
 
+#: templates/admin/migration/wizard/step2_connection.html:79
+#: templates/admin/migration/wizard/step2_connection.html:313
+#: templates/admin/migration/wizard/step2_connection.html:372
 msgid "Test connection before proceeding"
 msgstr "Testar a conexão antes de prosseguir"
 
+#: templates/admin/migration/wizard/step2_connection.html:87
 msgid "Shopify Admin API"
 msgstr "API de Administração Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:91
 msgid "Store Domain"
 msgstr "Domínio da Loja"
 
+#: templates/admin/migration/wizard/step2_connection.html:99
 msgid "Your Shopify store domain (e.g., yourstore.myshopify.com)"
 msgstr "Seu domínio da loja Shopify (ex., yourstore.myshopify.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:104
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Client ID"
 msgstr "ID do Cliente"
 
+#: templates/admin/migration/wizard/step2_connection.html:112
 msgid "Client ID from your Shopify app's Settings page"
 msgstr "ID do cliente da página de configurações do seu app Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:117
 msgid "Client Secret"
 msgstr "Segredo do cliente"
 
+#: templates/admin/migration/wizard/step2_connection.html:125
 msgid "Secret from your Shopify app's Settings page"
 msgstr "Segredo da página de configurações do seu app Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:131
 msgid "Need help getting your API credentials?"
 msgstr "Precisa de ajuda para obter suas credenciais da API?"
 
+#: templates/admin/migration/wizard/step2_connection.html:133
 msgid ""
 "Setting up a Shopify app takes about 10 minutes. Our step-by-step guide with "
 "screenshots will walk you through it."
@@ -2534,24 +3329,31 @@ msgstr ""
 "Configurar um app do Shopify leva cerca de 10 minutos. Nosso guia passo a "
 "passo com capturas de tela o guiará por este processo."
 
+#: templates/admin/migration/wizard/step2_connection.html:137
 msgid "Open Setup Guide"
 msgstr "Abrir Guia de Configuração"
 
+#: templates/admin/migration/wizard/step2_connection.html:148
 msgid "Shopify API Setup Guide"
 msgstr "Guia de Configuração da API Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:158
 msgid "Open the Shopify Developer Dashboard"
 msgstr "Abrir o Painel de Desenvolvedor Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:160
 msgid "Sign in with the same account you use to manage your store."
 msgstr "Faça login com a mesma conta que usa para gerenciar sua loja."
 
+#: templates/admin/migration/wizard/step2_connection.html:162
 msgid "Go to"
 msgstr "Ir para"
 
+#: templates/admin/migration/wizard/step2_connection.html:163
 msgid "Sign in with your Shopify account"
 msgstr "Faça login com sua conta Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:167
 msgid ""
 "If this is your first time visiting the Developer Dashboard, Shopify may ask "
 "you to agree to developer terms. This is normal — accept and continue."
@@ -2560,122 +3362,167 @@ msgstr ""
 "Shopify pode pedir que você concorde com os termos para desenvolvedores. "
 "Isso é normal — aceite e continue."
 
+#: templates/admin/migration/wizard/step2_connection.html:169
 msgid "Shopify Developer Dashboard"
 msgstr "Painel de Desenvolvedor Shopify"
 
+#: templates/admin/migration/wizard/step2_connection.html:176
 msgid "Create a New App"
 msgstr "Criar um Novo Aplicativo"
 
+#: templates/admin/migration/wizard/step2_connection.html:178
 msgid "Create a private app that Spwig will use to read your store data."
 msgstr "Crie um app privado que o Spwig usará para ler os dados da sua loja."
 
+#: templates/admin/migration/wizard/step2_connection.html:180
+#: templates/admin/migration/wizard/step2_connection.html:197
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "In the left sidebar, click"
 msgstr "No menu lateral esquerdo, clique em"
 
+#: templates/admin/migration/wizard/step2_connection.html:180
 msgid "Apps"
 msgstr "Aplicativos"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Click the"
 msgstr "Clique no"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Create app"
 msgstr "Criar aplicativo"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "button (top-right corner)"
 msgstr "botão (canto superior direito)"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Scroll past 'Start with Shopify CLI' to the"
 msgstr "Rola passando 'Start with Shopify CLI' para o"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Start from Dev Dashboard"
 msgstr "Comece no Painel de Desenvolvimento"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "section"
 msgstr "seção"
 
+#: templates/admin/migration/wizard/step2_connection.html:183
 msgid "Enter app name:"
 msgstr "Digite o nome do aplicativo:"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
+#: templates/admin/migration/wizard/step2_connection.html:198
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Click"
 msgstr "Clique"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
 msgid "Create"
 msgstr "Criar"
 
+#: templates/admin/migration/wizard/step2_connection.html:186
 msgid "Create app in Dev Dashboard"
 msgstr "Criar aplicativo no Painel de Desenvolvimento"
 
+#: templates/admin/migration/wizard/step2_connection.html:193
 msgid "Create an App Version with Permissions"
 msgstr "Criar uma Versão do App com Permissões"
 
+#: templates/admin/migration/wizard/step2_connection.html:195
 msgid "Configure which data the app can access. We only need read-only access."
 msgstr ""
 "Configure quais dados o app pode acessar. Nós precisamos apenas de acesso "
 "somente leitura."
 
+#: templates/admin/migration/wizard/step2_connection.html:197
 msgid "Versions"
 msgstr "Versões"
 
+#: templates/admin/migration/wizard/step2_connection.html:198
 msgid "Create version"
 msgstr "Criar versão"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "Set the"
 msgstr "Defina o"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "App URL"
 msgstr "URL do aplicativo"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "to:"
 msgstr "para:"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Select the newest"
 msgstr "Selecione a mais recente"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Webhooks API Version"
 msgstr "Versão da API Webhooks"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Scroll to"
 msgstr "Rola até"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "Access — Scopes"
 msgstr "Acesso — Escopos"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "and paste:"
 msgstr "e cole:"
 
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Release"
 msgstr "Lançamento"
 
+#: templates/admin/migration/wizard/step2_connection.html:209
 msgid "Scope input field"
 msgstr "Campo de entrada de escopo"
 
+#: templates/admin/migration/wizard/step2_connection.html:215
 msgid "What it accesses"
 msgstr "O que ele acessa"
 
+#: templates/admin/migration/wizard/step2_connection.html:219
 msgid "Products, variants, images, collections"
 msgstr "Produtos, variantes, imagens, coleções"
 
+#: templates/admin/migration/wizard/step2_connection.html:220
 msgid "Customer names, emails, addresses"
 msgstr "Nomes, e-mails e endereços dos clientes"
 
+#: templates/admin/migration/wizard/step2_connection.html:221
 msgid "Orders from the last 60 days"
 msgstr "Pedidos dos últimos 60 dias"
 
+#: templates/admin/migration/wizard/step2_connection.html:222
 msgid "Blog posts and pages"
 msgstr "Posts e páginas do blog"
 
+#: templates/admin/migration/wizard/step2_connection.html:223
 msgid "Discount codes and rules"
 msgstr "Códigos e regras de desconto"
 
+#: templates/admin/migration/wizard/step2_connection.html:224
 msgid "Uploaded media files"
 msgstr "Arquivos de mídia carregados"
 
+#: templates/admin/migration/wizard/step2_connection.html:228
 msgid "Scope selection UI"
 msgstr "UI de seleção de escopo"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid "Want to migrate your full order history? Add"
 msgstr "Quer migrar seu histórico completo de pedidos? Adicione"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid ""
 "to the scopes above. Without it, only orders from the last 60 days are "
 "accessible."
@@ -2683,36 +3530,47 @@ msgstr ""
 "aos escopos acima. Sem ele, apenas pedidos dos últimos 60 dias estarão "
 "acessíveis."
 
+#: templates/admin/migration/wizard/step2_connection.html:240
 msgid "Copy Your Client ID and Secret"
 msgstr "Copie seu ID do Cliente e Segredo"
 
+#: templates/admin/migration/wizard/step2_connection.html:242
 msgid "These are the two values you will paste into Spwig."
 msgstr "Esses são os dois valores que você colará no Spwig."
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Find the"
 msgstr "Encontre o"
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Credentials"
 msgstr "Credenciais"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Copy the"
 msgstr "Copie o"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "(click the copy icon)"
 msgstr "(clique no ícone de cópia)"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Click the eye icon to reveal the"
 msgstr "Clique no ícone de olho para revelar o"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Secret"
 msgstr "Segredo"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid ", then copy it"
 msgstr ", depois copie-o"
 
+#: templates/admin/migration/wizard/step2_connection.html:249
 msgid "App credentials page"
 msgstr "Página de credenciais do aplicativo"
 
+#: templates/admin/migration/wizard/step2_connection.html:252
 msgid ""
 "Treat the Secret like a password. Spwig encrypts it and only uses it during "
 "migration. You can delete the app from Shopify after your migration is "
@@ -2722,65 +3580,86 @@ msgstr ""
 "a migração. Você pode excluir o app do Shopify após a migração estar "
 "completa."
 
+#: templates/admin/migration/wizard/step2_connection.html:260
 msgid "Set Up Distribution and Install"
 msgstr "Configurar Distribuição e Instalar"
 
+#: templates/admin/migration/wizard/step2_connection.html:262
 msgid "Your app needs to be installed on your store before it can access data."
 msgstr ""
 "Seu aplicativo precisa ser instalado em sua loja antes de poder acessar os "
 "dados."
 
+#: templates/admin/migration/wizard/step2_connection.html:264
 msgid "Click your app name to return to the overview page"
 msgstr "Clique no nome do seu aplicativo para retornar à página de visão geral"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Distribution"
 msgstr "Distribuição"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "and click"
 msgstr "e clique"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
+#: templates/admin/migration/wizard/step2_connection.html:267
 msgid "Select distribution method"
 msgstr "Selecione o método de distribuição"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Select"
 msgstr "Selecionar"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Custom distribution"
 msgstr "Distribuição personalizada"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "and confirm"
 msgstr "e confirme"
 
+#: templates/admin/migration/wizard/step2_connection.html:271
 msgid "Custom distribution option"
 msgstr "Opção de distribuição personalizada"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Enter your store domain (e.g.,"
 msgstr "Digite o domínio da sua loja (ex.,"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid ") and click"
 msgstr ") e clique"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Generate link"
 msgstr "Gerar link"
 
+#: templates/admin/migration/wizard/step2_connection.html:275
 msgid "Generate install link"
 msgstr "Gerar link de instalação"
 
+#: templates/admin/migration/wizard/step2_connection.html:277
 msgid "Copy the install link and paste it into your browser"
 msgstr "Copie o link de instalação e cole-o no seu navegador"
 
+#: templates/admin/migration/wizard/step2_connection.html:279
 msgid "Copy the generated link"
 msgstr "Copie o link gerado"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "On your Shopify admin, review the permissions and click"
 msgstr "No seu Shopify admin, revise as permissões e clique"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "Install"
 msgstr "Instalar"
 
+#: templates/admin/migration/wizard/step2_connection.html:283
 msgid "Install app permissions screen"
 msgstr "Tela de permissões de instalação do aplicativo"
 
+#: templates/admin/migration/wizard/step2_connection.html:286
 msgid ""
 "Done! Your app is now installed. Return to this page and paste your Client "
 "ID and Secret into the fields above."
@@ -2788,21 +3667,87 @@ msgstr ""
 "Feito! Seu aplicativo está agora instalado. Volte a esta página e cole seu "
 "ID do Cliente e Segredo nos campos acima."
 
+#: templates/admin/migration/wizard/step2_connection.html:297
 msgid "Previous"
 msgstr "Anterior"
 
+#: templates/admin/migration/wizard/step2_connection.html:300
 msgid "Next"
 msgstr "Próximo"
 
+#: templates/admin/migration/wizard/step2_connection.html:303
 msgid "Got it"
 msgstr "Entendi"
 
+#: templates/admin/migration/wizard/step2_connection.html:321
+msgid "Magento 2 REST API"
+msgstr "API REST Magento 2"
+
+#: templates/admin/migration/wizard/step2_connection.html:333
+msgid "Your Magento store URL (e.g., https://yourstore.com)"
+msgstr "URL da sua loja Magento (ex., https://yourstore.com)"
+
+#: templates/admin/migration/wizard/step2_connection.html:338
+msgid "Access Token"
+msgstr "Token de Acesso"
+
+#: templates/admin/migration/wizard/step2_connection.html:346
+msgid "Integration Access Token from your Magento admin"
+msgstr "Token de Acesso de Integração do seu administrador do Magento"
+
+#: templates/admin/migration/wizard/step2_connection.html:352
+msgid "How to get your Access Token"
+msgstr "Como obter seu Token de Acesso"
+
+#: templates/admin/migration/wizard/step2_connection.html:354
+msgid "Log in to your Magento admin panel"
+msgstr "Faça login no painel de administração do Magento"
+
+#: templates/admin/migration/wizard/step2_connection.html:355
+msgid "Go to System > Integrations"
+msgstr "Ir para Sistema > Integrações"
+
+#: templates/admin/migration/wizard/step2_connection.html:356
+msgid "Click 'Add New Integration'"
+msgstr "Clique em 'Adicionar Nova Integração'"
+
+#: templates/admin/migration/wizard/step2_connection.html:357
+msgid "Set the name to"
+msgstr "Definir o nome para"
+
+#: templates/admin/migration/wizard/step2_connection.html:358
+msgid "Under the API tab, set Resource Access to 'All'"
+msgstr "Na aba API, defina o Acesso aos Recursos para 'Todos'"
+
+#: templates/admin/migration/wizard/step2_connection.html:359
+msgid "Save and click 'Activate'"
+msgstr "Salvar e clicar em 'Ativar'"
+
+#: templates/admin/migration/wizard/step2_connection.html:360
+msgid "Click 'Allow' on the confirmation popup"
+msgstr "Clique em 'Permitir' no pop-up de confirmação"
+
+#: templates/admin/migration/wizard/step2_connection.html:361
+msgid "Copy the Access Token value and paste it above"
+msgstr "Copie o valor do Token de Acesso e cole acima"
+
+#: templates/admin/migration/wizard/step2_connection.html:364
+msgid ""
+"Note: Read-only access is sufficient. We will not modify your Magento store. "
+"You can revoke the integration after migration."
+msgstr ""
+"Nota: O acesso somente leitura é suficiente. Não modificaremos sua loja "
+"Magento. Você pode revogar a integração após a migração."
+
+#: templates/admin/migration/wizard/step2_connection.html:380
 msgid "CSV File Upload"
 msgstr "Carregar Arquivo CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:385
 msgid "CSV Import Instructions"
 msgstr "Instruções de Importação CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:386
 msgid ""
 "Upload CSV files for each data type you want to import. You can import some "
 "or all of the following:"
@@ -2810,222 +3755,309 @@ msgstr ""
 "Carregue arquivos CSV para cada tipo de dado que deseja importar. Você pode "
 "importar alguns ou todos os seguintes:"
 
+#: templates/admin/migration/wizard/step2_connection.html:388
 msgid "Products (required)"
 msgstr "Produtos (obrigatório)"
 
+#: templates/admin/migration/wizard/step2_connection.html:389
 msgid "Categories (optional)"
 msgstr "Categorias (opcional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:390
 msgid "Customers (optional)"
 msgstr "Clientes (opcional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:391
 msgid "Orders (optional)"
 msgstr "Pedidos (opcional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:392
 msgid "Reviews (optional)"
 msgstr "Avaliações (opcional)"
 
+#: templates/admin/migration/wizard/step2_connection.html:399
 msgid "Products CSV"
 msgstr "CSV de Produtos"
 
+#: templates/admin/migration/wizard/step2_connection.html:403
 msgid "CSV file containing your products"
 msgstr "Arquivo CSV contendo seus produtos"
 
+#: templates/admin/migration/wizard/step2_connection.html:405
+#: templates/admin/migration/wizard/step2_connection.html:416
+#: templates/admin/migration/wizard/step2_connection.html:427
+#: templates/admin/migration/wizard/step2_connection.html:438
+#: templates/admin/migration/wizard/step2_connection.html:449
 msgid "Download Template"
 msgstr "Baixar Modelo"
 
+#: templates/admin/migration/wizard/step2_connection.html:411
 msgid "Categories CSV"
 msgstr "CSV de Categorias"
 
+#: templates/admin/migration/wizard/step2_connection.html:414
 msgid "Optional: CSV file containing your product categories"
 msgstr "Opcional: Arquivo CSV contendo suas categorias de produtos"
 
+#: templates/admin/migration/wizard/step2_connection.html:422
 msgid "Customers CSV"
 msgstr "CSV de Clientes"
 
+#: templates/admin/migration/wizard/step2_connection.html:425
 msgid "Optional: CSV file containing your customers"
 msgstr "Opcional: Arquivo CSV contendo seus clientes"
 
+#: templates/admin/migration/wizard/step2_connection.html:433
 msgid "Orders CSV"
 msgstr "CSV de Pedidos"
 
+#: templates/admin/migration/wizard/step2_connection.html:436
 msgid "Optional: CSV file containing your orders"
 msgstr "Opcional: Arquivo CSV contendo seus pedidos"
 
+#: templates/admin/migration/wizard/step2_connection.html:444
 msgid "Reviews CSV"
 msgstr "Avaliações CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:447
 msgid "Optional: CSV file containing your product reviews"
 msgstr "Opcional: Arquivo CSV contendo suas avaliações de produtos"
 
+#: templates/admin/migration/wizard/step2_connection.html:463
 msgid "Next: Preview Data"
 msgstr "Próximo: Visualizar Dados"
 
+#: templates/admin/migration/wizard/step2_connection.html:476
 msgid "Saving..."
 msgstr "Salvando..."
 
+#: templates/admin/migration/wizard/step2_connection.html:477
+#: templates/admin/migration/wizard/step3_preview.html:299
 msgid "Processing..."
 msgstr "Processando..."
 
+#: templates/admin/migration/wizard/step2_connection.html:478
 msgid "Loading preview..."
 msgstr "Carregando pré-visualização..."
 
+#: templates/admin/migration/wizard/step2_connection.html:480
 msgid "Verifying API credentials"
 msgstr "Verificando credenciais da API"
 
+#: templates/admin/migration/wizard/step2_connection.html:481
 msgid "Counting products"
 msgstr "Contando produtos"
 
+#: templates/admin/migration/wizard/step2_connection.html:482
 msgid "Counting categories"
 msgstr "Contando categorias"
 
+#: templates/admin/migration/wizard/step2_connection.html:483
 msgid "Counting customers"
 msgstr "Contando clientes"
 
+#: templates/admin/migration/wizard/step2_connection.html:484
 msgid "Counting orders"
 msgstr "Contando pedidos"
 
+#: templates/admin/migration/wizard/step2_connection.html:485
 msgid "Counting blog posts"
 msgstr "Contando posts do blog"
 
+#: templates/admin/migration/wizard/step2_connection.html:486
 msgid "Preparing the next step"
 msgstr "Preparando o próximo passo"
 
+#: templates/admin/migration/wizard/step2_connection.html:487
 msgid "Connection successful"
 msgstr "Conexão bem-sucedida"
 
+#: templates/admin/migration/wizard/step2_connection.html:489
 msgid "Connection error"
 msgstr "Erro de conexão"
 
+#: templates/admin/migration/wizard/step2_connection.html:490
 msgid "Credentials verified"
 msgstr "Credenciais verificadas"
 
+#: templates/admin/migration/wizard/step2_connection.html:491
 msgid "Products counted"
 msgstr "Produtos contados"
 
+#: templates/admin/migration/wizard/step2_connection.html:492
 msgid "Categories counted"
 msgstr "Categorias contadas"
 
+#: templates/admin/migration/wizard/step2_connection.html:493
 msgid "Customers counted"
 msgstr "Clientes contados"
 
+#: templates/admin/migration/wizard/step2_connection.html:494
 msgid "Orders counted"
 msgstr "Pedidos contados"
 
+#: templates/admin/migration/wizard/step2_connection.html:495
 msgid "Blog posts counted"
 msgstr "Posts do blog contados"
 
+#: templates/admin/migration/wizard/step2_connection.html:496
 msgid "Retry Connection"
 msgstr "Tentar Conexão Novamente"
 
+#: templates/admin/migration/wizard/step2_connection.html:497
 msgid "Exchanging credentials for access token"
 msgstr "Trocando credenciais por token de acesso"
 
+#: templates/admin/migration/wizard/step2_connection.html:498
 msgid "Access token obtained"
 msgstr "Token de acesso obtido"
 
+#: templates/admin/migration/wizard/step2_connection.html:499
 msgid "Verifying API access"
 msgstr "Verificando acesso à API"
 
+#: templates/admin/migration/wizard/step2_connection.html:500
 msgid "API access verified"
 msgstr "Acesso à API verificado"
 
+#: templates/admin/migration/wizard/step2_connection.html:501
 msgid "Scanning store data"
 msgstr "Varredura dos dados da loja"
 
+#: templates/admin/migration/wizard/step2_connection.html:502
 msgid "Store scan complete"
 msgstr "Varredura da loja completa"
 
+#: templates/admin/migration/wizard/step2_connection.html:503
 msgid "Counting collections"
 msgstr "Contando coleções"
 
+#: templates/admin/migration/wizard/step2_connection.html:504
 msgid "Collections counted"
 msgstr "Coleções contadas"
 
+#: templates/admin/migration/wizard/step2_connection.html:505
 msgid "Counting discounts"
 msgstr "Contando descontos"
 
+#: templates/admin/migration/wizard/step2_connection.html:506
 msgid "Discounts counted"
 msgstr "Descontos contados"
 
+#: templates/admin/migration/wizard/step3_preview.html:8
 msgid "Preview Import Data"
 msgstr "Visualizar Dados de Importação"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "Review what will be imported from your"
 msgstr "Reveja o que será importado do seu"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "store. You can select which data types to import."
 msgstr "armazém. Você pode selecionar quais tipos de dados importar."
 
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
 msgid "Collections"
 msgstr "Coleções"
 
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
 msgid "Discounts"
 msgstr "Descontos"
 
+#: templates/admin/migration/wizard/step3_preview.html:44
+#: templates/admin/migration/wizard/step3_preview.html:122
+#: templates/admin/migration/wizard/step4_mapping.html:100
+#: templates/admin/migration/wizard/step5_import.html:211
 msgid "Blog Posts"
 msgstr "Posts do Blog"
 
+#: templates/admin/migration/wizard/step3_preview.html:60
 msgid "Select Data to Import"
 msgstr "Selecionar Dados para Importar"
 
+#: templates/admin/migration/wizard/step3_preview.html:66
+#: templates/admin/migration/wizard/step3_preview.html:75
+#: templates/admin/migration/wizard/step3_preview.html:84
+#: templates/admin/migration/wizard/step3_preview.html:93
+#: templates/admin/migration/wizard/step3_preview.html:103
+#: templates/admin/migration/wizard/step3_preview.html:113
 msgid "found"
 msgstr "encontrado(s)"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import collections as product categories"
 msgstr "Importar coleções como categorias de produtos"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import product categories and their hierarchy"
 msgstr "Importar categorias de produtos e sua hierarquia"
 
+#: templates/admin/migration/wizard/step3_preview.html:77
 msgid "Import products with images, variants, and attributes"
 msgstr "Importar produtos com imagens, variações e atributos"
 
+#: templates/admin/migration/wizard/step3_preview.html:86
 msgid "Import customer accounts and addresses"
 msgstr "Importar contas de clientes e endereços"
 
+#: templates/admin/migration/wizard/step3_preview.html:95
 msgid "Import order history and transactions"
 msgstr "Importar histórico de pedidos e transações"
 
+#: templates/admin/migration/wizard/step3_preview.html:105
 msgid "Import product reviews and ratings"
 msgstr "Importar avaliações e classificações de produtos"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount codes and price rules"
 msgstr "Importar códigos de desconto e regras de preço"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount coupons and vouchers"
 msgstr "Importar cupons e vales de desconto"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "posts"
 msgstr "posts"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "categories"
 msgstr "categorias"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "tags"
 msgstr "tags"
 
+#: templates/admin/migration/wizard/step3_preview.html:125
 msgid ""
 "Import blog posts with categories, tags, featured images, and content images"
 msgstr ""
 "Importar posts de blog com categorias, tags, imagens em destaque e imagens "
 "de conteúdo"
 
+#: templates/admin/migration/wizard/step3_preview.html:135
 msgid "Affiliate Program Data"
 msgstr "Dados do Programa de Afiliados"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "affiliates"
 msgstr "afiliados"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "commissions"
 msgstr "comissões"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "payouts"
 msgstr "pagamentos"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "plans"
 msgstr "planos"
 
+#: templates/admin/migration/wizard/step3_preview.html:144
 msgid ""
 "Import affiliate profiles, commission records, and payout history. Requires "
 "orders and customers to be imported first."
@@ -3033,9 +4065,11 @@ msgstr ""
 "Importar perfis de afiliados, registros de comissões e histórico de "
 "pagamentos. Exige que os pedidos e clientes sejam importados primeiro."
 
+#: templates/admin/migration/wizard/step3_preview.html:153
 msgid "Affiliate Data Available"
 msgstr "Dados do Afiliado Disponíveis"
 
+#: templates/admin/migration/wizard/step3_preview.html:154
 msgid ""
 "To import your affiliate program data (affiliates, commissions, payouts), "
 "install the Spwig Migration Bridge plugin on your WordPress site:"
@@ -3043,16 +4077,20 @@ msgstr ""
 "Para importar os dados do seu programa de afiliados (afiliados, comissões, "
 "pagamentos), instale o plugin Spwig Migration Bridge no seu site WordPress:"
 
+#: templates/admin/migration/wizard/step3_preview.html:156
 msgid "Download the plugin ZIP using the button below"
 msgstr "Baixe o ZIP do plugin usando o botão abaixo"
 
+#: templates/admin/migration/wizard/step3_preview.html:157
 msgid "Go to your WordPress admin → Plugins → Add New → Upload Plugin"
 msgstr ""
 "Vá para o seu WordPress admin → Plugins → Adicionar Novo → Carregar Plugin"
 
+#: templates/admin/migration/wizard/step3_preview.html:158
 msgid "Upload and activate the plugin"
 msgstr "Carregar e ativar o plugin"
 
+#: templates/admin/migration/wizard/step3_preview.html:159
 msgid ""
 "Return here and refresh this page — the affiliate data will appear "
 "automatically"
@@ -3060,116 +4098,178 @@ msgstr ""
 "Volte aqui e atualize esta página — os dados de afiliado aparecerão "
 "automaticamente"
 
+#: templates/admin/migration/wizard/step3_preview.html:163
 msgid "Download Bridge Plugin"
 msgstr "Baixar Plugin Bridge"
 
+#: templates/admin/migration/wizard/step3_preview.html:175
 msgid "Sample Products"
 msgstr "Produtos de Exemplo"
 
+#: templates/admin/migration/wizard/step3_preview.html:176
 msgid "Here are a few example products that will be imported:"
 msgstr "Aqui estão alguns exemplos de produtos que serão importados:"
 
+#: templates/admin/migration/wizard/step3_preview.html:181
+msgid "Name"
+msgstr "Nome"
+
+#: templates/admin/migration/wizard/step3_preview.html:182
 msgid "SKU"
 msgstr "SKU"
 
+#: templates/admin/migration/wizard/step3_preview.html:183
 msgid "Price"
 msgstr "Preço"
 
+#: templates/admin/migration/wizard/step3_preview.html:195
 msgid "Active"
 msgstr "Ativo"
 
+#: templates/admin/migration/wizard/step3_preview.html:197
 msgid "Archived"
 msgstr "Arquivado"
 
+#: templates/admin/migration/wizard/step3_preview.html:199
 msgid "Draft"
 msgstr "Rascunho"
 
+#: templates/admin/migration/wizard/step3_preview.html:211
 msgid "Import Options"
 msgstr "Opções de Importação"
 
+#: templates/admin/migration/wizard/step3_preview.html:216
 msgid "Skip existing items"
 msgstr "Pular itens existentes"
 
+#: templates/admin/migration/wizard/step3_preview.html:218
 msgid "Don't import items that already exist (matched by SKU, email, etc.)"
 msgstr ""
 "Não importar itens que já existem (correspondentes por SKU, e-mail, etc.)"
 
+#: templates/admin/migration/wizard/step3_preview.html:225
+msgid "If the import fails, automatically remove what was imported"
+msgstr "Se a importação falhar, remova automaticamente o que foi importado"
+
+#: templates/admin/migration/wizard/step3_preview.html:227
+msgid ""
+"Leave this off to keep partial data so you can fix the problem and run the "
+"import again — anything already imported will be skipped."
+msgstr ""
+"Deixe isso desativado para manter os dados parciais, assim você poderá "
+"corrigir o problema e executar o importe novamente — qualquer coisa já "
+"importada será ignorada."
+
+#: templates/admin/migration/wizard/step3_preview.html:233
 msgid "Import product images"
 msgstr "Importar imagens de produtos"
 
+#: templates/admin/migration/wizard/step3_preview.html:235
 msgid "Download and import product images (may increase import time)"
 msgstr ""
 "Baixar e importar imagens de produtos (pode aumentar o tempo de importação)"
 
+#: templates/admin/migration/wizard/step3_preview.html:241
 msgid "Preserve original IDs where possible"
 msgstr "Preservar IDs originais quando possível"
 
+#: templates/admin/migration/wizard/step3_preview.html:243
 msgid "Attempt to keep original IDs for products and orders (not recommended)"
 msgstr ""
 "Tentar manter os IDs originais para produtos e pedidos (não recomendado)"
 
+#: templates/admin/migration/wizard/step3_preview.html:247
 msgid "Batch size"
 msgstr "Tamanho do lote"
 
+#: templates/admin/migration/wizard/step3_preview.html:249
+#: templates/admin/migration/wizard/step3_preview.html:250
+#: templates/admin/migration/wizard/step3_preview.html:251
+#: templates/admin/migration/wizard/step3_preview.html:252
 msgid "items per batch"
 msgstr "itens por lote"
 
+#: templates/admin/migration/wizard/step3_preview.html:254
 msgid "Larger batches are faster but use more memory"
 msgstr "Lotes maiores são mais rápidos, mas usam mais memória"
 
+#: templates/admin/migration/wizard/step3_preview.html:261
 msgid "Data Safety"
 msgstr "Segurança dos Dados"
 
+#: templates/admin/migration/wizard/step3_preview.html:262
 msgid ""
-"All data will be imported within a database transaction. If anything goes "
-"wrong, the entire import will be rolled back automatically. You'll also have "
-"24 hours to manually rollback if needed."
+"Spwig imports your data one item at a time, and each item is saved as it is "
+"imported. If the import stops part way through, the items already imported "
+"stay in your store unless you tick the option above. You can roll an import "
+"back at any time from the Migrations list — whether it finished, failed or "
+"was stopped. Rollback removes what the import added, but keeps anything your "
+"store has since come to depend on, such as an imported product that now "
+"appears on a real customer's order. Take a full backup before you begin."
 msgstr ""
-"Todos os dados serão importados dentro de uma transação do banco de dados. "
-"Se algo sair errado, a importação inteira será desfeita automaticamente. "
-"Você também terá 24 horas para desfazer manualmente se necessário."
+"O Spwig importa seus dados um item de cada vez, e cada item é salvo conforme "
+"é importado. Se a importação parar antes de ser concluída, os itens já "
+"importados permanecerão em sua loja, a menos que você marque a opção acima. "
+"Você pode desfazer uma importação a qualquer momento na lista de Migrações — "
+"seja ela concluída, falha ou interrompida. O desfazimento remove o que foi "
+"adicionado pela importação, mas mantém qualquer coisa em que sua loja já "
+"depende, como um produto importado que agora aparece em um pedido real de um "
+"cliente. Faça um backup completo antes de começar."
 
+#: templates/admin/migration/wizard/step3_preview.html:272
 msgid "Next: Configure Mapping"
 msgstr "Próximo: Configurar Mapeamento"
 
+#: templates/admin/migration/wizard/step3_preview.html:282
 msgid "Generating Field Mappings..."
 msgstr "Gerando Mapeamentos de Campos..."
 
+#: templates/admin/migration/wizard/step3_preview.html:283
 msgid ""
 "Analyzing your data and creating field mappings. This may take a moment..."
 msgstr ""
 "Analisando seus dados e criando mapeamentos de campos. Isso pode levar um "
 "momento..."
 
+#: templates/admin/migration/wizard/step3_preview.html:288
 msgid "Preparing..."
 msgstr "Preparando..."
 
+#: templates/admin/migration/wizard/step3_preview.html:298
 msgid "Please select at least one data type to import."
 msgstr "Por favor, selecione pelo menos um tipo de dado para importar."
 
+#: templates/admin/migration/wizard/step3_preview.html:300
 msgid "Fetching sample data..."
 msgstr "Obtendo dados de exemplo..."
 
+#: templates/admin/migration/wizard/step3_preview.html:301
 msgid "Detecting custom fields..."
 msgstr "Detectando campos personalizados..."
 
+#: templates/admin/migration/wizard/step3_preview.html:302
 msgid "Creating field mappings..."
 msgstr "Criando mapeamentos de campos..."
 
+#: templates/admin/migration/wizard/step4_mapping.html:8
 msgid "Configure Field Mapping"
 msgstr "Configurar Mapeamento de Campo"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "Review and customize how data from"
 msgstr "Reveja e personalize como os dados de"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "maps to your platform. Most fields are mapped automatically."
 msgstr ""
 "se mapeiam para sua plataforma. A maioria dos campos é mapeada "
 "automaticamente."
 
+#: templates/admin/migration/wizard/step4_mapping.html:21
 msgid "CSV Column Mapping"
 msgstr "Mapeamento da Coluna CSV"
 
+#: templates/admin/migration/wizard/step4_mapping.html:23
 msgid ""
 "Map the columns in your CSV files to the expected fields. We've auto-"
 "detected some matches — review and adjust as needed."
@@ -3178,39 +4278,50 @@ msgstr ""
 "automaticamente algumas correspondências — revise e ajuste conforme "
 "necessário."
 
+#: templates/admin/migration/wizard/step4_mapping.html:34
 msgid "CSV Column"
 msgstr "Coluna CSV"
 
+#: templates/admin/migration/wizard/step4_mapping.html:35
 msgid "Maps To"
 msgstr "Mapeia Para"
 
+#: templates/admin/migration/wizard/step4_mapping.html:46
 msgid "Skip this column"
 msgstr "Pular esta coluna"
 
+#: templates/admin/migration/wizard/step4_mapping.html:70
 msgid "Automatic Mappings"
 msgstr "Mapeamentos Automáticos"
 
+#: templates/admin/migration/wizard/step4_mapping.html:72
 msgid ""
 "These fields will be mapped automatically based on standard field names:"
 msgstr ""
 "Esses campos serão mapeados automaticamente com base em nomes de campos "
 "padrão:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:103
 msgid "Blog Categories"
 msgstr "Categorias do Blog"
 
+#: templates/admin/migration/wizard/step4_mapping.html:106
 msgid "Blog Tags"
 msgstr "Tags do Blog"
 
+#: templates/admin/migration/wizard/step4_mapping.html:114
 msgid "Source"
 msgstr "Fonte"
 
+#: templates/admin/migration/wizard/step4_mapping.html:116
 msgid "Destination"
 msgstr "Destino"
 
+#: templates/admin/migration/wizard/step4_mapping.html:144
 msgid "No automatic mappings available."
 msgstr "Nenhum mapeamento automático disponível."
 
+#: templates/admin/migration/wizard/step4_mapping.html:156
 msgid ""
 "We detected custom fields in your source data. Map them to your platform's "
 "fields or skip them:"
@@ -3218,72 +4329,101 @@ msgstr ""
 "Detectamos campos personalizados nos seus dados de origem. Mapeie-os para os "
 "campos de sua plataforma ou pule-os:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:171
 msgid "Meta Fields"
 msgstr "Campos de Meta"
 
+#: templates/admin/migration/wizard/step4_mapping.html:181
 msgid "Type:"
 msgstr "Tipo:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:183
 msgid "Example:"
 msgstr "Exemplo:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:190
 msgid "Map to:"
 msgstr "Mapear para:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:192
 msgid "— Skip this field —"
 msgstr "— Pular este campo —"
 
+#: templates/admin/migration/wizard/step4_mapping.html:194
 msgid "Product Fields"
 msgstr "Campos do Produto"
 
+#: templates/admin/migration/wizard/step4_mapping.html:195
+#: templates/admin/migration/wizard/step4_mapping.html:202
+#: templates/admin/migration/wizard/step4_mapping.html:208
 msgid "Custom Field 1"
 msgstr "Campo Personalizado 1"
 
+#: templates/admin/migration/wizard/step4_mapping.html:196
+#: templates/admin/migration/wizard/step4_mapping.html:203
+#: templates/admin/migration/wizard/step4_mapping.html:209
 msgid "Custom Field 2"
 msgstr "Campo Personalizado 2"
 
+#: templates/admin/migration/wizard/step4_mapping.html:197
 msgid "Custom Field 3"
 msgstr "Campo Personalizado 3"
 
+#: templates/admin/migration/wizard/step4_mapping.html:198
+#: templates/admin/migration/wizard/step4_mapping.html:204
+#: templates/admin/migration/wizard/step4_mapping.html:210
 msgid "Meta Data (JSON)"
 msgstr "Dados de Meta (JSON)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:201
 msgid "Customer Fields"
 msgstr "Campos do Cliente"
 
+#: templates/admin/migration/wizard/step4_mapping.html:207
 msgid "Order Fields"
 msgstr "Campos do Pedido"
 
+#: templates/admin/migration/wizard/step4_mapping.html:217
 msgid "Transform:"
 msgstr "Transformar:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:219
 msgid "As Text (String)"
 msgstr "Como Texto (String)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:220
 msgid "As Number (Integer)"
 msgstr "Como Número (Integer)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:221
 msgid "As Decimal"
 msgstr "Como Decimal"
 
+#: templates/admin/migration/wizard/step4_mapping.html:222
 msgid "As True/False (Boolean)"
 msgstr "Como Verdadeiro/Falso (Boolean)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:223
 msgid "As JSON"
 msgstr "Como JSON"
 
+#: templates/admin/migration/wizard/step4_mapping.html:224
 msgid "As Date"
 msgstr "Como Data"
 
+#: templates/admin/migration/wizard/step4_mapping.html:225
 msgid "As URL"
 msgstr "Como URL"
 
+#: templates/admin/migration/wizard/step4_mapping.html:226
 msgid "As Email"
 msgstr "Como Email"
 
+#: templates/admin/migration/wizard/step4_mapping.html:240
 msgid "No custom fields detected"
 msgstr "Nenhum campo personalizado detectado"
 
+#: templates/admin/migration/wizard/step4_mapping.html:241
 msgid ""
 "All fields in your source data can be mapped automatically. You can proceed "
 "to the import step."
@@ -3291,73 +4431,60 @@ msgstr ""
 "Todos os campos em seus dados de origem podem ser mapeados automaticamente. "
 "Você pode prosseguir para o passo de importação."
 
-msgid "Category Mapping"
-msgstr "Mapeamento de Categoria"
+#: templates/admin/migration/wizard/step4_mapping.html:255
+msgid "Pricing"
+msgstr "Preços"
 
+#: templates/admin/migration/wizard/step4_mapping.html:261
 msgid ""
-"Some categories from your source don't have direct matches. Choose how to "
-"handle them:"
+"Tax rates and shipping zones are not imported. Tax rules differ enough "
+"between platforms that copying them across unreviewed would risk charging "
+"your customers the wrong amount, so Spwig leaves them to you."
 msgstr ""
-"Algumas categorias da sua origem não têm correspondências diretas. Escolha "
-"como lidar com elas:"
+"As taxas de imposto e zonas de frete não são importadas. As regras de "
+"imposto diferem bastante entre plataformas, então copiá-las sem revisão "
+"poderia colocar em risco o cobrar sua clientes a quantidade errada, por isso "
+"o Spwig deixa isso para você."
 
-msgid "Create new categories"
-msgstr "Criar novas categorias"
-
-msgid "Create new categories in your platform for unmapped categories"
-msgstr "Criar novas categorias em sua plataforma para categorias não mapeadas"
-
-msgid "Assign to default category"
-msgstr "Atribuir à categoria padrão"
-
-msgid "Put all unmapped items in a default 'Uncategorized' category"
+#: templates/admin/migration/wizard/step4_mapping.html:262
+msgid ""
+"Set them up in Settings → Tax & Currency and Settings → Shipping once the "
+"import has finished."
 msgstr ""
-"Coloque todos os itens não mapeados em uma categoria padrão 'Não "
-"Categorizados'"
+"Configure-as em Configurações → Imposto e Moeda e Configurações → Frete após "
+"o importe ter terminado."
 
-msgid "Skip items with unmapped categories"
-msgstr "Pular itens com categorias não mapeadas"
-
-msgid "Don't import items that belong to unmapped categories"
-msgstr "Não importe itens que pertencem a categorias não mapeadas"
-
-msgid "Tax & Shipping Settings"
-msgstr "Configurações de Imposto e Envio"
-
-msgid "Import tax settings"
-msgstr "Importar configurações de imposto"
-
-msgid "Import tax rates and rules from your source platform"
-msgstr "Importar taxas e regras de imposto da sua plataforma de origem"
-
-msgid "Import shipping zones and methods"
-msgstr "Importar zonas e métodos de envio"
-
-msgid "Import shipping configuration from your source platform"
-msgstr "Importar configuração de envio da sua plataforma de origem"
-
+#: templates/admin/migration/wizard/step4_mapping.html:267
 msgid "Price adjustment"
 msgstr "Ajuste de Preço"
 
+#: templates/admin/migration/wizard/step4_mapping.html:270
+#: templates/admin/migration/wizard/step6_complete.html:218
 msgid "None"
 msgstr "Nenhum"
 
+#: templates/admin/migration/wizard/step4_mapping.html:271
 msgid "Percentage"
 msgstr "Porcentagem"
 
+#: templates/admin/migration/wizard/step4_mapping.html:272
 msgid "Fixed Amount"
 msgstr "Valor Fixo"
 
+#: templates/admin/migration/wizard/step4_mapping.html:280
 #, python-format
 msgid "(e.g., +10 for 10%% increase or -5 for 5%% decrease)"
 msgstr "(ex., +10 para aumento de 10%% ou -5 para diminuição de 5%%)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:282
 msgid "Optionally adjust all prices during import"
 msgstr "Ajuste opcionalmente todos os preços durante a importação"
 
+#: templates/admin/migration/wizard/step4_mapping.html:289
 msgid "Pro Tip"
 msgstr "Dica Profissional"
 
+#: templates/admin/migration/wizard/step4_mapping.html:290
 msgid ""
 "Field mappings are saved and can be reused for future migrations. You can "
 "also edit mappings after the import is complete."
@@ -3366,15 +4493,32 @@ msgstr ""
 "migrações. Você também pode editar as mapeações após a importação ser "
 "concluída."
 
+#: templates/admin/migration/wizard/step4_mapping.html:300
+#: templates/admin/migration/wizard/step5_import.html:16
 msgid "Start Import"
 msgstr "Iniciar Importação"
 
+#: templates/admin/migration/wizard/step5_import.html:9
+msgid "Ready to Import"
+msgstr "Pronto para Importar"
+
+#: templates/admin/migration/wizard/step5_import.html:11
+msgid ""
+"This migration is configured but has not started yet. Starting it will begin "
+"importing data into your store."
+msgstr ""
+"Essa migração está configurada, mas ainda não foi iniciada. Iniciá-la "
+"começará a importar dados para sua loja."
+
+#: templates/admin/migration/wizard/step5_import.html:24
 msgid "Import in Progress"
 msgstr "Importação em Andamento"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid "Importing data from"
 msgstr "Importando dados de"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid ""
 ". This process is running in the background - you can safely close this "
 "window and check back later."
@@ -3382,54 +4526,101 @@ msgstr ""
 ". Este processo está sendo executado em segundo plano - você pode fechar "
 "esta janela com segurança e verificar novamente mais tarde."
 
+#: templates/admin/migration/wizard/step5_import.html:36
+msgid ""
+"Stop this import? Spwig finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store — cancelling does not remove "
+"it."
+msgstr ""
+"Parar esta importação? O Spwig termina o lote no qual está trabalhando e "
+"depois para. Qualquer coisa já importada permanece em sua loja — cancelar "
+"não a remove."
+
+#: templates/admin/migration/wizard/step5_import.html:38
+msgid "Stop Import"
+msgstr "Parar Importação"
+
+#: templates/admin/migration/wizard/step5_import.html:44
+msgid "Stopping — Spwig finishes the batch it is working on, then stops."
+msgstr ""
+"Parando — o Spwig termina o lote no qual está trabalhando, depois para."
+
+#: templates/admin/migration/wizard/step5_import.html:60
 msgid "Initializing..."
 msgstr "Inicializando..."
 
+#: templates/admin/migration/wizard/step5_import.html:70
 msgid "Starting import..."
 msgstr "Iniciando importação..."
 
+#: templates/admin/migration/wizard/step5_import.html:79
 msgid "Import Steps"
 msgstr "Etapas de Importação"
 
+#: templates/admin/migration/wizard/step5_import.html:98
+#: templates/admin/migration/wizard/step5_import.html:118
+#: templates/admin/migration/wizard/step5_import.html:138
+#: templates/admin/migration/wizard/step5_import.html:158
+#: templates/admin/migration/wizard/step5_import.html:178
+#: templates/admin/migration/wizard/step5_import.html:198
+#: templates/admin/migration/wizard/step5_import.html:218
+#: templates/admin/migration/wizard/step5_import.html:238
+#: templates/admin/migration/wizard/step5_import.html:258
+#: templates/admin/migration/wizard/step5_import.html:278
 msgid "Waiting..."
 msgstr "Aguardando..."
 
+#: templates/admin/migration/wizard/step5_import.html:290
 msgid "Import Log"
 msgstr "Log de Importação"
 
+#: templates/admin/migration/wizard/step5_import.html:293
+#: templates/admin/migration/wizard/step5_import.html:321
 msgid "Show Details"
 msgstr "Mostrar Detalhes"
 
+#: templates/admin/migration/wizard/step5_import.html:306
+#: templates/admin/migration/wizard/step6_complete.html:484
 msgid "View All Migrations"
 msgstr "Ver Todas as Migrações"
 
+#: templates/admin/migration/wizard/step5_import.html:320
 msgid "Hide Details"
 msgstr "Ocultar Detalhes"
 
+#: templates/admin/migration/wizard/step5_import.html:322
 msgid "View Error Report"
 msgstr "Ver Relatório de Erros"
 
+#: templates/admin/migration/wizard/step6_complete.html:9
 msgid "Migration Completed Successfully!"
 msgstr "Migração Concluída com Sucesso!"
 
+#: templates/admin/migration/wizard/step6_complete.html:10
 msgid "Your data has been successfully imported from"
 msgstr "Seus dados foram importados com sucesso de"
 
+#: templates/admin/migration/wizard/step6_complete.html:57
 msgid "Import Summary"
 msgstr "Resumo da Importação"
 
+#: templates/admin/migration/wizard/step6_complete.html:63
 msgid "Data Type"
 msgstr "Tipo de Dado"
 
+#: templates/admin/migration/wizard/step6_complete.html:119
 msgid "links found"
 msgstr "links encontrados"
 
+#: templates/admin/migration/wizard/step6_complete.html:121
 msgid "pending review"
 msgstr "pendentes de revisão"
 
+#: templates/admin/migration/wizard/step6_complete.html:124
 msgid "applied"
 msgstr "aplicado"
 
+#: templates/admin/migration/wizard/step6_complete.html:132
 msgid ""
 "We found internal links in your imported content pointing to your old site. "
 "Review the suggestions below and approve the replacements."
@@ -3437,95 +4628,156 @@ msgstr ""
 "Nós encontramos links internos no seu conteúdo importado que apontam para "
 "seu antigo site. Revise as sugestões abaixo e aprovem as substituições."
 
+#: templates/admin/migration/wizard/step6_complete.html:135
 msgid "links have high-confidence matches and can be auto-approved."
 msgstr ""
 "links têm correspondências com alta confiança e podem ser aprovados "
 "automaticamente."
 
+#: templates/admin/migration/wizard/step6_complete.html:146
 msgid "Auto-approve high confidence"
 msgstr "Aprovar automaticamente com alta confiança"
 
+#: templates/admin/migration/wizard/step6_complete.html:152
 msgid "Apply Approved Links"
 msgstr "Aplicar links aprovados"
 
+#: templates/admin/migration/wizard/step6_complete.html:168
 msgid "links"
 msgstr "links"
 
+#: templates/admin/migration/wizard/step6_complete.html:171
 msgid "Edit"
 msgstr "Editar"
 
+#: templates/admin/migration/wizard/step6_complete.html:179
 msgid "Original URL"
 msgstr "URL original"
 
+#: templates/admin/migration/wizard/step6_complete.html:180
 msgid "Anchor Text"
 msgstr "Texto de âncora"
 
+#: templates/admin/migration/wizard/step6_complete.html:181
 msgid "Suggested URL"
 msgstr "URL sugerida"
 
+#: templates/admin/migration/wizard/step6_complete.html:182
 msgid "Match"
 msgstr "Correspondência"
 
+#: templates/admin/migration/wizard/step6_complete.html:183
 msgid "Action"
 msgstr "Ação"
 
+#: templates/admin/migration/wizard/step6_complete.html:226
 msgid "Approve"
 msgstr "Aprovar"
 
+#: templates/admin/migration/wizard/step6_complete.html:231
 msgid "Skip"
 msgstr "Pular"
 
+#: templates/admin/migration/wizard/step6_complete.html:258
 msgid "Rollback Available"
 msgstr "Rollback disponível"
 
-msgid "You can rollback this migration until"
-msgstr "Você pode reverter esta migração até"
+#: templates/admin/migration/wizard/step6_complete.html:261
+#, python-format
+msgid "You can roll this migration back until <strong>%(deadline)s</strong>."
+msgstr "Você pode reverter esta migração até <strong>%(deadline)s</strong>."
 
+#: templates/admin/migration/wizard/step6_complete.html:263
+msgid "You can roll this migration back from the Migrations list."
+msgstr "Você pode desfazer esta migração na lista de Migrações."
+
+#: templates/admin/migration/wizard/step6_complete.html:269
 msgid "Important"
 msgstr "Importante"
 
+#: templates/admin/migration/wizard/step6_complete.html:270
 msgid ""
-"Rolling back will remove all imported data. This action cannot be undone. "
-"Make sure to backup any changes you've made since the migration."
+"Rolling back removes the products, categories, customers, orders, media and "
+"store-extension data this import created, and it cannot be undone. Anything "
+"your store has since come to depend on — an imported product that now "
+"appears on a real order, for example — is kept rather than removed, and "
+"Spwig lists what it kept. You will see exactly what will be removed before "
+"you confirm."
 msgstr ""
-"Reverter removerá todos os dados importados. Esta ação não pode ser "
-"desfeita. Certifique-se de fazer backup de quaisquer alterações que você fez "
-"desde a migração."
+"Desfazer remove os dados de produtos, categorias, clientes, pedidos, mídia e "
+"extensões de loja criados por este importe, e isso não pode ser desfeito. "
+"Qualquer coisa em que sua loja tenha dependido desde então — como um produto "
+"importado que agora aparece em um pedido real — será mantida em vez de "
+"removida, e o Spwig lista o que foi mantido. Você verá exatamente o que será "
+"removido antes de confirmar."
 
+#: templates/admin/migration/wizard/step6_complete.html:278
 msgid ""
-"Are you sure you want to rollback this migration? This will remove all "
-"imported data and cannot be undone."
+"Roll back this migration? This removes what the import created, keeping "
+"anything your store now depends on. It cannot be undone."
 msgstr ""
-"Tem certeza de que deseja reverter esta migração? Isso removerá todos os "
-"dados importados e não poderá ser desfeito."
+"Reverter esta migração? Isso removerá o que foi criado pela importação, "
+"mantendo qualquer coisa em que sua loja agora depende. Isso não pode ser "
+"desfeito."
 
+#: templates/admin/migration/wizard/step6_complete.html:290
+msgid "Migration Stopped"
+msgstr "Migração Parada"
+
+#: templates/admin/migration/wizard/step6_complete.html:291
 msgid ""
-"There was an error during the import process. The migration has been rolled "
-"back automatically."
+"You stopped this import. The items imported before it stopped are still in "
+"your store — nothing was removed. You can roll the import back to remove "
+"them, or run it again, in which case anything already imported will be "
+"skipped."
 msgstr ""
-"Ocorreu um erro durante o processo de importação. A migração foi revertida "
-"automaticamente."
+"Você parou esta importação. Os itens importados antes de ela parar ainda "
+"estão em sua loja — nada foi removido. Você pode reverter a importação para "
+"removê-los ou executá-la novamente, caso em que anything já importado será "
+"ignorado."
 
+#: templates/admin/migration/wizard/step6_complete.html:299
+msgid ""
+"Spwig could not finish this import. Items imported before the error are "
+"still in your store — nothing has been removed automatically. Review the "
+"details below, then fix the problem at source and run the import again. "
+"Items that were already imported will be skipped."
+msgstr ""
+"O Spwig não pôde concluir este import. Os itens importados antes do erro "
+"ainda estão no seu loja — nada foi removido automaticamente. Revise os "
+"detalhes abaixo, depois corrija o problema na fonte e execute o import "
+"novamente. Os itens já importados serão ignorados."
+
+#: templates/admin/migration/wizard/step6_complete.html:306
 msgid "Error Details"
 msgstr "Detalhes do Erro"
 
+#: templates/admin/migration/wizard/step6_complete.html:322
 msgid "Show technical details"
 msgstr "Mostrar detalhes técnicos"
 
+#: templates/admin/migration/wizard/step6_complete.html:331
 msgid "No detailed error information available."
 msgstr "Nenhuma informação detalhada de erro disponível."
 
+#: templates/admin/migration/wizard/step6_complete.html:340
 msgid "Partial Import Results"
 msgstr "Resultados de importação parcial"
 
+#: templates/admin/migration/wizard/step6_complete.html:342
 msgid ""
-"The following data was imported before the error occurred (all rolled back):"
+"The following items were imported before the error occurred. They are live "
+"in your store:"
 msgstr ""
-"Os seguintes dados foram importados antes do erro ocorrer (todos revertidos):"
+"Os seguintes itens foram importados antes do erro ocorrer. Eles estão ativos "
+"em sua loja:"
 
+#: templates/admin/migration/wizard/step6_complete.html:377
+#: templates/admin/migration/wizard/step6_complete.html:494
 msgid "Try Again"
 msgstr "Tentar novamente"
 
+#: templates/admin/migration/wizard/step6_complete.html:379
 msgid ""
 "You can start a new migration with the same settings or adjust your "
 "configuration."
@@ -3533,12 +4785,15 @@ msgstr ""
 "Você pode iniciar uma nova migração com as mesmas configurações ou ajustar "
 "sua configuração."
 
+#: templates/admin/migration/wizard/step6_complete.html:384
 msgid "Adjust Settings"
 msgstr "Ajustar configurações"
 
+#: templates/admin/migration/wizard/step6_complete.html:404
 msgid "Review your imported data"
 msgstr "Revisar seus dados importados"
 
+#: templates/admin/migration/wizard/step6_complete.html:406
 msgid ""
 "Check your products, customers, and orders to ensure everything imported "
 "correctly."
@@ -3546,71 +4801,331 @@ msgstr ""
 "Verifique seus produtos, clientes e pedidos para garantir que tudo foi "
 "importado corretamente."
 
+#: templates/admin/migration/wizard/step6_complete.html:410
 msgid "View Products"
 msgstr "Ver Produtos"
 
+#: templates/admin/migration/wizard/step6_complete.html:413
 msgid "View Customers"
 msgstr "Ver Clientes"
 
+#: templates/admin/migration/wizard/step6_complete.html:416
 msgid "View Orders"
 msgstr "Ver Pedidos"
 
+#: templates/admin/migration/wizard/step6_complete.html:422
 msgid "Configure your store settings"
 msgstr "Configurar suas configurações de loja"
 
+#: templates/admin/migration/wizard/step6_complete.html:424
 msgid "Review and adjust shipping, tax, and payment settings for your store."
 msgstr ""
 "Revise e ajuste as configurações de envio, imposto e pagamento para sua loja."
 
+#: templates/admin/migration/wizard/step6_complete.html:429
 msgid "Test your checkout process"
 msgstr "Testar seu processo de checkout"
 
+#: templates/admin/migration/wizard/step6_complete.html:431
 msgid "Place a test order to ensure everything works correctly."
 msgstr "Faça um pedido de teste para garantir que tudo funcione corretamente."
 
+#: templates/admin/migration/wizard/step6_complete.html:436
 msgid "Update your DNS settings"
 msgstr "Atualizar suas configurações de DNS"
 
+#: templates/admin/migration/wizard/step6_complete.html:438
 msgid "When you're ready to go live, point your domain to this platform."
 msgstr ""
 "Quando você estiver pronto para ir ao ar, direcione seu domínio para esta "
 "plataforma."
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Review the error logs"
 msgstr "Revisar os logs de erro"
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Understand what went wrong during the migration"
 msgstr "Entenda o que deu errado durante a migração"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Check your source data"
 msgstr "Verificar seus dados de origem"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Ensure your data is valid and accessible"
 msgstr "Certifique-se de que seus dados são válidos e acessíveis"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "Contact support"
 msgstr "Contate o suporte"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "If you need help, our team is here to assist"
 msgstr "Se você precisar de ajuda, nossa equipe está aqui para ajudar"
 
+#: templates/admin/migration/wizard/step6_complete.html:460
 msgid "Download Report"
 msgstr "Baixar Relatório"
 
+#: templates/admin/migration/wizard/step6_complete.html:462
 msgid "Download a detailed report of this migration for your records."
 msgstr "Baixe um relatório detalhado desta migração para seus registros."
 
+#: templates/admin/migration/wizard/step6_complete.html:467
 msgid "Download PDF"
 msgstr "Baixar PDF"
 
+#: templates/admin/migration/wizard/step6_complete.html:471
 msgid "Download CSV"
 msgstr "Baixar CSV"
 
+#: templates/admin/migration/wizard/step6_complete.html:475
 msgid "Download Logs"
 msgstr "Baixar Logs"
 
+#: templates/admin/migration/wizard/step6_complete.html:489
 msgid "Start Another Migration"
 msgstr "Iniciar outra migração"
+
+#~ msgid "Transaction ID for rollback tracking"
+#~ msgstr "ID da transação para rastreamento de reversão"
+
+#~ msgid "Database savepoint ID for this step"
+#~ msgstr "ID do ponto de salvamento do banco de dados para esta etapa"
+
+#~ msgid "Category Mapping"
+#~ msgstr "Mapeamento de Categoria"
+
+#~ msgid ""
+#~ "Some categories from your source don't have direct matches. Choose how to "
+#~ "handle them:"
+#~ msgstr ""
+#~ "Algumas categorias da sua origem não têm correspondências diretas. "
+#~ "Escolha como lidar com elas:"
+
+#~ msgid "Create new categories"
+#~ msgstr "Criar novas categorias"
+
+#~ msgid "Create new categories in your platform for unmapped categories"
+#~ msgstr ""
+#~ "Criar novas categorias em sua plataforma para categorias não mapeadas"
+
+#~ msgid "Assign to default category"
+#~ msgstr "Atribuir à categoria padrão"
+
+#~ msgid "Put all unmapped items in a default 'Uncategorized' category"
+#~ msgstr ""
+#~ "Coloque todos os itens não mapeados em uma categoria padrão 'Não "
+#~ "Categorizados'"
+
+#~ msgid "Skip items with unmapped categories"
+#~ msgstr "Pular itens com categorias não mapeadas"
+
+#~ msgid "Don't import items that belong to unmapped categories"
+#~ msgstr "Não importe itens que pertencem a categorias não mapeadas"
+
+#~ msgid "Tax & Shipping Settings"
+#~ msgstr "Configurações de Imposto e Envio"
+
+#~ msgid "Import tax settings"
+#~ msgstr "Importar configurações de imposto"
+
+#~ msgid "Import tax rates and rules from your source platform"
+#~ msgstr "Importar taxas e regras de imposto da sua plataforma de origem"
+
+#~ msgid "Import shipping zones and methods"
+#~ msgstr "Importar zonas e métodos de envio"
+
+#~ msgid "Import shipping configuration from your source platform"
+#~ msgstr "Importar configuração de envio da sua plataforma de origem"
+
+#~ msgid "Deadline for manual rollback (24 hours after completion)"
+#~ msgstr "Prazo para reversão manual (24 horas após o término)"
+
+#~ msgid "Migration cancelled by user"
+#~ msgstr "Migração cancelada pelo usuário"
+
+#~ msgid ""
+#~ "Migration marked as cancelled. The background import may keep running for "
+#~ "a while longer, so imported counts can continue to rise. Anything already "
+#~ "imported stays in your store."
+#~ msgstr ""
+#~ "Migração marcada como cancelada. A importação em segundo plano pode "
+#~ "continuar executando por um pouco mais, então as contagens importadas "
+#~ "podem continuar a aumentar. Qualquer coisa já importada permanece em sua "
+#~ "loja."
+
+#~ msgid ""
+#~ "Only pending or failed migrations can be deleted. A running migration "
+#~ "must be cancelled first."
+#~ msgstr ""
+#~ "Apenas migrações pendentes ou falhas podem ser excluídas. Uma migração em "
+#~ "andamento deve ser cancelada primeiro."
+
+#~ msgid "This will NOT remove:"
+#~ msgstr "Isso NÃO removerá:"
+
+#~ msgid ""
+#~ "Subscription plans, booking resources or other data created by store "
+#~ "extensions"
+#~ msgstr ""
+#~ "Planos de assinatura, recursos de reservas ou outros dados criados por "
+#~ "extensões do loja"
+
+#~ msgid ""
+#~ "Review the rollback details? Rolling back removes what this import "
+#~ "created, and also removes all orders belonging to imported customers — "
+#~ "including any placed since the import."
+#~ msgstr ""
+#~ "Revisar os detalhes do rollback? Reverter remove o que esta importação "
+#~ "criou, e também remove todos os pedidos pertencentes aos clientes "
+#~ "importados — incluindo quaisquer pedidos feitos desde a importação."
+
+#~ msgid "Migration rolled back successfully!"
+#~ msgstr "Migração revertida com sucesso!"
+
+#~ msgid ""
+#~ "The products, categories, reviews, coupons and media this import created"
+#~ msgstr ""
+#~ "Os produtos, categorias, avaliações, cupons e mídia criados por este "
+#~ "importe"
+
+#~ msgid ""
+#~ "The customer accounts this import created, along with their addresses and "
+#~ "loyalty history"
+#~ msgstr ""
+#~ "As contas de clientes criadas por este importe, juntamente com seus "
+#~ "endereços e histórico de fidelidade"
+
+#~ msgid ""
+#~ "Every order belonging to an imported customer — including orders they "
+#~ "have placed since the import, not only the imported ones"
+#~ msgstr ""
+#~ "Todo pedido pertencente a um cliente importado — incluindo pedidos que "
+#~ "ele fez desde a importação, não apenas os importados"
+
+#~ msgid ""
+#~ "Imported products from orders placed by your other customers, which "
+#~ "leaves those orders with missing items and incorrect totals"
+#~ msgstr ""
+#~ "Produtos importados de pedidos feitos pelos seus outros clientes, o que "
+#~ "deixa esses pedidos com itens faltando e totais incorretos"
+
+#~ msgid "Affiliates, commissions or payouts created by this import"
+#~ msgstr "Afiliados, comissões ou pagamentos criados por este importe"
+
+#~ msgid ""
+#~ "Because rollback reaches beyond the data this import created, it is only "
+#~ "safe immediately after a migration — before any real trading has "
+#~ "happened. This operation is PERMANENT and cannot be reversed."
+#~ msgstr ""
+#~ "Como o rollback vai além dos dados importados, ele só é seguro "
+#~ "imediatamente após uma migração — antes de qualquer negociação real ter "
+#~ "acontecido. Esta operação é PERMANENTE e não pode ser revertida."
+
+#~ msgid "🚀 Start New Migration"
+#~ msgstr "🚀 Iniciar Nova Migração"
+
+#~ msgid "Migration restarted! Redirecting to progress page..."
+#~ msgstr "Migração reiniciada! Redirecionando para a página de progresso..."
+
+#~ msgid "Migration cancelled successfully."
+#~ msgstr "Migração cancelada com sucesso."
+
+#~ msgid ""
+#~ "Deleted a running migration. If this was stuck, the operation has been "
+#~ "cleaned up."
+#~ msgstr ""
+#~ "Excluída uma migração em execução. Se estivesse travada, a operação foi "
+#~ "limpa."
+
+#~ msgid "Migration deleted successfully."
+#~ msgstr "Migração excluída com sucesso."
+
+#~ msgid "Delete all products imported from this migration"
+#~ msgstr "Excluir todos os produtos importados desta migração"
+
+#~ msgid "Delete all categories imported from this migration"
+#~ msgstr "Excluir todas as categorias importadas desta migração"
+
+#~ msgid "Delete all customers imported from this migration"
+#~ msgstr "Excluir todos os clientes importados desta migração"
+
+#~ msgid "Delete all orders imported from this migration"
+#~ msgstr "Excluir todos os pedidos importados desta migração"
+
+#~ msgid "Delete all reviews imported from this migration"
+#~ msgstr "Excluir todas as avaliações importadas desta migração"
+
+#~ msgid "Delete all coupons imported from this migration"
+#~ msgstr "Excluir todos os cupons importados desta migração"
+
+#~ msgid "Delete all associated media assets"
+#~ msgstr "Excluir todos os ativos de mídia associados"
+
+#~ msgid "Mark the migration job as 'rolled_back'"
+#~ msgstr "Marcar o trabalho de migração como 'rolled_back'"
+
+#~ msgid "Are you sure you want to cancel this migration?"
+#~ msgstr "Tem certeza de que deseja cancelar esta migração?"
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will delete all "
+#~ "imported data."
+#~ msgstr ""
+#~ "Tem certeza de que deseja desfazer esta migração? Isso excluirá todos os "
+#~ "dados importados."
+
+#~ msgid ""
+#~ "Are you sure you want to force delete this migration? This cannot be "
+#~ "undone."
+#~ msgstr ""
+#~ "Tem certeza de que deseja excluir forçadamente esta migração? Isso não "
+#~ "pode ser desfeito."
+
+#, fuzzy
+#~ msgid "Token Preview"
+#~ msgstr "Visualizar"
+
+#~ msgid ""
+#~ "Magento migration is coming soon. We will support database access and API "
+#~ "methods."
+#~ msgstr ""
+#~ "A migração Magento está chegando em breve. Nós suportaremos acesso ao "
+#~ "banco de dados e métodos API."
+
+#~ msgid ""
+#~ "All data will be imported within a database transaction. If anything goes "
+#~ "wrong, the entire import will be rolled back automatically. You'll also "
+#~ "have 24 hours to manually rollback if needed."
+#~ msgstr ""
+#~ "Todos os dados serão importados dentro de uma transação do banco de "
+#~ "dados. Se algo sair errado, a importação inteira será desfeita "
+#~ "automaticamente. Você também terá 24 horas para desfazer manualmente se "
+#~ "necessário."
+
+#~ msgid ""
+#~ "Rolling back will remove all imported data. This action cannot be undone. "
+#~ "Make sure to backup any changes you've made since the migration."
+#~ msgstr ""
+#~ "Reverter removerá todos os dados importados. Esta ação não pode ser "
+#~ "desfeita. Certifique-se de fazer backup de quaisquer alterações que você "
+#~ "fez desde a migração."
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will remove all "
+#~ "imported data and cannot be undone."
+#~ msgstr ""
+#~ "Tem certeza de que deseja reverter esta migração? Isso removerá todos os "
+#~ "dados importados e não poderá ser desfeito."
+
+#~ msgid ""
+#~ "There was an error during the import process. The migration has been "
+#~ "rolled back automatically."
+#~ msgstr ""
+#~ "Ocorreu um erro durante o processo de importação. A migração foi "
+#~ "revertida automaticamente."
 
 #~ msgid ""
 #~ "Shopify migration is coming soon. We will support both API and CSV import "

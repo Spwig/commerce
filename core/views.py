@@ -1059,6 +1059,7 @@ def csp_report(request):
 # =============================================================================
 
 
+@ratelimit(key="ip", rate="10/m", method="POST", block=True)
 def activate(request):
     """
     Public activation page for fresh installations.
@@ -1080,7 +1081,27 @@ def activate(request):
 
     context = {"error": None, "result": None}
 
-    if request.method == "POST":
+    if request.method == "POST" and request.POST.get("action") == "community":
+        # Continue with the free Community Edition — installs the signed
+        # Community licence bundled with the platform. Same code path as the
+        # automatic bootstrap in CoreConfig.ready(), for installs where that
+        # bootstrap failed (e.g. the licence directory was not yet writable).
+        from django.core.management import call_command
+
+        try:
+            call_command("bootstrap_community_licence", quiet=True)
+        except Exception:
+            logger.exception("Community licence bootstrap via /activate/ failed")
+
+        if license_path.exists():
+            return redirect("/")
+
+        context["error"] = _(
+            "Could not install the Community licence. Check that the licence "
+            "directory is writable by Spwig, or run "
+            '"./manage.py bootstrap_community_licence" on the server.'
+        )
+    elif request.method == "POST":
         setup_token = request.POST.get("setup_token", "").strip()
 
         if not setup_token:

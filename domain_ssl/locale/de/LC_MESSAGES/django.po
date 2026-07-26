@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,113 +18,323 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "Benutzerdefinierte Domain"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "Domain & SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "Keine (nur HTTP)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "Benutzerdefiniertes Zertifikat"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "Selbstsigniert"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "Extern verwaltet"
 
+#: models.py:22
 msgid "Idle"
 msgstr "Inaktiv"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "DNS-Validierung"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "Konfigurieren"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "Zertifikat abrufen"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "Dienste neu laden"
 
+#: models.py:27
 msgid "Error"
 msgstr "Fehler"
 
+#: models.py:34
 msgid "Domain"
 msgstr "Domain"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "Vollständiger Domain-Name (z. B. shop.example.com)"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "Vorherige Domain"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr "Domain vor der letzten Änderung, zur Rückverfolgung von Rollbacks"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "SSL-Modus"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "Zertifikatsdomain"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "Zertifikatsaussteller"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "Zertifikatsablauf"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "Zertifikat erworben"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "Wildcard-Zertifikat"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "Cloudflare API-Token"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "API-Token für DNS-01-Herausforderungen oder Origin CA"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "Cloudflare-Zonen-ID"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "Admin-E-Mail"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "Kontakt-E-Mail für Let's Encrypt-Benachrichtigungen"
 
+#: models.py:108
 msgid "Status"
 msgstr "\"Status\""
 
+#: models.py:113
 msgid "Last Error"
 msgstr "Letzter Fehler"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "Aktive Aufgaben-ID"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "Celery-Aufgaben-ID für die aktuelle Operation"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "Automatisch verlängern"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "Zertifikate automatisch vor Ablauf verlängern"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "Domain-Konfiguration"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "Keine Domain konfiguriert"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "Ihr Store-Domain"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "Lade Domain-Konfiguration..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "Aktuelle URL"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "Benutzerdefinierte Domain aktiv"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "Benutzerdefinierte Domain entfernen"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "Verbinden Sie Ihre eigene Domain"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr ""
+"Verwenden Sie Ihre eigene Domain-Name anstelle der Standardadresse "
+"myspwig.com."
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "Ihr Domain-Name"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr ""
+"Geben Sie die vollständige Domain ein (z. B. www.yourstore.com oder "
+"shop.yourdomain.com)"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "Weiter"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "Richten Sie Ihre Domain auf Ihr Geschäft aus"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr ""
+"Fügen Sie diese beiden DNS-Einträge in den Einstellungen Ihres Domain-"
+"Registrars hinzu:"
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "Domain-Ziel"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "Typ"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "Name"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "Kopieren"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "Wert"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "Besitzverifikation"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "Wie füge ich DNS-Einträge hinzu?"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr ""
+"Melden Sie sich bei Ihrem Domain-Registrierer (bei dem Sie Ihre Domain "
+"erworben haben) an und suchen Sie die DNS-Einstellungen. Häufige "
+"Registrierer:"
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr "Meine Produkte > DNS > Verwalten"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "Domain-Liste > Verwalten > Erweitertes DNS"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > Einträge > Eintrag hinzufügen"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > Benutzerdefinierte Einträge"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr ""
+"DNS-Änderungen können bis zu 24 Stunden benötigen, um weltweit wirksam zu "
+"werden, treten jedoch in der Regel innerhalb von Minuten in Kraft."
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "Ich habe diese Einträge hinzugefügt - Überprüfen"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "Prüfe Ihre DNS-Einträge..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "Domain verbunden!"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "Ihr Geschäft wird unter"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "bald."
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "Die Bereitstellung des SSL-Zertifikats kann einige Minuten dauern."
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "Einträge wurden noch nicht gefunden"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr ""
+"DNS-Änderungen können bis zu 24 Stunden dauern. Sie können später auf dieser"
+" Seite erneut versuchen."
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "Nochmal versuchen"

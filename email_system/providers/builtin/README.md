@@ -141,10 +141,10 @@ sudo systemctl enable spwig-smtp
 from django.core.mail import send_mail
 
 send_mail(
-    subject='Test Email',
-    message='This is a test from the built-in SMTP server!',
-    from_email='noreply@yourdomain.com',
-    recipient_list=['recipient@example.com'],
+    subject="Test Email",
+    message="This is a test from the built-in SMTP server!",
+    from_email="noreply@yourdomain.com",
+    recipient_list=["recipient@example.com"],
     fail_silently=False,
 )
 ```
@@ -159,14 +159,14 @@ The built-in SMTP server requires minimal configuration in `settings.py`:
 
 ```python
 # Email Backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = '127.0.0.1'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "127.0.0.1"
 EMAIL_PORT = 2525
 EMAIL_USE_TLS = False  # Not needed for localhost
 EMAIL_USE_SSL = False  # Not needed for localhost
 
 # Default From Email
-DEFAULT_FROM_EMAIL = 'noreply@yourdomain.com'
+DEFAULT_FROM_EMAIL = "noreply@yourdomain.com"
 ```
 
 ### Email Account Configuration
@@ -453,9 +453,10 @@ sudo postqueue -p  # Check mail queue
 ```
 ```python
 from email_system.services.dns_assistant import DNSAssistant
-dns = DNSAssistant(domain='yourdomain.com', dkim_selector='mail')
+
+dns = DNSAssistant(domain="yourdomain.com", dkim_selector="mail")
 results = dns.check_all()
-print(results['overall']['status'])  # Should be 'pass'
+print(results["overall"]["status"])  # Should be 'pass'
 ```
 
 ### Backup DKIM Keys
@@ -467,9 +468,10 @@ DKIM private keys are critical for email sending. Backup regularly:
 ```
 ```python
 from email_system.models import EmailAccount
-account = EmailAccount.objects.get(component__key='builtin_smtp')
+
+account = EmailAccount.objects.get(component__key="builtin_smtp")
 credentials = account.get_credentials()
-print(credentials['dkim_private_key'])  # Encrypted value
+print(credentials["dkim_private_key"])  # Encrypted value
 # Store securely in backup system
 ```
 

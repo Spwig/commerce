@@ -174,7 +174,36 @@ def write_license_file(license_data: dict) -> Path:
     with open(license_path, "w") as f:
         json.dump(license_data, f, indent=2)
 
+    _deactivate_simulated_gateways(license_data)
+
     return license_path
+
+
+def _deactivate_simulated_gateways(license_data: dict) -> None:
+    """A production licence must never leave a simulated gateway active.
+
+    A store bootstrapped with a dev/staging licence gets the bundled test
+    gateway account auto-activated; if that store is later activated with a
+    production licence, customers could "pay" with publicly documented magic
+    cards and orders would mark paid with no money moved. Reads the freshly
+    written licence data directly (the licence cache may be stale here).
+    """
+    env_type = (license_data.get("license") or {}).get("environment_type", "production")
+    if env_type in ("development", "staging", "sandbox"):
+        return
+    try:
+        from payment_providers.models import PaymentProviderAccount
+
+        updated = PaymentProviderAccount.objects.filter(
+            component__slug="test_gateway", is_active=True
+        ).update(is_active=False)
+        if updated:
+            logger.warning(
+                "Deactivated %s simulated payment account(s): production licence activated",
+                updated,
+            )
+    except Exception:
+        logger.exception("Could not check simulated gateways after licence activation")
 
 
 def create_admin_user(email: str, owner_name: str) -> tuple:

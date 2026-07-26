@@ -235,10 +235,23 @@ class WebhookService:
             event_data: Event data from webhook
         """
         try:
-            # Find transaction by provider transaction ID
-            transaction = PaymentTransaction.objects.filter(
-                provider_transaction_id=transaction_id
-            ).first()
+            # Lock the transaction row for the whole update.
+            #
+            # The amount_paid accumulation below reads a captured-before-mutation
+            # `already_completed` flag as its replay guard. Without a row lock,
+            # two concurrent deliveries of the same event both read the row as
+            # not-yet-completed and both add the amount — double-counting
+            # amount_paid. The lock is held until this method's caller
+            # (process_webhook, which is @transaction.atomic) commits, so the
+            # second delivery blocks, then sees the first's committed status and
+            # skips. (Not itself a refund leak — refunds cap on the capture
+            # ledger, not amount_paid — but an inflated amount_paid mis-sizes a
+            # "full" refund default.)
+            transaction = (
+                PaymentTransaction.objects.select_for_update()
+                .filter(provider_transaction_id=transaction_id)
+                .first()
+            )
 
             if not transaction:
                 logger.warning(f"Transaction not found for webhook: {transaction_id}")
@@ -246,17 +259,31 @@ class WebhookService:
 
             # Update transaction based on event type
             if event_type in ["payment_intent.succeeded", "charge.succeeded", "payment.captured"]:
-                transaction.status = "succeeded"
+                # Captured BEFORE mutating: the replay guard below needs to know
+                # whether this webhook has already been applied.
+                already_completed = transaction.status == "completed"
+                transaction.status = "completed"
                 transaction.completed_at = timezone.now()
 
                 # Update order
                 if transaction.order:
-                    transaction.order.payment_status = "paid"
-                    transaction.order.amount_paid = transaction.amount
-                    transaction.order.paid_at = timezone.now()
-                    transaction.order.save(
-                        update_fields=["payment_status", "amount_paid", "paid_at"]
-                    )
+                    order = transaction.order
+                    order.payment_status = "paid"
+                    # ACCUMULATE, do not assign.
+                    #
+                    # Assigning erased gift card tender already credited by
+                    # catalog/signals.py when the tender was captured, so a
+                    # split-tender order settled by webhook read as paying only
+                    # the gateway leg — understating amount_paid and, since
+                    # RefundService caps refunds on it, silently blocking
+                    # refunds of money the customer really handed over (I2).
+                    #
+                    # Guarded against replay: a webhook redelivery for a
+                    # transaction already marked completed must not add twice.
+                    if not already_completed:
+                        order.amount_paid = (order.amount_paid or 0) + transaction.amount
+                    order.paid_at = order.paid_at or timezone.now()
+                    order.save(update_fields=["payment_status", "amount_paid", "paid_at"])
 
             elif event_type in ["payment_intent.payment_failed", "charge.failed", "payment.failed"]:
                 transaction.status = "failed"
@@ -269,7 +296,7 @@ class WebhookService:
                     transaction.order.save(update_fields=["payment_status"])
 
             elif event_type in ["payment_intent.canceled", "charge.canceled", "payment.cancelled"]:
-                transaction.status = "cancelled"
+                transaction.status = "voided"
                 transaction.completed_at = timezone.now()
 
                 # Update order

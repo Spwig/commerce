@@ -1,0 +1,66 @@
+{% load i18n merchant_trans %}
+{% comment %}
+Gift card / store credit tenders — rendered ABOVE the payment provider list.
+
+A tender is money the customer already holds, applied against the full
+post-tax total; whatever remains is what the gateway is asked for. Keeping
+this at the top of the payment step (never the order-summary sidebar, which
+multi-step hides on mobile) means the amount a provider will charge is
+settled before the customer picks one.
+{% endcomment %}
+
+{% comment %}
+When the merchant sells no gift cards, the whole block starts hidden — the
+wallet row and applied-tender rows are per-customer, so the JS unhides the
+block when either actually has something to show.
+{% endcomment %}
+<div class="checkout-tenders" id="checkout-tenders"
+     {% if not gift_cards_enabled %}hidden{% endif %}
+     data-endpoint-tenders="/api/checkout/tenders/"
+     data-endpoint-gift-card="/api/checkout/tenders/gift-card/"
+     data-endpoint-wallet="/api/checkout/tenders/wallet/">
+
+    <h4 class="checkout-tenders__heading">
+        {% if gift_cards_enabled %}{% mtrans 'Gift card or store credit' %}{% else %}{% mtrans 'Store credit' %}{% endif %}
+    </h4>
+
+    {# Applied tenders — JS-rendered rows: label, −amount, remove #}
+    <div class="checkout-tenders__applied" id="tenders-applied"></div>
+
+    {% if gift_cards_enabled %}
+    {# Gift card entry #}
+    <div class="checkout-tenders__row">
+        <input type="text" id="tender-gift-card-code" class="checkout-input"
+               placeholder="{% mtrans 'Gift card code' %}"
+               autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button type="button" class="btn btn--secondary"
+                data-action="apply-gift-card">{% mtrans 'Apply' %}</button>
+    </div>
+    {% endif %}
+
+    {# Wallet — signed-in customers with a spendable balance only; JS unhides #}
+    <div class="checkout-tenders__wallet" id="tender-wallet-row" hidden>
+        <span class="checkout-tenders__wallet-balance">
+            {% mtrans 'Store credit available:' %}
+            <strong id="tender-wallet-amount"></strong>
+        </span>
+        <button type="button" class="btn btn--secondary"
+                data-action="apply-wallet">{% mtrans 'Use store credit' %}</button>
+    </div>
+
+    <div class="checkout-tenders__error" id="tenders-error" role="alert" hidden></div>
+</div>
+
+{% comment %}
+Zero-due: replaces the provider list when tenders cover the whole order.
+Never mount a gateway widget for 0.00 — create_payment_intent has no zero
+guard, and the order is settled by /api/checkout/complete/ instead.
+{% endcomment %}
+<div class="checkout-zero-due" id="checkout-zero-due" hidden>
+    <p class="checkout-zero-due__message">
+        <i class="fas fa-check-circle" aria-hidden="true"></i>
+        {% mtrans 'No payment needed — your gift card or store credit covers this order.' %}
+    </p>
+    <button type="button" class="btn btn--primary"
+            data-action="place-order-free">{% mtrans 'Place Order' %}</button>
+</div>

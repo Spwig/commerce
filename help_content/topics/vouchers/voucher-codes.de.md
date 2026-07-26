@@ -2,15 +2,17 @@
 title: Gutschein-Codes
 ---
 
-Gutschein-Codes ermöglichen es Ihnen, Rabattcodes, Gutscheine und Geschenkkarten zu erstellen, die Kunden am Checkout eingeben können, um einen Rabatt zu erhalten. Navigieren Sie zu **Marketing > Gutscheine** in der Admin-Seitenleiste.
+Gutschein-Codes ermöglichen es Ihnen, Rabattcodes und Gutscheine zu erstellen, die Kunden am Checkout eingeben können, um einen Rabatt zu erhalten. Navigieren Sie zu **Marketing > Gutscheine** in der Admin-Seitenleiste.
+
+Möchten Sie stattdessen Store-Credits verkaufen? Das ist eine Geschenkkarte, die unter **Produkte > Geschenkkarten** separat verwaltet wird – siehe das Hilfethema **Geschenkkarten**.
 
 ![Gutschein-Liste](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 
-## Gutschein-Dashboard
+## Gutschein-Übersicht
 
-Die Gutschein-Seite zeigt einen Überblick mit:
+Die Gutscheinseite zeigt eine Übersicht mit:
 
-- **Statistik-Karten** — Aktive, Inaktive, Einlösungen und Gesamtanzahl an Gutscheinen
+- **Statistik-Karten** — Aktive, Inaktive, Einlösungen und Gesamtzahl der Gutscheine
 - **Filter** — Nach Code oder Name suchen, filtern nach Typ, Status und Umfang
 - **Gutschein-Karten** — Jeder Gutschein wird mit Einlösungs- und Statusdetails angezeigt
 
@@ -27,18 +29,18 @@ Die Gutschein-Seite zeigt einen Überblick mit:
    - **Pro-Kunden-Grenze** — Maximale Nutzung pro Kunde
    - **Mindestbestellwert** — Mindestbestellwert, der erforderlich ist
 4. Legen Sie den **Umfang** fest:
-   - **Ganzes Warenkorb** — Der Rabatt gilt für die gesamte Bestellung
+   - **Ganzes Warenkorb** — Der Rabatt gilt für den gesamten Bestellwert
    - **Spezifische Produkte** — Gilt nur für ausgewählte Artikel
    - **Spezifische Kategorien** — Gilt nur für Artikel in ausgewählten Kategorien
 5. Setzen Sie optional ein Ablaufdatum:
-   - **Ablaufdatum** — Datum, an dem der Gutschein nicht mehr gültig ist
+   - **Ablaufdatum** — Zu diesem Zeitpunkt wird der Gutschein nicht mehr funktionieren
 6. Klicken Sie auf **Speichern**
 
 ## Gutschein-Typen
 
 | Typ | Beschreibung | Beispiel |
 |------|-------------|---------|
-| **Fixer Betrag** | Deduziert einen festen Geldbetrag | 20 $ Rabatt auf die Bestellung |
+| **Fixer Betrag** | Deduziert einen festen Dollarbetrag | 20 $ Rabatt auf die Bestellung |
 | **Prozent** | Deduziert einen Prozentsatz des Gesamtbetrags | 15 % Rabatt auf die Bestellung |
 | **Kostenlose Lieferung** | Entfernt die Versandkosten | Kostenlose Lieferung für jede Bestellung |
 
@@ -51,7 +53,7 @@ Jede Gutschein-Karte zeigt:
 - **Beschreibung** — Was der Gutschein bewirkt
 - **Status-Abzeichen** — Aktiv oder Inaktiv
 - **Rabattdetails** — Typ und Wert (z. B. "$ 20,00" oder "15,00%")
-- **Umfang** — Ob er für den gesamten Warenkorb oder spezifische Artikel gilt
+- **Umfang** — Ob er für den gesamten Warenkorb oder für spezifische Artikel gilt
 - **Nutzungszahl** — Wie oft der Gutschein eingelöst wurde
 - **Erstellungsdatum** — Wann der Gutschein erstellt wurde
 - **Ablauf** — Ablaufdatum oder "Kein Ablauf"
@@ -78,11 +80,11 @@ Für große Kampagnen können Sie Gutscheine in Massen generieren:
 2. Legen Sie gemeinsame Parameter für alle generierten Gutscheine fest
 3. Verteilen Sie die Codes per E-Mail, sozialen Medien oder Druck
 
-## Kundenerfahrung
+## Kundenerlebnis
 
 Wenn ein Kunde einen Gutschein-Code hat:
-1. Er geht zum **Checkout**
-2. Gibt den Code im **Rabatt-Code**-Feld ein
+1. Sie gehen zum **Checkout**
+2. Geben Sie den Code im **Rabatt-Code**-Feld ein
 3. Der Rabatt wird sofort angewendet, wenn der Gutschein gültig ist
 4. Die Bestellübersicht wird aktualisiert, um den Rabatt anzuzeigen
 
@@ -93,6 +95,6 @@ Wenn ein Gutschein ungültig ist (abgelaufen, Nutzungsgrenze erreicht, Mindestbe
 - Verwenden Sie merkenswerte Codes für Marketingkampagnen (z. B. "SUMMER20" anstelle von Zufallszeichenketten).
 - Legen Sie pro-Kunden-Grenzen fest, um Missbrauch wertvoller Rabatte zu verhindern.
 - Verwenden Sie Mindestbestellwerte, um die Profitabilität zu sichern (z. B. "10 $ Rabatt auf Bestellungen über 50 $").
-- Überwachen Sie die Einlösungsanzahl auf dem Dashboard, um die Effektivität der Kampagnen zu verfolgen.
+- Überwachen Sie die Einlösungsanzahl auf der Übersicht, um die Effektivität der Kampagne zu verfolgen.
 - Erstellen Sie zeitlich begrenzte Gutscheine, um Dringlichkeit zu erzeugen (z. B. "Nur dieses Wochenende gültig").
 - Verwenden Sie den Aktiv/Inaktiv-Status, um Gutscheine ohne sie zu löschen zu pausieren.

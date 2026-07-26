@@ -318,25 +318,22 @@ from email_system.models import EmailAccount
 from email_system.providers.registry import ProviderRegistry
 
 # Get built-in account
-account = EmailAccount.objects.get(provider_key='builtin_smtp')
+account = EmailAccount.objects.get(provider_key="builtin_smtp")
 
 # Get provider class
-ProviderClass = ProviderRegistry.get_provider('builtin_smtp')
-provider = ProviderClass(
-    credentials=account.get_credentials(),
-    config={}
-)
+ProviderClass = ProviderRegistry.get_provider("builtin_smtp")
+provider = ProviderClass(credentials=account.get_credentials(), config={})
 
 # Send test message
 from email_system.providers.base import EmailMessage
 
 message = EmailMessage(
-    to=['your-email@example.com'],
-    subject='Test from Spwig SMTP Server',
-    html_body='<p>This is a test email from your Spwig built-in SMTP server!</p>',
-    text_body='This is a test email from your Spwig built-in SMTP server!',
+    to=["your-email@example.com"],
+    subject="Test from Spwig SMTP Server",
+    html_body="<p>This is a test email from your Spwig built-in SMTP server!</p>",
+    text_body="This is a test email from your Spwig built-in SMTP server!",
     from_email=account.from_email,
-    from_name=account.from_name
+    from_name=account.from_name,
 )
 
 result = provider.send(message)

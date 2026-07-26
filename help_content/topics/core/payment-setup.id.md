@@ -2,9 +2,9 @@
 title: Pengaturan Pembayaran
 ---
 
-Penggunaan penyedia pembayaran menghubungkan toko Anda ke gateway pembayaran sehingga Anda dapat menerima kartu kredit, dompet digital, dan metode pembayaran lainnya saat checkout. Spwig mendukung beberapa penyedia secara bersamaan, memberi pelanggan Anda opsi pembayaran yang fleksibel.
+Pengelola pembayaran menghubungkan toko Anda ke pintu gerai pembayaran sehingga Anda dapat menerima kartu kredit, dompet digital, dan metode pembayaran lainnya saat checkout. Spwig mendukung beberapa penyedia secara bersamaan, memberi pelanggan Anda pilihan pembayaran yang fleksibel.
 
-![Penggunaan penyedia pembayaran](/static/core/admin/img/help/payment-setup/payment-dashboard.webp)
+![Pengelola pembayaran](/static/core/admin/img/help/payment-setup/payment-dashboard.webp)
 
 ## Penyedia yang Tersedia
 
@@ -13,13 +13,12 @@ Penggunaan penyedia pembayaran menghubungkan toko Anda ke gateway pembayaran seh
 | **Stripe** | Kartu kredit, Apple Pay, Google Pay, dan 135+ mata uang |
 | **PayPal** | Saldo PayPal, kartu kredit/debit, dan opsi Bayar Nanti |
 | **Airwallex** | Pembayaran multi-mata uang yang dioptimalkan untuk perdagangan lintas batas |
-| **Adyen** | Pembayaran kelas perusahaan dengan 250+ metode pembayaran di seluruh dunia |
 | **Square** | Pembayaran tatap muka dan online dengan dukungan POS terintegrasi |
 | **Revolut** | Pembayaran Eropa yang cepat dengan kurs FX kompetitif |
 
 ## Menghubungkan Penyedia
 
-Navigasikan ke **Pengaturan > Penyedia Pembayaran** dan klik **Koneksi Penyedia** untuk memulai wizard pengaturan.
+Navigasikan ke **Pengaturan > Penyedia Pembayaran** dan klik **Hubungkan Penyedia** untuk memulai wizard pengaturan.
 
 ### Langkah 1: Pilih Penyedia
 
@@ -50,7 +49,7 @@ Masukkan kredensial API Anda:
 Klik **Uji Koneksi** untuk memverifikasi kredensial Anda valid. Wizard memeriksa:
 - Otentikasi kunci API
 - Izin akun
-- Ketersediaan akhir titik webhook
+- Ketersediaan endpoint webhook
 
 ### Langkah 5: Konfigurasi dan Simpan
 
@@ -68,14 +67,14 @@ Navigasikan ke **Pengaturan > Dashboard Pembayaran** untuk melihat ringkasan akt
 
 Kartu peringatan di bagian atas menyoroti masalah yang memerlukan perhatian:
 - **Transaksi Gagal** — Pembayaran yang tidak dapat diproses
-- **Pengambilan Tertunda** — Pembayaran yang telah disetujui menunggu pengambilan
+- **Pengambilan Tertunda** — Pembayaran yang telah disetujui tetapi menunggu pengambilan
 - **Kesalahan Koneksi** — Penyedia dengan masalah koneksi
 
 ### Analitik Pendapatan
 
 - **Grafik Pendapatan** — Pemecahan visual volume pembayaran seiring waktu, dikelompokkan berdasarkan hari, minggu, atau bulan
 - **Metrik Kinerja** — Total pendapatan, tingkat keberhasilan, nilai transaksi rata-rata, dan tingkat pengembalian
-- **Perbandingan Penyedia** — Kartu kinerja sampingan untuk setiap penyedia yang terhubung
+- **Perbandingan Penyedia** — Kartu kinerja berdampingan untuk setiap penyedia yang terhubung
 
 ### Pemecahan Transaksi
 
@@ -93,23 +92,25 @@ Setiap penyedia mendukung metode pembayaran yang berbeda. Anda dapat mengaktifka
 
 Ini berguna ketika metode pembayaran populer di satu wilayah tetapi tidak di wilayah lain (misalnya, iDEAL di Belanda, Bancontact di Belgia).
 
-## Webhook
+## Webhooks
 
-Webhook menjaga toko Anda tetap sinkron dengan penyedia pembayaran secara real time. Mereka menangani peristiwa seperti:
+Webhooks menjaga toko Anda tetap sinkron dengan penyedia pembayaran secara real time.
+
+Mereka menangani acara seperti:
 - Pembayaran selesai atau gagal
-- Pengembalian dana diproses
-- Dispute dan pembatalan tagihan dibuka
+- Refund yang diproses
+- Dispute dan chargeback yang dibuka
 - Perpanjangan langganan
 
 ### Pengaturan Otomatis
 
-Ketika Anda menghubungkan penyedia, Spwig secara otomatis mendaftarkan titik akhir webhook dengan penyedia. URL webhook ditampilkan di halaman konfigurasi penyedia untuk referensi.
+Ketika Anda menghubungkan penyedia, Spwig secara otomatis mendaftarkan endpoint webhook dengan penyedia. URL webhook ditampilkan pada halaman konfigurasi penyedia untuk referensi.
 
 ### Pemantauan Webhook
 
 Setiap webhook yang masuk dicatat dengan:
-- **Jenis Acara** (misalnya, payment_intent.succeeded)
-- **Tanda Waktu** dan status pemrosesan
+- **Jenis acara** (misalnya, payment_intent.succeeded)
+- **Timestamp** dan status pemrosesan
 - **Payload** untuk debugging
 
 Jika webhook gagal diproses, akan dicatat sebagai kesalahan sehingga Anda dapat menyelidiki.
@@ -120,13 +121,13 @@ Anda dapat menghubungkan beberapa penyedia pembayaran secara bersamaan:
 
 - **Penyedia Default** — Penyedia yang dipilih secara default saat checkout. Tandai satu penyedia sebagai default dalam konfigurasinya.
 - **Urutan Penyortiran** — Mengontrol urutan tampilan saat checkout. Pelanggan melihat semua penyedia aktif dan dapat memilih yang mereka sukai.
-- **Failover** — Jika penyedia mengalami gangguan, pelanggan masih dapat membayar menggunakan penyedia alternatif.
+- **Failover** — Jika penyedia mengalami downtime, pelanggan masih dapat membayar menggunakan penyedia alternatif.
 
 ## Tips
 
-- Mulai dengan **Stripe** atau **PayPal** — mereka menutupi rentang metode pembayaran dan wilayah yang paling luas.
-- Gunakan **mode sandbox/pengujian** untuk memproses transaksi pengujian sebelum diluncurkan. Setiap penyedia memiliki nomor kartu pengujian di dokumentasinya.
+- Mulailah dengan **Stripe** atau **PayPal** — mereka menutupi rentang metode pembayaran dan wilayah yang paling luas.
+- Gunakan **mode sandbox/test** untuk memproses transaksi uji sebelum diluncurkan. Setiap penyedia memiliki nomor kartu uji dalam dokumentasinya.
 - Aktifkan **banyak penyedia** sehingga pelanggan memiliki opsi pembayaran cadangan jika satu penyedia mengalami masalah.
 - Tetapkan **urutan penyortiran yang rendah** untuk penyedia favorit Anda sehingga muncul pertama saat checkout.
-- Pantau Dashboard Pembayaran secara mingguan untuk menangkap transaksi gagal dan masalah koneksi secara dini.
-- Jaga kredensial API Anda aman — mereka disimpan dalam bentuk terenkripsi di database tetapi seharusnya tidak pernah dibagikan.
+- Pantau Dashboard Pembayaran secara mingguan untuk menangkap transaksi yang gagal dan masalah koneksi secara dini.
+- Jaga kredensial API Anda aman — mereka disimpan dalam bentuk terenkripsi di database tetapi tidak pernah boleh dibagikan.

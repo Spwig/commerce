@@ -3,6 +3,12 @@ Sample Data Provider for Email Template Preview
 Provides realistic sample data for testing and previewing email templates
 """
 
+from datetime import timedelta
+from decimal import Decimal
+
+from django.utils import timezone
+from djmoney.money import Money
+
 
 class SampleDataProvider:
     """
@@ -412,26 +418,28 @@ class SampleDataProvider:
                 "expiry_hours": 72,
             },
             # Gift Card Templates
+            #
+            # Shapes must match what GiftCard.issue() actually sends: the
+            # template reads `gift_card.current_balance.amount` / `.currency`
+            # and applies the `date` filter to `gift_card.expires_at`. This
+            # sample previously used pre-formatted strings ("$50.00",
+            # "December 31, 2026"), which render as EMPTY against those
+            # expressions — so the admin preview looked plausible while the
+            # real email showed no value and no expiry. Keep this in step with
+            # catalog.GiftCard.issue().
             "gift_card_delivery": {
                 "gift_card": {
                     "code": "GC-ABCD-EFGH-IJKL",
-                    "current_balance": "$50.00",
-                    "initial_value": "$50.00",
-                    "expires_at": "December 31, 2026",
+                    "current_balance": Money(Decimal("50.00"), "USD"),
+                    "initial_value": Money(Decimal("50.00"), "USD"),
+                    "expires_at": timezone.now() + timedelta(days=365),
                     "message": "Happy Birthday! Hope you find something special!",
                     "sender_name": "John Smith",
                     "recipient_name": "Sarah Johnson",
                     "recipient_email": "sarah@example.com",
                 },
-                "recipient_name": "Sarah Johnson",
-                "recipient_email": "sarah@example.com",
                 "sender_name": "John Smith",
-                "gift_card_code": "GC-ABCD-EFGH-IJKL",
-                "gift_card_amount": "$50.00",
-                "gift_card_message": "Happy Birthday! Hope you find something special!",
-                "gift_card_expiry": "December 31, 2026",
                 "check_balance_url": f"{shop_url}/gift-cards/check-balance/",
-                "redeem_url": f"{shop_url}/gift-cards/redeem/",
             },
             # Referral Program Templates
             "referral_reward_issued_referrer": {

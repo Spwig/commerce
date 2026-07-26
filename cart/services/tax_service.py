@@ -200,6 +200,16 @@ class TaxService:
                 tax_type=preset_rate.tax_type,
                 is_active=True,
                 priority=0,
+                # Selling a gift card is not a taxable supply in most
+                # jurisdictions — it is stored value, and tax falls due when
+                # the card is SPENT on goods. Without this a default EU-VAT
+                # install charges 20% when the card is bought and 20% again
+                # when it is redeemed, taxing the same money twice.
+                #
+                # A default, not a rule: merchants can clear this per rate in
+                # the tax admin if their jurisdiction differs, and the help
+                # docs tell them to confirm with their accountant.
+                exempt_product_types=["gift_card"],
             )
             created += 1
 

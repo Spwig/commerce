@@ -188,7 +188,10 @@ def oauth_provider_wizard(request, provider_type):
                 messages.error(request, _(f"Error saving configuration: {str(e)}"))
 
     # Determine current step
-    step = int(request.GET.get("step", 1))
+    try:
+        step = int(request.GET.get("step", 1))
+    except (TypeError, ValueError):
+        step = 1
 
     # Generate callback URL
     protocol = "https" if request.is_secure() else "http"

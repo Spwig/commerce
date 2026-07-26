@@ -27,7 +27,6 @@ from pos_api.permissions import IsStaffUser
 from pos_api.serializers.cart import (
     POSAddToCartSerializer,
     POSApplyDiscountSerializer,
-    POSApplyGiftCardSerializer,
     POSCartSerializer,
     POSUpdateCartItemSerializer,
 )
@@ -346,7 +345,21 @@ def apply_voucher(request):
     code = serializer.validated_data["code"]
 
     cart = CartService.get_or_create_cart(user=request.user)
-    success, message, discount_amount = CartService.apply_voucher(cart, code, user=request.user)
+
+    # user=None, deliberately. `request.user` here is the **cashier**, not the
+    # customer being served, and the Cart model carries no customer link — so
+    # there is no shopper identity to evaluate per-customer rules against.
+    #
+    # Passing the cashier was worse than passing nothing: it evaluated every
+    # per-customer rule against the wrong person, meaning a voucher issued to
+    # the cashier would pass for any customer's sale, and a voucher genuinely
+    # issued to the customer at the till would be rejected.
+    #
+    # With no identity, can_be_used_by_customer refuses vouchers that are bound
+    # to a customer (issued_to) and allows general promotional codes — the same
+    # treatment guest checkout gets. When POS gains customer linkage, pass it
+    # here.
+    success, message, discount_amount = CartService.apply_voucher(cart, code, user=None)
 
     if not success:
         return Response(
@@ -412,55 +425,9 @@ def remove_voucher(request):
 
 
 @extend_schema(
-    summary=_("Apply gift card to cart"),
-    description=_(
-        "Apply a gift card code to the cart to cover part or all of the total. "
-        "Requires staff authentication and valid POS license."
-    ),
-    request=POSApplyGiftCardSerializer,
-    responses={
-        200: POSCartSerializer,
-        400: OpenApiResponse(description=_("Invalid gift card or insufficient balance")),
-        401: OpenApiResponse(description=AUTH_REQUIRED),
-        403: OpenApiResponse(description=POS_LICENSE_REQUIRED),
-    },
-    tags=["POS - Cart"],
-)
-@api_view(["POST"])
-@authentication_classes([MobileTokenAuthentication])
-@permission_classes([IsStaffUser])
-def apply_gift_card(request):
-    """Apply a gift card to the POS cart."""
-    from cart.services.cart_service import CartService
-
-    serializer = POSApplyGiftCardSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    code = serializer.validated_data["code"]
-
-    cart = CartService.get_or_create_cart(user=request.user)
-    success, message, discount_amount = CartService.apply_gift_card(cart, code)
-
-    if not success:
-        return Response(
-            {"success": False, "error": {"code": "GIFT_CARD_INVALID", "message": str(message)}},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    cart.refresh_from_db()
-    return Response(
-        {
-            "success": True,
-            "message": str(message),
-            "gift_card_applied": str(discount_amount),
-            "cart": serialize_cart(cart, currency=get_terminal_currency(request), request=request),
-        }
-    )
-
-
-@extend_schema(
     summary=_("Clear all items from cart"),
     description=_(
-        "Remove all items, vouchers, and gift cards from the cart. "
+        "Remove all items and vouchers from the cart. "
         "Requires staff authentication and valid POS license."
     ),
     responses={

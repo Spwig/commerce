@@ -611,3 +611,230 @@ def send_back_in_stock_email(notification: StockNotification, stock_item: StockI
 
 # Import models at module level to avoid issues
 from django.db import models
+
+
+def _credit_captures_to_amount_paid(order, captures):
+    """
+    Add settled gift card value to ``Order.amount_paid``.
+
+    Invariant I2: ``amount_paid == sum of settlement_amount`` over completed
+    charge/capture rows. The gateway leg is assigned by
+    ``PaymentOrchestrationService.handle_payment_success`` as
+    ``amount_paid = intent.amount``, and that intent is now raised for
+    ``amount_due`` — net of tenders — so without this the gift card leg is
+    never credited and every split-tender order reads as permanently
+    part-paid. That is not cosmetic: ``RefundService`` caps refunds at
+    ``amount_paid``, so an under-stated figure silently blocks refunding money
+    the customer actually handed over.
+
+    Re-reads the row inside the update so a concurrent gateway write does not
+    clobber the increment, and skips captures already reflected so a retried
+    webhook cannot inflate the total.
+    """
+    from django.db import transaction as db_transaction
+
+    from orders.models import Order as OrderModel
+
+    amounts = [c.settlement_amount for c in captures if c.settlement_amount is not None]
+    if not amounts:
+        return
+    # Money does not sum from an int zero, so fold instead of sum().
+    settled = amounts[0]
+    for extra in amounts[1:]:
+        settled = settled + extra
+    if settled.amount <= 0:
+        return
+
+    with db_transaction.atomic():
+        fresh = OrderModel.objects.select_for_update().get(pk=order.pk)
+        if fresh.amount_paid.currency != settled.currency:
+            logger.error(
+                f"Cannot credit {settled} to order {fresh.order_number}: "
+                f"amount_paid is in {fresh.amount_paid.currency}. Left alone "
+                f"rather than guessing a conversion — needs reconciliation."
+            )
+            return
+        fresh.amount_paid = fresh.amount_paid + settled
+        fresh.save(update_fields=["amount_paid", "updated_at"])
+        order.amount_paid = fresh.amount_paid
+
+    logger.info(
+        f"Credited {settled} of gift card tender to order {order.order_number}; "
+        f"amount_paid now {order.amount_paid}"
+    )
+
+
+@receiver(post_save, sender=Order)
+def issue_gift_cards_on_payment_confirmed(sender, instance, created, **kwargs):
+    """
+    Mint and deliver the gift cards an order paid for, once payment is confirmed.
+
+    Until P2.3 this never ran. ``GiftCardService.create_gift_cards_for_order``
+    was reachable only from ``CheckoutService.process_payment_completion``,
+    which had zero callers repo-wide — so a merchant could sell a gift card and
+    the customer would receive nothing. That orphaned entry point is what the
+    whole phase exists to fix, and it is why the test suite asserts this
+    receiver is *registered*, not merely that the service works.
+
+    **Deliberately no ``if created: return``.** The sibling receiver
+    ``settle_tenders_on_payment_confirmed`` has that guard and is right to,
+    but copying it here would silently break every in-store sale: POS builds
+    the Order with ``payment_status="paid"`` inline
+    (``pos_api/views/checkout.py``), so ``created`` is True on the only
+    post_save it ever gets. A guard would mean the till takes the money and no
+    card is ever minted — the exact failure this phase removes.
+
+    Idempotency is NOT this receiver's job. It fires more than once per order by
+    design (webhook retry, admin re-save, the settlement receiver's own
+    ``amount_paid`` write-back), and the guarantee lives in a unique database
+    constraint on ``(order_item, issue_index)``. The self-write filter below is
+    an optimisation that keeps the constraint off the hot path, not the safety
+    property.
+
+    Deferred to ``on_commit`` so a rollback cannot leave a funded card — with
+    its code already emailed — attached to an order that never existed.
+    """
+    if instance.payment_status != "paid":
+        return
+
+    # Skip our own and the settlement receiver's write-backs.
+    update_fields = kwargs.get("update_fields")
+    if update_fields and set(update_fields) <= {
+        "amount_paid",
+        "amount_paid_base",
+        "updated_at",
+        "paid_at",
+    }:
+        return
+
+    order_pk = instance.pk
+
+    def _issue():
+        from catalog.tasks import issue_gift_cards_for_order
+
+        # Dispatched by pk, never by instance: a pickled model in a Celery
+        # message can be stale by the time a worker picks it up.
+        try:
+            issue_gift_cards_for_order.delay(order_pk)
+        except Exception:
+            # Broker unreachable. Do it inline rather than lose the issuance —
+            # the customer has paid. The periodic reconcile task is the net if
+            # even this fails.
+            logger.exception(
+                f"Could not queue gift card issuance for order {order_pk}; running inline"
+            )
+            from catalog.services.gift_card_service import GiftCardService
+            from orders.models import Order as OrderModel
+
+            try:
+                GiftCardService.create_gift_cards_for_order(OrderModel.objects.get(pk=order_pk))
+            except Exception:
+                logger.exception(
+                    f"Inline gift card issuance failed for order {order_pk} — "
+                    f"customer paid and holds no card; needs reconciliation"
+                )
+
+    transaction.on_commit(_issue)
+
+
+@receiver(post_save, sender=Order)
+def settle_tenders_on_payment_confirmed(sender, instance, created, **kwargs):
+    """
+    Capture gift card holds once an order's payment is confirmed.
+
+    Modelled on process_licenses_on_payment_confirmed above, which is the
+    proven hook: it fires on ANY path that flips payment_status to "paid" —
+    the orchestration service, the legacy webhook handler, capture, and POS —
+    rather than only the gateway path that
+    PaymentOrchestrationService._trigger_post_payment_flows covers.
+
+    Three properties matter here, all of them about money:
+
+    * **Idempotent.** GiftCardTenderService.capture_for_order skips any
+      (order, card) pair that already has a capture row, so a retried webhook
+      cannot debit a card twice.
+    * **After commit.** Capture is deferred with transaction.on_commit, so a
+      rollback later in the same transaction cannot leave cards debited for an
+      order that never existed. The licences receiver above does NOT do this
+      and has the same latent problem.
+    * **Never rolls back a successful charge.** A capture failure is recorded
+      and surfaced, but must not undo a gateway payment that already
+      succeeded — the customer has been charged.
+
+    KNOWN GAP: `orders/admin.py` "Mark as Paid" uses `queryset.update()`,
+    which bypasses post_save entirely, so this does not fire for orders marked
+    paid in bulk from the admin. That is fixed alongside this receiver.
+    """
+    if created:
+        return
+
+    if instance.payment_status != "paid":
+        return
+
+    # Ignore our own write-back. _credit_captures_to_amount_paid saves
+    # amount_paid, which re-fires this receiver; without this the capture pass
+    # would run again on every credit.
+    update_fields = kwargs.get("update_fields")
+    if update_fields and set(update_fields) <= {"amount_paid", "amount_paid_base", "updated_at"}:
+        return
+
+    def _capture():
+        from catalog.services.gift_card_tender_service import GiftCardTenderService
+        from payment_providers.models import PaymentTransaction
+        from wallet.tender_service import WalletTenderService
+
+        try:
+            # Which capture rows already existed. capture_for_order is
+            # idempotent and returns pre-existing rows alongside new ones, so
+            # crediting its whole return value would re-add settled value every
+            # time an order is re-saved as paid. Covers BOTH internal tenders.
+            already = set(
+                PaymentTransaction.objects.filter(
+                    order=instance,
+                    tender_type__in=PaymentTransaction.INTERNAL_TENDERS,
+                    transaction_type="capture",
+                ).values_list("pk", flat=True)
+            )
+
+            # Fixed, documented order: gift cards first, wallet second. Both
+            # cap the debit at what the order still owes counting EVERY
+            # completed capture and charge, so whichever runs second sees the
+            # first's captures and cannot jointly over-capture a cart that
+            # shrank between hold and payment.
+            captures = list(GiftCardTenderService.capture_for_order(instance))
+            captures += list(WalletTenderService.capture_for_order(instance))
+
+            newly_settled = [c for c in captures if c.pk not in already]
+            if newly_settled:
+                _credit_captures_to_amount_paid(instance, newly_settled)
+            if captures:
+                logger.info(
+                    f"Settled {len(captures)} internal tender(s) for order {instance.order_number}"
+                )
+        except Exception as e:
+            # Deliberately swallowed at this boundary: the payment has already
+            # succeeded, and raising here would roll back nothing useful while
+            # breaking the request. Surface it loudly instead — an unsettled
+            # hold means the customer's card was not debited for an order they
+            # paid for, which needs a human.
+            logger.exception(
+                f"FAILED to settle gift card tenders for order "
+                f"{instance.order_number}: {e}. The order is paid but one or "
+                f"more gift cards were not debited — reconcile manually."
+            )
+            try:
+                from orders.models import OrderNote
+
+                OrderNote.objects.create(
+                    order=instance,
+                    note=(
+                        f"Gift card tender settlement failed: {e}. "
+                        f"Card(s) not debited — needs manual reconciliation."
+                    ),
+                    # Staff-facing, not shown to the customer.
+                    is_customer_note=False,
+                )
+            except Exception:  # pragma: no cover - note is best-effort
+                logger.exception("Could not record settlement failure as an OrderNote")
+
+    transaction.on_commit(_capture)

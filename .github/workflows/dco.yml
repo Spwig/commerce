@@ -4,6 +4,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+# Collapse duplicate runs for the same PR/ref (Gitea can emit opened +
+# synchronize back-to-back for API-created PRs): the newer run cancels
+# the older one instead of both burning a runner slot.
+concurrency:
+  group: dco-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -16,7 +23,10 @@ jobs:
         run: |
           echo "Checking commits ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
           missing=0
-          for sha in $(git log --format=%H ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}); do
+          # --no-merges: platform-generated merge commits (e.g. Gitea's
+          # "Update branch" button) carry no sign-off and never can; DCO
+          # certifies authored changes, so merges are conventionally exempt.
+          for sha in $(git log --no-merges --format=%H ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}); do
             if ! git log -1 --format=%B "$sha" | grep -qE "^Signed-off-by: .+ <.+@.+>"; then
               echo "::error::Commit $sha is missing Signed-off-by. Run: git commit --amend --signoff"
               missing=$((missing+1))

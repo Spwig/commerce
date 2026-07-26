@@ -248,7 +248,11 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+/* 767.98px, not 768px: the header's own mobile rules stop at 767px, so a plain
+   768px here left a 1px band where the search switched to overlay mode while
+   the header was still laid out for desktop. Must stay in sync with the
+   matchMedia query in design/js/widgets/search.js. */
+@media (max-width: 767.98px) {
   /* Show icon trigger on mobile */
   .widget-search .search-mobile-trigger {
     display: inline-flex;

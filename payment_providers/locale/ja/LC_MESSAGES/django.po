@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: 2025-09-17 11:42+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -19,309 +19,426 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.7\n"
 
+#: admin.py:71
 msgid "Provider Information"
 msgstr "プロバイダー情報"
 
+#: admin.py:75
 msgid ""
 "Component and User cannot be changed after creation for security and audit "
 "purposes."
-msgstr ""
-"セキュリティおよび監査の目的により、作成後のコンポーネントとユーザーは変更で"
-"きません。"
+msgstr "セキュリティおよび監査の目的により、作成後のコンポーネントとユーザーは変更できません。"
 
-msgid "Payment Configuration"
-msgstr "支払い設定"
-
-msgid ""
-"Configure which payment methods are offered to customers. Leave empty to "
-"show all available methods."
-msgstr ""
-"顧客に提供する支払い方法を構成してください。空のままにするとすべての利用可能"
-"な方法が表示されます。"
-
+#: admin.py:79
 msgid "Configuration"
 msgstr "操作"
 
+#: admin.py:80 admin.py:172
+#: templates/admin/payment_providers/payment_dashboard.html:417
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:73
 msgid "Status"
 msgstr "ステータス"
 
+#: admin.py:82
 msgid "Payment Method Synchronization"
 msgstr "支払い方法の同期"
 
+#: admin.py:92
 msgid "Payment methods can be synced from your provider account. "
 msgstr "支払い方法は、あなたのプロバイダーアカウントから同期できます。"
 
+#: admin.py:96
 msgid "Sync Payment Methods Now"
 msgstr "今すぐ支払い方法を同期"
 
+#: admin.py:100
 msgid "Save the account first to enable payment method synchronization."
 msgstr "支払い方法の同期を有効にするには、まずアカウントを保存してください。"
 
+#: admin.py:104
 msgid "Connection Health"
 msgstr "接続状態"
 
+#: admin.py:109
 msgid ""
-"Connection health is automatically updated when you test the connection from "
-"the wizard."
+"Connection health is automatically updated when you test the connection from"
+" the wizard."
 msgstr "ウィザードから接続をテストすると、接続の状態が自動的に更新されます。"
 
+#: admin.py:113
 msgid "Metadata"
 msgstr "メタデータ"
 
+#: admin.py:120
 msgid "Create Provider"
 msgstr "プロバイダーの作成"
 
+#: admin.py:127
 msgid "Please use the Payment Provider Connection Wizard"
 msgstr "支払いプロバイダー接続ウィザードをご利用ください。"
 
+#: admin.py:131
 #, python-format
 msgid ""
 "For the best experience, please use the <a href=\"%(url)s\">Provider "
 "Connection Wizard</a> to set up new providers."
 msgstr ""
-"最高の体験のために、<a href=\"%(url)s\">プロバイダ接続ウィザード</a>をご利用"
-"ください。新しいプロバイダの設定に使用してください。"
+"最高の体験のために、<a href=\"%(url)s\">プロバイダ接続ウィザード</a>をご利用ください。新しいプロバイダの設定に使用してください。"
 
+#: admin.py:148
 msgid "Name"
 msgstr "名前"
 
+#: admin.py:164
 msgid "Connection"
 msgstr "接続"
 
+#: admin.py:180 templates/admin/payment_providers/payment_dashboard.html:334
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:79
 msgid "Default"
 msgstr "デフォルト"
 
+#: admin.py:192
+#: templates/admin/payment_providers/wizard/step3_credentials.html:195
 msgid "Checkout Mode"
 msgstr "チェックアウトモード"
 
+#: admin.py:194
 msgid "Environment"
 msgstr "環境"
 
+#: admin.py:330
 msgid "Connection test completed"
 msgstr "接続テストが完了しました"
 
+#: admin.py:336 admin.py:359 admin.py:383 admin.py:446 admin.py:539
+#: admin.py:598 admin.py:648 admin.py:688 services/webhook_service.py:114
 msgid "Provider account not found"
 msgstr "プロバイダーのアカウントが見つかりません"
 
+#: admin.py:342
 #, python-format
 msgid "Connection test failed: %(error)s"
 msgstr "接続テストに失敗しました: %(error)s"
 
+#: admin.py:356
 msgid "Set as default provider"
 msgstr "デフォルトプロバイダーとして設定"
 
+#: admin.py:366 admin.py:389 admin.py:544 admin.py:615 admin.py:664
 msgid "Method not allowed"
 msgstr "許可されていないメソッド"
 
+#: admin.py:376
+#| msgid "Provider not installed"
+msgid "Provider enabled"
+msgstr "プロバイダーが有効です"
+
+#: admin.py:378
+#| msgid "Provider not installed"
+msgid "Provider disabled"
+msgstr "プロバイダーが無効です"
+
+#: admin.py:402
 msgid "This provider does not support payment method synchronization"
 msgstr "このプロバイダーは支払い方法の同期をサポートしていません。"
 
+#: admin.py:410
 #, python-format
 msgid "Failed to load provider: %(error)s"
 msgstr "プロバイダの読み込みに失敗しました: %(error)s"
 
+#: admin.py:426
 #, python-format
 msgid ""
 "Successfully synced %(methods)d payment methods across %(countries)d "
 "countries"
-msgstr ""
-"%(countries)dか国にわたり、%(methods)d件の支払い方法を正常に同期しました"
+msgstr "%(countries)dか国にわたり、%(methods)d件の支払い方法を正常に同期しました"
 
+#: admin.py:441
 msgid "Synchronization failed"
 msgstr "同期に失敗しました"
 
+#: admin.py:450
 #, python-format
 msgid "Unexpected error: %(error)s"
 msgstr "予期しないエラー: %(error)s"
 
+#: admin.py:481
+#| msgid "All Countries"
+msgid "Global (All Countries)"
+msgstr "グローバル（すべての国）"
+
+#: admin.py:528
 #, python-format
 msgid "Configure Payment Methods - %(provider)s"
 msgstr "支払い方法の設定 - %(provider)s"
 
+#: admin.py:558
 msgid "Missing required parameters"
 msgstr "必要なパラメーターが欠けています"
 
+#: admin.py:564 admin.py:626
+msgid "Invalid country code"
+msgstr "無効な国コード"
+
+#: admin.py:570
+#| msgid "enabled payment methods"
+msgid "Invalid payment method identifier"
+msgstr "無効な支払い方法識別子"
+
+#: admin.py:576
+#| msgid "Invalid request"
+msgid "Invalid enabled value"
+msgstr "有効な値ではありません"
+
+#: admin.py:583
 #, python-format
 msgid "Enabled %(method)s for %(country)s"
 msgstr "%(country)s向けに%(method)sを有効にしました"
 
+#: admin.py:589
 #, python-format
 msgid "Disabled %(method)s for %(country)s"
 msgstr "%(country)s向けに%(method)sを無効にしました"
 
+#: admin.py:603 admin.py:651
+#| msgid "Invalid request"
+msgid "Invalid request body"
+msgstr "無効なリクエストボディ"
+
+#: admin.py:609 admin.py:657
+#| msgid "Unexpected error: %(error)s"
+msgid "An unexpected error occurred"
+msgstr "予期しないエラーが発生しました"
+
+#: admin.py:640
+#, python-format
+msgid "Country override removed. Global settings will apply for %(country)s."
+msgstr "国設定の上書きが削除されました。%(country)sのグローバル設定が適用されます。"
+
+#: admin.py:676
 msgid ""
 "Cannot delete provider with existing transactions. Deactivate it instead."
-msgstr ""
-"既存の取引があるプロバイダーは削除できません。代わりに無効にしてください。"
+msgstr "既存の取引があるプロバイダーは削除できません。代わりに無効にしてください。"
 
+#: admin.py:684
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:332
 msgid "Provider deleted successfully"
 msgstr "プロバイダーが正常に削除されました"
 
+#: admin.py:739
 msgid "Transaction Information"
 msgstr "取引情報"
 
+#: admin.py:752
 msgid "Payment Details"
 msgstr "支払情報の詳細"
 
+#: admin.py:756 admin.py:776 admin.py:982
 msgid "Provider Response"
 msgstr "プロバイダーの応答"
 
+#: admin.py:760
 msgid "Error Information"
 msgstr "エラー情報"
 
+#: admin.py:764 admin.py:985
 msgid "Timestamps"
 msgstr "タイムスタンプ"
 
+#: admin.py:774
 msgid "No response data"
 msgstr "応答データなし"
 
+#: admin.py:850
 msgid "Webhook Information"
 msgstr "Webhook 情報"
 
+#: admin.py:863
 msgid "Payload"
 msgstr "Payload"
 
+#: admin.py:864
 msgid "Headers"
 msgstr "ヘッダ"
 
+#: admin.py:866 models.py:511 models.py:1006
 msgid "Processing"
 msgstr "処理中"
 
+#: admin.py:872
 msgid "System Information"
 msgstr "システム情報"
 
+#: admin.py:880
 msgid "No payload data"
 msgstr "ペイロード データなし"
 
+#: admin.py:882
 msgid "Webhook Payload"
 msgstr "Webhook ペイロード"
 
+#: admin.py:889
 msgid "No headers data"
 msgstr "ヘッダーデータなし"
 
+#: admin.py:891
 msgid "HTTP Headers"
 msgstr "HTTP ヘッダ"
 
+#: admin.py:957
 msgid "Intent Information"
 msgstr "インテント情報"
 
+#: admin.py:971
 msgid "Checkout Details"
 msgstr "チェックアウト詳細"
 
+#: admin.py:975
 msgid "3DS / Authentication"
 msgstr "3DS / 認証"
 
+#: api_serializers.py:21
 msgid ""
 "Checkout session ID. If not provided, uses current user's active session."
-msgstr ""
-"チェックアウトセッションID。指定されない場合は、現在のユーザーのアクティブな"
-"セッションを使用します。"
+msgstr "チェックアウトセッションID。指定されない場合は、現在のユーザーのアクティブなセッションを使用します。"
 
+#: api_serializers.py:26
 msgid ""
 "Payment provider account ID. If not provided, uses session's selected "
 "provider."
-msgstr ""
-"支払いプロバイダーのアカウントID。指定されない場合は、セッションで選択された"
-"プロバイダーを使用します。"
+msgstr "支払いプロバイダーのアカウントID。指定されない場合は、セッションで選択されたプロバイダーを使用します。"
 
+#: api_serializers.py:30
 msgid "Saved payment method ID for returning customers."
 msgstr "リピーター顧客用に保存された支払い方法ID。"
 
+#: api_serializers.py:33
 msgid "URL to redirect after successful payment."
 msgstr "支払いが成功した後のリダイレクトURL。"
 
+#: api_serializers.py:36
 msgid "URL to redirect on payment cancellation."
 msgstr "支払いがキャンセルされた後のリダイレクトURL。"
 
+#: api_serializers.py:39
 msgid "Additional metadata to attach to the payment."
 msgstr "支払いに追加で添付するメタデータ。"
 
+#: api_serializers.py:49 models.py:1092
 msgid "Type of action required (redirect, 3ds_challenge, etc.)"
 msgstr "必要なアクションのタイプ（リダイレクト、3ds_challengeなど）。"
 
+#: api_serializers.py:52
 msgid "URL to redirect for action completion."
 msgstr "アクション完了後のリダイレクトURL。"
 
+#: api_serializers.py:55
 msgid "Provider-specific action data for SDK handling."
 msgstr "SDK処理用のプロバイダー固有のアクションデータ。"
 
+#: api_serializers.py:64
 msgid "Whether the operation succeeded."
 msgstr "操作が成功したかどうか。"
 
+#: api_serializers.py:65 api_serializers.py:413
 msgid "Payment intent ID."
 msgstr "支払い意図ID。"
 
+#: api_serializers.py:67
 msgid "Order ID (created with 'unpaid' status)."
 msgstr "未払いステータスで作成された注文ID。"
 
+#: api_serializers.py:70 api_serializers.py:422
 msgid "Order number for display."
 msgstr "表示用の注文番号。"
 
+#: api_serializers.py:72 api_serializers.py:414
 msgid "Current payment intent status."
 msgstr "現在の支払い意図ステータス。"
 
+#: api_serializers.py:74
 msgid "Type of checkout flow (hosted or embedded)."
 msgstr "チェックアウトフローのタイプ（ホステッドまたは埋め込み）。"
 
+#: api_serializers.py:80
 msgid "Hosted checkout redirect URL (for hosted checkout)."
-msgstr ""
-"ホステッドチェックアウト用のリダイレクトURL（ホステッドチェックアウトの場"
-"合）。"
+msgstr "ホステッドチェックアウト用のリダイレクトURL（ホステッドチェックアウトの場合）。"
 
+#: api_serializers.py:86
 msgid "Client secret for provider SDK (for embedded checkout)."
 msgstr "埋め込みチェックアウト用のプロバイダーアクセスシークレット（SDK）。"
 
+#: api_serializers.py:89
 msgid "Provider's publishable key for SDK initialization."
 msgstr "SDK初期化用のプロバイダーの公開鍵。"
 
+#: api_serializers.py:92
 msgid "URL to provider's checkout handler JavaScript."
 msgstr "プロバイダのチェックアウトハンドラJavaScriptへのURL。"
 
+#: api_serializers.py:95
 msgid "Configuration data for handler initialization."
 msgstr "ハンドラー初期化用の構成データ。"
 
+#: api_serializers.py:98
 msgid "External SDK URLs required by provider."
 msgstr "プロバイダが要求する外部SDKのURL。"
 
+#: api_serializers.py:101
 msgid "Provider identifier (slug) for handler lookup."
 msgstr "ハンドラの検索用のプロバイダ識別子（スラグ）です。"
 
+#: api_serializers.py:104
 msgid "Whether customer action is required (3DS, etc.)."
 msgstr "顧客のアクションが必要かどうか（3DSなど）。"
 
+#: api_serializers.py:107 api_serializers.py:426
 msgid "Action details if requires_action is true."
 msgstr "requires_actionがtrueの場合のアクションの詳細。"
 
+#: api_serializers.py:109
 msgid "When this payment intent expires."
 msgstr "この支払い意図が期限切れになる時。"
 
+#: api_serializers.py:110 api_serializers.py:428
 msgid "Error details if payment failed."
 msgstr "支払いが失敗した場合のエラー詳細。"
 
+#: api_serializers.py:416
 msgid "Order ID."
 msgstr "注文ID。"
 
+#: api_serializers.py:424
 msgid "Whether customer action is required."
 msgstr "顧客のアクションが必要かどうか。"
 
+#: api_serializers.py:455
 msgid "Provider-specific payment method data for confirmation."
 msgstr "確認用のプロバイダー固有の支払い方法データ。"
 
+#: api_serializers.py:468
 msgid "Optional reason for cancellation."
 msgstr "キャンセルの理由（任意）。"
 
+#: api_serializers.py:516
 msgid "Payment provider account ID."
 msgstr "支払いプロバイダーのアカウントID。"
 
+#: api_serializers.py:518
 msgid "Token from provider SDK representing the payment method."
 msgstr "支払い方法を表すプロバイダーSDKからのトークン。"
 
+#: api_serializers.py:521
 msgid "Whether to set this as the default payment method."
 msgstr "この支払い方法をデフォルトとして設定するかどうか。"
 
+#: api_views.py:53
 msgid "Create payment intent"
 msgstr "支払い意図を作成"
 
+#: api_views.py:54
 msgid ""
 "\n"
 "Create a payment intent for checkout.\n"
@@ -338,8 +455,7 @@ msgid ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -363,8 +479,7 @@ msgstr ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -373,23 +488,28 @@ msgstr ""
 "- Amounts are validated against checkout session totals\n"
 "        "
 
+#: api_views.py:81 services/payment_orchestration_service.py:265
+#: services/payment_service.py:131
 msgid "Payment intent created successfully"
 msgstr "支払いインテントが正常に作成されました"
 
+#: api_views.py:84
 msgid "Invalid request, checkout not ready, or validation failed"
-msgstr ""
-"無効なリクエスト、チェックアウトが準備できていません、または検証に失敗しまし"
-"た"
+msgstr "無効なリクエスト、チェックアウトが準備できていません、または検証に失敗しました"
 
+#: api_views.py:86 api_views.py:102
 msgid "Checkout session not found"
 msgstr "チェックアウトセッションが見つかりません"
 
+#: api_views.py:110
 msgid "Payment provider not found or not configured"
 msgstr "支払いプロバイダが見つからないか、設定されていません"
 
+#: api_views.py:205
 msgid "Get payment intent status"
 msgstr "支払い意図のステータスを取得"
 
+#: api_views.py:206
 msgid ""
 "\n"
 "        Get the current status of a payment intent.\n"
@@ -427,22 +547,25 @@ msgstr ""
 "        - `canceled`: Payment was canceled\n"
 "        "
 
+#: api_views.py:228
 msgid "Payment intent UUID"
 msgstr "支払い意図UUID"
 
+#: api_views.py:235
 msgid ""
 "Payment intent details (full handler data for active intents, status-only "
 "for terminal states)"
-msgstr ""
-"支払い意図の詳細（アクティブな意図の完全なハンドラーデータ、終了状態の場合は"
-"ステータスのみ）"
+msgstr "支払い意図の詳細（アクティブな意図の完全なハンドラーデータ、終了状態の場合はステータスのみ）"
 
+#: api_views.py:238 api_views.py:287 api_views.py:342
 msgid "Payment intent not found"
 msgstr "支払い意図が見つかりません"
 
+#: api_views.py:270
 msgid "Confirm payment intent"
 msgstr "支払い意図を確認"
 
+#: api_views.py:271
 msgid ""
 "\n"
 "        Confirm a payment intent after customer completes required action.\n"
@@ -452,8 +575,7 @@ msgid ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 msgstr ""
 "\n"
@@ -464,19 +586,22 @@ msgstr ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 
+#: api_views.py:284
 msgid "Confirmation result"
 msgstr "確認結果"
 
+#: api_views.py:286
 msgid "Confirmation failed"
 msgstr "確認失敗"
 
+#: api_views.py:327
 msgid "Cancel payment intent"
 msgstr "支払い意図をキャンセル"
 
+#: api_views.py:328
 msgid ""
 "\n"
 "        Cancel a payment intent.\n"
@@ -486,8 +611,7 @@ msgid ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 msgstr ""
 "\n"
@@ -498,28 +622,34 @@ msgstr ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 
+#: api_views.py:340
 msgid "Payment canceled successfully"
 msgstr "支払いが正常にキャンセルされました"
 
+#: api_views.py:341
 msgid "Cannot cancel this payment"
 msgstr "この支払いはキャンセルできません"
 
+#: api_views.py:367
 msgid "List saved payment methods"
 msgstr "保存された支払い方法の一覧"
 
+#: api_views.py:368
 msgid "List all saved payment methods for the authenticated user."
 msgstr "認証されたユーザーの保存された支払い方法をすべて一覧表示します。"
 
+#: api_views.py:372
 msgid "List of saved payment methods"
 msgstr "保存された支払い方法のリスト"
 
+#: api_views.py:390
 msgid "Save a new payment method"
 msgstr "新しい支払い方法を保存"
 
+#: api_views.py:391
 msgid ""
 "\n"
 "        Save a new payment method for future use.\n"
@@ -535,42 +665,55 @@ msgstr ""
 "        after collecting card details on the client side.\n"
 "        "
 
+#: api_views.py:401
 msgid "Payment method saved successfully"
 msgstr "支払い方法が正常に保存されました"
 
+#: api_views.py:403
 msgid "Invalid request"
 msgstr "無効なリクエスト"
 
+#: api_views.py:422 services/payment_orchestration_service.py:122
 msgid "Payment provider not found"
 msgstr "支払いプロバイダーが見つかりません"
 
+#: api_views.py:434
 msgid "Provider does not support saved payment methods"
 msgstr "プロバイダは保存された支払い方法をサポートしていません"
 
+#: api_views.py:494
 msgid "Get saved payment method details"
 msgstr "保存された支払い方法の詳細を取得"
 
+#: api_views.py:497
 msgid "Payment method details"
 msgstr "支払い方法の詳細"
 
+#: api_views.py:499 api_views.py:519 api_views.py:551
 msgid "Payment method not found"
 msgstr "支払い方法が見つかりません"
 
+#: api_views.py:516
 msgid "Delete saved payment method"
 msgstr "保存された支払い方法を削除"
 
+#: api_views.py:518 api_views.py:536
 msgid "Payment method deleted"
 msgstr "支払い方法が削除されました"
 
+#: api_views.py:548
 msgid "Set default payment method"
 msgstr "デフォルトの支払い方法を設定"
 
+#: api_views.py:550 api_views.py:566
 msgid "Default payment method updated"
 msgstr "デフォルトの支払い方法が更新されました"
 
+#: api_views.py:579
 msgid "Report payment SDK failure"
 msgstr "支払いSDKの失敗を報告"
 
+#: api_views.py:580
 msgid ""
 "\n"
 "Report a payment SDK loading failure. Used by the checkout frontend\n"
@@ -592,1147 +735,1793 @@ msgstr ""
 "**Authentication:** Not required (supports guest checkout).\n"
 "        "
 
+#: api_views.py:590
 msgid "Failure reported"
 msgstr "失敗が報告されました"
 
+#: apps.py:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:6
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:4
 msgid "Payment Providers"
 msgstr "支払いプロバイダー"
 
-msgid "Enabled Payment Methods"
-msgstr "有効な支払い方法"
-
-msgid ""
-"Select payment methods to offer customers. Leave empty for all available "
-"methods."
-msgstr ""
-"顧客に提供する支払い方法を選択してください。空のままにするとすべての利用可能"
-"な方法が表示されます。"
-
+#: management/commands/sync_payment_methods.py:17
 msgid "Sync payment methods from payment provider APIs"
 msgstr "支払いプロバイダのAPIから支払い方法を同期"
 
+#: models.py:27
 msgid "component"
 msgstr "コンポーネント"
 
+#: models.py:28
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:170
 msgid "Installed payment provider component"
 msgstr "インストールされた支払いプロバイダー コンポーネント"
 
+#: models.py:35
 msgid "user"
 msgstr "ユーザー"
 
+#: models.py:36
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:184
 msgid "User who owns this provider account"
 msgstr "このプロバイダアカウントの所有者"
 
+#: models.py:42
 msgid "display name"
 msgstr "表示名"
 
+#: models.py:43
 msgid "Friendly name for this connection (e.g., \"My Payment Provider\")"
 msgstr "この接続のフレンドリな名前（例: \"My Payment Provider\"）"
 
+#: models.py:49 templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "credentials"
 msgstr "資格情報"
 
+#: models.py:50
 msgid "Encrypted API credentials (never stored in plain text)"
 msgstr "暗号化されたAPI資格情報（平文で保存されることはありません）"
 
+#: models.py:56
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "settings"
 msgstr "設定"
 
+#: models.py:57
 msgid "Provider-specific configuration (checkout mode, features, etc.)"
 msgstr "プロバイダ固有の設定（チェックアウトモード、機能など）"
 
+#: models.py:63
 msgid "signup URL"
 msgstr "サインアップURL"
 
+#: models.py:64
 msgid "Link for merchants to create provider account (may be affiliate link)"
-msgstr ""
-"商人がプロバイダアカウントを作成するために使用するリンク（アフィリエイトリン"
-"クである場合があります）"
+msgstr "商人がプロバイダアカウントを作成するために使用するリンク（アフィリエイトリンクである場合があります）"
 
+#: models.py:69
 msgid "is active"
 msgstr "アクティブ"
 
+#: models.py:70
 msgid "Whether this provider connection is active for checkout"
 msgstr "このプロバイダ接続がチェックアウトでアクティブかどうか"
 
+#: models.py:75
 msgid "is default"
 msgstr "デフォルト"
 
+#: models.py:76
 msgid "Use this provider as default for payment processing"
 msgstr "このプロバイダを支払い処理のデフォルトとして使用"
 
+#: models.py:83
 msgid "Hosted - Redirect to provider"
 msgstr "ホスト済み - プロバイダにリダイレクト"
 
+#: models.py:84
+#: templates/admin/payment_providers/wizard/step3_credentials.html:200
 msgid "Integrated - On-site checkout"
 msgstr "統合済み - サイト内での支払い"
 
+#: models.py:87
 msgid "checkout mode"
 msgstr "支払いモード"
 
+#: models.py:88
 msgid "How customers will complete payment"
 msgstr "顧客が支払いを完了する方法"
 
+#: models.py:94
 msgid "sort order"
 msgstr "並び順"
 
+#: models.py:95
 msgid "Display order in checkout (lower numbers appear first)"
 msgstr "チェックアウトでの表示順序（数字が小さいほど先に表示されます）"
 
+#: models.py:102
 msgid "last tested at"
 msgstr "最終テスト日時"
 
+#: models.py:103
 msgid "Last successful connection test"
 msgstr "最後に成功した接続テスト"
 
+#: models.py:109
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:238
 msgid "Unknown"
 msgstr "不明"
 
+#: models.py:110
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:57
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:62
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:118
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:230
 msgid "Connected"
 msgstr "接続済み"
 
+#: models.py:111
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:288
 msgid "Connection Error"
 msgstr "接続エラー"
 
+#: models.py:114
 msgid "connection status"
 msgstr "接続状態"
 
+#: models.py:118
 msgid "connection error"
 msgstr "接続エラー"
 
+#: models.py:118
 msgid "Last connection error message"
 msgstr "最後の接続エラーメッセージ"
 
+#: models.py:125
 msgid "available payment methods"
 msgstr "利用可能な支払い方法"
 
+#: models.py:127
+#| msgid ""
+#| "Payment methods available from provider API, organized by country. Format: "
+#| "{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgid ""
-"Payment methods available from provider API, organized by country. Format: "
-"{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"Payment methods available from provider API, organized by country. Use "
+"\"_global\" key for methods available regardless of country. Format: "
+"{\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgstr ""
-"プロバイダAPIから利用可能な支払い方法（国ごとに整理）。形式: {\"US\": "
-"[\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"プロバイダーのAPIから利用可能な支払い方法で、国ごとに整理されています。国に関係なく利用可能な方法には \"_global\" "
+"キーを使用してください。形式: {\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", "
+"\"paynow\"]}"
 
+#: models.py:136
 msgid "enabled payment methods"
 msgstr "有効な支払い方法"
 
+#: models.py:138
+#| msgid ""
+#| "Payment methods enabled by merchant for each country. Format: {\"US\": "
+#| "[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
 msgid ""
-"Payment methods enabled by merchant for each country. Format: {\"US\": "
-"[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
+"Payment methods enabled by merchant. Use \"_global\" for all countries, or "
+"per-country keys to override. Format: {\"_global\": [\"card\", "
+"\"apple_pay\"], \"SG\": [\"card\"]}"
 msgstr ""
-"商人が各国で有効にした支払い方法。形式: {\"US\": [\"card\", \"apple_pay\"], "
-"\"SG\": [\"card\"]}"
+"商人によって有効にされた支払い方法。すべての国に適用する場合は \"_global\" "
+"を使用し、特定の国ごとのキーを使用して上書きすることもできます。形式: {\"_global\": [\"card\", \"apple_pay\"],"
+" \"SG\": [\"card\"]}"
 
+#: models.py:147
 msgid "last method sync at"
 msgstr "最後のメソッド同期日時"
 
+#: models.py:148
 msgid "When payment methods were last synced from provider"
 msgstr "支払い方法がプロバイダから最後に同期された時刻"
 
+#: models.py:154
 msgid "Pending - Not synced yet"
 msgstr "保留 - まだ同期されていません"
 
+#: models.py:155
 msgid "Syncing - In progress"
 msgstr "同期中 - 進行中"
 
+#: models.py:156
 msgid "Success - Synced successfully"
 msgstr "成功 - 成功して同期されました"
 
+#: models.py:157
 msgid "Error - Sync failed"
 msgstr "エラー - 同期に失敗しました"
 
+#: models.py:160
 msgid "method sync status"
 msgstr "メソッド同期ステータス"
 
+#: models.py:161
 msgid "Status of payment method synchronization"
 msgstr "支払いメソッド同期のステータス"
 
+#: models.py:166
 msgid "method sync error"
 msgstr "メソッド同期エラー"
 
+#: models.py:167
 msgid "Last payment method sync error message"
 msgstr "最後の支払い方法同期エラーメッセージ"
 
+#: models.py:171 models.py:757 models.py:1134
 msgid "created at"
 msgstr "作成日時"
 
+#: models.py:172 models.py:758 models.py:1135
 msgid "updated at"
 msgstr "更新日時"
 
+#: models.py:176
 msgid "payment provider account"
 msgstr "支払いプロバイダアカウント"
 
+#: models.py:177
 msgid "payment provider accounts"
 msgstr "支払いプロバイダアカウント一覧"
 
+#: models.py:313
 msgid "Provider does not support payment method synchronization"
 msgstr "プロバイダは支払い方法の同期をサポートしていません"
 
+#: models.py:345
 msgid "Payment methods synced successfully"
 msgstr "支払いメソッドが正常に同期されました"
 
+#: models.py:510
+#: templates/admin/payment_providers/partials/webhook_cards.html:28
 msgid "Pending"
 msgstr "保留"
 
+#: models.py:512
 msgid "Authorized - Not captured"
 msgstr "承認済み - 捕捉されていない"
 
+#: models.py:513
 msgid "Completed - Payment successful"
 msgstr "完了 - 支払い成功"
 
+#: models.py:514 models.py:1009
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:61
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:40
 msgid "Failed"
 msgstr "失敗"
 
+#: models.py:515
 msgid "Voided - Authorization canceled"
 msgstr "キャンセル済み - 承認が取り消されました"
 
+#: models.py:516
 msgid "Refunded - Full refund"
 msgstr "払い戻し - 全額払い戻し"
 
+#: models.py:517
 msgid "Partially Refunded"
 msgstr "部分払い戻し"
 
+#: models.py:521
 msgid "Charge - Immediate payment"
 msgstr "請求 - 即時支払い"
 
+#: models.py:522
 msgid "Authorize - Hold funds"
 msgstr "承認 - 資金保留"
 
+#: models.py:523
 msgid "Capture - Collect authorized funds"
 msgstr "確定 - 承認済資金の収集"
 
+#: models.py:524
 msgid "Void - Cancel authorization"
 msgstr "無効 - 承認のキャンセル"
 
+#: models.py:525
 msgid "Refund - Return payment"
 msgstr "払い戻し - 支払いの返還"
 
+#: models.py:547
+#| msgid "Payment Providers"
+msgid "Payment provider"
+msgstr "支払いプロバイダー"
+
+#: models.py:548
+msgid "Gift Card"
+msgstr "ギフトカード"
+
+#: models.py:549
+msgid "Store Credit"
+msgstr "ストアクレジット"
+
+#: models.py:550
+msgid "Cash"
+msgstr "現金"
+
+#: models.py:551
+msgid "Card (Terminal)"
+msgstr "カード（端末）"
+
+#: models.py:552
+msgid "Card (Manual)"
+msgstr "カード（手動）"
+
+#: models.py:568 models.py:872 models.py:1029
 msgid "provider account"
 msgstr "プロバイダーアカウント"
 
+#: models.py:569
 msgid "Payment provider account used for this transaction"
 msgstr "この取引に使用された支払いプロバイダアカウント"
 
+#: models.py:579 models.py:1037
 msgid "order"
 msgstr "注文"
 
+#: models.py:587
 msgid "transaction ID"
 msgstr "トランザクションID"
 
+#: models.py:588
 msgid "Internal transaction ID"
 msgstr "内部トランザクションID"
 
+#: models.py:595
 msgid "provider transaction ID"
 msgstr "プロバイダートランザクションID"
 
+#: models.py:596
 msgid "Provider transaction ID (charge ID, payment intent ID, etc.)"
 msgstr "プロバイダの取引ID（チャージID、支払い意図IDなど）"
 
+#: models.py:604
 msgid "authorization ID"
 msgstr "承認ID"
 
+#: models.py:605
 msgid "Provider authorization ID (if applicable)"
 msgstr "プロバイダー承認ID（該当する場合）"
 
+#: models.py:613 models.py:1077
 msgid "amount"
 msgstr "金額"
 
+#: models.py:614
 msgid "Transaction amount"
 msgstr "トランザクション金額"
 
+#: models.py:618 models.py:1069
 msgid "status"
 msgstr "ステータス"
 
+#: models.py:622
 msgid "type"
 msgstr "タイプ"
 
-msgid "customer email"
-msgstr "顧客のメールアドレス"
+#: models.py:633
+#| msgid "event type"
+msgid "tender type"
+msgstr "支払い方法タイプ"
 
-msgid "customer name"
-msgstr "顧客名"
+#: models.py:634
+msgid "How this payment was made"
+msgstr "この支払いの方法"
 
-msgid "payment method type"
-msgstr "支払い方法の種類"
+#: models.py:643
+msgid "gift card"
+msgstr "ギフトカード"
 
-msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
-msgstr "使用された支払い方法の種類（クレジットカード、銀行振込など）"
+#: models.py:644
+msgid "Gift card this tender draws on"
+msgstr "この支払い方法が使用するギフトカード"
 
-msgid "last 4 digits"
-msgstr "末尾4桁"
+#: models.py:656
+#| msgid "Wallets"
+msgid "wallet"
+msgstr "ウォレット"
 
-msgid "Last 4 digits of card/account"
-msgstr "カード/アカウントの末尾4桁"
+#: models.py:657
+msgid "Customer wallet this tender draws on"
+msgstr "この支払い方法が使用する顧客ウォレット"
 
-msgid "metadata"
-msgstr "メタデータ"
-
-msgid "Additional transaction metadata"
-msgstr "追加のトランザクションメタデータ"
-
-msgid "provider response"
-msgstr "プロバイダの応答"
-
-msgid "Raw response from payment provider"
-msgstr "支払いプロバイダーからの生の応答"
-
-msgid "error message"
-msgstr "エラーメッセージ"
-
-msgid "error code"
-msgstr "エラーコード"
-
-msgid "expires at"
-msgstr "有効期限"
-
-msgid "When authorization expires (if applicable)"
-msgstr "承認の有効期限（該当する場合）"
-
-msgid "completed at"
-msgstr "完了時間"
-
-msgid "payment transaction"
-msgstr "支払いトランザクション"
-
-msgid "payment transactions"
-msgstr "支払いトランザクション"
-
-msgid "provider slug"
-msgstr "プロバイダースラグ"
-
-msgid "Provider identifier for routing"
-msgstr "ルーティング用のプロバイダ識別子"
-
-msgid "event ID"
-msgstr "イベントID"
-
-msgid "Provider webhook event ID"
-msgstr "プロバイダウェブフックイベントID"
-
-msgid "event type"
-msgstr "イベントタイプ"
-
-msgid "Type of webhook event"
-msgstr "ウェブフックイベントのタイプ"
-
-msgid "payload"
-msgstr "ペイロード"
-
-msgid "Complete webhook payload"
-msgstr "ウェブフックペイロードを完成"
-
-msgid "headers"
-msgstr "ヘッダー"
-
-msgid "HTTP headers from webhook request"
-msgstr "ウェブフックリクエストからのHTTPヘッダ"
-
-msgid "processed"
-msgstr "処理済み"
-
-msgid "Whether webhook has been processed"
-msgstr "ウェブフックが処理済みか"
-
-msgid "processing result"
-msgstr "処理結果"
-
-msgid "Result from webhook handler"
-msgstr "ウェブフックハンドラからの結果"
-
-msgid "processing error"
-msgstr "処理エラー"
-
-msgid "Error message if processing failed"
-msgstr "処理が失敗した場合のエラーメッセージ"
-
-msgid "signature verified"
-msgstr "署名が確認済み"
-
-msgid "Whether webhook signature was verified"
-msgstr "ウェブフックの署名が確認済みか"
-
-msgid "idempotency key"
-msgstr "イデムポテンシー鍵"
-
-msgid "Key to prevent duplicate processing"
-msgstr "重複処理を防ぐための鍵"
-
-msgid "received at"
-msgstr "受信時刻"
-
-msgid "processed at"
-msgstr "処理時刻"
-
-msgid "payment webhook"
-msgstr "支払いウェブフック"
-
-msgid "payment webhooks"
-msgstr "支払いウェブフック一覧"
-
-msgid "Created"
-msgstr "作成済み"
-
-msgid "Requires Payment Method"
-msgstr "支払い方法が必要"
-
-msgid "Requires Confirmation"
-msgstr "確認が必要"
-
-msgid "Requires Action"
-msgstr "アクションが必要"
-
-msgid "Succeeded"
-msgstr "成功"
-
-msgid "Canceled"
-msgstr "キャンセル"
-
+#: models.py:669 models.py:1021
 msgid "checkout session"
 msgstr "チェックアウトセッション"
 
+#: models.py:681
+#| msgid "payment transaction"
+msgid "parent transaction"
+msgstr "親取引"
+
+#: models.py:694
+#| msgid "Payment amount"
+msgid "settlement amount"
+msgstr "決済額"
+
+#: models.py:695
+msgid "This tender's value in the order's currency"
+msgstr "注文通貨でのこの支払い方法の価値"
+
+#: models.py:703
+msgid "exchange rate"
+msgstr "為替レート"
+
+#: models.py:704
+msgid "Rate used to convert amount into settlement_amount"
+msgstr "金額をsettlement_amountに変換するために使用されるレート"
+
+#: models.py:708
+msgid "customer email"
+msgstr "顧客のメールアドレス"
+
+#: models.py:710
+msgid "customer name"
+msgstr "顧客名"
+
+#: models.py:716
+msgid "payment method type"
+msgstr "支払い方法の種類"
+
+#: models.py:717
+msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
+msgstr "使用された支払い方法の種類（クレジットカード、銀行振込など）"
+
+#: models.py:723
+msgid "last 4 digits"
+msgstr "末尾4桁"
+
+#: models.py:724
+msgid "Last 4 digits of card/account"
+msgstr "カード/アカウントの末尾4桁"
+
+#: models.py:731 models.py:1113
+msgid "metadata"
+msgstr "メタデータ"
+
+#: models.py:732
+msgid "Additional transaction metadata"
+msgstr "追加のトランザクションメタデータ"
+
+#: models.py:739 models.py:1120
+msgid "provider response"
+msgstr "プロバイダの応答"
+
+#: models.py:740 models.py:1121
+msgid "Raw response from payment provider"
+msgstr "支払いプロバイダーからの生の応答"
+
+#: models.py:744 models.py:1127
+msgid "error message"
+msgstr "エラーメッセージ"
+
+#: models.py:746 models.py:1125
+msgid "error code"
+msgstr "エラーコード"
+
+#: models.py:752 models.py:1131
+msgid "expires at"
+msgstr "有効期限"
+
+#: models.py:753
+msgid "When authorization expires (if applicable)"
+msgstr "承認の有効期限（該当する場合）"
+
+#: models.py:759
+msgid "completed at"
+msgstr "完了時間"
+
+#: models.py:763
+msgid "payment transaction"
+msgstr "支払いトランザクション"
+
+#: models.py:764
+msgid "payment transactions"
+msgstr "支払いトランザクション"
+
+#: models.py:881
+msgid "provider slug"
+msgstr "プロバイダースラグ"
+
+#: models.py:882
+msgid "Provider identifier for routing"
+msgstr "ルーティング用のプロバイダ識別子"
+
+#: models.py:891
+msgid "event ID"
+msgstr "イベントID"
+
+#: models.py:892
+msgid "Provider webhook event ID"
+msgstr "プロバイダウェブフックイベントID"
+
+#: models.py:900
+msgid "event type"
+msgstr "イベントタイプ"
+
+#: models.py:901
+msgid "Type of webhook event"
+msgstr "ウェブフックイベントのタイプ"
+
+#: models.py:905
+msgid "payload"
+msgstr "ペイロード"
+
+#: models.py:905
+msgid "Complete webhook payload"
+msgstr "ウェブフックペイロードを完成"
+
+#: models.py:910
+msgid "headers"
+msgstr "ヘッダー"
+
+#: models.py:911
+msgid "HTTP headers from webhook request"
+msgstr "ウェブフックリクエストからのHTTPヘッダ"
+
+#: models.py:918
+msgid "processed"
+msgstr "処理済み"
+
+#: models.py:919
+msgid "Whether webhook has been processed"
+msgstr "ウェブフックが処理済みか"
+
+#: models.py:925
+msgid "processing result"
+msgstr "処理結果"
+
+#: models.py:926
+msgid "Result from webhook handler"
+msgstr "ウェブフックハンドラからの結果"
+
+#: models.py:931
+msgid "processing error"
+msgstr "処理エラー"
+
+#: models.py:932
+msgid "Error message if processing failed"
+msgstr "処理が失敗した場合のエラーメッセージ"
+
+#: models.py:938
+msgid "signature verified"
+msgstr "署名が確認済み"
+
+#: models.py:939
+msgid "Whether webhook signature was verified"
+msgstr "ウェブフックの署名が確認済みか"
+
+#: models.py:947
+msgid "idempotency key"
+msgstr "イデムポテンシー鍵"
+
+#: models.py:948
+msgid "Key to prevent duplicate processing"
+msgstr "重複処理を防ぐための鍵"
+
+#: models.py:952
+msgid "received at"
+msgstr "受信時刻"
+
+#: models.py:953
+msgid "processed at"
+msgstr "処理時刻"
+
+#: models.py:957
+msgid "payment webhook"
+msgstr "支払いウェブフック"
+
+#: models.py:958
+msgid "payment webhooks"
+msgstr "支払いウェブフック一覧"
+
+#: models.py:1002
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:41
+msgid "Created"
+msgstr "作成済み"
+
+#: models.py:1003
+msgid "Requires Payment Method"
+msgstr "支払い方法が必要"
+
+#: models.py:1004
+msgid "Requires Confirmation"
+msgstr "確認が必要"
+
+#: models.py:1005
+msgid "Requires Action"
+msgstr "アクションが必要"
+
+#: models.py:1007
+msgid "Succeeded"
+msgstr "成功"
+
+#: models.py:1008
+msgid "Canceled"
+msgstr "キャンセル"
+
+#: models.py:1022
 msgid "Checkout session this payment intent was created for"
 msgstr "この支払い意図が作成されたチェックアウトセッション"
 
+#: models.py:1030
 msgid "Payment provider account used for this intent"
 msgstr "この意図に使用された支払いプロバイダアカウント"
 
+#: models.py:1038
 msgid "Order this payment intent is for"
 msgstr "この支払い意図が対象の注文"
 
+#: models.py:1045
 msgid "provider intent ID"
 msgstr "プロバイダインテントID"
 
+#: models.py:1046
 msgid "Provider payment intent ID (e.g., Stripe pi_xxx, AirWallex int_xxx)"
 msgstr "プロバイダの支払い意図ID（例: Stripe pi_xxx, AirWallex int_xxx）"
 
+#: models.py:1052
 msgid "client secret"
 msgstr "クライアントシークレット"
 
+#: models.py:1053
 msgid "Client secret for embedded checkout (never expose in logs)"
-msgstr ""
-"埋め込みチェックアウト用のクライアントシークレット（ログに公開しないでくださ"
-"い）"
+msgstr "埋め込みチェックアウト用のクライアントシークレット（ログに公開しないでください）"
 
+#: models.py:1059
 msgid "checkout URL"
 msgstr "チェックアウトURL"
 
+#: models.py:1060
 msgid "Hosted checkout redirect URL"
 msgstr "ホストされたチェックアウトリダイレクトURL"
 
+#: models.py:1078
 msgid "Payment amount"
 msgstr "支払い金額"
 
+#: models.py:1084
 msgid "requires action"
 msgstr "アクションが必要"
 
+#: models.py:1085
 msgid "Whether customer action is required (e.g., 3DS)"
 msgstr "顧客のアクションが必要かどうか（例: 3DS）"
 
+#: models.py:1091
 msgid "action type"
 msgstr "アクションタイプ"
 
+#: models.py:1098
 msgid "action URL"
 msgstr "アクションURL"
 
+#: models.py:1099
 msgid "URL to redirect for action (3DS, verification, etc.)"
 msgstr "アクション（3DS、検証など）のためにリダイレクトするURL"
 
+#: models.py:1105
 msgid "action data"
 msgstr "アクションデータ"
 
+#: models.py:1106
 msgid "Provider-specific action data for SDK handling"
 msgstr "SDK処理用のプロバイダ固有のアクションデータ"
 
+#: models.py:1114
 msgid "Additional intent metadata"
 msgstr "追加のインテントメタデータ"
 
+#: models.py:1131
 msgid "When this payment intent expires"
 msgstr "この支払いインテントの有効期限"
 
+#: models.py:1139
 msgid "payment intent"
 msgstr "支払い意図"
 
+#: models.py:1140
 msgid "payment intents"
 msgstr "支払い意図一覧"
 
+#: services/payment_orchestration_service.py:82 services/payment_service.py:76
 msgid "Payment provider is not active"
 msgstr "支払いプロバイダがアクティブではありません"
 
+#: services/payment_orchestration_service.py:85 services/payment_service.py:79
 msgid "Payment provider is not properly configured"
 msgstr "支払いプロバイダが正しく設定されていません"
 
+#: services/payment_orchestration_service.py:127
 msgid "Failed to initialize payment provider"
 msgstr "支払いプロバイダの初期化に失敗しました"
 
+#: services/payment_orchestration_service.py:197
 #, python-brace-format
 msgid "Failed to create payment with provider: {error}"
 msgstr "プロバイダと支払いの作成に失敗しました: {error}"
 
+#: services/payment_orchestration_service.py:381
+#: services/payment_orchestration_service.py:592
 msgid "Payment intent is already in terminal state"
 msgstr "支払いの意図はすでに終了状態です"
 
+#: services/payment_orchestration_service.py:391
 msgid "Provider does not support payment confirmation"
 msgstr "プロバイダは支払いの確認をサポートしていません"
 
+#: services/payment_orchestration_service.py:411
 msgid "Payment confirmed"
 msgstr "支払いが確認されました"
 
+#: services/payment_orchestration_service.py:454
 msgid "Payment already processed"
 msgstr "支払いはすでに処理済みです"
 
+#: services/payment_orchestration_service.py:552
 msgid "Payment processed successfully"
 msgstr "支払いが正常に処理されました"
 
+#: services/payment_orchestration_service.py:634
 msgid "Payment cancelled"
 msgstr "支払いがキャンセルされました"
 
+#: services/payment_service.py:44
 msgid "Payment amount must be greater than zero"
 msgstr "支払い金額はゼロより大きくなければなりません"
 
+#: services/payment_service.py:48
 msgid "Payment amount exceeds maximum allowed"
 msgstr "支払い金額が許容上限を超えています"
 
+#: services/payment_service.py:93 services/refund_service.py:131
 msgid "Payment provider not found in registry"
 msgstr "レジストリに支払いプロバイダが見つかりません"
 
+#: services/payment_service.py:107
 msgid "Payment intent creation failed"
 msgstr "支払いインテントの作成に失敗しました"
 
+#: services/payment_service.py:135
 #, python-brace-format
 msgid "Payment processing error: {error}"
 msgstr "支払い処理エラー: {error}"
 
+#: services/payment_service.py:153
 msgid "Payment transaction is not in pending state"
 msgstr "支払いトランザクションは保留状態ではありません"
 
+#: services/payment_service.py:169
 msgid "Authorization failed"
 msgstr "認証に失敗しました"
 
+#: services/payment_service.py:189
 msgid "Payment authorized successfully"
 msgstr "支払いが正常に認証されました"
 
+#: services/payment_service.py:196
 #, python-brace-format
 msgid "Payment authorization error: {error}"
 msgstr "支払い承認エラー: {error}"
 
+#: services/payment_service.py:214
 msgid "Payment transaction is not authorized"
 msgstr "支払いトランザクションは認証されていません"
 
+#: services/payment_service.py:221
 msgid "Capture amount exceeds authorized amount"
 msgstr "キャプチャ金額が認証金額を超えてます"
 
+#: services/payment_service.py:235
 msgid "Capture failed"
 msgstr "キャプチャに失敗しました"
 
+#: services/payment_service.py:256
 msgid "Payment captured successfully"
 msgstr "支払いが正常にキャプチャされました"
 
+#: services/payment_service.py:260
 #, python-brace-format
 msgid "Payment capture error: {error}"
 msgstr "支払い確定エラー: {error}"
 
+#: services/payment_service.py:310
 msgid "Only pending or authorized payments can be cancelled"
 msgstr "キャンセルできるのは保留または承認済みの支払いのみです"
 
+#: services/payment_service.py:325
 msgid "Cancellation failed"
 msgstr "キャンセルに失敗しました"
 
+#: services/payment_service.py:340
 msgid "Payment cancelled successfully"
 msgstr "支払いが正常にキャンセルされました"
 
+#: services/payment_service.py:344
 #, python-brace-format
 msgid "Payment cancellation error: {error}"
 msgstr "支払いキャンセルエラー: {error}"
 
+#: services/refund_service.py:43
 msgid "Refund amount must be greater than zero"
 msgstr "返金金額はゼロより大きくなければなりません"
 
+#: services/refund_service.py:66
 #, python-brace-format
 msgid "Refund amount ({amount}) exceeds available amount ({available})"
 msgstr "返金額 ({amount}) は利用可能な額 ({available}) を超えています"
 
+#: services/refund_service.py:102
 msgid "Only successful payments can be refunded"
 msgstr "返金できるのは成功した支払いのみです"
 
+#: services/refund_service.py:105
 msgid "Only charge transactions can be refunded"
 msgstr "返金できるのはチャージトランザクションのみです"
 
+#: services/refund_service.py:149
 msgid "Refund failed"
 msgstr "返金に失敗しました"
 
+#: services/refund_service.py:213
 msgid "Refund processed successfully"
 msgstr "返金が正常に処理されました"
 
+#: services/refund_service.py:217
 #, python-brace-format
 msgid "Refund processing error: {error}"
 msgstr "返金処理エラー: {error}"
 
+#: services/refund_service.py:231
 msgid "Transaction is not a refund"
 msgstr "トランザクションは返金ではありません"
 
+#: services/webhook_service.py:103
 msgid "Webhook already processed"
 msgstr "ウェブフックはすでに処理されています"
 
+#: services/webhook_service.py:197
 msgid "Webhook processed successfully"
 msgstr "ウェブフックが正常に処理されました"
 
+#: services/webhook_service.py:546
 msgid "Webhook already processed successfully"
 msgstr "ウェブフックはすでに正常に処理されています"
 
+#: services/webhook_service.py:560
 msgid "Webhook not found"
 msgstr "ウェブフックが見つかりません"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:4
+#: templates/admin/payment_providers/configure_payment_methods.html:17
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:243
 msgid "Configure Payment Methods"
 msgstr "支払い方法の設定"
 
-msgid "Enable or disable payment methods per country"
-msgstr "国ごとに支払い方法を有効または無効にします"
+#: templates/admin/payment_providers/configure_payment_methods.html:19
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid "Configure which payment methods are available at checkout"
+msgstr "チェックアウトで利用可能な支払い方法を構成してください"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:23
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:246
+#| msgid "Back to Provider"
+msgid "Sync from Provider"
+msgstr "プロバイダから同期"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:26
 msgid "Back to Provider"
 msgstr "プロバイダーに戻る"
 
-msgid "No Shipping Countries Configured"
-msgstr "配送可能な国が設定されていません"
+#: templates/admin/payment_providers/configure_payment_methods.html:35
+#| msgid "No Payment Providers Available"
+msgid "No Payment Methods Available"
+msgstr "利用可能な支払い方法がありません"
 
-msgid ""
-"Configure shipping countries first to set up payment methods per country."
-msgstr "支払い方法を国ごとに設定するには、まず配送可能な国を設定してください。"
+#: templates/admin/payment_providers/configure_payment_methods.html:36
+#| msgid "Sync payment methods from payment provider APIs"
+msgid "Sync payment methods from your provider first using the button above."
+msgstr "上記のボタンを使用して、まずプロバイダーから支払い方法を同期してください。"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:43
 msgid "How it works"
 msgstr "仕組み"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:44
 msgid ""
-"Toggle payment methods on or off for each country. Changes are saved "
-"automatically."
+"The Global section applies to all customers. Add country-specific overrides "
+"below to customize methods for particular countries — country overrides take"
+" priority over global settings. Changes are saved automatically."
 msgstr ""
-"各国の支払い方法をオンまたはオフに切り替えられます。変更は自動的に保存されま"
-"す。"
+"グローバルセクションはすべての顧客に適用されます。特定の国向けにメソッドをカスタマイズするには、以下に国ごとの上書き設定を追加してください — "
+"国ごとの上書き設定はグローバル設定よりも優先されます。変更は自動的に保存されます。"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:53
 msgid ""
-"No payment methods available. Try syncing payment methods from the provider "
-"first."
-msgstr ""
-"利用可能な支払い方法がありません。まずプロバイダーから支払い方法を同期してみ"
-"てください。"
+"These payment methods are available to customers in all countries unless "
+"overridden below."
+msgstr "これらの支払い方法は、下記で上書きされない限り、すべての国のお客様に利用可能です。"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:58
+#: templates/admin/payment_providers/configure_payment_methods.html:110
+#| msgid "Enable"
+msgid "Enable All"
+msgstr "すべてを有効にする"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:61
+#: templates/admin/payment_providers/configure_payment_methods.html:113
+#| msgid "Disable"
+msgid "Disable All"
+msgstr "すべてを無効にする"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:80
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid "No payment methods available. Try syncing from the provider first."
+msgstr "利用可能な支払い方法がありません。まずプロバイダーから同期を試してください。"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:88
+#| msgid "All Countries"
+msgid "Country Overrides"
+msgstr "国別設定の上書き"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:89
+msgid "(optional)"
+msgstr "(任意)"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:91
+msgid ""
+"Add country-specific configurations that override the global settings above."
+" Useful if certain payment methods are only available or should be "
+"restricted in specific countries."
+msgstr "上記のグローバル設定を上書きする、国ごとの設定を追加してください。特定の国で支払い方法が利用可能または制限される場合に便利です。"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:102
+msgid "Remove override — will fall back to global"
+msgstr "上書きを解除 — グローバル設定に戻ります"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:103
+msgid "Remove"
+msgstr "削除"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:132
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid ""
+"No payment methods available for this country. Methods from the global "
+"section will apply."
+msgstr "この国には利用可能な支払い方法がありません。グローバルセクションの支払い方法が適用されます。"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:144
 msgid "Saved"
 msgstr "保存済み"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:145
 msgid "Error saving change"
 msgstr "変更の保存に失敗しました"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:17
 msgid "Unknown Provider"
 msgstr "未知のプロバイダー"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:69
+#: templates/admin/payment_providers/payment_dashboard.html:413
 msgid "Order"
 msgstr "順序"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:76
+#: templates/admin/payment_providers/partials/webhook_cards.html:65
 msgid "View"
 msgstr "表示"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:89
 msgid "No transactions found."
 msgstr "トランザクションが見つかりません。"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:91
+#: templates/admin/payment_providers/partials/webhook_cards.html:80
 msgid "Try adjusting your filters or search terms."
 msgstr "フィルタや検索語を調整してみてください。"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:24
+#: templates/admin/payment_providers/partials/webhook_cards.html:52
+#: templates/admin/payment_providers/payment_dashboard.html:482
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:86
 msgid "Processed"
 msgstr "処理済み"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:45
 msgid "Verified"
 msgstr "確認済み"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:39
 msgid "Unverified"
 msgstr "未検証"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:78
 msgid "No webhooks found."
 msgstr "ウェブフックが見つかりません。"
 
+#: templates/admin/payment_providers/payment_dashboard.html:4
+#: templates/admin/payment_providers/payment_dashboard.html:19
+#: templates/admin/payment_providers/payment_dashboard.html:30
+#: views/payment_dashboard.py:94
 msgid "Payment Dashboard"
 msgstr "支払いダッシュボード"
 
+#: templates/admin/payment_providers/payment_dashboard.html:18
+#: templates/admin/payment_providers/providers/browse.html:26
 msgid "Home"
 msgstr "ホーム"
 
+#: templates/admin/payment_providers/payment_dashboard.html:33
 msgid "Monitor payment performance, provider health, and transaction metrics"
-msgstr ""
-"支払いのパフォーマンス、プロバイダの状態、およびトランザクションのメトリクス"
-"を監視します"
+msgstr "支払いのパフォーマンス、プロバイダの状態、およびトランザクションのメトリクスを監視します"
 
+#: templates/admin/payment_providers/payment_dashboard.html:42
 msgid "Period"
 msgstr "期間"
 
+#: templates/admin/payment_providers/payment_dashboard.html:54
 msgid "From"
 msgstr "開始"
 
+#: templates/admin/payment_providers/payment_dashboard.html:60
 msgid "To"
 msgstr "まで"
 
+#: templates/admin/payment_providers/payment_dashboard.html:72
 msgid "Compare with previous period"
 msgstr "前期間と比較"
 
+#: templates/admin/payment_providers/payment_dashboard.html:83
 msgid "Quick Navigation"
 msgstr "クイックナビゲーション"
 
+#: templates/admin/payment_providers/payment_dashboard.html:86
 msgid "Jump to section..."
 msgstr "セクションへ移動..."
 
+#: templates/admin/payment_providers/payment_dashboard.html:87
+#: templates/admin/payment_providers/payment_dashboard.html:103
 msgid "Actions Required"
 msgstr "必要なアクション"
 
+#: templates/admin/payment_providers/payment_dashboard.html:88
 msgid "Revenue Over Time"
 msgstr "時間ごとの収益"
 
+#: templates/admin/payment_providers/payment_dashboard.html:89
+#: templates/admin/payment_providers/payment_dashboard.html:179
 msgid "Payment Performance"
 msgstr "支払いパフォーマンス"
 
+#: templates/admin/payment_providers/payment_dashboard.html:90
+#: templates/admin/payment_providers/payment_dashboard.html:266
 msgid "Refund Metrics"
 msgstr "返金メトリクス"
 
+#: templates/admin/payment_providers/payment_dashboard.html:91
 msgid "Provider Performance"
 msgstr "プロバイダパフォーマンス"
 
+#: templates/admin/payment_providers/payment_dashboard.html:92
 msgid "Transaction Status"
 msgstr "取引ステータス"
 
+#: templates/admin/payment_providers/payment_dashboard.html:93
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:212
 msgid "Payment Methods"
 msgstr "お支払い方法"
 
+#: templates/admin/payment_providers/payment_dashboard.html:94
+#: templates/admin/payment_providers/payment_dashboard.html:406
 msgid "Recent Transactions"
 msgstr "最近の取引"
 
+#: templates/admin/payment_providers/payment_dashboard.html:95
+#: templates/admin/payment_providers/payment_dashboard.html:464
 msgid "Webhook Statistics"
 msgstr "ウェブフック統計"
 
+#: templates/admin/payment_providers/payment_dashboard.html:111
 msgid "Failed Transactions (7d)"
 msgstr "失敗した取引 (7日間)"
 
+#: templates/admin/payment_providers/payment_dashboard.html:119
 msgid "Pending Captures"
 msgstr "保留中のキャプチャ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:127
 msgid "Pending Refunds"
 msgstr "保留中の返金"
 
+#: templates/admin/payment_providers/payment_dashboard.html:135
 msgid "Connection Errors"
 msgstr "接続エラー"
 
+#: templates/admin/payment_providers/payment_dashboard.html:143
 msgid "Unprocessed Webhooks"
 msgstr "未処理のウェブフック"
 
+#: templates/admin/payment_providers/payment_dashboard.html:153
 msgid "Payment Revenue Over Time"
 msgstr "時間ごとの支払い収益"
 
+#: templates/admin/payment_providers/payment_dashboard.html:157
 msgid "Group by"
 msgstr "グループ化:"
 
+#: templates/admin/payment_providers/payment_dashboard.html:160
 msgid "Day"
 msgstr "日"
 
+#: templates/admin/payment_providers/payment_dashboard.html:163
 msgid "Week"
 msgstr "週"
 
+#: templates/admin/payment_providers/payment_dashboard.html:166
 msgid "Month"
 msgstr "月"
 
+#: templates/admin/payment_providers/payment_dashboard.html:187
 msgid "Total Revenue"
 msgstr "総収益"
 
+#: templates/admin/payment_providers/payment_dashboard.html:203
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:30
 msgid "Total Transactions"
 msgstr "総取引数"
 
+#: templates/admin/payment_providers/payment_dashboard.html:219
+#: templates/admin/payment_providers/payment_dashboard.html:354
 msgid "Success Rate"
 msgstr "成功率"
 
+#: templates/admin/payment_providers/payment_dashboard.html:235
 msgid "Average Transaction"
 msgstr "平均取引"
 
+#: templates/admin/payment_providers/payment_dashboard.html:245
 msgid "Authorized (Not Captured)"
 msgstr "承認済み（キャプチャ未実行）"
 
+#: templates/admin/payment_providers/payment_dashboard.html:255
+#: templates/admin/payment_providers/payment_dashboard.html:274
 msgid "Total Refunded"
 msgstr "返金総額"
 
+#: templates/admin/payment_providers/payment_dashboard.html:290
 msgid "Refund Count"
 msgstr "返金数"
 
+#: templates/admin/payment_providers/payment_dashboard.html:306
 msgid "Refund Rate"
 msgstr "返金率"
 
+#: templates/admin/payment_providers/payment_dashboard.html:317
 msgid "Provider Performance Comparison"
 msgstr "プロバイダパフォーマンス比較"
 
+#: templates/admin/payment_providers/payment_dashboard.html:337
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:127
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:253
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:339
 msgid "Active"
 msgstr "アクティブ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:339
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:72
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:257
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:340
 msgid "Inactive"
 msgstr "非アクティブ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:346
 msgid "Revenue"
 msgstr "売上"
 
+#: templates/admin/payment_providers/payment_dashboard.html:350
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:125
 msgid "Transactions"
 msgstr "取引履歴"
 
+#: templates/admin/payment_providers/payment_dashboard.html:360
 msgid "Avg Amount"
 msgstr "平均金額"
 
+#: templates/admin/payment_providers/payment_dashboard.html:368
 msgid "No payment providers configured"
 msgstr "支払いプロバイダーが設定されていません"
 
+#: templates/admin/payment_providers/payment_dashboard.html:370
 msgid "Setup First Provider"
 msgstr "最初のプロバイダを設定"
 
+#: templates/admin/payment_providers/payment_dashboard.html:383
 msgid "Transaction Status Breakdown"
 msgstr "取引ステータスの概要"
 
+#: templates/admin/payment_providers/payment_dashboard.html:393
 msgid "Payment Methods Distribution"
 msgstr "支払い方法の分布"
 
+#: templates/admin/payment_providers/payment_dashboard.html:412
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:65
 msgid "Transaction ID"
 msgstr "取引ID"
 
+#: templates/admin/payment_providers/payment_dashboard.html:414
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:99
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:73
 msgid "Provider"
 msgstr "プロバイダー"
 
+#: templates/admin/payment_providers/payment_dashboard.html:415
 msgid "Amount"
 msgstr "金額"
 
+#: templates/admin/payment_providers/payment_dashboard.html:416
 msgid "Payment Method"
 msgstr "支払い方法"
 
+#: templates/admin/payment_providers/payment_dashboard.html:418
 msgid "Date"
 msgstr "日付"
 
+#: templates/admin/payment_providers/payment_dashboard.html:451
 msgid "No recent transactions"
 msgstr "最近の取引はありません"
 
+#: templates/admin/payment_providers/payment_dashboard.html:472
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:30
 msgid "Total Webhooks"
 msgstr "総ウェブフック数"
 
+#: templates/admin/payment_providers/payment_dashboard.html:492
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:40
 msgid "Unprocessed"
 msgstr "未処理"
 
+#: templates/admin/payment_providers/payment_dashboard.html:502
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:98
 msgid "Signature Verified"
 msgstr "署名が検証されました"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
 msgid "Add Payment Provider"
 msgstr "支払いプロバイダの追加"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:46
 msgid "Last Tested"
 msgstr "最終テスト"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:86
+#| msgid "Hosted Mode"
+msgid "Test Mode"
+msgstr "テストモード"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:90
+msgid "Live"
+msgstr "ライブ"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:97
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:87
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:215
 msgid "Hosted"
 msgstr "ホスト済み"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:99
 msgid "Embedded"
 msgstr "埋め込み"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:109
 msgid "Settings"
 msgstr "設定"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:113
 msgid "Status & Health"
 msgstr "ステータス & ヘルス"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:117
 msgid "Advanced"
 msgstr "高度な設定"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:133
+#| msgid "Webhook Information"
+msgid "Webhook Endpoint"
+msgstr "ウェブフックエンドポイント"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:135
+msgid ""
+"Configure this URL in your payment provider's dashboard to receive payment "
+"notifications."
+msgstr "支払いプロバイダーのダッシュボードでこのURLを構成して、支払い通知を受け取るようにしてください。"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:138
+msgid "Copy to clipboard"
+msgstr "クリップボードにコピー"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:149
+#| msgid "Payment Dashboard"
+msgid "Provider Dashboard"
+msgstr "プロバイダダッシュボード"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:163
 msgid "Component"
 msgstr "コンポーネント"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:177
 msgid "User"
 msgstr "ユーザー"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:215
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid ""
+"Configure which payment methods are shown to customers at checkout, "
+"organized by country."
+msgstr "チェックアウト時に顧客に表示される支払い方法を設定し、国別に整理します。"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:221
+#| msgid "Last tested:"
+msgid "Last synced:"
+msgstr "最終同期:"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:227
+#| msgid "Basic Configuration"
+msgid "Global configuration active"
+msgstr "グローバル設定が有効"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:232
+#| msgid "No payment providers configured"
+msgid "countries configured"
+msgstr "設定された国"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:237
+msgid "Not configured — all available methods will be shown"
+msgstr "構成されていません - すべての利用可能な方法が表示されます"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:277
 msgid "Connection Status"
 msgstr "接続状態"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:300
 msgid "Last Tested At"
 msgstr "最終テスト日時"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:311
 msgid "Payment Method Sync Status"
 msgstr "支払い方法の同期状態"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:322
 msgid "Last Method Sync At"
 msgstr "最終方法同期日時"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:334
 msgid "Method Sync Error"
 msgstr "方法同期エラー"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:369
+#: templates/admin/payment_providers/wizard/step3_credentials.html:46
+msgid "API Credentials"
+msgstr "API資格情報"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:371
+msgid ""
+"API credentials are encrypted and managed through the setup wizard for "
+"security. To update your API keys or secrets, use the wizard to reconfigure "
+"this provider."
+msgstr ""
+"APIの資格情報はセキュリティのため、セットアップウィザードを通じて暗号化され管理されています。APIキーまたはシークレットを更新するには、このプロバイダの再構成のためにウィザードを使用してください。"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:373
+#| msgid "Enter Your Credentials"
+msgid "Reconfigure Credentials"
+msgstr "資格情報を再構成"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:380
 msgid "Created At"
 msgstr "作成日時"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:390
 msgid "Updated At"
 msgstr "更新日時"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:400
 msgid "Save"
 msgstr "保存"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:401
 msgid "Save and continue editing"
 msgstr "保存して編集を続ける"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:403
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:293
 msgid "Delete"
 msgstr "削除"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:418
 msgid "Select All"
 msgstr "すべて選択"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:419
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:117
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:115
 msgid "Clear All"
 msgstr "すべてクリア"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:18
+#: templates/admin/payment_providers/providers/browse.html:27
 msgid "Payment Provider Accounts"
 msgstr "支払いプロバイダアカウント"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:20
 msgid "Manage payment gateway integrations and API connections"
 msgstr "支払いゲートウェイの統合およびAPI接続を管理します"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:22
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s プロバイダ"
 msgstr[1] "%(counter)s プロバイダ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:23
 msgid "active"
 msgstr "アクティブ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:24
 msgid "connected"
 msgstr "接続済み"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:29
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:305
+#: templates/admin/payment_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr "プロバイダーを閲覧"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:32
 msgid "Setup New Provider"
 msgstr "新しいプロバイダの設定"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:51
 msgid "Search providers..."
 msgstr "プロバイダを検索..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:60
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:76
 msgid "All Statuses"
 msgstr "すべてのステータス"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:65
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:234
 msgid "Error"
 msgstr "エラー"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:74
 msgid "All Active Status"
 msgstr "すべてのアクティブステータス"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:76
 msgid "Active Only"
 msgstr "アクティブのみ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:79
 msgid "Inactive Only"
 msgstr "アクティブでないみなし"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:85
 msgid "All Checkout Modes"
 msgstr "すべてのチェックアウトモード"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:90
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:219
 msgid "Integrated"
 msgstr "統合済み"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:97
 msgid "All Provider Types"
 msgstr "すべてのプロバイダタイプ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:136
 msgid "Hosted Mode"
 msgstr "ホストモード"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:145
 msgid "Integrated Mode"
 msgstr "統合モード"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:155
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:184
 msgid "Default Provider"
 msgstr "デフォルトプロバイダ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:199
 msgid "Provider:"
 msgstr "プロバイダー:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "Last tested:"
 msgstr "最後にテストした:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "ago"
 msgstr "前"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:267
 msgid "Edit"
 msgstr "編集"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:272
+#: templates/admin/payment_providers/wizard/base.html:46
+#: templates/admin/payment_providers/wizard/step4_test.html:13
 msgid "Test Connection"
 msgstr "接続をテスト"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:338
 msgid "Disable"
 msgstr "無効"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:337
 msgid "Enable"
 msgstr "有効"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:288
 msgid "Set as Default"
 msgstr "デフォルトに設定"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:302
 msgid "No Payment Providers Connected"
 msgstr "接続された支払いプロバイダはありません"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:303
 msgid "Get started by connecting your first payment provider"
 msgstr "最初の支払いプロバイダを接続して開始してください"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:308
 msgid "Setup Your First Provider"
 msgstr "最初のプロバイダを設定してください"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:318
 msgid "providers"
 msgstr "プロバイダ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:327
 msgid "Testing..."
 msgstr "テスト中..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:328
 msgid "Setting..."
 msgstr "設定中..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:329
 msgid "Deleting..."
 msgstr "削除中..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:330
 msgid "Connection test failed"
 msgstr "接続テストに失敗しました"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:331
 msgid "Failed to set default"
 msgstr "デフォルトの設定に失敗しました"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:333
 msgid "Failed to delete"
 msgstr "削除に失敗しました"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:334
 msgid "Set this provider as the default payment provider?"
 msgstr "このプロバイダーをデフォルトの支払いプロバイダーに設定しますか？"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:335
 msgid ""
-"Are you sure you want to delete this payment provider? This action cannot be "
-"undone."
-msgstr ""
-"この支払いプロバイダーを削除してもよろしいですか？この操作は元に戻すことがで"
-"きません。"
+"Are you sure you want to delete this payment provider? This action cannot be"
+" undone."
+msgstr "この支払いプロバイダーを削除してもよろしいですか？この操作は元に戻すことができません。"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:336
+#| msgid "Failed to initialize payment provider"
+msgid "Failed to toggle provider"
+msgstr "プロバイダの切り替えに失敗しました"
+
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:4
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:18
 msgid "Payment Transactions"
 msgstr "支払い取引"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:20
 msgid "View and track all payment transactions"
 msgstr "すべての支払いトランザクションを表示およびトラッキングします"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:25
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:25
 msgid "Overview"
 msgstr "概要"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:35
 msgid "Successful"
 msgstr "成功"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:45
 msgid "Refunded"
 msgstr "返金済み"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:54
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:54
 msgid "Filters"
 msgstr "フィルター"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:67
 msgid "Search by transaction ID..."
 msgstr "トランザクションIDで検索..."
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:86
 msgid "Type"
 msgstr "タイプ"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:89
 msgid "All Types"
 msgstr "すべてのタイプ"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:102
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:76
 msgid "All Providers"
 msgstr "すべてのプロバイダ"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:114
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:112
 msgid "Apply Filters"
 msgstr "フィルターを適用"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:128
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:126
 msgid "entries"
 msgstr "件"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:137
 msgid "Loading transactions..."
 msgstr "取引を読み込み中..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:4
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:18
 msgid "Payment Webhooks"
 msgstr "支払いウェブフック"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:20
 msgid "Monitor incoming payment provider webhooks"
 msgstr "入力される支払いプロバイダのウェブフックを監視"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:65
 msgid "Event ID / Type"
 msgstr "イベントID / タイプ"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:67
 msgid "Search by event ID or type..."
 msgstr "イベントIDまたはタイプで検索..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:89
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:101
 msgid "All"
 msgstr "すべて"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:90
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:102
 msgid "Yes"
 msgstr "はい"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:91
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:103
 msgid "No"
 msgstr "いいえ"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:123
+#: templates/admin/payment_providers/providers/browse.html:281
 msgid "Webhooks"
 msgstr "ウェブフック"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:135
 msgid "Loading webhooks..."
 msgstr "ウェブフックを読み込み中..."
 
+#: templates/admin/payment_providers/providers/browse.html:4
+#: templates/admin/payment_providers/providers/browse.html:37
+#: views/provider_browse.py:212
 msgid "Browse Payment Providers"
 msgstr "支払いプロバイダを閲覧"
 
+#: templates/admin/payment_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr "サイト管理者"
 
+#: templates/admin/payment_providers/providers/browse.html:39
 msgid ""
 "Choose a payment provider to integrate with your store. Install new "
 "providers or configure existing ones."
-msgstr ""
-"ストアと統合する支払いプロバイダを選択してください。新しいプロバイダをインス"
-"トールするか、既存のプロバイダを構成してください。"
+msgstr "ストアと統合する支払いプロバイダを選択してください。新しいプロバイダをインストールするか、既存のプロバイダを構成してください。"
 
+#: templates/admin/payment_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr "更新サーバーが利用不可"
 
+#: templates/admin/payment_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
-msgstr ""
-"アップデートサーバーに接続できませんでした。ローカルにインストールされたプロ"
-"バイダーのみを表示しています。"
+msgstr "アップデートサーバーに接続できませんでした。ローカルにインストールされたプロバイダーのみを表示しています。"
 
+#: templates/admin/payment_providers/providers/browse.html:58
 msgid "Payment Provider Marketplace"
 msgstr "支払いプロバイダマーケットプレイス"
 
+#: templates/admin/payment_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payment providers to accept payments from "
 "customers worldwide, including credit cards, digital wallets, and local "
 "payment methods."
 msgstr ""
-"ここでは、世界中のお客様から支払いを受け取るために、クレジットカード、デジタ"
-"ルウォレット、および地域固有の支払い方法を含む支払いプロバイダを発見およびイ"
-"ンストールできます。"
+"ここでは、世界中のお客様から支払いを受け取るために、クレジットカード、デジタルウォレット、および地域固有の支払い方法を含む支払いプロバイダを発見およびインストールできます。"
 
+#: templates/admin/payment_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr "実行できる操作:"
 
+#: templates/admin/payment_providers/providers/browse.html:82
 msgid "Browse available payment providers by country and payment methods"
 msgstr "国や支払い方法ごとに利用可能な支払いプロバイダをブラウズしてください"
 
+#: templates/admin/payment_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr "ワンクリックで新しいプロバイダーをインストールしてください。"
 
+#: templates/admin/payment_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr "インストールされているプロバイダーを最新バージョンに更新してください。"
 
+#: templates/admin/payment_providers/providers/browse.html:94
 msgid "Configure provider settings and API credentials"
 msgstr "プロバイダの設定とAPI資格情報を構成します"
 
+#: templates/admin/payment_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr "開始方法:"
 
+#: templates/admin/payment_providers/providers/browse.html:105
 msgid "Browse providers below and find your payment processor"
 msgstr "以下からプロバイダをブラウズし、支払いプロセッサを検索してください"
 
+#: templates/admin/payment_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr "'インストール'をクリックして、プロバイダをストアに追加してください"
 
+#: templates/admin/payment_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr "API資格情報を構成するために設定に移動してください。"
 
+#: templates/admin/payment_providers/providers/browse.html:108
 msgid "Test the provider with a sample transaction"
 msgstr "サンプルトランザクションでプロバイダをテストしてください"
 
+#: templates/admin/payment_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -1751,6 +2540,7 @@ msgstr[1] ""
 "                    現在: %(total)s つのプロバイダーが利用可能です\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:121
 #, python-format
 msgid ""
 "\n"
@@ -1769,524 +2559,747 @@ msgstr[1] ""
 "                    %(installed)s がインストール済み\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:136
 msgid "Filter by Country:"
 msgstr "国でフィルタ:"
 
+#: templates/admin/payment_providers/providers/browse.html:142
 msgid "All Countries"
 msgstr "すべての国"
 
+#: templates/admin/payment_providers/providers/browse.html:156
 msgid "Active Filter:"
 msgstr "アクティブなフィルタ:"
 
+#: templates/admin/payment_providers/providers/browse.html:163
 msgid "Clear filter"
 msgstr "フィルターをクリア"
 
+#: templates/admin/payment_providers/providers/browse.html:181
 msgid "Update Available"
 msgstr "更新が利用可能です"
 
+#: templates/admin/payment_providers/providers/browse.html:207
 msgid "Installed"
 msgstr "インストール済み"
 
+#: templates/admin/payment_providers/providers/browse.html:222
 msgid "Available"
 msgstr "利用可能"
 
+#: templates/admin/payment_providers/providers/browse.html:245
 msgid "Cards"
 msgstr "カード"
 
+#: templates/admin/payment_providers/providers/browse.html:250
 msgid "Bank"
 msgstr "銀行"
 
+#: templates/admin/payment_providers/providers/browse.html:255
 msgid "Wallets"
 msgstr "ウォレット"
 
+#: templates/admin/payment_providers/providers/browse.html:260
 msgid "Local"
 msgstr "ローカル"
 
+#: templates/admin/payment_providers/providers/browse.html:271
+#: templates/admin/payment_providers/wizard/step1_select.html:94
 msgid "3D Secure"
 msgstr "3Dセキュア"
 
+#: templates/admin/payment_providers/providers/browse.html:276
+#: templates/admin/payment_providers/wizard/step1_select.html:82
 msgid "Refunds"
 msgstr "返金"
 
+#: templates/admin/payment_providers/providers/browse.html:314
 msgid "Update"
 msgstr "更新"
 
+#: templates/admin/payment_providers/providers/browse.html:320
+#: templates/admin/payment_providers/wizard/base.html:54
 msgid "Configure"
 msgstr "設定"
 
+#: templates/admin/payment_providers/providers/browse.html:328
 msgid "Install"
 msgstr "インストール"
 
+#: templates/admin/payment_providers/providers/browse.html:338
 msgid "View Details"
 msgstr "詳細を表示"
 
+#: templates/admin/payment_providers/providers/browse.html:347
 msgid "Learn More"
 msgstr "もっと詳しく"
 
+#: templates/admin/payment_providers/providers/browse.html:361
 msgid "No Providers Available"
 msgstr "利用可能なプロバイダがありません"
 
+#: templates/admin/payment_providers/providers/browse.html:362
 msgid ""
 "No payment providers are currently available. Please check your update "
 "server connection or contact support."
-msgstr ""
-"現在利用可能な支払いプロバイダはございません。更新サーバーの接続を確認する"
-"か、サポートにお問い合わせください。"
+msgstr "現在利用可能な支払いプロバイダはございません。更新サーバーの接続を確認するか、サポートにお問い合わせください。"
 
+#: templates/admin/payment_providers/providers/browse.html:371
 msgid "Installing provider..."
 msgstr "プロバイダーのインストール中..."
 
+#: templates/admin/payment_providers/wizard/base.html:13
 msgid "Connect Payment Provider"
 msgstr "支払いプロバイダーを接続"
 
+#: templates/admin/payment_providers/wizard/base.html:14
 msgid "Follow these steps to connect your payment provider account"
-msgstr ""
-"支払いプロバイダのアカウントを接続するためにこれらの手順に従ってください"
+msgstr "支払いプロバイダのアカウントを接続するためにこれらの手順に従ってください"
 
+#: templates/admin/payment_providers/wizard/base.html:22
 msgid "Select Provider"
 msgstr "プロバイダを選択"
 
+#: templates/admin/payment_providers/wizard/base.html:30
 msgid "Setup Instructions"
 msgstr "設定手順"
 
+#: templates/admin/payment_providers/wizard/base.html:38
 msgid "Enter Credentials"
 msgstr "資格情報を入力"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:6
 msgid "Select a Payment Provider"
 msgstr "支払いプロバイダーを選択"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:7
 msgid "Choose the payment provider you want to connect to your store."
 msgstr "ストアに接続したい支払いプロバイダを選択してください。"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:20
+#, python-format
+#| msgid ""
+#| "\n"
+#| "                    Currently: %(total)s provider available\n"
+#| "                "
+#| msgid_plural ""
+#| "\n"
+#| "                    Currently: %(total)s providers available\n"
+#| "                "
+msgid ""
+"\n"
+"                %(counter)s payment provider needs repair\n"
+"                "
+msgid_plural ""
+"\n"
+"                %(counter)s payment providers need repair\n"
+"                "
+msgstr[0] ""
+"\n"
+"                %(counter)s 支払いプロバイダの修理が必要です\n"
+"                "
+msgstr[1] ""
+"\n"
+"                    現在: %(total)s つのプロバイダーが利用可能です\n"
+"                "
+
+#: templates/admin/payment_providers/wizard/step1_select.html:27
+msgid ""
+"These providers are registered but their files are missing on disk. Click "
+"Reinstall to download a fresh copy from the update server."
+msgstr ""
+"これらのプロバイダは登録されていますが、ディスク上にファイルがありません。再インストールをクリックして、アップデートサーバーから新しいコピーをダウンロードしてください。"
+
+#: templates/admin/payment_providers/wizard/step1_select.html:39
+#| msgid "Install"
+msgid "Reinstall"
+msgstr "再インストール"
+
+#: templates/admin/payment_providers/wizard/step1_select.html:76
 msgid "Recurring"
 msgstr "定期的な"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:88
 msgid "International"
 msgstr "国際的な"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:100
 msgid "Digital Wallets"
 msgstr "デジタルウォレット"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:115
 msgid "No Payment Providers Available"
 msgstr "利用可能な支払いプロバイダーはありません"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:116
 msgid ""
 "Install payment provider components from the Component Manager to get "
 "started."
-msgstr ""
-"開始するためにコンポーネントマネージャーから支払いプロバイダのコンポーネント"
-"をインストールしてください。"
+msgstr "開始するためにコンポーネントマネージャーから支払いプロバイダのコンポーネントをインストールしてください。"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:118
 msgid "Browse Components"
 msgstr "コンポーネントを閲覧"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:130
 msgid "Cancel"
 msgstr "キャンセル"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:133
+#: templates/admin/payment_providers/wizard/step2_setup.html:80
+#: templates/admin/payment_providers/wizard/step3_credentials.html:223
+#: templates/admin/payment_providers/wizard/step4_test.html:119
 msgid "Continue"
 msgstr "次へ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:14
 msgid "Follow these instructions to set up your account"
 msgstr "これらの手順に従ってアカウントを設定してください"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:24
 msgid "Setup Information"
 msgstr "設定情報"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:31
 msgid "Create an Account"
 msgstr "アカウントを作成"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "If you don't already have an account with"
 msgstr "すでにアカウントをお持ちでない場合は"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "you'll need to create one."
 msgstr "作成する必要があります。"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:36
 msgid "Sign Up for"
 msgstr "にサインアップ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:45
 msgid "Get Your API Credentials"
 msgstr "API資格情報を取得"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid "Log in to your"
 msgstr "あなたの"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid ""
 "dashboard and navigate to the API or Developer section to obtain your "
 "credentials."
-msgstr ""
-"ダッシュボードにアクセスし、APIまたは開発者セクションに移動して、資格情報を取"
-"得してください。"
+msgstr "ダッシュボードにアクセスし、APIまたは開発者セクションに移動して、資格情報を取得してください。"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:53
 msgid "Copy Your Credentials"
 msgstr "資格情報をコピー"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:54
 msgid "Have your API credentials ready. You'll need them in the next step."
 msgstr "APIの資格情報を用意してください。次のステップで必要になります。"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:62
 msgid "Security Note"
 msgstr "セキュリティに関する注意"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:63
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored. They are never stored in plain text."
-msgstr ""
-"資格情報は保存される前にAES-256暗号化で暗号化されます。平文で保存されることは"
-"ありません。"
+msgstr "資格情報は保存される前にAES-256暗号化で暗号化されます。平文で保存されることはありません。"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:75
+#: templates/admin/payment_providers/wizard/step3_credentials.html:220
+#: templates/admin/payment_providers/wizard/step4_test.html:116
+#: templates/admin/payment_providers/wizard/step5_configure.html:196
 msgid "Back"
 msgstr "戻る"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:13
 msgid "Enter Your Credentials"
 msgstr "資格情報を入力"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "Provide your"
 msgstr "あなたの"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "API credentials"
 msgstr "API資格情報"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:25
+#: templates/admin/payment_providers/wizard/step5_configure.html:25
 msgid "Please correct the errors below:"
 msgstr "以下のエラーを修正してください:"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:38
+#: templates/admin/payment_providers/wizard/step3_credentials.html:231
 msgid "TEST MODE"
 msgstr "テストモード"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:39
+#: templates/admin/payment_providers/wizard/step3_credentials.html:232
 msgid "Using test credentials - no real transactions"
 msgstr "テスト用の資格情報を使用中 - 実際の取引は発生しません"
 
-msgid "API Credentials"
-msgstr "API資格情報"
-
+#: templates/admin/payment_providers/wizard/step3_credentials.html:166
 msgid "This provider does not require additional credentials."
 msgstr "このプロバイダは追加の資格情報は必要ありません。"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:173
 msgid "Basic Configuration"
 msgstr "基本設定"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:178
 msgid "Display Name"
 msgstr "表示名"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:189
 msgid "A friendly name to identify this payment provider connection"
 msgstr "この支払いプロバイダ接続を識別するためのフレンドリな名前"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:199
 msgid "Hosted - Redirect to provider (recommended)"
 msgstr "ホスト済み - プロバイダにリダイレクト (推奨)"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:204
 msgid ""
 "How customers will complete payment. Hosted mode is more secure and easier "
 "to maintain."
 msgstr "顧客が支払いを完了する方法。ホストモードはより安全で、管理が簡単です。"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:211
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database. They are never stored in plain text."
-msgstr ""
-"資格情報はデータベースに保存される前にAES-256暗号化で暗号化されます。平文で保"
-"存されることはありません。"
+msgstr "資格情報はデータベースに保存される前にAES-256暗号化で暗号化されます。平文で保存されることはありません。"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:233
 msgid "PRODUCTION MODE"
 msgstr "本番モード"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:234
 msgid "Using live credentials - real transactions!"
 msgstr "本番用の資格情報を使用中 - 実際の取引が発生します！"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "Verify your"
 msgstr "あなたの"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:26
 msgid "Connection Successful!"
 msgstr "接続に成功しました！"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "Your"
 msgstr "あなたの"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "account has been verified and is ready to use."
 msgstr "アカウントが確認済みで、使用準備ができています。"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:31
 msgid "Account Information"
 msgstr "アカウント情報"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:34
 msgid "Account ID"
 msgstr "アカウントID"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:39
 msgid "Email"
 msgstr "メール"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:44
 msgid "Country"
 msgstr "国"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:49
 msgid "Default Currency"
 msgstr "デフォルト通貨"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:54
 msgid "Account Status"
 msgstr "アカウントステータス"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:68
 msgid "Connection Failed"
 msgstr "接続に失敗しました"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:69
 msgid ""
-"Unable to connect to the payment provider. Please check your credentials and "
-"try again."
-msgstr ""
-"支払いプロバイダに接続できません。資格情報を確認し、再度お試しください。"
+"Unable to connect to the payment provider. Please check your credentials and"
+" try again."
+msgstr "支払いプロバイダに接続できません。資格情報を確認し、再度お試しください。"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:73
 msgid "Technical Details"
 msgstr "技術的詳細"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:79
 msgid "Troubleshooting Tips"
 msgstr "トラブルシューティングのヒント"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:81
 msgid "Verify that your API credentials are correct"
 msgstr "APIの資格情報が正しいことを確認してください"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:82
 msgid "Check that your account is active with the payment provider"
 msgstr "支払いプロバイダでのアカウントがアクティブであることを確認してください"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:83
 msgid "Ensure you're using the correct environment (test/production)"
 msgstr "正しい環境（テスト/本番）を使用していることを確認してください"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:84
 msgid "Verify that your IP address is not blocked by the provider"
-msgstr ""
-"IPアドレスがプロバイダによってブロックされていないことを確認してください"
+msgstr "IPアドレスがプロバイダによってブロックされていないことを確認してください"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:97
 msgid "Testing Connection..."
 msgstr "接続テスト中..."
 
+#: templates/admin/payment_providers/wizard/step4_test.html:98
 msgid "Please wait while we verify your credentials with"
 msgstr "資格情報を確認するため、お待ちください"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:123
 msgid "Edit Credentials"
 msgstr "資格情報を編集"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:126
 msgid "Retry Test"
 msgstr "テストを再試行"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:13
 msgid "Configure Provider"
 msgstr "プロバイダーの設定"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "Finalize your"
 msgstr "あなたの"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:33
 msgid "Activation"
 msgstr "アクティベーション"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:42
 msgid "Enable this payment provider for checkout"
 msgstr "この支払いプロバイダをチェックアウトで使用可能にします"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:46
 msgid ""
 "When enabled, customers will be able to use this payment method during "
 "checkout."
-msgstr ""
-"有効にすると、顧客はチェックアウト時にこの支払い方法を使用できるようになりま"
-"す。"
+msgstr "有効にすると、顧客はチェックアウト時にこの支払い方法を使用できるようになります。"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:56
 msgid "Set as default payment provider"
 msgstr "デフォルトの支払いプロバイダーに設定"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:60
 msgid ""
-"The default provider will be pre-selected during checkout. You can only have "
-"one default provider."
-msgstr ""
-"チェックアウト時にデフォルトプロバイダが事前に選択されます。デフォルトプロバ"
-"イダは1つだけ設定できます。"
+"The default provider will be pre-selected during checkout. You can only have"
+" one default provider."
+msgstr "チェックアウト時にデフォルトプロバイダが事前に選択されます。デフォルトプロバイダは1つだけ設定できます。"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:67
 msgid "Display Order"
 msgstr "表示順"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:72
 msgid "Sort Order"
 msgstr "並び順"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:82
 msgid ""
 "Lower numbers appear first in the checkout payment method list. Use this to "
 "control the order of payment options."
-msgstr ""
-"チェックアウトの支払い方法リストでは、番号が小さい順に表示されます。支払いオ"
-"プションの順序を制御するために使用してください。"
+msgstr "チェックアウトの支払い方法リストでは、番号が小さい順に表示されます。支払いオプションの順序を制御するために使用してください。"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:90
 msgid "Advanced Settings"
 msgstr "詳細設定"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:167
 msgid "Webhook Configuration"
 msgstr "ウェブフックの設定"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid ""
 "To receive real-time payment notifications, configure the following webhook "
 "URL in your"
-msgstr ""
-"リアルタイムの支払い通知を受信するには、以下のウェブフックURLをあなたの"
+msgstr "リアルタイムの支払い通知を受信するには、以下のウェブフックURLをあなたの"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid "dashboard:"
 msgstr "ダッシュボード:"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:176
 msgid "Copy"
 msgstr "コピー"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:183
 msgid "Important"
 msgstr "重要"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:184
 msgid ""
-"Webhooks allow your store to receive instant notifications when payments are "
-"completed, refunded, or encounter issues. Configure this in your payment "
+"Webhooks allow your store to receive instant notifications when payments are"
+" completed, refunded, or encounter issues. Configure this in your payment "
 "provider's dashboard to ensure smooth operation."
 msgstr ""
-"ウェブフックは、支払いが完了、返金、または問題が発生したときに、あなたのスト"
-"アに即時通知を送信できます。スムーズな運用を保証するために、支払いプロバイダ"
-"のダッシュボードでこれを設定してください。"
+"ウェブフックは、支払いが完了、返金、または問題が発生したときに、あなたのストアに即時通知を送信できます。スムーズな運用を保証するために、支払いプロバイダのダッシュボードでこれを設定してください。"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:199
 msgid "Complete Setup"
 msgstr "セットアップを完了"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:208
 msgid "Copied!"
 msgstr "コピーしました！"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:209
 msgid "Failed to copy to clipboard. Please copy manually."
 msgstr "クリップボードへのコピーに失敗しました。手動でコピーしてください。"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:210
 msgid ""
 "Setting this as the default will remove the default status from any other "
 "payment provider. Continue?"
-msgstr ""
-"これをデフォルトに設定すると、他の支払いプロバイダのデフォルトステータスが削"
-"除されます。続行しますか？"
+msgstr "これをデフォルトに設定すると、他の支払いプロバイダのデフォルトステータスが削除されます。続行しますか？"
 
-msgid "Cannot set as default while inactive. Please enable the provider first."
-msgstr ""
-"無効な状態ではデフォルトに設定できません。まずプロバイダを有効にしてくださ"
-"い。"
+#: templates/admin/payment_providers/wizard/step5_configure.html:211
+msgid ""
+"Cannot set as default while inactive. Please enable the provider first."
+msgstr "無効な状態ではデフォルトに設定できません。まずプロバイダを有効にしてください。"
 
+#: views/handlers.py:111
 msgid "Provider not found"
 msgstr "プロバイダーが見つかりません"
 
+#: views/payment_dashboard.py:118
 msgid "Today"
 msgstr "今日"
 
+#: views/payment_dashboard.py:119
 msgid "Yesterday"
 msgstr "昨日"
 
+#: views/payment_dashboard.py:120
 msgid "Last 7 Days"
 msgstr "過去7日間"
 
+#: views/payment_dashboard.py:121
 msgid "Last 30 Days"
 msgstr "過去30日"
 
+#: views/payment_dashboard.py:122
 msgid "This Month"
 msgstr "今月"
 
+#: views/payment_dashboard.py:123
 msgid "Last Month"
 msgstr "先月"
 
+#: views/payment_dashboard.py:124
 msgid "This Quarter"
 msgstr "今期"
 
+#: views/payment_dashboard.py:125
 msgid "Last Quarter"
 msgstr "前期"
 
+#: views/payment_dashboard.py:126
 msgid "This Year / YTD"
 msgstr "今年 / 年間累計"
 
+#: views/payment_dashboard.py:127
 msgid "Last Year"
 msgstr "昨年"
 
+#: views/payment_dashboard.py:128
 msgid "Custom Range"
 msgstr "カスタム範囲"
 
+#: views/provider_browse.py:62
 msgid ""
 "Could not fetch providers from update server. Showing installed providers "
 "only."
-msgstr ""
-"アップデートサーバーからプロバイダを取得できませんでした。インストールされて"
-"いるプロバイダのみを表示しています。"
+msgstr "アップデートサーバーからプロバイダを取得できませんでした。インストールされているプロバイダのみを表示しています。"
 
+#: views/provider_browse.py:269
 msgid "Provider is already installed"
 msgstr "プロバイダーはすでにインストールされています"
 
+#: views/provider_browse.py:306
 msgid "Provider not found on update server."
 msgstr "更新サーバー上にプロバイダが見つかりません。"
 
+#: views/provider_browse.py:316
 msgid "Could not determine provider version."
 msgstr "プロバイダーのバージョンを特定できませんでした。"
 
+#: views/provider_browse.py:338
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "プロバイダのダウンロードに失敗しました: %(error)s"
 
+#: views/provider_browse.py:351
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "プロバイダのインストールに失敗しました: %(error)s"
 
+#: views/provider_browse.py:389
 #, python-format
 msgid "Provider %(name)s installed successfully"
 msgstr "プロバイダ %(name)s が正常にインストールされました"
 
+#: views/provider_browse.py:398
 #, python-format
 msgid "Installation failed: %(error)s"
 msgstr "インストールに失敗しました: %(error)s"
 
+#: views/provider_browse.py:424
 msgid "Provider not installed"
 msgstr "プロバイダーがインストールされていません"
 
+#: views/provider_browse.py:437
 msgid "Could not find latest version on update server"
 msgstr "アップデートサーバーで最新バージョンを確認できませんでした。"
 
+#: views/provider_browse.py:450
 #, python-format
 msgid "Provider updated successfully to v%(version)s"
 msgstr "プロバイダが v%(version)s に正常に更新されました"
 
+#: views/provider_browse.py:456
 msgid "Update failed"
 msgstr "更新に失敗しました"
 
+#: views/wizard.py:104
+msgid "Provider files missing on disk"
+msgstr "プロバイダーのファイルがディスク上にありません"
+
+#: views/wizard.py:115
+#| msgid "Provider account not found"
+msgid "Provider manifest could not be loaded"
+msgstr "プロバイダーマニフェストの読み込みに失敗しました"
+
+#: views/wizard.py:127
+#| msgid "Provider not installed"
+msgid "Provider manifest is empty or invalid"
+msgstr "プロバイダーマニフェストが空または無効です"
+
+#: views/wizard.py:144
 msgid "Connect Payment Provider - Select Provider"
 msgstr "支払いプロバイダの接続 - プロバイダの選択"
 
+#: views/wizard.py:157
 msgid "Please select a provider."
 msgstr "プロバイダーを選択してください。"
 
+#: views/wizard.py:165
 msgid "Invalid provider selected."
 msgstr "無効なプロバイダーが選択されています。"
 
+#: views/wizard.py:193 views/wizard.py:262
 msgid "Please select a provider first."
 msgstr "まずプロバイダーを選択してください。"
 
+#: views/wizard.py:222 views/wizard.py:279
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "プロバイダーの読み込みエラー: %(error)s"
 
+#: views/wizard.py:232
 msgid "Connect Payment Provider - Setup Instructions"
 msgstr "支払いプロバイダの接続 - 設定手順"
 
+#: views/wizard.py:273
 msgid "Could not load provider configuration."
 msgstr "プロバイダの設定を読み込めませんでした。"
 
+#: views/wizard.py:293
 msgid "Connect Payment Provider - Enter Credentials"
 msgstr "支払いプロバイダの接続 - 認証情報を入力"
 
+#: views/wizard.py:321
 msgid "Error loading provider configuration."
 msgstr "プロバイダ構成の読み込み中にエラーが発生しました。"
 
+#: views/wizard.py:333
 msgid "Display name is required."
 msgstr "表示名は必須です。"
 
+#: views/wizard.py:364
 msgid "Please complete previous steps first."
 msgstr "まず前のステップを完了してください。"
 
+#: views/wizard.py:377 views/wizard.py:495
 msgid "Provider not found."
 msgstr "プロバイダが見つかりません。"
 
+#: views/wizard.py:381
 msgid "Connect Payment Provider - Test Connection"
 msgstr "支払いプロバイダの接続 - 接続テスト"
 
+#: views/wizard.py:408
 msgid "Provider implementation not found."
 msgstr "プロバイダの実装が見つかりません。"
 
+#: views/wizard.py:478
 msgid "Please complete all previous steps."
 msgstr "すべての前のステップを完了してください。"
 
+#: views/wizard.py:499
 msgid "Connect Payment Provider - Configure"
 msgstr "支払いプロバイダーを接続 - 設定"
 
+#: views/wizard.py:578
 #, python-format
 msgid "Payment provider \"%(name)s\" connected successfully!"
 msgstr "支払いプロバイダ \"%(name)s\" が正常に接続されました！"
 
+#: views/wizard.py:603
+#, python-format
+msgid ""
+"Provider was saved but payment methods could not be auto-synced (%(error)s)."
+" The provider will not appear at checkout until methods are synced — try the"
+" \"Sync methods\" action on the provider list."
+msgstr ""
+"プロバイダーは保存されましたが、支払い方法の自動同期に失敗しました "
+"(%(error)s)。方法が同期されるまで、プロバイダーはチェックアウトに表示されません — プロバイダー一覧で \"Sync methods\" "
+"アクションを試してください。"
+
+#: views/wizard.py:618
 #, python-format
 msgid "Error saving provider: %(error)s"
 msgstr "プロバイダの保存にエラーが発生しました: %(error)s"
+
+#~ msgid "Payment Configuration"
+#~ msgstr "支払い設定"
+
+#~ msgid "Enabled Payment Methods"
+#~ msgstr "有効な支払い方法"
+
+#~ msgid ""
+#~ "Select payment methods to offer customers. Leave empty for all available "
+#~ "methods."
+#~ msgstr "顧客に提供する支払い方法を選択してください。空のままにするとすべての利用可能な方法が表示されます。"
+
+#~ msgid "Enable or disable payment methods per country"
+#~ msgstr "国ごとに支払い方法を有効または無効にします"
+
+#~ msgid "No Shipping Countries Configured"
+#~ msgstr "配送可能な国が設定されていません"
+
+#~ msgid ""
+#~ "Configure shipping countries first to set up payment methods per country."
+#~ msgstr "支払い方法を国ごとに設定するには、まず配送可能な国を設定してください。"
+
+#~ msgid ""
+#~ "Toggle payment methods on or off for each country. Changes are saved "
+#~ "automatically."
+#~ msgstr "各国の支払い方法をオンまたはオフに切り替えられます。変更は自動的に保存されます。"

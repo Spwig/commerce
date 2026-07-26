@@ -10,6 +10,38 @@ matches your change before you write code.
 
 ---
 
+## ⚠️ This file is PUBLIC — read before editing it
+
+`CLAUDE.md` is tracked in git and ships in the public AGPL repository.
+Anything you add here is published to everyone, permanently, and cannot be
+recalled by a later delete — it stays in history.
+
+It is deliberately tracked (see `.gitignore`) so that contributors working
+in a fresh clone get the same design invariants the maintainers use. That
+only works if it stays free of anything install-specific.
+
+**Never add to this file:**
+
+- Absolute filesystem paths (`/mnt/...`, `/home/...`, `C:\...`). Use
+  repo-relative paths.
+- Hostnames, IP addresses, ports, or fleet/server topology.
+- Credentials, tokens, keys, or anything resembling one.
+- Links to paths that are gitignored — `.claude/`, `.claude_code/`,
+  `internal_tools/`, `docs/`. A link a public clone cannot follow is worse
+  than no link, and describing tooling that does not ship misleads
+  contributors into trying to use it.
+- Customer, merchant, or employee names; support tickets; revenue figures.
+- Anything you would not put in a public README.
+
+**Before you edit it, ask:** is this rule true for anyone who clones this
+repo, or only true on this machine? Only the first kind belongs here.
+Machine-specific notes belong in your own ignored config.
+
+`make check-claude-md` (also run by pre-commit and CI) enforces the
+mechanical half of this. It cannot judge the rest — that is on you.
+
+---
+
 ## What Spwig is
 
 Self-hosted e-commerce platform. Django 5, PostgreSQL, Redis, Docker.
@@ -105,12 +137,12 @@ webhooks, no language prefix)?
 
 ```python
 # non-i18n
-path('api/set-currency/', set_currency, name='set_currency')
+path("api/set-currency/", set_currency, name="set_currency")
 
 # i18n
 urlpatterns += i18n_patterns(
-    path('admin/loyalty/', include('loyalty.urls')),
-    path('admin/', admin.site.urls),
+    path("admin/loyalty/", include("loyalty.urls")),
+    path("admin/", admin.site.urls),
 )
 ```
 
@@ -292,6 +324,48 @@ Don't duplicate tier 2 rules in app CSS.
 
 - Third-party JS libs go in `core/static/core/js/vendor/`.
 - Never load from CDNs — serve locally for CSP compliance.
+
+### Storefront overlays must never live inside `<header>`
+
+Any element meant to cover the viewport — modal, drawer, backdrop,
+full-screen search — must be a **sibling** of `<header class="site-header">`,
+never a descendant. Two independent traps otherwise apply:
+
+1. `.site-header` is `position: sticky` with a `z-index`, so it forms a
+   **stacking context**. A child's `z-index: 1050` is capped at the header's
+   own layer, and body-level elements (cookie banner at 9999, storefront
+   modal at 1050) paint over it regardless.
+2. Any `transform`, `filter`, `backdrop-filter`, `will-change`, `contain`, or
+   `perspective` on the header or one of its zones makes it the **containing
+   block** for `position: fixed` descendants, collapsing a full-screen overlay
+   into the header strip. Verified in both Blink and WebKit: a 390×664
+   backdrop became 390×76. The dormant `[data-glass-effect]` rule in
+   `header-preset-zones.css` would do exactly this if wired up.
+
+Do **not** put `overflow-x` on `.site-header` either — `overflow-x: hidden`
+computes `overflow-y` to `auto`, making the header a scroll container that
+clips every dropdown hanging below it (account menu, search autocomplete, nav
+dropdowns). Contain overflow on `.header-zone__inner` instead.
+
+**How to comply:**
+
+- Static markup (mobile menu, announcement modal) → render after `</header>`
+  in `design/templates/design/components/header.html`. The mini-cart already
+  does this from `page_builder/base.html`.
+- Widget-rendered overlays that can't be moved in the template → portal them
+  at runtime with `window.SpwigPortal.mount(nodes, hostClass, {lockScroll})`
+  from `design/static/design/js/overlay-portal.js`, and `unmount()` on close.
+  Pass a **hardcoded** host class (not `widget.className`, which carries
+  merchant-controlled `css_classes`) so descendant CSS keeps matching.
+- Locking scroll → use `SpwigPortal.lockScroll()` / `unlockScroll()`.
+  `document.body.style.overflow = 'hidden'` does **not** hold on iOS Safari.
+- Full-height overlays → pair `100vh` with a `100dvh` line; bare `100vh` sits
+  under the iOS browser chrome.
+
+Regression coverage lives in `tests/e2e/test_header_overlays.py` and runs
+against **both** Chromium and WebKit — WebKit is the only local proxy for iOS
+Safari, and all iOS browsers (including Edge and Chrome) are WKWebView, so an
+iOS-only bug is an engine-level bug.
 
 ---
 
@@ -584,8 +658,16 @@ attribute only. Static styles go external.
 6. Regenerate docs after changes:
    ```bash
    ./manage.py generate_internal_api_docs
-   ./manage.py spectacular --format openapi-json > api-schema.json
+   ./manage.py spectacular --file api-schema.yml
+   ./manage.py spectacular --format openapi-json --file api-schema.json
    ```
+
+   `api-schema.yml` at the repo root is the **versioned API contract** — the
+   SDK type generator reads it, and the `schema-freshness` CI job fails the
+   build if it drifts from the code. Regenerate and commit BOTH files with any
+   endpoint change. Never write schema files under `docs/` — that directory
+   is gitignored, so anything there is invisible to version control and will
+   silently go stale.
 
 ### Admin API (mobile app) — `/api/admin/`
 
@@ -737,6 +819,75 @@ Consult the affiliate app's own docs before making changes.
 
 ---
 
+## Required follow-up work
+
+Some changes are not finished when the code compiles. The checklists below
+say which changes oblige which follow-up. They apply to every contributor —
+do the work yourself, or delegate it to whatever tooling you use.
+
+If you are an AI assistant, prefer a subagent for these so the review is
+done with fresh context rather than by the same pass that wrote the code.
+Maintainers keep local agent configurations that automate this; those
+configs are not part of the public repository, so do not assume a
+particular agent name or dispatch mechanism exists.
+
+### Help documentation
+
+**Trigger** — before finishing, if any of these paths were
+edited/created and no matching update to `help_content/` was made:
+
+- `templates/admin/**/*.html`
+- `**/admin.py` (Django admin classes)
+- `**/views/admin*.py` or `**/views.py` when the view backs an admin
+  page
+- Admin CSS: `core/static/core/admin/**/*.css` or any app CSS scoped
+  to admin (`.admin-*`, `.change-*` selectors)
+- New admin URL patterns
+
+Write the merchant-facing help content, including screenshots and correct
+file placement under `help_content/`.
+
+**Skip** if the change is invisible to merchants (rename of a private
+helper, adding a comment, log line, non-admin URL, etc.).
+
+### Security review
+
+**Trigger** — before finishing, if any of these were touched:
+
+- `**/views.py`, `**/api_views.py`, `**/viewsets.py`
+- `**/forms.py`, `**/serializers.py`
+- `**/middleware.py` or middleware wiring in settings
+- `**/authentication.py`, `**/permissions.py`, anything under
+  `accounts/`
+- `payment_methods/**`, `payments/**`
+- CSP config, cookie config, session config, or `SECURE_*` settings
+- `**/templates/**/*.html` where user-authored content is rendered
+- File-upload handling
+- SQL via `.raw()` / `.extra()` / cursors
+- Frontend JS that touches auth, payment, or user input
+
+Review the change for the CSP / injection / auth pattern violations
+listed in the *Security & CSP hardening* section above. `/security-review`
+covers this if you have no other tooling.
+
+### Tests
+
+**Trigger** — after adding a new model, view, service, form, or
+management command, or after a non-trivial refactor of any of the
+above. Also after fixing a bug that could recur — that one ships with a
+regression test.
+
+Write tests against the changed surfaces. If an AI assistant wrote the
+code, have something other than that same pass write the tests.
+
+### Themes
+
+Theme work belongs in the separate components repository, not here. Do
+not apply theme conventions to in-repo admin CSS — see
+*Theme tokens workflow* above.
+
+---
+
 ## Final reminders for AI execution
 
 1. **Map the change to the sections above before writing code.** If a
@@ -746,5 +897,8 @@ Consult the affiliate app's own docs before making changes.
    `AdminTabs`, `AdminListFilters`, `admin-base.css` — check what
    exists before rolling your own.
 4. **Keep it theme-aware, responsive, and i18n-ready.**
-5. **Update this file when new rules emerge** so future runs stay
-   aligned.
+5. **Do the required follow-up before finishing** — see the *Required
+   follow-up work* section above. Skipping it is a correctness failure,
+   not a style choice.
+6. **Update this file when new rules emerge** so future runs stay
+   aligned — but read the notice at the top first. This file is public.

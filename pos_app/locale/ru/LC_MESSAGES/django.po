@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,47 +20,86 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14) ? 2 : 3);\n"
 
+#: admin.py:45 templates/admin/pos_app/posterminal/change_form.html:122
+#: templates/admin/pos_app/posterminalreader/change_form.html:90
+#: templates/admin/pos_app/posterminalreader/change_form.html:331
+#: templates/admin/pos_app/storegroup/change_form.html:107
 msgid "Basic Information"
 msgstr "Базовая информация"
 
+#: admin.py:52 templates/admin/pos_app/posterminal/change_form.html:160
+#: templates/admin/pos_app/posterminal/change_form.html:432
 msgid "Device Pairing"
 msgstr "Сопряжение устройств"
 
+#: admin.py:59 templates/admin/pos_app/posterminal/change_form.html:199
 msgid "Hardware Configuration"
 msgstr "Настройка оборудования"
 
+#: admin.py:66 templates/admin/pos_app/posterminal/change_form.html:107
+#: templates/admin/pos_app/posterminal/change_form.html:238
 msgid "Sync & Cache"
 msgstr "Синхронизация и кэш"
 
+#: admin.py:73 templates/admin/pos_app/posterminal/change_form.html:277
+#: templates/admin/pos_app/posterminal/change_form.html:509
 msgid "Staff Assignment"
 msgstr "Назначение сотрудника"
 
+#: admin.py:80 admin.py:148 admin.py:403 admin.py:591
+#: templates/admin/pos_app/posterminal/change_form.html:115
+#: templates/admin/pos_app/posterminal/change_form.html:315
+#: templates/admin/pos_app/posterminal/change_list.html:155
+#: templates/admin/pos_app/posterminalprovider/change_list.html:61
+#: templates/admin/pos_app/posterminalreader/change_form.html:52
+#: templates/admin/pos_app/posterminalreader/change_list.html:102
+#: templates/admin/pos_app/promoslide/change_list.html:68
+#: templates/admin/pos_app/storegroup/change_list.html:71
 msgid "Status"
 msgstr "Статус"
 
+#: admin.py:142
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:71
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:77
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:87
 msgid "Never"
 msgstr "Никогда"
 
+#: admin.py:145 models.py:602
+#: templates/admin/pos_app/posterminal/change_form.html:56
+#: templates/admin/pos_app/posterminal/change_list.html:171
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:36
+#: templates/admin/pos_app/posterminalreader/change_list.html:106
+#: templates/admin/pos_app/posterminalreader/change_list.html:176
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:38
 msgid "Online"
 msgstr "Онлайн"
 
+#: admin.py:146
 #, python-format
 msgid "Offline (%s ago)"
 msgstr "Офлайн (%s назад)"
 
+#: admin.py:153 models.py:1209
+#: templates/admin/pos_app/posterminal/change_form.html:111
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:58
 msgid "Staff"
 msgstr "Сотрудник"
 
+#: admin.py:157
 msgid "Regenerate pairing codes"
 msgstr "Перегенерировать коды сопряжения"
 
+#: admin.py:162
 #, python-format
 msgid "Pairing codes regenerated for %d terminals."
 msgstr "Коды сопоставления были перегенерированы для %d терминалов."
 
+#: admin.py:165
 msgid "Unlock terminal (remote)"
 msgstr "Разблокировать терминал (удаленно)"
 
+#: admin.py:170
 #, python-format
 msgid ""
 "Remote unlock signal sent to %d terminal(s). They will unlock within a few "
@@ -69,9 +108,11 @@ msgstr ""
 "Сигнал дистанционного разблокирования отправлен на %d терминал(ы). Они "
 "разблокируются через несколько секунд."
 
+#: admin.py:197 templates/admin/pos_app/storegroup/change_form.html:138
 msgid "Regional Settings"
 msgstr "Региональные настройки"
 
+#: admin.py:202
 msgid ""
 "Settings applied to all stores in this group. Blank = inherit from site "
 "default."
@@ -79,74 +120,106 @@ msgstr ""
 "Настройки применяются ко всем магазинам в этой группе. Пусто = наследовать "
 "от сайта по умолчанию."
 
+#: admin.py:207 templates/admin/pos_app/storegroup/change_form.html:96
 msgid "Advanced"
 msgstr "Расширенные"
 
+#: admin.py:211 models.py:63
+#: templates/admin/pos_app/storegroup/change_form.html:162
 msgid "Additional group-level settings as JSON."
 msgstr "Дополнительные настройки на уровне группы в формате JSON."
 
+#: admin.py:215 templates/admin/pos_app/storegroup/change_form.html:186
 msgid "Metadata"
 msgstr "Метаданные"
 
+#: admin.py:230
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:52
 msgid "Stores"
 msgstr "Магазины"
 
+#: admin.py:248
 msgid "(Site Default)"
 msgstr "(По умолчанию для сайта)"
 
+#: admin.py:250 templates/admin/pos_app/storegroup/change_list.html:58
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:32
 msgid "Currency"
 msgstr "Валюта"
 
+#: admin.py:302
 msgid "Component"
 msgstr "Компонент"
 
+#: admin.py:306
 msgid ""
 "Component package from upgrade server. Null for built-in manual provider."
 msgstr ""
 "Пакет компонентов с сервера обновления. Null для встроенного ручного "
 "провайдера."
 
+#: admin.py:311 templates/admin/pos_app/wizard/base.html:42
 msgid "Credentials"
 msgstr "Учетные данные"
 
+#: admin.py:315
 msgid "Encrypted API credentials. Use set_credentials() to update safely."
 msgstr ""
 "Шифрованные учетные данные API. Используйте set_credentials() для "
 "безопасного обновления."
 
+#: admin.py:320 templates/admin/pos_app/wizard/step5_configure.html:43
 msgid "Provider Settings"
 msgstr "Настройки поставщика"
 
+#: admin.py:323
 msgid "Non-secret provider config, e.g. Stripe location ID."
 msgstr ""
 "Неконфиденциальная настройка провайдера, например, идентификатор "
 "расположения Stripe."
 
+#: admin.py:327
 msgid "Connection Health"
 msgstr "Состояние подключения"
 
+#: admin.py:333 admin.py:424
+#: templates/admin/pos_app/posterminalreader/change_form.html:60
 msgid "Timestamps"
 msgstr "Временные метки"
 
+#: admin.py:353
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:109
 msgid "Test connection"
 msgstr "Проверить соединение"
 
+#: admin.py:357
 msgid "connected"
 msgstr "подключен"
 
+#: admin.py:357
 msgid "error"
 msgstr "ошибка"
 
+#: admin.py:360
 #, python-format
 msgid "%(name)s: %(status)s"
 msgstr "%(name)s: %(status)s"
 
+#: admin.py:397 templates/admin/pos_app/posterminalreader/change_form.html:48
+#: templates/admin/pos_app/posterminalreader/change_form.html:119
+#: templates/admin/pos_app/posterminalreader/change_form.html:297
+#: templates/admin/pos_app/posterminalreader/change_form.html:360
+#: templates/admin/pos_app/wizard/step5_configure.html:26
 msgid "Provider Details"
 msgstr "Детали провайдера"
 
+#: admin.py:409 templates/admin/pos_app/posterminalreader/change_form.html:56
+#: templates/admin/pos_app/posterminalreader/change_form.html:301
 msgid "Splash Screen"
 msgstr "Скрин-загрузка"
 
+#: admin.py:418 templates/admin/pos_app/posterminalreader/change_form.html:190
+#: templates/admin/pos_app/posterminalreader/change_form.html:403
 msgid ""
 "Custom splash screen for this reader. Leave blank to auto-generate from your "
 "site logo. Splash screens are uploaded to Stripe when the reader is "
@@ -156,43 +229,58 @@ msgstr ""
 "пустым, чтобы сгенерировать его автоматически на основе логотипа вашего "
 "сайта. Экранные изображения загружаются в Stripe при регистрации считывателя."
 
+#: admin.py:438
 msgid "Splash"
 msgstr "Скрин-загрузка"
 
+#: admin.py:455
 msgid "Regenerate splash screen"
 msgstr "Перегенерировать скрин-загрузку"
 
+#: admin.py:471
 #, python-format
 msgid "Queued splash screen regeneration for %(count)d reader(s)."
 msgstr ""
 "Перегенерация экрана-приветствия поставлена в очередь для %(count)d "
 "считывателей(ей)."
 
+#: admin.py:474
 msgid "No Stripe Terminal readers selected."
 msgstr "Не выбраны считыватели Stripe Terminal."
 
+#: admin.py:549
 msgid "Cash Reconciliation"
 msgstr "Сверка наличных"
 
+#: admin.py:555
 msgid "Shift Totals"
 msgstr "Итоги смены"
 
+#: admin.py:561
 msgid "Notes"
 msgstr "Примечания"
 
+#: admin.py:586 templates/admin/pos_app/posshift/change_list.html:41
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:27
 msgid "Open"
 msgstr "Открыт"
 
+#: admin.py:588
 #, python-format
 msgid "Closed (%.2f difference)"
 msgstr "Закрыто (%.2f разница)"
 
+#: admin.py:589 templates/admin/pos_app/posshift/change_list.html:46
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:31
 msgid "Closed"
 msgstr "Закрыт"
 
+#: admin.py:616 admin.py:726
+#: templates/admin/pos_app/posterminalreader/change_list.html:115
 msgid "Assignment"
 msgstr "Назначение"
 
+#: admin.py:620
 msgid ""
 "Leave both blank for the default template. Select a group for all stores in "
 "that group. Select a specific store to override group/default."
@@ -201,24 +289,32 @@ msgstr ""
 "магазинов в этой группе. Выберите конкретный магазин, чтобы переопределить "
 "группу/по умолчанию."
 
+#: admin.py:627
 msgid "Header & Logo"
 msgstr "Заголовок и логотип"
 
+#: admin.py:633
 msgid "Store Information"
 msgstr "Информация о магазине"
 
+#: admin.py:646
 msgid "Business Details"
 msgstr "Детали бизнеса"
 
+#: admin.py:652
 msgid "Receipt Options"
 msgstr "Настройки чека"
 
+#: admin.py:658
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:65
 msgid "Footer"
 msgstr "Подвал"
 
+#: admin.py:664
 msgid "QR Code Promotion"
 msgstr "Промо-код QR"
 
+#: admin.py:668
 #, python-format
 msgid ""
 "Add a QR code to the bottom of receipts for promotions like \"Scan for "
@@ -227,12 +323,17 @@ msgstr ""
 "Добавьте QR-код в нижнюю часть чеков для акций, таких как \"Сканируйте для "
 "получения 10% скидки\", \"Оставьте отзыв\" или \"Посетите наш сайт\"."
 
+#: admin.py:674
 msgid "Branding"
 msgstr "Брендинг"
 
+#: admin.py:704 admin.py:778
+#: templates/admin/pos_app/promoslide/change_list.html:44
+#: templates/admin/pos_app/receipttemplate/change_list.html:57
 msgid "Scope"
 msgstr "Область"
 
+#: admin.py:730
 msgid ""
 "Leave both blank for All Stores. Select a group to show in all stores of "
 "that group. Select a specific store to show only there."
@@ -241,9 +342,11 @@ msgstr ""
 "отобразить в всех магазинах этой группы. Выберите конкретный магазин, чтобы "
 "отобразить только там."
 
+#: admin.py:737
 msgid "Content"
 msgstr "Контент"
 
+#: admin.py:741
 msgid ""
 "Create promotional slides for your customer-facing display. Recommended "
 "image size: 1920x1080 or 16:9 aspect ratio."
@@ -251,21 +354,27 @@ msgstr ""
 "Создайте промо-слайды для вашего клиентского дисплея. Рекомендуемый размер "
 "изображения: 1920x1080 или соотношение сторон 16:9."
 
+#: admin.py:747
 msgid "Display Order"
 msgstr "Порядок отображения"
 
+#: admin.py:750
 msgid "Lower numbers appear first in the slideshow."
 msgstr "Числа с меньшими значениями отображаются первыми в слайд-шоу."
 
+#: admin.py:771 models.py:1076
 msgid "Untitled Slide"
 msgstr "Слайд без названия"
 
+#: admin.py:773
 msgid "Title"
 msgstr "Заголовок"
 
+#: admin.py:812
 msgid "Discount Limits"
 msgstr "Ограничения скидок"
 
+#: admin.py:816
 msgid ""
 "Set the maximum discount this staff member can apply. Percentage limit "
 "applies to both % and fixed discounts relative to line/cart total."
@@ -274,12 +383,15 @@ msgstr ""
 "Ограничение в процентах применяется как к процентным, так и к фиксированным "
 "скидкам относительно суммы позиции/корзины."
 
+#: admin.py:822
 msgid "Permissions"
 msgstr "Разрешения"
 
+#: admin.py:832
 msgid "Manager Approval"
 msgstr "Утверждение менеджера"
 
+#: admin.py:836
 msgid ""
 "Managers can approve discounts that exceed other staff members' limits. The "
 "PIN is used for quick approval at the terminal."
@@ -287,9 +399,11 @@ msgstr ""
 "Менеджеры могут одобрить скидки, превышающие лимиты других сотрудников. PIN "
 "используется для быстрого одобрения на терминале."
 
+#: admin.py:842
 msgid "Terminal Lock"
 msgstr "Блокировка терминала"
 
+#: admin.py:846
 msgid ""
 "Personal PIN for unlocking the terminal after locking. 4-6 digits "
 "recommended."
@@ -297,106 +411,142 @@ msgstr ""
 "Личный PIN для разблокировки терминала после блокировки. Рекомендуется "
 "использовать 4-6 цифр."
 
+#: admin.py:855
 msgid "No limit"
 msgstr "Без ограничений"
 
+#: admin.py:857
 msgid "Max Amount"
 msgstr "Максимальная сумма"
 
+#: admin.py:922
 msgid "Users"
 msgstr "Пользователи"
 
+#: admin.py:928
 msgid "Security"
 msgstr "Безопасность"
 
+#: admin.py:934
 msgid "Cart State"
 msgstr "Состояние корзины"
 
+#: admin.py:957
 msgid "Cart"
 msgstr "Корзина"
 
+#: apps.py:8 templates/admin/pos_app/dashboard.html:4
+#: templates/admin/pos_app/dashboard_upsell.html:4
 msgid "Point of Sale"
 msgstr "Точка продаж"
 
+#: models.py:28
 msgid "group name"
 msgstr "название группы"
 
+#: models.py:28
 msgid "e.g. \"NZ Stores\", \"Singapore Region\""
 msgstr "например, \"NZ Stores\", \"Singapore Region\""
 
+#: models.py:31
 msgid "group code"
 msgstr "код группы"
 
+#: models.py:35
 msgid "Short unique code e.g. \"NZ\", \"SG\""
 msgstr "Краткий уникальный код, например, \"NZ\", \"SG\""
 
+#: models.py:40 models.py:141
 msgid "currency"
 msgstr "валюта"
 
+#: models.py:43
 msgid ""
 "Currency for stores in this group (e.g. NZD, SGD). Blank = site default."
 msgstr ""
 "Валюта для магазинов в этой группе (например, NZD, SGD). Пусто = по "
 "умолчанию сайта."
 
+#: models.py:46
 msgid "language"
 msgstr "язык"
 
+#: models.py:49
 msgid "Default language for stores in this group. Blank = site default."
 msgstr ""
 "Язык по умолчанию для магазинов в этой группе. Пусто = по умолчанию сайта."
 
+#: models.py:52
 msgid "timezone"
 msgstr "часовой пояс"
 
+#: models.py:55
 msgid "Timezone for reports (e.g. Pacific/Auckland). Blank = site default."
 msgstr ""
 "Часовой пояс для отчетов (например, Pacific/Auckland). Пусто = по умолчанию "
 "сайта."
 
+#: models.py:60
 msgid "additional settings"
 msgstr "дополнительные настройки"
 
+#: models.py:67 models.py:1063
 msgid "sort order"
 msgstr "порядок сортировки"
 
+#: models.py:67
 msgid "Lower numbers appear first in lists."
 msgstr "Числа с меньшими значениями отображаются первыми в списках."
 
+#: models.py:69 models.py:165 models.py:541 models.py:1065
 msgid "active"
 msgstr "активный"
 
+#: models.py:75 templates/admin/pos_app/receipttemplate/change_list.html:62
 msgid "Store Group"
 msgstr "Группа магазинов"
 
+#: models.py:76 templates/admin/pos_app/promoslide/change_list.html:49
+#: templates/admin/pos_app/storegroup/change_list.html:4
+#: templates/admin/pos_app/storegroup/change_list.html:20
+#: templates/admin/pos_app/storegroup/change_list.html:96
 msgid "Store Groups"
 msgstr "Группы магазинов"
 
+#: models.py:102
 msgid "terminal name"
 msgstr "название терминала"
 
+#: models.py:104
 msgid "Friendly name for this terminal, e.g. \"Front Register\""
 msgstr "Дружественное имя для этого терминала, например, \"Front Register\""
 
+#: models.py:110
 msgid "Unique identifier for this terminal"
 msgstr "Уникальный идентификатор для этого терминала"
 
+#: models.py:117
 msgid "store location"
 msgstr "местоположение магазина"
 
+#: models.py:118
 msgid "The physical store (warehouse) this terminal is located in"
 msgstr "Физический магазин (склад), в котором находится этот терминал"
 
+#: models.py:121 models.py:242
 msgid "pairing code"
 msgstr "код сопряжения"
 
+#: models.py:125
 msgid "Code used to pair a new device with this terminal"
 msgstr ""
 "Код, используемый для сопоставления нового устройства с этим терминалом"
 
+#: models.py:130
 msgid "hardware configuration"
 msgstr "конфигурация оборудования"
 
+#: models.py:134
 msgid ""
 "Terminal hardware settings. Example: {\"printer\": {\"type\": \"network\", "
 "\"url\": \"http://192.168.1.100:9100\"}, \"scanner\": \"keyboard_wedge\", "
@@ -406,13 +556,16 @@ msgstr ""
 "\"network\", \"url\": \"http://192.168.1.100:9100\"}, \"scanner\": "
 "\"keyboard_wedge\", \"cash_drawer\": true, \"customer_display\": true}"
 
+#: models.py:144
 msgid "Currency for this terminal (e.g. NZD, SGD). Blank = site default."
 msgstr ""
 "Валюта для этого терминала (например, NZD, SGD). Пусто = по умолчанию сайта."
 
+#: models.py:148
 msgid "order history (days)"
 msgstr "история заказов (дни)"
 
+#: models.py:151
 msgid ""
 "Number of days of order history to sync to the terminal for offline access. "
 "Higher values increase storage usage and sync time. Recommended: 7-30 days."
@@ -421,9 +574,11 @@ msgstr ""
 "автономного доступа. Более высокие значения увеличивают использование "
 "хранилища и время синхронизации. Рекомендуется: 7-30 дней."
 
+#: models.py:156
 msgid "order sync limit"
 msgstr "предел синхронизации заказов"
 
+#: models.py:159
 msgid ""
 "Maximum number of orders to cache on the terminal. POS orders are "
 "prioritised over web orders. Higher values increase device storage and sync "
@@ -433,15 +588,19 @@ msgstr ""
 "имеют приоритет над веб-заказами. Более высокие значения увеличивают объем "
 "хранения на устройстве и время синхронизации. Рекомендуется: 200-1000."
 
+#: models.py:167
 msgid "last heartbeat"
 msgstr "последний пинг"
 
+#: models.py:170
 msgid "Last time this terminal reported as online"
 msgstr "Последний раз, когда этот терминал сообщал о подключении к сети"
 
+#: models.py:173
 msgid "remote unlock at"
 msgstr "удаленное разблокирование в"
 
+#: models.py:177
 msgid ""
 "Set by admin to remotely unlock the terminal. Frontend polls and unlocks if "
 "this is newer than lock time."
@@ -450,229 +609,323 @@ msgstr ""
 "Фронтенд опрашивает и разблокирует, если это значение новее времени "
 "блокировки."
 
+#: models.py:184
 msgid "assigned staff"
 msgstr "назначенный персонал"
 
+#: models.py:185
 msgid "Staff members authorized to use this terminal"
 msgstr "Персонал, авторизованный для использования этого терминала"
 
+#: models.py:192
 msgid "POS Terminal"
 msgstr "POS-терминал"
 
+#: models.py:193 templates/admin/pos_app/posterminal/change_list.html:4
+#: templates/admin/pos_app/posterminal/change_list.html:18
 msgid "POS Terminals"
 msgstr "POS-терминалы"
 
+#: models.py:240 models.py:309 models.py:1309 models.py:1436
+#: templates/admin/pos_app/posterminal/change_list.html:197
+#: templates/admin/pos_app/posterminal/change_list.html:209
 msgid "terminal"
 msgstr "терминал"
 
+#: models.py:244 models.py:1447
 msgid "expires at"
 msgstr "истекает в"
 
+#: models.py:245
 msgid "used at"
 msgstr "используется в"
 
+#: models.py:248
 msgid "Display Pairing Code"
 msgstr "Показать код сопряжения"
 
+#: models.py:249
 msgid "Display Pairing Codes"
 msgstr "Показать коды сопряжения"
 
+#: models.py:315
 msgid "cashier"
 msgstr "кассир"
 
+#: models.py:318
 msgid "shift started"
 msgstr "смена начата"
 
+#: models.py:319
 msgid "shift ended"
 msgstr "смена завершена"
 
+#: models.py:323
 msgid "opening cash"
 msgstr "начальный наличный остаток"
 
+#: models.py:327
 msgid "Cash in drawer at shift start"
 msgstr "Денежные средства в кассе на начало смены"
 
+#: models.py:330
 msgid "closing cash"
 msgstr "конечный наличный остаток"
 
+#: models.py:335
 msgid "Actual cash counted at shift end"
 msgstr "Фактические денежные средства, подсчитанные в конце смены"
 
+#: models.py:338
 msgid "expected cash"
 msgstr "ожидаемый наличный остаток"
 
+#: models.py:343
 msgid "Calculated expected cash based on transactions"
 msgstr "Рассчитанные ожидаемые денежные средства на основе транзакций"
 
+#: models.py:346
 msgid "cash difference"
 msgstr "разница в наличных"
 
+#: models.py:351
 msgid "Difference between closing and expected cash"
 msgstr "Разница между фактическими и ожидаемыми денежными средствами"
 
+#: models.py:355
 msgid "total sales"
 msgstr "общая выручка"
 
+#: models.py:357
 msgid "total refunds"
 msgstr "общий возврат средств"
 
+#: models.py:359
 msgid "total transactions"
 msgstr "общее количество транзакций"
 
+#: models.py:363
 msgid "total manual discounts"
 msgstr "общие ручные скидки"
 
+#: models.py:367
 msgid "Total value of manual discounts given during shift"
 msgstr "Общая сумма ручных скидок, предоставленных в течение смены"
 
+#: models.py:370
 msgid "manual discount count"
 msgstr "количество ручных скидок"
 
+#: models.py:372
 msgid "Number of manual discounts applied during shift"
 msgstr "Количество примененных ручных скидок в течение смены"
 
+#: models.py:375
 msgid "notes"
 msgstr "Примечания"
 
+#: models.py:378
 msgid "POS Shift"
 msgstr "Смена POS"
 
+#: models.py:379 templates/admin/pos_app/posshift/change_list.html:4
+#: templates/admin/pos_app/posshift/change_list.html:18
 msgid "POS Shifts"
 msgstr "Смены POS"
 
+#: models.py:456
 msgid "Cash In"
 msgstr "Внесение наличных"
 
+#: models.py:457
 msgid "Cash Out"
 msgstr "Выдача наличных"
 
+#: models.py:461 models.py:727 models.py:1317
+#: templates/admin/pos_app/posshift/change_list.html:125
+#: templates/admin/pos_app/posshift/change_list.html:137
 msgid "shift"
 msgstr "смена"
 
+#: models.py:463
 msgid "type"
 msgstr "тип"
 
+#: models.py:465 models.py:732
 msgid "amount"
 msgstr "сумма"
 
+#: models.py:465
 msgid "Amount in base currency"
 msgstr "Сумма в базовой валюте"
 
+#: models.py:468
 msgid "reason"
 msgstr "причина"
 
+#: models.py:470
 msgid "Reason for cash movement, e.g. \"Change float top-up\""
 msgstr ""
 "Причина движения денежных средств, например, \"Пополнение фонда сдачи\""
 
+#: models.py:476 models.py:1330
 msgid "performed by"
 msgstr "выполнено кем"
 
+#: models.py:482
 msgid "Cash Movement"
 msgstr "Движение наличных"
 
+#: models.py:483
 msgid "Cash Movements"
 msgstr "Движения наличных"
 
+#: models.py:498
 msgid "Unknown"
 msgstr "Неизвестно"
 
+#: models.py:499
+#: templates/admin/pos_app/posterminalprovider/change_list.html:77
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:40
+#: templates/admin/pos_app/wizard/reader_step1_select.html:46
 msgid "Connected"
 msgstr "Подключен"
 
+#: models.py:500
+#: templates/admin/pos_app/posterminalprovider/change_list.html:78
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:44
 msgid "Error"
 msgstr "Ошибка"
 
+#: models.py:505 models.py:612
+#: templates/admin/pos_app/posterminalprovider/change_list.html:104
+#: templates/admin/pos_app/posterminalprovider/change_list.html:116
 msgid "provider"
 msgstr "поставщик"
 
+#: models.py:508
 msgid "Provider identifier, e.g. \"stripe_terminal\", \"manual\""
 msgstr "Идентификатор поставщика, например, \"stripe_terminal\", \"manual\""
 
+#: models.py:511
 msgid "display name"
 msgstr "отображаемое имя"
 
+#: models.py:514
 msgid "Friendly name, e.g. \"Stripe Terminal\""
 msgstr "Дружественное имя, например, \"Stripe Terminal\""
 
+#: models.py:525
 msgid "Component package. Null for built-in manual provider."
 msgstr "Пакет компонентов. Null для встроенного ручного поставщика."
 
+#: models.py:530
 msgid "credentials"
 msgstr "данные для входа"
 
+#: models.py:530
 msgid "Encrypted API credentials"
 msgstr "Шифрованные учетные данные API"
 
+#: models.py:535
 msgid "settings"
 msgstr "настройки"
 
+#: models.py:538
 msgid "Provider-specific settings, e.g. {\"stripe_location_id\": \"tml_xxx\"}"
 msgstr ""
 "Настройки, специфичные для поставщика, например, {\"stripe_location_id\": "
 "\"tml_xxx\"}"
 
+#: models.py:545
 msgid "connection status"
 msgstr "состояние подключения"
 
+#: models.py:547
 msgid "connection error"
 msgstr "ошибка подключения"
 
+#: models.py:548
 msgid "last tested"
 msgstr "последний тест"
 
+#: models.py:554
 msgid "POS Terminal Provider"
 msgstr "Поставщик терминала POS"
 
+#: models.py:555
 msgid "POS Terminal Providers"
 msgstr "Поставщики терминалов POS"
 
+#: models.py:603 templates/admin/pos_app/posterminal/change_form.html:60
+#: templates/admin/pos_app/posterminal/change_list.html:172
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:40
+#: templates/admin/pos_app/posterminalreader/change_list.html:107
+#: templates/admin/pos_app/posterminalreader/change_list.html:177
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:42
 msgid "Offline"
 msgstr "Офлайн"
 
+#: models.py:604 templates/admin/pos_app/posterminalreader/change_list.html:108
+#: templates/admin/pos_app/posterminalreader/change_list.html:178
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:40
 msgid "Busy"
 msgstr "Занят"
 
+#: models.py:620
 msgid "assigned terminal"
 msgstr "назначенный терминал"
 
+#: models.py:621
 msgid "Which POS register this reader is paired with"
 msgstr "Какой POS-касса связана с этим считывателем"
 
+#: models.py:626
 msgid "provider reader ID"
 msgstr "идентификатор считывателя поставщика"
 
+#: models.py:628
 msgid "Reader ID from the provider, e.g. \"tmr_xxx\" for Stripe"
 msgstr ""
 "Идентификатор считывателя от поставщика, например, \"tmr_xxx\" для Stripe"
 
+#: models.py:631
 msgid "label"
 msgstr "метка"
 
+#: models.py:634
 msgid "Friendly name, e.g. \"Front Counter Reader\""
 msgstr "Дружественное имя, например, \"Считыватель на фронтовом прилавке\""
 
+#: models.py:639
 msgid "reader type"
 msgstr "тип считывателя"
 
+#: models.py:642
 msgid "Device type, e.g. \"bbpos_wisepos_e\", \"stripe_s700\""
 msgstr "Тип устройства, например, \"bbpos_wisepos_e\", \"stripe_s700\""
 
+#: models.py:644
 msgid "serial number"
 msgstr "серийный номер"
 
+#: models.py:645 models.py:1369
 msgid "IP address"
 msgstr "IP-адрес"
 
+#: models.py:648
 msgid "status"
 msgstr "Статус"
 
+#: models.py:649
 msgid "last seen"
 msgstr "последнее видение"
 
+#: models.py:658
 msgid "custom splash screen"
 msgstr "пользовательский экран приветствия"
 
+#: models.py:660
 msgid ""
 "Upload a custom splash screen image. Leave blank to auto-generate from site "
 "logo."
@@ -680,124 +933,163 @@ msgstr ""
 "Загрузите пользовательское изображение для экрана приветствия. Оставьте поле "
 "пустым, чтобы сгенерировать его автоматически на основе логотипа сайта."
 
+#: models.py:664
 msgid "Stripe file ID"
 msgstr "ИД файла Stripe"
 
+#: models.py:667
 msgid "Stripe File ID (file_xxx) of the uploaded splash screen"
 msgstr "Идентификатор файла Stripe (file_xxx) загруженного экрана приветствия"
 
+#: models.py:670
 msgid "Stripe configuration ID"
 msgstr "ИД конфигурации Stripe"
 
+#: models.py:673
 msgid "Stripe Configuration ID (cfg_xxx) for this reader"
 msgstr "Идентификатор конфигурации Stripe (cfg_xxx) для этого считывателя"
 
+#: models.py:676
 msgid "splash generated at"
 msgstr "экран приветствия создан в"
 
+#: models.py:679
 msgid "When the splash screen was last generated and uploaded"
 msgstr "Когда был в последний раз сгенерирован и загружен экран приветствия"
 
+#: models.py:684
 msgid "provider metadata"
 msgstr "метаданные провайдера"
 
+#: models.py:687
 msgid "Provider-specific reader data, e.g. Adyen POIID, Square device_code_id."
 msgstr ""
 "Данные считывателя, специфичные для поставщика, например, Adyen POIID, "
 "Square device_code_id."
 
+#: models.py:694
 msgid "POS Card Reader"
 msgstr "Читалка карт POS"
 
+#: models.py:695
 msgid "POS Card Readers"
 msgstr "Читалки карт POS"
 
+#: models.py:709
 msgid "Cash"
 msgstr "Наличные"
 
+#: models.py:710
 msgid "Card (Manual)"
 msgstr "Карта (вручную)"
 
+#: models.py:711
 msgid "Card (Terminal)"
 msgstr "Карта (терминал)"
 
+#: models.py:712
 msgid "Gift Card"
 msgstr "Подарочная карта"
 
+#: models.py:719
 msgid "order"
 msgstr "заказ"
 
+#: models.py:730
 msgid "payment method"
 msgstr "способ оплаты"
 
+#: models.py:732
 msgid "Amount paid via this method"
 msgstr "Сумма, оплаченная этим способом"
 
+#: models.py:737
 msgid "amount tendered"
 msgstr "сумма, предложенная к оплате"
 
+#: models.py:742
 msgid "Cash amount given by customer"
 msgstr "Наличные, предоставленные клиентом"
 
+#: models.py:745
 msgid "change given"
 msgstr "сдача, выданная"
 
+#: models.py:750
 msgid "Change returned to customer"
 msgstr "Сдача, возвращенная клиенту"
 
+#: models.py:755
 msgid "card last four"
 msgstr "последние четыре цифры карты"
 
+#: models.py:758
 msgid "Last four digits of card number"
 msgstr "Последние четыре цифры номера карты"
 
+#: models.py:761
 msgid "card reference"
 msgstr "ссылка на карту"
 
+#: models.py:764
 msgid "Reference number from external card terminal"
 msgstr "Референсный номер с внешнего терминала карты"
 
+#: models.py:769
 msgid "provider payment ID"
 msgstr "ИД платежа провайдера"
 
+#: models.py:772
 msgid "Payment ID from terminal provider, e.g. Stripe PaymentIntent ID"
 msgstr ""
 "Идентификатор платежа от поставщика терминала, например, Stripe "
 "PaymentIntent ID"
 
+#: models.py:775
 msgid "card brand"
 msgstr "бренд карты"
 
+#: models.py:778
 msgid "Card brand, e.g. \"visa\", \"mastercard\""
 msgstr "Бренд карты, например, \"visa\", \"mastercard\""
 
+#: models.py:783
 msgid "gift card code"
 msgstr "код подарочной карты"
 
+#: models.py:786
 msgid "Gift card code used for payment"
 msgstr "Код подарочной карты, использованный для оплаты"
 
+#: models.py:792
 msgid "POS Payment"
 msgstr "Платеж POS"
 
+#: models.py:793
 msgid "POS Payments"
 msgstr "Оплаты POS"
 
+#: models.py:811
 msgid "58mm (32 chars)"
 msgstr "58 мм (32 символа)"
 
+#: models.py:812
 msgid "80mm (48 chars)"
 msgstr "80 мм (48 символов)"
 
+#: models.py:816
 msgid "template name"
 msgstr "название шаблона"
 
+#: models.py:818
 msgid "e.g. \"Downtown Store Receipt\", \"Default Receipt\""
 msgstr "напр. \"Downtown Store Receipt\", \"Default Receipt\""
 
+#: models.py:826 models.py:1036
 msgid "store group"
 msgstr "группа магазинов"
 
+#: models.py:828
 msgid ""
 "Template for all stores in this group. Leave blank for default or specific "
 "store."
@@ -805,132 +1097,171 @@ msgstr ""
 "Шаблон для всех магазинов в этой группе. Оставьте пустым для использования "
 "по умолчанию или конкретного магазина."
 
+#: models.py:838 models.py:1046
 msgid "specific store"
 msgstr "конкретный магазин"
 
+#: models.py:839
 msgid "Template for this specific store. Overrides group template."
 msgstr "Шаблон для этого конкретного магазина. Перекрывает шаблон группы."
 
+#: models.py:844
 msgid "paper width"
 msgstr "ширина бумаги"
 
+#: models.py:848
 msgid "Receipt paper width. 80mm is standard for most thermal printers."
 msgstr ""
 "Ширина бумаги для чека. 80 мм — стандарт для большинства термопринтеров."
 
+#: models.py:858
 msgid "logo"
 msgstr "логотип"
 
+#: models.py:859
 msgid "Monochrome logo image. Max 384px wide for 80mm paper, 192px for 58mm."
 msgstr ""
 "Черно-белое изображение логотипа. Максимальная ширина 384 пикселя для бумаги "
 "80 мм, 192 пикселя для бумаги 58 мм."
 
+#: models.py:862
 msgid "header text"
 msgstr "текст заголовка"
 
+#: models.py:865
 msgid "Store name on receipt. Leave blank to use the store POS display name."
 msgstr ""
 "Название магазина на чеке. Оставьте пустым, чтобы использовать отображаемое "
 "имя магазина POS."
 
+#: models.py:867
 msgid "show address"
 msgstr "показывать адрес"
 
+#: models.py:869
 msgid "custom address"
 msgstr "пользовательский адрес"
 
+#: models.py:871
 msgid "Custom receipt address. Leave blank to use the store warehouse address."
 msgstr ""
 "Пользовательский адрес чека. Оставьте пустым, чтобы использовать адрес "
 "склада магазина."
 
+#: models.py:873
 msgid "show phone"
 msgstr "показывать телефон"
 
+#: models.py:875
 msgid "custom phone"
 msgstr "пользовательский телефон"
 
+#: models.py:878
 msgid "Leave blank to use the store contact phone."
 msgstr "Оставьте пустым, чтобы использовать контактный телефон магазина."
 
+#: models.py:880
 msgid "show email"
 msgstr "показывать электронную почту"
 
+#: models.py:882
 msgid "custom email"
 msgstr "пользовательская электронная почта"
 
+#: models.py:882
 msgid "Leave blank to use the store contact email."
 msgstr "Оставьте пустым, чтобы использовать контактный email магазина."
 
+#: models.py:887
 msgid "tax ID label"
 msgstr "название налогового ИД"
 
+#: models.py:890
 msgid ""
 "Label for your tax number, e.g. \"GST No.\", \"VAT No.\", \"ABN\", \"Tax ID\""
 msgstr ""
 "Этикетка для вашего налогового номера, напр. \"GST No.\", \"VAT No.\", "
 "\"ABN\", \"Tax ID\""
 
+#: models.py:893
 msgid "tax ID number"
 msgstr "номер налогового ИД"
 
+#: models.py:896
 msgid "Your tax identification number"
 msgstr "Ваш налоговый идентификационный номер"
 
+#: models.py:899
 msgid "business registration"
 msgstr "регистрация бизнеса"
 
+#: models.py:902
 msgid "Business registration number"
 msgstr "номер регистрации бизнеса"
 
+#: models.py:907
 msgid "show SKU"
 msgstr "показывать SKU"
 
+#: models.py:907
 msgid "Display product SKU on receipt items"
 msgstr "Отображать SKU продукта на позициях чека"
 
+#: models.py:910
 msgid "show cashier"
 msgstr "показывать кассира"
 
+#: models.py:910
 msgid "Display cashier name on receipt"
 msgstr "Отображать имя кассира на чеке"
 
+#: models.py:913
 msgid "show terminal name"
 msgstr "показывать имя терминала"
 
+#: models.py:913
 msgid "Display terminal name on receipt"
 msgstr "Отображать имя терминала на чеке"
 
+#: models.py:918
 msgid "footer text"
 msgstr "текст подвала"
 
+#: models.py:922
 msgid "Custom message at the bottom of the receipt"
 msgstr "Пользовательское сообщение внизу чека"
 
+#: models.py:925
 msgid "return policy"
 msgstr "политика возврата"
 
+#: models.py:927
 msgid "Short return policy printed in small text at the bottom"
 msgstr "Краткая политика возврата, напечатанная маленьким текстом внизу"
 
+#: models.py:932
 msgid "enable QR code"
 msgstr "включить QR-код"
 
+#: models.py:934
 msgid "Print a QR code at the bottom of the receipt"
 msgstr "Напечатать QR-код внизу чека"
 
+#: models.py:937
 msgid "QR code URL"
 msgstr "URL QR-кода"
 
+#: models.py:939
 msgid "URL encoded in the QR code (e.g. review page, discount page, website)"
 msgstr ""
 "URL, закодированный в QR-коде (напр. страница отзывов, страница скидок, веб-"
 "сайт)"
 
+#: models.py:942
 msgid "QR code label"
 msgstr "этикетка QR-кода"
 
+#: models.py:946
 #, python-format
 msgid ""
 "Text printed below the QR code, e.g. \"Scan for 10% off your next online "
@@ -939,18 +1270,24 @@ msgstr ""
 "Текст, напечатанный под QR-кодом, например, \"Сканируйте для получения "
 "скидки 10% на следующий онлайн-заказ\""
 
+#: models.py:952
 msgid "show \"Powered by Spwig POS\""
 msgstr "показывать \"Powered by Spwig POS\""
 
+#: models.py:954
 msgid "Display Spwig branding at the bottom of the receipt"
 msgstr "Отображать бренд Spwig внизу чека"
 
+#: models.py:961
 msgid "Receipt Template"
 msgstr "Шаблон чека"
 
+#: models.py:962 templates/admin/pos_app/receipttemplate/change_list.html:4
+#: templates/admin/pos_app/receipttemplate/change_list.html:19
 msgid "Receipt Templates"
 msgstr "Шаблоны чеков"
 
+#: models.py:975
 msgid ""
 "A template cannot be assigned to both a store group and a specific store. "
 "Choose one."
@@ -958,45 +1295,60 @@ msgstr ""
 "Шаблон не может быть назначен и группе магазинов, и конкретному магазину. "
 "Выберите один."
 
+#: models.py:985
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:53
 msgid "Default"
 msgstr "По умолчанию"
 
+#: models.py:1037
 msgid ""
 "Show in all stores in this group. Leave blank for All or specific store."
 msgstr ""
 "Отображать во всех магазинах этой группы. Оставьте пустым для Все или "
 "конкретный магазин."
 
+#: models.py:1047
 msgid "Show in this specific store only. Overrides group."
 msgstr "Отображать только в этом конкретном магазине. Перекрывает группу."
 
+#: models.py:1053
 msgid "slide image"
 msgstr "изображение слайда"
 
+#: models.py:1054
 msgid "Recommended size: 1920x1080 or 16:9 aspect ratio."
 msgstr "Рекомендуемый размер: 1920x1080 или соотношение сторон 16:9."
 
+#: models.py:1057
 msgid "title"
 msgstr "заголовок"
 
+#: models.py:1057
 msgid "Large text overlay on the slide."
 msgstr "Крупный текст поверх слайда."
 
+#: models.py:1060
 msgid "subtitle"
 msgstr "подзаголовок"
 
+#: models.py:1060
 msgid "Secondary text below the title."
 msgstr "Второстепенный текст под заголовком."
 
+#: models.py:1063
 msgid "Lower numbers appear first."
 msgstr "Числа с меньшими значениями отображаются первыми."
 
+#: models.py:1071
 msgid "Promo Slide"
 msgstr "Промо-слайд"
 
+#: models.py:1072 templates/admin/pos_app/promoslide/change_list.html:4
+#: templates/admin/pos_app/promoslide/change_list.html:18
 msgid "Promo Slides"
 msgstr "Промо-слайды"
 
+#: models.py:1086
 msgid ""
 "A slide cannot be assigned to both a store group and a specific store. "
 "Choose one."
@@ -1004,54 +1356,71 @@ msgstr ""
 "Слайд не может быть назначен и группе магазинов, и конкретному магазину. "
 "Выберите один."
 
+#: models.py:1096 templates/admin/pos_app/promoslide/change_list.html:47
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:45
 msgid "All Stores"
 msgstr "Все магазины"
 
+#: models.py:1106
 msgid "staff member"
 msgstr "сотрудник"
 
+#: models.py:1111
 msgid "max discount %"
 msgstr "максимальная скидка в %"
 
+#: models.py:1115
 msgid "Maximum percentage discount this staff member can apply (0-100)"
 msgstr ""
 "Максимальный процент скидки, который может применить этот сотрудник (0-100)"
 
+#: models.py:1118
 msgid "max discount amount"
 msgstr "максимальная сумма скидки"
 
+#: models.py:1123
 msgid "Maximum fixed amount discount per transaction. Blank = no limit."
 msgstr ""
 "Максимальная фиксированная сумма скидки на каждую транзакцию. Пусто = нет "
 "ограничения."
 
+#: models.py:1128
 msgid "can apply item discounts"
 msgstr "можно применять скидки на товары"
 
+#: models.py:1130
 msgid "Allow applying discounts to individual items"
 msgstr "Разрешить применение скидок к отдельным товарам"
 
+#: models.py:1133
 msgid "can apply cart discounts"
 msgstr "можно применять скидки на корзину"
 
+#: models.py:1135
 msgid "Allow applying discounts to entire cart"
 msgstr "Разрешить применение скидок к целому заказу"
 
+#: models.py:1138
 msgid "requires reason"
 msgstr "требуется причина"
 
+#: models.py:1140
 msgid "Staff must provide a reason when applying discounts"
 msgstr "Персонал должен указать причину при применении скидок"
 
+#: models.py:1145
 msgid "is manager"
 msgstr "является менеджером"
 
+#: models.py:1147
 msgid "Can approve discounts exceeding other staff limits"
 msgstr "Может утверждать скидки, превышающие лимиты других сотрудников"
 
+#: models.py:1150
 msgid "manager PIN"
 msgstr "PIN-код менеджера"
 
+#: models.py:1154
 msgid ""
 "4-6 digit PIN for approving discounts (managers only). Migrated to hashed "
 "storage on first use."
@@ -1059,15 +1428,19 @@ msgstr ""
 "4-6-значный PIN-код для одобрения скидок (только для менеджеров). Перенесен "
 "в хэшированное хранение при первом использовании."
 
+#: models.py:1159
 msgid "manager PIN (hashed)"
 msgstr "ПИН-код менеджера (хэшированный)"
 
+#: models.py:1162
 msgid "PBKDF2-hashed manager PIN"
 msgstr "ПИН-код менеджера, хэшированный PBKDF2"
 
+#: models.py:1165
 msgid "cashier PIN"
 msgstr "PIN-код кассира"
 
+#: models.py:1169
 msgid ""
 "4-6 digit PIN for terminal lock/unlock. Migrated to hashed storage on first "
 "use."
@@ -1075,275 +1448,389 @@ msgstr ""
 "4-6-значный PIN-код для блокировки/разблокировки терминала. Перенесен в "
 "хэшированное хранение при первом использовании."
 
+#: models.py:1173
 msgid "cashier PIN (hashed)"
 msgstr "ПИН-код кассира (хэшированный)"
 
+#: models.py:1176
 msgid "PBKDF2-hashed cashier PIN"
 msgstr "ПИН-код кассира, хэшированный PBKDF2"
 
+#: models.py:1179
 msgid "card identifier hash"
 msgstr "хэш идентификатора карты"
 
+#: models.py:1183
 msgid "SHA-256 hash of card swipe data for unlock authentication"
 msgstr "SHA-256 хэш данных смахивания карты для аутентификации разблокировки"
 
+#: models.py:1190
 msgid "POS Staff Discount"
 msgstr "Скидка для сотрудников POS"
 
+#: models.py:1191
 msgid "POS Staff Discounts"
 msgstr "Скидки для сотрудников POS"
 
+#: models.py:1209
 msgid "Manager"
 msgstr "Менеджер"
 
+#: models.py:1289
 msgid "Manual Lock"
 msgstr "Ручная блокировка"
 
+#: models.py:1290
 msgid "Auto-Lock (Idle Timeout)"
 msgstr "Автоблокировка (таймаут простоя)"
 
+#: models.py:1291
 msgid "Unlock by Cashier"
 msgstr "Разблокировать кассиром"
 
+#: models.py:1292
 msgid "Unlock by Manager"
 msgstr "Разблокировать менеджером"
 
+#: models.py:1293
 msgid "Unlock by Card"
 msgstr "Разблокировать по карте"
 
+#: models.py:1294
 msgid "Unlock by Biometric"
 msgstr "Разблокировать по биометрии"
 
+#: models.py:1295
 msgid "Failed Unlock Attempt"
 msgstr "Неудачная попытка разблокировки"
 
+#: models.py:1296
 msgid "Lockout (3+ failures)"
 msgstr "Блокировка (3+ неудачных попыток)"
 
+#: models.py:1300
 msgid "PIN"
 msgstr "ПИН-код"
 
+#: models.py:1301
 msgid "Card Swipe"
 msgstr "Сканирование карты"
 
+#: models.py:1302
 msgid "Biometric"
 msgstr "Биометрия"
 
+#: models.py:1320
 msgid "event type"
 msgstr "Тип события"
 
+#: models.py:1339
 msgid "locked by"
 msgstr "заблокировано"
 
+#: models.py:1344
 msgid "manager override"
 msgstr "переопределение менеджером"
 
+#: models.py:1346
 msgid "True if unlocked by manager instead of original cashier"
 msgstr "Истина, если разблокирован менеджером вместо оригинального кассира"
 
+#: models.py:1351
 msgid "unlock method"
 msgstr "метод разблокировки"
 
+#: models.py:1359
 msgid "failed attempts"
 msgstr "неудачные попытки"
 
+#: models.py:1359
 msgid "Cumulative failed attempts before this event"
 msgstr "Накопленные неудачные попытки до этого события"
 
+#: models.py:1363
 msgid "cart items"
 msgstr "предметы в корзине"
 
+#: models.py:1365
 msgid "cart total"
 msgstr "итого в корзине"
 
+#: models.py:1371
 msgid "timestamp"
 msgstr "временная метка"
 
+#: models.py:1374
 msgid "Terminal Lock Event"
 msgstr "Событие блокировки терминала"
 
+#: models.py:1375
 msgid "Terminal Lock Events"
 msgstr "События блокировки терминала"
 
+#: models.py:1393
 msgid "user"
 msgstr "пользователь"
 
+#: models.py:1396
 msgid "credential ID"
 msgstr "идентификатор учетных данных"
 
+#: models.py:1400
 msgid "public key"
 msgstr "публичный ключ"
 
+#: models.py:1400
 msgid "CBOR-encoded attested credential data"
 msgstr "зашифрованные данные удостоверенного凭证 в формате CBOR"
 
+#: models.py:1403
 msgid "sign count"
 msgstr "количество подписей"
 
+#: models.py:1407
 msgid "device name"
 msgstr "название устройства"
 
+#: models.py:1415
 msgid "WebAuthn Credential"
 msgstr "Удостоверение WebAuthn"
 
+#: models.py:1416
 msgid "WebAuthn Credentials"
 msgstr "Удостоверения WebAuthn"
 
+#: models.py:1442
 msgid "parked by"
 msgstr "припарковано кем"
 
+#: models.py:1444
 msgid "parked at"
 msgstr "припарковано в"
 
+#: models.py:1445
 msgid "restored at"
 msgstr "восстановлено в"
 
+#: models.py:1450
 msgid "Auto-cleanup after this time. Default: 24h from parking."
 msgstr ""
 "Автоматическая очистка после этого времени. По умолчанию: 24 часа с момента "
 "парковки."
 
+#: models.py:1455
 msgid "cart data"
 msgstr "данные корзины"
 
+#: models.py:1455
 msgid "Full cart snapshot: items, customer, discounts, etc."
 msgstr "Полный снимок заказа: товары, клиент, скидки и т.д."
 
+#: models.py:1459
 msgid "item count"
 msgstr "количество товаров"
 
+#: models.py:1461
 msgid "total amount"
 msgstr "общая сумма"
 
+#: models.py:1464
 msgid "customer name"
 msgstr "имя клиента"
 
+#: models.py:1467
 msgid "Customer name for quick display in parked carts list"
 msgstr "Имя клиента для быстрого отображения в списке припаркованных заказов"
 
+#: models.py:1471
 msgid "Parked Cart"
 msgstr "Припаркованная корзина"
 
+#: models.py:1472
 msgid "Parked Carts"
 msgstr "Припаркованные корзины"
 
+#: models.py:1485
 msgid "Guest"
 msgstr "Гость"
 
+#: templates/admin/pos_app/dashboard.html:17
 msgid "Point of Sale Dashboard"
 msgstr "Дашборд точки продаж"
 
+#: templates/admin/pos_app/dashboard.html:20
 msgid "Monitor terminals, shifts, and today's sales at a glance"
 msgstr "Контролируйте терминалы, смены и сегодняшние продажи в один клик"
 
+#: templates/admin/pos_app/dashboard.html:30
+#: templates/admin/pos_app/dashboard.html:82
+#: templates/admin/pos_app/dashboard.html:169
+#: templates/admin/pos_app/posterminal/change_list.html:194
 msgid "Terminals"
 msgstr "Терминалы"
 
+#: templates/admin/pos_app/dashboard.html:35
 msgid "Online Now"
 msgstr "В сети сейчас"
 
+#: templates/admin/pos_app/dashboard.html:40
 msgid "Open Shifts"
 msgstr "Открытые смены"
 
+#: templates/admin/pos_app/dashboard.html:45
 msgid "Today's Transactions"
 msgstr "Сегодняшние транзакции"
 
+#: templates/admin/pos_app/dashboard.html:50
 msgid "Today's Sales"
 msgstr "Сегодняшние продажи"
 
+#: templates/admin/pos_app/dashboard.html:61
 msgid "Quick Actions"
 msgstr "Быстрые действия"
 
+#: templates/admin/pos_app/dashboard.html:68
+#: templates/admin/pos_app/dashboard.html:197
+#: templates/admin/pos_app/posterminal/change_list.html:25
 msgid "Add Terminal"
 msgstr "Добавить терминал"
 
+#: templates/admin/pos_app/dashboard.html:69
 msgid "Register a new POS terminal device"
 msgstr "Зарегистрировать новый POS-терминал"
 
+#: templates/admin/pos_app/dashboard.html:71
 msgid "Add"
 msgstr "Добавить"
 
+#: templates/admin/pos_app/dashboard.html:79
 msgid "Manage Staff"
 msgstr "Управление персоналом"
 
+#: templates/admin/pos_app/dashboard.html:80
 msgid "Assign staff members to POS terminals"
 msgstr "Назначить сотрудников на POS-терминалы"
 
+#: templates/admin/pos_app/dashboard.html:90
 msgid "View Shifts"
 msgstr "Посмотреть смены"
 
+#: templates/admin/pos_app/dashboard.html:91
 msgid "Review shift history and cash reconciliation"
 msgstr "Просмотреть историю смен и кассовую сверку"
 
+#: templates/admin/pos_app/dashboard.html:93
+#: templates/admin/pos_app/posshift/change_list.html:122
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:62
 msgid "Shifts"
 msgstr "Смены"
 
+#: templates/admin/pos_app/dashboard.html:101
 msgid "Open POS"
 msgstr "Открыть POS"
 
+#: templates/admin/pos_app/dashboard.html:102
 msgid "Launch the point of sale interface"
 msgstr "Запустить интерфейс кассы"
 
+#: templates/admin/pos_app/dashboard.html:104
 msgid "Launch"
 msgstr "Запуск"
 
+#: templates/admin/pos_app/dashboard.html:115
 msgid "Recent Shifts"
 msgstr "Недавние смены"
 
+#: templates/admin/pos_app/dashboard.html:122
 msgid "Cashier"
 msgstr "Кассир"
 
+#: templates/admin/pos_app/dashboard.html:123
+#: templates/admin/pos_app/posshift/change_list.html:78
 msgid "Terminal"
 msgstr "Терминал"
 
+#: templates/admin/pos_app/dashboard.html:124
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:89
 msgid "Ended"
 msgstr "Завершено"
 
+#: templates/admin/pos_app/dashboard.html:125
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:62
 msgid "Sales"
 msgstr "Продажи"
 
+#: templates/admin/pos_app/dashboard.html:126
 msgid "Txns"
 msgstr "Операции"
 
+#: templates/admin/pos_app/dashboard.html:127
 msgid "Cash Diff"
 msgstr "Разница в наличности"
 
+#: templates/admin/pos_app/dashboard.html:139
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:84
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:90
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:57
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:74
 msgid "ago"
 msgstr "назад"
 
+#: templates/admin/pos_app/dashboard.html:144
 msgid "OK"
 msgstr "Хорошо"
 
+#: templates/admin/pos_app/dashboard.html:159
 msgid "No completed shifts yet"
 msgstr "Смен еще не завершено"
 
+#: templates/admin/pos_app/dashboard.html:160
 msgid "Shifts will appear here once cashiers close them"
 msgstr "Смены появятся здесь, когда кассиры их закроют"
 
+#: templates/admin/pos_app/dashboard.html:183
 msgid "staff assigned"
 msgstr "назначенный персонал"
 
+#: templates/admin/pos_app/dashboard.html:186
 msgid "Pairing Code"
 msgstr "Код сопряжения"
 
+#: templates/admin/pos_app/dashboard.html:195
 msgid "No terminals configured"
 msgstr "Терминалы не настроены"
 
+#: templates/admin/pos_app/dashboard.html:207
 msgid "License Status"
 msgstr "Статус лицензии"
 
+#: templates/admin/pos_app/dashboard.html:208
+#: templates/admin/pos_app/posterminal/change_form.html:67
+#: templates/admin/pos_app/posterminal/change_list.html:159
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:26
+#: templates/admin/pos_app/posterminalprovider/change_list.html:65
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:30
+#: templates/admin/pos_app/promoslide/change_list.html:72
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:31
+#: templates/admin/pos_app/storegroup/change_form.html:37
+#: templates/admin/pos_app/storegroup/change_list.html:75
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:17
 msgid "Active"
 msgstr "Активный"
 
+#: templates/admin/pos_app/dashboard.html:212
 msgid "License Key"
 msgstr "Ключ лицензии"
 
+#: templates/admin/pos_app/dashboard.html:218
 msgid "Expires"
 msgstr "Истекает"
 
+#: templates/admin/pos_app/dashboard_upsell.html:19
 msgid "Spwig Point of Sale"
 msgstr "Точка продаж Spwig"
 
+#: templates/admin/pos_app/dashboard_upsell.html:21
 msgid ""
 "Turn any device into a powerful retail checkout — seamlessly connected to "
 "your online store."
@@ -1351,9 +1838,11 @@ msgstr ""
 "Превратите любое устройство в мощную кассу — бесшовно подключено к вашему "
 "интернет-магазину."
 
+#: templates/admin/pos_app/dashboard_upsell.html:31
 msgid "Unified Inventory"
 msgstr "Единый инвентарь"
 
+#: templates/admin/pos_app/dashboard_upsell.html:32
 msgid ""
 "Shared stock between your online store and physical locations. Every sale "
 "updates in real time."
@@ -1361,9 +1850,11 @@ msgstr ""
 "Общий ассортимент между вашим интернет-магазином и физическими точками. "
 "Каждая продажа обновляется в реальном времени."
 
+#: templates/admin/pos_app/dashboard_upsell.html:38
 msgid "Works on Any Device"
 msgstr "Работает на любом устройстве"
 
+#: templates/admin/pos_app/dashboard_upsell.html:39
 msgid ""
 "iPad, Android tablet, touchscreen PC, or any browser — no special hardware "
 "required."
@@ -1371,9 +1862,11 @@ msgstr ""
 "iPad, Android-планшет, сенсорный ПК или любой браузер — не требуется "
 "специальное оборудование."
 
+#: templates/admin/pos_app/dashboard_upsell.html:45
 msgid "Unlimited Terminals"
 msgstr "Неограниченное количество терминалов"
 
+#: templates/admin/pos_app/dashboard_upsell.html:46
 msgid ""
 "One flat price covers all your terminals and staff. Scale without per-device "
 "fees."
@@ -1381,9 +1874,11 @@ msgstr ""
 "Один единый тариф охватывает все ваши терминалы и сотрудников. "
 "Масштабируйтесь без дополнительных платежей за устройство."
 
+#: templates/admin/pos_app/dashboard_upsell.html:52
 msgid "Gift Cards & Vouchers"
 msgstr "Подарочные карты и купоны"
 
+#: templates/admin/pos_app/dashboard_upsell.html:53
 msgid ""
 "Accept and sell gift cards at the register. Apply discount vouchers with a "
 "quick scan."
@@ -1391,9 +1886,11 @@ msgstr ""
 "Принимать и продавать подарочные карты на кассе. Применять купоны на скидки "
 "с быстрым сканированием."
 
+#: templates/admin/pos_app/dashboard_upsell.html:59
 msgid "Shift Reports"
 msgstr "Отчеты по сменам"
 
+#: templates/admin/pos_app/dashboard_upsell.html:60
 msgid ""
 "End-of-day cash reconciliation, sales summaries, and staff performance — "
 "built in."
@@ -1401,149 +1898,253 @@ msgstr ""
 "Кассовая сверка в конце дня, резюме продаж и производительность сотрудников "
 "— встроены."
 
+#: templates/admin/pos_app/dashboard_upsell.html:66
 msgid "Multi-Language"
 msgstr "Многоязычность"
 
+#: templates/admin/pos_app/dashboard_upsell.html:67
 msgid "POS interface available in 10 languages."
 msgstr "Интерфейс POS доступен на 10 языках."
 
+#: templates/admin/pos_app/dashboard_upsell.html:77
 msgid "year"
 msgstr "год"
 
+#: templates/admin/pos_app/dashboard_upsell.html:80
 msgid "Unlimited terminals"
 msgstr "Неограниченное количество терминалов"
 
+#: templates/admin/pos_app/dashboard_upsell.html:81
 msgid "Unlimited staff accounts"
 msgstr "Неограниченное количество учетных записей персонала"
 
+#: templates/admin/pos_app/dashboard_upsell.html:82
 msgid "All future updates included"
 msgstr "Все будущие обновления включены"
 
+#: templates/admin/pos_app/dashboard_upsell.html:83
 msgid "Customer-facing display"
 msgstr "Пользовательский интерфейс"
 
+#: templates/admin/pos_app/dashboard_upsell.html:84
 msgid "Offline mode"
 msgstr "Режим оффлайн"
 
+#: templates/admin/pos_app/dashboard_upsell.html:91
 msgid "To activate POS, add your license key in"
 msgstr "Чтобы активировать POS, добавьте ваш ключ лицензии в"
 
+#: templates/admin/pos_app/dashboard_upsell.html:92
 msgid "Store Settings"
 msgstr "Настройки магазина"
 
+#: templates/admin/pos_app/dashboard_upsell.html:95
 msgid "Don't have a license? Visit"
 msgstr "Нет лицензии? Перейдите"
 
+#: templates/admin/pos_app/dashboard_upsell.html:97
 msgid "to purchase one."
 msgstr "чтобы приобрести одну."
 
+#: templates/admin/pos_app/posshift/change_list.html:20
 msgid "Track cashier shifts, sales, and cash reconciliation"
 msgstr "Отслеживать смены кассиров, продажи и кассовую сверку"
 
+#: templates/admin/pos_app/posshift/change_list.html:36
+#: templates/admin/pos_app/posterminal/change_list.html:158
+#: templates/admin/pos_app/posterminal/change_list.html:170
+#: templates/admin/pos_app/posterminalprovider/change_list.html:64
+#: templates/admin/pos_app/posterminalprovider/change_list.html:76
+#: templates/admin/pos_app/posterminalreader/change_list.html:105
+#: templates/admin/pos_app/posterminalreader/change_list.html:118
+#: templates/admin/pos_app/promoslide/change_list.html:71
+#: templates/admin/pos_app/receipttemplate/change_list.html:86
+#: templates/admin/pos_app/storegroup/change_list.html:74
 msgid "All"
 msgstr "Все"
 
+#: templates/admin/pos_app/posshift/change_list.html:55
+#: templates/admin/pos_app/posterminal/change_list.html:119
+#: templates/admin/pos_app/posterminalprovider/change_list.html:50
+#: templates/admin/pos_app/posterminalreader/change_list.html:66
+#: templates/admin/pos_app/promoslide/change_list.html:33
+#: templates/admin/pos_app/receipttemplate/change_list.html:34
+#: templates/admin/pos_app/storegroup/change_list.html:35
 msgid "Filters"
 msgstr "Фильтры"
 
+#: templates/admin/pos_app/posshift/change_list.html:66
+#: templates/admin/pos_app/posterminal/change_list.html:130
+#: templates/admin/pos_app/posterminalreader/change_list.html:77
+#: templates/admin/pos_app/receipttemplate/change_list.html:45
+#: templates/admin/pos_app/storegroup/change_list.html:46
 msgid "Search"
 msgstr "Поиск"
 
+#: templates/admin/pos_app/posshift/change_list.html:71
 msgid "Search by cashier name..."
 msgstr "Поиск по имени кассира..."
 
+#: templates/admin/pos_app/posshift/change_list.html:81
 msgid "All Terminals"
 msgstr "Все терминалы"
 
+#: templates/admin/pos_app/posshift/change_list.html:91
 msgid "From Date"
 msgstr "С даты"
 
+#: templates/admin/pos_app/posshift/change_list.html:99
 msgid "To Date"
 msgstr "По дату"
 
+#: templates/admin/pos_app/posshift/change_list.html:107
+#: templates/admin/pos_app/posterminal/change_list.html:179
+#: templates/admin/pos_app/posterminalprovider/change_list.html:86
+#: templates/admin/pos_app/posterminalreader/change_list.html:127
 msgid "Active:"
 msgstr "Активный:"
 
+#: templates/admin/pos_app/posshift/change_list.html:111
+#: templates/admin/pos_app/posterminal/change_list.html:183
+#: templates/admin/pos_app/posterminalprovider/change_list.html:90
+#: templates/admin/pos_app/posterminalreader/change_list.html:131
 msgid "Apply"
 msgstr "Применить"
 
+#: templates/admin/pos_app/posshift/change_list.html:114
+#: templates/admin/pos_app/posterminal/change_list.html:186
+#: templates/admin/pos_app/posterminalprovider/change_list.html:93
+#: templates/admin/pos_app/posterminalreader/change_list.html:134
+#: templates/admin/pos_app/promoslide/change_list.html:85
+#: templates/admin/pos_app/receipttemplate/change_list.html:100
+#: templates/admin/pos_app/storegroup/change_list.html:88
 msgid "Clear All"
 msgstr "Очистить все"
 
+#: templates/admin/pos_app/posshift/change_list.html:139
+#: templates/admin/pos_app/posterminal/change_list.html:211
+#: templates/admin/pos_app/posterminalprovider/change_list.html:118
+#: templates/admin/pos_app/posterminalreader/change_list.html:159
 msgid "Show all"
 msgstr "Показать все"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:38
 msgid "Balanced"
 msgstr "Сбалансировано"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:55
 msgid "txns"
 msgstr "txns"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:68
 msgid "Transactions"
 msgstr "Транзакции"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:72
 msgid "Refunds"
 msgstr "Возвраты"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:76
 msgid "Opening Cash"
 msgstr "Начальный наличный остаток"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:84
 msgid "Started"
 msgstr "Начато"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:98
 msgid "Still open"
 msgstr "Еще открыто"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:107
 msgid "Edit shift"
 msgstr "Редактировать смену"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:112
 msgid "View terminal"
 msgstr "Посмотреть терминал"
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:122
 msgid "No shifts found matching your criteria."
 msgstr "Нет смен, соответствующих вашим критериям."
 
+#: templates/admin/pos_app/posshift/partials/shift_cards.html:124
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:120
 msgid "Try adjusting your filters or search terms."
 msgstr "Попробуйте изменить свои фильтры или ключевые слова поиска."
 
+#: templates/admin/pos_app/posterminal/change_form.html:4
 msgid "Edit POS Terminal"
 msgstr "Редактировать терминал POS"
 
+#: templates/admin/pos_app/posterminal/change_form.html:4
+#: templates/admin/pos_app/posterminal/change_form.html:380
 msgid "Add POS Terminal"
 msgstr "Добавить терминал POS"
 
+#: templates/admin/pos_app/posterminal/change_form.html:26
 msgid "Please correct the errors below."
 msgstr "Пожалуйста, исправьте ошибки ниже."
 
+#: templates/admin/pos_app/posterminal/change_form.html:42
 msgid "Edit POS Terminal:"
 msgstr "Редактировать терминал POS:"
 
+#: templates/admin/pos_app/posterminal/change_form.html:71
+#: templates/admin/pos_app/posterminal/change_list.html:160
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:30
+#: templates/admin/pos_app/posterminalprovider/change_list.html:66
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:34
+#: templates/admin/pos_app/promoslide/change_list.html:73
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:35
+#: templates/admin/pos_app/storegroup/change_form.html:39
+#: templates/admin/pos_app/storegroup/change_list.html:76
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:21
 msgid "Inactive"
 msgstr "Неактивный"
 
+#: templates/admin/pos_app/posterminal/change_form.html:77
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:80
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:86
+#: templates/admin/pos_app/storegroup/change_form.html:35
 msgid "Created"
 msgstr "Создано"
 
+#: templates/admin/pos_app/posterminal/change_form.html:83
 msgid "Save and Continue"
 msgstr "Сохранить и продолжить"
 
+#: templates/admin/pos_app/posterminal/change_form.html:86
+#: templates/admin/pos_app/posterminal/change_form.html:359
+#: templates/admin/pos_app/posterminal/change_form.html:385
+#: templates/admin/pos_app/posterminal/change_form.html:558
+#: templates/admin/pos_app/posterminalreader/change_form.html:272
+#: templates/admin/pos_app/posterminalreader/change_form.html:423
+#: templates/admin/pos_app/storegroup/change_form.html:48
+#: templates/admin/pos_app/storegroup/change_form.html:221
 msgid "Save"
 msgstr "Сохранить"
 
+#: templates/admin/pos_app/posterminal/change_form.html:99
+#: templates/admin/pos_app/storegroup/change_form.html:87
 msgid "Basic"
 msgstr "Базовый"
 
+#: templates/admin/pos_app/posterminal/change_form.html:103
 msgid "Device"
 msgstr "Устройство"
 
+#: templates/admin/pos_app/posterminal/change_form.html:161
 msgid "Share the pairing code with the device to register it."
 msgstr ""
 "Поделитесь кодом сопоставления с устройством, чтобы зарегистрировать его."
 
+#: templates/admin/pos_app/posterminal/change_form.html:200
 msgid "JSON configuration for connected hardware (printer, scanner, etc.)."
 msgstr ""
 "JSON-конфигурация для подключенного оборудования (принтер, сканер и т.д.)."
 
+#: templates/admin/pos_app/posterminal/change_form.html:239
 msgid ""
 "Configure how many orders are cached on the terminal for offline viewing. "
 "POS orders from this terminal are always synced first. Remaining slots are "
@@ -1553,18 +2154,29 @@ msgstr ""
 "оффлайн-режиме. Заказы POS с этого терминала всегда синхронизируются "
 "первыми. Оставшиеся слоты заполняются недавними заказами с веб-интерфейса."
 
+#: templates/admin/pos_app/posterminal/change_form.html:278
+#: templates/admin/pos_app/posterminal/change_form.html:510
 msgid "Assign staff members who are authorized to use this terminal."
 msgstr "Назначьте сотрудников, которые имеют право использовать этот терминал."
 
+#: templates/admin/pos_app/posterminal/change_form.html:360
+#: templates/admin/pos_app/posterminal/change_form.html:560
+#: templates/admin/pos_app/posterminalreader/change_form.html:270
+#: templates/admin/pos_app/posterminalreader/change_form.html:421
+#: templates/admin/pos_app/storegroup/change_form.html:45
+#: templates/admin/pos_app/storegroup/change_form.html:222
 msgid "Save and continue editing"
 msgstr "Сохранить и продолжить редактирование"
 
+#: templates/admin/pos_app/posterminal/change_form.html:363
 msgid "Delete"
 msgstr "Удалить"
 
+#: templates/admin/pos_app/posterminal/change_form.html:396
 msgid "Terminal Information"
 msgstr "Информация о терминале"
 
+#: templates/admin/pos_app/posterminal/change_form.html:433
 msgid ""
 "The pairing code will be generated automatically. You can share it with the "
 "device after saving."
@@ -1572,24 +2184,32 @@ msgstr ""
 "Код сопоставления будет сгенерирован автоматически. Вы можете поделиться им "
 "с устройством после сохранения."
 
+#: templates/admin/pos_app/posterminal/change_form.html:472
 msgid "Sync Settings"
 msgstr "Настройки синхронизации"
 
+#: templates/admin/pos_app/posterminal/change_form.html:473
 msgid ""
 "Configure how many orders are cached on the terminal for offline viewing."
 msgstr ""
 "Настройте, сколько заказов будет кэшироваться на терминале для оффлайн-"
 "просмотра."
 
+#: templates/admin/pos_app/posterminal/change_form.html:559
+#: templates/admin/pos_app/posterminalreader/change_form.html:267
+#: templates/admin/pos_app/posterminalreader/change_form.html:418
 msgid "Save and add another"
 msgstr "Сохранить и добавить еще"
 
+#: templates/admin/pos_app/posterminal/change_list.html:20
 msgid "Manage your point-of-sale terminals and device pairings"
 msgstr "Управление терминалами продаж и настройка устройств"
 
+#: templates/admin/pos_app/posterminal/change_list.html:45
 msgid "Set Up Your Store Location"
 msgstr "Настройка расположения магазина"
 
+#: templates/admin/pos_app/posterminal/change_list.html:46
 msgid ""
 "Before adding POS terminals, you need to designate at least one warehouse as "
 "a physical store location."
@@ -1597,18 +2217,24 @@ msgstr ""
 "Перед добавлением терминалов POS вам нужно назначить хотя бы один склад в "
 "качестве физического местоположения магазина."
 
+#: templates/admin/pos_app/posterminal/change_list.html:66
 msgid "Store Display Name"
 msgstr "Отображаемое имя магазина"
 
+#: templates/admin/pos_app/posterminal/change_list.html:70
 msgid "e.g. Downtown Store"
 msgstr "например, Downtown Store"
 
+#: templates/admin/pos_app/posterminal/change_list.html:72
 msgid "A short name shown in the POS interface and on receipts."
 msgstr "Короткое имя, отображаемое в интерфейсе POS и на чеках."
 
+#: templates/admin/pos_app/posterminal/change_list.html:77
+#: templates/admin/pos_app/posterminal/change_list.html:221
 msgid "Enable as Store Location"
 msgstr "Включить как расположение магазина"
 
+#: templates/admin/pos_app/posterminal/change_list.html:85
 #, python-format
 msgid ""
 "\n"
@@ -1623,9 +2249,11 @@ msgstr ""
 "терминалами POS.\n"
 "                "
 
+#: templates/admin/pos_app/posterminal/change_list.html:90
 msgid "Go to Warehouse Management"
 msgstr "Перейти к управлению складом"
 
+#: templates/admin/pos_app/posterminal/change_list.html:97
 msgid ""
 "You need to create a warehouse first. A warehouse represents a location "
 "where your stock is kept, including physical stores."
@@ -1633,9 +2261,11 @@ msgstr ""
 "Сначала вам нужно создать склад. Склад представляет собой место, где "
 "хранится ваш товар, включая физические магазины."
 
+#: templates/admin/pos_app/posterminal/change_list.html:99
 msgid "Create Warehouse"
 msgstr "Создать склад"
 
+#: templates/admin/pos_app/posterminal/change_list.html:106
 msgid ""
 "\n"
 "            Need multiple store locations? You can enable any warehouse as a "
@@ -1648,69 +2278,97 @@ msgstr ""
 "складами</strong>.\n"
 "            "
 
+#: templates/admin/pos_app/posterminal/change_list.html:109
 msgid "Manage Warehouses"
 msgstr "Управление складами"
 
+#: templates/admin/pos_app/posterminal/change_list.html:135
 msgid "Search by name or pairing code..."
 msgstr "Поиск по имени или коду сопоставления..."
 
+#: templates/admin/pos_app/posterminal/change_list.html:142
 msgid "Store Location"
 msgstr "Расположение магазина"
 
+#: templates/admin/pos_app/posterminal/change_list.html:145
 msgid "All Locations"
 msgstr "Все расположения"
 
+#: templates/admin/pos_app/posterminal/change_list.html:167
+#: templates/admin/pos_app/posterminalprovider/change_list.html:73
 msgid "Connection"
 msgstr "Соединение"
 
+#: templates/admin/pos_app/posterminal/change_list.html:220
 msgid "Enabling..."
 msgstr "Включение..."
 
+#: templates/admin/pos_app/posterminal/change_list.html:222
 msgid "Something went wrong. Please try again."
 msgstr "Что-то пошло не так. Пожалуйста, попробуйте еще раз."
 
+#: templates/admin/pos_app/posterminal/change_list.html:223
 msgid "Send remote unlock signal to this terminal?"
 msgstr "Отправить сигнал дистанционного разблокирования на этот терминал?"
 
+#: templates/admin/pos_app/posterminal/change_list.html:224
 msgid "Failed to unlock terminal."
 msgstr "Не удалось разблокировать терминал."
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:46
 msgid "staff"
 msgstr "персонал"
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:66
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:82
 msgid "Last Seen"
 msgstr "Последнее посещение"
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:84
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:90
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:57
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:74
 msgid "Updated"
 msgstr "Обновлено"
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:92
 msgid "Edit terminal"
 msgstr "Редактировать терминал"
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:98
 msgid "Unlock terminal"
 msgstr "Разблокировать терминал"
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:103
 msgid "View shifts"
 msgstr "Посмотреть смены"
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:108
 msgid "Delete terminal"
 msgstr "Удалить терминал"
 
+#: templates/admin/pos_app/posterminal/partials/terminal_cards.html:118
 msgid "No terminals found matching your criteria."
 msgstr "Нет терминалов, соответствующих вашим критериям."
 
+#: templates/admin/pos_app/posterminalprovider/change_list.html:4
+#: templates/admin/pos_app/posterminalprovider/change_list.html:18
 msgid "Terminal Providers"
 msgstr "Поставщики терминалов"
 
+#: templates/admin/pos_app/posterminalprovider/change_list.html:20
 msgid "Configure integrated card payment terminal providers for your POS"
 msgstr "Настройка поставщиков терминалов оплаты картами для вашего POS"
 
+#: templates/admin/pos_app/posterminalprovider/change_list.html:24
 msgid "Connect Provider"
 msgstr "Подключить поставщика"
 
+#: templates/admin/pos_app/posterminalprovider/change_list.html:41
 msgid "What are Terminal Providers?"
 msgstr "Что такое поставщики терминалов?"
 
+#: templates/admin/pos_app/posterminalprovider/change_list.html:42
 msgid ""
 "Terminal providers are payment processing integrations (like Stripe "
 "Terminal) that allow your POS to accept card payments through connected card "
@@ -1721,94 +2379,138 @@ msgstr ""
 "подключенные считыватели карт. Настройте поставщика здесь, а затем назначьте "
 "считыватели на терминалы."
 
+#: templates/admin/pos_app/posterminalprovider/change_list.html:79
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:48
 msgid "Not Tested"
 msgstr "Не протестировано"
 
+#: templates/admin/pos_app/posterminalprovider/change_list.html:101
 msgid "Providers"
 msgstr "Поставщики"
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:54
+#: templates/admin/pos_app/posterminalreader/change_list.html:145
+#: templates/admin/pos_app/posterminalreader/change_list.html:157
 msgid "reader"
 msgstr "читалка"
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:68
+#: templates/admin/pos_app/posterminalreader/change_list.html:142
 msgid "Readers"
 msgstr "Читалки"
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:72
 msgid "Last Tested"
 msgstr "Последний тест"
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:98
 msgid "Edit provider"
 msgstr "Редактировать поставщика"
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:103
 msgid "View readers"
 msgstr "Посмотреть читалки"
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:114
 msgid "Delete provider"
 msgstr "Удалить поставщика"
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:124
 msgid "No terminal providers configured."
 msgstr "Не настроены поставщики терминалов."
 
+#: templates/admin/pos_app/posterminalprovider/partials/provider_cards.html:126
 msgid "Add a provider to enable integrated card payments in your POS."
 msgstr ""
 "Добавьте поставщика, чтобы включить интегрированные платежи картами в ваш "
 "POS."
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:4
 msgid "Edit Card Reader"
 msgstr "Редактировать считыватель карт"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:4
+#: templates/admin/pos_app/posterminalreader/change_form.html:283
+#: templates/admin/pos_app/wizard/reader_base.html:24
 msgid "Add Card Reader"
 msgstr "Добавить читалку карт"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:19
+#: templates/admin/pos_app/wizard/reader_base.html:4
 msgid "Card Reader"
 msgstr "Читалка карт"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:44
+#: templates/admin/pos_app/posterminalreader/change_form.html:293
 msgid "Basic Info"
 msgstr "Базовая информация"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:80
+#: templates/admin/pos_app/posterminalreader/change_form.html:321
+#: templates/admin/pos_app/storegroup/change_form.html:61
 msgid "Please correct the errors below"
 msgstr "Пожалуйста, исправьте ошибки ниже"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:91
+#: templates/admin/pos_app/posterminalreader/change_form.html:332
 msgid "Configure the basic settings for this card reader"
 msgstr "Настройка базовых параметров этого считывателя карт"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:120
+#: templates/admin/pos_app/posterminalreader/change_form.html:361
 msgid "Technical details from the payment provider"
 msgstr "Технические детали от поставщика платежей"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:161
 msgid "Reader Status"
 msgstr "Состояние читателя"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:162
 msgid "Current connection and availability status"
 msgstr "Текущий статус подключения и доступности"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:189
+#: templates/admin/pos_app/posterminalreader/change_form.html:402
 msgid "Splash Screen Configuration"
 msgstr "Настройка экрана приветствия"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:231
 msgid "System Timestamps"
 msgstr "Временные метки системы"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:232
 msgid "Automatically tracked system information"
 msgstr "Автоматически отслеживаемая система информации"
 
+#: templates/admin/pos_app/posterminalreader/change_form.html:285
 msgid "Register a new payment terminal card reader"
 msgstr "Зарегистрировать новый считыватель карт терминала оплаты"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:4
+#: templates/admin/pos_app/posterminalreader/change_list.html:18
 msgid "Card Readers"
 msgstr "Читалки карт"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:20
 msgid "Manage physical card reader devices connected to your POS terminals"
 msgstr ""
 "Управление физическими устройствами считывания карт, подключенными к "
 "терминалам POS"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:25
+#: templates/admin/pos_app/posterminalreader/change_list.html:169
 msgid "Sync Readers"
 msgstr "Синхронизировать читалки"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:28
 msgid "Add Reader"
 msgstr "Добавить читалку"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:48
 msgid "Configure a Terminal Provider First"
 msgstr "Сначала настройте поставщика терминалов"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:49
 msgid ""
 "Before adding card readers, you need to set up a terminal provider (like "
 "Stripe Terminal) that will manage the reader connections."
@@ -1817,6 +2519,7 @@ msgstr ""
 "терминалов (например, Stripe Terminal), который будет управлять соединениями "
 "считывателей."
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:53
 msgid ""
 "Terminal providers handle the communication between your POS and card "
 "readers. Once configured, readers can be discovered and registered."
@@ -1825,78 +2528,104 @@ msgstr ""
 "считывателями карт. После настройки считыватели могут быть обнаружены и "
 "зарегистрированы."
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:55
 msgid "Add Terminal Provider"
 msgstr "Добавить поставщика терминалов"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:82
 msgid "Search by label or serial number..."
 msgstr "Поиск по метке или серийному номеру..."
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:89
+#: templates/admin/pos_app/wizard/reader_base.html:34
 msgid "Provider"
 msgstr "Провайдер"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:92
 msgid "All Providers"
 msgstr "Все провайдеры"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:119
 msgid "Assigned to Terminal"
 msgstr "Назначена терминалу"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:120
 msgid "Unassigned"
 msgstr "Не назначено"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:168
 msgid "Syncing..."
 msgstr "Синхронизация..."
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:170
 msgid "Synced"
 msgstr "Синхронизировано"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:171
 msgid "readers"
 msgstr "читатели"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:172
 msgid "Sync completed with errors:"
 msgstr "Синхронизация завершена с ошибками:"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:173
 msgid "Sync failed:"
 msgstr "Синхронизация не удалась:"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:174
 msgid "Failed to assign"
 msgstr "Не удалось назначить"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:175
 msgid "Failed to assign reader"
 msgstr "Не удалось назначить читателя"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:179
 msgid "Just now"
 msgstr "Недавно"
 
+#: templates/admin/pos_app/posterminalreader/change_list.html:180
 msgid "Failed to refresh status"
 msgstr "Не удалось обновить статус"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:56
 msgid "Terminal:"
 msgstr "Терминал:"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:61
 msgid "— Unassigned"
 msgstr "— Не назначено"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:72
 msgid "Provider ID"
 msgstr "ID провайдера"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:77
 msgid "IP Address"
 msgstr "IP-адрес"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:96
 msgid "Registered"
 msgstr "Зарегистрировано"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:110
 msgid "Refresh status"
 msgstr "Обновить статус"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:117
 msgid "Edit reader"
 msgstr "Редактировать читателя"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:122
 msgid "Delete reader"
 msgstr "Удалить читателя"
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:132
 msgid "No card readers found."
 msgstr "Читатели карт не найдены."
 
+#: templates/admin/pos_app/posterminalreader/partials/reader_cards.html:134
 msgid ""
 "Readers are discovered through your terminal provider or can be added "
 "manually."
@@ -1904,36 +2633,50 @@ msgstr ""
 "Считыватели могут быть обнаружены через вашего поставщика терминалов или "
 "добавлены вручную."
 
+#: templates/admin/pos_app/promoslide/change_list.html:20
 msgid "Promotional slides for customer-facing POS displays"
 msgstr "Рекламные слайды для дисплеев POS, обращенных к клиентам"
 
+#: templates/admin/pos_app/promoslide/change_list.html:24
 msgid "Add Slide"
 msgstr "Добавить слайд"
 
+#: templates/admin/pos_app/promoslide/change_list.html:56
 msgid "Individual Stores"
 msgstr "Индивидуальные магазины"
 
+#: templates/admin/pos_app/promoslide/change_list.html:82
+#: templates/admin/pos_app/receipttemplate/change_list.html:97
+#: templates/admin/pos_app/storegroup/change_list.html:85
 msgid "Apply Filters"
 msgstr "Применить фильтры"
 
+#: templates/admin/pos_app/promoslide/change_list.html:93
 msgid "Slides"
 msgstr "Слайды"
 
+#: templates/admin/pos_app/promoslide/change_list.html:96
+#: templates/admin/pos_app/promoslide/change_list.html:108
 msgid "slide"
 msgstr "слайд"
 
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:50
 msgid "Order"
 msgstr "Порядок"
 
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:65
 msgid "Edit slide"
 msgstr "Редактировать слайд"
 
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:70
 msgid "Delete slide"
 msgstr "Удалить слайд"
 
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:80
 msgid "No promo slides found."
 msgstr "Промо-слайды не найдены."
 
+#: templates/admin/pos_app/promoslide/partials/slide_cards.html:82
 msgid ""
 "Create your first slide to display promotional content on customer-facing "
 "displays."
@@ -1941,102 +2684,140 @@ msgstr ""
 "Создайте первый слайд, чтобы отображать рекламный контент на дисплеях, "
 "обращенных к клиентам."
 
+#: templates/admin/pos_app/receipttemplate/change_form.html:4
 msgid "Edit Receipt Template"
 msgstr "Редактировать шаблон чека"
 
+#: templates/admin/pos_app/receipttemplate/change_form.html:4
 msgid "Add Receipt Template"
 msgstr "Добавить шаблон чека"
 
+#: templates/admin/pos_app/receipttemplate/change_form.html:20
 msgid "Receipt Preview"
 msgstr "Предварительный просмотр чека"
 
+#: templates/admin/pos_app/receipttemplate/change_form.html:21
 msgid "Live"
 msgstr "Живой"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:21
 msgid "Customize receipt layouts for each store location"
 msgstr "Настройка макетов чеков для каждого местоположения магазина"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:25
 msgid "Add Template"
 msgstr "Добавить шаблон"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:50
 msgid "Search by name..."
 msgstr "Поиск по имени..."
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:60
 msgid "All Scopes"
 msgstr "Все области"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:61
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:30
 msgid "Default Template"
 msgstr "Шаблон по умолчанию"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:63
 msgid "Specific Store"
 msgstr "Конкретный магазин"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:70
 msgid "Paper Width"
 msgstr "Ширина бумаги"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:73
 msgid "All Widths"
 msgstr "Все ширины"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:83
 msgid "QR Code"
 msgstr "QR-код"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:87
 msgid "Enabled"
 msgstr "Включено"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:88
 msgid "Disabled"
 msgstr "Отключено"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:108
 msgid "Templates"
 msgstr "Шаблоны"
 
+#: templates/admin/pos_app/receipttemplate/change_list.html:111
+#: templates/admin/pos_app/receipttemplate/change_list.html:123
 msgid "template"
 msgstr "Шаблон"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:10
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:12
 msgid "Logo"
 msgstr "Логотип"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:28
 msgid "Group"
 msgstr "Группа"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:41
 msgid "QR Enabled"
 msgstr "QR-код включен"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:47
 msgid "Branded"
 msgstr "С брендом"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:60
 msgid "Header"
 msgstr "Заголовок"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:79
 msgid "Shows address"
 msgstr "Показывает адрес"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:85
 msgid "Shows cashier"
 msgstr "Показывает кассира"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:94
 msgid "Edit template"
 msgstr "Редактировать шаблон"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:99
 msgid "Delete template"
 msgstr "Удалить шаблон"
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:109
 msgid "No receipt templates found."
 msgstr "Шаблоны чеков не найдены."
 
+#: templates/admin/pos_app/receipttemplate/partials/template_cards.html:111
 msgid "Create a template to customize your POS receipts."
 msgstr "Создайте шаблон для настройки чеков POS."
 
+#: templates/admin/pos_app/storegroup/change_form.html:4
 msgid "Edit Store Group"
 msgstr "Редактировать группу магазинов"
 
+#: templates/admin/pos_app/storegroup/change_form.html:4
+#: templates/admin/pos_app/storegroup/change_form.html:29
+#: templates/admin/pos_app/storegroup/change_list.html:26
 msgid "Add Store Group"
 msgstr "Добавить группу магазинов"
 
+#: templates/admin/pos_app/storegroup/change_form.html:91
 msgid "Regional"
 msgstr "Региональные"
 
+#: templates/admin/pos_app/storegroup/change_form.html:108
 msgid "Configure the store group name, code, and status."
 msgstr "Настройте имя группы магазинов, код и статус."
 
+#: templates/admin/pos_app/storegroup/change_form.html:139
 msgid ""
 "Settings applied to all stores in this group. Leave blank to inherit from "
 "site defaults."
@@ -2044,80 +2825,107 @@ msgstr ""
 "Настройки применяются ко всем магазинам в этой группе. Оставьте поле пустым, "
 "чтобы наследовать значения по умолчанию сайта."
 
+#: templates/admin/pos_app/storegroup/change_form.html:161
 msgid "Advanced Settings"
 msgstr "Расширенные настройки"
 
+#: templates/admin/pos_app/storegroup/change_list.html:22
 msgid "Manage regional settings for POS store groups"
 msgstr "Управление региональными настройками для групп магазинов POS"
 
+#: templates/admin/pos_app/storegroup/change_list.html:51
 msgid "Search by name or code..."
 msgstr "Поиск по названию или коду..."
 
+#: templates/admin/pos_app/storegroup/change_list.html:61
 msgid "All Currencies"
 msgstr "Все валюты"
 
+#: templates/admin/pos_app/storegroup/change_list.html:99
 msgid "group"
 msgstr "группа"
 
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:39
 msgid "Language"
 msgstr "Язык"
 
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:46
 msgid "Timezone"
 msgstr "Часовой пояс"
 
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:56
 msgid "None"
 msgstr "Нет"
 
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:64
 msgid "Edit"
 msgstr "Редактировать"
 
+#: templates/admin/pos_app/storegroup/partials/storegroup_cards.html:73
 msgid "No store groups match your filters."
 msgstr "Нет групп магазинов, соответствующих вашим фильтрам."
 
+#: templates/admin/pos_app/wizard/base.html:4
+#: templates/admin/pos_app/wizard/reader_step1_select.html:22
 msgid "Terminal Provider"
 msgstr "Поставщик терминала"
 
+#: templates/admin/pos_app/wizard/base.html:17
 msgid "Back to Terminal Providers"
 msgstr "Назад к поставщикам терминалов"
 
+#: templates/admin/pos_app/wizard/base.html:24
 msgid "Connect Terminal Provider"
 msgstr "Подключить поставщика терминала"
 
+#: templates/admin/pos_app/wizard/base.html:34
 msgid "Select"
 msgstr "Выбрать"
 
+#: templates/admin/pos_app/wizard/base.html:38
 msgid "Setup"
 msgstr "Настройка"
 
+#: templates/admin/pos_app/wizard/base.html:46
 msgid "Test"
 msgstr "Тест"
 
+#: templates/admin/pos_app/wizard/base.html:50
 msgid "Configure"
 msgstr "Настроить"
 
+#: templates/admin/pos_app/wizard/reader_base.html:17
 msgid "Back to Card Readers"
 msgstr "Назад к читалкам карт"
 
+#: templates/admin/pos_app/wizard/reader_base.html:38
 msgid "Register"
 msgstr "Регистрация"
 
+#: templates/admin/pos_app/wizard/reader_base.html:42
 msgid "Assign"
 msgstr "Назначить"
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:9
 msgid "Select Provider & Method"
 msgstr "Выберите поставщика и метод"
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:11
 msgid "Choose the terminal provider for your card reader and how to add it."
 msgstr ""
 "Выберите поставщика терминалов для вашего считывателя карт и способ его "
 "добавления."
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:62
 msgid "How to Add Reader"
 msgstr "Как добавить читалку"
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:73
+#: templates/admin/pos_app/wizard/reader_step2_register.html:14
 msgid "Register New Device"
 msgstr "Зарегистрировать новое устройство"
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:74
 msgid ""
 "Enter the registration code shown on your device screen to pair it with your "
 "account."
@@ -2125,9 +2933,12 @@ msgstr ""
 "Введите код регистрации, отображаемый на экране вашего устройства, чтобы "
 "связать его с вашей учетной записью."
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:86
+#: wizard_views/reader_wizard.py:176
 msgid "Discover Existing"
 msgstr "Найти существующее"
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:87
 msgid ""
 "Fetch readers already registered with your provider and import them into "
 "your POS system."
@@ -2135,70 +2946,107 @@ msgstr ""
 "Получить читалки, уже зарегистрированные в вашем провайдере, и импортировать "
 "их в вашу систему POS."
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:96
+#: templates/admin/pos_app/wizard/step1_select.html:82
 msgid "Cancel"
 msgstr "Отменить"
 
+#: templates/admin/pos_app/wizard/reader_step1_select.html:99
+#: templates/admin/pos_app/wizard/step1_select.html:85
+#: templates/admin/pos_app/wizard/step4_test.html:61
+#: templates/admin/pos_app/wizard/step4_test.html:72
 msgid "Continue"
 msgstr "Продолжить"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:16
 msgid "Discover Existing Readers"
 msgstr "Найти существующие читалки"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:21
 msgid "Enter the registration code displayed on your card reader device."
 msgstr "Введите код регистрации, отображаемый на устройстве считывателя карт."
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:23
 msgid ""
 "Select readers from your provider account to import into your POS system."
 msgstr ""
 "Выберите читалки из вашей учетной записи провайдера для импорта в вашу "
 "систему POS."
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:38
 msgid "Registration Code"
 msgstr "Код регистрации"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:48
 msgid "Find this code on your device screen. It looks like:"
 msgstr "Найдите этот код на экране устройства. Он выглядит так:"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:53
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:62
 msgid "Reader Label"
 msgstr "Метка читалки"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:57
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:67
 msgid "e.g., Front Counter Reader"
 msgstr "Например, читалка прикассовой зоны"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:59
 msgid "A friendly name to identify this reader. Optional."
 msgstr "Дружественное имя для идентификации этого считывателя. Необязательно."
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:74
 msgid "Where to find the code"
 msgstr "Где найти код"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:76
 msgid "Power on your card reader device"
 msgstr "Включите устройство считывателя карт"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:77
 msgid "Connect it to your WiFi network"
 msgstr "Подключите его к вашей сети WiFi"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:78
 msgid "The registration code will appear on screen"
 msgstr "Код регистрации появится на экране"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:79
 msgid "Enter the code in the field to the left"
 msgstr "Введите код в поле слева"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:83
 msgid "If you're using a simulated reader for testing, use:"
 msgstr ""
 "Если вы используете симулированный считыватель для тестирования, используйте:"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:91
+#: templates/admin/pos_app/wizard/reader_step2_register.html:172
+#: templates/admin/pos_app/wizard/reader_step2_register.html:188
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:108
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:112
+#: templates/admin/pos_app/wizard/step2_setup.html:40
+#: templates/admin/pos_app/wizard/step3_credentials.html:94
+#: templates/admin/pos_app/wizard/step4_test.html:56
+#: templates/admin/pos_app/wizard/step5_configure.html:110
+#: templates/admin/pos_app/wizard/step5_configure.html:114
 msgid "Back"
 msgstr "Назад"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:94
+#: templates/admin/pos_app/wizard/reader_step2_register.html:211
 msgid "Register Reader"
 msgstr "Зарегистрировать читалку"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:108
 msgid "Failed to fetch readers"
 msgstr "Не удалось получить читалки"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:112
 msgid "Retry"
 msgstr "Повторить"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:118
 #, python-format
 msgid ""
 "\n"
@@ -2231,18 +3079,24 @@ msgstr[3] ""
 "display_name)s account.\n"
 "            "
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:162
 msgid "Select All"
 msgstr "Выбрать все"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:165
 msgid "Select None"
 msgstr "Не выбирать"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:175
+#: templates/admin/pos_app/wizard/reader_step2_register.html:213
 msgid "Import Selected"
 msgstr "Импортировать выбранные"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:184
 msgid "All readers already imported"
 msgstr "Все считыватели уже импортированы"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:185
 msgid ""
 "All readers from your provider account are already registered in your POS "
 "system."
@@ -2250,27 +3104,36 @@ msgstr ""
 "Все читалки из вашей учетной записи провайдера уже зарегистрированы в вашей "
 "системе POS."
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:191
 msgid "View Readers"
 msgstr "Посмотреть считыватели"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:207
 msgid "Please enter a registration code."
 msgstr "Пожалуйста, введите код регистрации."
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:208
 msgid "Registering..."
 msgstr "Регистрация..."
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:209
 msgid "Reader registered successfully!"
 msgstr "Считыватель успешно зарегистрирован!"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:210
 msgid "Registration failed"
 msgstr "Ошибка регистрации"
 
+#: templates/admin/pos_app/wizard/reader_step2_register.html:212
 msgid "Import"
 msgstr "Импорт"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:9
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:75
 msgid "Assign to Terminal"
 msgstr "Назначить терминалу"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:11
 msgid ""
 "Optionally assign this reader to a POS terminal. You can always change this "
 "later."
@@ -2278,25 +3141,32 @@ msgstr ""
 "Опционально назначьте этот считыватель терминалу POS. Вы всегда сможете "
 "изменить это позже."
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:45
 msgid "New Manual Reader"
 msgstr "Новый ручной считыватель"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:53
 msgid "Ready"
 msgstr "Готово"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:70
 msgid "A friendly name to identify this reader."
 msgstr "Дружественное имя для идентификации этого считывателя."
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:77
 msgid "— Don't assign (configure later)"
 msgstr "— Не назначать (настроить позже)"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:83
 msgid "Has reader"
 msgstr "Есть считыватель"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:87
 msgid "Select which POS terminal should use this card reader."
 msgstr ""
 "Выберите, какой терминал POS должен использовать этот считыватель карт."
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:92
 msgid ""
 "This terminal already has a card reader assigned. The existing assignment "
 "will be removed."
@@ -2304,77 +3174,103 @@ msgstr ""
 "Этот терминал уже имеет назначенный считыватель карт. Существующее "
 "назначение будет удалено."
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:99
 msgid "Add another reader after saving"
 msgstr "Добавить еще одного считывателя после сохранения"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:116
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:124
 msgid "Save & Finish"
 msgstr "Сохранить и завершить"
 
+#: templates/admin/pos_app/wizard/reader_step3_assign.html:124
 msgid "Save & Add Another"
 msgstr "Сохранить и добавить еще"
 
+#: templates/admin/pos_app/wizard/step1_select.html:9
 msgid "Select Terminal Provider"
 msgstr "Выбрать поставщика терминала"
 
+#: templates/admin/pos_app/wizard/step1_select.html:11
 msgid ""
 "Choose a payment terminal provider to accept card payments at the point of "
 "sale."
 msgstr "Выберите поставщика терминала оплаты для приема карт в момент покупки."
 
+#: templates/admin/pos_app/wizard/step1_select.html:50
 msgid "Supported Readers:"
 msgstr "Поддерживаемые считыватели:"
 
+#: templates/admin/pos_app/wizard/step1_select.html:64
+#: templates/admin/pos_app/wizard/step5_configure.html:34
 msgid "Manual Entry"
 msgstr "Ручной ввод"
 
+#: templates/admin/pos_app/wizard/step1_select.html:72
 msgid "No terminal providers available."
 msgstr "Нет доступных поставщиков терминалов."
 
+#: templates/admin/pos_app/wizard/step1_select.html:73
 msgid "Install terminal provider components from the update server."
 msgstr "Установите компоненты поставщика терминала с сервера обновлений."
 
+#: templates/admin/pos_app/wizard/step2_setup.html:9
 msgid "Setup Instructions"
 msgstr "Инструкции по настройке"
 
+#: templates/admin/pos_app/wizard/step2_setup.html:11
 #, python-format
 msgid "Follow these steps to set up %(name)s for your store."
 msgstr "Следуйте этим шагам, чтобы настроить %(name)s для вашего магазина."
 
+#: templates/admin/pos_app/wizard/step2_setup.html:22
 msgid "Don't have an account?"
 msgstr "Нет аккаунта?"
 
+#: templates/admin/pos_app/wizard/step2_setup.html:23
 #, python-format
 msgid "Create a %(name)s account to get started."
 msgstr "Создайте учетную запись %(name)s, чтобы начать."
 
+#: templates/admin/pos_app/wizard/step2_setup.html:26
 msgid "Sign Up"
 msgstr "Зарегистрироваться"
 
+#: templates/admin/pos_app/wizard/step2_setup.html:43
 msgid "I've completed setup"
 msgstr "Настройка завершена"
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:9
 msgid "Enter Credentials"
 msgstr "Введите учетные данные"
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:11
 #, python-format
 msgid "Enter your %(name)s API credentials to connect your account."
 msgstr "Введите учетные данные API %(name)s, чтобы подключить ваш аккаунт."
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:21
+#: templates/admin/pos_app/wizard/step5_configure.html:31
 msgid "Display Name"
 msgstr "Отображаемое имя"
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:26
 msgid "A friendly name for this connection (shown in admin)."
 msgstr "Дружественное имя для этой связи (отображается в админке)."
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:32
 msgid "API Credentials"
 msgstr "Учетные данные API"
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:35
 msgid "These credentials are encrypted and stored securely."
 msgstr "Эти учетные данные зашифрованы и хранятся безопасно."
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:87
 msgid "Security Notice"
 msgstr "Уведомление о безопасности"
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:88
 msgid ""
 "Your credentials are encrypted using AES-256 before being stored. They are "
 "never exposed in logs or admin interfaces."
@@ -2382,60 +3278,82 @@ msgstr ""
 "Ваши учетные данные шифруются с использованием AES-256 перед хранением. Они "
 "никогда не отображаются в журналах или интерфейсах администратора."
 
+#: templates/admin/pos_app/wizard/step3_credentials.html:97
+#: templates/admin/pos_app/wizard/step4_test.html:9
 msgid "Test Connection"
 msgstr "Проверить соединение"
 
+#: templates/admin/pos_app/wizard/step4_test.html:11
 #, python-format
 msgid "Verifying your connection to %(name)s."
 msgstr "Проверка вашего подключения к %(name)s."
 
+#: templates/admin/pos_app/wizard/step4_test.html:21
 msgid "Connection Successful!"
 msgstr "Соединение успешно!"
 
+#: templates/admin/pos_app/wizard/step4_test.html:27
+#: templates/admin/pos_app/wizard/step4_test.html:89
 msgid "Connection Failed"
 msgstr "Соединение не удалось"
 
+#: templates/admin/pos_app/wizard/step4_test.html:33
+#: templates/admin/pos_app/wizard/step4_test.html:87
 msgid "Testing Connection..."
 msgstr "Проверка соединения..."
 
+#: templates/admin/pos_app/wizard/step4_test.html:34
+#: templates/admin/pos_app/wizard/step4_test.html:88
 msgid "Please wait while we verify your credentials."
 msgstr "Пожалуйста, подождите, пока мы проверим ваши учетные данные."
 
+#: templates/admin/pos_app/wizard/step4_test.html:42
 msgid "API credentials verified"
 msgstr "Учетные данные API проверены"
 
+#: templates/admin/pos_app/wizard/step4_test.html:46
 msgid "Account access confirmed"
 msgstr "Доступ к аккаунту подтвержден"
 
+#: templates/admin/pos_app/wizard/step4_test.html:65
 msgid "Retry Test"
 msgstr "Повторить тест"
 
+#: templates/admin/pos_app/wizard/step4_test.html:68
 msgid "Update Credentials"
 msgstr "Обновить учетные данные"
 
+#: templates/admin/pos_app/wizard/step4_test.html:90
 msgid "Unable to connect. Please check your credentials."
 msgstr "Невозможно подключиться. Пожалуйста, проверьте свои учетные данные."
 
+#: templates/admin/pos_app/wizard/step4_test.html:91
 msgid "An unexpected error occurred. Please try again."
 msgstr "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз."
 
+#: templates/admin/pos_app/wizard/step5_configure.html:9
 msgid "Configure & Save"
 msgstr "Настроить и сохранить"
 
+#: templates/admin/pos_app/wizard/step5_configure.html:13
 msgid "Configure the manual entry provider for your store."
 msgstr "Настройте поставщика ввода вручную для вашего магазина."
 
+#: templates/admin/pos_app/wizard/step5_configure.html:15
 #, python-format
 msgid "Review and finalize your %(name)s configuration."
 msgstr "Проверьте и завершите настройку %(name)s."
 
+#: templates/admin/pos_app/wizard/step5_configure.html:36
 msgid "This name will appear in the admin interface and terminal selection."
 msgstr ""
 "Это имя отобразится в интерфейсе администратора и при выборе терминала."
 
+#: templates/admin/pos_app/wizard/step5_configure.html:91
 msgid "About Manual Entry"
 msgstr "О вводе вручную"
 
+#: templates/admin/pos_app/wizard/step5_configure.html:92
 msgid ""
 "The manual entry provider is for standalone terminals that process cards "
 "independently. After each terminal transaction, you'll enter the card "
@@ -2445,9 +3363,11 @@ msgstr ""
 "обрабатывают карты самостоятельно. После каждой транзакции терминала вы "
 "вручную введете детали карты (название, последние 4 цифры) в приложении POS."
 
+#: templates/admin/pos_app/wizard/step5_configure.html:101
 msgid "Ready to Connect"
 msgstr "Готов к подключению"
 
+#: templates/admin/pos_app/wizard/step5_configure.html:102
 #, python-format
 msgid ""
 "Your %(name)s account is verified and ready. Click \"Save & Connect\" to "
@@ -2456,92 +3376,123 @@ msgstr ""
 "Ваш аккаунт %(name)s подтвержден и готов. Нажмите \"Сохранить и "
 "подключить\", чтобы завершить настройку."
 
+#: templates/admin/pos_app/wizard/step5_configure.html:118
 msgid "Save & Connect"
 msgstr "Сохранить и подключить"
 
+#: wizard_views/reader_wizard.py:79
 msgid "No active terminal providers found. Please configure a provider first."
 msgstr ""
 "Не найдено активных провайдеров терминалов. Сначала настройте провайдера."
 
+#: wizard_views/reader_wizard.py:84
 msgid "Add Card Reader - Select Provider"
 msgstr "Добавить считыватель карт - Выбрать провайдера"
 
+#: wizard_views/reader_wizard.py:98
 msgid "Please select a provider and method."
 msgstr "Пожалуйста, выберите провайдера и метод."
 
+#: wizard_views/reader_wizard.py:104 wizard_views/terminal_wizard.py:176
+#: wizard_views/terminal_wizard.py:184
 msgid "Invalid provider selected."
 msgstr "Выбран недопустимый провайдер."
 
+#: wizard_views/reader_wizard.py:140 wizard_views/reader_wizard.py:392
+#: wizard_views/terminal_wizard.py:215 wizard_views/terminal_wizard.py:285
+#: wizard_views/terminal_wizard.py:478
 msgid "Please select a provider first."
 msgstr "Сначала выберите провайдера."
 
+#: wizard_views/reader_wizard.py:146 wizard_views/reader_wizard.py:199
+#: wizard_views/reader_wizard.py:398 wizard_views/reader_wizard.py:440
+#: wizard_views/terminal_wizard.py:392
 msgid "Provider not found."
 msgstr "Поставщик не найден."
 
+#: wizard_views/reader_wizard.py:169
 msgid "Failed to fetch readers."
 msgstr "Не удалось получить считыватели."
 
+#: wizard_views/reader_wizard.py:175
 #, python-format
 msgid "Add Card Reader - %(method)s"
 msgstr "Добавить считыватель карт - %(method)s"
 
+#: wizard_views/reader_wizard.py:176
 msgid "Register New"
 msgstr "Зарегистрировать новый"
 
+#: wizard_views/reader_wizard.py:208
 msgid "Registration code is required."
 msgstr "Требуется код регистрации."
 
+#: wizard_views/reader_wizard.py:212
 #, python-format
 msgid "Reader %(date)s"
 msgstr "Считыватель %(date)s"
 
+#: wizard_views/reader_wizard.py:249
 #, python-format
 msgid "Registration failed: %(error)s"
 msgstr "Ошибка регистрации: %(error)s"
 
+#: wizard_views/reader_wizard.py:255
 #, python-format
 msgid "Registration error: %(error)s"
 msgstr "Ошибка регистрации: %(error)s"
 
+#: wizard_views/reader_wizard.py:263
 msgid "Please select at least one reader."
 msgstr "Пожалуйста, выберите хотя бы один считыватель."
 
+#: wizard_views/reader_wizard.py:272
 msgid "Failed to fetch reader details."
 msgstr "Не удалось получить подробности считывателя."
 
+#: wizard_views/reader_wizard.py:308
 #, python-format
 msgid "Successfully imported %(count)d readers."
 msgstr "Успешно импортировано %(count)d считывателей."
 
+#: wizard_views/reader_wizard.py:315
 #, python-format
 msgid "Import error: %(error)s"
 msgstr "Ошибка импорта: %(error)s"
 
+#: wizard_views/reader_wizard.py:361
 msgid "Registration failed."
 msgstr "Регистрация не удалась."
 
+#: wizard_views/reader_wizard.py:418
 msgid "Add Card Reader - Assign to Terminal"
 msgstr "Добавить считыватель карт - Назначить терминалу"
 
+#: wizard_views/reader_wizard.py:451
 msgid "Reader not found."
 msgstr "Считыватель не найден."
 
+#: wizard_views/reader_wizard.py:457
 #, python-format
 msgid "Manual Reader %(date)s"
 msgstr "Ручной считыватель %(date)s"
 
+#: wizard_views/reader_wizard.py:490
 msgid "Selected terminal not found."
 msgstr "Выбранный терминал не найден."
 
+#: wizard_views/reader_wizard.py:500
 #, python-format
 msgid "Reader \"%(name)s\" has been added. Add another reader below."
 msgstr ""
 "Считыватель \"%(name)s\" был добавлен. Добавьте еще одного считывателя ниже."
 
+#: wizard_views/reader_wizard.py:507
 #, python-format
 msgid "Reader \"%(name)s\" has been added successfully."
 msgstr "Считыватель \"%(name)s\" был успешно добавлен."
 
+#: wizard_views/terminal_wizard.py:135
 msgid ""
 "For standalone terminals that process cards independently. Card details are "
 "entered manually after each transaction."
@@ -2549,55 +3500,71 @@ msgstr ""
 "Для автономных терминалов, обрабатывающих карты самостоятельно. Данные карты "
 "вводятся вручную после каждой транзакции."
 
+#: wizard_views/terminal_wizard.py:147
 msgid "Connect Terminal Provider - Select Provider"
 msgstr "Подключить провайдера терминала - Выбрать провайдера"
 
+#: wizard_views/terminal_wizard.py:160
 msgid "Please select a provider."
 msgstr "Пожалуйста, выберите провайдера."
 
+#: wizard_views/terminal_wizard.py:244 wizard_views/terminal_wizard.py:303
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Ошибка загрузки провайдера: %(error)s"
 
+#: wizard_views/terminal_wizard.py:254
 msgid "Connect Terminal Provider - Setup Instructions"
 msgstr "Подключить провайдера терминала - Инструкции по настройке"
 
+#: wizard_views/terminal_wizard.py:296
 msgid "Could not load provider configuration."
 msgstr "Не удалось загрузить конфигурацию провайдера."
 
+#: wizard_views/terminal_wizard.py:307
 msgid "Connect Terminal Provider - Enter Credentials"
 msgstr "Подключить провайдера терминала - Ввести учетные данные"
 
+#: wizard_views/terminal_wizard.py:332 wizard_views/terminal_wizard.py:517
 msgid "Error loading provider configuration."
 msgstr "Ошибка загрузки конфигурации поставщика."
 
+#: wizard_views/terminal_wizard.py:345
 #, python-format
 msgid "%(field)s is required."
 msgstr "%(field)s обязательно."
 
+#: wizard_views/terminal_wizard.py:384
 msgid "Please complete previous steps first."
 msgstr "Сначала завершите предыдущие шаги."
 
+#: wizard_views/terminal_wizard.py:396
 msgid "Connect Terminal Provider - Test Connection"
 msgstr "Подключить провайдера терминала - Проверить соединение"
 
+#: wizard_views/terminal_wizard.py:423
 msgid "Provider implementation not found."
 msgstr "Реализация поставщика не найдена."
 
+#: wizard_views/terminal_wizard.py:482
 msgid "Configure Terminal Provider - Manual Entry"
 msgstr "Настроить провайдера терминала - Ввод вручную"
 
+#: wizard_views/terminal_wizard.py:502
 msgid "Please complete all previous steps."
 msgstr "Сначала завершите все предыдущие шаги."
 
+#: wizard_views/terminal_wizard.py:521
 #, python-format
 msgid "Configure Terminal Provider - %(name)s"
 msgstr "Настроить поставщика терминала - %(name)s"
 
+#: wizard_views/terminal_wizard.py:588
 #, python-format
 msgid "Terminal provider \"%(name)s\" has been connected successfully."
 msgstr "Поставщик терминала \"%(name)s\" успешно подключен."
 
+#: wizard_views/terminal_wizard.py:596
 #, python-format
 msgid "Error saving provider: %(error)s"
 msgstr "Ошибка сохранения провайдера: %(error)s"

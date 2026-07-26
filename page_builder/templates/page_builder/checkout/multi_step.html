@@ -25,6 +25,7 @@
                 <span class="multistep__step-label">{% mtrans 'Contact' %}</span>
             </li>
 
+            {% if cart_requires_shipping %}
             {% comment %} Step 2: Shipping {% endcomment %}
             <li class="multistep__progress-item" data-progress-step="shipping">
                 {% if template_options.progress_bar_style == 'dots' %}
@@ -44,23 +45,24 @@
                 {% endif %}
                 <span class="multistep__step-label">{% mtrans 'Delivery' %}</span>
             </li>
+            {% endif %}
 
-            {% comment %} Step 4: Payment {% endcomment %}
+            {% comment %} Step 4: Payment (2 when nothing ships) {% endcomment %}
             <li class="multistep__progress-item" data-progress-step="payment">
                 {% if template_options.progress_bar_style == 'dots' %}
                 <span class="multistep__dot"></span>
                 {% else %}
-                <span class="multistep__step-number">4</span>
+                <span class="multistep__step-number">{% if cart_requires_shipping %}4{% else %}2{% endif %}</span>
                 {% endif %}
                 <span class="multistep__step-label">{% mtrans 'Payment' %}</span>
             </li>
 
-            {% comment %} Step 5: Review {% endcomment %}
+            {% comment %} Step 5: Review (3 when nothing ships) {% endcomment %}
             <li class="multistep__progress-item" data-progress-step="review">
                 {% if template_options.progress_bar_style == 'dots' %}
                 <span class="multistep__dot"></span>
                 {% else %}
-                <span class="multistep__step-number">5</span>
+                <span class="multistep__step-number">{% if cart_requires_shipping %}5{% else %}3{% endif %}</span>
                 {% endif %}
                 <span class="multistep__step-label">{% mtrans 'Review' %}</span>
             </li>
@@ -83,11 +85,25 @@
             <div class="multistep__step multistep__step--active" data-step="contact">
                 <h2 class="multistep__step-title">{% mtrans 'Contact Information' %}</h2>
 
-                {% if template_options.show_express_checkout %}
+                {% comment %}
+                Guarded on express_checkout_methods like single_page: without
+                server-provided methods nothing populates the buttons, and an
+                empty "Express Checkout" shell reads as broken.
+                {% endcomment %}
+                {% if template_options.show_express_checkout and express_checkout_methods %}
                 <div class="multistep__express-checkout" id="express-checkout">
                     <p class="multistep__express-label">{% mtrans 'Express Checkout' %}</p>
                     <div class="multistep__express-buttons" id="express-checkout-buttons">
-                        {# Populated by JS based on available express payment providers #}
+                        {% for method in express_checkout_methods %}
+                        <button type="button"
+                                class="express-btn {{ method.button_class }}"
+                                data-action="express-checkout"
+                                data-provider="{{ method.provider_slug|escapejs }}"
+                                data-method="{{ method.slug|escapejs }}">
+                            <i class="{{ method.icon }}"></i>
+                            {{ method.name }}
+                        </button>
+                        {% endfor %}
                     </div>
                     <div class="multistep__divider">
                         <span>{% mtrans 'or continue below' %}</span>
@@ -103,12 +119,13 @@
                         {% mtrans 'Return to Cart' %}
                     </a>
                     <button type="button" class="btn btn--primary" data-action="continue-contact">
-                        {% mtrans 'Continue to Shipping' %}
+                        {% if cart_requires_shipping %}{% mtrans 'Continue to Shipping' %}{% else %}{% mtrans 'Continue to Payment' %}{% endif %}
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
 
+            {% if cart_requires_shipping %}
             {# ── Step 2: Shipping Address ── #}
             <div class="multistep__step" data-step="shipping" hidden>
                 <h2 class="multistep__step-title">{% mtrans 'Shipping Address' %}</h2>
@@ -144,6 +161,7 @@
                     </button>
                 </div>
             </div>
+            {% endif %}
 
             {# ── Step 4: Payment ── #}
             <div class="multistep__step" data-step="payment" hidden>
@@ -163,7 +181,7 @@
                         {% mtrans 'Back' %}
                     </button>
                     <button type="button" class="btn btn--primary" data-action="continue-payment">
-                        {% mtrans 'Continue to Payment' %}
+                        {% mtrans 'Continue to Review' %}
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -197,7 +215,7 @@
                 <span id="summary-toggle-total"></span>
                 <i class="fas fa-chevron-down multistep__summary-chevron"></i>
             </button>
-            {% include "page_builder/checkout/_order_summary.html" %}
+            {% include "page_builder/checkout/_order_summary.html" with summary_toggle_provided=True %}
         </div>
         {% endif %}
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Vietnamese <LL@li.org>\n"
@@ -18,15 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:58
 msgid "-- Select Provider --"
 msgstr "-- Chọn Nhà cung cấp --"
 
+#: admin.py:200 admin.py:212
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:149
+#: templates/admin/sms_system/wizard/step3_credentials.html:33
 msgid "Provider Credentials"
 msgstr "Thông tin xác thực nhà cung cấp"
 
+#: admin.py:203
 msgid "Enter your provider API credentials."
 msgstr "Nhập thông tin xác thực API của nhà cung cấp."
 
+#: admin.py:216
 msgid ""
 "Select a provider above to see credential fields, or use the Setup Wizard "
 "for a guided experience."
@@ -34,247 +40,383 @@ msgstr ""
 "Chọn nhà cung cấp phía trên để xem các trường thông tin xác thực, hoặc sử "
 "dụng Trợ lý Cài đặt để có trải nghiệm được hướng dẫn."
 
+#: admin.py:226
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:178
+#: templates/admin/sms_system/wizard/step4_test.html:53
 msgid "Default Settings"
 msgstr "Cài đặt mặc định"
 
+#: admin.py:237 models.py:92
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:202
 msgid "Connection Status"
 msgstr "Trạng thái kết nối"
 
+#: admin.py:248 admin.py:347
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:228
 msgid "Timestamps"
 msgstr "Thời gian"
 
+#: admin.py:273 models.py:76 models.py:251
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:32
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:69
+#: templates/admin/sms_system/smstemplate/change_list.html:82
 msgid "Active"
 msgstr "Kích hoạt"
 
+#: admin.py:274
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:34
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:73
+#: templates/admin/sms_system/smstemplate/change_list.html:86
 msgid "Inactive"
 msgstr "Không kích hoạt"
 
+#: admin.py:276 admin.py:410 models.py:334
+#: templates/admin/sms_system/smsoutbox/change_list.html:76
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:108
+#: templates/admin/sms_system/wizard/complete.html:30
 msgid "Status"
 msgstr "Trạng thái"
 
+#: admin.py:281
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:37
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:79
+#: templates/admin/sms_system/wizard/complete.html:40
 msgid "Default SMS"
 msgstr "SMS mặc định"
 
+#: admin.py:284 models.py:290
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:56
+#: templates/admin/sms_system/provider_browse.html:130
+#: templates/admin/sms_system/smsoutbox/change_list.html:96
 msgid "SMS"
 msgstr "SMS"
 
+#: admin.py:290
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:40
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:85
+#: templates/admin/sms_system/wizard/complete.html:50
 msgid "Default WhatsApp"
 msgstr "WhatsApp mặc định"
 
+#: admin.py:294 models.py:291
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:52
+#: templates/admin/sms_system/provider_browse.html:135
+#: templates/admin/sms_system/smsoutbox/change_list.html:97
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: admin.py:308
 msgid "Connection"
 msgstr "Kết nối"
 
+#: admin.py:338
 msgid "Message Content"
 msgstr "Nội dung tin nhắn"
 
+#: admin.py:342
 #, python-brace-format
 msgid ""
 "Use {variable} syntax for placeholders. Example: \"Hello {name}, your order "
 "#{order_number} is ready.\""
 msgstr ""
-"Sử dụng cú pháp {variable} cho các trường giữ chỗ. Ví dụ: \"Chào {name}, đơn "
-"hàng của bạn #{order_number} đã sẵn sàng.\""
+"Sử dụng cú pháp {variable} cho các trường giữ chỗ. Ví dụ: \"Chào {name}, đơn"
+" hàng của bạn #{order_number} đã sẵn sàng.\""
 
+#: apps.py:8
 msgid "SMS System"
 msgstr "Hệ thống SMS"
 
+#: models.py:39
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:47
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:99
 msgid "Untested"
 msgstr "Chưa kiểm tra"
 
+#: models.py:40
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:43
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:91
+#: templates/admin/sms_system/wizard/complete.html:33
 msgid "Connected"
 msgstr "Kết nối"
 
+#: models.py:41
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:24
 msgid "Connection Failed"
 msgstr "Kết nối thất bại"
 
+#: models.py:52 templates/admin/sms_system/wizard/complete.html:26
 msgid "Provider"
 msgstr "Nhà cung cấp"
 
+#: models.py:53
 msgid "SMS/messaging service provider"
 msgstr "Nhà cung cấp dịch vụ SMS/định dạng tin nhắn"
 
+#: models.py:62
 msgid "Provider Component"
 msgstr "Thành phần nhà cung cấp"
 
+#: models.py:63
 msgid "Reference to installed provider component"
 msgstr "Tham chiếu đến thành phần nhà cung cấp đã cài đặt"
 
+#: models.py:67 templates/admin/sms_system/wizard/complete.html:22
+#: templates/admin/sms_system/wizard/step3_credentials.html:20
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
+#: models.py:68
 msgid "Friendly name for this account"
 msgstr "Tên thân thiện cho tài khoản này"
 
+#: models.py:71
 msgid "Encrypted Credentials"
 msgstr "Thông tin xác thực được mã hóa"
 
+#: models.py:72
 msgid "Encrypted API credentials for this provider"
 msgstr "Thông tin xác thực API được mã hóa cho cung cấp này"
 
+#: models.py:80
 msgid "Default SMS Account"
 msgstr "Tài khoản SMS mặc định"
 
+#: models.py:81
 msgid "Use this account for sending SMS by default"
 msgstr "Sử dụng tài khoản này để gửi tin nhắn SMS mặc định"
 
+#: models.py:85
 msgid "Default WhatsApp Account"
 msgstr "Tài khoản WhatsApp mặc định"
 
+#: models.py:86
 msgid "Use this account for sending WhatsApp messages by default"
 msgstr "Sử dụng tài khoản này để gửi tin nhắn WhatsApp mặc định"
 
+#: models.py:97
 msgid "Last Checked"
 msgstr "Lần kiểm tra cuối cùng"
 
+#: models.py:103
 msgid "SMS Provider Account"
 msgstr "Tài khoản nhà cung cấp SMS"
 
+#: models.py:104
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:21
 msgid "SMS Provider Accounts"
 msgstr "Tài khoản nhà cung cấp SMS"
 
+#: models.py:225
 msgid "POS Receipt"
 msgstr "Phiếu thu POS"
 
+#: models.py:226
 msgid "Order Confirmation"
 msgstr "Xác nhận đơn hàng"
 
+#: models.py:227
 msgid "Shipping Update"
 msgstr "Cập nhật vận chuyển"
 
+#: models.py:228
 msgid "Delivery Notification"
 msgstr "Thông báo giao hàng"
 
+#: models.py:229
 msgid "Password Reset"
 msgstr "Đặt lại mật khẩu"
 
+#: models.py:230
 msgid "Verification Code"
 msgstr "Mã xác nhận"
 
+#: models.py:231
 msgid "Marketing"
 msgstr "Tiếp thị"
 
+#: models.py:232
 msgid "Custom"
 msgstr "Tùy chỉnh"
 
+#: models.py:239
 msgid "Template Type"
 msgstr "Loại mẫu"
 
+#: models.py:243
 msgid "Name"
 msgstr "Tên"
 
+#: models.py:246 models.py:328
 msgid "Message"
 msgstr "Tin nhắn"
 
+#: models.py:247
 #, python-brace-format
 msgid "Message template. Use {variable} syntax for placeholders."
 msgstr "Mẫu tin nhắn. Sử dụng cú pháp {variable} cho các trường giữ chỗ."
 
+#: models.py:257
 msgid "SMS Template"
 msgstr "Mẫu SMS"
 
+#: models.py:258 templates/admin/sms_system/smstemplate/change_list.html:4
+#: templates/admin/sms_system/smstemplate/change_list.html:21
 msgid "SMS Templates"
 msgstr "Mẫu tin nhắn SMS"
 
+#: models.py:280 templates/admin/sms_system/partials/smsoutbox_cards.html:26
+#: templates/admin/sms_system/smsoutbox/change_list.html:80
 msgid "Pending"
 msgstr "Chờ xử lý"
 
+#: models.py:281 templates/admin/sms_system/partials/smsoutbox_cards.html:30
+#: templates/admin/sms_system/smsoutbox/change_list.html:81
 msgid "Queued"
 msgstr "Đang xếp hàng"
 
+#: models.py:282 templates/admin/sms_system/partials/smsoutbox_cards.html:34
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsoutbox/change_list.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:82
 msgid "Sent"
 msgstr "Đã gửi"
 
+#: models.py:283 templates/admin/sms_system/partials/smsoutbox_cards.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:43
+#: templates/admin/sms_system/smsoutbox/change_list.html:83
 msgid "Delivered"
 msgstr "Đã giao hàng"
 
+#: models.py:284 templates/admin/sms_system/partials/smsoutbox_cards.html:42
+#: templates/admin/sms_system/smsoutbox/change_list.html:48
+#: templates/admin/sms_system/smsoutbox/change_list.html:84
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:45
 msgid "Failed"
 msgstr "Thất bại"
 
+#: models.py:285 templates/admin/sms_system/partials/smsoutbox_cards.html:46
+#: templates/admin/sms_system/smsoutbox/change_list.html:85
 msgid "Skipped"
 msgstr "Bỏ qua"
 
+#: models.py:286
+msgid "Sandbox Logged"
+msgstr "Đã đăng nhập Sandbox"
+
+#: models.py:306
 msgid "Provider Account"
 msgstr "Tài khoản nhà cung cấp"
 
+#: models.py:314
 msgid "Template"
 msgstr "Mẫu"
 
+#: models.py:320 templates/admin/sms_system/smsoutbox/change_list.html:92
 msgid "Message Type"
 msgstr "Loại tin nhắn"
 
+#: models.py:324
 msgid "Phone Number"
 msgstr "Số điện thoại"
 
+#: models.py:325
 msgid "Recipient phone number in E.164 format"
 msgstr "Số điện thoại người nhận theo định dạng E.164"
 
+#: models.py:339
 msgid "Provider Message ID"
 msgstr "ID tin nhắn nhà cung cấp"
 
+#: models.py:340
 msgid "Message ID from the SMS provider"
 msgstr "ID tin nhắn từ nhà cung cấp SMS"
 
+#: models.py:344
 msgid "Error Message"
 msgstr "Thông báo lỗi"
 
+#: models.py:349
 msgid "Skip Reason"
 msgstr "Lý do bỏ qua"
 
+#: models.py:350
 msgid ""
 "Reason why SMS was skipped (e.g., user_preference_disabled, unsubscribed)"
-msgstr "Lý do SMS đã bị bỏ qua (ví dụ: user_preference_disabled, unsubscribed)"
+msgstr ""
+"Lý do SMS đã bị bỏ qua (ví dụ: user_preference_disabled, unsubscribed)"
 
+#: models.py:354
 msgid "Retry Count"
 msgstr "Số lần thử lại"
 
+#: models.py:360
 msgid "Queued At"
 msgstr "Được xếp hàng lúc"
 
+#: models.py:365
 msgid "Sent At"
 msgstr "Gửi lúc"
 
+#: models.py:370
 msgid "Delivered At"
 msgstr "Giao lúc"
 
+#: models.py:374 models.py:375
 msgid "SMS Outbox"
 msgstr "Hộp thư ra SMS"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:64
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "ago"
 msgstr "trước"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:75
 #, python-format
 msgid "%(counter)s retry"
 msgid_plural "%(counter)s retries"
 msgstr[0] "%(counter)s lần thử lại"
 msgstr[1] "%(counter)s lần thử lại"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:88
 msgid "View"
 msgstr "Xem"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:100
 msgid "No messages found matching your criteria."
 msgstr "Không tìm thấy tin nhắn nào phù hợp với tiêu chí của bạn."
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:101
 msgid "Try adjusting your filters or search terms."
 msgstr "Hãy thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm của bạn."
 
+#: templates/admin/sms_system/provider_browse.html:4
+#: templates/admin/sms_system/provider_browse.html:36
 msgid "Browse SMS Providers"
 msgstr "Duyệt nhà cung cấp SMS"
 
+#: templates/admin/sms_system/provider_browse.html:4
 msgid "Site Admin"
 msgstr "Quản trị trang web"
 
+#: templates/admin/sms_system/provider_browse.html:25
 msgid "Home"
 msgstr "Trang chủ"
 
+#: templates/admin/sms_system/provider_browse.html:26
 msgid "SMS Accounts"
 msgstr "Tài khoản SMS"
 
+#: templates/admin/sms_system/provider_browse.html:27
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:33
+#: templates/admin/sms_system/wizard/step1_select.html:58
 msgid "Browse Providers"
 msgstr "Duyệt nhà cung cấp"
 
+#: templates/admin/sms_system/provider_browse.html:38
 msgid ""
 "Choose an SMS provider to integrate with your store. Send transactional SMS "
 "and WhatsApp messages to your customers."
@@ -282,19 +424,23 @@ msgstr ""
 "Chọn nhà cung cấp SMS để tích hợp với cửa hàng của bạn. Gửi tin nhắn SMS và "
 "WhatsApp giao dịch đến khách hàng của bạn."
 
+#: templates/admin/sms_system/provider_browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Máy chủ cập nhật không khả dụng"
 
+#: templates/admin/sms_system/provider_browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr ""
-"Không thể kết nối với máy chủ cập nhật. Chỉ hiển thị nhà cung cấp đã cài đặt "
-"cục bộ."
+"Không thể kết nối với máy chủ cập nhật. Chỉ hiển thị nhà cung cấp đã cài đặt"
+" cục bộ."
 
+#: templates/admin/sms_system/provider_browse.html:57
 msgid "SMS Provider Marketplace"
 msgstr "Thị trường nhà cung cấp SMS"
 
+#: templates/admin/sms_system/provider_browse.html:69
 msgid ""
 "Here you can discover and configure SMS providers to send transactional "
 "messages, including order confirmations, shipping updates, and delivery "
@@ -304,36 +450,47 @@ msgstr ""
 "giao dịch, bao gồm xác nhận đơn hàng, cập nhật vận chuyển và thông báo giao "
 "hàng."
 
+#: templates/admin/sms_system/provider_browse.html:76
 msgid "Capabilities:"
 msgstr "Khả năng:"
 
+#: templates/admin/sms_system/provider_browse.html:81
 msgid "Send SMS order confirmations and shipping notifications"
 msgstr "Gửi xác nhận đơn hàng và thông báo vận chuyển qua SMS"
 
+#: templates/admin/sms_system/provider_browse.html:85
 msgid "WhatsApp Business messaging support"
 msgstr "Hỗ trợ gửi tin nhắn WhatsApp Business"
 
+#: templates/admin/sms_system/provider_browse.html:89
 msgid "Delivery status tracking and webhooks"
 msgstr "Theo dõi trạng thái giao hàng và webhook"
 
+#: templates/admin/sms_system/provider_browse.html:93
 msgid "POS digital receipts via SMS"
 msgstr "Hóa đơn số qua SMS từ POS"
 
+#: templates/admin/sms_system/provider_browse.html:101
 msgid "Getting Started:"
 msgstr "Bắt đầu:"
 
+#: templates/admin/sms_system/provider_browse.html:104
 msgid "Browse providers below and select your SMS service"
 msgstr "Xem các nhà cung cấp bên dưới và chọn dịch vụ SMS của bạn"
 
+#: templates/admin/sms_system/provider_browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Nhấp vào 'Cài đặt' để thêm nhà cung cấp vào cửa hàng của bạn"
 
+#: templates/admin/sms_system/provider_browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr "Hãy làm theo hướng dẫn cài đặt để cấu hình thông tin xác thực API"
 
+#: templates/admin/sms_system/provider_browse.html:107
 msgid "Test the connection and start sending messages"
 msgstr "Kiểm tra kết nối và bắt đầu gửi tin nhắn"
 
+#: templates/admin/sms_system/provider_browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -352,51 +509,70 @@ msgstr[1] ""
 "                    %(counter)s provider installed\n"
 "                "
 
+#: templates/admin/sms_system/provider_browse.html:140
 msgid "MMS"
 msgstr "MMS"
 
+#: templates/admin/sms_system/provider_browse.html:143
 msgid "Filter"
 msgstr "Lọc"
 
+#: templates/admin/sms_system/provider_browse.html:145
 msgid "Clear"
 msgstr "Xóa"
 
+#: templates/admin/sms_system/provider_browse.html:157
 msgid "Installed Providers"
 msgstr "Nhà cung cấp đã cài đặt"
 
+#: templates/admin/sms_system/provider_browse.html:168
 msgid "Update Available"
 msgstr "Cập nhật có sẵn"
 
+#: templates/admin/sms_system/provider_browse.html:191
 msgid "Installed"
 msgstr "Đã cài đặt"
 
+#: templates/admin/sms_system/provider_browse.html:234
 msgid "Delivery Reports"
 msgstr "Báo cáo giao hàng"
 
+#: templates/admin/sms_system/provider_browse.html:260
 msgid "Update"
 msgstr "Cập nhật"
 
+#: templates/admin/sms_system/provider_browse.html:265
 msgid "Configure"
 msgstr "Cấu hình"
 
+#: templates/admin/sms_system/provider_browse.html:274
+#: templates/admin/sms_system/provider_browse.html:377
 msgid "View Details"
 msgstr "Xem chi tiết"
 
+#: templates/admin/sms_system/provider_browse.html:282
+#: templates/admin/sms_system/provider_browse.html:385
 msgid "Learn More"
 msgstr "Tìm hiểu thêm"
 
+#: templates/admin/sms_system/provider_browse.html:298
 msgid "Available from Marketplace"
 msgstr "Có sẵn từ Thị trường"
 
+#: templates/admin/sms_system/provider_browse.html:324
 msgid "Available"
 msgstr "Khả dụng"
 
+#: templates/admin/sms_system/provider_browse.html:369
 msgid "Install"
 msgstr "Cài đặt"
 
+#: templates/admin/sms_system/provider_browse.html:402
+#: templates/admin/sms_system/wizard/step1_select.html:55
 msgid "No Providers Available"
 msgstr "Không có nhà cung cấp nào sẵn có"
 
+#: templates/admin/sms_system/provider_browse.html:403
 msgid ""
 "No SMS providers are currently available. Please check your update server "
 "connection or contact support."
@@ -404,200 +580,279 @@ msgstr ""
 "Hiện tại không có nhà cung cấp SMS nào sẵn sàng. Vui lòng kiểm tra kết nối "
 "máy chủ cập nhật của bạn hoặc liên hệ hỗ trợ."
 
+#: templates/admin/sms_system/provider_browse.html:412
 msgid "Installing provider..."
 msgstr "Đang cài đặt nhà cung cấp..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:4
+#: templates/admin/sms_system/smsoutbox/change_list.html:21
 msgid "Message Log"
 msgstr "Lịch sử tin nhắn"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:23
 msgid "Track sent SMS and WhatsApp messages"
 msgstr "Theo dõi tin nhắn SMS và WhatsApp đã gửi"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:28
 msgid "Overview"
 msgstr "Tổng quan"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:33
 msgid "Total Messages"
 msgstr "Tổng số tin nhắn"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:57
 msgid "Filters"
 msgstr "Lọc"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:68
 msgid "Search"
 msgstr "Tìm kiếm"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:70
 msgid "Phone number or message..."
 msgstr "Số điện thoại hoặc tin nhắn..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:79
 msgid "All Statuses"
 msgstr "Tất cả trạng thái"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:95
 msgid "All Types"
 msgstr "Tất cả loại"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:106
 msgid "Apply Filters"
 msgstr "Áp dụng bộ lọc"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:109
 msgid "Clear All"
 msgstr "Xóa tất cả"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:117
 msgid "Messages"
 msgstr "Thông báo"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:120
 msgid "messages"
 msgstr "tin nhắn"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:130
 msgid "Loading messages..."
 msgstr "Đang tải tin nhắn..."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:22
 msgid "Edit SMS Provider"
 msgstr "Chỉnh sửa nhà cung cấp SMS"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:24
 msgid "Add SMS Provider"
 msgstr "Thêm nhà cung cấp SMS"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:30
 msgid "Created"
 msgstr "Đã tạo"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:53
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:253
 msgid "Save and continue editing"
 msgstr "Lưu và tiếp tục chỉnh sửa"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:56
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:252
 msgid "Save"
 msgstr "Lưu"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:69
 msgid "Please correct the errors below"
 msgstr "Vui lòng sửa các lỗi dưới đây"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:95
 msgid "Basic"
 msgstr "Cơ bản"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:99
+#: templates/admin/sms_system/wizard/base.html:45
 msgid "Credentials"
 msgstr "Thông tin xác thực"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:103
 msgid "Defaults"
 msgstr "Mặc định"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:119
 msgid "Basic Information"
 msgstr "Thông tin cơ bản"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:165
 msgid "Select a provider in the Basic tab to see credential fields."
 msgstr ""
 "Chọn một nhà cung cấp trong tab Cơ bản để xem các trường thông tin xác thực."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:179
 msgid "Configure which messaging channels use this provider by default."
 msgstr ""
 "Cấu hình các kênh nhắn tin nào sẽ sử dụng nhà cung cấp này làm mặc định."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:23
 msgid "Manage your SMS and WhatsApp provider connections"
 msgstr "Quản lý kết nối nhà cung cấp SMS và WhatsApp của bạn"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:28
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:131
 msgid "Setup Wizard"
 msgstr "Chỉ dẫn cài đặt"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:42
 msgid "Provider Accounts"
 msgstr "Tài khoản nhà cung cấp"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:45
 msgid "accounts"
 msgstr "tài khoản"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
 msgid "Last checked"
 msgstr "Lần kiểm tra cuối cùng"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:115
+#: templates/admin/sms_system/smstemplate/change_list.html:100
 msgid "Edit"
 msgstr "Chỉnh sửa"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:127
 msgid "No provider accounts configured."
 msgstr "Không có tài khoản nhà cung cấp được cấu hình."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:128
 msgid "Use the Setup Wizard to add one."
 msgstr "Sử dụng Trợ lý Cài đặt để thêm một nhà cung cấp."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:23
 msgid "Manage message templates for SMS and WhatsApp notifications"
 msgstr "Quản lý mẫu tin nhắn cho thông báo SMS và WhatsApp"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:27
+#: templates/admin/sms_system/smstemplate/change_list.html:118
 msgid "Add Template"
 msgstr "Thêm mẫu"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:35
 msgid "Templates"
 msgstr "Mẫu"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:38
 msgid "templates"
 msgstr "mẫu"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "Updated"
 msgstr "Đã cập nhật"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:103
 msgid "Delete"
 msgstr "Xóa"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:115
 msgid "No SMS templates configured yet."
 msgstr "Chưa có mẫu SMS được cấu hình."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:116
 msgid "Create a template to get started with SMS notifications."
 msgstr "Tạo một mẫu để bắt đầu sử dụng thông báo SMS."
 
+#: templates/admin/sms_system/wizard/base.html:4
 msgid "SMS Provider Setup"
 msgstr "Cài đặt nhà cung cấp SMS"
 
+#: templates/admin/sms_system/wizard/base.html:17
 msgid "SMS Provider Setup Wizard"
 msgstr "Hướng dẫn thiết lập nhà cung cấp SMS"
 
+#: templates/admin/sms_system/wizard/base.html:18
 msgid "Follow these steps to connect your SMS provider"
 msgstr "Hãy làm theo các bước này để kết nối nhà cung cấp SMS của bạn"
 
+#: templates/admin/sms_system/wizard/base.html:27
 msgid "Select"
 msgstr "Chọn"
 
+#: templates/admin/sms_system/wizard/base.html:36
 msgid "Instructions"
 msgstr "Hướng dẫn"
 
+#: templates/admin/sms_system/wizard/base.html:54
 msgid "Test"
 msgstr "Kiểm tra"
 
+#: templates/admin/sms_system/wizard/base.html:61
 msgid "Complete"
 msgstr "Hoàn tất"
 
+#: templates/admin/sms_system/wizard/complete.html:4
+#: templates/admin/sms_system/wizard/complete.html:5 views.py:365
 msgid "Setup Complete"
 msgstr "Thiết lập hoàn tất"
 
+#: templates/admin/sms_system/wizard/complete.html:11
 msgid "Your SMS provider has been configured!"
 msgstr "Nhà cung cấp SMS của bạn đã được cấu hình!"
 
+#: templates/admin/sms_system/wizard/complete.html:12
 msgid "You can now send SMS and WhatsApp messages from your store."
 msgstr "Bạn có thể gửi tin nhắn SMS và WhatsApp từ cửa hàng của mình."
 
+#: templates/admin/sms_system/wizard/complete.html:19
+#: templates/admin/sms_system/wizard/step4_test.html:37
 msgid "Account Details"
 msgstr "Chi tiết tài khoản"
 
+#: templates/admin/sms_system/wizard/complete.html:43
+#: templates/admin/sms_system/wizard/complete.html:53
 msgid "Yes"
 msgstr "Có"
 
+#: templates/admin/sms_system/wizard/complete.html:45
+#: templates/admin/sms_system/wizard/complete.html:55
 msgid "No"
 msgstr "Không"
 
+#: templates/admin/sms_system/wizard/complete.html:65
 msgid "What's Next?"
 msgstr "Tiếp theo là gì?"
 
+#: templates/admin/sms_system/wizard/complete.html:71
 msgid "Configure SMS templates"
 msgstr "Cấu hình mẫu tin nhắn SMS"
 
+#: templates/admin/sms_system/wizard/complete.html:75
 msgid "View message logs"
 msgstr "Xem nhật ký tin nhắn"
 
+#: templates/admin/sms_system/wizard/complete.html:79
 msgid "Add another provider"
 msgstr "Thêm nhà cung cấp khác"
 
+#: templates/admin/sms_system/wizard/complete.html:90
 msgid "View All Accounts"
 msgstr "Xem tất cả tài khoản"
 
+#: templates/admin/sms_system/wizard/step1_select.html:4
+#: templates/admin/sms_system/wizard/step1_select.html:5 views.py:85
 msgid "Select SMS Provider"
 msgstr "Chọn nhà cung cấp SMS"
 
+#: templates/admin/sms_system/wizard/step1_select.html:9
 msgid "Select a Provider"
 msgstr "Chọn một nhà cung cấp"
 
+#: templates/admin/sms_system/wizard/step1_select.html:10
 msgid "Choose the SMS provider you want to configure."
 msgstr "Chọn nhà cung cấp SMS mà bạn muốn cấu hình."
 
+#: templates/admin/sms_system/wizard/step1_select.html:56
 msgid ""
 "No SMS providers are installed. Install providers from the provider browse "
 "page."
@@ -605,74 +860,107 @@ msgstr ""
 "Không có nhà cung cấp SMS nào được cài đặt. Cài đặt nhà cung cấp từ trang "
 "duyệt nhà cung cấp."
 
+#: templates/admin/sms_system/wizard/step1_select.html:68
 msgid "Cancel"
 msgstr "Hủy"
 
+#: templates/admin/sms_system/wizard/step1_select.html:72
+#: templates/admin/sms_system/wizard/step2_instructions.html:46
+#: templates/admin/sms_system/wizard/step3_credentials.html:98
 msgid "Next"
 msgstr "Tiếp theo"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:4
+#: templates/admin/sms_system/wizard/step2_instructions.html:5
+#: templates/admin/sms_system/wizard/step2_instructions.html:9 views.py:148
 msgid "Setup Instructions"
 msgstr "Hướng dẫn thiết lập"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:10
 msgid "Follow these instructions to set up your provider account."
 msgstr ""
 "Hãy làm theo các hướng dẫn này để thiết lập tài khoản nhà cung cấp của bạn."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:27
 msgid "No specific setup instructions available"
 msgstr "Không có hướng dẫn cài đặt cụ thể nào sẵn có"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:28
 msgid "Please proceed to enter your credentials."
 msgstr "Vui lòng tiếp tục để nhập thông tin xác thực của bạn."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:43
+#: templates/admin/sms_system/wizard/step3_credentials.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:94
 msgid "Back"
 msgstr "Quay lại"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:4
+#: templates/admin/sms_system/wizard/step3_credentials.html:5
+#: templates/admin/sms_system/wizard/step3_credentials.html:9 views.py:193
 msgid "Enter Credentials"
 msgstr "Nhập thông tin xác thực"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:10
 #, python-format
 msgid "Enter the credentials from your %(name)s account."
 msgstr "Nhập thông tin xác thực từ tài khoản %(name)s của bạn."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:17
 msgid "Account Name"
 msgstr "Tên tài khoản"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:26
 msgid "A friendly name to identify this account."
 msgstr "Tên thân thiện để nhận biết tài khoản này."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:86
 msgid "Your credentials are encrypted before being stored."
 msgstr "Thông tin xác thực của bạn được mã hóa trước khi lưu trữ."
 
+#: templates/admin/sms_system/wizard/step4_test.html:4
+#: templates/admin/sms_system/wizard/step4_test.html:5
+#: templates/admin/sms_system/wizard/step4_test.html:9 views.py:281
 msgid "Test Connection"
 msgstr "Kiểm tra kết nối"
 
+#: templates/admin/sms_system/wizard/step4_test.html:10
 msgid "We've tested the connection to your provider."
 msgstr "Chúng tôi đã kiểm tra kết nối đến nhà cung cấp của bạn."
 
+#: templates/admin/sms_system/wizard/step4_test.html:22
 msgid "Connection Successful"
 msgstr "Kết nối thành công"
 
+#: templates/admin/sms_system/wizard/step4_test.html:29
 msgid "Successfully connected to the SMS provider."
 msgstr "Đã kết nối thành công đến nhà cung cấp SMS."
 
+#: templates/admin/sms_system/wizard/step4_test.html:31
 msgid "Failed to connect to the SMS provider."
 msgstr "Kết nối đến nhà cung cấp SMS không thành công."
 
+#: templates/admin/sms_system/wizard/step4_test.html:40
 msgid "Account"
 msgstr "Tài khoản"
 
+#: templates/admin/sms_system/wizard/step4_test.html:55
 msgid "Configure how this account should be used."
 msgstr "Cấu hình cách sử dụng tài khoản này."
 
+#: templates/admin/sms_system/wizard/step4_test.html:60
 msgid "Set as default for SMS messages"
 msgstr "Đặt làm mặc định cho tin nhắn SMS"
 
+#: templates/admin/sms_system/wizard/step4_test.html:68
 msgid "Set as default for WhatsApp messages"
 msgstr "Đặt làm mặc định cho tin nhắn WhatsApp"
 
+#: templates/admin/sms_system/wizard/step4_test.html:78
 msgid "Connection test failed"
 msgstr "Kiểm tra kết nối thất bại"
 
+#: templates/admin/sms_system/wizard/step4_test.html:79
 msgid ""
 "Check your credentials and try again, or save anyway if you're sure they're "
 "correct."
@@ -680,85 +968,111 @@ msgstr ""
 "Kiểm tra lại thông tin xác thực và thử lại, hoặc lưu bất kể điều gì nếu bạn "
 "chắc chắn rằng chúng là chính xác."
 
+#: templates/admin/sms_system/wizard/step4_test.html:82
 msgid "Save account anyway (not recommended)"
 msgstr "Lưu tài khoản bất chấp (không được khuyến nghị)"
 
+#: templates/admin/sms_system/wizard/step4_test.html:97
 msgid "Create Account"
 msgstr "Tạo tài khoản"
 
+#: views.py:97
 msgid "Please select a provider"
 msgstr "Vui lòng chọn một nhà cung cấp"
 
+#: views.py:102
 msgid "Selected provider is not available"
 msgstr "Nhà cung cấp đã chọn không khả dụng"
 
+#: views.py:131 views.py:183
 msgid "Provider not found"
 msgstr "Không tìm thấy nhà cung cấp"
 
+#: views.py:211
 msgid "Unable to get credential schema"
 msgstr "Không thể lấy lược đồ thông tin xác thực"
 
+#: views.py:228
 #, python-format
 msgid "Missing required fields: %(fields)s"
 msgstr "Thiếu các trường bắt buộc: %(fields)s"
 
+#: views.py:304
 msgid "Connection test failed. Check your credentials and try again."
-msgstr "Kiểm tra kết nối thất bại. Kiểm tra lại thông tin xác thực và thử lại."
+msgstr ""
+"Kiểm tra kết nối thất bại. Kiểm tra lại thông tin xác thực và thử lại."
 
+#: views.py:328
 msgid "SMS provider account created successfully!"
 msgstr "Tài khoản nhà cung cấp SMS đã được tạo thành công!"
 
+#: views.py:333
 #, python-format
 msgid "Failed to create account: %(error)s"
 msgstr "Không thể tạo tài khoản: %(error)s"
 
+#: views.py:424
 msgid "SMS Providers"
 msgstr "Nhà cung cấp SMS"
 
+#: views.py:525
 msgid "Provider is already installed. Configure it now."
 msgstr "Nhà cung cấp đã được cài đặt. Cấu hình nó ngay bây giờ."
 
+#: views.py:554 views.py:701
 msgid "Provider not found on update server."
 msgstr "Không tìm thấy nhà cung cấp trên máy chủ cập nhật."
 
+#: views.py:567
 msgid "Could not determine provider version."
 msgstr "Không thể xác định phiên bản nhà cung cấp."
 
+#: views.py:590
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Không thể tải xuống cung cấp viên: %(error)s"
 
+#: views.py:602
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Không thể cài đặt cung cấp viên: %(error)s"
 
+#: views.py:630
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr ""
-"Cung cấp viên \"%(name)s\" đã được cài đặt thành công! Cấu hình ngay bây giờ."
+"Cung cấp viên \"%(name)s\" đã được cài đặt thành công! Cấu hình ngay bây "
+"giờ."
 
+#: views.py:669
 msgid "Provider not installed."
 msgstr "Nhà cung cấp chưa được cài đặt."
 
+#: views.py:686
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Không thể kết nối đến máy chủ cập nhật: %(error)s"
 
+#: views.py:713
 msgid "Could not determine latest version."
 msgstr "Không thể xác định phiên bản mới nhất."
 
+#: views.py:723
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "Cung cấp viên \"%(name)s\" đã cập nhật đầy đủ (v%(version)s)."
 
+#: views.py:739
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Không thể tải xuống bản cập nhật: %(error)s"
 
+#: views.py:750
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Không thể cài đặt bản cập nhật: %(error)s"
 
+#: views.py:780
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr ""

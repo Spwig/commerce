@@ -552,12 +552,24 @@ class OrderAdmin(CustomFieldsAdminMixin, admin.ModelAdmin):
     def mark_as_paid(self, request, queryset):
         from django.utils import timezone
 
-        updated = queryset.update(payment_status="paid", paid_at=timezone.now())
-        # Also update amount_paid to match total for each order
+        # Saved one at a time, NOT via queryset.update().
+        #
+        # `update()` writes straight to SQL and fires no post_save signals, so
+        # everything that keys off "payment is confirmed" was skipped: digital
+        # product licences, and now gift card tender settlement. Worse, the old
+        # code then called order.save() only for orders whose amount_paid
+        # differed — so signals fired for *some* of the selected orders and not
+        # others, which is harder to notice than never firing at all.
+        now = timezone.now()
+        updated = 0
         for order in queryset:
+            order.payment_status = "paid"
+            order.paid_at = now
             if order.amount_paid != order.total_amount:
                 order.amount_paid = order.total_amount
-                order.save(update_fields=["amount_paid"])
+            order.save()
+            updated += 1
+
         self.message_user(request, _(f"{updated} orders marked as paid"))
 
     @admin.action(description=_("Mark selected orders as Unpaid"))
@@ -1532,14 +1544,38 @@ class RefundAdmin(admin.ModelAdmin):
             updated += 1
         self.message_user(request, _(f"{updated} refunds marked as processing"))
 
-    @admin.action(description=_("Mark selected refunds as Completed"))
+    @admin.action(description=_("Complete selected refunds (returns the money)"))
     def mark_as_completed(self, request, queryset):
-        """Bulk mark as completed"""
-        updated = 0
+        """
+        Actually refund the customer, then mark completed.
+
+        This used to call refund.complete(), which only set a status — the
+        merchant saw "Completed", the order read "refunded", and no money ever
+        left. It now goes through Refund.execute(), which splits the refund
+        across the tenders that paid (gift card before gateway) and writes the
+        ledger rows.
+
+        Failures are reported per refund rather than aborting the batch: one
+        order whose ledger cannot fund the amount must not stop the others.
+        """
+        from orders.services.tender_refund_allocator import RefundAllocationError
+
+        completed, failed = 0, []
         for refund in queryset.filter(status="processing"):
-            refund.complete()
-            updated += 1
-        self.message_user(request, _(f"{updated} refunds marked as completed"))
+            try:
+                refund.execute()
+                completed += 1
+            except RefundAllocationError as exc:
+                failed.append(f"{refund.order.order_number}: {exc}")
+            except Exception as exc:  # provider errors, etc.
+                failed.append(f"{refund.order.order_number}: {exc}")
+
+        if completed:
+            self.message_user(
+                request, _("%(n)d refund(s) completed and paid out.") % {"n": completed}
+            )
+        for problem in failed:
+            self.message_user(request, problem, level=messages.ERROR)
 
     def save_model(self, request, obj, form, change):
         """Auto-set processed_by if approving"""

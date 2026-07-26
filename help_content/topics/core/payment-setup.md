@@ -33,7 +33,6 @@ Payment providers connect your store to payment gateways so you can accept credi
 | **Stripe** | Credit cards, Apple Pay, Google Pay, and 135+ currencies |
 | **PayPal** | PayPal balance, credit/debit cards, and Pay Later options |
 | **Airwallex** | Multi-currency payments optimized for cross-border commerce |
-| **Adyen** | Enterprise-grade payments with 250+ payment methods worldwide |
 | **Square** | In-person and online payments with integrated POS support |
 | **Revolut** | Fast European payments with competitive FX rates |
 

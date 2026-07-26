@@ -45,19 +45,35 @@ class MobileMenuToggle {
   }
 
   open() {
+    // Symmetric with close(): both guard the refcounted scroll lock, so a
+    // double open() can never leave the body pinned after a single close().
+    if (this.isOpen) {
+      return;
+    }
     this.isOpen = true;
     this.menu.classList.add('is-open');
     this.menu.setAttribute('aria-hidden', 'false');
     this.toggle.setAttribute('aria-expanded', 'true');
     document.body.classList.add('menu-open');
+    // `body.menu-open` has no stylesheet rule, so it never locked scroll —
+    // the page scrolled behind the open drawer. Lock it explicitly.
+    if (window.SpwigPortal) {
+      window.SpwigPortal.lockScroll();
+    }
   }
 
   close() {
+    if (!this.isOpen) {
+      return;
+    }
     this.isOpen = false;
     this.menu.classList.remove('is-open');
     this.menu.setAttribute('aria-hidden', 'true');
     this.toggle.setAttribute('aria-expanded', 'false');
     document.body.classList.remove('menu-open');
+    if (window.SpwigPortal) {
+      window.SpwigPortal.unlockScroll();
+    }
   }
 
   toggleMenu() {

@@ -154,7 +154,10 @@ class LedgerService:
         Returns:
             Adjustment transaction
         """
-        description = f"Manual adjustment by {admin_user.username}: {reason}"
+        # admin_user is optional on the reversal path and for system-initiated
+        # adjustments, so it must not be dereferenced blind.
+        actor = admin_user.username if admin_user else "system"
+        description = f"Manual adjustment by {actor}: {reason}"
 
         with db_transaction.atomic():
             txn = LoyaltyTransaction.objects.create(
@@ -302,8 +305,14 @@ class LedgerService:
                 available += txn.points
 
             elif txn.transaction_type == LoyaltyTransaction.TYPE_REDEEM:
-                lifetime_redeemed += abs(txn.points)
-                available += txn.points  # Points are negative
+                # Signed, not abs(): a redemption row carries negative points,
+                # and its refund (see refund_redemption) carries positive points
+                # on the same type. Negating makes the pair net to zero rather
+                # than counting the refund as a second redemption. For any row
+                # written before refunds existed the points are negative, so
+                # this is identical to the previous abs() behaviour.
+                lifetime_redeemed -= txn.points
+                available += txn.points
 
             elif txn.transaction_type == LoyaltyTransaction.TYPE_EXPIRE:
                 lifetime_expired += abs(txn.points)
@@ -361,6 +370,32 @@ class LedgerService:
         points_amount = -abs(points)
 
         with db_transaction.atomic():
+            # Get-or-create first, then lock: two concurrent redemptions for the
+            # same member would otherwise both read the pre-deduction balance and
+            # the second would overwrite the first's deduction, spending the same
+            # points twice.
+            balance, _created = LoyaltyBalance.objects.get_or_create(
+                member=member,
+                defaults={
+                    "available_points": 0,
+                    "pending_points": 0,
+                    "lifetime_earned": 0,
+                    "lifetime_redeemed": 0,
+                    "lifetime_expired": 0,
+                },
+            )
+            balance = LoyaltyBalance.objects.select_for_update().get(pk=balance.pk)
+
+            # Re-check sufficiency under the lock. Callers check eligibility
+            # before getting here, but that check is not serialised with this
+            # write, so it cannot be relied on to keep the balance non-negative.
+            if balance.available_points < abs(points_amount):
+                raise ValueError(
+                    f"Insufficient points for member {member.id}: "
+                    f"{balance.available_points} available, "
+                    f"{abs(points_amount)} required"
+                )
+
             # Create transaction
             transaction = LoyaltyTransaction.objects.create(
                 member=member,
@@ -373,18 +408,6 @@ class LedgerService:
                 related_object_id=str(redemption.id) if redemption else "",
             )
 
-            # Update balance
-            balance, created = LoyaltyBalance.objects.get_or_create(
-                member=member,
-                defaults={
-                    "available_points": 0,
-                    "pending_points": 0,
-                    "lifetime_earned": 0,
-                    "lifetime_redeemed": 0,
-                    "lifetime_expired": 0,
-                },
-            )
-
             # Deduct from available points
             balance.available_points += points_amount  # points_amount is negative
             balance.lifetime_redeemed += abs(points_amount)
@@ -394,6 +417,118 @@ class LedgerService:
             logger.info(f"Recorded redemption: {points_amount} points for member {member.id}")
 
         return transaction
+
+    def refund_redemption(
+        self,
+        redemption_transaction: LoyaltyTransaction,
+        reason: str,
+        admin_user=None,
+    ) -> LoyaltyTransaction:
+        """
+        Return points from a redemption that could not be fulfilled.
+
+        Points must never be lost because the thing they bought could not be
+        issued. Anywhere a redemption fails after :meth:`record_redemption` has
+        run, call this.
+
+        Why not :meth:`create_reversal`: it rejects anything that is not
+        ``TYPE_EARN``/``TYPE_BONUS``, because reversing an *earn* claws points
+        back. This is the opposite operation and needs its own balance handling.
+
+        Why ``TYPE_REDEEM`` with positive points rather than ``TYPE_ADJUSTMENT``:
+        :meth:`reconcile_balance` credits a positive adjustment to
+        ``lifetime_earned``, which is what ``TieringService`` and
+        ``SegmentEvaluator`` read — so refunding via an adjustment could promote
+        a member's tier or move them between segments as a side effect of a
+        failure. A positive redeem row nets against the original in both
+        ``available_points`` and ``lifetime_redeemed`` and touches nothing else.
+
+        Args:
+            redemption_transaction: The ``TYPE_REDEEM`` transaction to undo.
+            reason: Why the redemption could not be fulfilled.
+            admin_user: Admin performing the refund, if any.
+
+        Returns:
+            The compensating transaction.
+
+        Raises:
+            ValueError: If the transaction is not a redemption, is already a
+                refund, or has already been refunded.
+        """
+        if redemption_transaction.transaction_type != LoyaltyTransaction.TYPE_REDEEM:
+            raise ValueError(
+                f"Cannot refund transaction type: "
+                f"{redemption_transaction.transaction_type}. Expected "
+                f"{LoyaltyTransaction.TYPE_REDEEM}."
+            )
+
+        if redemption_transaction.points >= 0:
+            raise ValueError(
+                f"Transaction {redemption_transaction.id} carries "
+                f"{redemption_transaction.points} points — it is already a "
+                f"refund, not a redemption."
+            )
+
+        member = redemption_transaction.member
+        points_returned = abs(redemption_transaction.points)
+
+        with db_transaction.atomic():
+            # Lock the redemption row before checking whether it has already
+            # been refunded. Checking outside the transaction (as this used to)
+            # lets two concurrent refunds both observe "not refunded" and both
+            # credit the balance — the balance lock further down serialises the
+            # writes but not the decision, which makes the double credit
+            # reliable rather than preventing it.
+            #
+            # The UniqueConstraint on LoyaltyTransaction.reversal_of is the
+            # authoritative guard; this check exists to raise a clear error
+            # rather than an IntegrityError on the common path.
+            locked_transaction = LoyaltyTransaction.objects.select_for_update().get(
+                pk=redemption_transaction.pk
+            )
+
+            already_refunded = LoyaltyTransaction.objects.filter(
+                reversal_of=locked_transaction
+            ).exists()
+            if already_refunded:
+                raise ValueError(f"Transaction {locked_transaction.id} is already refunded")
+
+            refund = LoyaltyTransaction.objects.create(
+                member=member,
+                transaction_type=LoyaltyTransaction.TYPE_REDEEM,
+                points=points_returned,
+                status=LoyaltyTransaction.STATUS_AVAILABLE,
+                description=(f"Refund of redemption #{redemption_transaction.id}: {reason}"),
+                reason="redemption_refund",
+                reversal_of=locked_transaction,
+                created_by=admin_user,
+            )
+
+            # Lock the balance row: a refund and a concurrent redemption would
+            # otherwise read-modify-write the same counters and lose one update.
+            # get_or_create first (mirroring record_redemption) so a legacy
+            # member with no balance row gets one rather than a 500.
+            LoyaltyBalance.objects.get_or_create(
+                member=member,
+                defaults={
+                    "available_points": 0,
+                    "pending_points": 0,
+                    "lifetime_earned": 0,
+                    "lifetime_redeemed": 0,
+                    "lifetime_expired": 0,
+                },
+            )
+            balance = LoyaltyBalance.objects.select_for_update().get(member=member)
+            balance.available_points += points_returned
+            balance.lifetime_redeemed -= points_returned
+            balance.save(update_fields=["available_points", "lifetime_redeemed", "updated_at"])
+
+            logger.info(
+                f"Refunded {points_returned} points to member {member.id} "
+                f"for failed redemption (txn {redemption_transaction.id}): {reason}"
+            )
+
+        return refund
 
 
 # Singleton instance

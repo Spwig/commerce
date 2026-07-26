@@ -10,6 +10,7 @@ from typing import Any
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -41,13 +42,22 @@ class RefundService:
         if refund_amount <= 0:
             return False, _("Refund amount must be greater than zero")
 
-        # Calculate already refunded amount
+        # Capacity is PER CAPTURE ROW, not per order (invariant I3:
+        # sum(refunds) <= sum(captures) for each tender row).
+        #
+        # The previous filter keyed on (provider_account, order), which is wrong
+        # in both directions: refunds against a DIFFERENT charge on the same
+        # provider account ate this transaction's capacity, and gift card
+        # refunds — which carry provider_account=None — were not counted at all,
+        # so a gift card leg could be refunded repeatedly.
+        #
+        # `pending` counts as well as `completed`: two concurrent refunds must
+        # not both be told the same capacity is free.
         already_refunded = PaymentTransaction.objects.filter(
-            provider_account=original_transaction.provider_account,
-            order=original_transaction.order,
+            parent_transaction=original_transaction,
             transaction_type="refund",
-            status="succeeded",
-        ).aggregate(total=sum("amount"))["total"] or Decimal("0")
+            status__in=("pending", "completed"),
+        ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
 
         # Check if refund amount exceeds available amount
         available_for_refund = original_transaction.amount - already_refunded
@@ -78,22 +88,24 @@ class RefundService:
         Returns:
             Tuple of (success: bool, refund_transaction: PaymentTransaction|None, message: str)
         """
-        # Validate original transaction can be refunded
-        if original_transaction.status != "succeeded":
+        # Validate original transaction can be refunded.
+        #
+        # These two guards were the last survivors of the dead status
+        # vocabulary. The aggregate filters below were fixed to "completed", but
+        # these were left on "succeeded" — which is not in STATUS_CHOICES — and
+        # "charge" — which excludes the "capture" rows the tender rail writes.
+        # So every gateway refund routed here returned "Only successful payments
+        # can be refunded", the allocator raised, and the whole refund failed.
+        # The tests missed it because none exercised a refund large enough to
+        # spill onto the gateway leg.
+        if original_transaction.status != "completed":
             return False, None, _("Only successful payments can be refunded")
 
-        if original_transaction.transaction_type != "charge":
+        if original_transaction.transaction_type not in ("charge", "capture"):
             return False, None, _("Only charge transactions can be refunded")
 
         # Default to full refund
         refund_amount = refund_amount or original_transaction.amount
-
-        # Validate refund amount
-        is_valid, message = RefundService.validate_refund_amount(
-            original_transaction, refund_amount
-        )
-        if not is_valid:
-            return False, None, message
 
         # Check if provider supports refunds
         provider_account = original_transaction.provider_account
@@ -104,6 +116,15 @@ class RefundService:
         refund_transaction_id = f"rfnd_{uuid.uuid4().hex[:16]}"
 
         try:
+            # Validated INSIDE the try. Raising out of here escapes the
+            # documented (success, transaction, message) contract that POS
+            # unpacks, turning a refused refund into a 500.
+            is_valid, message = RefundService.validate_refund_amount(
+                original_transaction, refund_amount
+            )
+            if not is_valid:
+                return False, None, message
+
             # Get provider instance
             provider_class = ProviderRegistry.get_provider(provider_account.component.slug)
             if not provider_class:
@@ -134,8 +155,16 @@ class RefundService:
                 order=original_transaction.order,
                 amount=refund_amount,
                 amount_currency=original_transaction.amount_currency,
-                status="succeeded",
+                status="completed",
                 transaction_type="refund",
+                # Link the refund to the capture it draws against. Without this
+                # there is no per-row capacity: refund capacity can only be
+                # checked against the order in aggregate, which permits
+                # refunding gift card value out through the gateway.
+                # GiftCardTenderService.refund_to_card already does this.
+                parent_transaction=original_transaction,
+                settlement_amount=refund_amount,
+                tender_type=original_transaction.tender_type,
                 provider_transaction_id=refund_response.get("provider_refund_id", ""),
                 provider_response=PaymentIntent._json_safe(refund_response),
                 metadata={
@@ -163,8 +192,8 @@ class RefundService:
 
                 # Calculate total refunded amount
                 total_refunded = PaymentTransaction.objects.filter(
-                    order=order, transaction_type="refund", status="succeeded"
-                ).aggregate(total=sum("amount"))["total"] or Decimal("0")
+                    order=order, transaction_type="refund", status="completed"
+                ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
 
                 order.amount_refunded = total_refunded
 
@@ -244,8 +273,8 @@ class RefundService:
             provider_account=transaction.provider_account,
             order=transaction.order,
             transaction_type="refund",
-            status="succeeded",
-        ).aggregate(total=sum("amount"))["total"] or Decimal("0")
+            status="completed",
+        ).aggregate(total=Sum("amount"))["total"] or Decimal("0")
 
         return max(Decimal("0"), transaction.amount - already_refunded)
 

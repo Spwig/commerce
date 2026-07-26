@@ -257,13 +257,17 @@
         <i class="fas fa-undo"></i>
         {% trans "Rollback Available" %}
     </h3>
-    <p>{% trans "You can rollback this migration until" %} <strong>{{ job.rollback_deadline|date:"Y-m-d H:i:s" }}</strong>.</p>
+    {% if job.rollback_deadline %}
+        <p>{% blocktrans with deadline=job.rollback_deadline|date:"Y-m-d H:i:s" %}You can roll this migration back until <strong>{{ deadline }}</strong>.{% endblocktrans %}</p>
+    {% else %}
+        <p>{% trans "You can roll this migration back from the Migrations list." %}</p>
+    {% endif %}
 
     <div class="alert-warning">
         <i class="fas fa-exclamation-triangle"></i>
         <div>
             <strong>{% trans "Important" %}</strong>
-            <p>{% trans "Rolling back will remove all imported data. This action cannot be undone. Make sure to backup any changes you've made since the migration." %}</p>
+            <p>{% trans "Rolling back removes the products, categories, customers, orders, media and store-extension data this import created, and it cannot be undone. Anything your store has since come to depend on — an imported product that now appears on a real order, for example — is kept rather than removed, and Spwig lists what it kept. You will see exactly what will be removed before you confirm." %}</p>
         </div>
     </div>
 
@@ -271,7 +275,7 @@
         {% csrf_token %}
         <button type="submit" class="button danger"
                 data-action="confirm-rollback"
-                data-confirm-msg="{% trans 'Are you sure you want to rollback this migration? This will remove all imported data and cannot be undone.' %}">
+                data-confirm-msg="{% trans 'Roll back this migration? This removes what the import created, keeping anything your store now depends on. It cannot be undone.' %}">
             <i class="fas fa-undo"></i>
             {% trans "Rollback Migration" %}
         </button>
@@ -279,12 +283,20 @@
 </div>
 {% endif %}
 
+{% elif job.status == 'cancelled' %}
+<!-- Cancelled State -->
+<div class="alert-warning error-alert-large">
+    <i class="fas fa-ban error-icon-large"></i>
+    <strong class="success-heading">{% trans "Migration Stopped" %}</strong>
+    <p class="success-message">{% trans "You stopped this import. The items imported before it stopped are still in your store — nothing was removed. You can roll the import back to remove them, or run it again, in which case anything already imported will be skipped." %}</p>
+</div>
+
 {% elif job.status == 'failed' %}
 <!-- Failure State -->
 <div class="alert-error error-alert-large">
     <i class="fas fa-exclamation-circle error-icon-large"></i>
     <strong class="success-heading">{% trans "Migration Failed" %}</strong>
-    <p class="success-message">{% trans "There was an error during the import process. The migration has been rolled back automatically." %}</p>
+    <p class="success-message">{% trans "Spwig could not finish this import. Items imported before the error are still in your store — nothing has been removed automatically. Review the details below, then fix the problem at source and run the import again. Items that were already imported will be skipped." %}</p>
 </div>
 
 <!-- Error Details -->
@@ -327,30 +339,30 @@
         <i class="fas fa-info-circle"></i>
         {% trans "Partial Import Results" %}
     </h3>
-    <p>{% trans "The following data was imported before the error occurred (all rolled back):" %}</p>
+    <p>{% trans "The following items were imported before the error occurred. They are live in your store:" %}</p>
 
     <div class="stats-grid">
         {% if job.products_imported > 0 %}
         <div class="stat-card">
-            <div class="stat-number text-muted">{{ job.products_imported }}</div>
+            <div class="stat-number">{{ job.products_imported }}</div>
             <div class="stat-label">{% trans "Products" %}</div>
         </div>
         {% endif %}
         {% if job.categories_imported > 0 %}
         <div class="stat-card">
-            <div class="stat-number text-muted">{{ job.categories_imported }}</div>
+            <div class="stat-number">{{ job.categories_imported }}</div>
             <div class="stat-label">{% trans "Categories" %}</div>
         </div>
         {% endif %}
         {% if job.customers_imported > 0 %}
         <div class="stat-card">
-            <div class="stat-number text-muted">{{ job.customers_imported }}</div>
+            <div class="stat-number">{{ job.customers_imported }}</div>
             <div class="stat-label">{% trans "Customers" %}</div>
         </div>
         {% endif %}
         {% if job.orders_imported > 0 %}
         <div class="stat-card">
-            <div class="stat-number text-muted">{{ job.orders_imported }}</div>
+            <div class="stat-number">{{ job.orders_imported }}</div>
             <div class="stat-label">{% trans "Orders" %}</div>
         </div>
         {% endif %}
@@ -394,13 +406,13 @@
                 {% trans "Check your products, customers, and orders to ensure everything imported correctly." %}
             </span>
             <div class="wizard-next-step-actions">
-                <a href="/admin/catalog/product/" class="button secondary small">
+                <a href="{% url 'admin:catalog_product_changelist' %}" class="button secondary small">
                     <i class="fas fa-box"></i> {% trans "View Products" %}
                 </a>
-                <a href="/admin/customers/customer/" class="button secondary small">
+                <a href="{% url 'admin:accounts_customerprofile_changelist' %}" class="button secondary small">
                     <i class="fas fa-users"></i> {% trans "View Customers" %}
                 </a>
-                <a href="/admin/orders/order/" class="button secondary small">
+                <a href="{% url 'admin:orders_order_changelist' %}" class="button secondary small">
                     <i class="fas fa-shopping-cart"></i> {% trans "View Orders" %}
                 </a>
             </div>

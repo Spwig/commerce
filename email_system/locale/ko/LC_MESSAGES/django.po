@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean <LL@li.org>\n"
@@ -18,125 +18,166 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:61 templates/admin/email_system/emailaccount/change_form.html:124
 msgid "Provider Information"
 msgstr "제공업체 정보"
 
+#: admin.py:68 templates/admin/email_system/emailaccount/change_form.html:150
 msgid "Sender Configuration"
 msgstr "발신자 설정"
 
+#: admin.py:75 templates/admin/email_system/emailaccount/change_form.html:172
 msgid "Configuration"
 msgstr "설정"
 
+#: admin.py:82 templates/admin/email_system/emailaccount/change_form.html:203
 msgid "DKIM Configuration"
 msgstr "DKIM 설정"
 
+#: admin.py:86
 msgid ""
 "DKIM keys are used to digitally sign outgoing emails. Use \"Regenerate DKIM "
 "Keys\" action to create new keys."
-msgstr ""
-"DKIM 키는 외부로 발송되는 이메일을 디지털 서명에 사용됩니다. \"DKIM 키 재생성"
-"\" 작업을 사용하여 새 키를 생성하세요."
+msgstr "DKIM 키는 외부로 발송되는 이메일을 디지털 서명에 사용됩니다. \"DKIM 키 재생성\" 작업을 사용하여 새 키를 생성하세요."
 
+#: admin.py:92 admin.py:187
+#: templates/admin/email_system/emailaccount/change_form.html:230
 msgid "Credentials"
 msgstr "인증 정보"
 
+#: admin.py:96
 msgid ""
 "Credentials are encrypted and managed through the provider setup. To update "
 "credentials, reconnect the provider."
-msgstr ""
-"자격 증명은 제공자 설정을 통해 암호화되고 관리됩니다. 자격 증명을 업데이트하"
-"려면 제공자를 다시 연결하세요."
+msgstr "자격 증명은 제공자 설정을 통해 암호화되고 관리됩니다. 자격 증명을 업데이트하려면 제공자를 다시 연결하세요."
 
+#: admin.py:102 templates/admin/email_system/emailaccount/change_form.html:261
 msgid "Connection Status"
 msgstr "연결 상태"
 
+#: admin.py:109 admin.py:565 admin.py:751 admin.py:850
+#: templates/admin/email_system/emailaccount/change_form.html:287
 msgid "Timestamps"
 msgstr "타임스탬프"
 
+#: admin.py:122 admin.py:301 providers/builtin/setup_instructions.html:5
 msgid "Built-in SMTP Server"
 msgstr "내장 SMTP 서버"
 
+#: admin.py:124
 msgid "Unknown Provider"
 msgstr "알 수 없는 제공업체"
 
+#: admin.py:126
 msgid "Provider"
 msgstr "제공업체"
 
+#: admin.py:142 admin.py:559 admin.py:576 admin.py:739 admin.py:779
+#: templates/admin/email_system/emailaccount/change_form.html:112
+#: templates/admin/email_system/emailoutbox/change_list.html:73
+#: templates/admin/email_system/template_delete_confirm.html:35
+#: templates/admin/email_system/template_list.html:111
 msgid "Status"
 msgstr "상태"
 
+#: admin.py:152 templates/admin/email_system/emailaccount/change_form.html:44
+#: templates/admin/email_system/template_list.html:246
+#: templates/email_system/admin/account_card.html:88
 msgid "Default"
 msgstr "기본"
 
+#: admin.py:167
 msgid "Connection"
 msgstr "연결"
 
+#: admin.py:177
 msgid "Credentials are encrypted and stored securely"
 msgstr "자격 증명은 암호화되어 안전하게 저장됩니다"
 
+#: admin.py:184
 msgid "No credentials configured"
 msgstr "인증 정보가 설정되지 않았습니다"
 
+#: admin.py:413
 msgid "DKIM keys are only managed for the built-in SMTP provider."
 msgstr "DKIM 키는 내장 SMTP 제공자만을 대상으로 관리됩니다."
 
+#: admin.py:427
 msgid "No DKIM keys generated"
 msgstr "생성된 DKIM 키가 없습니다"
 
+#: admin.py:428
 msgid "Use \"Regenerate DKIM Keys\" action to generate keys."
 msgstr "\"DKIM 키 재생성\" 작업을 사용하여 키를 생성하세요."
 
+#: admin.py:461
 msgid "DKIM keys configured"
 msgstr "DKIM 키가 설정되었습니다"
 
+#: admin.py:462
 msgid "DNS TXT Record:"
 msgstr "DNS TXT 기록:"
 
+#: admin.py:463
 msgid "Name"
 msgstr "이름"
 
+#: admin.py:465
 msgid "Value"
 msgstr "값"
 
+#: admin.py:468
 msgid "Copy DNS Record"
 msgstr "DNS 기록 복사"
 
+#: admin.py:476
 msgid "Error loading DKIM keys"
 msgstr "DKIM 키 로드 오류"
 
+#: admin.py:480
 msgid "DKIM Keys"
 msgstr "DKIM 키"
 
+#: admin.py:516
 #, python-brace-format
 msgid "✓ DKIM keys regenerated for {account.name}"
 msgstr "✓ {account.name}의 DKIM 키가 재생성되었습니다"
 
+#: admin.py:526
 #, python-brace-format
 msgid "Successfully regenerated DKIM keys for {regenerated_count} account(s)"
-msgstr ""
-"{regenerated_count}개의 계정에 대해 DKIM 키가 성공적으로 재생성되었습니다"
+msgstr "{regenerated_count}개의 계정에 대해 DKIM 키가 성공적으로 재생성되었습니다"
 
+#: admin.py:534
 msgid "Regenerate DKIM keys for selected accounts"
 msgstr "선택한 계정의 DKIM 키를 재생성합니다"
 
+#: admin.py:557
 msgid "Template Information"
 msgstr "템플릿 정보"
 
+#: admin.py:558 admin.py:729
 msgid "Content"
 msgstr "콘텐츠"
 
+#: admin.py:561
 msgid "Version Control"
 msgstr "버전 관리"
 
+#: admin.py:584 templates/admin/email_system/template_list.html:96
 msgid "Type"
 msgstr "유형"
 
+#: admin.py:594 templates/admin/email_system/template_list.html:282
 msgid "Preview"
 msgstr "미리보기"
 
+#: admin.py:597 templates/admin/email_system/newsletter_list.html:40
+#: templates/admin/email_system/translation_manager.html:121
 msgid "Actions"
 msgstr "작업"
 
+#: admin.py:624
 msgid ""
 "Successfully cloned template: {template.get_template_type_display()} "
 "({template.language_code})"
@@ -144,3545 +185,4973 @@ msgstr ""
 "템플릿이 성공적으로 복제되었습니다: {template.get_template_type_display()} "
 "({template.language_code})"
 
+#: admin.py:633
 #, python-brace-format
 msgid "Successfully cloned {cloned_count} template(s)"
 msgstr "{cloned_count}개의 템플릿이 성공적으로 복제되었습니다"
 
+#: admin.py:640
 msgid "Clone selected templates"
 msgstr "선택한 템플릿 복제"
 
+#: admin.py:659
 #, python-brace-format
 msgid "Successfully activated {activated_count} template(s)"
 msgstr "{activated_count}개의 템플릿이 성공적으로 활성화되었습니다"
 
+#: admin.py:667
 msgid "Activate selected templates"
 msgstr "선택한 템플릿 활성화"
 
+#: admin.py:686
 #, python-brace-format
 msgid "Successfully deactivated {deactivated_count} template(s)"
 msgstr "{deactivated_count}개의 템플릿이 성공적으로 비활성화되었습니다"
 
+#: admin.py:694
 msgid "Deactivate selected templates"
 msgstr "선택한 템플릿 비활성화"
 
+#: admin.py:726
 msgid "Email Details"
 msgstr "이메일 상세 정보"
 
+#: admin.py:730
 msgid "Additional Recipients"
 msgstr "추가 수신자"
 
+#: admin.py:732
 msgid "Metadata"
 msgstr "메타데이터"
 
+#: admin.py:792
 #, python-format
 msgid "Released %d email(s) for delivery."
-msgstr ""
+msgstr "배송을 위해 %d개의 이메일을 해제했습니다."
 
+#: admin.py:795
 msgid "No held emails in selection."
-msgstr ""
+msgstr "선택된 보류 이메일이 없습니다."
 
+#: admin.py:797
 msgid "Release held emails for delivery"
-msgstr ""
+msgstr "보류된 이메일을 배송을 위해 해제합니다"
 
+#: admin.py:843
 msgid "Event Information"
 msgstr "이벤트 정보"
 
+#: admin.py:844
 msgid "Event Data"
 msgstr "이벤트 데이터"
 
+#: admin.py:846
 msgid "Bounce Details"
 msgstr "반송 상세 정보"
 
+#: admin.py:849 templates/admin/email_system/wizard/step1_select.html:62
 msgid "Tracking"
 msgstr "추적"
 
+#: admin.py:869
 msgid "Event Type"
 msgstr "이벤트 유형"
 
+#: admin_views.py:85
 msgid "Account enabled"
 msgstr "계정 활성화됨"
 
+#: admin_views.py:85
 msgid "Account disabled"
 msgstr "계정 비활성화됨"
 
+#: admin_views.py:89 admin_views.py:129 admin_views.py:169 admin_views.py:203
 msgid "Account not found"
 msgstr "계정을 찾을 수 없음"
 
+#: admin_views.py:109
 msgid "Cannot set an inactive account as default"
 msgstr "비활성화된 계정을 기본으로 설정할 수 없습니다"
 
+#: admin_views.py:124
 #, python-format
 msgid "Default account updated to %(email)s"
 msgstr "기본 계정이 %(email)s로 업데이트되었습니다"
 
+#: admin_views.py:154
 msgid "Connection test failed"
 msgstr "연결 테스트 실패"
 
+#: admin_views.py:165
 msgid "Connection test completed"
 msgstr "연결 테스트 완료"
 
+#: admin_views.py:188
 msgid ""
 "Cannot delete the default email account. Set another account as default "
 "first."
-msgstr ""
-"기본 이메일 계정은 삭제할 수 없습니다. 먼저 다른 계정을 기본으로 설정하세요."
+msgstr "기본 이메일 계정은 삭제할 수 없습니다. 먼저 다른 계정을 기본으로 설정하세요."
 
+#: admin_views.py:199
 #, python-format
 msgid "Account %(email)s deleted"
 msgstr "계정 %(email)s가 삭제되었습니다"
 
+#: admin_views.py:222
 msgid "Action and account selection are required"
 msgstr "작업 및 계정 선택이 필요합니다"
 
+#: admin_views.py:234
 msgid "No accounts found"
 msgstr "계정을 찾을 수 없음"
 
+#: admin_views.py:241
 #, python-format
 msgid "%(count)d account(s) enabled"
 msgstr "%(count)d개의 계정이 활성화되었습니다"
 
+#: admin_views.py:244
 #, python-format
 msgid "%(count)d account(s) disabled"
 msgstr "%(count)d개의 계정이 비활성화되었습니다"
 
+#: admin_views.py:273
 #, python-format
 msgid "%(success)d of %(total)d connection tests passed"
 msgstr "%(total)d개의 연결 테스트 중 %(success)d개가 통과되었습니다"
 
+#: admin_views.py:285
 msgid ""
 "Cannot delete the default email account. Remove it from selection or change "
 "the default first."
-msgstr ""
-"기본 이메일 계정은 삭제할 수 없습니다. 선택에서 제거하거나 기본을 먼저 변경하"
-"세요."
+msgstr "기본 이메일 계정은 삭제할 수 없습니다. 선택에서 제거하거나 기본을 먼저 변경하세요."
 
+#: admin_views.py:291
 #, python-format
 msgid "%(count)d account(s) deleted"
 msgstr "%(count)d개의 계정이 삭제되었습니다"
 
+#: admin_views.py:296
 #, python-format
 msgid "Unknown action: %(action)s"
 msgstr "알 수 없는 작업: %(action)s"
 
+#: admin_views.py:304
 msgid "Invalid request data"
 msgstr "잘못된 요청 데이터"
 
+#: apps.py:8
 msgid "Email System"
 msgstr "이메일 시스템"
 
+#: models.py:25 models.py:306 models.py:930
 msgid "site"
 msgstr "사이트"
 
+#: models.py:26
 msgid "Site this email account belongs to"
 msgstr "이 이메일 계정이 속한 사이트"
 
+#: models.py:36
 msgid "provider component"
 msgstr "제공업체 구성 요소"
 
+#: models.py:37
 msgid ""
 "Email provider component from update system (null for built-in providers)"
-msgstr ""
-"업데이트 시스템에서 가져온 이메일 제공자 구성 요소 (내장 제공자는 null)"
+msgstr "업데이트 시스템에서 가져온 이메일 제공자 구성 요소 (내장 제공자는 null)"
 
+#: models.py:43
 msgid "provider key"
 msgstr "제공업체 키"
 
+#: models.py:45
 msgid ""
 "Provider identifier (e.g., 'builtin_smtp', 'gmail_api'). Required for built-"
 "in providers."
-msgstr ""
-"제공자 식별자 (예: 'builtin_smtp', 'gmail_api'). 내장 제공자에 필수입니다."
+msgstr "제공자 식별자 (예: 'builtin_smtp', 'gmail_api'). 내장 제공자에 필수입니다."
 
+#: models.py:51
 msgid "account name"
 msgstr "계정 이름"
 
+#: models.py:52
 msgid "Friendly name for this email account (e.g., 'Main Email Account')"
 msgstr "이 이메일 계정의 친근한 이름 (예: '메인 이메일 계정')"
 
+#: models.py:57 models.py:947
 msgid "from email"
 msgstr "발신 이메일"
 
+#: models.py:57
 msgid "Default sender email address"
 msgstr "기본 발신 이메일 주소"
 
+#: models.py:61 models.py:950
 msgid "from name"
 msgstr "발신자 이름"
 
+#: models.py:61
 msgid "Default sender name"
 msgstr "기본 발신자 이름"
 
+#: models.py:65
 msgid "reply-to email"
 msgstr "대답 이메일"
 
+#: models.py:65
 msgid "Default reply-to email address"
 msgstr "기본 대답 이메일 주소"
 
+#: models.py:70
 msgid "encrypted credentials"
 msgstr "암호화된 자격 증명"
 
+#: models.py:71
 msgid "Encrypted API credentials for this provider"
 msgstr "이 제공자에 대한 암호화된 API 자격 증명"
 
+#: models.py:77 models.py:572
+#: templates/email_system/admin/emailaccount_changelist.html:23
 msgid "active"
 msgstr "활성"
 
+#: models.py:78
 msgid "Whether this email account is active and should be used for sending"
 msgstr "이 이메일 계정이 활성화되어 있고 발송에 사용되어야 하는지 여부"
 
+#: models.py:83
 msgid "default account"
 msgstr "기본 계정"
 
+#: models.py:84
 msgid "Use this account as default for sending emails"
 msgstr "이 계정을 이메일 발송의 기본으로 사용합니다"
 
+#: models.py:91
 msgid "provider settings"
 msgstr "제공업체 설정"
 
+#: models.py:92
 msgid "Provider-specific settings and configuration"
 msgstr "제공업체별 설정 및 구성"
 
+#: models.py:99
 msgid "Unknown"
 msgstr "알 수 없음"
 
+#: models.py:100 templates/admin/email_system/emailaccount/change_form.html:47
+#: templates/email_system/admin/account_card.html:60
+#: templates/email_system/admin/emailaccount_changelist.html:68
 msgid "Connected"
 msgstr "연결됨"
 
+#: models.py:101 models.py:1188 models.py:1209 models.py:1237 models.py:1265
+#: templates/admin/email_system/emailaccount/change_form.html:49
+#: templates/admin/email_system/template_preview.html:53
+#: templates/email_system/admin/account_card.html:64
+#: templates/email_system/admin/emailaccount_changelist.html:71
 msgid "Error"
 msgstr "에러"
 
+#: models.py:104
 msgid "connection status"
 msgstr "연결 상태"
 
+#: models.py:105
 msgid "Current connection status with provider"
 msgstr "제공업체와의 현재 연결 상태"
 
+#: models.py:110
 msgid "connection error"
 msgstr "연결 오류"
 
+#: models.py:111
 msgid "Error message from last connection test"
 msgstr "최근 연결 테스트에서 발생한 오류 메시지"
 
+#: models.py:117
 msgid "last tested at"
 msgstr "마지막으로 테스트된 시간"
 
+#: models.py:118
 msgid "When connection was last tested"
 msgstr "연결이 마지막으로 테스트된 시간"
 
+#: models.py:124
 msgid "DNS validated"
 msgstr "DNS 검증 완료"
 
+#: models.py:125
 msgid "Whether DNS records (SPF/DKIM/DMARC) have been validated"
 msgstr "DNS 기록(SPFLDKIM/DMARC)이 검증되었는지 여부"
 
+#: models.py:131
 msgid "DNS validated at"
 msgstr "DNS 검증 완료 시간"
 
+#: models.py:132
 msgid "When DNS validation last passed"
 msgstr "DNS 검증이 마지막으로 성공한 시간"
 
+#: models.py:138
 msgid "DNS domain"
 msgstr "DNS 도메인"
 
+#: models.py:139
 msgid "Domain used for DNS validation (if different from email domain)"
 msgstr "DNS 검증에 사용된 도메인 (이메일 도메인과 다른 경우)"
 
+#: models.py:143 models.py:598 models.py:1052 models.py:1140 models.py:1408
+#: models.py:1491
 msgid "created at"
 msgstr "생성 시간"
 
+#: models.py:144 models.py:599 models.py:1053 models.py:1141 models.py:1291
+#: models.py:1409
 msgid "updated at"
 msgstr "업데이트 시간"
 
+#: models.py:151 models.py:606
 msgid "created by"
 msgstr "작성자"
 
+#: models.py:155 models.py:939 models.py:1173
 msgid "email account"
 msgstr "이메일 계정"
 
+#: models.py:156
 msgid "email accounts"
 msgstr "이메일 계정들"
 
+#: models.py:307
 msgid "Site this template belongs to"
 msgstr "이 템플릿이 속한 사이트"
 
+#: models.py:315
 msgid "Account Invitation"
 msgstr "계정 초대"
 
+#: models.py:316
 msgid "Account Welcome"
 msgstr "계정 환영"
 
+#: models.py:317
 msgid "Delivery Confirmation"
 msgstr "배송 확인"
 
+#: models.py:318
 msgid "Email Verification"
 msgstr "이메일 확인"
 
+#: models.py:319
 msgid "Message Reply"
 msgstr "메시지 답장"
 
+#: models.py:320
 msgid "Order Cancelled"
 msgstr "주문 취소됨"
 
+#: models.py:321
 msgid "Order Confirmation"
 msgstr "주문 확인"
 
+#: models.py:322
 msgid "Order Delay Notification"
 msgstr "주문 지연 알림"
 
+#: models.py:323
 msgid "Order Note Notification"
 msgstr "주문 메모 알림"
 
+#: models.py:324
 msgid "Order Shipped"
 msgstr "주문 출고됨"
 
+#: models.py:325
 msgid "Password Reset"
 msgstr "비밀번호 재설정"
 
-#, fuzzy
-#| msgid "Account Invitation"
+#: models.py:326
 msgid "Staff Invitation"
-msgstr "계정 초대"
+msgstr "직원 초대"
 
+#: models.py:327
 msgid "Payment Confirmation"
 msgstr "결제 확인"
 
+#: models.py:328
 msgid "Refund Notification"
 msgstr "환불 알림"
 
+#: models.py:329
 msgid "Review Request"
 msgstr "리뷰 요청"
 
+#: models.py:330
 msgid "Shipping Confirmation"
 msgstr "배송 확인"
 
+#: models.py:331
 msgid "Shipping: Delayed"
 msgstr "배송: 지연됨"
 
+#: models.py:332
 msgid "Shipping: Exception"
 msgstr "배송: 예외"
 
+#: models.py:333
 msgid "Shipping: Tracking Milestone"
 msgstr "배송: 추적 마일스톤"
 
+#: models.py:334
 msgid "Order Status Update"
 msgstr "주문 상태 업데이트"
 
+#: models.py:336
+#| msgid "Returns: Package Received"
+msgid "Returns: Request Received"
+msgstr "반품: 요청 수신"
+
+#: models.py:337
 msgid "Returns: Approved"
 msgstr "반품: 승인됨"
 
+#: models.py:338
 msgid "Returns: Rejected"
 msgstr "반품: 거부됨"
 
+#: models.py:339
 msgid "Returns: Package Received"
 msgstr "반품: 패키지 수령"
 
+#: models.py:340
 msgid "Returns: Refund Processed"
 msgstr "반품: 환불 처리됨"
 
+#: models.py:342
 msgid "Admin: New Order"
 msgstr "관리자: 새 주문"
 
+#: models.py:343
 msgid "Admin: Payment Failed"
 msgstr "관리자: 결제 실패"
 
+#: models.py:344
 msgid "Admin: Payment SDK Failure"
 msgstr "관리자: 결제 SDK 실패"
 
+#: models.py:345
 msgid "Admin: Return Inspection Reminder"
 msgstr "관리자: 반품 검사 напоминание"
 
+#: models.py:346
 msgid "Admin: Abandoned Carts Summary"
 msgstr "관리자: 포기된 장바구니 요약"
 
+#: models.py:347
 msgid "Admin: Customer Insights"
 msgstr "관리자: 고객 인사이트"
 
+#: models.py:348
 msgid "Admin: Daily Sales Report"
 msgstr "관리자: 일일 매출 보고서"
 
+#: models.py:349
 msgid "Admin: Low Stock Alert"
 msgstr "관리자: 낮은 재고 경고"
 
+#: models.py:350
 msgid "Admin: Monthly Review"
 msgstr "관리자: 월간 검토"
 
+#: models.py:351
 msgid "Admin: Revenue Forecast"
 msgstr "관리자: 매출 예측"
 
+#: models.py:352
 msgid "Admin: Top Products"
 msgstr "관리자: 상위 제품"
 
+#: models.py:353
 msgid "Admin: Weekly Digest"
 msgstr "관리자: 주간 요약"
 
+#: models.py:355
 msgid "Affiliate: Account Activated"
 msgstr "아フィ리에이트: 계정 활성화됨"
 
+#: models.py:356
 msgid "Affiliate: Account Approved"
 msgstr "아피리에이트: 계정 승인됨"
 
+#: models.py:357
 msgid "Affiliate: Account Rejected"
 msgstr "아피리에이트: 계정 거부됨"
 
+#: models.py:358
 msgid "Affiliate: Account Suspended"
 msgstr "아피리에이트: 계정 정지됨"
 
+#: models.py:359
 msgid "Affiliate: Commission Approved"
 msgstr "아피리에이트: 수수료 승인됨"
 
+#: models.py:360
 msgid "Affiliate: Commission Earned"
 msgstr "아피리에이트: 수수료 획득됨"
 
+#: models.py:361
 msgid "Affiliate: Commission Rejected"
 msgstr "아피리에이트: 수수료 거부됨"
 
+#: models.py:362
 msgid "Affiliate: Commission Reversed"
 msgstr "아피리에이트: 수수료 되돌림"
 
+#: models.py:363
 msgid "Affiliate: High Commission Alert"
 msgstr "아피리에이트: 높은 수수료 경고"
 
+#: models.py:364
 msgid "Affiliate: Monthly Report"
 msgstr "아フィ리エ이트: 월간 보고서"
 
+#: models.py:365
 msgid "Affiliate: Payout Cancelled"
 msgstr "아피리에이트: 지급 취소"
 
+#: models.py:366
 msgid "Affiliate: Payout Completed"
 msgstr "아피리에이트: 지급 완료"
 
+#: models.py:367
 msgid "Affiliate: Payout Failed"
 msgstr "소속: 지급 실패"
 
+#: models.py:368
 msgid "Affiliate: Payout Processing"
 msgstr "아피리에이트: 지급 처리 중"
 
+#: models.py:369
 msgid "Affiliate: Payout Threshold Reached"
 msgstr "아피리에이트: 지급 임계치 달성"
 
+#: models.py:370
 msgid "Affiliate: Program Approved"
 msgstr "아피리에이트: 프로그램 승인"
 
+#: models.py:371
 msgid "Affiliate: Program Rejected"
 msgstr "아피리에이트: 프로그램 거부"
 
+#: models.py:373
 msgid "Backup: Completed"
 msgstr "백업: 완료"
 
+#: models.py:374
 msgid "Backup: Failed"
 msgstr "백업: 실패"
 
+#: models.py:375
 msgid "Backup: Restore Completed"
 msgstr "백업: 복원 완료"
 
+#: models.py:376
 msgid "Backup: Restore Failed"
 msgstr "백업: 복원 실패"
 
+#: models.py:377
 msgid "Backup: Scheduled Missed"
 msgstr "백업: 예약된 백업 누락"
 
+#: models.py:378
 msgid "Backup: Size Warning"
 msgstr "백업: 크기 경고"
 
+#: models.py:379
 msgid "Backup: Storage Quota Alert"
 msgstr "백업: 저장 공간 할당량 경고"
 
+#: models.py:380
 msgid "Backup: Weekly Report"
 msgstr "백업: 주간 보고서"
 
+#: models.py:382
 msgid "Admin: Booking Cancelled"
 msgstr "관리자: 예약 취소됨"
 
+#: models.py:383
 msgid "Admin: New Booking"
 msgstr "관리자: 새 예약"
 
+#: models.py:384
 msgid "Booking: Cancelled"
 msgstr "예약: 취소됨"
 
+#: models.py:385
 msgid "Booking: Completed"
 msgstr "예약: 완료됨"
 
+#: models.py:386
 msgid "Booking: Confirmation"
 msgstr "예약: 확인"
 
+#: models.py:387
 msgid "Booking: Deposit Receipt"
 msgstr "예약: 예치금 영수증"
 
+#: models.py:388
 msgid "Booking: No Show"
 msgstr "예약: 미참석"
 
+#: models.py:389
 msgid "Booking: Pending Confirmation"
 msgstr "예약: 확인 대기 중"
 
+#: models.py:390
 msgid "Booking: Recurring Series Created"
 msgstr "예약: 반복 시리즈 생성됨"
 
+#: models.py:391
 msgid "Booking: Reminder"
 msgstr "예약: напоминание"
 
+#: models.py:392
 msgid "Booking: Rescheduled"
 msgstr "예약: 재예약됨"
 
+#: models.py:393
 msgid "Booking: Waitlist Notification"
 msgstr "예약: 대기 목록 알림"
 
+#: models.py:395
 msgid "Blog: Comment Approved"
 msgstr "블로그: 댓글 승인"
 
+#: models.py:396
 msgid "Blog: Comment Reply"
 msgstr "블로그: 댓글 답변"
 
+#: models.py:397
 msgid "Blog: Weekly Digest"
 msgstr "블로그: 주간 요약"
 
+#: models.py:398
 msgid "Blog: Post Published"
 msgstr "블로그: 게시물 게시됨"
 
+#: models.py:399
 msgid "Blog: Subscriber Welcome"
 msgstr "블로그: 구독자 환영"
 
+#: models.py:400
 msgid "Blog: Subscription Confirmed"
 msgstr "블로그: 구독 확인"
 
+#: models.py:402
 msgid "Cart: Abandoned (1 Hour)"
 msgstr "카트: 1시간 동안 버려짐"
 
+#: models.py:403
 msgid "Cart: Abandoned (24 Hours)"
 msgstr "카트: 24시간 동안 버려짐"
 
+#: models.py:404
 msgid "Cart: Abandoned (48 Hours)"
 msgstr "카트: 48시간 동안 버려짐"
 
+#: models.py:405
 msgid "Cart: Abandoned (Discount Offer)"
 msgstr "장바구니: 포기 (할인 제안)"
 
+#: models.py:406
 msgid "Cart: Recovery Thank You"
 msgstr "장바구니: 복구 감사"
 
+#: models.py:408
 msgid "Component: Deprecated Warning"
 msgstr "구성 요소: 사용 중지 경고"
 
+#: models.py:409
 msgid "Component: Incompatible Warning"
 msgstr "구성 요소: 호환되지 않음 경고"
 
+#: models.py:410
 msgid "Component: Rollback Success"
 msgstr "구성 요소: 롤백 성공"
 
+#: models.py:411
 msgid "Component: Security Update"
 msgstr "구성 요소: 보안 업데이트"
 
+#: models.py:412
 msgid "Component: Update Available"
 msgstr "구성 요소: 업데이트 가능"
 
+#: models.py:413
 msgid "Component: Update Failed"
 msgstr "구성 요소: 업데이트 실패"
 
+#: models.py:414
 msgid "Component: Update Installed"
 msgstr "구성 요소: 업데이트 설치됨"
 
+#: models.py:416
 msgid "Developer: Account Approved"
 msgstr "개발자: 계정 승인됨"
 
+#: models.py:417
 msgid "Developer: Account Rejected"
 msgstr "개발자: 계정 거부됨"
 
+#: models.py:418
 msgid "Developer: Account Suspended"
 msgstr "개발자: 계정 일시 중지됨"
 
+#: models.py:419
 msgid "Developer: Component Published"
 msgstr "개발자: 구성 요소 게시됨"
 
+#: models.py:420
 msgid "Developer: License Approved"
 msgstr "개발자: 라이선스 승인됨"
 
+#: models.py:421
 msgid "Developer: License Rejected"
 msgstr "개발자: 라이선스 거부됨"
 
+#: models.py:422
 msgid "Developer: New Review"
 msgstr "개발자: 새 리뷰"
 
+#: models.py:423
 msgid "Developer: Registration Received"
 msgstr "개발자: 등록 받음"
 
+#: models.py:424
 msgid "Developer: Review Digest"
 msgstr "개발자: 리뷰 요약"
 
+#: models.py:425
 msgid "Developer: Revision Requested"
 msgstr "개발자: 수정 요청됨"
 
+#: models.py:426
 msgid "Developer: Submission Approved"
 msgstr "개발자: 제출 승인됨"
 
+#: models.py:427
 msgid "Developer: Submission Received"
 msgstr "개발자: 제출 받음"
 
+#: models.py:428
 msgid "Developer: Submission Rejected"
 msgstr "개발자: 제출 거부"
 
+#: models.py:430
 msgid "Digital Product: Download Ready"
 msgstr "디지털 상품: 다운로드 준비 완료"
 
+#: models.py:431
 msgid "Digital Product: Download Link Expired"
 msgstr "디지털 상품: 다운로드 링크 만료"
 
+#: models.py:432
 msgid "Digital Product: License Expired"
 msgstr "디지털 상품: 라이선스 만료"
 
+#: models.py:433
 msgid "Digital Product: License Key"
 msgstr "디지털 상품: 라이선스 키"
 
+#: models.py:435
 msgid "License: Trial Welcome"
 msgstr "라이선스: 시험판 환영"
 
+#: models.py:436
 msgid "License: Purchase Confirmation"
 msgstr "라이선스: 구매 확인"
 
+#: models.py:437
 msgid "License: Maintenance Renewal"
 msgstr "라이선스: 유지보수 연장"
 
+#: models.py:439
+#| msgid "Feed: Generation Failed"
+msgid "Hosted: Provisioning Failed"
+msgstr "호스팅: 프로비저닝 실패"
+
+#: models.py:440
+#| msgid "Feed: Generation Completed"
+msgid "Hosted: Provisioning Complete"
+msgstr "호스팅: 프로비저닝 완료"
+
+#: models.py:441
+msgid "Hosted: Onboarding Tips"
+msgstr "호스팅: 온보딩 팁"
+
+#: models.py:443
+#| msgid "Blog: Subscription Confirmed"
+msgid "Hosted: Subscription Confirmation"
+msgstr "호스팅: 구독 확인"
+
+#: models.py:444
+msgid "Hosted: Payment Receipt"
+msgstr "호스팅: 결제 영수증"
+
+#: models.py:445
+#| msgid "Admin: Payment Failed"
+msgid "Hosted: Payment Failed"
+msgstr "호스팅: 결제 실패"
+
+#: models.py:446
+msgid "Hosted: Payment Recovered"
+msgstr "호스팅: 결제 복구됨"
+
+#: models.py:447
+msgid "Hosted: Suspension Warning"
+msgstr "호스팅: 일시 중지 경고"
+
+#: models.py:448
+#| msgid "Affiliate: Account Suspended"
+msgid "Hosted: Account Suspended"
+msgstr "호스팅: 계정 일시 중지"
+
+#: models.py:449
+#| msgid "Blog: Subscription Confirmed"
+msgid "Hosted: Cancellation Confirmed"
+msgstr "호스팅: 해지 확인"
+
+#: models.py:450
+#| msgid "Loyalty: Tier Demotion Warning"
+msgid "Hosted: Termination Warning"
+msgstr "호스팅: 종료 경고"
+
+#: models.py:451
+#| msgid "Account enabled"
+msgid "Hosted: Account Terminated"
+msgstr "호스팅: 계정 종료"
+
+#: models.py:453
+msgid "Hosted: Onboarding Day 3"
+msgstr "호스팅: 온보딩 3일차"
+
+#: models.py:454
+msgid "Hosted: Onboarding Day 7"
+msgstr "호스팅: 온보딩 7일차"
+
+#: models.py:455
+msgid "Hosted: Onboarding Day 14"
+msgstr "호스팅: 온보딩 일 14"
+
+#: models.py:457
 msgid "Form: Admin Notification"
 msgstr "양식: 관리자 알림"
 
+#: models.py:458
 msgid "Form: Submission Approved"
 msgstr "양식: 제출 승인"
 
+#: models.py:459
 msgid "Form: Auto Response"
 msgstr "양식: 자동 응답"
 
+#: models.py:460
 msgid "Form: Submission Confirmation"
 msgstr "양식: 제출 확인"
 
+#: models.py:461
 msgid "Form: Submission Rejected"
 msgstr "양식: 제출 거부"
 
+#: models.py:463
 msgid "Gift Card: Delivery Email"
 msgstr "기프트 카드: 배송 이메일"
 
+#: models.py:465
 msgid "Loyalty: Anniversary Bonus"
 msgstr "로열티: 기념일 보너스"
 
+#: models.py:466
 msgid "Loyalty: Birthday Bonus"
 msgstr "로열티: 생일 보너스"
 
+#: models.py:467
 msgid "Loyalty: Double Points Event"
 msgstr "로열티: 이중 포인트 이벤트"
 
+#: models.py:468
 msgid "Loyalty: Points Earned"
 msgstr "로열티: 포인트 획득"
 
+#: models.py:469
 msgid "Loyalty: Points Expiring"
 msgstr "로열티: 만료되는 포인트"
 
+#: models.py:470
 msgid "Loyalty: Referral Bonus"
 msgstr "로열티: 추천 보너스"
 
+#: models.py:471
 msgid "Loyalty: Reward Available"
 msgstr "충성도: 보상 가능"
 
+#: models.py:472
 msgid "Loyalty: Tier Demotion Warning"
 msgstr "로열티: 등급 강등 경고"
 
+#: models.py:473
 msgid "Loyalty: Tier Upgrade"
 msgstr "로열티: 등급 업그레이드"
 
+#: models.py:474
 msgid "Loyalty: Welcome"
 msgstr "로열티: 환영"
 
+#: models.py:476
 msgid "Newsletter"
 msgstr "뉴스레터"
 
+#: models.py:478
 msgid "POS: Cash Discrepancy Alert"
 msgstr "POS: 현금 차이 경고"
 
+#: models.py:479
 msgid "POS: Daily Z-Report"
 msgstr "POS: 일일 Z-보고서"
 
+#: models.py:480
 msgid "POS: High Value Transaction"
 msgstr "POS: 고가 거래"
 
+#: models.py:481
 msgid "POS: Low Inventory Alert"
 msgstr "POS: 재고 부족 경고"
 
+#: models.py:482
 msgid "POS: Receipt"
 msgstr "POS: 영수증"
 
+#: models.py:483
 msgid "POS: Shift Closed Report"
 msgstr "POS: 시프트 종료 보고서"
 
+#: models.py:484
 msgid "POS: Terminal Offline"
 msgstr "POS: 터미널 오프라인"
 
+#: models.py:485
+msgid "POS: License Expiration Warning"
+msgstr "POS: 라이선스 만료 경고"
+
+#: models.py:487
 msgid "Feed: Generation Completed"
 msgstr "피드: 생성 완료"
 
+#: models.py:488
 msgid "Feed: Generation Failed"
 msgstr "피드: 생성 실패"
 
+#: models.py:489
 msgid "Feed: Sync Failed"
 msgstr "피드: 동기화 실패"
 
+#: models.py:490
 msgid "Feed: Sync Success"
 msgstr "피드: 동기화 성공"
 
+#: models.py:491
 msgid "Feed: Validation Errors"
 msgstr "피드: 유효성 검사 오류"
 
+#: models.py:492
 msgid "Feed: Weekly Report"
 msgstr "피드: 주간 보고서"
 
+#: models.py:494
 msgid "Referral: Invitation Email"
 msgstr "추천: 초대 이메일"
 
+#: models.py:495
 msgid "Referral: Reward Expired"
 msgstr "추천: 보상 만료"
 
+#: models.py:496
 msgid "Referral: Reward Expiring Soon"
 msgstr "추천: 보상이 곧 만료됩니다"
 
+#: models.py:497
 msgid "Referral: Reward Issued (Referee)"
 msgstr "추천: 보상 지급 (추천받은 사람)"
 
+#: models.py:498
 msgid "Referral: Reward Issued (Referrer)"
 msgstr "추천: 보상 지급 (추천자)"
 
+#: models.py:499
 msgid "Referral: Reward Revoked"
 msgstr "추천: 보상 해지"
 
+#: models.py:500
 msgid "Referral: Successful Referral"
 msgstr "추천: 성공적인 추천"
 
+#: models.py:502
 msgid "Back In Stock: Notification"
 msgstr "재입고: 알림"
 
+#: models.py:503
 msgid "Back In Stock: Low Stock Warning"
 msgstr "재고 복구: 재고 부족 경고"
 
+#: models.py:504
 msgid "Back In Stock: Waitlist Confirmation"
 msgstr "재입고: 대기 목록 확인"
 
+#: models.py:506
 msgid "Subscription: Add-on Added"
 msgstr "구독: 추가 기능 추가"
 
+#: models.py:507
 msgid "Subscription: Add-on Removed"
 msgstr "구독: 추가 기능 제거"
 
+#: models.py:508
 msgid "Subscription: Canceled"
 msgstr "구독: 취소됨"
 
+#: models.py:509
 msgid "Subscription: Created"
 msgstr "구독: 생성됨"
 
+#: models.py:510
 msgid "Subscription: Dunning Final Notice"
 msgstr "구독: 최종 부채 통지"
 
+#: models.py:511
 msgid "Subscription: Expired"
 msgstr "구독: 만료됨"
 
+#: models.py:512
 msgid "Subscription: Paused"
 msgstr "구독: 일시 중지"
 
+#: models.py:513
 msgid "Subscription: Payment Failed"
 msgstr "구독: 결제 실패"
 
+#: models.py:514
 msgid "Subscription: Payment Method Expiring"
 msgstr "구독: 결제 수단 만료"
 
+#: models.py:515
 msgid "Subscription: Payment Successful"
 msgstr "구독: 결제 성공"
 
+#: models.py:516
 msgid "Subscription: Plan Downgraded"
 msgstr "구독: 플랜 다운그레이드"
 
+#: models.py:517
 msgid "Subscription: Plan Upgraded"
 msgstr "구독: 플랜 업그레이드"
 
+#: models.py:518
 msgid "Subscription: Reactivated"
 msgstr "구독: 재활성화"
 
+#: models.py:519
 msgid "Subscription: Renewal Reminder"
 msgstr "구독: 갱신 알림"
 
+#: models.py:520
 msgid "Subscription: Resumed"
 msgstr "구독: 재개"
 
+#: models.py:521
 msgid "Subscription: Trial Ending Soon"
 msgstr "구독: 시도 기간이 곧 끝납니다"
 
+#: models.py:523
 msgid "System: Critical Alert"
 msgstr "시스템: 중대한 경고"
 
+#: models.py:524
 msgid "System: Daily Health Report"
 msgstr "시스템: 일일 건강 보고서"
 
+#: models.py:525
 msgid "System: Issue Resolved"
 msgstr "시스템: 문제 해결됨"
 
+#: models.py:526
 msgid "System: Warning"
 msgstr "시스템: 경고"
 
+#: models.py:527
 msgid "System: Performance Degraded"
 msgstr "시스템: 성능 저하"
 
+#: models.py:529
 msgid "Translation: Job Completed"
 msgstr "번역: 작업 완료"
 
+#: models.py:530
 msgid "Translation: Job Failed"
 msgstr "번역: 작업 실패"
 
+#: models.py:531
 msgid "Translation: Job Started"
 msgstr "번역: 작업 시작"
 
+#: models.py:532
 msgid "Translation: Quality Review Needed"
 msgstr "번역: 품질 검토 필요"
 
+#: models.py:534
 msgid "Wishlist: Back In Stock"
 msgstr "위시리스트: 재입고됨"
 
+#: models.py:535
 msgid "Wishlist: Item Added"
 msgstr "위시리스트: 항목 추가됨"
 
+#: models.py:536
 msgid "Wishlist: Low Stock Warning"
 msgstr "위시리스트: 재고 부족 경고"
 
+#: models.py:537
 msgid "Wishlist: Price Drop"
 msgstr "위시리스트: 가격 하락"
 
+#: models.py:538
 msgid "Wishlist: Weekly Reminder"
 msgstr "위시리스트: 주간 напоминание"
 
+#: models.py:539
 msgid "Wishlist: Shared Confirmation"
 msgstr "위시리스트: 공유 확인"
 
+#: models.py:541 models.py:993 models.py:1469
 msgid "template type"
 msgstr "템플릿 유형"
 
+#: models.py:542
 msgid "Type of email (transactional or marketing)"
 msgstr "이메일 유형 (트랜잭셔널 또는 마케팅)"
 
+#: models.py:548
 msgid "language code"
 msgstr "언어 코드"
 
+#: models.py:549
 msgid "Language code for this template (e.g., 'en', 'es', 'fr')"
 msgstr "이 템플릿의 언어 코드 (예: 'en', 'es', 'fr')"
 
+#: models.py:555 models.py:952 models.py:1359
 msgid "subject"
 msgstr "제목"
 
+#: models.py:556
 msgid "Email subject line (supports {{ variables }})"
 msgstr "이메일 제목 ({{ 변수 }} 지원)"
 
+#: models.py:560 models.py:1364
 msgid "HTML content"
 msgstr "HTML 내용"
 
+#: models.py:560
 msgid "HTML email content (MJML or plain HTML)"
 msgstr "HTML 이메일 콘텐츠 (MJML 또는 일반 HTML)"
 
+#: models.py:565 models.py:1368
 msgid "text content"
 msgstr "텍스트 내용"
 
+#: models.py:566
 msgid "Plain text version (auto-generated if empty)"
 msgstr "일반 텍스트 버전 (빈 경우 자동 생성)"
 
+#: models.py:573
 msgid "Whether this template is active and should be used"
 msgstr "이 템플릿이 활성화되어 있고 사용되어야 하는지 여부"
 
+#: models.py:578
 msgid "system template"
 msgstr "시스템 템플릿"
 
+#: models.py:579
 msgid "Pre-installed system template (can be customized)"
 msgstr "사전 설치된 시스템 템플릿 (커스터마이징 가능)"
 
+#: models.py:584
 msgid "version"
 msgstr "버전"
 
+#: models.py:584
 msgid "Template version number"
 msgstr "템플릿 버전 번호"
 
+#: models.py:593
 msgid "parent template"
 msgstr "부모 템플릿"
 
+#: models.py:594
 msgid "Original template this was cloned from"
 msgstr "이 템플릿이 복제된 원본 템플릿"
 
+#: models.py:610
 msgid "email template"
 msgstr "이메일 템플릿"
 
+#: models.py:611
 msgid "email templates"
 msgstr "이메일 템플릿"
 
+#: models.py:931
 msgid "Site this email belongs to"
 msgstr "이 이메일이 속한 사이트"
 
+#: models.py:940
 msgid "Email account used to send this message"
 msgstr "이 메시지를 발송하는 데 사용된 이메일 계정"
 
+#: models.py:944
 msgid "to email"
 msgstr "받는 이메일"
 
+#: models.py:944
 msgid "Recipient email address"
 msgstr "수신자 이메일 주소"
 
+#: models.py:947
 msgid "Sender email address"
 msgstr "발신자 이메일 주소"
 
+#: models.py:954
 msgid "HTML body"
 msgstr "HTML 본문"
 
+#: models.py:956
 msgid "text body"
 msgstr "텍스트 본문"
 
+#: models.py:958
 msgid "reply-to"
 msgstr "답변 주소"
 
+#: models.py:962
 msgid "CC"
 msgstr "참조"
 
+#: models.py:962
 msgid "CC email addresses"
 msgstr "참조 이메일 주소"
 
+#: models.py:966
 msgid "BCC"
 msgstr "숨은 참조"
 
+#: models.py:966
 msgid "BCC email addresses"
 msgstr "숨은 참조 이메일 주소"
 
+#: models.py:971
 msgid "headers"
 msgstr "헤더"
 
+#: models.py:971
 msgid "Custom email headers"
 msgstr "사용자 정의 이메일 헤더"
 
+#: models.py:977
 msgid "tags"
 msgstr "태그"
 
+#: models.py:978
 msgid "Provider tags for categorization"
 msgstr "분류를 위한 제공업체 태그"
 
+#: models.py:985
 msgid "attachments"
 msgstr "첨부 파일"
 
+#: models.py:986
 msgid "Attachment file references"
 msgstr "첨부 파일 참조"
 
+#: models.py:994
 msgid "Template used to generate this email"
 msgstr "이 이메일을 생성하는 데 사용된 템플릿"
 
+#: models.py:1001 templates/admin/email_system/emailoutbox/change_list.html:45
+#: templates/admin/email_system/emailoutbox/change_list.html:77
+#: templates/admin/email_system/partials/emailoutbox_cards.html:39
+#: templates/admin/email_system/translation_manager.html:148
 msgid "Queued"
 msgstr "대기 중"
 
+#: models.py:1002
 msgid "Held"
-msgstr ""
+msgstr "보류됨"
 
+#: models.py:1003
 msgid "Logged"
-msgstr ""
+msgstr "기록됨"
 
+#: models.py:1004
+#| msgid "Logged"
+msgid "Sandbox Logged"
+msgstr "샌드박스 로그인됨"
+
+#: models.py:1005 templates/admin/email_system/emailoutbox/change_list.html:78
+#: templates/admin/email_system/partials/emailoutbox_cards.html:35
 msgid "Sending"
 msgstr "전송 중"
 
+#: models.py:1006 models.py:1462
+#: templates/admin/email_system/emailoutbox/change_list.html:35
+#: templates/admin/email_system/emailoutbox/change_list.html:79
+#: templates/admin/email_system/partials/emailoutbox_cards.html:23
+#: templates/admin/email_system/partials/emailoutbox_cards.html:58
 msgid "Sent"
 msgstr "발송됨"
 
+#: models.py:1007 models.py:1464
+#: templates/admin/email_system/emailoutbox/change_list.html:40
+#: templates/admin/email_system/emailoutbox/change_list.html:80
+#: templates/admin/email_system/partials/emailoutbox_cards.html:27
 msgid "Failed"
 msgstr "실패"
 
+#: models.py:1008 models.py:1095
+#: templates/admin/email_system/emailoutbox/change_list.html:81
+#: templates/admin/email_system/partials/emailoutbox_cards.html:31
 msgid "Bounced"
 msgstr "반송됨"
 
+#: models.py:1009
 msgid "Skipped"
 msgstr "건너뜀"
 
+#: models.py:1012 models.py:1489
 msgid "status"
 msgstr "상태"
 
+#: models.py:1018
 msgid "skip reason"
 msgstr "건너뛰기 이유"
 
+#: models.py:1020
 msgid ""
 "Reason why email was skipped (e.g., 'user_preference_disabled', "
 "'unsubscribed')"
 msgstr "이메일이 건너뛴 이유 (예: 'user_preference_disabled', 'unsubscribed')"
 
+#: models.py:1027
 msgid "provider message ID"
 msgstr "제공업체 메시지 ID"
 
+#: models.py:1028
 msgid "Message ID from email provider"
 msgstr "이메일 제공업체에서 온 메시지 ID"
 
+#: models.py:1032 models.py:1493
 msgid "error message"
 msgstr "에러 메시지"
 
+#: models.py:1032
 msgid "Error details if sending failed"
 msgstr "전송 실패 시 에러 세부 정보"
 
+#: models.py:1038
 msgid "priority"
 msgstr "우선순위"
 
+#: models.py:1039
 msgid ""
 "Email priority (1=highest, 10=lowest). Lower priority emails are sent first."
-msgstr ""
-"이메일 우선순위 (1=가장 높음, 10=가장 낮음). 우선순위가 낮은 이메일이 먼저 발"
-"송됩니다."
+msgstr "이메일 우선순위 (1=가장 높음, 10=가장 낮음). 우선순위가 낮은 이메일이 먼저 발송됩니다."
 
+#: models.py:1044
 msgid "retry count"
 msgstr "재시도 횟수"
 
+#: models.py:1044
 msgid "Number of send attempts"
 msgstr "전송 시도 횟수"
 
+#: models.py:1048
 msgid "max retries"
 msgstr "최대 재시도 횟수"
 
+#: models.py:1048
 msgid "Maximum number of retry attempts"
 msgstr "최대 재시도 시도 횟수"
 
+#: models.py:1054
 msgid "queued at"
 msgstr "대기 시간"
 
+#: models.py:1055 models.py:1492
 msgid "sent at"
 msgstr "전송 시간"
 
+#: models.py:1056
 msgid "failed at"
 msgstr "실패 시간"
 
+#: models.py:1059 models.py:1060
 msgid "email outbox"
 msgstr "이메일 발신함"
 
+#: models.py:1086
 msgid "email"
 msgstr "이메일"
 
+#: models.py:1087
 msgid "Email this event relates to"
 msgstr "이 이벤트와 관련된 이메일"
 
+#: models.py:1094
 msgid "Delivered"
 msgstr "전달됨"
 
+#: models.py:1096
 msgid "Opened"
 msgstr "열림"
 
+#: models.py:1097
 msgid "Clicked"
 msgstr "클릭됨"
 
+#: models.py:1098
 msgid "Complained"
 msgstr "불만 신고됨"
 
+#: models.py:1099
 msgid "Unsubscribed"
 msgstr "구독 해지됨"
 
+#: models.py:1101
 msgid "event type"
 msgstr "이벤트 유형"
 
+#: models.py:1107
 msgid "event data"
 msgstr "이벤트 데이터"
 
+#: models.py:1108
 msgid "Provider-specific event details"
 msgstr "제공업체별 이벤트 세부 정보"
 
+#: models.py:1116
 msgid "Hard Bounce"
 msgstr "경고 반송"
 
+#: models.py:1117
 msgid "Soft Bounce"
 msgstr "부드러운 반송"
 
+#: models.py:1118
 msgid "Transient"
 msgstr "임시"
 
+#: models.py:1120
 msgid "bounce type"
 msgstr "반송 유형"
 
+#: models.py:1123
 msgid "bounce reason"
 msgstr "반송 사유"
 
+#: models.py:1128
 msgid "user agent"
 msgstr "사용자 에이전트"
 
+#: models.py:1129
 msgid "Browser/client information for opens/clicks"
 msgstr "열림/클릭에 대한 브라우저/클라이언트 정보"
 
+#: models.py:1135
 msgid "IP address"
 msgstr "IP 주소"
 
+#: models.py:1136
 msgid "IP address for opens/clicks"
 msgstr "열림/클릭에 대한 IP 주소"
 
+#: models.py:1144
 msgid "occurred at"
 msgstr "발생 시간"
 
+#: models.py:1145
 msgid "When the event occurred (from provider)"
 msgstr "이벤트 발생 시간 (제공자에서)"
 
+#: models.py:1149
 msgid "email event"
 msgstr "이메일 이벤트"
 
+#: models.py:1150
 msgid "email events"
 msgstr "이메일 이벤트"
 
+#: models.py:1174
 msgid "Email account being validated"
 msgstr "검증 중인 이메일 계정"
 
+#: models.py:1178
 msgid "domain"
 msgstr "도메인"
 
+#: models.py:1178
 msgid "Domain being validated"
 msgstr "검증 중인 도메인"
 
+#: models.py:1185 models.py:1206 models.py:1234 models.py:1276
 msgid "Pass"
 msgstr "통과"
 
+#: models.py:1186 models.py:1207 models.py:1235 models.py:1278
 msgid "Fail"
 msgstr "실패"
 
+#: models.py:1187 models.py:1208 models.py:1236 models.py:1277
+#: providers/builtin/dns_requirements_OLD.html:571
+#: providers/builtin/dns_requirements_OLD.html:632
+#: providers/builtin/dns_requirements_OLD.html:697
+#: providers/builtin/dns_requirements_OLD.html:758
+#: providers/builtin/dns_requirements_OLD.html:831
 msgid "Warning"
 msgstr "경고"
 
+#: models.py:1191
 msgid "SPF status"
 msgstr "SPF 상태"
 
+#: models.py:1195
 msgid "SPF record"
 msgstr "SPF 레코드"
 
+#: models.py:1195
 msgid "SPF TXT record value found"
 msgstr "SPF TXT 레코드 값 찾음"
 
+#: models.py:1199
 msgid "SPF errors"
 msgstr "SPF 오류"
 
+#: models.py:1199
 msgid "SPF validation error messages"
 msgstr "SPF 검증 오류 메시지"
 
+#: models.py:1212
 msgid "DKIM status"
 msgstr "DKIM 상태"
 
+#: models.py:1216
 msgid "DKIM record"
 msgstr "DKIM 레코드"
 
+#: models.py:1216
 msgid "DKIM TXT record value found"
 msgstr "DKIM TXT 레코드 값 발견됨"
 
+#: models.py:1222
 msgid "DKIM selector"
 msgstr "DKIM 선택자"
 
+#: models.py:1223
 msgid "DKIM selector used for validation"
 msgstr "검증에 사용되는 DKIM 선택자"
 
+#: models.py:1227
 msgid "DKIM errors"
 msgstr "DKIM 오류"
 
+#: models.py:1227
 msgid "DKIM validation error messages"
 msgstr "DKIM 검증 오류 메시지"
 
+#: models.py:1240
 msgid "DMARC status"
 msgstr "DMARC 상태"
 
+#: models.py:1244
 msgid "DMARC record"
 msgstr "DMARC 레코드"
 
+#: models.py:1244
 msgid "DMARC TXT record value found"
 msgstr "DMARC TXT 레코드 값 발견됨"
 
+#: models.py:1248
 msgid "DMARC errors"
 msgstr "DMARC 오류"
 
+#: models.py:1248
 msgid "DMARC validation error messages"
 msgstr "DMARC 검증 오류 메시지"
 
+#: models.py:1255
 msgid "resolvers checked"
 msgstr "확인된 리졸버"
 
+#: models.py:1256
 msgid ""
 "DNS resolver results (e.g., {'8.8.8.8': 'success', '1.1.1.1': 'success'})"
 msgstr "DNS 리졸버 결과 (예: {'8.8.8.8': '성공', '1.1.1.1': '성공'})"
 
+#: models.py:1262
 msgid "Fully Propagated"
 msgstr "전체적으로 전파됨"
 
+#: models.py:1263
 msgid "Partially Propagated"
 msgstr "부분적으로 전파됨"
 
+#: models.py:1264
 msgid "Not Propagated"
 msgstr "전파되지 않음"
 
+#: models.py:1268
 msgid "propagation status"
 msgstr "전파 상태"
 
+#: models.py:1269
 msgid "DNS propagation status across multiple resolvers"
 msgstr "여러 리졸버에 걸쳐 DNS 전파 상태"
 
+#: models.py:1281
 msgid "overall status"
 msgstr "종합 상태"
 
+#: models.py:1282
 msgid "Overall DNS validation status"
 msgstr "종합 DNS 검증 상태"
 
+#: models.py:1288
 msgid "checked at"
 msgstr "확인 시간"
 
+#: models.py:1289
 msgid "When this DNS check was performed"
 msgstr "이 DNS 확인이 수행된 시간"
 
+#: models.py:1298
 msgid "checked by"
 msgstr "확인자"
 
+#: models.py:1299
 msgid "User who initiated this check"
 msgstr "이 확인을 시작한 사용자"
 
+#: models.py:1303
 msgid "DNS check"
 msgstr "DNS 확인"
 
+#: models.py:1304
 msgid "DNS checks"
 msgstr "DNS 확인"
 
+#: models.py:1338
 msgid "Template this translation belongs to"
 msgstr "이 번역이 속한 템플릿"
 
+#: models.py:1344 views/template_preview.py:160
 msgid "English"
 msgstr "영어"
 
+#: models.py:1345 views/template_preview.py:161
 msgid "Spanish"
 msgstr "스페인어"
 
+#: models.py:1346 views/template_preview.py:162
 msgid "French"
 msgstr "프랑스어"
 
+#: models.py:1347 views/template_preview.py:163
 msgid "German"
 msgstr "독일어"
 
+#: models.py:1348 views/template_preview.py:164
 msgid "Japanese"
 msgstr "일본어"
 
+#: models.py:1349 views/template_preview.py:165
 msgid "Portuguese"
 msgstr "포르투갈어"
 
+#: models.py:1350 views/template_preview.py:166
 msgid "Chinese (Simplified)"
 msgstr "중국어 (간체)"
 
+#: models.py:1351
 msgid "Arabic"
 msgstr "아랍어"
 
+#: models.py:1352
 msgid "Russian"
 msgstr "러시아어"
 
+#: models.py:1354
 msgid "Language code (ISO 639-1)"
 msgstr "언어 코드 (ISO 639-1)"
 
+#: models.py:1360
 msgid "Translated email subject (template syntax)"
 msgstr "번역된 이메일 제목 (템플릿 구문)"
 
+#: models.py:1364
 msgid "Translated MJML/HTML template"
 msgstr "번역된 MJML/HTML 템플릿"
 
+#: models.py:1368
 msgid "Translated plain text version"
 msgstr "번역된 일반 텍스트 버전"
 
+#: models.py:1377
 msgid "User who created/verified this translation"
 msgstr "이 번역을 생성/확인한 사용자"
 
+#: models.py:1386
 msgid "AI translation job that created this translation"
 msgstr "이 번역을 생성한 AI 번역 작업"
 
+#: models.py:1391
 msgid "verified"
 msgstr "확인됨"
 
+#: models.py:1392
 msgid "Has this translation been manually verified?"
 msgstr "이 번역이 수동으로 검증되었는가?"
 
+#: models.py:1398
 msgid "quality score"
 msgstr "품질 점수"
 
+#: models.py:1399
 msgid "Translation quality score (0-1) from AI service"
 msgstr "AI 서비스에서 제공하는 번역 품질 점수 (0-1)"
 
+#: models.py:1404
 msgid "base template version"
 msgstr "기본 템플릿 버전"
 
+#: models.py:1405
 msgid "Version of base template this translation was created from"
 msgstr "이 번역이 생성된 기반 템플릿의 버전"
 
+#: models.py:1413
 msgid "email template translation"
 msgstr "이메일 템플릿 번역"
 
+#: models.py:1414
 msgid "email template translations"
 msgstr "이메일 템플릿 번역"
 
+#: models.py:1461 providers/builtin/dns_requirements_OLD.html:572
+#: providers/builtin/dns_requirements_OLD.html:633
+#: providers/builtin/dns_requirements_OLD.html:698
+#: providers/builtin/dns_requirements_OLD.html:759
+#: providers/builtin/dns_requirements_OLD.html:832
+#: templates/email_system/admin/account_card.html:68
+#: templates/email_system/admin/emailaccount_changelist.html:74
+msgid "Pending"
+msgstr "대기 중"
+
+#: models.py:1463
+#| msgid "Cancel"
+msgid "Cancelled"
+msgstr "취소됨"
+
+#: models.py:1470
+#| msgid "Email Template Translations"
+msgid "EmailTemplate template_type to send"
+msgstr "이메일 템플릿 템플릿 유형 보내기"
+
+#: models.py:1473
+#| msgid "Test Recipient Email"
+msgid "recipient email"
+msgstr "수신자 이메일"
+
+#: models.py:1477
+#| msgid "template type"
+msgid "template context"
+msgstr "템플릿 컨텍스트"
+
+#: models.py:1478
+msgid "JSON context dict passed to EmailSendingService.send_template_email()"
+msgstr "\"JSON context dict passed to EmailSendingService.send_template_email()\""
+
+#: models.py:1482
+msgid "scheduled for"
+msgstr "예약됨"
+
+#: models.py:1483
+#| msgid "Whether this template is active and should be used"
+msgid "When this email should be sent"
+msgstr "이 이메일이 언제 보내져야 하는지"
+
+#: models.py:1497
+msgid "scheduled email"
+msgstr "예약된 이메일"
+
+#: models.py:1498
+msgid "scheduled emails"
+msgstr "예약된 이메일들"
+
+#: providers/builtin/dns_requirements.html:354
+#: providers/builtin/dns_requirements_OLD.html:514
+#: templates/admin/email_system/wizard/step4_dns.html:6
 msgid "DNS Configuration"
 msgstr "DNS 구성"
 
+#: providers/builtin/dns_requirements.html:355
 msgid "Configure your domain's DNS records to enable email sending"
 msgstr "이메일 발송을 활성화하기 위해 도메인의 DNS 기록을 구성하세요."
 
+#: providers/builtin/dns_requirements.html:360
 msgid "Step 1: Add DNS Records"
 msgstr "단계 1: DNS 레코드 추가"
 
+#: providers/builtin/dns_requirements.html:364
+#: providers/builtin/dns_requirements_OLD.html:879
 msgid "Detected DNS Provider:"
 msgstr "감지된 DNS 제공업체:"
 
+#: providers/builtin/dns_requirements.html:365
+#: providers/builtin/dns_requirements_OLD.html:882
 msgid "Nameservers:"
 msgstr "네임서버:"
 
+#: providers/builtin/dns_requirements.html:373
+#: providers/builtin/dns_requirements_OLD.html:649
 msgid "DKIM Keys Generated"
 msgstr "생성된 DKIM 키"
 
+#: providers/builtin/dns_requirements.html:373
+#: providers/builtin/dns_requirements_OLD.html:649
 msgid "Your DKIM keys have been automatically generated and are ready to use."
 msgstr "DKIM 키가 자동으로 생성되어 사용 준비가 되었습니다."
 
+#: providers/builtin/dns_requirements.html:377
+#: providers/builtin/dns_requirements_OLD.html:888
 msgid "Select your DNS provider for step-by-step instructions:"
 msgstr "단계별 지시를 위해 DNS 제공자를 선택하세요:"
 
+#: providers/builtin/dns_requirements.html:393
+#: providers/builtin/dns_requirements_OLD.html:904
 msgid "Other"
 msgstr "기타"
 
+#: providers/builtin/dns_requirements.html:403
 msgid "Step 2: Verify DNS Records"
 msgstr "단계 2: DNS 레코드 확인"
 
+#: providers/builtin/dns_requirements.html:416
+#: providers/builtin/dns_requirements.html:540
 msgid "Sender Policy Framework"
 msgstr "보내는 사람 정책 프레임워크"
 
+#: providers/builtin/dns_requirements.html:423
+#: providers/builtin/dns_requirements.html:458
+#: providers/builtin/dns_requirements.html:493
 msgid "Details"
 msgstr "세부 정보"
 
+#: providers/builtin/dns_requirements.html:429
+#: providers/builtin/dns_requirements.html:499
 msgid "Issue:"
 msgstr "문제:"
 
+#: providers/builtin/dns_requirements.html:432
+#: providers/builtin/dns_requirements.html:502
 msgid "Current:"
 msgstr "현재:"
 
+#: providers/builtin/dns_requirements.html:433
+#: providers/builtin/dns_requirements.html:503
 msgid "Updated:"
 msgstr "업데이트됨:"
 
+#: providers/builtin/dns_requirements.html:435
+#: providers/builtin/dns_requirements.html:463
+#: providers/builtin/dns_requirements.html:505
 msgid "Add this record:"
 msgstr "이 레코드 추가:"
 
+#: providers/builtin/dns_requirements.html:451
+#: providers/builtin/dns_requirements.html:560
 msgid "DomainKeys Identified Mail"
 msgstr "도메인 키 식별 메일"
 
+#: providers/builtin/dns_requirements.html:465
+#: providers/builtin/dns_requirements.html:546
+#: providers/builtin/dns_requirements.html:566
+#: providers/builtin/dns_requirements.html:586
+#: providers/builtin/dns_requirements_OLD.html:587
+#: providers/builtin/dns_requirements_OLD.html:653
+#: providers/builtin/dns_requirements_OLD.html:713
+#: providers/builtin/dns_requirements_OLD.html:1060
+#: providers/builtin/dns_requirements_OLD.html:1066
+#: providers/builtin/dns_requirements_OLD.html:1072
+#: providers/builtin/dns_requirements_OLD.html:1078
+#: providers/builtin/dns_requirements_OLD.html:1084
 msgid "Copied!"
 msgstr "복사됨!"
 
+#: providers/builtin/dns_requirements.html:465
+#: providers/builtin/dns_requirements.html:546
+#: providers/builtin/dns_requirements.html:566
+#: providers/builtin/dns_requirements.html:586
+#: providers/builtin/dns_requirements_OLD.html:587
+#: providers/builtin/dns_requirements_OLD.html:653
+#: providers/builtin/dns_requirements_OLD.html:713
+#: providers/builtin/dns_requirements_OLD.html:1060
+#: providers/builtin/dns_requirements_OLD.html:1066
+#: providers/builtin/dns_requirements_OLD.html:1072
+#: providers/builtin/dns_requirements_OLD.html:1078
+#: providers/builtin/dns_requirements_OLD.html:1084
+#: templates/admin/email_system/template_edit.html:171
 msgid "Copy"
 msgstr "복사"
 
+#: providers/builtin/dns_requirements.html:468
+#: providers/builtin/dns_requirements.html:549
+#: providers/builtin/dns_requirements.html:569
+#: providers/builtin/dns_requirements.html:589
 msgid "Hostname:"
 msgstr "호스트 이름:"
 
+#: providers/builtin/dns_requirements.html:486
+#: providers/builtin/dns_requirements.html:580
 msgid "Domain-based Message Authentication"
 msgstr "도메인 기반 메시지 인증"
 
+#: providers/builtin/dns_requirements.html:522
 msgid "Mail Exchange Record"
 msgstr "메일 교환 레코드"
 
+#: providers/builtin/dns_requirements.html:534
 msgid "DNS Records Reference"
 msgstr "DNS 레코드 참조"
 
+#: providers/builtin/dns_requirements_OLD.html:515
 msgid "Configure DNS records for email authentication and deliverability"
 msgstr "이메일 인증 및 전달을 위해 DNS 기록을 구성하세요"
 
+#: providers/builtin/dns_requirements_OLD.html:520
 msgid "Automatic SPF Record Merging"
 msgstr "자동 SPF 레코드 병합"
 
+#: providers/builtin/dns_requirements_OLD.html:521
 msgid ""
 "We've automatically detected your existing DNS records and merged them with "
 "the built-in SMTP server requirements."
-msgstr ""
-"우리는 기존의 DNS 기록을 자동으로 감지하고 내장 SMTP 서버 요구사항과 병합했습"
-"니다."
+msgstr "우리는 기존의 DNS 기록을 자동으로 감지하고 내장 SMTP 서버 요구사항과 병합했습니다."
 
+#: providers/builtin/dns_requirements_OLD.html:523
 msgid "SPF:"
 msgstr "SPF:"
 
+#: providers/builtin/dns_requirements_OLD.html:523
 msgid ""
 "The record below includes your existing providers PLUS the built-in server "
 "(mx, a)."
 msgstr "아래 기록에는 기존 제공자와 함께 내장 서버(mx, a)도 포함되어 있습니다."
 
+#: providers/builtin/dns_requirements_OLD.html:524
 msgid "DKIM:"
 msgstr "DKIM:"
 
+#: providers/builtin/dns_requirements_OLD.html:524
 msgid "Using selector 'mail' to avoid conflicts with other providers."
 msgstr "기타 제공자와의 충돌을 피하기 위해 'mail' 선택기를 사용합니다."
 
+#: providers/builtin/dns_requirements_OLD.html:525
 msgid "DMARC:"
 msgstr "DMARC:"
 
+#: providers/builtin/dns_requirements_OLD.html:525
 msgid "One record covers all email providers for your domain."
 msgstr "한 기록이 도메인의 모든 이메일 제공자를 다룹니다."
 
+#: providers/builtin/dns_requirements_OLD.html:527
 msgid "Just copy and paste the records below - they're ready to use!"
 msgstr "아래 기록을 복사하여 붙여넣기만 하면 사용 준비가 되어 있습니다!"
 
+#: providers/builtin/dns_requirements_OLD.html:533
 msgid "About Dynamic DNS"
 msgstr "동적 DNS에 대해"
 
+#: providers/builtin/dns_requirements_OLD.html:534
 msgid ""
 "We've configured your SPF record using 'mx' and 'a' mechanisms instead of "
 "hard-coding your IP address."
-msgstr ""
-"우리는 IP 주소를 하드코딩하는 대신 'mx' 및 'a' 메커니즘을 사용하여 SPF 기록"
-"을 구성했습니다."
+msgstr "우리는 IP 주소를 하드코딩하는 대신 'mx' 및 'a' 메커니즘을 사용하여 SPF 기록을 구성했습니다."
 
+#: providers/builtin/dns_requirements_OLD.html:535
 msgid "Why?"
 msgstr "왜?"
 
+#: providers/builtin/dns_requirements_OLD.html:535
 msgid "This makes your configuration flexible:"
 msgstr "이렇게 하면 설정이 유연해집니다:"
 
+#: providers/builtin/dns_requirements_OLD.html:537
 msgid "Authorizes servers in your domain's MX records"
 msgstr "도메인의 MX 기록에 있는 서버를 승인합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:538
 msgid "Authorizes the server at your domain's A record"
 msgstr "도메인의 A 기록에 있는 서버를 승인합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:539
 msgid ""
 "If your IP changes (dynamic DNS), you only need to update your A or MX "
 "record - not the SPF record"
-msgstr ""
-"IP가 변경될 경우 (동적 DNS), SPF 기록 대신 A 또는 MX 기록만 업데이트하면 됩니"
-"다"
+msgstr "IP가 변경될 경우 (동적 DNS), SPF 기록 대신 A 또는 MX 기록만 업데이트하면 됩니다"
 
+#: providers/builtin/dns_requirements_OLD.html:547
 msgid "Domain"
 msgstr "도메인"
 
+#: providers/builtin/dns_requirements_OLD.html:551
 msgid "Server IP"
 msgstr "서버 IP"
 
+#: providers/builtin/dns_requirements_OLD.html:555
 msgid "DKIM Selector"
 msgstr "DKIM 선택자"
 
+#: providers/builtin/dns_requirements_OLD.html:565
 msgid "SPF Record"
 msgstr "SPF 레코드"
 
+#: providers/builtin/dns_requirements_OLD.html:569
+#: providers/builtin/dns_requirements_OLD.html:630
+#: providers/builtin/dns_requirements_OLD.html:695
+#: providers/builtin/dns_requirements_OLD.html:756
+#: providers/builtin/dns_requirements_OLD.html:829
 msgid "Valid"
 msgstr "유효"
 
+#: providers/builtin/dns_requirements_OLD.html:570
+#: providers/builtin/dns_requirements_OLD.html:631
+#: providers/builtin/dns_requirements_OLD.html:696
+#: providers/builtin/dns_requirements_OLD.html:757
+#: providers/builtin/dns_requirements_OLD.html:830
 msgid "Invalid"
 msgstr "무효"
 
-msgid "Pending"
-msgstr "대기 중"
-
+#: providers/builtin/dns_requirements_OLD.html:578
 msgid "What is SPF?"
 msgstr "SPF란 무엇인가요?"
 
+#: providers/builtin/dns_requirements_OLD.html:580
 msgid ""
 "Sender Policy Framework (SPF) specifies which mail servers can send emails "
 "for your domain"
-msgstr ""
-"보내는 사람 정책 프레임워크 (SPF)는 도메인을 대신하여 이메일을 발송할 수 있"
-"는 이메일 서버를 지정합니다"
+msgstr "보내는 사람 정책 프레임워크 (SPF)는 도메인을 대신하여 이메일을 발송할 수 있는 이메일 서버를 지정합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:581
 msgid "Prevents spammers from forging emails from your domain"
 msgstr "스팸 발신자가 도메인에서 이메일을 조작하는 것을 방지합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:582
 msgid "Required for good email deliverability"
 msgstr "좋은 이메일 전달을 위해 필수"
 
+#: providers/builtin/dns_requirements_OLD.html:590
+#: providers/builtin/dns_requirements_OLD.html:656
+#: providers/builtin/dns_requirements_OLD.html:716
+#: providers/builtin/dns_requirements_OLD.html:794
 msgid "Record Hostname:"
 msgstr "레코드 호스트명:"
 
+#: providers/builtin/dns_requirements_OLD.html:603
 msgid "SPF Validation"
 msgstr "SPF 검증"
 
+#: providers/builtin/dns_requirements_OLD.html:612
 msgid "Current SPF:"
 msgstr "현재 SPF:"
 
+#: providers/builtin/dns_requirements_OLD.html:613
 msgid "Updated SPF:"
 msgstr "업데이트된 SPF:"
 
+#: providers/builtin/dns_requirements_OLD.html:626
 msgid "DKIM Record"
 msgstr "DKIM 레코드"
 
+#: providers/builtin/dns_requirements_OLD.html:639
 msgid "What is DKIM?"
 msgstr "DKIM란 무엇인가요?"
 
+#: providers/builtin/dns_requirements_OLD.html:641
 msgid "DomainKeys Identified Mail (DKIM) cryptographically signs your emails"
 msgstr "도메인키 식별 메일(DKIM)은 이메일을 암호화하여 서명합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:642
 msgid "Proves that emails haven't been tampered with in transit"
 msgstr "이메일이 전송 중에 조작되지 않았음을 입증합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:643
 msgid "Improves email deliverability and reduces spam classification"
 msgstr "이메일 전달성을 향상시키고 스팸 분류를 줄입니다"
 
+#: providers/builtin/dns_requirements_OLD.html:662
 msgid "DKIM Keys Auto-Generated"
 msgstr "DKIM 키 자동 생성"
 
+#: providers/builtin/dns_requirements_OLD.html:663
 msgid ""
 "DKIM keys are automatically generated when you view this page. If you're "
 "seeing this message, please refresh the page."
-msgstr ""
-"이 페이지를 보는 순간 DKIM 키가 자동으로 생성됩니다. 이 메시지를 보고 계시다"
-"면 페이지를 새로 고치시기 바랍니다."
+msgstr "이 페이지를 보는 순간 DKIM 키가 자동으로 생성됩니다. 이 메시지를 보고 계시다면 페이지를 새로 고치시기 바랍니다."
 
+#: providers/builtin/dns_requirements_OLD.html:664
+#: providers/builtin/dns_requirements_OLD.html:801
+#: templates/admin/email_system/newsletter_delete_confirm.html:46
 msgid "Note:"
 msgstr "참고:"
 
+#: providers/builtin/dns_requirements_OLD.html:664
 msgid ""
 "Keys are securely stored in your session and will be saved to the database "
 "when you complete the wizard."
-msgstr ""
-"키는 세션에 안전하게 저장되어 마법사가 완료되면 데이터베이스에 저장됩니다."
+msgstr "키는 세션에 안전하게 저장되어 마법사가 완료되면 데이터베이스에 저장됩니다."
 
+#: providers/builtin/dns_requirements_OLD.html:676
 msgid "DKIM Validation"
 msgstr "DKIM 검증"
 
+#: providers/builtin/dns_requirements_OLD.html:691
 msgid "DMARC Record"
 msgstr "DMARC 레코드"
 
+#: providers/builtin/dns_requirements_OLD.html:704
 msgid "What is DMARC?"
 msgstr "DMARC란 무엇인가요?"
 
+#: providers/builtin/dns_requirements_OLD.html:706
 msgid ""
 "Domain-based Message Authentication, Reporting & Conformance (DMARC) builds "
 "on SPF and DKIM"
-msgstr ""
-"도메인 기반 메시지 인증, 보고 및 준수(DMARC)는 SPF 및 DKIM에 기반합니다"
+msgstr "도메인 기반 메시지 인증, 보고 및 준수(DMARC)는 SPF 및 DKIM에 기반합니다"
 
-msgid "Tells receiving servers what to do with emails that fail authentication"
+#: providers/builtin/dns_requirements_OLD.html:707
+msgid ""
+"Tells receiving servers what to do with emails that fail authentication"
 msgstr "인증에 실패한 이메일에 대해 수신 서버가 어떻게 처리할지를 알려줍니다"
 
+#: providers/builtin/dns_requirements_OLD.html:708
 msgid "Provides reporting on email authentication results"
 msgstr "이메일 인증 결과에 대한 보고를 제공합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:729
 msgid "DMARC Validation"
 msgstr "DMARC 검증"
 
+#: providers/builtin/dns_requirements_OLD.html:738
 msgid "Current DMARC:"
 msgstr "현재 DMARC:"
 
+#: providers/builtin/dns_requirements_OLD.html:739
 msgid "Updated DMARC:"
 msgstr "업데이트된 DMARC:"
 
+#: providers/builtin/dns_requirements_OLD.html:752
 msgid "MX Records (Mail Exchange)"
 msgstr "MX 레코드 (메일 교환)"
 
+#: providers/builtin/dns_requirements_OLD.html:765
 msgid "What are MX Records?"
 msgstr "MX 레코드란 무엇인가요?"
 
+#: providers/builtin/dns_requirements_OLD.html:767
 msgid ""
 "MX (Mail Exchange) records tell other mail servers where to deliver emails "
 "for your domain"
-msgstr ""
-"MX(메일 교환) 레코드는 다른 메일 서버에게 도메인의 이메일을 전달할 위치를 알"
-"려줍니다"
+msgstr "MX(메일 교환) 레코드는 다른 메일 서버에게 도메인의 이메일을 전달할 위치를 알려줍니다"
 
+#: providers/builtin/dns_requirements_OLD.html:768
 msgid "Essential for receiving emails to addresses at your domain"
 msgstr "도메인 내 주소로 이메일을 수신하는 데 필수적입니다"
 
+#: providers/builtin/dns_requirements_OLD.html:769
 msgid "Used by SPF 'mx' mechanism to authorize your mail servers for sending"
 msgstr "SPF 'mx' 메커니즘에 의해 사용되어 메일 서버의 전송을 인증합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:775
 msgid "Current MX Records Detected"
 msgstr "현재 감지된 MX 레코드"
 
+#: providers/builtin/dns_requirements_OLD.html:778
+#: providers/builtin/dns_requirements_OLD.html:797
 msgid "Priority"
 msgstr "우선순위"
 
-msgid "MX record points to your domain - this is correct for self-hosted email"
-msgstr ""
-"MX 레코드는 도메인을 가리키고 있으며, 이는 자체 호스팅 이메일에 적합합니다"
+#: providers/builtin/dns_requirements_OLD.html:782
+msgid ""
+"MX record points to your domain - this is correct for self-hosted email"
+msgstr "MX 레코드는 도메인을 가리키고 있으며, 이는 자체 호스팅 이메일에 적합합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:784
 msgid ""
 "MX records point to external providers. If you want to receive emails on "
 "this server, add an MX record pointing to your domain."
 msgstr ""
-"MX 레코드는 외부 제공업체를 가리키고 있습니다. 이 서버에서 이메일을 수신하고"
-"자 한다면 도메인을 가리키는 MX 레코드를 추가해야 합니다."
+"MX 레코드는 외부 제공업체를 가리키고 있습니다. 이 서버에서 이메일을 수신하고자 한다면 도메인을 가리키는 MX 레코드를 추가해야 "
+"합니다."
 
+#: providers/builtin/dns_requirements_OLD.html:789
 msgid "No MX Records Found"
 msgstr "MX 레코드를 찾을 수 없습니다"
 
+#: providers/builtin/dns_requirements_OLD.html:790
 msgid ""
 "You need to add an MX record to receive emails at your domain. Add the "
 "following to your DNS:"
-msgstr ""
-"도메인에서 이메일을 수신하려면 MX 레코드를 추가해야 합니다. 다음을 DNS에 추가"
-"하십시오:"
+msgstr "도메인에서 이메일을 수신하려면 MX 레코드를 추가해야 합니다. 다음을 DNS에 추가하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:798
 msgid "Mail Server"
 msgstr "메일 서버"
 
+#: providers/builtin/dns_requirements_OLD.html:801
 msgid "Make sure your domain's A record points to your server's IP address:"
 msgstr "도메인의 A 레코드가 서버의 IP 주소를 가리키는지 확인하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:813
 msgid "MX Validation"
 msgstr "MX 검증"
 
+#: providers/builtin/dns_requirements_OLD.html:825
 msgid "Reverse DNS (PTR)"
 msgstr "역 DNS (PTR)"
 
+#: providers/builtin/dns_requirements_OLD.html:838
 msgid "What is PTR/rDNS?"
 msgstr "PTR/rDNS란 무엇인가요?"
 
+#: providers/builtin/dns_requirements_OLD.html:840
 msgid "Reverse DNS (PTR record) maps your server IP to your domain name"
 msgstr "역 DNS(PTR 레코드)는 서버 IP를 도메인 이름에 매핑합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:841
 msgid ""
 "Critical for email deliverability - many servers reject emails without PTR"
-msgstr ""
-"이메일 전달성에 매우 중요합니다. PTR이 없는 경우 많은 서버가 이메일을 거부합"
-"니다"
+msgstr "이메일 전달성에 매우 중요합니다. PTR이 없는 경우 많은 서버가 이메일을 거부합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:842
 msgid "Must be configured by your hosting provider or datacenter"
 msgstr "호스팅 제공업체 또는 데이터센터에 의해 구성되어야 합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:847
 msgid "Configure with Your Hosting Provider"
 msgstr "호스팅 제공업체에서 설정"
 
+#: providers/builtin/dns_requirements_OLD.html:848
 msgid ""
 "PTR records must be set by your hosting provider. Contact them and request:"
-msgstr ""
-"PTR 레코드는 호스팅 제공업체에 의해 설정되어야 합니다. 그들과 연락하여 다음"
-"을 요청하십시오:"
+msgstr "PTR 레코드는 호스팅 제공업체에 의해 설정되어야 합니다. 그들과 연락하여 다음을 요청하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:850
 #, python-format
 msgid "Set PTR record for IP %(ip)s to %(domain)s"
 msgstr "IP %(ip)s의 PTR 레코드를 %(domain)s로 설정합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:862
 msgid "PTR Validation"
 msgstr "PTR 검증"
 
+#: providers/builtin/dns_requirements_OLD.html:874
 msgid "DNS Registrar Setup Instructions"
 msgstr "DNS 등록업체 설정 지침"
 
+#: providers/builtin/dns_requirements_OLD.html:880
 msgid "We've automatically detected that you're using"
 msgstr "우리는 자동으로 당신이 사용하고 있음을 감지했습니다"
 
+#: providers/builtin/dns_requirements_OLD.html:880
 msgid "for DNS management."
 msgstr "DNS 관리용입니다."
 
+#: providers/builtin/dns_requirements_OLD.html:910
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:6
 msgid "Log in to Cloudflare"
 msgstr "Cloudflare에 로그인"
 
+#: providers/builtin/dns_requirements_OLD.html:911
+#: providers/builtin/dns_requirements_OLD.html:942
+#: providers/builtin/dns_requirements_OLD.html:966
+#: providers/builtin/dns_requirements_OLD.html:994
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:7
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:43
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:79
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:119
 msgid "Go to"
 msgstr "이동"
 
+#: providers/builtin/dns_requirements_OLD.html:911
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:7
 msgid "and select your domain"
 msgstr "그리고 도메인을 선택하세요"
 
+#: providers/builtin/dns_requirements_OLD.html:914
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:10
 msgid "Navigate to DNS"
 msgstr "DNS로 이동"
 
+#: providers/builtin/dns_requirements_OLD.html:915
+#: providers/builtin/dns_requirements_OLD.html:926
+#: providers/builtin/dns_requirements_OLD.html:935
+#: providers/builtin/dns_requirements_OLD.html:950
+#: providers/builtin/dns_requirements_OLD.html:959
+#: providers/builtin/dns_requirements_OLD.html:970
+#: providers/builtin/dns_requirements_OLD.html:974
+#: providers/builtin/dns_requirements_OLD.html:978
+#: providers/builtin/dns_requirements_OLD.html:998
+#: providers/builtin/dns_requirements_OLD.html:1002
+#: providers/builtin/dns_requirements_OLD.html:1011
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:11
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:15
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:26
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:35
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:51
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:62
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:71
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:83
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:87
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:91
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:102
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:123
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:127
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:137
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:146
 msgid "Click"
 msgstr "클릭"
 
+#: providers/builtin/dns_requirements_OLD.html:915
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:11
 msgid "in the left sidebar"
 msgstr "왼쪽 사이드바에서"
 
+#: providers/builtin/dns_requirements_OLD.html:918
 msgid "Add MX Record (if needed)"
 msgstr "필요한 경우 MX 레코드 추가"
 
+#: providers/builtin/dns_requirements_OLD.html:919
 msgid "If you want to receive emails on this server, add an MX record:"
 msgstr "이 서버에서 이메일을 수신하고자 한다면 MX 레코드를 추가하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:925
+#: providers/builtin/dns_requirements_OLD.html:949
+#: providers/builtin/dns_requirements_OLD.html:977
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:25
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:61
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:101
 msgid "Add TXT Records"
 msgstr "TXT 레코드 추가"
 
+#: providers/builtin/dns_requirements_OLD.html:926
 msgid "and add each TXT record above:"
 msgstr "위의 각 TXT 레코드를 추가하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:934
+#: providers/builtin/dns_requirements_OLD.html:958
+#: providers/builtin/dns_requirements_OLD.html:986
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:34
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:70
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:110
 msgid "Save Changes"
 msgstr "변경 사항 저장"
 
+#: providers/builtin/dns_requirements_OLD.html:935
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:35
 msgid "for each record. DNS propagation typically takes 5-15 minutes."
 msgstr "각 레코드에 대해. DNS 전파는 일반적으로 5-15분 정도 걸립니다."
 
+#: providers/builtin/dns_requirements_OLD.html:941
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:42
 msgid "Log in to GoDaddy"
 msgstr "GoDaddy에 로그인"
 
+#: providers/builtin/dns_requirements_OLD.html:945
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:46
 msgid "Manage DNS"
 msgstr "DNS 관리"
 
+#: providers/builtin/dns_requirements_OLD.html:946
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:47
 msgid "Click your domain, then"
 msgstr "도메인을 클릭한 후"
 
+#: providers/builtin/dns_requirements_OLD.html:950
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:62
 msgid "and select"
 msgstr "선택하세요"
 
+#: providers/builtin/dns_requirements_OLD.html:950
 msgid "record type:"
 msgstr "기록 유형:"
 
+#: providers/builtin/dns_requirements_OLD.html:959
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:71
 msgid "DNS propagation can take up to 48 hours with GoDaddy."
 msgstr "GoDaddy에서는 DNS 전파가 최대 48시간까지 걸릴 수 있습니다."
 
+#: providers/builtin/dns_requirements_OLD.html:965
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:78
 msgid "Log in to Namecheap"
 msgstr "Namecheap에 로그인"
 
+#: providers/builtin/dns_requirements_OLD.html:969
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:82
 msgid "Manage Domain"
 msgstr "도메인 관리"
 
+#: providers/builtin/dns_requirements_OLD.html:970
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:83
 msgid "click"
 msgstr "클릭"
 
+#: providers/builtin/dns_requirements_OLD.html:970
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:83
 msgid "next to your domain"
 msgstr "도메인 옆에"
 
+#: providers/builtin/dns_requirements_OLD.html:973
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:86
 msgid "Advanced DNS"
 msgstr "고급 DNS"
 
+#: providers/builtin/dns_requirements_OLD.html:974
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:87
 msgid "tab"
 msgstr "탭"
 
+#: providers/builtin/dns_requirements_OLD.html:987
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:111
 msgid ""
 "Click the green checkmark to save. Propagation takes 30 minutes to 48 hours."
-msgstr ""
-"저장하려면 녹색 확인 표시를 클릭하십시오. 전파는 30분에서 48시간까지 걸릴 수 "
-"있습니다."
+msgstr "저장하려면 녹색 확인 표시를 클릭하십시오. 전파는 30분에서 48시간까지 걸릴 수 있습니다."
 
+#: providers/builtin/dns_requirements_OLD.html:993
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:118
 msgid "Log in to AWS Console"
 msgstr "AWS 콘솔에 로그인"
 
+#: providers/builtin/dns_requirements_OLD.html:997
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:122
 msgid "Select Hosted Zone"
 msgstr "호스팅 존 선택"
 
+#: providers/builtin/dns_requirements_OLD.html:998
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:123
 msgid "select your domain"
 msgstr "도메인 선택"
 
+#: providers/builtin/dns_requirements_OLD.html:1001
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:136
 msgid "Create TXT Records"
 msgstr "TXT 기록 생성"
 
+#: providers/builtin/dns_requirements_OLD.html:1002
 msgid "and add:"
 msgstr "추가:"
 
+#: providers/builtin/dns_requirements_OLD.html:1010
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:145
 msgid "Create Records"
 msgstr "기록 생성"
 
+#: providers/builtin/dns_requirements_OLD.html:1011
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:146
 msgid "Route 53 propagates changes within 60 seconds."
 msgstr "Route 53은 60초 이내에 변경 내용을 전파합니다."
 
+#: providers/builtin/dns_requirements_OLD.html:1018
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:154
 msgid "Your DNS Nameservers"
 msgstr "귀하의 DNS 네임서버"
 
+#: providers/builtin/dns_requirements_OLD.html:1019
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:155
 msgid "Your domain uses the following nameservers:"
 msgstr "귀하의 도메인은 다음 네임서버를 사용합니다:"
 
+#: providers/builtin/dns_requirements_OLD.html:1026
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:162
 msgid "Tip:"
 msgstr "팁:"
 
+#: providers/builtin/dns_requirements_OLD.html:1026
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:162
 msgid ""
 "Search for your DNS provider's documentation using your nameserver names "
 "above."
 msgstr "위의 네임서버 이름을 사용하여 DNS 제공업체의 문서를 검색하십시오."
 
+#: providers/builtin/dns_requirements_OLD.html:1032
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:168
 msgid "General Instructions"
 msgstr "일반 지시사항"
 
+#: providers/builtin/dns_requirements_OLD.html:1033
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:169
 msgid "Most DNS providers follow a similar process:"
 msgstr "대부분의 DNS 제공업체는 유사한 절차를 따릅니다:"
 
+#: providers/builtin/dns_requirements_OLD.html:1035
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:171
 msgid "Log in to your DNS provider's control panel"
 msgstr "DNS 제공업체의 제어판에 로그인하십시오"
 
+#: providers/builtin/dns_requirements_OLD.html:1036
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:172
 msgid "Navigate to DNS management for your domain"
 msgstr "도메인의 DNS 관리로 이동하십시오"
 
+#: providers/builtin/dns_requirements_OLD.html:1037
 msgid "Add TXT records with the values shown above"
 msgstr "위에 표시된 값을 사용하여 TXT 레코드를 추가하십시오"
 
+#: providers/builtin/dns_requirements_OLD.html:1038
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:183
 msgid "Wait for DNS propagation (15 minutes to 48 hours)"
 msgstr "DNS 전파를 기다리십시오 (15분에서 48시간까지)"
 
+#: providers/builtin/dns_requirements_OLD.html:1042
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:187
 msgid "Important Notes"
 msgstr "중요한 참고 사항"
 
+#: providers/builtin/dns_requirements_OLD.html:1044
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:189
 msgid "Some providers use"
 msgstr "일부 제공업체는 사용합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1044
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:189
 msgid "for the root domain, others require the full domain name"
 msgstr "루트 도메인에 대해서는, 다른 경우 전체 도메인 이름이 필요합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1045
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:190
 msgid "DKIM and DMARC records must use the exact hostnames shown above"
-msgstr ""
-"DKIM 및 DMARC 레코드는 위에 표시된 정확한 호스트 이름을 사용해야 합니다"
+msgstr "DKIM 및 DMARC 레코드는 위에 표시된 정확한 호스트 이름을 사용해야 합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1046
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:191
 msgid ""
 "If you have existing SPF records, you must merge them (only one SPF record "
 "allowed)"
 msgstr "기존 SPF 레코드가 있다면 병합해야 합니다 (SPF 레코드는 하나만 허용됨)"
 
+#: providers/builtin/dns_requirements_OLD.html:1054
 msgid "Verify DNS Configuration"
 msgstr "DNS 구성 확인"
 
-msgid "Use these commands to verify your DNS records are configured correctly:"
-msgstr ""
-"DNS 레코드가 올바르게 구성되었는지 확인하려면 다음 명령어를 사용하십시오:"
+#: providers/builtin/dns_requirements_OLD.html:1055
+msgid ""
+"Use these commands to verify your DNS records are configured correctly:"
+msgstr "DNS 레코드가 올바르게 구성되었는지 확인하려면 다음 명령어를 사용하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:1058
 msgid "Check SPF Record"
 msgstr "SPF 기록 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1064
 msgid "Check DKIM Record"
 msgstr "DKIM 기록 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1070
 msgid "Check DMARC Record"
 msgstr "DMARC 기록 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1076
 msgid "Check MX Records"
 msgstr "MX 기록 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1082
 msgid "Check PTR Record"
 msgstr "PTR 기록 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1088
 msgid "Alternative: Use nslookup"
 msgstr "대안: nslookup 사용"
 
+#: providers/builtin/dns_requirements_OLD.html:1090
 msgid "- Check SPF"
 msgstr "- SPF 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1091
 msgid "- Check DKIM"
 msgstr "- DKIM 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1092
 msgid "- Check DMARC"
 msgstr "- DMARC 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1093
 msgid "- Check MX"
 msgstr "- MX 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1094
 msgid "- Check PTR"
 msgstr "- PTR 확인"
 
+#: providers/builtin/dns_requirements_OLD.html:1101
 msgid "Troubleshooting"
 msgstr "문제 해결"
 
+#: providers/builtin/dns_requirements_OLD.html:1104
 msgid "DNS records not appearing"
 msgstr "DNS 기록이 표시되지 않음"
 
+#: providers/builtin/dns_requirements_OLD.html:1106
 msgid ""
 "DNS propagation can take 15 minutes to 48 hours depending on your provider"
 msgstr "DNS 전파는 제공업체에 따라 15분에서 48시간까지 걸릴 수 있습니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1107
 msgid "Try clearing your local DNS cache:"
 msgstr "로컬 DNS 캐시를 비우는 것을 시도해 보십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:1108
 msgid "Use a different DNS server to check:"
 msgstr "다른 DNS 서버를 사용하여 확인하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:1109
 msgid "Verify records at"
 msgstr "기록 확인:"
 
+#: providers/builtin/dns_requirements_OLD.html:1114
 msgid "Multiple SPF records detected"
 msgstr "여러 SPF 기록이 감지됨"
 
+#: providers/builtin/dns_requirements_OLD.html:1116
 msgid "Only ONE SPF record is allowed per domain"
 msgstr "도메인당 하나의 SPF 레코드만 허용됩니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1117
 msgid "If you have existing SPF records, merge them:"
 msgstr "기존 SPF 레코드가 있다면 병합하십시오:"
 
+#: providers/builtin/dns_requirements_OLD.html:1118
 msgid "Delete all old SPF records before adding the new one"
 msgstr "새로운 레코드를 추가하기 전에 모든 오래된 SPF 레코드를 삭제하십시오"
 
+#: providers/builtin/dns_requirements_OLD.html:1123
 msgid "DKIM validation failing"
 msgstr "DKIM 검증 실패"
 
+#: providers/builtin/dns_requirements_OLD.html:1125
 msgid "Ensure the hostname is exactly:"
 msgstr "호스트 이름이 정확히 다음과 같도록 확인하세요:"
 
+#: providers/builtin/dns_requirements_OLD.html:1126
 msgid ""
 "DKIM record must be a single TXT record (some providers split long records)"
-msgstr ""
-"DKIM 레코드는 단일 TXT 레코드여야 합니다 (일부 제공업체는 긴 레코드를 분할합"
-"니다)"
+msgstr "DKIM 레코드는 단일 TXT 레코드여야 합니다 (일부 제공업체는 긴 레코드를 분할합니다)"
 
+#: providers/builtin/dns_requirements_OLD.html:1127
 msgid "Remove any extra quotes or whitespace from the TXT value"
 msgstr "TXT 값에서 추가된 따옴표나 공백을 제거하십시오"
 
+#: providers/builtin/dns_requirements_OLD.html:1128
 msgid "Regenerate DKIM keys if needed:"
 msgstr "필요한 경우 DKIM 키 재생성:"
 
+#: providers/builtin/dns_requirements_OLD.html:1133
 msgid "PTR record issues"
 msgstr "PTR 기록 문제"
 
+#: providers/builtin/dns_requirements_OLD.html:1135
 msgid "PTR records MUST be configured by your hosting provider or datacenter"
 msgstr "PTR 레코드는 호스팅 제공업체 또는 데이터센터에 의해 구성되어야 합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1136
 msgid "You cannot set PTR records through regular DNS management"
 msgstr "PTR 레코드는 일반적인 DNS 관리를 통해 설정할 수 없습니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1137
 msgid "Contact your hosting provider's support team"
 msgstr "호스팅 제공업체의 지원팀에 문의하십시오"
 
+#: providers/builtin/dns_requirements_OLD.html:1138
 msgid "Provide them your IP address and domain name"
 msgstr "귀하의 IP 주소와 도메인 이름을 제공하십시오"
 
+#: providers/builtin/dns_requirements_OLD.html:1143
 msgid "Emails still going to spam"
 msgstr "이메일이 여전히 스팸으로 가고 있음"
 
+#: providers/builtin/dns_requirements_OLD.html:1145
 msgid "All 4 DNS records (SPF, DKIM, DMARC, PTR) must be valid"
 msgstr "모든 4개의 DNS 기록(SPFin, DKIM, DMARC, PTR)이 유효해야 합니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1146
 msgid "Warm up your IP address by sending gradually increasing volumes"
 msgstr "점진적으로 증가하는 부하로 IP 주소를 워밍업하세요"
 
+#: providers/builtin/dns_requirements_OLD.html:1147
 msgid "Ensure your email content is not triggering spam filters"
 msgstr "이메일 콘텐츠가 스팸 필터를 트리거하지 않도록 확인하세요"
 
+#: providers/builtin/dns_requirements_OLD.html:1148
 msgid "Check your IP reputation at"
 msgstr "IP 평판 확인:"
 
+#: providers/builtin/dns_requirements_OLD.html:1149
 msgid "Consider using a dedicated IP address for email sending"
 msgstr "이메일 발송용 전용 IP 주소 사용을 고려하세요"
 
+#: providers/builtin/dns_requirements_OLD.html:1157
 msgid "Validate DNS Now"
 msgstr "지금 DNS 검증"
 
+#: providers/builtin/dns_requirements_OLD.html:1160
 msgid "Refresh Validation"
 msgstr "검증 새로고침"
 
+#: providers/builtin/dns_requirements_OLD.html:1180
 msgid "Failed to copy to clipboard"
 msgstr "클립보드에 복사에 실패했습니다"
 
+#: providers/builtin/dns_requirements_OLD.html:1202
 msgid "DNS validation triggered. Please wait..."
 msgstr "DNS 검증이 트리거되었습니다. 기다려 주세요..."
 
+#: providers/builtin/setup_instructions.html:6
 msgid ""
-"Your platform includes a professional SMTP server that's ready to use. We'll "
-"handle all the technical setup automatically."
-msgstr ""
-"귀하의 플랫폼에는 사용 가능한 전문적인 SMTP 서버가 포함되어 있습니다. 모든 기"
-"술적 설정은 자동으로 처리됩니다."
+"Your platform includes a professional SMTP server that's ready to use. We'll"
+" handle all the technical setup automatically."
+msgstr "귀하의 플랫폼에는 사용 가능한 전문적인 SMTP 서버가 포함되어 있습니다. 모든 기술적 설정은 자동으로 처리됩니다."
 
+#: providers/builtin/setup_instructions.html:11
 msgid "Zero Configuration Required"
 msgstr "설정 필요 없음"
 
+#: providers/builtin/setup_instructions.html:12
 msgid ""
 "No management commands, no server configuration. Just enter your email "
 "details and we'll set everything up for you automatically."
-msgstr ""
-"관리 명령어도 없고, 서버 설정도 필요 없습니다. 이메일 정보만 입력하면 모든 설"
-"정이 자동으로 이루어집니다."
+msgstr "관리 명령어도 없고, 서버 설정도 필요 없습니다. 이메일 정보만 입력하면 모든 설정이 자동으로 이루어집니다."
 
+#: providers/builtin/setup_instructions.html:16
 msgid "What You Get"
 msgstr "받는 내용"
 
+#: providers/builtin/setup_instructions.html:20
 msgid "No Monthly Fees"
 msgstr "월별 요금 없음"
 
+#: providers/builtin/setup_instructions.html:21
 msgid "Completely free - no subscription costs or rate limits."
 msgstr "완전히 무료 - 구독 비용이나 속도 제한 없음"
 
+#: providers/builtin/setup_instructions.html:25
 msgid "Automatic DKIM Signing"
 msgstr "자동 DKIM 서명"
 
+#: providers/builtin/setup_instructions.html:26
 msgid "Professional email authentication configured automatically."
 msgstr "프로페셔널 이메일 인증이 자동으로 설정됩니다."
 
+#: providers/builtin/setup_instructions.html:30
 msgid "Privacy First"
 msgstr "프라이버시 우선"
 
+#: providers/builtin/setup_instructions.html:31
 msgid "Your emails stay on your server - no third-party access."
 msgstr "이메일은 귀하의 서버에 남아 있으며, 제3자 접근이 없습니다."
 
+#: providers/builtin/setup_instructions.html:35
 msgid "Unlimited Sending"
 msgstr "무제한 발송"
 
+#: providers/builtin/setup_instructions.html:36
 msgid "Only limited by your server capacity."
 msgstr "서버 용량에만 제한됩니다."
 
+#: providers/builtin/setup_instructions.html:42
 msgid "How It Works"
 msgstr "작동 방식"
 
+#: providers/builtin/setup_instructions.html:47
 msgid "You Provide Email Details"
 msgstr "귀하가 이메일 세부 정보를 제공합니다"
 
+#: providers/builtin/setup_instructions.html:48
 msgid ""
-"Enter your sending email address in the next step (e.g., noreply@yourdomain."
-"com)"
+"Enter your sending email address in the next step (e.g., "
+"noreply@yourdomain.com)"
 msgstr "다음 단계에서 이메일 주소를 입력하세요 (예: noreply@yourdomain.com)"
 
+#: providers/builtin/setup_instructions.html:54
 msgid "We Generate DKIM Keys"
 msgstr "우리는 DKIM 키를 생성합니다"
 
+#: providers/builtin/setup_instructions.html:55
 msgid ""
 "Cryptographic keys are automatically created and encrypted in your database"
 msgstr "암호화 키는 자동으로 생성되어 데이터베이스에 암호화됩니다"
 
+#: providers/builtin/setup_instructions.html:61
 msgid "We Start the SMTP Server"
 msgstr "우리는 SMTP 서버를 시작합니다"
 
+#: providers/builtin/setup_instructions.html:62
 msgid ""
 "The built-in server starts automatically and begins signing all outgoing "
 "emails"
 msgstr "내장 서버는 자동으로 시작되어 모든 외부 이메일에 서명을 시작합니다"
 
+#: providers/builtin/setup_instructions.html:68
 msgid "Configure DNS Records"
 msgstr "DNS 레코드 구성"
 
+#: providers/builtin/setup_instructions.html:69
 msgid ""
 "We'll show you exactly which DNS records to add for optimal deliverability"
 msgstr "최적의 전달성을 위해 추가해야 할 DNS 기록을 정확히 보여드립니다"
 
+#: providers/builtin/setup_instructions.html:77
 msgid "What Happens Next?"
 msgstr "다음으로 무엇이 일어날까요?"
 
+#: providers/builtin/setup_instructions.html:78
 msgid ""
 "After you enter your email address, we'll automatically generate DKIM keys, "
 "start the SMTP server, and guide you through adding DNS records. The entire "
 "process takes about 2 minutes."
 msgstr ""
-"이메일 주소를 입력한 후, DKIM 키를 자동으로 생성하고 SMTP 서버를 시작하여 "
-"DNS 기록을 추가하는 방법을 안내해 드립니다. 전체 과정은 약 2분이 소요됩니다."
+"이메일 주소를 입력한 후, DKIM 키를 자동으로 생성하고 SMTP 서버를 시작하여 DNS 기록을 추가하는 방법을 안내해 드립니다. 전체"
+" 과정은 약 2분이 소요됩니다."
 
+#: providers/builtin/setup_instructions.html:82
 msgid "Technical Details"
 msgstr "기술 세부 정보"
 
+#: providers/builtin/setup_instructions.html:84
 msgid "Only your shop can send through this email provider for security"
-msgstr ""
-"보안상 이유로 이 이메일 제공업체를 통해 이메일을 보내는 것은 귀하의 가게만 가"
-"능합니다"
+msgstr "보안상 이유로 이 이메일 제공업체를 통해 이메일을 보내는 것은 귀하의 가게만 가능합니다"
 
+#: providers/builtin/setup_instructions.html:85
 msgid "DKIM keys use RSA 2048-bit encryption for enhanced security"
 msgstr "강화된 보안을 위해 DKIM 키는 RSA 2048비트 암호화를 사용합니다"
 
+#: providers/builtin/setup_instructions.html:86
 msgid ""
-"All emails are automatically signed before sending to ensure your emails are "
-"delivered and avoid hitting spam and junk folders"
-msgstr ""
-"이메일이 전달되고 스팸 및 쓰레기 폴더에 들어가지 않도록 보장하기 위해 모든 이"
-"메일은 전송 전에 자동으로 서명됩니다"
+"All emails are automatically signed before sending to ensure your emails are"
+" delivered and avoid hitting spam and junk folders"
+msgstr "이메일이 전달되고 스팸 및 쓰레기 폴더에 들어가지 않도록 보장하기 위해 모든 이메일은 전송 전에 자동으로 서명됩니다"
 
+#: providers/builtin/setup_instructions.html:92
 msgid "Important for Production Use"
 msgstr "프로덕션 사용에 중요합니다"
 
+#: providers/builtin/setup_instructions.html:93
 msgid ""
 "After setup, you'll need to add DNS records (SPF, DKIM, DMARC, PTR) with "
 "your domain provider for optimal email deliverability. We'll provide "
 "detailed instructions in Step 4."
 msgstr ""
-"설치 후, 최적의 이메일 전달성을 위해 도메인 제공업체에 DNS 기록(SPFin, DKIM, "
-"DMARC, PTR)을 추가해야 합니다. 단계 4에서 상세한 지침을 제공합니다."
+"설치 후, 최적의 이메일 전달성을 위해 도메인 제공업체에 DNS 기록(SPFin, DKIM, DMARC, PTR)을 추가해야 합니다. "
+"단계 4에서 상세한 지침을 제공합니다."
 
+#: services/dns_assistant.py:97 services/dns_assistant.py:355
 msgid "DKIM selector not provided"
 msgstr "DKIM 선택자가 제공되지 않았습니다"
 
+#: services/dns_assistant.py:98
 msgid "DKIM validation skipped - no selector available"
 msgstr "DKIM 검증이 건너뛰어졌습니다 - 선택자 없음"
 
+#: services/dns_assistant.py:151
 msgid "MX records found"
 msgstr "MX 레코드가 발견되었습니다"
 
-msgid "MX record correctly points to this server ({mx[\"host\"]})"
-msgstr "MX 기록이 이 서버({mx[\"host\"]})에 올바르게 가리키고 있습니다"
+#: services/dns_assistant.py:175
+#| msgid "MX record correctly points to this server ({mx[\"host\"]})"
+msgid "MX record correctly points to this server ({mx['host']})"
+msgstr "MX 레코드가 이 서버({mx[\"host\"]})로 올바르게 지정되어 있습니다"
 
+#: services/dns_assistant.py:181
+#| msgid ""
+#| "MX {mx[\"host\"]} points to {mx_ips[0]}, not this server ({self.server_ip})"
 msgid ""
-"MX {mx[\"host\"]} points to {mx_ips[0]}, not this server ({self.server_ip})"
-msgstr ""
-"MX {mx[\"host\"]}는 {mx_ips[0]}를 가리키고 있으며, 이 서버({self.server_ip})"
-"가 아닙니다"
+"MX {mx['host']} points to {mx_ips[0]}, not this server ({self.server_ip})"
+msgstr "MX {mx['host']}은 {mx_ips[0]}로 가리키고 있으며, 이 서버({self.server_ip})가 아닙니다."
 
-msgid "Could not resolve MX hostname {mx[\"host\"]}"
-msgstr "MX 호스트 이름 {mx[\"host\"]}을 확인할 수 없습니다"
+#: services/dns_assistant.py:185
+#| msgid "Could not resolve MX hostname {mx[\"host\"]}"
+msgid "Could not resolve MX hostname {mx['host']}"
+msgstr "{mx['host']} MX 호스트 이름을 해석할 수 없습니다."
 
+#: services/dns_assistant.py:193
 msgid "MX record should point to this server for built-in SMTP to work"
 msgstr "내장 SMTP가 작동하려면 MX 기록이 이 서버를 가리켜야 합니다"
 
+#: services/dns_assistant.py:201 services/dns_assistant.py:222
 #, python-brace-format
 msgid "Points to your server at {ip}"
 msgstr "{ip}의 서버로 가리킵니다"
 
+#: services/dns_assistant.py:205
 msgid "No MX records found - email delivery may fail"
 msgstr "MX 기록을 찾을 수 없습니다 - 이메일 전달이 실패할 수 있습니다"
 
+#: services/dns_assistant.py:209
 msgid "Domain does not exist"
 msgstr "도메인이 존재하지 않습니다"
 
+#: services/dns_assistant.py:210
 msgid "Cannot configure email for non-existent domain"
 msgstr "존재하지 않는 도메인에 대한 이메일을 설정할 수 없습니다"
 
+#: services/dns_assistant.py:214
 msgid "No MX records configured"
 msgstr "설정된 MX 레코드가 없습니다"
 
+#: services/dns_assistant.py:215
 msgid "No MX records found. Add MX record pointing to your server."
 msgstr "MX 기록을 찾을 수 없습니다. 서버를 가리키는 MX 기록을 추가하세요."
 
+#: services/dns_assistant.py:229 services/dns_assistant.py:235
 msgid "Error checking MX records"
 msgstr "MX 레코드 확인 중 오류 발생"
 
+#: services/dns_assistant.py:303
 msgid "SPF record found and fully propagated"
 msgstr "SPF 기록이 발견되었으며, 완전히 전파되었습니다"
 
+#: services/dns_assistant.py:313
 msgid "SPF record should include your email provider's servers"
 msgstr "SPF 레코드는 이메일 제공업체의 서버를 포함해야 합니다"
 
+#: services/dns_assistant.py:317
 msgid ""
 "Update required: SPF record must be updated to include built-in SMTP server"
-msgstr ""
-"업데이트 필요: 내장 SMTP 서버를 포함하도록 SPF 기록을 업데이트해야 합니다"
+msgstr "업데이트 필요: 내장 SMTP 서버를 포함하도록 SPF 기록을 업데이트해야 합니다"
 
+#: services/dns_assistant.py:320
 msgid "SPF record found but has warnings"
 msgstr "SPF 기록이 발견되었지만 경고가 있습니다"
 
+#: services/dns_assistant.py:325
 msgid "SPF record partially propagated"
 msgstr "SPF 레코드가 부분적으로 전파되었습니다"
 
+#: services/dns_assistant.py:326
 msgid "SPF record found on some DNS servers but not all"
 msgstr "일부 DNS 서버에서 SPF 기록이 발견되었지만 모두 아닙니다"
 
+#: services/dns_assistant.py:330
 msgid "No SPF record found"
 msgstr "SPF 레코드가 발견되지 않았습니다"
 
+#: services/dns_assistant.py:331
 msgid "SPF record not found on any DNS server"
 msgstr "어떤 DNS 서버에서도 SPF 기록을 찾을 수 없습니다"
 
+#: services/dns_assistant.py:337
 msgid "Error checking SPF record"
 msgstr "SPF 레코드 확인 중 오류 발생"
 
+#: services/dns_assistant.py:356
 msgid "Cannot validate DKIM without selector"
 msgstr "선택자가 없는 경우 DKIM을 검증할 수 없습니다"
 
+#: services/dns_assistant.py:427
 msgid "DKIM record found and fully propagated"
 msgstr "DKIM 기록이 발견되었으며, 완전히 전파되었습니다"
 
+#: services/dns_assistant.py:434
 msgid "DKIM record found but has warnings"
 msgstr "DKIM 기록이 발견되었지만 경고가 있습니다"
 
+#: services/dns_assistant.py:439
 msgid "DKIM record partially propagated"
 msgstr "DKIM 레코드가 부분적으로 전파되었습니다"
 
+#: services/dns_assistant.py:440
 msgid "DKIM record found on some DNS servers but not all"
 msgstr "일부 DNS 서버에서 DKIM 기록이 발견되었지만 모두 아닙니다"
 
+#: services/dns_assistant.py:444
 msgid "No DKIM record found"
 msgstr "DKIM 레코드가 발견되지 않았습니다"
 
+#: services/dns_assistant.py:446
 msgid "DKIM record not found. Please configure DKIM in your email provider."
-msgstr ""
-"DKIM 기록을 찾을 수 없습니다. 이메일 제공업체에서 DKIM을 구성해 주세요."
+msgstr "DKIM 기록을 찾을 수 없습니다. 이메일 제공업체에서 DKIM을 구성해 주세요."
 
+#: services/dns_assistant.py:453
 msgid "Error checking DKIM record"
 msgstr "DKIM 레코드 확인 중 오류 발생"
 
+#: services/dns_assistant.py:529
 msgid "DMARC record found and fully propagated"
 msgstr "DMARC 기록이 발견되었으며, 완전히 전파되었습니다"
 
+#: services/dns_assistant.py:536
 msgid "DMARC record found but has issues"
 msgstr "DMARC 레코드가 발견되었지만 문제가 있습니다"
 
+#: services/dns_assistant.py:541
 msgid ""
 "Update required: DMARC record needs relaxed alignment for multi-provider "
 "compatibility"
-msgstr ""
-"업데이트 필요: 여러 제공업체와의 호환성을 위해 DMARC 기록은 느슨한 정렬이 필"
-"요합니다"
+msgstr "업데이트 필요: 여러 제공업체와의 호환성을 위해 DMARC 기록은 느슨한 정렬이 필요합니다"
 
+#: services/dns_assistant.py:550
 msgid "DMARC record partially propagated"
 msgstr "DMARC 레코드가 부분적으로 전파되었습니다"
 
+#: services/dns_assistant.py:551
 msgid "DMARC record found on some DNS servers but not all"
 msgstr "일부 DNS 서버에서 DMARC 기록이 발견되었지만 모두 아닙니다"
 
+#: services/dns_assistant.py:555
 msgid "No DMARC record found"
 msgstr "DMARC 레코드가 발견되지 않았습니다"
 
+#: services/dns_assistant.py:557
 msgid "DMARC record not found. Recommended for email authentication."
 msgstr "DMARC 기록을 찾을 수 없습니다. 이메일 인증을 위해 권장됩니다."
 
+#: services/dns_assistant.py:564
 msgid "Error checking DMARC record"
 msgstr "DMARC 레코드 확인 중 오류 발생"
 
+#: services/dns_assistant.py:639
 msgid "SPF record must start with \"v=spf1\""
 msgstr "SPF 기록은 \"v=spf1\"으로 시작해야 합니다"
 
+#: services/dns_assistant.py:666
 msgid "SPF record should end with \"~all\" or \"-all\" for better security"
 msgstr "더 나은 보안을 위해 SPF 기록은 \"~all\" 또는 \"-all\"로 끝나야 합니다"
 
+#: services/dns_assistant.py:671
 #, python-format
 msgid "SPF record has %(count)d DNS lookups (max 10 allowed)"
-msgstr ""
-"SPF 레코드는 %(count)d개의 DNS 조회를 포함하고 있습니다 (최대 10개 허용)"
+msgstr "SPF 레코드는 %(count)d개의 DNS 조회를 포함하고 있습니다 (최대 10개 허용)"
 
+#: services/dns_assistant.py:679
 #, python-format
-msgid ""
-"SPF record should include \"include:%(include)s\" for your email provider"
-msgstr ""
-"SPF 레코드에는 이메일 제공업체를 위해 \"include:%(include)s\"를 포함해야 합니"
-"다"
+msgid "SPF record should include \"include:%(include)s\" for your email provider"
+msgstr "SPF 레코드에는 이메일 제공업체를 위해 \"include:%(include)s\"를 포함해야 합니다"
 
+#: services/dns_assistant.py:689
 msgid ""
-"SPF record does not include \"mx\" or \"a\" mechanisms required for built-in "
-"SMTP server"
-msgstr ""
-"내장 SMTP 서버를 위해 필요한 \"mx\" 또는 \"a\" 메커니즘을 포함하지 않은 SPF "
-"기록입니다"
+"SPF record does not include \"mx\" or \"a\" mechanisms required for built-in"
+" SMTP server"
+msgstr "내장 SMTP 서버를 위해 필요한 \"mx\" 또는 \"a\" 메커니즘을 포함하지 않은 SPF 기록입니다"
 
+#: services/dns_assistant.py:716
 msgid "DKIM record must contain public key (p=)"
 msgstr "DKIM 기록은 공개 키(p=)를 포함해야 합니다"
 
+#: services/dns_assistant.py:720
 msgid "DKIM public key is empty (revoked)"
 msgstr "DKIM 공개 키는 비어 있습니다(재발급됨)"
 
+#: services/dns_assistant.py:724
 msgid "DKIM record should specify version (v=DKIM1)"
 msgstr "DKIM 기록은 버전(v=DKIM1)을 명시해야 합니다"
 
+#: services/dns_assistant.py:748
 msgid "DMARC record must start with \"v=DMARC1\""
 msgstr "DMARC 기록은 \"v=DMARC1\"으로 시작해야 합니다"
 
+#: services/dns_assistant.py:752
 msgid "DMARC record must have a policy (p=none/quarantine/reject)"
 msgstr "DMARC 기록은 정책(p=none/quarantine/reject)이 필요합니다"
 
+#: services/dns_assistant.py:756
 msgid "DMARC record should include aggregate report address (rua=)"
 msgstr "DMARC 기록은 집계 보고 주소(rua=)를 포함해야 합니다"
 
+#: services/dns_assistant.py:762
 msgid ""
 "DMARC policy is set to \"none\" - consider using \"quarantine\" or "
 "\"reject\" for better security"
-msgstr ""
-"DMARC 정책이 \"none\"으로 설정되어 있습니다 - 보안을 위해 \"quarantine\" 또"
-"는 \"reject\"를 고려하세요"
+msgstr "DMARC 정책이 \"none\"으로 설정되어 있습니다 - 보안을 위해 \"quarantine\" 또는 \"reject\"를 고려하세요"
 
+#: services/dns_assistant.py:776
 msgid ""
 "DMARC has strict SPF alignment (aspf=s) - this may break multi-provider "
 "email. Use aspf=r for relaxed alignment"
 msgstr ""
-"DMARC가 엄격한 SPF 정렬(aspf=s)을 사용하고 있습니다. 이는 다중 제공업체 이메"
-"일을 손상시킬 수 있습니다. 정렬을 느슨하게 하려면 aspf=r을 사용하세요."
+"DMARC가 엄격한 SPF 정렬(aspf=s)을 사용하고 있습니다. 이는 다중 제공업체 이메일을 손상시킬 수 있습니다. 정렬을 느슨하게 "
+"하려면 aspf=r을 사용하세요."
 
+#: services/dns_assistant.py:782
 msgid ""
-"DMARC missing SPF alignment setting (aspf) - defaults to relaxed, but aspf=r "
-"recommended for clarity"
+"DMARC missing SPF alignment setting (aspf) - defaults to relaxed, but aspf=r"
+" recommended for clarity"
 msgstr ""
-"DMARC에서 SPF 정렬 설정(aspf)이 누락되었습니다. 기본값은 relaxed이지만, 명확"
-"성을 위해 aspf=r을 권장합니다"
+"DMARC에서 SPF 정렬 설정(aspf)이 누락되었습니다. 기본값은 relaxed이지만, 명확성을 위해 aspf=r을 권장합니다"
 
+#: services/dns_assistant.py:789
 msgid ""
 "DMARC has strict DKIM alignment (adkim=s) - this may break multi-provider "
 "email. Use adkim=r for relaxed alignment"
 msgstr ""
-"DMARC가 엄격한 DKIM 정렬(adkim=s)을 사용하고 있습니다. 이는 다중 제공업체 이"
-"메일을 손상시킬 수 있습니다. 정렬을 느슨하게 하려면 adkim=r을 사용하세요."
+"DMARC가 엄격한 DKIM 정렬(adkim=s)을 사용하고 있습니다. 이는 다중 제공업체 이메일을 손상시킬 수 있습니다. 정렬을 "
+"느슨하게 하려면 adkim=r을 사용하세요."
 
+#: services/dns_assistant.py:795
 msgid ""
 "DMARC missing DKIM alignment setting (adkim) - defaults to relaxed, but "
 "adkim=r recommended for clarity"
 msgstr ""
-"DMARC에서 DKIM 정렬 설정(adkim)이 누락됨 - 기본값은 relaxed이지만, 명확성을 "
-"위해 adkim=r이 권장됩니다."
+"DMARC에서 DKIM 정렬 설정(adkim)이 누락됨 - 기본값은 relaxed이지만, 명확성을 위해 adkim=r이 권장됩니다."
 
+#: services/dns_assistant.py:802
 #, python-format
 msgid ""
 "Consider adding failure report address (ruf=mailto:postmaster@%(domain)s)"
-msgstr ""
-"실패 보고 주소를 추가하는 것을 고려하세요 (ruf=mailto:postmaster@%(domain)s)"
+msgstr "실패 보고 주소를 추가하는 것을 고려하세요 (ruf=mailto:postmaster@%(domain)s)"
 
+#: services/dns_assistant.py:807
 msgid "Consider adding failure reporting options (fo=1) for detailed reports"
 msgstr "자세한 보고서를 위해 실패 보고 옵션(fo=1) 추가를 고려하세요"
 
+#: services/dns_assistant.py:833
 msgid "Required DNS records missing or invalid"
 msgstr "필요한 DNS 기록이 누락되었거나 유효하지 않습니다."
 
+#: services/dns_assistant.py:838 services/dns_assistant.py:841
 msgid "All DNS records configured correctly"
 msgstr "모든 DNS 레코드가 올바르게 구성되었습니다"
 
+#: services/dns_assistant.py:845
 msgid "SPF and DKIM configured, DMARC needs attention"
 msgstr "SPF 및 DKIM이 설정되었지만 DMARC에 주의가 필요합니다"
 
+#: services/dns_assistant.py:850
 msgid "SPF and DKIM configured, DMARC recommended"
 msgstr "SPF와 DKIM이 구성되었지만 DMARC를 권장합니다."
 
+#: services/dns_assistant.py:853
 msgid "Some DNS records have warnings"
 msgstr "일부 DNS 레코드에 경고가 있습니다"
 
+#: templates/admin/email_system/emailaccount/change_form.html:4
+#: templates/admin/email_system/emailaccount/change_form.html:22
 msgid "Edit Email Account"
 msgstr "이메일 계정 편집"
 
+#: templates/admin/email_system/emailaccount/change_form.html:4
+#: templates/admin/email_system/emailaccount/change_form.html:24
 msgid "Add Email Account"
 msgstr "이메일 계정 추가"
 
+#: templates/admin/email_system/emailaccount/change_form.html:32
 msgid "Built-in SMTP"
 msgstr "내장 SMTP"
 
+#: templates/admin/email_system/emailaccount/change_form.html:37
+#: templates/admin/email_system/newsletter_delete_confirm.html:28
+#: templates/admin/email_system/newsletter_list.html:39
+#: templates/admin/email_system/newsletter_send.html:42
 msgid "Created"
 msgstr "생성일"
 
+#: templates/admin/email_system/emailaccount/change_form.html:39
+#: templates/admin/email_system/newsletter_list.html:51
+#: templates/admin/email_system/template_delete_confirm.html:38
+#: templates/admin/email_system/template_list.html:226
+#: templates/email_system/admin/account_card.html:77
+#: templates/email_system/admin/emailaccount_changelist.html:82
 msgid "Active"
 msgstr "활성"
 
+#: templates/admin/email_system/emailaccount/change_form.html:41
+#: templates/admin/email_system/newsletter_list.html:53
+#: templates/admin/email_system/template_delete_confirm.html:40
+#: templates/email_system/admin/account_card.html:81
+#: templates/email_system/admin/emailaccount_changelist.html:85
 msgid "Inactive"
 msgstr "비활성"
 
+#: templates/admin/email_system/emailaccount/change_form.html:51
 msgid "Untested"
 msgstr "미테스트"
 
+#: templates/admin/email_system/emailaccount/change_form.html:57
+#: templates/admin/email_system/emailaccount/change_form.html:312
 msgid "Save and continue editing"
 msgstr "저장하고 편집 계속"
 
+#: templates/admin/email_system/emailaccount/change_form.html:60
+#: templates/admin/email_system/emailaccount/change_form.html:311
 msgid "Save"
 msgstr "저장"
 
+#: templates/admin/email_system/emailaccount/change_form.html:73
 msgid "Please correct the errors below"
 msgstr "아래의 오류를 수정해 주세요"
 
+#: templates/admin/email_system/emailaccount/change_form.html:99
 msgid "Basic"
 msgstr "기본"
 
+#: templates/admin/email_system/emailaccount/change_form.html:103
 msgid "Settings"
 msgstr "설정"
 
+#: templates/admin/email_system/emailaccount/change_form.html:107
 msgid "Security"
 msgstr "보안"
 
+#: templates/admin/email_system/emailaccount/change_form.html:151
 msgid "Configure the default sender identity for outgoing emails."
 msgstr "송신 이메일의 기본 발신자 신원을 구성합니다."
 
+#: templates/admin/email_system/emailaccount/change_form.html:204
 msgid ""
 "DKIM keys are used to digitally sign outgoing emails. Use the 'Regenerate "
 "DKIM Keys' action to create new keys."
 msgstr ""
-"DKIM 키는 외부로 발송되는 이메일을 디지털로 서명하는 데 사용됩니다. 'DKIM 키 "
-"재생성' 작업을 사용하여 새 키를 생성할 수 있습니다."
+"DKIM 키는 외부로 발송되는 이메일을 디지털로 서명하는 데 사용됩니다. 'DKIM 키 재생성' 작업을 사용하여 새 키를 생성할 수 "
+"있습니다."
 
+#: templates/admin/email_system/emailaccount/change_form.html:231
 msgid "Credentials are encrypted and managed through the provider setup."
 msgstr "자격 증명은 제공업체 설정을 통해 암호화되고 관리됩니다."
 
+#: templates/admin/email_system/emailoutbox/change_list.html:4
+#: templates/admin/email_system/emailoutbox/change_list.html:18
 msgid "Email Outbox"
 msgstr "이메일 발신함"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:20
 msgid "Track outgoing email delivery status"
 msgstr "발신 이메일의 전송 상태를 추적합니다"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:25
 msgid "Overview"
 msgstr "개요"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:30
 msgid "Total Emails"
 msgstr "총 이메일"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:54
 msgid "Filters"
 msgstr "필터"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:65
+#: templates/admin/email_system/template_list.html:82
+#: templates/admin/email_system/template_list.html:130
 msgid "Search"
 msgstr "검색"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:67
 msgid "Subject, to, or from email..."
 msgstr "제목, 받는 사람, 보내는 사람 이메일..."
 
+#: templates/admin/email_system/emailoutbox/change_list.html:76
 msgid "All Statuses"
 msgstr "모든 상태"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:88
+#: templates/admin/email_system/template_delete_confirm.html:27
 msgid "Template Type"
 msgstr "템플릿 유형"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:91
+#: templates/admin/email_system/template_list.html:99
 msgid "All Types"
 msgstr "모든 유형"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:103
 msgid "Apply Filters"
 msgstr "필터 적용"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:106
 msgid "Clear All"
 msgstr "모두 지우기"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:114
 msgid "Emails"
 msgstr "이메일"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:117
 msgid "entries"
 msgstr "개 항목"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:126
 msgid "Loading emails..."
 msgstr "이메일을 로딩 중입니다..."
 
+#: templates/admin/email_system/newsletter_create.html:4
+#: templates/admin/email_system/newsletter_create.html:16
+#: templates/admin/email_system/newsletter_list.html:29
+#: templates/admin/email_system/newsletter_list.html:97
+#: views/newsletter.py:132
 msgid "Create Newsletter"
 msgstr "뉴스레터 작성"
 
+#: templates/admin/email_system/newsletter_create.html:4
+#: templates/admin/email_system/newsletter_delete_confirm.html:4
+#: templates/admin/email_system/newsletter_list.html:4
+#: templates/admin/email_system/newsletter_send.html:4
+#: templates/admin/email_system/template_delete_confirm.html:4
+#: templates/admin/email_system/template_edit.html:4
+#: templates/admin/email_system/template_list.html:4
+#: templates/admin/email_system/template_preview.html:4
+#: templates/admin/email_system/translation_manager.html:4
+#: templates/admin/email_system/wizard/base.html:4
+#: templates/email_system/admin/emailaccount_changelist.html:4
+#: templates/email_system/oauth_setup.html:4
+#: templates/email_system/providers/browse.html:4
 msgid "Site Admin"
 msgstr "사이트 관리자"
 
+#: templates/admin/email_system/newsletter_create.html:19
 msgid "Create a new newsletter template to send to your customers"
 msgstr "고객에게 이메일을 보내기 위해 새 뉴스레터 템플릿을 생성하세요."
 
+#: templates/admin/email_system/newsletter_create.html:29
+#: templates/admin/email_system/template_edit.html:111
+#: templates/admin/email_system/template_preview.html:170
 msgid "Subject Line"
 msgstr "제목 줄"
 
+#: templates/admin/email_system/newsletter_create.html:31
+#: views/newsletter.py:93
 msgid "New Newsletter"
 msgstr "새로운 뉴스레터"
 
+#: templates/admin/email_system/newsletter_create.html:37
 msgid "Enter newsletter subject..."
 msgstr "뉴스레터 제목을 입력하세요..."
 
+#: templates/admin/email_system/newsletter_create.html:41
 msgid "This will appear in your recipients' inbox"
 msgstr "이 내용은 수신자의 수신함에 표시됩니다."
 
+#: templates/admin/email_system/newsletter_create.html:47
+#: templates/admin/email_system/template_delete_confirm.html:31
+#: templates/admin/email_system/template_preview.html:24
 msgid "Language"
 msgstr "언어"
 
+#: templates/admin/email_system/newsletter_create.html:57
 msgid ""
-"Select the language for this newsletter. Only languages you have enabled for "
-"your store are shown."
-msgstr ""
-"이 뉴스레터에 사용할 언어를 선택하세요. 가게에서 활성화한 언어만 표시됩니다."
+"Select the language for this newsletter. Only languages you have enabled for"
+" your store are shown."
+msgstr "이 뉴스레터에 사용할 언어를 선택하세요. 가게에서 활성화한 언어만 표시됩니다."
 
+#: templates/admin/email_system/newsletter_create.html:64
 msgid "Create & Edit Design"
 msgstr "디자인 생성 및 편집"
 
+#: templates/admin/email_system/newsletter_create.html:67
+#: templates/admin/email_system/newsletter_delete_confirm.html:57
+#: templates/admin/email_system/newsletter_send.html:160
+#: templates/admin/email_system/template_delete_confirm.html:73
+#: templates/admin/email_system/template_list.html:337
+#: templates/admin/email_system/template_preview.html:144
+#: templates/admin/email_system/template_preview.html:212
+#: templates/admin/email_system/translation_manager.html:226
+#: templates/admin/email_system/wizard/step1_select.html:106
+#: templates/email_system/oauth_setup.html:89
 msgid "Cancel"
 msgstr "취소"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:4
+#: templates/admin/email_system/newsletter_delete_confirm.html:16
+#: templates/admin/email_system/newsletter_delete_confirm.html:61
+#: views/newsletter.py:284
 msgid "Delete Newsletter"
 msgstr "뉴스레터 삭제"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:19
 msgid "Confirm newsletter deletion"
 msgstr "뉴스레터 삭제 확인"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:36
 msgid "Are you sure you want to delete this newsletter?"
 msgstr "이 뉴스레터를 삭제하시겠습니까?"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:38
 msgid "This action will:"
 msgstr "이 작업은 다음과 같이 수행됩니다:"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:41
 msgid "Soft delete the newsletter template (can be restored from admin)"
 msgstr "뉴스레터 템플릿을 소프트 삭제합니다(관리자에 의해 복원할 수 있음)"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:42
 msgid "Hide it from the newsletter list"
 msgstr "뉴스레터 목록에서 숨깁니다."
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:43
 msgid "Prevent it from being used for future sends"
 msgstr "미래의 발송에 사용되는 것을 방지합니다."
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:47
 msgid ""
 "Past send history and analytics will be preserved. This newsletter can be "
 "restored by an administrator if needed."
-msgstr ""
-"과거 발송 기록과 분석은 보존됩니다. 필요 시 관리자가 이 뉴스레터를 복원할 수 "
-"있습니다."
+msgstr "과거 발송 기록과 분석은 보존됩니다. 필요 시 관리자가 이 뉴스레터를 복원할 수 있습니다."
 
+#: templates/admin/email_system/newsletter_list.html:4
+#: templates/admin/email_system/newsletter_list.html:16 views/newsletter.py:69
 msgid "Newsletters"
 msgstr "뉴스레터"
 
+#: templates/admin/email_system/newsletter_list.html:19
 msgid "Create and send newsletters to your customers"
 msgstr "고객에게 뉴스레터를 생성하고 발송하세요."
 
+#: templates/admin/email_system/newsletter_list.html:25
 msgid "Search newsletters..."
 msgstr "뉴스레터 검색..."
 
+#: templates/admin/email_system/newsletter_list.html:37
+#: templates/admin/email_system/template_preview.html:93
 msgid "Subject"
 msgstr "제목"
 
+#: templates/admin/email_system/newsletter_list.html:38
 msgid "Statistics"
 msgstr "통계"
 
+#: templates/admin/email_system/newsletter_list.html:61
 msgid "sent"
 msgstr "전송됨"
 
+#: templates/admin/email_system/newsletter_list.html:73
+#: templates/admin/email_system/template_list.html:287
+#: templates/email_system/admin/account_card.html:98
 msgid "Edit"
 msgstr "편집"
 
+#: templates/admin/email_system/newsletter_list.html:76
+#: templates/admin/email_system/template_preview.html:147
 msgid "Send"
 msgstr "전송"
 
+#: templates/admin/email_system/newsletter_list.html:79
 msgid "Duplicate"
 msgstr "복제"
 
+#: templates/admin/email_system/newsletter_list.html:82
+#: templates/admin/email_system/template_list.html:309
+#: templates/email_system/admin/account_card.html:118
 msgid "Delete"
 msgstr "삭제"
 
+#: templates/admin/email_system/newsletter_list.html:93
 msgid "No newsletters yet"
 msgstr "아직 뉴스레터가 없습니다"
 
+#: templates/admin/email_system/newsletter_list.html:94
 msgid "Create your first newsletter to start engaging with your customers"
 msgstr "고객과 소통을 시작하려면 첫 번째 뉴스레터를 생성하세요."
 
+#: templates/admin/email_system/newsletter_send.html:4
+#: templates/admin/email_system/newsletter_send.html:29
+#: templates/admin/email_system/newsletter_send.html:156
+#: views/newsletter.py:243
 msgid "Send Newsletter"
 msgstr "뉴스레터 전송"
 
+#: templates/admin/email_system/newsletter_send.html:16
 msgid "Send newsletter to "
 msgstr "뉴스레터를 보내는 대상"
 
+#: templates/admin/email_system/newsletter_send.html:17
 msgid " recipients?"
 msgstr "수신자들에게?"
 
+#: templates/admin/email_system/newsletter_send.html:32
 msgid "Select recipients and send your newsletter"
 msgstr "수신자를 선택하고 뉴스레터를 발송하세요."
 
+#: templates/admin/email_system/newsletter_send.html:38
 msgid "Newsletter to Send:"
 msgstr "전송할 뉴스레터:"
 
+#: templates/admin/email_system/newsletter_send.html:52
 msgid "Recipients Selected"
 msgstr "선택된 수신자"
 
+#: templates/admin/email_system/newsletter_send.html:56
 msgid "Select Recipients"
 msgstr "수신자 선택"
 
+#: templates/admin/email_system/newsletter_send.html:60
 msgid "Customer Segments"
 msgstr "고객 세그먼트"
 
+#: templates/admin/email_system/newsletter_send.html:79
 msgid ""
 "No customer segments available. Newsletter will be sent to all customers."
 msgstr "고객 세그먼트가 없습니다. 뉴스레터는 모든 고객에게 발송됩니다."
 
+#: templates/admin/email_system/newsletter_send.html:85
 msgid "Customer Status"
 msgstr "고객 상태"
 
+#: templates/admin/email_system/newsletter_send.html:96
 msgid "All Customers"
 msgstr "모든 고객"
 
+#: templates/admin/email_system/newsletter_send.html:107
 msgid "Customers with Orders"
 msgstr "주문이 있는 고객"
 
+#: templates/admin/email_system/newsletter_send.html:118
 msgid "Customers without Orders"
 msgstr "주문이 없는 고객"
 
+#: templates/admin/email_system/newsletter_send.html:127
 msgid "Or Upload Custom List"
 msgstr "또는 사용자 정의 목록 업로드"
 
+#: templates/admin/email_system/newsletter_send.html:131
 msgid "CSV File"
 msgstr "CSV 파일"
 
+#: templates/admin/email_system/newsletter_send.html:140
 msgid ""
 "Upload a CSV file with custom recipient list. This will override segment "
 "filters."
-msgstr ""
-"사용자 정의 수신자 목록이 포함된 CSV 파일을 업로드하세요. 이는 세그먼트 필터"
-"를 덮어씁니다."
+msgstr "사용자 정의 수신자 목록이 포함된 CSV 파일을 업로드하세요. 이는 세그먼트 필터를 덮어씁니다."
 
+#: templates/admin/email_system/newsletter_send.html:144
 msgid "CSV Format:"
 msgstr "CSV 형식:"
 
+#: templates/admin/email_system/newsletter_send.html:145
 msgid "Required columns:"
 msgstr "필수 열:"
 
+#: templates/admin/email_system/newsletter_send.html:146
 msgid "Optional columns:"
 msgstr "선택적 열:"
 
+#: templates/admin/email_system/newsletter_send.html:147
 msgid "Example:"
 msgstr "예시:"
 
+#: templates/admin/email_system/newsletter_send.html:167
 msgid ""
 "Newsletters will be queued for sending and processed by the email system. "
 "You can monitor delivery status in the Email Outbox. Orders placed within 7 "
 "days of opening this newsletter will be attributed for ROI tracking."
 msgstr ""
-"뉴스레터는 발송 대기 목록에 추가되어 이메일 시스템에서 처리됩니다. 이메일 발"
-"송 상태는 이메일 발송함에서 모니터링할 수 있습니다. 이 뉴스레터를 열린 후 7"
-"일 이내에 주문한 주문은 ROI 추적에 기여됩니다."
+"뉴스레터는 발송 대기 목록에 추가되어 이메일 시스템에서 처리됩니다. 이메일 발송 상태는 이메일 발송함에서 모니터링할 수 있습니다. 이 "
+"뉴스레터를 열린 후 7일 이내에 주문한 주문은 ROI 추적에 기여됩니다."
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:64
 msgid "retries"
 msgstr "재시도"
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:71
 msgid "View"
 msgstr "보기"
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:84
 msgid "No emails found."
 msgstr "이메일을 찾을 수 없습니다."
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:86
 msgid "Try adjusting your filters or search terms."
 msgstr "필터 또는 검색어를 조정해 보세요."
 
+#: templates/admin/email_system/template_delete_confirm.html:4
+#: templates/admin/email_system/template_delete_confirm.html:19
 msgid "Confirm Template Deletion"
 msgstr "템플릿 삭제 확인"
 
+#: templates/admin/email_system/template_delete_confirm.html:21
 msgid "Are you sure you want to delete this template?"
 msgstr "이 템플릿을 삭제하시겠습니까?"
 
+#: templates/admin/email_system/template_delete_confirm.html:45
 msgid "Translations"
 msgstr "번역"
 
+#: templates/admin/email_system/template_delete_confirm.html:65
 msgid "This template can be safely deleted without affecting email sending."
-msgstr ""
-"이 템플릿은 이메일 발송에 영향을 주지 않고 안전하게 삭제할 수 있습니다."
+msgstr "이 템플릿은 이메일 발송에 영향을 주지 않고 안전하게 삭제할 수 있습니다."
 
+#: templates/admin/email_system/template_delete_confirm.html:79
+#: templates/admin/email_system/template_list.html:343
 msgid "Delete Template"
 msgstr "템플릿 삭제"
 
+#: templates/admin/email_system/template_delete_confirm.html:86
 msgid ""
 "Tip: Consider deactivating this template instead of deleting it to preserve "
 "it for future use."
-msgstr ""
-"팁: 향후 사용을 위해 이 템플릿을 삭제하는 대신 비활성화하는 것을 고려하세요."
+msgstr "팁: 향후 사용을 위해 이 템플릿을 삭제하는 대신 비활성화하는 것을 고려하세요."
 
+#: templates/admin/email_system/template_edit.html:4
 msgid "Edit Email Template"
 msgstr "이메일 템플릿 편집"
 
+#: templates/admin/email_system/template_edit.html:21
+#: templates/admin/email_system/translation_manager.html:27
 msgid "Back to Templates"
 msgstr "템플릿으로 돌아가기"
 
+#: templates/admin/email_system/template_edit.html:29
 msgid "Version"
 msgstr "버전"
 
+#: templates/admin/email_system/template_edit.html:34
 msgid "Editing"
 msgstr "편집"
 
+#: templates/admin/email_system/template_edit.html:36
 msgid "Translation"
 msgstr "번역"
 
+#: templates/admin/email_system/template_edit.html:38
 msgid "Base Template"
 msgstr "기본 템플릿"
 
+#: templates/admin/email_system/template_edit.html:47
 msgid ""
 "This is a system template (read-only). Clone it to create a customizable "
 "version."
-msgstr ""
-"이것은 시스템 템플릿(읽기 전용)입니다. 사용자 정의 버전을 생성하려면 이 템플"
-"릿을 복제하세요."
+msgstr "이것은 시스템 템플릿(읽기 전용)입니다. 사용자 정의 버전을 생성하려면 이 템플릿을 복제하세요."
 
+#: templates/admin/email_system/template_edit.html:53
 msgid "Refresh Preview"
 msgstr "미리보기 새로고침"
 
+#: templates/admin/email_system/template_edit.html:57
 msgid "Full Preview"
 msgstr "전체 미리보기"
 
+#: templates/admin/email_system/template_edit.html:62
 msgid "Save Template"
 msgstr "템플릿 저장"
 
+#: templates/admin/email_system/template_edit.html:69
 msgid "Clone to Edit"
 msgstr "편집을 위해 복제"
 
+#: templates/admin/email_system/template_edit.html:84
 msgid "Code Editor"
 msgstr "코드 편집기"
 
+#: templates/admin/email_system/template_edit.html:86
+#: templates/admin/email_system/template_edit.html:205
 msgid "Expand/Collapse"
 msgstr "확장/접기"
 
+#: templates/admin/email_system/template_edit.html:95
 msgid "MJML Template"
 msgstr "MJML 템플릿"
 
+#: templates/admin/email_system/template_edit.html:99
 msgid "Plain Text"
 msgstr "플레인 텍스트"
 
+#: templates/admin/email_system/template_edit.html:103
 msgid "Variables"
 msgstr "변수"
 
+#: templates/admin/email_system/template_edit.html:117
 msgid "Email subject line (can use variables like {{ order_number }})"
 msgstr "이메일 제목 줄(예: {{ order_number }}와 같은 변수를 사용할 수 있음)"
 
+#: templates/admin/email_system/template_edit.html:127
 msgid "MJML Code"
 msgstr "MJML 코드"
 
+#: templates/admin/email_system/template_edit.html:130
 msgid "Format Code"
 msgstr "코드 형식화"
 
+#: templates/admin/email_system/template_edit.html:133
 msgid "Validate MJML"
 msgstr "MJML 검증"
 
+#: templates/admin/email_system/template_edit.html:146
+#: templates/admin/email_system/template_preview.html:113
 msgid "Plain Text Version"
 msgstr "플레인 텍스트 버전"
 
+#: templates/admin/email_system/template_edit.html:157
 msgid "Available Variables"
 msgstr "사용 가능한 변수"
 
+#: templates/admin/email_system/template_edit.html:160
 msgid ""
 "Click a variable to copy it to your clipboard. Use these in your template "
 "with double curly braces:"
-msgstr ""
-"변수를 클릭하여 클립보드에 복사하세요. 이들을 템플릿에서 이중 곡선 괄호로 사"
-"용하세요:"
+msgstr "변수를 클릭하여 클립보드에 복사하세요. 이들을 템플릿에서 이중 곡선 괄호로 사용하세요:"
 
+#: templates/admin/email_system/template_edit.html:179
 msgid "Template Syntax Help"
 msgstr "템플릿 문법 도움말"
 
+#: templates/admin/email_system/template_edit.html:181
 msgid "Variables:"
 msgstr "변수:"
 
+#: templates/admin/email_system/template_edit.html:185
 msgid "Conditions:"
 msgstr "조건:"
 
+#: templates/admin/email_system/template_edit.html:189
 msgid "Loops:"
 msgstr "반복:"
 
+#: templates/admin/email_system/template_edit.html:203
 msgid "Live Preview"
 msgstr "실시간 미리보기"
 
+#: templates/admin/email_system/template_edit.html:212
 msgid "Desktop View"
 msgstr "데스크탑 뷰"
 
+#: templates/admin/email_system/template_edit.html:215
 msgid "Mobile View"
 msgstr "모바일 뷰"
 
+#: templates/admin/email_system/template_edit.html:223
 msgid "Loading preview..."
 msgstr "미리보기 로딩 중..."
 
+#: templates/admin/email_system/template_edit.html:229
 msgid "Template Preview"
 msgstr "템플릿 미리보기"
 
+#: templates/admin/email_system/template_edit.html:240
 msgid "Saved"
 msgstr "저장됨"
 
+#: templates/admin/email_system/template_list.html:4
+#: templates/admin/email_system/template_list.html:17
+#: templates/admin/email_system/translation_manager.html:47
+#: views/template_management.py:295
 msgid "Email Templates"
 msgstr "이메일 템플릿"
 
+#: templates/admin/email_system/template_list.html:20
 msgid ""
 "Manage email templates for your store. Clone system templates to customize "
 "them."
-msgstr ""
-"가게의 이메일 템플릿을 관리하세요. 시스템 템플릿을 복제하여 사용자 정의하세"
-"요."
+msgstr "가게의 이메일 템플릿을 관리하세요. 시스템 템플릿을 복제하여 사용자 정의하세요."
 
+#: templates/admin/email_system/template_list.html:30
 msgid "Total Templates"
 msgstr "총 템플릿"
 
+#: templates/admin/email_system/template_list.html:36
 msgid "System Templates"
 msgstr "시스템 템플릿"
 
+#: templates/admin/email_system/template_list.html:42
 msgid "Custom Templates"
 msgstr "사용자 정의 템플릿"
 
+#: templates/admin/email_system/template_list.html:48
 msgid "Active Templates"
 msgstr "활성 템플릿"
 
+#: templates/admin/email_system/template_list.html:58
 msgid "Quick Actions"
 msgstr "빠른 작업"
 
+#: templates/admin/email_system/template_list.html:65
+#: templates/admin/email_system/template_list.html:199
 msgid "Create Template"
 msgstr "템플릿 생성"
 
+#: templates/admin/email_system/template_list.html:66
 msgid "Create a new custom email template"
 msgstr "새로운 사용자 정의 이메일 템플릿을 생성하세요."
 
+#: templates/admin/email_system/template_list.html:68
 msgid "Create"
 msgstr "생성"
 
+#: templates/admin/email_system/template_list.html:88
 msgid "Search templates..."
 msgstr "템플릿 검색..."
 
+#: templates/admin/email_system/template_list.html:114
 msgid "All Templates"
 msgstr "모든 템플릿"
 
+#: templates/admin/email_system/template_list.html:116
+#: templates/admin/email_system/template_list.html:231
 msgid "System"
 msgstr "시스템"
 
+#: templates/admin/email_system/template_list.html:119
+#: templates/admin/email_system/template_list.html:235
 msgid "Custom"
 msgstr "사용자 정의"
 
+#: templates/admin/email_system/template_list.html:122
 msgid "Active Only"
 msgstr "활성만 보기"
 
+#: templates/admin/email_system/template_list.html:136
 msgid "Clear"
 msgstr "지우기"
 
+#: templates/admin/email_system/template_list.html:151
 msgid "Show All Admin Languages"
 msgstr "모든 관리자 언어 표시"
 
+#: templates/admin/email_system/template_list.html:163
 msgid "Show Inactive Templates"
 msgstr "비활성 템플릿 표시"
 
+#: templates/admin/email_system/template_list.html:177
 msgid "Recycle Bin"
 msgstr "휴지통"
 
+#: templates/admin/email_system/template_list.html:195
 msgid "No templates found"
 msgstr "템플릿을 찾을 수 없습니다."
 
+#: templates/admin/email_system/template_list.html:196
 msgid "Try adjusting your filters or create a new template."
 msgstr "필터를 조정하거나 새 템플릿을 생성해 보세요."
 
+#: templates/admin/email_system/template_list.html:265
 msgid "Restore from Recycle Bin"
 msgstr "휴지통에서 복원"
 
+#: templates/admin/email_system/template_list.html:267
 msgid "Restore"
 msgstr "복원"
 
+#: templates/admin/email_system/template_list.html:272
 msgid "Deleted"
 msgstr "삭제됨"
 
+#: templates/admin/email_system/template_list.html:272
+#: templates/email_system/admin/account_card.html:46
 msgid "ago"
 msgstr "전"
 
+#: templates/admin/email_system/template_list.html:274
 msgid "by"
 msgstr "by"
 
+#: templates/admin/email_system/template_list.html:293
 msgid "Clone"
 msgstr "복제"
 
+#: templates/admin/email_system/template_list.html:300
 msgid "Deactivate"
 msgstr "비활성화"
 
+#: templates/admin/email_system/template_list.html:300
 msgid "Activate"
 msgstr "활성화"
 
+#: templates/admin/email_system/template_list.html:329
 msgid "Confirm Deletion"
 msgstr "삭제 확인"
 
+#: templates/admin/email_system/template_preview.html:4
+#: templates/admin/email_system/template_preview.html:18
 msgid "Email Template Preview"
 msgstr "이메일 템플릿 미리보기"
 
+#: templates/admin/email_system/template_preview.html:35
+#: templates/admin/email_system/template_preview.html:159
 msgid "Edit Translation"
 msgstr "번역 편집"
 
+#: templates/admin/email_system/template_preview.html:41
+#: templates/admin/email_system/template_preview.html:130
+#: templates/admin/email_system/wizard/step5_test.html:6
 msgid "Send Test Email"
 msgstr "테스트 이메일 보내기"
 
+#: templates/admin/email_system/template_preview.html:45
 msgid "Refresh"
 msgstr "새로 고침"
 
+#: templates/admin/email_system/template_preview.html:64
 msgid "Translation Not Available"
 msgstr "번역 불가"
 
+#: templates/admin/email_system/template_preview.html:66
 #, python-format
 msgid ""
 "\n"
-"                No translation exists for this template yet. The "
-"%(lang_name)s (base) template will be used until a translation is created.\n"
+"                No translation exists for this template yet. The %(lang_name)s (base) template will be used until a translation is created.\n"
 "                "
 msgstr ""
 "\n"
-"                이 템플릿에 대한 번역이 아직 존재하지 않습니다. 번역이 생성"
-"될 때까지 %(lang_name)s (기본) 템플릿이 사용됩니다.\n"
+"                이 템플릿에 대한 번역이 아직 존재하지 않습니다. 번역이 생성될 때까지 %(lang_name)s (기본) 템플릿이 사용됩니다.\n"
 "                "
 
+#: templates/admin/email_system/template_preview.html:71
 msgid "Create Translation"
 msgstr "번역 생성"
 
+#: templates/admin/email_system/template_preview.html:83
 msgid "Viewing Translation:"
 msgstr "번역 보기:"
 
+#: templates/admin/email_system/template_preview.html:101
+#: templates/admin/email_system/template_preview.html:106
 msgid "HTML Preview"
 msgstr "HTML 미리보기"
 
+#: templates/admin/email_system/template_preview.html:134
 msgid "Recipient Email Address"
 msgstr "수신자 이메일 주소"
 
+#: templates/admin/email_system/template_preview.html:176
 msgid "Translated subject line"
 msgstr "번역된 제목"
 
+#: templates/admin/email_system/template_preview.html:184
 msgid "HTML Content"
 msgstr "HTML 내용"
 
+#: templates/admin/email_system/template_preview.html:187
+#: templates/admin/email_system/template_preview.html:201
 msgid "Copy from Base"
 msgstr "기본 템플릿에서 복사"
 
+#: templates/admin/email_system/template_preview.html:198
 msgid "Plain Text Content"
 msgstr "순수 텍스트 내용"
 
+#: templates/admin/email_system/template_preview.html:215
 msgid "Save Translation"
 msgstr "번역 저장"
 
+#: templates/admin/email_system/translation_manager.html:4
+#: templates/admin/email_system/translation_manager.html:18
+#: views/template_management.py:690
 msgid "Email Template Translations"
 msgstr "이메일 템플릿 번역"
 
+#: templates/admin/email_system/translation_manager.html:21
 msgid ""
-"Manage translations for email templates. Use AI translation to automatically "
-"translate templates into multiple languages."
-msgstr ""
-"이메일 템플릿의 번역을 관리하세요. AI 번역을 사용하여 템플릿을 여러 언어로 자"
-"동으로 번역할 수 있습니다."
+"Manage translations for email templates. Use AI translation to automatically"
+" translate templates into multiple languages."
+msgstr "이메일 템플릿의 번역을 관리하세요. AI 번역을 사용하여 템플릿을 여러 언어로 자동으로 번역할 수 있습니다."
 
+#: templates/admin/email_system/translation_manager.html:33
 msgid "Translate All Missing"
 msgstr "모든 누락된 항목 번역"
 
+#: templates/admin/email_system/translation_manager.html:56
 msgid "Languages"
 msgstr "언어"
 
+#: templates/admin/email_system/translation_manager.html:65
 msgid "Completed"
 msgstr "완료됨"
 
+#: templates/admin/email_system/translation_manager.html:74
 msgid "Missing"
 msgstr "누락됨"
 
+#: templates/admin/email_system/translation_manager.html:84
 msgid "Overall Translation Coverage"
 msgstr "전체 번역 범위"
 
+#: templates/admin/email_system/translation_manager.html:92
 msgid "of"
 msgstr "의"
 
+#: templates/admin/email_system/translation_manager.html:92
 msgid "translations complete"
 msgstr "번역 완료"
 
+#: templates/admin/email_system/translation_manager.html:101
 msgid "Translation Matrix"
 msgstr "번역 매트릭스"
 
+#: templates/admin/email_system/translation_manager.html:104
 msgid ""
 "Green cells indicate completed translations. Click 'Translate' to create AI "
 "translation jobs for missing languages."
-msgstr ""
-"초록색 셀은 완료된 번역을 나타냅니다. 누락된 언어에 대한 AI 번역 작업을 생성"
-"하려면 '번역'을 클릭하세요."
+msgstr "초록색 셀은 완료된 번역을 나타냅니다. 누락된 언어에 대한 AI 번역 작업을 생성하려면 '번역'을 클릭하세요."
 
+#: templates/admin/email_system/translation_manager.html:112
 msgid "Template"
 msgstr "템플릿"
 
+#: templates/admin/email_system/translation_manager.html:141
 msgid "Translation in progress"
 msgstr "번역 중"
 
+#: templates/admin/email_system/translation_manager.html:141
 msgid "Translation queued"
 msgstr "번역 대기 중"
 
+#: templates/admin/email_system/translation_manager.html:144
 msgid "AI translation in progress"
 msgstr "AI 번역 중"
 
+#: templates/admin/email_system/translation_manager.html:146
 msgid "Translating"
 msgstr "번역 중"
 
+#: templates/admin/email_system/translation_manager.html:155
 msgid "Translation outdated - base template modified"
 msgstr "번역이 오래되었습니다 - 기본 템플릿이 수정됨"
 
+#: templates/admin/email_system/translation_manager.html:155
 msgid "Translated"
 msgstr "번역됨"
 
+#: templates/admin/email_system/translation_manager.html:158
 msgid "Verified"
 msgstr "확인됨"
 
+#: templates/admin/email_system/translation_manager.html:162
 msgid "Base template has been modified"
 msgstr "기본 템플릿이 수정되었습니다"
 
+#: templates/admin/email_system/translation_manager.html:163
 msgid "Outdated"
 msgstr "구형"
 
+#: templates/admin/email_system/translation_manager.html:168
 msgid "Not translated"
 msgstr "번역되지 않음"
 
+#: templates/admin/email_system/translation_manager.html:183
+#: templates/admin/email_system/translation_manager.html:203
 msgid "Translate Template"
 msgstr "템플릿 번역"
 
+#: templates/admin/email_system/translation_manager.html:186
+#: templates/admin/email_system/translation_manager.html:230
 msgid "Translate"
 msgstr "번역"
 
+#: templates/admin/email_system/translation_manager.html:210
 msgid ""
 "Select languages to translate. Existing translations will be updated with "
 "the current template."
 msgstr "번역할 언어를 선택하세요. 기존 번역은 현재 템플릿으로 업데이트됩니다."
 
+#: templates/admin/email_system/translation_manager.html:221
 msgid ""
 "Translation jobs will be created and processed automatically by the AI "
 "translation service."
 msgstr "AI 번역 서비스에 의해 자동으로 번역 작업이 생성되고 처리됩니다."
 
+#: templates/admin/email_system/wizard/base.html:4
+#: templates/admin/email_system/wizard/base.html:17
 msgid "Email Provider Setup Wizard"
 msgstr "이메일 제공자 설정 마법사"
 
+#: templates/admin/email_system/wizard/base.html:18
 msgid "Follow these steps to connect your email provider"
 msgstr "이메일 제공업체를 연결하려면 다음 단계를 따르세요."
 
+#: templates/admin/email_system/wizard/base.html:27
 msgid "Select"
 msgstr "선택"
 
+#: templates/admin/email_system/wizard/base.html:36
+#: templates/email_system/providers/browse.html:268
+#: templates/email_system/providers/browse.html:273
 msgid "Configure"
 msgstr "설정"
 
+#: templates/admin/email_system/wizard/base.html:45
 msgid "Sender"
 msgstr "발신자"
 
+#: templates/admin/email_system/wizard/base.html:54
 msgid "DNS"
 msgstr "DNS"
 
+#: templates/admin/email_system/wizard/base.html:63
 msgid "Test"
 msgstr "테스트"
 
+#: templates/admin/email_system/wizard/base.html:70
 msgid "Complete"
 msgstr "완료"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:14
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:50
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:90
 msgid "Add MX Record"
 msgstr "MX 레코드 추가"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:15
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:51
 msgid "select"
 msgstr "선택"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:15
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:51
 msgid "type:"
 msgstr "타입:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:17
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:28
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:29
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:30
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:53
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:93
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:139
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:140
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:141
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:176
 msgid "Type:"
 msgstr "유형:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:18
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:28
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:29
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:30
 msgid "Name:"
 msgstr "이름:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:19
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:55
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:95
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:178
 msgid "Priority:"
 msgstr "우선순위:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:20
 msgid "Mail server:"
 msgstr "메일 서버:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:22
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:58
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:98
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:133
 msgid "This directs incoming email to your server"
 msgstr "이것은 수신 이메일을 서버로 전달합니다."
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:26
 msgid "and add each TXT record from Step 2 (Verify DNS Records) below:"
 msgstr "아래 단계 2(도메인 기록 확인)에서 각 TXT 기록을 추가하세요:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:28
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:29
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:30
 msgid "Content:"
 msgstr "내용:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:54
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:64
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:65
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:66
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:94
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:104
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:105
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:106
 msgid "Host:"
 msgstr "호스트:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:56
 msgid "Points to:"
 msgstr "지정:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:62
 msgid "record type. Copy values from Step 2 below:"
 msgstr "기록 유형. 아래 단계 2에서 값을 복사하세요:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:64
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:65
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:66
 msgid "TXT Value:"
 msgstr "TXT 값:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:96
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:104
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:105
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:106
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:131
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:139
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:140
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:141
 msgid "Value:"
 msgstr "값:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:102
 msgid "Copy values from Step 2 below:"
 msgstr "아래 단계 2에서 값을 복사하세요:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:126
 msgid "Create MX Record"
 msgstr "MX 레코드 생성"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:129
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:139
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:140
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:141
 msgid "Record name:"
 msgstr "레코드 이름:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:130
 msgid "Record type:"
 msgstr "레코드 유형:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:137
 msgid "and add. Copy values from Step 2 below:"
 msgstr "그리고 추가. 아래 단계 2에서 값을 복사하세요:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:174
 msgid "Add MX Record:"
 msgstr "MX 레코드 추가:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:177
 msgid "Name/Host:"
 msgstr "이름/호스트:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:179
 msgid "Value/Points to:"
 msgstr "값/지정된 위치:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:182
 msgid "Add TXT records with the values shown in Step 2 below"
 msgstr "단계 2 아래에 표시된 값을 사용하여 TXT 기록을 추가하세요."
 
+#: templates/admin/email_system/wizard/step1_select.html:6
 msgid "Select an Email Provider"
 msgstr "이메일 제공업체 선택"
 
+#: templates/admin/email_system/wizard/step1_select.html:7
 msgid "Choose the service you want to use for sending transactional emails."
 msgstr "트랜잭셔널 이메일을 보내기 위해 사용하고자 하는 서비스를 선택하세요."
 
+#: templates/admin/email_system/wizard/step1_select.html:46
 msgid "OAuth"
 msgstr "OAuth"
 
+#: templates/admin/email_system/wizard/step1_select.html:50
 msgid "API Key"
 msgstr "API 키"
 
+#: templates/admin/email_system/wizard/step1_select.html:56
+#: templates/email_system/providers/browse.html:213
 msgid "Attachments"
 msgstr "첨부파일"
 
+#: templates/admin/email_system/wizard/step1_select.html:68
+#: templates/email_system/providers/browse.html:223
 msgid "Webhooks"
 msgstr "웹훅"
 
+#: templates/admin/email_system/wizard/step1_select.html:74
 msgid "Batch Send"
 msgstr "배치 전송"
 
+#: templates/admin/email_system/wizard/step1_select.html:91
+#: templates/email_system/providers/browse.html:315
 msgid "No Providers Available"
 msgstr "사용 가능한 제공업체 없음"
 
+#: templates/admin/email_system/wizard/step1_select.html:92
 msgid "No email provider components are currently installed."
 msgstr "현재 이메일 제공업체 구성 요소가 설치되어 있지 않습니다."
 
+#: templates/admin/email_system/wizard/step1_select.html:93
 msgid ""
 "Please download and install email provider components from the component "
 "registry."
-msgstr ""
-"구성 요소 등록소에서 이메일 제공업체 구성 요소를 다운로드하고 설치하십시오."
+msgstr "구성 요소 등록소에서 이메일 제공업체 구성 요소를 다운로드하고 설치하십시오."
 
+#: templates/admin/email_system/wizard/step1_select.html:95
 msgid "Browse Components"
 msgstr "요소 둘러보기"
 
+#: templates/admin/email_system/wizard/step1_select.html:109
+#: templates/admin/email_system/wizard/step2_configure.html:145
+#: templates/admin/email_system/wizard/step3_sender.html:53
+#: templates/admin/email_system/wizard/step4_dns.html:177
 msgid "Next"
 msgstr "다음"
 
+#: templates/admin/email_system/wizard/step1_select.html:118
 msgid "Using built-in SMTP server (only provider available)"
 msgstr "내장된 SMTP 서버를 사용하고 있습니다(현재 유일한 제공업체)"
 
+#: templates/admin/email_system/wizard/step2_configure.html:6
 msgid "Configure Credentials"
 msgstr "자격 증명 설정"
 
+#: templates/admin/email_system/wizard/step2_configure.html:7
 msgid "Enter the credentials for"
 msgstr "의 자격 증명 입력"
 
+#: templates/admin/email_system/wizard/step2_configure.html:11
 msgid "Setup Instructions"
 msgstr "설치 지침"
 
+#: templates/admin/email_system/wizard/step2_configure.html:20
 msgid "Account Display Name"
 msgstr "계정 표시 이름"
 
+#: templates/admin/email_system/wizard/step2_configure.html:27
 msgid "A friendly name to identify this email account in your admin panel"
 msgstr "관리자 패널에서 이 이메일 계정을 식별할 수 있는 친절한 이름입니다."
 
+#: templates/admin/email_system/wizard/step2_configure.html:33
 msgid ""
 "This provider uses OAuth 2.0 authentication. Enter your OAuth credentials "
 "below to authorize the connection."
-msgstr ""
-"이 제공업체는 OAuth 2.0 인증을 사용합니다. 아래에 OAuth 자격 증명을 입력하여 "
-"연결을 승인하세요."
+msgstr "이 제공업체는 OAuth 2.0 인증을 사용합니다. 아래에 OAuth 자격 증명을 입력하여 연결을 승인하세요."
 
+#: templates/admin/email_system/wizard/step2_configure.html:37
+#: templates/email_system/oauth_setup.html:47
 msgid "Client ID"
 msgstr "클라이언트 ID"
 
+#: templates/admin/email_system/wizard/step2_configure.html:44
 msgid "OAuth 2.0 client ID from your provider console"
 msgstr "OAuth 2.0 클라이언트 ID를 제공자의 콘솔에서 확인하세요"
 
+#: templates/admin/email_system/wizard/step2_configure.html:48
+#: templates/email_system/oauth_setup.html:61
 msgid "Client Secret"
 msgstr "클라이언트 비밀"
 
+#: templates/admin/email_system/wizard/step2_configure.html:54
 msgid "OAuth 2.0 client secret from your provider console"
 msgstr "OAuth 2.0 클라이언트 시크릿을 제공자의 콘솔에서 확인하세요"
 
+#: templates/admin/email_system/wizard/step2_configure.html:59
 msgid "Provider Credentials"
 msgstr "공급업체 자격 증명"
 
+#: templates/admin/email_system/wizard/step2_configure.html:100
 msgid "Select..."
 msgstr "선택..."
 
+#: templates/admin/email_system/wizard/step2_configure.html:125
 msgid "Your credentials will be securely encrypted before being stored."
 msgstr "귀하의 자격 증명은 저장되기 전에 안전하게 암호화됩니다."
 
+#: templates/admin/email_system/wizard/step2_configure.html:131
 msgid "No additional credential configuration is needed for this provider."
 msgstr "이 제공업체에는 추가 자격 증명 구성이 필요하지 않습니다."
 
+#: templates/admin/email_system/wizard/step2_configure.html:142
+#: templates/admin/email_system/wizard/step3_sender.html:50
+#: templates/admin/email_system/wizard/step4_dns.html:167
+#: templates/admin/email_system/wizard/step5_test.html:48
 msgid "Back"
 msgstr "뒤로"
 
+#: templates/admin/email_system/wizard/step3_sender.html:6
 msgid "Configure Sender Details"
 msgstr "발신자 정보 설정"
 
+#: templates/admin/email_system/wizard/step3_sender.html:7
 msgid "These details will appear in all outgoing emails"
 msgstr "이 세부 정보는 모든 발신 이메일에 나타납니다"
 
+#: templates/admin/email_system/wizard/step3_sender.html:13
 msgid "From Email Address"
 msgstr "이메일 주소"
 
+#: templates/admin/email_system/wizard/step3_sender.html:20
 msgid "This address must be verified with your email provider"
 msgstr "이 주소는 이메일 제공업체에서 확인되어야 합니다"
 
+#: templates/admin/email_system/wizard/step3_sender.html:24
 msgid "From Name"
 msgstr "이름"
 
+#: templates/admin/email_system/wizard/step3_sender.html:31
 msgid "Appears as \\"
 msgstr "표시됨 "
 
+#: templates/admin/email_system/wizard/step3_sender.html:35
 msgid "Reply-To Email"
 msgstr "대답할 이메일"
 
+#: templates/admin/email_system/wizard/step3_sender.html:35
 msgid "optional"
 msgstr "선택 사항"
 
+#: templates/admin/email_system/wizard/step3_sender.html:41
 msgid ""
 "Customers will reply to this address. Leave blank to use the From Email."
-msgstr ""
-"고객은 이 주소로 답장을 보냅니다. From Email을 사용하려면 빈칸으로 두세요."
+msgstr "고객은 이 주소로 답장을 보냅니다. From Email을 사용하려면 빈칸으로 두세요."
 
+#: templates/admin/email_system/wizard/step4_dns.html:7
 msgid "Configure and validate DNS records for optimal email deliverability"
 msgstr "이메일 전달성을 최적화하기 위해 DNS 기록을 구성하고 검증하세요"
 
+#: templates/admin/email_system/wizard/step4_dns.html:11
 msgid "Sending Domain"
 msgstr "송신 도메인"
 
+#: templates/admin/email_system/wizard/step4_dns.html:18
 msgid "Domain for DNS Validation"
 msgstr "DNS 검증용 도메인"
 
+#: templates/admin/email_system/wizard/step4_dns.html:26
 msgid "Automatically extracted from"
 msgstr "에서 자동 추출됨"
 
+#: templates/admin/email_system/wizard/step4_dns.html:28
 msgid "(overridden)"
 msgstr "(상書き됨)"
 
+#: templates/admin/email_system/wizard/step4_dns.html:34
 msgid "Update & Re-validate"
 msgstr "업데이트 및 다시 검증"
 
+#: templates/admin/email_system/wizard/step4_dns.html:41
 msgid "Notice:"
 msgstr "공지:"
 
+#: templates/admin/email_system/wizard/step4_dns.html:42
 #, python-format
 msgid ""
 "\n"
-"            Your email domain (%(email_domain)s) differs from your shop "
-"domain (%(site_domain)s).\n"
-"            This is fine if intentional, but ensure DNS records are "
-"configured for %(email_domain)s.\n"
+"            Your email domain (%(email_domain)s) differs from your shop domain (%(site_domain)s).\n"
+"            This is fine if intentional, but ensure DNS records are configured for %(email_domain)s.\n"
 "            "
 msgstr ""
 "\n"
-"            이메일 도메인 (%(email_domain)s)이 쇼핑 도메인 (%(site_domain)s)"
-"과 다릅니다. 의도된 경우에만 문제가 없지만, %(email_domain)s에 대한 DNS 레코"
-"드가 구성되어 있는지 확인하십시오.\n"
+"            이메일 도메인 (%(email_domain)s)이 쇼핑 도메인 (%(site_domain)s)과 다릅니다. 의도된 경우에만 문제가 없지만, %(email_domain)s에 대한 DNS 레코드가 구성되어 있는지 확인하십시오.\n"
 "            "
 
+#: templates/admin/email_system/wizard/step4_dns.html:53
 msgid "DNS Validation Status"
 msgstr "DNS 검증 상태"
 
+#: templates/admin/email_system/wizard/step4_dns.html:125
 msgid "Add:"
 msgstr "추가:"
 
+#: templates/admin/email_system/wizard/step4_dns.html:137
 msgid "DNS Setup Instructions"
 msgstr "DNS 설정 지침"
 
+#: templates/admin/email_system/wizard/step4_dns.html:145
 msgid "No DNS Setup Instructions Available"
 msgstr "사용 가능한 DNS 설정 지침 없음"
 
+#: templates/admin/email_system/wizard/step4_dns.html:146
 msgid ""
-"The provider has not provided DNS configuration instructions. Please consult "
-"the provider's documentation for SPF, DKIM, and DMARC setup."
+"The provider has not provided DNS configuration instructions. Please consult"
+" the provider's documentation for SPF, DKIM, and DMARC setup."
 msgstr ""
-"제공업체는 DNS 구성 지침을 제공하지 않았습니다. SPF, DKIM 및 DMARC 설정을 위"
-"해 제공업체의 문서를 참조하세요."
+"제공업체는 DNS 구성 지침을 제공하지 않았습니다. SPF, DKIM 및 DMARC 설정을 위해 제공업체의 문서를 참조하세요."
 
+#: templates/admin/email_system/wizard/step4_dns.html:172
 msgid "Skip for Now"
 msgstr "지금은 건너뛰기"
 
+#: templates/admin/email_system/wizard/step5_test.html:7
 msgid "Verify your configuration by sending a test email"
 msgstr "테스트 이메일을 보내 구성이 올바르게 되었는지 확인하세요"
 
+#: templates/admin/email_system/wizard/step5_test.html:13
 msgid "Test Recipient Email"
 msgstr "테스트 수신자 이메일"
 
+#: templates/admin/email_system/wizard/step5_test.html:20
 msgid "Enter your email address to receive the test message"
 msgstr "테스트 메시지를 받을 이메일 주소를 입력하세요"
 
+#: templates/admin/email_system/wizard/step5_test.html:25
 msgid "What to expect"
 msgstr "예상되는 내용"
 
+#: templates/admin/email_system/wizard/step5_test.html:26
 msgid ""
 "A real test email will be sent to verify your configuration. You should "
 "receive it within a few minutes."
-msgstr ""
-"실제 테스트 이메일이 보내져 구성이 올바른지 확인합니다. 몇 분 이내에 이메일"
-"을 받을 수 있습니다."
+msgstr "실제 테스트 이메일이 보내져 구성이 올바른지 확인합니다. 몇 분 이내에 이메일을 받을 수 있습니다."
 
+#: templates/admin/email_system/wizard/step5_test.html:27
 msgid ""
 "Check your inbox (and spam folder). The test email will show your provider "
 "configuration details."
-msgstr ""
-"받은 편지함(스팸 폴더도 확인하세요)을 확인하세요. 테스트 이메일은 제공업체 구"
-"성 세부 정보를 표시합니다."
+msgstr "받은 편지함(스팸 폴더도 확인하세요)을 확인하세요. 테스트 이메일은 제공업체 구성 세부 정보를 표시합니다."
 
+#: templates/admin/email_system/wizard/step5_test.html:31
 msgid "Test Email Preview"
 msgstr "테스트 이메일 미리보기"
 
+#: templates/admin/email_system/wizard/step5_test.html:33
+#: templates/admin/email_system/wizard/step6_complete.html:21
 msgid "From:"
 msgstr "발신자:"
 
+#: templates/admin/email_system/wizard/step5_test.html:35
+#: templates/admin/email_system/wizard/step6_complete.html:27
 msgid "Reply-To:"
 msgstr "대답할 주소:"
 
+#: templates/admin/email_system/wizard/step5_test.html:37
 msgid "Subject:"
 msgstr "제목:"
 
+#: templates/admin/email_system/wizard/step5_test.html:37
 msgid "Test Email from"
 msgstr "에서 테스트 이메일"
 
+#: templates/admin/email_system/wizard/step5_test.html:38
 msgid "Body:"
 msgstr "내용:"
 
+#: templates/admin/email_system/wizard/step5_test.html:38
 msgid ""
 "This is a test email to verify your email provider configuration is working "
 "correctly."
-msgstr ""
-"이것은 이메일 제공업체 구성이 올바르게 작동하는지 확인하기 위한 테스트 이메일"
-"입니다."
+msgstr "이것은 이메일 제공업체 구성이 올바르게 작동하는지 확인하기 위한 테스트 이메일입니다."
 
+#: templates/admin/email_system/wizard/step5_test.html:51
 msgid "Send Test & Continue"
 msgstr "테스트 보내기 및 계속"
 
+#: templates/admin/email_system/wizard/step6_complete.html:8
 msgid "Setup Complete!"
 msgstr "설치 완료!"
 
+#: templates/admin/email_system/wizard/step6_complete.html:9
 msgid "Your email provider is ready to use"
 msgstr "이메일 제공업체는 사용 준비가 되었습니다"
 
+#: templates/admin/email_system/wizard/step6_complete.html:13
 msgid "Configuration Summary"
 msgstr "설정 요약"
 
+#: templates/admin/email_system/wizard/step6_complete.html:16
+#: templates/email_system/admin/account_card.html:38
 msgid "Provider:"
 msgstr "제공업체:"
 
+#: templates/admin/email_system/wizard/step6_complete.html:33
 msgid "Status:"
 msgstr "상태:"
 
+#: templates/admin/email_system/wizard/step6_complete.html:36
 msgid "Ready"
 msgstr "준비됨"
 
+#: templates/admin/email_system/wizard/step6_complete.html:48
 msgid "Make this my default email account"
 msgstr "이것을 기본 이메일 계정으로 설정하세요"
 
+#: templates/admin/email_system/wizard/step6_complete.html:50
 msgid ""
 "The default account will be used for all outgoing transactional emails "
 "unless specified otherwise"
 msgstr "기본 계정은 다른 지정이 없는 한 모든 발신 거래 이메일에 사용됩니다"
 
+#: templates/admin/email_system/wizard/step6_complete.html:55
 msgid "What's Next?"
 msgstr "다음으로 무엇을 해야 할까요?"
 
+#: templates/admin/email_system/wizard/step6_complete.html:58
 msgid "SMTP server is configured and ready to start"
 msgstr "SMTP 서버가 구성되어 시작 준비가 되었습니다"
 
+#: templates/admin/email_system/wizard/step6_complete.html:59
 msgid "DKIM keys have been automatically generated and encrypted"
 msgstr "DKIM 키가 자동으로 생성되고 암호화되었습니다"
 
+#: templates/admin/email_system/wizard/step6_complete.html:60
 msgid "Configure your DNS records (SPF, DKIM, DMARC) for best deliverability"
 msgstr "최적의 전달성을 위해 DNS 기록(SP, DKIM, DMARC)을 구성하세요"
 
+#: templates/admin/email_system/wizard/step6_complete.html:62
 msgid "Your email account is ready to send transactional emails"
 msgstr "이메일 계정은 거래 이메일을 보내기 위해 준비되었습니다"
 
+#: templates/admin/email_system/wizard/step6_complete.html:63
 msgid "Configure DNS records for better deliverability (if required)"
 msgstr "필요한 경우 DNS 기록을 구성하여 전달성을 향상시킵니다"
 
+#: templates/admin/email_system/wizard/step6_complete.html:65
 msgid "Customize email templates to match your brand"
 msgstr "브랜드와 일치하도록 이메일 템플릿을 맞춤설정하세요"
 
+#: templates/admin/email_system/wizard/step6_complete.html:66
 msgid "Send a real test email from the Email Accounts page"
 msgstr "이메일 계정 페이지에서 실제 테스트 이메일을 보내세요"
 
+#: templates/admin/email_system/wizard/step6_complete.html:75
 msgid "View All Accounts"
 msgstr "모든 계정 보기"
 
+#: templates/admin/email_system/wizard/step6_complete.html:78
 msgid "Finish Setup"
 msgstr "설치 완료"
 
+#: templates/email_system/admin/account_card.html:23
 msgid "Default Account"
 msgstr "기본 계정"
 
+#: templates/email_system/admin/account_card.html:46
 msgid "Last tested:"
 msgstr "마지막으로 테스트한 시간:"
 
+#: templates/email_system/admin/account_card.html:51
 msgid "Never tested"
 msgstr "테스트된 적 없음"
 
+#: templates/email_system/admin/account_card.html:103
+#: templates/email_system/admin/emailaccount_changelist.html:51
 msgid "Test Connection"
 msgstr "연결 테스트"
 
+#: templates/email_system/admin/account_card.html:109
 msgid "Disable"
 msgstr "비활성화"
 
+#: templates/email_system/admin/account_card.html:109
 msgid "Enable"
 msgstr "활성화"
 
+#: templates/email_system/admin/emailaccount_changelist.html:4
+#: templates/email_system/admin/emailaccount_changelist.html:18
+#: templates/email_system/oauth_setup.html:14
+#: templates/email_system/providers/browse.html:26
 msgid "Email Accounts"
 msgstr "이메일 계정"
 
+#: templates/email_system/admin/emailaccount_changelist.html:20
 msgid "Manage email provider integrations and SMTP configurations"
 msgstr "이메일 제공업체 통합 및 SMTP 구성 관리"
 
+#: templates/email_system/admin/emailaccount_changelist.html:22
+#: templates/email_system/admin/emailaccount_changelist.html:136
 #, python-format
 msgid "%(counter)s account"
 msgid_plural "%(counter)s accounts"
 msgstr[0] "%(counter)s 계정"
 msgstr[1] "%(counter)s 계정"
 
+#: templates/email_system/admin/emailaccount_changelist.html:24
 msgid "Default:"
 msgstr "기본:"
 
+#: templates/email_system/admin/emailaccount_changelist.html:29
+#: templates/email_system/providers/browse.html:27
 msgid "Browse Providers"
 msgstr "공급업체 보기"
 
+#: templates/email_system/admin/emailaccount_changelist.html:48
 msgid "Bulk Actions"
 msgstr "대량 작업"
 
+#: templates/email_system/admin/emailaccount_changelist.html:49
 msgid "Enable Selected"
 msgstr "선택한 항목 활성화"
 
+#: templates/email_system/admin/emailaccount_changelist.html:50
 msgid "Disable Selected"
 msgstr "선택한 항목 비활성화"
 
+#: templates/email_system/admin/emailaccount_changelist.html:52
 msgid "Delete Selected"
 msgstr "선택한 항목 삭제"
 
+#: templates/email_system/admin/emailaccount_changelist.html:54
 msgid "Apply"
 msgstr "적용"
 
+#: templates/email_system/admin/emailaccount_changelist.html:56
 msgid "selected"
 msgstr "선택됨"
 
+#: templates/email_system/admin/emailaccount_changelist.html:66
 msgid "All Connection Statuses"
 msgstr "모든 연결 상태"
 
+#: templates/email_system/admin/emailaccount_changelist.html:80
 msgid "All Active Status"
 msgstr "모든 활성 상태"
 
+#: templates/email_system/admin/emailaccount_changelist.html:92
 msgid "All Providers"
 msgstr "모든 공급업체"
 
+#: templates/email_system/admin/emailaccount_changelist.html:108
 msgid "Search accounts..."
 msgstr "계정 검색..."
 
+#: templates/email_system/admin/emailaccount_changelist.html:118
 msgid "Select All"
 msgstr "모두 선택"
 
+#: templates/email_system/admin/emailaccount_changelist.html:145
 msgid "No email accounts found"
 msgstr "이메일 계정을 찾을 수 없습니다"
 
+#: templates/email_system/admin/emailaccount_changelist.html:148
 msgid "Try adjusting your filters or search query."
 msgstr "필터를 조정하거나 검색 쿼리를 시도해 보세요."
 
+#: templates/email_system/admin/emailaccount_changelist.html:150
 msgid "Get started by connecting your first email provider."
 msgstr "첫 번째 이메일 제공업체를 연결하여 시작하세요."
 
+#: templates/email_system/admin/emailaccount_changelist.html:155
 msgid "Browse & Install Providers"
 msgstr "공급업체 검색 및 설치"
 
+#: templates/email_system/admin/emailaccount_changelist.html:166
 msgid "Loading..."
 msgstr "로딩 중..."
 
+#: templates/email_system/oauth_setup.html:4
 msgid "OAuth Setup"
 msgstr "OAuth 설정"
 
+#: templates/email_system/oauth_setup.html:13
+#: templates/email_system/providers/browse.html:25
 msgid "Home"
 msgstr "홈"
 
+#: templates/email_system/oauth_setup.html:15
 msgid "Connect"
 msgstr "연결"
 
+#: templates/email_system/oauth_setup.html:22
 #, python-format
 msgid "Connect %(provider_name)s"
 msgstr "%(provider_name)s 연결"
 
+#: templates/email_system/oauth_setup.html:25
 msgid "Before you begin:"
 msgstr "시작하기 전:"
 
+#: templates/email_system/oauth_setup.html:27
 msgid "You need to have a Google Cloud Console project with Gmail API enabled"
 msgstr "Gmail API가 활성화된 Google Cloud Console 프로젝트가 필요합니다"
 
+#: templates/email_system/oauth_setup.html:28
 msgid "You need OAuth 2.0 client credentials (Client ID and Client Secret)"
-msgstr ""
-"OAuth 2.0 클라이언트 자격 증명(Client ID 및 Client Secret)이 필요합니다"
+msgstr "OAuth 2.0 클라이언트 자격 증명(Client ID 및 Client Secret)이 필요합니다"
 
+#: templates/email_system/oauth_setup.html:29
 msgid ""
 "The redirect URI below must be added to your OAuth client's authorized "
 "redirect URIs"
-msgstr ""
-"아래의 리디렉션 URI는 OAuth 클라이언트의 승인된 리디렉션 URI에 추가해야 합니"
-"다"
+msgstr "아래의 리디렉션 URI는 OAuth 클라이언트의 승인된 리디렉션 URI에 추가해야 합니다"
 
+#: templates/email_system/oauth_setup.html:33
 msgid "1. Configure Your Redirect URI"
 msgstr "1. 리디렉션 URI 구성"
 
+#: templates/email_system/oauth_setup.html:34
 msgid ""
 "Add this redirect URI to your Google Cloud Console OAuth client "
 "configuration:"
-msgstr ""
-"이 리디렉션 URI를 Google Cloud Console OAuth 클라이언트 구성에 추가하세요:"
+msgstr "이 리디렉션 URI를 Google Cloud Console OAuth 클라이언트 구성에 추가하세요:"
 
+#: templates/email_system/oauth_setup.html:39
 msgid ""
 "Location: Google Cloud Console → APIs & Services → Credentials → Your OAuth "
 "Client → Authorized redirect URIs"
 msgstr ""
-"위치: Google Cloud Console → APIs & Services → Credentials → OAuth 클라이언"
-"트 → 승인된 리디렉션 URI"
+"위치: Google Cloud Console → APIs & Services → Credentials → OAuth 클라이언트 → 승인된"
+" 리디렉션 URI"
 
+#: templates/email_system/oauth_setup.html:42
 msgid "2. Enter Your OAuth Credentials"
 msgstr "2. OAuth 자격 증명 입력"
 
+#: templates/email_system/oauth_setup.html:56
 msgid "Your OAuth 2.0 client ID from Google Cloud Console"
 msgstr "Google Cloud Console에서의 OAuth 2.0 클라이언트 ID"
 
+#: templates/email_system/oauth_setup.html:67
 msgid "Enter your client secret"
 msgstr "귀하의 클라이언트 시크릿을 입력하세요"
 
+#: templates/email_system/oauth_setup.html:70
 msgid "Your OAuth 2.0 client secret from Google Cloud Console"
 msgstr "Google Cloud Console에서의 OAuth 2.0 클라이언트 시크릿"
 
+#: templates/email_system/oauth_setup.html:75
 msgid "What happens next?"
 msgstr "다음에 어떤 일이 발생합니까?"
 
+#: templates/email_system/oauth_setup.html:77
 msgid "You'll be redirected to Google to authorize access"
 msgstr "Google로 리디렉션되어 액세스를 승인하게 됩니다"
 
+#: templates/email_system/oauth_setup.html:78
 msgid "Sign in with the Gmail account you want to use for sending emails"
 msgstr "이메일을 보내려는 Gmail 계정으로 로그인하세요"
 
+#: templates/email_system/oauth_setup.html:79
 msgid "Review and approve the requested permissions (send email only)"
 msgstr "요청된 권한(이메일 전송만)을 검토하고 승인하세요"
 
+#: templates/email_system/oauth_setup.html:80
 msgid "You'll be redirected back and your account will be connected"
 msgstr "다시 리디렉션되어 계정이 연결됩니다"
 
+#: templates/email_system/oauth_setup.html:86
 msgid "Connect Gmail Account"
 msgstr "Gmail 계정 연결"
 
+#: templates/email_system/oauth_setup.html:96
 msgid "Need Help?"
 msgstr "도움이 필요하신가요?"
 
+#: templates/email_system/oauth_setup.html:97
 msgid ""
 "If you haven't set up your Google OAuth credentials yet, follow these steps:"
 msgstr "Google OAuth 자격 증명을 아직 설정하지 않은 경우 다음 단계를 따르세요:"
 
+#: templates/email_system/oauth_setup.html:100
 msgid "Create a Google Cloud Project"
 msgstr "Google Cloud 프로젝트 생성"
 
+#: templates/email_system/oauth_setup.html:101
 msgid "Visit"
 msgstr "방문"
 
+#: templates/email_system/oauth_setup.html:102
 msgid "and create a new project or select an existing one"
 msgstr "새로운 프로젝트를 생성하거나 기존 프로젝트를 선택하세요"
 
+#: templates/email_system/oauth_setup.html:105
 msgid "Enable Gmail API"
 msgstr "Gmail API 활성화"
 
+#: templates/email_system/oauth_setup.html:106
 msgid "Go to APIs & Services → Library, search for 'Gmail API', and enable it"
-msgstr ""
-"API & Services → Library로 이동하여 'Gmail API'를 검색하고 활성화하세요"
+msgstr "API & Services → Library로 이동하여 'Gmail API'를 검색하고 활성화하세요"
 
+#: templates/email_system/oauth_setup.html:109
 msgid "Configure OAuth Consent Screen"
 msgstr "OAuth 동의 화면 구성"
 
+#: templates/email_system/oauth_setup.html:110
 msgid ""
 "Go to APIs & Services → OAuth consent screen and configure your app details"
-msgstr ""
-"API & Services → OAuth 동의 화면으로 이동하여 앱 세부 정보를 구성하세요"
+msgstr "API & Services → OAuth 동의 화면으로 이동하여 앱 세부 정보를 구성하세요"
 
+#: templates/email_system/oauth_setup.html:113
 msgid "Create OAuth Credentials"
 msgstr "OAuth 자격 증명 생성"
 
+#: templates/email_system/oauth_setup.html:114
 msgid ""
 "Go to APIs & Services → Credentials → Create Credentials → OAuth client ID"
-msgstr ""
-"API & Services → Credentials → 자격 증명 생성 → OAuth 클라이언트 ID로 이동하"
-"세요"
+msgstr "API & Services → Credentials → 자격 증명 생성 → OAuth 클라이언트 ID로 이동하세요"
 
+#: templates/email_system/oauth_setup.html:115
 msgid "Select 'Web application' and add the redirect URI shown above"
 msgstr "'웹 애플리케이션'을 선택하고 위에 표시된 리디렉션 URI를 추가하세요"
 
+#: templates/email_system/oauth_setup.html:118
 msgid "Copy Credentials"
 msgstr "자격 증명 복사"
 
+#: templates/email_system/oauth_setup.html:119
 msgid "Copy the Client ID and Client Secret and paste them in the form above"
 msgstr "Client ID와 Client Secret을 복사하고 위의 양식에 붙여넣으세요"
 
+#: templates/email_system/oauth_setup.html:124
 msgid "View detailed setup guide →"
 msgstr "상세 설정 가이드 보기 →"
 
+#: templates/email_system/providers/browse.html:4
+#: templates/email_system/providers/browse.html:36
+#: views/provider_browse.py:338
 msgid "Browse Email Providers"
 msgstr "이메일 공급업체 검색"
 
+#: templates/email_system/providers/browse.html:38
 msgid ""
-"Choose an email provider to integrate with your store. Install new providers "
-"or configure existing ones."
-msgstr ""
-"가게와 통합할 이메일 제공업체를 선택하세요. 새 제공업체를 설치하거나 기존 제"
-"공업체를 구성할 수 있습니다."
+"Choose an email provider to integrate with your store. Install new providers"
+" or configure existing ones."
+msgstr "가게와 통합할 이메일 제공업체를 선택하세요. 새 제공업체를 설치하거나 기존 제공업체를 구성할 수 있습니다."
 
+#: templates/email_system/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "업데이트 서버 사용 불가"
 
+#: templates/email_system/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
-msgstr ""
-"업데이트 서버에 연결할 수 없습니다. 로컬에 설치된 공급업체만 표시합니다."
+msgstr "업데이트 서버에 연결할 수 없습니다. 로컬에 설치된 공급업체만 표시합니다."
 
+#: templates/email_system/providers/browse.html:57
 msgid "Email Provider Marketplace"
 msgstr "이메일 공급업체 마켓플레이스"
 
+#: templates/email_system/providers/browse.html:69
 msgid ""
 "Here you can discover and install email providers to send transactional "
 "emails, including order confirmations, shipping notifications, and customer "
 "communications."
 msgstr ""
-"주문 확인, 배송 알림 및 고객 커뮤니케이션을 포함한 거래 이메일을 보내는 이메"
-"일 제공업체를 여기에서 발견하고 설치할 수 있습니다."
+"주문 확인, 배송 알림 및 고객 커뮤니케이션을 포함한 거래 이메일을 보내는 이메일 제공업체를 여기에서 발견하고 설치할 수 있습니다."
 
+#: templates/email_system/providers/browse.html:76
 msgid "What you can do:"
 msgstr "할 수 있는 일:"
 
+#: templates/email_system/providers/browse.html:81
 msgid "Browse available email providers by features and capabilities"
 msgstr "기능과 능력에 따라 이용 가능한 이메일 제공업체를 둘러보세요"
 
+#: templates/email_system/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "한 번의 클릭으로 새 제공업체를 설치하세요"
 
+#: templates/email_system/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "설치된 제공업체를 최신 버전으로 업데이트하세요"
 
+#: templates/email_system/providers/browse.html:93
 msgid "Configure provider settings and credentials after installation"
 msgstr "설치 후 제공업체 설정 및 자격 증명을 구성하세요"
 
+#: templates/email_system/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "시작하기:"
 
+#: templates/email_system/providers/browse.html:104
 msgid "Browse providers below and select your email service"
 msgstr "아래에서 제공업체를 둘러보고 이메일 서비스를 선택하세요"
 
+#: templates/email_system/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "'설치'를 클릭하여 제공업체를 가게에 추가하세요"
 
+#: templates/email_system/providers/browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr "설치 마법사를 따라 API 자격 증명을 구성하세요"
 
+#: templates/email_system/providers/browse.html:107
 msgid "Test the provider by sending a test email"
 msgstr "테스트 이메일을 보내어 제공자를 테스트하세요"
 
+#: templates/email_system/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -3701,598 +5170,721 @@ msgstr[1] ""
 "                    Currently: %(counter)s provider available\n"
 "                "
 
+#: templates/email_system/providers/browse.html:134
 msgid "Update Available"
 msgstr "업데이트 가능"
 
+#: templates/email_system/providers/browse.html:160
 msgid "Installed"
 msgstr "설치됨"
 
+#: templates/email_system/providers/browse.html:175
 msgid "Available"
 msgstr "사용 가능"
 
+#: templates/email_system/providers/browse.html:198
 msgid "Transactional"
 msgstr "트랜잭셔널"
 
+#: templates/email_system/providers/browse.html:203
 msgid "Marketing"
 msgstr "마케팅"
 
+#: templates/email_system/providers/browse.html:208
 msgid "Templates"
 msgstr "템플릿"
 
+#: templates/email_system/providers/browse.html:218
 msgid "Analytics"
 msgstr "분석"
 
+#: templates/email_system/providers/browse.html:241
 msgid "Free"
 msgstr "무료"
 
+#: templates/email_system/providers/browse.html:261
 msgid "Update"
 msgstr "업데이트"
 
+#: templates/email_system/providers/browse.html:282
 msgid "Install"
 msgstr "설치"
 
+#: templates/email_system/providers/browse.html:292
 msgid "View Details"
 msgstr "상세 보기"
 
+#: templates/email_system/providers/browse.html:301
 msgid "Learn More"
 msgstr "더 알아보기"
 
+#: templates/email_system/providers/browse.html:316
 msgid ""
 "No email providers are currently available. Please check your update server "
 "connection or contact support."
-msgstr ""
-"현재 사용 가능한 이메일 제공자가 없습니다. 업데이트 서버 연결을 확인하거나 지"
-"원팀에 문의하세요."
+msgstr "현재 사용 가능한 이메일 제공자가 없습니다. 업데이트 서버 연결을 확인하거나 지원팀에 문의하세요."
 
+#: templates/email_system/providers/browse.html:325
 msgid "Installing provider..."
 msgstr "제공업체 설치 중..."
 
+#: views/builtin_dns.py:209
 msgid "Domain is required"
 msgstr "도메인은 필수입니다"
 
+#: views/newsletter.py:121
 msgid "Newsletter template created! Now customize the design."
 msgstr "뉴스레터 템플릿이 생성되었습니다! 이제 디자인을 맞춤화하세요."
 
+#: views/newsletter.py:128
 #, python-format
 msgid "Error creating newsletter: %(error)s"
 msgstr "뉴스레터 생성 오류: %(error)s"
 
+#: views/newsletter.py:183
 msgid "No recipients selected. Please select at least one recipient."
 msgstr "수신자가 선택되지 않았습니다. 최소한 한 명의 수신자를 선택하세요."
 
-msgid "No active email account found. Please configure an email account first."
+#: views/newsletter.py:197
+msgid ""
+"No active email account found. Please configure an email account first."
 msgstr "활성 이메일 계정이 발견되지 않았습니다. 먼저 이메일 계정을 구성하세요."
 
+#: views/newsletter.py:222
 #, python-format
 msgid "Newsletter queued successfully! %(count)s emails will be sent."
-msgstr ""
-"뉴스레터가 성공적으로 대기열에 추가되었습니다! %(count)s개의 이메일이 전송될 "
-"예정입니다."
+msgstr "뉴스레터가 성공적으로 대기열에 추가되었습니다! %(count)s개의 이메일이 전송될 예정입니다."
 
+#: views/newsletter.py:231
 #, python-format
 msgid "Error sending newsletter: %(error)s"
 msgstr "뉴스레터 전송 오류: %(error)s"
 
+#: views/newsletter.py:264
 msgid "Newsletter duplicated successfully!"
 msgstr "뉴스레터가 성공적으로 복제되었습니다!"
 
+#: views/newsletter.py:279
 msgid "Newsletter deleted successfully!"
 msgstr "뉴스레터가 성공적으로 삭제되었습니다!"
 
+#: views/newsletter.py:350
 #, python-format
 msgid "Error parsing CSV file: %(error)s"
 msgstr "CSV 파일 파싱 오류: %(error)s"
 
+#: views/oauth.py:55
 #, python-format
 msgid "Email provider '%(provider)s' not found"
 msgstr "이메일 제공업체 '%(provider)s'를 찾을 수 없습니다"
 
+#: views/oauth.py:63
 #, python-format
 msgid "Provider '%(provider)s' does not support OAuth"
 msgstr "제공업체 '%(provider)s'는 OAuth를 지원하지 않습니다"
 
+#: views/oauth.py:73
 msgid "Client ID and Client Secret are required"
 msgstr "클라이언트 ID 및 클라이언트 비밀이 필요합니다"
 
-msgid "OAuth credentials not found. Please start the connection process again."
+#: views/oauth.py:87
+msgid ""
+"OAuth credentials not found. Please start the connection process again."
 msgstr "OAuth 자격 증명을 찾을 수 없습니다. 연결 프로세스를 다시 시작하세요."
 
+#: views/oauth.py:119
 #, python-format
 msgid "Failed to initiate OAuth flow: %(error)s"
 msgstr "OAuth 흐름을 시작하지 못했습니다: %(error)s"
 
+#: views/oauth.py:152
 msgid "Invalid OAuth state. Please try again."
 msgstr "잘못된 OAuth 상태입니다. 다시 시도해 주세요."
 
+#: views/oauth.py:161
 #, python-format
 msgid "OAuth authorization failed: %(error)s"
 msgstr "OAuth 인증 실패: %(error)s"
 
+#: views/oauth.py:168
 msgid "Authorization code not received"
 msgstr "인증 코드를 수신하지 못했습니다"
 
+#: views/oauth.py:179
 msgid "OAuth session expired. Please start the connection process again."
 msgstr "OAuth 세션이 만료되었습니다. 연결 프로세스를 다시 시작하세요."
 
+#: views/oauth.py:185
 msgid "Provider mismatch. Please try again."
 msgstr "공급업체 불일치. 다시 시도해 주세요."
 
+#: views/oauth.py:191 views/oauth.py:396
 msgid "Email provider not found"
 msgstr "이메일 공급업체를 찾을 수 없습니다"
 
+#: views/oauth.py:228
 #, python-format
 msgid ""
 "Successfully authorized %(provider)s. Continue configuring your account."
 msgstr "%(provider)s가 성공적으로 인증되었습니다. 계정 설정을 계속합니다."
 
+#: views/oauth.py:242
 #, python-format
 msgid "Connection test failed: %(error)s"
 msgstr "연결 테스트 실패: %(error)s"
 
+#: views/oauth.py:259
 msgid "Email provider component not found in registry"
 msgstr "이메일 제공자 구성 요소를 등록에서 찾을 수 없습니다"
 
+#: views/oauth.py:287
 #, python-format
 msgid "Successfully connected %(provider)s account: %(email)s"
 msgstr "%(provider)s 계정이 성공적으로 연결되었습니다: %(email)s"
 
+#: views/oauth.py:303
 #, python-format
 msgid ""
 "OAuth validation failed: %(error)s. Please check your Client ID and Client "
 "Secret and try again."
-msgstr ""
-"OAuth 검증 실패: %(error)s. Client ID와 Client Secret을 확인하고 다시 시도해 "
-"주세요."
+msgstr "OAuth 검증 실패: %(error)s. Client ID와 Client Secret을 확인하고 다시 시도해 주세요."
 
+#: views/oauth.py:310
 #, python-format
 msgid "OAuth validation failed: %(error)s"
 msgstr "OAuth 검증 실패: %(error)s"
 
+#: views/oauth.py:322
 #, python-format
 msgid ""
 "OAuth authorization failed: %(error)s. Please check your Client ID and "
 "Client Secret and try again."
-msgstr ""
-"OAuth 인증 실패: %(error)s. Client ID와 Client Secret을 확인하고 다시 시도해 "
-"주세요."
+msgstr "OAuth 인증 실패: %(error)s. Client ID와 Client Secret을 확인하고 다시 시도해 주세요."
 
+#: views/oauth.py:329
 #, python-format
 msgid "Failed to complete OAuth flow: %(error)s"
 msgstr "OAuth 흐름 완료 실패: %(error)s"
 
+#: views/oauth.py:418
 #, python-format
 msgid "Failed to load OAuth setup form: %(error)s"
 msgstr "OAuth 설정 폼 로드 실패: %(error)s"
 
+#: views/provider_browse.py:378
 msgid "Provider is already installed. Configure it now."
 msgstr "제공자가 이미 설치되어 있습니다. 지금 구성하세요."
 
+#: views/provider_browse.py:407 views/provider_browse.py:546
 msgid "Provider not found on update server."
 msgstr "업데이트 서버에서 제공자를 찾을 수 없습니다."
 
+#: views/provider_browse.py:417
 msgid "Could not determine provider version."
 msgstr "공급업체 버전을 확인할 수 없습니다."
 
+#: views/provider_browse.py:441
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "제공업체 다운로드 실패: %(error)s"
 
+#: views/provider_browse.py:454
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "제공업체 설치 실패: %(error)s"
 
+#: views/provider_browse.py:487
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "제공업체 \"%(name)s\"가 성공적으로 설치되었습니다! 지금 설정해 보세요."
 
+#: views/provider_browse.py:516
 msgid "Provider not installed."
 msgstr "공급업체가 설치되지 않았습니다."
 
+#: views/provider_browse.py:532
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "업데이트 서버에 연결할 수 없습니다: %(error)s"
 
+#: views/provider_browse.py:555
 msgid "Could not determine latest version."
 msgstr "최신 버전을 확인할 수 없습니다."
 
+#: views/provider_browse.py:564
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "제공업체 \"%(name)s\"는 이미 최신 상태입니다 (v%(version)s)."
 
+#: views/provider_browse.py:579
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "업데이트 다운로드 실패: %(error)s"
 
+#: views/provider_browse.py:591
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "업데이트 설치 실패: %(error)s"
 
+#: views/provider_browse.py:628
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "제공업체 \"%(name)s\"가 v%(version)s로 성공적으로 업데이트되었습니다!"
 
+#: views/template_management.py:100
 #, python-format
 msgid ""
 "No translation available for %(language)s. Showing base template in "
 "%(base_lang)s."
-msgstr ""
-"%(language)s에 대한 번역이 없습니다. %(base_lang)s의 기본 템플릿을 표시하고 "
-"있습니다."
+msgstr "%(language)s에 대한 번역이 없습니다. %(base_lang)s의 기본 템플릿을 표시하고 있습니다."
 
-msgid "System templates cannot be edited. Clone this template to customize it."
+#: views/template_management.py:108
+msgid ""
+"System templates cannot be edited. Clone this template to customize it."
 msgstr "시스템 템플릿은 편집할 수 없습니다. 이 템플릿을 복제하여 맞춤화하세요."
 
+#: views/template_management.py:129
 #, python-format
 msgid "MJML validation failed: %(error)s"
 msgstr "MJML 검증 실패: %(error)s"
 
+#: views/template_management.py:154
 #, python-format
 msgid "Translation saved successfully (%(language)s)"
 msgstr "번역이 성공적으로 저장되었습니다 (%(language)s)"
 
+#: views/template_management.py:162
 msgid "Translation saved successfully!"
 msgstr "번역이 성공적으로 저장되었습니다!"
 
+#: views/template_management.py:178
 #, python-format
 msgid "Template saved successfully! Version %(version)s"
 msgstr "템플릿이 성공적으로 저장되었습니다! 버전 %(version)s"
 
+#: views/template_management.py:187
 msgid "Template saved successfully!"
 msgstr "템플릿이 성공적으로 저장되었습니다!"
 
+#: views/template_management.py:202
 #, python-format
 msgid "Error saving template: %(error)s"
 msgstr "템플릿 저장 오류: %(error)s"
 
+#: views/template_management.py:210
 #, python-format
 msgid "Edit Template: %(name)s"
 msgstr "템플릿 편집: %(name)s"
 
+#: views/template_management.py:341
 #, python-format
 msgid ""
 "Successfully cloned template \"%(name)s\" (%(language)s). You can now "
 "customize it."
-msgstr ""
-"\"%(name)s\" 템플릿이 성공적으로 복제되었습니다 (%(language)s). 이제 이를 커"
-"스터마이징할 수 있습니다."
+msgstr "\"%(name)s\" 템플릿이 성공적으로 복제되었습니다 (%(language)s). 이제 이를 커스터마이징할 수 있습니다."
 
+#: views/template_management.py:354
 #, python-format
 msgid ""
-"Note: No translation was available for %(language)s. The clone uses the base "
-"template in %(base_lang)s."
+"Note: No translation was available for %(language)s. The clone uses the base"
+" template in %(base_lang)s."
 msgstr ""
-"참고: %(language)s 언어에 대한 번역이 존재하지 않습니다. 복제본은 "
-"%(base_lang)s의 기본 템플릿을 사용합니다."
+"참고: %(language)s 언어에 대한 번역이 존재하지 않습니다. 복제본은 %(base_lang)s의 기본 템플릿을 사용합니다."
 
+#: views/template_management.py:366
 #, python-format
 msgid "Error cloning template: %(error)s"
 msgstr "템플릿 복제 오류: %(error)s"
 
+#: views/template_management.py:393
 msgid ""
 "System templates cannot be deleted. Clone this template to customize it."
 msgstr "시스템 템플릿은 삭제할 수 없습니다. 이 템플릿을 복제하여 맞춤화하세요."
 
+#: views/template_management.py:426
 #, python-format
 msgid ""
-"Cannot delete the only active template for \"%(type)s\" (%(lang)s). Activate "
-"another template first, or deactivate this template instead of deleting it."
+"Cannot delete the only active template for \"%(type)s\" (%(lang)s). Activate"
+" another template first, or deactivate this template instead of deleting it."
 msgstr ""
-"\"%(type)s\" (%(lang)s)에 대한 유일한 활성 템플릿을 삭제할 수 없습니다. 먼저 "
-"다른 템플릿을 활성화하거나, 이 템플릿을 삭제하기보다는 비활성화하세요."
+"\"%(type)s\" (%(lang)s)에 대한 유일한 활성 템플릿을 삭제할 수 없습니다. 먼저 다른 템플릿을 활성화하거나, 이 "
+"템플릿을 삭제하기보다는 비활성화하세요."
 
+#: views/template_management.py:440
 msgid ""
 "Deleting this active template will cause emails to fall back to the system "
 "template."
 msgstr "이 활성 템플릿을 삭제하면 이메일이 시스템 템플릿으로 돌아갑니다."
 
+#: views/template_management.py:455
 #, python-format
 msgid ""
 "Warning: %(count)s email(s) are queued using this template type. They will "
 "use the fallback template when sent."
 msgstr ""
-"경고: 이 템플릿 유형을 사용하여 %(count)s개의 이메일이 대기 중입니다. 이메일"
-"을 전송할 때 대체 템플릿이 사용됩니다."
+"경고: 이 템플릿 유형을 사용하여 %(count)s개의 이메일이 대기 중입니다. 이메일을 전송할 때 대체 템플릿이 사용됩니다."
 
+#: views/template_management.py:469
 #, python-format
 msgid "This template has %(count)s translation(s) that will also be deleted."
-msgstr ""
-"이 템플릿은 %(count)s개의 번역을 포함하고 있으며, 이 번역도 함께 삭제됩니다."
+msgstr "이 템플릿은 %(count)s개의 번역을 포함하고 있으며, 이 번역도 함께 삭제됩니다."
 
+#: views/template_management.py:487
 #, python-format
 msgid ""
 "This template type was used to send %(count)s email(s) in the last 30 days."
-msgstr ""
-"이 템플릿 유형은 지난 30일 동안 %(count)s개의 이메일을 전송하는 데 사용되었습"
-"니다."
+msgstr "이 템플릿 유형은 지난 30일 동안 %(count)s개의 이메일을 전송하는 데 사용되었습니다."
 
+#: views/template_management.py:523
 #, python-format
 msgid "Template \"%(name)s\" moved to recycle bin"
 msgstr "템플릿 \"%(name)s\"이 재활용 바구니로 이동되었습니다"
 
+#: views/template_management.py:548
 #, python-format
 msgid "Template \"%(name)s\" restored successfully"
 msgstr "템플릿 \"%(name)s\"이 성공적으로 복원되었습니다"
 
+#: views/template_management.py:574
 #, python-format
 msgid "Template \"%(name)s\" deactivated"
 msgstr "템플릿 \"%(name)s\"이 비활성화되었습니다"
 
+#: views/template_management.py:581
 #, python-format
 msgid "Template \"%(name)s\" activated"
 msgstr "템플릿 \"%(name)s\"이 활성화되었습니다"
 
+#: views/template_management.py:586
 #, python-format
 msgid "Error updating template: %(error)s"
 msgstr "템플릿 업데이트 오류: %(error)s"
 
+#: views/template_management.py:724
 msgid "Please select at least one language"
 msgstr "최소한 한 개의 언어를 선택하세요"
 
+#: views/template_management.py:740
 #, python-format
 msgid ""
 "Translation jobs created for %(count)s language(s). Translations will be "
 "processed automatically."
-msgstr ""
-"%(count)s 개의 언어에 대한 번역 작업이 생성되었습니다. 번역은 자동으로 처리됩"
-"니다."
+msgstr "%(count)s 개의 언어에 대한 번역 작업이 생성되었습니다. 번역은 자동으로 처리됩니다."
 
+#: views/template_management.py:747
 #, python-format
 msgid "Translation failed: %(message)s"
 msgstr "번역 실패: %(message)s"
 
+#: views/template_management.py:753
 #, python-format
 msgid "Error creating translation jobs: %(error)s"
 msgstr "번역 작업 생성 오류: %(error)s"
 
+#: views/template_management.py:797
 #, python-format
 msgid ""
 "Created %(count)s translation jobs. Translations will be processed "
 "automatically."
 msgstr "%(count)s 개의 번역 작업이 생성되었습니다. 번역은 자동으로 처리됩니다."
 
+#: views/template_preview.py:361
 msgid "Email address is required"
 msgstr "이메일 주소는 필수입니다"
 
+#: views/template_preview.py:386
 #, python-format
 msgid "Test email sent successfully to %(email)s"
 msgstr "%(email)s로 테스트 이메일이 성공적으로 전송되었습니다."
 
+#: views/template_preview.py:497
 msgid "Subject line is required"
 msgstr "제목은 필수입니다"
 
+#: views/template_preview.py:502
 msgid "HTML content is required"
 msgstr "HTML 내용은 필수입니다"
 
+#: views/template_preview.py:518
 msgid "created"
 msgstr "생성됨"
 
+#: views/template_preview.py:518
 msgid "updated"
 msgstr "업데이트됨"
 
+#: views/template_preview.py:527
 #, python-format
 msgid "Translation %(action)s successfully"
 msgstr "번역 %(action)s 성공"
 
+#: views/wizard.py:120
 msgid "✓ Started built-in SMTP server"
 msgstr "✓ 내장 SMTP 서버 시작"
 
+#: views/wizard.py:132
 msgid "SMTP server started but may need more time to initialize"
 msgstr "SMTP 서버가 시작되었지만 초기화에 더 많은 시간이 필요할 수 있습니다"
 
+#: views/wizard.py:162
 msgid "✓ Started built-in SMTP server in background"
 msgstr "✓ 백그라운드에서 내장 SMTP 서버를 시작했습니다"
 
+#: views/wizard.py:174
 msgid ""
-"SMTP server started but may need more time. If test fails, wait a moment and "
-"try again."
-msgstr ""
-"SMTP 서버가 시작되었지만 더 많은 시간이 필요할 수 있습니다. 테스트가 실패하"
-"면 잠시 기다린 후 다시 시도해 보세요."
+"SMTP server started but may need more time. If test fails, wait a moment and"
+" try again."
+msgstr "SMTP 서버가 시작되었지만 더 많은 시간이 필요할 수 있습니다. 테스트가 실패하면 잠시 기다린 후 다시 시도해 보세요."
 
+#: views/wizard.py:183
 msgid ""
-"Could not start SMTP server automatically. You may need to start it manually."
-msgstr ""
-"SMTP 서버를 자동으로 시작할 수 없습니다. 수동으로 시작해야 할 수 있습니다."
+"Could not start SMTP server automatically. You may need to start it "
+"manually."
+msgstr "SMTP 서버를 자동으로 시작할 수 없습니다. 수동으로 시작해야 할 수 있습니다."
 
+#: views/wizard.py:299 views/wizard.py:443
 msgid "Built-in SMTP is not available for Spwig-hosted installations."
-msgstr ""
+msgstr "Spwig 호스팅 설치에는 내장 SMTP가 사용할 수 없습니다."
 
+#: views/wizard.py:321 views/wizard.py:469
 msgid "Spwig Email is only available for Spwig-hosted installations."
-msgstr ""
+msgstr "Spwig 이메일은 Spwig 호스팅 설치에만 사용할 수 있습니다."
 
+#: views/wizard.py:421
 msgid "Email Provider Setup - Select Provider"
 msgstr "이메일 제공자 설정 - 제공자 선택"
 
+#: views/wizard.py:434
 msgid "Please select a provider."
 msgstr "제공업체를 선택해 주세요."
 
+#: views/wizard.py:491 views/wizard.py:757
 msgid "Invalid provider selected."
 msgstr "잘못된 제공업체가 선택되었습니다."
 
+#: views/wizard.py:522 views/wizard.py:671
 msgid "Please select a provider first."
 msgstr "먼저 제공업체를 선택해 주세요."
 
+#: views/wizard.py:569
 msgid "Email Provider Setup - Configure Built-in SMTP"
 msgstr "이메일 제공자 설정 - 내장 SMTP 구성"
 
+#: views/wizard.py:607 views/wizard.py:701 views/wizard.py:1131
 msgid "Could not load provider configuration."
 msgstr "공급업체 설정을 불러올 수 없습니다."
 
+#: views/wizard.py:631
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "공급업체 로드 오류: %(error)s"
 
+#: views/wizard.py:649
 msgid "Email Provider Setup - Configure Credentials"
 msgstr "이메일 제공자 설정 - 자격 증명 구성"
 
+#: views/wizard.py:714
 msgid "Client ID and Client Secret are required for OAuth authentication."
 msgstr "OAuth 인증을 위해 클라이언트 ID 및 클라이언트 비밀이 필요합니다."
 
+#: views/wizard.py:762
 #, python-format
 msgid "Error processing credentials: %(error)s"
 msgstr "자격 증명 처리 오류: %(error)s"
 
+#: views/wizard.py:781
 msgid "Please start from step 1."
 msgstr "1단계부터 시작해 주세요."
 
+#: views/wizard.py:785
 msgid "Email Provider Setup - Sender Details"
 msgstr "이메일 제공자 설정 - 발신자 세부 정보"
 
+#: views/wizard.py:800
 msgid "From email is required."
 msgstr "발신 이메일은 필수입니다."
 
+#: views/wizard.py:804
 msgid "From name is required."
 msgstr "발신자 이름은 필수입니다."
 
+#: views/wizard.py:816
 msgid "Invalid email address format."
 msgstr "잘못된 이메일 주소 형식입니다."
 
+#: views/wizard.py:855
 #, python-format
 msgid "✓ DKIM keys generated automatically for %(domain)s"
 msgstr "✓ %(domain)s에 대해 DKIM 키가 자동으로 생성되었습니다."
 
+#: views/wizard.py:866
 msgid ""
 "Could not auto-generate DKIM keys. You may need to generate them manually "
 "later."
-msgstr ""
-"DKIM 키를 자동으로 생성할 수 없습니다. 나중에 수동으로 생성해야 할 수 있습니"
-"다."
+msgstr "DKIM 키를 자동으로 생성할 수 없습니다. 나중에 수동으로 생성해야 할 수 있습니다."
 
+#: views/wizard.py:904
 msgid "Please complete sender configuration first."
 msgstr "먼저 발신자 설정을 완료해 주세요."
 
+#: views/wizard.py:929 views/wizard.py:1101 views/wizard.py:1218
 msgid "Email Provider Setup - DNS Configuration"
 msgstr "이메일 제공자 설정 - DNS 구성"
 
-#, python-format
-msgid "Error loading DNS configuration: %(error)s"
-msgstr "DNS 구성 로드 오류: %(error)s"
+#: views/wizard.py:1243
+msgid ""
+"Spwig could not load the DNS configuration for this email provider. Please "
+"try again, or contact support if the problem continues."
+msgstr ""
+"Spwig는 이 이메일 제공업체의 DNS 구성 정보를 로드할 수 없습니다. 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
 
+#: views/wizard.py:1262
 msgid "Domain updated. DNS validation refreshed."
 msgstr "도메인 업데이트. DNS 검증이 새로고침되었습니다."
 
+#: views/wizard.py:1264
 msgid "Invalid domain format."
 msgstr "잘못된 도메인 형식입니다."
 
+#: views/wizard.py:1277
 msgid ""
 "DNS validation incomplete. Your emails may be flagged as spam until DNS "
 "records are properly configured."
-msgstr ""
-"DNS 검증이 완료되지 않았습니다. DNS 기록이 올바르게 구성될 때까지 이메일이 스"
-"팸으로 표시될 수 있습니다."
+msgstr "DNS 검증이 완료되지 않았습니다. DNS 기록이 올바르게 구성될 때까지 이메일이 스팸으로 표시될 수 있습니다."
 
+#: views/wizard.py:1303
 msgid "Please complete previous steps first."
 msgstr "먼저 이전 단계를 완료해 주세요."
 
+#: views/wizard.py:1307
 msgid "Email Provider Setup - Test Send"
 msgstr "이메일 제공자 설정 - 테스트 전송"
 
+#: views/wizard.py:1320
 msgid "Please enter a test recipient email."
 msgstr "테스트 수신자 이메일을 입력해 주세요."
 
+#: views/wizard.py:1330
 msgid "Please enter a valid email address."
 msgstr "유효한 이메일 주소를 입력해 주세요."
 
+#: views/wizard.py:1346
 msgid "Built-in SMTP server could not be started. Please check the logs."
 msgstr "내장 SMTP 서버를 시작할 수 없습니다. 로그를 확인해 주세요."
 
+#: views/wizard.py:1363
 msgid "⚠ Postfix mail server is not running. Email delivery will fail."
-msgstr ""
-"⚠ Postfix 메일 서버가 실행되고 있지 않습니다. 이메일 전송에 실패할 수 있습니"
-"다."
+msgstr "⚠ Postfix 메일 서버가 실행되고 있지 않습니다. 이메일 전송에 실패할 수 있습니다."
 
+#: views/wizard.py:1368
 msgid ""
-"For Docker: Check container logs. For development: Run \"sudo postfix start\""
-msgstr ""
-"Docker: 컨테이너 로그를 확인하세요. 개발: \"sudo postfix start\"을 실행하세요"
+"For Docker: Check container logs. For development: Run \"sudo postfix "
+"start\""
+msgstr "Docker: 컨테이너 로그를 확인하세요. 개발: \"sudo postfix start\"을 실행하세요"
 
+#: views/wizard.py:1389
 #, python-format
 msgid "Provider not found: %(key)s"
 msgstr "공급업체를 찾을 수 없습니다: %(key)s"
 
+#: views/wizard.py:1410
 msgid ""
 "Spwig Email credentials have not been provisioned yet. Please contact "
 "support."
-msgstr ""
+msgstr "Spwig 이메일 자격 증명이 아직 제공되지 않았습니다. 지원팀에 문의하십시오."
 
-#, fuzzy
-#| msgid "Could not load provider configuration."
+#: views/wizard.py:1416
 msgid "Could not load email credentials."
-msgstr "공급업체 설정을 불러올 수 없습니다."
+msgstr "이메일 자격 증명을 로드할 수 없습니다."
 
+#: views/wizard.py:1422
 msgid "OAuth authentication not completed. Please go back to Step 2."
 msgstr "OAuth 인증이 완료되지 않았습니다. 단계 2로 돌아가주세요."
 
+#: views/wizard.py:1430
 #, python-format
 msgid "Test Email from %(name)s"
 msgstr "%(name)s로부터 테스트 이메일"
 
+#: views/wizard.py:1535
 #, python-format
 msgid "✓ Test email sent successfully to %(email)s! Check your inbox."
-msgstr ""
-"✓ %(email)s로 테스트 이메일이 성공적으로 전송되었습니다! 수신함을 확인해보세"
-"요."
+msgstr "✓ %(email)s로 테스트 이메일이 성공적으로 전송되었습니다! 수신함을 확인해보세요."
 
+#: views/wizard.py:1541
 #, python-format
 msgid "Message ID: %(id)s"
 msgstr "메시지 ID: %(id)s"
 
+#: views/wizard.py:1552
 msgid "Unknown error"
 msgstr "알 수 없는 오류"
 
+#: views/wizard.py:1554
 #, python-format
 msgid "Failed to send test email: %(error)s"
 msgstr "테스트 이메일 전송 실패: %(error)s"
 
+#: views/wizard.py:1560
 #, python-format
 msgid "Error sending test email: %(error)s"
 msgstr "테스트 이메일 전송 오류: %(error)s"
 
+#: views/wizard.py:1578
 msgid "Please complete all previous steps."
 msgstr "이전 단계를 모두 완료해 주세요."
 
+#: views/wizard.py:1617
 msgid "Email Provider Setup - Complete"
 msgstr "이메일 공급업체 설정 - 완료"
 
+#: views/wizard.py:1628
 #, python-format
 msgid "Error: %(error)s"
 msgstr "오류: %(error)s"
 
+#: views/wizard.py:1738 views/wizard.py:1752 views/wizard.py:1769
+#: views/wizard.py:1780 views/wizard.py:1794
 #, python-format
 msgid "✓ Email account \"%(name)s\" created successfully!"
 msgstr "✓ 이메일 계정 \"%(name)s\"이 성공적으로 생성되었습니다!"
 
+#: views/wizard.py:1743
 msgid "✓ Built-in SMTP server is running and ready to send emails."
 msgstr "✓ 내장 SMTP 서버가 실행되고 있으며 이메일 전송이 준비되었습니다."
 
+#: views/wizard.py:1758
 msgid ""
 "The SMTP server should already be running. If emails don't send, please "
 "contact your system administrator."
-msgstr ""
-"SMTP 서버는 이미 실행되어야 합니다. 이메일이 전송되지 않는 경우 시스템 관리자"
-"에게 문의하세요."
+msgstr "SMTP 서버는 이미 실행되어야 합니다. 이메일이 전송되지 않는 경우 시스템 관리자에게 문의하세요."
 
+#: views/wizard.py:1773
 msgid "Your email system is configured and ready to use."
 msgstr "이메일 시스템이 구성되어 사용 준비가 되었습니다."
 
+#: views/wizard.py:1786
 msgid ""
 "Email system configured. If you experience issues sending emails, please "
 "contact your system administrator."
-msgstr ""
-"이메일 시스템이 구성되었습니다. 이메일 전송에 문제가 발생하는 경우 시스템 관"
-"리자에게 문의하세요."
+msgstr "이메일 시스템이 구성되었습니다. 이메일 전송에 문제가 발생하는 경우 시스템 관리자에게 문의하세요."
 
+#: views/wizard.py:1800
 msgid ""
-"Your email account is configured. The SMTP server should be running from the "
-"previous setup steps."
-msgstr ""
-"이메일 계정이 구성되었습니다. 이전 설정 단계에서 SMTP 서버가 실행되어야 합니"
-"다."
+"Your email account is configured. The SMTP server should be running from the"
+" previous setup steps."
+msgstr "이메일 계정이 구성되었습니다. 이전 설정 단계에서 SMTP 서버가 실행되어야 합니다."
 
+#: views/wizard.py:1806
 #, python-format
 msgid "Email account \"%(name)s\" created successfully!"
 msgstr "이메일 계정 \"%(name)s\"이 성공적으로 생성되었습니다!"
 
+#: views/wizard.py:1818
 #, python-format
 msgid "Error creating account: %(error)s"
 msgstr "계정 생성 오류: %(error)s"
+
+#, python-format
+#~ msgid "Error loading DNS configuration: %(error)s"
+#~ msgstr "DNS 구성 로드 오류: %(error)s"

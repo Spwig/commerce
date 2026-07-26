@@ -208,6 +208,7 @@ class CommunicationPreferenceFactory(factory.django.DjangoModelFactory):
         marketing_opted_in = factory.Trait(...)  # Email marketing + verified
         sms_opted_in = factory.Trait(...)  # SMS enabled + verified
 
+
 class BlogSubscriberFactory(factory.django.DjangoModelFactory):
     class Params:
         weekly = factory.Trait(...)  # Weekly digest

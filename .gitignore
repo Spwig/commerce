@@ -151,3 +151,8 @@ media
 # fleet deploy tooling, OSS sync scripts, one-off migration scripts,
 # adhoc test/utility scripts, licence generation.
 internal_tools/
+
+# Half-written embeddings fixture. generate_embeddings_fixture.py writes here
+# and os.replace()s into position, so a .partial only exists mid-run or after
+# an interrupted one — it must never be committed or mistaken for the fixture.
+core/fixtures/*.partial

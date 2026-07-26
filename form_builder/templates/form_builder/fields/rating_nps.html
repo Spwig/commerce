@@ -13,9 +13,14 @@
         <span class="nps-label-high">{{ high_label }}</span>
     </div>
 
+    {% comment %}
+    Bands use forloop.counter0, not forloop.counter: the scale starts at 0, so
+    the 1-based counter shifted every band down one and contradicted the legend
+    below — 6 rendered passive while the legend called 0-6 detractors.
+    {% endcomment %}
     <div class="nps-scale">
         {% for i in "0123456789" %}
-        <div class="nps-option {% if forloop.counter <= 6 %}detractor{% elif forloop.counter <= 8 %}passive{% else %}promoter{% endif %}">
+        <div class="nps-option {% if forloop.counter0 <= 6 %}detractor{% elif forloop.counter0 <= 8 %}passive{% else %}promoter{% endif %}">
             <input type="radio"
                    id="field-{{ field.field_name }}-{{ i }}"
                    name="{{ field.field_name }}"
@@ -45,4 +50,5 @@
     </div>
 </div>
 
-{% endwith %}{% endwith %}{% endwith %}
+{# one endwith per with opened on lines 3-6 #}
+{% endwith %}{% endwith %}{% endwith %}{% endwith %}

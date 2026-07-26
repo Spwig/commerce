@@ -53,6 +53,7 @@ class PaymentOrchestrationService:
         cancel_url: str,
         saved_method_id: str | None = None,
         metadata: dict[str, Any] | None = None,
+        expected_total=None,
     ) -> tuple[bool, PaymentIntent | None, str]:
         """
         Create order and payment intent for checkout.
@@ -75,7 +76,6 @@ class PaymentOrchestrationService:
         Returns:
             Tuple of (success, PaymentIntent or None, message)
         """
-        from cart.services.checkout_service import CheckoutService
 
         # Validate provider is active and connected
         if not provider_account.is_active:
@@ -83,6 +83,15 @@ class PaymentOrchestrationService:
 
         if provider_account.connection_status != "connected":
             return False, None, _("Payment provider is not properly configured")
+
+        # Serialize concurrent intent creation for this session. Without a lock,
+        # a double-clicked "Pay" (two requests in flight at once) can both find
+        # no existing intent and each create a separate order + provider intent
+        # — double charge, double stock allocation. Locking the session row here
+        # (inside the surrounding atomic block) makes the second request wait for
+        # the first to commit, after which the existing-intent reuse below kicks
+        # in. Re-fetch to actually take the row lock.
+        checkout_session = CheckoutSession.objects.select_for_update().get(pk=checkout_session.pk)
 
         # Check for existing unpaid order for this session
         existing_intent = (
@@ -94,11 +103,29 @@ class PaymentOrchestrationService:
             .first()
         )
 
-        if existing_intent and existing_intent.order:
+        checkout_session.recalculate_totals()
+        if (
+            existing_intent
+            and existing_intent.order
+            and existing_intent.order.total_amount == checkout_session.total_amount
+        ):
             # Reuse existing order, create new intent
             order = existing_intent.order
             logger.info(f"Reusing existing order {order.order_number} for retry payment")
         else:
+            if existing_intent and existing_intent.order:
+                # Cart changed since the order was raised (voucher applied,
+                # item edited): a reused order would record the OLD total
+                # while the gateway charges the new amount_due. Retire the
+                # stale intent and raise a fresh order at current figures.
+                logger.info(
+                    "Not reusing order %s: total %s != session %s",
+                    existing_intent.order.order_number,
+                    existing_intent.order.total_amount,
+                    checkout_session.total_amount,
+                )
+                existing_intent.status = "canceled"
+                existing_intent.save(update_fields=["status", "updated_at"])
             # Store metadata (including email) in checkout session for order creation
             if metadata:
                 if not checkout_session.metadata:
@@ -106,11 +133,33 @@ class PaymentOrchestrationService:
                 checkout_session.metadata.update(metadata)
                 checkout_session.save(update_fields=["metadata"])
 
-            # Create new order with payment_status='unpaid'
-            # Pass clear_session=False to keep session active
-            success, message, order = CheckoutService.create_order(
-                checkout_session, clear_session=False
+            # Create new order with payment_status='unpaid'.
+            # Pass clear_session=False to keep session active. Routed through the
+            # placement facade so the drift gate re-prices the cart before an
+            # order — and then a payment intent for its amount_due — is created
+            # against it. Warn-only by default (SPWIG_ENFORCE_QUOTE_DRIFT), so
+            # behaviour is identical to create_order until the flag is flipped.
+            from commerce import OrderPlacementService, PlacementRequest
+
+            # Carry the sales channel through so an agent-placed order is
+            # attributed as such on the Order. The channel is stamped into the
+            # session metadata by the caller (the agentic checkout binding); the
+            # web/POS paths leave it unset and default to "web".
+            session_channel = (checkout_session.metadata or {}).get("channel", "web")
+
+            # expected_total, when the caller asserts one (an agent attesting a
+            # price), is enforced by the drift gate INSIDE the locked placement —
+            # it raises QuoteDriftError if the fresh price differs, closing the
+            # TOCTOU window between an agent's price check and this charge.
+            result = OrderPlacementService.place_order(
+                PlacementRequest(
+                    session=checkout_session,
+                    clear_session=False,
+                    channel=session_channel,
+                    expected_total=expected_total,
+                )
             )
+            success, message, order = result.ok, result.message, result.order
 
             if not success:
                 return False, None, message
@@ -126,9 +175,19 @@ class PaymentOrchestrationService:
             logger.error(f"Failed to get provider instance: {e}")
             return False, None, _("Failed to initialize payment provider")
 
-        # Calculate amount
-        amount = checkout_session.total_amount.amount
-        currency = str(checkout_session.total_amount.currency)
+        # Charge the gateway what is still OWED, not the gross order total.
+        #
+        # Gift card and wallet tenders are money the customer has already
+        # handed over, held against this session. Asking the gateway for
+        # `total_amount` bills them a second time for the tendered portion and
+        # the card is then debited too on settlement: a 100 order with a 40
+        # gift card charged 100 to the card on file AND took 40 off the gift
+        # card — 140 collected for a 100 order.
+        #
+        # `amount_due` is total minus authorized tenders, floored at zero.
+        amount_due = checkout_session.amount_due
+        amount = amount_due.amount
+        currency = str(amount_due.currency)
 
         # Build metadata
         intent_metadata = {
@@ -138,9 +197,27 @@ class PaymentOrchestrationService:
             **(metadata or {}),
         }
 
-        # Get customer email and name
+        # Get customer email and name.
+        # Digital-only orders have no shipping (and usually no billing)
+        # address, so fall back to the account holder's name — providers
+        # validating like real PSPs (e.g. the Test Gateway in strict mode)
+        # reject nameless customers, and real PSPs (Stripe/PayPal) want a
+        # billing name for fraud screening and dispute evidence.
         customer_email = order.email or (order.user.email if order.user else None)
         customer_name = order.shipping_name or order.billing_name or ""
+        if not customer_name and order.metadata:
+            customer_name = (order.metadata.get("contact_name") or "").strip()
+        if not customer_name and order.user:
+            customer_name = (order.user.get_full_name() or "").strip()
+
+        # Physical deliveries need a carrier-reachable phone number; pass it
+        # so providers validating like real PSPs (Test Gateway strict mode)
+        # can enforce it. order.phone mirrors the shipping phone at order
+        # creation, with billing phone as fallback.
+        customer_phone = order.shipping_phone or order.phone or order.billing_phone or ""
+        order_requires_shipping = bool(
+            checkout_session.cart.requires_shipping if checkout_session.cart_id else False
+        )
 
         # Get customer country from shipping/billing address
         from core.utils import get_default_country
@@ -160,6 +237,9 @@ class PaymentOrchestrationService:
         # Call provider to create payment intent
         try:
             if hasattr(provider, "create_payment_intent_for_checkout"):
+                # customer_phone / order_requires_shipping land in **kwargs
+                # for providers that don't consume them (all bundled
+                # providers accept **kwargs).
                 provider_response = provider.create_payment_intent_for_checkout(
                     amount=amount,
                     currency=currency,
@@ -168,6 +248,8 @@ class PaymentOrchestrationService:
                     customer_email=customer_email,
                     customer_name=customer_name,
                     customer_country=customer_country,
+                    customer_phone=customer_phone,
+                    order_requires_shipping=order_requires_shipping,
                     payment_method_types=payment_method_types,
                     metadata=intent_metadata,
                 )
@@ -232,7 +314,10 @@ class PaymentOrchestrationService:
             client_secret=provider_response.get("client_secret") or "",
             checkout_url=provider_response.get("checkout_url") or "",
             status=status,
-            amount=checkout_session.total_amount,
+            # The amount actually requested from the provider — see above.
+            # Order.amount_paid reconciles against settlement rows, so this
+            # must be the net figure or the gateway leg reads as an overpay.
+            amount=amount_due,
             requires_action=provider_response.get("requires_action", False),
             action_type=action.get("type") or "",
             action_url=action.get("url") or "",
@@ -367,6 +452,14 @@ class PaymentOrchestrationService:
         if intent.is_terminal():
             return False, _("Payment intent is already in terminal state")
 
+        # Never charge the gateway for an order that is already paid. Two intents
+        # can point at one order (the create-time reuse path mints a fresh intent
+        # against an existing order); without this, confirming the second one
+        # after the first settled would charge the card a second time.
+        order = intent.order
+        if order is not None and order.payment_status == "paid":
+            return False, _("Order already paid")
+
         try:
             provider = intent.provider_account.get_provider_instance()
 
@@ -381,8 +474,10 @@ class PaymentOrchestrationService:
                 # Update intent status
                 new_status = response.get("status", "processing")
                 if new_status == "succeeded":
-                    intent.mark_succeeded(response)
-                    # Handle payment success
+                    # handle_payment_success marks the intent succeeded AND
+                    # settles the order/transaction/session atomically.
+                    # Marking it succeeded here first would trip its
+                    # already-processed guard and leave the order unpaid.
                     PaymentOrchestrationService.handle_payment_success(intent, response)
                 elif response.get("requires_action"):
                     intent.mark_requires_action(
@@ -393,7 +488,15 @@ class PaymentOrchestrationService:
                 else:
                     intent.status = new_status
                     intent.provider_response = PaymentIntent._json_safe(response)
-                    intent.save(update_fields=["status", "provider_response", "updated_at"])
+                    update_fields = ["status", "provider_response", "updated_at"]
+                    # Soft declines (e.g. requires_payment_method after a card
+                    # decline) carry the reason so the UI can show it while
+                    # the intent stays retryable
+                    if response.get("error_code"):
+                        intent.error_code = response.get("error_code", "")
+                        intent.error_message = response.get("message", "")
+                        update_fields += ["error_code", "error_message"]
+                    intent.save(update_fields=update_fields)
 
                 return True, _("Payment confirmed")
             else:
@@ -441,6 +544,29 @@ class PaymentOrchestrationService:
                 return True, _("Payment already processed")
 
             order = intent.order
+
+            # Lock the ORDER row too: two distinct intents settling the same order
+            # concurrently only serialise if they contend on the order, not just
+            # their own (distinct) intent rows.
+            if order is not None:
+                from orders.models import Order
+
+                order = Order.objects.select_for_update().get(pk=order.pk)
+                intent.order = order
+
+            # Order-level idempotency: if a DIFFERENT intent already settled this
+            # order, record this intent as succeeded but do NOT settle again (no
+            # second PaymentTransaction, no amount_paid overwrite). The per-intent
+            # guard above cannot catch this — the two intents are distinct rows.
+            if order is not None and order.payment_status == "paid":
+                logger.warning(
+                    "Intent %s confirmed against already-paid order %s; "
+                    "recording success without re-settling.",
+                    intent.id,
+                    order.id,
+                )
+                intent.mark_succeeded(provider_data)
+                return True, _("Order already paid")
 
             # Update intent status
             intent.mark_succeeded(provider_data)
@@ -529,7 +655,6 @@ class PaymentOrchestrationService:
 
                     cart.items.all().delete()
                     cart.applied_vouchers.all().delete()
-                    cart.applied_gift_cards.all().delete()
                 intent.checkout_session.delete()
 
         # --- Outside atomic: post-payment side effects ---

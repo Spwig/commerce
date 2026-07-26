@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <LL@li.org>\n"
@@ -18,78 +18,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:328
 msgid "Action and method IDs required"
 msgstr "कार्रवाई और विधि IDs आवश्यक हैं"
 
+#: admin.py:336
 msgid "{} method(s) enabled"
 msgstr "विधि(ओं) को योग्य करें {}"
 
+#: admin.py:340
 msgid "{} method(s) disabled"
 msgstr "विधि(ओं) को अयोग्य करें {}"
 
+#: admin.py:344
 msgid "{} method(s) deleted"
 msgstr "{} विधि(ओं) को हटा दिया गया"
 
+#: admin.py:347
 msgid "Unknown action"
 msgstr "अज्ञात कार्रवाई"
 
+#: admin.py:353 mini_cart_api.py:469
 msgid "Invalid request data"
 msgstr "अमान्य अनुरोध डेटा"
 
+#: admin.py:358
 msgid "An unexpected error occurred. Please try again."
 msgstr "अप्रत्याशित त्रुटि हुई। कृपया पुनः प्रयास करें।"
 
+#: admin.py:376 templates/admin/cart/method_wizard/step1_basics.html:21
+#: templates/admin/cart/shippingmethod/change_form.html:118
+#: templates/admin/cart/taxrate/change_form.html:111
 msgid "Basic Information"
 msgstr "आधारभूत जानकारी"
 
+#: admin.py:383 templates/admin/cart/taxrate/change_form.html:141
 msgid "Geographic Scope"
 msgstr "भूगोलीय क्षेत्र"
 
+#: admin.py:387 templates/admin/cart/taxrate/change_form.html:163
 msgid "Application Rules"
 msgstr "अनुप्रयोग के नियम"
 
+#: admin.py:391 templates/admin/cart/taxrate/change_form.html:193
 msgid "Product Exemptions"
 msgstr "उत्पाद छूट"
 
+#: admin.py:397 templates/admin/cart/shippingmethod/change_form.html:107
+#: templates/admin/cart/shippingmethod/change_form.html:321
+#: templates/admin/cart/taxrate/change_form.html:100
+#: templates/admin/cart/taxrate/change_form.html:216
 msgid "Timestamps"
 msgstr "टाइमस्टैंप"
 
+#: admin.py:409
 msgid "Rate %"
 msgstr "दर %"
 
+#: apps.py:8 models.py:735 models.py:1599
 msgid "Cart"
 msgstr "कार्ट"
 
+#: forms.py:34
 msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
 msgstr "प्रतिशत के रूप में दर्ज करें (उदाहरण के लिए, 8.25 के लिए 8.25%)"
 
+#: forms.py:35
 msgid "Rate (%)"
 msgstr "दर (%)"
 
+#: method_wizard.py:106
 msgid "Please complete Step 1 first"
 msgstr "कृपया पहले स्टेप 1 पूरा करें"
 
+#: method_wizard.py:146 method_wizard.py:193 method_wizard.py:266
 msgid "Please complete the wizard steps"
 msgstr "कृपया मैजिक स्टेप पूरा करें"
 
+#: method_wizard.py:354
 #, python-format
 msgid "Shipping method \"%(name)s\" created successfully!"
 msgstr "शिपिंग मेथड \"%(name)s\" सफलतापूर्वक बनाया गया!"
 
+#: method_wizard.py:360
 msgid "Please configure rate tables for this method."
 msgstr "कृपया इस विधि के लिए दर तालिम की सेटिंग करें।"
 
+#: method_wizard.py:368
 #, python-format
 msgid "Failed to create shipping method: %(error)s"
 msgstr "शिपिंग मेथड बनाने में विफल रहा: %(error)s"
 
+#: mini_cart_api.py:281
 msgid "Get mini-cart data"
 msgstr "मिनी कार्ट डेटा प्राप्त करें"
 
+#: mini_cart_api.py:282
 msgid ""
 "\n"
-"    Retrieve the current cart contents formatted for the mini-cart "
-"component.\n"
+"    Retrieve the current cart contents formatted for the mini-cart component.\n"
 "\n"
 "    Works for both authenticated users (cart linked to user account) and\n"
 "    anonymous users (cart linked to session). Cart data includes all items\n"
@@ -104,21 +131,18 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    मिनी-कार्ट कम्पोनेंट के लिए वर्तमान कार्ट के अंतर्गत डेटा प्राप्त करें। यह अधिकृत "
-"उपयोगकर्ताओं (कार्ट उपयोगकर्ता खाता से जुड़ा हुआ है) और अज्ञात उपयोगकर्ताओं (कार्ट सेशन से "
-"जुड़ा हुआ है) दोनों के लिए काम करता है। कार्ट डेटा सभी आइटमों के साथ शामिल होता है, जिसमें "
-"उत्पाद विवरण, मात्रा, मूल्य और चित्र शामिल होता है। **उपयोग के मामले:** - पृष्ठ पर "
-"मिनी-कार्ट के लोड के लिए प्रारंभिक - बाहरी परिवर्तन के बाद कार्ट के ताज़ा करना - चेकआउट "
-"से पहले कार्ट की स्थिति की जांच करें **सुरक्षा प्रमाणीकरण:** कोई आवश्यक नहीं (अज्ञात "
-"उपयोगकर्ताओं के लिए सेशन का उपयोग करता है)\n"
+"    मिनी-कार्ट कम्पोनेंट के लिए वर्तमान कार्ट के अंतर्गत डेटा प्राप्त करें। यह अधिकृत उपयोगकर्ताओं (कार्ट उपयोगकर्ता खाता से जुड़ा हुआ है) और अज्ञात उपयोगकर्ताओं (कार्ट सेशन से जुड़ा हुआ है) दोनों के लिए काम करता है। कार्ट डेटा सभी आइटमों के साथ शामिल होता है, जिसमें उत्पाद विवरण, मात्रा, मूल्य और चित्र शामिल होता है। **उपयोग के मामले:** - पृष्ठ पर मिनी-कार्ट के लोड के लिए प्रारंभिक - बाहरी परिवर्तन के बाद कार्ट के ताज़ा करना - चेकआउट से पहले कार्ट की स्थिति की जांच करें **सुरक्षा प्रमाणीकरण:** कोई आवश्यक नहीं (अज्ञात उपयोगकर्ताओं के लिए सेशन का उपयोग करता है)\n"
 "    "
 
+#: mini_cart_api.py:300
 msgid "Cart data retrieved successfully"
 msgstr "कार्ट डेटा सफलतापूर्वक प्राप्त कर लिया गया"
 
+#: mini_cart_api.py:352
 msgid "Update cart item quantity"
 msgstr "कार्ट आइटम की मात्रा अपडेट करें"
 
+#: mini_cart_api.py:353
 msgid ""
 "\n"
 "    Update the quantity of an item in the cart.\n"
@@ -131,8 +155,7 @@ msgid ""
 "    - Direct quantity input changes\n"
 "    - Removing items (quantity=0)\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "\n"
 "    **Validation:**\n"
 "    - Item must exist in user's cart\n"
@@ -141,27 +164,26 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    कार्ट में एक आइटम की मात्रा अपडेट करें। मात्रा को 0 रखकर आइटम को पूरी तरह से हटा "
-"सकते हैं। अपडेट करने से पहले अंतर्निहित बिंदु बाजार उपलब्धता की जांच करता है और पूर्ण अपडेट "
-"कार्ट लौटाता है। **उपयोग के मामले:** - मिनी-कार्ट में मात्रा बढ़ाने/घटाने के बटन - मात्रा "
-"इनपुट के सीधे बदलाव - आइटम हटाना (मात्रा = 0) **सुरक्षा प्रमाणीकरण:** कोई आवश्यक नहीं "
-"(आइटम की जांच करता है कि यह उपयोगकर्ता के कार्ट के अंतर्गत है) **सत्यापन:** - आइटम "
-"उपयोगकर्ता के कार्ट में होना चाहिए - मात्रा एक गैर-ऋणात्मक पूर्णांक होना चाहिए - इन्वेंटरी-"
-"ट्रैक किए गए उत्पादों के लिए बाजार उपलब्धता की जांच की जाती है\n"
+"    कार्ट में एक आइटम की मात्रा अपडेट करें। मात्रा को 0 रखकर आइटम को पूरी तरह से हटा सकते हैं। अपडेट करने से पहले अंतर्निहित बिंदु बाजार उपलब्धता की जांच करता है और पूर्ण अपडेट कार्ट लौटाता है। **उपयोग के मामले:** - मिनी-कार्ट में मात्रा बढ़ाने/घटाने के बटन - मात्रा इनपुट के सीधे बदलाव - आइटम हटाना (मात्रा = 0) **सुरक्षा प्रमाणीकरण:** कोई आवश्यक नहीं (आइटम की जांच करता है कि यह उपयोगकर्ता के कार्ट के अंतर्गत है) **सत्यापन:** - आइटम उपयोगकर्ता के कार्ट में होना चाहिए - मात्रा एक गैर-ऋणात्मक पूर्णांक होना चाहिए - इन्वेंटरी-ट्रैक किए गए उत्पादों के लिए बाजार उपलब्धता की जांच की जाती है\n"
 "    "
 
+#: mini_cart_api.py:375
 msgid "Cart updated successfully"
 msgstr "कार्ट सफलतापूर्वक अपडेट कर दिया गया"
 
+#: mini_cart_api.py:379
 msgid "Invalid request data or insufficient stock"
 msgstr "अमान्य अनुरोध डेटा या कम भंडार"
 
+#: mini_cart_api.py:392 mini_cart_api.py:472
 msgid "Cart item not found"
 msgstr "कार्ट आइटम नहीं मिला"
 
+#: mini_cart_api.py:450
 msgid "Remove item from cart"
 msgstr "कार्ट से आइटम हटाएं"
 
+#: mini_cart_api.py:451
 msgid ""
 "\n"
 "    Remove an item from the cart entirely.\n"
@@ -172,37 +194,34 @@ msgid ""
 "    - Delete button on cart items\n"
 "    - Clearing specific items\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "    "
 msgstr ""
 "\n"
-"    कार्ट से एक आइटम पूरी तरह से हटाएं। हटाने के बाद अपडेट कार्ट डेटा लौटाता है। "
-"**उपयोग के मामले:** - कार्ट आइटम पर डिलीट बटन - विशिष्ट आइटम को हटाना **सुरक्षा:** "
-"कोई आवश्यक नहीं (आइटम का सत्यापन उपयोगकर्ता के कार्ट के लिए होता है)\n"
+"    कार्ट से एक आइटम पूरी तरह से हटाएं। हटाने के बाद अपडेट कार्ट डेटा लौटाता है। **उपयोग के मामले:** - कार्ट आइटम पर डिलीट बटन - विशिष्ट आइटम को हटाना **सुरक्षा:** कोई आवश्यक नहीं (आइटम का सत्यापन उपयोगकर्ता के कार्ट के लिए होता है)\n"
 "    "
 
+#: mini_cart_api.py:466
 msgid "Item removed successfully"
 msgstr "आइटम सफलतापूर्वक हटा दिया गया"
 
+#: mini_cart_api.py:515
 msgid "Get empty cart recommendations"
 msgstr "खाली कार्ट अनुशंसाएं प्राप्त करें"
 
+#: mini_cart_api.py:516
 msgid ""
 "\n"
 "    Get intelligent product recommendations for the empty cart state.\n"
 "\n"
-"    Returns personalized suggestions organized into labeled sections based "
-"on:\n"
-"    - **Recently viewed**: Products the user has browsed (session-based for "
-"anonymous users)\n"
+"    Returns personalized suggestions organized into labeled sections based on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for anonymous users)\n"
 "    - **Related**: Products in the same categories as recently viewed items\n"
 "    - **On sale**: Currently discounted products\n"
 "    - **Trending**: Popular products by views/sales\n"
 "    - **Featured**: Editor-picked products as fallback\n"
 "\n"
-"    All returned products are verified to be in stock and available for "
-"purchase.\n"
+"    All returned products are verified to be in stock and available for purchase.\n"
 "\n"
 "    **Use Cases:**\n"
 "    - Empty cart state in mini-cart\n"
@@ -217,239 +236,245 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    रिक्त कार्ट स्थिति के लिए बुद्धिमान उत्पाद प्रस्ताव लाएं। व्यक्तिगत टिप्पणियों को "
-"निर्दिष्ट अनुभागों में संगठित करके लौटाता है: - **अपने द्वारा देखे गए**: उपयोगकर्ता द्वारा "
-"जो उत्पाद ब्राउज किए गए हैं (अनामिक उपयोगकर्ताओं के लिए सेशन आधारित) - **संबंधित**: "
-"हाल ही में देखे गए आइटम की श्रेणियों में उत्पाद - **विक्रय में**: वर्तमान में छूट वाले उत्पाद - "
-"**लोकप्रिय**: दृश्य/विक्रय द्वारा लोकप्रिय उत्पाद - **विशेष**: संपादक द्वारा चुने गए "
-"उत्पाद जो बैकअप के रूप में हैं सभी लौटे उत्पाद वर्तमान में स्टॉक में हैं और खरीदे जा सकते हैं। "
-"**उपयोग के मामले:** - मिनी-कार्ट में रिक्त कार्ट स्थिति - \"आपको शायद पसंद हो सकता "
-"है\" अनुभाग - क्रॉस-बेच अवसर **सुरक्षा:** कोई आवश्यक नहीं (अनामिक उपयोगकर्ताओं के लिए "
-"सेशन का उपयोग करता है) **व्यक्तिगतकरण:** - अनामिक उपयोगकर्ता: सेशन के आधार पर हाल "
-"ही में देखे गए उत्पादों पर आधारित - प्रमाणित उपयोगकर्ता: खाता ऐतिहासिक और पसंदों के "
-"आधार पर\n"
+"    रिक्त कार्ट स्थिति के लिए बुद्धिमान उत्पाद प्रस्ताव लाएं। व्यक्तिगत टिप्पणियों को निर्दिष्ट अनुभागों में संगठित करके लौटाता है: - **अपने द्वारा देखे गए**: उपयोगकर्ता द्वारा जो उत्पाद ब्राउज किए गए हैं (अनामिक उपयोगकर्ताओं के लिए सेशन आधारित) - **संबंधित**: हाल ही में देखे गए आइटम की श्रेणियों में उत्पाद - **विक्रय में**: वर्तमान में छूट वाले उत्पाद - **लोकप्रिय**: दृश्य/विक्रय द्वारा लोकप्रिय उत्पाद - **विशेष**: संपादक द्वारा चुने गए उत्पाद जो बैकअप के रूप में हैं सभी लौटे उत्पाद वर्तमान में स्टॉक में हैं और खरीदे जा सकते हैं। **उपयोग के मामले:** - मिनी-कार्ट में रिक्त कार्ट स्थिति - \"आपको शायद पसंद हो सकता है\" अनुभाग - क्रॉस-बेच अवसर **सुरक्षा:** कोई आवश्यक नहीं (अनामिक उपयोगकर्ताओं के लिए सेशन का उपयोग करता है) **व्यक्तिगतकरण:** - अनामिक उपयोगकर्ता: सेशन के आधार पर हाल ही में देखे गए उत्पादों पर आधारित - प्रमाणित उपयोगकर्ता: खाता ऐतिहासिक और पसंदों के आधार पर\n"
 "    "
 
+#: mini_cart_api.py:545
 msgid "Maximum number of products to return (default: 6, max: 12)"
 msgstr "वापस करने के लिए उत्पादों की अधिकतम संख्या (डिफ़ॉल्ट: 6, अधिकतम: 12)"
 
+#: mini_cart_api.py:556
 msgid "Recommendations retrieved successfully"
 msgstr "सिफारिशें सफलतापूर्वक प्राप्त कर ली गईं"
 
+#: models.py:18 models.py:964 models.py:1068
 msgid "User"
 msgstr "उपयोगकर्ता"
 
+#: models.py:21 models.py:1071
 msgid "Session Key"
 msgstr "सेशन की"
 
+#: models.py:31
 msgid "Cart Currency"
 msgstr "कार्ट मुद्रा"
 
+#: models.py:33
 msgid ""
 "Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
 "default currency."
 msgstr ""
-"इस कार्ट में सभी आइटम के लिए मुद्रा कोड (उदा. EUR, NZD)। खाली होने का मतलब है कि "
-"स्टोर की डिफ़ॉल्ट मुद्रा।"
+"इस कार्ट में सभी आइटम के लिए मुद्रा कोड (उदा. EUR, NZD)। खाली होने का मतलब "
+"है कि स्टोर की डिफ़ॉल्ट मुद्रा।"
 
+#: models.py:40
 msgid "Default Layout"
 msgstr "डिफ़ॉल्ट लेआउट"
 
+#: models.py:41 models.py:971
 msgid "Compact View"
 msgstr "संक्षिप्त दृश्य"
 
+#: models.py:42 models.py:972
 msgid "Detailed View"
 msgstr "विस्तृत दृश्य"
 
+#: models.py:43
 msgid "Minimal View"
 msgstr "न्यूनतम दृश्य"
 
+#: models.py:44
 msgid "Sidebar Cart"
 msgstr "साइडबार कार्ट"
 
+#: models.py:45
 msgid "Overlay Cart"
 msgstr "ओवरले कार्ट"
 
+#: models.py:52
 msgid "How the cart is displayed"
 msgstr "कार्ट कैसे दिखाया जाता है"
 
+#: models.py:53
 msgid "Cart Layout"
 msgstr "कार्ट लेआउट"
 
+#: models.py:57
 msgid "Show Product Images"
 msgstr "उत्पाद चित्र दिखाएं"
 
+#: models.py:59
 msgid "Show Product Variants"
 msgstr "उत्पाद वेरिएंट दिखाएं"
 
+#: models.py:61
 msgid "Show Remove Button"
 msgstr "हटाएं बटन दिखाएं"
 
+#: models.py:63
 msgid "Show Quantity Controls"
 msgstr "मात्रा नियंत्रण दिखाएं"
 
+#: models.py:67
 msgid "Show Item Totals"
 msgstr "आइटम कुल दिखाएं"
 
+#: models.py:68
 msgid "Show Cart Summary"
 msgstr "कार्ट सारांश दिखाएं"
 
+#: models.py:69
 msgid "Show Savings"
 msgstr "बचत दिखाएं"
 
+#: models.py:75
 msgid "Single Page Checkout"
 msgstr "एक पृष्ठ चेकआउट"
 
+#: models.py:76
 msgid "Multi-Step Checkout"
 msgstr "बहु-चरण चेकआउट"
 
+#: models.py:77
 msgid "Accordion Style"
 msgstr "एक्कोर्डियन स्टाइल"
 
+#: models.py:78
 msgid "Wizard Style"
 msgstr "मैजिक स्टाइल"
 
+#: models.py:81
 msgid "Checkout Flow"
 msgstr "चेकआउट फ्लो"
 
+#: models.py:91 models.py:1609 models.py:1739
 msgid "Shipping Address"
 msgstr "शिपिंग पता"
 
+#: models.py:99 models.py:1214 models.py:1740
+#: templates/admin/cart/cart/change_list.html:93
 msgid "Shipping Method"
 msgstr "शिपिंग विधि"
 
+#: models.py:107
 msgid "Calculated shipping cost"
 msgstr "गणना शिपिंग लागत"
 
+#: models.py:108 models.py:1660
 msgid "Shipping Cost"
 msgstr "शिपिंग लागत"
 
+#: models.py:112 models.py:1664
 msgid "Estimated Delivery Date"
 msgstr "अनुमानित डिलीवरी तिथि"
 
+#: models.py:115
 msgid "Shipping Notes"
 msgstr "शिपिंग नोट्स"
 
+#: models.py:119 models.py:846
 msgid "None"
 msgstr "कोई नहीं"
 
+#: models.py:120 models.py:847
 msgid "Percentage"
 msgstr "प्रतिशत"
 
+#: models.py:121 models.py:848
 msgid "Fixed Amount"
 msgstr "निश्चित राशि"
 
+#: models.py:124
 msgid "POS manual discount type"
 msgstr "POS मैनुअल छूट प्रकार"
 
+#: models.py:127
 msgid "POS manual discount value"
 msgstr "POS मैनुअल छूट मूल्य"
 
+#: models.py:131 models.py:858
 msgid "Discount value (percentage or fixed amount)"
 msgstr "छूट की मात्रा (प्रतिशत या निश्चित राशि)"
 
+#: models.py:139
 msgid "POS discount applied by"
 msgstr "POS छूट लागू करता है"
 
+#: models.py:147
 msgid "POS discount approved by"
 msgstr "POS छूट मंजूर करता है"
 
+#: models.py:148 models.py:875
 msgid "Manager who approved the discount if it exceeded staff limit"
 msgstr "यदि छूट कर्मचारी सीमा से अधिक है तो छूट को अनुमोदित करने वाला प्रबंधक"
 
+#: models.py:151
 msgid "POS discount reason"
 msgstr "POS छूट कारण"
 
+#: models.py:154 models.py:879 models.py:992 models.py:1052 models.py:1210
+#: models.py:1447 models.py:1526 models.py:1756
 msgid "Created At"
 msgstr "बनाया गया"
 
+#: models.py:155 models.py:880 models.py:993 models.py:1211 models.py:1448
+#: models.py:1757
 msgid "Updated At"
 msgstr "अपडेट किया गया"
 
+#: models.py:158
 msgid "Shopping Cart"
 msgstr "खरीदारी कार्ट"
 
+#: models.py:159 templates/admin/cart/cart/change_list.html:4
+#: templates/admin/cart/cart/change_list.html:20
+#: templates/admin/cart/cart/change_list.html:175
 msgid "Shopping Carts"
 msgstr "खरीदारी कार्ट्स"
 
+#: models.py:186
 #, python-brace-format
 msgid "Cart for {username}"
 msgstr "{username} के लिए कार्ट"
 
+#: models.py:187
 #, python-brace-format
 msgid "Cart (Session: {session})"
 msgstr "कार्ट (सेशन: {session})"
 
+#: models.py:455
 msgid "No shipping required"
 msgstr "कोई शिपिंग आवश्यक नहीं"
 
+#: models.py:465
 msgid "Shipping address required"
 msgstr "शिपिंग पता आवश्यक"
 
+#: models.py:505
 msgid "Available shipping methods retrieved"
 msgstr "उपलब्ध शिपिंग विधि प्राप्त"
 
+#: models.py:526
 msgid "Shipping calculated successfully"
 msgstr "शिपिंग सफलतापूर्वक गणना की गई"
 
-msgid "Invalid gift card code"
-msgstr "अमान्य गिफ्ट कार्ड कोड"
-
-msgid "Gift card already applied"
-msgstr "गिफ्ट कार्ड पहले से लागू कर दिया गया है"
-
-msgid "Gift card is not active"
-msgstr "गिफ्ट कार्ड सक्रिय नहीं है"
-
-msgid "Gift card has expired"
-msgstr "गिफ्ट कार्ड अप्रचलित हो गया है"
-
-msgid "Gift card has been fully redeemed"
-msgstr "गिफ्ट कार्ड पूरी तरह से लाभान्वित कर दिया गया है"
-
-msgid "Gift card cannot be used"
-msgstr "गिफ्ट कार्ड का उपयोग नहीं किया जा सकता"
-
-#, python-brace-format
-msgid ""
-"Currency mismatch. Gift card is in {card_currency}, cart is in "
-"{cart_currency}"
-msgstr ""
-"मुद्रा मिलान नहीं हो पा रहा। गिफ्ट कार्ड {card_currency} में है, कार्ट "
-"{cart_currency} में है"
-
-#, python-brace-format
-msgid ""
-"This gift card is in {card_currency}. Please switch your currency to "
-"{card_currency} to use it."
-msgstr ""
-"यह गिफ्ट कार्ड {card_currency} में है। इसका उपयोग करने के लिए अपनी मुद्रा को "
-"{card_currency} में बदलें।"
-
-msgid "Gift cards cannot be used to purchase other gift cards"
-msgstr "गिफ्ट कार्ड का उपयोग अन्य गिफ्ट कार्ड के खरीदने के लिए नहीं किया जा सकता है"
-
-msgid "Cart total is already covered"
-msgstr "कार्ट कुल पहले से ढका जा चुका है"
-
-msgid "Unable to process gift card currency conversion"
-msgstr "गिफ्ट कार्ड के मुद्रा परिवर्तन को प्रक्रिया करने में असमर्थ"
-
-msgid "Gift card applied successfully"
-msgstr "गिफ्ट कार्ड सफलतापूर्वक लागू कर दिया गया है"
-
+#: models.py:740 models.py:1023 models.py:1074
 msgid "Product"
 msgstr "उत्पाद"
 
+#: models.py:747 models.py:1030
 msgid "Variant"
 msgstr "वैरिएंट"
 
+#: models.py:751
 msgid "Quantity"
 msgstr "मात्रा"
 
+#: models.py:753
 msgid "Unit Price"
 msgstr "इकाई मूल्य"
 
+#: models.py:761
 msgid ""
 "Product customizations with calculated prices: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
@@ -457,1925 +482,2525 @@ msgstr ""
 "गणना के साथ उत्पाद विशेषताएं: {customization_option_id: {'value': '...', "
 "'calculated_price': '10.00'}}"
 
+#: models.py:763
 msgid "Customizations"
 msgstr "अनुकूलन"
 
+#: models.py:769
 msgid "Is Subscription"
 msgstr "सदस्यता है"
 
+#: models.py:770
 msgid "Whether this item will be purchased as a subscription"
 msgstr "क्या यह आइटम एक सदस्यता के रूप में खरीदा जाएगा"
 
+#: models.py:777
 msgid "Subscription Plan"
 msgstr "सदस्यता योजना"
 
+#: models.py:778
 msgid "Selected subscription plan for recurring billing"
 msgstr "दोहराए जाने वाले बिलिंग के लिए चुनी गई सदस्यता योजना"
 
+#: models.py:785
 msgid "Pricing Tier"
 msgstr "मूल्य श्रेणी"
 
+#: models.py:786
 msgid "Selected pricing tier (billing frequency) for subscription"
 msgstr "सदस्यता के लिए चुना गया मूल्य वर्ग (बिलिंग आवृत्ति)"
 
+#: models.py:793
 msgid "Payment Token"
 msgstr "भुगतान टोकन"
 
+#: models.py:794
 msgid ""
 "Saved payment method for subscription billing (required for subscriptions)"
 msgstr "सदस्यता बिलिंग के लिए सहेजी गई भुगतान विधि (सदस्यता के लिए आवश्यक)"
 
+#: models.py:804
 msgid "Parent Bundle"
 msgstr "माता पैकेज"
 
+#: models.py:805
 msgid "If this is a bundle component, reference to bundle CartItem"
 msgstr "यदि यह एक पैकेज घटक है, तो पैकेज कार्ट आइटम के संदर्भ के लिए"
 
+#: models.py:813
 msgid ""
 "Booking details: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
 msgstr ""
 "बुकिंग विवरण: {start_datetime, end_datetime, resource_id, persons, timezone}"
 
+#: models.py:815
 msgid "Booking Data"
 msgstr "बुकिंग डेटा"
 
+#: models.py:833
+msgid ""
+"Gift card purchase details: {recipient_email, recipient_name, sender_name, "
+"message, scheduled_send_at, amount}"
+msgstr ""
+"गिफ्ट कार्ड खरीद विवरण: {recipient_email, recipient_name, sender_name, "
+"message, scheduled_send_at, amount}"
+
+#: models.py:836
+#| msgid "Gift Card"
+msgid "Gift Card Data"
+msgstr "गिफ्ट कार्ड डेटा"
+
+#: models.py:841
 msgid "Customer notes for this item"
 msgstr "इस आइटम के लिए ग्राहक के टिप्पणी"
 
+#: models.py:841 models.py:1034 models.py:1573
 msgid "Notes"
 msgstr "टिप्पणियाँ"
 
+#: models.py:851
 msgid "manual discount type"
 msgstr "मैन्युअल छूट प्रकार"
 
+#: models.py:854
 msgid "manual discount value"
 msgstr "मैन्युअल छूट मूल्य"
 
+#: models.py:866
 msgid "discount applied by"
 msgstr "छूट द्वारा लागू किया गया"
 
+#: models.py:874
 msgid "discount approved by"
 msgstr "छूट द्वारा अनुमोदित किया गया"
 
+#: models.py:877
 msgid "discount reason"
 msgstr "छूट कारण"
 
+#: models.py:883
 msgid "Cart Item"
 msgstr "कार्ट आइटम"
 
+#: models.py:884
 msgid "Cart Items"
 msgstr "कार्ट आइटम्स"
 
+#: models.py:965 services/wishlist_service.py:28
 msgid "My Wishlist"
 msgstr "मेरी विशिष्ट सूची"
 
+#: models.py:965 models.py:1108 models.py:1367 models.py:1506
+#: templates/admin/cart/shippingmethod/change_form.html:276
 msgid "Name"
 msgstr "नाम"
 
+#: models.py:969
 msgid "Grid Layout"
 msgstr "ग्रिड लेआउट"
 
+#: models.py:970
 msgid "List Layout"
 msgstr "सूची लेआउट"
 
+#: models.py:979
 msgid "How wishlist items are displayed"
 msgstr "विशिष्ट सूची आइटम कैसे प्रदर्शित किए जाते हैं"
 
+#: models.py:980
 msgid "Wishlist Layout"
 msgstr "विशिष्ट सूची लेआउट"
 
+#: models.py:984
 msgid "Is Public"
 msgstr "सार्वजनिक है"
 
+#: models.py:985
 msgid "Share Slug"
 msgstr "शेयर स्लग"
 
+#: models.py:988
 msgid "Show Prices"
 msgstr "मूल्य दिखाएं"
 
+#: models.py:989
 msgid "Show Availability"
 msgstr "उपलब्धता दिखाएं"
 
+#: models.py:990
 msgid "Show Add to Cart"
 msgstr "कार्ट में जोड़ें दिखाएं"
 
+#: models.py:996 models.py:1020
 msgid "Wishlist"
 msgstr "विशिष्ट सूची"
 
+#: models.py:997
 msgid "Wishlists"
 msgstr "विशिष्ट सूची"
 
+#: models.py:1038
 msgid "Low"
 msgstr "कम"
 
+#: models.py:1039
 msgid "Medium"
 msgstr "मध्यम"
 
+#: models.py:1040
 msgid "High"
 msgstr "उच्च"
 
+#: models.py:1043 models.py:1442
+#: templates/admin/cart/shippingmethod/change_form.html:279
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:51
 msgid "Priority"
 msgstr "अधिकता"
 
+#: models.py:1048
 msgid "Notify When Available"
 msgstr "उपलब्ध होने पर सूचना दें"
 
+#: models.py:1050
 msgid "Notify When On Sale"
 msgstr "बिक्री पर सूचना दें"
 
+#: models.py:1055
 msgid "Wishlist Item"
 msgstr "विशिष्ट सूची आइटम"
 
+#: models.py:1056
 msgid "Wishlist Items"
 msgstr "विशिष्ट सूची आइटम्स"
 
+#: models.py:1077
 msgid "Viewed At"
 msgstr "देखा गया था"
 
+#: models.py:1078
 msgid "View Count"
 msgstr "दृश्य गिनती"
 
+#: models.py:1081
 msgid "Recently Viewed Product"
 msgstr "हालिया देखा गया उत्पाद"
 
+#: models.py:1082
 msgid "Recently Viewed Products"
 msgstr "हालिया देखे गए उत्पाद"
 
+#: models.py:1094
 #, python-brace-format
 msgid "Session: {session}"
 msgstr "सेशन: {session}"
 
+#: models.py:1098
 #, python-brace-format
 msgid "{product} viewed by {user}"
 msgstr "{user} द्वारा {product} को देखा गया"
 
+#: models.py:1109 models.py:1507
+#: templates/admin/cart/method_wizard/step1_basics.html:44
 msgid "Description"
 msgstr "विवरण"
 
+#: models.py:1113 templates/admin/cart/shippingmethod/change_list.html:78
 msgid "Flat Rate"
 msgstr "समतल दर"
 
-msgid "Free Shipping"
-msgstr "मुफ़्त शिपिंग"
-
-msgid "Weight Based"
-msgstr "वजन आधारित"
-
-msgid "Price Based"
-msgstr "मूल्य आधारित"
-
+#: models.py:1114
 msgid "Real-Time Carrier Rates"
 msgstr "वास्तविक समय वाले डिलीवरी दर"
 
+#: models.py:1115 templates/admin/cart/shippingmethod/change_list.html:84
 msgid "Local Pickup"
 msgstr "स्थानीय ले जाए"
 
+#: models.py:1116 templates/admin/cart/shippingmethod/change_list.html:87
 msgid "Table Rate"
 msgstr "टेबल दर"
 
+#: models.py:1119 templates/admin/cart/method_wizard/step1_basics.html:111
 msgid "Method Type"
 msgstr "विधि प्रकार"
 
+#: models.py:1129
 msgid "Fixed shipping cost (for flat_rate type)"
 msgstr "निश्चित शिपिंग लागत (प्लैट रेट प्रकार के लिए)"
 
+#: models.py:1130 templates/admin/cart/method_wizard/step1_basics.html:146
 msgid "Flat Rate Cost"
 msgstr "समान दर लागत"
 
-msgid "Minimum cart value to qualify"
-msgstr "योग्यता के लिए न्यूनतम कार्ट मूल्य"
-
-msgid "Minimum Order Value"
-msgstr "न्यूनतम कमांड मूल्य"
-
-msgid "Maximum cart value to qualify"
-msgstr "योग्यता के लिए अधिकतम कार्ट मूल्य"
-
-msgid "Maximum Order Value"
-msgstr "अधिकतम कमांड मूल्य"
-
-msgid "Minimum cart weight (kg)"
-msgstr "न्यूनतम कार्ट वजन (किलोग्राम)"
-
-msgid "Minimum Weight"
-msgstr "न्यूनतम वजन"
-
-msgid "Maximum cart weight (kg)"
-msgstr "अधिकतम कार्ट वजन (किलोग्राम)"
-
-msgid "Maximum Weight"
-msgstr "अधिकतम वजन"
-
+#: models.py:1138 templates/admin/cart/method_wizard/step3_coverage.html:17
 msgid "Shipping Zones"
 msgstr "डिलीवरी क्षेत्र"
 
+#: models.py:1140
 msgid ""
-"Zones where this shipping method is available. If empty, legacy country/"
-"state restrictions apply."
+"Zones where this shipping method is available. If empty, legacy "
+"country/state restrictions apply."
 msgstr ""
-"शिपिंग विधि के लिए उपलब्ध क्षेत्र। यदि खाली है तो पुराने देश/राज्य प्रतिबंध लागू होंगे।"
+"शिपिंग विधि के लिए उपलब्ध क्षेत्र। यदि खाली है तो पुराने देश/राज्य प्रतिबंध "
+"लागू होंगे।"
 
+#: models.py:1149 templates/admin/cart/method_wizard/step4_features.html:19
 msgid "Pickup Locations"
 msgstr "ले जाने के स्थान"
 
+#: models.py:1151
 msgid ""
 "Locations where customers can pick up orders using this shipping method. "
 "Only applies to 'local_pickup' method type."
 msgstr ""
-"ग्राहक इस शिपिंग विधि का उपयोग करके कौन सी स्थानों पर अपने ऑर्डर ले सकते हैं। केवल "
-"'local_pickup' विधि प्रकार के लिए लागू होता है।"
+"ग्राहक इस शिपिंग विधि का उपयोग करके कौन सी स्थानों पर अपने ऑर्डर ले सकते "
+"हैं। केवल 'local_pickup' विधि प्रकार के लिए लागू होता है।"
 
+#: models.py:1158
 msgid "Minimum delivery time in business days"
 msgstr "व्यावसायिक दिनों में न्यूनतम डिलीवरी समय"
 
+#: models.py:1159 templates/admin/cart/method_wizard/step4_features.html:176
 msgid "Minimum Delivery Days"
 msgstr "न्यूनतम डिलीवरी दिन"
 
+#: models.py:1164
 msgid "Maximum delivery time in business days"
 msgstr "व्यावसायिक दिनों में अधिकतम डिलीवरी समय"
 
+#: models.py:1165 templates/admin/cart/method_wizard/step4_features.html:193
 msgid "Maximum Delivery Days"
 msgstr "अधिकतम डिलीवरी दिन"
 
+#: models.py:1172
 msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
 msgstr "फॉन्ट अवेज़ आइकॉन क्लास (उदाहरण के लिए, 'fa-truck', 'fa-box')"
 
+#: models.py:1173 models.py:1512
 msgid "Icon"
 msgstr "आइकॉन"
 
+#: models.py:1183
 msgid ""
 "Custom shipping method image from media library. If provided, this takes "
 "priority over icon."
 msgstr ""
-"मीडिया लाइब्रेरी से शिपिंग विधि के लिए आवश्यक छवि। यदि प्रदान किया गया है, तो आइकॉन "
-"के बजाय यह प्राथमिकता देता है।"
+"मीडिया लाइब्रेरी से शिपिंग विधि के लिए आवश्यक छवि। यदि प्रदान किया गया है, "
+"तो आइकॉन के बजाय यह प्राथमिकता देता है।"
 
+#: models.py:1185
 msgid "Image"
 msgstr "चित्र"
 
+#: models.py:1188 templates/admin/cart/method_wizard/step4_features.html:234
 msgid "Sort Order"
 msgstr "क्रमबद्ध करें"
 
+#: models.py:1189 models.py:1445 models.py:1518 models.py:1575
 msgid "Is Active"
 msgstr "सक्रिय है"
 
+#: models.py:1197
 msgid "Custom Carrier"
 msgstr "कस्टम डिलीवरी"
 
+#: models.py:1200 templates/admin/cart/method_wizard/step1_basics.html:185
+#: templates/admin/cart/shippingmethod/change_form.html:98
 msgid "Carrier"
 msgstr "डिलीवरी"
 
+#: models.py:1206
 msgid "Carrier-specific service code"
 msgstr "विशिष्ट डिलीवरी सेवा कोड"
 
+#: models.py:1207
 msgid "Carrier Service Code"
 msgstr "डिलीवरी सेवा कोड"
 
+#: models.py:1215 templates/admin/cart/shippingmethod/change_list.html:4
+#: templates/admin/cart/shippingmethod/change_list.html:19
 msgid "Shipping Methods"
 msgstr "डिलीवरी विधियां"
 
+#: models.py:1236
 msgid "Shipping method is not active"
 msgstr "डिलीवरी विधि सक्रिय नहीं है"
 
-#, python-brace-format
-msgid "Minimum order value {value} required"
-msgstr "न्यूनतम ऑर्डर मूल्य {value} की आवश्यकता है"
-
-#, python-brace-format
-msgid "Maximum order value {value} exceeded"
-msgstr "अधिकतम ऑर्डर मूल्य {value} से अधिक है"
-
-#, python-brace-format
-msgid "Minimum weight {weight}kg required"
-msgstr "न्यूनतम वजन {weight}केजी की आवश्यकता है"
-
-#, python-brace-format
-msgid "Maximum weight {weight}kg exceeded"
-msgstr "अधिकतम वजन {weight}केजी से अधिक है"
-
+#: models.py:1240
 msgid "Cart contains only digital products"
 msgstr "कार्ट में केवल डिजिटल उत्पाद हैं"
 
+#: models.py:1266
+#| msgid "No pricing tier available for this plan"
+msgid "Not available for this cart"
+msgstr "इस कार्ट के लिए उपलब्ध नहीं है"
+
+#: models.py:1268
 msgid "Available"
 msgstr "उपलब्ध"
 
+#: models.py:1291
 msgid "No geographic restrictions"
 msgstr "भूगोलिक प्रतिबंध नहीं"
 
+#: models.py:1299
 #, python-brace-format
 msgid "Available in {zone}"
 msgstr "{zone} में उपलब्ध"
 
+#: models.py:1302
 msgid "Not available in your location"
 msgstr "आपके स्थान में उपलब्ध नहीं"
 
+#: models.py:1305
 msgid "Available worldwide"
 msgstr "विश्वव्यापी उपलब्ध"
 
+#: models.py:1371 models.py:1550
 msgid "ISO 3166-1 alpha-2 country code"
 msgstr "ISO 3166-1 अल्फा-2 देश कोड"
 
+#: models.py:1371 templates/admin/cart/taxrate/change_list.html:67
 msgid "Country"
 msgstr "देश"
 
+#: models.py:1375
 msgid "State/Province/Region"
 msgstr "राज्य/प्रांत/क्षेत्र"
 
+#: models.py:1375
 msgid "State"
 msgstr "राज्य"
 
+#: models.py:1379
 msgid "City name (optional)"
 msgstr "शहर का नाम (वैकल्पिक)"
 
+#: models.py:1379
 msgid "City"
 msgstr "शहर"
 
+#: models.py:1385
 msgid "List of specific postal codes (optional)"
 msgstr "विशिष्ट पोस्टल कोडों की सूची (वैकल्पिक)"
 
+#: models.py:1386
 msgid "Postal Codes"
 msgstr "पोस्टल कोड"
 
+#: models.py:1393
 msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
 msgstr "कर दर दशमलव के रूप में (उदाहरण के लिए, 0.0825 के लिए 8.25%)"
 
+#: models.py:1394 models.py:1564
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:47
 msgid "Rate"
 msgstr "दर"
 
+#: models.py:1399 templates/admin/cart/taxrate/change_list.html:79
 msgid "Sales Tax"
 msgstr "विक्रय कर"
 
+#: models.py:1402
 msgid "Custom Tax"
 msgstr "कस्टम कर"
 
+#: models.py:1405 models.py:1567
+#: templates/admin/cart/taxrate/change_list.html:76
 msgid "Tax Type"
 msgstr "कर प्रकार"
 
+#: models.py:1411
 msgid "Apply tax to shipping costs"
 msgstr "कर को डिलीवरी लागत पर लागू करें"
 
+#: models.py:1412
 msgid "Applies to Shipping"
 msgstr "शिपिंग पर लागू होता है"
 
+#: models.py:1417
 msgid "Calculate on top of other taxes (compound tax)"
 msgstr "अन्य करों के ऊपर गणना (संयुक्त कर)"
 
+#: models.py:1418
 msgid "Compound Tax"
 msgstr "संयुक्त कर"
 
-msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
-msgstr "इस कर से छूट उत्पाद प्रकार (उदाहरण के लिए, ['digital', 'service'])"
+#: models.py:1426
+msgid ""
+"Product types exempt from this tax. Gift cards are exempt by default: "
+"selling stored value is not a taxable supply in most jurisdictions, and tax "
+"falls due when the card is spent. Confirm with your accountant."
+msgstr ""
+"इस कर से छूट वाले उत्पाद प्रकार। गिफ्ट कार्ड को डिफ़ॉल्ट रूप से छूट दी जाती "
+"है: अधिकांश जूरिस्डिक्शन में संग्रहित मूल्य की बिक्री कर योग्य आपूर्ति नहीं "
+"होती है, और कर तब दायर होता है जब कार्ड का उपयोग किया जाता है। अपने "
+"अकाउंटेंट से पुष्टि करें।"
 
+#: models.py:1430
 msgid "Exempt Product Types"
 msgstr "कर मुक्त उत्पाद प्रकार"
 
+#: models.py:1436
 msgid "Categories exempt from this tax"
 msgstr "इस कर से मुक्त श्रेणियाँ"
 
+#: models.py:1437
 msgid "Exempt Categories"
 msgstr "कर मुक्त श्रेणियाँ"
 
+#: models.py:1442
 msgid "Higher priority rules take precedence"
 msgstr "उच्च प्राथमिकता वाले नियम अधिक प्रासंगिक होते हैं"
 
+#: models.py:1451
 msgid "Tax Rate"
 msgstr "कर दर"
 
+#: models.py:1452 templates/admin/cart/taxrate/change_list.html:4
+#: templates/admin/cart/taxrate/change_list.html:17
 msgid "Tax Rates"
 msgstr "कर दरें"
 
+#: models.py:1465
 #, python-brace-format
 msgid "{name} ({location}) - {rate}%"
 msgstr "{name} ({location}) - {rate}%"
 
+#: models.py:1491
 msgid "Europe"
 msgstr "यूरोप"
 
+#: models.py:1492
 msgid "North America"
 msgstr "उत्तरी अमेरिका"
 
+#: models.py:1493
 msgid "Asia Pacific"
 msgstr "एशियाई प्रशांत"
 
+#: models.py:1494
 msgid "Middle East"
 msgstr "मध्य पूर्व"
 
+#: models.py:1495
 msgid "Africa"
 msgstr "अफ्रीका"
 
+#: models.py:1496
 msgid "Latin America"
 msgstr "लैटिन अमेरिका"
 
+#: models.py:1497
 msgid "Oceania"
 msgstr "ओशियानिया"
 
+#: models.py:1503
 msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
 msgstr "अद्वितीय पहचानक (जैसे, eu_vat, us_sales_tax)"
 
+#: models.py:1504
 msgid "Key"
 msgstr "की"
 
+#: models.py:1511
 msgid "Font Awesome icon class"
 msgstr "फॉंट अवेज़ आइकॉन क्लास"
 
+#: models.py:1515
 msgid "Default Tax Type"
 msgstr "मूल्य टैक्स प्रकार"
 
+#: models.py:1517
 msgid "Region"
 msgstr "क्षेत्र"
 
+#: models.py:1522
 msgid "Version for tracking rate updates"
 msgstr "अपडेट के लिए वर्जन"
 
+#: models.py:1523
 msgid "Version"
 msgstr "वर्जन"
 
+#: models.py:1525
 msgid "Last Updated"
 msgstr "अंतिम अपडेट"
 
+#: models.py:1529
 msgid "Tax Preset Group"
 msgstr "टैक्स प्रीसेट समूह"
 
+#: models.py:1530
 msgid "Tax Preset Groups"
 msgstr "टैक्स प्रीसेट समूह"
 
+#: models.py:1547
 msgid "Preset Group"
 msgstr "प्रीसेट समूह"
 
+#: models.py:1550
 msgid "Country Code"
 msgstr "देश कोड"
 
+#: models.py:1552
 msgid "Country Name"
 msgstr "देश का नाम"
 
+#: models.py:1556
 msgid "State/province code (for US/CA presets)"
 msgstr "राज्य/प्रांत कोड (US/CA प्रीसेट के लिए)"
 
+#: models.py:1557
 msgid "State Code"
 msgstr "राज्य कोड"
 
+#: models.py:1559
 msgid "State Name"
 msgstr "राज्य का नाम"
 
+#: models.py:1563
 msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
 msgstr "कर दर दशमलव के रूप में (उदाहरण के लिए, 0.20 के लिए 20%)"
 
+#: models.py:1572
 #, python-format
 msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
 msgstr "वैकल्पिक टिप्पणियाँ (जैसे, 'जुलाई 2025 में 22% तक बढ़ा')"
 
+#: models.py:1578
 msgid "Tax Preset Rate"
 msgstr "टैक्स प्रीसेट दर"
 
+#: models.py:1579
 msgid "Tax Preset Rates"
 msgstr "टैक्स प्रीसेट दर"
 
+#: models.py:1618
 msgid "Billing Address"
 msgstr "बिलिंग पता"
 
+#: models.py:1622
 msgid "Billing Same as Shipping"
 msgstr "बिलिंग शिपिंग के समान है"
 
+#: models.py:1630
 msgid "Shipping Address Data"
 msgstr "स्पेसिफिकेशन पता डेटा"
 
+#: models.py:1632
 msgid ""
 "Temporary shipping address data (not saved to Address model until order "
 "placed)"
-msgstr "अस्थायी शिपिंग पता डेटा (आदेश देने तक Address मॉडल में नहीं सहेजा गया)"
+msgstr ""
+"अस्थायी शिपिंग पता डेटा (आदेश देने तक Address मॉडल में नहीं सहेजा गया)"
 
+#: models.py:1639
 msgid "Billing Address Data"
 msgstr "बिलिंग पता डेटा"
 
+#: models.py:1641
 msgid ""
 "Temporary billing address data (not saved to Address model until order "
 "placed)"
-msgstr "अस्थायी बिलिंग पता डेटा (आदेश देने तक Address मॉडल में नहीं सहेजा गया)"
+msgstr ""
+"अस्थायी बिलिंग पता डेटा (आदेश देने तक Address मॉडल में नहीं सहेजा गया)"
 
+#: models.py:1651
 msgid "Selected Shipping Method"
 msgstr "चुनी गई शिपिंग विधि"
 
+#: models.py:1671
 msgid "Cached list of available shipping methods with rates"
 msgstr "कैश किए गए उपलब्ध शिपिंग विधियों की सूची दर के साथ"
 
+#: models.py:1672
 msgid "Available Shipping Methods"
 msgstr "उपलब्ध शिपिंग विधियाँ"
 
+#: models.py:1679
 msgid "Detailed tax breakdown by jurisdiction"
 msgstr "अधिकार के आधार पर विस्तृत टैक्स वितरण"
 
+#: models.py:1680
 msgid "Tax Breakdown"
 msgstr "टैक्स वितरण"
 
+#: models.py:1688
 msgid "Tax Amount"
 msgstr "टैक्स राशि"
 
+#: models.py:1698
 msgid "Payment Provider"
 msgstr "भुगतान प्रदाता"
 
+#: models.py:1707
 msgid "Subtotal"
 msgstr "उप-कुल"
 
+#: models.py:1715
 msgid "Discount Amount"
 msgstr "छूट की राशि"
 
+#: models.py:1723
 msgid "Gift Card Discount"
 msgstr "गिफ्ट कार्ड छूट"
 
+#: models.py:1724
 msgid "Total discount from applied gift cards"
 msgstr "लागू गिफ्ट कार्ड से कुल छूट"
 
+#: models.py:1732
 msgid "Final total: subtotal + shipping + tax - discounts"
 msgstr "अंतिम कुल: उप-कुल + शिपिंग + कर - छूट"
 
+#: models.py:1733
 msgid "Total Amount"
 msgstr "कुल राशि"
 
+#: models.py:1738
 msgid "Cart Review"
 msgstr "कार्ट समीक्षा"
 
+#: models.py:1741
 msgid "Billing Information"
 msgstr "बिलिंग जानकारी"
 
+#: models.py:1742
 msgid "Payment Method"
 msgstr "भुगतान विधि"
 
+#: models.py:1743
 msgid "Order Review"
 msgstr "ऑर्डर समीक्षा"
 
+#: models.py:1746
 msgid "Step Completed"
 msgstr "चरण पूरा"
 
+#: models.py:1749
 msgid "Expires At"
 msgstr "मौजूदा तिथि"
 
+#: models.py:1753
 msgid "Metadata"
 msgstr "मेटाडेटा"
 
+#: models.py:1754
 msgid "Extra metadata (e.g., marketplace purchase info)"
 msgstr "अतिरिक्त मेटाडेटा (उदाहरण के लिए, मार्केटप्लेस खरीदारी जानकारी)"
 
+#: models.py:1760
 msgid "Checkout Session"
 msgstr "चेकआउट सेशन"
 
+#: models.py:1761
 msgid "Checkout Sessions"
 msgstr "चेकआउट सेशन"
 
+#: models.py:1768
 #, python-brace-format
 msgid "Checkout for {cart}"
 msgstr "{cart} के लिए चेकआउट"
 
-msgid "Gift Card"
-msgstr "गिफ्ट कार्ड"
-
-msgid "Amount in base currency (used for cart calculations)"
-msgstr "मूल मुद्रा में राशि (कार्ट की गणना के लिए उपयोग किया जाता है)"
-
-msgid "Original Currency Amount"
-msgstr "मूल मुद्रा राशि"
-
-msgid ""
-"Discount in the gift card's native currency (for foreign-currency gift cards)"
-msgstr "गिफ्ट कार्ड की स्थानीय मुद्रा में छूट (विदेशी मुद्रा वाले गिफ्ट कार्ड के लिए)"
-
-msgid "Exchange Rate"
-msgstr "विनिमय दर"
-
-msgid "Rate: gift card currency -> base currency at time of application"
-msgstr "दर: गिफ्ट कार्ड मुद्रा -> मूल मुद्रा आवेदन के समय"
-
-msgid "Applied At"
-msgstr "लागू करें"
-
-msgid "Applied Gift Card"
-msgstr "लागू गिफ्ट कार्ड"
-
-msgid "Applied Gift Cards"
-msgstr "लागू गिफ्ट कार्ड"
-
-msgid "This gift card cannot be used"
-msgstr "यह गिफ्ट कार्ड उपयोग नहीं किया जा सकता है"
-
-msgid "Discount amount exceeds gift card balance"
-msgstr "छूट की राशि गिफ्ट कार्ड शेष से अधिक है"
-
+#: serializers.py:34
 msgid "Total customization price (per unit)"
 msgstr "कुल अनुकूलन मूल्य (प्रति इकाई)"
 
+#: serializers.py:43
 msgid "'instant' for digital items, 'shipping' for physical items"
 msgstr "'instant' डिजिटल आइटम के लिए, 'shipping' भौतिक आइटम के लिए"
 
+#: serializers.py:46
 msgid "True if this item is a component of a bundle"
 msgstr "यह आइटम एक बंडल के एक घटक है या नहीं"
 
+#: serializers.py:49
 msgid "ID of parent bundle CartItem if this is a component"
 msgstr "यदि यह एक घटक है तो मातृ बंडल CartItem के ID"
 
+#: serializers.py:52
 msgid "Child items if this is a bundle parent"
 msgstr "बच्चा आइटम यदि यह बंडल पेरेंट है"
 
-msgid "Map of bundle_item_id to variant_id for customer-selected variants"
-msgstr "ग्राहक द्वारा चुने गए वेरिएंट के लिए bundle_item_id से variant_id का मैप"
+#: serializers.py:591
+#| msgid "Remove gift card"
+msgid "Where to deliver the gift card"
+msgstr "गिफ्ट कार्ड की डिलीवरी कहाँ करें"
 
-msgid ""
-"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+#: serializers.py:605
+msgid "Offset-aware ISO-8601. Omit to deliver as soon as payment clears."
 msgstr ""
-"अपवर्जित करने के लिए bundle_item_ids की सूची (ग्राहक को नहीं चाहिए वैकल्पिक आइटम के "
-"लिए)"
+"ISO-8601 के ऑफसेट-जागरूक। भुगतान स्पष्ट होने पर तुरंत डिलीवर करने के लिए "
+"छोड़ दें।"
 
-msgid "Map of slot_id to list of selected option_ids for configurable products"
-msgstr "कॉन्फिगरेबल उत्पादों के लिए चुने गए विकल्पों की सूची के लिए slot_id के मानचित्र"
+#: serializers.py:612
+msgid "Face value, for products that let the customer choose."
+msgstr "मुख्य मूल्य, उन उत्पादों के लिए जिनमें ग्राहक चुन सकता है।"
 
+#: serializers.py:621
+#| msgid "Gift card is not active"
+msgid "Gift card details must be an object."
+msgstr "गिफ्ट कार्ड विवरण एक ऑब्जेक्ट होना चाहिए।"
+
+#: serializers.py:626
+#, python-format
+msgid "Unknown field(s): %(keys)s"
+msgstr "अज्ञात क्षेत्र(ओं): %(keys)s"
+
+#: serializers.py:638
+msgid "Message cannot contain HTML or markup."
+msgstr "संदेश में HTML या मार्कअप नहीं हो सकता।"
+
+#: serializers.py:647
+msgid "Include a UTC offset so the send time is unambiguous."
+msgstr "एक UTC ऑफसेट शामिल करें ताकि भेजे जाने का समय अस्पष्ट न हो।"
+
+#: serializers.py:651
+msgid "Scheduled delivery must be in the future."
+msgstr "निर्धारित डिलीवरी भविष्य में होनी चाहिए।"
+
+#: serializers.py:654
+msgid "Scheduled delivery cannot be more than a year away."
+msgstr "निर्धारित डिलीवरी एक वर्ष से अधिक दूर नहीं हो सकती।"
+
+#: serializers.py:673
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr ""
+"ग्राहक द्वारा चुने गए वेरिएंट के लिए bundle_item_id से variant_id का मैप"
+
+#: serializers.py:680
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't "
+"want)"
+msgstr ""
+"अपवर्जित करने के लिए bundle_item_ids की सूची (ग्राहक को नहीं चाहिए वैकल्पिक "
+"आइटम के लिए)"
+
+#: serializers.py:689
+msgid ""
+"Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"कॉन्फिगरेबल उत्पादों के लिए चुने गए विकल्पों की सूची के लिए slot_id के "
+"मानचित्र"
+
+#: serializers.py:694
 msgid "Configuration preset ID used as starting point"
 msgstr "सेटिंग प्रीसेट ID के रूप में शुरुआत के लिए उपयोग किया गया"
 
+#: serializers.py:706
 msgid ""
-"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+"Booking details: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
 msgstr ""
 "बुकिंग विवरण: start_datetime, end_datetime, resource_id, persons, timezone"
 
+#: serializers.py:719
 msgid "Quantity must be at least 1"
 msgstr "मात्रा कम से कम 1 होनी चाहिए"
 
+#: serializers.py:737
 msgid "Subscription plan is required for subscription purchases"
 msgstr "सदस्यता खरीद के लिए सदस्यता योजना आवश्यक है"
 
+#: serializers.py:743
 msgid "Payment token is required for subscription purchases"
 msgstr "सब्सक्रिप्शन खरीदारी के लिए भुगतान टोकन आवश्यक है"
 
+#: serializers.py:752 services/cart_service.py:991
+#: services/wishlist_service.py:61
 msgid "Product not found"
 msgstr "उत्पाद नहीं मिला"
 
+#: serializers.py:756
 msgid "This product does not support subscriptions"
 msgstr "यह उत्पाद सब्सक्रिप्शन के समर्थन के लिए नहीं है"
 
+#: serializers.py:768
 msgid "Invalid or inactive subscription plan"
 msgstr "अमान्य या बंद ग्राहक योजना"
 
+#: serializers.py:773
 msgid "This plan is not available for this product"
 msgstr "यह योजना इस उत्पाद के लिए उपलब्ध नहीं है"
 
+#: serializers.py:790
 msgid "Invalid or inactive payment token"
 msgstr "अमान्य या बंद भुगतान टोकन"
 
+#: serializers.py:805
 msgid "Pricing tier not found or does not belong to selected plan"
 msgstr "मूल्य टीयर नहीं मिला या चुनी गई योजना से संबंधित नहीं है"
 
+#: serializers.py:813
 msgid "No pricing tier available for this plan"
 msgstr "इस योजना के लिए कोई मूल्य वर्ग उपलब्ध नहीं है"
 
+#: serializers.py:830
 msgid "Quantity cannot be negative"
 msgstr "मात्रा ऋणात्मक नहीं हो सकती"
 
-msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
-msgstr "गिफ्ट कार्ड कोड (जैसे, GC-XXXX-XXXX-XXXX)"
-
-msgid "Amount applied from this gift card (in base currency)"
-msgstr "इस उपहार कार्ड से लागू राशि (मूल मुद्रा में)"
-
-msgid "Remaining balance on gift card after this application"
-msgstr "इस आवेदन के बाद गिफ्ट कार्ड पर शेष राशि"
-
-msgid "Base currency code"
-msgstr "मूल मुद्रा कोड"
-
-msgid "Gift card's native currency code"
-msgstr "गिफ्ट कार्ड की मूल मुद्रा कोड"
-
-msgid ""
-"Discount in gift card's native currency (for foreign-currency gift cards)"
-msgstr "उपहार कार्ड की मूल अपनी अपनी मुद्रा में छूट (विदेशी मुद्रा उपहार कार्ड के लिए)"
-
+#: serializers.py:1355
 #, python-brace-format
 msgid ""
-"Either address_id or complete address details are required. Missing: {fields}"
+"Either address_id or complete address details are required. Missing: "
+"{fields}"
 msgstr "या तो address_id या पूरे पता विवरण की आवश्यकता है। लापता: {fields}"
 
+#: serializers.py:1388
+#, python-brace-format
+#| msgid ""
+#| "Either address_id or complete address details are required. Missing: "
+#| "{fields}"
+msgid "Complete billing address details are required. Missing: {fields}"
+msgstr "बिलिंग पता विवरण पूरा करना आवश्यक है। लापता: {fields}"
+
+#: serializers.py:1406
+#| msgid "Payment provider is not properly configured"
+msgid "Either payment_provider_id or provider slug is required."
+msgstr "या तो payment_provider_id या provider slug आवश्यक है।"
+
+#: services/cart_service.py:128 services/cart_service.py:130
+msgid "Choose an amount for this gift card."
+msgstr "इस गिफ्ट कार्ड के लिए एक राशि चुनें।"
+
+#: services/cart_service.py:136
+msgid "Gift card amount must be greater than zero."
+msgstr "गिफ्ट कार्ड की राशि शून्य से अधिक होनी चाहिए।"
+
+#: services/cart_service.py:140 services/cart_service.py:156
+#| msgid "This plan is not available for this product"
+msgid "That is not an available gift card amount."
+msgstr "यह उपलब्ध गिफ्ट कार्ड राशि नहीं है।"
+
+#: services/cart_service.py:151
+#, python-format
+msgid "Minimum gift card amount is %(min)s."
+msgstr "न्यूनतम गिफ्ट कार्ड राशि %(min)s है।"
+
+#: services/cart_service.py:153
+#, python-format
+msgid "Maximum gift card amount is %(max)s."
+msgstr "अधिकतम गिफ्ट कार्ड राशि %(max)s है।"
+
+#: services/cart_service.py:199
 msgid "This product requires customization"
 msgstr "इस उत्पाद को अनुकूलन की आवश्यकता है"
 
+#: services/cart_service.py:207
 msgid "Invalid design token"
 msgstr "अमान्य डिज़ाइन टोकन"
 
+#: services/cart_service.py:235
 msgid "Design not found or expired"
 msgstr "डिज़ाइन नहीं मिला या अप्रभावी हो गया"
 
+#: services/cart_service.py:239
 msgid "This product does not support customization"
 msgstr "यह उत्पाद विशेषता के समर्थन के बिना है"
 
+#: services/cart_service.py:252
 msgid "Invalid customization option"
 msgstr "अमान्य अनुकूलन विकल्प"
 
+#: services/cart_service.py:261
 #, python-brace-format
 msgid "Customization '{name}': {error}"
 msgstr "स्वादीकरण '{name}': {error}"
 
+#: services/cart_service.py:280
 #, python-brace-format
 msgid "Required customization '{name}' is missing"
 msgstr "आवश्यक स्वादीकरण '{name}' लापता है"
 
+#: services/cart_service.py:343
 msgid "Insufficient stock"
 msgstr "अपर्याप्त स्टॉक"
 
+#: services/cart_service.py:386
 msgid "Bundle has no components configured"
 msgstr "बंडल में कोई घटक निर्धारित नहीं है"
 
+#: services/cart_service.py:395
 #, python-brace-format
 msgid "Cannot exclude non-optional bundle component: {name}"
 msgstr "अनिवार्य बंडल घटक को हटाया जा नहीं सकता: {name}"
 
+#: services/cart_service.py:414
+msgid "Bundles cannot contain gift cards."
+msgstr "बंडल में गिफ्ट कार्ड शामिल नहीं किए जा सकते।"
+
+#: services/cart_service.py:424
 #, python-brace-format
 msgid "Variant selection required for: {name}"
 msgstr "{name} के लिए वेरिएंट चयन आवश्यक है"
 
+#: services/cart_service.py:436
 #, python-brace-format
 msgid "Invalid variant selected for: {name}"
 msgstr "{name} के लिए अमान्य वेरिएंट चुना गया है"
 
+#: services/cart_service.py:465
 #, python-brace-format
 msgid "Insufficient stock for bundle component: {name}"
 msgstr "बंडल घटक के लिए पर्याप्त स्टॉक नहीं है: {name}"
 
+#: services/cart_service.py:514
 msgid "Bundle quantity updated in cart"
 msgstr "कार्ट में बंडल मात्रा अपडेट की गई है"
 
+#: services/cart_service.py:544
 msgid "Bundle added to cart"
 msgstr "बंडल कार्ट में जोड़ा गया है"
 
+#: services/cart_service.py:581
 #, python-brace-format
 msgid "Required slot '{name}' has no selection."
 msgstr "आवश्यक स्लॉट '{name}' में कोई चयन नहीं है।"
 
+#: services/cart_service.py:590
 #, python-brace-format
 msgid "Slot '{name}' requires at least {min} selection(s)."
 msgstr "स्लॉट '{name}' कम से कम {min} चयन की आवश्यकता है।"
 
+#: services/cart_service.py:598
 #, python-brace-format
 msgid "Slot '{name}' allows at most {max} selection(s)."
 msgstr "स्लॉट '{name}' अधिकतम {max} चयन तक अनुमति देता है।"
 
+#: services/cart_service.py:609
 #, python-brace-format
 msgid "Invalid slot ID: {id}"
 msgstr "अमान्य स्लॉट ID: {id}"
 
+#: services/cart_service.py:619
 #, python-brace-format
 msgid "Option {opt_id} is not valid for slot '{slot}'."
 msgstr "विकल्प {opt_id} स्लॉट '{slot}' के लिए अमान्य है।"
 
+#: services/cart_service.py:656
 #, python-brace-format
 msgid ""
 "Incompatible selection in slot '{slot}'. Some options are not compatible "
 "with your other choices."
-msgstr "स्लॉट '{slot}' में असंगत चयन। कुछ विकल्प आपके अन्य चयनों के साथ संगत नहीं हैं।"
+msgstr ""
+"स्लॉट '{slot}' में असंगत चयन। कुछ विकल्प आपके अन्य चयनों के साथ संगत नहीं "
+"हैं।"
 
+#: services/cart_service.py:667
 #, python-brace-format
 msgid ""
 "Excluded selection in slot '{slot}'. Some options conflict with your other "
 "choices."
 msgstr ""
-"स्लॉट '{slot}' में बाहर किया गया चयन। कुछ विकल्प आपके अन्य चयनों के साथ टकराते हैं।"
+"स्लॉट '{slot}' में बाहर किया गया चयन। कुछ विकल्प आपके अन्य चयनों के साथ "
+"टकराते हैं।"
 
+#: services/cart_service.py:767 services/cart_service.py:1386
 #, python-brace-format
 msgid "Insufficient stock for component: {name}"
 msgstr "घटक के लिए पर्याप्त स्टॉक नहीं है: {name}"
 
+#: services/cart_service.py:827
 msgid "Configured product added to cart"
 msgstr "निर्धारित उत्पाद कार्ट में जोड़ा गया है"
 
+#: services/cart_service.py:887
 msgid "Either user or session_key must be provided"
 msgstr "या तो उपयोगकर्ता या सेशन_की देना आवश्यक है"
 
+#: services/cart_service.py:995
 msgid "This product is no longer available"
 msgstr "यह उत्पाद अब उपलब्ध नहीं है"
 
+#: services/cart_service.py:1023
 msgid "You must be logged in to purchase this product."
 msgstr "आपको इस उत्पाद को खरीदने के लिए लॉग इन करना आवश्यक है।"
 
+#: services/cart_service.py:1026
 #, python-format
 msgid "This product requires you to own \"%(required)s\" first."
 msgstr "इस उत्पाद के लिए आपको पहले \"\" के मालिक होना आवश्यक है। %(required)s"
 
+#: services/cart_service.py:1035 services/wishlist_service.py:68
 msgid "Product variant not found"
 msgstr "उत्पाद वेरिएंट नहीं मिला"
 
+#: services/cart_service.py:1040
 msgid "Configuration is required for configurable products"
 msgstr "विन्यासित उत्पादों के लिए सेटिंग आवश्यक है"
 
+#: services/cart_service.py:1159
 msgid "Booking added to cart"
 msgstr "बुकिंग कार्ट में जोड़ दी गई"
 
+#: services/cart_service.py:1192
+#| msgid "Item added to cart"
+msgid "Gift card added to cart"
+msgstr "गिफ्ट कार्ड कार्ट में जोड़ा गया"
+
+#: services/cart_service.py:1231
 msgid "Insufficient stock for requested quantity"
 msgstr "अनुरोधित मात्रा के लिए अपर्याप्त स्टॉक"
 
+#: services/cart_service.py:1234
 msgid "Cart item quantity updated"
 msgstr "कार्ट आइटम मात्रा अपडेट की गई है"
 
+#: services/cart_service.py:1256
 msgid "Item added to cart"
 msgstr "आइटम कार्ट में जोड़ा गया है"
 
+#: services/cart_service.py:1303
 msgid ""
 "Component quantities cannot be changed directly. Update the parent product "
 "instead."
-msgstr "घटक मात्राएं सीधे बदली नहीं जा सकती हैं। बजाय अपने माता उत्पाद को अपडेट करें।"
+msgstr ""
+"घटक मात्राएं सीधे बदली नहीं जा सकती हैं। बजाय अपने माता उत्पाद को अपडेट "
+"करें।"
 
+#: services/cart_service.py:1318 services/cart_service.py:1499
 #, python-format
 msgid ""
 "Item removed from cart. Also removed %(names)s (required product no longer "
 "in cart)."
 msgstr ""
-"कार्ट से आइटम हटा दिया गया। इसके साथ ही %(names)s भी हटा दिया गया (आवश्यक उत्पाद "
-"कार्ट में नहीं है)"
+"कार्ट से आइटम हटा दिया गया। इसके साथ ही %(names)s भी हटा दिया गया (आवश्यक "
+"उत्पाद कार्ट में नहीं है)"
 
+#: services/cart_service.py:1320 services/cart_service.py:1501
 msgid "Item removed from cart"
 msgstr "आइटम कार्ट से हटा दिया गया है"
 
+#: services/cart_service.py:1410
 msgid "Cart item updated"
 msgstr "कार्ट आइटम अपडेट किया गया है"
 
+#: services/cart_service.py:1469 views.py:286
 msgid ""
 "Component items cannot be removed directly. Remove the parent product "
 "instead."
 msgstr "घटक आइटम्स को सीधे हटाया जा सकता है। बजाय माता उत्पाद को हटाएं।"
 
+#: services/cart_service.py:1556
 msgid "Cart cleared"
 msgstr "कार्ट साफ कर दिया गया है"
 
+#: services/cart_service.py:1593
 msgid "Voucher removed"
 msgstr "वौचर हटा दिया गया है"
 
+#: services/cart_service.py:1594
 msgid "Voucher not found in cart"
 msgstr "कार्ट में वौचर नहीं मिला"
 
-msgid "Gift card removed"
-msgstr "गिफ्ट कार्ड हटा दिया गया है"
-
-msgid "Gift card not found in cart"
-msgstr "कार्ट में गिफ्ट कार्ड नहीं मिला"
-
+#: services/cart_service.py:1666
 #, python-brace-format
 msgid "{count} items merged into cart"
 msgstr "{count} आइटम कार्ट में मर्ज कर दिए गए"
 
+#: services/checkout_service.py:94
 msgid "Account creation required to proceed"
 msgstr "आगे बढ़ने के लिए खाता बनाना आवश्यक है"
 
+#: services/checkout_service.py:169 services/checkout_service.py:233
 msgid "Address not found"
 msgstr "पता नहीं मिला"
 
+#: services/checkout_service.py:178
 msgid "Either address_id or address_data must be provided"
 msgstr "या तो address_id या address_data देना आवश्यक है"
 
+#: services/checkout_service.py:198
 msgid "Shipping address set"
 msgstr "शिपिंग पता सेट कर दिया गया है"
 
+#: services/checkout_service.py:239
 msgid "Billing address must be provided"
 msgstr "बिलिंग पता प्रदान करना आवश्यक है"
 
+#: services/checkout_service.py:242
 msgid "Billing address set"
 msgstr "बिलिंग पता सेट कर दिया गया है"
 
+#: services/checkout_service.py:282
 msgid "Shipping address must be set first"
 msgstr "शिपिंग पता पहले सेट करना आवश्यक है"
 
+#: services/checkout_service.py:287
 msgid "Shipping method not found"
 msgstr "शिपिंग विधि नहीं मिली"
 
+#: services/checkout_service.py:320
 msgid "Shipping method selected"
 msgstr "शिपिंग विधि चुनी गई है"
 
+#: services/checkout_service.py:382
 msgid "Payment provider not found"
 msgstr "भुगतान प्रदाता नहीं मिला"
 
+#: services/checkout_service.py:386
 msgid "Payment provider is not properly configured"
 msgstr "भुगतान प्रदाता सही तरीके से सेट अप नहीं किया गया है"
 
+#: services/checkout_service.py:410
 msgid "Payment provider is not available for your location or currency"
 msgstr "आपके स्थान या मुद्रा के लिए भुगतान प्रदाता उपलब्ध नहीं है"
 
+#: services/checkout_service.py:417
 msgid "Payment method selected"
 msgstr "भुगतान विधि चुनी गई है"
 
+#: services/checkout_service.py:434
 msgid "Cart is empty"
 msgstr "कार्ट रिक्त है"
 
+#: services/checkout_service.py:440
 msgid "Shipping address is required"
 msgstr "शिपिंग पता आवश्यक है"
 
+#: services/checkout_service.py:442
 msgid "Shipping method is required"
 msgstr "शिपिंग विधि आवश्यक है"
 
+#: services/checkout_service.py:448
 msgid "Billing address is required"
 msgstr "बिलिंग पता आवश्यक है"
 
+#: services/checkout_service.py:455
 msgid "Payment method is required"
 msgstr "भुगतान विधि आवश्यक है"
 
+#: services/checkout_service.py:459
 msgid "Checkout session has expired"
 msgstr "चेकआउट सेशन समाप्त हो गया है"
 
+#: services/checkout_service.py:489
 #, python-brace-format
 msgid "Insufficient stock for {product}"
 msgstr "{product} के लिए पर्याप्त स्टॉक नहीं है"
 
+#: services/checkout_service.py:505
 #, python-format
 msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
 msgstr "\"%(product)s\" के लिए \"\" के पहले से ही मालिक होना आवश्यक है। %(required)s"
 
+#: services/checkout_service.py:694
 msgid "Customer email is required"
 msgstr "ग्राहक के ईमेल की आवश्यकता है"
 
+#: services/checkout_service.py:854
 msgid "Unable to allocate warehouse for order. Please contact support."
 msgstr "आदेश के लिए वेयरहाउस आवंटित करने में असमर्थ। समर्थन से संपर्क करें।"
 
+#: services/checkout_service.py:985 services/checkout_service.py:1018
 msgid "Insufficient stock to complete order"
 msgstr "ऑर्डर पूरा करने के लिए अपर्याप्त स्टॉक"
 
+#: services/checkout_service.py:990 services/checkout_service.py:1023
 msgid "Error processing order. Please try again."
 msgstr "आदेश के प्रोसेसिंग में त्रुटि। कृपया पुनः प्रयास करें।"
 
+#: services/checkout_service.py:1072
 msgid "Order created successfully"
 msgstr "ऑर्डर सफलतापूर्वक बनाया गया है"
 
+#: services/checkout_service.py:1322
+#, python-format
+msgid "The voucher %(code)s has just been fully used."
+msgstr "वौचर %(code)s अब पूरी तरह से उपयोग कर दिया गया है।"
+
+#: services/checkout_service.py:1328
+#, python-format
+#| msgid "This product is no longer available"
+msgid "The voucher %(code)s is no longer valid."
+msgstr "वॉचर %(code)s अब वैध नहीं है।"
+
+#: services/wishlist_service.py:82
 msgid "Wishlist item updated"
 msgstr "विशिष्ट सूची आइटम अपडेट किया गया है"
 
+#: services/wishlist_service.py:95
 msgid "Item added to wishlist"
 msgstr "आइटम विशिष्ट सूची में जोड़ा गया है"
 
+#: services/wishlist_service.py:110
 msgid "Item removed from wishlist"
 msgstr "आइटम विशिष्ट सूची से हटा दिया गया है"
 
+#: services/wishlist_service.py:137
 msgid "Item moved to cart"
 msgstr "आइटम कार्ट में ले जाया गया है"
 
+#: services/wishlist_service.py:154
 msgid "Wishlist cleared"
 msgstr "विशिष्ट सूची साफ कर दी गई है"
 
+#: services/wishlist_service.py:173
 msgid "Wishlist with this name already exists"
 msgstr "इस नाम के साथ विश्लेषण सूची पहले से ही मौजूद है"
 
+#: services/wishlist_service.py:184
 msgid "Wishlist created"
 msgstr "विशिष्ट सूची बनाई गई है"
 
+#: templates/admin/cart/cart/change_list.html:22
 msgid "Monitor active and abandoned customer carts"
 msgstr "सक्रिय और छोड़े गए ग्राहक कार्ट की निगरानी करें"
 
+#: templates/admin/cart/cart/change_list.html:33
 msgid "Add"
 msgstr "जोड़ें"
 
+#: templates/admin/cart/cart/change_list.html:33
+#: templates/admin/cart/cart/change_list.html:178
 msgid "cart"
 msgstr "कार्ट"
 
+#: templates/admin/cart/cart/change_list.html:45
+#: templates/admin/cart/taxrate/change_list.html:59
 msgid "Filters"
 msgstr "फ़िल्टर"
 
+#: templates/admin/cart/cart/change_list.html:56
+#: templates/admin/cart/taxrate/change_list.html:63
 msgid "Search"
 msgstr "खोजें"
 
+#: templates/admin/cart/cart/change_list.html:61
 msgid "Search by user, session, or email..."
 msgstr "उपयोगकर्ता, सेशन या ईमेल द्वारा खोजें..."
 
+#: templates/admin/cart/cart/change_list.html:68
 msgid "User Type"
 msgstr "उपयोगकर्ता प्रकार"
 
+#: templates/admin/cart/cart/change_list.html:71
 msgid "All Carts"
 msgstr "सभी कार्ट"
 
+#: templates/admin/cart/cart/change_list.html:72
 msgid "Registered Users"
 msgstr "पंजीकृत उपयोगकर्ता"
 
+#: templates/admin/cart/cart/change_list.html:73
 msgid "Guest Carts"
 msgstr "अतिथि कार्ट"
 
+#: templates/admin/cart/cart/change_list.html:80
 msgid "Cart Status"
 msgstr "कार्ट स्थिति"
 
+#: templates/admin/cart/cart/change_list.html:83
+#: templates/admin/cart/cart/change_list.html:96
+#: templates/admin/cart/taxrate/change_list.html:88
 msgid "All"
 msgstr "सभी"
 
+#: templates/admin/cart/cart/change_list.html:84
 msgid "Active (< 24h)"
 msgstr "सक्रिय (< 24h)"
 
+#: templates/admin/cart/cart/change_list.html:85
 msgid "Abandoned (> 24h)"
 msgstr "त्याग दिया गया (> 24h)"
 
+#: templates/admin/cart/cart/change_list.html:86
+#: templates/admin/cart/partials/cart_cards.html:50
 msgid "Empty"
 msgstr "रिक्त"
 
+#: templates/admin/cart/cart/change_list.html:97
 msgid "Has Shipping"
 msgstr "शिपिंग है"
 
+#: templates/admin/cart/cart/change_list.html:98
 msgid "No Shipping"
 msgstr "कोई शिपिंग"
 
+#: templates/admin/cart/cart/change_list.html:105
 msgid "Min Cart Value"
 msgstr "न्यूनतम कार्ट मूल्य"
 
+#: templates/admin/cart/cart/change_list.html:110
 msgid "Min value"
 msgstr "न्यूनतम मूल्य"
 
+#: templates/admin/cart/cart/change_list.html:117
 msgid "Max Cart Value"
 msgstr "अधिकतम कार्ट मूल्य"
 
+#: templates/admin/cart/cart/change_list.html:122
 msgid "Max value"
 msgstr "अधिकतम मूल्य"
 
+#: templates/admin/cart/cart/change_list.html:130
 msgid "Created From"
 msgstr "बनाया गया अनुसार"
 
+#: templates/admin/cart/cart/change_list.html:139
 msgid "Created To"
 msgstr "बनाया गया तक"
 
+#: templates/admin/cart/cart/change_list.html:151
 msgid "Apply Filters"
 msgstr "फ़िल्टर लागू करें"
 
+#: templates/admin/cart/cart/change_list.html:154
 msgid "Clear All"
 msgstr "सब कुछ साफ करें"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Run the selected action"
 msgstr "चुनी गई कार्रवाई चलाएं"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Go"
 msgstr "जाएं"
 
+#: templates/admin/cart/cart/change_list.html:168
 msgid "of"
 msgstr "के"
 
+#: templates/admin/cart/cart/change_list.html:195
 #, python-format
 msgid "1 cart"
 msgid_plural "%(counter)s carts"
 msgstr[0] "%(counter)s कार्ट"
 msgstr[1] "%(counter)s कार्ट्स"
 
+#: templates/admin/cart/cart/change_list.html:197
 msgid "carts"
 msgstr "कार्ट"
 
+#: templates/admin/cart/cart/change_list.html:201
 msgid "Show all"
 msgstr "सभी दिखाएं"
 
+#: templates/admin/cart/cart/change_list.html:205
+#: templates/admin/cart/shippingmethod/change_form.html:43
+#: templates/admin/cart/shippingmethod/change_form.html:343
+#: templates/admin/cart/taxrate/change_form.html:44
+#: templates/admin/cart/taxrate/change_form.html:238
 msgid "Save"
 msgstr "सहेजें"
 
+#: templates/admin/cart/method_wizard/base.html:4
+#: templates/admin/cart/method_wizard/base.html:17
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:24
 msgid "Add Shipping Method"
 msgstr "शिपिंग विधि जोड़ें"
 
+#: templates/admin/cart/method_wizard/base.html:18
 msgid "Configure a new shipping method for your store"
 msgstr "अपने स्टोर के लिए एक नई शिपिंग विधि के लिए सेटिंग करें"
 
+#: templates/admin/cart/method_wizard/base.html:25
+#: templates/admin/cart/method_wizard/step1_basics.html:10
+#: templates/admin/cart/method_wizard/step5_review.html:18
 msgid "Method Basics"
 msgstr "विधि के आधार"
 
+#: templates/admin/cart/method_wizard/base.html:31
 msgid "Eligibility"
 msgstr "योग्यता"
 
+#: templates/admin/cart/method_wizard/base.html:37
+#: templates/admin/cart/shippingmethod/change_form.html:90
 msgid "Coverage"
 msgstr "कवरेज"
 
+#: templates/admin/cart/method_wizard/base.html:43
 msgid "Features"
 msgstr "विशेषताएं"
 
+#: templates/admin/cart/method_wizard/base.html:49
 msgid "Review"
 msgstr "समीक्षा"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:13
 msgid "Define the core identity and type of this shipping method."
 msgstr "इस शिपिंग विधि की मूल पहचान और प्रकार को परिभाषित करें।"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:27
 msgid "Method Name"
 msgstr "विधि का नाम"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:35
 msgid "e.g., Standard Shipping, Express Delivery"
 msgstr "जैसे, मानक शिपिंग, एक्सप्रेस डिलीवरी"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:38
 msgid "Customer-facing name for this shipping method"
 msgstr "इस शिपिंग विधि के लिए ग्राहक-मुखी नाम"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:49
 msgid "Optional description of this shipping method"
 msgstr "इस शिपिंग विधि का वैकल्पिक विवरण"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:54
 msgid "Display Icon"
 msgstr "आइकॉन दिखाएं"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:58
+#: templates/admin/cart/shippingmethod/change_form.html:227
 msgid ""
 "Select an image from the media library or choose a Font Awesome icon. Image "
 "takes priority if both are provided."
 msgstr ""
-"मीडिया लाइब्रेरी से एक छवि चुनें या फॉन्ट अवेज़ आइकॉन चुनें। यदि दोनों प्रदान किए जाते हैं, "
-"तो छवि की प्राथमिकता होती है।"
+"मीडिया लाइब्रेरी से एक छवि चुनें या फॉन्ट अवेज़ आइकॉन चुनें। यदि दोनों "
+"प्रदान किए जाते हैं, तो छवि की प्राथमिकता होती है।"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:63
+#: templates/admin/cart/method_wizard/step5_review.html:48
 msgid "Custom Image"
 msgstr "कस्टम इमेज"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:74
 msgid "Font Awesome Icon"
 msgstr "फॉंट अवेज़ आइकॉन"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:78
 msgid "Choose an icon from Font Awesome library"
 msgstr "फॉन्ट अवेज़ लाइब्रेरी से एक आइकॉन चुनें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:94
+#: templates/admin/cart/method_wizard/step5_review.html:62
+#: templates/admin/cart/shippingmethod/change_form.html:32
+#: templates/admin/cart/shippingmethod/change_form.html:294
+#: templates/admin/cart/shippingmethod/change_list.html:67
+#: templates/admin/cart/shippingmethod/method_card.html:122
+#: templates/admin/cart/taxrate/change_form.html:33
+#: templates/admin/cart/taxrate/change_list.html:42
+#: templates/admin/cart/taxrate/change_list.html:89
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:26
 msgid "Active"
 msgstr "सक्रिय"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:98
 msgid "Make this method available to customers immediately"
 msgstr "ग्राहकों के लिए तुरंत इस विधि को उपलब्ध करें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:105
 msgid "Method Type & Pricing"
 msgstr "विधि के प्रकार और मूल्य"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:114
 msgid "Select method type..."
 msgstr "विधि प्रकार चुनें..."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:116
 msgid "Flat Rate - Fixed shipping cost"
 msgstr "फ्लैट रेट - निर्धारित शिपिंग लागत"
 
-msgid "Free Shipping - No charge"
-msgstr "मुफ्त शिपिंग - कोई शुल्क नहीं"
-
-msgid "Weight Based - Calculate by cart weight"
-msgstr "वजन आधारित - कार्ट वजन द्वारा गणना"
-
-msgid "Price Based - Calculate by cart subtotal"
-msgstr "कीमत आधारित - कार्ट सबटोटल द्वारा गणना"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:119
 msgid "Real-Time Carrier Rates - Live rates from carriers"
 msgstr "रियल-टाइम कैरियर रेट - कैरियर से लाइव रेट"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:122
 msgid "Local Pickup - Customer picks up at location"
 msgstr "लोकल पिकअप - ग्राहक स्थान पर ले जाता है"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:125
 msgid "Table Rate - Complex rules based on weight/price/destination"
 msgstr "टेबल रेट - वजन/कीमत/गंतव्य के आधार पर जटिल नियम"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:133
 msgid "Method Types:"
 msgstr "विधि प्रकार:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Flat Rate:"
 msgstr "फ्लैट दर:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Fixed shipping cost regardless of order"
 msgstr "ऑर्डर के बिना निर्धारित शिपिंग लागत"
 
-msgid "Free Shipping:"
-msgstr "मुफ्त शिपिंग:"
-
-msgid "No shipping charge"
-msgstr "कोई शिपिंग शुल्क नहीं"
-
-msgid "Weight/Price Based:"
-msgstr "वजन/मूल्य आधारित:"
-
-msgid "Calculate using rate tables"
-msgstr "दर तालिका का उपयोग करके गणना करें"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Real-Time:"
 msgstr "रियल-टाइम:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Get live rates from USPS, FedEx, UPS, or DHL"
 msgstr "USPS, FedEx, UPS या DHL से लाइव रेट प्राप्त करें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Local Pickup:"
 msgstr "स्थानीय पिकअप:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Customer picks up at your location"
 msgstr "ग्राहक अपने स्थान पर ले जाता है"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate"
+msgid "Table Rate:"
+msgstr "टेबल रेट:"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate - Complex rules based on weight/price/destination"
+msgid "Complex rules based on weight, price, or destination"
+msgstr "भार, मूल्य या गंतव्य के आधार पर जटिल नियम"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:158
 msgid "Fixed shipping cost charged to customer"
 msgstr "ग्राहक को निर्धारित शिपिंग लागत लगाई जाती है"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:168
 msgid "No Configured Providers"
 msgstr "कोई निर्धारित प्रोवाइडर नहीं"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:170
 msgid ""
-"You need to configure at least one shipping provider that supports real-time "
-"rates before you can use this method type."
+"You need to configure at least one shipping provider that supports real-time"
+" rates before you can use this method type."
 msgstr ""
-"इस विधि प्रकार का उपयोग करने से पहले आपको कम से कम एक शिपिंग प्रदाता को वास्तविक समय "
-"रेट समर्थन के साथ निर्माण करना होगा।"
+"इस विधि प्रकार का उपयोग करने से पहले आपको कम से कम एक शिपिंग प्रदाता को "
+"वास्तविक समय रेट समर्थन के साथ निर्माण करना होगा।"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:174
 msgid "Connect Provider"
 msgstr "प्रोवाइडर कनेक्ट करें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:177
 msgid "Manage Providers"
 msgstr "प्रोवाइडर प्रबंधित करें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:190
 msgid "Select a configured shipping provider"
 msgstr "एक निर्धारित शिपिंग प्रोवाइडर चुनें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:202
+#: templates/admin/cart/method_wizard/step4_features.html:252
 msgid "Tip:"
 msgstr "सुझाव:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:203
 msgid ""
 "Only providers that are configured and support real-time rates are shown "
 "above."
 msgstr ""
-"केवल उन प्रदाताओं को ऊपर दिखाया जाता है जो निर्मित और वास्तविक समय रेट समर्थन करते हैं।"
+"केवल उन प्रदाताओं को ऊपर दिखाया जाता है जो निर्मित और वास्तविक समय रेट "
+"समर्थन करते हैं।"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:204
 msgid "Manage providers"
 msgstr "प्रोवाइडर प्रबंधित करें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:209
 msgid "Service Code"
 msgstr "सेवा कोड"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:213
 msgid "Specific service code from carrier (optional)"
 msgstr "कैरियर से विशिष्ट सेवा कोड (वैकल्पिक)"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:230
 msgid "Cancel"
 msgstr "रद्द करें"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:233
+#: templates/admin/cart/method_wizard/step2_conditions.html:53
+#: templates/admin/cart/method_wizard/step3_coverage.html:102
 msgid "Next Step"
 msgstr "अगला कदम"
 
-msgid "Eligibility Conditions"
-msgstr "योग्यता की शर्तें"
-
-msgid ""
-"Define when this shipping method should be available based on cart value and "
-"weight."
-msgstr ""
-"कार्ट के मूल्य और वजन के आधार पर इस शिपिंग विधि के उपलब्ध होने के समय को परिभाषित करें।"
-
-msgid "Order Value Restrictions"
-msgstr "आदेश मूल्य प्रतिबंध"
-
-msgid "Set minimum or maximum cart subtotal requirements for this method."
-msgstr "इस विधि के लिए कार्ट सबटोटल की न्यूनतम या अधिकतम आवश्यकताएं निर्धारित करें।"
-
-msgid "Method only available if cart subtotal is at least this amount"
-msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट सबटोटल इस राशि के बराबर या अधिक हो।"
-
-msgid "No maximum"
-msgstr "कोई अधिकतम नहीं"
-
-msgid "Method only available if cart subtotal is below this amount"
-msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट सबटोटल इस राशि से कम हो।"
-
-msgid "Examples:"
-msgstr "उदाहरण:"
-
-msgid "Free shipping for orders over $50: Set minimum to 50.00"
-msgstr "$50 से अधिक के ऑर्डर के लिए मुफ्त शिपिंग: न्यूनतम 50.00 रखें"
-
-msgid "Economy shipping for orders under $100: Set maximum to 100.00"
-msgstr "$100 से कम के ऑर्डर के लिए अर्थव्यवस्था शिपिंग: अधिकतम 100.00 रखें"
-
-msgid "Standard shipping for $25-$200: Set both minimum and maximum"
-msgstr "$25-$200 के लिए मानक शिपिंग: दोनों न्यूनतम और अधिकतम रखें"
-
-msgid "Weight Restrictions"
-msgstr "वजन प्रतिबंध"
-
-msgid "Set minimum or maximum total cart weight requirements for this method."
-msgstr "इस विधि के लिए कार्ट के कुल वजन की न्यूनतम या अधिकतम आवश्यकताएं निर्धारित करें।"
-
-msgid "Minimum Weight (kg)"
-msgstr "न्यूनतम वजन (किलोग्राम)"
-
-msgid "Method only available if total cart weight is at least this value"
-msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट के कुल वजन इस मूल्य के बराबर या अधिक हो।"
-
-msgid "Maximum Weight (kg)"
-msgstr "अधिकतम वजन (किलोग्राम)"
-
-msgid "Method only available if total cart weight is below this value"
-msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट के कुल वजन इस मूल्य से कम हो।"
-
-msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
-msgstr "2 किलोग्राम से कम पैकेज के लिए हल्का पैकेज शिपिंग: अधिकतम 2.00 रखें"
-
-msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
-msgstr "20 किलोग्राम से अधिक पैकेज के लिए भारी भाड़ा: न्यूनतम 20.00 रखें"
-
-msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
-msgstr "0.5 किलोग्राम-10 किलोग्राम के लिए मानक शिपिंग: दोनों न्यूनतम और अधिकतम रखें"
-
+#: templates/admin/cart/method_wizard/step2_conditions.html:6
+#: templates/admin/cart/method_wizard/step2_conditions.html:27
+#: templates/admin/cart/method_wizard/step5_review.html:93
 msgid "Additional Options"
 msgstr "अतिरिक्त विकल्प"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:9
+#| msgid "Optional description of this shipping method"
+msgid "Configure additional options for this shipping method."
+msgstr "इस शिपिंग विधि के लिए अतिरिक्त विकल्पों के लिए विन्यास करें।"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:19
+msgid "Eligibility Conditions"
+msgstr "योग्यता की शर्तें"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:20
+msgid ""
+"Order value and weight eligibility conditions are now configured through "
+"Shipping Promotions with visibility control. Go to Shipping Promotions to "
+"set up conditions that control when this method is shown to customers."
+msgstr ""
+"अब ऑर्डर के मूल्य और वजन के पात्रता के शर्तों को शिपिंग प्रोमोशन्स के माध्यम"
+" से जिसमें दृश्यता नियंत्रण शामिल है, सेट किया जाता है। शिपिंग प्रोमोशन्स "
+"जाएं ताकि आप शर्तों का व्यवस्था कर सकें जो नियंत्रित करता है कि यह विधि "
+"ग्राहकों को कब दिखाई दे।"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:36
 msgid "Requires Shipping Address"
 msgstr "शिपिंग पता आवश्यक है"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:40
 msgid ""
 "Customer must provide a shipping address for this method (disable for "
 "digital goods or local pickup)"
 msgstr ""
-"इस विधि के लिए ग्राहक को एक शिपिंग पता प्रदान करना आवश्यक है (डिजिटल वस्तुओं या लोकल "
-"पिकअप के लिए अक्षम करें)"
+"इस विधि के लिए ग्राहक को एक शिपिंग पता प्रदान करना आवश्यक है (डिजिटल वस्तुओं"
+" या लोकल पिकअप के लिए अक्षम करें)"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:50
+#: templates/admin/cart/method_wizard/step3_coverage.html:99
+#: templates/admin/cart/method_wizard/step4_features.html:263
+#: templates/admin/cart/method_wizard/step5_review.html:228
 msgid "Previous"
 msgstr "पिछला"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:117
+#: templates/admin/cart/shippingmethod/change_form.html:169
 msgid "Geographic Coverage"
 msgstr "भौगोलिक कवरेज"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:9
+#: templates/admin/cart/shippingmethod/change_form.html:170
 msgid "Define where this shipping method is available using shipping zones."
-msgstr "शिपिंग जोन के उपयोग से इस शिपिंग विधि के उपलब्ध होने के स्थान को परिभाषित करें।"
+msgstr ""
+"शिपिंग जोन के उपयोग से इस शिपिंग विधि के उपलब्ध होने के स्थान को परिभाषित "
+"करें।"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:23
 msgid "Zone-Based Coverage:"
 msgstr "क्षेत्र-आधारित कवरेज:"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:24
 msgid ""
 "Use shipping zones for flexible, rule-based geographic coverage. This "
 "approach works seamlessly with shipping rules and allows precise control "
 "over where your methods are available."
 msgstr ""
-"उपयोग करें शिपिंग जोन लचीले, नियम-आधारित भौगोलिक कवरेज के लिए। यह दृष्टिकोण शिपिंग "
-"नियमों के साथ सुगमता से काम करता है और आपकी विधियों के उपलब्ध होने के स्थान पर नियंत्रण "
-"की अनुमति देता है।"
+"उपयोग करें शिपिंग जोन लचीले, नियम-आधारित भौगोलिक कवरेज के लिए। यह दृष्टिकोण "
+"शिपिंग नियमों के साथ सुगमता से काम करता है और आपकी विधियों के उपलब्ध होने के"
+" स्थान पर नियंत्रण की अनुमति देता है।"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:29
 msgid "Select Shipping Zones"
 msgstr "शिपिंग क्षेत्र चुनें"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:32
 msgid ""
 "Choose which shipping zones this method is available for. Leave empty to "
 "make available worldwide."
 msgstr ""
-"इस विधि के लिए कौन-से शिपिंग जोन उपलब्ध हैं उनका चयन करें। विश्वव्यापी उपलब्ध करने के लिए "
-"खाली छोड़ दें।"
+"इस विधि के लिए कौन-से शिपिंग जोन उपलब्ध हैं उनका चयन करें। विश्वव्यापी "
+"उपलब्ध करने के लिए खाली छोड़ दें।"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:38
 msgid "Available Zones"
 msgstr "उपलब्ध क्षेत्र"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:49
 msgid "Add selected zones"
 msgstr "चुने गए क्षेत्र जोड़ें"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:52
 msgid "Add all zones"
 msgstr "सभी क्षेत्र जोड़ें"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:55
 msgid "Remove selected zones"
 msgstr "चुने गए क्षेत्र हटाएं"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:58
 msgid "Remove all zones"
 msgstr "सभी क्षेत्र हटाएं"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:64
 msgid "Selected Zones"
 msgstr "चुने गए क्षेत्र"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:83
 msgid "No shipping zones found!"
 msgstr "कोई शिपिंग क्षेत्र नहीं मिला!"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:84
 msgid "You need to create shipping zones first."
 msgstr "आपको पहले शिपिंग जोन बनाने की आवश्यकता है।"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:86
 msgid "Create a shipping zone"
 msgstr "एक शिपिंग क्षेत्र बनाएं"
 
+#: templates/admin/cart/method_wizard/step4_features.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:154
 msgid "Method Features"
 msgstr "विधि विशेषताएं"
 
+#: templates/admin/cart/method_wizard/step4_features.html:9
 msgid ""
 "Configure delivery estimates, display order, and method-specific features."
-msgstr "डिलीवरी अनुमानों, प्रदर्शन क्रम और विधि-विशिष्ट विशेषताओं के निर्माण करें।"
+msgstr ""
+"डिलीवरी अनुमानों, प्रदर्शन क्रम और विधि-विशिष्ट विशेषताओं के निर्माण करें।"
 
-msgid "Select the physical locations where customers can pick up their orders."
+#: templates/admin/cart/method_wizard/step4_features.html:23
+msgid ""
+"Select the physical locations where customers can pick up their orders."
 msgstr "ग्राहक अपने ऑर्डर ले जा सकते हैं उन भौतिक स्थानों का चयन करें।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:27
 msgid "Available Pickup Locations"
 msgstr "उपलब्ध पिकअप स्थान"
 
+#: templates/admin/cart/method_wizard/step4_features.html:32
 msgid "Available Locations"
 msgstr "उपलब्ध स्थान"
 
+#: templates/admin/cart/method_wizard/step4_features.html:60
 msgid "Selected Locations"
 msgstr "चुने गए स्थान"
 
+#: templates/admin/cart/method_wizard/step4_features.html:79
 msgid "No pickup locations found!"
 msgstr "कोई पिकअप स्थान नहीं मिला!"
 
+#: templates/admin/cart/method_wizard/step4_features.html:80
 msgid "You need to create pickup locations first for local pickup methods."
 msgstr "लोकल पिकअप विधियों के लिए आपको पहले पिकअप स्थान बनाने की आवश्यकता है।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:82
 msgid "Create a pickup location"
 msgstr "एक पिकअप स्थान बनाएं"
 
+#: templates/admin/cart/method_wizard/step4_features.html:95
 msgid "Carrier API Status"
 msgstr "कैरियर API स्थिति"
 
+#: templates/admin/cart/method_wizard/step4_features.html:101
+#: templates/admin/cart/method_wizard/step5_review.html:79
+#: templates/admin/cart/shippingmethod/method_card.html:96
 msgid "Carrier:"
 msgstr "कैरियर:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:103
 msgid "Service Code:"
 msgstr "सेवा कोड:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:109
 msgid "API Configuration Status"
 msgstr "API संfiguration स्थिति"
 
+#: templates/admin/cart/method_wizard/step4_features.html:113
 msgid "Checking API credentials..."
 msgstr "API प्रमाणपत्र की जांच कर रहा है..."
 
+#: templates/admin/cart/method_wizard/step4_features.html:119
 msgid ""
 "Ensure your carrier API credentials are configured in the shipping provider "
 "settings."
 msgstr "अपने कैरियर API योग्यता को शिपिंग प्रदाता सेटिंग में निर्मित करें।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:129
 msgid "Enable Rate Caching"
 msgstr "रेट कैशिंग योग्य करें"
 
+#: templates/admin/cart/method_wizard/step4_features.html:133
 msgid ""
 "Cache carrier rates for 15 minutes to improve performance and reduce API "
 "calls"
-msgstr "15 मिनट के लिए कैरियर रेट कैश करें ताकि प्रदर्शन में सुधार और API कॉल कम कर सकें।"
+msgstr ""
+"15 मिनट के लिए कैरियर रेट कैश करें ताकि प्रदर्शन में सुधार और API कॉल कम कर "
+"सकें।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:143
 msgid "Rate Table Configuration"
 msgstr "रेट टेबल संfiguration"
 
-msgid "Weight-Based Rates:"
-msgstr "वजन-आधारित रेट:"
+#: templates/admin/cart/method_wizard/step4_features.html:149
+#| msgid "Table Rate"
+msgid "Table Rates:"
+msgstr "टेबल रेट्स:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:150
+#| msgid ""
+#| "You'll be able to configure tiered rates based on cart weight after the "
+#| "method is created."
 msgid ""
-"You'll be able to configure tiered rates based on cart weight after the "
-"method is created."
+"You'll be able to configure tiered rates based on weight, price, or "
+"destination after the method is created."
 msgstr ""
-"विधि बनाने के बाद आप कार्ट वजन के आधार पर टियर्ड रेट के निर्माण के लिए सक्षम होंगे।"
+"मेथड बनाने के बाद आप भार, मूल्य या गंतव्य के आधार पर टियर्ड रेट्स को स्थापित"
+" कर सकेंगे।"
 
-msgid "Price-Based Rates:"
-msgstr "कीमत-आधारित रेट:"
-
-msgid ""
-"You'll be able to configure tiered rates based on cart subtotal after the "
-"method is created."
-msgstr ""
-"विधि बनाने के बाद आप कार्ट सबटोटल के आधार पर टियर्ड रेट के निर्माण के लिए सक्षम होंगे।"
-
+#: templates/admin/cart/method_wizard/step4_features.html:156
 msgid "Rate tables can be managed from the method's edit page after creation."
-msgstr "रेट टेबल बनाने के बाद विधि के संपादन पृष्ठ से प्रबंधित किए जा सकते हैं।"
+msgstr ""
+"रेट टेबल बनाने के बाद विधि के संपादन पृष्ठ से प्रबंधित किए जा सकते हैं।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:165
 msgid "Delivery Time Estimate"
 msgstr "वितरण समय अनुमान"
 
+#: templates/admin/cart/method_wizard/step4_features.html:169
 msgid "Provide customers with an estimated delivery timeframe."
 msgstr "ग्राहकों को एक अनुमानित डिलीवरी समय अवधि प्रदान करें।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:186
 msgid "Fastest delivery time in business days"
 msgstr "व्यावसायिक दिनों में सबसे तेज़ डिलीवरी समय"
 
+#: templates/admin/cart/method_wizard/step4_features.html:203
 msgid "Slowest delivery time in business days"
 msgstr "व्यावसायिक दिनों में सबसे धीमा डिलीवरी समय"
 
+#: templates/admin/cart/method_wizard/step4_features.html:211
+msgid "Examples:"
+msgstr "उदाहरण:"
+
+#: templates/admin/cart/method_wizard/step4_features.html:213
 msgid "Standard shipping: 3-5 business days"
 msgstr "मानक शिपिंग: 3-5 व्यावसायिक दिन"
 
+#: templates/admin/cart/method_wizard/step4_features.html:214
 msgid "Express shipping: 1-2 business days"
 msgstr "त्वरित शिपिंग: 1-2 व्यावसायिक दिन"
 
+#: templates/admin/cart/method_wizard/step4_features.html:215
 msgid "International shipping: 7-14 business days"
 msgstr "अंतरराष्ट्रीय शिपिंग: 7-14 व्यावसायिक दिन"
 
+#: templates/admin/cart/method_wizard/step4_features.html:229
 msgid "Display Settings"
 msgstr "प्रदर्शन सेटिंग्स"
 
+#: templates/admin/cart/method_wizard/step4_features.html:245
 msgid ""
 "Lower numbers appear first. Use this to control the order methods are "
 "displayed to customers."
 msgstr ""
-"निम्न संख्या पहले दिखाई देती हैं। इसका उपयोग ग्राहकों के लिए विधियों के प्रदर्शन के क्रम को "
-"नियंत्रित करने के लिए करें।"
+"निम्न संख्या पहले दिखाई देती हैं। इसका उपयोग ग्राहकों के लिए विधियों के "
+"प्रदर्शन के क्रम को नियंत्रित करने के लिए करें।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:253
 msgid ""
 "Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
 "of new methods between existing ones."
 msgstr ""
-"मौजूदा विधियों के बीच नई विधियों के आसान प्रवर्तन की अनुमति देने के लिए 10 के अंतराल (0, "
-"10, 20) में छानबीन के क्रम निर्धारित करें।"
+"मौजूदा विधियों के बीच नई विधियों के आसान प्रवर्तन की अनुमति देने के लिए 10 "
+"के अंतराल (0, 10, 20) में छानबीन के क्रम निर्धारित करें।"
 
+#: templates/admin/cart/method_wizard/step4_features.html:266
+#: templates/admin/cart/method_wizard/step5_review.html:6
 msgid "Review & Create"
 msgstr "समीक्षा और बनाएं"
 
+#: templates/admin/cart/method_wizard/step4_features.html:275
 msgid "API credentials verified successfully"
 msgstr "API प्रमाणपत्र सफलता पूर्वक सत्यापित किया गया"
 
+#: templates/admin/cart/method_wizard/step5_review.html:9
 msgid "Review your shipping method configuration and create it."
 msgstr "अपने शिपिंग मेथड कॉन्फ़िगरेशन की जांच करें और इसे बनाएं।"
 
+#: templates/admin/cart/method_wizard/step5_review.html:20
+#: templates/admin/cart/method_wizard/step5_review.html:95
+#: templates/admin/cart/method_wizard/step5_review.html:119
+#: templates/admin/cart/method_wizard/step5_review.html:156
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:62
 msgid "Edit"
 msgstr "संपादित करें"
 
+#: templates/admin/cart/method_wizard/step5_review.html:26
 msgid "Name:"
 msgstr "नाम:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:30
 msgid "Method Type:"
 msgstr "विधि प्रकार:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:39
 msgid "Description:"
 msgstr "विवरण:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:45
+#: templates/admin/cart/method_wizard/step5_review.html:53
 msgid "Display Icon:"
 msgstr "प्रदर्शन आइकॉन:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:58
 msgid "Status:"
 msgstr "स्थिति:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:66
+#: templates/admin/cart/shippingmethod/change_form.html:34
+#: templates/admin/cart/shippingmethod/change_list.html:70
+#: templates/admin/cart/shippingmethod/method_card.html:124
+#: templates/admin/cart/taxrate/change_form.html:35
+#: templates/admin/cart/taxrate/change_list.html:90
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:30
 msgid "Inactive"
 msgstr "असक्रिय"
 
+#: templates/admin/cart/method_wizard/step5_review.html:73
 msgid "Flat Rate Cost:"
 msgstr "समतल दर लागत:"
 
-msgid "Min Order Value:"
-msgstr "न्यूनतम कमांड मूल्य:"
-
-msgid "Max Order Value:"
-msgstr "अधिकतम कमांड मूल्य:"
-
-msgid "Min Weight:"
-msgstr "न्यूनतम वजन:"
-
-msgid "Max Weight:"
-msgstr "अधिकतम वजन:"
-
+#: templates/admin/cart/method_wizard/step5_review.html:101
 msgid "Requires Shipping Address:"
 msgstr "शिपिंग पता आवश्यक है:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:104
 msgid "Yes"
 msgstr "हां"
 
+#: templates/admin/cart/method_wizard/step5_review.html:106
 msgid "No"
 msgstr "नहीं"
 
-msgid ""
-"No eligibility conditions set - method available for all cart values and "
-"weights"
-msgstr ""
-"कोई योग्यता की शर्तें नहीं निर्धारित - यह मेथड सभी कार्ट मूल्यों और वजनों के लिए उपलब्ध है"
-
+#: templates/admin/cart/method_wizard/step5_review.html:126
 msgid "Shipping Zones:"
 msgstr "शिपिंग क्षेत्र:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:141
+#: templates/admin/cart/shippingmethod/method_card.html:76
 msgid "Coverage:"
 msgstr "कवरेज:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:143
 msgid "Worldwide (No zones selected)"
 msgstr "विश्वव्यापी (कोई क्षेत्र चुना नहीं)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:164
 msgid "Pickup Locations:"
 msgstr "पिकअप स्थान:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:167
+#: templates/admin/cart/shippingmethod/method_card.html:87
 msgid "location"
 msgstr "स्थान"
 
+#: templates/admin/cart/method_wizard/step5_review.html:172
 msgid "Delivery Time:"
 msgstr "वितरण समय:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:174
+#: templates/admin/cart/shippingmethod/method_card.html:110
 msgid "Instant Pickup"
 msgstr "तत्काल पिकअप"
 
+#: templates/admin/cart/method_wizard/step5_review.html:179
 msgid "Delivery Estimate:"
 msgstr "वितरण अनुमान:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:182
+#: templates/admin/cart/shippingmethod/method_card.html:112
 msgid "business days"
 msgstr "व्यावसायिक दिन"
 
+#: templates/admin/cart/method_wizard/step5_review.html:188
 msgid "Sort Order:"
 msgstr "सॉर्ट ऑर्डर:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:194
 msgid "Rate Caching:"
 msgstr "रेट कैशिंग:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:196
 msgid "Enabled"
 msgstr "सक्रिय"
 
+#: templates/admin/cart/method_wizard/step5_review.html:208
 msgid "What happens next:"
 msgstr "अगला क्या होता है:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:210
 msgid "Your shipping method will be created with the settings above"
 msgstr "आपका शिपिंग मेथड ऊपर दिए गए सेटिंग्स के साथ बनाया जाएगा"
 
+#: templates/admin/cart/method_wizard/step5_review.html:212
 msgid "You'll be redirected to configure rate tables for this method"
-msgstr "आप इस मेथड के लिए रेट टेबल कॉन्फ़िगर करने के लिए रिडायरेक्ट किए जाएंगे"
+msgstr ""
+"आप इस मेथड के लिए रेट टेबल कॉन्फ़िगर करने के लिए रिडायरेक्ट किए जाएंगे"
 
+#: templates/admin/cart/method_wizard/step5_review.html:215
 msgid ""
 "The method will be immediately available to customers (if eligibility "
 "conditions are met)"
 msgstr ""
-"यदि योग्यता की शर्तें पूरी हो जाती हैं, तो ग्राहकों के लिए यह मेथड तुरंत उपलब्ध हो जाएगा"
+"यदि योग्यता की शर्तें पूरी हो जाती हैं, तो ग्राहकों के लिए यह मेथड तुरंत "
+"उपलब्ध हो जाएगा"
 
+#: templates/admin/cart/method_wizard/step5_review.html:217
 msgid "The method will be created as inactive - activate it when ready"
 msgstr "मेथड को अक्रिय रूप से बनाया जाएगा - तैयार होने पर इसे सक्रिय करें"
 
+#: templates/admin/cart/method_wizard/step5_review.html:231
 msgid "Create Shipping Method"
 msgstr "शिपिंग विधि बनाएं"
 
+#: templates/admin/cart/method_wizard/step5_review.html:240
 msgid "Creating..."
 msgstr "बनाना..."
 
+#: templates/admin/cart/partials/cart_cards.html:29
 msgid "Session"
 msgstr "सेशन"
 
+#: templates/admin/cart/partials/cart_cards.html:36
 msgid "Registered"
 msgstr "पंजीकृत"
 
+#: templates/admin/cart/partials/cart_cards.html:40
 msgid "Guest"
 msgstr "अतिथि"
 
+#: templates/admin/cart/partials/cart_cards.html:46
 msgid "item"
 msgstr "वस्तु"
 
+#: templates/admin/cart/partials/cart_cards.html:56
 msgid "Shipping Set"
 msgstr "शिपिंग सेट"
 
+#: templates/admin/cart/partials/cart_cards.html:69
 msgid "Cart Total"
 msgstr "कार्ट कुल"
 
+#: templates/admin/cart/partials/cart_cards.html:75
 msgid "Items"
 msgstr "वस्तुएं"
 
+#: templates/admin/cart/partials/cart_cards.html:80
 msgid "Savings"
 msgstr "बचत"
 
+#: templates/admin/cart/partials/cart_cards.html:88
 msgid "Shipping"
 msgstr "वितरण"
 
+#: templates/admin/cart/partials/cart_cards.html:95
 msgid "Grand Total"
 msgstr "कुल कुल"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "Updated"
 msgstr "अपडेट किया गया"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "ago"
 msgstr "पहले"
 
+#: templates/admin/cart/partials/cart_cards.html:109
+#: templates/admin/cart/shippingmethod/change_form.html:30
+#: templates/admin/cart/shippingmethod/method_card.html:128
 msgid "Created"
 msgstr "बनाया गया"
 
+#: templates/admin/cart/partials/cart_cards.html:120
 msgid "Est. Delivery"
 msgstr "अनुमानित डिलिवरी"
 
+#: templates/admin/cart/partials/cart_cards.html:129
 msgid "View cart details"
 msgstr "कार्ट विवरण देखें"
 
+#: templates/admin/cart/partials/cart_cards.html:134
 msgid "Edit cart"
 msgstr "कार्ट संपादित करें"
 
+#: templates/admin/cart/partials/cart_cards.html:140
 msgid "Delete cart"
 msgstr "कार्ट हटाएं"
 
+#: templates/admin/cart/partials/cart_cards.html:143
 msgid "Are you sure you want to clear this cart?"
 msgstr "क्या आप इस कार्ट को साफ करना चाहते हैं?"
 
+#: templates/admin/cart/partials/cart_cards.html:154
 msgid "No shopping carts found matching your criteria."
 msgstr "आपके मानदंडों के अनुसार कोई खरीददारी कार्ट नहीं मिला।"
 
+#: templates/admin/cart/partials/cart_cards.html:156
 msgid "Try adjusting your filters or search terms."
 msgstr "अपने फ़िल्टर या खोज शब्दों को समायोजित करें।"
 
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:22
 msgid "Edit Shipping Method"
 msgstr "स्पेसिफिकेशन विधि संपादित करें"
 
+#: templates/admin/cart/shippingmethod/change_form.html:40
+#: templates/admin/cart/shippingmethod/change_form.html:344
+#: templates/admin/cart/taxrate/change_form.html:41
+#: templates/admin/cart/taxrate/change_form.html:239
 msgid "Save and continue editing"
 msgstr "सहेजें और संपादन जारी रखें"
 
+#: templates/admin/cart/shippingmethod/change_form.html:56
+#: templates/admin/cart/taxrate/change_form.html:57
 msgid "Please correct the errors below"
 msgstr "कृपया नीचे दिए गए त्रुटियों को सुधारें"
 
+#: templates/admin/cart/shippingmethod/change_form.html:82
+#: templates/admin/cart/taxrate/change_form.html:83
 msgid "Basic"
 msgstr "मूल"
 
+#: templates/admin/cart/shippingmethod/change_form.html:86
+#: templates/admin/cart/shippingmethod/change_form.html:148
 msgid "Pricing"
 msgstr "मूल्य"
 
+#: templates/admin/cart/shippingmethod/change_form.html:94
 msgid "Display"
 msgstr "प्रदर्शन"
 
-msgid "Optional: Restrict availability based on order value or weight."
-msgstr "वैकल्पिक: आदेश के मूल्य या भार के आधार पर उपलब्धता को सीमित करें।"
+#: templates/admin/cart/shippingmethod/change_form.html:103
+#| msgid "Product Exemptions"
+msgid "Promotions"
+msgstr "प्रोमोशन्स"
 
+#: templates/admin/cart/shippingmethod/change_form.html:185
 msgid "Delivery Time"
 msgstr "स्पेसिफिकेशन समय"
 
+#: templates/admin/cart/shippingmethod/change_form.html:226
 msgid "Display Options"
 msgstr "प्रदर्शन विकल्प"
 
+#: templates/admin/cart/shippingmethod/change_form.html:248
 msgid "Carrier Integration"
 msgstr "वाहक एकीकरण"
 
+#: templates/admin/cart/shippingmethod/change_form.html:249
 msgid "Configure carrier-specific settings for real-time rate lookups."
 msgstr "वास्तविक समय दर खोज के लिए वाहक-विशिष्ट सेटिंग्स कॉन्फ़िगर करें।"
 
+#: templates/admin/cart/shippingmethod/change_form.html:269
+msgid "Active Promotions"
+msgstr "सक्रिय प्रोमोशन"
+
+#: templates/admin/cart/shippingmethod/change_form.html:270
+msgid ""
+"Shipping promotions that currently affect this method. Promotions with no "
+"method restrictions apply to all methods."
+msgstr ""
+"वह शिपिंग प्रोमोशन्स जो अभी इस विधि को प्रभावित करता है। ऐसे प्रोमोशन्स "
+"जिनमें कोई विधि प्रतिबंध नहीं है, सभी विधियों पर लागू होता है।"
+
+#: templates/admin/cart/shippingmethod/change_form.html:277
+#| msgid "Tax Type"
+msgid "Type"
+msgstr "प्रकार"
+
+#: templates/admin/cart/shippingmethod/change_form.html:278
+msgid "Value"
+msgstr "मूल्य"
+
+#: templates/admin/cart/shippingmethod/change_form.html:280
+#: templates/admin/cart/taxrate/change_list.html:86
+msgid "Status"
+msgstr "स्थिति"
+
+#: templates/admin/cart/shippingmethod/change_form.html:302
+#| msgid "Optional description of this shipping method"
+msgid "No active promotions affect this shipping method."
+msgstr "इस शिपिंग विधि पर कोई सक्रिय प्रोमोशन प्रभाव नहीं डालता।"
+
+#: templates/admin/cart/shippingmethod/change_form.html:308
+#| msgid "Created From"
+msgid "Create New Promotion"
+msgstr "नई प्रोमोशन बनाएं"
+
+#: templates/admin/cart/shippingmethod/change_list.html:21
 msgid "Configure shipping options, rates, and delivery methods"
 msgstr "शिपिंग विकल्पों, दरों और डिलीवरी विधियों को कॉन्फ़िगर करें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:23
 msgid "method"
 msgstr "विधि"
 
+#: templates/admin/cart/shippingmethod/change_list.html:24
 msgid "active"
 msgstr "सक्रिय"
 
+#: templates/admin/cart/shippingmethod/change_list.html:29
 msgid "Add Method"
 msgstr "विधि जोड़ें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:48
 msgid "Bulk Actions"
 msgstr "बैच कार्रवाई"
 
+#: templates/admin/cart/shippingmethod/change_list.html:49
 msgid "Enable Selected"
 msgstr "चयनित एनेबल करें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:50
 msgid "Disable Selected"
 msgstr "चयनित डिसेबल करें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:51
 msgid "Delete Selected"
 msgstr "चुने गए को हटाएं"
 
+#: templates/admin/cart/shippingmethod/change_list.html:53
 msgid "Apply"
 msgstr "लागू करें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:55
 msgid "selected"
 msgstr "चुने गए"
 
+#: templates/admin/cart/shippingmethod/change_list.html:65
 msgid "All Status"
 msgstr "सभी स्थिति"
 
+#: templates/admin/cart/shippingmethod/change_list.html:76
+#: templates/admin/cart/taxrate/change_list.html:78
 msgid "All Types"
 msgstr "सभी प्रकार"
 
+#: templates/admin/cart/shippingmethod/change_list.html:81
 msgid "Real-Time Rates"
 msgstr "रियल-टाइम दरें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:92
 msgid "Clear all filters"
 msgstr "सभी फ़िल्टर क्लियर करें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:93
 msgid "Clear Filters"
 msgstr "फ़िल्टर क्लियर करें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:101
 msgid "Search methods..."
 msgstr "विधियों की तलाश करें..."
 
+#: templates/admin/cart/shippingmethod/change_list.html:112
 msgid "Select All"
 msgstr "सभी चुनें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:130
 #, python-format
 msgid "%(counter)s method"
 msgid_plural "%(counter)s methods"
 msgstr[0] "%(counter)s विधि"
 msgstr[1] "%(counter)s विधियां"
 
+#: templates/admin/cart/shippingmethod/change_list.html:139
 msgid "No shipping methods found"
 msgstr "कोई शिपिंग विधि नहीं मिली"
 
+#: templates/admin/cart/shippingmethod/change_list.html:142
 msgid "Try adjusting your filters or search query."
 msgstr "अपने फिल्टर्स या खोज प्रश्न को समायोजित करने के प्रयास करें।"
 
+#: templates/admin/cart/shippingmethod/change_list.html:144
 msgid "Get started by creating your first shipping method."
 msgstr "अपने पहले शिपिंग मेथड के बनाने से शुरू करें।"
 
+#: templates/admin/cart/shippingmethod/change_list.html:149
 msgid "Add First Method"
 msgstr "पहली विधि जोड़ें"
 
+#: templates/admin/cart/shippingmethod/change_list.html:160
 msgid "Loading..."
 msgstr "लोड हो रहा है..."
 
-msgid "Order Value:"
-msgstr "ऑर्डर मूल्य:"
-
-msgid "Weight:"
-msgstr "वजन:"
-
+#: templates/admin/cart/shippingmethod/method_card.html:60
 msgid "Zones:"
 msgstr "जोन:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:62
 msgid "zone"
 msgstr "जोन"
 
+#: templates/admin/cart/shippingmethod/method_card.html:68
 msgid "Countries:"
 msgstr "देश:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:70
 msgid "country"
 msgstr "देश"
 
+#: templates/admin/cart/shippingmethod/method_card.html:77
 msgid "Worldwide"
 msgstr "विश्वव्यापी"
 
+#: templates/admin/cart/shippingmethod/method_card.html:85
 msgid "Pickup:"
 msgstr "पिकअप:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:107
 msgid "Delivery:"
 msgstr "डिलिवरी:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:137
 msgid "Edit method"
 msgstr "विधि संपादित करें"
 
+#: templates/admin/cart/shippingmethod/method_card.html:143
 msgid "Toggle active status"
 msgstr "सक्रिय स्थिति टॉगल करें"
 
+#: templates/admin/cart/shippingmethod/method_card.html:149
 msgid "Delete method"
 msgstr "विधि हटाएं"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:22
 msgid "Edit Tax Rate"
 msgstr "कर दर संपादित करें"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:24
+#: templates/admin/cart/taxrate/change_list.html:26
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:82
 msgid "Add Tax Rate"
 msgstr "कर दर जोड़ें"
 
+#: templates/admin/cart/taxrate/change_form.html:87
 msgid "Geography"
 msgstr "भूगोल"
 
+#: templates/admin/cart/taxrate/change_form.html:91
 msgid "Rules"
 msgstr "नियम"
 
+#: templates/admin/cart/taxrate/change_form.html:95
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:55
 msgid "Exemptions"
 msgstr "छूट"
 
+#: templates/admin/cart/taxrate/change_form.html:142
 msgid ""
 "Define where this tax rate applies. Leave state/city empty for country-wide "
 "rates."
 msgstr ""
-"निर्धारित करें कि यह कर दर कहाँ लागू होता है। देश भर के दरों के लिए राज्य/शहर खाली छोड़ "
-"दें।"
+"निर्धारित करें कि यह कर दर कहाँ लागू होता है। देश भर के दरों के लिए "
+"राज्य/शहर खाली छोड़ दें।"
 
+#: templates/admin/cart/taxrate/change_form.html:194
 msgid "Exclude specific product types or categories from this tax rate."
 msgstr "इस कर दर से विशिष्ट उत्पाद प्रकार या श्रेणियों को बाहर रखें।"
 
+#: templates/admin/cart/taxrate/change_list.html:18
 msgid ""
 "Configure tax rules for your store. Tax rates are matched to customer "
 "addresses during checkout."
 msgstr ""
-"अपने स्टोर के टैक्स नियमों को कॉन्फ़िगर करें। चेकआउट के दौरान टैक्स दरों को ग्राहक पतों के साथ "
-"मिलाया जाता है।"
+"अपने स्टोर के टैक्स नियमों को कॉन्फ़िगर करें। चेकआउट के दौरान टैक्स दरों को "
+"ग्राहक पतों के साथ मिलाया जाता है।"
 
+#: templates/admin/cart/taxrate/change_list.html:22
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:79
 msgid "Load Presets"
 msgstr "प्रीसेट लोड करें"
 
+#: templates/admin/cart/taxrate/change_list.html:37
 msgid "Total Rules"
 msgstr "कुल नियम"
 
+#: templates/admin/cart/taxrate/change_list.html:47
 msgid "Countries"
 msgstr "देश"
 
+#: templates/admin/cart/taxrate/change_list.html:52
 msgid "Tax Types"
 msgstr "कर प्रकार"
 
+#: templates/admin/cart/taxrate/change_list.html:64
 msgid "Search by name, country, state..."
 msgstr "नाम, देश, राज्य द्वारा खोजें..."
 
+#: templates/admin/cart/taxrate/change_list.html:69
 msgid "All Countries"
 msgstr "सभी देश"
 
+#: templates/admin/cart/taxrate/change_list.html:82
 msgid "Custom"
 msgstr "स्वयं के अनुसार"
 
-msgid "Status"
-msgstr "स्थिति"
-
+#: templates/admin/cart/taxrate/change_list.html:97
 msgid "Clear"
 msgstr "साफ करें"
 
+#: templates/admin/cart/taxrate/change_list.html:104
 msgid "Tax Rules"
 msgstr "कर नियम"
 
+#: templates/admin/cart/taxrate/change_list.html:107
 msgid "rules"
 msgstr "नियम"
 
+#: templates/admin/cart/taxrate/change_list.html:120
 msgid "Load Tax Rate Presets"
 msgstr "कर दर पूर्वनिर्धारित लोड करें"
 
+#: templates/admin/cart/taxrate/change_list.html:121
 msgid ""
 "Quickly add standard tax rates for your region. Existing rates will not be "
 "duplicated."
 msgstr ""
-"अपने क्षेत्र के लिए मानक टैक्स दरें त्वरित रूप से जोड़ें। अस्तित्व में वाली दरें दोहराई नहीं जाएंगी।"
+"अपने क्षेत्र के लिए मानक टैक्स दरें त्वरित रूप से जोड़ें। अस्तित्व में वाली "
+"दरें दोहराई नहीं जाएंगी।"
 
+#: templates/admin/cart/taxrate/change_list.html:141
 msgid "rates"
 msgstr "दर"
 
+#: templates/admin/cart/taxrate/change_list.html:147
 msgid "Load"
 msgstr "लोड करें"
 
+#: templates/admin/cart/taxrate/change_list.html:158
 msgid "Close"
 msgstr "बंद करें"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:17
 msgid "postal codes"
 msgstr "पोस्टल कोड"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:35
 msgid "Shipping Taxed"
 msgstr "शिपिंग कर"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:40
 msgid "Compound"
 msgstr "संयोजित"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:65
 msgid "Delete"
 msgstr "हटाएं"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:75
 msgid "No tax rates configured"
 msgstr "कोई कर दर निर्धारित नहीं की गई है"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:76
 msgid ""
 "Use 'Load Presets' to quickly add standard rates for your region, or add "
 "rates manually."
 msgstr ""
-"'लोड प्रीसेट्स' का उपयोग करके अपने क्षेत्र के लिए मानक दरें त्वरित रूप से जोड़ें, या दरें मनमाने "
-"तौर पर जोड़ें।"
+"'लोड प्रीसेट्स' का उपयोग करके अपने क्षेत्र के लिए मानक दरें त्वरित रूप से "
+"जोड़ें, या दरें मनमाने तौर पर जोड़ें।"
 
+#: views.py:57
 msgid "Get current cart"
 msgstr "वर्तमान कार्ट प्राप्त करें"
 
+#: views.py:59
 msgid ""
 "Get the current cart for authenticated user or session. Returns cart items, "
 "subtotal, discounts, taxes, and total. Automatically creates cart if it "
 "doesn't exist."
 msgstr ""
-"प्रमाणित उपयोगकर्ता या सेशन के लिए वर्तमान कार्ट प्राप्त करें। कार्ट आइटम, सबटोटल, छूट, "
-"कर और कुल लौटाता है। यदि कार्ट मौजूद नहीं है तो स्वत: कार्ट बनाता है।"
+"प्रमाणित उपयोगकर्ता या सेशन के लिए वर्तमान कार्ट प्राप्त करें। कार्ट आइटम, "
+"सबटोटल, छूट, कर और कुल लौटाता है। यदि कार्ट मौजूद नहीं है तो स्वत: कार्ट "
+"बनाता है।"
 
+#: views.py:64
 msgid "Add item to cart"
 msgstr "कार्ट में आइटम जोड़ें"
 
+#: views.py:66
 msgid ""
 "Add a product to cart with specified quantity. Optionally include variant "
 "ID, customizations, and notes. Validates stock availability and merges with "
@@ -2383,299 +3008,770 @@ msgid ""
 "include is_subscription=true with subscription_plan_id, payment_token_id, "
 "and optionally pricing_tier_id."
 msgstr ""
-"कार्ट में निर्दिष्ट मात्रा के साथ एक उत्पाद जोड़ें। वैकल्पिक रूप से वेरिएंट ID, स्वाद और नोट्स "
-"शामिल करें। स्टॉक उपलब्धता के सत्यापन के साथ, यदि समान उत्पाद/वेरिएंट है तो वर्तमान कार्ट "
-"आइटम के साथ मिलाएं। सब्सक्रिप्शन उत्पादों के लिए, is_subscription=true के साथ "
-"subscription_plan_id, payment_token_id शामिल करें और वैकल्पिक रूप से "
-"pricing_tier_id।"
+"कार्ट में निर्दिष्ट मात्रा के साथ एक उत्पाद जोड़ें। वैकल्पिक रूप से वेरिएंट "
+"ID, स्वाद और नोट्स शामिल करें। स्टॉक उपलब्धता के सत्यापन के साथ, यदि समान "
+"उत्पाद/वेरिएंट है तो वर्तमान कार्ट आइटम के साथ मिलाएं। सब्सक्रिप्शन उत्पादों"
+" के लिए, is_subscription=true के साथ subscription_plan_id, payment_token_id "
+"शामिल करें और वैकल्पिक रूप से pricing_tier_id।"
 
+#: views.py:72
 msgid "Update cart item"
 msgstr "कार्ट आइटम अपडेट करें"
 
+#: views.py:74
 msgid ""
 "Update cart item quantity, customizations, or notes. Validates new quantity "
 "against stock availability. Returns updated cart with recalculated totals."
 msgstr ""
-"कार्ट आइटम की मात्रा, अनुकूलन या नोट्स को अपडेट करें। नई मात्रा को स्टॉक उपलब्धता के "
-"खिलाफ सत्यापित करता है। अपडेट कार्ट के साथ पुनः गणना किए गए कुल राशि के साथ लौटता है।"
+"कार्ट आइटम की मात्रा, अनुकूलन या नोट्स को अपडेट करें। नई मात्रा को स्टॉक "
+"उपलब्धता के खिलाफ सत्यापित करता है। अपडेट कार्ट के साथ पुनः गणना किए गए कुल "
+"राशि के साथ लौटता है।"
 
+#: views.py:79
 msgid "Remove cart item"
 msgstr "कार्ट आइटम हटाएं"
 
+#: views.py:81
 msgid ""
 "Remove a specific item from cart. Recalculates cart totals and revalidates "
 "any applied vouchers against new cart total."
 msgstr ""
-"कार्ट से एक विशिष्ट आइटम हटाएं। कार्ट के कुल राशि की पुनः गणना करता है और नए कार्ट कुल "
-"के खिलाफ कोई भी लागू कूपन को पुनः सत्यापित करता है।"
+"कार्ट से एक विशिष्ट आइटम हटाएं। कार्ट के कुल राशि की पुनः गणना करता है और नए"
+" कार्ट कुल के खिलाफ कोई भी लागू कूपन को पुनः सत्यापित करता है।"
 
+#: views.py:86
 msgid "Clear cart"
 msgstr "कार्ट साफ करें"
 
+#: views.py:88
 msgid ""
 "Remove all items from cart. Also removes any applied vouchers. Cart object "
 "persists but becomes empty."
 msgstr ""
-"कार्ट से सभी आइटम हटाएं। इसके साथ ही लागू किए गए कोई भी वौचर भी हटा दिए जाएंगे। "
-"कार्ट ऑब्जेक्ट बरकरार रहता है लेकिन खाली हो जाएगा।"
+"कार्ट से सभी आइटम हटाएं। इसके साथ ही लागू किए गए कोई भी वौचर भी हटा दिए "
+"जाएंगे। कार्ट ऑब्जेक्ट बरकरार रहता है लेकिन खाली हो जाएगा।"
 
+#: views.py:93
 msgid "Apply voucher code"
 msgstr "वौचर कोड लागू करें"
 
+#: views.py:95
 msgid ""
 "Apply a voucher code to cart. Validates voucher eligibility, minimum "
 "purchase requirements, and usage limits. Calculates and applies discount to "
 "cart total."
 msgstr ""
-"कार्ट पर एक वौचर कोड लागू करें। वौचर के पात्रता, न्यूनतम खरीदारी की आवश्यकताओं और "
-"उपयोग सीमाओं की जांच करता है। कार्ट के कुल राशि पर छूट की गणना करता है और लागू करता है।"
+"कार्ट पर एक वौचर कोड लागू करें। वौचर के पात्रता, न्यूनतम खरीदारी की "
+"आवश्यकताओं और उपयोग सीमाओं की जांच करता है। कार्ट के कुल राशि पर छूट की गणना"
+" करता है और लागू करता है।"
 
+#: views.py:100
 msgid "Remove voucher"
 msgstr "वौचर हटाएं"
 
+#: views.py:102
 msgid ""
-"Remove a specific voucher from cart by code. Recalculates cart total without "
-"the voucher discount. User can reapply the voucher later if eligible."
+"Remove a specific voucher from cart by code. Recalculates cart total without"
+" the voucher discount. User can reapply the voucher later if eligible."
 msgstr ""
-"कोड द्वारा कार्ट से एक विशिष्ट वौचर हटाएं। वौचर छूट के बिना कार्ट कुल की पुनः गणना करें। "
-"यदि पात्र हो तो उपयोगकर्ता बाद में वौचर को पुनः लागू कर सकता है।"
+"कोड द्वारा कार्ट से एक विशिष्ट वौचर हटाएं। वौचर छूट के बिना कार्ट कुल की "
+"पुनः गणना करें। यदि पात्र हो तो उपयोगकर्ता बाद में वौचर को पुनः लागू कर सकता"
+" है।"
 
-msgid "Apply gift card"
-msgstr "गिफ्ट कार्ड लागू करें"
-
-msgid ""
-"Apply a gift card code to cart. Validates gift card status, balance, and "
-"currency. Gift cards cannot be used to purchase other gift cards. Amount "
-"applied is limited to gift card balance or remaining cart total."
-msgstr ""
-"कार्ट पर एक गिफ्ट कार्ड कोड लागू करें। गिफ्ट कार्ड की स्थिति, शेष और मुद्रा की जांच करें। "
-"एक गिफ्ट कार्ड का उपयोग अन्य गिफ्ट कार्ड खरीदने के लिए नहीं किया जा सकता है। लागू किया "
-"गया राशि गिफ्ट कार्ड शेष या शेष कार्ट कुल तक सीमित है।"
-
-msgid "Remove gift card"
-msgstr "गिफ्ट कार्ड हटाएं"
-
-msgid ""
-"Remove a specific gift card from cart by code. The gift card balance is not "
-"affected until checkout is completed. User can reapply the gift card."
-msgstr ""
-"कोड द्वारा कार्ट से एक विशिष्ट गिफ्ट कार्ड हटाएं। चेकआउट पूरा होने तक गिफ्ट कार्ड के बैलेंस "
-"पर कोई प्रभाव नहीं पड़ता। उपयोगकर्ता गिफ्ट कार्ड को पुनः लागू कर सकता है।"
-
+#: views.py:107
 msgid "Get cart summary"
 msgstr "कार्ट समारह प्राप्त करें"
 
+#: views.py:109
 msgid ""
 "Get lightweight cart summary with item count, subtotal, and total. Faster "
-"than full cart endpoint. Useful for header cart badge or quick total display."
+"than full cart endpoint. Useful for header cart badge or quick total "
+"display."
 msgstr ""
-"आइटम की संख्या, सबटोटल और कुल के साथ हल्का कार्ट समारह लें। पूर्ण कार्ट अंत बिंदु की तुलना "
-"में तेज है। हेडर कार्ट बैज या त्वरित कुल प्रदर्शन के लिए उपयोगी है।"
+"आइटम की संख्या, सबटोटल और कुल के साथ हल्का कार्ट समारह लें। पूर्ण कार्ट अंत "
+"बिंदु की तुलना में तेज है। हेडर कार्ट बैज या त्वरित कुल प्रदर्शन के लिए "
+"उपयोगी है।"
 
+#: views.py:246
 msgid ""
 "Component items cannot be modified directly. Update the parent product "
 "instead."
 msgstr ""
-"कॉम्पोनेंट आइटम्स को सीधे संशोधित नहीं किया जा सकता। बर्बर उत्पाद के बजाय इसे अपडेट करें।"
+"कॉम्पोनेंट आइटम्स को सीधे संशोधित नहीं किया जा सकता। बर्बर उत्पाद के बजाय "
+"इसे अपडेट करें।"
 
+#: views.py:360
 msgid "List user wishlists"
 msgstr "उपयोगकर्ता की इच्छाओं की सूची"
 
+#: views.py:362
 msgid ""
 "Get all wishlists for the authenticated user. Users can have multiple "
 "wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
 "Returns wishlist names, item counts, and privacy settings."
 msgstr ""
-"अधिकृत उपयोगकर्ता के लिए सभी इच्छा सूची प्राप्त करें। उपयोगकर्ता अलग-अलग उद्देश्यों (जैसे, "
-"'जन्मदिन', 'विवाह', 'अवधारणाएं') के लिए कई इच्छा सूची बना सकते हैं। इच्छा सूची के नाम, "
-"आइटम काउंट और गोपनीयता सेटिंग्स लौटाता है।"
+"अधिकृत उपयोगकर्ता के लिए सभी इच्छा सूची प्राप्त करें। उपयोगकर्ता अलग-अलग "
+"उद्देश्यों (जैसे, 'जन्मदिन', 'विवाह', 'अवधारणाएं') के लिए कई इच्छा सूची बना "
+"सकते हैं। इच्छा सूची के नाम, आइटम काउंट और गोपनीयता सेटिंग्स लौटाता है।"
 
+#: views.py:367
 msgid "Create wishlist"
 msgstr "विश्लेषण सूची बनाएं"
 
+#: views.py:369
 msgid ""
-"Create a new wishlist for the authenticated user. Specify name, description, "
-"and privacy setting (public/private). Public wishlists can be shared via URL."
+"Create a new wishlist for the authenticated user. Specify name, description,"
+" and privacy setting (public/private). Public wishlists can be shared via "
+"URL."
 msgstr ""
-"अधिकृत उपयोगकर्ता के लिए एक नई इच्छा सूची बनाएं। नाम, विवरण और गोपनीयता सेटिंग "
-"(सार्वजनिक/निजी) का उल्लेख करें। सार्वजनिक इच्छा सूची URL के माध्यम से साझा की जा सकती "
-"है।"
+"अधिकृत उपयोगकर्ता के लिए एक नई इच्छा सूची बनाएं। नाम, विवरण और गोपनीयता "
+"सेटिंग (सार्वजनिक/निजी) का उल्लेख करें। सार्वजनिक इच्छा सूची URL के माध्यम "
+"से साझा की जा सकती है।"
 
+#: views.py:374
 msgid "Get wishlist details"
 msgstr "इच्छा विवरण प्राप्त करें"
 
+#: views.py:376
 msgid ""
 "Get detailed information about a specific wishlist including all items, "
 "prices, availability, and sharing settings. Only accessible to wishlist "
 "owner unless publicly shared."
 msgstr ""
-"एक विशिष्ट विश्लेषण सूची के बारे में विस्तृत जानकारी प्राप्त करें, जिसमें सभी आइटम, मूल्य, "
-"उपलब्धता और साझाकरने के सेटिंग शामिल हैं। यह केवल विश्लेषण सूची के मालिक द्वारा एक्सेस किया "
-"जा सकता है, अगर सार्वजनिक रूप से साझा नहीं किया गया है।"
+"एक विशिष्ट विश्लेषण सूची के बारे में विस्तृत जानकारी प्राप्त करें, जिसमें "
+"सभी आइटम, मूल्य, उपलब्धता और साझाकरने के सेटिंग शामिल हैं। यह केवल विश्लेषण "
+"सूची के मालिक द्वारा एक्सेस किया जा सकता है, अगर सार्वजनिक रूप से साझा नहीं "
+"किया गया है।"
 
+#: views.py:381
 msgid "Update wishlist"
 msgstr "विश्लेषण सूची अपडेट करें"
 
+#: views.py:383
 msgid ""
 "Update wishlist information including name, description, or privacy "
 "settings. Can make wishlist public or private. Only owner can update."
 msgstr ""
-"विश्लेषण सूची की जानकारी अपडेट करें, जिसमें नाम, विवरण या गोपनीयता सेटिंग शामिल हैं। आप "
-"विश्लेषण सूची को सार्वजनिक या गोपनीय बना सकते हैं। केवल मालिक अपडेट कर सकता है।"
+"विश्लेषण सूची की जानकारी अपडेट करें, जिसमें नाम, विवरण या गोपनीयता सेटिंग "
+"शामिल हैं। आप विश्लेषण सूची को सार्वजनिक या गोपनीय बना सकते हैं। केवल मालिक "
+"अपडेट कर सकता है।"
 
+#: views.py:388
 msgid "Partially update wishlist"
 msgstr "इच्छा आंशिक रूप से अपडेट करें"
 
+#: views.py:390
 msgid ""
 "Update specific wishlist fields without sending full wishlist data. Useful "
 "for toggling privacy or renaming wishlist."
 msgstr ""
-"कुल विश्लिस्ट डेटा भेजे बिना विश्लिस्ट के विशिष्ट क्षेत्रों को अपडेट करें। गोपनीयता बदलने या "
-"विश्लिस्ट का नाम बदलने के लिए उपयोगी है।"
+"कुल विश्लिस्ट डेटा भेजे बिना विश्लिस्ट के विशिष्ट क्षेत्रों को अपडेट करें। "
+"गोपनीयता बदलने या विश्लिस्ट का नाम बदलने के लिए उपयोगी है।"
 
+#: views.py:395
 msgid "Delete wishlist"
 msgstr "विश्लेषण सूची हटाएं"
 
+#: views.py:397
 msgid ""
 "Permanently delete a wishlist and all its items. Cannot be undone. Only "
 "owner can delete."
 msgstr ""
-"एक विश्लेषण सूची और इसके सभी आइटम को अपने द्वारा हमेशा के लिए हटा दें। इसे वापस नहीं "
-"किया जा सकता। केवल मालिक ही इसे हटा सकता है।"
+"एक विश्लेषण सूची और इसके सभी आइटम को अपने द्वारा हमेशा के लिए हटा दें। इसे "
+"वापस नहीं किया जा सकता। केवल मालिक ही इसे हटा सकता है।"
 
+#: views.py:402
 msgid "Add item to wishlist"
 msgstr "वस्तु को विश्लेषण सूची में जोड़ें"
 
+#: views.py:404
 msgid ""
 "Add a product to wishlist with optional variant, quantity, and notes. "
 "Prevents duplicates. Can add to default wishlist or specify wishlist ID."
 msgstr ""
-"वैकल्पिक वेरिएंट, मात्रा और टिप्पणियों के साथ एक उत्पाद को विश्लिस्ट में जोड़ें। डुप्लिकेट को "
-"रोकता है। डिफ़ॉल्ट विश्लिस्ट में जोड़ सकता है या विश्लिस्ट ID का निर्दिष्ट कर सकता है।"
+"वैकल्पिक वेरिएंट, मात्रा और टिप्पणियों के साथ एक उत्पाद को विश्लिस्ट में "
+"जोड़ें। डुप्लिकेट को रोकता है। डिफ़ॉल्ट विश्लिस्ट में जोड़ सकता है या "
+"विश्लिस्ट ID का निर्दिष्ट कर सकता है।"
 
+#: views.py:409
 msgid "Remove item from wishlist"
 msgstr "वस्तु को विश्लेषण सूची से हटाएं"
 
+#: views.py:411
 msgid ""
-"Remove a specific item from wishlist. Item can be added back later. Does not "
-"affect product availability."
+"Remove a specific item from wishlist. Item can be added back later. Does not"
+" affect product availability."
 msgstr ""
-"विश्लेषण सूची से एक विशिष्ट आइटम हटाएं। आइटम को बाद में फिर से जोड़ा जा सकता है। यह "
-"उत्पाद उपलब्धता पर कोई प्रभाव नहीं डालता।"
+"विश्लेषण सूची से एक विशिष्ट आइटम हटाएं। आइटम को बाद में फिर से जोड़ा जा सकता"
+" है। यह उत्पाद उपलब्धता पर कोई प्रभाव नहीं डालता।"
 
+#: views.py:416
 msgid "Move item to cart"
 msgstr "वस्तु को कार्ट में बदलें"
 
+#: views.py:418
 msgid ""
 "Move a wishlist item directly to shopping cart. Validates stock "
 "availability. Item is removed from wishlist after successful cart addition."
 msgstr ""
-"विश्लेषण सूची से आइटम को तुरंत खरीदारी कार्ट में बदलें। स्टॉक उपलब्धता का सत्यापन करता है। "
-"कार्ट में सफल जोड़ने के बाद आइटम विश्लेषण सूची से हटा दिया जाता है।"
+"विश्लेषण सूची से आइटम को तुरंत खरीदारी कार्ट में बदलें। स्टॉक उपलब्धता का "
+"सत्यापन करता है। कार्ट में सफल जोड़ने के बाद आइटम विश्लेषण सूची से हटा दिया "
+"जाता है।"
 
+#: views.py:423
 msgid "Get public wishlist by share slug"
 msgstr "शेयर स्लग द्वारा सार्वजनिक विश्लेषण सूची प्राप्त करें"
 
+#: views.py:425
 msgid ""
 "View a public wishlist using its share URL slug. Anyone with the link can "
-"view public wishlists. Useful for gift registries and wish lists shared with "
-"family/friends."
+"view public wishlists. Useful for gift registries and wish lists shared with"
+" family/friends."
 msgstr ""
-"साझा करने वाले URL slug का उपयोग करके एक सार्वजनिक ईच्छा सूची देखें। लिंक के साथ कोई भी "
-"सार्वजनिक ईच्छा सूची देख सकता है। उपहार पंजीकरण और परिवार/दोस्तों के साथ साझा की गई "
-"ईच्छा सूची के लिए उपयोगी है।"
+"साझा करने वाले URL slug का उपयोग करके एक सार्वजनिक ईच्छा सूची देखें। लिंक के"
+" साथ कोई भी सार्वजनिक ईच्छा सूची देख सकता है। उपहार पंजीकरण और "
+"परिवार/दोस्तों के साथ साझा की गई ईच्छा सूची के लिए उपयोगी है।"
 
+#: views.py:430
+#| msgid "Get wishlist details"
+msgid "Get wishlisted product IDs"
+msgstr "चाहते वाले उत्पादों के IDs प्राप्त करें"
+
+#: views.py:432
+msgid ""
+"Returns a mapping of product IDs to wishlist item IDs for the current user's"
+" default wishlist. Used by the storefront to show wishlist heart icons on "
+"product listings without fetching full wishlist data."
+msgstr ""
+"वर्तमान उपयोगकर्ता के पूर्व-निर्धारित विशिष्ट सूची के उत्पाद IDs के विशिष्ट "
+"सूची आइटम IDs के मानचित्र को लौटता है। स्टोरफ्रंट द्वारा विशिष्ट सूची के "
+"पूर्ण विशिष्ट सूची डेटा लोड किए बिना उत्पाद सूची पर विशिष्ट सूची हृदय आइकन "
+"दिखाने के लिए इसका उपयोग किया जाता है।"
+
+#: views.py:436
+msgid "Map of product IDs to wishlist item IDs"
+msgstr "उत्पाद IDs से विशिष्ट सूची आइटम IDs का मानचित्र"
+
+#: views.py:444
+msgid "Keys are product IDs (as strings), values are wishlist item IDs"
+msgstr ""
+"कुंजक मूल्य (स्ट्रिंग के रूप में) हैं, मान विश्लेषन सूची आइटम के मूल्य हैं"
+
+#: views.py:451
+#| msgid "Account creation required to proceed"
+msgid "Authentication required"
+msgstr "अधिकृतिकरण आवश्यक है"
+
+#: views.py:523
 msgid "ID of the wishlist item to remove"
 msgstr "हटाए जाने वाले विश्लेषण सूची आइटम का ID"
 
+#: views.py:542
 msgid "ID of the wishlist item to move to cart"
 msgstr "कार्ट में ले जाए जाने वाले विश्लेषण सूची आइटम का ID"
 
+#: views.py:573
 msgid "Share slug of the public wishlist"
 msgstr "सार्वजनिक विश्लेषण सूची का साझा करें slug"
 
+#: views.py:589
 msgid "Wishlist not found"
 msgstr "विश्लेषण सूची नहीं मिली"
 
+#: views.py:612
 msgid "Get checkout session"
 msgstr "चेकआउट सेशन प्राप्त करें"
 
+#: views.py:613
 msgid "Set shipping address"
 msgstr "शिपिंग पता सेट करें"
 
+#: views.py:614
 msgid "Set billing address"
 msgstr "बिलिंग पता सेट करें"
 
+#: views.py:616
 msgid "Get available shipping methods"
 msgstr "उपलब्ध शिपिंग विधियाँ प्राप्त करें"
 
+#: views.py:620
 msgid "Get available payment providers"
 msgstr "उपलब्ध भुगतान प्रदाताओं को प्राप्त करें"
 
+#: views.py:622
 msgid ""
-"Returns payment providers available for the customer's country and currency. "
-"Filters based on shipping countries, provider capabilities, and merchant "
+"Returns payment providers available for the customer's country and currency."
+" Filters based on shipping countries, provider capabilities, and merchant "
 "configuration."
 msgstr ""
-"ग्राहक के देश और मुद्रा के लिए उपलब्ध भुगतान प्रदाताओं को लौटाता है। डिलीवरी देश, प्रदाता "
-"क्षमताओं और व्यापारी विन्यास के आधार पर फ़िल्टर किया जाता है।"
+"ग्राहक के देश और मुद्रा के लिए उपलब्ध भुगतान प्रदाताओं को लौटाता है। डिलीवरी"
+" देश, प्रदाता क्षमताओं और व्यापारी विन्यास के आधार पर फ़िल्टर किया जाता है।"
 
+#: views.py:625
 msgid "Set shipping method"
 msgstr "शिपिंग विधि सेट करें"
 
+#: views.py:626
 msgid "Set payment method"
 msgstr "भुगतान विधि सेट करें"
 
+#: views.py:627
 msgid "Validate checkout"
 msgstr "चेकआउट का वैधता परीक्षण करें"
 
+#: views.py:628
 msgid "Complete checkout"
 msgstr "चेकआउट पूरा करें"
 
+#: views.py:631
+#| msgid "discount applied by"
+msgid "List applied tenders"
+msgstr "लागू किए गए टेंडरों की सूची"
+
+#: views.py:633
+msgid ""
+"Gift card and store credit holds against this checkout, plus the amount "
+"still due. amount_due — not total_amount — is what a payment provider should"
+" be asked to charge; it can legitimately be zero when tenders cover the "
+"whole order. Includes the signed-in customer's spendable wallet balance "
+"(null for guests, missing wallets, frozen wallets, or a currency mismatch)."
+msgstr ""
+"इस चेकआउट के खिलाफ गिफ्ट कार्ड और स्टोर क्रेडिट के होल्ड, प्लस अभी तक बकाया "
+"राशि। एमाउंट_ड्यू — नॉट टोटल_एमाउंट — यह भुगतान प्रदाता को चार्ज करने के लिए"
+" पूछा जाना चाहिए; जब टेंडर पूरे ऑर्डर को कवर करते हैं तो यह वैध रूप से शून्य"
+" हो सकता है। लॉग-इन करने वाले ग्राहक के खर्च करने योग्य वॉलेट बैलेंस को "
+"शामिल करता है (मेहमानों के लिए नॉल, लापता वॉलेट, जमा वॉलेट या मुद्रा मिसमैच "
+"के लिए)।"
+
+#: views.py:643
+#| msgid "Apply gift card"
+msgid "Apply a gift card"
+msgstr "एक गिफ्ट कार्ड लागू करें"
+
+#: views.py:645
+msgid ""
+"Places a hold on the card as a PAYMENT, not a discount: it settles the post-"
+"tax total and never reduces the tax base. Nothing is debited until payment "
+"is confirmed, so an abandoned checkout costs the customer nothing. Error "
+"messages are deliberately uniform — this endpoint sits on stored value and "
+"must not act as an enumeration oracle."
+msgstr ""
+"कार्ड पर एक भुगतान के रूप में, नॉट डिस्काउंट के रूप में एक होल्ड रखता है: यह"
+" कर के बाद की कुल राशि को समाप्त करता है और कभी भी कर आधार को कम नहीं करता "
+"है। भुगतान की पुष्टि होने तक कोई भी राशि डेबिट नहीं की जाती है, इसलिए एक "
+"छोड़े गए चेकआउट के ग्राहक के लिए कुछ भी लागत नहीं होती है। त्रुटि संदेश "
+"जानबूझ कर समान हैं — यह अंत बिंदु संग्रहित मूल्य पर रहता है और एक गणना के "
+"ओरेकल के रूप में कार्य नहीं कर सकता है।"
+
+#: views.py:655
+#| msgid "Apply gift card"
+msgid "Apply store credit"
+msgstr "स्टोर क्रेडिट लागू करें"
+
+#: views.py:657
+msgid ""
+"Holds the signed-in customer's wallet balance against this checkout, up to "
+"the amount due. Guests receive 403 — wallets belong to accounts. Single-"
+"currency: a wallet cannot part-pay an order in another currency."
+msgstr ""
+"चेकआउट के लिए लॉग-इन करने वाले ग्राहक के वॉलेट बैलेंस रखता है, जो बकाया राशि"
+" तक है। अतिथि 403 प्राप्त करते हैं - वॉलेट खातों के लिए होता है। एकल मुद्रा:"
+" एक वॉलेट दूसरी मुद्रा में एक आदेश के लिए आंशिक भुगतान नहीं कर सकता है।"
+
+#: views.py:665
+#| msgid "Remove all zones"
+msgid "Remove a tender"
+msgstr "एक टेंडर हटाएं"
+
+#: views.py:667
+msgid ""
+"Releases a hold. Nothing was debited, so this only frees the reservation; "
+"the checkout's amount_due rises accordingly."
+msgstr ""
+"एक रोक छोड़ देता है। कोई राशि डेबिट नहीं की गई है, इसलिए यह केवल आरक्षण को "
+"मुक्त करता है; चेकआउट के amount_due अनुसार बढ़ जाता है।"
+
+#: views.py:972
+msgid "Store credit"
+msgstr "स्टोर क्रेडिट"
+
+#: views.py:999
+#| msgid "Gift card has expired"
+msgid "Gift card code is required"
+msgstr "गिफ्ट कार्ड कोड आवश्यक है"
+
+#: views.py:1010 views.py:1064
+msgid "This order is already fully paid"
+msgstr "इस आदेश के लिए भुगतान पहले से पूरा कर दिया गया है"
+
+#: views.py:1054
+msgid "Sign in to pay with your wallet"
+msgstr "अपने वॉलेट के साथ भुगतान करने के लिए साइन इन करें"
+
+#: views.py:1093
+#| msgid "Address not found"
+msgid "Tender not found"
+msgstr "टेंडर नहीं मिला"
+
+#: views.py:1120
 msgid "Get recently viewed products"
 msgstr "हाल ही में देखे गए उत्पाद प्राप्त करें"
 
+#: views.py:1121
 msgid "Get recently viewed details"
 msgstr "हाल ही में देखे गए विवरण प्राप्त करें"
 
+#: views.py:1150
 msgid "List shipping methods"
 msgstr "वितरण विधियों की सूची प्राप्त करें"
 
+#: views.py:1151
 msgid "Get shipping method details"
 msgstr "वितरण विधि विवरण प्राप्त करें"
 
+#: views.py:1174
 msgid "List tax rates"
 msgstr "कर दरों की सूची"
 
+#: views.py:1175
 msgid "Get tax rate details"
 msgstr "कर दर विवरण प्राप्त करें"
 
+#: views.py:1176
 msgid "Create tax rate"
 msgstr "कर दर बनाएं"
 
+#: views.py:1177
 msgid "Update tax rate"
 msgstr "कर दर अपडेट करें"
 
+#: views.py:1178
 msgid "Partial update tax rate"
 msgstr "कर दर आंशिक रूप से अपडेट करें"
 
+#: views.py:1179
 msgid "Delete tax rate"
 msgstr "कर दर हटाएं"
 
+#: views.py:1190
 msgid "Calculate applicable taxes"
 msgstr "लागू कर की गणना करें"
 
+#: views.py:1235
 msgid "Tax rates grouped by country"
 msgstr "देश के अनुसार कर दरों के समूह"
 
+#: views.py:1254
 msgid "Load preset tax rates"
 msgstr "पूर्वनिर्धारित कर दर लोड करें"
 
+#: views.py:1285
 msgid "List tax preset groups"
 msgstr "कर पूर्वनिर्धारित समूहों की सूची"
 
+#: views.py:1286
 msgid "Get preset group details"
 msgstr "पूर्व-निर्धारित समूह विवरण प्राप्त करें"
 
+#: views.py:1297
 msgid "List rates in a preset group"
 msgstr "एक पूर्व-सेट ग्रुप में दरें सूचीबद्ध करें"
+
+#~ msgid "Invalid gift card code"
+#~ msgstr "अमान्य गिफ्ट कार्ड कोड"
+
+#~ msgid "Gift card already applied"
+#~ msgstr "गिफ्ट कार्ड पहले से लागू कर दिया गया है"
+
+#~ msgid "Gift card has been fully redeemed"
+#~ msgstr "गिफ्ट कार्ड पूरी तरह से लाभान्वित कर दिया गया है"
+
+#~ msgid "Gift card cannot be used"
+#~ msgstr "गिफ्ट कार्ड का उपयोग नहीं किया जा सकता"
+
+#, python-brace-format
+#~ msgid ""
+#~ "Currency mismatch. Gift card is in {card_currency}, cart is in "
+#~ "{cart_currency}"
+#~ msgstr ""
+#~ "मुद्रा मिलान नहीं हो पा रहा। गिफ्ट कार्ड {card_currency} में है, कार्ट "
+#~ "{cart_currency} में है"
+
+#, python-brace-format
+#~ msgid ""
+#~ "This gift card is in {card_currency}. Please switch your currency to "
+#~ "{card_currency} to use it."
+#~ msgstr ""
+#~ "यह गिफ्ट कार्ड {card_currency} में है। इसका उपयोग करने के लिए अपनी मुद्रा को"
+#~ " {card_currency} में बदलें।"
+
+#~ msgid "Gift cards cannot be used to purchase other gift cards"
+#~ msgstr ""
+#~ "गिफ्ट कार्ड का उपयोग अन्य गिफ्ट कार्ड के खरीदने के लिए नहीं किया जा सकता है"
+
+#~ msgid "Cart total is already covered"
+#~ msgstr "कार्ट कुल पहले से ढका जा चुका है"
+
+#~ msgid "Unable to process gift card currency conversion"
+#~ msgstr "गिफ्ट कार्ड के मुद्रा परिवर्तन को प्रक्रिया करने में असमर्थ"
+
+#~ msgid "Gift card applied successfully"
+#~ msgstr "गिफ्ट कार्ड सफलतापूर्वक लागू कर दिया गया है"
+
+#~ msgid "Free Shipping"
+#~ msgstr "मुफ़्त शिपिंग"
+
+#~ msgid "Weight Based"
+#~ msgstr "वजन आधारित"
+
+#~ msgid "Price Based"
+#~ msgstr "मूल्य आधारित"
+
+#~ msgid "Minimum cart value to qualify"
+#~ msgstr "योग्यता के लिए न्यूनतम कार्ट मूल्य"
+
+#~ msgid "Minimum Order Value"
+#~ msgstr "न्यूनतम कमांड मूल्य"
+
+#~ msgid "Maximum cart value to qualify"
+#~ msgstr "योग्यता के लिए अधिकतम कार्ट मूल्य"
+
+#~ msgid "Maximum Order Value"
+#~ msgstr "अधिकतम कमांड मूल्य"
+
+#~ msgid "Minimum cart weight (kg)"
+#~ msgstr "न्यूनतम कार्ट वजन (किलोग्राम)"
+
+#~ msgid "Minimum Weight"
+#~ msgstr "न्यूनतम वजन"
+
+#~ msgid "Maximum cart weight (kg)"
+#~ msgstr "अधिकतम कार्ट वजन (किलोग्राम)"
+
+#~ msgid "Maximum Weight"
+#~ msgstr "अधिकतम वजन"
+
+#, python-brace-format
+#~ msgid "Minimum order value {value} required"
+#~ msgstr "न्यूनतम ऑर्डर मूल्य {value} की आवश्यकता है"
+
+#, python-brace-format
+#~ msgid "Maximum order value {value} exceeded"
+#~ msgstr "अधिकतम ऑर्डर मूल्य {value} से अधिक है"
+
+#, python-brace-format
+#~ msgid "Minimum weight {weight}kg required"
+#~ msgstr "न्यूनतम वजन {weight}केजी की आवश्यकता है"
+
+#, python-brace-format
+#~ msgid "Maximum weight {weight}kg exceeded"
+#~ msgstr "अधिकतम वजन {weight}केजी से अधिक है"
+
+#~ msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+#~ msgstr "इस कर से छूट उत्पाद प्रकार (उदाहरण के लिए, ['digital', 'service'])"
+
+#~ msgid "Amount in base currency (used for cart calculations)"
+#~ msgstr "मूल मुद्रा में राशि (कार्ट की गणना के लिए उपयोग किया जाता है)"
+
+#~ msgid "Original Currency Amount"
+#~ msgstr "मूल मुद्रा राशि"
+
+#~ msgid ""
+#~ "Discount in the gift card's native currency (for foreign-currency gift "
+#~ "cards)"
+#~ msgstr ""
+#~ "गिफ्ट कार्ड की स्थानीय मुद्रा में छूट (विदेशी मुद्रा वाले गिफ्ट कार्ड के "
+#~ "लिए)"
+
+#~ msgid "Exchange Rate"
+#~ msgstr "विनिमय दर"
+
+#~ msgid "Rate: gift card currency -> base currency at time of application"
+#~ msgstr "दर: गिफ्ट कार्ड मुद्रा -> मूल मुद्रा आवेदन के समय"
+
+#~ msgid "Applied At"
+#~ msgstr "लागू करें"
+
+#~ msgid "Applied Gift Card"
+#~ msgstr "लागू गिफ्ट कार्ड"
+
+#~ msgid "Applied Gift Cards"
+#~ msgstr "लागू गिफ्ट कार्ड"
+
+#~ msgid "This gift card cannot be used"
+#~ msgstr "यह गिफ्ट कार्ड उपयोग नहीं किया जा सकता है"
+
+#~ msgid "Discount amount exceeds gift card balance"
+#~ msgstr "छूट की राशि गिफ्ट कार्ड शेष से अधिक है"
+
+#~ msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+#~ msgstr "गिफ्ट कार्ड कोड (जैसे, GC-XXXX-XXXX-XXXX)"
+
+#~ msgid "Amount applied from this gift card (in base currency)"
+#~ msgstr "इस उपहार कार्ड से लागू राशि (मूल मुद्रा में)"
+
+#~ msgid "Remaining balance on gift card after this application"
+#~ msgstr "इस आवेदन के बाद गिफ्ट कार्ड पर शेष राशि"
+
+#~ msgid "Base currency code"
+#~ msgstr "मूल मुद्रा कोड"
+
+#~ msgid "Gift card's native currency code"
+#~ msgstr "गिफ्ट कार्ड की मूल मुद्रा कोड"
+
+#~ msgid ""
+#~ "Discount in gift card's native currency (for foreign-currency gift cards)"
+#~ msgstr ""
+#~ "उपहार कार्ड की मूल अपनी अपनी मुद्रा में छूट (विदेशी मुद्रा उपहार कार्ड के "
+#~ "लिए)"
+
+#~ msgid "Gift card removed"
+#~ msgstr "गिफ्ट कार्ड हटा दिया गया है"
+
+#~ msgid "Gift card not found in cart"
+#~ msgstr "कार्ट में गिफ्ट कार्ड नहीं मिला"
+
+#~ msgid "Free Shipping - No charge"
+#~ msgstr "मुफ्त शिपिंग - कोई शुल्क नहीं"
+
+#~ msgid "Weight Based - Calculate by cart weight"
+#~ msgstr "वजन आधारित - कार्ट वजन द्वारा गणना"
+
+#~ msgid "Price Based - Calculate by cart subtotal"
+#~ msgstr "कीमत आधारित - कार्ट सबटोटल द्वारा गणना"
+
+#~ msgid "Free Shipping:"
+#~ msgstr "मुफ्त शिपिंग:"
+
+#~ msgid "No shipping charge"
+#~ msgstr "कोई शिपिंग शुल्क नहीं"
+
+#~ msgid "Weight/Price Based:"
+#~ msgstr "वजन/मूल्य आधारित:"
+
+#~ msgid "Calculate using rate tables"
+#~ msgstr "दर तालिका का उपयोग करके गणना करें"
+
+#~ msgid ""
+#~ "Define when this shipping method should be available based on cart value and"
+#~ " weight."
+#~ msgstr ""
+#~ "कार्ट के मूल्य और वजन के आधार पर इस शिपिंग विधि के उपलब्ध होने के समय को "
+#~ "परिभाषित करें।"
+
+#~ msgid "Order Value Restrictions"
+#~ msgstr "आदेश मूल्य प्रतिबंध"
+
+#~ msgid "Set minimum or maximum cart subtotal requirements for this method."
+#~ msgstr ""
+#~ "इस विधि के लिए कार्ट सबटोटल की न्यूनतम या अधिकतम आवश्यकताएं निर्धारित करें।"
+
+#~ msgid "Method only available if cart subtotal is at least this amount"
+#~ msgstr ""
+#~ "केवल तब यह विधि उपलब्ध होगी जब कार्ट सबटोटल इस राशि के बराबर या अधिक हो।"
+
+#~ msgid "No maximum"
+#~ msgstr "कोई अधिकतम नहीं"
+
+#~ msgid "Method only available if cart subtotal is below this amount"
+#~ msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट सबटोटल इस राशि से कम हो।"
+
+#~ msgid "Free shipping for orders over $50: Set minimum to 50.00"
+#~ msgstr "$50 से अधिक के ऑर्डर के लिए मुफ्त शिपिंग: न्यूनतम 50.00 रखें"
+
+#~ msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+#~ msgstr "$100 से कम के ऑर्डर के लिए अर्थव्यवस्था शिपिंग: अधिकतम 100.00 रखें"
+
+#~ msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+#~ msgstr "$25-$200 के लिए मानक शिपिंग: दोनों न्यूनतम और अधिकतम रखें"
+
+#~ msgid "Weight Restrictions"
+#~ msgstr "वजन प्रतिबंध"
+
+#~ msgid "Set minimum or maximum total cart weight requirements for this method."
+#~ msgstr ""
+#~ "इस विधि के लिए कार्ट के कुल वजन की न्यूनतम या अधिकतम आवश्यकताएं निर्धारित "
+#~ "करें।"
+
+#~ msgid "Minimum Weight (kg)"
+#~ msgstr "न्यूनतम वजन (किलोग्राम)"
+
+#~ msgid "Method only available if total cart weight is at least this value"
+#~ msgstr ""
+#~ "केवल तब यह विधि उपलब्ध होगी जब कार्ट के कुल वजन इस मूल्य के बराबर या अधिक "
+#~ "हो।"
+
+#~ msgid "Maximum Weight (kg)"
+#~ msgstr "अधिकतम वजन (किलोग्राम)"
+
+#~ msgid "Method only available if total cart weight is below this value"
+#~ msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट के कुल वजन इस मूल्य से कम हो।"
+
+#~ msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+#~ msgstr "2 किलोग्राम से कम पैकेज के लिए हल्का पैकेज शिपिंग: अधिकतम 2.00 रखें"
+
+#~ msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+#~ msgstr "20 किलोग्राम से अधिक पैकेज के लिए भारी भाड़ा: न्यूनतम 20.00 रखें"
+
+#~ msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+#~ msgstr ""
+#~ "0.5 किलोग्राम-10 किलोग्राम के लिए मानक शिपिंग: दोनों न्यूनतम और अधिकतम रखें"
+
+#~ msgid "Weight-Based Rates:"
+#~ msgstr "वजन-आधारित रेट:"
+
+#~ msgid "Price-Based Rates:"
+#~ msgstr "कीमत-आधारित रेट:"
+
+#~ msgid ""
+#~ "You'll be able to configure tiered rates based on cart subtotal after the "
+#~ "method is created."
+#~ msgstr ""
+#~ "विधि बनाने के बाद आप कार्ट सबटोटल के आधार पर टियर्ड रेट के निर्माण के लिए "
+#~ "सक्षम होंगे।"
+
+#~ msgid "Min Order Value:"
+#~ msgstr "न्यूनतम कमांड मूल्य:"
+
+#~ msgid "Max Order Value:"
+#~ msgstr "अधिकतम कमांड मूल्य:"
+
+#~ msgid "Min Weight:"
+#~ msgstr "न्यूनतम वजन:"
+
+#~ msgid "Max Weight:"
+#~ msgstr "अधिकतम वजन:"
+
+#~ msgid ""
+#~ "No eligibility conditions set - method available for all cart values and "
+#~ "weights"
+#~ msgstr ""
+#~ "कोई योग्यता की शर्तें नहीं निर्धारित - यह मेथड सभी कार्ट मूल्यों और वजनों के"
+#~ " लिए उपलब्ध है"
+
+#~ msgid "Optional: Restrict availability based on order value or weight."
+#~ msgstr "वैकल्पिक: आदेश के मूल्य या भार के आधार पर उपलब्धता को सीमित करें।"
+
+#~ msgid "Order Value:"
+#~ msgstr "ऑर्डर मूल्य:"
+
+#~ msgid "Weight:"
+#~ msgstr "वजन:"
+
+#~ msgid ""
+#~ "Apply a gift card code to cart. Validates gift card status, balance, and "
+#~ "currency. Gift cards cannot be used to purchase other gift cards. Amount "
+#~ "applied is limited to gift card balance or remaining cart total."
+#~ msgstr ""
+#~ "कार्ट पर एक गिफ्ट कार्ड कोड लागू करें। गिफ्ट कार्ड की स्थिति, शेष और मुद्रा "
+#~ "की जांच करें। एक गिफ्ट कार्ड का उपयोग अन्य गिफ्ट कार्ड खरीदने के लिए नहीं "
+#~ "किया जा सकता है। लागू किया गया राशि गिफ्ट कार्ड शेष या शेष कार्ट कुल तक "
+#~ "सीमित है।"
+
+#~ msgid ""
+#~ "Remove a specific gift card from cart by code. The gift card balance is not "
+#~ "affected until checkout is completed. User can reapply the gift card."
+#~ msgstr ""
+#~ "कोड द्वारा कार्ट से एक विशिष्ट गिफ्ट कार्ड हटाएं। चेकआउट पूरा होने तक गिफ्ट "
+#~ "कार्ड के बैलेंस पर कोई प्रभाव नहीं पड़ता। उपयोगकर्ता गिफ्ट कार्ड को पुनः "
+#~ "लागू कर सकता है।"

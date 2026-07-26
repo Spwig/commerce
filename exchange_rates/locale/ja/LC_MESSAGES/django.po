@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:47
 msgid "Provider Information"
 msgstr "プロバイダー情報"
 
+#: admin.py:48
 msgid "Configuration"
 msgstr "設定"
 
+#: admin.py:50 admin.py:110
 msgid "Credentials"
 msgstr "資格情報"
 
+#: admin.py:54
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
@@ -34,66 +38,87 @@ msgstr ""
 "資格情報はプロバイダーウィザードを通じて暗号化され、管理されます。資格情報を"
 "更新するには、プロバイダーを再インストールしてください。"
 
+#: admin.py:60 admin.py:75 models.py:82
 msgid "Sync Status"
 msgstr "同期ステータス"
 
+#: admin.py:66 admin.py:323
 msgid "Timestamps"
 msgstr "タイムスタンプ"
 
+#: admin.py:69
 msgid "Name"
 msgstr "名前"
 
+#: admin.py:88 admin.py:269 admin.py:336
 msgid "Status"
 msgstr "ステータス"
 
+#: admin.py:102
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:88
 msgid "Primary"
 msgstr "プライマリ"
 
+#: admin.py:118
 msgid "Credentials are encrypted and stored securely"
 msgstr "資格情報は暗号化され、安全に保存されています。"
 
+#: admin.py:125
 msgid "No credentials configured"
 msgstr "資格情報が設定されていません"
 
+#: admin.py:265 admin.py:283 admin.py:320 admin.py:332
 msgid "Currency Pair"
 msgstr "通貨ペア"
 
+#: admin.py:272
 msgid "Stale"
 msgstr "古い"
 
+#: admin.py:273
 msgid "Fresh"
 msgstr "最新"
 
+#: admin.py:287 models.py:220
 msgid "Order"
 msgstr "順序"
 
+#: admin.py:321
 msgid "Rate"
 msgstr "レート"
 
+#: admin.py:322
 msgid "Settings"
 msgstr "設定"
 
+#: admin.py:341
 msgid "ACTIVE"
 msgstr "有効"
 
+#: admin.py:345
 msgid "INACTIVE"
 msgstr "無効"
 
+#: admin.py:348 models.py:285
 msgid "Notes"
 msgstr "備考"
 
+#: api_views.py:38
 msgid "List manual exchange rates"
 msgstr "手動為替レートを一覧表示"
 
+#: api_views.py:40
 msgid ""
 "Returns all manual exchange rates for the current site. Staff authentication "
 "required."
 msgstr ""
 "現在のサイトの手動為替レートすべてを返します。スタッフの認証が必要です。"
 
+#: api_views.py:46
 msgid "Create a manual exchange rate"
 msgstr "手動為替レートを作成"
 
+#: api_views.py:48
 msgid ""
 "Create a new manual exchange rate for a currency pair. Only one rate per "
 "currency pair is allowed. Manual rates take precedence over provider rates "
@@ -103,30 +128,39 @@ msgstr ""
 "レートのみが許可されています。アクティブな場合、手動レートはプロバイダレート"
 "よりも優先されます。"
 
+#: api_views.py:54
 msgid "Rate created successfully"
 msgstr "レートが正常に作成されました"
 
+#: api_views.py:56
 msgid "Validation error (duplicate pair, invalid rate, etc.)"
 msgstr "検証エラー（重複したペア、無効なレートなど）"
 
+#: api_views.py:62
 msgid "Get manual exchange rate details"
 msgstr "手動為替レートの詳細を取得"
 
+#: api_views.py:63
 msgid "Retrieve a specific manual exchange rate by ID."
 msgstr "IDによって特定の手動為替レートを取得します。"
 
+#: api_views.py:68
 msgid "Update a manual exchange rate"
 msgstr "手動為替レートを更新"
 
+#: api_views.py:69
 msgid "Fully update a manual exchange rate. All fields required."
 msgstr "手動為替レートを完全に更新します。すべてのフィールドが必須です。"
 
+#: api_views.py:72 api_views.py:85
 msgid "Rate updated successfully"
 msgstr "為替レートが正常に更新されました"
 
+#: api_views.py:78
 msgid "Partially update a manual exchange rate"
 msgstr "手動為替レートを部分的に更新します"
 
+#: api_views.py:80
 msgid ""
 "Update specific fields of a manual exchange rate. Commonly used to update "
 "just the rate value."
@@ -134,9 +168,11 @@ msgstr ""
 "手動為替レートの特定のフィールドを更新します。通常はレート値のみを更新するた"
 "めに使用されます。"
 
+#: api_views.py:91
 msgid "Delete a manual exchange rate"
 msgstr "手動為替レートを削除"
 
+#: api_views.py:93
 msgid ""
 "Permanently delete a manual exchange rate. The system will fall back to "
 "provider rates for this currency pair."
@@ -144,27 +180,35 @@ msgstr ""
 "手動の為替レートを永久に削除します。この通貨ペアに対してシステムはプロバイダ"
 "レートに戻ります。"
 
+#: api_views.py:97
 msgid "Rate deleted successfully"
 msgstr "為替レートが正常に削除されました"
 
+#: api_views.py:143
 msgid "Manual exchange rate created successfully."
 msgstr "手動で為替レートを正常に作成しました。"
 
+#: api_views.py:151
 msgid "Failed to create manual exchange rate."
 msgstr "手動為替レートの作成に失敗しました。"
 
+#: api_views.py:172
 msgid "Manual exchange rate updated successfully."
 msgstr "手動為替レートが正常に更新されました。"
 
+#: api_views.py:180
 msgid "Failed to update manual exchange rate."
 msgstr "手動為替レートの更新に失敗しました。"
 
+#: api_views.py:193
 msgid "Manual exchange rate deleted successfully."
 msgstr "手動為替レートが正常に削除されました。"
 
+#: api_views.py:199
 msgid "Toggle manual rate active status"
 msgstr "手動為替レートのアクティブ状態を切り替え"
 
+#: api_views.py:201
 msgid ""
 "Toggle the active/inactive status of a manual exchange rate. When "
 "deactivated, the system falls back to provider rates."
@@ -172,21 +216,27 @@ msgstr ""
 "手動為替レートのアクティブ/非アクティブステータスを切り替えます。非アクティブ"
 "になると、システムはプロバイダーのレートにフォールバックします。"
 
+#: api_views.py:205
 msgid "Status toggled successfully"
 msgstr "ステータスが正常に切り替えられました"
 
+#: api_views.py:220 views/admin_views.py:448 views/admin_views.py:477
 msgid "Rate {} successfully"
 msgstr "レート {} が正常に設定されました"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "activated"
 msgstr "有効化"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "deactivated"
 msgstr "無効化"
 
+#: api_views.py:231
 msgid "Bulk create or update manual rates"
 msgstr "手動レートのバルク作成または更新"
 
+#: api_views.py:233
 msgid ""
 "Create or update multiple manual exchange rates in a single request. Each "
 "rate is identified by its base_currency + target_currency pair. If a rate "
@@ -218,31 +268,40 @@ msgstr ""
 "  ]\n"
 "} ```"
 
+#: api_views.py:249
 msgid "Bulk operation completed"
 msgstr "バルク操作が完了しました"
 
+#: api_views.py:261
 msgid "Invalid request data."
 msgstr "無効なリクエストデータ。"
 
+#: api_views.py:284
 msgid "base_currency, target_currency, and rate are required."
 msgstr "base_currency、target_currency、およびrateは必須です。"
 
+#: api_views.py:294 models.py:312 serializers.py:68
 msgid "Base and target currencies must be different."
 msgstr "ベース通貨とターゲット通貨は異なっている必要があります。"
 
+#: api_views.py:307 models.py:315 serializers.py:59
 msgid "Exchange rate must be greater than zero."
 msgstr "為替レートはゼロより大きくなければなりません。"
 
+#: api_views.py:312
 msgid "Invalid rate value."
 msgstr "無効なレート値です。"
 
+#: api_views.py:336
 #, python-format
 msgid "Bulk operation completed: %(created)d created, %(updated)d updated."
 msgstr "バルク操作が完了しました: %(created)d 件作成、%(updated)d 件更新。"
 
+#: api_views.py:348
 msgid "Sync manual rates from provider"
 msgstr "プロバイダーからの手動レートを同期"
 
+#: api_views.py:350
 msgid ""
 "Auto-populate manual exchange rates from the latest provider rates. Rates "
 "marked as locked (exclude_from_auto_sync) will be skipped. Creates new "
@@ -252,19 +311,24 @@ msgstr ""
 "いるレート（exclude_from_auto_sync）はスキップされます。新しい手動レートを作"
 "成するか、既存のロックされていないレートを更新します。"
 
+#: api_views.py:355
 msgid "Sync completed"
 msgstr "同期が完了しました"
 
+#: api_views.py:356
 msgid "Sync failed"
 msgstr "同期に失敗しました"
 
+#: api_views.py:412
 msgid "No provider rate available"
 msgstr "プロバイダのレートが利用できません"
 
+#: api_views.py:426 views/admin_views.py:559
 #, python-format
 msgid "Synced from provider on %(date)s"
 msgstr "%(date)s にプロバイダーから同期されました"
 
+#: api_views.py:448 views/admin_views.py:578
 #, python-format
 msgid ""
 "Sync complete: %(created)d created, %(updated)d updated, %(skipped)d locked "
@@ -272,152 +336,210 @@ msgid ""
 msgstr ""
 "同期完了: %(created)d 作成, %(updated)d 更新, %(skipped)d ロック (スキップ)"
 
+#: api_views.py:467 views/admin_views.py:591
 msgid "An error occurred during sync."
 msgstr "同期中にエラーが発生しました。"
 
+#: apps.py:8 models.py:169
 msgid "Exchange Rates"
 msgstr "為替レート"
 
+#: models.py:15 models.py:245
 msgid "Site"
 msgstr "サイト"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "このプロバイダー アカウントが所属するサイト"
 
+#: models.py:24
 msgid "Provider Component"
 msgstr "プロバイダー コンポーネント"
 
+#: models.py:25
 msgid "Exchange rate provider component from update system"
 msgstr "アップデートシステムからの為替レートプロバイダーコンポーネント"
 
+#: models.py:30
 msgid "Account Name"
 msgstr "アカウント名"
 
+#: models.py:32
 msgid ""
 "Friendly name for this provider account (e.g., 'Main Exchange Rate Provider')"
 msgstr ""
 "このプロバイダー アカウントのフレンドリな名前（例: 'Main Exchange Rate "
 "Provider'）"
 
+#: models.py:37
 msgid "Encrypted Credentials"
 msgstr "暗号化された資格情報"
 
+#: models.py:38
 msgid "Encrypted API credentials for this provider"
 msgstr "このプロバイダ用の暗号化されたAPI資格情報"
 
+#: models.py:43 models.py:270 models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:88
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:77
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:90
+#: views/admin_views.py:451
 msgid "Active"
 msgstr "アクティブ"
 
+#: models.py:44
 msgid ""
 "Whether this provider account is active and should be used for rate fetching"
 msgstr ""
 "このプロバイダー アカウントがアクティブであり、為替レートの取得に使用されるべ"
 "きかどうか"
 
+#: models.py:49
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:23
 msgid "Primary Provider"
 msgstr "プライマリプロバイダー"
 
+#: models.py:50
 msgid "Use this provider as primary source for exchange rates"
 msgstr "このプロバイダーを為替レートの主要なソースとして使用する"
 
+#: models.py:55
 msgid "Priority"
 msgstr "優先度"
 
+#: models.py:56
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "フォールバックチェーンの優先度（低いほど優先度が高い）"
 
+#: models.py:62
 msgid "Provider Settings"
 msgstr "プロバイダー設定"
 
+#: models.py:63
 msgid "Provider-specific settings and configuration"
 msgstr "プロバイダー固有の設定と構成"
 
+#: models.py:70
 msgid "Last Sync At"
 msgstr "最後の同期日時"
 
+#: models.py:71
 msgid "When rates were last successfully fetched"
 msgstr "レートが最後に正常に取得された時刻"
 
+#: models.py:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:80
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:68
 msgid "Pending"
 msgstr "保留"
 
+#: models.py:78
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:74
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:60
 msgid "Success"
 msgstr "成功"
 
+#: models.py:79
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:64
+#: templates/admin/exchange_rates/wizard/step4_test.html:76
 msgid "Error"
 msgstr "エラー"
 
+#: models.py:87
 msgid "Sync Error Message"
 msgstr "同期エラーメッセージ"
 
+#: models.py:88
 msgid "Error message from last sync attempt"
 msgstr "最後の同期試行からのエラーメッセージ"
 
+#: models.py:95
 msgid "Exchange Rate Provider Account"
 msgstr "為替レートプロバイダー アカウント"
 
+#: models.py:96
 msgid "Exchange Rate Provider Accounts"
 msgstr "為替レートプロバイダー アカウント一覧"
 
+#: models.py:138
 msgid "Provider Account"
 msgstr "プロバイダー アカウント"
 
+#: models.py:144 models.py:195 models.py:251
 msgid "Base Currency"
 msgstr "基準通貨"
 
+#: models.py:145 models.py:252
 msgid "Base currency code (e.g., 'USD')"
 msgstr "基準通貨コード (例: 'USD')"
 
+#: models.py:150 models.py:197 models.py:257
 msgid "Target Currency"
 msgstr "対象通貨"
 
+#: models.py:151 models.py:258
 msgid "Target currency code (e.g., 'EUR')"
 msgstr "対象通貨コード (例: 'EUR')"
 
+#: models.py:157 models.py:168 models.py:199 models.py:264
 msgid "Exchange Rate"
 msgstr "為替レート"
 
+#: models.py:158
 msgid "Exchange rate from base to target (e.g., 0.85 means 1 USD = 0.85 EUR)"
 msgstr ""
 "ベースからターゲットへの為替レート（例: 0.85 は 1 USD = 0.85 EUR を意味する）"
 
+#: models.py:163
 msgid "Fetched At"
 msgstr "取得日時"
 
+#: models.py:164
 msgid "When this rate was last fetched from provider"
 msgstr "このレートが最後にプロバイダーから取得された時刻"
 
+#: models.py:203
 msgid "Provider Name"
 msgstr "プロバイダー名"
 
+#: models.py:204
 msgid "Name of exchange rate provider used"
 msgstr "使用された為替レートプロバイダーの名前"
 
+#: models.py:209
 msgid "Created At"
 msgstr "作成日時"
 
+#: models.py:210
 msgid "When this rate snapshot was created"
 msgstr "このレートスナップショットが作成された時刻"
 
+#: models.py:224 models.py:225
 msgid "Exchange Rate History"
 msgstr "為替レート履歴"
 
+#: models.py:246
 msgid "Site this manual rate belongs to"
 msgstr "この手動レートが所属するサイト"
 
+#: models.py:265
 msgid ""
 "Exchange rate from base to target (e.g., 0.85 means 1 base = 0.85 target)"
 msgstr ""
 "ベースからターゲットへの為替レート（例: 0.85 は 1 ベース = 0.85 ターゲットを"
 "意味します）"
 
+#: models.py:271
 msgid "Whether this manual rate is active and should be used for conversions"
 msgstr ""
 "この手動レートがアクティブであり、コンバージョンに使用されるべきかどうか。"
 
+#: models.py:276
 msgid "Locked (Exclude from Auto-Sync)"
 msgstr "ロック (オート同期から除外)"
 
+#: models.py:278
 msgid ""
 "When enabled, this rate will not be overwritten by provider sync operations. "
 "Use for rates you manage manually."
@@ -425,19 +547,30 @@ msgstr ""
 "この設定を有効にすると、プロバイダ同期操作によってこのレートが上書きされるこ"
 "とはありません。手動で管理するレートに使用してください。"
 
+#: models.py:286
 msgid ""
 "Optional notes about this rate (e.g., 'Fixed rate for wholesale customers')"
 msgstr "このレートに関するオプションのノート（例: '小売顧客向けの固定レート'）"
 
+#: models.py:293
 msgid "Manual Exchange Rate"
 msgstr "手動為替レート"
 
+#: models.py:294
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:22
 msgid "Manual Exchange Rates"
 msgstr "手動為替レート"
 
+#: models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:91
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:81
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:92
+#: views/admin_views.py:452
 msgid "Inactive"
 msgstr "非アクティブ"
 
+#: providers/fixer.py:316
 msgid ""
 "\n"
 "        <h3>Fixer.io Setup</h3>\n"
@@ -473,6 +606,7 @@ msgstr ""
 "<p><strong>最適な利用:</strong> ECB準拠が必要なEU拠点のストア向け</p>\n"
 "        "
 
+#: providers/openexchangerates.py:289
 msgid ""
 "\n"
 "        <h3>Open Exchange Rates Setup</h3>\n"
@@ -505,6 +639,7 @@ msgstr ""
 "トは有料プランが必要です。</p>\n"
 "        "
 
+#: serializers.py:82
 msgid ""
 "List of rate objects with base_currency, target_currency, rate, and optional "
 "is_active/notes"
@@ -512,126 +647,180 @@ msgstr ""
 "base_currency、target_currency、rate、およびオプションのis_active/notesを持つ"
 "レートオブジェクトのリスト"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:24
 msgid "Exchange Rate Providers"
 msgstr "為替レートプロバイダ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/providers/browse.html:4
 msgid "Site Admin"
 msgstr "サイト管理者"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:26
 msgid "Manage currency exchange rate provider integrations"
 msgstr "通貨為替レートプロバイダーの統合を管理する"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:28
 msgid "provider"
 msgstr "プロバイダ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:29
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:27
 msgid "active"
 msgstr "アクティブ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:34
+#: templates/admin/exchange_rates/providers/browse.html:27
 msgid "Browse Providers"
 msgstr "プロバイダーを閲覧"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:53
 msgid "Bulk Actions"
 msgstr "バッチ操作"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:54
 msgid "Enable Selected"
 msgstr "選択したものを有効にする"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:55
 msgid "Disable Selected"
 msgstr "選択したものを無効にする"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:56
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:119
 msgid "Set as Primary"
 msgstr "プライマリに設定"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:57
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:103
 msgid "Sync Rates"
 msgstr "レートを同期"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:58
 msgid "Delete Selected"
 msgstr "選択したものを削除"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:60
 msgid "Apply"
 msgstr "適用"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:62
 msgid "selected"
 msgstr "選択済み"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:72
 msgid "All Sync Statuses"
 msgstr "すべての同期状態"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:86
 msgid "All Active Status"
 msgstr "すべてのアクティブステータス"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:98
 msgid "All Providers"
 msgstr "すべてのプロバイダ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:114
 msgid "Search providers..."
 msgstr "プロバイダを検索..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:124
 msgid "Select All"
 msgstr "すべて選択"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:142
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s プロバイダー"
 msgstr[1] "%(counter)s プロバイダー"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:151
+#: views/admin_views.py:86
 msgid "No provider accounts found"
 msgstr "プロバイダアカウントが見つかりません"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:154
+#: views/admin_views.py:87
 msgid "Try adjusting your filters or search query."
 msgstr "フィルタや検索クエリを調整してみてください。"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:156
 msgid "Get started by connecting your first exchange rate provider."
 msgstr "最初の為替レートプロバイダーを接続して開始してください。"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:161
 msgid "Browse & Install Providers"
 msgstr "プロバイダを閲覧＆インストール"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:172
 msgid "Loading..."
 msgstr "読み込み中..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:38
 msgid "Provider:"
 msgstr "プロバイダー:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
 msgid "Last synced:"
 msgstr "最後の同期:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "ago"
 msgstr "前"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:51
 msgid "Never synced"
 msgstr "これまで同期されていません"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:98
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:119
 msgid "Edit"
 msgstr "編集"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Disable"
 msgstr "無効"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Enable"
 msgstr "有効"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:124
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:124
 msgid "Delete"
 msgstr "削除"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:24
 msgid "Set and manage exchange rates manually for currency conversions"
 msgstr "通貨変換用の為替レートを手動で設定および管理"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:26
 msgid "rate"
 msgstr "レート"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:28
 msgid "inactive"
 msgstr "非アクティブ"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:29
+#: views/admin_views.py:478
 msgid "locked"
 msgstr "ロック"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:35
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:144
 msgid "Sync from Provider"
 msgstr "プロバイダーから同期"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:38
 msgid "Add Rate"
 msgstr "レートを追加"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:55
 msgid ""
 "Manual rates take precedence over provider-fetched rates. Lock rates to "
 "prevent them from being overwritten during provider sync."
@@ -639,52 +828,70 @@ msgstr ""
 "手動で設定したレートは、プロバイダから取得したレートよりも優先されます。同期"
 "中に上書きされないようにするには、レートをロックしてください。"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "Updated"
 msgstr "更新済み"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:95
+#: views/admin_views.py:480
 msgid "Locked"
 msgstr "ロック"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Unlock (allow auto-sync)"
 msgstr "アンロック（自動同期を許可）"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Lock (exclude from auto-sync)"
 msgstr "ロック（自動同期から除外）"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Deactivate"
 msgstr "非アクティブ化"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Activate"
 msgstr "アクティブ化"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:139
 msgid "No manual exchange rates"
 msgstr "手動為替レートなし"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:140
 msgid ""
 "Add manual exchange rates to define fixed conversion rates between "
 "currencies."
 msgstr "通貨間の固定変換レートを定義するために手動で為替レートを追加します。"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:147
 msgid "Add Your First Rate"
 msgstr "最初のレートを追加"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:160
 msgid "Syncing from Provider"
 msgstr "プロバイダーから同期中"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:161
 msgid "Fetching latest provider rates and updating unlocked manual rates..."
 msgstr ""
 "最新のプロバイダレートを取得し、ロックされていない手動レートを更新していま"
 "す..."
 
+#: templates/admin/exchange_rates/providers/browse.html:4
+#: templates/admin/exchange_rates/providers/browse.html:36
+#: views/provider_browse.py:158
 msgid "Browse Exchange Rate Providers"
 msgstr "為替レートプロバイダを閲覧"
 
+#: templates/admin/exchange_rates/providers/browse.html:25
 msgid "Home"
 msgstr "ホーム"
 
+#: templates/admin/exchange_rates/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "プロバイダアカウント"
 
+#: templates/admin/exchange_rates/providers/browse.html:38
 msgid ""
 "Choose an exchange rate provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -692,9 +899,11 @@ msgstr ""
 "ストアと統合する為の為替レートプロバイダーを選択してください。新しいプロバイ"
 "ダーをインストールしたり、既存のものを構成したりできます。"
 
+#: templates/admin/exchange_rates/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "更新サーバーが利用不可"
 
+#: templates/admin/exchange_rates/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -702,9 +911,11 @@ msgstr ""
 "アップデートサーバーに接続できませんでした。ローカルにインストールされたプロ"
 "バイダーのみを表示しています。"
 
+#: templates/admin/exchange_rates/providers/browse.html:57
 msgid "Exchange Rate Provider Marketplace"
 msgstr "為替レートプロバイダマーケットプレイス"
 
+#: templates/admin/exchange_rates/providers/browse.html:69
 msgid ""
 "Here you can discover and install exchange rate providers to automate your "
 "currency conversion, including live rates, historical data, and multi-"
@@ -713,37 +924,48 @@ msgstr ""
 "ここでは、リアルタイムレート、履歴データ、マルチ通貨サポートを含む為替レート"
 "プロバイダーを発見し、インストールして通貨変換を自動化できます。"
 
+#: templates/admin/exchange_rates/providers/browse.html:76
 msgid "What you can do:"
 msgstr "実行できる操作:"
 
+#: templates/admin/exchange_rates/providers/browse.html:81
 msgid "Browse available exchange rate providers by feature and pricing"
 msgstr ""
 "機能や料金に基づいて利用可能な為替レートプロバイダーをブラウズしてください"
 
+#: templates/admin/exchange_rates/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "ワンクリックで新しいプロバイダーをインストールしてください。"
 
+#: templates/admin/exchange_rates/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "インストールされているプロバイダーを最新バージョンに更新してください。"
 
+#: templates/admin/exchange_rates/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "インストール後にプロバイダ設定を構成"
 
+#: templates/admin/exchange_rates/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "開始方法:"
 
+#: templates/admin/exchange_rates/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "以下からプロバイダーをブラウズし、自分に合ったものを選んでください"
 
+#: templates/admin/exchange_rates/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "'インストール'をクリックして、プロバイダをストアに追加してください"
 
+#: templates/admin/exchange_rates/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "API資格情報を構成するために設定に移動してください。"
 
+#: templates/admin/exchange_rates/providers/browse.html:107
 msgid "Test the provider connection and sync exchange rates"
 msgstr "プロバイダーの接続をテストし、為替レートを同期してください"
 
+#: templates/admin/exchange_rates/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -762,54 +984,78 @@ msgstr[1] ""
 "                    Currently: %(counter)s provider available\n"
 "                "
 
+#: templates/admin/exchange_rates/providers/browse.html:134
 msgid "Update Available"
 msgstr "更新が利用可能です"
 
+#: templates/admin/exchange_rates/providers/browse.html:160
 msgid "Installed"
 msgstr "インストール済み"
 
+#: templates/admin/exchange_rates/providers/browse.html:175
 msgid "Available"
 msgstr "利用可能"
 
+#: templates/admin/exchange_rates/providers/browse.html:198
+#: templates/admin/exchange_rates/wizard/step1_select.html:46
 msgid "Live Rates"
 msgstr "リアルタイムレート"
 
+#: templates/admin/exchange_rates/providers/browse.html:203
+#: templates/admin/exchange_rates/wizard/step1_select.html:51
 msgid "Historical"
 msgstr "歴史的"
 
+#: templates/admin/exchange_rates/providers/browse.html:208
+#: templates/admin/exchange_rates/wizard/step1_select.html:56
 msgid "Crypto"
 msgstr "暗号通貨"
 
+#: templates/admin/exchange_rates/providers/browse.html:213
+#: templates/admin/exchange_rates/wizard/step1_select.html:61
 msgid "Commodities"
 msgstr "商品"
 
+#: templates/admin/exchange_rates/providers/browse.html:218
+#: templates/admin/exchange_rates/wizard/step1_select.html:66
 msgid "Any Base Currency"
 msgstr "任意の基準通貨"
 
+#: templates/admin/exchange_rates/providers/browse.html:223
+#: templates/admin/exchange_rates/wizard/step1_select.html:71
 msgid "Batch Requests"
 msgstr "バッチリクエスト"
 
+#: templates/admin/exchange_rates/providers/browse.html:241
 msgid "Free"
 msgstr "無料"
 
+#: templates/admin/exchange_rates/providers/browse.html:261
 msgid "Update"
 msgstr "更新"
 
+#: templates/admin/exchange_rates/providers/browse.html:267
 msgid "Configure"
 msgstr "設定"
 
+#: templates/admin/exchange_rates/providers/browse.html:275
 msgid "Install"
 msgstr "インストール"
 
+#: templates/admin/exchange_rates/providers/browse.html:285
 msgid "View Details"
 msgstr "詳細を表示"
 
+#: templates/admin/exchange_rates/providers/browse.html:294
 msgid "Learn More"
 msgstr "もっと詳しく"
 
+#: templates/admin/exchange_rates/providers/browse.html:308
+#: templates/admin/exchange_rates/wizard/step1_select.html:88
 msgid "No Providers Available"
 msgstr "利用可能なプロバイダがありません"
 
+#: templates/admin/exchange_rates/providers/browse.html:309
 msgid ""
 "No exchange rate providers are currently available. Please check your update "
 "server connection or contact support."
@@ -817,39 +1063,53 @@ msgstr ""
 "現在利用可能な為替レートプロバイダーはありません。更新サーバーの接続を確認す"
 "るか、サポートに連絡してください。"
 
+#: templates/admin/exchange_rates/providers/browse.html:318
 msgid "Installing provider..."
 msgstr "プロバイダーのインストール中..."
 
+#: templates/admin/exchange_rates/wizard/base.html:14
 msgid "Connect Exchange Rate Provider"
 msgstr "為替レートプロバイダに接続"
 
+#: templates/admin/exchange_rates/wizard/base.html:15
 msgid "Follow these steps to connect your exchange rate provider account"
 msgstr ""
 "為替レートプロバイダーのアカウントを接続するためにこれらの手順に従ってくださ"
 "い"
 
+#: templates/admin/exchange_rates/wizard/base.html:24
 msgid "Select Provider"
 msgstr "プロバイダを選択"
 
+#: templates/admin/exchange_rates/wizard/base.html:33
+#: templates/admin/exchange_rates/wizard/step2_setup.html:13
 msgid "Setup Instructions"
 msgstr "設定手順"
 
+#: templates/admin/exchange_rates/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "資格情報を入力"
 
+#: templates/admin/exchange_rates/wizard/base.html:51
+#: templates/admin/exchange_rates/wizard/step4_test.html:7
+#: templates/admin/exchange_rates/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "接続をテスト"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:6
 msgid "Select an Exchange Rate Provider"
 msgstr "為替レートプロバイダーを選択"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:7
 msgid "Choose the exchange rate provider you want to connect to your store."
 msgstr "ストアに接続したい為替レートプロバイダーを選んでください。"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:89
 msgid "No exchange rate provider components are currently installed."
 msgstr ""
 "現在、為替レートプロバイダーのコンポーネントはインストールされていません。"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:90
 msgid ""
 "Please download and install exchange rate provider components from the "
 "component registry."
@@ -857,15 +1117,20 @@ msgstr ""
 "コンポーネントレジストリから為替レートプロバイダーのコンポーネントをダウン"
 "ロードしてインストールしてください。"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:92
 msgid "Browse Components"
 msgstr "コンポーネントを閲覧"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:103
 msgid "Cancel"
 msgstr "キャンセル"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:106
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "次へ"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:16
 #, python-format
 msgid ""
 "\n"
@@ -878,9 +1143,11 @@ msgstr ""
 "ださい。\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:28
 msgid "Setup Instructions Not Available"
 msgstr "セットアップ手順が利用できません"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:30
 #, python-format
 msgid ""
 "\n"
@@ -896,15 +1163,21 @@ msgstr ""
 "をご確認ください。\n"
 "                    "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:49
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:120
+#: templates/admin/exchange_rates/wizard/step4_test.html:58
 msgid "Back"
 msgstr "戻る"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:52
 msgid "Continue to Credentials"
 msgstr "資格情報へ進む"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "API資格情報を入力"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -917,29 +1190,37 @@ msgstr ""
 "れて保存されます。\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "まだアカウントをお持ちですか？"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "API資格情報を取得するにはアカウントが必要です。"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "ここからサインアップ"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "API資格情報"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "選択..."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "このプロバイダに資格情報のフィールドが設定されていません。"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
 msgstr "資格情報はデータベースに保存される前にAES-256暗号化で暗号化されます。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -952,238 +1233,316 @@ msgstr ""
 "い。\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:21
+#: templates/admin/exchange_rates/wizard/step4_test.html:70
 msgid "Testing connection..."
 msgstr "接続をテストしています..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:22
+#: templates/admin/exchange_rates/wizard/step4_test.html:71
 msgid "Please wait while we verify your credentials."
 msgstr "資格情報を確認しています。お待ちください。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "入力した資格情報を用いて接続をテストするにはクリックしてください。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:42
+#: templates/admin/exchange_rates/wizard/step4_test.html:72
 msgid "Connection Successful!"
 msgstr "接続に成功しました！"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:46
 msgid "Connection Details"
 msgstr "接続詳細"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:61
+#: templates/admin/exchange_rates/wizard/step4_test.html:80
 msgid "Save & Finish"
 msgstr "保存して完了"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:73
 msgid "Your credentials were verified successfully."
 msgstr "あなたの資格情報が正常に検証されました。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:74
 msgid "Connection Failed"
 msgstr "接続に失敗しました"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:75
 msgid "Could not connect to the provider API."
 msgstr "プロバイダのAPIに接続できませんでした。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:77
+#: views/admin_views.py:296 views/wizard.py:515
 msgid "An unexpected error occurred."
 msgstr "予期しないエラーが発生しました。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:78
 msgid "Saving..."
 msgstr "保存中..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:79
 msgid "Failed to save provider account."
 msgstr "プロバイダーアカウントの保存に失敗しました。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:81
 msgid "An error occurred while saving."
 msgstr "保存中にエラーが発生しました。"
 
+#: views/admin_views.py:114
 msgid "Provider {} successfully"
 msgstr "プロバイダー {} が正常に"
 
+#: views/admin_views.py:115
 msgid "enabled"
 msgstr "有効化されました"
 
+#: views/admin_views.py:115
 msgid "disabled"
 msgstr "無効化されました"
 
+#: views/admin_views.py:122
 msgid "An error occurred while updating the provider."
 msgstr "プロバイダーの更新中にエラーが発生しました。"
 
+#: views/admin_views.py:146 views/admin_views.py:372
 msgid "\"{}\" set as primary provider"
 msgstr "\"{}\" をプライマリプロバイダーに設定しました"
 
+#: views/admin_views.py:156
 msgid "An error occurred while setting the primary provider."
 msgstr "プライマリプロバイダーの設定中にエラーが発生しました。"
 
+#: views/admin_views.py:174
 msgid "Provider implementation not found"
 msgstr "プロバイダーの実装が見つかりません"
 
+#: views/admin_views.py:191
 msgid ""
 "Failed to decrypt provider credentials. Please reconfigure the provider."
 msgstr ""
 "プロバイダーの資格情報を復号できませんでした。プロバイダーを再構成してくださ"
 "い。"
 
+#: views/admin_views.py:209
 msgid "Site settings not configured"
 msgstr "サイト設定が構成されていません"
 
+#: views/admin_views.py:223 views/admin_views.py:227
 msgid "No rates returned from provider"
 msgstr "プロバイダーからレートが返されませんでした"
 
+#: views/admin_views.py:262
 msgid "Successfully synced {} exchange rate(s)"
 msgstr "{} 通貨レートが正常に同期されました"
 
+#: views/admin_views.py:285
 msgid "Failed to sync exchange rates. Check the provider configuration."
 msgstr "為替レートの同期に失敗しました。プロバイダーの設定を確認してください。"
 
+#: views/admin_views.py:313
 msgid "Provider \"{}\" successfully deleted"
 msgstr "プロバイダー \"{}\" が正常に削除されました"
 
+#: views/admin_views.py:319
 msgid "An error occurred while deleting the provider."
 msgstr "プロバイダーの削除中にエラーが発生しました。"
 
+#: views/admin_views.py:335
 msgid "Invalid action or no providers selected"
 msgstr "無効なアクションまたは選択されたプロバイダがありません"
 
+#: views/admin_views.py:343
 msgid "{} provider(s) enabled"
 msgstr "{} プロバイダーが有効化されています"
 
+#: views/admin_views.py:347
 msgid "{} provider(s) disabled"
 msgstr "{} つのプロバイダが無効になりました"
 
+#: views/admin_views.py:354
 msgid "Please select exactly one provider to set as primary"
 msgstr "プライマリとして設定するプロバイダを1つだけ選択してください"
 
+#: views/admin_views.py:402
 msgid "{} provider(s) queued for sync, {} errors: {}"
 msgstr "{} プロバイダが同期待ちリストにあり、{} エラー: {}"
 
+#: views/admin_views.py:406
 msgid "{} provider(s) queued for sync"
 msgstr "{} つのプロバイダが同期待ちリストに追加されました"
 
+#: views/admin_views.py:411
 msgid "{} provider(s) deleted"
 msgstr "{} つのプロバイダが削除されました"
 
+#: views/admin_views.py:415
 msgid "Unknown action: {}"
 msgstr "不明なアクション: {}"
 
+#: views/admin_views.py:423
 msgid "An error occurred while performing the bulk action."
 msgstr "バッチアクションの実行中にエラーが発生しました。"
 
+#: views/admin_views.py:458 views/admin_views.py:487
 msgid "An error occurred while updating the rate."
 msgstr "レートの更新中にエラーが発生しました。"
 
+#: views/admin_views.py:478
 msgid "unlocked"
 msgstr "アンロック"
 
+#: views/admin_views.py:481
 msgid "Unlocked"
 msgstr "アンロック"
 
+#: views/provider_browse.py:197
 msgid "Provider is already installed. Configure it now."
 msgstr "プロバイダはすでにインストールされています。今すぐ設定してください。"
 
+#: views/provider_browse.py:226 views/provider_browse.py:367
 msgid "Provider not found on update server."
 msgstr "更新サーバー上にプロバイダが見つかりません。"
 
+#: views/provider_browse.py:236
 msgid "Could not determine provider version."
 msgstr "プロバイダーのバージョンを特定できませんでした。"
 
+#: views/provider_browse.py:260
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "プロバイダのダウンロードに失敗しました: %(error)s"
 
+#: views/provider_browse.py:273
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "プロバイダのインストールに失敗しました: %(error)s"
 
+#: views/provider_browse.py:306
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr ""
 "プロバイダー \"%(name)s\" が正常にインストールされました！今すぐ設定してくだ"
 "さい。"
 
+#: views/provider_browse.py:315
 msgid "An unexpected error occurred during installation."
 msgstr "インストール中に予期せぬエラーが発生しました。"
 
+#: views/provider_browse.py:337
 msgid "Provider not installed."
 msgstr "プロバイダーがインストールされていません。"
 
+#: views/provider_browse.py:353
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "アップデートサーバーへの接続に失敗しました: %(error)s"
 
+#: views/provider_browse.py:376
 msgid "Could not determine latest version."
 msgstr "最新バージョンを特定できませんでした。"
 
+#: views/provider_browse.py:385
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "プロバイダー \"%(name)s\" はすでに最新です (v%(version)s)"
 
+#: views/provider_browse.py:400
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "アップデートのダウンロードに失敗しました: %(error)s"
 
+#: views/provider_browse.py:412
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "アップデートのインストールに失敗しました: %(error)s"
 
+#: views/provider_browse.py:449
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "プロバイダー \"%(name)s\" が v%(version)s に正常に更新されました！"
 
+#: views/provider_browse.py:458
 msgid "An unexpected error occurred during the update."
 msgstr "更新中に予期せぬエラーが発生しました。"
 
+#: views/wizard.py:153
 msgid "Connect Exchange Rate Provider - Select Provider"
 msgstr "為替レートプロバイダを接続 - プロバイダの選択"
 
+#: views/wizard.py:166
 msgid "Please select a provider."
 msgstr "プロバイダーを選択してください。"
 
+#: views/wizard.py:174
 msgid "Invalid provider selected."
 msgstr "無効なプロバイダーが選択されています。"
 
+#: views/wizard.py:202 views/wizard.py:282
 msgid "Please select a provider first."
 msgstr "まずプロバイダーを選択してください。"
 
+#: views/wizard.py:235
 #, python-format
 msgid "Setup instructions not found for %(provider)s. Please contact support."
 msgstr ""
 "%(provider)s用のセットアップ手順が見つかりません。サポートにお問い合わせくだ"
 "さい。"
 
+#: views/wizard.py:240 views/wizard.py:304
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "プロバイダーの読み込みエラー: %(error)s"
 
+#: views/wizard.py:250
 msgid "Connect Exchange Rate Provider - Setup Instructions"
 msgstr "為替レートプロバイダを接続 - 設定手順"
 
+#: views/wizard.py:297
 msgid "Could not load provider configuration."
 msgstr "プロバイダの設定を読み込めませんでした。"
 
+#: views/wizard.py:308
 msgid "Connect Exchange Rate Provider - Enter Credentials"
 msgstr "為替レートプロバイダを接続 - 資格情報の入力"
 
+#: views/wizard.py:338
 msgid "Error loading provider configuration."
 msgstr "プロバイダ構成の読み込み中にエラーが発生しました。"
 
+#: views/wizard.py:372
 msgid "Please complete previous steps first."
 msgstr "まず前のステップを完了してください。"
 
+#: views/wizard.py:380
 msgid "Provider not found."
 msgstr "プロバイダが見つかりません。"
 
+#: views/wizard.py:384
 msgid "Connect Exchange Rate Provider - Test Connection"
 msgstr "為替レートプロバイダを接続 - 接続のテスト"
 
+#: views/wizard.py:413
 msgid "Provider implementation not found."
 msgstr "プロバイダの実装が見つかりません。"
 
+#: views/wizard.py:435
 msgid "An error occurred while testing the connection."
 msgstr "接続テスト中にエラーが発生しました。"
 
+#: views/wizard.py:449
 msgid "Site not configured."
 msgstr "サイトが構成されていません。"
 
+#: views/wizard.py:460
 msgid "Connection test failed"
 msgstr "接続テストに失敗しました"
 
+#: views/wizard.py:491
 msgid "Provider connected successfully!"
 msgstr "プロバイダが正常に接続されました！"
 
+#: views/wizard.py:504
 msgid "An error occurred while saving the provider."
 msgstr "プロバイダーの保存中にエラーが発生しました。"

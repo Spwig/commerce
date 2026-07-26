@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,37 +18,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: apps.py:8
 msgid "POS API"
 msgstr "API Điểm bán hàng"
 
+#: middleware.py:30
 msgid "A valid POS license is required to access this endpoint."
 msgstr "Một giấy phép POS hợp lệ là cần thiết để truy cập điểm cuối này."
 
+#: permissions.py:12
 msgid "POS access requires a staff account."
 msgstr "Truy cập POS yêu cầu tài khoản nhân viên."
 
+#: permissions.py:24
 msgid "You are not assigned to this terminal."
 msgstr "Bạn không được giao cho thiết bị đầu cuối này."
 
+#: permissions.py:72
 #, python-format
 msgid "You do not have permission: %(label)s."
 msgstr "Bạn không có quyền: %(label)s."
 
+#: serializers/cart.py:48
 msgid "Bundle variant selections: {bundle_item_id: variant_id}"
 msgstr "Lựa chọn biến thể gói hàng: {bundle_item_id: variant_id}"
 
+#: serializers/cart.py:54
 msgid "List of optional BundleItem IDs to exclude"
 msgstr "Danh sách các ID BundleItem không bắt buộc để loại trừ"
 
+#: serializers/customer.py:22
 msgid "Search by email, phone, or name"
 msgstr "Tìm kiếm theo email, số điện thoại hoặc tên"
 
+#: serializers/inventory.py:46
 msgid "ID of the product to adjust stock for."
 msgstr "ID của sản phẩm cần điều chỉnh số lượng tồn kho."
 
+#: serializers/inventory.py:50
 msgid "ID of the variant (required for variable products)."
 msgstr "ID của biến thể (bắt buộc cho sản phẩm có biến thể)."
 
+#: serializers/inventory.py:55
 msgid ""
 "Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
 "removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
@@ -59,6 +70,7 @@ msgstr ""
 "lập số lượng on_hand tuyệt đối, \"return\" thêm lại hàng tồn kho (ví dụ: trả"
 " hàng của khách hàng)."
 
+#: serializers/inventory.py:65
 msgid ""
 "For receive/return: units to add. For damage: units to remove. For recount: "
 "new absolute on_hand count."
@@ -66,32 +78,41 @@ msgstr ""
 "Đối với receive/return: đơn vị để thêm. Đối với damage: đơn vị để loại bỏ. "
 "Đối với recount: số lượng on_hand tuyệt đối mới."
 
+#: serializers/inventory.py:71
 msgid "Required explanation for this adjustment (audit trail)."
 msgstr "Lý do bắt buộc cho điều chỉnh này (truy xuất nguồn gốc)."
 
+#: serializers/inventory.py:74
 msgid "Optional UUID for offline deduplication."
 msgstr "UUID tùy chọn cho việc loại bỏ trùng lặp ngoại tuyến."
 
+#: serializers/inventory.py:88
 msgid "Signed quantity delta."
 msgstr "Sự thay đổi số lượng đã ký."
 
+#: serializers/payment.py:19
 msgid "Last four digits of card number (digits only)"
 msgstr "Bốn chữ số cuối của số thẻ (chỉ số)"
 
+#: serializers/payment.py:32
 msgid "Amount to charge. If not provided, charges the full remaining balance."
 msgstr "Số tiền cần thu. Nếu không cung cấp, sẽ thu toàn bộ số dư còn lại."
 
+#: serializers/terminal_provider.py:10
 msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
 msgstr ""
 "ID thanh toán từ nhà cung cấp thiết bị đầu cuối (ví dụ: Stripe PaymentIntent"
 " ID)"
 
+#: serializers/terminal_provider.py:57
 msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
 msgstr "ID đọc cụ thể của nhà cung cấp (ví dụ: Adyen POIID, Square device_id)"
 
+#: serializers/terminal_provider.py:72
 msgid "Provider-specific transaction ID for status polling"
 msgstr "ID giao dịch cụ thể của nhà cung cấp để kiểm tra trạng thái"
 
+#: serializers/terminal_provider.py:77
 msgid ""
 "Initial status -- typically \"pending\" for async providers, \"succeeded\" "
 "for sync (Adyen)"
@@ -99,18 +120,23 @@ msgstr ""
 "Trạng thái ban đầu -- thường là \"đang chờ\" cho các nhà cung cấp không đồng"
 " bộ, \"thành công\" cho các nhà cung cấp đồng bộ (Adyen)"
 
+#: serializers/terminal_provider.py:91
 msgid "Current payment status"
 msgstr "Trạng thái thanh toán hiện tại"
 
+#: serializers/terminal_provider.py:97
 msgid "Provider payment ID (when succeeded)"
 msgstr "ID thanh toán của nhà cung cấp (khi thành công)"
 
+#: serializers/terminal_provider.py:100
 msgid "Reason for cancellation (when canceled)"
 msgstr "Lý do hủy bỏ (khi đã hủy)"
 
+#: views/auth.py:19
 msgid "POS staff login"
 msgstr "Đăng nhập nhân viên POS"
 
+#: views/auth.py:21
 msgid ""
 "Authenticate a staff member for POS access. Returns access and refresh "
 "tokens. Uses the same token system as the Admin API "
@@ -120,39 +146,51 @@ msgstr ""
 "token làm mới. Sử dụng cùng hệ thống token như API Quản trị "
 "(MobileTokenAuthentication)."
 
+#: views/auth.py:40
 msgid "Login successful, returns tokens and terminal config"
 msgstr "Đăng nhập thành công, trả về token và cấu hình đầu cuối"
 
+#: views/auth.py:41
 msgid "Invalid credentials"
 msgstr "Thông tin xác thực không hợp lệ"
 
+#: views/auth.py:42
 msgid "User is not a staff member"
 msgstr "Người dùng không phải là nhân viên"
 
+#: views/auth.py:183
 msgid "Refresh POS access token"
 msgstr "Làm mới token truy cập POS"
 
+#: views/auth.py:184
 msgid "Exchange a refresh token for a new access token."
 msgstr "Đổi token làm mới lấy token truy cập mới."
 
+#: views/auth.py:195
 msgid "New access token"
 msgstr "Token truy cập mới"
 
+#: views/auth.py:196
 msgid "Invalid or expired refresh token"
 msgstr "Token làm mới không hợp lệ hoặc đã hết hạn"
 
+#: views/auth.py:259
 msgid "POS logout"
 msgstr "Đăng xuất POS"
 
+#: views/auth.py:260
 msgid "Invalidate the current access and refresh tokens."
 msgstr "Hủy token truy cập và token làm mới hiện tại."
 
+#: views/auth.py:262
 msgid "Logged out successfully"
 msgstr "Đã đăng xuất thành công"
 
+#: views/cart.py:37
 msgid "Get current POS cart"
 msgstr "Lấy giỏ hàng POS hiện tại"
 
+#: views/cart.py:39
 msgid ""
 "Returns the current cart for the authenticated cashier. Creates a new cart "
 "if one does not exist. Requires staff authentication and valid POS license."
@@ -160,9 +198,11 @@ msgstr ""
 "Trả lại giỏ hàng hiện tại của nhân viên thu ngân đã xác thực. Tạo giỏ hàng "
 "mới nếu không tồn tại. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:67
 msgid "Add item to POS cart"
 msgstr "Thêm mặt hàng vào giỏ hàng POS"
 
+#: views/cart.py:69
 msgid ""
 "Add a product to the cashier's cart. Supports adding by product ID or "
 "barcode. When barcode is provided without product_id, it resolves the "
@@ -172,12 +212,15 @@ msgstr ""
 "phẩm hoặc mã vạch. Khi cung cấp mã vạch mà không có product_id, nó sẽ tự "
 "động xác định sản phẩm. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:76
 msgid "Invalid product, variant, or insufficient stock"
 msgstr "Sản phẩm, biến thể không hợp lệ hoặc tồn kho không đủ"
 
+#: views/cart.py:194
 msgid "Update cart item quantity"
 msgstr "Cập nhật số lượng mặt hàng trong giỏ hàng"
 
+#: views/cart.py:196
 msgid ""
 "Update the quantity of a cart item. Set quantity to 0 to remove the item. "
 "Requires staff authentication and valid POS license."
@@ -185,15 +228,20 @@ msgstr ""
 "Cập nhật số lượng của mục trong giỏ hàng. Đặt số lượng thành 0 để xóa mục. "
 "Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:202
 msgid "Invalid quantity or insufficient stock"
 msgstr "Số lượng không hợp lệ hoặc tồn kho không đủ"
 
+#: views/cart.py:205 views/cart.py:274 views/cart.py:553 views/cart.py:695
+#: views/cart.py:1017
 msgid "Cart item not found"
 msgstr "Không tìm thấy mặt hàng trong giỏ hàng"
 
+#: views/cart.py:266
 msgid "Remove item from cart"
 msgstr "Xóa mặt hàng khỏi giỏ hàng"
 
+#: views/cart.py:268
 msgid ""
 "Remove a specific item from the cart. Requires staff authentication and "
 "valid POS license."
@@ -201,9 +249,11 @@ msgstr ""
 "Xóa một mục cụ thể khỏi giỏ hàng. Yêu cầu xác thực nhân viên và giấy phép "
 "POS hợp lệ."
 
+#: views/cart.py:321
 msgid "Apply voucher to cart"
 msgstr "Áp dụng phiếu giảm giá vào giỏ hàng"
 
+#: views/cart.py:323
 msgid ""
 "Apply a voucher/discount code to the cart. Only one voucher can be active at"
 " a time. Requires staff authentication and valid POS license."
@@ -212,12 +262,15 @@ msgstr ""
 "giảm giá có thể được kích hoạt tại một thời điểm. Yêu cầu xác thực nhân viên"
 " và giấy phép POS hợp lệ."
 
+#: views/cart.py:330
 msgid "Invalid or expired voucher code"
 msgstr "Mã phiếu giảm giá không hợp lệ hoặc đã hết hạn"
 
+#: views/cart.py:382
 msgid "Remove voucher from cart"
 msgstr "Loại bỏ phiếu giảm giá khỏi giỏ hàng"
 
+#: views/cart.py:384
 msgid ""
 "Remove the applied voucher from the cart. Requires staff authentication and "
 "valid POS license."
@@ -225,35 +278,30 @@ msgstr ""
 "Xóa phiếu giảm giá đã áp dụng khỏi giỏ hàng. Yêu cầu xác thực nhân viên và "
 "giấy phép POS hợp lệ."
 
+#: views/cart.py:389
 msgid "No voucher applied"
 msgstr "Không có phiếu giảm giá được áp dụng"
 
-msgid "Apply gift card to cart"
-msgstr "Áp dụng thẻ quà tặng vào giỏ hàng"
-
-msgid ""
-"Apply a gift card code to the cart to cover part or all of the total. "
-"Requires staff authentication and valid POS license."
-msgstr ""
-"Áp dụng mã thẻ quà tặng vào giỏ hàng để bao phủ một phần hoặc toàn bộ tổng "
-"số tiền. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
-
-msgid "Invalid gift card or insufficient balance"
-msgstr "Thẻ quà tặng không hợp lệ hoặc số dư không đủ"
-
+#: views/cart.py:428
 msgid "Clear all items from cart"
 msgstr "Xóa tất cả mục khỏi giỏ hàng"
 
+#: views/cart.py:430
+#| msgid ""
+#| "Remove the applied voucher from the cart. Requires staff authentication and "
+#| "valid POS license."
 msgid ""
-"Remove all items, vouchers, and gift cards from the cart. Requires staff "
-"authentication and valid POS license."
+"Remove all items and vouchers from the cart. Requires staff authentication "
+"and valid POS license."
 msgstr ""
-"Xóa tất cả các mục, phiếu giảm giá và thẻ quà tặng khỏi giỏ hàng. Yêu cầu "
-"xác thực nhân viên và giấy phép POS hợp lệ."
+"Xoá tất cả sản phẩm và phiếu giảm giá khỏi giỏ hàng. Yêu cầu xác thực nhân "
+"viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:533
 msgid "Apply manual discount to cart item"
 msgstr "Áp dụng giảm giá thủ công cho mục trong giỏ hàng"
 
+#: views/cart.py:535
 msgid ""
 "Apply a staff manual discount to a specific cart item. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -263,15 +311,19 @@ msgstr ""
 "requires_approval=true nếu giảm giá vượt quá giới hạn nhân viên. Yêu cầu xác"
 " thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:549 views/cart.py:759
 msgid "Discount applied or requires approval"
 msgstr "Giảm giá đã được áp dụng hoặc cần phê duyệt"
 
+#: views/cart.py:550 views/cart.py:760
 msgid "Invalid discount or not authorized"
 msgstr "Giảm giá không hợp lệ hoặc không được ủy quyền"
 
+#: views/cart.py:686
 msgid "Remove manual discount from cart item"
 msgstr "Loại bỏ giảm giá thủ công khỏi mục giỏ hàng"
 
+#: views/cart.py:688
 msgid ""
 "Remove a staff manual discount from a specific cart item. Requires staff "
 "authentication and valid POS license."
@@ -279,12 +331,15 @@ msgstr ""
 "Loại bỏ giảm giá thủ công của nhân viên khỏi một mục giỏ hàng cụ thể. Yêu "
 "cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:692 views/cart.py:893
 msgid "Discount removed"
 msgstr "Giảm giá đã được loại bỏ"
 
+#: views/cart.py:743
 msgid "Apply manual discount to cart"
 msgstr "Áp dụng giảm giá thủ công vào giỏ hàng"
 
+#: views/cart.py:745
 msgid ""
 "Apply a staff manual discount to the entire cart. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -294,9 +349,11 @@ msgstr ""
 "requires_approval=true nếu giảm giá vượt quá giới hạn nhân viên. Yêu cầu xác"
 " thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:887
 msgid "Remove manual discount from cart"
 msgstr "Loại bỏ giảm giá thủ công khỏi giỏ hàng"
 
+#: views/cart.py:889
 msgid ""
 "Remove the staff manual discount from the cart. Requires staff "
 "authentication and valid POS license."
@@ -304,9 +361,11 @@ msgstr ""
 "Loại bỏ giảm giá thủ công của nhân viên khỏi giỏ hàng. Yêu cầu xác thực nhân"
 " viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:934
 msgid "Verify manager PIN"
 msgstr "Xác minh mã PIN quản lý"
 
+#: views/cart.py:936
 msgid ""
 "Verify if a PIN is valid for a manager who can approve discounts. Returns "
 "the manager's name if valid. Requires staff authentication and valid POS "
@@ -316,12 +375,15 @@ msgstr ""
 "không. Trả về tên quản lý nếu hợp lệ. Yêu cầu xác thực nhân viên và giấy "
 "phép POS hợp lệ."
 
+#: views/cart.py:948
 msgid "PIN verification result"
 msgstr "Kết quả xác minh mã PIN"
 
+#: views/cart.py:992
 msgid "Approve discount with manager PIN"
 msgstr "Phê duyệt giảm giá bằng mã PIN quản lý"
 
+#: views/cart.py:994
 msgid ""
 "Apply a discount that exceeds staff limits with manager approval. Requires a"
 " valid manager PIN to proceed. Requires staff authentication and valid POS "
@@ -331,15 +393,19 @@ msgstr ""
 "của quản lý. Yêu cầu mã PIN của quản lý hợp lệ để tiếp tục. Yêu cầu xác thực"
 " nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:1013
 msgid "Discount approved and applied"
 msgstr "Giảm giá đã được phê duyệt và áp dụng"
 
+#: views/cart.py:1014
 msgid "Invalid PIN or discount parameters"
 msgstr "Mã PIN không hợp lệ hoặc tham số giảm giá không hợp lệ"
 
+#: views/cart.py:1182
 msgid "Park current cart"
 msgstr "Đậu giỏ hàng hiện tại"
 
+#: views/cart.py:1184
 msgid ""
 "Save the current cart state for later restoration. Used when a customer "
 "needs to step away and another customer needs to be served. Requires staff "
@@ -349,15 +415,19 @@ msgstr ""
 " hàng cần rời đi và cần phục vụ khách hàng khác. Yêu cầu xác thực nhân viên "
 "và giấy phép POS hợp lệ."
 
+#: views/cart.py:1195
 msgid "Cart parked successfully"
 msgstr "Giỏ hàng đã đậu thành công"
 
+#: views/cart.py:1196
 msgid "Cart is empty or cannot be parked"
 msgstr "Giỏ hàng trống hoặc không thể đậu lại"
 
+#: views/cart.py:1290
 msgid "List parked carts"
 msgstr "Liệt kê giỏ hàng đã đậu"
 
+#: views/cart.py:1292
 msgid ""
 "Get all parked carts for the current terminal. Requires staff authentication"
 " and valid POS license."
@@ -365,12 +435,15 @@ msgstr ""
 "Lấy tất cả giỏ hàng đã đậu lại cho thiết bị hiện tại. Yêu cầu xác thực nhân "
 "viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:1296
 msgid "List of parked carts"
 msgstr "Danh sách giỏ hàng đã đậu"
 
+#: views/cart.py:1345
 msgid "Restore parked cart"
 msgstr "Khôi phục giỏ hàng đã đậu"
 
+#: views/cart.py:1347
 msgid ""
 "Restore a parked cart, replacing the current cart contents. The current cart"
 " will be cleared before restoration. Requires staff authentication and valid"
@@ -380,18 +453,23 @@ msgstr ""
 "hiện tại sẽ bị xóa trước khi khôi phục. Yêu cầu xác thực nhân viên và giấy "
 "phép POS hợp lệ."
 
+#: views/cart.py:1352
 msgid "Cart restored successfully"
 msgstr "Khôi phục giỏ hàng thành công"
 
+#: views/cart.py:1353
 msgid "Current cart is not empty"
 msgstr "Giỏ hàng hiện tại không trống"
 
+#: views/cart.py:1356 views/cart.py:1477
 msgid "Parked cart not found"
 msgstr "Không tìm thấy giỏ hàng tạm dừng"
 
+#: views/cart.py:1468
 msgid "Delete parked cart"
 msgstr "Xóa giỏ hàng tạm dừng"
 
+#: views/cart.py:1470
 msgid ""
 "Permanently delete a parked cart. This cannot be undone. Requires staff "
 "authentication and valid POS license."
@@ -399,12 +477,15 @@ msgstr ""
 "Xóa vĩnh viễn giỏ hàng đang đỗ. Hành động này không thể hoàn tác. Yêu cầu "
 "xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/cart.py:1474
 msgid "Parked cart deleted"
 msgstr "Giỏ hàng tạm dừng đã được xóa"
 
+#: views/catalog.py:527
 msgid "List POS products"
 msgstr "Danh sách sản phẩm POS"
 
+#: views/catalog.py:529
 msgid ""
 "Returns products available for in-store sale, filtered by sales channel. "
 "Includes warehouse-specific stock levels when a terminal is identified. "
@@ -415,49 +496,64 @@ msgstr ""
 "phẩm có hình ảnh sẽ được hiển thị trước, sắp xếp theo độ phổ biến tại từng "
 "kho."
 
+#: views/catalog.py:534
 msgid "Search by name, SKU, or barcode"
 msgstr "Tìm kiếm theo tên, SKU hoặc mã vạch"
 
+#: views/catalog.py:535
 msgid "Filter by category ID"
 msgstr "Lọc theo ID danh mục"
 
+#: views/catalog.py:537
 msgid "Warehouse for stock levels"
 msgstr "Kho hàng để kiểm tra mức tồn kho"
 
+#: views/catalog.py:539 views/inventory.py:90 views/inventory.py:691
+#: views/orders.py:131 views/sync.py:67 views/sync.py:158 views/sync.py:723
 msgid "Page number (default: 1)"
 msgstr "Số trang (mặc định: 1)"
 
+#: views/catalog.py:541 views/inventory.py:92
 msgid "Items per page (default: 50, max: 200)"
 msgstr "Số mục trên mỗi trang (mặc định: 50, tối đa: 200)"
 
+#: views/catalog.py:641
 msgid "Get product detail"
 msgstr "Lấy chi tiết sản phẩm"
 
+#: views/catalog.py:642
 msgid "Returns full product details including variants and warehouse stock."
 msgstr ""
 "Trả về chi tiết sản phẩm đầy đủ bao gồm các biến thể và tồn kho kho hàng."
 
+#: views/catalog.py:695
 msgid "Barcode lookup"
 msgstr "Tra cứu mã vạch"
 
+#: views/catalog.py:696
 msgid ""
 "Look up a product or variant by barcode. Fast, indexed lookup for scanning."
 msgstr ""
 "Tra cứu sản phẩm hoặc biến thể theo mã vạch. Tra cứu nhanh, có chỉ mục cho "
 "việc quét mã vạch."
 
+#: views/catalog.py:699
 msgid "No product found with this barcode"
 msgstr "Không tìm thấy sản phẩm nào với mã vạch này"
 
+#: views/catalog.py:763
 msgid "List categories"
 msgstr "Danh sách danh mục"
 
+#: views/catalog.py:764
 msgid "Returns the category tree for POS product navigation."
 msgstr "Trả về cây danh mục cho điều hướng sản phẩm POS."
 
+#: views/checkout.py:499
 msgid "Process cash payment"
 msgstr "Xử lý thanh toán tiền mặt"
 
+#: views/checkout.py:501
 msgid ""
 "Complete a POS transaction with cash payment. Validates that the amount "
 "tendered covers the order total and calculates change. Creates an Order with"
@@ -469,12 +565,15 @@ msgstr ""
 "channel='pos' và một bản ghi POSPayment. Yêu cầu phải có ca làm việc đang mở"
 " trên máy POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/checkout.py:510
 msgid "Empty cart or insufficient cash tendered"
 msgstr "Giỏ hàng trống hoặc số tiền thanh toán không đủ"
 
+#: views/checkout.py:599
 msgid "Process card payment"
 msgstr "Xử lý thanh toán bằng thẻ"
 
+#: views/checkout.py:601
 msgid ""
 "Complete a POS transaction with card payment. Card processing is assumed to "
 "be handled by an external card terminal. This endpoint records the card "
@@ -486,12 +585,15 @@ msgstr ""
 "chiếu thẻ và bốn chữ số cuối cùng. Yêu cầu phải có ca làm việc đang mở trên "
 "máy POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/checkout.py:610
 msgid "Empty cart"
 msgstr "Xóa giỏ hàng"
 
+#: views/checkout.py:680
 msgid "Check gift card balance"
 msgstr "Kiểm tra số dư thẻ quà tặng"
 
+#: views/checkout.py:682
 msgid ""
 "Check the balance of a gift card for POS checkout. Returns the current "
 "balance if valid, or an error message if invalid. Requires staff "
@@ -501,15 +603,19 @@ msgstr ""
 "nếu thẻ hợp lệ, hoặc thông báo lỗi nếu thẻ không hợp lệ. Yêu cầu xác thực "
 "nhân viên."
 
+#: views/checkout.py:696
 msgid "Gift card balance info"
 msgstr "Thông tin số dư thẻ quà tặng"
 
+#: views/checkout.py:697
 msgid "Invalid gift card or missing code"
 msgstr "Thẻ quà tặng không hợp lệ hoặc thiếu mã"
 
+#: views/checkout.py:742
 msgid "Process gift card payment"
 msgstr "Xử lý thanh toán bằng thẻ quà tặng"
 
+#: views/checkout.py:744
 msgid ""
 "Complete a POS transaction using a gift card. Validates the gift card has "
 "sufficient balance. If the gift card balance is less than the order total, "
@@ -521,12 +627,15 @@ msgstr ""
 " thanh toán thay vào đó. Yêu cầu phải có ca làm việc đang mở trên máy POS. "
 "Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/checkout.py:754
 msgid "Empty cart, invalid gift card, or insufficient balance"
 msgstr "Giỏ hàng trống, thẻ quà tặng không hợp lệ hoặc số dư không đủ"
 
+#: views/checkout.py:911
 msgid "Process split tender payment"
 msgstr "Xử lý thanh toán chia nhỏ"
 
+#: views/checkout.py:913
 msgid ""
 "Complete a POS transaction using multiple payment methods (split tender). "
 "The total of all payments must cover the order total. Change is calculated "
@@ -540,14 +649,17 @@ msgstr ""
 "toán vượt quá tổng đơn hàng. Yêu cầu phải có ca làm việc đang mở trên máy "
 "POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/checkout.py:922
 msgid "Empty cart, invalid payments, or insufficient total"
 msgstr ""
 "Giỏ hàng trống, phương thức thanh toán không hợp lệ hoặc tổng số tiền không "
 "đủ"
 
+#: views/checkout.py:1117
 msgid "Process terminal card payment"
 msgstr "Xử lý thanh toán bằng thẻ tại máy POS"
 
+#: views/checkout.py:1119
 msgid ""
 "Complete a POS transaction with an integrated card terminal payment. The "
 "frontend must have already collected payment via the terminal SDK and "
@@ -562,12 +674,15 @@ msgstr ""
 "khi tạo đơn hàng. Yêu cầu phải có ca làm việc đang mở trên máy POS. Yêu cầu "
 "xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/checkout.py:1129
 msgid "Empty cart or payment verification failed"
 msgstr "Giỏ hàng trống hoặc xác minh thanh toán thất bại"
 
+#: views/customer.py:65
 msgid "Search customers"
 msgstr "Tìm kiếm khách hàng"
 
+#: views/customer.py:67
 msgid ""
 "Search for customers by email, phone, first name, or last name. Returns up "
 "to 20 matching results. Minimum 2 characters required. Requires staff "
@@ -577,15 +692,19 @@ msgstr ""
 " tối đa 20 kết quả phù hợp. Yêu cầu tối thiểu 2 ký tự. Yêu cầu xác thực nhân"
 " viên và giấy phép POS hợp lệ."
 
+#: views/customer.py:76
 msgid "Search query (email, phone, or name). Minimum 2 characters."
 msgstr "Tìm kiếm theo (email, số điện thoại hoặc tên). Tối thiểu 2 ký tự."
 
+#: views/customer.py:81
 msgid "Search query too short"
 msgstr "Truy vấn tìm kiếm quá ngắn"
 
+#: views/customer.py:121
 msgid "Create walk-in customer"
 msgstr "Tạo khách hàng tự do"
 
+#: views/customer.py:123
 msgid ""
 "Create a new customer for a walk-in sale. If a customer with the given email"
 " already exists, returns the existing customer instead of creating a "
@@ -597,12 +716,15 @@ msgstr ""
 "sao. Email là tùy chọn cho các khách hàng đến không hẹn trước thực sự ẩn "
 "danh. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/customer.py:131
 msgid "Existing customer found with this email"
 msgstr "Đã tìm thấy khách hàng hiện có với email này"
 
+#: views/customer.py:201
 msgid "Get customer details"
 msgstr "Lấy thông tin khách hàng"
 
+#: views/customer.py:203
 msgid ""
 "Retrieve customer details including contact info and recent order history. "
 "Requires staff authentication and valid POS license."
@@ -610,9 +732,11 @@ msgstr ""
 "Truy xuất thông tin khách hàng bao gồm thông tin liên lạc và lịch sử đơn "
 "hàng gần đây. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/inventory.py:72
 msgid "List stock levels for warehouse"
 msgstr "Liệt kê mức tồn kho theo kho"
 
+#: views/inventory.py:74
 msgid ""
 "Returns paginated stock levels for the terminal's warehouse. Supports search"
 " by product name or SKU and filtering for low-stock or no-stock items. "
@@ -622,21 +746,27 @@ msgstr ""
 "theo tên sản phẩm hoặc SKU và lọc theo mặt hàng tồn kho thấp hoặc hết hàng. "
 "Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/inventory.py:79
 msgid "Search by product name or SKU"
 msgstr "Tìm kiếm theo tên sản phẩm hoặc SKU"
 
+#: views/inventory.py:83
 msgid "Only return items at or below low stock threshold"
 msgstr "Chỉ trả lại các mặt hàng ở mức tồn kho thấp hoặc thấp hơn"
 
+#: views/inventory.py:88
 msgid "Only return items with zero available stock"
 msgstr "Chỉ trả lại các mặt hàng có số lượng tồn kho bằng 0"
 
+#: views/inventory.py:97 views/inventory.py:286 views/inventory.py:698
 msgid "Warehouse not determined"
 msgstr "Kho chưa được xác định"
 
+#: views/inventory.py:278
 msgid "Get product stock detail"
 msgstr "Lấy thông tin tồn kho sản phẩm"
 
+#: views/inventory.py:280
 msgid ""
 "Returns stock levels for a specific product in the terminal's warehouse, "
 "including variant-level breakdown. Requires staff authentication and valid "
@@ -646,9 +776,11 @@ msgstr ""
 "phân tích theo cấp độ biến thể. Yêu cầu xác thực nhân viên và giấy phép POS "
 "hợp lệ."
 
+#: views/inventory.py:351
 msgid "Check stock across all locations"
 msgstr "Kiểm tra tồn kho tại tất cả vị trí"
 
+#: views/inventory.py:353
 msgid ""
 "Returns stock levels for a product across all warehouse locations. Useful "
 "for checking if an out-of-stock item is available at another location. The "
@@ -660,9 +792,11 @@ msgstr ""
 "hiện tại được đánh dấu bằng is_current=true. Yêu cầu xác thực nhân viên và "
 "giấy phép POS hợp lệ."
 
+#: views/inventory.py:501
 msgid "Adjust stock levels"
 msgstr "Điều chỉnh mức tồn kho"
 
+#: views/inventory.py:503
 msgid ""
 "Adjust stock for a product in the terminal's warehouse. Supports four "
 "adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
@@ -678,21 +812,27 @@ msgstr ""
 "ra một bản ghi kiểm toán StockMovement không thể thay đổi. Yêu cầu xác thực "
 "nhân viên, giấy phép POS hợp lệ và quyền pos_stock_adjustment."
 
+#: views/inventory.py:515
 msgid "Stock adjusted successfully"
 msgstr "Điều chỉnh tồn kho thành công"
 
+#: views/inventory.py:516
 msgid "Validation error or warehouse not determined"
 msgstr "Lỗi xác thực hoặc kho hàng không xác định"
 
+#: views/inventory.py:518
 msgid "Permission denied or POS license required"
 msgstr "Không có quyền hoặc cần giấy phép POS"
 
+#: views/inventory.py:519
 msgid "Product or stock item not found"
 msgstr "Sản phẩm hoặc mặt hàng tồn kho không tìm thấy"
 
+#: views/inventory.py:673
 msgid "List stock movement history"
 msgstr "Liệt kê lịch sử thay đổi tồn kho"
 
+#: views/inventory.py:675
 msgid ""
 "Returns paginated stock movement records for the terminal's warehouse. "
 "Useful for auditing recent stock changes (adjustments, damage, recounts, "
@@ -704,20 +844,25 @@ msgstr ""
 "đếm lại, hoàn trả). Hỗ trợ lọc theo sản phẩm và loại thay đổi. Yêu cầu xác "
 "thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/inventory.py:684
 msgid "Filter movements by product ID"
 msgstr "Lọc thay đổi theo ID sản phẩm"
 
+#: views/inventory.py:689
 msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
 msgstr ""
 "Loại chuyển động cần bao gồm, cách nhau bằng dấu phẩy (ví dụ: "
 "'damage,recount')"
 
+#: views/inventory.py:693 views/orders.py:133
 msgid "Items per page (default: 20, max: 100)"
 msgstr "Số mục mỗi trang (mặc định: 20, tối đa: 100)"
 
+#: views/loyalty.py:20
 msgid "Get customer loyalty info"
 msgstr "Lấy thông tin khách hàng thân thiết"
 
+#: views/loyalty.py:22
 msgid ""
 "Retrieve loyalty membership status, tier, and points balance for a customer."
 " Returns `is_member: false` if the customer has no active loyalty "
@@ -727,6 +872,7 @@ msgstr ""
 "`is_member: false` nếu khách hàng không có thành viên trung thành đang hoạt "
 "động. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/loyalty.py:29
 msgid ""
 "Loyalty membership info. `is_member` indicates whether the customer has an "
 "active membership. When true, includes `tier_name`, `tier_color`, and "
@@ -736,9 +882,11 @@ msgstr ""
 " sở hữu thành viên hoạt động hay không. Khi giá trị là true, sẽ bao gồm "
 "`tier_name`, `tier_color`, và `available_points`."
 
+#: views/loyalty.py:105
 msgid "Preview loyalty points for cart"
 msgstr "Xem trước điểm khách hàng thân thiết cho giỏ hàng"
 
+#: views/loyalty.py:107
 msgid ""
 "Calculate the loyalty points a customer would earn for a given cart total. "
 "Returns 0 if the customer has no active loyalty membership. Requires staff "
@@ -748,11 +896,13 @@ msgstr ""
 "nhất định. Trả về 0 nếu khách hàng không có thành viên trung thành nào đang "
 "hoạt động. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/loyalty.py:115
 msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
 msgstr ""
 "Tổng giá giỏ hàng dưới dạng chuỗi thập phân (ví dụ: '49.99'). Mặc định là "
 "'0'."
 
+#: views/loyalty.py:121
 msgid ""
 "Points preview. `points_preview` is the number of points the customer would "
 "earn for the given cart total."
@@ -760,9 +910,11 @@ msgstr ""
 "Xem trước điểm. `points_preview` là số điểm khách hàng sẽ nhận được cho tổng"
 " giá trị giỏ hàng nhất định."
 
+#: views/orders.py:77
 msgid "List POS orders"
 msgstr "Liệt kê đơn hàng POS"
 
+#: views/orders.py:79
 msgid ""
 "Returns orders with advanced filtering for date range, origin, customer, "
 "cashier, and search. Supports viewing web orders for return scenarios. "
@@ -778,6 +930,7 @@ msgstr ""
 "để tìm bất kỳ đơn hàng nào theo số đơn, tên khách hàng, email hoặc số điện "
 "thoại. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/orders.py:91
 msgid ""
 "Start date for range filter (ISO format, default: today). Ignored when "
 "search is provided."
@@ -785,6 +938,7 @@ msgstr ""
 "Ngày bắt đầu cho bộ lọc khoảng (định dạng ISO, mặc định: hôm nay). Bỏ qua "
 "khi cung cấp tìm kiếm."
 
+#: views/orders.py:98
 msgid ""
 "End date for range filter (ISO format, default: today). Ignored when search "
 "is provided."
@@ -792,6 +946,7 @@ msgstr ""
 "Ngày kết thúc cho bộ lọc khoảng (định dạng ISO, mặc định: hôm nay). Bỏ qua "
 "khi cung cấp tìm kiếm."
 
+#: views/orders.py:106
 msgid ""
 "Order origin filter: this_terminal (default), all_pos, all (includes web). "
 "Ignored when search is provided."
@@ -799,12 +954,15 @@ msgstr ""
 "Bộ lọc nguồn đơn hàng: this_terminal (mặc định), all_pos, all (bao gồm web)."
 " Bỏ qua khi cung cấp tìm kiếm."
 
+#: views/orders.py:112
 msgid "Filter by customer user ID. Ignored when search is provided."
 msgstr "Lọc theo ID người dùng khách hàng. Bỏ qua khi cung cấp tìm kiếm."
 
+#: views/orders.py:117
 msgid "Filter by cashier staff ID. Ignored when search is provided."
 msgstr "Lọc theo ID nhân viên thu ngân. Bỏ qua khi cung cấp tìm kiếm."
 
+#: views/orders.py:123
 msgid ""
 "Search across ALL orders by order number, customer name, email, or phone. "
 "Bypasses date/origin filters."
@@ -812,12 +970,15 @@ msgstr ""
 "Tìm kiếm trên TẤT CẢ các đơn hàng theo số đơn hàng, tên khách hàng, email "
 "hoặc số điện thoại. Bỏ qua bộ lọc ngày/gốc."
 
+#: views/orders.py:129
 msgid "Filter by order status (applies in both modes)"
 msgstr "Lọc theo trạng thái đơn hàng (áp dụng trong cả hai chế độ)"
 
+#: views/orders.py:342
 msgid "Get order details"
 msgstr "Lấy thông tin đơn hàng"
 
+#: views/orders.py:344
 msgid ""
 "Returns full order details including items and payment breakdown. Supports "
 "both POS and web orders (for return scenarios). Requires staff "
@@ -827,9 +988,11 @@ msgstr ""
 "toán. Hỗ trợ cả đơn hàng POS và web (cho các tình huống hoàn trả). Yêu cầu "
 "xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/orders.py:388
 msgid "Get receipt data for printing"
 msgstr "Lấy dữ liệu hóa đơn để in"
 
+#: views/orders.py:390
 msgid ""
 "Returns receipt-formatted data for a POS order including store info, items, "
 "payments, and footer text. Designed for ESC/POS thermal printers. Requires "
@@ -839,9 +1002,11 @@ msgstr ""
 "cửa hàng, mặt hàng, thanh toán và văn bản chân trang. Được thiết kế cho máy "
 "in nhiệt ESC/POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/orders.py:653
 msgid "Process order refund"
 msgstr "Xử lý hoàn tiền đơn hàng"
 
+#: views/orders.py:655
 msgid ""
 "Process a full or partial refund for a POS order. For partial refunds, "
 "specify the items and quantities to refund. Creates a Refund record and "
@@ -854,15 +1019,19 @@ msgstr ""
 " mở trên thiết bị đầu cuối. Yêu cầu xác thực nhân viên và giấy phép POS hợp "
 "lệ."
 
+#: views/orders.py:700
 msgid "Refund processed successfully"
 msgstr "Hoàn tiền đơn hàng thành công"
 
+#: views/orders.py:701
 msgid "Invalid refund request or order already refunded"
 msgstr "Yêu cầu hoàn tiền không hợp lệ hoặc đơn hàng đã được hoàn tiền"
 
+#: views/orders.py:897
 msgid "Void a POS order"
 msgstr "Hủy đơn hàng POS"
 
+#: views/orders.py:899
 msgid ""
 "Cancel a POS order from the current shift. Only orders placed during the "
 "current open shift can be voided. This creates a full refund and reverses "
@@ -875,15 +1044,19 @@ msgstr ""
 "đang mở trên thiết bị đầu cuối. Yêu cầu xác thực nhân viên và giấy phép POS "
 "hợp lệ."
 
+#: views/orders.py:906
 msgid "Order voided successfully"
 msgstr "Hủy đơn hàng thành công"
 
+#: views/orders.py:907
 msgid "Order cannot be voided (not from current shift)"
 msgstr "Không thể hủy đơn hàng (không phải từ ca làm việc hiện tại)"
 
+#: views/orders.py:1092
 msgid "List POS cashiers"
 msgstr "Danh sách cashier POS"
 
+#: views/orders.py:1094
 msgid ""
 "Returns list of staff members who have processed POS orders. Used to "
 "populate the cashier filter dropdown. Requires staff authentication and "
@@ -893,12 +1066,15 @@ msgstr ""
 "danh sách thả xuống bộ lọc quầy thu ngân. Yêu cầu xác thực nhân viên và giấy"
 " phép POS hợp lệ."
 
+#: views/orders.py:1100
 msgid "List of cashiers"
 msgstr "Danh sách cashier"
 
+#: views/receipts.py:28
 msgid "Send digital receipt"
 msgstr "Gửi biên lai số"
 
+#: views/receipts.py:30
 msgid ""
 "Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
 "receipt is sent asynchronously via Celery task. Requires staff "
@@ -908,12 +1084,15 @@ msgstr ""
 "được gửi bất đồng bộ thông qua tác vụ Celery. Yêu cầu xác thực nhân viên và "
 "giấy phép POS hợp lệ."
 
+#: views/receipts.py:57
 msgid "Receipt queued for sending"
 msgstr "Biên lai đã được xếp hàng để gửi"
 
+#: views/receipts.py:200
 msgid "Get receipt sending status"
 msgstr "Lấy trạng thái gửi biên lai"
 
+#: views/receipts.py:202
 msgid ""
 "Check which digital receipts have been sent for an order. Returns timestamps"
 " for email and SMS/WhatsApp deliveries."
@@ -921,12 +1100,15 @@ msgstr ""
 "Kiểm tra hóa đơn điện tử nào đã được gửi cho đơn hàng. Trả về thời gian gửi "
 "cho email và SMS/WhatsApp."
 
+#: views/receipts.py:207
 msgid "Receipt status"
 msgstr "Trạng thái biên lai"
 
+#: views/reports.py:86
 msgid "Get current shift summary"
 msgstr "Lấy tổng kết ca làm việc hiện tại"
 
+#: views/reports.py:88
 msgid ""
 "Returns the open shift summary for the current cashier on the terminal, "
 "including totals, transaction count, and payment method breakdown. Returns "
@@ -938,9 +1120,11 @@ msgstr ""
 "thanh toán. Trả về ca làm việc null nếu không có ca nào đang mở. Yêu cầu xác"
 " thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/reports.py:128
 msgid "Open a new shift"
 msgstr "Mở ca làm việc mới"
 
+#: views/reports.py:130
 msgid ""
 "Start a new shift on the terminal. Only one open shift is allowed per "
 "terminal at any time. Records the opening cash amount. Requires staff "
@@ -950,15 +1134,19 @@ msgstr ""
 "trên mỗi thiết bị tại một thời điểm. Ghi lại số tiền mở ca. Yêu cầu xác thực"
 " nhân viên và giấy phép POS hợp lệ."
 
+#: views/reports.py:137
 msgid "Invalid opening cash amount"
 msgstr "Số tiền mở ca không hợp lệ"
 
+#: views/reports.py:140
 msgid "A shift is already open on this terminal"
 msgstr "Một ca làm việc đã được mở trên thiết bị này"
 
+#: views/reports.py:193
 msgid "Close current shift"
 msgstr "Đóng ca làm việc hiện tại"
 
+#: views/reports.py:195
 msgid ""
 "Close the current open shift. Records the closing cash amount and calculates"
 " the expected vs actual cash difference. Requires staff authentication and "
@@ -968,9 +1156,11 @@ msgstr ""
 " giữa số tiền dự kiến và thực tế. Yêu cầu xác thực nhân viên và giấy phép "
 "POS hợp lệ."
 
+#: views/reports.py:262
 msgid "Record cash movement"
 msgstr "Ghi lại chuyển động tiền mặt"
 
+#: views/reports.py:264
 msgid ""
 "Record a cash-in or cash-out movement during the shift. Examples: adding "
 "float, removing for deposit, petty cash. Requires an open shift on the "
@@ -980,15 +1170,19 @@ msgstr ""
 "tiền lẻ, lấy ra để gửi ngân hàng, chi phí nhỏ. Yêu cầu phải có ca làm việc "
 "đang mở trên máy. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/reports.py:271
 msgid "Cash movement recorded"
 msgstr "Đã ghi lại chuyển động tiền mặt"
 
+#: views/reports.py:272
 msgid "Invalid movement data"
 msgstr "Dữ liệu chuyển động không hợp lệ"
 
+#: views/reports.py:329
 msgid "Get daily sales report"
 msgstr "Lấy báo cáo doanh thu hàng ngày"
 
+#: views/reports.py:331
 msgid ""
 "Returns an aggregated daily sales report for the terminal including totals, "
 "transaction count, average transaction value, and payment method breakdown. "
@@ -998,12 +1192,15 @@ msgstr ""
 "lượng giao dịch, giá trị trung bình của giao dịch và phân tích phương thức "
 "thanh toán. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/reports.py:340 views/reports.py:450
 msgid "Report date (ISO format, default: today)"
 msgstr "Ngày báo cáo (định dạng ISO, mặc định: hôm nay)"
 
+#: views/reports.py:440
 msgid "Get top selling products"
 msgstr "Lấy danh sách sản phẩm bán chạy"
 
+#: views/reports.py:442
 msgid ""
 "Returns the top selling products for the terminal on a given date, ranked by"
 " quantity sold. Requires staff authentication and valid POS license."
@@ -1012,12 +1209,15 @@ msgstr ""
 "xếp hạng theo số lượng bán ra. Yêu cầu xác thực nhân viên và giấy phép POS "
 "hợp lệ."
 
+#: views/reports.py:455
 msgid "Number of products to return (default: 10, max: 50)"
 msgstr "Số lượng sản phẩm cần hoàn trả (mặc định: 10, tối đa: 50)"
 
+#: views/sync.py:54
 msgid "Sync products since timestamp"
 msgstr "Đồng bộ sản phẩm kể từ thời điểm"
 
+#: views/sync.py:56
 msgid ""
 "Returns products that have been created or updated since the given "
 "timestamp. Used for incremental product sync to the POS terminal's local "
@@ -1029,17 +1229,21 @@ msgstr ""
 "của thiết bị POS. Trả về sync_token cho yêu cầu đồng bộ lần sau. Yêu cầu xác"
 " thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/sync.py:65 views/sync.py:156
 msgid "ISO timestamp to fetch changes since. Omit for full sync."
 msgstr ""
 "Dấu thời gian ISO để lấy các thay đổi kể từ thời điểm đó. Bỏ qua để đồng bộ "
 "đầy đủ."
 
+#: views/sync.py:69 views/sync.py:160 views/sync.py:725
 msgid "Items per page (default: 100, max: 200)"
 msgstr "Số mục trên mỗi trang (mặc định: 100, tối đa: 200)"
 
+#: views/sync.py:146
 msgid "Sync customers since timestamp"
 msgstr "Đồng bộ khách hàng kể từ thời điểm"
 
+#: views/sync.py:148
 msgid ""
 "Returns customers that have been created or have placed orders since the "
 "given timestamp. Used for offline customer lookup. Requires staff "
@@ -1049,12 +1253,15 @@ msgstr ""
 "định. Được sử dụng để tra cứu khách hàng ngoại tuyến. Yêu cầu xác thực nhân "
 "viên và giấy phép POS hợp lệ."
 
+#: views/sync.py:164
 msgid "Customer sync data"
 msgstr "Dữ liệu đồng bộ khách hàng"
 
+#: views/sync.py:225
 msgid "Upload offline transactions"
 msgstr "Tải lên giao dịch ngoại tuyến"
 
+#: views/sync.py:227
 msgid ""
 "Batch upload transactions that were processed while the terminal was "
 "offline. Each transaction creates an Order with items and payments. Uses "
@@ -1066,12 +1273,15 @@ msgstr ""
 "local_id để đảm bảo tính idempotency - các tải lên trùng lặp được phát hiện "
 "và bỏ qua. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/sync.py:234
 msgid "Upload results with success/failure per transaction"
 msgstr "Tải lên kết quả kèm theo thành công/thất bại cho mỗi giao dịch"
 
+#: views/sync.py:412
 msgid "Get sync status"
 msgstr "Lấy trạng thái đồng bộ"
 
+#: views/sync.py:414
 msgid ""
 "Returns the current server time and database counts for sync planning. "
 "Requires staff authentication and valid POS license."
@@ -1079,9 +1289,11 @@ msgstr ""
 "Trả về thời gian máy chủ hiện tại và số lượng cơ sở dữ liệu để lập kế hoạch "
 "đồng bộ. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
 
+#: views/sync.py:457
 msgid "Get sync version info"
 msgstr "Lấy thông tin phiên bản đồng bộ"
 
+#: views/sync.py:459
 msgid ""
 "Returns API version and data schema version for client compatibility checks."
 " Clients should clear and resync when schema version increases."
@@ -1090,12 +1302,15 @@ msgstr ""
 "thích của khách hàng. Khách hàng nên xóa và đồng bộ lại khi phiên bản lược "
 "đồ tăng lên."
 
+#: views/sync.py:463
 msgid "Version information"
 msgstr "Thông tin phiên bản"
 
+#: views/sync.py:483
 msgid "Upload offline stock adjustments"
 msgstr "Tải lên điều chỉnh tồn kho ngoại tuyến"
 
+#: views/sync.py:485
 msgid ""
 "Batch upload stock adjustments that were queued while the terminal was "
 "offline. Each adjustment uses an idempotency key to prevent duplicates. "
@@ -1107,15 +1322,19 @@ msgstr ""
 "trùng lặp. Yêu cầu xác thực nhân viên, giấy phép POS hợp lệ và quyền điều "
 "chỉnh tồn kho."
 
+#: views/sync.py:491
 msgid "Upload results with success/failure per adjustment"
 msgstr "Tải lên kết quả kèm theo thành công/thất bại cho mỗi điều chỉnh"
 
+#: views/sync.py:494
 msgid "POS license or permission required"
 msgstr "Yêu cầu giấy phép hoặc quyền POS"
 
+#: views/sync.py:710
 msgid "Sync orders for offline cache"
 msgstr "Đồng bộ đơn hàng cho bộ đệm ngoại tuyến"
 
+#: views/sync.py:712
 msgid ""
 "Returns orders for offline caching on the POS terminal. POS orders are "
 "prioritised over web orders up to the terminal's sync limit. Supports delta "
@@ -1127,12 +1346,15 @@ msgstr ""
 " Hỗ trợ đồng bộ chênh lệch thông qua tham số 'since'. Yêu cầu xác thực nhân "
 "viên và giấy phép POS hợp lệ."
 
+#: views/sync.py:721
 msgid "ISO timestamp for delta sync. Omit for full sync."
 msgstr "Thời gian ISO cho đồng bộ hóa delta. Bỏ qua để đồng bộ hóa đầy đủ."
 
+#: views/terminal.py:57
 msgid "Register POS terminal"
 msgstr "Đăng ký đầu cuối POS"
 
+#: views/terminal.py:59
 msgid ""
 "Register a new device as a POS terminal using a pairing code. The pairing "
 "code is generated in the admin panel when creating a terminal."
@@ -1140,34 +1362,43 @@ msgstr ""
 "Đăng ký thiết bị mới làm thiết bị POS bằng mã ghép nối. Mã ghép nối được tạo"
 " trong bảng điều khiển quản trị khi tạo thiết bị."
 
+#: views/terminal.py:65
 msgid "Terminal registered successfully, returns terminal config"
 msgstr ""
 "Thiết bị đầu cuối đã được đăng ký thành công, trả về cấu hình thiết bị đầu "
 "cuối"
 
+#: views/terminal.py:67
 msgid "Invalid or expired pairing code"
 msgstr "Mã ghép nối không hợp lệ hoặc đã hết hạn"
 
+#: views/terminal.py:113
 msgid "Get terminal configuration"
 msgstr "Lấy cấu hình đầu cuối"
 
+#: views/terminal.py:114
 msgid ""
 "Returns the current terminal's configuration including hardware settings."
 msgstr ""
 "Trả về cấu hình hiện tại của thiết bị đầu cuối bao gồm cài đặt phần cứng."
 
+#: views/terminal.py:163
 msgid "Terminal heartbeat"
 msgstr "Đánh dấu nhịp tim đầu cuối"
 
+#: views/terminal.py:164
 msgid "Report that the terminal is online. Should be called every 60 seconds."
 msgstr "Báo rằng thiết bị đầu cuối đang online. Nên gọi mỗi 60 giây."
 
+#: views/terminal.py:166
 msgid "Heartbeat recorded"
 msgstr "Đã ghi nhận nhịp tim"
 
+#: views/terminal.py:187
 msgid "Get receipt template"
 msgstr "Lấy mẫu biên lai"
 
+#: views/terminal.py:189
 msgid ""
 "Returns the receipt template for the terminal's warehouse. Falls back to the"
 " default template (no warehouse assigned) if the warehouse has no specific "
@@ -1177,12 +1408,15 @@ msgstr ""
 "quay về mẫu mặc định (không gán kho). Nếu không có mẫu nào tồn tại, sẽ trả "
 "về các giá trị mặc định hợp lý."
 
+#: views/terminal.py:195
 msgid "Receipt template data"
 msgstr "Dữ liệu mẫu biên lai"
 
+#: views/terminal.py:328
 msgid "Get promo slides"
 msgstr "Lấy slide khuyến mãi"
 
+#: views/terminal.py:330
 msgid ""
 "Returns promotional slides for the terminal's warehouse. Slides are "
 "displayed on the customer-facing display during idle periods."
@@ -1190,12 +1424,15 @@ msgstr ""
 "Trả lại các slide quảng cáo cho kho của thiết bị. Các slide được hiển thị "
 "trên màn hình hướng đến khách hàng trong thời gian rảnh."
 
+#: views/terminal.py:334
 msgid "List of promo slides with image URLs"
 msgstr "Danh sách các slide quảng cáo kèm URL hình ảnh"
 
+#: views/terminal.py:408
 msgid "Generate display pairing code"
 msgstr "Tạo mã ghép nối hiển thị"
 
+#: views/terminal.py:410
 msgid ""
 "Generate a short-lived 6-digit pairing code for customer display "
 "authentication. The code expires after 5 minutes and can only be used once. "
@@ -1206,23 +1443,29 @@ msgstr ""
 "hàng. Mã sẽ hết hạn sau 5 phút và chỉ có thể được sử dụng một lần. Việc tạo "
 "mã mới sẽ vô hiệu hóa các mã chưa sử dụng nào cho thiết bị này."
 
+#: views/terminal.py:415
 msgid "Pairing code generated"
 msgstr "Mã ghép nối đã được tạo"
 
+#: views/terminal.py:464
 msgid "List managers for unlock override"
 msgstr "Liệt kê quản lý để gỡ khóa thay thế"
 
+#: views/terminal.py:465
 msgid ""
 "Return list of managers (id and name) for the manager override unlock flow."
 msgstr ""
 "Trả về danh sách quản lý (id và tên) cho quy trình gỡ khóa thay thế quản lý."
 
+#: views/terminal.py:467
 msgid "List of managers"
 msgstr "Danh sách quản lý"
 
+#: views/terminal.py:503
 msgid "Verify unlock PIN"
 msgstr "Xác minh mã PIN gỡ khóa"
 
+#: views/terminal.py:505
 msgid ""
 "Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
 "attempts, only manager PIN will be accepted. All attempts are logged for "
@@ -1232,15 +1475,19 @@ msgstr ""
 "thất bại, chỉ mã PIN của quản lý mới được chấp nhận. Tất cả các lần thử đều "
 "được ghi lại để kiểm toán."
 
+#: views/terminal.py:537
 msgid "PIN verified successfully"
 msgstr "Mã PIN đã được xác minh thành công"
 
+#: views/terminal.py:538
 msgid "Invalid PIN"
 msgstr "Mã PIN không hợp lệ"
 
+#: views/terminal.py:700
 msgid "Log terminal lock event"
 msgstr "Ghi lại sự kiện khóa thiết bị"
 
+#: views/terminal.py:702
 msgid ""
 "Log when a terminal is locked (manually or via auto-lock timeout). This "
 "endpoint is for audit logging only and does not change terminal state."
@@ -1249,15 +1496,19 @@ msgstr ""
 " Điểm cuối này chỉ dành cho ghi nhật ký kiểm toán và không thay đổi trạng "
 "thái thiết bị."
 
+#: views/terminal.py:717
 msgid "Event logged successfully"
 msgstr "Sự kiện đã được ghi lại thành công"
 
+#: views/terminal.py:718
 msgid "Invalid event type"
 msgstr "Loại sự kiện không hợp lệ"
 
+#: views/terminal.py:784
 msgid "Verify unlock card"
 msgstr "Xác minh thẻ mở khóa"
 
+#: views/terminal.py:786
 msgid ""
 "Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
 " compared against stored card hashes. After 3 failed PIN attempts, only "
@@ -1267,37 +1518,48 @@ msgstr ""
 " sánh với các mã hóa thẻ đã lưu. Sau 3 lần nhập PIN thất bại, chỉ thẻ quản "
 "lý mới được chấp nhận."
 
+#: views/terminal.py:805
 msgid "Card verified successfully"
 msgstr "Thẻ đã được xác minh thành công"
 
+#: views/terminal.py:806
 msgid "Card not recognized"
 msgstr "Thẻ không được nhận diện"
 
+#: views/terminal.py:951
 msgid "Register staff unlock card"
 msgstr "Đăng ký thẻ mở khóa nhân viên"
 
+#: views/terminal.py:952
 msgid "Register a card swipe for the current user's quick terminal unlock."
 msgstr ""
 "Đăng ký một lần quẹt thẻ cho việc gỡ khóa nhanh của người dùng hiện tại."
 
+#: views/terminal.py:963
 msgid "Card registered successfully"
 msgstr "Thẻ đã được đăng ký thành công"
 
+#: views/terminal.py:964
 msgid "Card already registered to another user"
 msgstr "Thẻ đã được đăng ký cho người dùng khác"
 
+#: views/terminal.py:1013
 msgid "Remove staff unlock card"
 msgstr "Xóa thẻ mở khóa nhân viên"
 
+#: views/terminal.py:1014
 msgid "Remove the current user's registered unlock card."
 msgstr "Xóa thẻ gỡ khóa đã đăng ký của người dùng hiện tại."
 
+#: views/terminal.py:1016
 msgid "Card removed successfully"
 msgstr "Thẻ đã được xóa thành công"
 
+#: views/terminal.py:1038
 msgid "Set cashier PIN"
 msgstr "Thiết lập mã PIN nhân viên thu ngân"
 
+#: views/terminal.py:1040
 msgid ""
 "Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
 "must be 4-6 digits. Both pin and pin_confirm must match."
@@ -1305,12 +1567,15 @@ msgstr ""
 "Đặt hoặc cập nhật mã PIN của người dùng hiện tại để khóa/mở khóa thiết bị. "
 "PIN phải là 4-6 chữ số. Cả pin và pin_confirm phải khớp nhau."
 
+#: views/terminal.py:1057
 msgid "PIN set successfully"
 msgstr "Mã PIN đã được thiết lập thành công"
 
+#: views/terminal_provider.py:66
 msgid "Get terminal provider config"
 msgstr "Lấy cấu hình nhà cung cấp thiết bị"
 
+#: views/terminal_provider.py:68
 msgid ""
 "Returns the terminal provider configuration for the current terminal, "
 "including the integration mode (sdk, cloud, or manual) and connected reader "
@@ -1322,9 +1587,11 @@ msgstr ""
 "Được sử dụng bởi giao diện POS khi khởi động để xác định xem thiết bị đọc "
 "thẻ tích hợp có sẵn hay không và sử dụng luồng thanh toán nào."
 
+#: views/terminal_provider.py:127
 msgid "Create connection token"
 msgstr "Tạo token kết nối"
 
+#: views/terminal_provider.py:129
 msgid ""
 "Creates a short-lived connection token for SDK-mode terminal providers (e.g."
 " Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
@@ -1338,9 +1605,11 @@ msgstr ""
 "Các nhà cung cấp đám mây không sử dụng token kết nối. Trả về 400 nếu nhà "
 "cung cấp không hỗ trợ token SDK."
 
+#: views/terminal_provider.py:200
 msgid "List card readers"
 msgstr "Liệt kê thiết bị đọc thẻ"
 
+#: views/terminal_provider.py:202
 msgid ""
 "List available card readers from the terminal provider. Works for both SDK-"
 "mode and cloud-mode providers. Each reader object contains: id, label, type,"
@@ -1350,9 +1619,11 @@ msgstr ""
 "cả nhà cung cấp ở chế độ SDK và chế độ cloud. Mỗi đối tượng thiết bị đọc thẻ"
 " chứa: id, nhãn, loại, số chuỗi, và trạng thái."
 
+#: views/terminal_provider.py:238
 msgid "Create payment intent for terminal"
 msgstr "Tạo ý định thanh toán cho thiết bị"
 
+#: views/terminal_provider.py:240
 msgid ""
 "Creates a PaymentIntent for card_present collection on the terminal reader. "
 "The frontend uses the returned client_secret to collect payment via the SDK."
@@ -1365,9 +1636,11 @@ msgstr ""
 "initiate-cloud-payment. Nếu không chỉ định tiền tệ, sẽ mặc định là tiền tệ "
 "đã cấu hình trên đầu cuối."
 
+#: views/terminal_provider.py:316
 msgid "Capture/verify terminal payment"
 msgstr "Xác nhận/thanh toán giao dịch thiết bị"
 
+#: views/terminal_provider.py:318
 msgid ""
 "Verifies that a PaymentIntent was successfully processed on the terminal "
 "reader and returns card details (brand, last4) from the provider. SDK only."
@@ -1376,9 +1649,11 @@ msgstr ""
 "và trả lại chi tiết thẻ (thương hiệu, 4 số cuối) từ nhà cung cấp. Chỉ dành "
 "cho SDK."
 
+#: views/terminal_provider.py:367
 msgid "Cancel terminal payment"
 msgstr "Hủy thanh toán thiết bị"
 
+#: views/terminal_provider.py:369
 msgid ""
 "Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
 "cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
@@ -1387,9 +1662,11 @@ msgstr ""
 " hủy). Chỉ dành cho SDK. Nhà cung cấp đám mây nên sử dụng cancel-cloud-"
 "payment."
 
+#: views/terminal_provider.py:420
 msgid "Initiate cloud payment on reader"
 msgstr "Khởi động thanh toán đám mây trên thiết bị đọc thẻ"
 
+#: views/terminal_provider.py:422
 msgid ""
 "Sends a payment request to a card reader via the provider's cloud API. For "
 "cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
@@ -1402,9 +1679,11 @@ msgstr ""
 " dụng chế độ SDK. Nếu không chỉ định tiền tệ, sẽ mặc định là tiền tệ đã cấu "
 "hình trên thiết bị."
 
+#: views/terminal_provider.py:519
 msgid "Check cloud payment status"
 msgstr "Kiểm tra trạng thái thanh toán đám mây"
 
+#: views/terminal_provider.py:521
 msgid ""
 "Poll the status of a cloud-initiated payment. Returns the current status: "
 "pending, succeeded, failed, or canceled. When status is 'succeeded', the "
@@ -1418,13 +1697,16 @@ msgstr ""
 "Khi là 'canceled', bao gồm cancel_reason. Frontend nên kiểm tra mỗi 2 giây "
 "cho đến khi trạng thái không còn là 'pending'."
 
+#: views/terminal_provider.py:532
 msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
 msgstr ""
 "ID giao dịch đặc thù của nhà cung cấp được trả về bởi initiate-cloud-payment"
 
+#: views/terminal_provider.py:587
 msgid "Cancel cloud payment"
 msgstr "Hủy thanh toán đám mây"
 
+#: views/terminal_provider.py:589
 msgid ""
 "Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
 " varies by provider."
@@ -1432,9 +1714,11 @@ msgstr ""
 "Hủy một khoản thanh toán do đám mây khởi phát đang chờ trên thiết bị đọc. "
 "Chỉ dành cho đám mây. Hành vi có thể thay đổi tùy theo nhà cung cấp."
 
+#: views/webauthn.py:66
 msgid "Begin WebAuthn registration"
 msgstr "Bắt đầu đăng ký WebAuthn"
 
+#: views/webauthn.py:68
 msgid ""
 "Generate registration options for biometric enrollment. Returns challenge "
 "and credential creation options."
@@ -1442,26 +1726,33 @@ msgstr ""
 "Tạo các tùy chọn đăng ký cho đăng ký sinh trắc học. Trả về thách thức và tùy"
 " chọn tạo thông tin xác thực."
 
+#: views/webauthn.py:70
 msgid "Registration options"
 msgstr "Tùy chọn đăng ký"
 
+#: views/webauthn.py:136
 msgid "Complete WebAuthn registration"
 msgstr "Hoàn tất đăng ký WebAuthn"
 
+#: views/webauthn.py:137
 msgid "Verify attestation and store credential for biometric unlock."
 msgstr ""
 "Xác minh xác nhận và lưu trữ thông tin xác thực cho việc mở khóa sinh trắc "
 "học."
 
+#: views/webauthn.py:150
 msgid "Credential registered"
 msgstr "Thông tin xác thực đã được đăng ký"
 
+#: views/webauthn.py:151 views/webauthn.py:335
 msgid "Verification failed"
 msgstr "Xác thực thất bại"
 
+#: views/webauthn.py:222
 msgid "Begin WebAuthn authentication"
 msgstr "Bắt đầu xác thực WebAuthn"
 
+#: views/webauthn.py:224
 msgid ""
 "Generate authentication challenge for biometric unlock. Returns "
 "allowCredentials for the locked-by user and all managers. If failed_attempts"
@@ -1471,17 +1762,42 @@ msgstr ""
 "cho người dùng bị khóa và tất cả các quản lý. Nếu failed_attempts >= 3, chỉ "
 "thông tin xác thực của quản lý được bao gồm."
 
+#: views/webauthn.py:238
 msgid "Authentication options"
 msgstr "Tùy chọn xác thực"
 
+#: views/webauthn.py:239
 msgid "No credentials registered"
 msgstr "Không có thông tin xác thực nào được đăng ký"
 
+#: views/webauthn.py:319
 msgid "Complete WebAuthn authentication"
 msgstr "Hoàn tất xác thực WebAuthn"
 
+#: views/webauthn.py:320
 msgid "Verify biometric assertion and unlock terminal."
 msgstr "Xác minh xác nhận sinh trắc học và mở khóa thiết bị."
 
+#: views/webauthn.py:334
 msgid "Authentication successful"
 msgstr "Xác thực thành công"
+
+#~ msgid "Apply gift card to cart"
+#~ msgstr "Áp dụng thẻ quà tặng vào giỏ hàng"
+
+#~ msgid ""
+#~ "Apply a gift card code to the cart to cover part or all of the total. "
+#~ "Requires staff authentication and valid POS license."
+#~ msgstr ""
+#~ "Áp dụng mã thẻ quà tặng vào giỏ hàng để bao phủ một phần hoặc toàn bộ tổng "
+#~ "số tiền. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+#~ msgid "Invalid gift card or insufficient balance"
+#~ msgstr "Thẻ quà tặng không hợp lệ hoặc số dư không đủ"
+
+#~ msgid ""
+#~ "Remove all items, vouchers, and gift cards from the cart. Requires staff "
+#~ "authentication and valid POS license."
+#~ msgstr ""
+#~ "Xóa tất cả các mục, phiếu giảm giá và thẻ quà tặng khỏi giỏ hàng. Yêu cầu "
+#~ "xác thực nhân viên và giấy phép POS hợp lệ."

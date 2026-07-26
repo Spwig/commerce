@@ -10,6 +10,7 @@ import logging
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.utils import timezone
 from django.utils.text import slugify
 from tqdm import tqdm
@@ -65,17 +66,48 @@ class AffiliateImporter:
             "payouts": {"created": 0, "skipped": 0, "errors": 0},
         }
 
-        # Track IDs for rollback
+        # Track IDs for rollback.
+        #
+        # user_ids records ONLY accounts this importer created. An affiliate can
+        # be attached to a pre-existing user — _get_or_create_user matches on
+        # email first — and deleting that account on rollback would destroy a
+        # real customer who happened to share the address.
         self.imported_ids = {
             "program_ids": [],
             "affiliate_ids": [],
             "commission_ids": [],
             "payout_ids": [],
+            "user_ids": [],
         }
 
     def _get_merchant_user(self):
         """Get the first superuser as the merchant/program owner."""
         return User.objects.filter(is_superuser=True).first()
+
+    def _persist_rollback_manifest(self):
+        """Record what this run created, so a rollback can find it later.
+
+        Merges rather than overwrites. `self.imported_ids` starts empty on every
+        run, so a retry would otherwise replace the previous attempt's IDs and
+        strand everything it created — unreachable by rollback, because affiliate
+        users carry no other provenance marker.
+        """
+        if not self.job:
+            return
+
+        config = self.job.connection_config or {}
+        existing = config.get("affiliate_rollback_ids") or {}
+
+        merged = {}
+        for key in set(existing) | set(self.imported_ids):
+            previous = existing.get(key) or []
+            current = self.imported_ids.get(key) or []
+            # Preserve order, drop duplicates.
+            merged[key] = list(dict.fromkeys([*previous, *current]))
+
+        config["affiliate_rollback_ids"] = merged
+        self.job.connection_config = config
+        self.job.save(update_fields=["connection_config"])
 
     def import_all(self, progress_bar=True, step=None):
         """
@@ -90,24 +122,25 @@ class AffiliateImporter:
         """
         logger.info("Starting affiliate data import...")
 
-        # Step 1: Import plans → Programs
-        self._import_plans(progress_bar=progress_bar)
+        # The manifest is written in a finally block: it is the only record of
+        # what this importer created (affiliate users have no CustomerProfile,
+        # so provenance cannot be recovered from the database alone). If the
+        # import fails halfway, the rows already created must still be
+        # reachable by a rollback.
+        try:
+            # Step 1: Import plans → Programs
+            self._import_plans(progress_bar=progress_bar)
 
-        # Step 2: Import affiliates → Users + Affiliates
-        self._import_affiliates(progress_bar=progress_bar)
+            # Step 2: Import affiliates → Users + Affiliates
+            self._import_affiliates(progress_bar=progress_bar)
 
-        # Step 3: Import commissions (requires orders to exist)
-        self._import_commissions(progress_bar=progress_bar)
+            # Step 3: Import commissions (requires orders to exist)
+            self._import_commissions(progress_bar=progress_bar)
 
-        # Step 4: Import payouts
-        self._import_payouts(progress_bar=progress_bar)
-
-        # Store rollback IDs in job config
-        if self.job:
-            config = self.job.connection_config or {}
-            config["affiliate_rollback_ids"] = self.imported_ids
-            self.job.connection_config = config
-            self.job.save(update_fields=["connection_config"])
+            # Step 4: Import payouts
+            self._import_payouts(progress_bar=progress_bar)
+        finally:
+            self._persist_rollback_manifest()
 
         logger.info(
             f"Affiliate import complete: "
@@ -232,63 +265,81 @@ class AffiliateImporter:
             self.stats["affiliates"]["skipped"] += 1
             return
 
-        # Step 1: Find or create User
-        user = self._find_or_create_user(source)
-        if not user:
-            self.stats["affiliates"]["skipped"] += 1
-            return
+        # A brand-new affiliate can touch up to four rows (User,
+        # CustomerProfile, Affiliate, AffiliateProgramMembership). They share
+        # one transaction, so a failure partway through never leaves e.g. a
+        # user with no affiliate, or an affiliate with no program membership,
+        # behind it. Tracking-list and stat updates are applied only after
+        # the block commits below, so a rolled back attempt can't leave a
+        # phantom entry in the rollback manifest.
+        already_has_profile = False
+        affiliate = None
+        with transaction.atomic():
+            user, user_created = self._find_or_create_user(source)
 
-        # Step 2: Check if user already has an affiliate profile
-        if hasattr(user, "affiliate_profile"):
+            if hasattr(user, "affiliate_profile"):
+                already_has_profile = True
+            else:
+                payment_email = source.get("payment_email") or email
+                status_map = {
+                    "active": "active",
+                    "pending": "pending",
+                    "inactive": "suspended",
+                    "rejected": "rejected",
+                }
+                status = status_map.get(source.get("status", "active"), "active")
+
+                created_at = self._parse_date(source.get("registered_date"))
+
+                affiliate = Affiliate.objects.create(
+                    user=user,
+                    payment_email=payment_email,
+                    status=status,
+                    website=source.get("website", "") or "",
+                    created_at=created_at or timezone.now(),
+                )
+
+                # Create program membership for first available program
+                program = self._get_default_program(source)
+                if program:
+                    AffiliateProgramMembership.objects.create(
+                        affiliate=affiliate,
+                        program=program,
+                        status="approved",
+                        applied_at=created_at or timezone.now(),
+                        approved_at=created_at or timezone.now(),
+                    )
+
+        # Only counted/tracked now the transaction has committed.
+        if user_created:
+            self.imported_ids["user_ids"].append(user.id)
+
+        if already_has_profile:
             logger.info(f"User {user.email} already has affiliate profile, skipping")
             self.affiliate_map[source_id] = user.affiliate_profile
             self.stats["affiliates"]["skipped"] += 1
             return
 
-        # Step 3: Create Affiliate
-        payment_email = source.get("payment_email") or email
-        status_map = {
-            "active": "active",
-            "pending": "pending",
-            "inactive": "suspended",
-            "rejected": "rejected",
-        }
-        status = status_map.get(source.get("status", "active"), "active")
-
-        created_at = self._parse_date(source.get("registered_date"))
-
-        affiliate = Affiliate.objects.create(
-            user=user,
-            payment_email=payment_email,
-            status=status,
-            website=source.get("website", "") or "",
-            created_at=created_at or timezone.now(),
-        )
-
         self.affiliate_map[source_id] = affiliate
         self.imported_ids["affiliate_ids"].append(affiliate.id)
         self.stats["affiliates"]["created"] += 1
 
-        # Step 4: Create program membership for first available program
-        program = self._get_default_program(source)
-        if program:
-            AffiliateProgramMembership.objects.create(
-                affiliate=affiliate,
-                program=program,
-                status="approved",
-                applied_at=created_at or timezone.now(),
-                approved_at=created_at or timezone.now(),
-            )
-
     def _find_or_create_user(self, source):
-        """Find existing user by email/external_id or create new one."""
+        """Find existing user by email/external_id or create new one.
+
+        Returns ``(user, created)`` — ``created`` is True only when this call
+        itself inserted the User row, so the caller can decide whether to
+        track it for rollback provenance after its own transaction commits,
+        rather than risking a phantom tracked ID if that transaction rolls
+        back.
+        """
         email = source.get("email", "").strip().lower()
         wp_user_id = str(source.get("wp_user_id", ""))
 
         # Try matching by email first
         try:
             user = User.objects.get(email__iexact=email)
-            return user
+            return user, False
         except User.DoesNotExist:
             pass
 
@@ -296,7 +347,7 @@ class AffiliateImporter:
         if wp_user_id:
             try:
                 profile = CustomerProfile.objects.get(external_id=wp_user_id)
-                return profile.user
+                return profile.user, False
             except CustomerProfile.DoesNotExist:
                 pass
 
@@ -323,7 +374,13 @@ class AffiliateImporter:
             is_active=True,
         )
 
-        return user
+        # Give the account the same provenance marker every other imported
+        # customer gets. Without it this user is invisible to anything that
+        # looks up imported accounts via CustomerProfile.
+        if self.job:
+            CustomerProfile.objects.get_or_create(user=user, defaults={"migration_job": self.job})
+
+        return user, True
 
     def _get_default_program(self, source):
         """Get the best matching program for an affiliate."""
@@ -497,28 +554,32 @@ class AffiliateImporter:
         # Parse dates
         created_at = self._parse_date(source.get("created_at"))
 
-        payout = Payout.objects.create(
-            affiliate=affiliate,
-            amount=amount,
-            method=source.get("method", "manual") or "manual",
-            status="completed",
-            currency=source.get("currency") or get_default_currency(),
-            reference=f"WP import: {source_id}",
-            notes=f"Imported from WordPress (source ID: {source_id})",
-            created_at=created_at or timezone.now(),
-            completed_at=created_at or timezone.now(),
-        )
+        # The payout create and its commission links share one transaction,
+        # so a failure partway through never leaves a payout live with none
+        # of the commissions it was meant to settle attached.
+        with transaction.atomic():
+            payout = Payout.objects.create(
+                affiliate=affiliate,
+                amount=amount,
+                method=source.get("method", "manual") or "manual",
+                status="completed",
+                currency=source.get("currency") or get_default_currency(),
+                reference=f"WP import: {source_id}",
+                notes=f"Imported from WordPress (source ID: {source_id})",
+                created_at=created_at or timezone.now(),
+                completed_at=created_at or timezone.now(),
+            )
 
-        # Link commissions if referral_ids provided
-        referral_ids = source.get("referral_ids", [])
-        if referral_ids:
-            linked_commissions = []
-            for ref_id in referral_ids:
-                commission = self.commission_map.get(str(ref_id))
-                if commission:
-                    linked_commissions.append(commission)
-            if linked_commissions:
-                payout.commissions.set(linked_commissions)
+            # Link commissions if referral_ids provided
+            referral_ids = source.get("referral_ids", [])
+            if referral_ids:
+                linked_commissions = []
+                for ref_id in referral_ids:
+                    commission = self.commission_map.get(str(ref_id))
+                    if commission:
+                        linked_commissions.append(commission)
+                if linked_commissions:
+                    payout.commissions.set(linked_commissions)
 
         self.imported_ids["payout_ids"].append(payout.id)
         self.stats["payouts"]["created"] += 1

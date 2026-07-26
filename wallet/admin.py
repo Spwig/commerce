@@ -40,6 +40,7 @@ class CustomerWalletAdmin(admin.ModelAdmin):
         "last_credited_at",
     )
     list_filter = ("is_active",)
+    list_select_related = ("customer",)
     search_fields = ("customer__email", "customer__first_name", "customer__last_name")
     readonly_fields = (
         "available_balance",

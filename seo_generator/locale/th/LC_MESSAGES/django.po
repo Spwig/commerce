@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Thai <LL@li.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:33
 msgid "Provider Information"
 msgstr "ข้อมูลผู้ให้บริการ"
 
+#: admin.py:34
 msgid "Configuration"
 msgstr "การตั้งค่า"
 
+#: admin.py:36 admin.py:80
 msgid "Credentials"
 msgstr "ข้อมูลการยืนยันตัวตน"
 
+#: admin.py:40
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
@@ -34,37 +38,49 @@ msgstr ""
 "ข้อมูลการเข้าสู่ระบบจะถูกเข้ารหัสและจัดการผ่านวิザาร์ดผู้ให้บริการ ในการอัปเดตข้อมูลการเข้าสู่ระบบ "
 "กรุณาติดตั้งผู้ให้บริการอีกครั้ง"
 
+#: admin.py:45
 msgid "Timestamps"
 msgstr "เวลาที่บันทึก"
 
+#: admin.py:48
 msgid "Name"
 msgstr "ชื่อ"
 
+#: admin.py:52
 msgid "Provider"
 msgstr "ผู้ให้บริการ"
 
+#: admin.py:58
 msgid "Status"
 msgstr "สถานะ"
 
+#: admin.py:72 templates/admin/seo_generator/dashboard.html:161
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:51
 msgid "Primary"
 msgstr "หลัก"
 
+#: admin.py:88
 msgid "Credentials are encrypted and stored securely"
 msgstr "ข้อมูลการเข้าสู่ระบบถูกเข้ารหัสและจัดเก็บอย่างปลอดภัย"
 
+#: admin.py:95
 msgid "No credentials configured (built-in provider)"
 msgstr "ไม่ได้ตั้งค่าข้อมูลการยืนยันตัวตน (ผู้ให้บริการในตัว)"
 
+#: api/endpoints.py:63
 #, python-format
 msgid "Invalid model type: %(type)s. Must be one of: %(valid)s"
 msgstr "ประเภทโมเดลไม่ถูกต้อง: %(type)s ต้องเป็นหนึ่งใน: %(valid)s"
 
+#: api/endpoints.py:80 api/endpoints.py:428
 msgid "Permission denied."
 msgstr "ไม่ได้รับสิทธิ์"
 
+#: api/endpoints.py:176
 msgid "Generate SEO content for a single object"
 msgstr "สร้างเนื้อหา SEO สำหรับวัตถุเดียว"
 
+#: api/endpoints.py:178
 msgid ""
 "Generate meta title, meta description, and keywords for a product, category, "
 "brand, page, blog post, or blog category. The generated content is "
@@ -73,42 +89,55 @@ msgstr ""
 "สร้างชื่อหัวข้อ, คำอธิบาย, และคำหลักสำหรับสินค้า, หมวดหมู่, แบรนด์, หน้า, บล็อก, "
 "หรือหมวดหมู่บล็อก ข้อมูลที่สร้างขึ้นจะถูกบันทึกโดยอัตโนมัติในวัตถุ"
 
+#: api/endpoints.py:185 api/endpoints.py:503
 msgid "Model type: product, category, brand, page, blogpost, or blogcategory"
 msgstr "ประเภทโมเดล: สินค้า, หมวดหมู่, แบรนด์, หน้า, บล็อกโพสต์, หรือหมวดหมู่บล็อก"
 
+#: api/endpoints.py:191
 msgid "ID of the object to generate SEO for"
 msgstr "ID ของวัตถุที่ต้องการสร้าง SEO"
 
+#: api/endpoints.py:217
 msgid "Invalid model type, provider key, or language code"
 msgstr "ประเภทโมเดล, คีย์ผู้ให้บริการ หรือรหัสภาษาไม่ถูกต้อง"
 
+#: api/endpoints.py:218
 msgid "Permission denied"
 msgstr "ไม่ได้รับสิทธิ์"
 
+#: api/endpoints.py:219 api/endpoints.py:523
 msgid "Object not found"
 msgstr "ไม่พบวัตถุ"
 
+#: api/endpoints.py:220
 msgid "Generation failed or unexpected error"
 msgstr "การสร้างล้มเหลวหรือเกิดข้อผิดพลาดที่ไม่คาดคิด"
 
+#: api/endpoints.py:241 api/endpoints.py:383
 msgid "Invalid provider key."
 msgstr "คีย์ผู้ให้บริการไม่ถูกต้อง"
 
+#: api/endpoints.py:248
 msgid "Invalid language code."
 msgstr "รหัสภาษาไม่ถูกต้อง"
 
+#: api/endpoints.py:265 api/endpoints.py:541
 msgid "Object not found."
 msgstr "ไม่พบวัตถุ"
 
+#: api/endpoints.py:282
 msgid "SEO generation failed. Please try again."
 msgstr "การสร้าง SEO ล้มเหลว กรุณาลองอีกครั้ง"
 
+#: api/endpoints.py:311 api/endpoints.py:487 api/endpoints.py:565
 msgid "An unexpected error occurred. Please try again."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้ง"
 
+#: api/endpoints.py:318
 msgid "Batch generate SEO for multiple objects"
 msgstr "สร้าง SEO แบบชุดสำหรับวัตถุหลายชิ้น"
 
+#: api/endpoints.py:320
 msgid ""
 "Generate SEO content for multiple objects at once. Each item specifies a "
 "model type and object ID. Results include per-item success/failure and a "
@@ -117,27 +146,35 @@ msgstr ""
 "สร้างเนื้อหา SEO สำหรับวัตถุหลายชิ้นในครั้งเดียว แต่ละรายการระบุประเภทโมเดลและ ID วัตถุ "
 "ผลลัพธ์ประกอบด้วยความสำเร็จ/ความล้มเหลวต่อรายการและสรุปผล"
 
+#: api/endpoints.py:359
 msgid "Invalid request body, no items, or invalid provider"
 msgstr "ร่างคำขอไม่ถูกต้อง ไม่มีรายการ หรือผู้ให้บริการไม่ถูกต้อง"
 
+#: api/endpoints.py:360 api/endpoints.py:524
 msgid "Unexpected error"
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด"
 
+#: api/endpoints.py:372
 msgid "Invalid request body."
 msgstr "ร่างคำขอไม่ถูกต้อง"
 
+#: api/endpoints.py:376
 msgid "No items provided."
 msgstr "ไม่มีรายการที่ให้มา"
 
+#: api/endpoints.py:410
 msgid "Missing model_type or object_id."
 msgstr "ขาด model_type หรือ object_id"
 
+#: api/endpoints.py:462
 msgid "Generation failed for this item."
 msgstr "การสร้างสำหรับรายการนี้ล้มเหลว"
 
+#: api/endpoints.py:494
 msgid "Check SEO status for an object"
 msgstr "ตรวจสอบสถานะ SEO ของวัตถุ"
 
+#: api/endpoints.py:496
 msgid ""
 "Check whether an object has SEO content, whether it was auto-generated, and "
 "return the current meta title and description with their lengths."
@@ -145,24 +182,31 @@ msgstr ""
 "ตรวจสอบว่าวัตถุมีเนื้อหา SEO หรือไม่ ว่ามันถูกสร้างโดยอัตโนมัติหรือไม่ "
 "และคืนค่าชื่อหัวข้อและคำอธิบาย meta พร้อมกับความยาวของแต่ละรายการ"
 
+#: api/endpoints.py:506
 msgid "ID of the object"
 msgstr "ไอดีของวัตถุ"
 
+#: api/endpoints.py:522
 msgid "Invalid model type"
 msgstr "ประเภทโมเดลไม่ถูกต้อง"
 
+#: apps.py:8
 msgid "SEO Generator"
 msgstr "เครื่องสร้าง SEO"
 
+#: management/commands/generate_seo.py:33
 msgid "Model type to generate SEO for (or \"all\" for all models)"
 msgstr "ประเภทโมเดลที่ต้องการสร้าง SEO (หรือ \"all\" เพื่อสร้างสำหรับโมเดลทั้งหมด)"
 
+#: management/commands/generate_seo.py:39
 msgid "Number of items to process in each batch (default: 50)"
 msgstr "จำนวนรายการที่ต้องการประมวลผลในแต่ละ批次 (ค่าเริ่มต้น: 50)"
 
+#: management/commands/generate_seo.py:44
 msgid "Only generate SEO for items with seo_auto_generated=True"
 msgstr "สร้าง SEO สำหรับรายการที่มีค่า seo_auto_generated=True เท่านั้น"
 
+#: management/commands/generate_seo.py:51
 msgid ""
 "SEO provider to use (default: primary provider, or deterministic if none "
 "configured)"
@@ -170,32 +214,40 @@ msgstr ""
 "ผู้ให้บริการ SEO ที่จะใช้ (ค่าเริ่มต้น: ผู้ให้บริการหลัก "
 "หรือกำหนดโดยระบบหากไม่มีผู้ให้บริการที่ตั้งค่าไว้)"
 
+#: management/commands/generate_seo.py:58
 msgid "Language code for generation (default: site primary language)"
 msgstr "รหัสภาษาสำหรับการสร้าง (ค่าเริ่มต้น: ภาษาหลักของเว็บไซต์)"
 
+#: management/commands/generate_seo.py:76
 #, python-format
 msgid "Using language: %(lang)s"
 msgstr "กำลังใช้ภาษา: %(lang)s"
 
+#: management/commands/generate_seo.py:83
 #, python-format
 msgid "Using provider: %(name)s"
 msgstr "กำลังใช้ผู้ให้บริการ: %(name)s"
 
+#: management/commands/generate_seo.py:103
 msgid "SEO Generation Complete"
 msgstr "การสร้าง SEO เสร็จสมบูรณ์"
 
+#: management/commands/generate_seo.py:104
 #, python-format
 msgid "Total Processed: %(count)d"
 msgstr "จำนวนทั้งหมดที่ประมวลผล: %(count)d"
 
+#: management/commands/generate_seo.py:106
 #, python-format
 msgid "Successful: %(count)d"
 msgstr "สำเร็จ: %(count)d"
 
+#: management/commands/generate_seo.py:109
 #, python-format
 msgid "Failed: %(count)d"
 msgstr "ล้มเหลว: %(count)d"
 
+#: management/commands/generate_seo.py:118
 #, python-format
 msgid ""
 "\n"
@@ -204,6 +256,7 @@ msgstr ""
 "\n"
 "ข้ามประเภทโมเดลที่ไม่รู้จัก: %(type)s"
 
+#: management/commands/generate_seo.py:134
 #, python-format
 msgid ""
 "\n"
@@ -212,6 +265,7 @@ msgstr ""
 "\n"
 "ไม่มีรายการ %(type)s ที่ต้องการประมวลผล"
 
+#: management/commands/generate_seo.py:138
 #, python-format
 msgid ""
 "\n"
@@ -220,135 +274,181 @@ msgstr ""
 "\n"
 "%(type)s (%(count)d รายการ)"
 
+#: management/commands/generate_seo.py:171
 #, python-format
 msgid "  Failed %(type)s %(pk)s: %(error)s"
 msgstr "ล้มเหลว %(type)s %(pk)s: %(error)s"
 
+#: management/commands/generate_seo.py:181
 #, python-format
 msgid "  %(type)s: %(success)d successful, %(failed)d failed"
 msgstr "%(type)s: %(success)d สำเร็จ, %(failed)d ล้มเหลว"
 
+#: models.py:15
 msgid "Site"
 msgstr "เว็บไซต์"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "เว็บไซต์ที่บัญชีผู้ให้บริการนี้อยู่"
 
+#: models.py:26
 msgid "Provider Component"
 msgstr "ส่วนประกอบผู้ให้บริการ"
 
+#: models.py:27
 msgid "SEO provider component from update system (null for built-in)"
 msgstr "ส่วนประกอบผู้ให้บริการ SEO จากระบบอัปเดต (null สำหรับตัวสร้างในตัว)"
 
+#: models.py:33
 msgid "Provider Key"
 msgstr "คีย์ผู้ให้บริการ"
 
+#: models.py:34
 msgid ""
 "Built-in provider key (e.g., 'deterministic'). Used when component is null."
 msgstr "คีย์ผู้ให้บริการในตัว (เช่น, 'deterministic'). ใช้เมื่อส่วนประกอบเป็น null"
 
+#: models.py:39
 msgid "Account Name"
 msgstr "ชื่อผู้ใช้"
 
+#: models.py:40
 msgid "Friendly name for this provider account"
 msgstr "ชื่อเรียกที่เป็นมิตรสำหรับบัญชีผู้ให้บริการนี้"
 
+#: models.py:46
 msgid "Encrypted Credentials"
 msgstr "ข้อมูลผู้ใช้ที่เข้ารหัส"
 
+#: models.py:47
 msgid "Encrypted API credentials for this provider"
 msgstr "ข้อมูลการเข้าสู่ระบบ API ที่เข้ารหัสสำหรับผู้ให้บริการนี้"
 
+#: models.py:52
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:54
 msgid "Active"
 msgstr "เปิดใช้งาน"
 
+#: models.py:53
 msgid "Whether this provider account is active"
 msgstr "บัญชีผู้ให้บริการนี้เปิดใช้งานหรือไม่"
 
+#: models.py:58
 msgid "Primary Provider"
 msgstr "ผู้ให้บริการหลัก"
 
+#: models.py:59
 msgid "Use this provider as primary source for SEO generation"
 msgstr "ใช้ผู้ให้บริการนี้เป็นแหล่งหลักสำหรับการสร้าง SEO"
 
+#: models.py:64
 msgid "Priority"
 msgstr "ลำดับความสำคัญ"
 
+#: models.py:65
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "ลำดับความสำคัญสำหรับโซนติดต่อฉุกเฉิน (ค่าต่ำ = ความสำคัญสูง)"
 
+#: models.py:71
 msgid "Provider Settings"
 msgstr "การตั้งค่าผู้ให้บริการ"
 
+#: models.py:72
 msgid "Provider-specific settings and configuration"
 msgstr "การตั้งค่าและกำหนดค่าเฉพาะผู้ให้บริการ"
 
+#: models.py:79
 msgid "SEO Provider Account"
 msgstr "บัญชีผู้ให้บริการ SEO"
 
+#: models.py:80
 msgid "SEO Provider Accounts"
 msgstr "บัญชีผู้ให้บริการ SEO"
 
+#: providers/base.py:50
 msgid "provider_key must be set by subclass"
 msgstr "provider_key ต้องถูกตั้งค่าโดยคลาสย่อย"
 
+#: providers/base.py:52
 msgid "provider_name must be set by subclass"
 msgstr "provider_name ต้องถูกตั้งค่าโดยคลาสย่อย"
 
+#: providers/base.py:61
 #, python-format
 msgid "Provider '%(key)s' requires credentials"
 msgstr "ผู้ให้บริการ '%(key)s' ต้องการข้อมูลการเข้าสู่ระบบ"
 
+#: providers/builtin.py:94 templates/admin/seo_generator/dashboard.html:158
+#: templates/admin/seo_generator/dashboard.html:165
 msgid "Built-in Generator"
 msgstr "เครื่องสร้างติดตั้งมาพร้อม"
 
+#: providers/builtin.py:197
 #, python-format
 msgid "Keyword extraction failed: %(error)s"
 msgstr "การดึงคำหลักล้มเหลว: %(error)s"
 
+#: providers/builtin.py:221 providers/builtin.py:278
 msgid "Content must have a 'name' field"
 msgstr "เนื้อหาต้องมีฟิลด์ 'name'"
 
+#: providers/builtin.py:259
 #, python-format
 msgid "Meta title generation failed: %(error)s"
 msgstr "การสร้างชื่อเมต้าล้มเหลว: %(error)s"
 
+#: providers/builtin.py:349
 #, python-format
 msgid "Meta description generation failed: %(error)s"
 msgstr "การสร้างคำอธิบายเมต้าล้มเหลว: %(error)s"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/dashboard.html:22 views/dashboard.py:76
 msgid "SEO Dashboard"
 msgstr "แดชบอร์ด SEO"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
 msgid "Site Admin"
 msgstr "ผู้ดูแลเว็บไซต์"
 
+#: templates/admin/seo_generator/dashboard.html:25
 msgid ""
 "Monitor SEO coverage across your store and generate missing meta content"
 msgstr "ติดตามการครอบคลุม SEO ของร้านค้าและสร้างเนื้อหา meta ที่ขาดหายไป"
 
+#: templates/admin/seo_generator/dashboard.html:33
 msgid "Total Items"
 msgstr "จำนวนรายการทั้งหมด"
 
+#: templates/admin/seo_generator/dashboard.html:38
 msgid "Complete SEO"
 msgstr "ทำ SEO ให้สมบูรณ์"
 
+#: templates/admin/seo_generator/dashboard.html:43
 msgid "Missing SEO"
 msgstr "ขาด SEO"
 
+#: templates/admin/seo_generator/dashboard.html:48
 msgid "Active Providers"
 msgstr "ผู้ให้บริการที่ใช้งานอยู่"
 
+#: templates/admin/seo_generator/dashboard.html:59
 msgid "SEO Coverage"
 msgstr "การครอบคลุม SEO"
 
+#: templates/admin/seo_generator/dashboard.html:61
 msgid "Refresh"
 msgstr "รีเฟรช"
 
+#: templates/admin/seo_generator/dashboard.html:82
 #, python-format
 msgid "%(pct)s%% of your content has complete SEO"
 msgstr "%(pct)s%% ของเนื้อหาของคุณมี SEO สมบูรณ์"
 
+#: templates/admin/seo_generator/dashboard.html:85
 #, python-format
 msgid ""
 "\n"
@@ -363,87 +463,122 @@ msgstr ""
 "รายการมีทั้งชื่อหัวข้อและคำอธิบาย %(title)s มีชื่อหัวข้อ %(desc)s มีคำอธิบาย\n"
 "                            "
 
+#: templates/admin/seo_generator/dashboard.html:96
 msgid "Coverage by Content Type"
 msgstr "การครอบคลุมตามประเภทเนื้อหา"
 
+#: templates/admin/seo_generator/dashboard.html:112
 msgid "No content found."
 msgstr "ไม่พบเนื้อหา"
 
+#: templates/admin/seo_generator/dashboard.html:123
 msgid "Quality Check"
 msgstr "ตรวจสอบคุณภาพ"
 
+#: templates/admin/seo_generator/dashboard.html:128
 msgid "Titles too short"
 msgstr "หัวข้อสั้นเกินไป"
 
+#: templates/admin/seo_generator/dashboard.html:128
+#: templates/admin/seo_generator/dashboard.html:132
+#: templates/admin/seo_generator/dashboard.html:136
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "chars"
 msgstr "ตัวอักษร"
 
+#: templates/admin/seo_generator/dashboard.html:132
 msgid "Titles too long"
 msgstr "หัวข้อยาวเกินไป"
 
+#: templates/admin/seo_generator/dashboard.html:136
 msgid "Descriptions short"
 msgstr "คำอธิบายสั้น"
 
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "Descriptions long"
 msgstr "คำอธิบายยาว"
 
+#: templates/admin/seo_generator/dashboard.html:149
 msgid "Active Provider"
 msgstr "ผู้ให้บริการที่ใช้งาน"
 
+#: templates/admin/seo_generator/dashboard.html:166
 msgid "No external provider configured"
 msgstr "ไม่ได้ตั้งค่าผู้ให้บริการภายนอก"
 
+#: templates/admin/seo_generator/dashboard.html:168
 msgid "Connect a provider"
 msgstr "เชื่อมต่อผู้ให้บริการ"
 
+#: templates/admin/seo_generator/dashboard.html:178
 msgid "Quick Actions"
 msgstr "การกระทำเร็ว"
 
+#: templates/admin/seo_generator/dashboard.html:184
 #, python-format
 msgid "Generate SEO for %(count)s missing items"
 msgstr "สร้าง SEO สำหรับ %(count)s รายการที่ขาดหายไป"
 
+#: templates/admin/seo_generator/dashboard.html:189
 msgid "Manage Providers"
 msgstr "จัดการผู้ให้บริการ"
 
+#: templates/admin/seo_generator/dashboard.html:193
+#: templates/admin/seo_generator/providers/browse.html:27
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:28
+#: templates/admin/seo_generator/wizard/step1_select.html:86
 msgid "Browse Providers"
 msgstr "เรียกดูผู้ให้บริการ"
 
+#: templates/admin/seo_generator/dashboard.html:204
 msgid "Generating SEO Content"
 msgstr "กำลังสร้างเนื้อหา SEO"
 
+#: templates/admin/seo_generator/dashboard.html:212
 msgid "Preparing..."
 msgstr "กำลังเตรียม..."
 
+#: templates/admin/seo_generator/dashboard.html:218
+#: templates/admin/seo_generator/wizard/step1_select.html:97
 msgid "Cancel"
 msgstr "ยกเลิก"
 
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/providers/browse.html:36
+#: views/provider_browse.py:132
 msgid "Browse SEO Providers"
 msgstr "เรียกดูผู้ให้บริการ SEO"
 
+#: templates/admin/seo_generator/providers/browse.html:25
 msgid "Home"
 msgstr "หน้าแรก"
 
+#: templates/admin/seo_generator/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "บัญชีผู้ให้บริการ"
 
+#: templates/admin/seo_generator/providers/browse.html:38
 msgid ""
 "Choose an SEO generation provider to integrate with your store. Install new "
 "providers or configure existing ones."
 msgstr ""
 "เลือกผู้ให้บริการสร้าง SEO เพื่อเชื่อมต่อกับร้านของคุณ ติดตั้งผู้ให้บริการใหม่หรือตั้งค่าผู้ให้บริการที่มีอยู่"
 
+#: templates/admin/seo_generator/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "เซิร์ฟเวอร์อัปเดตไม่สามารถใช้งานได้"
 
+#: templates/admin/seo_generator/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตได้ แสดงเฉพาะผู้ให้บริการที่ติดตั้งไว้ในเครื่องเท่านั้น"
 
+#: templates/admin/seo_generator/providers/browse.html:57
 msgid "SEO Provider Marketplace"
 msgstr "ตลาดผู้ให้บริการ SEO"
 
+#: templates/admin/seo_generator/providers/browse.html:69
 msgid ""
 "Here you can discover and install SEO generation providers to automatically "
 "create optimized meta titles, descriptions, and keywords for your products, "
@@ -452,36 +587,47 @@ msgstr ""
 "คุณสามารถค้นหาและติดตั้งผู้ให้บริการสร้าง SEO เพื่อสร้างชื่อเมตา คำอธิบาย "
 "และคำหลักที่ได้รับการปรับปรุงโดยอัตโนมัติสำหรับสินค้า ประเภทสินค้า และหน้าเว็บของคุณ"
 
+#: templates/admin/seo_generator/providers/browse.html:76
 msgid "What you can do:"
 msgstr "สิ่งที่คุณสามารถทำได้:"
 
+#: templates/admin/seo_generator/providers/browse.html:81
 msgid "Browse available SEO providers by capability"
 msgstr "ค้นหาผู้ให้บริการ SEO ที่มีอยู่ตามความสามารถ"
 
+#: templates/admin/seo_generator/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "ติดตั้งผู้ให้บริการใหม่ด้วยการคลิกเพียงครั้งเดียว"
 
+#: templates/admin/seo_generator/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "อัปเดตผู้ให้บริการที่ติดตั้งแล้วเป็นเวอร์ชันล่าสุด"
 
+#: templates/admin/seo_generator/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "ตั้งค่าการตั้งค่าของผู้ให้บริการหลังการติดตั้ง"
 
+#: templates/admin/seo_generator/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "เริ่มต้น:"
 
+#: templates/admin/seo_generator/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "ค้นหาผู้ให้บริการด้านล่างและหาผู้ให้บริการที่เหมาะสมกับคุณ"
 
+#: templates/admin/seo_generator/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "คลิก 'ติดตั้ง' เพื่อเพิ่มผู้ให้บริการลงในร้านค้าของคุณ"
 
+#: templates/admin/seo_generator/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "ไปที่การตั้งค่าเพื่อตั้งค่าข้อมูลการเข้าถึง API"
 
+#: templates/admin/seo_generator/providers/browse.html:107
 msgid "Test the provider connection and start generating SEO"
 msgstr "ทดสอบการเชื่อมต่อกับผู้ให้บริการและเริ่มสร้าง SEO"
 
+#: templates/admin/seo_generator/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -500,48 +646,70 @@ msgstr[1] ""
 "                    ปัจจุบัน: %(counter)s ผู้ให้บริการที่สามารถใช้งานได้\n"
 "                "
 
+#: templates/admin/seo_generator/providers/browse.html:133
 msgid "Update Available"
 msgstr "มีการอัปเดต"
 
+#: templates/admin/seo_generator/providers/browse.html:156
 msgid "Installed"
 msgstr "ติดตั้งแล้ว"
 
+#: templates/admin/seo_generator/providers/browse.html:171
 msgid "Available"
 msgstr "มีอยู่"
 
+#: templates/admin/seo_generator/providers/browse.html:192
+#: templates/admin/seo_generator/wizard/step1_select.html:45
 msgid "Meta Titles"
 msgstr "ชื่อเมตา"
 
+#: templates/admin/seo_generator/providers/browse.html:197
+#: templates/admin/seo_generator/wizard/step1_select.html:50
 msgid "Descriptions"
 msgstr "คำอธิบาย"
 
+#: templates/admin/seo_generator/providers/browse.html:202
+#: templates/admin/seo_generator/wizard/step1_select.html:55
 msgid "Keywords"
 msgstr "คำหลัก"
 
+#: templates/admin/seo_generator/providers/browse.html:207
+#: templates/admin/seo_generator/wizard/step1_select.html:60
 msgid "Multi-Language"
 msgstr "หลายภาษา"
 
+#: templates/admin/seo_generator/providers/browse.html:212
+#: templates/admin/seo_generator/wizard/step1_select.html:65
 msgid "Bulk Generation"
 msgstr "การสร้างจำนวนมาก"
 
+#: templates/admin/seo_generator/providers/browse.html:226
 msgid "Update"
 msgstr "อัปเดต"
 
+#: templates/admin/seo_generator/providers/browse.html:231
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:72
 msgid "Configure"
 msgstr "ตั้งค่า"
 
+#: templates/admin/seo_generator/providers/browse.html:238
 msgid "Install"
 msgstr "ติดตั้ง"
 
+#: templates/admin/seo_generator/providers/browse.html:247
 msgid "View Details"
 msgstr "ดูรายละเอียด"
 
+#: templates/admin/seo_generator/providers/browse.html:255
 msgid "Learn More"
 msgstr "เรียนรู้เพิ่มเติม"
 
+#: templates/admin/seo_generator/providers/browse.html:268
+#: templates/admin/seo_generator/wizard/step1_select.html:82
 msgid "No Providers Available"
 msgstr "ไม่มีผู้ให้บริการที่สามารถใช้งานได้"
 
+#: templates/admin/seo_generator/providers/browse.html:269
 msgid ""
 "No SEO generation providers are currently available. The built-in "
 "deterministic provider is always available without installation."
@@ -549,27 +717,36 @@ msgstr ""
 "ในขณะนี้ไม่มีผู้ให้บริการสร้าง SEO ที่สามารถใช้งานได้ "
 "ผู้ให้บริการที่มีอยู่ในตัวที่ใช้การกำหนดค่าแบบมีความแน่นอนจะพร้อมใช้งานเสมอโดยไม่จำเป็นต้องติดตั้ง"
 
+#: templates/admin/seo_generator/providers/browse.html:278
 msgid "Installing provider..."
 msgstr "กำลังติดตั้งผู้ให้บริการ..."
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:18
 msgid "SEO Providers"
 msgstr "ผู้ให้บริการ SEO"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:20
 msgid "Manage SEO generation provider integrations"
 msgstr "จัดการการผสานผู้ให้บริการสร้าง SEO"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:22
 msgid "provider"
 msgstr "ผู้ให้บริการ"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:23
 msgid "active"
 msgstr "เปิดใช้งาน"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:56
 msgid "Inactive"
 msgstr "ปิดใช้งาน"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:79
 msgid "No SEO Providers Configured"
 msgstr "ยังไม่มีผู้ให้บริการ SEO ที่ตั้งค่า"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:80
 msgid ""
 "The built-in deterministic provider is available by default. Connect "
 "additional providers for AI-powered SEO generation."
@@ -577,42 +754,59 @@ msgstr ""
 "ผู้ให้บริการที่มีอยู่ในตัวที่ใช้การกำหนดค่าแบบมีความแน่นอนจะพร้อมใช้งานโดยค่าเริ่มต้น "
 "เชื่อมต่อกับผู้ให้บริการเพิ่มเติมสำหรับการสร้าง SEO ด้วย AI"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:82
 msgid "Connect Provider"
 msgstr "เชื่อมต่อกับผู้ให้บริการ"
 
+#: templates/admin/seo_generator/wizard/base.html:14
 msgid "Connect SEO Provider"
 msgstr "เชื่อมต่อกับผู้ให้บริการ SEO"
 
+#: templates/admin/seo_generator/wizard/base.html:15
 msgid "Follow these steps to connect your SEO generation provider"
 msgstr "ปฏิบัติตามขั้นตอนเหล่านี้เพื่อเชื่อมต่อกับผู้ให้บริการสร้าง SEO ของคุณ"
 
+#: templates/admin/seo_generator/wizard/base.html:24
 msgid "Select Provider"
 msgstr "เลือกผู้ให้บริการ"
 
+#: templates/admin/seo_generator/wizard/base.html:33
+#: templates/admin/seo_generator/wizard/step2_setup.html:8
 msgid "Setup Instructions"
 msgstr "คำแนะนำการตั้งค่า"
 
+#: templates/admin/seo_generator/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "กรอกข้อมูลการเข้าสู่ระบบ"
 
+#: templates/admin/seo_generator/wizard/base.html:51
+#: templates/admin/seo_generator/wizard/step4_test.html:7
+#: templates/admin/seo_generator/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "ทดสอบการเชื่อมต่อ"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:6
 msgid "Select an SEO Provider"
 msgstr "เลือกผู้ให้บริการ SEO"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:7
 msgid "Choose the SEO generation provider you want to connect to your store."
 msgstr "เลือกผู้ให้บริการสร้าง SEO ที่คุณต้องการเชื่อมต่อกับร้านค้าของคุณ"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:83
 msgid "No SEO provider components are currently installed."
 msgstr "ไม่มีส่วนประกอบของผู้ให้บริการ SEO ที่ติดตั้งไว้ในขณะนี้"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:84
 msgid "Please browse and install SEO provider components from the marketplace."
 msgstr "โปรดค้นหาและติดตั้งส่วนประกอบของผู้ให้บริการ SEO จากตลาด"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:100
+#: templates/admin/seo_generator/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "ต่อไป"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:11
 #, python-format
 msgid ""
 "\n"
@@ -625,9 +819,11 @@ msgstr ""
 "%(provider)s.\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:22
 msgid "Setup Instructions Not Available"
 msgstr "ไม่มีคำแนะนำการตั้งค่า"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:24
 #, python-format
 msgid ""
 "\n"
@@ -642,15 +838,21 @@ msgstr ""
 "%(provider)s กรุณาติดต่อฝ่ายสนับสนุนเพื่อขอความช่วยเหลือ หรือตรวจสอบว่ามีเวอร์ชันใหม่หรือไม่\n"
 "                    "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:43
+#: templates/admin/seo_generator/wizard/step3_credentials.html:120
+#: templates/admin/seo_generator/wizard/step4_test.html:51
 msgid "Back"
 msgstr "ย้อนกลับ"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:46
 msgid "Continue to Credentials"
 msgstr "ดำเนินการต่อเพื่อกรอกข้อมูลการเข้าสู่ระบบ"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "กรอกข้อมูล API"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -663,30 +865,38 @@ msgstr ""
 "ข้อมูลเหล่านี้จะถูกเข้ารหัสและจัดเก็บอย่างปลอดภัย\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "ยังไม่มีบัญชีใช่ไหม?"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "คุณจำเป็นต้องมีบัญชีเพื่อขอข้อมูลการเข้าถึง API"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "สมัครสมาชิกที่นี่"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "ข้อมูล API"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "เลือก..."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "ไม่มีฟิลด์ข้อมูลการเข้าถึงที่ตั้งค่าสำหรับผู้ให้บริการนี้"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
 msgstr ""
 "ข้อมูลการเข้าถึงของคุณจะถูกเข้ารหัสโดยใช้การเข้ารหัส AES-256 ก่อนที่จะถูกเก็บไว้ในฐานข้อมูล"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -700,174 +910,232 @@ msgstr ""
 "เพื่อยืนยันว่าข้อมูลการเข้าสู่ระบบของคุณถูกต้อง\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step4_test.html:21
+#: templates/admin/seo_generator/wizard/step4_test.html:63
 msgid "Testing connection..."
 msgstr "กำลังทดสอบการเชื่อมต่อ..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:22
+#: templates/admin/seo_generator/wizard/step4_test.html:64
 msgid "Please wait while we verify your credentials."
 msgstr "กรุณารอสักครู่ขณะที่เราตรวจสอบข้อมูลการเข้าถึงของคุณ"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "คลิกเพื่อทดสอบการเชื่อมต่อด้วยข้อมูลการเข้าถึงที่คุณป้อนไว้"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:42
+#: templates/admin/seo_generator/wizard/step4_test.html:65
 msgid "Connection Successful!"
 msgstr "การเชื่อมต่อสำเร็จ!"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:54
+#: templates/admin/seo_generator/wizard/step4_test.html:73
 msgid "Save & Finish"
 msgstr "บันทึกและเสร็จสิ้น"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:66
 msgid "Your credentials were verified successfully."
 msgstr "ข้อมูลการเข้าสู่ระบบของคุณได้รับการตรวจสอบอย่างถูกต้องแล้ว。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:67
 msgid "Connection Failed"
 msgstr "การเชื่อมต่อล้มเหลว"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:68
 msgid "Could not connect to the provider API."
 msgstr "ไม่สามารถเชื่อมต่อกับ API ของผู้ให้บริการได้"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:69
 msgid "Error"
 msgstr "ข้อผิดพลาด"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:70 views/wizard.py:481
 msgid "An unexpected error occurred."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดขึ้น。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:71
 msgid "Saving..."
 msgstr "กำลังบันทึก..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:72
 msgid "Failed to save provider account."
 msgstr "ไม่สามารถบันทึกบัญชีผู้ให้บริการได้。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:74
 msgid "An error occurred while saving."
 msgstr "เกิดข้อผิดพลาดขณะบันทึก。"
 
+#: views/dashboard.py:98
 msgid "Failed to calculate coverage."
 msgstr "ล้มเหลวในการคำนวณการครอบคลุม。"
 
+#: views/dashboard.py:113
 msgid "Failed to refresh coverage."
 msgstr "ล้มเหลวในการอัปเดตการครอบคลุม。"
 
+#: views/dashboard.py:133
 msgid "Failed to get missing items."
 msgstr "ไม่สามารถรับรายการที่ขาดหายไปได้"
 
+#: views/dashboard.py:142
 msgid "Invalid content type."
 msgstr "ประเภทเนื้อหาไม่ถูกต้อง。"
 
+#: views/dashboard.py:208
 msgid "Failed to load items."
 msgstr "ไม่สามารถโหลดรายการได้。"
 
+#: views/provider_browse.py:158
 msgid "Provider is already installed. Configure it now."
 msgstr "ผู้ให้บริการนี้ได้ติดตั้งไว้แล้ว ตั้งค่าทันที"
 
+#: views/provider_browse.py:184 views/provider_browse.py:311
 msgid "Provider not found on update server."
 msgstr "ไม่พบผู้ให้บริการในเซิร์ฟเวอร์อัปเดต"
 
+#: views/provider_browse.py:193
 msgid "Could not determine provider version."
 msgstr "ไม่สามารถระบุเวอร์ชันของผู้ให้บริการได้。"
 
+#: views/provider_browse.py:212
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "การดาวน์โหลดผู้ให้บริการล้มเหลว: %(error)s"
 
+#: views/provider_browse.py:224
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "การติดตั้งผู้ให้บริการล้มเหลว: %(error)s"
 
+#: views/provider_browse.py:253
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "ติดตั้งผู้ให้บริการ \"%(name)s\" สำเร็จแล้ว! ตั้งค่าได้ทันที"
 
+#: views/provider_browse.py:262
 msgid "An unexpected error occurred during installation."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดขณะติดตั้ง"
 
+#: views/provider_browse.py:283
 msgid "Provider not installed."
 msgstr "ผู้ให้บริการยังไม่ได้ติดตั้ง。"
 
+#: views/provider_browse.py:298
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตได้: %(error)s"
 
+#: views/provider_browse.py:319
 msgid "Could not determine latest version."
 msgstr "ไม่สามารถระบุเวอร์ชันล่าสุดได้。"
 
+#: views/provider_browse.py:326
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "ผู้ให้บริการ \"%(name)s\" ล่าสุดแล้ว (v%(version)s)"
 
+#: views/provider_browse.py:339
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "การดาวน์โหลดอัปเดตล้มเหลว: %(error)s"
 
+#: views/provider_browse.py:350
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "การติดตั้งอัปเดตล้มเหลว: %(error)s"
 
+#: views/provider_browse.py:381
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "ผู้ให้บริการ \"%(name)s\" อัปเดตสำเร็จแล้วเป็น v%(version)s!"
 
+#: views/provider_browse.py:390
 msgid "An unexpected error occurred during the update."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดขณะอัปเดต"
 
+#: views/wizard.py:141
 msgid "Connect SEO Provider - Select Provider"
 msgstr "เชื่อมต่อกับผู้ให้บริการ SEO - เลือกผู้ให้บริการ"
 
+#: views/wizard.py:154
 msgid "Please select a provider."
 msgstr "กรุณาเลือกผู้ให้บริการ。"
 
+#: views/wizard.py:162
 msgid "Invalid provider selected."
 msgstr "ผู้ให้บริการที่เลือกไม่ถูกต้อง。"
 
+#: views/wizard.py:189 views/wizard.py:264
 msgid "Please select a provider first."
 msgstr "กรุณาเลือกผู้ให้บริการก่อน。"
 
+#: views/wizard.py:219
 #, python-format
 msgid "Setup instructions not found for %(provider)s."
 msgstr "ไม่พบคำแนะนำการตั้งค่าสำหรับ %(provider)s"
 
+#: views/wizard.py:224 views/wizard.py:285
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "เกิดข้อผิดพลาดขณะโหลดผู้ให้บริการ: %(error)s"
 
+#: views/wizard.py:233
 msgid "Connect SEO Provider - Setup Instructions"
 msgstr "เชื่อมต่อกับผู้ให้บริการ SEO - คำแนะนำการตั้งค่า"
 
+#: views/wizard.py:278
 msgid "Could not load provider configuration."
 msgstr "ไม่สามารถโหลดการตั้งค่าผู้ให้บริการได้。"
 
+#: views/wizard.py:289
 msgid "Connect SEO Provider - Enter Credentials"
 msgstr "เชื่อมต่อกับผู้ให้บริการ SEO - กรอกข้อมูลการเข้าสู่ระบบ"
 
+#: views/wizard.py:318
 msgid "Error loading provider configuration."
 msgstr "เกิดข้อผิดพลาดขณะโหลดการตั้งค่าผู้ให้บริการ。"
 
+#: views/wizard.py:349
 msgid "Please complete previous steps first."
 msgstr "กรุณาทำขั้นตอนก่อนหน้านี้ให้เสร็จก่อน"
 
+#: views/wizard.py:357
 msgid "Provider not found."
 msgstr "ไม่พบผู้ให้บริการ"
 
+#: views/wizard.py:361
 msgid "Connect SEO Provider - Test Connection"
 msgstr "เชื่อมต่อกับผู้ให้บริการ SEO - ทดสอบการเชื่อมต่อ"
 
+#: views/wizard.py:380
 msgid "Missing data."
 msgstr "ข้อมูลไม่ครบถ้วน。"
 
+#: views/wizard.py:389
 msgid "Provider implementation not found."
 msgstr "ไม่พบการดำเนินการของผู้ให้บริการ。"
 
+#: views/wizard.py:408
 msgid "An error occurred while testing the connection."
 msgstr "เกิดข้อผิดพลาดขณะทดสอบการเชื่อมต่อ"
 
+#: views/wizard.py:420
 msgid "Site not configured."
 msgstr "เว็บไซต์ยังไม่ได้ตั้งค่า。"
 
+#: views/wizard.py:431
 msgid "Connection test failed"
 msgstr "การทดสอบการเชื่อมต่อล้มเหลว"
 
+#: views/wizard.py:457
 msgid "Provider connected successfully!"
 msgstr "ผู้ให้บริการเชื่อมต่อสำเร็จ!"
 
+#: views/wizard.py:470
 msgid "An error occurred while saving the provider."
 msgstr "เกิดข้อผิดพลาดขณะบันทึกผู้ให้บริการ"
 
+#: views/wizard.py:476
 msgid "Invalid action."
 msgstr "การดำเนินการไม่ถูกต้อง。"

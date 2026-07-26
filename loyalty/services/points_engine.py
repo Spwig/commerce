@@ -366,14 +366,23 @@ class PointsEngine:
 
     def _evaluate_rule(self, rule: LoyaltyRule, order, member: LoyaltyMember) -> int:
         """Evaluate a single rule against an order."""
+        # Gift card lines never earn.
+        #
+        # Buying stored value is not spending: the customer earns when they
+        # spend the card on goods, and counting the purchase too pays points
+        # twice for one pound passing through the store. Excluded from the
+        # minimum-order gate as well as the calculation, or a basket only
+        # qualifies because of a gift card it will not earn on.
+        earning_base = self._earning_base(order)
+
         # Check minimum order amount
-        if order.subtotal.amount < rule.min_order_amount:
+        if earning_base < rule.min_order_amount:
             return 0
 
         # Calculate points based on rule type
         if rule.rule_type == LoyaltyRule.TYPE_SPEND_BASED:
-            # Points = floor(subtotal * rate)
-            points = int(float(order.subtotal.amount) * float(rule.points_rate))
+            # Points = floor(earning base * rate)
+            points = int(float(earning_base) * float(rule.points_rate))
             return points
 
         elif rule.rule_type == LoyaltyRule.TYPE_ITEM_BASED:
@@ -385,6 +394,26 @@ class PointsEngine:
             return total_points
 
         return 0
+
+    def _earning_base(self, order):
+        """
+        The part of an order that can earn points.
+
+        ``order.subtotal`` includes gift card lines; this subtracts them. Falls
+        back to the subtotal when the order has no item rows loaded, so a
+        points award never silently becomes zero because of a query shape.
+        """
+        from decimal import Decimal
+
+        subtotal = order.subtotal.amount
+        gift_card_total = Decimal("0")
+        for item in order.items.select_related("product").all():
+            if getattr(item.product, "product_type", None) == "gift_card":
+                gift_card_total += item.total_price.amount
+
+        if gift_card_total <= 0:
+            return subtotal
+        return max(subtotal - gift_card_total, Decimal("0"))
 
     def _item_matches_scope(self, rule: LoyaltyRule, item) -> bool:
         """Check if an order item matches the rule's scope filters."""
@@ -475,10 +504,20 @@ class PointsEngine:
             balance.last_earned_at = timezone.now()
 
         elif transaction.transaction_type == LoyaltyTransaction.TYPE_REDEEM:
-            # Subtract from available points (points are negative for redemption)
-            balance.available_points += transaction.points  # points are negative
-            balance.lifetime_redeemed += abs(transaction.points)
-            balance.last_redeemed_at = timezone.now()
+            balance.available_points += transaction.points
+
+            # Signed, not abs(): a redemption carries negative points and its
+            # refund (LedgerService.refund_redemption) carries positive points
+            # on the same type, so the pair must net to zero rather than count
+            # the refund as a second redemption. Identical to the previous
+            # abs() behaviour for redemption rows, which are always negative.
+            # Kept in step with LedgerService.reconcile_balance deliberately —
+            # the two must agree or the cached balance drifts from the ledger.
+            balance.lifetime_redeemed -= transaction.points
+
+            # Only a real redemption moves this; a refund is not a redemption.
+            if transaction.points < 0:
+                balance.last_redeemed_at = timezone.now()
 
         elif transaction.transaction_type == LoyaltyTransaction.TYPE_EXPIRE:
             # Subtract from available points

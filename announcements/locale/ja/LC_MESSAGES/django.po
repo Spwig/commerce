@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,338 +18,431 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "コンテンツ"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "画像"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
-msgstr ""
-"モーダル表示用の任意の画像。バナー（コンテンツ上部）か背景（テキストの後ろに"
-"オーバーレイを使用）を選択します。"
+msgstr "モーダル表示用のオプション画像。バナー（コンテンツの上部）または背景（テキストの後ろにオーバーレイ付き）から選択してください。"
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "リンク"
 
+#: admin.py:78
 msgid "Display"
 msgstr "表示"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "表示ルール"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
-msgstr ""
-"高度な条件に基づいて、このお知らせが表示されるタイミングを制限する（任意）。"
+msgstr "オプション: このお知らせが表示されるタイミングを高度な条件に基づいて制限する"
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "タイトル"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
-msgstr "有効期限なし"
+msgstr "期限なし"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "期限切れ"
 
+#: admin.py:121
 msgid "Active"
 msgstr "アクティブ"
 
+#: admin.py:123
+#: templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "ステータス"
 
+#: api_views.py:50
 msgid "List active announcements"
-msgstr "アクティブなお知らせを一覧表示"
+msgstr "アクティブなアナウンスを一覧表示"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
 "announcement widget."
 msgstr ""
-"パブリック エンドポイント。有効で期限切れでないお知らせをすべて返し、優先度が"
-"昇順、created_atが降順に並べ替えます。ショッピングストアのお知らせウィジェッ"
-"トで使用されます。"
+"パブリックエンドポイント。優先度が昇順、作成日が降順に並べられた、有効で期限切れでないすべてのお知らせを返します。ストアフロントのお知らせウィジェットで使用されます。"
 
+#: api_views.py:58
 msgid "List of active announcements"
-msgstr "アクティブなお知らせの一覧"
+msgstr "アクティブなアナウンスの一覧"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "お知らせの詳細を取得"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
 "announcement is inactive, expired, or does not exist."
 msgstr ""
-"パブリック エンドポイント。ショッピングストアのモーダル用のお知らせ本文HTML、"
-"画像URL、および表示モードを含む完全なお知らせデータを返します。お知らせが無"
-"効、期限切れ、または存在しない場合、404を返します。"
+"パブリックエンドポイント。ストアフロントのモーダル表示用の本文HTML、画像URL、表示モードを含むお知らせの完全なデータを返します。お知らせがアクティブでない、期限切れ、または存在しない場合、404を返します。"
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "お知らせのプライマリキー"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "お知らせの詳細"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "見つからない、非アクティブ、または期限切れ"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "お知らせ"
 
+#: models.py:15
 msgid "No Link"
 msgstr "リンクなし"
 
+#: models.py:16
 msgid "Product"
 msgstr "商品"
 
+#: models.py:17
 msgid "Category"
 msgstr "カテゴリ"
 
+#: models.py:18
 msgid "Blog Post"
-msgstr "ブログ記事"
+msgstr "ブログ投稿"
 
+#: models.py:19
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "ページ"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "カスタムURL"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "バナー画像（コンテンツ上部）"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
-msgstr "背景画像（オーバーレイ付き）"
+msgstr "背景画像（オーバーレイあり）"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
-msgstr "お知らせタイトル - 太字、斜体、文字色などの基本的なスタイルをサポート"
+msgstr "お知らせのタイトル - 基本的なスタイル設定（太字、斜体、色）をサポート"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
-msgstr "モーダル表示用の詳細な内容（任意）"
+msgstr "モーダル表示用の詳細なコンテンツ（オプション）"
 
+#: models.py:41
 msgid "Optional image for modal display"
-msgstr "モーダル表示用の任意の画像"
+msgstr "モーダル表示用のオプション画像"
 
+#: models.py:47
 msgid "How to display the image in the modal"
-msgstr "モーダル内で画像をどのように表示するか"
+msgstr "モーダルで画像をどのように表示するか"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
-msgstr ""
-"画像を背景として使用するときのオーバーレイの透明度（0 = 透明、1 = 不透明）"
+msgstr "画像を背景として使用した場合のオーバーレイの不透明度（0 = 透明, 1 = 不透明）"
 
+#: models.py:64
 msgid "Type of link for this announcement"
-msgstr "このお知らせのリンクタイプ"
+msgstr "このお知らせのリンクの種類"
 
+#: models.py:72
 msgid "Product to link to"
-msgstr "リンクする商品"
+msgstr "リンク先の商品"
 
+#: models.py:80
 msgid "Category to link to"
-msgstr "リンクするカテゴリ"
+msgstr "リンク先のカテゴリ"
 
+#: models.py:88
 msgid "Blog post to link to"
-msgstr "リンクするブログ記事"
+msgstr "リンク先のブログ記事"
 
+#: models.py:96
 msgid "Page to link to"
-msgstr "リンクするページ"
+msgstr "リンク先のページ"
 
+#: models.py:99
 msgid "Custom URL for the link"
-msgstr "リンクのカスタムURL"
+msgstr "リンク用のカスタムURL"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
-msgstr "モーダルリンクのボタンテキスト、例：「今すぐ購入」"
+msgstr "モーダルリンクのボタンテキスト、例: 「Shop Now」"
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
-msgstr ""
-"有効に設定されている場合、お知らせをクリックするとフルコンテンツが表示される"
-"モーダルが開きます。無効に設定されている場合、クリックするとリンクURLに直接移"
-"動します。"
+msgstr "有効な場合、お知らせをクリックすると本文の全文が表示されるモーダルが開きます。無効な場合、クリックすると直接リンクURLに移動します。"
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "このお知らせを有効または無効にします"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
-msgstr ""
-"この日時以降、自動的に表示が停止します。有効期限がない場合は空白にしてくださ"
-"い。"
+msgstr "この日時以降、お知らせの表示が自動的に停止されます。期限なしにするには空欄にしてください。"
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
-msgstr "数字が小さいほど優先順位が高い（最初に表示される）"
+msgstr "数字が小さいほど優先度が高くなり、先に表示されます"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
-msgstr "条件付き表示の表示ルール"
+msgstr "条件付き表示のための可視性ルール"
 
+#: models.py:142
 msgid "Translations for announcement content"
-msgstr "お知らせコンテンツの翻訳"
+msgstr "お知らせ内容の翻訳"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "お知らせ"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
-msgstr "お知らせを編集"
+msgstr "お知らせの編集"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
-msgstr "お知らせを追加"
+msgstr "お知らせの追加"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
-msgstr "以下のエラーを修正してください。"
+msgstr "下のエラーを修正してください。"
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
-msgstr "お知らせヘッダー — 太字、斜体、フォント色をサポート"
+msgstr "お知らせの見出し — 太字、斜体、フォントカラーをサポートしています。"
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "本文"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
-msgstr "モーダルポップアップで表示される任意の詳細テキスト。"
+msgstr "モーダルポップアップで表示されるオプションの詳細テキスト。"
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
-msgstr "リンクタイプ"
+msgstr "リンクの種類"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
-msgstr "ボタンテキスト"
+msgstr "ボタンのテキスト"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "例: "
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "モーダルを表示"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
-msgstr "ナビゲーションする代わりに、詳細を開くポップアップを開きます。"
+msgstr "ナビゲーションではなく、ポップアップで詳細を開く。"
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
-msgstr "任意"
+msgstr "オプション"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
-msgstr ""
-"モーダルポップアップ用の画像。訪問者がお知らせをクリックしたときに表示されま"
-"す。"
+msgstr "モーダルポップアップ用の画像。訪問者がお知らせをクリックしたときに表示されます。"
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "表示モード"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
-msgstr "オーバーレイの透明度"
+msgstr "オーバーレイの不透明度"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
-msgstr "0 = 透明、1 = 不透明"
+msgstr "0 = 透明, 1 = 不透明"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "有効"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
-msgstr "優先順位"
+msgstr "優先度"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
-msgstr "低い = 最初に表示"
+msgstr "下 = 最初に表示"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "有効期限"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
-msgstr "有効期限がない場合は空白にしてください。"
+msgstr "空欄にすると期限なしになります。"
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
-msgstr "作成日時"
+msgstr "作成日"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
-msgstr "更新日時"
+msgstr "更新日"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
-msgstr "詳細設定"
+msgstr "高度な設定"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
-msgstr ""
-"このお知らせが表示されるタイミングを制限します。すべての人に表示する場合は空"
-"欄にしてください。"
+msgstr "このお知らせが表示されるタイミングを制限します。空欄にすると全員に表示されます。"
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
-msgstr "複数選択するには Ctrl / Cmd を押しながら選択してください。"
+msgstr "Ctrl / Cmdを押しながら複数選択してください。"
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "保存"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
-msgstr "保存して続ける"
+msgstr "保存して続行"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
-msgstr "保存して別のを作成"
+msgstr "保存して別のものを追加"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "削除"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
-msgstr "ヘッダーやフッターに表示されるストアのお知らせを管理します。"
+msgstr "ヘッダーおよびフッターに表示されるストアのお知らせを管理します。"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "すべて"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "無効"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
-msgstr "お知らせを検索..."
+msgstr "お知らせの検索..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "お知らせ"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "前へ"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
-msgstr "中の"
+msgstr "の"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "次へ"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "お知らせが見つかりません"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
-msgstr "検索クエリと一致するお知らせはありません。"
+msgstr "検索クエリに一致するお知らせはありません。"
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
-msgstr ""
-"あなたのストアのヘッダーやフッターに表示する最初のお知らせを作成します。"
+msgstr "ストアのヘッダーまたはフッターに表示するため、最初のお知らせを作成してください。"
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
-msgstr "お知らせを作成"
+msgstr "お知らせの作成"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "クリック時にモーダルを開く"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "モーダル"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
-msgstr "クリック時に直接リンクを開く"
+msgstr "クリック時に直接リンク"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "直接リンク"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "最終更新"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
-msgstr "前に"
+msgstr "以前"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
-msgstr "有効期限"
+msgstr "期限切れ"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "画像あり"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "編集"

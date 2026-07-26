@@ -39,6 +39,11 @@ regexes = [
   '''ABCDEFGH12345678WXYZ''',
   '''abc123def456''',
 
+  # Dummy account passphrase in the checkout-contact test — the test
+  # creates a user and asserts the password is hashed (check_password),
+  # so the plaintext appears in the fixture. Never a live credential.
+  '''a-strong-passphrase-\d+''',
+
   # FedEx sandbox example credentials from the shipping provider README.
   # The README explicitly says "For sandbox testing, any 9-digit number
   # works" and the api_key value starts with 'l' (invalid hex).

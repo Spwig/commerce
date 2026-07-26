@@ -1,4 +1,4 @@
-.PHONY: test test-fast test-e2e test-integration test-checkout test-custom-fields test-pos coverage test-deps test-all help install-hooks build-prod push-prod build-bundles test-health test-health-fast audit-admin audit-storefront audit-api audit-all audit-baseline audit-regression
+.PHONY: test test-fast test-e2e test-integration test-checkout test-custom-fields test-pos coverage test-deps test-all help install-hooks build-prod push-prod build-bundles test-health test-health-fast audit-admin audit-storefront audit-api audit-all audit-baseline audit-regression check-claude-md
 
 # Build version - auto-read from core/version.py (single source of truth)
 VERSION := $(shell python3 -c "import re; print(re.search(r'__version__\s*=\s*\"(.+?)\"', open('core/version.py').read()).group(1))" 2>/dev/null || echo "0.0.0")
@@ -102,3 +102,6 @@ audit-baseline: ## Save current audit results as baseline
 
 audit-regression: ## Compare current audit to saved baseline
 	python scripts/site_health_audit.py --scope all --compare-baseline
+
+check-claude-md: ## Verify CLAUDE.md carries nothing install-specific (it ships publicly)
+	python3 scripts/check_public_docs.py

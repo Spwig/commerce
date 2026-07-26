@@ -1,7 +1,13 @@
 {% load i18n %}
+{% comment %}
+`blocktrans count` accepts exactly one keyword argument, so the extra var has to
+come from `with`. Not pluralised on purpose: the counter is available_count but
+the noun tracks total_languages, so ngettext on available_count would render
+"1/5 language available".
+{% endcomment %}
 {% if show_always or available_count > 0 %}
 <span class="translation-indicator"
-      title="{% blocktrans count count=available_count total=total_languages %}{{ count }}/{{ total }} languages available{% endblocktrans %}">
+      title="{% blocktrans with count=available_count total=total_languages %}{{ count }}/{{ total }} languages available{% endblocktrans %}">
     <i class="fas fa-globe"></i>
     <span class="translation-count">{{ available_count }}/{{ total_languages }}</span>
 </span>

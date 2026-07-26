@@ -9,6 +9,8 @@ adoption of ``Spwig/commerce`` across the OSS release. The payload is:
 - installed_components — {slug: version} of components installed today
 - metrics — a flexible bag including:
     - edition (community | pro | enterprise | dev | trial)
+    - install_source (official-image | source-docker | source | unknown)
+    - install_method (installer | "" for manual installs)
     - active_theme
     - payment_providers_configured — list of provider slugs
     - themes_installed — list of theme slugs
@@ -26,12 +28,57 @@ returns. Telemetry must never block or slow a merchant's own request.
 """
 
 import logging
+from pathlib import Path
 
 from django.conf import settings
 
 import core
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Install provenance — how was this instance built and installed
+# ---------------------------------------------------------------------------
+
+
+def detect_install_source() -> str:
+    """
+    Classify how this installation was built and deployed.
+
+    - "official-image": the compiled image from registry.spwig.com. It ships
+      an integrity manifest at the project root, and its sensitive modules
+      are compiled to native extensions.
+    - "source-docker": built from the public source tree, running in Docker.
+    - "source": built from the public source tree on bare metal.
+
+    Never raises — returns "unknown" if detection itself fails.
+    """
+    try:
+        if (Path(settings.BASE_DIR) / ".integrity_manifest.json").exists():
+            return "official-image"
+
+        # Belt-and-braces: protected builds compile core.license to a native
+        # extension even if the manifest were ever missing.
+        from core import license as _license_module
+
+        if str(getattr(_license_module, "__file__", "")).endswith(".so"):
+            return "official-image"
+
+        if Path("/.dockerenv").exists():
+            return "source-docker"
+        return "source"
+    except Exception as e:
+        logger.debug("Install source detection failed: %s", e)
+        return "unknown"
+
+
+def get_install_method() -> str:
+    """
+    How the merchant installed Spwig ("installer" for the one-line installer,
+    "" for manual installs that predate or skip the marker).
+    """
+    return str(getattr(settings, "SPWIG_INSTALL_METHOD", "") or "")
 
 
 # ---------------------------------------------------------------------------
@@ -68,10 +115,10 @@ def bucket_count(n: int) -> str:
 def _installed_components() -> dict:
     """Return {slug: version} for currently installed components."""
     try:
-        from component_updates.models import InstalledComponent
+        from component_updates.models import ComponentRegistry
 
-        qs = InstalledComponent.objects.filter(is_active=True).values("slug", "version")
-        return {row["slug"]: row["version"] for row in qs}
+        qs = ComponentRegistry.objects.values("slug", "current_version")
+        return {row["slug"]: row["current_version"] for row in qs}
     except Exception as e:
         logger.debug("Could not enumerate installed components: %s", e)
         return {}
@@ -80,9 +127,15 @@ def _installed_components() -> dict:
 def _payment_providers_configured() -> list:
     """Return a list of payment provider slugs that have credentials configured."""
     try:
-        from payment_providers.models import PaymentProvider
+        from payment_providers.models import PaymentProviderAccount
 
-        return list(PaymentProvider.objects.filter(is_active=True).values_list("slug", flat=True))
+        return sorted(
+            set(
+                PaymentProviderAccount.objects.filter(is_active=True).values_list(
+                    "component__slug", flat=True
+                )
+            )
+        )
     except Exception as e:
         logger.debug("Could not enumerate payment providers: %s", e)
         return []
@@ -138,6 +191,8 @@ def build_payload() -> dict:
         "installed_components": _installed_components(),
         "metrics": {
             "edition": get_license_manager().get_edition(),
+            "install_source": detect_install_source(),
+            "install_method": get_install_method(),
             "active_theme": _active_theme(),
             "payment_providers_configured": _payment_providers_configured(),
             "themes_installed": _themes_installed(),

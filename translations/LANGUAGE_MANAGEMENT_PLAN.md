@@ -15,8 +15,8 @@ class SiteLanguage(models.Model):
     is_default = models.BooleanField(default=False)  # Site default language
 
     # Model support
-    m2m100_support = models.CharField(choices=['full', 'limited', 'none'])
-    nllb_support = models.CharField(choices=['full', 'limited', 'none'])
+    m2m100_support = models.CharField(choices=["full", "limited", "none"])
+    nllb_support = models.CharField(choices=["full", "limited", "none"])
     requires_nllb = models.BooleanField(default=False)
 
     # Ordering
@@ -24,8 +24,8 @@ class SiteLanguage(models.Model):
 
     # Metadata
     rtl = models.BooleanField(default=False)  # Right-to-left language
-    date_format = models.CharField(max_length=50, default='Y-m-d')
-    time_format = models.CharField(max_length=50, default='H:i:s')
+    date_format = models.CharField(max_length=50, default="Y-m-d")
+    time_format = models.CharField(max_length=50, default="H:i:s")
 ```
 
 ## UI Components
@@ -164,15 +164,42 @@ def check_language_compatibility_view(request):
 ### 3. Model Compatibility Warnings
 ```python
 LANGUAGE_WARNINGS = {
-    'limited_m2m100': [
-        'ast', 'ba', 'br', 'ceb', 'ff', 'fy', 'gd', 'ha',
-        'ig', 'ilo', 'lb', 'lg', 'ln', 'mg', 'ns', 'oc',
-        'or', 'ps', 'sd', 'ss', 'su', 'sw', 'tl', 'tn',
-        'wo', 'xh', 'yi', 'yo', 'zu'
+    "limited_m2m100": [
+        "ast",
+        "ba",
+        "br",
+        "ceb",
+        "ff",
+        "fy",
+        "gd",
+        "ha",
+        "ig",
+        "ilo",
+        "lb",
+        "lg",
+        "ln",
+        "mg",
+        "ns",
+        "oc",
+        "or",
+        "ps",
+        "sd",
+        "ss",
+        "su",
+        "sw",
+        "tl",
+        "tn",
+        "wo",
+        "xh",
+        "yi",
+        "yo",
+        "zu",
     ],
-    'nllb_only': [
-        'te_IN', 'gl_ES', 'sl_SI'  # Telugu, Galician, Slovene
-    ]
+    "nllb_only": [
+        "te_IN",
+        "gl_ES",
+        "sl_SI",  # Telugu, Galician, Slovene
+    ],
 }
 ```
 

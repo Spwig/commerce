@@ -2,36 +2,38 @@
 title: Kundentasche
 ---
 
-Die Kundentasche ist ein Kredit-System für den Laden, das Kunden einen Saldo gewährt, den sie für zukünftige Bestellungen verwenden können. Ladenkredite können als Ergebnis von Rückgaben, Empfehlungsbelohnungen, Werbekampagnen oder manuellen Anpassungen, die Ihr Team vornimmt, hinzugefügt werden. Kunden können dann ihren Taschensaldo beim Checkout anwenden, um den Betrag, den sie zahlen, zu reduzieren.
+Die Kundentasche ist ein Kreditbuch, das den aktuellen Saldo für jeden Kunden verfolgt. Kredit kann durch Rückerstattungen, Empfehlungsbelohnungen, Werbekampagnen oder manuelle Anpassungen, die Ihr Team vornimmt, hinzugefügt werden.
+
+> **Taschensalden können am Kasse verwendet werden.** Ein angemeldeter Kunde mit Kredit sieht diesen auf dem Zahlungsschritt und kann ihn mit einem Klick anwenden. Der Kredit wird vom Endbetrag abgezogen – nach Steuern und Lieferkosten – und der Rest wird wie gewohnt auf seine Karte belastet. Wenn der Kredit den gesamten Auftrag abdeckt, ist keine Karte erforderlich. Der Kredit wird reserviert, sobald er angewendet wird, und erst tatsächlich abgebucht, wenn die Zahlung bestätigt wird, sodass eine abgebrochene Kasse den Kunden nichts kostet.
 
 Navigieren Sie zu **Kunden > Kundentaschen**, um Taschen anzuzeigen und zu verwalten.
 
 ## Verständnis von Taschensalden
 
-Jede Kundentasche zeigt vier Saldo-Nummern an:
+Jede Kundentasche zeigt vier Saldoangaben an:
 
 | Saldo | Beschreibung |
 |---|---|
-| **Verfügbares Saldo** | Der Betrag, den der Kunde jetzt beim Checkout ausgeben kann |
-| **Ausstehendes Saldo** | Kredite, die noch nicht auszahlbar sind – beispielsweise eine Rückgabe, die noch in ihrer Bestätigungszeit liegt |
+| **Verfügbares Saldo** | Der aktuelle, verwendbare Kredit des Kunden – dies ist der Betrag, der am Kasse verwendet werden kann, sobald diese Funktion bereitsteht |
+| **Ausstehendes Saldo** | Kredite, die noch nicht im verfügbaren Saldo enthalten sind – beispielsweise eine Rückerstattung, die noch in ihrer Bestätigungszeit liegt |
 | **Lebenslanger Kredit** | Der Gesamtbetrag, der je nach Wallet je nach Zeitpunkt vergeben wurde, einschließlich aller früheren Kredite |
-| **Lebenslanger Verbrauch** | Der Gesamtbetrag, den der Kunde aus seiner Tasche für alle Bestellungen ausgegeben hat |
+| **Lebenslanger Verbrauch** | Der Gesamtbetrag, der je nach Wallet je nach Zeitpunkt abgebucht wurde |
 
-Das verfügbare Saldo ist die einzige Zahl, die beim Checkout zählt. Ausstehende Kredite werden verfügbar, sobald die Ausstehenszeit abgelaufen ist.
+Das verfügbare Saldo ist die Zahl, die zählt, sobald der Kassenverbrauch aktiv ist. Ausstehende Kredite werden in dieses Saldo übertragen, sobald die Ausstehungszeit abgelaufen ist.
 
-## Kundentasche ansehen
+## Anzeigen der Kundentasche
 
 1. Navigieren Sie zu **Kunden > Kundentaschen**
 2. Verwenden Sie das Suchfeld, um den Kunden nach Namen oder E-Mail zu finden
 3. Klicken Sie auf den Eintrag der Tasche, um die Detailansicht zu öffnen
 
-Die Detailansicht zeigt die aktuellen Saldo-Nummern oben und eine vollständige Transaktionshistorie unten. Die Zeitstempel **Zuletzt vergeben** und **Zuletzt genutzt** zeigen an, wann die Tasche zuletzt aktiv war.
+Die Detailansicht zeigt die aktuellen Saldoangaben oben und eine vollständige Transaktionshistorie unten. Die Zeitstempel **Zuletzt vergeben am** und **Zuletzt verwendet am** zeigen an, wann die Tasche zuletzt aktiv war.
 
 ### Filtern der Taschenliste
 
-Verwenden Sie den **Aktiv**-Filter, um aktive Taschen von gefrorenen zu trennen. Eine Tasche, die als inaktiv markiert ist, kann nicht beim Checkout verwendet werden, auch wenn sie einen positiven Saldo hat.
+Verwenden Sie den **Aktiv**-Filter, um aktive Taschen von gefrorenen zu trennen. Eine als inaktiv markierte Tasche ist gefroren – keine Kredite oder Abbuchungen können gegen sie gebucht werden, obwohl sie ihren Saldo behält.
 
-## Transaktionshistorie einsehen
+## Lesen der Transaktionshistorie
 
 Jede Änderung des Taschensaldos wird als einzelne Transaktion aufgezeichnet. Die Transaktionshistorie ist ein vollständiges, dauerhaftes Buch – Transaktionen werden niemals bearbeitet oder gelöscht. Wenn ein Fehler behoben werden muss, wird stattdessen eine neue Gegentransaktion hinzugefügt.
 
@@ -39,89 +41,62 @@ Jede Transaktion zeigt:
 
 | Feld | Beschreibung |
 |---|---|
-| **Typ** | Kredit, Debit, Rückgabe, Anpassung oder Umkehrung |
+| **Typ** | Kredit, Abbuchung, Rückerstattung, Anpassung oder Rücknahme |
 | **Betrag** | Der Wert dieser Transaktion (immer als positiver Betrag angezeigt) |
 | **Saldo nach** | Der Taschensaldo unmittelbar nach Anwendung dieser Transaktion |
-| **Quelle** | Wo der Kredit oder Debit ursprünglich stammt |
-| **Status** | Abgeschlossen, Ausstehend oder Umgekehrt |
+| **Quelle** | Wo der Kredit oder die Abbuchung stammt |
+| **Status** | Abgeschlossen, Ausstehend oder Rücknahme |
 | **Beschreibung** | Eine kurze Erklärung der Transaktion |
 | **Referenz-ID** | Ein Link zur ursprünglichen Aufzeichnung (z. B. einer Bestellnummer oder Belohnungs-ID) |
 | **Erstellt am** | Wann die Transaktion aufgezeichnet wurde |
 
 ### Erklärung der Transaktionstypen
 
-- **Kredit** – Geld, das der Tasche hinzugefügt wird (aus einer Rückgabe, Promotion oder manueller Anpassung)
-- **Debit** – Geld, das beim Checkout ausgegeben wird
-- **Rückgabe** – Kredit, der speziell als Ergebnis einer zurückgegebenen oder abgebrochenen Bestellung hinzugefügt wird
+- **Kredit** – Geld, das der Tasche hinzugefügt wird (aus einer Rückerstattung, Promotion oder manueller Anpassung)
+- **Abbuchung** – Geld, das aus der Tasche abgebucht wird. Sobald der Kassenverbrauch aktiv ist, bedeutet dies „auf einen Auftrag ausgegeben“ – derzeit ist die einzige Möglichkeit, eine Abbuchung vorzunehmen, eine manuelle Anpassung
+- **Rückerstattung** – Kredit, der speziell als Ergebnis einer zurückgegebenen oder stornierten Bestellung hinzugefügt wird
 - **Anpassung** – eine manuelle Korrektur, die von Ihrem Team vorgenommen wird
-- **Umkehrung** – eine Transaktion, die eine frühere Eintragung aufhebt
+- **Rücknahme** – eine Transaktion, die eine frühere Eintragung aufhebt
 
 ### Erklärung der Transaktionsquellen
 
-- **Bestellrückgabe** – Kredit, der vergeben wird, wenn eine Bestellung an die Tasche zurückgegeben wird
+- **Bestellrückerstattung** – Kredit, der vergeben wird, wenn eine Bestellung an die Tasche zurückerstattet wird
 - **Empfehlungsbelohnung** – Kredit, der durch das Empfehlungsprogramm verdient wird
 - **Promotion** – Kredit, der als Teil einer Marketingkampagne vergeben wird
-- **Manuelle Anpassung** – Kredit, der direkt von einem Mitarbeiter hinzugefügt oder entfernt wird
-- **Bestellzahlung** – Geld, das beim Checkout für eine Bestellung ausgegeben wird
+- **Manuelle Anpassung** – Kredit, der direkt von einem Mitarbeiter hinzugefügt oder abgebucht wird
+- **Bestellzahlung** – Geld, das am Kasse für eine Bestellung ausgegeben wird. Nicht noch in Verwendung – reserviert für den Zeitpunkt, an dem der Kassenverbrauch aktiv ist
 
-## Manuelle Taschenanpassungen
+## Manuelle Wallet-Anpassungen
 
-Sie können Geld nicht direkt aus der Detailansicht der Tasche hinzufügen oder entfernen – Taschentransaktionen werden durch die relevanten Prozesse (Rückgaben, Belohnungen, Promotionen) erstellt. Allerdings können Mitarbeiter mit den entsprechenden Berechtigungen manuelle Anpassungstransaktionen über den Abschnitt **Taschentransaktionen** erstellen.
+Sie können keine Mittel über das Admin-Panel hinzufügen oder entfernen — Wallet-Transaktionen werden nur von den Prozessen erstellt, die sie besitzen: Rückgaben von Bestellungen, Treueprämien und Empfehlungsprämien. Dies ist bewusst so gestaltet. Jeder Bewegung liegt eine Referenz zur Ursache zugrunde, und eine tägliche Prüfung vergleicht den Saldo jedes Wallets mit seiner eigenen Historie; manuell eingegebene Zeilen brechen diese Kette. 
 
-Navigieren Sie zu **Kunden > Taschentransaktionen** und verwenden Sie **+ Taschentransaktion hinzufügen**, wenn Sie einen Kredit anwenden müssen, der nicht zu einer anderen Quelle passt – beispielsweise einen Goodwill-Kredit nach einer Beschwerde über den Service.
+Für eine Gutschrift aus gutem Willen — bei einer Dienstleistungsklage, einem Gestus nach einem Problem — geben Sie stattdessen manuell eine **Gutschein-Karte** aus (siehe das Hilfethema **Gutschein-Karten**). Eine Gutschein-Karte ist genau dafür konzipiert: Sie kontrollieren den Wert, der Kunde erhält einen Code per E-Mail und kann ihn beim Checkout genauso wie Store-Guthaben ausgeben.
 
-Bei der Erstellung einer manuellen Anpassung:
+## Wallet sperren
 
-1.
+Wenn Sie einen Kunden daran hindern müssen, sein Wallet-Guthaben zu verwenden — beispielsweise während einer Betrugsuntersuchung — können Sie es deaktivieren, ohne es zu löschen oder das Guthaben zu entfernen.
 
-Wählen Sie die **Tasche** aus, die Sie anpassen (suchen Sie nach der E-Mail-Adresse des Kunden)
-2.
+1. Öffnen Sie den Detailansicht des Kunden-Wallets
+2. Deaktivieren Sie das **Aktiv**-Schalter
+3. Klicken Sie auf **Speichern**
 
-
-Setze **Transaktionsart** auf `Anpassung`
-3.
-
-Setze **Quelle** auf `Manuelle Anpassung`
-4.
-
-Gib den **Betrag** ein – immer eine positive Zahl, unabhängig von der Richtung
-5.
-
-Setze den **Status** auf `Abgeschlossen`, um einen sofortigen Gutschrift zu vergeben
-6.
-
-Füge eine klare **Beschreibung** hinzu, die den Grund erklärt – dies ist im Transaktionsverlauf sichtbar
-7.
-
-Klicke auf **Speichern**
-
-> **Hinweis:** Da Wallet-Transaktionen unveränderlich sind, überprüfe den Betrag und das Wallet noch einmal, bevor du speicherst. Falls du einen Fehler machst, musst du eine Gegenbuchung erstellen, um dies zu korrigieren.
-
-## Das Wallet sperren
-
-Wenn du einen Kunden davon abhalten möchtest, sein Wallet-Guthaben zu verwenden – beispielsweise während einer Betrugsuntersuchung – kannst du es deaktivieren, ohne es zu löschen oder das Guthaben zu entfernen.
-
-1. Öffne den Detailansicht des Kunden-Wallets
-2. Deaktiviere den **Aktiv**-Schalter
-3. Klicke auf **Speichern**
-
-Das Guthaben bleibt erhalten und das Wallet kann jederzeit wieder aktiviert werden. Während es inaktiv ist, kann der Kunde das Wallet-Guthaben beim Checkout nicht verwenden.
+Das Guthaben bleibt erhalten und das Wallet kann jederzeit wieder aktiviert werden. Während es inaktiv ist, können keine neuen Guthaben- oder Lastschriftvorgänge — manuell oder anderweitig — im Wallet gebucht werden.
 
 ## Alle Transaktionen ansehen
 
-Für eine Gesamtansicht der Wallet-Aktivitäten navigiere zu **Kunden > Wallet-Transaktionen**. Diese Liste zeigt jede Transaktion in allen Kunden-Wallets, mit Filtern für:
+Für eine Übersicht über alle Wallet-Aktivitäten im gesamten Geschäft, navigieren Sie zu **Kunden > Wallet-Transaktionen**. Diese Liste zeigt jede Transaktion in allen Kunden-Wallets, mit Filtern für:
 
-- **Transaktionsart** – filtere nach Gutschrift, Abbuchung, Anpassung usw.
-- **Quelle** – filtere nach dem Ursprung der Transaktionen
-- **Status** – filtere nach abgeschlossen, ausstehend oder rückgängig gemacht
-- **Datum** – nutze die Datenhierarchie oben, um in ein bestimmtes Tag, Monat oder Jahr einzusteigen
+- **Transaktionsart** — filtern Sie nach Guthaben, Lastschrift, Anpassung usw.
+- **Quelle** — filtern Sie nach dem Ursprung der Transaktionen
+- **Status** — filtern Sie nach abgeschlossen, ausstehend oder rückgängig gemacht
+- **Datum** — verwenden Sie die Datenhierarchie oben, um sich in ein bestimmtes Tag, Monat oder Jahr zu vertiefen
 
-Die Transaktionsliste ist schreibgeschützt – Transaktionen können nicht bearbeitet oder gelöscht werden.
+Die Transaktionsliste ist schreibgeschützt — Transaktionen können nicht in dieser Ansicht bearbeitet oder gelöscht werden.
 
 ## Tipps
 
-- Überprüfe **Lebenslange Gutschriften** versus **Lebenslange Nutzung**, um zu verstehen, wie aktiv ein Kunde sein Store-Guthaben verwendet – ein großes, nicht genutztes Guthaben kann darauf hindeuten, dass der Kunde es vergessen hat
-- Wenn ein Kunde meldet, dass sein Guthaben falsch aussieht, überprüfe die vollständige Transaktionshistorie, um genau zu verfolgen, wie sich das Guthaben im Laufe der Zeit verändert hat; die Spalte **Guthaben nach** auf jedem Eintrag macht dies einfach
-- Nutze Wallet-Guthaben als Kundenbindungsinstrument – eine Gutschrift als Goodwill nach einem schwierigen Bestell-Erlebnis kann günstiger sein als eine Erstattung, während der Kunde weiterhin in deinem Store ausgibt
-- Gefrorene Wallets behalten ihr Guthaben dauerhaft; es gibt keine Ablaufdatum – wenn du ein Wallet vorübergehend deaktivierst, erinnere dich daran, es wieder zu aktivieren, sobald das Problem gelöst ist
-- Die **Referenz-ID** auf jeder Transaktion verweist auf den ursprünglichen Eintrag, wodurch es einfach ist, zu überprüfen, warum eine Gutschrift oder Abbuchung angewendet wurde, ohne anderswo suchen zu müssen
+- Prüfen Sie **Lebenslänglich gutgeschrieben** versus **Lebenslänglich genutzt**, um zu verstehen, wie aktiv ein Kunde sein Store-Guthaben verwendet — ein großes, nicht genutztes Guthaben kann darauf hindeuten, dass der Kunde es vergessen hat
+- Wenn ein Kunde meldet, dass sein Guthaben falsch aussieht, überprüfen Sie die vollständige Transaktionshistorie, um genau zu verfolgen, wie sich das Guthaben im Laufe der Zeit verändert hat; die Spalte **Guthaben nach** in jedem Eintrag macht dies einfach
+- Ein großes, nicht genutztes Guthaben ist wertvoll, um es einem Kunden zu erinnern — Kunden sehen ihr Store-Guthaben auf dem Kontodashboard und beim Zahlungsschritt beim Checkout, aber eine kurze E-Mail, die es erwähnt, führt oft zu einem Bestellvorgang
+- Gefrorene Wallets behalten ihr Guthaben dauerhaft; es gibt keine Ablaufdatum — wenn Sie ein Wallet vorübergehend deaktivieren, erinnern Sie sich, es wieder zu aktivieren, wenn das Problem gelöst ist
+- Die **Referenz-ID** auf jeder Transaktion verweist auf den ursprünglichen Eintrag, wodurch es einfach ist, zu überprüfen, warum eine Guthaben- oder Lastschrift angewendet wurde, ohne anderswo zu suchen

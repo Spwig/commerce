@@ -251,6 +251,11 @@ def _create_pos_order(
             quantity=item.quantity,
             unit_price=Money(unit_price, currency),
             total_price=Money(line_total, currency),
+            # Without this an in-store gift card sale mints nothing: issuance
+            # reads OrderItem.gift_card_data and refuses to create a card with
+            # no recipient. POS builds its own OrderItems rather than going
+            # through CheckoutService, so the web path's copy does not cover it.
+            gift_card_data=item.gift_card_data,
         )
 
     # Allocate stock from terminal's warehouse
@@ -784,6 +789,23 @@ def checkout_gift_card(request):
     _, _, order_total = _calculate_order_total(cart)
     currency = terminal.effective_currency
 
+    # A gift card cannot buy another gift card. POS never calls
+    # GiftCardTenderService.authorize_for_session, where the web path enforces
+    # this, so without an explicit check the till would sell a gift card paid
+    # for with another gift card — converting a traceable instrument into a
+    # fresh one with a reset expiry and no chain back to the original purchase.
+    if GiftCardService.cart_contains_gift_card(cart.items):
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "GIFT_CARD_CANNOT_BUY_GIFT_CARD",
+                    "message": "A gift card cannot be used to buy another gift card.",
+                },
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     # Validate gift card
     try:
         gc_valid, gc_balance = GiftCardService.validate_card(gift_card_code)
@@ -944,6 +966,22 @@ def checkout_split(request):
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+    # Same rule as the single gift card path — see checkout_gift_card.
+    if any(p["method"] == "gift_card" for p in payments_data):
+        from catalog.services.gift_card_service import GiftCardService
+
+        if GiftCardService.cart_contains_gift_card(cart.items):
+            return Response(
+                {
+                    "success": False,
+                    "error": {
+                        "code": "GIFT_CARD_CANNOT_BUY_GIFT_CARD",
+                        "message": "A gift card cannot be used to buy another gift card.",
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     # Pre-validate all gift card payments before creating order
     gift_card_payments = []

@@ -391,6 +391,16 @@ class SiteSettings(models.Model):
         default=True, help_text="Track product inventory and prevent overselling"
     )
 
+    public_gift_card_balance_enabled = models.BooleanField(
+        default=True,
+        help_text=(
+            "Let anyone check a gift card balance by entering its code, without "
+            "signing in. Recipients usually have no account, so this is on by "
+            "default and rate limited. Turn it off if you would rather customers "
+            "contacted you for balances."
+        ),
+    )
+
     enable_multi_warehouse = models.BooleanField(
         default=False,
         help_text="Enable multi-warehouse inventory management. When disabled, all products use the main warehouse with simplified stock management.",
@@ -2136,6 +2146,19 @@ class APIToken(models.Model):
         verbose_name=_("Allowed IPs"),
     )
 
+    # API access scopes: {scope_key: access_level} where access_level is
+    # "read" or "write" ("write" implies read). Empty = no API access.
+    # Scope keys are defined in core.api_scopes.SCOPE_REGISTRY.
+    scopes = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_(
+            "Which admin APIs this token may call and at what level. "
+            "Empty means the token cannot reach any scoped API."
+        ),
+        verbose_name=_("API Scopes"),
+    )
+
     # Usage tracking
     usage_count = models.PositiveIntegerField(
         default=0,
@@ -2183,6 +2206,55 @@ class APIToken(models.Model):
         if len(self.token) <= 8:
             return "****"
         return f"{self.token[:4]}...{self.token[-4:]}"
+
+    def has_scope(self, scope_key, access="read"):
+        """
+        Check whether this token grants a scope at the requested access level.
+
+        Args:
+            scope_key: Registry scope key (e.g. "analytics.traffic", "orders").
+            access: "read" or "write". "write" access requires the token to
+                hold the scope at write level; "read" is satisfied by either
+                "read" or "write".
+
+        Returns:
+            bool
+        """
+        level = (self.scopes or {}).get(scope_key)
+        if not level:
+            return False
+        if access == "write":
+            return level == "write"
+        return level in ("read", "write")
+
+    def granted_scopes(self):
+        """
+        Resolve this token's scopes against the registry for display.
+
+        Unknown or currently-unavailable (e.g. HQ-only in a public build) keys
+        are dropped so the admin summary never shows a scope the install can't
+        actually honour.
+
+        Returns:
+            list of dicts: {key, level, label, group}
+        """
+        from core.api_scopes import get_available_scopes
+
+        available = get_available_scopes()
+        resolved = []
+        for key, level in (self.scopes or {}).items():
+            meta = available.get(key)
+            if not meta:
+                continue
+            resolved.append(
+                {
+                    "key": key,
+                    "level": level,
+                    "label": meta["label"],
+                    "group": meta["group"],
+                }
+            )
+        return resolved
 
 
 # ============================================================================

@@ -59,18 +59,21 @@
       }
     };
 
-    // Auto-submit contact on blur if valid
+    // Complete the contact step and open the next when the email is valid.
     const emailInput = document.getElementById('checkout-email');
+    const completeContact = () => {
+      if (!emailInput) return;
+      const email = emailInput.value.trim();
+      if (email && C.isValidEmail(email) && !C.completedSteps.has('contact')) {
+        C.completedSteps.add('contact');
+        C.updateSummaryText('contact', email);
+        C.updateStepUI('contact', 'completed');
+        // No-shipping carts have no shipping section — payment is next
+        C.openStep(C.requiresShipping ? 'shipping' : 'payment');
+      }
+    };
     if (emailInput) {
-      emailInput.addEventListener('blur', function () {
-        const email = this.value.trim();
-        if (email && C.isValidEmail(email) && !C.completedSteps.has('contact')) {
-          C.completedSteps.add('contact');
-          C.updateSummaryText('contact', email);
-          C.updateStepUI('contact', 'completed');
-          C.openStep('shipping');
-        }
-      });
+      emailInput.addEventListener('blur', completeContact);
     }
 
     // Initial section states - enable contact, disable the rest
@@ -81,6 +84,11 @@
         section.classList.add('single-page__section--disabled');
       }
     });
+
+    // A prefilled email (signed-in customer, browser autofill) unlocks the
+    // next section immediately — no focus/blur cycle needed. Runs after the
+    // initial lock pass so openStep's unlock isn't re-disabled.
+    if (emailInput && emailInput.value.trim()) completeContact();
   }
 
   if (document.readyState === 'loading') {

@@ -2,66 +2,68 @@
 title: Kupon Kodları
 ---
 
-Kupon Kodları, müşterilerin ödeme sırasında indirim alabilmeleri için kullanabilecekleri indirim kodları, kuponlar ve hediye kartları oluşturmanıza olanak tanır. Yönetici menüsünden **Pazarlama > Kuponlar** bölümüne gidin.
+Kupon Kodları, müşterilerin ödeme sırasında indirim alabilmeleri için kullanabilecekleri indirim kodları ve kuponlar oluşturmanıza olanak tanır. Yönetici menüsünden **Pazarlama > Kuponlar** bölümüne gidin.
+
+Mağaza kredisi satmak istiyorsanız? Bu, **Ürünler > Hediye Çeki** altında ayrı olarak yönetilen bir hediye çektir — **Hediye Çekleri** yardım konusuna bakın.
 
 ![Kupon listesi](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 
 ## Kupon Paneli
 
-Kupon sayfası, aşağıdaki genel bakış bilgilerini gösterir:
+Kupon sayfası, şunları gösteren bir genel bakışa sahiptir:
 
 - **İstatistik Kartları** — Aktif, Pasif, Kullanım Sayısı ve Toplam kupon sayıları
-- **Filtreler** — Kod veya isimle arama yapın, Tip, Durum ve Kapsam ile filtreleyin
+- **Filtreler** — Kod veya isimle arama, Tip, Durum ve Kapsam ile filtreleme
 - **Kupon Kartları** — Her kupon, kullanım ve durum detaylarıyla birlikte gösterilir
 
 ## Kupon Oluşturma
 
-1. Üst sağ köşedeki **+ Kupon Ekle** butonuna tıklayın
+1. Üst sağ köşedeki **+ Kupon Ekle**'ye tıklayın
 2. Kupon detaylarını doldurun:
    - **Kod** — Müşterilerin ödeme sırasında gireceği kod (örneğin, "SAVE20", "FREESHIP")
-   - **Adı/Açıklaması** — Kendi referansınız için iç açıklama
+   - **Adı/Açıklama** — Kendi referansınız için iç açıklama
    - **İndirim Türü** — İndirimin nasıl uygulanacağı
    - **İndirim Değeri** — İndirim miktarı veya yüzdesi
 3. Kullanım kurallarını yapılandırın:
    - **Kullanım Sınırlaması** — Toplam kullanım sayısı (0 = sınırsız)
-   - **Müşteri Başına Sınırlama** — Her müşteri için maksimum kullanım sayısı
+   - **Müşteri Başına Sınırlama** — Müşteri başına maksimum kullanım sayısı
    - **Minimum Sipariş Değeri** — Gerekli minimum sepet toplamı
-4. **Kapsam** ayarlayın:
+4. **Kapsam**'ı ayarlayın:
    - **Tüm Sepet** — İndirim tüm siparişe uygulanır
-   - **Belirli Ürünler** — Sadece seçilen ürünlere uygulanır
-   - **Belirli Kategoriler** — Sadece seçilen kategorilere uygulanır
-5. Opsiyonel olarak son kullanma tarihi ayarlayın:
-   - **Son Kullanma Tarihi** — Kuponun artık işe yaramayacağı tarih
-6. **Kaydet** butonuna tıklayın
+   - **Belirli Ürünler** — Sadece seçilen öğelere uygulanır
+   - **Belirli Kategoriler** — Sadece seçilen kategorilere ait öğelere uygulanır
+5. Opsiyonel olarak son kullanma tarihini ayarlayın:
+   - **Son Kullanma Tarihi** — Kuponun işe yaramaması için tarih
+6. **Kaydet**'e tıklayın
 
 ## Kupon Türleri
 
 | Tür | Açıklama | Örnek |
 |------|-------------|---------|
-| **Sabit Tutar** | Belirli bir dolar tutarını düşer | Siparişin 20$ indirilir |
-| **Yüzde** | Toplamın bir yüzdesini düşer | Siparişin 15% indirilir |
+| **Sabit Tutar** | Sabit dolar tutarı keser | Siparişin $20 indirilir |
+| **Yüzde** | Toplamın bir yüzdesi keser | Siparişin 15% indirilir |
 | **Ücretsiz Kargo** | Kargo ücretlerini kaldırır | Herhangi bir siparişte ücretsiz kargo |
 
 ## Kuponları Yönetme
 
 ### Kupon Kartları
 
-Her kupon kartı aşağıdaki bilgileri gösterir:
-- **Kod** — Kupon kodu kalın yazıyla gösterilir
+Her kupon kartı şu bilgileri gösterir:
+- **Kod** — Kupon kodu kalın yazıyla
 - **Açıklama** — Kuponun ne yaptığını gösterir
 - **Durum Etiketi** — Aktif veya Pasif
 - **İndirim Detayları** — Tür ve değer (örneğin, "$ 20.00" veya "15.00%")
-- **Kapsam** — Tüm sepete mi yoksa belirli ürünlere mi uygulanır
+- **Kapsam** — Tüm sepete mi yoksa belirli öğelere mi uygulanır
 - **Kullanım Sayısı** — Kuponun kaç kez kullanıldığını gösterir
 - **Oluşturulma Tarihi** — Kuponun ne zaman oluşturulduğunu gösterir
-- **Son Kullanma Tarihi** — Son kullanma tarihi veya "Son kullanma yok" yazısı
+- **Son Kullanma Tarihi** — Son kullanma tarihi veya "Son kullanma yok"
 
-### Kupon İşlemleri
+### Kupon Eylemleri
 
-Her kartta aşağıdaki işlem butonları vardır:
-- **Düzenle** — Kupon ayarlarını değiştirin
-- **Tarihçeyi Görüntüle** — Kullanım tarihçesini görün
-- **Sil** — Kuponu kaldırın
+Her kartta eylem butonları vardır:
+- **Düzenle** — Kupon ayarlarını değiştir
+- **Tarihçeyi Görüntüle** — Kullanım tarihçesini görüntüle
+- **Sil** — Kuponu kaldır
 
 ### Kuponları Filtreleme
 
@@ -69,30 +71,30 @@ Filtre çubuğunu kullanarak belirli kuponları bulun:
 - **Arama** — Kod, isim veya açıklamaya göre arama yapın
 - **Tip** — Sabit Tutar, Yüzde veya Ücretsiz Kargo
 - **Durum** — Aktif veya Pasif
-- **Kapsam** — Tüm Sepet veya ürün özelinde
+- **Kapsam** — Tüm Sepet veya ürün özel
 
 ## Toplu Kupon Oluşturma
 
 Büyük kampanyalar için toplu kupon oluşturabilirsiniz:
 1. Sistem, benzersiz kodları otomatik olarak oluşturur (örneğin, "COUPONX1600406498")
 2. Oluşturulan tüm kuponlar için ortak parametreleri ayarlayın
-3. Kodları e-posta, sosyal medya veya basılı malzemelerle dağıtın
+3. Kodları e-posta, sosyal medya veya basılı materyal yoluyla dağıtın
 
 ## Müşteri Deneyimi
 
 Bir müşteri kupon koduna sahipse:
-1. **Ödeme** kısmına gider
+1. Ödeme ekranına gider
 2. Kodu **indirim kodu** alanına girer
 3. Kupon geçerliyse indirim hemen uygulanır
-4. Sipariş özeti, indirimi göstermek üzere güncellenir
+4. Sipariş özeti, indirimi göstermek için güncellenir
 
-Eğer kupon geçersizse (son kullanma tarihi geçmiş, kullanım sınırı aşıldı, minimum değer karşılanmadı), müşteriye açık bir hata mesajı gösterilir.
+Eğer kupon geçersizse (son kullanma tarihi geçmiş, kullanım sınırı aşılmış, minimum tutar karşılanmamış), müşteriye net bir hata mesajı gösterilir.
 
 ## İpuçları
 
 - Pazarlama kampanyaları için kolayca hatırlanabilecek kodlar kullanın (örneğin, "SUMMER20" gibi rastgele dizgeler yerine).
 - Değerli indirimlerin kötüye kullanılmasını önlemek için müşteri başına kullanım sınırlaması ayarlayın.
-- Kârlılığı korumak için minimum sipariş değerleri kullanın (örneğin, "50$ üzerindeki siparişlerde 10$ indirim").
+- Kârlılığı korumak için minimum sipariş değerleri kullanın (örneğin, "$50'den fazla siparişlerde $10 indirim").
 - Paneldeki Kullanım Sayısı'na bakarak kampanya etkinliğini izleyin.
 - Aciliyet yaratmak için zaman sınırlı kuponlar oluşturun (örneğin, "Sadece bu hafta sonu geçerlidir").
 - Kuponları silmeden durdurmak için Aktif/Pasif durumunu kullanın.

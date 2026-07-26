@@ -143,6 +143,7 @@
   width: 100%;
   max-width: var(--theme-widget-cart-panel-width, 420px);
   height: 100vh;
+  height: 100dvh; /* iOS: 100vh sits under the browser chrome */
   background: var(--theme-widget-cart-dropdown-bg, var(--theme-color-surface, #fff));
   z-index: calc(var(--theme-widget-cart-z-index, var(--theme-z-modal-backdrop, 1040)) + 10);
   display: flex;
@@ -229,6 +230,7 @@
   padding: var(--theme-space-5, 1.25rem);
   height: 100%; /* Ensure full height */
   max-height: calc(100vh - 200px); /* Leave space for header/footer */
+  max-height: calc(100dvh - 200px);
   -webkit-overflow-scrolling: touch; /* Smooth iOS scrolling */
 }
 

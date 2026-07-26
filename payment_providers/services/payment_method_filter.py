@@ -18,6 +18,10 @@ from shipping.models import ShippingCountry
 
 logger = logging.getLogger(__name__)
 
+# Providers that simulate payments (no money moves). Never offered to
+# customers outside sandbox mode, regardless of account state.
+SIMULATED_PROVIDER_SLUGS = {"test_gateway"}
+
 
 class PaymentMethodFilter:
     """
@@ -59,14 +63,18 @@ class PaymentMethodFilter:
 
     @staticmethod
     def get_available_providers_for_checkout(
-        customer_country: str, currency: str, amount: Decimal | None = None
+        customer_country: str,
+        currency: str,
+        amount: Decimal | None = None,
+        require_ships_to: bool = True,
     ) -> list[PaymentProviderAccount]:
         """
         Get list of payment provider accounts available for checkout.
 
         This applies all filtering layers:
         1. Only active providers
-        2. Merchant ships to customer's country
+        2. Merchant ships to customer's country (skipped for carts with no
+           shippable items — a download or booking is deliverable anywhere)
         3. Provider supports customer's country
         4. Provider has enabled payment methods for customer's country
         5. Provider supports the transaction currency
@@ -75,6 +83,11 @@ class PaymentMethodFilter:
             customer_country: ISO 3166-1 alpha-2 country code or full country name
             currency: ISO 4217 currency code (e.g., 'USD', 'EUR')
             amount: Optional transaction amount (for future min/max filtering)
+            require_ships_to: Enforce the merchant ships-to-country gate.
+                Pass False for no-shipping carts (digital / booking only):
+                the customer's country still filters provider and method
+                availability, but the merchant's shipping coverage is
+                irrelevant to a cart nothing ships from.
 
         Returns:
             List of PaymentProviderAccount objects available for checkout
@@ -84,12 +97,12 @@ class PaymentMethodFilter:
         customer_country = PaymentMethodFilter._normalize_country_code(customer_country)
         currency = currency.upper()
 
-        print(
-            f"💳 Payment providers: country '{original_country}' → normalized '{customer_country}', currency={currency}"
-        )
         logger.info(
-            f"Filtering payment providers for country={customer_country}, "
-            f"currency={currency}, amount={amount}"
+            "Filtering payment providers for country=%s (raw %r), currency=%s, amount=%s",
+            customer_country,
+            original_country,
+            currency,
+            amount,
         )
 
         # Layer 1: Get active provider accounts
@@ -97,23 +110,38 @@ class PaymentMethodFilter:
             "component"
         )
 
-        # Layer 2: Check if merchant ships to customer's country
-        ships_to_country = ShippingCountry.objects.filter(
-            site_id=1,  # Single-tenant - always site 1
-            country_code=customer_country,
-            is_active=True,
-        ).exists()
+        # Layer 2: Check if merchant ships to customer's country.
+        # Skipped for no-shipping carts (require_ships_to=False).
+        if require_ships_to:
+            ships_to_country = ShippingCountry.objects.filter(
+                site_id=1,  # Single-tenant - always site 1
+                country_code=customer_country,
+                is_active=True,
+            ).exists()
 
-        if not ships_to_country:
-            logger.warning(
-                f"Merchant does not ship to {customer_country}. No payment methods available."
-            )
-            return []
+            if not ships_to_country:
+                logger.warning(
+                    f"Merchant does not ship to {customer_country}. No payment methods available."
+                )
+                return []
 
         # Layer 3-5: Filter providers by country support and enabled methods
         available_providers = []
 
+        # Simulated gateways never surface to customers outside sandbox
+        # mode, even if an account was left active (belt-and-braces with the
+        # licence-activation reaper in core.activation)
+        from core.license import is_sandbox_mode
+
+        sandbox = is_sandbox_mode()
+
         for provider in active_providers:
+            if provider.component.slug in SIMULATED_PROVIDER_SLUGS and not sandbox:
+                logger.warning(
+                    "Hiding simulated gateway %s from checkout: not in sandbox mode",
+                    provider.component.slug,
+                )
+                continue
             # Layer 3: Check if provider has payment methods for this country
             available_methods = provider.get_available_methods_for_country(customer_country)
             if not available_methods:

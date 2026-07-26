@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Italian <LL@li.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:33
 msgid "Provider Information"
 msgstr "Informazioni sul fornitore"
 
+#: admin.py:34
 msgid "Configuration"
 msgstr "Configurazione"
 
+#: admin.py:36 admin.py:80
 msgid "Credentials"
 msgstr "Credenziali"
 
+#: admin.py:40
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
@@ -34,37 +38,49 @@ msgstr ""
 "Le credenziali sono crittografate e gestite tramite il wizard del fornitore. "
 "Per aggiornare le credenziali, reinstallare il fornitore."
 
+#: admin.py:45
 msgid "Timestamps"
 msgstr "Timestamp"
 
+#: admin.py:48
 msgid "Name"
 msgstr "Nome"
 
+#: admin.py:52
 msgid "Provider"
 msgstr "Fornitore"
 
+#: admin.py:58
 msgid "Status"
 msgstr "Stato"
 
+#: admin.py:72 templates/admin/seo_generator/dashboard.html:161
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:51
 msgid "Primary"
 msgstr "Principale"
 
+#: admin.py:88
 msgid "Credentials are encrypted and stored securely"
 msgstr "Le credenziali sono crittografate e memorizzate in modo sicuro"
 
+#: admin.py:95
 msgid "No credentials configured (built-in provider)"
 msgstr "Nessuna credenziale configurata (fornitore incorporato)"
 
+#: api/endpoints.py:63
 #, python-format
 msgid "Invalid model type: %(type)s. Must be one of: %(valid)s"
 msgstr "Tipo di modello non valido: %(type)s. Deve essere uno di: %(valid)s"
 
+#: api/endpoints.py:80 api/endpoints.py:428
 msgid "Permission denied."
 msgstr "Permesso negato."
 
+#: api/endpoints.py:176
 msgid "Generate SEO content for a single object"
 msgstr "Genera il contenuto SEO per un singolo oggetto"
 
+#: api/endpoints.py:178
 msgid ""
 "Generate meta title, meta description, and keywords for a product, category, "
 "brand, page, blog post, or blog category. The generated content is "
@@ -74,45 +90,58 @@ msgstr ""
 "categoria, marca, pagina, post di blog o categoria di blog. Il contenuto "
 "generato viene salvato automaticamente nell'oggetto."
 
+#: api/endpoints.py:185 api/endpoints.py:503
 msgid "Model type: product, category, brand, page, blogpost, or blogcategory"
 msgstr ""
 "Tipo di modello: prodotto, categoria, marca, pagina, post di blog o "
 "categoria di blog"
 
+#: api/endpoints.py:191
 msgid "ID of the object to generate SEO for"
 msgstr "ID dell'oggetto per il quale generare l'ottimizzazione SEO"
 
+#: api/endpoints.py:217
 msgid "Invalid model type, provider key, or language code"
 msgstr ""
 "Tipo di modello non valido, chiave fornitore o codice lingua non validi"
 
+#: api/endpoints.py:218
 msgid "Permission denied"
 msgstr "Permesso negato"
 
+#: api/endpoints.py:219 api/endpoints.py:523
 msgid "Object not found"
 msgstr "Oggetto non trovato"
 
+#: api/endpoints.py:220
 msgid "Generation failed or unexpected error"
 msgstr "Generazione fallita o errore inaspettato"
 
+#: api/endpoints.py:241 api/endpoints.py:383
 msgid "Invalid provider key."
 msgstr "Chiave del fornitore non valida."
 
+#: api/endpoints.py:248
 msgid "Invalid language code."
 msgstr "Codice lingua non valido."
 
+#: api/endpoints.py:265 api/endpoints.py:541
 msgid "Object not found."
 msgstr "Oggetto non trovato."
 
+#: api/endpoints.py:282
 msgid "SEO generation failed. Please try again."
 msgstr "La generazione SEO è fallita. Per favore, riprova."
 
+#: api/endpoints.py:311 api/endpoints.py:487 api/endpoints.py:565
 msgid "An unexpected error occurred. Please try again."
 msgstr "Si è verificato un errore inaspettato. Per favore, riprova."
 
+#: api/endpoints.py:318
 msgid "Batch generate SEO for multiple objects"
 msgstr "Genera in batch l'ottimizzazione SEO per diversi oggetti"
 
+#: api/endpoints.py:320
 msgid ""
 "Generate SEO content for multiple objects at once. Each item specifies a "
 "model type and object ID. Results include per-item success/failure and a "
@@ -122,28 +151,36 @@ msgstr ""
 "specifica un tipo di modello e un ID dell'oggetto. I risultati includono lo "
 "stato di successo/fallimento per ogni elemento e un riepilogo."
 
+#: api/endpoints.py:359
 msgid "Invalid request body, no items, or invalid provider"
 msgstr ""
 "Corpo della richiesta non valido, nessun elemento o fornitore non valido"
 
+#: api/endpoints.py:360 api/endpoints.py:524
 msgid "Unexpected error"
 msgstr "Errore inaspettato"
 
+#: api/endpoints.py:372
 msgid "Invalid request body."
 msgstr "Corpo della richiesta non valido."
 
+#: api/endpoints.py:376
 msgid "No items provided."
 msgstr "Nessun elemento fornito."
 
+#: api/endpoints.py:410
 msgid "Missing model_type or object_id."
 msgstr "Mancante model_type o object_id."
 
+#: api/endpoints.py:462
 msgid "Generation failed for this item."
 msgstr "Generazione fallita per questo elemento."
 
+#: api/endpoints.py:494
 msgid "Check SEO status for an object"
 msgstr "Verifica lo stato SEO di un oggetto"
 
+#: api/endpoints.py:496
 msgid ""
 "Check whether an object has SEO content, whether it was auto-generated, and "
 "return the current meta title and description with their lengths."
@@ -152,25 +189,32 @@ msgstr ""
 "automaticamente e restituisci il titolo meta e la descrizione correnti con "
 "le loro lunghezze."
 
+#: api/endpoints.py:506
 msgid "ID of the object"
 msgstr "ID dell'oggetto"
 
+#: api/endpoints.py:522
 msgid "Invalid model type"
 msgstr "Tipo di modello non valido"
 
+#: apps.py:8
 msgid "SEO Generator"
 msgstr "Generatore SEO"
 
+#: management/commands/generate_seo.py:33
 msgid "Model type to generate SEO for (or \"all\" for all models)"
 msgstr ""
 "Tipo di modello per il quale generare la SEO (o \"all\" per tutti i modelli)"
 
+#: management/commands/generate_seo.py:39
 msgid "Number of items to process in each batch (default: 50)"
 msgstr "Numero di elementi da elaborare in ogni batch (predefinito: 50)"
 
+#: management/commands/generate_seo.py:44
 msgid "Only generate SEO for items with seo_auto_generated=True"
 msgstr "Genera SEO solo per gli elementi con seo_auto_generated=True"
 
+#: management/commands/generate_seo.py:51
 msgid ""
 "SEO provider to use (default: primary provider, or deterministic if none "
 "configured)"
@@ -178,34 +222,42 @@ msgstr ""
 "Fornitore SEO da utilizzare (predefinito: fornitore primario, o "
 "deterministico se nessuno è configurato)"
 
+#: management/commands/generate_seo.py:58
 msgid "Language code for generation (default: site primary language)"
 msgstr ""
 "Codice della lingua per la generazione (predefinito: lingua primaria del "
 "sito)"
 
+#: management/commands/generate_seo.py:76
 #, python-format
 msgid "Using language: %(lang)s"
 msgstr "Utilizzando la lingua: %(lang)s"
 
+#: management/commands/generate_seo.py:83
 #, python-format
 msgid "Using provider: %(name)s"
 msgstr "Utilizzando il fornitore: %(name)s"
 
+#: management/commands/generate_seo.py:103
 msgid "SEO Generation Complete"
 msgstr "Generazione SEO completata"
 
+#: management/commands/generate_seo.py:104
 #, python-format
 msgid "Total Processed: %(count)d"
 msgstr "Totale elaborati: %(count)d"
 
+#: management/commands/generate_seo.py:106
 #, python-format
 msgid "Successful: %(count)d"
 msgstr "Riusciti: %(count)d"
 
+#: management/commands/generate_seo.py:109
 #, python-format
 msgid "Failed: %(count)d"
 msgstr "Falliti: %(count)d"
 
+#: management/commands/generate_seo.py:118
 #, python-format
 msgid ""
 "\n"
@@ -214,6 +266,7 @@ msgstr ""
 "\n"
 "Ignorando il tipo di modello sconosciuto: %(type)s"
 
+#: management/commands/generate_seo.py:134
 #, python-format
 msgid ""
 "\n"
@@ -222,6 +275,7 @@ msgstr ""
 "\n"
 "Nessun elemento %(type)s da elaborare"
 
+#: management/commands/generate_seo.py:138
 #, python-format
 msgid ""
 "\n"
@@ -230,140 +284,186 @@ msgstr ""
 "\n"
 "%(type)s (%(count)d elementi)"
 
+#: management/commands/generate_seo.py:171
 #, python-format
 msgid "  Failed %(type)s %(pk)s: %(error)s"
 msgstr "Fallito %(type)s %(pk)s: %(error)s"
 
+#: management/commands/generate_seo.py:181
 #, python-format
 msgid "  %(type)s: %(success)d successful, %(failed)d failed"
 msgstr "%(type)s: %(success)d riusciti, %(failed)d falliti"
 
+#: models.py:15
 msgid "Site"
 msgstr "Sito"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "Sito a cui appartiene questo account del fornitore"
 
+#: models.py:26
 msgid "Provider Component"
 msgstr "Componente Fornitore"
 
+#: models.py:27
 msgid "SEO provider component from update system (null for built-in)"
 msgstr ""
 "Componente fornitore SEO dal sistema di aggiornamento (null per i "
 "predefiniti)"
 
+#: models.py:33
 msgid "Provider Key"
 msgstr "Chiave Fornitore"
 
+#: models.py:34
 msgid ""
 "Built-in provider key (e.g., 'deterministic'). Used when component is null."
 msgstr ""
 "Chiave fornitore predefinita (es. 'deterministic'). Utilizzata quando il "
 "componente è null."
 
+#: models.py:39
 msgid "Account Name"
 msgstr "Nome account"
 
+#: models.py:40
 msgid "Friendly name for this provider account"
 msgstr "Nome amichevole per questo account del fornitore"
 
+#: models.py:46
 msgid "Encrypted Credentials"
 msgstr "Credenziali crittografate"
 
+#: models.py:47
 msgid "Encrypted API credentials for this provider"
 msgstr "Credenziali API crittografate per questo fornitore"
 
+#: models.py:52
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:54
 msgid "Active"
 msgstr "Attivo"
 
+#: models.py:53
 msgid "Whether this provider account is active"
 msgstr "Se questo account del fornitore è attivo"
 
+#: models.py:58
 msgid "Primary Provider"
 msgstr "Fornitore principale"
 
+#: models.py:59
 msgid "Use this provider as primary source for SEO generation"
 msgstr "Utilizza questo fornitore come fonte primaria per la generazione SEO"
 
+#: models.py:64
 msgid "Priority"
 msgstr "Priorità"
 
+#: models.py:65
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "Priorità per la catena di fallback (minore = priorità maggiore)"
 
+#: models.py:71
 msgid "Provider Settings"
 msgstr "Impostazioni Fornitore"
 
+#: models.py:72
 msgid "Provider-specific settings and configuration"
 msgstr "Impostazioni e configurazioni specifiche del fornitore"
 
+#: models.py:79
 msgid "SEO Provider Account"
 msgstr "Account Fornitore SEO"
 
+#: models.py:80
 msgid "SEO Provider Accounts"
 msgstr "Account Fornitori SEO"
 
+#: providers/base.py:50
 msgid "provider_key must be set by subclass"
 msgstr "provider_key deve essere impostato da una sottoclasse"
 
+#: providers/base.py:52
 msgid "provider_name must be set by subclass"
 msgstr "provider_name deve essere impostato da una sottoclasse"
 
+#: providers/base.py:61
 #, python-format
 msgid "Provider '%(key)s' requires credentials"
 msgstr "Il fornitore '%(key)s' richiede credenziali"
 
+#: providers/builtin.py:94 templates/admin/seo_generator/dashboard.html:158
+#: templates/admin/seo_generator/dashboard.html:165
 msgid "Built-in Generator"
 msgstr "Generatore incorporato"
 
+#: providers/builtin.py:197
 #, python-format
 msgid "Keyword extraction failed: %(error)s"
 msgstr "Estrazione delle parole chiave fallita: %(error)s"
 
+#: providers/builtin.py:221 providers/builtin.py:278
 msgid "Content must have a 'name' field"
 msgstr "Il contenuto deve avere un campo 'name'"
 
+#: providers/builtin.py:259
 #, python-format
 msgid "Meta title generation failed: %(error)s"
 msgstr "Generazione del titolo meta fallita: %(error)s"
 
+#: providers/builtin.py:349
 #, python-format
 msgid "Meta description generation failed: %(error)s"
 msgstr "Generazione della descrizione meta fallita: %(error)s"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/dashboard.html:22 views/dashboard.py:76
 msgid "SEO Dashboard"
 msgstr "Dashboard SEO"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
 msgid "Site Admin"
 msgstr "Amministratore del sito"
 
+#: templates/admin/seo_generator/dashboard.html:25
 msgid ""
 "Monitor SEO coverage across your store and generate missing meta content"
 msgstr ""
 "Monitora la copertura SEO nel tuo negozio e genera contenuti meta mancanti"
 
+#: templates/admin/seo_generator/dashboard.html:33
 msgid "Total Items"
 msgstr "Totale elementi"
 
+#: templates/admin/seo_generator/dashboard.html:38
 msgid "Complete SEO"
 msgstr "Completa SEO"
 
+#: templates/admin/seo_generator/dashboard.html:43
 msgid "Missing SEO"
 msgstr "SEO mancante"
 
+#: templates/admin/seo_generator/dashboard.html:48
 msgid "Active Providers"
 msgstr "Fornitori attivi"
 
+#: templates/admin/seo_generator/dashboard.html:59
 msgid "SEO Coverage"
 msgstr "Copertura SEO"
 
+#: templates/admin/seo_generator/dashboard.html:61
 msgid "Refresh"
 msgstr "Aggiorna"
 
+#: templates/admin/seo_generator/dashboard.html:82
 #, python-format
 msgid "%(pct)s%% of your content has complete SEO"
 msgstr "%(pct)s%% del tuo contenuto ha l'ottimizzazione SEO completa"
 
+#: templates/admin/seo_generator/dashboard.html:85
 #, python-format
 msgid ""
 "\n"
@@ -379,70 +479,101 @@ msgstr ""
 "descrizioni.\n"
 "                            "
 
+#: templates/admin/seo_generator/dashboard.html:96
 msgid "Coverage by Content Type"
 msgstr "Copertura per tipo di contenuto"
 
+#: templates/admin/seo_generator/dashboard.html:112
 msgid "No content found."
 msgstr "Nessun contenuto trovato."
 
+#: templates/admin/seo_generator/dashboard.html:123
 msgid "Quality Check"
 msgstr "Controllo qualità"
 
+#: templates/admin/seo_generator/dashboard.html:128
 msgid "Titles too short"
 msgstr "Titoli troppo brevi"
 
+#: templates/admin/seo_generator/dashboard.html:128
+#: templates/admin/seo_generator/dashboard.html:132
+#: templates/admin/seo_generator/dashboard.html:136
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "chars"
 msgstr "caratteri"
 
+#: templates/admin/seo_generator/dashboard.html:132
 msgid "Titles too long"
 msgstr "Titoli troppo lunghi"
 
+#: templates/admin/seo_generator/dashboard.html:136
 msgid "Descriptions short"
 msgstr "Descrizioni brevi"
 
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "Descriptions long"
 msgstr "Descrizioni lunghe"
 
+#: templates/admin/seo_generator/dashboard.html:149
 msgid "Active Provider"
 msgstr "Fornitore attivo"
 
+#: templates/admin/seo_generator/dashboard.html:166
 msgid "No external provider configured"
 msgstr "Nessun fornitore esterno configurato"
 
+#: templates/admin/seo_generator/dashboard.html:168
 msgid "Connect a provider"
 msgstr "Connetti un fornitore"
 
+#: templates/admin/seo_generator/dashboard.html:178
 msgid "Quick Actions"
 msgstr "Azioni rapide"
 
+#: templates/admin/seo_generator/dashboard.html:184
 #, python-format
 msgid "Generate SEO for %(count)s missing items"
 msgstr "Genera SEO per %(count)s elementi mancanti"
 
+#: templates/admin/seo_generator/dashboard.html:189
 msgid "Manage Providers"
 msgstr "Gestisci fornitori"
 
+#: templates/admin/seo_generator/dashboard.html:193
+#: templates/admin/seo_generator/providers/browse.html:27
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:28
+#: templates/admin/seo_generator/wizard/step1_select.html:86
 msgid "Browse Providers"
 msgstr "Esplora Fornitori"
 
+#: templates/admin/seo_generator/dashboard.html:204
 msgid "Generating SEO Content"
 msgstr "Generazione del contenuto SEO"
 
+#: templates/admin/seo_generator/dashboard.html:212
 msgid "Preparing..."
 msgstr "Preparazione in corso..."
 
+#: templates/admin/seo_generator/dashboard.html:218
+#: templates/admin/seo_generator/wizard/step1_select.html:97
 msgid "Cancel"
 msgstr "Annulla"
 
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/providers/browse.html:36
+#: views/provider_browse.py:132
 msgid "Browse SEO Providers"
 msgstr "Esplora Fornitori SEO"
 
+#: templates/admin/seo_generator/providers/browse.html:25
 msgid "Home"
 msgstr "Home"
 
+#: templates/admin/seo_generator/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "Account Fornitori"
 
+#: templates/admin/seo_generator/providers/browse.html:38
 msgid ""
 "Choose an SEO generation provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -450,9 +581,11 @@ msgstr ""
 "Scegli un fornitore di generazione SEO per integrarlo con il tuo negozio. "
 "Installa nuovi fornitori o configura quelli esistenti."
 
+#: templates/admin/seo_generator/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Server di aggiornamento non disponibile"
 
+#: templates/admin/seo_generator/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -460,9 +593,11 @@ msgstr ""
 "Non è stato possibile connettersi al server di aggiornamento. Verranno "
 "visualizzati solo i fornitori installati localmente."
 
+#: templates/admin/seo_generator/providers/browse.html:57
 msgid "SEO Provider Marketplace"
 msgstr "Mercato Fornitori SEO"
 
+#: templates/admin/seo_generator/providers/browse.html:69
 msgid ""
 "Here you can discover and install SEO generation providers to automatically "
 "create optimized meta titles, descriptions, and keywords for your products, "
@@ -472,36 +607,47 @@ msgstr ""
 "automaticamente titoli meta ottimizzati, descrizioni e parole chiave per i "
 "tuoi prodotti, categorie e pagine."
 
+#: templates/admin/seo_generator/providers/browse.html:76
 msgid "What you can do:"
 msgstr "Cosa puoi fare:"
 
+#: templates/admin/seo_generator/providers/browse.html:81
 msgid "Browse available SEO providers by capability"
 msgstr "Esplora i fornitori SEO disponibili in base alle capacità"
 
+#: templates/admin/seo_generator/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "Installa nuovi fornitori con un clic"
 
+#: templates/admin/seo_generator/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "Aggiorna i fornitori installati alle ultime versioni"
 
+#: templates/admin/seo_generator/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "Configura le impostazioni del fornitore dopo l'installazione"
 
+#: templates/admin/seo_generator/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "Guida all'uso:"
 
+#: templates/admin/seo_generator/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "Esplora i fornitori qui sotto e trova quello giusto per te"
 
+#: templates/admin/seo_generator/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Clicca su 'Installa' per aggiungere il fornitore al tuo negozio"
 
+#: templates/admin/seo_generator/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "Vai a Impostazioni per configurare le credenziali API"
 
+#: templates/admin/seo_generator/providers/browse.html:107
 msgid "Test the provider connection and start generating SEO"
 msgstr "Testa la connessione al fornitore e inizia a generare la SEO"
 
+#: templates/admin/seo_generator/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -520,48 +666,70 @@ msgstr[1] ""
 "                    Attualmente: %(counter)s fornitori disponibili\n"
 "                "
 
+#: templates/admin/seo_generator/providers/browse.html:133
 msgid "Update Available"
 msgstr "Aggiornamento disponibile"
 
+#: templates/admin/seo_generator/providers/browse.html:156
 msgid "Installed"
 msgstr "Installato"
 
+#: templates/admin/seo_generator/providers/browse.html:171
 msgid "Available"
 msgstr "Disponibile"
 
+#: templates/admin/seo_generator/providers/browse.html:192
+#: templates/admin/seo_generator/wizard/step1_select.html:45
 msgid "Meta Titles"
 msgstr "Titoli Meta"
 
+#: templates/admin/seo_generator/providers/browse.html:197
+#: templates/admin/seo_generator/wizard/step1_select.html:50
 msgid "Descriptions"
 msgstr "Descrizioni"
 
+#: templates/admin/seo_generator/providers/browse.html:202
+#: templates/admin/seo_generator/wizard/step1_select.html:55
 msgid "Keywords"
 msgstr "Parole chiave"
 
+#: templates/admin/seo_generator/providers/browse.html:207
+#: templates/admin/seo_generator/wizard/step1_select.html:60
 msgid "Multi-Language"
 msgstr "Multilingua"
 
+#: templates/admin/seo_generator/providers/browse.html:212
+#: templates/admin/seo_generator/wizard/step1_select.html:65
 msgid "Bulk Generation"
 msgstr "Generazione di massa"
 
+#: templates/admin/seo_generator/providers/browse.html:226
 msgid "Update"
 msgstr "Aggiorna"
 
+#: templates/admin/seo_generator/providers/browse.html:231
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:72
 msgid "Configure"
 msgstr "Configura"
 
+#: templates/admin/seo_generator/providers/browse.html:238
 msgid "Install"
 msgstr "Installa"
 
+#: templates/admin/seo_generator/providers/browse.html:247
 msgid "View Details"
 msgstr "Visualizza dettagli"
 
+#: templates/admin/seo_generator/providers/browse.html:255
 msgid "Learn More"
 msgstr "Scopri di più"
 
+#: templates/admin/seo_generator/providers/browse.html:268
+#: templates/admin/seo_generator/wizard/step1_select.html:82
 msgid "No Providers Available"
 msgstr "Nessun fornitore disponibile"
 
+#: templates/admin/seo_generator/providers/browse.html:269
 msgid ""
 "No SEO generation providers are currently available. The built-in "
 "deterministic provider is always available without installation."
@@ -569,27 +737,36 @@ msgstr ""
 "Nessun fornitore di generazione SEO è attualmente disponibile. Il fornitore "
 "deterministico predefinito è sempre disponibile senza installazione."
 
+#: templates/admin/seo_generator/providers/browse.html:278
 msgid "Installing provider..."
 msgstr "Installazione del fornitore in corso..."
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:18
 msgid "SEO Providers"
 msgstr "Fornitori SEO"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:20
 msgid "Manage SEO generation provider integrations"
 msgstr "Gestisci le integrazioni dei fornitori di generazione SEO"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:22
 msgid "provider"
 msgstr "fornitore"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:23
 msgid "active"
 msgstr "attivo"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:56
 msgid "Inactive"
 msgstr "Inattivo"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:79
 msgid "No SEO Providers Configured"
 msgstr "Nessun fornitore SEO configurato"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:80
 msgid ""
 "The built-in deterministic provider is available by default. Connect "
 "additional providers for AI-powered SEO generation."
@@ -597,45 +774,62 @@ msgstr ""
 "Il fornitore deterministico predefinito è disponibile di default. Connetti "
 "fornitori aggiuntivi per la generazione SEO alimentata dall'AI."
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:82
 msgid "Connect Provider"
 msgstr "Connetti il fornitore"
 
+#: templates/admin/seo_generator/wizard/base.html:14
 msgid "Connect SEO Provider"
 msgstr "Connetti il fornitore SEO"
 
+#: templates/admin/seo_generator/wizard/base.html:15
 msgid "Follow these steps to connect your SEO generation provider"
 msgstr ""
 "Segui questi passaggi per collegare il tuo fornitore di generazione SEO"
 
+#: templates/admin/seo_generator/wizard/base.html:24
 msgid "Select Provider"
 msgstr "Seleziona il fornitore"
 
+#: templates/admin/seo_generator/wizard/base.html:33
+#: templates/admin/seo_generator/wizard/step2_setup.html:8
 msgid "Setup Instructions"
 msgstr "Istruzioni per l'installazione"
 
+#: templates/admin/seo_generator/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "Inserisci le credenziali"
 
+#: templates/admin/seo_generator/wizard/base.html:51
+#: templates/admin/seo_generator/wizard/step4_test.html:7
+#: templates/admin/seo_generator/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "Testa la connessione"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:6
 msgid "Select an SEO Provider"
 msgstr "Seleziona un fornitore SEO"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:7
 msgid "Choose the SEO generation provider you want to connect to your store."
 msgstr ""
 "Scegli il fornitore di generazione SEO a cui vuoi collegare il tuo negozio."
 
+#: templates/admin/seo_generator/wizard/step1_select.html:83
 msgid "No SEO provider components are currently installed."
 msgstr "Non sono attualmente installati componenti di fornitori SEO."
 
+#: templates/admin/seo_generator/wizard/step1_select.html:84
 msgid "Please browse and install SEO provider components from the marketplace."
 msgstr ""
 "Per favore, esplora e installa componenti di fornitori SEO dal mercato."
 
+#: templates/admin/seo_generator/wizard/step1_select.html:100
+#: templates/admin/seo_generator/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "Avanti"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:11
 #, python-format
 msgid ""
 "\n"
@@ -648,9 +842,11 @@ msgstr ""
 "configurazione per %(provider)s.\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:22
 msgid "Setup Instructions Not Available"
 msgstr "Le istruzioni per l'installazione non sono disponibili"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:24
 #, python-format
 msgid ""
 "\n"
@@ -666,15 +862,21 @@ msgstr ""
 "l'assistenza o di controllare se è disponibile una versione aggiornata.\n"
 "                    "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:43
+#: templates/admin/seo_generator/wizard/step3_credentials.html:120
+#: templates/admin/seo_generator/wizard/step4_test.html:51
 msgid "Back"
 msgstr "Indietro"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:46
 msgid "Continue to Credentials"
 msgstr "Prosegui con le credenziali"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "Inserisci le credenziali API"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -687,24 +889,31 @@ msgstr ""
 "crittografate e archiviate in modo sicuro.\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "Non hai ancora un account?"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "Avrai bisogno di un account per ottenere le credenziali API."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "Iscriviti qui"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "Credenziali API"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "Seleziona..."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "Non sono configurati campi credenziali per questo fornitore."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
@@ -712,6 +921,7 @@ msgstr ""
 "Le tue credenziali saranno crittografate utilizzando l'encryption AES-256 "
 "prima di essere memorizzate nel database."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -724,174 +934,232 @@ msgstr ""
 "credenziali siano corrette.\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step4_test.html:21
+#: templates/admin/seo_generator/wizard/step4_test.html:63
 msgid "Testing connection..."
 msgstr "Test della connessione in corso..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:22
+#: templates/admin/seo_generator/wizard/step4_test.html:64
 msgid "Please wait while we verify your credentials."
 msgstr "Per favore, attendi mentre verifichiamo le tue credenziali."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "Clicca per testare la connessione con le credenziali inserite."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:42
+#: templates/admin/seo_generator/wizard/step4_test.html:65
 msgid "Connection Successful!"
 msgstr "Connessione riuscita!"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:54
+#: templates/admin/seo_generator/wizard/step4_test.html:73
 msgid "Save & Finish"
 msgstr "Salva e finisci"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:66
 msgid "Your credentials were verified successfully."
 msgstr "Le tue credenziali sono state verificate con successo."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:67
 msgid "Connection Failed"
 msgstr "Connessione fallita"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:68
 msgid "Could not connect to the provider API."
 msgstr "Non è stato possibile connettersi all'API del fornitore."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:69
 msgid "Error"
 msgstr "Errore"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:70 views/wizard.py:481
 msgid "An unexpected error occurred."
 msgstr "Si è verificato un errore imprevisto."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:71
 msgid "Saving..."
 msgstr "Salvataggio in corso..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:72
 msgid "Failed to save provider account."
 msgstr "Impossibile salvare l'account del fornitore."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:74
 msgid "An error occurred while saving."
 msgstr "Si è verificato un errore durante il salvataggio."
 
+#: views/dashboard.py:98
 msgid "Failed to calculate coverage."
 msgstr "Impossibile calcolare la copertura."
 
+#: views/dashboard.py:113
 msgid "Failed to refresh coverage."
 msgstr "Impossibile aggiornare la copertura."
 
+#: views/dashboard.py:133
 msgid "Failed to get missing items."
 msgstr "Impossibile ottenere gli elementi mancanti."
 
+#: views/dashboard.py:142
 msgid "Invalid content type."
 msgstr "Tipo di contenuto non valido."
 
+#: views/dashboard.py:208
 msgid "Failed to load items."
 msgstr "Impossibile caricare gli elementi."
 
+#: views/provider_browse.py:158
 msgid "Provider is already installed. Configure it now."
 msgstr "Il fornitore è già installato. Configuralo ora."
 
+#: views/provider_browse.py:184 views/provider_browse.py:311
 msgid "Provider not found on update server."
 msgstr "Fornitore non trovato sul server di aggiornamento."
 
+#: views/provider_browse.py:193
 msgid "Could not determine provider version."
 msgstr "Non è stato possibile determinare la versione del fornitore."
 
+#: views/provider_browse.py:212
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Impossibile scaricare il fornitore: %(error)s"
 
+#: views/provider_browse.py:224
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Impossibile installare il fornitore: %(error)s"
 
+#: views/provider_browse.py:253
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "Fornitore \"%(name)s\" installato con successo! Configuralo ora."
 
+#: views/provider_browse.py:262
 msgid "An unexpected error occurred during installation."
 msgstr "Si è verificato un errore inaspettato durante l'installazione."
 
+#: views/provider_browse.py:283
 msgid "Provider not installed."
 msgstr "Fornitore non installato."
 
+#: views/provider_browse.py:298
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Impossibile connettersi al server degli aggiornamenti: %(error)s"
 
+#: views/provider_browse.py:319
 msgid "Could not determine latest version."
 msgstr "Non è stato possibile determinare l'ultima versione."
 
+#: views/provider_browse.py:326
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "Il fornitore \"%(name)s\" è già aggiornato (v%(version)s)."
 
+#: views/provider_browse.py:339
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Impossibile scaricare l'aggiornamento: %(error)s"
 
+#: views/provider_browse.py:350
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Impossibile installare l'aggiornamento: %(error)s"
 
+#: views/provider_browse.py:381
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "Fornitore \"%(name)s\" aggiornato con successo a v%(version)s!"
 
+#: views/provider_browse.py:390
 msgid "An unexpected error occurred during the update."
 msgstr "Si è verificato un errore inaspettato durante l'aggiornamento."
 
+#: views/wizard.py:141
 msgid "Connect SEO Provider - Select Provider"
 msgstr "Connetti Fornitore SEO - Seleziona Fornitore"
 
+#: views/wizard.py:154
 msgid "Please select a provider."
 msgstr "Seleziona un fornitore."
 
+#: views/wizard.py:162
 msgid "Invalid provider selected."
 msgstr "Fornitore selezionato non valido."
 
+#: views/wizard.py:189 views/wizard.py:264
 msgid "Please select a provider first."
 msgstr "Seleziona prima un fornitore."
 
+#: views/wizard.py:219
 #, python-format
 msgid "Setup instructions not found for %(provider)s."
 msgstr "Istruzioni di configurazione non trovate per %(provider)s."
 
+#: views/wizard.py:224 views/wizard.py:285
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Errore nel caricamento del fornitore: %(error)s"
 
+#: views/wizard.py:233
 msgid "Connect SEO Provider - Setup Instructions"
 msgstr "Connetti Fornitore SEO - Istruzioni per l'installazione"
 
+#: views/wizard.py:278
 msgid "Could not load provider configuration."
 msgstr "Non è stato possibile caricare la configurazione del fornitore."
 
+#: views/wizard.py:289
 msgid "Connect SEO Provider - Enter Credentials"
 msgstr "Connetti Fornitore SEO - Inserisci Credenziali"
 
+#: views/wizard.py:318
 msgid "Error loading provider configuration."
 msgstr "Errore nel caricamento della configurazione del fornitore."
 
+#: views/wizard.py:349
 msgid "Please complete previous steps first."
 msgstr "Completa prima i passaggi precedenti."
 
+#: views/wizard.py:357
 msgid "Provider not found."
 msgstr "Fornitore non trovato."
 
+#: views/wizard.py:361
 msgid "Connect SEO Provider - Test Connection"
 msgstr "Connetti Fornitore SEO - Test Connessione"
 
+#: views/wizard.py:380
 msgid "Missing data."
 msgstr "Dati mancanti."
 
+#: views/wizard.py:389
 msgid "Provider implementation not found."
 msgstr "Implementazione del fornitore non trovata."
 
+#: views/wizard.py:408
 msgid "An error occurred while testing the connection."
 msgstr "Si è verificato un errore durante il test della connessione."
 
+#: views/wizard.py:420
 msgid "Site not configured."
 msgstr "Sito non configurato."
 
+#: views/wizard.py:431
 msgid "Connection test failed"
 msgstr "Test di connessione fallito"
 
+#: views/wizard.py:457
 msgid "Provider connected successfully!"
 msgstr "Fornitore connesso con successo!"
 
+#: views/wizard.py:470
 msgid "An error occurred while saving the provider."
 msgstr "Si è verificato un errore durante il salvataggio del fornitore."
 
+#: views/wizard.py:476
 msgid "Invalid action."
 msgstr "Azione non valida."

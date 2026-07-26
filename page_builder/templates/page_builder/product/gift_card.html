@@ -1,0 +1,146 @@
+{% extends "page_builder/product/_base.html" %}
+{% load i18n static merchant_trans %}
+{% comment %}
+Gift Card Product Template — the purchase form web gift card sales were
+missing. The API has required recipient details since P2.3
+(GiftCardDataSerializer), but no storefront surface collected them, so a
+customer could not actually buy a card through the UI. This template IS
+that surface, and its rules mirror the serializer's exactly: whatever this
+form lets through, the server accepts, and vice versa.
+{% endcomment %}
+
+{% block product_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-gift-card.css' %}">
+{% endblock %}
+
+{% block product_layout %}
+<section class="product-section product-section--gift-card">
+    <div class="container">
+        <div class="product-layout product-layout--gift-card">
+            <div class="product-gift-card__preview">
+                {% include "page_builder/product/_gallery.html" %}
+            </div>
+
+            <div class="product-gift-card__info">
+                <div class="product-info" data-product-name="{{ product.name }}">
+                    {% if template_options.show_brand and product.brand %}
+                    <p class="product-info__brand">{{ product.brand.name }}</p>
+                    {% endif %}
+
+                    <h1 class="product-info__title">{{ product.name }}</h1>
+
+                    {% if product.short_description %}
+                    <div class="product-info__description">{{ product.short_description|safe }}</div>
+                    {% endif %}
+
+                    <div class="gift-card-badge">
+                        <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+                        <span>{% mtrans 'Delivered by email once payment clears' %}</span>
+                    </div>
+
+                    <form class="gift-card-form" id="gift-card-form">
+                        {% comment %}
+                        Amount — rendered per denomination_type; JS enforces
+                        the same bounds the serializer does.
+                        {% endcomment %}
+                        <div class="gift-card-form__group" id="gc-amount-group">
+                            <label class="gift-card-form__label">{% mtrans 'Amount' %}</label>
+
+                            {% if product.gift_card_denomination_type != 'custom' and product.gift_card_denominations %}
+                            <div class="gift-card-form__denominations" id="gc-denominations">
+                                {% for denom in product.gift_card_denominations %}
+                                <button type="button" class="gift-card-denom" data-amount="{{ denom }}">
+                                    {{ denom }}
+                                </button>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            {% if product.gift_card_denomination_type != 'fixed' %}
+                            <div class="gift-card-form__custom">
+                                <label class="gift-card-form__sublabel" for="gc-custom-amount">
+                                    {% mtrans 'Or enter an amount' %}
+                                </label>
+                                <input type="number" id="gc-custom-amount" class="gift-card-form__input"
+                                       step="0.01"
+                                       {% if product.gift_card_min_amount %}min="{{ product.gift_card_min_amount }}"{% endif %}
+                                       {% if product.gift_card_max_amount %}max="{{ product.gift_card_max_amount }}"{% endif %}>
+                                {% if product.gift_card_min_amount or product.gift_card_max_amount %}
+                                <p class="gift-card-form__hint">
+                                    {% if product.gift_card_min_amount %}{% mtrans 'Min' %} {{ product.gift_card_min_amount }}{% endif %}
+                                    {% if product.gift_card_max_amount %} · {% mtrans 'Max' %} {{ product.gift_card_max_amount }}{% endif %}
+                                </p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="gift-card-form__group">
+                            <label class="gift-card-form__label" for="gc-recipient-email">
+                                {% mtrans 'Send to (their email)' %} <span class="required">*</span>
+                            </label>
+                            <input type="email" id="gc-recipient-email" class="gift-card-form__input"
+                                   required autocomplete="off">
+                        </div>
+
+                        <div class="gift-card-form__row">
+                            <div class="gift-card-form__group">
+                                <label class="gift-card-form__label" for="gc-recipient-name">{% mtrans 'Their name' %}</label>
+                                <input type="text" id="gc-recipient-name" class="gift-card-form__input" maxlength="255">
+                            </div>
+                            <div class="gift-card-form__group">
+                                <label class="gift-card-form__label" for="gc-sender-name">{% mtrans 'From' %}</label>
+                                <input type="text" id="gc-sender-name" class="gift-card-form__input" maxlength="255">
+                            </div>
+                        </div>
+
+                        <div class="gift-card-form__group">
+                            <label class="gift-card-form__label" for="gc-message">{% mtrans 'Gift message' %}</label>
+                            <textarea id="gc-message" class="gift-card-form__input" rows="3"
+                                      maxlength="500"></textarea>
+                            <p class="gift-card-form__hint"><span id="gc-message-count">0</span>/500</p>
+                        </div>
+
+                        <div class="gift-card-form__group">
+                            <label class="gift-card-form__label" for="gc-send-at">{% mtrans 'Delivery date (optional)' %}</label>
+                            <input type="datetime-local" id="gc-send-at" class="gift-card-form__input">
+                            <p class="gift-card-form__hint">{% mtrans 'Leave empty to send as soon as payment clears. Up to a year ahead.' %}</p>
+                        </div>
+
+                        <div class="gift-card-form__error" id="gc-form-error" role="alert" hidden></div>
+
+                        <button type="submit" class="btn btn--primary gift-card-form__submit" id="gc-add-to-cart">
+                            <i class="fas fa-gift" aria-hidden="true"></i>
+                            {% mtrans 'Add gift card to cart' %}
+                        </button>
+                    </form>
+
+                    {% if product.gift_card_expires_days %}
+                    <p class="gift-card-form__hint gift-card-form__expiry">
+                        {% mtrans 'Card is valid for' %} {{ product.gift_card_expires_days }} {% mtrans 'days after delivery.' %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if product.description %}
+        <div class="product-description">{{ product.description|safe }}</div>
+        {% endif %}
+    </div>
+</section>
+
+<script id="gift-card-config" type="application/json">
+{
+    "productId": {{ product.id }},
+    "denominationType": "{{ product.gift_card_denomination_type|default:'fixed'|escapejs }}",
+    "denominations": {{ product.gift_card_denominations|default:"[]"|safe }},
+    "minAmount": {{ product.gift_card_min_amount|default:"null" }},
+    "maxAmount": {{ product.gift_card_max_amount|default:"null" }}
+}
+</script>
+{% endblock %}
+
+{% block product_scripts %}
+<script src="{% static 'page_builder/js/product-gift-card.js' %}" defer></script>
+{% endblock %}

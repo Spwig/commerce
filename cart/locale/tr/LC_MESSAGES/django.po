@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish <LL@li.org>\n"
@@ -18,78 +18,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:328
 msgid "Action and method IDs required"
 msgstr "Eylem ve yöntem kimlikleri gereklidir"
 
+#: admin.py:336
 msgid "{} method(s) enabled"
 msgstr "\"{} yöntemi(leri) etkin\""
 
+#: admin.py:340
 msgid "{} method(s) disabled"
 msgstr "\"{} yöntemi(leri) devre dışı\""
 
+#: admin.py:344
 msgid "{} method(s) deleted"
 msgstr "\"{} yöntemi(leri) silindi\""
 
+#: admin.py:347
 msgid "Unknown action"
 msgstr "Bilinmeyen eylem"
 
+#: admin.py:353 mini_cart_api.py:469
 msgid "Invalid request data"
 msgstr "Geçersiz istek verisi"
 
+#: admin.py:358
 msgid "An unexpected error occurred. Please try again."
 msgstr "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin."
 
+#: admin.py:376 templates/admin/cart/method_wizard/step1_basics.html:21
+#: templates/admin/cart/shippingmethod/change_form.html:118
+#: templates/admin/cart/taxrate/change_form.html:111
 msgid "Basic Information"
 msgstr "Temel Bilgiler"
 
+#: admin.py:383 templates/admin/cart/taxrate/change_form.html:141
 msgid "Geographic Scope"
 msgstr "Coğrafi Kapsam"
 
+#: admin.py:387 templates/admin/cart/taxrate/change_form.html:163
 msgid "Application Rules"
 msgstr "Uygulama Kuralları"
 
+#: admin.py:391 templates/admin/cart/taxrate/change_form.html:193
 msgid "Product Exemptions"
 msgstr "Ürün İstisnaları"
 
+#: admin.py:397 templates/admin/cart/shippingmethod/change_form.html:107
+#: templates/admin/cart/shippingmethod/change_form.html:321
+#: templates/admin/cart/taxrate/change_form.html:100
+#: templates/admin/cart/taxrate/change_form.html:216
 msgid "Timestamps"
 msgstr "Zaman Damgaları"
 
+#: admin.py:409
 msgid "Rate %"
 msgstr "Oran %"
 
+#: apps.py:8 models.py:735 models.py:1599
 msgid "Cart"
 msgstr "Sepet"
 
+#: forms.py:34
 msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
 msgstr "Yüzde olarak girin (örneğin, 8.25 için 8.25)"
 
+#: forms.py:35
 msgid "Rate (%)"
 msgstr "Oran (%)"
 
+#: method_wizard.py:106
 msgid "Please complete Step 1 first"
 msgstr "Lütfen önce Adım 1'i tamamlayın"
 
+#: method_wizard.py:146 method_wizard.py:193 method_wizard.py:266
 msgid "Please complete the wizard steps"
 msgstr "Lütfen sihirbaz adımlarını tamamlayın"
 
+#: method_wizard.py:354
 #, python-format
 msgid "Shipping method \"%(name)s\" created successfully!"
 msgstr "İletim yöntemi \"%(name)s\" başarıyla oluşturuldu!"
 
+#: method_wizard.py:360
 msgid "Please configure rate tables for this method."
 msgstr "Lütfen bu yöntemin ücret tablolarını yapılandırın."
 
+#: method_wizard.py:368
 #, python-format
 msgid "Failed to create shipping method: %(error)s"
 msgstr "İletim yöntemi oluşturulamadı: %(error)s"
 
+#: mini_cart_api.py:281
 msgid "Get mini-cart data"
 msgstr "Mini sepet verilerini al"
 
+#: mini_cart_api.py:282
 msgid ""
 "\n"
-"    Retrieve the current cart contents formatted for the mini-cart "
-"component.\n"
+"    Retrieve the current cart contents formatted for the mini-cart component.\n"
 "\n"
 "    Works for both authenticated users (cart linked to user account) and\n"
 "    anonymous users (cart linked to session). Cart data includes all items\n"
@@ -104,22 +131,18 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Mevcut sepet içeriğini mini-sepet bileşeni için biçimlendir. Hem kimli "
-"kullanıcılar (sepet kullanıcı hesabına bağlı) hem de anonim kullanıcılar "
-"(sepet oturuma bağlı) için çalışır. Sepet verisi, ürün detayları, miktarlar, "
-"fiyatlar ve resimlerle birlikte tüm öğeleri içerir. **Kullanım Alanları:** - "
-"Sayfa üzerindeki mini-sepetin ilk yükleme işlemi - Dışarıdan "
-"değişikliklerden sonra sepeti yenileme - Ödeme öncesi sepet durumunu kontrol "
-"etme **Kimlik Doğrulama:** Gerek yok (anonim kullanıcılar için oturum "
-"kullanılır)\n"
+"    Mevcut sepet içeriğini mini-sepet bileşeni için biçimlendir. Hem kimli kullanıcılar (sepet kullanıcı hesabına bağlı) hem de anonim kullanıcılar (sepet oturuma bağlı) için çalışır. Sepet verisi, ürün detayları, miktarlar, fiyatlar ve resimlerle birlikte tüm öğeleri içerir. **Kullanım Alanları:** - Sayfa üzerindeki mini-sepetin ilk yükleme işlemi - Dışarıdan değişikliklerden sonra sepeti yenileme - Ödeme öncesi sepet durumunu kontrol etme **Kimlik Doğrulama:** Gerek yok (anonim kullanıcılar için oturum kullanılır)\n"
 "    "
 
+#: mini_cart_api.py:300
 msgid "Cart data retrieved successfully"
 msgstr "Sepet verileri başarıyla alındı"
 
+#: mini_cart_api.py:352
 msgid "Update cart item quantity"
 msgstr "Sepet öğesi miktarını güncelle"
 
+#: mini_cart_api.py:353
 msgid ""
 "\n"
 "    Update the quantity of an item in the cart.\n"
@@ -132,8 +155,7 @@ msgid ""
 "    - Direct quantity input changes\n"
 "    - Removing items (quantity=0)\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "\n"
 "    **Validation:**\n"
 "    - Item must exist in user's cart\n"
@@ -142,28 +164,26 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Sepetteki bir öğenin miktarını güncelle. Öğeyi tamamen kaldırmak için "
-"miktarı 0 olarak ayarla. Güncellenmeden önce stok mevcudunu doğrular ve "
-"tamamen güncellenmiş sepeti döndürür. **Kullanım Alanları:** - Mini-"
-"sepetteki miktar artı/azalt butonları - Doğrudan miktar girişi "
-"değişiklikleri - Öğeleri kaldırma (miktar=0) **Kimlik Doğrulama:** Gerek yok "
-"(öğenin kullanıcı sepetine ait olup olmadığını doğrular) **Doğrulama:** - "
-"Öğe kullanıcı sepetinde olmalıdır - Miktar negatif olmayan bir tamsayı "
-"olmalıdır - Stok takibi yapılan ürünler için stok mevcudu kontrol edilir\n"
+"    Sepetteki bir öğenin miktarını güncelle. Öğeyi tamamen kaldırmak için miktarı 0 olarak ayarla. Güncellenmeden önce stok mevcudunu doğrular ve tamamen güncellenmiş sepeti döndürür. **Kullanım Alanları:** - Mini-sepetteki miktar artı/azalt butonları - Doğrudan miktar girişi değişiklikleri - Öğeleri kaldırma (miktar=0) **Kimlik Doğrulama:** Gerek yok (öğenin kullanıcı sepetine ait olup olmadığını doğrular) **Doğrulama:** - Öğe kullanıcı sepetinde olmalıdır - Miktar negatif olmayan bir tamsayı olmalıdır - Stok takibi yapılan ürünler için stok mevcudu kontrol edilir\n"
 "    "
 
+#: mini_cart_api.py:375
 msgid "Cart updated successfully"
 msgstr "Sepet başarıyla güncellendi"
 
+#: mini_cart_api.py:379
 msgid "Invalid request data or insufficient stock"
 msgstr "Geçersiz istek verisi veya yetersiz stok"
 
+#: mini_cart_api.py:392 mini_cart_api.py:472
 msgid "Cart item not found"
 msgstr "Sepet öğesi bulunamadı"
 
+#: mini_cart_api.py:450
 msgid "Remove item from cart"
 msgstr "Öğeyi sepetten kaldır"
 
+#: mini_cart_api.py:451
 msgid ""
 "\n"
 "    Remove an item from the cart entirely.\n"
@@ -174,38 +194,34 @@ msgid ""
 "    - Delete button on cart items\n"
 "    - Clearing specific items\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "    "
 msgstr ""
 "\n"
-"    Sepetten bir öğeyi tamamen kaldırır. Kaldırıldıktan sonra güncellenmiş "
-"sepet verilerini döndürür. **Kullanım Durumları:** - Sepet öğelerindeki "
-"silme butonu - Belirli öğelerin temizlenmesi **Kimlik Doğrulama:** Gerek yok "
-"(öğenin kullanıcı sepetine ait olduğundan emin olur)\n"
+"    Sepetten bir öğeyi tamamen kaldırır. Kaldırıldıktan sonra güncellenmiş sepet verilerini döndürür. **Kullanım Durumları:** - Sepet öğelerindeki silme butonu - Belirli öğelerin temizlenmesi **Kimlik Doğrulama:** Gerek yok (öğenin kullanıcı sepetine ait olduğundan emin olur)\n"
 "    "
 
+#: mini_cart_api.py:466
 msgid "Item removed successfully"
 msgstr "Öğe başarıyla kaldırıldı"
 
+#: mini_cart_api.py:515
 msgid "Get empty cart recommendations"
 msgstr "Boş sepet önerilerini al"
 
+#: mini_cart_api.py:516
 msgid ""
 "\n"
 "    Get intelligent product recommendations for the empty cart state.\n"
 "\n"
-"    Returns personalized suggestions organized into labeled sections based "
-"on:\n"
-"    - **Recently viewed**: Products the user has browsed (session-based for "
-"anonymous users)\n"
+"    Returns personalized suggestions organized into labeled sections based on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for anonymous users)\n"
 "    - **Related**: Products in the same categories as recently viewed items\n"
 "    - **On sale**: Currently discounted products\n"
 "    - **Trending**: Popular products by views/sales\n"
 "    - **Featured**: Editor-picked products as fallback\n"
 "\n"
-"    All returned products are verified to be in stock and available for "
-"purchase.\n"
+"    All returned products are verified to be in stock and available for purchase.\n"
 "\n"
 "    **Use Cases:**\n"
 "    - Empty cart state in mini-cart\n"
@@ -220,34 +236,30 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Boş sepet durumu için akıllı ürün önerileri alın. Kullanıcının taradığı "
-"ürünler (anonim kullanıcılar için oturum bazlı), sonunda taranan ürünlerin "
-"aynı kategorilerindeki ürünler, şu anda indirimli ürünler, görüşler/"
-"gelişmeler göre popüler ürünler, editör tarafından seçilen ürünler gibi "
-"etiketlenmiş bölümlere göre kişiselleştirilmiş öneriler döndürür. Döndürülen "
-"tüm ürünlerin stokta ve satın alınabilir olduğundan emin olunur. **Kullanım "
-"Alanları:** - Mini sepetteki boş sepet durumu - \"Muhtemelen beğenirsin\" "
-"bölümleri - Çapraz satım fırsatları **Kimlik Doğrulama:** Gerek yok (anonim "
-"kullanıcılar için oturum kullanılır) **Kişiselleştirme:** - Anonim "
-"kullanıcılar: Oturum bazlı olarak sonunda taranan ürünler temel alınır - "
-"Kimli kullanıcılar: Hesap tarihçesi ve tercihleri temel alınır\n"
+"    Boş sepet durumu için akıllı ürün önerileri alın. Kullanıcının taradığı ürünler (anonim kullanıcılar için oturum bazlı), sonunda taranan ürünlerin aynı kategorilerindeki ürünler, şu anda indirimli ürünler, görüşler/gelişmeler göre popüler ürünler, editör tarafından seçilen ürünler gibi etiketlenmiş bölümlere göre kişiselleştirilmiş öneriler döndürür. Döndürülen tüm ürünlerin stokta ve satın alınabilir olduğundan emin olunur. **Kullanım Alanları:** - Mini sepetteki boş sepet durumu - \"Muhtemelen beğenirsin\" bölümleri - Çapraz satım fırsatları **Kimlik Doğrulama:** Gerek yok (anonim kullanıcılar için oturum kullanılır) **Kişiselleştirme:** - Anonim kullanıcılar: Oturum bazlı olarak sonunda taranan ürünler temel alınır - Kimli kullanıcılar: Hesap tarihçesi ve tercihleri temel alınır\n"
 "    "
 
+#: mini_cart_api.py:545
 msgid "Maximum number of products to return (default: 6, max: 12)"
 msgstr "Dönüşen ürün sayısı (varsayılan: 6, maks: 12)"
 
+#: mini_cart_api.py:556
 msgid "Recommendations retrieved successfully"
 msgstr "Tavsiyeler başarıyla alındı"
 
+#: models.py:18 models.py:964 models.py:1068
 msgid "User"
 msgstr "Kullanıcı"
 
+#: models.py:21 models.py:1071
 msgid "Session Key"
 msgstr "Oturum Anahtarı"
 
+#: models.py:31
 msgid "Cart Currency"
 msgstr "Sepet Para Birimi"
 
+#: models.py:33
 msgid ""
 "Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
 "default currency."
@@ -255,204 +267,214 @@ msgstr ""
 "Bu sepettaki tüm öğeler için para birimi kodu (örneğin EUR, NZD). Boş "
 "bırakılırsa mağaza varsayılan para birimi anlamına gelir."
 
+#: models.py:40
 msgid "Default Layout"
 msgstr "Varsayılan Düzen"
 
+#: models.py:41 models.py:971
 msgid "Compact View"
 msgstr "Kompakt Görünüm"
 
+#: models.py:42 models.py:972
 msgid "Detailed View"
 msgstr "Detaylı Görünüm"
 
+#: models.py:43
 msgid "Minimal View"
 msgstr "Minimum Görünüm"
 
+#: models.py:44
 msgid "Sidebar Cart"
 msgstr "Yan Çubuk Sepeti"
 
+#: models.py:45
 msgid "Overlay Cart"
 msgstr "Örtülü Sepet"
 
+#: models.py:52
 msgid "How the cart is displayed"
 msgstr "Sepetin nasıl görüntülendiği"
 
+#: models.py:53
 msgid "Cart Layout"
 msgstr "Sepet Düzeni"
 
+#: models.py:57
 msgid "Show Product Images"
 msgstr "Ürün Resimlerini Göster"
 
+#: models.py:59
 msgid "Show Product Variants"
 msgstr "Ürün Değişkenlerini Göster"
 
+#: models.py:61
 msgid "Show Remove Button"
 msgstr "Kaldır Butonunu Göster"
 
+#: models.py:63
 msgid "Show Quantity Controls"
 msgstr "Miktar Kontrollerini Göster"
 
+#: models.py:67
 msgid "Show Item Totals"
 msgstr "Öğe Toplamlarını Göster"
 
+#: models.py:68
 msgid "Show Cart Summary"
 msgstr "Sepet Özeti Göster"
 
+#: models.py:69
 msgid "Show Savings"
 msgstr "Kazançları Göster"
 
+#: models.py:75
 msgid "Single Page Checkout"
 msgstr "Tek Sayfa Ödeme"
 
+#: models.py:76
 msgid "Multi-Step Checkout"
 msgstr "Çok Adımlı Ödeme"
 
+#: models.py:77
 msgid "Accordion Style"
 msgstr "Açılır Menü Stili"
 
+#: models.py:78
 msgid "Wizard Style"
 msgstr "Sihirbaz Stili"
 
+#: models.py:81
 msgid "Checkout Flow"
 msgstr "Ödeme Akışı"
 
+#: models.py:91 models.py:1609 models.py:1739
 msgid "Shipping Address"
 msgstr "Kargo Adresi"
 
+#: models.py:99 models.py:1214 models.py:1740
+#: templates/admin/cart/cart/change_list.html:93
 msgid "Shipping Method"
 msgstr "Kargo Yöntemi"
 
+#: models.py:107
 msgid "Calculated shipping cost"
 msgstr "Hesaplanan Kargo Ücreti"
 
+#: models.py:108 models.py:1660
 msgid "Shipping Cost"
 msgstr "Kargo Ücreti"
 
+#: models.py:112 models.py:1664
 msgid "Estimated Delivery Date"
 msgstr "Tahmini Teslim Tarihi"
 
+#: models.py:115
 msgid "Shipping Notes"
 msgstr "Kargo Notları"
 
+#: models.py:119 models.py:846
 msgid "None"
 msgstr "Hiçbiri"
 
+#: models.py:120 models.py:847
 msgid "Percentage"
 msgstr "Yüzde"
 
+#: models.py:121 models.py:848
 msgid "Fixed Amount"
 msgstr "Sabit Tutar"
 
+#: models.py:124
 msgid "POS manual discount type"
 msgstr "POS el ile indirim türü"
 
+#: models.py:127
 msgid "POS manual discount value"
 msgstr "POS el ile indirim değeri"
 
+#: models.py:131 models.py:858
 msgid "Discount value (percentage or fixed amount)"
 msgstr "İndirim değeri (yüzde veya sabit miktar)"
 
+#: models.py:139
 msgid "POS discount applied by"
 msgstr "POS indirimi uygulayan"
 
+#: models.py:147
 msgid "POS discount approved by"
 msgstr "POS indirimi onaylayan"
 
+#: models.py:148 models.py:875
 msgid "Manager who approved the discount if it exceeded staff limit"
 msgstr "İndirim, personel limitini aşıyorsa onaylayan yönetici"
 
+#: models.py:151
 msgid "POS discount reason"
 msgstr "POS indirimi nedeni"
 
+#: models.py:154 models.py:879 models.py:992 models.py:1052 models.py:1210
+#: models.py:1447 models.py:1526 models.py:1756
 msgid "Created At"
 msgstr "Oluşturulma Tarihi"
 
+#: models.py:155 models.py:880 models.py:993 models.py:1211 models.py:1448
+#: models.py:1757
 msgid "Updated At"
 msgstr "Güncelleme Tarihi"
 
+#: models.py:158
 msgid "Shopping Cart"
 msgstr "Alışveriş Sepeti"
 
+#: models.py:159 templates/admin/cart/cart/change_list.html:4
+#: templates/admin/cart/cart/change_list.html:20
+#: templates/admin/cart/cart/change_list.html:175
 msgid "Shopping Carts"
 msgstr "Alışveriş Sepetleri"
 
+#: models.py:186
 #, python-brace-format
 msgid "Cart for {username}"
 msgstr "{username} için sepet"
 
+#: models.py:187
 #, python-brace-format
 msgid "Cart (Session: {session})"
 msgstr "Sepet (Oturum: {session})"
 
+#: models.py:455
 msgid "No shipping required"
 msgstr "Kargo gerekmiyor"
 
+#: models.py:465
 msgid "Shipping address required"
 msgstr "Kargo adresi gerekli"
 
+#: models.py:505
 msgid "Available shipping methods retrieved"
 msgstr "Kullanılabilir kargo yöntemleri alındı"
 
+#: models.py:526
 msgid "Shipping calculated successfully"
 msgstr "Kargo başarıyla hesaplandı"
 
-msgid "Invalid gift card code"
-msgstr "Geçersiz hediye kartı kodu"
-
-msgid "Gift card already applied"
-msgstr "Hediye kartı zaten uygulandı"
-
-msgid "Gift card is not active"
-msgstr "Hediye kartı aktif değil"
-
-msgid "Gift card has expired"
-msgstr "Hediye kartı süresi doldu"
-
-msgid "Gift card has been fully redeemed"
-msgstr "Hediyelik kart tamamen kullanıldı"
-
-msgid "Gift card cannot be used"
-msgstr "Hediye kartı kullanılamaz"
-
-#, python-brace-format
-msgid ""
-"Currency mismatch. Gift card is in {card_currency}, cart is in "
-"{cart_currency}"
-msgstr ""
-"Para birimi uyuşmazlığı. Hediye kartı {card_currency} içinde, sepet "
-"{cart_currency} içinde"
-
-#, python-brace-format
-msgid ""
-"This gift card is in {card_currency}. Please switch your currency to "
-"{card_currency} to use it."
-msgstr ""
-"Bu hediye kartı {card_currency} içinde. Kullanmak için para biriminizi "
-"{card_currency} olarak değiştirin."
-
-msgid "Gift cards cannot be used to purchase other gift cards"
-msgstr "Hediyelik kartlar başka hediyelik kartlarla satın alınamaz"
-
-msgid "Cart total is already covered"
-msgstr "Sepet toplamı zaten ödenmiş"
-
-msgid "Unable to process gift card currency conversion"
-msgstr "Hediye kartı para birimi dönüşümü işlenemiyor"
-
-msgid "Gift card applied successfully"
-msgstr "Hediye kartı başarıyla uygulandı"
-
+#: models.py:740 models.py:1023 models.py:1074
 msgid "Product"
 msgstr "Ürün"
 
+#: models.py:747 models.py:1030
 msgid "Variant"
 msgstr "Değişken"
 
+#: models.py:751
 msgid "Quantity"
 msgstr "Miktar"
 
+#: models.py:753
 msgid "Unit Price"
 msgstr "Birim Fiyat"
 
+#: models.py:761
 msgid ""
 "Product customizations with calculated prices: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
@@ -460,42 +482,54 @@ msgstr ""
 "Hesaplanan fiyatlarla ürün özelleştirmeleri: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
 
+#: models.py:763
 msgid "Customizations"
 msgstr "Özel Ayarlar"
 
+#: models.py:769
 msgid "Is Subscription"
 msgstr "Abonelik"
 
+#: models.py:770
 msgid "Whether this item will be purchased as a subscription"
 msgstr "Bu ürün abonelik olarak satın alınacak mı"
 
+#: models.py:777
 msgid "Subscription Plan"
 msgstr "Abonelik Planı"
 
+#: models.py:778
 msgid "Selected subscription plan for recurring billing"
 msgstr "Tekrar eden faturalandırma için seçilen abonelik planı"
 
+#: models.py:785
 msgid "Pricing Tier"
 msgstr "Fiyatlandırma Katmanı"
 
+#: models.py:786
 msgid "Selected pricing tier (billing frequency) for subscription"
 msgstr "Abonelik için seçilen fiyatlandırma katmanı (fatura frekansı)"
 
+#: models.py:793
 msgid "Payment Token"
 msgstr "Ödeme Tokenı"
 
+#: models.py:794
 msgid ""
 "Saved payment method for subscription billing (required for subscriptions)"
 msgstr ""
 "Abonelik faturalandırması için kaydedilen ödeme yöntemi (abonelikler için "
 "gerekli)"
 
+#: models.py:804
 msgid "Parent Bundle"
 msgstr "Ana Paket"
 
+#: models.py:805
 msgid "If this is a bundle component, reference to bundle CartItem"
 msgstr "Bu bir paket bileşeniyseniz, paket CartItem'e referans verin"
 
+#: models.py:813
 msgid ""
 "Booking details: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
@@ -503,189 +537,222 @@ msgstr ""
 "Rezervasyon detayları: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
 
+#: models.py:815
 msgid "Booking Data"
 msgstr "Rezervasyon Verisi"
 
+#: models.py:833
+msgid ""
+"Gift card purchase details: {recipient_email, recipient_name, sender_name, "
+"message, scheduled_send_at, amount}"
+msgstr ""
+"Hediye kartı satın alma detayları: {recipient_email, recipient_name, "
+"sender_name, message, scheduled_send_at, amount}"
+
+#: models.py:836
+#| msgid "Gift Card"
+msgid "Gift Card Data"
+msgstr "Hediye Kartı Verisi"
+
+#: models.py:841
 msgid "Customer notes for this item"
 msgstr "Bu ürün için müşteri notları"
 
+#: models.py:841 models.py:1034 models.py:1573
 msgid "Notes"
 msgstr "Notlar"
 
+#: models.py:851
 msgid "manual discount type"
 msgstr "el ile indirim türü"
 
+#: models.py:854
 msgid "manual discount value"
 msgstr "el ile indirim değeri"
 
+#: models.py:866
 msgid "discount applied by"
 msgstr "indirim uygulayan"
 
+#: models.py:874
 msgid "discount approved by"
 msgstr "indirim onayan"
 
+#: models.py:877
 msgid "discount reason"
 msgstr "indirim nedeni"
 
+#: models.py:883
 msgid "Cart Item"
 msgstr "Sepet Ürünü"
 
+#: models.py:884
 msgid "Cart Items"
 msgstr "Sepet Ürünleri"
 
+#: models.py:965 services/wishlist_service.py:28
 msgid "My Wishlist"
 msgstr "Favori Listem"
 
+#: models.py:965 models.py:1108 models.py:1367 models.py:1506
+#: templates/admin/cart/shippingmethod/change_form.html:276
 msgid "Name"
 msgstr "İsim"
 
+#: models.py:969
 msgid "Grid Layout"
 msgstr "Kafes Düzeni"
 
+#: models.py:970
 msgid "List Layout"
 msgstr "Liste Düzeni"
 
+#: models.py:979
 msgid "How wishlist items are displayed"
 msgstr "Favori listesi ürünleri nasıl görüntüleneceğini belirler"
 
+#: models.py:980
 msgid "Wishlist Layout"
 msgstr "Favori Liste Düzeni"
 
+#: models.py:984
 msgid "Is Public"
 msgstr "Herkese Açık"
 
+#: models.py:985
 msgid "Share Slug"
 msgstr "Paylaş Slug"
 
+#: models.py:988
 msgid "Show Prices"
 msgstr "Fiyatları Göster"
 
+#: models.py:989
 msgid "Show Availability"
 msgstr "Stok Durumunu Göster"
 
+#: models.py:990
 msgid "Show Add to Cart"
 msgstr "Sepete Ekle Butonunu Göster"
 
+#: models.py:996 models.py:1020
 msgid "Wishlist"
 msgstr "Favori Liste"
 
+#: models.py:997
 msgid "Wishlists"
 msgstr "Favori Listeleri"
 
+#: models.py:1038
 msgid "Low"
 msgstr "Düşük"
 
+#: models.py:1039
 msgid "Medium"
 msgstr "Orta"
 
+#: models.py:1040
 msgid "High"
 msgstr "Yüksek"
 
+#: models.py:1043 models.py:1442
+#: templates/admin/cart/shippingmethod/change_form.html:279
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:51
 msgid "Priority"
 msgstr "Öncelik"
 
+#: models.py:1048
 msgid "Notify When Available"
 msgstr "Stokta Olduğunda Bildir"
 
+#: models.py:1050
 msgid "Notify When On Sale"
 msgstr "İndirimde Olduğunda Bildir"
 
+#: models.py:1055
 msgid "Wishlist Item"
 msgstr "Favori Liste Ürünü"
 
+#: models.py:1056
 msgid "Wishlist Items"
 msgstr "Favori Liste Ürünleri"
 
+#: models.py:1077
 msgid "Viewed At"
 msgstr "Görüntülenme Tarihi"
 
+#: models.py:1078
 msgid "View Count"
 msgstr "Görüntülenme Sayısı"
 
+#: models.py:1081
 msgid "Recently Viewed Product"
 msgstr "Son Görüntülenen Ürün"
 
+#: models.py:1082
 msgid "Recently Viewed Products"
 msgstr "Son Görüntülenen Ürünler"
 
+#: models.py:1094
 #, python-brace-format
 msgid "Session: {session}"
 msgstr "Oturum: {session}"
 
+#: models.py:1098
 #, python-brace-format
 msgid "{product} viewed by {user}"
 msgstr "{product} {user} tarafından görüntülendi"
 
+#: models.py:1109 models.py:1507
+#: templates/admin/cart/method_wizard/step1_basics.html:44
 msgid "Description"
 msgstr "Açıklama"
 
+#: models.py:1113 templates/admin/cart/shippingmethod/change_list.html:78
 msgid "Flat Rate"
 msgstr "Düz Oran"
 
-msgid "Free Shipping"
-msgstr "Ücretsiz Kargo"
-
-msgid "Weight Based"
-msgstr "Ağırlık Bazlı"
-
-msgid "Price Based"
-msgstr "Fiyat Bazlı"
-
+#: models.py:1114
 msgid "Real-Time Carrier Rates"
 msgstr "Gerçek Zamanlı Taşıyıcı Oranları"
 
+#: models.py:1115 templates/admin/cart/shippingmethod/change_list.html:84
 msgid "Local Pickup"
 msgstr "Yerel Toplama"
 
+#: models.py:1116 templates/admin/cart/shippingmethod/change_list.html:87
 msgid "Table Rate"
 msgstr "Tablo Oranı"
 
+#: models.py:1119 templates/admin/cart/method_wizard/step1_basics.html:111
 msgid "Method Type"
 msgstr "Yöntem Türü"
 
+#: models.py:1129
 msgid "Fixed shipping cost (for flat_rate type)"
 msgstr "Sabit kargo ücreti (flat_rate türü için)"
 
+#: models.py:1130 templates/admin/cart/method_wizard/step1_basics.html:146
 msgid "Flat Rate Cost"
 msgstr "Düz Oran Maliyeti"
 
-msgid "Minimum cart value to qualify"
-msgstr "Eligibility İçin Minimum Sepet Değeri"
-
-msgid "Minimum Order Value"
-msgstr "Minimum Sipariş Değeri"
-
-msgid "Maximum cart value to qualify"
-msgstr "Eligibility İçin Maksimum Sepet Değeri"
-
-msgid "Maximum Order Value"
-msgstr "Maksimum Sipariş Değeri"
-
-msgid "Minimum cart weight (kg)"
-msgstr "Minimum Sepet Ağırlığı (kg)"
-
-msgid "Minimum Weight"
-msgstr "Minimum Ağırlık"
-
-msgid "Maximum cart weight (kg)"
-msgstr "Maksimum Sepet Ağırlığı (kg)"
-
-msgid "Maximum Weight"
-msgstr "Maksimum Ağırlık"
-
+#: models.py:1138 templates/admin/cart/method_wizard/step3_coverage.html:17
 msgid "Shipping Zones"
 msgstr "Kargo Bölgesi"
 
+#: models.py:1140
 msgid ""
-"Zones where this shipping method is available. If empty, legacy country/"
-"state restrictions apply."
+"Zones where this shipping method is available. If empty, legacy "
+"country/state restrictions apply."
 msgstr ""
 "Bu kargo yönteminin kullanılabildiği bölgeler. Boş bırakılırsa, geleneksel "
 "ülke/ştatı kısıtlamaları uygulanır."
 
+#: models.py:1149 templates/admin/cart/method_wizard/step4_features.html:19
 msgid "Pickup Locations"
 msgstr "Toplama Noktaları"
 
+#: models.py:1151
 msgid ""
 "Locations where customers can pick up orders using this shipping method. "
 "Only applies to 'local_pickup' method type."
@@ -693,24 +760,31 @@ msgstr ""
 "Müşterilerin bu kargo yöntemiyle siparişleri alabileceği yerler. Sadece "
 "'local_pickup' yöntemi türüne uygulanır."
 
+#: models.py:1158
 msgid "Minimum delivery time in business days"
 msgstr "İş günlerinde minimum teslim süresi"
 
+#: models.py:1159 templates/admin/cart/method_wizard/step4_features.html:176
 msgid "Minimum Delivery Days"
 msgstr "Minimum Teslimat Günleri"
 
+#: models.py:1164
 msgid "Maximum delivery time in business days"
 msgstr "İş günlerinde maksimum teslim süresi"
 
+#: models.py:1165 templates/admin/cart/method_wizard/step4_features.html:193
 msgid "Maximum Delivery Days"
 msgstr "Maksimum Teslimat Günleri"
 
+#: models.py:1172
 msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
 msgstr "Font Awesome ikon sınıfı (örneğin, 'fa-truck', 'fa-box')"
 
+#: models.py:1173 models.py:1512
 msgid "Icon"
 msgstr "Simge"
 
+#: models.py:1183
 msgid ""
 "Custom shipping method image from media library. If provided, this takes "
 "priority over icon."
@@ -718,235 +792,306 @@ msgstr ""
 "Medya kütüphanesinden özel kargo yöntemi resmi. Sağlanırsa, ikonun önüne "
 "geçer."
 
+#: models.py:1185
 msgid "Image"
 msgstr "Görsel"
 
+#: models.py:1188 templates/admin/cart/method_wizard/step4_features.html:234
 msgid "Sort Order"
 msgstr "Sıra"
 
+#: models.py:1189 models.py:1445 models.py:1518 models.py:1575
 msgid "Is Active"
 msgstr "Aktif Mi?"
 
+#: models.py:1197
 msgid "Custom Carrier"
 msgstr "Özel Taşıyıcı"
 
+#: models.py:1200 templates/admin/cart/method_wizard/step1_basics.html:185
+#: templates/admin/cart/shippingmethod/change_form.html:98
 msgid "Carrier"
 msgstr "Taşıyıcı"
 
+#: models.py:1206
 msgid "Carrier-specific service code"
 msgstr "Taşıyıcıya Özel Hizmet Kodu"
 
+#: models.py:1207
 msgid "Carrier Service Code"
 msgstr "Taşıyıcı Hizmet Kodu"
 
+#: models.py:1215 templates/admin/cart/shippingmethod/change_list.html:4
+#: templates/admin/cart/shippingmethod/change_list.html:19
 msgid "Shipping Methods"
 msgstr "Kargo Yöntemleri"
 
+#: models.py:1236
 msgid "Shipping method is not active"
 msgstr "Kargo yöntemi aktif değil"
 
-#, python-brace-format
-msgid "Minimum order value {value} required"
-msgstr "En düşük sipariş değeri {value} gerekli"
-
-#, python-brace-format
-msgid "Maximum order value {value} exceeded"
-msgstr "Maksimum sipariş değeri {value} aşıldı"
-
-#, python-brace-format
-msgid "Minimum weight {weight}kg required"
-msgstr "Gerekli minimum ağırlık {weight}kg"
-
-#, python-brace-format
-msgid "Maximum weight {weight}kg exceeded"
-msgstr "{weight}kg ağırlık sınırı aşıldı"
-
+#: models.py:1240
 msgid "Cart contains only digital products"
 msgstr "Sepet sadece dijital ürünler içeriyor"
 
+#: models.py:1266
+#| msgid "No pricing tier available for this plan"
+msgid "Not available for this cart"
+msgstr "Bu sepet için mevcut değil"
+
+#: models.py:1268
 msgid "Available"
 msgstr "Mevcut"
 
+#: models.py:1291
 msgid "No geographic restrictions"
 msgstr "Coğrafi kısıtlamalar yok"
 
+#: models.py:1299
 #, python-brace-format
 msgid "Available in {zone}"
 msgstr "{zone}\\'de mevcut"
 
+#: models.py:1302
 msgid "Not available in your location"
 msgstr "Konumunuzda mevcut değil"
 
+#: models.py:1305
 msgid "Available worldwide"
 msgstr "Dünya çapında mevcut"
 
+#: models.py:1371 models.py:1550
 msgid "ISO 3166-1 alpha-2 country code"
 msgstr "ISO 3166-1 alfa-2 ülke kodu"
 
+#: models.py:1371 templates/admin/cart/taxrate/change_list.html:67
 msgid "Country"
 msgstr "Ülke"
 
+#: models.py:1375
 msgid "State/Province/Region"
 msgstr "Eyalet/İlçe/Bölge"
 
+#: models.py:1375
 msgid "State"
 msgstr "Eyalet"
 
+#: models.py:1379
 msgid "City name (optional)"
 msgstr "Şehir adı (isteğe bağlı)"
 
+#: models.py:1379
 msgid "City"
 msgstr "Şehir"
 
+#: models.py:1385
 msgid "List of specific postal codes (optional)"
 msgstr "Özel posta kodları listesi (isteğe bağlı)"
 
+#: models.py:1386
 msgid "Postal Codes"
 msgstr "Posta Kodları"
 
+#: models.py:1393
 msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
 msgstr "Vergi oranı ondalık olarak (örneğin, 8.25% için 0.0825)"
 
+#: models.py:1394 models.py:1564
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:47
 msgid "Rate"
 msgstr "Oran"
 
+#: models.py:1399 templates/admin/cart/taxrate/change_list.html:79
 msgid "Sales Tax"
 msgstr "Satış Vergisi"
 
+#: models.py:1402
 msgid "Custom Tax"
 msgstr "Özel Vergi"
 
+#: models.py:1405 models.py:1567
+#: templates/admin/cart/taxrate/change_list.html:76
 msgid "Tax Type"
 msgstr "Vergi Türü"
 
+#: models.py:1411
 msgid "Apply tax to shipping costs"
 msgstr "Vergiyi kargo maliyetlerine uygula"
 
+#: models.py:1412
 msgid "Applies to Shipping"
 msgstr "Kargo için uygulanır"
 
+#: models.py:1417
 msgid "Calculate on top of other taxes (compound tax)"
 msgstr "Diğer vergilerin üzerine hesaplanır (bileşik vergi)"
 
+#: models.py:1418
 msgid "Compound Tax"
 msgstr "Bileşik Vergi"
 
-msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
-msgstr "Bu vergiden muaf ürün türleri (örneğin, ['digital', 'service'])"
+#: models.py:1426
+msgid ""
+"Product types exempt from this tax. Gift cards are exempt by default: "
+"selling stored value is not a taxable supply in most jurisdictions, and tax "
+"falls due when the card is spent. Confirm with your accountant."
+msgstr ""
+"Bu vergiden muaf ürün türleri. Hediye kartları varsayılan olarak muaf: "
+"Depolanan değer satışı çoğu yerde vergiye tabi bir arz değildir ve kartın "
+"harcanmasından sonra vergi doğar. Muhasebecinizle onaylayın."
 
+#: models.py:1430
 msgid "Exempt Product Types"
 msgstr "Vergiden Muaf Ürün Türleri"
 
+#: models.py:1436
 msgid "Categories exempt from this tax"
 msgstr "Bu vergiden muaf kategoriler"
 
+#: models.py:1437
 msgid "Exempt Categories"
 msgstr "Vergiden Muaf Kategoriler"
 
+#: models.py:1442
 msgid "Higher priority rules take precedence"
 msgstr "Daha yüksek öncelikli kurallar önceliklidir"
 
+#: models.py:1451
 msgid "Tax Rate"
 msgstr "Vergi Oranı"
 
+#: models.py:1452 templates/admin/cart/taxrate/change_list.html:4
+#: templates/admin/cart/taxrate/change_list.html:17
 msgid "Tax Rates"
 msgstr "Vergi Oranları"
 
+#: models.py:1465
 #, python-brace-format
 msgid "{name} ({location}) - {rate}%"
 msgstr "{name} ({location}) - {rate}%"
 
+#: models.py:1491
 msgid "Europe"
 msgstr "Avrupa"
 
+#: models.py:1492
 msgid "North America"
 msgstr "Kuzey Amerika"
 
+#: models.py:1493
 msgid "Asia Pacific"
 msgstr "Asya Pasifik"
 
+#: models.py:1494
 msgid "Middle East"
 msgstr "Orta Doğu"
 
+#: models.py:1495
 msgid "Africa"
 msgstr "Afrika"
 
+#: models.py:1496
 msgid "Latin America"
 msgstr "Latin Amerika"
 
+#: models.py:1497
 msgid "Oceania"
 msgstr "Okyanusya"
 
+#: models.py:1503
 msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
 msgstr "Benzersiz tanımlayıcı (örneğin, eu_vat, us_sales_tax)"
 
+#: models.py:1504
 msgid "Key"
 msgstr "Anahtar"
 
+#: models.py:1511
 msgid "Font Awesome icon class"
 msgstr "Font Awesome ikon sınıfı"
 
+#: models.py:1515
 msgid "Default Tax Type"
 msgstr "Varsayılan Vergi Türü"
 
+#: models.py:1517
 msgid "Region"
 msgstr "Bölge"
 
+#: models.py:1522
 msgid "Version for tracking rate updates"
 msgstr "Güncelleme takibi için sürüm"
 
+#: models.py:1523
 msgid "Version"
 msgstr "Sürüm"
 
+#: models.py:1525
 msgid "Last Updated"
 msgstr "Son Güncellenme"
 
+#: models.py:1529
 msgid "Tax Preset Group"
 msgstr "Vergi Önceden Ayarlanmış Grubu"
 
+#: models.py:1530
 msgid "Tax Preset Groups"
 msgstr "Vergi Önceden Ayarlanmış Gruplar"
 
+#: models.py:1547
 msgid "Preset Group"
 msgstr "Önceden Ayarlanmış Grup"
 
+#: models.py:1550
 msgid "Country Code"
 msgstr "Ülke Kodu"
 
+#: models.py:1552
 msgid "Country Name"
 msgstr "Ülke Adı"
 
+#: models.py:1556
 msgid "State/province code (for US/CA presets)"
 msgstr "Devlet/İl kodu (US/CA önceden ayarlamaları için)"
 
+#: models.py:1557
 msgid "State Code"
 msgstr "Devlet Kodu"
 
+#: models.py:1559
 msgid "State Name"
 msgstr "Devlet Adı"
 
+#: models.py:1563
 msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
 msgstr "Vergi oranı ondalık olarak (örneğin, 20% için 0.20)"
 
+#: models.py:1572
 #, python-format
 msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
 msgstr "Opsiyonel notlar (örneğin, 'Temmuz 2025'te 22'ye çıktı')"
 
+#: models.py:1578
 msgid "Tax Preset Rate"
 msgstr "Vergi Önceden Ayarlanmış Oranı"
 
+#: models.py:1579
 msgid "Tax Preset Rates"
 msgstr "Vergi Önceden Ayarlanmış Oranlar"
 
+#: models.py:1618
 msgid "Billing Address"
 msgstr "Fatura Adresi"
 
+#: models.py:1622
 msgid "Billing Same as Shipping"
 msgstr "Fatura Adresi Teslimat Adresiyle Aynı"
 
+#: models.py:1630
 msgid "Shipping Address Data"
 msgstr "Kargo Adresi Verisi"
 
+#: models.py:1632
 msgid ""
 "Temporary shipping address data (not saved to Address model until order "
 "placed)"
@@ -954,9 +1099,11 @@ msgstr ""
 "Geçici kargo adresi verileri (sipariş verilene kadar Adres modeline "
 "kaydedilmez)"
 
+#: models.py:1639
 msgid "Billing Address Data"
 msgstr "Fatura Adresi Verisi"
 
+#: models.py:1641
 msgid ""
 "Temporary billing address data (not saved to Address model until order "
 "placed)"
@@ -964,285 +1111,382 @@ msgstr ""
 "Geçici fatura adresi verileri (sipariş verilene kadar Adres modeline "
 "kaydedilmez)"
 
+#: models.py:1651
 msgid "Selected Shipping Method"
 msgstr "Seçilen Teslimat Yöntemi"
 
+#: models.py:1671
 msgid "Cached list of available shipping methods with rates"
 msgstr "Kısmi ücretlerle mevcut kargo yöntemleri listesi"
 
+#: models.py:1672
 msgid "Available Shipping Methods"
 msgstr "Mevcut Teslimat Yöntemleri"
 
+#: models.py:1679
 msgid "Detailed tax breakdown by jurisdiction"
 msgstr "Yönetim birimine göre detaylı vergi analizi"
 
+#: models.py:1680
 msgid "Tax Breakdown"
 msgstr "Vergi Analizi"
 
+#: models.py:1688
 msgid "Tax Amount"
 msgstr "Vergi Tutarı"
 
+#: models.py:1698
 msgid "Payment Provider"
 msgstr "Ödeme Sağlayıcısı"
 
+#: models.py:1707
 msgid "Subtotal"
 msgstr "Ara Toplam"
 
+#: models.py:1715
 msgid "Discount Amount"
 msgstr "İndirim Tutarı"
 
+#: models.py:1723
 msgid "Gift Card Discount"
 msgstr "Hediyelik Kart İndirimi"
 
+#: models.py:1724
 msgid "Total discount from applied gift cards"
 msgstr "Uygulanan hediyelik kartlardan toplam indirim"
 
+#: models.py:1732
 msgid "Final total: subtotal + shipping + tax - discounts"
 msgstr "Son toplam: alt toplam + kargo + vergi - indirimler"
 
+#: models.py:1733
 msgid "Total Amount"
 msgstr "Toplam Tutar"
 
+#: models.py:1738
 msgid "Cart Review"
 msgstr "Sepet Gözden Geçirme"
 
+#: models.py:1741
 msgid "Billing Information"
 msgstr "Fatura Bilgisi"
 
+#: models.py:1742
 msgid "Payment Method"
 msgstr "Ödeme Yöntemi"
 
+#: models.py:1743
 msgid "Order Review"
 msgstr "Sipariş Gözden Geçirme"
 
+#: models.py:1746
 msgid "Step Completed"
 msgstr "Aşama Tamamlandı"
 
+#: models.py:1749
 msgid "Expires At"
 msgstr "Son Kullanım Tarihi"
 
+#: models.py:1753
 msgid "Metadata"
 msgstr "Meta Veri"
 
+#: models.py:1754
 msgid "Extra metadata (e.g., marketplace purchase info)"
 msgstr "Ek meta veri (örneğin, pazar yerinde satın alma bilgisi)"
 
+#: models.py:1760
 msgid "Checkout Session"
 msgstr "Ödeme Oturumu"
 
+#: models.py:1761
 msgid "Checkout Sessions"
 msgstr "Ödeme Oturumları"
 
+#: models.py:1768
 #, python-brace-format
 msgid "Checkout for {cart}"
 msgstr "{cart} için ödeme"
 
-msgid "Gift Card"
-msgstr "Hediyelik Kart"
-
-msgid "Amount in base currency (used for cart calculations)"
-msgstr "Temel para biriminde tutar (sepet hesaplamaları için kullanılır)"
-
-msgid "Original Currency Amount"
-msgstr "Orijinal Para Birimi Tutarı"
-
-msgid ""
-"Discount in the gift card's native currency (for foreign-currency gift cards)"
-msgstr ""
-"Hediye kartının yerel para biriminde indirim (yabancı para birimi hediye "
-"kartları için)"
-
-msgid "Exchange Rate"
-msgstr "Döviz Kuru"
-
-msgid "Rate: gift card currency -> base currency at time of application"
-msgstr "Oran: hediye kartı para birimi -> uygulama zamanında temel para birimi"
-
-msgid "Applied At"
-msgstr "Uygulandığı Zaman"
-
-msgid "Applied Gift Card"
-msgstr "Uygulanan Hediyelik Kart"
-
-msgid "Applied Gift Cards"
-msgstr "Uygulanan Hediyelik Kartlar"
-
-msgid "This gift card cannot be used"
-msgstr "Bu hediyelik kart kullanılamaz"
-
-msgid "Discount amount exceeds gift card balance"
-msgstr "İndirim tutarı hediyelik kart bakiyesini aşıyor"
-
+#: serializers.py:34
 msgid "Total customization price (per unit)"
 msgstr "Toplam kişiselleştirme fiyatı (birim başına)"
 
+#: serializers.py:43
 msgid "'instant' for digital items, 'shipping' for physical items"
 msgstr "'instant' dijital ürünler için, 'shipping' fiziksel ürünler için"
 
+#: serializers.py:46
 msgid "True if this item is a component of a bundle"
 msgstr "Bu öğe bir paketin bileşeniysse true"
 
+#: serializers.py:49
 msgid "ID of parent bundle CartItem if this is a component"
 msgstr "Bu bir bileşense, ana paket CartItem'inin ID'si"
 
+#: serializers.py:52
 msgid "Child items if this is a bundle parent"
 msgstr "Bu bir paket ebeveyniyseniz, alt öğeler"
 
+#: serializers.py:591
+#| msgid "Remove gift card"
+msgid "Where to deliver the gift card"
+msgstr "Hediye kartı nereye gönderilecek"
+
+#: serializers.py:605
+msgid "Offset-aware ISO-8601. Omit to deliver as soon as payment clears."
+msgstr ""
+"Offset-aware ISO-8601. Boş bırakırsanız, ödeme tamamlandığında hemen teslim "
+"edilir."
+
+#: serializers.py:612
+msgid "Face value, for products that let the customer choose."
+msgstr "Müşterinin seçim yapabileceği ürünler için nominal değer."
+
+#: serializers.py:621
+#| msgid "Gift card is not active"
+msgid "Gift card details must be an object."
+msgstr "Hediye kartı detayları bir nesne olmalıdır."
+
+#: serializers.py:626
+#, python-format
+msgid "Unknown field(s): %(keys)s"
+msgstr "Bilinmeyen alan(lar): %(keys)s"
+
+#: serializers.py:638
+msgid "Message cannot contain HTML or markup."
+msgstr "Mesaj HTML veya biçimlendirme içermemelidir."
+
+#: serializers.py:647
+msgid "Include a UTC offset so the send time is unambiguous."
+msgstr "Gönderim zamanının belirsiz olmaması için bir UTC sapması ekleyin."
+
+#: serializers.py:651
+msgid "Scheduled delivery must be in the future."
+msgstr "Planlı teslimat gelecekte olmalıdır."
+
+#: serializers.py:654
+msgid "Scheduled delivery cannot be more than a year away."
+msgstr "Planlı teslimat bir yıldan uzun olamaz."
+
+#: serializers.py:673
 msgid "Map of bundle_item_id to variant_id for customer-selected variants"
 msgstr ""
 "Müşteri tarafından seçilen varyasyonlar için bundle_item_id'den "
 "variant_id'ye harita"
 
+#: serializers.py:680
 msgid ""
-"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+"List of bundle_item_ids to exclude (for optional items customer doesn't "
+"want)"
 msgstr ""
-"Müşterinin istemediği isteğe bağlı öğeler için dışlamak için bundle_item_ids "
-"listesi"
+"Müşterinin istemediği isteğe bağlı öğeler için dışlamak için bundle_item_ids"
+" listesi"
 
-msgid "Map of slot_id to list of selected option_ids for configurable products"
+#: serializers.py:689
+msgid ""
+"Map of slot_id to list of selected option_ids for configurable products"
 msgstr ""
 "Konfigüre edilebilir ürünler için seçilen option_ids listesi olan slot_id "
 "haritası"
 
+#: serializers.py:694
 msgid "Configuration preset ID used as starting point"
-msgstr "Başlangıç noktası olarak kullanılan yapılandırma önceden ayarlanmış ID"
+msgstr ""
+"Başlangıç noktası olarak kullanılan yapılandırma önceden ayarlanmış ID"
 
+#: serializers.py:706
 msgid ""
-"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+"Booking details: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
 msgstr ""
 "Rezervasyon detayları: start_datetime, end_datetime, resource_id, persons, "
 "timezone"
 
+#: serializers.py:719
 msgid "Quantity must be at least 1"
 msgstr "Miktar en az 1 olmalıdır"
 
+#: serializers.py:737
 msgid "Subscription plan is required for subscription purchases"
 msgstr "Abonelik satın almaları için abonelik planı gerekli"
 
+#: serializers.py:743
 msgid "Payment token is required for subscription purchases"
 msgstr "Abonelik satın almaları için ödeme tokenı gerekli"
 
+#: serializers.py:752 services/cart_service.py:991
+#: services/wishlist_service.py:61
 msgid "Product not found"
 msgstr "Ürün bulunamadı"
 
+#: serializers.py:756
 msgid "This product does not support subscriptions"
 msgstr "Bu ürün abonelikleri desteklemiyor"
 
+#: serializers.py:768
 msgid "Invalid or inactive subscription plan"
 msgstr "Geçersiz veya aktif olmayan abonelik planı"
 
+#: serializers.py:773
 msgid "This plan is not available for this product"
 msgstr "Bu plan bu ürün için mevcut değil"
 
+#: serializers.py:790
 msgid "Invalid or inactive payment token"
 msgstr "Geçersiz veya aktif olmayan ödeme tokenı"
 
+#: serializers.py:805
 msgid "Pricing tier not found or does not belong to selected plan"
 msgstr "Fiyatlandırma katmanı bulunamadı veya seçilen plana ait değil"
 
+#: serializers.py:813
 msgid "No pricing tier available for this plan"
 msgstr "Bu plan için fiyatlandırma katmanı mevcut değil"
 
+#: serializers.py:830
 msgid "Quantity cannot be negative"
 msgstr "Miktar negatif olamaz"
 
-msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
-msgstr "Hediyelik kart kodu (örneğin, GC-XXXX-XXXX-XXXX)"
-
-msgid "Amount applied from this gift card (in base currency)"
-msgstr "Bu hediye kartından uygulanan tutar (temel para biriminde)"
-
-msgid "Remaining balance on gift card after this application"
-msgstr "Bu uygulama sonrası hediyelik karttaki kalan bakiye"
-
-msgid "Base currency code"
-msgstr "Temel Para Birimi Kodu"
-
-msgid "Gift card's native currency code"
-msgstr "Hediye Çeki'nin Yerel Para Birimi Kodu"
-
-msgid ""
-"Discount in gift card's native currency (for foreign-currency gift cards)"
-msgstr ""
-"Hediye kartının yerel para biriminde indirim (yabancı para birimi hediye "
-"kartları için)"
-
+#: serializers.py:1355
 #, python-brace-format
 msgid ""
-"Either address_id or complete address details are required. Missing: {fields}"
+"Either address_id or complete address details are required. Missing: "
+"{fields}"
 msgstr "address_id veya tam adres detayları gereklidir. Eksik: {fields}"
 
+#: serializers.py:1388
+#, python-brace-format
+#| msgid ""
+#| "Either address_id or complete address details are required. Missing: "
+#| "{fields}"
+msgid "Complete billing address details are required. Missing: {fields}"
+msgstr "Tam bir fatura adresi gereklidir. Eksik: {fields}"
+
+#: serializers.py:1406
+#| msgid "Payment provider is not properly configured"
+msgid "Either payment_provider_id or provider slug is required."
+msgstr "Ödeme sağlayıcısı ID'si veya sağlayıcı slug'ı gereklidir."
+
+#: services/cart_service.py:128 services/cart_service.py:130
+msgid "Choose an amount for this gift card."
+msgstr "Bu hediye kartı için bir tutar seçin."
+
+#: services/cart_service.py:136
+msgid "Gift card amount must be greater than zero."
+msgstr "Hediye kartı tutarı sıfırdan büyük olmalıdır."
+
+#: services/cart_service.py:140 services/cart_service.py:156
+#| msgid "This plan is not available for this product"
+msgid "That is not an available gift card amount."
+msgstr "Bu, mevcut bir hediye kartı tutarı değildir."
+
+#: services/cart_service.py:151
+#, python-format
+msgid "Minimum gift card amount is %(min)s."
+msgstr "Hediyelik kartın minimum tutarı %(min)s."
+
+#: services/cart_service.py:153
+#, python-format
+msgid "Maximum gift card amount is %(max)s."
+msgstr "Hediyelik kartın maksimum tutarı %(max)s."
+
+#: services/cart_service.py:199
 msgid "This product requires customization"
 msgstr "Bu ürün özelleştirme gerektiriyor"
 
+#: services/cart_service.py:207
 msgid "Invalid design token"
 msgstr "Geçersiz tasarım jetonu"
 
+#: services/cart_service.py:235
 msgid "Design not found or expired"
 msgstr "Tasarım bulunamadı veya süresi doldu"
 
+#: services/cart_service.py:239
 msgid "This product does not support customization"
 msgstr "Bu ürün özelleştirmeyi desteklemiyor"
 
+#: services/cart_service.py:252
 msgid "Invalid customization option"
 msgstr "Geçersiz özelleştirme seçeneği"
 
+#: services/cart_service.py:261
 #, python-brace-format
 msgid "Customization '{name}': {error}"
 msgstr "'{name}' özelleştirme: {error}"
 
+#: services/cart_service.py:280
 #, python-brace-format
 msgid "Required customization '{name}' is missing"
 msgstr "Gerekli özelleştirme '{name}' eksik"
 
+#: services/cart_service.py:343
 msgid "Insufficient stock"
 msgstr "Yetersiz stok"
 
+#: services/cart_service.py:386
 msgid "Bundle has no components configured"
 msgstr "Bundloda yapılandırılmamış bileşenler var"
 
+#: services/cart_service.py:395
 #, python-brace-format
 msgid "Cannot exclude non-optional bundle component: {name}"
 msgstr "{name} adlı zorunlu olmayan paket bileşeni dışlanamaz"
 
+#: services/cart_service.py:414
+msgid "Bundles cannot contain gift cards."
+msgstr "Bundlalar hediye kartları içeremez."
+
+#: services/cart_service.py:424
 #, python-brace-format
 msgid "Variant selection required for: {name}"
 msgstr "Variant selection required for: {name}"
 
+#: services/cart_service.py:436
 #, python-brace-format
 msgid "Invalid variant selected for: {name}"
 msgstr "Invalid variant selected for: {name}"
 
+#: services/cart_service.py:465
 #, python-brace-format
 msgid "Insufficient stock for bundle component: {name}"
 msgstr "Insufficient stock for bundle component: {name}"
 
+#: services/cart_service.py:514
 msgid "Bundle quantity updated in cart"
 msgstr "Bundlo ürün miktarı sepette güncellendi"
 
+#: services/cart_service.py:544
 msgid "Bundle added to cart"
 msgstr "Bundlo sepete eklendi"
 
+#: services/cart_service.py:581
 #, python-brace-format
 msgid "Required slot '{name}' has no selection."
 msgstr "Required slot '{name}' has no selection."
 
+#: services/cart_service.py:590
 #, python-brace-format
 msgid "Slot '{name}' requires at least {min} selection(s)."
 msgstr "Slot '{name}' requires at least {min} selection(s)."
 
+#: services/cart_service.py:598
 #, python-brace-format
 msgid "Slot '{name}' allows at most {max} selection(s)."
 msgstr "Slot '{name}' allows at most {max} selection(s)."
 
+#: services/cart_service.py:609
 #, python-brace-format
 msgid "Invalid slot ID: {id}"
 msgstr "Invalid slot ID: {id}"
 
+#: services/cart_service.py:619
 #, python-brace-format
 msgid "Option {opt_id} is not valid for slot '{slot}'."
 msgstr "Option {opt_id} is not valid for slot '{slot}'."
 
+#: services/cart_service.py:656
 #, python-brace-format
 msgid ""
 "Incompatible selection in slot '{slot}'. Some options are not compatible "
@@ -1251,6 +1495,7 @@ msgstr ""
 "Incompatible selection in slot '{slot}'. Some options are not compatible "
 "with your other choices."
 
+#: services/cart_service.py:667
 #, python-brace-format
 msgid ""
 "Excluded selection in slot '{slot}'. Some options conflict with your other "
@@ -1259,50 +1504,69 @@ msgstr ""
 "Excluded selection in slot '{slot}'. Some options conflict with your other "
 "choices."
 
+#: services/cart_service.py:767 services/cart_service.py:1386
 #, python-brace-format
 msgid "Insufficient stock for component: {name}"
 msgstr "Bileşen için yetersiz stok: {name}"
 
+#: services/cart_service.py:827
 msgid "Configured product added to cart"
 msgstr "Özelleştirilmiş ürün sepete eklendi"
 
+#: services/cart_service.py:887
 msgid "Either user or session_key must be provided"
 msgstr "Kullanıcı veya session_key sağlanmalıdır"
 
+#: services/cart_service.py:995
 msgid "This product is no longer available"
 msgstr "Bu ürün artık mevcut değil"
 
+#: services/cart_service.py:1023
 msgid "You must be logged in to purchase this product."
 msgstr "Bu ürünü satın almak için giriş yapmanız gerekir."
 
+#: services/cart_service.py:1026
 #, python-format
 msgid "This product requires you to own \"%(required)s\" first."
 msgstr "Bu ürün, önce \"%(required)s\" sahibi olmanızı gerektirir."
 
+#: services/cart_service.py:1035 services/wishlist_service.py:68
 msgid "Product variant not found"
 msgstr "Ürün varyantı bulunamadı"
 
+#: services/cart_service.py:1040
 msgid "Configuration is required for configurable products"
 msgstr "Yapılandırılabilir ürünler için yapılandırma gerekli"
 
+#: services/cart_service.py:1159
 msgid "Booking added to cart"
 msgstr "Rezervasyon sepete eklendi"
 
+#: services/cart_service.py:1192
+#| msgid "Item added to cart"
+msgid "Gift card added to cart"
+msgstr "Hediye kartı sepete eklendi"
+
+#: services/cart_service.py:1231
 msgid "Insufficient stock for requested quantity"
 msgstr "Talep edilen miktar için yetersiz stok"
 
+#: services/cart_service.py:1234
 msgid "Cart item quantity updated"
 msgstr "Sepet ürün miktarı güncellendi"
 
+#: services/cart_service.py:1256
 msgid "Item added to cart"
 msgstr "Ürün sepete eklendi"
 
+#: services/cart_service.py:1303
 msgid ""
 "Component quantities cannot be changed directly. Update the parent product "
 "instead."
 msgstr ""
 "Bileşen miktarları doğrudan değiştirilemez. Ana ürün yerine güncelleyin."
 
+#: services/cart_service.py:1318 services/cart_service.py:1499
 #, python-format
 msgid ""
 "Item removed from cart. Also removed %(names)s (required product no longer "
@@ -1311,276 +1575,384 @@ msgstr ""
 "Öğe sepetten kaldırıldı. Ayrıca %(names)s kaldırıldı (gereken ürün sepette "
 "artık değil)."
 
+#: services/cart_service.py:1320 services/cart_service.py:1501
 msgid "Item removed from cart"
 msgstr "Ürün sepetten kaldırıldı"
 
+#: services/cart_service.py:1410
 msgid "Cart item updated"
 msgstr "Sepet ürün güncellendi"
 
+#: services/cart_service.py:1469 views.py:286
 msgid ""
 "Component items cannot be removed directly. Remove the parent product "
 "instead."
 msgstr "Bileşen öğeleri doğrudan kaldırılamaz. Ana ürünü kaldırın."
 
+#: services/cart_service.py:1556
 msgid "Cart cleared"
 msgstr "Sepet temizlendi"
 
+#: services/cart_service.py:1593
 msgid "Voucher removed"
 msgstr "Kupon kaldırıldı"
 
+#: services/cart_service.py:1594
 msgid "Voucher not found in cart"
 msgstr "Sepette kupon bulunamadı"
 
-msgid "Gift card removed"
-msgstr "Hediye kartı kaldırıldı"
-
-msgid "Gift card not found in cart"
-msgstr "Sepette hediyelik kart bulunamadı"
-
+#: services/cart_service.py:1666
 #, python-brace-format
 msgid "{count} items merged into cart"
 msgstr "{count} öğe sepete birleştirildi"
 
+#: services/checkout_service.py:94
 msgid "Account creation required to proceed"
 msgstr "Devam etmek için hesap oluşturulması gerekir"
 
+#: services/checkout_service.py:169 services/checkout_service.py:233
 msgid "Address not found"
 msgstr "Adres bulunamadı"
 
+#: services/checkout_service.py:178
 msgid "Either address_id or address_data must be provided"
 msgstr "address_id veya address_data sağlanmalıdır"
 
+#: services/checkout_service.py:198
 msgid "Shipping address set"
 msgstr "Kargo adresi belirlendi"
 
+#: services/checkout_service.py:239
 msgid "Billing address must be provided"
 msgstr "Fatura adresi sağlanmalıdır"
 
+#: services/checkout_service.py:242
 msgid "Billing address set"
 msgstr "Fatura adresi belirlendi"
 
+#: services/checkout_service.py:282
 msgid "Shipping address must be set first"
 msgstr "Önce kargo adresi ayarlanmalıdır"
 
+#: services/checkout_service.py:287
 msgid "Shipping method not found"
 msgstr "Kargo yöntemi bulunamadı"
 
+#: services/checkout_service.py:320
 msgid "Shipping method selected"
 msgstr "Kargo yöntemi seçildi"
 
+#: services/checkout_service.py:382
 msgid "Payment provider not found"
 msgstr "Ödeme sağlayıcısı bulunamadı"
 
+#: services/checkout_service.py:386
 msgid "Payment provider is not properly configured"
 msgstr "Ödeme sağlayıcısı doğru şekilde yapılandırılmadı"
 
+#: services/checkout_service.py:410
 msgid "Payment provider is not available for your location or currency"
 msgstr "Ödeme sağlayıcısı, konumunuz veya para biriminiz için mevcut değil"
 
+#: services/checkout_service.py:417
 msgid "Payment method selected"
 msgstr "Ödeme yöntemi seçildi"
 
+#: services/checkout_service.py:434
 msgid "Cart is empty"
 msgstr "Sepet boş"
 
+#: services/checkout_service.py:440
 msgid "Shipping address is required"
 msgstr "Kargo adresi gerekli"
 
+#: services/checkout_service.py:442
 msgid "Shipping method is required"
 msgstr "Kargo yöntemi gerekli"
 
+#: services/checkout_service.py:448
 msgid "Billing address is required"
 msgstr "Fatura adresi gerekli"
 
+#: services/checkout_service.py:455
 msgid "Payment method is required"
 msgstr "Ödeme yöntemi gerekli"
 
+#: services/checkout_service.py:459
 msgid "Checkout session has expired"
 msgstr "Ödeme oturumu zaman aşımına uğradı"
 
+#: services/checkout_service.py:489
 #, python-brace-format
 msgid "Insufficient stock for {product}"
 msgstr "{product} için yetersiz stok"
 
+#: services/checkout_service.py:505
 #, python-format
 msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
 msgstr "\"%(product)s\", önce \"%(required)s\" sahibi olmanızı gerektirir."
 
+#: services/checkout_service.py:694
 msgid "Customer email is required"
 msgstr "Müşteri e-postası gerekli"
 
+#: services/checkout_service.py:854
 msgid "Unable to allocate warehouse for order. Please contact support."
 msgstr ""
 "Sipariş için depo tahsisi yapılamadı. Lütfen destek ile iletişime geçin."
 
+#: services/checkout_service.py:985 services/checkout_service.py:1018
 msgid "Insufficient stock to complete order"
 msgstr "Siparişi tamamlamak için yetersiz stok"
 
+#: services/checkout_service.py:990 services/checkout_service.py:1023
 msgid "Error processing order. Please try again."
 msgstr "Sipariş işleme hatası. Lütfen tekrar deneyin."
 
+#: services/checkout_service.py:1072
 msgid "Order created successfully"
 msgstr "Sipariş başarıyla oluşturuldu"
 
+#: services/checkout_service.py:1322
+#, python-format
+msgid "The voucher %(code)s has just been fully used."
+msgstr "Hediyelik kupon %(code)s tamamen kullanıldı."
+
+#: services/checkout_service.py:1328
+#, python-format
+#| msgid "This product is no longer available"
+msgid "The voucher %(code)s is no longer valid."
+msgstr "Hediyelik kupon %(code)s artık geçerli değil."
+
+#: services/wishlist_service.py:82
 msgid "Wishlist item updated"
 msgstr "İstek listesi ürün güncellendi"
 
+#: services/wishlist_service.py:95
 msgid "Item added to wishlist"
 msgstr "Ürün istek listesine eklendi"
 
+#: services/wishlist_service.py:110
 msgid "Item removed from wishlist"
 msgstr "Ürün istek listesinden kaldırıldı"
 
+#: services/wishlist_service.py:137
 msgid "Item moved to cart"
 msgstr "Ürün sepete taşındı"
 
+#: services/wishlist_service.py:154
 msgid "Wishlist cleared"
 msgstr "İstek listesi temizlendi"
 
+#: services/wishlist_service.py:173
 msgid "Wishlist with this name already exists"
 msgstr "Bu isimle bir istek listesi zaten mevcut"
 
+#: services/wishlist_service.py:184
 msgid "Wishlist created"
 msgstr "İstek listesi oluşturuldu"
 
+#: templates/admin/cart/cart/change_list.html:22
 msgid "Monitor active and abandoned customer carts"
 msgstr "Aktif ve terk edilmiş müşteri sepetlerini izle"
 
+#: templates/admin/cart/cart/change_list.html:33
 msgid "Add"
 msgstr "Ekle"
 
+#: templates/admin/cart/cart/change_list.html:33
+#: templates/admin/cart/cart/change_list.html:178
 msgid "cart"
 msgstr "sepet"
 
+#: templates/admin/cart/cart/change_list.html:45
+#: templates/admin/cart/taxrate/change_list.html:59
 msgid "Filters"
 msgstr "Filtreler"
 
+#: templates/admin/cart/cart/change_list.html:56
+#: templates/admin/cart/taxrate/change_list.html:63
 msgid "Search"
 msgstr "Ara"
 
+#: templates/admin/cart/cart/change_list.html:61
 msgid "Search by user, session, or email..."
 msgstr "Kullanıcı, oturum veya e-posta ile ara..."
 
+#: templates/admin/cart/cart/change_list.html:68
 msgid "User Type"
 msgstr "Kullanıcı Türü"
 
+#: templates/admin/cart/cart/change_list.html:71
 msgid "All Carts"
 msgstr "Tüm Sepetler"
 
+#: templates/admin/cart/cart/change_list.html:72
 msgid "Registered Users"
 msgstr "Kayıtlı Kullanıcılar"
 
+#: templates/admin/cart/cart/change_list.html:73
 msgid "Guest Carts"
 msgstr "Misafir Sepetleri"
 
+#: templates/admin/cart/cart/change_list.html:80
 msgid "Cart Status"
 msgstr "Sepet Durumu"
 
+#: templates/admin/cart/cart/change_list.html:83
+#: templates/admin/cart/cart/change_list.html:96
+#: templates/admin/cart/taxrate/change_list.html:88
 msgid "All"
 msgstr "Tümü"
 
+#: templates/admin/cart/cart/change_list.html:84
 msgid "Active (< 24h)"
 msgstr "Aktif (< 24h)"
 
+#: templates/admin/cart/cart/change_list.html:85
 msgid "Abandoned (> 24h)"
 msgstr "Bırakılmış (> 24h)"
 
+#: templates/admin/cart/cart/change_list.html:86
+#: templates/admin/cart/partials/cart_cards.html:50
 msgid "Empty"
 msgstr "Boş"
 
+#: templates/admin/cart/cart/change_list.html:97
 msgid "Has Shipping"
 msgstr "Kargo Var"
 
+#: templates/admin/cart/cart/change_list.html:98
 msgid "No Shipping"
 msgstr "Kargo Yok"
 
+#: templates/admin/cart/cart/change_list.html:105
 msgid "Min Cart Value"
 msgstr "Minimum Sepet Değeri"
 
+#: templates/admin/cart/cart/change_list.html:110
 msgid "Min value"
 msgstr "Minimum Değer"
 
+#: templates/admin/cart/cart/change_list.html:117
 msgid "Max Cart Value"
 msgstr "Maksimum Sepet Değeri"
 
+#: templates/admin/cart/cart/change_list.html:122
 msgid "Max value"
 msgstr "Maksimum Değer"
 
+#: templates/admin/cart/cart/change_list.html:130
 msgid "Created From"
 msgstr "Oluşturma Tarihi (Başlangıç)"
 
+#: templates/admin/cart/cart/change_list.html:139
 msgid "Created To"
 msgstr "Oluşturma Tarihi (Bitiş)"
 
+#: templates/admin/cart/cart/change_list.html:151
 msgid "Apply Filters"
 msgstr "Filtreleri Uygula"
 
+#: templates/admin/cart/cart/change_list.html:154
 msgid "Clear All"
 msgstr "Tümünü Temizle"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Run the selected action"
 msgstr "Seçilen eylemi çalıştır"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Go"
 msgstr "Git"
 
+#: templates/admin/cart/cart/change_list.html:168
 msgid "of"
 msgstr "içinde"
 
+#: templates/admin/cart/cart/change_list.html:195
 #, python-format
 msgid "1 cart"
 msgid_plural "%(counter)s carts"
 msgstr[0] "%(counter)s sepet"
 msgstr[1] "%(counter)s sepet"
 
+#: templates/admin/cart/cart/change_list.html:197
 msgid "carts"
 msgstr "sepette"
 
+#: templates/admin/cart/cart/change_list.html:201
 msgid "Show all"
 msgstr "Tümünü Göster"
 
+#: templates/admin/cart/cart/change_list.html:205
+#: templates/admin/cart/shippingmethod/change_form.html:43
+#: templates/admin/cart/shippingmethod/change_form.html:343
+#: templates/admin/cart/taxrate/change_form.html:44
+#: templates/admin/cart/taxrate/change_form.html:238
 msgid "Save"
 msgstr "Kaydet"
 
+#: templates/admin/cart/method_wizard/base.html:4
+#: templates/admin/cart/method_wizard/base.html:17
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:24
 msgid "Add Shipping Method"
 msgstr "Kargo Yöntemi Ekle"
 
+#: templates/admin/cart/method_wizard/base.html:18
 msgid "Configure a new shipping method for your store"
 msgstr "Mağazanız için yeni bir kargo yöntemi yapılandırın"
 
+#: templates/admin/cart/method_wizard/base.html:25
+#: templates/admin/cart/method_wizard/step1_basics.html:10
+#: templates/admin/cart/method_wizard/step5_review.html:18
 msgid "Method Basics"
 msgstr "Yöntem Temelleri"
 
+#: templates/admin/cart/method_wizard/base.html:31
 msgid "Eligibility"
 msgstr "Eligibility"
 
+#: templates/admin/cart/method_wizard/base.html:37
+#: templates/admin/cart/shippingmethod/change_form.html:90
 msgid "Coverage"
 msgstr "Kapsam"
 
+#: templates/admin/cart/method_wizard/base.html:43
 msgid "Features"
 msgstr "Özellikler"
 
+#: templates/admin/cart/method_wizard/base.html:49
 msgid "Review"
 msgstr "İncele"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:13
 msgid "Define the core identity and type of this shipping method."
 msgstr "Bu nakliye yönteminin temel kimliğini ve türünü tanımlayın."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:27
 msgid "Method Name"
 msgstr "Yöntem Adı"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:35
 msgid "e.g., Standard Shipping, Express Delivery"
 msgstr "örn. Standart Kargo, Hızlı Teslimat"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:38
 msgid "Customer-facing name for this shipping method"
 msgstr "Müşteriye yönelik bu nakliye yönteminin adı"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:49
 msgid "Optional description of this shipping method"
 msgstr "Bu nakliye yönteminin isteğe bağlı açıklaması"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:54
 msgid "Display Icon"
 msgstr "İkon Göster"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:58
+#: templates/admin/cart/shippingmethod/change_form.html:227
 msgid ""
 "Select an image from the media library or choose a Font Awesome icon. Image "
 "takes priority if both are provided."
@@ -1588,107 +1960,133 @@ msgstr ""
 "Medya kütüphanesinden bir resim seçin veya Font Awesome ikonu seçin. Her "
 "ikisi de sağlanırsa resim önceliklidir."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:63
+#: templates/admin/cart/method_wizard/step5_review.html:48
 msgid "Custom Image"
 msgstr "Özel Görüntü"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:74
 msgid "Font Awesome Icon"
 msgstr "Font Awesome İkonu"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:78
 msgid "Choose an icon from Font Awesome library"
 msgstr "Font Awesome kütüphanesinden bir ikon seçin"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:94
+#: templates/admin/cart/method_wizard/step5_review.html:62
+#: templates/admin/cart/shippingmethod/change_form.html:32
+#: templates/admin/cart/shippingmethod/change_form.html:294
+#: templates/admin/cart/shippingmethod/change_list.html:67
+#: templates/admin/cart/shippingmethod/method_card.html:122
+#: templates/admin/cart/taxrate/change_form.html:33
+#: templates/admin/cart/taxrate/change_list.html:42
+#: templates/admin/cart/taxrate/change_list.html:89
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:26
 msgid "Active"
 msgstr "Aktif"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:98
 msgid "Make this method available to customers immediately"
 msgstr "Bu yöntemi müşterilere hemen kullanıma sunun"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:105
 msgid "Method Type & Pricing"
 msgstr "Yöntem Tipi ve Fiyatlandırma"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:114
 msgid "Select method type..."
 msgstr "Yöntem tipini seçin..."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:116
 msgid "Flat Rate - Fixed shipping cost"
 msgstr "Düz Oran - Sabit nakliye ücreti"
 
-msgid "Free Shipping - No charge"
-msgstr "Ücretsiz Kargo - Ücret Yok"
-
-msgid "Weight Based - Calculate by cart weight"
-msgstr "Ağırlık Temelli - Sepet ağırlığına göre hesapla"
-
-msgid "Price Based - Calculate by cart subtotal"
-msgstr "Fiyat Temelli - Sepet alt toplamına göre hesapla"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:119
 msgid "Real-Time Carrier Rates - Live rates from carriers"
 msgstr ""
 "Gerçek Zamanlı Taşıyıcı Oranları - Taşıyıcılar tarafından canlı oranlar"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:122
 msgid "Local Pickup - Customer picks up at location"
 msgstr "Yerel Toplama - Müşteri konumda toplar"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:125
 msgid "Table Rate - Complex rules based on weight/price/destination"
 msgstr "Tablo Oranı - Ağırlık/fiyat/hedefe dayalı karma kurallar"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:133
 msgid "Method Types:"
 msgstr "Yöntem Türleri:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Flat Rate:"
 msgstr "Düz Oran:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Fixed shipping cost regardless of order"
 msgstr "Siparişe bakılmaksızın sabit nakliye ücreti"
 
-msgid "Free Shipping:"
-msgstr "Ücretsiz Kargo:"
-
-msgid "No shipping charge"
-msgstr "Kargo ücreti yok"
-
-msgid "Weight/Price Based:"
-msgstr "Ağırlık/Fiyat Tabanlı:"
-
-msgid "Calculate using rate tables"
-msgstr "Oran tabloları kullanarak hesapla"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Real-Time:"
 msgstr "Gerçek Zamanlı:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Get live rates from USPS, FedEx, UPS, or DHL"
 msgstr "USPS, FedEx, UPS veya DHL'den canlı oranları alın"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Local Pickup:"
 msgstr "Yerel Toplama:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Customer picks up at your location"
 msgstr "Müşteri konumunuzda toplar"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate"
+msgid "Table Rate:"
+msgstr "Tablo Oranı:"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate - Complex rules based on weight/price/destination"
+msgid "Complex rules based on weight, price, or destination"
+msgstr "Ağırlık, fiyat veya hedefe dayalı karma kurallar"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:158
 msgid "Fixed shipping cost charged to customer"
 msgstr "Müşteriye uygulanan sabit nakliye ücreti"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:168
 msgid "No Configured Providers"
 msgstr "Yapılandırılmış Sağlayıcı Yok"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:170
 msgid ""
-"You need to configure at least one shipping provider that supports real-time "
-"rates before you can use this method type."
+"You need to configure at least one shipping provider that supports real-time"
+" rates before you can use this method type."
 msgstr ""
-"Bu yöntem türünü kullanmadan önce, gerçek zamanlı oranları destekleyen en az "
-"bir nakliye sağlayıcısını yapılandırmanız gerekir."
+"Bu yöntem türünü kullanmadan önce, gerçek zamanlı oranları destekleyen en az"
+" bir nakliye sağlayıcısını yapılandırmanız gerekir."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:174
 msgid "Connect Provider"
 msgstr "Sağlayıcıya Bağlan"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:177
 msgid "Manage Providers"
 msgstr "Sağlayıcıları Yönet"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:190
 msgid "Select a configured shipping provider"
 msgstr "Yapılandırılmış bir kargo sağlayıcısı seçin"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:202
+#: templates/admin/cart/method_wizard/step4_features.html:252
 msgid "Tip:"
 msgstr "İpucu:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:203
 msgid ""
 "Only providers that are configured and support real-time rates are shown "
 "above."
@@ -1696,106 +2094,59 @@ msgstr ""
 "Yukarıdaki yalnızca yapılandırılmış ve gerçek zamanlı oranları destekleyen "
 "sağlayıcılar görünür."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:204
 msgid "Manage providers"
 msgstr "Sağlayıcıları Yönet"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:209
 msgid "Service Code"
 msgstr "Hizmet Kodu"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:213
 msgid "Specific service code from carrier (optional)"
 msgstr "Taşıyıcıdan özel hizmet kodu (isteğe bağlı)"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:230
 msgid "Cancel"
 msgstr "İptal"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:233
+#: templates/admin/cart/method_wizard/step2_conditions.html:53
+#: templates/admin/cart/method_wizard/step3_coverage.html:102
 msgid "Next Step"
 msgstr "Sonraki Adım"
 
-msgid "Eligibility Conditions"
-msgstr "Eligibility Koşulları"
-
-msgid ""
-"Define when this shipping method should be available based on cart value and "
-"weight."
-msgstr ""
-"Sepet değeri ve ağırlığına dayalı olarak bu nakliye yönteminin ne zaman "
-"kullanılabilir olduğunun tanımlanması."
-
-msgid "Order Value Restrictions"
-msgstr "Sipariş Değeri Sınırlamaları"
-
-msgid "Set minimum or maximum cart subtotal requirements for this method."
-msgstr ""
-"Bu yöntemin için sepet alt toplamı minimum veya maksimum gereksinimlerini "
-"ayarlayın."
-
-msgid "Method only available if cart subtotal is at least this amount"
-msgstr ""
-"Sepet alt toplamı bu miktardan az değilse yöntemin kullanılabilir olduğu"
-
-msgid "No maximum"
-msgstr "Maksimum yok"
-
-msgid "Method only available if cart subtotal is below this amount"
-msgstr "Sepet alt toplamı bu miktardan düşükse yöntemin kullanılabilir olduğu"
-
-msgid "Examples:"
-msgstr "Örnekler:"
-
-msgid "Free shipping for orders over $50: Set minimum to 50.00"
-msgstr ""
-"50$'dan fazla siparişler için ücretsiz nakliye: Minimum 50.00 olarak ayarla"
-
-msgid "Economy shipping for orders under $100: Set maximum to 100.00"
-msgstr ""
-"100$'dan az siparişler için ekonomik nakliye: Maksimum 100.00 olarak ayarla"
-
-msgid "Standard shipping for $25-$200: Set both minimum and maximum"
-msgstr ""
-"25$-200$ arası siparişler için standart nakliye: Hem minimum hem maksimum "
-"ayarla"
-
-msgid "Weight Restrictions"
-msgstr "Ağırlık Sınırlamaları"
-
-msgid "Set minimum or maximum total cart weight requirements for this method."
-msgstr ""
-"Bu yöntemin için toplam sepet ağırlığı minimum veya maksimum "
-"gereksinimlerini ayarlayın."
-
-msgid "Minimum Weight (kg)"
-msgstr "Minimum Ağırlık (kg)"
-
-msgid "Method only available if total cart weight is at least this value"
-msgstr ""
-"Toplam sepet ağırlığı bu değerin en azı kadar ise yöntemin kullanılabilir "
-"olduğu"
-
-msgid "Maximum Weight (kg)"
-msgstr "Maksimum Ağırlık (kg)"
-
-msgid "Method only available if total cart weight is below this value"
-msgstr ""
-"Toplam sepet ağırlığı bu değerin altındaysa yöntemin kullanılabilir olduğu"
-
-msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
-msgstr ""
-"2kg'dan az paketler için hafif paket nakliyesi: Maksimum 2.00 olarak ayarla"
-
-msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
-msgstr "20kg'dan fazla paketler için ağır nakliye: Minimum 20.00 olarak ayarla"
-
-msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
-msgstr ""
-"0.5kg-10kg arası paketler için standart nakliye: Hem minimum hem maksimum "
-"ayarla"
-
+#: templates/admin/cart/method_wizard/step2_conditions.html:6
+#: templates/admin/cart/method_wizard/step2_conditions.html:27
+#: templates/admin/cart/method_wizard/step5_review.html:93
 msgid "Additional Options"
 msgstr "Ekstra Seçenekler"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:9
+#| msgid "Optional description of this shipping method"
+msgid "Configure additional options for this shipping method."
+msgstr "Bu taşıma yöntemi için ek seçenekleri yapılandırın."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:19
+msgid "Eligibility Conditions"
+msgstr "Eligibility Koşulları"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:20
+msgid ""
+"Order value and weight eligibility conditions are now configured through "
+"Shipping Promotions with visibility control. Go to Shipping Promotions to "
+"set up conditions that control when this method is shown to customers."
+msgstr ""
+"Sipariş değeri ve ağırlık elverişlilik koşulları artık görünürlük kontrolü "
+"ile Sevkiyat Teşvikleri üzerinden yapılandırılmaktadır. Bu yöntemin "
+"müşterilere ne zaman gösterileceğini denetleyen koşulları Sevkiyat "
+"Teşvikleri'ne giderek ayarlayabilirsiniz."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:36
 msgid "Requires Shipping Address"
 msgstr "Kargo Adresi Gerekli"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:40
 msgid ""
 "Customer must provide a shipping address for this method (disable for "
 "digital goods or local pickup)"
@@ -1803,20 +2154,31 @@ msgstr ""
 "Müşterinin bu yöntemin için bir nakliye adresi sağlaması gerekir (dijital "
 "ürünler veya yerel toplama için devre dışı bırakın)"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:50
+#: templates/admin/cart/method_wizard/step3_coverage.html:99
+#: templates/admin/cart/method_wizard/step4_features.html:263
+#: templates/admin/cart/method_wizard/step5_review.html:228
 msgid "Previous"
 msgstr "Önceki"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:117
+#: templates/admin/cart/shippingmethod/change_form.html:169
 msgid "Geographic Coverage"
 msgstr "Coğrafi Kapsam"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:9
+#: templates/admin/cart/shippingmethod/change_form.html:170
 msgid "Define where this shipping method is available using shipping zones."
 msgstr ""
 "Nakliye bölgelerini kullanarak bu nakliye yönteminin nerede kullanılabilir "
 "olduğunun tanımlanması."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:23
 msgid "Zone-Based Coverage:"
 msgstr "Alan Temelli Kapsam:"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:24
 msgid ""
 "Use shipping zones for flexible, rule-based geographic coverage. This "
 "approach works seamlessly with shipping rules and allows precise control "
@@ -1826,9 +2188,11 @@ msgstr ""
 "yaklaşım nakliye kuralları ile uyumlu çalışır ve yöntemlerinin nerede "
 "kullanılabilir olduğuna dair hassas kontrol sağlar."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:29
 msgid "Select Shipping Zones"
 msgstr "Kargo Alanlarını Seç"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:32
 msgid ""
 "Choose which shipping zones this method is available for. Leave empty to "
 "make available worldwide."
@@ -1836,79 +2200,107 @@ msgstr ""
 "Bu yöntemin kullanılabilir olduğu nakliye bölgelerini seçin. Dünya çapında "
 "kullanılabilir hale getirmek için boş bırakın."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:38
 msgid "Available Zones"
 msgstr "Mevcut Alanlar"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:49
 msgid "Add selected zones"
 msgstr "Seçilen alanları ekle"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:52
 msgid "Add all zones"
 msgstr "Tüm alanları ekle"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:55
 msgid "Remove selected zones"
 msgstr "Seçilen alanları kaldır"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:58
 msgid "Remove all zones"
 msgstr "Tüm alanları kaldır"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:64
 msgid "Selected Zones"
 msgstr "Seçilen Alanlar"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:83
 msgid "No shipping zones found!"
 msgstr "Kargo alanı bulunamadı!"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:84
 msgid "You need to create shipping zones first."
 msgstr "Önce nakliye bölgeleri oluşturmanız gerekir."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:86
 msgid "Create a shipping zone"
 msgstr "Bir kargo alanı oluştur"
 
+#: templates/admin/cart/method_wizard/step4_features.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:154
 msgid "Method Features"
 msgstr "Özellikler"
 
+#: templates/admin/cart/method_wizard/step4_features.html:9
 msgid ""
 "Configure delivery estimates, display order, and method-specific features."
 msgstr ""
 "Teslimat tahminlerini, görüntü sırasını ve yöntem özel özelliklerini "
 "yapılandırın."
 
-msgid "Select the physical locations where customers can pick up their orders."
+#: templates/admin/cart/method_wizard/step4_features.html:23
+msgid ""
+"Select the physical locations where customers can pick up their orders."
 msgstr "Müşterilerin siparişlerini toplayabileceği fiziksel yerleri seçin."
 
+#: templates/admin/cart/method_wizard/step4_features.html:27
 msgid "Available Pickup Locations"
 msgstr "Mevcut Toplama Noktaları"
 
+#: templates/admin/cart/method_wizard/step4_features.html:32
 msgid "Available Locations"
 msgstr "Mevcut Noktalar"
 
+#: templates/admin/cart/method_wizard/step4_features.html:60
 msgid "Selected Locations"
 msgstr "Seçilen Noktalar"
 
+#: templates/admin/cart/method_wizard/step4_features.html:79
 msgid "No pickup locations found!"
 msgstr "Toplama noktası bulunamadı!"
 
+#: templates/admin/cart/method_wizard/step4_features.html:80
 msgid "You need to create pickup locations first for local pickup methods."
 msgstr ""
 "Yerel toplama yöntemleri için önce toplama yerleri oluşturmanız gerekir."
 
+#: templates/admin/cart/method_wizard/step4_features.html:82
 msgid "Create a pickup location"
 msgstr "Bir toplama noktası oluştur"
 
+#: templates/admin/cart/method_wizard/step4_features.html:95
 msgid "Carrier API Status"
 msgstr "Taşıyıcı API Durumu"
 
+#: templates/admin/cart/method_wizard/step4_features.html:101
+#: templates/admin/cart/method_wizard/step5_review.html:79
+#: templates/admin/cart/shippingmethod/method_card.html:96
 msgid "Carrier:"
 msgstr "Taşıyıcı:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:103
 msgid "Service Code:"
 msgstr "Hizmet Kodu:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:109
 msgid "API Configuration Status"
 msgstr "API Yapılandırma Durumu"
 
+#: templates/admin/cart/method_wizard/step4_features.html:113
 msgid "Checking API credentials..."
 msgstr "API kimlik bilgileri kontrol ediliyor..."
 
+#: templates/admin/cart/method_wizard/step4_features.html:119
 msgid ""
 "Ensure your carrier API credentials are configured in the shipping provider "
 "settings."
@@ -1916,9 +2308,11 @@ msgstr ""
 "Taşıyıcı API kimlik bilgilerinin nakliye sağlayıcı ayarlarında "
 "yapılandırılmış olduğundan emin olun."
 
+#: templates/admin/cart/method_wizard/step4_features.html:129
 msgid "Enable Rate Caching"
 msgstr "Oran Önbelleğini Etkinleştir"
 
+#: templates/admin/cart/method_wizard/step4_features.html:133
 msgid ""
 "Cache carrier rates for 15 minutes to improve performance and reduce API "
 "calls"
@@ -1926,58 +2320,69 @@ msgstr ""
 "Performansı artırma ve API çağrılarını azaltma amacıyla taşıyıcı oranlarını "
 "15 dakika boyunca önbelleğe alın."
 
+#: templates/admin/cart/method_wizard/step4_features.html:143
 msgid "Rate Table Configuration"
 msgstr "Oran Tablosu Yapılandırması"
 
-msgid "Weight-Based Rates:"
-msgstr "Ağırlık Temelli Oranlar:"
+#: templates/admin/cart/method_wizard/step4_features.html:149
+#| msgid "Table Rate"
+msgid "Table Rates:"
+msgstr "Tablo Oranları:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:150
+#| msgid ""
+#| "You'll be able to configure tiered rates based on cart weight after the "
+#| "method is created."
 msgid ""
-"You'll be able to configure tiered rates based on cart weight after the "
-"method is created."
+"You'll be able to configure tiered rates based on weight, price, or "
+"destination after the method is created."
 msgstr ""
-"Yöntem oluşturulduktan sonra sepet ağırlığına dayalı katmanlı oranları "
-"yapılandırabilirsiniz."
+"Yöntem oluşturulduktan sonra ağırlık, fiyat veya hedefe dayalı katmanlı "
+"oranları yapılandırabileceksiniz."
 
-msgid "Price-Based Rates:"
-msgstr "Fiyat Temelli Oranlar:"
-
-msgid ""
-"You'll be able to configure tiered rates based on cart subtotal after the "
-"method is created."
-msgstr ""
-"Yöntem oluşturulduktan sonra sepet alt toplamına dayalı katmanlı oranları "
-"yapılandırabilirsiniz."
-
+#: templates/admin/cart/method_wizard/step4_features.html:156
 msgid "Rate tables can be managed from the method's edit page after creation."
 msgstr ""
 "Oran tabloları, yöntem oluşturulduktan sonra yöntemin düzenleme sayfasından "
 "yönetilebilir."
 
+#: templates/admin/cart/method_wizard/step4_features.html:165
 msgid "Delivery Time Estimate"
 msgstr "Teslimat Zamanı Tahmini"
 
+#: templates/admin/cart/method_wizard/step4_features.html:169
 msgid "Provide customers with an estimated delivery timeframe."
 msgstr "Müşterilere tahmini teslimat zaman çerçevesi sağlayın."
 
+#: templates/admin/cart/method_wizard/step4_features.html:186
 msgid "Fastest delivery time in business days"
 msgstr "İş günlerindeki en hızlı teslimat süresi"
 
+#: templates/admin/cart/method_wizard/step4_features.html:203
 msgid "Slowest delivery time in business days"
 msgstr "İş günlerindeki en yavaş teslimat süresi"
 
+#: templates/admin/cart/method_wizard/step4_features.html:211
+msgid "Examples:"
+msgstr "Örnekler:"
+
+#: templates/admin/cart/method_wizard/step4_features.html:213
 msgid "Standard shipping: 3-5 business days"
 msgstr "Standart kargo: 3-5 iş günü"
 
+#: templates/admin/cart/method_wizard/step4_features.html:214
 msgid "Express shipping: 1-2 business days"
 msgstr "Hızlı kargo: 1-2 iş günü"
 
+#: templates/admin/cart/method_wizard/step4_features.html:215
 msgid "International shipping: 7-14 business days"
 msgstr "Uluslararası kargo: 7-14 iş günü"
 
+#: templates/admin/cart/method_wizard/step4_features.html:229
 msgid "Display Settings"
 msgstr "Görünüm Ayarları"
 
+#: templates/admin/cart/method_wizard/step4_features.html:245
 msgid ""
 "Lower numbers appear first. Use this to control the order methods are "
 "displayed to customers."
@@ -1985,6 +2390,7 @@ msgstr ""
 "Düşük sayılar önce görünür. Bu, yöntemlerin müşterilere nasıl "
 "gösterileceğini kontrol etmek için kullanılır."
 
+#: templates/admin/cart/method_wizard/step4_features.html:253
 msgid ""
 "Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
 "of new methods between existing ones."
@@ -1992,112 +2398,139 @@ msgstr ""
 "Var olan yöntemler arasında yeni yöntemlerin kolayca eklenmesini sağlamak "
 "için sıralama sıralarını 10'arlık artımlarla (0, 10, 20) atayın."
 
+#: templates/admin/cart/method_wizard/step4_features.html:266
+#: templates/admin/cart/method_wizard/step5_review.html:6
 msgid "Review & Create"
 msgstr "İncele ve Oluştur"
 
+#: templates/admin/cart/method_wizard/step4_features.html:275
 msgid "API credentials verified successfully"
 msgstr "API kimlik bilgileri başarıyla doğrulandı"
 
+#: templates/admin/cart/method_wizard/step5_review.html:9
 msgid "Review your shipping method configuration and create it."
 msgstr "Kargo yönteminizin yapılandırmasını gözden geçirin ve oluşturun."
 
+#: templates/admin/cart/method_wizard/step5_review.html:20
+#: templates/admin/cart/method_wizard/step5_review.html:95
+#: templates/admin/cart/method_wizard/step5_review.html:119
+#: templates/admin/cart/method_wizard/step5_review.html:156
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:62
 msgid "Edit"
 msgstr "Düzenle"
 
+#: templates/admin/cart/method_wizard/step5_review.html:26
 msgid "Name:"
 msgstr "Ad:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:30
 msgid "Method Type:"
 msgstr "Yöntem Türü:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:39
 msgid "Description:"
 msgstr "Açıklama:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:45
+#: templates/admin/cart/method_wizard/step5_review.html:53
 msgid "Display Icon:"
 msgstr "Göster Icon:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:58
 msgid "Status:"
 msgstr "Durum:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:66
+#: templates/admin/cart/shippingmethod/change_form.html:34
+#: templates/admin/cart/shippingmethod/change_list.html:70
+#: templates/admin/cart/shippingmethod/method_card.html:124
+#: templates/admin/cart/taxrate/change_form.html:35
+#: templates/admin/cart/taxrate/change_list.html:90
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:30
 msgid "Inactive"
 msgstr "Pasif"
 
+#: templates/admin/cart/method_wizard/step5_review.html:73
 msgid "Flat Rate Cost:"
 msgstr "Düz Oran Maliyeti:"
 
-msgid "Min Order Value:"
-msgstr "Min Sipariş Değeri:"
-
-msgid "Max Order Value:"
-msgstr "Maks Sipariş Değeri:"
-
-msgid "Min Weight:"
-msgstr "Min Ağırlık:"
-
-msgid "Max Weight:"
-msgstr "Maks Ağırlık:"
-
+#: templates/admin/cart/method_wizard/step5_review.html:101
 msgid "Requires Shipping Address:"
 msgstr "Kargo Adresi Gerekli:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:104
 msgid "Yes"
 msgstr "Evet"
 
+#: templates/admin/cart/method_wizard/step5_review.html:106
 msgid "No"
 msgstr "Hayır"
 
-msgid ""
-"No eligibility conditions set - method available for all cart values and "
-"weights"
-msgstr ""
-"Eligibility koşulları ayarlanmamış - tüm sepet değerleri ve ağırlıkları için "
-"yöntem kullanılabilir"
-
+#: templates/admin/cart/method_wizard/step5_review.html:126
 msgid "Shipping Zones:"
 msgstr "Kargo Alanları:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:141
+#: templates/admin/cart/shippingmethod/method_card.html:76
 msgid "Coverage:"
 msgstr "Kapsam:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:143
 msgid "Worldwide (No zones selected)"
 msgstr "Dünya çapında (Alan seçilmedi)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:164
 msgid "Pickup Locations:"
 msgstr "Toplama Noktaları:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:167
+#: templates/admin/cart/shippingmethod/method_card.html:87
 msgid "location"
 msgstr "konum"
 
+#: templates/admin/cart/method_wizard/step5_review.html:172
 msgid "Delivery Time:"
 msgstr "Teslimat Zamanı:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:174
+#: templates/admin/cart/shippingmethod/method_card.html:110
 msgid "Instant Pickup"
 msgstr "Anında Toplama"
 
+#: templates/admin/cart/method_wizard/step5_review.html:179
 msgid "Delivery Estimate:"
 msgstr "Teslimat Tahmini:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:182
+#: templates/admin/cart/shippingmethod/method_card.html:112
 msgid "business days"
 msgstr "iş günü"
 
+#: templates/admin/cart/method_wizard/step5_review.html:188
 msgid "Sort Order:"
 msgstr "Sıra:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:194
 msgid "Rate Caching:"
 msgstr "Oran Önbelleğe Alma:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:196
 msgid "Enabled"
 msgstr "Etkin"
 
+#: templates/admin/cart/method_wizard/step5_review.html:208
 msgid "What happens next:"
 msgstr "Ne olacak:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:210
 msgid "Your shipping method will be created with the settings above"
 msgstr "Kargo yönteminiz yukarıdaki ayarlara göre oluşturulacak"
 
+#: templates/admin/cart/method_wizard/step5_review.html:212
 msgid "You'll be redirected to configure rate tables for this method"
 msgstr "Bu yöntemin ücret tablolarını yapılandırmak için yönlendirileceksiniz"
 
+#: templates/admin/cart/method_wizard/step5_review.html:215
 msgid ""
 "The method will be immediately available to customers (if eligibility "
 "conditions are met)"
@@ -2105,243 +2538,363 @@ msgstr ""
 "Yöntem, müşteriye hemen ulaşılabilir olacaktır (eligibility koşulları "
 "karşılanırsa)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:217
 msgid "The method will be created as inactive - activate it when ready"
 msgstr "Yöntem pasif olarak oluşturulacak - hazır olduğunuzda etkinleştirin"
 
+#: templates/admin/cart/method_wizard/step5_review.html:231
 msgid "Create Shipping Method"
 msgstr "Kargo Yöntemi Oluştur"
 
+#: templates/admin/cart/method_wizard/step5_review.html:240
 msgid "Creating..."
 msgstr "Oluşturuluyor..."
 
+#: templates/admin/cart/partials/cart_cards.html:29
 msgid "Session"
 msgstr "Oturum"
 
+#: templates/admin/cart/partials/cart_cards.html:36
 msgid "Registered"
 msgstr "Kayıtlı"
 
+#: templates/admin/cart/partials/cart_cards.html:40
 msgid "Guest"
 msgstr "Ziyaretçi"
 
+#: templates/admin/cart/partials/cart_cards.html:46
 msgid "item"
 msgstr "ürün"
 
+#: templates/admin/cart/partials/cart_cards.html:56
 msgid "Shipping Set"
 msgstr "Kargo Seti"
 
+#: templates/admin/cart/partials/cart_cards.html:69
 msgid "Cart Total"
 msgstr "Sepet Toplamı"
 
+#: templates/admin/cart/partials/cart_cards.html:75
 msgid "Items"
 msgstr "Ürünler"
 
+#: templates/admin/cart/partials/cart_cards.html:80
 msgid "Savings"
 msgstr "Kazançlar"
 
+#: templates/admin/cart/partials/cart_cards.html:88
 msgid "Shipping"
 msgstr "Kargo"
 
+#: templates/admin/cart/partials/cart_cards.html:95
 msgid "Grand Total"
 msgstr "Genel Toplam"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "Updated"
 msgstr "Güncellendi"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "ago"
 msgstr "önce"
 
+#: templates/admin/cart/partials/cart_cards.html:109
+#: templates/admin/cart/shippingmethod/change_form.html:30
+#: templates/admin/cart/shippingmethod/method_card.html:128
 msgid "Created"
 msgstr "Oluşturuldu"
 
+#: templates/admin/cart/partials/cart_cards.html:120
 msgid "Est. Delivery"
 msgstr "Tahmini Teslimat"
 
+#: templates/admin/cart/partials/cart_cards.html:129
 msgid "View cart details"
 msgstr "Sepet Detaylarını Görüntüle"
 
+#: templates/admin/cart/partials/cart_cards.html:134
 msgid "Edit cart"
 msgstr "Sepeti Düzenle"
 
+#: templates/admin/cart/partials/cart_cards.html:140
 msgid "Delete cart"
 msgstr "Sepeti Sil"
 
+#: templates/admin/cart/partials/cart_cards.html:143
 msgid "Are you sure you want to clear this cart?"
 msgstr "Bu sepeti temizlemek istediğinizden emin misiniz?"
 
+#: templates/admin/cart/partials/cart_cards.html:154
 msgid "No shopping carts found matching your criteria."
 msgstr "Kriterlerinize uyan hiçbir alışveriş sepeti bulunamadı."
 
+#: templates/admin/cart/partials/cart_cards.html:156
 msgid "Try adjusting your filters or search terms."
 msgstr "Filtrelerinizi veya arama kriterlerinizi ayarlayarak tekrar deneyin."
 
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:22
 msgid "Edit Shipping Method"
 msgstr "Kargo Yöntemini Düzenle"
 
+#: templates/admin/cart/shippingmethod/change_form.html:40
+#: templates/admin/cart/shippingmethod/change_form.html:344
+#: templates/admin/cart/taxrate/change_form.html:41
+#: templates/admin/cart/taxrate/change_form.html:239
 msgid "Save and continue editing"
 msgstr "Kaydet ve düzenleme devam et"
 
+#: templates/admin/cart/shippingmethod/change_form.html:56
+#: templates/admin/cart/taxrate/change_form.html:57
 msgid "Please correct the errors below"
 msgstr "Lütfen aşağıda belirtilen hataları düzeltin"
 
+#: templates/admin/cart/shippingmethod/change_form.html:82
+#: templates/admin/cart/taxrate/change_form.html:83
 msgid "Basic"
 msgstr "Temel"
 
+#: templates/admin/cart/shippingmethod/change_form.html:86
+#: templates/admin/cart/shippingmethod/change_form.html:148
 msgid "Pricing"
 msgstr "Fiyatlandırma"
 
+#: templates/admin/cart/shippingmethod/change_form.html:94
 msgid "Display"
 msgstr "Göster"
 
-msgid "Optional: Restrict availability based on order value or weight."
-msgstr ""
-"İsteğe bağlı: Kullanılabilirliği sipariş değeri veya ağırlığına göre kısıtla."
+#: templates/admin/cart/shippingmethod/change_form.html:103
+#| msgid "Product Exemptions"
+msgid "Promotions"
+msgstr "İndirimler"
 
+#: templates/admin/cart/shippingmethod/change_form.html:185
 msgid "Delivery Time"
 msgstr "Teslimat Zamanı"
 
+#: templates/admin/cart/shippingmethod/change_form.html:226
 msgid "Display Options"
 msgstr "Gösterim Seçenekleri"
 
+#: templates/admin/cart/shippingmethod/change_form.html:248
 msgid "Carrier Integration"
 msgstr "Taşıyıcı Entegrasyonu"
 
+#: templates/admin/cart/shippingmethod/change_form.html:249
 msgid "Configure carrier-specific settings for real-time rate lookups."
 msgstr ""
 "Gerçek zamanlı ücret sorgulamaları için taşıyıcı özel ayarlarını yapılandır."
 
+#: templates/admin/cart/shippingmethod/change_form.html:269
+msgid "Active Promotions"
+msgstr "Aktif İndirimler"
+
+#: templates/admin/cart/shippingmethod/change_form.html:270
+msgid ""
+"Shipping promotions that currently affect this method. Promotions with no "
+"method restrictions apply to all methods."
+msgstr ""
+"Bu yöntem üzerinde etkili olan mevcut nakliye kampanyaları. Yöntem "
+"kısıtlaması olmayan kampanyalar tüm yöntemlere uygulanır."
+
+#: templates/admin/cart/shippingmethod/change_form.html:277
+#| msgid "Tax Type"
+msgid "Type"
+msgstr "Tip"
+
+#: templates/admin/cart/shippingmethod/change_form.html:278
+msgid "Value"
+msgstr "Değer"
+
+#: templates/admin/cart/shippingmethod/change_form.html:280
+#: templates/admin/cart/taxrate/change_list.html:86
+msgid "Status"
+msgstr "Durum"
+
+#: templates/admin/cart/shippingmethod/change_form.html:302
+#| msgid "Optional description of this shipping method"
+msgid "No active promotions affect this shipping method."
+msgstr "Bu taşıma yöntemi üzerinde etkili aktif promosyon yok."
+
+#: templates/admin/cart/shippingmethod/change_form.html:308
+#| msgid "Created From"
+msgid "Create New Promotion"
+msgstr "Yeni İndirim Oluştur"
+
+#: templates/admin/cart/shippingmethod/change_list.html:21
 msgid "Configure shipping options, rates, and delivery methods"
 msgstr "Kargo seçeneklerini, ücretleri ve teslimat yöntemlerini yapılandırın"
 
+#: templates/admin/cart/shippingmethod/change_list.html:23
 msgid "method"
 msgstr "yöntem"
 
+#: templates/admin/cart/shippingmethod/change_list.html:24
 msgid "active"
 msgstr "aktif"
 
+#: templates/admin/cart/shippingmethod/change_list.html:29
 msgid "Add Method"
 msgstr "Yöntem Ekle"
 
+#: templates/admin/cart/shippingmethod/change_list.html:48
 msgid "Bulk Actions"
 msgstr "Toplu İşlemler"
 
+#: templates/admin/cart/shippingmethod/change_list.html:49
 msgid "Enable Selected"
 msgstr "Seçiliyi Etkinleştir"
 
+#: templates/admin/cart/shippingmethod/change_list.html:50
 msgid "Disable Selected"
 msgstr "Seçiliyi Devre Dışı Bırak"
 
+#: templates/admin/cart/shippingmethod/change_list.html:51
 msgid "Delete Selected"
 msgstr "Seçili Yazıyı Sil"
 
+#: templates/admin/cart/shippingmethod/change_list.html:53
 msgid "Apply"
 msgstr "Uygula"
 
+#: templates/admin/cart/shippingmethod/change_list.html:55
 msgid "selected"
 msgstr "seçili"
 
+#: templates/admin/cart/shippingmethod/change_list.html:65
 msgid "All Status"
 msgstr "Tüm Durumlar"
 
+#: templates/admin/cart/shippingmethod/change_list.html:76
+#: templates/admin/cart/taxrate/change_list.html:78
 msgid "All Types"
 msgstr "Tüm Türler"
 
+#: templates/admin/cart/shippingmethod/change_list.html:81
 msgid "Real-Time Rates"
 msgstr "Gerçek Zamanlı Oranlar"
 
+#: templates/admin/cart/shippingmethod/change_list.html:92
 msgid "Clear all filters"
 msgstr "Tüm Filtreleri Temizle"
 
+#: templates/admin/cart/shippingmethod/change_list.html:93
 msgid "Clear Filters"
 msgstr "Filtreleri Temizle"
 
+#: templates/admin/cart/shippingmethod/change_list.html:101
 msgid "Search methods..."
 msgstr "Yöntemleri Ara..."
 
+#: templates/admin/cart/shippingmethod/change_list.html:112
 msgid "Select All"
 msgstr "Tümünü Seç"
 
+#: templates/admin/cart/shippingmethod/change_list.html:130
 #, python-format
 msgid "%(counter)s method"
 msgid_plural "%(counter)s methods"
 msgstr[0] "%(counter)s yöntem"
 msgstr[1] "%(counter)s yöntemler"
 
+#: templates/admin/cart/shippingmethod/change_list.html:139
 msgid "No shipping methods found"
 msgstr "Kargo yöntemi bulunamadı"
 
+#: templates/admin/cart/shippingmethod/change_list.html:142
 msgid "Try adjusting your filters or search query."
 msgstr "Filtrelerinizi veya arama sorgunuzu ayarlayarak deneyin."
 
+#: templates/admin/cart/shippingmethod/change_list.html:144
 msgid "Get started by creating your first shipping method."
 msgstr "İlk kargonuzu oluşturarak başlayın."
 
+#: templates/admin/cart/shippingmethod/change_list.html:149
 msgid "Add First Method"
 msgstr "İlk Yöntemi Ekle"
 
+#: templates/admin/cart/shippingmethod/change_list.html:160
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
-msgid "Order Value:"
-msgstr "Sipariş Değeri:"
-
-msgid "Weight:"
-msgstr "Ağırlık:"
-
+#: templates/admin/cart/shippingmethod/method_card.html:60
 msgid "Zones:"
 msgstr "Bölgeler:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:62
 msgid "zone"
 msgstr "bölge"
 
+#: templates/admin/cart/shippingmethod/method_card.html:68
 msgid "Countries:"
 msgstr "Ülkeler:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:70
 msgid "country"
 msgstr "ülke"
 
+#: templates/admin/cart/shippingmethod/method_card.html:77
 msgid "Worldwide"
 msgstr "Dünya çapında"
 
+#: templates/admin/cart/shippingmethod/method_card.html:85
 msgid "Pickup:"
 msgstr "Toplama:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:107
 msgid "Delivery:"
 msgstr "Teslimat:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:137
 msgid "Edit method"
 msgstr "Yöntemi Düzenle"
 
+#: templates/admin/cart/shippingmethod/method_card.html:143
 msgid "Toggle active status"
 msgstr "Etkinlik Durumunu Değiştir"
 
+#: templates/admin/cart/shippingmethod/method_card.html:149
 msgid "Delete method"
 msgstr "Yöntemi Sil"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:22
 msgid "Edit Tax Rate"
 msgstr "Vergi Oranını Düzenle"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:24
+#: templates/admin/cart/taxrate/change_list.html:26
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:82
 msgid "Add Tax Rate"
 msgstr "Vergi Oranı Ekle"
 
+#: templates/admin/cart/taxrate/change_form.html:87
 msgid "Geography"
 msgstr "Coğrafya"
 
+#: templates/admin/cart/taxrate/change_form.html:91
 msgid "Rules"
 msgstr "Kurallar"
 
+#: templates/admin/cart/taxrate/change_form.html:95
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:55
 msgid "Exemptions"
 msgstr "İstisnalar"
 
+#: templates/admin/cart/taxrate/change_form.html:142
 msgid ""
 "Define where this tax rate applies. Leave state/city empty for country-wide "
 "rates."
 msgstr ""
-"Bu vergi oranının uygulandığı yeri tanımla. Ulus çaplı oranlar için eyalet/"
-"şehir alanlarını boş bırak."
+"Bu vergi oranının uygulandığı yeri tanımla. Ulus çaplı oranlar için "
+"eyalet/şehir alanlarını boş bırak."
 
+#: templates/admin/cart/taxrate/change_form.html:194
 msgid "Exclude specific product types or categories from this tax rate."
 msgstr "Bu vergi oranından özel ürün türlerini veya kategorilerini hariç tut."
 
+#: templates/admin/cart/taxrate/change_list.html:18
 msgid ""
 "Configure tax rules for your store. Tax rates are matched to customer "
 "addresses during checkout."
@@ -2349,42 +2902,52 @@ msgstr ""
 "Mağazanız için vergi kurallarını yapılandırın. Vergi oranları, ödeme "
 "sırasında müşteri adreslerine eşlenir."
 
+#: templates/admin/cart/taxrate/change_list.html:22
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:79
 msgid "Load Presets"
 msgstr "Ön Ayarları Yükle"
 
+#: templates/admin/cart/taxrate/change_list.html:37
 msgid "Total Rules"
 msgstr "Toplam Kurallar"
 
+#: templates/admin/cart/taxrate/change_list.html:47
 msgid "Countries"
 msgstr "Ülkeler"
 
+#: templates/admin/cart/taxrate/change_list.html:52
 msgid "Tax Types"
 msgstr "Vergi Türleri"
 
+#: templates/admin/cart/taxrate/change_list.html:64
 msgid "Search by name, country, state..."
 msgstr "Ad, ülke, eyalet tarafından ara..."
 
+#: templates/admin/cart/taxrate/change_list.html:69
 msgid "All Countries"
 msgstr "Tüm Ülkeler"
 
+#: templates/admin/cart/taxrate/change_list.html:82
 msgid "Custom"
 msgstr "Özel"
 
-msgid "Status"
-msgstr "Durum"
-
+#: templates/admin/cart/taxrate/change_list.html:97
 msgid "Clear"
 msgstr "Temizle"
 
+#: templates/admin/cart/taxrate/change_list.html:104
 msgid "Tax Rules"
 msgstr "Vergi Kuralları"
 
+#: templates/admin/cart/taxrate/change_list.html:107
 msgid "rules"
 msgstr "Kurallar"
 
+#: templates/admin/cart/taxrate/change_list.html:120
 msgid "Load Tax Rate Presets"
 msgstr "Vergi Oranı Ön Ayarlarını Yükle"
 
+#: templates/admin/cart/taxrate/change_list.html:121
 msgid ""
 "Quickly add standard tax rates for your region. Existing rates will not be "
 "duplicated."
@@ -2392,30 +2955,39 @@ msgstr ""
 "Bölgeniz için standart vergi oranlarını hızlıca ekleyin. Mevcut oranlar "
 "tekrarlanmayacak."
 
+#: templates/admin/cart/taxrate/change_list.html:141
 msgid "rates"
 msgstr "oranlar"
 
+#: templates/admin/cart/taxrate/change_list.html:147
 msgid "Load"
 msgstr "Yükle"
 
+#: templates/admin/cart/taxrate/change_list.html:158
 msgid "Close"
 msgstr "Kapat"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:17
 msgid "postal codes"
 msgstr "posta kodları"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:35
 msgid "Shipping Taxed"
 msgstr "Kargo Vergilendirildi"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:40
 msgid "Compound"
 msgstr "Bileşik"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:65
 msgid "Delete"
 msgstr "Sil"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:75
 msgid "No tax rates configured"
 msgstr "Vergi oranları yapılandırılmadı"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:76
 msgid ""
 "Use 'Load Presets' to quickly add standard rates for your region, or add "
 "rates manually."
@@ -2423,9 +2995,11 @@ msgstr ""
 "Bölgeniz için standart oranları hızlıca eklemek için 'Ön Ayarları Yükle' "
 "kullanın veya oranları el ile ekleyin."
 
+#: views.py:57
 msgid "Get current cart"
 msgstr "Mevcut sepeti al"
 
+#: views.py:59
 msgid ""
 "Get the current cart for authenticated user or session. Returns cart items, "
 "subtotal, discounts, taxes, and total. Automatically creates cart if it "
@@ -2435,9 +3009,11 @@ msgstr ""
 "öğelerini, ara toplamı, indirimleri, vergileri ve toplamı döndürür. Sepet "
 "yoksa otomatik olarak oluşturur."
 
+#: views.py:64
 msgid "Add item to cart"
 msgstr "Ürünü sepete ekle"
 
+#: views.py:66
 msgid ""
 "Add a product to cart with specified quantity. Optionally include variant "
 "ID, customizations, and notes. Validates stock availability and merges with "
@@ -2446,14 +3022,16 @@ msgid ""
 "and optionally pricing_tier_id."
 msgstr ""
 "Belirtilen miktarla bir ürünü sepete ekleyin. Seçenek olarak varyant ID'si, "
-"özelleştirmeler ve notlar da dahil edilebilir. Aynı ürün/varyant olan mevcut "
-"sepet öğesiyle birleştirilir. Abonelik ürünleri için is_subscription=true "
+"özelleştirmeler ve notlar da dahil edilebilir. Aynı ürün/varyant olan mevcut"
+" sepet öğesiyle birleştirilir. Abonelik ürünleri için is_subscription=true "
 "ile birlikte subscription_plan_id, payment_token_id ve isteğe bağlı olarak "
 "pricing_tier_id ekleyin."
 
+#: views.py:72
 msgid "Update cart item"
 msgstr "Sepet ürününü güncelle"
 
+#: views.py:74
 msgid ""
 "Update cart item quantity, customizations, or notes. Validates new quantity "
 "against stock availability. Returns updated cart with recalculated totals."
@@ -2462,9 +3040,11 @@ msgstr ""
 "miktarın stok mevcudiyetiyle uyumlu olup olmadığını doğrular. Yeniden "
 "hesaplanan toplamlarla güncellenmiş sepeti döndürür."
 
+#: views.py:79
 msgid "Remove cart item"
 msgstr "Sepet ürününü kaldır"
 
+#: views.py:81
 msgid ""
 "Remove a specific item from cart. Recalculates cart totals and revalidates "
 "any applied vouchers against new cart total."
@@ -2472,9 +3052,11 @@ msgstr ""
 "Sepetten belirli bir öğeyi kaldır. Sepet toplamlarını yeniden hesapla ve "
 "yeni sepet toplamına göre uygulanan biletleri tekrar doğrula."
 
+#: views.py:86
 msgid "Clear cart"
 msgstr "Sepeti temizle"
 
+#: views.py:88
 msgid ""
 "Remove all items from cart. Also removes any applied vouchers. Cart object "
 "persists but becomes empty."
@@ -2482,9 +3064,11 @@ msgstr ""
 "Sepetin tüm öğelerini kaldır. Ayrıca uygulanan biletleri de kaldır. Sepet "
 "nesnesi devam eder ama boş olur."
 
+#: views.py:93
 msgid "Apply voucher code"
 msgstr "Kupon kodunu uygula"
 
+#: views.py:95
 msgid ""
 "Apply a voucher code to cart. Validates voucher eligibility, minimum "
 "purchase requirements, and usage limits. Calculates and applies discount to "
@@ -2494,52 +3078,34 @@ msgstr ""
 "gerekliliklerini ve kullanım sınırlarını doğrula. Sepet toplamına indirimi "
 "hesapla ve uygula."
 
+#: views.py:100
 msgid "Remove voucher"
 msgstr "Kuponu kaldır"
 
+#: views.py:102
 msgid ""
-"Remove a specific voucher from cart by code. Recalculates cart total without "
-"the voucher discount. User can reapply the voucher later if eligible."
+"Remove a specific voucher from cart by code. Recalculates cart total without"
+" the voucher discount. User can reapply the voucher later if eligible."
 msgstr ""
 "Kod ile sepetten belirli bir kuponu kaldır. Kupon indirimi olmadan sepet "
 "toplamını yeniden hesapla. Kullanıcı, uygunsa kuponu daha sonra tekrar "
 "uygulayabilir."
 
-msgid "Apply gift card"
-msgstr "Hediye kartı uygula"
-
-msgid ""
-"Apply a gift card code to cart. Validates gift card status, balance, and "
-"currency. Gift cards cannot be used to purchase other gift cards. Amount "
-"applied is limited to gift card balance or remaining cart total."
-msgstr ""
-"Bir hediye kartı kodunu sepete uygula. Hediye kartı durumu, bakiyesi ve para "
-"birimi doğrulanır. Hediye kartları başka hediye kartları satın almak için "
-"kullanılamaz. Uygulanan miktar, hediye kartı bakiyesi veya kalan sepet "
-"toplamına sınırlıdır."
-
-msgid "Remove gift card"
-msgstr "Hediye kartını kaldır"
-
-msgid ""
-"Remove a specific gift card from cart by code. The gift card balance is not "
-"affected until checkout is completed. User can reapply the gift card."
-msgstr ""
-"Kod ile sepetten belirli bir hediye kartını kaldır. Ödeme tamamlanana kadar "
-"hediye kartı bakiyesi etkilenmez. Kullanıcı hediye kartını tekrar "
-"uygulayabilir."
-
+#: views.py:107
 msgid "Get cart summary"
 msgstr "Sepet özeti al"
 
+#: views.py:109
 msgid ""
 "Get lightweight cart summary with item count, subtotal, and total. Faster "
-"than full cart endpoint. Useful for header cart badge or quick total display."
+"than full cart endpoint. Useful for header cart badge or quick total "
+"display."
 msgstr ""
 "Hafif sepet özeti al: ürün sayısı, alt toplam ve toplam. Tam sepet "
 "endpoint'inden daha hızlıdır. Başlık sepet pusu veya hızlı toplam "
 "görüntüleme için yararlıdır."
 
+#: views.py:246
 msgid ""
 "Component items cannot be modified directly. Update the parent product "
 "instead."
@@ -2547,9 +3113,11 @@ msgstr ""
 "Bileşen öğeleri doğrudan değiştirilemez. Aksine ebeveyn ürününüzü "
 "güncelleyin."
 
+#: views.py:360
 msgid "List user wishlists"
 msgstr "Kullanıcı istek listelerini listele"
 
+#: views.py:362
 msgid ""
 "Get all wishlists for the authenticated user. Users can have multiple "
 "wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
@@ -2560,20 +3128,25 @@ msgstr ""
 "'Doğum Günü', 'Düğün', 'Fikirler'). İstek listesi adlarını, ürün sayılarını "
 "ve gizlilik ayarlarını döndürür."
 
+#: views.py:367
 msgid "Create wishlist"
 msgstr "Beklenen liste oluştur"
 
+#: views.py:369
 msgid ""
-"Create a new wishlist for the authenticated user. Specify name, description, "
-"and privacy setting (public/private). Public wishlists can be shared via URL."
+"Create a new wishlist for the authenticated user. Specify name, description,"
+" and privacy setting (public/private). Public wishlists can be shared via "
+"URL."
 msgstr ""
 "Kimliği doğrulanmış kullanıcı için yeni bir istek listesi oluştur. Ad, "
 "açıklama ve gizlilik ayarı (ortak/özel) belirt. Ortak istek listeleri URL "
 "aracılığıyla paylaşılabilir."
 
+#: views.py:374
 msgid "Get wishlist details"
 msgstr "İstek listesi ayrıntılarını al"
 
+#: views.py:376
 msgid ""
 "Get detailed information about a specific wishlist including all items, "
 "prices, availability, and sharing settings. Only accessible to wishlist "
@@ -2583,9 +3156,11 @@ msgstr ""
 "mevcutluk ve paylaşım ayarlarını içeren. Sadece istek listesi sahibi "
 "tarafından erişilebilir, genel olarak paylaşılmazsa."
 
+#: views.py:381
 msgid "Update wishlist"
 msgstr "Beklenen listeyi güncelle"
 
+#: views.py:383
 msgid ""
 "Update wishlist information including name, description, or privacy "
 "settings. Can make wishlist public or private. Only owner can update."
@@ -2594,9 +3169,11 @@ msgstr ""
 "güncelleyin. İstek listesini genel veya özel yapabilirsiniz. Sadece sahip "
 "güncelleyebilir."
 
+#: views.py:388
 msgid "Partially update wishlist"
 msgstr "İstek listesini kısmen güncelle"
 
+#: views.py:390
 msgid ""
 "Update specific wishlist fields without sending full wishlist data. Useful "
 "for toggling privacy or renaming wishlist."
@@ -2605,9 +3182,11 @@ msgstr ""
 "güncelleyin. Gizliliği değiştirmek veya istek listesini yeniden adlandırmak "
 "için yararlıdır."
 
+#: views.py:395
 msgid "Delete wishlist"
 msgstr "Beklenen listeyi sil"
 
+#: views.py:397
 msgid ""
 "Permanently delete a wishlist and all its items. Cannot be undone. Only "
 "owner can delete."
@@ -2615,9 +3194,11 @@ msgstr ""
 "Bir istek listesini ve tüm öğelerini kalıcı olarak sil. Geri alınamaz. "
 "Sadece sahip silinebilir."
 
+#: views.py:402
 msgid "Add item to wishlist"
 msgstr "Ürünü beklenen listeye ekle"
 
+#: views.py:404
 msgid ""
 "Add a product to wishlist with optional variant, quantity, and notes. "
 "Prevents duplicates. Can add to default wishlist or specify wishlist ID."
@@ -2626,131 +3207,600 @@ msgstr ""
 "listesine ekleyin. Çiftleri önler. Varsayılan favori listesine ekleyebilir "
 "veya bir favori listesi ID'si belirtebilirsiniz."
 
+#: views.py:409
 msgid "Remove item from wishlist"
 msgstr "Beklenen listeden ürünü kaldır"
 
+#: views.py:411
 msgid ""
-"Remove a specific item from wishlist. Item can be added back later. Does not "
-"affect product availability."
+"Remove a specific item from wishlist. Item can be added back later. Does not"
+" affect product availability."
 msgstr ""
 "Bir ürün öğesini favori listeden kaldırın. Ürün daha sonra tekrar "
 "eklenebilir. Ürünün mevculuğunu etkilemez."
 
+#: views.py:416
 msgid "Move item to cart"
 msgstr "Ürünü sepete taşı"
 
+#: views.py:418
 msgid ""
 "Move a wishlist item directly to shopping cart. Validates stock "
 "availability. Item is removed from wishlist after successful cart addition."
 msgstr ""
 "Bir favori listesi öğesini doğrudan alışveriş sepetine taşıyın. Stok "
-"mevculuğunu doğrular. Sepete başarıyla eklendikten sonra öğe favori listeden "
-"kaldırılır."
+"mevculuğunu doğrular. Sepete başarıyla eklendikten sonra öğe favori listeden"
+" kaldırılır."
 
+#: views.py:423
 msgid "Get public wishlist by share slug"
 msgstr "Paylaş slug'ı ile genel istek listesini al"
 
+#: views.py:425
 msgid ""
 "View a public wishlist using its share URL slug. Anyone with the link can "
-"view public wishlists. Useful for gift registries and wish lists shared with "
-"family/friends."
+"view public wishlists. Useful for gift registries and wish lists shared with"
+" family/friends."
 msgstr ""
 "Bir paylaşım URL slug'ı kullanarak ortak bir istek listesini görüntüleyin. "
-"Bağlantıya sahip olan herkes ortak istek listelerini görebilir. Hediye kaydı "
-"ve aile/dostlarla paylaşılacak istek listeleri için kullanışlıdır."
+"Bağlantıya sahip olan herkes ortak istek listelerini görebilir. Hediye kaydı"
+" ve aile/dostlarla paylaşılacak istek listeleri için kullanışlıdır."
 
+#: views.py:430
+#| msgid "Get wishlist details"
+msgid "Get wishlisted product IDs"
+msgstr "İstek Listesindeki Ürün Kimliklerini Al"
+
+#: views.py:432
+msgid ""
+"Returns a mapping of product IDs to wishlist item IDs for the current user's"
+" default wishlist. Used by the storefront to show wishlist heart icons on "
+"product listings without fetching full wishlist data."
+msgstr ""
+"Mevcut kullanıcının varsayılan istek listesi için ürün kimliklerini istek "
+"listesi öğesi kimliklerine eşleyen bir harita döndürür. Tam istek listesi "
+"verisi çekmeden ürün listelerinde istek listesi kalbik ikonlarını göstermek "
+"için mağaza ön yüzü tarafından kullanılır."
+
+#: views.py:436
+msgid "Map of product IDs to wishlist item IDs"
+msgstr "Ürün kimliklerinden istek listesi öğesi kimliklerine harita"
+
+#: views.py:444
+msgid "Keys are product IDs (as strings), values are wishlist item IDs"
+msgstr ""
+"Anahtarlar ürün kimlikleridir (dize olarak), değerler istek listesi öğesi "
+"kimlikleridir"
+
+#: views.py:451
+#| msgid "Account creation required to proceed"
+msgid "Authentication required"
+msgstr "Kimlik doğrulama gerekli"
+
+#: views.py:523
 msgid "ID of the wishlist item to remove"
 msgstr "Kaldırılacak istek listesi öğesinin ID'si"
 
+#: views.py:542
 msgid "ID of the wishlist item to move to cart"
 msgstr "Sepete taşınacak istek listesi öğesinin ID'si"
 
+#: views.py:573
 msgid "Share slug of the public wishlist"
 msgstr "Kamuya açık istek listesinin slug'ını paylaş"
 
+#: views.py:589
 msgid "Wishlist not found"
 msgstr "İstek listesi bulunamadı"
 
+#: views.py:612
 msgid "Get checkout session"
 msgstr "Ödeme oturumu al"
 
+#: views.py:613
 msgid "Set shipping address"
 msgstr "Kargo adresini ayarla"
 
+#: views.py:614
 msgid "Set billing address"
 msgstr "Fatura adresini ayarla"
 
+#: views.py:616
 msgid "Get available shipping methods"
 msgstr "Kullanılabilir kargo yöntemleri al"
 
+#: views.py:620
 msgid "Get available payment providers"
 msgstr "Kullanılabilir ödeme sağlayıcılarını al"
 
+#: views.py:622
 msgid ""
-"Returns payment providers available for the customer's country and currency. "
-"Filters based on shipping countries, provider capabilities, and merchant "
+"Returns payment providers available for the customer's country and currency."
+" Filters based on shipping countries, provider capabilities, and merchant "
 "configuration."
 msgstr ""
 "Müşterinin ülkesi ve para birimi için mevcut ödemeyi sağlayan sağlayıcıları "
 "döndürür. Filtreleme, sevkiyat ülkesine, sağlayıcının yeteneklerine ve "
 "satıcı yapılandırmasına göre yapılır."
 
+#: views.py:625
 msgid "Set shipping method"
 msgstr "Kargo yöntemini ayarla"
 
+#: views.py:626
 msgid "Set payment method"
 msgstr "Ödeme yöntemini ayarla"
 
+#: views.py:627
 msgid "Validate checkout"
 msgstr "Ödeme sürecini doğrula"
 
+#: views.py:628
 msgid "Complete checkout"
 msgstr "Ödeme sürecini tamamla"
 
+#: views.py:631
+#| msgid "discount applied by"
+msgid "List applied tenders"
+msgstr "Uygulanan ödeme yöntemlerini listele"
+
+#: views.py:633
+msgid ""
+"Gift card and store credit holds against this checkout, plus the amount "
+"still due. amount_due — not total_amount — is what a payment provider should"
+" be asked to charge; it can legitimately be zero when tenders cover the "
+"whole order. Includes the signed-in customer's spendable wallet balance "
+"(null for guests, missing wallets, frozen wallets, or a currency mismatch)."
+msgstr ""
+"Bu ödeme için hediye kartı ve mağaza kredisi tutarları, daha ödenmesi "
+"gereken tutarla birlikte listelenir. Ödeme sağlayıcısına sorulması gereken "
+"tutar amount_due'dür — total_amount değil; tenders tüm siparişi kapsıyorsa "
+"bu değer sıfır olabilir. Giriş yapmış müşteriye ait kullanılabilir cüzdan "
+"bakiyesini içerir (misafirler, eksik cüzdanlar, donmuş cüzdanlar veya para "
+"birimi uyuşmazlığı için null)."
+
+#: views.py:643
+#| msgid "Apply gift card"
+msgid "Apply a gift card"
+msgstr "Bir hediye kartı uygula"
+
+#: views.py:645
+msgid ""
+"Places a hold on the card as a PAYMENT, not a discount: it settles the post-"
+"tax total and never reduces the tax base. Nothing is debited until payment "
+"is confirmed, so an abandoned checkout costs the customer nothing. Error "
+"messages are deliberately uniform — this endpoint sits on stored value and "
+"must not act as an enumeration oracle."
+msgstr ""
+"Bu işlem, indirim değil, ÖDEME olarak kartta bir tutar bloke eder: vergi "
+"sonrası toplamı kapatır ve asla vergi tabanını azaltmaz. Ödeme onaylanana "
+"kadar hiçbir şey debite edilmez, bu nedenle terk edilen ödeme müşteriye "
+"hiçbir maliyet getirmez. Hata mesajları amaçlı olarak birbiriyle aynıdır — "
+"bu uç nokta depolanan değerler üzerinde çalışır ve bir numaralandırma orak "
+"olarak davranmamalıdır."
+
+#: views.py:655
+#| msgid "Apply gift card"
+msgid "Apply store credit"
+msgstr "Mağaza kredisi uygula"
+
+#: views.py:657
+msgid ""
+"Holds the signed-in customer's wallet balance against this checkout, up to "
+"the amount due. Guests receive 403 — wallets belong to accounts. Single-"
+"currency: a wallet cannot part-pay an order in another currency."
+msgstr ""
+"Müşterinin giriş yapmış olduğu hesap bakiyesini bu ödeme işlemi için tutar. "
+"Ziyaretçiler 403 alır — cüzdanlar hesaplara aittir. Tek para birimi: bir "
+"cüzdan başka bir para birimi ile bir siparişi kısmen ödemek için "
+"kullanılamaz."
+
+#: views.py:665
+#| msgid "Remove all zones"
+msgid "Remove a tender"
+msgstr "Bir ödeme yöntemini kaldır"
+
+#: views.py:667
+msgid ""
+"Releases a hold. Nothing was debited, so this only frees the reservation; "
+"the checkout's amount_due rises accordingly."
+msgstr ""
+"Bir tutar serbest bırakır. Hiçbir şey debite edilmediği için bu sadece "
+"rezervasyonu serbest bırakır; checkout'un amount_due değeri bunun göreli "
+"olarak artar."
+
+#: views.py:972
+msgid "Store credit"
+msgstr "Mağaza Kredisi"
+
+#: views.py:999
+#| msgid "Gift card has expired"
+msgid "Gift card code is required"
+msgstr "Hediye kartı kodu gerekli"
+
+#: views.py:1010 views.py:1064
+msgid "This order is already fully paid"
+msgstr "Bu sipariş zaten tamamen ödenmiştir"
+
+#: views.py:1054
+msgid "Sign in to pay with your wallet"
+msgstr "Cüzdanınızla ödeme yapmak için oturum açın"
+
+#: views.py:1093
+#| msgid "Address not found"
+msgid "Tender not found"
+msgstr "Ödeme yöntemi bulunamadı"
+
+#: views.py:1120
 msgid "Get recently viewed products"
 msgstr "Son görüntülendiği ürünler"
 
+#: views.py:1121
 msgid "Get recently viewed details"
 msgstr "Son görüntülendiği detayları al"
 
+#: views.py:1150
 msgid "List shipping methods"
 msgstr "Kargo yöntemlerini listele"
 
+#: views.py:1151
 msgid "Get shipping method details"
 msgstr "Kargo yöntemi detaylarını al"
 
+#: views.py:1174
 msgid "List tax rates"
 msgstr "Vergi oranlarını listele"
 
+#: views.py:1175
 msgid "Get tax rate details"
 msgstr "Vergi oranı detaylarını al"
 
+#: views.py:1176
 msgid "Create tax rate"
 msgstr "Vergi oranı oluştur"
 
+#: views.py:1177
 msgid "Update tax rate"
 msgstr "Vergi oranı güncelle"
 
+#: views.py:1178
 msgid "Partial update tax rate"
 msgstr "Vergi oranını kısmen güncelle"
 
+#: views.py:1179
 msgid "Delete tax rate"
 msgstr "Vergi oranı sil"
 
+#: views.py:1190
 msgid "Calculate applicable taxes"
 msgstr "Uygulanabilir vergileri hesapla"
 
+#: views.py:1235
 msgid "Tax rates grouped by country"
 msgstr "Ülkeye göre gruplandırılmış vergi oranları"
 
+#: views.py:1254
 msgid "Load preset tax rates"
 msgstr "Önceden ayarlanmış vergi oranlarını yükle"
 
+#: views.py:1285
 msgid "List tax preset groups"
 msgstr "Vergi önceden ayarlanmış gruplarını listele"
 
+#: views.py:1286
 msgid "Get preset group details"
 msgstr "Önceden tanımlanmış grup ayrıntılarını al"
 
+#: views.py:1297
 msgid "List rates in a preset group"
 msgstr "Önceden tanımlanmış bir gruptaki oranları listele"
+
+#~ msgid "Invalid gift card code"
+#~ msgstr "Geçersiz hediye kartı kodu"
+
+#~ msgid "Gift card already applied"
+#~ msgstr "Hediye kartı zaten uygulandı"
+
+#~ msgid "Gift card has been fully redeemed"
+#~ msgstr "Hediyelik kart tamamen kullanıldı"
+
+#~ msgid "Gift card cannot be used"
+#~ msgstr "Hediye kartı kullanılamaz"
+
+#, python-brace-format
+#~ msgid ""
+#~ "Currency mismatch. Gift card is in {card_currency}, cart is in "
+#~ "{cart_currency}"
+#~ msgstr ""
+#~ "Para birimi uyuşmazlığı. Hediye kartı {card_currency} içinde, sepet "
+#~ "{cart_currency} içinde"
+
+#, python-brace-format
+#~ msgid ""
+#~ "This gift card is in {card_currency}. Please switch your currency to "
+#~ "{card_currency} to use it."
+#~ msgstr ""
+#~ "Bu hediye kartı {card_currency} içinde. Kullanmak için para biriminizi "
+#~ "{card_currency} olarak değiştirin."
+
+#~ msgid "Gift cards cannot be used to purchase other gift cards"
+#~ msgstr "Hediyelik kartlar başka hediyelik kartlarla satın alınamaz"
+
+#~ msgid "Cart total is already covered"
+#~ msgstr "Sepet toplamı zaten ödenmiş"
+
+#~ msgid "Unable to process gift card currency conversion"
+#~ msgstr "Hediye kartı para birimi dönüşümü işlenemiyor"
+
+#~ msgid "Gift card applied successfully"
+#~ msgstr "Hediye kartı başarıyla uygulandı"
+
+#~ msgid "Free Shipping"
+#~ msgstr "Ücretsiz Kargo"
+
+#~ msgid "Weight Based"
+#~ msgstr "Ağırlık Bazlı"
+
+#~ msgid "Price Based"
+#~ msgstr "Fiyat Bazlı"
+
+#~ msgid "Minimum cart value to qualify"
+#~ msgstr "Eligibility İçin Minimum Sepet Değeri"
+
+#~ msgid "Minimum Order Value"
+#~ msgstr "Minimum Sipariş Değeri"
+
+#~ msgid "Maximum cart value to qualify"
+#~ msgstr "Eligibility İçin Maksimum Sepet Değeri"
+
+#~ msgid "Maximum Order Value"
+#~ msgstr "Maksimum Sipariş Değeri"
+
+#~ msgid "Minimum cart weight (kg)"
+#~ msgstr "Minimum Sepet Ağırlığı (kg)"
+
+#~ msgid "Minimum Weight"
+#~ msgstr "Minimum Ağırlık"
+
+#~ msgid "Maximum cart weight (kg)"
+#~ msgstr "Maksimum Sepet Ağırlığı (kg)"
+
+#~ msgid "Maximum Weight"
+#~ msgstr "Maksimum Ağırlık"
+
+#, python-brace-format
+#~ msgid "Minimum order value {value} required"
+#~ msgstr "En düşük sipariş değeri {value} gerekli"
+
+#, python-brace-format
+#~ msgid "Maximum order value {value} exceeded"
+#~ msgstr "Maksimum sipariş değeri {value} aşıldı"
+
+#, python-brace-format
+#~ msgid "Minimum weight {weight}kg required"
+#~ msgstr "Gerekli minimum ağırlık {weight}kg"
+
+#, python-brace-format
+#~ msgid "Maximum weight {weight}kg exceeded"
+#~ msgstr "{weight}kg ağırlık sınırı aşıldı"
+
+#~ msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+#~ msgstr "Bu vergiden muaf ürün türleri (örneğin, ['digital', 'service'])"
+
+#~ msgid "Amount in base currency (used for cart calculations)"
+#~ msgstr "Temel para biriminde tutar (sepet hesaplamaları için kullanılır)"
+
+#~ msgid "Original Currency Amount"
+#~ msgstr "Orijinal Para Birimi Tutarı"
+
+#~ msgid ""
+#~ "Discount in the gift card's native currency (for foreign-currency gift "
+#~ "cards)"
+#~ msgstr ""
+#~ "Hediye kartının yerel para biriminde indirim (yabancı para birimi hediye "
+#~ "kartları için)"
+
+#~ msgid "Exchange Rate"
+#~ msgstr "Döviz Kuru"
+
+#~ msgid "Rate: gift card currency -> base currency at time of application"
+#~ msgstr ""
+#~ "Oran: hediye kartı para birimi -> uygulama zamanında temel para birimi"
+
+#~ msgid "Applied At"
+#~ msgstr "Uygulandığı Zaman"
+
+#~ msgid "Applied Gift Card"
+#~ msgstr "Uygulanan Hediyelik Kart"
+
+#~ msgid "Applied Gift Cards"
+#~ msgstr "Uygulanan Hediyelik Kartlar"
+
+#~ msgid "This gift card cannot be used"
+#~ msgstr "Bu hediyelik kart kullanılamaz"
+
+#~ msgid "Discount amount exceeds gift card balance"
+#~ msgstr "İndirim tutarı hediyelik kart bakiyesini aşıyor"
+
+#~ msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+#~ msgstr "Hediyelik kart kodu (örneğin, GC-XXXX-XXXX-XXXX)"
+
+#~ msgid "Amount applied from this gift card (in base currency)"
+#~ msgstr "Bu hediye kartından uygulanan tutar (temel para biriminde)"
+
+#~ msgid "Remaining balance on gift card after this application"
+#~ msgstr "Bu uygulama sonrası hediyelik karttaki kalan bakiye"
+
+#~ msgid "Base currency code"
+#~ msgstr "Temel Para Birimi Kodu"
+
+#~ msgid "Gift card's native currency code"
+#~ msgstr "Hediye Çeki'nin Yerel Para Birimi Kodu"
+
+#~ msgid ""
+#~ "Discount in gift card's native currency (for foreign-currency gift cards)"
+#~ msgstr ""
+#~ "Hediye kartının yerel para biriminde indirim (yabancı para birimi hediye "
+#~ "kartları için)"
+
+#~ msgid "Gift card removed"
+#~ msgstr "Hediye kartı kaldırıldı"
+
+#~ msgid "Gift card not found in cart"
+#~ msgstr "Sepette hediyelik kart bulunamadı"
+
+#~ msgid "Free Shipping - No charge"
+#~ msgstr "Ücretsiz Kargo - Ücret Yok"
+
+#~ msgid "Weight Based - Calculate by cart weight"
+#~ msgstr "Ağırlık Temelli - Sepet ağırlığına göre hesapla"
+
+#~ msgid "Price Based - Calculate by cart subtotal"
+#~ msgstr "Fiyat Temelli - Sepet alt toplamına göre hesapla"
+
+#~ msgid "Free Shipping:"
+#~ msgstr "Ücretsiz Kargo:"
+
+#~ msgid "No shipping charge"
+#~ msgstr "Kargo ücreti yok"
+
+#~ msgid "Weight/Price Based:"
+#~ msgstr "Ağırlık/Fiyat Tabanlı:"
+
+#~ msgid "Calculate using rate tables"
+#~ msgstr "Oran tabloları kullanarak hesapla"
+
+#~ msgid ""
+#~ "Define when this shipping method should be available based on cart value and"
+#~ " weight."
+#~ msgstr ""
+#~ "Sepet değeri ve ağırlığına dayalı olarak bu nakliye yönteminin ne zaman "
+#~ "kullanılabilir olduğunun tanımlanması."
+
+#~ msgid "Order Value Restrictions"
+#~ msgstr "Sipariş Değeri Sınırlamaları"
+
+#~ msgid "Set minimum or maximum cart subtotal requirements for this method."
+#~ msgstr ""
+#~ "Bu yöntemin için sepet alt toplamı minimum veya maksimum gereksinimlerini "
+#~ "ayarlayın."
+
+#~ msgid "Method only available if cart subtotal is at least this amount"
+#~ msgstr ""
+#~ "Sepet alt toplamı bu miktardan az değilse yöntemin kullanılabilir olduğu"
+
+#~ msgid "No maximum"
+#~ msgstr "Maksimum yok"
+
+#~ msgid "Method only available if cart subtotal is below this amount"
+#~ msgstr "Sepet alt toplamı bu miktardan düşükse yöntemin kullanılabilir olduğu"
+
+#~ msgid "Free shipping for orders over $50: Set minimum to 50.00"
+#~ msgstr ""
+#~ "50$'dan fazla siparişler için ücretsiz nakliye: Minimum 50.00 olarak ayarla"
+
+#~ msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+#~ msgstr ""
+#~ "100$'dan az siparişler için ekonomik nakliye: Maksimum 100.00 olarak ayarla"
+
+#~ msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+#~ msgstr ""
+#~ "25$-200$ arası siparişler için standart nakliye: Hem minimum hem maksimum "
+#~ "ayarla"
+
+#~ msgid "Weight Restrictions"
+#~ msgstr "Ağırlık Sınırlamaları"
+
+#~ msgid "Set minimum or maximum total cart weight requirements for this method."
+#~ msgstr ""
+#~ "Bu yöntemin için toplam sepet ağırlığı minimum veya maksimum "
+#~ "gereksinimlerini ayarlayın."
+
+#~ msgid "Minimum Weight (kg)"
+#~ msgstr "Minimum Ağırlık (kg)"
+
+#~ msgid "Method only available if total cart weight is at least this value"
+#~ msgstr ""
+#~ "Toplam sepet ağırlığı bu değerin en azı kadar ise yöntemin kullanılabilir "
+#~ "olduğu"
+
+#~ msgid "Maximum Weight (kg)"
+#~ msgstr "Maksimum Ağırlık (kg)"
+
+#~ msgid "Method only available if total cart weight is below this value"
+#~ msgstr ""
+#~ "Toplam sepet ağırlığı bu değerin altındaysa yöntemin kullanılabilir olduğu"
+
+#~ msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+#~ msgstr ""
+#~ "2kg'dan az paketler için hafif paket nakliyesi: Maksimum 2.00 olarak ayarla"
+
+#~ msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+#~ msgstr ""
+#~ "20kg'dan fazla paketler için ağır nakliye: Minimum 20.00 olarak ayarla"
+
+#~ msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+#~ msgstr ""
+#~ "0.5kg-10kg arası paketler için standart nakliye: Hem minimum hem maksimum "
+#~ "ayarla"
+
+#~ msgid "Weight-Based Rates:"
+#~ msgstr "Ağırlık Temelli Oranlar:"
+
+#~ msgid "Price-Based Rates:"
+#~ msgstr "Fiyat Temelli Oranlar:"
+
+#~ msgid ""
+#~ "You'll be able to configure tiered rates based on cart subtotal after the "
+#~ "method is created."
+#~ msgstr ""
+#~ "Yöntem oluşturulduktan sonra sepet alt toplamına dayalı katmanlı oranları "
+#~ "yapılandırabilirsiniz."
+
+#~ msgid "Min Order Value:"
+#~ msgstr "Min Sipariş Değeri:"
+
+#~ msgid "Max Order Value:"
+#~ msgstr "Maks Sipariş Değeri:"
+
+#~ msgid "Min Weight:"
+#~ msgstr "Min Ağırlık:"
+
+#~ msgid "Max Weight:"
+#~ msgstr "Maks Ağırlık:"
+
+#~ msgid ""
+#~ "No eligibility conditions set - method available for all cart values and "
+#~ "weights"
+#~ msgstr ""
+#~ "Eligibility koşulları ayarlanmamış - tüm sepet değerleri ve ağırlıkları için"
+#~ " yöntem kullanılabilir"
+
+#~ msgid "Optional: Restrict availability based on order value or weight."
+#~ msgstr ""
+#~ "İsteğe bağlı: Kullanılabilirliği sipariş değeri veya ağırlığına göre "
+#~ "kısıtla."
+
+#~ msgid "Order Value:"
+#~ msgstr "Sipariş Değeri:"
+
+#~ msgid "Weight:"
+#~ msgstr "Ağırlık:"
+
+#~ msgid ""
+#~ "Apply a gift card code to cart. Validates gift card status, balance, and "
+#~ "currency. Gift cards cannot be used to purchase other gift cards. Amount "
+#~ "applied is limited to gift card balance or remaining cart total."
+#~ msgstr ""
+#~ "Bir hediye kartı kodunu sepete uygula. Hediye kartı durumu, bakiyesi ve para"
+#~ " birimi doğrulanır. Hediye kartları başka hediye kartları satın almak için "
+#~ "kullanılamaz. Uygulanan miktar, hediye kartı bakiyesi veya kalan sepet "
+#~ "toplamına sınırlıdır."
+
+#~ msgid ""
+#~ "Remove a specific gift card from cart by code. The gift card balance is not "
+#~ "affected until checkout is completed. User can reapply the gift card."
+#~ msgstr ""
+#~ "Kod ile sepetten belirli bir hediye kartını kaldır. Ödeme tamamlanana kadar "
+#~ "hediye kartı bakiyesi etkilenmez. Kullanıcı hediye kartını tekrar "
+#~ "uygulayabilir."

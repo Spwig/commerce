@@ -7,6 +7,7 @@
     {% for addr in saved_addresses %}
     <label class="saved-address-card{% if addr.is_default %} saved-address-card--selected{% endif %}">
         <input type="radio" name="saved_address" value="{{ addr.id }}"
+               data-has-phone="{% if addr.phone %}1{% else %}0{% endif %}"
                {% if addr.is_default %}checked{% endif %}>
         <div class="saved-address-card__info">
             <div>
@@ -16,9 +17,16 @@
             <div>{{ addr.address1 }}{% if addr.address2 %}, {{ addr.address2 }}{% endif %}</div>
             <div>{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</div>
             <div>{{ addr.country }}</div>
+            {% if addr.phone %}<div>{{ addr.phone }}</div>{% endif %}
         </div>
     </label>
     {% endfor %}
+</div>
+<!-- Supplemental phone for saved addresses recorded without one -->
+<div class="checkout-form-group" id="saved-address-phone-group" hidden>
+    <label for="saved-address-phone">{% mtrans 'Phone' %} <span class="required">*</span></label>
+    <input type="tel" id="saved-address-phone" class="checkout-input" autocomplete="tel">
+    <div class="checkout-help">{% mtrans 'This address needs a phone number so the carrier can contact you about delivery.' %}</div>
 </div>
 <button type="button" class="new-address-toggle" id="new-address-toggle">
     <i class="fas fa-plus"></i> {% mtrans 'Use a different address' %}
@@ -73,12 +81,18 @@
         </div>
         <div class="checkout-form-group">
             <label for="shipping-country">{% mtrans 'Country' %} <span class="required">*</span></label>
-            <input type="text" id="shipping-country" class="checkout-input" required>
+            <select id="shipping-country" class="checkout-input" required>
+                <option value="">{% mtrans 'Select country' %}</option>
+                {% for code, name in shipping_countries %}
+                <option value="{{ code }}"{% if code == geo_country %} selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
         </div>
     </div>
 
     <div class="checkout-form-group">
-        <label for="shipping-phone">{% mtrans 'Phone' %}</label>
-        <input type="tel" id="shipping-phone" class="checkout-input">
+        <label for="shipping-phone">{% mtrans 'Phone' %} <span class="required">*</span></label>
+        <input type="tel" id="shipping-phone" class="checkout-input" required autocomplete="tel">
+        <div class="checkout-help">{% mtrans 'Used by the carrier to contact you about delivery.' %}</div>
     </div>
 </div>

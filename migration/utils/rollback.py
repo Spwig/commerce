@@ -1,197 +1,431 @@
 """
-Rollback utility for migration jobs
-Safely deletes all imported data from a migration job
+Rollback utility for migration jobs.
+
+Removes what a migration created, and only what a migration created.
+
+Rows the import created can become load-bearing after go-live: a customer places
+a real order against an imported product, a merchant files their own product
+under an imported category. Anything in that position is *retained* rather than
+deleted, together with everything it depends on, and reported back to the
+merchant. See migration/utils/rollback_preflight.py for how that set is derived
+from the foreign-key graph.
+
+This is a compensating delete, not a database rollback. The import itself does
+not run in a transaction; this undoes it after the fact.
 """
 
 import logging
 
 from django.db import transaction
+from django.db.models import ProtectedError
+
+from migration.utils.rollback_preflight import build_retention_plan
 
 logger = logging.getLogger(__name__)
 
+# Chunk deletes to stay clear of PostgreSQL's bind-parameter ceiling.
+_CHUNK = 10_000
 
-def rollback_migration(job):
+
+class RollbackRefused(Exception):
+    """Raised when the rollback cannot be performed safely.
+
+    Distinct from a generic failure so the admin can show the merchant why
+    rather than surfacing a raw exception string.
     """
-    Rollback a migration by deleting all imported data
 
-    Args:
-        job: MigrationJob instance
 
-    Returns:
-        dict: Statistics of deleted items
+def _delete_in_chunks(model, pks):
+    """Hard-delete `pks` of `model`, returning the number of rows removed.
+
+    Always uses the base manager. Product and MediaAsset have soft-delete
+    default managers whose delete() only sets a flag; that would leave the rows
+    in place and the subsequent Category delete would then hit PROTECT.
+    """
+    if not pks:
+        return 0
+
+    total = 0
+    pks = list(pks)
+    for i in range(0, len(pks), _CHUNK):
+        batch = pks[i : i + _CHUNK]
+        # Count what the database actually removed for this model, not how many
+        # ids were asked for — a row may already be gone, and an operator
+        # reading these logs during an incident needs the real number. The
+        # per-model breakdown is used because .delete() also reports cascaded
+        # rows from other models.
+        _, per_model = model._base_manager.filter(pk__in=batch).delete()
+        total += per_model.get(model._meta.label, 0)
+    return total
+
+
+def _collect_seeds(job):
+    """Everything this migration created, before retention is applied.
+
+    Keyed by model class. Models carrying a migration_job foreign key are read
+    directly; the rest are derived from those.
     """
     from django.contrib.auth import get_user_model
 
     from accounts.models import CustomerProfile
-    from blog.models import BlogCategory, BlogPost
+    from blog.models import BlogCategory, BlogPost, BlogTag
     from catalog.models import Category, Product, ProductReview
-    from loyalty.models import LoyaltyMember, LoyaltyRedemption, LoyaltyTransaction
     from media_library.models import MediaAsset
-    from orders.models import Address, Order, OrderItem
-    from shipping.models import Shipment
+    from orders.models import Order
+    from subscriptions.models import SubscriptionPlan
     from vouchers.models import VoucherCode
 
     User = get_user_model()
 
-    stats = {
-        "categories": 0,
-        "products": 0,
-        "customers": 0,
-        "orders": 0,
-        "reviews": 0,
-        "coupons": 0,
-        "media_assets": 0,
-        "blog_posts": 0,
-        "blog_categories": 0,
+    def by_job(model):
+        return set(model._base_manager.filter(migration_job=job).values_list("pk", flat=True))
+
+    seeds = {
+        # Subscription plans are the only extension model needing explicit
+        # provenance. Everything else the extension importer creates — booking
+        # resources, bundle items, configuration slots, customisation options —
+        # cascades from Product and is removed with it.
+        SubscriptionPlan: by_job(SubscriptionPlan),
+        Category: by_job(Category),
+        Product: by_job(Product),
+        ProductReview: by_job(ProductReview),
+        Order: by_job(Order),
+        VoucherCode: by_job(VoucherCode),
+        MediaAsset: by_job(MediaAsset),
+        BlogCategory: by_job(BlogCategory),
+        BlogTag: by_job(BlogTag),
+        BlogPost: by_job(BlogPost),
     }
 
-    logger.info(f"Starting rollback for migration job: {job} (ID: {job.id})")
+    # Customer accounts. CustomerProfile carries the provenance; the User row is
+    # what actually has to go, and CustomerProfile/Address/LoyaltyMember all
+    # cascade from it.
+    profile_user_ids = set(
+        CustomerProfile._base_manager.filter(migration_job=job).values_list("user_id", flat=True)
+    )
 
-    with transaction.atomic():
-        # CRITICAL: Delete in reverse order of dependencies!
-        # Each step removes PROTECT FK references that would block later steps.
+    # Affiliate accounts created by the WooCommerce bridge importer. These users
+    # have no CustomerProfile, so provenance for them lives only in the manifest
+    # the importer writes to connection_config.
+    seeds.update(_affiliate_seeds(job))
+    affiliate_user_ids = _affiliate_user_ids(job)
 
-        # Step 1: Delete OrderItems for orders from this migration
-        order_ids = list(Order.objects.filter(migration_job=job).values_list("id", flat=True))
-        deleted_order_items = 0
-        if order_ids:
-            order_items = OrderItem.objects.filter(order_id__in=order_ids)
-            deleted_order_items = order_items.count()
-            order_items.delete()
-            logger.info(f"Deleted {deleted_order_items} order items from this migration")
+    candidate_user_ids = {uid for uid in (profile_user_ids | affiliate_user_ids) if uid}
 
-        # Step 2: Delete OrderItems that reference products from this migration
-        # (handles products ordered AFTER migration but BEFORE rollback)
-        # Use all_objects to include soft-deleted products
-        product_ids = list(
-            Product.all_objects.filter(migration_job=job).values_list("id", flat=True)
+    # Never delete a staff or superuser account, whatever the provenance says.
+    #
+    # Importers link an existing account when the source email matches, and older
+    # jobs stamped migration_job on it — so a merchant or staff member sharing an
+    # address with a source-store customer looks import-created. Deleting such an
+    # account cascades its payment provider credentials, stored payment methods
+    # and, through MigrationJob.created_by, that person's other migration records
+    # — which SET_NULLs provenance on everything those jobs imported, store-wide.
+    #
+    # No import legitimately creates a privileged account, so excluding them
+    # costs nothing and bounds the blast radius of a mis-stamped row.
+    seeds[User] = set(
+        User._base_manager.filter(pk__in=candidate_user_ids)
+        .exclude(is_staff=True)
+        .exclude(is_superuser=True)
+        .values_list("pk", flat=True)
+    )
+
+    return seeds
+
+
+def _affiliate_seeds(job):
+    """Affiliate rows recorded in the importer's rollback manifest."""
+    from affiliate.models import Affiliate, Program
+
+    manifest = (job.connection_config or {}).get("affiliate_rollback_ids") or {}
+    affiliate_ids = set(manifest.get("affiliate_ids") or [])
+    program_ids = set(manifest.get("program_ids") or [])
+
+    # Commissions, payouts and memberships all cascade from Affiliate/Program,
+    # so seeding those two is sufficient. They are listed in the manifest too,
+    # but deleting the parents is enough and avoids depending on the manifest
+    # being complete.
+    return {
+        Affiliate: set(
+            Affiliate._base_manager.filter(pk__in=affiliate_ids).values_list("pk", flat=True)
+        ),
+        Program: set(Program._base_manager.filter(pk__in=program_ids).values_list("pk", flat=True)),
+    }
+
+
+def _affiliate_user_ids(job):
+    """User accounts the affiliate importer created.
+
+    Read from the manifest's explicit user_ids rather than derived from the
+    affiliate rows: the importer attaches an Affiliate to a pre-existing user
+    when the email matches, and that account belongs to the merchant, not to
+    the migration. Deleting it would destroy a real customer.
+    """
+    from django.contrib.auth import get_user_model
+
+    User = get_user_model()
+
+    manifest = (job.connection_config or {}).get("affiliate_rollback_ids") or {}
+    user_ids = set(manifest.get("user_ids") or [])
+    if not user_ids:
+        return set()
+
+    # Confirm against the database so a stale or malformed manifest cannot name
+    # rows that do not exist.
+    return set(User._base_manager.filter(pk__in=user_ids).values_list("pk", flat=True))
+
+
+def dependent_models():
+    """Models whose rows are deleted because of who owns them, not provenance.
+
+    Wallet transactions are deliberately NOT here. No importer creates a wallet
+    or a wallet transaction — verified across migration/importers and
+    migration/services — so every balance attached to a migrated customer is
+    money the merchant granted after go-live: goodwill credit, a refund, a
+    referral or promotion reward. None of it is an artefact of the import.
+
+    Leaving them out means WalletTransaction's PROTECT edge to CustomerWallet
+    keeps such a customer, which is the right outcome: a rollback should never
+    destroy a real balance, and the customer is reported as kept.
+    """
+    from loyalty.models import LoyaltyRedemption, LoyaltyTransaction
+    from shipping.models import Shipment
+
+    return (LoyaltyRedemption, LoyaltyTransaction, Shipment)
+
+
+def _dependent_seeds_for(user_ids, order_ids):
+    """Rows that must go because the owner being deleted requires it.
+
+    These follow their owner's fate rather than carrying provenance of their own:
+
+    * LoyaltyTransaction and LoyaltyRedemption PROTECT LoyaltyMember, which
+      cascades from User. They must be cleared for users actually being deleted
+      — and left alone for a retained customer, whose points were earned on real
+      orders.
+    * Shipment PROTECTs Order, so shipments of deleted orders must go first.
+
+    Recomputed on every pass of the planning loop. They cannot be derived once
+    from a settled plan: the loyalty rows are the very thing that blocks the
+    member, so omitting them causes the owner to be withdrawn, which then
+    removes the reason to delete them — a cycle in which nothing is deleted.
+    """
+    from loyalty.models import LoyaltyMember, LoyaltyRedemption, LoyaltyTransaction
+    from shipping.models import Shipment
+
+    deleted_user_ids = user_ids
+    deleted_order_ids = order_ids
+
+    member_ids = (
+        set(
+            LoyaltyMember._base_manager.filter(customer_id__in=deleted_user_ids).values_list(
+                "pk", flat=True
+            )
         )
-        if product_ids:
-            additional_items = OrderItem.objects.filter(product_id__in=product_ids)
-            additional_count = additional_items.count()
-            additional_items.delete()
-            deleted_order_items += additional_count
-            logger.info(
-                f"Deleted {additional_count} additional order items referencing migrated products"
+        if deleted_user_ids
+        else set()
+    )
+
+    # Always return an entry for every dependent model, even when empty, so the
+    # caller can drop rows whose owner has since been withdrawn.
+    extra = {
+        LoyaltyRedemption: set(),
+        LoyaltyTransaction: set(),
+        Shipment: set(),
+    }
+
+    if member_ids:
+        extra[LoyaltyRedemption] = set(
+            LoyaltyRedemption._base_manager.filter(member_id__in=member_ids).values_list(
+                "pk", flat=True
             )
-
-        # Step 2b: Delete Shipments for orders from this migration
-        # (Shipment.order has PROTECT FK — must delete before Orders)
-        if order_ids:
-            shipment_count = Shipment.objects.filter(order_id__in=order_ids).count()
-            if shipment_count:
-                Shipment.objects.filter(order_id__in=order_ids).delete()
-                logger.info(f"Deleted {shipment_count} shipments from this migration")
-
-        # Step 3: Delete Orders from this migration
-        deleted_orders = Order.objects.filter(migration_job=job).count()
-        Order.objects.filter(migration_job=job).delete()
-        stats["orders"] = deleted_orders
-        logger.info(f"Deleted {deleted_orders} orders from this migration")
-
-        # Step 4: Delete ProductReviews from this migration
-        deleted_reviews = ProductReview.objects.filter(migration_job=job).count()
-        ProductReview.objects.filter(migration_job=job).delete()
-        stats["reviews"] = deleted_reviews
-        logger.info(f"Deleted {deleted_reviews} reviews from this migration")
-
-        # Step 5: Delete VoucherCodes from this migration
-        deleted_coupons = VoucherCode.objects.filter(migration_job=job).count()
-        VoucherCode.objects.filter(migration_job=job).delete()
-        stats["coupons"] = deleted_coupons
-        logger.info(f"Deleted {deleted_coupons} coupons from this migration")
-
-        # Step 6: Hard-delete Products from this migration
-        # Must use all_objects (base Manager) because Product.objects uses soft-delete.
-        # all_objects returns a standard QuerySet whose .delete() is a real DB delete,
-        # which is required so Category deletion in Step 7 doesn't hit PROTECT constraints.
-        product_qs = Product.all_objects.filter(migration_job=job)
-        deleted_products = product_qs.count()
-        # ProductImage and ProductVariant will be cascade deleted with products
-        product_qs.delete()
-        stats["products"] = deleted_products
-        logger.info(f"Deleted {deleted_products} products from this migration")
-
-        # Step 7: Delete Categories from this migration
-        deleted_categories = Category.objects.filter(migration_job=job).count()
-        Category.objects.filter(migration_job=job).delete()
-        stats["categories"] = deleted_categories
-        logger.info(f"Deleted {deleted_categories} categories from this migration")
-
-        # Step 7b: Delete Blog content from this migration
-        deleted_blog_posts = BlogPost.objects.filter(migration_job=job).count()
-        BlogPost.objects.filter(migration_job=job).delete()
-        stats["blog_posts"] = deleted_blog_posts
-
-        deleted_blog_categories = BlogCategory.objects.filter(migration_job=job).count()
-        BlogCategory.objects.filter(migration_job=job).delete()
-        stats["blog_categories"] = deleted_blog_categories
-
-        if deleted_blog_posts or deleted_blog_categories:
-            logger.info(
-                f"Deleted {deleted_blog_posts} blog posts, "
-                f"{deleted_blog_categories} blog categories from this migration"
-            )
-
-        # Step 8: Delete addresses from migrated customers
-        customer_user_ids = CustomerProfile.objects.filter(migration_job=job).values_list(
-            "user_id", flat=True
         )
-        if customer_user_ids:
-            Address.objects.filter(user_id__in=customer_user_ids).delete()
-
-        # Step 8b: Collect user IDs and clean up loyalty data before User deletion
-        # The loyalty post_save signal auto-enrolls new users, creating LoyaltyMember,
-        # LoyaltyTransaction, and LoyaltyRedemption records. These have PROTECT FKs
-        # that block LoyaltyMember deletion (which would CASCADE from User deletion).
-        deleted_customers = CustomerProfile.objects.filter(migration_job=job).count()
-        user_ids = list(
-            CustomerProfile.objects.filter(migration_job=job).values_list("user_id", flat=True)
+        extra[LoyaltyTransaction] = set(
+            LoyaltyTransaction._base_manager.filter(member_id__in=member_ids).values_list(
+                "pk", flat=True
+            )
         )
 
-        if user_ids:
-            # Step 8c: Delete ALL orders referencing migrated users
-            # (includes showcase/seed orders and any orders not tagged with migration_job)
-            # Order.user has PROTECT FK — must clean up before User deletion.
-            user_order_ids = list(
-                Order.objects.filter(user_id__in=user_ids).values_list("id", flat=True)
+    if deleted_order_ids:
+        extra[Shipment] = set(
+            Shipment._base_manager.filter(order_id__in=deleted_order_ids).values_list(
+                "pk", flat=True
             )
-            if user_order_ids:
-                OrderItem.objects.filter(order_id__in=user_order_ids).delete()
-                Shipment.objects.filter(order_id__in=user_order_ids).delete()
-                extra_orders = Order.objects.filter(id__in=user_order_ids).count()
-                Order.objects.filter(id__in=user_order_ids).delete()
-                stats["orders"] += extra_orders
-                logger.info(f"Deleted {extra_orders} additional orders referencing migrated users")
+        )
 
-            # Step 8d: Delete loyalty data (auto-created by post_save signal on User)
-            # LoyaltyTransaction and LoyaltyRedemption have PROTECT FK to LoyaltyMember,
-            # which CASCADE-deletes when User is deleted — so clear them first.
-            loyalty_member_ids = list(
-                LoyaltyMember.objects.filter(customer_id__in=user_ids).values_list("id", flat=True)
-            )
-            if loyalty_member_ids:
-                LoyaltyRedemption.objects.filter(member_id__in=loyalty_member_ids).delete()
-                LoyaltyTransaction.objects.filter(member_id__in=loyalty_member_ids).delete()
-                logger.info(f"Deleted loyalty data for {len(loyalty_member_ids)} members")
+    return extra
 
-        # Step 9: Delete CustomerProfiles and Users from this migration
-        CustomerProfile.objects.filter(migration_job=job).delete()
-        User.objects.filter(id__in=user_ids).delete()
-        stats["customers"] = deleted_customers
-        logger.info(f"Deleted {deleted_customers} customers from this migration")
 
-        # Step 10: Delete MediaAssets from this migration
-        deleted_media = MediaAsset.objects.filter(migration_job=job).count()
-        MediaAsset.objects.filter(migration_job=job).delete()
-        stats["media_assets"] = deleted_media
-        logger.info(f"Deleted {deleted_media} media assets from this migration")
+def _deletion_order():
+    """Models in an order that satisfies every PROTECT edge between them.
 
-        # Mark job as rolled back
-        job.status = "rolled_back"
-        job.save()
+    The retention plan guarantees nothing *outside* the delete set protects
+    anything inside it. This ordering resolves the PROTECT edges *within* the
+    set. Rows not listed here are removed by cascade from something that is.
+    """
+    from django.contrib.auth import get_user_model
 
-        logger.info(f"Rollback completed for migration job: {job}")
-        logger.info(f"Rollback statistics: {stats}")
+    from affiliate.models import Affiliate, Program
+    from blog.models import BlogCategory, BlogPost, BlogTag
+    from catalog.models import Category, Product, ProductReview
+    from loyalty.models import LoyaltyRedemption, LoyaltyTransaction
+    from media_library.models import MediaAsset
+    from orders.models import Order
+    from shipping.models import Shipment
+    from subscriptions.models import SubscriptionPlan
+    from vouchers.models import VoucherCode
 
-    return stats
+    return [
+        # PROTECT LoyaltyMember, which cascades from User further down.
+        (LoyaltyRedemption, "loyalty_redemptions"),
+        (LoyaltyTransaction, "loyalty_transactions"),
+        # Shipment PROTECTs Order.
+        (Shipment, "shipments"),
+        # Order cascades OrderItem, which PROTECTs Product — so orders must go
+        # before products. OrderItem is never deleted directly.
+        (Order, "orders"),
+        (ProductReview, "reviews"),
+        (VoucherCode, "coupons"),
+        (BlogPost, "blog_posts"),
+        (BlogTag, "blog_tags"),
+        (BlogCategory, "blog_categories"),
+        # Cascades its pricing tiers. Independent of Product, so ordering
+        # relative to the catalogue does not matter.
+        (SubscriptionPlan, "subscription_plans"),
+        # Product cascades ProductImage, which PROTECTs MediaAsset — so products
+        # must go before media assets.
+        (Product, "products"),
+        # Product.category PROTECTs Category.
+        (Category, "categories"),
+        # Cascades memberships, commissions and payouts.
+        (Affiliate, "affiliates"),
+        (Program, "affiliate_programs"),
+        # Cascades CustomerProfile, Address, LoyaltyMember and Shipment.
+        (get_user_model(), "customers"),
+        # Last: the widest set of PROTECT referrers points here.
+        (MediaAsset, "media_assets"),
+    ]
+
+
+def plan_rollback(job):
+    """Work out what a rollback of `job` would do, without changing anything."""
+    from django.contrib.auth import get_user_model
+
+    from orders.models import Order
+
+    User = get_user_model()
+
+    provenance = _collect_seeds(job)
+
+    # Seed owner-dependent rows from provenance up front, then reconcile them
+    # against the settled plan and re-plan until both agree.
+    #
+    # They cannot be added only at the end. Loyalty transactions PROTECT the
+    # member, which cascades from the customer, so leaving them out makes the
+    # customer look undeletable — the planner withdraws them, which then removes
+    # the reason to delete the transactions. Nothing is deleted and the whole
+    # import survives its own rollback.
+    #
+    # Equally they cannot simply be seeded and left: once a customer is retained
+    # for a genuine reason, their loyalty history must be spared with them.
+    # Recomputing each pass converges on both.
+    deletable = dict(provenance)
+    for model, pks in _dependent_seeds_for(
+        provenance.get(User, set()), provenance.get(Order, set())
+    ).items():
+        deletable[model] = set(pks)
+
+    plan = build_retention_plan(deletable)
+
+    for _ in range(10):
+        wanted = _dependent_seeds_for(plan.pks(User), plan.pks(Order))
+        current = {model: plan.pks(model) for model in dependent_models()}
+        if all(wanted[model] == current[model] for model in dependent_models()):
+            return plan
+
+        next_deletable = dict(plan.deletable)
+        for model in dependent_models():
+            next_deletable[model] = set(wanted[model])
+
+        plan = build_retention_plan(next_deletable, carry_retained=plan.retained)
+
+    # Do not fall back to the last plan. Its dependent rows were derived from the
+    # previous, larger owner set and never re-filtered, so it can delete the
+    # loyalty points and store credit of a customer the same plan decided to
+    # keep. Refuse instead — an unrunnable rollback is recoverable, a customer
+    # silently stripped of their balance is not.
+    raise RollbackRefused(
+        "Spwig could not work out a safe set of data to remove for this "
+        "migration. Nothing has been deleted. Please report this."
+    )
+
+
+def summarise(plan):
+    """Merchant-facing summary of a plan: what goes, what stays and why.
+
+    Reports the whole cascade closure, not only the models deleted explicitly.
+    A customer account cascades into wallets, stored payment methods and
+    subscriptions; listing just "customers" would understate what confirming
+    this actually destroys, which is the one thing a consent screen must not do.
+    """
+    from migration.utils.rollback_preflight import cascade_closure
+
+    closure = cascade_closure(plan.deletable)
+
+    deleted = {}
+    for model, pks in closure.items():
+        if not pks:
+            continue
+        name = str(model._meta.verbose_name_plural).strip()
+        label = name[:1].upper() + name[1:] if name else model._meta.label
+        deleted[label] = deleted.get(label, 0) + len(pks)
+
+    return {
+        # Largest first: the things worth noticing sit at the top.
+        "deleted": dict(sorted(deleted.items(), key=lambda kv: (-kv[1], kv[0]))),
+        "retained": plan.retained_counts(),
+    }
+
+
+def rollback_migration(job, dry_run=False):
+    """Delete what this migration created, keeping anything still depended on.
+
+    Returns a report dict of what was deleted and what was retained. With
+    dry_run=True nothing is written — used to show the merchant the consequences
+    before they confirm.
+    """
+    logger.info("Planning rollback for migration job %s", job.id)
+    plan = plan_rollback(job)
+    report = summarise(plan)
+
+    if dry_run:
+        return report
+
+    logger.info("Rollback plan for job %s: %s", job.id, report)
+
+    try:
+        with transaction.atomic():
+            for model, label in _deletion_order():
+                pks = plan.pks(model)
+                if not pks:
+                    continue
+                removed = _delete_in_chunks(model, pks)
+                logger.info("Rollback %s: removed %d %s", job.id, removed, label)
+
+            job.status = "rolled_back"
+            job.can_rollback = False
+            job.save(update_fields=["status", "can_rollback"])
+
+    except ProtectedError as exc:
+        # The retention plan should make this unreachable. If it fires, the FK
+        # graph has an edge the closure did not account for; fail closed with a
+        # message that names it rather than corrupting the store.
+        logger.exception("Rollback of job %s aborted on a protected reference", job.id)
+        raise RollbackRefused(
+            "Rollback stopped because something in your store still depends on "
+            "data this import created, and Spwig could not determine what. "
+            "Nothing has been deleted."
+        ) from exc
+
+    logger.info("Rollback completed for migration job %s", job.id)
+    return report

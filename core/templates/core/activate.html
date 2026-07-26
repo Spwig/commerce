@@ -108,9 +108,26 @@
                     </button>
                 </form>
 
+                <div class="activate-divider"><span>{% trans "or" %}</span></div>
+
+                <form method="post" class="activate-community-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="community">
+                    <button type="submit" class="activate-community-btn">
+                        <span>{% trans "Continue with Community Edition" %}</span>
+                    </button>
+                    <p class="activate-community-note">
+                        {% trans "Free and open source — no token needed. You can add a paid licence later from the admin panel." %}
+                    </p>
+                </form>
+
                 <div class="activate-help">
                     <p class="activate-help-title">{% trans "Don't have a license?" %}</p>
                     <div class="activate-help-options">
+                        <div class="activate-help-option">
+                            <strong>{% trans "Community Edition (Free)" %}</strong>
+                            <span>{% trans "Run your store on the free, open-source Community Edition — no account or token required." %}</span>
+                        </div>
                         <div class="activate-help-option">
                             <strong>{% trans "Developer License (Free)" %}</strong>
                             <span>{% trans "Create a developer account at" %} <a href="https://spwig.com" target="_blank" rel="noopener">spwig.com</a> {% trans "to get a free developer license for testing and development." %}</span>

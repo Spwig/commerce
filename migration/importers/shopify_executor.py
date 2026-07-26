@@ -10,6 +10,7 @@ from typing import Any
 import requests
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
+from django.db import transaction
 from django.utils import timezone
 from tqdm import tqdm
 
@@ -24,6 +25,8 @@ from catalog.models import (
 )
 from media_library.models import MediaAsset
 from migration.fetchers.shopify_api import ShopifyAPIClient
+from migration.importers.cancellation import CancellationMixin, MigrationCancelled
+from migration.importers.dedup import should_skip_existing, try_replace_existing
 from migration.mappers.shopify import (
     ShopifyArticleMapper,
     ShopifyCollectionMapper,
@@ -34,6 +37,7 @@ from migration.mappers.shopify import (
 )
 from migration.models import MigrationJob, MigrationLog, MigrationStagedItem, MigrationStep
 from migration.services.attribute_service import AttributeService
+from migration.utils.pricing import apply_price_adjustment, get_adjustment
 from migration.utils.shopify_transformers import (
     parse_shopify_tags,
     transform_shopify_discount_type,
@@ -59,7 +63,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-class ShopifyImportExecutor:
+class ShopifyImportExecutor(CancellationMixin):
     """
     Shopify import executor that orchestrates the entire migration process.
 
@@ -199,45 +203,48 @@ class ShopifyImportExecutor:
         try:
             self.job.status = "running"
             self.job.started_at = timezone.now()
-            self.job.save()
+            self.job.save(update_fields=["status", "started_at"])
 
             logger.info(f"Starting Shopify import for job {self.job.id}")
 
             config = self.job.connection_config or {}
 
-            # Execute imports in order
+            # Execute imports in order. Between phases is the safest place to
+            # stop: no step is running, so unwinding cannot strand one.
             if config.get("import_categories", False):
+                self._check_cancelled()
                 self._import_collections()
 
             if config.get("import_products", False):
+                self._check_cancelled()
                 self._import_products()
 
             if config.get("import_customers", False):
+                self._check_cancelled()
                 self._import_customers()
 
             if config.get("import_orders", False):
+                self._check_cancelled()
                 self._import_orders()
 
             if config.get("import_coupons", False):
+                self._check_cancelled()
                 self._import_discounts()
 
             if config.get("import_blog", False):
+                self._check_cancelled()
                 self._import_blog()
 
             # Post-import: scan content for internal links
             self._scan_content_links()
 
-            # Mark job as complete
-            self.job.status = "completed"
-            self.job.completed_at = timezone.now()
-            self.job.duration_seconds = int(
-                (self.job.completed_at - self.job.started_at).total_seconds()
-            )
-            self.job.progress_percent = 100
-            self.job.save()
+            self._mark_completed()
 
-            logger.info(f"Shopify import completed for job {self.job.id}")
-            self._update_overall_progress()
+        except MigrationCancelled:
+            # Precedes the generic handler so a deliberate stop is not recorded
+            # as a failure.
+            self._mark_cancelled()
+            raise
 
         except Exception as e:
             logger.error(f"Shopify import failed: {e}", exc_info=True)
@@ -245,10 +252,17 @@ class ShopifyImportExecutor:
             self.job.error_summary = str(e)
             self.job.completed_at = timezone.now()
             if self.job.started_at:
-                self.job.duration_seconds = (
-                    self.job.completed_at - self.job.started_at
-                ).total_seconds()
-            self.job.save()
+                self.job.duration_seconds = int(
+                    (self.job.completed_at - self.job.started_at).total_seconds()
+                )
+            self.job.save(
+                update_fields=[
+                    "status",
+                    "error_summary",
+                    "completed_at",
+                    "duration_seconds",
+                ]
+            )
             raise
 
     # ──────────────────────────────────────────────
@@ -317,7 +331,13 @@ class ShopifyImportExecutor:
             self.job.categories_imported = step.items_imported
             self.job.categories_failed = step.items_failed
             self.job.categories_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "categories_imported",
+                    "categories_failed",
+                    "categories_skipped",
+                ]
+            )
 
             self._update_overall_progress()
 
@@ -342,26 +362,47 @@ class ShopifyImportExecutor:
 
         # Check if already imported
         existing = Category.objects.filter(external_id=external_id).first()
-        if existing:
+        if existing and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             self._step_increment(step, "items_skipped")
             self.category_map[external_id] = existing
             return existing
 
         mapped = mapper.map(col_data)
 
-        category = Category.objects.create(
-            external_id=external_id,
-            migration_job=self.job,
-            name=mapped.get("name", col_data.get("title")),
-            slug=self._get_unique_slug(mapped.get("slug", col_data.get("handle")), Category),
-            description=mapped.get("description", ""),
-            is_active=mapped.get("is_active", True),
-            imported_meta={
-                "shopify_id": external_id,
-                "collection_type": mapped.get("collection_type", "custom"),
-            },
-        )
+        # The delete (if replacing) and the create that follows share one
+        # transaction, so a failure partway through creation rolls the
+        # delete back too. Without this, a crash right after deleting the
+        # old collection and before the new one exists would leave the slot
+        # empty with nothing to fill it — silent data loss, not a skip.
+        with transaction.atomic():
+            if existing and not try_replace_existing(existing):
+                # Blocked: something else in the store still depends on it.
+                # Nothing was written — try_replace_existing's own delete
+                # runs in its own savepoint — so returning from inside this
+                # block is safe.
+                self._step_increment(step, "items_skipped")
+                self.category_map[external_id] = existing
+                return existing
+            # else: no existing row, or it was deleted — create it fresh.
 
+            category = Category.objects.create(
+                external_id=external_id,
+                migration_job=self.job,
+                name=mapped.get("name", col_data.get("title")),
+                slug=self._get_unique_slug(mapped.get("slug", col_data.get("handle")), Category),
+                description=mapped.get("description", ""),
+                is_active=mapped.get("is_active", True),
+                imported_meta={
+                    "shopify_id": external_id,
+                    "collection_type": mapped.get("collection_type", "custom"),
+                },
+            )
+
+        # Counted after the transaction commits, never inside it — a rolled
+        # back attempt must never leave a phantom increment.
         self.category_map[external_id] = category
 
         # Download collection image if present
@@ -475,7 +516,13 @@ class ShopifyImportExecutor:
             self.job.products_imported = step.items_imported
             self.job.products_failed = step.items_failed
             self.job.products_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "products_imported",
+                    "products_failed",
+                    "products_skipped",
+                ]
+            )
 
             self._update_overall_progress()
 
@@ -500,7 +547,10 @@ class ShopifyImportExecutor:
 
         # Check if already imported
         existing = Product.objects.filter(external_id=external_id).first()
-        if existing:
+        if existing and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             self._step_increment(step, "items_skipped")
             return existing
 
@@ -531,25 +581,20 @@ class ShopifyImportExecutor:
                 f"defaulting to 0.00"
             )
 
-        # Apply price adjustment
-        price_adjustment_type = self.job.connection_config.get("price_adjustment_type", "none")
-        if price_adjustment_type != "none":
-            adjustment_value = Decimal(
-                self.job.connection_config.get("price_adjustment_value", "0")
-            )
-            if price_adjustment_type == "percentage":
-                price = price * (1 + adjustment_value / 100)
-            elif price_adjustment_type == "fixed":
-                price = price + adjustment_value
+        # Apply the optional across-the-board price adjustment.
+        adj_type, adj_value = get_adjustment(self.job.connection_config)
+        price = apply_price_adjustment(price, adj_type, adj_value)
 
-        # Compute sale fields
+        # Compute sale fields. The sale_type decision uses raw values (the
+        # relationship survives a uniform adjustment), but the stored sale value
+        # is adjusted so the discount stays proportional to the marked-up price.
         sale_type = "none"
         sale_value_decimal = None
         regular_price = mapped.get("regular_price")
         sale_price = mapped.get("sale_price")
         if sale_price and regular_price and sale_price < regular_price:
             sale_type = "fixed_price"
-            sale_value_decimal = sale_price
+            sale_value_decimal = apply_price_adjustment(sale_price, adj_type, adj_value)
 
         # Short description
         short_desc = mapped.get("short_description", "")
@@ -566,36 +611,53 @@ class ShopifyImportExecutor:
 
         product_type = mapped.get("product_type", "simple")
 
-        product = Product.objects.create(
-            external_id=external_id,
-            migration_job=self.job,
-            name=mapped.get("name", product_data.get("title")),
-            slug=self._get_unique_slug(mapped.get("slug", product_data.get("handle")), Product),
-            sku=self._get_unique_sku(mapped.get("sku", "")),
-            product_type=product_type,
-            category=category,
-            full_description=mapped.get("full_description", ""),
-            short_description=short_desc,
-            price=price,
-            sale_type=sale_type,
-            sale_value=sale_value_decimal,
-            status=transform_shopify_status(product_data.get("status", "active")),
-            is_featured=False,
-            track_inventory=mapped.get("track_inventory", False),
-            allow_backorders=mapped.get("allow_backorders", False),
-            weight=transform_decimal_nullable(mapped.get("weight")),
-            imported_meta=imported_meta,
-        )
+        # The delete (if replacing) and the create that follows share one
+        # transaction, so a failure partway through creation rolls the
+        # delete back too. Without this, a crash right after deleting the
+        # old product and before the new one exists would leave the slot
+        # empty with nothing to fill it — silent data loss, not a skip.
+        with transaction.atomic():
+            if existing and not try_replace_existing(existing):
+                # Blocked: a real order (or bundle, gift card, dependency…)
+                # still references this product. Nothing was written —
+                # try_replace_existing's own delete runs in its own
+                # savepoint — so returning from inside this block is safe.
+                self._step_increment(step, "items_skipped")
+                return existing
+            # else: no existing row, or it was deleted — create it fresh.
+            # ProductVariant.product is CASCADE, so a successful replace also
+            # removed the old variants, images and stock items.
 
-        # Create stock item
-        if self.default_warehouse and mapped.get("track_inventory"):
-            stock_qty = mapped.get("stock_quantity", 0) or 0
-            StockItem.objects.create(
-                product=product,
-                warehouse=self.default_warehouse,
-                on_hand=stock_qty,
-                allocated=0,
+            product = Product.objects.create(
+                external_id=external_id,
+                migration_job=self.job,
+                name=mapped.get("name", product_data.get("title")),
+                slug=self._get_unique_slug(mapped.get("slug", product_data.get("handle")), Product),
+                sku=self._get_unique_sku(mapped.get("sku", "")),
+                product_type=product_type,
+                category=category,
+                full_description=mapped.get("full_description", ""),
+                short_description=short_desc,
+                price=price,
+                sale_type=sale_type,
+                sale_value=sale_value_decimal,
+                status=transform_shopify_status(product_data.get("status", "active")),
+                is_featured=False,
+                track_inventory=mapped.get("track_inventory", False),
+                allow_backorders=mapped.get("allow_backorders", False),
+                weight=transform_decimal_nullable(mapped.get("weight")),
+                imported_meta=imported_meta,
             )
+
+            # Create stock item
+            if self.default_warehouse and mapped.get("track_inventory"):
+                stock_qty = mapped.get("stock_quantity", 0) or 0
+                StockItem.objects.create(
+                    product=product,
+                    warehouse=self.default_warehouse,
+                    on_hand=stock_qty,
+                    allocated=0,
+                )
 
         # Import product images
         if product_data.get("images"):
@@ -858,10 +920,13 @@ class ShopifyImportExecutor:
             sku = f"{product.sku}-{external_id}"
         sku = self._get_unique_variant_sku(sku)
 
-        # Pricing
+        # Pricing. Adjust a custom variant price the same way as the parent; an
+        # "inherit" variant follows the already-adjusted parent price.
         regular_price = transform_money(
             variant_data.get("compare_at_price") or variant_data.get("price"), currency
         )
+        adj_type, adj_value = get_adjustment(self.job.connection_config)
+        regular_price = apply_price_adjustment(regular_price, adj_type, adj_value)
 
         pricing_strategy = "inherit"
         variant_price = None
@@ -1022,7 +1087,13 @@ class ShopifyImportExecutor:
             self.job.customers_imported = step.items_imported
             self.job.customers_failed = step.items_failed
             self.job.customers_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "customers_imported",
+                    "customers_failed",
+                    "customers_skipped",
+                ]
+            )
 
             self._update_overall_progress()
 
@@ -1051,90 +1122,124 @@ class ShopifyImportExecutor:
 
         # Check if already imported
         existing_profile = CustomerProfile.objects.filter(external_id=external_id).first()
-        if existing_profile:
+        if existing_profile and should_skip_existing(self.job.connection_config):
+            # Fast path: no delete is ever attempted, so no transaction is
+            # needed here — this mirrors the behaviour before skip_existing
+            # could be turned off at all.
             self._step_increment(step, "items_skipped")
             return existing_profile.user
 
-        # Check if user with this email exists
-        existing_user = User.objects.filter(email=email).first()
-        if existing_user:
-            profile, created = CustomerProfile.objects.get_or_create(
-                user=existing_user,
-                defaults={
-                    "external_id": external_id,
-                    "migration_job": self.job,
-                    "phone": customer_data.get("phone", "") or "",
-                },
-            )
-            if not created and not profile.external_id:
-                profile.external_id = external_id
-                profile.migration_job = self.job
-                profile.save()
+        # The delete (if replacing) and whatever follows it — linking to a
+        # pre-existing account, or creating a fresh one — share one
+        # transaction, so a failure partway through rolls the delete back
+        # too. Without this, a crash right after deleting the old account
+        # and before its replacement exists would strand the customer with
+        # neither record.
+        skipped = False
+        linked_existing = False
+        with transaction.atomic():
+            if existing_profile and not try_replace_existing(existing_profile.user):
+                # Blocked: something else in the store still depends on this
+                # account. Nothing was written — try_replace_existing's own
+                # delete runs in its own savepoint — so returning from
+                # inside this block is safe.
+                skipped = True
+                user = existing_profile.user
+            else:
+                # else: no previously-imported record, or it was just
+                # removed — fall through to identity resolution / creation.
 
-            self._step_increment(step, "items_imported")
-            return existing_user
+                # Check if user with this email exists. Identity resolution,
+                # not re-import bookkeeping — never affected by
+                # skip_existing.
+                existing_user = User.objects.filter(email=email).first()
+                if existing_user:
+                    # Pre-existing account: link it to its source-store
+                    # counterpart, but do not stamp migration_job. That
+                    # field is the provenance a rollback deletes by, and
+                    # this customer belongs to the merchant rather than to
+                    # the migration.
+                    profile, created = CustomerProfile.objects.get_or_create(
+                        user=existing_user,
+                        defaults={
+                            "external_id": external_id,
+                            "phone": customer_data.get("phone", "") or "",
+                        },
+                    )
+                    if not created and not profile.external_id:
+                        profile.external_id = external_id
+                        profile.save()
+                    linked_existing = True
+                    user = existing_user
+                else:
+                    mapped = mapper.map(customer_data)
 
-        mapped = mapper.map(customer_data)
+                    # Generate unique username
+                    username = mapped.get("username") or email.split("@")[0]
+                    original_username = username
+                    counter = 1
+                    while User.objects.filter(username=username).exists():
+                        username = f"{original_username}{counter}"
+                        counter += 1
 
-        # Generate unique username
-        username = mapped.get("username") or email.split("@")[0]
-        original_username = username
-        counter = 1
-        while User.objects.filter(username=username).exists():
-            username = f"{original_username}{counter}"
-            counter += 1
+                    # Parse date
+                    date_joined = timezone.now()
+                    if customer_data.get("created_at"):
+                        try:
+                            date_joined = timezone.datetime.fromisoformat(
+                                customer_data["created_at"].replace("Z", "+00:00")
+                            )
+                        except (ValueError, AttributeError):
+                            pass
 
-        # Parse date
-        date_joined = timezone.now()
-        if customer_data.get("created_at"):
-            try:
-                date_joined = timezone.datetime.fromisoformat(
-                    customer_data["created_at"].replace("Z", "+00:00")
-                )
-            except (ValueError, AttributeError):
-                pass
+                    user = User.objects.create(
+                        username=username,
+                        email=email,
+                        first_name=mapped.get("first_name", ""),
+                        last_name=mapped.get("last_name", ""),
+                        date_joined=date_joined,
+                        is_active=True,
+                    )
+                    user.set_unusable_password()
+                    user.save()
 
-        user = User.objects.create(
-            username=username,
-            email=email,
-            first_name=mapped.get("first_name", ""),
-            last_name=mapped.get("last_name", ""),
-            date_joined=date_joined,
-            is_active=True,
-        )
-        user.set_unusable_password()
-        user.save()
+                    CustomerProfile.objects.create(
+                        user=user,
+                        external_id=external_id,
+                        migration_job=self.job,
+                        phone=customer_data.get("phone", "") or "",
+                    )
 
-        CustomerProfile.objects.create(
-            user=user,
-            external_id=external_id,
-            migration_job=self.job,
-            phone=customer_data.get("phone", "") or "",
-        )
+                    # Create address from default address
+                    billing = mapped.get("billing_address", {})
+                    if billing.get("address_1"):
+                        from orders.models import Address
 
-        # Create address from default address
-        billing = mapped.get("billing_address", {})
-        if billing.get("address_1"):
-            from orders.models import Address
+                        Address.objects.create(
+                            user=user,
+                            address_type="billing",
+                            name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
+                            company=billing.get("company", ""),
+                            address1=billing.get("address_1", ""),
+                            address2=billing.get("address_2", ""),
+                            city=billing.get("city", ""),
+                            state=billing.get("state", ""),
+                            postal_code=billing.get("postcode", ""),
+                            country=billing.get("country", ""),
+                            phone=billing.get("phone", ""),
+                            is_default=True,
+                        )
 
-            Address.objects.create(
-                user=user,
-                address_type="billing",
-                name=f"{billing.get('first_name', '')} {billing.get('last_name', '')}".strip(),
-                company=billing.get("company", ""),
-                address1=billing.get("address_1", ""),
-                address2=billing.get("address_2", ""),
-                city=billing.get("city", ""),
-                state=billing.get("state", ""),
-                postal_code=billing.get("postcode", ""),
-                country=billing.get("country", ""),
-                phone=billing.get("phone", ""),
-                is_default=True,
-            )
+        # Counted after the transaction commits, never inside it — a rolled
+        # back attempt must never leave a phantom increment.
+        if skipped:
+            self._step_increment(step, "items_skipped")
+            return user
 
         self._step_increment(step, "items_imported")
 
-        logger.debug(f"Imported customer: {user.email}")
+        if not linked_existing:
+            logger.debug(f"Imported customer: {user.email}")
         return user
 
     # ──────────────────────────────────────────────
@@ -1189,7 +1294,7 @@ class ShopifyImportExecutor:
             self.job.orders_imported = step.items_imported
             self.job.orders_failed = step.items_failed
             self.job.orders_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["orders_imported", "orders_failed", "orders_skipped"])
 
             self._update_overall_progress()
 
@@ -1235,29 +1340,6 @@ class ShopifyImportExecutor:
             if email:
                 user = User.objects.filter(email=email).first()
 
-        # Create guest user if needed
-        if not user:
-            email = (
-                order_data.get("email")
-                or order_data.get("contact_email")
-                or f"guest_{external_id}@example.com"
-            )
-            username = f"guest_{external_id}"
-            existing_guest = User.objects.filter(username=username).first()
-            if existing_guest:
-                user = existing_guest
-            else:
-                billing = order_data.get("billing_address") or {}
-                user = User.objects.create(
-                    username=username,
-                    email=email,
-                    first_name=billing.get("first_name") or "Guest",
-                    last_name=billing.get("last_name") or "",
-                    is_active=False,
-                )
-                user.set_unusable_password()
-                user.save()
-
         # Map status
         status = transform_shopify_order_status(
             order_data.get("financial_status", "pending"),
@@ -1294,54 +1376,89 @@ class ShopifyImportExecutor:
             except (ValueError, AttributeError):
                 pass
 
-        order = Order.objects.create(
-            order_number=order_number,
-            user=user,
-            external_id=external_id,
-            migration_job=self.job,
-            status=status,
-            payment_status=payment_status,
-            email=order_data.get("email") or order_data.get("contact_email") or user.email,
-            phone=billing_addr.get("phone") or "",
-            # Shipping address
-            shipping_name=f"{shipping_addr.get('first_name') or ''} {shipping_addr.get('last_name') or ''}".strip(),
-            shipping_address1=shipping_addr.get("address1") or "",
-            shipping_address2=shipping_addr.get("address2") or "",
-            shipping_city=shipping_addr.get("city") or "",
-            shipping_state=shipping_addr.get("province")
-            or shipping_addr.get("province_code")
-            or "",
-            shipping_postal_code=shipping_addr.get("zip") or "",
-            shipping_country=shipping_addr.get("country_code")
-            or shipping_addr.get("country")
-            or "",
-            # Billing address
-            billing_same_as_shipping=False,
-            billing_name=f"{billing_addr.get('first_name') or ''} {billing_addr.get('last_name') or ''}".strip(),
-            billing_address1=billing_addr.get("address1") or "",
-            billing_address2=billing_addr.get("address2") or "",
-            billing_city=billing_addr.get("city") or "",
-            billing_state=billing_addr.get("province") or billing_addr.get("province_code") or "",
-            billing_postal_code=billing_addr.get("zip") or "",
-            billing_country=billing_addr.get("country_code") or billing_addr.get("country") or "",
-            # Totals (use safe_money to guarantee non-null for required MoneyFields)
-            subtotal=safe_money(order_data.get("subtotal_price"), currency),
-            tax_amount=safe_money(order_data.get("total_tax"), currency),
-            shipping_cost=safe_money(
-                sum(
-                    safe_decimal(line.get("price")) for line in order_data.get("shipping_lines", [])
+        # The guest-user create (if needed) and the order create share one
+        # transaction, so a failure partway through the order never leaves a
+        # guest account with no order behind it. Line items are deliberately
+        # NOT inside this block — a bad line item is meant to be skipped
+        # without losing the rest of the order, and that only works if its
+        # failure can't roll back what came before it.
+        with transaction.atomic():
+            # Create guest user if needed
+            if not user:
+                email = (
+                    order_data.get("email")
+                    or order_data.get("contact_email")
+                    or f"guest_{external_id}@example.com"
+                )
+                username = f"guest_{external_id}"
+                existing_guest = User.objects.filter(username=username).first()
+                if existing_guest:
+                    user = existing_guest
+                else:
+                    billing = order_data.get("billing_address") or {}
+                    user = User.objects.create(
+                        username=username,
+                        email=email,
+                        first_name=billing.get("first_name") or "Guest",
+                        last_name=billing.get("last_name") or "",
+                        is_active=False,
+                    )
+                    user.set_unusable_password()
+                    user.save()
+
+            order = Order.objects.create(
+                order_number=order_number,
+                user=user,
+                external_id=external_id,
+                migration_job=self.job,
+                status=status,
+                payment_status=payment_status,
+                email=order_data.get("email") or order_data.get("contact_email") or user.email,
+                phone=billing_addr.get("phone") or "",
+                # Shipping address
+                shipping_name=f"{shipping_addr.get('first_name') or ''} {shipping_addr.get('last_name') or ''}".strip(),
+                shipping_address1=shipping_addr.get("address1") or "",
+                shipping_address2=shipping_addr.get("address2") or "",
+                shipping_city=shipping_addr.get("city") or "",
+                shipping_state=shipping_addr.get("province")
+                or shipping_addr.get("province_code")
+                or "",
+                shipping_postal_code=shipping_addr.get("zip") or "",
+                shipping_country=shipping_addr.get("country_code")
+                or shipping_addr.get("country")
+                or "",
+                # Billing address
+                billing_same_as_shipping=False,
+                billing_name=f"{billing_addr.get('first_name') or ''} {billing_addr.get('last_name') or ''}".strip(),
+                billing_address1=billing_addr.get("address1") or "",
+                billing_address2=billing_addr.get("address2") or "",
+                billing_city=billing_addr.get("city") or "",
+                billing_state=billing_addr.get("province")
+                or billing_addr.get("province_code")
+                or "",
+                billing_postal_code=billing_addr.get("zip") or "",
+                billing_country=billing_addr.get("country_code")
+                or billing_addr.get("country")
+                or "",
+                # Totals (use safe_money to guarantee non-null for required MoneyFields)
+                subtotal=safe_money(order_data.get("subtotal_price"), currency),
+                tax_amount=safe_money(order_data.get("total_tax"), currency),
+                shipping_cost=safe_money(
+                    sum(
+                        safe_decimal(line.get("price"))
+                        for line in order_data.get("shipping_lines", [])
+                    ),
+                    currency,
                 ),
-                currency,
-            ),
-            discount_amount=safe_money(order_data.get("total_discounts"), currency),
-            gift_card_discount=safe_money(0, currency),
-            total_amount=safe_money(order_data.get("total_price"), currency),
-            amount_paid=safe_money(0, currency),
-            amount_refunded=safe_money(0, currency),
-            special_instructions=order_data.get("note") or "",
-            language=self._get_site_default_language(),
-            created_at=created_at,
-        )
+                discount_amount=safe_money(order_data.get("total_discounts"), currency),
+                gift_card_discount=safe_money(0, currency),
+                total_amount=safe_money(order_data.get("total_price"), currency),
+                amount_paid=safe_money(0, currency),
+                amount_refunded=safe_money(0, currency),
+                special_instructions=order_data.get("note") or "",
+                language=self._get_site_default_language(),
+                created_at=created_at,
+            )
 
         # Import line items
         for item_data in order_data.get("line_items", []):
@@ -1466,7 +1583,7 @@ class ShopifyImportExecutor:
             self.job.coupons_imported = step.items_imported
             self.job.coupons_failed = step.items_failed
             self.job.coupons_skipped = step.items_skipped
-            self.job.save()
+            self.job.save(update_fields=["coupons_imported", "coupons_failed", "coupons_skipped"])
 
             self._update_overall_progress()
 
@@ -1630,7 +1747,15 @@ class ShopifyImportExecutor:
             self.job.blog_posts_failed = articles_failed
             self.job.blog_categories_total = len(blogs)
             self.job.blog_categories_imported = len(blogs)
-            self.job.save()
+            self.job.save(
+                update_fields=[
+                    "blog_posts_total",
+                    "blog_posts_imported",
+                    "blog_posts_failed",
+                    "blog_categories_total",
+                    "blog_categories_imported",
+                ]
+            )
 
             self._update_overall_progress()
 
@@ -1916,7 +2041,7 @@ class ShopifyImportExecutor:
         steps = self.job.steps.all()
         if not steps.exists():
             self.job.progress_percent = 0
-            self.job.save()
+            self.job.save(update_fields=["progress_percent"])
             return
 
         total_items = sum(step.items_total for step in steps if step.items_total > 0)
@@ -1929,4 +2054,4 @@ class ShopifyImportExecutor:
         else:
             self.job.progress_percent = 0
 
-        self.job.save()
+        self.job.save(update_fields=["progress_percent"])

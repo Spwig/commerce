@@ -295,19 +295,17 @@ class TestCartDiscountEmptyZeroCurrency:
         cart = CartFactory(user=None, session_key="discount_ccy_1", currency="EUR")
         assert str(cart.voucher_discount_amount.currency) == "EUR"
 
-    def test_gift_card_discount_amount_empty_uses_cart_currency(self, usd_default_site):
-        cart = CartFactory(user=None, session_key="discount_ccy_2", currency="EUR")
-        assert str(cart.gift_card_discount_amount.currency) == "EUR"
-
     def test_total_savings_empty_uses_cart_currency(self, usd_default_site):
         cart = CartFactory(user=None, session_key="discount_ccy_3", currency="EUR")
         assert str(cart.total_savings.currency) == "EUR"
 
-    def test_recalculate_gift_card_discounts_no_currency_mismatch(
-        self, usd_default_site, eur_product_no_tracking
-    ):
+    def test_final_amount_no_currency_mismatch(self, usd_default_site, eur_product_no_tracking):
         """This is the exact 500 from fashion.demos.spwig.com — site USD, product EUR,
-        no vouchers/gift cards applied. recalculate_gift_card_discounts must not raise.
+        no vouchers applied. The discount subtraction must not raise.
+
+        Originally guarded recalculate_gift_card_discounts, which P2.2f deleted;
+        `final_amount` performs the same total_amount - voucher_discount_amount
+        arithmetic, so the regression is still reachable and still guarded.
         """
         cart = CartFactory(user=None, session_key="discount_ccy_4", currency="EUR")
         CartService.add_item(
@@ -315,8 +313,7 @@ class TestCartDiscountEmptyZeroCurrency:
             product_id=eur_product_no_tracking.id,
             quantity=1,
         )
-        # This subtracts total_amount - voucher_discount_amount internally.
-        cart.recalculate_gift_card_discounts()
+        assert str(cart.final_amount.currency) == "EUR"
 
 
 # ============================================================

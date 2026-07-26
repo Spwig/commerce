@@ -2,12 +2,19 @@ name: Security
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
   schedule:
     # Weekly full scan on the main branch even without new commits
     - cron: "0 6 * * 1"
+
+# Collapse duplicate runs for the same PR/ref (Gitea can emit opened +
+# synchronize back-to-back for API-created PRs): the newer run cancels
+# the older one instead of both burning a runner slot.
+concurrency:
+  group: security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   gitleaks:

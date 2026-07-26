@@ -434,3 +434,10 @@ label.cookie-category__name {
     white-space: normal;
   }
 }
+
+/* Reserve foot-of-page space while the full-width bottom bar is shown so it
+   never hides page content (checkout CTAs, footers) behind it. The height
+   custom property and the active class are set by cookie_banner.js. */
+body.cookie-banner-active {
+  padding-bottom: var(--cookie-banner-h, 0);
+}

@@ -54,7 +54,6 @@ urlpatterns = [
     path("cart/items/<int:item_id>/remove/", cart.remove_cart_item, name="cart_remove_item"),
     path("cart/voucher/", cart.apply_voucher, name="cart_apply_voucher"),
     path("cart/voucher/remove/", cart.remove_voucher, name="cart_remove_voucher"),
-    path("cart/gift-card/", cart.apply_gift_card, name="cart_apply_gift_card"),
     path("cart/clear/", cart.clear_cart, name="cart_clear"),
     # Manual discounts
     path("cart/items/<int:item_id>/discount/", cart.apply_item_discount, name="cart_item_discount"),

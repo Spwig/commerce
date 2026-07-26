@@ -29,7 +29,12 @@ from wallet.api.serializers import (
     WalletTransactionSerializer,
 )
 from wallet.models import CustomerWallet, WalletTransaction
-from wallet.services import InsufficientBalance, WalletFrozen, WalletService
+from wallet.services import (
+    InsufficientBalance,
+    WalletCurrencyMismatch,
+    WalletFrozen,
+    WalletService,
+)
 
 # =====================================================================
 # CUSTOMER-FACING ENDPOINTS
@@ -82,7 +87,7 @@ class WalletBalanceViewSet(HeadlessAPIMixin, viewsets.ViewSet):
             OpenApiParameter(
                 name="source",
                 description=_("Filter by source"),
-                enum=["referral", "refund", "promotion", "manual", "order"],
+                enum=["referral", "refund", "promotion", "manual", "order", "loyalty"],
                 required=False,
             ),
             OpenApiParameter(
@@ -341,6 +346,14 @@ class AdminWalletViewSet(viewsets.ReadOnlyModelViewSet):
                 description=data["description"],
                 reference_id=data.get("reference_id", ""),
             )
+        except WalletCurrencyMismatch:
+            return Response(
+                {
+                    "success": False,
+                    "error": _("Debit currency does not match the wallet currency"),
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except InsufficientBalance:
             return Response(
                 {"success": False, "error": _("Insufficient wallet balance")},
@@ -401,7 +414,7 @@ class AdminWalletViewSet(viewsets.ReadOnlyModelViewSet):
             OpenApiParameter(
                 name="source",
                 description=_("Filter by source"),
-                enum=["referral", "refund", "promotion", "manual", "order"],
+                enum=["referral", "refund", "promotion", "manual", "order", "loyalty"],
                 required=False,
             ),
             OpenApiParameter(

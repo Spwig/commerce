@@ -525,6 +525,37 @@ class PaymentTransaction(models.Model):
         ("refund", _("Refund - Return payment")),
     ]
 
+    # How the money arrived. Everything before this model gained tender support
+    # was a gateway charge, so "gateway" is the backfill default.
+    #
+    # A gift card or wallet balance is a *payment method*, not a discount: it is
+    # money the customer already handed over, so it applies to the full
+    # post-tax total and must not reduce the tax base or count as a saving.
+    # Modelling it as a discount (as cart.AppliedGiftCard did until P2.2f) caps it at
+    # the pre-tax subtotal and can strand balance while still charging a card.
+    #
+    # Vocabulary deliberately matches pos_app.POSPayment.PAYMENT_METHODS so POS
+    # and web can converge on one representation in R3.
+    TENDER_GATEWAY = "gateway"
+    TENDER_GIFT_CARD = "gift_card"
+    TENDER_WALLET = "wallet"
+    TENDER_CASH = "cash"
+    TENDER_TERMINAL_CARD = "terminal_card"
+    TENDER_MANUAL_CARD = "card"
+
+    TENDER_TYPES = [
+        (TENDER_GATEWAY, _("Payment provider")),
+        (TENDER_GIFT_CARD, _("Gift Card")),
+        (TENDER_WALLET, _("Store Credit")),
+        (TENDER_CASH, _("Cash")),
+        (TENDER_TERMINAL_CARD, _("Card (Terminal)")),
+        (TENDER_MANUAL_CARD, _("Card (Manual)")),
+    ]
+
+    # Tender types that settle against an internal balance rather than an
+    # external provider. These legitimately have provider_account = NULL.
+    INTERNAL_TENDERS = (TENDER_GIFT_CARD, TENDER_WALLET)
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Link to provider account
@@ -591,6 +622,88 @@ class PaymentTransaction(models.Model):
         max_length=20, choices=TYPE_CHOICES, default="charge", verbose_name=_("type")
     )
 
+    # ---------------------------------------------------------------------
+    # Tender (non-gateway payment) support
+    # ---------------------------------------------------------------------
+    tender_type = models.CharField(
+        max_length=20,
+        choices=TENDER_TYPES,
+        default=TENDER_GATEWAY,
+        db_index=True,
+        verbose_name=_("tender type"),
+        help_text=_("How this payment was made"),
+    )
+
+    gift_card = models.ForeignKey(
+        "catalog.GiftCard",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="tender_transactions",
+        verbose_name=_("gift card"),
+        help_text=_("Gift card this tender draws on"),
+    )
+
+    # Wallet this tender draws on (tender_type="wallet"). PROTECT for the same
+    # reason as gift_card above: money rows must outlive the thing they drew
+    # from, or deleting a wallet erases the audit trail of real payments.
+    wallet = models.ForeignKey(
+        "wallet.CustomerWallet",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="tender_transactions",
+        verbose_name=_("wallet"),
+        help_text=_("Customer wallet this tender draws on"),
+    )
+
+    # Set while a card is held against an in-progress checkout and cleared to
+    # the order on completion. A hold with a session but no order is what makes
+    # double-spend detectable before payment rather than after.
+    checkout_session = models.ForeignKey(
+        "cart.CheckoutSession",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tenders",
+        verbose_name=_("checkout session"),
+    )
+
+    # Capture rows point back at the authorize row they settle. The authorize
+    # row is never mutated into a capture — the ledger stays append-only, so
+    # the hold and its settlement are both visible afterwards.
+    parent_transaction = models.ForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="child_transactions",
+        verbose_name=_("parent transaction"),
+    )
+
+    # Amount in the ORDER's currency. `amount` above is denominated in the
+    # tender's own currency (a EUR gift card against a GBP order keeps EUR
+    # there), so summing `amount` across mixed-currency tenders is meaningless.
+    # Order.amount_paid is incremented from this field, never from `amount`.
+    settlement_amount = MoneyField(
+        max_digits=19,
+        decimal_places=2,
+        default_currency="USD",
+        null=True,
+        blank=True,
+        verbose_name=_("settlement amount"),
+        help_text=_("This tender's value in the order's currency"),
+    )
+
+    exchange_rate = models.DecimalField(
+        max_digits=18,
+        decimal_places=8,
+        null=True,
+        blank=True,
+        verbose_name=_("exchange rate"),
+        help_text=_("Rate used to convert amount into settlement_amount"),
+    )
+
     # Customer information
     customer_email = models.EmailField(blank=True, verbose_name=_("customer email"))
 
@@ -654,10 +767,59 @@ class PaymentTransaction(models.Model):
             models.Index(fields=["provider_account", "status"], name="pp_txn_prov_status_idx"),
             models.Index(fields=["order", "status"], name="pp_txn_order_status_idx"),
             models.Index(fields=["status", "transaction_type"], name="pp_txn_status_type_idx"),
+            # Holds are looked up per card to compute available balance, and
+            # per session to settle or release them at checkout.
+            models.Index(fields=["gift_card", "status"], name="pp_txn_giftcard_status_idx"),
+            # Wallet holds are summed per wallet to compute spendable balance.
+            models.Index(fields=["wallet", "status"], name="pp_txn_wallet_status_idx"),
+            models.Index(fields=["checkout_session", "status"], name="pp_txn_session_status_idx"),
+            models.Index(fields=["tender_type", "status"], name="pp_txn_tender_status_idx"),
         ]
+        constraints = [
+            # A gift card tender without a card is unattributable money: the
+            # balance would be debited with no record of whose it was.
+            models.CheckConstraint(
+                condition=~models.Q(tender_type="gift_card") | models.Q(gift_card__isnull=False),
+                name="pp_txn_giftcard_tender_needs_card",
+            ),
+            # Conversely a card FK on a non-gift-card tender means the tender
+            # type is wrong, which would corrupt available-balance maths.
+            models.CheckConstraint(
+                condition=models.Q(tender_type="gift_card") | models.Q(gift_card__isnull=True),
+                name="pp_txn_card_only_on_giftcard_tender",
+            ),
+            # Same pair for wallet tenders, same reasoning: an unattributed
+            # wallet debit, or a wallet FK on a non-wallet tender, both corrupt
+            # the spendable-balance maths.
+            models.CheckConstraint(
+                condition=~models.Q(tender_type="wallet") | models.Q(wallet__isnull=False),
+                name="pp_txn_wallet_tender_needs_wallet",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(tender_type="wallet") | models.Q(wallet__isnull=True),
+                name="pp_txn_wallet_only_on_wallet_tender",
+            ),
+        ]
+        # Deliberately NOT constrained: "a gateway tender must have a
+        # provider_account". It reads like a sensible invariant, but
+        # provider_account is documented as nullable "during migration period",
+        # so installs may hold legacy gateway rows without one. Every existing
+        # row backfills to tender_type='gateway', so such a constraint could
+        # fail the migration and block an upgrade — to assert data tidiness
+        # rather than protect money. The two constraints above are money
+        # invariants; this one would not have been.
 
     def __str__(self):
-        return f"{self.transaction_id} - {self.provider_account.component.name} - {self.amount}"
+        # provider_account is nullable and legitimately null for non-gateway
+        # tender (gift card, wallet, cash), which has no payment provider behind
+        # it. Dereferencing it unguarded raised AttributeError for every such
+        # row — in Django admin lists, logging and error messages alike.
+        source = (
+            self.provider_account.component.name
+            if self.provider_account_id and self.provider_account.component_id
+            else self.get_tender_type_display()
+        )
+        return f"{self.transaction_id} - {source} - {self.amount}"
 
     def is_successful(self):
         """Check if transaction was successful"""
