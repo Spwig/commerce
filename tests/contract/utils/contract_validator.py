@@ -7,6 +7,14 @@ Validates API response data against JSON Schema definitions
 from decimal import Decimal
 from typing import Any
 
+#: Schema ``type`` meaning "this field is present, but its type is not pinned".
+#: Written into recorded baselines by ``tests.contract.conftest._unpin_nulls``
+#: for fields that were ``null`` in the recorded sample: one response cannot
+#: tell us what type such a field takes when populated, so pinning it to
+#: ``"null"`` would encode the fixture rather than the contract. Treated as
+#: compatible with any value here and by the breaking-change detector.
+UNPINNED_TYPE = "any"
+
 
 class SchemaValidationResult:
     """Result of schema validation"""
@@ -123,6 +131,11 @@ def _validate_type(value: Any, expected_type: str) -> bool:
     Returns:
         True if value matches expected type
     """
+    if expected_type == UNPINNED_TYPE:
+        # Field is present but its type is deliberately not pinned — see
+        # UNPINNED_TYPE. Any value satisfies it.
+        return True
+
     type_map = {
         "string": str,
         "integer": int,

@@ -138,8 +138,10 @@ class PaymentIntentResponseSerializer(serializers.Serializer):
         return None
 
     def get_error(self, obj):
-        """Get error details if failed."""
-        if obj.status == "failed" and (obj.error_code or obj.error_message):
+        """Get error details if failed or soft-declined (retryable)."""
+        if obj.status in ("failed", "requires_payment_method") and (
+            obj.error_code or obj.error_message
+        ):
             return {"code": obj.error_code, "message": obj.error_message}
         return None
 
@@ -438,8 +440,10 @@ class PaymentIntentStatusSerializer(serializers.Serializer):
         return None
 
     def get_error(self, obj):
-        """Get error details if failed."""
-        if obj.status == "failed" and (obj.error_code or obj.error_message):
+        """Get error details if failed or soft-declined (retryable)."""
+        if obj.status in ("failed", "requires_payment_method") and (
+            obj.error_code or obj.error_message
+        ):
             return {"code": obj.error_code, "message": obj.error_message}
         return None
 

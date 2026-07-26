@@ -130,6 +130,7 @@ INSTALLED_APPS = [
     "custom_fields",  # Merchant-defined custom fields for products, orders, categories, customers
     "domain_ssl",  # Domain & SSL configuration via admin GUI
     "enterprise_sso",  # Enterprise SSO via OpenID Connect (OIDC)
+    "agentic",  # Agentic commerce (UCP discovery, agent identity) — off by default
 ]
 
 # API Documentation (drf-spectacular)
@@ -151,6 +152,7 @@ if SPWIG_IS_HQ:
     INSTALLED_APPS.append("marketplace_checkout")
     INSTALLED_APPS.append("license_checkout")
 
+
 # Sales Bell (Pi dashboard) - shared secret for the internal events API
 SALES_BELL_TOKEN = env("SALES_BELL_TOKEN", default="")
 
@@ -162,6 +164,13 @@ UPGRADE_SERVER_INTERNAL_API_KEY = env("UPGRADE_SERVER_INTERNAL_API_KEY", default
 # Enables hosted-specific features (custom domain UI, managed SSL).
 IS_HOSTED = env.bool("SPWIG_HOSTED", default=False)
 HOSTING_INFRA_TIER = env("HOSTING_INFRA_TIER", default="")  # 'shared' or 'dedicated'
+
+# Quote-drift gate (commerce.OrderPlacementService.place_order).
+# Default False = warn-only: a stored total that disagrees with a fresh quote
+# is logged, and the order still places. Flip to True to REFUSE placement on
+# drift once warn-only logs have been clean on real traffic for a while.
+# An explicit caller `expected_total` mismatch always raises regardless.
+SPWIG_ENFORCE_QUOTE_DRIFT = env.bool("SPWIG_ENFORCE_QUOTE_DRIFT", default=False)
 
 MIDDLEWARE = [
     "core.middleware.subpath.SubpathMiddleware",  # Handle URL subpath deployments (must be first)
@@ -325,10 +334,22 @@ else:
     }
 
 # Cache configuration with Redis
+_REDIS_DB = env("REDIS_DB", default="0")
+# Under pytest-xdist every worker must get its own Redis DB: the suite calls
+# cache.clear() freely, and a shared DB lets one worker wipe another's DRF
+# throttle counters mid-test (observed: gift-card balance throttling test
+# red under -n auto). PYTEST_XDIST_WORKER is set in the worker bootstrap
+# before Django imports, so this is the only reliably-early place to map it
+# (a conftest env override runs after pytest-django has already imported
+# settings). gw0..gwN -> DBs 1..15; wraps past 15 workers; absent outside
+# xdist so serial runs, dev servers, and production are untouched.
+_XDIST_WORKER = os.environ.get("PYTEST_XDIST_WORKER", "")
+if _XDIST_WORKER.startswith("gw") and _XDIST_WORKER[2:].isdigit():
+    _REDIS_DB = str(1 + int(_XDIST_WORKER[2:]) % 15)
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://:{env('REDIS_PASSWORD', default='')}@{env('REDIS_HOST', default='localhost')}:{env('REDIS_PORT', default='6379')}/{env('REDIS_DB', default='0')}",
+        "LOCATION": f"redis://:{env('REDIS_PASSWORD', default='')}@{env('REDIS_HOST', default='localhost')}:{env('REDIS_PORT', default='6379')}/{_REDIS_DB}",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
@@ -637,6 +658,11 @@ CORS_ALLOW_CREDENTIALS = False
 # REST Framework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        # Merchant-generated core.APIToken Bearer tokens. Inert outside the
+        # admin_api URL namespace; enforces per-endpoint scopes fail-closed.
+        # Listed first so a core.APIToken is matched before the mobile
+        # authenticator (which raises on an unknown Bearer token).
+        "core.authentication.APITokenAuthentication",
         "admin_api.authentication.MobileTokenAuthentication",  # Mobile app Bearer tokens
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
@@ -676,6 +702,12 @@ REST_FRAMEWORK = {
         # Endpoint-specific strict limits (security-critical)
         "public_write": "20/hour",  # Very restrictive for public write operations
         "voucher_validation": "10/minute",  # Prevent voucher code enumeration
+        # Gift card balance is a public stored-value oracle (200 = real code with
+        # a balance, 404 = not a code), so it is throttled harder than voucher
+        # validation. Both variants are set: authenticating must not buy a
+        # laxer limit on the same lookup.
+        "gift_card_balance_anon": "10/hour",
+        "gift_card_balance_user": "30/hour",
         "referral_tracking": "30/hour",  # Prevent token enumeration
         "social_tracking": "50/hour",  # Prevent spam in social tracking (authenticated)
         "social_tracking_anonymous": "20/hour",  # Stricter limit for anonymous guest share tracking
@@ -691,6 +723,9 @@ REST_FRAMEWORK = {
         # POS API rate limits
         "pos_auth": "5/minute",  # POS login attempts (strict to prevent brute force)
         "pos_pin": "10/minute",  # PIN verification attempts (manager/cashier PINs)
+        # Agentic UCP checkout rate limits (per IP; complements the signature limiter)
+        "agentic_checkout": "60/minute",  # Session create/update/read
+        "agentic_checkout_pay": "15/minute",  # Completion (submits a payment credential)
     },
 }
 
@@ -719,7 +754,11 @@ if ENABLE_API_DOCS:
 
     # API Documentation settings (Swagger/ReDoc)
     SPECTACULAR_SETTINGS = {
-        "TITLE": _("Spwig eCommerce API Documentation"),
+        # A plain string, deliberately. Schema metadata is generated once and
+        # served to every locale; a gettext_lazy proxy here serialises
+        # differently per code path and fails isinstance(str) checks — the
+        # long-red test_spectacular_title_configured was exactly this.
+        "TITLE": "Spwig eCommerce API Documentation",
         "DESCRIPTION": _("""## Spwig API Documentation
 
 Welcome to the Spwig eCommerce Platform API documentation. This API enables you to build custom headless storefronts, mobile apps, and integrations.
@@ -805,6 +844,10 @@ Public endpoints may be rate-limited. Authenticated requests have higher limits.
             {"name": "Vouchers", "description": _("Discount codes and promotions")},
             {"name": "Wallet", "description": _("Customer store credit wallet")},
             {"name": "Webhooks", "description": _("Outbound webhook management")},
+            {
+                "name": "Agentic Commerce",
+                "description": _("UCP discovery and catalog for AI shopping agents"),
+            },
         ],
         "ENUM_NAME_OVERRIDES": {
             "ProductSerializer.status": "ProductStatusEnum",
@@ -927,6 +970,12 @@ else:
     # Development mode security settings
     CSRF_COOKIE_HTTPONLY = True  # Prevent XSS even in development
     X_FRAME_OPTIONS = "SAMEORIGIN"  # Allow same-origin framing in dev
+    # Dev serves over plain HTTP, and browsers only honour
+    # Cross-Origin-Opener-Policy on secure (HTTPS) origins — Chrome
+    # ignores the header and prints a console warning on every page load.
+    # Suppress the header in DEBUG only; production (the branch above)
+    # keeps Django's default of 'same-origin'.
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 # Content-Security-Policy configuration (django-csp 4.0)
 # Nonce-based enforcement: no 'unsafe-inline' in script-src.
@@ -1074,6 +1123,10 @@ SENTRY_DSN = env("SENTRY_DSN", default=None)
 # Path to license file - /opt/shop-platform/license for Docker with read-only mount
 LICENSE_PATH = env("LICENSE_PATH", default="/opt/shop-platform/license/license.json")
 
+# How this instance was installed ("installer" when set up by the one-line
+# installer, empty for manual installs). Reported in anonymous telemetry.
+SPWIG_INSTALL_METHOD = env("SPWIG_INSTALL_METHOD", default="")
+
 if SENTRY_DSN:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
@@ -1217,6 +1270,20 @@ FLEET_INSTANCE_NAME = env("FLEET_INSTANCE_NAME", default="")
 # task exits early. See README's Privacy section for the exact payload.
 SPWIG_TELEMETRY_ENABLED = env.bool("SPWIG_TELEMETRY", default=True)
 
+# How long a completed migration stays rollbackable, in hours.
+#
+# Unset (the default) means it never expires. A 24-hour window previously
+# existed on Magento alone, from when rollback deleted more than it created and
+# a short window bounded the damage. Rollback now keeps anything the store
+# depends on, so an expiry mostly serves to strand a merchant who imported on a
+# Friday and reviewed on a Monday. Set a value here if you want one back.
+MIGRATION_ROLLBACK_WINDOW_HOURS = env.int("MIGRATION_ROLLBACK_WINDOW_HOURS", default=0) or None
+
+# How long migration logs, steps and quarantined items are kept, in days. The
+# MigrationJob rows themselves are never purged — they carry the provenance that
+# makes rollback possible.
+MIGRATION_LOG_RETENTION_DAYS = env.int("MIGRATION_LOG_RETENTION_DAYS", default=90)
+
 CELERY_BEAT_SCHEDULE = {
     "send-daily-telemetry": {
         "task": "core.telemetry.tasks.send_daily_telemetry",
@@ -1236,6 +1303,26 @@ CELERY_BEAT_SCHEDULE = {
         # month per service when any of GeoIP/Geocoder/Push crosses 90%.
         "task": "core.hosted_services.tasks.check_hosted_service_quotas",
         "schedule": crontab(hour=7, minute=0),  # once daily at 07:00 UTC
+        "options": {"expires": 3600},
+    },
+    "reap-stalled-migrations": {
+        # Returns migration jobs whose worker died to a state the merchant can
+        # act on. Without it a killed worker leaves the job "running" for ever,
+        # and every admin action is gated on status.
+        "task": "migration.reap_stalled_migrations",
+        "schedule": 600.0,  # every 10 minutes
+        "options": {"expires": 540.0},
+    },
+    "cleanup-migration-history": {
+        # Trims migration logs, steps and quarantined items once a job is old
+        # enough, and closes any rollback window that has expired.
+        #
+        # It never deletes MigrationJob rows: imported rows point at their job
+        # with SET_NULL, so removing one strips provenance store-wide and makes
+        # rollback impossible. Its predecessor did exactly that, which is why it
+        # was never scheduled.
+        "task": "migration.cleanup_migration_history",
+        "schedule": crontab(hour=3, minute=30),  # once daily, off-peak
         "options": {"expires": 3600},
     },
     "process-pending-translation-callbacks": {
@@ -1516,6 +1603,37 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 300.0,  # Run every 5 minutes (300 seconds)
         "options": {
             "expires": 240.0,  # Task expires after 4 minutes if not executed
+        },
+    },
+    # Gift card hold cleanup. A hold reserves value without debiting it, so an
+    # abandoned checkout costs the customer nothing — but their card looks empty
+    # until the hold is released. Runs on the same cadence as stock reservation
+    # cleanup, which is the same class of problem.
+    # Safety net beneath the issuance receiver. A dropped Celery message means
+    # a paying customer holds no gift card and nothing raises — this is the only
+    # thing that would ever notice.
+    # Invariant I5: every wallet balance equals the signed sum of its own
+    # ledger. Nightly, read-only, logs loudly on drift. Ships BEFORE the wallet
+    # becomes a payment tender so the net exists before any money moves.
+    "reconcile-wallet-balances": {
+        "task": "wallet.reconcile_wallet_balances",
+        "schedule": 86400.0,  # Nightly
+        "options": {
+            "expires": 3600.0,
+        },
+    },
+    "reconcile-gift-card-issuance": {
+        "task": "catalog.reconcile_gift_card_issuance",
+        "schedule": 3600.0,  # Hourly; looks only at orders paid in the last 48h
+        "options": {
+            "expires": 3000.0,
+        },
+    },
+    "expire-gift-card-holds": {
+        "task": "catalog.expire_gift_card_holds",
+        "schedule": 300.0,  # Every 5 minutes; holds expire after 30 (HOLD_MINUTES)
+        "options": {
+            "expires": 240.0,
         },
     },
     # Stock Reservation Cleanup

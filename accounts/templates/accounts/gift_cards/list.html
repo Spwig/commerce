@@ -1,0 +1,62 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'My Gift Cards' %}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% trans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item"><a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a></li>
+                <li class="breadcrumb__item"><a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% mtrans 'My Account' %}</a></li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">{% mtrans 'My Gift Cards' %}</li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% mtrans 'My Gift Cards' %}</h1>
+        <p class="page-header__subtitle">{% mtrans 'Gift cards you have purchased' %}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if gift_cards %}
+        <div class="account-gift-cards">
+            {% for card in gift_cards %}
+            <div class="account-gift-card">
+                <div class="account-gift-card__main">
+                    <span class="account-gift-card__code">&bull;&bull;&bull;&bull;{{ card.code|slice:"-4:" }}</span>
+                    <span class="account-gift-card__recipient">
+                        {% mtrans 'Sent to' %} {{ card.recipient_email }}
+                    </span>
+                </div>
+                <div class="account-gift-card__balance">
+                    <span class="account-gift-card__amount">{{ card.current_balance }}</span>
+                    <span class="account-gift-card__of">{% mtrans 'of' %} {{ card.initial_value }}</span>
+                </div>
+                <div class="account-gift-card__status">
+                    {% if not card.is_active %}
+                    <span class="badge badge--muted">{% mtrans 'Inactive' %}</span>
+                    {% elif card.is_expired %}
+                    <span class="badge badge--warning">{% mtrans 'Expired' %}</span>
+                    {% elif card.issued_at %}
+                    <span class="badge badge--success">{% mtrans 'Delivered' %}</span>
+                    {% else %}
+                    <span class="badge">{% mtrans 'Scheduled' %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="account-gift-cards__note">
+            {% mtrans 'For security, full codes are only shown in the delivery email sent to the recipient.' %}
+        </p>
+        {% else %}
+        <div class="account-empty-state">
+            <i class="fas fa-gift" aria-hidden="true"></i>
+            <p>{% mtrans 'You have not purchased any gift cards yet.' %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

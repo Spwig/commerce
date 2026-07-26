@@ -110,17 +110,15 @@ def my_view(request):
     # Location is automatically available via middleware
     location = request.geo_location
 
-    country = location.get('country')
-    currency = location.get('currency')
-    language = location.get('language')
+    country = location.get("country")
+    currency = location.get("currency")
+    language = location.get("language")
 
     # Check special conditions
-    is_vpn = location.get('is_vpn', False)
-    is_mobile = location.get('is_mobile', False)
+    is_vpn = location.get("is_vpn", False)
+    is_mobile = location.get("is_mobile", False)
 
-    return render(request, 'template.html', {
-        'location': location
-    })
+    return render(request, "template.html", {"location": location})
 ```
 
 ## Models
@@ -147,8 +145,8 @@ Conditional rules for customizing user experience based on location.
 ```python
 # GeoIP settings (in settings.py or .env)
 GEOIP_CACHE_TIMEOUT = 3600  # Redis cache timeout in seconds
-GEOIP_DB_CACHE_DAYS = 30    # Database cache retention days
-GEOIP_PRIVACY_MODE = True   # Enable IP anonymization
+GEOIP_DB_CACHE_DAYS = 30  # Database cache retention days
+GEOIP_PRIVACY_MODE = True  # Enable IP anonymization
 ```
 
 ### Adding New Providers

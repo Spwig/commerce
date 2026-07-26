@@ -337,203 +337,8 @@ class TestVoucherCombinationRules:
 
 
 # ============================================================
-# GiftCardRecalculationTests
-# ============================================================
-
-
-class TestGiftCardRecalculation:
-    """Tests for gift card discount recalculation after cart mutations."""
-
-    def test_gift_card_discount_recalculated_on_item_removal(self, site_settings):
-        """After removing items that reduce cart total below GC discount, discount should adjust."""
-        user = UserFactory()
-        cart = CartFactory(user=user)
-
-        product1 = ProductFactory(price=Decimal("60.00"))
-        product2 = ProductFactory(price=Decimal("40.00"))
-        item1 = CartItemFactory(
-            cart=cart, product=product1, quantity=1, unit_price=Decimal("60.00")
-        )
-        item2 = CartItemFactory(
-            cart=cart, product=product2, quantity=1, unit_price=Decimal("40.00")
-        )
-
-        # Apply gift card of $80 to $100 cart
-        gc = _create_gift_card(initial_value=Decimal("80.00"))
-        success, msg, discount = cart.apply_gift_card(gc.code)
-        assert success, f"apply_gift_card failed: {msg}"
-        assert Decimal(str(discount)) == Decimal("80.00")
-
-        # Remove product2 ($40), cart is now $60
-        item2.delete()
-
-        # Recalculate gift card discounts
-        cart.recalculate_gift_card_discounts()
-
-        # Gift card discount should now be $60 (capped at remaining cart total)
-        gc_discount = cart.gift_card_discount_amount
-        assert gc_discount.amount == Decimal("60.00"), (
-            f"Expected $60.00 GC discount, got ${gc_discount.amount}"
-        )
-
-    def test_gift_card_removed_when_cart_emptied(self, site_settings):
-        """When all items are removed, gift card should be removed from cart."""
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product = ProductFactory(price=Decimal("50.00"))
-        item = CartItemFactory(cart=cart, product=product, quantity=1, unit_price=Decimal("50.00"))
-
-        gc = _create_gift_card(initial_value=Decimal("30.00"))
-        success, _, _ = cart.apply_gift_card(gc.code)
-        assert success
-
-        # Remove the only item
-        item.delete()
-
-        # Recalculate -- GC should be removed since remaining total is 0
-        cart.recalculate_gift_card_discounts()
-
-        assert cart.applied_gift_cards.count() == 0
-        assert cart.gift_card_discount_amount.amount == Decimal("0.00")
-
-    def test_gift_card_recalculated_after_voucher_applied(self, site_settings):
-        """Applying a voucher should trigger gift card recalculation."""
-        from cart.services.cart_service import CartService
-
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product = ProductFactory(price=Decimal("100.00"))
-        CartItemFactory(cart=cart, product=product, quantity=1, unit_price=Decimal("100.00"))
-
-        # Apply GC of $60 to $100 cart
-        gc = _create_gift_card(initial_value=Decimal("60.00"))
-        cart.apply_gift_card(gc.code)
-
-        # Now apply a $20 voucher via service (which should trigger GC recalc)
-        voucher = VoucherFactory(
-            code="RECALC_V",
-            discount_type="fixed",
-            discount_value=Decimal("20.00"),
-        )
-        success, msg, _ = CartService.apply_voucher(cart, "RECALC_V", user)
-        assert success, f"apply_voucher failed: {msg}"
-
-        # After voucher: subtotal $100, voucher -$20, remaining $80
-        # GC should still be $60 (fits within $80 remaining)
-        gc_discount = cart.gift_card_discount_amount
-        assert gc_discount.amount == Decimal("60.00")
-
-    def test_gift_card_capped_when_voucher_covers_most_of_cart(self, site_settings):
-        """GC discount should shrink when a voucher leaves insufficient remaining total."""
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product = ProductFactory(price=Decimal("100.00"))
-        CartItemFactory(cart=cart, product=product, quantity=1, unit_price=Decimal("100.00"))
-
-        # Apply GC of $80
-        gc = _create_gift_card(initial_value=Decimal("80.00"))
-        cart.apply_gift_card(gc.code)
-
-        # Apply voucher of $50
-        VoucherFactory(
-            code="BIG_VOUCHER",
-            discount_type="fixed",
-            discount_value=Decimal("50.00"),
-        )
-        cart.apply_voucher("BIG_VOUCHER", user)
-
-        # Trigger GC recalculation
-        cart.recalculate_gift_card_discounts()
-
-        # Remaining after voucher: $100 - $50 = $50
-        # GC should be capped at $50 (not $80)
-        gc_discount = cart.gift_card_discount_amount
-        assert gc_discount.amount == Decimal("50.00"), (
-            f"Expected $50.00 GC discount, got ${gc_discount.amount}"
-        )
-
-
-# ============================================================
 # CheckoutSessionTests
 # ============================================================
-
-
-class TestCheckoutSessionTotals:
-    """Tests for CheckoutSession.recalculate_totals() including gift card discount."""
-
-    def test_checkout_session_total_includes_gift_card_discount(self, site_settings):
-        """Bug fix: total_amount must subtract gift_card_discount."""
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product = ProductFactory(price=Decimal("100.00"))
-        CartItemFactory(cart=cart, product=product, quantity=1, unit_price=Decimal("100.00"))
-
-        # Apply gift card
-        gc = _create_gift_card(initial_value=Decimal("30.00"))
-        cart.apply_gift_card(gc.code)
-
-        session = CheckoutSessionFactory(cart=cart)
-        session.recalculate_totals()
-
-        session.refresh_from_db()
-        assert session.subtotal.amount == Decimal("100.00")
-        assert session.gift_card_discount.amount == Decimal("30.00")
-        # Total = subtotal + shipping(0) + tax(0) - voucher(0) - gift_card(30) = 70
-        assert session.total_amount.amount == Decimal("70.00"), (
-            f"Expected $70.00 total, got ${session.total_amount.amount}"
-        )
-
-    def test_checkout_session_total_does_not_go_negative(self, site_settings):
-        """Gift card larger than cart total should result in total_amount = 0."""
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product = ProductFactory(price=Decimal("20.00"))
-        CartItemFactory(cart=cart, product=product, quantity=1, unit_price=Decimal("20.00"))
-
-        # Apply gift card of $50 to $20 cart
-        gc = _create_gift_card(initial_value=Decimal("50.00"))
-        cart.apply_gift_card(gc.code)
-
-        session = CheckoutSessionFactory(cart=cart)
-        session.recalculate_totals()
-
-        session.refresh_from_db()
-        # GC discount should be capped at $20 (cart total)
-        assert session.gift_card_discount.amount == Decimal("20.00")
-        assert session.total_amount.amount == Decimal("0.00"), (
-            f"Expected $0.00 total, got ${session.total_amount.amount}"
-        )
-
-    def test_checkout_session_with_voucher_and_gift_card(self, site_settings):
-        """Both voucher and gift card should be subtracted from total."""
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product = ProductFactory(price=Decimal("200.00"))
-        CartItemFactory(cart=cart, product=product, quantity=1, unit_price=Decimal("200.00"))
-
-        # Apply 10% voucher = $20 discount
-        VoucherFactory(
-            code="COMBO_CHECKOUT",
-            discount_type="percentage",
-            discount_value=Decimal("10.00"),
-        )
-        cart.apply_voucher("COMBO_CHECKOUT", user)
-
-        # Apply $50 gift card
-        gc = _create_gift_card(initial_value=Decimal("50.00"))
-        cart.apply_gift_card(gc.code)
-
-        session = CheckoutSessionFactory(cart=cart)
-        session.recalculate_totals()
-
-        session.refresh_from_db()
-        assert session.subtotal.amount == Decimal("200.00")
-        assert session.discount_amount.amount == Decimal("20.00")
-        assert session.gift_card_discount.amount == Decimal("50.00")
-        # Total = 200 + 0 + 0 - 20 - 50 = 130
-        assert session.total_amount.amount == Decimal("130.00"), (
-            f"Expected $130.00 total, got ${session.total_amount.amount}"
-        )
 
 
 # ============================================================
@@ -631,184 +436,85 @@ class TestMinOrderValue:
 
 
 class TestGiftCardRefund:
-    """Tests for gift card refund balance restoration."""
+    """
+    Automatic balance restoration is DISABLED as of P2.3.
 
-    def test_gift_card_balance_restored_on_order_refund(self, site_settings):
-        """Bug fix: process_gift_card_refund must restore balance for GCs used as payment."""
+    These tests used to assert that refunding an order restored the full
+    original redemption to any gift card used to pay for it. That behaviour was
+    wrong in a way that cost real money: it restored the WHOLE redemption
+    regardless of how much was actually refunded, so refunding 20 of a 200
+    order paid entirely by gift card gave the customer 200 back on the card AND
+    the 20. It also wrote no PaymentTransaction refund row, so the tender ledger
+    and the gift card ledger disagreed afterwards.
+
+    It survived only because it was unreachable — `order_item` was never
+    populated, because issuance had never run. P2.3 makes issuance real, which
+    would have brought this to life too.
+
+    Tender-aware refunds are P2.4 (TenderRefundAllocator). Until then the
+    service logs loudly and a human adjusts the card from the admin: refusing
+    is better than a partly-correct restore that silently over-credits.
+    """
+
+    def test_balance_is_not_silently_restored(self, site_settings):
         from catalog.models import GiftCardTransaction
         from catalog.services.gift_card_service import GiftCardService
 
-        user = UserFactory()
-        order = OrderFactory(
-            user=user,
-            gift_card_discount=Decimal("30.00"),
-        )
-
-        # Create a gift card that was used for payment
-        gc = _create_gift_card(initial_value=Decimal("50.00"))
-
-        # Simulate redemption: deduct $30 from gift card
-        gc.redeem(
-            amount=Money(Decimal("30.00"), "USD"),
-            order=order,
-            notes="Payment for order",
-        )
+        gc = _create_gift_card(initial_value=Decimal("200.00"))
+        order = OrderFactory(payment_status="paid")
+        gc.redeem(amount=Money(Decimal("200.00"), "USD"), order=order)
         gc.refresh_from_db()
-        assert gc.current_balance.amount == Decimal("20.00")
+        assert gc.current_balance.amount == Decimal("0.00")
 
-        # Process refund
-        processed = GiftCardService.process_gift_card_refund(order)
+        GiftCardService.process_gift_card_refund(order)
 
-        # Verify balance restored
         gc.refresh_from_db()
-        assert gc.current_balance.amount == Decimal("50.00"), (
-            f"Expected $50.00 balance after refund, got ${gc.current_balance.amount}"
+        assert gc.current_balance.amount == Decimal("0.00"), (
+            "The card was auto-restored. That path over-credits on a partial "
+            "refund and is disabled until P2.4 routes refunds through the "
+            "tender rail."
         )
-        assert gc.is_active is True
-        assert processed >= 1
+        assert not GiftCardTransaction.objects.filter(
+            gift_card=gc, order=order, transaction_type="refund", amount__gt=0
+        ).exists()
 
-        # Verify refund transaction was created
-        refund_txn = GiftCardTransaction.objects.filter(
-            gift_card=gc, order=order, transaction_type="refund"
-        ).first()
-        assert refund_txn is not None
-        assert refund_txn.amount.amount == Decimal("30.00")  # Positive = restoration
+    def test_a_purchased_card_is_deactivated_and_zeroed_together(self, site_settings):
+        """
+        Part 1 still runs, and its ledger row and balance must agree.
 
-    def test_purchased_gift_card_deactivated_on_refund(self, site_settings):
-        """Purchased but unused gift card should be deactivated on order refund."""
+        It used to write a -initial_value ledger row while leaving
+        current_balance at full face value, so reconciliation
+        (balance == initial - redemptions + refunds + adjustments) failed on
+        every refunded card.
+        """
         from catalog.models import GiftCard, GiftCardTransaction
         from catalog.services.gift_card_service import GiftCardService
 
-        user = UserFactory()
-        gc_product = ProductFactory(product_type="gift_card", price=Decimal("50.00"))
-        order = OrderFactory(user=user)
+        product = ProductFactory(product_type="gift_card", price=Decimal("50.00"))
+        order = OrderFactory(payment_status="paid")
         order_item = OrderItemFactory(
             order=order,
-            product=gc_product,
+            product=product,
             quantity=1,
-            unit_price=Decimal("50.00"),
-            total_price=Decimal("50.00"),
+            unit_price=Money(Decimal("50.00"), "USD"),
+            total_price=Money(Decimal("50.00"), "USD"),
+            gift_card_data={"recipient_email": "recipient@test.spwig.com"},
         )
+        GiftCardService.create_gift_cards_for_order(order)
+        card = GiftCard.objects.get(order_item=order_item)
 
-        # Create the gift card as if it was issued from this order item
-        gc = GiftCard.objects.create(
-            product=gc_product,
-            order_item=order_item,
-            initial_value=Money(Decimal("50.00"), "USD"),
-            current_balance=Money(Decimal("50.00"), "USD"),
-            recipient_email="recipient@test.spwig.com",
-            is_active=True,
+        GiftCardService.process_gift_card_refund(order)
+
+        card.refresh_from_db()
+        assert card.is_active is False
+        assert card.current_balance.amount == Decimal("0.00")
+
+        row = GiftCardTransaction.objects.get(
+            gift_card=card, order=order, transaction_type="refund"
         )
-
-        # Process refund
-        processed = GiftCardService.process_gift_card_refund(order)
-
-        gc.refresh_from_db()
-        assert gc.is_active is False, "Unused purchased GC should be deactivated on refund"
-        assert processed >= 1
-
-        # Verify deactivation transaction exists
-        deactivation_txn = GiftCardTransaction.objects.filter(
-            gift_card=gc, order=order, transaction_type="refund"
-        ).first()
-        assert deactivation_txn is not None
-
-    def test_partially_used_gift_card_not_deactivated(self, site_settings):
-        """A purchased gift card that has been partially used should NOT be auto-deactivated."""
-        from catalog.models import GiftCard
-        from catalog.services.gift_card_service import GiftCardService
-
-        user = UserFactory()
-        gc_product = ProductFactory(product_type="gift_card", price=Decimal("50.00"))
-        order = OrderFactory(user=user)
-        order_item = OrderItemFactory(
-            order=order,
-            product=gc_product,
-            quantity=1,
-            unit_price=Decimal("50.00"),
-            total_price=Decimal("50.00"),
+        assert row.balance_after == card.current_balance, (
+            "Ledger and balance disagree — reconciliation would fail."
         )
-
-        # Create GC with partial balance used
-        gc = GiftCard.objects.create(
-            product=gc_product,
-            order_item=order_item,
-            initial_value=Money(Decimal("50.00"), "USD"),
-            current_balance=Money(Decimal("30.00"), "USD"),  # $20 already used
-            recipient_email="recipient@test.spwig.com",
-            is_active=True,
-        )
-
-        processed = GiftCardService.process_gift_card_refund(order)
-
-        gc.refresh_from_db()
-        # Should NOT be deactivated because balance != initial_value
-        assert gc.is_active is True
-        # Should not be counted as processed
-        assert processed == 0
-
-    def test_refund_restores_multiple_gift_cards(self, site_settings):
-        """When multiple GCs were used as payment, all should be restored."""
-        from catalog.services.gift_card_service import GiftCardService
-
-        user = UserFactory()
-        order = OrderFactory(user=user, gift_card_discount=Decimal("50.00"))
-
-        gc1 = _create_gift_card(initial_value=Decimal("30.00"))
-        gc2 = _create_gift_card(initial_value=Decimal("40.00"))
-
-        # Use $30 from gc1 and $20 from gc2
-        gc1.redeem(amount=Money(Decimal("30.00"), "USD"), order=order, notes="Payment")
-        gc2.redeem(amount=Money(Decimal("20.00"), "USD"), order=order, notes="Payment")
-
-        gc1.refresh_from_db()
-        gc2.refresh_from_db()
-        assert gc1.current_balance.amount == Decimal("0.00")
-        assert gc2.current_balance.amount == Decimal("20.00")
-
-        # Refund
-        processed = GiftCardService.process_gift_card_refund(order)
-
-        gc1.refresh_from_db()
-        gc2.refresh_from_db()
-        assert gc1.current_balance.amount == Decimal("30.00")
-        assert gc2.current_balance.amount == Decimal("40.00")
-        assert gc1.is_active is True
-        assert gc2.is_active is True
-        assert processed == 2
-
-    def test_double_refund_does_not_double_restore_balance(self, site_settings):
-        """Double-refund guard: calling process_gift_card_refund twice must not restore balance twice."""
-        from catalog.models import GiftCard, GiftCardTransaction
-        from catalog.services.gift_card_service import GiftCardService
-
-        user = UserFactory()
-        order = OrderFactory(user=user)
-        gc = _create_gift_card(initial_value=Decimal("50.00"))
-
-        # Simulate a redemption of $30
-        GiftCard.objects.filter(pk=gc.pk).update(current_balance=Money(Decimal("20.00"), "USD"))
-        GiftCardTransaction.objects.create(
-            gift_card=gc,
-            transaction_type="redemption",
-            amount=Money(Decimal("-30.00"), "USD"),
-            balance_after=Money(Decimal("20.00"), "USD"),
-            order=order,
-        )
-
-        # First refund
-        processed1 = GiftCardService.process_gift_card_refund(order)
-        gc.refresh_from_db()
-        assert gc.current_balance.amount == Decimal("50.00")
-        assert processed1 == 1
-
-        # Second refund (should not restore again)
-        processed2 = GiftCardService.process_gift_card_refund(order)
-        gc.refresh_from_db()
-        assert gc.current_balance.amount == Decimal("50.00"), (
-            "Balance should NOT be $80 after double refund"
-        )
-        assert processed2 == 0
 
 
 # ============================================================
@@ -982,77 +688,6 @@ class TestSecureRandomCodeGeneration:
 # ============================================================
 
 
-class TestCartServiceGiftCardRecalcOnMutation:
-    """Tests that CartService methods trigger gift card recalculation."""
-
-    def test_add_item_triggers_gift_card_recalc(self, site_settings):
-        """CartService.add_item should recalculate gift card discounts."""
-        from cart.services.cart_service import CartService
-
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product1 = ProductFactory(price=Decimal("50.00"))
-        CartItemFactory(cart=cart, product=product1, quantity=1, unit_price=Decimal("50.00"))
-
-        # Apply GC of $30
-        gc = _create_gift_card(initial_value=Decimal("30.00"))
-        cart.apply_gift_card(gc.code)
-        assert cart.gift_card_discount_amount.amount == Decimal("30.00")
-
-        # Add another item worth $50 (cart becomes $100)
-        product2 = ProductFactory(price=Decimal("50.00"))
-        CartService.add_item(cart, product2.id, quantity=1)
-
-        # GC discount should still be $30 (GC balance hasn't changed, still fits)
-        assert cart.gift_card_discount_amount.amount == Decimal("30.00")
-
-    def test_remove_item_triggers_gift_card_recalc(self, site_settings):
-        """CartService.remove_item should recalculate gift card discounts."""
-        from cart.services.cart_service import CartService
-
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product1 = ProductFactory(price=Decimal("60.00"))
-        product2 = ProductFactory(price=Decimal("40.00"))
-        item1 = CartItemFactory(
-            cart=cart, product=product1, quantity=1, unit_price=Decimal("60.00")
-        )
-        item2 = CartItemFactory(
-            cart=cart, product=product2, quantity=1, unit_price=Decimal("40.00")
-        )
-
-        # Apply GC of $80 to $100 cart
-        gc = _create_gift_card(initial_value=Decimal("80.00"))
-        cart.apply_gift_card(gc.code)
-        assert cart.gift_card_discount_amount.amount == Decimal("80.00")
-
-        # Remove item2 ($40), cart becomes $60
-        CartService.remove_item(item2)
-
-        # GC discount should be recalculated to $60
-        assert cart.gift_card_discount_amount.amount == Decimal("60.00")
-
-    def test_update_item_quantity_triggers_gift_card_recalc(self, site_settings):
-        """CartService.update_item should recalculate gift card discounts."""
-        from cart.services.cart_service import CartService
-
-        user = UserFactory()
-        cart = CartFactory(user=user)
-        product = ProductFactory(price=Decimal("40.00"))
-        item = CartItemFactory(cart=cart, product=product, quantity=2, unit_price=Decimal("40.00"))
-
-        # Apply GC of $70 to $80 cart
-        gc = _create_gift_card(initial_value=Decimal("70.00"))
-        cart.apply_gift_card(gc.code)
-        assert cart.gift_card_discount_amount.amount == Decimal("70.00")
-
-        # Reduce quantity to 1 (cart becomes $40)
-        CartService.update_item(item, quantity=1)
-
-        # GC discount should be capped at $40
-        assert cart.gift_card_discount_amount.amount == Decimal("40.00")
-
-
 # ============================================================
 # Edge Cases
 # ============================================================
@@ -1101,16 +736,26 @@ class TestEdgeCases:
         assert "invalid" in msg.lower()
 
     def test_gift_card_for_gift_card_product_rejected(self, site_settings):
-        """Gift cards cannot be used to purchase other gift card products."""
+        """
+        A gift card cannot buy another gift card.
+
+        Enforced by GiftCardTenderService.authorize_for_session since P2.2f
+        deleted Cart.apply_gift_card, which used to hold the rule.
+        """
+        from catalog.services.gift_card_tender_service import (
+            GiftCardTenderError,
+            GiftCardTenderService,
+        )
+
         user = UserFactory()
         cart = CartFactory(user=user)
         gc_product = ProductFactory(product_type="gift_card", price=Decimal("50.00"))
         CartItemFactory(cart=cart, product=gc_product, quantity=1, unit_price=Decimal("50.00"))
+        session = CheckoutSessionFactory(cart=cart)
 
         gc = _create_gift_card(initial_value=Decimal("50.00"))
-        success, msg, _ = cart.apply_gift_card(gc.code)
-        assert not success
-        assert "gift card" in msg.lower()
+        with pytest.raises(GiftCardTenderError, match="cannot be used to buy another gift card"):
+            GiftCardTenderService.authorize_for_session(session, gc.code)
 
     def test_zero_discount_voucher_rejected(self, site_settings):
         """A voucher that calculates to $0 discount should be rejected."""
@@ -1169,11 +814,17 @@ class TestEdgeCases:
         gc.refresh_from_db()
         assert gc.current_balance.amount == Decimal("0.00"), "Setup: GC balance must be $0"
 
-        success, msg, _ = cart.apply_gift_card(gc.code)
-        assert not success
-        assert (
-            "redeemed" in msg.lower() or "balance" in msg.lower() or "cannot be used" in msg.lower()
+        from catalog.services.gift_card_tender_service import (
+            GiftCardTenderError,
+            GiftCardTenderService,
+            InsufficientGiftCardBalance,
         )
+
+        session = CheckoutSessionFactory(cart=cart)
+        # `is_valid` may reject a drained card outright, otherwise the available
+        # balance check does — either is a correct refusal.
+        with pytest.raises((GiftCardTenderError, InsufficientGiftCardBalance)):
+            GiftCardTenderService.authorize_for_session(session, gc.code)
 
     def test_process_voucher_usage_for_guest_user(self, site_settings):
         """_process_voucher_usage should handle guest (unauthenticated) users."""

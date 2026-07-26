@@ -23,7 +23,9 @@ URL_CART = "/api/pos/cart/"
 URL_ADD = "/api/pos/cart/items/"
 URL_VOUCHER = "/api/pos/cart/voucher/"
 URL_VOUCHER_REMOVE = "/api/pos/cart/voucher/remove/"
-URL_GIFT_CARD = "/api/pos/cart/gift-card/"
+# Removed in P2.2f. Kept as a constant so the guard test below can assert it
+# stays gone — see TestGiftCardCartEndpointRemoved.
+URL_GIFT_CARD_REMOVED = "/api/pos/cart/gift-card/"
 URL_CLEAR = "/api/pos/cart/clear/"
 URL_MANUAL_DISCOUNT = "/api/pos/cart/manual-discount/"
 URL_MANUAL_DISCOUNT_REMOVE = "/api/pos/cart/manual-discount/remove/"
@@ -325,79 +327,6 @@ class TestRemoveVoucher:
 
 # ============================================================
 # TestApplyGiftCard
-# ============================================================
-
-
-class TestApplyGiftCard:
-    """POST /api/pos/cart/gift-card/ - apply gift card."""
-
-    @pytest.fixture
-    def gift_card_product(self, category, site_settings):
-        return ProductFactory(
-            name="Gift Card Product",
-            slug="gift-card-product",
-            category=category,
-            price=Decimal("50.00"),
-            product_type="gift_card",
-        )
-
-    @pytest.fixture
-    def valid_gift_card(self, gift_card_product):
-        from catalog.models import GiftCard
-
-        return GiftCard.objects.create(
-            code="GC-TEST-AAAA-BBBB",
-            product=gift_card_product,
-            initial_value_currency="USD",
-            initial_value=Decimal("50.00"),
-            current_balance_currency="USD",
-            current_balance=Decimal("50.00"),
-            recipient_email="test@example.com",
-            is_active=True,
-        )
-
-    def test_valid_gift_card(self, pos_client, open_shift, product_with_stock, valid_gift_card):
-        _add_item(pos_client, product_with_stock.id, quantity=1)
-        resp = pos_client.post(URL_GIFT_CARD, {"code": valid_gift_card.code})
-        data = assert_pos_success(resp)
-        assert "gift_card_applied" in data
-
-    def test_invalid_gift_card(self, pos_client, open_shift, product_with_stock):
-        _add_item(pos_client, product_with_stock.id)
-        resp = pos_client.post(URL_GIFT_CARD, {"code": "GC-NONEXISTENT"})
-        assert_pos_error(resp, "GIFT_CARD_INVALID", http_status=400)
-
-    def test_zero_balance_gift_card(
-        self, pos_client, open_shift, product_with_stock, gift_card_product
-    ):
-        from catalog.models import GiftCard
-
-        # Create with a positive balance first, then update to zero.
-        # GiftCard.save() overrides current_balance with initial_value on
-        # creation when current_balance is falsy (Decimal('0.00') is falsy).
-        empty_card = GiftCard.objects.create(
-            code="GC-ZERO-XXXX-YYYY",
-            product=gift_card_product,
-            initial_value_currency="USD",
-            initial_value=Decimal("50.00"),
-            current_balance_currency="USD",
-            current_balance=Decimal("50.00"),
-            recipient_email="test@example.com",
-            is_active=True,
-        )
-        # Now set balance to zero via update to bypass save() override
-        GiftCard.objects.filter(pk=empty_card.pk).update(
-            current_balance=Decimal("0.00"),
-        )
-        empty_card.refresh_from_db()
-
-        _add_item(pos_client, product_with_stock.id)
-        resp = pos_client.post(URL_GIFT_CARD, {"code": empty_card.code})
-        assert_pos_error(resp, "GIFT_CARD_INVALID", http_status=400)
-
-
-# ============================================================
-# TestClearCart
 # ============================================================
 
 
@@ -713,3 +642,29 @@ class TestParkedCarts:
     def test_park_empty_cart_error(self, pos_client, open_shift):
         resp = pos_client.post(URL_PARK)
         assert_pos_error(resp, "EMPTY_CART", http_status=400)
+
+
+class TestGiftCardCartEndpointRemoved:
+    """
+    POST /api/pos/cart/gift-card/ must stay deleted.
+
+    It applied a gift card as a cart *discount*, capped at the pre-tax subtotal,
+    and debited nothing. `_calculate_order_total` then read the already-reduced
+    `cart.grand_total`, so the checkout tender only drew down the residue: a
+    110 sale against a 200 card handed over 110 of goods, debited 10, and left
+    190 on the card — 100 of unfunded goods, absorbed by the merchant. Both the
+    cart field and the payment-screen field were reachable in a single sale.
+
+    Gift cards are tendered at checkout now (POST /api/pos/checkout/gift-card/),
+    against the full post-tax total. Re-adding a cart-level apply reopens the
+    hole, so this asserts the route does not resolve.
+    """
+
+    def test_cart_gift_card_route_is_gone(self, pos_client, open_shift, product_with_stock):
+        _add_item(pos_client, product_with_stock.id, quantity=1)
+        resp = pos_client.post(URL_GIFT_CARD_REMOVED, {"code": "GC-TEST-AAAA-BBBB"})
+        assert resp.status_code == 404, (
+            "POST /api/pos/cart/gift-card/ resolved. It was removed in P2.2f because "
+            "it discounted the cart without debiting the card. Gift cards are a "
+            "tender: use POST /api/pos/checkout/gift-card/."
+        )

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish <LL@li.org>\n"
@@ -18,12 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "İçerik"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "Resim"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -31,15 +34,19 @@ msgstr ""
 "Moda pencere görüntülemesi için isteğe bağlı bir resim. Reklam (içerik "
 "üzerinde) ya da arka plan (metin arkasında ve örtüyle) arasında seçim yapın."
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "Link"
 
+#: admin.py:78
 msgid "Display"
 msgstr "Göster"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "Görünürlük Kuralları"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
@@ -47,24 +54,33 @@ msgstr ""
 "İsteğe bağlı: bu duyuru ne zaman gösterileceğini ileri düzey koşullara göre "
 "sınırlayın."
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "Başlık"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "Son kullanma tarihi yok"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "Sona Erdi"
 
+#: admin.py:121
 msgid "Active"
 msgstr "Aktif"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "Durum"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "Etkin duyuruları listele"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -74,12 +90,15 @@ msgstr ""
 "sırasına göre artan, ardından created_at sırasına göre azalan şekilde "
 "döndürür. Mağaza ön yüzü duyuru widget'ı tarafından kullanılır."
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "Etkin duyurular listesi"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "Duyuru detayını al"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -90,54 +109,73 @@ msgstr ""
 "modunu içerir. Duyuru etkin değilse, süresi dolduysa veya mevcut değilse 404 "
 "döndürür."
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "Duyuru birincil anahtarı"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "Duyuru detayı"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "Bulunamadı, etkin değil veya süresi dolmuş"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "Duyurular"
 
+#: models.py:15
 msgid "No Link"
 msgstr "Bağlantı Yok"
 
+#: models.py:16
 msgid "Product"
 msgstr "Ürün"
 
+#: models.py:17
 msgid "Category"
 msgstr "Kategori"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "Blog Yazısı"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "Sayfa"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "Özel URL"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "Bannervizyon Resmi (içerik üzerinde)"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "Arka Plan Resmi (özellikle ile)"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr "Duyuru başlığı - temel stiller (kalın, italik, renk) destekler"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "Moda pencere görüntülemesi için isteğe bağlı detaylı içerik"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "Modalsız gösterim için isteğe bağlı resim"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "Resmin moda pencerede nasıl görüntüleneceğini seçin"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
@@ -145,27 +183,35 @@ msgstr ""
 "Resim arka plan olarak kullanıldığında örtü opaklığı (0 = şeffaflık, 1 = "
 "opak)"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "Bu duyuru için bağlantı türü"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "Bağlantı yapılacak ürün"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "Bağlantı yapılacak kategori"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "Bağlantı yapılacak blog yazısı"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "Bağlantı yapılacak sayfa"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "Bağlantı için özel URL"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "Moda pencere bağlantısı için buton metni, örneğin: \"Şimdi Satın Al\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
@@ -174,9 +220,11 @@ msgstr ""
 "açar. Devre dışı bırakıldığında, tıklamak doğrudan bağlantı URL'sine "
 "yönlendirir."
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "Bu duyuruyu etkinleştir veya devre dışı bırak"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
@@ -184,175 +232,236 @@ msgstr ""
 "Duyuru bu tarih/saatten sonra otomatik olarak görüntülenmeyecek. Süresiz "
 "olacaksa boş bırakın."
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr "Daha düşük sayı = daha yüksek öncelik (önce gösterilir)"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "Koşullu gösterim için görünürlük kuralları"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "Duyuru içeriği için çeviriler"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "Duyuru"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "Duyuruyu Düzenle"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "Duyuru Ekle"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "Aşağıdaki hataları düzeltiniz."
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "Duyuru başlığı — kalın, italik ve font rengi destekler."
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "Vücut"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "Moda pencere pop-up'ında gösterilecek isteğe bağlı detay metni."
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "Bağlantı Tipi"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "Buton Metni"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "Örnek: \""
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "Modalsız Göster"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "Detayları navigasyon yerine bir pop-up penceresinde aç."
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "Opsiyonel"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr ""
 "Moda pencere pop-up'ı için resim. Ziyaretçi duyuru tıkladığında gösterilir."
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "Gösterim Modu"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "Örtü Opaşite"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = şeffaflık, 1 = opak"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "Etkin"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "Öncelik"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "Düşük = ilk olarak gösterilir"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "Son Kullanma Tarihi"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "Son kullanma tarihi yoksa boş bırakın."
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "Oluşturuldu"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "Güncellendi"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "Gelişmiş"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr ""
 "Bu duyurunun ne zaman gösterileceğini sınırlayın. Herkese gösterilecekse boş "
 "bırakın."
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "Çoklu seçim yapmak için Ctrl / Cmd tuşuna basılı tutun."
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "Kaydet"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "Kaydet ve Devam Et"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "Kaydet ve Başka Birini Ekle"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "Sil"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr "Başlık ve altbilgilerde görüntülenen mağaza duyurularını yönetin"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "Tümü"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "Devre Dışı"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "Duyuruları ara..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "duyurular"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "Önceki"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "içinde"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "İleri"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "Duyuru Bulunamadı"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "Arama sorgunuzla eşleşen duyuru bulunamadı."
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr ""
 "Mağaza başlığınızda veya altbilgilerinizde görüntülenecek ilk duyurunuzu "
 "oluşturun."
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "Duyuru Oluştur"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "Tıklama ile modal aç"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "Modal"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "Tıklama ile doğrudan bağlantı"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "Doğrudan Bağlantı"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "Son Güncellenme"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "önce"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "Sona Eriyor"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "Görsel Var"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "Düzenle"

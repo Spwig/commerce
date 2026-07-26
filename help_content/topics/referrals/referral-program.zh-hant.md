@@ -2,13 +2,13 @@
 title: 推薦計劃
 ---
 
-推薦計劃讓您現有的客戶可以與他們的朋友和家人分享一個獨特的推薦連結。當被推薦的朋友進行他們的第一筆符合資格的購買時，推薦人和新客戶都可以獲得獎勵——透過口碑行銷來推動新客戶的獲取。
+推薦計劃讓您現有的客戶可以與他們的朋友和家人分享一個獨特的推薦連結。當被推薦的朋友進行他們的第一筆符合條件的購買時，推薦人和新客戶都可以獲得獎勵——透過口碑行銷來推動新客戶的獲取。
 
 ## 推薦計劃是如何運作的
 
-1. 顧客與朋友分享他們獨特的推薦連結（或代碼）。
+1. 一位客戶與朋友分享他們獨特的推薦連結（或代碼）。
 2. 朋友點擊連結，並透過 cookie 跟蹤最多 30 天（可配置）。
-3. 朋友註冊並下達他們的第一筆符合資格的訂單。
+3. 朋友註冊並下達他們的第一筆符合條件的訂單。
 4. 系統會建立推薦歸因記錄，並執行詐騙和資格檢查。
 5. 如果歸因獲得批准，雙方都會獲得獎勵。
 
@@ -21,7 +21,7 @@ title: 推薦計劃
 該計劃有三種狀態：
 
 - **草稿** — 計劃正在配置中，但尚未上線。推薦連結處於非活動狀態。
-- **啟用** — 計劃已上線。顧客可以分享連結並賺取獎勵。
+- **啟用** — 計劃已上線。客戶可以分享連結並賺取獎勵。
 - **暫停** — 計劃暫時停止。現有的歸因仍會處理，但不會追蹤新的推薦。
 
 當您準備好啟動時，將 **狀態** 設置為 **啟用**。您隨時可以暫停它。
@@ -32,14 +32,16 @@ title: 推薦計劃
 
 在 **獎勵配置** 欄位中為每位接收者配置獎勵。可用的獎勵類型包括：
 
-| Reward Kind | Description |
-|-------------|-------------|
-| **Store Credit** | Adds credit to the customer's wallet, usable on future orders |
-| **Coupon Code** | Generates a unique discount voucher code |
-| **Percentage Discount** | Issues a percentage discount for use at checkout |
-| **Exclusive Perk** | A custom perk (e.g., free gift, priority access) — described in the reward's description field |
+| 優惠類型 | 說明 |
+|---------|------|
+| **商店信用** | 向客戶的錢包添加信用，可用於未來的訂購 |
+| **優惠券代碼** | 生成唯一的折扣優惠券代碼 |
+| **百分比折扣** | 在結帳時提供百分比折扣 |
+| **專屬福利** | 一個自定義福利（例如：免費贈品、優先訪問權）——在優惠的描述欄中說明 |
 
-**Example configuration** — $10 store credit for the referrer and $10 discount for the new customer:
+優惠券代碼和百分比折扣的優惠僅限於獲得它的客戶——優惠券代碼只有在該客戶登入時才有效。如果推薦人與其他人分享他們的優惠代碼而不是推薦連結，朋友將無法使用它；只有推薦連結本身才應該被分享。
+
+**範例設定** — 推薦人獲得 $10 商店信用，新客戶獲得 $10 折扣：
 
 ```json
 {
@@ -49,20 +51,20 @@ title: 推薦計劃
 }
 ```
 
-Set "double_sided": false if you only want to reward the referrer.
+如果只想獎勵推薦人，請設置 `"double_sided": false`。
 
-### Eligibility rules
+### 權限規則
 
-Eligibility rules determine which referrals qualify for rewards. Configure these in the **Eligibility Rules** field:
+權限規則用於確定哪些推薦符合獲得獎勵的條件。在 **權限規則** 欄位中進行設定：
 
-| Rule | What it does |
-|------|--------------|
-| `new_customer_only` | If `true`, the referred friend must be a brand new customer (no prior orders) |
-| `min_order_value` | The minimum order amount (in your store currency) the referred friend must spend |
-| `exclude_discounts` | If `true`, orders where the referred customer used a voucher do not qualify |
-| `exclude_staff` | If `true`, staff accounts cannot be referrers or referees |
+| 規則 | 功能 |
+|------|------|
+| `new_customer_only` | 如果設為 `true`，被推薦的朋友必須是全新的客戶（沒有之前的訂購記錄） |
+| `min_order_value` | 被推薦的朋友必須達到的最低訂購金額（以您商店的貨幣計） |
+| `exclude_discounts` | 如果設為 `true`，被推薦客戶使用優惠券的訂單將不符合條件 |
+| `exclude_staff` | 如果設為 `true`，員工帳號不能作為推薦人或被推薦人 |
 
-**Example** — new customers only, minimum $40 order, staff excluded:
+**範例** — 僅限新客戶，最低 $40 訂購金額，排除員工：
 
 ```json
 {
@@ -73,29 +75,62 @@ Eligibility rules determine which referrals qualify for rewards. Configure these
 }
 ```
 
-### Timing configuration
+### 時間設定
 
-The **Timing Configuration** field controls when rewards are issued after a qualifying order:
+**時間設定** 欄位控制在符合條件的訂購後何時發放獎勵：
 
-| Setting | What it does |
+| 設定 | 功能說明 |
 |---------|--------------|
-| `issue_on` | When to issue the reward: `signup` (immediately on registration), `first_purchase` (immediately after order), or `post_refund` (after the refund window expires) |
-| `refund_window_days` | How many days to wait before issuing rewards when using `post_refund` (default: 14 days) |
+| `issue_on` | 發放獎勵的時機：`signup`（註冊時立即發放）、`first_purchase`（下單後立即發放），或 `post_refund`（退貨窗口過後發放） |
+| `refund_window_days` | 使用 `post_refund` 時，發放獎勵前需等待的天數（預設：14 天） |
 
-使用 `post_refund` 是最謹慎的選擇 — 它會等到退貨窗口過後才發放獎勵，從而降低對後續可能被退貨的訂單發放獎勵的風險。
+使用 `post_refund` 是最謹慎的選擇 —— 它會等到退貨窗口過後才發放獎勵，降低因後續退貨而錯誤發放獎勵的風險。
+
+### 奖励上限與限制
+
+透過在 **Caps & Limits** 欄位中設定上限，防止單個推薦人無限制地獲得獎勵：
+
+| 設定 | 功能說明 |
+|---------|--------------|
+| `monthly_per_referrer` | 每個推薦人每月可獲得的最大成功推薦獎勵數 |
+| `lifetime_per_referrer` | 每個推薦人總共可獲得的最大成功推薦獎勵數 |
+| `max_reward_per_order` | 單個推薦轉化所發放的最大獎勵金額（以您商店的貨幣計） |
+
+**範例** — 每月 20 個推薦，總共 200 個，每個轉化最多 $50 奖励：
+
+```json
+{
+  "monthly_per_referrer": 20,
+  "lifetime_per_referrer": 200,
+  "max_reward_per_order": 50
+}
+```
+
+### 跟踪配置
+
+在 **Tracking Configuration** 欄位中配置推薦鏈接的跟踪方式：
+
+| 設定 | 功能說明 |
+|---------|--------------|
+| `cookie_ttl_days` | 友人點擊鏈接後，推薦跟踪 cookie 的有效期（預設：30 天） |
+| `attribution` | 跟踪方法 —— 目前為 `last_touch`（最近一次推薦鏈接點擊會被計入） |
+
+### 欺詐政策
+
+欺詐檢測系統會在批准推薦歸因前自動評估每個推薦歸因的風險。在 **Fraud Policy** 欄位中配置政策：
 
 | 設定 | 功能說明 |
 |---------|--------------|
 | `policy` | 整體嚴格程度：`strict`、`balanced` 或 `lenient` |
 | `auto_reject_threshold` | 風險分數（0–100）高於此值的推薦將自動被拒絕（預設：80） |
 | `auto_approve_threshold` | 風險分數低於此值的推薦將自動被批准（預設：30） |
-| `check_ip` | 若設為 `true`，會檢查推薦人與被推薦人是否使用相同的 IP 位址 |
-| `check_device` | 若設為 `true`，會檢查推薦人與被推薦人是否有相同的設備指紋 |
+| `check_ip` | 若設為 `true`，會檢查推薦人與被推薦人是否共享相同的 IP 位址 |
+| `check_device` | 若設為 `true`，會檢查推薦人與被推薦人是否共享相同的設備指紋 |
 | `check_velocity` | 若設為 `true`，會監控來自單一來源的異常高推薦率 |
 | `velocity_window_hours` | 速度檢查的時間窗口（以小時為單位） |
 | `max_referrals_per_window` | 在速度窗口內允許來自單一來源的最大推薦數 |
 
-風險分數介於自動拒絕與自動批准閾值之間的推薦將處於 **Pending** 狀態，需要手動審核。
+風險分數介於自動拒絕和自動批准閾值之間的推薦將處於 **Pending** 狀態，需要手動審核。
 
 ### 使用條款與條件
 
@@ -103,11 +138,11 @@ The **Timing Configuration** field controls when rewards are issued after a qual
 
 ## 查看推薦記錄
 
-導覽至 **Marketing > Referral Attributions**，可查看所有推薦案例 — 也就是推薦人與被推薦客戶之間的連結。
+導覽至 **Marketing > Referral Attributions** 可查看所有推薦案例 — 顯示推薦人與被推薦客戶之間的連結。
 
 ![Referral attributions list](/static/core/admin/img/help/referral-program/attribution-list.webp)
 
-每個推薦記錄會顯示推薦人、被推薦客戶、他們放置的第一筆訂單、目前的狀態以及風險分數。
+每個推薦記錄會顯示推薦人、被推薦客戶、他們放置的第一筆訂單、當前狀態以及風險分數。
 
 ### 推薦狀態
 
@@ -125,7 +160,7 @@ The **Timing Configuration** field controls when rewards are issued after a qual
 
 - 自我推薦
 - 非新客戶
-- 未達最低訂單價值
+- 未達最低訂單金額
 - 一次性郵箱
 - 資本上限已達
 - 有詐騙風險
@@ -161,16 +196,16 @@ The **Timing Configuration** field controls when rewards are issued after a qual
 
 ### 撤销奖励
 
-如果需要取消奖励——例如，符合条件的订单被退回——请打开奖励记录并使用 **撤销** 操作。为您的记录添加一个说明撤销原因的备注。
+如果需要取消奖励——例如，符合条件的订单被退货——请打开奖励记录并使用 **撤销** 操作。为您的记录添加一个说明撤销原因的备注。
 
 ## 小贴士
 
 - 从 `post_refund` 时间设置开始。
 
 在發放獎勵之前等待退貨窗口過期，可避免對最終被退貨的訂單進行獎勵。
-- `balanced` 的詐騙政策對大多數商店來說是一個不錯的預設選擇。
+- `balanced` 的詐騙政策對大多數商店來說是一個不錯的預設選項。
 
-如果您發現來自少數帳戶的推薦量異常激增，請切換至 `strict`。
+如果您注意到來自少量賬戶的推薦量異常激增，請切換至 `strict`。
 - 設定實際的每月和終身上限。
 
 如果您的獎勵價值較高，每月每位推薦者的上限設定為 10–20 是合理的，以防止濫用。

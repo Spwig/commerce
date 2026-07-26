@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish <LL@li.org>\n"
@@ -18,15 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:58
 msgid "-- Select Provider --"
 msgstr "-- Sağlayıcı Seç --"
 
+#: admin.py:200 admin.py:212
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:149
+#: templates/admin/sms_system/wizard/step3_credentials.html:33
 msgid "Provider Credentials"
 msgstr "Sağlayıcı Kimlik Bilgileri"
 
+#: admin.py:203
 msgid "Enter your provider API credentials."
 msgstr "Sağlayıcınızın API kimlik bilgilerini girin."
 
+#: admin.py:216
 msgid ""
 "Select a provider above to see credential fields, or use the Setup Wizard "
 "for a guided experience."
@@ -34,250 +40,385 @@ msgstr ""
 "Yukarıdan bir sağlayıcı seçerek kimlik bilgisi alanlarını görebilir ya da "
 "kılavuzlu bir deneyim için Kurulum Sihirbazını kullanabilirsiniz."
 
+#: admin.py:226
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:178
+#: templates/admin/sms_system/wizard/step4_test.html:53
 msgid "Default Settings"
 msgstr "Varsayılan Ayarlar"
 
+#: admin.py:237 models.py:92
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:202
 msgid "Connection Status"
 msgstr "Bağlantı Durumu"
 
+#: admin.py:248 admin.py:347
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:228
 msgid "Timestamps"
 msgstr "Zaman Damgaları"
 
+#: admin.py:273 models.py:76 models.py:251
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:32
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:69
+#: templates/admin/sms_system/smstemplate/change_list.html:82
 msgid "Active"
 msgstr "Aktif"
 
+#: admin.py:274
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:34
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:73
+#: templates/admin/sms_system/smstemplate/change_list.html:86
 msgid "Inactive"
 msgstr "Pasif"
 
+#: admin.py:276 admin.py:410 models.py:334
+#: templates/admin/sms_system/smsoutbox/change_list.html:76
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:108
+#: templates/admin/sms_system/wizard/complete.html:30
 msgid "Status"
 msgstr "Durum"
 
+#: admin.py:281
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:37
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:79
+#: templates/admin/sms_system/wizard/complete.html:40
 msgid "Default SMS"
 msgstr "Varsayılan SMS"
 
+#: admin.py:284 models.py:290
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:56
+#: templates/admin/sms_system/provider_browse.html:130
+#: templates/admin/sms_system/smsoutbox/change_list.html:96
 msgid "SMS"
 msgstr "SMS"
 
+#: admin.py:290
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:40
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:85
+#: templates/admin/sms_system/wizard/complete.html:50
 msgid "Default WhatsApp"
 msgstr "Varsayılan WhatsApp"
 
+#: admin.py:294 models.py:291
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:52
+#: templates/admin/sms_system/provider_browse.html:135
+#: templates/admin/sms_system/smsoutbox/change_list.html:97
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: admin.py:308
 msgid "Connection"
 msgstr "Bağlantı"
 
+#: admin.py:338
 msgid "Message Content"
 msgstr "Mesaj İçeriği"
 
+#: admin.py:342
 #, python-brace-format
 msgid ""
 "Use {variable} syntax for placeholders. Example: \"Hello {name}, your order "
 "#{order_number} is ready.\""
 msgstr ""
-"Yer tutucular için {variable} sözdizimini kullanın. Örnek: \"Merhaba {name}, "
-"siparişiniz #{order_number} hazırdır.\""
+"Yer tutucular için {variable} sözdizimini kullanın. Örnek: \"Merhaba {name},"
+" siparişiniz #{order_number} hazırdır.\""
 
+#: apps.py:8
 msgid "SMS System"
 msgstr "SMS Sistemi"
 
+#: models.py:39
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:47
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:99
 msgid "Untested"
 msgstr "Test edilmemiş"
 
+#: models.py:40
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:43
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:91
+#: templates/admin/sms_system/wizard/complete.html:33
 msgid "Connected"
 msgstr "Bağlantılı"
 
+#: models.py:41
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:24
 msgid "Connection Failed"
 msgstr "Bağlantı Başarısız"
 
+#: models.py:52 templates/admin/sms_system/wizard/complete.html:26
 msgid "Provider"
 msgstr "Sağlayıcı"
 
+#: models.py:53
 msgid "SMS/messaging service provider"
 msgstr "SMS/iletişim hizmeti sağlayıcısı"
 
+#: models.py:62
 msgid "Provider Component"
 msgstr "Sağlayıcı Bileşeni"
 
+#: models.py:63
 msgid "Reference to installed provider component"
 msgstr "Yüklü sağlayıcı bileşenine referans"
 
+#: models.py:67 templates/admin/sms_system/wizard/complete.html:22
+#: templates/admin/sms_system/wizard/step3_credentials.html:20
 msgid "Display Name"
 msgstr "Görüntülenecek Ad"
 
+#: models.py:68
 msgid "Friendly name for this account"
 msgstr "Bu hesap için kullanıcı dostu ad"
 
+#: models.py:71
 msgid "Encrypted Credentials"
 msgstr "Şifrelenmiş Kimlik Bilgileri"
 
+#: models.py:72
 msgid "Encrypted API credentials for this provider"
 msgstr "Bu sağlayıcı için şifrelenmiş API kimlik doğrulama bilgileri"
 
+#: models.py:80
 msgid "Default SMS Account"
 msgstr "Varsayılan SMS Hesabı"
 
+#: models.py:81
 msgid "Use this account for sending SMS by default"
 msgstr "Bu hesabı, SMS göndermek için varsayılan olarak kullanın"
 
+#: models.py:85
 msgid "Default WhatsApp Account"
 msgstr "Varsayılan WhatsApp Hesabı"
 
+#: models.py:86
 msgid "Use this account for sending WhatsApp messages by default"
 msgstr ""
 "Bu hesabı, WhatsApp mesajları göndermek için varsayılan olarak kullanın"
 
+#: models.py:97
 msgid "Last Checked"
 msgstr "Son Kontrol Zamanı"
 
+#: models.py:103
 msgid "SMS Provider Account"
 msgstr "SMS Sağlayıcı Hesabı"
 
+#: models.py:104
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:21
 msgid "SMS Provider Accounts"
 msgstr "SMS Sağlayıcı Hesapları"
 
+#: models.py:225
 msgid "POS Receipt"
 msgstr "POS Fatura"
 
+#: models.py:226
 msgid "Order Confirmation"
 msgstr "Sipariş Onayı"
 
+#: models.py:227
 msgid "Shipping Update"
 msgstr "Nakliye Güncellemesi"
 
+#: models.py:228
 msgid "Delivery Notification"
 msgstr "Teslimat Bildirimi"
 
+#: models.py:229
 msgid "Password Reset"
 msgstr "Şifre Sıfırlama"
 
+#: models.py:230
 msgid "Verification Code"
 msgstr "Doğrulama Kodu"
 
+#: models.py:231
 msgid "Marketing"
 msgstr "Pazarlama"
 
+#: models.py:232
 msgid "Custom"
 msgstr "Özel"
 
+#: models.py:239
 msgid "Template Type"
 msgstr "Şablon Türü"
 
+#: models.py:243
 msgid "Name"
 msgstr "Ad"
 
+#: models.py:246 models.py:328
 msgid "Message"
 msgstr "Mesaj"
 
+#: models.py:247
 #, python-brace-format
 msgid "Message template. Use {variable} syntax for placeholders."
 msgstr "Mesaj şablonu. Yer tutucular için {variable} sözdizimini kullanın."
 
+#: models.py:257
 msgid "SMS Template"
 msgstr "SMS Şablonu"
 
+#: models.py:258 templates/admin/sms_system/smstemplate/change_list.html:4
+#: templates/admin/sms_system/smstemplate/change_list.html:21
 msgid "SMS Templates"
 msgstr "SMS Şablonları"
 
+#: models.py:280 templates/admin/sms_system/partials/smsoutbox_cards.html:26
+#: templates/admin/sms_system/smsoutbox/change_list.html:80
 msgid "Pending"
 msgstr "Beklemede"
 
+#: models.py:281 templates/admin/sms_system/partials/smsoutbox_cards.html:30
+#: templates/admin/sms_system/smsoutbox/change_list.html:81
 msgid "Queued"
 msgstr "Kuyuya Alma"
 
+#: models.py:282 templates/admin/sms_system/partials/smsoutbox_cards.html:34
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsoutbox/change_list.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:82
 msgid "Sent"
 msgstr "Gönderildi"
 
+#: models.py:283 templates/admin/sms_system/partials/smsoutbox_cards.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:43
+#: templates/admin/sms_system/smsoutbox/change_list.html:83
 msgid "Delivered"
 msgstr "Teslim Edildi"
 
+#: models.py:284 templates/admin/sms_system/partials/smsoutbox_cards.html:42
+#: templates/admin/sms_system/smsoutbox/change_list.html:48
+#: templates/admin/sms_system/smsoutbox/change_list.html:84
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:45
 msgid "Failed"
 msgstr "Başarısız"
 
+#: models.py:285 templates/admin/sms_system/partials/smsoutbox_cards.html:46
+#: templates/admin/sms_system/smsoutbox/change_list.html:85
 msgid "Skipped"
 msgstr "Atlandı"
 
+#: models.py:286
+msgid "Sandbox Logged"
+msgstr "Deneme Oturumu Başarılı"
+
+#: models.py:306
 msgid "Provider Account"
 msgstr "Sağlayıcı Hesabı"
 
+#: models.py:314
 msgid "Template"
 msgstr "Şablon"
 
+#: models.py:320 templates/admin/sms_system/smsoutbox/change_list.html:92
 msgid "Message Type"
 msgstr "Mesaj Türü"
 
+#: models.py:324
 msgid "Phone Number"
 msgstr "Telefon Numarası"
 
+#: models.py:325
 msgid "Recipient phone number in E.164 format"
 msgstr "E.164 formatında alıcı telefon numarası"
 
+#: models.py:339
 msgid "Provider Message ID"
 msgstr "Sağlayıcı Mesaj Kimliği"
 
+#: models.py:340
 msgid "Message ID from the SMS provider"
 msgstr "SMS sağlayıcısından gelen Mesaj Kimliği"
 
+#: models.py:344
 msgid "Error Message"
 msgstr "Hata Mesajı"
 
+#: models.py:349
 msgid "Skip Reason"
 msgstr "Atla Sebebi"
 
+#: models.py:350
 msgid ""
 "Reason why SMS was skipped (e.g., user_preference_disabled, unsubscribed)"
 msgstr ""
 "SMS'in neden atlanmış olduğu (örneğin, kullanıcı_tercihi_devre_disinda, "
 "abonelikten_cikmis)"
 
+#: models.py:354
 msgid "Retry Count"
 msgstr "Yeniden Deneme Sayısı"
 
+#: models.py:360
 msgid "Queued At"
 msgstr "Kuyuya Alma Zamanı"
 
+#: models.py:365
 msgid "Sent At"
 msgstr "Gönderme Zamanı"
 
+#: models.py:370
 msgid "Delivered At"
 msgstr "Teslim Zamanı"
 
+#: models.py:374 models.py:375
 msgid "SMS Outbox"
 msgstr "SMS Çıkış Kutusu"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:64
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "ago"
 msgstr "önce"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:75
 #, python-format
 msgid "%(counter)s retry"
 msgid_plural "%(counter)s retries"
 msgstr[0] "%(counter)s tekrar"
 msgstr[1] "%(counter)s tekrar"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:88
 msgid "View"
 msgstr "Görüntüle"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:100
 msgid "No messages found matching your criteria."
 msgstr "Kriterlerinizle eşleşen mesaj bulunamadı."
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:101
 msgid "Try adjusting your filters or search terms."
 msgstr "Filtrelerinizi veya arama kriterlerinizi ayarlayarak tekrar deneyin."
 
+#: templates/admin/sms_system/provider_browse.html:4
+#: templates/admin/sms_system/provider_browse.html:36
 msgid "Browse SMS Providers"
 msgstr "SMS Sağlayıcılarını Gözat"
 
+#: templates/admin/sms_system/provider_browse.html:4
 msgid "Site Admin"
 msgstr "Site Yöneticisi"
 
+#: templates/admin/sms_system/provider_browse.html:25
 msgid "Home"
 msgstr "Ana Sayfa"
 
+#: templates/admin/sms_system/provider_browse.html:26
 msgid "SMS Accounts"
 msgstr "SMS Hesapları"
 
+#: templates/admin/sms_system/provider_browse.html:27
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:33
+#: templates/admin/sms_system/wizard/step1_select.html:58
 msgid "Browse Providers"
 msgstr "Sağlayıcıları Gözden Geçir"
 
+#: templates/admin/sms_system/provider_browse.html:38
 msgid ""
 "Choose an SMS provider to integrate with your store. Send transactional SMS "
 "and WhatsApp messages to your customers."
@@ -285,9 +426,11 @@ msgstr ""
 "Mağazanızla entegre edilecek bir SMS sağlayıcısı seçin. Müşterilerinize "
 "işlem tabanlı SMS ve WhatsApp mesajları gönderin."
 
+#: templates/admin/sms_system/provider_browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Güncelleme sunucusu kullanılamıyor"
 
+#: templates/admin/sms_system/provider_browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -295,49 +438,62 @@ msgstr ""
 "Güncelleme sunucusuna bağlanılamadı. Yerel olarak yüklenen sağlayıcılar "
 "sadece gösteriliyor."
 
+#: templates/admin/sms_system/provider_browse.html:57
 msgid "SMS Provider Marketplace"
 msgstr "SMS Sağlayıcı Pazarı"
 
+#: templates/admin/sms_system/provider_browse.html:69
 msgid ""
 "Here you can discover and configure SMS providers to send transactional "
 "messages, including order confirmations, shipping updates, and delivery "
 "notifications."
 msgstr ""
-"Burada işlem tabanlı mesajlar, yani sipariş onayları, nakliye güncellemeleri "
-"ve teslimat bildirimleri göndermek için SMS sağlayıcılarını keşfedip "
+"Burada işlem tabanlı mesajlar, yani sipariş onayları, nakliye güncellemeleri"
+" ve teslimat bildirimleri göndermek için SMS sağlayıcılarını keşfedip "
 "yapılandırabilirsiniz."
 
+#: templates/admin/sms_system/provider_browse.html:76
 msgid "Capabilities:"
 msgstr "Yetenekler:"
 
+#: templates/admin/sms_system/provider_browse.html:81
 msgid "Send SMS order confirmations and shipping notifications"
 msgstr "SMS sipariş onayları ve nakliye bildirimleri gönder"
 
+#: templates/admin/sms_system/provider_browse.html:85
 msgid "WhatsApp Business messaging support"
 msgstr "WhatsApp İş Mesajlaşma Desteği"
 
+#: templates/admin/sms_system/provider_browse.html:89
 msgid "Delivery status tracking and webhooks"
 msgstr "Teslim Durumu Takibi ve Webhook'lar"
 
+#: templates/admin/sms_system/provider_browse.html:93
 msgid "POS digital receipts via SMS"
 msgstr "SMS Aracılığıyla POS Dijital Faturalar"
 
+#: templates/admin/sms_system/provider_browse.html:101
 msgid "Getting Started:"
 msgstr "Başlangıç:"
 
+#: templates/admin/sms_system/provider_browse.html:104
 msgid "Browse providers below and select your SMS service"
 msgstr "Aşağıdaki sağlayıcıları inceleyin ve SMS hizmetinizi seçin"
 
+#: templates/admin/sms_system/provider_browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "'Yükle'ye tıklayın ve sağlayıcıyı mağazanıza ekleyin"
 
+#: templates/admin/sms_system/provider_browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr ""
 "API kimlik bilgilerini yapılandırmak için kurulum asistanını takip edin"
 
+#: templates/admin/sms_system/provider_browse.html:107
 msgid "Test the connection and start sending messages"
 msgstr "Bağlantıyı test edin ve mesaj göndermeye başlayın"
 
+#: templates/admin/sms_system/provider_browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -356,51 +512,70 @@ msgstr[1] ""
 "                    %(counter)s sağlayıcı yüklendi\n"
 "                "
 
+#: templates/admin/sms_system/provider_browse.html:140
 msgid "MMS"
 msgstr "MMS"
 
+#: templates/admin/sms_system/provider_browse.html:143
 msgid "Filter"
 msgstr "Filtrele"
 
+#: templates/admin/sms_system/provider_browse.html:145
 msgid "Clear"
 msgstr "Temizle"
 
+#: templates/admin/sms_system/provider_browse.html:157
 msgid "Installed Providers"
 msgstr "Yüklü Sağlayıcılar"
 
+#: templates/admin/sms_system/provider_browse.html:168
 msgid "Update Available"
 msgstr "Güncelleme Mevcut"
 
+#: templates/admin/sms_system/provider_browse.html:191
 msgid "Installed"
 msgstr "Yüklendi"
 
+#: templates/admin/sms_system/provider_browse.html:234
 msgid "Delivery Reports"
 msgstr "Teslim Raporları"
 
+#: templates/admin/sms_system/provider_browse.html:260
 msgid "Update"
 msgstr "Güncelle"
 
+#: templates/admin/sms_system/provider_browse.html:265
 msgid "Configure"
 msgstr "Yapılandır"
 
+#: templates/admin/sms_system/provider_browse.html:274
+#: templates/admin/sms_system/provider_browse.html:377
 msgid "View Details"
 msgstr "Detayları Görüntüle"
 
+#: templates/admin/sms_system/provider_browse.html:282
+#: templates/admin/sms_system/provider_browse.html:385
 msgid "Learn More"
 msgstr "Daha Fazla Bilgi"
 
+#: templates/admin/sms_system/provider_browse.html:298
 msgid "Available from Marketplace"
 msgstr "Pazardan Mevcut"
 
+#: templates/admin/sms_system/provider_browse.html:324
 msgid "Available"
 msgstr "Kullanılabilir"
 
+#: templates/admin/sms_system/provider_browse.html:369
 msgid "Install"
 msgstr "Yükle"
 
+#: templates/admin/sms_system/provider_browse.html:402
+#: templates/admin/sms_system/wizard/step1_select.html:55
 msgid "No Providers Available"
 msgstr "Kullanıcı Sağlayıcısı Yok"
 
+#: templates/admin/sms_system/provider_browse.html:403
 msgid ""
 "No SMS providers are currently available. Please check your update server "
 "connection or contact support."
@@ -408,275 +583,387 @@ msgstr ""
 "Şu anda SMS sağlayıcısı bulunmamaktadır. Lütfen güncellemeler sunucusu "
 "bağlantınızı kontrol edin veya destek ile iletişime geçin."
 
+#: templates/admin/sms_system/provider_browse.html:412
 msgid "Installing provider..."
 msgstr "Sağlayıcı kuruluyor..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:4
+#: templates/admin/sms_system/smsoutbox/change_list.html:21
 msgid "Message Log"
 msgstr "Mesaj Günlüğü"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:23
 msgid "Track sent SMS and WhatsApp messages"
 msgstr "Gönderilen SMS ve WhatsApp mesajlarını izleyin"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:28
 msgid "Overview"
 msgstr "Genel Bakış"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:33
 msgid "Total Messages"
 msgstr "Toplam Mesajlar"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:57
 msgid "Filters"
 msgstr "Filtreler"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:68
 msgid "Search"
 msgstr "Ara"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:70
 msgid "Phone number or message..."
 msgstr "Telefon numarası veya mesaj..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:79
 msgid "All Statuses"
 msgstr "Tüm Durumlar"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:95
 msgid "All Types"
 msgstr "Tüm Türler"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:106
 msgid "Apply Filters"
 msgstr "Filtreleri Uygula"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:109
 msgid "Clear All"
 msgstr "Tümünü Temizle"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:117
 msgid "Messages"
 msgstr "Mesajlar"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:120
 msgid "messages"
 msgstr "mesajlar"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:130
 msgid "Loading messages..."
 msgstr "Mesajlar yükleniyor..."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:22
 msgid "Edit SMS Provider"
 msgstr "SMS Sağlayıcısını Düzenle"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:24
 msgid "Add SMS Provider"
 msgstr "SMS Sağlayıcısı Ekle"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:30
 msgid "Created"
 msgstr "Oluşturuldu"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:53
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:253
 msgid "Save and continue editing"
 msgstr "Kaydet ve düzenleme devam et"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:56
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:252
 msgid "Save"
 msgstr "Kaydet"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:69
 msgid "Please correct the errors below"
 msgstr "Lütfen aşağıda belirtilen hataları düzeltin"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:95
 msgid "Basic"
 msgstr "Temel"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:99
+#: templates/admin/sms_system/wizard/base.html:45
 msgid "Credentials"
 msgstr "Kimlik Bilgileri"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:103
 msgid "Defaults"
 msgstr "Varsayılanlar"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:119
 msgid "Basic Information"
 msgstr "Temel Bilgiler"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:165
 msgid "Select a provider in the Basic tab to see credential fields."
 msgstr ""
 "Kimlik bilgisi alanlarını görmek için Temel sekmesinden bir sağlayıcı seçin."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:179
 msgid "Configure which messaging channels use this provider by default."
 msgstr ""
 "Bu sağlayıcının varsayılan olarak hangi mesajlaşma kanallarında "
 "kullanılacağını yapılandırın."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:23
 msgid "Manage your SMS and WhatsApp provider connections"
 msgstr "SMS ve WhatsApp sağlayıcı bağlantılarınızı yönetin"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:28
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:131
 msgid "Setup Wizard"
 msgstr "Kurulum Sihirbazı"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:42
 msgid "Provider Accounts"
 msgstr "Sağlayıcı Hesapları"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:45
 msgid "accounts"
 msgstr "hesaplar"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
 msgid "Last checked"
 msgstr "Son kontrol edildi"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:115
+#: templates/admin/sms_system/smstemplate/change_list.html:100
 msgid "Edit"
 msgstr "Düzenle"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:127
 msgid "No provider accounts configured."
 msgstr "Hiçbir sağlayıcı hesabı yapılandırılmadı."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:128
 msgid "Use the Setup Wizard to add one."
 msgstr "Birini eklemek için Kurulum Sihirbazını kullanın."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:23
 msgid "Manage message templates for SMS and WhatsApp notifications"
 msgstr "SMS ve WhatsApp bildirimleri için mesaj şablonlarını yönetin"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:27
+#: templates/admin/sms_system/smstemplate/change_list.html:118
 msgid "Add Template"
 msgstr "Şablon Ekle"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:35
 msgid "Templates"
 msgstr "Şablonlar"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:38
 msgid "templates"
 msgstr "şablonlar"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "Updated"
 msgstr "Güncellendi"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:103
 msgid "Delete"
 msgstr "Sil"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:115
 msgid "No SMS templates configured yet."
 msgstr "Henüz SMS şablonu yapılandırılmadı."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:116
 msgid "Create a template to get started with SMS notifications."
 msgstr "SMS bildirimleriyle başlamak için bir şablon oluşturun."
 
+#: templates/admin/sms_system/wizard/base.html:4
 msgid "SMS Provider Setup"
 msgstr "SMS Sağlayıcı Kurulumu"
 
+#: templates/admin/sms_system/wizard/base.html:17
 msgid "SMS Provider Setup Wizard"
 msgstr "SMS Sağlayıcı Kurulum Sihirbazı"
 
+#: templates/admin/sms_system/wizard/base.html:18
 msgid "Follow these steps to connect your SMS provider"
 msgstr "SMS sağlayıcınızı bağlamak için bu adımları izleyin"
 
+#: templates/admin/sms_system/wizard/base.html:27
 msgid "Select"
 msgstr "Seç"
 
+#: templates/admin/sms_system/wizard/base.html:36
 msgid "Instructions"
 msgstr "Yönergeler"
 
+#: templates/admin/sms_system/wizard/base.html:54
 msgid "Test"
 msgstr "Test"
 
+#: templates/admin/sms_system/wizard/base.html:61
 msgid "Complete"
 msgstr "Tamamla"
 
+#: templates/admin/sms_system/wizard/complete.html:4
+#: templates/admin/sms_system/wizard/complete.html:5 views.py:365
 msgid "Setup Complete"
 msgstr "Kurulum Tamamlandı"
 
+#: templates/admin/sms_system/wizard/complete.html:11
 msgid "Your SMS provider has been configured!"
 msgstr "SMS sağlayıcınız yapılandırıldı!"
 
+#: templates/admin/sms_system/wizard/complete.html:12
 msgid "You can now send SMS and WhatsApp messages from your store."
 msgstr "Şimdi mağazanızdan SMS ve WhatsApp mesajları gönderebilirsiniz."
 
+#: templates/admin/sms_system/wizard/complete.html:19
+#: templates/admin/sms_system/wizard/step4_test.html:37
 msgid "Account Details"
 msgstr "Hesap Detayları"
 
+#: templates/admin/sms_system/wizard/complete.html:43
+#: templates/admin/sms_system/wizard/complete.html:53
 msgid "Yes"
 msgstr "Evet"
 
+#: templates/admin/sms_system/wizard/complete.html:45
+#: templates/admin/sms_system/wizard/complete.html:55
 msgid "No"
 msgstr "Hayır"
 
+#: templates/admin/sms_system/wizard/complete.html:65
 msgid "What's Next?"
 msgstr "Ne Bir Sonraki?"
 
+#: templates/admin/sms_system/wizard/complete.html:71
 msgid "Configure SMS templates"
 msgstr "SMS Şablonlarını Yapılandır"
 
+#: templates/admin/sms_system/wizard/complete.html:75
 msgid "View message logs"
 msgstr "Mesaj Günlüğünü Görüntüle"
 
+#: templates/admin/sms_system/wizard/complete.html:79
 msgid "Add another provider"
 msgstr "Diğer bir sağlayıcı ekle"
 
+#: templates/admin/sms_system/wizard/complete.html:90
 msgid "View All Accounts"
 msgstr "Tüm Hesapları Görüntüle"
 
+#: templates/admin/sms_system/wizard/step1_select.html:4
+#: templates/admin/sms_system/wizard/step1_select.html:5 views.py:85
 msgid "Select SMS Provider"
 msgstr "SMS Sağlayıcısını Seç"
 
+#: templates/admin/sms_system/wizard/step1_select.html:9
 msgid "Select a Provider"
 msgstr "Bir Sağlayıcı Seç"
 
+#: templates/admin/sms_system/wizard/step1_select.html:10
 msgid "Choose the SMS provider you want to configure."
 msgstr "Yapılandırmak istediğiniz SMS sağlayıcısını seçin."
 
+#: templates/admin/sms_system/wizard/step1_select.html:56
 msgid ""
 "No SMS providers are installed. Install providers from the provider browse "
 "page."
 msgstr ""
-"Herhangi bir SMS sağlayıcısı yüklü değil. Sağlayıcıları inceleme sayfasından "
-"yükleyin."
+"Herhangi bir SMS sağlayıcısı yüklü değil. Sağlayıcıları inceleme sayfasından"
+" yükleyin."
 
+#: templates/admin/sms_system/wizard/step1_select.html:68
 msgid "Cancel"
 msgstr "İptal"
 
+#: templates/admin/sms_system/wizard/step1_select.html:72
+#: templates/admin/sms_system/wizard/step2_instructions.html:46
+#: templates/admin/sms_system/wizard/step3_credentials.html:98
 msgid "Next"
 msgstr "Sonraki"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:4
+#: templates/admin/sms_system/wizard/step2_instructions.html:5
+#: templates/admin/sms_system/wizard/step2_instructions.html:9 views.py:148
 msgid "Setup Instructions"
 msgstr "Kurulum Talimatları"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:10
 msgid "Follow these instructions to set up your provider account."
 msgstr "Sağlayıcı hesabınızı ayarlamak için bu talimatları takip edin."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:27
 msgid "No specific setup instructions available"
 msgstr "Ayrıntılı kurulum talimatları mevcut değil"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:28
 msgid "Please proceed to enter your credentials."
 msgstr "Lütfen kimlik bilgilerinizi girin."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:43
+#: templates/admin/sms_system/wizard/step3_credentials.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:94
 msgid "Back"
 msgstr "Geri"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:4
+#: templates/admin/sms_system/wizard/step3_credentials.html:5
+#: templates/admin/sms_system/wizard/step3_credentials.html:9 views.py:193
 msgid "Enter Credentials"
 msgstr "Kimlik Bilgilerini Gir"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:10
 #, python-format
 msgid "Enter the credentials from your %(name)s account."
 msgstr "Kendi %(name)s hesabınızdan kimlik bilgilerini girin."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:17
 msgid "Account Name"
 msgstr "Hesap Adı"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:26
 msgid "A friendly name to identify this account."
 msgstr "Bu hesabı tanımlamak için dostça bir isim."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:86
 msgid "Your credentials are encrypted before being stored."
 msgstr "Kimlik bilgileriniz depolanmadan önce şifrelenir."
 
+#: templates/admin/sms_system/wizard/step4_test.html:4
+#: templates/admin/sms_system/wizard/step4_test.html:5
+#: templates/admin/sms_system/wizard/step4_test.html:9 views.py:281
 msgid "Test Connection"
 msgstr "Bağlantıyı Test Et"
 
+#: templates/admin/sms_system/wizard/step4_test.html:10
 msgid "We've tested the connection to your provider."
 msgstr "Sağlayıcınıza olan bağlantıyı test ettik."
 
+#: templates/admin/sms_system/wizard/step4_test.html:22
 msgid "Connection Successful"
 msgstr "Bağlantı Başarılı"
 
+#: templates/admin/sms_system/wizard/step4_test.html:29
 msgid "Successfully connected to the SMS provider."
 msgstr "SMS sağlayıcısına başarıyla bağlandı."
 
+#: templates/admin/sms_system/wizard/step4_test.html:31
 msgid "Failed to connect to the SMS provider."
 msgstr "SMS sağlayıcısına bağlanılamadı."
 
+#: templates/admin/sms_system/wizard/step4_test.html:40
 msgid "Account"
 msgstr "Hesap"
 
+#: templates/admin/sms_system/wizard/step4_test.html:55
 msgid "Configure how this account should be used."
 msgstr "Bu hesabın nasıl kullanılacağını yapılandırın."
 
+#: templates/admin/sms_system/wizard/step4_test.html:60
 msgid "Set as default for SMS messages"
 msgstr "SMS mesajları için varsayılan olarak ayarla"
 
+#: templates/admin/sms_system/wizard/step4_test.html:68
 msgid "Set as default for WhatsApp messages"
 msgstr "WhatsApp mesajları için varsayılan olarak ayarla"
 
+#: templates/admin/sms_system/wizard/step4_test.html:78
 msgid "Connection test failed"
 msgstr "Bağlantı testi başarısız oldu"
 
+#: templates/admin/sms_system/wizard/step4_test.html:79
 msgid ""
 "Check your credentials and try again, or save anyway if you're sure they're "
 "correct."
@@ -684,86 +971,110 @@ msgstr ""
 "Kimlik bilgilerinizi kontrol edin ve tekrar deneyin, ya da doğru olduğundan "
 "emin iseniz her şekilde kaydedin."
 
+#: templates/admin/sms_system/wizard/step4_test.html:82
 msgid "Save account anyway (not recommended)"
 msgstr "Hesabı kaydet (tavsiye edilmez)"
 
+#: templates/admin/sms_system/wizard/step4_test.html:97
 msgid "Create Account"
 msgstr "Hesap Oluştur"
 
+#: views.py:97
 msgid "Please select a provider"
 msgstr "Lütfen bir sağlayıcı seçin"
 
+#: views.py:102
 msgid "Selected provider is not available"
 msgstr "Seçilen sağlayıcı mevcut değil"
 
+#: views.py:131 views.py:183
 msgid "Provider not found"
 msgstr "Sağlayıcı bulunamadı"
 
+#: views.py:211
 msgid "Unable to get credential schema"
 msgstr "Kimlik bilgisi şeması alınamadı"
 
+#: views.py:228
 #, python-format
 msgid "Missing required fields: %(fields)s"
 msgstr "Gerekli alanlar eksik: %(fields)s"
 
+#: views.py:304
 msgid "Connection test failed. Check your credentials and try again."
 msgstr ""
 "Bağlantı testi başarısız oldu. Kimlik bilgilerinizi kontrol edin ve tekrar "
 "deneyin."
 
+#: views.py:328
 msgid "SMS provider account created successfully!"
 msgstr "SMS sağlayıcısı hesabı başarıyla oluşturuldu!"
 
+#: views.py:333
 #, python-format
 msgid "Failed to create account: %(error)s"
 msgstr "Hesap oluşturulamadı: %(error)s"
 
+#: views.py:424
 msgid "SMS Providers"
 msgstr "SMS Sağlayıcıları"
 
+#: views.py:525
 msgid "Provider is already installed. Configure it now."
 msgstr "Sağlayıcı zaten yüklenmiştir. Şimdi onu yapılandırın."
 
+#: views.py:554 views.py:701
 msgid "Provider not found on update server."
 msgstr "Güncelleme sunucusunda sağlayıcı bulunamadı."
 
+#: views.py:567
 msgid "Could not determine provider version."
 msgstr "Sağlayıcı sürümü belirlenemedi."
 
+#: views.py:590
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Provider indirilemedi: %(error)s"
 
+#: views.py:602
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Provider kurulamadı: %(error)s"
 
+#: views.py:630
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "Provider \"%(name)s\" başarıyla yüklendi! Şimdi ayarlayınız."
 
+#: views.py:669
 msgid "Provider not installed."
 msgstr "Sağlayıcı kurulmamış."
 
+#: views.py:686
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Güncelleme sunucusuna bağlanılamadı: %(error)s"
 
+#: views.py:713
 msgid "Could not determine latest version."
 msgstr "En yeni sürüm belirlenemedi."
 
+#: views.py:723
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "Provider \"%(name)s\" zaten güncel (v%(version)s)."
 
+#: views.py:739
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Güncelleme indirilemedi: %(error)s"
 
+#: views.py:750
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Güncelleme kurulamadı: %(error)s"
 
+#: views.py:780
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "Provider \"%(name)s\" başarıyla v%(version)s sürümüne güncellendi!"

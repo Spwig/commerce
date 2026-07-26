@@ -13,6 +13,7 @@ Covers:
 - Category model methods (get_image_url, get_card_image_url, get_banner_url)
 """
 
+import re
 from decimal import Decimal
 
 import pytest
@@ -869,3 +870,212 @@ class TestEdgeCases:
         assert "breadcrumb" not in content
         assert "sort-bar" not in content
         assert "help-block" not in content
+
+
+# ============================================================
+# Accordion product-count badges (regression)
+#
+# Covers page_builder/views.py::category_view accordion count logic.
+# Badge counts must be derived from the storefront-visible queryset
+# (published, not hidden, not pos_only, region-filtered) and summed over
+# each category's descendant subtree. The count must NOT be fragmented by
+# Product.Meta.ordering ("-created_at") leaking into the GROUP BY.
+# ============================================================
+
+
+def _set_category_template(template_key):
+    """Force the site-wide category page template (e.g. 'accordion')."""
+    from design.models import PageTemplateConfig
+
+    config = PageTemplateConfig.get_config()
+    config.category_template = template_key
+    config.save()
+
+
+def _accordion_counts(client):
+    """Return {slug: product_count} from the accordion list-view context."""
+    resp = client.get("/en/category/")
+    assert resp.status_code == 200
+    return {c.slug: getattr(c, "product_count", None) for c in resp.context["categories"]}
+
+
+class TestAccordionProductCounts:
+    """Badge product-count computation for the accordion category list view."""
+
+    def test_accordion_template_is_used(self, client, site_settings):
+        """Setting category_template='accordion' renders the accordion template."""
+        _set_category_template("accordion")
+        CategoryFactory(name="Root Cat", slug="root-cat")
+        resp = client.get("/en/category/")
+        assert resp.status_code == 200
+        assert "page_builder/category/accordion.html" in [t.name for t in resp.templates]
+
+    def test_count_excludes_draft_hidden_and_pos_only(self, client, site_settings):
+        """Only storefront-visible products contribute to the badge count."""
+        _set_category_template("accordion")
+        cat = CategoryFactory(name="Gadgets", slug="gadgets")
+        ProductFactory(name="Visible One", slug="vis-1", category=cat)
+        ProductFactory(name="Draft One", slug="draft-1", category=cat, status="draft")
+        ProductFactory(name="Hidden One", slug="hidden-1", category=cat, hide_from_storefront=True)
+        ProductFactory(name="Pos One", slug="pos-1", category=cat, sales_channel="pos_only")
+        counts = _accordion_counts(client)
+        assert counts["gadgets"] == 1
+
+    def test_count_includes_subcategory_products(self, client, site_settings):
+        """A parent's badge sums products across its whole descendant subtree."""
+        _set_category_template("accordion")
+        parent = CategoryFactory(name="Audio", slug="audio")
+        child = CategoryFactory(name="Headphones", slug="headphones", parent=parent)
+        ProductFactory(name="Speaker A", slug="spk-a", category=parent)
+        ProductFactory(name="Speaker B", slug="spk-b", category=parent)
+        ProductFactory(name="Can A", slug="can-a", category=child)
+        ProductFactory(name="Can B", slug="can-b", category=child)
+        ProductFactory(name="Can C", slug="can-c", category=child)
+        counts = _accordion_counts(client)
+        # 2 (parent) + 3 (child subtree) = 5
+        assert counts["audio"] == 5
+
+    def test_multiple_products_report_full_count_not_one(self, client, site_settings):
+        """GROUP BY regression: several visible products in a single category
+        must yield the full count. Without the view's ``.order_by()`` clear,
+        Product.Meta.ordering ('-created_at') leaks into the GROUP BY and each
+        product lands in its own group, collapsing the badge to 1.
+        """
+        _set_category_template("accordion")
+        cat = CategoryFactory(name="Cameras", slug="cameras")
+        for i in range(4):
+            ProductFactory(name=f"Cam {i}", slug=f"cam-{i}", category=cat)
+        counts = _accordion_counts(client)
+        assert counts["cameras"] == 4
+
+    def test_badge_count_matches_detail_page_listing(self, client, site_settings):
+        """The accordion badge equals the product total on the detail page."""
+        _set_category_template("accordion")
+        parent = CategoryFactory(name="Kitchen", slug="kitchen")
+        child = CategoryFactory(name="Cookware", slug="cookware", parent=parent)
+        ProductFactory(name="Pan", slug="pan", category=parent)
+        ProductFactory(name="Pot", slug="pot", category=child)
+        ProductFactory(name="Knife", slug="knife", category=child)
+        # Noise that must not be counted on either surface.
+        ProductFactory(name="Draft Pan", slug="draft-pan", category=parent, status="draft")
+        counts = _accordion_counts(client)
+        detail = client.get("/en/category/kitchen/")
+        assert detail.status_code == 200
+        assert counts["kitchen"] == detail.context["total_count"]
+        assert counts["kitchen"] == 3
+
+    def test_empty_category_reports_zero(self, client, site_settings):
+        """A category with no visible products reports a zero badge, not None."""
+        _set_category_template("accordion")
+        CategoryFactory(name="Nothing Here", slug="nothing-here")
+        counts = _accordion_counts(client)
+        assert counts["nothing-here"] == 0
+
+    def test_badge_markup_shows_full_count(self, client, site_settings):
+        """The rendered accordion HTML shows the full count in the badge."""
+        _set_category_template("accordion")
+        cat = CategoryFactory(name="Toys", slug="toys")
+        for i in range(3):
+            ProductFactory(name=f"Toy {i}", slug=f"toy-{i}", category=cat)
+        resp = client.get("/en/category/")
+        content = resp.content.decode()
+        assert "cat-accordion__badge" in content
+        normalized = re.sub(r"\s+", " ", content)
+        assert "3 products" in normalized
+
+
+# ============================================================
+# Category card image fallback chain (regression)
+#
+# Covers catalog/models.py::Category._card_fallback_product and the
+# get_card_image_url / get_card_image_thumbnail wrappers. Fallback order:
+#   merchant image_asset  ->  featured product (-sales_count)
+#                         ->  best-selling product (-sales_count)  ->  None
+# Only storefront-visible products with images qualify, searched across the
+# category subtree.
+# ============================================================
+
+
+class TestCardFallbackProduct:
+    """The card image fallback priority chain."""
+
+    def test_category_image_wins_over_products(self, client, site_settings):
+        """A merchant-set category image beats any product fallback."""
+        asset = _create_media_asset(title="Own category image")
+        cat = CategoryFactory(name="Branded Cat", slug="branded-cat", image_asset=asset)
+        # A strong product candidate that must be ignored.
+        _create_product_with_image(
+            cat, name="Star Product", slug="star-product", is_featured=True, sales_count=999
+        )
+        assert cat.get_card_image_url() == cat.get_image_url()
+        # Thumbnail path also short-circuits to the category asset.
+        assert cat.get_card_image_thumbnail() == asset.get_thumbnail("card")
+
+    def test_featured_beats_higher_selling_non_featured(self, client, site_settings):
+        """A featured product wins even if a non-featured one sells more."""
+        cat = CategoryFactory(name="Priority Cat", slug="priority-cat")
+        featured = _create_product_with_image(
+            cat, name="Featured Low Sales", slug="feat-low", is_featured=True, sales_count=5
+        )
+        _create_product_with_image(
+            cat, name="Popular Not Featured", slug="pop-plain", is_featured=False, sales_count=500
+        )
+        assert cat._card_fallback_product() == featured
+
+    def test_highest_selling_featured_wins_among_featured(self, client, site_settings):
+        """When several products are featured, the best seller wins."""
+        cat = CategoryFactory(name="Featured Race", slug="featured-race")
+        _create_product_with_image(
+            cat, name="Featured Mid", slug="feat-mid", is_featured=True, sales_count=10
+        )
+        top = _create_product_with_image(
+            cat, name="Featured Top", slug="feat-top", is_featured=True, sales_count=50
+        )
+        assert cat._card_fallback_product() == top
+
+    def test_best_seller_when_none_featured(self, client, site_settings):
+        """With no featured products, the highest sales_count wins."""
+        cat = CategoryFactory(name="Best Seller Cat", slug="bestseller-cat")
+        _create_product_with_image(
+            cat, name="Slow Mover", slug="slow-mover", is_featured=False, sales_count=3
+        )
+        best = _create_product_with_image(
+            cat, name="Fast Mover", slug="fast-mover", is_featured=False, sales_count=80
+        )
+        assert cat._card_fallback_product() == best
+
+    def test_hidden_pos_only_and_imageless_never_selected(self, client, site_settings):
+        """Draft/hidden/pos-only/imageless products can never be the card."""
+        from catalog.models import ProductImage
+
+        cat = CategoryFactory(name="Unusable Cat", slug="unusable-cat")
+        # Hidden product with an image.
+        _create_product_with_image(
+            cat, name="Hidden With Image", slug="hidden-img", hide_from_storefront=True
+        )
+        # POS-only product with an image.
+        _create_product_with_image(
+            cat, name="Pos With Image", slug="pos-img", sales_channel="pos_only"
+        )
+        # Draft product with an image.
+        _create_product_with_image(cat, name="Draft With Image", slug="draft-img", status="draft")
+        # Visible product but no image at all.
+        ProductFactory(name="Visible No Image", slug="vis-no-img", category=cat)
+        assert cat._card_fallback_product() is None
+        assert cat.get_card_image_url() is None
+        assert cat.get_card_image_thumbnail() is None
+        # Guard against a silent product-model change: ProductImage import used.
+        assert ProductImage.objects.filter(product__category=cat).count() == 3
+
+    def test_fallback_product_found_in_subcategory(self, client, site_settings):
+        """The card product may live in a descendant category."""
+        parent = CategoryFactory(name="Parent Cat", slug="parent-card-cat")
+        child = CategoryFactory(name="Child Cat", slug="child-card-cat", parent=parent)
+        # Parent has no direct products; the qualifying product is in the child.
+        child_product = _create_product_with_image(
+            child, name="Child Star", slug="child-star", is_featured=True, sales_count=9
+        )
+        assert parent.image_asset is None
+        assert parent._card_fallback_product() == child_product
+        assert parent.get_card_image_url() == child_product.primary_image_url
+        assert parent.get_card_image_thumbnail() is not None

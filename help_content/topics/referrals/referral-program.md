@@ -64,6 +64,8 @@ Configure rewards for each recipient in the **Reward Configuration** field. The 
 | **Percentage Discount** | Issues a percentage discount for use at checkout |
 | **Exclusive Perk** | A custom perk (e.g., free gift, priority access) — described in the reward's description field |
 
+Coupon Code and Percentage Discount rewards are locked to the customer who earned them — the voucher code only works when that customer is signed in. If a referrer shares their reward code with someone else instead of their referral link, the friend won't be able to use it; only the referral link itself is meant to be shared.
+
 **Example configuration** — $10 store credit for the referrer and $10 discount for the new customer:
 
 ```json

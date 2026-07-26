@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Vietnamese <LL@li.org>\n"
@@ -18,667 +18,943 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:68 admin.py:164 templates/admin/social_sharing/dashboard.html:256
+#: templates/admin/social_sharing/dashboard.html:308
+#: templates/admin/social_sharing/dashboard.html:381
+#: templates/admin/social_sharing/sharecount/change_list.html:52
+#: templates/admin/social_sharing/socialshare/change_list.html:52
 msgid "Platform"
 msgstr "Nền tảng"
 
+#: admin.py:76
 msgid "Shared Content"
 msgstr "Nội dung được chia sẻ"
 
+#: admin.py:86 templates/admin/social_sharing/dashboard.html:322
+#: templates/admin/social_sharing/partials/share_cards.html:78
 msgid "Anonymous"
 msgstr "Ẩn danh"
 
+#: admin.py:88 templates/admin/social_sharing/dashboard.html:208
+#: templates/admin/social_sharing/dashboard.html:307
 msgid "User"
 msgstr "Người dùng"
 
+#: admin.py:172 templates/admin/social_sharing/dashboard.html:309
+#: templates/admin/social_sharing/dashboard.html:380
 msgid "Content"
 msgstr "Nội dung"
 
+#: admin.py:183 models.py:192
 msgid "Share Count"
 msgstr "Số lần chia sẻ"
 
+#: admin.py:243
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:66
 msgid "Placement"
 msgstr "Vị trí đặt"
 
+#: admin.py:252
 msgid "Configure where social share buttons appear automatically"
 msgstr "Cấu hình nơi hiển thị nút chia sẻ mạng xã hội tự động"
 
+#: admin.py:256
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:70
 msgid "Appearance"
 msgstr "Mẫu mã"
 
+#: admin.py:269
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:74
 msgid "Tracking"
 msgstr "Theo dõi"
 
+#: admin.py:278
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:211
 msgid "Metadata"
 msgstr "Metadata"
 
+#: api/serializers.py:17
 msgid "Model name (lowercase) - e.g., 'product', 'page', 'post'"
 msgstr "Tên mô hình (viết thường) - ví dụ: 'product', 'page', 'post'"
 
+#: api/serializers.py:20
 msgid "ID of the content being shared"
 msgstr "ID của nội dung đang được chia sẻ"
 
+#: api/serializers.py:25
 msgid "Social media platform"
 msgstr "Nền tảng mạng xã hội"
 
+#: api/serializers.py:27
 msgid "Full URL being shared"
 msgstr "URL đầy đủ đang được chia sẻ"
 
+#: api/views.py:147
 msgid "Track social media share"
 msgstr "Theo dõi lượt chia sẻ mạng xã hội"
 
+#: api/views.py:148
 msgid ""
-"Track a social media share event for a product or other content. Records "
-"platform, URL, user, session, IP, and device type.\n"
+"Track a social media share event for a product or other content. Records platform, URL, user, session, IP, and device type.\n"
 "\n"
-"    Use this endpoint when a user shares content to social media platforms. "
-"Helps measure content virality and track most-shared products.\n"
+"    Use this endpoint when a user shares content to social media platforms. Helps measure content virality and track most-shared products.\n"
 "\n"
-"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"    **Security**: Authentication required to prevent spam and database "
-"pollution. Rate limited to 50 requests/hour per user.\n"
+"    **Security**: Authentication required to prevent spam and database pollution. Rate limited to 50 requests/hour per user.\n"
 "\n"
-"    **Use Case**: Call when user clicks a social share button to track "
-"sharing behavior and measure content engagement."
+"    **Use Case**: Call when user clicks a social share button to track sharing behavior and measure content engagement."
 msgstr ""
-"Theo dõi sự kiện chia sẻ trên mạng xã hội cho một sản phẩm hoặc nội dung "
-"khác. Ghi lại nền tảng, URL, người dùng, phiên, địa chỉ IP và loại thiết "
-"bị.\n"
+"Theo dõi sự kiện chia sẻ trên mạng xã hội cho một sản phẩm hoặc nội dung khác. Ghi lại nền tảng, URL, người dùng, phiên, địa chỉ IP và loại thiết bị.\n"
 "\n"
-"Sử dụng điểm cuối này khi người dùng chia sẻ nội dung lên các nền tảng mạng "
-"xã hội. Giúp đo lường tính lan tỏa của nội dung và theo dõi các sản phẩm "
-"được chia sẻ nhiều nhất.\n"
+"Sử dụng điểm cuối này khi người dùng chia sẻ nội dung lên các nền tảng mạng xã hội. Giúp đo lường tính lan tỏa của nội dung và theo dõi các sản phẩm được chia sẻ nhiều nhất.\n"
 "\n"
-"**Các nền tảng được hỗ trợ**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"**Các nền tảng được hỗ trợ**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"**Bảo mật**: Yêu cầu xác thực để ngăn chặn spam và ô nhiễm cơ sở dữ liệu. "
-"Giới hạn tốc độ đến 50 yêu cầu/giờ mỗi người dùng.\n"
+"**Bảo mật**: Yêu cầu xác thực để ngăn chặn spam và ô nhiễm cơ sở dữ liệu. Giới hạn tốc độ đến 50 yêu cầu/giờ mỗi người dùng.\n"
 "\n"
-"**Trường hợp sử dụng**: Gọi khi người dùng nhấp vào nút chia sẻ mạng xã hội "
-"để theo dõi hành vi chia sẻ và đo lường mức độ tương tác với nội dung."
+"**Trường hợp sử dụng**: Gọi khi người dùng nhấp vào nút chia sẻ mạng xã hội để theo dõi hành vi chia sẻ và đo lường mức độ tương tác với nội dung."
 
+#: api/views.py:168 api/views.py:283
 msgid "Invalid request, missing required fields, or invalid platform"
-msgstr "Yêu cầu không hợp lệ, thiếu trường bắt buộc hoặc nền tảng không hợp lệ"
+msgstr ""
+"Yêu cầu không hợp lệ, thiếu trường bắt buộc hoặc nền tảng không hợp lệ"
 
+#: api/views.py:170 api/views.py:286 api/views.py:422 api/views.py:486
 msgid "Internal server error"
 msgstr "Lỗi máy chủ nội bộ"
 
+#: api/views.py:264
+#| msgid "Track social media share"
+msgid "Track social media share (anonymous)"
+msgstr "Theo dõi chia sẻ mạng xã hội (ẩn danh)"
+
+#: api/views.py:265
+msgid ""
+"Anonymous variant of the share tracking endpoint for guest visitors.\n"
+"\n"
+"    Identical payload to the authenticated endpoint, but does not require a logged-in user. The resulting `SocialShare` row is stored with `user=None` and is linked only via the visitor's session key, IP, user agent, and device type.\n"
+"\n"
+"    **Security**: No authentication required, but aggressively rate-limited (20 requests/hour per IP) to prevent spam and database pollution. Bots are not filtered at the endpoint level — consumers should apply their own bot detection if needed.\n"
+"\n"
+"    **Use Case**: Headless storefronts where most visitors sharing content (product pages, blog posts) are not logged in. The authenticated `track_share` endpoint would exclude all guest shares from analytics, which is the majority of real traffic."
+msgstr ""
+"Biến thể ẩn danh của điểm cuối theo dõi chia sẻ cho khách truy cập.\n"
+"\n"
+"Tải payload giống với điểm cuối đã xác thực, nhưng không yêu cầu người dùng đã đăng nhập. Dòng `SocialShare` kết quả được lưu trữ với `user=None` và chỉ được liên kết thông qua khóa phiên của khách truy cập, địa chỉ IP, trình duyệt và loại thiết bị.\n"
+"\n"
+"**Bảo mật**: Không yêu cầu xác thực, nhưng bị giới hạn tốc độ nghiêm ngặt (20 yêu cầu/giờ mỗi IP) để ngăn chặn thư rác và ô nhiễm cơ sở dữ liệu. Bot không được lọc ở cấp điểm cuối — người tiêu dùng nên áp dụng phát hiện bot của riêng họ nếu cần.\n"
+"\n"
+"**Trường hợp sử dụng**: Các cửa hàng đầuless nơi phần lớn khách truy cập chia sẻ nội dung (trang sản phẩm, bài đăng blog) không đăng nhập. Điểm cuối đã xác thực `track_share` sẽ loại bỏ tất cả chia sẻ của khách từ phân tích, chiếm phần lớn lưu lượng truy cập thực tế."
+
+#: api/views.py:285
+msgid "Rate limit exceeded"
+msgstr "Đã vượt quá giới hạn tốc độ"
+
+#: api/views.py:401
 msgid "Get share counts for content"
 msgstr "Lấy số lượng chia sẻ cho nội dung"
 
+#: api/views.py:402
 msgid ""
 "Get aggregated share counts by platform for a specific piece of content.\n"
 "\n"
-"    Returns counts for each social platform plus a total. Useful for "
-"displaying share counts on product pages, blog posts, etc.\n"
+"    Returns counts for each social platform plus a total. Useful for displaying share counts on product pages, blog posts, etc.\n"
 "\n"
 "    **No authentication required** - share counts are public data."
 msgstr ""
 "Lấy số lượt chia sẻ tổng hợp theo nền tảng cho một nội dung cụ thể.\n"
 "\n"
-"Trả về số lượng chia sẻ cho từng nền tảng cộng với tổng số. Hữu ích để hiển "
-"thị số lượt chia sẻ trên trang sản phẩm, bài đăng blog, v.v.\n"
+"Trả về số lượng chia sẻ cho từng nền tảng cộng với tổng số. Hữu ích để hiển thị số lượt chia sẻ trên trang sản phẩm, bài đăng blog, v.v.\n"
 "\n"
 "**Không yêu cầu xác thực** - số lượt chia sẻ là dữ liệu công khai."
 
+#: api/views.py:421
 msgid "Invalid content type"
 msgstr "Loại nội dung không hợp lệ"
 
+#: api/views.py:472
 msgid "Get current user's share history"
 msgstr "Lấy lịch sử chia sẻ của người dùng hiện tại"
 
+#: api/views.py:473
 msgid ""
-"Get the authenticated user's social sharing history, including total shares, "
-"breakdown by platform, and recent share events.\n"
+"Get the authenticated user's social sharing history, including total shares, breakdown by platform, and recent share events.\n"
 "\n"
 "    **Authentication required.**"
 msgstr ""
-"Lấy lịch sử chia sẻ mạng xã hội của người dùng đã xác thực, bao gồm tổng số "
-"lượt chia sẻ, phân tích theo nền tảng và các sự kiện chia sẻ gần đây.\n"
+"Lấy lịch sử chia sẻ mạng xã hội của người dùng đã xác thực, bao gồm tổng số lượt chia sẻ, phân tích theo nền tảng và các sự kiện chia sẻ gần đây.\n"
 "\n"
 "**Yêu cầu xác thực.**"
 
+#: api/views.py:485
 msgid "Authentication required"
 msgstr "Yêu cầu xác thực"
 
+#: apps.py:8
 msgid "Social Sharing"
 msgstr "Chia sẻ xã hội"
 
+#: forms.py:27 settings_models.py:152
 msgid "Enabled Platforms"
 msgstr "Nền tảng được bật"
 
+#: forms.py:29
 msgid ""
 "Select which platforms to show. If none selected, all platforms will be "
 "shown."
 msgstr ""
-"Chọn các nền tảng muốn hiển thị. Nếu không chọn nền tảng nào, tất cả các nền "
-"tảng sẽ được hiển thị."
+"Chọn các nền tảng muốn hiển thị. Nếu không chọn nền tảng nào, tất cả các nền"
+" tảng sẽ được hiển thị."
 
+#: models.py:35 templates/admin/social_sharing/partials/share_cards.html:39
+#: templates/admin/social_sharing/partials/sharecount_cards.html:39
+#: templates/admin/social_sharing/sharecount/change_list.html:56
+#: templates/admin/social_sharing/socialshare/change_list.html:56
 msgid "Facebook"
 msgstr "Facebook"
 
+#: models.py:36 templates/admin/social_sharing/sharecount/change_list.html:57
+#: templates/admin/social_sharing/socialshare/change_list.html:57
 msgid "Twitter/X"
 msgstr "Twitter/X"
 
+#: models.py:37 templates/admin/social_sharing/partials/share_cards.html:43
+#: templates/admin/social_sharing/partials/sharecount_cards.html:43
+#: templates/admin/social_sharing/sharecount/change_list.html:58
+#: templates/admin/social_sharing/socialshare/change_list.html:58
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
+#: models.py:38 templates/admin/social_sharing/partials/share_cards.html:45
+#: templates/admin/social_sharing/partials/sharecount_cards.html:45
+#: templates/admin/social_sharing/sharecount/change_list.html:59
+#: templates/admin/social_sharing/socialshare/change_list.html:59
 msgid "Pinterest"
 msgstr "Pinterest"
 
+#: models.py:39 templates/admin/social_sharing/partials/share_cards.html:47
+#: templates/admin/social_sharing/partials/sharecount_cards.html:47
+#: templates/admin/social_sharing/sharecount/change_list.html:60
+#: templates/admin/social_sharing/socialshare/change_list.html:60
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: models.py:40 templates/admin/social_sharing/partials/share_cards.html:49
+#: templates/admin/social_sharing/partials/sharecount_cards.html:49
+#: templates/admin/social_sharing/sharecount/change_list.html:61
+#: templates/admin/social_sharing/socialshare/change_list.html:61
 msgid "Telegram"
 msgstr "Telegram"
 
+#: models.py:41 templates/admin/social_sharing/partials/share_cards.html:51
+#: templates/admin/social_sharing/partials/sharecount_cards.html:51
+#: templates/admin/social_sharing/sharecount/change_list.html:62
+#: templates/admin/social_sharing/socialshare/change_list.html:62
 msgid "Email"
 msgstr "Email"
 
+#: models.py:51 templates/admin/social_sharing/socialshare/change_list.html:86
 msgid "Desktop"
 msgstr "Máy tính để bàn"
 
+#: models.py:52 templates/admin/social_sharing/socialshare/change_list.html:87
 msgid "Mobile"
 msgstr "Di động"
 
+#: models.py:53 templates/admin/social_sharing/socialshare/change_list.html:88
 msgid "Tablet"
 msgstr "Bảng"
 
+#: models.py:54
 msgid "Unknown"
 msgstr "Không xác định"
 
+#: models.py:61 models.py:170
 msgid "content type"
 msgstr "loại nội dung"
 
+#: models.py:62
 msgid "Type of content shared (Product, Category, etc.)"
 msgstr "Loại nội dung được chia sẻ (Sản phẩm, Danh mục, v.v.)"
 
+#: models.py:65 models.py:172
 msgid "object ID"
 msgstr "ID đối tượng"
 
+#: models.py:65
 msgid "ID of the shared object"
 msgstr "ID của đối tượng được chia sẻ"
 
+#: models.py:74 models.py:177
 msgid "platform"
 msgstr "nền tảng"
 
+#: models.py:75
 msgid "Social platform used for sharing"
 msgstr "Nền tảng xã hội được dùng để chia sẻ"
 
+#: models.py:79
 msgid "shared URL"
 msgstr "URL đã được chia sẻ"
 
+#: models.py:79
 msgid "URL that was shared"
 msgstr "URL đã được chia sẻ"
 
+#: models.py:85
 msgid "referrer"
 msgstr "người giới thiệu"
 
+#: models.py:86
 msgid "Page from which share was initiated"
 msgstr "Trang mà chia sẻ được khởi động"
 
+#: models.py:96
 msgid "user"
 msgstr "người dùng"
 
+#: models.py:97
 msgid "User who shared (if logged in)"
 msgstr "Người dùng đã chia sẻ (nếu đã đăng nhập)"
 
+#: models.py:104
 msgid "session ID"
 msgstr "ID phiên"
 
+#: models.py:105
 msgid "Session identifier for anonymous users"
 msgstr "Mã định danh phiên cho người dùng ẩn danh"
 
+#: models.py:111
 msgid "IP address"
 msgstr "Địa chỉ IP"
 
+#: models.py:112
 msgid "IP address of sharer (for analytics and fraud detection)"
 msgstr ""
 "Địa chỉ IP của người chia sẻ (dùng cho phân tích và phát hiện gian lận)"
 
+#: models.py:116
 msgid "user agent"
 msgstr "bộ điều khiển người dùng"
 
+#: models.py:116
 msgid "Browser user agent string"
 msgstr "Chuỗi đại diện trình duyệt"
 
+#: models.py:123
 msgid "device type"
 msgstr "loại thiết bị"
 
+#: models.py:124
 msgid "Type of device used for sharing"
 msgstr "Loại thiết bị được dùng để chia sẻ"
 
+#: models.py:131
 msgid "shared at"
 msgstr "được chia sẻ lúc"
 
+#: models.py:132
 msgid "When the share occurred"
 msgstr "Khi chia sẻ xảy ra"
 
+#: models.py:135 models.py:189
 msgid "created at"
 msgstr "Tạo lúc"
 
+#: models.py:137
 msgid "updated at"
 msgstr "Cập nhật lúc"
 
+#: models.py:140
 msgid "Social Share"
 msgstr "Chia sẻ xã hội"
 
+#: models.py:141 templates/admin/social_sharing/dashboard.html:138
+#: templates/admin/social_sharing/socialshare/change_list.html:4
+#: templates/admin/social_sharing/socialshare/change_list.html:19
 msgid "Social Shares"
 msgstr "Lượt chia sẻ xã hội"
 
+#: models.py:182
 msgid "share count"
 msgstr "số lần chia sẻ"
 
+#: models.py:183
 msgid "Number of times shared on this platform"
 msgstr "Số lần chia sẻ trên nền tảng này"
 
+#: models.py:187
 msgid "last updated"
 msgstr "cập nhật lần cuối"
 
+#: models.py:193 templates/admin/social_sharing/dashboard.html:149
+#: templates/admin/social_sharing/sharecount/change_list.html:4
+#: templates/admin/social_sharing/sharecount/change_list.html:19
 msgid "Share Counts"
 msgstr "Số lượt chia sẻ"
 
+#: settings_models.py:22 settings_models.py:23 settings_models.py:197
+#: templates/admin/social_sharing/dashboard.html:450
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:4
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:20
 msgid "Social Sharing Settings"
 msgstr "Cài đặt chia sẻ xã hội"
 
+#: settings_models.py:28
 msgid "Enable on Products"
 msgstr "Bật trên sản phẩm"
 
+#: settings_models.py:29
 msgid "Automatically show share buttons on product detail pages"
 msgstr "Hiển thị tự động nút chia sẻ trên các trang chi tiết sản phẩm"
 
+#: settings_models.py:34
 msgid "Enable on Categories"
 msgstr "Bật trên danh mục"
 
+#: settings_models.py:35
 msgid "Automatically show share buttons on category pages"
 msgstr "Hiển thị tự động nút chia sẻ trên các trang danh mục"
 
+#: settings_models.py:40
 msgid "Enable on Blog Posts"
 msgstr "Bật trên bài viết blog"
 
+#: settings_models.py:41
 msgid "Automatically show share buttons on blog post pages"
 msgstr "Hiển thị tự động nút chia sẻ trên các trang bài viết blog"
 
+#: settings_models.py:46
 msgid "Enable on Custom Pages"
 msgstr "Bật trên trang tùy chỉnh"
 
+#: settings_models.py:47
 msgid "Automatically show share buttons on custom pages"
 msgstr "Hiển thị tự động nút chia sẻ trên các trang tùy chỉnh"
 
+#: settings_models.py:52
 msgid "Above Content"
 msgstr "Trên nội dung"
 
+#: settings_models.py:53
 msgid "Below Content"
 msgstr "Dưới nội dung"
 
+#: settings_models.py:54
 msgid "Sidebar"
 msgstr "Thanh bên"
 
+#: settings_models.py:55
 msgid "Floating (sticky)"
 msgstr "Lửng (cố định)"
 
+#: settings_models.py:62
 msgid "Placement Position"
 msgstr "Vị trí đặt"
 
+#: settings_models.py:63
 msgid "Where to display share buttons on the page"
 msgstr "Nơi hiển thị nút chia sẻ trên trang"
 
+#: settings_models.py:68
 msgid "Icon Only"
 msgstr "Chỉ biểu tượng"
 
+#: settings_models.py:69
 msgid "Icon + Label"
 msgstr "Biểu tượng + nhãn"
 
+#: settings_models.py:70
 msgid "Label Only"
 msgstr "Chỉ nhãn"
 
+#: settings_models.py:77
 msgid "Button Style"
 msgstr "Phong cách nút"
 
+#: settings_models.py:78
 msgid "How share buttons are displayed"
 msgstr "Cách hiển thị nút chia sẻ"
 
+#: settings_models.py:83
 msgid "Small"
 msgstr "Nhỏ"
 
+#: settings_models.py:84
 msgid "Medium"
 msgstr "Trung bình"
 
+#: settings_models.py:85
 msgid "Large"
 msgstr "Lớn"
 
+#: settings_models.py:92
 msgid "Button Size"
 msgstr "Kích thước nút"
 
+#: settings_models.py:93
 msgid "Size of the share buttons"
 msgstr "Kích thước nút chia sẻ"
 
+#: settings_models.py:98
 msgid "Horizontal"
 msgstr "Ngang"
 
+#: settings_models.py:99
 msgid "Vertical"
 msgstr "Dọc"
 
+#: settings_models.py:106
 msgid "Layout Direction"
 msgstr "Hướng bố cục"
 
+#: settings_models.py:107
 msgid "Arrange share buttons horizontally or vertically"
 msgstr "Sắp xếp nút chia sẻ theo chiều ngang hoặc dọc"
 
+#: settings_models.py:113
 msgid "Show Title"
 msgstr "Hiển thị tiêu đề"
 
+#: settings_models.py:114
 msgid "Show the 'Share' heading above the buttons"
 msgstr "Hiển thị tiêu đề 'Chia sẻ' phía trên các nút"
 
+#: settings_models.py:119
 msgid "Always Show"
 msgstr "Luôn hiển thị"
 
+#: settings_models.py:120
 msgid "Hide on Mobile"
 msgstr "Ẩn trên thiết bị di động"
 
+#: settings_models.py:121
 msgid "Mobile Only"
 msgstr "Chỉ thiết bị di động"
 
+#: settings_models.py:128
 msgid "Mobile Visibility"
 msgstr "Hiển thị trên thiết bị di động"
 
+#: settings_models.py:129
 msgid "Control whether share buttons appear on mobile devices"
 msgstr "Kiểm soát việc hiển thị nút chia sẻ trên thiết bị di động"
 
+#: settings_models.py:136
 msgid "Widget Slug"
 msgstr "Đoạn slug widget"
 
+#: settings_models.py:137
 msgid "Slug of the widget package to use for rendering"
 msgstr "Slug của gói widget để sử dụng trong việc hiển thị"
 
+#: settings_models.py:144
 msgid "Default Widget Configuration"
 msgstr "Cấu hình widget mặc định"
 
+#: settings_models.py:145
 msgid ""
 "Override default widget configuration (display_style, button_size, etc.)"
 msgstr "Ghi đè cài đặt widget mặc định (display_style, button_size, v.v.)"
 
+#: settings_models.py:153
 msgid "List of enabled platforms. Leave empty to use widget defaults."
 msgstr ""
-"Danh sách nền tảng được bật. Để trống để sử dụng cài đặt mặc định của widget."
+"Danh sách nền tảng được bật. Để trống để sử dụng cài đặt mặc định của "
+"widget."
 
+#: settings_models.py:159 templates/admin/social_sharing/dashboard.html:514
 msgid "Show Share Counts"
 msgstr "Hiển thị số lần chia sẻ"
 
+#: settings_models.py:160
 msgid "Display number of shares for each platform"
 msgstr "Hiển thị số lượng chia sẻ cho từng nền tảng"
 
+#: settings_models.py:165
 msgid "Track Shares"
 msgstr "Theo dõi chia sẻ"
 
+#: settings_models.py:166
 msgid "Track share events and award loyalty badges"
 msgstr "Theo dõi sự kiện chia sẻ và cấp huy hiệu trung thành"
 
+#: settings_models.py:170
 msgid "Updated At"
 msgstr "Cập nhật lúc"
 
+#: settings_models.py:173
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:221
 msgid "Updated By"
 msgstr "Cập nhật bởi"
 
+#: templates/admin/social_sharing/dashboard.html:4
+#: templates/admin/social_sharing/dashboard.html:22
 msgid "Social Sharing Dashboard"
 msgstr "Bảng điều khiển chia sẻ xã hội"
 
+#: templates/admin/social_sharing/dashboard.html:4
 msgid "Site Admin"
 msgstr "Quản trị trang web"
 
+#: templates/admin/social_sharing/dashboard.html:25
 #, python-format
 msgid ""
 "\n"
-"            Analytics and settings for the last 30 days (%(start)s - "
-"%(end)s)\n"
+"            Analytics and settings for the last 30 days (%(start)s - %(end)s)\n"
 "            "
 msgstr ""
 "\n"
-"            Phân tích và cài đặt cho 30 ngày gần đây (%(start)s - "
-"%(end)s)Phân tích và cài đặt cho 30 ngày gần đây (%(start)s - %(end)s)\n"
+"            Phân tích và cài đặt cho 30 ngày gần đây (%(start)s - %(end)s)Phân tích và cài đặt cho 30 ngày gần đây (%(start)s - %(end)s)\n"
 "            "
 
+#: templates/admin/social_sharing/dashboard.html:38
 msgid "Total Shares"
 msgstr "Tổng số lần chia sẻ"
 
+#: templates/admin/social_sharing/dashboard.html:45
 msgid "Shares Today"
 msgstr "Số lần chia sẻ hôm nay"
 
+#: templates/admin/social_sharing/dashboard.html:52
 msgid "Shares This Month"
 msgstr "Số lần chia sẻ trong tháng này"
 
+#: templates/admin/social_sharing/dashboard.html:77
 msgid "Top Platform"
 msgstr "Nền tảng hàng đầu"
 
+#: templates/admin/social_sharing/dashboard.html:92
+#: templates/admin/social_sharing/dashboard.html:100
 msgid "Top Product"
 msgstr "Sản phẩm hàng đầu"
 
+#: templates/admin/social_sharing/dashboard.html:110
+#: templates/admin/social_sharing/dashboard.html:118
 msgid "Most Active Sharer"
 msgstr "Người chia sẻ tích cực nhất"
 
+#: templates/admin/social_sharing/dashboard.html:130
 msgid "Quick Actions"
 msgstr "Hành động nhanh"
 
+#: templates/admin/social_sharing/dashboard.html:139
 msgid "View individual share events"
 msgstr "Xem các sự kiện chia sẻ cá nhân"
 
+#: templates/admin/social_sharing/dashboard.html:141
+#: templates/admin/social_sharing/dashboard.html:152
 msgid "Manage"
 msgstr "Quản lý"
 
+#: templates/admin/social_sharing/dashboard.html:150
 msgid "Aggregated share statistics"
 msgstr "Thống kê chia sẻ tổng hợp"
 
+#: templates/admin/social_sharing/dashboard.html:160
 msgid "Settings"
 msgstr "Cài đặt"
 
+#: templates/admin/social_sharing/dashboard.html:161
 msgid "Configure social sharing"
 msgstr "Cấu hình chia sẻ xã hội"
 
+#: templates/admin/social_sharing/dashboard.html:163
 msgid "Configure"
 msgstr "Cấu hình"
 
+#: templates/admin/social_sharing/dashboard.html:178
 msgid "Shares Over Time (Last 30 Days)"
 msgstr "Số lần chia sẻ theo thời gian (30 ngày gần nhất)"
 
+#: templates/admin/social_sharing/dashboard.html:187
 msgid "Shares by Platform"
 msgstr "Chia sẻ theo nền tảng"
 
+#: templates/admin/social_sharing/dashboard.html:200
 msgid "Top 10 Sharers (Last 30 Days)"
 msgstr "Top 10 người chia sẻ nhiều nhất (30 ngày gần nhất)"
 
+#: templates/admin/social_sharing/dashboard.html:207
+#: templates/admin/social_sharing/dashboard.html:255
+#: templates/admin/social_sharing/dashboard.html:379
 msgid "Rank"
 msgstr "Hạng"
 
+#: templates/admin/social_sharing/dashboard.html:209
+#: templates/admin/social_sharing/dashboard.html:257
+#: templates/admin/social_sharing/dashboard.html:382
+#: templates/admin/social_sharing/dashboard.html:542
 msgid "Shares"
 msgstr "Chia sẻ"
 
+#: templates/admin/social_sharing/dashboard.html:232
+#: templates/admin/social_sharing/dashboard.html:280
+#: templates/admin/social_sharing/dashboard.html:426
+#: templates/admin/social_sharing/dashboard.html:544
+#: templates/admin/social_sharing/partials/sharecount_cards.html:68
 msgid "shares"
 msgstr "chia sẻ"
 
+#: templates/admin/social_sharing/dashboard.html:240
 msgid "No sharers in the selected period."
 msgstr "Không có người chia sẻ trong khoảng thời gian đã chọn."
 
+#: templates/admin/social_sharing/dashboard.html:248
 msgid "Top 5 Platforms"
 msgstr "Top 5 nền tảng"
 
+#: templates/admin/social_sharing/dashboard.html:288
 msgid "No platform data available."
 msgstr "Không có dữ liệu nền tảng."
 
+#: templates/admin/social_sharing/dashboard.html:299
 msgid "Recent Shares"
 msgstr "Chia sẻ gần đây"
 
+#: templates/admin/social_sharing/dashboard.html:306
 msgid "Date"
 msgstr "Ngày"
 
+#: templates/admin/social_sharing/dashboard.html:348
+#: templates/admin/social_sharing/dashboard.html:417
 msgid "Content deleted"
 msgstr "Nội dung đã xóa"
 
+#: templates/admin/social_sharing/dashboard.html:357
 msgid "No recent shares."
 msgstr "Không có chia sẻ gần đây."
 
+#: templates/admin/social_sharing/dashboard.html:363
 msgid "View All Shares"
 msgstr "Xem tất cả chia sẻ"
 
+#: templates/admin/social_sharing/dashboard.html:372
 msgid "Top 5 Most Shared Content"
 msgstr "Top 5 nội dung được chia sẻ nhiều nhất"
 
+#: templates/admin/social_sharing/dashboard.html:434
 msgid "No shared content yet."
 msgstr "Chưa có nội dung nào được chia sẻ."
 
+#: templates/admin/social_sharing/dashboard.html:440
 msgid "View All Share Counts"
 msgstr "Xem tất cả số lượng chia sẻ"
 
+#: templates/admin/social_sharing/dashboard.html:468
 msgid "Enable Social Sharing On"
 msgstr "Bật chia sẻ xã hội trên"
 
+#: templates/admin/social_sharing/dashboard.html:473
 msgid "Products"
 msgstr "Sản phẩm"
 
+#: templates/admin/social_sharing/dashboard.html:479
 msgid "Categories"
 msgstr "Danh mục"
 
+#: templates/admin/social_sharing/dashboard.html:485
 msgid "Blog Posts"
 msgstr "Bài đăng blog"
 
+#: templates/admin/social_sharing/dashboard.html:491
 msgid "Pages"
 msgstr "Trang"
 
+#: templates/admin/social_sharing/dashboard.html:499
 msgid "Display Settings"
 msgstr "Cài đặt hiển thị"
 
+#: templates/admin/social_sharing/dashboard.html:502
 msgid "Button Placement"
 msgstr "Vị trí nút"
 
+#: templates/admin/social_sharing/dashboard.html:520
 msgid "Track Share Events"
 msgstr "Theo dõi sự kiện chia sẻ"
 
+#: templates/admin/social_sharing/dashboard.html:529
 msgid "Save Settings"
 msgstr "Lưu cài đặt"
 
+#: templates/admin/social_sharing/dashboard.html:543
+#: templates/admin/social_sharing/partials/sharecount_cards.html:66
 msgid "share"
 msgstr "chia sẻ"
 
+#: templates/admin/social_sharing/partials/share_cards.html:41
+#: templates/admin/social_sharing/partials/sharecount_cards.html:41
 msgid "Twitter"
 msgstr "Twitter"
 
+#: templates/admin/social_sharing/partials/share_cards.html:128
 msgid "No social shares found matching your filters."
 msgstr "Không tìm thấy chia sẻ mạng xã hội nào phù hợp với bộ lọc của bạn."
 
+#: templates/admin/social_sharing/partials/share_cards.html:132
+#: templates/admin/social_sharing/partials/sharecount_cards.html:119
 msgid "Clear Filters"
 msgstr "Xóa bộ lọc"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:76
 msgid "Updated"
 msgstr "Đã cập nhật"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:115
 msgid "No share counts found matching your filters."
 msgstr "Không tìm thấy số lượng chia sẻ nào phù hợp với bộ lọc của bạn."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:21
 msgid "Track social media sharing statistics across platforms"
 msgstr "Theo dõi thống kê chia sẻ mạng xã hội trên các nền tảng"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:31
+#: templates/admin/social_sharing/socialshare/change_list.html:31
 msgid "Filters"
 msgstr "Lọc"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:35
+#: templates/admin/social_sharing/socialshare/change_list.html:35
 msgid "Toggle Filters"
 msgstr "Bật/Tắt bộ lọc"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:44
+#: templates/admin/social_sharing/socialshare/change_list.html:44
 msgid "Search"
 msgstr "Tìm kiếm"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:46
 msgid "Search by content ID..."
 msgstr "Tìm kiếm theo ID nội dung..."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:55
+#: templates/admin/social_sharing/socialshare/change_list.html:55
 msgid "All Platforms"
 msgstr "Tất cả nền tảng"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:69
+#: templates/admin/social_sharing/socialshare/change_list.html:69
 msgid "Content Type"
 msgstr "Loại nội dung"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:72
+#: templates/admin/social_sharing/socialshare/change_list.html:72
 msgid "All Types"
 msgstr "Tất cả loại"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:82
 msgid "Min. Share Count"
 msgstr "Số lượng chia sẻ tối thiểu"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:84
 msgid "Minimum shares"
 msgstr "Số chia sẻ tối thiểu"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:90
 msgid "Sort By"
 msgstr "Sắp xếp theo"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:93
 msgid "Most Shares"
 msgstr "Nhiều chia sẻ nhất"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:94
 msgid "Least Shares"
 msgstr "Ít chia sẻ nhất"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:95
 msgid "Recently Updated"
 msgstr "Cập nhật gần đây"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:96
 msgid "Oldest Updated"
 msgstr "Cập nhật lâu nhất"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:104
+#: templates/admin/social_sharing/socialshare/change_list.html:112
 msgid "Active:"
 msgstr "Hoạt động:"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:111
+#: templates/admin/social_sharing/socialshare/change_list.html:119
 msgid "Clear All"
 msgstr "Xóa tất cả"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:115
+#: templates/admin/social_sharing/socialshare/change_list.html:123
 msgid "Apply Filters"
 msgstr "Áp dụng bộ lọc"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "Showing"
 msgstr "Hiển thị"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "results"
 msgstr "kết quả"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:21
 msgid "Monitor individual share events and user engagement"
 msgstr "Theo dõi các sự kiện chia sẻ cá nhân và sự tương tác của người dùng"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:46
 msgid "Search by user, URL..."
 msgstr "Tìm kiếm theo người dùng, URL..."
 
+#: templates/admin/social_sharing/socialshare/change_list.html:82
 msgid "Device"
 msgstr "Thiết bị"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:85
 msgid "All Devices"
 msgstr "Tất cả thiết bị"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:95
 msgid "Date From"
 msgstr "Ngày bắt đầu"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:103
 msgid "Date To"
 msgstr "Ngày kết thúc"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:25
 msgid "Configure automatic social sharing buttons across your store"
 msgstr ""
 "Cấu hình các nút chia sẻ mạng xã hội tự động trên toàn bộ cửa hàng của bạn"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:30
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:234
 msgid "Save and continue editing"
 msgstr "Lưu và tiếp tục chỉnh sửa"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:33
 msgid "Save settings"
 msgstr "Lưu cài đặt"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:50
 msgid "Please correct the errors below"
 msgstr "Vui lòng sửa các lỗi bên dưới"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:83
 msgid "Automatic Placement"
 msgstr "Vị trí tự động"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:84
 msgid ""
 "Configure where social share buttons appear automatically across your store."
 msgstr ""
 "Cấu hình nơi các nút chia sẻ mạng xã hội xuất hiện tự động trên toàn bộ cửa "
 "hàng của bạn."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:129
 msgid "Platforms"
 msgstr "Nền tảng"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:130
 msgid ""
 "Select which social platforms to show. If none are selected, all platforms "
 "will be displayed."
@@ -686,23 +962,30 @@ msgstr ""
 "Chọn các nền tảng mạng xã hội muốn hiển thị. Nếu không chọn nền tảng nào, "
 "tất cả các nền tảng sẽ được hiển thị."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:140
 msgid "Button Appearance"
 msgstr "Mẫu mã nút"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:141
 msgid "Control how the share buttons look on your store."
 msgstr "Kiểm soát cách các nút chia sẻ hiển thị trên cửa hàng của bạn."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:186
 msgid "Tracking & Analytics"
 msgstr "Theo dõi và Phân tích"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:187
 msgid "Control share tracking and count display."
 msgstr "Kiểm soát việc theo dõi chia sẻ và hiển thị số lượng."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:215
 msgid "Last Updated"
 msgstr "Cập nhật lần cuối"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:233
 msgid "Save"
 msgstr "Lưu"
 
+#: views.py:214
 msgid "Social sharing settings updated successfully."
 msgstr "Cài đặt chia sẻ xã hội đã được cập nhật thành công."

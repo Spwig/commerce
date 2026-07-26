@@ -2,6 +2,7 @@
 Cart Service - Business logic for cart operations
 """
 
+import logging
 from decimal import Decimal
 from typing import Any
 
@@ -13,6 +14,8 @@ from catalog.services.stock_reservation import StockReservationService
 from core.utils import get_default_currency
 
 from ..models import Cart, CartItem
+
+logger = logging.getLogger(__name__)
 
 
 class CartService:
@@ -36,15 +39,138 @@ class CartService:
         try:
             from ..models import CheckoutSession
 
+            # No status predicate: CheckoutSession has no `status` field (its
+            # state field is `step_completed`), and `cart` is a OneToOneField
+            # so there is at most one row. Filtering on a phantom field raised
+            # FieldError when the queryset compiled — before any SQL — and the
+            # except below swallowed it, making recalculate_totals unreachable
+            # from every call site.
+            #
+            # Expiry is deliberately not filtered either. validate_checkout
+            # already rejects expired sessions, and recalculating one that is
+            # later extended is free; skipping it would leave stale totals.
             session = (
-                CheckoutSession.objects.filter(cart=cart, status="active")
+                CheckoutSession.objects.filter(cart=cart)
                 .select_related("shipping_address", "selected_shipping_method")
                 .first()
             )
             if session:
                 session.recalculate_totals()
         except Exception:
-            pass  # Non-critical — checkout will recalculate on next step
+            # Still swallowed for now so this change carries only the
+            # behavioural risk of totals actually refreshing. Logged because
+            # verifying that on staging is impossible against a silent except.
+            # Tightening this to propagate is a separate, later step.
+            logger.exception("Checkout session recalculation failed for cart %s", cart.pk)
+
+    @staticmethod
+    def _validate_gift_card_data(product, gift_card_data):
+        """
+        Validate a gift card line: recipient details and face value.
+
+        Returns (ok, message, cleaned_data).
+
+        Lives in the service rather than only in ``GiftCardDataSerializer``
+        because POS adds items through ``CartService.add_item`` directly and
+        would otherwise skip validation entirely. The serializer still runs for
+        web requests — it gives better field-level errors — so this is a second
+        gate over the same rules, not the only one.
+
+        Face value matters most. A merchant configures
+        ``gift_card_denomination_type`` with fixed denominations, a custom
+        range, or both; without enforcing that here, every customer buys a card
+        at ``product.price`` regardless of what the admin promised, and a
+        customer supplying their own ``amount`` could mint a card worth more
+        than they pay.
+        """
+        from decimal import Decimal, InvalidOperation
+
+        from cart.serializers import GiftCardDataSerializer
+
+        serializer = GiftCardDataSerializer(data=gift_card_data or {})
+        if not serializer.is_valid():
+            # Name the field. A bare "This field is required." reaches the
+            # customer through the cart API and tells them nothing about what
+            # to fix.
+            field, first_error = next(iter(serializer.errors.items()))
+            detail = first_error[0] if isinstance(first_error, list) else first_error
+            label = str(field).replace("_", " ")
+            message = (
+                str(detail)
+                if str(field) in {"gift_card_data", "non_field_errors"}
+                else f"{label}: {detail}"
+            )
+            return False, message, None
+        cleaned = dict(serializer.validated_data)
+
+        amount = cleaned.get("amount")
+        denom_type = product.gift_card_denomination_type or "fixed"
+        allowed = product.gift_card_denominations or []
+
+        def _as_decimals(values):
+            out = []
+            for v in values:
+                try:
+                    out.append(Decimal(str(v)))
+                except (InvalidOperation, TypeError, ValueError):
+                    continue
+            return out
+
+        allowed_decimals = _as_decimals(allowed)
+
+        if amount is None:
+            # No amount supplied. Fine only when the product has a single
+            # implied value; otherwise the customer has not chosen one.
+            if denom_type == "custom":
+                return False, _("Choose an amount for this gift card."), None
+            if denom_type in ("fixed", "both") and len(allowed_decimals) > 1:
+                return False, _("Choose an amount for this gift card."), None
+            if allowed_decimals:
+                cleaned["amount"] = allowed_decimals[0]
+            return True, "", cleaned
+
+        if amount <= 0:
+            return False, _("Gift card amount must be greater than zero."), None
+
+        if denom_type == "fixed":
+            if amount not in allowed_decimals:
+                return False, _("That is not an available gift card amount."), None
+            return True, "", cleaned
+
+        # "custom" and "both" allow a free amount within the merchant's range.
+        # A fixed denomination is also acceptable under "both".
+        if denom_type == "both" and amount in allowed_decimals:
+            return True, "", cleaned
+
+        minimum = product.gift_card_min_amount
+        maximum = product.gift_card_max_amount
+        if minimum is not None and amount < minimum:
+            return False, _("Minimum gift card amount is %(min)s.") % {"min": minimum}, None
+        if maximum is not None and amount > maximum:
+            return False, _("Maximum gift card amount is %(max)s.") % {"max": maximum}, None
+        if minimum is None and maximum is None and denom_type == "both" and allowed_decimals:
+            # "both" with no custom range configured behaves as "fixed".
+            return False, _("That is not an available gift card amount."), None
+
+        return True, "", cleaned
+
+    @staticmethod
+    def _json_safe_gift_card_data(cleaned):
+        """
+        Make validated data storable in a plain JSONField.
+
+        DRF hands back a ``Decimal`` for ``amount`` and a ``datetime`` for
+        ``scheduled_send_at``; neither is JSON-serialisable, and both fields are
+        plain ``models.JSONField`` with no custom encoder. Writing them raw
+        raises at add-to-cart — i.e. the customer cannot buy a gift card at all
+        the moment they pick an amount or a delivery date.
+        """
+        out = dict(cleaned)
+        if out.get("amount") is not None:
+            out["amount"] = str(out["amount"])
+        if out.get("scheduled_send_at") is not None:
+            out["scheduled_send_at"] = out["scheduled_send_at"].isoformat()
+        return out
 
     @staticmethod
     def _validate_customizations(
@@ -270,6 +396,22 @@ class CartService:
                     )
                 continue
 
+            # Refuse bundles containing a gift card.
+            #
+            # The sales check only ever looked at the TOP-LEVEL product, so a
+            # bundle with a gift card component slipped through it — and
+            # create_gift_cards_for_order filters parent_bundle__isnull=True,
+            # so the component is charged for and no card is ever minted.
+            # Refusing is right rather than supporting it: bundled gift cards
+            # are not a requested feature, and the current behaviour is
+            # simply taking money for nothing.
+            if bundle_item.component_product.product_type == "gift_card":
+                return (
+                    False,
+                    _("Bundles cannot contain gift cards."),
+                    None,
+                )
+
             # Check if variant selection is required
             if bundle_item.allow_variant_selection:
                 if bundle_item.component_product.product_type == "variable":
@@ -400,7 +542,6 @@ class CartService:
 
         # Recalculate voucher and gift card discounts if any
         cart.recalculate_voucher_discounts()
-        cart.recalculate_gift_card_discounts()
 
         return True, message, parent_item
 
@@ -679,7 +820,6 @@ class CartService:
 
         # Recalculate voucher and gift card discounts
         cart.recalculate_voucher_discounts()
-        cart.recalculate_gift_card_discounts()
 
         return True, _("Configured product added to cart"), parent_item
 
@@ -722,6 +862,8 @@ class CartService:
             # loads can both miss the existing cart and both create a new one,
             # leaving duplicates that bounce non-deterministically on later
             # reads (see _merge_duplicate_carts).
+            from django.db import IntegrityError
+
             with transaction.atomic():
                 carts = list(
                     Cart.objects.select_for_update()
@@ -729,10 +871,27 @@ class CartService:
                     .order_by("-updated_at", "-id")
                 )
                 if not carts:
-                    cart = Cart.objects.create(
-                        session_key=session_key,
-                        user=None,
-                    )
+                    # select_for_update cannot lock a row that does not exist
+                    # yet, so two first-touch requests on a brand-new guest
+                    # session (the storefront fires several cart/checkout API
+                    # calls at once on load) can both reach here and both
+                    # INSERT — the loser hit the partial unique constraint and
+                    # 500'd. Create inside a savepoint; on the race, adopt the
+                    # winner's cart instead of erroring.
+                    try:
+                        with transaction.atomic():
+                            cart = Cart.objects.create(
+                                session_key=session_key,
+                                user=None,
+                            )
+                    except IntegrityError:
+                        cart = (
+                            Cart.objects.filter(session_key=session_key, user=None)
+                            .order_by("-updated_at", "-id")
+                            .first()
+                        )
+                        if cart is None:
+                            raise
                 elif len(carts) == 1:
                     cart = carts[0]
                 else:
@@ -743,7 +902,143 @@ class CartService:
         else:
             raise ValueError(_("Either user or session_key must be provided"))
 
+        CartService.sync_cart_currency(cart)
         return cart
+
+    @staticmethod
+    def sync_cart_currency(cart: Cart) -> bool:
+        """Reprice items whose stored currency differs from the cart's.
+
+        Items get stranded in a stale currency when the shopper switches
+        display currency mid-session, or when an add-to-cart path stores a
+        product-currency price into a cart operating in another currency.
+        Mixed-currency items make every Money aggregation on the cart raise
+        TypeError, which breaks the cart and checkout APIs.
+
+        Plain product/variant items are repriced through the normal pricing
+        path (respects fixed per-currency prices and charming rules).
+        Derived prices (bundles, configurator, customizations,
+        subscriptions) are converted from the line's immutable
+        `base_unit_price` anchor in a single hop — never from the previous
+        converted value, which would let repeated currency toggles
+        accumulate spread/rounding drift in the customer's favour. All
+        conversions go through ExchangeRateService.convert so the
+        merchant's FX markup applies uniformly. Items that cannot be
+        converted are left unchanged and logged, and the failing currency
+        pair is negative-cached briefly so a stranded cart doesn't hammer
+        rate providers on every request.
+
+        Returns True when any item was repriced.
+        """
+        from django.core.cache import cache
+        from djmoney.money import Money
+
+        from exchange_rates.services.exchange_service import ExchangeRateService
+
+        target = str(cart.effective_currency)
+        # Cheap pre-check; the common case is "nothing to do"
+        if not cart.items.exclude(unit_price_currency=target).exists():
+            return False
+
+        service = ExchangeRateService()
+        repriced = False
+        with transaction.atomic():
+            # Lock item rows so concurrent currency switches serialise
+            # (of="self": FOR UPDATE can't target the nullable variant join)
+            items = list(
+                cart.items.select_for_update(of=("self",)).select_related("product", "variant")
+            )
+            for item in items:
+                source = str(item.unit_price.currency)
+                if source == target:
+                    continue
+                fail_key = f"cart_fx_sync_fail:{source}:{target}"
+                if cache.get(fail_key):
+                    continue  # known-unavailable pair; retry after TTL
+                try:
+                    # MoneyField stores amount + currency in separate columns;
+                    # update_fields must name both or the currency won't save
+                    update_fields = ["unit_price", "unit_price_currency"]
+                    # Seed the anchor for rows created before base_unit_price
+                    # existed: the stored price/customizations are the best
+                    # available as-priced values at that point.
+                    if item.base_unit_price is None:
+                        item.base_unit_price = item.unit_price
+                        update_fields += ["base_unit_price", "base_unit_price_currency"]
+                    base = item.base_unit_price
+                    base_currency = str(base.currency)
+
+                    simple = (
+                        not item.customizations
+                        and item.parent_bundle_id is None
+                        and item.subscription_plan_id is None
+                        and item.product.product_type not in ("bundle", "configurable")
+                    )
+                    if simple:
+                        # Canonical recompute from the product/variant price
+                        if item.variant_id is None:
+                            new_price = item.product.get_price_in_currency(target)
+                        else:
+                            new_price = item.variant.get_effective_price()
+                        if str(new_price.currency) != target:
+                            # Pricing path couldn't produce the target currency
+                            # (e.g. multi-currency disabled) — convert.
+                            new_price = Money(
+                                service.convert(new_price.amount, str(new_price.currency), target),
+                                target,
+                            )
+                    elif base_currency == target:
+                        # Round trip back to the anchor currency: exact restore
+                        new_price = base
+                    else:
+                        new_price = Money(
+                            Decimal(service.convert(base.amount, base_currency, target)).quantize(
+                                Decimal("0.01")
+                            ),
+                            target,
+                        )
+                    if not simple and item.customizations:
+                        if CartService._sync_customization_prices(
+                            item, base_currency, target, service
+                        ):
+                            update_fields.append("customizations")
+                    item.unit_price = new_price
+                except Exception:
+                    cache.set(fail_key, True, 300)
+                    logger.exception(
+                        "Could not reprice cart item %s from %s to %s", item.id, source, target
+                    )
+                    continue
+                item.save(update_fields=update_fields)
+                repriced = True
+        return repriced
+
+    @staticmethod
+    def _sync_customization_prices(item, base_currency, target, service) -> bool:
+        """Convert each customization's calculated_price from its anchored base.
+
+        Seeds `calculated_price_base` (in the line's base currency) the first
+        time through, then always converts base → target in one hop. Only
+        rescales numeric values — never reshapes the payload, which is
+        validated exclusively by _validate_customizations at add time.
+        """
+        changed = False
+        for data in item.customizations.values():
+            if not isinstance(data, dict) or "calculated_price" not in data:
+                continue
+            if "calculated_price_base" not in data:
+                data["calculated_price_base"] = str(data["calculated_price"])
+            base_amount = Decimal(str(data["calculated_price_base"]))
+            if base_currency == target:
+                data["calculated_price"] = str(base_amount)
+            else:
+                data["calculated_price"] = str(
+                    Decimal(service.convert(base_amount, base_currency, target)).quantize(
+                        Decimal("0.01")
+                    )
+                )
+            changed = True
+        return changed
 
     @staticmethod
     def _merge_duplicate_carts(carts: list[Cart]) -> Cart:
@@ -751,12 +1046,10 @@ class CartService:
         Merge a list of duplicate Cart rows into one keeper.
 
         Keeper = cart with the most items (then highest id). Items from losers
-        are reassigned or quantity-merged into the keeper, vouchers/gift-cards
-        are preserved when not already present on the keeper, then loser carts
+        are reassigned or quantity-merged into the keeper, vouchers are
+        preserved when not already present on the keeper, then loser carts
         are deleted. Must be called inside an outer transaction.
         """
-        from ..models import AppliedGiftCard
-
         keeper = max(carts, key=lambda c: (c.items.count(), c.id))
         losers = [c for c in carts if c.id != keeper.id]
 
@@ -785,20 +1078,17 @@ class CartService:
                     item.cart = keeper
                     item.save(update_fields=["cart", "updated_at"])
 
-            # Preserve vouchers / gift cards not already on keeper
+            # Preserve vouchers not already on keeper. Gift cards are not cart
+            # state any more — they are tendered against a CheckoutSession, so
+            # there is nothing on the cart to carry over.
             for v in loser.applied_vouchers.all():
                 if not keeper.applied_vouchers.filter(voucher=v.voucher).exists():
                     v.cart = keeper
                     v.save(update_fields=["cart"])
-            for g in AppliedGiftCard.objects.filter(cart=loser):
-                if not AppliedGiftCard.objects.filter(cart=keeper, gift_card=g.gift_card).exists():
-                    g.cart = keeper
-                    g.save(update_fields=["cart"])
 
             loser.delete()
 
         keeper.recalculate_voucher_discounts()
-        keeper.recalculate_gift_card_discounts()
         keeper.save(update_fields=["updated_at"])
         return keeper
 
@@ -818,6 +1108,7 @@ class CartService:
         configuration: dict[int, list[int]] | None = None,
         preset_id: int | None = None,
         booking_data: dict | None = None,
+        gift_card_data: dict | None = None,
         is_subscription: bool = False,
         subscription_plan=None,
         pricing_tier=None,
@@ -854,6 +1145,20 @@ class CartService:
         # Validate product is not deleted
         if product.is_deleted:
             return False, _("This product is no longer available"), None
+
+        # Gift card sales are live as of P2.3 (the issuance receiver in
+        # catalog/signals.py mints and delivers the card once payment clears).
+        # The blanket refusal that stood here through R1/P2.2 is gone; what
+        # replaces it is validation, because a gift card line carries details
+        # that reach a third party and set a face value.
+        #
+        # Validated in the SERVICE, not only in the DRF serializer: POS calls
+        # add_item directly (pos_api/views/cart.py) and would otherwise bypass
+        # every check below.
+        if product.product_type == "gift_card":
+            ok, msg, gift_card_data = CartService._validate_gift_card_data(product, gift_card_data)
+            if not ok:
+                return False, msg, None
 
         # Check product dependencies
         from catalog.services.dependency_service import check_hard_dependencies
@@ -1003,6 +1308,37 @@ class CartService:
             cart.recalculate_voucher_discounts()
             return True, _("Booking added to cart"), cart_item
 
+        # Gift card lines are never merged either, for the same reason bookings
+        # are not: each one carries details unique to it.
+        #
+        # Merging is actively wrong here. Buy a card for alice@ and another for
+        # bob@ from the same product and the merge below would collapse them
+        # into one line at quantity 2 carrying ONE recipient — so alice gets
+        # both cards and bob gets nothing, having been charged.
+        if product.product_type == "gift_card":
+            # Face value drives the line price, and must be applied HERE rather
+            # than beside validation above: the general pricing block in between
+            # recomputes unit_price from the product/variant and would discard
+            # the customer's chosen denomination, charging product.price while
+            # the admin promised a choice of amounts.
+            if (gift_card_data or {}).get("amount") is not None:
+                from djmoney.money import Money
+
+                unit_price = Money(Decimal(str(gift_card_data["amount"])), cart.effective_currency)
+
+            cart_item = CartItem.objects.create(
+                cart=cart,
+                product=product,
+                variant=variant,
+                quantity=quantity,
+                unit_price=unit_price,
+                customizations=validated_customizations,
+                notes=notes,
+                gift_card_data=CartService._json_safe_gift_card_data(gift_card_data or {}),
+            )
+            cart.recalculate_voucher_discounts()
+            return True, _("Gift card added to cart"), cart_item
+
         # Check if identical item (same product, variant, AND customizations) already exists in cart
         existing_filter = CartItem.objects.filter(
             cart=cart,
@@ -1081,7 +1417,6 @@ class CartService:
 
         # Recalculate voucher and gift card discounts if any
         cart.recalculate_voucher_discounts()
-        cart.recalculate_gift_card_discounts()
 
         # Sync checkout session totals
         CartService._sync_checkout_session(cart)
@@ -1216,7 +1551,6 @@ class CartService:
 
         # Recalculate voucher and gift card discounts
         cart_item.cart.recalculate_voucher_discounts()
-        cart_item.cart.recalculate_gift_card_discounts()
 
         # Sync checkout session totals
         CartService._sync_checkout_session(cart_item.cart)
@@ -1303,7 +1637,6 @@ class CartService:
 
         # Recalculate voucher and gift card discounts
         cart.recalculate_voucher_discounts()
-        cart.recalculate_gift_card_discounts()
 
         # Sync checkout session totals
         CartService._sync_checkout_session(cart)
@@ -1410,46 +1743,6 @@ class CartService:
 
     @staticmethod
     @transaction.atomic
-    def apply_gift_card(
-        cart: Cart, gift_card_code: str, customer_currency: str = None
-    ) -> tuple[bool, str, Decimal]:
-        """
-        Apply gift card to cart
-
-        Args:
-            cart: Cart instance
-            gift_card_code: Gift card code to apply
-            customer_currency: Customer's active currency code (from session/middleware)
-
-        Returns:
-            Tuple of (success: bool, message: str, discount_amount: Decimal)
-        """
-        result = cart.apply_gift_card(gift_card_code, customer_currency=customer_currency)
-        if result[0]:  # success
-            CartService._sync_checkout_session(cart)
-        return result
-
-    @staticmethod
-    @transaction.atomic
-    def remove_gift_card(cart: Cart, gift_card_code: str) -> tuple[bool, str]:
-        """
-        Remove gift card from cart
-
-        Args:
-            cart: Cart instance
-            gift_card_code: Gift card code to remove
-
-        Returns:
-            Tuple of (success: bool, message: str)
-        """
-        removed = cart.remove_gift_card(gift_card_code)
-        if removed:
-            CartService._sync_checkout_session(cart)
-            return True, _("Gift card removed")
-        return False, _("Gift card not found in cart")
-
-    @staticmethod
-    @transaction.atomic
     def merge_carts(source_cart: Cart, target_cart: Cart) -> tuple[bool, str]:
         """
         Merge source cart into target cart (used when anonymous user logs in)
@@ -1466,6 +1759,18 @@ class CartService:
         for item in source_cart.items.all():
             # Skip bundle component items - they'll be handled when parent is merged
             if item.parent_bundle is not None:
+                continue
+
+            # Gift card lines move across whole and never merge. Two cards
+            # bought for two different recipients match on
+            # (product, variant, customizations) — customizations is empty for
+            # both — so merging would fold them into one line carrying one
+            # recipient, and the other recipient's card would never exist.
+            # This reproduces the add_item collapse independently, on login.
+            if item.product.product_type == "gift_card":
+                item.cart = target_cart
+                item.save()
+                items_merged += 1
                 continue
 
             # Check if identical item (same product, variant, AND customizations) exists in target cart
@@ -1504,7 +1809,6 @@ class CartService:
 
         # Recalculate target cart
         target_cart.recalculate_voucher_discounts()
-        target_cart.recalculate_gift_card_discounts()
         target_cart.save(update_fields=["updated_at"])
 
         message = _("{count} items merged into cart").format(count=items_merged)

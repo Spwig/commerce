@@ -618,12 +618,17 @@ class CustomizationAPITest(TestCase):
 
         self.client = APIClient()
 
-        # Create site settings (required for middleware)
-        SiteSettings.objects.create(
+        # The root conftest seeds the SiteSettings singleton for every
+        # DB-using test; set the values this suite depends on explicitly.
+        # update_or_create (not create) so it neither collides with the
+        # seed under pytest nor breaks under the plain Django runner.
+        SiteSettings.objects.update_or_create(
             pk=1,
-            admin_email="admin@example.com",
-            default_currency="USD",
-            enable_multi_warehouse=False,
+            defaults={
+                "admin_email": "admin@example.com",
+                "default_currency": "USD",
+                "enable_multi_warehouse": False,
+            },
         )
 
         # Create category

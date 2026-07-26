@@ -116,6 +116,8 @@ Rewards are what customers can redeem their points for:
    - **Free Shipping** — 300 points
    - **10% Discount** — 1000 points
 
+> **Discount Code rewards can't be redeemed right now.** A reward with **Reward Type** set to **Discount Code** — like the $5 Off Coupon or 10% Discount examples above — currently fails to redeem. The member sees a clear error and their points are automatically returned to their balance, so nothing is lost, but the reward isn't usable yet. This is a deliberate fix: redemption used to report success while quietly deducting points and issuing nothing. If members mention a redemption "not working," that's this — not a new problem. Discount rewards will start working again in an upcoming release. This does not affect Free Shipping, Free Product, or Experience/Perk rewards.
+
 ### Step 4: Create Badges (Optional)
 
 Badges recognize customer achievements:

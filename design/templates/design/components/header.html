@@ -6,12 +6,13 @@
 {% if hidden %}
     {# Header hidden for this page #}
 {% elif header %}
+{# Resolved once here so the notification zone and its portaled modal share one query #}
+{% if header.enable_notification_zone %}{% get_active_announcements as announcements %}{% endif %}
 <header class="site-header header-preset-{{ header.layout_type }} {{ header.css_classes }}" role="banner"
         {% if header.is_sticky %}data-sticky="true" data-sticky-offset="{{ header.sticky_offset }}"{% endif %}>
 
     {# Notification Zone — above all other zones #}
     {% if header.enable_notification_zone %}
-    {% get_active_announcements as announcements %}
     {% if announcements %}
     {% with nz_config=header.get_notification_zone_config %}
     <div class="header-zone header-zone--notification"{% with override_style=zone_overrides|zone_override_styles:'notification' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
@@ -43,14 +44,6 @@
             {% if nz_config.dismissible %}
             <button type="button" class="announcement-close" aria-label="{% mtrans 'Close announcement' %}">&times;</button>
             {% endif %}
-        </div>
-    </div>
-
-    {# Announcement modal — rendered once per page #}
-    <div id="announcement-modal" class="announcement-modal-backdrop" aria-hidden="true">
-        <div class="announcement-modal" role="dialog" aria-modal="true">
-            <button type="button" class="announcement-modal-close" aria-label="{% mtrans 'Close' %}">&times;</button>
-            <div class="announcement-modal-content"></div>
         </div>
     </div>
     {% endwith %}
@@ -243,8 +236,35 @@
     </div>
     {% endif %}
 
-    {# Mobile Menu - Slide out panel #}
-    <div id="mobile-menu" class="mobile-menu" data-mobile-menu aria-hidden="true">
+    {# Custom CSS #}
+    {% if header.custom_css %}
+    <style>{{ header.custom_css|safe }}</style>
+    {% endif %}
+</header>
+
+{% comment %}
+   ==========================================================================
+   Viewport-level overlays — deliberately rendered OUTSIDE <header>.
+
+   <header> is position:sticky with a z-index, so it forms a stacking context,
+   and any transform/filter/backdrop-filter/will-change/contain on it or a
+   descendant zone would make it the containing block for position:fixed
+   children. Either one traps a full-screen overlay inside the header strip.
+   Keep these siblings of <header>, never children — same reason the mini-cart
+   lives at body level in page_builder/base.html.
+
+   NB: this block uses the comment TAG, not the hash-comment syntax. Django's
+   hash comments are single-line only — the lexer is not compiled with
+   re.DOTALL — so a multi-line one renders verbatim. That leaked this very
+   note onto every storefront page and, because the prose contains literal
+   <header> tags, the parser opened phantom headers and adopted #mobile-menu
+   into one of them. Guarded by
+   tests/e2e/test_header_overlays.py::test_header_template_leaks_no_comment_markup.
+   ==========================================================================
+{% endcomment %}
+
+{# Mobile Menu - Slide out panel #}
+<div id="mobile-menu" class="mobile-menu" data-mobile-menu aria-hidden="true">
         <div class="mobile-menu__header">
             <span class="mobile-menu__title">{% mtrans 'Menu' %}</span>
             <button type="button" class="mobile-menu__close" data-menu-close aria-label="{% mtrans 'Close menu' %}">
@@ -303,13 +323,17 @@
                 {% endif %}
             </nav>
         </div>
-    </div>
+</div>
 
-    {# Custom CSS #}
-    {% if header.custom_css %}
-    <style>{{ header.custom_css|safe }}</style>
-    {% endif %}
-</header>
+{# Announcement modal — rendered once per page #}
+{% if header.enable_notification_zone and announcements %}
+<div id="announcement-modal" class="announcement-modal-backdrop" aria-hidden="true">
+    <div class="announcement-modal" role="dialog" aria-modal="true">
+        <button type="button" class="announcement-modal-close" aria-label="{% mtrans 'Close' %}">&times;</button>
+        <div class="announcement-modal-content"></div>
+    </div>
+</div>
+{% endif %}
 {% else %}
 {# Fallback: Static header when no HeaderTemplate is configured #}
 {% include 'page_builder/components/header_static.html' %}

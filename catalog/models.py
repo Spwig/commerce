@@ -1,9 +1,11 @@
+import uuid as uuid_lib
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import F, Prefetch, Q, Sum
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -204,27 +206,73 @@ class Category(CustomFieldsMixin, DesignMixin):
             return self.image_asset.get_display_url()
         return None
 
+    def _card_fallback_product(self):
+        """Storefront-visible product whose image can represent this category.
+
+        Prefers a featured product, then the best seller, searching this
+        category and all its subcategories. Excludes hidden/POS-only
+        products so component or configurator parts never become the card.
+        """
+        base = Product.objects.filter(
+            category_id__in=self.get_descendant_ids(),
+            status="published",
+            hide_from_storefront=False,
+            images__isnull=False,
+        ).exclude(sales_channel="pos_only")
+        return base.order_by("-is_featured", "-sales_count").first()
+
     def get_card_image_url(self):
         """Get image for category card with product fallback.
 
         Returns the category's own image if set, otherwise the primary
-        image of the first published product in this category.
+        image of a featured product, then the best-selling product.
         """
         if self.image_asset:
             return self.image_asset.get_display_url()
-        product = self.products.filter(status="published", images__isnull=False).only("id").first()
+        product = self._card_fallback_product()
         if product:
             return product.primary_image_url
         return None
 
-    def get_card_image_thumbnail(self, size_preset="card"):
-        """Get thumbnail for category card with product fallback."""
+    def get_card_image_thumbnail(self, size_preset="medium"):
+        """Get thumbnail for category card with product fallback.
+
+        Defaults to the "medium" (600x600) preset — an unknown preset makes
+        get_thumbnail() fall back to the full-size original, which is far
+        too heavy for cards.
+        """
         if self.image_asset:
             return self.image_asset.get_thumbnail(size_preset)
-        product = self.products.filter(status="published", images__isnull=False).only("id").first()
+        product = self._card_fallback_product()
         if product and product.primary_image:
             return product.primary_image.get_thumbnail(size_preset)
         return None
+
+    def get_card_image_sources(self):
+        """Responsive image URLs for category cards.
+
+        Resolves the card image asset once (merchant image, then product
+        fallback) and returns medium/large thumbnail URLs for use in a
+        srcset, or None when no usable image exists.
+        """
+        asset = self.image_asset
+        if not asset:
+            product = self._card_fallback_product()
+            asset = product.primary_image if product else None
+        if not asset:
+            return None
+        if asset.is_video() or asset.is_3d_model():
+            poster = asset.poster_image.url if asset.poster_image else None
+            return {"medium": poster, "large": None} if poster else None
+        # Both presets in one query; missing mediums degrade to the original
+        thumbs = {
+            t.size_preset: (t.webp_file.url if t.webp_file else t.file.url)
+            for t in asset.thumbnails.filter(size_preset__in=("medium", "large"))
+        }
+        return {
+            "medium": thumbs.get("medium") or asset.get_display_url(),
+            "large": thumbs.get("large"),
+        }
 
     def get_banner_url(self):
         """Get category banner URL from MediaAsset"""
@@ -236,11 +284,17 @@ class Category(CustomFieldsMixin, DesignMixin):
         """
         Get IDs of this category and all descendants (recursive).
         Used for querying products across entire category subtree.
+        Cached per instance so repeated calls in one request (product
+        counts, card-image fallback) walk the tree only once.
         """
-        ids = [self.id] if include_self else []
-        for child in self.children.filter(is_active=True):
-            ids.extend(child.get_descendant_ids(include_self=True))
-        return ids
+        if not hasattr(self, "_descendant_ids_cache"):
+            ids = [self.id]
+            for child in self.children.filter(is_active=True):
+                ids.extend(child.get_descendant_ids(include_self=True))
+            self._descendant_ids_cache = ids
+        if include_self:
+            return list(self._descendant_ids_cache)
+        return [i for i in self._descendant_ids_cache if i != self.id]
 
     def get_image_thumbnail(self, size_preset="medium"):
         """Get thumbnail for category image from MediaAsset"""
@@ -1045,6 +1099,15 @@ class Product(CustomFieldsMixin, DesignMixin):
             "Check if this product includes digital downloads (e.g., files, licenses). Can be combined with any product type for scenarios like variable digital products (software with Basic/Pro editions) or customizable digital products (custom designs)."
         ),
     )
+    requires_shipping = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name=_("Requires Shipping"),
+        help_text=_(
+            "Whether this product needs to be shipped to the customer. "
+            "Turn off for downloads, services and bookings."
+        ),
+    )
     hide_from_storefront = models.BooleanField(
         default=False,
         verbose_name=_("Hide from Storefront"),
@@ -1052,6 +1115,31 @@ class Product(CustomFieldsMixin, DesignMixin):
             "Hide this product from catalog listings and search results. "
             "The product remains available as a configurator option or bundle component."
         ),
+    )
+    # Agentic commerce visibility and condition. `agent_visible` defaults True
+    # so enabling agentic commerce doesn't require bulk-editing the catalog; a
+    # merchant opts individual products OUT. `condition` maps to the UCP/ACP
+    # catalog field (Google's agentic checkout excludes non-new goods).
+    agent_visible = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name=_("Visible to AI shopping agents"),
+        help_text=_(
+            "When off, AI shopping agents cannot see or buy this product, even "
+            "while it stays visible on the storefront."
+        ),
+    )
+    condition = models.CharField(
+        max_length=16,
+        default="new",
+        db_index=True,
+        choices=[
+            ("new", _("New")),
+            ("refurbished", _("Refurbished")),
+            ("used", _("Used")),
+        ],
+        verbose_name=_("Condition"),
+        help_text=_("Item condition reported to AI shopping agents."),
     )
     license_template = models.ForeignKey(
         "LicenseKeyTemplate",
@@ -1222,6 +1310,20 @@ class Product(CustomFieldsMixin, DesignMixin):
         # Digital products and gift cards are always digital
         if self.product_type in ["digital", "gift_card"]:
             self.is_digital = True
+            if self.product_type == "gift_card":
+                # A digital gift card is delivered by email, so it is neither
+                # shipped nor stocked. Both of these blocked the sale outright
+                # once the sales gate came off:
+                #   * requires_shipping True made checkout demand an address
+                #     and quote postage for an emailed code.
+                #   * track_inventory True made every add-to-cart fail with
+                #     "Insufficient stock", because StockItemInline is hidden
+                #     for gift cards so no merchant can ever create a
+                #     StockItem to satisfy it.
+                # R3 revisits this for PHYSICAL gift cards, which are shipped
+                # and stocked like any other good.
+                self.requires_shipping = False
+                self.track_inventory = False
         # For bundles, check if ALL components are digital
         elif self.product_type == "bundle":
             # Only check if this is an existing bundle (has ID)
@@ -1237,6 +1339,18 @@ class Product(CustomFieldsMixin, DesignMixin):
         # Booking products use slot-based capacity, not stock inventory
         if self.product_type == "booking":
             self.track_inventory = False
+
+        # requires_shipping was a @property returning
+        # `product_type not in ("digital", "booking")`. It is now a real column,
+        # because cart/models.py filters on `product__requires_shipping=True`
+        # and a property cannot be resolved by the ORM — that raised FieldError
+        # at query time on exactly the shippable-cart path.
+        #
+        # Types that can never ship keep forcing the value; everything else is
+        # merchant-controlled, which is what makes a physical gift card
+        # expressible in R3.
+        if self.product_type in ("digital", "booking"):
+            self.requires_shipping = False
 
         super().save(*args, **kwargs)
 
@@ -1553,11 +1667,6 @@ class Product(CustomFieldsMixin, DesignMixin):
             return f"{minutes} minute{'s' if minutes != 1 else ''}"
         else:
             return "Less than a minute"
-
-    @property
-    def requires_shipping(self):
-        """Check if product requires shipping (digital/booking products don't)"""
-        return self.product_type not in ("digital", "booking")
 
     @property
     def primary_image(self):
@@ -2000,34 +2109,29 @@ class Product(CustomFieldsMixin, DesignMixin):
             )
 
         # Validate gift_card_currency
+        #
+        # Deprecated and now refused. It meant "issue the card denominated in
+        # this currency", which converted the purchase price at the spot rate
+        # on the day of sale. Under D5 gift cards are single-currency —
+        # spendable only against a cart in the card's own currency — so such a
+        # card is unspendable by the customer who bought it, and it saddles the
+        # merchant with an unhedgeable, open-ended FX liability.
+        #
+        # The field is kept for now so existing rows still load; the column is
+        # dropped in a later schema-only migration. A merchant wanting to sell
+        # in several currencies issues a card per currency, as Apple, Amazon,
+        # Microsoft and Steam all do.
         if self.gift_card_currency:
-            if self.product_type != "gift_card":
-                raise ValidationError(
-                    {
-                        "gift_card_currency": _(
-                            "Gift card currency can only be set on gift card products."
-                        )
-                    }
-                )
-            # Validate it's a supported currency
-            from core.models import SiteSettings
-
-            settings = SiteSettings.get_settings()
-            if self.gift_card_currency == settings.default_currency:
-                # If same as base currency, clear it (no conversion needed)
-                self.gift_card_currency = None
-            elif (
-                settings.supported_currencies
-                and self.gift_card_currency not in settings.supported_currencies
-            ):
-                raise ValidationError(
-                    {
-                        "gift_card_currency": _(
-                            'Currency "%(currency)s" is not in the store\'s supported currencies.'
-                        )
-                        % {"currency": self.gift_card_currency}
-                    }
-                )
+            raise ValidationError(
+                {
+                    "gift_card_currency": _(
+                        "Gift card currency is no longer supported. Gift cards are "
+                        "issued in the currency the customer paid in, and can only "
+                        "be spent in that currency. To sell in another currency, "
+                        "create a separate gift card product priced in it."
+                    )
+                }
+            )
 
 
 class BundleItem(models.Model):
@@ -5801,6 +5905,25 @@ class GiftCard(models.Model):
         help_text=_("Purchase that created this card"),
     )
 
+    # Which of the N cards on that order line this is (0-based).
+    #
+    # Exists solely to carry the uniqueness constraint below. Issuance must be
+    # idempotent — a retried payment webhook, an admin re-save, or the
+    # settlement receiver's own amount_paid write-back all re-fire post_save on
+    # a paid Order — and "count existing cards, mint the difference" is a
+    # read-then-write race: two workers both read zero and both mint a full set.
+    # A unique index cannot be raced.
+    #
+    # NULL for cards created by hand in the admin, which have no order line and
+    # are exempt from the constraint via its partial condition.
+    issue_index = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name=_("Issue Index"),
+        help_text=_("Position of this card within its order line; enforces one-mint-per-slot"),
+    )
+
     # Balance tracking
     initial_value = MoneyField(
         max_digits=10,
@@ -5866,8 +5989,20 @@ class GiftCard(models.Model):
         help_text=_("Expiration date and time (null = never expires)"),
     )
 
+    uuid = models.UUIDField(
+        default=uuid_lib.uuid4,
+        editable=False,
+        unique=True,
+        db_index=True,
+        verbose_name=_("UUID"),
+        help_text=_("Stable public identifier — safe to expose where the code is not"),
+    )
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    # CLAUDE.md requires updated_at on every model. This one never had it, so
+    # there was no way to tell when a card was last touched.
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
 
     issued_at = models.DateTimeField(
         null=True, blank=True, verbose_name=_("Issued At"), help_text=_("When sent to recipient")
@@ -5906,6 +6041,22 @@ class GiftCard(models.Model):
             models.Index(fields=["is_active", "expires_at"]),
             models.Index(fields=["scheduled_send_at", "issued_at"]),
         ]
+        constraints = [
+            # One card per (order line, slot). This is the safety property for
+            # issuance — deliberately in the database rather than in Python,
+            # because every application-level alternative is a race.
+            #
+            # Partial: admin-created cards have no order_item and no
+            # issue_index, and must stay exempt. Note order_item is SET_NULL,
+            # so deleting a paid order's line detaches its cards from this
+            # constraint; that is an accepted residual, and requires deliberate
+            # destructive admin action on an order that has already been paid.
+            models.UniqueConstraint(
+                fields=["order_item", "issue_index"],
+                condition=models.Q(order_item__isnull=False, issue_index__isnull=False),
+                name="uniq_giftcard_order_item_issue_index",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.code} - {self.current_balance} / {self.initial_value}"
@@ -5930,31 +6081,22 @@ class GiftCard(models.Model):
         Returns:
             str: Unique gift card code
         """
-        import secrets
-        import string
+        from core.utils.codes import UNAMBIGUOUS_ALPHABET, generate_unique_code
 
-        # Use cryptographically secure random generation
-        alphabet = string.ascii_uppercase + string.digits
-        # Remove easily confused characters (0, O, I, 1)
-        alphabet = alphabet.replace("0", "").replace("O", "").replace("I", "").replace("1", "")
-
-        max_attempts = 10
-        for _attempt in range(max_attempts):
-            # Generate 12 random characters in groups of 4
-            part1 = "".join(secrets.choice(alphabet) for _c in range(4))
-            part2 = "".join(secrets.choice(alphabet) for _c in range(4))
-            part3 = "".join(secrets.choice(alphabet) for _c in range(4))
-
-            code = f"{prefix}-{part1}-{part2}-{part3}"
-
-            # Check uniqueness
-            if not GiftCard.objects.filter(code=code).exists():
-                return code
-
-        # Fallback to UUID if random generation fails (very unlikely)
-        import uuid
-
-        return f"{prefix}-{uuid.uuid4().hex[:12].upper()}"
+        # No UUID fallback: this used to fall back to
+        # f"{prefix}-{uuid4().hex[:12]}" after 10 collisions, which produces a
+        # code in a different shape from every other gift card (no group
+        # separators, and drawn from an alphabet including the 0/O/1/I
+        # characters this format deliberately excludes). Repeated collisions
+        # mean something is wrong with the keyspace or the uniqueness check,
+        # and that should surface rather than silently change the format.
+        return generate_unique_code(
+            exists=lambda code: GiftCard.objects.filter(code=code).exists(),
+            length=4,
+            groups=3,
+            prefix=prefix,
+            alphabet=UNAMBIGUOUS_ALPHABET,
+        )
 
     def clean(self):
         """Validate gift card configuration"""
@@ -6050,10 +6192,63 @@ class GiftCard(models.Model):
 
         return True, ""
 
+    @property
+    def held_amount(self):
+        """
+        Value currently reserved by in-flight checkouts.
+
+        A hold is an `authorize` PaymentTransaction against this card that has
+        neither been captured nor voided. Without subtracting it, two concurrent
+        checkouts both see the full balance and both pass validation.
+
+        Every tender row for a card is denominated in that card's own currency
+        (enforced below), so this sum is meaningful.
+        """
+        from djmoney.money import Money
+
+        from payment_providers.models import PaymentTransaction
+
+        holds = PaymentTransaction.objects.filter(
+            gift_card=self,
+            tender_type=PaymentTransaction.TENDER_GIFT_CARD,
+            transaction_type="authorize",
+            status="authorized",
+        ).values_list("amount", "amount_currency")
+
+        currency = self.current_balance.currency
+        total = Money(Decimal("0"), currency)
+        for amount, amount_currency in holds:
+            if str(amount_currency) != str(currency):
+                # Refuse to guess. Summing mixed currencies here would silently
+                # over- or under-state what is actually available to spend.
+                raise ValueError(
+                    f"Gift card {self.code} has a hold in {amount_currency} but "
+                    f"its balance is in {currency} — tender rows must match the "
+                    f"card's currency."
+                )
+            total += Money(amount, currency)
+        return total
+
+    @property
+    def available_balance(self):
+        """
+        What can still be spent: current balance minus in-flight holds.
+
+        `current_balance` alone is the wrong number to validate against once
+        holds exist — it is the *settled* balance and does not know about a
+        checkout in progress.
+        """
+        return self.current_balance - self.held_amount
+
     def redeem(self, amount, order=None, notes=""):
         """
         Redeem an amount from this gift card.
         Creates a transaction record and updates balance.
+
+        Locks the card row for the duration: this is a read-modify-write on
+        money, and without the lock two concurrent redemptions both read the
+        pre-deduction balance and the second overwrites the first, letting the
+        same value be spent twice.
 
         Args:
             amount: Money object to redeem
@@ -6067,98 +6262,174 @@ class GiftCard(models.Model):
             ValidationError: If redemption is not allowed
         """
         from django.core.exceptions import ValidationError
+        from django.db import transaction as db_transaction
 
-        can_redeem, error_msg = self.can_redeem(amount)
-        if not can_redeem:
-            raise ValidationError(error_msg)
+        with db_transaction.atomic():
+            # Re-read under the lock. The caller's copy of self may be stale by
+            # the time we get here, so validate against what is actually stored.
+            locked = GiftCard.objects.select_for_update().get(pk=self.pk)
 
-        # Update balance
-        self.current_balance -= amount
+            can_redeem, error_msg = locked.can_redeem(amount)
+            if not can_redeem:
+                raise ValidationError(error_msg)
 
-        # Set first_used_at if this is the first redemption
-        if not self.first_used_at:
-            self.first_used_at = timezone.now()
+            locked.current_balance -= amount
+            if not locked.first_used_at:
+                locked.first_used_at = timezone.now()
+            locked.save(update_fields=["current_balance", "first_used_at", "updated_at"])
 
-        self.save(update_fields=["current_balance", "first_used_at"])
+            # Keep the caller's instance consistent with what was written.
+            self.current_balance = locked.current_balance
+            self.first_used_at = locked.first_used_at
 
-        # Create transaction record
-        transaction = GiftCardTransaction.objects.create(
-            gift_card=self,
-            transaction_type="redemption",
-            amount=-amount,  # Negative for redemptions
-            balance_after=self.current_balance,
-            order=order,
-            notes=notes,
-        )
+            # Inside the transaction, deliberately. Written outside it, a
+            # failure here would leave the balance deducted with no ledger row,
+            # so summing GiftCardTransaction would no longer reconcile to the
+            # balance — the invariant that makes stored value auditable.
+            transaction = GiftCardTransaction.objects.create(
+                gift_card=locked,
+                transaction_type="redemption",
+                amount=-amount,  # Negative for redemptions
+                balance_after=locked.current_balance,
+                order=order,
+                notes=notes,
+            )
 
         return transaction
 
     def issue(self, send_email=True):
         """
-        Mark gift card as issued and optionally send email.
+        Mark gift card as issued and optionally send the delivery email.
 
-        Args:
-            send_email: Whether to send email to recipient
+        Returns:
+            bool: True if the card is issued AND (if requested) the email was
+            sent. False means delivery failed and should be retried.
+
+        ``issued_at`` is stamped regardless of email outcome, because the card
+        genuinely exists and is spendable from that moment. Delivery state is
+        therefore not the same thing as issuance state — callers that need to
+        retry delivery must key on the return value, not on ``issued_at``, and
+        should call :meth:`send_delivery_email` directly to re-send.
         """
         if not self.issued_at:
             self.issued_at = timezone.now()
             self.save(update_fields=["issued_at"])
 
-            # Create issue transaction
-            GiftCardTransaction.objects.create(
+            # get_or_create, not create: a card issued by hand through the admin
+            # already has its opening ledger row, and emailing it later must not
+            # book the value a second time.
+            GiftCardTransaction.objects.get_or_create(
                 gift_card=self,
                 transaction_type="issue",
-                amount=self.initial_value,
-                balance_after=self.current_balance,
-                notes=_("Gift card issued to {email}").format(email=self.recipient_email),
+                defaults={
+                    "amount": self.initial_value,
+                    "balance_after": self.current_balance,
+                    "notes": _("Gift card issued to {email}").format(email=self.recipient_email),
+                },
             )
 
         if send_email and self.recipient_email:
-            try:
-                from core.models import SiteSettings
-                from email_system.services.email_sender import EmailSendingService
+            return self.send_delivery_email()
 
-                settings = SiteSettings.get_settings()
-                site_url = (settings.site_url or "").rstrip("/")
+        return True
 
-                formatted_expiry = ""
-                if self.expires_at:
-                    formatted_expiry = self.expires_at.strftime("%B %d, %Y")
+    def send_delivery_email(self):
+        """
+        Send the delivery email. Does not change issuance state.
 
-                context = {
-                    "gift_card": {
-                        "code": self.code,
-                        "current_balance": str(self.current_balance),
-                        "initial_value": str(self.initial_value),
-                        "expires_at": formatted_expiry,
-                        "message": self.message or "",
-                        "sender_name": self.sender_name or "",
-                        "recipient_name": self.recipient_name or "",
-                        "recipient_email": self.recipient_email,
-                    },
-                    "recipient_name": self.recipient_name or "",
-                    "recipient_email": self.recipient_email,
-                    "sender_name": self.sender_name or "",
-                    "gift_card_code": self.code,
-                    "gift_card_amount": str(self.initial_value),
-                    "gift_card_message": self.message or "",
-                    "gift_card_expiry": formatted_expiry,
-                    "check_balance_url": f"{site_url}/gift-cards/check-balance/",
-                    "redeem_url": f"{site_url}/gift-cards/redeem/",
-                }
+        Split from :meth:`issue` so a delivery failure is reportable and
+        retryable: ``issue()`` stamps ``issued_at`` first, and the scheduled
+        sender selects on ``issued_at IS NULL``, so folding the two together
+        would mark a card delivered the moment sending was merely *attempted*
+        and it would never be retried.
 
-                EmailSendingService.send_template_email(
-                    to_email=self.recipient_email,
-                    template_type="gift_card_delivery",
-                    context=context,
-                    language=settings.default_language,
+        Returns:
+            bool: True if the email was handed to the email service.
+        """
+        import logging
+
+        if not self.recipient_email:
+            return False
+
+        try:
+            from core.models import SiteSettings
+            from email_system.services.email_sender import EmailSendingService
+
+            settings = SiteSettings.get_settings()
+            site_url = (settings.site_url or "").rstrip("/")
+
+            # Pass the model instance, NOT stringified fields. The template
+            # dereferences `gift_card.current_balance.amount`,
+            # `.current_balance.currency`, and
+            # `gift_card.expires_at|date:"F d, Y"` — against `str(...)` and a
+            # pre-formatted date those resolve to empty, so the recipient
+            # received a gift card email showing no value and no expiry.
+            #
+            # `shop_name`, `shop_url`, `support_email` and `theme.*` are
+            # injected by TemplateRenderer, so they are deliberately absent
+            # here. Every key below is one the template actually reads.
+            context = {
+                "gift_card": self,
+                "sender_name": self.sender_name or "",
+                # Routed as of P2.5e. reverse() rather than a hand-built
+                # string, so a URL rename breaks loudly at send time instead of
+                # silently mailing 404s — which is exactly what the previous
+                # hardcoded path did for every email since P2.3. The variable
+                # name is kept so the 17 seeded email templates need no change,
+                # and the old /check-balance/ spelling in already-sent emails
+                # redirects permanently.
+                "check_balance_url": f"{site_url}{reverse('catalog:gift_card_balance')}",
+            }
+
+            outbox = EmailSendingService.send_template_email(
+                to_email=self.recipient_email,
+                template_type="gift_card_delivery",
+                context=context,
+                language=settings.default_language,
+            )
+
+            # Report what actually happened, not merely that no exception was
+            # raised. send_template_email returns an EmailOutbox (or None) and
+            # can decline to send — suppression, preference checks, sandbox
+            # mode — without raising. Returning True regardless meant a
+            # declined send stamped issued_at, and the scheduled sender selects
+            # on issued_at IS NULL, so it was never retried: the customer paid
+            # and the recipient heard nothing, permanently.
+            if outbox is None:
+                logging.getLogger(__name__).error(
+                    "Gift card delivery for ***%s produced no outbox entry", self.code[-4:]
                 )
-            except Exception:
-                import logging
-
-                logging.getLogger(__name__).exception(
-                    "Failed to send gift card delivery email for ***%s", self.code[-4:]
+                return False
+            # Verified against every status email_sender actually writes:
+            # pending, queued, sent, failed, skipped, held, logged,
+            # sandbox_logged. "logged" is log-only mode: nothing was
+            # actually transmitted, so it must not stamp issued_at.
+            # "pending"/"queued"/"sent" are in-flight or delivered — success.
+            #
+            # "held" is treated as NOT delivered even though a release path
+            # exists. That is a deliberate trade: if the held copy is later
+            # released the recipient may get the email twice, but the card is
+            # the same card with the same code, so a duplicate email is only
+            # confusing. The opposite error — stamping issued_at on a message
+            # that never goes out — removes the card from the retry queryset
+            # permanently, and the gift silently never arrives.
+            status = getattr(outbox, "status", None)
+            if status in {"skipped", "failed", "held", "logged", "sandbox_logged"}:
+                logging.getLogger(__name__).error(
+                    "Gift card delivery for ***%s not sent (status=%s)",
+                    self.code[-4:],
+                    status,
                 )
+                return False
+            return True
+        except Exception:
+            # Returning False rather than swallowing silently is what lets the
+            # scheduled sender know to retry. Do not collapse this back into a
+            # bare log.
+            logging.getLogger(__name__).exception(
+                "Failed to send gift card delivery email for ***%s", self.code[-4:]
+            )
+            return False
 
     def adjust_balance(self, amount, reason="", created_by=None):
         """
@@ -6171,21 +6442,37 @@ class GiftCard(models.Model):
 
         Returns:
             GiftCardTransaction: The transaction record
+
+        Raises:
+            ValidationError: If the adjustment would drive the balance negative.
         """
+        from django.core.exceptions import ValidationError
+        from django.db import transaction as db_transaction
 
-        # Update balance
-        self.current_balance += amount
-        self.save(update_fields=["current_balance"])
+        with db_transaction.atomic():
+            # Same lock discipline as redeem(): an admin adjustment racing a
+            # customer redemption would otherwise lose one of the two writes.
+            locked = GiftCard.objects.select_for_update().get(pk=self.pk)
 
-        # Create transaction
-        transaction = GiftCardTransaction.objects.create(
-            gift_card=self,
-            transaction_type="adjustment",
-            amount=amount,
-            balance_after=self.current_balance,
-            notes=reason,
-            created_by=created_by,
-        )
+            new_balance = locked.current_balance + amount
+            if new_balance.amount < 0:
+                raise ValidationError(
+                    f"Adjustment of {amount} would take gift card {locked.code} "
+                    f"to {new_balance}. A card cannot hold a negative balance."
+                )
+
+            locked.current_balance = new_balance
+            locked.save(update_fields=["current_balance", "updated_at"])
+            self.current_balance = locked.current_balance
+
+            transaction = GiftCardTransaction.objects.create(
+                gift_card=locked,
+                transaction_type="adjustment",
+                amount=amount,
+                balance_after=locked.current_balance,
+                notes=reason,
+                created_by=created_by,
+            )
 
         return transaction
 
@@ -6205,7 +6492,13 @@ class GiftCardTransaction(models.Model):
     ]
 
     gift_card = models.ForeignKey(
-        GiftCard, on_delete=models.CASCADE, related_name="transactions", verbose_name=_("Gift Card")
+        GiftCard,
+        # PROTECT, not CASCADE. This is a liability ledger: deleting a card
+        # should not silently take its financial history with it, and a card
+        # that still holds value should not be deletable at all.
+        on_delete=models.PROTECT,
+        related_name="transactions",
+        verbose_name=_("Gift Card"),
     )
 
     transaction_type = models.CharField(

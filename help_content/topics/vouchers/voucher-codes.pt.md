@@ -2,7 +2,9 @@
 title: Códigos de Voucher
 ---
 
-Códigos de voucher permitem que você crie códigos de desconto, cupons e cartões-presente que os clientes inserem no checkout para receber um desconto. Navegue até **Marketing > Vouchers** no menu lateral do administrador.
+Códigos de voucher permitem que você crie códigos de desconto e cupons que os clientes inserem no checkout para receber um desconto. Navegue até **Marketing > Vouchers** no menu lateral do administrador.
+
+Procurando vender créditos de loja em vez de um desconto? Isso é um cartão-presente, gerenciado separadamente sob **Produtos > Cartões-presente** — veja o tópico de ajuda **Cartões-presente**.
 
 ![Lista de vouchers](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 
@@ -23,14 +25,14 @@ A página de voucher mostra uma visão geral com:
    - **Tipo de Desconto** — Escolha como o desconto é aplicado
    - **Valor do Desconto** — O valor ou porcentagem de desconto
 3. Configure as regras de uso:
-   - **Limite de Uso** — Máximo de redemptions totais (0 = ilimitado)
+   - **Limite de Uso** — Máximo total de redemptions (0 = ilimitado)
    - **Limite por Cliente** — Máximo de usos por cliente
    - **Valor Mínimo do Pedido** — Valor mínimo do carrinho necessário
 4. Defina o **escopo**:
    - **Todo o Carrinho** — O desconto se aplica a toda a ordem
    - **Produtos Específicos** — Apenas se aplica a itens selecionados
    - **Categorias Específicas** — Apenas se aplica a itens em categorias selecionadas
-5. Defina opcionalmente a expiração:
+5. Defina opcionalmente a data de expiração:
    - **Data de Expiração** — Quando o voucher deixa de funcionar
 6. Clique em **Salvar**
 
@@ -42,7 +44,7 @@ A página de voucher mostra uma visão geral com:
 | **Porcentagem** | Deduz uma porcentagem do total | 15% de desconto no pedido |
 | **Frete Grátis** | Remove as taxas de envio | Frete grátis em qualquer pedido |
 
-## Gerenciando Vouchers
+## Gerenciamento de Vouchers
 
 ### Cartões de Voucher
 
@@ -63,13 +65,13 @@ Cada cartão tem botões de ação:
 - **Ver Histórico** — Ver histórico de resgates
 - **Excluir** — Remover o voucher
 
-### Filtros de Voucher
+### Filtro de Vouchers
 
 Use a barra de filtro para encontrar vouchers específicos:
 - **Pesquisar** — Encontrar por código, nome ou descrição
 - **Tipo** — Valor Fixo, Porcentagem ou Frete Grátis
 - **Status** — Ativo ou Inativo
-- **Escopo** — Todo o Carrinho ou específico para produtos
+- **Escopo** — Todo o Carrinho ou itens específicos
 
 ## Geração em Lote de Vouchers
 
@@ -84,7 +86,7 @@ Quando um cliente tem um código de voucher:
 1. Eles prosseguem para **checkout**
 2. Inserem o código no campo **código de desconto**
 3. O desconto é aplicado imediatamente se o voucher for válido
-4. A resumo do pedido é atualizado para mostrar o desconto
+4. A resumo da ordem é atualizado para mostrar o desconto
 
 Se um voucher for inválido (expirado, limite de uso atingido, valor mínimo não atingido), o cliente verá uma mensagem de erro clara.
 
@@ -93,6 +95,6 @@ Se um voucher for inválido (expirado, limite de uso atingido, valor mínimo nã
 - Use códigos memoráveis para campanhas de marketing (ex: "SUMMER20" em vez de strings aleatórios).
 - Defina limites por cliente para evitar o abuso de descontos valiosos.
 - Use valores mínimos de pedido para manter a rentabilidade (ex: "$10 de desconto em pedidos acima de $50").
-- Monitore a contagem de redemptions no dashboard para acompanhar a eficácia da campanha.
+- Monitore a contagem de redemptions no painel para acompanhar a eficácia da campanha.
 - Crie vouchers com prazo limitado para criar urgência (ex: "Válido apenas este fim de semana").
 - Use o status Ativo/Inativo para pausar vouchers sem excluí-los.

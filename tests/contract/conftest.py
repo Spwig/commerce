@@ -3,6 +3,7 @@ Contract test fixtures and utilities
 """
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,16 @@ from rest_framework.test import APIClient
 
 # Schema baseline directory
 SCHEMA_DIR = Path(__file__).parent / "schemas"
+
+# Environment flag set by scripts/generate_contract_baselines.py. When on, a
+# contract test that finds no baseline records one from the live response
+# instead of skipping.
+RECORD_ENV_VAR = "SPWIG_RECORD_CONTRACTS"
+
+
+def recording_enabled() -> bool:
+    """True when baselines should be recorded rather than asserted against."""
+    return os.environ.get(RECORD_ENV_VAR) == "1"
 
 
 # ============================================================
@@ -137,3 +148,74 @@ def save_schema_baseline(
     schema_path = schema_dir / f"{serializer_name}.json"
     with open(schema_path, "w") as f:
         json.dump(schema, f, indent=2, sort_keys=True)
+
+
+def _unpin_nulls(schema: dict[str, Any]) -> dict[str, Any]:
+    """
+    Rewrite ``{"type": "null"}`` nodes to the unpinned sentinel, recursively.
+
+    A baseline recorded from one response cannot distinguish "this field is
+    always null" from "this field happened to be null in the fixture". Recording
+    the observed ``null`` would pin the contract to the fixture: a product that
+    *does* have a brand would then fail with
+    ``brand_name: Incorrect type. Expected: null, Got: string``, and the
+    breaking-change detector would report a break that never happened.
+
+    Presence is the assertion worth keeping; the type of a null is not knowable
+    from the sample, so it is left unpinned. Populate the fixture if you want a
+    field's type genuinely pinned.
+    """
+    from tests.contract.utils.contract_validator import UNPINNED_TYPE
+
+    node = dict(schema)
+
+    if node.get("type") == "null":
+        node["type"] = UNPINNED_TYPE
+        node["nullable"] = True
+
+    if "properties" in node:
+        node["properties"] = {k: _unpin_nulls(v) for k, v in node["properties"].items()}
+
+    items = node.get("items")
+    if isinstance(items, dict) and items:
+        node["items"] = _unpin_nulls(items)
+
+    return node
+
+
+def record_or_skip(
+    api_module: str,
+    serializer_name: str,
+    response_data: dict[str, Any],
+    version: str = "v1",
+):
+    """
+    Handle a missing baseline.
+
+    In record mode (``SPWIG_RECORD_CONTRACTS=1``, set by
+    ``scripts/generate_contract_baselines.py``) this writes the baseline from the
+    live response and skips. Otherwise it skips with instructions.
+
+    Baselines are recorded with :func:`extract_response_schema` — the same
+    function the assertions compare against. Do **not** substitute
+    ``generate_serializer_schema``: it marks only required, non-read-only fields
+    as required, whereas response extraction marks every present key, so mixing
+    the two reports breaking changes that have not happened.
+
+    Call from a contract test's ``except FileNotFoundError`` branch::
+
+        except FileNotFoundError:
+            record_or_skip(self.SCHEMA_MODULE, self.SERIALIZER_NAME, product_data)
+    """
+    from tests.contract.utils.contract_validator import extract_response_schema
+
+    if recording_enabled():
+        schema = _unpin_nulls(extract_response_schema(response_data))
+        save_schema_baseline(api_module, serializer_name, schema, version=version)
+        pytest.skip(f"Recorded baseline for {api_module}/{version}/{serializer_name}")
+
+    pytest.skip(
+        f"No baseline for {api_module}/{version}/{serializer_name}. "
+        f"Generate with: python scripts/generate_contract_baselines.py "
+        f"--module {api_module} --serializer {serializer_name}"
+    )

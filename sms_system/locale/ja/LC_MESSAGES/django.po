@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,56 +18,100 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:58
 msgid "-- Select Provider --"
 msgstr "-- プロバイダーを選択 --"
 
+#: admin.py:200 admin.py:212
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:149
+#: templates/admin/sms_system/wizard/step3_credentials.html:33
 msgid "Provider Credentials"
 msgstr "プロバイダーの資格情報"
 
+#: admin.py:203
 msgid "Enter your provider API credentials."
 msgstr "プロバイダーのAPI資格情報を入力してください。"
 
+#: admin.py:216
 msgid ""
 "Select a provider above to see credential fields, or use the Setup Wizard "
 "for a guided experience."
 msgstr "上記からプロバイダーを選択して資格フィールドを表示するか、セットアップウィザードを使用してガイドされた体験を行ってください。"
 
+#: admin.py:226
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:178
+#: templates/admin/sms_system/wizard/step4_test.html:53
 msgid "Default Settings"
 msgstr "デフォルト設定"
 
+#: admin.py:237 models.py:92
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:202
 msgid "Connection Status"
 msgstr "接続状態"
 
+#: admin.py:248 admin.py:347
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:228
 msgid "Timestamps"
 msgstr "タイムスタンプ"
 
+#: admin.py:273 models.py:76 models.py:251
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:32
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:69
+#: templates/admin/sms_system/smstemplate/change_list.html:82
 msgid "Active"
 msgstr "アクティブ"
 
+#: admin.py:274
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:34
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:73
+#: templates/admin/sms_system/smstemplate/change_list.html:86
 msgid "Inactive"
 msgstr "非アクティブ"
 
+#: admin.py:276 admin.py:410 models.py:334
+#: templates/admin/sms_system/smsoutbox/change_list.html:76
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:108
+#: templates/admin/sms_system/wizard/complete.html:30
 msgid "Status"
 msgstr "ステータス"
 
+#: admin.py:281
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:37
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:79
+#: templates/admin/sms_system/wizard/complete.html:40
 msgid "Default SMS"
 msgstr "デフォルトSMS"
 
+#: admin.py:284 models.py:290
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:56
+#: templates/admin/sms_system/provider_browse.html:130
+#: templates/admin/sms_system/smsoutbox/change_list.html:96
 msgid "SMS"
 msgstr "SMS"
 
+#: admin.py:290
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:40
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:85
+#: templates/admin/sms_system/wizard/complete.html:50
 msgid "Default WhatsApp"
 msgstr "デフォルトWhatsApp"
 
+#: admin.py:294 models.py:291
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:52
+#: templates/admin/sms_system/provider_browse.html:135
+#: templates/admin/sms_system/smsoutbox/change_list.html:97
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: admin.py:308
 msgid "Connection"
 msgstr "接続"
 
+#: admin.py:338
 msgid "Message Content"
 msgstr "メッセージ内容"
 
+#: admin.py:342
 #, python-brace-format
 msgid ""
 "Use {variable} syntax for placeholders. Example: \"Hello {name}, your order "
@@ -76,255 +120,367 @@ msgstr ""
 "プレースホルダーのために{variable}構文を使用してください。例: \"こんにちは "
 "{name}、注文#{order_number}が準備できました。\""
 
+#: apps.py:8
 msgid "SMS System"
 msgstr "SMSシステム"
 
+#: models.py:39
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:47
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:99
 msgid "Untested"
 msgstr "未テスト"
 
+#: models.py:40
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:43
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:91
+#: templates/admin/sms_system/wizard/complete.html:33
 msgid "Connected"
 msgstr "接続済み"
 
+#: models.py:41
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:24
 msgid "Connection Failed"
 msgstr "接続に失敗しました"
 
+#: models.py:52 templates/admin/sms_system/wizard/complete.html:26
 msgid "Provider"
 msgstr "プロバイダー"
 
+#: models.py:53
 msgid "SMS/messaging service provider"
 msgstr "SMS/メッセージサービスプロバイダー"
 
+#: models.py:62
 msgid "Provider Component"
 msgstr "プロバイダー コンポーネント"
 
+#: models.py:63
 msgid "Reference to installed provider component"
 msgstr "インストールされたプロバイダーコンポーネントへの参照"
 
+#: models.py:67 templates/admin/sms_system/wizard/complete.html:22
+#: templates/admin/sms_system/wizard/step3_credentials.html:20
 msgid "Display Name"
 msgstr "表示名"
 
+#: models.py:68
 msgid "Friendly name for this account"
 msgstr "このアカウントのフレンドリな名前"
 
+#: models.py:71
 msgid "Encrypted Credentials"
 msgstr "暗号化された資格情報"
 
+#: models.py:72
 msgid "Encrypted API credentials for this provider"
 msgstr "このプロバイダ用の暗号化されたAPI資格情報"
 
+#: models.py:80
 msgid "Default SMS Account"
 msgstr "デフォルトのSMSアカウント"
 
+#: models.py:81
 msgid "Use this account for sending SMS by default"
 msgstr "デフォルトでSMSを送信するためにこのアカウントを使用する"
 
+#: models.py:85
 msgid "Default WhatsApp Account"
 msgstr "デフォルトのWhatsAppアカウント"
 
+#: models.py:86
 msgid "Use this account for sending WhatsApp messages by default"
 msgstr "デフォルトでWhatsAppメッセージを送信するためにこのアカウントを使用する"
 
+#: models.py:97
 msgid "Last Checked"
 msgstr "最終チェック"
 
+#: models.py:103
 msgid "SMS Provider Account"
 msgstr "SMSプロバイダー アカウント"
 
+#: models.py:104
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:21
 msgid "SMS Provider Accounts"
 msgstr "SMSプロバイダー アカウント一覧"
 
+#: models.py:225
 msgid "POS Receipt"
 msgstr "POSレシート"
 
+#: models.py:226
 msgid "Order Confirmation"
 msgstr "注文確認"
 
+#: models.py:227
 msgid "Shipping Update"
 msgstr "配送状況の更新"
 
+#: models.py:228
 msgid "Delivery Notification"
 msgstr "配達通知"
 
+#: models.py:229
 msgid "Password Reset"
 msgstr "パスワードリセット"
 
+#: models.py:230
 msgid "Verification Code"
 msgstr "認証コード"
 
+#: models.py:231
 msgid "Marketing"
 msgstr "マーケティング"
 
+#: models.py:232
 msgid "Custom"
 msgstr "カスタム"
 
+#: models.py:239
 msgid "Template Type"
 msgstr "テンプレートタイプ"
 
+#: models.py:243
 msgid "Name"
 msgstr "名前"
 
+#: models.py:246 models.py:328
 msgid "Message"
 msgstr "メッセージ"
 
+#: models.py:247
 #, python-brace-format
 msgid "Message template. Use {variable} syntax for placeholders."
 msgstr "メッセージテンプレート。プレースホルダーのために{variable}構文を使用してください。"
 
+#: models.py:257
 msgid "SMS Template"
 msgstr "SMSテンプレート"
 
+#: models.py:258 templates/admin/sms_system/smstemplate/change_list.html:4
+#: templates/admin/sms_system/smstemplate/change_list.html:21
 msgid "SMS Templates"
 msgstr "SMSテンプレート"
 
+#: models.py:280 templates/admin/sms_system/partials/smsoutbox_cards.html:26
+#: templates/admin/sms_system/smsoutbox/change_list.html:80
 msgid "Pending"
 msgstr "保留"
 
+#: models.py:281 templates/admin/sms_system/partials/smsoutbox_cards.html:30
+#: templates/admin/sms_system/smsoutbox/change_list.html:81
 msgid "Queued"
 msgstr "キューに保留"
 
+#: models.py:282 templates/admin/sms_system/partials/smsoutbox_cards.html:34
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsoutbox/change_list.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:82
 msgid "Sent"
 msgstr "送信済み"
 
+#: models.py:283 templates/admin/sms_system/partials/smsoutbox_cards.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:43
+#: templates/admin/sms_system/smsoutbox/change_list.html:83
 msgid "Delivered"
 msgstr "配信済み"
 
+#: models.py:284 templates/admin/sms_system/partials/smsoutbox_cards.html:42
+#: templates/admin/sms_system/smsoutbox/change_list.html:48
+#: templates/admin/sms_system/smsoutbox/change_list.html:84
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:45
 msgid "Failed"
 msgstr "失敗"
 
+#: models.py:285 templates/admin/sms_system/partials/smsoutbox_cards.html:46
+#: templates/admin/sms_system/smsoutbox/change_list.html:85
 msgid "Skipped"
 msgstr "スキップされました"
 
+#: models.py:286
+msgid "Sandbox Logged"
+msgstr "サンドボックスログイン"
+
+#: models.py:306
 msgid "Provider Account"
 msgstr "プロバイダー アカウント"
 
+#: models.py:314
 msgid "Template"
 msgstr "テンプレート"
 
+#: models.py:320 templates/admin/sms_system/smsoutbox/change_list.html:92
 msgid "Message Type"
 msgstr "メッセージタイプ"
 
+#: models.py:324
 msgid "Phone Number"
 msgstr "電話番号"
 
+#: models.py:325
 msgid "Recipient phone number in E.164 format"
 msgstr "E.164形式の受信者電話番号"
 
+#: models.py:339
 msgid "Provider Message ID"
 msgstr "プロバイダーのメッセージID"
 
+#: models.py:340
 msgid "Message ID from the SMS provider"
 msgstr "SMSプロバイダーからのメッセージID"
 
+#: models.py:344
 msgid "Error Message"
 msgstr "エラーメッセージ"
 
+#: models.py:349
 msgid "Skip Reason"
 msgstr "スキップ理由"
 
+#: models.py:350
 msgid ""
 "Reason why SMS was skipped (e.g., user_preference_disabled, unsubscribed)"
 msgstr "SMSがスキップされた理由（例：user_preference_disabled, unsubscribed）"
 
+#: models.py:354
 msgid "Retry Count"
 msgstr "再試行回数"
 
+#: models.py:360
 msgid "Queued At"
 msgstr "キューイング日時"
 
+#: models.py:365
 msgid "Sent At"
 msgstr "送信日時"
 
+#: models.py:370
 msgid "Delivered At"
 msgstr "配信日時"
 
+#: models.py:374 models.py:375
 msgid "SMS Outbox"
 msgstr "SMS送信ボックス"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:64
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "ago"
 msgstr "前"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:75
 #, python-format
 msgid "%(counter)s retry"
 msgid_plural "%(counter)s retries"
 msgstr[0] "%(counter)s 回の再試行"
 msgstr[1] "%(counter)s 回の再試行"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:88
 msgid "View"
 msgstr "表示"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:100
 msgid "No messages found matching your criteria."
 msgstr "指定の条件に一致するメッセージは見つかりませんでした。"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:101
 msgid "Try adjusting your filters or search terms."
 msgstr "フィルタや検索語を調整してみてください。"
 
+#: templates/admin/sms_system/provider_browse.html:4
+#: templates/admin/sms_system/provider_browse.html:36
 msgid "Browse SMS Providers"
 msgstr "SMSプロバイダーを閲覧"
 
+#: templates/admin/sms_system/provider_browse.html:4
 msgid "Site Admin"
 msgstr "サイト管理者"
 
+#: templates/admin/sms_system/provider_browse.html:25
 msgid "Home"
 msgstr "ホーム"
 
+#: templates/admin/sms_system/provider_browse.html:26
 msgid "SMS Accounts"
 msgstr "SMSアカウント一覧"
 
+#: templates/admin/sms_system/provider_browse.html:27
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:33
+#: templates/admin/sms_system/wizard/step1_select.html:58
 msgid "Browse Providers"
 msgstr "プロバイダーを閲覧"
 
+#: templates/admin/sms_system/provider_browse.html:38
 msgid ""
 "Choose an SMS provider to integrate with your store. Send transactional SMS "
 "and WhatsApp messages to your customers."
 msgstr "ストアと統合するSMSプロバイダーを選択してください。顧客にトランザクショナルなSMSおよびWhatsAppメッセージを送信できます。"
 
+#: templates/admin/sms_system/provider_browse.html:45
 msgid "Update Server Unavailable"
 msgstr "アップデートサーバーが利用できません"
 
+#: templates/admin/sms_system/provider_browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr "アップデートサーバーに接続できませんでした。ローカルにインストールされているプロバイダのみを表示しています。"
 
+#: templates/admin/sms_system/provider_browse.html:57
 msgid "SMS Provider Marketplace"
 msgstr "SMSプロバイダーマーケットプレイス"
 
+#: templates/admin/sms_system/provider_browse.html:69
 msgid ""
 "Here you can discover and configure SMS providers to send transactional "
 "messages, including order confirmations, shipping updates, and delivery "
 "notifications."
 msgstr "ここでは注文確定、配送状況更新、配達通知などのトランザクショナルメッセージを送信するためのSMSプロバイダーを発見し、構成できます。"
 
+#: templates/admin/sms_system/provider_browse.html:76
 msgid "Capabilities:"
 msgstr "機能:"
 
+#: templates/admin/sms_system/provider_browse.html:81
 msgid "Send SMS order confirmations and shipping notifications"
 msgstr "SMSで注文確定と配送通知を送信"
 
+#: templates/admin/sms_system/provider_browse.html:85
 msgid "WhatsApp Business messaging support"
 msgstr "WhatsAppビジネスメッセージングのサポート"
 
+#: templates/admin/sms_system/provider_browse.html:89
 msgid "Delivery status tracking and webhooks"
 msgstr "配信状態の追跡とウェブフック"
 
+#: templates/admin/sms_system/provider_browse.html:93
 msgid "POS digital receipts via SMS"
 msgstr "SMS経由でのPOSデジタルレシート"
 
+#: templates/admin/sms_system/provider_browse.html:101
 msgid "Getting Started:"
 msgstr "開始方法:"
 
+#: templates/admin/sms_system/provider_browse.html:104
 msgid "Browse providers below and select your SMS service"
 msgstr "下のプロバイダをブラウズし、SMSサービスを選択してください。"
 
+#: templates/admin/sms_system/provider_browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "'Install'をクリックして、プロバイダをストアに追加してください。"
 
+#: templates/admin/sms_system/provider_browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr "API資格情報を設定するには、セットアップウィザードに従ってください。"
 
+#: templates/admin/sms_system/provider_browse.html:107
 msgid "Test the connection and start sending messages"
 msgstr "接続をテストし、メッセージの送信を開始します"
 
+#: templates/admin/sms_system/provider_browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -343,403 +499,558 @@ msgstr[1] ""
 "                    %(counter)s つのプロバイダーがインストール済み\n"
 "                "
 
+#: templates/admin/sms_system/provider_browse.html:140
 msgid "MMS"
 msgstr "MMS"
 
+#: templates/admin/sms_system/provider_browse.html:143
 msgid "Filter"
 msgstr "フィルター"
 
+#: templates/admin/sms_system/provider_browse.html:145
 msgid "Clear"
 msgstr "クリア"
 
+#: templates/admin/sms_system/provider_browse.html:157
 msgid "Installed Providers"
 msgstr "インストール済みプロバイダー"
 
+#: templates/admin/sms_system/provider_browse.html:168
 msgid "Update Available"
 msgstr "更新が利用可能です"
 
+#: templates/admin/sms_system/provider_browse.html:191
 msgid "Installed"
 msgstr "インストール済み"
 
+#: templates/admin/sms_system/provider_browse.html:234
 msgid "Delivery Reports"
 msgstr "配信レポート"
 
+#: templates/admin/sms_system/provider_browse.html:260
 msgid "Update"
 msgstr "更新"
 
+#: templates/admin/sms_system/provider_browse.html:265
 msgid "Configure"
 msgstr "設定"
 
+#: templates/admin/sms_system/provider_browse.html:274
+#: templates/admin/sms_system/provider_browse.html:377
 msgid "View Details"
 msgstr "詳細を表示"
 
+#: templates/admin/sms_system/provider_browse.html:282
+#: templates/admin/sms_system/provider_browse.html:385
 msgid "Learn More"
 msgstr "詳しく見る"
 
+#: templates/admin/sms_system/provider_browse.html:298
 msgid "Available from Marketplace"
 msgstr "マーケットプレイスから利用可能"
 
+#: templates/admin/sms_system/provider_browse.html:324
 msgid "Available"
 msgstr "利用可能"
 
+#: templates/admin/sms_system/provider_browse.html:369
 msgid "Install"
 msgstr "インストール"
 
+#: templates/admin/sms_system/provider_browse.html:402
+#: templates/admin/sms_system/wizard/step1_select.html:55
 msgid "No Providers Available"
 msgstr "利用可能なプロバイダがありません"
 
+#: templates/admin/sms_system/provider_browse.html:403
 msgid ""
 "No SMS providers are currently available. Please check your update server "
 "connection or contact support."
 msgstr "現在、利用可能なSMSプロバイダーはありません。更新サーバーの接続を確認するか、サポートに連絡してください。"
 
+#: templates/admin/sms_system/provider_browse.html:412
 msgid "Installing provider..."
 msgstr "プロバイダーのインストール中..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:4
+#: templates/admin/sms_system/smsoutbox/change_list.html:21
 msgid "Message Log"
 msgstr "メッセージログ"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:23
 msgid "Track sent SMS and WhatsApp messages"
 msgstr "送信されたSMSおよびWhatsAppメッセージを追跡"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:28
 msgid "Overview"
 msgstr "概要"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:33
 msgid "Total Messages"
 msgstr "合計メッセージ"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:57
 msgid "Filters"
 msgstr "フィルター"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:68
 msgid "Search"
 msgstr "検索"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:70
 msgid "Phone number or message..."
 msgstr "電話番号またはメッセージ..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:79
 msgid "All Statuses"
 msgstr "すべてのステータス"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:95
 msgid "All Types"
 msgstr "すべてのタイプ"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:106
 msgid "Apply Filters"
 msgstr "フィルターを適用"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:109
 msgid "Clear All"
 msgstr "すべてクリア"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:117
 msgid "Messages"
 msgstr "メッセージ"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:120
 msgid "messages"
 msgstr "メッセージ"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:130
 msgid "Loading messages..."
 msgstr "メッセージを読み込み中..."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:22
 msgid "Edit SMS Provider"
 msgstr "SMSプロバイダの編集"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:24
 msgid "Add SMS Provider"
 msgstr "SMSプロバイダの追加"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:30
 msgid "Created"
 msgstr "作成済み"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:53
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:253
 msgid "Save and continue editing"
 msgstr "保存して編集を続ける"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:56
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:252
 msgid "Save"
 msgstr "保存"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:69
 msgid "Please correct the errors below"
 msgstr "以下のエラーを修正してください"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:95
 msgid "Basic"
 msgstr "基本"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:99
+#: templates/admin/sms_system/wizard/base.html:45
 msgid "Credentials"
 msgstr "資格情報"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:103
 msgid "Defaults"
 msgstr "デフォルト"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:119
 msgid "Basic Information"
 msgstr "基本情報"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:165
 msgid "Select a provider in the Basic tab to see credential fields."
 msgstr "基本タブでプロバイダーを選択して資格情報を表示してください。"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:179
 msgid "Configure which messaging channels use this provider by default."
 msgstr "このプロバイダーをデフォルトで使用するメッセージングチャネルを構成してください。"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:23
 msgid "Manage your SMS and WhatsApp provider connections"
 msgstr "SMSおよびWhatsAppプロバイダーの接続を管理"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:28
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:131
 msgid "Setup Wizard"
 msgstr "セットアップウィザード"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:42
 msgid "Provider Accounts"
 msgstr "プロバイダアカウント"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:45
 msgid "accounts"
 msgstr "アカウント"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
 msgid "Last checked"
 msgstr "最終確認日時"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:115
+#: templates/admin/sms_system/smstemplate/change_list.html:100
 msgid "Edit"
 msgstr "編集"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:127
 msgid "No provider accounts configured."
 msgstr "プロバイダーアカウントが設定されていません。"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:128
 msgid "Use the Setup Wizard to add one."
 msgstr "セットアップウィザードを使用して1つを追加してください。"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:23
 msgid "Manage message templates for SMS and WhatsApp notifications"
 msgstr "SMSおよびWhatsApp通知のメッセージテンプレートを管理"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:27
+#: templates/admin/sms_system/smstemplate/change_list.html:118
 msgid "Add Template"
 msgstr "テンプレートの追加"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:35
 msgid "Templates"
 msgstr "テンプレート"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:38
 msgid "templates"
 msgstr "テンプレート一覧"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "Updated"
 msgstr "更新済み"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:103
 msgid "Delete"
 msgstr "削除"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:115
 msgid "No SMS templates configured yet."
 msgstr "SMSテンプレートがまだ設定されていません。"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:116
 msgid "Create a template to get started with SMS notifications."
 msgstr "SMS通知の開始にテンプレートを作成してください。"
 
+#: templates/admin/sms_system/wizard/base.html:4
 msgid "SMS Provider Setup"
 msgstr "SMSプロバイダの設定"
 
+#: templates/admin/sms_system/wizard/base.html:17
 msgid "SMS Provider Setup Wizard"
 msgstr "SMSプロバイダーセットアップウィザード"
 
+#: templates/admin/sms_system/wizard/base.html:18
 msgid "Follow these steps to connect your SMS provider"
 msgstr "SMSプロバイダーを接続するためにこれらの手順に従ってください"
 
+#: templates/admin/sms_system/wizard/base.html:27
 msgid "Select"
 msgstr "選択"
 
+#: templates/admin/sms_system/wizard/base.html:36
 msgid "Instructions"
 msgstr "手順"
 
+#: templates/admin/sms_system/wizard/base.html:54
 msgid "Test"
 msgstr "テスト"
 
+#: templates/admin/sms_system/wizard/base.html:61
 msgid "Complete"
 msgstr "完了"
 
+#: templates/admin/sms_system/wizard/complete.html:4
+#: templates/admin/sms_system/wizard/complete.html:5 views.py:365
 msgid "Setup Complete"
 msgstr "セットアップ完了"
 
+#: templates/admin/sms_system/wizard/complete.html:11
 msgid "Your SMS provider has been configured!"
 msgstr "SMSプロバイダーの設定が完了しました！"
 
+#: templates/admin/sms_system/wizard/complete.html:12
 msgid "You can now send SMS and WhatsApp messages from your store."
 msgstr "今後、ストアからSMSおよびWhatsAppメッセージを送信できます。"
 
+#: templates/admin/sms_system/wizard/complete.html:19
+#: templates/admin/sms_system/wizard/step4_test.html:37
 msgid "Account Details"
 msgstr "アカウント詳細"
 
+#: templates/admin/sms_system/wizard/complete.html:43
+#: templates/admin/sms_system/wizard/complete.html:53
 msgid "Yes"
 msgstr "はい"
 
+#: templates/admin/sms_system/wizard/complete.html:45
+#: templates/admin/sms_system/wizard/complete.html:55
 msgid "No"
 msgstr "いいえ"
 
+#: templates/admin/sms_system/wizard/complete.html:65
 msgid "What's Next?"
 msgstr "次は？"
 
+#: templates/admin/sms_system/wizard/complete.html:71
 msgid "Configure SMS templates"
 msgstr "SMSテンプレートの設定"
 
+#: templates/admin/sms_system/wizard/complete.html:75
 msgid "View message logs"
 msgstr "メッセージログの表示"
 
+#: templates/admin/sms_system/wizard/complete.html:79
 msgid "Add another provider"
 msgstr "別のプロバイダーを追加"
 
+#: templates/admin/sms_system/wizard/complete.html:90
 msgid "View All Accounts"
 msgstr "すべてのアカウントを表示"
 
+#: templates/admin/sms_system/wizard/step1_select.html:4
+#: templates/admin/sms_system/wizard/step1_select.html:5 views.py:85
 msgid "Select SMS Provider"
 msgstr "SMSプロバイダーの選択"
 
+#: templates/admin/sms_system/wizard/step1_select.html:9
 msgid "Select a Provider"
 msgstr "プロバイダを選択"
 
+#: templates/admin/sms_system/wizard/step1_select.html:10
 msgid "Choose the SMS provider you want to configure."
 msgstr "構成したいSMSプロバイダーを選択してください。"
 
+#: templates/admin/sms_system/wizard/step1_select.html:56
 msgid ""
 "No SMS providers are installed. Install providers from the provider browse "
 "page."
 msgstr "SMSプロバイダーはインストールされていません。プロバイダーのブラウジングページからプロバイダーをインストールしてください。"
 
+#: templates/admin/sms_system/wizard/step1_select.html:68
 msgid "Cancel"
 msgstr "キャンセル"
 
+#: templates/admin/sms_system/wizard/step1_select.html:72
+#: templates/admin/sms_system/wizard/step2_instructions.html:46
+#: templates/admin/sms_system/wizard/step3_credentials.html:98
 msgid "Next"
 msgstr "次へ"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:4
+#: templates/admin/sms_system/wizard/step2_instructions.html:5
+#: templates/admin/sms_system/wizard/step2_instructions.html:9 views.py:148
 msgid "Setup Instructions"
 msgstr "設定手順"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:10
 msgid "Follow these instructions to set up your provider account."
 msgstr "プロバイダーのアカウントを設定するためにこれらの指示に従ってください。"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:27
 msgid "No specific setup instructions available"
 msgstr "特定の設定手順は利用できません"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:28
 msgid "Please proceed to enter your credentials."
 msgstr "資格情報を入力してください。"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:43
+#: templates/admin/sms_system/wizard/step3_credentials.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:94
 msgid "Back"
 msgstr "戻る"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:4
+#: templates/admin/sms_system/wizard/step3_credentials.html:5
+#: templates/admin/sms_system/wizard/step3_credentials.html:9 views.py:193
 msgid "Enter Credentials"
 msgstr "資格情報を入力"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:10
 #, python-format
 msgid "Enter the credentials from your %(name)s account."
 msgstr " %(name)s アカウントから認証情報を入力してください。"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:17
 msgid "Account Name"
 msgstr "アカウント名"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:26
 msgid "A friendly name to identify this account."
 msgstr "このアカウントを識別するためのフレンドリーな名前。"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:86
 msgid "Your credentials are encrypted before being stored."
 msgstr "資格情報は保存される前に暗号化されます。"
 
+#: templates/admin/sms_system/wizard/step4_test.html:4
+#: templates/admin/sms_system/wizard/step4_test.html:5
+#: templates/admin/sms_system/wizard/step4_test.html:9 views.py:281
 msgid "Test Connection"
 msgstr "接続をテスト"
 
+#: templates/admin/sms_system/wizard/step4_test.html:10
 msgid "We've tested the connection to your provider."
 msgstr "プロバイダーへの接続をテストしました。"
 
+#: templates/admin/sms_system/wizard/step4_test.html:22
 msgid "Connection Successful"
 msgstr "接続成功"
 
+#: templates/admin/sms_system/wizard/step4_test.html:29
 msgid "Successfully connected to the SMS provider."
 msgstr "SMSプロバイダーへの接続に成功しました。"
 
+#: templates/admin/sms_system/wizard/step4_test.html:31
 msgid "Failed to connect to the SMS provider."
 msgstr "SMSプロバイダーへの接続に失敗しました。"
 
+#: templates/admin/sms_system/wizard/step4_test.html:40
 msgid "Account"
 msgstr "アカウント"
 
+#: templates/admin/sms_system/wizard/step4_test.html:55
 msgid "Configure how this account should be used."
 msgstr "このアカウントの使用方法を設定してください。"
 
+#: templates/admin/sms_system/wizard/step4_test.html:60
 msgid "Set as default for SMS messages"
 msgstr "SMSメッセージのデフォルトに設定"
 
+#: templates/admin/sms_system/wizard/step4_test.html:68
 msgid "Set as default for WhatsApp messages"
 msgstr "WhatsAppメッセージのデフォルトに設定"
 
+#: templates/admin/sms_system/wizard/step4_test.html:78
 msgid "Connection test failed"
 msgstr "接続テストに失敗しました"
 
+#: templates/admin/sms_system/wizard/step4_test.html:79
 msgid ""
 "Check your credentials and try again, or save anyway if you're sure they're "
 "correct."
 msgstr "資格情報を確認し、再度試してみてください。または、正しい場合はそれでも保存してください。"
 
+#: templates/admin/sms_system/wizard/step4_test.html:82
 msgid "Save account anyway (not recommended)"
 msgstr "アカウントを保存する（推奨されません）"
 
+#: templates/admin/sms_system/wizard/step4_test.html:97
 msgid "Create Account"
 msgstr "アカウントを作成"
 
+#: views.py:97
 msgid "Please select a provider"
 msgstr "プロバイダを選択してください"
 
+#: views.py:102
 msgid "Selected provider is not available"
 msgstr "選択したプロバイダは利用できません"
 
+#: views.py:131 views.py:183
 msgid "Provider not found"
 msgstr "プロバイダーが見つかりません"
 
+#: views.py:211
 msgid "Unable to get credential schema"
 msgstr "資格情報スキーマを取得できません"
 
+#: views.py:228
 #, python-format
 msgid "Missing required fields: %(fields)s"
 msgstr "必須項目が不足しています: %(fields)s"
 
+#: views.py:304
 msgid "Connection test failed. Check your credentials and try again."
 msgstr "接続テストに失敗しました。資格情報を確認し、再度試してみてください。"
 
+#: views.py:328
 msgid "SMS provider account created successfully!"
 msgstr "SMSプロバイダアカウントが正常に作成されました！"
 
+#: views.py:333
 #, python-format
 msgid "Failed to create account: %(error)s"
 msgstr "アカウントの作成に失敗しました: %(error)s"
 
+#: views.py:424
 msgid "SMS Providers"
 msgstr "SMSプロバイダ"
 
+#: views.py:525
 msgid "Provider is already installed. Configure it now."
 msgstr "プロバイダーはすでにインストールされています。今すぐ設定してください。"
 
+#: views.py:554 views.py:701
 msgid "Provider not found on update server."
 msgstr "アップデートサーバーでプロバイダーが見つかりません。"
 
+#: views.py:567
 msgid "Could not determine provider version."
 msgstr "プロバイダーバージョンを判定できませんでした。"
 
+#: views.py:590
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "プロバイダーのダウンロードに失敗しました: %(error)s"
 
+#: views.py:602
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "プロバイダーのインストールに失敗しました: %(error)s"
 
+#: views.py:630
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "プロバイダ \"%(name)s\" が正常にインストールされました！今すぐ設定してください。"
 
+#: views.py:669
 msgid "Provider not installed."
 msgstr "プロバイダーがインストールされていません。"
 
+#: views.py:686
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "アップデートサーバーに接続できませんでした: %(error)s"
 
+#: views.py:713
 msgid "Could not determine latest version."
 msgstr "最新バージョンを判定できませんでした。"
 
+#: views.py:723
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "プロバイダー \"%(name)s\" はすでに最新です (v%(version)s)."
 
+#: views.py:739
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "更新のダウンロードに失敗しました: %(error)s"
 
+#: views.py:750
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "更新のインストールに失敗しました: %(error)s"
 
+#: views.py:780
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "プロバイダー \"%(name)s\" が v%(version)s に正常に更新されました！"

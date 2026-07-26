@@ -5,6 +5,248 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-07-21
+
+The stored-value release. Gift cards become a first-class part of the
+platform — sold on the storefront, delivered by email, spendable at
+checkout and at the POS, and handled cleanly through refunds — now
+modelled as true payment tenders rather than discounts. The customer
+wallet graduates to spendable store credit, loyalty rewards pay out
+into it, and the payment, refund, and reward paths gain substantial
+hardening, auditability, and test coverage throughout.
+
+### Added
+
+- Gift card products are purchasable on the storefront: denomination
+  picker (fixed, custom, or both), recipient email and name, gift
+  message, and optional scheduled delivery up to a year ahead.
+- Paid orders mint funded gift cards and email them to the recipient,
+  on web and at the POS. Issuance is idempotent per order line and a
+  reconciler repairs partial runs.
+- Gift card balance page on the storefront, linked directly from the
+  delivery email.
+- Checkout tender panel: customers key a gift card code (or apply
+  store credit when signed in) directly at checkout. Multiple tenders
+  combine on one order, and a fully covered order completes without
+  asking for a card.
+- Customer wallet is spendable at checkout as store credit, with
+  hold-based double-spend protection and a strict single-currency
+  rule.
+- Account pages: gift cards you've bought (masked codes) and your
+  store credit balance with full transaction history.
+- Loyalty fixed-value rewards credit spendable store credit the
+  moment they're confirmed — exactly once, enforced at the database
+  level. Percentage rewards issue a single-use voucher bound to the
+  member.
+- Tender-aware refunds: refunds allocate across the tenders that paid
+  the order, value returns to the gift card before the gateway by
+  default, and a refund to a deactivated or expired card mints a
+  replacement addressed to the card's recipient.
+- Automatic loyalty-point clawback and affiliate-commission reversal
+  on fully refunded orders.
+- Privacy erasure for customer accounts: an admin action anonymises
+  the person in place while financial records survive for legal
+  retention, with an explicit guard when store credit would be
+  forfeited.
+- Reconciliation commands verify wallet balances and gift card
+  ledgers against their transaction history.
+- The API contract (`api-schema.yml` / `api-schema.json`) is now
+  versioned at the repository root, and CI fails any change that
+  lets it drift from the code.
+
+- Built-in **Spwig Test Gateway**: a fully local simulated payment
+  provider (magic cards for success, decline, insufficient funds, 3-D
+  Secure, and AVS failure, plus a webhook-delayed capture), with a strict
+  validation mode that enforces the field requirements real gateways
+  impose — customer email, name, ISO-3166 alpha-2 country, phone for
+  physical orders, per-currency minimum amounts, and zero-decimal
+  currency correctness. Bundled with the platform and auto-installed
+  (active only in sandbox mode) so a fresh store can exercise checkout end
+  to end before configuring a real provider.
+- Payment providers can be bundled with the platform image and installed
+  at first boot, the same path themes and utilities already use.
+- Checkout collects a voucher / discount code in the payment section
+  across every template, and the country is chosen from a shipping-country
+  dropdown (ISO-2 codes) pre-filled from the visitor's detected country.
+- Digital-only and booking-only carts skip the shipping address and
+  shipping-method steps.
+- Scoped API tokens: merchant-generated API tokens can now be granted
+  access to specific admin APIs at a Read or Read & Write level,
+  chosen from a grouped scope picker in the token admin, with a
+  read-only summary of everything a token can reach. A token reaches
+  only the APIs it holds a scope for, and one with no scopes cannot
+  call any API. Tokens present a Bearer credential and always act
+  within — never beyond — the permissions of the staff member who
+  created them, and never with owner/superuser powers.
+- Web traffic analytics API (`GET /api/admin/analytics/traffic/`):
+  visitor overview, daily trends, top pages, geographic distribution,
+  and referrers for a chosen period, now reachable by a scoped API
+  token rather than only the staff-only analytics dashboard.
+- **Agentic Commerce (AI Shopping).** Merchants can let AI shopping
+  assistants discover their store and, when allowed, buy on a
+  customer's behalf — built into the core, not bolted on via a plugin.
+  **Off by default**; turning it on is a deliberate opt-in and every
+  agent surface returns 404 until then.
+  - Discovery + read-only catalogue over the Universal Commerce
+    Protocol (`/.well-known/ucp`), with capabilities computed from live
+    install state — a checkout is only advertised when a payment
+    provider is actually connected.
+  - Storefront MCP endpoint (`search_catalog` / `get_product`) as a
+    transport over the same catalogue, matching the shape assistants
+    already integrate against.
+  - Agent authentication via HTTP Message Signatures (RFC 9421):
+    verified signing keys resolved from the assistant's directory,
+    trust-on-first-use with per-assistant spending caps, and a
+    tamper-evident, append-only activity log for dispute evidence.
+  - UCP checkout sessions that place a real, paid order through the
+    same pricing, tax, shipping, and payment paths as the storefront —
+    no parallel checkout. Agent orders are gateway-only and carry a
+    checkout-time price lock.
+  - AP2 checkout mandates: each agent-placed order is issued a
+    merchant-signed attestation (SD-JWT) of exactly what was charged,
+    verifiable against the store's published keys and retained as
+    dispute evidence.
+  - Optional ACP product feed for merchants who need it, projecting the
+    same catalogue in ACP shape (off by default).
+  - **AI Shopping** admin section: a plain-language readiness verdict
+    ("assistants can buy from your store"), a per-product "visible to
+    assistants" switch, an assistant registry with block / unblock, an
+    emergency stop, and the activity record.
+
+### Changed
+
+- **Gift cards are payment tenders, not discounts.** A card now
+  settles the full post-tax, post-shipping total and writes a proper
+  payment record, replacing the earlier discount-style application
+  that capped cards at the pre-tax subtotal. Customers get full use
+  of their balance, merchant analytics keep tenders and discounts
+  cleanly separate, and the tax base is unaffected by card usage.
+  Historical order figures are preserved unchanged.
+- Gift cards are single-currency instruments: a card is spendable
+  against a cart in its own currency, matching the practice of every
+  major issuer. Multi-currency stores issue cards per currency.
+- Gift card purchases are tax-exempt by default, so card value is
+  taxed once — when it's spent, not when it's loaded. Configurable
+  per store; confirm the right treatment with your accountant.
+- Refund processing is rebuilt on a single tender-aware allocator
+  with per-tender capacity enforcement; the admin and mobile-app
+  refund actions now drive the same engine end to end.
+- POS gift card handling converges with web checkout on the unified
+  tender path at payment time, superseding the cart-level
+  application.
+- The headless TypeScript SDK and React hooks move to 2.0.0 with
+  breaking changes (tender endpoints, loyalty redemption by UUID);
+  each package carries its own changelog.
+
+- Storefront cart and checkout APIs now recognise signed-in customers
+  via session authentication: a logged-in browser uses the account cart
+  instead of a separate anonymous one, and a guest cart merges into the
+  account on login.
+- Express checkout reworked: email first and always editable, a
+  single-column layout with the order summary above payment (collapsible
+  on mobile), the default payment provider pre-selected with its form
+  already mounted, provider switching applied on click, and a "Change
+  payment method" link that collapses the list to the chosen gateway
+  across all flows.
+- Shipping method now auto-selects the default so the step is never a
+  dead-end.
+- Removed the Adyen payment integration.
+
+### Fixed
+
+- Percentage-based affiliate commissions now calculate from the
+  correct order total.
+- Loyalty discount-reward redemption is fully transactional: the
+  member either receives their reward or keeps their points, with a
+  clear message either way.
+- Referral reward issuance is now consistent across all reward
+  kinds.
+- Single-use vouchers are enforced under concurrent checkouts — two
+  simultaneous orders can no longer both apply the same code.
+- Loyalty points and affiliate commission accrue on genuine
+  merchandise spend: buying a gift card earns when the card is
+  spent, not on the card purchase itself.
+- Gift card delivery emails are classed as transactional, so they
+  reach recipients regardless of marketing preferences.
+- POS gift card sales charge the selected denomination and issue the
+  card at the till, matching the web flow.
+- API schema generation is now deterministic on a fresh database
+  (exchange-rate endpoints previously documented their id parameter
+  differently in clean-room builds).
+
+- Checkout no longer errors (HTTP 500) when a cart mixes currencies;
+  cart lines carry an immutable price anchor so repeated currency switches
+  can't accumulate rounding drift.
+- Vouchers and gift cards are redeemable only in the currency they were
+  issued in.
+- Applying a voucher after the payment form has mounted reprices the
+  order instead of charging the pre-voucher total, and the order total can
+  no longer diverge from the amount charged.
+- Declined cards keep the payment form in place with an inline reason and
+  allow an immediate retry rather than tearing the form down.
+- Fixed a rendering crash on numeric shipping-method identifiers that left
+  the payment step spinning, and multi-line template comments leaking into
+  rendered pages.
+- Shipping and billing forms require and store a delivery phone number
+  (carriers need a contact), and a recipient name is captured for
+  digital-only orders.
+- Guest carts no longer 500 under the concurrent first-request race on a
+  brand-new session, and store credit is hidden when there is no spendable
+  balance.
+- Bundle component products are no longer taxed twice: tax is charged on
+  the bundle price the customer actually pays, not on that price plus the
+  components' own prices.
+- Cart mutations from non-browser (headless) clients now refresh the
+  checkout totals, so a removed item can no longer be charged for.
+
+### Security
+
+- Dependency refresh, each bump validated by the full test suite:
+  Django 5.1.7 and Pillow 12.1.1 (security releases), plus boto3,
+  cryptography, and django-storages patch updates.
+- All stored-value code generation uses cryptographically secure
+  randomness through one shared generator.
+- Gift card balance lookups are throttled and return a uniform
+  response for unknown codes.
+- Loyalty reward vouchers are bound to the redeeming customer.
+- Wallet spending requires an existing active wallet, and concurrent
+  checkout holds are enforced under row locks.
+
+- CSRF is now enforced for session-authenticated storefront API
+  requests.
+- The simulated test gateway is deactivated automatically when a
+  production licence is activated and is never offered at checkout outside
+  sandbox mode; bundled component packages are checksum-verified before
+  installation.
+- Agentic Commerce ships hardened against its own threat model
+  (independent cryptographic and security review): agent key-directory
+  fetches are guarded against server-side request forgery, checkout is
+  protected against concurrent double-charge and check-to-charge price
+  drift, agent activity is signature-verified and rate-limited, and a
+  merchant's signing private keys are never exposed to any UI or API.
+- API tokens are least-privilege by default: every admin API is
+  denied unless the token holds a matching scope, write operations
+  require a Read & Write scope, and a token can never exceed its
+  creator's role or act as a superuser. Access is fail-closed — a new
+  endpoint is unreachable by tokens until it is explicitly mapped.
+- The published API contract (`api-schema.yml` / `api-schema.json`)
+  now reflects only the merchant-install surface; hosted-service
+  endpoints that never run on a merchant install are no longer
+  included.
+
+### Tests
+
+- New integration suites cover the full stored-value arc: tender
+  authorization and capture, split-tender checkout, refund
+  allocation, issuance idempotency, loyalty payout routing, wallet
+  reconciliation invariants, and the storefront gift card pages.
+  Money-movement guards are mutation-verified — the suite fails when
+  a guard is removed, not only when the happy path breaks.
+- Scoped API token coverage: authentication binding and fall-through
+  to other credentials, fail-closed scope enforcement across every
+  admin API route, the read-versus-write method mapping, the
+  non-superuser cap, and the new traffic analytics endpoint.
+
 ## [1.6.0] - 2026-07-14
 
 A quality-hardening release. Continuous integration now enforces

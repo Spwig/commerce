@@ -44,6 +44,32 @@ class VoucherValidationThrottle(UserRateThrottle):
     scope = "voucher_validation"
 
 
+class GiftCardBalanceAnonThrottle(AnonRateThrottle):
+    """
+    Strict rate limiting for anonymous gift card balance checks.
+
+    The balance endpoint is deliberately public — a gift card is a bearer
+    instrument and the recipient usually has no account — which makes it an
+    oracle: a valid code returns 200 with a balance, an invalid one 404. Without
+    a throttle it is a stored-value enumeration surface.
+
+    Anonymous *and* authenticated variants both apply, because authenticating
+    must not be a way to get a laxer limit on the same oracle.
+    """
+
+    scope = "gift_card_balance_anon"
+
+
+class GiftCardBalanceUserThrottle(UserRateThrottle):
+    """
+    Rate limiting for authenticated gift card balance checks.
+
+    Companion to :class:`GiftCardBalanceAnonThrottle` — see its docstring.
+    """
+
+    scope = "gift_card_balance_user"
+
+
 class ReferralTrackingThrottle(AnonRateThrottle):
     """
     Rate limiting for referral click tracking.
@@ -146,3 +172,28 @@ class HostingWebhookThrottle(AnonRateThrottle):
     """
 
     scope = "hosting_webhook"
+
+
+class AgenticCheckoutThrottle(AnonRateThrottle):
+    """
+    Rate limiting for agentic UCP checkout create/update reads.
+
+    The agentic binding has its own signature-based limiter, but that only
+    counts SIGNED requests; an unverified-checkout caller is never counted by
+    it. This IP throttle bounds cart/session creation regardless. Keyed on IP
+    (the views run with no DRF auth), so it applies to signed agents too.
+    """
+
+    scope = "agentic_checkout"
+
+
+class AgenticPaymentThrottle(AnonRateThrottle):
+    """
+    Strict rate limiting for agentic checkout COMPLETION.
+
+    Completion submits an attacker-controlled payment credential to the gateway
+    on every call, so it is a card-testing / payment-brute-force surface and
+    gets a much tighter limit than the read/create operations.
+    """
+
+    scope = "agentic_checkout_pay"

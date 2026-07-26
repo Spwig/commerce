@@ -1,9 +1,15 @@
 {% load i18n merchant_trans %}
-{#
+{% comment %}
     Grouped Attribute Selector Widget
 
+    NB: comment TAG, not {# #}. Django's hash comments are single-line only, so
+    the usage example below used to be a LIVE unconditional self-include —
+    every render recursed until the interpreter died. It surfaced as a
+    TypeError from inspect, not a clean RecursionError, which made it very
+    hard to read in production logs.
+
     Usage:
-    {% include 'catalog/partials/attribute_selector.html' with attributes=product.available_attributes variants=product.variants %}
+    {% templatetag openblock %} include 'catalog/partials/attribute_selector.html' with attributes=product.available_attributes variants=product.variants {% templatetag closeblock %}
 
     Expected data structure:
     attributes = [
@@ -20,7 +26,7 @@
         },
         ...
     ]
-#}
+{% endcomment %}
 
 {% if attributes %}
 <div class="attribute-selector" data-product-id="{{ product.id }}" data-product-type="{{ product.product_type }}">

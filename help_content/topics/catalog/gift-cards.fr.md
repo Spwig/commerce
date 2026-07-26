@@ -2,136 +2,144 @@
 title: Cartes cadeaux
 ---
 
-Les cartes cadeaux permettent à vos clients d'acheter un crédit de magasin qu'ils peuvent envoyer à quelqu'un comme cadeau ou conserver à leur usage personnel. Les destinataires reçoivent un code unique par e-mail qu'ils peuvent utiliser lors du paiement.
+Les cartes cadeaux sont un crédit magasin que les clients peuvent acheter pour quelqu'un d'autre — ou pour eux-mêmes — envoyé par e-mail sous forme de code de rédemption unique. Vous pouvez également émettre une carte cadeau directement depuis l'admin sans achat client.
+
+La vente de cartes cadeaux est active. Lorsqu'un client en achète une, la carte est créée et envoyée par e-mail automatiquement une fois que leur paiement est validé — jamais avant, afin qu'aucun client ne reçoive un code pour un paiement qui échouera plus tard.
+
+Quelques choses à savoir avant d'activer un produit de carte cadeau :
+
+- **Une carte cadeau est de l'argent, pas un rabais.** Elle est déduite du montant final après les taxes et les frais d'expédition, et elle ne réduit pas les impôts que vous devez. Cela est contraire à un bon de réduction, qui réduit le prix des marchandises.
+- **Les cartes sont en une seule devise.** Une carte achetée en euros ne peut être utilisée que pour un achat en euros. Si vous vendez en plusieurs devises, créez un produit de carte cadeau distinct pour chacune. Cela vous protège des fluctuations des taux de change sur un solde qui pourrait ne pas être utilisé pendant un an.
+- **Les cartes cadeaux ne peuvent pas être rabattues.** Un bon de réduction ne s'appliquera pas à une ligne de carte cadeau, car vendre 100 £ de crédit pour 80 £ vous coûte 20 £ chaque fois.
+- **Une carte cadeau ne peut pas acheter une autre carte cadeau.** Cela ferme une voie que les gens utilisent pour blanchir des détails de carte volée.
+- **Acheter une carte cadeau n'octroie pas de points de fidélité.** Les points sont attribués lorsque la carte est utilisée pour acheter des marchandises, donc personne ne gagne deux fois sur le même argent.
 
 ![Gestion des cartes cadeaux](/static/core/admin/img/help/gift-cards/gift-card-list.webp)
 
 ## Types de dénominations
 
-Contrôlez la façon dont les clients choisissent le montant de la carte cadeau:
+Ces paramètres contrôlent la manière dont un client choisit le montant lors de l'achat d'une carte cadeau :
 
 | Type | Description |
 |------|-------------|
-| **Dénominations fixes** | Les clients choisissent parmi des montants prédéfinis (par exemple, 25 $, 50 $, 100 $) |
+| **Dénominations fixes** | Les clients choisissent parmi des montants prédéfinis (ex. $25, $50, $100) |
 | **Montant personnalisé** | Les clients entrent tout montant compris entre un minimum et un maximum |
-| **Les deux** | Proposez des dénominations prédéfinies ainsi qu'une option de montant personnalisé |
+| **Les deux** | Proposer des dénominations prédéfinies ainsi qu'une option de montant personnalisé |
 
-## Création d'un produit de carte cadeau
+## Créer un produit de carte cadeau
 
-### Étape 1: Créer le produit
+Toute carte cadeau — qu'elle soit finalement vendue ou émise manuellement aujourd'hui — a besoin d'un produit de type carte cadeau derrière elle.
+
+### Étape 1 : Configurer le produit
 
 1. Accédez à **Produits > Tous les produits** et cliquez sur **+ Ajouter un produit**
-2. Définissez le **Type de produit** sur **Carte cadeau**
+2. Définissez **Type de produit** sur **Carte cadeau**
 3. Remplissez le nom et la description du produit
-4. Configurez les paramètres de dénomination:
+4. Configurez les paramètres de dénomination :
    - Choisissez un **Type de dénomination** (Fixe, Personnalisé ou Les deux)
-   - Pour Fixe: définissez les montants de dénomination disponibles
-   - Pour Personnalisé: définissez le **Minimum** et le **Maximum** des montants autorisés
-5. Définissez le **Nombre de jours avant expiration** (0 = ne jamais expirer) — cela détermine la durée de validité des cartes cadeaux après l'achat
+   - Pour Fixe : définissez les montants de dénomination disponibles
+   - Pour Personnalisé : définissez le **Minimum** et le **Maximum** autorisés
+5. Définissez **Jours d'expiration** (0 = ne jamais expirer) — cela détermine combien de temps les cartes cadeaux sont valides après l'achat
 6. Enregistrez et publiez le produit
 
-### Étape 2: Publier et vendre
+### Étape 2 : Publication
 
-Une fois publié, la carte cadeau apparaît dans votre boutique en ligne comme tout autre produit. Les clients peuvent la consulter, choisir un montant et l'ajouter à leur panier.
+Publiez le produit lorsque vous êtes prêt à le vendre. Les clients peuvent l'acheter directement depuis votre boutique en ligne dès maintenant, et la carte est envoyée par e-mail automatiquement une fois que leur paiement est validé.
 
-## Cycle de vie d'une carte cadeau
+Ce produit est également celui que vous sélectionnez lors de l'émission manuelle d'une carte — donc il vaut la peine de l'en créer même si vous prévoyez uniquement de donner des cartes cadeaux.
 
-Une carte cadeau suit ce cycle de vie:
+## Créer une carte cadeau manuellement
 
-1. **Achat** — Le client achète le produit de carte cadeau et fournit les détails du destinataire
-2. **Livraison** — Un e-mail contenant le code de la carte cadeau est envoyé automatiquement au destinataire
-3. **Utilisation** — Le destinataire entre le code lors du paiement pour appliquer le solde
-4. **Suivi du solde** — Chaque utilisation déduit du solde jusqu'à ce qu'il atteigne zéro
+C'est la seule façon de créer une carte cadeau financée pour le moment, et elle fonctionne pleinement aujourd'hui.
 
-## Flux d'achat du client
+1. Accédez à **Produits > Cartes cadeaux** et cliquez sur **+ Ajouter une carte cadeau**
+2. Choisissez le **Produit** — cela doit être un produit de type carte cadeau existant (voir ci-dessus)
+3. Entrez la **Valeur initiale** — le solde de départ, dans le montant que vous choisissez. Contrairement à un achat client, cela n'est pas limité aux paramètres de dénomination du produit
+4. Définissez optionnellement une date **Expire à**, et laissez **Actif** coché afin que la carte puisse être réclamée
+5. Remplissez la section **Destinataire**, plus bas sur la même page :
+   - **Email du destinataire** — obligatoire ; l'endroit où l'e-mail de livraison sera envoyé
+   - **Nom du destinataire**, **Nom de l'expéditeur** et **Message personnel** — tous optionnels
+   - **Date d'envoi planifiée** — optionnel ; laissez vide et envoyez quand vous êtes prêt, ou définissez une date/heure future (ex. un anniversaire)
+6. Cliquez sur **Enregistrer**
 
-Lorsqu'un client achète une carte cadeau:
+Le code de réclamation est généré automatiquement et le solde de départ est défini à partir de la Valeur initiale — vous ne remplissez ni l'un ni l'autre vous-même.
 
-1. **Choisir le montant** — Choisir une dénomination ou entrer un montant personnalisé
-2. **Détails du destinataire** — Entrer l'adresse e-mail et le nom du destinataire
-3. **Message personnel** — Ajouter un message optionnel à inclure dans l'e-mail de livraison
-4. **Nom de l'expéditeur** — Fournir le nom de l'expéditeur pour l'e-mail
-5. **Livraison planifiée** — Planifier optionnellement l'e-mail pour une date ultérieure (par exemple, un anniversaire)
-6. **Paiement** — Terminer l'achat comme tout autre produit
+**Enregistrement de la carte ne l'envoie pas par courriel.** Pour l'envoyer, retournez à la liste des cartes-cadeaux, sélectionnez la case à cocher de la carte, choisissez **Envoyer les courriels des cartes-cadeaux** dans le menu déroulant Actions, puis cliquez sur **Aller**.
 
-## Livraison automatique
+La même action permet de renvoyer le courriel si vous avez besoin de le faire plus tard.
 
-Après l'achat, la carte cadeau est livrée automatiquement:
+## Gestion des cartes-cadeaux dans l'administration
 
-- Un e-mail stylisé est envoyé au destinataire avec:
-  - Le code unique de la carte cadeau
-  - La valeur de la carte cadeau
-  - Le message personnel de l'expéditeur
-  - Un lien pour vérifier le solde restant
-- Si une livraison planifiée a été définie, l'e-mail est envoyé à la date et à l'heure spécifiées
-- L'expéditeur reçoit une confirmation de commande avec les détails de la carte cadeau
-
-## Gestion des cartes cadeaux dans l'administration
-
-Accédez à **Produits > Cartes cadeaux** pour gérer toutes les cartes cadeaux:
+Accédez à **Produits > Cartes-cadeaux** pour gérer toutes les cartes-cadeaux :
 
 ### Tableau de bord des statistiques
 
-En haut de la page, quatre cartes affichent des indicateurs clés:
+En haut de la page, quatre cartes affichent des indicateurs clés :
 
-- **Total des cartes cadeaux** — Nombre total de cartes cadeaux émises
+- **Total des cartes-cadeaux** — Nombre total de cartes-cadeaux émises
 - **Actives** — Cartes actives avec un solde disponible
-- **Total du solde** — Solde restant combiné de toutes les cartes
-- **Utilisées partiellement** — Cartes qui ont été partiellement utilisées
+- **Solde total** — Solde restant combiné de toutes les cartes
+- **Partiellement utilisées** — Cartes qui ont été partiellement réclamées
 
 ### Filtres
 
-Filtrez les cartes cadeaux par:
+Filtrez les cartes-cadeaux par :
 
-- **Recherche** — Trouver par code, e-mail ou nom du destinataire
-- **Statut** — Actives, Inactives, Expirées, Totalement utilisées ou Utilisées partiellement
-- **Solde** — Avec solde ou Solde nul
+- **Recherche** — Trouver par code, courriel ou nom du destinataire
+- **Statut** — Actives, Inactives, Expirées, Totalement Réclamées ou Partiellement Utilisées
+- **Solde** — Avec solde ou sans solde
 - **Créé** — Période de temps (Aujourd'hui, Cette semaine, Ce mois, Cette année)
 
-### Détails de la carte cadeau
+### Détails de la carte-cadeaux
 
-Chaque carte cadeau affiche:
+Chaque carte-cadeaux affiche :
 
-- **Code** — Le code unique de rédemption (par exemple, GC-XXXX-XXXX-XXXX)
-- **Destinataire** — E-mail et nom
+- **Code** — Le code unique de réclamation (ex. GC-XXXX-XXXX-XXXX)
+- **Destinataire** — Courriel et nom
 - **Badges de statut** — Statut actuel avec une coloration
-- **Solde / Initial / Utilisé** — Résumé financier avec le pourcentage utilisé
+- **Solde / Initial / Réclamé** — Résumé financier avec le pourcentage utilisé
 - **Dates importantes** — Créé, émis, première utilisation
-- **Expéditeur** — Qui a acheté la carte cadeau
+- **Expéditeur** — Qui a acheté (ou qui a émis) la carte-cadeaux
 
 ### Actions
 
-Pour chaque carte cadeau, vous pouvez:
+- Cliquez sur une carte-cadeaux pour **éditer** ses détails et consulter son **historique complet des transactions**, affiché en ligne sur la même page
+- Sélectionnez une ou plusieurs cartes et utilisez le menu déroulant **Actions** pour **Envoyer les courriels des cartes-cadeaux** (envoie ou renvoie le courriel d'envoi) ou **Marquer les cartes-cadeaux sélectionnées comme inactives** (désactive — le solde est préservé mais la carte ne peut plus être réclamée)
 
-- **Modifier** — Voir et modifier les détails de la carte cadeau
-- **Voir les transactions** — Voir l'historique complet des transactions
-- **Renvoyer l'e-mail** — Renvoyer l'e-mail de livraison au destinataire
-- **Désactiver** — Désactiver la carte (le solde est préservé mais la carte ne peut plus être utilisée)
+## Réclamation aujourd'hui
 
-## Utilisation à la caisse
+**En magasin**, à votre terminal de caisse :
 
-Lorsqu'un client entre un code de carte cadeau à la caisse:
+1. Le caissier prend le code à l'étape du paiement
+2. Le code est validé — actif, non expiré, avec un solde, et dans la même devise que la vente
+3. Le solde est appliqué au montant total dû, y compris les taxes et les frais de livraison
+4. Si le solde ne couvre pas l'ensemble de la vente, le client paie le reste d'une autre manière
+5. Le solde est déduit et la transaction est enregistrée
 
-1. Le code est validé (actif, non expiré, avec solde)
-2. Le solde disponible est affiché
-3. Le solde est appliqué au total de la commande
-4. Si le solde couvre l'ensemble de la commande, aucun paiement supplémentaire n'est nécessaire
-5. Si le solde est inférieur au total de la commande, le client paie le reste
-6. La transaction est enregistrée et le solde est mis à jour
+Notez que le caissier prend le code à l'**étape du paiement**, et non lors de la création du panier. Une carte-cadeaux est de l'argent que le client a déjà donné, donc elle règle la facture plutôt que de réduire les marchandises.
+
+**En ligne**, le processus de paiement inclut un champ pour la carte-cadeaux à l'étape du paiement. Le client entre son code, le solde est déduit du montant dû — après les taxes et les frais de livraison — et le reste est facturé à sa carte comme d'habitude. Si la carte couvre l'ensemble de la commande, aucun autre paiement n'est nécessaire. Le solde n'est déduit qu'une fois le paiement confirmé, donc un panier abandonné ne touche jamais la carte.
+
+Les destinataires peuvent également vérifier leur solde restant à tout moment via le lien dans leur courriel d'envoi.
 
 ## Gestion des remboursements
 
-Lorsque vous remboursez des commandes qui ont utilisé une carte cadeau:
+Lors du remboursement de commandes ou de ventes qui ont utilisé une carte-cadeaux :
 
-- **Cartes cadeaux non utilisées** — Désactiver complètement la carte cadeau
-- **Cartes partiellement utilisées** — Le solde doit être ajusté manuellement via une transaction
-- **Remboursement total** — Créditer le montant sur le solde de la carte cadeau via une transaction de remboursement
+- **Une carte-cadeaux achetée par le client, encore inutilisée** — la carte est désactivée et son solde est annulé, donc le crédit disparaît avec le remboursement.
+- **Une carte-cadeaux achetée par le client et partiellement utilisée** — cela nécessite votre jugement. Désactiver la carte retirerait le crédit déjà utilisé, donc le solde reste intact et est marqué pour que vous l'ajustiez manuellement.
+- **Une carte-cadeaux utilisée pour payer la commande remboursée** — le remboursement est d'abord retourné sur la carte, avant tout paiement par carte ou par banque. Rembourser de l'argent à une banque dont le commerçant n'a jamais réellement collecté est une erreur plus grave, et le fait de rendre la valeur là d'où elle vient ferme également une voie connue de fraude. Si la carte originale a depuis expiré ou a été désactivée, une nouvelle carte est émise au même destinataire sans date d'expiration.
+- **Remboursement total** — Créditez le montant sur le solde de la carte-cadeaux via une transaction de remboursement
 
 ## Conseils
 
-- Fixez des périodes d'expiration raisonnables (par exemple, 365 jours) pour respecter les réglementations locales sur les cartes cadeaux — certaines juridictions exigent des durées minimales de validité.
-- Utilisez le type de dénomination "Les deux" pour offrir commodité (montants prédéfinis) et flexibilité (montants personnalisés).
-- Surveillez régulièrement le métrique Total du solde — il représente une dette restante sur vos livres comptables.
-- Utilisez la livraison planifiée pour les promotions saisonnières — les clients peuvent acheter des cartes cadeaux en avance et les avoir livrées à la date exacte.
-- Testez le flux complet (achat, livraison par e-mail, utilisation) avec une commande de test avant de lancer.
-- Si vous vendez à des clients dans plusieurs pays, vous pouvez émettre des cartes cadeaux en devises spécifiques — consultez le sujet d'aide **Cartes cadeaux multidevises** pour plus de détails.
+Conservez tous les formats de mise en forme markdown, les chemins d'image, les blocs de code et les termes techniques.
+
+- Utilisez l'émission manuelle pour les crédits de bonne volonté, les résolutions liées au service client ou tout cas où vous souhaitez accorder un crédit de magasin à un client sans achat via le site.
+- Fixez des durées d'expiration raisonnables (par exemple, 365 jours) afin de respecter les réglementations locales sur les cartes-cadeaux — certaines juridictions exigent des durées minimales de validité.
+- Utilisez le type de désignation "Both" pour offrir à la fois commodité (montants prédéfinis) et flexibilité (un montant personnalisé).
+- Surveillez régulièrement le métrique Solde total — il représente une dette impayée sur vos livres comptables.
+- Une carte s'utilise de la même manière en ligne et en personne — lors du paiement à l'étape de paiement lors du passage à la caisse en ligne, ou au comptoir.
+
+L'e-mail de livraison inclut un lien permettant de vérifier le solde, que les destinataires peuvent utiliser à tout moment.
+- Si vous vendez à des clients dans plusieurs pays, vous pouvez émettre des cartes-cadeaux dans des devises spécifiques — consultez le sujet d'aide **Multi-Currency Gift Cards** pour plus de détails.

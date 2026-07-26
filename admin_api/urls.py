@@ -26,6 +26,7 @@ from admin_api.views import (
     settings,
     sso,
     staff,
+    traffic,
     variants,
 )
 
@@ -78,6 +79,8 @@ urlpatterns = [
     path("analytics/brands/", analytics.brand_analytics, name="brand_analytics"),
     path("analytics/comparison/", analytics.analytics_comparison, name="analytics_comparison"),
     path("analytics/export/", analytics.analytics_export, name="analytics_export"),
+    # Web/visitor traffic analytics (wraps geoip.services.analytics_service)
+    path("analytics/traffic/", traffic.traffic_analytics, name="traffic_analytics"),
     # Inventory intelligence endpoints
     path("inventory/dashboard/", inventory.inventory_dashboard, name="inventory_dashboard"),
     path("inventory/low-stock/", inventory.inventory_low_stock, name="inventory_low_stock"),

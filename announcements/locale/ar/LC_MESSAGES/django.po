@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,12 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "المحتوى"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "الصورة"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -32,38 +35,51 @@ msgstr ""
 "صورة اختيارية لعرض النافذة المنبثقة. اختر بين الشعار (فوق المحتوى) أو "
 "الخلفية (خلف النص مع طبقة شفافة)"
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "الرابط"
 
+#: admin.py:78
 msgid "Display"
 msgstr "عرض"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "قواعد الظهور"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
 msgstr "اختياري: قيد ظهور هذا الإعلان بناءً على الظروف المتقدمة"
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "العنوان"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "لا يوجد تاريخ انتهاء"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "منتهية الصلاحية"
 
+#: admin.py:121
 msgid "Active"
 msgstr "فعال"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "الحالة"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "قائمة الإعلانات النشطة"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -73,12 +89,15 @@ msgstr ""
 "الأولوية تصاعديًا، ثم حسب created_at تنازعيًا. تُستخدم من قبل مكون إعلان متجر "
 "التجزئة."
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "قائمة بإعلانات نشطة"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "احصل على تفاصيل الإعلان"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -88,80 +107,107 @@ msgstr ""
 "الصورة، والوضعية الخاصة بعرض نافذة الإعلان في متجر التجزئة. تُعيد رمز 404 إذا "
 "كان الإعلان غير نشط أو منتهي الصلاحية أو غير موجود."
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "مفتاح الإعلان الأساسي"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "تفاصيل الإعلان"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "غير موجود، غير نشط، أو منتهي الصلاحية"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "الإعلانات"
 
+#: models.py:15
 msgid "No Link"
 msgstr "لا يوجد رابط"
 
+#: models.py:16
 msgid "Product"
 msgstr "المنتج"
 
+#: models.py:17
 msgid "Category"
 msgstr "الקטגוריה"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "مدونة"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "الصفحة"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "عنوان URL مخصص"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "صورة اللافتة (أعلاه المحتوى)"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "صورة الخلفية (مع طبقة تغطية)"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr "عنوان الإعلان - يدعم التصميم الأساسي (مائل، سمين، لون)"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "محتوى مفصل اختياري لعرض النافذة المنبثقة"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "صورة إضافية لعرض النافذة المنبثقة"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "كيفية عرض الصورة في النافذة المنبثقة"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
 msgstr "شفافية الطبقة عند استخدام الصورة كخلفية (0 = شفاف، 1 = غير شفاف)"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "نوع الرابط لهذا الإعلان"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "المنتج المراد ربطه"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "الקטגוריה المراد ربطها"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "مقال المدونة المراد ربطه"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "الصفحة المراد ربطها"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "عنوان URL مخصص للرابط"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "نص زر الروابط المنبثقة، مثل \"تسوق الآن\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
@@ -169,178 +215,241 @@ msgstr ""
 "إذا تم تمكينه، فسيفتح النقر فوق الإعلان نافذة منبثقة تحتوي على المحتوى "
 "الكامل. وإذا تم تعطيله، فسيقوم النقر بنقل المستخدم مباشرة إلى رابط URL."
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "السماح أو تعطيل هذا الإعلان"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
 msgstr "سيتوقف عرض الإعلان تلقائيًا بعد هذه التاريخ/الوقت. اترك الفراغ للعدم"
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr "رقم أقل = أولوية أعلى (يتم عرضه أولاً)"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "قواعد الظهور لعرض الشرطية"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "ترجمة محتوى الإعلان"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "إعلان"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "تعديل الإعلان"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "إضافة إعلان"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "الرجاء تصحيح الأخطاء أدناه."
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "عنوان الإعلان - يدعم الخط المائل، السمين، واللون"
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "المحتوى"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "نص تفصيلي اختياري يظهر في نافذة الإعلان المنبثقة"
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "نوع الرابط"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "نص الزر"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "مثال: \\"
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "إظهار النافذة المنبثقة"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "فتح التفاصيل في نافذة منبثقة بدلاً من التنقل"
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "اختياري"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr "صورة لعرض النافذة المنبثقة. يتم عرضها عندما ينقر الزائر على الإعلان"
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "نمط العرض"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "شفافية التغطية"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = شفاف، 1 = غير شفاف"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "مفعل"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "الأولوية"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "الأقل قيمة يظهر أولاً"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "ينتهي في"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "اترك الخانة فارغة لعدم وجود تاريخ انتهاء."
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "تم إنشاؤها"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "تم التحديث"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "متقدم"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr "تقييد ظهور هذا الإعلان. اترك الفراغ لعرضه للجميع"
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "احتفظ بـ Ctrl / Cmd لتحديد أكثر من عنصر"
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "حفظ"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "حفظ ومواصلة"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "حفظ وإضافة آخر"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "حذف"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr "إدارة إعلانات المتجر المعروضة في الأعلى والأسفل"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "كل"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "معطل"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "ابحث عن الإعلانات..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "الإعلانات"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "السابق"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "من"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "التالي"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "لم يتم العثور على أي إعلانات"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "لا يوجد إعلانات تتطابق مع استعلام البحث الخاص بك"
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr "إنشاء إعلانك الأول لعرضه في أعلى أو أسفل متجرك"
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "إنشاء إعلان"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "يفتح نافذة منبثقة عند النقر"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "نافذة منبثقة"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "رابط مباشر عند النقر"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "رابط مباشر"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "آخر تحديث"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "منذ"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "تنتهي صلاحيتها"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "تحتوي على صورة"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "تحرير"

@@ -17,12 +17,10 @@ Step 4 of the migration wizard allows users to review and customize how data fro
       max_length=100,
       blank=True,
       db_index=True,
-      help_text="Original ID from source platform (WooCommerce, Shopify, etc.)"
+      help_text="Original ID from source platform (WooCommerce, Shopify, etc.)",
   )
   imported_meta = models.JSONField(
-      default=dict,
-      blank=True,
-      help_text="Metadata from import (SEO fields, identifiers, etc.)"
+      default=dict, blank=True, help_text="Metadata from import (SEO fields, identifiers, etc.)"
   )
   ```
 - **Purpose**: Track original WooCommerce IDs for relationship matching (products→categories, reviews→products) and store SEO/meta data

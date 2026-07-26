@@ -215,6 +215,31 @@
   border-color: var(--theme-color-primary, #2563eb);
 }
 
+/* Collapsed provider list: unselected cards hide behind a change link
+   (display:flex above would otherwise defeat the hidden attribute) */
+.payment-provider-card[hidden] {
+  display: none;
+}
+
+.checkout-change-provider-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-1, 0.25rem);
+  margin: var(--theme-space-2, 0.5rem) 0 var(--theme-space-3, 0.75rem);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--theme-color-primary, #2563eb);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.checkout-change-provider-link[hidden] {
+  display: none;
+}
+
 .payment-provider-card--selected {
   border-color: var(--theme-color-primary, #2563eb);
   background: var(--theme-color-background-secondary, #f9fafb);
@@ -292,6 +317,21 @@
 .billing-toggle label {
   font-size: var(--theme-font-size-sm, 0.875rem);
   cursor: pointer;
+}
+
+/* Full billing address for carts with no shippable items: collected at the
+   payment step (there's no shipping form to mirror). */
+.billing-address--standalone {
+  margin-top: var(--theme-space-4, 1rem);
+  padding-top: var(--theme-space-4, 1rem);
+  border-top: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.billing-address__title {
+  margin: 0 0 var(--theme-space-3, 0.75rem);
+  font-size: var(--theme-font-size-base, 1rem);
+  font-weight: 600;
+  color: var(--theme-color-text, #111827);
 }
 
 /* Embedded payment container */
@@ -492,29 +532,65 @@
   white-space: nowrap;
 }
 
+/* Totals — labels left, amounts right (tabular), Total emphasised.
+   Mirrors the express flow's .express__totals treatment. */
 .checkout-summary__row {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
+  gap: var(--theme-space-4, 1rem);
   padding: var(--theme-space-1, 0.25rem) 0;
   font-size: var(--theme-font-size-sm, 0.875rem);
   color: var(--theme-color-text-muted, #6b7280);
+}
+
+.checkout-summary__row > span:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .checkout-summary__row[hidden] {
   display: none;
 }
 
-.checkout-summary__row--discount {
+.checkout-summary__row--discount > span:last-child {
   color: var(--theme-color-success, #059669);
 }
 
 .checkout-summary__row--total {
-  font-size: var(--theme-font-size-lg, 1.125rem);
-  font-weight: var(--theme-font-weight-semibold, 600);
+  font-size: 1.25rem;
+  font-weight: 700;
   color: var(--theme-color-text, #1f2937);
   padding-top: var(--theme-space-3, 0.75rem);
   border-top: 1px solid var(--theme-color-border, #e5e7eb);
   margin-top: var(--theme-space-3, 0.75rem);
+}
+
+/* Voucher / discount code (shared order summary) */
+.checkout-summary__voucher {
+  margin-top: var(--theme-space-4, 1rem);
+  padding-top: var(--theme-space-4, 1rem);
+  border-top: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.checkout-summary__voucher-row {
+  display: flex;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.checkout-summary__voucher-row .checkout-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkout-summary__voucher-msg {
+  margin: var(--theme-space-2, 0.5rem) 0 0;
+  font-size: 0.875rem;
+  color: var(--theme-color-success, #16a34a);
+}
+
+.checkout-summary__voucher-msg--error {
+  color: var(--theme-color-error, #dc2626);
 }
 
 /* Alerts */
@@ -795,4 +871,219 @@
   padding: 0 var(--theme-space-3, 0.75rem);
   color: var(--theme-color-text-light, #6b7280);
   font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+/* === Tenders (gift card / store credit) — P2.5b ======================== */
+/* A tender is a payment, not a discount: it lives on the payment step, above
+   the provider list, and the summary shows it as a minus against what a
+   gateway will actually be asked for. Mobile-first like everything here. */
+
+.checkout-tenders {
+  margin-bottom: var(--theme-space-6, 1.5rem);
+  padding: var(--theme-space-4, 1rem);
+  border: 1px solid var(--theme-color-border, #e5e7eb);
+  border-radius: var(--theme-radius-md, 0.5rem);
+  background: var(--theme-color-surface, #fff);
+}
+
+.checkout-tenders__heading {
+  margin: 0 0 var(--theme-space-3, 0.75rem);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  font-weight: 600;
+  color: var(--theme-color-text, #111827);
+}
+
+.checkout-tenders__row {
+  display: flex;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.checkout-tenders__row .checkout-input {
+  flex: 1;
+  min-width: 0; /* let the input shrink on narrow screens */
+  text-transform: uppercase;
+}
+
+.checkout-tenders__wallet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--theme-space-2, 0.5rem);
+  flex-wrap: wrap;
+  margin-top: var(--theme-space-3, 0.75rem);
+  padding-top: var(--theme-space-3, 0.75rem);
+  border-top: 1px dashed var(--theme-color-border, #e5e7eb);
+}
+
+/* Without this, display:flex above overrides the `hidden` attribute the JS
+   sets when the customer has no spendable store credit (guests always) —
+   the row would show with an empty balance. */
+.checkout-tenders__wallet[hidden] {
+  display: none;
+}
+
+.checkout-tenders__wallet-balance {
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-text-light, #6b7280);
+}
+
+.checkout-tenders__applied:not(:empty) {
+  margin-bottom: var(--theme-space-3, 0.75rem);
+}
+
+.checkout-tenders__item {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+  padding: var(--theme-space-2, 0.5rem) 0;
+  font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+.checkout-tenders__item-label {
+  flex: 1;
+  color: var(--theme-color-text, #111827);
+}
+
+.checkout-tenders__item-amount {
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-color-success, #059669);
+}
+
+.checkout-tenders__remove {
+  background: none;
+  border: none;
+  padding: 0 var(--theme-space-1, 0.25rem);
+  font-size: var(--theme-font-size-lg, 1.125rem);
+  line-height: 1;
+  color: var(--theme-color-text-light, #6b7280);
+  cursor: pointer;
+}
+
+.checkout-tenders__remove:hover {
+  color: var(--theme-color-error, #dc2626);
+}
+
+.checkout-tenders__error {
+  margin-top: var(--theme-space-2, 0.5rem);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  color: var(--theme-color-error, #dc2626);
+}
+
+.checkout-zero-due {
+  margin-bottom: var(--theme-space-6, 1.5rem);
+  padding: var(--theme-space-4, 1rem);
+  border: 1px solid var(--theme-color-success, #059669);
+  border-radius: var(--theme-radius-md, 0.5rem);
+  background: var(--theme-color-success-bg, #ecfdf5);
+  text-align: center;
+}
+
+.checkout-zero-due__message {
+  margin: 0 0 var(--theme-space-3, 0.75rem);
+  color: var(--theme-color-text, #111827);
+}
+
+.checkout-zero-due__message .fa-check-circle {
+  color: var(--theme-color-success, #059669);
+  margin-right: var(--theme-space-1, 0.25rem);
+}
+
+.checkout-summary__row--tender span:last-child {
+  color: var(--theme-color-success, #059669);
+  font-variant-numeric: tabular-nums;
+}
+
+.checkout-summary__row--amount-due {
+  font-weight: 600;
+  border-top: 1px dashed var(--theme-color-border, #e5e7eb);
+  padding-top: var(--theme-space-2, 0.5rem);
+}
+
+/* ==========================================================================
+   Mobile order-summary — collapsible bar at the top of the page
+   Mobile-first: the summary card is moved above the form (grid order) and
+   collapsed behind a toggle bar that shows the live total, so customers see
+   what they owe without scrolling to the foot of the page. The min-width
+   block below restores the static desktop sidebar.
+   ========================================================================== */
+
+/* Move the summary to the top of the single-column grid on mobile. The grid
+   child differs per flow: accordion includes the aside directly; single-page
+   wraps it in a sidebar. */
+.checkout-container--accordion > .checkout-summary,
+.checkout-container--single-page > .single-page__sidebar {
+  order: -1;
+}
+
+.checkout-summary__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+  width: 100%;
+  padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+  border: 1px solid var(--theme-color-border, #e5e7eb);
+  border-radius: var(--theme-radius-base, 0.5rem);
+  background: var(--theme-color-surface, #ffffff);
+  color: var(--theme-color-text, #111827);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.checkout-summary__toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.checkout-summary__toggle-total {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.checkout-summary__toggle-chevron {
+  transition: transform 200ms ease;
+}
+
+.checkout-summary--open .checkout-summary__toggle-chevron {
+  transform: rotate(180deg);
+}
+
+/* Card collapses behind the toggle on mobile; --open reveals it. Scoped to
+   accordion + single-page: multi-step and express provide their own summary
+   toggles and manage card visibility differently. */
+.checkout-container--accordion .checkout-summary__card,
+.checkout-container--single-page .checkout-summary__card {
+  display: none;
+  margin-top: var(--theme-space-3, 0.75rem);
+}
+
+.checkout-container--accordion .checkout-summary--open .checkout-summary__card,
+.checkout-container--single-page .checkout-summary--open .checkout-summary__card {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  /* Desktop: two-column grid — static sidebar, no toggle, card always shown */
+  .checkout-container--accordion > .checkout-summary,
+  .checkout-container--single-page > .single-page__sidebar {
+    order: 0;
+  }
+  .checkout-summary__toggle {
+    display: none;
+  }
+  .checkout-container--accordion .checkout-summary__card,
+  .checkout-container--single-page .checkout-summary__card {
+    display: block;
+    margin-top: 0;
+  }
+}
+
+/* Separate the payment-section voucher entry from the payment provider list
+   below it with a divider and spacing. */
+.checkout-voucher--payment {
+  margin-top: var(--theme-space-4, 1rem);
+  margin-bottom: var(--theme-space-5, 1.25rem);
+  padding-bottom: var(--theme-space-5, 1.25rem);
+  border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
 }

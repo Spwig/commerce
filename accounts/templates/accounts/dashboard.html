@@ -66,6 +66,32 @@
         <div class="account-grid">
             <!-- Left Column: Loyalty, Referral, Affiliate Cards -->
             <div class="account-grid__left">
+                <!-- Store Credit Card (if a wallet exists) -->
+                {% if customer_wallet %}
+        <div class="account-card">
+            <div class="account-card__header">
+                <div class="account-card__header-flex">
+                    <div class="account-stat__icon account-stat__icon--loyalty">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h2 class="account-card__title">{% mtrans 'Store Credit' %}</h2>
+                </div>
+            </div>
+            <div class="account-card__body">
+                <div class="loyalty-stat-center">
+                    <div class="loyalty-points-value">{{ customer_wallet.available_balance }}</div>
+                    <div class="loyalty-stat-label">{% mtrans 'Available Balance' %}</div>
+                </div>
+                <p class="account-card__hint">{% mtrans 'Spend it at checkout — it is applied before any card payment.' %}</p>
+                <div class="loyalty-cta">
+                    <a href="{% url 'accounts:wallet_detail' %}" class="btn btn-primary">
+                        {% mtrans 'View History' %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
                 <!-- Loyalty Points Card (if member) -->
                 {% if loyalty_member %}
         <div class="account-card">

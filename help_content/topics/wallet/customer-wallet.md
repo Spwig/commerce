@@ -27,7 +27,9 @@ url_patterns:
 published: true
 ---
 
-The customer wallet is a store credit system that gives customers a balance they can spend on future orders. Store credit can be added as a result of refunds, referral rewards, promotional campaigns, or manual adjustments made by your team. Customers can then apply their wallet balance at checkout to reduce the amount they pay.
+The customer wallet is a store credit ledger that tracks a running balance for each customer. Store credit can be added as a result of refunds, referral rewards, promotional campaigns, or manual adjustments made by your team.
+
+> **Wallet balances are spendable at checkout.** A signed-in customer with store credit sees it on the payment step and can apply it with one click. The credit comes off the final bill — after tax and delivery — and any remainder is charged to their card as usual. If the credit covers the whole order, no card is needed at all. Credit is reserved when applied and only actually deducted once payment is confirmed, so an abandoned checkout never costs the customer anything.
 
 Navigate to **Customers > Customer Wallets** to view and manage wallets.
 
@@ -37,12 +39,12 @@ Each customer wallet shows four balance figures:
 
 | Balance | Description |
 |---|---|
-| **Available Balance** | The amount the customer can spend right now at checkout |
-| **Pending Balance** | Credits that are not yet spendable — for example, a refund that is still within its confirmation window |
+| **Available Balance** | The customer's current, usable credit — this will be what's spendable at checkout once that feature ships |
+| **Pending Balance** | Credits that aren't in the available balance yet — for example, a refund that is still within its confirmation window |
 | **Lifetime Credited** | The total amount ever credited to this wallet, including all past credits |
-| **Lifetime Used** | The total amount the customer has spent from their wallet across all orders |
+| **Lifetime Used** | The total amount ever debited from this wallet |
 
-The available balance is the only figure that matters at checkout. Pending credits become available once the pending period expires.
+The available balance is the figure that will matter once checkout spending is live. Pending credits move into it once the pending period expires.
 
 ## Viewing a customer's wallet
 
@@ -54,7 +56,7 @@ The detail view shows the current balances at the top and a full transaction his
 
 ### Filtering the wallet list
 
-Use the **Active** filter to separate live wallets from frozen ones. A wallet marked as inactive cannot be used at checkout even if it has a positive balance.
+Use the **Active** filter to separate live wallets from frozen ones. A wallet marked as inactive is frozen — no credits or debits can be recorded against it, even though it keeps its balance.
 
 ## Reading the transaction history
 
@@ -76,7 +78,7 @@ Each transaction shows:
 ### Transaction types explained
 
 - **Credit** — funds added to the wallet (from a refund, promotion, or manual adjustment)
-- **Debit** — funds spent at checkout
+- **Debit** — funds removed from the wallet. Once checkout spending ships this will mean "spent on an order" — for now the only way a debit happens is a manual adjustment
 - **Refund** — credit added specifically as a result of a returned or cancelled order
 - **Adjustment** — a manual correction made by your team
 - **Reversal** — a transaction that cancels out an earlier entry
@@ -87,25 +89,13 @@ Each transaction shows:
 - **Referral Reward** — credit earned through the referral programme
 - **Promotion** — credit granted as part of a marketing campaign
 - **Manual Adjustment** — credit added or removed directly by a staff member
-- **Order Payment** — funds spent at checkout to pay for an order
+- **Order Payment** — funds spent at checkout to pay for an order. Not yet in use — reserved for when wallet checkout spending ships
 
 ## Manual wallet adjustments
 
-You cannot add or remove funds directly from the wallet detail view — wallet transactions are created through the relevant processes (refunds, rewards, promotions). However, staff members with the appropriate permissions can create manual adjustment transactions through the **Wallet Transactions** section.
+You cannot add or remove funds from the admin panel — wallet transactions are created only by the processes that own them: order refunds, loyalty rewards, and referral rewards. This is deliberate. Every movement carries a reference back to what caused it, and a nightly check verifies each wallet's balance against its own history; hand-entered rows are what break that chain.
 
-Navigate to **Customers > Wallet Transactions** and use **+ Add Wallet Transaction** if you need to apply a credit that doesn't fit another source — for example, a goodwill credit following a service complaint.
-
-When creating a manual adjustment:
-
-1. Select the **Wallet** you are adjusting (search by customer email)
-2. Set **Transaction Type** to `Adjustment`
-3. Set **Source** to `Manual Adjustment`
-4. Enter the **Amount** — always a positive number regardless of direction
-5. Set the **Status** to `Completed` for an immediate credit
-6. Add a clear **Description** explaining the reason — this is visible in the transaction history
-7. Click **Save**
-
-> **Note:** Because wallet transactions are immutable, double-check the amount and wallet before saving. If you make a mistake, you will need to create a reversal transaction to correct it.
+For a goodwill credit — a service complaint, a gesture after a problem — issue a **gift card** by hand instead (see the **Gift Cards** help topic). A gift card is designed for exactly this: you control the value, the customer gets a code by email, and it spends at checkout the same way store credit does.
 
 ## Freezing a wallet
 
@@ -115,7 +105,7 @@ If you need to prevent a customer from using their wallet balance — for exampl
 2. Uncheck the **Active** toggle
 3. Click **Save**
 
-The balance is preserved and the wallet can be reactivated at any time. While inactive, the customer cannot apply the wallet balance at checkout.
+The balance is preserved and the wallet can be reactivated at any time. While inactive, no new credits or debits — manual or otherwise — can be recorded against the wallet.
 
 ## Viewing all transactions
 
@@ -132,6 +122,6 @@ The transaction list is read-only — transactions cannot be edited or deleted f
 
 - Check **Lifetime Credited** versus **Lifetime Used** to understand how actively a customer uses their store credit — a large unused balance may indicate the customer has forgotten it exists
 - If a customer reports their balance looks wrong, review the full transaction history to trace exactly how the balance changed over time; the **Balance After** column on each entry makes this easy
-- Use wallet credits as a customer retention tool — a goodwill credit after a difficult order experience can cost less than a refund while keeping the customer spending in your store
+- A large unspent balance is worth a nudge — customers see their store credit on the account dashboard and on the payment step at checkout, but a short email pointing it out often converts it into an order
 - Frozen wallets retain their balance permanently; there is no expiry — if you deactivate a wallet temporarily, remember to reactivate it when the issue is resolved
 - The **Reference ID** on each transaction links back to the originating record, making it straightforward to verify why a credit or debit was applied without having to search elsewhere

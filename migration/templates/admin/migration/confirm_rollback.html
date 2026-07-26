@@ -21,20 +21,37 @@
         {% trans "You are about to rollback the migration job:" %} <strong>{{ job }}</strong>
     </p>
 
-    <h3>{% trans "This will:" %}</h3>
+    {% if preview %}
+    <h3>{% trans "Spwig will remove:" %}</h3>
+    {% if preview.deleted %}
     <ul class="consequences-list">
-        <li>{% trans "Delete all products imported from this migration" %}</li>
-        <li>{% trans "Delete all categories imported from this migration" %}</li>
-        <li>{% trans "Delete all customers imported from this migration" %}</li>
-        <li>{% trans "Delete all orders imported from this migration" %}</li>
-        <li>{% trans "Delete all reviews imported from this migration" %}</li>
-        <li>{% trans "Delete all coupons imported from this migration" %}</li>
-        <li>{% trans "Delete all associated media assets" %}</li>
-        <li>{% trans "Mark the migration job as 'rolled_back'" %}</li>
+        {% for label, count in preview.deleted.items %}
+        <li>{{ count }} &times; {{ label }}</li>
+        {% endfor %}
     </ul>
+    {% else %}
+    <p>{% trans "Nothing — there is nothing left from this import that can be removed." %}</p>
+    {% endif %}
+
+    {% if preview.retained %}
+    <h3>{% trans "Spwig will keep:" %}</h3>
+    <p>{% trans "These were created by the import, but other things in your store now depend on them. Removing them would damage real orders or customer activity, so they stay." %}</p>
+    <ul class="consequences-list">
+        {% for label, info in preview.retained.items %}
+        <li>{{ info.0 }} &times; {{ label }} — {% trans "still referenced by" %} {{ info.1|join:", " }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% else %}
+    <p>
+        {% trans "Spwig could not calculate exactly what this rollback would remove." %}
+        {% if preview_error %}<br><span class="text-muted">{{ preview_error }}</span>{% endif %}
+    </p>
+    {% endif %}
 
     <p class="permanent-warning">
-        {% trans "This operation is PERMANENT and cannot be reversed!" %}
+        {% trans "This operation is PERMANENT and cannot be reversed." %}
     </p>
 </div>
 

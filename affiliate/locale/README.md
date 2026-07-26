@@ -42,11 +42,9 @@ affiliate_commission_approved = "Approved"
 ```python
 from django.utils.translation import gettext_lazy as _
 
+
 class Program(models.Model):
-    name = models.CharField(
-        max_length=200,
-        verbose_name=_("program name")
-    )
+    name = models.CharField(max_length=200, verbose_name=_("program name"))
 
     class Meta:
         verbose_name = _("affiliate program")
@@ -140,8 +138,10 @@ Add `?lang=es` to URL or set language preference in admin.
 #### Test specific language in shell
 ```python
 from django.utils import translation
-translation.activate('es')
+
+translation.activate("es")
 from django.utils.translation import gettext as _
+
 print(_("affiliate program"))
 ```
 

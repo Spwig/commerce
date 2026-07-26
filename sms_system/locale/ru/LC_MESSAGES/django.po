@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);\n"
 
+#: admin.py:58
 msgid "-- Select Provider --"
 msgstr "-- Выбрать провайдера --"
 
+#: admin.py:200 admin.py:212
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:149
+#: templates/admin/sms_system/wizard/step3_credentials.html:33
 msgid "Provider Credentials"
 msgstr "Учетные данные провайдера"
 
+#: admin.py:203
 msgid "Enter your provider API credentials."
 msgstr "Введите учетные данные API провайдера."
 
+#: admin.py:216
 msgid ""
 "Select a provider above to see credential fields, or use the Setup Wizard "
 "for a guided experience."
@@ -34,42 +40,80 @@ msgstr ""
 "Выберите поставщика выше, чтобы увидеть поля учетных данных, или используйте"
 " мастер настройки для пошагового опыта."
 
+#: admin.py:226
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:178
+#: templates/admin/sms_system/wizard/step4_test.html:53
 msgid "Default Settings"
 msgstr "Настройки по умолчанию"
 
+#: admin.py:237 models.py:92
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:202
 msgid "Connection Status"
 msgstr "Состояние соединения"
 
+#: admin.py:248 admin.py:347
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:228
 msgid "Timestamps"
 msgstr "Временные метки"
 
+#: admin.py:273 models.py:76 models.py:251
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:32
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:69
+#: templates/admin/sms_system/smstemplate/change_list.html:82
 msgid "Active"
 msgstr "Активный"
 
+#: admin.py:274
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:34
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:73
+#: templates/admin/sms_system/smstemplate/change_list.html:86
 msgid "Inactive"
 msgstr "Неактивный"
 
+#: admin.py:276 admin.py:410 models.py:334
+#: templates/admin/sms_system/smsoutbox/change_list.html:76
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:108
+#: templates/admin/sms_system/wizard/complete.html:30
 msgid "Status"
 msgstr "Статус"
 
+#: admin.py:281
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:37
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:79
+#: templates/admin/sms_system/wizard/complete.html:40
 msgid "Default SMS"
 msgstr "По умолчанию SMS"
 
+#: admin.py:284 models.py:290
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:56
+#: templates/admin/sms_system/provider_browse.html:130
+#: templates/admin/sms_system/smsoutbox/change_list.html:96
 msgid "SMS"
 msgstr "SMS"
 
+#: admin.py:290
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:40
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:85
+#: templates/admin/sms_system/wizard/complete.html:50
 msgid "Default WhatsApp"
 msgstr "По умолчанию WhatsApp"
 
+#: admin.py:294 models.py:291
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:52
+#: templates/admin/sms_system/provider_browse.html:135
+#: templates/admin/sms_system/smsoutbox/change_list.html:97
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: admin.py:308
 msgid "Connection"
 msgstr "Соединение"
 
+#: admin.py:338
 msgid "Message Content"
 msgstr "Содержание сообщения"
 
+#: admin.py:342
 #, python-brace-format
 msgid ""
 "Use {variable} syntax for placeholders. Example: \"Hello {name}, your order "
@@ -78,176 +122,261 @@ msgstr ""
 "Используйте синтаксис {variable} для заполнителей. Пример: \"Привет {name}, "
 "ваш заказ #{order_number} готов.\""
 
+#: apps.py:8
 msgid "SMS System"
 msgstr "Система SMS"
 
+#: models.py:39
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:47
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:99
 msgid "Untested"
 msgstr "Не протестировано"
 
+#: models.py:40
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:43
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:91
+#: templates/admin/sms_system/wizard/complete.html:33
 msgid "Connected"
 msgstr "Подключен"
 
+#: models.py:41
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:24
 msgid "Connection Failed"
 msgstr "Соединение не удалось"
 
+#: models.py:52 templates/admin/sms_system/wizard/complete.html:26
 msgid "Provider"
 msgstr "Провайдер"
 
+#: models.py:53
 msgid "SMS/messaging service provider"
 msgstr "Провайдер SMS/услуг сообщений"
 
+#: models.py:62
 msgid "Provider Component"
 msgstr "Компонент поставщика"
 
+#: models.py:63
 msgid "Reference to installed provider component"
 msgstr "Ссылка на установленный компонент провайдера"
 
+#: models.py:67 templates/admin/sms_system/wizard/complete.html:22
+#: templates/admin/sms_system/wizard/step3_credentials.html:20
 msgid "Display Name"
 msgstr "Отображаемое имя"
 
+#: models.py:68
 msgid "Friendly name for this account"
 msgstr "Дружественное имя для этой учетной записи"
 
+#: models.py:71
 msgid "Encrypted Credentials"
 msgstr "Шифрованные учетные данные"
 
+#: models.py:72
 msgid "Encrypted API credentials for this provider"
 msgstr "Зашифрованные учетные данные API для этого провайдера"
 
+#: models.py:80
 msgid "Default SMS Account"
 msgstr "Учетная запись SMS по умолчанию"
 
+#: models.py:81
 msgid "Use this account for sending SMS by default"
 msgstr "Использовать этот аккаунт для отправки SMS по умолчанию"
 
+#: models.py:85
 msgid "Default WhatsApp Account"
 msgstr "Учетная запись WhatsApp по умолчанию"
 
+#: models.py:86
 msgid "Use this account for sending WhatsApp messages by default"
 msgstr ""
 "Использовать этот аккаунт для отправки сообщений WhatsApp по умолчанию"
 
+#: models.py:97
 msgid "Last Checked"
 msgstr "Последняя проверка"
 
+#: models.py:103
 msgid "SMS Provider Account"
 msgstr "Учетная запись провайдера SMS"
 
+#: models.py:104
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:21
 msgid "SMS Provider Accounts"
 msgstr "Учетные записи провайдеров SMS"
 
+#: models.py:225
 msgid "POS Receipt"
 msgstr "Чек POS"
 
+#: models.py:226
 msgid "Order Confirmation"
 msgstr "Подтверждение заказа"
 
+#: models.py:227
 msgid "Shipping Update"
 msgstr "Обновление доставки"
 
+#: models.py:228
 msgid "Delivery Notification"
 msgstr "Уведомление о доставке"
 
+#: models.py:229
 msgid "Password Reset"
 msgstr "Сброс пароля"
 
+#: models.py:230
 msgid "Verification Code"
 msgstr "Код подтверждения"
 
+#: models.py:231
 msgid "Marketing"
 msgstr "Маркетинг"
 
+#: models.py:232
 msgid "Custom"
 msgstr "Пользовательский"
 
+#: models.py:239
 msgid "Template Type"
 msgstr "Тип шаблона"
 
+#: models.py:243
 msgid "Name"
 msgstr "Название"
 
+#: models.py:246 models.py:328
 msgid "Message"
 msgstr "Сообщение"
 
+#: models.py:247
 #, python-brace-format
 msgid "Message template. Use {variable} syntax for placeholders."
 msgstr "Шаблон сообщения. Используйте синтаксис {variable} для заполнителей."
 
+#: models.py:257
 msgid "SMS Template"
 msgstr "Шаблон SMS"
 
+#: models.py:258 templates/admin/sms_system/smstemplate/change_list.html:4
+#: templates/admin/sms_system/smstemplate/change_list.html:21
 msgid "SMS Templates"
 msgstr "Шаблоны SMS"
 
+#: models.py:280 templates/admin/sms_system/partials/smsoutbox_cards.html:26
+#: templates/admin/sms_system/smsoutbox/change_list.html:80
 msgid "Pending"
 msgstr "В ожидании"
 
+#: models.py:281 templates/admin/sms_system/partials/smsoutbox_cards.html:30
+#: templates/admin/sms_system/smsoutbox/change_list.html:81
 msgid "Queued"
 msgstr "В очереди"
 
+#: models.py:282 templates/admin/sms_system/partials/smsoutbox_cards.html:34
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsoutbox/change_list.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:82
 msgid "Sent"
 msgstr "Отправлено"
 
+#: models.py:283 templates/admin/sms_system/partials/smsoutbox_cards.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:43
+#: templates/admin/sms_system/smsoutbox/change_list.html:83
 msgid "Delivered"
 msgstr "Доставлено"
 
+#: models.py:284 templates/admin/sms_system/partials/smsoutbox_cards.html:42
+#: templates/admin/sms_system/smsoutbox/change_list.html:48
+#: templates/admin/sms_system/smsoutbox/change_list.html:84
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:45
 msgid "Failed"
 msgstr "Не пройдено"
 
+#: models.py:285 templates/admin/sms_system/partials/smsoutbox_cards.html:46
+#: templates/admin/sms_system/smsoutbox/change_list.html:85
 msgid "Skipped"
 msgstr "Пропущено"
 
+#: models.py:286
+msgid "Sandbox Logged"
+msgstr "Вход в песочницу"
+
+#: models.py:306
 msgid "Provider Account"
 msgstr "Аккаунт поставщика"
 
+#: models.py:314
 msgid "Template"
 msgstr "Шаблон"
 
+#: models.py:320 templates/admin/sms_system/smsoutbox/change_list.html:92
 msgid "Message Type"
 msgstr "Тип сообщения"
 
+#: models.py:324
 msgid "Phone Number"
 msgstr "Номер телефона"
 
+#: models.py:325
 msgid "Recipient phone number in E.164 format"
 msgstr "Номер телефона получателя в формате E.164"
 
+#: models.py:339
 msgid "Provider Message ID"
 msgstr "Идентификатор сообщения провайдера"
 
+#: models.py:340
 msgid "Message ID from the SMS provider"
 msgstr "Идентификатор сообщения от поставщика SMS"
 
+#: models.py:344
 msgid "Error Message"
 msgstr "Сообщение об ошибке"
 
+#: models.py:349
 msgid "Skip Reason"
 msgstr "Причина пропуска"
 
+#: models.py:350
 msgid ""
 "Reason why SMS was skipped (e.g., user_preference_disabled, unsubscribed)"
 msgstr ""
 "Причина, по которой SMS было пропущено (например, user_preference_disabled, "
 "unsubscribed)"
 
+#: models.py:354
 msgid "Retry Count"
 msgstr "Количество попыток"
 
+#: models.py:360
 msgid "Queued At"
 msgstr "В очереди с"
 
+#: models.py:365
 msgid "Sent At"
 msgstr "Отправлено в"
 
+#: models.py:370
 msgid "Delivered At"
 msgstr "Доставлено в"
 
+#: models.py:374 models.py:375
 msgid "SMS Outbox"
 msgstr "SMS исходящие"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:64
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "ago"
 msgstr "назад"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:75
 #, python-format
 msgid "%(counter)s retry"
 msgid_plural "%(counter)s retries"
@@ -256,30 +385,42 @@ msgstr[1] "%(counter)s повтора"
 msgstr[2] "%(counter)s повторов"
 msgstr[3] "%(counter)s повторов"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:88
 msgid "View"
 msgstr "Просмотр"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:100
 msgid "No messages found matching your criteria."
 msgstr "Сообщения, соответствующие вашим критериям, не найдены."
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:101
 msgid "Try adjusting your filters or search terms."
 msgstr "Попробуйте изменить свои фильтры или ключевые слова поиска."
 
+#: templates/admin/sms_system/provider_browse.html:4
+#: templates/admin/sms_system/provider_browse.html:36
 msgid "Browse SMS Providers"
 msgstr "Просмотр провайдеров SMS"
 
+#: templates/admin/sms_system/provider_browse.html:4
 msgid "Site Admin"
 msgstr "Администратор сайта"
 
+#: templates/admin/sms_system/provider_browse.html:25
 msgid "Home"
 msgstr "Главная"
 
+#: templates/admin/sms_system/provider_browse.html:26
 msgid "SMS Accounts"
 msgstr "Учетные записи SMS"
 
+#: templates/admin/sms_system/provider_browse.html:27
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:33
+#: templates/admin/sms_system/wizard/step1_select.html:58
 msgid "Browse Providers"
 msgstr "Просмотреть поставщиков"
 
+#: templates/admin/sms_system/provider_browse.html:38
 msgid ""
 "Choose an SMS provider to integrate with your store. Send transactional SMS "
 "and WhatsApp messages to your customers."
@@ -287,9 +428,11 @@ msgstr ""
 "Выберите поставщика SMS для интеграции с вашим магазином. Отправляйте "
 "транзакционные SMS и сообщения WhatsApp вашим клиентам."
 
+#: templates/admin/sms_system/provider_browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Сервер обновления недоступен"
 
+#: templates/admin/sms_system/provider_browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -297,9 +440,11 @@ msgstr ""
 "Не удалось подключиться к серверу обновлений. Показываются только локально "
 "установленные поставщики."
 
+#: templates/admin/sms_system/provider_browse.html:57
 msgid "SMS Provider Marketplace"
 msgstr "Рынок провайдеров SMS"
 
+#: templates/admin/sms_system/provider_browse.html:69
 msgid ""
 "Here you can discover and configure SMS providers to send transactional "
 "messages, including order confirmations, shipping updates, and delivery "
@@ -309,36 +454,47 @@ msgstr ""
 "транзакционных сообщений, включая подтверждения заказов, обновления по "
 "доставке и уведомления о получении."
 
+#: templates/admin/sms_system/provider_browse.html:76
 msgid "Capabilities:"
 msgstr "Возможности:"
 
+#: templates/admin/sms_system/provider_browse.html:81
 msgid "Send SMS order confirmations and shipping notifications"
 msgstr "Отправляйте подтверждения заказов и уведомления о доставке через SMS"
 
+#: templates/admin/sms_system/provider_browse.html:85
 msgid "WhatsApp Business messaging support"
 msgstr "Поддержка сообщений WhatsApp Business"
 
+#: templates/admin/sms_system/provider_browse.html:89
 msgid "Delivery status tracking and webhooks"
 msgstr "Отслеживание статуса доставки и вебхуки"
 
+#: templates/admin/sms_system/provider_browse.html:93
 msgid "POS digital receipts via SMS"
 msgstr "Электронные чеки POS через SMS"
 
+#: templates/admin/sms_system/provider_browse.html:101
 msgid "Getting Started:"
 msgstr "Начало работы:"
 
+#: templates/admin/sms_system/provider_browse.html:104
 msgid "Browse providers below and select your SMS service"
 msgstr "Просмотрите поставщиков ниже и выберите свой сервис SMS"
 
+#: templates/admin/sms_system/provider_browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Нажмите \"Установить\", чтобы добавить поставщика в ваш магазин"
 
+#: templates/admin/sms_system/provider_browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr "Следуйте мастеру настройки, чтобы настроить учетные данные API"
 
+#: templates/admin/sms_system/provider_browse.html:107
 msgid "Test the connection and start sending messages"
 msgstr "Проверьте соединение и начните отправлять сообщения"
 
+#: templates/admin/sms_system/provider_browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -365,51 +521,70 @@ msgstr[3] ""
 "                    %(counter)s provider installed\n"
 "                "
 
+#: templates/admin/sms_system/provider_browse.html:140
 msgid "MMS"
 msgstr "MMS"
 
+#: templates/admin/sms_system/provider_browse.html:143
 msgid "Filter"
 msgstr "Фильтр"
 
+#: templates/admin/sms_system/provider_browse.html:145
 msgid "Clear"
 msgstr "Очистить"
 
+#: templates/admin/sms_system/provider_browse.html:157
 msgid "Installed Providers"
 msgstr "Установленные провайдеры"
 
+#: templates/admin/sms_system/provider_browse.html:168
 msgid "Update Available"
 msgstr "Доступно обновление"
 
+#: templates/admin/sms_system/provider_browse.html:191
 msgid "Installed"
 msgstr "Установлено"
 
+#: templates/admin/sms_system/provider_browse.html:234
 msgid "Delivery Reports"
 msgstr "Отчеты по доставке"
 
+#: templates/admin/sms_system/provider_browse.html:260
 msgid "Update"
 msgstr "Обновить"
 
+#: templates/admin/sms_system/provider_browse.html:265
 msgid "Configure"
 msgstr "Настроить"
 
+#: templates/admin/sms_system/provider_browse.html:274
+#: templates/admin/sms_system/provider_browse.html:377
 msgid "View Details"
 msgstr "Посмотреть детали"
 
+#: templates/admin/sms_system/provider_browse.html:282
+#: templates/admin/sms_system/provider_browse.html:385
 msgid "Learn More"
 msgstr "Узнать больше"
 
+#: templates/admin/sms_system/provider_browse.html:298
 msgid "Available from Marketplace"
 msgstr "Доступно на рынке"
 
+#: templates/admin/sms_system/provider_browse.html:324
 msgid "Available"
 msgstr "Доступно"
 
+#: templates/admin/sms_system/provider_browse.html:369
 msgid "Install"
 msgstr "Установить"
 
+#: templates/admin/sms_system/provider_browse.html:402
+#: templates/admin/sms_system/wizard/step1_select.html:55
 msgid "No Providers Available"
 msgstr "Поставщики недоступны"
 
+#: templates/admin/sms_system/provider_browse.html:403
 msgid ""
 "No SMS providers are currently available. Please check your update server "
 "connection or contact support."
@@ -417,203 +592,282 @@ msgstr ""
 "В настоящее время поставщики SMS недоступны. Проверьте соединение с сервером"
 " обновлений или свяжитесь с поддержкой."
 
+#: templates/admin/sms_system/provider_browse.html:412
 msgid "Installing provider..."
 msgstr "Установка провайдера..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:4
+#: templates/admin/sms_system/smsoutbox/change_list.html:21
 msgid "Message Log"
 msgstr "Журнал сообщений"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:23
 msgid "Track sent SMS and WhatsApp messages"
 msgstr "Отслеживайте отправленные SMS и сообщения WhatsApp"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:28
 msgid "Overview"
 msgstr "Обзор"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:33
 msgid "Total Messages"
 msgstr "Общее количество сообщений"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:57
 msgid "Filters"
 msgstr "Фильтры"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:68
 msgid "Search"
 msgstr "Поиск"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:70
 msgid "Phone number or message..."
 msgstr "Номер телефона или сообщение..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:79
 msgid "All Statuses"
 msgstr "Все статусы"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:95
 msgid "All Types"
 msgstr "Все типы"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:106
 msgid "Apply Filters"
 msgstr "Применить фильтры"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:109
 msgid "Clear All"
 msgstr "Очистить все"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:117
 msgid "Messages"
 msgstr "Сообщения"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:120
 msgid "messages"
 msgstr "сообщения"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:130
 msgid "Loading messages..."
 msgstr "Загрузка сообщений..."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:22
 msgid "Edit SMS Provider"
 msgstr "Редактировать поставщика SMS"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:24
 msgid "Add SMS Provider"
 msgstr "Добавить поставщика SMS"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:30
 msgid "Created"
 msgstr "Создано"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:53
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:253
 msgid "Save and continue editing"
 msgstr "Сохранить и продолжить редактирование"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:56
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:252
 msgid "Save"
 msgstr "Сохранить"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:69
 msgid "Please correct the errors below"
 msgstr "Пожалуйста, исправьте ошибки ниже"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:95
 msgid "Basic"
 msgstr "Базовый"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:99
+#: templates/admin/sms_system/wizard/base.html:45
 msgid "Credentials"
 msgstr "Учетные данные"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:103
 msgid "Defaults"
 msgstr "По умолчанию"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:119
 msgid "Basic Information"
 msgstr "Основная информация"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:165
 msgid "Select a provider in the Basic tab to see credential fields."
 msgstr ""
 "Выберите поставщика в вкладке \"Базовые\" для просмотра полей учетных "
 "данных."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:179
 msgid "Configure which messaging channels use this provider by default."
 msgstr ""
 "Настройте, какие каналы связи по умолчанию будут использовать этого "
 "поставщика."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:23
 msgid "Manage your SMS and WhatsApp provider connections"
 msgstr "Управляйте подключениями к поставщикам SMS и WhatsApp"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:28
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:131
 msgid "Setup Wizard"
 msgstr "Мастер настройки"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:42
 msgid "Provider Accounts"
 msgstr "Аккаунты поставщиков"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:45
 msgid "accounts"
 msgstr "аккаунты"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
 msgid "Last checked"
 msgstr "Последняя проверка"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:115
+#: templates/admin/sms_system/smstemplate/change_list.html:100
 msgid "Edit"
 msgstr "Редактировать"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:127
 msgid "No provider accounts configured."
 msgstr "Аккаунты провайдеров не настроены."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:128
 msgid "Use the Setup Wizard to add one."
 msgstr "Используйте мастер настройки, чтобы добавить один."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:23
 msgid "Manage message templates for SMS and WhatsApp notifications"
 msgstr "Управляйте шаблонами сообщений для уведомлений SMS и WhatsApp"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:27
+#: templates/admin/sms_system/smstemplate/change_list.html:118
 msgid "Add Template"
 msgstr "Добавить шаблон"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:35
 msgid "Templates"
 msgstr "Шаблоны"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:38
 msgid "templates"
 msgstr "Шаблоны"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "Updated"
 msgstr "Обновлено"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:103
 msgid "Delete"
 msgstr "Удалить"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:115
 msgid "No SMS templates configured yet."
 msgstr "Шаблоны SMS пока не настроены."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:116
 msgid "Create a template to get started with SMS notifications."
 msgstr "Создайте шаблон, чтобы начать использовать уведомления SMS."
 
+#: templates/admin/sms_system/wizard/base.html:4
 msgid "SMS Provider Setup"
 msgstr "Настройка провайдера SMS"
 
+#: templates/admin/sms_system/wizard/base.html:17
 msgid "SMS Provider Setup Wizard"
 msgstr "Мастер настройки провайдера SMS"
 
+#: templates/admin/sms_system/wizard/base.html:18
 msgid "Follow these steps to connect your SMS provider"
 msgstr "Следуйте этим шагам, чтобы подключить вашего поставщика SMS"
 
+#: templates/admin/sms_system/wizard/base.html:27
 msgid "Select"
 msgstr "Выбрать"
 
+#: templates/admin/sms_system/wizard/base.html:36
 msgid "Instructions"
 msgstr "Инструкции"
 
+#: templates/admin/sms_system/wizard/base.html:54
 msgid "Test"
 msgstr "Тест"
 
+#: templates/admin/sms_system/wizard/base.html:61
 msgid "Complete"
 msgstr "Завершить"
 
+#: templates/admin/sms_system/wizard/complete.html:4
+#: templates/admin/sms_system/wizard/complete.html:5 views.py:365
 msgid "Setup Complete"
 msgstr "Настройка завершена"
 
+#: templates/admin/sms_system/wizard/complete.html:11
 msgid "Your SMS provider has been configured!"
 msgstr "Ваш поставщик SMS настроен!"
 
+#: templates/admin/sms_system/wizard/complete.html:12
 msgid "You can now send SMS and WhatsApp messages from your store."
 msgstr ""
 "Теперь вы можете отправлять SMS и сообщения WhatsApp из своего магазина."
 
+#: templates/admin/sms_system/wizard/complete.html:19
+#: templates/admin/sms_system/wizard/step4_test.html:37
 msgid "Account Details"
 msgstr "Детали аккаунта"
 
+#: templates/admin/sms_system/wizard/complete.html:43
+#: templates/admin/sms_system/wizard/complete.html:53
 msgid "Yes"
 msgstr "Да"
 
+#: templates/admin/sms_system/wizard/complete.html:45
+#: templates/admin/sms_system/wizard/complete.html:55
 msgid "No"
 msgstr "Нет"
 
+#: templates/admin/sms_system/wizard/complete.html:65
 msgid "What's Next?"
 msgstr "Что делать дальше?"
 
+#: templates/admin/sms_system/wizard/complete.html:71
 msgid "Configure SMS templates"
 msgstr "Настроить шаблоны SMS"
 
+#: templates/admin/sms_system/wizard/complete.html:75
 msgid "View message logs"
 msgstr "Просмотреть логи сообщений"
 
+#: templates/admin/sms_system/wizard/complete.html:79
 msgid "Add another provider"
 msgstr "Добавить еще одного провайдера"
 
+#: templates/admin/sms_system/wizard/complete.html:90
 msgid "View All Accounts"
 msgstr "Посмотреть все аккаунты"
 
+#: templates/admin/sms_system/wizard/step1_select.html:4
+#: templates/admin/sms_system/wizard/step1_select.html:5 views.py:85
 msgid "Select SMS Provider"
 msgstr "Выбрать провайдера SMS"
 
+#: templates/admin/sms_system/wizard/step1_select.html:9
 msgid "Select a Provider"
 msgstr "Выберите поставщика"
 
+#: templates/admin/sms_system/wizard/step1_select.html:10
 msgid "Choose the SMS provider you want to configure."
 msgstr "Выберите поставщика SMS, который вы хотите настроить."
 
+#: templates/admin/sms_system/wizard/step1_select.html:56
 msgid ""
 "No SMS providers are installed. Install providers from the provider browse "
 "page."
@@ -621,73 +875,106 @@ msgstr ""
 "Поставщиков SMS не установлено. Установите поставщиков с страницы просмотра "
 "поставщиков."
 
+#: templates/admin/sms_system/wizard/step1_select.html:68
 msgid "Cancel"
 msgstr "Отменить"
 
+#: templates/admin/sms_system/wizard/step1_select.html:72
+#: templates/admin/sms_system/wizard/step2_instructions.html:46
+#: templates/admin/sms_system/wizard/step3_credentials.html:98
 msgid "Next"
 msgstr "Следующий"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:4
+#: templates/admin/sms_system/wizard/step2_instructions.html:5
+#: templates/admin/sms_system/wizard/step2_instructions.html:9 views.py:148
 msgid "Setup Instructions"
 msgstr "Инструкции по настройке"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:10
 msgid "Follow these instructions to set up your provider account."
 msgstr "Следуйте этим инструкциям, чтобы настроить аккаунт поставщика."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:27
 msgid "No specific setup instructions available"
 msgstr "Нет конкретных инструкций по настройке"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:28
 msgid "Please proceed to enter your credentials."
 msgstr "Пожалуйста, введите свои учетные данные."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:43
+#: templates/admin/sms_system/wizard/step3_credentials.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:94
 msgid "Back"
 msgstr "Назад"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:4
+#: templates/admin/sms_system/wizard/step3_credentials.html:5
+#: templates/admin/sms_system/wizard/step3_credentials.html:9 views.py:193
 msgid "Enter Credentials"
 msgstr "Введите учетные данные"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:10
 #, python-format
 msgid "Enter the credentials from your %(name)s account."
 msgstr "Введите учетные данные из вашей учетной записи %(name)s."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:17
 msgid "Account Name"
 msgstr "Имя аккаунта"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:26
 msgid "A friendly name to identify this account."
 msgstr "Дружелюбное имя для идентификации этой учетной записи."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:86
 msgid "Your credentials are encrypted before being stored."
 msgstr "Ваши учетные данные шифруются перед сохранением."
 
+#: templates/admin/sms_system/wizard/step4_test.html:4
+#: templates/admin/sms_system/wizard/step4_test.html:5
+#: templates/admin/sms_system/wizard/step4_test.html:9 views.py:281
 msgid "Test Connection"
 msgstr "Проверить соединение"
 
+#: templates/admin/sms_system/wizard/step4_test.html:10
 msgid "We've tested the connection to your provider."
 msgstr "Мы протестировали соединение с вашим провайдером."
 
+#: templates/admin/sms_system/wizard/step4_test.html:22
 msgid "Connection Successful"
 msgstr "Соединение успешно"
 
+#: templates/admin/sms_system/wizard/step4_test.html:29
 msgid "Successfully connected to the SMS provider."
 msgstr "Успешно подключено к SMS-провайдеру."
 
+#: templates/admin/sms_system/wizard/step4_test.html:31
 msgid "Failed to connect to the SMS provider."
 msgstr "Не удалось подключиться к SMS-провайдеру."
 
+#: templates/admin/sms_system/wizard/step4_test.html:40
 msgid "Account"
 msgstr "Аккаунт"
 
+#: templates/admin/sms_system/wizard/step4_test.html:55
 msgid "Configure how this account should be used."
 msgstr "Настройте, как должна использоваться эта учетная запись."
 
+#: templates/admin/sms_system/wizard/step4_test.html:60
 msgid "Set as default for SMS messages"
 msgstr "Установить по умолчанию для SMS-сообщений"
 
+#: templates/admin/sms_system/wizard/step4_test.html:68
 msgid "Set as default for WhatsApp messages"
 msgstr "Установить по умолчанию для сообщений WhatsApp"
 
+#: templates/admin/sms_system/wizard/step4_test.html:78
 msgid "Connection test failed"
 msgstr "Тест подключения завершился неудачно"
 
+#: templates/admin/sms_system/wizard/step4_test.html:79
 msgid ""
 "Check your credentials and try again, or save anyway if you're sure they're "
 "correct."
@@ -695,86 +982,110 @@ msgstr ""
 "Проверьте свои учетные данные и попробуйте снова, или сохраните их, если "
 "уверены, что они верны."
 
+#: templates/admin/sms_system/wizard/step4_test.html:82
 msgid "Save account anyway (not recommended)"
 msgstr "Сохранить аккаунт в любом случае (не рекомендуется)"
 
+#: templates/admin/sms_system/wizard/step4_test.html:97
 msgid "Create Account"
 msgstr "Создать аккаунт"
 
+#: views.py:97
 msgid "Please select a provider"
 msgstr "Пожалуйста, выберите поставщика"
 
+#: views.py:102
 msgid "Selected provider is not available"
 msgstr "Выбранный поставщик недоступен"
 
+#: views.py:131 views.py:183
 msgid "Provider not found"
 msgstr "Провайдер не найден"
 
+#: views.py:211
 msgid "Unable to get credential schema"
 msgstr "Невозможно получить схему учетных данных"
 
+#: views.py:228
 #, python-format
 msgid "Missing required fields: %(fields)s"
 msgstr "Отсутствуют обязательные поля: %(fields)s"
 
+#: views.py:304
 msgid "Connection test failed. Check your credentials and try again."
 msgstr ""
 "Тест подключения не прошел. Проверьте свои учетные данные и попробуйте "
 "снова."
 
+#: views.py:328
 msgid "SMS provider account created successfully!"
 msgstr "Аккаунт поставщика SMS успешно создан!"
 
+#: views.py:333
 #, python-format
 msgid "Failed to create account: %(error)s"
 msgstr "Не удалось создать аккаунт: %(error)s"
 
+#: views.py:424
 msgid "SMS Providers"
 msgstr "Поставщики SMS"
 
+#: views.py:525
 msgid "Provider is already installed. Configure it now."
 msgstr "Поставщик уже установлен. Настройте его сейчас."
 
+#: views.py:554 views.py:701
 msgid "Provider not found on update server."
 msgstr "Поставщик не найден на сервере обновлений."
 
+#: views.py:567
 msgid "Could not determine provider version."
 msgstr "Не удалось определить версию провайдера."
 
+#: views.py:590
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Не удалось загрузить провайдера: %(error)s"
 
+#: views.py:602
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Не удалось установить провайдера: %(error)s"
 
+#: views.py:630
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "Поставщик \"%(name)s\" успешно установлен! Настройте его сейчас."
 
+#: views.py:669
 msgid "Provider not installed."
 msgstr "Провайдер не установлен."
 
+#: views.py:686
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Не удалось подключиться к серверу обновлений: %(error)s"
 
+#: views.py:713
 msgid "Could not determine latest version."
 msgstr "Не удалось определить последнюю версию."
 
+#: views.py:723
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "Поставщик \"%(name)s\" уже актуален (v%(version)s)."
 
+#: views.py:739
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Не удалось скачать обновление: %(error)s"
 
+#: views.py:750
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Не удалось установить обновление: %(error)s"
 
+#: views.py:780
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "Поставщик \"%(name)s\" успешно обновлен до версии v%(version)s!"

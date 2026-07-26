@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean <LL@li.org>\n"
@@ -18,2362 +18,3052 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:88
 msgid "Data Migrations"
 msgstr "데이터 마이그레이션"
 
-msgid "🚀 Start New Migration"
-msgstr "🚀 새 마이그레이션 시작"
+#: admin.py:91 templates/admin/migration/migrationjob/change_list.html:68
+#: templates/admin/migration/wizard/step6_complete.html:388
+msgid "Start New Migration"
+msgstr "새로운 데이터 이전 시작"
 
-msgid "Migrate from WooCommerce, Shopify, or CSV files"
-msgstr "WooCommerce, Shopify 또는 CSV 파일에서 마이그레이션"
+#: admin.py:93
+msgid "Migrate from WooCommerce, Shopify, Magento, or CSV files"
+msgstr "\"WooCommerce, Shopify, Magento 또는 CSV 파일에서 마이그레이션하세요\""
 
-msgid "📊 Migration History"
-msgstr "📊 마이그레이션 기록"
+#: admin.py:98
+msgid "Migration History"
+msgstr "이전 이전 기록"
 
+#: admin.py:100
 msgid "View all past migrations"
 msgstr "모든 이전 마이그레이션 보기"
 
+#: admin.py:140 sync_admin.py:262
 msgid "ID"
 msgstr "ID"
 
+#: admin.py:163 admin.py:2234 templates/admin/migration/wizard/base.html:38
 msgid "Platform"
 msgstr "플랫폼"
 
+#: admin.py:202 admin.py:2235 admin.py:2294 sync_admin.py:72 sync_admin.py:311
+#: templates/admin/migration/fullmig/step5_results.html:74
+#: templates/admin/migration/wizard/step3_preview.html:184
 msgid "Status"
 msgstr "상태"
 
+#: admin.py:228 sync_admin.py:330 templates/admin/migration/sync/base.html:58
+#: templates/admin/migration/sync/base.html:79
 msgid "Progress"
 msgstr "진행률"
 
+#: admin.py:248 templates/admin/migration/fullmig/step3_preflight.html:111
 msgid "Items"
 msgstr "항목"
 
+#: admin.py:276 models/log.py:85 sync_admin.py:349
+#: templates/admin/migration/sync/token_management.html:76
 msgid "Created"
 msgstr "생성일"
 
+#: admin.py:311 sync_admin.py:88 sync_admin.py:373
 msgid "Actions"
 msgstr "작업"
 
+#: admin.py:464
 msgid "Please select a platform."
 msgstr "플랫폼을 선택해 주세요."
 
+#: admin.py:469 admin.py:490
 msgid "Migration Wizard - Choose Platform"
 msgstr "마이그레이션 마법사 - 플랫폼 선택"
 
+#: admin.py:483
 msgid "Migration job created. Please configure the connection."
 msgstr "마이그레이션 작업이 생성되었습니다. 연결을 설정해 주세요."
 
+#: admin.py:508 admin.py:545 admin.py:575
 msgid "Please fill in all required fields."
 msgstr "모든 필수 항목을 입력하세요."
 
+#: admin.py:513 admin.py:550 admin.py:580 admin.py:629 admin.py:644
+#: admin.py:666 admin.py:683
 msgid "Migration Wizard - Connection"
 msgstr "마이그레이션 마법사 - 연결"
 
+#: admin.py:531 admin.py:567 admin.py:599
 msgid "Connection configured successfully."
 msgstr "연결이 성공적으로 설정되었습니다."
 
+#: admin.py:623
 msgid "{} CSV has no headers."
 msgstr "\"{} CSV에 헤더가 없습니다.\""
 
+#: admin.py:638
 msgid "{} CSV could not be read: {}"
 msgstr "\"{}\" CSV 파일을 읽을 수 없습니다: {}"
 
+#: admin.py:661
 msgid "Products CSV is required."
 msgstr "제품 CSV가 필요합니다."
 
+#: admin.py:676
 msgid "CSV files uploaded successfully."
 msgstr "CSV 파일이 성공적으로 업로드되었습니다."
 
+#: admin.py:747 admin.py:780 admin.py:843
 msgid "Failed to fetch preview data: {}"
 msgstr "미리보기 데이터를 가져오지 못했습니다: {}"
 
+#: admin.py:866
 msgid "Failed to read CSV files: {}"
 msgstr "CSV 파일을 읽는 데 실패했습니다: {}"
 
+#: admin.py:945
 msgid "Import options saved."
 msgstr "입력 옵션이 저장되었습니다."
 
+#: admin.py:952
 msgid "Migration Wizard - Preview Data"
 msgstr "마이그레이션 마법사 - 데이터 미리보기"
 
+#: admin.py:1027
 msgid "Field mappings configured successfully."
 msgstr "필드 매핑이 성공적으로 설정되었습니다."
 
+#: admin.py:1149
 msgid "Could not analyze custom fields. You can still proceed with the import."
 msgstr ""
 "사용자 정의 필드를 분석할 수 없습니다. 하지만 가져오기를 계속할 수 있습니다."
 
+#: admin.py:1167 models/step.py:31
+#: templates/admin/migration/confirm_rollback.html:67
+#: templates/admin/migration/wizard/step3_preview.html:17
+#: templates/admin/migration/wizard/step3_preview.html:74
+#: templates/admin/migration/wizard/step4_mapping.html:85
+#: templates/admin/migration/wizard/step5_import.html:111
+#: templates/admin/migration/wizard/step6_complete.html:17
+#: templates/admin/migration/wizard/step6_complete.html:348
 msgid "Products"
 msgstr "상품"
 
+#: admin.py:1168 models/step.py:29
+#: templates/admin/migration/confirm_rollback.html:63
+#: templates/admin/migration/fullmig/step1_connection.html:114
+#: templates/admin/migration/sync/base.html:71
+#: templates/admin/migration/sync/step1_connection.html:134
+#: templates/admin/migration/sync/step2_categories.html:82
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
+#: templates/admin/migration/wizard/step4_mapping.html:82
+#: templates/admin/migration/wizard/step5_import.html:91
+#: templates/admin/migration/wizard/step6_complete.html:21
+#: templates/admin/migration/wizard/step6_complete.html:354
 msgid "Categories"
 msgstr "카테고리"
 
+#: admin.py:1169 models/step.py:34
+#: templates/admin/migration/confirm_rollback.html:71
+#: templates/admin/migration/wizard/step3_preview.html:25
+#: templates/admin/migration/wizard/step3_preview.html:83
+#: templates/admin/migration/wizard/step4_mapping.html:88
+#: templates/admin/migration/wizard/step5_import.html:131
+#: templates/admin/migration/wizard/step6_complete.html:25
+#: templates/admin/migration/wizard/step6_complete.html:360
 msgid "Customers"
 msgstr "고객"
 
+#: admin.py:1170 models/step.py:36
+#: templates/admin/migration/confirm_rollback.html:75
+#: templates/admin/migration/wizard/step3_preview.html:29
+#: templates/admin/migration/wizard/step3_preview.html:92
+#: templates/admin/migration/wizard/step4_mapping.html:91
+#: templates/admin/migration/wizard/step5_import.html:151
+#: templates/admin/migration/wizard/step6_complete.html:29
+#: templates/admin/migration/wizard/step6_complete.html:366
 msgid "Orders"
 msgstr "주문"
 
+#: admin.py:1171 models/step.py:38
+#: templates/admin/migration/confirm_rollback.html:79
+#: templates/admin/migration/wizard/step3_preview.html:34
+#: templates/admin/migration/wizard/step3_preview.html:102
+#: templates/admin/migration/wizard/step4_mapping.html:94
+#: templates/admin/migration/wizard/step5_import.html:171
+#: templates/admin/migration/wizard/step6_complete.html:33
 msgid "Reviews"
 msgstr "리뷰"
 
+#: admin.py:1203
 msgid "Migration Wizard - Field Mapping"
 msgstr "마이그레이션 마법사 - 필드 매핑"
 
+#: admin.py:1239
 msgid ""
-"Migration started! You can safely close this window and check back later."
+"Migration started. You can safely close this window and check back later."
 msgstr ""
-"마이그레이션이 시작되었습니다! 이 창을 안전하게 닫고 나중에 다시 확인할 수 있"
+"마이그레이션이 시작되었습니다. 이 창을 안전하게 닫고 나중에 다시 확인할 수 있"
 "습니다."
 
+#: admin.py:1245
 msgid "Failed to start import: {}"
 msgstr "입력 시작 실패: {}"
 
+#: admin.py:1259
+msgid "This migration has already been started."
+msgstr "이 마이그레이션은 이미 시작되었습니다."
+
+#: admin.py:1278
 msgid "Migration Wizard - Importing"
 msgstr "마이그레이션 마법사 - 입력 중"
 
+#: admin.py:1344 templates/admin/migration/fullmig/step5_results.html:10
 msgid "Migration Complete"
 msgstr "마이그레이션 완료"
 
+#: admin.py:1483
 msgid "This migration cannot be rolled back."
 msgstr "이 마이그레이션은 되돌릴 수 없습니다."
 
-msgid "Migration rolled back successfully!"
-msgstr "마이그레이션이 성공적으로 롤백되었습니다!"
+#: admin.py:1498
+msgid "This rollback is already running."
+msgstr "이 롤백은 이미 실행 중입니다."
 
-msgid "Rollback failed: {}"
-msgstr "롤백 실패: {}"
+#: admin.py:1517
+msgid "Spwig could not start the rollback. Nothing has been removed."
+msgstr "Spwig는 롤백을 시작할 수 없습니다. 아무 것도 제거되지 않았습니다."
 
+#: admin.py:1524
+msgid ""
+"Rollback started. This runs in the background — check back shortly to see "
+"what was removed and what was kept."
+msgstr ""
+"롤백이 시작되었습니다. 이 작업은 백그라운드에서 실행되며, 잠시 후 돌아와서 무"
+"엇이 삭제되었고 무엇이 보존되었는지 확인할 수 있습니다."
+
+#: admin.py:1543
+msgid ""
+"Spwig could not calculate this in advance. The rollback itself will still "
+"report what it removed and what it kept."
+msgstr ""
+"Spwig는 이 작업을 사전에 계산할 수 없습니다. 하지만 롤백 자체는 무엇이 삭제되"
+"었고 무엇이 보존되었는지를 보고할 것입니다."
+
+#: admin.py:1551 templates/admin/migration/confirm_rollback.html:4
+#: templates/admin/migration/confirm_rollback.html:13
 msgid "Confirm Rollback"
 msgstr "롤백 확인"
 
+#: admin.py:1575
 msgid "Only failed migrations can be retried."
 msgstr "다시 시도할 수 있는 마이그레이션은 실패한 것뿐입니다."
 
-msgid "Migration restarted! Redirecting to progress page..."
+#: admin.py:1600
+msgid ""
+"Migration restarted. It runs from the beginning and skips items that have "
+"already been imported."
 msgstr ""
-"마이그레이션이 재시작되었습니다! 진행 상황 페이지로 리디렉션 중입니다..."
+"마이그레이션이 재시작되었습니다. 처음부터 실행되며 이미 가져온 항목은 건너뜁"
+"니다."
 
+#: admin.py:1608
 msgid "Failed to restart migration: {}"
 msgstr "마이그레이션 재시작 실패: {}"
 
+#: admin.py:1629
 msgid "Only running migrations can be cancelled."
 msgstr "취소할 수 있는 마이그레이션은 실행 중인 것뿐입니다."
 
-msgid "Migration cancelled by user"
-msgstr "사용자가 마이그레이션을 취소했습니다"
-
+#: admin.py:1641
 msgid "Migration cancelled by {}"
 msgstr "마이그레이션을 {}이(가) 취소했습니다"
 
-msgid "Migration cancelled successfully."
-msgstr "마이그레이션이 성공적으로 취소되었습니다."
-
-msgid "Only pending, failed, or running migrations can be deleted."
-msgstr ""
-"삭제할 수 있는 마이그레이션은 대기 중, 실패, 또는 실행 중인 것뿐입니다."
-
+#: admin.py:1649
 msgid ""
-"Deleted a running migration. If this was stuck, the operation has been "
-"cleaned up."
+"Stopping this import. It finishes the batch it is working on and then stops, "
+"so this can take a moment. Anything already imported stays in your store — "
+"you can roll it back afterwards if you don't want it."
 msgstr ""
-"실행 중이던 마이그레이션을 삭제했습니다. 만약 이 작업이 중단되었었다면, 해당 "
-"작업은 정리되었습니다."
+"이 임포트를 중지합니다. 현재 처리 중인 배치를 완료한 후 중지하므로 잠시 시간"
+"이 걸릴 수 있습니다. 이미 임포트된 항목은 가게에 그대로 남아 있으며, 원하지 "
+"않는 경우 나중에 되돌릴 수 있습니다."
 
-msgid "Migration deleted successfully."
-msgstr "마이그레이션이 성공적으로 삭제되었습니다."
+#: admin.py:1691
+msgid ""
+"This migration can't be deleted yet. Cancel it first, and once it has "
+"finished stopping you'll be able to remove the record."
+msgstr ""
+"이 마이그레이션은 아직 삭제할 수 없습니다. 먼저 취소한 후, 중단이 완료되면 기"
+"록을 삭제할 수 있습니다."
 
+#: admin.py:1708
+msgid ""
+"Migration record deleted. Anything this import added is still in your store "
+"— deleting the record does not remove it."
+msgstr ""
+"마이그레이션 기록이 삭제되었습니다. 이 임포트로 추가된 항목은 여전히 상점에 "
+"남아 있습니다 — 기록을 삭제해도 항목은 삭제되지 않습니다."
+
+#: admin.py:1713
+msgid "Migration record deleted."
+msgstr "이전 데이터 기록이 삭제되었습니다."
+
+#: admin.py:2233
 msgid "Job ID"
 msgstr "\"작업 ID\""
 
+#: admin.py:2236
 msgid "Started"
 msgstr "\"시작됨\""
 
+#: admin.py:2238 models/job.py:87 models/step.py:55 models/sync_job.py:78
+#: models/sync_step.py:32
+#: templates/admin/migration/migrationjob/change_list.html:44
+#: templates/admin/migration/syncjob/change_list.html:40
 msgid "Completed"
 msgstr "완료됨"
 
+#: admin.py:2241
 msgid "Duration"
 msgstr "지속 시간"
 
+#: admin.py:2242
 msgid "Success Rate"
 msgstr "성공률"
 
+#: admin.py:2260 templates/admin/migration/sync/step3_preview.html:16
 msgid "Summary"
 msgstr "요약"
 
+#: admin.py:2262
 msgid "Total Items"
 msgstr "총 항목"
 
+#: admin.py:2262 admin.py:2294
+#: templates/admin/migration/migrationjob/change_list.html:174
+#: templates/admin/migration/wizard/step6_complete.html:64
 msgid "Imported"
 msgstr "수입됨"
 
+#: admin.py:2262 admin.py:2294 models/content_link.py:123 models/log.py:87
+#: models/step.py:57 models/sync_step.py:34
+#: templates/admin/migration/fullmig/step4_progress.html:52
+#: templates/admin/migration/fullmig/step5_results.html:47
+#: templates/admin/migration/fullmig/step5_results.html:95
+#: templates/admin/migration/migrationjob/change_list.html:178
+#: templates/admin/migration/sync/step4_progress.html:52
+#: templates/admin/migration/syncjob/change_list.html:149
+#: templates/admin/migration/wizard/step6_complete.html:65
+#: templates/admin/migration/wizard/step6_complete.html:208
 msgid "Skipped"
 msgstr "건너뜀"
 
+#: admin.py:2262 admin.py:2294 models/job.py:88 models/step.py:56
+#: models/sync_job.py:79 models/sync_step.py:33
+#: templates/admin/migration/fullmig/step4_progress.html:56
+#: templates/admin/migration/fullmig/step5_results.html:51
+#: templates/admin/migration/fullmig/step5_results.html:76
+#: templates/admin/migration/fullmig/step5_results.html:91
+#: templates/admin/migration/migrationjob/change_list.html:60
+#: templates/admin/migration/migrationjob/change_list.html:182
+#: templates/admin/migration/sync/step4_progress.html:56
+#: templates/admin/migration/syncjob/change_list.html:50
+#: templates/admin/migration/syncjob/change_list.html:153
+#: templates/admin/migration/wizard/step6_complete.html:66
 msgid "Failed"
 msgstr "실패"
 
+#: admin.py:2292
 msgid "Step Breakdown"
 msgstr "\"단계 세부 정보\""
 
+#: admin.py:2294 templates/admin/migration/wizard/step2_connection.html:293
 msgid "Step"
 msgstr "단계"
 
+#: admin.py:2294 templates/admin/migration/fullmig/step4_progress.html:60
+#: templates/admin/migration/fullmig/step5_results.html:55
+#: templates/admin/migration/fullmig/step5_results.html:77
+#: templates/admin/migration/migrationjob/change_list.html:170
+#: templates/admin/migration/sync/step4_progress.html:60
+#: templates/admin/migration/syncjob/change_list.html:141
+#: templates/admin/migration/wizard/step6_complete.html:67
+#: templates/admin/migration/wizard/step6_complete.html:94
 msgid "Total"
 msgstr "총합"
 
+#: admin.py:2334 templates/admin/migration/sync/step4_progress.html:127
 msgid "Errors"
 msgstr "오류"
 
+#: admin.py:2412
 msgid "Message"
 msgstr "메시지"
 
+#: admin.py:2434 templates/admin/migration/wizard/base.html:50
 msgid "Mapping"
 msgstr "매핑"
 
+#: models/content_link.py:24 models/log.py:24 models/mapping.py:24
+#: models/staged_item.py:41 models/step.py:25
 msgid "Parent migration job"
 msgstr "부모 마이그레이션 작업"
 
+#: models/content_link.py:29
 msgid "Product - Full Description"
 msgstr "상품 - 전체 설명"
 
+#: models/content_link.py:30
 msgid "Product - Short Description"
 msgstr "상품 - 간단한 설명"
 
+#: models/content_link.py:31
 msgid "Blog Post - Content"
 msgstr "블로그 게시물 - 내용"
 
+#: models/content_link.py:32
 msgid "Category - Description"
 msgstr "카테고리 - 설명"
 
+#: models/content_link.py:35
 msgid "Which content field contains this link"
 msgstr "이 링크가 포함된 콘텐츠 필드는 무엇인가요"
 
+#: models/content_link.py:63
 msgid "Title of the source object (for display)"
 msgstr "소스 객체의 제목 (표시용)"
 
+#: models/content_link.py:68
 msgid "Original URL found in the HTML content"
 msgstr "HTML 콘텐츠에서 찾은 원본 URL"
 
+#: models/content_link.py:71
 msgid "Visible link text (anchor text)"
 msgstr "보이는 링크 텍스트 (앵커 텍스트)"
 
+#: models/content_link.py:76
 msgid "Auto-suggested replacement URL"
 msgstr "자동으로 제안된 대체 URL"
 
+#: models/content_link.py:80
 msgid "Stored Permalink Match"
 msgstr "저장된 영구 링크 일치"
 
+#: models/content_link.py:81
 msgid "Exact Slug Match"
 msgstr "정확한 슬러그 일치"
 
+#: models/content_link.py:82
 msgid "External ID Match"
 msgstr "외부 ID 일치"
 
+#: models/content_link.py:83
 msgid "URL Path Pattern Match"
 msgstr "URL 경로 패턴 일치"
 
+#: models/content_link.py:84
 msgid "Slug Fallback Match"
 msgstr "슬러그 대체 일치"
 
+#: models/content_link.py:85
 msgid "No Match Found"
 msgstr "일치 항목 없음"
 
+#: models/content_link.py:91
 msgid "How the suggested URL was matched"
 msgstr "제안된 URL이 어떻게 일치했는지"
 
+#: models/content_link.py:95 models/mapping.py:29 models/mapping.py:53
+#: models/staged_item.py:19
 msgid "Product"
 msgstr "상품"
 
+#: models/content_link.py:96 models/mapping.py:31 models/mapping.py:55
+#: models/staged_item.py:20
+#: templates/admin/migration/fullmig/step3_preflight.html:110
+#: templates/admin/migration/fullmig/step5_results.html:73
 msgid "Category"
 msgstr "카테고리"
 
+#: models/content_link.py:97 models/mapping.py:35 models/mapping.py:59
 msgid "Blog Post"
 msgstr "블로그 게시물"
 
+#: models/content_link.py:98 models/mapping.py:36 models/mapping.py:60
 msgid "Blog Category"
 msgstr "블로그 카테고리"
 
+#: models/content_link.py:99
 msgid "Collection"
 msgstr "컬렉션"
 
+#: models/content_link.py:100
 msgid "Page"
 msgstr "페이지"
 
+#: models/content_link.py:101
 msgid "Unknown"
 msgstr "알 수 없음"
 
+#: models/content_link.py:107
 msgid "Type of Spwig object the URL was matched to"
 msgstr "URL이 일치한 Spwig 객체의 유형"
 
+#: models/content_link.py:110
 msgid "ID of the matched Spwig object"
 msgstr "일치한 Spwig 객체의 ID"
 
+#: models/content_link.py:115
 msgid "Match confidence: 0.0 (no match) to 1.0 (exact match)"
 msgstr "일치 신뢰도: 0.0 (일치하지 않음)에서 1.0 (완전히 일치)까지"
 
+#: models/content_link.py:120 models/staged_item.py:73
 msgid "Pending Review"
 msgstr "검토 대기"
 
+#: models/content_link.py:121
+#: templates/admin/migration/wizard/step6_complete.html:210
 msgid "Approved"
 msgstr "승인됨"
 
+#: models/content_link.py:122
 msgid "Modified by Merchant"
 msgstr "상인에 의해 수정됨"
 
+#: models/content_link.py:124
+#: templates/admin/migration/wizard/step6_complete.html:206
 msgid "Applied"
 msgstr "신청됨"
 
+#: models/content_link.py:125
 msgid "Apply Failed"
 msgstr "적용 실패"
 
+#: models/content_link.py:137
 msgid "URL manually entered by merchant (overrides suggested_url)"
 msgstr "상인이 수동으로 입력한 URL (suggested_url을 덮어씁니다)"
 
+#: models/content_link.py:140
 msgid "Error message if apply failed"
 msgstr "적용 실패 시 오류 메시지"
 
+#: models/content_link.py:146
 msgid "Content Link"
 msgstr "콘텐츠 링크"
 
+#: models/content_link.py:147
 msgid "Content Links"
 msgstr "콘텐츠 링크"
 
+#: models/job.py:34
 msgid "User who initiated this migration"
 msgstr "이 마이그레이션을 시작한 사용자"
 
+#: models/job.py:39
 msgid "WooCommerce"
 msgstr "WooCommerce"
 
+#: models/job.py:40
 msgid "Shopify"
 msgstr "Shopify"
 
+#: models/job.py:41
 msgid "Magento"
 msgstr "Magento"
 
+#: models/job.py:42
 msgid "CSV Files"
 msgstr "CSV 파일"
 
+#: models/job.py:45
 msgid "Source e-commerce platform"
 msgstr "소스 전자상거래 플랫폼"
 
+#: models/job.py:49
 msgid "REST API"
 msgstr "REST API"
 
+#: models/job.py:50
 msgid "CSV Upload"
 msgstr "CSV 업로드"
 
+#: models/job.py:51
 msgid "Direct Database"
 msgstr "직접 데이터베이스"
 
+#: models/job.py:54
 msgid "Migration method used"
 msgstr "사용된 마이그레이션 방법"
 
+#: models/job.py:60
 msgid "Connection configuration (API keys, URLs, etc.)"
 msgstr "연결 설정 (API 키, URL 등)"
 
+#: models/job.py:74
 msgid "Import blog posts, categories, and tags from WordPress"
 msgstr "WordPress에서 블로그 게시물, 카테고리 및 태그를 가져옵니다"
 
+#: models/job.py:77
 msgid "Import affiliate data via Spwig Migration Bridge plugin"
 msgstr "Spwig Migration Bridge 플러그인을 통해 파트너 데이터를 가져옵니다"
 
+#: models/job.py:82 models/step.py:53 models/sync_job.py:74
+#: models/sync_step.py:30
 msgid "Pending"
 msgstr "대기 중"
 
+#: models/job.py:83
 msgid "Testing Connection"
 msgstr "연결 테스트"
 
+#: models/job.py:84
 msgid "Previewing Data"
 msgstr "데이터 미리보기"
 
+#: models/job.py:85
 msgid "Importing"
 msgstr "데이터 가져오기"
 
+#: models/job.py:86
 msgid "Paused"
 msgstr "일시 중지됨"
 
+#: models/job.py:89 models/step.py:61 models/sync_job.py:82
+msgid "Cancelled"
+msgstr "취소됨"
+
+#: models/job.py:90 models/sync_job.py:80
 msgid "Rolling Back"
 msgstr "롤백"
 
+#: models/job.py:91 models/step.py:62 models/sync_job.py:81
+#: models/sync_step.py:35
 msgid "Rolled Back"
 msgstr "롤백됨"
 
-msgid "Transaction ID for rollback tracking"
-msgstr "롤백 추적을 위한 트랜잭션 ID"
+#: models/job.py:92
+msgid "Rollback Failed"
+msgstr "롤백 실패"
 
+#: models/job.py:99
 msgid "Whether this migration can be rolled back"
 msgstr "이 마이그레이션이 되돌릴 수 있는지 여부"
 
-msgid "Deadline for manual rollback (24 hours after completion)"
-msgstr "수동 되돌리기 마감 시간 (완료 후 24시간)"
+#: models/job.py:105
+msgid ""
+"Point after which this migration can no longer be rolled back. Empty means "
+"it never expires."
+msgstr ""
+"이 마이그레이션을 다시 롤백할 수 없는 시점입니다. 비어 있으면 만료되지 않습니"
+"다."
 
+#: models/job.py:112
+msgid "If the import fails, automatically remove everything it imported"
+msgstr "입력이 실패하면 자동으로 입력한 모든 항목을 삭제합니다."
+
+#: models/job.py:126
+msgid "Set when an operator asks for a running import to stop"
+msgstr "운영자가 실행 중인 임포트를 중지하도록 요청할 때 설정됩니다"
+
+#: models/job.py:131
 msgid "Current import step being processed"
 msgstr "현재 처리 중인 가져오기 단계"
 
+#: models/job.py:134 models/sync_job.py:92
 msgid "Overall progress percentage (0-100)"
 msgstr "전체 진행률 퍼센트 (0-100)"
 
+#: models/job.py:225
 msgid "Total migration duration in seconds"
 msgstr "총 마이그레이션 시간(초)"
 
+#: models/job.py:232
 msgid "Summary of errors encountered"
 msgstr "발생한 오류 요약"
 
+#: models/job.py:233
 msgid "Summary of warnings encountered"
 msgstr "발생한 경고 요약"
 
+#: models/job.py:240
 msgid "Generated migration report (CSV/PDF)"
 msgstr "생성된 마이그레이션 보고서 (CSV/PDF)"
 
+#: models/job.py:245
 msgid "Migration Job"
 msgstr "마이그레이션 작업"
 
+#: models/job.py:246
 msgid "Migration Jobs"
 msgstr "마이그레이션 작업들"
 
+#: models/log.py:33
 msgid "Migration step this log belongs to"
 msgstr "이 로그가 속한 마이그레이션 단계"
 
+#: models/log.py:37
 msgid "When this log entry was created"
 msgstr "이 로그 항목이 생성된 시점"
 
+#: models/log.py:41
 msgid "Debug"
 msgstr "디버그"
 
+#: models/log.py:42
 msgid "Info"
 msgstr "정보"
 
+#: models/log.py:43
 msgid "Warning"
 msgstr "경고"
 
+#: models/log.py:44 models/log.py:88
 msgid "Error"
 msgstr "에러"
 
+#: models/log.py:45
 msgid "Critical"
 msgstr "비상"
 
+#: models/log.py:48
 msgid "Log severity level"
 msgstr "로그 심각도 수준"
 
+#: models/log.py:51
 msgid "Log message"
 msgstr "로그 메시지"
 
+#: models/log.py:55
 msgid "Source data type (e.g., 'woocommerce_product')"
 msgstr "소스 데이터 유형 (예: 'woocommerce_product')"
 
+#: models/log.py:58
 msgid "ID from source system"
 msgstr "소스 시스템에서의 ID"
 
+#: models/log.py:61
 msgid "Name/title of source item"
 msgstr "소스 항목의 이름/제목"
 
+#: models/log.py:70
 msgid "Type of created object"
 msgstr "생성된 객체 유형"
 
+#: models/log.py:73
 msgid "ID of created object"
 msgstr "생성된 객체의 ID"
 
+#: models/log.py:78
 msgid "Additional context data"
 msgstr "추가 컨텍스트 데이터"
 
+#: models/log.py:82
 msgid "Fetched"
 msgstr "가져온"
 
+#: models/log.py:83
 msgid "Validated"
 msgstr "검증됨"
 
+#: models/log.py:84
 msgid "Mapped"
 msgstr "매핑된"
 
+#: models/log.py:86
 msgid "Updated"
 msgstr "업데이트됨"
 
+#: models/log.py:91
 msgid "Action performed"
 msgstr "실행된 작업"
 
+#: models/log.py:96
 msgid "Migration Log"
 msgstr "마이그레이션 로그"
 
+#: models/log.py:97
 msgid "Migration Logs"
 msgstr "마이그레이션 로그들"
 
+#: models/mapping.py:30 models/mapping.py:54
 msgid "Product Variant"
 msgstr "상품 변형"
 
+#: models/mapping.py:32 models/mapping.py:56 models/staged_item.py:21
 msgid "Customer"
 msgstr "고객"
 
+#: models/mapping.py:33 models/mapping.py:57 models/staged_item.py:22
 msgid "Order"
 msgstr "주문"
 
+#: models/mapping.py:34 models/mapping.py:58 models/staged_item.py:23
 msgid "Review"
 msgstr "검토"
 
+#: models/mapping.py:37 models/mapping.py:61
 msgid "Blog Tag"
 msgstr "블로그 태그"
 
+#: models/mapping.py:40
 msgid "Type of source data"
 msgstr "소스 데이터 유형"
 
+#: models/mapping.py:44
 msgid "Source field name (e.g., '_custom_brand', 'metafields.brand')"
 msgstr "소스 필드 이름 (예: '_custom_brand', 'metafields.brand')"
 
+#: models/mapping.py:48
 msgid "Human-readable label for source field"
 msgstr "소스 필드의 사람이 읽을 수 있는 라벨"
 
+#: models/mapping.py:64
 msgid "Destination model name"
 msgstr "목적지 모델 이름"
 
+#: models/mapping.py:68
 msgid "Destination field name (e.g., 'brand', 'short_description')"
 msgstr "대상 필드 이름 (예: 'brand', 'short_description')"
 
+#: models/mapping.py:72
 msgid "Human-readable label for destination field"
 msgstr "목적지 필드의 사람이 읽을 수 있는 라벨"
 
+#: models/mapping.py:77
 msgid "No Transformation"
 msgstr "변환 없음"
 
+#: models/mapping.py:78
 msgid "Convert to String"
 msgstr "문자열로 변환"
 
+#: models/mapping.py:79
 msgid "Convert to Integer"
 msgstr "정수로 변환"
 
+#: models/mapping.py:80
 msgid "Convert to Decimal"
 msgstr "소수로 변환"
 
+#: models/mapping.py:81
 msgid "Convert to Boolean"
 msgstr "불리언으로 변환"
 
+#: models/mapping.py:82
 msgid "Parse JSON"
 msgstr "JSON 파싱"
 
+#: models/mapping.py:83
 msgid "Parse Date"
 msgstr "날짜 파싱"
 
+#: models/mapping.py:84
 msgid "Validate URL"
 msgstr "URL 검증"
 
+#: models/mapping.py:85
 msgid "Validate Email"
 msgstr "이메일 검증"
 
+#: models/mapping.py:87
 msgid "Convert to Money"
 msgstr "통화로 변환"
 
+#: models/mapping.py:88
 msgid "Integer (allow null)"
 msgstr "정수 (null 허용)"
 
+#: models/mapping.py:89
 msgid "Decimal (allow null)"
 msgstr "소수 (null 허용)"
 
+#: models/mapping.py:90
 msgid "WooCommerce Status"
 msgstr "WooCommerce 상태"
 
+#: models/mapping.py:91
 msgid "WooCommerce Product Type"
 msgstr "WooCommerce 상품 유형"
 
+#: models/mapping.py:92
 msgid "WooCommerce Backorders"
 msgstr "WooCommerce 예약 주문"
 
+#: models/mapping.py:93
 msgid "Meta Data Array"
 msgstr "메타 데이터 배열"
 
+#: models/mapping.py:94
 msgid "Category Array"
 msgstr "카테고리 배열"
 
+#: models/mapping.py:95
 msgid "Image Array"
 msgstr "이미지 배열"
 
+#: models/mapping.py:96
 msgid "Category Parent Resolution"
 msgstr "카테고리 상위 항목 해결"
 
+#: models/mapping.py:97
 msgid "Custom Function"
 msgstr "사용자 정의 함수"
 
+#: models/mapping.py:99
 msgid "Shopify Product Status"
 msgstr "Shopify 제품 상태"
 
+#: models/mapping.py:100
 msgid "Shopify Order Status"
 msgstr "Shopify 주문 상태"
 
+#: models/mapping.py:101
 msgid "Shopify Discount Type"
 msgstr "Shopify 할인 유형"
 
+#: models/mapping.py:102
 msgid "Shopify Discount Value"
 msgstr "Shopify 할인 금액"
 
+#: models/mapping.py:103
 msgid "Shopify Inventory Tracked"
 msgstr "Shopify 재고 추적"
 
+#: models/mapping.py:104
 msgid "Shopify Inventory Policy"
 msgstr "Shopify 재고 정책"
 
+#: models/mapping.py:105
 msgid "Comma-Separated to List"
 msgstr "콤마로 구분된 목록으로 변환"
 
+#: models/mapping.py:107
+msgid "Magento Product Status"
+msgstr "메가토 제품 상태"
+
+#: models/mapping.py:108
+msgid "Magento Product Visibility"
+msgstr "메가토 Product Visibility"
+
+#: models/mapping.py:109
+msgid "Magento Order Status"
+msgstr "메가토 주문 상태"
+
+#: models/mapping.py:110
+msgid "Magento Discount Type"
+msgstr "메가토 할인 유형"
+
+#: models/mapping.py:116
 msgid "Data transformation to apply"
 msgstr "적용할 데이터 변환"
 
+#: models/mapping.py:121
 msgid "Python function name for custom transformation"
 msgstr "사용자 정의 변환을 위한 파이썬 함수 이름"
 
+#: models/mapping.py:126
 msgid "Default value if source field is missing or empty"
 msgstr "소스 필드가 누락되거나 빈 경우의 기본값"
 
+#: models/mapping.py:131
 msgid "Whether this field is required (skip item if missing)"
 msgstr "이 필드가 필수인지 여부 (누락된 경우 항목을 건너뜁니다)"
 
+#: models/mapping.py:135
 msgid "Skip entire item if this field is empty"
 msgstr "이 필드가 비어 있으면 전체 항목을 건너뜁니다"
 
+#: models/mapping.py:140
 msgid "Number of times this mapping was applied"
 msgstr "이 매핑이 적용된 횟수"
 
+#: models/mapping.py:144
 msgid "Number of times transformation failed"
 msgstr "변환 실패 횟수"
 
+#: models/mapping.py:149
 msgid "Whether this mapping was auto-detected from data"
 msgstr "이 매핑이 데이터에서 자동으로 감지되었는지 여부"
 
+#: models/mapping.py:156
 msgid "Migration Mapping"
 msgstr "이전 매핑"
 
+#: models/mapping.py:157
 msgid "Migration Mappings"
 msgstr "이전 매핑들"
 
+#: models/staged_item.py:27
 msgid "Missing Required Field"
 msgstr "필수 필드 누락"
 
+#: models/staged_item.py:28
 msgid "Invalid Data Format"
 msgstr "잘못된 데이터 형식"
 
+#: models/staged_item.py:29
 msgid "Missing Relationship"
 msgstr "관계 누락"
 
+#: models/staged_item.py:30
 msgid "Data Transformation Failed"
 msgstr "데이터 변환 실패"
 
+#: models/staged_item.py:31
 msgid "Duplicate Entry"
 msgstr "중복 항목"
 
+#: models/staged_item.py:32
 msgid "Validation Failed"
 msgstr "검증 실패"
 
+#: models/staged_item.py:33
 msgid "Unknown Error"
 msgstr "알 수 없는 오류"
 
+#: models/staged_item.py:46
 msgid "Original ID from source platform"
 msgstr "소스 플랫폼에서의 원본 ID"
 
+#: models/staged_item.py:49
 msgid "Original data from WooCommerce/Shopify"
 msgstr "WooCommerce/Shopify에서의 원본 데이터"
 
+#: models/staged_item.py:53
 msgid "Data after transformation, ready for model creation"
 msgstr "변환 후 데이터, 모델 생성을 위해 준비됨"
 
+#: models/staged_item.py:58
 msgid "Why this item failed to import"
 msgstr "이 항목이 가져오기에 실패한 이유"
 
+#: models/staged_item.py:61
 msgid "Detailed error message"
 msgstr "상세한 오류 메시지"
 
+#: models/staged_item.py:64
 msgid "Specific field that caused the error"
 msgstr "에러를 일으킨 특정 필드"
 
+#: models/staged_item.py:74
 msgid "Being Fixed"
 msgstr "수리 중"
 
+#: models/staged_item.py:75
 msgid "Ready to Retry"
 msgstr "재시도 준비 완료"
 
+#: models/staged_item.py:76
 msgid "Successfully Imported"
 msgstr "성공적으로 가져옴"
 
+#: models/staged_item.py:77
 msgid "Skipped by Admin"
 msgstr "관리자에 의해 건너뜀"
 
+#: models/staged_item.py:81
 msgid "Admin notes about fixing this item"
 msgstr "이 항목을 수정하는 것에 대한 관리자 주석"
 
+#: models/staged_item.py:92
 msgid "Staged Item"
 msgstr "단계별 항목"
 
+#: models/staged_item.py:93
 msgid "Staged Items"
 msgstr "단계별 항목들"
 
+#: models/step.py:30
 msgid "Brands"
 msgstr "브랜드"
 
+#: models/step.py:32
 msgid "Product Images"
 msgstr "상품 이미지"
 
+#: models/step.py:33
 msgid "Product Variants"
 msgstr "상품 변형"
 
+#: models/step.py:35
 msgid "Customer Addresses"
 msgstr "고객 주소"
 
+#: models/step.py:37
 msgid "Order Items"
 msgstr "주문 항목"
 
+#: models/step.py:39 templates/admin/migration/confirm_rollback.html:83
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
+#: templates/admin/migration/wizard/step4_mapping.html:97
+#: templates/admin/migration/wizard/step5_import.html:191
+#: templates/admin/migration/wizard/step6_complete.html:37
 msgid "Coupons"
 msgstr "쿠폰"
 
+#: models/step.py:40
 msgid "Blog"
 msgstr "블로그"
 
+#: models/step.py:41
 msgid "Shipping Zones"
 msgstr "배송 지역"
 
+#: models/step.py:42
 msgid "Tax Rates"
 msgstr "세율"
 
+#: models/step.py:43 templates/admin/migration/wizard/step6_complete.html:117
 msgid "Link Rewriting"
 msgstr "링크 재작성"
 
+#: models/step.py:44 templates/admin/migration/wizard/step3_preview.html:50
+#: templates/admin/migration/wizard/step3_preview.html:141
+#: templates/admin/migration/wizard/step5_import.html:231
+#: templates/admin/migration/wizard/step6_complete.html:42
 msgid "Affiliates"
 msgstr "소속"
 
+#: models/step.py:45 templates/admin/migration/wizard/step5_import.html:251
+#: templates/admin/migration/wizard/step6_complete.html:48
 msgid "Commissions"
 msgstr "수수료"
 
+#: models/step.py:46 templates/admin/migration/wizard/step5_import.html:271
 msgid "Payouts"
 msgstr "지급"
 
+#: models/step.py:49
 msgid "Type of data being imported in this step"
 msgstr "이 단계에서 가져오는 데이터 유형"
 
+#: models/step.py:54 models/sync_job.py:77 models/sync_step.py:31
 msgid "Running"
 msgstr "실행 중"
 
-msgid "Database savepoint ID for this step"
-msgstr "이 단계의 데이터베이스 저장 지점 ID"
-
+#: models/step.py:69
 msgid "Total items to import in this step"
 msgstr "이 단계에서 가져올 총 항목 수"
 
+#: models/step.py:70
 msgid "Items successfully imported"
 msgstr "성공적으로 가져온 항목"
 
+#: models/step.py:72
 msgid "Items skipped (duplicates, validation failures)"
 msgstr "건너뛴 항목 (중복, 검증 실패)"
 
+#: models/step.py:74
 msgid "Items that failed to import"
 msgstr "가져오기에 실패한 항목"
 
+#: models/step.py:77
 msgid "When this step started"
 msgstr "이 단계가 시작된 시간"
 
+#: models/step.py:79
 msgid "When this step completed"
 msgstr "이 단계가 완료된 시간"
 
+#: models/step.py:82
 msgid "Duration of this step in seconds"
 msgstr "이 단계의 지속 시간(초 단위)"
 
+#: models/step.py:86
 msgid "Error message if step failed"
 msgstr "단계가 실패했을 경우 오류 메시지"
 
+#: models/step.py:88
 msgid "Number of errors encountered in this step"
 msgstr "이 단계에서 발생한 오류 수"
 
+#: models/step.py:91
 msgid "Number of warnings encountered in this step"
 msgstr "이 단계에서 발생한 경고 수"
 
+#: models/step.py:96
 msgid "Currently processing item (for progress display)"
 msgstr "현재 처리 중인 항목 (진행률 표시용)"
 
+#: models/step.py:101
 msgid "Migration Step"
 msgstr "이전 단계"
 
+#: models/step.py:102
 msgid "Migration Steps"
 msgstr "이전 단계들"
 
+#: models/sync_connection.py:24
 msgid "Descriptive name (e.g., 'Production Server', 'Staging')"
-msgstr ""
+msgstr "설명적인 이름 (예: '생산 서버', '스테이징')"
 
-#, fuzzy
-#| msgid "Product"
+#: models/sync_connection.py:28
+#: templates/admin/migration/sync/step1_connection.html:92
 msgid "Production"
-msgstr "상품"
+msgstr "생산"
 
+#: models/sync_connection.py:29
+#: templates/admin/migration/sync/step1_connection.html:91
 msgid "Staging"
-msgstr ""
+msgstr "스테이징"
 
-#, fuzzy
-#| msgid "Back"
+#: models/sync_connection.py:30
+#: templates/admin/migration/sync/step1_connection.html:93
 msgid "Backup"
-msgstr "뒤로"
+msgstr "백업"
 
+#: models/sync_connection.py:31
+#: templates/admin/migration/sync/step1_connection.html:94
 msgid "Other"
-msgstr ""
+msgstr "기타"
 
+#: models/sync_connection.py:37
 msgid "Role of the remote instance"
-msgstr ""
+msgstr "원격 인스턴스의 역할"
 
+#: models/sync_connection.py:41
 msgid ""
 "Base URL of the remote Spwig instance (e.g., https://merchant-store.com)"
-msgstr ""
+msgstr "원격 Spwig 인스턴스의 기본 URL (예: https://merchant-store.com)"
 
+#: models/sync_connection.py:46
 msgid "SyncToken for the remote instance (stored encrypted)"
-msgstr ""
+msgstr "원격 인스턴스용 SyncToken(암호화되어 저장됨)"
 
+#: models/sync_connection.py:51
 msgid "Spwig version running on the remote instance"
-msgstr ""
+msgstr "원격 인스턴스에서 실행 중인 Spwig 버전"
 
+#: models/sync_connection.py:54
 msgid "Site name of the remote instance"
-msgstr ""
+msgstr "원격 인스턴스의 사이트 이름"
 
+#: models/sync_connection.py:58
 msgid "Whether the connection has been verified"
-msgstr ""
+msgstr "연결이 확인되었는지 여부"
 
+#: models/sync_connection.py:61
 msgid "Last successful connection test"
-msgstr ""
+msgstr "마지막 성공한 연결 테스트"
 
+#: models/sync_connection.py:64
 msgid "Last time a sync was performed using this connection"
-msgstr ""
+msgstr "이 연결을 사용하여 마지막으로 동기화가 수행된 시간"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_connection.py:72
 msgid "User who created this connection"
-msgstr "이 마이그레이션을 시작한 사용자"
+msgstr "이 연결을 생성한 사용자"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:79
 msgid "Sync Connection"
-msgstr "연결"
+msgstr "동기화 연결"
 
-#, fuzzy
-#| msgid "Connection"
+#: models/sync_connection.py:80
 msgid "Sync Connections"
-msgstr "연결"
+msgstr "동기화 연결"
 
-#, fuzzy
-#| msgid "Settings"
+#: models/sync_job.py:26 templates/admin/migration/sync/base.html:34
 msgid "Settings Sync"
-msgstr "설정"
+msgstr "설정 동기화"
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: models/sync_job.py:27 templates/admin/migration/sync/base.html:32
 msgid "Full System Migration"
-msgstr "새로운 데이터 이전 시작"
+msgstr "전체 시스템 마이그레이션"
 
-#, fuzzy
-#| msgid "Type of source data"
+#: models/sync_job.py:30
 msgid "Type of sync operation"
-msgstr "소스 데이터 유형"
+msgstr "동기화 작업 유형"
 
+#: models/sync_job.py:34
 msgid "Pull from Remote"
-msgstr ""
+msgstr "원격에서 끌어오기"
 
+#: models/sync_job.py:35
 msgid "Push to Remote"
-msgstr ""
+msgstr "원격으로 푸시"
 
+#: models/sync_job.py:38
 msgid "Direction of data flow"
-msgstr ""
+msgstr "데이터 흐름 방향"
 
+#: models/sync_job.py:46
 msgid "Connection to the remote instance"
-msgstr ""
+msgstr "원격 인스턴스 연결"
 
-#, fuzzy
-#| msgid "User who initiated this migration"
+#: models/sync_job.py:54
 msgid "User who initiated this sync"
-msgstr "이 마이그레이션을 시작한 사용자"
+msgstr "이 동기화를 시작한 사용자"
 
+#: models/sync_job.py:59
 msgid "List of sync category keys selected for this job"
-msgstr ""
+msgstr "이 작업에 선택된 동기화 카테고리 키 목록"
 
+#: models/sync_job.py:63
 msgid "Add & Update Only"
-msgstr ""
+msgstr "추가 및 업데이트만"
 
+#: models/sync_job.py:64
 msgid "Full Mirror"
-msgstr ""
+msgstr "전체 미러"
 
+#: models/sync_job.py:70
 msgid "Sync behaviour: additive (no deletions) or mirror (exact copy)"
-msgstr ""
+msgstr "동기화 방식: 추가(삭제 없음) 또는 미러(정확한 복사)"
 
-#, fuzzy
-#| msgid "pending review"
+#: models/sync_job.py:75
 msgid "Generating Preview"
-msgstr "검토 대기 중"
+msgstr "미리보기 생성 중"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: models/sync_job.py:76
 msgid "Awaiting Confirmation"
-msgstr "연결 테스트"
+msgstr "확인 대기 중"
 
-#, fuzzy
-#| msgid "Cancel"
-msgid "Cancelled"
-msgstr "취소"
-
+#: models/sync_job.py:88
 msgid "Current status of the sync operation"
-msgstr ""
+msgstr "동기화 작업의 현재 상태"
 
+#: models/sync_job.py:95
 msgid "Name of the currently executing step"
-msgstr ""
+msgstr "현재 실행 중인 단계의 이름"
 
+#: models/sync_job.py:100
 msgid "Structured diff from preview step"
-msgstr ""
+msgstr "미리보기 단계에서의 구조화된 차이"
 
+#: models/sync_job.py:105
 msgid "Whether the merchant confirmed production overwrite"
-msgstr ""
+msgstr "상인께서 프로덕션 덮어쓰기를 확인했는지 여부"
 
+#: models/sync_job.py:110
 msgid "Pre-sync state snapshot for rollback"
-msgstr ""
+msgstr "롤백을 위한 사전 동기화 상태 스냅샷"
 
-#, fuzzy
-#| msgid "Whether this migration can be rolled back"
+#: models/sync_job.py:113
 msgid "Whether this job can be rolled back"
-msgstr "이 마이그레이션이 되돌릴 수 있는지 여부"
+msgstr "이 작업을 롤백할 수 있는지 여부"
 
-#, fuzzy
-#| msgid "Deadline for manual rollback (24 hours after completion)"
+#: models/sync_job.py:116
 msgid "Deadline for rollback (24 hours after completion)"
-msgstr "수동 되돌리기 마감 시간 (완료 후 24시간)"
+msgstr "롤백 마감 시간 (완료 후 24시간)"
 
+#: models/sync_job.py:136
 msgid "Recent activity log entries [{ts, msg}, ...] (last 50)"
-msgstr ""
+msgstr "최근 활동 로그 항목 [{ts, msg}, ...] (최근 50개)"
 
+#: models/sync_job.py:143
 msgid "Sync Job"
-msgstr ""
+msgstr "동기화 작업"
 
+#: models/sync_job.py:144
 msgid "Sync Jobs"
-msgstr ""
+msgstr "동기화 작업"
 
-#, fuzzy
-#| msgid "Parent migration job"
+#: models/sync_step.py:21
 msgid "Parent sync job"
-msgstr "부모 마이그레이션 작업"
+msgstr "상위 동기화 작업"
 
+#: models/sync_step.py:26
 msgid "Sync category key (e.g., 'email_config', 'design_theme')"
-msgstr ""
+msgstr "동기화 카테고리 키 (예: 'email_config', 'design_theme')"
 
+#: models/sync_step.py:52
 msgid "Diff data, created object IDs, or ID mappings for this step"
-msgstr ""
+msgstr "이 단계의 차이 데이터, 생성된 객체 ID 또는 ID 매핑"
 
+#: models/sync_step.py:59
 msgid "Extra progress data for the UI (e.g., bytes transferred for media)"
-msgstr ""
+msgstr "UI용 추가 진행 데이터 (예: 미디어 파일 전송 바이트 수)"
 
-#, fuzzy
-#| msgid "Step"
+#: models/sync_step.py:64
 msgid "Sync Step"
-msgstr "단계"
+msgstr "동기화 단계"
 
-#, fuzzy
-#| msgid "Next Steps"
+#: models/sync_step.py:65
 msgid "Sync Steps"
-msgstr "다음 단계"
+msgstr "동기화 단계"
 
+#: sync/authentication.py:40
 msgid "HTTPS is required for sync API requests."
-msgstr ""
+msgstr "동기화 API 요청에는 HTTPS가 필요합니다."
 
+#: sync/authentication.py:46
 msgid "Missing or invalid Authorization header. Expected: SyncToken <token>"
-msgstr ""
+msgstr "인증 헤더가 누락되었거나 유효하지 않습니다. 예상됨: SyncToken <token>"
 
+#: sync/authentication.py:51
 msgid "Empty sync token."
-msgstr ""
+msgstr "빈 동기화 토큰입니다."
 
+#: sync/authentication.py:61
 msgid "Invalid or expired sync token."
-msgstr ""
+msgstr "잘못된 또는 만료된 동기화 토큰입니다."
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:25
 msgid "Site Settings"
-msgstr "설정"
+msgstr "사이트 설정"
 
+#: sync/category_registry.py:27
 msgid ""
 "Core site configuration: name, branding, currency, checkout, SEO, maintenance"
-msgstr ""
+msgstr "핵심 사이트 설정: 이름, 브랜딩, 통화, 결제, SEO, 유지보수"
 
+#: sync/category_registry.py:41
 msgid "Design & Theme"
-msgstr ""
+msgstr "디자인 & 테마"
 
+#: sync/category_registry.py:42
 msgid "Active theme, design tokens, custom CSS, theme branding"
-msgstr ""
+msgstr "활성 테마, 디자인 토큰, 커스텀 CSS, 테마 브랜딩"
 
+#: sync/category_registry.py:61
 msgid "Headers, Footers & Menus"
-msgstr ""
+msgstr "헤더, 푸터 및 메뉴"
 
+#: sync/category_registry.py:62
 msgid "Header/footer templates, widgets, navigation menus"
-msgstr ""
+msgstr "헤더/푸터 템플릿, 위젯, 네비게이션 메뉴"
 
-#, fuzzy
-#| msgid "Total Migrations"
+#: sync/category_registry.py:81
 msgid "Email Configuration"
-msgstr "총 이전 작업"
+msgstr "이메일 설정"
 
+#: sync/category_registry.py:82
 msgid "Email provider accounts, templates, and template translations"
-msgstr ""
+msgstr "이메일 제공업체 계정, 템플릿 및 템플릿 번역"
 
+#: sync/category_registry.py:99
 msgid "SMS & WhatsApp Configuration"
-msgstr ""
+msgstr "SMS 및 WhatsApp 설정"
 
+#: sync/category_registry.py:100
 msgid "SMS/WhatsApp provider accounts and message templates"
-msgstr ""
+msgstr "SMS/WhatsApp 제공업체 계정 및 메시지 템플릿"
 
+#: sync/category_registry.py:113
 msgid "Payment Providers"
-msgstr ""
+msgstr "결제 제공업체"
 
+#: sync/category_registry.py:114
 msgid "Payment provider accounts (Stripe, PayPal, etc.)"
-msgstr ""
+msgstr "결제 제공업체 계정 (Stripe, PayPal 등)"
 
+#: sync/category_registry.py:123
 msgid "Sandbox/test credentials will NOT be synced to production."
-msgstr ""
+msgstr "Sandbox/테스트 자격 증명은 프로덕션으로 동기화되지 않습니다."
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:130
 msgid "Shipping Configuration"
-msgstr "Shopify 이전"
+msgstr "배송 설정"
 
+#: sync/category_registry.py:132
 msgid ""
-"Shipping providers, zones, methods, rules, rate tables, packages, carrier "
-"presets, locations"
+"Shipping providers, zones, methods, promotions, rate tables, packages, "
+"carrier presets, locations"
 msgstr ""
+"배송 제공업체, 지역, 방법, 프로모션, 가격 표, 패키지, 운송사 사전 설정, 위치"
 
+#: sync/category_registry.py:156
 msgid "Tax & Currency"
-msgstr ""
+msgstr "세금 및 통화"
 
+#: sync/category_registry.py:158
 msgid "Supported currencies, exchange rate providers, manual exchange rates"
-msgstr ""
+msgstr "지원되는 통화, 환율 제공업체, 수동 환율"
 
-#, fuzzy
-#| msgid "Tax Rates"
+#: sync/category_registry.py:176
 msgid "Tax Rates & Presets"
-msgstr "세율"
+msgstr "세율 및 사전 설정"
 
+#: sync/category_registry.py:177
 msgid "Tax rates, tax preset groups and preset rates"
-msgstr ""
+msgstr "세율, 사전 정의된 세율 그룹 및 사전 설정된 세율"
 
+#: sync/category_registry.py:193
 msgid "Languages & Translations"
-msgstr ""
+msgstr "언어 및 번역"
 
+#: sync/category_registry.py:194
 msgid "Site languages, translation providers, UI translation overrides"
-msgstr ""
+msgstr "사이트 언어, 번역 제공업체, UI 번역 오버라이드"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync/category_registry.py:210
 msgid "Blog Settings"
-msgstr "설정"
+msgstr "블로그 설정"
 
+#: sync/category_registry.py:211
 msgid "Blog configuration (posts per page, RSS, subscriptions)"
-msgstr ""
+msgstr "블로그 설정 (페이지당 게시물 수, RSS, 구독)"
 
+#: sync/category_registry.py:223
 msgid "Social Sharing"
-msgstr ""
+msgstr "소셜 공유"
 
+#: sync/category_registry.py:224
 msgid "Social sharing button configuration and platform settings"
-msgstr ""
+msgstr "소셜 공유 버튼 설정 및 플랫폼 설정"
 
+#: sync/category_registry.py:236
 msgid "Sales Regions & Warehouses"
-msgstr ""
+msgstr "판매 지역 및 창고"
 
+#: sync/category_registry.py:238
 msgid "Sales regions, warehouse locations, and fulfillment configuration"
-msgstr ""
+msgstr "판매 지역, 창고 위치 및 완료 설정"
 
-#, fuzzy
-#| msgid "Collections"
+#: sync/category_registry.py:251
 msgid "Product Collections"
-msgstr "컬렉션"
+msgstr "제품 컬렉션"
 
+#: sync/category_registry.py:252
 msgid "Curated and automatic product collections"
-msgstr ""
+msgstr "큐레이션 및 자동 제품 컬렉션"
 
-#, fuzzy
-#| msgid "WooCommerce Status"
+#: sync/category_registry.py:265
 msgid "Commerce Rules"
-msgstr "WooCommerce 상태"
+msgstr "상거래 규칙"
 
+#: sync/category_registry.py:267
 msgid "Vouchers, promotions, loyalty program, subscriptions, referral program"
-msgstr ""
+msgstr "쿠폰, 프로모션, 로열티 프로그램, 구독, 추천 프로그램"
 
-#, fuzzy
-#| msgid "Webhooks API Version"
+#: sync/category_registry.py:293
 msgid "Webhooks & Integrations"
-msgstr "웹후크 API 버전"
+msgstr "웹훅 및 통합"
 
+#: sync/category_registry.py:294
 msgid "Webhook endpoints and OAuth provider settings"
-msgstr ""
+msgstr "웹후크 엔드포인트 및 OAuth 제공업체 설정"
 
+#: sync/category_registry.py:307
+#: templates/admin/migration/wizard/step4_mapping.html:154
 msgid "Custom Fields"
 msgstr "사용자 정의 필드"
 
+#: sync/category_registry.py:308
 msgid "Custom field groups and field definitions"
-msgstr ""
+msgstr "사용자 정의 필드 그룹 및 필드 정의"
 
+#: sync/category_registry.py:320
 msgid "Staff Roles"
-msgstr ""
+msgstr "직원 역할"
 
+#: sync/category_registry.py:321
 msgid "Staff role definitions and permissions"
-msgstr ""
+msgstr "직원 역할 정의 및 권한"
 
+#: sync/category_registry.py:333
 msgid "Forms"
-msgstr ""
+msgstr "양식"
 
+#: sync/category_registry.py:334
 msgid "Form builder forms and configurations"
-msgstr ""
+msgstr "폼 빌더 폼 및 설정"
 
+#: sync/category_registry.py:346
 msgid "Pages & Templates"
-msgstr ""
+msgstr "페이지 및 템플릿"
 
+#: sync/category_registry.py:347
 msgid "Page builder pages, page templates, element templates"
-msgstr ""
+msgstr "페이지 빌더 페이지, 페이지 템플릿, 요소 템플릿"
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: sync/category_registry.py:364
 msgid "Blog Posts & Categories"
-msgstr "블로그 카테고리"
+msgstr "블로그 게시물 및 카테고리"
 
-#, fuzzy
-#| msgid "Import blog posts, categories, and tags from WordPress"
+#: sync/category_registry.py:365
 msgid "Blog posts, categories, and tags"
-msgstr "WordPress에서 블로그 게시물, 카테고리 및 태그를 가져옵니다"
+msgstr "블로그 게시물, 카테고리 및 태그"
 
+#: sync/category_registry.py:377
 msgid "Announcements"
-msgstr ""
+msgstr "공지사항"
 
+#: sync/category_registry.py:378
 msgid "Site announcements and notification banners"
-msgstr ""
+msgstr "사이트 공지사항 및 알림 배너"
 
-#, fuzzy
-#| msgid "Shopify Migration"
+#: sync/category_registry.py:391
 msgid "Search Configuration"
-msgstr "Shopify 이전"
+msgstr "검색 구성"
 
+#: sync/category_registry.py:392
 msgid "Search redirects and search settings"
-msgstr ""
+msgstr "검색 리디렉션 및 검색 설정"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:404
 msgid "SEO Providers"
-msgstr "주문"
+msgstr "SEO 제공업체"
 
+#: sync/category_registry.py:405
 msgid "SEO generator provider accounts and configuration"
-msgstr ""
+msgstr "SEO 생성기 제공업체 계정 및 설정"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:418
 msgid "Product Feed Providers"
-msgstr "제품 필드"
+msgstr "제품 피드 제공업체"
 
+#: sync/category_registry.py:419
 msgid "Product feed provider accounts for Google Shopping, Meta, etc."
-msgstr ""
+msgstr "구글 쇼핑, 메타 등 제품 피드 제공업체 계정"
 
+#: sync/category_registry.py:432
 msgid "Blog Social Connectors"
-msgstr ""
+msgstr "블로그 소셜 커넥터"
 
+#: sync/category_registry.py:433
 msgid "Social media connector accounts for blog auto-sharing"
-msgstr ""
+msgstr "블로그 자동 공유를 위한 소셜 미디어 커넥터 계정"
 
+#: sync/category_registry.py:442
 msgid "OAuth tokens will need to be re-authorized on the destination."
-msgstr ""
+msgstr "OAuth 토큰은 대상에서 다시 인증되어야 합니다."
 
+#: sync/category_registry.py:449
 msgid "Customer Analytics Configuration"
-msgstr ""
+msgstr "고객 분석 설정"
 
+#: sync/category_registry.py:450
 msgid "Customer segments, LTV settings, and category multipliers"
-msgstr ""
+msgstr "고객 세그먼트, LTV 설정 및 카테고리 배수"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:466
 msgid "Affiliate Program Configuration"
-msgstr "아フィ리에이트 프로그램 데이터"
+msgstr "리퍼럴 프로그램 설정"
 
+#: sync/category_registry.py:467
 msgid "Affiliate program settings, report settings, and programs"
-msgstr ""
+msgstr "소속 프로그램 설정, 보고서 설정 및 프로그램"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: sync/category_registry.py:483
 msgid "POS Configuration"
-msgstr "연결 설정"
+msgstr "POS 설정"
 
+#: sync/category_registry.py:485
 msgid ""
 "Store groups, terminals, receipt templates, promo slides, staff discounts"
-msgstr ""
+msgstr "스토어 그룹, 터미널, 영수증 템플릿, 프로모션 슬라이드, 직원 할인"
 
+#: sync/category_registry.py:510
 msgid "Installed Components"
-msgstr ""
+msgstr "설치된 구성 요소"
 
+#: sync/category_registry.py:512
 msgid ""
 "Installed themes, provider integrations, and utility components with "
 "filesystem packages"
 msgstr ""
+"설치된 테마, 제공업체 통합, 파일시스템 패키지와 함께하는 유틸리티 구성 요소"
 
-#, fuzzy
-#| msgid "Product Variants"
+#: sync/category_registry.py:531
 msgid "Products, Categories & Brands"
-msgstr "상품 변형"
+msgstr "상품, 카테고리 및 브랜드"
 
-#, fuzzy
-#| msgid "Import products with images, variants, and attributes"
+#: sync/category_registry.py:532
 msgid "Products, variants, images, categories, brands, attributes"
-msgstr "이미지, 변형 및 속성을 포함한 제품을 가져옵니다"
+msgstr "상품, 변형, 이미지, 카테고리, 브랜드, 속성"
 
+#: sync/category_registry.py:555
 msgid "Media Library"
-msgstr ""
+msgstr "미디어 라이브러리"
 
+#: sync/category_registry.py:556
 msgid "Media assets, thumbnails, and uploaded files"
-msgstr ""
+msgstr "미디어 자산, 썸네일, 업로드된 파일"
 
-#, fuzzy
-#| msgid "Customer Addresses"
+#: sync/category_registry.py:570
 msgid "Customers & Addresses"
-msgstr "고객 주소"
+msgstr "고객 및 주소"
 
-#, fuzzy
-#| msgid "Import customer accounts and addresses"
+#: sync/category_registry.py:571
 msgid "Customer accounts, profiles, and addresses"
-msgstr "고객 계정 및 주소 가져오기"
+msgstr "고객 계정, 프로필 및 주소"
 
-#, fuzzy
-#| msgid "Order Fields"
+#: sync/category_registry.py:588
 msgid "Order History"
-msgstr "주문 필드"
+msgstr "주문 내역"
 
-#, fuzzy
-#| msgid "Import order history and transactions"
+#: sync/category_registry.py:589
 msgid "Orders, order items, and transaction records"
-msgstr "주문 내역 및 거래 가져오기"
+msgstr "주문, 주문 항목 및 거래 기록"
 
-#, fuzzy
-#| msgid "Product Fields"
+#: sync/category_registry.py:601
 msgid "Product Reviews"
-msgstr "제품 필드"
+msgstr "제품 리뷰"
 
-#, fuzzy
-#| msgid "Import product reviews and ratings"
+#: sync/category_registry.py:602
 msgid "Product reviews and ratings"
-msgstr "제품 리뷰 및 평점 가져오기"
+msgstr "제품 리뷰 및 평점"
 
+#: sync/category_registry.py:614
 msgid "Stock Levels"
-msgstr ""
+msgstr "재고 수준"
 
+#: sync/category_registry.py:616
 msgid "Per-warehouse stock quantities, reserved stock, and reorder points"
-msgstr ""
+msgstr "창고별 재고 수량, 예약된 재고, 재주문 기준점"
 
+#: sync/category_registry.py:629
 msgid "Digital Products & Licenses"
-msgstr ""
+msgstr "디지털 제품 및 라이선스"
 
+#: sync/category_registry.py:631
 msgid "Digital assets, license key templates, license pools, license providers"
-msgstr ""
+msgstr "디지털 자산, 라이선스 키 템플릿, 라이선스 풀, 라이선스 제공업체"
 
+#: sync/category_registry.py:651
 msgid "Gift Cards & Voucher Usage"
-msgstr ""
+msgstr "선물 카드 및 쿠폰 사용"
 
+#: sync/category_registry.py:652
 msgid "Gift card balances, transactions, voucher usage records"
-msgstr ""
+msgstr "기프트 카드 잔액, 거래 내역, 바우처 사용 기록"
 
+#: sync/category_registry.py:669
 msgid "Store Credit & Wallets"
-msgstr ""
+msgstr "스토어 크레딧 & 지갑"
 
+#: sync/category_registry.py:670
 msgid "Customer wallet balances and transaction history"
-msgstr ""
+msgstr "고객 지갑 잔액 및 거래 내역"
 
+#: sync/category_registry.py:682
 msgid "Loyalty Program Members"
-msgstr ""
+msgstr "로열티 프로그램 회원"
 
+#: sync/category_registry.py:684
 msgid "Loyalty members, points balances, transactions, redemptions, badges"
-msgstr ""
+msgstr "로열티 회원, 포인트 잔액, 거래, 사용 내역, 배지"
 
+#: sync/category_registry.py:705
 msgid "Active Subscriptions"
-msgstr ""
+msgstr "활성 구독"
 
+#: sync/category_registry.py:707
 msgid ""
 "Subscription plans pricing, active subscriptions, billing cycles, payment "
 "tokens"
-msgstr ""
+msgstr "구독 계획 가격, 활성 구독, 요금 주기, 결제 토큰"
 
+#: sync/category_registry.py:724
 msgid ""
 "Payment tokens may not be valid across different payment provider "
 "installations."
 msgstr ""
+"결제 토큰은 다른 결제 제공업체 설치 환경에서 유효하지 않을 수 있습니다."
 
+#: sync/category_registry.py:731
 msgid "Shipments & Tracking"
-msgstr ""
+msgstr "배송 및 추적"
 
+#: sync/category_registry.py:732
 msgid "Shipment records and tracking event history"
-msgstr ""
+msgstr "배송 기록 및 추적 이벤트 기록"
 
+#: sync/category_registry.py:744
 msgid "Refunds, Returns & Order Notes"
-msgstr ""
+msgstr "환불, 반품 및 주문 메모"
 
+#: sync/category_registry.py:745
 msgid "Refund records, return requests, and order notes"
-msgstr ""
+msgstr "환불 기록, 반품 요청 및 주문 메모"
 
-#, fuzzy
-#| msgid "Customer Fields"
+#: sync/category_registry.py:757
 msgid "Customer Wishlists"
-msgstr "고객 필드"
+msgstr "고객 위시리스트"
 
+#: sync/category_registry.py:758
 msgid "Customer wishlists and wishlist items"
-msgstr ""
+msgstr "고객 위시리스트 및 위시리스트 항목"
 
+#: sync/category_registry.py:770
 msgid "Blog Subscribers"
-msgstr ""
+msgstr "블로그 구독자"
 
+#: sync/category_registry.py:771
 msgid "Blog email subscribers and category subscriptions"
-msgstr ""
+msgstr "블로그 이메일 구독자 및 카테고리 구독"
 
-#, fuzzy
-#| msgid "Commissions"
+#: sync/category_registry.py:783
 msgid "Form Submissions"
-msgstr "수수료"
+msgstr "양식 제출"
 
+#: sync/category_registry.py:784
 msgid "Form response data and submission history"
-msgstr ""
+msgstr "양식 응답 데이터 및 제출 내역"
 
+#: sync/category_registry.py:796
 msgid "Customer Analytics & History"
-msgstr ""
+msgstr "고객 분석 및 이력"
 
+#: sync/category_registry.py:797
 msgid "Customer notes, abandoned carts, cohort data, preference logs"
-msgstr ""
+msgstr "고객 메모, 포기한 장바구니, 코호트 데이터, 선호도 로그"
 
-#, fuzzy
-#| msgid "Affiliate Program Data"
+#: sync/category_registry.py:815
 msgid "Affiliate Member Data"
-msgstr "아フィ리에이트 프로그램 데이터"
+msgstr "회원 데이터"
 
+#: sync/category_registry.py:817
 msgid "Affiliate accounts, program memberships, links, commissions, payouts"
-msgstr ""
+msgstr "배경 계정, 프로그램 멤버십, 링크, 커미션, 지급"
 
-#, fuzzy
-#| msgid "📊 Migration History"
+#: sync/category_registry.py:836
 msgid "POS Transaction History"
-msgstr "📊 마이그레이션 기록"
+msgstr "POS 거래 내역"
 
+#: sync/category_registry.py:837
 msgid "POS shifts, cash movements, payments, and parked carts"
-msgstr ""
+msgstr "POS 교대, 현금 이동, 결제 및 대기 중인 장바구니"
 
+#: sync/category_registry.py:854
 msgid "Software License Keys"
-msgstr ""
+msgstr "소프트웨어 라이선스 키"
 
+#: sync/category_registry.py:855
 msgid "License keys, activations, and device registrations"
-msgstr ""
+msgstr "라이선스 키, 활성화 및 장치 등록"
 
-#, fuzzy
-#| msgid "Platform"
+#: sync/category_registry.py:870
 msgid "Platform License"
-msgstr "플랫폼"
+msgstr "플랫폼 라이선스"
 
+#: sync/category_registry.py:871
 msgid "Platform license transfer and EULA acceptance history"
-msgstr ""
+msgstr "플랫폼 라이선스 이전 및 EULA 수락 기록"
 
+#: sync/category_registry.py:880
 msgid ""
 "This will deactivate the license on the source installation. The source "
 "installation will stop working after transfer."
 msgstr ""
+"이 작업은 원본 설치에서 라이선스를 비활성화합니다. 이전 후 원본 설치는 더 이"
+"상 작동하지 않습니다."
 
+#: sync/category_registry.py:895
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "Settings"
 msgstr "설정"
 
+#: sync/category_registry.py:897
 msgid "Core site settings, currencies, languages"
-msgstr ""
+msgstr "핵심 사이트 설정, 통화, 언어"
 
+#: sync/category_registry.py:903
 msgid "Design"
-msgstr ""
+msgstr "디자인"
 
+#: sync/category_registry.py:905
 msgid "Theme, layout, menus, widgets"
-msgstr ""
+msgstr "테마, 레이아웃, 메뉴, 위젯"
 
-#, fuzzy
-#| msgid "Orders"
+#: sync/category_registry.py:911
 msgid "Providers"
-msgstr "주문"
+msgstr "제공업체"
 
+#: sync/category_registry.py:913
 msgid "Email, SMS, payment, shipping providers"
-msgstr ""
+msgstr "이메일, SMS, 결제, 배송 제공업체"
 
-#, fuzzy
-#| msgid "WooCommerce"
+#: sync/category_registry.py:919
 msgid "Commerce"
-msgstr "WooCommerce"
+msgstr "커머스"
 
+#: sync/category_registry.py:921
 msgid "Vouchers, promotions, loyalty, subscriptions"
-msgstr ""
+msgstr "바우처, 프로모션, 충성도, 구독"
 
-#, fuzzy
-#| msgid "Content Link"
+#: sync/category_registry.py:927
 msgid "Content"
-msgstr "콘텐츠 링크"
+msgstr "콘텐츠"
 
+#: sync/category_registry.py:929
 msgid "Pages, blog posts, forms"
-msgstr ""
+msgstr "페이지, 블로그 게시물, 양식"
 
-#, fuzzy
-#| msgid "Data Type"
+#: sync/category_registry.py:935
 msgid "Data"
-msgstr "데이터 유형"
+msgstr "데이터"
 
+#: sync/category_registry.py:937
 msgid "Products, customers, orders, media"
-msgstr ""
+msgstr "상품, 고객, 주문, 미디어"
 
-#, fuzzy
-#| msgid ""
-#| "Could not analyze custom fields. You can still proceed with the import."
+#: sync/compatibility.py:82
 msgid "Could not determine local version. Proceeding with caution."
-msgstr ""
-"사용자 정의 필드를 분석할 수 없습니다. 하지만 가져오기를 계속할 수 있습니다."
+msgstr "로컬 버전을 확인할 수 없습니다. 주의하여 진행합니다."
 
+#: sync/compatibility.py:83
 msgid "Local version could not be determined."
-msgstr ""
+msgstr "로컬 버전을 확인할 수 없습니다."
 
+#: sync/compatibility.py:89
 msgid "Could not determine remote version. Proceeding with caution."
-msgstr ""
+msgstr "원격 버전을 확인할 수 없습니다. 주의하여 계속합니다."
 
+#: sync/compatibility.py:90
 msgid "Remote version could not be determined."
-msgstr ""
+msgstr "원격 버전을 확인할 수 없습니다."
 
+#: sync/diff_engine.py:89
 msgid "Credentials will be re-encrypted on the target instance."
-msgstr ""
+msgstr "자격 증명은 대상 인스턴스에서 다시 암호화됩니다."
 
+#: sync_admin.py:65 templates/admin/migration/sync/step1_connection.html:89
 msgid "Role"
-msgstr ""
+msgstr "역할"
 
+#: sync_admin.py:79
 msgid "Last Sync"
-msgstr ""
+msgstr "마지막 동기화"
 
+#: sync_admin.py:130 templates/admin/migration/syncjob/change_list.html:4
+#: templates/admin/migration/syncjob/change_list.html:24
 msgid "Spwig-to-Spwig Sync"
-msgstr ""
+msgstr "Spwig 대 Spwig 동기화"
 
-#, fuzzy
-#| msgid "Settings"
+#: sync_admin.py:133
 msgid "Sync Settings"
-msgstr "설정"
+msgstr "동기화 설정"
 
+#: sync_admin.py:135
 msgid "Sync settings between staging and production"
-msgstr ""
+msgstr "스테이징과 프로덕션 간의 동기화 설정"
 
-#, fuzzy
-#| msgid "Rollback Migration"
+#: sync_admin.py:140
 msgid "Full Migration"
-msgstr "마이그레이션 롤백"
+msgstr "전체 마이그레이션"
 
+#: sync_admin.py:142
 msgid "Migrate entire system to a new installation"
-msgstr ""
+msgstr "전체 시스템을 새 설치로 마이그레이션"
 
+#: sync_admin.py:147
 msgid "Manage Tokens"
-msgstr ""
+msgstr "토큰 관리"
 
+#: sync_admin.py:149
 msgid "Generate and manage sync tokens"
-msgstr ""
+msgstr "동기화 토큰 생성 및 관리"
 
-#, fuzzy
-#| msgid "Type:"
+#: sync_admin.py:279
 msgid "Type"
-msgstr "유형:"
+msgstr "유형"
 
-#, fuzzy
-#| msgid "section"
+#: sync_admin.py:289 templates/admin/migration/sync/step2_categories.html:22
 msgid "Direction"
-msgstr "섹션"
+msgstr "방향"
 
+#: sync_admin.py:344
 msgid "Synced/Failed/Total"
-msgstr ""
+msgstr "동기화됨/실패/총"
 
+#: sync_admin.py:400 sync_admin.py:565
 msgid "Sync token is required for new connections."
-msgstr ""
+msgstr "새로운 연결에 동기화 토큰이 필요합니다."
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: sync_admin.py:425
 msgid "Settings Sync - Connection"
-msgstr "연결 테스트"
+msgstr "설정 동기화 - 연결"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:446
 msgid "Please select at least one category to sync."
-msgstr "가져올 데이터 유형을 최소 하나 선택하세요."
+msgstr "동기화할 카테고리를 하나 이상 선택해 주세요."
 
+#: sync_admin.py:468
 msgid "Settings Sync - Select Categories"
-msgstr ""
+msgstr "설정 동기화 - 범주 선택"
 
+#: sync_admin.py:486
 msgid "You must confirm production overwrite."
-msgstr ""
+msgstr "생산 환경 덮어쓰기를 확인해야 합니다."
 
-#, fuzzy
-#| msgid "Migration job created. Please configure the connection."
+#: sync_admin.py:505
 msgid "Preview generation failed. Please check the connection and try again."
-msgstr "마이그레이션 작업이 생성되었습니다. 연결을 설정해 주세요."
+msgstr ""
+"미리보기 생성에 실패했습니다. 연결 상태를 확인한 후 다시 시도해 주세요."
 
+#: sync_admin.py:513
 msgid "Settings Sync - Preview Changes"
-msgstr ""
+msgstr "설정 동기화 - 변경 사항 미리보기"
 
+#: sync_admin.py:533
 msgid "Settings Sync - Progress"
-msgstr ""
+msgstr "설정 동기화 - 진행 상황"
 
-#, fuzzy
-#| msgid "Migration Wizard - Connection"
+#: sync_admin.py:589
 msgid "Full Migration - Connection"
-msgstr "마이그레이션 마법사 - 연결"
+msgstr "전체 마이그레이션 - 연결"
 
-#, fuzzy
-#| msgid "Please select at least one data type to import."
+#: sync_admin.py:609
 msgid "Please select at least one category to migrate."
-msgstr "가져올 데이터 유형을 최소 하나 선택하세요."
+msgstr "이동할 카테고리를 하나 이상 선택해 주세요."
 
-#, fuzzy
-#| msgid "Migration Step"
+#: sync_admin.py:621
 msgid "Full Migration - Select Scope"
-msgstr "이전 단계"
+msgstr "전체 마이그레이션 - 범위 선택"
 
+#: sync_admin.py:646
 msgid "Compatibility check failed. Please verify the connection and try again."
-msgstr ""
+msgstr "호환성 검사에 실패했습니다. 연결을 확인한 후 다시 시도해 주세요."
 
+#: sync_admin.py:657
 msgid "Full Migration - Pre-flight Check"
-msgstr ""
+msgstr "전체 마이그레이션 - 사전 점검"
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: sync_admin.py:676
 msgid "Full Migration - Progress"
-msgstr "마이그레이션 로그들"
+msgstr "전체 마이그레이션 - 진행 상황"
 
-#, fuzzy
-#| msgid "No Migrations Yet"
+#: sync_admin.py:695
 msgid "Full Migration - Results"
-msgstr "아직 이전 작업 없음"
+msgstr "전체 마이그레이션 - 결과"
 
+#: sync_admin.py:874
 msgid "Token generated. Copy it now — it will not be shown again:"
-msgstr ""
+msgstr "토큰이 생성되었습니다. 지금 복사하세요 — 다시 표시되지 않습니다:"
 
+#: sync_admin.py:882
 msgid "Token revoked."
-msgstr ""
+msgstr "토큰이 취소되었습니다."
 
+#: sync_admin.py:884
 msgid "Invalid token ID."
-msgstr ""
+msgstr "잘못된 토큰 ID입니다."
 
+#: sync_admin.py:893 templates/admin/migration/sync/token_management.html:4
+#: templates/admin/migration/sync/token_management.html:27
 msgid "Sync Token Management"
-msgstr ""
+msgstr "동기화 토큰 관리"
 
+#: templates/admin/migration/confirm_rollback.html:18
 msgid "Warning: This action cannot be undone!"
 msgstr "경고: 이 작업은 되돌릴 수 없습니다!"
 
+#: templates/admin/migration/confirm_rollback.html:21
 msgid "You are about to rollback the migration job:"
 msgstr "다음 마이그레이션 작업을 되돌리려고 합니다:"
 
-msgid "This will:"
-msgstr "이 작업은:"
+#: templates/admin/migration/confirm_rollback.html:25
+msgid "Spwig will remove:"
+msgstr "Spwig가 제거할 항목:"
 
-msgid "Delete all products imported from this migration"
-msgstr "이 마이그레이션에서 가져온 모든 상품을 삭제합니다"
+#: templates/admin/migration/confirm_rollback.html:33
+msgid "Nothing — there is nothing left from this import that can be removed."
+msgstr ""
+"무것도 없습니다 — 이 임포트에서 제거할 수 있는 것이 남아 있지 않습니다."
 
-msgid "Delete all categories imported from this migration"
-msgstr "이 마이그레이션에서 가져온 모든 카테고리를 삭제합니다"
+#: templates/admin/migration/confirm_rollback.html:37
+msgid "Spwig will keep:"
+msgstr "Spwig가 유지할 항목:"
 
-msgid "Delete all customers imported from this migration"
-msgstr "이 마이그레이션에서 가져온 모든 고객을 삭제합니다"
+#: templates/admin/migration/confirm_rollback.html:38
+msgid ""
+"These were created by the import, but other things in your store now depend "
+"on them. Removing them would damage real orders or customer activity, so "
+"they stay."
+msgstr ""
+"이 항목들은 임포트를 통해 생성되었지만, 현재 가게에 의존하는 다른 항목들이 있"
+"습니다. 이를 제거하면 실제 주문이나 고객 활동에 손상을 줄 수 있으므로 유지됩"
+"니다."
 
-msgid "Delete all orders imported from this migration"
-msgstr "이 마이그레이션에서 가져온 모든 주문을 삭제합니다"
+#: templates/admin/migration/confirm_rollback.html:41
+msgid "still referenced by"
+msgstr " 여전히 참조되고 있는"
 
-msgid "Delete all reviews imported from this migration"
-msgstr "이 마이그레이션에서 가져온 모든 리뷰를 삭제합니다"
+#: templates/admin/migration/confirm_rollback.html:48
+msgid "Spwig could not calculate exactly what this rollback would remove."
+msgstr "Spwig는 이 롤백이 무엇을 제거하는지 정확히 계산할 수 없습니다."
 
-msgid "Delete all coupons imported from this migration"
-msgstr "이 마이그레이션에서 가져온 모든 쿠폰을 삭제합니다"
+#: templates/admin/migration/confirm_rollback.html:54
+msgid "This operation is PERMANENT and cannot be reversed."
+msgstr "이 작업은 영구적이며 되돌릴 수 없습니다."
 
-msgid "Delete all associated media assets"
-msgstr "모든 관련 미디어 자산을 삭제합니다"
-
-msgid "Mark the migration job as 'rolled_back'"
-msgstr "이 마이그레이션 작업을 'rolled_back'으로 표시합니다"
-
-msgid "This operation is PERMANENT and cannot be reversed!"
-msgstr "이 작업은 영구적이며 되돌릴 수 없습니다!"
-
+#: templates/admin/migration/confirm_rollback.html:59
 msgid "Items to be Deleted"
 msgstr "삭제할 항목"
 
+#: templates/admin/migration/confirm_rollback.html:93
 msgid "Yes, Rollback Migration"
 msgstr "네, 이전 작업을 되돌립니다"
 
+#: templates/admin/migration/confirm_rollback.html:96
+#: templates/admin/migration/fullmig/step1_connection.html:95
+#: templates/admin/migration/migrationjob/change_list.html:216
+#: templates/admin/migration/sync/step1_connection.html:115
+#: templates/admin/migration/wizard/step1_platform.html:65
 msgid "Cancel"
 msgstr "취소"
 
+#: templates/admin/migration/fullmig/step1_connection.html:8
 msgid "Connect to Source Instance"
-msgstr ""
+msgstr "소스 인스턴스에 연결"
 
+#: templates/admin/migration/fullmig/step1_connection.html:10
 msgid ""
 "Connect to the Spwig instance you want to migrate from. All data will be "
 "pulled from the remote instance to this one."
 msgstr ""
+"이동시키고자 하는 Spwig 인스턴스에 연결하세요. 모든 데이터는 원격 인스턴스에"
+"서 이 인스턴스로 끌어올릴 것입니다."
 
-#, fuzzy
-#| msgid "Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:19
+#: templates/admin/migration/sync/step1_connection.html:19
 msgid "Saved Connections"
-msgstr "연결"
+msgstr "저장된 연결"
 
+#: templates/admin/migration/fullmig/step1_connection.html:34
+#: templates/admin/migration/sync/step1_connection.html:34
 msgid "Verified"
-msgstr ""
+msgstr "확인됨"
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:43
+#: templates/admin/migration/sync/step1_connection.html:47
 msgid "or configure a new connection"
-msgstr "연결 설정"
+msgstr "또는 새 연결을 구성하세요"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:50
+#: templates/admin/migration/sync/step1_connection.html:54
 msgid "Connection Details"
-msgstr "연결 실패"
+msgstr "연결 정보"
 
-#, fuzzy
-#| msgid "Connection failed"
+#: templates/admin/migration/fullmig/step1_connection.html:55
+#: templates/admin/migration/sync/step1_connection.html:59
 msgid "Connection Name"
-msgstr "연결 실패"
+msgstr "연결 이름"
 
+#: templates/admin/migration/fullmig/step1_connection.html:57
 msgid "e.g., Old Server"
-msgstr ""
+msgstr "예: 이전 서버"
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/fullmig/step1_connection.html:61
 msgid "Source URL"
-msgstr "스토어 URL"
+msgstr "소스 URL"
 
+#: templates/admin/migration/fullmig/step1_connection.html:67
+#: templates/admin/migration/sync/step1_connection.html:79
 msgid "Sync Token"
-msgstr ""
+msgstr "동기화 토큰"
 
+#: templates/admin/migration/fullmig/step1_connection.html:69
 msgid "Paste the sync token from the source instance"
-msgstr ""
+msgstr "소스 인스턴스에서 동기화 토큰을 붙여넣으세요"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/fullmig/step1_connection.html:78
+#: templates/admin/migration/sync/step1_connection.html:106
 msgid "Test Connection"
 msgstr "연결 테스트"
 
-#, fuzzy
-#| msgid "View All Migrations"
+#: templates/admin/migration/fullmig/step1_connection.html:87
 msgid "How Full Migration Works"
-msgstr "모든 마이그레이션 보기"
+msgstr "전체 마이그레이션 작동 방식"
 
+#: templates/admin/migration/fullmig/step1_connection.html:88
 msgid ""
 "Full migration pulls all data from the source instance: settings, products, "
 "customers, orders, media files, and content. This is typically used when "
 "moving to a new server or creating a staging copy."
 msgstr ""
+"풀 마이그레이션은 소스 인스턴스에서 설정, 제품, 고객, 주문, 미디어 파일 및 콘"
+"텐츠 데이터를 모두 가져옵니다. 이는 새 서버로 이전하거나 스테이징 복사본을 생"
+"성할 때 일반적으로 사용됩니다."
 
+#: templates/admin/migration/fullmig/step1_connection.html:98
 msgid "Next: Select Scope"
-msgstr ""
+msgstr "다음: 범위 선택"
 
+#: templates/admin/migration/fullmig/step1_connection.html:109
+#: templates/admin/migration/sync/step1_connection.html:129
+#: templates/admin/migration/wizard/step2_connection.html:479
 msgid "Testing connection..."
 msgstr "연결 테스트 중..."
 
-#, fuzzy
-#| msgid "Connection successful"
+#: templates/admin/migration/fullmig/step1_connection.html:110
+#: templates/admin/migration/sync/step1_connection.html:130
 msgid "Connection successful!"
-msgstr "연결 성공"
+msgstr "연결 성공!"
 
+#: templates/admin/migration/fullmig/step1_connection.html:111
+#: templates/admin/migration/sync/step1_connection.html:131
+#: templates/admin/migration/wizard/step2_connection.html:488
 msgid "Connection failed"
 msgstr "연결 실패"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step1_connection.html:112
+#: templates/admin/migration/sync/step1_connection.html:132
 msgid "Version"
 msgstr "버전"
 
-#, fuzzy
-#| msgid "Name"
+#: templates/admin/migration/fullmig/step1_connection.html:113
+#: templates/admin/migration/sync/step1_connection.html:133
 msgid "Site Name"
-msgstr "이름"
+msgstr "사이트 이름"
 
-#, fuzzy
-#| msgid "Migration Step"
+#: templates/admin/migration/fullmig/step2_scope.html:8
 msgid "Select Migration Scope"
-msgstr "이전 단계"
+msgstr "마이그레이션 범위 선택"
 
+#: templates/admin/migration/fullmig/step2_scope.html:10
 msgid ""
 "Choose which data categories to include in the migration. Dependencies will "
 "be automatically included."
 msgstr ""
+"마이그레이션에 포함할 데이터 범주를 선택하세요. 종속 항목은 자동으로 포함됩니"
+"다."
 
-#, fuzzy
-#| msgid "Blog Categories"
+#: templates/admin/migration/fullmig/step2_scope.html:20
 msgid "Select All Categories"
-msgstr "블로그 카테고리"
+msgstr "모든 카테고리 선택"
 
-#, fuzzy
-#| msgid "Parse Date"
+#: templates/admin/migration/fullmig/step2_scope.html:41
 msgid "Large Data"
-msgstr "날짜 파싱"
+msgstr "대규모 데이터"
 
-#, fuzzy
-#| msgid "Credentials"
+#: templates/admin/migration/fullmig/step2_scope.html:46
+#: templates/admin/migration/sync/step2_categories.html:109
 msgid "Has Credentials"
-msgstr "자격 증명"
+msgstr "자격 증명이 있음"
 
+#: templates/admin/migration/fullmig/step2_scope.html:51
 msgid "Requires:"
-msgstr ""
+msgstr "필요: "
 
+#: templates/admin/migration/fullmig/step2_scope.html:65
+#: templates/admin/migration/fullmig/step3_preflight.html:165
+#: templates/admin/migration/sync/step2_categories.html:133
+#: templates/admin/migration/sync/step3_preview.html:119
+#: templates/admin/migration/wizard/step2_connection.html:460
+#: templates/admin/migration/wizard/step3_preview.html:269
+#: templates/admin/migration/wizard/step4_mapping.html:297
 msgid "Back"
 msgstr "뒤로"
 
+#: templates/admin/migration/fullmig/step2_scope.html:68
 msgid "Next: Pre-flight Check"
-msgstr ""
+msgstr "다음: 사전 점검"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:8
 msgid "Pre-flight Check"
-msgstr ""
+msgstr "사전 점검"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:10
 msgid ""
 "Verifying compatibility between source and target instances before migration."
 msgstr ""
+"마이그레이션 전에 소스와 대상 인스턴스 간의 호환성을 확인하고 있습니다."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:16
 msgid "Version Compatibility"
-msgstr ""
+msgstr "버전 호환성"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:21
 msgid "Versions Compatible"
-msgstr ""
+msgstr "호환 가능한 버전"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:23
+#: templates/admin/migration/fullmig/step3_preflight.html:43
 msgid "Local:"
-msgstr ""
+msgstr "로컬:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:25
+#: templates/admin/migration/fullmig/step3_preflight.html:45
 msgid "Remote:"
-msgstr ""
+msgstr "원격:"
 
-#, fuzzy
-#| msgid "Versions"
+#: templates/admin/migration/fullmig/step3_preflight.html:40
 msgid "Version Mismatch"
-msgstr "버전"
+msgstr "버전 불일치"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:55
 msgid "Component Compatibility"
-msgstr ""
+msgstr "구성 요소 호환성"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:61
 msgid "Components Missing on Target"
-msgstr ""
+msgstr "대상에 누락된 구성 요소"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:62
 msgid ""
 "These components are installed on the source but not on this instance. "
 "Install them via the Component Store before migrating."
 msgstr ""
+"이 구성 요소는 소스에 설치되어 있지만 이 인스턴스에는 설치되어 있지 않습니"
+"다. 마이그레이션하기 전에 구성 요소 저장소를 통해 설치하세요."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:76
 msgid "Component Version Differences"
-msgstr ""
+msgstr "구성 요소 버전 차이"
 
-#, fuzzy
-#| msgid "Source"
+#: templates/admin/migration/fullmig/step3_preflight.html:81
 msgid "source"
-msgstr "출처"
+msgstr "소스"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:82
 msgid "target"
-msgstr ""
+msgstr "대상"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:94
 msgid "All Components Match"
-msgstr ""
+msgstr "모든 구성 요소 일치"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:95
 msgid "Installed components are compatible between source and target."
-msgstr ""
+msgstr "설치된 구성 요소는 소스와 대상 간에 호환됩니다."
 
-#, fuzzy
-#| msgid "Import Summary"
+#: templates/admin/migration/fullmig/step3_preflight.html:105
 msgid "Source Data Summary"
-msgstr "입력 요약"
+msgstr "소스 데이터 요약"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:129
 msgid "Media Storage"
-msgstr ""
+msgstr "미디어 저장소"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:130
 msgid "Total media size on source:"
-msgstr ""
+msgstr "소스의 전체 미디어 크기:"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:142
 msgid "Pre-flight Check Failed"
-msgstr ""
+msgstr "사전 점검 실패"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:143
 msgid ""
 "Could not connect to the remote instance to perform compatibility checks. "
 "Please verify the connection and try again."
 msgstr ""
+"호환성 검사를 위해 원격 인스턴스에 연결할 수 없습니다. 연결을 확인하고 다시 "
+"시도해 주세요."
 
+#: templates/admin/migration/fullmig/step3_preflight.html:154
 msgid "License Reminder"
-msgstr ""
+msgstr "라이선스 напоминание"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:155
 msgid ""
 "This installation requires its own license. After migration, you will need "
 "to activate a separate license for this instance."
 msgstr ""
+"이 설치는 자체 라이선스가 필요합니다. 마이그레이션 후에는 이 인스턴스에 대해 "
+"별도의 라이선스를 활성화해야 합니다."
 
-#, fuzzy
-#| msgid "Start New Migration"
+#: templates/admin/migration/fullmig/step3_preflight.html:170
 msgid "Start Migration"
-msgstr "새로운 데이터 이전 시작"
+msgstr "마이그레이션 시작"
 
+#: templates/admin/migration/fullmig/step3_preflight.html:175
 msgid "Cannot Proceed (Version Incompatible)"
-msgstr ""
+msgstr "이어가기 불가 (버전 호환 불가)"
 
+#: templates/admin/migration/fullmig/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The migration will continue in "
 "the background."
 msgstr ""
+"이 페이지에서 이동해도 안전합니다. 마이그레이션은 백그라운드에서 계속 진행됩"
+"니다."
 
-#, fuzzy
-#| msgid "Migration Logs"
+#: templates/admin/migration/fullmig/step4_progress.html:13
 msgid "Migration Progress"
-msgstr "마이그레이션 로그들"
+msgstr "마이그레이션 진행 상황"
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step4_progress.html:17
+#: templates/admin/migration/fullmig/step4_progress.html:149
 msgid "Migration completed."
-msgstr "마이그레이션 완료"
+msgstr "마이그레이션이 완료되었습니다."
 
-#, fuzzy
-#| msgid "Migration cancelled by user"
+#: templates/admin/migration/fullmig/step4_progress.html:19
+#: templates/admin/migration/fullmig/step4_progress.html:150
 msgid "Migration encountered errors."
-msgstr "사용자가 마이그레이션을 취소했습니다"
+msgstr "마이그레이션 중 오류가 발생했습니다."
 
+#: templates/admin/migration/fullmig/step4_progress.html:21
+#: templates/admin/migration/fullmig/step4_progress.html:151
 msgid "Migrating data from source instance..."
-msgstr ""
+msgstr "소스 인스턴스에서 데이터를 마이그레이션 중..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:28
+#: templates/admin/migration/sync/step4_progress.html:28
+#: templates/admin/migration/wizard/step5_import.html:54
 msgid "Overall Progress"
 msgstr "전체 진행률"
 
+#: templates/admin/migration/fullmig/step4_progress.html:39
+#: templates/admin/migration/fullmig/step4_progress.html:155
+#: templates/admin/migration/sync/step4_progress.html:39
+#: templates/admin/migration/sync/step4_progress.html:167
 msgid "Elapsed:"
-msgstr ""
+msgstr "경과 시간:"
 
+#: templates/admin/migration/fullmig/step4_progress.html:40
+#: templates/admin/migration/fullmig/step4_progress.html:156
+#: templates/admin/migration/sync/step4_progress.html:40
+#: templates/admin/migration/sync/step4_progress.html:168
 msgid "Remaining:"
-msgstr ""
+msgstr "남은:"
 
-#, fuzzy
-#| msgid "Migration Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:48
+#: templates/admin/migration/fullmig/step5_results.html:43
+#: templates/admin/migration/fullmig/step5_results.html:75
 msgid "Migrated"
-msgstr "마이그레이션 실패"
+msgstr "마이그레이션됨"
 
-#, fuzzy
-#| msgid "Category Array"
+#: templates/admin/migration/fullmig/step4_progress.html:67
+#: templates/admin/migration/sync/step4_progress.html:67
 msgid "Category Progress"
-msgstr "카테고리 배열"
+msgstr "카테고리 진행 상황"
 
-#, fuzzy
-#| msgid "Created"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:146
 msgid "migrated"
-msgstr "생성일"
+msgstr "마이그레이션됨"
 
-#, fuzzy
-#| msgid "Failed"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:147
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:159
 msgid "failed"
 msgstr "실패"
 
-#, fuzzy
-#| msgid "Total"
+#: templates/admin/migration/fullmig/step4_progress.html:97
+#: templates/admin/migration/fullmig/step4_progress.html:148
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:160
 msgid "total"
-msgstr "총합"
+msgstr "총"
 
+#: templates/admin/migration/fullmig/step4_progress.html:112
+#: templates/admin/migration/sync/step4_progress.html:112
 msgid "Activity Log"
-msgstr ""
+msgstr "활동 기록"
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:117
+#: templates/admin/migration/sync/step4_progress.html:117
 msgid "Waiting for activity..."
-msgstr "대기 중..."
+msgstr "활동 대기 중..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:125
+#: templates/admin/migration/syncjob/change_list.html:176
+#: templates/admin/migration/wizard/step5_import.html:309
 msgid "View Results"
 msgstr "결과 보기"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/fullmig/step4_progress.html:131
+#: templates/admin/migration/fullmig/step4_progress.html:152
+#: templates/admin/migration/fullmig/step5_results.html:155
+#: templates/admin/migration/sync/step4_progress.html:138
+#: templates/admin/migration/sync/step4_progress.html:164
 msgid "Back to Dashboard"
-msgstr "Dev 대시보드에서 시작"
+msgstr "대시보드로 돌아가기"
 
+#: templates/admin/migration/fullmig/step4_progress.html:153
+#: templates/admin/migration/fullmig/step5_results.html:163
+#: templates/admin/migration/wizard/step6_complete.html:280
 msgid "Rollback Migration"
 msgstr "마이그레이션 롤백"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step4_progress.html:154
 msgid ""
 "Are you sure you want to rollback this migration? This will delete all "
 "migrated data."
-msgstr ""
-"이 마이그레이션을 롤백하시겠습니까? 이 작업은 모든 가져온 데이터를 삭제합니"
-"다."
+msgstr "이 이동을 롤백하시겠습니까? 이 작업은 이동된 모든 데이터를 삭제합니다."
 
-#, fuzzy
-#| msgid "Waiting..."
+#: templates/admin/migration/fullmig/step4_progress.html:157
+#: templates/admin/migration/sync/step4_progress.html:169
 msgid "calculating..."
-msgstr "대기 중..."
+msgstr "계산 중..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:158
+#: templates/admin/migration/sync/step4_progress.html:170
 msgid "Connection lost, retrying..."
-msgstr ""
+msgstr "연결이 끊어졌습니다. 재시도 중..."
 
+#: templates/admin/migration/fullmig/step4_progress.html:159
+#: templates/admin/migration/sync/step4_progress.html:171
 msgid "Reconnected"
-msgstr ""
+msgstr "재연결됨"
 
-#, fuzzy
-#| msgid "Your data has been successfully imported from"
+#: templates/admin/migration/fullmig/step5_results.html:11
 msgid "All selected data has been successfully migrated to this installation."
-msgstr "귀하의 데이터가 성공적으로 가져와졌습니다"
+msgstr "모든 선택된 데이터가 이 설치로 성공적으로 마이그레이션되었습니다."
 
-#, fuzzy
-#| msgid "Migration Complete"
+#: templates/admin/migration/fullmig/step5_results.html:20
 msgid "Migration Completed with Errors"
-msgstr "마이그레이션 완료"
+msgstr "오류와 함께 마이그레이션 완료"
 
+#: templates/admin/migration/fullmig/step5_results.html:21
 msgid "Some items could not be migrated. Review the details below."
-msgstr ""
+msgstr "일부 항목은 마이그레이션되지 않았습니다. 아래 세부 정보를 확인하세요."
 
+#: templates/admin/migration/fullmig/step5_results.html:30
+#: templates/admin/migration/wizard/step6_complete.html:298
 msgid "Migration Failed"
 msgstr "마이그레이션 실패"
 
-#, fuzzy
-#| msgid "Migration Wizard"
+#: templates/admin/migration/fullmig/step5_results.html:39
 msgid "Migration Summary"
-msgstr "이전 작업 마법사"
+msgstr "마이그레이션 요약"
 
-#, fuzzy
-#| msgid "Duration"
+#: templates/admin/migration/fullmig/step5_results.html:62
 msgid "Duration:"
-msgstr "지속 시간"
+msgstr "기간:"
 
-#, fuzzy
-#| msgid "Categories"
+#: templates/admin/migration/fullmig/step5_results.html:69
 msgid "Category Results"
-msgstr "카테고리"
+msgstr "카테고리 결과"
 
+#: templates/admin/migration/fullmig/step5_results.html:87
 msgid "Done"
-msgstr ""
+msgstr "완료"
 
+#: templates/admin/migration/fullmig/step5_results.html:121
+#: templates/admin/migration/wizard/step6_complete.html:398
 msgid "Next Steps"
 msgstr "다음 단계"
 
+#: templates/admin/migration/fullmig/step5_results.html:126
 msgid "Activate your license on this installation"
-msgstr ""
+msgstr "이 설치에서 라이선스를 활성화하세요"
 
+#: templates/admin/migration/fullmig/step5_results.html:130
 msgid "Re-enter any payment provider credentials that were skipped"
-msgstr ""
+msgstr "건너뛴 결제 제공업체 자격 증명을 다시 입력하세요"
 
-#, fuzzy
-#| msgid "When you're ready to go live, point your domain to this platform."
+#: templates/admin/migration/fullmig/step5_results.html:134
 msgid "Configure DNS to point your domain to this server"
-msgstr "라이브로 전환할 준비가 되었으면 도메인을 이 플랫폼으로 연결하세요."
+msgstr "DNS를 구성하여 도메인을 이 서버로 지정하세요"
 
+#: templates/admin/migration/fullmig/step5_results.html:138
 msgid "Test the checkout flow with a test order"
-msgstr ""
+msgstr "테스트 주문을 통해 결제 흐름을 테스트하세요"
 
+#: templates/admin/migration/fullmig/step5_results.html:142
 msgid "Verify email sending works correctly"
-msgstr ""
+msgstr "이메일 전송이 올바르게 작동하는지 확인하세요"
 
+#: templates/admin/migration/fullmig/step5_results.html:146
 msgid "Check that media files and images are loading correctly"
-msgstr ""
+msgstr "미디어 파일과 이미지가 올바르게 로드되는지 확인하세요"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/fullmig/step5_results.html:161
 msgid "Are you sure? This will delete all migrated data."
 msgstr ""
-"이 마이그레이션을 롤백하시겠습니까? 이 작업은 모든 가져온 데이터를 삭제합니"
-"다."
+"정말로 삭제하시겠습니까? 이 작업은 마이그레이션된 모든 데이터를 삭제합니다."
 
-#, fuzzy
-#| msgid "Shopify Developer Dashboard"
+#: templates/admin/migration/fullmig/step5_results.html:168
+msgid "Rollback available until"
+msgstr "롤백 가능 기간:"
+
+#: templates/admin/migration/fullmig/step5_results.html:174
 msgid "Go to Dashboard"
-msgstr "Shopify 개발자 대시보드"
+msgstr "대시보드로 이동"
 
+#: templates/admin/migration/migrationjob/change_list.html:4
+#: templates/admin/migration/migrationjob/change_list.html:23
 msgid "Data Import & Export"
 msgstr "데이터 가져오기 및 내보내기"
 
+#: templates/admin/migration/migrationjob/change_list.html:25
 msgid ""
 "Migrate from WooCommerce, Shopify, Magento, or import/export via CSV files"
 msgstr ""
 "WooCommerce, Shopify, Magento에서 마이그레이션하거나 CSV 파일을 통해 데이터"
 "를 가져오고 내보냅니다"
 
+#: templates/admin/migration/migrationjob/change_list.html:36
 msgid "Total Migrations"
 msgstr "총 이전 작업"
 
+#: templates/admin/migration/migrationjob/change_list.html:52
+#: templates/admin/migration/syncjob/change_list.html:45
 msgid "In Progress"
 msgstr "진행 중"
 
-msgid "Start New Migration"
-msgstr "새로운 데이터 이전 시작"
-
+#: templates/admin/migration/migrationjob/change_list.html:73
 msgid "View Logs"
 msgstr "로그 보기"
 
+#: templates/admin/migration/migrationjob/change_list.html:78
 msgid "Field Mappings"
 msgstr "필드 매핑"
 
+#: templates/admin/migration/migrationjob/change_list.html:114
+#: templates/admin/migration/wizard/step5_import.html:60
+msgid "Stopping…"
+msgstr "중지 중…"
+
+#: templates/admin/migration/migrationjob/change_list.html:192
 msgid "Resume"
 msgstr "재개"
 
+#: templates/admin/migration/migrationjob/change_list.html:202
+msgid ""
+"Run this import again? It starts from the beginning and skips items that "
+"have already been imported."
+msgstr ""
+"이 가져오기를 다시 실행하시겠습니까? 처음부터 시작하며 이미 가져온 항목은 건"
+"너뜁니다."
+
+#: templates/admin/migration/migrationjob/change_list.html:203
 msgid "Retry"
 msgstr "재시도"
 
-msgid "Are you sure you want to cancel this migration?"
-msgstr "이 마이그레이션을 취소하시겠습니까?"
+#: templates/admin/migration/migrationjob/change_list.html:215
+msgid ""
+"Stop this import? It finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store."
+msgstr ""
+"이 임포트를 중단하시겠습니까? 현재 처리 중인 배치를 완료한 후 중단됩니다. 이"
+"미 임포트된 항목은 상점에 그대로 남아 있습니다."
 
+#: templates/admin/migration/migrationjob/change_list.html:223
+#: templates/admin/migration/migrationjob/change_list.html:227
+#: templates/admin/migration/migrationjob/change_list.html:231
 msgid "View"
 msgstr "보기"
 
+#: templates/admin/migration/migrationjob/change_list.html:239
 msgid ""
-"Are you sure you want to rollback this migration? This will delete all "
-"imported data."
+"Review the rollback details? Rolling back removes what this import created, "
+"keeping anything your store now depends on. You will see exactly what it "
+"will remove before you confirm."
 msgstr ""
-"이 마이그레이션을 롤백하시겠습니까? 이 작업은 모든 가져온 데이터를 삭제합니"
-"다."
+"롤백 세부 정보를 확인하시겠습니까? 롤백을 수행하면 이 임포트로 생성된 항목은 "
+"삭제되지만, 현재 가게가 의존하고 있는 항목은 유지됩니다. 확인하기 전에 정확"
+"히 무엇이 삭제되는지 확인할 수 있습니다."
 
+#: templates/admin/migration/migrationjob/change_list.html:240
+#: templates/admin/migration/sync/step4_progress.html:144
+#: templates/admin/migration/sync/step4_progress.html:165
+#: templates/admin/migration/syncjob/change_list.html:185
 msgid "Rollback"
 msgstr "롤백"
 
+#: templates/admin/migration/migrationjob/change_list.html:250
 msgid ""
-"Are you sure you want to force delete this migration? This cannot be undone."
+"Delete this migration record? This does not remove anything that was "
+"imported. Spwig will lose its record of which items came from this import, "
+"so you will not be able to roll it back afterwards."
 msgstr ""
-"이 마이그레이션을 강제로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+"이 마이그레이션 기록을 삭제하시겠습니까? 이전에 임포트된 내용은 삭제되지 않습"
+"니다. Spwig은 이 임포트에서 어떤 항목이 가져온 것인지에 대한 기록을 잃게 되므"
+"로, 이후로 롤백할 수 없습니다."
 
+#: templates/admin/migration/migrationjob/change_list.html:251
 msgid "Delete"
 msgstr "삭제"
 
+#: templates/admin/migration/migrationjob/change_list.html:262
 msgid "No Migrations Yet"
 msgstr "아직 이전 작업 없음"
 
+#: templates/admin/migration/migrationjob/change_list.html:263
 msgid "Get started by creating your first data migration"
 msgstr "첫 번째 데이터 마이그레이션을 생성하여 시작하세요"
 
+#: templates/admin/migration/migrationjob/change_list.html:266
 msgid "Create First Migration"
 msgstr "첫 번째 이전 작업 생성"
 
+#: templates/admin/migration/sync/base.html:4
 msgid "Spwig Sync"
-msgstr ""
+msgstr "Spwig 동기화"
 
-#, fuzzy
-#| msgid "Start from Dev Dashboard"
+#: templates/admin/migration/sync/base.html:20
+#: templates/admin/migration/sync/token_management.html:21
 msgid "Back to Sync Dashboard"
-msgstr "Dev 대시보드에서 시작"
+msgstr "동기화 대시보드로 돌아가기"
 
+#: templates/admin/migration/sync/base.html:46
+#: templates/admin/migration/sync/base.html:67
+#: templates/admin/migration/wizard/base.html:42
 msgid "Connection"
 msgstr "연결"
 
+#: templates/admin/migration/sync/base.html:50
+#: templates/admin/migration/wizard/step2_connection.html:214
 msgid "Scope"
 msgstr "범위"
 
+#: templates/admin/migration/sync/base.html:54
 msgid "Pre-flight"
-msgstr ""
+msgstr "사전 점검"
 
-#, fuzzy
-#| msgid "View Results"
+#: templates/admin/migration/sync/base.html:62
 msgid "Results"
-msgstr "결과 보기"
+msgstr "결과"
 
+#: templates/admin/migration/sync/base.html:75
+#: templates/admin/migration/wizard/base.html:46
 msgid "Preview"
 msgstr "미리보기"
 
+#: templates/admin/migration/sync/step1_connection.html:8
 msgid "Connect to Remote Instance"
-msgstr ""
+msgstr "원격 인스턴스에 연결"
 
+#: templates/admin/migration/sync/step1_connection.html:10
 msgid ""
 "Connect to another Spwig installation to sync settings. You can use a saved "
 "connection or set up a new one."
 msgstr ""
+"다른 Spwig 설치에 연결하여 설정을 동기화할 수 있습니다. 기존 연결을 사용하거"
+"나 새 연결을 설정할 수 있습니다."
 
-#, fuzzy
-#| msgid "Credentials verified"
+#: templates/admin/migration/sync/step1_connection.html:39
 msgid "Not verified"
-msgstr "인증 정보 확인 완료"
+msgstr "확인되지 않음"
 
+#: templates/admin/migration/sync/step1_connection.html:61
 msgid "e.g., Production Server"
-msgstr ""
+msgstr "예: 프로덕션 서버"
 
+#: templates/admin/migration/sync/step1_connection.html:64
 msgid "A friendly name to identify this connection."
-msgstr ""
+msgstr "이 연결을 식별할 수 있는 친근한 이름입니다."
 
-#, fuzzy
-#| msgid "Store URL"
+#: templates/admin/migration/sync/step1_connection.html:69
 msgid "Remote URL"
-msgstr "스토어 URL"
+msgstr "원격 URL"
 
+#: templates/admin/migration/sync/step1_connection.html:74
 msgid "The full URL of the remote Spwig installation."
-msgstr ""
+msgstr "원격 Spwig 설치의 전체 URL입니다."
 
+#: templates/admin/migration/sync/step1_connection.html:81
 msgid "Paste the sync token from the remote instance"
-msgstr ""
+msgstr "원격 인스턴스에서 복사한 동기화 토큰을 붙여넣으세요"
 
+#: templates/admin/migration/sync/step1_connection.html:84
 msgid ""
 "Generate a sync token on the remote instance under Sync Dashboard > Manage "
 "Tokens."
 msgstr ""
+"리모트 인스턴스의 Sync Dashboard > Manage Tokens에서 동기화 토큰을 생성하십시"
+"오."
 
+#: templates/admin/migration/sync/step1_connection.html:98
 msgid ""
 "Marking a connection as 'Production' enables additional safety checks when "
 "pushing changes."
 msgstr ""
+"'Production'으로 연결을 표시하면 변경 내용을 푸시할 때 추가 안전 검사를 활성"
+"화합니다."
 
-#, fuzzy
-#| msgid "Create new categories"
+#: templates/admin/migration/sync/step1_connection.html:118
 msgid "Next: Select Categories"
-msgstr "새로운 카테고리 생성"
+msgstr "다음: 범주 선택"
 
-#, fuzzy
-#| msgid "Category - Description"
+#: templates/admin/migration/sync/step2_categories.html:8
 msgid "Select Categories & Direction"
-msgstr "카테고리 - 설명"
+msgstr "범주 및 방향 선택"
 
+#: templates/admin/migration/sync/step2_categories.html:10
 msgid "Choose which settings to sync and the direction of data flow."
-msgstr ""
+msgstr "동기화할 설정과 데이터 흐름 방향을 선택하십시오."
 
-#, fuzzy
-#| msgid "Configure Connection"
+#: templates/admin/migration/sync/step2_categories.html:18
 msgid "Sync Configuration"
-msgstr "연결 설정"
+msgstr "동기화 설정"
 
+#: templates/admin/migration/sync/step2_categories.html:29
 msgid "Pull"
-msgstr ""
+msgstr "끌어오기"
 
-msgid "Remote → Local"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:30
+msgid "From connected store to this store"
+msgstr "연결된 매장에서 이 매장으로"
 
+#: templates/admin/migration/sync/step2_categories.html:38
 msgid "Push"
-msgstr ""
+msgstr "푸시"
 
-msgid "Local → Remote"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:39
+msgid "From this store to connected store"
+msgstr "이 매장에서 연결된 매장으로"
 
+#: templates/admin/migration/sync/step2_categories.html:47
 msgid "Sync Mode"
-msgstr ""
+msgstr "동기화 모드"
 
-#, fuzzy
-#| msgid "Updated"
+#: templates/admin/migration/sync/step2_categories.html:54
 msgid "Add & Update"
-msgstr "업데이트됨"
+msgstr "추가 및 업데이트"
 
-#, fuzzy
-#| msgid "Skip existing items"
+#: templates/admin/migration/sync/step2_categories.html:55
 msgid "Never deletes existing items"
-msgstr "기존 항목 건너뛰기"
+msgstr "기존 항목을 삭제하지 않음"
 
-msgid "Makes target match source exactly"
-msgstr ""
+#: templates/admin/migration/sync/step2_categories.html:62
+msgid "Exact Copy"
+msgstr "정확한 복사"
 
-#, fuzzy
-#| msgid "Testing Connection"
+#: templates/admin/migration/sync/step2_categories.html:63
+msgid "Adds, updates, and removes items to match the source"
+msgstr "소스와 일치하도록 항목을 추가, 업데이트 및 제거합니다."
+
+#: templates/admin/migration/sync/step2_categories.html:73
 msgid "Production Connection"
-msgstr "연결 테스트"
+msgstr "생산 연결"
 
+#: templates/admin/migration/sync/step2_categories.html:74
 msgid ""
 "This connection is marked as production. Pushing changes will modify your "
 "live store settings."
 msgstr ""
+"이 연결은 프로덕션으로 표시되어 있습니다. 변경 사항을 푸시하면 실제 쇼핑몰 설"
+"정이 변경됩니다."
 
+#: templates/admin/migration/sync/step2_categories.html:83
 msgid "Select which categories to include in this sync."
-msgstr ""
+msgstr "이 동기화에 포함할 카테고리를 선택하세요."
 
-#, fuzzy
-#| msgid "Select"
+#: templates/admin/migration/sync/step2_categories.html:88
 msgid "Select All"
-msgstr "선택"
+msgstr "모두 선택"
 
-#, fuzzy
-#| msgid "CSV Files"
+#: templates/admin/migration/sync/step2_categories.html:114
 msgid "Has Files"
-msgstr "CSV 파일"
+msgstr "파일이 포함됨"
 
-#, fuzzy
-#| msgid "Next: Preview Data"
+#: templates/admin/migration/sync/step2_categories.html:136
 msgid "Next: Preview Changes"
-msgstr "다음: 데이터 미리보기"
+msgstr "다음: 변경 사항 미리보기"
 
-#, fuzzy
-#| msgid "Preview"
+#: templates/admin/migration/sync/step3_preview.html:8
 msgid "Preview Changes"
-msgstr "미리보기"
+msgstr "변경 사전 보기"
 
+#: templates/admin/migration/sync/step3_preview.html:10
 msgid "Review the changes that will be applied before confirming."
-msgstr ""
+msgstr "확인하기 전에 적용될 변경 사항을 검토하세요."
 
+#: templates/admin/migration/sync/step3_preview.html:32
 msgid "Add"
-msgstr ""
+msgstr "추가"
 
+#: templates/admin/migration/sync/step3_preview.html:34
 msgid "Modify"
-msgstr ""
+msgstr "수정"
 
+#: templates/admin/migration/sync/step3_preview.html:36
 msgid "Remove"
-msgstr ""
+msgstr "제거"
 
-#, fuzzy
-#| msgid "Field Mappings"
+#: templates/admin/migration/sync/step3_preview.html:44
 msgid "Field changes"
-msgstr "필드 매핑"
+msgstr "필드 변경"
 
-#, fuzzy
-#| msgid "Meta Fields"
+#: templates/admin/migration/sync/step3_preview.html:48
 msgid "Field"
-msgstr "메타 필드"
+msgstr "필드"
 
+#: templates/admin/migration/sync/step3_preview.html:49
 msgid "Current"
-msgstr ""
+msgstr "현재"
 
+#: templates/admin/migration/sync/step3_preview.html:50
 msgid "New"
-msgstr ""
+msgstr "새로운"
 
-#, fuzzy
-#| msgid "Warning"
+#: templates/admin/migration/sync/step3_preview.html:77
 msgid "Warnings"
 msgstr "경고"
 
+#: templates/admin/migration/sync/step3_preview.html:91
 msgid "No Changes Detected"
-msgstr ""
+msgstr "변경 사항 없음"
 
+#: templates/admin/migration/sync/step3_preview.html:92
 msgid "The selected categories are already in sync. There is nothing to apply."
-msgstr ""
+msgstr "선택한 카테고리는 이미 동기화되었습니다. 적용할 내용이 없습니다."
 
-#, fuzzy
-#| msgid "Product Variant"
+#: templates/admin/migration/sync/step3_preview.html:105
 msgid "Production Warning"
-msgstr "상품 변형"
+msgstr "생산 환경 경고"
 
+#: templates/admin/migration/sync/step3_preview.html:106
 msgid ""
 "You are about to push changes to a production instance. This will modify "
 "live store settings."
 msgstr ""
+"생산 인스턴스에 변경 내용을 푸시하려고 합니다. 이 작업은 라이브 스토어 설정"
+"을 수정할 것입니다."
 
+#: templates/admin/migration/sync/step3_preview.html:109
 msgid "I understand this will modify production settings and want to proceed."
-msgstr ""
+msgstr "이 작업이 생산 설정을 수정한다는 점을 이해하고 진행하고자 합니다."
 
+#: templates/admin/migration/sync/step3_preview.html:124
 msgid "Start Sync"
-msgstr ""
+msgstr "동기화 시작"
 
+#: templates/admin/migration/sync/step4_progress.html:7
 msgid ""
 "You can safely navigate away from this page. The sync will continue in the "
 "background."
-msgstr ""
+msgstr "이 페이지에서 이동해도 안전합니다. 동기화는 백그라운드에서 계속됩니다."
 
-#, fuzzy
-#| msgid "In Progress"
+#: templates/admin/migration/sync/step4_progress.html:13
 msgid "Sync Progress"
-msgstr "진행 중"
+msgstr "동기화 진행 상황"
 
-#, fuzzy
-#| msgid "Migration Completed Successfully!"
+#: templates/admin/migration/sync/step4_progress.html:17
+#: templates/admin/migration/sync/step4_progress.html:161
 msgid "Sync completed successfully."
-msgstr "마이그레이션이 성공적으로 완료되었습니다!"
+msgstr "동기화가 성공적으로 완료되었습니다."
 
+#: templates/admin/migration/sync/step4_progress.html:19
+#: templates/admin/migration/sync/step4_progress.html:162
 msgid "Sync encountered errors."
-msgstr ""
+msgstr "동기화 중 오류 발생."
 
-#, fuzzy
-#| msgid "Counting categories"
+#: templates/admin/migration/sync/step4_progress.html:21
+#: templates/admin/migration/sync/step4_progress.html:163
 msgid "Syncing selected categories..."
-msgstr "카테고리 수 계산 중"
+msgstr "선택된 카테고리 동기화 중..."
 
+#: templates/admin/migration/sync/step4_progress.html:48
+#: templates/admin/migration/syncjob/change_list.html:145
 msgid "Synced"
-msgstr ""
+msgstr "동기화됨"
 
+#: templates/admin/migration/sync/step4_progress.html:97
+#: templates/admin/migration/sync/step4_progress.html:158
 msgid "synced"
-msgstr ""
+msgstr "동기화됨"
 
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to rollback this migration? This will delete all "
-#| "imported data."
+#: templates/admin/migration/sync/step4_progress.html:166
 msgid ""
 "Are you sure you want to rollback this sync? This will restore the previous "
 "state."
-msgstr ""
-"이 마이그레이션을 롤백하시겠습니까? 이 작업은 모든 가져온 데이터를 삭제합니"
-"다."
+msgstr "이 동기화를 롤백하시겠습니까? 이 작업은 이전 상태로 복원합니다."
 
+#: templates/admin/migration/sync/token_management.html:33
 msgid "About Sync Tokens"
-msgstr ""
+msgstr "동기화 토큰 정보"
 
+#: templates/admin/migration/sync/token_management.html:34
 msgid ""
 "Sync tokens allow other Spwig instances to connect to this installation. "
 "Generate a token here and provide it to the remote instance."
 msgstr ""
+"동기화 토큰은 다른 Spwig 인스턴스가 이 설치에 연결할 수 있도록 합니다. 여기에"
+"서 토큰을 생성하고 원격 인스턴스에 제공하세요."
 
+#: templates/admin/migration/sync/token_management.html:38
 msgid "Security"
-msgstr ""
+msgstr "보안"
 
+#: templates/admin/migration/sync/token_management.html:39
 msgid ""
 "Tokens grant read and write access to settings data. Only share them with "
 "trusted administrators. Revoke tokens immediately if compromised."
 msgstr ""
+"토큰은 설정 데이터에 대한 읽기 및 쓰기 권한을 부여합니다. 신뢰할 수 있는 관리"
+"자에게만 공유하세요. 해킹될 경우 즉시 토큰을 취소하세요."
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:45
 msgid "Generate New Token"
-msgstr "링크 생성"
+msgstr "새로운 토큰 생성"
 
+#: templates/admin/migration/sync/token_management.html:50
 msgid "Token Name"
-msgstr ""
+msgstr "토큰 이름"
 
+#: templates/admin/migration/sync/token_management.html:52
 msgid "e.g., Staging Server Token"
-msgstr ""
+msgstr "예: 스테이징 서버 토큰"
 
-#, fuzzy
-#| msgid "Generate link"
+#: templates/admin/migration/sync/token_management.html:56
 msgid "Generate Token"
-msgstr "링크 생성"
+msgstr "토큰 생성"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:62
 msgid "Active Tokens"
-msgstr "작업"
+msgstr "활성 토큰"
 
-msgid "Name"
-msgstr "이름"
+#: templates/admin/migration/sync/token_management.html:81
+msgid "Last used"
+msgstr "마지막 사용"
 
-#, fuzzy
-#| msgid "Preview"
-msgid "Token Preview"
-msgstr "미리보기"
+#: templates/admin/migration/sync/token_management.html:83
+msgid "Never used"
+msgstr "사용되지 않음"
 
-msgid "Last Used"
-msgstr ""
-
-msgid "Revoke this token? Any connections using it will stop working."
-msgstr ""
-
+#: templates/admin/migration/sync/token_management.html:96
 msgid "Revoke"
-msgstr ""
+msgstr "취소"
 
-#, fuzzy
-#| msgid "Actions"
+#: templates/admin/migration/sync/token_management.html:106
 msgid "No Active Tokens"
-msgstr "작업"
+msgstr "활성 토큰 없음"
 
+#: templates/admin/migration/sync/token_management.html:107
 msgid "Generate a token to allow remote Spwig instances to connect."
-msgstr ""
+msgstr "원격 Spwig 인스턴스가 연결할 수 있도록 토큰을 생성합니다."
 
+#: templates/admin/migration/syncjob/change_list.html:26
 msgid "Sync settings between instances or perform full system migrations"
-msgstr ""
+msgstr "인스턴스 간 설정을 동기화하거나 전체 시스템 마이그레이션을 수행합니다."
 
-#, fuzzy
-#| msgid "Total Items"
+#: templates/admin/migration/syncjob/change_list.html:35
 msgid "Total Jobs"
-msgstr "총 항목"
+msgstr "총 작업"
 
-#, fuzzy
-#| msgid "Progress"
+#: templates/admin/migration/syncjob/change_list.html:164
 msgid "View Progress"
-msgstr "진행률"
+msgstr "진행 상황 보기"
 
+#: templates/admin/migration/syncjob/change_list.html:170
 msgid "Review & Confirm"
-msgstr ""
+msgstr "검토 및 확인"
 
+#: templates/admin/migration/syncjob/change_list.html:184
+msgid "Rollback this sync? This will restore the previous state."
+msgstr "이 동기화를 롤백하시겠습니까? 이 작업은 이전 상태로 복원합니다."
+
+#: templates/admin/migration/syncjob/change_list.html:195
 msgid "No Sync Jobs Yet"
-msgstr ""
+msgstr "동기화 작업이 아직 없습니다"
 
+#: templates/admin/migration/syncjob/change_list.html:196
 msgid "Start a settings sync or full migration to see job history here."
 msgstr ""
+"작업 기록을 여기서 확인하려면 설정 동기화 또는 전체 마이그레이션을 시작하세"
+"요."
 
+#: templates/admin/migration/syncjob/change_list.html:199
 msgid "Start Settings Sync"
-msgstr ""
+msgstr "설정 동기화 시작"
 
-msgid "Rollback this sync? This will restore the previous state."
-msgstr ""
-
+#: templates/admin/migration/wizard/base.html:4
+#: templates/admin/migration/wizard/base.html:28
 msgid "Migration Wizard"
 msgstr "이전 작업 마법사"
 
+#: templates/admin/migration/wizard/base.html:21
 msgid "Back to Migrations"
 msgstr "이전 작업으로 돌아가기"
 
+#: templates/admin/migration/wizard/base.html:54
 msgid "Import"
 msgstr "추가"
 
+#: templates/admin/migration/wizard/base.html:58
 msgid "Complete"
 msgstr "완료"
 
+#: templates/admin/migration/wizard/base.html:71
 msgid "Copied!"
 msgstr "복사됨!"
 
+#: templates/admin/migration/wizard/step1_platform.html:8
 msgid "Select Source Platform"
 msgstr "소스 플랫폼 선택"
 
+#: templates/admin/migration/wizard/step1_platform.html:10
 msgid ""
 "Choose the e-commerce platform you're migrating from. We'll guide you "
 "through the process of importing your data."
@@ -2381,24 +3071,31 @@ msgstr ""
 "데이터를 가져올 e-commerce 플랫폼을 선택하세요. 데이터 가져오기 과정을 안내"
 "해 드리겠습니다."
 
+#: templates/admin/migration/wizard/step1_platform.html:23
 msgid "WordPress + WooCommerce stores"
 msgstr "WordPress + WooCommerce 스토어"
 
+#: templates/admin/migration/wizard/step1_platform.html:32
 msgid "Shopify stores using Admin API"
 msgstr "Admin API를 사용하는 Shopify 상점"
 
-msgid "Magento/Adobe Commerce (coming soon)"
-msgstr "Magento/Adobe Commerce (곧 출시)"
+#: templates/admin/migration/wizard/step1_platform.html:41
+msgid "Magento 2 / Adobe Commerce stores"
+msgstr "Magento 2 / Adobe Commerce 스토어"
 
+#: templates/admin/migration/wizard/step1_platform.html:50
 msgid "Import from CSV files"
 msgstr "CSV 파일에서 가져오기"
 
+#: templates/admin/migration/wizard/step1_platform.html:68
 msgid "Next: Configure Connection"
 msgstr "다음: 연결 설정"
 
+#: templates/admin/migration/wizard/step1_platform.html:78
 msgid "WooCommerce Migration"
 msgstr "WooCommerce 이전"
 
+#: templates/admin/migration/wizard/step1_platform.html:79
 msgid ""
 "We will connect to your WooCommerce store using the REST API. You will need "
 "to provide your store URL and API credentials in the next step."
@@ -2406,9 +3103,11 @@ msgstr ""
 "REST API를 사용하여 WooCommerce 스토어에 연결합니다. 다음 단계에서 스토어 URL"
 "과 API 자격 증명을 제공해야 합니다."
 
+#: templates/admin/migration/wizard/step1_platform.html:82
 msgid "Shopify Migration"
 msgstr "Shopify 이전"
 
+#: templates/admin/migration/wizard/step1_platform.html:83
 msgid ""
 "We will connect to your Shopify store using the Admin API. You will need to "
 "create a private app in the Shopify Developer Dashboard and provide your "
@@ -2418,19 +3117,25 @@ msgstr ""
 "에서 Shopify 개발자 대시보드에서 개인 앱을 생성하고 Client ID 및 Client "
 "Secret을 제공해야 합니다."
 
+#: templates/admin/migration/wizard/step1_platform.html:86
 msgid "Magento Migration"
 msgstr "Magento 이전"
 
+#: templates/admin/migration/wizard/step1_platform.html:87
 msgid ""
-"Magento migration is coming soon. We will support database access and API "
-"methods."
+"We will connect to your Magento 2 store using the REST API. You will need to "
+"create an Integration in your Magento admin and provide the Access Token in "
+"the next step."
 msgstr ""
-"Magento 마이그레이션은 곧 제공될 예정입니다. 데이터베이스 접근 및 API 방법을 "
-"지원합니다."
+"우리는 REST API를 사용하여 귀하의 Magento 2 스토어에 연결할 것입니다. 다음 단"
+"계에서 액세스 토큰을 제공하려면 먼저 Magento 관리자에서 Integration을 생성해"
+"야 합니다."
 
+#: templates/admin/migration/wizard/step1_platform.html:90
 msgid "CSV Import"
 msgstr "CSV 가져오기"
 
+#: templates/admin/migration/wizard/step1_platform.html:91
 msgid ""
 "Import your data from CSV files. We will provide templates in the next step "
 "for products, customers, orders, and other data."
@@ -2438,54 +3143,72 @@ msgstr ""
 "CSV 파일에서 데이터를 가져옵니다. 다음 단계에서 제품, 고객, 주문 및 기타 데이"
 "터에 대한 템플릿을 제공합니다."
 
+#: templates/admin/migration/wizard/step1_platform.html:95
 msgid "Please select a platform to continue."
 msgstr "계속하려면 플랫폼을 선택하세요."
 
+#: templates/admin/migration/wizard/step2_connection.html:8
 msgid "Configure Connection"
 msgstr "연결 설정"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "Provide the connection details for your"
 msgstr "귀하의 연결 세부 정보를 제공하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:10
 msgid "store."
 msgstr "스토어."
 
+#: templates/admin/migration/wizard/step2_connection.html:19
 msgid "WooCommerce REST API"
 msgstr "WooCommerce REST API"
 
+#: templates/admin/migration/wizard/step2_connection.html:23
+#: templates/admin/migration/wizard/step2_connection.html:325
 msgid "Store URL"
 msgstr "스토어 URL"
 
+#: templates/admin/migration/wizard/step2_connection.html:31
 msgid "Your WooCommerce store URL (e.g., https://yourstore.com)"
 msgstr "귀하의 WooCommerce 스토어 URL (예: https://yourstore.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:36
 msgid "Consumer Key"
 msgstr "소비자 키"
 
+#: templates/admin/migration/wizard/step2_connection.html:44
 msgid "Your WooCommerce REST API consumer key"
 msgstr "귀하의 WooCommerce REST API 소비자 키"
 
+#: templates/admin/migration/wizard/step2_connection.html:49
 msgid "Consumer Secret"
 msgstr "소비자 시크릿"
 
+#: templates/admin/migration/wizard/step2_connection.html:57
 msgid "Your WooCommerce REST API consumer secret"
 msgstr "귀하의 WooCommerce REST API 소비자 비밀번호"
 
+#: templates/admin/migration/wizard/step2_connection.html:63
 msgid "How to get API credentials"
 msgstr "API 인증 정보를 어떻게 얻는가요?"
 
+#: templates/admin/migration/wizard/step2_connection.html:65
 msgid "Log in to your WordPress admin panel"
 msgstr "WordPress 관리자 패널에 로그인하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:66
 msgid "Go to WooCommerce > Settings > Advanced > REST API"
 msgstr "WooCommerce > 설정 > 고급 > REST API로 이동하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:67
 msgid "Click 'Add key' and create a new API key with Read permissions"
 msgstr "'Add key'를 클릭하고 읽기 권한이 있는 새로운 API 키를 생성하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:68
 msgid "Copy the Consumer Key and Consumer Secret here"
 msgstr "Consumer Key와 Consumer Secret을 여기에 복사하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:71
 msgid ""
 "Note: Read-only permissions are sufficient for data migration. We will not "
 "modify your WooCommerce store."
@@ -2493,33 +3216,46 @@ msgstr ""
 "참고: 데이터 마이그레이션에는 읽기 전용 권한이 충분합니다. WooCommerce 스토어"
 "를 수정하지 않습니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:79
+#: templates/admin/migration/wizard/step2_connection.html:313
+#: templates/admin/migration/wizard/step2_connection.html:372
 msgid "Test connection before proceeding"
 msgstr "계속하기 전에 연결을 테스트하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:87
 msgid "Shopify Admin API"
 msgstr "Shopify 관리자 API"
 
+#: templates/admin/migration/wizard/step2_connection.html:91
 msgid "Store Domain"
 msgstr "상점 도메인"
 
+#: templates/admin/migration/wizard/step2_connection.html:99
 msgid "Your Shopify store domain (e.g., yourstore.myshopify.com)"
 msgstr "귀하의 Shopify 상점 도메인 (예: yourstore.myshopify.com)"
 
+#: templates/admin/migration/wizard/step2_connection.html:104
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Client ID"
 msgstr "클라이언트 ID"
 
+#: templates/admin/migration/wizard/step2_connection.html:112
 msgid "Client ID from your Shopify app's Settings page"
 msgstr "Shopify 앱의 설정 페이지에서의 클라이언트 ID"
 
+#: templates/admin/migration/wizard/step2_connection.html:117
 msgid "Client Secret"
 msgstr "클라이언트 시크릿"
 
+#: templates/admin/migration/wizard/step2_connection.html:125
 msgid "Secret from your Shopify app's Settings page"
 msgstr "Shopify 앱의 설정 페이지에서의 비밀키"
 
+#: templates/admin/migration/wizard/step2_connection.html:131
 msgid "Need help getting your API credentials?"
 msgstr "API 자격 증명을 받는 데 도움이 필요하신가요?"
 
+#: templates/admin/migration/wizard/step2_connection.html:133
 msgid ""
 "Setting up a Shopify app takes about 10 minutes. Our step-by-step guide with "
 "screenshots will walk you through it."
@@ -2527,24 +3263,31 @@ msgstr ""
 "Shopify 앱을 설정하는 데 약 10분이 걸립니다. 스크린샷을 포함한 단계별 가이드"
 "가 여러분을 안내해 드릴 것입니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:137
 msgid "Open Setup Guide"
 msgstr "설치 가이드 열기"
 
+#: templates/admin/migration/wizard/step2_connection.html:148
 msgid "Shopify API Setup Guide"
 msgstr "Shopify API 설치 가이드"
 
+#: templates/admin/migration/wizard/step2_connection.html:158
 msgid "Open the Shopify Developer Dashboard"
 msgstr "Shopify 개발자 대시보드를 열고"
 
+#: templates/admin/migration/wizard/step2_connection.html:160
 msgid "Sign in with the same account you use to manage your store."
 msgstr "가게를 관리하는 데 사용하는 동일한 계정으로 로그인하세요."
 
+#: templates/admin/migration/wizard/step2_connection.html:162
 msgid "Go to"
 msgstr "이동"
 
+#: templates/admin/migration/wizard/step2_connection.html:163
 msgid "Sign in with your Shopify account"
 msgstr "Shopify 계정으로 로그인"
 
+#: templates/admin/migration/wizard/step2_connection.html:167
 msgid ""
 "If this is your first time visiting the Developer Dashboard, Shopify may ask "
 "you to agree to developer terms. This is normal — accept and continue."
@@ -2552,124 +3295,169 @@ msgstr ""
 "Developer Dashboard를 처음 방문하는 경우 Shopify는 개발자 약관에 동의하도록 "
 "요청할 수 있습니다. 이는 정상적인 절차입니다 — 동의하고 계속 진행하세요."
 
+#: templates/admin/migration/wizard/step2_connection.html:169
 msgid "Shopify Developer Dashboard"
 msgstr "Shopify 개발자 대시보드"
 
+#: templates/admin/migration/wizard/step2_connection.html:176
 msgid "Create a New App"
 msgstr "새 앱 생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:178
 msgid "Create a private app that Spwig will use to read your store data."
 msgstr ""
 "Spwig이 사용할 수 있는 프라이빗 앱을 생성하여 가게 데이터를 읽을 수 있도록 합"
 "니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:180
+#: templates/admin/migration/wizard/step2_connection.html:197
+#: templates/admin/migration/wizard/step2_connection.html:244
 msgid "In the left sidebar, click"
 msgstr "왼쪽 사이드바에서 클릭"
 
+#: templates/admin/migration/wizard/step2_connection.html:180
 msgid "Apps"
 msgstr "앱"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Click the"
 msgstr "클릭하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "Create app"
 msgstr "앱 생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:181
 msgid "button (top-right corner)"
 msgstr "버튼 (우측 상단)"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Scroll past 'Start with Shopify CLI' to the"
 msgstr "'Shopify CLI로 시작'을 넘겨"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
 msgid "Start from Dev Dashboard"
 msgstr "Dev 대시보드에서 시작"
 
+#: templates/admin/migration/wizard/step2_connection.html:182
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "section"
 msgstr "섹션"
 
+#: templates/admin/migration/wizard/step2_connection.html:183
 msgid "Enter app name:"
 msgstr "앱 이름을 입력하세요:"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
+#: templates/admin/migration/wizard/step2_connection.html:198
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Click"
 msgstr "클릭"
 
+#: templates/admin/migration/wizard/step2_connection.html:184
 msgid "Create"
 msgstr "생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:186
 msgid "Create app in Dev Dashboard"
 msgstr "Dev 대시보드에서 앱 생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:193
 msgid "Create an App Version with Permissions"
 msgstr "권한과 함께 앱 버전 생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:195
 msgid "Configure which data the app can access. We only need read-only access."
 msgstr ""
 "앱이 액세스할 수 있는 데이터를 구성하세요. 우리는 오직 읽기 전용 액세스만 필"
 "요합니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:197
 msgid "Versions"
 msgstr "버전"
 
+#: templates/admin/migration/wizard/step2_connection.html:198
 msgid "Create version"
 msgstr "버전 생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "Set the"
 msgstr "설정"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "App URL"
 msgstr "앱 URL"
 
+#: templates/admin/migration/wizard/step2_connection.html:199
 msgid "to:"
 msgstr "에게:"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Select the newest"
 msgstr "가장 최신 버전을 선택하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:202
 msgid "Webhooks API Version"
 msgstr "웹후크 API 버전"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Scroll to"
 msgstr "스크롤하여"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "Access — Scopes"
 msgstr "접근 — 범위"
 
+#: templates/admin/migration/wizard/step2_connection.html:203
 msgid "and paste:"
 msgstr "그리고 붙여넣기:"
 
+#: templates/admin/migration/wizard/step2_connection.html:206
 msgid "Release"
 msgstr "릴리스"
 
+#: templates/admin/migration/wizard/step2_connection.html:209
 msgid "Scope input field"
 msgstr "범위 입력 필드"
 
+#: templates/admin/migration/wizard/step2_connection.html:215
 msgid "What it accesses"
 msgstr "접근할 항목"
 
+#: templates/admin/migration/wizard/step2_connection.html:219
 msgid "Products, variants, images, collections"
 msgstr "상품, 변형, 이미지, 컬렉션"
 
+#: templates/admin/migration/wizard/step2_connection.html:220
 msgid "Customer names, emails, addresses"
 msgstr "고객 이름, 이메일, 주소"
 
+#: templates/admin/migration/wizard/step2_connection.html:221
 msgid "Orders from the last 60 days"
 msgstr "지난 60일 간의 주문"
 
+#: templates/admin/migration/wizard/step2_connection.html:222
 msgid "Blog posts and pages"
 msgstr "블로그 게시물 및 페이지"
 
+#: templates/admin/migration/wizard/step2_connection.html:223
 msgid "Discount codes and rules"
 msgstr "할인 코드 및 규칙"
 
+#: templates/admin/migration/wizard/step2_connection.html:224
 msgid "Uploaded media files"
 msgstr "업로드된 미디어 파일"
 
+#: templates/admin/migration/wizard/step2_connection.html:228
 msgid "Scope selection UI"
 msgstr "범위 선택 UI"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid "Want to migrate your full order history? Add"
 msgstr "전체 주문 내역을 마이그레이션하려면"
 
+#: templates/admin/migration/wizard/step2_connection.html:232
 msgid ""
 "to the scopes above. Without it, only orders from the last 60 days are "
 "accessible."
@@ -2677,36 +3465,47 @@ msgstr ""
 "위 범위에 추가하세요. 이 범위를 추가하지 않으면 최근 60일 이내의 주문만 접근"
 "할 수 있습니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:240
 msgid "Copy Your Client ID and Secret"
 msgstr "클라이언트 ID 및 비밀을 복사하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:242
 msgid "These are the two values you will paste into Spwig."
 msgstr "이 두 값을 Spwig에 붙여넣어야 합니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Find the"
 msgstr "찾기"
 
+#: templates/admin/migration/wizard/step2_connection.html:245
 msgid "Credentials"
 msgstr "자격 증명"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "Copy the"
 msgstr "복사하기"
 
+#: templates/admin/migration/wizard/step2_connection.html:246
 msgid "(click the copy icon)"
 msgstr "(복사 아이콘 클릭)"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Click the eye icon to reveal the"
 msgstr "눈 모양 아이콘을 클릭하여 표시합니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid "Secret"
 msgstr "비밀"
 
+#: templates/admin/migration/wizard/step2_connection.html:247
 msgid ", then copy it"
 msgstr "그런 다음 복사하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:249
 msgid "App credentials page"
 msgstr "앱 인증 정보 페이지"
 
+#: templates/admin/migration/wizard/step2_connection.html:252
 msgid ""
 "Treat the Secret like a password. Spwig encrypts it and only uses it during "
 "migration. You can delete the app from Shopify after your migration is "
@@ -2715,64 +3514,85 @@ msgstr ""
 "비밀번호처럼 Secret을 대하십시오. Spwig는 이를 암호화하고 마이그레이션 중에"
 "만 사용합니다. 마이그레이션이 완료되면 Shopify에서 앱을 삭제할 수 있습니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:260
 msgid "Set Up Distribution and Install"
 msgstr "분배 설정 및 설치"
 
+#: templates/admin/migration/wizard/step2_connection.html:262
 msgid "Your app needs to be installed on your store before it can access data."
 msgstr ""
 "앱이 데이터에 접근할 수 있도록 하기 위해 먼저 스토어에 설치해야 합니다."
 
+#: templates/admin/migration/wizard/step2_connection.html:264
 msgid "Click your app name to return to the overview page"
 msgstr "앱 이름을 클릭하여 개요 페이지로 돌아가세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "Distribution"
 msgstr "분배"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
 msgid "and click"
 msgstr "그리고 클릭하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:265
+#: templates/admin/migration/wizard/step2_connection.html:267
 msgid "Select distribution method"
 msgstr "분배 방법 선택"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Select"
 msgstr "선택"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "Custom distribution"
 msgstr "사용자 정의 분배"
 
+#: templates/admin/migration/wizard/step2_connection.html:269
 msgid "and confirm"
 msgstr "그리고 확인하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:271
 msgid "Custom distribution option"
 msgstr "사용자 정의 분배 옵션"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Enter your store domain (e.g.,"
 msgstr "스토어 도메인을 입력하세요 (예: "
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid ") and click"
 msgstr "`)을 클릭하고"
 
+#: templates/admin/migration/wizard/step2_connection.html:273
 msgid "Generate link"
 msgstr "링크 생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:275
 msgid "Generate install link"
 msgstr "설치 링크 생성"
 
+#: templates/admin/migration/wizard/step2_connection.html:277
 msgid "Copy the install link and paste it into your browser"
 msgstr "설치 링크를 복사하여 브라우저에 붙여넣으세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:279
 msgid "Copy the generated link"
 msgstr "생성된 링크 복사"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "On your Shopify admin, review the permissions and click"
 msgstr "Shopify 관리자에서 권한을 확인한 후 클릭하세요"
 
+#: templates/admin/migration/wizard/step2_connection.html:281
 msgid "Install"
 msgstr "설치"
 
+#: templates/admin/migration/wizard/step2_connection.html:283
 msgid "Install app permissions screen"
 msgstr "앱 설치 권한 스크린"
 
+#: templates/admin/migration/wizard/step2_connection.html:286
 msgid ""
 "Done! Your app is now installed. Return to this page and paste your Client "
 "ID and Secret into the fields above."
@@ -2780,21 +3600,87 @@ msgstr ""
 "완료되었습니다! 앱이 이제 설치되었습니다. 이 페이지로 돌아가서 Client ID와 "
 "Secret을 위의 필드에 붙여넣으세요."
 
+#: templates/admin/migration/wizard/step2_connection.html:297
 msgid "Previous"
 msgstr "이전"
 
+#: templates/admin/migration/wizard/step2_connection.html:300
 msgid "Next"
 msgstr "다음"
 
+#: templates/admin/migration/wizard/step2_connection.html:303
 msgid "Got it"
 msgstr "알겠습니다"
 
+#: templates/admin/migration/wizard/step2_connection.html:321
+msgid "Magento 2 REST API"
+msgstr "Magento 2 REST API"
+
+#: templates/admin/migration/wizard/step2_connection.html:333
+msgid "Your Magento store URL (e.g., https://yourstore.com)"
+msgstr "귀하의 Magento 스토어 URL (예: https://yourstore.com)"
+
+#: templates/admin/migration/wizard/step2_connection.html:338
+msgid "Access Token"
+msgstr "액세스 토큰"
+
+#: templates/admin/migration/wizard/step2_connection.html:346
+msgid "Integration Access Token from your Magento admin"
+msgstr "귀하의 Magento 관리자에서 가져온 인티그레이션 액세스 토큰"
+
+#: templates/admin/migration/wizard/step2_connection.html:352
+msgid "How to get your Access Token"
+msgstr "액세스 토큰을 얻는 방법"
+
+#: templates/admin/migration/wizard/step2_connection.html:354
+msgid "Log in to your Magento admin panel"
+msgstr "Magento 관리자 패널에 로그인하세요"
+
+#: templates/admin/migration/wizard/step2_connection.html:355
+msgid "Go to System > Integrations"
+msgstr "시스템 > 통합으로 이동"
+
+#: templates/admin/migration/wizard/step2_connection.html:356
+msgid "Click 'Add New Integration'"
+msgstr "'새로운 통합 추가'를 클릭하세요"
+
+#: templates/admin/migration/wizard/step2_connection.html:357
+msgid "Set the name to"
+msgstr "이름을 설정합니다."
+
+#: templates/admin/migration/wizard/step2_connection.html:358
+msgid "Under the API tab, set Resource Access to 'All'"
+msgstr "API 탭에서 리소스 액세스를 'All'로 설정하세요"
+
+#: templates/admin/migration/wizard/step2_connection.html:359
+msgid "Save and click 'Activate'"
+msgstr "저장한 후 '활성화'를 클릭하세요"
+
+#: templates/admin/migration/wizard/step2_connection.html:360
+msgid "Click 'Allow' on the confirmation popup"
+msgstr "확인 팝업에서 'Allow'을 클릭하세요"
+
+#: templates/admin/migration/wizard/step2_connection.html:361
+msgid "Copy the Access Token value and paste it above"
+msgstr "\"액세스 토큰 값을 복사하여 위에 붙여넣으세요\""
+
+#: templates/admin/migration/wizard/step2_connection.html:364
+msgid ""
+"Note: Read-only access is sufficient. We will not modify your Magento store. "
+"You can revoke the integration after migration."
+msgstr ""
+"참고: 읽기 전용 접근이 충분합니다. 우리는 귀하의 Magento 스토어를 수정하지 않"
+"을 것입니다. 마이그레이션 후 통합을 취소할 수 있습니다."
+
+#: templates/admin/migration/wizard/step2_connection.html:380
 msgid "CSV File Upload"
 msgstr "CSV 파일 업로드"
 
+#: templates/admin/migration/wizard/step2_connection.html:385
 msgid "CSV Import Instructions"
 msgstr "CSV 가져오기 지침"
 
+#: templates/admin/migration/wizard/step2_connection.html:386
 msgid ""
 "Upload CSV files for each data type you want to import. You can import some "
 "or all of the following:"
@@ -2802,222 +3688,309 @@ msgstr ""
 "가져올 데이터 유형에 대해 각각 CSV 파일을 업로드하세요. 다음 중 일부 또는 모"
 "두를 가져올 수 있습니다:"
 
+#: templates/admin/migration/wizard/step2_connection.html:388
 msgid "Products (required)"
 msgstr "상품 (필수)"
 
+#: templates/admin/migration/wizard/step2_connection.html:389
 msgid "Categories (optional)"
 msgstr "카테고리 (선택)"
 
+#: templates/admin/migration/wizard/step2_connection.html:390
 msgid "Customers (optional)"
 msgstr "고객 (선택)"
 
+#: templates/admin/migration/wizard/step2_connection.html:391
 msgid "Orders (optional)"
 msgstr "주문 (선택)"
 
+#: templates/admin/migration/wizard/step2_connection.html:392
 msgid "Reviews (optional)"
 msgstr "리뷰 (선택)"
 
+#: templates/admin/migration/wizard/step2_connection.html:399
 msgid "Products CSV"
 msgstr "상품 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:403
 msgid "CSV file containing your products"
 msgstr "귀하의 상품이 포함된 CSV 파일"
 
+#: templates/admin/migration/wizard/step2_connection.html:405
+#: templates/admin/migration/wizard/step2_connection.html:416
+#: templates/admin/migration/wizard/step2_connection.html:427
+#: templates/admin/migration/wizard/step2_connection.html:438
+#: templates/admin/migration/wizard/step2_connection.html:449
 msgid "Download Template"
 msgstr "템플릿 다운로드"
 
+#: templates/admin/migration/wizard/step2_connection.html:411
 msgid "Categories CSV"
 msgstr "카테고리 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:414
 msgid "Optional: CSV file containing your product categories"
 msgstr "선택 사항: 제품 카테고리를 포함한 CSV 파일"
 
+#: templates/admin/migration/wizard/step2_connection.html:422
 msgid "Customers CSV"
 msgstr "고객 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:425
 msgid "Optional: CSV file containing your customers"
 msgstr "선택 사항: 고객 정보를 포함한 CSV 파일"
 
+#: templates/admin/migration/wizard/step2_connection.html:433
 msgid "Orders CSV"
 msgstr "주문 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:436
 msgid "Optional: CSV file containing your orders"
 msgstr "선택 사항: 주문 정보를 포함한 CSV 파일"
 
+#: templates/admin/migration/wizard/step2_connection.html:444
 msgid "Reviews CSV"
 msgstr "리뷰 CSV"
 
+#: templates/admin/migration/wizard/step2_connection.html:447
 msgid "Optional: CSV file containing your product reviews"
 msgstr "선택 사항: 제품 리뷰를 포함한 CSV 파일"
 
+#: templates/admin/migration/wizard/step2_connection.html:463
 msgid "Next: Preview Data"
 msgstr "다음: 데이터 미리보기"
 
+#: templates/admin/migration/wizard/step2_connection.html:476
 msgid "Saving..."
 msgstr "저장 중..."
 
+#: templates/admin/migration/wizard/step2_connection.html:477
+#: templates/admin/migration/wizard/step3_preview.html:299
 msgid "Processing..."
 msgstr "처리 중..."
 
+#: templates/admin/migration/wizard/step2_connection.html:478
 msgid "Loading preview..."
 msgstr "미리보기 로딩 중..."
 
+#: templates/admin/migration/wizard/step2_connection.html:480
 msgid "Verifying API credentials"
 msgstr "API 인증 정보 확인 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:481
 msgid "Counting products"
 msgstr "상품 수 계산 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:482
 msgid "Counting categories"
 msgstr "카테고리 수 계산 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:483
 msgid "Counting customers"
 msgstr "고객 수 계산 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:484
 msgid "Counting orders"
 msgstr "주문 수 계산 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:485
 msgid "Counting blog posts"
 msgstr "블로그 게시물 수 계산 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:486
 msgid "Preparing the next step"
 msgstr "다음 단계 준비 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:487
 msgid "Connection successful"
 msgstr "연결 성공"
 
+#: templates/admin/migration/wizard/step2_connection.html:489
 msgid "Connection error"
 msgstr "연결 오류"
 
+#: templates/admin/migration/wizard/step2_connection.html:490
 msgid "Credentials verified"
 msgstr "인증 정보 확인 완료"
 
+#: templates/admin/migration/wizard/step2_connection.html:491
 msgid "Products counted"
 msgstr "상품 수 계산 완료"
 
+#: templates/admin/migration/wizard/step2_connection.html:492
 msgid "Categories counted"
 msgstr "카테고리 수 계산 완료"
 
+#: templates/admin/migration/wizard/step2_connection.html:493
 msgid "Customers counted"
 msgstr "고객 수 계산 완료"
 
+#: templates/admin/migration/wizard/step2_connection.html:494
 msgid "Orders counted"
 msgstr "주문 수 계산 완료"
 
+#: templates/admin/migration/wizard/step2_connection.html:495
 msgid "Blog posts counted"
 msgstr "블로그 게시물 수 계산 완료"
 
+#: templates/admin/migration/wizard/step2_connection.html:496
 msgid "Retry Connection"
 msgstr "연결 재시도"
 
+#: templates/admin/migration/wizard/step2_connection.html:497
 msgid "Exchanging credentials for access token"
 msgstr "액세스 토큰을 위한 자격 증명 교환"
 
+#: templates/admin/migration/wizard/step2_connection.html:498
 msgid "Access token obtained"
 msgstr "액세스 토큰 획득"
 
+#: templates/admin/migration/wizard/step2_connection.html:499
 msgid "Verifying API access"
 msgstr "API 액세스 확인"
 
+#: templates/admin/migration/wizard/step2_connection.html:500
 msgid "API access verified"
 msgstr "API 접근 확인됨"
 
+#: templates/admin/migration/wizard/step2_connection.html:501
 msgid "Scanning store data"
 msgstr "상점 데이터 스캔 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:502
 msgid "Store scan complete"
 msgstr "상점 스캔 완료"
 
+#: templates/admin/migration/wizard/step2_connection.html:503
 msgid "Counting collections"
 msgstr "컬렉션 수 계산"
 
+#: templates/admin/migration/wizard/step2_connection.html:504
 msgid "Collections counted"
 msgstr "컬렉션 수 계산됨"
 
+#: templates/admin/migration/wizard/step2_connection.html:505
 msgid "Counting discounts"
 msgstr "할인 수 계산 중"
 
+#: templates/admin/migration/wizard/step2_connection.html:506
 msgid "Discounts counted"
 msgstr "할인 수 계산됨"
 
+#: templates/admin/migration/wizard/step3_preview.html:8
 msgid "Preview Import Data"
 msgstr "가져올 데이터 미리보기"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "Review what will be imported from your"
 msgstr "귀하의 데이터에서 가져올 항목을 확인하세요"
 
+#: templates/admin/migration/wizard/step3_preview.html:10
 msgid "store. You can select which data types to import."
 msgstr ". 가져올 데이터 유형을 선택할 수 있습니다."
 
+#: templates/admin/migration/wizard/step3_preview.html:21
+#: templates/admin/migration/wizard/step3_preview.html:65
 msgid "Collections"
 msgstr "컬렉션"
 
+#: templates/admin/migration/wizard/step3_preview.html:39
+#: templates/admin/migration/wizard/step3_preview.html:112
 msgid "Discounts"
 msgstr "할인"
 
+#: templates/admin/migration/wizard/step3_preview.html:44
+#: templates/admin/migration/wizard/step3_preview.html:122
+#: templates/admin/migration/wizard/step4_mapping.html:100
+#: templates/admin/migration/wizard/step5_import.html:211
 msgid "Blog Posts"
 msgstr "블로그 게시물"
 
+#: templates/admin/migration/wizard/step3_preview.html:60
 msgid "Select Data to Import"
 msgstr "가져올 데이터 선택"
 
+#: templates/admin/migration/wizard/step3_preview.html:66
+#: templates/admin/migration/wizard/step3_preview.html:75
+#: templates/admin/migration/wizard/step3_preview.html:84
+#: templates/admin/migration/wizard/step3_preview.html:93
+#: templates/admin/migration/wizard/step3_preview.html:103
+#: templates/admin/migration/wizard/step3_preview.html:113
 msgid "found"
 msgstr "찾음"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import collections as product categories"
 msgstr "제품 카테고리로 컬렉션 가져오기"
 
+#: templates/admin/migration/wizard/step3_preview.html:68
 msgid "Import product categories and their hierarchy"
 msgstr "제품 카테고리 및 계층 구조를 가져옵니다"
 
+#: templates/admin/migration/wizard/step3_preview.html:77
 msgid "Import products with images, variants, and attributes"
 msgstr "이미지, 변형 및 속성을 포함한 제품을 가져옵니다"
 
+#: templates/admin/migration/wizard/step3_preview.html:86
 msgid "Import customer accounts and addresses"
 msgstr "고객 계정 및 주소 가져오기"
 
+#: templates/admin/migration/wizard/step3_preview.html:95
 msgid "Import order history and transactions"
 msgstr "주문 내역 및 거래 가져오기"
 
+#: templates/admin/migration/wizard/step3_preview.html:105
 msgid "Import product reviews and ratings"
 msgstr "제품 리뷰 및 평점 가져오기"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount codes and price rules"
 msgstr "할인 코드 및 가격 규칙을 가져오기"
 
+#: templates/admin/migration/wizard/step3_preview.html:115
 msgid "Import discount coupons and vouchers"
 msgstr "할인 쿠폰 및 바우처 가져오기"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "posts"
 msgstr "게시물"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "categories"
 msgstr "카테고리"
 
+#: templates/admin/migration/wizard/step3_preview.html:123
 msgid "tags"
 msgstr "태그"
 
+#: templates/admin/migration/wizard/step3_preview.html:125
 msgid ""
 "Import blog posts with categories, tags, featured images, and content images"
 msgstr ""
 "카테고리, 태그, 특징 이미지 및 콘텐츠 이미지를 포함한 블로그 게시물을 가져옵"
 "니다"
 
+#: templates/admin/migration/wizard/step3_preview.html:135
 msgid "Affiliate Program Data"
 msgstr "아フィ리에이트 프로그램 데이터"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "affiliates"
 msgstr "아피리에이트"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "commissions"
 msgstr "커미션"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "payouts"
 msgstr "지급"
 
+#: templates/admin/migration/wizard/step3_preview.html:142
 msgid "plans"
 msgstr "플랜"
 
+#: templates/admin/migration/wizard/step3_preview.html:144
 msgid ""
 "Import affiliate profiles, commission records, and payout history. Requires "
 "orders and customers to be imported first."
@@ -3025,9 +3998,11 @@ msgstr ""
 "소속사 프로필, 수수료 기록 및 지급 내역을 가져옵니다. 먼저 주문과 고객 정보"
 "를 가져오셔야 합니다."
 
+#: templates/admin/migration/wizard/step3_preview.html:153
 msgid "Affiliate Data Available"
 msgstr "아피리에이트 데이터 사용 가능"
 
+#: templates/admin/migration/wizard/step3_preview.html:154
 msgid ""
 "To import your affiliate program data (affiliates, commissions, payouts), "
 "install the Spwig Migration Bridge plugin on your WordPress site:"
@@ -3035,128 +4010,192 @@ msgstr ""
 "소속사 프로그램 데이터(소속사, 수수료, 지급)를 가져오려면 WordPress 사이트에 "
 "Spwig Migration Bridge 플러그인을 설치하십시오:"
 
+#: templates/admin/migration/wizard/step3_preview.html:156
 msgid "Download the plugin ZIP using the button below"
 msgstr "아래 버튼을 사용하여 플러그인 ZIP 파일을 다운로드하세요"
 
+#: templates/admin/migration/wizard/step3_preview.html:157
 msgid "Go to your WordPress admin → Plugins → Add New → Upload Plugin"
 msgstr ""
 "WordPress 관리자 → 플러그인 → 새 플러그인 추가 → 플러그인 업로드로 이동하세요"
 
+#: templates/admin/migration/wizard/step3_preview.html:158
 msgid "Upload and activate the plugin"
 msgstr "플러그인 업로드 및 활성화"
 
+#: templates/admin/migration/wizard/step3_preview.html:159
 msgid ""
 "Return here and refresh this page — the affiliate data will appear "
 "automatically"
 msgstr ""
 "이곳으로 돌아와 이 페이지를 새로 고침하면 파트너 데이터가 자동으로 나타납니다"
 
+#: templates/admin/migration/wizard/step3_preview.html:163
 msgid "Download Bridge Plugin"
 msgstr "브리지 플러그인 다운로드"
 
+#: templates/admin/migration/wizard/step3_preview.html:175
 msgid "Sample Products"
 msgstr "샘플 제품"
 
+#: templates/admin/migration/wizard/step3_preview.html:176
 msgid "Here are a few example products that will be imported:"
 msgstr "다음은 가져올 예시 제품입니다:"
 
+#: templates/admin/migration/wizard/step3_preview.html:181
+msgid "Name"
+msgstr "이름"
+
+#: templates/admin/migration/wizard/step3_preview.html:182
 msgid "SKU"
 msgstr "SKU"
 
+#: templates/admin/migration/wizard/step3_preview.html:183
 msgid "Price"
 msgstr "가격"
 
+#: templates/admin/migration/wizard/step3_preview.html:195
 msgid "Active"
 msgstr "활성"
 
+#: templates/admin/migration/wizard/step3_preview.html:197
 msgid "Archived"
 msgstr "보관됨"
 
+#: templates/admin/migration/wizard/step3_preview.html:199
 msgid "Draft"
 msgstr "초안"
 
+#: templates/admin/migration/wizard/step3_preview.html:211
 msgid "Import Options"
 msgstr "가져오기 옵션"
 
+#: templates/admin/migration/wizard/step3_preview.html:216
 msgid "Skip existing items"
 msgstr "기존 항목 건너뛰기"
 
+#: templates/admin/migration/wizard/step3_preview.html:218
 msgid "Don't import items that already exist (matched by SKU, email, etc.)"
 msgstr ""
 "이미 존재하는 항목은 가져오지 마세요 (SKU, 이메일 등으로 일치하는 항목)"
 
+#: templates/admin/migration/wizard/step3_preview.html:225
+msgid "If the import fails, automatically remove what was imported"
+msgstr "입력이 실패하면 자동으로 입력한 내용을 삭제합니다."
+
+#: templates/admin/migration/wizard/step3_preview.html:227
+msgid ""
+"Leave this off to keep partial data so you can fix the problem and run the "
+"import again — anything already imported will be skipped."
+msgstr ""
+"이 옵션을 끄면 부분 데이터를 유지할 수 있어 문제가 수정되고 다시 가져올 수 있"
+"습니다 — 이미 가져온 내용은 건너뜁니다."
+
+#: templates/admin/migration/wizard/step3_preview.html:233
 msgid "Import product images"
 msgstr "제품 이미지 가져오기"
 
+#: templates/admin/migration/wizard/step3_preview.html:235
 msgid "Download and import product images (may increase import time)"
 msgstr "제품 이미지를 다운로드하여 가져옵니다 (가져오기 시간이 증가할 수 있음)"
 
+#: templates/admin/migration/wizard/step3_preview.html:241
 msgid "Preserve original IDs where possible"
 msgstr "가능한 경우 원본 ID 유지"
 
+#: templates/admin/migration/wizard/step3_preview.html:243
 msgid "Attempt to keep original IDs for products and orders (not recommended)"
 msgstr "제품 및 주문의 원본 ID를 유지하려는 시도 (권장하지 않음)"
 
+#: templates/admin/migration/wizard/step3_preview.html:247
 msgid "Batch size"
 msgstr "배치 크기"
 
+#: templates/admin/migration/wizard/step3_preview.html:249
+#: templates/admin/migration/wizard/step3_preview.html:250
+#: templates/admin/migration/wizard/step3_preview.html:251
+#: templates/admin/migration/wizard/step3_preview.html:252
 msgid "items per batch"
 msgstr "배치당 항목 수"
 
+#: templates/admin/migration/wizard/step3_preview.html:254
 msgid "Larger batches are faster but use more memory"
 msgstr "더 큰 배치는 더 빠르지만 더 많은 메모리를 사용합니다"
 
+#: templates/admin/migration/wizard/step3_preview.html:261
 msgid "Data Safety"
 msgstr "데이터 안전성"
 
+#: templates/admin/migration/wizard/step3_preview.html:262
 msgid ""
-"All data will be imported within a database transaction. If anything goes "
-"wrong, the entire import will be rolled back automatically. You'll also have "
-"24 hours to manually rollback if needed."
+"Spwig imports your data one item at a time, and each item is saved as it is "
+"imported. If the import stops part way through, the items already imported "
+"stay in your store unless you tick the option above. You can roll an import "
+"back at any time from the Migrations list — whether it finished, failed or "
+"was stopped. Rollback removes what the import added, but keeps anything your "
+"store has since come to depend on, such as an imported product that now "
+"appears on a real customer's order. Take a full backup before you begin."
 msgstr ""
-"모든 데이터는 데이터베이스 트랜잭션 내에서 가져옵니다. 문제가 발생하면 전체 "
-"가져오기가 자동으로 롤백됩니다. 필요 시 24시간 동안 수동으로 롤백할 수도 있습"
-"니다."
+"Spwig은 데이터를 하나씩 가져오며, 각 항목은 가져올 때마다 저장됩니다. 가져오"
+"기 중간에 중단되면, 위에 있는 옵션을 선택하지 않는 한 이미 가져온 항목은 상점"
+"에 계속 남아 있습니다. 가져오기를 언제든지 '마이그레이션' 목록에서 되돌릴 수 "
+"있으며, 가져오기 작업이 완료되었는지, 실패했는지, 중단되었는지에 관계없이 되"
+"돌릴 수 있습니다. 되돌리기 작업은 가져오기로 추가된 항목을 제거하지만, 상점"
+"이 이후로 의존하게 된 항목은 유지합니다. 예를 들어, 실제 고객의 주문에 나타"
+"나 있는 가져온 제품은 유지됩니다. 시작하기 전에 전체 백업을 수행하세요."
 
+#: templates/admin/migration/wizard/step3_preview.html:272
 msgid "Next: Configure Mapping"
 msgstr "다음: 매핑 구성"
 
+#: templates/admin/migration/wizard/step3_preview.html:282
 msgid "Generating Field Mappings..."
 msgstr "필드 매핑 생성 중..."
 
+#: templates/admin/migration/wizard/step3_preview.html:283
 msgid ""
 "Analyzing your data and creating field mappings. This may take a moment..."
 msgstr ""
 "귀하의 데이터를 분석하고 필드 매핑을 생성 중입니다. 잠시 시간이 걸릴 수 있습"
 "니다..."
 
+#: templates/admin/migration/wizard/step3_preview.html:288
 msgid "Preparing..."
 msgstr "준비 중..."
 
+#: templates/admin/migration/wizard/step3_preview.html:298
 msgid "Please select at least one data type to import."
 msgstr "가져올 데이터 유형을 최소 하나 선택하세요."
 
+#: templates/admin/migration/wizard/step3_preview.html:300
 msgid "Fetching sample data..."
 msgstr "샘플 데이터 가져오기 중..."
 
+#: templates/admin/migration/wizard/step3_preview.html:301
 msgid "Detecting custom fields..."
 msgstr "사용자 정의 필드 감지 중..."
 
+#: templates/admin/migration/wizard/step3_preview.html:302
 msgid "Creating field mappings..."
 msgstr "필드 매핑 생성 중..."
 
+#: templates/admin/migration/wizard/step4_mapping.html:8
 msgid "Configure Field Mapping"
 msgstr "필드 매핑 구성"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "Review and customize how data from"
 msgstr "데이터가 어떻게 가져올지 검토하고 커스터마이즈하세요"
 
+#: templates/admin/migration/wizard/step4_mapping.html:10
 msgid "maps to your platform. Most fields are mapped automatically."
 msgstr ". 대부분의 필드는 자동으로 매핑됩니다."
 
+#: templates/admin/migration/wizard/step4_mapping.html:21
 msgid "CSV Column Mapping"
 msgstr "\"CSV 열 매핑\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:23
 msgid ""
 "Map the columns in your CSV files to the expected fields. We've auto-"
 "detected some matches — review and adjust as needed."
@@ -3164,37 +4203,48 @@ msgstr ""
 "CSV 파일의 열을 예상되는 필드에 매핑하세요. 일부 항목은 자동으로 감지되었습니"
 "다 — 필요에 따라 검토하고 조정하세요."
 
+#: templates/admin/migration/wizard/step4_mapping.html:34
 msgid "CSV Column"
 msgstr "\"CSV 열\""
 
+#: templates/admin/migration/wizard/step4_mapping.html:35
 msgid "Maps To"
 msgstr "매핑 대상"
 
+#: templates/admin/migration/wizard/step4_mapping.html:46
 msgid "Skip this column"
 msgstr "이 열을 건너뜁니다"
 
+#: templates/admin/migration/wizard/step4_mapping.html:70
 msgid "Automatic Mappings"
 msgstr "자동 매핑"
 
+#: templates/admin/migration/wizard/step4_mapping.html:72
 msgid ""
 "These fields will be mapped automatically based on standard field names:"
 msgstr "이 필드는 표준 필드 이름 기반으로 자동으로 매핑됩니다:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:103
 msgid "Blog Categories"
 msgstr "블로그 카테고리"
 
+#: templates/admin/migration/wizard/step4_mapping.html:106
 msgid "Blog Tags"
 msgstr "블로그 태그"
 
+#: templates/admin/migration/wizard/step4_mapping.html:114
 msgid "Source"
 msgstr "출처"
 
+#: templates/admin/migration/wizard/step4_mapping.html:116
 msgid "Destination"
 msgstr "대상"
 
+#: templates/admin/migration/wizard/step4_mapping.html:144
 msgid "No automatic mappings available."
 msgstr "사용 가능한 자동 매핑이 없습니다."
 
+#: templates/admin/migration/wizard/step4_mapping.html:156
 msgid ""
 "We detected custom fields in your source data. Map them to your platform's "
 "fields or skip them:"
@@ -3202,72 +4252,101 @@ msgstr ""
 "소스 데이터에 사용자 정의 필드가 포함되어 있습니다. 플랫폼의 필드에 매핑하거"
 "나 건너뛸 수 있습니다:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:171
 msgid "Meta Fields"
 msgstr "메타 필드"
 
+#: templates/admin/migration/wizard/step4_mapping.html:181
 msgid "Type:"
 msgstr "유형:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:183
 msgid "Example:"
 msgstr "예시:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:190
 msgid "Map to:"
 msgstr "매핑 대상:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:192
 msgid "— Skip this field —"
 msgstr "— 이 필드를 건너뜁니다 —"
 
+#: templates/admin/migration/wizard/step4_mapping.html:194
 msgid "Product Fields"
 msgstr "제품 필드"
 
+#: templates/admin/migration/wizard/step4_mapping.html:195
+#: templates/admin/migration/wizard/step4_mapping.html:202
+#: templates/admin/migration/wizard/step4_mapping.html:208
 msgid "Custom Field 1"
 msgstr "사용자 정의 필드 1"
 
+#: templates/admin/migration/wizard/step4_mapping.html:196
+#: templates/admin/migration/wizard/step4_mapping.html:203
+#: templates/admin/migration/wizard/step4_mapping.html:209
 msgid "Custom Field 2"
 msgstr "사용자 정의 필드 2"
 
+#: templates/admin/migration/wizard/step4_mapping.html:197
 msgid "Custom Field 3"
 msgstr "사용자 정의 필드 3"
 
+#: templates/admin/migration/wizard/step4_mapping.html:198
+#: templates/admin/migration/wizard/step4_mapping.html:204
+#: templates/admin/migration/wizard/step4_mapping.html:210
 msgid "Meta Data (JSON)"
 msgstr "메타 데이터 (JSON)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:201
 msgid "Customer Fields"
 msgstr "고객 필드"
 
+#: templates/admin/migration/wizard/step4_mapping.html:207
 msgid "Order Fields"
 msgstr "주문 필드"
 
+#: templates/admin/migration/wizard/step4_mapping.html:217
 msgid "Transform:"
 msgstr "변환:"
 
+#: templates/admin/migration/wizard/step4_mapping.html:219
 msgid "As Text (String)"
 msgstr "텍스트로 (문자열)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:220
 msgid "As Number (Integer)"
 msgstr "숫자로 (정수)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:221
 msgid "As Decimal"
 msgstr "소수로"
 
+#: templates/admin/migration/wizard/step4_mapping.html:222
 msgid "As True/False (Boolean)"
 msgstr "참/거짓으로 (불리언)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:223
 msgid "As JSON"
 msgstr "JSON으로"
 
+#: templates/admin/migration/wizard/step4_mapping.html:224
 msgid "As Date"
 msgstr "날짜로"
 
+#: templates/admin/migration/wizard/step4_mapping.html:225
 msgid "As URL"
 msgstr "URL로"
 
+#: templates/admin/migration/wizard/step4_mapping.html:226
 msgid "As Email"
 msgstr "이메일로"
 
+#: templates/admin/migration/wizard/step4_mapping.html:240
 msgid "No custom fields detected"
 msgstr "사용자 정의 필드 감지되지 않음"
 
+#: templates/admin/migration/wizard/step4_mapping.html:241
 msgid ""
 "All fields in your source data can be mapped automatically. You can proceed "
 "to the import step."
@@ -3275,70 +4354,58 @@ msgstr ""
 "소스 데이터의 모든 필드를 자동으로 매핑할 수 있습니다. 가져오기 단계로 진행"
 "할 수 있습니다."
 
-msgid "Category Mapping"
-msgstr "카테고리 매핑"
+#: templates/admin/migration/wizard/step4_mapping.html:255
+msgid "Pricing"
+msgstr "가격"
 
+#: templates/admin/migration/wizard/step4_mapping.html:261
 msgid ""
-"Some categories from your source don't have direct matches. Choose how to "
-"handle them:"
+"Tax rates and shipping zones are not imported. Tax rules differ enough "
+"between platforms that copying them across unreviewed would risk charging "
+"your customers the wrong amount, so Spwig leaves them to you."
 msgstr ""
-"소스의 일부 카테고리는 직접 매칭되지 않습니다. 어떻게 처리할지 선택하세요:"
+"세율 및 배송 지역은 가져오지 않습니다. 플랫폼 간 세율 규칙이 충분히 다르므"
+"로, 검토 없이 복사하면 고객에게 잘못된 금액을 청구할 위험이 있으므로 Spwig은 "
+"이를 사용자에게 남깁니다."
 
-msgid "Create new categories"
-msgstr "새로운 카테고리 생성"
+#: templates/admin/migration/wizard/step4_mapping.html:262
+msgid ""
+"Set them up in Settings → Tax & Currency and Settings → Shipping once the "
+"import has finished."
+msgstr ""
+"임포트가 완료되면 설정 → 세금 및 통화와 설정 → 배송에서 이를 설정합니다."
 
-msgid "Create new categories in your platform for unmapped categories"
-msgstr "매핑되지 않은 카테고리에 대해 플랫폼에서 새로운 카테고리를 생성합니다"
-
-msgid "Assign to default category"
-msgstr "기본 카테고리에 할당"
-
-msgid "Put all unmapped items in a default 'Uncategorized' category"
-msgstr "모든 매핑되지 않은 항목을 기본 '미분류' 카테고리에 넣습니다"
-
-msgid "Skip items with unmapped categories"
-msgstr "매핑되지 않은 카테고리 항목 건너뛰기"
-
-msgid "Don't import items that belong to unmapped categories"
-msgstr "매핑되지 않은 카테고리에 속한 항목은 가져오지 마세요"
-
-msgid "Tax & Shipping Settings"
-msgstr "세금 및 배송 설정"
-
-msgid "Import tax settings"
-msgstr "세금 설정 가져오기"
-
-msgid "Import tax rates and rules from your source platform"
-msgstr "소스 플랫폼에서 세금율 및 규칙을 가져옵니다"
-
-msgid "Import shipping zones and methods"
-msgstr "배송 지역 및 방법 가져오기"
-
-msgid "Import shipping configuration from your source platform"
-msgstr "소스 플랫폼에서 배송 설정을 가져옵니다"
-
+#: templates/admin/migration/wizard/step4_mapping.html:267
 msgid "Price adjustment"
 msgstr "가격 조정"
 
+#: templates/admin/migration/wizard/step4_mapping.html:270
+#: templates/admin/migration/wizard/step6_complete.html:218
 msgid "None"
 msgstr "없음"
 
+#: templates/admin/migration/wizard/step4_mapping.html:271
 msgid "Percentage"
 msgstr "백분율"
 
+#: templates/admin/migration/wizard/step4_mapping.html:272
 msgid "Fixed Amount"
 msgstr "고정 금액"
 
+#: templates/admin/migration/wizard/step4_mapping.html:280
 #, python-format
 msgid "(e.g., +10 for 10%% increase or -5 for 5%% decrease)"
 msgstr "(예: +10은 10%% 증가, -5은 5%% 감소)"
 
+#: templates/admin/migration/wizard/step4_mapping.html:282
 msgid "Optionally adjust all prices during import"
 msgstr "가져오기 중 모든 가격을 조정할 수 있습니다"
 
+#: templates/admin/migration/wizard/step4_mapping.html:289
 msgid "Pro Tip"
 msgstr "프로 팁"
 
+#: templates/admin/migration/wizard/step4_mapping.html:290
 msgid ""
 "Field mappings are saved and can be reused for future migrations. You can "
 "also edit mappings after the import is complete."
@@ -3346,15 +4413,32 @@ msgstr ""
 "필드 매핑은 저장되어 향후 마이그레이션에서 재사용할 수 있습니다. 가져오기 완"
 "료 후에도 매핑을 편집할 수 있습니다."
 
+#: templates/admin/migration/wizard/step4_mapping.html:300
+#: templates/admin/migration/wizard/step5_import.html:16
 msgid "Start Import"
 msgstr "입력 시작"
 
+#: templates/admin/migration/wizard/step5_import.html:9
+msgid "Ready to Import"
+msgstr "임포트 준비 완료"
+
+#: templates/admin/migration/wizard/step5_import.html:11
+msgid ""
+"This migration is configured but has not started yet. Starting it will begin "
+"importing data into your store."
+msgstr ""
+"이 마이그레이션은 설정되었지만 아직 시작되지 않았습니다. 시작하면 데이터가 상"
+"점에 시작되어 가져옵니다."
+
+#: templates/admin/migration/wizard/step5_import.html:24
 msgid "Import in Progress"
 msgstr "입력 중"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid "Importing data from"
 msgstr "데이터 입력 중"
 
+#: templates/admin/migration/wizard/step5_import.html:26
 msgid ""
 ". This process is running in the background - you can safely close this "
 "window and check back later."
@@ -3362,54 +4446,100 @@ msgstr ""
 ". 이 프로세스는 백그라운드에서 실행되고 있습니다 - 이 창을 안전하게 닫고 나중"
 "에 다시 확인할 수 있습니다."
 
+#: templates/admin/migration/wizard/step5_import.html:36
+msgid ""
+"Stop this import? Spwig finishes the batch it is working on and then stops. "
+"Anything already imported stays in your store — cancelling does not remove "
+"it."
+msgstr ""
+"이 임포트를 중지하시겠습니까? Spwig는 현재 처리 중인 배치를 완료한 후 중지합"
+"니다. 이미 임포트된 항목은 가게에 그대로 남아 있으며, 취소하는 것은 항목을 삭"
+"제하지 않습니다."
+
+#: templates/admin/migration/wizard/step5_import.html:38
+msgid "Stop Import"
+msgstr "가져오기 중지"
+
+#: templates/admin/migration/wizard/step5_import.html:44
+msgid "Stopping — Spwig finishes the batch it is working on, then stops."
+msgstr "중지 중 — Spwig는 현재 작업 중인 배치를 완료한 후 중지합니다."
+
+#: templates/admin/migration/wizard/step5_import.html:60
 msgid "Initializing..."
 msgstr "초기화 중..."
 
+#: templates/admin/migration/wizard/step5_import.html:70
 msgid "Starting import..."
 msgstr "입력 시작 중..."
 
+#: templates/admin/migration/wizard/step5_import.html:79
 msgid "Import Steps"
 msgstr "입력 단계"
 
+#: templates/admin/migration/wizard/step5_import.html:98
+#: templates/admin/migration/wizard/step5_import.html:118
+#: templates/admin/migration/wizard/step5_import.html:138
+#: templates/admin/migration/wizard/step5_import.html:158
+#: templates/admin/migration/wizard/step5_import.html:178
+#: templates/admin/migration/wizard/step5_import.html:198
+#: templates/admin/migration/wizard/step5_import.html:218
+#: templates/admin/migration/wizard/step5_import.html:238
+#: templates/admin/migration/wizard/step5_import.html:258
+#: templates/admin/migration/wizard/step5_import.html:278
 msgid "Waiting..."
 msgstr "대기 중..."
 
+#: templates/admin/migration/wizard/step5_import.html:290
 msgid "Import Log"
 msgstr "입력 기록"
 
+#: templates/admin/migration/wizard/step5_import.html:293
+#: templates/admin/migration/wizard/step5_import.html:321
 msgid "Show Details"
 msgstr "세부 정보 보기"
 
+#: templates/admin/migration/wizard/step5_import.html:306
+#: templates/admin/migration/wizard/step6_complete.html:484
 msgid "View All Migrations"
 msgstr "모든 마이그레이션 보기"
 
+#: templates/admin/migration/wizard/step5_import.html:320
 msgid "Hide Details"
 msgstr "세부 정보 숨기기"
 
+#: templates/admin/migration/wizard/step5_import.html:322
 msgid "View Error Report"
 msgstr "오류 보고서 보기"
 
+#: templates/admin/migration/wizard/step6_complete.html:9
 msgid "Migration Completed Successfully!"
 msgstr "마이그레이션이 성공적으로 완료되었습니다!"
 
+#: templates/admin/migration/wizard/step6_complete.html:10
 msgid "Your data has been successfully imported from"
 msgstr "귀하의 데이터가 성공적으로 가져와졌습니다"
 
+#: templates/admin/migration/wizard/step6_complete.html:57
 msgid "Import Summary"
 msgstr "입력 요약"
 
+#: templates/admin/migration/wizard/step6_complete.html:63
 msgid "Data Type"
 msgstr "데이터 유형"
 
+#: templates/admin/migration/wizard/step6_complete.html:119
 msgid "links found"
 msgstr "링크 발견"
 
+#: templates/admin/migration/wizard/step6_complete.html:121
 msgid "pending review"
 msgstr "검토 대기 중"
 
+#: templates/admin/migration/wizard/step6_complete.html:124
 msgid "applied"
 msgstr "적용됨"
 
+#: templates/admin/migration/wizard/step6_complete.html:132
 msgid ""
 "We found internal links in your imported content pointing to your old site. "
 "Review the suggestions below and approve the replacements."
@@ -3417,171 +4547,484 @@ msgstr ""
 "가져온 콘텐츠 내부 링크가 이전 사이트를 가리키고 있는 것으로 확인되었습니다. "
 "아래의 제안을 검토하고 대체를 승인해 주세요."
 
+#: templates/admin/migration/wizard/step6_complete.html:135
 msgid "links have high-confidence matches and can be auto-approved."
 msgstr "링크는 높은 신뢰도로 일치하며 자동 승인될 수 있습니다."
 
+#: templates/admin/migration/wizard/step6_complete.html:146
 msgid "Auto-approve high confidence"
 msgstr "높은 신뢰도 자동 승인"
 
+#: templates/admin/migration/wizard/step6_complete.html:152
 msgid "Apply Approved Links"
 msgstr "승인된 링크 적용"
 
+#: templates/admin/migration/wizard/step6_complete.html:168
 msgid "links"
 msgstr "링크"
 
+#: templates/admin/migration/wizard/step6_complete.html:171
 msgid "Edit"
 msgstr "편집"
 
+#: templates/admin/migration/wizard/step6_complete.html:179
 msgid "Original URL"
 msgstr "원본 URL"
 
+#: templates/admin/migration/wizard/step6_complete.html:180
 msgid "Anchor Text"
 msgstr "앵커 텍스트"
 
+#: templates/admin/migration/wizard/step6_complete.html:181
 msgid "Suggested URL"
 msgstr "추천 URL"
 
+#: templates/admin/migration/wizard/step6_complete.html:182
 msgid "Match"
 msgstr "일치"
 
+#: templates/admin/migration/wizard/step6_complete.html:183
 msgid "Action"
 msgstr "작업"
 
+#: templates/admin/migration/wizard/step6_complete.html:226
 msgid "Approve"
 msgstr "승인"
 
+#: templates/admin/migration/wizard/step6_complete.html:231
 msgid "Skip"
 msgstr "건너뛰기"
 
+#: templates/admin/migration/wizard/step6_complete.html:258
 msgid "Rollback Available"
 msgstr "롤백 가능"
 
-msgid "You can rollback this migration until"
-msgstr "이 마이그레이션을 롤백할 수 있습니다"
+#: templates/admin/migration/wizard/step6_complete.html:261
+#, python-format
+msgid "You can roll this migration back until <strong>%(deadline)s</strong>."
+msgstr ""
+"이 마이그레이션을 <strong>%(deadline)s</strong>까지 롤백할 수 있습니다."
 
+#: templates/admin/migration/wizard/step6_complete.html:263
+msgid "You can roll this migration back from the Migrations list."
+msgstr "이 마이그레이션을 마이그레이션 목록에서 롤백할 수 있습니다."
+
+#: templates/admin/migration/wizard/step6_complete.html:269
 msgid "Important"
 msgstr "중요"
 
+#: templates/admin/migration/wizard/step6_complete.html:270
 msgid ""
-"Rolling back will remove all imported data. This action cannot be undone. "
-"Make sure to backup any changes you've made since the migration."
+"Rolling back removes the products, categories, customers, orders, media and "
+"store-extension data this import created, and it cannot be undone. Anything "
+"your store has since come to depend on — an imported product that now "
+"appears on a real order, for example — is kept rather than removed, and "
+"Spwig lists what it kept. You will see exactly what will be removed before "
+"you confirm."
 msgstr ""
-"롤백하면 모든 가져온 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 마이"
-"그레이션 이후에 변경한 내용을 백업해 두세요."
+"롤백을 실행하면 이 임포트로 생성된 제품, 카테고리, 고객, 주문, 미디어 및 스토"
+"어 확장 데이터가 제거되며, 이 작업은 되돌릴 수 없습니다. 이후로 스토어가 의존"
+"하게 된 항목 — 예를 들어, 실제 주문에 표시되는 임포트된 제품 — 은 제거되지 않"
+"고 유지되며, Spwig는 유지된 항목을 목록으로 보여줍니다. 확인하기 전에 정확히 "
+"무엇이 제거될지 확인할 수 있습니다."
 
+#: templates/admin/migration/wizard/step6_complete.html:278
 msgid ""
-"Are you sure you want to rollback this migration? This will remove all "
-"imported data and cannot be undone."
+"Roll back this migration? This removes what the import created, keeping "
+"anything your store now depends on. It cannot be undone."
 msgstr ""
-"이 마이그레이션을 롤백하시겠습니까? 이 작업은 모든 가져온 데이터를 삭제하며 "
-"되돌릴 수 없습니다."
+"이 마이그레이션을 롤백하시겠습니까? 이 작업은 임포트로 생성된 항목을 제거하"
+"며, 현재 가게가 의존하는 항목들은 유지합니다. 이 작업은 되돌릴 수 없습니다."
 
+#: templates/admin/migration/wizard/step6_complete.html:290
+msgid "Migration Stopped"
+msgstr "이전 중지"
+
+#: templates/admin/migration/wizard/step6_complete.html:291
 msgid ""
-"There was an error during the import process. The migration has been rolled "
-"back automatically."
+"You stopped this import. The items imported before it stopped are still in "
+"your store — nothing was removed. You can roll the import back to remove "
+"them, or run it again, in which case anything already imported will be "
+"skipped."
 msgstr ""
-"가져오기 과정에서 오류가 발생했습니다. 마이그레이션이 자동으로 롤백되었습니"
+"이 임포트를 중단하셨습니다. 중단되기 전에 임포트된 항목은 여전히 가게에 남아 "
+"있습니다 — 아무것도 삭제되지 않았습니다. 이를 삭제하려면 임포트를 롤백하거"
+"나, 다시 실행할 수 있습니다. 다시 실행하는 경우 이미 임포트된 항목은 건너뜁니"
 "다."
 
+#: templates/admin/migration/wizard/step6_complete.html:299
+msgid ""
+"Spwig could not finish this import. Items imported before the error are "
+"still in your store — nothing has been removed automatically. Review the "
+"details below, then fix the problem at source and run the import again. "
+"Items that were already imported will be skipped."
+msgstr ""
+"Spwig이 이 임포트를 완료하지 못했습니다. 오류가 발생하기 전에 임포트된 항목"
+"은 여전히 상점에 남아 있습니다. 자동으로 삭제된 항목은 없습니다. 아래의 세부 "
+"정보를 확인한 후 원본에서 문제를 수정하고 임포트를 다시 실행하십시오. 이미 임"
+"포트된 항목은 건너뛰게 됩니다."
+
+#: templates/admin/migration/wizard/step6_complete.html:306
 msgid "Error Details"
 msgstr "에러 세부 정보"
 
+#: templates/admin/migration/wizard/step6_complete.html:322
 msgid "Show technical details"
 msgstr "기술 세부 정보 보기"
 
+#: templates/admin/migration/wizard/step6_complete.html:331
 msgid "No detailed error information available."
 msgstr "상세한 오류 정보가 없습니다."
 
+#: templates/admin/migration/wizard/step6_complete.html:340
 msgid "Partial Import Results"
 msgstr "부분 입력 결과"
 
+#: templates/admin/migration/wizard/step6_complete.html:342
 msgid ""
-"The following data was imported before the error occurred (all rolled back):"
-msgstr "오류 발생 이전에 다음 데이터가 가져와졌습니다(모두 롤백됨):"
+"The following items were imported before the error occurred. They are live "
+"in your store:"
+msgstr ""
+"에러가 발생하기 전에 다음 항목이 가져와졌습니다. 이 항목들은 현재 스토어에서 "
+"활성화되어 있습니다:"
 
+#: templates/admin/migration/wizard/step6_complete.html:377
+#: templates/admin/migration/wizard/step6_complete.html:494
 msgid "Try Again"
 msgstr "다시 시도"
 
+#: templates/admin/migration/wizard/step6_complete.html:379
 msgid ""
 "You can start a new migration with the same settings or adjust your "
 "configuration."
 msgstr ""
 "동일한 설정으로 새로운 마이그레이션을 시작하거나 설정을 조정할 수 있습니다."
 
+#: templates/admin/migration/wizard/step6_complete.html:384
 msgid "Adjust Settings"
 msgstr "설정 조정"
 
+#: templates/admin/migration/wizard/step6_complete.html:404
 msgid "Review your imported data"
 msgstr "입력된 데이터 검토"
 
+#: templates/admin/migration/wizard/step6_complete.html:406
 msgid ""
 "Check your products, customers, and orders to ensure everything imported "
 "correctly."
 msgstr ""
 "제품, 고객, 주문 내역을 확인하여 모든 항목이 올바르게 가져왔는지 확인하세요."
 
+#: templates/admin/migration/wizard/step6_complete.html:410
 msgid "View Products"
 msgstr "상품 보기"
 
+#: templates/admin/migration/wizard/step6_complete.html:413
 msgid "View Customers"
 msgstr "고객 보기"
 
+#: templates/admin/migration/wizard/step6_complete.html:416
 msgid "View Orders"
 msgstr "주문 보기"
 
+#: templates/admin/migration/wizard/step6_complete.html:422
 msgid "Configure your store settings"
 msgstr "쇼핑몰 설정 구성"
 
+#: templates/admin/migration/wizard/step6_complete.html:424
 msgid "Review and adjust shipping, tax, and payment settings for your store."
 msgstr "쇼핑몰의 배송, 세금 및 결제 설정을 검토하고 조정하세요."
 
+#: templates/admin/migration/wizard/step6_complete.html:429
 msgid "Test your checkout process"
 msgstr "체크아웃 프로세스 테스트"
 
+#: templates/admin/migration/wizard/step6_complete.html:431
 msgid "Place a test order to ensure everything works correctly."
 msgstr "모든 기능이 정상 작동하는지 확인하기 위해 테스트 주문을 진행하세요."
 
+#: templates/admin/migration/wizard/step6_complete.html:436
 msgid "Update your DNS settings"
 msgstr "DNS 설정 업데이트"
 
+#: templates/admin/migration/wizard/step6_complete.html:438
 msgid "When you're ready to go live, point your domain to this platform."
 msgstr "라이브로 전환할 준비가 되었으면 도메인을 이 플랫폼으로 연결하세요."
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Review the error logs"
 msgstr "오류 로그 검토"
 
+#: templates/admin/migration/wizard/step6_complete.html:445
 msgid "Understand what went wrong during the migration"
 msgstr "마이그레이션 중 발생한 문제를 파악하세요"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Check your source data"
 msgstr "소스 데이터 확인"
 
+#: templates/admin/migration/wizard/step6_complete.html:448
 msgid "Ensure your data is valid and accessible"
 msgstr "귀하의 데이터가 유효하고 접근 가능하도록 확인하세요"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "Contact support"
 msgstr "지원 담당자 연락"
 
+#: templates/admin/migration/wizard/step6_complete.html:451
 msgid "If you need help, our team is here to assist"
 msgstr "도움이 필요하시면 팀이 도와드리겠습니다"
 
+#: templates/admin/migration/wizard/step6_complete.html:460
 msgid "Download Report"
 msgstr "보고서 다운로드"
 
+#: templates/admin/migration/wizard/step6_complete.html:462
 msgid "Download a detailed report of this migration for your records."
 msgstr "이 마이그레이션에 대한 상세 보고서를 다운로드하여 기록으로 보관하세요."
 
+#: templates/admin/migration/wizard/step6_complete.html:467
 msgid "Download PDF"
 msgstr "PDF 다운로드"
 
+#: templates/admin/migration/wizard/step6_complete.html:471
 msgid "Download CSV"
 msgstr "CSV 다운로드"
 
+#: templates/admin/migration/wizard/step6_complete.html:475
 msgid "Download Logs"
 msgstr "로그 다운로드"
 
+#: templates/admin/migration/wizard/step6_complete.html:489
 msgid "Start Another Migration"
 msgstr "다른 마이그레이션 시작"
+
+#~ msgid "Transaction ID for rollback tracking"
+#~ msgstr "롤백 추적을 위한 트랜잭션 ID"
+
+#~ msgid "Database savepoint ID for this step"
+#~ msgstr "이 단계의 데이터베이스 저장 지점 ID"
+
+#~ msgid "Category Mapping"
+#~ msgstr "카테고리 매핑"
+
+#~ msgid ""
+#~ "Some categories from your source don't have direct matches. Choose how to "
+#~ "handle them:"
+#~ msgstr ""
+#~ "소스의 일부 카테고리는 직접 매칭되지 않습니다. 어떻게 처리할지 선택하세요:"
+
+#~ msgid "Create new categories"
+#~ msgstr "새로운 카테고리 생성"
+
+#~ msgid "Create new categories in your platform for unmapped categories"
+#~ msgstr ""
+#~ "매핑되지 않은 카테고리에 대해 플랫폼에서 새로운 카테고리를 생성합니다"
+
+#~ msgid "Assign to default category"
+#~ msgstr "기본 카테고리에 할당"
+
+#~ msgid "Put all unmapped items in a default 'Uncategorized' category"
+#~ msgstr "모든 매핑되지 않은 항목을 기본 '미분류' 카테고리에 넣습니다"
+
+#~ msgid "Skip items with unmapped categories"
+#~ msgstr "매핑되지 않은 카테고리 항목 건너뛰기"
+
+#~ msgid "Don't import items that belong to unmapped categories"
+#~ msgstr "매핑되지 않은 카테고리에 속한 항목은 가져오지 마세요"
+
+#~ msgid "Tax & Shipping Settings"
+#~ msgstr "세금 및 배송 설정"
+
+#~ msgid "Import tax settings"
+#~ msgstr "세금 설정 가져오기"
+
+#~ msgid "Import tax rates and rules from your source platform"
+#~ msgstr "소스 플랫폼에서 세금율 및 규칙을 가져옵니다"
+
+#~ msgid "Import shipping zones and methods"
+#~ msgstr "배송 지역 및 방법 가져오기"
+
+#~ msgid "Import shipping configuration from your source platform"
+#~ msgstr "소스 플랫폼에서 배송 설정을 가져옵니다"
+
+#~ msgid "Deadline for manual rollback (24 hours after completion)"
+#~ msgstr "수동 되돌리기 마감 시간 (완료 후 24시간)"
+
+#~ msgid "Migration cancelled by user"
+#~ msgstr "사용자가 마이그레이션을 취소했습니다"
+
+#~ msgid ""
+#~ "Migration marked as cancelled. The background import may keep running for "
+#~ "a while longer, so imported counts can continue to rise. Anything already "
+#~ "imported stays in your store."
+#~ msgstr ""
+#~ "이 마이그레이션이 취소됨으로 표시되었습니다. 백그라운드 임포트는 여전히 잠"
+#~ "시 더 실행될 수 있으므로, 임포트된 수량은 계속 증가할 수 있습니다. 이미 임"
+#~ "포트된 항목은 가게에 계속 남아 있습니다."
+
+#~ msgid ""
+#~ "Only pending or failed migrations can be deleted. A running migration "
+#~ "must be cancelled first."
+#~ msgstr ""
+#~ "삭제할 수 있는 마이그레이션은 대기 중이거나 실패한 마이그레이션뿐입니다. "
+#~ "실행 중인 마이그레이션은 먼저 취소해야 합니다."
+
+#~ msgid "This will NOT remove:"
+#~ msgstr "이 작업은 다음을 삭제하지 않습니다:"
+
+#~ msgid ""
+#~ "Subscription plans, booking resources or other data created by store "
+#~ "extensions"
+#~ msgstr "스토어 확장 기능으로 생성된 구독 플랜, 예약 자원 또는 기타 데이터"
+
+#~ msgid ""
+#~ "Review the rollback details? Rolling back removes what this import "
+#~ "created, and also removes all orders belonging to imported customers — "
+#~ "including any placed since the import."
+#~ msgstr ""
+#~ "롤백 세부 정보를 확인하시겠습니까? 이 임포트가 생성한 내용은 모두 삭제되"
+#~ "며, 임포트된 고객의 주문도 모두 삭제됩니다. 임포트 이후에 생성된 주문도 포"
+#~ "함됩니다."
+
+#~ msgid "Migration rolled back successfully!"
+#~ msgstr "마이그레이션이 성공적으로 롤백되었습니다!"
+
+#~ msgid ""
+#~ "The products, categories, reviews, coupons and media this import created"
+#~ msgstr "이 임포트가 생성한 상품, 카테고리, 리뷰, 쿠폰 및 미디어"
+
+#~ msgid ""
+#~ "The customer accounts this import created, along with their addresses and "
+#~ "loyalty history"
+#~ msgstr "이 임포트가 생성한 고객 계정과 함께 그들의 주소 및 로열티 기록"
+
+#~ msgid ""
+#~ "Every order belonging to an imported customer — including orders they "
+#~ "have placed since the import, not only the imported ones"
+#~ msgstr ""
+#~ "내입력 고객이 소유한 모든 주문 — import 이후 고객이 주문한 주문도 포함하"
+#~ "며, 단지 import된 주문만이 아닙니다"
+
+#~ msgid ""
+#~ "Imported products from orders placed by your other customers, which "
+#~ "leaves those orders with missing items and incorrect totals"
+#~ msgstr ""
+#~ "다른 고객이 주문한 주문에서 가져온 제품은 해당 주문이 누락된 항목과 잘못"
+#~ "된 합계를 포함하게 됩니다"
+
+#~ msgid "Affiliates, commissions or payouts created by this import"
+#~ msgstr "이 임포트로 생성된 파트너, 수수료 또는 지급금"
+
+#~ msgid ""
+#~ "Because rollback reaches beyond the data this import created, it is only "
+#~ "safe immediately after a migration — before any real trading has "
+#~ "happened. This operation is PERMANENT and cannot be reversed."
+#~ msgstr ""
+#~ "이 이ported 데이터보다 롤백이 더 많은 범위에 영향을 미치므로, 마이그레이"
+#~ "션 직후 — 실제 거래가 발생하기 전에만 안전합니다. 이 작업은 영구적이며 되"
+#~ "돌릴 수 없습니다."
+
+#~ msgid "🚀 Start New Migration"
+#~ msgstr "🚀 새 마이그레이션 시작"
+
+#~ msgid "Migration restarted! Redirecting to progress page..."
+#~ msgstr ""
+#~ "마이그레이션이 재시작되었습니다! 진행 상황 페이지로 리디렉션 중입니다..."
+
+#~ msgid "Migration cancelled successfully."
+#~ msgstr "마이그레이션이 성공적으로 취소되었습니다."
+
+#~ msgid ""
+#~ "Deleted a running migration. If this was stuck, the operation has been "
+#~ "cleaned up."
+#~ msgstr ""
+#~ "실행 중이던 마이그레이션을 삭제했습니다. 만약 이 작업이 중단되었었다면, 해"
+#~ "당 작업은 정리되었습니다."
+
+#~ msgid "Migration deleted successfully."
+#~ msgstr "마이그레이션이 성공적으로 삭제되었습니다."
+
+#~ msgid "Delete all products imported from this migration"
+#~ msgstr "이 마이그레이션에서 가져온 모든 상품을 삭제합니다"
+
+#~ msgid "Delete all categories imported from this migration"
+#~ msgstr "이 마이그레이션에서 가져온 모든 카테고리를 삭제합니다"
+
+#~ msgid "Delete all customers imported from this migration"
+#~ msgstr "이 마이그레이션에서 가져온 모든 고객을 삭제합니다"
+
+#~ msgid "Delete all orders imported from this migration"
+#~ msgstr "이 마이그레이션에서 가져온 모든 주문을 삭제합니다"
+
+#~ msgid "Delete all reviews imported from this migration"
+#~ msgstr "이 마이그레이션에서 가져온 모든 리뷰를 삭제합니다"
+
+#~ msgid "Delete all coupons imported from this migration"
+#~ msgstr "이 마이그레이션에서 가져온 모든 쿠폰을 삭제합니다"
+
+#~ msgid "Delete all associated media assets"
+#~ msgstr "모든 관련 미디어 자산을 삭제합니다"
+
+#~ msgid "Mark the migration job as 'rolled_back'"
+#~ msgstr "이 마이그레이션 작업을 'rolled_back'으로 표시합니다"
+
+#~ msgid "Are you sure you want to cancel this migration?"
+#~ msgstr "이 마이그레이션을 취소하시겠습니까?"
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will delete all "
+#~ "imported data."
+#~ msgstr ""
+#~ "이 마이그레이션을 롤백하시겠습니까? 이 작업은 모든 가져온 데이터를 삭제합"
+#~ "니다."
+
+#~ msgid ""
+#~ "Are you sure you want to force delete this migration? This cannot be "
+#~ "undone."
+#~ msgstr ""
+#~ "이 마이그레이션을 강제로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+
+#, fuzzy
+#~ msgid "Token Preview"
+#~ msgstr "미리보기"
+
+#~ msgid ""
+#~ "Magento migration is coming soon. We will support database access and API "
+#~ "methods."
+#~ msgstr ""
+#~ "Magento 마이그레이션은 곧 제공될 예정입니다. 데이터베이스 접근 및 API 방법"
+#~ "을 지원합니다."
+
+#~ msgid ""
+#~ "All data will be imported within a database transaction. If anything goes "
+#~ "wrong, the entire import will be rolled back automatically. You'll also "
+#~ "have 24 hours to manually rollback if needed."
+#~ msgstr ""
+#~ "모든 데이터는 데이터베이스 트랜잭션 내에서 가져옵니다. 문제가 발생하면 전"
+#~ "체 가져오기가 자동으로 롤백됩니다. 필요 시 24시간 동안 수동으로 롤백할 수"
+#~ "도 있습니다."
+
+#~ msgid ""
+#~ "Rolling back will remove all imported data. This action cannot be undone. "
+#~ "Make sure to backup any changes you've made since the migration."
+#~ msgstr ""
+#~ "롤백하면 모든 가져온 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 마"
+#~ "이그레이션 이후에 변경한 내용을 백업해 두세요."
+
+#~ msgid ""
+#~ "Are you sure you want to rollback this migration? This will remove all "
+#~ "imported data and cannot be undone."
+#~ msgstr ""
+#~ "이 마이그레이션을 롤백하시겠습니까? 이 작업은 모든 가져온 데이터를 삭제하"
+#~ "며 되돌릴 수 없습니다."
+
+#~ msgid ""
+#~ "There was an error during the import process. The migration has been "
+#~ "rolled back automatically."
+#~ msgstr ""
+#~ "가져오기 과정에서 오류가 발생했습니다. 마이그레이션이 자동으로 롤백되었습"
+#~ "니다."
 
 #~ msgid ""
 #~ "Shopify migration is coming soon. We will support both API and CSV import "

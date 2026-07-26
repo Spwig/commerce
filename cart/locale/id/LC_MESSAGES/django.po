@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Indonesian <LL@li.org>\n"
@@ -18,78 +18,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:328
 msgid "Action and method IDs required"
 msgstr "ID aksi dan metode diperlukan"
 
+#: admin.py:336
 msgid "{} method(s) enabled"
 msgstr "{} metode aktif"
 
+#: admin.py:340
 msgid "{} method(s) disabled"
 msgstr "{} metode dinonaktifkan"
 
+#: admin.py:344
 msgid "{} method(s) deleted"
 msgstr "{} metode dihapus"
 
+#: admin.py:347
 msgid "Unknown action"
 msgstr "Aksi tidak diketahui"
 
+#: admin.py:353 mini_cart_api.py:469
 msgid "Invalid request data"
 msgstr "Data permintaan tidak valid"
 
+#: admin.py:358
 msgid "An unexpected error occurred. Please try again."
 msgstr "Terjadi kesalahan yang tidak terduga. Silakan coba lagi."
 
+#: admin.py:376 templates/admin/cart/method_wizard/step1_basics.html:21
+#: templates/admin/cart/shippingmethod/change_form.html:118
+#: templates/admin/cart/taxrate/change_form.html:111
 msgid "Basic Information"
 msgstr "Informasi Dasar"
 
+#: admin.py:383 templates/admin/cart/taxrate/change_form.html:141
 msgid "Geographic Scope"
 msgstr "Cakupan Geografis"
 
+#: admin.py:387 templates/admin/cart/taxrate/change_form.html:163
 msgid "Application Rules"
 msgstr "Aturan Aplikasi"
 
+#: admin.py:391 templates/admin/cart/taxrate/change_form.html:193
 msgid "Product Exemptions"
 msgstr "Pengecualian Produk"
 
+#: admin.py:397 templates/admin/cart/shippingmethod/change_form.html:107
+#: templates/admin/cart/shippingmethod/change_form.html:321
+#: templates/admin/cart/taxrate/change_form.html:100
+#: templates/admin/cart/taxrate/change_form.html:216
 msgid "Timestamps"
 msgstr "Waktu Timestamp"
 
+#: admin.py:409
 msgid "Rate %"
 msgstr "Tarif %"
 
+#: apps.py:8 models.py:735 models.py:1599
 msgid "Cart"
 msgstr "Keranjang"
 
+#: forms.py:34
 msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
 msgstr "Masukkan sebagai persentase (contoh: 8.25 untuk 8.25%)"
 
+#: forms.py:35
 msgid "Rate (%)"
 msgstr "Tarif (%)"
 
+#: method_wizard.py:106
 msgid "Please complete Step 1 first"
 msgstr "Silakan lengkapi Langkah 1 terlebih dahulu"
 
+#: method_wizard.py:146 method_wizard.py:193 method_wizard.py:266
 msgid "Please complete the wizard steps"
 msgstr "Silakan lengkapi langkah-langkah wizard"
 
+#: method_wizard.py:354
 #, python-format
 msgid "Shipping method \"%(name)s\" created successfully!"
 msgstr "Metode pengiriman \"%(name)s\" berhasil dibuat!"
 
+#: method_wizard.py:360
 msgid "Please configure rate tables for this method."
 msgstr "Silakan konfigurasikan tabel tarif untuk metode ini."
 
+#: method_wizard.py:368
 #, python-format
 msgid "Failed to create shipping method: %(error)s"
 msgstr "Gagal membuat metode pengiriman: %(error)s"
 
+#: mini_cart_api.py:281
 msgid "Get mini-cart data"
 msgstr "Dapatkan data mini-cart"
 
+#: mini_cart_api.py:282
 msgid ""
 "\n"
-"    Retrieve the current cart contents formatted for the mini-cart "
-"component.\n"
+"    Retrieve the current cart contents formatted for the mini-cart component.\n"
 "\n"
 "    Works for both authenticated users (cart linked to user account) and\n"
 "    anonymous users (cart linked to session). Cart data includes all items\n"
@@ -104,21 +131,18 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Mengambil isi keranjang saat ini yang diformat untuk komponen mini-cart. "
-"Berfungsi untuk pengguna terautentikasi (keranjang terkait akun pengguna) "
-"dan pengguna anonim (keranjang terkait sesi). Data keranjang mencakup semua "
-"item dengan detail produk, kuantitas, harga, dan gambar. **Use Cases:** - "
-"Muat mini-cart awal pada halaman - Memperbarui keranjang setelah perubahan "
-"eksternal - Memeriksa status keranjang sebelum checkout **Autentikasi:** "
-"Tidak diperlukan (menggunakan sesi untuk pengguna anonim)\n"
+"    Mengambil isi keranjang saat ini yang diformat untuk komponen mini-cart. Berfungsi untuk pengguna terautentikasi (keranjang terkait akun pengguna) dan pengguna anonim (keranjang terkait sesi). Data keranjang mencakup semua item dengan detail produk, kuantitas, harga, dan gambar. **Use Cases:** - Muat mini-cart awal pada halaman - Memperbarui keranjang setelah perubahan eksternal - Memeriksa status keranjang sebelum checkout **Autentikasi:** Tidak diperlukan (menggunakan sesi untuk pengguna anonim)\n"
 "    "
 
+#: mini_cart_api.py:300
 msgid "Cart data retrieved successfully"
 msgstr "Data keranjang berhasil diambil"
 
+#: mini_cart_api.py:352
 msgid "Update cart item quantity"
 msgstr "Perbarui jumlah item keranjang"
 
+#: mini_cart_api.py:353
 msgid ""
 "\n"
 "    Update the quantity of an item in the cart.\n"
@@ -131,8 +155,7 @@ msgid ""
 "    - Direct quantity input changes\n"
 "    - Removing items (quantity=0)\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "\n"
 "    **Validation:**\n"
 "    - Item must exist in user's cart\n"
@@ -141,29 +164,26 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Memperbarui kuantitas item dalam keranjang. Atur kuantitas menjadi 0 "
-"untuk menghapus item secara keseluruhan. Endpoint memvalidasi ketersediaan "
-"stok sebelum pembaruan dan mengembalikan keranjang yang telah diperbarui "
-"secara lengkap. **Use Cases:** - Tombol increment/decrement kuantitas di "
-"mini-cart - Perubahan langsung pada input kuantitas - Menghapus item "
-"(kuantitas=0) **Autentikasi:** Tidak diperlukan (memvalidasi item termasuk "
-"dalam keranjang pengguna) **Validasi:** - Item harus ada dalam keranjang "
-"pengguna - Kuantitas harus berupa bilangan bulat non-negatif - Ketersediaan "
-"stok diperiksa untuk produk yang dilacak inventaris\n"
+"    Memperbarui kuantitas item dalam keranjang. Atur kuantitas menjadi 0 untuk menghapus item secara keseluruhan. Endpoint memvalidasi ketersediaan stok sebelum pembaruan dan mengembalikan keranjang yang telah diperbarui secara lengkap. **Use Cases:** - Tombol increment/decrement kuantitas di mini-cart - Perubahan langsung pada input kuantitas - Menghapus item (kuantitas=0) **Autentikasi:** Tidak diperlukan (memvalidasi item termasuk dalam keranjang pengguna) **Validasi:** - Item harus ada dalam keranjang pengguna - Kuantitas harus berupa bilangan bulat non-negatif - Ketersediaan stok diperiksa untuk produk yang dilacak inventaris\n"
 "    "
 
+#: mini_cart_api.py:375
 msgid "Cart updated successfully"
 msgstr "Keranjang berhasil diperbarui"
 
+#: mini_cart_api.py:379
 msgid "Invalid request data or insufficient stock"
 msgstr "Data permintaan tidak valid atau stok tidak cukup"
 
+#: mini_cart_api.py:392 mini_cart_api.py:472
 msgid "Cart item not found"
 msgstr "Item keranjang tidak ditemukan"
 
+#: mini_cart_api.py:450
 msgid "Remove item from cart"
 msgstr "Hapus item dari keranjang"
 
+#: mini_cart_api.py:451
 msgid ""
 "\n"
 "    Remove an item from the cart entirely.\n"
@@ -174,38 +194,34 @@ msgid ""
 "    - Delete button on cart items\n"
 "    - Clearing specific items\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "    "
 msgstr ""
 "\n"
-"    Menghapus item dari keranjang secara keseluruhan. Mengembalikan data "
-"keranjang yang telah diperbarui setelah penghapusan. **Kasus Penggunaan:** - "
-"Tombol hapus pada item keranjang - Mengosongkan item tertentu **Otorisasi:** "
-"Tidak diperlukan (memvalidasi item termasuk dalam keranjang pengguna)\n"
+"    Menghapus item dari keranjang secara keseluruhan. Mengembalikan data keranjang yang telah diperbarui setelah penghapusan. **Kasus Penggunaan:** - Tombol hapus pada item keranjang - Mengosongkan item tertentu **Otorisasi:** Tidak diperlukan (memvalidasi item termasuk dalam keranjang pengguna)\n"
 "    "
 
+#: mini_cart_api.py:466
 msgid "Item removed successfully"
 msgstr "Item berhasil dihapus"
 
+#: mini_cart_api.py:515
 msgid "Get empty cart recommendations"
 msgstr "Dapatkan rekomendasi keranjang kosong"
 
+#: mini_cart_api.py:516
 msgid ""
 "\n"
 "    Get intelligent product recommendations for the empty cart state.\n"
 "\n"
-"    Returns personalized suggestions organized into labeled sections based "
-"on:\n"
-"    - **Recently viewed**: Products the user has browsed (session-based for "
-"anonymous users)\n"
+"    Returns personalized suggestions organized into labeled sections based on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for anonymous users)\n"
 "    - **Related**: Products in the same categories as recently viewed items\n"
 "    - **On sale**: Currently discounted products\n"
 "    - **Trending**: Popular products by views/sales\n"
 "    - **Featured**: Editor-picked products as fallback\n"
 "\n"
-"    All returned products are verified to be in stock and available for "
-"purchase.\n"
+"    All returned products are verified to be in stock and available for purchase.\n"
 "\n"
 "    **Use Cases:**\n"
 "    - Empty cart state in mini-cart\n"
@@ -220,36 +236,30 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Dapatkan rekomendasi produk cerdas untuk keadaan keranjang kosong. "
-"Mengembalikan saran pribadi yang disusun dalam bagian berlabel berdasarkan: "
-"- **Baru Dilihat**: Produk yang telah dilihat pengguna (berbasis sesi untuk "
-"pengguna anonim) - **Terkait**: Produk dalam kategori yang sama dengan "
-"produk yang baru dilihat - **Diskon**: Produk yang sedang didiskon - "
-"**Tren**: Produk populer berdasarkan tampilan/penjualan - **Dianjurkan**: "
-"Produk yang dipilih oleh editor sebagai cadangan Semua produk yang "
-"dikembalikan telah diverifikasi untuk memastikan stok dan ketersediaan "
-"pembelian. **Penggunaan:** - Keadaan keranjang kosong di mini-cart - Bagian "
-"\"Anda mungkin menyukai\" - Kesempatan penjualan silang **Autentikasi:** "
-"Tidak diperlukan (menggunakan sesi untuk pengguna anonim) **Personalisasi:** "
-"- Pengguna anonim: Berdasarkan produk yang baru dilihat dalam sesi - "
-"Pengguna terautentikasi: Berdasarkan riwayat akun dan preferensi\n"
+"    Dapatkan rekomendasi produk cerdas untuk keadaan keranjang kosong. Mengembalikan saran pribadi yang disusun dalam bagian berlabel berdasarkan: - **Baru Dilihat**: Produk yang telah dilihat pengguna (berbasis sesi untuk pengguna anonim) - **Terkait**: Produk dalam kategori yang sama dengan produk yang baru dilihat - **Diskon**: Produk yang sedang didiskon - **Tren**: Produk populer berdasarkan tampilan/penjualan - **Dianjurkan**: Produk yang dipilih oleh editor sebagai cadangan Semua produk yang dikembalikan telah diverifikasi untuk memastikan stok dan ketersediaan pembelian. **Penggunaan:** - Keadaan keranjang kosong di mini-cart - Bagian \"Anda mungkin menyukai\" - Kesempatan penjualan silang **Autentikasi:** Tidak diperlukan (menggunakan sesi untuk pengguna anonim) **Personalisasi:** - Pengguna anonim: Berdasarkan produk yang baru dilihat dalam sesi - Pengguna terautentikasi: Berdasarkan riwayat akun dan preferensi\n"
 "    "
 
+#: mini_cart_api.py:545
 msgid "Maximum number of products to return (default: 6, max: 12)"
 msgstr "Jumlah maksimum produk yang dikembalikan (default: 6, maks: 12)"
 
+#: mini_cart_api.py:556
 msgid "Recommendations retrieved successfully"
 msgstr "Rekomendasi berhasil diambil"
 
+#: models.py:18 models.py:964 models.py:1068
 msgid "User"
 msgstr "Pengguna"
 
+#: models.py:21 models.py:1071
 msgid "Session Key"
 msgstr "Kunci Sesi"
 
+#: models.py:31
 msgid "Cart Currency"
 msgstr "Mata Uang Keranjang"
 
+#: models.py:33
 msgid ""
 "Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
 "default currency."
@@ -257,204 +267,214 @@ msgstr ""
 "Kode mata uang untuk semua item dalam keranjang ini (misalnya EUR, NZD). "
 "Kosong berarti mata uang default toko."
 
+#: models.py:40
 msgid "Default Layout"
 msgstr "Tata Letak Default"
 
+#: models.py:41 models.py:971
 msgid "Compact View"
 msgstr "Tampilan Kompak"
 
+#: models.py:42 models.py:972
 msgid "Detailed View"
 msgstr "Tampilan Rinci"
 
+#: models.py:43
 msgid "Minimal View"
 msgstr "Tampilan Minimal"
 
+#: models.py:44
 msgid "Sidebar Cart"
 msgstr "Keranjang Sidebar"
 
+#: models.py:45
 msgid "Overlay Cart"
 msgstr "Keranjang Overlay"
 
+#: models.py:52
 msgid "How the cart is displayed"
 msgstr "Cara keranjang ditampilkan"
 
+#: models.py:53
 msgid "Cart Layout"
 msgstr "Tata Letak Keranjang"
 
+#: models.py:57
 msgid "Show Product Images"
 msgstr "Tampilkan Gambar Produk"
 
+#: models.py:59
 msgid "Show Product Variants"
 msgstr "Tampilkan Variasi Produk"
 
+#: models.py:61
 msgid "Show Remove Button"
 msgstr "Tampilkan Tombol Hapus"
 
+#: models.py:63
 msgid "Show Quantity Controls"
 msgstr "Tampilkan Kontrol Kuantitas"
 
+#: models.py:67
 msgid "Show Item Totals"
 msgstr "Tampilkan Total Item"
 
+#: models.py:68
 msgid "Show Cart Summary"
 msgstr "Tampilkan Ringkasan Keranjang"
 
+#: models.py:69
 msgid "Show Savings"
 msgstr "Tampilkan Penghematan"
 
+#: models.py:75
 msgid "Single Page Checkout"
 msgstr "Checkout Halaman Tunggal"
 
+#: models.py:76
 msgid "Multi-Step Checkout"
 msgstr "Checkout Multi-Langkah"
 
+#: models.py:77
 msgid "Accordion Style"
 msgstr "Gaya Accordion"
 
+#: models.py:78
 msgid "Wizard Style"
 msgstr "Gaya Wizard"
 
+#: models.py:81
 msgid "Checkout Flow"
 msgstr "Alur Checkout"
 
+#: models.py:91 models.py:1609 models.py:1739
 msgid "Shipping Address"
 msgstr "Alamat Pengiriman"
 
+#: models.py:99 models.py:1214 models.py:1740
+#: templates/admin/cart/cart/change_list.html:93
 msgid "Shipping Method"
 msgstr "Metode Pengiriman"
 
+#: models.py:107
 msgid "Calculated shipping cost"
 msgstr "Biaya pengiriman yang dihitung"
 
+#: models.py:108 models.py:1660
 msgid "Shipping Cost"
 msgstr "Biaya Pengiriman"
 
+#: models.py:112 models.py:1664
 msgid "Estimated Delivery Date"
 msgstr "Tanggal Pengiriman yang Diperkirakan"
 
+#: models.py:115
 msgid "Shipping Notes"
 msgstr "Catatan Pengiriman"
 
+#: models.py:119 models.py:846
 msgid "None"
 msgstr "Tidak ada"
 
+#: models.py:120 models.py:847
 msgid "Percentage"
 msgstr "Persentase"
 
+#: models.py:121 models.py:848
 msgid "Fixed Amount"
 msgstr "Jumlah Tetap"
 
+#: models.py:124
 msgid "POS manual discount type"
 msgstr "Jenis Diskon Manual POS"
 
+#: models.py:127
 msgid "POS manual discount value"
 msgstr "Nilai Diskon Manual POS"
 
+#: models.py:131 models.py:858
 msgid "Discount value (percentage or fixed amount)"
 msgstr "Nilai diskon (persentase atau jumlah tetap)"
 
+#: models.py:139
 msgid "POS discount applied by"
 msgstr "Diskon POS diterapkan oleh"
 
+#: models.py:147
 msgid "POS discount approved by"
 msgstr "Diskon POS disetujui oleh"
 
+#: models.py:148 models.py:875
 msgid "Manager who approved the discount if it exceeded staff limit"
 msgstr "Manajer yang menyetujui diskon jika melebihi batas staf"
 
+#: models.py:151
 msgid "POS discount reason"
 msgstr "Alasan Diskon POS"
 
+#: models.py:154 models.py:879 models.py:992 models.py:1052 models.py:1210
+#: models.py:1447 models.py:1526 models.py:1756
 msgid "Created At"
 msgstr "Dibuat Pada"
 
+#: models.py:155 models.py:880 models.py:993 models.py:1211 models.py:1448
+#: models.py:1757
 msgid "Updated At"
 msgstr "Diperbarui Pada"
 
+#: models.py:158
 msgid "Shopping Cart"
 msgstr "Keranjang Belanja"
 
+#: models.py:159 templates/admin/cart/cart/change_list.html:4
+#: templates/admin/cart/cart/change_list.html:20
+#: templates/admin/cart/cart/change_list.html:175
 msgid "Shopping Carts"
 msgstr "Keranjang Belanja"
 
+#: models.py:186
 #, python-brace-format
 msgid "Cart for {username}"
 msgstr "Keranjang untuk {username}"
 
+#: models.py:187
 #, python-brace-format
 msgid "Cart (Session: {session})"
 msgstr "Keranjang (Sesi: {session})"
 
+#: models.py:455
 msgid "No shipping required"
 msgstr "Tidak perlu pengiriman"
 
+#: models.py:465
 msgid "Shipping address required"
 msgstr "Alamat pengiriman diperlukan"
 
+#: models.py:505
 msgid "Available shipping methods retrieved"
 msgstr "Metode pengiriman yang tersedia telah diambil"
 
+#: models.py:526
 msgid "Shipping calculated successfully"
 msgstr "Pengiriman dihitung dengan sukses"
 
-msgid "Invalid gift card code"
-msgstr "Kode kartu hadiah tidak valid"
-
-msgid "Gift card already applied"
-msgstr "Kartu hadiah sudah diterapkan"
-
-msgid "Gift card is not active"
-msgstr "Kartu hadiah tidak aktif"
-
-msgid "Gift card has expired"
-msgstr "Kartu hadiah sudah berakhir"
-
-msgid "Gift card has been fully redeemed"
-msgstr "Kartu hadiah telah sepenuhnya digunakan"
-
-msgid "Gift card cannot be used"
-msgstr "Kartu hadiah tidak dapat digunakan"
-
-#, python-brace-format
-msgid ""
-"Currency mismatch. Gift card is in {card_currency}, cart is in "
-"{cart_currency}"
-msgstr ""
-"Tidak cocoknya mata uang. Kartu hadiah berada di {card_currency}, keranjang "
-"berada di {cart_currency}"
-
-#, python-brace-format
-msgid ""
-"This gift card is in {card_currency}. Please switch your currency to "
-"{card_currency} to use it."
-msgstr ""
-"Kartu hadiah ini dalam {card_currency}. Silakan ubah mata uang Anda menjadi "
-"{card_currency} untuk menggunakan kartu ini."
-
-msgid "Gift cards cannot be used to purchase other gift cards"
-msgstr "Kartu hadiah tidak dapat digunakan untuk membeli kartu hadiah lainnya"
-
-msgid "Cart total is already covered"
-msgstr "Total keranjang sudah tertutup"
-
-msgid "Unable to process gift card currency conversion"
-msgstr "Tidak dapat memproses konversi mata uang kartu hadiah"
-
-msgid "Gift card applied successfully"
-msgstr "Kartu hadiah berhasil diterapkan"
-
+#: models.py:740 models.py:1023 models.py:1074
 msgid "Product"
 msgstr "Produk"
 
+#: models.py:747 models.py:1030
 msgid "Variant"
 msgstr "Variasi"
 
+#: models.py:751
 msgid "Quantity"
 msgstr "Jumlah"
 
+#: models.py:753
 msgid "Unit Price"
 msgstr "Harga Satuan"
 
+#: models.py:761
 msgid ""
 "Product customizations with calculated prices: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
@@ -462,42 +482,54 @@ msgstr ""
 "Pemodifikasian produk dengan harga yang dihitung: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
 
+#: models.py:763
 msgid "Customizations"
 msgstr "Kustomisasi"
 
+#: models.py:769
 msgid "Is Subscription"
 msgstr "Apakah Langganan"
 
+#: models.py:770
 msgid "Whether this item will be purchased as a subscription"
 msgstr "Apakah item ini akan dibeli sebagai langganan"
 
+#: models.py:777
 msgid "Subscription Plan"
 msgstr "Rencana Langganan"
 
+#: models.py:778
 msgid "Selected subscription plan for recurring billing"
 msgstr "Rencana langganan yang dipilih untuk pembayaran berulang"
 
+#: models.py:785
 msgid "Pricing Tier"
 msgstr "Tingkat Harga"
 
+#: models.py:786
 msgid "Selected pricing tier (billing frequency) for subscription"
 msgstr "Tingkat harga yang dipilih (frekuensi pembayaran) untuk langganan"
 
+#: models.py:793
 msgid "Payment Token"
 msgstr "Token Pembayaran"
 
+#: models.py:794
 msgid ""
 "Saved payment method for subscription billing (required for subscriptions)"
 msgstr ""
-"Metode pembayaran yang disimpan untuk pembayaran langganan (diperlukan untuk "
-"langganan)"
+"Metode pembayaran yang disimpan untuk pembayaran langganan (diperlukan untuk"
+" langganan)"
 
+#: models.py:804
 msgid "Parent Bundle"
 msgstr "Bundle Induk"
 
+#: models.py:805
 msgid "If this is a bundle component, reference to bundle CartItem"
 msgstr "Jika ini adalah komponen paket, referensi ke CartItem paket"
 
+#: models.py:813
 msgid ""
 "Booking details: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
@@ -505,189 +537,222 @@ msgstr ""
 "Detail pemesanan: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
 
+#: models.py:815
 msgid "Booking Data"
 msgstr "Data Pemesanan"
 
+#: models.py:833
+msgid ""
+"Gift card purchase details: {recipient_email, recipient_name, sender_name, "
+"message, scheduled_send_at, amount}"
+msgstr ""
+"Detail pembelian kartu hadiah: {recipient_email, recipient_name, "
+"sender_name, message, scheduled_send_at, amount}"
+
+#: models.py:836
+#| msgid "Gift Card"
+msgid "Gift Card Data"
+msgstr "Data Kartu Hadiah"
+
+#: models.py:841
 msgid "Customer notes for this item"
 msgstr "Catatan pelanggan untuk item ini"
 
+#: models.py:841 models.py:1034 models.py:1573
 msgid "Notes"
 msgstr "Catatan"
 
+#: models.py:851
 msgid "manual discount type"
 msgstr "tipe diskon manual"
 
+#: models.py:854
 msgid "manual discount value"
 msgstr "nilai diskon manual"
 
+#: models.py:866
 msgid "discount applied by"
 msgstr "diskon diterapkan oleh"
 
+#: models.py:874
 msgid "discount approved by"
 msgstr "diskon disetujui oleh"
 
+#: models.py:877
 msgid "discount reason"
 msgstr "alasan diskon"
 
+#: models.py:883
 msgid "Cart Item"
 msgstr "Item Keranjang"
 
+#: models.py:884
 msgid "Cart Items"
 msgstr "Item Keranjang"
 
+#: models.py:965 services/wishlist_service.py:28
 msgid "My Wishlist"
 msgstr "Daftar Keinginan Saya"
 
+#: models.py:965 models.py:1108 models.py:1367 models.py:1506
+#: templates/admin/cart/shippingmethod/change_form.html:276
 msgid "Name"
 msgstr "Nama"
 
+#: models.py:969
 msgid "Grid Layout"
 msgstr "Tata Letak Kisi"
 
+#: models.py:970
 msgid "List Layout"
 msgstr "Tata Letak Daftar"
 
+#: models.py:979
 msgid "How wishlist items are displayed"
 msgstr "Cara item daftar keinginan ditampilkan"
 
+#: models.py:980
 msgid "Wishlist Layout"
 msgstr "Tata Letak Daftar Keinginan"
 
+#: models.py:984
 msgid "Is Public"
 msgstr "Apakah Umum"
 
+#: models.py:985
 msgid "Share Slug"
 msgstr "Bagikan Slug"
 
+#: models.py:988
 msgid "Show Prices"
 msgstr "Tampilkan Harga"
 
+#: models.py:989
 msgid "Show Availability"
 msgstr "Tampilkan Ketersediaan"
 
+#: models.py:990
 msgid "Show Add to Cart"
 msgstr "Tampilkan Tambah ke Keranjang"
 
+#: models.py:996 models.py:1020
 msgid "Wishlist"
 msgstr "Daftar Keinginan"
 
+#: models.py:997
 msgid "Wishlists"
 msgstr "Daftar Keinginan"
 
+#: models.py:1038
 msgid "Low"
 msgstr "Rendah"
 
+#: models.py:1039
 msgid "Medium"
 msgstr "Sedang"
 
+#: models.py:1040
 msgid "High"
 msgstr "Tinggi"
 
+#: models.py:1043 models.py:1442
+#: templates/admin/cart/shippingmethod/change_form.html:279
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:51
 msgid "Priority"
 msgstr "Prioritas"
 
+#: models.py:1048
 msgid "Notify When Available"
 msgstr "Notifikasi Saat Tersedia"
 
+#: models.py:1050
 msgid "Notify When On Sale"
 msgstr "Notifikasi Saat Diskon"
 
+#: models.py:1055
 msgid "Wishlist Item"
 msgstr "Item Daftar Keinginan"
 
+#: models.py:1056
 msgid "Wishlist Items"
 msgstr "Item Daftar Keinginan"
 
+#: models.py:1077
 msgid "Viewed At"
 msgstr "Dilihat Pada"
 
+#: models.py:1078
 msgid "View Count"
 msgstr "Jumlah Pemlihatan"
 
+#: models.py:1081
 msgid "Recently Viewed Product"
 msgstr "Produk yang Dilihat Baru-baru ini"
 
+#: models.py:1082
 msgid "Recently Viewed Products"
 msgstr "Produk yang Dilihat Baru-baru ini"
 
+#: models.py:1094
 #, python-brace-format
 msgid "Session: {session}"
 msgstr "Sesi: {session}"
 
+#: models.py:1098
 #, python-brace-format
 msgid "{product} viewed by {user}"
 msgstr "{product} dilihat oleh {user}"
 
+#: models.py:1109 models.py:1507
+#: templates/admin/cart/method_wizard/step1_basics.html:44
 msgid "Description"
 msgstr "Deskripsi"
 
+#: models.py:1113 templates/admin/cart/shippingmethod/change_list.html:78
 msgid "Flat Rate"
 msgstr "Tarif Tetap"
 
-msgid "Free Shipping"
-msgstr "Pengiriman Gratis"
-
-msgid "Weight Based"
-msgstr "Berdasarkan Berat"
-
-msgid "Price Based"
-msgstr "Berdasarkan Harga"
-
+#: models.py:1114
 msgid "Real-Time Carrier Rates"
 msgstr "Tarif Pengiriman Waktu Nyata"
 
+#: models.py:1115 templates/admin/cart/shippingmethod/change_list.html:84
 msgid "Local Pickup"
 msgstr "Ambil di Lokal"
 
+#: models.py:1116 templates/admin/cart/shippingmethod/change_list.html:87
 msgid "Table Rate"
 msgstr "Tarif Tabel"
 
+#: models.py:1119 templates/admin/cart/method_wizard/step1_basics.html:111
 msgid "Method Type"
 msgstr "Jenis Metode"
 
+#: models.py:1129
 msgid "Fixed shipping cost (for flat_rate type)"
 msgstr "Biaya pengiriman tetap (untuk tipe flat_rate)"
 
+#: models.py:1130 templates/admin/cart/method_wizard/step1_basics.html:146
 msgid "Flat Rate Cost"
 msgstr "Biaya Tarif Tetap"
 
-msgid "Minimum cart value to qualify"
-msgstr "Nilai keranjang minimum untuk memenuhi syarat"
-
-msgid "Minimum Order Value"
-msgstr "Nilai Pesanan Minimum"
-
-msgid "Maximum cart value to qualify"
-msgstr "Nilai keranjang maksimum untuk memenuhi syarat"
-
-msgid "Maximum Order Value"
-msgstr "Nilai Pesanan Maksimum"
-
-msgid "Minimum cart weight (kg)"
-msgstr "Berat keranjang minimum (kg)"
-
-msgid "Minimum Weight"
-msgstr "Berat Minimum"
-
-msgid "Maximum cart weight (kg)"
-msgstr "Berat keranjang maksimum (kg)"
-
-msgid "Maximum Weight"
-msgstr "Berat Maksimum"
-
+#: models.py:1138 templates/admin/cart/method_wizard/step3_coverage.html:17
 msgid "Shipping Zones"
 msgstr "Zona Pengiriman"
 
+#: models.py:1140
 msgid ""
-"Zones where this shipping method is available. If empty, legacy country/"
-"state restrictions apply."
+"Zones where this shipping method is available. If empty, legacy "
+"country/state restrictions apply."
 msgstr ""
-"Zona di mana metode pengiriman ini tersedia. Jika kosong, pembatasan negara/"
-"negara bagian lama akan berlaku."
+"Zona di mana metode pengiriman ini tersedia. Jika kosong, pembatasan "
+"negara/negara bagian lama akan berlaku."
 
+#: models.py:1149 templates/admin/cart/method_wizard/step4_features.html:19
 msgid "Pickup Locations"
 msgstr "Lokasi Pengambilan"
 
+#: models.py:1151
 msgid ""
 "Locations where customers can pick up orders using this shipping method. "
 "Only applies to 'local_pickup' method type."
@@ -695,24 +760,31 @@ msgstr ""
 "Lokasi di mana pelanggan dapat mengambil pesanan menggunakan metode "
 "pengiriman ini. Hanya berlaku untuk tipe metode 'local_pickup'."
 
+#: models.py:1158
 msgid "Minimum delivery time in business days"
 msgstr "Waktu pengiriman minimum dalam hari kerja"
 
+#: models.py:1159 templates/admin/cart/method_wizard/step4_features.html:176
 msgid "Minimum Delivery Days"
 msgstr "Hari Pengiriman Minimum"
 
+#: models.py:1164
 msgid "Maximum delivery time in business days"
 msgstr "Waktu pengiriman maksimum dalam hari kerja"
 
+#: models.py:1165 templates/admin/cart/method_wizard/step4_features.html:193
 msgid "Maximum Delivery Days"
 msgstr "Hari Pengiriman Maksimum"
 
+#: models.py:1172
 msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
 msgstr "Kelas ikon Font Awesome (contoh: 'fa-truck', 'fa-box')"
 
+#: models.py:1173 models.py:1512
 msgid "Icon"
 msgstr "Ikon"
 
+#: models.py:1183
 msgid ""
 "Custom shipping method image from media library. If provided, this takes "
 "priority over icon."
@@ -720,236 +792,307 @@ msgstr ""
 "Gambar metode pengiriman khusus dari perpustakaan media. Jika disediakan, "
 "ini akan mengambil prioritas atas ikon."
 
+#: models.py:1185
 msgid "Image"
 msgstr "Gambar"
 
+#: models.py:1188 templates/admin/cart/method_wizard/step4_features.html:234
 msgid "Sort Order"
 msgstr "Urutan Pengurutan"
 
+#: models.py:1189 models.py:1445 models.py:1518 models.py:1575
 msgid "Is Active"
 msgstr "Aktif"
 
+#: models.py:1197
 msgid "Custom Carrier"
 msgstr "Pengirim Khusus"
 
+#: models.py:1200 templates/admin/cart/method_wizard/step1_basics.html:185
+#: templates/admin/cart/shippingmethod/change_form.html:98
 msgid "Carrier"
 msgstr "Pengirim"
 
+#: models.py:1206
 msgid "Carrier-specific service code"
 msgstr "Kode layanan khusus pengirim"
 
+#: models.py:1207
 msgid "Carrier Service Code"
 msgstr "Kode Layanan Pengirim"
 
+#: models.py:1215 templates/admin/cart/shippingmethod/change_list.html:4
+#: templates/admin/cart/shippingmethod/change_list.html:19
 msgid "Shipping Methods"
 msgstr "Metode Pengiriman"
 
+#: models.py:1236
 msgid "Shipping method is not active"
 msgstr "Metode pengiriman tidak aktif"
 
-#, python-brace-format
-msgid "Minimum order value {value} required"
-msgstr "Nilai pesanan minimum {value} diperlukan"
-
-#, python-brace-format
-msgid "Maximum order value {value} exceeded"
-msgstr "Nilai pesanan maksimum {value} terlampaui"
-
-#, python-brace-format
-msgid "Minimum weight {weight}kg required"
-msgstr "Berat minimum {weight}kg diperlukan"
-
-#, python-brace-format
-msgid "Maximum weight {weight}kg exceeded"
-msgstr "Berat maksimum {weight}kg terlampaui"
-
+#: models.py:1240
 msgid "Cart contains only digital products"
 msgstr "Keranjang hanya berisi produk digital"
 
+#: models.py:1266
+#| msgid "No pricing tier available for this plan"
+msgid "Not available for this cart"
+msgstr "Tidak tersedia untuk keranjang ini"
+
+#: models.py:1268
 msgid "Available"
 msgstr "Tersedia"
 
+#: models.py:1291
 msgid "No geographic restrictions"
 msgstr "Tidak ada pembatasan geografis"
 
+#: models.py:1299
 #, python-brace-format
 msgid "Available in {zone}"
 msgstr "Tersedia di {zone}"
 
+#: models.py:1302
 msgid "Not available in your location"
 msgstr "Tidak tersedia di lokasi Anda"
 
+#: models.py:1305
 msgid "Available worldwide"
 msgstr "Tersedia di seluruh dunia"
 
+#: models.py:1371 models.py:1550
 msgid "ISO 3166-1 alpha-2 country code"
 msgstr "Kode negara ISO 3166-1 alpha-2"
 
+#: models.py:1371 templates/admin/cart/taxrate/change_list.html:67
 msgid "Country"
 msgstr "Negara"
 
+#: models.py:1375
 msgid "State/Province/Region"
 msgstr "Negara Bagian/Propinsi/Region"
 
+#: models.py:1375
 msgid "State"
 msgstr "Negara Bagian"
 
+#: models.py:1379
 msgid "City name (optional)"
 msgstr "Nama Kota (opsional)"
 
+#: models.py:1379
 msgid "City"
 msgstr "Kota"
 
+#: models.py:1385
 msgid "List of specific postal codes (optional)"
 msgstr "Daftar kode pos spesifik (opsional)"
 
+#: models.py:1386
 msgid "Postal Codes"
 msgstr "Kode Pos"
 
+#: models.py:1393
 msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
 msgstr "Tarif pajak sebagai desimal (contoh: 0.0825 untuk 8.25%)"
 
+#: models.py:1394 models.py:1564
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:47
 msgid "Rate"
 msgstr "Tarif"
 
+#: models.py:1399 templates/admin/cart/taxrate/change_list.html:79
 msgid "Sales Tax"
 msgstr "Pajak Penjualan"
 
+#: models.py:1402
 msgid "Custom Tax"
 msgstr "Pajak Khusus"
 
+#: models.py:1405 models.py:1567
+#: templates/admin/cart/taxrate/change_list.html:76
 msgid "Tax Type"
 msgstr "Jenis Pajak"
 
+#: models.py:1411
 msgid "Apply tax to shipping costs"
 msgstr "Terapkan pajak pada biaya pengiriman"
 
+#: models.py:1412
 msgid "Applies to Shipping"
 msgstr "Berlaku untuk Pengiriman"
 
+#: models.py:1417
 msgid "Calculate on top of other taxes (compound tax)"
 msgstr "Hitung di atas pajak lainnya (pajak majemuk)"
 
+#: models.py:1418
 msgid "Compound Tax"
 msgstr "Pajak Gabungan"
 
-msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+#: models.py:1426
+msgid ""
+"Product types exempt from this tax. Gift cards are exempt by default: "
+"selling stored value is not a taxable supply in most jurisdictions, and tax "
+"falls due when the card is spent. Confirm with your accountant."
 msgstr ""
-"Jenis produk yang terbebas dari pajak ini (contoh: ['digital', 'service'])"
+"Jenis produk yang bebas dari pajak ini. Kartu hadiah secara default bebas "
+"pajak: menjual nilai yang disimpan bukan merupakan pasokan yang dapat "
+"dikenai pajak di kebanyakan yurisdiksi, dan pajak terutang saat kartu "
+"tersebut digunakan. Konfirmasikan dengan akuntan Anda."
 
+#: models.py:1430
 msgid "Exempt Product Types"
 msgstr "Jenis Produk yang Bebas Pajak"
 
+#: models.py:1436
 msgid "Categories exempt from this tax"
 msgstr "Kategori yang bebas dari pajak ini"
 
+#: models.py:1437
 msgid "Exempt Categories"
 msgstr "Kategori yang Bebas Pajak"
 
+#: models.py:1442
 msgid "Higher priority rules take precedence"
 msgstr "Aturan dengan prioritas lebih tinggi yang berlaku"
 
+#: models.py:1451
 msgid "Tax Rate"
 msgstr "Tarif Pajak"
 
+#: models.py:1452 templates/admin/cart/taxrate/change_list.html:4
+#: templates/admin/cart/taxrate/change_list.html:17
 msgid "Tax Rates"
 msgstr "Tarif Pajak"
 
+#: models.py:1465
 #, python-brace-format
 msgid "{name} ({location}) - {rate}%"
 msgstr "{name} ({location}) - {rate}%"
 
+#: models.py:1491
 msgid "Europe"
 msgstr "Eropa"
 
+#: models.py:1492
 msgid "North America"
 msgstr "Amerika Utara"
 
+#: models.py:1493
 msgid "Asia Pacific"
 msgstr "Asia Pasifik"
 
+#: models.py:1494
 msgid "Middle East"
 msgstr "Timur Tengah"
 
+#: models.py:1495
 msgid "Africa"
 msgstr "Afrika"
 
+#: models.py:1496
 msgid "Latin America"
 msgstr "Amerika Latin"
 
+#: models.py:1497
 msgid "Oceania"
 msgstr "Oceania"
 
+#: models.py:1503
 msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
 msgstr "Identifikasi unik (contoh: eu_vat, us_sales_tax)"
 
+#: models.py:1504
 msgid "Key"
 msgstr "Kunci"
 
+#: models.py:1511
 msgid "Font Awesome icon class"
 msgstr "Kelas ikon Font Awesome"
 
+#: models.py:1515
 msgid "Default Tax Type"
 msgstr "Jenis Pajak Default"
 
+#: models.py:1517
 msgid "Region"
 msgstr "Wilayah"
 
+#: models.py:1522
 msgid "Version for tracking rate updates"
 msgstr "Versi untuk melacak pembaruan tarif"
 
+#: models.py:1523
 msgid "Version"
 msgstr "Versi"
 
+#: models.py:1525
 msgid "Last Updated"
 msgstr "Terakhir Diperbarui"
 
+#: models.py:1529
 msgid "Tax Preset Group"
 msgstr "Grup Preset Pajak"
 
+#: models.py:1530
 msgid "Tax Preset Groups"
 msgstr "Grup Preset Pajak"
 
+#: models.py:1547
 msgid "Preset Group"
 msgstr "Grup Preset"
 
+#: models.py:1550
 msgid "Country Code"
 msgstr "Kode Negara"
 
+#: models.py:1552
 msgid "Country Name"
 msgstr "Nama Negara"
 
+#: models.py:1556
 msgid "State/province code (for US/CA presets)"
 msgstr "Kode Negara Bagian/Propinsi (untuk preset US/CA)"
 
+#: models.py:1557
 msgid "State Code"
 msgstr "Kode Negara Bagian"
 
+#: models.py:1559
 msgid "State Name"
 msgstr "Nama Negara Bagian"
 
+#: models.py:1563
 msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
 msgstr "Tarif pajak sebagai desimal (contoh: 0.20 untuk 20%)"
 
+#: models.py:1572
 #, python-format
 msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
 msgstr "Catatan opsional (contoh, 'Meningkat dari 22% pada Juli 2025')"
 
+#: models.py:1578
 msgid "Tax Preset Rate"
 msgstr "Tarif Preset Pajak"
 
+#: models.py:1579
 msgid "Tax Preset Rates"
 msgstr "Tarif Preset Pajak"
 
+#: models.py:1618
 msgid "Billing Address"
 msgstr "Alamat Tagihan"
 
+#: models.py:1622
 msgid "Billing Same as Shipping"
 msgstr "Alamat Tagihan Sama dengan Alamat Pengiriman"
 
+#: models.py:1630
 msgid "Shipping Address Data"
 msgstr "Data Alamat Pengiriman"
 
+#: models.py:1632
 msgid ""
 "Temporary shipping address data (not saved to Address model until order "
 "placed)"
@@ -957,9 +1100,11 @@ msgstr ""
 "Data alamat pengiriman sementara (tidak disimpan ke model Address sampai "
 "pesanan ditempatkan)"
 
+#: models.py:1639
 msgid "Billing Address Data"
 msgstr "Data Alamat Pembayaran"
 
+#: models.py:1641
 msgid ""
 "Temporary billing address data (not saved to Address model until order "
 "placed)"
@@ -967,284 +1112,384 @@ msgstr ""
 "Data alamat pembayaran sementara (tidak disimpan ke model Address sampai "
 "pesanan ditempatkan)"
 
+#: models.py:1651
 msgid "Selected Shipping Method"
 msgstr "Metode Pengiriman yang Dipilih"
 
+#: models.py:1671
 msgid "Cached list of available shipping methods with rates"
 msgstr "Daftar metode pengiriman yang tersedia dengan tarif yang disimpan"
 
+#: models.py:1672
 msgid "Available Shipping Methods"
 msgstr "Metode Pengiriman yang Tersedia"
 
+#: models.py:1679
 msgid "Detailed tax breakdown by jurisdiction"
 msgstr "Pembreakdownan pajak terperinci berdasarkan yurisdiksi"
 
+#: models.py:1680
 msgid "Tax Breakdown"
 msgstr "Pembreakdownan Pajak"
 
+#: models.py:1688
 msgid "Tax Amount"
 msgstr "Jumlah Pajak"
 
+#: models.py:1698
 msgid "Payment Provider"
 msgstr "Pemberi Pembayaran"
 
+#: models.py:1707
 msgid "Subtotal"
 msgstr "Subtotal"
 
+#: models.py:1715
 msgid "Discount Amount"
 msgstr "Jumlah Diskon"
 
+#: models.py:1723
 msgid "Gift Card Discount"
 msgstr "Diskon Kartu Hadiah"
 
+#: models.py:1724
 msgid "Total discount from applied gift cards"
 msgstr "Total diskon dari kartu hadiah yang diterapkan"
 
+#: models.py:1732
 msgid "Final total: subtotal + shipping + tax - discounts"
 msgstr "Total akhir: subtotal + pengiriman + pajak - diskon"
 
+#: models.py:1733
 msgid "Total Amount"
 msgstr "Jumlah Total"
 
+#: models.py:1738
 msgid "Cart Review"
 msgstr "Ulasan Keranjang"
 
+#: models.py:1741
 msgid "Billing Information"
 msgstr "Informasi Tagihan"
 
+#: models.py:1742
 msgid "Payment Method"
 msgstr "Metode Pembayaran"
 
+#: models.py:1743
 msgid "Order Review"
 msgstr "Ulasan Pemesanan"
 
+#: models.py:1746
 msgid "Step Completed"
 msgstr "Langkah Selesai"
 
+#: models.py:1749
 msgid "Expires At"
 msgstr "Berakhir Pada"
 
+#: models.py:1753
 msgid "Metadata"
 msgstr "Metadata"
 
+#: models.py:1754
 msgid "Extra metadata (e.g., marketplace purchase info)"
 msgstr "Metadata tambahan (contoh: informasi pembelian pasar)"
 
+#: models.py:1760
 msgid "Checkout Session"
 msgstr "Sesi Checkout"
 
+#: models.py:1761
 msgid "Checkout Sessions"
 msgstr "Sesi Checkout"
 
+#: models.py:1768
 #, python-brace-format
 msgid "Checkout for {cart}"
 msgstr "Pembayaran untuk {cart}"
 
-msgid "Gift Card"
-msgstr "Kartu Hadiah"
-
-msgid "Amount in base currency (used for cart calculations)"
-msgstr "Jumlah dalam mata uang dasar (digunakan untuk perhitungan keranjang)"
-
-msgid "Original Currency Amount"
-msgstr "Jumlah Mata Uang Asli"
-
-msgid ""
-"Discount in the gift card's native currency (for foreign-currency gift cards)"
-msgstr ""
-"Diskon dalam mata uang asli kartu hadiah (untuk kartu hadiah mata uang asing)"
-
-msgid "Exchange Rate"
-msgstr "Kurs Tukar"
-
-msgid "Rate: gift card currency -> base currency at time of application"
-msgstr "Tarif: mata uang kartu hadiah -> mata uang dasar pada waktu penerapan"
-
-msgid "Applied At"
-msgstr "Diterapkan Pada"
-
-msgid "Applied Gift Card"
-msgstr "Kartu Hadiah yang Diterapkan"
-
-msgid "Applied Gift Cards"
-msgstr "Kartu Hadiah yang Diterapkan"
-
-msgid "This gift card cannot be used"
-msgstr "Kartu hadiah ini tidak dapat digunakan"
-
-msgid "Discount amount exceeds gift card balance"
-msgstr "Jumlah diskon melebihi saldo kartu hadiah"
-
+#: serializers.py:34
 msgid "Total customization price (per unit)"
 msgstr "Harga penyesuaian total (per unit)"
 
+#: serializers.py:43
 msgid "'instant' for digital items, 'shipping' for physical items"
 msgstr "'instant' untuk barang digital, 'shipping' untuk barang fisik"
 
+#: serializers.py:46
 msgid "True if this item is a component of a bundle"
 msgstr "Benar jika item ini adalah komponen dari paket"
 
+#: serializers.py:49
 msgid "ID of parent bundle CartItem if this is a component"
 msgstr "ID dari CartItem bundel induk jika ini adalah komponen"
 
+#: serializers.py:52
 msgid "Child items if this is a bundle parent"
 msgstr "Item anak jika ini adalah bundel induk"
 
+#: serializers.py:591
+#| msgid "Remove gift card"
+msgid "Where to deliver the gift card"
+msgstr "Kemana kartu hadiah akan dikirimkan"
+
+#: serializers.py:605
+msgid "Offset-aware ISO-8601. Omit to deliver as soon as payment clears."
+msgstr ""
+"ISO-8601 yang sadar offset. Hilangkan untuk mengirimkan segera setelah "
+"pembayaran selesai."
+
+#: serializers.py:612
+msgid "Face value, for products that let the customer choose."
+msgstr "Nilai nominal, untuk produk yang memungkinkan pelanggan memilih."
+
+#: serializers.py:621
+#| msgid "Gift card is not active"
+msgid "Gift card details must be an object."
+msgstr "Detail kartu hadiah harus berupa objek."
+
+#: serializers.py:626
+#, python-format
+msgid "Unknown field(s): %(keys)s"
+msgstr "Bidang tidak diketahui: %(keys)s"
+
+#: serializers.py:638
+msgid "Message cannot contain HTML or markup."
+msgstr "Pesan tidak dapat mengandung HTML atau markup."
+
+#: serializers.py:647
+msgid "Include a UTC offset so the send time is unambiguous."
+msgstr "Sertakan offset UTC agar waktu pengiriman menjadi jelas."
+
+#: serializers.py:651
+msgid "Scheduled delivery must be in the future."
+msgstr "Pengiriman yang dijadwalkan harus berada di masa depan."
+
+#: serializers.py:654
+msgid "Scheduled delivery cannot be more than a year away."
+msgstr "Pengiriman yang dijadwalkan tidak dapat lebih dari setahun ke depan."
+
+#: serializers.py:673
 msgid "Map of bundle_item_id to variant_id for customer-selected variants"
 msgstr ""
 "Pemetaan dari bundle_item_id ke variant_id untuk variasi yang dipilih "
 "pelanggan"
 
+#: serializers.py:680
 msgid ""
-"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+"List of bundle_item_ids to exclude (for optional items customer doesn't "
+"want)"
 msgstr ""
 "Daftar bundle_item_ids yang akan dikecualikan (untuk item opsional yang "
 "tidak diinginkan oleh pelanggan)"
 
-msgid "Map of slot_id to list of selected option_ids for configurable products"
+#: serializers.py:689
+msgid ""
+"Map of slot_id to list of selected option_ids for configurable products"
 msgstr ""
-"Peta dari slot_id ke daftar option_ids yang dipilih untuk produk konfigurabel"
+"Peta dari slot_id ke daftar option_ids yang dipilih untuk produk "
+"konfigurabel"
 
+#: serializers.py:694
 msgid "Configuration preset ID used as starting point"
 msgstr "ID preset konfigurasi yang digunakan sebagai titik awal"
 
+#: serializers.py:706
 msgid ""
-"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+"Booking details: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
 msgstr ""
 "Detail pemesanan: start_datetime, end_datetime, resource_id, persons, "
 "timezone"
 
+#: serializers.py:719
 msgid "Quantity must be at least 1"
 msgstr "Kuantitas harus minimal 1"
 
+#: serializers.py:737
 msgid "Subscription plan is required for subscription purchases"
 msgstr "Rencana langganan diperlukan untuk pembelian langganan"
 
+#: serializers.py:743
 msgid "Payment token is required for subscription purchases"
 msgstr "Token pembayaran diperlukan untuk pembelian langganan"
 
+#: serializers.py:752 services/cart_service.py:991
+#: services/wishlist_service.py:61
 msgid "Product not found"
 msgstr "Produk tidak ditemukan"
 
+#: serializers.py:756
 msgid "This product does not support subscriptions"
 msgstr "Produk ini tidak mendukung langganan"
 
+#: serializers.py:768
 msgid "Invalid or inactive subscription plan"
 msgstr "Rencana langganan tidak valid atau tidak aktif"
 
+#: serializers.py:773
 msgid "This plan is not available for this product"
 msgstr "Rencana ini tidak tersedia untuk produk ini"
 
+#: serializers.py:790
 msgid "Invalid or inactive payment token"
 msgstr "Token pembayaran tidak valid atau tidak aktif"
 
+#: serializers.py:805
 msgid "Pricing tier not found or does not belong to selected plan"
 msgstr ""
 "Tingkat harga tidak ditemukan atau tidak termasuk dalam rencana yang dipilih"
 
+#: serializers.py:813
 msgid "No pricing tier available for this plan"
 msgstr "Tidak ada tingkat harga yang tersedia untuk rencana ini"
 
+#: serializers.py:830
 msgid "Quantity cannot be negative"
 msgstr "Kuantitas tidak dapat negatif"
 
-msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
-msgstr "Kode kartu hadiah (contoh: GC-XXXX-XXXX-XXXX)"
-
-msgid "Amount applied from this gift card (in base currency)"
-msgstr "Jumlah yang diterapkan dari kartu hadiah ini (dalam mata uang dasar)"
-
-msgid "Remaining balance on gift card after this application"
-msgstr "Saldo yang tersisa di kartu hadiah setelah penerapan ini"
-
-msgid "Base currency code"
-msgstr "Kode Mata Uang Dasar"
-
-msgid "Gift card's native currency code"
-msgstr "Kode Mata Uang Asli Kartu Hadiah"
-
-msgid ""
-"Discount in gift card's native currency (for foreign-currency gift cards)"
-msgstr ""
-"Diskon dalam mata uang asli kartu hadiah (untuk kartu hadiah mata uang asing)"
-
+#: serializers.py:1355
 #, python-brace-format
 msgid ""
-"Either address_id or complete address details are required. Missing: {fields}"
+"Either address_id or complete address details are required. Missing: "
+"{fields}"
 msgstr ""
-"Salah satu address_id atau detail alamat lengkap diperlukan. Hilang: {fields}"
+"Salah satu address_id atau detail alamat lengkap diperlukan. Hilang: "
+"{fields}"
 
+#: serializers.py:1388
+#, python-brace-format
+#| msgid ""
+#| "Either address_id or complete address details are required. Missing: "
+#| "{fields}"
+msgid "Complete billing address details are required. Missing: {fields}"
+msgstr "Detail alamat pembayaran yang lengkap diperlukan. Hilang: {fields}"
+
+#: serializers.py:1406
+#| msgid "Payment provider is not properly configured"
+msgid "Either payment_provider_id or provider slug is required."
+msgstr "Salah satu payment_provider_id atau slug penyedia diperlukan."
+
+#: services/cart_service.py:128 services/cart_service.py:130
+msgid "Choose an amount for this gift card."
+msgstr "Pilih jumlah untuk kartu hadiah ini."
+
+#: services/cart_service.py:136
+msgid "Gift card amount must be greater than zero."
+msgstr "Jumlah kartu hadiah harus lebih besar dari nol."
+
+#: services/cart_service.py:140 services/cart_service.py:156
+#| msgid "This plan is not available for this product"
+msgid "That is not an available gift card amount."
+msgstr "Jumlah kartu hadiah tersebut tidak tersedia."
+
+#: services/cart_service.py:151
+#, python-format
+msgid "Minimum gift card amount is %(min)s."
+msgstr "Jumlah minimum kartu hadiah adalah %(min)s."
+
+#: services/cart_service.py:153
+#, python-format
+msgid "Maximum gift card amount is %(max)s."
+msgstr "Jumlah maksimum kartu hadiah adalah %(max)s."
+
+#: services/cart_service.py:199
 msgid "This product requires customization"
 msgstr "Produk ini memerlukan penyesuaian"
 
+#: services/cart_service.py:207
 msgid "Invalid design token"
 msgstr "Token desain tidak valid"
 
+#: services/cart_service.py:235
 msgid "Design not found or expired"
 msgstr "Desain tidak ditemukan atau sudah kedaluwarsa"
 
+#: services/cart_service.py:239
 msgid "This product does not support customization"
 msgstr "Produk ini tidak mendukung pemodifikasian"
 
+#: services/cart_service.py:252
 msgid "Invalid customization option"
 msgstr "Opsi penyesuaian tidak valid"
 
+#: services/cart_service.py:261
 #, python-brace-format
 msgid "Customization '{name}': {error}"
 msgstr "Pempersonalan '{name}': {error}"
 
+#: services/cart_service.py:280
 #, python-brace-format
 msgid "Required customization '{name}' is missing"
 msgstr "Pempersonalan yang diperlukan '{name}' tidak tersedia"
 
+#: services/cart_service.py:343
 msgid "Insufficient stock"
 msgstr "Stok tidak cukup"
 
+#: services/cart_service.py:386
 msgid "Bundle has no components configured"
 msgstr "Bundle tidak memiliki komponen yang dikonfigurasi"
 
+#: services/cart_service.py:395
 #, python-brace-format
 msgid "Cannot exclude non-optional bundle component: {name}"
 msgstr "Tidak dapat mengecualikan komponen bundel yang tidak opsional: {name}"
 
+#: services/cart_service.py:414
+msgid "Bundles cannot contain gift cards."
+msgstr "Bundel tidak dapat berisi kartu hadiah."
+
+#: services/cart_service.py:424
 #, python-brace-format
 msgid "Variant selection required for: {name}"
 msgstr "Pemilihan variasi diperlukan untuk: {name}"
 
+#: services/cart_service.py:436
 #, python-brace-format
 msgid "Invalid variant selected for: {name}"
 msgstr "Variasi yang dipilih tidak valid untuk: {name}"
 
+#: services/cart_service.py:465
 #, python-brace-format
 msgid "Insufficient stock for bundle component: {name}"
 msgstr "Stok tidak cukup untuk komponen bundel: {name}"
 
+#: services/cart_service.py:514
 msgid "Bundle quantity updated in cart"
 msgstr "Kuantitas bundle diperbarui di keranjang"
 
+#: services/cart_service.py:544
 msgid "Bundle added to cart"
 msgstr "Bundle ditambahkan ke keranjang"
 
+#: services/cart_service.py:581
 #, python-brace-format
 msgid "Required slot '{name}' has no selection."
 msgstr "Slot yang diperlukan '{name}' tidak memiliki pemilihan."
 
+#: services/cart_service.py:590
 #, python-brace-format
 msgid "Slot '{name}' requires at least {min} selection(s)."
 msgstr "Slot '{name}' memerlukan setidaknya {min} pemilihan."
 
+#: services/cart_service.py:598
 #, python-brace-format
 msgid "Slot '{name}' allows at most {max} selection(s)."
 msgstr "Slot '{name}' memperbolehkan paling banyak {max} pemilihan."
 
+#: services/cart_service.py:609
 #, python-brace-format
 msgid "Invalid slot ID: {id}"
 msgstr "ID slot tidak valid: {id}"
 
+#: services/cart_service.py:619
 #, python-brace-format
 msgid "Option {opt_id} is not valid for slot '{slot}'."
 msgstr "Opsi {opt_id} tidak valid untuk slot '{slot}'."
 
+#: services/cart_service.py:656
 #, python-brace-format
 msgid ""
 "Incompatible selection in slot '{slot}'. Some options are not compatible "
@@ -1253,6 +1498,7 @@ msgstr ""
 "Pemilihan tidak kompatibel di slot '{slot}'. Beberapa opsi tidak kompatibel "
 "dengan pilihan lain Anda."
 
+#: services/cart_service.py:667
 #, python-brace-format
 msgid ""
 "Excluded selection in slot '{slot}'. Some options conflict with your other "
@@ -1261,52 +1507,71 @@ msgstr ""
 "Pemilihan yang dikecualikan di slot '{slot}'. Beberapa opsi bertentangan "
 "dengan pilihan lain Anda."
 
+#: services/cart_service.py:767 services/cart_service.py:1386
 #, python-brace-format
 msgid "Insufficient stock for component: {name}"
 msgstr "Stok tidak cukup untuk komponen: {name}"
 
+#: services/cart_service.py:827
 msgid "Configured product added to cart"
 msgstr "Produk yang dikonfigurasi ditambahkan ke keranjang"
 
+#: services/cart_service.py:887
 msgid "Either user or session_key must be provided"
 msgstr "Harus disediakan pengguna atau session_key"
 
+#: services/cart_service.py:995
 msgid "This product is no longer available"
 msgstr "Produk ini tidak tersedia lagi"
 
+#: services/cart_service.py:1023
 msgid "You must be logged in to purchase this product."
 msgstr "Anda harus masuk untuk membeli produk ini."
 
+#: services/cart_service.py:1026
 #, python-format
 msgid "This product requires you to own \"%(required)s\" first."
 msgstr ""
 "Produk ini memerlukan Anda untuk memiliki \"%(required)s\" terlebih dahulu."
 
+#: services/cart_service.py:1035 services/wishlist_service.py:68
 msgid "Product variant not found"
 msgstr "Varian produk tidak ditemukan"
 
+#: services/cart_service.py:1040
 msgid "Configuration is required for configurable products"
 msgstr "Konfigurasi diperlukan untuk produk yang dapat dikonfigurasi"
 
+#: services/cart_service.py:1159
 msgid "Booking added to cart"
 msgstr "Pemesanan ditambahkan ke keranjang"
 
+#: services/cart_service.py:1192
+#| msgid "Item added to cart"
+msgid "Gift card added to cart"
+msgstr "Kartu hadiah telah ditambahkan ke keranjang"
+
+#: services/cart_service.py:1231
 msgid "Insufficient stock for requested quantity"
 msgstr "Stok tidak cukup untuk kuantitas yang diminta"
 
+#: services/cart_service.py:1234
 msgid "Cart item quantity updated"
 msgstr "Kuantitas item keranjang diperbarui"
 
+#: services/cart_service.py:1256
 msgid "Item added to cart"
 msgstr "Item ditambahkan ke keranjang"
 
+#: services/cart_service.py:1303
 msgid ""
 "Component quantities cannot be changed directly. Update the parent product "
 "instead."
 msgstr ""
-"Kuantitas komponen tidak dapat diubah secara langsung. Perbarui produk induk "
-"sebagai gantinya."
+"Kuantitas komponen tidak dapat diubah secara langsung. Perbarui produk induk"
+" sebagai gantinya."
 
+#: services/cart_service.py:1318 services/cart_service.py:1499
 #, python-format
 msgid ""
 "Item removed from cart. Also removed %(names)s (required product no longer "
@@ -1315,12 +1580,15 @@ msgstr ""
 "Barang dihapus dari keranjang. Juga dihapus %(names)s (produk yang "
 "diperlukan tidak lagi ada di keranjang)."
 
+#: services/cart_service.py:1320 services/cart_service.py:1501
 msgid "Item removed from cart"
 msgstr "Item dihapus dari keranjang"
 
+#: services/cart_service.py:1410
 msgid "Cart item updated"
 msgstr "Item keranjang diperbarui"
 
+#: services/cart_service.py:1469 views.py:286
 msgid ""
 "Component items cannot be removed directly. Remove the parent product "
 "instead."
@@ -1328,266 +1596,370 @@ msgstr ""
 "Item komponen tidak dapat dihapus secara langsung. Hapus produk induk "
 "sebagai gantinya."
 
+#: services/cart_service.py:1556
 msgid "Cart cleared"
 msgstr "Keranjang dibersihkan"
 
+#: services/cart_service.py:1593
 msgid "Voucher removed"
 msgstr "Voucher dihapus"
 
+#: services/cart_service.py:1594
 msgid "Voucher not found in cart"
 msgstr "Voucher tidak ditemukan di keranjang"
 
-msgid "Gift card removed"
-msgstr "Kartu hadiah dihapus"
-
-msgid "Gift card not found in cart"
-msgstr "Kartu hadiah tidak ditemukan dalam keranjang"
-
+#: services/cart_service.py:1666
 #, python-brace-format
 msgid "{count} items merged into cart"
 msgstr "{count} item digabungkan ke dalam keranjang"
 
+#: services/checkout_service.py:94
 msgid "Account creation required to proceed"
 msgstr "Pembuatan akun diperlukan untuk melanjutkan"
 
+#: services/checkout_service.py:169 services/checkout_service.py:233
 msgid "Address not found"
 msgstr "Alamat tidak ditemukan"
 
+#: services/checkout_service.py:178
 msgid "Either address_id or address_data must be provided"
 msgstr "Harus disediakan address_id atau address_data"
 
+#: services/checkout_service.py:198
 msgid "Shipping address set"
 msgstr "Alamat pengiriman telah ditetapkan"
 
+#: services/checkout_service.py:239
 msgid "Billing address must be provided"
 msgstr "Alamat pembayaran harus disediakan"
 
+#: services/checkout_service.py:242
 msgid "Billing address set"
 msgstr "Alamat pembayaran telah ditetapkan"
 
+#: services/checkout_service.py:282
 msgid "Shipping address must be set first"
 msgstr "Alamat pengiriman harus diatur terlebih dahulu"
 
+#: services/checkout_service.py:287
 msgid "Shipping method not found"
 msgstr "Metode pengiriman tidak ditemukan"
 
+#: services/checkout_service.py:320
 msgid "Shipping method selected"
 msgstr "Metode pengiriman telah dipilih"
 
+#: services/checkout_service.py:382
 msgid "Payment provider not found"
 msgstr "Pemroses pembayaran tidak ditemukan"
 
+#: services/checkout_service.py:386
 msgid "Payment provider is not properly configured"
 msgstr "Pemberi pembayaran tidak dikonfigurasikan dengan benar"
 
+#: services/checkout_service.py:410
 msgid "Payment provider is not available for your location or currency"
 msgstr "Pemberi pembayaran tidak tersedia untuk lokasi atau mata uang Anda"
 
+#: services/checkout_service.py:417
 msgid "Payment method selected"
 msgstr "Metode pembayaran telah dipilih"
 
+#: services/checkout_service.py:434
 msgid "Cart is empty"
 msgstr "Keranjang kosong"
 
+#: services/checkout_service.py:440
 msgid "Shipping address is required"
 msgstr "Alamat pengiriman diperlukan"
 
+#: services/checkout_service.py:442
 msgid "Shipping method is required"
 msgstr "Metode pengiriman diperlukan"
 
+#: services/checkout_service.py:448
 msgid "Billing address is required"
 msgstr "Alamat pembayaran diperlukan"
 
+#: services/checkout_service.py:455
 msgid "Payment method is required"
 msgstr "Metode pembayaran diperlukan"
 
+#: services/checkout_service.py:459
 msgid "Checkout session has expired"
 msgstr "Sesi checkout telah habis"
 
+#: services/checkout_service.py:489
 #, python-brace-format
 msgid "Insufficient stock for {product}"
 msgstr "Stok tidak cukup untuk {product}"
 
+#: services/checkout_service.py:505
 #, python-format
 msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
-msgstr ""
-"\"%(product)s\" memerlukan kepemilikan terlebih dahulu dari \"%(required)s\"."
+msgstr "\"%(product)s\" memerlukan kepemilikan terlebih dahulu dari \"%(required)s\"."
 
+#: services/checkout_service.py:694
 msgid "Customer email is required"
 msgstr "Email pelanggan diperlukan"
 
+#: services/checkout_service.py:854
 msgid "Unable to allocate warehouse for order. Please contact support."
 msgstr ""
 "Tidak dapat mengalokasikan gudang untuk pesanan. Silakan hubungi dukungan."
 
+#: services/checkout_service.py:985 services/checkout_service.py:1018
 msgid "Insufficient stock to complete order"
 msgstr "Stok tidak cukup untuk menyelesaikan pesanan"
 
+#: services/checkout_service.py:990 services/checkout_service.py:1023
 msgid "Error processing order. Please try again."
 msgstr "Kesalahan dalam memproses pesanan. Silakan coba lagi."
 
+#: services/checkout_service.py:1072
 msgid "Order created successfully"
 msgstr "Pemesanan berhasil dibuat"
 
+#: services/checkout_service.py:1322
+#, python-format
+msgid "The voucher %(code)s has just been fully used."
+msgstr "Voucher %(code)s telah digunakan secara penuh."
+
+#: services/checkout_service.py:1328
+#, python-format
+#| msgid "This product is no longer available"
+msgid "The voucher %(code)s is no longer valid."
+msgstr "Voucher %(code)s sudah tidak valid."
+
+#: services/wishlist_service.py:82
 msgid "Wishlist item updated"
 msgstr "Item daftar keinginan diperbarui"
 
+#: services/wishlist_service.py:95
 msgid "Item added to wishlist"
 msgstr "Item ditambahkan ke daftar keinginan"
 
+#: services/wishlist_service.py:110
 msgid "Item removed from wishlist"
 msgstr "Item dihapus dari daftar keinginan"
 
+#: services/wishlist_service.py:137
 msgid "Item moved to cart"
 msgstr "Item dipindahkan ke keranjang"
 
+#: services/wishlist_service.py:154
 msgid "Wishlist cleared"
 msgstr "Daftar keinginan dibersihkan"
 
+#: services/wishlist_service.py:173
 msgid "Wishlist with this name already exists"
 msgstr "Daftar keinginan dengan nama ini sudah ada"
 
+#: services/wishlist_service.py:184
 msgid "Wishlist created"
 msgstr "Daftar keinginan dibuat"
 
+#: templates/admin/cart/cart/change_list.html:22
 msgid "Monitor active and abandoned customer carts"
 msgstr "Pantau keranjang pelanggan yang aktif dan yang ditinggalkan"
 
+#: templates/admin/cart/cart/change_list.html:33
 msgid "Add"
 msgstr "Tambah"
 
+#: templates/admin/cart/cart/change_list.html:33
+#: templates/admin/cart/cart/change_list.html:178
 msgid "cart"
 msgstr "keranjang"
 
+#: templates/admin/cart/cart/change_list.html:45
+#: templates/admin/cart/taxrate/change_list.html:59
 msgid "Filters"
 msgstr "Filter"
 
+#: templates/admin/cart/cart/change_list.html:56
+#: templates/admin/cart/taxrate/change_list.html:63
 msgid "Search"
 msgstr "Cari"
 
+#: templates/admin/cart/cart/change_list.html:61
 msgid "Search by user, session, or email..."
 msgstr "Cari berdasarkan pengguna, sesi, atau email..."
 
+#: templates/admin/cart/cart/change_list.html:68
 msgid "User Type"
 msgstr "Jenis Pengguna"
 
+#: templates/admin/cart/cart/change_list.html:71
 msgid "All Carts"
 msgstr "Semua Keranjang"
 
+#: templates/admin/cart/cart/change_list.html:72
 msgid "Registered Users"
 msgstr "Pengguna Terdaftar"
 
+#: templates/admin/cart/cart/change_list.html:73
 msgid "Guest Carts"
 msgstr "Keranjang Pengunjung"
 
+#: templates/admin/cart/cart/change_list.html:80
 msgid "Cart Status"
 msgstr "Status Keranjang"
 
+#: templates/admin/cart/cart/change_list.html:83
+#: templates/admin/cart/cart/change_list.html:96
+#: templates/admin/cart/taxrate/change_list.html:88
 msgid "All"
 msgstr "Semua"
 
+#: templates/admin/cart/cart/change_list.html:84
 msgid "Active (< 24h)"
 msgstr "Aktif (< 24 jam)"
 
+#: templates/admin/cart/cart/change_list.html:85
 msgid "Abandoned (> 24h)"
 msgstr "Ditinggalkan (> 24 jam)"
 
+#: templates/admin/cart/cart/change_list.html:86
+#: templates/admin/cart/partials/cart_cards.html:50
 msgid "Empty"
 msgstr "Kosong"
 
+#: templates/admin/cart/cart/change_list.html:97
 msgid "Has Shipping"
 msgstr "Memiliki Pengiriman"
 
+#: templates/admin/cart/cart/change_list.html:98
 msgid "No Shipping"
 msgstr "Tidak Ada Pengiriman"
 
+#: templates/admin/cart/cart/change_list.html:105
 msgid "Min Cart Value"
 msgstr "Nilai Keranjang Minimum"
 
+#: templates/admin/cart/cart/change_list.html:110
 msgid "Min value"
 msgstr "Nilai Minimum"
 
+#: templates/admin/cart/cart/change_list.html:117
 msgid "Max Cart Value"
 msgstr "Nilai Keranjang Maksimum"
 
+#: templates/admin/cart/cart/change_list.html:122
 msgid "Max value"
 msgstr "Nilai Maksimum"
 
+#: templates/admin/cart/cart/change_list.html:130
 msgid "Created From"
 msgstr "Dibuat Dari"
 
+#: templates/admin/cart/cart/change_list.html:139
 msgid "Created To"
 msgstr "Dibuat Sampai"
 
+#: templates/admin/cart/cart/change_list.html:151
 msgid "Apply Filters"
 msgstr "Terapkan Filter"
 
+#: templates/admin/cart/cart/change_list.html:154
 msgid "Clear All"
 msgstr "Hapus Semua"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Run the selected action"
 msgstr "Lakukan tindakan yang dipilih"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Go"
 msgstr "Go"
 
+#: templates/admin/cart/cart/change_list.html:168
 msgid "of"
 msgstr "dari"
 
+#: templates/admin/cart/cart/change_list.html:195
 #, python-format
 msgid "1 cart"
 msgid_plural "%(counter)s carts"
 msgstr[0] "%(counter)s keranjang"
 msgstr[1] "%(counter)s keranjang"
 
+#: templates/admin/cart/cart/change_list.html:197
 msgid "carts"
 msgstr "keranjang"
 
+#: templates/admin/cart/cart/change_list.html:201
 msgid "Show all"
 msgstr "Tampilkan Semua"
 
+#: templates/admin/cart/cart/change_list.html:205
+#: templates/admin/cart/shippingmethod/change_form.html:43
+#: templates/admin/cart/shippingmethod/change_form.html:343
+#: templates/admin/cart/taxrate/change_form.html:44
+#: templates/admin/cart/taxrate/change_form.html:238
 msgid "Save"
 msgstr "Simpan"
 
+#: templates/admin/cart/method_wizard/base.html:4
+#: templates/admin/cart/method_wizard/base.html:17
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:24
 msgid "Add Shipping Method"
 msgstr "Tambah Metode Pengiriman"
 
+#: templates/admin/cart/method_wizard/base.html:18
 msgid "Configure a new shipping method for your store"
 msgstr "Konfigurasikan metode pengiriman baru untuk toko Anda"
 
+#: templates/admin/cart/method_wizard/base.html:25
+#: templates/admin/cart/method_wizard/step1_basics.html:10
+#: templates/admin/cart/method_wizard/step5_review.html:18
 msgid "Method Basics"
 msgstr "Dasar Metode"
 
+#: templates/admin/cart/method_wizard/base.html:31
 msgid "Eligibility"
 msgstr "Kelayakan"
 
+#: templates/admin/cart/method_wizard/base.html:37
+#: templates/admin/cart/shippingmethod/change_form.html:90
 msgid "Coverage"
 msgstr "Cakupan"
 
+#: templates/admin/cart/method_wizard/base.html:43
 msgid "Features"
 msgstr "Fitur"
 
+#: templates/admin/cart/method_wizard/base.html:49
 msgid "Review"
 msgstr "Tinjau"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:13
 msgid "Define the core identity and type of this shipping method."
 msgstr "Definisikan identitas inti dan jenis metode pengiriman ini."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:27
 msgid "Method Name"
 msgstr "Nama Metode"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:35
 msgid "e.g., Standard Shipping, Express Delivery"
 msgstr "Contoh: Pengiriman Standar, Pengiriman Ekspres"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:38
 msgid "Customer-facing name for this shipping method"
 msgstr "Nama metode pengiriman yang dilihat oleh pelanggan"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:49
 msgid "Optional description of this shipping method"
 msgstr "Deskripsi opsional untuk metode pengiriman ini"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:54
 msgid "Display Icon"
 msgstr "Ikon Tampilan"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:58
+#: templates/admin/cart/shippingmethod/change_form.html:227
 msgid ""
 "Select an image from the media library or choose a Font Awesome icon. Image "
 "takes priority if both are provided."
@@ -1595,106 +1967,132 @@ msgstr ""
 "Pilih gambar dari perpustakaan media atau pilih ikon Font Awesome. Gambar "
 "akan diprioritaskan jika keduanya disediakan."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:63
+#: templates/admin/cart/method_wizard/step5_review.html:48
 msgid "Custom Image"
 msgstr "Gambar Kustom"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:74
 msgid "Font Awesome Icon"
 msgstr "Ikon Font Awesome"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:78
 msgid "Choose an icon from Font Awesome library"
 msgstr "Pilih ikon dari perpustakaan Font Awesome"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:94
+#: templates/admin/cart/method_wizard/step5_review.html:62
+#: templates/admin/cart/shippingmethod/change_form.html:32
+#: templates/admin/cart/shippingmethod/change_form.html:294
+#: templates/admin/cart/shippingmethod/change_list.html:67
+#: templates/admin/cart/shippingmethod/method_card.html:122
+#: templates/admin/cart/taxrate/change_form.html:33
+#: templates/admin/cart/taxrate/change_list.html:42
+#: templates/admin/cart/taxrate/change_list.html:89
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:26
 msgid "Active"
 msgstr "Aktif"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:98
 msgid "Make this method available to customers immediately"
 msgstr "Tetapkan metode ini tersedia untuk pelanggan segera"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:105
 msgid "Method Type & Pricing"
 msgstr "Jenis Metode & Harga"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:114
 msgid "Select method type..."
 msgstr "Pilih jenis metode..."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:116
 msgid "Flat Rate - Fixed shipping cost"
 msgstr "Tarif Tetap - Biaya pengiriman tetap"
 
-msgid "Free Shipping - No charge"
-msgstr "Pengiriman Gratis - Tidak ada biaya"
-
-msgid "Weight Based - Calculate by cart weight"
-msgstr "Berdasarkan Berat - Hitung berdasarkan berat keranjang"
-
-msgid "Price Based - Calculate by cart subtotal"
-msgstr "Berdasarkan Harga - Hitung berdasarkan subtotal keranjang"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:119
 msgid "Real-Time Carrier Rates - Live rates from carriers"
 msgstr "Tarif Pengiriman Langsung - Tarif langsung dari penyedia pengiriman"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:122
 msgid "Local Pickup - Customer picks up at location"
 msgstr "Pengambilan Lokal - Pelanggan mengambil di lokasi"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:125
 msgid "Table Rate - Complex rules based on weight/price/destination"
 msgstr "Tarif Tabel - Aturan kompleks berdasarkan berat/harga/tujuan"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:133
 msgid "Method Types:"
 msgstr "Jenis Metode:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Flat Rate:"
 msgstr "Tarif Tetap:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Fixed shipping cost regardless of order"
 msgstr "Biaya pengiriman tetap tanpa memandang pesanan"
 
-msgid "Free Shipping:"
-msgstr "Pengiriman Gratis:"
-
-msgid "No shipping charge"
-msgstr "Tidak ada biaya pengiriman"
-
-msgid "Weight/Price Based:"
-msgstr "Berdasarkan Berat/Harga:"
-
-msgid "Calculate using rate tables"
-msgstr "Hitung menggunakan tabel tarif"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Real-Time:"
 msgstr "Waktu Nyata:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Get live rates from USPS, FedEx, UPS, or DHL"
 msgstr "Dapatkan tarif langsung dari USPS, FedEx, UPS, atau DHL"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Local Pickup:"
 msgstr "Ambil Sendiri di Lokasi:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Customer picks up at your location"
 msgstr "Pelanggan mengambil di lokasi Anda"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate"
+msgid "Table Rate:"
+msgstr "Tarif Tabel:"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate - Complex rules based on weight/price/destination"
+msgid "Complex rules based on weight, price, or destination"
+msgstr "Aturan kompleks berdasarkan berat, harga, atau tujuan"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:158
 msgid "Fixed shipping cost charged to customer"
 msgstr "Biaya pengiriman tetap yang dikenakan kepada pelanggan"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:168
 msgid "No Configured Providers"
 msgstr "Tidak Ada Pemasok yang Diatur"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:170
 msgid ""
-"You need to configure at least one shipping provider that supports real-time "
-"rates before you can use this method type."
+"You need to configure at least one shipping provider that supports real-time"
+" rates before you can use this method type."
 msgstr ""
-"Anda perlu mengonfigurasi setidaknya satu penyedia pengiriman yang mendukung "
-"tarif langsung sebelum Anda dapat menggunakan jenis metode ini."
+"Anda perlu mengonfigurasi setidaknya satu penyedia pengiriman yang mendukung"
+" tarif langsung sebelum Anda dapat menggunakan jenis metode ini."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:174
 msgid "Connect Provider"
 msgstr "Hubungkan Pemasok"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:177
 msgid "Manage Providers"
 msgstr "Kelola Pemasok"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:190
 msgid "Select a configured shipping provider"
 msgstr "Pilih pemasok pengiriman yang telah dikonfigurasi"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:202
+#: templates/admin/cart/method_wizard/step4_features.html:252
 msgid "Tip:"
 msgstr "Tips:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:203
 msgid ""
 "Only providers that are configured and support real-time rates are shown "
 "above."
@@ -1702,99 +2100,59 @@ msgstr ""
 "Hanya penyedia yang dikonfigurasi dan mendukung tarif langsung yang "
 "ditampilkan di atas."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:204
 msgid "Manage providers"
 msgstr "Kelola pemasok"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:209
 msgid "Service Code"
 msgstr "Kode Layanan"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:213
 msgid "Specific service code from carrier (optional)"
 msgstr "Kode layanan spesifik dari penyedia (opsional)"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:230
 msgid "Cancel"
 msgstr "Batal"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:233
+#: templates/admin/cart/method_wizard/step2_conditions.html:53
+#: templates/admin/cart/method_wizard/step3_coverage.html:102
 msgid "Next Step"
 msgstr "Langkah Berikutnya"
 
-msgid "Eligibility Conditions"
-msgstr "Kondisi Kelayakan"
-
-msgid ""
-"Define when this shipping method should be available based on cart value and "
-"weight."
-msgstr ""
-"Definisikan kapan metode pengiriman ini harus tersedia berdasarkan nilai "
-"keranjang dan beratnya."
-
-msgid "Order Value Restrictions"
-msgstr "Batasan Nilai Pesanan"
-
-msgid "Set minimum or maximum cart subtotal requirements for this method."
-msgstr ""
-"Tetapkan persyaratan subtotal keranjang minimum atau maksimum untuk metode "
-"ini."
-
-msgid "Method only available if cart subtotal is at least this amount"
-msgstr "Metode hanya tersedia jika subtotal keranjang setidaknya sejumlah ini"
-
-msgid "No maximum"
-msgstr "Tidak ada maksimum"
-
-msgid "Method only available if cart subtotal is below this amount"
-msgstr "Metode hanya tersedia jika subtotal keranjang di bawah jumlah ini"
-
-msgid "Examples:"
-msgstr "Contoh:"
-
-msgid "Free shipping for orders over $50: Set minimum to 50.00"
-msgstr "Pengiriman gratis untuk pesanan di atas $50: Tetapkan minimum ke 50.00"
-
-msgid "Economy shipping for orders under $100: Set maximum to 100.00"
-msgstr ""
-"Pengiriman ekonomi untuk pesanan di bawah $100: Tetapkan maksimum ke 100.00"
-
-msgid "Standard shipping for $25-$200: Set both minimum and maximum"
-msgstr "Pengiriman standar untuk $25-$200: Tetapkan minimum dan maksimum"
-
-msgid "Weight Restrictions"
-msgstr "Batasan Berat"
-
-msgid "Set minimum or maximum total cart weight requirements for this method."
-msgstr ""
-"Tetapkan persyaratan berat total keranjang minimum atau maksimum untuk "
-"metode ini."
-
-msgid "Minimum Weight (kg)"
-msgstr "Berat Minimum (kg)"
-
-msgid "Method only available if total cart weight is at least this value"
-msgstr ""
-"Metode hanya tersedia jika berat total keranjang setidaknya sejumlah ini"
-
-msgid "Maximum Weight (kg)"
-msgstr "Berat Maksimum (kg)"
-
-msgid "Method only available if total cart weight is below this value"
-msgstr "Metode hanya tersedia jika berat total keranjang di bawah jumlah ini"
-
-msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
-msgstr ""
-"Pengiriman paket ringan untuk paket di bawah 2kg: Tetapkan maksimum ke 2.00"
-
-msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
-msgstr ""
-"Pengiriman barang berat untuk paket di atas 20kg: Tetapkan minimum ke 20.00"
-
-msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
-msgstr "Pengiriman standar untuk 0.5kg-10kg: Tetapkan minimum dan maksimum"
-
+#: templates/admin/cart/method_wizard/step2_conditions.html:6
+#: templates/admin/cart/method_wizard/step2_conditions.html:27
+#: templates/admin/cart/method_wizard/step5_review.html:93
 msgid "Additional Options"
 msgstr "Opsi Tambahan"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:9
+#| msgid "Optional description of this shipping method"
+msgid "Configure additional options for this shipping method."
+msgstr "Konfigurasikan opsi tambahan untuk metode pengiriman ini."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:19
+msgid "Eligibility Conditions"
+msgstr "Kondisi Kelayakan"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:20
+msgid ""
+"Order value and weight eligibility conditions are now configured through "
+"Shipping Promotions with visibility control. Go to Shipping Promotions to "
+"set up conditions that control when this method is shown to customers."
+msgstr ""
+"Kondisi kelayakan nilai pesanan dan berat kini dikonfigurasikan melalui "
+"Shipping Promotions dengan kontrol visibilitas. Pergi ke Shipping Promotions"
+" untuk mengatur kondisi yang mengontrol kapan metode ini ditampilkan kepada "
+"pelanggan."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:36
 msgid "Requires Shipping Address"
 msgstr "Memerlukan Alamat Pengiriman"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:40
 msgid ""
 "Customer must provide a shipping address for this method (disable for "
 "digital goods or local pickup)"
@@ -1802,32 +2160,45 @@ msgstr ""
 "Pelanggan harus menyediakan alamat pengiriman untuk metode ini (nonaktifkan "
 "untuk barang digital atau pengambilan lokal)"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:50
+#: templates/admin/cart/method_wizard/step3_coverage.html:99
+#: templates/admin/cart/method_wizard/step4_features.html:263
+#: templates/admin/cart/method_wizard/step5_review.html:228
 msgid "Previous"
 msgstr "Sebelumnya"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:117
+#: templates/admin/cart/shippingmethod/change_form.html:169
 msgid "Geographic Coverage"
 msgstr "Cakupan Geografis"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:9
+#: templates/admin/cart/shippingmethod/change_form.html:170
 msgid "Define where this shipping method is available using shipping zones."
 msgstr ""
 "Definisikan di mana metode pengiriman ini tersedia menggunakan zona "
 "pengiriman."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:23
 msgid "Zone-Based Coverage:"
 msgstr "Cakupan Berbasis Zona:"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:24
 msgid ""
 "Use shipping zones for flexible, rule-based geographic coverage. This "
 "approach works seamlessly with shipping rules and allows precise control "
 "over where your methods are available."
 msgstr ""
 "Gunakan zona pengiriman untuk cakupan geografis berbasis aturan yang "
-"fleksibel. Pendekatan ini bekerja dengan lancar dengan aturan pengiriman dan "
-"memungkinkan kendali presisi atas tempat metode Anda tersedia."
+"fleksibel. Pendekatan ini bekerja dengan lancar dengan aturan pengiriman dan"
+" memungkinkan kendali presisi atas tempat metode Anda tersedia."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:29
 msgid "Select Shipping Zones"
 msgstr "Pilih Zona Pengiriman"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:32
 msgid ""
 "Choose which shipping zones this method is available for. Leave empty to "
 "make available worldwide."
@@ -1835,80 +2206,108 @@ msgstr ""
 "Pilih zona pengiriman mana metode ini tersedia. Biarkan kosong untuk "
 "membuatnya tersedia secara global."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:38
 msgid "Available Zones"
 msgstr "Zona Tersedia"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:49
 msgid "Add selected zones"
 msgstr "Tambahkan zona yang dipilih"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:52
 msgid "Add all zones"
 msgstr "Tambahkan semua zona"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:55
 msgid "Remove selected zones"
 msgstr "Hapus zona yang dipilih"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:58
 msgid "Remove all zones"
 msgstr "Hapus semua zona"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:64
 msgid "Selected Zones"
 msgstr "Zona yang Dipilih"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:83
 msgid "No shipping zones found!"
 msgstr "Tidak ditemukan zona pengiriman!"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:84
 msgid "You need to create shipping zones first."
 msgstr "Anda perlu membuat zona pengiriman terlebih dahulu."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:86
 msgid "Create a shipping zone"
 msgstr "Buat zona pengiriman"
 
+#: templates/admin/cart/method_wizard/step4_features.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:154
 msgid "Method Features"
 msgstr "Fitur Metode"
 
+#: templates/admin/cart/method_wizard/step4_features.html:9
 msgid ""
 "Configure delivery estimates, display order, and method-specific features."
 msgstr ""
 "Konfigurasikan perkiraan pengiriman, urutan tampilan, dan fitur spesifik "
 "metode."
 
-msgid "Select the physical locations where customers can pick up their orders."
+#: templates/admin/cart/method_wizard/step4_features.html:23
+msgid ""
+"Select the physical locations where customers can pick up their orders."
 msgstr "Pilih lokasi fisik di mana pelanggan dapat mengambil pesanan mereka."
 
+#: templates/admin/cart/method_wizard/step4_features.html:27
 msgid "Available Pickup Locations"
 msgstr "Lokasi Ambil Barang Tersedia"
 
+#: templates/admin/cart/method_wizard/step4_features.html:32
 msgid "Available Locations"
 msgstr "Lokasi Tersedia"
 
+#: templates/admin/cart/method_wizard/step4_features.html:60
 msgid "Selected Locations"
 msgstr "Lokasi yang Dipilih"
 
+#: templates/admin/cart/method_wizard/step4_features.html:79
 msgid "No pickup locations found!"
 msgstr "Tidak ditemukan lokasi ambil barang!"
 
+#: templates/admin/cart/method_wizard/step4_features.html:80
 msgid "You need to create pickup locations first for local pickup methods."
 msgstr ""
 "Anda perlu membuat lokasi pengambilan terlebih dahulu untuk metode "
 "pengambilan lokal."
 
+#: templates/admin/cart/method_wizard/step4_features.html:82
 msgid "Create a pickup location"
 msgstr "Buat lokasi ambil barang"
 
+#: templates/admin/cart/method_wizard/step4_features.html:95
 msgid "Carrier API Status"
 msgstr "Status API Pengangkut"
 
+#: templates/admin/cart/method_wizard/step4_features.html:101
+#: templates/admin/cart/method_wizard/step5_review.html:79
+#: templates/admin/cart/shippingmethod/method_card.html:96
 msgid "Carrier:"
 msgstr "Pengangkut:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:103
 msgid "Service Code:"
 msgstr "Kode Layanan:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:109
 msgid "API Configuration Status"
 msgstr "Status Konfigurasi API"
 
+#: templates/admin/cart/method_wizard/step4_features.html:113
 msgid "Checking API credentials..."
 msgstr "Memeriksa kredensial API..."
 
+#: templates/admin/cart/method_wizard/step4_features.html:119
 msgid ""
 "Ensure your carrier API credentials are configured in the shipping provider "
 "settings."
@@ -1916,9 +2315,11 @@ msgstr ""
 "Pastikan kredensial API penyedia Anda dikonfigurasi dalam pengaturan "
 "penyedia pengiriman."
 
+#: templates/admin/cart/method_wizard/step4_features.html:129
 msgid "Enable Rate Caching"
 msgstr "Aktifkan Penyimpanan Tarif"
 
+#: templates/admin/cart/method_wizard/step4_features.html:133
 msgid ""
 "Cache carrier rates for 15 minutes to improve performance and reduce API "
 "calls"
@@ -1926,176 +2327,217 @@ msgstr ""
 "Cache tarif penyedia selama 15 menit untuk meningkatkan kinerja dan "
 "mengurangi panggilan API"
 
+#: templates/admin/cart/method_wizard/step4_features.html:143
 msgid "Rate Table Configuration"
 msgstr "Konfigurasi Tabel Tarif"
 
-msgid "Weight-Based Rates:"
-msgstr "Tarif Berbasis Berat:"
+#: templates/admin/cart/method_wizard/step4_features.html:149
+#| msgid "Table Rate"
+msgid "Table Rates:"
+msgstr "Tarif Tabel:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:150
+#| msgid ""
+#| "You'll be able to configure tiered rates based on cart weight after the "
+#| "method is created."
 msgid ""
-"You'll be able to configure tiered rates based on cart weight after the "
-"method is created."
+"You'll be able to configure tiered rates based on weight, price, or "
+"destination after the method is created."
 msgstr ""
-"Anda akan dapat mengonfigurasi tarif bertingkat berdasarkan berat keranjang "
-"setelah metode dibuat."
+"Anda akan dapat mengonfigurasi tarif bertingkat berdasarkan berat, harga, "
+"atau tujuan setelah metode dibuat."
 
-msgid "Price-Based Rates:"
-msgstr "Tarif Berbasis Harga:"
-
-msgid ""
-"You'll be able to configure tiered rates based on cart subtotal after the "
-"method is created."
-msgstr ""
-"Anda akan dapat mengonfigurasi tarif bertingkat berdasarkan subtotal "
-"keranjang setelah metode dibuat."
-
+#: templates/admin/cart/method_wizard/step4_features.html:156
 msgid "Rate tables can be managed from the method's edit page after creation."
-msgstr "Tabel tarif dapat dikelola dari halaman edit metode setelah pembuatan."
+msgstr ""
+"Tabel tarif dapat dikelola dari halaman edit metode setelah pembuatan."
 
+#: templates/admin/cart/method_wizard/step4_features.html:165
 msgid "Delivery Time Estimate"
 msgstr "Estimasi Waktu Pengiriman"
 
+#: templates/admin/cart/method_wizard/step4_features.html:169
 msgid "Provide customers with an estimated delivery timeframe."
 msgstr "Berikan pelanggan dengan perkiraan kerangka waktu pengiriman."
 
+#: templates/admin/cart/method_wizard/step4_features.html:186
 msgid "Fastest delivery time in business days"
 msgstr "Waktu pengiriman tercepat dalam hari kerja"
 
+#: templates/admin/cart/method_wizard/step4_features.html:203
 msgid "Slowest delivery time in business days"
 msgstr "Waktu pengiriman terlambat dalam hari kerja"
 
+#: templates/admin/cart/method_wizard/step4_features.html:211
+msgid "Examples:"
+msgstr "Contoh:"
+
+#: templates/admin/cart/method_wizard/step4_features.html:213
 msgid "Standard shipping: 3-5 business days"
 msgstr "Pengiriman Standar: 3-5 hari kerja"
 
+#: templates/admin/cart/method_wizard/step4_features.html:214
 msgid "Express shipping: 1-2 business days"
 msgstr "Pengiriman Ekspres: 1-2 hari kerja"
 
+#: templates/admin/cart/method_wizard/step4_features.html:215
 msgid "International shipping: 7-14 business days"
 msgstr "Pengiriman Internasional: 7-14 hari kerja"
 
+#: templates/admin/cart/method_wizard/step4_features.html:229
 msgid "Display Settings"
 msgstr "Pengaturan Tampilan"
 
+#: templates/admin/cart/method_wizard/step4_features.html:245
 msgid ""
 "Lower numbers appear first. Use this to control the order methods are "
 "displayed to customers."
 msgstr ""
-"Angka yang lebih rendah muncul terlebih dahulu. Gunakan ini untuk mengontrol "
-"urutan metode yang ditampilkan kepada pelanggan."
+"Angka yang lebih rendah muncul terlebih dahulu. Gunakan ini untuk mengontrol"
+" urutan metode yang ditampilkan kepada pelanggan."
 
+#: templates/admin/cart/method_wizard/step4_features.html:253
 msgid ""
 "Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
 "of new methods between existing ones."
 msgstr ""
-"Tetapkan urutan pengurutan dalam kelipatan 10 (0, 10, 20) untuk memungkinkan "
-"penambahan mudah metode baru antara metode yang sudah ada."
+"Tetapkan urutan pengurutan dalam kelipatan 10 (0, 10, 20) untuk memungkinkan"
+" penambahan mudah metode baru antara metode yang sudah ada."
 
+#: templates/admin/cart/method_wizard/step4_features.html:266
+#: templates/admin/cart/method_wizard/step5_review.html:6
 msgid "Review & Create"
 msgstr "Periksa & Buat"
 
+#: templates/admin/cart/method_wizard/step4_features.html:275
 msgid "API credentials verified successfully"
 msgstr "Kredensial API telah diverifikasi dengan sukses"
 
+#: templates/admin/cart/method_wizard/step5_review.html:9
 msgid "Review your shipping method configuration and create it."
 msgstr "Periksa konfigurasi metode pengiriman Anda dan buat metode tersebut."
 
+#: templates/admin/cart/method_wizard/step5_review.html:20
+#: templates/admin/cart/method_wizard/step5_review.html:95
+#: templates/admin/cart/method_wizard/step5_review.html:119
+#: templates/admin/cart/method_wizard/step5_review.html:156
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:62
 msgid "Edit"
 msgstr "Edit"
 
+#: templates/admin/cart/method_wizard/step5_review.html:26
 msgid "Name:"
 msgstr "Nama:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:30
 msgid "Method Type:"
 msgstr "Jenis Metode:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:39
 msgid "Description:"
 msgstr "Deskripsi:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:45
+#: templates/admin/cart/method_wizard/step5_review.html:53
 msgid "Display Icon:"
 msgstr "Ikon Tampilan:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:58
 msgid "Status:"
 msgstr "Status:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:66
+#: templates/admin/cart/shippingmethod/change_form.html:34
+#: templates/admin/cart/shippingmethod/change_list.html:70
+#: templates/admin/cart/shippingmethod/method_card.html:124
+#: templates/admin/cart/taxrate/change_form.html:35
+#: templates/admin/cart/taxrate/change_list.html:90
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:30
 msgid "Inactive"
 msgstr "Tidak Aktif"
 
+#: templates/admin/cart/method_wizard/step5_review.html:73
 msgid "Flat Rate Cost:"
 msgstr "Biaya Tarif Tetap:"
 
-msgid "Min Order Value:"
-msgstr "Nilai Pesanan Minimum:"
-
-msgid "Max Order Value:"
-msgstr "Nilai Pesanan Maksimum:"
-
-msgid "Min Weight:"
-msgstr "Berat Minimum:"
-
-msgid "Max Weight:"
-msgstr "Berat Maksimum:"
-
+#: templates/admin/cart/method_wizard/step5_review.html:101
 msgid "Requires Shipping Address:"
 msgstr "Memerlukan Alamat Pengiriman:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:104
 msgid "Yes"
 msgstr "Ya"
 
+#: templates/admin/cart/method_wizard/step5_review.html:106
 msgid "No"
 msgstr "Tidak"
 
-msgid ""
-"No eligibility conditions set - method available for all cart values and "
-"weights"
-msgstr ""
-"Tidak ada kondisi kelayakan yang ditetapkan - metode tersedia untuk semua "
-"nilai keranjang dan berat"
-
+#: templates/admin/cart/method_wizard/step5_review.html:126
 msgid "Shipping Zones:"
 msgstr "Zona Pengiriman:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:141
+#: templates/admin/cart/shippingmethod/method_card.html:76
 msgid "Coverage:"
 msgstr "Cakupan:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:143
 msgid "Worldwide (No zones selected)"
 msgstr "Seluruh Dunia (Tidak ada zona yang dipilih)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:164
 msgid "Pickup Locations:"
 msgstr "Lokasi Ambil Barang:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:167
+#: templates/admin/cart/shippingmethod/method_card.html:87
 msgid "location"
 msgstr "lokasi"
 
+#: templates/admin/cart/method_wizard/step5_review.html:172
 msgid "Delivery Time:"
 msgstr "Waktu Pengiriman:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:174
+#: templates/admin/cart/shippingmethod/method_card.html:110
 msgid "Instant Pickup"
 msgstr "Ambil Langsung"
 
+#: templates/admin/cart/method_wizard/step5_review.html:179
 msgid "Delivery Estimate:"
 msgstr "Estimasi Pengiriman:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:182
+#: templates/admin/cart/shippingmethod/method_card.html:112
 msgid "business days"
 msgstr "hari kerja"
 
+#: templates/admin/cart/method_wizard/step5_review.html:188
 msgid "Sort Order:"
 msgstr "Urutan Pengurutan:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:194
 msgid "Rate Caching:"
 msgstr "Penyimpanan Tarif:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:196
 msgid "Enabled"
 msgstr "Diaktifkan"
 
+#: templates/admin/cart/method_wizard/step5_review.html:208
 msgid "What happens next:"
 msgstr "Apa yang terjadi selanjutnya:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:210
 msgid "Your shipping method will be created with the settings above"
 msgstr "Metode pengiriman Anda akan dibuat dengan pengaturan di atas"
 
+#: templates/admin/cart/method_wizard/step5_review.html:212
 msgid "You'll be redirected to configure rate tables for this method"
-msgstr "Anda akan dialihkan untuk mengkonfigurasi tabel tarif untuk metode ini"
+msgstr ""
+"Anda akan dialihkan untuk mengkonfigurasi tabel tarif untuk metode ini"
 
+#: templates/admin/cart/method_wizard/step5_review.html:215
 msgid ""
 "The method will be immediately available to customers (if eligibility "
 "conditions are met)"
@@ -2103,233 +2545,352 @@ msgstr ""
 "Metode ini akan segera tersedia bagi pelanggan (jika kondisi kelayakan "
 "terpenuhi)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:217
 msgid "The method will be created as inactive - activate it when ready"
 msgstr "Metode ini akan dibuat dalam keadaan tidak aktif - aktifkan saat siap"
 
+#: templates/admin/cart/method_wizard/step5_review.html:231
 msgid "Create Shipping Method"
 msgstr "Buat Metode Pengiriman"
 
+#: templates/admin/cart/method_wizard/step5_review.html:240
 msgid "Creating..."
 msgstr "Membuat..."
 
+#: templates/admin/cart/partials/cart_cards.html:29
 msgid "Session"
 msgstr "Sesi"
 
+#: templates/admin/cart/partials/cart_cards.html:36
 msgid "Registered"
 msgstr "Terdaftar"
 
+#: templates/admin/cart/partials/cart_cards.html:40
 msgid "Guest"
 msgstr "Pengunjung"
 
+#: templates/admin/cart/partials/cart_cards.html:46
 msgid "item"
 msgstr "item"
 
+#: templates/admin/cart/partials/cart_cards.html:56
 msgid "Shipping Set"
 msgstr "Set Pengiriman"
 
+#: templates/admin/cart/partials/cart_cards.html:69
 msgid "Cart Total"
 msgstr "Total Keranjang"
 
+#: templates/admin/cart/partials/cart_cards.html:75
 msgid "Items"
 msgstr "Barang"
 
+#: templates/admin/cart/partials/cart_cards.html:80
 msgid "Savings"
 msgstr "Penghematan"
 
+#: templates/admin/cart/partials/cart_cards.html:88
 msgid "Shipping"
 msgstr "Pengiriman"
 
+#: templates/admin/cart/partials/cart_cards.html:95
 msgid "Grand Total"
 msgstr "Total Keseluruhan"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "Updated"
 msgstr "Diperbarui"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "ago"
 msgstr "yang lalu"
 
+#: templates/admin/cart/partials/cart_cards.html:109
+#: templates/admin/cart/shippingmethod/change_form.html:30
+#: templates/admin/cart/shippingmethod/method_card.html:128
 msgid "Created"
 msgstr "Dibuat"
 
+#: templates/admin/cart/partials/cart_cards.html:120
 msgid "Est. Delivery"
 msgstr "Estimasi Pengiriman"
 
+#: templates/admin/cart/partials/cart_cards.html:129
 msgid "View cart details"
 msgstr "Lihat Detail Keranjang"
 
+#: templates/admin/cart/partials/cart_cards.html:134
 msgid "Edit cart"
 msgstr "Edit Keranjang"
 
+#: templates/admin/cart/partials/cart_cards.html:140
 msgid "Delete cart"
 msgstr "Hapus Keranjang"
 
+#: templates/admin/cart/partials/cart_cards.html:143
 msgid "Are you sure you want to clear this cart?"
 msgstr "Apakah Anda yakin ingin membersihkan keranjang ini?"
 
+#: templates/admin/cart/partials/cart_cards.html:154
 msgid "No shopping carts found matching your criteria."
 msgstr "Tidak ditemukan keranjang belanja yang cocok dengan kriteria Anda."
 
+#: templates/admin/cart/partials/cart_cards.html:156
 msgid "Try adjusting your filters or search terms."
 msgstr "Coba sesuaikan filter atau kata kunci pencarian Anda."
 
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:22
 msgid "Edit Shipping Method"
 msgstr "Ubah Metode Pengiriman"
 
+#: templates/admin/cart/shippingmethod/change_form.html:40
+#: templates/admin/cart/shippingmethod/change_form.html:344
+#: templates/admin/cart/taxrate/change_form.html:41
+#: templates/admin/cart/taxrate/change_form.html:239
 msgid "Save and continue editing"
 msgstr "Simpan dan lanjutkan mengedit"
 
+#: templates/admin/cart/shippingmethod/change_form.html:56
+#: templates/admin/cart/taxrate/change_form.html:57
 msgid "Please correct the errors below"
 msgstr "Silakan perbaiki kesalahan di bawah ini"
 
+#: templates/admin/cart/shippingmethod/change_form.html:82
+#: templates/admin/cart/taxrate/change_form.html:83
 msgid "Basic"
 msgstr "Dasar"
 
+#: templates/admin/cart/shippingmethod/change_form.html:86
+#: templates/admin/cart/shippingmethod/change_form.html:148
 msgid "Pricing"
 msgstr "Harga"
 
+#: templates/admin/cart/shippingmethod/change_form.html:94
 msgid "Display"
 msgstr "Tampilan"
 
-msgid "Optional: Restrict availability based on order value or weight."
-msgstr "Opsional: Batasi ketersediaan berdasarkan nilai pesanan atau berat."
+#: templates/admin/cart/shippingmethod/change_form.html:103
+#| msgid "Product Exemptions"
+msgid "Promotions"
+msgstr "Promosi"
 
+#: templates/admin/cart/shippingmethod/change_form.html:185
 msgid "Delivery Time"
 msgstr "Waktu Pengiriman"
 
+#: templates/admin/cart/shippingmethod/change_form.html:226
 msgid "Display Options"
 msgstr "Opsi Tampilan"
 
+#: templates/admin/cart/shippingmethod/change_form.html:248
 msgid "Carrier Integration"
 msgstr "Integrasi Pengangkut"
 
+#: templates/admin/cart/shippingmethod/change_form.html:249
 msgid "Configure carrier-specific settings for real-time rate lookups."
 msgstr ""
-"Konfigurasikan pengaturan khusus penyedia layanan untuk pencarian tarif real-"
-"time."
+"Konfigurasikan pengaturan khusus penyedia layanan untuk pencarian tarif "
+"real-time."
 
+#: templates/admin/cart/shippingmethod/change_form.html:269
+msgid "Active Promotions"
+msgstr "Promosi Aktif"
+
+#: templates/admin/cart/shippingmethod/change_form.html:270
+msgid ""
+"Shipping promotions that currently affect this method. Promotions with no "
+"method restrictions apply to all methods."
+msgstr ""
+"Promosi pengiriman yang saat ini memengaruhi metode ini. Promosi tanpa "
+"batasan metode berlaku untuk semua metode."
+
+#: templates/admin/cart/shippingmethod/change_form.html:277
+#| msgid "Tax Type"
+msgid "Type"
+msgstr "Jenis"
+
+#: templates/admin/cart/shippingmethod/change_form.html:278
+msgid "Value"
+msgstr "Nilai"
+
+#: templates/admin/cart/shippingmethod/change_form.html:280
+#: templates/admin/cart/taxrate/change_list.html:86
+msgid "Status"
+msgstr "Status"
+
+#: templates/admin/cart/shippingmethod/change_form.html:302
+#| msgid "Optional description of this shipping method"
+msgid "No active promotions affect this shipping method."
+msgstr "Tidak ada promosi aktif yang memengaruhi metode pengiriman ini."
+
+#: templates/admin/cart/shippingmethod/change_form.html:308
+#| msgid "Created From"
+msgid "Create New Promotion"
+msgstr "Buat Promosi Baru"
+
+#: templates/admin/cart/shippingmethod/change_list.html:21
 msgid "Configure shipping options, rates, and delivery methods"
 msgstr "Konfigurasikan opsi pengiriman, tarif, dan metode pengiriman"
 
+#: templates/admin/cart/shippingmethod/change_list.html:23
 msgid "method"
 msgstr "metode"
 
+#: templates/admin/cart/shippingmethod/change_list.html:24
 msgid "active"
 msgstr "aktif"
 
+#: templates/admin/cart/shippingmethod/change_list.html:29
 msgid "Add Method"
 msgstr "Tambah Metode"
 
+#: templates/admin/cart/shippingmethod/change_list.html:48
 msgid "Bulk Actions"
 msgstr "Aksi Massal"
 
+#: templates/admin/cart/shippingmethod/change_list.html:49
 msgid "Enable Selected"
 msgstr "Aktifkan yang Dipilih"
 
+#: templates/admin/cart/shippingmethod/change_list.html:50
 msgid "Disable Selected"
 msgstr "Nonaktifkan yang Dipilih"
 
+#: templates/admin/cart/shippingmethod/change_list.html:51
 msgid "Delete Selected"
 msgstr "Hapus yang Dipilih"
 
+#: templates/admin/cart/shippingmethod/change_list.html:53
 msgid "Apply"
 msgstr "Terapkan"
 
+#: templates/admin/cart/shippingmethod/change_list.html:55
 msgid "selected"
 msgstr "dipilih"
 
+#: templates/admin/cart/shippingmethod/change_list.html:65
 msgid "All Status"
 msgstr "Semua Status"
 
+#: templates/admin/cart/shippingmethod/change_list.html:76
+#: templates/admin/cart/taxrate/change_list.html:78
 msgid "All Types"
 msgstr "Semua Jenis"
 
+#: templates/admin/cart/shippingmethod/change_list.html:81
 msgid "Real-Time Rates"
 msgstr "Tarif Waktu Nyata"
 
+#: templates/admin/cart/shippingmethod/change_list.html:92
 msgid "Clear all filters"
 msgstr "Hapus Semua Filter"
 
+#: templates/admin/cart/shippingmethod/change_list.html:93
 msgid "Clear Filters"
 msgstr "Hapus Filter"
 
+#: templates/admin/cart/shippingmethod/change_list.html:101
 msgid "Search methods..."
 msgstr "Cari metode..."
 
+#: templates/admin/cart/shippingmethod/change_list.html:112
 msgid "Select All"
 msgstr "Pilih Semua"
 
+#: templates/admin/cart/shippingmethod/change_list.html:130
 #, python-format
 msgid "%(counter)s method"
 msgid_plural "%(counter)s methods"
 msgstr[0] "%(counter)s metode"
 msgstr[1] "%(counter)s metode"
 
+#: templates/admin/cart/shippingmethod/change_list.html:139
 msgid "No shipping methods found"
 msgstr "Tidak ditemukan metode pengiriman"
 
+#: templates/admin/cart/shippingmethod/change_list.html:142
 msgid "Try adjusting your filters or search query."
 msgstr "Coba sesuaikan filter atau query pencarian Anda."
 
+#: templates/admin/cart/shippingmethod/change_list.html:144
 msgid "Get started by creating your first shipping method."
 msgstr "Mulailah dengan membuat metode pengiriman pertama Anda."
 
+#: templates/admin/cart/shippingmethod/change_list.html:149
 msgid "Add First Method"
 msgstr "Tambah Metode Pertama"
 
+#: templates/admin/cart/shippingmethod/change_list.html:160
 msgid "Loading..."
 msgstr "Memuat..."
 
-msgid "Order Value:"
-msgstr "Nilai Pesanan:"
-
-msgid "Weight:"
-msgstr "Berat:"
-
+#: templates/admin/cart/shippingmethod/method_card.html:60
 msgid "Zones:"
 msgstr "Zona:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:62
 msgid "zone"
 msgstr "zona"
 
+#: templates/admin/cart/shippingmethod/method_card.html:68
 msgid "Countries:"
 msgstr "Negara:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:70
 msgid "country"
 msgstr "negara"
 
+#: templates/admin/cart/shippingmethod/method_card.html:77
 msgid "Worldwide"
 msgstr "Seluruh Dunia"
 
+#: templates/admin/cart/shippingmethod/method_card.html:85
 msgid "Pickup:"
 msgstr "Pengambilan:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:107
 msgid "Delivery:"
 msgstr "Pengiriman:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:137
 msgid "Edit method"
 msgstr "Edit Metode"
 
+#: templates/admin/cart/shippingmethod/method_card.html:143
 msgid "Toggle active status"
 msgstr "Ubah Status Aktif"
 
+#: templates/admin/cart/shippingmethod/method_card.html:149
 msgid "Delete method"
 msgstr "Hapus Metode"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:22
 msgid "Edit Tax Rate"
 msgstr "Ubah Tingkat Pajak"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:24
+#: templates/admin/cart/taxrate/change_list.html:26
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:82
 msgid "Add Tax Rate"
 msgstr "Tambah Tarif Pajak"
 
+#: templates/admin/cart/taxrate/change_form.html:87
 msgid "Geography"
 msgstr "Geografi"
 
+#: templates/admin/cart/taxrate/change_form.html:91
 msgid "Rules"
 msgstr "Aturan"
 
+#: templates/admin/cart/taxrate/change_form.html:95
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:55
 msgid "Exemptions"
 msgstr "Pengecualian"
 
+#: templates/admin/cart/taxrate/change_form.html:142
 msgid ""
 "Define where this tax rate applies. Leave state/city empty for country-wide "
 "rates."
@@ -2337,9 +2898,11 @@ msgstr ""
 "Tentukan di mana tarif pajak ini berlaku. Biarkan negara/kota kosong untuk "
 "tarif se-negara."
 
+#: templates/admin/cart/taxrate/change_form.html:194
 msgid "Exclude specific product types or categories from this tax rate."
 msgstr "Eksklusikan jenis produk atau kategori tertentu dari tarif pajak ini."
 
+#: templates/admin/cart/taxrate/change_list.html:18
 msgid ""
 "Configure tax rules for your store. Tax rates are matched to customer "
 "addresses during checkout."
@@ -2347,42 +2910,52 @@ msgstr ""
 "Konfigurasikan aturan pajak untuk toko Anda. Tarif pajak akan cocok dengan "
 "alamat pelanggan saat checkout."
 
+#: templates/admin/cart/taxrate/change_list.html:22
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:79
 msgid "Load Presets"
 msgstr "Muat Preset"
 
+#: templates/admin/cart/taxrate/change_list.html:37
 msgid "Total Rules"
 msgstr "Aturan Total"
 
+#: templates/admin/cart/taxrate/change_list.html:47
 msgid "Countries"
 msgstr "Negara"
 
+#: templates/admin/cart/taxrate/change_list.html:52
 msgid "Tax Types"
 msgstr "Jenis Pajak"
 
+#: templates/admin/cart/taxrate/change_list.html:64
 msgid "Search by name, country, state..."
 msgstr "Cari berdasarkan nama, negara, negara bagian..."
 
+#: templates/admin/cart/taxrate/change_list.html:69
 msgid "All Countries"
 msgstr "Semua Negara"
 
+#: templates/admin/cart/taxrate/change_list.html:82
 msgid "Custom"
 msgstr "Kustom"
 
-msgid "Status"
-msgstr "Status"
-
+#: templates/admin/cart/taxrate/change_list.html:97
 msgid "Clear"
 msgstr "Hapus"
 
+#: templates/admin/cart/taxrate/change_list.html:104
 msgid "Tax Rules"
 msgstr "Aturan Pajak"
 
+#: templates/admin/cart/taxrate/change_list.html:107
 msgid "rules"
 msgstr "aturan"
 
+#: templates/admin/cart/taxrate/change_list.html:120
 msgid "Load Tax Rate Presets"
 msgstr "Muat Preset Tingkat Pajak"
 
+#: templates/admin/cart/taxrate/change_list.html:121
 msgid ""
 "Quickly add standard tax rates for your region. Existing rates will not be "
 "duplicated."
@@ -2390,30 +2963,39 @@ msgstr ""
 "Tambahkan dengan cepat tarif pajak standar untuk wilayah Anda. Tarif yang "
 "sudah ada tidak akan diduplikasi."
 
+#: templates/admin/cart/taxrate/change_list.html:141
 msgid "rates"
 msgstr "tingkat"
 
+#: templates/admin/cart/taxrate/change_list.html:147
 msgid "Load"
 msgstr "Muat"
 
+#: templates/admin/cart/taxrate/change_list.html:158
 msgid "Close"
 msgstr "Tutup"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:17
 msgid "postal codes"
 msgstr "kode pos"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:35
 msgid "Shipping Taxed"
 msgstr "Pajak Pengiriman"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:40
 msgid "Compound"
 msgstr "Kombinasi"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:65
 msgid "Delete"
 msgstr "Hapus"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:75
 msgid "No tax rates configured"
 msgstr "Tidak ada tingkat pajak yang dikonfigurasikan"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:76
 msgid ""
 "Use 'Load Presets' to quickly add standard rates for your region, or add "
 "rates manually."
@@ -2421,9 +3003,11 @@ msgstr ""
 "Gunakan 'Muat Preset' untuk menambahkan dengan cepat tarif standar untuk "
 "wilayah Anda, atau tambahkan tarif secara manual."
 
+#: views.py:57
 msgid "Get current cart"
 msgstr "Dapatkan keranjang saat ini"
 
+#: views.py:59
 msgid ""
 "Get the current cart for authenticated user or session. Returns cart items, "
 "subtotal, discounts, taxes, and total. Automatically creates cart if it "
@@ -2433,9 +3017,11 @@ msgstr ""
 "diotorisasi. Mengembalikan item keranjang, subtotal, diskon, pajak, dan "
 "total. Otomatis membuat keranjang jika tidak ada."
 
+#: views.py:64
 msgid "Add item to cart"
 msgstr "Tambahkan item ke keranjang"
 
+#: views.py:66
 msgid ""
 "Add a product to cart with specified quantity. Optionally include variant "
 "ID, customizations, and notes. Validates stock availability and merges with "
@@ -2450,9 +3036,11 @@ msgstr ""
 "is_subscription=true bersama subscription_plan_id, payment_token_id, dan "
 "secara opsional pricing_tier_id."
 
+#: views.py:72
 msgid "Update cart item"
 msgstr "Perbarui item keranjang"
 
+#: views.py:74
 msgid ""
 "Update cart item quantity, customizations, or notes. Validates new quantity "
 "against stock availability. Returns updated cart with recalculated totals."
@@ -2461,9 +3049,11 @@ msgstr ""
 "Memvalidasi kuantitas baru terhadap ketersediaan stok. Mengembalikan "
 "keranjang yang telah diperbarui dengan total yang dihitung ulang."
 
+#: views.py:79
 msgid "Remove cart item"
 msgstr "Hapus item keranjang"
 
+#: views.py:81
 msgid ""
 "Remove a specific item from cart. Recalculates cart totals and revalidates "
 "any applied vouchers against new cart total."
@@ -2471,9 +3061,11 @@ msgstr ""
 "Hapus item tertentu dari keranjang. Menghitung ulang total keranjang dan "
 "memverifikasi kembali voucher yang diterapkan terhadap total keranjang baru."
 
+#: views.py:86
 msgid "Clear cart"
 msgstr "Bersihkan keranjang"
 
+#: views.py:88
 msgid ""
 "Remove all items from cart. Also removes any applied vouchers. Cart object "
 "persists but becomes empty."
@@ -2481,9 +3073,11 @@ msgstr ""
 "Hapus semua item dari keranjang. Juga menghapus voucher yang diterapkan. "
 "Objek keranjang tetap ada tetapi menjadi kosong."
 
+#: views.py:93
 msgid "Apply voucher code"
 msgstr "Terapkan kode voucher"
 
+#: views.py:95
 msgid ""
 "Apply a voucher code to cart. Validates voucher eligibility, minimum "
 "purchase requirements, and usage limits. Calculates and applies discount to "
@@ -2493,52 +3087,34 @@ msgstr ""
 "persyaratan pembelian minimum, dan batas penggunaan. Menghitung dan "
 "menerapkan diskon ke total keranjang."
 
+#: views.py:100
 msgid "Remove voucher"
 msgstr "Hapus voucher"
 
+#: views.py:102
 msgid ""
-"Remove a specific voucher from cart by code. Recalculates cart total without "
-"the voucher discount. User can reapply the voucher later if eligible."
+"Remove a specific voucher from cart by code. Recalculates cart total without"
+" the voucher discount. User can reapply the voucher later if eligible."
 msgstr ""
 "Hapus voucher spesifik dari keranjang dengan kode. Hitung ulang total "
 "keranjang tanpa diskon voucher. Pengguna dapat menerapkan voucher kembali "
 "nanti jika memenuhi syarat."
 
-msgid "Apply gift card"
-msgstr "Terapkan kartu hadiah"
-
-msgid ""
-"Apply a gift card code to cart. Validates gift card status, balance, and "
-"currency. Gift cards cannot be used to purchase other gift cards. Amount "
-"applied is limited to gift card balance or remaining cart total."
-msgstr ""
-"Terapkan kode kartu hadiah ke keranjang. Memvalidasi status, saldo, dan mata "
-"uang kartu hadiah. Kartu hadiah tidak dapat digunakan untuk membeli kartu "
-"hadiah lainnya. Jumlah yang diterapkan terbatas pada saldo kartu hadiah atau "
-"total keranjang yang tersisa."
-
-msgid "Remove gift card"
-msgstr "Hapus kartu hadiah"
-
-msgid ""
-"Remove a specific gift card from cart by code. The gift card balance is not "
-"affected until checkout is completed. User can reapply the gift card."
-msgstr ""
-"Hapus kartu hadiah spesifik dari keranjang dengan kode. Saldo kartu hadiah "
-"tidak terpengaruh sampai proses checkout selesai. Pengguna dapat menerapkan "
-"kartu hadiah kembali."
-
+#: views.py:107
 msgid "Get cart summary"
 msgstr "Dapatkan ringkasan keranjang"
 
+#: views.py:109
 msgid ""
 "Get lightweight cart summary with item count, subtotal, and total. Faster "
-"than full cart endpoint. Useful for header cart badge or quick total display."
+"than full cart endpoint. Useful for header cart badge or quick total "
+"display."
 msgstr ""
-"Dapatkan ringkasan keranjang ringan dengan jumlah item, subtotal, dan total. "
-"Lebih cepat daripada akhir titik keranjang penuh. Berguna untuk badge "
+"Dapatkan ringkasan keranjang ringan dengan jumlah item, subtotal, dan total."
+" Lebih cepat daripada akhir titik keranjang penuh. Berguna untuk badge "
 "keranjang header atau tampilan total cepat."
 
+#: views.py:246
 msgid ""
 "Component items cannot be modified directly. Update the parent product "
 "instead."
@@ -2546,9 +3122,11 @@ msgstr ""
 "Item komponen tidak dapat diubah secara langsung. Perbarui produk induknya "
 "sebagai gantinya."
 
+#: views.py:360
 msgid "List user wishlists"
 msgstr "Daftar daftar keinginan pengguna"
 
+#: views.py:362
 msgid ""
 "Get all wishlists for the authenticated user. Users can have multiple "
 "wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
@@ -2559,20 +3137,25 @@ msgstr ""
 "(misalnya, 'Ulang Tahun', 'Perkawinan', 'Ide'). Mengembalikan nama daftar "
 "keinginan, jumlah item, dan pengaturan privasi."
 
+#: views.py:367
 msgid "Create wishlist"
 msgstr "Buat daftar keinginan"
 
+#: views.py:369
 msgid ""
-"Create a new wishlist for the authenticated user. Specify name, description, "
-"and privacy setting (public/private). Public wishlists can be shared via URL."
+"Create a new wishlist for the authenticated user. Specify name, description,"
+" and privacy setting (public/private). Public wishlists can be shared via "
+"URL."
 msgstr ""
 "Buat daftar keinginan baru untuk pengguna yang telah diverifikasi. Tentukan "
 "nama, deskripsi, dan pengaturan privasi (umum/terbatas). Daftar keinginan "
 "umum dapat dibagikan melalui URL."
 
+#: views.py:374
 msgid "Get wishlist details"
 msgstr "Dapatkan detail daftar keinginan"
 
+#: views.py:376
 msgid ""
 "Get detailed information about a specific wishlist including all items, "
 "prices, availability, and sharing settings. Only accessible to wishlist "
@@ -2583,9 +3166,11 @@ msgstr ""
 "pemilik daftar keinginan kecuali daftar keinginan tersebut dibagikan secara "
 "publik."
 
+#: views.py:381
 msgid "Update wishlist"
 msgstr "Perbarui daftar keinginan"
 
+#: views.py:383
 msgid ""
 "Update wishlist information including name, description, or privacy "
 "settings. Can make wishlist public or private. Only owner can update."
@@ -2594,9 +3179,11 @@ msgstr ""
 "pengaturan privasi. Dapat membuat daftar keinginan menjadi publik atau "
 "privat. Hanya pemilik yang dapat memperbarui."
 
+#: views.py:388
 msgid "Partially update wishlist"
 msgstr "Perbarui sebagian daftar keinginan"
 
+#: views.py:390
 msgid ""
 "Update specific wishlist fields without sending full wishlist data. Useful "
 "for toggling privacy or renaming wishlist."
@@ -2605,9 +3192,11 @@ msgstr ""
 "keinginan lengkap. Berguna untuk mengaktifkan/menonaktifkan privasi atau "
 "mengganti nama daftar keinginan."
 
+#: views.py:395
 msgid "Delete wishlist"
 msgstr "Hapus daftar keinginan"
 
+#: views.py:397
 msgid ""
 "Permanently delete a wishlist and all its items. Cannot be undone. Only "
 "owner can delete."
@@ -2615,9 +3204,11 @@ msgstr ""
 "Hapus permanen daftar keinginan dan semua item di dalamnya. Tidak dapat "
 "dikembalikan. Hanya pemilik yang dapat menghapusnya."
 
+#: views.py:402
 msgid "Add item to wishlist"
 msgstr "Tambahkan item ke daftar keinginan"
 
+#: views.py:404
 msgid ""
 "Add a product to wishlist with optional variant, quantity, and notes. "
 "Prevents duplicates. Can add to default wishlist or specify wishlist ID."
@@ -2626,19 +3217,23 @@ msgstr ""
 "opsional. Mencegah duplikasi. Bisa ditambahkan ke daftar keinginan default "
 "atau spesifikkan ID daftar keinginan."
 
+#: views.py:409
 msgid "Remove item from wishlist"
 msgstr "Hapus item dari daftar keinginan"
 
+#: views.py:411
 msgid ""
-"Remove a specific item from wishlist. Item can be added back later. Does not "
-"affect product availability."
+"Remove a specific item from wishlist. Item can be added back later. Does not"
+" affect product availability."
 msgstr ""
 "Hapus item tertentu dari daftar keinginan. Item dapat ditambahkan kembali "
 "nanti. Tidak memengaruhi ketersediaan produk."
 
+#: views.py:416
 msgid "Move item to cart"
 msgstr "Pindahkan item ke keranjang"
 
+#: views.py:418
 msgid ""
 "Move a wishlist item directly to shopping cart. Validates stock "
 "availability. Item is removed from wishlist after successful cart addition."
@@ -2647,110 +3242,566 @@ msgstr ""
 "ketersediaan stok. Item akan dihapus dari daftar keinginan setelah "
 "penambahan keranjang berhasil."
 
+#: views.py:423
 msgid "Get public wishlist by share slug"
 msgstr "Dapatkan daftar keinginan publik berdasarkan slug bagikan"
 
+#: views.py:425
 msgid ""
 "View a public wishlist using its share URL slug. Anyone with the link can "
-"view public wishlists. Useful for gift registries and wish lists shared with "
-"family/friends."
+"view public wishlists. Useful for gift registries and wish lists shared with"
+" family/friends."
 msgstr ""
 "Lihat daftar keinginan publik menggunakan slug URL berbagi. Siapa pun yang "
 "memiliki tautan dapat melihat daftar keinginan publik. Berguna untuk daftar "
 "hadiah dan daftar keinginan yang dibagikan dengan keluarga/teman."
 
+#: views.py:430
+#| msgid "Get wishlist details"
+msgid "Get wishlisted product IDs"
+msgstr "Dapatkan ID produk yang diinginkan"
+
+#: views.py:432
+msgid ""
+"Returns a mapping of product IDs to wishlist item IDs for the current user's"
+" default wishlist. Used by the storefront to show wishlist heart icons on "
+"product listings without fetching full wishlist data."
+msgstr ""
+"Mengembalikan peta dari ID produk ke ID item daftar keinginan untuk daftar "
+"keinginan default pengguna saat ini. Digunakan oleh toko depan untuk "
+"menampilkan ikon hati daftar keinginan pada daftar produk tanpa mengambil "
+"data daftar keinginan lengkap."
+
+#: views.py:436
+msgid "Map of product IDs to wishlist item IDs"
+msgstr "Peta dari ID produk ke ID item daftar keinginan"
+
+#: views.py:444
+msgid "Keys are product IDs (as strings), values are wishlist item IDs"
+msgstr ""
+"Kunci adalah ID produk (sebagai string), nilai adalah ID item daftar "
+"keinginan"
+
+#: views.py:451
+#| msgid "Account creation required to proceed"
+msgid "Authentication required"
+msgstr "Otentikasi diperlukan"
+
+#: views.py:523
 msgid "ID of the wishlist item to remove"
 msgstr "ID item daftar keinginan yang akan dihapus"
 
+#: views.py:542
 msgid "ID of the wishlist item to move to cart"
 msgstr "ID item daftar keinginan yang akan dipindahkan ke keranjang"
 
+#: views.py:573
 msgid "Share slug of the public wishlist"
 msgstr "Bagikan slug daftar keinginan publik"
 
+#: views.py:589
 msgid "Wishlist not found"
 msgstr "Daftar Keinginan Tidak Ditemukan"
 
+#: views.py:612
 msgid "Get checkout session"
 msgstr "Dapatkan sesi checkout"
 
+#: views.py:613
 msgid "Set shipping address"
 msgstr "Atur alamat pengiriman"
 
+#: views.py:614
 msgid "Set billing address"
 msgstr "Atur alamat pembayaran"
 
+#: views.py:616
 msgid "Get available shipping methods"
 msgstr "Dapatkan metode pengiriman yang tersedia"
 
+#: views.py:620
 msgid "Get available payment providers"
 msgstr "Dapatkan penyedia pembayaran yang tersedia"
 
+#: views.py:622
 msgid ""
-"Returns payment providers available for the customer's country and currency. "
-"Filters based on shipping countries, provider capabilities, and merchant "
+"Returns payment providers available for the customer's country and currency."
+" Filters based on shipping countries, provider capabilities, and merchant "
 "configuration."
 msgstr ""
 "Mengembalikan penyedia pembayaran yang tersedia untuk negara dan mata uang "
 "pelanggan. Penyaringan berdasarkan negara pengiriman, kemampuan penyedia, "
 "dan konfigurasi pedagang."
 
+#: views.py:625
 msgid "Set shipping method"
 msgstr "Atur metode pengiriman"
 
+#: views.py:626
 msgid "Set payment method"
 msgstr "Atur metode pembayaran"
 
+#: views.py:627
 msgid "Validate checkout"
 msgstr "Validasi checkout"
 
+#: views.py:628
 msgid "Complete checkout"
 msgstr "Selesaikan checkout"
 
+#: views.py:631
+#| msgid "discount applied by"
+msgid "List applied tenders"
+msgstr "Daftar tender yang diterapkan"
+
+#: views.py:633
+msgid ""
+"Gift card and store credit holds against this checkout, plus the amount "
+"still due. amount_due — not total_amount — is what a payment provider should"
+" be asked to charge; it can legitimately be zero when tenders cover the "
+"whole order. Includes the signed-in customer's spendable wallet balance "
+"(null for guests, missing wallets, frozen wallets, or a currency mismatch)."
+msgstr ""
+"Holding kartu hadiah dan kredit toko terhadap checkout ini, ditambah jumlah "
+"yang masih terutang. amount_due — bukan total_amount — adalah jumlah yang "
+"harus diminta dari penyedia pembayaran; secara sah dapat bernilai nol ketika"
+" pembayaran mencakup seluruh pesanan. Termasuk saldo dompet yang dapat "
+"digunakan oleh pelanggan yang masuk (null untuk tamu, dompet yang hilang, "
+"dompet yang dibekukan, atau ketidakcocokan mata uang)."
+
+#: views.py:643
+#| msgid "Apply gift card"
+msgid "Apply a gift card"
+msgstr "Terapkan kartu hadiah"
+
+#: views.py:645
+msgid ""
+"Places a hold on the card as a PAYMENT, not a discount: it settles the post-"
+"tax total and never reduces the tax base. Nothing is debited until payment "
+"is confirmed, so an abandoned checkout costs the customer nothing. Error "
+"messages are deliberately uniform — this endpoint sits on stored value and "
+"must not act as an enumeration oracle."
+msgstr ""
+"Menempatkan tahanan pada kartu sebagai PEMBAYARAN, bukan diskon: ini "
+"menyelesaikan total setelah pajak dan tidak pernah mengurangi dasar pajak. "
+"Tidak ada yang didebit sampai pembayaran dikonfirmasi, sehingga checkout "
+"yang ditinggalkan tidak memakan biaya apa pun bagi pelanggan. Pesan "
+"kesalahan sengaja seragam — endpoint ini berada di nilai yang disimpan dan "
+"tidak boleh bertindak sebagai oracle enumerasi."
+
+#: views.py:655
+#| msgid "Apply gift card"
+msgid "Apply store credit"
+msgstr "Terapkan kredit toko"
+
+#: views.py:657
+msgid ""
+"Holds the signed-in customer's wallet balance against this checkout, up to "
+"the amount due. Guests receive 403 — wallets belong to accounts. Single-"
+"currency: a wallet cannot part-pay an order in another currency."
+msgstr ""
+"Menyimpan saldo dompet pelanggan yang telah masuk terhadap checkout ini, "
+"hingga jumlah yang terutang. Pengunjung menerima 403 — dompet milik akun. "
+"Satu mata uang: dompet tidak dapat membayar sebagian pesanan dalam mata uang"
+" lain."
+
+#: views.py:665
+#| msgid "Remove all zones"
+msgid "Remove a tender"
+msgstr "Hapus tender"
+
+#: views.py:667
+msgid ""
+"Releases a hold. Nothing was debited, so this only frees the reservation; "
+"the checkout's amount_due rises accordingly."
+msgstr ""
+"Membatalkan penahanan. Tidak ada pembayaran yang dilakukan, sehingga ini "
+"hanya melepaskan reservasi; jumlah yang harus dibayar pada checkout akan "
+"meningkat sesuai dengan itu."
+
+#: views.py:972
+msgid "Store credit"
+msgstr "Kredit Toko"
+
+#: views.py:999
+#| msgid "Gift card has expired"
+msgid "Gift card code is required"
+msgstr "Kode kartu hadiah diperlukan"
+
+#: views.py:1010 views.py:1064
+msgid "This order is already fully paid"
+msgstr "Pesanan ini sudah dibayar secara penuh"
+
+#: views.py:1054
+msgid "Sign in to pay with your wallet"
+msgstr "Masuk untuk membayar dengan dompet Anda"
+
+#: views.py:1093
+#| msgid "Address not found"
+msgid "Tender not found"
+msgstr "Tender tidak ditemukan"
+
+#: views.py:1120
 msgid "Get recently viewed products"
 msgstr "Dapatkan produk yang dilihat baru-baru ini"
 
+#: views.py:1121
 msgid "Get recently viewed details"
 msgstr "Dapatkan detail produk yang dilihat baru-baru ini"
 
+#: views.py:1150
 msgid "List shipping methods"
 msgstr "Daftar metode pengiriman"
 
+#: views.py:1151
 msgid "Get shipping method details"
 msgstr "Dapatkan detail metode pengiriman"
 
+#: views.py:1174
 msgid "List tax rates"
 msgstr "Daftar tarif pajak"
 
+#: views.py:1175
 msgid "Get tax rate details"
 msgstr "Dapatkan detail tarif pajak"
 
+#: views.py:1176
 msgid "Create tax rate"
 msgstr "Buat tarif pajak"
 
+#: views.py:1177
 msgid "Update tax rate"
 msgstr "Perbarui tarif pajak"
 
+#: views.py:1178
 msgid "Partial update tax rate"
 msgstr "Perbarui sebagian tingkat pajak"
 
+#: views.py:1179
 msgid "Delete tax rate"
 msgstr "Hapus tarif pajak"
 
+#: views.py:1190
 msgid "Calculate applicable taxes"
 msgstr "Hitung pajak yang berlaku"
 
+#: views.py:1235
 msgid "Tax rates grouped by country"
 msgstr "Tingkat pajak dikelompokkan berdasarkan negara"
 
+#: views.py:1254
 msgid "Load preset tax rates"
 msgstr "Muat tarif pajak prasetel"
 
+#: views.py:1285
 msgid "List tax preset groups"
 msgstr "Daftar grup prasetel pajak"
 
+#: views.py:1286
 msgid "Get preset group details"
 msgstr "Dapatkan detail kelompok prasetel"
 
+#: views.py:1297
 msgid "List rates in a preset group"
 msgstr "Daftar tarif dalam kelompok prasetel"
+
+#~ msgid "Invalid gift card code"
+#~ msgstr "Kode kartu hadiah tidak valid"
+
+#~ msgid "Gift card already applied"
+#~ msgstr "Kartu hadiah sudah diterapkan"
+
+#~ msgid "Gift card has been fully redeemed"
+#~ msgstr "Kartu hadiah telah sepenuhnya digunakan"
+
+#~ msgid "Gift card cannot be used"
+#~ msgstr "Kartu hadiah tidak dapat digunakan"
+
+#, python-brace-format
+#~ msgid ""
+#~ "Currency mismatch. Gift card is in {card_currency}, cart is in "
+#~ "{cart_currency}"
+#~ msgstr ""
+#~ "Tidak cocoknya mata uang. Kartu hadiah berada di {card_currency}, keranjang "
+#~ "berada di {cart_currency}"
+
+#, python-brace-format
+#~ msgid ""
+#~ "This gift card is in {card_currency}. Please switch your currency to "
+#~ "{card_currency} to use it."
+#~ msgstr ""
+#~ "Kartu hadiah ini dalam {card_currency}. Silakan ubah mata uang Anda menjadi "
+#~ "{card_currency} untuk menggunakan kartu ini."
+
+#~ msgid "Gift cards cannot be used to purchase other gift cards"
+#~ msgstr "Kartu hadiah tidak dapat digunakan untuk membeli kartu hadiah lainnya"
+
+#~ msgid "Cart total is already covered"
+#~ msgstr "Total keranjang sudah tertutup"
+
+#~ msgid "Unable to process gift card currency conversion"
+#~ msgstr "Tidak dapat memproses konversi mata uang kartu hadiah"
+
+#~ msgid "Gift card applied successfully"
+#~ msgstr "Kartu hadiah berhasil diterapkan"
+
+#~ msgid "Free Shipping"
+#~ msgstr "Pengiriman Gratis"
+
+#~ msgid "Weight Based"
+#~ msgstr "Berdasarkan Berat"
+
+#~ msgid "Price Based"
+#~ msgstr "Berdasarkan Harga"
+
+#~ msgid "Minimum cart value to qualify"
+#~ msgstr "Nilai keranjang minimum untuk memenuhi syarat"
+
+#~ msgid "Minimum Order Value"
+#~ msgstr "Nilai Pesanan Minimum"
+
+#~ msgid "Maximum cart value to qualify"
+#~ msgstr "Nilai keranjang maksimum untuk memenuhi syarat"
+
+#~ msgid "Maximum Order Value"
+#~ msgstr "Nilai Pesanan Maksimum"
+
+#~ msgid "Minimum cart weight (kg)"
+#~ msgstr "Berat keranjang minimum (kg)"
+
+#~ msgid "Minimum Weight"
+#~ msgstr "Berat Minimum"
+
+#~ msgid "Maximum cart weight (kg)"
+#~ msgstr "Berat keranjang maksimum (kg)"
+
+#~ msgid "Maximum Weight"
+#~ msgstr "Berat Maksimum"
+
+#, python-brace-format
+#~ msgid "Minimum order value {value} required"
+#~ msgstr "Nilai pesanan minimum {value} diperlukan"
+
+#, python-brace-format
+#~ msgid "Maximum order value {value} exceeded"
+#~ msgstr "Nilai pesanan maksimum {value} terlampaui"
+
+#, python-brace-format
+#~ msgid "Minimum weight {weight}kg required"
+#~ msgstr "Berat minimum {weight}kg diperlukan"
+
+#, python-brace-format
+#~ msgid "Maximum weight {weight}kg exceeded"
+#~ msgstr "Berat maksimum {weight}kg terlampaui"
+
+#~ msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+#~ msgstr ""
+#~ "Jenis produk yang terbebas dari pajak ini (contoh: ['digital', 'service'])"
+
+#~ msgid "Amount in base currency (used for cart calculations)"
+#~ msgstr "Jumlah dalam mata uang dasar (digunakan untuk perhitungan keranjang)"
+
+#~ msgid "Original Currency Amount"
+#~ msgstr "Jumlah Mata Uang Asli"
+
+#~ msgid ""
+#~ "Discount in the gift card's native currency (for foreign-currency gift "
+#~ "cards)"
+#~ msgstr ""
+#~ "Diskon dalam mata uang asli kartu hadiah (untuk kartu hadiah mata uang "
+#~ "asing)"
+
+#~ msgid "Exchange Rate"
+#~ msgstr "Kurs Tukar"
+
+#~ msgid "Rate: gift card currency -> base currency at time of application"
+#~ msgstr "Tarif: mata uang kartu hadiah -> mata uang dasar pada waktu penerapan"
+
+#~ msgid "Applied At"
+#~ msgstr "Diterapkan Pada"
+
+#~ msgid "Applied Gift Card"
+#~ msgstr "Kartu Hadiah yang Diterapkan"
+
+#~ msgid "Applied Gift Cards"
+#~ msgstr "Kartu Hadiah yang Diterapkan"
+
+#~ msgid "This gift card cannot be used"
+#~ msgstr "Kartu hadiah ini tidak dapat digunakan"
+
+#~ msgid "Discount amount exceeds gift card balance"
+#~ msgstr "Jumlah diskon melebihi saldo kartu hadiah"
+
+#~ msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+#~ msgstr "Kode kartu hadiah (contoh: GC-XXXX-XXXX-XXXX)"
+
+#~ msgid "Amount applied from this gift card (in base currency)"
+#~ msgstr "Jumlah yang diterapkan dari kartu hadiah ini (dalam mata uang dasar)"
+
+#~ msgid "Remaining balance on gift card after this application"
+#~ msgstr "Saldo yang tersisa di kartu hadiah setelah penerapan ini"
+
+#~ msgid "Base currency code"
+#~ msgstr "Kode Mata Uang Dasar"
+
+#~ msgid "Gift card's native currency code"
+#~ msgstr "Kode Mata Uang Asli Kartu Hadiah"
+
+#~ msgid ""
+#~ "Discount in gift card's native currency (for foreign-currency gift cards)"
+#~ msgstr ""
+#~ "Diskon dalam mata uang asli kartu hadiah (untuk kartu hadiah mata uang "
+#~ "asing)"
+
+#~ msgid "Gift card removed"
+#~ msgstr "Kartu hadiah dihapus"
+
+#~ msgid "Gift card not found in cart"
+#~ msgstr "Kartu hadiah tidak ditemukan dalam keranjang"
+
+#~ msgid "Free Shipping - No charge"
+#~ msgstr "Pengiriman Gratis - Tidak ada biaya"
+
+#~ msgid "Weight Based - Calculate by cart weight"
+#~ msgstr "Berdasarkan Berat - Hitung berdasarkan berat keranjang"
+
+#~ msgid "Price Based - Calculate by cart subtotal"
+#~ msgstr "Berdasarkan Harga - Hitung berdasarkan subtotal keranjang"
+
+#~ msgid "Free Shipping:"
+#~ msgstr "Pengiriman Gratis:"
+
+#~ msgid "No shipping charge"
+#~ msgstr "Tidak ada biaya pengiriman"
+
+#~ msgid "Weight/Price Based:"
+#~ msgstr "Berdasarkan Berat/Harga:"
+
+#~ msgid "Calculate using rate tables"
+#~ msgstr "Hitung menggunakan tabel tarif"
+
+#~ msgid ""
+#~ "Define when this shipping method should be available based on cart value and"
+#~ " weight."
+#~ msgstr ""
+#~ "Definisikan kapan metode pengiriman ini harus tersedia berdasarkan nilai "
+#~ "keranjang dan beratnya."
+
+#~ msgid "Order Value Restrictions"
+#~ msgstr "Batasan Nilai Pesanan"
+
+#~ msgid "Set minimum or maximum cart subtotal requirements for this method."
+#~ msgstr ""
+#~ "Tetapkan persyaratan subtotal keranjang minimum atau maksimum untuk metode "
+#~ "ini."
+
+#~ msgid "Method only available if cart subtotal is at least this amount"
+#~ msgstr "Metode hanya tersedia jika subtotal keranjang setidaknya sejumlah ini"
+
+#~ msgid "No maximum"
+#~ msgstr "Tidak ada maksimum"
+
+#~ msgid "Method only available if cart subtotal is below this amount"
+#~ msgstr "Metode hanya tersedia jika subtotal keranjang di bawah jumlah ini"
+
+#~ msgid "Free shipping for orders over $50: Set minimum to 50.00"
+#~ msgstr ""
+#~ "Pengiriman gratis untuk pesanan di atas $50: Tetapkan minimum ke 50.00"
+
+#~ msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+#~ msgstr ""
+#~ "Pengiriman ekonomi untuk pesanan di bawah $100: Tetapkan maksimum ke 100.00"
+
+#~ msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+#~ msgstr "Pengiriman standar untuk $25-$200: Tetapkan minimum dan maksimum"
+
+#~ msgid "Weight Restrictions"
+#~ msgstr "Batasan Berat"
+
+#~ msgid "Set minimum or maximum total cart weight requirements for this method."
+#~ msgstr ""
+#~ "Tetapkan persyaratan berat total keranjang minimum atau maksimum untuk "
+#~ "metode ini."
+
+#~ msgid "Minimum Weight (kg)"
+#~ msgstr "Berat Minimum (kg)"
+
+#~ msgid "Method only available if total cart weight is at least this value"
+#~ msgstr ""
+#~ "Metode hanya tersedia jika berat total keranjang setidaknya sejumlah ini"
+
+#~ msgid "Maximum Weight (kg)"
+#~ msgstr "Berat Maksimum (kg)"
+
+#~ msgid "Method only available if total cart weight is below this value"
+#~ msgstr "Metode hanya tersedia jika berat total keranjang di bawah jumlah ini"
+
+#~ msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+#~ msgstr ""
+#~ "Pengiriman paket ringan untuk paket di bawah 2kg: Tetapkan maksimum ke 2.00"
+
+#~ msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+#~ msgstr ""
+#~ "Pengiriman barang berat untuk paket di atas 20kg: Tetapkan minimum ke 20.00"
+
+#~ msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+#~ msgstr "Pengiriman standar untuk 0.5kg-10kg: Tetapkan minimum dan maksimum"
+
+#~ msgid "Weight-Based Rates:"
+#~ msgstr "Tarif Berbasis Berat:"
+
+#~ msgid "Price-Based Rates:"
+#~ msgstr "Tarif Berbasis Harga:"
+
+#~ msgid ""
+#~ "You'll be able to configure tiered rates based on cart subtotal after the "
+#~ "method is created."
+#~ msgstr ""
+#~ "Anda akan dapat mengonfigurasi tarif bertingkat berdasarkan subtotal "
+#~ "keranjang setelah metode dibuat."
+
+#~ msgid "Min Order Value:"
+#~ msgstr "Nilai Pesanan Minimum:"
+
+#~ msgid "Max Order Value:"
+#~ msgstr "Nilai Pesanan Maksimum:"
+
+#~ msgid "Min Weight:"
+#~ msgstr "Berat Minimum:"
+
+#~ msgid "Max Weight:"
+#~ msgstr "Berat Maksimum:"
+
+#~ msgid ""
+#~ "No eligibility conditions set - method available for all cart values and "
+#~ "weights"
+#~ msgstr ""
+#~ "Tidak ada kondisi kelayakan yang ditetapkan - metode tersedia untuk semua "
+#~ "nilai keranjang dan berat"
+
+#~ msgid "Optional: Restrict availability based on order value or weight."
+#~ msgstr "Opsional: Batasi ketersediaan berdasarkan nilai pesanan atau berat."
+
+#~ msgid "Order Value:"
+#~ msgstr "Nilai Pesanan:"
+
+#~ msgid "Weight:"
+#~ msgstr "Berat:"
+
+#~ msgid ""
+#~ "Apply a gift card code to cart. Validates gift card status, balance, and "
+#~ "currency. Gift cards cannot be used to purchase other gift cards. Amount "
+#~ "applied is limited to gift card balance or remaining cart total."
+#~ msgstr ""
+#~ "Terapkan kode kartu hadiah ke keranjang. Memvalidasi status, saldo, dan mata"
+#~ " uang kartu hadiah. Kartu hadiah tidak dapat digunakan untuk membeli kartu "
+#~ "hadiah lainnya. Jumlah yang diterapkan terbatas pada saldo kartu hadiah atau"
+#~ " total keranjang yang tersisa."
+
+#~ msgid ""
+#~ "Remove a specific gift card from cart by code. The gift card balance is not "
+#~ "affected until checkout is completed. User can reapply the gift card."
+#~ msgstr ""
+#~ "Hapus kartu hadiah spesifik dari keranjang dengan kode. Saldo kartu hadiah "
+#~ "tidak terpengaruh sampai proses checkout selesai. Pengguna dapat menerapkan "
+#~ "kartu hadiah kembali."

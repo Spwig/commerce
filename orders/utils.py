@@ -153,7 +153,7 @@ def apply_voucher_to_order(order, voucher_code_str):
     """
     from django.utils import timezone
 
-    from vouchers.models import AppliedVoucher, VoucherCode, VoucherUsage
+    from vouchers.models import AppliedVoucher, VoucherCode
 
     # Normalize code
     code = voucher_code_str.strip().upper()
@@ -170,7 +170,9 @@ def apply_voucher_to_order(order, voucher_code_str):
         if existing:
             raise ValidationError(_("This voucher is already applied to this order"))
 
-    # Validate voucher timing
+    # Specific messages for the common timing failures. These are for the
+    # merchant's benefit only — enforcement is the delegated call below, which
+    # re-checks all of this. Do not add new *rules* here.
     now = timezone.now()
 
     if voucher.start_date and voucher.start_date > now:
@@ -179,24 +181,29 @@ def apply_voucher_to_order(order, voucher_code_str):
     if voucher.end_date and voucher.end_date < now:
         raise ValidationError(_("This voucher has expired"))
 
-    # Check usage limits
     if voucher.max_uses_total and voucher.current_uses >= voucher.max_uses_total:
         raise ValidationError(_("This voucher has reached its usage limit"))
 
-    # Check customer-specific usage limits
-    if order.user and voucher.max_uses_per_customer and hasattr(VoucherUsage, "objects"):
-        customer_uses = VoucherUsage.objects.filter(voucher=voucher, user=order.user).count()
-        if customer_uses >= voucher.max_uses_per_customer:
-            raise ValidationError(
-                _("Customer has already used this voucher the maximum number of times")
-            )
-
-    # Check minimum order value
     if voucher.min_order_value and order.subtotal < voucher.min_order_value:
         raise ValidationError(
             _("Minimum order value of %(amount)s required for this voucher")
             % {"amount": voucher.min_order_value}
         )
+
+    # Authoritative validation. This path used to re-implement the rules inline
+    # and never call the model, so anything added to can_be_used_by_customer was
+    # silently unenforced here — including issued_to, which binds a loyalty or
+    # referral reward to the customer who earned it. Without this, a referral
+    # code (REF + 8 chars, single use) could be applied to anyone's order by
+    # whoever learned the string.
+    #
+    # Caveat: no `context` is passed, so VoucherRestriction rules
+    # (shipping country, payment method, day/time, user group, email domain)
+    # are still NOT evaluated here. Enforcing those needs order context threaded
+    # through — tracked separately, not fixed by this call.
+    can_use, message = voucher.can_be_used_by_customer(order.user, order_total=order.subtotal)
+    if not can_use:
+        raise ValidationError(message)
 
     # Check application scope
     if voucher.application_scope == "products":

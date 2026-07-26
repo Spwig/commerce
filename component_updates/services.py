@@ -125,12 +125,16 @@ class UpdateManager:
             else:
                 effective_license_key = self.config.license_key
 
+            from core.telemetry.client import detect_install_source, get_install_method
+
             registration_data = {
                 "installation_uuid": str(self.config.installation_uuid),
                 "platform_version": getattr(settings, "PLATFORM_VERSION", "1.0.0"),
                 "license_key": effective_license_key,
                 "is_sandbox": is_sandbox_mode(),
                 "environment_type": license_manager.get_environment_type(),
+                "install_source": detect_install_source(),
+                "install_method": get_install_method(),
             }
 
             # Include domain from Sites framework for server-side tracking
@@ -304,6 +308,9 @@ class UpdateManager:
                     logger.warning("⚠️ Service secrets endpoint returned empty secrets")
             elif response.status_code == 404:
                 logger.debug("Service secrets endpoint not available on this server version")
+            elif response.status_code == 403:
+                # Community installs have no hosted-service secrets — expected.
+                logger.debug("Service secrets not available for this edition")
             else:
                 logger.warning(f"⚠️ Failed to fetch service secrets: HTTP {response.status_code}")
 
@@ -1751,6 +1758,7 @@ class PlatformUpdateService:
         # Authenticate with update server
         try:
             from core.license import get_license_manager, is_sandbox_mode
+            from core.telemetry.client import detect_install_source, get_install_method
 
             reg_data = {
                 "installation_uuid": str(self.config.installation_uuid),
@@ -1758,6 +1766,8 @@ class PlatformUpdateService:
                 "license_key": self.config.license_key,
                 "is_sandbox": is_sandbox_mode(),
                 "environment_type": get_license_manager().get_environment_type(),
+                "install_source": detect_install_source(),
+                "install_method": get_install_method(),
             }
 
             # Include domain from Sites framework for server-side tracking

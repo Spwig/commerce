@@ -92,6 +92,8 @@ urlpatterns = [
     path("preferences/history/", views.preference_history, name="preference_history"),
     path("unsubscribe/<str:token>/", views.unsubscribe, name="unsubscribe"),
     # Customer Bookings
+    path("gift-cards/", views.gift_card_list, name="gift_card_list"),
+    path("wallet/", views.wallet_detail, name="wallet_detail"),
     path("bookings/", views.booking_list, name="booking_list"),
     path("bookings/<int:booking_id>/", views.booking_detail, name="booking_detail"),
     path(

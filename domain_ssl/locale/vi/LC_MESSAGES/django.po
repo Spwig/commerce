@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,115 +18,319 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "Tên miền tùy chỉnh"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "Tên miền & SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "Không (chỉ HTTP)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "Chứng chỉ tùy chỉnh"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "Tự ký"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "Được quản lý bên ngoài"
 
+#: models.py:22
 msgid "Idle"
 msgstr "Không hoạt động"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "Đang xác minh DNS"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "Đang cấu hình"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "Đang lấy chứng chỉ"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "Đang tải lại dịch vụ"
 
+#: models.py:27
 msgid "Error"
 msgstr "Lỗi"
 
+#: models.py:34
 msgid "Domain"
 msgstr "Tên miền"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "Tên miền đầy đủ (ví dụ: shop.example.com)"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "Tên miền trước đó"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr ""
 "Tên miền trước lần thay đổi cuối cùng, dùng để theo dõi việc quay lại trạng "
 "thái trước"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "Chế độ SSL"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "Tên miền chứng chỉ"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "Nhà cấp chứng chỉ"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "Hết hạn chứng chỉ"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "Đã Nhận Chứng Chỉ"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "Chứng Chỉ Wildcard"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "Token API Cloudflare"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "Token API cho các thách thức DNS-01 hoặc Origin CA"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "ID Khu Vực Cloudflare"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "Email Quản Trị"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "Địa chỉ email liên hệ cho thông báo từ Let's Encrypt"
 
+#: models.py:108
 msgid "Status"
 msgstr "Trạng thái"
 
+#: models.py:113
 msgid "Last Error"
 msgstr "Lỗi Cuối Cùng"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "ID Nhiệm Vụ Hoạt Động"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "ID tác vụ Celery cho thao tác hiện tại"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "Tự Động Gia Hạn"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "Tự động gia hạn chứng chỉ trước khi hết hạn"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "Cấu Hình Miền"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "Không có miền được cấu hình"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "Tên miền Cửa hàng của bạn"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "Đang tải cấu hình tên miền..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "URL hiện tại"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "Tên miền tùy chỉnh đang hoạt động"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "Xóa tên miền tùy chỉnh"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "Kết nối tên miền của bạn"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr "Sử dụng tên miền của riêng bạn thay vì địa chỉ mặc định myspwig.com."
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "Tên miền của bạn"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr ""
+"Nhập toàn bộ tên miền (ví dụ: www.yourstore.com hoặc shop.yourdomain.com)"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "Tiếp tục"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "Chỉ định tên miền của bạn đến cửa hàng của bạn"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr ""
+"Thêm hai bản ghi DNS này vào cài đặt của nhà đăng ký tên miền của bạn:"
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "Chỉ dẫn tên miền"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "Loại"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "Tên"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "Sao chép"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "Giá trị"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "Xác minh quyền sở hữu"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "Làm thế nào để tôi thêm các bản ghi DNS?"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr ""
+"Đăng nhập vào nhà đăng ký tên miền của bạn (nơi bạn đã mua tên miền) và tìm "
+"cài đặt DNS. Các nhà đăng ký phổ biến:"
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr "Sản phẩm của tôi > DNS > Quản lý"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "Danh sách tên miền > Quản lý > DNS nâng cao"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > Bản ghi > Thêm bản ghi"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > Ghi chú tùy chỉnh"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr ""
+"Các thay đổi DNS có thể mất đến 24 giờ để lan truyền toàn cầu, nhưng thường "
+"có hiệu lực trong vài phút."
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "Tôi đã thêm các bản ghi này - Xác minh"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "Hủy"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "Đang kiểm tra bản ghi DNS của bạn..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "Tên miền đã được kết nối!"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "Cửa hàng của bạn sẽ khả dụng tại"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "sắp xảy ra."
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "Cấp chứng chỉ SSL có thể mất vài phút."
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "Chưa tìm thấy bản ghi nào"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr ""
+"Thay đổi DNS có thể mất đến 24 giờ. Bạn có thể thử lại sau từ trang này."
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "Thử lại"

@@ -95,10 +95,10 @@ ProviderRegistry.register_provider(FedExProvider)
 from shipping.providers.fedex import FedExProvider
 
 credentials = {
-    'api_key': 'your_api_key_here',
-    'api_secret': 'your_api_secret_here',
-    'account_number': '123456789',
-    'environment': 'sandbox'  # or 'production'
+    "api_key": "your_api_key_here",
+    "api_secret": "your_api_secret_here",
+    "account_number": "123456789",
+    "environment": "sandbox",  # or 'production'
 }
 
 provider = FedExProvider(credentials)
@@ -109,7 +109,7 @@ provider = FedExProvider(credentials)
 ```python
 result = provider.test_connection()
 
-if result['success']:
+if result["success"]:
     print(f"✅ {result['message']}")
     print(f"Environment: {result['details']['environment']}")
     print(f"Account: {result['details']['account_number']}")
@@ -121,26 +121,18 @@ else:
 
 ```python
 rates = provider.get_rates(
-    origin={
-        'country': 'US',
-        'postal_code': '10001',
-        'state': 'NY',
-        'city': 'New York'
-    },
-    destination={
-        'country': 'US',
-        'postal_code': '90001',
-        'state': 'CA',
-        'city': 'Los Angeles'
-    },
-    parcels=[{
-        'length': 10,    # cm
-        'width': 10,
-        'height': 5,
-        'weight': 500,   # grams
-        'value': 100.00,
-        'currency': 'USD'
-    }]
+    origin={"country": "US", "postal_code": "10001", "state": "NY", "city": "New York"},
+    destination={"country": "US", "postal_code": "90001", "state": "CA", "city": "Los Angeles"},
+    parcels=[
+        {
+            "length": 10,  # cm
+            "width": 10,
+            "height": 5,
+            "weight": 500,  # grams
+            "value": 100.00,
+            "currency": "USD",
+        }
+    ],
 )
 
 for rate in rates:
@@ -151,12 +143,12 @@ for rate in rates:
 
 ```python
 label = provider.buy_label(
-    shipment_id='shipment_123',
+    shipment_id="shipment_123",
     rate=rates[0],  # Selected rate
     options={
-        'label_format': 'PDF',  # PDF, PNG, ZPL
-        'label_size': '4x6'
-    }
+        "label_format": "PDF",  # PDF, PNG, ZPL
+        "label_size": "4x6",
+    },
 )
 
 print(f"Label URL: {label['label_url']}")
@@ -166,12 +158,12 @@ print(f"Tracking: {label['tracking_number']}")
 ### Get Tracking (Phase 6 - Not Yet Implemented)
 
 ```python
-tracking = provider.get_tracking('1234567890')
+tracking = provider.get_tracking("1234567890")
 
 print(f"Status: {tracking['status']}")
 print(f"Estimated Delivery: {tracking['estimated_delivery']}")
 
-for event in tracking['events']:
+for event in tracking["events"]:
     print(f"{event['timestamp']}: {event['description']}")
 ```
 
@@ -223,9 +215,9 @@ for event in tracking['events']:
 
 ```python
 {
-    'success': False,
-    'message': 'User-friendly error message',
-    'details': {}  # Additional error context
+    "success": False,
+    "message": "User-friendly error message",
+    "details": {},  # Additional error context
 }
 ```
 
@@ -275,15 +267,17 @@ redacted = provider.redact_credentials(credentials)
 # Test with sandbox credentials
 from shipping.providers.fedex import FedExProvider
 
-provider = FedExProvider({
-    'api_key': 'l7fc3d8e0b50d84fcd9549be70f9da97cd',
-    'api_secret': '158087397f194167be0db4017105f0df',
-    'account_number': '740561073',
-    'environment': 'sandbox'
-})
+provider = FedExProvider(
+    {
+        "api_key": "l7fc3d8e0b50d84fcd9549be70f9da97cd",
+        "api_secret": "158087397f194167be0db4017105f0df",
+        "account_number": "740561073",
+        "environment": "sandbox",
+    }
+)
 
 result = provider.test_connection()
-assert result['success'] == True
+assert result["success"] == True
 ```
 
 ---

@@ -10,20 +10,21 @@ Handles all redemption operations including:
 - Cancellation and expiration handling
 """
 
-import random
-import string
+import logging
 from datetime import timedelta
-from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction as db_transaction
 from django.utils import timezone
 
+from core.utils.codes import generate_unique_code
 from loyalty.models import (
     LoyaltyRedemption,
     LoyaltyReward,
 )
 from loyalty.services.ledger_service import LedgerService
+
+logger = logging.getLogger(__name__)
 
 
 class RedemptionEngine:
@@ -42,15 +43,17 @@ class RedemptionEngine:
         Generate a unique redemption code.
 
         Format: LOYALTY-XXXXX-XXXXX
-        """
-        while True:
-            part1 = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-            part2 = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-            code = f"LOYALTY-{part1}-{part2}"
 
-            # Check uniqueness
-            if not LoyaltyRedemption.objects.filter(redemption_code=code).exists():
-                return code
+        Uses the shared secrets-backed generator: this code is a bearer
+        credential, and the previous ``random.choices`` implementation was
+        predictable from observed output.
+        """
+        return generate_unique_code(
+            exists=lambda code: LoyaltyRedemption.objects.filter(redemption_code=code).exists(),
+            length=5,
+            groups=2,
+            prefix="LOYALTY",
+        )
 
     @db_transaction.atomic
     def redeem_reward(self, member, reward, **kwargs):
@@ -137,6 +140,13 @@ class RedemptionEngine:
         Returns:
             tuple: (success: bool, message: str)
         """
+        # Lock and re-read before the status check. cancel_redemption and
+        # expire_redemption already do this; confirm did not, so two racing
+        # confirms could both read PENDING and both issue. The database
+        # constraint on (source='loyalty', reference_id) is the backstop for
+        # the fixed-value path, but the lock stops the race for every path.
+        redemption = LoyaltyRedemption.objects.select_for_update().get(pk=redemption.pk)
+
         if redemption.status != LoyaltyRedemption.STATUS_PENDING:
             return False, f"Cannot confirm redemption with status: {redemption.status}"
 
@@ -145,13 +155,65 @@ class RedemptionEngine:
             self.expire_redemption(redemption)
             return False, "Redemption has expired"
 
-        # Generate voucher code for discount rewards
+        # Discount rewards: D2 routing, live as of P2.5c.
+        #   fixed      -> wallet credit (the wallet is the store-credit ledger,
+        #                 and is spendable at checkout as of P2.5a/b — minting
+        #                 before that existed would have been "points deducted,
+        #                 unspendable number displayed").
+        #   percentage -> a real single-use VoucherCode issued to the member.
+        # Any issuance failure falls through to the R1 refund-and-cancel path,
+        # which is idempotent and already surfaces the double-failure case.
         if redemption.reward.reward_type == LoyaltyReward.TYPE_DISCOUNT:
-            voucher = self._generate_voucher_code(redemption)
-            if voucher:
-                redemption.voucher_code = voucher
-            else:
-                return False, "Failed to generate voucher code"
+            issued, issue_message = self._issue_discount_reward(redemption)
+            if issued:
+                redemption.status = LoyaltyRedemption.STATUS_CONFIRMED
+                redemption.confirmed_at = timezone.now()
+                redemption.save(
+                    update_fields=[
+                        "status",
+                        "confirmed_at",
+                        "voucher_code",
+                        "updated_at",
+                    ]
+                )
+                return True, issue_message
+
+            refunded, refund_message = self._refund_points(
+                redemption,
+                reason=(f"Discount reward could not be issued: {redemption.redemption_code}"),
+            )
+            if not refunded:
+                logger.error(
+                    f"Redemption {redemption.redemption_code} could not be issued AND "
+                    f"its points could not be refunded: {refund_message}. "
+                    f"Member {redemption.member_id} is owed "
+                    f"{redemption.points_spent} points."
+                )
+                return False, (
+                    "Your reward could not be issued, and refunding your "
+                    "points failed. Support has been notified."
+                )
+
+            redemption.status = LoyaltyRedemption.STATUS_CANCELLED
+            redemption.cancelled_at = timezone.now()
+            redemption.cancellation_reason = f"Issuance failed: {issue_message}"[:255]
+            redemption.save(
+                update_fields=[
+                    "status",
+                    "cancelled_at",
+                    "cancellation_reason",
+                    "updated_at",
+                ]
+            )
+
+            if redemption.reward.quantity_remaining is not None:
+                reward = LoyaltyReward.objects.select_for_update().get(pk=redemption.reward.pk)
+                reward.quantity_remaining += 1
+                reward.save(update_fields=["quantity_remaining", "updated_at"])
+
+            return False, (
+                "Your reward could not be issued. Your points have been returned to your balance."
+            )
 
         # Update status
         redemption.status = LoyaltyRedemption.STATUS_CONFIRMED
@@ -159,6 +221,125 @@ class RedemptionEngine:
         redemption.save(update_fields=["status", "confirmed_at", "voucher_code", "updated_at"])
 
         return True, "Redemption confirmed successfully"
+
+    def _issue_discount_reward(self, redemption):
+        """
+        Issue what a discount redemption actually promises (D2).
+
+        Returns (success, message). Never raises — a failure message feeds the
+        caller's refund-and-cancel path, so the member always ends up with
+        either the reward or their points, never neither.
+        """
+        reward = redemption.reward
+
+        if reward.discount_type == LoyaltyReward.DISCOUNT_TYPE_FIXED:
+            return self._issue_wallet_credit(redemption)
+        if reward.discount_type == LoyaltyReward.DISCOUNT_TYPE_PERCENTAGE:
+            return self._issue_percentage_voucher(redemption)
+
+        return False, f"Unknown discount type: {reward.discount_type!r}"
+
+    def _issue_wallet_credit(self, redemption):
+        """
+        Fixed-value reward -> wallet credit, exactly once per redemption.
+
+        Idempotency is the partial UniqueConstraint on
+        (source='loyalty', reference_id=redemption.uuid) — an existing row
+        means a previous confirm already paid, so this reports success without
+        crediting again rather than treating the collision as failure: the
+        member HAS their money.
+        """
+        from core.utils import get_default_currency
+        from wallet.models import WalletTransaction
+        from wallet.services import WalletService
+
+        reward = redemption.reward
+        if not reward.discount_value or reward.discount_value <= 0:
+            return False, "Reward has no discount value configured"
+
+        already = WalletTransaction.objects.filter(
+            source=WalletTransaction.SOURCE_LOYALTY,
+            reference_id=str(redemption.uuid),
+        ).exists()
+        if already:
+            logger.info(
+                f"Redemption {redemption.redemption_code} already credited a "
+                f"wallet; treating confirm as already done"
+            )
+            return True, "Reward already credited to your wallet"
+
+        try:
+            WalletService.credit(
+                redemption.member.customer,
+                reward.discount_value,
+                get_default_currency(),
+                WalletTransaction.SOURCE_LOYALTY,
+                f"Loyalty reward: {reward.name}",
+                reference_id=str(redemption.uuid),
+            )
+        except Exception as exc:  # frozen wallet, currency mismatch, race loser
+            logger.warning(
+                f"Wallet credit failed for redemption {redemption.redemption_code}: {exc}"
+            )
+            return False, str(exc)
+
+        return True, "Reward credited to your wallet"
+
+    def _issue_percentage_voucher(self, redemption):
+        """
+        Percentage reward -> a real single-use VoucherCode, issued to the
+        member so nobody else holding the string can spend it.
+
+        Mirrors referrals.create_percentage_coupon. LoyaltyReward has no
+        max_discount_amount field, so the voucher is UNCAPPED — a deliberate
+        product decision (forcing a cap would change merchant-facing reward
+        config mid-release); the warning below is the audit trail for it.
+        """
+        from djmoney.money import Money
+
+        from core.utils import get_default_currency
+        from core.utils.codes import generate_unique_code
+        from vouchers.models import VoucherCode
+
+        reward = redemption.reward
+        if not reward.discount_value or reward.discount_value <= 0:
+            return False, "Reward has no discount percentage configured"
+
+        if redemption.voucher_code_id:
+            return True, "Reward voucher already issued"
+
+        currency = get_default_currency()
+        logger.warning(
+            f"Minting UNCAPPED {reward.discount_value}% voucher for redemption "
+            f"{redemption.redemption_code}: LoyaltyReward has no maximum "
+            f"discount amount, so the value is bounded only by the order it "
+            f"is spent on."
+        )
+
+        try:
+            voucher = VoucherCode.objects.create(
+                code=generate_unique_code(
+                    lambda c: VoucherCode.objects.filter(code=c).exists(),
+                    prefix="LOYAL",
+                ),
+                name=f"Loyalty Reward - {reward.name}"[:100],
+                description=f"Redeemed with {redemption.points_spent} points",
+                discount_type="percentage",
+                discount_value=reward.discount_value,
+                min_order_value=Money(0, currency),
+                max_uses_total=1,
+                max_uses_per_customer=1,
+                issued_to=redemption.member.customer,
+                is_active=True,
+            )
+        except Exception as exc:
+            logger.warning(
+                f"Voucher mint failed for redemption {redemption.redemption_code}: {exc}"
+            )
+            return False, str(exc)
+
+        redemption.voucher_code = voucher
+        return True, "Reward voucher issued"
 
     @db_transaction.atomic
     def fulfill_redemption(self, redemption, **kwargs):
@@ -210,20 +391,21 @@ class RedemptionEngine:
         Returns:
             tuple: (success: bool, message: str)
         """
+        # Lock and re-read before deciding, so two concurrent cancels cannot
+        # both pass the guard and both refund/restock. See expire_redemption.
+        redemption = LoyaltyRedemption.objects.select_for_update().get(pk=redemption.pk)
+
         if not redemption.can_cancel():
             return False, f"Cannot cancel redemption with status: {redemption.status}"
 
         # Refund points if requested
         if refund_points:
-            try:
-                self.ledger.manual_adjustment(
-                    member=redemption.member,
-                    points=redemption.points_spent,
-                    reason=f"Refund for cancelled redemption: {redemption.redemption_code}",
-                    admin_user=None,
-                )
-            except Exception as e:
-                return False, f"Failed to refund points: {str(e)}"
+            refunded, refund_message = self._refund_points(
+                redemption,
+                reason=f"Refund for cancelled redemption: {redemption.redemption_code}",
+            )
+            if not refunded:
+                return False, refund_message
 
         # Restore reward quantity
         if redemption.reward.quantity_remaining is not None:
@@ -255,22 +437,30 @@ class RedemptionEngine:
         Returns:
             tuple: (success: bool, message: str)
         """
+        # Lock and re-read before deciding: two concurrent expiries (a sweep
+        # racing an admin action, or a retried task) would otherwise both pass
+        # the status check.
+        redemption = LoyaltyRedemption.objects.select_for_update().get(pk=redemption.pk)
+
+        # STATUS_EXPIRED belongs in this list. Without it the method was
+        # re-entrant: a second call re-ran the body, _refund_points reported
+        # success on the already-refunded ledger row, and
+        # `quantity_remaining += 1` ran again — minting a unit of reward stock
+        # on every repeat call.
         if redemption.status in [
             LoyaltyRedemption.STATUS_FULFILLED,
             LoyaltyRedemption.STATUS_CANCELLED,
+            LoyaltyRedemption.STATUS_EXPIRED,
         ]:
             return False, "Redemption is already in a final state"
 
         # Refund points for expired redemptions
-        try:
-            self.ledger.manual_adjustment(
-                member=redemption.member,
-                points=redemption.points_spent,
-                reason=f"Refund for expired redemption: {redemption.redemption_code}",
-                admin_user=None,
-            )
-        except Exception as e:
-            return False, f"Failed to refund points: {str(e)}"
+        refunded, refund_message = self._refund_points(
+            redemption,
+            reason=f"Refund for expired redemption: {redemption.redemption_code}",
+        )
+        if not refunded:
+            return False, refund_message
 
         # Restore reward quantity
         if redemption.reward.quantity_remaining is not None:
@@ -322,54 +512,60 @@ class RedemptionEngine:
 
         return stats
 
-    def _generate_voucher_code(self, redemption):
+    def _refund_points(self, redemption, reason):
         """
-        Generate a voucher code for discount redemptions.
+        Return the points a redemption spent.
 
-        Args:
-            redemption (LoyaltyRedemption): Redemption to generate voucher for
+        Prefers :meth:`LedgerService.refund_redemption`, which links the refund
+        to the original redemption row and leaves ``lifetime_earned`` alone.
+        That matters: ``lifetime_earned`` drives ``TieringService`` and
+        ``SegmentEvaluator``, so refunding through ``manual_adjustment`` (as this
+        code used to) can promote a member's tier as a side effect of a failed
+        or cancelled redemption.
+
+        Falls back to ``manual_adjustment`` only when the redemption has no
+        linked transaction — which should not happen for anything created by
+        :meth:`redeem_reward`, but is possible for legacy rows. The fallback
+        carries the tier-inflation caveat above, so it is logged.
 
         Returns:
-            VoucherCode or None: Generated voucher code
+            tuple: (success: bool, message: str)
         """
-        # This will integrate with the vouchers app
-        # For now, return None (to be implemented when integrating with checkout)
+        txn = redemption.transaction
+
+        if txn is not None:
+            try:
+                self.ledger.refund_redemption(
+                    redemption_transaction=txn,
+                    reason=reason,
+                )
+                return True, "Points refunded"
+            except ValueError as e:
+                # Already refunded is not a failure: the points are back, which
+                # is the outcome the caller wants. Anything else is.
+                if "already refunded" in str(e):
+                    logger.warning(
+                        f"Redemption {redemption.redemption_code} was already refunded; "
+                        f"treating as success"
+                    )
+                    return True, "Points already refunded"
+                return False, f"Failed to refund points: {e}"
+
+        logger.error(
+            f"Redemption {redemption.redemption_code} has no linked transaction; "
+            f"refunding via manual_adjustment, which will inflate lifetime_earned "
+            f"and may affect tier assignment for this member."
+        )
         try:
-            from vouchers.models import Voucher, VoucherCode
-
-            reward = redemption.reward
-
-            # Create or get a voucher for this reward
-            voucher, created = Voucher.objects.get_or_create(
-                name=f"Loyalty Reward: {reward.name}",
-                defaults={
-                    "code_prefix": "LOYALTY",
-                    "discount_type": reward.discount_type,
-                    "discount_value": reward.discount_value,
-                    "min_purchase_amount": reward.min_purchase_amount or Decimal("0.00"),
-                    "usage_limit_per_customer": 1,
-                    "is_active": True,
-                },
+            self.ledger.manual_adjustment(
+                member=redemption.member,
+                points=redemption.points_spent,
+                reason=reason,
+                admin_user=None,
             )
-
-            # Generate unique code
-            code_suffix = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
-            code = f"{voucher.code_prefix}-{code_suffix}"
-
-            # Create voucher code
-            voucher_code = VoucherCode.objects.create(
-                voucher=voucher, code=code, usage_limit=1, expires_at=redemption.expires_at
-            )
-
-            return voucher_code
-
-        except ImportError:
-            # Vouchers app not available
-            return None
+            return True, "Points refunded"
         except Exception as e:
-            # Log error
-            print(f"Error generating voucher code: {e}")
-            return None
+            return False, f"Failed to refund points: {e}"
 
     def get_available_rewards(self, member):
         """

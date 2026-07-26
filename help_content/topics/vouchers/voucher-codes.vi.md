@@ -2,7 +2,9 @@
 title: Mã khuyến mãi
 ---
 
-Mã khuyến mãi cho phép bạn tạo các mã giảm giá, phiếu mua hàng và thẻ quà tặng mà khách hàng nhập tại bước thanh toán để nhận được ưu đãi. Truy cập **Marketing > Mã khuyến mãi** trong thanh điều hướng quản trị.
+Mã khuyến mãi cho phép bạn tạo các mã giảm giá và phiếu mua hàng mà khách hàng nhập tại bước thanh toán để nhận được ưu đãi. Truy cập **Marketing > Mã khuyến mãi** trong thanh điều hướng quản trị.
+
+Bạn đang muốn bán tín dụng cửa hàng thay vì giảm giá? Đó là thẻ quà tặng, được quản lý riêng biệt dưới mục **Sản phẩm > Thẻ quà tặng** — xem chủ đề trợ giúp **Thẻ quà tặng**.
 
 ![Danh sách mã khuyến mãi](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 
@@ -18,18 +20,18 @@ Trang mã khuyến mãi hiển thị tổng quan với:
 
 1. Nhấp vào **+ Thêm mã khuyến mãi** ở góc trên bên phải
 2. Điền thông tin mã khuyến mãi:
-   - **Mã** — Mã khách hàng nhập tại bước thanh toán (ví dụ: "SAVE20", "FREESHIP")
+   - **Mã** — Mã mà khách hàng nhập tại bước thanh toán (ví dụ: "SAVE20", "FREESHIP")
    - **Tên/Mô tả** — Mô tả nội bộ để bạn tham khảo
    - **Loại giảm giá** — Chọn cách áp dụng giảm giá
-   - **Giá trị giảm giá** — Số tiền hoặc tỷ lệ giảm giá
+   - **Giá trị giảm giá** — Số tiền hoặc tỷ lệ giảm
 3. Cấu hình quy tắc sử dụng:
    - **Giới hạn sử dụng** — Số lần sử dụng tối đa (0 = không giới hạn)
    - **Giới hạn theo khách hàng** — Số lần sử dụng tối đa cho mỗi khách hàng
    - **Giá trị đơn hàng tối thiểu** — Tổng giá trị giỏ hàng tối thiểu cần thiết
 4. Thiết lập **phạm vi**:
-   - **Toàn bộ đơn hàng** — Giảm giá áp dụng cho toàn bộ đơn hàng
-   - **Sản phẩm cụ thể** — Chỉ áp dụng cho các mặt hàng đã chọn
-   - **Danh mục cụ thể** — Chỉ áp dụng cho các mặt hàng trong danh mục đã chọn
+   - **Toàn bộ giỏ hàng** — Giảm giá áp dụng cho toàn bộ đơn hàng
+   - **Sản phẩm cụ thể** — Chỉ áp dụng cho các mặt hàng được chọn
+   - **Danh mục cụ thể** — Chỉ áp dụng cho các mặt hàng trong danh mục được chọn
 5. Tùy chọn thiết lập thời hạn:
    - **Ngày hết hạn** — Thời điểm mã khuyến mãi ngừng hoạt động
 6. Nhấp vào **Lưu**
@@ -69,7 +71,7 @@ Sử dụng thanh lọc để tìm mã khuyến mãi cụ thể:
 - **Tìm kiếm** — Tìm theo mã, tên hoặc mô tả
 - **Loại** — Giá cố định, Tỷ lệ phần trăm hoặc Miễn phí vận chuyển
 - **Trạng thái** — Hoạt động hoặc Không hoạt động
-- **Phạm vi** — Toàn bộ đơn hàng hoặc sản phẩm cụ thể
+- **Phạm vi** — Toàn bộ giỏ hàng hoặc sản phẩm cụ thể
 
 ## Tạo mã khuyến mãi theo lô
 
@@ -86,13 +88,13 @@ Khi khách hàng có mã khuyến mãi:
 3. Giảm giá được áp dụng ngay lập tức nếu mã khuyến mãi hợp lệ
 4. Tổng đơn hàng được cập nhật để hiển thị giảm giá
 
-Nếu mã khuyến mãi không hợp lệ (hết hạn, đạt giới hạn sử dụng, không đạt giá trị đơn hàng tối thiểu), khách hàng sẽ thấy thông báo lỗi rõ ràng.
+Nếu mã khuyến mãi không hợp lệ (đã hết hạn, đạt giới hạn sử dụng, không đạt giá trị đơn hàng tối thiểu), khách hàng sẽ thấy một thông báo lỗi rõ ràng.
 
 ## Một số mẹo
 
-- Sử dụng mã dễ nhớ cho các chiến dịch marketing (ví dụ: "SUMMER20" thay vì chuỗi ngẫu nhiên).
+- Sử dụng các mã dễ nhớ cho các chiến dịch marketing (ví dụ: "SUMMER20" thay vì chuỗi ngẫu nhiên).
 - Thiết lập giới hạn theo khách hàng để ngăn chặn việc lạm dụng các ưu đãi giá trị cao.
-- Sử dụng giá trị đơn hàng tối thiểu để duy trì tính khả thi (ví dụ: "Giảm $10 cho đơn hàng trên $50").
+- Sử dụng giá trị đơn hàng tối thiểu để duy trì tính khả thi (ví dụ: "Giảm $10 cho các đơn hàng trên $50").
 - Theo dõi số lần sử dụng trên bảng điều khiển để theo dõi hiệu quả chiến dịch.
 - Tạo mã khuyến mãi có thời hạn để tạo sự khẩn cấp (ví dụ: "Chỉ hợp lệ trong cuối tuần này").
 - Sử dụng trạng thái Hoạt động/Không hoạt động để tạm dừng mã khuyến mãi mà không cần xóa chúng.

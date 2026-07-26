@@ -1,0 +1,53 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'Store Credit' %}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% trans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item"><a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a></li>
+                <li class="breadcrumb__item"><a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% mtrans 'My Account' %}</a></li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">{% mtrans 'Store Credit' %}</li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% mtrans 'Store Credit' %}</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if wallet %}
+        <div class="wallet-balance-hero">
+            <div class="wallet-balance-hero__amount">{{ wallet.available_balance }}</div>
+            <div class="wallet-balance-hero__label">{% mtrans 'Available Balance' %}</div>
+            <p class="wallet-balance-hero__hint">{% mtrans 'Spend it at checkout — it is applied before any card payment.' %}</p>
+        </div>
+
+        {% if transactions %}
+        <h2 class="wallet-history__title">{% mtrans 'History' %}</h2>
+        <div class="wallet-history">
+            {% for txn in transactions %}
+            <div class="wallet-history__row">
+                <div class="wallet-history__desc">
+                    {{ txn.description }}
+                    <span class="wallet-history__date">{{ txn.created_at|date:"j M Y" }}</span>
+                </div>
+                <div class="wallet-history__amount {% if txn.transaction_type == 'credit' or txn.transaction_type == 'refund' %}wallet-history__amount--credit{% endif %}">
+                    {% if txn.transaction_type == 'credit' or txn.transaction_type == 'refund' %}+{% else %}&minus;{% endif %}{{ txn.amount }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="account-empty-state">
+            <i class="fas fa-wallet" aria-hidden="true"></i>
+            <p>{% mtrans 'You have no store credit yet. Credit from loyalty rewards, referrals and refunds appears here.' %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

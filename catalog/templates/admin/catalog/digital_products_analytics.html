@@ -179,10 +179,20 @@
     {% endif %}
 </div>
 
+{% comment %}
+downloadTrends* previously used |map:'date'|list — those are Jinja2 filters, not
+Django ones, so this template did not compile. They now use the same {% templatetag openblock %} for {% templatetag closeblock %}
+idiom as topProductsLabels below. download_trends is a list of
+{"date": "YYYY-MM-DD", "count": int} built in catalog/admin_views.py.
+
+Keep prose OUT of the JSON body below — this block is parsed by JSON.parse in
+catalog/admin/js/digital_products_analytics.js, and anything that leaks into it
+breaks the dashboard silently.
+{% endcomment %}
 <script type="application/json" id="digital-analytics-config">
 {
-    "downloadTrendsLabels": {{ download_trends|safe|map:'date'|list }},
-    "downloadTrendsCounts": {{ download_trends|safe|map:'count'|list }},
+    "downloadTrendsLabels": [{% for point in download_trends %}"{{ point.date|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+    "downloadTrendsCounts": [{% for point in download_trends %}{{ point.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
     "licenseStats": {
         "active": {{ license_stats.active|default:0 }},
         "expired": {{ license_stats.expired|default:0 }},

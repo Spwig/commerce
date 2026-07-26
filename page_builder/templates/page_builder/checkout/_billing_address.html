@@ -1,0 +1,84 @@
+{% load i18n merchant_trans %}
+{% comment %}
+Full billing address for carts with no shippable items. There is no shipping
+form to mirror, so this is the customer's primary address — rendered up with
+contact details (name/email), not buried under payment. Pre-filled from the
+default saved address when signed in; fully editable. The country still drives
+which payment methods are offered. Field IDs match the JS in checkout.js
+(createPaymentIntent) and checkout-express.js (autoMountPayment).
+{% endcomment %}
+<div class="billing-address billing-address--standalone" id="billing-address-standalone">
+    <h3 class="billing-address__title">{% mtrans 'Billing Address' %}</h3>
+
+    <div class="checkout-form-group">
+        <label for="billing-address-search">{% mtrans 'Search Address' %}</label>
+        <input type="text" id="billing-address-search" class="checkout-input"
+               placeholder="{% mtrans 'Start typing your address...' %}" autocomplete="off">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-name">{% mtrans 'Full Name' %} <span class="required">*</span></label>
+        <input type="text" id="billing-name" class="checkout-input" required
+               value="{% if default_address %}{{ default_address.name }}{% else %}{{ user_full_name }}{% endif %}"
+               autocomplete="name">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-company">{% mtrans 'Company' %}</label>
+        <input type="text" id="billing-company" class="checkout-input"
+               value="{% if default_address %}{{ default_address.company }}{% endif %}">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-address1">{% mtrans 'Address Line 1' %} <span class="required">*</span></label>
+        <input type="text" id="billing-address1" class="checkout-input" required
+               value="{% if default_address %}{{ default_address.address1 }}{% endif %}">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-address2">{% mtrans 'Address Line 2' %}</label>
+        <input type="text" id="billing-address2" class="checkout-input"
+               value="{% if default_address %}{{ default_address.address2 }}{% endif %}">
+    </div>
+
+    <div class="checkout-form-row">
+        <div class="checkout-form-group">
+            <label for="billing-city">{% mtrans 'City' %} <span class="required">*</span></label>
+            <input type="text" id="billing-city" class="checkout-input" required
+                   value="{% if default_address %}{{ default_address.city }}{% endif %}">
+        </div>
+        <div class="checkout-form-group">
+            <label for="billing-state">{% mtrans 'State / Province' %} <span class="required">*</span></label>
+            <input type="text" id="billing-state" class="checkout-input" required
+                   value="{% if default_address %}{{ default_address.state }}{% endif %}">
+        </div>
+    </div>
+
+    <div class="checkout-form-row">
+        <div class="checkout-form-group">
+            <label for="billing-postal-code">{% mtrans 'Postal Code' %} <span class="required">*</span></label>
+            <input type="text" id="billing-postal-code" class="checkout-input" required
+                   value="{% if default_address %}{{ default_address.postal_code }}{% endif %}"
+                   autocomplete="billing postal-code">
+        </div>
+        <div class="checkout-form-group">
+            <label for="billing-country">{% mtrans 'Country' %} <span class="required">*</span></label>
+            <select id="billing-country" class="checkout-input" required autocomplete="billing country">
+                <option value="">{% mtrans 'Select country' %}</option>
+                {# Defensive: never render an empty country list if the view
+                   didn't supply billing_countries (e.g. a stale server) —
+                   fall back to the shipping country list. #}
+                {% for code, name in billing_countries|default:shipping_countries %}
+                <option value="{{ code }}"{% if default_address %}{% if code == default_address.country %} selected{% endif %}{% elif code == geo_country %} selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+            <div class="checkout-help">{% mtrans 'Used to show the payment methods available in your country.' %}</div>
+        </div>
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-phone">{% mtrans 'Phone' %}</label>
+        <input type="tel" id="billing-phone" class="checkout-input"
+               value="{% if default_address %}{{ default_address.phone }}{% endif %}" autocomplete="tel">
+    </div>
+</div>

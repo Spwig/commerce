@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,113 +18,318 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "Пользовательский домен"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "Домен и SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "Нет (только HTTP)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "Пользовательский сертификат"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "Самоподписанный"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "Управляется внешним образом"
 
+#: models.py:22
 msgid "Idle"
 msgstr "Свободен"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "Проверка DNS"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "Настройка"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "Получение сертификата"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "Перезагрузка служб"
 
+#: models.py:27
 msgid "Error"
 msgstr "Ошибка"
 
+#: models.py:34
 msgid "Domain"
 msgstr "Домен"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "Полное доменное имя (например, shop.example.com)"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "Предыдущий домен"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr "Домен до последнего изменения, для отслеживания отката"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "Режим SSL"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "Домен сертификата"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "Издатель сертификата"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "Срок действия сертификата"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "Сертификат получен"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "Сертификат с подстановочным знаком"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "Токен API Cloudflare"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "Токен API для DNS-01 вызовов или Origin CA"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "ID зоны Cloudflare"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "Администраторский email"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "Электронная почта для уведомлений Let's Encrypt"
 
+#: models.py:108
 msgid "Status"
 msgstr "Статус"
 
+#: models.py:113
 msgid "Last Error"
 msgstr "Последняя ошибка"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "Активный ID задачи"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "ID задачи Celery для текущей операции"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "Автоматическое продление"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "Автоматически продлевать сертификаты перед истечением срока"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "Настройка домена"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "Не настроен домен"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "Домен вашего магазина"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "Загрузка настроек домена..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "Текущий URL"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "Активен пользовательский домен"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "Удалить пользовательский домен"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "Подключите свой собственный домен"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr ""
+"Используйте собственное доменное имя вместо стандартного адреса myspwig.com."
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "Ваш домен"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr ""
+"Введите полный домен (например, www.yourstore.com или shop.yourdomain.com)"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "Продолжить"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "Направьте ваш домен на ваш магазин"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr "Добавьте эти два DNS-записи в настройках вашего регистратора доменов:"
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "Указатель домена"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "Тип"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "Имя"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "Копировать"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "Значение"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "Проверка владения"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "Как добавить DNS-записи?"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr ""
+"Войдите в систему вашего регистратора доменов (где вы приобрели свой домен) "
+"и найдите настройки DNS. Распространенные регистраторы:"
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr "Мои товары > DNS > Управление"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "Список доменов > Управление > Расширенный DNS"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > Записи > Добавить запись"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > Пользовательские записи"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr ""
+"Изменения DNS могут занять до 24 часов для распространения по всему миру, но"
+" обычно вступают в силу в течение минут."
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "Я добавил эти записи - Проверьте"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "Отмена"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "Проверка ваших DNS-записей..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "Домен подключен!"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "Ваш магазин будет доступен по адресу"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "в ближайшее время."
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "Выдача SSL-сертификата может занять несколько минут."
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "Записи пока не найдены"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr ""
+"Изменения DNS могут занять до 24 часов. Вы можете попробовать снова позже с "
+"этой страницы."
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "Попробовать еще раз"

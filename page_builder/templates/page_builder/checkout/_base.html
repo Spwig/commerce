@@ -65,6 +65,8 @@
 {
     "geoCountry": "{{ geo_country|escapejs }}",
     "userEmail": "{{ user_email|escapejs }}",
+    "cartRequiresShipping": {{ cart_requires_shipping|yesno:"true,false" }},
+    "isAuthenticated": {{ request.user.is_authenticated|yesno:"true,false" }},
     "cartUrl": "{% url 'page_builder:cart' %}",
     "currency": "{{ site_settings.default_currency|escapejs }}",
     "templateOptions": {{ template_options_json|default:"{}"|safe }},

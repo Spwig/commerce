@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Thai <LL@li.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:47
 msgid "Provider Information"
 msgstr "ข้อมูลผู้ให้บริการ"
 
+#: admin.py:48
 msgid "Configuration"
 msgstr "การตั้งค่า"
 
+#: admin.py:50 admin.py:110
 msgid "Credentials"
 msgstr "ข้อมูลผู้ใช้"
 
+#: admin.py:54
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
@@ -34,66 +38,87 @@ msgstr ""
 "ข้อมูลการเข้าสู่ระบบถูกเข้ารหัสและจัดการผ่านเวิร์ดไวซาร์ดของผู้ให้บริการ "
 "ในการอัปเดตข้อมูลการเข้าสู่ระบบ ให้ติดตั้งผู้ให้บริการใหม่"
 
+#: admin.py:60 admin.py:75 models.py:82
 msgid "Sync Status"
 msgstr "สถานะการซิงค์"
 
+#: admin.py:66 admin.py:323
 msgid "Timestamps"
 msgstr "เวลาที่บันทึก"
 
+#: admin.py:69
 msgid "Name"
 msgstr "ชื่อ"
 
+#: admin.py:88 admin.py:269 admin.py:336
 msgid "Status"
 msgstr "สถานะ"
 
+#: admin.py:102
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:88
 msgid "Primary"
 msgstr "หลัก"
 
+#: admin.py:118
 msgid "Credentials are encrypted and stored securely"
 msgstr "ข้อมูลการรับรองถูกเข้ารหัสและจัดเก็บอย่างปลอดภัย"
 
+#: admin.py:125
 msgid "No credentials configured"
 msgstr "ไม่ได้ตั้งค่าข้อมูลการยืนยันตัวตน"
 
+#: admin.py:265 admin.py:283 admin.py:320 admin.py:332
 msgid "Currency Pair"
 msgstr "คู่สกุลเงิน"
 
+#: admin.py:272
 msgid "Stale"
 msgstr "ล้าสมัย"
 
+#: admin.py:273
 msgid "Fresh"
 msgstr "ใหม่"
 
+#: admin.py:287 models.py:220
 msgid "Order"
 msgstr "คำสั่งซื้อ"
 
+#: admin.py:321
 msgid "Rate"
 msgstr "อัตรา"
 
+#: admin.py:322
 msgid "Settings"
 msgstr "การตั้งค่า"
 
+#: admin.py:341
 msgid "ACTIVE"
 msgstr "เปิดใช้งาน"
 
+#: admin.py:345
 msgid "INACTIVE"
 msgstr "ปิดใช้งาน"
 
+#: admin.py:348 models.py:285
 msgid "Notes"
 msgstr "หมายเหตุ"
 
+#: api_views.py:38
 msgid "List manual exchange rates"
 msgstr "รายการอัตราการแลกเปลี่ยนแบบมือ"
 
+#: api_views.py:40
 msgid ""
 "Returns all manual exchange rates for the current site. Staff authentication "
 "required."
 msgstr ""
 "แสดงอัตราแลกเปลี่ยนแบบมือถือทั้งหมดสำหรับเว็บไซต์ปัจจุบัน ต้องการการยืนยันตัวตนของพนักงาน"
 
+#: api_views.py:46
 msgid "Create a manual exchange rate"
 msgstr "สร้างอัตราการแลกเปลี่ยนแบบมือ"
 
+#: api_views.py:48
 msgid ""
 "Create a new manual exchange rate for a currency pair. Only one rate per "
 "currency pair is allowed. Manual rates take precedence over provider rates "
@@ -102,64 +127,83 @@ msgstr ""
 "สร้างอัตราแลกเปลี่ยนแบบมือถือใหม่สำหรับคู่สกุลเงิน อนุญาตให้มีอัตราเดียวต่อคู่สกุลเงินเท่านั้น "
 "อัตราแบบมือถือจะมีความสำคัญเหนืออัตราของผู้ให้บริการเมื่อเปิดใช้งาน"
 
+#: api_views.py:54
 msgid "Rate created successfully"
 msgstr "สร้างอัตราการแลกเปลี่ยนสำเร็จ"
 
+#: api_views.py:56
 msgid "Validation error (duplicate pair, invalid rate, etc.)"
 msgstr "ข้อผิดพลาดในการตรวจสอบ (คู่ซ้ำ, อัตราไม่ถูกต้อง, เป็นต้น)"
 
+#: api_views.py:62
 msgid "Get manual exchange rate details"
 msgstr "ดึงรายละเอียดอัตราแลกเปลี่ยนแบบมือ"
 
+#: api_views.py:63
 msgid "Retrieve a specific manual exchange rate by ID."
 msgstr "ดึงอัตราการแลกเปลี่ยนแบบกำหนดเองที่เฉพาะเจาะจงโดย ID"
 
+#: api_views.py:68
 msgid "Update a manual exchange rate"
 msgstr "อัปเดตอัตราแลกเปลี่ยนแบบมือ"
 
+#: api_views.py:69
 msgid "Fully update a manual exchange rate. All fields required."
 msgstr "อัปเดตอัตราการแลกเปลี่ยนแบบกำหนดเองทั้งหมด ต้องกรอกทุกช่อง"
 
+#: api_views.py:72 api_views.py:85
 msgid "Rate updated successfully"
 msgstr "อัตราแลกเปลี่ยนได้รับการอัปเดตเรียบร้อยแล้ว"
 
+#: api_views.py:78
 msgid "Partially update a manual exchange rate"
 msgstr "อัปเดตอัตราการแลกเปลี่ยนแบบกำหนดเองบางส่วน"
 
+#: api_views.py:80
 msgid ""
 "Update specific fields of a manual exchange rate. Commonly used to update "
 "just the rate value."
 msgstr "อัปเดตฟิลด์เฉพาะของอัตราแลกเปลี่ยนแบบมือถือ มักใช้เพื่ออัปเดตค่าอัตราเพียงอย่างเดียว"
 
+#: api_views.py:91
 msgid "Delete a manual exchange rate"
 msgstr "ลบอัตราแลกเปลี่ยนแบบมือ"
 
+#: api_views.py:93
 msgid ""
 "Permanently delete a manual exchange rate. The system will fall back to "
 "provider rates for this currency pair."
 msgstr "ลบอัตราแลกเปลี่ยนแบบมือถือถาวร ระบบจะกลับไปใช้อัตราของผู้ให้บริการสำหรับคู่สกุลเงินนี้"
 
+#: api_views.py:97
 msgid "Rate deleted successfully"
 msgstr "อัตราแลกเปลี่ยนถูกลบเรียบร้อยแล้ว"
 
+#: api_views.py:143
 msgid "Manual exchange rate created successfully."
 msgstr "อัตราแลกเปลี่ยนแบบมือถือได้รับการสร้างขึ้นอย่างสำเร็จ"
 
+#: api_views.py:151
 msgid "Failed to create manual exchange rate."
 msgstr "ไม่สามารถสร้างอัตราแลกเปลี่ยนแบบกำหนดได้。"
 
+#: api_views.py:172
 msgid "Manual exchange rate updated successfully."
 msgstr "อัตราการแปลงเงินแบบมือถือได้รับการอัปเดตสำเร็จ"
 
+#: api_views.py:180
 msgid "Failed to update manual exchange rate."
 msgstr "ไม่สามารถอัปเดตอัตราแลกเปลี่ยนแบบกำหนดได้。"
 
+#: api_views.py:193
 msgid "Manual exchange rate deleted successfully."
 msgstr "อัตราการแปลงเงินแบบมือถือได้รับการลบสำเร็จ"
 
+#: api_views.py:199
 msgid "Toggle manual rate active status"
 msgstr "สลับสถานะการใช้งานอัตราการแลกเปลี่ยนแบบมือ"
 
+#: api_views.py:201
 msgid ""
 "Toggle the active/inactive status of a manual exchange rate. When "
 "deactivated, the system falls back to provider rates."
@@ -167,21 +211,27 @@ msgstr ""
 "สลับสถานะการเปิด/ปิดของอัตราแลกเปลี่ยนแบบกำหนดเอง เมื่อถูกปิดการใช้งาน "
 "ระบบจะกลับไปใช้อัตราจากผู้ให้บริการ"
 
+#: api_views.py:205
 msgid "Status toggled successfully"
 msgstr "สถานะได้รับการสลับเรียบร้อยแล้ว"
 
+#: api_views.py:220 views/admin_views.py:448 views/admin_views.py:477
 msgid "Rate {} successfully"
 msgstr "อัตรา {} อย่างสำเร็จ"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "activated"
 msgstr "เปิดใช้งาน"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "deactivated"
 msgstr "ปิดใช้งาน"
 
+#: api_views.py:231
 msgid "Bulk create or update manual rates"
 msgstr "สร้างหรืออัปเดตอัตราค่าเงินแบบมืออาชีพเป็นจำนวนมาก"
 
+#: api_views.py:233
 msgid ""
 "Create or update multiple manual exchange rates in a single request. Each "
 "rate is identified by its base_currency + target_currency pair. If a rate "
@@ -211,32 +261,41 @@ msgstr ""
 "  ]\n"
 "} ```"
 
+#: api_views.py:249
 msgid "Bulk operation completed"
 msgstr "การดำเนินการแบบหมู่คณะเสร็จสิ้น"
 
+#: api_views.py:261
 msgid "Invalid request data."
 msgstr "ข้อมูลคำขอไม่ถูกต้อง。"
 
+#: api_views.py:284
 msgid "base_currency, target_currency, and rate are required."
 msgstr "ต้องระบุ base_currency, target_currency และ rate"
 
+#: api_views.py:294 models.py:312 serializers.py:68
 msgid "Base and target currencies must be different."
 msgstr "สกุลเงินฐานและสกุลเงินเป้าหมายต้องแตกต่างกัน。"
 
+#: api_views.py:307 models.py:315 serializers.py:59
 msgid "Exchange rate must be greater than zero."
 msgstr "อัตราการแลกเปลี่ยนต้องมากกว่าศูนย์。"
 
+#: api_views.py:312
 msgid "Invalid rate value."
 msgstr "ค่าอัตราไม่ถูกต้อง"
 
+#: api_views.py:336
 #, python-format
 msgid "Bulk operation completed: %(created)d created, %(updated)d updated."
 msgstr ""
 "การดำเนินการแบบกลุ่มเสร็จสิ้น: %(created)d รายการที่สร้าง, %(updated)d รายการที่อัปเดต"
 
+#: api_views.py:348
 msgid "Sync manual rates from provider"
 msgstr "ซิงค์อัตราค่าธรรมเนียมแบบมือถือจากผู้ให้บริการ"
 
+#: api_views.py:350
 msgid ""
 "Auto-populate manual exchange rates from the latest provider rates. Rates "
 "marked as locked (exclude_from_auto_sync) will be skipped. Creates new "
@@ -246,19 +305,24 @@ msgstr ""
 "อัตราที่ถูกทำเครื่องหมายว่าถูกล็อก (exclude_from_auto_sync) จะถูกข้าม "
 "สร้างอัตราแลกเปลี่ยนใหม่หรืออัปเดตอัตราที่ยังไม่ถูกล็อกที่มีอยู่"
 
+#: api_views.py:355
 msgid "Sync completed"
 msgstr "การซิงค์เสร็จสิ้น"
 
+#: api_views.py:356
 msgid "Sync failed"
 msgstr "การซิงค์ล้มเหลว"
 
+#: api_views.py:412
 msgid "No provider rate available"
 msgstr "ไม่มีอัตราผู้ให้บริการที่สามารถใช้งานได้"
 
+#: api_views.py:426 views/admin_views.py:559
 #, python-format
 msgid "Synced from provider on %(date)s"
 msgstr "ซิงค์จากผู้ให้บริการเมื่อ %(date)s"
 
+#: api_views.py:448 views/admin_views.py:578
 #, python-format
 msgid ""
 "Sync complete: %(created)d created, %(updated)d updated, %(skipped)d locked "
@@ -266,145 +330,203 @@ msgid ""
 msgstr ""
 "การซิงค์เสร็จสิ้น: %(created)d สร้างขึ้น, %(updated)d อัปเดต, %(skipped)d ถลก (ข้าม)"
 
+#: api_views.py:467 views/admin_views.py:591
 msgid "An error occurred during sync."
 msgstr "เกิดข้อผิดพลาดระหว่างการซิงค์"
 
+#: apps.py:8 models.py:169
 msgid "Exchange Rates"
 msgstr "อัตราแลกเปลี่ยน"
 
+#: models.py:15 models.py:245
 msgid "Site"
 msgstr "เว็บไซต์"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "เว็บไซต์ที่บัญชีผู้ให้บริการนี้เป็นเจ้าของ"
 
+#: models.py:24
 msgid "Provider Component"
 msgstr "ส่วนประกอบผู้ให้บริการ"
 
+#: models.py:25
 msgid "Exchange rate provider component from update system"
 msgstr "ส่วนประกอบผู้ให้บริการอัตราแลกเปลี่ยนจากระบบอัปเดต"
 
+#: models.py:30
 msgid "Account Name"
 msgstr "ชื่อบัญชี"
 
+#: models.py:32
 msgid ""
 "Friendly name for this provider account (e.g., 'Main Exchange Rate Provider')"
 msgstr "ชื่อที่เป็นมิตรสำหรับบัญชีผู้ให้บริการนี้ (เช่น 'Main Exchange Rate Provider')"
 
+#: models.py:37
 msgid "Encrypted Credentials"
 msgstr "ข้อมูลผู้ใช้ที่เข้ารหัส"
 
+#: models.py:38
 msgid "Encrypted API credentials for this provider"
 msgstr "ข้อมูลการรับรอง API ที่เข้ารหัสสำหรับผู้ให้บริการนี้"
 
+#: models.py:43 models.py:270 models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:88
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:77
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:90
+#: views/admin_views.py:451
 msgid "Active"
 msgstr "ใช้งาน"
 
+#: models.py:44
 msgid ""
 "Whether this provider account is active and should be used for rate fetching"
 msgstr "บัญชีผู้ให้บริการนี้เป็นบัญชีที่ใช้งานอยู่และควรใช้ในการดึงข้อมูลอัตราแลกเปลี่ยน"
 
+#: models.py:49
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:23
 msgid "Primary Provider"
 msgstr "ผู้ให้บริการหลัก"
 
+#: models.py:50
 msgid "Use this provider as primary source for exchange rates"
 msgstr "ใช้ผู้ให้บริการนี้เป็นแหล่งหลักสำหรับอัตราแลกเปลี่ยน"
 
+#: models.py:55
 msgid "Priority"
 msgstr "ลำดับความสำคัญ"
 
+#: models.py:56
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "ลำดับความสำคัญสำหรับการใช้งานเป็นตัวสำรอง (ค่าต่ำกว่า = ลำดับความสำคัญสูงกว่า)"
 
+#: models.py:62
 msgid "Provider Settings"
 msgstr "การตั้งค่าผู้ให้บริการ"
 
+#: models.py:63
 msgid "Provider-specific settings and configuration"
 msgstr "การตั้งค่าและกำหนดค่าเฉพาะผู้ให้บริการ"
 
+#: models.py:70
 msgid "Last Sync At"
 msgstr "เวลาการซิงค์ครั้งสุดท้าย"
 
+#: models.py:71
 msgid "When rates were last successfully fetched"
 msgstr "เมื่อใดที่อัตราแลกเปลี่ยนถูกดึงข้อมูลล่าสุดและสำเร็จ"
 
+#: models.py:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:80
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:68
 msgid "Pending"
 msgstr "รอการตรวจสอบ"
 
+#: models.py:78
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:74
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:60
 msgid "Success"
 msgstr "สำเร็จ"
 
+#: models.py:79
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:64
+#: templates/admin/exchange_rates/wizard/step4_test.html:76
 msgid "Error"
 msgstr "ข้อผิดพลาด"
 
+#: models.py:87
 msgid "Sync Error Message"
 msgstr "ข้อความข้อผิดพลาดการซิงค์"
 
+#: models.py:88
 msgid "Error message from last sync attempt"
 msgstr "ข้อความข้อผิดพลาดจากความพยายามในการซิงค์ครั้งสุดท้าย"
 
+#: models.py:95
 msgid "Exchange Rate Provider Account"
 msgstr "บัญชีผู้ให้บริการอัตราแลกเปลี่ยน"
 
+#: models.py:96
 msgid "Exchange Rate Provider Accounts"
 msgstr "บัญชีผู้ให้บริการอัตราแลกเปลี่ยน"
 
+#: models.py:138
 msgid "Provider Account"
 msgstr "บัญชีผู้ให้บริการ"
 
+#: models.py:144 models.py:195 models.py:251
 msgid "Base Currency"
 msgstr "สกุลเงินฐาน"
 
+#: models.py:145 models.py:252
 msgid "Base currency code (e.g., 'USD')"
 msgstr "รหัสสกุลเงินฐาน (เช่น 'USD')"
 
+#: models.py:150 models.py:197 models.py:257
 msgid "Target Currency"
 msgstr "สกุลเงินเป้าหมาย"
 
+#: models.py:151 models.py:258
 msgid "Target currency code (e.g., 'EUR')"
 msgstr "รหัสสกุลเงินเป้าหมาย (เช่น 'EUR')"
 
+#: models.py:157 models.py:168 models.py:199 models.py:264
 msgid "Exchange Rate"
 msgstr "อัตราแลกเปลี่ยน"
 
+#: models.py:158
 msgid "Exchange rate from base to target (e.g., 0.85 means 1 USD = 0.85 EUR)"
 msgstr "อัตราแลกเปลี่ยนจากสกุลเงินฐานไปยังเป้าหมาย (เช่น 0.85 หมายถึง 1 USD = 0.85 EUR)"
 
+#: models.py:163
 msgid "Fetched At"
 msgstr "เวลาที่ดึงข้อมูล"
 
+#: models.py:164
 msgid "When this rate was last fetched from provider"
 msgstr "เมื่อใดที่อัตราแลกเปลี่ยนนี้ถูกดึงข้อมูลล่าสุดจากผู้ให้บริการ"
 
+#: models.py:203
 msgid "Provider Name"
 msgstr "ชื่อผู้ให้บริการ"
 
+#: models.py:204
 msgid "Name of exchange rate provider used"
 msgstr "ชื่อผู้ให้บริการอัตราแลกเปลี่ยนที่ใช้งาน"
 
+#: models.py:209
 msgid "Created At"
 msgstr "สร้างเมื่อ"
 
+#: models.py:210
 msgid "When this rate snapshot was created"
 msgstr "เมื่อใดที่快照ของอัตราแลกเปลี่ยนนี้ถูกสร้างขึ้น"
 
+#: models.py:224 models.py:225
 msgid "Exchange Rate History"
 msgstr "ประวัติอัตราแลกเปลี่ยน"
 
+#: models.py:246
 msgid "Site this manual rate belongs to"
 msgstr "เว็บไซต์ที่อัตราค่าเงินมือถือนี้อยู่"
 
+#: models.py:265
 msgid ""
 "Exchange rate from base to target (e.g., 0.85 means 1 base = 0.85 target)"
 msgstr ""
 "อัตราการแลกเปลี่ยนจากฐานไปยังเป้าหมาย (เช่น 0.85 หมายถึง 1 ฐาน = 0.85 เป้าหมาย)"
 
+#: models.py:271
 msgid "Whether this manual rate is active and should be used for conversions"
 msgstr "อัตราการแปลงนี้เป็นอัตราที่ใช้งานอยู่และควรใช้สำหรับการแปลงหรือไม่"
 
+#: models.py:276
 msgid "Locked (Exclude from Auto-Sync)"
 msgstr "ถูกล็อก (ไม่รวมใน Auto-Sync)"
 
+#: models.py:278
 msgid ""
 "When enabled, this rate will not be overwritten by provider sync operations. "
 "Use for rates you manage manually."
@@ -412,20 +534,31 @@ msgstr ""
 "เมื่อเปิดใช้งาน อัตราส่วนนี้จะไม่ถูกทับ đèโดยการดำเนินการซิงค์ของผู้ให้บริการ "
 "ใช้สำหรับอัตราส่วนที่คุณจัดการด้วยตนเอง"
 
+#: models.py:286
 msgid ""
 "Optional notes about this rate (e.g., 'Fixed rate for wholesale customers')"
 msgstr ""
 "หมายเหตุเพิ่มเติมเกี่ยวกับอัตราการแลกเปลี่ยนนี้ (เช่น, 'อัตราคงที่สำหรับลูกค้าส่งสินค้าในปริมาณมาก')"
 
+#: models.py:293
 msgid "Manual Exchange Rate"
 msgstr "อัตราแลกเปลี่ยนแบบมือ"
 
+#: models.py:294
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:22
 msgid "Manual Exchange Rates"
 msgstr "อัตราแลกเปลี่ยนแบบมือ"
 
+#: models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:91
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:81
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:92
+#: views/admin_views.py:452
 msgid "Inactive"
 msgstr "ไม่ใช้งาน"
 
+#: providers/fixer.py:316
 msgid ""
 "\n"
 "        <h3>Fixer.io Setup</h3>\n"
@@ -462,6 +595,7 @@ msgstr ""
 "ECB</p>\n"
 "        "
 
+#: providers/openexchangerates.py:289
 msgid ""
 "\n"
 "        <h3>Open Exchange Rates Setup</h3>\n"
@@ -494,6 +628,7 @@ msgstr ""
 "ข้อมูลอัตราแลกเปลี่ยนในอดีตและการสนับสนุนสกุลเงินดิจิทัลจำเป็นต้องใช้แผนจ่ายเงิน</p>\n"
 "        "
 
+#: serializers.py:82
 msgid ""
 "List of rate objects with base_currency, target_currency, rate, and optional "
 "is_active/notes"
@@ -501,126 +636,180 @@ msgstr ""
 "รายการของอัตราการแปลงสกุลเงินที่มี base_currency, target_currency, rate และ "
 "is_active/notes (ไม่จำเป็น)"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:24
 msgid "Exchange Rate Providers"
 msgstr "ผู้ให้บริการอัตราแลกเปลี่ยน"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/providers/browse.html:4
 msgid "Site Admin"
 msgstr "ผู้ดูแลระบบเว็บไซต์"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:26
 msgid "Manage currency exchange rate provider integrations"
 msgstr "จัดการการผสานผู้ให้บริการอัตราแลกเปลี่ยนสกุลเงิน"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:28
 msgid "provider"
 msgstr "ผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:29
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:27
 msgid "active"
 msgstr "ใช้งานอยู่"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:34
+#: templates/admin/exchange_rates/providers/browse.html:27
 msgid "Browse Providers"
 msgstr "ดูผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:53
 msgid "Bulk Actions"
 msgstr "การดำเนินการแบบกลุ่ม"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:54
 msgid "Enable Selected"
 msgstr "เปิดใช้งานที่เลือก"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:55
 msgid "Disable Selected"
 msgstr "ปิดใช้งานที่เลือก"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:56
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:119
 msgid "Set as Primary"
 msgstr "ตั้งเป็นหลัก"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:57
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:103
 msgid "Sync Rates"
 msgstr "ซิงค์อัตราแลกเปลี่ยน"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:58
 msgid "Delete Selected"
 msgstr "ลบที่เลือก"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:60
 msgid "Apply"
 msgstr "ประยุกต์ใช้"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:62
 msgid "selected"
 msgstr "เลือกแล้ว"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:72
 msgid "All Sync Statuses"
 msgstr "สถานะการซิงค์ทั้งหมด"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:86
 msgid "All Active Status"
 msgstr "สถานะการใช้งานทั้งหมด"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:98
 msgid "All Providers"
 msgstr "ผู้ให้บริการทั้งหมด"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:114
 msgid "Search providers..."
 msgstr "ค้นหาผู้ให้บริการ..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:124
 msgid "Select All"
 msgstr "เลือกทั้งหมด"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:142
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s ผู้ให้บริการ"
 msgstr[1] "%(counter)s ผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:151
+#: views/admin_views.py:86
 msgid "No provider accounts found"
 msgstr "ไม่พบบัญชีผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:154
+#: views/admin_views.py:87
 msgid "Try adjusting your filters or search query."
 msgstr "ลองปรับแต่งตัวกรองหรือคำค้นหาของคุณ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:156
 msgid "Get started by connecting your first exchange rate provider."
 msgstr "เริ่มต้นด้วยการเชื่อมต่อกับผู้ให้บริการอัตราแลกเปลี่ยนรายแรกของคุณ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:161
 msgid "Browse & Install Providers"
 msgstr "ค้นหาและติดตั้งผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:172
 msgid "Loading..."
 msgstr "กำลังโหลด..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:38
 msgid "Provider:"
 msgstr "ผู้ให้บริการ:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
 msgid "Last synced:"
 msgstr "ซิงค์ครั้งสุดท้าย:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "ago"
 msgstr "ที่ผ่านมา"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:51
 msgid "Never synced"
 msgstr "ไม่เคยซิงค์มาก่อน"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:98
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:119
 msgid "Edit"
 msgstr "แก้ไข"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Disable"
 msgstr "ปิดใช้งาน"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Enable"
 msgstr "เปิดใช้งาน"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:124
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:124
 msgid "Delete"
 msgstr "ลบ"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:24
 msgid "Set and manage exchange rates manually for currency conversions"
 msgstr "ตั้งค่าและจัดการอัตราการแปลงสกุลเงินด้วยตนเองสำหรับการแปลงสกุลเงิน"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:26
 msgid "rate"
 msgstr "อัตรา"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:28
 msgid "inactive"
 msgstr "ไม่ใช้งาน"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:29
+#: views/admin_views.py:478
 msgid "locked"
 msgstr "ถูกล็อก"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:35
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:144
 msgid "Sync from Provider"
 msgstr "ซิงค์จากผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:38
 msgid "Add Rate"
 msgstr "เพิ่มอัตรา"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:55
 msgid ""
 "Manual rates take precedence over provider-fetched rates. Lock rates to "
 "prevent them from being overwritten during provider sync."
@@ -628,50 +817,68 @@ msgstr ""
 "อัตราส่วนที่ตั้งด้วยมือจะมีความสำคัญเหนือกว่าอัตราส่วนที่ดึงมาจากรายการผู้ให้บริการ "
 "ให้ล็อกอัตราส่วนเพื่อป้องกันไม่ให้ถูกทับ đèในระหว่างการซิงค์ผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "Updated"
 msgstr "อัปเดต"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:95
+#: views/admin_views.py:480
 msgid "Locked"
 msgstr "ถูกล็อก"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Unlock (allow auto-sync)"
 msgstr "ปลดล็อก (อนุญาตให้ซิงค์อัตโนมัติ)"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Lock (exclude from auto-sync)"
 msgstr "ล็อก (ไม่รวมในซิงค์อัตโนมัติ)"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Deactivate"
 msgstr "ปิดใช้งาน"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Activate"
 msgstr "เปิดใช้งาน"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:139
 msgid "No manual exchange rates"
 msgstr "ไม่มีอัตราแลกเปลี่ยนแบบมือถือ"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:140
 msgid ""
 "Add manual exchange rates to define fixed conversion rates between "
 "currencies."
 msgstr "เพิ่มอัตราการแปลงสกุลเงินด้วยตนเองเพื่อกำหนดอัตราการแปลงที่แน่นอนระหว่างสกุลเงิน"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:147
 msgid "Add Your First Rate"
 msgstr "เพิ่มอัตราแรกของคุณ"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:160
 msgid "Syncing from Provider"
 msgstr "กำลังซิงค์จากผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:161
 msgid "Fetching latest provider rates and updating unlocked manual rates..."
 msgstr "กำลังดึงอัตราค่าเงินล่าสุดจากผู้ให้บริการและอัปเดตอัตราค่าเงินมือถือที่ไม่ได้ล็อก..."
 
+#: templates/admin/exchange_rates/providers/browse.html:4
+#: templates/admin/exchange_rates/providers/browse.html:36
+#: views/provider_browse.py:158
 msgid "Browse Exchange Rate Providers"
 msgstr "เรียกดูผู้ให้บริการอัตราแลกเปลี่ยน"
 
+#: templates/admin/exchange_rates/providers/browse.html:25
 msgid "Home"
 msgstr "หน้าแรก"
 
+#: templates/admin/exchange_rates/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "บัญชีผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/providers/browse.html:38
 msgid ""
 "Choose an exchange rate provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -679,17 +886,21 @@ msgstr ""
 "เลือกผู้ให้บริการอัตราแลกเปลี่ยนเพื่อเชื่อมต่อกับร้านค้าของคุณ "
 "ติดตั้งผู้ให้บริการใหม่หรือตั้งค่าผู้ให้บริการที่มีอยู่"
 
+#: templates/admin/exchange_rates/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "เซิร์ฟเวอร์ไม่สามารถอัปเดตได้"
 
+#: templates/admin/exchange_rates/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตได้ แสดงเฉพาะผู้ให้บริการที่ติดตั้งไว้ในเครื่องเท่านั้น"
 
+#: templates/admin/exchange_rates/providers/browse.html:57
 msgid "Exchange Rate Provider Marketplace"
 msgstr "ตลาดผู้ให้บริการอัตราแลกเปลี่ยน"
 
+#: templates/admin/exchange_rates/providers/browse.html:69
 msgid ""
 "Here you can discover and install exchange rate providers to automate your "
 "currency conversion, including live rates, historical data, and multi-"
@@ -698,36 +909,47 @@ msgstr ""
 "ที่นี่คุณสามารถค้นหาและติดตั้งผู้ให้บริการอัตราแลกเปลี่ยนเพื่ออัตโนมัติการแปลงสกุลเงิน "
 "รวมถึงอัตราแลกเปลี่ยนแบบเรียลไทม์ ข้อมูลประวัติ และการสนับสนุนหลายสกุลเงิน"
 
+#: templates/admin/exchange_rates/providers/browse.html:76
 msgid "What you can do:"
 msgstr "สิ่งที่คุณสามารถทำได้:"
 
+#: templates/admin/exchange_rates/providers/browse.html:81
 msgid "Browse available exchange rate providers by feature and pricing"
 msgstr "ค้นหาผู้ให้บริการอัตราแลกเปลี่ยนที่มีอยู่ตามคุณสมบัติและราคา"
 
+#: templates/admin/exchange_rates/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "ติดตั้งผู้ให้บริการใหม่ด้วยการคลิกเพียงครั้งเดียว"
 
+#: templates/admin/exchange_rates/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "อัปเดตผู้ให้บริการที่ติดตั้งแล้วไปยังเวอร์ชันล่าสุด"
 
+#: templates/admin/exchange_rates/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "ตั้งค่าการตั้งค่าผู้ให้บริการหลังการติดตั้ง"
 
+#: templates/admin/exchange_rates/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "เริ่มต้น:"
 
+#: templates/admin/exchange_rates/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "เลือกผู้ให้บริการด้านล่างเพื่อหาผู้ให้บริการที่เหมาะสมกับคุณ"
 
+#: templates/admin/exchange_rates/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "คลิก 'ติดตั้ง' เพื่อเพิ่มผู้ให้บริการในร้านค้าของคุณ"
 
+#: templates/admin/exchange_rates/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "ไปที่การตั้งค่าเพื่อตั้งค่าข้อมูลการเข้าสู่ระบบ API"
 
+#: templates/admin/exchange_rates/providers/browse.html:107
 msgid "Test the provider connection and sync exchange rates"
 msgstr "ทดสอบการเชื่อมต่อกับผู้ให้บริการและสังเคราะห์อัตราแลกเปลี่ยน"
 
+#: templates/admin/exchange_rates/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -746,54 +968,78 @@ msgstr[1] ""
 "                    Currently: %(counter)s provider available\n"
 "                "
 
+#: templates/admin/exchange_rates/providers/browse.html:134
 msgid "Update Available"
 msgstr "มีการอัปเดทที่พร้อมใช้งาน"
 
+#: templates/admin/exchange_rates/providers/browse.html:160
 msgid "Installed"
 msgstr "ติดตั้งแล้ว"
 
+#: templates/admin/exchange_rates/providers/browse.html:175
 msgid "Available"
 msgstr "พร้อมใช้งาน"
 
+#: templates/admin/exchange_rates/providers/browse.html:198
+#: templates/admin/exchange_rates/wizard/step1_select.html:46
 msgid "Live Rates"
 msgstr "อัตราแลกเปลี่ยนแบบเรียลไทม์"
 
+#: templates/admin/exchange_rates/providers/browse.html:203
+#: templates/admin/exchange_rates/wizard/step1_select.html:51
 msgid "Historical"
 msgstr "ประวัติ"
 
+#: templates/admin/exchange_rates/providers/browse.html:208
+#: templates/admin/exchange_rates/wizard/step1_select.html:56
 msgid "Crypto"
 msgstr "สกุลเงินดิจิทัล"
 
+#: templates/admin/exchange_rates/providers/browse.html:213
+#: templates/admin/exchange_rates/wizard/step1_select.html:61
 msgid "Commodities"
 msgstr "สินค้า"
 
+#: templates/admin/exchange_rates/providers/browse.html:218
+#: templates/admin/exchange_rates/wizard/step1_select.html:66
 msgid "Any Base Currency"
 msgstr "สกุลเงินฐานใดก็ได้"
 
+#: templates/admin/exchange_rates/providers/browse.html:223
+#: templates/admin/exchange_rates/wizard/step1_select.html:71
 msgid "Batch Requests"
 msgstr "คำขอแบบแบตช์"
 
+#: templates/admin/exchange_rates/providers/browse.html:241
 msgid "Free"
 msgstr "ฟรี"
 
+#: templates/admin/exchange_rates/providers/browse.html:261
 msgid "Update"
 msgstr "อัปเดต"
 
+#: templates/admin/exchange_rates/providers/browse.html:267
 msgid "Configure"
 msgstr "ตั้งค่า"
 
+#: templates/admin/exchange_rates/providers/browse.html:275
 msgid "Install"
 msgstr "ติดตั้ง"
 
+#: templates/admin/exchange_rates/providers/browse.html:285
 msgid "View Details"
 msgstr "ดูรายละเอียด"
 
+#: templates/admin/exchange_rates/providers/browse.html:294
 msgid "Learn More"
 msgstr "เรียนรู้เพิ่มเติม"
 
+#: templates/admin/exchange_rates/providers/browse.html:308
+#: templates/admin/exchange_rates/wizard/step1_select.html:88
 msgid "No Providers Available"
 msgstr "ไม่มีผู้ให้บริการที่พร้อมใช้งาน"
 
+#: templates/admin/exchange_rates/providers/browse.html:309
 msgid ""
 "No exchange rate providers are currently available. Please check your update "
 "server connection or contact support."
@@ -801,50 +1047,69 @@ msgstr ""
 "ขณะนี้ไม่มีผู้ให้บริการอัตราแลกเปลี่ยนที่สามารถใช้งานได้ "
 "กรุณาตรวจสอบการเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตหรือติดต่อฝ่ายสนับสนุน"
 
+#: templates/admin/exchange_rates/providers/browse.html:318
 msgid "Installing provider..."
 msgstr "กำลังติดตั้งผู้ให้บริการ..."
 
+#: templates/admin/exchange_rates/wizard/base.html:14
 msgid "Connect Exchange Rate Provider"
 msgstr "เชื่อมต่อกับผู้ให้บริการอัตราแลกเปลี่ยน"
 
+#: templates/admin/exchange_rates/wizard/base.html:15
 msgid "Follow these steps to connect your exchange rate provider account"
 msgstr "โปรดปฏิบัติตามขั้นตอนต่อไปนี้เพื่อเชื่อมต่อบัญชีผู้ให้บริการอัตราแลกเปลี่ยนของคุณ"
 
+#: templates/admin/exchange_rates/wizard/base.html:24
 msgid "Select Provider"
 msgstr "เลือกผู้ให้บริการ"
 
+#: templates/admin/exchange_rates/wizard/base.html:33
+#: templates/admin/exchange_rates/wizard/step2_setup.html:13
 msgid "Setup Instructions"
 msgstr "คำแนะนำการตั้งค่า"
 
+#: templates/admin/exchange_rates/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "กรุณากรอกข้อมูลผู้ใช้"
 
+#: templates/admin/exchange_rates/wizard/base.html:51
+#: templates/admin/exchange_rates/wizard/step4_test.html:7
+#: templates/admin/exchange_rates/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "ทดสอบการเชื่อมต่อ"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:6
 msgid "Select an Exchange Rate Provider"
 msgstr "เลือกผู้ให้บริการอัตราแลกเปลี่ยน"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:7
 msgid "Choose the exchange rate provider you want to connect to your store."
 msgstr "เลือกผู้ให้บริการอัตราแลกเปลี่ยนที่คุณต้องการเชื่อมต่อกับร้านค้าของคุณ"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:89
 msgid "No exchange rate provider components are currently installed."
 msgstr "ไม่มีส่วนประกอบของผู้ให้บริการอัตราแลกเปลี่ยนที่ติดตั้งไว้ในขณะนี้"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:90
 msgid ""
 "Please download and install exchange rate provider components from the "
 "component registry."
 msgstr "กรุณาดาวน์โหลดและติดตั้งส่วนประกอบผู้ให้บริการอัตราแลกเปลี่ยนจากแคตตาล็อกส่วนประกอบ"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:92
 msgid "Browse Components"
 msgstr "ดูองค์ประกอบ"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:103
 msgid "Cancel"
 msgstr "ยกเลิก"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:106
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "ถัดไป"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:16
 #, python-format
 msgid ""
 "\n"
@@ -857,9 +1122,11 @@ msgstr ""
 "%(provider)s.\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:28
 msgid "Setup Instructions Not Available"
 msgstr "ไม่มีคำแนะนำการตั้งค่า"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:30
 #, python-format
 msgid ""
 "\n"
@@ -874,15 +1141,21 @@ msgstr ""
 "กรุณาติดต่อฝ่ายสนับสนุนเพื่อขอความช่วยเหลือ หรือตรวจสอบว่ามีเวอร์ชันที่อัปเดตหรือไม่\n"
 "                    "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:49
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:120
+#: templates/admin/exchange_rates/wizard/step4_test.html:58
 msgid "Back"
 msgstr "ย้อนกลับ"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:52
 msgid "Continue to Credentials"
 msgstr "ดำเนินการต่อไปยังข้อมูลผู้ใช้"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "กรอกข้อมูลผู้ใช้ API"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -895,30 +1168,38 @@ msgstr ""
 "ข้อมูลเหล่านี้จะถูกเข้ารหัสและจัดเก็บอย่างปลอดภัย\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "ยังไม่มีบัญชี?"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "คุณจำเป็นต้องมีบัญชีเพื่อขอข้อมูลการเข้าสู่ระบบ API"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "สมัครสมาชิกที่นี่"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "ข้อมูลการรับรอง API"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "เลือก..."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "ไม่มีฟิลด์ข้อมูลการเข้าสู่ระบบที่ตั้งค่าสำหรับผู้ให้บริการนี้"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
 msgstr ""
 "ข้อมูลประจำตัวของคุณจะถูกเข้ารหัสโดยใช้การเข้ารหัส AES-256 ก่อนที่จะถูกเก็บไว้ในฐานข้อมูล"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -932,232 +1213,310 @@ msgstr ""
 "เพื่อยืนยันว่าข้อมูลยืนยันตัวตนของคุณถูกต้อง\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:21
+#: templates/admin/exchange_rates/wizard/step4_test.html:70
 msgid "Testing connection..."
 msgstr "กำลังทดสอบการเชื่อมต่อ..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:22
+#: templates/admin/exchange_rates/wizard/step4_test.html:71
 msgid "Please wait while we verify your credentials."
 msgstr "กรุณารอสักครู่ขณะที่เรากำลังตรวจสอบข้อมูลประจำตัวของคุณ"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "คลิกเพื่อทดสอบการเชื่อมต่อโดยใช้ข้อมูลประจำตัวที่คุณป้อนไว้"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:42
+#: templates/admin/exchange_rates/wizard/step4_test.html:72
 msgid "Connection Successful!"
 msgstr "การเชื่อมต่อสำเร็จ!"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:46
 msgid "Connection Details"
 msgstr "รายละเอียดการเชื่อมต่อ"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:61
+#: templates/admin/exchange_rates/wizard/step4_test.html:80
 msgid "Save & Finish"
 msgstr "บันทึกและเสร็จสิ้น"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:73
 msgid "Your credentials were verified successfully."
 msgstr "ข้อมูลการเข้าสู่ระบบของคุณได้รับการตรวจสอบแล้วอย่างถูกต้อง"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:74
 msgid "Connection Failed"
 msgstr "การเชื่อมต่อไม่สำเร็จ"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:75
 msgid "Could not connect to the provider API."
 msgstr "ไม่สามารถเชื่อมต่อกับ API ของผู้ให้บริการได้"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:77
+#: views/admin_views.py:296 views/wizard.py:515
 msgid "An unexpected error occurred."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดขึ้น"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:78
 msgid "Saving..."
 msgstr "กำลังบันทึก..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:79
 msgid "Failed to save provider account."
 msgstr "ไม่สามารถบันทึกบัญชีผู้ให้บริการได้。"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:81
 msgid "An error occurred while saving."
 msgstr "เกิดข้อผิดพลาดขณะบันทึก"
 
+#: views/admin_views.py:114
 msgid "Provider {} successfully"
 msgstr "ผู้ให้บริการ {} สำเร็จ"
 
+#: views/admin_views.py:115
 msgid "enabled"
 msgstr "เปิดใช้งาน"
 
+#: views/admin_views.py:115
 msgid "disabled"
 msgstr "ปิดใช้งาน"
 
+#: views/admin_views.py:122
 msgid "An error occurred while updating the provider."
 msgstr "เกิดข้อผิดพลาดขณะอัปเดตผู้ให้บริการ"
 
+#: views/admin_views.py:146 views/admin_views.py:372
 msgid "\"{}\" set as primary provider"
 msgstr "\"{}\" ถูกตั้งเป็นผู้ให้บริการหลัก"
 
+#: views/admin_views.py:156
 msgid "An error occurred while setting the primary provider."
 msgstr "เกิดข้อผิดพลาดขณะตั้งค่าผู้ให้บริการหลัก"
 
+#: views/admin_views.py:174
 msgid "Provider implementation not found"
 msgstr "ไม่พบการดำเนินการของผู้ให้บริการ"
 
+#: views/admin_views.py:191
 msgid ""
 "Failed to decrypt provider credentials. Please reconfigure the provider."
 msgstr "ไม่สามารถถอดรหัสข้อมูลผู้ให้บริการได้ กรุณาตั้งค่าผู้ให้บริการอีกครั้ง"
 
+#: views/admin_views.py:209
 msgid "Site settings not configured"
 msgstr "การตั้งค่าเว็บไซต์ยังไม่ได้ตั้งค่า"
 
+#: views/admin_views.py:223 views/admin_views.py:227
 msgid "No rates returned from provider"
 msgstr "ไม่มีอัตราแลกเปลี่ยนที่ได้รับจากผู้ให้บริการ"
 
+#: views/admin_views.py:262
 msgid "Successfully synced {} exchange rate(s)"
 msgstr "ซิงค์อัตราแลกเปลี่ยน {} รายการสำเร็จ"
 
+#: views/admin_views.py:285
 msgid "Failed to sync exchange rates. Check the provider configuration."
 msgstr "ไม่สามารถสังเคราะห์อัตราแลกเปลี่ยนได้ โปรดตรวจสอบการตั้งค่าผู้ให้บริการ"
 
+#: views/admin_views.py:313
 msgid "Provider \"{}\" successfully deleted"
 msgstr "ผู้ให้บริการ \"{}\" ถูกลบสำเร็จ"
 
+#: views/admin_views.py:319
 msgid "An error occurred while deleting the provider."
 msgstr "เกิดข้อผิดพลาดขณะลบผู้ให้บริการ"
 
+#: views/admin_views.py:335
 msgid "Invalid action or no providers selected"
 msgstr "การดำเนินการไม่ถูกต้องหรือไม่ได้เลือกผู้ให้บริการใดๆ"
 
+#: views/admin_views.py:343
 msgid "{} provider(s) enabled"
 msgstr "{} ผู้ให้บริการที่เปิดใช้งาน"
 
+#: views/admin_views.py:347
 msgid "{} provider(s) disabled"
 msgstr "{} ผู้ให้บริการที่ถูกปิดใช้งาน"
 
+#: views/admin_views.py:354
 msgid "Please select exactly one provider to set as primary"
 msgstr "กรุณาเลือกผู้ให้บริการเพียงหนึ่งรายเพื่อตั้งเป็นผู้ให้บริการหลัก"
 
+#: views/admin_views.py:402
 msgid "{} provider(s) queued for sync, {} errors: {}"
 msgstr "{} ผู้ให้บริการ(ผู้ให้บริการ) ที่ตั้งค่าให้ซิงค์, {} ข้อผิดพลาด: {}"
 
+#: views/admin_views.py:406
 msgid "{} provider(s) queued for sync"
 msgstr "{} ผู้ให้บริการที่เข้าคิวสำหรับการซิงค์"
 
+#: views/admin_views.py:411
 msgid "{} provider(s) deleted"
 msgstr "{} ผู้ให้บริการที่ถูกลบ"
 
+#: views/admin_views.py:415
 msgid "Unknown action: {}"
 msgstr "การกระทำไม่ทราบ: {}"
 
+#: views/admin_views.py:423
 msgid "An error occurred while performing the bulk action."
 msgstr "เกิดข้อผิดพลาดขณะดำเนินการแบบกลุ่ม"
 
+#: views/admin_views.py:458 views/admin_views.py:487
 msgid "An error occurred while updating the rate."
 msgstr "เกิดข้อผิดพลาดขณะอัปเดตอัตรา"
 
+#: views/admin_views.py:478
 msgid "unlocked"
 msgstr "ปลดล็อก"
 
+#: views/admin_views.py:481
 msgid "Unlocked"
 msgstr "ปลดล็อก"
 
+#: views/provider_browse.py:197
 msgid "Provider is already installed. Configure it now."
 msgstr "ผู้ให้บริการนี้ถูกติดตั้งไว้แล้ว โปรดตั้งค่ามันตอนนี้"
 
+#: views/provider_browse.py:226 views/provider_browse.py:367
 msgid "Provider not found on update server."
 msgstr "ไม่พบผู้ให้บริการบนเซิร์ฟเวอร์อัปเดต"
 
+#: views/provider_browse.py:236
 msgid "Could not determine provider version."
 msgstr "ไม่สามารถระบุเวอร์ชันของผู้ให้บริการได้"
 
+#: views/provider_browse.py:260
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "ไม่สามารถดาวน์โหลดผู้ให้บริการได้: %(error)s"
 
+#: views/provider_browse.py:273
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "ไม่สามารถติดตั้งผู้ให้บริการได้: %(error)s"
 
+#: views/provider_browse.py:306
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "ผู้ให้บริการ \"%(name)s\" ติดตั้งสำเร็จแล้ว! โปรดตั้งค่ามันทันที"
 
+#: views/provider_browse.py:315
 msgid "An unexpected error occurred during installation."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดระหว่างการติดตั้ง"
 
+#: views/provider_browse.py:337
 msgid "Provider not installed."
 msgstr "ผู้ให้บริการยังไม่ได้ติดตั้ง"
 
+#: views/provider_browse.py:353
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตได้: %(error)s"
 
+#: views/provider_browse.py:376
 msgid "Could not determine latest version."
 msgstr "ไม่สามารถระบุเวอร์ชันล่าสุดได้"
 
+#: views/provider_browse.py:385
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "ผู้ให้บริการ \"%(name)s\" ได้รับการอัปเดตแล้ว (v%(version)s)"
 
+#: views/provider_browse.py:400
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "ไม่สามารถดาวน์โหลดอัปเดตได้: %(error)s"
 
+#: views/provider_browse.py:412
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "ไม่สามารถติดตั้งอัปเดตได้: %(error)s"
 
+#: views/provider_browse.py:449
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "ผู้ให้บริการ \"%(name)s\" อัปเดตสำเร็จไปที่ v%(version)s!"
 
+#: views/provider_browse.py:458
 msgid "An unexpected error occurred during the update."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดระหว่างการอัปเดต"
 
+#: views/wizard.py:153
 msgid "Connect Exchange Rate Provider - Select Provider"
 msgstr "เชื่อมต่อกับผู้ให้บริการอัตราแลกเปลี่ยน - เลือกผู้ให้บริการ"
 
+#: views/wizard.py:166
 msgid "Please select a provider."
 msgstr "กรุณาเลือกผู้ให้บริการ"
 
+#: views/wizard.py:174
 msgid "Invalid provider selected."
 msgstr "ผู้ให้บริการที่เลือกไม่ถูกต้อง"
 
+#: views/wizard.py:202 views/wizard.py:282
 msgid "Please select a provider first."
 msgstr "กรุณาเลือกผู้ให้บริการก่อน"
 
+#: views/wizard.py:235
 #, python-format
 msgid "Setup instructions not found for %(provider)s. Please contact support."
 msgstr "ไม่พบคำแนะนำในการตั้งค่าสำหรับ %(provider)s กรุณาติดต่อฝ่ายสนับสนุน"
 
+#: views/wizard.py:240 views/wizard.py:304
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "ข้อผิดพลาดในการโหลดผู้ให้บริการ: %(error)s"
 
+#: views/wizard.py:250
 msgid "Connect Exchange Rate Provider - Setup Instructions"
 msgstr "เชื่อมต่อกับผู้ให้บริการอัตราแลกเปลี่ยน - คำแนะนำการตั้งค่า"
 
+#: views/wizard.py:297
 msgid "Could not load provider configuration."
 msgstr "ไม่สามารถโหลดการตั้งค่าผู้ให้บริการได้"
 
+#: views/wizard.py:308
 msgid "Connect Exchange Rate Provider - Enter Credentials"
 msgstr "เชื่อมต่อกับผู้ให้บริการอัตราแลกเปลี่ยน - ป้อนข้อมูลการเข้าสู่ระบบ"
 
+#: views/wizard.py:338
 msgid "Error loading provider configuration."
 msgstr "เกิดข้อผิดพลาดในการโหลดการตั้งค่าผู้ให้บริการ。"
 
+#: views/wizard.py:372
 msgid "Please complete previous steps first."
 msgstr "กรุณาทำขั้นตอนก่อนหน้าให้เสร็จก่อน"
 
+#: views/wizard.py:380
 msgid "Provider not found."
 msgstr "ไม่พบผู้ให้บริการ"
 
+#: views/wizard.py:384
 msgid "Connect Exchange Rate Provider - Test Connection"
 msgstr "เชื่อมต่อกับผู้ให้บริการอัตราแลกเปลี่ยน - ทดสอบการเชื่อมต่อ"
 
+#: views/wizard.py:413
 msgid "Provider implementation not found."
 msgstr "ไม่พบการดำเนินการของผู้ให้บริการ。"
 
+#: views/wizard.py:435
 msgid "An error occurred while testing the connection."
 msgstr "เกิดข้อผิดพลาดขณะทดสอบการเชื่อมต่อ"
 
+#: views/wizard.py:449
 msgid "Site not configured."
 msgstr "ไซต์ยังไม่ได้ตั้งค่า"
 
+#: views/wizard.py:460
 msgid "Connection test failed"
 msgstr "การทดสอบการเชื่อมต่อล้มเหลว"
 
+#: views/wizard.py:491
 msgid "Provider connected successfully!"
 msgstr "ผู้ให้บริการเชื่อมต่อสำเร็จ!"
 
+#: views/wizard.py:504
 msgid "An error occurred while saving the provider."
 msgstr "เกิดข้อผิดพลาดขณะบันทึกผู้ให้บริการ"

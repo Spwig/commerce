@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Italian <LL@li.org>\n"
@@ -18,78 +18,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:328
 msgid "Action and method IDs required"
 msgstr "ID azione e metodo richiesti"
 
+#: admin.py:336
 msgid "{} method(s) enabled"
 msgstr "{} metodo(i) abilitato(i)"
 
+#: admin.py:340
 msgid "{} method(s) disabled"
 msgstr "{} metodo(i) disabilitato(i)"
 
+#: admin.py:344
 msgid "{} method(s) deleted"
 msgstr "{} metodo(i) eliminato(i)"
 
+#: admin.py:347
 msgid "Unknown action"
 msgstr "Azione sconosciuta"
 
+#: admin.py:353 mini_cart_api.py:469
 msgid "Invalid request data"
 msgstr "Dati della richiesta non validi"
 
+#: admin.py:358
 msgid "An unexpected error occurred. Please try again."
 msgstr "È verificato un errore inaspettato. Per favore, riprova."
 
+#: admin.py:376 templates/admin/cart/method_wizard/step1_basics.html:21
+#: templates/admin/cart/shippingmethod/change_form.html:118
+#: templates/admin/cart/taxrate/change_form.html:111
 msgid "Basic Information"
 msgstr "Informazioni di base"
 
+#: admin.py:383 templates/admin/cart/taxrate/change_form.html:141
 msgid "Geographic Scope"
 msgstr "Ambito geografico"
 
+#: admin.py:387 templates/admin/cart/taxrate/change_form.html:163
 msgid "Application Rules"
 msgstr "Regole di applicazione"
 
+#: admin.py:391 templates/admin/cart/taxrate/change_form.html:193
 msgid "Product Exemptions"
 msgstr "Esenzioni per prodotti"
 
+#: admin.py:397 templates/admin/cart/shippingmethod/change_form.html:107
+#: templates/admin/cart/shippingmethod/change_form.html:321
+#: templates/admin/cart/taxrate/change_form.html:100
+#: templates/admin/cart/taxrate/change_form.html:216
 msgid "Timestamps"
 msgstr "Timestamp"
 
+#: admin.py:409
 msgid "Rate %"
 msgstr "Aliquota %"
 
+#: apps.py:8 models.py:735 models.py:1599
 msgid "Cart"
 msgstr "Carrello"
 
+#: forms.py:34
 msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
 msgstr "Inserisci come percentuale (es. 8.25 per 8.25%)"
 
+#: forms.py:35
 msgid "Rate (%)"
 msgstr "Aliquota (%)"
 
+#: method_wizard.py:106
 msgid "Please complete Step 1 first"
 msgstr "Completare prima il passo 1"
 
+#: method_wizard.py:146 method_wizard.py:193 method_wizard.py:266
 msgid "Please complete the wizard steps"
 msgstr "Completare i passaggi del wizard"
 
+#: method_wizard.py:354
 #, python-format
 msgid "Shipping method \"%(name)s\" created successfully!"
 msgstr "Metodo di spedizione \"%(name)s\" creato con successo!"
 
+#: method_wizard.py:360
 msgid "Please configure rate tables for this method."
 msgstr "Configura le tabelle di tariffe per questo metodo."
 
+#: method_wizard.py:368
 #, python-format
 msgid "Failed to create shipping method: %(error)s"
 msgstr "Impossibile creare il metodo di spedizione: %(error)s"
 
+#: mini_cart_api.py:281
 msgid "Get mini-cart data"
 msgstr "Ottieni dati mini-carrello"
 
+#: mini_cart_api.py:282
 msgid ""
 "\n"
-"    Retrieve the current cart contents formatted for the mini-cart "
-"component.\n"
+"    Retrieve the current cart contents formatted for the mini-cart component.\n"
 "\n"
 "    Works for both authenticated users (cart linked to user account) and\n"
 "    anonymous users (cart linked to session). Cart data includes all items\n"
@@ -104,23 +131,18 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Recupera il contenuto corrente del carrello formattato per il componente "
-"mini-carrello. Funziona per gli utenti autenticati (carrello collegato "
-"all'account utente) e per gli utenti anonimi (carrello collegato alla "
-"sessione). I dati del carrello includono tutti gli elementi con dettagli del "
-"prodotto, quantità, prezzi e immagini. **Utilizzo:** - Caricamento iniziale "
-"del mini-carrello sulla pagina - Aggiornamento del carrello dopo modifiche "
-"esterne - Verifica dello stato del carrello prima del checkout "
-"**Autenticazione:** Nessuna richiesta (usa la sessione per gli utenti "
-"anonimi)\n"
+"    Recupera il contenuto corrente del carrello formattato per il componente mini-carrello. Funziona per gli utenti autenticati (carrello collegato all'account utente) e per gli utenti anonimi (carrello collegato alla sessione). I dati del carrello includono tutti gli elementi con dettagli del prodotto, quantità, prezzi e immagini. **Utilizzo:** - Caricamento iniziale del mini-carrello sulla pagina - Aggiornamento del carrello dopo modifiche esterne - Verifica dello stato del carrello prima del checkout **Autenticazione:** Nessuna richiesta (usa la sessione per gli utenti anonimi)\n"
 "    "
 
+#: mini_cart_api.py:300
 msgid "Cart data retrieved successfully"
 msgstr "Dati del carrello recuperati con successo"
 
+#: mini_cart_api.py:352
 msgid "Update cart item quantity"
 msgstr "Aggiorna quantità articolo carrello"
 
+#: mini_cart_api.py:353
 msgid ""
 "\n"
 "    Update the quantity of an item in the cart.\n"
@@ -133,8 +155,7 @@ msgid ""
 "    - Direct quantity input changes\n"
 "    - Removing items (quantity=0)\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "\n"
 "    **Validation:**\n"
 "    - Item must exist in user's cart\n"
@@ -143,30 +164,26 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Aggiorna la quantità di un elemento nel carrello. Impostare la quantità "
-"su 0 per rimuovere completamente l'elemento. L'endpoint verifica la "
-"disponibilità di stock prima dell'aggiornamento e restituisce il carrello "
-"aggiornato. **Utilizzo:** - Pulsanti per incrementare/decrementare la "
-"quantità nel mini-carrello - Modifiche dirette all'input della quantità - "
-"Rimozione di elementi (quantità=0) **Autenticazione:** Nessuna richiesta "
-"(verifica che l'elemento appartenga al carrello dell'utente) **Validazione:"
-"** - L'elemento deve esistere nel carrello dell'utente - La quantità deve "
-"essere un intero non negativo - Viene verificata la disponibilità di stock "
-"per i prodotti tracciati in magazzino\n"
+"    Aggiorna la quantità di un elemento nel carrello. Impostare la quantità su 0 per rimuovere completamente l'elemento. L'endpoint verifica la disponibilità di stock prima dell'aggiornamento e restituisce il carrello aggiornato. **Utilizzo:** - Pulsanti per incrementare/decrementare la quantità nel mini-carrello - Modifiche dirette all'input della quantità - Rimozione di elementi (quantità=0) **Autenticazione:** Nessuna richiesta (verifica che l'elemento appartenga al carrello dell'utente) **Validazione:** - L'elemento deve esistere nel carrello dell'utente - La quantità deve essere un intero non negativo - Viene verificata la disponibilità di stock per i prodotti tracciati in magazzino\n"
 "    "
 
+#: mini_cart_api.py:375
 msgid "Cart updated successfully"
 msgstr "Carrello aggiornato con successo"
 
+#: mini_cart_api.py:379
 msgid "Invalid request data or insufficient stock"
 msgstr "Dati della richiesta non validi o stock insufficiente"
 
+#: mini_cart_api.py:392 mini_cart_api.py:472
 msgid "Cart item not found"
 msgstr "Articolo carrello non trovato"
 
+#: mini_cart_api.py:450
 msgid "Remove item from cart"
 msgstr "Rimuovi articolo dal carrello"
 
+#: mini_cart_api.py:451
 msgid ""
 "\n"
 "    Remove an item from the cart entirely.\n"
@@ -177,39 +194,34 @@ msgid ""
 "    - Delete button on cart items\n"
 "    - Clearing specific items\n"
 "\n"
-"    **Authentication:** None required (validates item belongs to user's "
-"cart)\n"
+"    **Authentication:** None required (validates item belongs to user's cart)\n"
 "    "
 msgstr ""
 "\n"
-"    Rimuovi un articolo dal carrello completamente. Restituisce i dati del "
-"carrello aggiornati dopo la rimozione. **Casi d'uso:** - Pulsante elimina "
-"sugli articoli del carrello - Pulizia di articoli specifici **Autenticazione:"
-"** Nessuna richiesta (verifica che l'articolo appartenga al carrello "
-"dell'utente)\n"
+"    Rimuovi un articolo dal carrello completamente. Restituisce i dati del carrello aggiornati dopo la rimozione. **Casi d'uso:** - Pulsante elimina sugli articoli del carrello - Pulizia di articoli specifici **Autenticazione:** Nessuna richiesta (verifica che l'articolo appartenga al carrello dell'utente)\n"
 "    "
 
+#: mini_cart_api.py:466
 msgid "Item removed successfully"
 msgstr "Articolo rimosso con successo"
 
+#: mini_cart_api.py:515
 msgid "Get empty cart recommendations"
 msgstr "Ottieni raccomandazioni carrello vuoto"
 
+#: mini_cart_api.py:516
 msgid ""
 "\n"
 "    Get intelligent product recommendations for the empty cart state.\n"
 "\n"
-"    Returns personalized suggestions organized into labeled sections based "
-"on:\n"
-"    - **Recently viewed**: Products the user has browsed (session-based for "
-"anonymous users)\n"
+"    Returns personalized suggestions organized into labeled sections based on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for anonymous users)\n"
 "    - **Related**: Products in the same categories as recently viewed items\n"
 "    - **On sale**: Currently discounted products\n"
 "    - **Trending**: Popular products by views/sales\n"
 "    - **Featured**: Editor-picked products as fallback\n"
 "\n"
-"    All returned products are verified to be in stock and available for "
-"purchase.\n"
+"    All returned products are verified to be in stock and available for purchase.\n"
 "\n"
 "    **Use Cases:**\n"
 "    - Empty cart state in mini-cart\n"
@@ -224,38 +236,31 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Ottieni raccomandazioni intelligenti di prodotti per lo stato del "
-"carrello vuoto. Restituisce suggerimenti personalizzati organizzati in "
-"sezioni etichettate in base a: - **Recentemente visualizzati**: Prodotti che "
-"l'utente ha navigato (basati sulla sessione per gli utenti anonimi) - "
-"**Correlati**: Prodotti nelle stesse categorie dei prodotti recentemente "
-"visualizzati - **In vendita**: Prodotti attualmente in sconto - **Di "
-"tendenza**: Prodotti popolari in base a visualizzazioni/vendite - **In "
-"evidenza**: Prodotti selezionati dagli editori come alternativa Tutti i "
-"prodotti restituiti sono verificati come disponibili in stock e "
-"acquistabili. **Casi d'uso:** - Stato del carrello vuoto nel mini-carrello - "
-"Sezioni \"Potresti voler vedere\" - Opportunità di cross-selling "
-"**Autenticazione:** Nessuna richiesta (usa la sessione per gli utenti "
-"anonimi) **Personalizzazione:** - Utenti anonimi: Basati sui prodotti "
-"recentemente visualizzati nella sessione - Utenti autenticati: Basati sulla "
-"storia dell'account e sulle preferenze\n"
+"    Ottieni raccomandazioni intelligenti di prodotti per lo stato del carrello vuoto. Restituisce suggerimenti personalizzati organizzati in sezioni etichettate in base a: - **Recentemente visualizzati**: Prodotti che l'utente ha navigato (basati sulla sessione per gli utenti anonimi) - **Correlati**: Prodotti nelle stesse categorie dei prodotti recentemente visualizzati - **In vendita**: Prodotti attualmente in sconto - **Di tendenza**: Prodotti popolari in base a visualizzazioni/vendite - **In evidenza**: Prodotti selezionati dagli editori come alternativa Tutti i prodotti restituiti sono verificati come disponibili in stock e acquistabili. **Casi d'uso:** - Stato del carrello vuoto nel mini-carrello - Sezioni \"Potresti voler vedere\" - Opportunità di cross-selling **Autenticazione:** Nessuna richiesta (usa la sessione per gli utenti anonimi) **Personalizzazione:** - Utenti anonimi: Basati sui prodotti recentemente visualizzati nella sessione - Utenti autenticati: Basati sulla storia dell'account e sulle preferenze\n"
 "    "
 
+#: mini_cart_api.py:545
 msgid "Maximum number of products to return (default: 6, max: 12)"
-msgstr "Numero massimo di prodotti da restituire (predefinito: 6, massimo: 12)"
+msgstr ""
+"Numero massimo di prodotti da restituire (predefinito: 6, massimo: 12)"
 
+#: mini_cart_api.py:556
 msgid "Recommendations retrieved successfully"
 msgstr "Raccomandazioni recuperate con successo"
 
+#: models.py:18 models.py:964 models.py:1068
 msgid "User"
 msgstr "Utente"
 
+#: models.py:21 models.py:1071
 msgid "Session Key"
 msgstr "Chiave di sessione"
 
+#: models.py:31
 msgid "Cart Currency"
 msgstr "Valuta del carrello"
 
+#: models.py:33
 msgid ""
 "Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
 "default currency."
@@ -263,206 +268,215 @@ msgstr ""
 "Codice valuta per tutti gli elementi in questo carrello (es. EUR, NZD). "
 "Vuoto significa valuta predefinita del negozio."
 
+#: models.py:40
 msgid "Default Layout"
 msgstr "Layout predefinito"
 
+#: models.py:41 models.py:971
 msgid "Compact View"
 msgstr "Visualizzazione compatta"
 
+#: models.py:42 models.py:972
 msgid "Detailed View"
 msgstr "Visualizzazione dettagliata"
 
+#: models.py:43
 msgid "Minimal View"
 msgstr "Visualizzazione minima"
 
+#: models.py:44
 msgid "Sidebar Cart"
 msgstr "Carrello laterale"
 
+#: models.py:45
 msgid "Overlay Cart"
 msgstr "Carrello sovrapposto"
 
+#: models.py:52
 msgid "How the cart is displayed"
 msgstr "Come viene visualizzato il carrello"
 
+#: models.py:53
 msgid "Cart Layout"
 msgstr "Layout del carrello"
 
+#: models.py:57
 msgid "Show Product Images"
 msgstr "Mostra immagini del prodotto"
 
+#: models.py:59
 msgid "Show Product Variants"
 msgstr "Mostra varianti del prodotto"
 
+#: models.py:61
 msgid "Show Remove Button"
 msgstr "Mostra pulsante di rimozione"
 
+#: models.py:63
 msgid "Show Quantity Controls"
 msgstr "Mostra controlli della quantità"
 
+#: models.py:67
 msgid "Show Item Totals"
 msgstr "Mostra totali per elemento"
 
+#: models.py:68
 msgid "Show Cart Summary"
 msgstr "Mostra riepilogo del carrello"
 
+#: models.py:69
 msgid "Show Savings"
 msgstr "Mostra risparmi"
 
+#: models.py:75
 msgid "Single Page Checkout"
 msgstr "Checkout su singola pagina"
 
+#: models.py:76
 msgid "Multi-Step Checkout"
 msgstr "Checkout multi-passo"
 
+#: models.py:77
 msgid "Accordion Style"
 msgstr "Stile a accordion"
 
+#: models.py:78
 msgid "Wizard Style"
 msgstr "Stile wizard"
 
+#: models.py:81
 msgid "Checkout Flow"
 msgstr "Flusso di checkout"
 
+#: models.py:91 models.py:1609 models.py:1739
 msgid "Shipping Address"
 msgstr "Indirizzo di spedizione"
 
+#: models.py:99 models.py:1214 models.py:1740
+#: templates/admin/cart/cart/change_list.html:93
 msgid "Shipping Method"
 msgstr "Metodo di spedizione"
 
+#: models.py:107
 msgid "Calculated shipping cost"
 msgstr "Costo di spedizione calcolato"
 
+#: models.py:108 models.py:1660
 msgid "Shipping Cost"
 msgstr "Costo di spedizione"
 
+#: models.py:112 models.py:1664
 msgid "Estimated Delivery Date"
 msgstr "Data stimata di consegna"
 
+#: models.py:115
 msgid "Shipping Notes"
 msgstr "Note sulla spedizione"
 
+#: models.py:119 models.py:846
 msgid "None"
 msgstr "Nessuno"
 
+#: models.py:120 models.py:847
 msgid "Percentage"
 msgstr "Percentuale"
 
+#: models.py:121 models.py:848
 msgid "Fixed Amount"
 msgstr "Importo fisso"
 
+#: models.py:124
 msgid "POS manual discount type"
 msgstr "Tipo di sconto manuale POS"
 
+#: models.py:127
 msgid "POS manual discount value"
 msgstr "Valore dello sconto manuale POS"
 
+#: models.py:131 models.py:858
 msgid "Discount value (percentage or fixed amount)"
 msgstr "Valore dello sconto (percentuale o importo fisso)"
 
+#: models.py:139
 msgid "POS discount applied by"
 msgstr "Applicato da (sconto POS)"
 
+#: models.py:147
 msgid "POS discount approved by"
 msgstr "Approvato da (sconto POS)"
 
+#: models.py:148 models.py:875
 msgid "Manager who approved the discount if it exceeded staff limit"
 msgstr ""
 "Responsabile che ha approvato lo sconto se superato il limite dello staff"
 
+#: models.py:151
 msgid "POS discount reason"
 msgstr "Motivo dello sconto POS"
 
+#: models.py:154 models.py:879 models.py:992 models.py:1052 models.py:1210
+#: models.py:1447 models.py:1526 models.py:1756
 msgid "Created At"
 msgstr "Creato il"
 
+#: models.py:155 models.py:880 models.py:993 models.py:1211 models.py:1448
+#: models.py:1757
 msgid "Updated At"
 msgstr "Aggiornato il"
 
+#: models.py:158
 msgid "Shopping Cart"
 msgstr "Carrello di acquisto"
 
+#: models.py:159 templates/admin/cart/cart/change_list.html:4
+#: templates/admin/cart/cart/change_list.html:20
+#: templates/admin/cart/cart/change_list.html:175
 msgid "Shopping Carts"
 msgstr "Carrelli di acquisto"
 
+#: models.py:186
 #, python-brace-format
 msgid "Cart for {username}"
 msgstr "Carrello per {username}"
 
+#: models.py:187
 #, python-brace-format
 msgid "Cart (Session: {session})"
 msgstr "Carrello (Sessione: {session})"
 
+#: models.py:455
 msgid "No shipping required"
 msgstr "Nessuna spedizione richiesta"
 
+#: models.py:465
 msgid "Shipping address required"
 msgstr "Indirizzo di spedizione richiesto"
 
+#: models.py:505
 msgid "Available shipping methods retrieved"
 msgstr "Metodi di spedizione disponibili recuperati"
 
+#: models.py:526
 msgid "Shipping calculated successfully"
 msgstr "Calcolo della spedizione riuscito"
 
-msgid "Invalid gift card code"
-msgstr "Codice carta regalo non valido"
-
-msgid "Gift card already applied"
-msgstr "Carta regalo già applicata"
-
-msgid "Gift card is not active"
-msgstr "La carta regalo non è attiva"
-
-msgid "Gift card has expired"
-msgstr "La carta regalo è scaduta"
-
-msgid "Gift card has been fully redeemed"
-msgstr "La gift card è stata completamente utilizzata"
-
-msgid "Gift card cannot be used"
-msgstr "La carta regalo non può essere utilizzata"
-
-#, python-brace-format
-msgid ""
-"Currency mismatch. Gift card is in {card_currency}, cart is in "
-"{cart_currency}"
-msgstr ""
-"Discrepanza di valuta. La gift card è in {card_currency}, il carrello è in "
-"{cart_currency}"
-
-#, python-brace-format
-msgid ""
-"This gift card is in {card_currency}. Please switch your currency to "
-"{card_currency} to use it."
-msgstr ""
-"Questo buono regalo è in {card_currency}. Passa alla valuta {card_currency} "
-"per utilizzarlo."
-
-msgid "Gift cards cannot be used to purchase other gift cards"
-msgstr ""
-"Le gift card non possono essere utilizzate per acquistare altre gift card"
-
-msgid "Cart total is already covered"
-msgstr "Il totale del carrello è già coperto"
-
-msgid "Unable to process gift card currency conversion"
-msgstr "Impossibile elaborare la conversione della valuta della gift card"
-
-msgid "Gift card applied successfully"
-msgstr "Carta regalo applicata con successo"
-
+#: models.py:740 models.py:1023 models.py:1074
 msgid "Product"
 msgstr "Prodotto"
 
+#: models.py:747 models.py:1030
 msgid "Variant"
 msgstr "Variante"
 
+#: models.py:751
 msgid "Quantity"
 msgstr "Quantità"
 
+#: models.py:753
 msgid "Unit Price"
 msgstr "Prezzo unitario"
 
+#: models.py:761
 msgid ""
 "Product customizations with calculated prices: {customization_option_id: "
 "{'value': '...', 'calculated_price': '10.00'}}"
@@ -470,45 +484,57 @@ msgstr ""
 "Personalizzazioni del prodotto con prezzi calcolati: "
 "{customization_option_id: {'value': '...', 'calculated_price': '10.00'}}"
 
+#: models.py:763
 msgid "Customizations"
 msgstr "Personalizzazioni"
 
+#: models.py:769
 msgid "Is Subscription"
 msgstr "È un abbonamento"
 
+#: models.py:770
 msgid "Whether this item will be purchased as a subscription"
 msgstr "Se questo articolo verrà acquistato come abbonamento"
 
+#: models.py:777
 msgid "Subscription Plan"
 msgstr "Piano di abbonamento"
 
+#: models.py:778
 msgid "Selected subscription plan for recurring billing"
 msgstr "Piano di abbonamento selezionato per fatturazione ricorrente"
 
+#: models.py:785
 msgid "Pricing Tier"
 msgstr "Livello di prezzo"
 
+#: models.py:786
 msgid "Selected pricing tier (billing frequency) for subscription"
 msgstr ""
 "Livello di prezzo selezionato (frequenza di fatturazione) per l'abbonamento"
 
+#: models.py:793
 msgid "Payment Token"
 msgstr "Token di pagamento"
 
+#: models.py:794
 msgid ""
 "Saved payment method for subscription billing (required for subscriptions)"
 msgstr ""
 "Metodo di pagamento salvato per la fatturazione dell'abbonamento (richiesto "
 "per gli abbonamenti)"
 
+#: models.py:804
 msgid "Parent Bundle"
 msgstr "Bundle principale"
 
+#: models.py:805
 msgid "If this is a bundle component, reference to bundle CartItem"
 msgstr ""
 "Se si tratta di un componente di un pacchetto, riferimento all'elemento del "
 "carrello del pacchetto"
 
+#: models.py:813
 msgid ""
 "Booking details: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
@@ -516,189 +542,222 @@ msgstr ""
 "Dettagli prenotazione: {start_datetime, end_datetime, resource_id, persons, "
 "timezone}"
 
+#: models.py:815
 msgid "Booking Data"
 msgstr "Dati della prenotazione"
 
+#: models.py:833
+msgid ""
+"Gift card purchase details: {recipient_email, recipient_name, sender_name, "
+"message, scheduled_send_at, amount}"
+msgstr ""
+"Dettagli dell'acquisto della gift card: {recipient_email, recipient_name, "
+"sender_name, message, scheduled_send_at, amount}"
+
+#: models.py:836
+#| msgid "Gift Card"
+msgid "Gift Card Data"
+msgstr "Dati della carta regalo"
+
+#: models.py:841
 msgid "Customer notes for this item"
 msgstr "Note del cliente per questo articolo"
 
+#: models.py:841 models.py:1034 models.py:1573
 msgid "Notes"
 msgstr "Note"
 
+#: models.py:851
 msgid "manual discount type"
 msgstr "tipo di sconto manuale"
 
+#: models.py:854
 msgid "manual discount value"
 msgstr "valore dello sconto manuale"
 
+#: models.py:866
 msgid "discount applied by"
 msgstr "sconto applicato da"
 
+#: models.py:874
 msgid "discount approved by"
 msgstr "sconto approvato da"
 
+#: models.py:877
 msgid "discount reason"
 msgstr "motivo dello sconto"
 
+#: models.py:883
 msgid "Cart Item"
 msgstr "Articolo del carrello"
 
+#: models.py:884
 msgid "Cart Items"
 msgstr "Articoli del carrello"
 
+#: models.py:965 services/wishlist_service.py:28
 msgid "My Wishlist"
 msgstr "La mia lista dei desideri"
 
+#: models.py:965 models.py:1108 models.py:1367 models.py:1506
+#: templates/admin/cart/shippingmethod/change_form.html:276
 msgid "Name"
 msgstr "Nome"
 
+#: models.py:969
 msgid "Grid Layout"
 msgstr "Layout a griglia"
 
+#: models.py:970
 msgid "List Layout"
 msgstr "Layout a elenco"
 
+#: models.py:979
 msgid "How wishlist items are displayed"
 msgstr "Come vengono visualizzati gli elementi della lista dei desideri"
 
+#: models.py:980
 msgid "Wishlist Layout"
 msgstr "Layout della lista dei desideri"
 
+#: models.py:984
 msgid "Is Public"
 msgstr "È pubblica"
 
+#: models.py:985
 msgid "Share Slug"
 msgstr "Condividi slug"
 
+#: models.py:988
 msgid "Show Prices"
 msgstr "Mostra prezzi"
 
+#: models.py:989
 msgid "Show Availability"
 msgstr "Mostra disponibilità"
 
+#: models.py:990
 msgid "Show Add to Cart"
 msgstr "Mostra 'Aggiungi al carrello'"
 
+#: models.py:996 models.py:1020
 msgid "Wishlist"
 msgstr "Lista dei desideri"
 
+#: models.py:997
 msgid "Wishlists"
 msgstr "Liste dei desideri"
 
+#: models.py:1038
 msgid "Low"
 msgstr "Bassa"
 
+#: models.py:1039
 msgid "Medium"
 msgstr "Media"
 
+#: models.py:1040
 msgid "High"
 msgstr "Alta"
 
+#: models.py:1043 models.py:1442
+#: templates/admin/cart/shippingmethod/change_form.html:279
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:51
 msgid "Priority"
 msgstr "Priorità"
 
+#: models.py:1048
 msgid "Notify When Available"
 msgstr "Notifica quando disponibile"
 
+#: models.py:1050
 msgid "Notify When On Sale"
 msgstr "Notifica quando in offerta"
 
+#: models.py:1055
 msgid "Wishlist Item"
 msgstr "Articolo della lista dei desideri"
 
+#: models.py:1056
 msgid "Wishlist Items"
 msgstr "Articoli della lista dei desideri"
 
+#: models.py:1077
 msgid "Viewed At"
 msgstr "Visualizzato il"
 
+#: models.py:1078
 msgid "View Count"
 msgstr "Conteggio visualizzazioni"
 
+#: models.py:1081
 msgid "Recently Viewed Product"
 msgstr "Prodotto recentemente visualizzato"
 
+#: models.py:1082
 msgid "Recently Viewed Products"
 msgstr "Prodotti recentemente visualizzati"
 
+#: models.py:1094
 #, python-brace-format
 msgid "Session: {session}"
 msgstr "Sessione: {session}"
 
+#: models.py:1098
 #, python-brace-format
 msgid "{product} viewed by {user}"
 msgstr "{product} visualizzato da {user}"
 
+#: models.py:1109 models.py:1507
+#: templates/admin/cart/method_wizard/step1_basics.html:44
 msgid "Description"
 msgstr "Descrizione"
 
+#: models.py:1113 templates/admin/cart/shippingmethod/change_list.html:78
 msgid "Flat Rate"
 msgstr "Tariffa fissa"
 
-msgid "Free Shipping"
-msgstr "Spedizione gratuita"
-
-msgid "Weight Based"
-msgstr "In base al peso"
-
-msgid "Price Based"
-msgstr "In base al prezzo"
-
+#: models.py:1114
 msgid "Real-Time Carrier Rates"
 msgstr "Tariffe del corriere in tempo reale"
 
+#: models.py:1115 templates/admin/cart/shippingmethod/change_list.html:84
 msgid "Local Pickup"
 msgstr "Ritiro in loco"
 
+#: models.py:1116 templates/admin/cart/shippingmethod/change_list.html:87
 msgid "Table Rate"
 msgstr "Tariffa tabellare"
 
+#: models.py:1119 templates/admin/cart/method_wizard/step1_basics.html:111
 msgid "Method Type"
 msgstr "Tipo di metodo"
 
+#: models.py:1129
 msgid "Fixed shipping cost (for flat_rate type)"
 msgstr "Costo fisso di spedizione (per il tipo flat_rate)"
 
+#: models.py:1130 templates/admin/cart/method_wizard/step1_basics.html:146
 msgid "Flat Rate Cost"
 msgstr "Costo tariffa fissa"
 
-msgid "Minimum cart value to qualify"
-msgstr "Valore minimo del carrello per essere idoneo"
-
-msgid "Minimum Order Value"
-msgstr "Valore minimo dell'ordine"
-
-msgid "Maximum cart value to qualify"
-msgstr "Valore massimo del carrello per essere idoneo"
-
-msgid "Maximum Order Value"
-msgstr "Valore massimo dell'ordine"
-
-msgid "Minimum cart weight (kg)"
-msgstr "Peso minimo del carrello (kg)"
-
-msgid "Minimum Weight"
-msgstr "Peso minimo"
-
-msgid "Maximum cart weight (kg)"
-msgstr "Peso massimo del carrello (kg)"
-
-msgid "Maximum Weight"
-msgstr "Peso massimo"
-
+#: models.py:1138 templates/admin/cart/method_wizard/step3_coverage.html:17
 msgid "Shipping Zones"
 msgstr "Zone di spedizione"
 
+#: models.py:1140
 msgid ""
-"Zones where this shipping method is available. If empty, legacy country/"
-"state restrictions apply."
+"Zones where this shipping method is available. If empty, legacy "
+"country/state restrictions apply."
 msgstr ""
 "Zone in cui questo metodo di spedizione è disponibile. Se vuoto, vengono "
 "applicate le restrizioni legacy per paese/stato."
 
+#: models.py:1149 templates/admin/cart/method_wizard/step4_features.html:19
 msgid "Pickup Locations"
 msgstr "Luoghi di ritiro"
 
+#: models.py:1151
 msgid ""
 "Locations where customers can pick up orders using this shipping method. "
 "Only applies to 'local_pickup' method type."
@@ -706,24 +765,31 @@ msgstr ""
 "Luoghi in cui i clienti possono ritirare gli ordini utilizzando questo "
 "metodo di spedizione. Si applica solo al tipo di metodo 'local_pickup'."
 
+#: models.py:1158
 msgid "Minimum delivery time in business days"
 msgstr "Tempo minimo di consegna in giorni lavorativi"
 
+#: models.py:1159 templates/admin/cart/method_wizard/step4_features.html:176
 msgid "Minimum Delivery Days"
 msgstr "Giorni minimi di consegna"
 
+#: models.py:1164
 msgid "Maximum delivery time in business days"
 msgstr "Tempo massimo di consegna in giorni lavorativi"
 
+#: models.py:1165 templates/admin/cart/method_wizard/step4_features.html:193
 msgid "Maximum Delivery Days"
 msgstr "Giorni massimi di consegna"
 
+#: models.py:1172
 msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
 msgstr "Classe icona Font Awesome (es. 'fa-truck', 'fa-box')"
 
+#: models.py:1173 models.py:1512
 msgid "Icon"
 msgstr "Icona"
 
+#: models.py:1183
 msgid ""
 "Custom shipping method image from media library. If provided, this takes "
 "priority over icon."
@@ -731,235 +797,307 @@ msgstr ""
 "Immagine personalizzata del metodo di spedizione dalla libreria media. Se "
 "fornita, ha la precedenza sull'icona."
 
+#: models.py:1185
 msgid "Image"
 msgstr "Immagine"
 
+#: models.py:1188 templates/admin/cart/method_wizard/step4_features.html:234
 msgid "Sort Order"
 msgstr "Ordine di ordinamento"
 
+#: models.py:1189 models.py:1445 models.py:1518 models.py:1575
 msgid "Is Active"
 msgstr "È attivo"
 
+#: models.py:1197
 msgid "Custom Carrier"
 msgstr "Corriere personalizzato"
 
+#: models.py:1200 templates/admin/cart/method_wizard/step1_basics.html:185
+#: templates/admin/cart/shippingmethod/change_form.html:98
 msgid "Carrier"
 msgstr "Corriere"
 
+#: models.py:1206
 msgid "Carrier-specific service code"
 msgstr "Codice servizio specifico del corriere"
 
+#: models.py:1207
 msgid "Carrier Service Code"
 msgstr "Codice servizio del corriere"
 
+#: models.py:1215 templates/admin/cart/shippingmethod/change_list.html:4
+#: templates/admin/cart/shippingmethod/change_list.html:19
 msgid "Shipping Methods"
 msgstr "Metodi di spedizione"
 
+#: models.py:1236
 msgid "Shipping method is not active"
 msgstr "Il metodo di spedizione non è attivo"
 
-#, python-brace-format
-msgid "Minimum order value {value} required"
-msgstr "Valore minimo dell'ordine {value} richiesto"
-
-#, python-brace-format
-msgid "Maximum order value {value} exceeded"
-msgstr "Valore massimo dell'ordine {value} superato"
-
-#, python-brace-format
-msgid "Minimum weight {weight}kg required"
-msgstr "Peso minimo {weight}kg richiesto"
-
-#, python-brace-format
-msgid "Maximum weight {weight}kg exceeded"
-msgstr "Peso massimo {weight}kg superato"
-
+#: models.py:1240
 msgid "Cart contains only digital products"
 msgstr "Il carrello contiene solo prodotti digitali"
 
+#: models.py:1266
+#| msgid "No pricing tier available for this plan"
+msgid "Not available for this cart"
+msgstr "Non disponibile per questo carrello"
+
+#: models.py:1268
 msgid "Available"
 msgstr "Disponibile"
 
+#: models.py:1291
 msgid "No geographic restrictions"
 msgstr "Nessuna restrizione geografica"
 
+#: models.py:1299
 #, python-brace-format
 msgid "Available in {zone}"
 msgstr "Disponibile in {zone}"
 
+#: models.py:1302
 msgid "Not available in your location"
 msgstr "Non disponibile nella tua ubicazione"
 
+#: models.py:1305
 msgid "Available worldwide"
 msgstr "Disponibile in tutto il mondo"
 
+#: models.py:1371 models.py:1550
 msgid "ISO 3166-1 alpha-2 country code"
 msgstr "Codice paese ISO 3166-1 alpha-2"
 
+#: models.py:1371 templates/admin/cart/taxrate/change_list.html:67
 msgid "Country"
 msgstr "Paese"
 
+#: models.py:1375
 msgid "State/Province/Region"
 msgstr "Stato/Provincia/Regione"
 
+#: models.py:1375
 msgid "State"
 msgstr "Stato"
 
+#: models.py:1379
 msgid "City name (optional)"
 msgstr "Nome della città (opzionale)"
 
+#: models.py:1379
 msgid "City"
 msgstr "Città"
 
+#: models.py:1385
 msgid "List of specific postal codes (optional)"
 msgstr "Elenco di codici postali specifici (opzionale)"
 
+#: models.py:1386
 msgid "Postal Codes"
 msgstr "Codici postali"
 
+#: models.py:1393
 msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
 msgstr "Aliquota fiscale come decimale (es. 0.0825 per 8.25%)"
 
+#: models.py:1394 models.py:1564
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:47
 msgid "Rate"
 msgstr "Tariffa"
 
+#: models.py:1399 templates/admin/cart/taxrate/change_list.html:79
 msgid "Sales Tax"
 msgstr "Imposta sulle vendite"
 
+#: models.py:1402
 msgid "Custom Tax"
 msgstr "Imposta personalizzata"
 
+#: models.py:1405 models.py:1567
+#: templates/admin/cart/taxrate/change_list.html:76
 msgid "Tax Type"
 msgstr "Tipo di imposta"
 
+#: models.py:1411
 msgid "Apply tax to shipping costs"
 msgstr "Applica l'imposta ai costi di spedizione"
 
+#: models.py:1412
 msgid "Applies to Shipping"
 msgstr "Si applica alla spedizione"
 
+#: models.py:1417
 msgid "Calculate on top of other taxes (compound tax)"
 msgstr "Calcolare sopra ad altre tasse (imposta composta)"
 
+#: models.py:1418
 msgid "Compound Tax"
 msgstr "Imposta composta"
 
-msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
-msgstr "Tipi di prodotto esenti da questa tassa (es. ['digital', 'service'])"
+#: models.py:1426
+msgid ""
+"Product types exempt from this tax. Gift cards are exempt by default: "
+"selling stored value is not a taxable supply in most jurisdictions, and tax "
+"falls due when the card is spent. Confirm with your accountant."
+msgstr ""
+"Tipi di prodotto esenti da questo imposta. Le gift card sono esenti di "
+"default: la vendita di valore memorizzato non è una fornitura imponibile "
+"nella maggior parte delle giurisdizioni, e l'imposta scade quando la carta "
+"viene utilizzata. Conferma con il tuo contabile."
 
+#: models.py:1430
 msgid "Exempt Product Types"
 msgstr "Tipi di prodotti esenti"
 
+#: models.py:1436
 msgid "Categories exempt from this tax"
 msgstr "Categorie esenti da questa imposta"
 
+#: models.py:1437
 msgid "Exempt Categories"
 msgstr "Categorie esenti"
 
+#: models.py:1442
 msgid "Higher priority rules take precedence"
 msgstr "Le regole con priorità più alta hanno la precedenza"
 
+#: models.py:1451
 msgid "Tax Rate"
 msgstr "Aliquota fiscale"
 
+#: models.py:1452 templates/admin/cart/taxrate/change_list.html:4
+#: templates/admin/cart/taxrate/change_list.html:17
 msgid "Tax Rates"
 msgstr "Aliquote fiscali"
 
+#: models.py:1465
 #, python-brace-format
 msgid "{name} ({location}) - {rate}%"
 msgstr "{name} ({location}) - {rate}%"
 
+#: models.py:1491
 msgid "Europe"
 msgstr "Europa"
 
+#: models.py:1492
 msgid "North America"
 msgstr "America settentrionale"
 
+#: models.py:1493
 msgid "Asia Pacific"
 msgstr "Asia-Pacifico"
 
+#: models.py:1494
 msgid "Middle East"
 msgstr "Medio Oriente"
 
+#: models.py:1495
 msgid "Africa"
 msgstr "Africa"
 
+#: models.py:1496
 msgid "Latin America"
 msgstr "America Latina"
 
+#: models.py:1497
 msgid "Oceania"
 msgstr "Oceania"
 
+#: models.py:1503
 msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
 msgstr "Identificatore univoco (es. eu_vat, us_sales_tax)"
 
+#: models.py:1504
 msgid "Key"
 msgstr "Chiave"
 
+#: models.py:1511
 msgid "Font Awesome icon class"
 msgstr "Classe icona Font Awesome"
 
+#: models.py:1515
 msgid "Default Tax Type"
 msgstr "Tipo di imposta predefinito"
 
+#: models.py:1517
 msgid "Region"
 msgstr "Regione"
 
+#: models.py:1522
 msgid "Version for tracking rate updates"
 msgstr "Versione per il tracciamento degli aggiornamenti delle tariffe"
 
+#: models.py:1523
 msgid "Version"
 msgstr "Versione"
 
+#: models.py:1525
 msgid "Last Updated"
 msgstr "Ultimo aggiornamento"
 
+#: models.py:1529
 msgid "Tax Preset Group"
 msgstr "Gruppo di preset delle tasse"
 
+#: models.py:1530
 msgid "Tax Preset Groups"
 msgstr "Gruppi di preset delle tasse"
 
+#: models.py:1547
 msgid "Preset Group"
 msgstr "Gruppo di preset"
 
+#: models.py:1550
 msgid "Country Code"
 msgstr "Codice del paese"
 
+#: models.py:1552
 msgid "Country Name"
 msgstr "Nome del paese"
 
+#: models.py:1556
 msgid "State/province code (for US/CA presets)"
 msgstr "Codice stato/provincia (per preset US/CA)"
 
+#: models.py:1557
 msgid "State Code"
 msgstr "Codice stato"
 
+#: models.py:1559
 msgid "State Name"
 msgstr "Nome dello stato"
 
+#: models.py:1563
 msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
 msgstr "Aliquota fiscale come decimale (es. 0.20 per 20%)"
 
+#: models.py:1572
 #, python-format
 msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
 msgstr "Note opzionali (es. 'Aumentato dal 22% a luglio 2025')"
 
+#: models.py:1578
 msgid "Tax Preset Rate"
 msgstr "Tariffa di preset delle tasse"
 
+#: models.py:1579
 msgid "Tax Preset Rates"
 msgstr "Tariffe di preset delle tasse"
 
+#: models.py:1618
 msgid "Billing Address"
 msgstr "Indirizzo di fatturazione"
 
+#: models.py:1622
 msgid "Billing Same as Shipping"
 msgstr "Fatturazione uguale a spedizione"
 
+#: models.py:1630
 msgid "Shipping Address Data"
 msgstr "Dati indirizzo di spedizione"
 
+#: models.py:1632
 msgid ""
 "Temporary shipping address data (not saved to Address model until order "
 "placed)"
@@ -967,9 +1105,11 @@ msgstr ""
 "Dati temporanei per l'indirizzo di spedizione (non salvati nel modello "
 "Address fino al momento del completamento dell'ordine)"
 
+#: models.py:1639
 msgid "Billing Address Data"
 msgstr "Dati indirizzo di fatturazione"
 
+#: models.py:1641
 msgid ""
 "Temporary billing address data (not saved to Address model until order "
 "placed)"
@@ -977,291 +1117,390 @@ msgstr ""
 "Dati temporanei per l'indirizzo di fatturazione (non salvati nel modello "
 "Address fino al momento del completamento dell'ordine)"
 
+#: models.py:1651
 msgid "Selected Shipping Method"
 msgstr "Metodo di spedizione selezionato"
 
+#: models.py:1671
 msgid "Cached list of available shipping methods with rates"
 msgstr ""
 "Elenco memorizzato dei metodi di spedizione disponibili con le relative "
 "tariffe"
 
+#: models.py:1672
 msgid "Available Shipping Methods"
 msgstr "Metodi di spedizione disponibili"
 
+#: models.py:1679
 msgid "Detailed tax breakdown by jurisdiction"
 msgstr "Dettaglio delle tasse per giurisdizione"
 
+#: models.py:1680
 msgid "Tax Breakdown"
 msgstr "Dettaglio delle tasse"
 
+#: models.py:1688
 msgid "Tax Amount"
 msgstr "Importo delle tasse"
 
+#: models.py:1698
 msgid "Payment Provider"
 msgstr "Fornitore di pagamento"
 
+#: models.py:1707
 msgid "Subtotal"
 msgstr "Subtotale"
 
+#: models.py:1715
 msgid "Discount Amount"
 msgstr "Importo dello sconto"
 
+#: models.py:1723
 msgid "Gift Card Discount"
 msgstr "Sconto con carta regalo"
 
+#: models.py:1724
 msgid "Total discount from applied gift cards"
 msgstr "Totale sconto derivante dalle gift card applicate"
 
+#: models.py:1732
 msgid "Final total: subtotal + shipping + tax - discounts"
 msgstr "Totale finale: sottototale + spedizione + tasse - sconti"
 
+#: models.py:1733
 msgid "Total Amount"
 msgstr "Importo totale"
 
+#: models.py:1738
 msgid "Cart Review"
 msgstr "Rivedi il carrello"
 
+#: models.py:1741
 msgid "Billing Information"
 msgstr "Informazioni di fatturazione"
 
+#: models.py:1742
 msgid "Payment Method"
 msgstr "Metodo di pagamento"
 
+#: models.py:1743
 msgid "Order Review"
 msgstr "Rivedi l'ordine"
 
+#: models.py:1746
 msgid "Step Completed"
 msgstr "Passo completato"
 
+#: models.py:1749
 msgid "Expires At"
 msgstr "Scade il"
 
+#: models.py:1753
 msgid "Metadata"
 msgstr "Metadati"
 
+#: models.py:1754
 msgid "Extra metadata (e.g., marketplace purchase info)"
 msgstr "Metadati aggiuntivi (es. informazioni sull'acquisto nel marketplace)"
 
+#: models.py:1760
 msgid "Checkout Session"
 msgstr "Sessione di checkout"
 
+#: models.py:1761
 msgid "Checkout Sessions"
 msgstr "Sessioni di checkout"
 
+#: models.py:1768
 #, python-brace-format
 msgid "Checkout for {cart}"
 msgstr "Checkout per {cart}"
 
-msgid "Gift Card"
-msgstr "Carta regalo"
-
-msgid "Amount in base currency (used for cart calculations)"
-msgstr "Importo in valuta base (utilizzato per i calcoli del carrello)"
-
-msgid "Original Currency Amount"
-msgstr "Importo in Valuta Originale"
-
-msgid ""
-"Discount in the gift card's native currency (for foreign-currency gift cards)"
-msgstr ""
-"Sconto in valuta nativa della gift card (per gift card in valuta estera)"
-
-msgid "Exchange Rate"
-msgstr "Tasso di Cambio"
-
-msgid "Rate: gift card currency -> base currency at time of application"
-msgstr ""
-"Tasso: valuta della gift card -> valuta base al momento dell'applicazione"
-
-msgid "Applied At"
-msgstr "Applicato il"
-
-msgid "Applied Gift Card"
-msgstr "Carta regalo applicata"
-
-msgid "Applied Gift Cards"
-msgstr "Carte regalo applicate"
-
-msgid "This gift card cannot be used"
-msgstr "Questa gift card non può essere utilizzata"
-
-msgid "Discount amount exceeds gift card balance"
-msgstr "L'importo dello sconto supera il saldo della gift card"
-
+#: serializers.py:34
 msgid "Total customization price (per unit)"
 msgstr "Prezzo totale di personalizzazione (per unità)"
 
+#: serializers.py:43
 msgid "'instant' for digital items, 'shipping' for physical items"
 msgstr ""
 "'instant' per gli articoli digitali, 'shipping' per gli articoli fisici"
 
+#: serializers.py:46
 msgid "True if this item is a component of a bundle"
 msgstr "Vero se questo elemento è un componente di un pacchetto"
 
+#: serializers.py:49
 msgid "ID of parent bundle CartItem if this is a component"
 msgstr ""
 "ID dell'elemento padre del bundle CartItem se si tratta di un componente"
 
+#: serializers.py:52
 msgid "Child items if this is a bundle parent"
 msgstr "Elementi figlio se si tratta di un padre di bundle"
 
+#: serializers.py:591
+#| msgid "Remove gift card"
+msgid "Where to deliver the gift card"
+msgstr "Dove consegnare la gift card"
+
+#: serializers.py:605
+msgid "Offset-aware ISO-8601. Omit to deliver as soon as payment clears."
+msgstr ""
+"ISO-8601 con offset. Omettere per consegnare appena il pagamento è stato "
+"processato."
+
+#: serializers.py:612
+msgid "Face value, for products that let the customer choose."
+msgstr "Valore nominale, per prodotti che permettono al cliente di scegliere."
+
+#: serializers.py:621
+#| msgid "Gift card is not active"
+msgid "Gift card details must be an object."
+msgstr "I dettagli della gift card devono essere un oggetto."
+
+#: serializers.py:626
+#, python-format
+msgid "Unknown field(s): %(keys)s"
+msgstr "Campo(i) sconosciuti: %(keys)s"
+
+#: serializers.py:638
+msgid "Message cannot contain HTML or markup."
+msgstr "Il messaggio non può contenere HTML o markup."
+
+#: serializers.py:647
+msgid "Include a UTC offset so the send time is unambiguous."
+msgstr "Includi un offset UTC affinché l'orario di spedizione sia inequivoco."
+
+#: serializers.py:651
+msgid "Scheduled delivery must be in the future."
+msgstr "La consegna programmata deve essere in futuro."
+
+#: serializers.py:654
+msgid "Scheduled delivery cannot be more than a year away."
+msgstr "La consegna programmata non può essere più di un anno in avanti."
+
+#: serializers.py:673
 msgid "Map of bundle_item_id to variant_id for customer-selected variants"
 msgstr ""
 "Mappa da bundle_item_id a variant_id per le varianti selezionate dal cliente"
 
+#: serializers.py:680
 msgid ""
-"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+"List of bundle_item_ids to exclude (for optional items customer doesn't "
+"want)"
 msgstr ""
 "Elenco di bundle_item_ids da escludere (per gli articoli opzionali che il "
 "cliente non desidera)"
 
-msgid "Map of slot_id to list of selected option_ids for configurable products"
+#: serializers.py:689
+msgid ""
+"Map of slot_id to list of selected option_ids for configurable products"
 msgstr ""
 "Mappa da slot_id all'elenco degli option_ids selezionati per i prodotti "
 "configurabili"
 
+#: serializers.py:694
 msgid "Configuration preset ID used as starting point"
 msgstr "ID del preset di configurazione utilizzato come punto di partenza"
 
+#: serializers.py:706
 msgid ""
-"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+"Booking details: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
 msgstr ""
 "Dettagli della prenotazione: start_datetime, end_datetime, resource_id, "
 "persons, timezone"
 
+#: serializers.py:719
 msgid "Quantity must be at least 1"
 msgstr "La quantità deve essere almeno 1"
 
+#: serializers.py:737
 msgid "Subscription plan is required for subscription purchases"
 msgstr "È richiesto un piano di abbonamento per gli acquisti di abbonamento"
 
+#: serializers.py:743
 msgid "Payment token is required for subscription purchases"
 msgstr "È richiesto un token di pagamento per gli acquisti di abbonamento"
 
+#: serializers.py:752 services/cart_service.py:991
+#: services/wishlist_service.py:61
 msgid "Product not found"
 msgstr "Prodotto non trovato"
 
+#: serializers.py:756
 msgid "This product does not support subscriptions"
 msgstr "Questo prodotto non supporta gli abbonamenti"
 
+#: serializers.py:768
 msgid "Invalid or inactive subscription plan"
 msgstr "Piano di abbonamento non valido o inattivo"
 
+#: serializers.py:773
 msgid "This plan is not available for this product"
 msgstr "Questo piano non è disponibile per questo prodotto"
 
+#: serializers.py:790
 msgid "Invalid or inactive payment token"
 msgstr "Token di pagamento non valido o inattivo"
 
+#: serializers.py:805
 msgid "Pricing tier not found or does not belong to selected plan"
 msgstr "Livello di prezzo non trovato o non appartiene al piano selezionato"
 
+#: serializers.py:813
 msgid "No pricing tier available for this plan"
 msgstr "Nessun livello di prezzo disponibile per questo piano"
 
+#: serializers.py:830
 msgid "Quantity cannot be negative"
 msgstr "La quantità non può essere negativa"
 
-msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
-msgstr "Codice carta regalo (es. GC-XXXX-XXXX-XXXX)"
-
-msgid "Amount applied from this gift card (in base currency)"
-msgstr "Importo applicato da questa gift card (in valuta base)"
-
-msgid "Remaining balance on gift card after this application"
-msgstr "Saldo residuo sulla gift card dopo questa applicazione"
-
-msgid "Base currency code"
-msgstr "Codice Valuta Base"
-
-msgid "Gift card's native currency code"
-msgstr "Codice Valuta Nativa della Carta Regalo"
-
-msgid ""
-"Discount in gift card's native currency (for foreign-currency gift cards)"
-msgstr ""
-"Sconto in valuta nativa della gift card (per gift card in valuta estera)"
-
+#: serializers.py:1355
 #, python-brace-format
 msgid ""
-"Either address_id or complete address details are required. Missing: {fields}"
+"Either address_id or complete address details are required. Missing: "
+"{fields}"
 msgstr ""
 "È richiesto un address_id o i dettagli completi dell'indirizzo. Mancanti: "
 "{fields}"
 
+#: serializers.py:1388
+#, python-brace-format
+#| msgid ""
+#| "Either address_id or complete address details are required. Missing: "
+#| "{fields}"
+msgid "Complete billing address details are required. Missing: {fields}"
+msgstr ""
+"Sono richiesti i dettagli completi dell'indirizzo di fatturazione. Manca: "
+"{fields}"
+
+#: serializers.py:1406
+#| msgid "Payment provider is not properly configured"
+msgid "Either payment_provider_id or provider slug is required."
+msgstr "È richiesto payment_provider_id o slug del provider."
+
+#: services/cart_service.py:128 services/cart_service.py:130
+msgid "Choose an amount for this gift card."
+msgstr "Scegli un importo per questa carta regalo."
+
+#: services/cart_service.py:136
+msgid "Gift card amount must be greater than zero."
+msgstr "L'importo della carta regalo deve essere maggiore di zero."
+
+#: services/cart_service.py:140 services/cart_service.py:156
+#| msgid "This plan is not available for this product"
+msgid "That is not an available gift card amount."
+msgstr "Questo non è un importo disponibile per la gift card."
+
+#: services/cart_service.py:151
+#, python-format
+msgid "Minimum gift card amount is %(min)s."
+msgstr "L'importo minimo della gift card è %(min)s."
+
+#: services/cart_service.py:153
+#, python-format
+msgid "Maximum gift card amount is %(max)s."
+msgstr "L'importo massimo della gift card è %(max)s."
+
+#: services/cart_service.py:199
 msgid "This product requires customization"
 msgstr "Questo prodotto richiede personalizzazione"
 
+#: services/cart_service.py:207
 msgid "Invalid design token"
 msgstr "Token di progettazione non valido"
 
+#: services/cart_service.py:235
 msgid "Design not found or expired"
 msgstr "Progettazione non trovata o scaduta"
 
+#: services/cart_service.py:239
 msgid "This product does not support customization"
 msgstr "Questo prodotto non supporta la personalizzazione"
 
+#: services/cart_service.py:252
 msgid "Invalid customization option"
 msgstr "Opzione di personalizzazione non valida"
 
+#: services/cart_service.py:261
 #, python-brace-format
 msgid "Customization '{name}': {error}"
 msgstr "Personalizzazione '{name}': {error}"
 
+#: services/cart_service.py:280
 #, python-brace-format
 msgid "Required customization '{name}' is missing"
 msgstr "Personalizzazione obbligatoria '{name}' mancante"
 
+#: services/cart_service.py:343
 msgid "Insufficient stock"
 msgstr "Scorte insufficienti"
 
+#: services/cart_service.py:386
 msgid "Bundle has no components configured"
 msgstr "Il bundle non ha componenti configurati"
 
+#: services/cart_service.py:395
 #, python-brace-format
 msgid "Cannot exclude non-optional bundle component: {name}"
 msgstr ""
 "Non è possibile escludere un componente del bundle non opzionale: {name}"
 
+#: services/cart_service.py:414
+msgid "Bundles cannot contain gift cards."
+msgstr "I pacchetti non possono contenere carte regalo."
+
+#: services/cart_service.py:424
 #, python-brace-format
 msgid "Variant selection required for: {name}"
 msgstr "Selezione della variante richiesta per: {name}"
 
+#: services/cart_service.py:436
 #, python-brace-format
 msgid "Invalid variant selected for: {name}"
 msgstr "Variante selezionata non valida per: {name}"
 
+#: services/cart_service.py:465
 #, python-brace-format
 msgid "Insufficient stock for bundle component: {name}"
 msgstr ""
 "Quantità disponibile insufficiente per il componente del bundle: {name}"
 
+#: services/cart_service.py:514
 msgid "Bundle quantity updated in cart"
 msgstr "Quantità del bundle aggiornata nel carrello"
 
+#: services/cart_service.py:544
 msgid "Bundle added to cart"
 msgstr "Bundle aggiunto al carrello"
 
+#: services/cart_service.py:581
 #, python-brace-format
 msgid "Required slot '{name}' has no selection."
 msgstr "Slot obbligatorio '{name}' non ha alcuna selezione."
 
+#: services/cart_service.py:590
 #, python-brace-format
 msgid "Slot '{name}' requires at least {min} selection(s)."
 msgstr "Lo slot '{name}' richiede almeno {min} selezione/i."
 
+#: services/cart_service.py:598
 #, python-brace-format
 msgid "Slot '{name}' allows at most {max} selection(s)."
 msgstr "Lo slot '{name}' permette al massimo {max} selezione/i."
 
+#: services/cart_service.py:609
 #, python-brace-format
 msgid "Invalid slot ID: {id}"
 msgstr "ID slot non valido: {id}"
 
+#: services/cart_service.py:619
 #, python-brace-format
 msgid "Option {opt_id} is not valid for slot '{slot}'."
 msgstr "L'opzione {opt_id} non è valida per lo slot '{slot}'."
 
+#: services/cart_service.py:656
 #, python-brace-format
 msgid ""
 "Incompatible selection in slot '{slot}'. Some options are not compatible "
@@ -1270,6 +1509,7 @@ msgstr ""
 "Selezione non compatibile nello slot '{slot}'. Alcune opzioni non sono "
 "compatibili con le tue altre scelte."
 
+#: services/cart_service.py:667
 #, python-brace-format
 msgid ""
 "Excluded selection in slot '{slot}'. Some options conflict with your other "
@@ -1278,44 +1518,62 @@ msgstr ""
 "Selezione esclusa nello slot '{slot}'. Alcune opzioni sono in conflitto con "
 "le tue altre scelte."
 
+#: services/cart_service.py:767 services/cart_service.py:1386
 #, python-brace-format
 msgid "Insufficient stock for component: {name}"
 msgstr "Quantità disponibile insufficiente per il componente: {name}"
 
+#: services/cart_service.py:827
 msgid "Configured product added to cart"
 msgstr "Prodotto configurato aggiunto al carrello"
 
+#: services/cart_service.py:887
 msgid "Either user or session_key must be provided"
 msgstr "Deve essere fornito l'utente o la session_key"
 
+#: services/cart_service.py:995
 msgid "This product is no longer available"
 msgstr "Questo prodotto non è più disponibile"
 
+#: services/cart_service.py:1023
 msgid "You must be logged in to purchase this product."
 msgstr "Devi essere connesso per acquistare questo prodotto."
 
+#: services/cart_service.py:1026
 #, python-format
 msgid "This product requires you to own \"%(required)s\" first."
 msgstr "Questo prodotto richiede che tu possieda già \"%(required)s\"."
 
+#: services/cart_service.py:1035 services/wishlist_service.py:68
 msgid "Product variant not found"
 msgstr "Variante del prodotto non trovata"
 
+#: services/cart_service.py:1040
 msgid "Configuration is required for configurable products"
 msgstr "È richiesta la configurazione per i prodotti configurabili"
 
+#: services/cart_service.py:1159
 msgid "Booking added to cart"
 msgstr "Prenotazione aggiunta al carrello"
 
+#: services/cart_service.py:1192
+#| msgid "Item added to cart"
+msgid "Gift card added to cart"
+msgstr "Carta regalo aggiunta al carrello"
+
+#: services/cart_service.py:1231
 msgid "Insufficient stock for requested quantity"
 msgstr "Scorte insufficienti per la quantità richiesta"
 
+#: services/cart_service.py:1234
 msgid "Cart item quantity updated"
 msgstr "Quantità dell'elemento del carrello aggiornata"
 
+#: services/cart_service.py:1256
 msgid "Item added to cart"
 msgstr "Elemento aggiunto al carrello"
 
+#: services/cart_service.py:1303
 msgid ""
 "Component quantities cannot be changed directly. Update the parent product "
 "instead."
@@ -1323,6 +1581,7 @@ msgstr ""
 "Le quantità dei componenti non possono essere modificate direttamente. "
 "Aggiorna invece il prodotto principale."
 
+#: services/cart_service.py:1318 services/cart_service.py:1499
 #, python-format
 msgid ""
 "Item removed from cart. Also removed %(names)s (required product no longer "
@@ -1331,279 +1590,387 @@ msgstr ""
 "Prodotto rimosso dal carrello. È stato anche rimosso %(names)s (prodotto "
 "richiesto non presente più nel carrello)."
 
+#: services/cart_service.py:1320 services/cart_service.py:1501
 msgid "Item removed from cart"
 msgstr "Elemento rimosso dal carrello"
 
+#: services/cart_service.py:1410
 msgid "Cart item updated"
 msgstr "Elemento del carrello aggiornato"
 
+#: services/cart_service.py:1469 views.py:286
 msgid ""
 "Component items cannot be removed directly. Remove the parent product "
 "instead."
 msgstr ""
-"Gli elementi dei componenti non possono essere rimossi direttamente. Rimuovi "
-"invece il prodotto principale."
+"Gli elementi dei componenti non possono essere rimossi direttamente. Rimuovi"
+" invece il prodotto principale."
 
+#: services/cart_service.py:1556
 msgid "Cart cleared"
 msgstr "Carrello svuotato"
 
+#: services/cart_service.py:1593
 msgid "Voucher removed"
 msgstr "Buono rimosso"
 
+#: services/cart_service.py:1594
 msgid "Voucher not found in cart"
 msgstr "Buono non trovato nel carrello"
 
-msgid "Gift card removed"
-msgstr "Carta regalo rimossa"
-
-msgid "Gift card not found in cart"
-msgstr "Gift card non trovata nel carrello"
-
+#: services/cart_service.py:1666
 #, python-brace-format
 msgid "{count} items merged into cart"
 msgstr "{count} articoli aggiunti al carrello"
 
+#: services/checkout_service.py:94
 msgid "Account creation required to proceed"
 msgstr "Creazione account richiesta per procedere"
 
+#: services/checkout_service.py:169 services/checkout_service.py:233
 msgid "Address not found"
 msgstr "Indirizzo non trovato"
 
+#: services/checkout_service.py:178
 msgid "Either address_id or address_data must be provided"
 msgstr "Deve essere fornito address_id o address_data"
 
+#: services/checkout_service.py:198
 msgid "Shipping address set"
 msgstr "Indirizzo di spedizione impostato"
 
+#: services/checkout_service.py:239
 msgid "Billing address must be provided"
 msgstr "Deve essere fornito l'indirizzo di fatturazione"
 
+#: services/checkout_service.py:242
 msgid "Billing address set"
 msgstr "Indirizzo di fatturazione impostato"
 
+#: services/checkout_service.py:282
 msgid "Shipping address must be set first"
 msgstr "L'indirizzo di spedizione deve essere impostato per primo"
 
+#: services/checkout_service.py:287
 msgid "Shipping method not found"
 msgstr "Metodo di spedizione non trovato"
 
+#: services/checkout_service.py:320
 msgid "Shipping method selected"
 msgstr "Metodo di spedizione selezionato"
 
+#: services/checkout_service.py:382
 msgid "Payment provider not found"
 msgstr "Fornitore di pagamento non trovato"
 
+#: services/checkout_service.py:386
 msgid "Payment provider is not properly configured"
 msgstr "Il fornitore di pagamento non è configurato correttamente"
 
+#: services/checkout_service.py:410
 msgid "Payment provider is not available for your location or currency"
 msgstr ""
 "Il fornitore di pagamento non è disponibile per la tua ubicazione o valuta"
 
+#: services/checkout_service.py:417
 msgid "Payment method selected"
 msgstr "Metodo di pagamento selezionato"
 
+#: services/checkout_service.py:434
 msgid "Cart is empty"
 msgstr "Il carrello è vuoto"
 
+#: services/checkout_service.py:440
 msgid "Shipping address is required"
 msgstr "È richiesto l'indirizzo di spedizione"
 
+#: services/checkout_service.py:442
 msgid "Shipping method is required"
 msgstr "È richiesto il metodo di spedizione"
 
+#: services/checkout_service.py:448
 msgid "Billing address is required"
 msgstr "È richiesto l'indirizzo di fatturazione"
 
+#: services/checkout_service.py:455
 msgid "Payment method is required"
 msgstr "È richiesto il metodo di pagamento"
 
+#: services/checkout_service.py:459
 msgid "Checkout session has expired"
 msgstr "La sessione di checkout è scaduta"
 
+#: services/checkout_service.py:489
 #, python-brace-format
 msgid "Insufficient stock for {product}"
 msgstr "Quantità disponibile insufficiente per {product}"
 
+#: services/checkout_service.py:505
 #, python-format
 msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
 msgstr "\"%(product)s\" richiede la precedente proprietà di \"%(required)s\"."
 
+#: services/checkout_service.py:694
 msgid "Customer email is required"
 msgstr "L'email del cliente è richiesta"
 
+#: services/checkout_service.py:854
 msgid "Unable to allocate warehouse for order. Please contact support."
 msgstr "Impossibile allocare il magazzino per l'ordine. Contatta il supporto."
 
+#: services/checkout_service.py:985 services/checkout_service.py:1018
 msgid "Insufficient stock to complete order"
 msgstr "Scorte insufficienti per completare l'ordine"
 
+#: services/checkout_service.py:990 services/checkout_service.py:1023
 msgid "Error processing order. Please try again."
 msgstr "Errore durante l'elaborazione dell'ordine. Riprova."
 
+#: services/checkout_service.py:1072
 msgid "Order created successfully"
 msgstr "Ordine creato con successo"
 
+#: services/checkout_service.py:1322
+#, python-format
+msgid "The voucher %(code)s has just been fully used."
+msgstr "Il buono %(code)s è appena stato completamente utilizzato."
+
+#: services/checkout_service.py:1328
+#, python-format
+#| msgid "This product is no longer available"
+msgid "The voucher %(code)s is no longer valid."
+msgstr "Il buono %(code)s non è più valido."
+
+#: services/wishlist_service.py:82
 msgid "Wishlist item updated"
 msgstr "Elemento della lista dei desideri aggiornato"
 
+#: services/wishlist_service.py:95
 msgid "Item added to wishlist"
 msgstr "Elemento aggiunto alla lista dei desideri"
 
+#: services/wishlist_service.py:110
 msgid "Item removed from wishlist"
 msgstr "Elemento rimosso dalla lista dei desideri"
 
+#: services/wishlist_service.py:137
 msgid "Item moved to cart"
 msgstr "Elemento spostato nel carrello"
 
+#: services/wishlist_service.py:154
 msgid "Wishlist cleared"
 msgstr "Lista dei desideri svuotata"
 
+#: services/wishlist_service.py:173
 msgid "Wishlist with this name already exists"
 msgstr "La lista dei desideri con questo nome esiste già"
 
+#: services/wishlist_service.py:184
 msgid "Wishlist created"
 msgstr "Lista dei desideri creata"
 
+#: templates/admin/cart/cart/change_list.html:22
 msgid "Monitor active and abandoned customer carts"
 msgstr "Monitora i carrelli attivi e abbandonati dei clienti"
 
+#: templates/admin/cart/cart/change_list.html:33
 msgid "Add"
 msgstr "Aggiungi"
 
+#: templates/admin/cart/cart/change_list.html:33
+#: templates/admin/cart/cart/change_list.html:178
 msgid "cart"
 msgstr "carrello"
 
+#: templates/admin/cart/cart/change_list.html:45
+#: templates/admin/cart/taxrate/change_list.html:59
 msgid "Filters"
 msgstr "Filtri"
 
+#: templates/admin/cart/cart/change_list.html:56
+#: templates/admin/cart/taxrate/change_list.html:63
 msgid "Search"
 msgstr "Cerca"
 
+#: templates/admin/cart/cart/change_list.html:61
 msgid "Search by user, session, or email..."
 msgstr "Cerca per utente, sessione o email..."
 
+#: templates/admin/cart/cart/change_list.html:68
 msgid "User Type"
 msgstr "Tipo di utente"
 
+#: templates/admin/cart/cart/change_list.html:71
 msgid "All Carts"
 msgstr "Tutti i carrelli"
 
+#: templates/admin/cart/cart/change_list.html:72
 msgid "Registered Users"
 msgstr "Utenti registrati"
 
+#: templates/admin/cart/cart/change_list.html:73
 msgid "Guest Carts"
 msgstr "Carrelli degli ospiti"
 
+#: templates/admin/cart/cart/change_list.html:80
 msgid "Cart Status"
 msgstr "Stato del carrello"
 
+#: templates/admin/cart/cart/change_list.html:83
+#: templates/admin/cart/cart/change_list.html:96
+#: templates/admin/cart/taxrate/change_list.html:88
 msgid "All"
 msgstr "Tutti"
 
+#: templates/admin/cart/cart/change_list.html:84
 msgid "Active (< 24h)"
 msgstr "Attivo (< 24h)"
 
+#: templates/admin/cart/cart/change_list.html:85
 msgid "Abandoned (> 24h)"
 msgstr "Abbandonato (> 24h)"
 
+#: templates/admin/cart/cart/change_list.html:86
+#: templates/admin/cart/partials/cart_cards.html:50
 msgid "Empty"
 msgstr "Vuoto"
 
+#: templates/admin/cart/cart/change_list.html:97
 msgid "Has Shipping"
 msgstr "Ha spedizione"
 
+#: templates/admin/cart/cart/change_list.html:98
 msgid "No Shipping"
 msgstr "Nessuna spedizione"
 
+#: templates/admin/cart/cart/change_list.html:105
 msgid "Min Cart Value"
 msgstr "Minimo valore del carrello"
 
+#: templates/admin/cart/cart/change_list.html:110
 msgid "Min value"
 msgstr "Minimo valore"
 
+#: templates/admin/cart/cart/change_list.html:117
 msgid "Max Cart Value"
 msgstr "Massimo valore del carrello"
 
+#: templates/admin/cart/cart/change_list.html:122
 msgid "Max value"
 msgstr "Massimo valore"
 
+#: templates/admin/cart/cart/change_list.html:130
 msgid "Created From"
 msgstr "Creato da"
 
+#: templates/admin/cart/cart/change_list.html:139
 msgid "Created To"
 msgstr "Creato a"
 
+#: templates/admin/cart/cart/change_list.html:151
 msgid "Apply Filters"
 msgstr "Applica filtri"
 
+#: templates/admin/cart/cart/change_list.html:154
 msgid "Clear All"
 msgstr "Cancella tutto"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Run the selected action"
 msgstr "Esegui l'azione selezionata"
 
+#: templates/admin/cart/cart/change_list.html:166
 msgid "Go"
 msgstr "Vai"
 
+#: templates/admin/cart/cart/change_list.html:168
 msgid "of"
 msgstr "di"
 
+#: templates/admin/cart/cart/change_list.html:195
 #, python-format
 msgid "1 cart"
 msgid_plural "%(counter)s carts"
 msgstr[0] "%(counter)s carrello"
 msgstr[1] "%(counter)s carrelli"
 
+#: templates/admin/cart/cart/change_list.html:197
 msgid "carts"
 msgstr "carrelli"
 
+#: templates/admin/cart/cart/change_list.html:201
 msgid "Show all"
 msgstr "Mostra tutto"
 
+#: templates/admin/cart/cart/change_list.html:205
+#: templates/admin/cart/shippingmethod/change_form.html:43
+#: templates/admin/cart/shippingmethod/change_form.html:343
+#: templates/admin/cart/taxrate/change_form.html:44
+#: templates/admin/cart/taxrate/change_form.html:238
 msgid "Save"
 msgstr "Salva"
 
+#: templates/admin/cart/method_wizard/base.html:4
+#: templates/admin/cart/method_wizard/base.html:17
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:24
 msgid "Add Shipping Method"
 msgstr "Aggiungi metodo di spedizione"
 
+#: templates/admin/cart/method_wizard/base.html:18
 msgid "Configure a new shipping method for your store"
 msgstr "Configura un nuovo metodo di spedizione per il tuo negozio"
 
+#: templates/admin/cart/method_wizard/base.html:25
+#: templates/admin/cart/method_wizard/step1_basics.html:10
+#: templates/admin/cart/method_wizard/step5_review.html:18
 msgid "Method Basics"
 msgstr "Informazioni di base del metodo"
 
+#: templates/admin/cart/method_wizard/base.html:31
 msgid "Eligibility"
 msgstr "Qualificazione"
 
+#: templates/admin/cart/method_wizard/base.html:37
+#: templates/admin/cart/shippingmethod/change_form.html:90
 msgid "Coverage"
 msgstr "Copertura"
 
+#: templates/admin/cart/method_wizard/base.html:43
 msgid "Features"
 msgstr "Funzionalità"
 
+#: templates/admin/cart/method_wizard/base.html:49
 msgid "Review"
 msgstr "Rivedi"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:13
 msgid "Define the core identity and type of this shipping method."
 msgstr ""
 "Definisci l'identità principale e il tipo di questo metodo di spedizione."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:27
 msgid "Method Name"
 msgstr "Nome del metodo"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:35
 msgid "e.g., Standard Shipping, Express Delivery"
 msgstr "es. Spedizione standard, Consegna espressa"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:38
 msgid "Customer-facing name for this shipping method"
 msgstr "Nome del metodo di spedizione rivolto al cliente"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:49
 msgid "Optional description of this shipping method"
 msgstr "Descrizione opzionale di questo metodo di spedizione"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:54
 msgid "Display Icon"
 msgstr "Icona da visualizzare"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:58
+#: templates/admin/cart/shippingmethod/change_form.html:227
 msgid ""
 "Select an image from the media library or choose a Font Awesome icon. Image "
 "takes priority if both are provided."
@@ -1611,219 +1978,193 @@ msgstr ""
 "Seleziona un'immagine dalla libreria media o scegli un'icona da Font "
 "Awesome. L'immagine ha la precedenza se entrambe vengono fornite."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:63
+#: templates/admin/cart/method_wizard/step5_review.html:48
 msgid "Custom Image"
 msgstr "Immagine personalizzata"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:74
 msgid "Font Awesome Icon"
 msgstr "Icona Font Awesome"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:78
 msgid "Choose an icon from Font Awesome library"
 msgstr "Scegli un'icona dalla libreria Font Awesome"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:94
+#: templates/admin/cart/method_wizard/step5_review.html:62
+#: templates/admin/cart/shippingmethod/change_form.html:32
+#: templates/admin/cart/shippingmethod/change_form.html:294
+#: templates/admin/cart/shippingmethod/change_list.html:67
+#: templates/admin/cart/shippingmethod/method_card.html:122
+#: templates/admin/cart/taxrate/change_form.html:33
+#: templates/admin/cart/taxrate/change_list.html:42
+#: templates/admin/cart/taxrate/change_list.html:89
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:26
 msgid "Active"
 msgstr "Attivo"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:98
 msgid "Make this method available to customers immediately"
 msgstr "Rendi disponibile immediatamente questo metodo per i clienti"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:105
 msgid "Method Type & Pricing"
 msgstr "Tipo di metodo e prezzo"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:114
 msgid "Select method type..."
 msgstr "Seleziona tipo di metodo..."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:116
 msgid "Flat Rate - Fixed shipping cost"
 msgstr "Tariffa fissa - Costo di spedizione fisso"
 
-msgid "Free Shipping - No charge"
-msgstr "Spedizione gratuita - Nessun costo"
-
-msgid "Weight Based - Calculate by cart weight"
-msgstr "Basato sul peso - Calcolato in base al peso del carrello"
-
-msgid "Price Based - Calculate by cart subtotal"
-msgstr "Basato sul prezzo - Calcolato in base al sottototale del carrello"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:119
 msgid "Real-Time Carrier Rates - Live rates from carriers"
 msgstr "Tariffe in tempo reale del carrier - Tariffe live dai carrier"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:122
 msgid "Local Pickup - Customer picks up at location"
 msgstr "Ritiro locale - Il cliente ritira presso la location"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:125
 msgid "Table Rate - Complex rules based on weight/price/destination"
 msgstr ""
 "Tariffa tabellare - Regole complesse basate su peso/prezzo/destinazione"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:133
 msgid "Method Types:"
 msgstr "Tipi di metodo:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Flat Rate:"
 msgstr "Tariffa fissa:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:135
 msgid "Fixed shipping cost regardless of order"
 msgstr "Costo di spedizione fisso indipendentemente dall'ordine"
 
-msgid "Free Shipping:"
-msgstr "Spedizione gratuita:"
-
-msgid "No shipping charge"
-msgstr "Nessun costo di spedizione"
-
-msgid "Weight/Price Based:"
-msgstr "Basato su peso/prezzo:"
-
-msgid "Calculate using rate tables"
-msgstr "Calcola utilizzando tabelle di tariffa"
-
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Real-Time:"
 msgstr "In tempo reale:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:136
 msgid "Get live rates from USPS, FedEx, UPS, or DHL"
 msgstr "Ottieni tariffe live da USPS, FedEx, UPS o DHL"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Local Pickup:"
 msgstr "Ritiro in loco:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:137
 msgid "Customer picks up at your location"
 msgstr "Il cliente ritira presso la tua location"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate"
+msgid "Table Rate:"
+msgstr "Tariffa tabellare:"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:138
+#| msgid "Table Rate - Complex rules based on weight/price/destination"
+msgid "Complex rules based on weight, price, or destination"
+msgstr "Regole complesse basate su peso, prezzo o destinazione"
+
+#: templates/admin/cart/method_wizard/step1_basics.html:158
 msgid "Fixed shipping cost charged to customer"
 msgstr "Costo di spedizione fisso addebitato al cliente"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:168
 msgid "No Configured Providers"
 msgstr "Nessun fornitore configurato"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:170
 msgid ""
-"You need to configure at least one shipping provider that supports real-time "
-"rates before you can use this method type."
+"You need to configure at least one shipping provider that supports real-time"
+" rates before you can use this method type."
 msgstr ""
-"Devi configurare almeno un provider di spedizione che supporta le tariffe in "
-"tempo reale prima di poter utilizzare questo tipo di metodo."
+"Devi configurare almeno un provider di spedizione che supporta le tariffe in"
+" tempo reale prima di poter utilizzare questo tipo di metodo."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:174
 msgid "Connect Provider"
 msgstr "Connetti fornitore"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:177
 msgid "Manage Providers"
 msgstr "Gestisci fornitori"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:190
 msgid "Select a configured shipping provider"
 msgstr "Seleziona un fornitore di spedizione configurato"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:202
+#: templates/admin/cart/method_wizard/step4_features.html:252
 msgid "Tip:"
 msgstr "Suggerimento:"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:203
 msgid ""
 "Only providers that are configured and support real-time rates are shown "
 "above."
 msgstr ""
-"Solo i provider configurati che supportano le tariffe in tempo reale vengono "
-"mostrati sopra."
+"Solo i provider configurati che supportano le tariffe in tempo reale vengono"
+" mostrati sopra."
 
+#: templates/admin/cart/method_wizard/step1_basics.html:204
 msgid "Manage providers"
 msgstr "Gestisci fornitori"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:209
 msgid "Service Code"
 msgstr "Codice servizio"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:213
 msgid "Specific service code from carrier (optional)"
 msgstr "Codice di servizio specifico dal carrier (opzionale)"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:230
 msgid "Cancel"
 msgstr "Annulla"
 
+#: templates/admin/cart/method_wizard/step1_basics.html:233
+#: templates/admin/cart/method_wizard/step2_conditions.html:53
+#: templates/admin/cart/method_wizard/step3_coverage.html:102
 msgid "Next Step"
 msgstr "Passo successivo"
 
-msgid "Eligibility Conditions"
-msgstr "Condizioni di qualificazione"
-
-msgid ""
-"Define when this shipping method should be available based on cart value and "
-"weight."
-msgstr ""
-"Definisci quando questo metodo di spedizione dovrebbe essere disponibile in "
-"base al valore del carrello e al peso."
-
-msgid "Order Value Restrictions"
-msgstr "Limiti del valore dell'ordine"
-
-msgid "Set minimum or maximum cart subtotal requirements for this method."
-msgstr ""
-"Imposta i requisiti minimi o massimi per il sottototale del carrello per "
-"questo metodo."
-
-msgid "Method only available if cart subtotal is at least this amount"
-msgstr ""
-"Il metodo è disponibile solo se il sottototale del carrello è almeno questo "
-"importo"
-
-msgid "No maximum"
-msgstr "Nessun massimo"
-
-msgid "Method only available if cart subtotal is below this amount"
-msgstr ""
-"Il metodo è disponibile solo se il sottototale del carrello è inferiore a "
-"questo importo"
-
-msgid "Examples:"
-msgstr "Esempi:"
-
-msgid "Free shipping for orders over $50: Set minimum to 50.00"
-msgstr ""
-"Spedizione gratuita per ordini superiori a $50: Imposta il minimo a 50.00"
-
-msgid "Economy shipping for orders under $100: Set maximum to 100.00"
-msgstr ""
-"Spedizione economica per ordini inferiori a $100: Imposta il massimo a 100.00"
-
-msgid "Standard shipping for $25-$200: Set both minimum and maximum"
-msgstr ""
-"Spedizione standard per $25-$200: Imposta entrambi i minimi e i massimi"
-
-msgid "Weight Restrictions"
-msgstr "Limiti di peso"
-
-msgid "Set minimum or maximum total cart weight requirements for this method."
-msgstr ""
-"Imposta i requisiti minimi o massimi per il peso totale del carrello per "
-"questo metodo."
-
-msgid "Minimum Weight (kg)"
-msgstr "Peso minimo (kg)"
-
-msgid "Method only available if total cart weight is at least this value"
-msgstr ""
-"Il metodo è disponibile solo se il peso totale del carrello è almeno questo "
-"valore"
-
-msgid "Maximum Weight (kg)"
-msgstr "Peso massimo (kg)"
-
-msgid "Method only available if total cart weight is below this value"
-msgstr ""
-"Il metodo è disponibile solo se il peso totale del carrello è inferiore a "
-"questo valore"
-
-msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
-msgstr ""
-"Spedizione per pacchi leggeri per pacchi inferiori a 2kg: Imposta il massimo "
-"a 2.00"
-
-msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
-msgstr ""
-"Spedizione per carichi pesanti per pacchi superiori a 20kg: Imposta il "
-"minimo a 20.00"
-
-msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
-msgstr ""
-"Spedizione standard per 0.5kg-10kg: Imposta entrambi i minimi e i massimi"
-
+#: templates/admin/cart/method_wizard/step2_conditions.html:6
+#: templates/admin/cart/method_wizard/step2_conditions.html:27
+#: templates/admin/cart/method_wizard/step5_review.html:93
 msgid "Additional Options"
 msgstr "Opzioni aggiuntive"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:9
+#| msgid "Optional description of this shipping method"
+msgid "Configure additional options for this shipping method."
+msgstr "Configura opzioni aggiuntive per questo metodo di spedizione."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:19
+msgid "Eligibility Conditions"
+msgstr "Condizioni di qualificazione"
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:20
+msgid ""
+"Order value and weight eligibility conditions are now configured through "
+"Shipping Promotions with visibility control. Go to Shipping Promotions to "
+"set up conditions that control when this method is shown to customers."
+msgstr ""
+"Le condizioni di idoneità per valore dell'ordine e peso sono ora "
+"configurabili tramite Promozioni di Spedizione con controllo della "
+"visibilità. Vai a Promozioni di Spedizione per impostare le condizioni che "
+"controllano quando questo metodo viene mostrato ai clienti."
+
+#: templates/admin/cart/method_wizard/step2_conditions.html:36
 msgid "Requires Shipping Address"
 msgstr "Richiede indirizzo di spedizione"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:40
 msgid ""
 "Customer must provide a shipping address for this method (disable for "
 "digital goods or local pickup)"
@@ -1831,20 +2172,31 @@ msgstr ""
 "Il cliente deve fornire un indirizzo di spedizione per questo metodo "
 "(disattivare per prodotti digitali o ritiro locale)"
 
+#: templates/admin/cart/method_wizard/step2_conditions.html:50
+#: templates/admin/cart/method_wizard/step3_coverage.html:99
+#: templates/admin/cart/method_wizard/step4_features.html:263
+#: templates/admin/cart/method_wizard/step5_review.html:228
 msgid "Previous"
 msgstr "Precedente"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:117
+#: templates/admin/cart/shippingmethod/change_form.html:169
 msgid "Geographic Coverage"
 msgstr "Copertura geografica"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:9
+#: templates/admin/cart/shippingmethod/change_form.html:170
 msgid "Define where this shipping method is available using shipping zones."
 msgstr ""
-"Definisci dove questo metodo di spedizione è disponibile utilizzando le zone "
-"di spedizione."
+"Definisci dove questo metodo di spedizione è disponibile utilizzando le zone"
+" di spedizione."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:23
 msgid "Zone-Based Coverage:"
 msgstr "Copertura basata sulla zona:"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:24
 msgid ""
 "Use shipping zones for flexible, rule-based geographic coverage. This "
 "approach works seamlessly with shipping rules and allows precise control "
@@ -1855,9 +2207,11 @@ msgstr ""
 "spedizione e consente un controllo preciso su dove sono disponibili i tuoi "
 "metodi."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:29
 msgid "Select Shipping Zones"
 msgstr "Seleziona le aree di spedizione"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:32
 msgid ""
 "Choose which shipping zones this method is available for. Leave empty to "
 "make available worldwide."
@@ -1865,80 +2219,108 @@ msgstr ""
 "Scegli quali zone di spedizione sono disponibili per questo metodo. Lascia "
 "vuoto per rendere disponibile a livello globale."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:38
 msgid "Available Zones"
 msgstr "Aree disponibili"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:49
 msgid "Add selected zones"
 msgstr "Aggiungi aree selezionate"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:52
 msgid "Add all zones"
 msgstr "Aggiungi tutte le aree"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:55
 msgid "Remove selected zones"
 msgstr "Rimuovi aree selezionate"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:58
 msgid "Remove all zones"
 msgstr "Rimuovi tutte le aree"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:64
 msgid "Selected Zones"
 msgstr "Aree selezionate"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:83
 msgid "No shipping zones found!"
 msgstr "Nessuna area di spedizione trovata!"
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:84
 msgid "You need to create shipping zones first."
 msgstr "Devi creare le zone di spedizione prima."
 
+#: templates/admin/cart/method_wizard/step3_coverage.html:86
 msgid "Create a shipping zone"
 msgstr "Crea un'area di spedizione"
 
+#: templates/admin/cart/method_wizard/step4_features.html:6
+#: templates/admin/cart/method_wizard/step5_review.html:154
 msgid "Method Features"
 msgstr "Caratteristiche del metodo"
 
+#: templates/admin/cart/method_wizard/step4_features.html:9
 msgid ""
 "Configure delivery estimates, display order, and method-specific features."
 msgstr ""
 "Configura le stime di consegna, l'ordine di visualizzazione e le "
 "funzionalità specifiche del metodo."
 
-msgid "Select the physical locations where customers can pick up their orders."
+#: templates/admin/cart/method_wizard/step4_features.html:23
+msgid ""
+"Select the physical locations where customers can pick up their orders."
 msgstr ""
 "Seleziona le ubicazioni fisiche dove i clienti possono ritirare gli ordini."
 
+#: templates/admin/cart/method_wizard/step4_features.html:27
 msgid "Available Pickup Locations"
 msgstr "Posizioni di ritiro disponibili"
 
+#: templates/admin/cart/method_wizard/step4_features.html:32
 msgid "Available Locations"
 msgstr "Posizioni disponibili"
 
+#: templates/admin/cart/method_wizard/step4_features.html:60
 msgid "Selected Locations"
 msgstr "Posizioni selezionate"
 
+#: templates/admin/cart/method_wizard/step4_features.html:79
 msgid "No pickup locations found!"
 msgstr "Nessuna posizione di ritiro trovata!"
 
+#: templates/admin/cart/method_wizard/step4_features.html:80
 msgid "You need to create pickup locations first for local pickup methods."
 msgstr ""
 "Devi creare le ubicazioni di ritiro prima per i metodi di ritiro locale."
 
+#: templates/admin/cart/method_wizard/step4_features.html:82
 msgid "Create a pickup location"
 msgstr "Crea una posizione di ritiro"
 
+#: templates/admin/cart/method_wizard/step4_features.html:95
 msgid "Carrier API Status"
 msgstr "Stato API del vettore"
 
+#: templates/admin/cart/method_wizard/step4_features.html:101
+#: templates/admin/cart/method_wizard/step5_review.html:79
+#: templates/admin/cart/shippingmethod/method_card.html:96
 msgid "Carrier:"
 msgstr "Vettore:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:103
 msgid "Service Code:"
 msgstr "Codice servizio:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:109
 msgid "API Configuration Status"
 msgstr "Stato configurazione API"
 
+#: templates/admin/cart/method_wizard/step4_features.html:113
 msgid "Checking API credentials..."
 msgstr "Verifica delle credenziali API..."
 
+#: templates/admin/cart/method_wizard/step4_features.html:119
 msgid ""
 "Ensure your carrier API credentials are configured in the shipping provider "
 "settings."
@@ -1946,9 +2328,11 @@ msgstr ""
 "Assicurati che le credenziali API del carrier siano configurate nelle "
 "impostazioni del provider di spedizione."
 
+#: templates/admin/cart/method_wizard/step4_features.html:129
 msgid "Enable Rate Caching"
 msgstr "Abilita caching delle tariffe"
 
+#: templates/admin/cart/method_wizard/step4_features.html:133
 msgid ""
 "Cache carrier rates for 15 minutes to improve performance and reduce API "
 "calls"
@@ -1956,58 +2340,69 @@ msgstr ""
 "Cachizza le tariffe del carrier per 15 minuti per migliorare le prestazioni "
 "e ridurre le chiamate API"
 
+#: templates/admin/cart/method_wizard/step4_features.html:143
 msgid "Rate Table Configuration"
 msgstr "Configurazione tabella tariffe"
 
-msgid "Weight-Based Rates:"
-msgstr "Tariffe basate sul peso:"
+#: templates/admin/cart/method_wizard/step4_features.html:149
+#| msgid "Table Rate"
+msgid "Table Rates:"
+msgstr "Tariffe tabellari:"
 
+#: templates/admin/cart/method_wizard/step4_features.html:150
+#| msgid ""
+#| "You'll be able to configure tiered rates based on cart weight after the "
+#| "method is created."
 msgid ""
-"You'll be able to configure tiered rates based on cart weight after the "
-"method is created."
+"You'll be able to configure tiered rates based on weight, price, or "
+"destination after the method is created."
 msgstr ""
-"Dopo la creazione del metodo, potrai configurare tariffe a livelli basate "
-"sul peso del carrello."
+"Dopo la creazione del metodo, sarà possibile configurare tariffe a scaglieri"
+" in base al peso, al prezzo o alla destinazione."
 
-msgid "Price-Based Rates:"
-msgstr "Tariffe basate sul prezzo:"
-
-msgid ""
-"You'll be able to configure tiered rates based on cart subtotal after the "
-"method is created."
-msgstr ""
-"Dopo la creazione del metodo, potrai configurare tariffe a livelli basate "
-"sul sottototale del carrello."
-
+#: templates/admin/cart/method_wizard/step4_features.html:156
 msgid "Rate tables can be managed from the method's edit page after creation."
 msgstr ""
-"Le tabelle delle tariffe possono essere gestite dalla pagina di modifica del "
-"metodo dopo la creazione."
+"Le tabelle delle tariffe possono essere gestite dalla pagina di modifica del"
+" metodo dopo la creazione."
 
+#: templates/admin/cart/method_wizard/step4_features.html:165
 msgid "Delivery Time Estimate"
 msgstr "Stima tempo di consegna"
 
+#: templates/admin/cart/method_wizard/step4_features.html:169
 msgid "Provide customers with an estimated delivery timeframe."
 msgstr "Fornisci ai clienti un intervallo stimato di consegna."
 
+#: templates/admin/cart/method_wizard/step4_features.html:186
 msgid "Fastest delivery time in business days"
 msgstr "Tempo di consegna più veloce in giorni lavorativi"
 
+#: templates/admin/cart/method_wizard/step4_features.html:203
 msgid "Slowest delivery time in business days"
 msgstr "Tempo di consegna più lento in giorni lavorativi"
 
+#: templates/admin/cart/method_wizard/step4_features.html:211
+msgid "Examples:"
+msgstr "Esempi:"
+
+#: templates/admin/cart/method_wizard/step4_features.html:213
 msgid "Standard shipping: 3-5 business days"
 msgstr "Spedizione standard: 3-5 giorni lavorativi"
 
+#: templates/admin/cart/method_wizard/step4_features.html:214
 msgid "Express shipping: 1-2 business days"
 msgstr "Spedizione espressa: 1-2 giorni lavorativi"
 
+#: templates/admin/cart/method_wizard/step4_features.html:215
 msgid "International shipping: 7-14 business days"
 msgstr "Spedizione internazionale: 7-14 giorni lavorativi"
 
+#: templates/admin/cart/method_wizard/step4_features.html:229
 msgid "Display Settings"
 msgstr "Impostazioni di visualizzazione"
 
+#: templates/admin/cart/method_wizard/step4_features.html:245
 msgid ""
 "Lower numbers appear first. Use this to control the order methods are "
 "displayed to customers."
@@ -2015,6 +2410,7 @@ msgstr ""
 "I numeri più bassi appaiono per primi. Usa questo per controllare l'ordine "
 "in cui i metodi vengono visualizzati ai clienti."
 
+#: templates/admin/cart/method_wizard/step4_features.html:253
 msgid ""
 "Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
 "of new methods between existing ones."
@@ -2022,114 +2418,141 @@ msgstr ""
 "Assegna ordini di sorteggio in incrementi di 10 (0, 10, 20) per permettere "
 "l'inserimento facile di nuovi metodi tra quelli esistenti."
 
+#: templates/admin/cart/method_wizard/step4_features.html:266
+#: templates/admin/cart/method_wizard/step5_review.html:6
 msgid "Review & Create"
 msgstr "Rivedi e crea"
 
+#: templates/admin/cart/method_wizard/step4_features.html:275
 msgid "API credentials verified successfully"
 msgstr "Credenziali API verificate con successo"
 
+#: templates/admin/cart/method_wizard/step5_review.html:9
 msgid "Review your shipping method configuration and create it."
 msgstr "Rivedi la configurazione del metodo di spedizione e crealo."
 
+#: templates/admin/cart/method_wizard/step5_review.html:20
+#: templates/admin/cart/method_wizard/step5_review.html:95
+#: templates/admin/cart/method_wizard/step5_review.html:119
+#: templates/admin/cart/method_wizard/step5_review.html:156
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:62
 msgid "Edit"
 msgstr "Modifica"
 
+#: templates/admin/cart/method_wizard/step5_review.html:26
 msgid "Name:"
 msgstr "Nome:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:30
 msgid "Method Type:"
 msgstr "Tipo di metodo:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:39
 msgid "Description:"
 msgstr "Descrizione:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:45
+#: templates/admin/cart/method_wizard/step5_review.html:53
 msgid "Display Icon:"
 msgstr "Icona da visualizzare:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:58
 msgid "Status:"
 msgstr "Stato:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:66
+#: templates/admin/cart/shippingmethod/change_form.html:34
+#: templates/admin/cart/shippingmethod/change_list.html:70
+#: templates/admin/cart/shippingmethod/method_card.html:124
+#: templates/admin/cart/taxrate/change_form.html:35
+#: templates/admin/cart/taxrate/change_list.html:90
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:30
 msgid "Inactive"
 msgstr "Inattivo"
 
+#: templates/admin/cart/method_wizard/step5_review.html:73
 msgid "Flat Rate Cost:"
 msgstr "Costo a tariffa piatta:"
 
-msgid "Min Order Value:"
-msgstr "Valore minimo dell'ordine:"
-
-msgid "Max Order Value:"
-msgstr "Valore massimo dell'ordine:"
-
-msgid "Min Weight:"
-msgstr "Peso minimo:"
-
-msgid "Max Weight:"
-msgstr "Peso massimo:"
-
+#: templates/admin/cart/method_wizard/step5_review.html:101
 msgid "Requires Shipping Address:"
 msgstr "Richiede indirizzo di spedizione:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:104
 msgid "Yes"
 msgstr "Sì"
 
+#: templates/admin/cart/method_wizard/step5_review.html:106
 msgid "No"
 msgstr "No"
 
-msgid ""
-"No eligibility conditions set - method available for all cart values and "
-"weights"
-msgstr ""
-"Nessuna condizione di idoneità impostata - il metodo è disponibile per tutti "
-"i valori del carrello e i pesi"
-
+#: templates/admin/cart/method_wizard/step5_review.html:126
 msgid "Shipping Zones:"
 msgstr "Aree di spedizione:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:141
+#: templates/admin/cart/shippingmethod/method_card.html:76
 msgid "Coverage:"
 msgstr "Copertura:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:143
 msgid "Worldwide (No zones selected)"
 msgstr "A livello globale (nessuna area selezionata)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:164
 msgid "Pickup Locations:"
 msgstr "Posizioni di ritiro:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:167
+#: templates/admin/cart/shippingmethod/method_card.html:87
 msgid "location"
 msgstr "posizione"
 
+#: templates/admin/cart/method_wizard/step5_review.html:172
 msgid "Delivery Time:"
 msgstr "Tempo di consegna:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:174
+#: templates/admin/cart/shippingmethod/method_card.html:110
 msgid "Instant Pickup"
 msgstr "Ritiro immediato"
 
+#: templates/admin/cart/method_wizard/step5_review.html:179
 msgid "Delivery Estimate:"
 msgstr "Stima consegna:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:182
+#: templates/admin/cart/shippingmethod/method_card.html:112
 msgid "business days"
 msgstr "giorni lavorativi"
 
+#: templates/admin/cart/method_wizard/step5_review.html:188
 msgid "Sort Order:"
 msgstr "Ordine di ordinamento:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:194
 msgid "Rate Caching:"
 msgstr "Caching delle tariffe:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:196
 msgid "Enabled"
 msgstr "Abilitato"
 
+#: templates/admin/cart/method_wizard/step5_review.html:208
 msgid "What happens next:"
 msgstr "Cosa accadrà successivamente:"
 
+#: templates/admin/cart/method_wizard/step5_review.html:210
 msgid "Your shipping method will be created with the settings above"
 msgstr ""
 "Il tuo metodo di spedizione verrà creato con le impostazioni sopra indicate"
 
+#: templates/admin/cart/method_wizard/step5_review.html:212
 msgid "You'll be redirected to configure rate tables for this method"
 msgstr ""
 "Verrai reindirizzato per configurare le tabelle di tariffa per questo metodo"
 
+#: templates/admin/cart/method_wizard/step5_review.html:215
 msgid ""
 "The method will be immediately available to customers (if eligibility "
 "conditions are met)"
@@ -2137,234 +2560,353 @@ msgstr ""
 "Il metodo sarà immediatamente disponibile per i clienti (se vengono "
 "soddisfatte le condizioni di idoneità)"
 
+#: templates/admin/cart/method_wizard/step5_review.html:217
 msgid "The method will be created as inactive - activate it when ready"
 msgstr "Il metodo verrà creato come non attivo - attivalo quando sei pronto"
 
+#: templates/admin/cart/method_wizard/step5_review.html:231
 msgid "Create Shipping Method"
 msgstr "Crea metodo di spedizione"
 
+#: templates/admin/cart/method_wizard/step5_review.html:240
 msgid "Creating..."
 msgstr "Creazione in corso..."
 
+#: templates/admin/cart/partials/cart_cards.html:29
 msgid "Session"
 msgstr "Sessione"
 
+#: templates/admin/cart/partials/cart_cards.html:36
 msgid "Registered"
 msgstr "Registrato"
 
+#: templates/admin/cart/partials/cart_cards.html:40
 msgid "Guest"
 msgstr "Ospite"
 
+#: templates/admin/cart/partials/cart_cards.html:46
 msgid "item"
 msgstr "articolo"
 
+#: templates/admin/cart/partials/cart_cards.html:56
 msgid "Shipping Set"
 msgstr "Set di spedizione"
 
+#: templates/admin/cart/partials/cart_cards.html:69
 msgid "Cart Total"
 msgstr "Totale carrello"
 
+#: templates/admin/cart/partials/cart_cards.html:75
 msgid "Items"
 msgstr "Articoli"
 
+#: templates/admin/cart/partials/cart_cards.html:80
 msgid "Savings"
 msgstr "Risparmi"
 
+#: templates/admin/cart/partials/cart_cards.html:88
 msgid "Shipping"
 msgstr "Spedizione"
 
+#: templates/admin/cart/partials/cart_cards.html:95
 msgid "Grand Total"
 msgstr "Totale complessivo"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "Updated"
 msgstr "Aggiornato"
 
+#: templates/admin/cart/partials/cart_cards.html:105
 msgid "ago"
 msgstr "fa"
 
+#: templates/admin/cart/partials/cart_cards.html:109
+#: templates/admin/cart/shippingmethod/change_form.html:30
+#: templates/admin/cart/shippingmethod/method_card.html:128
 msgid "Created"
 msgstr "Creato"
 
+#: templates/admin/cart/partials/cart_cards.html:120
 msgid "Est. Delivery"
 msgstr "Consegna stimata"
 
+#: templates/admin/cart/partials/cart_cards.html:129
 msgid "View cart details"
 msgstr "Visualizza dettagli del carrello"
 
+#: templates/admin/cart/partials/cart_cards.html:134
 msgid "Edit cart"
 msgstr "Modifica carrello"
 
+#: templates/admin/cart/partials/cart_cards.html:140
 msgid "Delete cart"
 msgstr "Elimina carrello"
 
+#: templates/admin/cart/partials/cart_cards.html:143
 msgid "Are you sure you want to clear this cart?"
 msgstr "Sei sicuro di voler svuotare questo carrello?"
 
+#: templates/admin/cart/partials/cart_cards.html:154
 msgid "No shopping carts found matching your criteria."
 msgstr "Nessun carrello di acquisto trovato che corrisponda ai tuoi criteri."
 
+#: templates/admin/cart/partials/cart_cards.html:156
 msgid "Try adjusting your filters or search terms."
 msgstr "Prova a modificare i filtri o i termini di ricerca."
 
+#: templates/admin/cart/shippingmethod/change_form.html:4
+#: templates/admin/cart/shippingmethod/change_form.html:22
 msgid "Edit Shipping Method"
 msgstr "Modifica metodo di spedizione"
 
+#: templates/admin/cart/shippingmethod/change_form.html:40
+#: templates/admin/cart/shippingmethod/change_form.html:344
+#: templates/admin/cart/taxrate/change_form.html:41
+#: templates/admin/cart/taxrate/change_form.html:239
 msgid "Save and continue editing"
 msgstr "Salva e continua a modificare"
 
+#: templates/admin/cart/shippingmethod/change_form.html:56
+#: templates/admin/cart/taxrate/change_form.html:57
 msgid "Please correct the errors below"
 msgstr "Per favore correggi gli errori segnalati"
 
+#: templates/admin/cart/shippingmethod/change_form.html:82
+#: templates/admin/cart/taxrate/change_form.html:83
 msgid "Basic"
 msgstr "Base"
 
+#: templates/admin/cart/shippingmethod/change_form.html:86
+#: templates/admin/cart/shippingmethod/change_form.html:148
 msgid "Pricing"
 msgstr "Prezzi"
 
+#: templates/admin/cart/shippingmethod/change_form.html:94
 msgid "Display"
 msgstr "Visualizzazione"
 
-msgid "Optional: Restrict availability based on order value or weight."
-msgstr ""
-"Opzionale: Limitare la disponibilità in base al valore dell'ordine o al peso."
+#: templates/admin/cart/shippingmethod/change_form.html:103
+#| msgid "Product Exemptions"
+msgid "Promotions"
+msgstr "Promozioni"
 
+#: templates/admin/cart/shippingmethod/change_form.html:185
 msgid "Delivery Time"
 msgstr "Tempo di consegna"
 
+#: templates/admin/cart/shippingmethod/change_form.html:226
 msgid "Display Options"
 msgstr "Opzioni di visualizzazione"
 
+#: templates/admin/cart/shippingmethod/change_form.html:248
 msgid "Carrier Integration"
 msgstr "Integrazione del trasportatore"
 
+#: templates/admin/cart/shippingmethod/change_form.html:249
 msgid "Configure carrier-specific settings for real-time rate lookups."
 msgstr ""
 "Configura le impostazioni specifiche del vettore per le ricerche in tempo "
 "reale sui tariffe."
 
+#: templates/admin/cart/shippingmethod/change_form.html:269
+msgid "Active Promotions"
+msgstr "Promozioni attive"
+
+#: templates/admin/cart/shippingmethod/change_form.html:270
+msgid ""
+"Shipping promotions that currently affect this method. Promotions with no "
+"method restrictions apply to all methods."
+msgstr ""
+"Promozioni di spedizione che attualmente influenzano questo metodo. Le "
+"promozioni senza restrizioni sui metodi si applicano a tutti i metodi."
+
+#: templates/admin/cart/shippingmethod/change_form.html:277
+#| msgid "Tax Type"
+msgid "Type"
+msgstr "Tipo"
+
+#: templates/admin/cart/shippingmethod/change_form.html:278
+msgid "Value"
+msgstr "Valore"
+
+#: templates/admin/cart/shippingmethod/change_form.html:280
+#: templates/admin/cart/taxrate/change_list.html:86
+msgid "Status"
+msgstr "Stato"
+
+#: templates/admin/cart/shippingmethod/change_form.html:302
+#| msgid "Optional description of this shipping method"
+msgid "No active promotions affect this shipping method."
+msgstr ""
+"Non ci sono promozioni attive che influenzano questo metodo di spedizione."
+
+#: templates/admin/cart/shippingmethod/change_form.html:308
+#| msgid "Created From"
+msgid "Create New Promotion"
+msgstr "Crea nuova promozione"
+
+#: templates/admin/cart/shippingmethod/change_list.html:21
 msgid "Configure shipping options, rates, and delivery methods"
 msgstr "Configura le opzioni di spedizione, le tariffe e i metodi di consegna"
 
+#: templates/admin/cart/shippingmethod/change_list.html:23
 msgid "method"
 msgstr "metodo"
 
+#: templates/admin/cart/shippingmethod/change_list.html:24
 msgid "active"
 msgstr "attivo"
 
+#: templates/admin/cart/shippingmethod/change_list.html:29
 msgid "Add Method"
 msgstr "Aggiungi metodo"
 
+#: templates/admin/cart/shippingmethod/change_list.html:48
 msgid "Bulk Actions"
 msgstr "Azioni di massa"
 
+#: templates/admin/cart/shippingmethod/change_list.html:49
 msgid "Enable Selected"
 msgstr "Abilita selezionati"
 
+#: templates/admin/cart/shippingmethod/change_list.html:50
 msgid "Disable Selected"
 msgstr "Disabilita selezionati"
 
+#: templates/admin/cart/shippingmethod/change_list.html:51
 msgid "Delete Selected"
 msgstr "Elimina selezionati"
 
+#: templates/admin/cart/shippingmethod/change_list.html:53
 msgid "Apply"
 msgstr "Applica"
 
+#: templates/admin/cart/shippingmethod/change_list.html:55
 msgid "selected"
 msgstr "selezionati"
 
+#: templates/admin/cart/shippingmethod/change_list.html:65
 msgid "All Status"
 msgstr "Tutti gli stati"
 
+#: templates/admin/cart/shippingmethod/change_list.html:76
+#: templates/admin/cart/taxrate/change_list.html:78
 msgid "All Types"
 msgstr "Tutti i tipi"
 
+#: templates/admin/cart/shippingmethod/change_list.html:81
 msgid "Real-Time Rates"
 msgstr "Tariffe in tempo reale"
 
+#: templates/admin/cart/shippingmethod/change_list.html:92
 msgid "Clear all filters"
 msgstr "Cancella tutti i filtri"
 
+#: templates/admin/cart/shippingmethod/change_list.html:93
 msgid "Clear Filters"
 msgstr "Cancella filtri"
 
+#: templates/admin/cart/shippingmethod/change_list.html:101
 msgid "Search methods..."
 msgstr "Cerca metodi..."
 
+#: templates/admin/cart/shippingmethod/change_list.html:112
 msgid "Select All"
 msgstr "Seleziona tutto"
 
+#: templates/admin/cart/shippingmethod/change_list.html:130
 #, python-format
 msgid "%(counter)s method"
 msgid_plural "%(counter)s methods"
 msgstr[0] "%(counter)s metodo"
 msgstr[1] "%(counter)s metodi"
 
+#: templates/admin/cart/shippingmethod/change_list.html:139
 msgid "No shipping methods found"
 msgstr "Nessun metodo di spedizione trovato"
 
+#: templates/admin/cart/shippingmethod/change_list.html:142
 msgid "Try adjusting your filters or search query."
 msgstr "Prova a modificare i filtri o la query di ricerca."
 
+#: templates/admin/cart/shippingmethod/change_list.html:144
 msgid "Get started by creating your first shipping method."
 msgstr "Inizia creando il tuo primo metodo di spedizione."
 
+#: templates/admin/cart/shippingmethod/change_list.html:149
 msgid "Add First Method"
 msgstr "Aggiungi primo metodo"
 
+#: templates/admin/cart/shippingmethod/change_list.html:160
 msgid "Loading..."
 msgstr "Caricamento..."
 
-msgid "Order Value:"
-msgstr "Valore dell'ordine:"
-
-msgid "Weight:"
-msgstr "Peso:"
-
+#: templates/admin/cart/shippingmethod/method_card.html:60
 msgid "Zones:"
 msgstr "Zone:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:62
 msgid "zone"
 msgstr "zona"
 
+#: templates/admin/cart/shippingmethod/method_card.html:68
 msgid "Countries:"
 msgstr "Paesi:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:70
 msgid "country"
 msgstr "paese"
 
+#: templates/admin/cart/shippingmethod/method_card.html:77
 msgid "Worldwide"
 msgstr "In tutto il mondo"
 
+#: templates/admin/cart/shippingmethod/method_card.html:85
 msgid "Pickup:"
 msgstr "Ritiro:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:107
 msgid "Delivery:"
 msgstr "Consegna:"
 
+#: templates/admin/cart/shippingmethod/method_card.html:137
 msgid "Edit method"
 msgstr "Modifica metodo"
 
+#: templates/admin/cart/shippingmethod/method_card.html:143
 msgid "Toggle active status"
 msgstr "Attiva/disattiva lo stato"
 
+#: templates/admin/cart/shippingmethod/method_card.html:149
 msgid "Delete method"
 msgstr "Elimina metodo"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:22
 msgid "Edit Tax Rate"
 msgstr "Modifica aliquota fiscale"
 
+#: templates/admin/cart/taxrate/change_form.html:4
+#: templates/admin/cart/taxrate/change_form.html:24
+#: templates/admin/cart/taxrate/change_list.html:26
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:82
 msgid "Add Tax Rate"
 msgstr "Aggiungi aliquota fiscale"
 
+#: templates/admin/cart/taxrate/change_form.html:87
 msgid "Geography"
 msgstr "Geografia"
 
+#: templates/admin/cart/taxrate/change_form.html:91
 msgid "Rules"
 msgstr "Regole"
 
+#: templates/admin/cart/taxrate/change_form.html:95
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:55
 msgid "Exemptions"
 msgstr "Esenzioni"
 
+#: templates/admin/cart/taxrate/change_form.html:142
 msgid ""
 "Define where this tax rate applies. Leave state/city empty for country-wide "
 "rates."
@@ -2372,10 +2914,12 @@ msgstr ""
 "Definisci dove si applica questa aliquota fiscale. Lascia vuoto stato/città "
 "per le aliquote a livello nazionale."
 
+#: templates/admin/cart/taxrate/change_form.html:194
 msgid "Exclude specific product types or categories from this tax rate."
 msgstr ""
 "Escludi determinati tipi o categorie di prodotti da questa aliquota fiscale."
 
+#: templates/admin/cart/taxrate/change_list.html:18
 msgid ""
 "Configure tax rules for your store. Tax rates are matched to customer "
 "addresses during checkout."
@@ -2383,42 +2927,52 @@ msgstr ""
 "Configura le regole fiscali per il tuo negozio. Le aliquote fiscali vengono "
 "abbinate agli indirizzi dei clienti durante il checkout."
 
+#: templates/admin/cart/taxrate/change_list.html:22
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:79
 msgid "Load Presets"
 msgstr "Carica preset"
 
+#: templates/admin/cart/taxrate/change_list.html:37
 msgid "Total Rules"
 msgstr "Regole totali"
 
+#: templates/admin/cart/taxrate/change_list.html:47
 msgid "Countries"
 msgstr "Paesi"
 
+#: templates/admin/cart/taxrate/change_list.html:52
 msgid "Tax Types"
 msgstr "Tipi di tassazione"
 
+#: templates/admin/cart/taxrate/change_list.html:64
 msgid "Search by name, country, state..."
 msgstr "Cerca per nome, paese, stato..."
 
+#: templates/admin/cart/taxrate/change_list.html:69
 msgid "All Countries"
 msgstr "Tutti i paesi"
 
+#: templates/admin/cart/taxrate/change_list.html:82
 msgid "Custom"
 msgstr "Personalizzato"
 
-msgid "Status"
-msgstr "Stato"
-
+#: templates/admin/cart/taxrate/change_list.html:97
 msgid "Clear"
 msgstr "Cancella"
 
+#: templates/admin/cart/taxrate/change_list.html:104
 msgid "Tax Rules"
 msgstr "Regole fiscali"
 
+#: templates/admin/cart/taxrate/change_list.html:107
 msgid "rules"
 msgstr "regole"
 
+#: templates/admin/cart/taxrate/change_list.html:120
 msgid "Load Tax Rate Presets"
 msgstr "Carica preset tasse"
 
+#: templates/admin/cart/taxrate/change_list.html:121
 msgid ""
 "Quickly add standard tax rates for your region. Existing rates will not be "
 "duplicated."
@@ -2426,40 +2980,51 @@ msgstr ""
 "Aggiungi rapidamente aliquote fiscali standard per la tua regione. Le "
 "aliquote esistenti non verranno duplicate."
 
+#: templates/admin/cart/taxrate/change_list.html:141
 msgid "rates"
 msgstr "tasse"
 
+#: templates/admin/cart/taxrate/change_list.html:147
 msgid "Load"
 msgstr "Carica"
 
+#: templates/admin/cart/taxrate/change_list.html:158
 msgid "Close"
 msgstr "Chiudi"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:17
 msgid "postal codes"
 msgstr "codici postali"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:35
 msgid "Shipping Taxed"
 msgstr "Tasse sulle spedizioni"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:40
 msgid "Compound"
 msgstr "Composto"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:65
 msgid "Delete"
 msgstr "Elimina"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:75
 msgid "No tax rates configured"
 msgstr "Nessuna tariffa delle tasse configurata"
 
+#: templates/admin/cart/taxrate/partials/tax_rate_cards.html:76
 msgid ""
 "Use 'Load Presets' to quickly add standard rates for your region, or add "
 "rates manually."
 msgstr ""
-"Utilizza 'Carica preset' per aggiungere rapidamente aliquote standard per la "
-"tua regione, o aggiungi le aliquote manualmente."
+"Utilizza 'Carica preset' per aggiungere rapidamente aliquote standard per la"
+" tua regione, o aggiungi le aliquote manualmente."
 
+#: views.py:57
 msgid "Get current cart"
 msgstr "Ottieni carrello corrente"
 
+#: views.py:59
 msgid ""
 "Get the current cart for authenticated user or session. Returns cart items, "
 "subtotal, discounts, taxes, and total. Automatically creates cart if it "
@@ -2469,9 +3034,11 @@ msgstr ""
 "Restituisce gli articoli del carrello, sottototale, sconti, tasse e totale. "
 "Crea automaticamente il carrello se non esiste."
 
+#: views.py:64
 msgid "Add item to cart"
 msgstr "Aggiungi articolo al carrello"
 
+#: views.py:66
 msgid ""
 "Add a product to cart with specified quantity. Optionally include variant "
 "ID, customizations, and notes. Validates stock availability and merges with "
@@ -2479,16 +3046,18 @@ msgid ""
 "include is_subscription=true with subscription_plan_id, payment_token_id, "
 "and optionally pricing_tier_id."
 msgstr ""
-"Aggiungi un prodotto al carrello con una quantità specificata. Opzionalmente "
-"includi l'ID della variante, personalizzazioni e note. Verifica la "
+"Aggiungi un prodotto al carrello con una quantità specificata. Opzionalmente"
+" includi l'ID della variante, personalizzazioni e note. Verifica la "
 "disponibilità in stock e unisciti all'elemento esistente del carrello se si "
 "tratta dello stesso prodotto/variante. Per i prodotti di abbonamento, "
 "include is_subscription=true con subscription_plan_id, payment_token_id e "
 "opzionalmente pricing_tier_id."
 
+#: views.py:72
 msgid "Update cart item"
 msgstr "Aggiorna articolo del carrello"
 
+#: views.py:74
 msgid ""
 "Update cart item quantity, customizations, or notes. Validates new quantity "
 "against stock availability. Returns updated cart with recalculated totals."
@@ -2497,9 +3066,11 @@ msgstr ""
 "carrello. Verifica la disponibilità di stock per la nuova quantità. "
 "Restituisce il carrello aggiornato con i totali ricalcolati."
 
+#: views.py:79
 msgid "Remove cart item"
 msgstr "Rimuovi articolo dal carrello"
 
+#: views.py:81
 msgid ""
 "Remove a specific item from cart. Recalculates cart totals and revalidates "
 "any applied vouchers against new cart total."
@@ -2508,9 +3079,11 @@ msgstr ""
 "e riconvalida eventuali buoni applicati rispetto al nuovo totale del "
 "carrello."
 
+#: views.py:86
 msgid "Clear cart"
 msgstr "Pulisci carrello"
 
+#: views.py:88
 msgid ""
 "Remove all items from cart. Also removes any applied vouchers. Cart object "
 "persists but becomes empty."
@@ -2518,9 +3091,11 @@ msgstr ""
 "Rimuovi tutti gli elementi dal carrello. Rimuove anche eventuali buoni "
 "applicati. L'oggetto carrello persiste ma diventa vuoto."
 
+#: views.py:93
 msgid "Apply voucher code"
 msgstr "Applica codice voucher"
 
+#: views.py:95
 msgid ""
 "Apply a voucher code to cart. Validates voucher eligibility, minimum "
 "purchase requirements, and usage limits. Calculates and applies discount to "
@@ -2530,63 +3105,47 @@ msgstr ""
 "requisiti minimi di acquisto e i limiti di utilizzo. Calcola e applica lo "
 "sconto al totale del carrello."
 
+#: views.py:100
 msgid "Remove voucher"
 msgstr "Rimuovi buono"
 
+#: views.py:102
 msgid ""
-"Remove a specific voucher from cart by code. Recalculates cart total without "
-"the voucher discount. User can reapply the voucher later if eligible."
+"Remove a specific voucher from cart by code. Recalculates cart total without"
+" the voucher discount. User can reapply the voucher later if eligible."
 msgstr ""
-"Rimuovi un buono specifico dal carrello tramite codice. Ri-calcola il totale "
-"del carrello senza lo sconto del buono. L'utente può riapplicare il buono in "
-"seguito se idoneo."
+"Rimuovi un buono specifico dal carrello tramite codice. Ri-calcola il totale"
+" del carrello senza lo sconto del buono. L'utente può riapplicare il buono "
+"in seguito se idoneo."
 
-msgid "Apply gift card"
-msgstr "Applica carta regalo"
-
-msgid ""
-"Apply a gift card code to cart. Validates gift card status, balance, and "
-"currency. Gift cards cannot be used to purchase other gift cards. Amount "
-"applied is limited to gift card balance or remaining cart total."
-msgstr ""
-"Applica un codice di carta regalo al carrello. Verifica lo stato, il saldo e "
-"la valuta della carta regalo. Le carte regalo non possono essere utilizzate "
-"per acquistare altre carte regalo. L'importo applicato è limitato al saldo "
-"della carta regalo o al totale rimanente del carrello."
-
-msgid "Remove gift card"
-msgstr "Rimuovi carta regalo"
-
-msgid ""
-"Remove a specific gift card from cart by code. The gift card balance is not "
-"affected until checkout is completed. User can reapply the gift card."
-msgstr ""
-"Rimuovi una carta regalo specifica dal carrello tramite codice. Il saldo "
-"della carta regalo non è influenzato fino al completamento del checkout. "
-"L'utente può riapplicare la carta regalo."
-
+#: views.py:107
 msgid "Get cart summary"
 msgstr "Ottieni riepilogo carrello"
 
+#: views.py:109
 msgid ""
 "Get lightweight cart summary with item count, subtotal, and total. Faster "
-"than full cart endpoint. Useful for header cart badge or quick total display."
+"than full cart endpoint. Useful for header cart badge or quick total "
+"display."
 msgstr ""
 "Ottieni un riepilogo leggero del carrello con il numero di articoli, il "
 "sottototale e il totale. Più veloce dell'endpoint del carrello completo. "
 "Utile per il badge del carrello nell'intestazione o per un rapido display "
 "del totale."
 
+#: views.py:246
 msgid ""
 "Component items cannot be modified directly. Update the parent product "
 "instead."
 msgstr ""
-"Gli elementi componenti non possono essere modificati direttamente. Aggiorna "
-"invece il prodotto principale."
+"Gli elementi componenti non possono essere modificati direttamente. Aggiorna"
+" invece il prodotto principale."
 
+#: views.py:360
 msgid "List user wishlists"
 msgstr "Elenca liste desideri utente"
 
+#: views.py:362
 msgid ""
 "Get all wishlists for the authenticated user. Users can have multiple "
 "wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
@@ -2597,20 +3156,25 @@ msgstr ""
 "'Matrimonio', 'Idee'). Restituisce i nomi delle liste dei desideri, i "
 "conteggi degli articoli e le impostazioni di privacy."
 
+#: views.py:367
 msgid "Create wishlist"
 msgstr "Crea lista desideri"
 
+#: views.py:369
 msgid ""
-"Create a new wishlist for the authenticated user. Specify name, description, "
-"and privacy setting (public/private). Public wishlists can be shared via URL."
+"Create a new wishlist for the authenticated user. Specify name, description,"
+" and privacy setting (public/private). Public wishlists can be shared via "
+"URL."
 msgstr ""
 "Crea una nuova lista dei desideri per l'utente autenticato. Specifica nome, "
 "descrizione e impostazione di privacy (pubblica/privata). Le liste dei "
 "desideri pubbliche possono essere condivise tramite URL."
 
+#: views.py:374
 msgid "Get wishlist details"
 msgstr "Ottieni dettagli lista desideri"
 
+#: views.py:376
 msgid ""
 "Get detailed information about a specific wishlist including all items, "
 "prices, availability, and sharing settings. Only accessible to wishlist "
@@ -2621,31 +3185,37 @@ msgstr ""
 "condivisione. Accessibile solo al proprietario della lista dei desideri a "
 "meno che non sia condivisa pubblicamente."
 
+#: views.py:381
 msgid "Update wishlist"
 msgstr "Aggiorna lista desideri"
 
+#: views.py:383
 msgid ""
 "Update wishlist information including name, description, or privacy "
 "settings. Can make wishlist public or private. Only owner can update."
 msgstr ""
-"Aggiorna le informazioni della lista dei desideri, inclusi nome, descrizione "
-"o impostazioni sulla privacy. È possibile rendere la lista dei desideri "
+"Aggiorna le informazioni della lista dei desideri, inclusi nome, descrizione"
+" o impostazioni sulla privacy. È possibile rendere la lista dei desideri "
 "pubblica o privata. Solo il proprietario può aggiornarla."
 
+#: views.py:388
 msgid "Partially update wishlist"
 msgstr "Aggiorna parzialmente lista desideri"
 
+#: views.py:390
 msgid ""
 "Update specific wishlist fields without sending full wishlist data. Useful "
 "for toggling privacy or renaming wishlist."
 msgstr ""
 "Aggiorna campi specifici della lista dei desideri senza inviare i dati "
-"completi della lista. Utile per attivare/disattivare la privacy o rinominare "
-"la lista dei desideri."
+"completi della lista. Utile per attivare/disattivare la privacy o rinominare"
+" la lista dei desideri."
 
+#: views.py:395
 msgid "Delete wishlist"
 msgstr "Elimina lista desideri"
 
+#: views.py:397
 msgid ""
 "Permanently delete a wishlist and all its items. Cannot be undone. Only "
 "owner can delete."
@@ -2653,9 +3223,11 @@ msgstr ""
 "Elimina definitivamente una lista dei desideri e tutti i suoi elementi. Non "
 "è possibile annullare. Solo il proprietario può eliminarla."
 
+#: views.py:402
 msgid "Add item to wishlist"
 msgstr "Aggiungi articolo alla lista desideri"
 
+#: views.py:404
 msgid ""
 "Add a product to wishlist with optional variant, quantity, and notes. "
 "Prevents duplicates. Can add to default wishlist or specify wishlist ID."
@@ -2664,133 +3236,608 @@ msgstr ""
 "opzionali. Impedisce duplicati. Puoi aggiungerlo alla lista dei desideri "
 "predefinita o specificare l'ID della lista dei desideri."
 
+#: views.py:409
 msgid "Remove item from wishlist"
 msgstr "Rimuovi articolo dalla lista desideri"
 
+#: views.py:411
 msgid ""
-"Remove a specific item from wishlist. Item can be added back later. Does not "
-"affect product availability."
+"Remove a specific item from wishlist. Item can be added back later. Does not"
+" affect product availability."
 msgstr ""
 "Rimuovi un elemento specifico dalla lista dei desideri. L'elemento può "
 "essere aggiunto nuovamente in un secondo momento. Non influisce sulla "
 "disponibilità del prodotto."
 
+#: views.py:416
 msgid "Move item to cart"
 msgstr "Sposta articolo nel carrello"
 
+#: views.py:418
 msgid ""
 "Move a wishlist item directly to shopping cart. Validates stock "
 "availability. Item is removed from wishlist after successful cart addition."
 msgstr ""
 "Sposta un elemento della lista dei desideri direttamente nel carrello. "
-"Verifica la disponibilità delle scorte. L'elemento viene rimosso dalla lista "
-"dei desideri dopo l'aggiunta corretta al carrello."
+"Verifica la disponibilità delle scorte. L'elemento viene rimosso dalla lista"
+" dei desideri dopo l'aggiunta corretta al carrello."
 
+#: views.py:423
 msgid "Get public wishlist by share slug"
 msgstr "Ottieni la lista dei desideri pubblica tramite slug di condivisione"
 
+#: views.py:425
 msgid ""
 "View a public wishlist using its share URL slug. Anyone with the link can "
-"view public wishlists. Useful for gift registries and wish lists shared with "
-"family/friends."
+"view public wishlists. Useful for gift registries and wish lists shared with"
+" family/friends."
 msgstr ""
 "Visualizza una lista dei desideri pubblica utilizzando il suo slug URL di "
 "condivisione. Chiunque abbia il link può visualizzare le liste dei desideri "
 "pubbliche. Utile per registri dei regali e liste dei desideri condivise con "
 "familiari/amici."
 
+#: views.py:430
+#| msgid "Get wishlist details"
+msgid "Get wishlisted product IDs"
+msgstr "Ottieni ID dei prodotti desiderati"
+
+#: views.py:432
+msgid ""
+"Returns a mapping of product IDs to wishlist item IDs for the current user's"
+" default wishlist. Used by the storefront to show wishlist heart icons on "
+"product listings without fetching full wishlist data."
+msgstr ""
+"Restituisce una mappatura degli ID dei prodotti agli ID degli elementi della"
+" lista dei desideri per la lista dei desideri predefinita dell'utente "
+"corrente. Utilizzato dal negozio online per mostrare gli iconi a forma di "
+"cuore della lista dei desideri nei elenchi dei prodotti senza recuperare i "
+"dati completi della lista dei desideri."
+
+#: views.py:436
+msgid "Map of product IDs to wishlist item IDs"
+msgstr ""
+"Mappa degli ID dei prodotti sugli ID degli elementi della lista dei desideri"
+
+#: views.py:444
+msgid "Keys are product IDs (as strings), values are wishlist item IDs"
+msgstr ""
+"Le chiavi sono gli ID dei prodotti (come stringhe), i valori sono gli ID "
+"degli elementi della lista dei desideri"
+
+#: views.py:451
+#| msgid "Account creation required to proceed"
+msgid "Authentication required"
+msgstr "Autenticazione richiesta"
+
+#: views.py:523
 msgid "ID of the wishlist item to remove"
 msgstr "ID dell'elemento della lista dei desideri da rimuovere"
 
+#: views.py:542
 msgid "ID of the wishlist item to move to cart"
 msgstr "ID dell'elemento della lista dei desideri da spostare nel carrello"
 
+#: views.py:573
 msgid "Share slug of the public wishlist"
 msgstr "Condividi lo slug della lista dei desideri pubblica"
 
+#: views.py:589
 msgid "Wishlist not found"
 msgstr "Elenco dei desideri non trovato"
 
+#: views.py:612
 msgid "Get checkout session"
 msgstr "Ottieni sessione di checkout"
 
+#: views.py:613
 msgid "Set shipping address"
 msgstr "Imposta indirizzo di spedizione"
 
+#: views.py:614
 msgid "Set billing address"
 msgstr "Imposta indirizzo di fatturazione"
 
+#: views.py:616
 msgid "Get available shipping methods"
 msgstr "Ottieni metodi di spedizione disponibili"
 
+#: views.py:620
 msgid "Get available payment providers"
 msgstr "Ottieni fornitori di pagamento disponibili"
 
+#: views.py:622
 msgid ""
-"Returns payment providers available for the customer's country and currency. "
-"Filters based on shipping countries, provider capabilities, and merchant "
+"Returns payment providers available for the customer's country and currency."
+" Filters based on shipping countries, provider capabilities, and merchant "
 "configuration."
 msgstr ""
 "Restituisce i fornitori di pagamento disponibili per il paese e la valuta "
 "del cliente. I filtri sono basati sui paesi di spedizione, sulle capacità "
 "del fornitore e sulla configurazione del commerciante."
 
+#: views.py:625
 msgid "Set shipping method"
 msgstr "Imposta metodo di spedizione"
 
+#: views.py:626
 msgid "Set payment method"
 msgstr "Imposta metodo di pagamento"
 
+#: views.py:627
 msgid "Validate checkout"
 msgstr "Conferma checkout"
 
+#: views.py:628
 msgid "Complete checkout"
 msgstr "Completa checkout"
 
+#: views.py:631
+#| msgid "discount applied by"
+msgid "List applied tenders"
+msgstr "Elenca i pagamenti applicati"
+
+#: views.py:633
+msgid ""
+"Gift card and store credit holds against this checkout, plus the amount "
+"still due. amount_due — not total_amount — is what a payment provider should"
+" be asked to charge; it can legitimately be zero when tenders cover the "
+"whole order. Includes the signed-in customer's spendable wallet balance "
+"(null for guests, missing wallets, frozen wallets, or a currency mismatch)."
+msgstr ""
+"Blocco della gift card e del credito del negozio su questo checkout, più "
+"l'importo ancora dovuto. amount_due — non total_amount — è l'importo che il "
+"fornitore di pagamento dovrebbe essere chiesto di addebitare; può "
+"legittimamente essere zero quando i mezzi di pagamento coprono l'intero "
+"ordine. Include il saldo spendibile del portafoglio del cliente autenticato "
+"(null per gli ospiti, portafogli mancanti, congelati o non corrispondenza di"
+" valuta)."
+
+#: views.py:643
+#| msgid "Apply gift card"
+msgid "Apply a gift card"
+msgstr "Applica una carta regalo"
+
+#: views.py:645
+msgid ""
+"Places a hold on the card as a PAYMENT, not a discount: it settles the post-"
+"tax total and never reduces the tax base. Nothing is debited until payment "
+"is confirmed, so an abandoned checkout costs the customer nothing. Error "
+"messages are deliberately uniform — this endpoint sits on stored value and "
+"must not act as an enumeration oracle."
+msgstr ""
+"Pone un blocco sulla carta come PAGAMENTO, non come sconto: addebita il "
+"totale post-imposta e mai riduce la base imponibile. Niente viene addebitato"
+" fino a quando il pagamento non è confermato, quindi un checkout abbandonato"
+" non costa nulla al cliente. I messaggi di errore sono deliberatamente "
+"uniformi — questo endpoint si basa su un valore archiviato e non deve agire "
+"come un oracolo di enumerazione."
+
+#: views.py:655
+#| msgid "Apply gift card"
+msgid "Apply store credit"
+msgstr "Applica credito in negozio"
+
+#: views.py:657
+msgid ""
+"Holds the signed-in customer's wallet balance against this checkout, up to "
+"the amount due. Guests receive 403 — wallets belong to accounts. Single-"
+"currency: a wallet cannot part-pay an order in another currency."
+msgstr ""
+"Mantiene il saldo del portafoglio del cliente autenticato per questa "
+"procedura di pagamento, fino all'importo dovuto. Gli ospiti ricevono 403 — i"
+" portafogli appartengono agli account. Moneta unica: un portafoglio non può "
+"pagare parzialmente un ordine in un'altra valuta."
+
+#: views.py:665
+#| msgid "Remove all zones"
+msgid "Remove a tender"
+msgstr "Rimuovi un pagamento"
+
+#: views.py:667
+msgid ""
+"Releases a hold. Nothing was debited, so this only frees the reservation; "
+"the checkout's amount_due rises accordingly."
+msgstr ""
+"Rilascia il blocco. Niente è stato addebitato, quindi questo libera solo la "
+"riserva; l'importo dovuto alla checkout aumenta di conseguenza."
+
+#: views.py:972
+msgid "Store credit"
+msgstr "Credito in negozio"
+
+#: views.py:999
+#| msgid "Gift card has expired"
+msgid "Gift card code is required"
+msgstr "È richiesto il codice della carta regalo"
+
+#: views.py:1010 views.py:1064
+msgid "This order is already fully paid"
+msgstr "Questo ordine è già completamente pagato"
+
+#: views.py:1054
+msgid "Sign in to pay with your wallet"
+msgstr "Accedi per pagare con il tuo portafoglio"
+
+#: views.py:1093
+#| msgid "Address not found"
+msgid "Tender not found"
+msgstr "Pagamento non trovato"
+
+#: views.py:1120
 msgid "Get recently viewed products"
 msgstr "Ottieni prodotti visualizzati di recente"
 
+#: views.py:1121
 msgid "Get recently viewed details"
 msgstr "Ottieni dettagli prodotti visualizzati di recente"
 
+#: views.py:1150
 msgid "List shipping methods"
 msgstr "Elenca metodi di spedizione"
 
+#: views.py:1151
 msgid "Get shipping method details"
 msgstr "Ottieni dettagli metodo di spedizione"
 
+#: views.py:1174
 msgid "List tax rates"
 msgstr "Elenca tasse"
 
+#: views.py:1175
 msgid "Get tax rate details"
 msgstr "Ottieni dettagli tassa"
 
+#: views.py:1176
 msgid "Create tax rate"
 msgstr "Crea tassa"
 
+#: views.py:1177
 msgid "Update tax rate"
 msgstr "Aggiorna tassa"
 
+#: views.py:1178
 msgid "Partial update tax rate"
 msgstr "Aggiorna parzialmente aliquota IVA"
 
+#: views.py:1179
 msgid "Delete tax rate"
 msgstr "Elimina tassa"
 
+#: views.py:1190
 msgid "Calculate applicable taxes"
 msgstr "Calcola tasse applicabili"
 
+#: views.py:1235
 msgid "Tax rates grouped by country"
 msgstr "Aliquote IVA raggruppate per paese"
 
+#: views.py:1254
 msgid "Load preset tax rates"
 msgstr "Carica tasse predefinite"
 
+#: views.py:1285
 msgid "List tax preset groups"
 msgstr "Elenca gruppi tasse predefinite"
 
+#: views.py:1286
 msgid "Get preset group details"
 msgstr "Ottieni dettagli gruppo predefinito"
 
+#: views.py:1297
 msgid "List rates in a preset group"
 msgstr "Elenca le tariffe in un gruppo predefinito"
+
+#~ msgid "Invalid gift card code"
+#~ msgstr "Codice carta regalo non valido"
+
+#~ msgid "Gift card already applied"
+#~ msgstr "Carta regalo già applicata"
+
+#~ msgid "Gift card has been fully redeemed"
+#~ msgstr "La gift card è stata completamente utilizzata"
+
+#~ msgid "Gift card cannot be used"
+#~ msgstr "La carta regalo non può essere utilizzata"
+
+#, python-brace-format
+#~ msgid ""
+#~ "Currency mismatch. Gift card is in {card_currency}, cart is in "
+#~ "{cart_currency}"
+#~ msgstr ""
+#~ "Discrepanza di valuta. La gift card è in {card_currency}, il carrello è in "
+#~ "{cart_currency}"
+
+#, python-brace-format
+#~ msgid ""
+#~ "This gift card is in {card_currency}. Please switch your currency to "
+#~ "{card_currency} to use it."
+#~ msgstr ""
+#~ "Questo buono regalo è in {card_currency}. Passa alla valuta {card_currency} "
+#~ "per utilizzarlo."
+
+#~ msgid "Gift cards cannot be used to purchase other gift cards"
+#~ msgstr ""
+#~ "Le gift card non possono essere utilizzate per acquistare altre gift card"
+
+#~ msgid "Cart total is already covered"
+#~ msgstr "Il totale del carrello è già coperto"
+
+#~ msgid "Unable to process gift card currency conversion"
+#~ msgstr "Impossibile elaborare la conversione della valuta della gift card"
+
+#~ msgid "Gift card applied successfully"
+#~ msgstr "Carta regalo applicata con successo"
+
+#~ msgid "Free Shipping"
+#~ msgstr "Spedizione gratuita"
+
+#~ msgid "Weight Based"
+#~ msgstr "In base al peso"
+
+#~ msgid "Price Based"
+#~ msgstr "In base al prezzo"
+
+#~ msgid "Minimum cart value to qualify"
+#~ msgstr "Valore minimo del carrello per essere idoneo"
+
+#~ msgid "Minimum Order Value"
+#~ msgstr "Valore minimo dell'ordine"
+
+#~ msgid "Maximum cart value to qualify"
+#~ msgstr "Valore massimo del carrello per essere idoneo"
+
+#~ msgid "Maximum Order Value"
+#~ msgstr "Valore massimo dell'ordine"
+
+#~ msgid "Minimum cart weight (kg)"
+#~ msgstr "Peso minimo del carrello (kg)"
+
+#~ msgid "Minimum Weight"
+#~ msgstr "Peso minimo"
+
+#~ msgid "Maximum cart weight (kg)"
+#~ msgstr "Peso massimo del carrello (kg)"
+
+#~ msgid "Maximum Weight"
+#~ msgstr "Peso massimo"
+
+#, python-brace-format
+#~ msgid "Minimum order value {value} required"
+#~ msgstr "Valore minimo dell'ordine {value} richiesto"
+
+#, python-brace-format
+#~ msgid "Maximum order value {value} exceeded"
+#~ msgstr "Valore massimo dell'ordine {value} superato"
+
+#, python-brace-format
+#~ msgid "Minimum weight {weight}kg required"
+#~ msgstr "Peso minimo {weight}kg richiesto"
+
+#, python-brace-format
+#~ msgid "Maximum weight {weight}kg exceeded"
+#~ msgstr "Peso massimo {weight}kg superato"
+
+#~ msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+#~ msgstr "Tipi di prodotto esenti da questa tassa (es. ['digital', 'service'])"
+
+#~ msgid "Amount in base currency (used for cart calculations)"
+#~ msgstr "Importo in valuta base (utilizzato per i calcoli del carrello)"
+
+#~ msgid "Original Currency Amount"
+#~ msgstr "Importo in Valuta Originale"
+
+#~ msgid ""
+#~ "Discount in the gift card's native currency (for foreign-currency gift "
+#~ "cards)"
+#~ msgstr ""
+#~ "Sconto in valuta nativa della gift card (per gift card in valuta estera)"
+
+#~ msgid "Exchange Rate"
+#~ msgstr "Tasso di Cambio"
+
+#~ msgid "Rate: gift card currency -> base currency at time of application"
+#~ msgstr ""
+#~ "Tasso: valuta della gift card -> valuta base al momento dell'applicazione"
+
+#~ msgid "Applied At"
+#~ msgstr "Applicato il"
+
+#~ msgid "Applied Gift Card"
+#~ msgstr "Carta regalo applicata"
+
+#~ msgid "Applied Gift Cards"
+#~ msgstr "Carte regalo applicate"
+
+#~ msgid "This gift card cannot be used"
+#~ msgstr "Questa gift card non può essere utilizzata"
+
+#~ msgid "Discount amount exceeds gift card balance"
+#~ msgstr "L'importo dello sconto supera il saldo della gift card"
+
+#~ msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+#~ msgstr "Codice carta regalo (es. GC-XXXX-XXXX-XXXX)"
+
+#~ msgid "Amount applied from this gift card (in base currency)"
+#~ msgstr "Importo applicato da questa gift card (in valuta base)"
+
+#~ msgid "Remaining balance on gift card after this application"
+#~ msgstr "Saldo residuo sulla gift card dopo questa applicazione"
+
+#~ msgid "Base currency code"
+#~ msgstr "Codice Valuta Base"
+
+#~ msgid "Gift card's native currency code"
+#~ msgstr "Codice Valuta Nativa della Carta Regalo"
+
+#~ msgid ""
+#~ "Discount in gift card's native currency (for foreign-currency gift cards)"
+#~ msgstr ""
+#~ "Sconto in valuta nativa della gift card (per gift card in valuta estera)"
+
+#~ msgid "Gift card removed"
+#~ msgstr "Carta regalo rimossa"
+
+#~ msgid "Gift card not found in cart"
+#~ msgstr "Gift card non trovata nel carrello"
+
+#~ msgid "Free Shipping - No charge"
+#~ msgstr "Spedizione gratuita - Nessun costo"
+
+#~ msgid "Weight Based - Calculate by cart weight"
+#~ msgstr "Basato sul peso - Calcolato in base al peso del carrello"
+
+#~ msgid "Price Based - Calculate by cart subtotal"
+#~ msgstr "Basato sul prezzo - Calcolato in base al sottototale del carrello"
+
+#~ msgid "Free Shipping:"
+#~ msgstr "Spedizione gratuita:"
+
+#~ msgid "No shipping charge"
+#~ msgstr "Nessun costo di spedizione"
+
+#~ msgid "Weight/Price Based:"
+#~ msgstr "Basato su peso/prezzo:"
+
+#~ msgid "Calculate using rate tables"
+#~ msgstr "Calcola utilizzando tabelle di tariffa"
+
+#~ msgid ""
+#~ "Define when this shipping method should be available based on cart value and"
+#~ " weight."
+#~ msgstr ""
+#~ "Definisci quando questo metodo di spedizione dovrebbe essere disponibile in "
+#~ "base al valore del carrello e al peso."
+
+#~ msgid "Order Value Restrictions"
+#~ msgstr "Limiti del valore dell'ordine"
+
+#~ msgid "Set minimum or maximum cart subtotal requirements for this method."
+#~ msgstr ""
+#~ "Imposta i requisiti minimi o massimi per il sottototale del carrello per "
+#~ "questo metodo."
+
+#~ msgid "Method only available if cart subtotal is at least this amount"
+#~ msgstr ""
+#~ "Il metodo è disponibile solo se il sottototale del carrello è almeno questo "
+#~ "importo"
+
+#~ msgid "No maximum"
+#~ msgstr "Nessun massimo"
+
+#~ msgid "Method only available if cart subtotal is below this amount"
+#~ msgstr ""
+#~ "Il metodo è disponibile solo se il sottototale del carrello è inferiore a "
+#~ "questo importo"
+
+#~ msgid "Free shipping for orders over $50: Set minimum to 50.00"
+#~ msgstr ""
+#~ "Spedizione gratuita per ordini superiori a $50: Imposta il minimo a 50.00"
+
+#~ msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+#~ msgstr ""
+#~ "Spedizione economica per ordini inferiori a $100: Imposta il massimo a "
+#~ "100.00"
+
+#~ msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+#~ msgstr ""
+#~ "Spedizione standard per $25-$200: Imposta entrambi i minimi e i massimi"
+
+#~ msgid "Weight Restrictions"
+#~ msgstr "Limiti di peso"
+
+#~ msgid "Set minimum or maximum total cart weight requirements for this method."
+#~ msgstr ""
+#~ "Imposta i requisiti minimi o massimi per il peso totale del carrello per "
+#~ "questo metodo."
+
+#~ msgid "Minimum Weight (kg)"
+#~ msgstr "Peso minimo (kg)"
+
+#~ msgid "Method only available if total cart weight is at least this value"
+#~ msgstr ""
+#~ "Il metodo è disponibile solo se il peso totale del carrello è almeno questo "
+#~ "valore"
+
+#~ msgid "Maximum Weight (kg)"
+#~ msgstr "Peso massimo (kg)"
+
+#~ msgid "Method only available if total cart weight is below this value"
+#~ msgstr ""
+#~ "Il metodo è disponibile solo se il peso totale del carrello è inferiore a "
+#~ "questo valore"
+
+#~ msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+#~ msgstr ""
+#~ "Spedizione per pacchi leggeri per pacchi inferiori a 2kg: Imposta il massimo"
+#~ " a 2.00"
+
+#~ msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+#~ msgstr ""
+#~ "Spedizione per carichi pesanti per pacchi superiori a 20kg: Imposta il "
+#~ "minimo a 20.00"
+
+#~ msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+#~ msgstr ""
+#~ "Spedizione standard per 0.5kg-10kg: Imposta entrambi i minimi e i massimi"
+
+#~ msgid "Weight-Based Rates:"
+#~ msgstr "Tariffe basate sul peso:"
+
+#~ msgid "Price-Based Rates:"
+#~ msgstr "Tariffe basate sul prezzo:"
+
+#~ msgid ""
+#~ "You'll be able to configure tiered rates based on cart subtotal after the "
+#~ "method is created."
+#~ msgstr ""
+#~ "Dopo la creazione del metodo, potrai configurare tariffe a livelli basate "
+#~ "sul sottototale del carrello."
+
+#~ msgid "Min Order Value:"
+#~ msgstr "Valore minimo dell'ordine:"
+
+#~ msgid "Max Order Value:"
+#~ msgstr "Valore massimo dell'ordine:"
+
+#~ msgid "Min Weight:"
+#~ msgstr "Peso minimo:"
+
+#~ msgid "Max Weight:"
+#~ msgstr "Peso massimo:"
+
+#~ msgid ""
+#~ "No eligibility conditions set - method available for all cart values and "
+#~ "weights"
+#~ msgstr ""
+#~ "Nessuna condizione di idoneità impostata - il metodo è disponibile per tutti"
+#~ " i valori del carrello e i pesi"
+
+#~ msgid "Optional: Restrict availability based on order value or weight."
+#~ msgstr ""
+#~ "Opzionale: Limitare la disponibilità in base al valore dell'ordine o al "
+#~ "peso."
+
+#~ msgid "Order Value:"
+#~ msgstr "Valore dell'ordine:"
+
+#~ msgid "Weight:"
+#~ msgstr "Peso:"
+
+#~ msgid ""
+#~ "Apply a gift card code to cart. Validates gift card status, balance, and "
+#~ "currency. Gift cards cannot be used to purchase other gift cards. Amount "
+#~ "applied is limited to gift card balance or remaining cart total."
+#~ msgstr ""
+#~ "Applica un codice di carta regalo al carrello. Verifica lo stato, il saldo e"
+#~ " la valuta della carta regalo. Le carte regalo non possono essere utilizzate"
+#~ " per acquistare altre carte regalo. L'importo applicato è limitato al saldo "
+#~ "della carta regalo o al totale rimanente del carrello."
+
+#~ msgid ""
+#~ "Remove a specific gift card from cart by code. The gift card balance is not "
+#~ "affected until checkout is completed. User can reapply the gift card."
+#~ msgstr ""
+#~ "Rimuovi una carta regalo specifica dal carrello tramite codice. Il saldo "
+#~ "della carta regalo non è influenzato fino al completamento del checkout. "
+#~ "L'utente può riapplicare la carta regalo."

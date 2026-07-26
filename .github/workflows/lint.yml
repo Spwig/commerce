@@ -2,9 +2,16 @@ name: Lint
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
+
+# Collapse duplicate runs for the same PR/ref (Gitea can emit opened +
+# synchronize back-to-back for API-created PRs): the newer run cancels
+# the older one instead of both burning a runner slot.
+concurrency:
+  group: lint-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # All four lint checks are blocking as of the Phase 2/3/4/5 rollouts.

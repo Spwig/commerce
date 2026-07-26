@@ -17,7 +17,7 @@ def award_order_points(order):
         return None
 
     try:
-        member = LoyaltyMember.objects.get(user=order.user)
+        member = LoyaltyMember.objects.get(customer=order.user)
     except LoyaltyMember.DoesNotExist:
         return None
 

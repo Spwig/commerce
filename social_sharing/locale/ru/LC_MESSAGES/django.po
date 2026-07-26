@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,149 +16,192 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
+#: admin.py:68 admin.py:164 templates/admin/social_sharing/dashboard.html:256
+#: templates/admin/social_sharing/dashboard.html:308
+#: templates/admin/social_sharing/dashboard.html:381
+#: templates/admin/social_sharing/sharecount/change_list.html:52
+#: templates/admin/social_sharing/socialshare/change_list.html:52
 msgid "Platform"
 msgstr "Платформа"
 
+#: admin.py:76
 msgid "Shared Content"
 msgstr "Поделенное содержимое"
 
+#: admin.py:86 templates/admin/social_sharing/dashboard.html:322
+#: templates/admin/social_sharing/partials/share_cards.html:78
 msgid "Anonymous"
 msgstr "Анонимный"
 
+#: admin.py:88 templates/admin/social_sharing/dashboard.html:208
+#: templates/admin/social_sharing/dashboard.html:307
 msgid "User"
 msgstr "Пользователь"
 
+#: admin.py:172 templates/admin/social_sharing/dashboard.html:309
+#: templates/admin/social_sharing/dashboard.html:380
 msgid "Content"
 msgstr "Контент"
 
+#: admin.py:183 models.py:192
 msgid "Share Count"
 msgstr "Количество поделенных"
 
+#: admin.py:243
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:66
 msgid "Placement"
 msgstr "Размещение"
 
+#: admin.py:252
 msgid "Configure where social share buttons appear automatically"
 msgstr ""
 "Настройте, где автоматически отображаются кнопки социального распространения"
 
+#: admin.py:256
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:70
 msgid "Appearance"
 msgstr "Внешний вид"
 
+#: admin.py:269
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:74
 msgid "Tracking"
 msgstr "Отслеживание"
 
+#: admin.py:278
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:211
 msgid "Metadata"
 msgstr "Метаданные"
 
+#: api/serializers.py:17
 msgid "Model name (lowercase) - e.g., 'product', 'page', 'post'"
 msgstr "Имя модели (в нижнем регистре) - например, 'product', 'page', 'post'"
 
+#: api/serializers.py:20
 msgid "ID of the content being shared"
 msgstr "ID содержимого, которое делится"
 
+#: api/serializers.py:25
 msgid "Social media platform"
 msgstr "Платформа социальных сетей"
 
+#: api/serializers.py:27
 msgid "Full URL being shared"
 msgstr "Полный URL, который будет поделен"
 
+#: api/views.py:147
 msgid "Track social media share"
 msgstr "Отслеживать социальное медиа-поделиться"
 
+#: api/views.py:148
 msgid ""
-"Track a social media share event for a product or other content. Records "
-"platform, URL, user, session, IP, and device type.\n"
+"Track a social media share event for a product or other content. Records platform, URL, user, session, IP, and device type.\n"
 "\n"
-"    Use this endpoint when a user shares content to social media platforms. "
-"Helps measure content virality and track most-shared products.\n"
+"    Use this endpoint when a user shares content to social media platforms. Helps measure content virality and track most-shared products.\n"
 "\n"
-"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"    **Security**: Authentication required to prevent spam and database "
-"pollution. Rate limited to 50 requests/hour per user.\n"
+"    **Security**: Authentication required to prevent spam and database pollution. Rate limited to 50 requests/hour per user.\n"
 "\n"
-"    **Use Case**: Call when user clicks a social share button to track "
-"sharing behavior and measure content engagement."
+"    **Use Case**: Call when user clicks a social share button to track sharing behavior and measure content engagement."
 msgstr ""
-"Отслеживайте событие обмена в социальных сетях для продукта или другого "
-"контента. Записываются платформа, URL, пользователь, сессия, IP-адрес и тип "
-"устройства.\n"
+"Отслеживайте событие обмена в социальных сетях для продукта или другого контента. Записываются платформа, URL, пользователь, сессия, IP-адрес и тип устройства.\n"
 "\n"
-"Используйте этот конечный пункт, когда пользователь делится контентом в "
-"социальных сетях. Помогает измерять вирусность контента и отслеживать "
-"наиболее часто делящиеся продукты.\n"
+"Используйте этот конечный пункт, когда пользователь делится контентом в социальных сетях. Помогает измерять вирусность контента и отслеживать наиболее часто делящиеся продукты.\n"
 "\n"
-"**Поддерживаемые платформы**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"**Поддерживаемые платформы**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"**Безопасность**: Требуется аутентификация, чтобы предотвратить спам и "
-"загрязнение базы данных. Ограничен по скорости до 50 запросов в час на "
-"пользователя.\n"
+"**Безопасность**: Требуется аутентификация, чтобы предотвратить спам и загрязнение базы данных. Ограничен по скорости до 50 запросов в час на пользователя.\n"
 "\n"
-"**Сценарий использования**: Вызовите, когда пользователь нажимает на кнопку "
-"обмена в социальных сетях, чтобы отслеживать поведение обмена и измерять "
-"вовлеченность контента."
+"**Сценарий использования**: Вызовите, когда пользователь нажимает на кнопку обмена в социальных сетях, чтобы отслеживать поведение обмена и измерять вовлеченность контента."
 
+#: api/views.py:168 api/views.py:283
 msgid "Invalid request, missing required fields, or invalid platform"
 msgstr ""
-"Недопустимый запрос, отсутствуют обязательные поля или недопустимая платформа"
+"Недопустимый запрос, отсутствуют обязательные поля или недопустимая "
+"платформа"
 
+#: api/views.py:170 api/views.py:286 api/views.py:422 api/views.py:486
 msgid "Internal server error"
 msgstr "Внутренняя ошибка сервера"
 
+#: api/views.py:264
+#| msgid "Track social media share"
+msgid "Track social media share (anonymous)"
+msgstr "Отслеживать социальное медиа-поделиться (анонимно)"
+
+#: api/views.py:265
+msgid ""
+"Anonymous variant of the share tracking endpoint for guest visitors.\n"
+"\n"
+"    Identical payload to the authenticated endpoint, but does not require a logged-in user. The resulting `SocialShare` row is stored with `user=None` and is linked only via the visitor's session key, IP, user agent, and device type.\n"
+"\n"
+"    **Security**: No authentication required, but aggressively rate-limited (20 requests/hour per IP) to prevent spam and database pollution. Bots are not filtered at the endpoint level — consumers should apply their own bot detection if needed.\n"
+"\n"
+"    **Use Case**: Headless storefronts where most visitors sharing content (product pages, blog posts) are not logged in. The authenticated `track_share` endpoint would exclude all guest shares from analytics, which is the majority of real traffic."
+msgstr ""
+"Анонимный вариант конечной точки для отслеживания совместного использования для гостей.\n"
+"\n"
+"Полезная нагрузка идентична аутентифицированной конечной точке, но не требует входа в систему. Полученная строка `SocialShare` сохраняется с `user=None` и связана только через ключ сеанса посетителя, IP-адрес, пользовательский агент и тип устройства.\n"
+"\n"
+"**Безопасность**: Аутентификация не требуется, но частота запросов строго ограничена (20 запросов в час на IP-адрес), чтобы предотвратить спам и загрязнение базы данных. Боты не фильтруются на уровне конечной точки — потребителям следует применить собственное обнаружение ботов, если это необходимо.\n"
+"\n"
+"**Сценарий использования**: Бессерверные магазины, где большинство посетителей, делящихся контентом (страницы товаров, блоги), не авторизованы. Аутентифицированная конечная точка `track_share` исключит все совместные использования гостей из аналитики, что составляет большинство реального трафика."
+
+#: api/views.py:285
+msgid "Rate limit exceeded"
+msgstr "Превышен лимит запросов"
+
+#: api/views.py:401
 msgid "Get share counts for content"
 msgstr "Получить количество поделиться для контента"
 
+#: api/views.py:402
 msgid ""
 "Get aggregated share counts by platform for a specific piece of content.\n"
 "\n"
-"    Returns counts for each social platform plus a total. Useful for "
-"displaying share counts on product pages, blog posts, etc.\n"
+"    Returns counts for each social platform plus a total. Useful for displaying share counts on product pages, blog posts, etc.\n"
 "\n"
 "    **No authentication required** - share counts are public data."
 msgstr ""
-"Получите агрегированные данные о количестве делится по платформам для "
-"конкретного контента.\n"
+"Получите агрегированные данные о количестве делится по платформам для конкретного контента.\n"
 "\n"
-"Возвращает количество для каждой социальной платформы, а также общее "
-"количество. Полезно для отображения данных о количестве делится на страницах "
-"продуктов, блог-постах и т.д.\n"
+"Возвращает количество для каждой социальной платформы, а также общее количество. Полезно для отображения данных о количестве делится на страницах продуктов, блог-постах и т.д.\n"
 "\n"
-"**Аутентификация не требуется** - данные о количестве делится являются "
-"публичными."
+"**Аутентификация не требуется** - данные о количестве делится являются публичными."
 
+#: api/views.py:421
 msgid "Invalid content type"
 msgstr "Неверный тип контента"
 
+#: api/views.py:472
 msgid "Get current user's share history"
 msgstr "Получить историю делегирования текущего пользователя"
 
+#: api/views.py:473
 msgid ""
-"Get the authenticated user's social sharing history, including total shares, "
-"breakdown by platform, and recent share events.\n"
+"Get the authenticated user's social sharing history, including total shares, breakdown by platform, and recent share events.\n"
 "\n"
 "    **Authentication required.**"
 msgstr ""
-"Получите историю социального делится аутентифицированного пользователя, "
-"включая общее количество делится, разбивку по платформам и недавние события "
-"делится.\n"
+"Получите историю социального делится аутентифицированного пользователя, включая общее количество делится, разбивку по платформам и недавние события делится.\n"
 "\n"
 "**Требуется аутентификация.**"
 
+#: api/views.py:485
 msgid "Authentication required"
 msgstr "Требуется аутентификация"
 
+#: apps.py:8
 msgid "Social Sharing"
 msgstr "Социальное разделение"
 
+#: forms.py:27 settings_models.py:152
 msgid "Enabled Platforms"
 msgstr "Включенные платформы"
 
+#: forms.py:29
 msgid ""
 "Select which platforms to show. If none selected, all platforms will be "
 "shown."
@@ -166,533 +209,759 @@ msgstr ""
 "Выберите, какие платформы отображать. Если ничего не выбрано, будут "
 "отображаться все платформы."
 
+#: models.py:35 templates/admin/social_sharing/partials/share_cards.html:39
+#: templates/admin/social_sharing/partials/sharecount_cards.html:39
+#: templates/admin/social_sharing/sharecount/change_list.html:56
+#: templates/admin/social_sharing/socialshare/change_list.html:56
 msgid "Facebook"
 msgstr "Facebook"
 
+#: models.py:36 templates/admin/social_sharing/sharecount/change_list.html:57
+#: templates/admin/social_sharing/socialshare/change_list.html:57
 msgid "Twitter/X"
 msgstr "Twitter/X"
 
+#: models.py:37 templates/admin/social_sharing/partials/share_cards.html:43
+#: templates/admin/social_sharing/partials/sharecount_cards.html:43
+#: templates/admin/social_sharing/sharecount/change_list.html:58
+#: templates/admin/social_sharing/socialshare/change_list.html:58
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
+#: models.py:38 templates/admin/social_sharing/partials/share_cards.html:45
+#: templates/admin/social_sharing/partials/sharecount_cards.html:45
+#: templates/admin/social_sharing/sharecount/change_list.html:59
+#: templates/admin/social_sharing/socialshare/change_list.html:59
 msgid "Pinterest"
 msgstr "Pinterest"
 
+#: models.py:39 templates/admin/social_sharing/partials/share_cards.html:47
+#: templates/admin/social_sharing/partials/sharecount_cards.html:47
+#: templates/admin/social_sharing/sharecount/change_list.html:60
+#: templates/admin/social_sharing/socialshare/change_list.html:60
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: models.py:40 templates/admin/social_sharing/partials/share_cards.html:49
+#: templates/admin/social_sharing/partials/sharecount_cards.html:49
+#: templates/admin/social_sharing/sharecount/change_list.html:61
+#: templates/admin/social_sharing/socialshare/change_list.html:61
 msgid "Telegram"
 msgstr "Telegram"
 
+#: models.py:41 templates/admin/social_sharing/partials/share_cards.html:51
+#: templates/admin/social_sharing/partials/sharecount_cards.html:51
+#: templates/admin/social_sharing/sharecount/change_list.html:62
+#: templates/admin/social_sharing/socialshare/change_list.html:62
 msgid "Email"
 msgstr "Электронная почта"
 
+#: models.py:51 templates/admin/social_sharing/socialshare/change_list.html:86
 msgid "Desktop"
 msgstr "Десктопы"
 
+#: models.py:52 templates/admin/social_sharing/socialshare/change_list.html:87
 msgid "Mobile"
 msgstr "Мобильные устройства"
 
+#: models.py:53 templates/admin/social_sharing/socialshare/change_list.html:88
 msgid "Tablet"
 msgstr "Планшеты"
 
+#: models.py:54
 msgid "Unknown"
 msgstr "Неизвестно"
 
+#: models.py:61 models.py:170
 msgid "content type"
 msgstr "тип содержимого"
 
+#: models.py:62
 msgid "Type of content shared (Product, Category, etc.)"
 msgstr "Тип shared содержимого (Товар, Категория и т.д.)"
 
+#: models.py:65 models.py:172
 msgid "object ID"
 msgstr "идентификатор объекта"
 
+#: models.py:65
 msgid "ID of the shared object"
 msgstr "ИД поделенного объекта"
 
+#: models.py:74 models.py:177
 msgid "platform"
 msgstr "платформа"
 
+#: models.py:75
 msgid "Social platform used for sharing"
 msgstr "Социальная платформа, используемая для деления"
 
+#: models.py:79
 msgid "shared URL"
 msgstr "поделенная URL"
 
+#: models.py:79
 msgid "URL that was shared"
 msgstr "URL, который был поделен"
 
+#: models.py:85
 msgid "referrer"
 msgstr "источник перехода"
 
+#: models.py:86
 msgid "Page from which share was initiated"
 msgstr "Страница, с которой был initiated share"
 
+#: models.py:96
 msgid "user"
 msgstr "пользователь"
 
+#: models.py:97
 msgid "User who shared (if logged in)"
 msgstr "Пользователь, который поделился (если вошел в систему)"
 
+#: models.py:104
 msgid "session ID"
 msgstr "идентификатор сессии"
 
+#: models.py:105
 msgid "Session identifier for anonymous users"
 msgstr "Идентификатор сессии для анонимных пользователей"
 
+#: models.py:111
 msgid "IP address"
 msgstr "IP-адрес"
 
+#: models.py:112
 msgid "IP address of sharer (for analytics and fraud detection)"
 msgstr "IP-адрес sharer (для аналитики и обнаружения мошенничества)"
 
+#: models.py:116
 msgid "user agent"
 msgstr "пользовательский агент"
 
+#: models.py:116
 msgid "Browser user agent string"
 msgstr "Строка user agent браузера"
 
+#: models.py:123
 msgid "device type"
 msgstr "тип устройства"
 
+#: models.py:124
 msgid "Type of device used for sharing"
 msgstr "Тип устройства, используемого для sharing"
 
+#: models.py:131
 msgid "shared at"
 msgstr "поделено в"
 
+#: models.py:132
 msgid "When the share occurred"
 msgstr "Когда произошло деление"
 
+#: models.py:135 models.py:189
 msgid "created at"
 msgstr "создано в"
 
+#: models.py:137
 msgid "updated at"
 msgstr "обновлено в"
 
+#: models.py:140
 msgid "Social Share"
 msgstr "Социальное деление"
 
+#: models.py:141 templates/admin/social_sharing/dashboard.html:138
+#: templates/admin/social_sharing/socialshare/change_list.html:4
+#: templates/admin/social_sharing/socialshare/change_list.html:19
 msgid "Social Shares"
 msgstr "Социальные делиться"
 
+#: models.py:182
 msgid "share count"
 msgstr "количество делений"
 
+#: models.py:183
 msgid "Number of times shared on this platform"
 msgstr "Количество раз, когда был shared на этой платформе"
 
+#: models.py:187
 msgid "last updated"
 msgstr "Последнее обновление"
 
+#: models.py:193 templates/admin/social_sharing/dashboard.html:149
+#: templates/admin/social_sharing/sharecount/change_list.html:4
+#: templates/admin/social_sharing/sharecount/change_list.html:19
 msgid "Share Counts"
 msgstr "Количество делений"
 
+#: settings_models.py:22 settings_models.py:23 settings_models.py:197
+#: templates/admin/social_sharing/dashboard.html:450
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:4
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:20
 msgid "Social Sharing Settings"
 msgstr "Настройки социального разделения"
 
+#: settings_models.py:28
 msgid "Enable on Products"
 msgstr "Включить на товарах"
 
+#: settings_models.py:29
 msgid "Automatically show share buttons on product detail pages"
 msgstr "Автоматически показывать кнопки sharing на страницах деталей продукта"
 
+#: settings_models.py:34
 msgid "Enable on Categories"
 msgstr "Включить на категориях"
 
+#: settings_models.py:35
 msgid "Automatically show share buttons on category pages"
 msgstr "Автоматически показывать кнопки sharing на страницах категорий"
 
+#: settings_models.py:40
 msgid "Enable on Blog Posts"
 msgstr "Включить на постах блога"
 
+#: settings_models.py:41
 msgid "Automatically show share buttons on blog post pages"
 msgstr "Автоматически показывать кнопки sharing на страницах постов блога"
 
+#: settings_models.py:46
 msgid "Enable on Custom Pages"
 msgstr "Включить на пользовательских страницах"
 
+#: settings_models.py:47
 msgid "Automatically show share buttons on custom pages"
 msgstr "Автоматически показывать кнопки sharing на пользовательских страницах"
 
+#: settings_models.py:52
 msgid "Above Content"
 msgstr "Выше контента"
 
+#: settings_models.py:53
 msgid "Below Content"
 msgstr "Ниже контента"
 
+#: settings_models.py:54
 msgid "Sidebar"
 msgstr "Боковая панель"
 
+#: settings_models.py:55
 msgid "Floating (sticky)"
 msgstr "Плавающая (прилипающая)"
 
+#: settings_models.py:62
 msgid "Placement Position"
 msgstr "Позиция размещения"
 
+#: settings_models.py:63
 msgid "Where to display share buttons on the page"
 msgstr "Где отображать кнопки sharing на странице"
 
+#: settings_models.py:68
 msgid "Icon Only"
 msgstr "Только значок"
 
+#: settings_models.py:69
 msgid "Icon + Label"
 msgstr "Значок + текст"
 
+#: settings_models.py:70
 msgid "Label Only"
 msgstr "Только текст"
 
+#: settings_models.py:77
 msgid "Button Style"
 msgstr "Стиль кнопки"
 
+#: settings_models.py:78
 msgid "How share buttons are displayed"
 msgstr "Как отображаются кнопки обмена"
 
+#: settings_models.py:83
 msgid "Small"
 msgstr "Маленький"
 
+#: settings_models.py:84
 msgid "Medium"
 msgstr "Средний"
 
+#: settings_models.py:85
 msgid "Large"
 msgstr "Большой"
 
+#: settings_models.py:92
 msgid "Button Size"
 msgstr "Размер кнопки"
 
+#: settings_models.py:93
 msgid "Size of the share buttons"
 msgstr "Размер кнопок обмена"
 
+#: settings_models.py:98
 msgid "Horizontal"
 msgstr "Горизонтальный"
 
+#: settings_models.py:99
 msgid "Vertical"
 msgstr "Вертикальный"
 
+#: settings_models.py:106
 msgid "Layout Direction"
 msgstr "Направление расположения"
 
+#: settings_models.py:107
 msgid "Arrange share buttons horizontally or vertically"
 msgstr "Расположите кнопки \"Поделиться\" горизонтально или вертикально"
 
+#: settings_models.py:113
 msgid "Show Title"
 msgstr "Показывать заголовок"
 
+#: settings_models.py:114
 msgid "Show the 'Share' heading above the buttons"
 msgstr "Показывать заголовок \"Поделиться\" над кнопками"
 
+#: settings_models.py:119
 msgid "Always Show"
 msgstr "Всегда показывать"
 
+#: settings_models.py:120
 msgid "Hide on Mobile"
 msgstr "Скрыть на мобильных устройствах"
 
+#: settings_models.py:121
 msgid "Mobile Only"
 msgstr "Только для мобильных устройств"
 
+#: settings_models.py:128
 msgid "Mobile Visibility"
 msgstr "Видимость на мобильных устройствах"
 
+#: settings_models.py:129
 msgid "Control whether share buttons appear on mobile devices"
 msgstr ""
 "Управляйте тем, отображаются ли кнопки \"Поделиться\" на мобильных "
 "устройствах"
 
+#: settings_models.py:136
 msgid "Widget Slug"
 msgstr "Идентификатор виджета"
 
+#: settings_models.py:137
 msgid "Slug of the widget package to use for rendering"
 msgstr "Slug пакета виджета для использования при рендеринге"
 
+#: settings_models.py:144
 msgid "Default Widget Configuration"
 msgstr "Настройки виджета по умолчанию"
 
+#: settings_models.py:145
 msgid ""
 "Override default widget configuration (display_style, button_size, etc.)"
 msgstr ""
 "Переопределить настройки по умолчанию виджета (display_style, button_size и "
 "т.д.)"
 
+#: settings_models.py:153
 msgid "List of enabled platforms. Leave empty to use widget defaults."
 msgstr ""
 "Список включенных платформ. Оставьте пустым, чтобы использовать настройки "
 "виджета по умолчанию."
 
+#: settings_models.py:159 templates/admin/social_sharing/dashboard.html:514
 msgid "Show Share Counts"
 msgstr "Показывать количество делится"
 
+#: settings_models.py:160
 msgid "Display number of shares for each platform"
 msgstr "Отображать количество shares для каждой платформы"
 
+#: settings_models.py:165
 msgid "Track Shares"
 msgstr "Отслеживать делится"
 
+#: settings_models.py:166
 msgid "Track share events and award loyalty badges"
 msgstr "Отслеживать события sharing и выдавать бейджи лояльности"
 
+#: settings_models.py:170
 msgid "Updated At"
 msgstr "Обновлено в"
 
+#: settings_models.py:173
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:221
 msgid "Updated By"
 msgstr "Обновлено пользователем"
 
+#: templates/admin/social_sharing/dashboard.html:4
+#: templates/admin/social_sharing/dashboard.html:22
 msgid "Social Sharing Dashboard"
 msgstr "Дашборд социального делится"
 
+#: templates/admin/social_sharing/dashboard.html:4
 msgid "Site Admin"
 msgstr "Администратор сайта"
 
+#: templates/admin/social_sharing/dashboard.html:25
 #, python-format
 msgid ""
 "\n"
-"            Analytics and settings for the last 30 days (%(start)s - "
-"%(end)s)\n"
+"            Analytics and settings for the last 30 days (%(start)s - %(end)s)\n"
 "            "
 msgstr ""
 "\n"
-"            Аналитика и настройки за последние 30 дней (%(start)s - "
-"%(end)s)Аналитика и настройки за последние 30 дней (%(start)s - %(end)s)\n"
+"            Аналитика и настройки за последние 30 дней (%(start)s - %(end)s)Аналитика и настройки за последние 30 дней (%(start)s - %(end)s)\n"
 "            "
 
+#: templates/admin/social_sharing/dashboard.html:38
 msgid "Total Shares"
 msgstr "Общее количество делится"
 
+#: templates/admin/social_sharing/dashboard.html:45
 msgid "Shares Today"
 msgstr "Делится сегодня"
 
+#: templates/admin/social_sharing/dashboard.html:52
 msgid "Shares This Month"
 msgstr "Делится в этом месяце"
 
+#: templates/admin/social_sharing/dashboard.html:77
 msgid "Top Platform"
 msgstr "Ведущая платформа"
 
+#: templates/admin/social_sharing/dashboard.html:92
+#: templates/admin/social_sharing/dashboard.html:100
 msgid "Top Product"
 msgstr "Ведущий товар"
 
+#: templates/admin/social_sharing/dashboard.html:110
+#: templates/admin/social_sharing/dashboard.html:118
 msgid "Most Active Sharer"
 msgstr "Наиболее активный делится"
 
+#: templates/admin/social_sharing/dashboard.html:130
 msgid "Quick Actions"
 msgstr "Быстрые действия"
 
+#: templates/admin/social_sharing/dashboard.html:139
 msgid "View individual share events"
 msgstr "Посмотреть отдельные события делится"
 
+#: templates/admin/social_sharing/dashboard.html:141
+#: templates/admin/social_sharing/dashboard.html:152
 msgid "Manage"
 msgstr "Управление"
 
+#: templates/admin/social_sharing/dashboard.html:150
 msgid "Aggregated share statistics"
 msgstr "Агрегированные статистика делится"
 
+#: templates/admin/social_sharing/dashboard.html:160
 msgid "Settings"
 msgstr "Настройки"
 
+#: templates/admin/social_sharing/dashboard.html:161
 msgid "Configure social sharing"
 msgstr "Настройка социального разделения"
 
+#: templates/admin/social_sharing/dashboard.html:163
 msgid "Configure"
 msgstr "Настроить"
 
+#: templates/admin/social_sharing/dashboard.html:178
 msgid "Shares Over Time (Last 30 Days)"
 msgstr "Shares со временем (Последние 30 дней)"
 
+#: templates/admin/social_sharing/dashboard.html:187
 msgid "Shares by Platform"
 msgstr "Сообщения по платформам"
 
+#: templates/admin/social_sharing/dashboard.html:200
 msgid "Top 10 Sharers (Last 30 Days)"
 msgstr "Топ 10 sharer (Последние 30 дней)"
 
+#: templates/admin/social_sharing/dashboard.html:207
+#: templates/admin/social_sharing/dashboard.html:255
+#: templates/admin/social_sharing/dashboard.html:379
 msgid "Rank"
 msgstr "Ранг"
 
+#: templates/admin/social_sharing/dashboard.html:209
+#: templates/admin/social_sharing/dashboard.html:257
+#: templates/admin/social_sharing/dashboard.html:382
+#: templates/admin/social_sharing/dashboard.html:542
 msgid "Shares"
 msgstr "Сообщения"
 
+#: templates/admin/social_sharing/dashboard.html:232
+#: templates/admin/social_sharing/dashboard.html:280
+#: templates/admin/social_sharing/dashboard.html:426
+#: templates/admin/social_sharing/dashboard.html:544
+#: templates/admin/social_sharing/partials/sharecount_cards.html:68
 msgid "shares"
 msgstr "сообщения"
 
+#: templates/admin/social_sharing/dashboard.html:240
 msgid "No sharers in the selected period."
 msgstr "Нет sharer в выбранном периоде."
 
+#: templates/admin/social_sharing/dashboard.html:248
 msgid "Top 5 Platforms"
 msgstr "Топ 5 платформ"
 
+#: templates/admin/social_sharing/dashboard.html:288
 msgid "No platform data available."
 msgstr "Данные по платформам недоступны."
 
+#: templates/admin/social_sharing/dashboard.html:299
 msgid "Recent Shares"
 msgstr "Недавние сообщения"
 
+#: templates/admin/social_sharing/dashboard.html:306
 msgid "Date"
 msgstr "Дата"
 
+#: templates/admin/social_sharing/dashboard.html:348
+#: templates/admin/social_sharing/dashboard.html:417
 msgid "Content deleted"
 msgstr "Контент удален"
 
+#: templates/admin/social_sharing/dashboard.html:357
 msgid "No recent shares."
 msgstr "Нет недавних сообщений."
 
+#: templates/admin/social_sharing/dashboard.html:363
 msgid "View All Shares"
 msgstr "Посмотреть все сообщения"
 
+#: templates/admin/social_sharing/dashboard.html:372
 msgid "Top 5 Most Shared Content"
 msgstr "Топ 5 самых популярных контентов"
 
+#: templates/admin/social_sharing/dashboard.html:434
 msgid "No shared content yet."
 msgstr "Еще нет поделенного контента."
 
+#: templates/admin/social_sharing/dashboard.html:440
 msgid "View All Share Counts"
 msgstr "Посмотреть все данные о сообщениях"
 
+#: templates/admin/social_sharing/dashboard.html:468
 msgid "Enable Social Sharing On"
 msgstr "Включить социальное сообщение"
 
+#: templates/admin/social_sharing/dashboard.html:473
 msgid "Products"
 msgstr "Товары"
 
+#: templates/admin/social_sharing/dashboard.html:479
 msgid "Categories"
 msgstr "Категории"
 
+#: templates/admin/social_sharing/dashboard.html:485
 msgid "Blog Posts"
 msgstr "Посты блога"
 
+#: templates/admin/social_sharing/dashboard.html:491
 msgid "Pages"
 msgstr "Страницы"
 
+#: templates/admin/social_sharing/dashboard.html:499
 msgid "Display Settings"
 msgstr "Настройки отображения"
 
+#: templates/admin/social_sharing/dashboard.html:502
 msgid "Button Placement"
 msgstr "Расположение кнопки"
 
+#: templates/admin/social_sharing/dashboard.html:520
 msgid "Track Share Events"
 msgstr "Отслеживать события сообщений"
 
+#: templates/admin/social_sharing/dashboard.html:529
 msgid "Save Settings"
 msgstr "Сохранить настройки"
 
+#: templates/admin/social_sharing/dashboard.html:543
+#: templates/admin/social_sharing/partials/sharecount_cards.html:66
 msgid "share"
 msgstr "сообщение"
 
+#: templates/admin/social_sharing/partials/share_cards.html:41
+#: templates/admin/social_sharing/partials/sharecount_cards.html:41
 msgid "Twitter"
 msgstr "Twitter"
 
+#: templates/admin/social_sharing/partials/share_cards.html:128
 msgid "No social shares found matching your filters."
 msgstr "Нет социальных shares, соответствующих вашим фильтрам."
 
+#: templates/admin/social_sharing/partials/share_cards.html:132
+#: templates/admin/social_sharing/partials/sharecount_cards.html:119
 msgid "Clear Filters"
 msgstr "Очистить фильтры"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:76
 msgid "Updated"
 msgstr "Обновлено"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:115
 msgid "No share counts found matching your filters."
 msgstr "Нет данных о shares, соответствующих вашим фильтрам."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:21
 msgid "Track social media sharing statistics across platforms"
 msgstr "Отслеживать статистику sharing в социальных сетях по платформам"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:31
+#: templates/admin/social_sharing/socialshare/change_list.html:31
 msgid "Filters"
 msgstr "Фильтры"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:35
+#: templates/admin/social_sharing/socialshare/change_list.html:35
 msgid "Toggle Filters"
 msgstr "Переключить фильтры"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:44
+#: templates/admin/social_sharing/socialshare/change_list.html:44
 msgid "Search"
 msgstr "Поиск"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:46
 msgid "Search by content ID..."
 msgstr "Поиск по ID контента..."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:55
+#: templates/admin/social_sharing/socialshare/change_list.html:55
 msgid "All Platforms"
 msgstr "Все платформы"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:69
+#: templates/admin/social_sharing/socialshare/change_list.html:69
 msgid "Content Type"
 msgstr "Тип содержимого"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:72
+#: templates/admin/social_sharing/socialshare/change_list.html:72
 msgid "All Types"
 msgstr "Все типы"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:82
 msgid "Min. Share Count"
 msgstr "Минимальное количество сообщений"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:84
 msgid "Minimum shares"
 msgstr "Минимальное количество сообщений"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:90
 msgid "Sort By"
 msgstr "Сортировать по"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:93
 msgid "Most Shares"
 msgstr "Наибольшее количество сообщений"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:94
 msgid "Least Shares"
 msgstr "Наименьшее количество сообщений"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:95
 msgid "Recently Updated"
 msgstr "Недавно обновлено"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:96
 msgid "Oldest Updated"
 msgstr "Самое старое обновление"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:104
+#: templates/admin/social_sharing/socialshare/change_list.html:112
 msgid "Active:"
 msgstr "Активный:"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:111
+#: templates/admin/social_sharing/socialshare/change_list.html:119
 msgid "Clear All"
 msgstr "Очистить все"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:115
+#: templates/admin/social_sharing/socialshare/change_list.html:123
 msgid "Apply Filters"
 msgstr "Применить фильтры"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "Showing"
 msgstr "Показывать"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "results"
 msgstr "результаты"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:21
 msgid "Monitor individual share events and user engagement"
-msgstr "Контролировать отдельные события sharing и вовлеченность пользователей"
+msgstr ""
+"Контролировать отдельные события sharing и вовлеченность пользователей"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:46
 msgid "Search by user, URL..."
 msgstr "Поиск по пользователю, URL..."
 
+#: templates/admin/social_sharing/socialshare/change_list.html:82
 msgid "Device"
 msgstr "Устройство"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:85
 msgid "All Devices"
 msgstr "Все устройства"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:95
 msgid "Date From"
 msgstr "Дата с"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:103
 msgid "Date To"
 msgstr "Дата по"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:25
 msgid "Configure automatic social sharing buttons across your store"
 msgstr ""
-"Настройте автоматические кнопки социального разделения по всей вашей магазине"
+"Настройте автоматические кнопки социального разделения по всей вашей "
+"магазине"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:30
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:234
 msgid "Save and continue editing"
 msgstr "Сохранить и продолжить редактирование"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:33
 msgid "Save settings"
 msgstr "Сохранить настройки"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:50
 msgid "Please correct the errors below"
 msgstr "Пожалуйста, исправьте ошибки ниже"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:83
 msgid "Automatic Placement"
 msgstr "Автоматическое размещение"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:84
 msgid ""
 "Configure where social share buttons appear automatically across your store."
 msgstr ""
 "Настройте, где автоматически появляются кнопки социального разделения по "
 "всей вашей магазине."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:129
 msgid "Platforms"
 msgstr "Платформы"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:130
 msgid ""
 "Select which social platforms to show. If none are selected, all platforms "
 "will be displayed."
@@ -700,23 +969,30 @@ msgstr ""
 "Выберите, какие социальные платформы отображать. Если ничего не выбрано, "
 "будут отображаться все платформы."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:140
 msgid "Button Appearance"
 msgstr "Внешний вид кнопки"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:141
 msgid "Control how the share buttons look on your store."
 msgstr "Управляйте тем, как выглядят кнопки \"Поделиться\" на вашем магазине."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:186
 msgid "Tracking & Analytics"
 msgstr "Отслеживание и аналитика"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:187
 msgid "Control share tracking and count display."
 msgstr "Управляйте отслеживанием поделиться и отображением счетчиков."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:215
 msgid "Last Updated"
 msgstr "Последнее обновление"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:233
 msgid "Save"
 msgstr "Сохранить"
 
+#: views.py:214
 msgid "Social sharing settings updated successfully."
 msgstr "Настройки социального разделения успешно обновлены."

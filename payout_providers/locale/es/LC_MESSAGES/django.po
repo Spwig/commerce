@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,390 +18,542 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:43
 msgid "Provider Information"
 msgstr "Información del proveedor"
 
+#: admin.py:44 admin.py:431 admin.py:454
 msgid "Status"
 msgstr "Estado"
 
+#: admin.py:46 models.py:102
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:62
 msgid "Connection Status"
 msgstr "Estado de la conexión"
 
+#: admin.py:53
 msgid "Configuration"
 msgstr "Configuración"
 
+#: admin.py:56 admin.py:433
 msgid "Timestamps"
 msgstr "Marcas de tiempo"
 
+#: admin.py:113
 msgid "Provider"
 msgstr "Proveedor"
 
+#: admin.py:139
 msgid "Connection"
 msgstr "Conexión"
 
+#: admin.py:144 admin.py:147 models.py:91
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:75
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:179
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:87
 msgid "Active"
 msgstr "Activo"
 
+#: admin.py:145
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:76
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:180
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:91
 msgid "Inactive"
 msgstr "Inactivo"
 
+#: admin.py:153 admin.py:156 models.py:95
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:98
 msgid "Default"
 msgstr "Predeterminado"
 
+#: admin.py:159
 msgid "Test connection for selected providers"
 msgstr "Probar conexión para proveedores seleccionados"
 
+#: admin.py:175
 #, python-format
 msgid "Successfully connected to %(count)d provider(s)."
 msgstr "Conexión exitosa a %(count)d proveedor(es)."
 
+#: admin.py:181
 #, python-format
 msgid "Failed to connect to %(count)d provider(s). Check error messages."
 msgstr ""
 "Fallo al conectarse a %(count)d proveedor(es). Verifique los mensajes de "
 "error."
 
+#: admin.py:227
 msgid "Provider {} successfully."
 msgstr "Proveedor {} exitosamente."
 
+#: admin.py:228
 msgid "enabled"
 msgstr "habilitado"
 
+#: admin.py:228
 msgid "disabled"
 msgstr "deshabilitado"
 
+#: admin.py:233 admin.py:264 admin.py:292
 msgid "Provider not found"
 msgstr "Proveedor no encontrado"
 
+#: admin.py:237 admin.py:268 admin.py:296 admin.py:384
+#: templates/admin/payout_providers/wizard/step4_test.html:77
+#: views/wizard.py:540
 msgid "An unexpected error occurred."
 msgstr "Ocurrió un error inesperado."
 
+#: admin.py:260
 #, python-format
 msgid "%(name)s set as default provider."
 msgstr "%(name)s establecido como proveedor predeterminado."
 
+#: admin.py:284
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:185
 msgid "Connection test successful!"
 msgstr "Prueba de conexión exitosa!"
 
+#: admin.py:289
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:186
+#: views/wizard.py:473
 msgid "Connection test failed"
 msgstr "Prueba de conexión fallida"
 
+#: admin.py:311
 msgid "Action and provider IDs required"
 msgstr "Se requieren IDs de acción y proveedor"
 
+#: admin.py:319
 #, python-format
 msgid "%(count)d provider(s) enabled."
 msgstr "%(count)d proveedor(es) habilitado(s)."
 
+#: admin.py:323
 #, python-format
 msgid "%(count)d provider(s) disabled."
 msgstr "%(count)d proveedor(es) deshabilitado(s)."
 
+#: admin.py:330
 msgid "Select exactly one provider to set as default"
 msgstr ""
 "Seleccione exactamente un proveedor para establecerlo como predeterminado"
 
+#: admin.py:339
 msgid "Default provider updated."
 msgstr "Proveedor predeterminado actualizado."
 
+#: admin.py:351
 #, python-format
 msgid "Tested %(count)d provider(s): %(success)d succeeded, %(fail)d failed."
 msgstr ""
 "Probado %(count)d proveedor(es): %(success)d exitoso(s), %(fail)d fallido(s)."
 
+#: admin.py:359
 msgid "You do not have permission to delete providers."
 msgstr "No tienes permiso para eliminar proveedores."
 
+#: admin.py:364
 #, python-format
 msgid "%(count)d provider(s) deleted."
 msgstr "%(count)d proveedor(es) eliminado(s)."
 
+#: admin.py:370
 #, python-format
 msgid "Unknown action: %(action)s"
 msgstr "Acción desconocida: %(action)s"
 
+#: admin.py:379
 msgid "Invalid request data."
 msgstr "Datos de solicitud no válidos."
 
+#: admin.py:420
 msgid "Event Information"
 msgstr "Información del evento"
 
+#: admin.py:432 models.py:269
 msgid "Payload"
 msgstr "Carga útil"
 
+#: admin.py:439
 msgid "Not Checked"
 msgstr "No revisado"
 
+#: admin.py:441
 msgid "Valid"
 msgstr "Válido"
 
+#: admin.py:442
 msgid "Invalid"
 msgstr "No válido"
 
+#: admin.py:444
 msgid "Signature"
 msgstr "Firma"
 
+#: admin.py:449 models.py:278
 msgid "Processed"
 msgstr "Procesado"
 
+#: admin.py:451 templates/admin/payout_providers/wizard/step4_test.html:76
 msgid "Error"
 msgstr "Error"
 
+#: admin.py:452
 msgid "Pending"
 msgstr "Pendiente"
 
+#: apps.py:8
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:4
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:20
 msgid "Payout Providers"
 msgstr "Proveedores de pago"
 
+#: models.py:28
 msgid "PayPal"
 msgstr "PayPal"
 
+#: models.py:29
 msgid "Airwallex"
 msgstr "Airwallex"
 
+#: models.py:30
 msgid "Wise"
 msgstr "Wise"
 
+#: models.py:34
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:67
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:78
 msgid "Untested"
 msgstr "No probado"
 
+#: models.py:35
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:65
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:66
 msgid "Connected"
 msgstr "Conectado"
 
+#: models.py:36 templates/admin/payout_providers/wizard/step4_test.html:74
 msgid "Connection Failed"
 msgstr "Conexión fallida"
 
+#: models.py:37
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:74
 msgid "Invalid Credentials"
 msgstr "Credenciales inválidas"
 
+#: models.py:42 models.py:254
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:82
 msgid "Provider Type"
 msgstr "Tipo de proveedor"
 
+#: models.py:45
 msgid "The payout provider service"
 msgstr "El servicio del proveedor de pago"
 
+#: models.py:55
 msgid "Installed provider component from the component registry"
 msgstr "Componente de proveedor instalado desde el registro de componentes"
 
+#: models.py:60
+#: templates/admin/payout_providers/wizard/step3_credentials.html:111
+#: templates/admin/payout_providers/wizard/step4_test.html:84
 msgid "Account Name"
 msgstr "Nombre de la cuenta"
 
+#: models.py:62
 msgid "A friendly name for this account (e.g., \"Primary PayPal\")"
 msgstr "Un nombre amigable para esta cuenta (p. ej., \"PayPal principal\")"
 
+#: models.py:67
 msgid "Credentials"
 msgstr "Credenciales"
 
+#: models.py:70
 msgid "Encrypted API credentials (never stored in plain text)"
 msgstr "Credenciales de API encriptadas (nunca almacenadas en texto plano)"
 
+#: models.py:75
 msgid "Settings"
 msgstr "Configuración"
 
+#: models.py:78
 msgid "Provider-specific configuration settings"
 msgstr "Configuraciones específicas del proveedor"
 
+#: models.py:83
 msgid "Supported Methods"
 msgstr "Métodos admitidos"
 
+#: models.py:86
 msgid "List of payout methods this account supports"
 msgstr "Lista de métodos de pago que esta cuenta admite"
 
+#: models.py:91
 msgid "Whether this provider account is active"
 msgstr "Si esta cuenta del proveedor está activa"
 
+#: models.py:97
 msgid "Whether this is the default provider for its supported methods"
 msgstr "Si este es el proveedor predeterminado para sus métodos admitidos"
 
+#: models.py:105
 msgid "Last Tested"
 msgstr "Última prueba"
 
+#: models.py:108
 msgid "Last Error"
 msgstr "Último error"
 
+#: models.py:108
 msgid "Last connection error message"
 msgstr "Último mensaje de error de conexión"
 
+#: models.py:112
 msgid "Created"
 msgstr "Creado"
 
+#: models.py:113
 msgid "Updated"
 msgstr "Actualizado"
 
+#: models.py:116
 msgid "Payout Provider Account"
 msgstr "Cuenta del proveedor de pago"
 
+#: models.py:117 templates/admin/payout_providers/providers/browse.html:27
 msgid "Payout Provider Accounts"
 msgstr "Cuentas del proveedor de pago"
 
+#: models.py:168
 #, python-format
 msgid "There is already a default account for %(provider)s: %(name)s"
 msgstr "Ya existe una cuenta predeterminada para %(provider)s: %(name)s"
 
+#: models.py:254
 msgid "Provider that sent the webhook"
 msgstr "Proveedor que envió el webhook"
 
+#: models.py:258
 msgid "Event Type"
 msgstr "Tipo de evento"
 
+#: models.py:258
 msgid "Type of webhook event"
 msgstr "Tipo de evento de webhook"
 
+#: models.py:262
 msgid "Event ID"
 msgstr "ID del evento"
 
+#: models.py:266
 msgid "Provider's unique event identifier"
 msgstr "Identificador único del evento del proveedor"
 
+#: models.py:269
 msgid "Full webhook payload"
 msgstr "Carga útil completa del webhook"
 
+#: models.py:271
 msgid "Headers"
 msgstr "Encabezados"
 
+#: models.py:271
 msgid "Request headers"
 msgstr "Encabezados de la solicitud"
 
+#: models.py:274
 msgid "Signature Valid"
 msgstr "Firma válida"
 
+#: models.py:274
 msgid "Whether signature verification passed"
 msgstr "¿La verificación de la firma pasó?"
 
+#: models.py:278
 msgid "Whether the webhook was successfully processed"
 msgstr "Si el webhook se procesó correctamente"
 
+#: models.py:282
 msgid "Processing Error"
 msgstr "Error de procesamiento"
 
+#: models.py:285
 msgid "Error message if processing failed"
 msgstr "Mensaje de error si el procesamiento falló"
 
+#: models.py:290
 msgid "Payout Reference"
 msgstr "Referencia de pago"
 
+#: models.py:293
 msgid "Received"
 msgstr "Recibido"
 
+#: models.py:294
 msgid "Processed At"
 msgstr "Procesado en"
 
+#: models.py:297
 msgid "Payout Webhook Log"
 msgstr "Registro del webhook de pago"
 
+#: models.py:298
 msgid "Payout Webhook Logs"
 msgstr "Registros del webhook de pago"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:22
 msgid "Manage payout provider accounts for affiliate payments"
 msgstr "Administrar cuentas de proveedores de pago para pagos de afiliados"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:24
 msgid "provider"
 msgstr "proveedor"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:25
 msgid "active"
 msgstr "activo"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:26
 msgid "connected"
 msgstr "conectado"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:31
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:159
 msgid "Browse & Install Providers"
 msgstr "Explorar y Instalar Proveedores"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:48
 msgid "Filters"
 msgstr "Filtros"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:57
 msgid "Search"
 msgstr "Buscar"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:58
 msgid "Search providers..."
 msgstr "Buscar proveedores..."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:64
 msgid "All Statuses"
 msgstr "Todos los estados"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:66
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:70
 msgid "Failed"
 msgstr "Fallido"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:72
 msgid "Active Status"
 msgstr "Estado activo"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:74
 msgid "All"
 msgstr "Todos"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:84
 msgid "All Provider Types"
 msgstr "Todos los tipos de proveedor"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:96
 msgid "Apply Filters"
 msgstr "Aplicar filtros"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:99
 msgid "Clear All"
 msgstr "Limpiar todo"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:110
 msgid "Bulk Actions"
 msgstr "Acciones en masa"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:111
 msgid "Enable Selected"
 msgstr "Habilitar seleccionados"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:112
 msgid "Disable Selected"
 msgstr "Deshabilitar seleccionados"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:113
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:129
 msgid "Set as Default"
 msgstr "Establecer como Predeterminado"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:114
 msgid "Test Connections"
 msgstr "Probar conexiones"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:115
 msgid "Delete Selected"
 msgstr "Eliminar seleccionados"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:117
 msgid "Apply"
 msgstr "Aplicar"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:119
 msgid "selected"
 msgstr "seleccionados"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:129
 msgid "Select All"
 msgstr "Seleccionar todo"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:147
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s proveedor"
 msgstr[1] "%(counter)s proveedores"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:156
+#: templates/admin/payout_providers/payoutprovideraccount/partials/provider_cards.html:11
 msgid "No payout provider accounts found"
 msgstr "No se encontraron cuentas de proveedores de pago"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:157
 msgid ""
 "Get started by connecting your first payout provider for affiliate payments."
 msgstr ""
 "Comience conectando su primer proveedor de pago para pagos de afiliados."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:169
 msgid "Loading..."
 msgstr "Cargando..."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:181
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:119
 msgid "Enable"
 msgstr "Habilitar"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:182
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:119
 msgid "Disable"
 msgstr "Deshabilitar"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:183
 msgid "Failed to toggle provider status"
 msgstr "Fallo al cambiar el estado del proveedor"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:184
 msgid "Failed to set default provider"
 msgstr "Fallo al establecer el proveedor predeterminado"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:187
 msgid "An error occurred during connection test."
 msgstr "Ocurrió un error durante la prueba de conexión."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:188
 msgid "An error occurred. Please try again."
 msgstr "Ocurrió un error. Por favor, intenta de nuevo."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:189
 msgid "Please select an action and at least one provider"
 msgstr "Por favor, selecciona una acción y al menos un proveedor"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:190
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {count} provider(s)? This action cannot be "
@@ -410,53 +562,74 @@ msgstr ""
 "¿Está seguro de que desea eliminar {count} proveedor(es)? Esta acción no se "
 "puede deshacer."
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:191
 msgid "Please select exactly one provider to set as default"
 msgstr ""
 "Por favor, selecciona exactamente un proveedor para establecerlo como "
 "predeterminado"
 
+#: templates/admin/payout_providers/payoutprovideraccount/change_list.html:192
 msgid "Bulk action failed"
 msgstr "Acción en masa fallida"
 
+#: templates/admin/payout_providers/payoutprovideraccount/partials/provider_cards.html:12
 msgid "Try adjusting your filters or search terms."
 msgstr "Intenta ajustar tus filtros o términos de búsqueda."
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:29
 msgid "Default Provider"
 msgstr "Proveedor por defecto"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:44
 msgid "Provider:"
 msgstr "Proveedor:"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:52
 msgid "Last tested:"
 msgstr "Última prueba:"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:52
 msgid "ago"
 msgstr "hace"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:57
 msgid "Never tested"
 msgstr "Nunca probado"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:108
 msgid "Edit"
 msgstr "Editar"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:113
+#: templates/admin/payout_providers/wizard/base.html:51
+#: templates/admin/payout_providers/wizard/step4_test.html:7
+#: templates/admin/payout_providers/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "Probar conexión"
 
+#: templates/admin/payout_providers/payoutprovideraccount/provider_card.html:134
 msgid "Delete"
 msgstr "Eliminar"
 
+#: templates/admin/payout_providers/providers/browse.html:4
+#: templates/admin/payout_providers/providers/browse.html:37
+#: views/provider_browse.py:142
 msgid "Browse Payout Providers"
 msgstr "Explorar proveedores de pago"
 
+#: templates/admin/payout_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr "Administrador del sitio"
 
+#: templates/admin/payout_providers/providers/browse.html:26
 msgid "Home"
 msgstr "Inicio"
 
+#: templates/admin/payout_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr "Explorar proveedores"
 
+#: templates/admin/payout_providers/providers/browse.html:39
 msgid ""
 "Choose a payout provider to integrate with your store. Install new providers "
 "or configure existing ones for affiliate payments."
@@ -464,9 +637,11 @@ msgstr ""
 "Elija un proveedor de pago para integrarlo con su tienda. Instale nuevos "
 "proveedores o configure los existentes para pagos de afiliados."
 
+#: templates/admin/payout_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr "Servidor de actualización no disponible"
 
+#: templates/admin/payout_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -474,9 +649,11 @@ msgstr ""
 "No se pudo conectar al servidor de actualización. Mostrando solo proveedores "
 "instalados localmente."
 
+#: templates/admin/payout_providers/providers/browse.html:58
 msgid "Payout Provider Marketplace"
 msgstr "Mercado de proveedores de pago"
 
+#: templates/admin/payout_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payout providers to automate affiliate "
 "payments, vendor payouts, and commission disbursements."
@@ -484,37 +661,48 @@ msgstr ""
 "Aquí puede descubrir e instalar proveedores de pago para automatizar pagos "
 "de afiliados, pagos a proveedores y distribuciones de comisiones."
 
+#: templates/admin/payout_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr "¿Qué puedes hacer:"
 
+#: templates/admin/payout_providers/providers/browse.html:82
 msgid "Browse available payout providers"
 msgstr "Explorar proveedores de pago disponibles"
 
+#: templates/admin/payout_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr "Instale nuevos proveedores con un solo clic"
 
+#: templates/admin/payout_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr "Actualice los proveedores instalados a las últimas versiones"
 
+#: templates/admin/payout_providers/providers/browse.html:94
 msgid "Configure provider settings after installation"
 msgstr "Configurar la configuración del proveedor después de la instalación"
 
+#: templates/admin/payout_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr "Comenzando:"
 
+#: templates/admin/payout_providers/providers/browse.html:105
 msgid "Browse providers below and find your preferred payout method"
 msgstr ""
 "Revise los proveedores a continuación y encuentre su método de pago preferido"
 
+#: templates/admin/payout_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Haz clic en 'Instalar' para agregar el proveedor a tu tienda"
 
+#: templates/admin/payout_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr "Navegue hasta Ajustes para configurar las credenciales de la API"
 
+#: templates/admin/payout_providers/providers/browse.html:108
 msgid "Test the provider with a sample payout"
 msgstr "Pruebe el proveedor con un pago de ejemplo"
 
+#: templates/admin/payout_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -533,51 +721,72 @@ msgstr[1] ""
 "                    Currently: %(counter)s proveedores disponibles\n"
 "                "
 
+#: templates/admin/payout_providers/providers/browse.html:122
 msgid "installed"
 msgstr "instalado"
 
+#: templates/admin/payout_providers/providers/browse.html:139
 msgid "Update Available"
 msgstr "Disponible actualización"
 
+#: templates/admin/payout_providers/providers/browse.html:165
+#: templates/admin/payout_providers/providers/browse.html:331
 msgid "Installed"
 msgstr "Instalado"
 
+#: templates/admin/payout_providers/providers/browse.html:180
 msgid "Available"
 msgstr "Disponible"
 
+#: templates/admin/payout_providers/providers/browse.html:203
+#: templates/admin/payout_providers/wizard/step1_select.html:46
 msgid "Batch Payouts"
 msgstr "Pagos por lotes"
 
+#: templates/admin/payout_providers/providers/browse.html:208
 msgid "Instant Payouts"
 msgstr "Pagos inmediatos"
 
+#: templates/admin/payout_providers/providers/browse.html:213
 msgid "Multi-Currency"
 msgstr "Multimoneda"
 
+#: templates/admin/payout_providers/providers/browse.html:218
+#: templates/admin/payout_providers/wizard/step1_select.html:56
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#: templates/admin/payout_providers/providers/browse.html:223
 msgid "International"
 msgstr "Internacional"
 
+#: templates/admin/payout_providers/providers/browse.html:252
 msgid "Update"
 msgstr "Actualizar"
 
+#: templates/admin/payout_providers/providers/browse.html:258
+#: templates/admin/payout_providers/providers/browse.html:332
 msgid "Configure"
 msgstr "Configurar"
 
+#: templates/admin/payout_providers/providers/browse.html:266
 msgid "Install"
 msgstr "Instalar"
 
+#: templates/admin/payout_providers/providers/browse.html:276
 msgid "View Details"
 msgstr "Ver detalles"
 
+#: templates/admin/payout_providers/providers/browse.html:285
 msgid "Learn More"
 msgstr "Más información"
 
+#: templates/admin/payout_providers/providers/browse.html:299
+#: templates/admin/payout_providers/wizard/step1_select.html:99
 msgid "No Providers Available"
 msgstr "No hay proveedores disponibles"
 
+#: templates/admin/payout_providers/providers/browse.html:300
 msgid ""
 "No payout providers are currently available. Please check your update server "
 "connection or contact support."
@@ -585,71 +794,95 @@ msgstr ""
 "Actualmente no hay proveedores de pago disponibles. Por favor, verifique su "
 "conexión al servidor de actualizaciones o póngase en contacto con soporte."
 
+#: templates/admin/payout_providers/providers/browse.html:309
 msgid "Installing provider..."
 msgstr "Instalando proveedor..."
 
+#: templates/admin/payout_providers/providers/browse.html:327
 msgid "Installing..."
 msgstr "Instalando..."
 
+#: templates/admin/payout_providers/providers/browse.html:328
 msgid "Provider installed successfully!"
 msgstr "¡Proveedor instalado con éxito!"
 
+#: templates/admin/payout_providers/providers/browse.html:329
 msgid "Failed to install provider."
 msgstr "Fallo al instalar el proveedor."
 
+#: templates/admin/payout_providers/providers/browse.html:330
 msgid "An error occurred during installation."
 msgstr "Ocurrió un error durante la instalación."
 
+#: templates/admin/payout_providers/providers/browse.html:333
 msgid "Updating..."
 msgstr "Actualizando..."
 
+#: templates/admin/payout_providers/providers/browse.html:334
 msgid "Provider updated successfully!"
 msgstr "¡Proveedor actualizado con éxito!"
 
+#: templates/admin/payout_providers/providers/browse.html:335
 msgid "Failed to update provider."
 msgstr "Fallo al actualizar el proveedor."
 
+#: templates/admin/payout_providers/providers/browse.html:336
 msgid "An error occurred during update."
 msgstr "Ocurrió un error durante la actualización."
 
+#: templates/admin/payout_providers/providers/browse.html:337
 #, python-brace-format
 msgid "Install {name}?"
 msgstr "¿Instalar {name}?"
 
+#: templates/admin/payout_providers/providers/browse.html:338
 #, python-brace-format
 msgid "Update {name} to the latest version?"
 msgstr "¿Actualizar {name} a la última versión?"
 
+#: templates/admin/payout_providers/wizard/base.html:4
+#: templates/admin/payout_providers/wizard/base.html:16
 msgid "Connect Payout Provider"
 msgstr "Conectar proveedor de pago"
 
+#: templates/admin/payout_providers/wizard/base.html:17
 msgid "Follow these steps to connect your payout provider account"
 msgstr "Siga estos pasos para conectar su cuenta del proveedor de pago"
 
+#: templates/admin/payout_providers/wizard/base.html:26
 msgid "Select Provider"
 msgstr "Seleccionar proveedor"
 
+#: templates/admin/payout_providers/wizard/base.html:35
+#: templates/admin/payout_providers/wizard/step2_setup.html:8
 msgid "Setup Instructions"
 msgstr "Instrucciones de configuración"
 
+#: templates/admin/payout_providers/wizard/base.html:44
 msgid "Enter Credentials"
 msgstr "Ingresar credenciales"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:6
 msgid "Select a Payout Provider"
 msgstr "Seleccionar un proveedor de pago"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:7
 msgid "Choose the payout provider you want to connect for affiliate payments."
 msgstr "Elija el proveedor de pago que desea conectar para pagos de afiliados."
 
+#: templates/admin/payout_providers/wizard/step1_select.html:51
 msgid "Single Payouts"
 msgstr "Pagos individuales"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:61
 msgid "Cancellation"
 msgstr "Cancelación"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:100
 msgid "No payout provider components are currently installed."
 msgstr "Actualmente no hay componentes de proveedores de pago instalados."
 
+#: templates/admin/payout_providers/wizard/step1_select.html:101
 msgid ""
 "Please download and install payout provider components from the component "
 "registry."
@@ -657,15 +890,20 @@ msgstr ""
 "Por favor, descargue e instale componentes de proveedores de pago desde el "
 "registro de componentes."
 
+#: templates/admin/payout_providers/wizard/step1_select.html:103
 msgid "Browse Components"
 msgstr "Explorar componentes"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:114
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: templates/admin/payout_providers/wizard/step1_select.html:117
+#: templates/admin/payout_providers/wizard/step3_credentials.html:141
 msgid "Next"
 msgstr "Siguiente"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:11
 #, python-format
 msgid ""
 "\n"
@@ -674,12 +912,15 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        Antes de ingresar las credenciales, revise estos pasos de configuración para %(provider)s.\n"
+"        Antes de ingresar las credenciales, revise estos pasos de "
+"configuración para %(provider)s.\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:23
 msgid "Setup Instructions Not Available"
 msgstr "No están disponibles las instrucciones de configuración"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:25
 #, python-format
 msgid ""
 "\n"
@@ -690,18 +931,26 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"                    No están disponibles instrucciones de configuración para esta versión de %(provider)s. Por favor, contacte al soporte para obtener ayuda o verifique si hay una versión actualizada.\n"
+"                    No están disponibles instrucciones de configuración para "
+"esta versión de %(provider)s. Por favor, contacte al soporte para obtener "
+"ayuda o verifique si hay una versión actualizada.\n"
 "                    "
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:44
+#: templates/admin/payout_providers/wizard/step3_credentials.html:138
+#: templates/admin/payout_providers/wizard/step4_test.html:58
 msgid "Back"
 msgstr "Atrás"
 
+#: templates/admin/payout_providers/wizard/step2_setup.html:47
 msgid "Continue to Credentials"
 msgstr "Continuar con las credenciales"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "Introducir credenciales de API"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -710,30 +959,39 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        Ingrese sus credenciales de API para %(provider)s. Estas se encriptarán y almacenarán de forma segura.\n"
+"        Ingrese sus credenciales de API para %(provider)s. Estas se "
+"encriptarán y almacenarán de forma segura.\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "¿No tienes una cuenta aún?"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "Necesitará una cuenta para obtener credenciales de API."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "Regístrate aquí"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "Credenciales de API"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "Seleccionar..."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "No hay campos de credenciales configurados para este proveedor."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:114
 msgid "Display Name"
 msgstr "Nombre a Mostrar"
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:122
 msgid ""
 "Optional friendly name to identify this account. Defaults to provider name "
 "if not specified."
@@ -741,6 +999,7 @@ msgstr ""
 "Nombre amigable opcional para identificar esta cuenta. Se usará el nombre "
 "del proveedor si no se especifica."
 
+#: templates/admin/payout_providers/wizard/step3_credentials.html:129
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
@@ -748,6 +1007,7 @@ msgstr ""
 "Sus credenciales se cifrarán usando el cifrado AES-256 antes de almacenarse "
 "en la base de datos."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -756,155 +1016,206 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        Pruebe la conexión con %(provider)s para verificar que sus credenciales sean correctas.\n"
+"        Pruebe la conexión con %(provider)s para verificar que sus "
+"credenciales sean correctas.\n"
 "        "
 
+#: templates/admin/payout_providers/wizard/step4_test.html:21
+#: templates/admin/payout_providers/wizard/step4_test.html:70
 msgid "Testing connection..."
 msgstr "Probando conexión..."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:22
+#: templates/admin/payout_providers/wizard/step4_test.html:71
 msgid "Please wait while we verify your credentials."
 msgstr "Por favor, espere mientras verificamos sus credenciales."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "Haga clic para probar la conexión con las credenciales introducidas."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:42
+#: templates/admin/payout_providers/wizard/step4_test.html:72
 msgid "Connection Successful!"
 msgstr "¡Conexión exitosa!"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:46
 msgid "Connection Details"
 msgstr "Detalles de conexión"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:61
+#: templates/admin/payout_providers/wizard/step4_test.html:80
 msgid "Save & Finish"
 msgstr "Guardar y finalizar"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:73
 msgid "Your credentials were verified successfully."
 msgstr "Tus credenciales se verificaron correctamente."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:75
 msgid "Could not connect to the provider API."
 msgstr "No se pudo conectar con la API del proveedor."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:78
 msgid "Saving..."
 msgstr "Guardando..."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:79
 msgid "Failed to save provider account."
 msgstr "Falló al guardar la cuenta del proveedor."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:81
 msgid "An error occurred while saving."
 msgstr "Ocurrió un error al guardar."
 
+#: templates/admin/payout_providers/wizard/step4_test.html:82
 msgid "Environment"
 msgstr "Entorno"
 
+#: templates/admin/payout_providers/wizard/step4_test.html:83
 msgid "Account ID"
 msgstr "ID de cuenta"
 
+#: views/provider_browse.py:177
 msgid "Provider is already installed. Configure it now."
 msgstr "El proveedor ya está instalado. Configúralo ahora."
 
+#: views/provider_browse.py:206 views/provider_browse.py:346
 msgid "Provider not found on update server."
 msgstr "Proveedor no encontrado en el servidor de actualización."
 
+#: views/provider_browse.py:216
 msgid "Could not determine provider version."
 msgstr "No se pudo determinar la versión del proveedor."
 
+#: views/provider_browse.py:238
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Falló descargar el proveedor: %(error)s"
 
+#: views/provider_browse.py:251
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Falló instalar el proveedor: %(error)s"
 
+#: views/provider_browse.py:284
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "Proveedor \"%(name)s\" instalado con éxito. Configure ahora."
 
+#: views/provider_browse.py:293
 msgid "An unexpected error occurred during installation."
 msgstr "Ocurrió un error inesperado durante la instalación."
 
+#: views/provider_browse.py:316
 msgid "Provider not installed."
 msgstr "Proveedor no instalado."
 
+#: views/provider_browse.py:332
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "No se pudo conectar al servidor de actualización: %(error)s"
 
+#: views/provider_browse.py:355
 msgid "Could not determine latest version."
 msgstr "No se pudo determinar la última versión."
 
+#: views/provider_browse.py:364
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "El proveedor \"%(name)s\" ya está actualizado (v%(version)s)."
 
+#: views/provider_browse.py:379
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Falló descargar la actualización: %(error)s"
 
+#: views/provider_browse.py:391
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Falló instalar la actualización: %(error)s"
 
+#: views/provider_browse.py:428
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "Proveedor \"%(name)s\" actualizado con éxito a v%(version)s!"
 
+#: views/provider_browse.py:437
 msgid "An unexpected error occurred during update."
 msgstr "Ocurrió un error inesperado durante la actualización."
 
+#: views/wizard.py:147
 msgid "Connect Payout Provider - Select Provider"
 msgstr "Conectar Proveedor de Pago - Seleccionar Proveedor"
 
+#: views/wizard.py:160
 msgid "Please select a provider."
 msgstr "Por favor, seleccione un proveedor."
 
+#: views/wizard.py:168
 msgid "Invalid provider selected."
 msgstr "Proveedor seleccionado no válido."
 
+#: views/wizard.py:196 views/wizard.py:287
 msgid "Please select a provider first."
 msgstr "Por favor, seleccione un proveedor primero."
 
+#: views/wizard.py:241
 #, python-format
 msgid "Setup instructions not found for %(provider)s. Please contact support."
 msgstr ""
 "No se encontraron instrucciones de configuración para %(provider)s. Por "
 "favor, contacte al soporte."
 
+#: views/wizard.py:246 views/wizard.py:309
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Error al cargar el proveedor: %(error)s"
 
+#: views/wizard.py:256
 msgid "Connect Payout Provider - Setup Instructions"
 msgstr "Conectar Proveedor de Pago - Instrucciones de Configuración"
 
+#: views/wizard.py:302
 msgid "Could not load provider configuration."
 msgstr "No se pudo cargar la configuración del proveedor."
 
+#: views/wizard.py:313
 msgid "Connect Payout Provider - Enter Credentials"
 msgstr "Conectar Proveedor de Pago - Ingresar Credenciales"
 
+#: views/wizard.py:343
 msgid "Error loading provider configuration."
 msgstr "Error al cargar la configuración del proveedor."
 
+#: views/wizard.py:391
 msgid "Please complete previous steps first."
 msgstr "Por favor, complete los pasos anteriores primero."
 
+#: views/wizard.py:399
 msgid "Provider not found."
 msgstr "Proveedor no encontrado."
 
+#: views/wizard.py:403
 msgid "Connect Payout Provider - Test Connection"
 msgstr "Conectar Proveedor de Pago - Probar Conexión"
 
+#: views/wizard.py:433
 msgid "Provider implementation not found."
 msgstr "Implementación del proveedor no encontrada."
 
+#: views/wizard.py:457
 msgid "An unexpected error occurred during connection test."
 msgstr "Ocurrió un error inesperado durante la prueba de conexión."
 
+#: views/wizard.py:516
 msgid "Provider connected successfully!"
 msgstr "Proveedor conectado exitosamente!"
 
+#: views/wizard.py:529
 msgid "An unexpected error occurred while saving."
 msgstr "Ocurrió un error inesperado mientras se guardaba."
 
+#: views/wizard.py:535
 msgid "Invalid action"
 msgstr "Acción no válida"

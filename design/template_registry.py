@@ -948,6 +948,7 @@ PRODUCT_TEMPLATES = {
     "gallery_focus": "page_builder/product/gallery_focus.html",
     "digital": "page_builder/product/digital.html",
     "booking": "page_builder/product/booking.html",
+    "gift_card": "page_builder/product/gift_card.html",
     "designer": "page_builder/product/designer.html",
 }
 

@@ -1,6 +1,28 @@
 {% load i18n merchant_trans %}
 {# Payment selection + billing address - shared across checkout templates #}
 
+{% if not skip_tenders %}
+{% include "page_builder/checkout/_step_payment_tenders.html" %}
+
+{% comment %}
+Voucher / discount code — in the payment section so it is present even when
+the order-summary sidebar is disabled. POST /api/cart/apply-voucher/, message
+inline; handler in checkout.js. Express skips this (skip_tenders) and renders
+its own voucher entry in its summary.
+{% endcomment %}
+<div class="checkout-summary__voucher checkout-voucher--payment">
+    <div class="checkout-summary__voucher-row">
+        <input type="text" id="checkout-voucher-code" class="checkout-input"
+               placeholder="{% mtrans 'Voucher Code' %}"
+               autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button type="button" class="btn btn--secondary" id="checkout-apply-voucher">
+            {% mtrans 'Apply' %}
+        </button>
+    </div>
+    <p class="checkout-summary__voucher-msg" id="checkout-voucher-msg" role="alert" hidden></p>
+</div>
+{% endif %}
+
 <div class="payment-providers" id="payment-providers-list">
     <div class="checkout-empty-state">
         <i class="fas fa-spinner fa-spin"></i>
@@ -8,6 +30,18 @@
     </div>
 </div>
 
+{% if not cart_requires_shipping %}
+{% comment %}
+No shippable items: the billing address is the customer's primary address and
+belongs up with their contact details (name/email), so express and other
+templates render _billing_address.html in the contact step and pass
+billing_in_contact to skip it here. If a template hasn't moved it, fall back to
+rendering it inline so the field is never missing.
+{% endcomment %}
+{% if not billing_in_contact %}
+{% include "page_builder/checkout/_billing_address.html" %}
+{% endif %}
+{% else %}
 <!-- Billing Address -->
 <div class="billing-toggle">
     <input type="checkbox" id="billing-same-as-shipping" checked>
@@ -61,7 +95,12 @@
         </div>
         <div class="checkout-form-group">
             <label for="billing-country">{% mtrans 'Country' %} <span class="required">*</span></label>
-            <input type="text" id="billing-country" class="checkout-input" required>
+            <select id="billing-country" class="checkout-input" required>
+                <option value="">{% mtrans 'Select country' %}</option>
+                {% for code, name in shipping_countries %}
+                <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
         </div>
     </div>
 
@@ -70,6 +109,7 @@
         <input type="tel" id="billing-phone" class="checkout-input">
     </div>
 </div>
+{% endif %}
 
 <!-- Embedded payment container (for SDK-based providers) -->
 <div id="embedded-payment-container"></div>

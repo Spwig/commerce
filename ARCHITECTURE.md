@@ -262,8 +262,8 @@ build we fix the build, not the source.
 - **Multi-tenant** in one process — see [Single-tenant model](#single-tenant-model).
 - **A JavaScript SPA admin** — the admin is server-rendered Django.
   Individual pages get JS enhancements; the whole thing is not a React app.
-- **Reinventing payment SDKs** — we integrate the vendor SDK (Stripe, Adyen,
-  PayPal), we don't wrap it.
+- **Reinventing payment SDKs** — we integrate the vendor SDK (Stripe,
+  PayPal, Square), we don't wrap it.
 - **A component marketplace clone** — the marketplace client is intentionally
   minimal so anyone can point it at their own registry.
 - **A hosted panel like Vercel/Netlify** — that's what

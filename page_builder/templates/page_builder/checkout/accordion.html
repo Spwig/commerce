@@ -23,13 +23,14 @@
                 {% include "page_builder/checkout/_step_contact.html" %}
                 <div class="checkout-step__actions">
                     <button type="button" class="btn btn--primary" data-action="continue-contact">
-                        {% mtrans 'Continue to Shipping' %}
+                        {% if cart_requires_shipping %}{% mtrans 'Continue to Shipping' %}{% else %}{% mtrans 'Continue to Payment' %}{% endif %}
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
         </div>
 
+        {% if cart_requires_shipping %}
         <!-- Step 2: Shipping Address -->
         <div class="checkout-step checkout-step--disabled" id="step-shipping" data-step="shipping">
             <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="false">
@@ -67,11 +68,12 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
-        <!-- Step 4: Payment -->
+        <!-- Step 4: Payment (2 when nothing ships) -->
         <div class="checkout-step checkout-step--disabled" id="step-payment" data-step="payment">
             <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="false">
-                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>4</span></div>{% endif %}
+                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>{% if cart_requires_shipping %}4{% else %}2{% endif %}</span></div>{% endif %}
                 <h2>{% mtrans 'Payment' %}</h2>
                 <span class="checkout-step__summary" id="payment-summary"></span>
                 <i class="fas fa-chevron-down checkout-step__toggle"></i>
@@ -80,17 +82,17 @@
                 {% include "page_builder/checkout/_step_payment.html" %}
                 <div class="checkout-step__actions">
                     <button type="button" class="btn btn--primary" data-action="continue-payment">
-                        {% mtrans 'Continue to Payment' %}
+                        {% mtrans 'Continue to Review' %}
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Step 5: Review & Complete Payment -->
+        <!-- Step 5: Review & Complete Payment (3 when nothing ships) -->
         <div class="checkout-step checkout-step--disabled" id="step-review" data-step="review">
             <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="false">
-                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>5</span></div>{% endif %}
+                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>{% if cart_requires_shipping %}5{% else %}3{% endif %}</span></div>{% endif %}
                 <h2>{% mtrans 'Review & Complete Payment' %}</h2>
                 <span class="checkout-step__summary"></span>
                 <i class="fas fa-chevron-down checkout-step__toggle"></i>

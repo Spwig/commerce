@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,113 +18,319 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "Domain Kustom"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "Domain & SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "Tidak Ada (Hanya HTTP)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "Sertifikat Kustom"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "Ditandatangani Sendiri"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "Dikelola Eksternal"
 
+#: models.py:22
 msgid "Idle"
 msgstr "Menganggur"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "Memvalidasi DNS"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "Mengonfigurasi"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "Mendapatkan Sertifikat"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "Memuat Ulang Layanan"
 
+#: models.py:27
 msgid "Error"
 msgstr "Kesalahan"
 
+#: models.py:34
 msgid "Domain"
 msgstr "Domain"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "Nama domain yang lengkap (contoh: shop.example.com)"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "Domain Sebelumnya"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr "Domain sebelum perubahan terakhir, untuk pelacakan rollback"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "Mode SSL"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "Domain Sertifikat"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "Penerbit Sertifikat"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "Kadaluarsa Sertifikat"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "Sertifikat Diperoleh"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "Sertifikat Wildcard"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "Token API Cloudflare"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "Token API untuk tantangan DNS-01 atau Origin CA"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "ID Zona Cloudflare"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "Email Admin"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "Email kontak untuk pemberitahuan Let's Encrypt"
 
+#: models.py:108
 msgid "Status"
 msgstr "Status"
 
+#: models.py:113
 msgid "Last Error"
 msgstr "Kesalahan Terakhir"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "ID Tugas Aktif"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "ID tugas Celery untuk operasi saat ini"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "Perbarui Otomatis"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "Perbarui sertifikat secara otomatis sebelum kedaluwarsa"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "Konfigurasi Domain"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "Tidak ada domain yang dikonfigurasi"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "Domain Toko Anda"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "Memuat konfigurasi domain..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "URL Saat Ini"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "Domain Kustom Aktif"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "Hapus Domain Kustom"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "Hubungkan Domain Anda Sendiri"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr ""
+"Gunakan nama domain Anda sendiri alih-alih alamat default myspwig.com."
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "Nama domain Anda"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr ""
+"Masukkan domain lengkap (misalnya, www.yourstore.com atau "
+"shop.yourdomain.com)"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "Lanjutkan"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "Arahkan domain Anda ke toko Anda"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr "Tambahkan dua catatan DNS ini di pengaturan registrar domain Anda:"
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "Pointer Domain"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "Tipe"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "Nama"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "Salin"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "Nilai"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "Verifikasi Kepemilikan"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "Bagaimana saya menambahkan catatan DNS?"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr ""
+"Masuk ke registrar domain Anda (tempat Anda membeli domain Anda) dan temukan"
+" pengaturan DNS. Registrar umum:"
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr "Produk Saya > DNS > Kelola"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "Daftar Domain > Kelola > DNS Lanjutan"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > Catatan > Tambah Catatan"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > Rekaman Kustom"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr ""
+"Perubahan DNS dapat memakan waktu hingga 24 jam untuk menyebar secara "
+"global, tetapi biasanya berlaku dalam beberapa menit."
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "Saya telah menambahkan catatan ini - Verifikasi"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "Batal"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "Memeriksa rekaman DNS Anda..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "Domain terhubung!"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "Toko Anda akan tersedia di"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "segera."
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "Pengalokasian sertifikat SSL mungkin memakan waktu beberapa menit."
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "Rekaman belum ditemukan"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr ""
+"Perubahan DNS dapat memakan waktu hingga 24 jam. Anda dapat mencoba lagi "
+"nanti dari halaman ini."
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "Coba Lagi"

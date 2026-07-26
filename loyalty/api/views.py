@@ -5,10 +5,10 @@ Customer-facing API endpoints for loyalty program.
 Provides access to loyalty status, rewards, and redemptions.
 """
 
-import uuid as uuid_lib
 from decimal import Decimal
 
-from django.db import models, transaction
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import (
@@ -35,6 +35,7 @@ from loyalty.models import (
     LoyaltyTier,
     LoyaltyTransaction,
 )
+from loyalty.services.redemption_engine import RedemptionEngine
 
 from .serializers import (
     LoyaltyBadgeSerializer,
@@ -536,74 +537,39 @@ class LoyaltyRewardViewSet(HeadlessAPIMixin, viewsets.ReadOnlyModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Process redemption
-        with transaction.atomic():
-            # Generate redemption code
-            redemption_code = (
-                f"LOYALTY-{uuid_lib.uuid4().hex[:5].upper()}-{uuid_lib.uuid4().hex[:5].upper()}"
+        # Delegate to RedemptionEngine rather than re-implementing redemption
+        # here. The previous inline block duplicated the engine's logic, wrote
+        # the balance directly instead of going through LedgerService, and
+        # swallowed the failure to issue a voucher with
+        # `except (ImportError, AttributeError): pass` — so it returned HTTP 200
+        # "redeemed successfully" while the customer's points were gone and no
+        # reward existed.
+        engine = RedemptionEngine()
+
+        try:
+            redemption, _created, _message = engine.redeem_reward(member=member, reward=reward)
+        except DjangoValidationError as e:
+            return Response(
+                {
+                    "success": False,
+                    "message": e.messages[0] if e.messages else str(e),
+                    "redemption": None,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            # Create redemption record
-            redemption = LoyaltyRedemption.objects.create(
-                member=member,
-                reward=reward,
-                points_spent=reward.points_cost,
-                status=LoyaltyRedemption.STATUS_PENDING,
-                redemption_code=redemption_code,
-                expires_at=timezone.now()
-                + timezone.timedelta(days=reward.redemption_expires_days or 365),
+        # confirm_redemption refunds the points and cancels the redemption if
+        # the reward cannot actually be issued, so a False here means the
+        # customer is whole — but it is still a failure and must be reported as
+        # one.
+        confirmed, confirm_message = engine.confirm_redemption(redemption)
+        if not confirmed:
+            return Response(
+                {"success": False, "message": confirm_message, "redemption": None},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            # Create points transaction (deduction)
-            points_tx = LoyaltyTransaction.objects.create(
-                member=member,
-                transaction_type=LoyaltyTransaction.TYPE_REDEEM,
-                points=-reward.points_cost,
-                status=LoyaltyTransaction.STATUS_REDEEMED,
-                description=f"Redeemed: {reward.name}",
-                reason=f"Redemption #{redemption.redemption_code}",
-                related_object_type="redemption",
-                related_object_id=str(redemption.id),
-            )
-
-            # Link transaction to redemption
-            redemption.transaction = points_tx
-            redemption.save(update_fields=["transaction"])
-
-            # Update balance
-            balance = member.balance
-            balance.available_points -= reward.points_cost
-            balance.lifetime_redeemed += reward.points_cost
-            balance.last_redeemed_at = timezone.now()
-            balance.save(
-                update_fields=["available_points", "lifetime_redeemed", "last_redeemed_at"]
-            )
-
-            # Update reward quantity if limited
-            if reward.quantity_remaining is not None:
-                reward.quantity_remaining -= 1
-                reward.save(update_fields=["quantity_remaining"])
-
-            # For discount rewards, create a voucher code
-            if reward.reward_type == LoyaltyReward.TYPE_DISCOUNT:
-                try:
-                    from vouchers.services import VoucherService
-
-                    voucher = VoucherService.create_loyalty_voucher(
-                        reward=reward, redemption=redemption, member=member
-                    )
-                    if voucher:
-                        redemption.voucher_code = voucher
-                        redemption.save(update_fields=["voucher_code"])
-                except (ImportError, AttributeError):
-                    # VoucherService not implemented yet - voucher will be created manually
-                    pass
-
-            # Mark as confirmed
-            redemption.status = LoyaltyRedemption.STATUS_CONFIRMED
-            redemption.confirmed_at = timezone.now()
-            redemption.save(update_fields=["status", "confirmed_at"])
-
+        redemption.refresh_from_db()
         serializer = LoyaltyRedemptionSerializer(redemption)
 
         return Response(

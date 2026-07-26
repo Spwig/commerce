@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Thai <LL@li.org>\n"
@@ -18,680 +18,967 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:68 admin.py:164 templates/admin/social_sharing/dashboard.html:256
+#: templates/admin/social_sharing/dashboard.html:308
+#: templates/admin/social_sharing/dashboard.html:381
+#: templates/admin/social_sharing/sharecount/change_list.html:52
+#: templates/admin/social_sharing/socialshare/change_list.html:52
 msgid "Platform"
 msgstr "แพลตฟอร์ม"
 
+#: admin.py:76
 msgid "Shared Content"
 msgstr "เนื้อหาที่แชร์"
 
+#: admin.py:86 templates/admin/social_sharing/dashboard.html:322
+#: templates/admin/social_sharing/partials/share_cards.html:78
 msgid "Anonymous"
 msgstr "ไม่ระบุตัวตน"
 
+#: admin.py:88 templates/admin/social_sharing/dashboard.html:208
+#: templates/admin/social_sharing/dashboard.html:307
 msgid "User"
 msgstr "ผู้ใช้"
 
+#: admin.py:172 templates/admin/social_sharing/dashboard.html:309
+#: templates/admin/social_sharing/dashboard.html:380
 msgid "Content"
 msgstr "เนื้อหา"
 
+#: admin.py:183 models.py:192
 msgid "Share Count"
 msgstr "จำนวนการแชร์"
 
+#: admin.py:243
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:66
 msgid "Placement"
 msgstr "ตำแหน่ง"
 
+#: admin.py:252
 msgid "Configure where social share buttons appear automatically"
 msgstr "กำหนดตำแหน่งที่ปุ่มแชร์โซเชียลจะปรากฏขึ้นอัตโนมัติ"
 
+#: admin.py:256
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:70
 msgid "Appearance"
 msgstr "การจัดรูปแบบ"
 
+#: admin.py:269
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:74
 msgid "Tracking"
 msgstr "การติดตาม"
 
+#: admin.py:278
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:211
 msgid "Metadata"
 msgstr "เมตาดาต้า"
 
+#: api/serializers.py:17
 msgid "Model name (lowercase) - e.g., 'product', 'page', 'post'"
 msgstr "ชื่อโมเดล (ตัวพิมพ์เล็ก) - เช่น 'product', 'page', 'post'"
 
+#: api/serializers.py:20
 msgid "ID of the content being shared"
 msgstr "ID ของเนื้อหาที่กำลังถูกแชร์"
 
+#: api/serializers.py:25
 msgid "Social media platform"
 msgstr "แพลตฟอร์มโซเชียลมีเดีย"
 
+#: api/serializers.py:27
 msgid "Full URL being shared"
 msgstr "URL ที่กำลังถูกแบ่งปัน"
 
+#: api/views.py:147
 msgid "Track social media share"
 msgstr "ติดตามการแบ่งปันโซเชียลมีเดีย"
 
+#: api/views.py:148
 msgid ""
-"Track a social media share event for a product or other content. Records "
-"platform, URL, user, session, IP, and device type.\n"
+"Track a social media share event for a product or other content. Records platform, URL, user, session, IP, and device type.\n"
 "\n"
-"    Use this endpoint when a user shares content to social media platforms. "
-"Helps measure content virality and track most-shared products.\n"
+"    Use this endpoint when a user shares content to social media platforms. Helps measure content virality and track most-shared products.\n"
 "\n"
-"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"    **Security**: Authentication required to prevent spam and database "
-"pollution. Rate limited to 50 requests/hour per user.\n"
+"    **Security**: Authentication required to prevent spam and database pollution. Rate limited to 50 requests/hour per user.\n"
 "\n"
-"    **Use Case**: Call when user clicks a social share button to track "
-"sharing behavior and measure content engagement."
+"    **Use Case**: Call when user clicks a social share button to track sharing behavior and measure content engagement."
 msgstr ""
-"ติดตามเหตุการณ์การแชร์ผ่านโซเชียลมีเดียสำหรับสินค้าหรือเนื้อหาอื่น ๆ โดยบันทึกแพลตฟอร์ม, URL, "
-"ผู้ใช้, ชุดเซสชัน, IP, และประเภทอุปกรณ์\n"
+"ติดตามเหตุการณ์การแชร์ผ่านโซเชียลมีเดียสำหรับสินค้าหรือเนื้อหาอื่น ๆ โดยบันทึกแพลตฟอร์ม, URL, ผู้ใช้, ชุดเซสชัน, IP, และประเภทอุปกรณ์\n"
 "\n"
-"ใช้ API นี้เมื่อผู้ใช้แชร์เนื้อหาไปยังแพลตฟอร์มโซเชียลมีเดีย "
-"เพื่อช่วยวัดความนิยมของเนื้อหาและติดตามสินค้าที่แชร์มากที่สุด\n"
+"ใช้ API นี้เมื่อผู้ใช้แชร์เนื้อหาไปยังแพลตฟอร์มโซเชียลมีเดีย เพื่อช่วยวัดความนิยมของเนื้อหาและติดตามสินค้าที่แชร์มากที่สุด\n"
 "\n"
-"**แพลตฟอร์มที่รองรับ**: facebook, twitter, linkedin, pinterest, whatsapp, "
-"telegram, email\n"
+"**แพลตฟอร์มที่รองรับ**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"**ความปลอดภัย**: ต้องการการตรวจสอบสิทธิ์เพื่อป้องกันการสแปมและข้อมูลที่ไม่จำเป็น "
-"จำกัดการร้องขอเป็น 50 ครั้งต่อชั่วโมงต่อผู้ใช้\n"
+"**ความปลอดภัย**: ต้องการการตรวจสอบสิทธิ์เพื่อป้องกันการสแปมและข้อมูลที่ไม่จำเป็น จำกัดการร้องขอเป็น 50 ครั้งต่อชั่วโมงต่อผู้ใช้\n"
 "\n"
-"**กรณีการใช้งาน**: "
-"ใช้เมื่อผู้ใช้คลิกปุ่มแชร์โซเชียลมีเดียเพื่อติดตามพฤติกรรมการแชร์และวัดการมีส่วนร่วมกับเนื้อหา"
+"**กรณีการใช้งาน**: ใช้เมื่อผู้ใช้คลิกปุ่มแชร์โซเชียลมีเดียเพื่อติดตามพฤติกรรมการแชร์และวัดการมีส่วนร่วมกับเนื้อหา"
 
+#: api/views.py:168 api/views.py:283
 msgid "Invalid request, missing required fields, or invalid platform"
 msgstr "คำขอไม่ถูกต้อง ขาดข้อมูลที่จำเป็น หรือแพลตฟอร์มไม่ถูกต้อง"
 
+#: api/views.py:170 api/views.py:286 api/views.py:422 api/views.py:486
 msgid "Internal server error"
 msgstr "ข้อผิดพลาดของเซิร์ฟเวอร์ภายใน"
 
+#: api/views.py:264
+#| msgid "Track social media share"
+msgid "Track social media share (anonymous)"
+msgstr "ติดตามการแชร์โซเชียลมีเดีย (ไม่ระบุตัวตน)"
+
+#: api/views.py:265
+msgid ""
+"Anonymous variant of the share tracking endpoint for guest visitors.\n"
+"\n"
+"    Identical payload to the authenticated endpoint, but does not require a logged-in user. The resulting `SocialShare` row is stored with `user=None` and is linked only via the visitor's session key, IP, user agent, and device type.\n"
+"\n"
+"    **Security**: No authentication required, but aggressively rate-limited (20 requests/hour per IP) to prevent spam and database pollution. Bots are not filtered at the endpoint level — consumers should apply their own bot detection if needed.\n"
+"\n"
+"    **Use Case**: Headless storefronts where most visitors sharing content (product pages, blog posts) are not logged in. The authenticated `track_share` endpoint would exclude all guest shares from analytics, which is the majority of real traffic."
+msgstr ""
+"เวอร์ชันไม่ระบุตัวตนของปลายทางติดตามการแชร์สำหรับผู้เยี่ยมชมทั่วไป\n"
+"\n"
+"ข้อมูลที่ส่งมามีลักษณะเดียวกันกับปลายทางที่ผ่านการยืนยันตัวตน แต่ไม่จำเป็นต้องมีผู้ใช้ที่เข้าสู่ระบบ แถว `SocialShare` ที่ได้จะถูกบันทึกโดยมี `user=None` และเชื่อมโยงเพียงผ่านคีย์เซสชัน ที่อยู่ IP ตัวแทนผู้ใช้ และประเภทอุปกรณ์ของผู้เยี่ยมชม\n"
+"\n"
+"**ความปลอดภัย**: ไม่จำเป็นต้องมีการยืนยันตัวตน แต่ถูกจำกัดการร้องขออย่างเข้มงวด (20 คำขอต่อชั่วโมงต่อ IP) เพื่อป้องกันการสแปมและการปนเปื้อนฐานข้อมูล บอทจะไม่ถูกกรองในระดับปลายทาง — ผู้ใช้ควรใช้การตรวจจับบอทของตนเองหากจำเป็น\n"
+"\n"
+"**กรณีการใช้งาน**: ร้านค้าแบบไม่มีหน้าเว็บที่ผู้เยี่ยมชมส่วนใหญ่ที่แชร์เนื้อหา (หน้าสินค้า บล็อก) ไม่ได้เข้าสู่ระบบ ปลายทางที่ผ่านการยืนยันตัวตน `track_share` จะไม่รวมการแชร์ของผู้เยี่ยมชมทั่วไปในรายงานการวิเคราะห์ ซึ่งเป็นส่วนใหญ่ของข้อมูลจริง"
+
+#: api/views.py:285
+msgid "Rate limit exceeded"
+msgstr "เกินขีดจำกัดอัตรา"
+
+#: api/views.py:401
 msgid "Get share counts for content"
 msgstr "รับข้อมูลจำนวนการแชร์สำหรับเนื้อหา"
 
+#: api/views.py:402
 msgid ""
 "Get aggregated share counts by platform for a specific piece of content.\n"
 "\n"
-"    Returns counts for each social platform plus a total. Useful for "
-"displaying share counts on product pages, blog posts, etc.\n"
+"    Returns counts for each social platform plus a total. Useful for displaying share counts on product pages, blog posts, etc.\n"
 "\n"
 "    **No authentication required** - share counts are public data."
 msgstr ""
 "รับข้อมูลจำนวนการแชร์ที่รวมกันตามแพลตฟอร์มสำหรับเนื้อหาชิ้นหนึ่ง\n"
 "\n"
-"แสดงจำนวนการแชร์ของแต่ละแพลตฟอร์มรวมถึงจำนวนทั้งหมด "
-"ใช้ได้ดีในการแสดงจำนวนการแชร์บนหน้าสินค้า บทความบล็อก ฯลฯ\n"
+"แสดงจำนวนการแชร์ของแต่ละแพลตฟอร์มรวมถึงจำนวนทั้งหมด ใช้ได้ดีในการแสดงจำนวนการแชร์บนหน้าสินค้า บทความบล็อก ฯลฯ\n"
 "\n"
 "**ไม่จำเป็นต้องใช้การตรวจสอบสิทธิ์** - ข้อมูลการแชร์เป็นข้อมูลสาธารณะ"
 
+#: api/views.py:421
 msgid "Invalid content type"
 msgstr "ประเภทเนื้อหาไม่ถูกต้อง"
 
+#: api/views.py:472
 msgid "Get current user's share history"
 msgstr "ดูประวัติการแบ่งปันของผู้ใช้ปัจจุบัน"
 
+#: api/views.py:473
 msgid ""
-"Get the authenticated user's social sharing history, including total shares, "
-"breakdown by platform, and recent share events.\n"
+"Get the authenticated user's social sharing history, including total shares, breakdown by platform, and recent share events.\n"
 "\n"
 "    **Authentication required.**"
 msgstr ""
-"รับประวัติการแชร์โซเชียลของผู้ใช้ที่ได้รับการตรวจสอบสิทธิ์ รวมถึงจำนวนการแชร์ทั้งหมด "
-"การแบ่งประเภทตามแพลตฟอร์ม และเหตุการณ์การแชร์ล่าสุด\n"
+"รับประวัติการแชร์โซเชียลของผู้ใช้ที่ได้รับการตรวจสอบสิทธิ์ รวมถึงจำนวนการแชร์ทั้งหมด การแบ่งประเภทตามแพลตฟอร์ม และเหตุการณ์การแชร์ล่าสุด\n"
 "\n"
 "**จำเป็นต้องใช้การตรวจสอบสิทธิ์**."
 
+#: api/views.py:485
 msgid "Authentication required"
 msgstr "ต้องการการยืนยันตัวตน"
 
+#: apps.py:8
 msgid "Social Sharing"
 msgstr "การแชร์สังคมออนไลน์"
 
+#: forms.py:27 settings_models.py:152
 msgid "Enabled Platforms"
 msgstr "แพลตฟอร์มที่เปิดใช้งาน"
 
+#: forms.py:29
 msgid ""
 "Select which platforms to show. If none selected, all platforms will be "
 "shown."
-msgstr "เลือกว่าจะแสดงแพลตฟอร์มใด ถ้าไม่ได้เลือกใดเลย แพลตฟอร์มทั้งหมดจะถูกแสดง"
+msgstr ""
+"เลือกว่าจะแสดงแพลตฟอร์มใด ถ้าไม่ได้เลือกใดเลย แพลตฟอร์มทั้งหมดจะถูกแสดง"
 
+#: models.py:35 templates/admin/social_sharing/partials/share_cards.html:39
+#: templates/admin/social_sharing/partials/sharecount_cards.html:39
+#: templates/admin/social_sharing/sharecount/change_list.html:56
+#: templates/admin/social_sharing/socialshare/change_list.html:56
 msgid "Facebook"
 msgstr "Facebook"
 
+#: models.py:36 templates/admin/social_sharing/sharecount/change_list.html:57
+#: templates/admin/social_sharing/socialshare/change_list.html:57
 msgid "Twitter/X"
 msgstr "Twitter/X"
 
+#: models.py:37 templates/admin/social_sharing/partials/share_cards.html:43
+#: templates/admin/social_sharing/partials/sharecount_cards.html:43
+#: templates/admin/social_sharing/sharecount/change_list.html:58
+#: templates/admin/social_sharing/socialshare/change_list.html:58
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
+#: models.py:38 templates/admin/social_sharing/partials/share_cards.html:45
+#: templates/admin/social_sharing/partials/sharecount_cards.html:45
+#: templates/admin/social_sharing/sharecount/change_list.html:59
+#: templates/admin/social_sharing/socialshare/change_list.html:59
 msgid "Pinterest"
 msgstr "Pinterest"
 
+#: models.py:39 templates/admin/social_sharing/partials/share_cards.html:47
+#: templates/admin/social_sharing/partials/sharecount_cards.html:47
+#: templates/admin/social_sharing/sharecount/change_list.html:60
+#: templates/admin/social_sharing/socialshare/change_list.html:60
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: models.py:40 templates/admin/social_sharing/partials/share_cards.html:49
+#: templates/admin/social_sharing/partials/sharecount_cards.html:49
+#: templates/admin/social_sharing/sharecount/change_list.html:61
+#: templates/admin/social_sharing/socialshare/change_list.html:61
 msgid "Telegram"
 msgstr "Telegram"
 
+#: models.py:41 templates/admin/social_sharing/partials/share_cards.html:51
+#: templates/admin/social_sharing/partials/sharecount_cards.html:51
+#: templates/admin/social_sharing/sharecount/change_list.html:62
+#: templates/admin/social_sharing/socialshare/change_list.html:62
 msgid "Email"
 msgstr "อีเมล"
 
+#: models.py:51 templates/admin/social_sharing/socialshare/change_list.html:86
 msgid "Desktop"
 msgstr "เดสก์ท็อป"
 
+#: models.py:52 templates/admin/social_sharing/socialshare/change_list.html:87
 msgid "Mobile"
 msgstr "มือถือ"
 
+#: models.py:53 templates/admin/social_sharing/socialshare/change_list.html:88
 msgid "Tablet"
 msgstr "แท็บเล็ต"
 
+#: models.py:54
 msgid "Unknown"
 msgstr "ไม่ทราบ"
 
+#: models.py:61 models.py:170
 msgid "content type"
 msgstr "ประเภทเนื้อหา"
 
+#: models.py:62
 msgid "Type of content shared (Product, Category, etc.)"
 msgstr "ประเภทเนื้อหาที่ถูกแชร์ (สินค้า, หมวดหมู่, เป็นต้น)"
 
+#: models.py:65 models.py:172
 msgid "object ID"
 msgstr "ID ของวัตถุ"
 
+#: models.py:65
 msgid "ID of the shared object"
 msgstr "ID ของวัตถุที่แชร์"
 
+#: models.py:74 models.py:177
 msgid "platform"
 msgstr "แพลตฟอร์ม"
 
+#: models.py:75
 msgid "Social platform used for sharing"
 msgstr "แพลตฟอร์มโซเชียลที่ใช้ในการแชร์"
 
+#: models.py:79
 msgid "shared URL"
 msgstr "URL ที่ถูกแชร์"
 
+#: models.py:79
 msgid "URL that was shared"
 msgstr "URL ที่ถูกแชร์"
 
+#: models.py:85
 msgid "referrer"
 msgstr "แหล่งที่มา"
 
+#: models.py:86
 msgid "Page from which share was initiated"
 msgstr "หน้าที่ใช้เริ่มต้นการแชร์"
 
+#: models.py:96
 msgid "user"
 msgstr "ผู้ใช้"
 
+#: models.py:97
 msgid "User who shared (if logged in)"
 msgstr "ผู้ใช้ที่แชร์ (ถ้าเข้าสู่ระบบแล้ว)"
 
+#: models.py:104
 msgid "session ID"
 msgstr "ID ของเซสชัน"
 
+#: models.py:105
 msgid "Session identifier for anonymous users"
 msgstr "ตัวระบุเซสชันสำหรับผู้ใช้ที่ไม่ได้เข้าสู่ระบบ"
 
+#: models.py:111
 msgid "IP address"
 msgstr "ที่อยู่ IP"
 
+#: models.py:112
 msgid "IP address of sharer (for analytics and fraud detection)"
 msgstr "ที่อยู่ IP ของผู้แชร์ (สำหรับการวิเคราะห์และตรวจสอบการฉ้อโกง)"
 
+#: models.py:116
 msgid "user agent"
 msgstr "ตัวแทนผู้ใช้"
 
+#: models.py:116
 msgid "Browser user agent string"
 msgstr "สตริง User Agent ของเบราว์เซอร์"
 
+#: models.py:123
 msgid "device type"
 msgstr "ประเภทอุปกรณ์"
 
+#: models.py:124
 msgid "Type of device used for sharing"
 msgstr "ประเภทอุปกรณ์ที่ใช้ในการแชร์"
 
+#: models.py:131
 msgid "shared at"
 msgstr "เวลาที่แชร์"
 
+#: models.py:132
 msgid "When the share occurred"
 msgstr "เวลาที่เกิดการแชร์"
 
+#: models.py:135 models.py:189
 msgid "created at"
 msgstr "สร้างเมื่อ"
 
+#: models.py:137
 msgid "updated at"
 msgstr "อัปเดตเมื่อ"
 
+#: models.py:140
 msgid "Social Share"
 msgstr "การแชร์โซเชียล"
 
+#: models.py:141 templates/admin/social_sharing/dashboard.html:138
+#: templates/admin/social_sharing/socialshare/change_list.html:4
+#: templates/admin/social_sharing/socialshare/change_list.html:19
 msgid "Social Shares"
 msgstr "การแชร์สังคมออนไลน์"
 
+#: models.py:182
 msgid "share count"
 msgstr "จำนวนการแชร์"
 
+#: models.py:183
 msgid "Number of times shared on this platform"
 msgstr "จำนวนครั้งที่ถูกแชร์บนแพลตฟอร์มนี้"
 
+#: models.py:187
 msgid "last updated"
 msgstr "อัปเดตล่าสุด"
 
+#: models.py:193 templates/admin/social_sharing/dashboard.html:149
+#: templates/admin/social_sharing/sharecount/change_list.html:4
+#: templates/admin/social_sharing/sharecount/change_list.html:19
 msgid "Share Counts"
 msgstr "จำนวนการแชร์"
 
+#: settings_models.py:22 settings_models.py:23 settings_models.py:197
+#: templates/admin/social_sharing/dashboard.html:450
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:4
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:20
 msgid "Social Sharing Settings"
 msgstr "การตั้งค่าการแชร์สังคมออนไลน์"
 
+#: settings_models.py:28
 msgid "Enable on Products"
 msgstr "เปิดใช้งานบนสินค้า"
 
+#: settings_models.py:29
 msgid "Automatically show share buttons on product detail pages"
 msgstr "แสดงปุ่มแชร์อัตโนมัติบนหน้ารายละเอียดสินค้า"
 
+#: settings_models.py:34
 msgid "Enable on Categories"
 msgstr "เปิดใช้งานบนหมวดหมู่"
 
+#: settings_models.py:35
 msgid "Automatically show share buttons on category pages"
 msgstr "แสดงปุ่มแชร์อัตโนมัติบนหน้าหมวดหมู่"
 
+#: settings_models.py:40
 msgid "Enable on Blog Posts"
 msgstr "เปิดใช้งานบนบทความบล็อก"
 
+#: settings_models.py:41
 msgid "Automatically show share buttons on blog post pages"
 msgstr "แสดงปุ่มแชร์อัตโนมัติบนหน้าโพสต์บล็อก"
 
+#: settings_models.py:46
 msgid "Enable on Custom Pages"
 msgstr "เปิดใช้งานบนหน้าที่กำหนดเอง"
 
+#: settings_models.py:47
 msgid "Automatically show share buttons on custom pages"
 msgstr "แสดงปุ่มแชร์อัตโนมัติบนหน้าที่กำหนดเอง"
 
+#: settings_models.py:52
 msgid "Above Content"
 msgstr "เหนือเนื้อหา"
 
+#: settings_models.py:53
 msgid "Below Content"
 msgstr "ใต้เนื้อหา"
 
+#: settings_models.py:54
 msgid "Sidebar"
 msgstr "แถบข้าง"
 
+#: settings_models.py:55
 msgid "Floating (sticky)"
 msgstr "ลอย (ยึดอยู่)"
 
+#: settings_models.py:62
 msgid "Placement Position"
 msgstr "ตำแหน่งการจัดวาง"
 
+#: settings_models.py:63
 msgid "Where to display share buttons on the page"
 msgstr "ตำแหน่งที่จะแสดงปุ่มแชร์บนหน้า"
 
+#: settings_models.py:68
 msgid "Icon Only"
 msgstr "ไอคอนเท่านั้น"
 
+#: settings_models.py:69
 msgid "Icon + Label"
 msgstr "ไอคอน + คำอธิบาย"
 
+#: settings_models.py:70
 msgid "Label Only"
 msgstr "คำอธิบายเท่านั้น"
 
+#: settings_models.py:77
 msgid "Button Style"
 msgstr "สไตล์ปุ่ม"
 
+#: settings_models.py:78
 msgid "How share buttons are displayed"
 msgstr "วิธีการแสดงปุ่มแชร์"
 
+#: settings_models.py:83
 msgid "Small"
 msgstr "เล็ก"
 
+#: settings_models.py:84
 msgid "Medium"
 msgstr "กลาง"
 
+#: settings_models.py:85
 msgid "Large"
 msgstr "ใหญ่"
 
+#: settings_models.py:92
 msgid "Button Size"
 msgstr "ขนาดปุ่ม"
 
+#: settings_models.py:93
 msgid "Size of the share buttons"
 msgstr "ขนาดของปุ่มแชร์"
 
+#: settings_models.py:98
 msgid "Horizontal"
 msgstr "แนวนอน"
 
+#: settings_models.py:99
 msgid "Vertical"
 msgstr "แนวตั้ง"
 
+#: settings_models.py:106
 msgid "Layout Direction"
 msgstr "ทิศทางการจัดวาง"
 
+#: settings_models.py:107
 msgid "Arrange share buttons horizontally or vertically"
 msgstr "จัดวางปุ่มแชร์ในแนวนอนหรือแนวตั้ง"
 
+#: settings_models.py:113
 msgid "Show Title"
 msgstr "แสดงชื่อ"
 
+#: settings_models.py:114
 msgid "Show the 'Share' heading above the buttons"
 msgstr "แสดงหัวข้อ 'แชร์' ด้านบนของปุ่ม"
 
+#: settings_models.py:119
 msgid "Always Show"
 msgstr "แสดงเสมอ"
 
+#: settings_models.py:120
 msgid "Hide on Mobile"
 msgstr "ซ่อนบนมือถือ"
 
+#: settings_models.py:121
 msgid "Mobile Only"
 msgstr "เฉพาะมือถือ"
 
+#: settings_models.py:128
 msgid "Mobile Visibility"
 msgstr "การมองเห็นบนมือถือ"
 
+#: settings_models.py:129
 msgid "Control whether share buttons appear on mobile devices"
 msgstr "ควบคุมว่าปุ่มแชร์จะปรากฏบนอุปกรณ์มือถือหรือไม่"
 
+#: settings_models.py:136
 msgid "Widget Slug"
 msgstr "Slug ของวิดเจ็ต"
 
+#: settings_models.py:137
 msgid "Slug of the widget package to use for rendering"
 msgstr "Slug ของแพ็กเกจวิดเจ็ตที่ใช้สำหรับการเรนเดอร์"
 
+#: settings_models.py:144
 msgid "Default Widget Configuration"
 msgstr "การตั้งค่าวิดเจ็ตค่าเริ่มต้น"
 
+#: settings_models.py:145
 msgid ""
 "Override default widget configuration (display_style, button_size, etc.)"
 msgstr "ทับค่าการตั้งค่าวิดเจ็ตเริ่มต้น (display_style, button_size, เป็นต้น)"
 
+#: settings_models.py:153
 msgid "List of enabled platforms. Leave empty to use widget defaults."
 msgstr "รายการแพลตฟอร์มที่เปิดใช้งาน ทิ้งว่างไว้เพื่อใช้ค่าเริ่มต้นของวิดเจ็ต"
 
+#: settings_models.py:159 templates/admin/social_sharing/dashboard.html:514
 msgid "Show Share Counts"
 msgstr "แสดงจำนวนการแชร์"
 
+#: settings_models.py:160
 msgid "Display number of shares for each platform"
 msgstr "แสดงจำนวนการแชร์สำหรับแต่ละแพลตฟอร์ม"
 
+#: settings_models.py:165
 msgid "Track Shares"
 msgstr "ติดตามการแชร์"
 
+#: settings_models.py:166
 msgid "Track share events and award loyalty badges"
 msgstr "ติดตามเหตุการณ์การแชร์และมอบใบประกาศความภักดี"
 
+#: settings_models.py:170
 msgid "Updated At"
 msgstr "อัปเดตเมื่อ"
 
+#: settings_models.py:173
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:221
 msgid "Updated By"
 msgstr "อัปเดตโดย"
 
+#: templates/admin/social_sharing/dashboard.html:4
+#: templates/admin/social_sharing/dashboard.html:22
 msgid "Social Sharing Dashboard"
 msgstr "แดชบอร์ดการแชร์โซเชียล"
 
+#: templates/admin/social_sharing/dashboard.html:4
 msgid "Site Admin"
 msgstr "ผู้ดูแลเว็บไซต์"
 
+#: templates/admin/social_sharing/dashboard.html:25
 #, python-format
 msgid ""
 "\n"
-"            Analytics and settings for the last 30 days (%(start)s - "
-"%(end)s)\n"
+"            Analytics and settings for the last 30 days (%(start)s - %(end)s)\n"
 "            "
 msgstr ""
 "\n"
-"            การวิเคราะห์และตั้งค่าสำหรับ 30 วันที่ผ่านมา (%(start)s - "
-"%(end)s)การวิเคราะห์และตั้งค่าสำหรับ 30 วันที่ผ่านมา (%(start)s - %(end)s)\n"
+"            การวิเคราะห์และตั้งค่าสำหรับ 30 วันที่ผ่านมา (%(start)s - %(end)s)การวิเคราะห์และตั้งค่าสำหรับ 30 วันที่ผ่านมา (%(start)s - %(end)s)\n"
 "            "
 
+#: templates/admin/social_sharing/dashboard.html:38
 msgid "Total Shares"
 msgstr "จำนวนการแชร์ทั้งหมด"
 
+#: templates/admin/social_sharing/dashboard.html:45
 msgid "Shares Today"
 msgstr "จำนวนการแชร์วันนี้"
 
+#: templates/admin/social_sharing/dashboard.html:52
 msgid "Shares This Month"
 msgstr "จำนวนการแชร์ในเดือนนี้"
 
+#: templates/admin/social_sharing/dashboard.html:77
 msgid "Top Platform"
 msgstr "แพลตฟอร์มยอดนิยม"
 
+#: templates/admin/social_sharing/dashboard.html:92
+#: templates/admin/social_sharing/dashboard.html:100
 msgid "Top Product"
 msgstr "สินค้ายอดนิยม"
 
+#: templates/admin/social_sharing/dashboard.html:110
+#: templates/admin/social_sharing/dashboard.html:118
 msgid "Most Active Sharer"
 msgstr "ผู้แชร์ที่กระตือรือร้นที่สุด"
 
+#: templates/admin/social_sharing/dashboard.html:130
 msgid "Quick Actions"
 msgstr "การดำเนินการเร็ว"
 
+#: templates/admin/social_sharing/dashboard.html:139
 msgid "View individual share events"
 msgstr "ดูเหตุการณ์การแชร์รายบุคคล"
 
+#: templates/admin/social_sharing/dashboard.html:141
+#: templates/admin/social_sharing/dashboard.html:152
 msgid "Manage"
 msgstr "จัดการ"
 
+#: templates/admin/social_sharing/dashboard.html:150
 msgid "Aggregated share statistics"
 msgstr "สถิติการแบ่งปันที่รวมกัน"
 
+#: templates/admin/social_sharing/dashboard.html:160
 msgid "Settings"
 msgstr "การตั้งค่า"
 
+#: templates/admin/social_sharing/dashboard.html:161
 msgid "Configure social sharing"
 msgstr "ตั้งค่าการแชร์สังคมออนไลน์"
 
+#: templates/admin/social_sharing/dashboard.html:163
 msgid "Configure"
 msgstr "กำหนดค่า"
 
+#: templates/admin/social_sharing/dashboard.html:178
 msgid "Shares Over Time (Last 30 Days)"
 msgstr "การแชร์ตลอดเวลา (30 วันที่ผ่านมา)"
 
+#: templates/admin/social_sharing/dashboard.html:187
 msgid "Shares by Platform"
 msgstr "การแบ่งปันตามแพลตฟอร์ม"
 
+#: templates/admin/social_sharing/dashboard.html:200
 msgid "Top 10 Sharers (Last 30 Days)"
 msgstr "ผู้แชร์อันดับ 10 ราย (30 วันที่ผ่านมา)"
 
+#: templates/admin/social_sharing/dashboard.html:207
+#: templates/admin/social_sharing/dashboard.html:255
+#: templates/admin/social_sharing/dashboard.html:379
 msgid "Rank"
 msgstr "อันดับ"
 
+#: templates/admin/social_sharing/dashboard.html:209
+#: templates/admin/social_sharing/dashboard.html:257
+#: templates/admin/social_sharing/dashboard.html:382
+#: templates/admin/social_sharing/dashboard.html:542
 msgid "Shares"
 msgstr "การแบ่งปัน"
 
+#: templates/admin/social_sharing/dashboard.html:232
+#: templates/admin/social_sharing/dashboard.html:280
+#: templates/admin/social_sharing/dashboard.html:426
+#: templates/admin/social_sharing/dashboard.html:544
+#: templates/admin/social_sharing/partials/sharecount_cards.html:68
 msgid "shares"
 msgstr "การแบ่งปัน"
 
+#: templates/admin/social_sharing/dashboard.html:240
 msgid "No sharers in the selected period."
 msgstr "ไม่มีผู้แชร์ในช่วงเวลาที่เลือก"
 
+#: templates/admin/social_sharing/dashboard.html:248
 msgid "Top 5 Platforms"
 msgstr "แพลตฟอร์มยอดนิยม 5 อันดับ"
 
+#: templates/admin/social_sharing/dashboard.html:288
 msgid "No platform data available."
 msgstr "ไม่มีข้อมูลแพลตฟอร์มให้ใช้งาน"
 
+#: templates/admin/social_sharing/dashboard.html:299
 msgid "Recent Shares"
 msgstr "การแบ่งปันล่าสุด"
 
+#: templates/admin/social_sharing/dashboard.html:306
 msgid "Date"
 msgstr "วันที่"
 
+#: templates/admin/social_sharing/dashboard.html:348
+#: templates/admin/social_sharing/dashboard.html:417
 msgid "Content deleted"
 msgstr "เนื้อหาถูกลบ"
 
+#: templates/admin/social_sharing/dashboard.html:357
 msgid "No recent shares."
 msgstr "ไม่มีการแบ่งปันล่าสุด"
 
+#: templates/admin/social_sharing/dashboard.html:363
 msgid "View All Shares"
 msgstr "ดูการแบ่งปันทั้งหมด"
 
+#: templates/admin/social_sharing/dashboard.html:372
 msgid "Top 5 Most Shared Content"
 msgstr "เนื้อหาที่ได้รับการแบ่งปันมากที่สุด 5 อันดับ"
 
+#: templates/admin/social_sharing/dashboard.html:434
 msgid "No shared content yet."
 msgstr "ยังไม่มีเนื้อหาที่ได้รับการแบ่งปัน"
 
+#: templates/admin/social_sharing/dashboard.html:440
 msgid "View All Share Counts"
 msgstr "ดูจำนวนการแบ่งปันทั้งหมด"
 
+#: templates/admin/social_sharing/dashboard.html:468
 msgid "Enable Social Sharing On"
 msgstr "เปิดใช้งานการแบ่งปันทางสังคม"
 
+#: templates/admin/social_sharing/dashboard.html:473
 msgid "Products"
 msgstr "สินค้า"
 
+#: templates/admin/social_sharing/dashboard.html:479
 msgid "Categories"
 msgstr "หมวดหมู่"
 
+#: templates/admin/social_sharing/dashboard.html:485
 msgid "Blog Posts"
 msgstr "โพสต์บล็อก"
 
+#: templates/admin/social_sharing/dashboard.html:491
 msgid "Pages"
 msgstr "หน้า"
 
+#: templates/admin/social_sharing/dashboard.html:499
 msgid "Display Settings"
 msgstr "การตั้งค่าการแสดงผล"
 
+#: templates/admin/social_sharing/dashboard.html:502
 msgid "Button Placement"
 msgstr "ตำแหน่งของปุ่ม"
 
+#: templates/admin/social_sharing/dashboard.html:520
 msgid "Track Share Events"
 msgstr "ติดตามเหตุการณ์การแบ่งปัน"
 
+#: templates/admin/social_sharing/dashboard.html:529
 msgid "Save Settings"
 msgstr "บันทึกการตั้งค่า"
 
+#: templates/admin/social_sharing/dashboard.html:543
+#: templates/admin/social_sharing/partials/sharecount_cards.html:66
 msgid "share"
 msgstr "แบ่งปัน"
 
+#: templates/admin/social_sharing/partials/share_cards.html:41
+#: templates/admin/social_sharing/partials/sharecount_cards.html:41
 msgid "Twitter"
 msgstr "ทวิตเตอร์"
 
+#: templates/admin/social_sharing/partials/share_cards.html:128
 msgid "No social shares found matching your filters."
 msgstr "ไม่พบการแชร์โซเชียลที่ตรงกับตัวกรองของคุณ"
 
+#: templates/admin/social_sharing/partials/share_cards.html:132
+#: templates/admin/social_sharing/partials/sharecount_cards.html:119
 msgid "Clear Filters"
 msgstr "ล้างตัวกรอง"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:76
 msgid "Updated"
 msgstr "อัปเดต"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:115
 msgid "No share counts found matching your filters."
 msgstr "ไม่พบจำนวนการแชร์ที่ตรงกับตัวกรองของคุณ"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:21
 msgid "Track social media sharing statistics across platforms"
 msgstr "ติดตามสถิติการแชร์โซเชียลบนแพลตฟอร์มต่าง ๆ"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:31
+#: templates/admin/social_sharing/socialshare/change_list.html:31
 msgid "Filters"
 msgstr "ตัวกรอง"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:35
+#: templates/admin/social_sharing/socialshare/change_list.html:35
 msgid "Toggle Filters"
 msgstr "เปิด/ปิดตัวกรอง"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:44
+#: templates/admin/social_sharing/socialshare/change_list.html:44
 msgid "Search"
 msgstr "ค้นหา"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:46
 msgid "Search by content ID..."
 msgstr "ค้นหาตาม ID เนื้อหา..."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:55
+#: templates/admin/social_sharing/socialshare/change_list.html:55
 msgid "All Platforms"
 msgstr "ทุกแพลตฟอร์ม"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:69
+#: templates/admin/social_sharing/socialshare/change_list.html:69
 msgid "Content Type"
 msgstr "ประเภทเนื้อหา"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:72
+#: templates/admin/social_sharing/socialshare/change_list.html:72
 msgid "All Types"
 msgstr "ทุกประเภท"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:82
 msgid "Min. Share Count"
 msgstr "จำนวนการแบ่งปันขั้นต่ำ"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:84
 msgid "Minimum shares"
 msgstr "จำนวนการแบ่งปันขั้นต่ำ"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:90
 msgid "Sort By"
 msgstr "เรียงตาม"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:93
 msgid "Most Shares"
 msgstr "การแบ่งปันมากที่สุด"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:94
 msgid "Least Shares"
 msgstr "การแบ่งปันน้อยที่สุด"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:95
 msgid "Recently Updated"
 msgstr "อัปเดตล่าสุด"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:96
 msgid "Oldest Updated"
 msgstr "อัปเดตเก่าที่สุด"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:104
+#: templates/admin/social_sharing/socialshare/change_list.html:112
 msgid "Active:"
 msgstr "เปิดใช้งาน:"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:111
+#: templates/admin/social_sharing/socialshare/change_list.html:119
 msgid "Clear All"
 msgstr "ล้างทั้งหมด"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:115
+#: templates/admin/social_sharing/socialshare/change_list.html:123
 msgid "Apply Filters"
 msgstr "ใช้ตัวกรอง"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "Showing"
 msgstr "แสดง"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "results"
 msgstr "ผลลัพธ์"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:21
 msgid "Monitor individual share events and user engagement"
 msgstr "ติดตามเหตุการณ์การแชร์รายบุคคลและการมีส่วนร่วมของผู้ใช้"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:46
 msgid "Search by user, URL..."
 msgstr "ค้นหาตามผู้ใช้, URL..."
 
+#: templates/admin/social_sharing/socialshare/change_list.html:82
 msgid "Device"
 msgstr "อุปกรณ์"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:85
 msgid "All Devices"
 msgstr "ทุกอุปกรณ์"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:95
 msgid "Date From"
 msgstr "วันที่เริ่มต้น"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:103
 msgid "Date To"
 msgstr "วันที่สิ้นสุด"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:25
 msgid "Configure automatic social sharing buttons across your store"
 msgstr "ตั้งค่าปุ่มแชร์สังคมออนไลน์อัตโนมัติทั่วทั้งร้านค้าของคุณ"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:30
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:234
 msgid "Save and continue editing"
 msgstr "บันทึกและดำเนินการแก้ไขต่อ"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:33
 msgid "Save settings"
 msgstr "บันทึกการตั้งค่า"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:50
 msgid "Please correct the errors below"
 msgstr "กรุณาแก้ไขข้อผิดพลาดด้านล่าง"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:83
 msgid "Automatic Placement"
 msgstr "การจัดวางอัตโนมัติ"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:84
 msgid ""
 "Configure where social share buttons appear automatically across your store."
-msgstr "ตั้งค่าตำแหน่งที่ปุ่มแชร์สังคมออนไลน์จะปรากฏอัตโนมัติทั่วทั้งร้านค้าของคุณ。"
+msgstr ""
+"ตั้งค่าตำแหน่งที่ปุ่มแชร์สังคมออนไลน์จะปรากฏอัตโนมัติทั่วทั้งร้านค้าของคุณ。"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:129
 msgid "Platforms"
 msgstr "แพลตฟอร์ม"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:130
 msgid ""
 "Select which social platforms to show. If none are selected, all platforms "
 "will be displayed."
-msgstr "เลือกว่าจะแสดงแพลตฟอร์มโซเชียลใด ถ้าไม่ได้เลือกใดเลย แพลตฟอร์มทั้งหมดจะถูกแสดง"
+msgstr ""
+"เลือกว่าจะแสดงแพลตฟอร์มโซเชียลใด ถ้าไม่ได้เลือกใดเลย "
+"แพลตฟอร์มทั้งหมดจะถูกแสดง"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:140
 msgid "Button Appearance"
 msgstr "ลักษณะของปุ่ม"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:141
 msgid "Control how the share buttons look on your store."
 msgstr "ควบคุมว่าปุ่มแชร์จะมีลักษณะอย่างไรในร้านค้าของคุณ"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:186
 msgid "Tracking & Analytics"
 msgstr "การติดตามและการวิเคราะห์"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:187
 msgid "Control share tracking and count display."
 msgstr "ควบคุมการติดตามการแชร์และการแสดงผลจำนวน"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:215
 msgid "Last Updated"
 msgstr "อัปเดตล่าสุด"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:233
 msgid "Save"
 msgstr "บันทึก"
 
+#: views.py:214
 msgid "Social sharing settings updated successfully."
 msgstr "การตั้งค่าการแบ่งปันทางสังคมได้รับการอัปเดตสำเร็จ"

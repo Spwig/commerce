@@ -3,7 +3,24 @@
 {# Populated by JS from cart data #}
 
 <aside class="checkout-summary" id="checkout-summary">
-    <div class="checkout-summary__card">
+    {% comment %}
+    Mobile-only collapsible bar: shows the live total near the top of the
+    page (the card below is moved to the top and collapsed on mobile). On
+    desktop the toggle is hidden and the card is a static sidebar.
+    Suppressed when the flow supplies its own toggle (multi-step).
+    {% endcomment %}
+    {% if not summary_toggle_provided %}
+    <button type="button" class="checkout-summary__toggle" data-action="toggle-summary"
+            aria-expanded="false" aria-controls="checkout-summary-card">
+        <span class="checkout-summary__toggle-label">
+            <i class="fas fa-receipt" aria-hidden="true"></i>
+            {% mtrans 'Order Summary' %}
+        </span>
+        <span class="checkout-summary__toggle-total" id="summary-toggle-total"></span>
+        <i class="fas fa-chevron-down checkout-summary__toggle-chevron" aria-hidden="true"></i>
+    </button>
+    {% endif %}
+    <div class="checkout-summary__card" id="checkout-summary-card">
         <h2 class="checkout-summary__title">{% mtrans 'Order Summary' %}</h2>
 
         <div class="checkout-summary__items" id="summary-items">
@@ -15,16 +32,24 @@
             <span id="summary-subtotal"></span>
         </div>
 
+        {% if cart_requires_shipping %}
         <div class="checkout-summary__row" id="summary-shipping-row">
             <span>{% mtrans 'Shipping' %}</span>
             <span id="summary-shipping">{% mtrans 'Calculated next' %}</span>
         </div>
+        {% endif %}
 
         <div class="checkout-summary__row checkout-summary__row--discount" id="summary-discount-row" hidden>
             <span>{% mtrans 'Discount' %}</span>
             <span id="summary-discount"></span>
         </div>
 
+        {% comment %}
+        Applied tenders (gift card / store credit). JS renders one row per
+        hold so a summary redraw can never wipe them, and the amount-due
+        line shows what a gateway will actually be asked for.
+        {% endcomment %}
+        <div id="summary-tenders"></div>
         <div class="checkout-summary__row" id="summary-tax-row" hidden>
             <span>{% mtrans 'Tax' %}</span>
             <span id="summary-tax"></span>
@@ -34,6 +59,23 @@
             <span>{% mtrans 'Total' %}</span>
             <span id="summary-total"></span>
         </div>
+
+        {% comment %}
+        What a payment provider will actually be asked for, once gift card /
+        store credit tenders are applied. Total above never changes — a
+        tender is a payment, not a discount.
+        {% endcomment %}
+        <div class="checkout-summary__row checkout-summary__row--amount-due"
+             id="summary-amount-due-row" hidden>
+            <span>{% mtrans 'Amount due' %}</span>
+            <span id="summary-amount-due"></span>
+        </div>
+
+        {% comment %}
+        Voucher / discount code moved to the payment section (_step_payment)
+        so it is present even when this sidebar is disabled, and to avoid a
+        duplicate #checkout-voucher-code when both render.
+        {% endcomment %}
 
         <div id="conversion-notice" class="checkout-conversion-notice" hidden>
             <i class="fas fa-info-circle"></i>

@@ -1,3 +1,4 @@
+import logging
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -8,6 +9,8 @@ from djmoney.models.fields import MoneyField
 from design.models import DesignMixin
 
 User = get_user_model()
+
+logger = logging.getLogger(__name__)
 
 
 class Cart(DesignMixin):
@@ -238,21 +241,17 @@ class Cart(DesignMixin):
         )
 
     @property
-    def gift_card_discount_amount(self):
-        """Total discount from applied gift cards"""
-        from core.utils import safe_money_sum
-
-        return safe_money_sum(
-            (gift_card.discount_amount for gift_card in self.applied_gift_cards.all()),
-            currency=self.effective_currency,
-        )
-
-    @property
     def final_amount(self):
-        """Final cart total after all discounts including vouchers and gift cards"""
+        """
+        Cart total after DISCOUNTS. Gift cards are not discounts.
+
+        A gift card no longer reduces this; it pays against it at checkout.
+        Anything wanting "what will actually be charged" wants
+        `CheckoutSession.amount_due`.
+        """
         from djmoney.money import Money
 
-        result = self.total_amount - self.voucher_discount_amount - self.gift_card_discount_amount
+        result = self.total_amount - self.voucher_discount_amount
         # Ensure we don't return negative amounts
         if result.amount < 0:
             return Money(0, result.currency)
@@ -260,8 +259,14 @@ class Cart(DesignMixin):
 
     @property
     def total_all_savings(self):
-        """Total savings from product discounts, vouchers, and gift cards"""
-        return self.total_savings + self.voucher_discount_amount + self.gift_card_discount_amount
+        """
+        Savings from product discounts and vouchers.
+
+        Gift cards are deliberately excluded. A customer spending their own
+        prepaid money is not saving anything, and counting it here overstated
+        discounts and understated margin in every report that used it.
+        """
+        return self.total_savings + self.voucher_discount_amount
 
     @property
     def requires_shipping(self):
@@ -572,11 +577,26 @@ class Cart(DesignMixin):
         if self.applied_vouchers.filter(voucher=voucher).exists():
             return False, "Voucher already applied", Decimal("0.00")
 
-        # Check if user can use this voucher
-        if user:
-            can_use, message = voucher.can_be_used_by_customer(user)
-            if not can_use:
-                return False, message, Decimal("0.00")
+        # Vouchers and gift cards are only redeemable in the currency they
+        # were issued in — no cross-currency conversion, by design.
+        if voucher.currency and voucher.currency != str(self.effective_currency):
+            return (
+                False,
+                f"This voucher can only be used for orders in {voucher.currency}",
+                Decimal("0.00"),
+            )
+
+        # Check if user can use this voucher.
+        #
+        # Called unconditionally, including for guests: this used to be guarded
+        # by `if user:`, so an anonymous cart skipped issued_to,
+        # first_time_customers_only and max_uses_per_customer entirely — which
+        # made checking out as a guest a one-click bypass of every per-customer
+        # rule. can_be_used_by_customer treats a missing identity as failing
+        # any rule that requires one.
+        can_use, message = voucher.can_be_used_by_customer(user)
+        if not can_use:
+            return False, message, Decimal("0.00")
 
         # Check voucher combination rules
         if voucher.cannot_combine_with_other_vouchers and self.applied_vouchers.exists():
@@ -633,54 +653,57 @@ class Cart(DesignMixin):
         return removed > 0
 
     def _calculate_eligible_amount_for_voucher(self, voucher):
-        """Calculate the amount eligible for voucher discount"""
+        """
+        Calculate the amount eligible for voucher discount.
+
+        **Gift cards are never eligible.** A gift card is stored value sold at
+        face value, not merchandise: discounting it hands the customer more
+        value than they paid for, repeatably. A 20%-off cart voucher against a
+        100 gift card costs 80 and yields a card worth 100 — a money printer
+        bounded only by how many times the voucher can be used.
+
+        The `cart` scope was the live hole: it took `self.total_amount`
+        wholesale and only iterated items when `exclude_sale_items` was set.
+        """
         from djmoney.money import Money
 
         from core.utils import safe_money_sum
 
-        if voucher.application_scope == "cart":
-            # Whole cart eligible
-            eligible_amount = self.total_amount
+        def eligible_items():
+            """Top-level, non-gift-card items, honouring exclude_sale_items."""
+            for item in self.items.all():
+                if item.parent_bundle_id is not None:
+                    continue
+                if item.product.product_type == "gift_card":
+                    continue
+                if voucher.exclude_sale_items and item.savings != Money(0, item.savings.currency):
+                    continue
+                yield item
 
-            # Exclude sale items if required
-            if voucher.exclude_sale_items:
-                eligible_amount = safe_money_sum(
-                    (
-                        item.total_price
-                        for item in self.items.all()
-                        if item.savings == Money(0, item.savings.currency)
-                    ),
-                    currency=self.effective_currency,
-                )
+        if voucher.application_scope == "cart":
+            eligible_amount = safe_money_sum(
+                (item.total_price for item in eligible_items()),
+                currency=self.effective_currency,
+            )
 
         elif voucher.application_scope == "products":
-            # Only specific products eligible
             eligible_products = voucher.eligible_products.all()
             eligible_amount = safe_money_sum(
                 (
                     item.total_price
-                    for item in self.items.all()
+                    for item in eligible_items()
                     if item.product in eligible_products
-                    and (
-                        not voucher.exclude_sale_items
-                        or item.savings == Money(0, item.savings.currency)
-                    )
                 ),
                 currency=self.effective_currency,
             )
 
         elif voucher.application_scope == "categories":
-            # Only specific categories eligible
             eligible_categories = voucher.eligible_categories.all()
             eligible_amount = safe_money_sum(
                 (
                     item.total_price
-                    for item in self.items.all()
+                    for item in eligible_items()
                     if item.product.category in eligible_categories
-                    and (
-                        not voucher.exclude_sale_items
-                        or item.savings == Money(0, item.savings.currency)
-                    )
                 ),
                 currency=self.effective_currency,
             )
@@ -700,263 +723,6 @@ class Cart(DesignMixin):
             if new_discount != applied_voucher.discount_amount:
                 applied_voucher.discount_amount = new_discount
                 applied_voucher.save()
-
-    def apply_gift_card(self, gift_card_code, customer_currency=None):
-        """
-        Apply a gift card to the cart.
-
-        Args:
-            gift_card_code: Gift card code to apply
-            customer_currency: Customer's active currency code (from session/middleware).
-                Used to validate foreign-currency gift cards. If None, falls back to
-                cart's internal currency (base currency).
-
-        Returns:
-            tuple: (success, message, discount_amount)
-        """
-        from decimal import Decimal
-
-        from djmoney.money import Money
-
-        from catalog.models import GiftCard
-
-        try:
-            gift_card = GiftCard.objects.get(code=gift_card_code)
-        except GiftCard.DoesNotExist:
-            return False, _("Invalid gift card code"), Decimal("0.00")
-
-        # Check if gift card is already applied
-        if self.applied_gift_cards.filter(gift_card=gift_card).exists():
-            return False, _("Gift card already applied"), Decimal("0.00")
-
-        # Check if gift card is valid
-        if not gift_card.is_valid:
-            if not gift_card.is_active:
-                return False, _("Gift card is not active"), Decimal("0.00")
-            elif gift_card.is_expired:
-                return False, _("Gift card has expired"), Decimal("0.00")
-            elif gift_card.is_fully_redeemed:
-                return False, _("Gift card has been fully redeemed"), Decimal("0.00")
-            else:
-                return False, _("Gift card cannot be used"), Decimal("0.00")
-
-        gc_currency = gift_card.current_balance.currency.code
-        cart_currency = self.total_amount.currency.code
-        is_foreign_currency_gc = gc_currency != cart_currency
-
-        # Currency validation
-        if is_foreign_currency_gc:
-            # Foreign-currency gift card: validate against customer's active currency
-            if not customer_currency:
-                return (
-                    False,
-                    _(
-                        "Currency mismatch. Gift card is in {card_currency}, "
-                        "cart is in {cart_currency}"
-                    ).format(card_currency=gc_currency, cart_currency=cart_currency),
-                    Decimal("0.00"),
-                )
-
-            if gc_currency != customer_currency:
-                return (
-                    False,
-                    _(
-                        "This gift card is in {card_currency}. Please switch your "
-                        "currency to {card_currency} to use it."
-                    ).format(card_currency=gc_currency),
-                    Decimal("0.00"),
-                )
-
-        # Cannot use gift cards to pay for other gift cards
-        has_gift_card_products = self.items.filter(product__product_type="gift_card").exists()
-        if has_gift_card_products:
-            return (
-                False,
-                _("Gift cards cannot be used to purchase other gift cards"),
-                Decimal("0.00"),
-            )
-
-        # Calculate remaining cart total (in base currency) after vouchers and other gift cards
-        amount_after_vouchers = self.total_amount - self.voucher_discount_amount
-        remaining_total = amount_after_vouchers - self.gift_card_discount_amount
-
-        if remaining_total.amount <= 0:
-            return False, _("Cart total is already covered"), Decimal("0.00")
-
-        if is_foreign_currency_gc:
-            # Foreign-currency gift card: convert balance to base currency for cart calculations
-            from exchange_rates.services.exchange_service import ExchangeRateService
-
-            try:
-                fx_service = ExchangeRateService()
-                # Convert gift card balance to base currency
-                gc_balance_in_base = fx_service.convert(
-                    gift_card.current_balance.amount, gc_currency, cart_currency
-                )
-                rate = fx_service.get_rate(gc_currency, cart_currency)
-
-                # discount_amount is in base currency (for cart math)
-                discount_base = Money(
-                    min(gc_balance_in_base, remaining_total.amount), cart_currency
-                )
-
-                # Calculate the corresponding amount in the gift card's currency
-                if discount_base.amount == gc_balance_in_base:
-                    # Using full gift card balance
-                    original_amount = gift_card.current_balance
-                else:
-                    # Partial use: convert the base discount back to gc currency
-                    original_in_gc = fx_service.convert(
-                        discount_base.amount, cart_currency, gc_currency
-                    )
-                    original_amount = Money(original_in_gc, gc_currency)
-
-                AppliedGiftCard.objects.create(
-                    cart=self,
-                    gift_card=gift_card,
-                    discount_amount=discount_base,
-                    original_currency_amount=original_amount,
-                    gc_exchange_rate=rate,
-                )
-                applied_discount = discount_base.amount
-            except Exception as e:
-                import logging
-
-                logging.getLogger(__name__).error(f"Gift card currency conversion failed: {e}")
-                return False, _("Unable to process gift card currency conversion"), Decimal("0.00")
-        else:
-            # Same-currency gift card (base currency): existing simple logic
-            discount_amount = Money(
-                min(gift_card.current_balance.amount, remaining_total.amount), cart_currency
-            )
-            AppliedGiftCard.objects.create(
-                cart=self, gift_card=gift_card, discount_amount=discount_amount
-            )
-            applied_discount = discount_amount.amount
-
-        return True, _("Gift card applied successfully"), applied_discount
-
-    def remove_gift_card(self, gift_card_code):
-        """
-        Remove a gift card from the cart.
-
-        Args:
-            gift_card_code: Gift card code to remove
-
-        Returns:
-            bool: True if removed, False if not found
-        """
-        removed = self.applied_gift_cards.filter(gift_card__code=gift_card_code).delete()[0]
-        return removed > 0
-
-    def recalculate_gift_card_discounts(self):
-        """
-        Recalculate all applied gift card discounts.
-        Useful after cart changes to ensure gift card discounts are still valid.
-        Handles both base-currency and foreign-currency gift cards.
-        """
-        from djmoney.money import Money
-
-        cart_currency = self.total_amount.currency.code
-
-        # Calculate amount after vouchers
-        amount_after_vouchers = self.total_amount - self.voucher_discount_amount
-        remaining_total = amount_after_vouchers
-
-        for applied_gift_card in self.applied_gift_cards.all():
-            gift_card = applied_gift_card.gift_card
-
-            # Check if gift card is still valid
-            if not gift_card.is_valid:
-                applied_gift_card.delete()
-                continue
-
-            gc_currency = gift_card.current_balance.currency.code
-            is_foreign = gc_currency != cart_currency
-
-            if is_foreign:
-                # Foreign-currency gift card: re-convert with current rate
-                try:
-                    from exchange_rates.services.exchange_service import ExchangeRateService
-
-                    fx_service = ExchangeRateService()
-                    gc_balance_in_base = fx_service.convert(
-                        gift_card.current_balance.amount, gc_currency, cart_currency
-                    )
-                    rate = fx_service.get_rate(gc_currency, cart_currency)
-
-                    new_discount = Money(
-                        min(gc_balance_in_base, remaining_total.amount), cart_currency
-                    )
-
-                    if new_discount.amount <= 0:
-                        applied_gift_card.delete()
-                        continue
-
-                    # Calculate corresponding native currency amount
-                    if new_discount.amount == gc_balance_in_base:
-                        original_amount = gift_card.current_balance
-                    else:
-                        original_in_gc = fx_service.convert(
-                            new_discount.amount, cart_currency, gc_currency
-                        )
-                        original_amount = Money(original_in_gc, gc_currency)
-
-                    updated = False
-                    if new_discount != applied_gift_card.discount_amount:
-                        applied_gift_card.discount_amount = new_discount
-                        updated = True
-                    if original_amount != applied_gift_card.original_currency_amount:
-                        applied_gift_card.original_currency_amount = original_amount
-                        updated = True
-                    if rate != applied_gift_card.gc_exchange_rate:
-                        applied_gift_card.gc_exchange_rate = rate
-                        updated = True
-                    if updated:
-                        applied_gift_card.save()
-
-                    remaining_total -= new_discount
-
-                except Exception:
-                    # If conversion fails, remove the gift card from cart
-                    import logging
-
-                    logging.getLogger(__name__).warning(
-                        f"Failed to recalculate foreign currency gift card {gift_card.code}, removing"
-                    )
-                    applied_gift_card.delete()
-            else:
-                # Base-currency gift card: simple recalculation
-                new_discount = Money(
-                    min(gift_card.current_balance.amount, remaining_total.amount), cart_currency
-                )
-
-                if new_discount.amount <= 0:
-                    applied_gift_card.delete()
-                elif new_discount != applied_gift_card.discount_amount:
-                    applied_gift_card.discount_amount = new_discount
-                    applied_gift_card.save()
-
-                remaining_total -= new_discount
-
-    def get_gift_card_summary(self):
-        """Get summary of applied gift cards for display"""
-        summary = []
-        for agc in self.applied_gift_cards.all():
-            entry = {
-                "code": agc.gift_card.code,
-                "discount_amount": float(agc.discount_amount.amount),
-                "currency": agc.discount_amount.currency.code,
-                "remaining_balance": float(agc.gift_card.current_balance.amount),
-                "gift_card_currency": agc.gift_card.current_balance.currency.code,
-                "applied_at": agc.applied_at.isoformat(),
-            }
-            # Include original currency info for foreign-currency gift cards
-            if agc.original_currency_amount:
-                entry["original_discount_amount"] = float(agc.original_currency_amount.amount)
-                entry["original_discount_currency"] = agc.original_currency_amount.currency.code
-            summary.append(entry)
-        return summary
 
     def get_voucher_summary(self):
         """Get summary of applied vouchers for display"""
@@ -995,6 +761,20 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1, verbose_name=_("Quantity"))
     unit_price = MoneyField(
         max_digits=10, decimal_places=2, default_currency="USD", verbose_name=_("Unit Price")
+    )
+    base_unit_price = MoneyField(
+        max_digits=10,
+        decimal_places=2,
+        default_currency="USD",
+        null=True,
+        blank=True,
+        verbose_name=_("Base Unit Price"),
+        help_text=_(
+            "Immutable price anchor in the currency the line was originally "
+            "priced in. Currency syncs always convert from this value in a "
+            "single hop — never from the last converted price, which would "
+            "accumulate rounding/spread drift."
+        ),
     )
 
     # Customization options (for personalized products)
@@ -1057,6 +837,27 @@ class CartItem(models.Model):
             "Booking details: {start_datetime, end_datetime, resource_id, persons, timezone}"
         ),
         verbose_name=_("Booking Data"),
+    )
+
+    # Gift card purchase details (for gift_card products)
+    #
+    # Deliberately NOT stored in `customizations`: that field is validated by
+    # CartService._validate_customizations, which rejects any payload when the
+    # product has allow_customization=False and reshapes every value into
+    # {option_id: {value, calculated_price}} — so a recipient email would read
+    # back as a dict, not a string.
+    #
+    # Unlike booking_data (an unvalidated passthrough at cart/serializers.py),
+    # this is validated by GiftCardDataSerializer before it lands here: the
+    # values are interpolated into an email sent to a third party.
+    gift_card_data = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_(
+            "Gift card purchase details: {recipient_email, recipient_name, "
+            "sender_name, message, scheduled_send_at, amount}"
+        ),
+        verbose_name=_("Gift Card Data"),
     )
 
     # Cart item notes
@@ -1144,9 +945,31 @@ class CartItem(models.Model):
         """Savings from product discount (difference between regular price and unit price)"""
         from djmoney.money import Money
 
-        if self.product.price > self.unit_price:
-            return (self.product.price - self.unit_price) * self.quantity
-        return Money(0, self.product.price.currency)
+        regular = self.product.price
+        if str(regular.currency) != str(self.unit_price.currency):
+            # Regular price lives in the product's base currency; convert it
+            # before comparing — django-money raises on cross-currency
+            # comparisons, and a display nicety must never break checkout.
+            try:
+                from exchange_rates.services.exchange_service import ExchangeRateService
+
+                regular = Money(
+                    ExchangeRateService().convert(
+                        regular.amount, str(regular.currency), str(self.unit_price.currency)
+                    ),
+                    self.unit_price.currency,
+                )
+            except Exception:
+                logger.debug(
+                    "savings: could not convert %s to %s for cart item %s; showing zero",
+                    regular.currency,
+                    self.unit_price.currency,
+                    self.pk,
+                )
+                return Money(0, self.unit_price.currency)
+        if regular > self.unit_price:
+            return (regular - self.unit_price) * self.quantity
+        return Money(0, self.unit_price.currency)
 
     @property
     def requires_shipping(self):
@@ -1178,6 +1001,20 @@ class CartItem(models.Model):
                 self.unit_price = self.variant.get_price()
             else:
                 self.unit_price = self.product.price
+        # Anchor the as-priced value once; currency syncs convert from this,
+        # never from a previously converted unit_price
+        if self.base_unit_price is None and self.unit_price is not None:
+            self.base_unit_price = self.unit_price
+            if (
+                "update_fields" in kwargs
+                and kwargs["update_fields"] is not None
+                and "base_unit_price" not in kwargs["update_fields"]
+            ):
+                # Both columns: MoneyField splits amount and currency
+                kwargs["update_fields"] = list(kwargs["update_fields"]) + [
+                    "base_unit_price",
+                    "base_unit_price_currency",
+                ]
         super().save(*args, **kwargs)
 
 
@@ -1576,6 +1413,11 @@ class ShippingMethod(DesignMixin):
         return min_date
 
 
+def default_exempt_product_types():
+    """Gift cards are exempt from tax at purchase by default — see the field help."""
+    return ["gift_card"]
+
+
 class TaxRate(models.Model):
     """
     Tax rates by geographic region
@@ -1638,9 +1480,13 @@ class TaxRate(models.Model):
 
     # Product eligibility
     exempt_product_types = models.JSONField(
-        default=list,
+        default=default_exempt_product_types,
         blank=True,
-        help_text=_("Product types exempt from this tax (e.g., ['digital', 'service'])"),
+        help_text=_(
+            "Product types exempt from this tax. Gift cards are exempt by default: "
+            "selling stored value is not a taxable supply in most jurisdictions, and "
+            "tax falls due when the card is spent. Confirm with your accountant."
+        ),
         verbose_name=_("Exempt Product Types"),
     )
 
@@ -1998,8 +1844,13 @@ class CheckoutSession(models.Model):
         # Discount from cart vouchers
         self.discount_amount = self.cart.voucher_discount_amount
 
-        # Gift card discount from cart
-        self.gift_card_discount = self.cart.gift_card_discount_amount
+        # Gift card discount stays zero. A gift card is a payment tender, not a
+        # discount — it settles against `amount_due` after tax and shipping, so
+        # it must never reduce the figure the customer is billed. The column is
+        # kept (not dropped) so historical orders keep reading back correctly;
+        # restating those would need amount_paid and the _base columns too, and
+        # is irreversible.
+        self.gift_card_discount = zero
 
         # Shipping cost (recalculate with promo-aware service)
         # Check both ForeignKey and JSONField for address
@@ -2031,13 +1882,16 @@ class CheckoutSession(models.Model):
             if hasattr(val, "currency") and val.currency != currency:
                 setattr(self, attr, Money(val.amount, currency))
 
-        # Final total (subtract both voucher discounts and gift card discounts)
+        # Order total. Voucher discounts reduce it; gift cards do NOT.
+        #
+        # A voucher is a price reduction — the customer owes less. A gift card
+        # is money they already handed over, so it is a payment against the
+        # total, not a change to it. Subtracting it here is what capped a card
+        # at the pre-tax subtotal and let a $200 card leave $20 to charge on a
+        # $120 order. `gift_card_discount` is retained as a frozen legacy column
+        # (see amount_due below) and stays at zero for new sessions.
         self.total_amount = (
-            self.subtotal
-            + self.shipping_cost
-            + self.tax_amount
-            - self.discount_amount
-            - self.gift_card_discount
+            self.subtotal + self.shipping_cost + self.tax_amount - self.discount_amount
         )
 
         # Ensure total doesn't go negative
@@ -2056,6 +1910,61 @@ class CheckoutSession(models.Model):
             ]
         )
 
+    @property
+    def tendered_amount(self):
+        """
+        Value already covered by tenders held against this checkout.
+
+        Counts `authorize` rows that are still live. A gift card hold is a
+        reservation of the customer's own money, so it offsets what remains to
+        charge — but it is not a discount and never changes `total_amount`.
+        """
+        from djmoney.money import Money
+
+        from payment_providers.models import PaymentTransaction
+
+        currency = self.total_amount.currency
+        rows = PaymentTransaction.objects.filter(
+            checkout_session=self,
+            transaction_type="authorize",
+            status="authorized",
+        ).values_list("settlement_amount", "settlement_amount_currency")
+
+        total = Money(Decimal("0"), currency)
+        for amount, amount_currency in rows:
+            if amount is None:
+                continue
+            if str(amount_currency) != str(currency):
+                # settlement_amount is by definition in the order's currency;
+                # a mismatch means something wrote the wrong figure, and
+                # guessing here would understate what the customer still owes.
+                raise ValueError(
+                    f"Tender on checkout {self.pk} settles in {amount_currency} "
+                    f"but the order is in {currency}"
+                )
+            total += Money(amount, currency)
+        return total
+
+    @property
+    def amount_due(self):
+        """
+        What still needs charging to a payment provider.
+
+        This — not `total_amount` — is the figure a gateway should be asked
+        for. It can legitimately be zero when tenders cover the whole order,
+        which is why checkout must tolerate a zero-value payment rather than
+        rejecting it (see PaymentService.validate_payment_amount).
+        """
+        from djmoney.money import Money
+
+        due = self.total_amount - self.tendered_amount
+        if due.amount < 0:
+            # More tendered than owed shouldn't happen — holds are capped at
+            # what the card has and what the order needs — but never ask a
+            # gateway for a negative charge.
+            return Money(Decimal("0"), self.total_amount.currency)
+        return due
+
     def _calculate_tax(self):
         """
         Calculate tax based on shipping address using TaxService.
@@ -2068,9 +1977,21 @@ class CheckoutSession(models.Model):
 
         from cart.services.tax_service import TaxService
 
-        # Gather cart items as (product, quantity, line_total) tuples
+        # Gather cart items as (product, quantity, line_total) tuples.
+        #
+        # Bundle components are excluded. A bundle is stored as a parent item
+        # carrying the bundle's price plus one child per component carrying
+        # that component's own price, and every money aggregation on Cart
+        # counts parents only (`total_amount`, `total_items`, `total_savings`,
+        # voucher-eligible amount). Including children here taxed goods the
+        # customer was never billed for: a $100 bundle whose components price
+        # at $120 standalone was taxed on $220. create_order copies
+        # `session.tax_amount` straight onto the Order, so that over-tax was
+        # collected.
         items = []
-        for item in self.cart.items.select_related("product", "variant"):
+        for item in self.cart.items.filter(parent_bundle__isnull=True).select_related(
+            "product", "variant"
+        ):
             items.append(
                 (
                     item.product,
@@ -2206,80 +2127,3 @@ class CheckoutSession(models.Model):
         self.save(update_fields=["available_shipping_methods"])
 
         return methods
-
-
-class AppliedGiftCard(models.Model):
-    """
-    Tracks gift cards applied to a cart.
-    Similar to AppliedVoucher but for gift card redemptions.
-    """
-
-    cart = models.ForeignKey(
-        Cart, on_delete=models.CASCADE, related_name="applied_gift_cards", verbose_name=_("Cart")
-    )
-
-    gift_card = models.ForeignKey(
-        "catalog.GiftCard",
-        on_delete=models.PROTECT,
-        related_name="cart_applications",
-        verbose_name=_("Gift Card"),
-    )
-
-    discount_amount = MoneyField(
-        max_digits=10,
-        decimal_places=2,
-        default_currency="USD",
-        verbose_name=_("Discount Amount"),
-        help_text=_("Amount in base currency (used for cart calculations)"),
-    )
-
-    # For foreign-currency gift cards: tracks the amount in the gift card's native currency
-    original_currency_amount = MoneyField(
-        max_digits=10,
-        decimal_places=2,
-        default_currency=None,
-        null=True,
-        blank=True,
-        verbose_name=_("Original Currency Amount"),
-        help_text=_(
-            "Discount in the gift card's native currency (for foreign-currency gift cards)"
-        ),
-    )
-
-    # Exchange rate used when converting between gift card currency and base currency
-    gc_exchange_rate = models.DecimalField(
-        max_digits=18,
-        decimal_places=6,
-        null=True,
-        blank=True,
-        verbose_name=_("Exchange Rate"),
-        help_text=_("Rate: gift card currency -> base currency at time of application"),
-    )
-
-    applied_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Applied At"))
-
-    class Meta:
-        verbose_name = _("Applied Gift Card")
-        verbose_name_plural = _("Applied Gift Cards")
-        unique_together = [["cart", "gift_card"]]
-        ordering = ["-applied_at"]
-
-    def __str__(self):
-        return f"{self.gift_card.code} - {self.discount_amount} on Cart {self.cart.id}"
-
-    @property
-    def redemption_amount(self):
-        """Amount to deduct from the gift card at checkout (in gift card's native currency)."""
-        return self.original_currency_amount or self.discount_amount
-
-    def clean(self):
-        """Validate gift card application"""
-        from django.core.exceptions import ValidationError
-
-        if not self.gift_card.is_valid:
-            raise ValidationError(_("This gift card cannot be used"))
-
-        # Check amount doesn't exceed balance (compare in gift card's native currency)
-        redemption = self.original_currency_amount or self.discount_amount
-        if redemption.amount > self.gift_card.current_balance.amount:
-            raise ValidationError(_("Discount amount exceeds gift card balance"))

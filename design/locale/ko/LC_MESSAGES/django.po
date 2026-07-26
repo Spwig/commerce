@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean <LL@li.org>\n"
@@ -18,12 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:50 admin.py:268 admin.py:377 admin.py:899 header_footer_admin.py:50
+#: header_footer_admin.py:119 header_footer_admin.py:198
+#: header_footer_admin.py:294 header_footer_admin.py:374
 msgid "Basic Information"
 msgstr "기본 정보"
 
+#: admin.py:52
 msgid "Priority & Source"
 msgstr "우선순위 및 출처"
 
+#: admin.py:56
 msgid ""
 "Token priority cascade: 1=Brand Builder (highest), 2=Theme, 3=Component, "
 "4=System (lowest). Lower number = higher priority in resolution. Set theme "
@@ -33,9 +38,11 @@ msgstr ""
 "스템(가장 낮음). 숫자가 작을수록 해결 우선순위가 높습니다. 테마 토큰은 테마"
 "를, 컴포넌트 토큰은 컴포넌트를 설정하십시오."
 
+#: admin.py:64 models.py:146
 msgid "Tier Restrictions"
 msgstr "계층 제한"
 
+#: admin.py:68
 msgid ""
 "Select tiers where this token is available. Empty = all tiers. Options: A "
 "(System-Critical), B (Semi-Critical), C (Marketing)."
@@ -43,9 +50,15 @@ msgstr ""
 "이 토큰이 사용 가능한 계층을 선택하십시오. 비워두면 모든 계층입니다. 선택지: "
 "A(시스템 중요), B(반 중요), C(마케팅)."
 
+#: admin.py:75 admin.py:920 header_footer_admin.py:65
+#: header_footer_admin.py:131 header_footer_admin.py:218
+#: header_footer_admin.py:297
+#: templates/admin/design/designtoken/change_list.html:137
+#: templates/admin/design/widget/change_list.html:76
 msgid "Status"
 msgstr "상태"
 
+#: admin.py:79
 msgid ""
 "Locked tokens cannot have their name changed. Theme tokens are locked by "
 "default to maintain consistency."
@@ -53,28 +66,36 @@ msgstr ""
 "잠긴 토큰은 이름을 변경할 수 없습니다. 테마 토큰은 기본적으로 잠겨 있어 일관"
 "성을 유지합니다."
 
+#: admin.py:84 admin.py:280 admin.py:411
 msgid "Metadata"
 msgstr "메타데이터"
 
+#: admin.py:90
 msgid "All Tiers"
 msgstr "모든 계층"
 
+#: admin.py:93
 msgid "Available Tiers"
 msgstr "사용 가능한 계층"
 
+#: admin.py:100
 msgid "This token is locked and cannot be renamed"
 msgstr "이 토큰은 잠겨 있어 이름을 변경할 수 없습니다."
 
+#: admin.py:133
 msgid "Sync selected theme tokens"
 msgstr "선택한 테마 토큰 동기화"
 
+#: admin.py:145
 #, python-format
 msgid "Synced tokens from %(count)d theme(s)"
 msgstr "토큰 %(count)d개의 테마에서 동기화됨"
 
+#: admin.py:148
 msgid "Sync ALL theme tokens (all active themes)"
 msgstr "모든 테마 토큰 동기화(모든 활성 테마)"
 
+#: admin.py:168
 #, python-format
 msgid ""
 "Synced %(themes)d theme(s): %(created)d created, %(updated)d updated, "
@@ -83,208 +104,266 @@ msgstr ""
 "%(themes)d개 테마 동기화: %(created)d개 생성, %(updated)d개 업데이트, "
 "%(deleted)d개 삭제"
 
+#: admin.py:178
 msgid "Clean up orphaned tokens"
 msgstr "고아 토큰 정리"
 
+#: admin.py:192
 #, python-format
 msgid ""
 "Deleted %(total)d orphaned token(s): %(theme)d theme, %(component)d component"
 msgstr ""
 "고아된 토큰 %(total)d개를 삭제함: 테마 %(theme)d개, 구성 요소 %(component)d개"
 
+#: admin.py:200
 msgid "No orphaned tokens found"
 msgstr "고아 토큰을 찾을 수 없습니다"
 
+#: admin.py:202
 msgid "Delete tokens for inactive themes"
 msgstr "비활성화된 테마의 토큰 삭제"
 
+#: admin.py:212
 #, python-format
 msgid "Deleted %(count)d token(s) from %(themes)d inactive theme(s)"
 msgstr "비활성화된 테마 %(themes)d개에서 토큰 %(count)d개를 삭제함"
 
+#: admin.py:269
 msgid "Page Structure"
 msgstr "페이지 구조"
 
+#: admin.py:271 admin.py:385
 msgid "Security Settings"
 msgstr "보안 설정"
 
+#: admin.py:317 admin.py:816 admin.py:832 models.py:943
 msgid "Errors"
 msgstr "에러"
 
+#: admin.py:325 admin.py:824 admin.py:844 models.py:946
 msgid "Warnings"
 msgstr "경고"
 
+#: admin.py:381
 msgid "Capabilities & Restrictions"
 msgstr "기능 및 제한"
 
+#: admin.py:392
 msgid "Distribution"
 msgstr "배포"
 
+#: admin.py:405
 msgid "Review"
 msgstr "검토"
 
+#: admin.py:420
 msgid "Signature Status"
 msgstr "서명 상태"
 
+#: admin.py:429
 msgid "Signed"
 msgstr "서명됨"
 
+#: admin.py:431 admin.py:535
 msgid "Invalid"
 msgstr "무효"
 
+#: admin.py:433
 msgid "Unsigned"
 msgstr "미서명"
 
+#: admin.py:435
 msgid "Sign selected components"
 msgstr "선택한 구성 요소 서명"
 
+#: admin.py:449
 #, python-format
 msgid "Skipped %(component)s - not approved"
 msgstr "%(component)s 건너뜀 - 승인되지 않음"
 
+#: admin.py:462
 #, python-format
 msgid "Failed to sign %(component)s: %(error)s"
 msgstr "%(component)s 서명 실패: %(error)s"
 
+#: admin.py:470
 #, python-format
 msgid "Successfully signed %(count)d component(s)"
 msgstr "%(count)d개 구성 요소를 성공적으로 서명함"
 
+#: admin.py:474
 msgid "Verify component signatures"
 msgstr "구성 요소 서명 검증"
 
+#: admin.py:493
 #, python-format
 msgid "%(component)s: %(message)s"
 msgstr "%(component)s: %(message)s"
 
+#: admin.py:500 admin.py:580
 #, python-format
 msgid "%(count)d valid"
 msgstr "%(count)d개 유효"
 
+#: admin.py:502 admin.py:582
 #, python-format
 msgid "%(count)d invalid"
 msgstr "%(count)d개 무효"
 
+#: admin.py:504
 #, python-format
 msgid "%(count)d unsigned"
 msgstr "%(count)d개 서명되지 않음"
 
+#: admin.py:508
 #, python-format
 msgid "Verification complete: %(summary)s"
 msgstr "검증 완료: %(summary)s"
 
+#: admin.py:512
 msgid "Validation Status"
 msgstr "검증 상태"
 
+#: admin.py:521
 msgid "Not Validated"
 msgstr "검증되지 않음"
 
+#: admin.py:527 admin.py:531
 msgid "Valid"
 msgstr "유효"
 
+#: admin.py:539
 msgid "Validate selected components"
 msgstr "선택한 구성 요소 검증"
 
+#: admin.py:572
 #, python-format
 msgid "%(component)s: %(error)s"
 msgstr "%(component)s: %(error)s"
 
+#: admin.py:586
 #, python-format
 msgid "Validated %(total)d component(s): %(summary)s"
 msgstr "%(total)d개 구성 요소 검증 완료: %(summary)s"
 
+#: admin.py:591
 msgid "Approve selected components"
 msgstr "선택한 구성 요소 승인"
 
+#: admin.py:606
 #, python-format
 msgid "%(component)s has not been validated"
 msgstr "%(component)s 검증되지 않음"
 
+#: admin.py:616
 #, python-format
 msgid "%(component)s has validation errors"
 msgstr "%(component)s에 검증 오류 발생"
 
+#: admin.py:626
 #, python-format
 msgid "%(component)s is not signed"
 msgstr "%(component)s 서명되지 않음"
 
+#: admin.py:642
 #, python-format
 msgid "Approved %(count)d component(s)"
 msgstr "%(count)d개 구성 요소 승인됨"
 
+#: admin.py:648
 #, python-format
 msgid "Skipped %(count)d component(s)"
 msgstr "%(count)d개 구성 요소 건너뜀"
 
+#: admin.py:652
 msgid "Reject selected components"
 msgstr "선택한 구성 요소 거부"
 
+#: admin.py:668
 #, python-format
 msgid "Rejected %(count)d component(s)"
 msgstr "%(count)d개 구성 요소 거부됨"
 
+#: admin.py:672
 msgid "Suspend selected components"
 msgstr "선택한 구성 요소 일시 중지"
 
+#: admin.py:693
 #, python-format
 msgid "Suspended %(count)d component(s)"
 msgstr "%(count)d개 구성 요소 일시 중단됨"
 
+#: admin.py:697
 msgid "Apply system permissions (all tiers)"
 msgstr "시스템 권한 적용(모든 계층)"
 
+#: admin.py:710
 #, python-format
 msgid ""
 "Applied system permissions to %(count)d component(s), created %(perms)d tier "
 "permissions"
 msgstr "%(count)d개 구성 요소에 시스템 권한 적용, %(perms)d개 계층 권한 생성"
 
+#: admin.py:717
 msgid "Apply marketing permissions (Tier C only)"
 msgstr "마케팅 권한 적용(계층 C만)"
 
+#: admin.py:730
 #, python-format
 msgid ""
 "Applied marketing permissions to %(count)d component(s), created %(perms)d "
 "tier permissions"
 msgstr "%(count)d개 구성 요소에 마케팅 권한 적용, %(perms)d개 계층 권한 생성"
 
+#: admin.py:737
 msgid "Apply product permissions (Tier B, C)"
 msgstr "제품 권한 적용(계층 B, C)"
 
+#: admin.py:750
 #, python-format
 msgid ""
 "Applied product permissions to %(count)d component(s), created %(perms)d "
 "tier permissions"
 msgstr "%(count)d개 구성 요소에 제품 권한 적용, %(perms)d개 계층 권한 생성"
 
+#: admin.py:757
 msgid "Remove all tier permissions"
 msgstr "모든 계층 권한 제거"
 
+#: admin.py:769
 #, python-format
 msgid "Removed %(count)d tier permissions from %(components)d component(s)"
 msgstr "%(components)d개 구성 요소에서 %(count)d개 계층 권한 제거"
 
+#: admin.py:802
 msgid "Validation Info"
 msgstr "검증 정보"
 
+#: admin.py:805
 msgid "Results"
 msgstr "결과"
 
+#: admin.py:836 admin.py:848 header_footer_admin.py:235
 msgid "None"
 msgstr "없음"
 
+#: admin.py:914
 msgid "Compatibility"
 msgstr "호환성"
 
+#: admin.py:917
 msgid "Package"
 msgstr "패키지"
 
+#: admin.py:918 header_footer_admin.py:200 header_footer_admin.py:295
 msgid "Configuration"
 msgstr "설정"
 
+#: admin.py:937
 msgid "Sync design tokens for selected themes"
 msgstr "선택한 테마의 디자인 토큰을 동기화합니다"
 
+#: admin.py:955
 #, python-format
 msgid ""
 "Synced %(count)d theme(s): %(created)d created, %(updated)d updated, "
@@ -293,208 +372,271 @@ msgstr ""
 "동기화된 테마 %(count)d개: %(created)d개 생성, %(updated)d개 업데이트, "
 "%(deleted)d개 삭제"
 
+#: apps.py:12 templates/admin/design/footertemplate/unified_management.html:14
+#: templates/admin/design/headertemplate/unified_management.html:14
+#: templates/design/template_config.html:9
 msgid "Design"
 msgstr "디자인"
 
+#: branding_admin.py:245
 msgid "Theme Selection"
 msgstr "테마 선택"
 
+#: branding_admin.py:252
 msgid "🎨 Brand Colors"
 msgstr "🎨 브랜드 색상"
 
+#: branding_admin.py:263
 msgid "✏️ Typography"
 msgstr "✏️ 타이포그래피"
 
+#: branding_admin.py:274
 msgid "📐 Layout & Spacing"
 msgstr "📐 레이아웃 및 간격"
 
+#: branding_admin.py:285
 msgid "🎭 Shadows & Effects"
 msgstr "🎭 그림자 및 효과"
 
+#: branding_admin.py:293
 msgid "🧩 Component Overrides"
 msgstr "🧩 구성 요소 오버라이드"
 
+#: branding_admin.py:301
 msgid "🔧 Custom CSS"
 msgstr "🔧 사용자 정의 CSS"
 
+#: branding_admin.py:309
 msgid "Generated Output"
 msgstr "생성된 출력"
 
+#: branding_builder_view.py:122 templates/design/branding_builder.html:9
+#: templates/design/branding_builder.html:70
 msgid "Branding Builder"
 msgstr "브랜딩 빌더"
 
+#: branding_builder_view.py:235
 msgid "Branding updated successfully"
 msgstr "브랜딩이 성공적으로 업데이트되었습니다."
 
+#: branding_builder_view.py:299
 msgid "Branding saved successfully"
 msgstr "브랜딩이 성공적으로 저장되었습니다."
 
+#: branding_builder_view.py:356
 msgid "No file provided"
 msgstr "파일이 제공되지 않았습니다."
 
+#: branding_builder_view.py:388 templates/design/branding_builder.html:2484
 msgid "Branding imported successfully"
 msgstr "브랜딩이 성공적으로 가져와졌습니다."
 
+#: component_permissions.py:31
 msgid "System components - allowed in all tiers"
 msgstr "시스템 컴포넌트 - 모든 계층에서 허용됨"
 
+#: component_permissions.py:37
 msgid "Marketing components - Tier C only (public pages)"
 msgstr "마케팅 컴포넌트 - 계층 C만 (공개 페이지)"
 
+#: component_permissions.py:43
 msgid "Product components - Tier B and C"
 msgstr "제품 컴포넌트 - 계층 B 및 C"
 
+#: component_permissions.py:49
 msgid "Checkout components - Tier A only (secure pages)"
 msgstr "체크아웃 컴포넌트 - 계층 A만 (보안 페이지)"
 
+#: component_permissions.py:55
 msgid "Content components - all tiers"
 msgstr "콘텐츠 구성 요소 - 모든 계층"
 
+#: component_permissions.py:61
 msgid "Restricted components - Tier A and B only"
 msgstr "제한된 컴포넌트 - 계층 A 및 B만"
 
+#: component_signer.py:89 component_signer.py:135 component_validator.py:134
 msgid "Component has no package file"
 msgstr "구성 요소에 패키지 파일이 없습니다."
 
+#: component_signer.py:106
 msgid "Component signed successfully"
 msgstr "구성 요소가 성공적으로 서명되었습니다."
 
+#: component_signer.py:109
 #, python-format
 msgid "Signing failed: %(error)s"
 msgstr "서명 실패: %(error)s"
 
+#: component_signer.py:129
 msgid "Component has no signature"
 msgstr "구성 요소에 서명이 없습니다."
 
+#: component_signer.py:132
 msgid "Component has no checksum"
 msgstr "구성 요소에 체크섬이 없습니다."
 
+#: component_signer.py:143
 msgid "Checksum mismatch - package has been modified"
 msgstr "체크섬 불일치 - 패키지가 수정되었습니다"
 
+#: component_signer.py:152
 msgid "Signature valid - component is authentic and unmodified"
 msgstr "서명 유효 - 컴포넌트가 원본이며 수정되지 않았습니다"
 
+#: component_signer.py:154
 msgid "Invalid signature - component may be tampered"
 msgstr "서명 유효하지 않음 - 컴포넌트가 손상되었을 수 있습니다"
 
+#: component_signer.py:157
 #, python-format
 msgid "Verification failed: %(error)s"
 msgstr "검증 실패: %(error)s"
 
+#: component_validator.py:146
 #, python-format
 msgid "Package contains invalid path: %(path)s"
 msgstr "패키지에 유효하지 않은 경로 포함: %(path)s"
 
+#: component_validator.py:155
 msgid "Invalid ZIP file"
 msgstr "잘못된 ZIP 파일"
 
+#: component_validator.py:158
 #, python-format
 msgid "Failed to extract package: %(error)s"
 msgstr "패키지 추출 실패: %(error)s"
 
+#: component_validator.py:167
 msgid "manifest.json not found in package"
 msgstr "패키지에 manifest.json 파일이 없습니다."
 
+#: component_validator.py:175
 #, python-format
 msgid "Manifest file too large: %(size).1f KB (max: %(max)d KB)"
 msgstr "매니페스트 파일이 너무 큼: %(size).1f KB (최대: %(max)d KB)"
 
+#: component_validator.py:185
 #, python-format
 msgid "Invalid JSON in manifest: %(error)s"
 msgstr "매니페스트에 유효하지 않은 JSON 포함: %(error)s"
 
+#: component_validator.py:188
 #, python-format
 msgid "Failed to read manifest: %(error)s"
 msgstr "매니페스트 읽기 실패: %(error)s"
 
+#: component_validator.py:196
 #, python-format
 msgid "Missing required field in manifest: %(field)s"
 msgstr "매니페스트에 필수 필드 누락: %(field)s"
 
+#: component_validator.py:203
 msgid "Version should use semantic versioning (e.g., 1.0.0)"
 msgstr "버전은 세마틱 버전 관리(예: 1.0.0)를 사용해야 합니다"
 
+#: component_validator.py:209
 msgid "component_type must be lowercase with underscores only"
 msgstr "component_type은 소문자와 밑줄만 사용해야 합니다"
 
+#: component_validator.py:217
 msgid "template.html not found in package"
 msgstr "패키지에 template.html 파일이 없습니다."
 
+#: component_validator.py:225
 #, python-format
 msgid "Template file too large: %(size).1f KB (max: %(max)d KB)"
 msgstr "템플릿 파일이 너무 큼: %(size).1f KB (최대: %(max)d KB)"
 
+#: component_validator.py:235
 #, python-format
 msgid "Failed to read template: %(error)s"
 msgstr "템플릿 읽기 실패: %(error)s"
 
+#: component_validator.py:242
 #, python-format
 msgid "Template syntax error: %(error)s"
 msgstr "템플릿 구문 오류: %(error)s"
 
+#: component_validator.py:248
 #, python-format
 msgid "Forbidden template tag: %(tag)s"
 msgstr "금지된 템플릿 태그: %(tag)s"
 
+#: component_validator.py:253
 msgid "Inline <script> tags not allowed. Use external script files."
 msgstr ""
 "인라인 <script> 태그는 허용되지 않습니다. 외부 스크립트 파일을 사용하십시오."
 
+#: component_validator.py:261
 #, python-format
 msgid "Inline event handlers not allowed: %(handlers)s"
 msgstr "인라인 이벤트 핸들러 허용되지 않음: %(handlers)s"
 
+#: component_validator.py:271
 msgid "No assets directory found"
 msgstr "자산 디렉터리가 없습니다."
 
+#: component_validator.py:285
 #, python-format
 msgid "CSS file %(file)s is large: %(size).1f KB"
 msgstr "CSS 파일 %(file)s 크기가 큼: %(size).1f KB"
 
+#: component_validator.py:298
 #, python-format
 msgid "JS file %(file)s is large: %(size).1f KB"
 msgstr "JS 파일 %(file)s 크기가 큼: %(size).1f KB"
 
+#: component_validator.py:308
 #, python-format
 msgid "Script size %(actual).1f KB exceeds budget %(budget).1f KB"
 msgstr "스크립트 크기 %(actual).1f KB가 예산 %(budget).1f KB를 초과함"
 
+#: component_validator.py:336
 #, python-format
 msgid "Potential XSS pattern in %(file)s: %(pattern)s"
 msgstr "%(file)s에 잠재적 XSS 패턴 포함: %(pattern)s"
 
+#: component_validator.py:346
 #, python-format
 msgid "Potential SQL injection pattern in %(file)s"
 msgstr "%(file)s에 잠재적 SQL 인젝션 패턴 포함"
 
+#: component_validator.py:355
 #, python-format
 msgid "Path traversal detected in %(file)s"
 msgstr "%(file)s에서 경로 탐색 감지됨"
 
+#: component_validator.py:366
 msgid "Component does not declare any capabilities"
 msgstr "컴포넌트는 어떤 기능도 선언하지 않았습니다"
 
+#: component_validator.py:370
 msgid "Component is not allowed in any tier"
 msgstr "이 컴포넌트는 어떤 계층에서도 허용되지 않습니다"
 
+#: component_validator.py:378
 msgid ""
 "Component with 'external_scripts' capability must declare external_domains"
 msgstr ""
 "'external_scripts' 기능을 가진 컴포넌트는 외부 도메인을 선언해야 합니다"
 
+#: component_validator.py:384
 msgid "Component with 'custom_html' capability should use sandbox"
 msgstr "'custom_html' 기능을 가진 컴포넌트는 샌드박스를 사용해야 합니다"
 
+#: component_validator.py:390
 msgid ""
 "Client-side render components typically need 'external_scripts' capability"
 msgstr ""
 "클라이언트 측 렌더링 컴포넌트는 일반적으로 'external_scripts' 기능이 필요합니"
 "다"
 
+#: dev_server_views.py:70
 msgid "Connect to dev server"
 msgstr "개발 서버에 연결"
 
+#: dev_server_views.py:71
 msgid ""
 "\n"
 "    Authenticate with the Spwig shop and create a development session.\n"
@@ -509,39 +651,54 @@ msgstr ""
 "을 사용한 기본 인증. 이후 API 호출을 위한 세션 토큰을 반환합니다.\n"
 "    "
 
+#: dev_server_views.py:98
 msgid "Session created successfully"
 msgstr "세션이 성공적으로 생성되었습니다."
 
+#: dev_server_views.py:99
 msgid "Authentication failed"
 msgstr "인증 실패"
 
+#: dev_server_views.py:100
 msgid "Dev server not enabled"
 msgstr "개발 서버가 활성화되지 않음"
 
+#: dev_server_views.py:158
 msgid "Disconnect from dev server"
 msgstr "개발 서버에서 연결 해제"
 
+#: dev_server_views.py:159
 msgid "End the development session and cleanup resources."
 msgstr "개발 세션을 종료하고 리소스를 정리합니다."
 
+#: dev_server_views.py:161
 msgid "Session ended successfully"
 msgstr "세션이 성공적으로 종료되었습니다."
 
+#: dev_server_views.py:162 dev_server_views.py:184 dev_server_views.py:238
+#: dev_server_views.py:295 dev_server_views.py:337 dev_server_views.py:374
+#: dev_server_views.py:396 dev_server_views.py:423 dev_server_views.py:454
+#: dev_server_views.py:481
 msgid "Invalid token"
 msgstr "잘못된 토큰"
 
+#: dev_server_views.py:180
 msgid "Get session status"
 msgstr "세션 상태 확인"
 
+#: dev_server_views.py:181
 msgid "Get current status of the development session."
 msgstr "개발 세션의 현재 상태를 확인합니다."
 
+#: dev_server_views.py:183
 msgid "Session status"
 msgstr "세션 상태"
 
+#: dev_server_views.py:204
 msgid "Sync theme files"
 msgstr "테마 파일 동기화"
 
+#: dev_server_views.py:205
 msgid ""
 "\n"
 "    Sync individual files from SDK to dev server.\n"
@@ -558,15 +715,19 @@ msgstr ""
 "터리에 쓰여지고 적절한 새로 고침을 트리거합니다.\n"
 "    "
 
+#: dev_server_views.py:236
 msgid "Files synced successfully"
 msgstr "파일이 성공적으로 동기화되었습니다."
 
+#: dev_server_views.py:237
 msgid "Invalid request"
 msgstr "잘못된 요청"
 
+#: dev_server_views.py:285
 msgid "Sync full theme archive"
 msgstr "전체 테마 아카이브 동기화"
 
+#: dev_server_views.py:286
 msgid ""
 "\n"
 "    Sync a complete theme as a ZIP archive.\n"
@@ -580,15 +741,19 @@ msgstr ""
 "렉토리를 대체합니다. ZIP 파일을 요청 본문의 원시 이진 데이터로 보내세요.\n"
 "    "
 
+#: dev_server_views.py:293
 msgid "Theme synced successfully"
 msgstr "테마가 성공적으로 동기화되었습니다."
 
+#: dev_server_views.py:294
 msgid "Invalid archive"
 msgstr "잘못된 아카이브"
 
+#: dev_server_views.py:324
 msgid "Watch for reload events"
 msgstr "재로드 이벤트 감시"
 
+#: dev_server_views.py:325
 msgid ""
 "\n"
 "    Server-Sent Events stream for hot reload notifications.\n"
@@ -608,445 +773,612 @@ msgstr ""
 "을 삽입하세요.\n"
 "    "
 
+#: dev_server_views.py:336
 msgid "SSE stream"
 msgstr "SSE 스트림"
 
+#: dev_server_views.py:370
 msgid "Validate theme"
 msgstr "테마 검증"
 
+#: dev_server_views.py:371
 msgid "Run validation on the synced dev theme."
 msgstr "동기화된 개발 테마에 대한 검증을 실행합니다."
 
+#: dev_server_views.py:373
 msgid "Validation result"
 msgstr "검증 결과"
 
+#: dev_server_views.py:391
 msgid "Compile theme CSS"
 msgstr "테마 CSS 컴파일"
 
+#: dev_server_views.py:392
 msgid "Compile CSS from design tokens and return the URL."
 msgstr "디자인 토큰에서 CSS를 컴파일하고 URL을 반환합니다."
 
+#: dev_server_views.py:394
 msgid "CSS compiled successfully"
 msgstr "CSS가 성공적으로 컴파일되었습니다."
 
+#: dev_server_views.py:395
 msgid "Compilation failed"
 msgstr "컴파일 실패"
 
+#: dev_server_views.py:419
 msgid "List theme components"
 msgstr "테마 구성 요소 목록"
 
+#: dev_server_views.py:420
 msgid "List all bundled components in the dev theme."
 msgstr "개발 테마에 포함된 모든 컴포넌트를 나열합니다."
 
+#: dev_server_views.py:422
 msgid "Component list"
 msgstr "구성 요소 목록"
 
+#: dev_server_views.py:440
 msgid "Get component details"
 msgstr "구성 요소 세부 정보 가져오기"
 
+#: dev_server_views.py:441
 msgid "Get details for a specific component by name."
 msgstr "이름을 통해 특정 컴포넌트의 세부 정보를 가져옵니다."
 
+#: dev_server_views.py:446
 msgid "Component name"
 msgstr "\"구성 요소 이름\""
 
+#: dev_server_views.py:452
 msgid "Component details"
 msgstr "\"구성 요소 세부 정보\""
 
+#: dev_server_views.py:453
 msgid "Component not found"
 msgstr "\"구성 요소를 찾을 수 없음\""
 
+#: dev_server_views.py:477
 msgid "Get preview URL"
 msgstr "\"미리보기 URL 가져오기\""
 
+#: dev_server_views.py:478
 msgid "Get the URL to preview the dev theme in the shop."
 msgstr "가게에서 개발 테마를 미리보기 위한 URL을 가져옵니다."
 
+#: dev_server_views.py:480
 msgid "Preview URL"
 msgstr "\"미리보기 URL\""
 
+#: header_footer_admin.py:52 header_footer_admin.py:121
+#: templates/design/branding_builder.html:130
 msgid "Layout"
 msgstr "레이아웃"
 
+#: header_footer_admin.py:63
 msgid "Mobile Settings"
 msgstr "모바일 설정"
 
+#: header_footer_admin.py:64 header_footer_admin.py:125
+#: header_footer_admin.py:216 header_footer_admin.py:296
 msgid "Styling"
 msgstr "스타일링"
 
+#: header_footer_admin.py:207 templates/design/menu_builder/builder.html:328
 msgid "Visibility"
 msgstr "가시성"
 
+#: header_footer_admin.py:217
 msgid "Performance"
 msgstr "성능"
 
+#: header_footer_admin.py:225
+#: templates/admin/design/widget/partials/widget_cards.html:40
+#: templates/design/branding_builder.html:83
+#: templates/design/menu_builder/builder.html:258
+#: templates/design/menu_builder/preview_popup.html:56
 msgid "Mobile"
 msgstr "모바일"
 
+#: header_footer_admin.py:227
+#: templates/admin/design/widget/partials/widget_cards.html:43
+#: templates/design/branding_builder.html:80
+#: templates/design/menu_builder/builder.html:255
+#: templates/design/menu_builder/preview_popup.html:53
 msgid "Tablet"
 msgstr "태블릿"
 
+#: header_footer_admin.py:229
+#: templates/admin/design/widget/partials/widget_cards.html:46
+#: templates/design/branding_builder.html:77
+#: templates/design/menu_builder/builder.html:252
+#: templates/design/menu_builder/preview_popup.html:50
 msgid "Desktop"
 msgstr "데스크탑"
 
+#: header_footer_admin.py:239
 msgid "Devices"
 msgstr "기기"
 
+#: header_footer_admin.py:248
 msgid "Used In"
 msgstr "사용됨"
 
+#: header_footer_admin.py:376
 msgid "Appearance"
 msgstr "모습"
 
+#: header_footer_admin.py:383 header_footer_models.py:812
 msgid "Mega Menu"
 msgstr "메가 메뉴"
 
+#: header_footer_admin.py:390
 msgid "Order & Status"
 msgstr "주문 및 상태"
 
+#: header_footer_models.py:17
 msgid "Internal name for this header"
 msgstr "이 헤더의 내부 이름"
 
+#: header_footer_models.py:18 header_footer_models.py:366
 msgid "URL-friendly identifier"
 msgstr "URL 친화적 식별자"
 
+#: header_footer_models.py:25
 msgid "Classic E-commerce"
 msgstr "클래식 전자상거래"
 
+#: header_footer_models.py:26
 msgid "Centered Boutique"
 msgstr "중앙 정렬 부티크"
 
+#: header_footer_models.py:27
 msgid "Minimal Startup"
 msgstr "미니멀 스타트업"
 
+#: header_footer_models.py:28
 msgid "Mega Menu Store"
 msgstr "메가 메뉴 스토어"
 
+#: header_footer_models.py:29
 msgid "Promotional Marketing"
 msgstr "프로모션 마케팅"
 
+#: header_footer_models.py:30
 msgid "Split Navigation"
 msgstr "분할 네비게이션"
 
+#: header_footer_models.py:31 header_footer_models.py:377
 msgid "Custom Layout"
 msgstr "커스텀 레이아웃"
 
+#: header_footer_models.py:38
 msgid "Header sticks to top when scrolling"
 msgstr "스크롤 시 헤더가 상단에 고정됩니다"
 
+#: header_footer_models.py:41
 msgid "Pixels from top before sticky activates"
 msgstr "고정 상태가 활성화되기 전 상단에서의 픽셀 수"
 
+#: header_footer_models.py:47
 msgid "Top bar widget configuration"
 msgstr "상단 바 위젯 구성"
 
+#: header_footer_models.py:52
 msgid "Show announcement bar above header zones"
 msgstr "헤더 영역 위에 공지 표시줄을 표시합니다"
 
+#: header_footer_models.py:57
 msgid "Notification zone display settings"
 msgstr "알림 영역 표시 설정"
 
+#: header_footer_models.py:72
 msgid "Zone style overrides - only properties that differ from theme defaults"
 msgstr "영역 스타일 오버라이드 - 테마 기본값과 다른 속성만"
 
+#: header_footer_models.py:86
 msgid "Defines sub-zones for each primary zone"
 msgstr "각 주요 영역의 하위 영역을 정의합니다"
 
+#: header_footer_models.py:97
 msgid "DEPRECATED: Use primary_zones and zone_layouts instead"
 msgstr "비추천: 대신 primary_zones 및 zone_layouts를 사용하십시오"
 
+#: header_footer_models.py:105
 msgid "Hamburger Menu"
 msgstr "햄버거 메뉴"
 
+#: header_footer_models.py:106
 msgid "Bottom Navigation"
 msgstr "하단 네비게이션"
 
+#: header_footer_models.py:107
 msgid "Slide-out Menu"
 msgstr "슬라이드아웃 메뉴"
 
+#: header_footer_models.py:108
 msgid "Fullscreen Menu"
 msgstr "풀 스크린 메뉴"
 
+#: header_footer_models.py:115
 msgid "Left"
 msgstr "좌측"
 
+#: header_footer_models.py:116
 msgid "Right"
 msgstr "우측"
 
+#: header_footer_models.py:119
 msgid "Position of hamburger menu button on mobile"
 msgstr "모바일에서 햄버거 메뉴 버튼의 위치"
 
+#: header_footer_models.py:132 header_footer_models.py:410
 msgid "Mark as a preset template that users can clone"
 msgstr "사용자가 복제할 수 있는 사전 정의된 템플릿으로 표시"
 
+#: header_footer_models.py:138 header_footer_models.py:416
 msgid "Modern"
 msgstr "현대적인"
 
+#: header_footer_models.py:139 header_footer_models.py:417 models.py:1117
+#: models.py:1138 template_registry.py:1071 template_registry.py:1114
 msgid "Classic"
 msgstr "클래식"
 
+#: header_footer_models.py:140 header_footer_models.py:376
+#: header_footer_models.py:418 models.py:1118 models.py:1127
+#: template_registry.py:1122 template_registry.py:1173
+#: templates/design/branding_builder.html:1245
 msgid "Minimal"
 msgstr "미니멀"
 
+#: header_footer_models.py:141 header_footer_models.py:419
 msgid "E-commerce"
 msgstr "전자상거래"
 
+#: header_footer_models.py:143 header_footer_models.py:421
 msgid "Category for preset templates"
 msgstr "사전 설정 템플릿 카테고리"
 
+#: header_footer_models.py:149
 msgid "Preview screenshot of this header template"
 msgstr "이 헤더 템플릿의 미리보기 스크린샷"
 
+#: header_footer_models.py:167 header_footer_models.py:445
 msgid "Current draft state being edited in the builder"
 msgstr "빌더에서 편집 중인 현재 초안 상태"
 
+#: header_footer_models.py:170 header_footer_models.py:448
 msgid "Published state shown on the frontend"
 msgstr "프론트엔드에 표시되는 게시된 상태"
 
+#: header_footer_models.py:173 header_footer_models.py:451
 msgid "When the template was last published"
 msgstr "템플릿이 마지막으로 게시된 시점"
 
+#: header_footer_models.py:176 header_footer_models.py:454
 msgid "True if draft differs from published"
 msgstr "초안이 게시된 내용과 다른 경우 참"
 
+#: header_footer_models.py:365
 msgid "Internal name for this footer"
 msgstr "이 푸터의 내부 이름"
 
+#: header_footer_models.py:373
 msgid "Simple (Single Row)"
 msgstr "간단한 (단일 행)"
 
+#: header_footer_models.py:374
 msgid "Multi-Column"
 msgstr "다중 열"
 
+#: header_footer_models.py:375
 msgid "Stacked Sections"
 msgstr "층叠 섹션"
 
+#: header_footer_models.py:386
 msgid "Number of columns in footer"
 msgstr "푸터의 열 수"
 
+#: header_footer_models.py:390
 msgid "Widget zones configuration"
 msgstr "위젯 영역 구성"
 
+#: header_footer_models.py:395
 msgid "Bottom bar widget configuration"
 msgstr "하단 바 위젯 구성"
 
+#: header_footer_models.py:401 header_footer_models.py:402
 msgid "Hex color code"
 msgstr "HEX 색상 코드"
 
+#: header_footer_models.py:427
 msgid "Preview screenshot of this footer template"
 msgstr "이 푸터 템플릿의 미리보기 스크린샷"
 
+#: header_footer_models.py:554
 msgid "Logo"
 msgstr "로고"
 
+#: header_footer_models.py:555
 msgid "Navigation Menu"
 msgstr "네비게이션 메뉴"
 
+#: header_footer_models.py:556
 msgid "Search Bar"
 msgstr "검색 바"
 
+#: header_footer_models.py:557
 msgid "Mini Cart"
 msgstr "미니 장바구니"
 
+#: header_footer_models.py:558 header_footer_models.py:799
 msgid "Account Menu"
 msgstr "계정 메뉴"
 
+#: header_footer_models.py:559
 msgid "Language Selector"
 msgstr "언어 선택기"
 
+#: header_footer_models.py:560
 msgid "Currency Selector"
 msgstr "통화 선택기"
 
+#: header_footer_models.py:561
 msgid "Social Media Links"
 msgstr "소셜 미디어 링크"
 
+#: header_footer_models.py:562
 msgid "Newsletter Signup"
 msgstr "뉴스레터 가입"
 
+#: header_footer_models.py:563
 msgid "Contact Information"
 msgstr "연락처 정보"
 
+#: header_footer_models.py:564
 msgid "Text/HTML Block"
 msgstr "텍스트/HTML 블록"
 
+#: header_footer_models.py:565
 msgid "Link List"
 msgstr "링크 목록"
 
+#: header_footer_models.py:566
 msgid "Payment Methods"
 msgstr "결제 수단"
 
+#: header_footer_models.py:567
 msgid "Trust Badges"
 msgstr "신뢰 배지"
 
+#: header_footer_models.py:568
 msgid "Announcement Bar"
 msgstr "공지 바"
 
+#: header_footer_models.py:569
 msgid "Loyalty Points Balance"
 msgstr "충성도 포인트 잔액"
 
+#: header_footer_models.py:570
 msgid "Loyalty Tier Badge"
 msgstr "충성도 레벨 배지"
 
+#: header_footer_models.py:571
 msgid "Site Variable"
 msgstr "사이트 변수"
 
+#: header_footer_models.py:572
 msgid "Custom Widget"
 msgstr "사용자 정의 위젯"
 
+#: header_footer_models.py:575
 msgid "Widget name"
 msgstr "위젯 이름"
 
+#: header_footer_models.py:579
 msgid "Widget configuration (varies by type)"
 msgstr "위젯 설정 (유형에 따라 다름)"
 
+#: header_footer_models.py:582
 msgid "Widget content (HTML allowed)"
 msgstr "위젯 콘텐츠 (HTML 허용)"
 
+#: header_footer_models.py:588
 msgid "Translations for widget config text by language code"
 msgstr "위젯 구성 텍스트의 언어 코드별 번역"
 
+#: header_footer_models.py:619
 msgid "Advanced visibility rules (pages, user groups, etc.)"
 msgstr "고급 가시성 규칙(페이지, 사용자 그룹 등)"
 
+#: header_footer_models.py:628
 msgid "Cache duration in seconds (0 = no cache)"
 msgstr "캐시 기간(초 단위, 0 = 캐시 없음)"
 
+#: header_footer_models.py:753
 msgid "Zone identifier (e.g., 'left', 'center', 'right', 'column_1')"
 msgstr "영역 식별자(예: 'left', 'center', 'right', 'column_1')"
 
+#: header_footer_models.py:757
 msgid "Order within the zone (lower = first)"
 msgstr "영역 내 순서(낮은 숫자 = 먼저)"
 
+#: header_footer_models.py:761
 msgid "Override widget config for this placement"
 msgstr "이 배치에 대한 위젯 설정을 재정의합니다"
 
+#: header_footer_models.py:787
 msgid "Menu name"
 msgstr "메뉴 이름"
 
+#: header_footer_models.py:795
 msgid "Primary Navigation"
 msgstr "메인 네비게이션"
 
+#: header_footer_models.py:796
 msgid "Secondary Navigation"
 msgstr "보조 네비게이션"
 
+#: header_footer_models.py:797
 msgid "Footer Menu"
 msgstr "푸터 메뉴"
 
+#: header_footer_models.py:798
 msgid "Mobile Menu"
 msgstr "모바일 메뉴"
 
+#: header_footer_models.py:800
 msgid "Custom Menu"
 msgstr "사용자 정의 메뉴"
 
+#: header_footer_models.py:809
 msgid "Horizontal"
 msgstr "가로"
 
+#: header_footer_models.py:810
 msgid "Vertical"
 msgstr "세로"
 
+#: header_footer_models.py:811
 msgid "Dropdown"
 msgstr "드롭다운"
 
+#: header_footer_models.py:813 models.py:1131 models.py:1150
+#: template_registry.py:987 template_registry.py:1061
 msgid "Accordion"
 msgstr "어코디언"
 
+#: header_footer_models.py:826
 msgid "Global styling configuration for all menu items"
 msgstr "모든 메뉴 항목에 대한 글로벌 스타일링 설정"
 
+#: header_footer_models.py:842
 msgid "Mobile menu behavior configuration"
 msgstr "모바일 메뉴 행동 설정"
 
+#: header_footer_models.py:854
 msgid "Translations for menu-level content"
 msgstr "메뉴 수준 콘텐츠 번역"
 
+#: header_footer_models.py:867 templates/design/branding_builder.html:945
 msgid "Menu"
 msgstr "메뉴"
 
+#: header_footer_models.py:868
 msgid "Menus"
 msgstr "메뉴들"
 
+#: header_footer_models.py:913
 msgid "Standard Link"
 msgstr "표준 링크"
 
+#: header_footer_models.py:914
 msgid "Page Link"
 msgstr "페이지 링크"
 
+#: header_footer_models.py:915
 msgid "Category Link"
 msgstr "카테고리 링크"
 
+#: header_footer_models.py:916
 msgid "Dynamic Categories"
 msgstr "동적 카테고리"
 
+#: header_footer_models.py:917 templates/design/menu_builder/builder.html:616
 msgid "Custom URL"
 msgstr "사용자 정의 URL"
 
+#: header_footer_models.py:918 templates/design/menu_builder/builder.html:617
 msgid "Divider"
 msgstr "구분자"
 
+#: header_footer_models.py:919
 msgid "Section Header"
 msgstr "섹션 헤더"
 
+#: header_footer_models.py:920
 msgid "Widget Item"
 msgstr "위젯 항목"
 
+#: header_footer_models.py:930
 msgid "Type of menu item"
 msgstr "메뉴 항목 유형"
 
+#: header_footer_models.py:937
 msgid "Display title (auto-populated from reference if empty)"
 msgstr "표시 제목(비어 있으면 참조에서 자동으로 채워짐)"
 
+#: header_footer_models.py:940
 msgid "URL or path (for link/custom_url types)"
 msgstr "URL 또는 경로(링크/커스텀_URL 유형용)"
 
+#: header_footer_models.py:950
 msgid "Page to link to (when item_type is 'page')"
 msgstr "항목 유형이 'page'일 때 연결할 페이지"
 
+#: header_footer_models.py:958
 msgid "Category to link to (when item_type is 'category')"
 msgstr "항목 유형이 'category'일 때 연결할 카테고리"
 
+#: header_footer_models.py:965
 msgid "Same Window"
 msgstr "동일 창"
 
+#: header_footer_models.py:966
 msgid "New Window"
 msgstr "새 창"
 
+#: header_footer_models.py:973
 msgid "FontAwesome icon class (e.g., 'fas fa-home')"
 msgstr "FontAwesome 아이콘 클래스(예: 'fas fa-home')"
 
+#: header_footer_models.py:977
 msgid "e.g., 'NEW', 'SALE'"
 msgstr "예: 'NEW', 'SALE'"
 
+#: header_footer_models.py:979
 msgid "Badge color (hex or CSS color name)"
 msgstr "배지 색상(HEX 또는 CSS 색상 이름)"
 
+#: header_footer_models.py:986
 msgid "Styling configuration for this menu item"
 msgstr "이 메뉴 항목에 대한 스타일링 설정"
 
+#: header_footer_models.py:1005
 msgid "Widget configuration (when item_type is 'widget')"
 msgstr "항목 유형이 'widget'일 때 위젯 설정"
 
+#: header_footer_models.py:1018
 msgid ""
 "Configuration for dynamic category tree (when item_type is 'category_tree')"
 msgstr "동적 카테고리 트리 구성 (item_type이 'category_tree'일 때)"
 
+#: header_footer_models.py:1030
 msgid "Configuration for mega menu layout"
 msgstr "메가 메뉴 레이아웃 설정"
 
+#: header_footer_models.py:1037
 msgid "Visibility rules for this menu item"
 msgstr "이 메뉴 항목에 대한 가시성 규칙"
 
+#: header_footer_models.py:1047
 msgid "Translations for menu item title"
 msgstr "메뉴 항목 제목 번역"
 
+#: header_footer_models.py:1059
 msgid "Menu Item"
 msgstr "메뉴 항목"
 
+#: header_footer_models.py:1060 templates/admin/design/menu/change_list.html:59
+#: templates/design/dashboard.html:54
 msgid "Menu Items"
 msgstr "메뉴 항목들"
 
+#: hf_api_views.py:67
 msgid "Get header template for builder"
 msgstr "\"빌더용 헤더 템플릿 가져오기\""
 
+#: hf_api_views.py:68
 msgid ""
 "\n"
 "        Load a header template with all widget placements for the visual "
@@ -1065,12 +1397,15 @@ msgstr ""
 "을 포함하여 반환합니다. **인증:** 관리자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:79
 msgid "Header template data with widget placements"
 msgstr "위젯 배치가 포함된 헤더 템플릿 데이터"
 
+#: hf_api_views.py:86
 msgid "Update header template"
 msgstr "헤더 템플릿 업데이트"
 
+#: hf_api_views.py:87
 msgid ""
 "\n"
 "        Update header template properties.\n"
@@ -1085,15 +1420,20 @@ msgstr ""
 "된 필드만 수정됩니다. **인증:** 관리자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:97
 msgid "Header updated successfully"
 msgstr "헤더가 성공적으로 업데이트되었습니다."
 
+#: hf_api_views.py:100 hf_api_views.py:327 hf_api_views.py:520
+#: hf_api_views.py:540 hf_api_views.py:671
 msgid "Invalid request data"
 msgstr "잘못된 요청 데이터"
 
+#: hf_api_views.py:218
 msgid "Publish header template"
 msgstr "헤더 템플릿 게시"
 
+#: hf_api_views.py:219
 msgid ""
 "\n"
 "    Publish the current draft of a header template, making it live on the "
@@ -1111,12 +1451,15 @@ msgstr ""
 "다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:228
 msgid "Header published successfully"
 msgstr "헤더가 성공적으로 게시되었습니다."
 
+#: hf_api_views.py:255
 msgid "Discard header draft changes"
 msgstr "헤더 초안 변경 사항 버리기"
 
+#: hf_api_views.py:256 hf_api_views.py:468
 msgid ""
 "\n"
 "    Discard all unpublished changes and revert draft to the published "
@@ -1133,12 +1476,15 @@ msgstr ""
 "증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:262 hf_api_views.py:474
 msgid "Draft discarded, reverted to published state"
 msgstr "초안이 삭제되고, 게시된 상태로 되돌아갑니다."
 
+#: hf_api_views.py:294
 msgid "Get footer template for builder"
 msgstr "빌더용 푸터 템플릿 가져오기"
 
+#: hf_api_views.py:295
 msgid ""
 "\n"
 "        Load a footer template with all widget placements for the visual "
@@ -1157,12 +1503,15 @@ msgstr ""
 "반환합니다. **인증:** 관리자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:306
 msgid "Footer template data with widget placements"
 msgstr "위젯 배치가 포함된 푸터 템플릿 데이터"
 
+#: hf_api_views.py:313
 msgid "Update footer template"
 msgstr "푸터 템플릿 업데이트"
 
+#: hf_api_views.py:314
 msgid ""
 "\n"
 "        Update footer template properties.\n"
@@ -1177,12 +1526,15 @@ msgstr ""
 "된 필드만 수정됩니다. **인증:** 관리자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:324
 msgid "Footer updated successfully"
 msgstr "푸터가 성공적으로 업데이트되었습니다."
 
+#: hf_api_views.py:430
 msgid "Publish footer template"
 msgstr "푸터 템플릿 게시"
 
+#: hf_api_views.py:431
 msgid ""
 "\n"
 "    Publish the current draft of a footer template, making it live on the "
@@ -1200,15 +1552,19 @@ msgstr ""
 "다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:440
 msgid "Footer published successfully"
 msgstr "푸터가 성공적으로 게시되었습니다."
 
+#: hf_api_views.py:467
 msgid "Discard footer draft changes"
 msgstr "푸터 초안 변경 사항 버리기"
 
+#: hf_api_views.py:506
 msgid "Create widget placement"
 msgstr "위젯 배치 생성"
 
+#: hf_api_views.py:507
 msgid ""
 "\n"
 "        Add a widget to a header or footer zone.\n"
@@ -1224,12 +1580,15 @@ msgstr ""
 "자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:517
 msgid "Widget placement created"
 msgstr "위젯 배치가 생성되었습니다."
 
+#: hf_api_views.py:526
 msgid "Update widget placement"
 msgstr "위젯 배치 업데이트"
 
+#: hf_api_views.py:527
 msgid ""
 "\n"
 "        Update an existing widget placement.\n"
@@ -1246,15 +1605,19 @@ msgstr ""
 "요\n"
 "        "
 
+#: hf_api_views.py:537
 msgid "Placement updated"
 msgstr "배치가 업데이트되었습니다."
 
+#: hf_api_views.py:542 hf_api_views.py:557
 msgid "Placement not found"
 msgstr "배치를 찾을 수 없습니다"
 
+#: hf_api_views.py:547
 msgid "Delete widget placement"
 msgstr "위젯 배치 삭제"
 
+#: hf_api_views.py:548
 msgid ""
 "\n"
 "        Remove a widget from its zone.\n"
@@ -1268,12 +1631,15 @@ msgstr ""
 "        위젯을 해당 존에서 제거합니다. **인증:** 관리자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:555
 msgid "Placement deleted"
 msgstr "배치가 삭제되었습니다."
 
+#: hf_api_views.py:656
 msgid "Reorder widget placements"
 msgstr "위젯 배치 재정렬"
 
+#: hf_api_views.py:657
 msgid ""
 "\n"
 "    Update the order of multiple widget placements within a zone.\n"
@@ -1290,12 +1656,15 @@ msgstr ""
 "**인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:668
 msgid "Placements reordered"
 msgstr "배치 순서 재정렬"
 
+#: hf_api_views.py:703
 msgid "Get widget library"
 msgstr "위젯 라이브러리 가져오기"
 
+#: hf_api_views.py:704
 msgid ""
 "\n"
 "    Get all available widgets for the builder's widget library panel.\n"
@@ -1312,12 +1681,15 @@ msgstr ""
 "본 설정 및 가시성 설정이 포함됩니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:713
 msgid "Widgets grouped by type"
 msgstr "타입별로 그룹화된 위젯"
 
+#: hf_api_views.py:755
 msgid "Get widget property schemas"
 msgstr "위젯 속성 스키마 가져오기"
 
+#: hf_api_views.py:756
 msgid ""
 "\n"
 "    Get JSON schemas defining widget property panel configuration.\n"
@@ -1337,12 +1709,15 @@ msgstr ""
 "의합니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:767
 msgid "Widget schemas keyed by type"
 msgstr "타입별 위젯 스키마"
 
+#: hf_api_views.py:800
 msgid "Get preset templates"
 msgstr "사전 설정된 템플릿 가져오기"
 
+#: hf_api_views.py:801
 msgid ""
 "\n"
 "    Get available preset templates for headers or footers.\n"
@@ -1359,18 +1734,23 @@ msgstr ""
 "기 위해 복제할 수 있습니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:813 hf_api_views.py:868
 msgid "Type of template: \"header\" or \"footer\""
 msgstr "템플릿 유형: \"header\" 또는 \"footer\""
 
+#: hf_api_views.py:820
 msgid "List of preset templates"
 msgstr "사전 정의된 템플릿 목록"
 
+#: hf_api_views.py:822
 msgid "Invalid template_type"
 msgstr "잘못된 템플릿 유형"
 
+#: hf_api_views.py:855
 msgid "Clone a preset template"
 msgstr "사전 정의된 템플릿 복제"
 
+#: hf_api_views.py:856
 msgid ""
 "\n"
 "    Create a new header or footer by cloning a preset template.\n"
@@ -1387,21 +1767,27 @@ msgstr ""
 "되지 않습니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:876
 msgid "ID of the preset to clone"
 msgstr "복제할 사전 설정의 ID"
 
+#: hf_api_views.py:885
 msgid "New template created from preset"
 msgstr "사전 설정에서 새 템플릿 생성"
 
+#: hf_api_views.py:888
 msgid "Invalid request or clone failed"
 msgstr "잘못된 요청 또는 복사 실패"
 
+#: hf_api_views.py:890
 msgid "Preset not found"
 msgstr "사전 정의된 템플릿을 찾을 수 없습니다"
 
+#: hf_api_views.py:1011
 msgid "List available menus"
 msgstr "사용 가능한 메뉴 목록"
 
+#: hf_api_views.py:1012
 msgid ""
 "\n"
 "    Get all active menus for widget configuration dropdowns.\n"
@@ -1416,12 +1802,15 @@ msgstr ""
 "젯은 이 메뉴 중 하나를 표시하도록 선택합니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:1021
 msgid "List of active menus"
 msgstr "활성 메뉴 목록"
 
+#: hf_api_views.py:1044
 msgid "Duplicate header template"
 msgstr "헤더 템플릿 복제"
 
+#: hf_api_views.py:1045
 msgid ""
 "\n"
 "    Create a copy of an existing header template.\n"
@@ -1438,15 +1827,19 @@ msgstr ""
 "용자 필요\n"
 "    "
 
+#: hf_api_views.py:1057
 msgid "Header duplicated successfully"
 msgstr "헤더가 성공적으로 복제되었습니다"
 
+#: hf_api_views.py:1059
 msgid "Duplication failed"
 msgstr "복제 실패"
 
+#: hf_api_views.py:1128
 msgid "Delete header template"
 msgstr "헤더 템플릿 삭제"
 
+#: hf_api_views.py:1129
 msgid ""
 "\n"
 "    Delete a header template after validation checks.\n"
@@ -1466,15 +1859,19 @@ msgstr ""
 "치는 연쇄적으로 삭제됩니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:1142
 msgid "Header deleted successfully"
 msgstr "헤더가 성공적으로 삭제되었습니다."
 
+#: hf_api_views.py:1145
 msgid "Cannot delete (default or in use)"
 msgstr "삭제할 수 없습니다 (기본값 또는 사용 중)"
 
+#: hf_api_views.py:1195
 msgid "Set default header"
 msgstr "기본 헤더 설정"
 
+#: hf_api_views.py:1196
 msgid ""
 "\n"
 "    Set a header template as the site default.\n"
@@ -1495,12 +1892,15 @@ msgstr ""
 "제됩니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:1205
 msgid "Header set as default"
 msgstr "헤더가 기본으로 설정되었습니다."
 
+#: hf_api_views.py:1238
 msgid "Get site logo for builder"
 msgstr "빌더용 사이트 로고 가져오기"
 
+#: hf_api_views.py:1239
 msgid ""
 "\n"
 "        Get the current site logo URL and metadata for the header/footer "
@@ -1518,12 +1918,15 @@ msgstr ""
 "는 데 사용됩니다. **인증:** 관리자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:1248
 msgid "Site logo data"
 msgstr "사이트 로고 데이터"
 
+#: hf_api_views.py:1265
 msgid "Update site logo from widget"
 msgstr "위젯에서 사이트 로고 업데이트"
 
+#: hf_api_views.py:1266
 msgid ""
 "\n"
 "        Update the site logo from a logo widget upload.\n"
@@ -1541,18 +1944,23 @@ msgstr ""
 "정으로 동기화할 수 있습니다. **인증:** 관리자 사용자 필요\n"
 "        "
 
+#: hf_api_views.py:1283
 msgid "Site logo updated"
 msgstr "사이트 로고가 업데이트되었습니다."
 
+#: hf_api_views.py:1286
 msgid "Missing asset_id"
 msgstr "asset_id 누락"
 
+#: hf_api_views.py:1288
 msgid "Asset or settings not found"
 msgstr "자산 또는 설정을 찾을 수 없습니다."
 
+#: hf_api_views.py:1354
 msgid "Render widget preview"
 msgstr "위젯 미리보기 렌더링"
 
+#: hf_api_views.py:1355
 msgid ""
 "\n"
 "    Render a widget with given configuration for real-time preview in the "
@@ -1571,15 +1979,19 @@ msgstr ""
 "미리보기와 실제 화면이 항상 일치하도록 합니다. **인증:** 관리자 사용자 필요\n"
 "    "
 
+#: hf_api_views.py:1376
 msgid "Rendered widget HTML"
 msgstr "렌더링된 위젯 HTML"
 
+#: hf_api_views.py:1385
 msgid "Missing widget_type parameter"
 msgstr "widget_type 매개변수가 누락되었습니다"
 
+#: menu_api_views.py:37
 msgid "List all menus"
 msgstr "모든 메뉴 목록"
 
+#: menu_api_views.py:38
 msgid ""
 "\n"
 "        Returns all menus for the store, ordered by location and name.\n"
@@ -1597,15 +2009,19 @@ msgstr ""
 "사용 가능한 메뉴를 나열하는 데 사용 **인증:** 스태프 세션 필요\n"
 "        "
 
+#: menu_api_views.py:49 menu_api_views.py:69 menu_api_views.py:257
 msgid "Not authenticated"
 msgstr "인증되지 않음"
 
+#: menu_api_views.py:50
 msgid "Permission denied - staff access required"
 msgstr "권한 없음 - 스태프 액세스 필요"
 
+#: menu_api_views.py:55
 msgid "Create a new menu"
 msgstr "새로운 메뉴 생성"
 
+#: menu_api_views.py:56
 msgid ""
 "\n"
 "        Creates a new navigation menu.\n"
@@ -1623,12 +2039,17 @@ msgstr ""
 "증:** 스태프 세션 필요\n"
 "        "
 
+#: menu_api_views.py:68 menu_api_views.py:121 menu_api_views.py:136
+#: menu_api_views.py:189 menu_api_views.py:204 menu_api_views.py:256
+#: menu_api_views.py:302 menu_api_views.py:727
 msgid "Validation error"
 msgstr "검증 오류"
 
+#: menu_api_views.py:87
 msgid "Get menu with full item tree"
 msgstr "전체 항목 트리와 함께 메뉴 가져오기"
 
+#: menu_api_views.py:88
 msgid ""
 "\n"
 "        Returns complete menu details including all items in a nested tree "
@@ -1652,12 +2073,16 @@ msgstr ""
 "터 로드 - 렌더링을 위한 전체 메뉴 구조 검색 **인증:** 스태프 세션 필요\n"
 "        "
 
+#: menu_api_views.py:102 menu_api_views.py:122 menu_api_views.py:137
+#: menu_api_views.py:152 menu_api_views.py:499 menu_api_views.py:728
 msgid "Menu not found"
 msgstr "메뉴를 찾을 수 없습니다"
 
+#: menu_api_views.py:107
 msgid "Update menu settings"
 msgstr "메뉴 설정 업데이트"
 
+#: menu_api_views.py:108
 msgid ""
 "\n"
 "        Updates menu properties (name, location, display type, styling).\n"
@@ -1677,9 +2102,11 @@ msgstr ""
 "니다\n"
 "        "
 
+#: menu_api_views.py:127
 msgid "Partially update menu settings"
 msgstr "메뉴 설정 부분 업데이트"
 
+#: menu_api_views.py:128
 msgid ""
 "\n"
 "        Partially updates menu properties.\n"
@@ -1695,9 +2122,12 @@ msgstr ""
 "니다\n"
 "        "
 
+#: menu_api_views.py:142
+#: templates/admin/design/menu/partials/menu_cards.html:115
 msgid "Delete menu"
 msgstr "메뉴 삭제"
 
+#: menu_api_views.py:143
 msgid ""
 "\n"
 "        Deletes a menu and all its items.\n"
@@ -1718,12 +2148,15 @@ msgstr ""
 "이 작업은 되돌릴 수 없습니다.\n"
 "        "
 
+#: menu_api_views.py:151
 msgid "Menu deleted"
 msgstr "메뉴 삭제"
 
+#: menu_api_views.py:167
 msgid "Get menu item details"
 msgstr "메뉴 항목 세부 정보 가져오기"
 
+#: menu_api_views.py:168
 msgid ""
 "\n"
 "        Returns details of a specific menu item.\n"
@@ -1737,12 +2170,16 @@ msgstr ""
 "        특정 메뉴 항목의 세부 정보를 반환합니다. **인증:** 스태프 세션 필요\n"
 "        "
 
+#: menu_api_views.py:175 menu_api_views.py:190 menu_api_views.py:205
+#: menu_api_views.py:220
 msgid "Menu item not found"
 msgstr "메뉴 항목을 찾을 수 없습니다"
 
+#: menu_api_views.py:180
 msgid "Update menu item"
 msgstr "메뉴 항목 업데이트"
 
+#: menu_api_views.py:181
 msgid ""
 "\n"
 "        Updates a menu item's properties.\n"
@@ -1756,9 +2193,11 @@ msgstr ""
 "        메뉴 항목의 속성을 업데이트합니다. **인증:** 스태프 세션 필요\n"
 "        "
 
+#: menu_api_views.py:195
 msgid "Partially update menu item"
 msgstr "메뉴 항목 부분 업데이트"
 
+#: menu_api_views.py:196
 msgid ""
 "\n"
 "        Partially updates a menu item's properties.\n"
@@ -1774,9 +2213,11 @@ msgstr ""
 "필요\n"
 "        "
 
+#: menu_api_views.py:210
 msgid "Delete menu item"
 msgstr "메뉴 항목 삭제"
 
+#: menu_api_views.py:211
 msgid ""
 "\n"
 "        Deletes a menu item and all its children.\n"
@@ -1797,12 +2238,15 @@ msgstr ""
 "**경고:** 하위 항목도 함께 삭제됩니다.\n"
 "        "
 
+#: menu_api_views.py:219
 msgid "Menu item deleted"
 msgstr "메뉴 항목이 삭제되었습니다."
 
+#: menu_api_views.py:238
 msgid "Create menu item"
 msgstr "메뉴 항목 생성"
 
+#: menu_api_views.py:239
 msgid ""
 "\n"
 "    Creates a new menu item.\n"
@@ -1834,9 +2278,11 @@ msgstr ""
 "    **Authentication:** Staff session required\n"
 "    "
 
+#: menu_api_views.py:273
 msgid "Reorder menu items"
 msgstr "메뉴 항목 재정렬"
 
+#: menu_api_views.py:274
 msgid ""
 "\n"
 "    Batch reorder menu items, supporting drag-and-drop operations.\n"
@@ -1884,12 +2330,15 @@ msgstr ""
 "    **Authentication:** Staff session required\n"
 "    "
 
+#: menu_api_views.py:299
 msgid "Items reordered successfully"
 msgstr "항목이 성공적으로 재정렬되었습니다."
 
+#: menu_api_views.py:335
 msgid "Get available link sources for quick-add"
 msgstr "빠른 추가용 사용 가능한 링크 소스 가져오기"
 
+#: menu_api_views.py:336
 msgid ""
 "\n"
 "    Returns available pages and categories for quick-adding as menu items.\n"
@@ -1913,18 +2362,23 @@ msgstr ""
 "** 스태프 세션 필요\n"
 "    "
 
+#: menu_api_views.py:354
 msgid "Type of sources to return"
 msgstr "반환할 소스 유형"
 
+#: menu_api_views.py:357
 msgid "Search term to filter results"
 msgstr "결과를 필터링할 검색어"
 
+#: menu_api_views.py:361
 msgid "Available link sources"
 msgstr "사용 가능한 링크 소스"
 
+#: menu_api_views.py:452
 msgid "Get rendered menu preview HTML"
 msgstr "렌더링된 메뉴 미리보기 HTML 가져오기"
 
+#: menu_api_views.py:453
 msgid ""
 "\n"
 "    Returns rendered HTML preview of a menu for the visual builder.\n"
@@ -1951,21 +2405,27 @@ msgstr ""
 "드) **인증:** 스태프 세션 필요\n"
 "    "
 
+#: menu_api_views.py:472
 msgid "Override display type for preview"
 msgstr "미리보기용 표시 유형 재정의"
 
+#: menu_api_views.py:478
 msgid "Device type for responsive preview"
 msgstr "반응형 미리보기용 기기 유형"
 
+#: menu_api_views.py:485
 msgid "Return full popup HTML page instead of JSON"
 msgstr "JSON 대신 전체 팝업 HTML 페이지 반환"
 
+#: menu_api_views.py:491
 msgid "Rendered menu HTML"
 msgstr "렌더링된 메뉴 HTML"
 
+#: menu_api_views.py:574
 msgid "Get or update menu design tokens"
 msgstr "메뉴 디자인 토큰 가져오기 또는 업데이트"
 
+#: menu_api_views.py:575
 msgid ""
 "\n"
 "    Gets or updates menu design tokens stored in ThemeBranding.\n"
@@ -2025,12 +2485,15 @@ msgstr ""
 "    **Authentication:** Staff session required\n"
 "    "
 
+#: menu_api_views.py:605
 msgid "Menu tokens"
 msgstr "메뉴 토큰"
 
+#: menu_api_views.py:670
 msgid "Save complete menu structure"
 msgstr "전체 메뉴 구조 저장"
 
+#: menu_api_views.py:671
 msgid ""
 "\n"
 "    Saves the complete menu structure including all items from the visual "
@@ -2066,54 +2529,87 @@ msgstr ""
 "    **Warning:** Items not included in the request will be deleted.\n"
 "    "
 
+#: menu_api_views.py:686
 msgid "Menu structure to save"
 msgstr "저장할 메뉴 구조"
 
+#: menu_api_views.py:713
 msgid "Menu saved successfully"
 msgstr "메뉴가 성공적으로 저장되었습니다."
 
+#: models.py:58
 msgid "Color"
 msgstr "색상"
 
+#: models.py:59
 msgid "Font"
 msgstr "폰트"
 
+#: models.py:60 templates/design/branding_builder.html:1694
+#: templates/design/branding_builder.html:2224
+#: templates/design/menu_builder/builder.html:607
 msgid "Spacing"
 msgstr "간격"
 
+#: models.py:61 templates/design/branding_builder.html:282
+#: templates/design/branding_builder.html:1047
+#: templates/design/branding_builder.html:1261
+#: templates/design/branding_builder.html:1303
+#: templates/design/branding_builder.html:1345
+#: templates/design/branding_builder.html:1387
 msgid "Border"
 msgstr "테두리"
 
+#: models.py:62 templates/design/branding_builder.html:468
+#: templates/design/branding_builder.html:1270
+#: templates/design/branding_builder.html:1312
+#: templates/design/branding_builder.html:1354
+#: templates/design/branding_builder.html:1396
+#: templates/design/branding_builder.html:1810
+#: templates/design/branding_builder.html:1937
+#: templates/design/branding_builder.html:2155
 msgid "Shadow"
 msgstr "그림자"
 
+#: models.py:63 templates/design/menu_builder/builder.html:609
 msgid "Animation"
 msgstr "애니메이션"
 
+#: models.py:64
 msgid "Breakpoint"
 msgstr "브레이크포인트"
 
+#: models.py:68
 msgid "Brand Builder"
 msgstr "브랜드 빌더"
 
+#: models.py:69 models.py:76 models.py:129
+#: templates/admin/design/partials/designtoken_cards.html:66
 msgid "Theme"
 msgstr "테마"
 
+#: models.py:70 models.py:77 models.py:138 models.py:848 models.py:920
+#: templates/admin/design/partials/designtoken_cards.html:70
 msgid "Component"
 msgstr "구성 요소"
 
+#: models.py:71
 msgid "System Default"
 msgstr "시스템 기본값"
 
+#: models.py:75
 msgid "Brand Builder (Highest)"
 msgstr "브랜드 빌더 (가장 높음)"
 
+#: models.py:78
 msgid "System Default (Lowest)"
 msgstr "시스템 기본값 (가장 낮음)"
 
+#: models.py:85
 msgid "Token Name"
 msgstr "토큰 이름"
 
+#: models.py:87
 msgid ""
 "e.g., primary-500, text-lg, spacing-4. Same name can exist at different "
 "priority levels for cascade."
@@ -2121,82 +2617,108 @@ msgstr ""
 "예: primary-500, text-lg, spacing-4. 캐스케이드에 따라 동일한 이름이 다른 우"
 "선순위 수준에서 존재할 수 있습니다."
 
+#: models.py:94 templates/admin/design/designtoken/change_list.html:98
 msgid "Token Type"
 msgstr "토큰 유형"
 
+#: models.py:95
 msgid "Category of design token"
 msgstr "디자인 토큰 카테고리"
 
+#: models.py:98
 msgid "Token Value"
 msgstr "토큰 값"
 
+#: models.py:98
 msgid "CSS value: #3B82F6, 1.125rem, 16px, etc."
 msgstr "CSS 값: #3B82F6, 1.125rem, 16px 등"
 
+#: models.py:103 templates/design/menu_builder/builder.html:399
 msgid "Description"
 msgstr "설명"
 
+#: models.py:104
 msgid "Human-readable description of token purpose"
 msgstr "토큰 목적에 대한 사람이 읽을 수 있는 설명"
 
+#: models.py:113
 msgid "Token Source"
 msgstr "토큰 소스"
 
+#: models.py:114
 msgid "Where this token comes from in the cascade"
 msgstr "이 토큰이 캐스케이드에서 어디서 오는지"
 
+#: models.py:120
 msgid "Priority Level"
 msgstr "우선순위 수준"
 
+#: models.py:121
 msgid ""
 "Lower number = higher priority. 1=Brand Builder (highest), 4=System (lowest)"
 msgstr ""
 "작은 숫자 = 높은 우선순위. 1=브랜드 빌더 (가장 높음), 4=시스템 (가장 낮음)"
 
+#: models.py:130
 msgid "Associated theme (only for theme-level tokens)"
 msgstr "연관된 테마 (테마 수준 토큰에만 해당)"
 
+#: models.py:139
 msgid "Associated component (only for component-level tokens)"
 msgstr "연관된 컴포넌트 (컴포넌트 수준 토큰에만 해당)"
 
+#: models.py:148
 msgid ""
 "List of tiers where this token is available. Empty = all tiers. Options: "
 "['A', 'B', 'C']"
 msgstr ""
 "이 토큰이 사용 가능한 계층 목록. 빈 항목 = 모든 계층. 옵션: ['A', 'B', 'C']"
 
+#: models.py:155
 msgid "Is Active"
 msgstr "활성 상태"
 
+#: models.py:156
 msgid "Whether this token is currently active"
 msgstr "이 토큰이 현재 활성화되어 있는지 여부"
 
+#: models.py:160
 msgid "Is Locked"
 msgstr "잠금 상태"
 
+#: models.py:161
 msgid "Locked tokens cannot be renamed. Theme tokens are locked by default."
 msgstr ""
 "잠금된 토큰은 이름을 바꿀 수 없습니다. 테마 토큰은 기본적으로 잠금 상태입니"
 "다."
 
+#: models.py:163 models.py:861
 msgid "Created At"
 msgstr "생성 시간"
 
+#: models.py:164 models.py:862
 msgid "Updated At"
 msgstr "업데이트 시간"
 
+#: models.py:169
 msgid "Design Token"
 msgstr "디자인 토큰"
 
+#: models.py:170 templates/admin/design/designtoken/change_list.html:4
+#: templates/admin/design/designtoken/change_list.html:60
+#: templates/design/dashboard.html:64
 msgid "Design Tokens"
 msgstr "디자인 토큰"
 
+#: models.py:241
 msgid "Unknown"
 msgstr "알 수 없음"
 
+#: models.py:441
 msgid "Force Light Mode"
 msgstr "라이트 모드 강제"
 
+#: models.py:443
 msgid ""
 "Force light mode (disable dark mode). When enabled, site always uses light "
 "theme colors even if user's browser prefers dark mode."
@@ -2204,427 +2726,581 @@ msgstr ""
 "라이트 모드 강제 적용(다크 모드 비활성화). 활성화되면 사용자의 브라우저가 다"
 "크 모드를 선호하더라도 항상 라이트 테마 색상이 사용됩니다."
 
+#: models.py:841
 msgid "Page Tier"
 msgstr "페이지 계층"
 
+#: models.py:842
 msgid "Page tier this permission applies to"
 msgstr "이 권한이 적용되는 페이지 계층"
 
+#: models.py:849
 msgid "Component being whitelisted"
 msgstr "화이트리스트 대상 컴포넌트"
 
+#: models.py:853
 msgid "Allowed Regions"
 msgstr "허용된 지역"
 
+#: models.py:854
 msgid "Specific region IDs where component can be placed (empty = all regions)"
 msgstr "컴포넌트가 배치될 수 있는 특정 지역 ID (빈 항목 = 모든 지역)"
 
+#: models.py:858
 msgid "Max Instances"
 msgstr "최대 인스턴스 수"
 
+#: models.py:859
 msgid "Maximum instances allowed on page (-1 = unlimited)"
 msgstr "페이지에서 허용되는 최대 인스턴스 수 (-1 = 무한)"
 
+#: models.py:867
 msgid "Tier Component Permission"
 msgstr "계층 컴포넌트 권한"
 
+#: models.py:868
 msgid "Tier Component Permissions"
 msgstr "계층 컴포넌트 권한"
 
+#: models.py:921
 msgid "Component that was validated"
 msgstr "검증된 컴포넌트"
 
+#: models.py:925
 msgid "Validated At"
 msgstr "검증 시간"
 
+#: models.py:926
 msgid "When this validation was performed"
 msgstr "이 검증이 수행된 시점"
 
+#: models.py:934
 msgid "Validated By"
 msgstr "검증자"
 
+#: models.py:935
 msgid "User who triggered this validation"
 msgstr "이 검증을 트리거한 사용자"
 
+#: models.py:939
 msgid "Is Valid"
 msgstr "검증 여부"
 
+#: models.py:940
 msgid "Whether validation passed (no critical errors)"
 msgstr "검증이 통과되었는지 여부 (중요한 오류 없음)"
 
+#: models.py:943
 msgid "Critical errors that must be fixed"
 msgstr "수리해야 할 중대한 오류"
 
+#: models.py:946
 msgid "Warnings that should be reviewed"
 msgstr "검토해야 할 경고"
 
+#: models.py:950
 msgid "Version Validated"
 msgstr "검증된 버전"
 
+#: models.py:951
 msgid "Component version at time of validation"
 msgstr "검증 시점의 컴포넌트 버전"
 
+#: models.py:957
 msgid "Component Validation Report"
 msgstr "컴포넌트 검증 보고서"
 
+#: models.py:958
 msgid "Component Validation Reports"
 msgstr "컴포넌트 검증 보고서"
 
+#: models.py:1119 models.py:1126 template_registry.py:1130
+#: template_registry.py:1165
 msgid "Magazine"
 msgstr "매거진"
 
+#: models.py:1120 models.py:1139 template_registry.py:1079
+#: template_registry.py:1138
 msgid "Full Width"
 msgstr "전체 너비"
 
+#: models.py:1124 models.py:1145 template_registry.py:1022
+#: template_registry.py:1149
 msgid "Grid"
 msgstr "그리드"
 
+#: models.py:1125 models.py:1146 template_registry.py:1030
+#: template_registry.py:1157
 msgid "List"
 msgstr "목록"
 
+#: models.py:1132 template_registry.py:995
 msgid "Multi-Step"
 msgstr "다단계"
 
+#: models.py:1133 template_registry.py:1003
 msgid "Single Page"
 msgstr "단일 페이지"
 
+#: models.py:1134 template_registry.py:1011
 msgid "Express"
 msgstr "빠른 결제"
 
+#: models.py:1140 template_registry.py:1087
 msgid "Gallery Focus"
 msgstr "갤러리 초점"
 
+#: models.py:1141 template_registry.py:1095
 msgid "Digital"
 msgstr "디지털"
 
+#: models.py:1147 template_registry.py:1038
 msgid "Carousel"
 msgstr "카로셀"
 
+#: models.py:1148 template_registry.py:1046
 msgid "Masonry"
 msgstr "마스터리"
 
+#: models.py:1149 template_registry.py:1053
 msgid "Featured"
 msgstr "추천"
 
+#: models.py:1158 templates/design/template_config.html:59
 msgid "Checkout Template"
 msgstr "체크아웃 템플릿"
 
+#: models.py:1159
 msgid "The checkout page layout used for all customers."
 msgstr "모든 고객에게 사용되는 체크아웃 페이지 레이아웃."
 
+#: models.py:1164
 msgid "Checkout Options"
 msgstr "체크아웃 옵션"
 
+#: models.py:1165
 msgid "Configuration options for the selected checkout template."
 msgstr "선택한 체크아웃 템플릿의 구성 옵션."
 
+#: models.py:1170 templates/design/template_config.html:113
 msgid "Checkout Trust Badges"
 msgstr "결제 신뢰 배지"
 
+#: models.py:1171
 msgid "Configurable trust badges shown during checkout."
 msgstr "체크아웃 중에 설정 가능한 신뢰 배지 표시."
 
+#: models.py:1179
 msgid "Default Product Template"
 msgstr "기본 제품 템플릿"
 
+#: models.py:1180
 msgid "The default product page layout. Individual products can override this."
 msgstr "기본 제품 페이지 레이아웃. 개별 제품은 이를 재정의할 수 있습니다."
 
+#: models.py:1185
 msgid "Product Page Options"
 msgstr "제품 페이지 옵션"
 
+#: models.py:1186
 msgid "Configuration options for the selected product template."
 msgstr "선택한 제품 템플릿의 구성 옵션."
 
+#: models.py:1191 templates/design/template_config.html:195
 msgid "Product Trust Badges"
 msgstr "상품 신뢰 배지"
 
+#: models.py:1192
 msgid "Trust badges shown on physical product pages."
 msgstr "물리 제품 페이지에 표시되는 신뢰 배지."
 
+#: models.py:1197 templates/design/template_config.html:223
 msgid "Digital Product Trust Badges"
 msgstr "디지털 상품 신뢰 배지"
 
+#: models.py:1198
 msgid "Trust badges shown on digital product pages."
 msgstr "디지털 제품 페이지에 표시되는 신뢰 배지."
 
+#: models.py:1206
 msgid "Category Template"
 msgstr "카테고리 템플릿"
 
+#: models.py:1207
 msgid "The category page layout. Individual categories can override options."
 msgstr "카테고리 페이지 레이아웃. 개별 카테고리는 옵션을 재정의할 수 있습니다."
 
+#: models.py:1212 templates/design/template_config.html:291
 msgid "Category Page Options"
 msgstr "카테고리 페이지 옵션"
 
+#: models.py:1213
 msgid "Configuration options for the category page template."
 msgstr "카테고리 페이지 템플릿의 구성 옵션."
 
+#: models.py:1221 templates/design/template_config.html:305
 msgid "Blog Post Template"
 msgstr "블로그 게시물 템플릿"
 
+#: models.py:1222
 msgid ""
 "The default blog post detail layout. Individual posts can override this."
 msgstr ""
 "기본 블로그 게시물 상세 레이아웃입니다. 개별 게시물은 이 레이아웃을 재정의할 "
 "수 있습니다."
 
+#: models.py:1227
 msgid "Blog Post Options"
 msgstr "블로그 게시물 옵션"
 
+#: models.py:1228
 msgid "Configuration options for the blog post template."
 msgstr "블로그 게시물 템플릿의 설정 옵션입니다."
 
+#: models.py:1236 templates/design/template_config.html:359
 msgid "Blog List Template"
 msgstr "블로그 목록 템플릿"
 
+#: models.py:1237
 msgid "The blog listing page layout."
 msgstr "블로그 목록 페이지 레이아웃."
 
+#: models.py:1242
 msgid "Blog List Options"
 msgstr "블로그 목록 옵션"
 
+#: models.py:1243
 msgid "Configuration options for the blog list template."
 msgstr "블로그 목록 템플릿의 설정 옵션입니다."
 
+#: models.py:1251 models.py:1252
 msgid "Page Template Configuration"
 msgstr "페이지 템플릿 구성"
 
+#: template_registry.py:20 template_registry.py:52 template_registry.py:86
 msgid "Show order summary sidebar"
 msgstr "주문 요약 사이드바 표시"
 
+#: template_registry.py:21
 msgid "Display the order summary in a sticky sidebar on desktop."
 msgstr "데스크탑에서 주문 요약을 고정된 사이드바에 표시합니다."
 
+#: template_registry.py:26
 msgid "Auto-advance to next step"
 msgstr "다음 단계 자동 이동"
 
+#: template_registry.py:27
 msgid "Automatically open the next step after completing the current one."
 msgstr "현재 단계를 완료한 후 다음 단계를 자동으로 열きます."
 
+#: template_registry.py:32
 msgid "Show step numbers"
 msgstr "단계 번호 표시"
 
+#: template_registry.py:33
 msgid "Display numbered circles next to each checkout step."
 msgstr "각 체크아웃 단계 옆에 번호가 있는 원을 표시합니다."
 
+#: template_registry.py:38 template_registry.py:65 template_registry.py:98
+#: template_registry.py:130
 msgid "Show trust badges"
 msgstr "신뢰 배지 표시"
 
+#: template_registry.py:39
 msgid "Display security and trust badges below the payment section."
 msgstr "결제 섹션 아래에 보안 및 신뢰 배지를 표시합니다."
 
+#: template_registry.py:44 template_registry.py:71 template_registry.py:110
 msgid "Show express checkout"
 msgstr "빠른 결제 표시"
 
+#: template_registry.py:45
 msgid "Show express checkout buttons (Apple Pay, Google Pay) at the top."
 msgstr "상단에 빠른 체크아웃 버튼 (Apple Pay, Google Pay)을 표시합니다."
 
+#: template_registry.py:53
 msgid "Display order summary alongside each step."
 msgstr "각 단계와 함께 주문 요약을 표시합니다."
 
+#: template_registry.py:59
 msgid "Progress indicator style"
 msgstr "진행 지시기 스타일"
 
+#: template_registry.py:60
 msgid "How the progress through checkout steps is displayed."
 msgstr "체크아웃 단계를 통한 진행 상황이 어떻게 표시되는지."
 
+#: template_registry.py:66
 msgid "Display security badges on the payment step."
 msgstr "결제 단계에 보안 배지를 표시합니다."
 
+#: template_registry.py:72
 msgid "Show express checkout buttons at the top of the first step."
 msgstr "첫 번째 단계 상단에 빠른 체크아웃 버튼을 표시합니다."
 
+#: template_registry.py:78
 msgid "Step transition animation"
 msgstr "단계 전환 애니메이션"
 
+#: template_registry.py:79
 msgid "Animation style when transitioning between steps."
 msgstr "단계 간 전환 시 애니메이션 스타일."
 
+#: template_registry.py:87
 msgid "Display a sticky order summary sidebar."
 msgstr "고정된 주문 요약 사이드바를 표시합니다."
 
+#: template_registry.py:92
 msgid "Sticky summary on scroll"
 msgstr "스크롤 시 고정된 요약"
 
+#: template_registry.py:93
 msgid "Keep the order summary visible while scrolling the form."
 msgstr "폼을 스크롤하는 동안 주문 요약을 보입니다."
 
+#: template_registry.py:99
 msgid "Display security badges near the payment section."
 msgstr "결제 섹션 근처에 보안 배지를 표시합니다."
 
+#: template_registry.py:104
 msgid "Show section dividers"
 msgstr "섹션 구분선 표시"
 
+#: template_registry.py:105
 msgid "Display visual dividers between form sections."
 msgstr "폼 섹션 사이에 시각적인 구분선을 표시합니다."
 
+#: template_registry.py:111
 msgid "Show express checkout buttons at the top."
 msgstr "상단에 빠른 체크아웃 버튼을 표시합니다."
 
+#: template_registry.py:118
 msgid "Show order summary"
 msgstr "주문 요약 표시"
 
+#: template_registry.py:119
 msgid "Display a compact order summary."
 msgstr "간단한 주문 요약 표시."
 
+#: template_registry.py:124
 msgid "Allow address change"
 msgstr "주소 변경 허용"
 
+#: template_registry.py:125
 msgid "Allow customers to modify their pre-filled address."
 msgstr "고객이 사전에 입력된 주소를 수정할 수 있도록 허용합니다."
 
+#: template_registry.py:131
 msgid "Display security badges below the place order button."
 msgstr "주문하기 버튼 아래에 보안 배지를 표시합니다."
 
+#: template_registry.py:137
 msgid "Fallback for new customers"
 msgstr "신규 고객 대비 대체 옵션"
 
+#: template_registry.py:138
 msgid "Template to use when customer has no saved details."
 msgstr "고객이 저장된 정보가 없을 때 사용할 템플릿."
 
+#: template_registry.py:153 template_registry.py:217 template_registry.py:283
+#: template_registry.py:335
 msgid "Show SKU"
 msgstr "SKU 표시"
 
+#: template_registry.py:154
 msgid "Display the product SKU on the product page."
 msgstr "제품 페이지에 제품 SKU를 표시합니다."
 
+#: template_registry.py:159 template_registry.py:223 template_registry.py:289
+#: template_registry.py:341
 msgid "Show brand name"
 msgstr "브랜드 이름 표시"
 
+#: template_registry.py:160 template_registry.py:224
 msgid "Display the brand name above the product title."
 msgstr "제품 제목 위에 브랜드 이름을 표시합니다."
 
+#: template_registry.py:165 template_registry.py:229 template_registry.py:295
+#: template_registry.py:347 template_registry.py:392 template_registry.py:465
+#: template_registry.py:554 template_registry.py:651 template_registry.py:739
+#: template_registry.py:820 template_registry.py:921
 msgid "Show breadcrumb"
 msgstr "브레드크럼 표시"
 
+#: template_registry.py:166 template_registry.py:393
 msgid "Display breadcrumb navigation above the product."
 msgstr "제품 위에 빵屑 네비게이션을 표시합니다."
 
+#: template_registry.py:171 template_registry.py:398 template_registry.py:536
 msgid "Show short description"
 msgstr "짧은 설명 표시"
 
+#: template_registry.py:172
 msgid "Display the short description above the add-to-cart button."
 msgstr "추가 버튼 위에 짧은 설명을 표시합니다."
 
+#: template_registry.py:177 template_registry.py:235 template_registry.py:371
 msgid "Show social share buttons"
 msgstr "소셜 공유 버튼 표시"
 
+#: template_registry.py:178
 msgid "Display social media sharing buttons."
 msgstr "소셜 미디어 공유 버튼 표시."
 
+#: template_registry.py:183 template_registry.py:241 template_registry.py:301
 msgid "Show stock indicator"
 msgstr "재고 지시표 표시"
 
+#: template_registry.py:184
 msgid "Display stock availability status."
 msgstr "재고 상태 표시."
 
+#: template_registry.py:189 template_registry.py:247 template_registry.py:377
+#: template_registry.py:404
 msgid "Floating add-to-cart bar"
 msgstr "상단에 추가 버튼 바 표시"
 
+#: template_registry.py:190 template_registry.py:405
 msgid "Show a sticky add-to-cart bar when the main button scrolls out of view."
 msgstr "메인 버튼이 화면에서 사라질 때 고정된 추가 버튼 바를 표시합니다."
 
+#: template_registry.py:196 template_registry.py:254 template_registry.py:411
 msgid "Floating bar position"
 msgstr "상단 바 위치"
 
+#: template_registry.py:197 template_registry.py:255 template_registry.py:412
 msgid "Where to show the floating add-to-cart bar."
 msgstr "부유하는 추가 버튼 바를 표시할 위치."
 
+#: template_registry.py:202 template_registry.py:320
 msgid "Image zoom on hover"
 msgstr "마우스 호버 시 이미지 확대"
 
+#: template_registry.py:203 template_registry.py:321
 msgid "Enable image magnification on hover."
 msgstr "마우스 호버 시 이미지 확대 기능 활성화."
 
+#: template_registry.py:209 template_registry.py:275 template_registry.py:327
+#: template_registry.py:384 template_registry.py:418
 msgid "Info sections layout"
 msgstr "정보 섹션 레이아웃"
 
+#: template_registry.py:210
 msgid "How description, specifications, and reviews are displayed."
 msgstr "설명, 사양 및 리뷰가 어떻게 표시되는지."
 
+#: template_registry.py:218 template_registry.py:284 template_registry.py:336
 msgid "Display the product SKU."
 msgstr "제품 SKU 표시."
 
+#: template_registry.py:230 template_registry.py:296 template_registry.py:348
 msgid "Display breadcrumb navigation."
 msgstr "브레드크럼 네비게이션 표시."
 
+#: template_registry.py:236 template_registry.py:372
 msgid "Display social sharing buttons."
 msgstr "소셜 공유 버튼 표시."
 
+#: template_registry.py:242 template_registry.py:302
 msgid "Display stock availability."
 msgstr "재고 상태 표시."
 
+#: template_registry.py:248 template_registry.py:378
 msgid "Show a sticky add-to-cart bar on scroll."
 msgstr "스크롤 시 고정된 추가 버튼 바를 표시합니다."
 
+#: template_registry.py:261
 msgid "Gallery hero height"
 msgstr "갤러리 히어로 높이"
 
+#: template_registry.py:262
 msgid "Height of the full-width gallery hero section."
 msgstr "전체 너비 갤러리 히어로 섹션의 높이."
 
+#: template_registry.py:268
 msgid "Content alignment"
 msgstr "콘텐츠 정렬"
 
+#: template_registry.py:269
 msgid "Alignment of product info below the gallery."
 msgstr "갤러리 아래에 제품 정보의 정렬."
 
+#: template_registry.py:276 template_registry.py:328 template_registry.py:385
 msgid "How description, specs, and reviews are displayed."
 msgstr "설명, 사양 및 리뷰가 표시되는 방식."
 
+#: template_registry.py:290
 msgid "Display the brand name."
 msgstr "브랜드 이름 표시."
 
+#: template_registry.py:307
 msgid "Sticky product info"
 msgstr "고정된 제품 정보"
 
+#: template_registry.py:308
 msgid "Keep product info sidebar visible while scrolling the gallery."
 msgstr "갤러리 스크롤 시 제품 정보 사이드바를 보여줍니다."
 
+#: template_registry.py:314
 msgid "Gallery grid columns"
 msgstr "갤러리 격자 열"
 
+#: template_registry.py:315
 msgid "Number of columns in the gallery grid."
 msgstr "갤러리 그리드의 열 수."
 
+#: template_registry.py:342
 msgid "Display the brand/publisher name."
 msgstr "브랜드/출판사 이름 표시."
 
+#: template_registry.py:353
 msgid "Instant delivery badge"
 msgstr "즉시 배송 배지"
 
+#: template_registry.py:354
 msgid "Show \"Instant Digital Delivery\" badge near add-to-cart."
 msgstr "추가 버튼 근처에 \"즉시 디지털 배송\" 배지 표시."
 
+#: template_registry.py:359
 msgid "Show features list"
 msgstr "기능 목록 표시"
 
+#: template_registry.py:360
 msgid "Display a \"What's Included\" checklist section."
 msgstr "\"포함 내용\" 확인 목록 섹션을 표시합니다."
 
+#: template_registry.py:365
 msgid "Show license info"
 msgstr "라이선스 정보 표시"
 
+#: template_registry.py:366
 msgid "Display license type and terms if available."
 msgstr "라이선스 유형 및 조건이 있다면 표시합니다."
 
+#: template_registry.py:399
 msgid "Display the short description in the header bar."
 msgstr "헤더 바에 짧은 설명을 표시합니다."
 
+#: template_registry.py:420
 msgid ""
 "How description, specifications, and reviews are displayed below the editor."
 msgstr "편집기 아래에 설명, 사양 및 리뷰가 어떻게 표시되는지 확인합니다."
 
+#: template_registry.py:436 template_registry.py:517 template_registry.py:601
+#: template_registry.py:707 template_registry.py:786
 msgid "Show category banner"
 msgstr "카테고리 배너 표시"
 
+#: template_registry.py:437 template_registry.py:518 template_registry.py:602
+#: template_registry.py:708 template_registry.py:787
 msgid "Display a hero banner when the category has a banner image."
 msgstr "카테고리에 배너 이미지가 있을 때 히어로 배너를 표시합니다."
 
+#: template_registry.py:443
 msgid "Card image fallback"
 msgstr "카드 이미지 대체"
 
+#: template_registry.py:445
 msgid ""
 "When a category has no image: show first product image, or a placeholder "
 "icon."
@@ -2632,123 +3308,178 @@ msgstr ""
 "카테고리에 이미지가 없을 경우: 첫 번째 제품 이미지 또는 플레이스홀더 아이콘"
 "을 표시합니다."
 
+#: template_registry.py:452 template_registry.py:593 template_registry.py:699
+#: template_registry.py:778 template_registry.py:859
 msgid "Products per page"
 msgstr "페이지당 제품 수"
 
+#: template_registry.py:453 template_registry.py:594 template_registry.py:700
+#: template_registry.py:779 template_registry.py:860
 msgid "Number of products to display per page."
 msgstr "페이지당 표시할 제품 수."
 
+#: template_registry.py:459 template_registry.py:690
 msgid "Products per row"
 msgstr "행당 제품 수"
 
+#: template_registry.py:460
 msgid ""
 "Number of products per row on desktop. Auto adjusts based on screen size."
 msgstr "데스크탑의 행당 제품 수. 화면 크기에 따라 자동 조정됩니다."
 
+#: template_registry.py:466 template_registry.py:555 template_registry.py:652
+#: template_registry.py:740 template_registry.py:821 template_registry.py:922
 msgid "Display breadcrumb navigation at the top of the page."
 msgstr "페이지 상단에 빵屑 네비게이션을 표시합니다."
 
+#: template_registry.py:471 template_registry.py:542 template_registry.py:645
+#: template_registry.py:727 template_registry.py:808
 msgid "Show subcategories"
 msgstr "하위 카테고리 표시"
 
+#: template_registry.py:472 template_registry.py:543 template_registry.py:646
+#: template_registry.py:728 template_registry.py:809
 msgid "Display subcategory chips when viewing a category with children."
 msgstr ""
 "자식 카테고리가 있는 카테고리를 보고 있을 때 하위 카테고리 칩을 표시합니다."
 
+#: template_registry.py:477 template_registry.py:548 template_registry.py:733
+#: template_registry.py:814
 msgid "Show category description"
 msgstr "카테고리 설명 표시"
 
+#: template_registry.py:478 template_registry.py:549 template_registry.py:734
+#: template_registry.py:815
 msgid "Display the category description below the title."
 msgstr "제목 아래에 카테고리 설명을 표시합니다."
 
+#: template_registry.py:483 template_registry.py:560 template_registry.py:657
+#: template_registry.py:745 template_registry.py:826
 msgid "Show sort bar"
 msgstr "정렬 바 표시"
 
+#: template_registry.py:484 template_registry.py:827
 msgid "Display the sort and product count toolbar above the product grid."
 msgstr "제품 그리드 위에 정렬 및 제품 수 툴바를 표시합니다."
 
+#: template_registry.py:489 template_registry.py:566 template_registry.py:663
+#: template_registry.py:751 template_registry.py:832
 msgid "Show product count"
 msgstr "제품 수 표시"
 
+#: template_registry.py:490 template_registry.py:567 template_registry.py:664
+#: template_registry.py:752 template_registry.py:833
 msgid "Display the total number of products in the toolbar."
 msgstr "툴바에 총 제품 수를 표시합니다."
 
+#: template_registry.py:495 template_registry.py:572 template_registry.py:669
+#: template_registry.py:757 template_registry.py:838 template_registry.py:927
 msgid "Show help section"
 msgstr "도움 섹션 표시"
 
+#: template_registry.py:496 template_registry.py:573 template_registry.py:670
+#: template_registry.py:758 template_registry.py:839 template_registry.py:928
 msgid ""
 "Display the \"Can't Find What You're Looking For?\" section at the bottom."
 msgstr "하단에 \"필요한 항목을 찾지 못하셨나요?\" 섹션을 표시합니다."
 
+#: template_registry.py:502 template_registry.py:579 template_registry.py:676
+#: template_registry.py:764 template_registry.py:845
 msgid "Pagination style"
 msgstr "페이지네이션 스타일"
 
+#: template_registry.py:503 template_registry.py:580 template_registry.py:677
+#: template_registry.py:765 template_registry.py:846
 msgid "How additional pages of products are loaded."
 msgstr "추가 제품 페이지가 로드되는 방식."
 
+#: template_registry.py:509 template_registry.py:586 template_registry.py:683
+#: template_registry.py:771 template_registry.py:852
 msgid "Default sort order"
 msgstr "기본 정렬 순서"
 
+#: template_registry.py:510 template_registry.py:587 template_registry.py:684
+#: template_registry.py:772 template_registry.py:853
 msgid "The default sort order when no sort is specified."
 msgstr "정렬이 지정되지 않은 경우의 기본 정렬 순서."
 
+#: template_registry.py:523
 msgid "Show product image"
 msgstr "상품 이미지 표시"
 
+#: template_registry.py:524
 msgid "Display product thumbnail images in each list row."
 msgstr "리스트 행마다 제품 썸네일 이미지를 표시합니다."
 
+#: template_registry.py:530
 msgid "Image position"
 msgstr "이미지 위치"
 
+#: template_registry.py:531
 msgid "Which side of the row the product image appears on."
 msgstr "제품 이미지가 행의 어느 쪽에 나타나는지 설정합니다."
 
+#: template_registry.py:537
 msgid "Display the product short description in each list row."
 msgstr "리스트 행마다 제품의 짧은 설명을 표시합니다."
 
+#: template_registry.py:561
 msgid "Display the sort and product count toolbar above the product list."
 msgstr "제품 목록 위에 정렬 및 제품 수 도구 모음을 표시합니다."
 
+#: template_registry.py:608
 msgid "Slides per view"
 msgstr "보기당 슬라이드 수"
 
+#: template_registry.py:609
 msgid "Number of product cards visible at once on desktop."
 msgstr "데스크탑에서 한 번에 보이는 제품 카드 수."
 
+#: template_registry.py:614
 msgid "Autoplay"
 msgstr "자동 재생"
 
+#: template_registry.py:615
 msgid "Automatically advance slides without user interaction."
 msgstr "사용자 상호작용 없이 슬라이드를 자동으로 진행합니다."
 
+#: template_registry.py:621
 msgid "Autoplay speed"
 msgstr "자동 재생 속도"
 
+#: template_registry.py:622
 msgid "Time in milliseconds between automatic slide transitions."
 msgstr "자동 슬라이드 전환 사이의 시간(밀리초 단위)."
 
+#: template_registry.py:627
 msgid "Show navigation arrows"
 msgstr "네비게이션 화살표 표시"
 
+#: template_registry.py:628
 msgid "Display left and right arrow buttons for manual navigation."
 msgstr "수동 탐색을 위한 좌우 화살표 버튼을 표시합니다."
 
+#: template_registry.py:633
 msgid "Show dot indicators"
 msgstr "점 표시기 표시"
 
+#: template_registry.py:634
 msgid "Display dot navigation below the carousel."
 msgstr "캐러셀 아래에 점 네비게이션을 표시합니다."
 
+#: template_registry.py:639
 msgid "Infinite loop"
 msgstr "무한 루프"
 
+#: template_registry.py:640
 msgid "Loop back to the beginning after reaching the last slide."
 msgstr "마지막 슬라이드에 도달한 후 처음으로 루프됩니다."
 
+#: template_registry.py:658
 msgid "Display the sort and product count toolbar above the carousel."
 msgstr "캐러셀 위에 정렬 및 제품 수 도구 모음을 표시합니다."
 
+#: template_registry.py:692
 msgid ""
 "Maximum products in each carousel row. Rows stack vertically — extra "
 "products create a new row below."
@@ -2756,30 +3487,39 @@ msgstr ""
 "각 캐러셀 행에 표시할 최대 상품 수. 행은 수직으로 쌓이며, 추가 상품은 아래에 "
 "새로운 행을 생성합니다."
 
+#: template_registry.py:714
 msgid "Columns"
 msgstr "열"
 
+#: template_registry.py:715
 msgid "Number of columns in the masonry grid on desktop."
 msgstr "데스크탑에서 마스터리 그리드의 열 수."
 
+#: template_registry.py:721
 msgid "Gap size"
 msgstr "간격 크기"
 
+#: template_registry.py:722
 msgid "Spacing between items in the masonry grid."
 msgstr "마스터리 그리드 내 항목 간 간격."
 
+#: template_registry.py:746
 msgid "Display the sort and product count toolbar above the masonry grid."
 msgstr "마스터리 그리드 위에 정렬 및 제품 수 도구 모음을 표시합니다."
 
+#: template_registry.py:793
 msgid "Featured products count"
 msgstr "특징 제품 수"
 
+#: template_registry.py:794
 msgid "Number of products to highlight in the hero spotlight area."
 msgstr "히어로 스폟라이트 영역에서 강조할 제품 수."
 
+#: template_registry.py:800
 msgid "Hero layout"
 msgstr "헤로 레이아웃"
 
+#: template_registry.py:802
 msgid ""
 "Layout of the featured product hero section. Full width spans the page; "
 "split shows image and details side by side."
@@ -2787,9 +3527,11 @@ msgstr ""
 "주요 상품 히어로 섹션의 레이아웃. 전체 너비는 페이지를 가득 채우고, 분할은 이"
 "미지와 세부 정보를 옆으로 나란히 표시합니다."
 
+#: template_registry.py:868
 msgid "Panels per row"
 msgstr "행당 패널 수"
 
+#: template_registry.py:870
 msgid ""
 "Maximum category panels per accordion row. When categories exceed this, "
 "additional rows are created below."
@@ -2797,35 +3539,45 @@ msgstr ""
 "각 액ordion 행에 표시할 최대 카테고리 패널 수. 카테고리 수가 이 수치를 초과하"
 "면 아래에 추가 행이 생성됩니다."
 
+#: template_registry.py:877
 msgid "Panel height"
 msgstr "패널 높이"
 
+#: template_registry.py:879
 msgid ""
 "Height of the accordion panels. Larger values create a more dramatic visual "
 "effect."
 msgstr "에코드 페널의 높이. 더 큰 값은 더 극적인 시각 효과를 만듭니다."
 
+#: template_registry.py:886
 msgid "Expand ratio"
 msgstr "확장 비율"
 
+#: template_registry.py:887
 msgid "How much wider the active panel becomes relative to collapsed panels."
 msgstr "접힌 패널에 비해 활성 패널이 얼마나 넓어지는지 설정합니다."
 
+#: template_registry.py:893
 msgid "Transition speed"
 msgstr "전환 속도"
 
+#: template_registry.py:894
 msgid "Duration in milliseconds for panel expand and collapse animations."
 msgstr "패널 확장 및 축소 애니메이션의 지속 시간(밀리초 단위)."
 
+#: template_registry.py:900
 msgid "Overlay style"
 msgstr "오버레이 스타일"
 
+#: template_registry.py:901
 msgid "How the category name and info are displayed over the panel image."
 msgstr "패널 이미지 위에 카테고리 이름 및 정보가 어떻게 표시되는지 설정합니다."
 
+#: template_registry.py:907
 msgid "Mobile layout"
 msgstr "모바일 레이아웃"
 
+#: template_registry.py:909
 msgid ""
 "How panels are displayed on mobile devices. Stack shows them vertically; "
 "grid uses a compact grid."
@@ -2833,12 +3585,15 @@ msgstr ""
 "모바일 기기에서 패널이 어떻게 표시되는지 설정합니다. 스택은 수직으로 표시하"
 "고, 그리드는 컴팩트한 그리드를 사용합니다."
 
+#: template_registry.py:915
 msgid "Show product count per category"
 msgstr "카테고리별 제품 수 표시"
 
+#: template_registry.py:916
 msgid "Display the number of products in each category panel."
 msgstr "각 카테고리 패널에 있는 제품 수를 표시합니다."
 
+#: template_registry.py:989
 msgid ""
 "All checkout steps on one page with collapsible sections. Steps collapse "
 "after completion, showing a summary. Great for general-purpose stores."
@@ -2846,6 +3601,7 @@ msgstr ""
 "한 페이지에 모든 체크아웃 단계를 포함하고, 단계가 완료되면 요약을 표시하는 접"
 "을 수 있는 섹션. 일반용 스토어에 적합합니다."
 
+#: template_registry.py:997
 msgid ""
 "One step per screen with a progress bar at top. Clean, focused input with "
 "smooth transitions. Ideal for mobile-first stores and impulse purchases."
@@ -2853,6 +3609,7 @@ msgstr ""
 "스크린당 하나의 단계와 상단의 진행 표시줄. 깔끔하고 집중적인 입력과 부드러운 "
 "전환. 모바일 중심 스토어와 즉흥 구매에 이상적입니다."
 
+#: template_registry.py:1005
 msgid ""
 "All checkout fields visible at once in a two-column layout. No collapsing or "
 "stepping. Perfect for B2B, repeat buyers, and digital products."
@@ -2860,6 +3617,7 @@ msgstr ""
 "두 열 레이아웃에서 모든 체크아웃 필드를 한 번에 표시. 접거나 단계별로 이동하"
 "지 않음. B2B, 반복 구매자, 디지털 제품에 완벽합니다."
 
+#: template_registry.py:1013
 msgid ""
 "Streamlined checkout for returning customers with saved addresses and "
 "payment methods. Falls back to another template for new customers."
@@ -2867,6 +3625,7 @@ msgstr ""
 "저장된 주소와 결제 수단이 있는 재방문 고객을 위한 간소화된 체크아웃. 새 고객"
 "은 다른 템플릿으로 전환됩니다."
 
+#: template_registry.py:1024
 msgid ""
 "Classic responsive grid of product cards with configurable columns. The most "
 "versatile layout for general-purpose stores."
@@ -2874,6 +3633,7 @@ msgstr ""
 "설정 가능한 열을 가진 전통적인 반응형 상품 카드 그리드. 일반용 스토어에 가장 "
 "유연한 레이아웃입니다."
 
+#: template_registry.py:1032
 msgid ""
 "Product rows with image and details side by side. Great for categories where "
 "customers need to compare specs at a glance."
@@ -2881,6 +3641,7 @@ msgstr ""
 "이미지와 세부 정보를 옆으로 나란히 표시하는 상품 행. 고객이 명세를 한눈에 비"
 "교해야 하는 카테고리에 적합합니다."
 
+#: template_registry.py:1040
 msgid ""
 "Horizontal product slider with navigation arrows and dot indicators. Ideal "
 "for curated collections and featured selections."
@@ -2888,6 +3649,7 @@ msgstr ""
 "네비게이션 화살표와 점 표시기를 가진 수평 상품 슬라이더. 엄선된 컬렉션과 주"
 "요 선택 항목에 이상적입니다."
 
+#: template_registry.py:1048
 msgid ""
 "Pinterest-style staggered grid that adapts to varying image heights. Best "
 "for visual products like fashion, art, and photography."
@@ -2895,6 +3657,7 @@ msgstr ""
 "Pinterest 스타일의 계단식 그리드로 이미지 높이에 따라 조정됩니다. 패션, 예"
 "술, 사진과 같은 시각적 상품에 가장 적합합니다."
 
+#: template_registry.py:1055
 msgid ""
 "Large hero spotlight for top products with a supporting grid below. Perfect "
 "for categories with standout items or new arrivals."
@@ -2902,6 +3665,7 @@ msgstr ""
 "상위 상품을 위한 대형 히어로 스폟라이트와 아래에 지원 그리드가 있습니다. 독특"
 "한 상품이나 신상품이 있는 카테고리에 완벽합니다."
 
+#: template_registry.py:1063
 msgid ""
 "Interactive horizontal image panels for browsing categories. Each panel "
 "expands on hover to reveal the category. Best for 3-8 categories."
@@ -2909,6 +3673,7 @@ msgstr ""
 "카테고리 탐색을 위한 상호작용형 수평 이미지 패널. 각 패널을 호버하면 카테고리"
 "를 표시합니다. 3~8개 카테고리에 적합합니다."
 
+#: template_registry.py:1073
 msgid ""
 "Gallery left, product info right. The familiar two-column layout used by "
 "major retailers. Tabs below for details, specs, and reviews."
@@ -2916,6 +3681,7 @@ msgstr ""
 "갤러리 왼쪽, 제품 정보 오른쪽. 주요 유통업체에서 사용하는 익숙한 두 열 레이아"
 "웃. 아래에 세부 정보, 사양 및 리뷰 탭이 있습니다."
 
+#: template_registry.py:1081
 msgid ""
 "Large hero gallery spanning the full width, with product info centered "
 "below. Editorial feel that emphasizes product imagery. Great for lifestyle "
@@ -2924,6 +3690,7 @@ msgstr ""
 "전체 너비를 차지하는 대형 히어로 갤러리와 아래에 중심에 배치된 제품 정보. 제"
 "품 이미지를 강조하는 편집자 느낌. 라이프스타일 및 럭셔리 브랜드에 적합합니다."
 
+#: template_registry.py:1089
 msgid ""
 "Gallery-heavy 60/40 layout with a sticky info sidebar. Shows more images by "
 "default. Ideal for jewelry, furniture, art, and handmade products."
@@ -2931,6 +3698,7 @@ msgstr ""
 "갤러리 중심의 60/40 레이아웃과 고정된 정보 사이드바. 기본적으로 더 많은 이미"
 "지를 표시. 보석, 가구, 예술, 수작업 제품에 이상적입니다."
 
+#: template_registry.py:1097
 msgid ""
 "Optimized for digital products with feature lists, instant delivery badges, "
 "license info, and no shipping-related UI. Perfect for software, ebooks, and "
@@ -2939,9 +3707,11 @@ msgstr ""
 "디지털 제품에 최적화된 기능 목록, 즉시 배송 배지, 라이선스 정보, 배송 관련 "
 "UI 없음. 소프트웨어, 전자책, 강의에 완벽합니다."
 
+#: template_registry.py:1103
 msgid "Designer"
 msgstr "디자이너"
 
+#: template_registry.py:1105
 msgid ""
 "Full-width design editor with compact product info bar. Optimized for "
 "customizable products where the visual editor is the primary interaction."
@@ -2949,6 +3719,7 @@ msgstr ""
 "전체 너비 디자인 편집기와 간결한 제품 정보 바. 시각적 편집기가 주요 상호작용"
 "인 맞춤형 제품에 최적화됨."
 
+#: template_registry.py:1116
 msgid ""
 "Full-width featured image at top, article body below with sidebar. "
 "Traditional blog layout with categories, tags, and subscribe."
@@ -2956,6 +3727,7 @@ msgstr ""
 "상단에 전체 너비의 특징 이미지, 아래에 본문과 사이드바가 있는 전통적인 블로"
 "그 레이아웃으로 카테고리, 태그 및 구독 기능 포함."
 
+#: template_registry.py:1124
 msgid ""
 "Clean centered reading experience with no sidebar. Focus on typography and "
 "content with comfortable reading width."
@@ -2963,6 +3735,7 @@ msgstr ""
 "사이드바 없이 깔끔한 중앙 정렬 독서 경험. 편안한 독서 너비로 타이포그래피와 "
 "콘텐츠에 집중."
 
+#: template_registry.py:1132
 msgid ""
 "Large hero image, author bio section, and editorial feel with sidebar. Great "
 "for long-form content and storytelling."
@@ -2970,6 +3743,7 @@ msgstr ""
 "대형 히로 이미지, 저자 정보 섹션 및 편집기 스타일의 레이아웃과 사이드바. 긴 "
 "형식의 콘텐츠 및 스토리텔링에 적합합니다."
 
+#: template_registry.py:1140
 msgid ""
 "Edge-to-edge featured image hero with wide content area and no sidebar. "
 "Immersive layout for visual storytelling."
@@ -2977,6 +3751,7 @@ msgstr ""
 "가장자리에서 가장자리까지 이어지는 특징 이미지 히로와 넓은 콘텐츠 영역, 사이"
 "드바 없음. 시각적 스토리텔링에 적합한 몰입형 레이아웃입니다."
 
+#: template_registry.py:1151
 msgid ""
 "Card-based responsive grid with featured images, titles, and excerpts. "
 "Classic blog homepage layout."
@@ -2984,6 +3759,7 @@ msgstr ""
 "기능 이미지, 제목 및 요약을 포함한 카드 기반 반응형 그리드. 고전적인 블로그 "
 "홈 페이지 레이아웃입니다."
 
+#: template_registry.py:1159
 msgid ""
 "Full-width article rows with image on left and text on right. Scannable "
 "format for content-heavy blogs."
@@ -2991,6 +3767,7 @@ msgstr ""
 "전체 너비의 기사 행, 왼쪽에 이미지, 오른쪽에 텍스트. 콘텐츠 중심 블로그용 스"
 "캔 가능한 형식."
 
+#: template_registry.py:1167
 msgid ""
 "Featured post hero at top with mixed grid and list layout below. Editorial "
 "magazine look and feel."
@@ -2998,6 +3775,7 @@ msgstr ""
 "상단에 특징 포스트 히로가 있고, 하단에는 혼합 그리드 및 목록 레이아웃이 있습"
 "니다. 편집부 매거진 스타일입니다."
 
+#: template_registry.py:1175
 msgid ""
 "Title-and-date list with no images. Clean, text-focused index page for blogs "
 "focused on writing."
@@ -3005,327 +3783,520 @@ msgstr ""
 "이미지 없이 제목과 날짜만 포함한 목록입니다. 글 중심 블로그를 위한 깔끔한 텍"
 "스트 중심 인덱스 페이지입니다."
 
+#: template_registry.py:1187 template_registry.py:1246
 msgid "Show sidebar"
 msgstr "사이드바 표시"
 
+#: template_registry.py:1188 template_registry.py:1247
 msgid "Display sidebar with search, categories, tags, and subscribe."
 msgstr "검색, 카테고리, 태그 및 구독 기능을 포함한 사이드바를 표시합니다."
 
+#: template_registry.py:1193 template_registry.py:1219
+#: template_registry.py:1272 template_registry.py:1314
+#: template_registry.py:1346
 msgid "Show author"
 msgstr "작성자 표시"
 
+#: template_registry.py:1194 template_registry.py:1273
 msgid "Display the post author name and avatar."
 msgstr "게시물 작성자 이름과 아바타를 표시합니다."
 
+#: template_registry.py:1199 template_registry.py:1225
+#: template_registry.py:1258 template_registry.py:1278
 msgid "Show share buttons"
 msgstr "공유 버튼 표시"
 
+#: template_registry.py:1200 template_registry.py:1226
+#: template_registry.py:1259 template_registry.py:1279
 msgid "Display social sharing buttons after the article."
 msgstr "기사 이후에 소셜 공유 버튼을 표시합니다."
 
+#: template_registry.py:1205 template_registry.py:1231
+#: template_registry.py:1264 template_registry.py:1284
 msgid "Show related posts"
 msgstr "관련 게시물 표시"
 
+#: template_registry.py:1206 template_registry.py:1232
+#: template_registry.py:1265 template_registry.py:1285
 msgid "Display related articles after the post content."
 msgstr "게시물 내용 이후 관련 기사를 표시합니다."
 
+#: template_registry.py:1211 template_registry.py:1290
 msgid "Show subscribe CTA"
 msgstr "구독 CTA 표시"
 
+#: template_registry.py:1212 template_registry.py:1291
 msgid "Display a subscribe call-to-action after the article."
 msgstr "기사 이후 구독 요청을 위한 CTA(행동 유도 문구)를 표시합니다."
 
+#: template_registry.py:1220 template_registry.py:1315
+#: template_registry.py:1347
 msgid "Display the post author name."
 msgstr "게시물 작성자 이름 표시."
 
+#: template_registry.py:1237
 msgid "Content width"
 msgstr "내용 너비"
 
+#: template_registry.py:1238
 msgid "Maximum width of the article content."
 msgstr "기사 콘텐츠의 최대 너비입니다."
 
+#: template_registry.py:1252
 msgid "Show author bio"
 msgstr "작성자 소개 표시"
 
+#: template_registry.py:1253
 msgid "Display full author biography section below the article."
 msgstr "기사 아래에 전체 저자 소개 섹션을 표시합니다."
 
+#: template_registry.py:1301
 msgid "Grid columns"
 msgstr "그리드 열"
 
+#: template_registry.py:1302
 msgid "Number of columns in the blog post grid."
 msgstr "블로그 게시물 그리드의 열 수。"
 
+#: template_registry.py:1308 template_registry.py:1334
+#: template_registry.py:1367
 msgid "Show excerpt"
 msgstr "요약 표시"
 
+#: template_registry.py:1309 template_registry.py:1368
 msgid "Display post excerpt below the title."
 msgstr "제목 아래에 게시물 요약을 표시합니다."
 
+#: template_registry.py:1320 template_registry.py:1381
 msgid "Show date"
 msgstr "날짜 표시"
 
+#: template_registry.py:1321 template_registry.py:1382
 msgid "Display the published date."
 msgstr "게시 날짜 표시."
 
+#: template_registry.py:1326 template_registry.py:1373
+#: template_registry.py:1387
 msgid "Show category"
 msgstr "카테고리 표시"
 
+#: template_registry.py:1327 template_registry.py:1374
 msgid "Display the post category badge."
 msgstr "게시물 카테고리 배지 표시."
 
+#: template_registry.py:1335
 msgid "Display post excerpt in each row."
 msgstr "각 행에 게시물 요약을 표시합니다."
 
+#: template_registry.py:1340
 msgid "Show image"
 msgstr "이미지 표시"
 
+#: template_registry.py:1341
 msgid "Display featured image thumbnail."
 msgstr "대표 이미지 미리보기 표시."
 
+#: template_registry.py:1352 template_registry.py:1393
 msgid "Show reading time"
 msgstr "읽기 시간 표시"
 
+#: template_registry.py:1353 template_registry.py:1394
 msgid "Display estimated reading time."
 msgstr "예상 읽기 시간 표시."
 
+#: template_registry.py:1360
 msgid "Featured posts"
 msgstr "추천 게시물"
 
+#: template_registry.py:1361
 msgid "Number of featured/hero posts at the top."
 msgstr "상단에 표시할 특징/헤로 게시물 수입니다."
 
+#: template_registry.py:1388
 msgid "Display the post category."
 msgstr "게시물 카테고리를 표시합니다."
 
+#: templates/admin/design/designtoken/change_list.html:62
 msgid "Manage design tokens for consistent styling across your store"
 msgstr "스토어 전반에 걸쳐 일관된 스타일링을 위해 디자인 토큰을 관리합니다"
 
+#: templates/admin/design/designtoken/change_list.html:66
 msgid "Add Token"
 msgstr "토큰 추가"
 
+#: templates/admin/design/designtoken/change_list.html:75
+#: templates/admin/design/widget/change_list.html:40
 msgid "Filters"
 msgstr "필터"
 
+#: templates/admin/design/designtoken/change_list.html:86
+#: templates/admin/design/widget/change_list.html:51
+#: templates/design/branding_builder.html:1973
 msgid "Search"
 msgstr "검색"
 
+#: templates/admin/design/designtoken/change_list.html:91
 msgid "Search by name or value..."
 msgstr "이름 또는 값으로 검색..."
 
+#: templates/admin/design/designtoken/change_list.html:101
+#: templates/admin/design/widget/available_widgets.html:44
+#: templates/admin/design/widget/change_list.html:66
 msgid "All Types"
 msgstr "모든 유형"
 
+#: templates/admin/design/designtoken/change_list.html:111
 msgid "Source"
 msgstr "출처"
 
+#: templates/admin/design/designtoken/change_list.html:114
 msgid "All Sources"
 msgstr "모든 소스"
 
+#: templates/admin/design/designtoken/change_list.html:124
+#: templates/admin/design/partials/designtoken_cards.html:105
 msgid "Priority"
 msgstr "우선순위"
 
+#: templates/admin/design/designtoken/change_list.html:127
 msgid "All Priorities"
 msgstr "모든 우선순위"
 
+#: templates/admin/design/designtoken/change_list.html:140
+#: templates/admin/design/footertemplate/unified_management.html:63
+#: templates/admin/design/headertemplate/unified_management.html:63
+#: templates/admin/design/partials/designtoken_cards.html:114
+#: templates/admin/design/widget/change_list.html:79
+#: templates/design/menu_builder/builder.html:531
 msgid "All"
 msgstr "모두"
 
+#: templates/admin/design/designtoken/change_list.html:141
+#: templates/admin/design/footertemplate/unified_management.html:67
+#: templates/admin/design/footertemplate/unified_management.html:108
+#: templates/admin/design/headertemplate/unified_management.html:67
+#: templates/admin/design/headertemplate/unified_management.html:108
+#: templates/admin/design/menu/change_list.html:50
+#: templates/admin/design/menu/partials/menu_cards.html:42
+#: templates/admin/design/partials/designtoken_cards.html:44
+#: templates/admin/design/theme/unified_management.html:107
+#: templates/admin/design/theme/unified_management.html:213
+#: templates/admin/design/widget/change_list.html:80
+#: templates/admin/design/widget/partials/widget_cards.html:19
+#: templates/design/menu_builder/builder.html:406
+#: templates/design/template_config.html:88
+#: templates/design/template_config.html:170
+#: templates/design/template_config.html:280
+#: templates/design/template_config.html:334
+#: templates/design/template_config.html:388
 msgid "Active"
 msgstr "활성"
 
+#: templates/admin/design/designtoken/change_list.html:142
+#: templates/admin/design/footertemplate/unified_management.html:71
+#: templates/admin/design/footertemplate/unified_management.html:112
+#: templates/admin/design/headertemplate/unified_management.html:71
+#: templates/admin/design/headertemplate/unified_management.html:112
+#: templates/admin/design/menu/partials/menu_cards.html:46
+#: templates/admin/design/partials/designtoken_cards.html:48
+#: templates/admin/design/widget/change_list.html:81
+#: templates/admin/design/widget/partials/widget_cards.html:23
 msgid "Inactive"
 msgstr "비활성"
 
+#: templates/admin/design/designtoken/change_list.html:151
+#: templates/admin/design/widget/change_list.html:90
 msgid "Apply Filters"
 msgstr "필터 적용"
 
+#: templates/admin/design/designtoken/change_list.html:154
+#: templates/admin/design/widget/change_list.html:93
 msgid "Clear All"
 msgstr "모두 지우기"
 
+#: templates/admin/design/designtoken/change_list.html:166
+#: templates/admin/design/widget/change_list.html:105
 msgid "Run the selected action"
 msgstr "선택된 작업 실행"
 
+#: templates/admin/design/designtoken/change_list.html:166
+#: templates/admin/design/widget/change_list.html:105
 msgid "Go"
 msgstr "시작"
 
+#: templates/admin/design/designtoken/change_list.html:168
+#: templates/admin/design/theme/unified_management.html:330
+#: templates/admin/design/widget/change_list.html:107
+#: templates/admin/design/widget/change_list.html:137
 msgid "of"
 msgstr "의"
 
+#: templates/admin/design/designtoken/change_list.html:175
 msgid "Tokens"
 msgstr "토큰"
 
+#: templates/admin/design/designtoken/change_list.html:178
 msgid "token"
 msgstr "토큰"
 
+#: templates/admin/design/designtoken/change_list.html:195
 #, python-format
 msgid "1 token"
 msgid_plural "%(counter)s tokens"
 msgstr[0] "%(counter)s 토큰"
 msgstr[1] "%(counter)s 토큰"
 
+#: templates/admin/design/designtoken/change_list.html:197
 msgid "tokens"
 msgstr "토큰들"
 
+#: templates/admin/design/designtoken/change_list.html:201
 msgid "Show all"
 msgstr "모두 보기"
 
+#: templates/admin/design/footertemplate/unified_management.html:4
+#: templates/admin/design/footertemplate/unified_management.html:15
+#: templates/admin/design/footertemplate/unified_management.html:25
+#: unified_header_footer_views.py:100
 msgid "Footer Management"
 msgstr "푸터 관리"
 
+#: templates/admin/design/footertemplate/unified_management.html:4
+#: templates/admin/design/headertemplate/unified_management.html:4
+#: templates/admin/design/widget/available_widgets.html:4
+#: templates/admin/design/widget/update_confirm.html:4
+#: templates/design/dashboard.html:4
 msgid "Spwig Admin"
 msgstr "스피그 관리자"
 
+#: templates/admin/design/footertemplate/unified_management.html:13
+#: templates/admin/design/headertemplate/unified_management.html:13
+#: templates/admin/design/widget/available_widgets.html:14
+#: templates/admin/design/widget/update_confirm.html:141
+#: templates/design/dashboard.html:13 templates/design/template_config.html:8
 msgid "Home"
 msgstr "홈"
 
+#: templates/admin/design/footertemplate/unified_management.html:27
 msgid "Manage footer templates for your storefront"
 msgstr "스토어 프론트의 푸터 템플릿을 관리합니다"
 
+#: templates/admin/design/footertemplate/unified_management.html:32
 msgid "Add Footer"
 msgstr "푸터 추가"
 
+#: templates/admin/design/footertemplate/unified_management.html:52
 msgid "Default Footer"
 msgstr "기본 푸터"
 
+#: templates/admin/design/footertemplate/unified_management.html:53
 msgid "This footer is used as the default across your site"
 msgstr "이 푸터는 사이트 전반에 걸쳐 기본으로 사용됩니다"
 
+#: templates/admin/design/footertemplate/unified_management.html:81
 msgid "Search footers..."
 msgstr "푸터 검색..."
 
+#: templates/admin/design/footertemplate/unified_management.html:102
+#: templates/design/branding_builder.html:1175
+#: templates/design/branding_builder.html:1242
+#: templates/design/branding_preview_frame.html:407
 msgid "Default"
 msgstr "기본"
 
+#: templates/admin/design/footertemplate/unified_management.html:122
 msgid "columns"
 msgstr "열"
 
+#: templates/admin/design/footertemplate/unified_management.html:136
+#: templates/admin/design/headertemplate/unified_management.html:136
 msgid "Widgets:"
 msgstr "위젯:"
 
+#: templates/admin/design/footertemplate/unified_management.html:142
 msgid "Bottom Bar:"
 msgstr "하단 바:"
 
+#: templates/admin/design/footertemplate/unified_management.html:142
+#: templates/admin/design/headertemplate/unified_management.html:142
 msgid "Yes"
 msgstr "예"
 
+#: templates/admin/design/footertemplate/unified_management.html:148
+#: templates/admin/design/headertemplate/unified_management.html:148
 msgid "Slug:"
 msgstr "슬러그:"
 
+#: templates/admin/design/footertemplate/unified_management.html:153
+#: templates/admin/design/headertemplate/unified_management.html:153
 msgid "Created by:"
 msgstr "작성자:"
 
+#: templates/admin/design/footertemplate/unified_management.html:159
 msgid "Colors:"
 msgstr "색상:"
 
+#: templates/admin/design/footertemplate/unified_management.html:170
+#: templates/admin/design/headertemplate/unified_management.html:177
 msgid "Open Builder"
 msgstr "빌더 열기"
 
+#: templates/admin/design/footertemplate/unified_management.html:174
+#: templates/admin/design/headertemplate/unified_management.html:182
+#: templates/admin/design/theme/unified_management.html:251
 msgid "Settings"
 msgstr "설정"
 
+#: templates/admin/design/footertemplate/unified_management.html:179
+#: templates/admin/design/headertemplate/unified_management.html:188
+#: templates/design/menu_builder/builder.html:233
+#: templates/design/preview/footer.html:56
+#: templates/design/preview/header.html:65
 msgid "Preview"
 msgstr "미리보기"
 
+#: templates/admin/design/footertemplate/unified_management.html:188
 msgid "No Footers Found"
 msgstr "푸터를 찾을 수 없습니다"
 
+#: templates/admin/design/footertemplate/unified_management.html:191
 msgid "No footers match your search query."
 msgstr "검색 쿼리와 일치하는 푸터가 없습니다."
 
+#: templates/admin/design/footertemplate/unified_management.html:193
 msgid "No footers available. Create your first footer to get started."
 msgstr "사용 가능한 푸터가 없습니다. 첫 번째 푸터를 생성하여 시작하세요."
 
+#: templates/admin/design/footertemplate/unified_management.html:198
 msgid "Create Footer"
 msgstr "푸터 생성"
 
+#: templates/admin/design/headertemplate/unified_management.html:4
+#: templates/admin/design/headertemplate/unified_management.html:15
+#: templates/admin/design/headertemplate/unified_management.html:25
+#: unified_header_footer_views.py:23
 msgid "Header Management"
 msgstr "헤더 관리"
 
+#: templates/admin/design/headertemplate/unified_management.html:27
 msgid "Manage header templates for your storefront"
 msgstr "스토어 프론트의 헤더 템플릿을 관리합니다"
 
+#: templates/admin/design/headertemplate/unified_management.html:32
 msgid "Add Header"
 msgstr "헤더 추가"
 
+#: templates/admin/design/headertemplate/unified_management.html:52
 msgid "Default Header"
 msgstr "기본 헤더"
 
+#: templates/admin/design/headertemplate/unified_management.html:53
 msgid "This header is used as the default across your site"
 msgstr "이 헤더는 사이트 전반에 걸쳐 기본으로 사용됩니다"
 
+#: templates/admin/design/headertemplate/unified_management.html:81
 msgid "Search headers..."
 msgstr "헤더 검색..."
 
+#: templates/admin/design/headertemplate/unified_management.html:102
 msgid "Site Default"
 msgstr "사이트 기본"
 
+#: templates/admin/design/headertemplate/unified_management.html:122
 msgid "Sticky"
 msgstr "고정"
 
+#: templates/admin/design/headertemplate/unified_management.html:142
 msgid "Top Bar:"
 msgstr "상단 바:"
 
+#: templates/admin/design/headertemplate/unified_management.html:158
 msgid "Mobile:"
 msgstr "모바일:"
 
+#: templates/admin/design/headertemplate/unified_management.html:163
 msgid "Pages:"
 msgstr "페이지:"
 
+#: templates/admin/design/headertemplate/unified_management.html:167
 msgid "Not assigned"
 msgstr "할당되지 않음"
 
+#: templates/admin/design/headertemplate/unified_management.html:194
 msgid "Set as Default"
 msgstr "기본으로 설정"
 
+#: templates/admin/design/headertemplate/unified_management.html:203
 msgid "Duplicate"
 msgstr "복제"
 
+#: templates/admin/design/headertemplate/unified_management.html:211
 msgid "Delete"
 msgstr "삭제"
 
+#: templates/admin/design/headertemplate/unified_management.html:226
 msgid "No Headers Found"
 msgstr "헤더를 찾을 수 없습니다"
 
+#: templates/admin/design/headertemplate/unified_management.html:229
 msgid "No headers match your search query."
 msgstr "검색 쿼리와 일치하는 헤더가 없습니다."
 
+#: templates/admin/design/headertemplate/unified_management.html:231
 msgid "No headers available. Create your first header to get started."
 msgstr "사용 가능한 헤더가 없습니다. 첫 번째 헤더를 생성하여 시작하세요."
 
+#: templates/admin/design/headertemplate/unified_management.html:236
 msgid "Create Header"
 msgstr "헤더 생성"
 
+#: templates/admin/design/headertemplate/unified_management.html:249
 msgid "Confirm Delete"
 msgstr "삭제 확인"
 
+#: templates/admin/design/headertemplate/unified_management.html:260
+#: templates/admin/design/widget/update_confirm.html:189
+#: templates/design/menu_builder/builder.html:411
+#: templates/design/menu_builder/builder.html:470
+#: templates/design/menu_builder/builder.html:510
+#: templates/design/menu_builder/builder.html:542
 msgid "Cancel"
 msgstr "취소"
 
+#: templates/admin/design/headertemplate/unified_management.html:263
+#: templates/admin/design/headertemplate/unified_management.html:291
 msgid "Delete Header"
 msgstr "헤더 삭제"
 
+#: templates/admin/design/headertemplate/unified_management.html:278
 msgid "Create a copy of"
 msgstr "복사본 생성"
 
+#: templates/admin/design/headertemplate/unified_management.html:279
 msgid "Set"
 msgstr "설정"
 
+#: templates/admin/design/headertemplate/unified_management.html:280
 msgid "as the default header for your site?"
 msgstr "사이트의 기본 헤더로 사용하시겠습니까?"
 
+#: templates/admin/design/headertemplate/unified_management.html:281
 msgid "Error duplicating header:"
 msgstr "헤더 복사 오류:"
 
+#: templates/admin/design/headertemplate/unified_management.html:282
 msgid "Error setting default:"
 msgstr "기본 설정 오류:"
 
+#: templates/admin/design/headertemplate/unified_management.html:283
 msgid "Are you sure you want to delete the header"
 msgstr "헤더를 삭제하시겠습니까?"
 
+#: templates/admin/design/headertemplate/unified_management.html:284
 msgid "Cannot delete default header"
 msgstr "기본 헤더는 삭제할 수 없습니다"
 
+#: templates/admin/design/headertemplate/unified_management.html:285
 msgid ""
 "This is the default header for your site. Please set another header as "
 "default before deleting this one."
@@ -3333,486 +4304,691 @@ msgstr ""
 "이 헤더는 사이트의 기본 헤더입니다. 이 헤더를 삭제하기 전에 다른 헤더를 기본"
 "으로 설정해 주세요."
 
+#: templates/admin/design/headertemplate/unified_management.html:286
 msgid "Header in use"
 msgstr "사용 중인 헤더"
 
+#: templates/admin/design/headertemplate/unified_management.html:287
 msgid "This header is used by"
 msgstr "이 헤더는 다음에 사용됩니다"
 
+#: templates/admin/design/headertemplate/unified_management.html:288
 msgid ""
 "page(s). Please assign a different header to these pages before deleting."
 msgstr "페이지(들). 삭제하기 전에 이 페이지들에 다른 헤더를 할당해 주세요."
 
+#: templates/admin/design/headertemplate/unified_management.html:289
 msgid "Deleting..."
 msgstr "삭제 중..."
 
+#: templates/admin/design/headertemplate/unified_management.html:290
 msgid "Delete failed"
 msgstr "삭제 실패"
 
+#: templates/admin/design/menu/change_list.html:4
+#: templates/admin/design/menu/change_list.html:19
 msgid "Navigation Menus"
 msgstr "네비게이션 메뉴"
 
+#: templates/admin/design/menu/change_list.html:21
 msgid ""
 "Create and manage navigation menus for your store's header, footer, and "
 "sidebars"
 msgstr ""
 "스토어의 헤더, 푸터 및 사이드바에 대한 네비게이션 메뉴를 생성하고 관리합니다"
 
+#: templates/admin/design/menu/change_list.html:25
 msgid "Visual Builder"
 msgstr "시각적 빌더"
 
+#: templates/admin/design/menu/change_list.html:28
 msgid "Add Menu"
 msgstr "메뉴 추가"
 
+#: templates/admin/design/menu/change_list.html:41
 msgid "Total Menus"
 msgstr "총 메뉴 수"
 
+#: templates/admin/design/menu/change_list.html:68
 msgid "Locations Used"
 msgstr "사용 위치"
 
+#: templates/admin/design/menu/change_list.html:75
 msgid "All Menus"
 msgstr "모든 메뉴"
 
+#: templates/admin/design/menu/change_list.html:78
 msgid "menu"
 msgstr "메뉴"
 
+#: templates/admin/design/menu/change_list.html:91
 msgid "No menus yet"
 msgstr "메뉴가 아직 없습니다"
 
+#: templates/admin/design/menu/change_list.html:92
 msgid ""
 "Create your first navigation menu to help customers navigate your store."
 msgstr ""
 "고객이 스토어를 탐색하는 데 도움을 주는 첫 번째 네비게이션 메뉴를 생성하세요."
 
+#: templates/admin/design/menu/change_list.html:94
 msgid "Create with Visual Builder"
 msgstr "시각적 빌더로 생성"
 
+#: templates/admin/design/menu/change_list.html:104
 #, python-format
 msgid "1 menu"
 msgid_plural "%(counter)s menus"
 msgstr[0] "%(counter)s 메뉴"
 msgstr[1] "%(counter)s 메뉴"
 
+#: templates/admin/design/menu/change_list.html:106
 msgid "menus"
 msgstr "메뉴"
 
+#: templates/admin/design/menu/partials/menu_cards.html:61
 msgid "item"
 msgstr "항목"
 
+#: templates/admin/design/menu/partials/menu_cards.html:65
 msgid "No items"
 msgstr "아이템 없음"
 
+#: templates/admin/design/menu/partials/menu_cards.html:73
 msgid "Items"
 msgstr "항목"
 
+#: templates/admin/design/menu/partials/menu_cards.html:79
 msgid "Display"
 msgstr "표시"
 
+#: templates/admin/design/menu/partials/menu_cards.html:83
+#: templates/design/menu_builder/builder.html:381
+#: templates/design/menu_builder/builder.html:492
 msgid "Location"
 msgstr "위치"
 
+#: templates/admin/design/menu/partials/menu_cards.html:91
+#: templates/admin/design/partials/designtoken_cards.html:123
+#: templates/design/dashboard.html:79
 msgid "Updated"
 msgstr "업데이트됨"
 
+#: templates/admin/design/menu/partials/menu_cards.html:91
+#: templates/admin/design/partials/designtoken_cards.html:123
+#: templates/design/dashboard.html:79 templates/design/dashboard.html:200
 msgid "ago"
 msgstr "전"
 
+#: templates/admin/design/menu/partials/menu_cards.html:96
 msgid "By"
 msgstr "작성자"
 
+#: templates/admin/design/menu/partials/menu_cards.html:105
 msgid "Open Visual Builder"
 msgstr "시각적 빌더 열기"
 
+#: templates/admin/design/menu/partials/menu_cards.html:110
 msgid "Edit menu settings"
 msgstr "메뉴 설정 편집"
 
+#: templates/admin/design/menu/partials/menu_cards.html:125
 msgid "No menus found."
 msgstr "메뉴를 찾을 수 없습니다."
 
+#: templates/admin/design/menu/partials/menu_cards.html:126
 msgid "Create your first menu using the Visual Builder."
 msgstr "시각적 빌더를 사용하여 첫 번째 메뉴를 생성하세요."
 
+#: templates/admin/design/partials/designtoken_cards.html:62
 msgid "Highest Priority"
 msgstr "가장 높은 우선순위"
 
+#: templates/admin/design/partials/designtoken_cards.html:74
+#: unified_header_footer_views.py:66 unified_header_footer_views.py:142
 msgid "System"
 msgstr "시스템"
 
+#: templates/admin/design/partials/designtoken_cards.html:80
+#: templates/design/layout_renderer_demo.html:18
 msgid "Tier"
 msgstr "계층"
 
+#: templates/admin/design/partials/designtoken_cards.html:99
+#: templates/admin/design/widget/partials/widget_cards.html:33
 msgid "Type"
 msgstr "유형"
 
+#: templates/admin/design/partials/designtoken_cards.html:109
 msgid "Tiers"
 msgstr "계층"
 
+#: templates/admin/design/partials/designtoken_cards.html:127
+#: templates/admin/design/widget/partials/widget_cards.html:65
 msgid "Created"
 msgstr "생성일"
 
+#: templates/admin/design/partials/designtoken_cards.html:135
 msgid "Edit token"
 msgstr "토큰 편집"
 
+#: templates/admin/design/partials/designtoken_cards.html:140
 msgid "Delete token"
 msgstr "토큰 삭제"
 
+#: templates/admin/design/partials/designtoken_cards.html:150
 msgid "No design tokens found matching your criteria."
 msgstr "기준에 맞는 디자인 토큰이 없습니다."
 
+#: templates/admin/design/partials/designtoken_cards.html:152
 msgid "Try adjusting your filters or search terms."
 msgstr "필터 또는 검색어를 조정해 보세요."
 
+#: templates/admin/design/theme/theme_package.html:18
 msgid "Theme Packager"
 msgstr "테마 패키지"
 
+#: templates/admin/design/theme/theme_package.html:21
 msgid "Package your theme for distribution and installation"
 msgstr "테마를 배포 및 설치를 위해 패키징합니다"
 
+#: templates/admin/design/theme/theme_package.html:28
 msgid "Back to Themes"
 msgstr "테마로 돌아가기"
 
+#: templates/admin/design/theme/theme_package.html:39
 msgid "How Theme Packaging Works"
 msgstr "테마 패키징 방법"
 
+#: templates/admin/design/theme/theme_package.html:41
 msgid "Select a theme directory from the list or enter a custom path"
 msgstr "목록에서 테마 디렉토리를 선택하거나 사용자 정의 경로를 입력합니다"
 
+#: templates/admin/design/theme/theme_package.html:42
 msgid "Validate your theme to check for errors and warnings"
 msgstr "테마를 검증하여 오류 및 경고를 확인합니다"
 
+#: templates/admin/design/theme/theme_package.html:43
 msgid "Review validation results and fix any issues"
 msgstr "검증 결과를 검토하고 모든 문제를 수정합니다"
 
+#: templates/admin/design/theme/theme_package.html:44
 msgid "Package your theme into a distributable ZIP file"
 msgstr "테마를 배포 가능한 ZIP 파일로 패키징합니다"
 
+#: templates/admin/design/theme/theme_package.html:45
 msgid "Download the package and share it with merchants"
 msgstr "패키지를 다운로드하여 상인과 공유하세요"
 
+#: templates/admin/design/theme/theme_package.html:55
 msgid "Select Theme"
 msgstr "테마 선택"
 
+#: templates/admin/design/theme/theme_package.html:62
 msgid "Available Themes"
 msgstr "사용 가능한 테마"
 
+#: templates/admin/design/theme/theme_package.html:64
 msgid "-- Select a theme --"
 msgstr "-- 테마 선택 --"
 
+#: templates/admin/design/theme/theme_package.html:78
 msgid "No themes found in the themes directory."
 msgstr "테마 디렉토리에서 테마를 찾을 수 없습니다."
 
+#: templates/admin/design/theme/theme_package.html:79
 msgid "Create a theme directory with a manifest.json file to get started."
 msgstr "시작하려면 manifest.json 파일을 포함한 테마 디렉토리를 생성하세요."
 
+#: templates/admin/design/theme/theme_package.html:84
 msgid "OR"
 msgstr "또는"
 
+#: templates/admin/design/theme/theme_package.html:88
 msgid "Custom Theme Path"
 msgstr "사용자 정의 테마 경로"
 
+#: templates/admin/design/theme/theme_package.html:93
 msgid "Enter absolute or relative path to theme directory"
 msgstr "테마 디렉토리의 절대 경로 또는 상대 경로를 입력하세요"
 
+#: templates/admin/design/theme/theme_package.html:97
 msgid "Validate Theme"
 msgstr "테마 검증"
 
+#: templates/admin/design/theme/theme_package.html:108
 msgid "Validation Results"
 msgstr "검증 결과"
 
+#: templates/admin/design/theme/theme_package.html:130
+#: templates/admin/design/theme/theme_package.html:222
+#: templates/admin/design/theme/unified_management.html:385
+#: templates/design/branding_builder.html:239
+#: templates/design/branding_builder.html:2481
+#: templates/design/branding_preview_frame.html:389
+#: templates/design/header_footer_builder.html:259
+#: templates/design/menu_builder/builder.html:584
 msgid "Error"
 msgstr "에러"
 
+#: templates/admin/design/theme/theme_package.html:139
+#: templates/design/branding_builder.html:227
+#: templates/design/branding_preview_frame.html:384
 msgid "Warning"
 msgstr "경고"
 
+#: templates/admin/design/theme/theme_package.html:148
 msgid "Create Package"
 msgstr "패키지 생성"
 
+#: templates/admin/design/theme/theme_package.html:152
 msgid "Re-validate"
 msgstr "재검증"
 
+#: templates/admin/design/theme/theme_package.html:163
 msgid "Package Created"
 msgstr "패키지 생성됨"
 
+#: templates/admin/design/theme/theme_package.html:172
 msgid "Theme Package Created Successfully!"
 msgstr "테마 패키지가 성공적으로 생성되었습니다!"
 
+#: templates/admin/design/theme/theme_package.html:176
 msgid "Package File"
 msgstr "패키지 파일"
 
+#: templates/admin/design/theme/theme_package.html:180
 msgid "Files"
 msgstr "파일"
 
+#: templates/admin/design/theme/theme_package.html:184
 msgid "Size"
 msgstr "크기"
 
+#: templates/admin/design/theme/theme_package.html:188
 msgid "Checksum"
 msgstr "체크섬"
 
+#: templates/admin/design/theme/theme_package.html:196
 msgid "Download Package"
 msgstr "패키지 다운로드"
 
+#: templates/admin/design/theme/theme_package.html:200
 msgid "Package Another Theme"
 msgstr "다른 테마 패키지 생성"
 
+#: templates/admin/design/theme/theme_package.html:213
+#: templates/admin/design/theme/unified_management.html:369
 msgid "Processing..."
 msgstr "처리 중..."
 
+#: templates/admin/design/theme/theme_package.html:220
 msgid "Validating theme..."
 msgstr "테마 검증 중..."
 
+#: templates/admin/design/theme/theme_package.html:221
 msgid "Creating package..."
 msgstr "패키지 생성 중..."
 
+#: templates/admin/design/theme/theme_package.html:223
 msgid "Validation failed"
 msgstr "검증 실패"
 
+#: templates/admin/design/theme/theme_package.html:224
 msgid "Validation passed! Ready to package."
 msgstr "검증 성공! 패키지 생성 준비 완료."
 
+#: templates/admin/design/theme/theme_package.html:225
 msgid "Packaging failed"
 msgstr "패키지 생성 실패"
 
+#: templates/admin/design/theme/theme_package.html:226
 msgid "Please select a theme or enter a path"
 msgstr "테마를 선택하거나 경로를 입력하세요"
 
+#: templates/admin/design/theme/unified_management.html:15
+#: unified_theme_views.py:43
 msgid "Theme Management"
 msgstr "테마 관리"
 
+#: templates/admin/design/theme/unified_management.html:18
 msgid "Manage your store's visual themes with Elegant Themes-style interface"
 msgstr "Elegant Themes 스타일 인터페이스로 가상 테마를 관리하세요"
 
+#: templates/admin/design/theme/unified_management.html:25
 msgid "Package Theme"
 msgstr "테마 패키지 생성"
 
+#: templates/admin/design/theme/unified_management.html:29
 msgid "View Theme List"
 msgstr "테마 목록 보기"
 
+#: templates/admin/design/theme/unified_management.html:41
+#: templates/design/dashboard.html:72
 msgid "Active Theme"
 msgstr "활성 테마"
 
+#: templates/admin/design/theme/unified_management.html:42
+#: templates/admin/design/theme/unified_management.html:394
 msgid "Version"
 msgstr "버전"
 
+#: templates/admin/design/theme/unified_management.html:52
 msgid "All Themes"
 msgstr "모든 테마"
 
+#: templates/admin/design/theme/unified_management.html:57
+#: templates/admin/design/theme/unified_management.html:396
+#: templates/admin/design/widget/available_widgets.html:66
 msgid "Installed"
 msgstr "설치됨"
 
+#: templates/admin/design/theme/unified_management.html:62
 msgid "Available"
 msgstr "사용 가능"
 
+#: templates/admin/design/theme/unified_management.html:74
 msgid "Search themes..."
 msgstr "테마 검색..."
 
+#: templates/admin/design/theme/unified_management.html:99
 msgid "No Preview"
 msgstr "미리보기 없음"
 
+#: templates/admin/design/theme/unified_management.html:115
 msgid "Update Available"
 msgstr "업데이트 가능"
 
+#: templates/admin/design/theme/unified_management.html:133
 msgid "Verified Author"
 msgstr "인증된 저자"
 
+#: templates/admin/design/theme/unified_management.html:146
 msgid "Bundled Component"
 msgstr "패키지 구성 요소"
 
+#: templates/admin/design/theme/unified_management.html:192
 msgid "Locked"
 msgstr "잠금"
 
+#: templates/admin/design/theme/unified_management.html:208
 msgid "Activate"
 msgstr "활성화"
 
+#: templates/admin/design/theme/unified_management.html:224
+#: templates/design/layout_renderer_demo.html:72
 msgid "Update"
 msgstr "업데이트"
 
+#: templates/admin/design/theme/unified_management.html:234
+#: templates/admin/design/theme/unified_management.html:293
 msgid "Details"
 msgstr "세부 정보"
 
+#: templates/admin/design/theme/unified_management.html:246
 msgid "Version History"
 msgstr "버전 기록"
 
+#: templates/admin/design/theme/unified_management.html:256
 msgid "Uninstall"
 msgstr "설치 해제"
 
+#: templates/admin/design/theme/unified_management.html:273
 msgid "Purchase"
 msgstr "구매"
 
+#: templates/admin/design/theme/unified_management.html:283
+#: templates/design/dashboard.html:175
 msgid "Install Theme"
 msgstr "테마 설치"
 
+#: templates/admin/design/theme/unified_management.html:303
+#: templates/design/branding_preview_frame.html:424
 msgid "Learn More"
 msgstr "더 알아보기"
 
+#: templates/admin/design/theme/unified_management.html:315
 msgid "No Themes Found"
 msgstr "테마를 찾을 수 없습니다"
 
+#: templates/admin/design/theme/unified_management.html:316
 msgid "Try adjusting your search or filters"
 msgstr "검색 또는 필터를 조정해 보세요"
 
+#: templates/admin/design/theme/unified_management.html:326
+#: templates/admin/design/widget/change_list.html:135
 msgid "Previous"
 msgstr "이전"
 
+#: templates/admin/design/theme/unified_management.html:330
+#: templates/admin/design/widget/change_list.html:137
+#: templates/design/menu_builder/builder.html:613
 msgid "Page"
 msgstr "페이지"
 
+#: templates/admin/design/theme/unified_management.html:334
+#: templates/admin/design/widget/change_list.html:139
 msgid "Next"
 msgstr "다음"
 
+#: templates/admin/design/theme/unified_management.html:349
+#: templates/admin/design/theme/unified_management.html:390
 msgid "Theme Details"
 msgstr "테마 세부 정보"
 
+#: templates/admin/design/theme/unified_management.html:376
 msgid "Activate this theme? All other themes will be deactivated."
 msgstr "이 테마를 활성화하시겠습니까? 다른 모든 테마는 비활성화됩니다."
 
+#: templates/admin/design/theme/unified_management.html:377
 msgid "Activation failed"
 msgstr "활성화 실패"
 
+#: templates/admin/design/theme/unified_management.html:378
 msgid "Install this theme?"
 msgstr "이 테마를 설치하시겠습니까?"
 
+#: templates/admin/design/theme/unified_management.html:379
 msgid "Installation failed"
 msgstr "설치 실패"
 
+#: templates/admin/design/theme/unified_management.html:380
 msgid "Update this theme to the latest version?"
 msgstr "이 테마를 최신 버전으로 업데이트하시겠습니까?"
 
+#: templates/admin/design/theme/unified_management.html:381
 msgid "Update failed"
 msgstr "업데이트 실패"
 
+#: templates/admin/design/theme/unified_management.html:382
 msgid "Uninstall this theme? This cannot be undone."
 msgstr "이 테마를 비활성화하시겠습니까? 이 작업은 되돌릴 수 없습니다."
 
+#: templates/admin/design/theme/unified_management.html:383
 msgid "Uninstall failed"
 msgstr "설치 해제 실패"
 
+#: templates/admin/design/theme/unified_management.html:384
 msgid "Update check failed"
 msgstr "업데이트 확인 실패"
 
+#: templates/admin/design/theme/unified_management.html:386
 msgid "Version history for"
 msgstr "버전 기록 for"
 
+#: templates/admin/design/theme/unified_management.html:387
 msgid "To be implemented"
 msgstr "구현 예정"
 
+#: templates/admin/design/theme/unified_management.html:388
 msgid "Could not generate purchase URL"
 msgstr "구매 URL을 생성할 수 없습니다"
 
+#: templates/admin/design/theme/unified_management.html:389
 msgid "Failed to load theme details"
 msgstr "테마 세부 정보를 로드하지 못했습니다"
 
+#: templates/admin/design/theme/unified_management.html:391
 msgid "Screenshots"
 msgstr "스크린샷"
 
+#: templates/admin/design/theme/unified_management.html:392
 msgid "Mobile Screenshots"
 msgstr "모바일 스크린샷"
 
+#: templates/admin/design/theme/unified_management.html:393
 msgid "Bundled Components"
 msgstr "묶은 구성 요소"
 
+#: templates/admin/design/theme/unified_management.html:395
 msgid "Author"
 msgstr "작성자"
 
+#: templates/admin/design/theme/unified_management.html:397
 msgid "Not Installed"
 msgstr "설치되지 않음"
 
+#: templates/admin/design/theme/unified_management.html:398
+#: templates/admin/design/widget/available_widgets.html:72
 msgid "No description available"
 msgstr "설명 없음"
 
+#: templates/admin/design/widget/available_widgets.html:4
+#: templates/admin/design/widget/available_widgets.html:16
+#: templates/admin/design/widget/available_widgets.html:24
 msgid "Available Widgets"
 msgstr "사용 가능한 위젯"
 
+#: templates/admin/design/widget/available_widgets.html:15
+#: templates/admin/design/widget/change_list.html:4
+#: templates/admin/design/widget/change_list.html:20
+#: templates/admin/design/widget/change_list.html:114
+#: templates/admin/design/widget/update_confirm.html:142
+#: templates/design/menu_builder/builder.html:69
 msgid "Widgets"
 msgstr "위젯"
 
+#: templates/admin/design/widget/available_widgets.html:27
 msgid "Back to Widgets"
 msgstr "위젯으로 돌아가기"
 
+#: templates/admin/design/widget/available_widgets.html:42
 msgid "Filter by type:"
 msgstr "타입으로 필터:"
 
+#: templates/admin/design/widget/available_widgets.html:78
 msgid "Version:"
 msgstr "버전:"
 
+#: templates/admin/design/widget/available_widgets.html:101
 msgid "Install"
 msgstr "설치"
 
+#: templates/admin/design/widget/available_widgets.html:106
 msgid "Already Installed"
 msgstr "이미 설치됨"
 
+#: templates/admin/design/widget/available_widgets.html:116
 msgid "No Widgets Available"
 msgstr "사용 가능한 위젯 없음"
 
+#: templates/admin/design/widget/available_widgets.html:117
 msgid "No widgets found on the update server, or unable to connect."
 msgstr "업데이트 서버에서 위젯을 찾을 수 없거나 연결할 수 없습니다."
 
+#: templates/admin/design/widget/change_list.html:22
 msgid "Manage page builder widgets and components"
 msgstr "페이지 빌더 위젯 및 구성 요소를 관리하세요"
 
+#: templates/admin/design/widget/change_list.html:28
 msgid "Refresh Update Status"
 msgstr "업데이트 상태 새로고침"
 
+#: templates/admin/design/widget/change_list.html:31
 msgid "Add Widget"
 msgstr "위젯 추가"
 
+#: templates/admin/design/widget/change_list.html:56
 msgid "Search by name or content..."
 msgstr "이름 또는 내용으로 검색..."
 
+#: templates/admin/design/widget/change_list.html:63
+#: templates/design/menu_builder/builder.html:461
 msgid "Widget Type"
 msgstr "위젯 유형"
 
+#: templates/admin/design/widget/change_list.html:117
 msgid "widget"
 msgstr "위젯"
 
+#: templates/admin/design/widget/change_list.html:130
 msgid "widgets"
 msgstr "위젯들"
 
+#: templates/admin/design/widget/partials/widget_cards.html:38
 msgid "Device Visibility"
 msgstr "기기 가시성"
 
+#: templates/admin/design/widget/partials/widget_cards.html:49
 msgid "Hidden on all devices"
 msgstr "모든 기기에서 숨김"
 
+#: templates/admin/design/widget/partials/widget_cards.html:54
 msgid "Usage"
 msgstr "사용법"
 
+#: templates/admin/design/widget/partials/widget_cards.html:57
 msgid "placement"
 msgstr "배치"
 
+#: templates/admin/design/widget/partials/widget_cards.html:60
 msgid "Not used"
 msgstr "사용되지 않음"
 
+#: templates/admin/design/widget/partials/widget_cards.html:68
+#: templates/design/dashboard.html:197
 msgid "by"
 msgstr "by"
 
+#: templates/admin/design/widget/partials/widget_cards.html:76
 msgid "Edit"
 msgstr "편집"
 
+#: templates/admin/design/widget/partials/widget_cards.html:85
 msgid "No widgets match your filters."
 msgstr "필터와 일치하는 위젯이 없습니다."
 
+#: templates/admin/design/widget/update_confirm.html:4
+#: templates/admin/design/widget/update_confirm.html:143
+#: templates/admin/design/widget/update_confirm.html:156
 msgid "Update Widget"
 msgstr "위젯 업데이트"
 
+#: templates/admin/design/widget/update_confirm.html:158
 msgid "You are about to update"
 msgstr "업데이트할 준비가 되었습니다"
 
+#: templates/admin/design/widget/update_confirm.html:165
 msgid "Current Version"
 msgstr "현재 버전"
 
+#: templates/admin/design/widget/update_confirm.html:171
 msgid "New Version"
 msgstr "새 버전"
 
+#: templates/admin/design/widget/update_confirm.html:180
 msgid "Changelog"
 msgstr "변경 내역"
 
+#: templates/admin/design/widget/update_confirm.html:192
 msgid "Update Now"
 msgstr "지금 업데이트"
 
+#: templates/design/branding_builder.html:54
 msgid "Desktop Required"
 msgstr "데스크탑 필요"
 
+#: templates/design/branding_builder.html:55
 msgid ""
 "The Branding Builder requires a larger screen. Please switch to a desktop or "
 "laptop computer for the best experience."
@@ -3820,594 +4996,1137 @@ msgstr ""
 "브랜딩 빌더는 더 큰 화면을 필요로 합니다. 최상의 경험을 위해 데스크탑 또는 노"
 "트북 컴퓨터로 전환해 주세요."
 
+#: templates/design/branding_builder.html:57
+#: templates/design/branding_builder.html:65
 msgid "Back to Dashboard"
 msgstr "대시보드로 돌아가기"
 
+#: templates/design/branding_builder.html:92
+#: templates/design/branding_builder.html:2479
+#: templates/design/header_footer_builder.html:257
+#: templates/design/menu_builder/builder.html:582
 msgid "Saving..."
 msgstr "저장 중..."
 
+#: templates/design/branding_builder.html:95
+#: templates/design/branding_builder.html:97
 msgid "Export"
 msgstr "내보내기"
 
+#: templates/design/branding_builder.html:100
+#: templates/design/branding_builder.html:102
 msgid "Import"
 msgstr "추가"
 
+#: templates/design/branding_builder.html:105
+#: templates/design/branding_builder.html:107
+#: templates/design/header_footer_builder.html:256
+#: templates/design/menu_builder/builder.html:177
+#: templates/design/menu_builder/builder.html:581
 msgid "Save"
 msgstr "저장"
 
+#: templates/design/branding_builder.html:122
+#: templates/design/menu_builder/builder.html:606
 msgid "Colors"
 msgstr "색상"
 
+#: templates/design/branding_builder.html:126
+#: templates/design/branding_builder.html:1019
+#: templates/design/branding_builder.html:1058
+#: templates/design/branding_builder.html:1635
+#: templates/design/branding_preview_frame.html:347
+#: templates/design/menu_builder/builder.html:608
 msgid "Typography"
 msgstr "타이포그래피"
 
+#: templates/design/branding_builder.html:134
 msgid "Components"
 msgstr "컴포넌트"
 
+#: templates/design/branding_builder.html:138
+#: templates/design/branding_builder.html:155
 msgid "Advanced"
 msgstr "고급"
 
+#: templates/design/branding_builder.html:147
 msgid "Brand Colors"
 msgstr "브랜드 색상"
 
+#: templates/design/branding_builder.html:152
 msgid "Basic"
 msgstr "기본"
 
+#: templates/design/branding_builder.html:165
 msgid "Primary Colors"
 msgstr "기본 색상"
 
+#: templates/design/branding_builder.html:169
+#: templates/design/branding_preview_frame.html:364
+#: templates/design/branding_preview_frame.html:399
 msgid "Primary"
 msgstr "기본"
 
+#: templates/design/branding_builder.html:172
+#: templates/design/branding_builder.html:184
+#: templates/design/branding_builder.html:196
+#: templates/design/branding_builder.html:218
+#: templates/design/branding_builder.html:230
+#: templates/design/branding_builder.html:242
+#: templates/design/branding_builder.html:264
+#: templates/design/branding_builder.html:285
+#: templates/design/branding_builder.html:311
+#: templates/design/branding_builder.html:323
+#: templates/design/branding_builder.html:345
+#: templates/design/branding_builder.html:357
+#: templates/design/branding_builder.html:379
+#: templates/design/branding_builder.html:391
+#: templates/design/branding_builder.html:403
+#: templates/design/branding_builder.html:415
+#: templates/design/branding_builder.html:437
+#: templates/design/branding_builder.html:449
+#: templates/design/branding_builder.html:471
+#: templates/design/branding_builder.html:483
+#: templates/design/branding_builder.html:529
+#: templates/design/branding_builder.html:566
+#: templates/design/branding_builder.html:593
+#: templates/design/branding_builder.html:620
+#: templates/design/branding_builder.html:647
+#: templates/design/branding_builder.html:674
+#: templates/design/branding_builder.html:701
+#: templates/design/branding_builder.html:723
+#: templates/design/branding_builder.html:735
+#: templates/design/branding_builder.html:747
+#: templates/design/branding_builder.html:776
+#: templates/design/branding_builder.html:788
+#: templates/design/branding_builder.html:800
+#: templates/design/branding_builder.html:812
+#: templates/design/branding_builder.html:824
+#: templates/design/branding_builder.html:858
+#: templates/design/branding_builder.html:870
+#: templates/design/branding_builder.html:882
+#: templates/design/branding_builder.html:894
+#: templates/design/branding_builder.html:906
+#: templates/design/branding_builder.html:918
+#: templates/design/branding_builder.html:952
+#: templates/design/branding_builder.html:964
+#: templates/design/branding_builder.html:976
+#: templates/design/branding_builder.html:988
+#: templates/design/branding_builder.html:1000
+#: templates/design/branding_builder.html:1433
+#: templates/design/branding_builder.html:1445
+#: templates/design/branding_builder.html:1457
+#: templates/design/branding_builder.html:1487
+#: templates/design/branding_builder.html:1499
+#: templates/design/branding_builder.html:1525
+#: templates/design/branding_builder.html:1546
+#: templates/design/branding_builder.html:1558
+#: templates/design/branding_builder.html:1575
+#: templates/design/branding_builder.html:1587
+#: templates/design/branding_builder.html:1599
+#: templates/design/branding_builder.html:1611
+#: templates/design/branding_builder.html:1623
+#: templates/design/branding_builder.html:1861
+#: templates/design/branding_builder.html:1873
+#: templates/design/branding_builder.html:1885
+#: templates/design/branding_builder.html:1897
+#: templates/design/branding_builder.html:1919
+#: templates/design/branding_builder.html:1958
+#: templates/design/branding_builder.html:1983
+#: templates/design/branding_builder.html:1995
+#: templates/design/branding_builder.html:2007
+#: templates/design/branding_builder.html:2019
+#: templates/design/branding_builder.html:2031
+#: templates/design/branding_builder.html:2084
+#: templates/design/branding_builder.html:2096
+#: templates/design/branding_builder.html:2108
+#: templates/design/branding_builder.html:2134
+#: templates/design/branding_builder.html:2146
+#: templates/design/branding_builder.html:2181
+#: templates/design/branding_builder.html:2193
 msgid "Pick color"
 msgstr "색상 선택"
 
+#: templates/design/branding_builder.html:175
+#: templates/design/branding_builder.html:187
+#: templates/design/branding_builder.html:199
+#: templates/design/branding_builder.html:221
+#: templates/design/branding_builder.html:233
+#: templates/design/branding_builder.html:245
+#: templates/design/branding_builder.html:267
+#: templates/design/branding_builder.html:276
+#: templates/design/branding_builder.html:288
+#: templates/design/branding_builder.html:314
+#: templates/design/branding_builder.html:326
+#: templates/design/branding_builder.html:348
+#: templates/design/branding_builder.html:360
+#: templates/design/branding_builder.html:382
+#: templates/design/branding_builder.html:394
+#: templates/design/branding_builder.html:406
+#: templates/design/branding_builder.html:418
+#: templates/design/branding_builder.html:440
+#: templates/design/branding_builder.html:452
+#: templates/design/branding_builder.html:474
+#: templates/design/branding_builder.html:486
+#: templates/design/branding_builder.html:520
+#: templates/design/branding_builder.html:532
+#: templates/design/branding_builder.html:557
+#: templates/design/branding_builder.html:569
+#: templates/design/branding_builder.html:584
+#: templates/design/branding_builder.html:596
+#: templates/design/branding_builder.html:611
+#: templates/design/branding_builder.html:623
+#: templates/design/branding_builder.html:638
+#: templates/design/branding_builder.html:650
+#: templates/design/branding_builder.html:665
+#: templates/design/branding_builder.html:677
+#: templates/design/branding_builder.html:692
+#: templates/design/branding_builder.html:704
+#: templates/design/branding_builder.html:726
+#: templates/design/branding_builder.html:738
+#: templates/design/branding_builder.html:750
+#: templates/design/branding_builder.html:779
+#: templates/design/branding_builder.html:791
+#: templates/design/branding_builder.html:803
+#: templates/design/branding_builder.html:815
+#: templates/design/branding_builder.html:827
+#: templates/design/branding_builder.html:839
+#: templates/design/branding_builder.html:861
+#: templates/design/branding_builder.html:873
+#: templates/design/branding_builder.html:885
+#: templates/design/branding_builder.html:897
+#: templates/design/branding_builder.html:909
+#: templates/design/branding_builder.html:921
+#: templates/design/branding_builder.html:933
+#: templates/design/branding_builder.html:955
+#: templates/design/branding_builder.html:967
+#: templates/design/branding_builder.html:979
+#: templates/design/branding_builder.html:991
+#: templates/design/branding_builder.html:1003
+#: templates/design/branding_builder.html:1013
+#: templates/design/branding_builder.html:1024
+#: templates/design/branding_builder.html:1050
+#: templates/design/branding_builder.html:1061
+#: templates/design/branding_builder.html:1078
+#: templates/design/branding_builder.html:1086
+#: templates/design/branding_builder.html:1094
+#: templates/design/branding_builder.html:1154
+#: templates/design/branding_builder.html:1165
+#: templates/design/branding_builder.html:1181
+#: templates/design/branding_builder.html:1194
+#: templates/design/branding_builder.html:1204
+#: templates/design/branding_builder.html:1214
+#: templates/design/branding_builder.html:1225
+#: templates/design/branding_builder.html:1255
+#: templates/design/branding_builder.html:1264
+#: templates/design/branding_builder.html:1273
+#: templates/design/branding_builder.html:1282
+#: templates/design/branding_builder.html:1297
+#: templates/design/branding_builder.html:1306
+#: templates/design/branding_builder.html:1315
+#: templates/design/branding_builder.html:1324
+#: templates/design/branding_builder.html:1339
+#: templates/design/branding_builder.html:1348
+#: templates/design/branding_builder.html:1357
+#: templates/design/branding_builder.html:1366
+#: templates/design/branding_builder.html:1381
+#: templates/design/branding_builder.html:1390
+#: templates/design/branding_builder.html:1399
+#: templates/design/branding_builder.html:1408
+#: templates/design/branding_builder.html:1436
+#: templates/design/branding_builder.html:1448
+#: templates/design/branding_builder.html:1460
+#: templates/design/branding_builder.html:1469
+#: templates/design/branding_builder.html:1478
+#: templates/design/branding_builder.html:1490
+#: templates/design/branding_builder.html:1502
+#: templates/design/branding_builder.html:1511
+#: templates/design/branding_builder.html:1528
+#: templates/design/branding_builder.html:1537
+#: templates/design/branding_builder.html:1549
+#: templates/design/branding_builder.html:1561
+#: templates/design/branding_builder.html:1578
+#: templates/design/branding_builder.html:1590
+#: templates/design/branding_builder.html:1602
+#: templates/design/branding_builder.html:1614
+#: templates/design/branding_builder.html:1626
+#: templates/design/branding_builder.html:1640
+#: templates/design/branding_builder.html:1649
+#: templates/design/branding_builder.html:1658
+#: templates/design/branding_builder.html:1667
+#: templates/design/branding_builder.html:1676
+#: templates/design/branding_builder.html:1685
+#: templates/design/branding_builder.html:1699
+#: templates/design/branding_builder.html:1708
+#: templates/design/branding_builder.html:1717
+#: templates/design/branding_builder.html:1726
+#: templates/design/branding_builder.html:1735
+#: templates/design/branding_builder.html:1749
+#: templates/design/branding_builder.html:1758
+#: templates/design/branding_builder.html:1767
+#: templates/design/branding_builder.html:1781
+#: templates/design/branding_builder.html:1790
+#: templates/design/branding_builder.html:1799
+#: templates/design/branding_builder.html:1813
+#: templates/design/branding_builder.html:1822
+#: templates/design/branding_builder.html:1843
+#: templates/design/branding_builder.html:1852
+#: templates/design/branding_builder.html:1864
+#: templates/design/branding_builder.html:1876
+#: templates/design/branding_builder.html:1888
+#: templates/design/branding_builder.html:1900
+#: templates/design/branding_builder.html:1922
+#: templates/design/branding_builder.html:1931
+#: templates/design/branding_builder.html:1940
+#: templates/design/branding_builder.html:1949
+#: templates/design/branding_builder.html:1961
+#: templates/design/branding_builder.html:1986
+#: templates/design/branding_builder.html:1998
+#: templates/design/branding_builder.html:2010
+#: templates/design/branding_builder.html:2022
+#: templates/design/branding_builder.html:2034
+#: templates/design/branding_builder.html:2043
+#: templates/design/branding_builder.html:2052
+#: templates/design/branding_builder.html:2061
+#: templates/design/branding_builder.html:2070
+#: templates/design/branding_builder.html:2087
+#: templates/design/branding_builder.html:2099
+#: templates/design/branding_builder.html:2111
+#: templates/design/branding_builder.html:2120
+#: templates/design/branding_builder.html:2137
+#: templates/design/branding_builder.html:2149
+#: templates/design/branding_builder.html:2158
+#: templates/design/branding_builder.html:2167
+#: templates/design/branding_builder.html:2184
+#: templates/design/branding_builder.html:2196
+#: templates/design/branding_builder.html:2205
+#: templates/design/branding_builder.html:2234
+#: templates/design/branding_builder.html:2266
+#: templates/design/branding_builder.html:2278
+#: templates/design/branding_builder.html:2290
+#: templates/design/branding_builder.html:2302
+#: templates/design/branding_builder.html:2321
+#: templates/design/branding_builder.html:2330
+#: templates/design/branding_builder.html:2339
+#: templates/design/branding_builder.html:2348
+#: templates/design/branding_builder.html:2357
+#: templates/design/branding_builder.html:2376
+#: templates/design/branding_builder.html:2385
+#: templates/design/branding_builder.html:2394
+#: templates/design/branding_builder.html:2409
 msgid "Reset"
 msgstr "초기화"
 
+#: templates/design/branding_builder.html:181
+#: templates/design/branding_preview_frame.html:369
+#: templates/design/branding_preview_frame.html:400
 msgid "Secondary"
 msgstr "보조"
 
+#: templates/design/branding_builder.html:193
+#: templates/design/branding_preview_frame.html:374
+#: templates/design/branding_preview_frame.html:401
 msgid "Accent"
 msgstr "강조"
 
+#: templates/design/branding_builder.html:211
 msgid "Semantic Colors"
 msgstr "세마틱 색상"
 
+#: templates/design/branding_builder.html:215
+#: templates/design/branding_preview_frame.html:379
 msgid "Success"
 msgstr "성공"
 
+#: templates/design/branding_builder.html:257
 msgid "Neutral Colors"
 msgstr "중립 색상"
 
+#: templates/design/branding_builder.html:261
 msgid "Text"
 msgstr "텍스트"
 
+#: templates/design/branding_builder.html:273
+#: templates/design/branding_builder.html:773
+#: templates/design/branding_builder.html:855
+#: templates/design/branding_builder.html:973
+#: templates/design/branding_builder.html:1252
+#: templates/design/branding_builder.html:1294
+#: templates/design/branding_builder.html:1336
+#: templates/design/branding_builder.html:1378
+#: templates/design/branding_builder.html:1430
+#: templates/design/branding_builder.html:1916
+#: templates/design/branding_builder.html:1980
+#: templates/design/branding_builder.html:2081
+#: templates/design/branding_builder.html:2131
+#: templates/design/branding_builder.html:2178
 msgid "Background"
 msgstr "배경"
 
+#: templates/design/branding_builder.html:304
 msgid "Color Variants"
 msgstr "색상 변형"
 
+#: templates/design/branding_builder.html:308
 msgid "Primary Light"
 msgstr "기본 색상(밝은)"
 
+#: templates/design/branding_builder.html:320
 msgid "Primary Dark"
 msgstr "기본 색상(어두운)"
 
+#: templates/design/branding_builder.html:338
 msgid "Background Variants"
 msgstr "배경 변형"
 
+#: templates/design/branding_builder.html:342
 msgid "Background Secondary"
 msgstr "배경 보조"
 
+#: templates/design/branding_builder.html:354
 msgid "Background Tertiary"
 msgstr "배경 보조 2"
 
+#: templates/design/branding_builder.html:372
 msgid "Surface Variants"
 msgstr "표면 변형"
 
+#: templates/design/branding_builder.html:376
 msgid "Surface"
 msgstr "표면"
 
+#: templates/design/branding_builder.html:388
 msgid "Surface Secondary"
 msgstr "표면 보조"
 
+#: templates/design/branding_builder.html:400
 msgid "Surface Hover"
 msgstr "표면 호버"
 
+#: templates/design/branding_builder.html:412
 msgid "Surface Dark"
 msgstr "표면 어두운"
 
+#: templates/design/branding_builder.html:430
 msgid "Border Variants"
 msgstr "경계 변형"
 
+#: templates/design/branding_builder.html:434
 msgid "Border Light"
 msgstr "경계 밝은"
 
+#: templates/design/branding_builder.html:446
 msgid "Border Dark"
 msgstr "경계 어두운"
 
+#: templates/design/branding_builder.html:464
+#: templates/design/branding_builder.html:1808
 msgid "Effects"
 msgstr "효과"
 
+#: templates/design/branding_builder.html:480
 msgid "Overlay"
 msgstr "오버레이"
 
+#: templates/design/branding_builder.html:501
 msgid "Typography Settings"
 msgstr "타이포그래피 설정"
 
+#: templates/design/branding_builder.html:507
 msgid "Body Typography"
 msgstr "본문 타이포그래피"
 
+#: templates/design/branding_builder.html:512
 msgid "Font & Style"
 msgstr "글꼴 및 스타일"
 
+#: templates/design/branding_builder.html:513
+#: templates/design/branding_builder.html:550
+#: templates/design/branding_builder.html:577
+#: templates/design/branding_builder.html:604
+#: templates/design/branding_builder.html:631
+#: templates/design/branding_builder.html:658
+#: templates/design/branding_builder.html:685
 msgid "View full style declaration"
 msgstr "전체 스타일 선언 보기"
 
+#: templates/design/branding_builder.html:519
 msgid "Controls body text appearance"
 msgstr "본문 텍스트의 외형을 제어합니다"
 
+#: templates/design/branding_builder.html:526
+#: templates/design/branding_builder.html:785
+#: templates/design/branding_builder.html:867
+#: templates/design/branding_builder.html:949
+#: templates/design/branding_builder.html:1543
+#: templates/design/branding_builder.html:2004
+#: templates/design/branding_builder.html:2093
 msgid "Text Color"
 msgstr "텍스트 색상"
 
+#: templates/design/branding_builder.html:544
 msgid "Heading Styles"
 msgstr "헤드라인 스타일"
 
+#: templates/design/branding_builder.html:549
 msgid "H1 - Font & Style"
 msgstr "H1 - 글꼴 및 스타일"
 
+#: templates/design/branding_builder.html:556
 msgid "Largest heading style"
 msgstr "가장 큰 헤드라인 스타일"
 
+#: templates/design/branding_builder.html:563
 msgid "H1 - Color"
 msgstr "H1 - 색상"
 
+#: templates/design/branding_builder.html:576
 msgid "H2 - Font & Style"
 msgstr "H2 - 글꼴 및 스타일"
 
+#: templates/design/branding_builder.html:583
 msgid "Secondary heading style"
 msgstr "보조 헤드라인 스타일"
 
+#: templates/design/branding_builder.html:590
 msgid "H2 - Color"
 msgstr "H2 - 색상"
 
+#: templates/design/branding_builder.html:603
 msgid "H3 - Font & Style"
 msgstr "H3 - 글꼴 및 스타일"
 
+#: templates/design/branding_builder.html:610
 msgid "Tertiary heading style"
 msgstr "보조 2 헤드라인 스타일"
 
+#: templates/design/branding_builder.html:617
 msgid "H3 - Color"
 msgstr "H3 - 색상"
 
+#: templates/design/branding_builder.html:630
 msgid "H4 - Font & Style"
 msgstr "H4 - 글꼴 및 스타일"
 
+#: templates/design/branding_builder.html:637
 msgid "Fourth-level heading"
 msgstr "4단계 제목"
 
+#: templates/design/branding_builder.html:644
 msgid "H4 - Color"
 msgstr "H4 - 색상"
 
+#: templates/design/branding_builder.html:657
 msgid "H5 - Font & Style"
 msgstr "H5 - 글꼴 및 스타일"
 
+#: templates/design/branding_builder.html:664
 msgid "Fifth-level heading"
 msgstr "5단계 제목"
 
+#: templates/design/branding_builder.html:671
 msgid "H5 - Color"
 msgstr "H5 - 색상"
 
+#: templates/design/branding_builder.html:684
 msgid "H6 - Font & Style"
 msgstr "H6 - 글꼴 및 스타일"
 
+#: templates/design/branding_builder.html:691
 msgid "Smallest heading style"
 msgstr "가장 작은 제목 스타일"
 
+#: templates/design/branding_builder.html:698
 msgid "H6 - Color"
 msgstr "H6 - 색상"
 
+#: templates/design/branding_builder.html:716
 msgid "Text Color Variants"
 msgstr "텍스트 색상 변형"
 
+#: templates/design/branding_builder.html:720
 msgid "Text Light"
 msgstr "텍스트 밝음"
 
+#: templates/design/branding_builder.html:732
 msgid "Text Muted"
 msgstr "텍스트 어두움"
 
+#: templates/design/branding_builder.html:744
 msgid "Text Inverse"
 msgstr "텍스트 반전"
 
+#: templates/design/branding_builder.html:761
 msgid "Layout Settings"
 msgstr "레이아웃 설정"
 
+#: templates/design/branding_builder.html:762
 msgid "Customize header, footer, and menu appearance"
 msgstr "헤더, 푸터 및 메뉴의 외형을 커스터마이즈하세요"
 
+#: templates/design/branding_builder.html:768
+#: templates/design/menu_builder/builder.html:618
 msgid "Header"
 msgstr "헤더"
 
+#: templates/design/branding_builder.html:797
+#: templates/design/branding_builder.html:879
+#: templates/design/branding_builder.html:1442
+#: templates/design/branding_builder.html:1992
+#: templates/design/branding_builder.html:2143
 msgid "Border Color"
 msgstr "경계선 색상"
 
+#: templates/design/branding_builder.html:809
+#: templates/design/branding_builder.html:891
 msgid "Link Color"
 msgstr "링크 색상"
 
+#: templates/design/branding_builder.html:821
+#: templates/design/branding_builder.html:903
 msgid "Link Hover Color"
 msgstr "링크 호버 색상"
 
+#: templates/design/branding_builder.html:833
+#: templates/design/branding_builder.html:927
+#: templates/design/branding_builder.html:1103
+#: templates/design/branding_builder.html:1475
+#: templates/design/branding_builder.html:1849
+#: templates/design/branding_builder.html:1946
 msgid "Padding"
 msgstr "패딩"
 
+#: templates/design/branding_builder.html:835
+#: templates/design/branding_builder.html:929
 msgid "Click to edit"
 msgstr "편집하려면 클릭하세요"
 
+#: templates/design/branding_builder.html:836
+#: templates/design/branding_builder.html:930
 msgid "Edit padding"
 msgstr "패딩 편집"
 
+#: templates/design/branding_builder.html:851
 msgid "Footer"
 msgstr "푸터"
 
+#: templates/design/branding_builder.html:915
 msgid "Heading Color"
 msgstr "제목 색상"
 
+#: templates/design/branding_builder.html:961
 msgid "Text Hover Color"
 msgstr "텍스트 호버 색상"
 
+#: templates/design/branding_builder.html:985
+#: templates/design/branding_builder.html:2105
 msgid "Hover Background"
 msgstr "호버 배경"
 
+#: templates/design/branding_builder.html:997
 msgid "Dropdown Background"
 msgstr "드롭다운 배경"
 
+#: templates/design/branding_builder.html:1009
 msgid "Dropdown Shadow"
 msgstr "드롭다운 그림자"
 
+#: templates/design/branding_builder.html:1022
 msgid "Click to customize"
 msgstr "사용자 정의하려면 클릭하세요"
 
+#: templates/design/branding_builder.html:1035
 msgid "Component Styles"
 msgstr "컴포넌트 스타일"
 
+#: templates/design/branding_builder.html:1036
 msgid "Customize buttons, cards, forms, and other UI components"
 msgstr "버튼, 카드, 폼 및 기타 UI 구성 요소를 커스터마이즈하세요"
 
+#: templates/design/branding_builder.html:1042
+#: templates/design/branding_preview_frame.html:397
 msgid "Buttons"
 msgstr "버튼"
 
+#: templates/design/branding_builder.html:1049
+#: templates/design/branding_builder.html:1060
+#: templates/design/branding_builder.html:1254
+#: templates/design/branding_builder.html:1263
+#: templates/design/branding_builder.html:1272
+#: templates/design/branding_builder.html:1281
+#: templates/design/branding_builder.html:1296
+#: templates/design/branding_builder.html:1305
+#: templates/design/branding_builder.html:1314
+#: templates/design/branding_builder.html:1323
+#: templates/design/branding_builder.html:1338
+#: templates/design/branding_builder.html:1347
+#: templates/design/branding_builder.html:1356
+#: templates/design/branding_builder.html:1365
+#: templates/design/branding_builder.html:1380
+#: templates/design/branding_builder.html:1389
+#: templates/design/branding_builder.html:1398
+#: templates/design/branding_builder.html:1407
 msgid "Click to edit..."
 msgstr "편집하려면 클릭하세요..."
 
+#: templates/design/branding_builder.html:1069
 msgid "Font Size"
 msgstr "글꼴 크기"
 
+#: templates/design/branding_builder.html:1112
+#: templates/design/branding_builder.html:1124
+#: templates/design/branding_builder.html:1136
 msgid "X (Horizontal)"
 msgstr "X (가로)"
 
+#: templates/design/branding_builder.html:1116
+#: templates/design/branding_builder.html:1128
+#: templates/design/branding_builder.html:1140
 msgid "Y (Vertical)"
 msgstr "Y (세로)"
 
+#: templates/design/branding_builder.html:1151
 msgid "Pill Radius"
 msgstr "알루미늄 반경"
 
+#: templates/design/branding_builder.html:1162
 msgid "Transition Duration"
 msgstr "전환 지속 시간"
 
+#: templates/design/branding_builder.html:1172
 msgid "Transition Easing"
 msgstr "전환 완화"
 
+#: templates/design/branding_builder.html:1176
+#: templates/design/branding_builder.html:2404
 msgid "Ease In"
 msgstr "들어오는 완화"
 
+#: templates/design/branding_builder.html:1177
+#: templates/design/branding_builder.html:2405
 msgid "Ease Out"
 msgstr "나가는 완화"
 
+#: templates/design/branding_builder.html:1178
 msgid "Ease In-Out"
 msgstr "들어오고 나가는 완화"
 
+#: templates/design/branding_builder.html:1179
+#: templates/design/branding_builder.html:2407
 msgid "Linear"
 msgstr "선형"
 
+#: templates/design/branding_builder.html:1191
 msgid "Focus Ring Width"
 msgstr "포커스 링 너비"
 
+#: templates/design/branding_builder.html:1201
 msgid "Focus Ring Offset"
 msgstr "포커스 링 오프셋"
 
+#: templates/design/branding_builder.html:1211
 msgid "Disabled Opacity"
 msgstr "비활성화된 투명도"
 
+#: templates/design/branding_builder.html:1222
 msgid "Icon Gap"
 msgstr "아이콘 간격"
 
+#: templates/design/branding_builder.html:1237
+#: templates/design/branding_preview_frame.html:414
 msgid "Cards"
 msgstr "카드"
 
+#: templates/design/branding_builder.html:1243
 msgid "Elevated"
 msgstr "높은 높이"
 
+#: templates/design/branding_builder.html:1244
 msgid "Bordered"
 msgstr "경계선 있는"
 
+#: templates/design/branding_builder.html:1279
+#: templates/design/branding_builder.html:1321
+#: templates/design/branding_builder.html:1363
+#: templates/design/branding_builder.html:1405
 msgid "Shadow (Hover)"
 msgstr "그림자 (호버)"
 
+#: templates/design/branding_builder.html:1422
+#: templates/design/branding_preview_frame.html:436
 msgid "Forms"
 msgstr "폼"
 
+#: templates/design/branding_builder.html:1428
+#: templates/design/branding_builder.html:1978
 msgid "Input Styling"
 msgstr "입력 스타일링"
 
+#: templates/design/branding_builder.html:1454
+#: templates/design/branding_builder.html:2028
 msgid "Focus Border"
 msgstr "초점 테두리"
 
+#: templates/design/branding_builder.html:1466
 msgid "Radius"
 msgstr "반경"
 
+#: templates/design/branding_builder.html:1484
 msgid "Disabled Background"
 msgstr "비활성 배경"
 
+#: templates/design/branding_builder.html:1496
+#: templates/design/branding_builder.html:2016
 msgid "Placeholder Color"
 msgstr "위치 표시자 색상"
 
+#: templates/design/branding_builder.html:1508
+#: templates/design/branding_builder.html:2040
 msgid "Focus Shadow"
 msgstr "초점 그림자"
 
+#: templates/design/branding_builder.html:1520
 msgid "Labels & Text"
 msgstr "레이블 & 텍스트"
 
+#: templates/design/branding_builder.html:1522
 msgid "Label Color"
 msgstr "레이블 색상"
 
+#: templates/design/branding_builder.html:1534
 msgid "Label Size"
 msgstr "레이블 크기"
 
+#: templates/design/branding_builder.html:1555
 msgid "Help Text Color"
 msgstr "도움말 텍스트 색상"
 
+#: templates/design/branding_builder.html:1570
 msgid "Status Colors"
 msgstr "상태 색상"
 
+#: templates/design/branding_builder.html:1572
 msgid "Error Color"
 msgstr "에러 색상"
 
+#: templates/design/branding_builder.html:1584
 msgid "Success Color"
 msgstr "성공 색상"
 
+#: templates/design/branding_builder.html:1596
 msgid "Warning Color"
 msgstr "경고 색상"
 
+#: templates/design/branding_builder.html:1608
 msgid "Primary Color"
 msgstr "기본 색상"
 
+#: templates/design/branding_builder.html:1620
 msgid "Primary Hover"
 msgstr "기본 호버"
 
+#: templates/design/branding_builder.html:1637
 msgid "Title Size"
 msgstr "제목 크기"
 
+#: templates/design/branding_builder.html:1646
 msgid "Heading Size"
 msgstr "헤딩 크기"
 
+#: templates/design/branding_builder.html:1655
 msgid "Base Size"
 msgstr "기본 크기"
 
+#: templates/design/branding_builder.html:1664
 msgid "Small Size"
 msgstr "작은 크기"
 
+#: templates/design/branding_builder.html:1673
 msgid "Font Weight Bold"
 msgstr "폰트 굵기(볼드)"
 
+#: templates/design/branding_builder.html:1682
 msgid "Line Height"
 msgstr "줄 간격"
 
+#: templates/design/branding_builder.html:1696
 msgid "Spacing Large"
 msgstr "간격 대형"
 
+#: templates/design/branding_builder.html:1705
 msgid "Spacing Medium"
 msgstr "간격 중형"
 
+#: templates/design/branding_builder.html:1714
 msgid "Spacing Small"
 msgstr "간격 소형"
 
+#: templates/design/branding_builder.html:1723
 msgid "Container Max Width"
 msgstr "컨테이너 최대 너비"
 
+#: templates/design/branding_builder.html:1732
 msgid "Container Padding"
 msgstr "컨테이너 패딩"
 
+#: templates/design/branding_builder.html:1744
 msgid "Checkbox & Radio"
 msgstr "체크박스 & 라디오"
 
+#: templates/design/branding_builder.html:1746
 msgid "Checkbox Size"
 msgstr "체크박스 크기"
 
+#: templates/design/branding_builder.html:1755
 msgid "Checkbox Radius"
 msgstr "체크박스 반경"
 
+#: templates/design/branding_builder.html:1764
 msgid "Radio Size"
 msgstr "라디오 크기"
 
+#: templates/design/branding_builder.html:1776
 msgid "Form Buttons"
 msgstr "폼 버튼"
 
+#: templates/design/branding_builder.html:1778
 msgid "Button Padding X"
 msgstr "버튼 패딩 X"
 
+#: templates/design/branding_builder.html:1787
 msgid "Button Padding Y"
 msgstr "버튼 패딩 Y"
 
+#: templates/design/branding_builder.html:1796
 msgid "Button Radius"
 msgstr "버튼 반경"
 
+#: templates/design/branding_builder.html:1819
 msgid "Transition"
 msgstr "전환 효과"
 
+#: templates/design/branding_builder.html:1836
+#: templates/design/branding_preview_frame.html:452
 msgid "Alerts"
 msgstr "알림"
 
+#: templates/design/branding_builder.html:1840
+#: templates/design/branding_builder.html:1928
+#: templates/design/branding_builder.html:2049
+#: templates/design/branding_builder.html:2117
+#: templates/design/branding_builder.html:2164
 msgid "Border Radius"
 msgstr "테두리 반경"
 
+#: templates/design/branding_builder.html:1858
 msgid "Success Background"
 msgstr "성공 배경"
 
+#: templates/design/branding_builder.html:1870
 msgid "Warning Background"
 msgstr "경고 배경"
 
+#: templates/design/branding_builder.html:1882
 msgid "Error Background"
 msgstr "에러 배경"
 
+#: templates/design/branding_builder.html:1894
 msgid "Info Background"
 msgstr "정보 배경"
 
+#: templates/design/branding_builder.html:1912
 msgid "Modal"
 msgstr "모달"
 
+#: templates/design/branding_builder.html:1955
 msgid "Backdrop Color"
 msgstr "배경 색상"
 
+#: templates/design/branding_builder.html:2058
 msgid "Padding X"
 msgstr "패딩 X"
 
+#: templates/design/branding_builder.html:2067
 msgid "Padding Y"
 msgstr "패딩 Y"
 
+#: templates/design/branding_builder.html:2079
 msgid "Button Styling"
 msgstr "버튼 스타일링"
 
+#: templates/design/branding_builder.html:2129
 msgid "Dropdown Styling"
 msgstr "드롭다운 스타일링"
 
+#: templates/design/branding_builder.html:2176
 msgid "Results Styling"
 msgstr "결과 스타일링"
 
+#: templates/design/branding_builder.html:2190
 msgid "Item Hover Background"
 msgstr "아이템 호버 배경"
 
+#: templates/design/branding_builder.html:2202
 msgid "Item Padding"
 msgstr "아이템 패딩"
 
+#: templates/design/branding_builder.html:2217
 msgid "Advanced Settings"
 msgstr "고급 설정"
 
+#: templates/design/branding_builder.html:2218
 msgid "Fine-tune spacing, shadows, borders, and transitions"
 msgstr "간격, 그림자, 테두리 및 전환 효과를 세부 조정하세요"
 
+#: templates/design/branding_builder.html:2228
 msgid "Base Spacing Unit"
 msgstr "기본 간격 단위"
 
+#: templates/design/branding_builder.html:2256
 msgid "Shadows"
 msgstr "그림자"
 
+#: templates/design/branding_builder.html:2260
 msgid "Small Shadow"
 msgstr "작은 그림자"
 
+#: templates/design/branding_builder.html:2272
 msgid "Medium Shadow"
 msgstr "중간 그림자"
 
+#: templates/design/branding_builder.html:2284
 msgid "Large Shadow"
 msgstr "큰 그림자"
 
+#: templates/design/branding_builder.html:2296
 msgid "XL Shadow"
 msgstr "XL 그림자"
 
+#: templates/design/branding_builder.html:2314
 msgid "Borders"
 msgstr "테두리"
 
+#: templates/design/branding_builder.html:2318
 msgid "Small Radius"
 msgstr "작은 반경"
 
+#: templates/design/branding_builder.html:2327
 msgid "Medium Radius"
 msgstr "중간 반경"
 
+#: templates/design/branding_builder.html:2336
 msgid "Large Radius"
 msgstr "큰 반경"
 
+#: templates/design/branding_builder.html:2345
 msgid "XL Radius"
 msgstr "XL 반경"
 
+#: templates/design/branding_builder.html:2354
 msgid "Border Width"
 msgstr "테두리 두께"
 
+#: templates/design/branding_builder.html:2369
 msgid "Transitions"
 msgstr "전환 효과"
 
+#: templates/design/branding_builder.html:2373
 msgid "Fast Duration"
 msgstr "빠른 지속 시간"
 
+#: templates/design/branding_builder.html:2382
 msgid "Base Duration"
 msgstr "기본 지속 시간"
 
+#: templates/design/branding_builder.html:2391
 msgid "Slow Duration"
 msgstr "느린 지속 시간"
 
+#: templates/design/branding_builder.html:2400
 msgid "Easing Function"
 msgstr "이징 함수"
 
+#: templates/design/branding_builder.html:2403
 msgid "Ease"
 msgstr "이징"
 
+#: templates/design/branding_builder.html:2406
 msgid "Ease In Out"
 msgstr "이징 인 아웃"
 
+#: templates/design/branding_builder.html:2421
 msgid "Custom CSS"
 msgstr "커스텀 CSS"
 
+#: templates/design/branding_builder.html:2426
 msgid "Add custom CSS here"
 msgstr "커스텀 CSS를 여기에 추가하세요"
 
+#: templates/design/branding_builder.html:2439
 msgid "Live Preview"
 msgstr "실시간 미리보기"
 
+#: templates/design/branding_builder.html:2440
 msgid "Refresh"
 msgstr "새로 고침"
 
+#: templates/design/branding_builder.html:2480
 msgid "Saved"
 msgstr "저장됨"
 
+#: templates/design/branding_builder.html:2482
 msgid "This will replace all current settings. Continue?"
 msgstr "이 작업은 모든 현재 설정을 대체합니다. 계속하시겠습니까?"
 
+#: templates/design/branding_builder.html:2483
 msgid "Branding exported successfully"
 msgstr "브랜딩이 성공적으로 내보내졌습니다"
 
+#: templates/design/branding_builder.html:2485
 msgid "Custom value"
 msgstr "커스텀 값"
 
+#: templates/design/branding_builder.html:2486
 msgid "Theme default"
 msgstr "테마 기본값"
 
+#: templates/design/branding_builder.html:2487
 msgid "No value"
 msgstr "값 없음"
 
+#: templates/design/branding_preview_frame.html:7
 msgid "Branding Preview"
 msgstr "브랜딩 미리보기"
 
+#: templates/design/branding_preview_frame.html:348
 msgid "Heading Level 1"
 msgstr "헤딩 레벨 1"
 
+#: templates/design/branding_preview_frame.html:349
 msgid "Heading Level 2"
 msgstr "헤딩 레벨 2"
 
+#: templates/design/branding_preview_frame.html:350
 msgid "Heading Level 3"
 msgstr "헤딩 레벨 3"
 
+#: templates/design/branding_preview_frame.html:351
 msgid "Heading Level 4"
 msgstr "헤딩 레벨 4"
 
+#: templates/design/branding_preview_frame.html:352
 msgid "Heading Level 5"
 msgstr "헤딩 레벨 5"
 
+#: templates/design/branding_preview_frame.html:353
 msgid "Heading Level 6"
 msgstr "헤딩 레벨 6"
 
+#: templates/design/branding_preview_frame.html:354
 msgid "This is a lead paragraph with larger text for emphasis."
 msgstr "이것은 강조를 위해 더 큰 글꼴로 된 주요 단락입니다."
 
+#: templates/design/branding_preview_frame.html:355
 msgid ""
 "This is regular body text. Lorem ipsum dolor sit amet, consectetur "
 "adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna "
@@ -4417,98 +6136,129 @@ msgstr ""
 "adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna "
 "aliqua."
 
+#: templates/design/branding_preview_frame.html:360
 msgid "Color Palette"
 msgstr "색상 팔레트"
 
+#: templates/design/branding_preview_frame.html:402
 msgid "Outline"
 msgstr "외곽선"
 
+#: templates/design/branding_preview_frame.html:406
 msgid "Small"
 msgstr "작은"
 
+#: templates/design/branding_preview_frame.html:408
 msgid "Large"
 msgstr "큰"
 
+#: templates/design/branding_preview_frame.html:417
 msgid "Card Title"
 msgstr "카드 제목"
 
+#: templates/design/branding_preview_frame.html:418
 msgid ""
 "This is a sample card with some text content to demonstrate the card styling."
 msgstr "이것은 카드 스타일을 보여주기 위한 샘플 카드입니다."
 
+#: templates/design/branding_preview_frame.html:419
 msgid "Action"
 msgstr "작업"
 
+#: templates/design/branding_preview_frame.html:422
 msgid "Another Card"
 msgstr "다른 카드"
 
+#: templates/design/branding_preview_frame.html:423
 msgid "Cards use border radius, shadow, and spacing tokens from your branding."
 msgstr "카드는 브랜딩에서 가져온 테두리 반경, 그림자, 간격 토큰을 사용합니다."
 
+#: templates/design/branding_preview_frame.html:427
 msgid "Third Card"
 msgstr "세 번째 카드"
 
+#: templates/design/branding_preview_frame.html:428
 msgid "The layout adjusts based on your spacing and typography settings."
 msgstr "레이아웃은 간격 및 글꼴 설정에 따라 조정됩니다."
 
+#: templates/design/branding_preview_frame.html:429
 msgid "Get Started"
 msgstr "시작하기"
 
+#: templates/design/branding_preview_frame.html:439
 msgid "Email Address"
 msgstr "이메일 주소"
 
+#: templates/design/branding_preview_frame.html:440
 msgid "your@email.com"
 msgstr "your@email.com"
 
+#: templates/design/branding_preview_frame.html:443
 msgid "Password"
 msgstr "비밀번호"
 
+#: templates/design/branding_preview_frame.html:447
 msgid "Submit"
 msgstr "제출"
 
+#: templates/design/branding_preview_frame.html:454
 msgid "Success!"
 msgstr "성공!"
 
+#: templates/design/branding_preview_frame.html:454
 msgid "Your changes have been saved."
 msgstr "변경 사항이 저장되었습니다."
 
+#: templates/design/branding_preview_frame.html:457
 msgid "Warning!"
 msgstr "경고!"
 
+#: templates/design/branding_preview_frame.html:457
 msgid "Please review your input."
 msgstr "입력 내용을 확인해 주세요."
 
+#: templates/design/branding_preview_frame.html:460
 msgid "Error!"
 msgstr "에러!"
 
+#: templates/design/branding_preview_frame.html:460
 msgid "Something went wrong."
 msgstr "어떤 문제가 발생했습니다."
 
+#: templates/design/dashboard.html:14
 msgid "Design Dashboard"
 msgstr "디자인 대시보드"
 
+#: templates/design/dashboard.html:22
 msgid "Design & Theme Dashboard"
 msgstr "디자인 및 테마 대시보드"
 
+#: templates/design/dashboard.html:23
 msgid ""
 "Central hub for managing your site's design, themes, and visual components"
 msgstr "사이트의 디자인, 테마 및 시각적 구성 요소를 관리하는 중심 허브입니다"
 
+#: templates/design/dashboard.html:34
 msgid "Themes"
 msgstr "테마"
 
+#: templates/design/dashboard.html:44
 msgid "Active Widgets"
 msgstr "활성 위젯"
 
+#: templates/design/dashboard.html:85
 msgid "Customize Branding"
 msgstr "브랜딩 커스터마이즈"
 
+#: templates/design/dashboard.html:88
 msgid "Preview Site"
 msgstr "사이트 미리보기"
 
+#: templates/design/dashboard.html:127
 msgid "Force Mode"
 msgstr "모드 강제"
 
+#: templates/design/dashboard.html:130
 msgid ""
 "When enabled, your site will always use light theme colors, even if a "
 "visitor\\"
@@ -4516,6 +6266,7 @@ msgstr ""
 "활성화되면, 귀하의 사이트는 항상 가벼운 테마 색상을 사용하게 되며, 방문자의 "
 "설정과 관계없이 적용됩니다."
 
+#: templates/design/dashboard.html:130
 msgid ""
 "This theme does not include dark mode tokens. Light mode is automatically "
 "enforced."
@@ -4523,194 +6274,262 @@ msgstr ""
 "이 테마는 다크 모드 토큰을 포함하지 않습니다. 가벼운 모드가 자동으로 적용됩니"
 "다."
 
+#: templates/design/dashboard.html:143 templates/design/dashboard.html:231
 msgid "This theme does not support dark mode"
 msgstr "이 테마는 다크 모드를 지원하지 않습니다"
 
+#: templates/design/dashboard.html:145 templates/design/dashboard.html:229
 msgid "On - Dark mode disabled (light theme forced)"
 msgstr "켜짐 - 어두운 모드 비활성화(가벼운 테마 강제)"
 
+#: templates/design/dashboard.html:147 templates/design/dashboard.html:230
 msgid "Off - Auto (respects system preference)"
 msgstr "꺼짐 - 자동(시스템 설정 존중)"
 
+#: templates/design/dashboard.html:160
 msgid "Quick Actions"
 msgstr "빠른 작업"
 
+#: templates/design/dashboard.html:165
 msgid "Regenerate CSS"
 msgstr "CSS 재생성"
 
+#: templates/design/dashboard.html:171
 msgid "Clear Cache"
 msgstr "캐시 비우기"
 
+#: templates/design/dashboard.html:178
 msgid "Export Theme"
 msgstr "테마 내보내기"
 
+#: templates/design/dashboard.html:186
 msgid "Recent Activity"
 msgstr "최근 활동"
 
+#: templates/design/dashboard.html:215
 msgid "Need Help?"
 msgstr "도움이 필요하신가요?"
 
+#: templates/design/dashboard.html:216
 msgid "Check out our"
 msgstr "우리의"
 
+#: templates/design/dashboard.html:216
 msgid "Theme Documentation"
 msgstr "테마 문서"
 
+#: templates/design/dashboard.html:216
 msgid "or"
 msgstr "또는"
 
+#: templates/design/dashboard.html:217
 msgid "Video Tutorials"
 msgstr "동영상 튜토리얼"
 
+#: templates/design/dashboard.html:217
 msgid "to get started with theme customization."
 msgstr "테마 커스터마이징을 시작하려면"
 
+#: templates/design/header_footer_builder.html:9
 msgid "Header Builder"
 msgstr "헤더 빌더"
 
+#: templates/design/header_footer_builder.html:11
 msgid "Footer Builder"
 msgstr "푸터 빌더"
 
+#: templates/design/header_footer_builder.html:59
 msgid "Widget Library"
 msgstr "위젯 라이브러리"
 
+#: templates/design/header_footer_builder.html:61
 msgid "Search widgets..."
 msgstr "위젯 검색..."
 
+#: templates/design/header_footer_builder.html:79
+#: templates/design/menu_builder/builder.html:134
 msgid "Back"
 msgstr "뒤로"
 
+#: templates/design/header_footer_builder.html:97
 msgid "Mobile View"
 msgstr "모바일 뷰"
 
+#: templates/design/header_footer_builder.html:100
 msgid "Tablet View"
 msgstr "태블릿 뷰"
 
+#: templates/design/header_footer_builder.html:103
 msgid "Desktop View"
 msgstr "데스크탑 뷰"
 
+#: templates/design/header_footer_builder.html:114
 msgid "Live"
 msgstr "라이브"
 
+#: templates/design/header_footer_builder.html:125
 msgid "Presets"
 msgstr "프리셋"
 
+#: templates/design/header_footer_builder.html:130
 msgid "Discard changes and revert to published state"
 msgstr "변경 사항을 버리고 게시된 상태로 되돌리기"
 
+#: templates/design/header_footer_builder.html:132
 msgid "Discard"
 msgstr "삭제"
 
+#: templates/design/header_footer_builder.html:136
 msgid "Save Draft"
 msgstr "초안 저장"
 
+#: templates/design/header_footer_builder.html:140
 msgid "Publish"
 msgstr "게시"
 
+#: templates/design/header_footer_builder.html:163
 msgid "Zones"
 msgstr "존"
 
+#: templates/design/header_footer_builder.html:167
+#: templates/design/menu_builder/builder.html:619
 msgid "Widget"
 msgstr "위젯"
 
+#: templates/design/header_footer_builder.html:177
 msgid "Click a zone in the preview to configure it"
 msgstr "미리보기에서 영역을 클릭하여 구성하세요"
 
+#: templates/design/header_footer_builder.html:187
 msgid "Select a widget to edit its properties"
 msgstr "위젯을 선택하여 속성을 편집하세요"
 
+#: templates/design/header_footer_builder.html:201
 msgid "Header Presets"
 msgstr "헤더 프리셋"
 
+#: templates/design/header_footer_builder.html:203
 msgid "Footer Presets"
 msgstr "푸터 프리셋"
 
+#: templates/design/header_footer_builder.html:258
+#: templates/design/menu_builder/builder.html:583
 msgid "Saved!"
 msgstr "저장됨!"
 
+#: templates/design/header_footer_builder.html:260
 msgid "Are you sure you want to delete this widget?"
 msgstr "이 위젯을 삭제하시겠습니까?"
 
+#: templates/design/header_footer_builder.html:261
 msgid "Select a widget to edit"
 msgstr "편집할 위젯을 선택하세요"
 
+#: templates/design/header_footer_builder.html:262
 msgid "Widget added"
 msgstr "위젯 추가됨"
 
+#: templates/design/header_footer_builder.html:263
 msgid "Widget removed"
 msgstr "위젯 제거됨"
 
+#: templates/design/header_footer_builder.html:264
 msgid "Widget updated"
 msgstr "위젯 업데이트됨"
 
+#: templates/design/header_footer_builder.html:265
 msgid "Loading presets..."
 msgstr "사전 설정 불러오는 중..."
 
+#: templates/design/header_footer_builder.html:266
 msgid "No presets available"
 msgstr "사용 가능한 프리셋이 없습니다"
 
+#: templates/design/header_footer_builder.html:267
 msgid "Use This Preset"
 msgstr "이 프리셋 사용"
 
+#: templates/design/layout_renderer_demo.html:8
 msgid "LayoutRenderer Integration Demo"
 msgstr "LayoutRenderer 통합 시연"
 
+#: templates/design/layout_renderer_demo.html:11
 msgid "Current Configuration"
 msgstr "현재 설정"
 
+#: templates/design/layout_renderer_demo.html:14
+#: templates/design/layout_renderer_demo.html:48
 msgid "Page Type"
 msgstr "페이지 유형"
 
+#: templates/design/layout_renderer_demo.html:22
 msgid "Preview Mode"
 msgstr "미리보기 모드"
 
+#: templates/design/layout_renderer_demo.html:26
+#: templates/design/layout_renderer_demo.html:60
 msgid "Isolation Type"
 msgstr "분리 유형"
 
+#: templates/design/layout_renderer_demo.html:30
 msgid "Isolation Class"
 msgstr "분리 클래스"
 
+#: templates/design/layout_renderer_demo.html:34
 msgid "Cache Enabled"
 msgstr "캐시 활성화"
 
+#: templates/design/layout_renderer_demo.html:38
 msgid "Regions Rendered"
 msgstr "렌더링된 영역"
 
+#: templates/design/layout_renderer_demo.html:45
 msgid "Test Different Configurations"
 msgstr "다양한 설정 테스트"
 
+#: templates/design/layout_renderer_demo.html:69
 msgid "Preview Mode (enables CSS isolation)"
 msgstr "미리보기 모드 (CSS 분리 활성화)"
 
+#: templates/design/layout_renderer_demo.html:77
 msgid "Page Schema"
 msgstr "페이지 스키마"
 
+#: templates/design/layout_renderer_demo.html:82
 msgid "Rendered Output"
 msgstr "렌더링된 출력"
 
+#: templates/design/layout_renderer_demo.html:84
 msgid "The content below shows the LayoutRenderer output."
 msgstr "아래 내용은 LayoutRenderer의 출력을 보여줍니다."
 
+#: templates/design/layout_renderer_demo.html:86
 msgid "CSS isolation is enabled - content is wrapped in"
 msgstr "CSS 격리가 활성화됨 - 내용이 다음으로 감싸짐"
 
+#: templates/design/layout_renderer_demo.html:88
 msgid "CSS isolation is disabled - rendering production mode."
 msgstr "CSS 격리가 비활성화됨 - 생산 모드 렌더링."
 
+#: templates/design/layout_renderer_demo.html:98
 msgid "Branding CSS"
 msgstr "브랜딩 CSS"
 
+#: templates/design/layout_renderer_demo.html:102
 msgid "No branding CSS available"
 msgstr "브랜딩 CSS 없음"
 
+#: templates/design/layout_renderer_demo.html:107
 msgid "Integration Notes"
 msgstr "통합 참고 사항"
 
+#: templates/design/layout_renderer_demo.html:109
 msgid ""
 "LayoutRenderer wraps output in CSS isolation container when preview_mode=True"
 msgstr ""
 "preview_mode=True일 때 LayoutRenderer는 출력을 CSS 격리 컨테이너로 감쌉니다"
 
+#: templates/design/layout_renderer_demo.html:110
 msgid ""
 "Brand Builder uses isolation_type=\"brand_builder\" → class \"hf-content-"
 "preview\""
@@ -4718,6 +6537,7 @@ msgstr ""
 "Brand Builder는 isolation_type=\"brand_builder\" → class \"hf-content-"
 "preview\"를 사용합니다"
 
+#: templates/design/layout_renderer_demo.html:111
 msgid ""
 "Page Editor uses isolation_type=\"page_editor\" → class \"pb-content-"
 "preview\""
@@ -4725,252 +6545,348 @@ msgstr ""
 "Page Editor는 isolation_type=\"page_editor\" → class \"pb-content-"
 "preview\"를 사용합니다"
 
+#: templates/design/layout_renderer_demo.html:112
 msgid "CSS isolation prevents admin styles from affecting preview content"
 msgstr "CSS 격리은 관리자 스타일이 미리보기 콘텐츠에 영향을 주지 않도록 합니다"
 
+#: templates/design/layout_renderer_demo.html:113
 msgid "Caching is disabled in preview mode for immediate updates"
 msgstr "미리보기 모드에서는 캐싱이 비활성화되어 즉시 업데이트가 이루어집니다"
 
+#: templates/design/layout_renderer_demo.html:114
 msgid "Production mode (preview_mode=False) enables caching for performance"
 msgstr "생산 모드 (preview_mode=False)는 성능을 위해 캐싱을 활성화합니다"
 
+#: templates/design/layout_renderer_demo.html:119
 msgid "Integration Examples"
 msgstr "통합 예시"
 
+#: templates/design/layout_renderer_demo.html:120
 msgid "Brand Builder Integration"
 msgstr "브랜드 빌더 통합"
 
+#: templates/design/layout_renderer_demo.html:139
 msgid "Page Editor Integration"
 msgstr "페이지 에디터 통합"
 
+#: templates/design/menu_builder/builder.html:7
 msgid "Menu Builder"
 msgstr "메뉴 빌더"
 
+#: templates/design/menu_builder/builder.html:41
 msgid "Add Items"
 msgstr "아이템 추가"
 
+#: templates/design/menu_builder/builder.html:43
 msgid "Search..."
 msgstr "검색..."
 
+#: templates/design/menu_builder/builder.html:53
 msgid "Item Types"
 msgstr "아이템 유형"
 
+#: templates/design/menu_builder/builder.html:85
 msgid "Pages"
 msgstr "페이지"
 
+#: templates/design/menu_builder/builder.html:90
+#: templates/design/menu_builder/builder.html:599
 msgid "Search pages..."
 msgstr "페이지 검색..."
 
+#: templates/design/menu_builder/builder.html:96
+#: templates/design/menu_builder/builder.html:118
+#: templates/design/menu_builder/builder.html:595
 msgid "Type to search..."
 msgstr "검색하려면 입력..."
 
+#: templates/design/menu_builder/builder.html:107
+#: templates/design/menu_builder/builder.html:615
 msgid "Categories"
 msgstr "카테고리"
 
+#: templates/design/menu_builder/builder.html:112
+#: templates/design/menu_builder/builder.html:600
 msgid "Search categories..."
 msgstr "카테고리 검색..."
 
+#: templates/design/menu_builder/builder.html:143
+#: templates/design/menu_builder/builder.html:480
 msgid "Create New Menu"
 msgstr "새로운 메뉴 생성"
 
+#: templates/design/menu_builder/builder.html:150
 msgid "Mobile Preview"
 msgstr "모바일 미리보기"
 
+#: templates/design/menu_builder/builder.html:153
 msgid "Tablet Preview"
 msgstr "태블릿 미리보기"
 
+#: templates/design/menu_builder/builder.html:156
 msgid "Desktop Preview"
 msgstr "데스크탑 미리보기"
 
+#: templates/design/menu_builder/builder.html:163
 msgid "Expand All"
 msgstr "모두 확장"
 
+#: templates/design/menu_builder/builder.html:166
 msgid "Collapse All"
 msgstr "모두 접기"
 
+#: templates/design/menu_builder/builder.html:169
 msgid "Undo"
 msgstr "실행 취소"
 
+#: templates/design/menu_builder/builder.html:172
 msgid "Redo"
 msgstr "재실행"
 
+#: templates/design/menu_builder/builder.html:193
+#: templates/design/menu_builder/builder.html:369
 msgid "Menu Settings"
 msgstr "메뉴 설정"
 
+#: templates/design/menu_builder/builder.html:207
 msgid "Click to style menu"
 msgstr "메뉴 스타일을 적용하려면 클릭하세요"
 
+#: templates/design/menu_builder/builder.html:214
+#: templates/design/menu_builder/partials/menu_preview.html:31
 msgid "No menu items yet"
 msgstr "아직 메뉴 아이템이 없습니다"
 
+#: templates/design/menu_builder/builder.html:215
 msgid "Drag items from the left panel or click the button below"
 msgstr "왼쪽 패널에서 항목을 끌어다 놓거나 아래 버튼을 클릭하세요"
 
+#: templates/design/menu_builder/builder.html:217
 msgid "Add First Item"
 msgstr "첫 번째 아이템 추가"
 
+#: templates/design/menu_builder/builder.html:226
+#: templates/design/menu_builder/builder.html:471
 msgid "Add Item"
 msgstr "아이템 추가"
 
+#: templates/design/menu_builder/builder.html:261
+#: templates/design/menu_builder/preview_popup.html:59
 msgid "Rotate"
 msgstr "회전"
 
+#: templates/design/menu_builder/builder.html:268
 msgid "Close Preview"
 msgstr "미리보기 닫기"
 
+#: templates/design/menu_builder/builder.html:271
 msgid "Open in New Window"
 msgstr "새 창에서 열기"
 
+#: templates/design/menu_builder/builder.html:320
 msgid "Item"
 msgstr "아이템"
 
+#: templates/design/menu_builder/builder.html:324
 msgid "Style"
 msgstr "스타일"
 
+#: templates/design/menu_builder/builder.html:338
 msgid "Select a menu item to edit its properties"
 msgstr "메뉴 항목을 선택하여 속성을 편집하세요"
 
+#: templates/design/menu_builder/builder.html:348
 msgid "Select a menu item to customize its styling"
 msgstr "메뉴 항목을 선택하여 스타일을 커스터마이즈하세요"
 
+#: templates/design/menu_builder/builder.html:358
 msgid "Select a menu item to configure visibility rules"
 msgstr "메뉴 항목을 선택하여 가시성 규칙을 구성하세요"
 
+#: templates/design/menu_builder/builder.html:376
+#: templates/design/menu_builder/builder.html:487
 msgid "Menu Name"
 msgstr "메뉴 이름"
 
+#: templates/design/menu_builder/builder.html:390
+#: templates/design/menu_builder/builder.html:501
 msgid "Display Type"
 msgstr "표시 유형"
 
+#: templates/design/menu_builder/builder.html:412
 msgid "Save Settings"
 msgstr "설정 저장"
 
+#: templates/design/menu_builder/builder.html:421
 msgid "Add Menu Item"
 msgstr "메뉴 아이템 추가"
 
+#: templates/design/menu_builder/builder.html:428
 msgid "Item Type"
 msgstr "아이템 유형"
 
+#: templates/design/menu_builder/builder.html:437
 msgid "Title"
 msgstr "제목"
 
+#: templates/design/menu_builder/builder.html:438
 msgid "Menu item title"
 msgstr "메뉴 아이템 제목"
 
+#: templates/design/menu_builder/builder.html:442
 msgid "URL"
 msgstr "URL"
 
+#: templates/design/menu_builder/builder.html:447
 msgid "Select Page"
 msgstr "페이지 선택"
 
+#: templates/design/menu_builder/builder.html:449
 msgid "-- Select a page --"
 msgstr "-- 페이지 선택 --"
 
+#: templates/design/menu_builder/builder.html:454
 msgid "Select Category"
 msgstr "카테고리 선택"
 
+#: templates/design/menu_builder/builder.html:456
 msgid "-- Select a category --"
 msgstr "-- 카테고리 선택 --"
 
+#: templates/design/menu_builder/builder.html:488
 msgid "e.g., Main Navigation"
 msgstr "예: 메인 네비게이션"
 
+#: templates/design/menu_builder/builder.html:511
 msgid "Create Menu"
 msgstr "메뉴 생성"
 
+#: templates/design/menu_builder/builder.html:520
 msgid "Choose Icon"
 msgstr "아이콘 선택"
 
+#: templates/design/menu_builder/builder.html:527
 msgid "Search icons..."
 msgstr "아이콘 검색..."
 
+#: templates/design/menu_builder/builder.html:532
 msgid "Solid"
 msgstr "솔리드"
 
+#: templates/design/menu_builder/builder.html:533
 msgid "Regular"
 msgstr "정규"
 
+#: templates/design/menu_builder/builder.html:534
 msgid "Brands"
 msgstr "브랜드"
 
+#: templates/design/menu_builder/builder.html:541
 msgid "No Icon"
 msgstr "아이콘 없음"
 
+#: templates/design/menu_builder/builder.html:585
 msgid "Are you sure you want to delete this menu item and all its children?"
 msgstr "이 메뉴 항목과 모든 하위 항목을 삭제하시겠습니까?"
 
+#: templates/design/menu_builder/builder.html:586
 msgid "Select an item to edit"
 msgstr "편집할 아이템을 선택하세요"
 
+#: templates/design/menu_builder/builder.html:587
 msgid "Item added"
 msgstr "아이템 추가됨"
 
+#: templates/design/menu_builder/builder.html:588
 msgid "Item removed"
 msgstr "아이템 제거됨"
 
+#: templates/design/menu_builder/builder.html:589
 msgid "Item updated"
 msgstr "아이템 업데이트됨"
 
+#: templates/design/menu_builder/builder.html:590
 msgid "Menu created"
 msgstr "메뉴 생성됨"
 
+#: templates/design/menu_builder/builder.html:591
 msgid "Menu settings updated"
 msgstr "메뉴 설정이 업데이트됨"
 
+#: templates/design/menu_builder/builder.html:592
 msgid "No icon selected"
 msgstr "아이콘 선택 없음"
 
+#: templates/design/menu_builder/builder.html:593
 msgid "Untitled Item"
 msgstr "제목 없는 아이템"
 
+#: templates/design/menu_builder/builder.html:594
 msgid "Drag items here"
 msgstr "항목을 여기로 드래그하세요"
 
+#: templates/design/menu_builder/builder.html:596
 msgid "Searching..."
 msgstr "검색 중..."
 
+#: templates/design/menu_builder/builder.html:597
 msgid "No results found"
 msgstr "결과 없음"
 
+#: templates/design/menu_builder/builder.html:598
 msgid "More results available. Refine your search."
 msgstr "더 많은 결과가 있습니다. 검색을 세부적으로 조정하세요."
 
+#: templates/design/menu_builder/builder.html:601
 msgid "Menu styles saved"
 msgstr "메뉴 스타일이 저장됨"
 
+#: templates/design/menu_builder/builder.html:602
 msgid "Menu styles reset to defaults"
 msgstr "메뉴 스타일이 기본값으로 되돌림"
 
+#: templates/design/menu_builder/builder.html:603
 msgid "Reset all menu styles to theme defaults?"
 msgstr "모든 메뉴 스타일을 테마 기본값으로 되돌리시겠습니까?"
 
+#: templates/design/menu_builder/builder.html:604
 msgid "Select a menu item or click the menu header to edit styles"
 msgstr "메뉴 항목을 선택하거나 메뉴 헤더를 클릭하여 스타일을 편집하세요"
 
+#: templates/design/menu_builder/builder.html:605
 msgid "Menu Styles"
 msgstr "메뉴 스타일"
 
+#: templates/design/menu_builder/builder.html:612
 msgid "Link"
 msgstr "링크"
 
+#: templates/design/menu_builder/builder.html:614
 msgid "Category"
 msgstr "카테고리"
 
+#: templates/design/menu_builder/partials/menu_preview.html:32
 msgid "Add items from the library panel"
 msgstr "라이브러리 패널에서 항목을 추가하세요"
 
+#: templates/design/menu_builder/partials/menu_preview_item.html:51
 msgid "Categories load dynamically..."
 msgstr "카테고리가 동적으로 로드됨..."
 
+#: templates/design/menu_builder/preview_popup.html:7
 msgid "Menu Preview"
 msgstr "메뉴 미리보기"
 
+#: templates/design/menu_builder/preview_popup.html:66
+#: templates/design/preview/header.html:112
 msgid "Close"
 msgstr "닫기"
 
+#: templates/design/preview/footer.html:60
 msgid "Footer Preview"
 msgstr "푸터 미리보기"
 
+#: templates/design/preview/footer.html:61
 msgid ""
 "Scroll down to see your footer template. The footer below will appear on all "
 "pages using this template."
@@ -4978,12 +6894,15 @@ msgstr ""
 "아래로 스크롤하여 푸터 템플릿을 확인하세요. 이 템플릿을 사용하는 모든 페이지"
 "에 아래 푸터가 표시됩니다."
 
+#: templates/design/preview/header.html:104
 msgid "Close announcement"
 msgstr "공지사항 닫기"
 
+#: templates/design/preview/header.html:331
 msgid "Header Preview"
 msgstr "헤더 미리보기"
 
+#: templates/design/preview/header.html:332
 msgid ""
 "This is a preview of your header template. The header above will appear on "
 "all pages using this template."
@@ -4991,27 +6910,38 @@ msgstr ""
 "이것은 헤더 템플릿의 미리보기입니다. 이 템플릿을 사용하는 모든 페이지에 위의 "
 "헤더가 표시됩니다."
 
+#: templates/design/preview/header.html:333
 msgid "Scroll down to see how the header behaves with content below it."
 msgstr "아래로 스크롤하여 헤더가 아래 내용과 어떻게 상호작용하는지 확인하세요."
 
+#: templates/design/template_config.html:21
 msgid "Template Configuration"
 msgstr "템플릿 구성"
 
+#: templates/design/template_config.html:23
 msgid "Choose and configure page templates for your storefront"
 msgstr "쇼핑몰용 페이지 템플릿을 선택하고 구성하세요"
 
+#: templates/design/template_config.html:27
+#: templates/design/template_config.html:411
 msgid "Save Configuration"
 msgstr "설정 저장"
 
+#: templates/design/template_config.html:62
 msgid ""
 "Choose how your checkout page looks and feels. This affects all customers."
 msgstr ""
 "체크아웃 페이지의 외형과 느낌을 선택하세요. 이 설정은 모든 고객에게 영향을 줍"
 "니다."
 
+#: templates/design/template_config.html:99
+#: templates/design/template_config.html:181
+#: templates/design/template_config.html:345
+#: templates/design/template_config.html:399
 msgid "Options"
 msgstr "옵션"
 
+#: templates/design/template_config.html:116
 msgid ""
 "Configure the trust badges displayed during checkout. These appear on all "
 "checkout templates when trust badges are enabled."
@@ -5019,15 +6949,23 @@ msgstr ""
 "체크아웃 시 표시되는 신뢰 배지 설정. 신뢰 배지가 활성화되면 모든 체크아웃 템"
 "플릿에 나타납니다."
 
+#: templates/design/template_config.html:127
+#: templates/design/template_config.html:209
+#: templates/design/template_config.html:237
 msgid "Add Badge"
 msgstr "배지 추가"
 
+#: templates/design/template_config.html:130
+#: templates/design/template_config.html:212
+#: templates/design/template_config.html:240
 msgid "Drag to reorder. Maximum 6 badges."
 msgstr "드래그하여 순서를 재정렬할 수 있습니다. 최대 6개의 배지."
 
+#: templates/design/template_config.html:141
 msgid "Product Page Template"
 msgstr "상품 페이지 템플릿"
 
+#: templates/design/template_config.html:144
 msgid ""
 "Choose the default product page layout. Individual products can override "
 "this in their settings."
@@ -5035,12 +6973,14 @@ msgstr ""
 "기본 제품 페이지 레이아웃을 선택하세요. 개별 제품은 설정에서 이 값을 재정의"
 "할 수 있습니다."
 
+#: templates/design/template_config.html:198
 msgid ""
 "Configure trust badges for physical product pages (Classic, Full Width, "
 "Gallery Focus templates)."
 msgstr ""
 "물리 제품 페이지(클래식, 풀 폭, 갤러리 포커스 템플릿)에 대한 신뢰 배지 설정."
 
+#: templates/design/template_config.html:226
 msgid ""
 "Configure trust badges for digital product pages (software, ebooks, courses, "
 "digital downloads)."
@@ -5048,9 +6988,11 @@ msgstr ""
 "디지털 제품 페이지(소프트웨어, 전자책, 강의, 디지털 다운로드)에 대한 신뢰 배"
 "지 설정."
 
+#: templates/design/template_config.html:251
 msgid "Category Page Template"
 msgstr "카테고리 페이지 템플릿"
 
+#: templates/design/template_config.html:254
 msgid ""
 "Choose the default category page layout. Individual categories can override "
 "this in their Display settings."
@@ -5058,6 +7000,7 @@ msgstr ""
 "기본 카테고리 페이지 레이아웃을 선택합니다. 개별 카테고리는 자신의 표시 설정"
 "에서 이 기본값을 재정의할 수 있습니다."
 
+#: templates/design/template_config.html:308
 msgid ""
 "Choose the default blog post layout. Individual posts can override this in "
 "their Design tab."
@@ -5065,102 +7008,133 @@ msgstr ""
 "기본 블로그 게시물 레이아웃을 선택하세요. 개별 게시물은 디자인 탭에서 이 설정"
 "을 재정의할 수 있습니다."
 
+#: templates/design/template_config.html:362
 msgid "Choose the layout for the blog index page where all posts are listed."
 msgstr "모든 게시물이 나열되는 블로그 인덱스 페이지의 레이아웃을 선택하세요."
 
+#: templates/design/widgets/loyalty_tier_badge.html:50
 #, python-format
 msgid "%(progress_pct)s%% to %(tier)s"
 msgstr "%(progress_pct)s%% → %(tier)s"
 
+#: templates/design/widgets/loyalty_tier_badge.html:57
 #, python-format
 msgid "Spend %(spend)s to reach %(tier)s"
 msgstr " %(spend)s 지출하여 %(tier)s 달성"
 
+#: templates/design/widgets/loyalty_tier_badge.html:64
 #, python-format
 msgid "%(orders)s orders to reach %(tier)s"
 msgstr " %(orders)s 주문하여 %(tier)s 달성"
 
+#: templates/design/widgets/site_variable.html:44
 msgid "No value set for"
 msgstr "값이 설정되지 않았습니다"
 
+#: theme_models.py:40
 msgid "Minimum shop platform version required"
 msgstr "필요한 최소 쇼핑 플랫폼 버전"
 
+#: theme_models.py:48
 msgid "Maximum compatible shop platform version"
 msgstr "최대 호환 가능한 쇼핑 플랫폼 버전"
 
+#: theme_models.py:61
 msgid "e.g., MIT, GPL-3.0, Proprietary"
 msgstr "예: MIT, GPL-3.0, Proprietary"
 
+#: theme_models.py:66
 msgid "Complete theme manifest including tokens, templates, widgets"
 msgstr "토큰, 템플릿, 위젯을 포함한 전체 테마 매니페스트"
 
+#: theme_models.py:68
 msgid "List of required feature flags"
 msgstr "필요한 기능 플래그 목록"
 
+#: theme_models.py:72
 msgid "Token rename/migration rules for upgrades"
 msgstr "업그레이드용 토큰 이름 변경/이전 규칙"
 
+#: theme_models.py:79
 msgid "Theme package ZIP file"
 msgstr "테마 패키지 ZIP 파일"
 
+#: theme_models.py:82
 msgid "SHA256 checksum of package file"
 msgstr "패키지 파일의 SHA256 체크섬"
 
+#: theme_models.py:85
 msgid "Path where theme assets are extracted"
 msgstr "테마 자산이 추출되는 경로"
 
+#: theme_models.py:91
 msgid ""
 "Compiled theme CSS (tokens.css + reset.css + components.css + theme.css)"
 msgstr ""
 "컴파일된 테마 CSS (tokens.css + reset.css + components.css + theme.css)"
 
+#: theme_models.py:94
 msgid "MD5 hash for cache busting"
 msgstr "캐시 무효화용 MD5 해시"
 
+#: theme_models.py:98
 msgid "List of preview image paths"
 msgstr "미리보기 이미지 경로 목록"
 
+#: theme_models.py:104
 msgid "Whether this theme is from the marketplace"
 msgstr "이 테마가 마켓플레이스에서 온 것인지 여부"
 
+#: theme_models.py:475
 msgid "Snapshot of customizations before installation"
 msgstr "설치 전 커스터마이징 스냅샷"
 
+#: theme_models.py:480
 msgid "List of applied token migrations"
 msgstr "적용된 토큰 이전 목록"
 
+#: theme_models.py:513
 msgid "Per-component style overrides"
 msgstr "성분별 스타일 재정의"
 
+#: theme_models.py:517
 msgid "Custom CSS code (use sparingly)"
 msgstr "사용을 신중하게 하세요. 사용자 정의 CSS 코드"
 
+#: theme_models.py:520
 msgid "Compiled brand CSS"
 msgstr "브랜드 CSS 컴파일"
 
+#: theme_models.py:522
 msgid "Hash for cache busting"
 msgstr "캐시 무효화용 해시"
 
+#: theme_models.py:530
 msgid "Theme Branding"
 msgstr "테마 브랜딩"
 
+#: theme_models.py:531
 msgid "Theme Brandings"
 msgstr "테마 브랜딩들"
 
+#: theme_models.py:772
 msgid "Relative path within theme"
 msgstr "테마 내부의 상대 경로"
 
+#: theme_models.py:782
 msgid "Whether this is critical CSS for initial render"
 msgstr "이 것이 초기 렌더링을 위한 크리티컬 CSS인지 여부"
 
+#: theme_models.py:787
 msgid "Specific route for critical CSS (e.g., home, plp, pdp)"
 msgstr "크리티컬 CSS를 위한 특정 경로 (예: home, plp, pdp)"
 
+#: unified_theme_views.py:179
 #, python-format
 msgid "Failed to fetch available themes: %(error)s"
 msgstr "사용 가능한 테마 가져오기 실패: %(error)s"
 
+#: unified_theme_views.py:320
 msgid "Cannot uninstall the active theme. Switch to a different theme first."
 msgstr "활성화된 테마는 언인스톨할 수 없습니다. 다른 테마로 전환하세요."
 

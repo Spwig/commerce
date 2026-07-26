@@ -15,13 +15,20 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from rest_framework import filters, status, viewsets
-from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
+from rest_framework.decorators import (
+    action,
+    api_view,
+    authentication_classes,
+    permission_classes,
+    throttle_classes,
+)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from core.api.api_descriptions import PRODUCT_NOT_FOUND
 from core.api.authentication import HeadlessAPIMixin
+from core.api.throttling import GiftCardBalanceAnonThrottle, GiftCardBalanceUserThrottle
 from core.utils import get_default_currency
 
 from .filters import ProductFilter
@@ -2042,27 +2049,48 @@ def pickup_locations(request):
 @api_view(["POST"])
 @authentication_classes(HeadlessAPIMixin.authentication_classes)
 @permission_classes([AllowAny])
+@throttle_classes([GiftCardBalanceAnonThrottle, GiftCardBalanceUserThrottle])
 def check_gift_card_balance(request):
     """
     Check gift card balance without authentication.
 
-    This is a public endpoint that allows customers to check their
-    gift card balance by providing the gift card code.
+    Public by design: a gift card is a bearer instrument and the recipient
+    usually has no account.
 
-    Rate limiting should be implemented at the server level to prevent abuse.
+    That makes this an enumeration surface on stored value, so it is throttled
+    for anonymous and authenticated callers alike. Note ``throttle_classes``
+    *replaces* ``DEFAULT_THROTTLE_CLASSES`` rather than adding to it, which is
+    why both variants are listed explicitly — naming only the anonymous one
+    would leave authenticated callers entirely unthrottled here.
+
+    Merchants can disable the endpoint via
+    ``SiteSettings.public_gift_card_balance_enabled``.
     """
+    from core.models import SiteSettings
+
     from .services.gift_card_service import GiftCardService
 
-    code = request.data.get("code", "").strip()
+    # Uniform failure response: an attacker must not be able to tell "no such
+    # code" from "disabled" from "malformed", since the difference is exactly
+    # what makes enumeration cheap.
+    not_found = Response({"error": _("Gift card not found")}, status=status.HTTP_404_NOT_FOUND)
+
+    site_settings = SiteSettings.get_settings()
+    if not getattr(site_settings, "public_gift_card_balance_enabled", True):
+        return not_found
+
+    code = request.data.get("code", "")
+    if not isinstance(code, str):
+        return not_found
+    code = code.strip()
 
     if not code:
-        return Response({"error": "Gift card code is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return not_found
 
-    # Check balance using service
     balance_info = GiftCardService.check_balance(code)
 
     if balance_info is None:
-        return Response({"error": "Gift card not found"}, status=status.HTTP_404_NOT_FOUND)
+        return not_found
 
     return Response(balance_info, status=status.HTTP_200_OK)
 

@@ -110,6 +110,12 @@ class ManualExchangeRateViewSet(viewsets.ModelViewSet):
     destroy: DELETE /api/exchange-rates/manual/{id}/
     """
 
+    # Class-level queryset so schema generation can infer the {id} type
+    # without calling get_queryset — and the filter below stays LAZY
+    # (site_id=1, never Site.objects.get): an eager query here executes
+    # during `spectacular` runs, and on a fresh database (CI) it raised,
+    # silently degrading the documented {id} parameter to a string.
+    queryset = ManualExchangeRate.objects.all()
     permission_classes = [IsAdminUser]
 
     def get_serializer_class(self):
@@ -120,7 +126,7 @@ class ManualExchangeRateViewSet(viewsets.ModelViewSet):
         return ManualExchangeRateSerializer
 
     def get_queryset(self):
-        return ManualExchangeRate.objects.filter(site=Site.objects.get(pk=1)).order_by(
+        return ManualExchangeRate.objects.filter(site_id=1).order_by(
             "base_currency", "target_currency"
         )
 

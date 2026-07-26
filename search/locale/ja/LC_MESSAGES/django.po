@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,27 +18,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:26 templates/admin/search/searchsettings/change_form.html:23
 msgid "General"
 msgstr "一般"
 
+#: admin.py:33 templates/admin/search/searchsettings/change_form.html:27
+#: templates/admin/search/searchsettings/change_form.html:78
 msgid "Autocomplete"
 msgstr "オートコンプリート"
 
+#: admin.py:45
 msgid "Autocomplete Display"
 msgstr "オートコンプリートの表示"
 
+#: admin.py:65 admin.py:242 models.py:305
+#: templates/admin/search/searchsettings/change_form.html:31
+#: templates/admin/search/wizard/base.html:34
+#: templates/admin/search/wizard/step2_content.html:6
+#: templates/admin/search/wizard/step4_review.html:38
 msgid "Content Types"
 msgstr "コンテンツタイプ"
 
+#: admin.py:77 templates/admin/search/searchsettings/change_form.html:35
+#: templates/admin/search/searchsettings/change_form.html:247
 msgid "Deep Indexing"
 msgstr "ディープインデクシング"
 
+#: admin.py:90 templates/admin/search/searchsettings/change_form.html:39
 msgid "Fuzzy Matching"
 msgstr "ファジィマッチング"
 
+#: admin.py:101 templates/admin/search/searchsettings/change_form.html:318
+#: templates/admin/search/wizard/step3_weights.html:6
+#: templates/admin/search/wizard/step4_review.html:62
 msgid "Relevance Weights"
 msgstr "関連性重み"
 
+#: admin.py:115
 msgid ""
 "Adjust the relevance weights for different content types. Higher values (up "
 "to 2.0) increase importance."
@@ -46,442 +62,610 @@ msgstr ""
 "さまざまなコンテンツタイプの関連性の重みを調整します。より高い値（最大2.0）は"
 "重要度を高めます。"
 
+#: admin.py:120 templates/admin/search/searchsettings/change_form.html:47
 msgid "Caching"
 msgstr "キャッシュ"
 
+#: admin.py:130 templates/admin/search/searchsettings/change_form.html:51
 msgid "Analytics"
 msgstr "分析"
 
+#: admin.py:141
 msgid "Pagination"
 msgstr "ページネーション"
 
+#: admin.py:204 templates/admin/search/searchengine/change_form.html:111
+#: templates/admin/search/wizard/step1_basic.html:6
+#: templates/admin/search/wizard/step4_review.html:15
 msgid "Basic Information"
 msgstr "基本情報"
 
+#: admin.py:211 templates/admin/search/searchengine/change_form.html:141
 msgid "Content Configuration"
 msgstr "コンテンツ設定"
 
+#: admin.py:218 templates/admin/search/searchengine/change_form.html:95
+#: templates/admin/search/searchengine/change_form.html:163
 msgid "Exclusions"
 msgstr "除外"
 
+#: admin.py:225 templates/admin/search/searchengine/change_form.html:100
+#: templates/admin/search/searchengine/change_form.html:186
 msgid "Metadata"
 msgstr "メタデータ"
 
+#: admin.py:240 admin.py:300
+#: templates/admin/search/searchengine/change_list.html:59
+#: templates/admin/search/searchredirect/change_list.html:83
+#: templates/admin/search/synonym/change_list.html:96
 msgid "All"
 msgstr "すべて"
 
+#: admin.py:279 admin.py:341
 msgid "Scope"
 msgstr "範囲"
 
+#: admin.py:283
 msgid "Optionally limit this synonym to a specific language or search engine."
 msgstr "この同義語を特定の言語または検索エンジンに限定する場合があります。"
 
+#: admin.py:297 models.py:352 models.py:384
+#: templates/admin/search/synonym/change_list.html:118
 msgid "Synonyms"
 msgstr "同義語"
 
+#: admin.py:302 models.py:363 models.py:497
+#: templates/admin/search/synonym/change_list.html:66
 msgid "Language"
 msgstr "言語"
 
+#: admin.py:335
 msgid "Redirect"
 msgstr "リダイレクト"
 
+#: admin.py:348
 msgid "Statistics"
 msgstr "統計"
 
+#: admin.py:363 models.py:426
 msgid "Redirect URL"
 msgstr "リダイレクトURL"
 
+#: admin.py:509
 msgid "Text Preview"
 msgstr "テキストプレビュー"
 
+#: api_views.py:66 api_views.py:139 api_views.py:396
 msgid "Search query"
 msgstr "検索クエリ"
 
+#: api_views.py:68
 msgid "Language code (e.g., en, es, fr)"
 msgstr "言語コード（例: en, es, fr）"
 
+#: api_views.py:71 api_views.py:142 api_views.py:292
 msgid "Search engine slug"
 msgstr "検索エンジン用スラッグ"
 
+#: api_views.py:73
 msgid "Max results per type"
 msgstr "タイプごとの最大結果数"
 
+#: api_views.py:77
 msgid "Autocomplete search"
 msgstr "オートコンプリート検索"
 
+#: api_views.py:79
 msgid ""
 "Fast predictive search suggestions. Returns products, categories, brands, "
 "and blog posts."
 msgstr "高速な予測検索の提案。製品、カテゴリ、ブランド、ブログ記事を返します。"
 
+#: api_views.py:140 api_views.py:291 api_views.py:397
 msgid "Language code"
 msgstr "言語コード"
 
+#: api_views.py:146
 msgid "Filter by type (product/category/brand/blog_post)"
 msgstr "タイプでフィルタ (product/category/brand/blog_post)"
 
+#: api_views.py:149
 msgid "Filter by category ID"
 msgstr "カテゴリIDでフィルター"
 
+#: api_views.py:150
 msgid "Filter by brand ID"
 msgstr "ブランドIDでフィルター"
 
+#: api_views.py:151
 msgid "Minimum price"
 msgstr "最低価格"
 
+#: api_views.py:152
 msgid "Maximum price"
 msgstr "最大価格"
 
+#: api_views.py:153
 msgid "Only in-stock items"
 msgstr "在庫のみの商品"
 
+#: api_views.py:156
 msgid "Sort order (relevance/price_asc/price_desc/newest)"
 msgstr "並び順 (関連性/価格昇順/価格降順/最新)"
 
+#: api_views.py:159
 msgid "Page number"
 msgstr "ページ番号"
 
+#: api_views.py:160
 msgid "Results per page"
 msgstr "1ページあたりの結果数"
 
+#: api_views.py:164
 msgid "Full search results"
 msgstr "完全な検索結果"
 
+#: api_views.py:165
 msgid "Paginated search results with facets and filtering."
 msgstr "ファセットとフィルタリング付きのページネーション検索結果。"
 
+#: api_views.py:294
 msgid "Number of days to analyze"
 msgstr "分析する日数"
 
+#: api_views.py:296
 msgid "Max results"
 msgstr "最大結果数"
 
+#: api_views.py:300
 msgid "Trending searches"
 msgstr "トレンド検索"
 
+#: api_views.py:301
 msgid "Popular search queries over the specified period."
 msgstr "指定された期間における人気のある検索クエリ。"
 
+#: api_views.py:346
 msgid "Search settings"
 msgstr "検索設定"
 
+#: api_views.py:347
 msgid "Public search configuration for frontend JS."
 msgstr "フロントエンドJS用の公開検索設定。"
 
+#: api_views.py:366
 msgid "Track click"
 msgstr "クリックを追跡"
 
+#: api_views.py:367
 msgid "Record a click on a search result for analytics."
 msgstr "検索結果へのクリックを分析のために記録します。"
 
+#: api_views.py:401
 msgid "Spelling suggestions"
 msgstr "綴りの提案"
 
+#: api_views.py:402
 msgid "Suggest spelling corrections for misspelled queries."
 msgstr "誤字・脱字のクエリに対してスペル修正を提案します。"
 
+#: api_views.py:443
 msgid "List search engines"
 msgstr "検索エンジンを一覧表示"
 
+#: api_views.py:444
 msgid "Get list of available search engines."
 msgstr "利用可能な検索エンジンのリストを取得します。"
 
+#: apps.py:8 templates/admin/search/searchengine/change_list.html:48
+#: templates/admin/search/searchredirect/change_list.html:45
+#: templates/admin/search/synonym/change_list.html:45
 msgid "Search"
 msgstr "検索"
 
+#: models.py:17
 msgid "Search Enabled"
 msgstr "検索を有効にする"
 
+#: models.py:19
 msgid "Enable or disable search functionality globally"
 msgstr "グローバルに検索機能を有効または無効にします。"
 
+#: models.py:22
 msgid "Minimum Query Length"
 msgstr "最小クエリ長"
 
+#: models.py:24
 msgid "Minimum number of characters required to trigger search"
 msgstr "検索をトリガーするために必要な最小文字数"
 
+#: models.py:29
 msgid "Autocomplete Enabled"
 msgstr "オートコンプリートを有効にする"
 
+#: models.py:31
 msgid "Show predictive search suggestions as user types"
 msgstr "ユーザーが入力するときに予測検索の提案を表示"
 
+#: models.py:34
 msgid "Autocomplete Max Results"
 msgstr "オートコンプリートの最大結果数"
 
+#: models.py:36
 msgid "Maximum number of suggestions per content type"
 msgstr "コンテンツタイプごとの最大提案数"
 
+#: models.py:39
 msgid "Autocomplete Debounce (ms)"
 msgstr "オートコンプリートのバウンド (ms)"
 
+#: models.py:41
 msgid "Delay in milliseconds before triggering autocomplete"
 msgstr "オートコンプリートをトリガーする前のミリ秒単位の遅延"
 
+#: models.py:44
 msgid "Show Thumbnails"
 msgstr "サムネイルを表示"
 
+#: models.py:46
 msgid "Display product/content thumbnails in search results"
 msgstr "検索結果に製品/コンテンツのサムネイルを表示"
 
+#: models.py:51
 msgid "Show Product Thumbnail"
 msgstr "製品サムネイルを表示"
 
+#: models.py:53
 msgid "Display product images in autocomplete dropdown"
 msgstr "オートコンプリートドロップダウンに製品画像を表示"
 
+#: models.py:56
 msgid "Show Product Description"
 msgstr "製品説明を表示"
 
+#: models.py:58
 msgid "Display short description in autocomplete dropdown"
 msgstr "オートコンプリートドロップダウンに短い説明を表示"
 
+#: models.py:61
 msgid "Show Product Price"
 msgstr "製品価格を表示"
 
+#: models.py:61
 msgid "Display price in autocomplete dropdown"
 msgstr "オートコンプリートドロップダウンに価格を表示"
 
+#: models.py:64
 msgid "Show Product SKU"
 msgstr "製品SKUを表示"
 
+#: models.py:64
 msgid "Display SKU in autocomplete dropdown"
 msgstr "オートコンプリートドロップダウンにSKUを表示"
 
+#: models.py:67
 msgid "Show Product Stock Status"
 msgstr "在庫状況を表示"
 
+#: models.py:69
 msgid "Display stock availability badge in autocomplete dropdown"
 msgstr "オートコンプリートドロップダウンに在庫状況のバッジを表示"
 
+#: models.py:74
 msgid "Show Blog Featured Image"
 msgstr "ブログの特集画像を表示"
 
+#: models.py:76
 msgid "Display featured image in blog post autocomplete results"
 msgstr "ブログ投稿のオートコンプリート結果に特集画像を表示"
 
+#: models.py:79
 msgid "Show Blog Excerpt"
 msgstr "ブログの抜粋を表示"
 
+#: models.py:81
 msgid "Display excerpt in blog post autocomplete results"
 msgstr "ブログ投稿のオートコンプリート結果に抜粋を表示"
 
+#: models.py:84
 msgid "Blog Excerpt Length"
 msgstr "ブログ抜粋の長さ"
 
+#: models.py:86
 msgid "Maximum characters to show for blog excerpts"
 msgstr "ブログの抜粋に表示する最大文字数"
 
+#: models.py:91
 msgid "Show Category Thumbnail"
 msgstr "カテゴリのサムネイルを表示"
 
+#: models.py:93
 msgid "Display category image in autocomplete dropdown"
 msgstr "オートコンプリートドロップダウンにカテゴリ画像を表示"
 
+#: models.py:96
 msgid "Show Category Product Count"
 msgstr "カテゴリの商品数を表示"
 
+#: models.py:98
 msgid "Display product count in category autocomplete results"
 msgstr "カテゴリのオートコンプリート結果に製品数を表示"
 
+#: models.py:103
 msgid "Show Brand Logo"
 msgstr "ブランドロゴを表示"
 
+#: models.py:105
 msgid "Display brand logo in autocomplete dropdown"
 msgstr "オートコンプリートドロップダウンにブランドロゴを表示"
 
+#: models.py:108
 msgid "Show Brand Product Count"
 msgstr "ブランドの商品数を表示"
 
+#: models.py:110
 msgid "Display product count in brand autocomplete results"
 msgstr "ブランドのオートコンプリート結果に製品数を表示"
 
+#: models.py:115
 msgid "Search Products"
 msgstr "商品を検索"
 
+#: models.py:115 views/engine_wizard.py:18
 msgid "Include products in search results"
 msgstr "検索結果に商品を含める"
 
+#: models.py:118
 msgid "Search Categories"
 msgstr "カテゴリを検索"
 
+#: models.py:118 views/engine_wizard.py:19
 msgid "Include categories in search results"
 msgstr "検索結果にカテゴリを含める"
 
+#: models.py:121
 msgid "Search Brands"
 msgstr "ブランドを検索"
 
+#: models.py:121 views/engine_wizard.py:20
 msgid "Include brands in search results"
 msgstr "検索結果にブランドを含める"
 
+#: models.py:124
 msgid "Search Blog Posts"
 msgstr "ブログ投稿を検索"
 
+#: models.py:124 views/engine_wizard.py:21
 msgid "Include blog posts in search results"
 msgstr "ブログ投稿を検索結果に含める"
 
+#: models.py:129
 msgid "Index SKUs"
 msgstr "SKUをインデックス化"
 
+#: models.py:129
 msgid "Include product SKUs in search"
 msgstr "検索に商品SKUを含める"
 
+#: models.py:132
 msgid "Index Attributes"
 msgstr "属性をインデックス化"
 
+#: models.py:134
 msgid "Include product attributes (color, size, etc.) in search"
 msgstr "製品属性（色、サイズなど）を検索に含める"
 
+#: models.py:137
 msgid "Index Custom Fields"
 msgstr "カスタムフィールドをインデックス化"
 
+#: models.py:139
 msgid "Include custom product fields in search"
 msgstr "カスタム製品フィールドを検索に含める"
 
+#: models.py:142
 msgid "Index Reviews"
 msgstr "レビューをインデックス化"
 
+#: models.py:142
 msgid "Include product review content in search"
 msgstr "製品レビューの内容を検索に含める"
 
+#: models.py:145
 msgid "Index Documents"
 msgstr "ドキュメントをインデックス化"
 
+#: models.py:147
 msgid "Index text content from digital asset documents (PDFs, Office files)"
 msgstr ""
 "デジタルアセットドキュメント（PDF、オフィスファイルなど）のテキスト内容をイン"
 "デックスに含める"
 
+#: models.py:152
 msgid "Fuzzy Matching Enabled"
 msgstr "ファジー検索を有効にする"
 
+#: models.py:154
 msgid "Enable typo tolerance in search queries"
 msgstr "検索クエリでタイプミスの許容を有効にする"
 
+#: models.py:157
 msgid "Fuzzy Threshold"
 msgstr "ファジーしきい値"
 
+#: models.py:162
 msgid "Similarity threshold for fuzzy matching (0-1, higher = stricter)"
 msgstr "ファジィマッチングの類似度閾値（0-1、値が高いほど厳しい）"
 
+#: models.py:165
 msgid "Fuzzy Max Edits"
 msgstr "ファジー最大編集数"
 
+#: models.py:167
 msgid "Maximum character edits allowed for fuzzy matching"
 msgstr "Fuzzyマッチングで許可される最大の文字編集数"
 
+#: models.py:172 views/engine_wizard.py:26
 msgid "Name Weight"
 msgstr "名前の重み"
 
+#: models.py:177 views/engine_wizard.py:26
 msgid "Relevance weight for product/item names"
 msgstr "商品/項目名の関連性重み"
 
+#: models.py:180 views/engine_wizard.py:27
 msgid "SKU Weight"
 msgstr "SKUの重み"
 
+#: models.py:185 views/engine_wizard.py:27
 msgid "Relevance weight for SKUs"
 msgstr "SKUの関連性重み"
 
+#: models.py:188 views/engine_wizard.py:28
 msgid "Description Weight"
 msgstr "説明の重み"
 
+#: models.py:193 views/engine_wizard.py:28
 msgid "Relevance weight for descriptions"
 msgstr "説明の関連性重み"
 
+#: models.py:196 views/engine_wizard.py:31
 msgid "Attributes Weight"
 msgstr "属性の重み"
 
+#: models.py:201
 msgid "Relevance weight for product attributes and custom fields"
 msgstr "製品属性とカスタムフィールドの関連性重み"
 
+#: models.py:204
 msgid "Reviews Weight"
 msgstr "レビューの重み"
 
+#: models.py:209
 msgid "Relevance weight for review content"
 msgstr "レビュー内容の関連性重み"
 
+#: models.py:212 views/engine_wizard.py:35
 msgid "Categories Weight"
 msgstr "カテゴリの重み"
 
+#: models.py:217 views/engine_wizard.py:35
 msgid "Relevance weight for category names"
 msgstr "カテゴリ名の関連性重み"
 
+#: models.py:220 views/engine_wizard.py:36
 msgid "Brands Weight"
 msgstr "ブランドの重み"
 
+#: models.py:225 views/engine_wizard.py:36
 msgid "Relevance weight for brand names"
 msgstr "ブランド名の関連性重み"
 
+#: models.py:228
 msgid "Blog Posts Weight"
 msgstr "ブログ投稿の重み"
 
+#: models.py:233
 msgid "Relevance weight for blog post content"
 msgstr "ブログ投稿内容の関連性重み"
 
+#: models.py:238
 msgid "Autocomplete Cache TTL"
 msgstr "オートコンプリートキャッシュTTL"
 
+#: models.py:240
 msgid "Time to live for autocomplete cache in seconds"
 msgstr "オートコンプリートキャッシュの有効時間（秒）"
 
+#: models.py:243
 msgid "Results Cache TTL"
 msgstr "結果キャッシュTTL"
 
+#: models.py:245
 msgid "Time to live for full search results cache in seconds"
 msgstr "フル検索結果キャッシュの有効時間（秒）"
 
+#: models.py:250
 msgid "Track Search Queries"
 msgstr "検索クエリの追跡"
 
+#: models.py:252
 msgid "Store search queries for analytics and trending searches"
 msgstr "分析とトレンド検索のために検索クエリを保存"
 
+#: models.py:255
 msgid "Track Clicks"
 msgstr "クリックの追跡"
 
+#: models.py:255
 msgid "Track clicks on search results for analytics"
 msgstr "分析のために検索結果へのクリックを追跡"
 
+#: models.py:258
 msgid "Track Zero Results"
 msgstr "ゼロ結果の追跡"
 
+#: models.py:260
 msgid "Flag and track queries that return no results"
 msgstr "結果が返されないクエリをフラグ付きで追跡"
 
+#: models.py:265
 msgid "Results Per Page"
 msgstr "1ページあたりの結果数"
 
+#: models.py:265
 msgid "Number of results to display per page"
 msgstr "1ページあたり表示する結果数"
 
+#: models.py:268 models.py:333 models.py:379 models.py:451 models.py:514
+#: models.py:564 models.py:609
 msgid "Created At"
 msgstr "作成日時"
 
+#: models.py:269 models.py:334 models.py:380 models.py:452 models.py:515
+#: models.py:565
 msgid "Updated At"
 msgstr "更新日時"
 
+#: models.py:272 models.py:273 models.py:276
+#: templates/admin/search/searchsettings/change_form.html:4
+#: templates/admin/search/searchsettings/change_form.html:14
 msgid "Search Settings"
 msgstr "検索設定"
 
+#: models.py:296
 msgid "Name"
 msgstr "名前"
 
+#: models.py:296
 msgid "Engine name (e.g., \"Shop Search\", \"Blog Search\")"
 msgstr "エンジン名（例: \"Shop Search\", \"Blog Search\"）"
 
+#: models.py:299 templates/admin/search/wizard/step1_basic.html:25
 msgid "Slug"
 msgstr "スラッグ"
 
+#: models.py:299
 msgid "URL-safe identifier"
 msgstr "URL安全な識別子"
 
+#: models.py:302 models.py:361 models.py:437
+#: templates/admin/search/partials/engine_cards.html:25
+#: templates/admin/search/partials/synonym_cards.html:39
+#: templates/admin/search/searchengine/change_form.html:36
+#: templates/admin/search/searchengine/change_list.html:60
+#: templates/admin/search/searchredirect/change_list.html:84
+#: templates/admin/search/synonym/change_list.html:97
+#: templates/admin/search/wizard/step1_basic.html:38
+#: templates/admin/search/wizard/step4_review.html:27
 msgid "Active"
 msgstr "アクティブ"
 
+#: models.py:302
 msgid "Enable or disable this search engine"
 msgstr "この検索エンジンを有効または無効にする"
 
+#: models.py:309
 msgid ""
 "List of searchable content types for this engine (e.g., [\"product\", "
 "\"category\"])"
@@ -489,335 +673,465 @@ msgstr ""
 "このエンジンで検索可能なコンテンツタイプのリスト（例: [\"product\", "
 "\"category\"]）"
 
+#: models.py:313
 msgid "Weight Overrides"
 msgstr "重みの上書き"
 
+#: models.py:316
 msgid "Engine-specific weight adjustments (e.g., {\"weight_name\": 2.0})"
 msgstr "エンジン固有の重み調整（例: {\"weight_name\": 2.0}）"
 
+#: models.py:322
 msgid "Excluded Categories"
 msgstr "除外カテゴリ"
 
+#: models.py:323
 msgid "Categories to exclude from this engine"
 msgstr "このエンジンから除外するカテゴリ"
 
+#: models.py:329
 msgid "Excluded Brands"
 msgstr "除外ブランド"
 
+#: models.py:330
 msgid "Brands to exclude from this engine"
 msgstr "このエンジンから除外するブランド"
 
+#: models.py:337 models.py:375 models.py:447 models.py:505
 msgid "Search Engine"
 msgstr "検索エンジン"
 
+#: models.py:338 templates/admin/search/searchengine/change_list.html:4
+#: templates/admin/search/searchengine/change_list.html:19
 msgid "Search Engines"
 msgstr "検索エンジン"
 
+#: models.py:350
 msgid "Term"
 msgstr "用語"
 
+#: models.py:350
 msgid "Original search term"
 msgstr "オリジナル検索用語"
 
+#: models.py:354
 msgid "List of equivalent terms (e.g., [\"sweater\", \"pullover\"])"
 msgstr "同等の語のリスト（例: [\"sweater\", \"pullover\"]）"
 
+#: models.py:357 templates/admin/search/partials/synonym_cards.html:49
 msgid "Bidirectional"
 msgstr "双方向"
 
+#: models.py:359
 msgid "Apply mapping both ways (e.g., jumper ↔ sweater)"
 msgstr "両方向にマッピングを適用（例: jumper ↔ sweater）"
 
+#: models.py:367
 msgid "Language code (e.g., \"en\", \"es\"). Leave blank for all languages."
 msgstr ""
 "言語コード（例: \"en\", \"es\"）。すべての言語に適用する場合は空欄にしてくだ"
 "さい。"
 
+#: models.py:376 models.py:448
 msgid "Apply to specific engine only. Leave blank for all engines."
 msgstr ""
 "特定のエンジンにのみ適用。すべてのエンジンに適用する場合は空欄にしてくださ"
 "い。"
 
+#: models.py:383
 msgid "Synonym"
 msgstr "同義語"
 
+#: models.py:404
 msgid "Exact Match"
 msgstr "完全一致"
 
+#: models.py:405 templates/admin/search/searchredirect/change_list.html:58
 msgid "Contains"
 msgstr "含む"
 
+#: models.py:406 templates/admin/search/searchredirect/change_list.html:59
 msgid "Starts With"
 msgstr "で始まる"
 
+#: models.py:407
 msgid "Regular Expression"
 msgstr "正規表現"
 
+#: models.py:411
 msgid "Temporary (302)"
 msgstr "一時的 (302)"
 
+#: models.py:412
 msgid "Permanent (301)"
 msgstr "永続的 (301)"
 
+#: models.py:416
 msgid "Search Term"
 msgstr "検索語"
 
+#: models.py:416
 msgid "Search term to trigger redirect"
 msgstr "リダイレクトをトリガーする検索語"
 
+#: models.py:419 templates/admin/search/searchredirect/change_list.html:53
 msgid "Match Type"
 msgstr "一致タイプ"
 
+#: models.py:423
 msgid "How to match the search term"
 msgstr "検索語をどのように一致させるか"
 
+#: models.py:428
 msgid "Target URL (can be relative like /products/sale/ or absolute)"
 msgstr "ターゲットURL（例: /products/sale/ のような相対URLまたは絶対URL）"
 
+#: models.py:431
 msgid "Redirect Type"
 msgstr "リダイレクトタイプ"
 
+#: models.py:435
 msgid "HTTP redirect status code"
 msgstr "HTTP リダイレクトステータスコード"
 
+#: models.py:439
 msgid "Hit Count"
 msgstr "ヒット数"
 
+#: models.py:439
 msgid "Number of times this redirect was triggered"
 msgstr "このリダイレクトがトリガーされた回数"
 
+#: models.py:455
 msgid "Search Redirect"
 msgstr "検索リダイレクト"
 
+#: models.py:456 templates/admin/search/searchredirect/change_list.html:4
+#: templates/admin/search/searchredirect/change_list.html:19
 msgid "Search Redirects"
 msgstr "検索リダイレクト一覧"
 
+#: models.py:475
 msgid "Query"
 msgstr "クエリ"
 
+#: models.py:475
 msgid "Original search query"
 msgstr "オリジナルの検索クエリ"
 
+#: models.py:477
 msgid "Normalized Query"
 msgstr "正規化されたクエリ"
 
+#: models.py:480
 msgid "Lowercase, trimmed query for aggregation"
 msgstr "小文字化・トリムされた集計用クエリ"
 
+#: models.py:483
 msgid "Result Count"
 msgstr "結果数"
 
+#: models.py:483
 msgid "Number of results returned"
 msgstr "返された結果数"
 
+#: models.py:491 models.py:560
 msgid "User"
 msgstr "ユーザー"
 
+#: models.py:494 models.py:562
 msgid "Session Key"
 msgstr "セッションキー"
 
+#: models.py:494
 msgid "For anonymous user tracking"
 msgstr "匿名ユーザーのトラッキング用"
 
+#: models.py:497
 msgid "Language code of the search"
 msgstr "検索の言語コード"
 
+#: models.py:508 templates/admin/search/partials/query_cards.html:20
 msgid "Zero Results"
 msgstr "0件の結果"
 
+#: models.py:508
 msgid "Whether this query returned no results"
 msgstr "このクエリが結果を返したかどうか"
 
+#: models.py:511
 msgid "Response Time (ms)"
 msgstr "応答時間 (ms)"
 
+#: models.py:511
 msgid "Search response time in milliseconds"
 msgstr "検索応答時間（ミリ秒）"
 
+#: models.py:518 models.py:544
+#: templates/admin/search/searchquery/change_list.html:86
 msgid "Search Query"
 msgstr "検索クエリ"
 
+#: models.py:519
 msgid "Search Queries"
 msgstr "検索クエリ一覧"
 
+#: models.py:547 models.py:594
 msgid "Content Type"
 msgstr "コンテンツタイプ"
 
+#: models.py:549 models.py:596
 msgid "Object ID"
 msgstr "オブジェクトID"
 
+#: models.py:552
 msgid "Position"
 msgstr "位置"
 
+#: models.py:552
 msgid "Position of the clicked item in search results"
 msgstr "検索結果でクリックされたアイテムの位置"
 
+#: models.py:568
 msgid "Search Click"
 msgstr "検索クリック"
 
+#: models.py:569
 msgid "Search Clicks"
 msgstr "検索クリック一覧"
 
+#: models.py:586
 msgid "PDF"
 msgstr "PDF"
 
+#: models.py:587
 msgid "Word Document"
 msgstr "ワードドキュメント"
 
+#: models.py:588
 msgid "Excel Spreadsheet"
 msgstr "エクセルスプレッドシート"
 
+#: models.py:589
 msgid "Text File"
 msgstr "テキストファイル"
 
+#: models.py:590
 msgid "Other"
 msgstr "その他"
 
+#: models.py:599
 msgid "Extracted Text"
 msgstr "抽出テキスト"
 
+#: models.py:599
 msgid "Text content extracted from the document"
 msgstr "ドキュメントから抽出されたテキストコンテンツ"
 
+#: models.py:602
 msgid "File Type"
 msgstr "ファイルタイプ"
 
+#: models.py:605
 msgid "Checksum"
 msgstr "チェックサム"
 
+#: models.py:605
 msgid "File checksum for change detection"
 msgstr "変更検出用ファイルチェックサム"
 
+#: models.py:608
 msgid "Indexed At"
 msgstr "インデックス作成日時"
 
+#: models.py:612
 msgid "Search Index"
 msgstr "検索インデックス"
 
+#: models.py:613
 msgid "Search Indexes"
 msgstr "検索インデックス一覧"
 
+#: templates/admin/search/partials/engine_cards.html:27
+#: templates/admin/search/partials/redirect_cards.html:32
+#: templates/admin/search/partials/synonym_cards.html:43
+#: templates/admin/search/searchengine/change_form.html:38
+#: templates/admin/search/searchengine/change_list.html:61
+#: templates/admin/search/searchredirect/change_list.html:85
+#: templates/admin/search/synonym/change_list.html:98
+#: templates/admin/search/wizard/step4_review.html:29
 msgid "Inactive"
 msgstr "非アクティブ"
 
+#: templates/admin/search/partials/engine_cards.html:34
+#: templates/admin/search/searchredirect/change_list.html:56
 msgid "All Types"
 msgstr "すべてのタイプ"
 
+#: templates/admin/search/partials/engine_cards.html:40
 msgid "Custom Weights"
 msgstr "カスタムウェイト"
 
+#: templates/admin/search/partials/engine_cards.html:45
 msgid "excluded categories"
 msgstr "除外カテゴリ"
 
+#: templates/admin/search/partials/engine_cards.html:50
 msgid "excluded brands"
 msgstr "除外ブランド"
 
+#: templates/admin/search/partials/engine_cards.html:54
+#: templates/admin/search/partials/synonym_cards.html:89
 msgid "Updated"
 msgstr "更新済み"
 
+#: templates/admin/search/partials/engine_cards.html:60
+#: templates/admin/search/partials/redirect_cards.html:48
 msgid "Edit"
 msgstr "編集"
 
+#: templates/admin/search/partials/engine_cards.html:63
+#: templates/admin/search/partials/redirect_cards.html:51
 msgid "Delete"
 msgstr "削除"
 
+#: templates/admin/search/partials/engine_cards.html:76
 msgid "No search engines found."
 msgstr "検索エンジンが見つかりません。"
 
+#: templates/admin/search/partials/engine_cards.html:78
 msgid "Create your first engine with the wizard"
 msgstr "ウィザードを使用して最初のエンジンを作成してください"
 
+#: templates/admin/search/partials/query_cards.html:10
 msgid "searches"
 msgstr "検索"
 
+#: templates/admin/search/partials/query_cards.html:16
 msgid "Avg Results"
 msgstr "平均結果数"
 
+#: templates/admin/search/partials/query_cards.html:24
 msgid "CTR"
 msgstr "CTR"
 
+#: templates/admin/search/partials/query_cards.html:28
 msgid "Avg Response"
 msgstr "平均応答"
 
+#: templates/admin/search/partials/query_cards.html:35
+#: templates/admin/search/synonym/change_list.html:25
 msgid "Add Synonym"
 msgstr "同義語を追加"
 
+#: templates/admin/search/partials/query_cards.html:38
+#: templates/admin/search/searchredirect/change_list.html:25
 msgid "Add Redirect"
 msgstr "リダイレクトを追加"
 
+#: templates/admin/search/partials/query_cards.html:47
 msgid "No search queries found matching your filters."
 msgstr "フィルターに一致する検索クエリは見つかりませんでした。"
 
+#: templates/admin/search/partials/redirect_cards.html:37
 msgid "Hits:"
 msgstr "ヒット:"
 
+#: templates/admin/search/partials/redirect_cards.html:64
 msgid "No redirects found matching your filters."
 msgstr "フィルターに一致するリダイレクトは見つかりませんでした。"
 
+#: templates/admin/search/partials/synonym_cards.html:53
 msgid "One-way"
 msgstr "片道"
 
+#: templates/admin/search/partials/synonym_cards.html:58
+#: templates/admin/search/synonym/change_list.html:121
+#: templates/admin/search/synonym/change_list.html:137
 msgid "synonym"
 msgstr "同義語"
 
+#: templates/admin/search/partials/synonym_cards.html:71
 msgid "All languages"
 msgstr "すべての言語"
 
+#: templates/admin/search/partials/synonym_cards.html:83
 msgid "All engines"
 msgstr "すべてのエンジン"
 
+#: templates/admin/search/partials/synonym_cards.html:89
 msgid "ago"
 msgstr "前"
 
+#: templates/admin/search/partials/synonym_cards.html:97
 msgid "Edit synonym"
 msgstr "同義語を編集"
 
+#: templates/admin/search/partials/synonym_cards.html:102
 msgid "Delete synonym"
 msgstr "同義語を削除"
 
+#: templates/admin/search/partials/synonym_cards.html:112
 msgid "No synonyms found matching your criteria."
 msgstr "基準に一致する類義語は見つかりませんでした。"
 
+#: templates/admin/search/partials/synonym_cards.html:114
 msgid "Try adjusting your filters or"
 msgstr "フィルタを調整するか、または"
 
+#: templates/admin/search/partials/synonym_cards.html:115
 msgid "add a new synonym"
 msgstr "新しい同義語を追加"
 
+#: templates/admin/search/searchengine/change_form.html:4
+#: templates/admin/search/searchengine/change_form.html:27
 msgid "Edit Search Engine"
 msgstr "検索エンジンの編集"
 
+#: templates/admin/search/searchengine/change_form.html:4
+#: templates/admin/search/searchengine/change_form.html:29
 msgid "Add Search Engine"
 msgstr "検索エンジンの追加"
 
+#: templates/admin/search/searchengine/change_form.html:40
 msgid "Created"
 msgstr "作成済み"
 
+#: templates/admin/search/searchengine/change_form.html:45
+#: templates/admin/search/searchengine/change_form.html:220
 msgid "Save and continue editing"
 msgstr "保存して編集を続ける"
 
+#: templates/admin/search/searchengine/change_form.html:48
+#: templates/admin/search/searchengine/change_form.html:219
 msgid "Save"
 msgstr "保存"
 
+#: templates/admin/search/searchengine/change_form.html:61
 msgid "Please correct the errors below"
 msgstr "以下のエラーを修正してください"
 
+#: templates/admin/search/searchengine/change_form.html:87
 msgid "Basic"
 msgstr "基本"
 
+#: templates/admin/search/searchengine/change_form.html:91
 msgid "Content"
 msgstr "コンテンツ"
 
+#: templates/admin/search/searchengine/change_form.html:142
 msgid ""
 "Configure which content types this engine searches and adjust relevance "
 "weights."
 msgstr ""
 "このエンジンが検索するコンテンツタイプを設定し、関連性の重みを調整します。"
 
+#: templates/admin/search/searchengine/change_form.html:164
 msgid ""
 "Exclude specific categories or brands from this search engine's results."
 msgstr "この検索エンジンの結果から特定のカテゴリやブランドを除外します。"
 
+#: templates/admin/search/searchengine/change_list.html:21
 msgid ""
 "Configure different search engines for different contexts (e.g., shop "
 "search, blog search). Each engine can have its own content types, weights, "
@@ -827,81 +1141,121 @@ msgstr ""
 "ンを構成できます。各エンジンは独自のコンテンツタイプ、重み、除外条件を持つこ"
 "とができます。"
 
+#: templates/admin/search/searchengine/change_list.html:25
 msgid "Setup Wizard"
 msgstr "セットアップウィザード"
 
+#: templates/admin/search/searchengine/change_list.html:28
 msgid "Add Engine"
 msgstr "エンジンを追加"
 
+#: templates/admin/search/searchengine/change_list.html:37
+#: templates/admin/search/searchredirect/change_list.html:34
+#: templates/admin/search/synonym/change_list.html:34
 msgid "Filters"
 msgstr "フィルター"
 
+#: templates/admin/search/searchengine/change_list.html:50
 msgid "Filter by name..."
 msgstr "名前でフィルタ..."
 
+#: templates/admin/search/searchengine/change_list.html:56
+#: templates/admin/search/searchredirect/change_list.html:80
+#: templates/admin/search/synonym/change_list.html:93
 msgid "Status"
 msgstr "ステータス"
 
+#: templates/admin/search/searchengine/change_list.html:70
+#: templates/admin/search/searchredirect/change_list.html:94
+#: templates/admin/search/synonym/change_list.html:107
 msgid "Apply Filters"
 msgstr "フィルターを適用"
 
+#: templates/admin/search/searchengine/change_list.html:73
+#: templates/admin/search/searchredirect/change_list.html:97
+#: templates/admin/search/synonym/change_list.html:110
 msgid "Clear All"
 msgstr "すべてクリア"
 
+#: templates/admin/search/searchengine/change_list.html:81
 msgid "Engines"
 msgstr "エンジン"
 
+#: templates/admin/search/searchengine/change_list.html:84
+#: templates/admin/search/searchengine/change_list.html:100
 msgid "engine"
 msgstr "エンジン"
 
+#: templates/admin/search/searchengine/change_list.html:93
 msgid "Loading engines..."
 msgstr "エンジンを読み込み中..."
 
+#: templates/admin/search/searchquery/change_list.html:4
+#: templates/admin/search/searchquery/change_list.html:17
 msgid "Search Analytics"
 msgstr "検索分析"
 
+#: templates/admin/search/searchquery/change_list.html:21
 msgid "Export CSV"
 msgstr "CSVでエクスポート"
 
+#: templates/admin/search/searchquery/change_list.html:32
 msgid "Total Searches"
 msgstr "総検索数"
 
+#: templates/admin/search/searchquery/change_list.html:39
 msgid "Unique Queries"
 msgstr "ユニークなクエリ"
 
+#: templates/admin/search/searchquery/change_list.html:46
 msgid "Zero Result Rate"
 msgstr "ゼロ結果率"
 
+#: templates/admin/search/searchquery/change_list.html:53
 msgid "Avg Response Time"
 msgstr "平均応答時間"
 
+#: templates/admin/search/searchquery/change_list.html:60
 msgid "Click-Through Rate"
 msgstr "クリック-through率"
 
+#: templates/admin/search/searchquery/change_list.html:69
 msgid "From"
 msgstr "開始"
 
+#: templates/admin/search/searchquery/change_list.html:73
 msgid "To"
 msgstr "まで"
 
+#: templates/admin/search/searchquery/change_list.html:77
+#: templates/admin/search/searchredirect/change_list.html:67
+#: templates/admin/search/synonym/change_list.html:53
 msgid "Engine"
 msgstr "エンジン"
 
+#: templates/admin/search/searchquery/change_list.html:79
+#: templates/admin/search/searchredirect/change_list.html:70
+#: templates/admin/search/synonym/change_list.html:56
 msgid "All Engines"
 msgstr "すべてのエンジン"
 
+#: templates/admin/search/searchquery/change_list.html:88
 msgid "Filter by query..."
 msgstr "クエリでフィルタ..."
 
+#: templates/admin/search/searchquery/change_list.html:93
 msgid "Zero results only"
 msgstr "ゼロ結果のみ"
 
+#: templates/admin/search/searchquery/change_list.html:96
 msgid "Apply"
 msgstr "適用"
 
+#: templates/admin/search/searchquery/change_list.html:103
 msgid "Loading..."
 msgstr "読み込み中..."
 
+#: templates/admin/search/searchredirect/change_list.html:21
 msgid ""
 "Redirects automatically send users to a specific page when they search for "
 "certain terms. Great for promotional campaigns or common misspellings."
@@ -909,33 +1263,45 @@ msgstr ""
 "特定の語句で検索された場合、ユーザーを特定のページに自動的にリダイレクトしま"
 "す。プロモーションキャンペーンや一般的なスペルミスの処理に最適です。"
 
+#: templates/admin/search/searchredirect/change_list.html:47
 msgid "Filter by term or URL..."
 msgstr "語句またはURLでフィルタ..."
 
+#: templates/admin/search/searchredirect/change_list.html:57
 msgid "Exact"
 msgstr "正確に"
 
+#: templates/admin/search/searchredirect/change_list.html:60
 msgid "Regex"
 msgstr "正規表現"
 
+#: templates/admin/search/searchredirect/change_list.html:105
 msgid "Redirects"
 msgstr "リダイレクト"
 
+#: templates/admin/search/searchredirect/change_list.html:108
+#: templates/admin/search/searchredirect/change_list.html:124
 msgid "redirect"
 msgstr "リダイレクト"
 
+#: templates/admin/search/searchredirect/change_list.html:117
 msgid "Loading redirects..."
 msgstr "リダイレクトを読み中..."
 
+#: templates/admin/search/searchsettings/change_form.html:43
+#: templates/admin/search/wizard/base.html:43
 msgid "Weights"
 msgstr "重み"
 
+#: templates/admin/search/searchsettings/change_form.html:59
 msgid "General Settings"
 msgstr "一般的な設定"
 
+#: templates/admin/search/searchsettings/change_form.html:105
 msgid "Autocomplete Display Settings"
 msgstr "オートコンプリート表示設定"
 
+#: templates/admin/search/searchsettings/change_form.html:106
 msgid ""
 "Configure which information to display for each content type in autocomplete "
 "results."
@@ -943,34 +1309,44 @@ msgstr ""
 "オートコンプリートの結果で、各コンテンツタイプに表示する情報を構成してくださ"
 "い。"
 
+#: templates/admin/search/searchsettings/change_form.html:108
 msgid "Product Display"
 msgstr "商品表示"
 
+#: templates/admin/search/searchsettings/change_form.html:147
 msgid "Blog Post Display"
 msgstr "ブログ投稿表示"
 
+#: templates/admin/search/searchsettings/change_form.html:172
 msgid "Category Display"
 msgstr "カテゴリ表示"
 
+#: templates/admin/search/searchsettings/change_form.html:190
 msgid "Brand Display"
 msgstr "ブランド表示"
 
+#: templates/admin/search/searchsettings/change_form.html:211
 msgid "Searchable Content Types"
 msgstr "検索可能なコンテンツタイプ"
 
+#: templates/admin/search/searchsettings/change_form.html:212
 msgid "Choose which content types to include in search results."
 msgstr "検索結果に含めるコンテンツタイプを選択してください。"
 
+#: templates/admin/search/searchsettings/change_form.html:248
 msgid ""
 "Configure which additional content fields to include in the search index."
 msgstr "検索インデックスに含める追加のコンテンツフィールドを構成してください。"
 
+#: templates/admin/search/searchsettings/change_form.html:295
 msgid "Fuzzy Matching (Typo Tolerance)"
 msgstr "曖昧な一致（タイプミスの許容）"
 
+#: templates/admin/search/searchsettings/change_form.html:296
 msgid "Configure how tolerant the search is to spelling mistakes and typos."
 msgstr "検索がスペルミスやタイプミスに対してどの程度寛容かを構成してください。"
 
+#: templates/admin/search/searchsettings/change_form.html:319
 msgid ""
 "Adjust how much each field contributes to search relevance. Higher values "
 "mean more importance."
@@ -978,24 +1354,32 @@ msgstr ""
 "各フィールドが検索の関連性に与える影響を調整してください。値が高いほど重要度"
 "が高くなります。"
 
+#: templates/admin/search/searchsettings/change_form.html:339
 msgid "Cache Settings"
 msgstr "キャッシュ設定"
 
+#: templates/admin/search/searchsettings/change_form.html:340
 msgid "Configure how long search results are cached for faster performance."
 msgstr "検索結果のキャッシュ期間を設定して、パフォーマンスを向上させます。"
 
+#: templates/admin/search/searchsettings/change_form.html:357
 msgid "Analytics & Tracking"
 msgstr "分析・トラッキング"
 
+#: templates/admin/search/searchsettings/change_form.html:358
 msgid "Configure what search data to collect for analytics."
 msgstr "分析用に収集する検索データを構成してください。"
 
+#: templates/admin/search/searchsettings/change_form.html:391
 msgid "Save Settings"
 msgstr "設定を保存"
 
+#: templates/admin/search/synonym/change_list.html:4
+#: templates/admin/search/synonym/change_list.html:19
 msgid "Search Synonyms"
 msgstr "検索の同義語"
 
+#: templates/admin/search/synonym/change_list.html:21
 msgid ""
 "Synonyms allow search queries to match related terms. For example, 'laptop' "
 "can also match 'notebook' and 'portable computer'."
@@ -1003,27 +1387,36 @@ msgstr ""
 "類義語により、検索クエリが関連語と一致するようになります。例えば、「laptop」"
 "は「notebook」や「portable computer」にも一致します。"
 
+#: templates/admin/search/synonym/change_list.html:47
 msgid "Filter by term..."
 msgstr "語句でフィルタ..."
 
+#: templates/admin/search/synonym/change_list.html:69
 msgid "All Languages"
 msgstr "すべての言語"
 
+#: templates/admin/search/synonym/change_list.html:130
 msgid "Loading synonyms..."
 msgstr "同義語を読み中..."
 
+#: templates/admin/search/wizard/base.html:4
+#: templates/admin/search/wizard/base.html:15
 msgid "Search Engine Setup"
 msgstr "検索エンジンの設定"
 
+#: templates/admin/search/wizard/base.html:16
 msgid "Configure a new search engine for your store in a few simple steps."
 msgstr "数ステップでストア向けの新しい検索エンジンを構成してください。"
 
+#: templates/admin/search/wizard/base.html:25
 msgid "Basic Info"
 msgstr "基本情報"
 
+#: templates/admin/search/wizard/base.html:50
 msgid "Review"
 msgstr "レビュー"
 
+#: templates/admin/search/wizard/step1_basic.html:7
 msgid ""
 "Give your search engine a name and identifier. The slug will be used in URLs "
 "and API calls."
@@ -1031,28 +1424,37 @@ msgstr ""
 "検索エンジンに名前と識別子を付与してください。slugはURLやAPI呼び出しで使用さ"
 "れます。"
 
+#: templates/admin/search/wizard/step1_basic.html:14
 msgid "Engine Name"
 msgstr "エンジン名"
 
+#: templates/admin/search/wizard/step1_basic.html:17
 msgid "e.g., Shop Search, Blog Search"
 msgstr "例: Shop Search, Blog Search"
 
+#: templates/admin/search/wizard/step1_basic.html:20
 msgid "A friendly name to identify this search engine."
 msgstr "この検索エンジンを識別するためのフレンドリな名前です。"
 
+#: templates/admin/search/wizard/step1_basic.html:28
 msgid "e.g., shop-search, blog-search"
 msgstr "例: shop-search, blog-search"
 
+#: templates/admin/search/wizard/step1_basic.html:31
 msgid "URL-safe identifier. Leave blank to auto-generate from the name."
 msgstr ""
 "URLが安全な識別子。名前から自動生成する場合、空白のままにしてください。"
 
+#: templates/admin/search/wizard/step1_basic.html:42
 msgid "Inactive engines won't be available for search queries."
 msgstr "非アクティブなエンジンは検索クエリでは利用できません。"
 
+#: templates/admin/search/wizard/step1_basic.html:50
+#: templates/admin/search/wizard/step3_weights.html:57
 msgid "Tip"
 msgstr "ヒント"
 
+#: templates/admin/search/wizard/step1_basic.html:51
 msgid ""
 "You can create multiple engines for different purposes. For example, a 'Shop "
 "Search' for products and a 'Blog Search' for articles."
@@ -1060,12 +1462,17 @@ msgstr ""
 "さまざまな目的のために複数のエンジンを作成できます。例えば、製品向けの「Shop "
 "Search」と記事向けの「Blog Search」です。"
 
+#: templates/admin/search/wizard/step1_basic.html:61
 msgid "Cancel"
 msgstr "キャンセル"
 
+#: templates/admin/search/wizard/step1_basic.html:64
+#: templates/admin/search/wizard/step2_content.html:47
+#: templates/admin/search/wizard/step3_weights.html:73
 msgid "Next"
 msgstr "次へ"
 
+#: templates/admin/search/wizard/step2_content.html:7
 msgid ""
 "Select which content types this search engine will index and include in "
 "results."
@@ -1073,9 +1480,11 @@ msgstr ""
 "この検索エンジンがインデックス化し、結果に含めるコンテンツタイプを選択してく"
 "ださい。"
 
+#: templates/admin/search/wizard/step2_content.html:16
 msgid "Note"
 msgstr "メモ"
 
+#: templates/admin/search/wizard/step2_content.html:17
 msgid ""
 "Leave all unchecked to search all content types. Select specific types to "
 "limit what this engine searches."
@@ -1083,9 +1492,13 @@ msgstr ""
 "すべてのチェックを外すと、すべてのコンテンツタイプを検索できます。検索対象を"
 "限定するには、特定のタイプを選択してください。"
 
+#: templates/admin/search/wizard/step2_content.html:44
+#: templates/admin/search/wizard/step3_weights.html:70
+#: templates/admin/search/wizard/step4_review.html:97
 msgid "Back"
 msgstr "戻る"
 
+#: templates/admin/search/wizard/step3_weights.html:7
 msgid ""
 "Optionally customize how different fields contribute to search relevance. "
 "Higher values mean more importance."
@@ -1093,18 +1506,22 @@ msgstr ""
 "必要に応じて、各フィールドが検索の関連性に与える影響をカスタマイズできます。"
 "値が高いほど重要度が高くなります。"
 
+#: templates/admin/search/wizard/step3_weights.html:17
 msgid "Use custom weights for this engine"
 msgstr "このエンジンでカスタム重みを使用する"
 
+#: templates/admin/search/wizard/step3_weights.html:21
 msgid ""
 "When disabled, the engine uses the global weight settings from Search "
 "Settings."
 msgstr ""
 "無効にすると、エンジンはSearch Settingsからグローバルな重み設定を使用します。"
 
+#: templates/admin/search/wizard/step3_weights.html:28
 msgid "Weight Configuration"
 msgstr "ウェイト設定"
 
+#: templates/admin/search/wizard/step3_weights.html:58
 msgid ""
 "Higher weights (up to 2.0) make matches in that field more important. A "
 "weight of 0 excludes the field from relevance scoring. Default values work "
@@ -1114,33 +1531,43 @@ msgstr ""
 "の場合、そのフィールドは関連性スコアリングから除外されます。デフォルト値はほ"
 "とんどの使用ケースでうまく動作します。"
 
+#: templates/admin/search/wizard/step4_review.html:6
 msgid "Review & Create"
 msgstr "確認と作成"
 
+#: templates/admin/search/wizard/step4_review.html:7
 msgid "Review your search engine configuration before creating it."
 msgstr "これを作成する前に、検索エンジンの構成を確認してください。"
 
+#: templates/admin/search/wizard/step4_review.html:18
 msgid "Name:"
 msgstr "名前:"
 
+#: templates/admin/search/wizard/step4_review.html:21
 msgid "Slug:"
 msgstr "スラッグ:"
 
+#: templates/admin/search/wizard/step4_review.html:24
 msgid "Status:"
 msgstr "ステータス:"
 
+#: templates/admin/search/wizard/step4_review.html:53
 msgid "All Content Types"
 msgstr "すべてのコンテンツタイプ"
 
+#: templates/admin/search/wizard/step4_review.html:71
 msgid "default:"
 msgstr "デフォルト:"
 
+#: templates/admin/search/wizard/step4_review.html:78
 msgid "Using global weight settings from Search Settings."
 msgstr "検索設定からグローバルな重み設定を使用しています。"
 
+#: templates/admin/search/wizard/step4_review.html:86
 msgid "Ready to create"
 msgstr "作成準備完了"
 
+#: templates/admin/search/wizard/step4_review.html:87
 msgid ""
 "Click 'Create Engine' to create this search engine. You can edit the "
 "configuration later, including adding category and brand exclusions."
@@ -1148,13 +1575,16 @@ msgstr ""
 "'Create Engine'をクリックしてこの検索エンジンを作成してください。後で構成を編"
 "集できます。カテゴリやブランドの除外を追加することも可能です。"
 
+#: templates/admin/search/wizard/step4_review.html:100
 msgid "Create Engine"
 msgstr "エンジンを作成"
 
+#: templates/search/search_results.html:4
 #, python-format
 msgid "Search Results for \"%(q)s\""
 msgstr "「%(q)s」の検索結果"
 
+#: templates/search/search_results.html:17
 #, python-format
 msgid ""
 "\n"
@@ -1173,10 +1603,12 @@ msgstr[1] ""
 "                    %(counter)s 件の \"%(q)s\" の結果\n"
 "                "
 
+#: templates/search/search_results.html:29
 #, python-format
 msgid "Search completed in %(time)sms"
 msgstr "%(time)sms で検索が完了しました"
 
+#: templates/search/search_results.html:142
 #, python-format
 msgid ""
 "We couldn't find anything matching \"%(q)s\". Try different keywords or "
@@ -1185,43 +1617,55 @@ msgstr ""
 "\"%(q)s\" に一致するものはありませんでした。異なるキーワードを試してみたり、"
 "カテゴリを閲覧してみてください。"
 
+#: templates/search/search_results.html:211
 #, python-format
 msgid "%(count)s product"
 msgid_plural "%(count)s products"
 msgstr[0] "%(count)s 商品"
 msgstr[1] "%(count)s 商品"
 
+#: views/engine_wizard.py:18
 msgid "Products"
 msgstr "商品"
 
+#: views/engine_wizard.py:19
 msgid "Categories"
 msgstr "カテゴリ"
 
+#: views/engine_wizard.py:20
 msgid "Brands"
 msgstr "ブランド"
 
+#: views/engine_wizard.py:21
 msgid "Blog Posts"
 msgstr "ブログ投稿"
 
+#: views/engine_wizard.py:33
 msgid "Relevance weight for product attributes"
 msgstr "製品属性の関連性ウェイト"
 
+#: views/engine_wizard.py:94
 msgid "Engine name is required."
 msgstr "エンジン名は必須です。"
 
+#: views/engine_wizard.py:103
 msgid "An engine with this slug already exists."
 msgstr "このスラッグを持つエンジンはすでに存在しています。"
 
+#: views/engine_wizard.py:129
 msgid "Please complete Step 1 first."
 msgstr "まずステップ1を完了してください。"
 
+#: views/engine_wizard.py:166 views/engine_wizard.py:216
 msgid "Please complete the wizard steps."
 msgstr "ウィザードの手順を完了してください。"
 
+#: views/engine_wizard.py:246
 #, python-format
 msgid "Search engine \"%(name)s\" created successfully!"
 msgstr "検索エンジン \"%(name)s\" が正常に作成されました！"
 
+#: views/engine_wizard.py:252
 #, python-format
 msgid "Failed to create engine: %(error)s"
 msgstr "エンジンの作成に失敗しました: %(error)s"

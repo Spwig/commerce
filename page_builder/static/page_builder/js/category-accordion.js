@@ -2,11 +2,13 @@
 
 /**
  * Category Accordion - Interactive expandable image panels.
- * Handles click-to-expand behavior, keyboard navigation,
- * and responsive adjustments.
+ * Panels expand on hover (mouse) and every click/tap navigates straight
+ * to the category page. Keyboard navigation moves the expanded panel.
  */
 (function () {
   'use strict';
+
+  var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   document.querySelectorAll('.cat-accordion').forEach(initAccordion);
 
@@ -23,25 +25,23 @@
     // Apply height class
     accordion.classList.add('cat-accordion--height-' + config.height);
 
-    // Set CSS custom property for expand ratio
+    // Expose merchant options to the stylesheet
     accordion.style.setProperty('--accordion-expand-ratio', config.expandRatio);
     accordion.style.setProperty('--accordion-transition-speed', config.transitionSpeed + 'ms');
 
-    // Click to expand (toggle on mobile, expand on desktop)
+    function activate(panel) {
+      panels.forEach(function (p) {
+        p.classList.toggle('cat-accordion__panel--active', p === panel);
+      });
+    }
+
+    // Hovering a panel expands it; clicks are left alone so a single
+    // click (or tap on touch devices) always follows the link.
     panels.forEach(function (panel) {
-      panel.addEventListener('click', function (e) {
-        // On mobile (stacked layout), don't interfere - let the link navigate
-        if (window.innerWidth <= 768) return;
-
-        // If panel is already active, let the link navigate
-        if (panel.classList.contains('cat-accordion__panel--active')) return;
-
-        // Otherwise, expand this panel first (prevent navigation)
-        e.preventDefault();
-        panels.forEach(function (p) {
-          p.classList.remove('cat-accordion__panel--active');
-        });
-        panel.classList.add('cat-accordion__panel--active');
+      panel.addEventListener('pointerenter', function (e) {
+        if (e.pointerType === 'mouse' && hoverCapable.matches) {
+          activate(panel);
+        }
       });
     });
 
@@ -53,21 +53,15 @@
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         e.preventDefault();
         const nextIndex = (index + 1) % panels.length;
-        panels.forEach(function (p) {
-          p.classList.remove('cat-accordion__panel--active');
-        });
-        panels[nextIndex].classList.add('cat-accordion__panel--active');
+        activate(panels[nextIndex]);
         panels[nextIndex].focus();
       } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
         e.preventDefault();
         const prevIndex = index <= 0 ? panels.length - 1 : index - 1;
-        panels.forEach(function (p) {
-          p.classList.remove('cat-accordion__panel--active');
-        });
-        panels[prevIndex].classList.add('cat-accordion__panel--active');
+        activate(panels[prevIndex]);
         panels[prevIndex].focus();
       } else if (e.key === 'Enter' || e.key === ' ') {
-        // Navigate to the category
+        // Navigate to the expanded category
         if (activePanel) {
           const link = activePanel.getAttribute('href');
           if (link) {

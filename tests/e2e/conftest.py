@@ -27,12 +27,40 @@ def browser_type_launch_args():
 
 
 @pytest.fixture(scope="session")
-def browser_instance():
-    """Single browser instance reused across the entire test session."""
+def playwright_instance():
+    """Session-wide Playwright driver.
+
+    Split out of ``browser_instance`` so several engines can be launched from
+    one driver and so device descriptors (``playwright.devices[...]``) are
+    reachable from fixtures that don't own a browser.
+    """
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        yield browser
-        browser.close()
+        yield p
+
+
+@pytest.fixture(scope="session")
+def browser_engine(request):
+    """Engine name for ``browser_instance``.
+
+    Defaults to chromium so every pre-existing test keeps its current
+    behaviour. Cross-engine tests opt in with indirect parametrisation::
+
+        @pytest.mark.parametrize(
+            "browser_engine", ["chromium", "webkit"], indirect=True
+        )
+
+    WebKit is the closest local proxy for iOS Safari, which is where the
+    header stacking-context / overflow-clipping bugs actually bite.
+    """
+    return getattr(request, "param", "chromium")
+
+
+@pytest.fixture(scope="session")
+def browser_instance(playwright_instance, browser_engine):
+    """Browser instance reused across the session, one per engine."""
+    browser = getattr(playwright_instance, browser_engine).launch(headless=True)
+    yield browser
+    browser.close()
 
 
 @pytest.fixture
@@ -42,6 +70,52 @@ def page(browser_instance, live_server):
     pg._live_server_url = live_server.url
     yield pg
     pg.close()
+
+
+def _quiesce_and_close(context, pg):
+    """Park the page on about:blank before closing the context.
+
+    Closing a context with requests still in flight leaves the live_server
+    thread mid-transaction. The ``transaction=True`` teardown then issues
+    TRUNCATE, which needs an AccessExclusiveLock, and deadlocks against the
+    row locks that unfinished request still holds — surfacing as
+    "Database test_shop_db couldn't be flushed" and, worse, leaving the test
+    database in a half-migrated state for the next run.
+    """
+    try:
+        pg.goto("about:blank")
+        pg.wait_for_timeout(100)
+    except Exception:
+        # The page may already be closed or crashed; closing is what matters.
+        pass
+    context.close()
+
+
+@pytest.fixture
+def mobile_page(browser_instance, playwright_instance, live_server):
+    """Page in an emulated iPhone 13 context (390x664 viewport, touch, DPR 3).
+
+    Uses a real device descriptor rather than a bare ``set_viewport_size`` so
+    ``hasTouch`` / ``isMobile`` / the mobile UA are all set — the account
+    dropdown's ``@media (hover: hover)`` rule and the search widget's
+    ``matchMedia('(max-width: 767.98px)')`` guard both depend on them.
+    """
+    device = playwright_instance.devices["iPhone 13"]
+    context = browser_instance.new_context(**device)
+    pg = context.new_page()
+    pg._live_server_url = live_server.url
+    yield pg
+    _quiesce_and_close(context, pg)
+
+
+@pytest.fixture
+def desktop_page(browser_instance, live_server):
+    """Page in a 1280x900 desktop context (no touch, no mobile UA)."""
+    context = browser_instance.new_context(viewport={"width": 1280, "height": 900})
+    pg = context.new_page()
+    pg._live_server_url = live_server.url
+    yield pg
+    _quiesce_and_close(context, pg)
 
 
 # ============================================================
@@ -164,11 +238,23 @@ class CheckoutHelper:
     # --- Step: Contact ---
 
     def submit_contact(self, email: str = None):
-        """Submit contact step (email)."""
+        """Submit the contact step.
+
+        For a signed-in shopper (or any pre-filled valid email) the contact step
+        auto-completes and collapses on load, hiding the continue button — so
+        only click it when it's actually present and visible, otherwise the next
+        step is already open. Clicking unconditionally hangs the whole suite.
+        """
         if email:
             self.page.fill("#checkout-email", email)
-        self.page.click('[data-action="continue-contact"]')
-        self.page.wait_for_timeout(500)
+        btn = self.page.query_selector('[data-action="continue-contact"]')
+        if btn and btn.is_visible():
+            btn.click()
+            self.page.wait_for_timeout(500)
+        else:
+            # Contact already satisfied (auto-completed) — give the next step a
+            # moment to open.
+            self.page.wait_for_timeout(200)
 
     # --- Step: Shipping Address ---
 
@@ -180,6 +266,7 @@ class CheckoutHelper:
         state="NY",
         postal_code="10013",
         country="US",
+        phone="+1 212 555 0100",
         use_new=True,
     ):
         """Fill the shipping address form."""
@@ -195,7 +282,11 @@ class CheckoutHelper:
         self.page.fill("#shipping-city", city)
         self.page.fill("#shipping-state", state)
         self.page.fill("#shipping-postal-code", postal_code)
-        self.page.fill("#shipping-country", country)
+        # Country is a <select> of shipping countries (ISO-2 values), not a
+        # free-text input — choose by value.
+        self.page.select_option("#shipping-country", country)
+        # Phone is required for shipping addresses (carrier delivery contact)
+        self.page.fill("#shipping-phone", phone)
 
     def submit_address(self):
         """Submit the shipping address and wait for shipping methods to load."""

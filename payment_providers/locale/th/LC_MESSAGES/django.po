@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Thai <LL@li.org>\n"
@@ -18,9 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:71
 msgid "Provider Information"
 msgstr "ข้อมูลผู้ให้บริการ"
 
+#: admin.py:75
 msgid ""
 "Component and User cannot be changed after creation for security and audit "
 "purposes."
@@ -28,289 +30,425 @@ msgstr ""
 "ไม่สามารถเปลี่ยน Component และ User หลังจากสร้างแล้ว "
 "เนื่องจากความปลอดภัยและการตรวจสอบบัญชี"
 
-msgid "Payment Configuration"
-msgstr "การตั้งค่าการชำระเงิน"
-
-msgid ""
-"Configure which payment methods are offered to customers. Leave empty to "
-"show all available methods."
-msgstr "กำหนดวิธีการชำระเงินที่จะเสนอให้กับลูกค้า ปล่อยว่างเพื่อแสดงวิธีการชำระเงินทั้งหมดที่มีอยู่"
-
+#: admin.py:79
 msgid "Configuration"
 msgstr "การตั้งค่า"
 
+#: admin.py:80 admin.py:172
+#: templates/admin/payment_providers/payment_dashboard.html:417
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:73
 msgid "Status"
 msgstr "สถานะ"
 
+#: admin.py:82
 msgid "Payment Method Synchronization"
 msgstr "การซิงค์วิธการชำระเงิน"
 
+#: admin.py:92
 msgid "Payment methods can be synced from your provider account. "
 msgstr "วิธีการชำระเงินสามารถซิงค์ได้จากบัญชีผู้ให้บริการของคุณ"
 
+#: admin.py:96
 msgid "Sync Payment Methods Now"
 msgstr "ซิงค์วิธการชำระเงินทันที"
 
+#: admin.py:100
 msgid "Save the account first to enable payment method synchronization."
 msgstr "โปรดบันทึกบัญชีก่อนเพื่อเปิดใช้งานการซิงค์วิธีการชำระเงิน"
 
+#: admin.py:104
 msgid "Connection Health"
 msgstr "สถานะการเชื่อมต่อ"
 
+#: admin.py:109
 msgid ""
-"Connection health is automatically updated when you test the connection from "
-"the wizard."
-msgstr "สถานะความสมบูรณ์ของการเชื่อมต่อจะถูกอัปเดตอัตโนมัติเมื่อคุณทดสอบการเชื่อมต่อจากเวิร์ดไวซาร์ด"
+"Connection health is automatically updated when you test the connection from"
+" the wizard."
+msgstr ""
+"สถานะความสมบูรณ์ของการเชื่อมต่อจะถูกอัปเดตอัตโนมัติเมื่อคุณทดสอบการเชื่อมต่อจากเวิร์ดไวซาร์ด"
 
+#: admin.py:113
 msgid "Metadata"
 msgstr "เมตาดาต้า"
 
+#: admin.py:120
 msgid "Create Provider"
 msgstr "สร้างผู้ให้บริการ"
 
+#: admin.py:127
 msgid "Please use the Payment Provider Connection Wizard"
 msgstr "โปรดใช้เวิร์ดไวซาร์ดการเชื่อมต่อผู้ให้บริการชำระเงิน"
 
+#: admin.py:131
 #, python-format
 msgid ""
 "For the best experience, please use the <a href=\"%(url)s\">Provider "
 "Connection Wizard</a> to set up new providers."
 msgstr ""
-"เพื่อประสบการณ์ที่ดีที่สุด กรุณาใช้ <a href=\"%(url)s\">Provider Connection Wizard</a> "
-"เพื่อตั้งค่าผู้ให้บริการใหม่"
+"เพื่อประสบการณ์ที่ดีที่สุด กรุณาใช้ <a href=\"%(url)s\">Provider Connection "
+"Wizard</a> เพื่อตั้งค่าผู้ให้บริการใหม่"
 
+#: admin.py:148
 msgid "Name"
 msgstr "ชื่อ"
 
+#: admin.py:164
 msgid "Connection"
 msgstr "การเชื่อมต่อ"
 
+#: admin.py:180 templates/admin/payment_providers/payment_dashboard.html:334
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:79
 msgid "Default"
 msgstr "ค่าเริ่มต้น"
 
+#: admin.py:192
+#: templates/admin/payment_providers/wizard/step3_credentials.html:195
 msgid "Checkout Mode"
 msgstr "โหมดเช็กเอาท์"
 
+#: admin.py:194
 msgid "Environment"
 msgstr "สภาพแวดล้อม"
 
+#: admin.py:330
 msgid "Connection test completed"
 msgstr "การทดสอบการเชื่อมต่อเสร็จสิ้น"
 
+#: admin.py:336 admin.py:359 admin.py:383 admin.py:446 admin.py:539
+#: admin.py:598 admin.py:648 admin.py:688 services/webhook_service.py:114
 msgid "Provider account not found"
 msgstr "ไม่พบบัญชีผู้ให้บริการ"
 
+#: admin.py:342
 #, python-format
 msgid "Connection test failed: %(error)s"
 msgstr "การทดสอบการเชื่อมต่อล้มเหลว: %(error)s"
 
+#: admin.py:356
 msgid "Set as default provider"
 msgstr "ตั้งเป็นผู้ให้บริการค่าเริ่มต้น"
 
+#: admin.py:366 admin.py:389 admin.py:544 admin.py:615 admin.py:664
 msgid "Method not allowed"
 msgstr "วิธีไม่อนุญาต"
 
+#: admin.py:376
+#| msgid "Provider not installed"
+msgid "Provider enabled"
+msgstr "ผู้ให้บริการเปิดใช้งาน"
+
+#: admin.py:378
+#| msgid "Provider not installed"
+msgid "Provider disabled"
+msgstr "ผู้ให้บริการปิดใช้งาน"
+
+#: admin.py:402
 msgid "This provider does not support payment method synchronization"
 msgstr "ผู้ให้บริการนี้ไม่รองรับการซิงค์วิธีการชำระเงิน"
 
+#: admin.py:410
 #, python-format
 msgid "Failed to load provider: %(error)s"
 msgstr "ไม่สามารถโหลดผู้ให้บริการ: %(error)s"
 
+#: admin.py:426
 #, python-format
 msgid ""
 "Successfully synced %(methods)d payment methods across %(countries)d "
 "countries"
 msgstr "ส 同歩 %(methods)d วิธีการชำระเงินสำหรับ %(countries)d ประเทศสำเร็จ"
 
+#: admin.py:441
 msgid "Synchronization failed"
 msgstr "การซิงค์ล้มเหลว"
 
+#: admin.py:450
 #, python-format
 msgid "Unexpected error: %(error)s"
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด: %(error)s"
 
+#: admin.py:481
+#| msgid "All Countries"
+msgid "Global (All Countries)"
+msgstr "ทั่วโลก (ทุกประเทศ)"
+
+#: admin.py:528
 #, python-format
 msgid "Configure Payment Methods - %(provider)s"
 msgstr "ตั้งค่าวิธีการชำระเงิน - %(provider)s"
 
+#: admin.py:558
 msgid "Missing required parameters"
 msgstr "ขาดพารามิเตอร์ที่จำเป็น"
 
+#: admin.py:564 admin.py:626
+msgid "Invalid country code"
+msgstr "รหัสประเทศไม่ถูกต้อง"
+
+#: admin.py:570
+#| msgid "enabled payment methods"
+msgid "Invalid payment method identifier"
+msgstr "ตัวระบุวิธีการชำระเงินไม่ถูกต้อง"
+
+#: admin.py:576
+#| msgid "Invalid request"
+msgid "Invalid enabled value"
+msgstr "ค่าที่เปิดใช้งานไม่ถูกต้อง"
+
+#: admin.py:583
 #, python-format
 msgid "Enabled %(method)s for %(country)s"
 msgstr "เปิดใช้งาน %(method)s สำหรับ %(country)s"
 
+#: admin.py:589
 #, python-format
 msgid "Disabled %(method)s for %(country)s"
 msgstr "ปิดใช้งาน %(method)s สำหรับ %(country)s"
 
+#: admin.py:603 admin.py:651
+#| msgid "Invalid request"
+msgid "Invalid request body"
+msgstr "ร่างคำขอไม่ถูกต้อง"
+
+#: admin.py:609 admin.py:657
+#| msgid "Unexpected error: %(error)s"
+msgid "An unexpected error occurred"
+msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด"
+
+#: admin.py:640
+#, python-format
+msgid "Country override removed. Global settings will apply for %(country)s."
+msgstr ""
+"การตั้งค่าประเทศถูกยกเลิก ตั้งค่าระดับโลกจะถูกนำไปใช้สำหรับ %(country)s"
+
+#: admin.py:676
 msgid ""
 "Cannot delete provider with existing transactions. Deactivate it instead."
 msgstr "ไม่สามารถลบผู้ให้บริการที่มีธุรกรรมที่มีอยู่ได้ ให้ปิดใช้งานแทน"
 
+#: admin.py:684
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:332
 msgid "Provider deleted successfully"
 msgstr "ผู้ให้บริการถูกลบเรียบร้อยแล้ว"
 
+#: admin.py:739
 msgid "Transaction Information"
 msgstr "ข้อมูลการทำธุรกรรม"
 
+#: admin.py:752
 msgid "Payment Details"
 msgstr "รายละเอียดการชำระเงิน"
 
+#: admin.py:756 admin.py:776 admin.py:982
 msgid "Provider Response"
 msgstr "การตอบกลับจากผู้ให้บริการ"
 
+#: admin.py:760
 msgid "Error Information"
 msgstr "ข้อมูลข้อผิดพลาด"
 
+#: admin.py:764 admin.py:985
 msgid "Timestamps"
 msgstr "เวลาที่บันทึก"
 
+#: admin.py:774
 msgid "No response data"
 msgstr "ไม่มีข้อมูลการตอบกลับ"
 
+#: admin.py:850
 msgid "Webhook Information"
 msgstr "ข้อมูลเว็บฮูค"
 
+#: admin.py:863
 msgid "Payload"
 msgstr "ข้อมูลที่ส่ง"
 
+#: admin.py:864
 msgid "Headers"
 msgstr "เฮดเดอร์"
 
+#: admin.py:866 models.py:511 models.py:1006
 msgid "Processing"
 msgstr "กำลังประมวลผล"
 
+#: admin.py:872
 msgid "System Information"
 msgstr "ข้อมูลระบบ"
 
+#: admin.py:880
 msgid "No payload data"
 msgstr "ไม่มีข้อมูลที่ส่ง"
 
+#: admin.py:882
 msgid "Webhook Payload"
 msgstr "ข้อมูลที่ส่งเว็บฮูค"
 
+#: admin.py:889
 msgid "No headers data"
 msgstr "ไม่มีข้อมูลเฮดเดอร์"
 
+#: admin.py:891
 msgid "HTTP Headers"
 msgstr "เฮดเดอร์ HTTP"
 
+#: admin.py:957
 msgid "Intent Information"
 msgstr "ข้อมูลเจตนา"
 
+#: admin.py:971
 msgid "Checkout Details"
 msgstr "รายละเอียดการชำระเงิน"
 
+#: admin.py:975
 msgid "3DS / Authentication"
 msgstr "3DS / การยืนยันตัวตน"
 
+#: api_serializers.py:21
 msgid ""
 "Checkout session ID. If not provided, uses current user's active session."
-msgstr "ID ของเซสชันเช็คเอาท์ หากไม่ได้ระบุ จะใช้เซสชันที่ใช้งานอยู่ของผู้ใช้ปัจจุบัน"
+msgstr ""
+"ID ของเซสชันเช็คเอาท์ หากไม่ได้ระบุ "
+"จะใช้เซสชันที่ใช้งานอยู่ของผู้ใช้ปัจจุบัน"
 
+#: api_serializers.py:26
 msgid ""
 "Payment provider account ID. If not provided, uses session's selected "
 "provider."
-msgstr "ID บัญชีผู้ให้บริการชำระเงิน หากไม่ได้ระบุ จะใช้ผู้ให้บริการที่เลือกในเซสชัน"
+msgstr ""
+"ID บัญชีผู้ให้บริการชำระเงิน หากไม่ได้ระบุ จะใช้ผู้ให้บริการที่เลือกในเซสชัน"
 
+#: api_serializers.py:30
 msgid "Saved payment method ID for returning customers."
 msgstr "ID วิธีการชำระเงินที่บันทึกไว้สำหรับลูกค้าที่เคยซื้อแล้ว"
 
+#: api_serializers.py:33
 msgid "URL to redirect after successful payment."
 msgstr "URL เพื่อเปลี่ยนเส้นทางหลังจากการชำระเงินสำเร็จ"
 
+#: api_serializers.py:36
 msgid "URL to redirect on payment cancellation."
 msgstr "URL เพื่อเปลี่ยนเส้นทางเมื่อการชำระเงินถูกยกเลิก"
 
+#: api_serializers.py:39
 msgid "Additional metadata to attach to the payment."
 msgstr "ข้อมูลเมตาเพิ่มเติมที่ต้องการแนบกับการชำระเงิน"
 
+#: api_serializers.py:49 models.py:1092
 msgid "Type of action required (redirect, 3ds_challenge, etc.)"
 msgstr "ประเภทของการกระทำที่ต้องการ (เปลี่ยนเส้นทาง, 3ds_challenge, ฯลฯ)"
 
+#: api_serializers.py:52
 msgid "URL to redirect for action completion."
 msgstr "URL เพื่อเปลี่ยนเส้นทางสำหรับการดำเนินการให้เสร็จสิ้น"
 
+#: api_serializers.py:55
 msgid "Provider-specific action data for SDK handling."
 msgstr "ข้อมูลการดำเนินการเฉพาะผู้ให้บริการสำหรับการจัดการ SDK"
 
+#: api_serializers.py:64
 msgid "Whether the operation succeeded."
 msgstr "การดำเนินการสำเร็จหรือไม่"
 
+#: api_serializers.py:65 api_serializers.py:413
 msgid "Payment intent ID."
 msgstr "ID ข้อความประสงค์การชำระเงิน"
 
+#: api_serializers.py:67
 msgid "Order ID (created with 'unpaid' status)."
 msgstr "ID ของคำสั่งซื้อ (สร้างด้วยสถานะ 'ยังไม่ชำระเงิน')"
 
+#: api_serializers.py:70 api_serializers.py:422
 msgid "Order number for display."
 msgstr "หมายเลขคำสั่งซื้อสำหรับแสดงผล"
 
+#: api_serializers.py:72 api_serializers.py:414
 msgid "Current payment intent status."
 msgstr "สถานะข้อความประสงค์การชำระเงินปัจจุบัน"
 
+#: api_serializers.py:74
 msgid "Type of checkout flow (hosted or embedded)."
 msgstr "ประเภทของขั้นตอนเช็คเอาท์ (hosted หรือ embedded)"
 
+#: api_serializers.py:80
 msgid "Hosted checkout redirect URL (for hosted checkout)."
 msgstr "URL เพื่อเปลี่ยนเส้นทางสำหรับขั้นตอนเช็คเอาท์แบบ hosted"
 
+#: api_serializers.py:86
 msgid "Client secret for provider SDK (for embedded checkout)."
-msgstr "Client secret สำหรับ SDK ของผู้ให้บริการ (สำหรับขั้นตอนเช็คเอาท์แบบ embedded)"
+msgstr ""
+"Client secret สำหรับ SDK ของผู้ให้บริการ (สำหรับขั้นตอนเช็คเอาท์แบบ "
+"embedded)"
 
+#: api_serializers.py:89
 msgid "Provider's publishable key for SDK initialization."
 msgstr "คีย์ publishable ของผู้ให้บริการสำหรับการเริ่มต้น SDK"
 
+#: api_serializers.py:92
 msgid "URL to provider's checkout handler JavaScript."
-msgstr "URL ไปยังไฟล์ JavaScript สำหรับการจัดการขั้นตอนการชำระเงินของผู้ให้บริการ"
+msgstr ""
+"URL ไปยังไฟล์ JavaScript สำหรับการจัดการขั้นตอนการชำระเงินของผู้ให้บริการ"
 
+#: api_serializers.py:95
 msgid "Configuration data for handler initialization."
 msgstr "ข้อมูลการตั้งค่าสำหรับการเริ่มต้นตัวจัดการ"
 
+#: api_serializers.py:98
 msgid "External SDK URLs required by provider."
 msgstr "URL ของ SDK ภายนอกที่ผู้ให้บริการต้องการ"
 
+#: api_serializers.py:101
 msgid "Provider identifier (slug) for handler lookup."
 msgstr "ตัวระบุผู้ให้บริการ (slug) สำหรับการค้นหา handler"
 
+#: api_serializers.py:104
 msgid "Whether customer action is required (3DS, etc.)."
 msgstr "ว่าการดำเนินการของลูกค้าจำเป็นหรือไม่ (3DS, ฯลฯ)"
 
+#: api_serializers.py:107 api_serializers.py:426
 msgid "Action details if requires_action is true."
 msgstr "รายละเอียดการดำเนินการ หาก requires_action เป็น true"
 
+#: api_serializers.py:109
 msgid "When this payment intent expires."
 msgstr "เมื่อข้อความประสงค์การชำระเงินหมดอายุ"
 
+#: api_serializers.py:110 api_serializers.py:428
 msgid "Error details if payment failed."
 msgstr "รายละเอียดข้อผิดพลาดหากการชำระเงินล้มเหลว"
 
+#: api_serializers.py:416
 msgid "Order ID."
 msgstr "ID คำสั่งซื้อ"
 
+#: api_serializers.py:424
 msgid "Whether customer action is required."
 msgstr "ระบุว่าลูกค้าต้องดำเนินการหรือไม่"
 
+#: api_serializers.py:455
 msgid "Provider-specific payment method data for confirmation."
 msgstr "ข้อมูลวิธีการชำระเงินเฉพาะผู้ให้บริการสำหรับการยืนยัน"
 
+#: api_serializers.py:468
 msgid "Optional reason for cancellation."
 msgstr "เหตุผลในการยกเลิก (ไม่จำเป็นต้องระบุ)"
 
+#: api_serializers.py:516
 msgid "Payment provider account ID."
 msgstr "ID บัญชีผู้ให้บริการชำระเงิน"
 
+#: api_serializers.py:518
 msgid "Token from provider SDK representing the payment method."
 msgstr "โทเคนจาก SDK ของผู้ให้บริการที่แสดงถึงวิธีการชำระเงิน"
 
+#: api_serializers.py:521
 msgid "Whether to set this as the default payment method."
 msgstr "ว่าจะตั้งวิธีการชำระเงินนี้เป็นวิธีการชำระเงินค่าเริ่มต้นหรือไม่"
 
+#: api_views.py:53
 msgid "Create payment intent"
 msgstr "สร้างเจตนาการชำระเงิน"
 
+#: api_views.py:54
 msgid ""
 "\n"
 "Create a payment intent for checkout.\n"
@@ -327,8 +465,7 @@ msgid ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -352,8 +489,7 @@ msgstr ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -362,21 +498,29 @@ msgstr ""
 "- Amounts are validated against checkout session totals\n"
 "        "
 
+#: api_views.py:81 services/payment_orchestration_service.py:265
+#: services/payment_service.py:131
 msgid "Payment intent created successfully"
 msgstr "สร้าง Intent การชำระเงินสำเร็จ"
 
+#: api_views.py:84
 msgid "Invalid request, checkout not ready, or validation failed"
-msgstr "คำขอไม่ถูกต้อง, ไม่พร้อมสำหรับการชำระเงิน, หรือการตรวจสอบความถูกต้องล้มเหลว"
+msgstr ""
+"คำขอไม่ถูกต้อง, ไม่พร้อมสำหรับการชำระเงิน, หรือการตรวจสอบความถูกต้องล้มเหลว"
 
+#: api_views.py:86 api_views.py:102
 msgid "Checkout session not found"
 msgstr "ไม่พบเซสชันเช็กเอาท์"
 
+#: api_views.py:110
 msgid "Payment provider not found or not configured"
 msgstr "ไม่พบผู้ให้บริการชำระเงิน หรือยังไม่ได้ตั้งค่า"
 
+#: api_views.py:205
 msgid "Get payment intent status"
 msgstr "ดูสถานะเจตนาการชำระเงิน"
 
+#: api_views.py:206
 msgid ""
 "\n"
 "        Get the current status of a payment intent.\n"
@@ -414,22 +558,28 @@ msgstr ""
 "        - `canceled`: Payment was canceled\n"
 "        "
 
+#: api_views.py:228
 msgid "Payment intent UUID"
 msgstr "UUID ของเจตนาการชำระเงิน"
 
+#: api_views.py:235
 msgid ""
 "Payment intent details (full handler data for active intents, status-only "
 "for terminal states)"
 msgstr ""
-"รายละเอียดความตั้งใจในการชำระเงิน (ข้อมูลผู้จัดการทั้งหมดสำหรับความตั้งใจที่เปิดใช้งาน, "
+"รายละเอียดความตั้งใจในการชำระเงิน "
+"(ข้อมูลผู้จัดการทั้งหมดสำหรับความตั้งใจที่เปิดใช้งาน, "
 "เพียงสถานะสำหรับสถานะปลายทาง)"
 
+#: api_views.py:238 api_views.py:287 api_views.py:342
 msgid "Payment intent not found"
 msgstr "ไม่พบการตั้งใจชำระเงิน"
 
+#: api_views.py:270
 msgid "Confirm payment intent"
 msgstr "ยืนยันเจตนาการชำระเงิน"
 
+#: api_views.py:271
 msgid ""
 "\n"
 "        Confirm a payment intent after customer completes required action.\n"
@@ -439,8 +589,7 @@ msgid ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 msgstr ""
 "\n"
@@ -451,19 +600,22 @@ msgstr ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 
+#: api_views.py:284
 msgid "Confirmation result"
 msgstr "ผลการยืนยัน"
 
+#: api_views.py:286
 msgid "Confirmation failed"
 msgstr "การยืนยันล้มเหลว"
 
+#: api_views.py:327
 msgid "Cancel payment intent"
 msgstr "ยกเลิกเจตนาการชำระเงิน"
 
+#: api_views.py:328
 msgid ""
 "\n"
 "        Cancel a payment intent.\n"
@@ -473,8 +625,7 @@ msgid ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 msgstr ""
 "\n"
@@ -485,28 +636,35 @@ msgstr ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 
+#: api_views.py:340
 msgid "Payment canceled successfully"
 msgstr "ยกเลิกการชำระเงินสำเร็จ"
 
+#: api_views.py:341
 msgid "Cannot cancel this payment"
 msgstr "ไม่สามารถยกเลิกการชำระเงินนี้ได้"
 
+#: api_views.py:367
 msgid "List saved payment methods"
 msgstr "รายการวิธีการชำระเงินที่บันทึกไว้"
 
+#: api_views.py:368
 msgid "List all saved payment methods for the authenticated user."
-msgstr "รายการวิธีการชำระเงินที่บันทึกไว้สำหรับผู้ใช้ที่ผ่านการตรวจสอบความถูกต้อง"
+msgstr ""
+"รายการวิธีการชำระเงินที่บันทึกไว้สำหรับผู้ใช้ที่ผ่านการตรวจสอบความถูกต้อง"
 
+#: api_views.py:372
 msgid "List of saved payment methods"
 msgstr "รายการวิธีการชำระเงินที่บันทึกไว้"
 
+#: api_views.py:390
 msgid "Save a new payment method"
 msgstr "บันทึกวิธีการชำระเงินใหม่"
 
+#: api_views.py:391
 msgid ""
 "\n"
 "        Save a new payment method for future use.\n"
@@ -522,42 +680,55 @@ msgstr ""
 "        after collecting card details on the client side.\n"
 "        "
 
+#: api_views.py:401
 msgid "Payment method saved successfully"
 msgstr "บันทึกวิธีการชำระเงินเรียบร้อยแล้ว"
 
+#: api_views.py:403
 msgid "Invalid request"
 msgstr "คำขอไม่ถูกต้อง"
 
+#: api_views.py:422 services/payment_orchestration_service.py:122
 msgid "Payment provider not found"
 msgstr "ไม่พบผู้ให้บริการชำระเงิน"
 
+#: api_views.py:434
 msgid "Provider does not support saved payment methods"
 msgstr "ผู้ให้บริการไม่รองรับวิธีการชำระเงินที่บันทึกไว้"
 
+#: api_views.py:494
 msgid "Get saved payment method details"
 msgstr "ดูรายละเอียดวิธีการชำระเงินที่บันทึกไว้"
 
+#: api_views.py:497
 msgid "Payment method details"
 msgstr "รายละเอียดวิธีการชำระเงิน"
 
+#: api_views.py:499 api_views.py:519 api_views.py:551
 msgid "Payment method not found"
 msgstr "ไม่พบวิธีการชำระเงิน"
 
+#: api_views.py:516
 msgid "Delete saved payment method"
 msgstr "ลบวิธีการชำระเงินที่บันทึกไว้"
 
+#: api_views.py:518 api_views.py:536
 msgid "Payment method deleted"
 msgstr "วิธีการชำระเงินถูกลบ"
 
+#: api_views.py:548
 msgid "Set default payment method"
 msgstr "ตั้งค่าวิธีการชำระเงินเริ่มต้น"
 
+#: api_views.py:550 api_views.py:566
 msgid "Default payment method updated"
 msgstr "วิธีการชำระเงินค่าเริ่มต้นได้รับการอัปเดต"
 
+#: api_views.py:579
 msgid "Report payment SDK failure"
 msgstr "รายงานความล้มเหลวของ SDK การชำระเงิน"
 
+#: api_views.py:580
 msgid ""
 "\n"
 "Report a payment SDK loading failure. Used by the checkout frontend\n"
@@ -579,1076 +750,1749 @@ msgstr ""
 "**Authentication:** Not required (supports guest checkout).\n"
 "        "
 
+#: api_views.py:590
 msgid "Failure reported"
 msgstr "รายงานความล้มเหลว"
 
+#: apps.py:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:6
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:4
 msgid "Payment Providers"
 msgstr "ผู้ให้บริการชำระเงิน"
 
-msgid "Enabled Payment Methods"
-msgstr "วิธีการชำระเงินที่เปิดใช้งาน"
-
-msgid ""
-"Select payment methods to offer customers. Leave empty for all available "
-"methods."
-msgstr "เลือกวิธีการชำระเงินที่จะเสนอให้กับลูกค้า ปล่อยว่างเพื่อแสดงวิธีการชำระเงินทั้งหมดที่มีอยู่"
-
+#: management/commands/sync_payment_methods.py:17
 msgid "Sync payment methods from payment provider APIs"
 msgstr "ซิงค์วิธีการชำระเงินจาก API ของผู้ให้บริการชำระเงิน"
 
+#: models.py:27
 msgid "component"
 msgstr "ส่วนประกอบ"
 
+#: models.py:28
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:170
 msgid "Installed payment provider component"
 msgstr "ส่วนประกอบผู้ให้บริการชำระเงินที่ติดตั้งแล้ว"
 
+#: models.py:35
 msgid "user"
 msgstr "ผู้ใช้"
 
+#: models.py:36
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:184
 msgid "User who owns this provider account"
 msgstr "ผู้ใช้ที่เป็นเจ้าของบัญชีผู้ให้บริการนี้"
 
+#: models.py:42
 msgid "display name"
 msgstr "ชื่อแสดงผล"
 
+#: models.py:43
 msgid "Friendly name for this connection (e.g., \"My Payment Provider\")"
 msgstr "ชื่อที่เป็นมิตรสำหรับการเชื่อมต้นี้ (เช่น \"My Payment Provider\")"
 
+#: models.py:49 templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "credentials"
 msgstr "ข้อมูลประจำตัว"
 
+#: models.py:50
 msgid "Encrypted API credentials (never stored in plain text)"
 msgstr "ข้อมูลการรับรอง API ที่เข้ารหัส (ไม่มีการเก็บในรูปแบบข้อความธรรมดา)"
 
+#: models.py:56
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "settings"
 msgstr "การตั้งค่า"
 
+#: models.py:57
 msgid "Provider-specific configuration (checkout mode, features, etc.)"
 msgstr "การตั้งค่าเฉพาะผู้ให้บริการ (โหมดเช็คเอาท์, คุณสมบัติ, ฯลฯ)"
 
+#: models.py:63
 msgid "signup URL"
 msgstr "URL สำหรับการสมัครสมาชิก"
 
+#: models.py:64
 msgid "Link for merchants to create provider account (may be affiliate link)"
 msgstr "ลิงก์สำหรับผู้ค้าเพื่อสร้างบัญชีผู้ให้บริการ (อาจเป็นลิงก์พันธมิตร)"
 
+#: models.py:69
 msgid "is active"
 msgstr "เปิดใช้งาน"
 
+#: models.py:70
 msgid "Whether this provider connection is active for checkout"
-msgstr "ว่าการเชื่อมต่อผู้ให้บริการนี้ยังใช้งานได้สำหรับขั้นตอนเช็คเอาท์หรือไม่"
+msgstr ""
+"ว่าการเชื่อมต่อผู้ให้บริการนี้ยังใช้งานได้สำหรับขั้นตอนเช็คเอาท์หรือไม่"
 
+#: models.py:75
 msgid "is default"
 msgstr "เป็นค่าเริ่มต้น"
 
+#: models.py:76
 msgid "Use this provider as default for payment processing"
 msgstr "ใช้ผู้ให้บริการนี้เป็นค่าเริ่มต้นสำหรับการประมวลผลการชำระเงิน"
 
+#: models.py:83
 msgid "Hosted - Redirect to provider"
 msgstr "โฮสต์ - ที่ให้บริการเปลี่ยนเส้นทางไปยังผู้ให้บริการ"
 
+#: models.py:84
+#: templates/admin/payment_providers/wizard/step3_credentials.html:200
 msgid "Integrated - On-site checkout"
 msgstr "ผสาน - ชำระเงินภายในเว็บไซต์"
 
+#: models.py:87
 msgid "checkout mode"
 msgstr "โหมดการชำระเงิน"
 
+#: models.py:88
 msgid "How customers will complete payment"
 msgstr "วิธีที่ลูกค้าจะทำการชำระเงิน"
 
+#: models.py:94
 msgid "sort order"
 msgstr "ลำดับการจัดเรียง"
 
+#: models.py:95
 msgid "Display order in checkout (lower numbers appear first)"
 msgstr "ลำดับการแสดงในขั้นตอนเช็คเอาท์ (ตัวเลขที่น้อยจะแสดงก่อน)"
 
+#: models.py:102
 msgid "last tested at"
 msgstr "ทดสอบครั้งสุดท้ายเมื่อ"
 
+#: models.py:103
 msgid "Last successful connection test"
 msgstr "การทดสอบการเชื่อมต่อครั้งสุดท้ายที่สำเร็จ"
 
+#: models.py:109
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:238
 msgid "Unknown"
 msgstr "ไม่ทราบ"
 
+#: models.py:110
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:57
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:62
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:118
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:230
 msgid "Connected"
 msgstr "เชื่อมต่อแล้ว"
 
+#: models.py:111
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:288
 msgid "Connection Error"
 msgstr "ข้อผิดพลาดในการเชื่อมต่อ"
 
+#: models.py:114
 msgid "connection status"
 msgstr "สถานะการเชื่อมต่อ"
 
+#: models.py:118
 msgid "connection error"
 msgstr "ข้อผิดพลาดในการเชื่อมต่อ"
 
+#: models.py:118
 msgid "Last connection error message"
 msgstr "ข้อความข้อผิดพลาดในการเชื่อมต่อครั้งสุดท้าย"
 
+#: models.py:125
 msgid "available payment methods"
 msgstr "วิธีการชำระเงินที่มีอยู่"
 
+#: models.py:127
+#| msgid ""
+#| "Payment methods available from provider API, organized by country. Format: "
+#| "{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgid ""
-"Payment methods available from provider API, organized by country. Format: "
-"{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"Payment methods available from provider API, organized by country. Use "
+"\"_global\" key for methods available regardless of country. Format: "
+"{\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgstr ""
-"วิธีการชำระเงินที่มีอยู่จาก API ของผู้ให้บริการ จัดตามประเทศ รูปแบบ: {\"US\": [\"card\", "
-"\"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"วิธีการชำระเงินที่สามารถใช้ได้จาก API ของผู้ให้บริการ จัดเรียงตามประเทศ "
+"ใช้คีย์ \"_global\" สำหรับวิธีการที่สามารถใช้ได้ไม่ว่าจะอยู่ประเทศใด รูปแบบ:"
+" {\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 
+#: models.py:136
 msgid "enabled payment methods"
 msgstr "วิธีการชำระเงินที่เปิดใช้งาน"
 
+#: models.py:138
+#| msgid ""
+#| "Payment methods enabled by merchant for each country. Format: {\"US\": "
+#| "[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
 msgid ""
-"Payment methods enabled by merchant for each country. Format: {\"US\": "
-"[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
+"Payment methods enabled by merchant. Use \"_global\" for all countries, or "
+"per-country keys to override. Format: {\"_global\": [\"card\", "
+"\"apple_pay\"], \"SG\": [\"card\"]}"
 msgstr ""
-"วิธีการชำระเงินที่ผู้ค้าเปิดใช้งานสำหรับแต่ละประเทศ รูปแบบ: {\"US\": [\"card\", "
+"วิธีการชำระเงินที่ผู้ขายเปิดใช้งาน ใช้ \"_global\" สำหรับประเทศทั้งหมด "
+"หรือใช้คีย์ตามประเทศเพื่อทับ đè รูปแบบ: {\"_global\": [\"card\", "
 "\"apple_pay\"], \"SG\": [\"card\"]}"
 
+#: models.py:147
 msgid "last method sync at"
 msgstr "สุดท้ายที่ซิงค์วิธีการชำระเงินเมื่อ"
 
+#: models.py:148
 msgid "When payment methods were last synced from provider"
 msgstr "วันที่วิธีการชำระเงินถูกซิงค์ครั้งสุดท้ายจากผู้ให้บริการ"
 
+#: models.py:154
 msgid "Pending - Not synced yet"
 msgstr "อยู่ระหว่างดำเนินการ - ยังไม่ซิงค์"
 
+#: models.py:155
 msgid "Syncing - In progress"
 msgstr "อยู่ระหว่างซิงค์"
 
+#: models.py:156
 msgid "Success - Synced successfully"
 msgstr "สำเร็จ - ซิงค์แล้ว"
 
+#: models.py:157
 msgid "Error - Sync failed"
 msgstr "ข้อผิดพลาด - ซิงค์ล้มเหลว"
 
+#: models.py:160
 msgid "method sync status"
 msgstr "สถานะการซิงค์วิธีการชำระเงิน"
 
+#: models.py:161
 msgid "Status of payment method synchronization"
 msgstr "สถานะการซิงค์วิธีการชำระเงิน"
 
+#: models.py:166
 msgid "method sync error"
 msgstr "ข้อผิดพลาดการซิงค์วิธีการชำระเงิน"
 
+#: models.py:167
 msgid "Last payment method sync error message"
 msgstr "ข้อความแสดงข้อผิดพลาดของการซิงค์วิธีการชำระเงินครั้งล่าสุด"
 
+#: models.py:171 models.py:757 models.py:1134
 msgid "created at"
 msgstr "สร้างเมื่อ"
 
+#: models.py:172 models.py:758 models.py:1135
 msgid "updated at"
 msgstr "อัปเดตเมื่อ"
 
+#: models.py:176
 msgid "payment provider account"
 msgstr "บัญชีผู้ให้บริการชำระเงิน"
 
+#: models.py:177
 msgid "payment provider accounts"
 msgstr "บัญชีผู้ให้บริการชำระเงิน"
 
+#: models.py:313
 msgid "Provider does not support payment method synchronization"
 msgstr "ผู้ให้บริการไม่รองรับการซิงค์วิธีการชำระเงิน"
 
+#: models.py:345
 msgid "Payment methods synced successfully"
 msgstr "วิธีการชำระเงินซิงค์สำเร็จแล้ว"
 
+#: models.py:510
+#: templates/admin/payment_providers/partials/webhook_cards.html:28
 msgid "Pending"
 msgstr "อยู่ระหว่างดำเนินการ"
 
+#: models.py:512
 msgid "Authorized - Not captured"
 msgstr "ได้รับการอนุมัติ - ยังไม่ได้รับการยืนยัน"
 
+#: models.py:513
 msgid "Completed - Payment successful"
 msgstr "เสร็จสิ้น - การชำระเงินสำเร็จ"
 
+#: models.py:514 models.py:1009
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:61
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:40
 msgid "Failed"
 msgstr "ล้มเหลว"
 
+#: models.py:515
 msgid "Voided - Authorization canceled"
 msgstr "ยกเลิก - การอนุมัติถูกยกเลิก"
 
+#: models.py:516
 msgid "Refunded - Full refund"
 msgstr "คืนเงิน - คืนเงินเต็มจำนวน"
 
+#: models.py:517
 msgid "Partially Refunded"
 msgstr "คืนเงินบางส่วน"
 
+#: models.py:521
 msgid "Charge - Immediate payment"
 msgstr "เก็บเงิน - ชำระเงินทันที"
 
+#: models.py:522
 msgid "Authorize - Hold funds"
 msgstr "อนุมัติ - จองเงินไว้"
 
+#: models.py:523
 msgid "Capture - Collect authorized funds"
 msgstr "เก็บเงิน - รับเงินที่ได้รับการอนุมัติ"
 
+#: models.py:524
 msgid "Void - Cancel authorization"
 msgstr "ยกเลิก - ยกเลิกการอนุมัติ"
 
+#: models.py:525
 msgid "Refund - Return payment"
 msgstr "คืนเงิน - คืนเงิน"
 
+#: models.py:547
+#| msgid "Payment Providers"
+msgid "Payment provider"
+msgstr "ผู้ให้บริการชำระเงิน"
+
+#: models.py:548
+msgid "Gift Card"
+msgstr "บัตรของขวัญ"
+
+#: models.py:549
+msgid "Store Credit"
+msgstr "เครดิตร้านค้า"
+
+#: models.py:550
+msgid "Cash"
+msgstr "เงินสด"
+
+#: models.py:551
+msgid "Card (Terminal)"
+msgstr "บัตร (เครื่องปลายทาง)"
+
+#: models.py:552
+msgid "Card (Manual)"
+msgstr "บัตร (ตัวเอง)"
+
+#: models.py:568 models.py:872 models.py:1029
 msgid "provider account"
 msgstr "บัญชีผู้ให้บริการ"
 
+#: models.py:569
 msgid "Payment provider account used for this transaction"
 msgstr "บัญชีผู้ให้บริการชำระเงินที่ใช้สำหรับธุรกรรมนี้"
 
+#: models.py:579 models.py:1037
 msgid "order"
 msgstr "คำสั่งซื้อ"
 
+#: models.py:587
 msgid "transaction ID"
 msgstr "รหัสธุรกรรม"
 
+#: models.py:588
 msgid "Internal transaction ID"
 msgstr "รหัสธุรกรรมภายใน"
 
+#: models.py:595
 msgid "provider transaction ID"
 msgstr "รหัสธุรกรรมของผู้ให้บริการ"
 
+#: models.py:596
 msgid "Provider transaction ID (charge ID, payment intent ID, etc.)"
 msgstr "ID ธุรกรรมของผู้ให้บริการ (charge ID, payment intent ID, ฯลฯ)"
 
+#: models.py:604
 msgid "authorization ID"
 msgstr "รหัสการอนุมัติ"
 
+#: models.py:605
 msgid "Provider authorization ID (if applicable)"
 msgstr "รหัสการอนุมัติของผู้ให้บริการ (ถ้ามี)"
 
+#: models.py:613 models.py:1077
 msgid "amount"
 msgstr "จำนวนเงิน"
 
+#: models.py:614
 msgid "Transaction amount"
 msgstr "จำนวนเงินธุรกรรม"
 
+#: models.py:618 models.py:1069
 msgid "status"
 msgstr "สถานะ"
 
+#: models.py:622
 msgid "type"
 msgstr "ประเภท"
 
-msgid "customer email"
-msgstr "อีเมลลูกค้า"
+#: models.py:633
+#| msgid "event type"
+msgid "tender type"
+msgstr "ประเภทการชำระเงิน"
 
-msgid "customer name"
-msgstr "ชื่อลูกค้า"
+#: models.py:634
+msgid "How this payment was made"
+msgstr "วิธีที่การชำระเงินนี้ถูกทำ"
 
-msgid "payment method type"
-msgstr "ประเภทวิธีการชำระเงิน"
+#: models.py:643
+msgid "gift card"
+msgstr "บัตรของขวัญ"
 
-msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
-msgstr "ประเภทของวิธีการชำระเงินที่ใช้ (credit_card, bank_transfer, ฯลฯ)"
+#: models.py:644
+msgid "Gift card this tender draws on"
+msgstr "บัตรของขวัญที่การชำระเงินนี้ใช้"
 
-msgid "last 4 digits"
-msgstr "ตัวเลข 4 หลักสุดท้าย"
+#: models.py:656
+#| msgid "Wallets"
+msgid "wallet"
+msgstr "กระเป๋าเงิน"
 
-msgid "Last 4 digits of card/account"
-msgstr "ตัวเลข 4 หลักสุดท้ายของบัตร/บัญชี"
+#: models.py:657
+msgid "Customer wallet this tender draws on"
+msgstr "กระเป๋าเงินลูกค้าที่การชำระเงินนี้ใช้"
 
-msgid "metadata"
-msgstr "ข้อมูลเพิ่มเติม"
-
-msgid "Additional transaction metadata"
-msgstr "ข้อมูลเพิ่มเติมของธุรกรรม"
-
-msgid "provider response"
-msgstr "คำตอบจากผู้ให้บริการชำระเงิน"
-
-msgid "Raw response from payment provider"
-msgstr "คำตอบดิบจากผู้ให้บริการชำระเงิน"
-
-msgid "error message"
-msgstr "ข้อความแสดงข้อผิดพลาด"
-
-msgid "error code"
-msgstr "รหัสข้อผิดพลาด"
-
-msgid "expires at"
-msgstr "หมดอายุเมื่อ"
-
-msgid "When authorization expires (if applicable)"
-msgstr "เมื่อการยืนยันหมดอายุ (ถ้ามี)"
-
-msgid "completed at"
-msgstr "เสร็จสิ้นเมื่อ"
-
-msgid "payment transaction"
-msgstr "ธุรกรรมการชำระเงิน"
-
-msgid "payment transactions"
-msgstr "ธุรกรรมการชำระเงิน"
-
-msgid "provider slug"
-msgstr "ชื่อผู้ให้บริการ (สำหรับการกำหนดเส้นทาง)"
-
-msgid "Provider identifier for routing"
-msgstr "ตัวระบุผู้ให้บริการสำหรับการกำหนดเส้นทาง"
-
-msgid "event ID"
-msgstr "ID เหตุการณ์"
-
-msgid "Provider webhook event ID"
-msgstr "ID เหตุการณ์ webhook ของผู้ให้บริการ"
-
-msgid "event type"
-msgstr "ประเภทเหตุการณ์"
-
-msgid "Type of webhook event"
-msgstr "ประเภทเหตุการณ์ webhook"
-
-msgid "payload"
-msgstr "ข้อมูลที่ส่งมา"
-
-msgid "Complete webhook payload"
-msgstr "ข้อมูลที่ส่งมาทั้งหมด"
-
-msgid "headers"
-msgstr "หัวข้อ HTTP จากคำขอ webhook"
-
-msgid "HTTP headers from webhook request"
-msgstr "หัวข้อ HTTP จากคำขอ webhook"
-
-msgid "processed"
-msgstr "ได้รับการประมวลผลแล้วหรือไม่"
-
-msgid "Whether webhook has been processed"
-msgstr "เว็บฮูคได้รับการประมวลผลแล้วหรือไม่"
-
-msgid "processing result"
-msgstr "ผลลัพธ์จากการประมวลผล"
-
-msgid "Result from webhook handler"
-msgstr "ผลลัพธ์จากการประมวลผลเว็บฮูค"
-
-msgid "processing error"
-msgstr "ข้อความแสดงข้อผิดพลาดในการประมวลผล"
-
-msgid "Error message if processing failed"
-msgstr "ข้อความแสดงข้อผิดพลาดหากการประมวลผลล้มเหลว"
-
-msgid "signature verified"
-msgstr "ลายเซ็นได้รับการตรวจสอบแล้วหรือไม่"
-
-msgid "Whether webhook signature was verified"
-msgstr "ลายเซ็นเว็บฮูคได้รับการตรวจสอบแล้วหรือไม่"
-
-msgid "idempotency key"
-msgstr "คีย์เพื่อป้องกันการประมวลผลซ้ำ"
-
-msgid "Key to prevent duplicate processing"
-msgstr "คีย์เพื่อป้องกันการประมวลผลซ้ำ"
-
-msgid "received at"
-msgstr "ได้รับเมื่อ"
-
-msgid "processed at"
-msgstr "ประมวลผลเมื่อ"
-
-msgid "payment webhook"
-msgstr "เว็บฮูคการชำระเงิน"
-
-msgid "payment webhooks"
-msgstr "เว็บฮูคการชำระเงิน"
-
-msgid "Created"
-msgstr "สร้างขึ้นแล้ว"
-
-msgid "Requires Payment Method"
-msgstr "ต้องระบุวิธีการชำระเงิน"
-
-msgid "Requires Confirmation"
-msgstr "ต้องยืนยัน"
-
-msgid "Requires Action"
-msgstr "ต้องดำเนินการ"
-
-msgid "Succeeded"
-msgstr "สำเร็จ"
-
-msgid "Canceled"
-msgstr "ยกเลิก"
-
+#: models.py:669 models.py:1021
 msgid "checkout session"
 msgstr "เซสชันการชำระเงิน"
 
+#: models.py:681
+#| msgid "payment transaction"
+msgid "parent transaction"
+msgstr "ธุรกรรมหลัก"
+
+#: models.py:694
+#| msgid "Payment amount"
+msgid "settlement amount"
+msgstr "จำนวนเงินการตั้งถิ่นฐาน"
+
+#: models.py:695
+msgid "This tender's value in the order's currency"
+msgstr "ค่าของการชำระเงินนี้ในสกุลเงินของคำสั่งซื้อ"
+
+#: models.py:703
+msgid "exchange rate"
+msgstr "อัตราแลกเปลี่ยน"
+
+#: models.py:704
+msgid "Rate used to convert amount into settlement_amount"
+msgstr "อัตราที่ใช้ในการแปลงจำนวนเงินเป็น settlement_amount"
+
+#: models.py:708
+msgid "customer email"
+msgstr "อีเมลลูกค้า"
+
+#: models.py:710
+msgid "customer name"
+msgstr "ชื่อลูกค้า"
+
+#: models.py:716
+msgid "payment method type"
+msgstr "ประเภทวิธีการชำระเงิน"
+
+#: models.py:717
+msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
+msgstr "ประเภทของวิธีการชำระเงินที่ใช้ (credit_card, bank_transfer, ฯลฯ)"
+
+#: models.py:723
+msgid "last 4 digits"
+msgstr "ตัวเลข 4 หลักสุดท้าย"
+
+#: models.py:724
+msgid "Last 4 digits of card/account"
+msgstr "ตัวเลข 4 หลักสุดท้ายของบัตร/บัญชี"
+
+#: models.py:731 models.py:1113
+msgid "metadata"
+msgstr "ข้อมูลเพิ่มเติม"
+
+#: models.py:732
+msgid "Additional transaction metadata"
+msgstr "ข้อมูลเพิ่มเติมของธุรกรรม"
+
+#: models.py:739 models.py:1120
+msgid "provider response"
+msgstr "คำตอบจากผู้ให้บริการชำระเงิน"
+
+#: models.py:740 models.py:1121
+msgid "Raw response from payment provider"
+msgstr "คำตอบดิบจากผู้ให้บริการชำระเงิน"
+
+#: models.py:744 models.py:1127
+msgid "error message"
+msgstr "ข้อความแสดงข้อผิดพลาด"
+
+#: models.py:746 models.py:1125
+msgid "error code"
+msgstr "รหัสข้อผิดพลาด"
+
+#: models.py:752 models.py:1131
+msgid "expires at"
+msgstr "หมดอายุเมื่อ"
+
+#: models.py:753
+msgid "When authorization expires (if applicable)"
+msgstr "เมื่อการยืนยันหมดอายุ (ถ้ามี)"
+
+#: models.py:759
+msgid "completed at"
+msgstr "เสร็จสิ้นเมื่อ"
+
+#: models.py:763
+msgid "payment transaction"
+msgstr "ธุรกรรมการชำระเงิน"
+
+#: models.py:764
+msgid "payment transactions"
+msgstr "ธุรกรรมการชำระเงิน"
+
+#: models.py:881
+msgid "provider slug"
+msgstr "ชื่อผู้ให้บริการ (สำหรับการกำหนดเส้นทาง)"
+
+#: models.py:882
+msgid "Provider identifier for routing"
+msgstr "ตัวระบุผู้ให้บริการสำหรับการกำหนดเส้นทาง"
+
+#: models.py:891
+msgid "event ID"
+msgstr "ID เหตุการณ์"
+
+#: models.py:892
+msgid "Provider webhook event ID"
+msgstr "ID เหตุการณ์ webhook ของผู้ให้บริการ"
+
+#: models.py:900
+msgid "event type"
+msgstr "ประเภทเหตุการณ์"
+
+#: models.py:901
+msgid "Type of webhook event"
+msgstr "ประเภทเหตุการณ์ webhook"
+
+#: models.py:905
+msgid "payload"
+msgstr "ข้อมูลที่ส่งมา"
+
+#: models.py:905
+msgid "Complete webhook payload"
+msgstr "ข้อมูลที่ส่งมาทั้งหมด"
+
+#: models.py:910
+msgid "headers"
+msgstr "หัวข้อ HTTP จากคำขอ webhook"
+
+#: models.py:911
+msgid "HTTP headers from webhook request"
+msgstr "หัวข้อ HTTP จากคำขอ webhook"
+
+#: models.py:918
+msgid "processed"
+msgstr "ได้รับการประมวลผลแล้วหรือไม่"
+
+#: models.py:919
+msgid "Whether webhook has been processed"
+msgstr "เว็บฮูคได้รับการประมวลผลแล้วหรือไม่"
+
+#: models.py:925
+msgid "processing result"
+msgstr "ผลลัพธ์จากการประมวลผล"
+
+#: models.py:926
+msgid "Result from webhook handler"
+msgstr "ผลลัพธ์จากการประมวลผลเว็บฮูค"
+
+#: models.py:931
+msgid "processing error"
+msgstr "ข้อความแสดงข้อผิดพลาดในการประมวลผล"
+
+#: models.py:932
+msgid "Error message if processing failed"
+msgstr "ข้อความแสดงข้อผิดพลาดหากการประมวลผลล้มเหลว"
+
+#: models.py:938
+msgid "signature verified"
+msgstr "ลายเซ็นได้รับการตรวจสอบแล้วหรือไม่"
+
+#: models.py:939
+msgid "Whether webhook signature was verified"
+msgstr "ลายเซ็นเว็บฮูคได้รับการตรวจสอบแล้วหรือไม่"
+
+#: models.py:947
+msgid "idempotency key"
+msgstr "คีย์เพื่อป้องกันการประมวลผลซ้ำ"
+
+#: models.py:948
+msgid "Key to prevent duplicate processing"
+msgstr "คีย์เพื่อป้องกันการประมวลผลซ้ำ"
+
+#: models.py:952
+msgid "received at"
+msgstr "ได้รับเมื่อ"
+
+#: models.py:953
+msgid "processed at"
+msgstr "ประมวลผลเมื่อ"
+
+#: models.py:957
+msgid "payment webhook"
+msgstr "เว็บฮูคการชำระเงิน"
+
+#: models.py:958
+msgid "payment webhooks"
+msgstr "เว็บฮูคการชำระเงิน"
+
+#: models.py:1002
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:41
+msgid "Created"
+msgstr "สร้างขึ้นแล้ว"
+
+#: models.py:1003
+msgid "Requires Payment Method"
+msgstr "ต้องระบุวิธีการชำระเงิน"
+
+#: models.py:1004
+msgid "Requires Confirmation"
+msgstr "ต้องยืนยัน"
+
+#: models.py:1005
+msgid "Requires Action"
+msgstr "ต้องดำเนินการ"
+
+#: models.py:1007
+msgid "Succeeded"
+msgstr "สำเร็จ"
+
+#: models.py:1008
+msgid "Canceled"
+msgstr "ยกเลิก"
+
+#: models.py:1022
 msgid "Checkout session this payment intent was created for"
 msgstr "เซสชันเช็คเอาท์ที่การสร้าง intent นี้เกิดขึ้น"
 
+#: models.py:1030
 msgid "Payment provider account used for this intent"
 msgstr "บัญชีผู้ให้บริการชำระเงินที่ใช้สำหรับ intent นี้"
 
+#: models.py:1038
 msgid "Order this payment intent is for"
 msgstr "คำสั่งซื้อที่ intent นี้ใช้"
 
+#: models.py:1045
 msgid "provider intent ID"
 msgstr "ID ของ Intent ผู้ให้บริการชำระเงิน"
 
+#: models.py:1046
 msgid "Provider payment intent ID (e.g., Stripe pi_xxx, AirWallex int_xxx)"
 msgstr ""
-"ID ของ intent การชำระเงินของผู้ให้บริการ (ตัวอย่างเช่น Stripe pi_xxx, AirWallex "
-"int_xxx)"
+"ID ของ intent การชำระเงินของผู้ให้บริการ (ตัวอย่างเช่น Stripe pi_xxx, "
+"AirWallex int_xxx)"
 
+#: models.py:1052
 msgid "client secret"
 msgstr "Client Secret"
 
+#: models.py:1053
 msgid "Client secret for embedded checkout (never expose in logs)"
 msgstr "Client secret สำหรับการเช็คเอาท์แบบ embedded (ไม่ควรปรากฏในบันทึก)"
 
+#: models.py:1059
 msgid "checkout URL"
 msgstr "URL การชำระเงิน"
 
+#: models.py:1060
 msgid "Hosted checkout redirect URL"
 msgstr "URL การเปลี่ยนเส้นทางการชำระเงินแบบ Hosted"
 
+#: models.py:1078
 msgid "Payment amount"
 msgstr "จำนวนเงินที่ต้องชำระ"
 
+#: models.py:1084
 msgid "requires action"
 msgstr "ต้องดำเนินการ"
 
+#: models.py:1085
 msgid "Whether customer action is required (e.g., 3DS)"
 msgstr "จำเป็นต้องมีการกระทำของลูกค้าหรือไม่ (เช่น 3DS)"
 
+#: models.py:1091
 msgid "action type"
 msgstr "ประเภทการดำเนินการ"
 
+#: models.py:1098
 msgid "action URL"
 msgstr "URL การดำเนินการ"
 
+#: models.py:1099
 msgid "URL to redirect for action (3DS, verification, etc.)"
-msgstr "URL สำหรับเปลี่ยนเส้นทางเพื่อการกระทำ (3DS, การตรวจสอบความถูกต้อง, ฯลฯ)"
+msgstr ""
+"URL สำหรับเปลี่ยนเส้นทางเพื่อการกระทำ (3DS, การตรวจสอบความถูกต้อง, ฯลฯ)"
 
+#: models.py:1105
 msgid "action data"
 msgstr "ข้อมูลการดำเนินการ"
 
+#: models.py:1106
 msgid "Provider-specific action data for SDK handling"
 msgstr "ข้อมูลการกระทำเฉพาะของผู้ให้บริการสำหรับการจัดการโดย SDK"
 
+#: models.py:1114
 msgid "Additional intent metadata"
 msgstr "เมตาดาต้าเพิ่มเติมของ Intent"
 
+#: models.py:1131
 msgid "When this payment intent expires"
 msgstr "เมื่อ Intent การชำระเงินนี้หมดอายุ"
 
+#: models.py:1139
 msgid "payment intent"
 msgstr "Intent การชำระเงิน"
 
+#: models.py:1140
 msgid "payment intents"
 msgstr "Intent การชำระเงิน"
 
+#: services/payment_orchestration_service.py:82 services/payment_service.py:76
 msgid "Payment provider is not active"
 msgstr "ผู้ให้บริการชำระเงินไม่ได้เปิดใช้งาน"
 
+#: services/payment_orchestration_service.py:85 services/payment_service.py:79
 msgid "Payment provider is not properly configured"
 msgstr "ผู้ให้บริการชำระเงินไม่ได้ตั้งค่าอย่างถูกต้อง"
 
+#: services/payment_orchestration_service.py:127
 msgid "Failed to initialize payment provider"
 msgstr "ไม่สามารถเริ่มต้นผู้ให้บริการชำระเงินได้"
 
+#: services/payment_orchestration_service.py:197
 #, python-brace-format
 msgid "Failed to create payment with provider: {error}"
 msgstr "ไม่สามารถสร้างการชำระเงินกับผู้ให้บริการ: {error}"
 
+#: services/payment_orchestration_service.py:381
+#: services/payment_orchestration_service.py:592
 msgid "Payment intent is already in terminal state"
 msgstr "เจตนาการชำระเงินอยู่ในสถานะสุดท้ายแล้ว"
 
+#: services/payment_orchestration_service.py:391
 msgid "Provider does not support payment confirmation"
 msgstr "ผู้ให้บริการไม่รองรับการยืนยันการชำระเงิน"
 
+#: services/payment_orchestration_service.py:411
 msgid "Payment confirmed"
 msgstr "ยืนยันการชำระเงิน"
 
+#: services/payment_orchestration_service.py:454
 msgid "Payment already processed"
 msgstr "การชำระเงินถูกประมวลผลแล้ว"
 
+#: services/payment_orchestration_service.py:552
 msgid "Payment processed successfully"
 msgstr "ประมวลผลการชำระเงินสำเร็จ"
 
+#: services/payment_orchestration_service.py:634
 msgid "Payment cancelled"
 msgstr "ยกเลิกการชำระเงิน"
 
+#: services/payment_service.py:44
 msgid "Payment amount must be greater than zero"
 msgstr "จำนวนเงินที่ชำระต้องมากกว่าศูนย์"
 
+#: services/payment_service.py:48
 msgid "Payment amount exceeds maximum allowed"
 msgstr "จำนวนเงินที่ชำระเกินขีดจำกัดสูงสุดที่อนุญาต"
 
+#: services/payment_service.py:93 services/refund_service.py:131
 msgid "Payment provider not found in registry"
 msgstr "ไม่พบผู้ให้บริการชำระเงินในรายการ"
 
+#: services/payment_service.py:107
 msgid "Payment intent creation failed"
 msgstr "การสร้าง Intent การชำระเงินล้มเหลว"
 
+#: services/payment_service.py:135
 #, python-brace-format
 msgid "Payment processing error: {error}"
 msgstr "เกิดข้อผิดพลาดในการประมวลผลการชำระเงิน: {error}"
 
+#: services/payment_service.py:153
 msgid "Payment transaction is not in pending state"
 msgstr "การทำธุรกรรมการชำระเงินไม่ได้อยู่ในสถานะรอการดำเนินการ"
 
+#: services/payment_service.py:169
 msgid "Authorization failed"
 msgstr "การยืนยันล้มเหลว"
 
+#: services/payment_service.py:189
 msgid "Payment authorized successfully"
 msgstr "ยืนยันการชำระเงินสำเร็จ"
 
+#: services/payment_service.py:196
 #, python-brace-format
 msgid "Payment authorization error: {error}"
 msgstr "เกิดข้อผิดพลาดในการอนุมัติการชำระเงิน: {error}"
 
+#: services/payment_service.py:214
 msgid "Payment transaction is not authorized"
 msgstr "การทำธุรกรรมการชำระเงินไม่ได้รับการยืนยัน"
 
+#: services/payment_service.py:221
 msgid "Capture amount exceeds authorized amount"
 msgstr "จำนวนเงินที่จับได้เกินจำนวนที่ได้รับการยืนยัน"
 
+#: services/payment_service.py:235
 msgid "Capture failed"
 msgstr "การจับเงินล้มเหลว"
 
+#: services/payment_service.py:256
 msgid "Payment captured successfully"
 msgstr "จับเงินสำเร็จ"
 
+#: services/payment_service.py:260
 #, python-brace-format
 msgid "Payment capture error: {error}"
 msgstr "เกิดข้อผิดพลาดในการจับการชำระเงิน: {error}"
 
+#: services/payment_service.py:310
 msgid "Only pending or authorized payments can be cancelled"
-msgstr "เฉพาะการทำธุรกรรมที่อยู่ในสถานะรอหรือได้รับการอนุมัติเท่านั้นที่สามารถยกเลิกได้"
+msgstr ""
+"เฉพาะการทำธุรกรรมที่อยู่ในสถานะรอหรือได้รับการอนุมัติเท่านั้นที่สามารถยกเลิกได้"
 
+#: services/payment_service.py:325
 msgid "Cancellation failed"
 msgstr "การยกเลิกล้มเหลว"
 
+#: services/payment_service.py:340
 msgid "Payment cancelled successfully"
 msgstr "ยกเลิกการชำระเงินสำเร็จ"
 
+#: services/payment_service.py:344
 #, python-brace-format
 msgid "Payment cancellation error: {error}"
 msgstr "เกิดข้อผิดพลาดในการยกเลิกการชำระเงิน: {error}"
 
+#: services/refund_service.py:43
 msgid "Refund amount must be greater than zero"
 msgstr "จำนวนเงินคืนต้องมากกว่าศูนย์"
 
+#: services/refund_service.py:66
 #, python-brace-format
 msgid "Refund amount ({amount}) exceeds available amount ({available})"
 msgstr "จำนวนเงินคืน ({amount}) มากกว่าจำนวนเงินที่สามารถคืนได้ ({available})"
 
+#: services/refund_service.py:102
 msgid "Only successful payments can be refunded"
 msgstr "เฉพาะการทำธุรกรรมที่สำเร็จเท่านั้นที่สามารถคืนเงินได้"
 
+#: services/refund_service.py:105
 msgid "Only charge transactions can be refunded"
 msgstr "เฉพาะการทำธุรกรรมการเรียกเก็บเงินเท่านั้นที่สามารถคืนเงินได้"
 
+#: services/refund_service.py:149
 msgid "Refund failed"
 msgstr "การคืนเงินล้มเหลว"
 
+#: services/refund_service.py:213
 msgid "Refund processed successfully"
 msgstr "ประมวลผลการคืนเงินสำเร็จ"
 
+#: services/refund_service.py:217
 #, python-brace-format
 msgid "Refund processing error: {error}"
 msgstr "เกิดข้อผิดพลาดในการประมวลผลการคืนเงิน: {error}"
 
+#: services/refund_service.py:231
 msgid "Transaction is not a refund"
 msgstr "การทำธุรกรรมไม่ใช่การคืนเงิน"
 
+#: services/webhook_service.py:103
 msgid "Webhook already processed"
 msgstr "Webhook ถูกประมวลผลแล้ว"
 
+#: services/webhook_service.py:197
 msgid "Webhook processed successfully"
 msgstr "ประมวลผล Webhook สำเร็จ"
 
+#: services/webhook_service.py:546
 msgid "Webhook already processed successfully"
 msgstr "Webhook ถูกประมวลผลสำเร็จแล้ว"
 
+#: services/webhook_service.py:560
 msgid "Webhook not found"
 msgstr "ไม่พบ Webhook"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:4
+#: templates/admin/payment_providers/configure_payment_methods.html:17
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:243
 msgid "Configure Payment Methods"
 msgstr "ตั้งค่าวิธีการชำระเงิน"
 
-msgid "Enable or disable payment methods per country"
-msgstr "เปิดหรือปิดวิธีการชำระเงินตามประเทศ"
+#: templates/admin/payment_providers/configure_payment_methods.html:19
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid "Configure which payment methods are available at checkout"
+msgstr "ตั้งค่าวิธีการชำระเงินที่สามารถใช้ได้ที่หน้าชำระเงิน"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:23
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:246
+#| msgid "Back to Provider"
+msgid "Sync from Provider"
+msgstr "ซิงค์จากผู้ให้บริการ"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:26
 msgid "Back to Provider"
 msgstr "กลับไปที่ผู้ให้บริการ"
 
-msgid "No Shipping Countries Configured"
-msgstr "ไม่ได้ตั้งค่าประเทศจัดส่ง"
+#: templates/admin/payment_providers/configure_payment_methods.html:35
+#| msgid "No Payment Providers Available"
+msgid "No Payment Methods Available"
+msgstr "ไม่มีวิธีการชำระเงินที่สามารถใช้งานได้"
 
-msgid ""
-"Configure shipping countries first to set up payment methods per country."
-msgstr "ตั้งค่าประเทศที่ส่งสินค้าก่อนเพื่อตั้งค่าวิธีการชำระเงินตามประเทศ"
+#: templates/admin/payment_providers/configure_payment_methods.html:36
+#| msgid "Sync payment methods from payment provider APIs"
+msgid "Sync payment methods from your provider first using the button above."
+msgstr ""
+"โปรดใช้ปุ่มด้านบนเพื่อสอดคล้องกับวิธีการชำระเงินจากผู้ให้บริการของคุณก่อน"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:43
 msgid "How it works"
 msgstr "วิธีใช้งาน"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:44
 msgid ""
-"Toggle payment methods on or off for each country. Changes are saved "
-"automatically."
-msgstr "เปิดหรือปิดวิธีการชำระเงินสำหรับแต่ละประเทศ การเปลี่ยนแปลงจะถูกบันทึกโดยอัตโนมัติ"
+"The Global section applies to all customers. Add country-specific overrides "
+"below to customize methods for particular countries — country overrides take"
+" priority over global settings. Changes are saved automatically."
+msgstr ""
+"ส่วน Global ใช้กับลูกค้าทั้งหมด "
+"คุณสามารถเพิ่มการตั้งค่าเฉพาะประเทศด้านล่างเพื่อปรับแต่งวิธีการสำหรับประเทศเฉพาะ"
+" — การตั้งค่าเฉพาะประเทศจะมีความสำคัญเหนือกว่าการตั้งค่า Global "
+"การเปลี่ยนแปลงจะถูกบันทึกโดยอัตโนมัติ"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:53
 msgid ""
-"No payment methods available. Try syncing payment methods from the provider "
-"first."
-msgstr "ไม่มีวิธีการชำระเงินที่สามารถใช้งานได้ ลองซิงค์วิธีการชำระเงินจากผู้ให้บริการก่อน"
+"These payment methods are available to customers in all countries unless "
+"overridden below."
+msgstr ""
+"วิธีการชำระเงินเหล่านี้สามารถใช้ได้กับลูกค้าในทุกประเทศ "
+"เว้นแต่จะมีการตั้งค่าทับ蓋ในส่วนด้านล่าง"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:58
+#: templates/admin/payment_providers/configure_payment_methods.html:110
+#| msgid "Enable"
+msgid "Enable All"
+msgstr "เปิดใช้งานทั้งหมด"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:61
+#: templates/admin/payment_providers/configure_payment_methods.html:113
+#| msgid "Disable"
+msgid "Disable All"
+msgstr "ปิดใช้งานทั้งหมด"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:80
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid "No payment methods available. Try syncing from the provider first."
+msgstr "ไม่มีวิธีการชำระเงินที่ใช้งานได้ โปรดลองสอดคล้องกับผู้ให้บริการก่อน"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:88
+#| msgid "All Countries"
+msgid "Country Overrides"
+msgstr "การตั้งค่าประเทศที่มีการแก้ไข"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:89
+msgid "(optional)"
+msgstr "(ไม่จำเป็น)"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:91
+msgid ""
+"Add country-specific configurations that override the global settings above."
+" Useful if certain payment methods are only available or should be "
+"restricted in specific countries."
+msgstr ""
+"เพิ่มการตั้งค่าเฉพาะประเทศที่จะทับ đèการตั้งค่า Global ด้านบน "
+"ใช้ได้หากวิธีการชำระเงินบางวิธีมีเฉพาะหรือควรจำกัดในประเทศเฉพาะ"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:102
+msgid "Remove override — will fall back to global"
+msgstr "ลบการตั้งค่าทับ蓋 — จะกลับไปใช้ค่าทั่วโลก"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:103
+msgid "Remove"
+msgstr "ลบ"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:132
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid ""
+"No payment methods available for this country. Methods from the global "
+"section will apply."
+msgstr ""
+"ไม่มีวิธีการชำระเงินที่ใช้งานได้สำหรับประเทศนี้ "
+"วิธีการจากส่วนทั่วโลกจะถูกใช้"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:144
 msgid "Saved"
 msgstr "บันทึกแล้ว"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:145
 msgid "Error saving change"
 msgstr "เกิดข้อผิดพลาดขณะบันทึกการเปลี่ยนแปลง"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:17
 msgid "Unknown Provider"
 msgstr "ผู้ให้บริการไม่ทราบ"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:69
+#: templates/admin/payment_providers/payment_dashboard.html:413
 msgid "Order"
 msgstr "ลำดับ"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:76
+#: templates/admin/payment_providers/partials/webhook_cards.html:65
 msgid "View"
 msgstr "ดู"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:89
 msgid "No transactions found."
 msgstr "ไม่พบการทำธุรกรรม"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:91
+#: templates/admin/payment_providers/partials/webhook_cards.html:80
 msgid "Try adjusting your filters or search terms."
 msgstr "ลองปรับตัวกรองหรือคำค้นหาของคุณ"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:24
+#: templates/admin/payment_providers/partials/webhook_cards.html:52
+#: templates/admin/payment_providers/payment_dashboard.html:482
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:86
 msgid "Processed"
 msgstr "ประมวลผลแล้ว"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:45
 msgid "Verified"
 msgstr "ตรวจสอบแล้ว"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:39
 msgid "Unverified"
 msgstr "ยังไม่ตรวจสอบ"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:78
 msgid "No webhooks found."
 msgstr "ไม่พบ Webhook"
 
+#: templates/admin/payment_providers/payment_dashboard.html:4
+#: templates/admin/payment_providers/payment_dashboard.html:19
+#: templates/admin/payment_providers/payment_dashboard.html:30
+#: views/payment_dashboard.py:94
 msgid "Payment Dashboard"
 msgstr "แดชบอร์ดการชำระเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:18
+#: templates/admin/payment_providers/providers/browse.html:26
 msgid "Home"
 msgstr "หน้าแรก"
 
+#: templates/admin/payment_providers/payment_dashboard.html:33
 msgid "Monitor payment performance, provider health, and transaction metrics"
-msgstr "ติดตามประสิทธิภาพการชำระเงิน, ความสมบูรณ์ของผู้ให้บริการ, และข้อมูลการดำเนินการต่างๆ"
+msgstr ""
+"ติดตามประสิทธิภาพการชำระเงิน, ความสมบูรณ์ของผู้ให้บริการ, "
+"และข้อมูลการดำเนินการต่างๆ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:42
 msgid "Period"
 msgstr "ช่วงเวลา"
 
+#: templates/admin/payment_providers/payment_dashboard.html:54
 msgid "From"
 msgstr "จาก"
 
+#: templates/admin/payment_providers/payment_dashboard.html:60
 msgid "To"
 msgstr "ถึง"
 
+#: templates/admin/payment_providers/payment_dashboard.html:72
 msgid "Compare with previous period"
 msgstr "เปรียบเทียบกับช่วงเวลาที่ผ่านมา"
 
+#: templates/admin/payment_providers/payment_dashboard.html:83
 msgid "Quick Navigation"
 msgstr "การนำทางแบบเร็ว"
 
+#: templates/admin/payment_providers/payment_dashboard.html:86
 msgid "Jump to section..."
 msgstr "ไปยังส่วน..."
 
+#: templates/admin/payment_providers/payment_dashboard.html:87
+#: templates/admin/payment_providers/payment_dashboard.html:103
 msgid "Actions Required"
 msgstr "การดำเนินการที่จำเป็น"
 
+#: templates/admin/payment_providers/payment_dashboard.html:88
 msgid "Revenue Over Time"
 msgstr "รายได้ตามเวลา"
 
+#: templates/admin/payment_providers/payment_dashboard.html:89
+#: templates/admin/payment_providers/payment_dashboard.html:179
 msgid "Payment Performance"
 msgstr "ประสิทธิภาพการชำระเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:90
+#: templates/admin/payment_providers/payment_dashboard.html:266
 msgid "Refund Metrics"
 msgstr "ข้อมูลคืนเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:91
 msgid "Provider Performance"
 msgstr "ประสิทธิภาพผู้ให้บริการ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:92
 msgid "Transaction Status"
 msgstr "สถานะการทำธุรกรรม"
 
+#: templates/admin/payment_providers/payment_dashboard.html:93
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:212
 msgid "Payment Methods"
 msgstr "วิธีการชำระเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:94
+#: templates/admin/payment_providers/payment_dashboard.html:406
 msgid "Recent Transactions"
 msgstr "การทำธุรกรรมล่าสุด"
 
+#: templates/admin/payment_providers/payment_dashboard.html:95
+#: templates/admin/payment_providers/payment_dashboard.html:464
 msgid "Webhook Statistics"
 msgstr "สถิติ Webhook"
 
+#: templates/admin/payment_providers/payment_dashboard.html:111
 msgid "Failed Transactions (7d)"
 msgstr "การทำธุรกรรมล้มเหลว (7 วัน)"
 
+#: templates/admin/payment_providers/payment_dashboard.html:119
 msgid "Pending Captures"
 msgstr "การจับเงินที่ยังไม่ได้ดำเนินการ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:127
 msgid "Pending Refunds"
 msgstr "การคืนเงินที่ยังไม่ได้ดำเนินการ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:135
 msgid "Connection Errors"
 msgstr "ข้อผิดพลาดในการเชื่อมต่อ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:143
 msgid "Unprocessed Webhooks"
 msgstr "Webhook ที่ยังไม่ได้ประมวลผล"
 
+#: templates/admin/payment_providers/payment_dashboard.html:153
 msgid "Payment Revenue Over Time"
 msgstr "รายได้จากการชำระเงินตามเวลา"
 
+#: templates/admin/payment_providers/payment_dashboard.html:157
 msgid "Group by"
 msgstr "จัดกลุ่มตาม"
 
+#: templates/admin/payment_providers/payment_dashboard.html:160
 msgid "Day"
 msgstr "วัน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:163
 msgid "Week"
 msgstr "สัปดาห์"
 
+#: templates/admin/payment_providers/payment_dashboard.html:166
 msgid "Month"
 msgstr "เดือน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:187
 msgid "Total Revenue"
 msgstr "รายได้รวม"
 
+#: templates/admin/payment_providers/payment_dashboard.html:203
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:30
 msgid "Total Transactions"
 msgstr "การทำธุรกรรมทั้งหมด"
 
+#: templates/admin/payment_providers/payment_dashboard.html:219
+#: templates/admin/payment_providers/payment_dashboard.html:354
 msgid "Success Rate"
 msgstr "อัตราความสำเร็จ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:235
 msgid "Average Transaction"
 msgstr "การทำธุรกรรมเฉลี่ย"
 
+#: templates/admin/payment_providers/payment_dashboard.html:245
 msgid "Authorized (Not Captured)"
 msgstr "ได้รับการอนุมัติ (ยังไม่ได้จับเงิน)"
 
+#: templates/admin/payment_providers/payment_dashboard.html:255
+#: templates/admin/payment_providers/payment_dashboard.html:274
 msgid "Total Refunded"
 msgstr "เงินคืนทั้งหมด"
 
+#: templates/admin/payment_providers/payment_dashboard.html:290
 msgid "Refund Count"
 msgstr "จำนวนการคืนเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:306
 msgid "Refund Rate"
 msgstr "อัตราการคืนเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:317
 msgid "Provider Performance Comparison"
 msgstr "เปรียบเทียบประสิทธิภาพผู้ให้บริการ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:337
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:127
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:253
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:339
 msgid "Active"
 msgstr "ใช้งานอยู่"
 
+#: templates/admin/payment_providers/payment_dashboard.html:339
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:72
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:257
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:340
 msgid "Inactive"
 msgstr "ไม่ได้ใช้งาน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:346
 msgid "Revenue"
 msgstr "รายได้"
 
+#: templates/admin/payment_providers/payment_dashboard.html:350
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:125
 msgid "Transactions"
 msgstr "การทำธุรกรรม"
 
+#: templates/admin/payment_providers/payment_dashboard.html:360
 msgid "Avg Amount"
 msgstr "จำนวนเฉลี่ย"
 
+#: templates/admin/payment_providers/payment_dashboard.html:368
 msgid "No payment providers configured"
 msgstr "ไม่มีผู้ให้บริการชำระเงินที่ตั้งค่า"
 
+#: templates/admin/payment_providers/payment_dashboard.html:370
 msgid "Setup First Provider"
 msgstr "ตั้งค่าผู้ให้บริการแรก"
 
+#: templates/admin/payment_providers/payment_dashboard.html:383
 msgid "Transaction Status Breakdown"
 msgstr "การวิเคราะห์สถานะการทำธุรกรรม"
 
+#: templates/admin/payment_providers/payment_dashboard.html:393
 msgid "Payment Methods Distribution"
 msgstr "การกระจายตัวของวิธีการชำระเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:412
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:65
 msgid "Transaction ID"
 msgstr "ID การทำธุรกรรม"
 
+#: templates/admin/payment_providers/payment_dashboard.html:414
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:99
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:73
 msgid "Provider"
 msgstr "ผู้ให้บริการ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:415
 msgid "Amount"
 msgstr "จำนวนเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:416
 msgid "Payment Method"
 msgstr "วิธีการชำระเงิน"
 
+#: templates/admin/payment_providers/payment_dashboard.html:418
 msgid "Date"
 msgstr "วันที่"
 
+#: templates/admin/payment_providers/payment_dashboard.html:451
 msgid "No recent transactions"
 msgstr "ไม่มีการทำธุรกรรมล่าสุด"
 
+#: templates/admin/payment_providers/payment_dashboard.html:472
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:30
 msgid "Total Webhooks"
 msgstr "Webhook ทั้งหมด"
 
+#: templates/admin/payment_providers/payment_dashboard.html:492
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:40
 msgid "Unprocessed"
 msgstr "ยังไม่ได้ประมวลผล"
 
+#: templates/admin/payment_providers/payment_dashboard.html:502
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:98
 msgid "Signature Verified"
 msgstr "ลายเซ็นได้รับการตรวจสอบแล้ว"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
 msgid "Add Payment Provider"
 msgstr "เพิ่มผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:46
 msgid "Last Tested"
 msgstr "ทดสอบครั้งสุดท้าย"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:86
+#| msgid "Hosted Mode"
+msgid "Test Mode"
+msgstr "โหมดทดสอบ"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:90
+msgid "Live"
+msgstr "สด"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:97
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:87
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:215
 msgid "Hosted"
 msgstr "โฮสต์"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:99
 msgid "Embedded"
 msgstr "ฝังไว้"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:109
 msgid "Settings"
 msgstr "การตั้งค่า"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:113
 msgid "Status & Health"
 msgstr "สถานะและสุขภาพ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:117
 msgid "Advanced"
 msgstr "ขั้นสูง"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:133
+#| msgid "Webhook Information"
+msgid "Webhook Endpoint"
+msgstr "จุดปลาย webhook"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:135
+msgid ""
+"Configure this URL in your payment provider's dashboard to receive payment "
+"notifications."
+msgstr ""
+"ตั้งค่า URL "
+"นี้ในแดชบอร์ดของผู้ให้บริการชำระเงินของคุณเพื่อรับการแจ้งการชำระเงิน"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:138
+msgid "Copy to clipboard"
+msgstr "คัดลอกไปยังคลิปบอร์ด"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:149
+#| msgid "Payment Dashboard"
+msgid "Provider Dashboard"
+msgstr "แดชบอร์ดผู้ให้บริการ"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:163
 msgid "Component"
 msgstr "องค์ประกอบ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:177
 msgid "User"
 msgstr "ผู้ใช้"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:215
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid ""
+"Configure which payment methods are shown to customers at checkout, "
+"organized by country."
+msgstr ""
+"กำหนดวิธีการชำระเงินที่แสดงให้ลูกค้าเห็นที่หน้าชำระเงิน จัดเรียงตามประเทศ"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:221
+#| msgid "Last tested:"
+msgid "Last synced:"
+msgstr "สุดท้ายที่ซิงค์:"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:227
+#| msgid "Basic Configuration"
+msgid "Global configuration active"
+msgstr "การตั้งค่าระดับโลกเปิดใช้งาน"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:232
+#| msgid "No payment providers configured"
+msgid "countries configured"
+msgstr "ประเทศที่กำหนดไว้"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:237
+msgid "Not configured — all available methods will be shown"
+msgstr "ยังไม่ได้ตั้งค่า — วิธีการชำระเงินทั้งหมดที่มีอยู่จะถูกแสดง"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:277
 msgid "Connection Status"
 msgstr "สถานะการเชื่อมต่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:300
 msgid "Last Tested At"
 msgstr "ทดสอบครั้งสุดท้ายเมื่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:311
 msgid "Payment Method Sync Status"
 msgstr "สถานะการซิงค์วิธีการชำระเงิน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:322
 msgid "Last Method Sync At"
 msgstr "ซิงค์วิธีการชำระเงินครั้งสุดท้ายเมื่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:334
 msgid "Method Sync Error"
 msgstr "ข้อผิดพลาดการซิงค์วิธีการชำระเงิน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:369
+#: templates/admin/payment_providers/wizard/step3_credentials.html:46
+msgid "API Credentials"
+msgstr "ข้อมูล API"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:371
+msgid ""
+"API credentials are encrypted and managed through the setup wizard for "
+"security. To update your API keys or secrets, use the wizard to reconfigure "
+"this provider."
+msgstr ""
+"ข้อมูลการเข้าถึง API "
+"ถูกเข้ารหัสและจัดการผ่านวิザาร์ดการตั้งค่าเพื่อความปลอดภัย "
+"หากต้องการอัปเดตคีย์ API หรือรหัสลับของคุณ "
+"กรุณาใช้วิザาร์ดเพื่อตั้งค่าผู้ให้บริการนี้ใหม่"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:373
+#| msgid "Enter Your Credentials"
+msgid "Reconfigure Credentials"
+msgstr "กำหนดค่าการรับรองตัวตนใหม่"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:380
 msgid "Created At"
 msgstr "สร้างเมื่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:390
 msgid "Updated At"
 msgstr "อัปเดตเมื่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:400
 msgid "Save"
 msgstr "บันทึก"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:401
 msgid "Save and continue editing"
 msgstr "บันทึกและดำเนินการแก้ไขต่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:403
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:293
 msgid "Delete"
 msgstr "ลบ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:418
 msgid "Select All"
 msgstr "เลือกทั้งหมด"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:419
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:117
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:115
 msgid "Clear All"
 msgstr "ล้างทั้งหมด"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:18
+#: templates/admin/payment_providers/providers/browse.html:27
 msgid "Payment Provider Accounts"
 msgstr "บัญชีผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:20
 msgid "Manage payment gateway integrations and API connections"
 msgstr "จัดการการผสานรวมของช่องทางการชำระเงินและการเชื่อมต่อ API"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:22
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s ผู้ให้บริการ"
 msgstr[1] "%(counter)s ผู้ให้บริการ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:23
 msgid "active"
 msgstr "ใช้งานอยู่"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:24
 msgid "connected"
 msgstr "เชื่อมต่อแล้ว"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:29
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:305
+#: templates/admin/payment_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr "ดูผู้ให้บริการ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:32
 msgid "Setup New Provider"
 msgstr "ตั้งค่าผู้ให้บริการใหม่"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:51
 msgid "Search providers..."
 msgstr "ค้นหาผู้ให้บริการ..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:60
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:76
 msgid "All Statuses"
 msgstr "ทั้งหมดสถานะ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:65
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:234
 msgid "Error"
 msgstr "ข้อผิดพลาด"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:74
 msgid "All Active Status"
 msgstr "สถานะที่เปิดใช้งานทั้งหมด"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:76
 msgid "Active Only"
 msgstr "เฉพาะที่เปิดใช้งาน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:79
 msgid "Inactive Only"
 msgstr "เฉพาะที่ไม่เปิดใช้งาน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:85
 msgid "All Checkout Modes"
 msgstr "โหมดเช็คเอาท์ทั้งหมด"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:90
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:219
 msgid "Integrated"
 msgstr "ผสานรวม"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:97
 msgid "All Provider Types"
 msgstr "ประเภทผู้ให้บริการทั้งหมด"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:136
 msgid "Hosted Mode"
 msgstr "โหมดโฮสต์"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:145
 msgid "Integrated Mode"
 msgstr "โหมดผสานรวม"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:155
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:184
 msgid "Default Provider"
 msgstr "ผู้ให้บริการค่าเริ่มต้น"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:199
 msgid "Provider:"
 msgstr "ผู้ให้บริการ:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "Last tested:"
 msgstr "ทดสอบครั้งสุดท้าย:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "ago"
 msgstr "ก่อน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:267
 msgid "Edit"
 msgstr "แก้ไข"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:272
+#: templates/admin/payment_providers/wizard/base.html:46
+#: templates/admin/payment_providers/wizard/step4_test.html:13
 msgid "Test Connection"
 msgstr "ทดสอบการเชื่อมต่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:338
 msgid "Disable"
 msgstr "ปิดการใช้งาน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:337
 msgid "Enable"
 msgstr "เปิดการใช้งาน"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:288
 msgid "Set as Default"
 msgstr "ตั้งเป็นค่าเริ่มต้น"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:302
 msgid "No Payment Providers Connected"
 msgstr "ไม่มีผู้ให้บริการชำระเงินที่เชื่อมต่อ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:303
 msgid "Get started by connecting your first payment provider"
 msgstr "เริ่มต้นด้วยการเชื่อมต่อกับผู้ให้บริการชำระเงินรายแรกของคุณ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:308
 msgid "Setup Your First Provider"
 msgstr "ตั้งค่าผู้ให้บริการแรกของคุณ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:318
 msgid "providers"
 msgstr "ผู้ให้บริการ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:327
 msgid "Testing..."
 msgstr "กำลังทดสอบ..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:328
 msgid "Setting..."
 msgstr "กำลังตั้งค่า..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:329
 msgid "Deleting..."
 msgstr "กำลังลบ..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:330
 msgid "Connection test failed"
 msgstr "การทดสอบการเชื่อมต่อล้มเหลว"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:331
 msgid "Failed to set default"
 msgstr "ไม่สามารถตั้งค่าเริ่มต้นได้"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:333
 msgid "Failed to delete"
 msgstr "ไม่สามารถลบได้"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:334
 msgid "Set this provider as the default payment provider?"
 msgstr "ต้องการตั้งค่านี้เป็นผู้ให้บริการชำระเงินเริ่มต้นใช่หรือไม่?"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:335
 msgid ""
-"Are you sure you want to delete this payment provider? This action cannot be "
-"undone."
-msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบผู้ให้บริการชำระเงินนี้? การกระทำนี้ไม่สามารถยกเลิกได้"
+"Are you sure you want to delete this payment provider? This action cannot be"
+" undone."
+msgstr ""
+"คุณแน่ใจหรือไม่ว่าต้องการลบผู้ให้บริการชำระเงินนี้? "
+"การกระทำนี้ไม่สามารถยกเลิกได้"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:336
+#| msgid "Failed to initialize payment provider"
+msgid "Failed to toggle provider"
+msgstr "ล้มเหลวในการสลับผู้ให้บริการ"
+
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:4
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:18
 msgid "Payment Transactions"
 msgstr "รายการธุรกรรมการชำระเงิน"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:20
 msgid "View and track all payment transactions"
 msgstr "ดูและติดตามการทำธุรกรรมการชำระเงินทั้งหมด"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:25
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:25
 msgid "Overview"
 msgstr "ภาพรวม"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:35
 msgid "Successful"
 msgstr "สำเร็จ"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:45
 msgid "Refunded"
 msgstr "คืนเงิน"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:54
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:54
 msgid "Filters"
 msgstr "ตัวกรอง"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:67
 msgid "Search by transaction ID..."
 msgstr "ค้นหาตาม ID ธุรกรรม..."
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:86
 msgid "Type"
 msgstr "ประเภท"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:89
 msgid "All Types"
 msgstr "ทุกประเภท"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:102
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:76
 msgid "All Providers"
 msgstr "ผู้ให้บริการทั้งหมด"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:114
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:112
 msgid "Apply Filters"
 msgstr "ใช้ตัวกรอง"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:128
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:126
 msgid "entries"
 msgstr "รายการ"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:137
 msgid "Loading transactions..."
 msgstr "กำลังโหลดรายการธุรกรรม..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:4
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:18
 msgid "Payment Webhooks"
 msgstr "เวิร์กโฮกการชำระเงิน"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:20
 msgid "Monitor incoming payment provider webhooks"
 msgstr "ตรวจสอบเวิร์กโฮกที่เข้ามาจากผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:65
 msgid "Event ID / Type"
 msgstr "ID / ประเภทเหตุการณ์"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:67
 msgid "Search by event ID or type..."
 msgstr "ค้นหาโดยใช้ ID หรือประเภทของเหตุการณ์..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:89
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:101
 msgid "All"
 msgstr "ทั้งหมด"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:90
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:102
 msgid "Yes"
 msgstr "ใช่"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:91
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:103
 msgid "No"
 msgstr "ไม่"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:123
+#: templates/admin/payment_providers/providers/browse.html:281
 msgid "Webhooks"
 msgstr "เวิร์กโฮก"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:135
 msgid "Loading webhooks..."
 msgstr "กำลังโหลดเวิร์กโฮก..."
 
+#: templates/admin/payment_providers/providers/browse.html:4
+#: templates/admin/payment_providers/providers/browse.html:37
+#: views/provider_browse.py:212
 msgid "Browse Payment Providers"
 msgstr "ดูผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr "ผู้ดูแลเว็บไซต์"
 
+#: templates/admin/payment_providers/providers/browse.html:39
 msgid ""
 "Choose a payment provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -1656,55 +2500,72 @@ msgstr ""
 "เลือกผู้ให้บริการชำระเงินเพื่อผสานรวมกับร้านค้าของคุณ "
 "ติดตั้งผู้ให้บริการใหม่หรือตั้งค่าผู้ให้บริการที่มีอยู่แล้ว"
 
+#: templates/admin/payment_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr "เซิร์ฟเวอร์อัปเดตไม่สามารถใช้งานได้"
 
+#: templates/admin/payment_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
-msgstr "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตได้ แสดงเฉพาะผู้ให้บริการที่ติดตั้งในท้องถิ่นเท่านั้น"
+msgstr ""
+"ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตได้ "
+"แสดงเฉพาะผู้ให้บริการที่ติดตั้งในท้องถิ่นเท่านั้น"
 
+#: templates/admin/payment_providers/providers/browse.html:58
 msgid "Payment Provider Marketplace"
 msgstr "ตลาดผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payment providers to accept payments from "
 "customers worldwide, including credit cards, digital wallets, and local "
 "payment methods."
 msgstr ""
-"คุณสามารถค้นพบและติดตั้งผู้ให้บริการชำระเงินเพื่อรับชำระเงินจากลูกค้าทั่วโลก รวมถึงบัตรเครดิต, "
-"กระเป๋าเงินดิจิทัล และวิธีการชำระเงินในท้องถิ่น"
+"คุณสามารถค้นพบและติดตั้งผู้ให้บริการชำระเงินเพื่อรับชำระเงินจากลูกค้าทั่วโลก"
+" รวมถึงบัตรเครดิต, กระเป๋าเงินดิจิทัล และวิธีการชำระเงินในท้องถิ่น"
 
+#: templates/admin/payment_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr "สิ่งที่คุณสามารถทำได้:"
 
+#: templates/admin/payment_providers/providers/browse.html:82
 msgid "Browse available payment providers by country and payment methods"
 msgstr "ค้นหาผู้ให้บริการชำระเงินที่มีอยู่ตามประเทศและวิธีการชำระเงิน"
 
+#: templates/admin/payment_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr "ติดตั้งผู้ให้บริการใหม่ด้วยการคลิกเพียงครั้งเดียว"
 
+#: templates/admin/payment_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr "อัปเดตผู้ให้บริการที่ติดตั้งแล้วเป็นเวอร์ชันล่าสุด"
 
+#: templates/admin/payment_providers/providers/browse.html:94
 msgid "Configure provider settings and API credentials"
 msgstr "ตั้งค่าการตั้งค่าผู้ให้บริการและข้อมูลการเข้าถึง API"
 
+#: templates/admin/payment_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr "เริ่มต้น:"
 
+#: templates/admin/payment_providers/providers/browse.html:105
 msgid "Browse providers below and find your payment processor"
 msgstr "ค้นหาผู้ให้บริการด้านล่างเพื่อหาผู้ประมวลผลการชำระเงินของคุณ"
 
+#: templates/admin/payment_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr "คลิก 'ติดตั้ง' เพื่อเพิ่มผู้ให้บริการลงในร้านค้าของคุณ"
 
+#: templates/admin/payment_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr "ไปที่การตั้งค่าเพื่อตั้งค่าข้อมูลการเข้าถึง API"
 
+#: templates/admin/payment_providers/providers/browse.html:108
 msgid "Test the provider with a sample transaction"
 msgstr "ทดสอบผู้ให้บริการด้วยการทำธุรกรรมตัวอย่าง"
 
+#: templates/admin/payment_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -1723,6 +2584,7 @@ msgstr[1] ""
 "                    Currently: %(total)s provider available\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:121
 #, python-format
 msgid ""
 "\n"
@@ -1741,324 +2603,479 @@ msgstr[1] ""
 "                    %(installed)s installed\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:136
 msgid "Filter by Country:"
 msgstr "กรองตามประเทศ:"
 
+#: templates/admin/payment_providers/providers/browse.html:142
 msgid "All Countries"
 msgstr "ประเทศทั้งหมด"
 
+#: templates/admin/payment_providers/providers/browse.html:156
 msgid "Active Filter:"
 msgstr "ตัวกรองที่เปิดใช้งาน:"
 
+#: templates/admin/payment_providers/providers/browse.html:163
 msgid "Clear filter"
 msgstr "ล้างตัวกรอง"
 
+#: templates/admin/payment_providers/providers/browse.html:181
 msgid "Update Available"
 msgstr "มีการอัปเดตที่พร้อมใช้งาน"
 
+#: templates/admin/payment_providers/providers/browse.html:207
 msgid "Installed"
 msgstr "ติดตั้งแล้ว"
 
+#: templates/admin/payment_providers/providers/browse.html:222
 msgid "Available"
 msgstr "พร้อมใช้งาน"
 
+#: templates/admin/payment_providers/providers/browse.html:245
 msgid "Cards"
 msgstr "บัตร"
 
+#: templates/admin/payment_providers/providers/browse.html:250
 msgid "Bank"
 msgstr "ธนาคาร"
 
+#: templates/admin/payment_providers/providers/browse.html:255
 msgid "Wallets"
 msgstr "กระเป๋าเงิน"
 
+#: templates/admin/payment_providers/providers/browse.html:260
 msgid "Local"
 msgstr "ท้องถิ่น"
 
+#: templates/admin/payment_providers/providers/browse.html:271
+#: templates/admin/payment_providers/wizard/step1_select.html:94
 msgid "3D Secure"
 msgstr "3D Secure"
 
+#: templates/admin/payment_providers/providers/browse.html:276
+#: templates/admin/payment_providers/wizard/step1_select.html:82
 msgid "Refunds"
 msgstr "การคืนเงิน"
 
+#: templates/admin/payment_providers/providers/browse.html:314
 msgid "Update"
 msgstr "อัปเดต"
 
+#: templates/admin/payment_providers/providers/browse.html:320
+#: templates/admin/payment_providers/wizard/base.html:54
 msgid "Configure"
 msgstr "กำหนดค่า"
 
+#: templates/admin/payment_providers/providers/browse.html:328
 msgid "Install"
 msgstr "ติดตั้ง"
 
+#: templates/admin/payment_providers/providers/browse.html:338
 msgid "View Details"
 msgstr "ดูรายละเอียด"
 
+#: templates/admin/payment_providers/providers/browse.html:347
 msgid "Learn More"
 msgstr "เรียนรู้เพิ่มเติม"
 
+#: templates/admin/payment_providers/providers/browse.html:361
 msgid "No Providers Available"
 msgstr "ไม่มีผู้ให้บริการที่ใช้งานได้"
 
+#: templates/admin/payment_providers/providers/browse.html:362
 msgid ""
 "No payment providers are currently available. Please check your update "
 "server connection or contact support."
 msgstr ""
-"ขณะนี้ไม่มีผู้ให้บริการชำระเงินที่สามารถใช้งานได้ กรุณาตรวจสอบการเชื่อมต่อกับเซิร์ฟเวอร์อัปเดต "
-"หรือติดต่อฝ่ายสนับสนุน"
+"ขณะนี้ไม่มีผู้ให้บริการชำระเงินที่สามารถใช้งานได้ "
+"กรุณาตรวจสอบการเชื่อมต่อกับเซิร์ฟเวอร์อัปเดต หรือติดต่อฝ่ายสนับสนุน"
 
+#: templates/admin/payment_providers/providers/browse.html:371
 msgid "Installing provider..."
 msgstr "กำลังติดตั้งผู้ให้บริการ..."
 
+#: templates/admin/payment_providers/wizard/base.html:13
 msgid "Connect Payment Provider"
 msgstr "เชื่อมต่อกับผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/wizard/base.html:14
 msgid "Follow these steps to connect your payment provider account"
-msgstr "ปฏิบัติตามขั้นตอนเหล่านี้เพื่อเชื่อมต่อบัญชีผู้ให้บริการชำระเงินของคุณ"
+msgstr ""
+"ปฏิบัติตามขั้นตอนเหล่านี้เพื่อเชื่อมต่อบัญชีผู้ให้บริการชำระเงินของคุณ"
 
+#: templates/admin/payment_providers/wizard/base.html:22
 msgid "Select Provider"
 msgstr "เลือกผู้ให้บริการ"
 
+#: templates/admin/payment_providers/wizard/base.html:30
 msgid "Setup Instructions"
 msgstr "คำแนะนำการตั้งค่า"
 
+#: templates/admin/payment_providers/wizard/base.html:38
 msgid "Enter Credentials"
 msgstr "กรอกข้อมูลการเข้าสู่ระบบ"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:6
 msgid "Select a Payment Provider"
 msgstr "เลือกผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:7
 msgid "Choose the payment provider you want to connect to your store."
 msgstr "เลือกผู้ให้บริการชำระเงินที่คุณต้องการเชื่อมต่อกับร้านค้าของคุณ"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:20
+#, python-format
+#| msgid ""
+#| "\n"
+#| "                    Currently: %(total)s provider available\n"
+#| "                "
+#| msgid_plural ""
+#| "\n"
+#| "                    Currently: %(total)s providers available\n"
+#| "                "
+msgid ""
+"\n"
+"                %(counter)s payment provider needs repair\n"
+"                "
+msgid_plural ""
+"\n"
+"                %(counter)s payment providers need repair\n"
+"                "
+msgstr[0] ""
+"\n"
+"                %(counter)s ผู้ให้บริการชำระเงินต้องซ่อมแซม\n"
+"                "
+msgstr[1] ""
+"\n"
+"                    Currently: %(total)s provider available\n"
+"                "
+
+#: templates/admin/payment_providers/wizard/step1_select.html:27
+msgid ""
+"These providers are registered but their files are missing on disk. Click "
+"Reinstall to download a fresh copy from the update server."
+msgstr ""
+"ผู้ให้บริการเหล่านี้ได้ลงทะเบียนแล้ว แต่ไฟล์ของพวกเขาหายไปจากดิสก์ คลิก "
+"Reinstall เพื่อดาวน์โหลดสำเนาใหม่จากเซิร์ฟเวอร์อัปเดต"
+
+#: templates/admin/payment_providers/wizard/step1_select.html:39
+#| msgid "Install"
+msgid "Reinstall"
+msgstr "ติดตั้งใหม่"
+
+#: templates/admin/payment_providers/wizard/step1_select.html:76
 msgid "Recurring"
 msgstr "การชำระเงินแบบสม่ำเสมอ"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:88
 msgid "International"
 msgstr "สากล"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:100
 msgid "Digital Wallets"
 msgstr "กระเป๋าเงินดิจิทัล"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:115
 msgid "No Payment Providers Available"
 msgstr "ไม่มีผู้ให้บริการชำระเงินที่ใช้งานได้"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:116
 msgid ""
 "Install payment provider components from the Component Manager to get "
 "started."
-msgstr "ติดตั้งส่วนประกอบของผู้ให้บริการชำระเงินจาก Component Manager เพื่อเริ่มต้น"
+msgstr ""
+"ติดตั้งส่วนประกอบของผู้ให้บริการชำระเงินจาก Component Manager เพื่อเริ่มต้น"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:118
 msgid "Browse Components"
 msgstr "เรียกดูส่วนประกอบ"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:130
 msgid "Cancel"
 msgstr "ยกเลิก"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:133
+#: templates/admin/payment_providers/wizard/step2_setup.html:80
+#: templates/admin/payment_providers/wizard/step3_credentials.html:223
+#: templates/admin/payment_providers/wizard/step4_test.html:119
 msgid "Continue"
 msgstr "ดำเนินการต่อ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:14
 msgid "Follow these instructions to set up your account"
 msgstr "ปฏิบัติตามคำแนะนำเหล่านี้เพื่อตั้งค่าบัญชีของคุณ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:24
 msgid "Setup Information"
 msgstr "ข้อมูลการตั้งค่า"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:31
 msgid "Create an Account"
 msgstr "สร้างบัญชี"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "If you don't already have an account with"
 msgstr "หากคุณยังไม่มีบัญชีกับ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "you'll need to create one."
 msgstr "คุณจำเป็นต้องสร้างบัญชีหนึ่ง"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:36
 msgid "Sign Up for"
 msgstr "สมัครใช้งาน"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:45
 msgid "Get Your API Credentials"
 msgstr "รับข้อมูล API ของคุณ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid "Log in to your"
 msgstr "เข้าสู่ระบบบัญชีของคุณ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid ""
 "dashboard and navigate to the API or Developer section to obtain your "
 "credentials."
-msgstr "แดชบอร์ดและไปยังส่วน API หรือ Developer เพื่อรับข้อมูลการเข้าถึงของคุณ"
+msgstr ""
+"แดชบอร์ดและไปยังส่วน API หรือ Developer เพื่อรับข้อมูลการเข้าถึงของคุณ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:53
 msgid "Copy Your Credentials"
 msgstr "คัดลอกข้อมูลการเข้าสู่ระบบของคุณ"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:54
 msgid "Have your API credentials ready. You'll need them in the next step."
-msgstr "เตรียมข้อมูลการเข้าถึง API ไว้ คุณจะต้องใช้ข้อมูลเหล่านี้ในขั้นตอนถัดไป"
+msgstr ""
+"เตรียมข้อมูลการเข้าถึง API ไว้ คุณจะต้องใช้ข้อมูลเหล่านี้ในขั้นตอนถัดไป"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:62
 msgid "Security Note"
 msgstr "หมายเหตุด้านความปลอดภัย"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:63
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored. They are never stored in plain text."
 msgstr ""
-"ข้อมูลการเข้าถึงของคุณจะถูกเข้ารหัสโดยใช้การเข้ารหัส AES-256 ก่อนที่จะถูกเก็บไว้ "
-"ข้อมูลเหล่านี้จะไม่ถูกเก็บในรูปแบบข้อความธรรมดาเด็ดขาด"
+"ข้อมูลการเข้าถึงของคุณจะถูกเข้ารหัสโดยใช้การเข้ารหัส AES-256 "
+"ก่อนที่จะถูกเก็บไว้ ข้อมูลเหล่านี้จะไม่ถูกเก็บในรูปแบบข้อความธรรมดาเด็ดขาด"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:75
+#: templates/admin/payment_providers/wizard/step3_credentials.html:220
+#: templates/admin/payment_providers/wizard/step4_test.html:116
+#: templates/admin/payment_providers/wizard/step5_configure.html:196
 msgid "Back"
 msgstr "ย้อนกลับ"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:13
 msgid "Enter Your Credentials"
 msgstr "กรอกข้อมูลการเข้าสู่ระบบของคุณ"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "Provide your"
 msgstr "กรุณาให้ข้อมูลของคุณ"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "API credentials"
 msgstr "ข้อมูล API"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:25
+#: templates/admin/payment_providers/wizard/step5_configure.html:25
 msgid "Please correct the errors below:"
 msgstr "กรุณาแก้ไขข้อผิดพลาดต่อไปนี้:"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:38
+#: templates/admin/payment_providers/wizard/step3_credentials.html:231
 msgid "TEST MODE"
 msgstr "โหมดทดสอบ"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:39
+#: templates/admin/payment_providers/wizard/step3_credentials.html:232
 msgid "Using test credentials - no real transactions"
 msgstr "กำลังใช้ข้อมูลทดสอบ - ไม่มีการทำธุรกรรมจริง"
 
-msgid "API Credentials"
-msgstr "ข้อมูล API"
-
+#: templates/admin/payment_providers/wizard/step3_credentials.html:166
 msgid "This provider does not require additional credentials."
 msgstr "ผู้ให้บริการรายนี้ไม่จำเป็นต้องใช้ข้อมูลการเข้าถึงเพิ่มเติม"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:173
 msgid "Basic Configuration"
 msgstr "การตั้งค่าพื้นฐาน"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:178
 msgid "Display Name"
 msgstr "ชื่อแสดงผล"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:189
 msgid "A friendly name to identify this payment provider connection"
 msgstr "ชื่อที่เป็นมิตรเพื่อระบุการเชื่อมต่อกับผู้ให้บริการชำระเงินนี้"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:199
 msgid "Hosted - Redirect to provider (recommended)"
 msgstr "แบบโฮสต์ - เปลี่ยนเส้นทางไปยังผู้ให้บริการ (แนะนำ)"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:204
 msgid ""
 "How customers will complete payment. Hosted mode is more secure and easier "
 "to maintain."
-msgstr "วิธีที่ลูกค้าจะดำเนินการชำระเงิน โหมดโฮสต์มีความปลอดภัยมากขึ้นและง่ายต่อการบำรุงรักษา"
+msgstr ""
+"วิธีที่ลูกค้าจะดำเนินการชำระเงิน "
+"โหมดโฮสต์มีความปลอดภัยมากขึ้นและง่ายต่อการบำรุงรักษา"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:211
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database. They are never stored in plain text."
 msgstr ""
-"ข้อมูลการเข้าถึงของคุณจะถูกเข้ารหัสโดยใช้การเข้ารหัส AES-256 ก่อนที่จะถูกเก็บไว้ในฐานข้อมูล "
+"ข้อมูลการเข้าถึงของคุณจะถูกเข้ารหัสโดยใช้การเข้ารหัส AES-256 "
+"ก่อนที่จะถูกเก็บไว้ในฐานข้อมูล "
 "ข้อมูลเหล่านี้จะไม่ถูกเก็บในรูปแบบข้อความธรรมดาเด็ดขาด"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:233
 msgid "PRODUCTION MODE"
 msgstr "โหมดการผลิต"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:234
 msgid "Using live credentials - real transactions!"
 msgstr "กำลังใช้ข้อมูลจริง - มีการทำธุรกรรมจริง!"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "Verify your"
 msgstr "ตรวจสอบข้อมูลของคุณ"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:26
 msgid "Connection Successful!"
 msgstr "การเชื่อมต่อสำเร็จ!"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "Your"
 msgstr "ของคุณ"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "account has been verified and is ready to use."
 msgstr "บัญชีได้รับการตรวจสอบแล้วและพร้อมใช้งาน"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:31
 msgid "Account Information"
 msgstr "ข้อมูลบัญชี"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:34
 msgid "Account ID"
 msgstr "ไอดีบัญชี"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:39
 msgid "Email"
 msgstr "อีเมล"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:44
 msgid "Country"
 msgstr "ประเทศ"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:49
 msgid "Default Currency"
 msgstr "สกุลเงินค่าเริ่มต้น"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:54
 msgid "Account Status"
 msgstr "สถานะบัญชี"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:68
 msgid "Connection Failed"
 msgstr "การเชื่อมต่อไม่สำเร็จ"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:69
 msgid ""
-"Unable to connect to the payment provider. Please check your credentials and "
-"try again."
+"Unable to connect to the payment provider. Please check your credentials and"
+" try again."
 msgstr ""
-"ไม่สามารถเชื่อมต่อกับผู้ให้บริการชำระเงินได้ กรุณาตรวจสอบข้อมูลการเข้าถึงของคุณและลองใหม่อีกครั้ง"
+"ไม่สามารถเชื่อมต่อกับผู้ให้บริการชำระเงินได้ "
+"กรุณาตรวจสอบข้อมูลการเข้าถึงของคุณและลองใหม่อีกครั้ง"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:73
 msgid "Technical Details"
 msgstr "รายละเอียดทางเทคนิค"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:79
 msgid "Troubleshooting Tips"
 msgstr "คำแนะนำแก้ไขปัญหา"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:81
 msgid "Verify that your API credentials are correct"
 msgstr "ตรวจสอบให้แน่ใจว่าข้อมูลการเข้าถึง API ของคุณถูกต้อง"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:82
 msgid "Check that your account is active with the payment provider"
 msgstr "ตรวจสอบว่าบัญชีของคุณยังคงใช้งานได้กับผู้ให้บริการชำระเงิน"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:83
 msgid "Ensure you're using the correct environment (test/production)"
 msgstr "ตรวจสอบให้แน่ใจว่าคุณใช้สภาพแวดล้อมที่ถูกต้อง (ทดสอบ/การผลิต)"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:84
 msgid "Verify that your IP address is not blocked by the provider"
 msgstr "ตรวจสอบให้แน่ใจว่าที่อยู่ IP ของคุณไม่ถูกบล็อกโดยผู้ให้บริการ"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:97
 msgid "Testing Connection..."
 msgstr "กำลังทดสอบการเชื่อมต่อ..."
 
+#: templates/admin/payment_providers/wizard/step4_test.html:98
 msgid "Please wait while we verify your credentials with"
 msgstr "กรุณารอสักครู่ขณะที่เราตรวจสอบข้อมูลการเข้าถึงของคุณกับ"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:123
 msgid "Edit Credentials"
 msgstr "แก้ไขข้อมูลการเข้าสู่ระบบ"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:126
 msgid "Retry Test"
 msgstr "ลองทดสอบอีกครั้ง"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:13
 msgid "Configure Provider"
 msgstr "ตั้งค่าผู้ให้บริการ"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "Finalize your"
 msgstr "สรุปขั้นตอนของคุณ"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:33
 msgid "Activation"
 msgstr "การเปิดใช้งาน"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:42
 msgid "Enable this payment provider for checkout"
 msgstr "เปิดใช้งานผู้ให้บริการชำระเงินนี้สำหรับขั้นตอนการชำระเงิน"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:46
 msgid ""
 "When enabled, customers will be able to use this payment method during "
 "checkout."
-msgstr "เมื่อเปิดใช้งาน ลูกค้าจะสามารถใช้วิธีการชำระเงินนี้ในขั้นตอนการชำระเงินได้"
+msgstr ""
+"เมื่อเปิดใช้งาน ลูกค้าจะสามารถใช้วิธีการชำระเงินนี้ในขั้นตอนการชำระเงินได้"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:56
 msgid "Set as default payment provider"
 msgstr "ตั้งค่าเป็นผู้ให้บริการชำระเงินค่าเริ่มต้น"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:60
 msgid ""
-"The default provider will be pre-selected during checkout. You can only have "
-"one default provider."
+"The default provider will be pre-selected during checkout. You can only have"
+" one default provider."
 msgstr ""
 "ผู้ให้บริการค่าเริ่มต้นจะถูกเลือกไว้ล่วงหน้าในขั้นตอนการชำระเงิน "
 "คุณสามารถมีผู้ให้บริการค่าเริ่มต้นได้เพียงผู้เดียวเท่านั้น"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:67
 msgid "Display Order"
 msgstr "ลำดับการแสดง"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:72
 msgid "Sort Order"
 msgstr "ลำดับการจัดเรียง"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:82
 msgid ""
 "Lower numbers appear first in the checkout payment method list. Use this to "
 "control the order of payment options."
@@ -2066,184 +3083,303 @@ msgstr ""
 "ตัวเลขที่ต่ำกว่าจะปรากฏก่อนในรายการวิธีการชำระเงินของขั้นตอนการชำระเงิน "
 "ใช้ตัวนี้เพื่อควบคุมลำดับของตัวเลือกการชำระเงิน"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:90
 msgid "Advanced Settings"
 msgstr "การตั้งค่าขั้นสูง"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:167
 msgid "Webhook Configuration"
 msgstr "การตั้งค่า Webhook"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid ""
 "To receive real-time payment notifications, configure the following webhook "
 "URL in your"
-msgstr "เพื่อรับการแจ้งเตือนการชำระเงินแบบเรียลไทม์ โปรดตั้งค่า URL webhook ดังต่อไปนี้ใน "
+msgstr ""
+"เพื่อรับการแจ้งเตือนการชำระเงินแบบเรียลไทม์ โปรดตั้งค่า URL webhook "
+"ดังต่อไปนี้ใน "
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid "dashboard:"
 msgstr "แดชบอร์ด:"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:176
 msgid "Copy"
 msgstr "คัดลอก"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:183
 msgid "Important"
 msgstr "สำคัญ"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:184
 msgid ""
-"Webhooks allow your store to receive instant notifications when payments are "
-"completed, refunded, or encounter issues. Configure this in your payment "
+"Webhooks allow your store to receive instant notifications when payments are"
+" completed, refunded, or encounter issues. Configure this in your payment "
 "provider's dashboard to ensure smooth operation."
 msgstr ""
-"Webhooks ช่วยให้ร้านค้าของคุณสามารถรับการแจ้งเตือนแบบเรียลไทม์เมื่อการชำระเงินเสร็จสิ้น "
-"คืนเงิน หรือเกิดปัญหา "
+"Webhooks "
+"ช่วยให้ร้านค้าของคุณสามารถรับการแจ้งเตือนแบบเรียลไทม์เมื่อการชำระเงินเสร็จสิ้น"
+" คืนเงิน หรือเกิดปัญหา "
 "โปรดตั้งค่าในแดชบอร์ดของผู้ให้บริการชำระเงินเพื่อให้การทำงานเป็นไปอย่างราบรื่น"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:199
 msgid "Complete Setup"
 msgstr "ตั้งค่าให้สมบูรณ์"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:208
 msgid "Copied!"
 msgstr "คัดลอกแล้ว!"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:209
 msgid "Failed to copy to clipboard. Please copy manually."
 msgstr "ไม่สามารถคัดลอกไปยังคลิปบอร์ดได้ กรุณาคัดลอกด้วยตนเอง"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:210
 msgid ""
 "Setting this as the default will remove the default status from any other "
 "payment provider. Continue?"
-msgstr "การตั้งค่านี้เป็นค่าเริ่มต้นจะลบสถานะค่าเริ่มต้นจากผู้ให้บริการชำระเงินอื่น ๆ ต่อไปไหม?"
+msgstr ""
+"การตั้งค่านี้เป็นค่าเริ่มต้นจะลบสถานะค่าเริ่มต้นจากผู้ให้บริการชำระเงินอื่น "
+"ๆ ต่อไปไหม?"
 
-msgid "Cannot set as default while inactive. Please enable the provider first."
-msgstr "ไม่สามารถตั้งค่าเป็นค่าเริ่มต้นขณะที่ไม่ได้เปิดใช้งาน กรุณาเปิดใช้งานผู้ให้บริการก่อน"
+#: templates/admin/payment_providers/wizard/step5_configure.html:211
+msgid ""
+"Cannot set as default while inactive. Please enable the provider first."
+msgstr ""
+"ไม่สามารถตั้งค่าเป็นค่าเริ่มต้นขณะที่ไม่ได้เปิดใช้งาน "
+"กรุณาเปิดใช้งานผู้ให้บริการก่อน"
 
+#: views/handlers.py:111
 msgid "Provider not found"
 msgstr "ไม่พบผู้ให้บริการ"
 
+#: views/payment_dashboard.py:118
 msgid "Today"
 msgstr "วันนี้"
 
+#: views/payment_dashboard.py:119
 msgid "Yesterday"
 msgstr "เมื่อวาน"
 
+#: views/payment_dashboard.py:120
 msgid "Last 7 Days"
 msgstr "7 วันที่ผ่านมา"
 
+#: views/payment_dashboard.py:121
 msgid "Last 30 Days"
 msgstr "30 วันที่ผ่านมา"
 
+#: views/payment_dashboard.py:122
 msgid "This Month"
 msgstr "เดือนนี้"
 
+#: views/payment_dashboard.py:123
 msgid "Last Month"
 msgstr "เดือนที่แล้ว"
 
+#: views/payment_dashboard.py:124
 msgid "This Quarter"
 msgstr "ไตรมาสนี้"
 
+#: views/payment_dashboard.py:125
 msgid "Last Quarter"
 msgstr "ไตรมาสที่แล้ว"
 
+#: views/payment_dashboard.py:126
 msgid "This Year / YTD"
 msgstr "ปีนี้ / ปีต่อปัจจุบัน"
 
+#: views/payment_dashboard.py:127
 msgid "Last Year"
 msgstr "ปีที่แล้ว"
 
+#: views/payment_dashboard.py:128
 msgid "Custom Range"
 msgstr "ช่วงเวลาที่กำหนดเอง"
 
+#: views/provider_browse.py:62
 msgid ""
 "Could not fetch providers from update server. Showing installed providers "
 "only."
-msgstr "ไม่สามารถดึงผู้ให้บริการจากเซิร์ฟเวอร์อัปเดตได้ จะแสดงเฉพาะผู้ให้บริการที่ติดตั้งแล้วเท่านั้น"
+msgstr ""
+"ไม่สามารถดึงผู้ให้บริการจากเซิร์ฟเวอร์อัปเดตได้ "
+"จะแสดงเฉพาะผู้ให้บริการที่ติดตั้งแล้วเท่านั้น"
 
+#: views/provider_browse.py:269
 msgid "Provider is already installed"
 msgstr "ผู้ให้บริการถูกติดตั้งไว้แล้ว"
 
+#: views/provider_browse.py:306
 msgid "Provider not found on update server."
 msgstr "ไม่พบผู้ให้บริการในเซิร์ฟเวอร์อัปเดต"
 
+#: views/provider_browse.py:316
 msgid "Could not determine provider version."
 msgstr "ไม่สามารถระบุเวอร์ชันของผู้ให้บริการได้"
 
+#: views/provider_browse.py:338
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "ไม่สามารถดาวน์โหลดผู้ให้บริการ: %(error)s"
 
+#: views/provider_browse.py:351
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "ไม่สามารถติดตั้งผู้ให้บริการ: %(error)s"
 
+#: views/provider_browse.py:389
 #, python-format
 msgid "Provider %(name)s installed successfully"
 msgstr "ผู้ให้บริการ %(name)s ติดตั้งสำเร็จ"
 
+#: views/provider_browse.py:398
 #, python-format
 msgid "Installation failed: %(error)s"
 msgstr "การติดตั้งล้มเหลว: %(error)s"
 
+#: views/provider_browse.py:424
 msgid "Provider not installed"
 msgstr "ผู้ให้บริการยังไม่ได้ติดตั้ง"
 
+#: views/provider_browse.py:437
 msgid "Could not find latest version on update server"
 msgstr "ไม่สามารถค้นหาเวอร์ชันล่าสุดจากเซิร์ฟเวอร์อัปเดตได้"
 
+#: views/provider_browse.py:450
 #, python-format
 msgid "Provider updated successfully to v%(version)s"
 msgstr "ผู้ให้บริการอัปเดตสำเร็จไปยัง v%(version)s"
 
+#: views/provider_browse.py:456
 msgid "Update failed"
 msgstr "การอัปเดตล้มเหลว"
 
+#: views/wizard.py:104
+msgid "Provider files missing on disk"
+msgstr "ไฟล์ผู้ให้บริการหายไปในดิสก์"
+
+#: views/wizard.py:115
+#| msgid "Provider account not found"
+msgid "Provider manifest could not be loaded"
+msgstr "ไม่สามารถโหลดรายการผู้ให้บริการได้"
+
+#: views/wizard.py:127
+#| msgid "Provider not installed"
+msgid "Provider manifest is empty or invalid"
+msgstr "รายการผู้ให้บริการว่างหรือไม่ถูกต้อง"
+
+#: views/wizard.py:144
 msgid "Connect Payment Provider - Select Provider"
 msgstr "เชื่อมต่อผู้ให้บริการชำระเงิน - เลือกผู้ให้บริการ"
 
+#: views/wizard.py:157
 msgid "Please select a provider."
 msgstr "กรุณาเลือกผู้ให้บริการ"
 
+#: views/wizard.py:165
 msgid "Invalid provider selected."
 msgstr "ผู้ให้บริการที่เลือกไม่ถูกต้อง"
 
+#: views/wizard.py:193 views/wizard.py:262
 msgid "Please select a provider first."
 msgstr "กรุณาเลือกผู้ให้บริการก่อน"
 
+#: views/wizard.py:222 views/wizard.py:279
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "เกิดข้อผิดพลาดในการโหลดผู้ให้บริการ: %(error)s"
 
+#: views/wizard.py:232
 msgid "Connect Payment Provider - Setup Instructions"
 msgstr "เชื่อมต่อผู้ให้บริการชำระเงิน - คำแนะนำการตั้งค่า"
 
+#: views/wizard.py:273
 msgid "Could not load provider configuration."
 msgstr "ไม่สามารถโหลดการตั้งค่าของผู้ให้บริการได้"
 
+#: views/wizard.py:293
 msgid "Connect Payment Provider - Enter Credentials"
 msgstr "เชื่อมต่อผู้ให้บริการชำระเงิน - ป้อนข้อมูลการเข้าสู่ระบบ"
 
+#: views/wizard.py:321
 msgid "Error loading provider configuration."
 msgstr "เกิดข้อผิดพลาดขณะโหลดการตั้งค่าของผู้ให้บริการ"
 
+#: views/wizard.py:333
 msgid "Display name is required."
 msgstr "จำเป็นต้องระบุชื่อแสดงผล"
 
+#: views/wizard.py:364
 msgid "Please complete previous steps first."
 msgstr "กรุณาดำเนินการขั้นตอนก่อนหน้าให้เสร็จก่อน"
 
+#: views/wizard.py:377 views/wizard.py:495
 msgid "Provider not found."
 msgstr "ไม่พบผู้ให้บริการ"
 
+#: views/wizard.py:381
 msgid "Connect Payment Provider - Test Connection"
 msgstr "เชื่อมต่อผู้ให้บริการชำระเงิน - ทดสอบการเชื่อมต่อ"
 
+#: views/wizard.py:408
 msgid "Provider implementation not found."
 msgstr "ไม่พบการดำเนินการของผู้ให้บริการ"
 
+#: views/wizard.py:478
 msgid "Please complete all previous steps."
 msgstr "กรุณาดำเนินการขั้นตอนก่อนหน้าทั้งหมดให้เสร็จ"
 
+#: views/wizard.py:499
 msgid "Connect Payment Provider - Configure"
 msgstr "เชื่อมต่อกับผู้ให้บริการชำระเงิน - ตั้งค่า"
 
+#: views/wizard.py:578
 #, python-format
 msgid "Payment provider \"%(name)s\" connected successfully!"
 msgstr "ผู้ให้บริการชำระเงิน \"%(name)s\" ต่อเชื่อมสำเร็จ!"
 
+#: views/wizard.py:603
+#, python-format
+msgid ""
+"Provider was saved but payment methods could not be auto-synced (%(error)s)."
+" The provider will not appear at checkout until methods are synced — try the"
+" \"Sync methods\" action on the provider list."
+msgstr ""
+"ผู้ให้บริการถูกบันทึกไว้แล้ว แต่วิธีการชำระเงินไม่สามารถซิงค์อัตโนมัติได้ "
+"(%(error)s) ผู้ให้บริการจะไม่ปรากฏที่หน้าชำระเงินจนกว่าวิธีการจะถูกซิงค์ — "
+"ลองใช้การกระทำ \"Sync methods\" บนรายการผู้ให้บริการ"
+
+#: views/wizard.py:618
 #, python-format
 msgid "Error saving provider: %(error)s"
 msgstr "เกิดข้อผิดพลาดในการบันทึกผู้ให้บริการ: %(error)s"
+
+#~ msgid "Payment Configuration"
+#~ msgstr "การตั้งค่าการชำระเงิน"
+
+#~ msgid "Enabled Payment Methods"
+#~ msgstr "วิธีการชำระเงินที่เปิดใช้งาน"
+
+#~ msgid ""
+#~ "Select payment methods to offer customers. Leave empty for all available "
+#~ "methods."
+#~ msgstr ""
+#~ "เลือกวิธีการชำระเงินที่จะเสนอให้กับลูกค้า "
+#~ "ปล่อยว่างเพื่อแสดงวิธีการชำระเงินทั้งหมดที่มีอยู่"
+
+#~ msgid "Enable or disable payment methods per country"
+#~ msgstr "เปิดหรือปิดวิธีการชำระเงินตามประเทศ"
+
+#~ msgid "No Shipping Countries Configured"
+#~ msgstr "ไม่ได้ตั้งค่าประเทศจัดส่ง"
+
+#~ msgid ""
+#~ "Configure shipping countries first to set up payment methods per country."
+#~ msgstr "ตั้งค่าประเทศที่ส่งสินค้าก่อนเพื่อตั้งค่าวิธีการชำระเงินตามประเทศ"
+
+#~ msgid ""
+#~ "Toggle payment methods on or off for each country. Changes are saved "
+#~ "automatically."
+#~ msgstr ""
+#~ "เปิดหรือปิดวิธีการชำระเงินสำหรับแต่ละประเทศ "
+#~ "การเปลี่ยนแปลงจะถูกบันทึกโดยอัตโนมัติ"

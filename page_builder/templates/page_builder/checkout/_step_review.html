@@ -7,6 +7,7 @@
     <div class="review-section__content" id="review-contact"></div>
 </div>
 
+{% if cart_requires_shipping %}
 <!-- Shipping Review -->
 <div class="review-section">
     <div class="review-section__title">{% mtrans 'Shipping Address' %}</div>
@@ -18,6 +19,7 @@
     <div class="review-section__title">{% mtrans 'Shipping Method' %}</div>
     <div class="review-section__content" id="review-shipping-method"></div>
 </div>
+{% endif %}
 
 <!-- Payment Review -->
 <div class="review-section">
@@ -39,10 +41,12 @@
             <span>{% mtrans 'Subtotal' %}</span>
             <span id="review-subtotal"></span>
         </div>
+        {% if cart_requires_shipping %}
         <div class="review-totals__row" id="review-shipping-row">
             <span>{% mtrans 'Shipping' %}</span>
             <span id="review-shipping-cost"></span>
         </div>
+        {% endif %}
         <div class="review-totals__row review-totals__row--discount" id="review-discount-row" hidden>
             <span>{% mtrans 'Discount' %}</span>
             <span id="review-discount"></span>

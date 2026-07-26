@@ -182,7 +182,9 @@ services:
       retries: 3
 
   nginx:
-    image: fholzer/nginx-brotli:v1.27.3
+    # Minor-line alias, not an exact patch tag: this image's maintainer
+    # prunes old patch tags (v1.27.3 vanished and broke fresh installs).
+    image: fholzer/nginx-brotli:v1.30
     container_name: spwig_prod_nginx
     restart: unless-stopped
     volumes:

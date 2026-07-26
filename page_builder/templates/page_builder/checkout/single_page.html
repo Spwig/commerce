@@ -47,12 +47,19 @@
                 {% include "page_builder/checkout/_step_contact.html" %}
             </div>
 
+            {% if cart_requires_shipping %}
             {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}
 
             <!-- Section 2: Shipping Address -->
             <div class="single-page__section" id="section-shipping" data-step="shipping">
                 <h2 class="single-page__section-heading">{% mtrans 'Shipping Address' %}</h2>
                 {% include "page_builder/checkout/_step_shipping.html" %}
+                <div class="single-page__section-actions">
+                    <button type="button" class="btn btn--primary" data-action="continue-shipping">
+                        {% mtrans 'Continue to Shipping Method' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
 
             {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}
@@ -61,7 +68,14 @@
             <div class="single-page__section" id="section-shipping-method" data-step="shipping-method">
                 <h2 class="single-page__section-heading">{% mtrans 'Shipping Method' %}</h2>
                 {% include "page_builder/checkout/_step_shipping_method.html" %}
+                <div class="single-page__section-actions">
+                    <button type="button" class="btn btn--primary" data-action="continue-shipping-method">
+                        {% mtrans 'Continue to Payment' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
+            {% endif %}
 
             {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}
 
@@ -69,6 +83,12 @@
             <div class="single-page__section" id="section-payment" data-step="payment">
                 <h2 class="single-page__section-heading">{% mtrans 'Payment' %}</h2>
                 {% include "page_builder/checkout/_step_payment.html" %}
+                <div class="single-page__section-actions">
+                    <button type="button" class="btn btn--primary" data-action="continue-payment">
+                        {% mtrans 'Continue to Review' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
 
             {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}

@@ -330,18 +330,6 @@ class OrderVoucherApplicationForm(forms.Form):
         if voucher.max_uses_total and voucher.current_uses >= voucher.max_uses_total:
             raise ValidationError(_("This voucher has reached its usage limit"))
 
-        # Check customer-specific usage limits
-        if self.order and self.order.user and voucher.max_uses_per_customer:
-            from vouchers.models import VoucherUsage
-
-            customer_uses = VoucherUsage.objects.filter(
-                voucher=voucher, user=self.order.user
-            ).count()
-            if customer_uses >= voucher.max_uses_per_customer:
-                raise ValidationError(
-                    _("You have already used this voucher the maximum number of times")
-                )
-
         # Check minimum order value
         if voucher.min_order_value:
             if self.order and self.order.subtotal < voucher.min_order_value:
@@ -349,6 +337,23 @@ class OrderVoucherApplicationForm(forms.Form):
                     _("Minimum order value of %(amount)s required for this voucher")
                     % {"amount": voucher.min_order_value}
                 )
+
+        # Authoritative validation — see the matching comment in
+        # orders.utils.apply_voucher_to_order. The checks above exist only to
+        # give a more specific message for common failures; this call enforces
+        # issued_to (customer binding for loyalty and referral rewards),
+        # first_time_customers_only and per-customer usage limits. Previously
+        # this form re-implemented a subset inline and never called the model,
+        # so those rules went unenforced when staff applied a voucher.
+        #
+        # Caveat: no `context` is passed, so VoucherRestriction rules are still
+        # not evaluated here — same limitation as the order-apply util.
+        if self.order:
+            can_use, message = voucher.can_be_used_by_customer(
+                self.order.user, order_total=self.order.subtotal
+            )
+            if not can_use:
+                raise ValidationError(message)
 
         self.cleaned_data["voucher"] = voucher
         return code

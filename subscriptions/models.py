@@ -239,6 +239,22 @@ class SubscriptionPlan(models.Model):
         help_text=_("Display order (lower numbers appear first)"),
     )
 
+    # Import tracking
+    #
+    # Plans created by a store migration are recorded here so a rollback can
+    # remove them. Every other model the extension importer creates hangs off
+    # Product and disappears with it; a plan has no product of its own, so
+    # without this it would survive a rollback with nothing pointing at it.
+    migration_job = models.ForeignKey(
+        "migration.MigrationJob",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        db_index=True,
+        related_name="subscription_plans",
+        help_text=_("Migration job that created this plan, if it was imported"),
+    )
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))

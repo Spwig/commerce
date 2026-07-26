@@ -32,7 +32,6 @@ from .permissions import IsAuthenticatedOrGuestCheckoutAllowed
 from .serializers import (
     AddToCartSerializer,
     AddToWishlistSerializer,
-    ApplyGiftCardSerializer,
     ApplyVoucherSerializer,
     CartSerializer,
     CheckoutSessionSerializer,
@@ -103,20 +102,6 @@ from .services import CartService, CheckoutService, TaxService, WishlistService
             "Remove a specific voucher from cart by code. Recalculates cart total without the voucher discount. User can reapply the voucher later if eligible."
         ),
     ),
-    apply_gift_card=extend_schema(
-        tags=["Cart"],
-        summary=_("Apply gift card"),
-        description=_(
-            "Apply a gift card code to cart. Validates gift card status, balance, and currency. Gift cards cannot be used to purchase other gift cards. Amount applied is limited to gift card balance or remaining cart total."
-        ),
-    ),
-    remove_gift_card=extend_schema(
-        tags=["Cart"],
-        summary=_("Remove gift card"),
-        description=_(
-            "Remove a specific gift card from cart by code. The gift card balance is not affected until checkout is completed. User can reapply the gift card."
-        ),
-    ),
     summary=extend_schema(
         tags=["Cart"],
         summary=_("Get cart summary"),
@@ -153,7 +138,13 @@ class CartViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
             if not session_key:
                 request.session.create()
                 session_key = request.session.session_key
-            return CartService.get_or_create_cart(session_key=session_key)
+            cart = CartService.get_or_create_cart(session_key=session_key)
+            # Remember the guest cart in session DATA — it survives the
+            # session-key rotation Django performs at login, so the
+            # user_logged_in receiver can merge this cart into the account
+            if request.session.get("guest_cart_id") != cart.id:
+                request.session["guest_cart_id"] = cart.id
+            return cart
 
     def list(self, request):
         """Get current cart"""
@@ -208,6 +199,7 @@ class CartViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
             configuration=serializer.validated_data.get("configuration"),
             preset_id=serializer.validated_data.get("preset_id"),
             booking_data=serializer.validated_data.get("booking_data"),
+            gift_card_data=serializer.validated_data.get("gift_card_data"),
             is_subscription=serializer.validated_data.get("is_subscription", False),
             subscription_plan=serializer.validated_data.get("subscription_plan"),
             pricing_tier=serializer.validated_data.get("pricing_tier"),
@@ -332,11 +324,13 @@ class CartViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
 
         if success:
             cart_serializer = CartSerializer(cart)
+            # Success hands back a Money; failure paths return a bare Decimal
+            amount = getattr(discount_amount, "amount", discount_amount)
             return Response(
                 {
                     "success": True,
                     "message": str(message),
-                    "discount_amount": float(discount_amount),
+                    "discount_amount": float(amount),
                     "cart": cart_serializer.data,
                 }
             )
@@ -367,62 +361,6 @@ class CartViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
         cart = self.get_cart(request)
         summary = CartService.get_cart_summary(cart)
         return Response(summary)
-
-    @action(detail=False, methods=["post"], url_path="apply-gift-card")
-    def apply_gift_card(self, request):
-        """Apply gift card code to cart"""
-        serializer = ApplyGiftCardSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        cart = self.get_cart(request)
-
-        # Get customer's active currency for foreign-currency gift card validation
-        customer_currency = (
-            request.session.get("currency") or getattr(request, "currency", None) or None
-        )
-
-        success, message, discount_amount = CartService.apply_gift_card(
-            cart=cart,
-            gift_card_code=serializer.validated_data["code"],
-            customer_currency=customer_currency,
-        )
-
-        if success:
-            cart_serializer = CartSerializer(cart)
-            return Response(
-                {
-                    "success": True,
-                    "message": str(message),
-                    "discount_applied": float(discount_amount),
-                    "cart": cart_serializer.data,
-                    "applied_gift_cards": cart.get_gift_card_summary(),
-                }
-            )
-        else:
-            return Response(
-                {"success": False, "message": str(message)}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-    @action(detail=False, methods=["delete"], url_path="remove-gift-card/(?P<code>[^/.]+)")
-    def remove_gift_card(self, request, code=None):
-        """Remove gift card from cart"""
-        cart = self.get_cart(request)
-        success, message = CartService.remove_gift_card(cart, code)
-
-        if success:
-            cart_serializer = CartSerializer(cart)
-            return Response(
-                {
-                    "success": True,
-                    "message": str(message),
-                    "cart": cart_serializer.data,
-                    "applied_gift_cards": cart.get_gift_card_summary(),
-                }
-            )
-        else:
-            return Response(
-                {"success": False, "message": str(message)}, status=status.HTTP_404_NOT_FOUND
-            )
 
 
 @extend_schema_view(
@@ -697,6 +635,48 @@ class WishlistViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
     set_payment_method=extend_schema(tags=["Checkout"], summary=_("Set payment method")),
     validate=extend_schema(tags=["Checkout"], summary=_("Validate checkout")),
     complete=extend_schema(tags=["Checkout"], summary=_("Complete checkout")),
+    list_tenders=extend_schema(
+        tags=["Checkout"],
+        summary=_("List applied tenders"),
+        description=_(
+            "Gift card and store credit holds against this checkout, plus the "
+            "amount still due. amount_due — not total_amount — is what a "
+            "payment provider should be asked to charge; it can legitimately "
+            "be zero when tenders cover the whole order. Includes the "
+            "signed-in customer's spendable wallet balance (null for guests, "
+            "missing wallets, frozen wallets, or a currency mismatch)."
+        ),
+    ),
+    add_gift_card_tender=extend_schema(
+        tags=["Checkout"],
+        summary=_("Apply a gift card"),
+        description=_(
+            "Places a hold on the card as a PAYMENT, not a discount: it "
+            "settles the post-tax total and never reduces the tax base. "
+            "Nothing is debited until payment is confirmed, so an abandoned "
+            "checkout costs the customer nothing. Error messages are "
+            "deliberately uniform — this endpoint sits on stored value and "
+            "must not act as an enumeration oracle."
+        ),
+    ),
+    add_wallet_tender=extend_schema(
+        tags=["Checkout"],
+        summary=_("Apply store credit"),
+        description=_(
+            "Holds the signed-in customer's wallet balance against this "
+            "checkout, up to the amount due. Guests receive 403 — wallets "
+            "belong to accounts. Single-currency: a wallet cannot part-pay an "
+            "order in another currency."
+        ),
+    ),
+    remove_tender=extend_schema(
+        tags=["Checkout"],
+        summary=_("Remove a tender"),
+        description=_(
+            "Releases a hold. Nothing was debited, so this only frees the "
+            "reservation; the checkout's amount_due rises accordingly."
+        ),
+    ),
 )
 class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
     """
@@ -735,6 +715,65 @@ class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(session)
         return Response({"success": True, "session": serializer.data})
 
+    @action(detail=False, methods=["post"], url_path="contact")
+    def contact(self, request):
+        """Persist the customer's contact details, and — when a password is
+        supplied (opt-in account creation) — create a real account and sign
+        them into this session. The password is used immediately and never
+        stored on the session or returned. Guests without a password are still
+        materialised as a guest user at order time; here we just record their
+        email/name so order creation and the confirmation flow have them.
+        """
+        session = self.get_session(request)
+        email = (request.data.get("email") or "").strip()
+        if not email:
+            return Response(
+                {"success": False, "message": _("Email is required")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        first_name = (request.data.get("first_name") or "").strip()
+        last_name = (request.data.get("last_name") or "").strip()
+        password = request.data.get("password") or ""
+
+        # Record email/name on the session for order creation (this is the only
+        # place a no-shipping guest's email gets persisted before payment).
+        if not session.metadata:
+            session.metadata = {}
+        session.metadata["email"] = email[:254]
+        full_name = f"{first_name} {last_name}".strip()
+        if full_name:
+            session.metadata["contact_name"] = full_name[:200]
+        session.save(update_fields=["metadata"])
+
+        # Only create an account now when the customer opted in with a password.
+        if password:
+            success, message = CheckoutService.ensure_checkout_user(
+                session,
+                {
+                    "email": email,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "password": password,
+                },
+            )
+            if not success:
+                return Response(
+                    {"success": False, "message": str(message)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user = session.cart.user
+            if (
+                user is not None
+                and not user.username.startswith("guest_")
+                and not request.user.is_authenticated
+            ):
+                from django.contrib.auth import login
+
+                login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+        session_serializer = self.get_serializer(session)
+        return Response({"success": True, "session": session_serializer.data})
+
     @action(detail=False, methods=["post"], url_path="shipping-address")
     def set_shipping_address(self, request):
         """Set shipping address for checkout"""
@@ -763,6 +802,7 @@ class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
             address_id=serializer.validated_data.get("address_id"),
             address_data=address_data,
             email=serializer.validated_data.get("email"),
+            phone=serializer.validated_data.get("phone", ""),
         )
 
         if success:
@@ -778,10 +818,16 @@ class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
     @action(detail=False, methods=["post"], url_path="billing-address")
     def set_billing_address(self, request):
         """Set billing address for checkout"""
-        serializer = SetBillingAddressSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
         session = self.get_session(request)
+
+        # No-shipping carts (digital / booking only) submit a minimal
+        # billing record — name + country (+ optional postal) — instead of
+        # a full street address; the serializer relaxes accordingly.
+        serializer = SetBillingAddressSerializer(
+            data=request.data,
+            context={"cart_requires_shipping": session.cart.requires_shipping},
+        )
+        serializer.is_valid(raise_exception=True)
 
         same_as_shipping = serializer.validated_data.get("same_as_shipping", True)
         address_id = serializer.validated_data.get("address_id")
@@ -806,6 +852,10 @@ class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
             same_as_shipping=same_as_shipping,
             address_id=address_id,
             address_data=address_data,
+            # A bare name may ride along with same_as_shipping for carts
+            # that never show an address form (digital-only guest checkout)
+            contact_name=serializer.validated_data.get("name", ""),
+            email=serializer.validated_data.get("email", ""),
         )
 
         if success:
@@ -828,26 +878,49 @@ class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
 
         return Response({"shipping_methods": methods})
 
+    @staticmethod
+    def _geo_country(request) -> str:
+        """Country code from the GeoIP middleware, '' when unavailable."""
+        geo_location = getattr(request, "geo_location", None)
+        if not geo_location:
+            return ""
+        try:
+            if isinstance(geo_location, dict):
+                return geo_location.get("country_code", "") or ""
+            return getattr(geo_location, "country_code", "") or ""
+        except Exception:
+            return ""
+
     @action(detail=False, methods=["get"], url_path="payment-providers")
     def get_payment_providers(self, request):
         """Get available payment providers for checkout"""
         session = self.get_session(request)
 
-        # Get available providers based on shipping country and currency
-        available_providers = CheckoutService.get_available_payment_providers(session)
+        # Get available providers based on customer country and currency.
+        # No-shipping carts have no shipping address — the checkout page
+        # sends the billing-country field value as a ?country= hint (GeoIP
+        # is the fallback when it hasn't been typed yet). Only used when no
+        # address on the session carries a country, and it's a filter input
+        # only — the authoritative billing country is what the customer
+        # submits with the billing address before payment.
+        fallback_country = request.query_params.get("country", "")[:64] or self._geo_country(
+            request
+        )
+        available_providers = CheckoutService.get_available_payment_providers(
+            session, fallback_country=fallback_country
+        )
 
-        # Get customer country for serializer context
-        customer_country = None
-        address = session.shipping_address or session.shipping_address_data
-        if address:
-            customer_country = (
-                address.country if hasattr(address, "country") else address.get("country")
-            )
-            # Normalize country to ISO code (handles both "Australia" and "AU")
-            if customer_country:
-                from payment_providers.services.payment_method_filter import PaymentMethodFilter
+        # Get customer country for serializer context — same resolution
+        # order as the provider filter (shipping → billing → hint/GeoIP)
+        customer_country = CheckoutService.get_customer_country(
+            session, fallback_country=fallback_country
+        )
+        if customer_country:
+            from payment_providers.services.payment_method_filter import PaymentMethodFilter
 
-                customer_country = PaymentMethodFilter._normalize_country_code(customer_country)
+            customer_country = PaymentMethodFilter._normalize_country_code(customer_country)
+        else:
+            customer_country = None
 
         # Serialize provider data
         from payment_providers.serializers import PaymentProviderAccountSerializer
@@ -936,15 +1009,212 @@ class CheckoutViewSet(HeadlessAPIMixin, viewsets.GenericViewSet):
 
         return Response({"is_valid": is_valid, "errors": [str(e) for e in errors]})
 
+    @action(detail=False, methods=["get"], url_path="tenders")
+    def list_tenders(self, request):
+        """
+        Tenders held against this checkout, and what is still due.
+
+        `amount_due` — not `total_amount` — is what a payment provider should
+        be asked to charge. It can legitimately be zero when gift cards cover
+        the order.
+        """
+        from payment_providers.models import PaymentTransaction
+
+        session = self.get_session(request)
+        session.recalculate_totals()
+
+        holds = PaymentTransaction.objects.filter(
+            checkout_session=session,
+            transaction_type="authorize",
+            status="authorized",
+        ).select_related("gift_card", "wallet")
+
+        # The wallet row in the checkout UI needs to know whether to render at
+        # all and what balance to offer. Spendable (balance minus live holds
+        # across every session), never the raw stored balance — offering money
+        # another tab has already promised invites a refusal one click later.
+        wallet_spendable = None
+        if request.user.is_authenticated:
+            from wallet.models import CustomerWallet
+            from wallet.tender_service import WalletTenderService
+
+            user_wallet = CustomerWallet.objects.filter(
+                customer=request.user, is_active=True
+            ).first()
+            if user_wallet is not None and str(user_wallet.available_balance.currency) == str(
+                session.total_amount.currency
+            ):
+                wallet_spendable = str(WalletTenderService.spendable_balance(user_wallet).amount)
+
+        return Response(
+            {
+                "success": True,
+                "total_amount": str(session.total_amount.amount),
+                "tendered_amount": str(session.tendered_amount.amount),
+                "amount_due": str(session.amount_due.amount),
+                "currency": str(session.total_amount.currency),
+                # None when signed out, no wallet, frozen, or currency-mismatched
+                # (D5): the UI simply hides the row in all four cases.
+                "wallet_spendable": wallet_spendable,
+                "tenders": [
+                    {
+                        "id": str(t.pk),
+                        "tender_type": t.tender_type,
+                        "amount": str(t.amount.amount),
+                        "currency": str(t.amount.currency),
+                        # Never echo the full code back — it is bearer credential.
+                        "gift_card_last4": t.gift_card.code[-4:] if t.gift_card else None,
+                        # Human label the UI can render without knowing tender
+                        # internals: "Gift card ••••1234" / "Store credit".
+                        "label": (
+                            f"Gift card \u2022\u2022\u2022\u2022{t.gift_card.code[-4:]}"
+                            if t.gift_card
+                            else str(_("Store credit"))
+                            if t.wallet_id
+                            else t.get_tender_type_display()
+                        ),
+                    }
+                    for t in holds
+                ],
+            }
+        )
+
+    @action(detail=False, methods=["post"], url_path="tenders/gift-card")
+    def add_gift_card_tender(self, request):
+        """
+        Apply a gift card to this checkout as a payment, not a discount.
+
+        Places a hold: the card is not debited until payment is confirmed, so
+        an abandoned checkout costs the customer nothing.
+        """
+        from catalog.services.gift_card_tender_service import (
+            GiftCardTenderError,
+            GiftCardTenderService,
+            InsufficientGiftCardBalance,
+        )
+
+        code = (request.data.get("code") or "").strip()
+        if not code:
+            return Response(
+                {"success": False, "message": _("Gift card code is required")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        session = self.get_session(request)
+        session.recalculate_totals()
+
+        # Never hold more than the order needs — the rest stays on the card.
+        due = session.amount_due
+        if due.amount <= 0:
+            return Response(
+                {"success": False, "message": _("This order is already fully paid")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            GiftCardTenderService.authorize_for_session(session, code, amount=due)
+        except InsufficientGiftCardBalance:
+            # Not an error the customer can act on beyond using another card;
+            # hold whatever the card has and let them add a second one.
+            try:
+                GiftCardTenderService.authorize_for_session(session, code, amount=None)
+            except GiftCardTenderError as exc:
+                return Response(
+                    {"success": False, "message": str(exc)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except GiftCardTenderError as exc:
+            return Response(
+                {"success": False, "message": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return self.list_tenders(request)
+
+    @action(detail=False, methods=["post"], url_path="tenders/wallet")
+    def add_wallet_tender(self, request):
+        """
+        Apply the customer's wallet balance to this checkout as a payment.
+
+        Logged-in only — guests have no wallet. One click, no code entry: the
+        wallet is resolved from the authenticated account, and the hold
+        defaults to min(spendable, amount due). Nothing is debited until
+        payment is confirmed, so an abandoned checkout costs nothing.
+        """
+        from wallet.tender_service import (
+            InsufficientWalletBalance,
+            WalletTenderError,
+            WalletTenderService,
+        )
+
+        if not request.user.is_authenticated:
+            # The viewset itself permits guests (carts do not require an
+            # account), so this action gates explicitly.
+            return Response(
+                {"success": False, "message": _("Sign in to pay with your wallet")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        session = self.get_session(request)
+        session.recalculate_totals()
+
+        due = session.amount_due
+        if due.amount <= 0:
+            return Response(
+                {"success": False, "message": _("This order is already fully paid")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            WalletTenderService.authorize_for_session(session, request.user)
+        except (InsufficientWalletBalance, WalletTenderError) as exc:
+            return Response(
+                {"success": False, "message": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return self.list_tenders(request)
+
+    @action(detail=False, methods=["delete"], url_path="tenders/(?P<tender_id>[^/.]+)")
+    def remove_tender(self, request, tender_id=None):
+        """Release a hold. Nothing was debited, so this only frees the reservation."""
+        from payment_providers.models import PaymentTransaction
+
+        session = self.get_session(request)
+        updated = PaymentTransaction.objects.filter(
+            pk=tender_id,
+            checkout_session=session,
+            transaction_type="authorize",
+            status="authorized",
+        ).update(status="voided")
+
+        if not updated:
+            return Response(
+                {"success": False, "message": _("Tender not found")},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return self.list_tenders(request)
+
     @action(detail=False, methods=["post"])
     def complete(self, request):
         """Complete checkout and create order"""
+        from commerce import OrderPlacementService, PlacementRequest
+
         session = self.get_session(request)
 
-        success, message, order = CheckoutService.create_order(session)
+        # Route through the placement facade: it re-prices the cart and, in
+        # enforce mode, refuses if the stored total no longer matches a fresh
+        # quote. Warn-only by default (SPWIG_ENFORCE_QUOTE_DRIFT), so this is
+        # behaviourally identical to create_order until the flag is flipped.
+        result = OrderPlacementService.place_order(PlacementRequest(session=session))
+        success, message, order = result.ok, result.message, result.order
 
         if success:
             from orders.serializers import OrderSerializer
+
+            # Guests aren't authenticated — let this browser view the
+            # confirmation page for the order it just placed.
+            CheckoutService.grant_guest_order_access(request, order)
 
             order_serializer = OrderSerializer(order)
             return Response(

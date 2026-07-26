@@ -22,7 +22,7 @@ The referral program uses Celery for asynchronous task processing and scheduled 
 ```python
 # In referral program settings
 {
-    'expiry_days': 90,  # Rewards expire after 90 days (affects expiration date)
+    "expiry_days": 90,  # Rewards expire after 90 days (affects expiration date)
 }
 ```
 
@@ -82,7 +82,7 @@ grep "Marked .* rewards as expired" logs/celery.log
 ```python
 # In referral program settings
 {
-    'attribution_review_period_days': 30,  # Auto-expire after 30 days pending
+    "attribution_review_period_days": 30,  # Auto-expire after 30 days pending
 }
 ```
 
@@ -165,7 +165,7 @@ grep "Auto-approved\|Auto-rejected" logs/django.log
 ```python
 # In referral program settings
 {
-    'event_retention_days': 90,  # Keep events for 90 days
+    "event_retention_days": 90,  # Keep events for 90 days
 }
 ```
 
@@ -317,6 +317,7 @@ print(scheduled)
    ```python
    # In Django shell
    from django.conf import settings
+
    print(settings.CELERY_BEAT_SCHEDULE)
    ```
 
@@ -349,6 +350,7 @@ print(scheduled)
 2. Run task manually in Django shell:
    ```python
    from referrals.tasks import send_reward_expiry_reminders
+
    result = send_reward_expiry_reminders()
    print(result)
    ```
@@ -356,7 +358,8 @@ print(scheduled)
 3. Check task signature and arguments:
    ```python
    from celery import current_app
-   task = current_app.tasks.get('referrals.send_reward_expiry_reminders')
+
+   task = current_app.tasks.get("referrals.send_reward_expiry_reminders")
    print(task)
    print(task.run())
    ```
@@ -372,7 +375,8 @@ print(scheduled)
    ```python
    # Enable query logging
    import logging
-   logging.getLogger('django.db.backends').setLevel(logging.DEBUG)
+
+   logging.getLogger("django.db.backends").setLevel(logging.DEBUG)
    ```
 
 2. Add database indexes if needed
@@ -428,9 +432,9 @@ To change task schedules, edit `core/settings.py`:
 
 ```python
 CELERY_BEAT_SCHEDULE = {
-    'send-reward-expiry-reminders': {
-        'task': 'referrals.send_reward_expiry_reminders',
-        'schedule': crontab(hour=8, minute=0),  # Change to 8 AM
+    "send-reward-expiry-reminders": {
+        "task": "referrals.send_reward_expiry_reminders",
+        "schedule": crontab(hour=8, minute=0),  # Change to 8 AM
     },
     # ... other tasks
 }
@@ -449,10 +453,10 @@ crontab(hour=9, minute=0, day_of_week=1)
 crontab(hour=2, minute=0, day_of_month=1)
 
 # Every 6 hours
-crontab(minute=0, hour='*/6')
+crontab(minute=0, hour="*/6")
 
 # Multiple times per day
-crontab(hour='*/4', minute=0)  # Every 4 hours
+crontab(hour="*/4", minute=0)  # Every 4 hours
 ```
 
 ---

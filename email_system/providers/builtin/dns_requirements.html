@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -597,7 +597,6 @@
     <script type="application/json" id="dns-requirements-config">
     {"detectedProvider": "{{ dns_provider|escapejs }}"}
     </script>
-    {% load static %}
     <script src="{% static 'email_system/js/dns_requirements.js' %}"></script>
 </body>
 </html>

@@ -2,13 +2,43 @@ name: Tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
+
+# Collapse duplicate runs for the same PR/ref (Gitea can emit opened +
+# synchronize back-to-back for API-created PRs): the newer run cancels
+# the older one instead of both burning a runner slot.
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    # Job-level env — inherited by every step unless overridden.
+    # DB_HOST/REDIS_HOST default to 'localhost' (GitHub Actions runner
+    # publishes service ports on the host). The first step below flips
+    # them to service names for Gitea Actions (act), which networks
+    # service containers by DNS alias instead of host port forwarding.
+    env:
+      DJANGO_SETTINGS_MODULE: core.settings
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_NAME: spwig_test
+      DB_USER: spwig
+      DB_PASSWORD: spwig
+      REDIS_HOST: localhost
+      REDIS_PORT: "6379"
+      SECRET_KEY: ci-test-secret-key-not-for-production
+      # Test-only Fernet key. Email / SMS provider credential fields
+      # get symmetrically encrypted at rest — no default in settings
+      # means every send-service test fails at credential-write.
+      # Rotate freely; not tied to any real data.
+      EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
+      SPWIG_TELEMETRY: "0"
+
     services:
       postgres:
         # pgvector/pgvector image = postgres 16 + pgvector extension
@@ -43,6 +73,23 @@ jobs:
         python-version: ["3.12"]
 
     steps:
+      - name: Configure env for Gitea Actions (act)
+        # act sets env.ACT=true when it invokes the runner container.
+        # GitHub Actions does not — so this step is a no-op there.
+        # - DB_HOST/REDIS_HOST: act networks services by DNS alias, not
+        #   host-port publishing like GitHub Actions runner-native jobs
+        # - SPWIG_IS_HQ=true: shop-dev's tree still contains the HQ apps
+        #   (developer_portal, license_checkout, marketplace_checkout).
+        #   Enable them in INSTALLED_APPS so tests that depend on them
+        #   can find their models. Commerce doesn't have these files
+        #   (blocklisted from sync + purged from history), so this env
+        #   flag would break commerce — kept Gitea-only.
+        if: env.ACT == 'true'
+        run: |
+          echo "DB_HOST=postgres" >> $GITHUB_ENV
+          echo "REDIS_HOST=redis" >> $GITHUB_ENV
+          echo "SPWIG_IS_HQ=true" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
@@ -57,45 +104,24 @@ jobs:
           pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run Django tests (community edition + integration sandbox)
-        env:
-          DJANGO_SETTINGS_MODULE: core.settings
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: spwig_test
-          DB_USER: spwig
-          DB_PASSWORD: spwig
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
-          SECRET_KEY: ci-test-secret-key-not-for-production
-          # Test-only Fernet key. Email / SMS provider credential fields
-          # get symmetrically encrypted at rest — no default in settings
-          # means every send-service test fails at credential-write.
-          # Rotate freely; not tied to any real data.
-          EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
-          SPWIG_TELEMETRY: "0"
         run: |
-          pytest tests/community_edition/ tests/integration/test_sandbox.py -v
+          pytest -n auto tests/community_edition/ tests/integration/test_sandbox.py -v
 
       - name: Run Django tests (app-level suites — audited drift-recovery scope)
-        env:
-          DJANGO_SETTINGS_MODULE: core.settings
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: spwig_test
-          DB_USER: spwig
-          DB_PASSWORD: spwig
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
-          SECRET_KEY: ci-test-secret-key-not-for-production
-          EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
-          SPWIG_TELEMETRY: "0"
         # Explicit paths: pytest.ini has `testpaths = tests`, so bare
         # `pytest` skips these dirs. Guards the ~4,400 tests audited
         # in the drift-recovery campaign (Phases 1 + 4 + 5 of
         # docs/.claude_code/plans/test-suite-drift-recovery.md).
         # New drift in any of these paths will now turn CI red.
+        #
+        # The stored-value apps below are listed as app ROOTS, not `<app>/tests/`,
+        # because several have no test package yet (see
+        # docs/.claude_code/plans/wondrous-moseying-wolf.md P1.0). pytest collects
+        # nothing from them today and picks up `<app>/tests/` automatically the
+        # moment it is created — so adding coverage never needs a workflow edit.
+        # Money-handling code must not be able to land untested again.
         run: |
-          pytest --create-db -v \
+          pytest -n auto --create-db -v \
             tests/unit/ \
             tests/integration/ \
             tests/contract/ \
@@ -114,4 +140,12 @@ jobs:
             search/tests/ \
             shipping/tests/ \
             social_sharing/tests/ \
-            subscriptions/tests/
+            subscriptions/tests/ \
+            cart/ \
+            core/ \
+            page_builder/ \
+            payment_providers/ \
+            pos_api/ \
+            pos_app/ \
+            vouchers/ \
+            wallet/

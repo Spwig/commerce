@@ -4,7 +4,7 @@ Includes OAuth provider settings, social app management, and User admin customiz
 """
 
 from allauth.socialaccount.models import SocialAccount, SocialApp
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.urls import path, reverse
@@ -264,6 +264,45 @@ admin.site.register(SocialAccount, CustomSocialAccountAdmin)
 
 class CustomUserAdmin(BaseUserAdmin):
     """Enhanced User admin with 2FA status column and staff profile link"""
+
+    actions = ["anonymise_customers"]
+
+    @admin.action(description=_("Anonymise selected customers (GDPR erasure)"))
+    def anonymise_customers(self, request, queryset):
+        """
+        The sanctioned erasure path: blank identity, keep financial records.
+
+        Raw deletion of a customer with wallet payment history is blocked by
+        the PROTECT FK on PaymentTransaction.wallet — deleting would erase the
+        audit trail of real payments. This action erases the PERSON instead:
+        orders and ledgers keep joining to an anonymised row, which is what
+        the legal-obligation retention basis requires.
+
+        Refuses per customer while their wallet still holds a balance — that
+        is money the store owes them, and forfeiting it is an accounting
+        decision, never a side effect of a privacy action. Refund the balance
+        first (or zero it deliberately from the wallet admin), then re-run.
+        """
+        from accounts.services.anonymise_service import (
+            AnonymiseError,
+            WalletHoldsBalance,
+            anonymise_customer,
+        )
+
+        done, refused = 0, []
+        for user in queryset:
+            try:
+                anonymise_customer(user, performed_by=request.user)
+                done += 1
+            except WalletHoldsBalance as exc:
+                refused.append(f"{user.pk}: {exc}")
+            except AnonymiseError as exc:
+                refused.append(f"{user.pk}: {exc}")
+
+        if done:
+            self.message_user(request, _("%(n)d customer(s) anonymised.") % {"n": done})
+        for line in refused:
+            self.message_user(request, line, level=messages.ERROR)
 
     list_display = [
         "email",

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,51 +18,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:33
 msgid "Provider Information"
 msgstr "供應商資訊"
 
+#: admin.py:34
 msgid "Configuration"
 msgstr "設定"
 
+#: admin.py:36 admin.py:80
 msgid "Credentials"
 msgstr "憑證"
 
+#: admin.py:40
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
 msgstr "憑證會透過供應商向導進行加密和管理。如需更新憑證，請重新安裝供應商。"
 
+#: admin.py:45
 msgid "Timestamps"
 msgstr "時間戳記"
 
+#: admin.py:48
 msgid "Name"
 msgstr "名稱"
 
+#: admin.py:52
 msgid "Provider"
 msgstr "供應商"
 
+#: admin.py:58
 msgid "Status"
 msgstr "狀態"
 
+#: admin.py:72 templates/admin/seo_generator/dashboard.html:161
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:51
 msgid "Primary"
 msgstr "主要"
 
+#: admin.py:88
 msgid "Credentials are encrypted and stored securely"
 msgstr "憑證已加密並安全存儲"
 
+#: admin.py:95
 msgid "No credentials configured (built-in provider)"
 msgstr "未設定憑證（內建供應商）"
 
+#: api/endpoints.py:63
 #, python-format
 msgid "Invalid model type: %(type)s. Must be one of: %(valid)s"
 msgstr "無效的模型類型：%(type)s。必須為以下之一：%(valid)s"
 
+#: api/endpoints.py:80 api/endpoints.py:428
 msgid "Permission denied."
 msgstr "權限被拒絕。"
 
+#: api/endpoints.py:176
 msgid "Generate SEO content for a single object"
 msgstr "為單一物件生成SEO內容"
 
+#: api/endpoints.py:178
 msgid ""
 "Generate meta title, meta description, and keywords for a product, category, "
 "brand, page, blog post, or blog category. The generated content is "
@@ -71,42 +87,55 @@ msgstr ""
 "為產品、分類、品牌、頁面、部落格文章或部落格分類生成 meta 標題、meta 描述和關"
 "鍵字。生成的內容會自動儲存到對應的物件中。"
 
+#: api/endpoints.py:185 api/endpoints.py:503
 msgid "Model type: product, category, brand, page, blogpost, or blogcategory"
 msgstr "模型類型：product、category、brand、page、blogpost 或 blogcategory"
 
+#: api/endpoints.py:191
 msgid "ID of the object to generate SEO for"
 msgstr "要生成 SEO 的物件 ID"
 
+#: api/endpoints.py:217
 msgid "Invalid model type, provider key, or language code"
 msgstr "無效的模型類型、供應商鍵或語言代碼"
 
+#: api/endpoints.py:218
 msgid "Permission denied"
 msgstr "拒絕存取"
 
+#: api/endpoints.py:219 api/endpoints.py:523
 msgid "Object not found"
 msgstr "找不到物件"
 
+#: api/endpoints.py:220
 msgid "Generation failed or unexpected error"
 msgstr "產生失敗或發生預期外的錯誤"
 
+#: api/endpoints.py:241 api/endpoints.py:383
 msgid "Invalid provider key."
 msgstr "無效的供應商金鑰。"
 
+#: api/endpoints.py:248
 msgid "Invalid language code."
 msgstr "無效的語言代碼。"
 
+#: api/endpoints.py:265 api/endpoints.py:541
 msgid "Object not found."
 msgstr "找不到物件。"
 
+#: api/endpoints.py:282
 msgid "SEO generation failed. Please try again."
 msgstr "SEO 生成失敗。請重試。"
 
+#: api/endpoints.py:311 api/endpoints.py:487 api/endpoints.py:565
 msgid "An unexpected error occurred. Please try again."
 msgstr "發生了意外錯誤。請重試。"
 
+#: api/endpoints.py:318
 msgid "Batch generate SEO for multiple objects"
 msgstr "批量為多個物件生成SEO"
 
+#: api/endpoints.py:320
 msgid ""
 "Generate SEO content for multiple objects at once. Each item specifies a "
 "model type and object ID. Results include per-item success/failure and a "
@@ -115,27 +144,35 @@ msgstr ""
 "一次為多個物件生成 SEO 內容。每個項目會指定模型類型和物件 ID。結果包含每個項"
 "目的成功/失敗狀態以及總結。"
 
+#: api/endpoints.py:359
 msgid "Invalid request body, no items, or invalid provider"
 msgstr "請求主體無效，沒有項目或提供者無效"
 
+#: api/endpoints.py:360 api/endpoints.py:524
 msgid "Unexpected error"
 msgstr "發生預期外的錯誤"
 
+#: api/endpoints.py:372
 msgid "Invalid request body."
 msgstr "無效的請求主體。"
 
+#: api/endpoints.py:376
 msgid "No items provided."
 msgstr "未提供任何項目。"
 
+#: api/endpoints.py:410
 msgid "Missing model_type or object_id."
 msgstr "缺少 model_type 或 object_id。"
 
+#: api/endpoints.py:462
 msgid "Generation failed for this item."
 msgstr "此項目生成失敗。"
 
+#: api/endpoints.py:494
 msgid "Check SEO status for an object"
 msgstr "檢查物件的SEO狀態"
 
+#: api/endpoints.py:496
 msgid ""
 "Check whether an object has SEO content, whether it was auto-generated, and "
 "return the current meta title and description with their lengths."
@@ -143,55 +180,70 @@ msgstr ""
 "檢查物件是否有 SEO 內容，是否為自動生成，並返回目前的 meta 標題和描述及其長"
 "度。"
 
+#: api/endpoints.py:506
 msgid "ID of the object"
 msgstr "物件的 ID"
 
+#: api/endpoints.py:522
 msgid "Invalid model type"
 msgstr "無效的模型類型"
 
+#: apps.py:8
 msgid "SEO Generator"
 msgstr "SEO 產生器"
 
+#: management/commands/generate_seo.py:33
 msgid "Model type to generate SEO for (or \"all\" for all models)"
 msgstr "要生成 SEO 的模型類型（或 \"all\" 表示所有模型）"
 
+#: management/commands/generate_seo.py:39
 msgid "Number of items to process in each batch (default: 50)"
 msgstr "每個批次處理的項目數（預設：50）"
 
+#: management/commands/generate_seo.py:44
 msgid "Only generate SEO for items with seo_auto_generated=True"
 msgstr "僅為 seo_auto_generated=True 的項目生成 SEO"
 
+#: management/commands/generate_seo.py:51
 msgid ""
 "SEO provider to use (default: primary provider, or deterministic if none "
 "configured)"
 msgstr "要使用的SEO服務提供商（預設：主要提供商，若未配置則使用確定性方法）"
 
+#: management/commands/generate_seo.py:58
 msgid "Language code for generation (default: site primary language)"
 msgstr "生成語言代碼（預設：網站主要語言）"
 
+#: management/commands/generate_seo.py:76
 #, python-format
 msgid "Using language: %(lang)s"
 msgstr "使用語言：%(lang)s"
 
+#: management/commands/generate_seo.py:83
 #, python-format
 msgid "Using provider: %(name)s"
 msgstr "使用供應商：%(name)s"
 
+#: management/commands/generate_seo.py:103
 msgid "SEO Generation Complete"
 msgstr "SEO 產生完成"
 
+#: management/commands/generate_seo.py:104
 #, python-format
 msgid "Total Processed: %(count)d"
 msgstr "總處理數：%(count)d"
 
+#: management/commands/generate_seo.py:106
 #, python-format
 msgid "Successful: %(count)d"
 msgstr "成功：%(count)d"
 
+#: management/commands/generate_seo.py:109
 #, python-format
 msgid "Failed: %(count)d"
 msgstr "失敗：%(count)d"
 
+#: management/commands/generate_seo.py:118
 #, python-format
 msgid ""
 "\n"
@@ -200,6 +252,7 @@ msgstr ""
 "\n"
 "跳過未知模型類型：%(type)s"
 
+#: management/commands/generate_seo.py:134
 #, python-format
 msgid ""
 "\n"
@@ -208,6 +261,7 @@ msgstr ""
 "\n"
 "沒有 %(type)s 項目需要處理"
 
+#: management/commands/generate_seo.py:138
 #, python-format
 msgid ""
 "\n"
@@ -216,135 +270,181 @@ msgstr ""
 "\n"
 "%(type)s (%(count)d 項目)"
 
+#: management/commands/generate_seo.py:171
 #, python-format
 msgid "  Failed %(type)s %(pk)s: %(error)s"
 msgstr "失敗 %(type)s %(pk)s: %(error)s"
 
+#: management/commands/generate_seo.py:181
 #, python-format
 msgid "  %(type)s: %(success)d successful, %(failed)d failed"
 msgstr "%(type)s: %(success)d 個成功，%(failed)d 個失敗"
 
+#: models.py:15
 msgid "Site"
 msgstr "網站"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "此供應商帳戶所屬的網站"
 
+#: models.py:26
 msgid "Provider Component"
 msgstr "供應商組件"
 
+#: models.py:27
 msgid "SEO provider component from update system (null for built-in)"
 msgstr "來自更新系統的 SEO 供應商組件（null 表示內建）"
 
+#: models.py:33
 msgid "Provider Key"
 msgstr "供應商金鑰"
 
+#: models.py:34
 msgid ""
 "Built-in provider key (e.g., 'deterministic'). Used when component is null."
 msgstr "內建供應商鍵（例如：'deterministic'）。當組件為 null 時使用。"
 
+#: models.py:39
 msgid "Account Name"
 msgstr "帳號名稱"
 
+#: models.py:40
 msgid "Friendly name for this provider account"
 msgstr "此供應商帳戶的友好名稱"
 
+#: models.py:46
 msgid "Encrypted Credentials"
 msgstr "加密憑證"
 
+#: models.py:47
 msgid "Encrypted API credentials for this provider"
 msgstr "此供應商的加密 API 憑證"
 
+#: models.py:52
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:54
 msgid "Active"
 msgstr "啟用"
 
+#: models.py:53
 msgid "Whether this provider account is active"
 msgstr "此供應商帳戶是否啟用"
 
+#: models.py:58
 msgid "Primary Provider"
 msgstr "主要供應商"
 
+#: models.py:59
 msgid "Use this provider as primary source for SEO generation"
 msgstr "將此供應商用作 SEO 生成的主要來源"
 
+#: models.py:64
 msgid "Priority"
 msgstr "優先順序"
 
+#: models.py:65
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "備用鏈的優先順序（數字越小，優先級越高）"
 
+#: models.py:71
 msgid "Provider Settings"
 msgstr "供應商設定"
 
+#: models.py:72
 msgid "Provider-specific settings and configuration"
 msgstr "供應商特定的設定和配置"
 
+#: models.py:79
 msgid "SEO Provider Account"
 msgstr "SEO 供應商帳號"
 
+#: models.py:80
 msgid "SEO Provider Accounts"
 msgstr "SEO 供應商帳號"
 
+#: providers/base.py:50
 msgid "provider_key must be set by subclass"
 msgstr "provider_key 必須由子類設定"
 
+#: providers/base.py:52
 msgid "provider_name must be set by subclass"
 msgstr "provider_name 必須由子類設定"
 
+#: providers/base.py:61
 #, python-format
 msgid "Provider '%(key)s' requires credentials"
 msgstr "供應商 '%(key)s' 需要憑證"
 
+#: providers/builtin.py:94 templates/admin/seo_generator/dashboard.html:158
+#: templates/admin/seo_generator/dashboard.html:165
 msgid "Built-in Generator"
 msgstr "內建產生器"
 
+#: providers/builtin.py:197
 #, python-format
 msgid "Keyword extraction failed: %(error)s"
 msgstr "關鍵字提取失敗：%(error)s"
 
+#: providers/builtin.py:221 providers/builtin.py:278
 msgid "Content must have a 'name' field"
 msgstr "內容必須包含 'name' 欄位"
 
+#: providers/builtin.py:259
 #, python-format
 msgid "Meta title generation failed: %(error)s"
 msgstr "元標題生成失敗：%(error)s"
 
+#: providers/builtin.py:349
 #, python-format
 msgid "Meta description generation failed: %(error)s"
 msgstr "元描述生成失敗：%(error)s"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/dashboard.html:22 views/dashboard.py:76
 msgid "SEO Dashboard"
 msgstr "SEO 儀表板"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
 msgid "Site Admin"
 msgstr "網站管理員"
 
+#: templates/admin/seo_generator/dashboard.html:25
 msgid ""
 "Monitor SEO coverage across your store and generate missing meta content"
 msgstr "監控您商店的SEO覆蓋範圍並生成缺失的元內容"
 
+#: templates/admin/seo_generator/dashboard.html:33
 msgid "Total Items"
 msgstr "總項目數"
 
+#: templates/admin/seo_generator/dashboard.html:38
 msgid "Complete SEO"
 msgstr "完成 SEO"
 
+#: templates/admin/seo_generator/dashboard.html:43
 msgid "Missing SEO"
 msgstr "遺漏的SEO"
 
+#: templates/admin/seo_generator/dashboard.html:48
 msgid "Active Providers"
 msgstr "活躍供應商"
 
+#: templates/admin/seo_generator/dashboard.html:59
 msgid "SEO Coverage"
 msgstr "SEO 覆蓋範圍"
 
+#: templates/admin/seo_generator/dashboard.html:61
 msgid "Refresh"
 msgstr "重新整理"
 
+#: templates/admin/seo_generator/dashboard.html:82
 #, python-format
 msgid "%(pct)s%% of your content has complete SEO"
 msgstr "%(pct)s%% 的內容已具備完整的 SEO"
 
+#: templates/admin/seo_generator/dashboard.html:85
 #, python-format
 msgid ""
 "\n"
@@ -359,86 +459,121 @@ msgstr ""
 "meta 標題和描述。%(title)s 個擁有標題，%(desc)s 個擁有描述。\n"
 "                            "
 
+#: templates/admin/seo_generator/dashboard.html:96
 msgid "Coverage by Content Type"
 msgstr "按內容類型覆蓋情況"
 
+#: templates/admin/seo_generator/dashboard.html:112
 msgid "No content found."
 msgstr "未找到內容。"
 
+#: templates/admin/seo_generator/dashboard.html:123
 msgid "Quality Check"
 msgstr "品質檢查"
 
+#: templates/admin/seo_generator/dashboard.html:128
 msgid "Titles too short"
 msgstr "標題太短"
 
+#: templates/admin/seo_generator/dashboard.html:128
+#: templates/admin/seo_generator/dashboard.html:132
+#: templates/admin/seo_generator/dashboard.html:136
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "chars"
 msgstr "字符"
 
+#: templates/admin/seo_generator/dashboard.html:132
 msgid "Titles too long"
 msgstr "標題太長"
 
+#: templates/admin/seo_generator/dashboard.html:136
 msgid "Descriptions short"
 msgstr "簡短描述"
 
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "Descriptions long"
 msgstr "長描述"
 
+#: templates/admin/seo_generator/dashboard.html:149
 msgid "Active Provider"
 msgstr "啟用供應商"
 
+#: templates/admin/seo_generator/dashboard.html:166
 msgid "No external provider configured"
 msgstr "未配置外部供應商"
 
+#: templates/admin/seo_generator/dashboard.html:168
 msgid "Connect a provider"
 msgstr "連接提供者"
 
+#: templates/admin/seo_generator/dashboard.html:178
 msgid "Quick Actions"
 msgstr "快速操作"
 
+#: templates/admin/seo_generator/dashboard.html:184
 #, python-format
 msgid "Generate SEO for %(count)s missing items"
 msgstr "為 %(count)s 個缺失項目生成 SEO"
 
+#: templates/admin/seo_generator/dashboard.html:189
 msgid "Manage Providers"
 msgstr "管理提供者"
 
+#: templates/admin/seo_generator/dashboard.html:193
+#: templates/admin/seo_generator/providers/browse.html:27
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:28
+#: templates/admin/seo_generator/wizard/step1_select.html:86
 msgid "Browse Providers"
 msgstr "瀏覽供應商"
 
+#: templates/admin/seo_generator/dashboard.html:204
 msgid "Generating SEO Content"
 msgstr "生成 SEO 內容"
 
+#: templates/admin/seo_generator/dashboard.html:212
 msgid "Preparing..."
 msgstr "準備中..."
 
+#: templates/admin/seo_generator/dashboard.html:218
+#: templates/admin/seo_generator/wizard/step1_select.html:97
 msgid "Cancel"
 msgstr "取消"
 
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/providers/browse.html:36
+#: views/provider_browse.py:132
 msgid "Browse SEO Providers"
 msgstr "瀏覽 SEO 供應商"
 
+#: templates/admin/seo_generator/providers/browse.html:25
 msgid "Home"
 msgstr "首頁"
 
+#: templates/admin/seo_generator/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "供應商帳號"
 
+#: templates/admin/seo_generator/providers/browse.html:38
 msgid ""
 "Choose an SEO generation provider to integrate with your store. Install new "
 "providers or configure existing ones."
 msgstr "選擇一個SEO生成供應商與您的商店整合。安裝新供應商或配置現有供應商。"
 
+#: templates/admin/seo_generator/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "更新伺服器不可用"
 
+#: templates/admin/seo_generator/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr "無法連接到更新伺服器。僅顯示本地已安裝的供應商。"
 
+#: templates/admin/seo_generator/providers/browse.html:57
 msgid "SEO Provider Marketplace"
 msgstr "SEO 供應商市場"
 
+#: templates/admin/seo_generator/providers/browse.html:69
 msgid ""
 "Here you can discover and install SEO generation providers to automatically "
 "create optimized meta titles, descriptions, and keywords for your products, "
@@ -447,36 +582,47 @@ msgstr ""
 "在此您可以發現並安裝SEO生成供應商，以自動為您的產品、分類和頁面生成最佳化的元"
 "標題、描述和關鍵字。"
 
+#: templates/admin/seo_generator/providers/browse.html:76
 msgid "What you can do:"
 msgstr "您可以做的是："
 
+#: templates/admin/seo_generator/providers/browse.html:81
 msgid "Browse available SEO providers by capability"
 msgstr "按功能瀏覽可用的 SEO 供應商"
 
+#: templates/admin/seo_generator/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "點擊一次即可安裝新供應商"
 
+#: templates/admin/seo_generator/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "將已安裝的供應商更新到最新版本"
 
+#: templates/admin/seo_generator/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "安裝後配置供應商設置"
 
+#: templates/admin/seo_generator/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "入門："
 
+#: templates/admin/seo_generator/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "在下方瀏覽供應商，找到適合您的那一個"
 
+#: templates/admin/seo_generator/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "點擊「安裝」將供應商添加到您的商店"
 
+#: templates/admin/seo_generator/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "導航到「設定」以配置 API 憑證"
 
+#: templates/admin/seo_generator/providers/browse.html:107
 msgid "Test the provider connection and start generating SEO"
 msgstr "測試供應商連接並開始生成 SEO"
 
+#: templates/admin/seo_generator/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -495,115 +641,163 @@ msgstr[1] ""
 "                    目前：%(counter)s 個供應商可用\n"
 "                "
 
+#: templates/admin/seo_generator/providers/browse.html:133
 msgid "Update Available"
 msgstr "有可用更新"
 
+#: templates/admin/seo_generator/providers/browse.html:156
 msgid "Installed"
 msgstr "已安裝"
 
+#: templates/admin/seo_generator/providers/browse.html:171
 msgid "Available"
 msgstr "可用"
 
+#: templates/admin/seo_generator/providers/browse.html:192
+#: templates/admin/seo_generator/wizard/step1_select.html:45
 msgid "Meta Titles"
 msgstr "元標題"
 
+#: templates/admin/seo_generator/providers/browse.html:197
+#: templates/admin/seo_generator/wizard/step1_select.html:50
 msgid "Descriptions"
 msgstr "描述"
 
+#: templates/admin/seo_generator/providers/browse.html:202
+#: templates/admin/seo_generator/wizard/step1_select.html:55
 msgid "Keywords"
 msgstr "關鍵字"
 
+#: templates/admin/seo_generator/providers/browse.html:207
+#: templates/admin/seo_generator/wizard/step1_select.html:60
 msgid "Multi-Language"
 msgstr "多語言"
 
+#: templates/admin/seo_generator/providers/browse.html:212
+#: templates/admin/seo_generator/wizard/step1_select.html:65
 msgid "Bulk Generation"
 msgstr "批量生成"
 
+#: templates/admin/seo_generator/providers/browse.html:226
 msgid "Update"
 msgstr "更新"
 
+#: templates/admin/seo_generator/providers/browse.html:231
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:72
 msgid "Configure"
 msgstr "配置"
 
+#: templates/admin/seo_generator/providers/browse.html:238
 msgid "Install"
 msgstr "安裝"
 
+#: templates/admin/seo_generator/providers/browse.html:247
 msgid "View Details"
 msgstr "查看詳情"
 
+#: templates/admin/seo_generator/providers/browse.html:255
 msgid "Learn More"
 msgstr "了解更多"
 
+#: templates/admin/seo_generator/providers/browse.html:268
+#: templates/admin/seo_generator/wizard/step1_select.html:82
 msgid "No Providers Available"
 msgstr "沒有可用的供應商"
 
+#: templates/admin/seo_generator/providers/browse.html:269
 msgid ""
 "No SEO generation providers are currently available. The built-in "
 "deterministic provider is always available without installation."
 msgstr "目前沒有可用的SEO生成供應商。內建的確定性供應商始終可用，無需安裝。"
 
+#: templates/admin/seo_generator/providers/browse.html:278
 msgid "Installing provider..."
 msgstr "正在安裝供應商..."
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:18
 msgid "SEO Providers"
 msgstr "SEO 供應商"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:20
 msgid "Manage SEO generation provider integrations"
 msgstr "管理 SEO 生成供應商整合"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:22
 msgid "provider"
 msgstr "供應商"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:23
 msgid "active"
 msgstr "啟用"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:56
 msgid "Inactive"
 msgstr "停用"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:79
 msgid "No SEO Providers Configured"
 msgstr "未設定任何 SEO 供應商"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:80
 msgid ""
 "The built-in deterministic provider is available by default. Connect "
 "additional providers for AI-powered SEO generation."
 msgstr "內建的確定性供應商預設可用。如需AI驅動的SEO生成，請連接其他供應商。"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:82
 msgid "Connect Provider"
 msgstr "連接供應商"
 
+#: templates/admin/seo_generator/wizard/base.html:14
 msgid "Connect SEO Provider"
 msgstr "連接 SEO 供應商"
 
+#: templates/admin/seo_generator/wizard/base.html:15
 msgid "Follow these steps to connect your SEO generation provider"
 msgstr "按照這些步驟連接您的 SEO 生成供應商"
 
+#: templates/admin/seo_generator/wizard/base.html:24
 msgid "Select Provider"
 msgstr "選擇供應商"
 
+#: templates/admin/seo_generator/wizard/base.html:33
+#: templates/admin/seo_generator/wizard/step2_setup.html:8
 msgid "Setup Instructions"
 msgstr "設定說明"
 
+#: templates/admin/seo_generator/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "輸入憑證"
 
+#: templates/admin/seo_generator/wizard/base.html:51
+#: templates/admin/seo_generator/wizard/step4_test.html:7
+#: templates/admin/seo_generator/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "測試連線"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:6
 msgid "Select an SEO Provider"
 msgstr "選擇一個 SEO 供應商"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:7
 msgid "Choose the SEO generation provider you want to connect to your store."
 msgstr "選擇您要連接到商店的 SEO 生成供應商。"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:83
 msgid "No SEO provider components are currently installed."
 msgstr "目前沒有安裝任何 SEO 供應商組件。"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:84
 msgid "Please browse and install SEO provider components from the marketplace."
 msgstr "請從市場中瀏覽並安裝 SEO 供應商組件。"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:100
+#: templates/admin/seo_generator/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "下一步"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:11
 #, python-format
 msgid ""
 "\n"
@@ -616,9 +810,11 @@ msgstr ""
 "請審閱 %(provider)s 的這些設置步驟。\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:22
 msgid "Setup Instructions Not Available"
 msgstr "無設定說明可用"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:24
 #, python-format
 msgid ""
 "\n"
@@ -633,15 +829,21 @@ msgstr ""
 "或檢查是否有更新版本。\n"
 "                    "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:43
+#: templates/admin/seo_generator/wizard/step3_credentials.html:120
+#: templates/admin/seo_generator/wizard/step4_test.html:51
 msgid "Back"
 msgstr "返回"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:46
 msgid "Continue to Credentials"
 msgstr "繼續到憑證"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "輸入 API 憑證"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -654,29 +856,37 @@ msgstr ""
 "為%(provider)s輸入您的API憑證。這些憑證將被安全加密並儲存。\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "還沒有帳號嗎？"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "您需要一個帳戶才能獲取 API 憑證。"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "這裡註冊"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "API 憑證"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "選擇..."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "此供應商尚未配置憑證欄位。"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
 msgstr "您的憑證在存儲到資料庫之前將使用 AES-256 加密進行加密。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -689,174 +899,232 @@ msgstr ""
 "%(provider)s 的連接以驗證您的憑證是否正確。\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step4_test.html:21
+#: templates/admin/seo_generator/wizard/step4_test.html:63
 msgid "Testing connection..."
 msgstr "測試連線中..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:22
+#: templates/admin/seo_generator/wizard/step4_test.html:64
 msgid "Please wait while we verify your credentials."
 msgstr "請稍候，我們正在驗證您的憑證。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "點擊以使用您輸入的憑證測試連接。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:42
+#: templates/admin/seo_generator/wizard/step4_test.html:65
 msgid "Connection Successful!"
 msgstr "連線成功！"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:54
+#: templates/admin/seo_generator/wizard/step4_test.html:73
 msgid "Save & Finish"
 msgstr "儲存並完成"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:66
 msgid "Your credentials were verified successfully."
 msgstr "您的憑證已成功驗證。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:67
 msgid "Connection Failed"
 msgstr "連線失敗"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:68
 msgid "Could not connect to the provider API."
 msgstr "無法連接到供應商 API。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:69
 msgid "Error"
 msgstr "錯誤"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:70 views/wizard.py:481
 msgid "An unexpected error occurred."
 msgstr "發生了意外錯誤。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:71
 msgid "Saving..."
 msgstr "儲存中..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:72
 msgid "Failed to save provider account."
 msgstr "無法儲存供應商帳號。"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:74
 msgid "An error occurred while saving."
 msgstr "儲存時發生錯誤。"
 
+#: views/dashboard.py:98
 msgid "Failed to calculate coverage."
 msgstr "無法計算覆蓋範圍。"
 
+#: views/dashboard.py:113
 msgid "Failed to refresh coverage."
 msgstr "無法重新整理覆蓋範圍。"
 
+#: views/dashboard.py:133
 msgid "Failed to get missing items."
 msgstr "無法取得遺漏的項目。"
 
+#: views/dashboard.py:142
 msgid "Invalid content type."
 msgstr "無效的內容類型。"
 
+#: views/dashboard.py:208
 msgid "Failed to load items."
 msgstr "無法加載項目。"
 
+#: views/provider_browse.py:158
 msgid "Provider is already installed. Configure it now."
 msgstr "供應商已經安裝。現在請進行配置。"
 
+#: views/provider_browse.py:184 views/provider_browse.py:311
 msgid "Provider not found on update server."
 msgstr "在更新伺服器上找不到供應商。"
 
+#: views/provider_browse.py:193
 msgid "Could not determine provider version."
 msgstr "無法確定供應商版本。"
 
+#: views/provider_browse.py:212
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "下載供應商失敗：%(error)s"
 
+#: views/provider_browse.py:224
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "安裝供應商失敗：%(error)s"
 
+#: views/provider_browse.py:253
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "提供商 \"%(name)s\" 安裝成功！現在進行設定。"
 
+#: views/provider_browse.py:262
 msgid "An unexpected error occurred during installation."
 msgstr "安裝期間發生了意外錯誤。"
 
+#: views/provider_browse.py:283
 msgid "Provider not installed."
 msgstr "供應商未安裝。"
 
+#: views/provider_browse.py:298
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "無法連接到更新伺服器：%(error)s"
 
+#: views/provider_browse.py:319
 msgid "Could not determine latest version."
 msgstr "無法確定最新版本。"
 
+#: views/provider_browse.py:326
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "提供商 \"%(name)s\" 已經是最新版本 (v%(version)s)。"
 
+#: views/provider_browse.py:339
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "無法下載更新：%(error)s"
 
+#: views/provider_browse.py:350
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "安裝更新失敗：%(error)s"
 
+#: views/provider_browse.py:381
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "供應商 \"%(name)s\" 已成功更新至 v%(version)s！"
 
+#: views/provider_browse.py:390
 msgid "An unexpected error occurred during the update."
 msgstr "在更新過程中發生了意外錯誤。"
 
+#: views/wizard.py:141
 msgid "Connect SEO Provider - Select Provider"
 msgstr "連接 SEO 供應商 - 選擇供應商"
 
+#: views/wizard.py:154
 msgid "Please select a provider."
 msgstr "請選擇一個供應商。"
 
+#: views/wizard.py:162
 msgid "Invalid provider selected."
 msgstr "選擇的供應商無效。"
 
+#: views/wizard.py:189 views/wizard.py:264
 msgid "Please select a provider first."
 msgstr "請先選擇一個供應商。"
 
+#: views/wizard.py:219
 #, python-format
 msgid "Setup instructions not found for %(provider)s."
 msgstr "未找到 %(provider)s 的設定說明。"
 
+#: views/wizard.py:224 views/wizard.py:285
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "載入提供者時發生錯誤：%(error)s"
 
+#: views/wizard.py:233
 msgid "Connect SEO Provider - Setup Instructions"
 msgstr "連接 SEO 供應商 - 設定說明"
 
+#: views/wizard.py:278
 msgid "Could not load provider configuration."
 msgstr "無法載入供應商設定。"
 
+#: views/wizard.py:289
 msgid "Connect SEO Provider - Enter Credentials"
 msgstr "連接 SEO 供應商 - 輸入憑證"
 
+#: views/wizard.py:318
 msgid "Error loading provider configuration."
 msgstr "載入供應商設定時發生錯誤。"
 
+#: views/wizard.py:349
 msgid "Please complete previous steps first."
 msgstr "請先完成之前的步驟。"
 
+#: views/wizard.py:357
 msgid "Provider not found."
 msgstr "找不到供應商。"
 
+#: views/wizard.py:361
 msgid "Connect SEO Provider - Test Connection"
 msgstr "連接 SEO 供應商 - 測試連線"
 
+#: views/wizard.py:380
 msgid "Missing data."
 msgstr "缺少資料。"
 
+#: views/wizard.py:389
 msgid "Provider implementation not found."
 msgstr "找不到供應商實現。"
 
+#: views/wizard.py:408
 msgid "An error occurred while testing the connection."
 msgstr "測試連線時發生錯誤。"
 
+#: views/wizard.py:420
 msgid "Site not configured."
 msgstr "網站未配置。"
 
+#: views/wizard.py:431
 msgid "Connection test failed"
 msgstr "連線測試失敗"
 
+#: views/wizard.py:457
 msgid "Provider connected successfully!"
 msgstr "供應商連接成功！"
 
+#: views/wizard.py:470
 msgid "An error occurred while saving the provider."
 msgstr "保存供應商時發生錯誤。"
 
+#: views/wizard.py:476
 msgid "Invalid action."
 msgstr "無效操作。"

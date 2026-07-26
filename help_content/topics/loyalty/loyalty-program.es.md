@@ -1,14 +1,14 @@
 ---
-title: Programa de fidelidad
+title: Programa de Fidelidad
 ---
 
-El Programa de fidelidad le permite recompensar a los clientes por compras y participación con un sistema basado en puntos. Los clientes ganan puntos, avanzan en niveles y canjean recompensas. Navegue hasta **Marketing > Programa de fidelidad** en el menú lateral de administración.
+El Programa de Fidelidad le permite recompensar a los clientes por compras y participación mediante un sistema basado en puntos. Los clientes ganan puntos, avanzan por niveles y canjean recompensas. Navegue hasta **Marketing > Programa de Fidelidad** en el menú lateral de administración.
 
 ![Panel de control de fidelidad](/static/core/admin/img/help/loyalty-program/loyalty-dashboard.webp)
 
 ## Panel de control de fidelidad
 
-El panel de control proporciona una visión general completa de su programa de fidelidad:
+El panel de control ofrece una visión general completa de su programa de fidelidad:
 
 ### Métricas clave
 
@@ -26,7 +26,7 @@ El panel de control proporciona una visión general completa de su programa de f
 El panel de control tiene tarjetas de atajo para administrar todos los aspectos del programa:
 - **Miembros** — Ver y administrar miembros de fidelidad
 - **Niveles** — Configurar niveles de membresía
-- **Recompensas** — Establecer el catálogo de recompensas
+- **Recompensas** — Configurar el catálogo de recompensas
 - **Canjeos** — Ver el historial de canjeos
 - **Reglas** — Configurar cómo se ganan los puntos
 - **Insignias** — Administrar insignias de logros
@@ -35,7 +35,7 @@ El panel de control tiene tarjetas de atajo para administrar todos los aspectos 
 
 ### Gráficos y análisis
 
-- **Tendencia de inscripción de miembros** — Nuevas inscripciones de miembros con el tiempo
+- **Tendencia de inscripción de miembros** — Nuevos registros de miembros con el tiempo
 - **Puntos ganados vs. canjeados** — Rastrear el equilibrio del flujo de puntos
 - **Distribución de niveles** — Ver cómo se distribuyen los miembros entre los niveles
 
@@ -49,19 +49,37 @@ Los niveles definen niveles de membresía con beneficios crecientes:
 2. Cree niveles como Bronce, Plata, Oro, Platino
 3. Para cada nivel, establezca:
    - **Nombre** — Nombre de visualización del nivel
-   - **Umbral de puntos** — Puntos mínimos para alcanzar este nivel
-   - **Multiplicador de ganancia** — Tasa de ganancia adicional (por ejemplo, los miembros de Oro ganan 2 veces más puntos)
+   - **Rango** — Orden de clasificación (rango más bajo = nivel más bajo, por ejemplo, Bronce = 1, Plata = 2)
+   - **Color** — Color de acento visual mostrado en las insignias de los miembros
+   - **Puntos mínimos ganados** — Puntos acumulados durante la vida para calificar para este nivel
+   - **Gasto mínimo** — Monto total de gasto para calificar para este nivel
+   - **Pedidos mínimos** — Número de pedidos para calificar para este nivel
+   - **Multiplicador de puntos** — Tasa de ganancia adicional para los miembros en este nivel (por ejemplo, 2.0 = 2 veces los puntos)
+
+Un miembro califica para un nivel si **cualquier** uno de los tres umbrales se cumple. Puede usar solo un umbral o combinar los tres.
 
 ### Paso 2: Configurar reglas de ganancia
 
 Las reglas definen cómo los clientes ganan puntos:
 
 1. Navegue hasta **Fidelidad > Reglas**
-2. Cree reglas como:
-   - **Compra** — Ganar puntos por cada dólar gastado
-   - **Inscripción** — Puntos adicionales por unirse al programa
-   - **Revisión** — Puntos por dejar reseñas de productos
-   - **Cumpleaños** — Puntos adicionales en el cumpleaños del cliente
+2. Cree reglas usando uno de los cuatro tipos de regla:
+
+| Tipo de regla | Descripción | Ejemplo |
+|---------------|-------------|---------|
+| **Gasto** | Puntos por monto gastado | 1 punto por $1 |
+| **Artículo** | Puntos por artículo comprado | 50 puntos por producto en una categoría específica |
+| **Acción** | Puntos por una acción específica | 200 puntos por registrarse |
+| **Evento** | Puntos por un evento del calendario | Puntos de cumpleaños bonus |
+
+3. Configure ajustes adicionales de regla:
+   - **Ámbito / Filtros de ámbito** — Limitar la regla a productos, categorías o niveles de membresía específicos
+   - **Monto mínimo del pedido** — Valor mínimo del carrito para que se aplique la regla
+   - **Niveles permitidos** — Restringir la regla a niveles de membresía específicos
+   - **Es exclusivo** — Cuando está habilitado, esta regla no puede acumularse con otras reglas
+   - **Días de puntos pendientes** — Número de días antes de que los puntos ganados estén disponibles (útil para tener en cuenta los periodos de devolución)
+   - **Días de vencimiento de puntos** — Número de días después de ganar antes de que los puntos expiren (dejar en blanco para no tener vencimiento)
+   - **Inicio / Fin** — Restringir la regla a un rango de fechas
 
 ### Paso 3: Configurar recompensas
 
@@ -73,11 +91,23 @@ Las recompensas son lo que los clientes pueden canjear por sus puntos:
    - **Envío gratis** — 300 puntos
    - **10% de descuento** — 1000 puntos
 
+> **No se pueden canjear actualmente los códigos de descuento.** Una recompensa con **Tipo de Recompensa** establecido en **Código de Descuento** — como el cupón de $5 de descuento o el ejemplo del 10% de descuento anterior — actualmente no puede canjearse.
+
+El miembro ve un error claro y sus puntos se devuelven automáticamente a su saldo, por lo que nada se pierde, pero la recompensa aún no es utilizable.
+
+Este es un arreglo deliberado: antes, el canje reportaba éxito mientras silenciosamente deducía puntos y no entregaba nada.
+
+Si los miembros mencionan que un canje "no funciona", se refiere a esto — no es un nuevo problema.
+
+Las recompensas de descuento volverán a funcionar en una versión futura.
+
+Esto no afecta las recompensas de Envío Gratis, Producto Gratis o Experiencia/Privilegio.
+
 ### Paso 4: Crear insignias (opcional)
 
 Las insignias reconocen logros de los clientes:
 
-1. Navegue hasta **Fidelidad > Insignias**
+1. Navegue a **Loyalty > Badges**
 2. Cree insignias para hitos:
    - **Primera compra** — Otorgada después de la primera orden
    - **Gran gasto** — Otorgada después de gastar $500+
@@ -85,40 +115,57 @@ Las insignias reconocen logros de los clientes:
 
 Las insignias pueden incluir premios de puntos adicionales al ser otorgadas.
 
-## Administración de miembros
+## Gestionar miembros
 
 ### Lista de miembros
 
-Ver todos los miembros de fidelidad con:
-- Nivel actual y estado
+Ver todos los miembros de lealtad con:
+- Nivel y estado actual
 - Saldo de puntos
 - Fecha de inscripción
 - Actividad reciente
 
-### Principales ganadores de puntos
+### Principales generadores de puntos
 
-El panel de control destaca a sus miembros más activos con una tabla de clasificación que muestra el rango, el nombre, el nivel y los puntos ganados en el período.
+El tablero destaca a sus miembros más activos con una tabla de clasificación que muestra el rango, nombre, nivel y puntos generados en el período.
 
 ### Transacciones recientes
 
-Un registro de transacciones muestra toda la actividad reciente de puntos, incluyendo:
-- **Ganados** — Puntos de compras
-- **Bonos** — Puntos de insignias, campañas o ajustes manuales
-- **Canjeados** — Puntos gastados en recompensas
+Un registro de transacciones muestra toda la actividad reciente de puntos. Los tipos de transacción incluyen:
+
+| Tipo | Significado |
+|------|---------|
+| **Earn** | Puntos acreditados por una compra calificada o regla |
+| **Redeem** | Puntos gastados en una recompensa |
+| **Bonus** | Puntos adicionales de una insignia, campaña o premio manual |
+| **Adjustment** | Corrección manual de puntos realizada por un miembro del personal |
+| **Revoke** | Puntos eliminados (por ejemplo, después de la cancelación de una orden) |
+| **Expire** | Puntos que han superado su fecha de vencimiento |
+
+### Ajustes manuales de puntos
+
+Puede agregar o deducir puntos manualmente para cualquier miembro:
+
+1. Abra la página de detalles del miembro
+2. Haga clic en **Adjust Points**
+3. Ingrese la cantidad de puntos (positiva para agregar, negativa para deducir)
+4. Ingrese la razón del ajuste
+5. Haga clic en **Save**
+
+El ajuste se registra como una transacción y es visible en el historial de transacciones del miembro.
 
 ## Campañas
 
-Las campañas de fidelidad le permiten ejecutar promociones especiales:
-- **Semanas de puntos dobles** — Aumentar temporalmente las tasas de ganancia
-- **Eventos de puntos adicionales** — Otorgar puntos adicionales por acciones específicas
-- **Promociones de ascenso de nivel** — Bajar el umbral para el avance de nivel
+Las campañas de lealtad le permiten realizar promociones especiales:
+- **Doble puntos los fines de semana** — Aumente temporalmente las tasas de generación de puntos
+- **Eventos de puntos adicionales** — Otorgue puntos extra por acciones específicas
+- **Promociones de ascenso de nivel** — Reduzca el umbral para el avance de nivel
 
 ## Consejos
 
-- Comience con reglas simples de ganancia (1 punto por cada $1 gastado) y amplíe con el tiempo.
+- Comience con reglas simples de generación de puntos (1 punto por cada $1 gastado) y amplíe con el tiempo.
 - Establezca umbrales de recompensa alcanzables para mantener a los miembros comprometidos — si las recompensas parecen inalcanzables, los miembros pierden interés.
 - Use insignias para gamificar la experiencia y fomentar comportamientos específicos.
-- Monitorea la Tasa de canje — un programa saludable tiene una tasa de canje del 10-30%.
-- Ejecute campañas durante períodos lentos para aumentar la participación.
-- Use el gráfico de Puntos ganados vs. canjeados para asegurar que su programa sea sostenible.
-
+- Monitorea la Tasa de Canje — un programa saludable tiene una tasa de canje del 10-30%.
+- Lanza campañas durante períodos lentos para aumentar la participación.
+- Use el gráfico de Puntos Generados vs. Canjeados para asegurarse de que su programa sea sostenible.

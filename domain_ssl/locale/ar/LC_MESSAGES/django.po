@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,113 +18,316 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "自定义域"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "النطاق والشهادة SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "لا يوجد (فقط HTTP)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "شهادة مخصصة"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "مُوقّع ذاتيًا"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "يتم إدارته خارجيًا"
 
+#: models.py:22
 msgid "Idle"
 msgstr "مُuspended"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "正在验证DNS"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "正在配置"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "正在获取证书"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "إعادة تحميل الخدمات"
 
+#: models.py:27
 msgid "Error"
 msgstr "خطأ"
 
+#: models.py:34
 msgid "Domain"
 msgstr "المجال"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "اسم النطاق المتكامل (مثلاً: shop.example.com)"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "المجال السابق"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr "النطاق قبل آخر تغيير، لتعقب التراجع"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "وضع SSL"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "مجال الشهادة"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "مصدر الشهادة"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "انتهاء صلاحية الشهادة"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "الشهادة المستحقة"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "شهادة الويلايد"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "رمز واجهة API كلاودفلر"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "رمز API للتحديات DNS-01 أو Origin CA"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "معرّف منطقة كلاودفلر"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "بريد إلكتروني للمشرف"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "البريد الإلكتروني للاتصال بإشعارات Let's Encrypt"
 
+#: models.py:108
 msgid "Status"
 msgstr "الحالة"
 
+#: models.py:113
 msgid "Last Error"
 msgstr "الخطأ الأخير"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "معرّف المهمة النشطة"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "معرّف مهمة Celery للعملية الحالية"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "التجديد التلقائي"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "تجدد الشهادات تلقائيًا قبل انتهائها"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "إعدادات النطاق"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "لا يوجد مجال مكوّن"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "اسم نطاق متجرك"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "جارٍ تحميل إعدادات النطاق..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "العنوان الحالي"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "نطاق مخصص نشط"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "إزالة النطاق المخصص"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "اتصل بنطاقك الخاص"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr "استخدم اسم النطاق الخاص بك بدلًا من العنوان الافتراضي myspwig.com."
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "اسم نطاقك"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr "أدخل النطاق الكامل (مثلاً: www.yourstore.com أو shop.yourdomain.com)"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "استمر"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "أعد توجيه نطاقك إلى متجرك"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr "أضف هذين السجلين DNS في إعدادات مُسجّل اسمك:"
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "مؤشر النطاق"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "النوع"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "الاسم"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "نسخ"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "القيمة"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "التحقق من الملكية"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "كيف أضيف سجلات DNS؟"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr ""
+"سجّل دخولك إلى مسجّل اسم النطاق (الذي اشتريت منه اسم النطاق) وابحث عن "
+"إعدادات DNS. مسجّلات شائعة:"
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr " منتجاتي > DNS > إدارة"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "قائمة النطاقات > إدارة > DNS متقدم"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > السجلات > إضافة سجل"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > السجلات المخصصة"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr ""
+"قد تستغرق تغييرات DNS ما يصل إلى 24 ساعة لانتشارها عالميًا، لكنها عادةً ما "
+"تبدأ العمل في غضون دقائق."
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "لقد أضفت هذه السجلات - تحقق"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "الغاء"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "正在检查您的DNS记录..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "域已连接！"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "سيكون متجرك متوفرًا في"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "稍后。"
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "قد تستغرق إعداد شهادة SSL دقيقتين أو ثلاث."
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "尚未找到记录"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr ""
+"قد تستغرق تغييرات DNS حتى 24 ساعة. يمكنك المحاولة مرة أخرى لاحقًا من هذه "
+"الصفحة."
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "重试"

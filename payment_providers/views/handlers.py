@@ -215,7 +215,6 @@ def _get_webhook_signature(headers: dict, provider_slug: str) -> str:
         "stripe": "stripe-signature",
         "airwallex": "x-signature",
         "paypal": "paypal-transmission-sig",
-        "adyen": "hmac-signature",
         "square": "x-square-signature",
         "braintree": "bt-signature",
     }

@@ -26,6 +26,11 @@ TRANSACTIONAL_EMAIL_TYPES = [
     "order_cancelled",
     "order_note_notification",
     "order_status_update",
+    # A gift card someone bought and addressed to you is not marketing. Absent
+    # from every category, it fell through to "unknown -> requires marketing
+    # consent + verified email", so any recipient with an account who had not
+    # opted into marketing silently never received their gift.
+    "gift_card_delivery",
     "return_request_approved",
     "return_request_rejected",
     "return_received",

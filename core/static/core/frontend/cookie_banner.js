@@ -85,13 +85,33 @@
   }
 
   /* ---- Banner visibility ---- */
+  function reserveSpaceForBanner() {
+    // Only the full-width bottom bar overlaps page content (checkout CTAs,
+    // footers); the corner-card variants float and don't. Reserve matching
+    // space at the foot of the page so nothing hides behind the bar.
+    if (!banner || banner.classList.contains('cookie-banner--hidden')) {
+      document.body.classList.remove('cookie-banner-active');
+      document.body.style.removeProperty('--cookie-banner-h');
+      return;
+    }
+    if (!banner.classList.contains('cookie-banner--bottom')) return;
+    document.body.style.setProperty('--cookie-banner-h', banner.offsetHeight + 'px');
+    document.body.classList.add('cookie-banner-active');
+  }
+
   function hideBanner() {
     banner.classList.add('cookie-banner--hidden');
+    reserveSpaceForBanner();
   }
 
   function showBanner() {
     banner.classList.remove('cookie-banner--hidden');
+    reserveSpaceForBanner();
   }
+
+  // The bar wraps to a different height on narrow screens — keep the
+  // reserved space in step.
+  window.addEventListener('resize', reserveSpaceForBanner);
 
   /* ---- Modal ---- */
   function openModal() {

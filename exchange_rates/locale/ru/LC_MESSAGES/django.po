@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,15 +20,19 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
+#: admin.py:47
 msgid "Provider Information"
 msgstr "Информация о провайдере"
 
+#: admin.py:48
 msgid "Configuration"
 msgstr "Настройка"
 
+#: admin.py:50 admin.py:110
 msgid "Credentials"
 msgstr "Учетные данные"
 
+#: admin.py:54
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
@@ -36,57 +40,76 @@ msgstr ""
 "Данные для подключения зашифрованы и управляются через мастер поставщика. "
 "Чтобы обновить учетные данные, переустановите поставщика."
 
+#: admin.py:60 admin.py:75 models.py:82
 msgid "Sync Status"
 msgstr "Состояние синхронизации"
 
+#: admin.py:66 admin.py:323
 msgid "Timestamps"
 msgstr "Временные метки"
 
+#: admin.py:69
 msgid "Name"
 msgstr "Название"
 
+#: admin.py:88 admin.py:269 admin.py:336
 msgid "Status"
 msgstr "Статус"
 
+#: admin.py:102
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:88
 msgid "Primary"
 msgstr "Основной"
 
+#: admin.py:118
 msgid "Credentials are encrypted and stored securely"
 msgstr "Учетные данные зашифрованы и хранятся в безопасном месте"
 
+#: admin.py:125
 msgid "No credentials configured"
 msgstr "Учетные данные не настроены"
 
+#: admin.py:265 admin.py:283 admin.py:320 admin.py:332
 msgid "Currency Pair"
 msgstr "Валютная пара"
 
+#: admin.py:272
 msgid "Stale"
 msgstr "Устаревшее"
 
+#: admin.py:273
 msgid "Fresh"
 msgstr "Свежее"
 
+#: admin.py:287 models.py:220
 msgid "Order"
 msgstr "Порядок"
 
+#: admin.py:321
 msgid "Rate"
 msgstr "Курс"
 
+#: admin.py:322
 msgid "Settings"
 msgstr "Настройки"
 
+#: admin.py:341
 msgid "ACTIVE"
 msgstr "АКТИВНО"
 
+#: admin.py:345
 msgid "INACTIVE"
 msgstr "НЕАКТИВНО"
 
+#: admin.py:348 models.py:285
 msgid "Notes"
 msgstr "Примечания"
 
+#: api_views.py:38
 msgid "List manual exchange rates"
 msgstr "Список ручных курсов обмена"
 
+#: api_views.py:40
 msgid ""
 "Returns all manual exchange rates for the current site. Staff authentication "
 "required."
@@ -94,9 +117,11 @@ msgstr ""
 "Возвращает все ручные курсы обмена для текущего сайта. Требуется "
 "аутентификация персонала."
 
+#: api_views.py:46
 msgid "Create a manual exchange rate"
 msgstr "Создать ручной курс обмена"
 
+#: api_views.py:48
 msgid ""
 "Create a new manual exchange rate for a currency pair. Only one rate per "
 "currency pair is allowed. Manual rates take precedence over provider rates "
@@ -106,30 +131,39 @@ msgstr ""
 "Допускается только одно значение курса на пару валют. Вручную заданные курсы "
 "имеют приоритет перед курсами поставщика, когда они активны."
 
+#: api_views.py:54
 msgid "Rate created successfully"
 msgstr "Курс успешно создан"
 
+#: api_views.py:56
 msgid "Validation error (duplicate pair, invalid rate, etc.)"
 msgstr "Ошибка валидации (дублирующаяся пара, недопустимый курс и т.д.)"
 
+#: api_views.py:62
 msgid "Get manual exchange rate details"
 msgstr "Получить детали ручного курса обмена"
 
+#: api_views.py:63
 msgid "Retrieve a specific manual exchange rate by ID."
 msgstr "Получить конкретный вручную заданный курс обмена по ID."
 
+#: api_views.py:68
 msgid "Update a manual exchange rate"
 msgstr "Обновить ручной курс обмена"
 
+#: api_views.py:69
 msgid "Fully update a manual exchange rate. All fields required."
 msgstr "Полностью обновить вручную заданный курс обмена. Все поля обязательны."
 
+#: api_views.py:72 api_views.py:85
 msgid "Rate updated successfully"
 msgstr "Курс обмена успешно обновлен"
 
+#: api_views.py:78
 msgid "Partially update a manual exchange rate"
 msgstr "Частично обновить вручную заданный курс обмена"
 
+#: api_views.py:80
 msgid ""
 "Update specific fields of a manual exchange rate. Commonly used to update "
 "just the rate value."
@@ -137,9 +171,11 @@ msgstr ""
 "Обновление конкретных полей ручного курса обмена. Часто используется для "
 "обновления только значения курса."
 
+#: api_views.py:91
 msgid "Delete a manual exchange rate"
 msgstr "Удалить ручной курс обмена"
 
+#: api_views.py:93
 msgid ""
 "Permanently delete a manual exchange rate. The system will fall back to "
 "provider rates for this currency pair."
@@ -147,27 +183,35 @@ msgstr ""
 "Постоянно удалите вручную заданный обменный курс. Система перейдет к курсам "
 "поставщика для этой пары валют."
 
+#: api_views.py:97
 msgid "Rate deleted successfully"
 msgstr "Курс обмена успешно удален"
 
+#: api_views.py:143
 msgid "Manual exchange rate created successfully."
 msgstr "Ручной обменный курс успешно создан."
 
+#: api_views.py:151
 msgid "Failed to create manual exchange rate."
 msgstr "Не удалось создать ручной обменный курс."
 
+#: api_views.py:172
 msgid "Manual exchange rate updated successfully."
 msgstr "Ручной обменный курс успешно обновлен."
 
+#: api_views.py:180
 msgid "Failed to update manual exchange rate."
 msgstr "Не удалось обновить ручной обменный курс."
 
+#: api_views.py:193
 msgid "Manual exchange rate deleted successfully."
 msgstr "Ручной обменный курс успешно удален."
 
+#: api_views.py:199
 msgid "Toggle manual rate active status"
 msgstr "Переключить активный статус ручного курса"
 
+#: api_views.py:201
 msgid ""
 "Toggle the active/inactive status of a manual exchange rate. When "
 "deactivated, the system falls back to provider rates."
@@ -175,21 +219,27 @@ msgstr ""
 "Переключите статус ручного обменного курса на активный/неактивный. При "
 "деактивации система вернется к курсам поставщика."
 
+#: api_views.py:205
 msgid "Status toggled successfully"
 msgstr "Состояние успешно изменено"
 
+#: api_views.py:220 views/admin_views.py:448 views/admin_views.py:477
 msgid "Rate {} successfully"
 msgstr "Курс {} успешно"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "activated"
 msgstr "активирован"
 
+#: api_views.py:221 views/admin_views.py:449
 msgid "deactivated"
 msgstr "деактивирован"
 
+#: api_views.py:231
 msgid "Bulk create or update manual rates"
 msgstr "Массовое создание или обновление вручную заданных курсов"
 
+#: api_views.py:233
 msgid ""
 "Create or update multiple manual exchange rates in a single request. Each "
 "rate is identified by its base_currency + target_currency pair. If a rate "
@@ -221,32 +271,41 @@ msgstr ""
 "  ]\n"
 "} ```"
 
+#: api_views.py:249
 msgid "Bulk operation completed"
 msgstr "Массовая операция завершена"
 
+#: api_views.py:261
 msgid "Invalid request data."
 msgstr "Неверные данные запроса."
 
+#: api_views.py:284
 msgid "base_currency, target_currency, and rate are required."
 msgstr "base_currency, target_currency и rate обязательны."
 
+#: api_views.py:294 models.py:312 serializers.py:68
 msgid "Base and target currencies must be different."
 msgstr "Базовая и целевая валюты должны быть разными."
 
+#: api_views.py:307 models.py:315 serializers.py:59
 msgid "Exchange rate must be greater than zero."
 msgstr "Курс обмена должен быть больше нуля."
 
+#: api_views.py:312
 msgid "Invalid rate value."
 msgstr "Недопустимое значение курса."
 
+#: api_views.py:336
 #, python-format
 msgid "Bulk operation completed: %(created)d created, %(updated)d updated."
 msgstr ""
 "Массовая операция завершена: %(created)d создано, %(updated)d обновлено."
 
+#: api_views.py:348
 msgid "Sync manual rates from provider"
 msgstr "Синхронизировать ручные курсы от провайдера"
 
+#: api_views.py:350
 msgid ""
 "Auto-populate manual exchange rates from the latest provider rates. Rates "
 "marked as locked (exclude_from_auto_sync) will be skipped. Creates new "
@@ -257,19 +316,24 @@ msgstr ""
 "будут пропущены. Создает новые ручные курсы или обновляет существующие "
 "незаблокированные."
 
+#: api_views.py:355
 msgid "Sync completed"
 msgstr "Синхронизация завершена"
 
+#: api_views.py:356
 msgid "Sync failed"
 msgstr "Синхронизация не удалась"
 
+#: api_views.py:412
 msgid "No provider rate available"
 msgstr "Нет доступного курса поставщика"
 
+#: api_views.py:426 views/admin_views.py:559
 #, python-format
 msgid "Synced from provider on %(date)s"
 msgstr "Синхронизировано с поставщиком %(date)s"
 
+#: api_views.py:448 views/admin_views.py:578
 #, python-format
 msgid ""
 "Sync complete: %(created)d created, %(updated)d updated, %(skipped)d locked "
@@ -278,154 +342,212 @@ msgstr ""
 "Синхронизация завершена: %(created)d создано, %(updated)d обновлено, "
 "%(skipped)d заблокировано (пропущено)"
 
+#: api_views.py:467 views/admin_views.py:591
 msgid "An error occurred during sync."
 msgstr "Произошла ошибка при синхронизации."
 
+#: apps.py:8 models.py:169
 msgid "Exchange Rates"
 msgstr "Курсы обмена"
 
+#: models.py:15 models.py:245
 msgid "Site"
 msgstr "Сайт"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "Сайт, к которому относится учетная запись поставщика"
 
+#: models.py:24
 msgid "Provider Component"
 msgstr "Компонент поставщика"
 
+#: models.py:25
 msgid "Exchange rate provider component from update system"
 msgstr "Компонент поставщика обменного курса из системы обновлений"
 
+#: models.py:30
 msgid "Account Name"
 msgstr "Имя аккаунта"
 
+#: models.py:32
 msgid ""
 "Friendly name for this provider account (e.g., 'Main Exchange Rate Provider')"
 msgstr ""
 "Дружественное имя для этой учетной записи поставщика (например, 'Основной "
 "поставщик обменных курсов')"
 
+#: models.py:37
 msgid "Encrypted Credentials"
 msgstr "Шифрованные учетные данные"
 
+#: models.py:38
 msgid "Encrypted API credentials for this provider"
 msgstr "Зашифрованные учетные данные API для этого провайдера"
 
+#: models.py:43 models.py:270 models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:88
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:77
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:90
+#: views/admin_views.py:451
 msgid "Active"
 msgstr "Активный"
 
+#: models.py:44
 msgid ""
 "Whether this provider account is active and should be used for rate fetching"
 msgstr ""
 "Активна ли эта учетная запись поставщика и должна ли использоваться для "
 "получения курсов"
 
+#: models.py:49
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:23
 msgid "Primary Provider"
 msgstr "Основной поставщик"
 
+#: models.py:50
 msgid "Use this provider as primary source for exchange rates"
 msgstr "Использовать этого поставщика как основной источник обменных курсов"
 
+#: models.py:55
 msgid "Priority"
 msgstr "Приоритет"
 
+#: models.py:56
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "Приоритет для цепочки резервного обеспечения (ниже = выше приоритет)"
 
+#: models.py:62
 msgid "Provider Settings"
 msgstr "Настройки поставщика"
 
+#: models.py:63
 msgid "Provider-specific settings and configuration"
 msgstr "Настройки и конфигурация, специфичные для провайдера"
 
+#: models.py:70
 msgid "Last Sync At"
 msgstr "Последняя синхронизация в"
 
+#: models.py:71
 msgid "When rates were last successfully fetched"
 msgstr "Когда курсы были последний раз успешно получены"
 
+#: models.py:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:80
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:68
 msgid "Pending"
 msgstr "В ожидании"
 
+#: models.py:78
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:74
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:60
 msgid "Success"
 msgstr "Успех"
 
+#: models.py:79
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:77
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:64
+#: templates/admin/exchange_rates/wizard/step4_test.html:76
 msgid "Error"
 msgstr "Ошибка"
 
+#: models.py:87
 msgid "Sync Error Message"
 msgstr "Сообщение об ошибке синхронизации"
 
+#: models.py:88
 msgid "Error message from last sync attempt"
 msgstr "Сообщение об ошибке из последней попытки синхронизации"
 
+#: models.py:95
 msgid "Exchange Rate Provider Account"
 msgstr "Аккаунт поставщика курса обмена"
 
+#: models.py:96
 msgid "Exchange Rate Provider Accounts"
 msgstr "Аккаунты поставщиков курса обмена"
 
+#: models.py:138
 msgid "Provider Account"
 msgstr "Аккаунт поставщика"
 
+#: models.py:144 models.py:195 models.py:251
 msgid "Base Currency"
 msgstr "Базовая валюта"
 
+#: models.py:145 models.py:252
 msgid "Base currency code (e.g., 'USD')"
 msgstr "Код базовой валюты (например, 'USD')"
 
+#: models.py:150 models.py:197 models.py:257
 msgid "Target Currency"
 msgstr "Целевая валюта"
 
+#: models.py:151 models.py:258
 msgid "Target currency code (e.g., 'EUR')"
 msgstr "Код целевой валюты (например, 'EUR')"
 
+#: models.py:157 models.py:168 models.py:199 models.py:264
 msgid "Exchange Rate"
 msgstr "Курс обмена"
 
+#: models.py:158
 msgid "Exchange rate from base to target (e.g., 0.85 means 1 USD = 0.85 EUR)"
 msgstr ""
 "Обменный курс от базовой валюты к целевой (например, 0.85 означает 1 USD = "
 "0.85 EUR)"
 
+#: models.py:163
 msgid "Fetched At"
 msgstr "Получено в"
 
+#: models.py:164
 msgid "When this rate was last fetched from provider"
 msgstr "Когда этот курс был последний раз получен от поставщика"
 
+#: models.py:203
 msgid "Provider Name"
 msgstr "Имя поставщика"
 
+#: models.py:204
 msgid "Name of exchange rate provider used"
 msgstr "Имя поставщика обменного курса, который используется"
 
+#: models.py:209
 msgid "Created At"
 msgstr "Создано в"
 
+#: models.py:210
 msgid "When this rate snapshot was created"
 msgstr "Когда был создан снимок этого курса"
 
+#: models.py:224 models.py:225
 msgid "Exchange Rate History"
 msgstr "История курса обмена"
 
+#: models.py:246
 msgid "Site this manual rate belongs to"
 msgstr "Сайт, к которому относится эта вручную заданная ставка"
 
+#: models.py:265
 msgid ""
 "Exchange rate from base to target (e.g., 0.85 means 1 base = 0.85 target)"
 msgstr ""
 "Курс обмена от базовой к целевой (например, 0.85 означает, что 1 базовая = "
 "0.85 целевой)"
 
+#: models.py:271
 msgid "Whether this manual rate is active and should be used for conversions"
 msgstr ""
 "Активен ли этот вручную заданный курс и должен ли он использоваться для "
 "конверсий"
 
+#: models.py:276
 msgid "Locked (Exclude from Auto-Sync)"
 msgstr "Заблокировано (Исключить из автоматической синхронизации)"
 
+#: models.py:278
 msgid ""
 "When enabled, this rate will not be overwritten by provider sync operations. "
 "Use for rates you manage manually."
@@ -434,21 +556,32 @@ msgstr ""
 "синхронизации провайдера. Используйте для курсов, которые вы управляете "
 "вручную."
 
+#: models.py:286
 msgid ""
 "Optional notes about this rate (e.g., 'Fixed rate for wholesale customers')"
 msgstr ""
 "Дополнительные примечания к этому курсу (например, 'Фиксированный курс для "
 "оптовых клиентов')"
 
+#: models.py:293
 msgid "Manual Exchange Rate"
 msgstr "Ручной обменный курс"
 
+#: models.py:294
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:22
 msgid "Manual Exchange Rates"
 msgstr "Ручные обменные курсы"
 
+#: models.py:304
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:91
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:81
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:92
+#: views/admin_views.py:452
 msgid "Inactive"
 msgstr "Неактивный"
 
+#: providers/fixer.py:316
 msgid ""
 "\n"
 "        <h3>Fixer.io Setup</h3>\n"
@@ -486,6 +619,7 @@ msgstr ""
 "strong> Магазинов, расположенных в ЕС, требующих соблюдения норм ECB</p>\n"
 "        "
 
+#: providers/openexchangerates.py:289
 msgid ""
 "\n"
 "        <h3>Open Exchange Rates Setup</h3>\n"
@@ -520,6 +654,7 @@ msgstr ""
 "платных тарифов.</p>\n"
 "        "
 
+#: serializers.py:82
 msgid ""
 "List of rate objects with base_currency, target_currency, rate, and optional "
 "is_active/notes"
@@ -527,63 +662,90 @@ msgstr ""
 "Список объектов курсов с базовой валютой, целевой валютой, курсом и "
 "необязательными is_active/заметками"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:24
 msgid "Exchange Rate Providers"
 msgstr "Поставщики курсов обмена"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:4
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:4
+#: templates/admin/exchange_rates/providers/browse.html:4
 msgid "Site Admin"
 msgstr "Администратор сайта"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:26
 msgid "Manage currency exchange rate provider integrations"
 msgstr "Управление интеграциями поставщиков обменных курсов"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:28
 msgid "provider"
 msgstr "поставщик"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:29
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:27
 msgid "active"
 msgstr "активный"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:34
+#: templates/admin/exchange_rates/providers/browse.html:27
 msgid "Browse Providers"
 msgstr "Просмотреть поставщиков"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:53
 msgid "Bulk Actions"
 msgstr "Пакетные действия"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:54
 msgid "Enable Selected"
 msgstr "Включить выбранные"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:55
 msgid "Disable Selected"
 msgstr "Отключить выбранные"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:56
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:119
 msgid "Set as Primary"
 msgstr "Установить как основной"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:57
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:103
 msgid "Sync Rates"
 msgstr "Синхронизировать курсы"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:58
 msgid "Delete Selected"
 msgstr "Удалить выбранные"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:60
 msgid "Apply"
 msgstr "Применить"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:62
 msgid "selected"
 msgstr "выбранные"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:72
 msgid "All Sync Statuses"
 msgstr "Все статусы синхронизации"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:86
 msgid "All Active Status"
 msgstr "Все активные статусы"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:98
 msgid "All Providers"
 msgstr "Все провайдеры"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:114
 msgid "Search providers..."
 msgstr "Поиск поставщиков..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:124
 msgid "Select All"
 msgstr "Выбрать все"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:142
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
@@ -591,63 +753,90 @@ msgstr[0] "%(counter)s провайдер"
 msgstr[1] "%(counter)s провайдера"
 msgstr[2] "%(counter)s провайдеров"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:151
+#: views/admin_views.py:86
 msgid "No provider accounts found"
 msgstr "Аккаунты поставщиков не найдены"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:154
+#: views/admin_views.py:87
 msgid "Try adjusting your filters or search query."
 msgstr "Попробуйте изменить свои фильтры или запрос поиска."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:156
 msgid "Get started by connecting your first exchange rate provider."
 msgstr "Начните с подключения первого поставщика обменных курсов."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:161
 msgid "Browse & Install Providers"
 msgstr "Просмотреть и установить провайдеров"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/change_list.html:172
 msgid "Loading..."
 msgstr "Загрузка..."
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:38
 msgid "Provider:"
 msgstr "Поставщик:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
 msgid "Last synced:"
 msgstr "Последняя синхронизация:"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:46
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "ago"
 msgstr "назад"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:51
 msgid "Never synced"
 msgstr "Никогда не синхронизировано"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:98
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:119
 msgid "Edit"
 msgstr "Редактировать"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Disable"
 msgstr "Отключить"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:109
 msgid "Enable"
 msgstr "Включить"
 
+#: templates/admin/exchange_rates/exchangerateprovideraccount/provider_card.html:124
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:124
 msgid "Delete"
 msgstr "Удалить"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:24
 msgid "Set and manage exchange rates manually for currency conversions"
 msgstr "Установите и управляйте курсами обмена вручную для конвертации валют"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:26
 msgid "rate"
 msgstr "курс"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:28
 msgid "inactive"
 msgstr "неактивный"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:29
+#: views/admin_views.py:478
 msgid "locked"
 msgstr "заблокировано"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:35
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:144
 msgid "Sync from Provider"
 msgstr "Синхронизировать с поставщиком"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:38
 msgid "Add Rate"
 msgstr "Добавить курс"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:55
 msgid ""
 "Manual rates take precedence over provider-fetched rates. Lock rates to "
 "prevent them from being overwritten during provider sync."
@@ -656,27 +845,36 @@ msgstr ""
 "провайдера. Заблокируйте курсы, чтобы предотвратить их перезапись во время "
 "синхронизации провайдера."
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:85
 msgid "Updated"
 msgstr "Обновлено"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:95
+#: views/admin_views.py:480
 msgid "Locked"
 msgstr "Заблокировано"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Unlock (allow auto-sync)"
 msgstr "Разблокировать (разрешить автосинхронизацию)"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:108
 msgid "Lock (exclude from auto-sync)"
 msgstr "Заблокировать (исключить из автосинхронизации)"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Deactivate"
 msgstr "Деактивировать"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:114
 msgid "Activate"
 msgstr "Активировать"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:139
 msgid "No manual exchange rates"
 msgstr "Нет вручную заданных курсов обмена"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:140
 msgid ""
 "Add manual exchange rates to define fixed conversion rates between "
 "currencies."
@@ -684,26 +882,35 @@ msgstr ""
 "Добавьте вручную курсы обмена, чтобы определить фиксированные ставки "
 "конвертации между валютами."
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:147
 msgid "Add Your First Rate"
 msgstr "Добавьте свой первый курс"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:160
 msgid "Syncing from Provider"
 msgstr "Синхронизация с поставщиком"
 
+#: templates/admin/exchange_rates/manualexchangerate/change_list.html:161
 msgid "Fetching latest provider rates and updating unlocked manual rates..."
 msgstr ""
 "Получение последних ставок поставщика и обновление разблокированных вручную "
 "ставок..."
 
+#: templates/admin/exchange_rates/providers/browse.html:4
+#: templates/admin/exchange_rates/providers/browse.html:36
+#: views/provider_browse.py:158
 msgid "Browse Exchange Rate Providers"
 msgstr "Просмотреть поставщиков курсов обмена"
 
+#: templates/admin/exchange_rates/providers/browse.html:25
 msgid "Home"
 msgstr "Главная"
 
+#: templates/admin/exchange_rates/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "Аккаунты поставщиков"
 
+#: templates/admin/exchange_rates/providers/browse.html:38
 msgid ""
 "Choose an exchange rate provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -711,9 +918,11 @@ msgstr ""
 "Выберите поставщика обменного курса для интеграции с вашим магазином. "
 "Установите новых поставщиков или настройте существующих."
 
+#: templates/admin/exchange_rates/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Сервер обновления недоступен"
 
+#: templates/admin/exchange_rates/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -721,9 +930,11 @@ msgstr ""
 "Невозможно подключиться к серверу обновлений. Показываются только локально "
 "установленные поставщики."
 
+#: templates/admin/exchange_rates/providers/browse.html:57
 msgid "Exchange Rate Provider Marketplace"
 msgstr "Рынок поставщиков курсов обмена"
 
+#: templates/admin/exchange_rates/providers/browse.html:69
 msgid ""
 "Here you can discover and install exchange rate providers to automate your "
 "currency conversion, including live rates, historical data, and multi-"
@@ -733,36 +944,47 @@ msgstr ""
 "автоматизации конвертации валют, включая актуальные курсы, исторические "
 "данные и поддержку нескольких валют."
 
+#: templates/admin/exchange_rates/providers/browse.html:76
 msgid "What you can do:"
 msgstr "Что вы можете сделать:"
 
+#: templates/admin/exchange_rates/providers/browse.html:81
 msgid "Browse available exchange rate providers by feature and pricing"
 msgstr "Обзор доступных провайдеров обменных курсов по функциям и цене"
 
+#: templates/admin/exchange_rates/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "Установите новые поставщики с одного щелчка"
 
+#: templates/admin/exchange_rates/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "Обновите установленных поставщиков до последних версий"
 
+#: templates/admin/exchange_rates/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "Настройте параметры поставщика после установки"
 
+#: templates/admin/exchange_rates/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "Начало работы:"
 
+#: templates/admin/exchange_rates/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "Обзорите провайдеров ниже и выберите подходящего для вас"
 
+#: templates/admin/exchange_rates/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Нажмите «Установить», чтобы добавить провайдера в ваш магазин"
 
+#: templates/admin/exchange_rates/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "Перейдите в Настройки, чтобы настроить учетные данные API"
 
+#: templates/admin/exchange_rates/providers/browse.html:107
 msgid "Test the provider connection and sync exchange rates"
 msgstr "Проверьте соединение с провайдером и синхронизируйте обменные курсы"
 
+#: templates/admin/exchange_rates/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -785,54 +1007,78 @@ msgstr[2] ""
 "                    Сейчас доступны %(counter)s провайдеров\n"
 "                "
 
+#: templates/admin/exchange_rates/providers/browse.html:134
 msgid "Update Available"
 msgstr "Доступно обновление"
 
+#: templates/admin/exchange_rates/providers/browse.html:160
 msgid "Installed"
 msgstr "Установлено"
 
+#: templates/admin/exchange_rates/providers/browse.html:175
 msgid "Available"
 msgstr "Доступно"
 
+#: templates/admin/exchange_rates/providers/browse.html:198
+#: templates/admin/exchange_rates/wizard/step1_select.html:46
 msgid "Live Rates"
 msgstr "Текущие курсы"
 
+#: templates/admin/exchange_rates/providers/browse.html:203
+#: templates/admin/exchange_rates/wizard/step1_select.html:51
 msgid "Historical"
 msgstr "Исторические"
 
+#: templates/admin/exchange_rates/providers/browse.html:208
+#: templates/admin/exchange_rates/wizard/step1_select.html:56
 msgid "Crypto"
 msgstr "Криптовалюты"
 
+#: templates/admin/exchange_rates/providers/browse.html:213
+#: templates/admin/exchange_rates/wizard/step1_select.html:61
 msgid "Commodities"
 msgstr "Товары"
 
+#: templates/admin/exchange_rates/providers/browse.html:218
+#: templates/admin/exchange_rates/wizard/step1_select.html:66
 msgid "Any Base Currency"
 msgstr "Любая базовая валюта"
 
+#: templates/admin/exchange_rates/providers/browse.html:223
+#: templates/admin/exchange_rates/wizard/step1_select.html:71
 msgid "Batch Requests"
 msgstr "Пакетные запросы"
 
+#: templates/admin/exchange_rates/providers/browse.html:241
 msgid "Free"
 msgstr "Бесплатно"
 
+#: templates/admin/exchange_rates/providers/browse.html:261
 msgid "Update"
 msgstr "Обновить"
 
+#: templates/admin/exchange_rates/providers/browse.html:267
 msgid "Configure"
 msgstr "Настроить"
 
+#: templates/admin/exchange_rates/providers/browse.html:275
 msgid "Install"
 msgstr "Установить"
 
+#: templates/admin/exchange_rates/providers/browse.html:285
 msgid "View Details"
 msgstr "Посмотреть детали"
 
+#: templates/admin/exchange_rates/providers/browse.html:294
 msgid "Learn More"
 msgstr "Узнать больше"
 
+#: templates/admin/exchange_rates/providers/browse.html:308
+#: templates/admin/exchange_rates/wizard/step1_select.html:88
 msgid "No Providers Available"
 msgstr "Поставщики недоступны"
 
+#: templates/admin/exchange_rates/providers/browse.html:309
 msgid ""
 "No exchange rate providers are currently available. Please check your update "
 "server connection or contact support."
@@ -840,39 +1086,53 @@ msgstr ""
 "В данный момент поставщики обменных курсов недоступны. Пожалуйста, проверьте "
 "соединение с сервером обновлений или свяжитесь со службой поддержки."
 
+#: templates/admin/exchange_rates/providers/browse.html:318
 msgid "Installing provider..."
 msgstr "Установка провайдера..."
 
+#: templates/admin/exchange_rates/wizard/base.html:14
 msgid "Connect Exchange Rate Provider"
 msgstr "Подключить поставщика курсов обмена"
 
+#: templates/admin/exchange_rates/wizard/base.html:15
 msgid "Follow these steps to connect your exchange rate provider account"
 msgstr ""
 "Следуйте этим шагам, чтобы подключить аккаунт провайдера обменных курсов"
 
+#: templates/admin/exchange_rates/wizard/base.html:24
 msgid "Select Provider"
 msgstr "Выбрать поставщика"
 
+#: templates/admin/exchange_rates/wizard/base.html:33
+#: templates/admin/exchange_rates/wizard/step2_setup.html:13
 msgid "Setup Instructions"
 msgstr "Инструкции по настройке"
 
+#: templates/admin/exchange_rates/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "Введите учетные данные"
 
+#: templates/admin/exchange_rates/wizard/base.html:51
+#: templates/admin/exchange_rates/wizard/step4_test.html:7
+#: templates/admin/exchange_rates/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "Проверить соединение"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:6
 msgid "Select an Exchange Rate Provider"
 msgstr "Выберите поставщика курса обмена"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:7
 msgid "Choose the exchange rate provider you want to connect to your store."
 msgstr ""
 "Выберите провайдера обменных курсов, которого вы хотите подключить к своему "
 "магазину."
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:89
 msgid "No exchange rate provider components are currently installed."
 msgstr "На данный момент не установлены компоненты провайдера обменных курсов."
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:90
 msgid ""
 "Please download and install exchange rate provider components from the "
 "component registry."
@@ -880,15 +1140,20 @@ msgstr ""
 "Пожалуйста, скачайте и установите компоненты провайдера обменных курсов из "
 "реестра компонентов."
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:92
 msgid "Browse Components"
 msgstr "Просмотр компонентов"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:103
 msgid "Cancel"
 msgstr "Отменить"
 
+#: templates/admin/exchange_rates/wizard/step1_select.html:106
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "Следующий"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:16
 #, python-format
 msgid ""
 "\n"
@@ -901,9 +1166,11 @@ msgstr ""
 "%(provider)s.\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:28
 msgid "Setup Instructions Not Available"
 msgstr "Инструкции по настройке недоступны"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:30
 #, python-format
 msgid ""
 "\n"
@@ -919,15 +1186,21 @@ msgstr ""
 "проверьте наличие обновленной версии.\n"
 "                    "
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:49
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:120
+#: templates/admin/exchange_rates/wizard/step4_test.html:58
 msgid "Back"
 msgstr "Назад"
 
+#: templates/admin/exchange_rates/wizard/step2_setup.html:52
 msgid "Continue to Credentials"
 msgstr "Перейти к учетным данным"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "Введите учетные данные API"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -940,24 +1213,31 @@ msgstr ""
 "безопасно зашифрованы и сохранены.\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "Еще нет аккаунта?"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "Для получения учетных данных API вам понадобится аккаунт."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "Зарегистрироваться здесь"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "Учетные данные API"
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "Выберите..."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "Для этого провайдера не настроены поля учетных данных."
 
+#: templates/admin/exchange_rates/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
@@ -965,6 +1245,7 @@ msgstr ""
 "Ваши учетные данные будут зашифрованы с использованием шифрования AES-256 "
 "перед сохранением в базе данных."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -977,241 +1258,319 @@ msgstr ""
 "учетные данные корректны.\n"
 "        "
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:21
+#: templates/admin/exchange_rates/wizard/step4_test.html:70
 msgid "Testing connection..."
 msgstr "Тестирование соединения..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:22
+#: templates/admin/exchange_rates/wizard/step4_test.html:71
 msgid "Please wait while we verify your credentials."
 msgstr "Пожалуйста, подождите, пока мы проверим ваши учетные данные."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr ""
 "Нажмите, чтобы протестировать соединение с введенными учетными данными."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:42
+#: templates/admin/exchange_rates/wizard/step4_test.html:72
 msgid "Connection Successful!"
 msgstr "Соединение успешно!"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:46
 msgid "Connection Details"
 msgstr "Детали соединения"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:61
+#: templates/admin/exchange_rates/wizard/step4_test.html:80
 msgid "Save & Finish"
 msgstr "Сохранить и завершить"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:73
 msgid "Your credentials were verified successfully."
 msgstr "Ваши учетные данные успешно проверены."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:74
 msgid "Connection Failed"
 msgstr "Соединение не удалось"
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:75
 msgid "Could not connect to the provider API."
 msgstr "Невозможно подключиться к API провайдера."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:77
+#: views/admin_views.py:296 views/wizard.py:515
 msgid "An unexpected error occurred."
 msgstr "Случилась неожиданная ошибка."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:78
 msgid "Saving..."
 msgstr "Сохранение..."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:79
 msgid "Failed to save provider account."
 msgstr "Не удалось сохранить учетную запись провайдера."
 
+#: templates/admin/exchange_rates/wizard/step4_test.html:81
 msgid "An error occurred while saving."
 msgstr "Произошла ошибка при сохранении."
 
+#: views/admin_views.py:114
 msgid "Provider {} successfully"
 msgstr "Провайдер {} успешно"
 
+#: views/admin_views.py:115
 msgid "enabled"
 msgstr "включен"
 
+#: views/admin_views.py:115
 msgid "disabled"
 msgstr "отключен"
 
+#: views/admin_views.py:122
 msgid "An error occurred while updating the provider."
 msgstr "Произошла ошибка при обновлении провайдера."
 
+#: views/admin_views.py:146 views/admin_views.py:372
 msgid "\"{}\" set as primary provider"
 msgstr "\"{}\" установлен как основной провайдер"
 
+#: views/admin_views.py:156
 msgid "An error occurred while setting the primary provider."
 msgstr "Произошла ошибка при установке основного провайдера."
 
+#: views/admin_views.py:174
 msgid "Provider implementation not found"
 msgstr "Реализация провайдера не найдена"
 
+#: views/admin_views.py:191
 msgid ""
 "Failed to decrypt provider credentials. Please reconfigure the provider."
 msgstr ""
 "Не удалось расшифровать учетные данные провайдера. Пожалуйста, пере "
 "настройте провайдера."
 
+#: views/admin_views.py:209
 msgid "Site settings not configured"
 msgstr "Настройки сайта не настроены"
 
+#: views/admin_views.py:223 views/admin_views.py:227
 msgid "No rates returned from provider"
 msgstr "Нет курсов, полученных от провайдера"
 
+#: views/admin_views.py:262
 msgid "Successfully synced {} exchange rate(s)"
 msgstr "Успешно синхронизирован(ы) {} курс(а/ов) обмена"
 
+#: views/admin_views.py:285
 msgid "Failed to sync exchange rates. Check the provider configuration."
 msgstr ""
 "Не удалось синхронизировать обменные курсы. Проверьте настройки провайдера."
 
+#: views/admin_views.py:313
 msgid "Provider \"{}\" successfully deleted"
 msgstr "Провайдер \"{}\" успешно удален"
 
+#: views/admin_views.py:319
 msgid "An error occurred while deleting the provider."
 msgstr "Произошла ошибка при удалении провайдера."
 
+#: views/admin_views.py:335
 msgid "Invalid action or no providers selected"
 msgstr "Недопустимое действие или не выбраны провайдеры"
 
+#: views/admin_views.py:343
 msgid "{} provider(s) enabled"
 msgstr "{} провайдеров включены"
 
+#: views/admin_views.py:347
 msgid "{} provider(s) disabled"
 msgstr "{}`s поставщик(и) отключены"
 
+#: views/admin_views.py:354
 msgid "Please select exactly one provider to set as primary"
 msgstr ""
 "Пожалуйста, выберите ровно одного провайдера, чтобы установить его как "
 "основной"
 
+#: views/admin_views.py:402
 msgid "{} provider(s) queued for sync, {} errors: {}"
 msgstr ""
 "{} провайдер(ов) добавлен(ы) в очередь для синхронизации, {} ошибок: {}"
 
+#: views/admin_views.py:406
 msgid "{} provider(s) queued for sync"
 msgstr "{}`s поставщик(и) добавлены в очередь синхронизации"
 
+#: views/admin_views.py:411
 msgid "{} provider(s) deleted"
 msgstr "{}`s поставщик(и) удалены"
 
+#: views/admin_views.py:415
 msgid "Unknown action: {}"
 msgstr "Неизвестное действие: {}"
 
+#: views/admin_views.py:423
 msgid "An error occurred while performing the bulk action."
 msgstr "Произошла ошибка при выполнении массового действия."
 
+#: views/admin_views.py:458 views/admin_views.py:487
 msgid "An error occurred while updating the rate."
 msgstr "Произошла ошибка при обновлении курса."
 
+#: views/admin_views.py:478
 msgid "unlocked"
 msgstr "разблокировано"
 
+#: views/admin_views.py:481
 msgid "Unlocked"
 msgstr "Разблокировано"
 
+#: views/provider_browse.py:197
 msgid "Provider is already installed. Configure it now."
 msgstr "Провайдер уже установлен. Настройте его сейчас."
 
+#: views/provider_browse.py:226 views/provider_browse.py:367
 msgid "Provider not found on update server."
 msgstr "Провайдер не найден на сервере обновлений."
 
+#: views/provider_browse.py:236
 msgid "Could not determine provider version."
 msgstr "Не удалось определить версию провайдера."
 
+#: views/provider_browse.py:260
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Не удалось загрузить провайдера: %(error)s"
 
+#: views/provider_browse.py:273
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Не удалось установить провайдера: %(error)s"
 
+#: views/provider_browse.py:306
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "Поставщик \"%(name)s\" успешно установлен! Настройте его сейчас."
 
+#: views/provider_browse.py:315
 msgid "An unexpected error occurred during installation."
 msgstr "Произошла непредвиденная ошибка во время установки."
 
+#: views/provider_browse.py:337
 msgid "Provider not installed."
 msgstr "Провайдер не установлен."
 
+#: views/provider_browse.py:353
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Не удалось подключиться к серверу обновлений: %(error)s"
 
+#: views/provider_browse.py:376
 msgid "Could not determine latest version."
 msgstr "Не удалось определить последнюю версию."
 
+#: views/provider_browse.py:385
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "Поставщик \"%(name)s\" уже актуален (v%(version)s)."
 
+#: views/provider_browse.py:400
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Не удалось загрузить обновление: %(error)s"
 
+#: views/provider_browse.py:412
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Не удалось установить обновление: %(error)s"
 
+#: views/provider_browse.py:449
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "Поставщик \"%(name)s\" успешно обновлен до версии v%(version)s!"
 
+#: views/provider_browse.py:458
 msgid "An unexpected error occurred during the update."
 msgstr "Произошла непредвиденная ошибка во время обновления."
 
+#: views/wizard.py:153
 msgid "Connect Exchange Rate Provider - Select Provider"
 msgstr "Подключение провайдера обменного курса - Выбор провайдера"
 
+#: views/wizard.py:166
 msgid "Please select a provider."
 msgstr "Пожалуйста, выберите провайдера."
 
+#: views/wizard.py:174
 msgid "Invalid provider selected."
 msgstr "Выбран недопустимый провайдер."
 
+#: views/wizard.py:202 views/wizard.py:282
 msgid "Please select a provider first."
 msgstr "Сначала выберите провайдера."
 
+#: views/wizard.py:235
 #, python-format
 msgid "Setup instructions not found for %(provider)s. Please contact support."
 msgstr ""
 "Инструкции по настройке не найдены для %(provider)s. Пожалуйста, свяжитесь с "
 "поддержкой."
 
+#: views/wizard.py:240 views/wizard.py:304
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Ошибка загрузки провайдера: %(error)s"
 
+#: views/wizard.py:250
 msgid "Connect Exchange Rate Provider - Setup Instructions"
 msgstr "Подключение провайдера обменного курса - Инструкции по настройке"
 
+#: views/wizard.py:297
 msgid "Could not load provider configuration."
 msgstr "Не удалось загрузить конфигурацию провайдера."
 
+#: views/wizard.py:308
 msgid "Connect Exchange Rate Provider - Enter Credentials"
 msgstr "Подключение провайдера обменного курса - Введите учетные данные"
 
+#: views/wizard.py:338
 msgid "Error loading provider configuration."
 msgstr "Ошибка загрузки конфигурации поставщика."
 
+#: views/wizard.py:372
 msgid "Please complete previous steps first."
 msgstr "Сначала завершите предыдущие шаги."
 
+#: views/wizard.py:380
 msgid "Provider not found."
 msgstr "Поставщик не найден."
 
+#: views/wizard.py:384
 msgid "Connect Exchange Rate Provider - Test Connection"
 msgstr "Подключение провайдера обменного курса - Проверка соединения"
 
+#: views/wizard.py:413
 msgid "Provider implementation not found."
 msgstr "Реализация поставщика не найдена."
 
+#: views/wizard.py:435
 msgid "An error occurred while testing the connection."
 msgstr "Произошла ошибка при тестировании соединения."
 
+#: views/wizard.py:449
 msgid "Site not configured."
 msgstr "Сайт не настроен."
 
+#: views/wizard.py:460
 msgid "Connection test failed"
 msgstr "Тест подключения завершился неудачно"
 
+#: views/wizard.py:491
 msgid "Provider connected successfully!"
 msgstr "Поставщик успешно подключен!"
 
+#: views/wizard.py:504
 msgid "An error occurred while saving the provider."
 msgstr "Произошла ошибка при сохранении провайдера."

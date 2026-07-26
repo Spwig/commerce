@@ -131,12 +131,14 @@ class WalletTransaction(models.Model):
     SOURCE_PROMOTION = "promotion"
     SOURCE_MANUAL = "manual"
     SOURCE_ORDER = "order"
+    SOURCE_LOYALTY = "loyalty"
 
     SOURCE_CHOICES = [
         (SOURCE_REFERRAL, _("Referral Reward")),
         (SOURCE_REFUND, _("Order Refund")),
         (SOURCE_PROMOTION, _("Promotion")),
         (SOURCE_MANUAL, _("Manual Adjustment")),
+        (SOURCE_LOYALTY, _("Loyalty Reward")),
         (SOURCE_ORDER, _("Order Payment")),
     ]
 
@@ -233,6 +235,20 @@ class WalletTransaction(models.Model):
             models.Index(fields=["wallet", "status"]),
             models.Index(fields=["wallet", "created_at"]),
             models.Index(fields=["source", "reference_id"]),
+        ]
+        constraints = [
+            # One wallet credit per loyalty redemption, EVER — the D2 money
+            # guarantee, held by the database rather than application logic.
+            # confirm_redemption can be re-entered (a retried campaign task,
+            # an admin re-confirm, two racing requests); "check then credit"
+            # is a race two workers both win, a unique index is not. Partial:
+            # only loyalty rows carry this meaning, and older sources
+            # (referral, manual) have no uniqueness contract to retrofit.
+            models.UniqueConstraint(
+                fields=["source", "reference_id"],
+                condition=models.Q(source="loyalty"),
+                name="wallet_txn_one_credit_per_loyalty_redemption",
+            ),
         ]
 
     def __str__(self):

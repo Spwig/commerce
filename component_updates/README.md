@@ -119,14 +119,14 @@ result = manager.check_for_updates()
 print(f"Found {result['updates_found']} updates")
 
 # Install update for specific component
-component = ComponentRegistry.objects.get(slug='logo')
+component = ComponentRegistry.objects.get(slug="logo")
 manager.install_update(component)
 
 # Rollback to previous version
 manager.rollback(component)
 
 # Check dependencies
-satisfied, issues = manager.check_dependencies(component, '2.0.0')
+satisfied, issues = manager.check_dependencies(component, "2.0.0")
 if not satisfied:
     print(f"Dependency issues: {issues}")
 ```
@@ -326,14 +326,11 @@ Components can declare dependencies on other components:
 from component_updates.models import ComponentDependency, ComponentRegistry
 
 # Add dependency
-component = ComponentRegistry.objects.get(slug='mega-menu')
-required = ComponentRegistry.objects.get(slug='logo')
+component = ComponentRegistry.objects.get(slug="mega-menu")
+required = ComponentRegistry.objects.get(slug="logo")
 
 ComponentDependency.objects.create(
-    component=component,
-    depends_on=required,
-    version_constraint='>=1.0.0',
-    is_required=True
+    component=component, depends_on=required, version_constraint=">=1.0.0", is_required=True
 )
 ```
 
@@ -353,20 +350,21 @@ Add to your cron configuration:
 from django_cron import CronJobBase, Schedule
 from component_updates.services import UpdateManager
 
+
 class CheckComponentUpdates(CronJobBase):
     RUN_EVERY_MINS = 60 * 24  # Daily
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'component_updates.check_updates'
+    code = "component_updates.check_updates"
 
     def do(self):
         manager = UpdateManager()
         result = manager.check_for_updates()
 
         # Auto-install security updates
-        for update in result['updates']:
-            if update.get('critical') and update['component'].auto_update:
-                manager.install_update(update['component'])
+        for update in result["updates"]:
+            if update.get("critical") and update["component"].auto_update:
+                manager.install_update(update["component"])
 ```
 
 ### Using Celery
@@ -376,14 +374,17 @@ class CheckComponentUpdates(CronJobBase):
 from celery import shared_task
 from .services import UpdateManager
 
+
 @shared_task
 def check_component_updates():
     manager = UpdateManager()
     return manager.check_for_updates()
 
+
 @shared_task
 def install_component_update(component_id, version=None):
     from .models import ComponentRegistry
+
     component = ComponentRegistry.objects.get(id=component_id)
     manager = UpdateManager()
     return manager.install_update(component, version)

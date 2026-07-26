@@ -14,6 +14,7 @@
     endpoints: {
       cart: '/api/cart/',
       session: '/api/checkout/',
+      contact: '/api/checkout/contact/',
       shippingAddress: '/api/checkout/shipping-address/',
       billingAddress: '/api/checkout/billing-address/',
       shippingMethods: '/api/checkout/shipping-methods/',
@@ -24,12 +25,18 @@
       complete: '/api/checkout/complete/',
       createIntent: '/api/payments/intents/',
       intentDetail: '/api/payments/intents/',
+      tenders: '/api/checkout/tenders/',
+      tenderGiftCard: '/api/checkout/tenders/gift-card/',
+      tenderWallet: '/api/checkout/tenders/wallet/',
     },
 
     // State
     config: {},
     cartData: null,
     sessionData: null,
+    // GET /tenders/ payload: applied holds, amount_due, wallet_spendable.
+    // Rendering always reads from here so a summary redraw can't wipe rows.
+    tendersData: null,
     selectedShippingMethod: null,
     selectedProvider: null,
     steps: ['contact', 'shipping', 'shipping-method', 'payment', 'review'],
@@ -42,10 +49,26 @@
       // Add lang from document
       this.config.lang = document.documentElement.lang || 'en';
 
+      // Carts with no shippable items (digital / booking only) skip the
+      // shipping address and shipping method steps entirely. The templates
+      // omit those sections server-side; dropping them from the steps array
+      // keeps progress bars, navigation, and resume logic aligned.
+      this.requiresShipping = this.config.cartRequiresShipping !== false;
+      if (!this.requiresShipping) {
+        this.steps = this.steps.filter(s => s !== 'shipping' && s !== 'shipping-method');
+      }
+
       this.cacheElements();
       this.bindEvents();
+      this.initLiveFieldValidation();
       this.initAccountCreationUI();
-      this.loadCheckout();
+      // The express template wraps loadCheckout() with its own render pass and
+      // drives the initial load itself — calling it here as well would double
+      // every checkout fetch (cart, session, tenders, methods, providers) and
+      // race the two passes. Every other template relies on this call.
+      if (!document.querySelector('.checkout-container--express')) {
+        this.loadCheckout();
+      }
     },
 
     cacheElements() {
@@ -142,12 +165,42 @@
                 this.expressCheckout(provider, method);
               }
               break;
+            case 'apply-gift-card':
+              this.applyGiftCardTender();
+              break;
+            case 'apply-wallet':
+              this.applyWalletTender();
+              break;
+            case 'place-order-free':
+              this.placeOrderFree();
+              break;
+            case 'toggle-summary': {
+              const summary = document.getElementById('checkout-summary');
+              if (summary) {
+                const open = summary.classList.toggle('checkout-summary--open');
+                e.currentTarget.setAttribute('aria-expanded', open ? 'true' : 'false');
+              }
+              break;
+            }
           }
         });
       });
 
-      // New address toggle
-      const toggle = document.getElementById('new-address-toggle');
+      // Remove-tender buttons are rendered after bind time — delegate.
+      const appliedTenders = document.getElementById('tenders-applied');
+      if (appliedTenders) {
+        appliedTenders.addEventListener('click', e => {
+          const btn = e.target.closest('[data-action="remove-tender"]');
+          if (!btn) return;
+          const row = btn.closest('[data-tender-id]');
+          if (row) this.removeTender(row.dataset.tenderId);
+        });
+      }
+
+      // New address toggle (express template uses a prefixed id)
+      const toggle =
+        document.getElementById('new-address-toggle') ||
+        document.getElementById('express-new-address-toggle');
       if (toggle) {
         toggle.addEventListener('click', () => {
           const form = document.getElementById('new-address-form');
@@ -160,9 +213,11 @@
               r.checked = false;
               r.closest('.saved-address-card').classList.remove('saved-address-card--selected');
             });
+            this.syncSavedAddressPhoneField();
           } else {
             form.hidden = true;
             toggle.innerHTML = '<i class="fas fa-plus"></i> Use a different address';
+            this.syncSavedAddressPhoneField();
           }
         });
       }
@@ -182,14 +237,98 @@
           const toggleBtn = document.getElementById('new-address-toggle');
           if (toggleBtn)
             toggleBtn.innerHTML = '<i class="fas fa-plus"></i> Use a different address';
+          this.syncSavedAddressPhoneField();
         });
       });
+
+      // Show the supplemental phone field if the pre-checked saved
+      // address has no phone on record
+      this.syncSavedAddressPhoneField();
 
       // Billing toggle
       if (this.els.billingSameAsShipping) {
         this.els.billingSameAsShipping.addEventListener('change', () => {
           this.els.billingForm.hidden = this.els.billingSameAsShipping.checked;
         });
+      }
+
+      // No-shipping carts: the billing country drives which payment
+      // providers can be offered — refresh the list when it changes
+      if (!this.requiresShipping) {
+        const billingCountry = document.getElementById('billing-country');
+        if (billingCountry) {
+          billingCountry.addEventListener('change', () => this.fetchPaymentProviders());
+        }
+      }
+
+      // Voucher code in the shared order summary (non-express flows).
+      // Express has its own field/handler in checkout-express.js.
+      const voucherBtn = document.getElementById('checkout-apply-voucher');
+      if (voucherBtn) {
+        voucherBtn.addEventListener('click', () => this.applyVoucherCode());
+        const voucherInput = document.getElementById('checkout-voucher-code');
+        if (voucherInput) {
+          voucherInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              this.applyVoucherCode();
+            }
+          });
+        }
+      }
+    },
+
+    // === Voucher (order summary) ===
+
+    async applyVoucherCode() {
+      const input = document.getElementById('checkout-voucher-code');
+      const msg = document.getElementById('checkout-voucher-msg');
+      const btn = document.getElementById('checkout-apply-voucher');
+      const code = input ? input.value.trim() : '';
+      if (!code) return;
+      if (btn) btn.disabled = true;
+      try {
+        const resp = await this.api('/api/cart/apply-voucher/', 'POST', { code: code });
+        if (msg) {
+          msg.textContent = resp.message || '';
+          msg.classList.toggle('checkout-summary__voucher-msg--error', !resp.success);
+          msg.hidden = false;
+        }
+        if (resp.success) {
+          if (input) input.value = '';
+          this.cartData = await this.api(this.endpoints.cart);
+
+          // A discount changes the amount a gateway will be asked for. An
+          // intent already created was raised for the OLD total — same rule
+          // as onTendersChanged: invalidate the payment step so it is redone
+          // at the new figure, never reused.
+          if (this.completedSteps.has('payment')) {
+            this.completedSteps.delete('payment');
+            this.completedSteps.delete('review');
+            sessionStorage.removeItem('payment_intent_id');
+            sessionStorage.removeItem('order_number');
+            const container = document.getElementById('review-payment-container');
+            if (container) container.innerHTML = '';
+            const section = document.getElementById('review-payment-section');
+            if (section) section.style.display = 'none';
+            this.updateSummaryText('payment', '');
+            this.updateStepUI('review', 'disabled');
+            this.openStep('payment');
+          }
+
+          this.renderSummary();
+          this.fetchTenders();
+        }
+      } catch (err) {
+        // this.api throws with the server's message (e.g. wrong currency,
+        // minimum order value) — show it rather than a generic failure
+        if (msg) {
+          msg.textContent = err.message || 'Could not apply this code.';
+          msg.classList.add('checkout-summary__voucher-msg--error');
+          msg.hidden = false;
+        }
+      } finally {
+        if (btn) btn.disabled = false;
       }
     },
 
@@ -225,13 +364,49 @@
         this.cartData = cartResp;
         this.sessionData = sessionResp.session || sessionResp;
         this.renderSummary();
+        // Applied tenders survive a reload (holds live server-side); fetch
+        // them with the session so the payment step opens in the right state.
+        this.fetchTenders();
         this.initAddressAutocomplete();
 
         // Restore form fields from session data
         this.restoreFormFields();
 
         // Resume from last completed step if session has data
-        if (this.sessionData.shipping_address || this.sessionData.shipping_address_data) {
+        if (!this.requiresShipping) {
+          // No shipping steps: contact → payment. Providers can be offered
+          // before any address exists (billing country / GeoIP drive the
+          // server-side filtering), so populate the list up front.
+          const knownEmail =
+            this.config.userEmail ||
+            (this.sessionData.metadata && this.sessionData.metadata.email) ||
+            '';
+          if (knownEmail) {
+            this.completedSteps.add('contact');
+            this.updateStepUI('contact', 'completed');
+            this.updateSummaryText('contact', knownEmail);
+            this.openStep('payment');
+          } else {
+            this.openStep('contact');
+          }
+          this.fetchPaymentProviders();
+
+          // Resume a payment selected before a reload — mirror the shipping
+          // branch below so a no-shipping customer who refreshes mid-payment
+          // gets the mounted gateway back (and can't create a second intent by
+          // continuing again) instead of a blank payment step.
+          if (this.sessionData.payment_provider) {
+            this.completedSteps.add('payment');
+            this.updateStepUI('payment', 'completed');
+            this.updateSummaryText('payment', this.sessionData.payment_provider_name || '');
+            this.renderReview();
+            this.openStep('review');
+            const storedIntentId = sessionStorage.getItem('payment_intent_id');
+            if (storedIntentId) {
+              this.recoverPaymentHandler(storedIntentId);
+            }
+          }
+        } else if (this.sessionData.shipping_address || this.sessionData.shipping_address_data) {
           this.completedSteps.add('contact');
           this.completedSteps.add('shipping');
           this.updateStepUI('contact', 'completed');
@@ -272,8 +447,18 @@
             this.openStep('shipping-method');
           }
         } else {
-          // Auto-complete contact if email is pre-filled
-          if (this.config.userEmail) {
+          // A pre-filled, valid email (signed-in customer) completes the
+          // contact step and opens the next one — no need to focus and blur
+          // the field. Single-page especially left downstream sections
+          // locked until the email blurred.
+          const emailEl = document.getElementById('checkout-email');
+          const email = (emailEl && emailEl.value.trim()) || this.config.userEmail || '';
+          if (email && this.isValidEmail(email)) {
+            this.completedSteps.add('contact');
+            this.updateStepUI('contact', 'completed');
+            this.updateSummaryText('contact', email);
+            this.openStep(this.requiresShipping ? 'shipping' : 'payment');
+          } else {
             this.openStep('contact');
           }
         }
@@ -345,6 +530,23 @@
         return;
       }
 
+      // Digital-only carts render a name field in the contact step (there
+      // is no shipping form to collect it) — required
+      const nameInput = document.getElementById('checkout-name');
+      let contactName = '';
+      if (nameInput) {
+        contactName = nameInput.value.trim();
+        if (!contactName) {
+          this.showFieldError(
+            'checkout-name',
+            (window.UI_STRINGS && window.UI_STRINGS['js.name_required']) ||
+              'Please enter your full name.'
+          );
+          this.scrollToFirstError();
+          return;
+        }
+      }
+
       // Handle password field based on account creation timing
       const accountTiming = this.config.accountCreationTiming || 'post_purchase';
       const passwordInput = document.getElementById('checkout-password');
@@ -370,17 +572,28 @@
 
       this.clearFieldErrors();
 
-      // Store contact info locally (will be submitted with order at completion)
-      // Following e-commerce best practice: collect data client-side, submit atomically on order placement
+      // Persist contact server-side. Email is recorded on the session (so guest
+      // order creation has it, even for no-shipping), and a password — if the
+      // customer opted into an account — creates a real account and signs them
+      // in. The password is sent once and never stored client-side.
+      this.contactName = contactName || this.contactName || '';
+      const nameParts = (this.contactName || '').split(' ');
+      const firstName = nameParts.shift() || this.config.userFirstName || '';
+      const lastName = nameParts.join(' ') || this.config.userLastName || '';
+      try {
+        const resp = await this.api(this.endpoints.contact, 'POST', {
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          ...(password ? { password } : {}),
+        });
+        if (resp && resp.session) this.sessionData = resp.session;
+      } catch (err) {
+        this.showAlert(err.message || 'Could not save your contact details.', 'error');
+        return;
+      }
       this.sessionData = this.sessionData || {};
       this.sessionData.email = email;
-      this.sessionData.first_name = this.config.userFirstName || '';
-      this.sessionData.last_name = this.config.userLastName || '';
-
-      // Store password if provided (for account creation)
-      if (password) {
-        this.sessionData.password = password;
-      }
 
       // Mark step as complete
       this.completedSteps.add('contact');
@@ -393,11 +606,28 @@
         this.updateSummaryText(s, '');
       });
 
-      // Proceed to shipping
-      this.openStep('shipping');
+      // Proceed to the next step — payment directly when nothing ships
+      if (this.requiresShipping) {
+        this.openStep('shipping');
+      } else {
+        this.openStep('payment');
+        this.fetchPaymentProviders();
+      }
     },
 
     // === Shipping Address ===
+
+    // Saved addresses recorded before phone became required have none —
+    // surface the supplemental phone field only when the selected saved
+    // address needs it (and the new-address form is not in use)
+    syncSavedAddressPhoneField() {
+      const group = document.getElementById('saved-address-phone-group');
+      if (!group) return;
+      const savedRadio = document.querySelector('input[name="saved_address"]:checked');
+      const newForm = document.getElementById('new-address-form');
+      const usingSaved = savedRadio && (!newForm || newForm.hidden);
+      group.hidden = !(usingSaved && savedRadio.dataset.hasPhone === '0');
+    },
 
     async submitShippingAddress() {
       this.showLoading(true);
@@ -405,11 +635,41 @@
         let body;
         const savedRadio = document.querySelector('input[name="saved_address"]:checked');
         const newForm = document.getElementById('new-address-form');
+        const requiredMsg =
+          (window.UI_STRINGS && window.UI_STRINGS['js.field_required']) ||
+          'This field is required.';
+        const phoneRequiredMsg =
+          (window.UI_STRINGS && window.UI_STRINGS['js.phone_required']) ||
+          'Please enter a phone number so the carrier can contact you about delivery.';
+        const phoneInvalidMsg =
+          (window.UI_STRINGS && window.UI_STRINGS['js.phone_invalid']) ||
+          'Please enter a valid phone number.';
 
         if (savedRadio && newForm.hidden) {
           body = { address_id: parseInt(savedRadio.value, 10) };
+          // Saved addresses recorded before phone became required carry
+          // none — the supplemental field fills the gap (carriers need a
+          // delivery contact number)
+          if (savedRadio.dataset.hasPhone === '0') {
+            const savedPhone = document.getElementById('saved-address-phone');
+            const phone = savedPhone ? savedPhone.value.trim() : '';
+            if (!phone) {
+              this.clearFieldErrors();
+              this.showFieldError('saved-address-phone', phoneRequiredMsg);
+              this.scrollToFirstError();
+              return;
+            }
+            if (!this.isValidPhone(phone)) {
+              this.clearFieldErrors();
+              this.showFieldError('saved-address-phone', phoneInvalidMsg);
+              this.scrollToFirstError();
+              return;
+            }
+            body.phone = phone;
+          }
         } else {
-          // Validate required fields
+          // Validate required fields — phone included: carriers need a
+          // contact number for delivery
           const fields = {
             name: document.getElementById('shipping-name').value.trim(),
             address1: document.getElementById('shipping-address1').value.trim(),
@@ -417,13 +677,25 @@
             state: document.getElementById('shipping-state').value.trim(),
             postal_code: document.getElementById('shipping-postal-code').value.trim(),
             country: document.getElementById('shipping-country').value.trim(),
+            phone: document.getElementById('shipping-phone').value.trim(),
           };
 
           const missing = Object.entries(fields).filter(([, v]) => !v);
           if (missing.length > 0) {
+            this.clearFieldErrors();
             missing.forEach(([key]) => {
-              this.showFieldError(`shipping-${key.replace('_', '-')}`, 'This field is required.');
+              this.showFieldError(
+                `shipping-${key.replace('_', '-')}`,
+                key === 'phone' ? phoneRequiredMsg : requiredMsg
+              );
             });
+            this.scrollToFirstError();
+            return;
+          }
+
+          if (!this.isValidPhone(fields.phone)) {
+            this.clearFieldErrors();
+            this.showFieldError('shipping-phone', phoneInvalidMsg);
             this.scrollToFirstError();
             return;
           }
@@ -432,7 +704,6 @@
             ...fields,
             company: document.getElementById('shipping-company').value.trim(),
             address2: document.getElementById('shipping-address2').value.trim(),
-            phone: document.getElementById('shipping-phone').value.trim(),
           };
         }
 
@@ -469,7 +740,7 @@
         }
       } catch (err) {
         console.error('Shipping address error:', err);
-        this.showAlert('Failed to save address. Please try again.', 'error');
+        this.showAlert(err.message || 'Failed to save address. Please try again.', 'error');
       } finally {
         this.showLoading(false);
       }
@@ -485,13 +756,19 @@
     // === Shipping Methods ===
 
     async fetchShippingMethods() {
+      // No-shipping carts render no shipping method section at all
+      if (!this.requiresShipping) return;
       const container = this.els.shippingMethodsList;
+      if (!container) return;
       container.innerHTML =
         '<div class="checkout-empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading shipping methods...</p></div>';
 
       try {
         const resp = await this.api(this.endpoints.shippingMethods);
         const methods = resp.shipping_methods || [];
+        // Keep the raw list (with final_cost) available so callers can make a
+        // cost-aware choice — the rendered cards only carry display strings.
+        this.shippingMethodsData = methods;
 
         if (methods.length === 0) {
           container.innerHTML = `
@@ -503,13 +780,16 @@
                             </p>
                         </div>
                     `;
-          // Disable the continue button
-          const continueBtn = document.querySelector('[data-action="continue-shipping-method"]');
-          if (continueBtn) {
-            continueBtn.disabled = true;
-            continueBtn.style.opacity = '0.5';
-            continueBtn.style.cursor = 'not-allowed';
-          }
+          // Disable the confirm buttons (base flow + express flow)
+          document
+            .querySelectorAll(
+              '[data-action="continue-shipping-method"], #express-confirm-shipping-method'
+            )
+            .forEach(btn => {
+              btn.disabled = true;
+              btn.style.opacity = '0.5';
+              btn.style.cursor = 'not-allowed';
+            });
           return;
         }
 
@@ -530,13 +810,16 @@
           )
           .join('');
 
-        // Re-enable the continue button (in case it was disabled before)
-        const continueBtn = document.querySelector('[data-action="continue-shipping-method"]');
-        if (continueBtn) {
-          continueBtn.disabled = false;
-          continueBtn.style.opacity = '';
-          continueBtn.style.cursor = '';
-        }
+        // Re-enable the confirm buttons (in case they were disabled before)
+        document
+          .querySelectorAll(
+            '[data-action="continue-shipping-method"], #express-confirm-shipping-method'
+          )
+          .forEach(btn => {
+            btn.disabled = false;
+            btn.style.opacity = '';
+            btn.style.cursor = '';
+          });
 
         // Bind selection styling
         container.querySelectorAll('.shipping-method-card').forEach(card => {
@@ -559,11 +842,17 @@
             radio.checked = true;
             radio.closest('.shipping-method-card').classList.add('shipping-method-card--selected');
           }
-        } else if (methods.length === 1) {
+        } else {
+          // No prior choice: pre-select the first method (server-sorted,
+          // typically cheapest/default) so the step is never a dead-end —
+          // "Continue" always has a selection. The customer can still change
+          // it. Fires the change event so dependent UI (summary shipping
+          // cost) updates.
           const radio = container.querySelector('input[type="radio"]');
           if (radio) {
             radio.checked = true;
             radio.closest('.shipping-method-card').classList.add('shipping-method-card--selected');
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
           }
         }
       } catch (err) {
@@ -573,7 +862,7 @@
       }
     },
 
-    async submitShippingMethod() {
+    async submitShippingMethod(opts = {}) {
       const selected = document.querySelector('input[name="shipping_method"]:checked');
       if (!selected) {
         this.showAlert('Please select a shipping method.', 'error');
@@ -597,9 +886,17 @@
             this.updateSummaryText(s, '');
           });
           this.updateShippingMethodSummary();
+          // Shipping changed the total, so amount_due moved under the holds —
+          // refetch so the tender panel and zero-due state stay truthful.
+          this.fetchTenders();
           this.renderSummary();
           this.openStep('payment');
-          this.fetchPaymentProviders();
+          // Express mounts payment via autoMountPayment(), which fetches
+          // providers itself — skip the fetch here so it doesn't run twice.
+          // Other flows populate the payment step from this call.
+          if (!opts.skipProviderFetch) {
+            this.fetchPaymentProviders();
+          }
         } else {
           this.showAlert(resp.message || 'Failed to set shipping method.', 'error');
         }
@@ -626,20 +923,53 @@
 
     // === Payment Providers ===
 
+    // Enable/disable the payment step's "Continue" control (step-driven
+    // templates). Express has no such button — it auto-mounts — so this is a
+    // no-op there. Keeps a customer from clicking Continue into a "select a
+    // payment method" dead-end when no provider is available for their country.
+    setPaymentContinueEnabled(enabled) {
+      document.querySelectorAll('[data-action="continue-payment"]').forEach(btn => {
+        btn.disabled = !enabled;
+        btn.style.opacity = enabled ? '' : '0.5';
+        btn.style.cursor = enabled ? '' : 'not-allowed';
+      });
+    },
+
     async fetchPaymentProviders() {
       const container = this.els.paymentProvidersList;
       container.innerHTML =
         '<div class="checkout-empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading payment methods...</p></div>';
 
       try {
-        const resp = await this.api(this.endpoints.paymentProviders);
+        // No-shipping carts have no shipping address to derive a country
+        // from — send the billing-country field (or the GeoIP country) as
+        // a hint so the server can filter providers before the billing
+        // address is formally submitted.
+        let url = this.endpoints.paymentProviders;
+        if (!this.requiresShipping) {
+          const countryHint =
+            document.getElementById('billing-country')?.value.trim() ||
+            this.config.geoCountry ||
+            '';
+          if (countryHint) {
+            url += `?country=${encodeURIComponent(countryHint)}`;
+          }
+        }
+        const resp = await this.api(url);
         const providers = resp.payment_providers || [];
 
         if (providers.length === 0) {
-          container.innerHTML =
-            '<div class="checkout-empty-state"><i class="fas fa-credit-card"></i><p>No payment methods available.</p></div>';
+          const msg =
+            (window.UI_STRINGS && window.UI_STRINGS['js.no_payment_methods']) ||
+            'No payment methods are available for this location. Try a different country, or contact us for help.';
+          container.innerHTML = `<div class="checkout-empty-state"><i class="fas fa-credit-card"></i><p>${this.esc(msg)}</p></div>`;
+          // Don't leave a dead "Continue" that only says "select a payment
+          // method" — disable it until a provider list actually loads.
+          this.setPaymentContinueEnabled(false);
           return;
         }
+        // Providers available again — re-enable the step's continue control.
+        this.setPaymentContinueEnabled(true);
 
         container.innerHTML = providers
           .map(
@@ -669,15 +999,26 @@
           });
         });
 
-        // Auto-select if only one provider
-        if (providers.length === 1) {
-          const radio = container.querySelector('input[type="radio"]');
-          if (radio) {
-            radio.checked = true;
-            radio
-              .closest('.payment-provider-card')
-              .classList.add('payment-provider-card--selected');
-          }
+        // Retire any stale "Change payment method" link before (re)collapsing
+        // below — collapseProviderList re-creates/shows it as needed.
+        const changeLink = document.getElementById('checkout-change-provider');
+        if (changeLink) changeLink.hidden = true;
+
+        // Pre-select the default provider (the list is sorted default-first)
+        // and, when there is more than one, collapse the list to just that
+        // card with a "Change payment method" link. Most stores run a single
+        // gateway; a wall of options is noise. Purely visual — the intent is
+        // created when the customer advances the payment step. Runs LAST so
+        // the stale-link retirement above can't hide the fresh link.
+        const firstRadio = container.querySelector('input[type="radio"]');
+        if (firstRadio) {
+          firstRadio.checked = true;
+          firstRadio
+            .closest('.payment-provider-card')
+            .classList.add('payment-provider-card--selected');
+        }
+        if (providers.length > 1) {
+          this.collapseProviderList();
         }
       } catch (err) {
         console.error('Payment providers error:', err);
@@ -686,7 +1027,263 @@
       }
     },
 
+    /**
+     * Collapse the provider list to just the selected card, with a
+     * "Change payment method" link when there is actually a choice.
+     * Mirrors the express flow's collapseProviderList; express itself is
+     * excluded — it hides the whole list and shows its own saved-card.
+     */
+    collapseProviderList() {
+      if (document.querySelector('.checkout-container--express')) return;
+      const list = this.els.paymentProvidersList;
+      if (!list) return;
+      const cards = list.querySelectorAll('.payment-provider-card');
+      if (cards.length < 2) return;
+      cards.forEach(card => {
+        card.hidden = !card.querySelector('input').checked;
+      });
+      let link = document.getElementById('checkout-change-provider');
+      if (!link) {
+        link = document.createElement('button');
+        link.type = 'button';
+        link.id = 'checkout-change-provider';
+        link.className = 'checkout-change-provider-link';
+        link.textContent =
+          (window.UI_STRINGS && window.UI_STRINGS['js.change_payment_method']) ||
+          'Change payment method';
+        link.addEventListener('click', () => this.expandProviderList());
+        list.parentNode.insertBefore(link, list.nextSibling);
+      }
+      link.hidden = false;
+    },
+
+    expandProviderList() {
+      const list = this.els.paymentProvidersList;
+      if (!list) return;
+      list.querySelectorAll('.payment-provider-card').forEach(card => {
+        card.hidden = false;
+      });
+      const link = document.getElementById('checkout-change-provider');
+      if (link) link.hidden = true;
+    },
+
+    // === Tenders (gift card / store credit) ===
+    //
+    // A tender is money the customer already holds. It settles the post-tax
+    // total; whatever remains (amount_due) is what a gateway is asked for.
+    // Every mutation here INVALIDATES the payment step: an intent created for
+    // the old amount_due would charge the wrong figure — the P2.2 double-charge
+    // resurrected client-side — so the step must be redone, never reused.
+
+    async fetchTenders() {
+      try {
+        const resp = await this.api(this.endpoints.tenders);
+        if (resp && resp.success) {
+          this.tendersData = resp;
+          this.renderTenders();
+          this.renderSummary();
+        }
+      } catch (err) {
+        // Tenders are additive UI: a fetch failure must never block checkout.
+        console.error('Fetch tenders error:', err);
+      }
+    },
+
+    async applyGiftCardTender() {
+      const input = document.getElementById('tender-gift-card-code');
+      const code = input ? input.value.trim() : '';
+      if (!code) return;
+
+      this.showLoading(true);
+      try {
+        const resp = await this.api(this.endpoints.tenderGiftCard, 'POST', { code: code });
+        if (resp.success) {
+          if (input) input.value = '';
+          this.showTenderError('');
+          this.onTendersChanged(resp);
+        } else {
+          // Server messages are already localised; show them verbatim.
+          this.showTenderError(resp.message || 'Could not apply gift card.');
+        }
+      } catch (err) {
+        this.showTenderError(err.message || 'Could not apply gift card.');
+      } finally {
+        this.showLoading(false);
+      }
+    },
+
+    async applyWalletTender() {
+      this.showLoading(true);
+      try {
+        const resp = await this.api(this.endpoints.tenderWallet, 'POST', {});
+        if (resp.success) {
+          this.showTenderError('');
+          this.onTendersChanged(resp);
+        } else {
+          this.showTenderError(resp.message || 'Could not apply store credit.');
+        }
+      } catch (err) {
+        this.showTenderError(err.message || 'Could not apply store credit.');
+      } finally {
+        this.showLoading(false);
+      }
+    },
+
+    async removeTender(tenderId) {
+      this.showLoading(true);
+      try {
+        const resp = await this.api(this.endpoints.tenders + tenderId + '/', 'DELETE');
+        if (resp.success) {
+          this.onTendersChanged(resp);
+        }
+      } catch (err) {
+        console.error('Remove tender error:', err);
+      } finally {
+        this.showLoading(false);
+      }
+    },
+
+    onTendersChanged(tendersResp) {
+      this.tendersData = tendersResp;
+
+      // Invalidate the payment step. An intent already created was raised for
+      // the OLD amount_due; letting it survive charges the customer the wrong
+      // amount. Forcing the step to rerun recreates the intent at the new
+      // figure — or skips the gateway entirely at zero due.
+      this.completedSteps.delete('payment');
+      this.completedSteps.delete('review');
+      sessionStorage.removeItem('payment_intent_id');
+      sessionStorage.removeItem('order_number');
+
+      this.renderTenders();
+      this.renderSummary();
+    },
+
+    renderTenders() {
+      const data = this.tendersData;
+      if (!data) return;
+
+      const tenders = data.tenders || [];
+      const due = parseFloat(data.amount_due || '0');
+
+      // Applied rows. Labels come from the server (already localised);
+      // nothing here needs to know tender internals.
+      const applied = document.getElementById('tenders-applied');
+      if (applied) {
+        applied.innerHTML = tenders
+          .map(
+            t => `
+              <div class="checkout-tenders__item" data-tender-id="${this.escAttr(t.id)}">
+                <span class="checkout-tenders__item-label">${this.esc(t.label || t.tender_type)}</span>
+                <span class="checkout-tenders__item-amount">\u2212${this.formatCurrency(t.amount)}</span>
+                <button type="button" class="checkout-tenders__remove"
+                        data-action="remove-tender" aria-label="Remove">&times;</button>
+              </div>`
+          )
+          .join('');
+      }
+
+      // Wallet row: only for a signed-in customer with spendable balance and
+      // no wallet hold already applied (the API returns null otherwise).
+      const walletRow = document.getElementById('tender-wallet-row');
+      let walletShown = false;
+      if (walletRow) {
+        const spendable = parseFloat(data.wallet_spendable || '0');
+        const hasWalletHold = tenders.some(t => t.tender_type === 'wallet');
+        walletShown = this.config.isAuthenticated && spendable > 0 && !hasWalletHold;
+        walletRow.hidden = !walletShown;
+        const amountEl = document.getElementById('tender-wallet-amount');
+        if (amountEl && walletShown)
+          amountEl.textContent = this.formatCurrency(data.wallet_spendable);
+      }
+
+      // The whole block starts hidden when the merchant sells no gift
+      // cards; unhide it when this customer has store credit to offer or
+      // tenders already applied
+      const tendersBlock = document.getElementById('checkout-tenders');
+      if (tendersBlock && tendersBlock.hidden && (walletShown || tenders.length > 0)) {
+        tendersBlock.hidden = false;
+      }
+
+      // Zero-due: swap the provider list for the free-order panel. The billing
+      // form stays — an order still needs an invoiceable address.
+      const providers = document.getElementById('payment-providers-list');
+      const zeroDue = document.getElementById('checkout-zero-due');
+      const fullyTendered = tenders.length > 0 && due <= 0;
+      if (providers) providers.hidden = fullyTendered;
+      if (zeroDue) zeroDue.hidden = !fullyTendered;
+
+      // Express fast-paths know nothing about tenders; hide them the moment
+      // one exists rather than let them charge the gross total.
+      if (tenders.length > 0) {
+        const express =
+          document.getElementById('express-checkout') ||
+          document.querySelector('.single-page__express-checkout');
+        if (express) express.hidden = true;
+      }
+    },
+
+    showTenderError(message) {
+      const el = document.getElementById('tenders-error');
+      if (!el) return;
+      el.textContent = message;
+      el.hidden = !message;
+    },
+
+    async placeOrderFree() {
+      // Fully tendered: no gateway involved. complete() creates the order,
+      // attaches the holds, and _settle_if_fully_tendered marks it paid —
+      // capture happens on the payment-confirmed signal.
+
+      // A shipping cart still needs a delivery phone; guide instead of a
+      // server error.
+      if (this.shippingPhoneMissing && this.shippingPhoneMissing()) {
+        this.promptForShippingPhone();
+        return;
+      }
+      this.showLoading(true);
+      try {
+        // Persist billing (+ email) BEFORE completing. createPaymentIntent is
+        // skipped on the zero-due path, so without this the order would be
+        // created with whatever billing/email happened to be on the session —
+        // often nothing for no-shipping guests.
+        const billingOk = await this.persistBilling();
+        if (!billingOk) return;
+
+        const validation = await this.api(this.endpoints.validate, 'POST');
+        if (!validation.is_valid) {
+          const errorMsg = (validation.errors || []).join('. ') || 'Checkout validation failed.';
+          this.showAlert(errorMsg, 'error');
+          return;
+        }
+
+        const resp = await this.api(this.endpoints.complete, 'POST');
+        if (resp.success && resp.order) {
+          sessionStorage.removeItem('payment_intent_id');
+          sessionStorage.removeItem('order_number');
+          const lang = this.config.lang || 'en';
+          window.location.href = `/${lang}/checkout/confirmation/${resp.order.order_number}/`;
+        } else {
+          this.showAlert(resp.message || 'Could not place the order.', 'error');
+        }
+      } catch (err) {
+        console.error('Zero-due place order error:', err);
+        this.showAlert(err.message || 'Could not place the order.', 'error');
+      } finally {
+        this.showLoading(false);
+      }
+    },
+
     async submitPaymentMethod() {
+      // Nothing due — fully tendered OR a genuinely free order: there is no
+      // provider to select and no intent to create — the step's continue
+      // button becomes Place Order. Never let this fall through to
+      // createPaymentIntent: gateways reject zero-amount intents.
+      const dueNow = this.tendersData ? parseFloat(this.tendersData.amount_due || '0') : null;
+      if (dueNow !== null && dueNow <= 0) {
+        return this.placeOrderFree();
+      }
+
       const selected = document.querySelector('input[name="payment_provider"]:checked');
       if (!selected) {
         this.showAlert('Please select a payment method.', 'error');
@@ -708,6 +1305,10 @@
         this.sessionData = resp.session;
         this.selectedProvider = selected.closest('.payment-provider-card');
 
+        // Provider chosen — collapse the list to the selection so the step
+        // reads as settled; the "Change payment method" link reopens it.
+        this.collapseProviderList();
+
         // 2. Create payment intent immediately (NEW FLOW)
         await this.createPaymentIntent();
       } catch (err) {
@@ -718,31 +1319,174 @@
       }
     },
 
-    async createPaymentIntent() {
-      try {
-        // 1. Set billing address
-        const billingSame = this.els.billingSameAsShipping?.checked !== false;
-        const billingBody = billingSame
-          ? { same_as_shipping: true }
-          : {
-              same_as_shipping: false,
-              name: document.getElementById('billing-name')?.value.trim() || '',
-              company: document.getElementById('billing-company')?.value.trim() || '',
-              address1: document.getElementById('billing-address1')?.value.trim() || '',
-              address2: document.getElementById('billing-address2')?.value.trim() || '',
-              city: document.getElementById('billing-city')?.value.trim() || '',
-              state: document.getElementById('billing-state')?.value.trim() || '',
-              postal_code: document.getElementById('billing-postal-code')?.value.trim() || '',
-              country: document.getElementById('billing-country')?.value.trim() || '',
-              phone: document.getElementById('billing-phone')?.value.trim() || '',
-            };
+    // A cart that ships needs a carrier-reachable phone on the shipping
+    // address — gateways validating like real PSPs reject the intent
+    // otherwise. Browsers always log failed HTTP requests, so the check
+    // runs client-side first and the API is never asked a question whose
+    // answer is a predictable 400.
+    shippingPhoneMissing() {
+      if (!this.requiresShipping) return false;
+      const addr =
+        this.sessionData &&
+        (this.sessionData.shipping_address || this.sessionData.shipping_address_data);
+      if (!addr) return false; // no address yet — upstream validation owns this
+      return !String(addr.phone || '').trim();
+    },
 
-        const billingResp = await this.api(this.endpoints.billingAddress, 'POST', billingBody);
-        if (!billingResp.success) {
-          this.showAlert(billingResp.message || 'Failed to set billing address.', 'error');
-          return;
+    // Reopen the address UI so the customer can supply a phone number.
+    // Shared flows reopen the shipping step; the express flow overrides
+    // this to open its address picker panel instead.
+    openAddressSectionForPhone() {
+      this.openStep('shipping');
+    },
+
+    // Guided fix for a phoneless shipping address: open the address
+    // section, reveal the supplemental phone field that exists for saved
+    // addresses recorded before phone became required, focus it and show
+    // the registered explanation.
+    promptForShippingPhone() {
+      const msg =
+        (window.UI_STRINGS && window.UI_STRINGS['js.saved_address_needs_phone']) ||
+        'This address needs a phone number so the carrier can contact you about delivery.';
+      this.openAddressSectionForPhone();
+      const group = document.getElementById('saved-address-phone-group');
+      if (group) group.hidden = false;
+      const input = document.getElementById('saved-address-phone');
+      if (input) {
+        this.clearFieldErrors();
+        this.showFieldError('saved-address-phone', msg);
+        input.focus();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        this.showAlert(msg, 'error');
+      }
+    },
+
+    // Build, validate and POST the billing address (+ the customer email) to
+    // the session. Shared by the paid path (createPaymentIntent) and the
+    // zero-due path (placeOrderFree) so both persist the same buyer data —
+    // previously only createPaymentIntent did, so fully-tendered orders could
+    // be created with blank billing / no email. Returns true on success;
+    // shows field errors / an alert and returns false otherwise.
+    async persistBilling() {
+      const billingSame = this.els.billingSameAsShipping?.checked !== false;
+      let billingBody;
+      if (!this.requiresShipping) {
+        // No shipping address to mirror — collect a full billing address. The
+        // name falls back to the contact-step name so an order always has one.
+        const contactName =
+          this.contactName || document.getElementById('checkout-name')?.value.trim() || '';
+        const billing = {
+          name: document.getElementById('billing-name')?.value.trim() || contactName,
+          company: document.getElementById('billing-company')?.value.trim() || '',
+          address1: document.getElementById('billing-address1')?.value.trim() || '',
+          address2: document.getElementById('billing-address2')?.value.trim() || '',
+          city: document.getElementById('billing-city')?.value.trim() || '',
+          state: document.getElementById('billing-state')?.value.trim() || '',
+          postal_code: document.getElementById('billing-postal-code')?.value.trim() || '',
+          country: document.getElementById('billing-country')?.value.trim() || '',
+          phone: document.getElementById('billing-phone')?.value.trim() || '',
+        };
+        const requiredMsg =
+          (window.UI_STRINGS && window.UI_STRINGS['js.field_required']) ||
+          'This field is required.';
+        this.clearFieldErrors();
+        const requiredBilling = ['name', 'address1', 'city', 'state', 'postal_code', 'country'];
+        const missingBilling = requiredBilling.filter(k => !billing[k]);
+        if (missingBilling.length > 0) {
+          missingBilling.forEach(k => {
+            this.showFieldError(`billing-${k.replace('_', '-')}`, requiredMsg);
+          });
+          this.scrollToFirstError();
+          return false;
         }
-        this.sessionData = billingResp.session;
+        if (billing.phone && !this.isValidPhone(billing.phone)) {
+          this.showFieldError(
+            'billing-phone',
+            (window.UI_STRINGS && window.UI_STRINGS['js.phone_invalid']) ||
+              'Please enter a valid phone number.'
+          );
+          this.scrollToFirstError();
+          return false;
+        }
+        billingBody = { same_as_shipping: false, ...billing };
+      } else if (billingSame) {
+        billingBody = { same_as_shipping: true };
+        const contactName =
+          this.contactName || document.getElementById('checkout-name')?.value.trim() || '';
+        if (contactName) {
+          billingBody.name = contactName;
+        }
+      } else {
+        billingBody = {
+          same_as_shipping: false,
+          name: document.getElementById('billing-name')?.value.trim() || '',
+          company: document.getElementById('billing-company')?.value.trim() || '',
+          address1: document.getElementById('billing-address1')?.value.trim() || '',
+          address2: document.getElementById('billing-address2')?.value.trim() || '',
+          city: document.getElementById('billing-city')?.value.trim() || '',
+          state: document.getElementById('billing-state')?.value.trim() || '',
+          postal_code: document.getElementById('billing-postal-code')?.value.trim() || '',
+          country: document.getElementById('billing-country')?.value.trim() || '',
+          phone: document.getElementById('billing-phone')?.value.trim() || '',
+        };
+        const requiredBilling = ['name', 'address1', 'city', 'state', 'postal_code', 'country'];
+        const missingBilling = requiredBilling.filter(k => !billingBody[k]);
+        if (missingBilling.length > 0) {
+          this.clearFieldErrors();
+          const requiredMsg =
+            (window.UI_STRINGS && window.UI_STRINGS['js.field_required']) ||
+            'This field is required.';
+          missingBilling.forEach(k => {
+            this.showFieldError(`billing-${k.replace('_', '-')}`, requiredMsg);
+          });
+          this.scrollToFirstError();
+          return false;
+        }
+        if (billingBody.phone && !this.isValidPhone(billingBody.phone)) {
+          this.clearFieldErrors();
+          this.showFieldError(
+            'billing-phone',
+            (window.UI_STRINGS && window.UI_STRINGS['js.phone_invalid']) ||
+              'Please enter a valid phone number.'
+          );
+          this.scrollToFirstError();
+          return false;
+        }
+      }
+
+      // Persist the customer email with billing so guest order creation (which
+      // reads metadata['email']) works on every path — including zero-due,
+      // where no shipping step ran to record it.
+      const email =
+        document.getElementById('checkout-email')?.value.trim() ||
+        (this.sessionData && this.sessionData.email) ||
+        this.config.userEmail ||
+        '';
+      if (email) billingBody.email = email;
+
+      const billingResp = await this.api(this.endpoints.billingAddress, 'POST', billingBody);
+      if (!billingResp.success) {
+        this.showAlert(billingResp.message || 'Failed to set billing address.', 'error');
+        return false;
+      }
+      this.sessionData = billingResp.session;
+      return true;
+    },
+
+    async createPaymentIntent() {
+      // Predictable rejection — a shipping cart with a phoneless address
+      // will fail PSP validation. Guide the customer instead of calling
+      // the API.
+      if (this.shippingPhoneMissing()) {
+        console.warn('[Checkout] Shipping address has no phone — prompting before payment');
+        this.promptForShippingPhone();
+        return;
+      }
+      try {
+        // 1. Set billing address (+ email)
+        const billingOk = await this.persistBilling();
+        if (!billingOk) return;
 
         // 2. Validate checkout
         const validation = await this.api(this.endpoints.validate, 'POST');
@@ -757,10 +1501,21 @@
         const origin = window.location.origin;
         const emailField = document.getElementById('checkout-email');
         const email =
-          (this.sessionData && this.sessionData.email) ||
           (emailField && emailField.value.trim()) ||
+          (this.sessionData && this.sessionData.email) ||
           this.config.userEmail ||
           '';
+
+        // Payment providers require a customer email (receipts, fraud
+        // checks, 3DS) — don't create an intent without one
+        if (!email) {
+          this.showAlert('Please enter your email address to continue to payment.', 'error');
+          if (emailField) {
+            emailField.focus();
+            emailField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
 
         const intentResp = await this.api(this.endpoints.createIntent, 'POST', {
           return_url: `${origin}/${lang}/checkout/return/`,
@@ -814,6 +1569,21 @@
           window.location.href = `/${lang}/checkout/confirmation/${intentResp.order_number}/`;
         }
       } catch (err) {
+        // HTTP 400 with a message is an EXPECTED validation rejection
+        // (e.g. a strict-mode gateway refusing incomplete customer data)
+        // — warn + guide, don't console.error. Genuinely unexpected
+        // failures (5xx, network) still error below.
+        if (err && err.status === 400) {
+          if (/customer_phone/.test(err.message || '')) {
+            // Server-side backstop for the client-side phone precheck
+            console.warn('[Checkout] Payment intent rejected — shipping phone required');
+            this.promptForShippingPhone();
+            return;
+          }
+          console.warn('[Checkout] Payment intent rejected:', err.message);
+          this.showAlert(err.message || 'Failed to create payment. Please try again.', 'error');
+          return;
+        }
         console.error('Create payment intent error:', err);
         this.showAlert(err.message || 'Something went wrong. Please try again.', 'error');
       }
@@ -1194,8 +1964,12 @@
     /**
      * Initialize payment handler in review step (NEW FLOW)
      * @param {object} intentData - Payment intent response with handler info
+     * @param {object} [opts] - {recovery: true} when re-mounting a stored
+     *   intent after a page refresh: failures are EXPECTED there (component
+     *   upgraded, handler gone) and are rethrown for recoverPaymentHandler
+     *   to handle quietly instead of being reported as errors here.
      */
-    async initPluginHandlerInReview(intentData) {
+    async initPluginHandlerInReview(intentData, opts = {}) {
       console.log('[Plugin Handler] Initializing in review step with data:', intentData);
       try {
         // Review step is already active at this point
@@ -1219,17 +1993,18 @@
         const handler = window.PaymentHandlers?.[providerKey];
 
         if (!handler || typeof handler.initialize !== 'function') {
-          console.error('[Plugin Handler] Handler not found or invalid:', providerKey, handler);
           throw new Error(`Payment handler not found for provider: ${providerKey}`);
         }
 
         console.log('[Plugin Handler] Found valid handler for:', providerKey);
 
-        // Get the review payment container
-        const container = document.getElementById('review-payment-container');
+        // Get the payment container: review step if the flow has one,
+        // otherwise the inline embedded container (express flow)
+        const container =
+          document.getElementById('review-payment-container') ||
+          document.getElementById('embedded-payment-container');
         if (!container) {
-          console.error('[Plugin Handler] review-payment-container not found in DOM');
-          throw new Error('Payment container not found in review step');
+          throw new Error('Payment container not found');
         }
 
         // Show the payment section
@@ -1262,6 +2037,11 @@
 
         this.showLoading(false);
       } catch (err) {
+        if (opts.recovery) {
+          // Stale stored intent — recoverPaymentHandler owns the (quiet)
+          // cleanup; don't report a payment error for an expected miss.
+          throw err;
+        }
         console.error('[Plugin Handler] Review outer catch:', err);
         this.showPaymentError(intentData);
         this.showLoading(false);
@@ -1271,15 +2051,32 @@
     /**
      * Recover payment handler after page refresh.
      * Fetches intent data from API and re-initializes the plugin handler.
+     *
+     * A stored intent that can no longer be resumed (terminal status,
+     * missing handler, no handler_url — typical after a provider component
+     * upgrade or server restart) is an EXPECTED condition: warn once,
+     * clear the stored ids and let the normal flow raise a fresh intent.
      * @param {string} intentId - Payment intent UUID from sessionStorage
      */
     async recoverPaymentHandler(intentId) {
       console.log('[Checkout] Recovering payment handler for intent:', intentId);
+      const discardStoredIntent = reason => {
+        console.warn(`[Checkout] Stored payment intent not resumable (${reason}) — starting fresh`);
+        sessionStorage.removeItem('payment_intent_id');
+        sessionStorage.removeItem('order_number');
+      };
       try {
         const intentData = await this.api(`${this.endpoints.intentDetail}${intentId}/`);
 
+        // A terminal intent can't be resumed — clear it and let the normal
+        // flow create a fresh one instead of remounting a dead handler
+        if (['failed', 'canceled', 'cancelled', 'expired'].includes(intentData.status)) {
+          discardStoredIntent(`terminal status: ${intentData.status}`);
+          return;
+        }
+
         if (intentData.handler_url) {
-          await this.initPluginHandlerInReview(intentData);
+          await this.initPluginHandlerInReview(intentData, { recovery: true });
         } else if (intentData.client_secret) {
           this.initEmbeddedPaymentInReview(intentData);
         } else if (intentData.status === 'succeeded') {
@@ -1292,13 +2089,18 @@
             window.location.href = `/${lang}/checkout/confirmation/${orderNumber}/`;
           }
         } else {
-          console.warn('[Checkout] Cannot recover handler — no handler_url or client_secret');
-          sessionStorage.removeItem('payment_intent_id');
+          discardStoredIntent('no handler_url or client_secret');
         }
       } catch (err) {
-        console.error('[Checkout] Failed to recover payment handler:', err);
         // Don't block checkout — user can re-select payment method
-        sessionStorage.removeItem('payment_intent_id');
+        discardStoredIntent(err && err.message ? err.message : 'unknown error');
+        // A failed recovery may have exposed an empty review payment
+        // section — hide it again so the customer isn't shown a void.
+        const paymentSection = document.getElementById('review-payment-section');
+        const container = document.getElementById('review-payment-container');
+        if (paymentSection && container && container.children.length === 0) {
+          paymentSection.style.display = 'none';
+        }
       }
     },
 
@@ -1307,7 +2109,9 @@
      * @param {object} intentData - Payment intent response
      */
     initEmbeddedPaymentInReview(intentData) {
-      const container = document.getElementById('review-payment-container');
+      const container =
+        document.getElementById('review-payment-container') ||
+        document.getElementById('embedded-payment-container');
       if (!container) return;
 
       // Show the payment section
@@ -1423,6 +2227,9 @@
       if (this.els.summarySubtotal)
         this.els.summarySubtotal.textContent = this.formatCurrency(subtotal);
       if (this.els.summaryTotal) this.els.summaryTotal.textContent = this.formatCurrency(total);
+      // Mirror the total into the mobile summary toggle bar.
+      const toggleTotal = document.getElementById('summary-toggle-total');
+      if (toggleTotal) toggleTotal.textContent = this.formatCurrency(total);
 
       // Shipping
       if (this.els.summaryShipping) {
@@ -1453,6 +2260,33 @@
         }
       }
 
+      // Tenders: one row per applied hold, plus the amount actually due.
+      // Driven from tendersData (not DOM state), so this full redraw restores
+      // them rather than wiping them.
+      const tendersContainer = document.getElementById('summary-tenders');
+      const dueRow = document.getElementById('summary-amount-due-row');
+      const tenders = (this.tendersData && this.tendersData.tenders) || [];
+      if (tendersContainer) {
+        tendersContainer.innerHTML = tenders
+          .map(
+            t => `
+              <div class="checkout-summary__row checkout-summary__row--tender">
+                <span>${this.esc(t.label || t.tender_type)}</span>
+                <span>\u2212${this.formatCurrency(t.amount)}</span>
+              </div>`
+          )
+          .join('');
+      }
+      if (dueRow) {
+        if (tenders.length > 0 && this.tendersData) {
+          dueRow.hidden = false;
+          const dueEl = document.getElementById('summary-amount-due');
+          if (dueEl) dueEl.textContent = this.formatCurrency(this.tendersData.amount_due);
+        } else {
+          dueRow.hidden = true;
+        }
+      }
+
       // Dispatch event for mobile summary toggle
       document.dispatchEvent(
         new CustomEvent('checkout:summary-updated', {
@@ -1477,6 +2311,18 @@
           '';
         if (email) {
           emailField.value = email;
+        }
+      }
+
+      // Restore the contact name for no-shipping carts (collected at the
+      // contact step, persisted in session metadata as contact_name)
+      const nameField = document.getElementById('checkout-name');
+      if (nameField && !nameField.value) {
+        const savedName =
+          (this.sessionData.metadata && this.sessionData.metadata.contact_name) || '';
+        if (savedName) {
+          nameField.value = savedName;
+          this.contactName = savedName;
         }
       }
 
@@ -1598,10 +2444,26 @@
         } catch {
           data = {};
         }
+        let message = '';
         if (data.message || data.detail) {
-          throw new Error(data.message || data.detail);
+          message = data.message || data.detail;
+        } else if (data && typeof data === 'object') {
+          // DRF serializer errors: {"field": ["msg"]} or
+          // {"non_field_errors": ["msg"]} — surface the first message
+          // instead of an opaque HTTP status
+          const firstKey = Object.keys(data)[0];
+          const firstVal = firstKey && data[firstKey];
+          const firstMsg = Array.isArray(firstVal) ? firstVal[0] : firstVal;
+          if (typeof firstMsg === 'string' && firstMsg) {
+            message = firstMsg;
+          }
         }
-        throw new Error(`HTTP ${response.status}`);
+        const error = new Error(message || `HTTP ${response.status}`);
+        // Callers use these to tell expected validation rejections
+        // (400 + message) apart from genuine failures (5xx, network)
+        error.status = response.status;
+        error.data = data;
+        throw error;
       }
       return response.json();
     },
@@ -1674,6 +2536,12 @@
 
     isValidEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    },
+
+    // Lenient, international-friendly: optional leading +, digits and
+    // common separators, at least 5 digits. Mirrors the server check.
+    isValidPhone(phone) {
+      return /^\+?[0-9()\-./\s]+$/.test(phone) && (phone.match(/\d/g) || []).length >= 5;
     },
 
     // Payment method slug → image path(s) under /static/providers_common/images/brands/payment_methods/
@@ -1761,7 +2629,9 @@
     },
 
     escAttr(text) {
-      return (text || '')
+      // String() first: numeric ids are truthy, so (text || '') would pass
+      // the number through and .replace would throw mid-render
+      return String(text ?? '')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;')
         .replace(/</g, '&lt;')
@@ -1778,10 +2648,19 @@
 
       const alertEl = document.createElement('div');
       alertEl.className = `checkout-alert checkout-alert--${type || 'error'} checkout-alert--dynamic`;
+      alertEl.setAttribute('role', 'alert');
       alertEl.textContent = message;
-      const steps = this.els.steps;
-      if (steps) {
-        steps.insertBefore(alertEl, steps.firstChild);
+      // #checkout-steps only exists on the step-driven templates. Express (and
+      // any template without it) would otherwise swallow every alert silently,
+      // so fall back to the checkout container. Without this, blocking errors
+      // ("select a payment method", validation/server failures) are invisible.
+      const host =
+        this.els.steps ||
+        document.getElementById('checkout-messages') ||
+        document.querySelector('.checkout-container--express') ||
+        document.querySelector('.checkout-container');
+      if (host) {
+        host.insertBefore(alertEl, host.firstChild);
         alertEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         // Auto-dismiss after 8 seconds
         setTimeout(() => alertEl.remove(), 8000);
@@ -1916,6 +2795,50 @@
         .querySelectorAll('.checkout-input--error')
         .forEach(el => el.classList.remove('checkout-input--error'));
       document.querySelectorAll('.checkout-form-error').forEach(el => el.remove());
+    },
+
+    // Clear a single field's error state (styling + inline message) without
+    // disturbing the others — used by the live validation below.
+    clearFieldError(field) {
+      if (typeof field === 'string') field = document.getElementById(field);
+      if (!field) return;
+      field.classList.remove('checkout-input--error');
+      const next = field.nextElementSibling;
+      if (next && next.classList && next.classList.contains('checkout-form-error')) {
+        next.remove();
+      }
+    },
+
+    // Drop a field's error the moment it becomes valid as the customer types,
+    // rather than making them re-submit to discover it's now accepted. Phone
+    // fields clear once they pass the same regex the submit checks use; the
+    // email field once it looks like an address; any other field once it is
+    // no longer empty (its only client-side error is "required"). Delegated
+    // so it also covers fields inside panels rendered after bind time.
+    initLiveFieldValidation() {
+      document.addEventListener('input', e => {
+        const field = e.target;
+        if (!field || !field.classList || !field.classList.contains('checkout-input--error')) {
+          return;
+        }
+        const value = (field.value || '').trim();
+        const isPhone = field.type === 'tel' || /phone/i.test(field.id || '');
+        const isEmail = field.type === 'email' || /email/i.test(field.id || '');
+        let nowValid;
+        if (isPhone) {
+          nowValid = this.isValidPhone(value);
+        } else if (isEmail) {
+          nowValid = this.isValidEmail(value);
+        } else if (field.type === 'password') {
+          // Mirror the submit check (min 8) so the error doesn't vanish on
+          // the first keystroke while the password is still too short.
+          nowValid = value.length >= 8;
+        } else {
+          // Every other field's only client-side error is "required".
+          nowValid = value.length > 0;
+        }
+        if (nowValid) this.clearFieldError(field);
+      });
     },
 
     scrollToFirstError() {

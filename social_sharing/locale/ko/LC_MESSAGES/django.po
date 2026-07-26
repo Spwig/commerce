@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean <LL@li.org>\n"
@@ -18,685 +18,963 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:68 admin.py:164 templates/admin/social_sharing/dashboard.html:256
+#: templates/admin/social_sharing/dashboard.html:308
+#: templates/admin/social_sharing/dashboard.html:381
+#: templates/admin/social_sharing/sharecount/change_list.html:52
+#: templates/admin/social_sharing/socialshare/change_list.html:52
 msgid "Platform"
 msgstr "플랫폼"
 
+#: admin.py:76
 msgid "Shared Content"
 msgstr "공유된 콘텐츠"
 
+#: admin.py:86 templates/admin/social_sharing/dashboard.html:322
+#: templates/admin/social_sharing/partials/share_cards.html:78
 msgid "Anonymous"
 msgstr "익명"
 
+#: admin.py:88 templates/admin/social_sharing/dashboard.html:208
+#: templates/admin/social_sharing/dashboard.html:307
 msgid "User"
 msgstr "사용자"
 
+#: admin.py:172 templates/admin/social_sharing/dashboard.html:309
+#: templates/admin/social_sharing/dashboard.html:380
 msgid "Content"
 msgstr "콘텐츠"
 
+#: admin.py:183 models.py:192
 msgid "Share Count"
 msgstr "공유 수"
 
+#: admin.py:243
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:66
 msgid "Placement"
 msgstr "배치"
 
+#: admin.py:252
 msgid "Configure where social share buttons appear automatically"
 msgstr "소셜 공유 버튼이 자동으로 나타나는 위치를 구성합니다"
 
+#: admin.py:256
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:70
 msgid "Appearance"
 msgstr "외관"
 
+#: admin.py:269
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:74
 msgid "Tracking"
 msgstr "추적"
 
+#: admin.py:278
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:211
 msgid "Metadata"
 msgstr "메타데이터"
 
+#: api/serializers.py:17
 msgid "Model name (lowercase) - e.g., 'product', 'page', 'post'"
 msgstr "모델 이름 (소문자) - 예: 'product', 'page', 'post'"
 
+#: api/serializers.py:20
 msgid "ID of the content being shared"
 msgstr "공유되는 콘텐츠의 ID"
 
+#: api/serializers.py:25
 msgid "Social media platform"
 msgstr "소셜 미디어 플랫폼"
 
+#: api/serializers.py:27
 msgid "Full URL being shared"
 msgstr "공유되는 전체 URL"
 
+#: api/views.py:147
 msgid "Track social media share"
 msgstr "소셜 미디어 공유 추적"
 
+#: api/views.py:148
 msgid ""
-"Track a social media share event for a product or other content. Records "
-"platform, URL, user, session, IP, and device type.\n"
+"Track a social media share event for a product or other content. Records platform, URL, user, session, IP, and device type.\n"
 "\n"
-"    Use this endpoint when a user shares content to social media platforms. "
-"Helps measure content virality and track most-shared products.\n"
+"    Use this endpoint when a user shares content to social media platforms. Helps measure content virality and track most-shared products.\n"
 "\n"
-"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, "
-"whatsapp, telegram, email\n"
+"    **Supported Platforms**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"    **Security**: Authentication required to prevent spam and database "
-"pollution. Rate limited to 50 requests/hour per user.\n"
+"    **Security**: Authentication required to prevent spam and database pollution. Rate limited to 50 requests/hour per user.\n"
 "\n"
-"    **Use Case**: Call when user clicks a social share button to track "
-"sharing behavior and measure content engagement."
+"    **Use Case**: Call when user clicks a social share button to track sharing behavior and measure content engagement."
 msgstr ""
-"제품 또는 기타 콘텐츠의 소셜 미디어 공유 이벤트를 추적합니다. 플랫폼, URL, 사"
-"용자, 세션, IP 주소 및 기기 유형을 기록합니다.\n"
+"제품 또는 기타 콘텐츠의 소셜 미디어 공유 이벤트를 추적합니다. 플랫폼, URL, 사용자, 세션, IP 주소 및 기기 유형을 기록합니다.\n"
 "\n"
-"사용자가 콘텐츠를 소셜 미디어 플랫폼에 공유할 때 이 엔드포인트를 사용합니다. "
-"콘텐츠의 바이럴 성능을 측정하고 가장 많이 공유된 제품을 추적하는 데 도움이 됩"
-"니다.\n"
+"사용자가 콘텐츠를 소셜 미디어 플랫폼에 공유할 때 이 엔드포인트를 사용합니다. 콘텐츠의 바이럴 성능을 측정하고 가장 많이 공유된 제품을 추적하는 데 도움이 됩니다.\n"
 "\n"
-"**지원되는 플랫폼**: facebook, twitter, linkedin, pinterest, whatsapp, "
-"telegram, email\n"
+"**지원되는 플랫폼**: facebook, twitter, linkedin, pinterest, whatsapp, telegram, email\n"
 "\n"
-"**보안**: 스팸 및 데이터베이스 오염을 방지하기 위해 인증이 필요합니다. 사용자"
-"당 시간당 50개의 요청으로 제한됩니다.\n"
+"**보안**: 스팸 및 데이터베이스 오염을 방지하기 위해 인증이 필요합니다. 사용자당 시간당 50개의 요청으로 제한됩니다.\n"
 "\n"
-"**사용 사례**: 사용자가 소셜 공유 버튼을 클릭할 때 공유 행동을 추적하고 콘텐"
-"츠 참여도를 측정하기 위해 호출합니다."
+"**사용 사례**: 사용자가 소셜 공유 버튼을 클릭할 때 공유 행동을 추적하고 콘텐츠 참여도를 측정하기 위해 호출합니다."
 
+#: api/views.py:168 api/views.py:283
 msgid "Invalid request, missing required fields, or invalid platform"
 msgstr "잘못된 요청, 필요한 필드 누락 또는 유효하지 않은 플랫폼"
 
+#: api/views.py:170 api/views.py:286 api/views.py:422 api/views.py:486
 msgid "Internal server error"
 msgstr "내부 서버 오류"
 
+#: api/views.py:264
+#| msgid "Track social media share"
+msgid "Track social media share (anonymous)"
+msgstr "소셜 미디어 공유 추적 (익명)"
+
+#: api/views.py:265
+msgid ""
+"Anonymous variant of the share tracking endpoint for guest visitors.\n"
+"\n"
+"    Identical payload to the authenticated endpoint, but does not require a logged-in user. The resulting `SocialShare` row is stored with `user=None` and is linked only via the visitor's session key, IP, user agent, and device type.\n"
+"\n"
+"    **Security**: No authentication required, but aggressively rate-limited (20 requests/hour per IP) to prevent spam and database pollution. Bots are not filtered at the endpoint level — consumers should apply their own bot detection if needed.\n"
+"\n"
+"    **Use Case**: Headless storefronts where most visitors sharing content (product pages, blog posts) are not logged in. The authenticated `track_share` endpoint would exclude all guest shares from analytics, which is the majority of real traffic."
+msgstr ""
+"게스트 방문자의 공유 추적 엔드포인트의 익명 버전입니다.\n"
+"\n"
+"인증된 엔드포인트와 동일한 페이로드를 가지지만, 로그인한 사용자가 필요하지 않습니다. 결과 `SocialShare` 행은 `user=None`으로 저장되며, 방문자의 세션 키, IP 주소, 사용자 에이전트 및 장치 유형을 통해만 연결됩니다.\n"
+"\n"
+"**보안**: 인증이 필요하지 않지만, 스팸 및 데이터베이스 오염을 방지하기 위해 IP당 시간당 20회 요청으로 엄격히 요청 제한이 적용됩니다. 엔드포인트 수준에서 봇 필터링은 이루어지지 않으며, 필요 시 소비자측에서 자체 봇 감지 기능을 적용해야 합니다.\n"
+"\n"
+"**사용 사례**: 대부분의 방문자가 로그인하지 않은 상태로 콘텐츠(제품 페이지, 블로그 게시물)를 공유하는 헤드리스 쇼핑몰에서 사용합니다. 인증된 `track_share` 엔드포인트는 모든 게스트 공유를 분석에서 제외시켜, 실제 트래픽의 대부분을 차지하게 됩니다."
+
+#: api/views.py:285
+msgid "Rate limit exceeded"
+msgstr "요금 제한 초과"
+
+#: api/views.py:401
 msgid "Get share counts for content"
 msgstr "콘텐츠의 공유 수 가져오기"
 
+#: api/views.py:402
 msgid ""
 "Get aggregated share counts by platform for a specific piece of content.\n"
 "\n"
-"    Returns counts for each social platform plus a total. Useful for "
-"displaying share counts on product pages, blog posts, etc.\n"
+"    Returns counts for each social platform plus a total. Useful for displaying share counts on product pages, blog posts, etc.\n"
 "\n"
 "    **No authentication required** - share counts are public data."
 msgstr ""
 "특정 콘텐츠에 대한 플랫폼별 집계된 공유 수를 가져옵니다.\n"
 "\n"
-"각 소셜 플랫폼의 공유 수와 총합을 반환합니다. 제품 페이지, 블로그 게시물 등"
-"에 공유 수를 표시하는 데 유용합니다.\n"
+"각 소셜 플랫폼의 공유 수와 총합을 반환합니다. 제품 페이지, 블로그 게시물 등에 공유 수를 표시하는 데 유용합니다.\n"
 "\n"
 "**인증 필요 없음** - 공유 수는 공개 데이터입니다."
 
+#: api/views.py:421
 msgid "Invalid content type"
 msgstr "잘못된 콘텐츠 유형"
 
+#: api/views.py:472
 msgid "Get current user's share history"
 msgstr "현재 사용자의 공유 기록 가져오기"
 
+#: api/views.py:473
 msgid ""
-"Get the authenticated user's social sharing history, including total shares, "
-"breakdown by platform, and recent share events.\n"
+"Get the authenticated user's social sharing history, including total shares, breakdown by platform, and recent share events.\n"
 "\n"
 "    **Authentication required.**"
 msgstr ""
-"인증된 사용자의 소셜 공유 이력을 가져옵니다. 총 공유 수, 플랫폼별 분석, 최근 "
-"공유 이벤트 포함.\n"
+"인증된 사용자의 소셜 공유 이력을 가져옵니다. 총 공유 수, 플랫폼별 분석, 최근 공유 이벤트 포함.\n"
 "\n"
 "**인증 필요.**"
 
+#: api/views.py:485
 msgid "Authentication required"
 msgstr "인증 필요"
 
+#: apps.py:8
 msgid "Social Sharing"
 msgstr "소셜 공유"
 
+#: forms.py:27 settings_models.py:152
 msgid "Enabled Platforms"
 msgstr "활성화된 플랫폼"
 
+#: forms.py:29
 msgid ""
 "Select which platforms to show. If none selected, all platforms will be "
 "shown."
-msgstr ""
-"표시할 플랫폼을 선택하세요. 아무것도 선택하지 않으면 모든 플랫폼이 표시됩니"
-"다."
+msgstr "표시할 플랫폼을 선택하세요. 아무것도 선택하지 않으면 모든 플랫폼이 표시됩니다."
 
+#: models.py:35 templates/admin/social_sharing/partials/share_cards.html:39
+#: templates/admin/social_sharing/partials/sharecount_cards.html:39
+#: templates/admin/social_sharing/sharecount/change_list.html:56
+#: templates/admin/social_sharing/socialshare/change_list.html:56
 msgid "Facebook"
 msgstr "페이스북"
 
+#: models.py:36 templates/admin/social_sharing/sharecount/change_list.html:57
+#: templates/admin/social_sharing/socialshare/change_list.html:57
 msgid "Twitter/X"
 msgstr "트위터/X"
 
+#: models.py:37 templates/admin/social_sharing/partials/share_cards.html:43
+#: templates/admin/social_sharing/partials/sharecount_cards.html:43
+#: templates/admin/social_sharing/sharecount/change_list.html:58
+#: templates/admin/social_sharing/socialshare/change_list.html:58
 msgid "LinkedIn"
 msgstr "링크드인"
 
+#: models.py:38 templates/admin/social_sharing/partials/share_cards.html:45
+#: templates/admin/social_sharing/partials/sharecount_cards.html:45
+#: templates/admin/social_sharing/sharecount/change_list.html:59
+#: templates/admin/social_sharing/socialshare/change_list.html:59
 msgid "Pinterest"
 msgstr "핀터레스트"
 
+#: models.py:39 templates/admin/social_sharing/partials/share_cards.html:47
+#: templates/admin/social_sharing/partials/sharecount_cards.html:47
+#: templates/admin/social_sharing/sharecount/change_list.html:60
+#: templates/admin/social_sharing/socialshare/change_list.html:60
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
+#: models.py:40 templates/admin/social_sharing/partials/share_cards.html:49
+#: templates/admin/social_sharing/partials/sharecount_cards.html:49
+#: templates/admin/social_sharing/sharecount/change_list.html:61
+#: templates/admin/social_sharing/socialshare/change_list.html:61
 msgid "Telegram"
 msgstr "텔레그램"
 
+#: models.py:41 templates/admin/social_sharing/partials/share_cards.html:51
+#: templates/admin/social_sharing/partials/sharecount_cards.html:51
+#: templates/admin/social_sharing/sharecount/change_list.html:62
+#: templates/admin/social_sharing/socialshare/change_list.html:62
 msgid "Email"
 msgstr "이메일"
 
+#: models.py:51 templates/admin/social_sharing/socialshare/change_list.html:86
 msgid "Desktop"
 msgstr "데스크탑"
 
+#: models.py:52 templates/admin/social_sharing/socialshare/change_list.html:87
 msgid "Mobile"
 msgstr "모바일"
 
+#: models.py:53 templates/admin/social_sharing/socialshare/change_list.html:88
 msgid "Tablet"
 msgstr "태블릿"
 
+#: models.py:54
 msgid "Unknown"
 msgstr "알 수 없음"
 
+#: models.py:61 models.py:170
 msgid "content type"
 msgstr "콘텐츠 유형"
 
+#: models.py:62
 msgid "Type of content shared (Product, Category, etc.)"
 msgstr "공유된 콘텐츠 유형(상품, 카테고리 등)"
 
+#: models.py:65 models.py:172
 msgid "object ID"
 msgstr "객체 ID"
 
+#: models.py:65
 msgid "ID of the shared object"
 msgstr "공유된 객체의 ID"
 
+#: models.py:74 models.py:177
 msgid "platform"
 msgstr "플랫폼"
 
+#: models.py:75
 msgid "Social platform used for sharing"
 msgstr "공유에 사용된 소셜 플랫폼"
 
+#: models.py:79
 msgid "shared URL"
 msgstr "공유된 URL"
 
+#: models.py:79
 msgid "URL that was shared"
 msgstr "공유된 URL"
 
+#: models.py:85
 msgid "referrer"
 msgstr "참조자"
 
+#: models.py:86
 msgid "Page from which share was initiated"
 msgstr "공유가 시작된 페이지"
 
+#: models.py:96
 msgid "user"
 msgstr "사용자"
 
+#: models.py:97
 msgid "User who shared (if logged in)"
 msgstr "공유한 사용자(로그인한 경우)"
 
+#: models.py:104
 msgid "session ID"
 msgstr "세션 ID"
 
+#: models.py:105
 msgid "Session identifier for anonymous users"
 msgstr "익명 사용자 세션 식별자"
 
+#: models.py:111
 msgid "IP address"
 msgstr "IP 주소"
 
+#: models.py:112
 msgid "IP address of sharer (for analytics and fraud detection)"
 msgstr "공유자의 IP 주소(분석 및 사기 감지용)"
 
+#: models.py:116
 msgid "user agent"
 msgstr "사용자 에이전트"
 
+#: models.py:116
 msgid "Browser user agent string"
 msgstr "브라우저 사용자 에이전트 문자열"
 
+#: models.py:123
 msgid "device type"
 msgstr "기기 유형"
 
+#: models.py:124
 msgid "Type of device used for sharing"
 msgstr "공유에 사용된 기기 유형"
 
+#: models.py:131
 msgid "shared at"
 msgstr "공유 시간"
 
+#: models.py:132
 msgid "When the share occurred"
 msgstr "공유가 발생한 시간"
 
+#: models.py:135 models.py:189
 msgid "created at"
 msgstr "작성 시간"
 
+#: models.py:137
 msgid "updated at"
 msgstr "업데이트됨"
 
+#: models.py:140
 msgid "Social Share"
 msgstr "소셜 공유"
 
+#: models.py:141 templates/admin/social_sharing/dashboard.html:138
+#: templates/admin/social_sharing/socialshare/change_list.html:4
+#: templates/admin/social_sharing/socialshare/change_list.html:19
 msgid "Social Shares"
 msgstr "소셜 공유"
 
+#: models.py:182
 msgid "share count"
 msgstr "공유 수"
 
+#: models.py:183
 msgid "Number of times shared on this platform"
 msgstr "이 플랫폼에서 공유된 횟수"
 
+#: models.py:187
 msgid "last updated"
 msgstr "마지막 업데이트"
 
+#: models.py:193 templates/admin/social_sharing/dashboard.html:149
+#: templates/admin/social_sharing/sharecount/change_list.html:4
+#: templates/admin/social_sharing/sharecount/change_list.html:19
 msgid "Share Counts"
 msgstr "공유 수"
 
+#: settings_models.py:22 settings_models.py:23 settings_models.py:197
+#: templates/admin/social_sharing/dashboard.html:450
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:4
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:20
 msgid "Social Sharing Settings"
 msgstr "소셜 공유 설정"
 
+#: settings_models.py:28
 msgid "Enable on Products"
 msgstr "상품에서 활성화"
 
+#: settings_models.py:29
 msgid "Automatically show share buttons on product detail pages"
 msgstr "상품 상세 페이지에 공유 버튼을 자동으로 표시"
 
+#: settings_models.py:34
 msgid "Enable on Categories"
 msgstr "카테고리에서 활성화"
 
+#: settings_models.py:35
 msgid "Automatically show share buttons on category pages"
 msgstr "카테고리 페이지에 공유 버튼을 자동으로 표시"
 
+#: settings_models.py:40
 msgid "Enable on Blog Posts"
 msgstr "블로그 게시물에서 활성화"
 
+#: settings_models.py:41
 msgid "Automatically show share buttons on blog post pages"
 msgstr "블로그 게시물 페이지에 공유 버튼을 자동으로 표시"
 
+#: settings_models.py:46
 msgid "Enable on Custom Pages"
 msgstr "사용자 정의 페이지에서 활성화"
 
+#: settings_models.py:47
 msgid "Automatically show share buttons on custom pages"
 msgstr "커스텀 페이지에 공유 버튼을 자동으로 표시"
 
+#: settings_models.py:52
 msgid "Above Content"
 msgstr "콘텐츠 위에"
 
+#: settings_models.py:53
 msgid "Below Content"
 msgstr "콘텐츠 아래에"
 
+#: settings_models.py:54
 msgid "Sidebar"
 msgstr "사이드바"
 
+#: settings_models.py:55
 msgid "Floating (sticky)"
 msgstr "부유(고정)"
 
+#: settings_models.py:62
 msgid "Placement Position"
 msgstr "배치 위치"
 
+#: settings_models.py:63
 msgid "Where to display share buttons on the page"
 msgstr "페이지에서 공유 버튼을 표시할 위치"
 
+#: settings_models.py:68
 msgid "Icon Only"
 msgstr "아이콘만"
 
+#: settings_models.py:69
 msgid "Icon + Label"
 msgstr "아이콘 + 라벨"
 
+#: settings_models.py:70
 msgid "Label Only"
 msgstr "라벨만"
 
+#: settings_models.py:77
 msgid "Button Style"
 msgstr "버튼 스타일"
 
+#: settings_models.py:78
 msgid "How share buttons are displayed"
 msgstr "공유 버튼의 표시 방식"
 
+#: settings_models.py:83
 msgid "Small"
 msgstr "작은"
 
+#: settings_models.py:84
 msgid "Medium"
 msgstr "중간"
 
+#: settings_models.py:85
 msgid "Large"
 msgstr "큰"
 
+#: settings_models.py:92
 msgid "Button Size"
 msgstr "버튼 크기"
 
+#: settings_models.py:93
 msgid "Size of the share buttons"
 msgstr "공유 버튼의 크기"
 
+#: settings_models.py:98
 msgid "Horizontal"
 msgstr "가로"
 
+#: settings_models.py:99
 msgid "Vertical"
 msgstr "세로"
 
+#: settings_models.py:106
 msgid "Layout Direction"
 msgstr "레이아웃 방향"
 
+#: settings_models.py:107
 msgid "Arrange share buttons horizontally or vertically"
 msgstr "공유 버튼을 가로 또는 세로로 정렬합니다."
 
+#: settings_models.py:113
 msgid "Show Title"
 msgstr "제목 표시"
 
+#: settings_models.py:114
 msgid "Show the 'Share' heading above the buttons"
 msgstr "버튼 위에 '공유' 제목을 표시합니다."
 
+#: settings_models.py:119
 msgid "Always Show"
 msgstr "항상 표시"
 
+#: settings_models.py:120
 msgid "Hide on Mobile"
 msgstr "모바일에서 숨기기"
 
+#: settings_models.py:121
 msgid "Mobile Only"
 msgstr "모바일 전용"
 
+#: settings_models.py:128
 msgid "Mobile Visibility"
 msgstr "모바일 가시성"
 
+#: settings_models.py:129
 msgid "Control whether share buttons appear on mobile devices"
 msgstr "모바일 기기에서 공유 버튼이 표시되는지 제어합니다."
 
+#: settings_models.py:136
 msgid "Widget Slug"
 msgstr "위젯 슬러그"
 
+#: settings_models.py:137
 msgid "Slug of the widget package to use for rendering"
 msgstr "렌더링에 사용할 위젯 패키지의 슬러그"
 
+#: settings_models.py:144
 msgid "Default Widget Configuration"
 msgstr "기본 위젯 구성"
 
+#: settings_models.py:145
 msgid ""
 "Override default widget configuration (display_style, button_size, etc.)"
 msgstr "기본 위젯 구성(display_style, button_size 등)을 재정의"
 
+#: settings_models.py:153
 msgid "List of enabled platforms. Leave empty to use widget defaults."
 msgstr "활성화된 플랫폼 목록. 위젯 기본값을 사용하려면 빈 상태로 두세요."
 
+#: settings_models.py:159 templates/admin/social_sharing/dashboard.html:514
 msgid "Show Share Counts"
 msgstr "공유 수 표시"
 
+#: settings_models.py:160
 msgid "Display number of shares for each platform"
 msgstr "각 플랫폼별 공유 횟수를 표시"
 
+#: settings_models.py:165
 msgid "Track Shares"
 msgstr "공유 추적"
 
+#: settings_models.py:166
 msgid "Track share events and award loyalty badges"
 msgstr "공유 이벤트를 추적하고 충성도 배지를 수여"
 
+#: settings_models.py:170
 msgid "Updated At"
 msgstr "수정 시간"
 
+#: settings_models.py:173
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:221
 msgid "Updated By"
 msgstr "수정자"
 
+#: templates/admin/social_sharing/dashboard.html:4
+#: templates/admin/social_sharing/dashboard.html:22
 msgid "Social Sharing Dashboard"
 msgstr "소셜 공유 대시보드"
 
+#: templates/admin/social_sharing/dashboard.html:4
 msgid "Site Admin"
 msgstr "사이트 관리자"
 
+#: templates/admin/social_sharing/dashboard.html:25
 #, python-format
 msgid ""
 "\n"
-"            Analytics and settings for the last 30 days (%(start)s - "
-"%(end)s)\n"
+"            Analytics and settings for the last 30 days (%(start)s - %(end)s)\n"
 "            "
 msgstr ""
 "\n"
-"            지난 30일의 분석 및 설정 (%(start)s - %(end)s)지난 30일의 분석 "
-"및 설정 (%(start)s - %(end)s)\n"
+"            지난 30일의 분석 및 설정 (%(start)s - %(end)s)지난 30일의 분석 및 설정 (%(start)s - %(end)s)\n"
 "            "
 
+#: templates/admin/social_sharing/dashboard.html:38
 msgid "Total Shares"
 msgstr "총 공유 수"
 
+#: templates/admin/social_sharing/dashboard.html:45
 msgid "Shares Today"
 msgstr "오늘 공유 수"
 
+#: templates/admin/social_sharing/dashboard.html:52
 msgid "Shares This Month"
 msgstr "이번 달 공유 수"
 
+#: templates/admin/social_sharing/dashboard.html:77
 msgid "Top Platform"
 msgstr "상위 플랫폼"
 
+#: templates/admin/social_sharing/dashboard.html:92
+#: templates/admin/social_sharing/dashboard.html:100
 msgid "Top Product"
 msgstr "상위 상품"
 
+#: templates/admin/social_sharing/dashboard.html:110
+#: templates/admin/social_sharing/dashboard.html:118
 msgid "Most Active Sharer"
 msgstr "가장 활발한 공유자"
 
+#: templates/admin/social_sharing/dashboard.html:130
 msgid "Quick Actions"
 msgstr "빠른 작업"
 
+#: templates/admin/social_sharing/dashboard.html:139
 msgid "View individual share events"
 msgstr "개별 공유 이벤트 보기"
 
+#: templates/admin/social_sharing/dashboard.html:141
+#: templates/admin/social_sharing/dashboard.html:152
 msgid "Manage"
 msgstr "관리"
 
+#: templates/admin/social_sharing/dashboard.html:150
 msgid "Aggregated share statistics"
 msgstr "집계된 공유 통계"
 
+#: templates/admin/social_sharing/dashboard.html:160
 msgid "Settings"
 msgstr "설정"
 
+#: templates/admin/social_sharing/dashboard.html:161
 msgid "Configure social sharing"
 msgstr "소셜 공유 설정"
 
+#: templates/admin/social_sharing/dashboard.html:163
 msgid "Configure"
 msgstr "설정"
 
+#: templates/admin/social_sharing/dashboard.html:178
 msgid "Shares Over Time (Last 30 Days)"
 msgstr "시간에 따른 공유(최근 30일)"
 
+#: templates/admin/social_sharing/dashboard.html:187
 msgid "Shares by Platform"
 msgstr "플랫폼별 공유"
 
+#: templates/admin/social_sharing/dashboard.html:200
 msgid "Top 10 Sharers (Last 30 Days)"
 msgstr "상위 10명의 공유자(최근 30일)"
 
+#: templates/admin/social_sharing/dashboard.html:207
+#: templates/admin/social_sharing/dashboard.html:255
+#: templates/admin/social_sharing/dashboard.html:379
 msgid "Rank"
 msgstr "순위"
 
+#: templates/admin/social_sharing/dashboard.html:209
+#: templates/admin/social_sharing/dashboard.html:257
+#: templates/admin/social_sharing/dashboard.html:382
+#: templates/admin/social_sharing/dashboard.html:542
 msgid "Shares"
 msgstr "공유"
 
+#: templates/admin/social_sharing/dashboard.html:232
+#: templates/admin/social_sharing/dashboard.html:280
+#: templates/admin/social_sharing/dashboard.html:426
+#: templates/admin/social_sharing/dashboard.html:544
+#: templates/admin/social_sharing/partials/sharecount_cards.html:68
 msgid "shares"
 msgstr "공유"
 
+#: templates/admin/social_sharing/dashboard.html:240
 msgid "No sharers in the selected period."
 msgstr "선택된 기간에 공유자가 없습니다."
 
+#: templates/admin/social_sharing/dashboard.html:248
 msgid "Top 5 Platforms"
 msgstr "상위 5개 플랫폼"
 
+#: templates/admin/social_sharing/dashboard.html:288
 msgid "No platform data available."
 msgstr "플랫폼 데이터가 없습니다."
 
+#: templates/admin/social_sharing/dashboard.html:299
 msgid "Recent Shares"
 msgstr "최근 공유"
 
+#: templates/admin/social_sharing/dashboard.html:306
 msgid "Date"
 msgstr "날짜"
 
+#: templates/admin/social_sharing/dashboard.html:348
+#: templates/admin/social_sharing/dashboard.html:417
 msgid "Content deleted"
 msgstr "내용이 삭제되었습니다."
 
+#: templates/admin/social_sharing/dashboard.html:357
 msgid "No recent shares."
 msgstr "최근 공유 내역이 없습니다."
 
+#: templates/admin/social_sharing/dashboard.html:363
 msgid "View All Shares"
 msgstr "모든 공유 보기"
 
+#: templates/admin/social_sharing/dashboard.html:372
 msgid "Top 5 Most Shared Content"
 msgstr "가장 많이 공유된 상위 5개 콘텐츠"
 
+#: templates/admin/social_sharing/dashboard.html:434
 msgid "No shared content yet."
 msgstr "아직 공유된 콘텐츠가 없습니다."
 
+#: templates/admin/social_sharing/dashboard.html:440
 msgid "View All Share Counts"
 msgstr "모든 공유 수 보기"
 
+#: templates/admin/social_sharing/dashboard.html:468
 msgid "Enable Social Sharing On"
 msgstr "소셜 공유 기능 활성화"
 
+#: templates/admin/social_sharing/dashboard.html:473
 msgid "Products"
 msgstr "상품"
 
+#: templates/admin/social_sharing/dashboard.html:479
 msgid "Categories"
 msgstr "카테고리"
 
+#: templates/admin/social_sharing/dashboard.html:485
 msgid "Blog Posts"
 msgstr "블로그 게시물"
 
+#: templates/admin/social_sharing/dashboard.html:491
 msgid "Pages"
 msgstr "페이지"
 
+#: templates/admin/social_sharing/dashboard.html:499
 msgid "Display Settings"
 msgstr "표시 설정"
 
+#: templates/admin/social_sharing/dashboard.html:502
 msgid "Button Placement"
 msgstr "버튼 배치"
 
+#: templates/admin/social_sharing/dashboard.html:520
 msgid "Track Share Events"
 msgstr "공유 이벤트 추적"
 
+#: templates/admin/social_sharing/dashboard.html:529
 msgid "Save Settings"
 msgstr "설정 저장"
 
+#: templates/admin/social_sharing/dashboard.html:543
+#: templates/admin/social_sharing/partials/sharecount_cards.html:66
 msgid "share"
 msgstr "공유"
 
+#: templates/admin/social_sharing/partials/share_cards.html:41
+#: templates/admin/social_sharing/partials/sharecount_cards.html:41
 msgid "Twitter"
 msgstr "트위터"
 
+#: templates/admin/social_sharing/partials/share_cards.html:128
 msgid "No social shares found matching your filters."
 msgstr "필터와 일치하는 소셜 공유가 없습니다."
 
+#: templates/admin/social_sharing/partials/share_cards.html:132
+#: templates/admin/social_sharing/partials/sharecount_cards.html:119
 msgid "Clear Filters"
 msgstr "필터 지우기"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:76
 msgid "Updated"
 msgstr "업데이트됨"
 
+#: templates/admin/social_sharing/partials/sharecount_cards.html:115
 msgid "No share counts found matching your filters."
 msgstr "필터와 일치하는 공유 횟수가 없습니다."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:21
 msgid "Track social media sharing statistics across platforms"
 msgstr "플랫폼별 소셜 미디어 공유 통계를 추적"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:31
+#: templates/admin/social_sharing/socialshare/change_list.html:31
 msgid "Filters"
 msgstr "필터"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:35
+#: templates/admin/social_sharing/socialshare/change_list.html:35
 msgid "Toggle Filters"
 msgstr "필터 전환"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:44
+#: templates/admin/social_sharing/socialshare/change_list.html:44
 msgid "Search"
 msgstr "검색"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:46
 msgid "Search by content ID..."
 msgstr "콘텐츠 ID로 검색..."
 
+#: templates/admin/social_sharing/sharecount/change_list.html:55
+#: templates/admin/social_sharing/socialshare/change_list.html:55
 msgid "All Platforms"
 msgstr "모든 플랫폼"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:69
+#: templates/admin/social_sharing/socialshare/change_list.html:69
 msgid "Content Type"
 msgstr "컨텐츠 유형"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:72
+#: templates/admin/social_sharing/socialshare/change_list.html:72
 msgid "All Types"
 msgstr "모든 유형"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:82
 msgid "Min. Share Count"
 msgstr "최소 공유 수"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:84
 msgid "Minimum shares"
 msgstr "최소 공유"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:90
 msgid "Sort By"
 msgstr "정렬 기준"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:93
 msgid "Most Shares"
 msgstr "가장 많이 공유된"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:94
 msgid "Least Shares"
 msgstr "가장 적게 공유된"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:95
 msgid "Recently Updated"
 msgstr "최근 업데이트됨"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:96
 msgid "Oldest Updated"
 msgstr "가장 오래된 업데이트"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:104
+#: templates/admin/social_sharing/socialshare/change_list.html:112
 msgid "Active:"
 msgstr "활성:"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:111
+#: templates/admin/social_sharing/socialshare/change_list.html:119
 msgid "Clear All"
 msgstr "모두 지우기"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:115
+#: templates/admin/social_sharing/socialshare/change_list.html:123
 msgid "Apply Filters"
 msgstr "필터 적용"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "Showing"
 msgstr "표시 중"
 
+#: templates/admin/social_sharing/sharecount/change_list.html:124
+#: templates/admin/social_sharing/socialshare/change_list.html:132
 msgid "results"
 msgstr "결과"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:21
 msgid "Monitor individual share events and user engagement"
 msgstr "개별 공유 이벤트 및 사용자 참여를 모니터링"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:46
 msgid "Search by user, URL..."
 msgstr "사용자, URL로 검색..."
 
+#: templates/admin/social_sharing/socialshare/change_list.html:82
 msgid "Device"
 msgstr "기기"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:85
 msgid "All Devices"
 msgstr "모든 기기"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:95
 msgid "Date From"
 msgstr "시작 날짜"
 
+#: templates/admin/social_sharing/socialshare/change_list.html:103
 msgid "Date To"
 msgstr "종료 날짜"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:25
 msgid "Configure automatic social sharing buttons across your store"
 msgstr "스토어 전반의 자동 소셜 공유 버튼을 설정합니다."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:30
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:234
 msgid "Save and continue editing"
 msgstr "저장하고 편집 계속"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:33
 msgid "Save settings"
 msgstr "설정 저장"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:50
 msgid "Please correct the errors below"
 msgstr "아래의 오류를 수정해 주세요"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:83
 msgid "Automatic Placement"
 msgstr "자동 배치"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:84
 msgid ""
 "Configure where social share buttons appear automatically across your store."
 msgstr "스토어 전반에서 자동으로 소셜 공유 버튼이 나타나는 위치를 설정합니다."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:129
 msgid "Platforms"
 msgstr "플랫폼"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:130
 msgid ""
 "Select which social platforms to show. If none are selected, all platforms "
 "will be displayed."
-msgstr ""
-"표시할 소셜 플랫폼을 선택하세요. 아무것도 선택하지 않으면 모든 플랫폼이 표시"
-"됩니다."
+msgstr "표시할 소셜 플랫폼을 선택하세요. 아무것도 선택하지 않으면 모든 플랫폼이 표시됩니다."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:140
 msgid "Button Appearance"
 msgstr "버튼 외관"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:141
 msgid "Control how the share buttons look on your store."
 msgstr "상점에서 공유 버튼의 외형을 제어합니다."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:186
 msgid "Tracking & Analytics"
 msgstr "추적 및 분석"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:187
 msgid "Control share tracking and count display."
 msgstr "공유 추적 및 카운트 표시를 제어합니다."
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:215
 msgid "Last Updated"
 msgstr "최근 업데이트"
 
+#: templates/admin/social_sharing/socialsharingsettings/change_form.html:233
 msgid "Save"
 msgstr "저장"
 
+#: views.py:214
 msgid "Social sharing settings updated successfully."
 msgstr "소셜 공유 설정이 성공적으로 업데이트되었습니다."

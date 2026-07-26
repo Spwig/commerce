@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Thai <LL@li.org>\n"
@@ -18,43 +18,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:33
 msgid "Data Binding"
 msgstr "การจับคู่ข้อมูล"
 
+#: admin.py:36
 msgid "Select which model this element will display data from."
 msgstr "เลือกโมเดลที่องค์ประกอบนี้จะแสดงข้อมูลจาก"
 
+#: admin.py:40 templates/admin/element_builder/visual_builder.html:362
 msgid "Appearance"
 msgstr "การปรากฏตัว"
 
+#: admin.py:46 registry.py:61 registry.py:413
+#: templates/admin/element_builder/customelement/change_list.html:66
 msgid "Status"
 msgstr "สถานะ"
 
+#: admin.py:52
 msgid "Timestamps"
 msgstr "เวลาที่บันทึก"
 
+#: admin.py:87 templates/admin/element_builder/visual_builder.html:155
 msgid "None (Static)"
 msgstr "ไม่มี (คงที่)"
 
+#: admin.py:93 models.py:26
+#: templates/admin/element_builder/customelement/change_list.html:53
 msgid "Target Model"
 msgstr "โมเดลเป้าหมาย"
 
+#: admin.py:100 models.py:46 registry.py:258
 msgid "Icon"
 msgstr "ไอคอน"
 
+#: admin.py:106 models.py:67
+#: templates/admin/element_builder/customelement/change_list.html:4
+#: templates/admin/element_builder/customelement/change_list.html:19
+#: templates/admin/element_builder/visual_builder.html:22
 msgid "Custom Elements"
 msgstr "องค์ประกอบแบบกำหนดเอง"
 
+#: admin_views.py:156 models.py:86
+#: templates/admin/element_builder/visual_builder.html:43
 msgid "None (Static Element)"
 msgstr "ไม่มี (องค์ประกอบคงที่)"
 
+#: admin_views.py:198
 #, python-format
 msgid "Element Builder: %(name)s"
 msgstr "สร้างองค์ประกอบ: %(name)s"
 
+#: api_views.py:39
 msgid "List custom elements"
 msgstr "รายการองค์ประกอบที่กำหนดเอง"
 
+#: api_views.py:40
 msgid ""
 "\n"
 "Returns all active custom elements for the store.\n"
@@ -78,15 +97,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "        "
 
+#: api_views.py:52 api_views.py:75
 msgid "Not authenticated"
 msgstr "ไม่ได้รับการยืนยันตัวตน"
 
+#: api_views.py:53 api_views.py:76
 msgid "Permission denied"
 msgstr "ไม่สามารถเข้าถึงได้"
 
+#: api_views.py:58
 msgid "Create custom element"
 msgstr "สร้างองค์ประกอบแบบกำหนดเอง"
 
+#: api_views.py:59
 msgid ""
 "\n"
 "Creates a new custom element.\n"
@@ -114,12 +137,15 @@ msgstr ""
 "- Element becomes available in page builder element library\n"
 "        "
 
+#: api_views.py:74 api_views.py:141 api_views.py:160 api_views.py:320
 msgid "Validation error"
 msgstr "ข้อผิดพลาดในการตรวจสอบ"
 
+#: api_views.py:103
 msgid "Get custom element details"
 msgstr "ดูรายละเอียดองค์ประกอบแบบกำหนดเอง"
 
+#: api_views.py:104
 msgid ""
 "\n"
 "Returns full details of a custom element including its structure.\n"
@@ -141,15 +167,21 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "        "
 
+#: api_views.py:115
 msgid "Element ID"
 msgstr "ID องค์ประกอบ"
 
+#: api_views.py:120 api_views.py:142 api_views.py:161 api_views.py:180
+#: api_views.py:387 api_views.py:433 api_views.py:471 api_views.py:713
+#: api_views.py:902
 msgid "Element not found"
 msgstr "ไม่พบองค์ประกอบ"
 
+#: api_views.py:125
 msgid "Update custom element"
 msgstr "อัปเดตองค์ประกอบแบบกำหนดเอง"
 
+#: api_views.py:126
 msgid ""
 "\n"
 "Updates a custom element's structure and properties.\n"
@@ -177,9 +209,11 @@ msgstr ""
 "- Clears cached renders for this element\n"
 "        "
 
+#: api_views.py:147
 msgid "Partial update custom element"
 msgstr "อัปเดตองค์ประกอบแบบกำหนดเองบางส่วน"
 
+#: api_views.py:148
 msgid ""
 "\n"
 "Partially updates a custom element.\n"
@@ -201,9 +235,11 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "        "
 
+#: api_views.py:166
 msgid "Delete custom element"
 msgstr "ลบองค์ประกอบที่กำหนดเอง"
 
+#: api_views.py:167
 msgid ""
 "\n"
 "Permanently deletes a custom element.\n"
@@ -231,12 +267,15 @@ msgstr ""
 "instead.\n"
 "        "
 
+#: api_views.py:179 api_views.py:432
 msgid "Element deleted"
 msgstr "ลบองค์ประกอบแล้ว"
 
+#: api_views.py:194
 msgid "List bindable models"
 msgstr "รายการโมเดลที่สามารถจับคู่ได้"
 
+#: api_views.py:195
 msgid ""
 "\n"
 "Returns all models that can be bound to custom elements.\n"
@@ -270,12 +309,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:213
 msgid "Dictionary of bindable models with their fields"
 msgstr "พจนานุกรมของโมเดลที่สามารถผูกได้พร้อมกับฟิลด์ของมัน"
 
+#: api_views.py:267
 msgid "List thumbnail presets"
 msgstr "รายการตั้งค่ารูปย่อ"
 
+#: api_views.py:268
 msgid ""
 "\n"
 "Returns available image size presets for thumbnail selection.\n"
@@ -297,9 +339,11 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:307
 msgid "Add element to custom element tree"
 msgstr "เพิ่มองค์ประกอบเข้าไปในต้นไม้องค์ประกอบแบบกำหนดเอง"
 
+#: api_views.py:308
 msgid ""
 "\n"
 "Creates a new page_builder Element and adds it to the custom element's "
@@ -323,15 +367,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:319
 msgid "Element created"
 msgstr "สร้างองค์ประกอบแล้ว"
 
+#: api_views.py:321
 msgid "Custom element or parent not found"
 msgstr "ไม่พบองค์ประกอบแบบกำหนดเองหรือองค์ประกอบพ่อ"
 
+#: api_views.py:375
 msgid "Update element in custom element tree"
 msgstr "อัปเดตองค์ประกอบในต้นไม้องค์ประกอบแบบกำหนดเอง"
 
+#: api_views.py:376
 msgid ""
 "\n"
 "Updates an element's content or properties in the custom element tree.\n"
@@ -353,12 +401,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:386
 msgid "Element updated"
 msgstr "อัปเดตองค์ประกอบแล้ว"
 
+#: api_views.py:421
 msgid "Delete element from custom element tree"
 msgstr "ลบองค์ประกอบออกจากต้นไม้องค์ประกอบแบบกำหนดเอง"
 
+#: api_views.py:422
 msgid ""
 "\n"
 "Removes an element and its children from the custom element tree.\n"
@@ -380,9 +431,11 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:458
 msgid "Set element binding"
 msgstr "ตั้งค่าการจับคู่องค์ประกอบ"
 
+#: api_views.py:459
 msgid ""
 "\n"
 "Creates or updates a data binding for an element.\n"
@@ -404,12 +457,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:470
 msgid "Binding saved"
 msgstr "การจับคู่ถูกบันทึกแล้ว"
 
+#: api_views.py:535
 msgid "Clear all bindings for a custom element"
 msgstr "ล้างการผูกทั้งหมดสำหรับองค์ประกอบแบบกำหนดเอง"
 
+#: api_views.py:536
 msgid ""
 "\n"
 "Deletes all element bindings for a custom element.\n"
@@ -431,15 +487,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:546
 msgid "All bindings cleared"
 msgstr "การจับคู่ทั้งหมดถูกลบแล้ว"
 
+#: api_views.py:547
 msgid "Custom element not found"
 msgstr "ไม่พบองค์ประกอบที่กำหนดเอง"
 
+#: api_views.py:569
 msgid "Get page builder element primitives"
 msgstr "รับ primitives ขององค์ประกอบผู้สร้างหน้า"
 
+#: api_views.py:570
 msgid ""
 "\n"
 "Returns available page_builder element types for building custom elements.\n"
@@ -461,12 +521,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:580
 msgid "List of element types with config"
 msgstr "รายการประเภทขององค์ประกอบพร้อมการตั้งค่า"
 
+#: api_views.py:627
 msgid "Get element configuration"
 msgstr "รับการตั้งค่าองค์ประกอบ"
 
+#: api_views.py:628
 msgid ""
 "\n"
 "Returns full config.json data for a specific element type.\n"
@@ -494,18 +557,23 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:644
 msgid "Element type identifier (e.g., \"heading\", \"image\", \"container\")"
 msgstr "ตัวระบุประเภทองค์ประกอบ (เช่น \"heading\", \"image\", \"container\")"
 
+#: api_views.py:648
 msgid "Element configuration with tabs and properties"
 msgstr "การตั้งค่าอิเลเมนต์พร้อมแท็บและคุณสมบัติ"
 
+#: api_views.py:649
 msgid "Element type not found"
 msgstr "ไม่พบประเภทองค์ประกอบ"
 
+#: api_views.py:691
 msgid "Apply container layout preset"
 msgstr "ใช้การตั้งค่าการจัดรูปแบบตัวอย่างสำหรับคอนเทนเนอร์"
 
+#: api_views.py:692
 msgid ""
 "\n"
 "Applies a layout preset to a container element, creating child columns.\n"
@@ -545,15 +613,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:711
 msgid "Layout applied successfully"
 msgstr "การจัดรูปแบบได้รับการใช้งานสำเร็จ"
 
+#: api_views.py:712
 msgid "Invalid layout type"
 msgstr "ประเภทการจัดรูปแบบไม่ถูกต้อง"
 
+#: api_views.py:784
 msgid "Move element to new parent/position"
 msgstr "ย้ายองค์ประกอบไปยังผู้ปกครอง/ตำแหน่งใหม่"
 
+#: api_views.py:785
 msgid ""
 "\n"
 "Moves an element to a new parent container and/or position.\n"
@@ -577,15 +649,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:796
 msgid "Element moved successfully"
 msgstr "ย้ายองค์ประกอบสำเร็จ"
 
+#: api_views.py:797
 msgid "Element or parent not found"
 msgstr "ไม่พบองค์ประกอบหรือผู้ปกครอง"
 
+#: api_views.py:878
 msgid "Render element preview"
 msgstr "แสดงตัวอย่างองค์ประกอบ"
 
+#: api_views.py:879
 msgid ""
 "\n"
 "Renders an element from the custom element tree as HTML for visual preview.\n"
@@ -607,629 +683,844 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:890
 msgid "Custom element ID"
 msgstr "ID องค์ประกอบที่กำหนดเอง"
 
+#: api_views.py:896
 msgid "Element ID to render (optional - renders root if not provided)"
 msgstr "ID ขององค์ประกอบที่จะแสดงผล (เป็นตัวเลือก - จะแสดงผลที่รากหากไม่ได้ระบุ)"
 
+#: api_views.py:901
 msgid "Rendered HTML preview"
 msgstr "ตัวอย่าง HTML ที่แสดงผลแล้ว"
 
+#: apps.py:8
 msgid "Element Builder"
 msgstr "สร้างองค์ประกอบ"
 
+#: models.py:13
 msgid "Name"
 msgstr "ชื่อ"
 
+#: models.py:13
 msgid "Display name for the custom element"
 msgstr "ชื่อแสดงผลสำหรับองค์ประกอบแบบกำหนดเอง"
 
+#: models.py:16
 msgid "Slug"
 msgstr "Slug"
 
+#: models.py:16
 msgid "URL-friendly identifier"
 msgstr "ตัวระบุที่เป็นมิตรกับ URL"
 
+#: models.py:19 registry.py:226 registry.py:319
 msgid "Description"
 msgstr "คำอธิบาย"
 
+#: models.py:21
 msgid "Optional description of what this element displays"
 msgstr "คำอธิบายเพิ่มเติมเกี่ยวกับสิ่งที่องค์ประกอบนี้แสดง"
 
+#: models.py:30
 msgid ""
 "Model to bind data from (e.g., \"catalog.Product\"). Leave empty for static "
 "elements."
 msgstr ""
 "โมเดลที่จะผูกข้อมูลจาก (เช่น \"catalog.Product\"). ปล่อยว่างสำหรับองค์ประกอบที่ไม่ได้ผูกข้อมูล"
 
+#: models.py:41
 msgid "Root element of the custom element tree"
 msgstr "องค์ประกอบรากของต้นไม้องค์ประกอบแบบกำหนดเอง"
 
+#: models.py:49
 msgid "Font Awesome icon class"
 msgstr "คลาสไอคอน Font Awesome"
 
+#: models.py:52 registry.py:215 registry.py:449
 msgid "Category"
 msgstr "หมวดหมู่"
 
+#: models.py:55
 msgid "Category for grouping in element library"
 msgstr "หมวดหมู่สำหรับการจัดกลุ่มในไลบรารีองค์ประกอบ"
 
+#: models.py:59
+#: templates/admin/element_builder/customelement/change_list.html:70
+#: templates/admin/element_builder/partials/element_cards.html:26
 msgid "Active"
 msgstr "ใช้งาน"
 
+#: models.py:59
 msgid "Whether this element is available for use"
 msgstr "ระบุว่าองค์ประกอบนี้สามารถใช้งานได้หรือไม่"
 
+#: models.py:62 templates/admin/element_builder/partials/element_cards.html:50
 msgid "Created"
 msgstr "สร้างขึ้น"
 
+#: models.py:63 templates/admin/element_builder/partials/element_cards.html:46
 msgid "Updated"
 msgstr "อัปเดตแล้ว"
 
+#: models.py:66 models.py:103
 msgid "Custom Element"
 msgstr "องค์ประกอบแบบกำหนดเอง"
 
+#: models.py:109
 msgid "Element"
 msgstr "องค์ประกอบ"
 
+#: models.py:113
 msgid "Content Field"
 msgstr "ฟิลด์เนื้อหา"
 
+#: models.py:115
 msgid "Element content field to bind data to (e.g., \"text\", \"src\")"
 msgstr "ฟิลด์เนื้อหาขององค์ประกอบที่จะผูกข้อมูล (เช่น \"text\", \"src\")"
 
+#: models.py:119
 msgid "Model Field"
 msgstr "ฟิลด์โมเดล"
 
+#: models.py:121
 msgid "Model field to bind data from (e.g., \"name\", \"get_price\")"
 msgstr "ฟิลด์โมเดลที่จะผูกข้อมูลจาก (เช่น \"name\", \"get_price\")"
 
+#: models.py:125
 msgid "Thumbnail Preset"
 msgstr "การตั้งค่ารูปย่อ"
 
+#: models.py:128
 msgid "Thumbnail preset for image fields (e.g., \"thumbnail\", \"medium\")"
 msgstr "การตั้งค่าล่วงหน้าสำหรับฟิลด์รูปภาพ (เช่น \"thumbnail\", \"medium\")"
 
+#: models.py:132
 msgid "Element Binding"
 msgstr "การจับคู่องค์ประกอบ"
 
+#: models.py:133
 msgid "Element Bindings"
 msgstr "การจับคู่องค์ประกอบ"
 
+#: registry.py:23
 msgid "Product"
 msgstr "สินค้า"
 
+#: registry.py:29
 msgid "Product Name"
 msgstr "ชื่อสินค้า"
 
+#: registry.py:34
 msgid "Short Description"
 msgstr "คำอธิบายสั้นๆ"
 
+#: registry.py:39
 msgid "Full Description"
 msgstr "คำอธิบายทั้งหมด"
 
+#: registry.py:40
 msgid "Rich text product description"
 msgstr "คำอธิบายสินค้าแบบข้อความอุดมสมบูรณ์"
 
+#: registry.py:45 registry.py:231 registry.py:330 registry.py:408
 msgid "URL Slug"
 msgstr "URL Slug"
 
+#: registry.py:50
 msgid "SKU"
 msgstr "SKU"
 
+#: registry.py:55
 msgid "Product Type"
 msgstr "ประเภทสินค้า"
 
+#: registry.py:56
 msgid "simple, variable, digital, bundle, gift_card"
 msgstr "simple, variable, digital, bundle, gift_card"
 
+#: registry.py:62
 msgid "draft, published, discontinued"
 msgstr "ร่าง, ตีพิมพ์, ยกเลิกการขาย"
 
+#: registry.py:68
 msgid "Main Image"
 msgstr "รูปหลัก"
 
+#: registry.py:71
 msgid "Primary product image from gallery"
 msgstr "รูปภาพสินค้าหลักจากแกลเลอรี่"
 
+#: registry.py:77
 msgid "Price"
 msgstr "ราคา"
 
+#: registry.py:79
 msgid "Formatted current price"
 msgstr "ราคาปัจจุบันที่จัดรูปแบบ"
 
+#: registry.py:84
 msgid "Compare at Price"
 msgstr "เปรียบเทียบราคา"
 
+#: registry.py:86
 msgid "Original price before discount"
 msgstr "ราคาเดิมก่อนลดราคา"
 
+#: registry.py:91
 msgid "Discount Percentage"
 msgstr "เปอร์เซ็นต์ส่วนลด"
 
+#: registry.py:93
 msgid "Percentage off (e.g., \"20%\")"
 msgstr "ส่วนลดเปอร์เซ็นต์ (ตัวอย่างเช่น \"20%\")"
 
+#: registry.py:98
 msgid "Savings Amount"
 msgstr "จำนวนเงินที่ประหยัดได้"
 
+#: registry.py:100
 msgid "Amount saved (e.g., \"$10.00\")"
 msgstr "จำนวนเงินที่ประหยัดได้ (ตัวอย่างเช่น \"$10.00\")"
 
+#: registry.py:105
 msgid "On Sale"
 msgstr "กำลังลดราคา"
 
+#: registry.py:107
 msgid "Whether product has active discount"
 msgstr "สินค้ามีส่วนลดที่ใช้งานอยู่หรือไม่"
 
+#: registry.py:113
 msgid "Stock Status"
 msgstr "สถานะสต็อก"
 
+#: registry.py:115
 msgid "In Stock / Out of Stock / Low Stock"
 msgstr "มีสินค้า / หมดสต็อก / สต็อกต่ำ"
 
+#: registry.py:120
 msgid "Is In Stock"
 msgstr "มีสต็อกหรือไม่"
 
+#: registry.py:122
 msgid "Boolean stock availability"
 msgstr "การมีสต็อกแบบบูลีน"
 
+#: registry.py:127
 msgid "Available Stock"
 msgstr "สต็อกที่มีอยู่"
 
+#: registry.py:129
 msgid "Number of items available"
 msgstr "จำนวนสินค้าที่มีอยู่"
 
+#: registry.py:135 registry.py:221
 msgid "Category Name"
 msgstr "ชื่อหมวดหมู่"
 
+#: registry.py:137
 msgid "Primary category name"
 msgstr "ชื่อหมวดหมู่หลัก"
 
+#: registry.py:142 registry.py:314
 msgid "Brand Name"
 msgstr "ชื่อแบรนด์"
 
+#: registry.py:144
 msgid "Brand name if assigned"
 msgstr "ชื่อแบรนด์หากได้รับการกำหนด"
 
+#: registry.py:150
 msgid "GTIN"
 msgstr "GTIN"
 
+#: registry.py:151
 msgid "Global Trade Item Number"
 msgstr "หมายเลขสินค้าการค้าโลก (GTIN)"
 
+#: registry.py:156
 msgid "EAN"
 msgstr "EAN"
 
+#: registry.py:157
 msgid "European Article Number"
 msgstr "หมายเลขบทความยุโรป (EAN)"
 
+#: registry.py:162
 msgid "UPC"
 msgstr "UPC"
 
+#: registry.py:163
 msgid "Universal Product Code"
 msgstr "รหัสผลิตภัณฑ์ทั่วไป (UPC)"
 
+#: registry.py:168
 msgid "ISBN"
 msgstr "ISBN"
 
+#: registry.py:169
 msgid "ISBN for books"
 msgstr "ISBN สำหรับหนังสือ"
 
+#: registry.py:174
 msgid "MPN"
 msgstr "MPN"
 
+#: registry.py:175
 msgid "Manufacturer Part Number"
 msgstr "หมายเลขชิ้นส่วนของผู้ผลิต"
 
+#: registry.py:181 registry.py:287 registry.py:364 registry.py:494
 msgid "Meta Title"
 msgstr "ชื่อเมตา"
 
+#: registry.py:182
 msgid "SEO title for search engines"
 msgstr "ชื่อเมตาสำหรับเครื่องมือค้นหา"
 
+#: registry.py:187 registry.py:293 registry.py:370 registry.py:500
 msgid "Meta Description"
 msgstr "คำอธิบายเมตา"
 
+#: registry.py:188
 msgid "SEO meta description"
 msgstr "คำอธิบายเมตาสำหรับ SEO"
 
+#: registry.py:194 registry.py:487
 msgid "View Count"
 msgstr "จำนวนครั้งที่ดู"
 
+#: registry.py:195
 msgid "Number of product views"
 msgstr "จำนวนการดูสินค้า"
 
+#: registry.py:200
 msgid "Sales Count"
 msgstr "จำนวนการขาย"
 
+#: registry.py:201
 msgid "Number of units sold"
 msgstr "จำนวนหน่วยที่ขายได้"
 
+#: registry.py:207
 msgid "Product URL"
 msgstr "URL สินค้า"
 
+#: registry.py:209
 msgid "Link to product page"
 msgstr "ลิงก์ไปยังหน้าสินค้า"
 
+#: registry.py:236
 msgid "Full Path"
 msgstr "เส้นทางทั้งหมด"
 
+#: registry.py:238
 msgid "Breadcrumb path including parents"
 msgstr "เส้นทางBreadcrumb รวมถึงผู้ปกครอง"
 
+#: registry.py:244
 msgid "Category Image"
 msgstr "รูปภาพหมวดหมู่"
 
+#: registry.py:250 registry.py:342
 msgid "Banner Image"
 msgstr "รูปภาพแบนเนอร์"
 
+#: registry.py:252
 msgid "Category banner for headers"
 msgstr "แบนเนอร์หมวดหมู่สำหรับหัวข้อ"
 
+#: registry.py:259
 msgid "Icon class or identifier"
 msgstr "คลาสไอคอนหรือตัวระบุ"
 
+#: registry.py:264
 msgid "Display Type"
 msgstr "ประเภทการแสดง"
 
+#: registry.py:265
 msgid "How products are displayed"
 msgstr "วิธีที่แสดงสินค้า"
 
+#: registry.py:271 registry.py:349
 msgid "Product Count"
 msgstr "จำนวนสินค้า"
 
+#: registry.py:273
 msgid "Number of products in category"
 msgstr "จำนวนสินค้าในหมวดหมู่"
 
+#: registry.py:279
 msgid "Parent Category"
 msgstr "หมวดหมู่หลัก"
 
+#: registry.py:281
 msgid "Name of parent category"
 msgstr "ชื่อหมวดหมู่ผู้ปกครอง"
 
+#: registry.py:288 registry.py:365 registry.py:495
 msgid "SEO title"
 msgstr "ชื่อ SEO"
 
+#: registry.py:294 registry.py:371 registry.py:501
 msgid "SEO description"
 msgstr "คำอธิบาย SEO"
 
+#: registry.py:300
 msgid "Category URL"
 msgstr "URL หมวดหมู่"
 
+#: registry.py:302
 msgid "Link to category page"
 msgstr "ลิงก์ไปยังหน้าหมวดหมู่"
 
+#: registry.py:308
 msgid "Brand"
 msgstr "แบรนด์"
 
+#: registry.py:324
 msgid "Brand Story"
 msgstr "เรื่องราวของแบรนด์"
 
+#: registry.py:325
 msgid "Extended brand narrative"
 msgstr "เรื่องราวแบรนด์ที่ขยาย"
 
+#: registry.py:336
 msgid "Logo"
 msgstr "โลโก้"
 
+#: registry.py:337
 msgid "Brand logo image"
 msgstr "ภาพโลโก้แบรนด์"
 
+#: registry.py:343
 msgid "Brand page banner"
 msgstr "แบนเนอร์หน้าแบรนด์"
 
+#: registry.py:351
 msgid "Number of products for brand"
 msgstr "จำนวนสินค้าสำหรับแบรนด์"
 
+#: registry.py:357
 msgid "Website"
 msgstr "เว็บไซต์"
 
+#: registry.py:358
 msgid "Brand website URL"
 msgstr "URL เว็บไซต์แบรนด์"
 
+#: registry.py:377
 msgid "Brand URL"
 msgstr "URL แบรนด์"
 
+#: registry.py:379
 msgid "Link to brand page"
 msgstr "ลิงก์ไปยังหน้าแบรนด์"
 
+#: registry.py:385
 msgid "Blog Post"
 msgstr "โพสต์บล็อก"
 
+#: registry.py:391
 msgid "Title"
 msgstr "หัวข้อ"
 
+#: registry.py:396
 msgid "Excerpt"
 msgstr "บทสรุป"
 
+#: registry.py:397
 msgid "Short summary for listings"
 msgstr "สรุปสั้นสำหรับรายการ"
 
+#: registry.py:402
 msgid "Content"
 msgstr "เนื้อหา"
 
+#: registry.py:403
 msgid "Full post content"
 msgstr "เนื้อหาโพสต์ทั้งหมด"
 
+#: registry.py:414
 msgid "draft, scheduled, published, archived"
 msgstr "ร่าง, กำหนดไว้, ตีพิมพ์, จัดเก็บ"
 
+#: registry.py:420
 msgid "Featured Image"
 msgstr "ภาพเด่น"
 
+#: registry.py:426
 msgid "Social Image"
 msgstr "ภาพโซเชียล"
 
+#: registry.py:428
 msgid "Image for social media sharing"
 msgstr "ภาพสำหรับการแบ่งปันโซเชียล"
 
+#: registry.py:434
 msgid "Author Name"
 msgstr "ชื่อผู้เขียน"
 
+#: registry.py:436
 msgid "Author display name"
 msgstr "ชื่อแสดงของผู้เขียน"
 
+#: registry.py:441
 msgid "Author Avatar"
 msgstr "โปรไฟล์ผู้เขียน"
 
+#: registry.py:443
 msgid "Author profile image"
 msgstr "รูปภาพโปรไฟล์ผู้เขียน"
 
+#: registry.py:451
 msgid "Blog category name"
 msgstr "ชื่อหมวดหมู่บล็อก"
 
+#: registry.py:456
 msgid "Tags"
 msgstr "แท็ก"
 
+#: registry.py:458
 msgid "Comma-separated tag names"
 msgstr "ชื่อแท็กที่คั่นด้วยเครื่องหมายจุลภาค"
 
+#: registry.py:464
 msgid "Published Date"
 msgstr "วันที่ตีพิมพ์"
 
+#: registry.py:465
 msgid "Publication date"
 msgstr "วันที่ตีพิมพ์"
 
+#: registry.py:470
 msgid "Created Date"
 msgstr "วันที่สร้าง"
 
+#: registry.py:475
 msgid "Updated Date"
 msgstr "วันที่อัปเดต"
 
+#: registry.py:481
 msgid "Reading Time"
 msgstr "เวลาอ่าน"
 
+#: registry.py:482
 msgid "Estimated minutes to read"
 msgstr "ประมาณนาทีในการอ่าน"
 
+#: registry.py:488
 msgid "Number of views"
 msgstr "จำนวนการดู"
 
+#: registry.py:507
 msgid "Post URL"
 msgstr "URL โพสต์"
 
+#: registry.py:509
 msgid "Link to blog post"
 msgstr "ลิงก์ไปยังโพสต์บล็อก"
 
+#: templates/admin/element_builder/customelement/change_list.html:21
 msgid "Create reusable data-bound UI components"
 msgstr "สร้างส่วนประกอบ UI ที่สามารถใช้ซ้ำได้ที่ผูกกับข้อมูล"
 
+#: templates/admin/element_builder/customelement/change_list.html:25
 msgid "Add Element"
 msgstr "เพิ่มองค์ประกอบ"
 
+#: templates/admin/element_builder/customelement/change_list.html:34
 msgid "Filters"
 msgstr "ตัวกรอง"
 
+#: templates/admin/element_builder/customelement/change_list.html:45
 msgid "Search"
 msgstr "ค้นหา"
 
+#: templates/admin/element_builder/customelement/change_list.html:47
 msgid "Search by name or description..."
 msgstr "ค้นหาตามชื่อหรือคำอธิบาย..."
 
+#: templates/admin/element_builder/customelement/change_list.html:56
 msgid "All Models"
 msgstr "โมเดลทั้งหมด"
 
+#: templates/admin/element_builder/customelement/change_list.html:69
 msgid "All"
 msgstr "ทั้งหมด"
 
+#: templates/admin/element_builder/customelement/change_list.html:71
+#: templates/admin/element_builder/partials/element_cards.html:30
 msgid "Inactive"
 msgstr "ไม่ใช้งาน"
 
+#: templates/admin/element_builder/customelement/change_list.html:78
 msgid "Active:"
 msgstr "ใช้งาน:"
 
+#: templates/admin/element_builder/customelement/change_list.html:82
 msgid "Apply"
 msgstr "ประยุกต์ใช้"
 
+#: templates/admin/element_builder/customelement/change_list.html:85
 msgid "Clear"
 msgstr "ล้าง"
 
+#: templates/admin/element_builder/customelement/change_list.html:97
 msgid "Run the selected action"
 msgstr "ดำเนินการตามที่เลือก"
 
+#: templates/admin/element_builder/customelement/change_list.html:97
 msgid "Go"
 msgstr "ดำเนินการ"
 
+#: templates/admin/element_builder/customelement/change_list.html:99
 msgid "of"
 msgstr "ของ"
 
+#: templates/admin/element_builder/customelement/change_list.html:108
 msgid "element"
 msgstr "องค์ประกอบ"
 
+#: templates/admin/element_builder/customelement/change_list.html:125
 #, python-format
 msgid "1 element"
 msgid_plural "%(counter)s elements"
 msgstr[0] "%(counter)s องค์ประกอบ"
 msgstr[1] "%(counter)s องค์ประกอบ"
 
+#: templates/admin/element_builder/customelement/change_list.html:127
 msgid "elements"
 msgstr "องค์ประกอบ"
 
+#: templates/admin/element_builder/customelement/change_list.html:131
 msgid "Show all"
 msgstr "แสดงทั้งหมด"
 
+#: templates/admin/element_builder/partials/element_cards.html:46
 msgid "ago"
 msgstr "ที่ผ่านมา"
 
+#: templates/admin/element_builder/partials/element_cards.html:58
 msgid "Open Builder"
 msgstr "เปิดสร้าง"
 
+#: templates/admin/element_builder/partials/element_cards.html:63
 msgid "Edit"
 msgstr "แก้ไข"
 
+#: templates/admin/element_builder/partials/element_cards.html:68
 msgid "Delete"
 msgstr "ลบ"
 
+#: templates/admin/element_builder/partials/element_cards.html:78
 msgid "No custom elements found."
 msgstr "ไม่พบองค์ประกอบที่กำหนดเอง"
 
+#: templates/admin/element_builder/partials/element_cards.html:80
 msgid "Create your first custom element"
 msgstr "สร้างองค์ประกอบที่กำหนดเองของคุณเป็นครั้งแรก"
 
+#: templates/admin/element_builder/visual_builder.html:21
 msgid "Home"
 msgstr "หน้าแรก"
 
+#: templates/admin/element_builder/visual_builder.html:24
 msgid "Visual Builder"
 msgstr "เครื่องมือสร้างแบบมีส่วนร่วม"
 
+#: templates/admin/element_builder/visual_builder.html:33
 msgid "Back to Elements"
 msgstr "กลับไปยังองค์ประกอบ"
 
+#: templates/admin/element_builder/visual_builder.html:41
 msgid "Model"
 msgstr "โมเดล"
 
+#: templates/admin/element_builder/visual_builder.html:53
+#: templates/admin/element_builder/visual_builder.html:72
+#: templates/admin/element_builder/visual_builder.html:74
+#: templates/admin/element_builder/visual_builder.html:104
 msgid "Preview"
 msgstr "ดูตัวอย่าง"
 
+#: templates/admin/element_builder/visual_builder.html:55
 msgid "Search for item..."
 msgstr "ค้นหาไอเทม..."
 
+#: templates/admin/element_builder/visual_builder.html:64
 msgid "Saved"
 msgstr "บันทึกแล้ว"
 
+#: templates/admin/element_builder/visual_builder.html:66
 msgid "Undo"
 msgstr "ยกเลิก"
 
+#: templates/admin/element_builder/visual_builder.html:69
 msgid "Redo"
 msgstr "ทำซ้ำ"
 
+#: templates/admin/element_builder/visual_builder.html:76
+#: templates/admin/element_builder/visual_builder.html:78
 msgid "Save"
 msgstr "บันทึก"
 
+#: templates/admin/element_builder/visual_builder.html:88
 msgid "Elements"
 msgstr "องค์ประกอบ"
 
+#: templates/admin/element_builder/visual_builder.html:94
 msgid "Loading elements..."
 msgstr "กำลังโหลดองค์ประกอบ..."
 
+#: templates/admin/element_builder/visual_builder.html:103
 msgid "Visual Preview"
 msgstr "การแสดงตัวอย่าง"
 
+#: templates/admin/element_builder/visual_builder.html:106
 msgid "Structure View"
 msgstr "การแสดงโครงสร้าง"
 
+#: templates/admin/element_builder/visual_builder.html:107
 msgid "Structure"
 msgstr "โครงสร้าง"
 
+#: templates/admin/element_builder/visual_builder.html:113
 msgid "Drag elements here to start building"
 msgstr "ลากองค์ประกอบมาที่นี่เพื่อเริ่มต้นสร้าง"
 
+#: templates/admin/element_builder/visual_builder.html:119
 msgid "Loading preview..."
 msgstr "กำลังโหลดตัวอย่าง..."
 
+#: templates/admin/element_builder/visual_builder.html:131
 msgid "Properties"
 msgstr "คุณสมบัติ"
 
+#: templates/admin/element_builder/visual_builder.html:136
 msgid "Select an element to edit its properties"
 msgstr "เลือกองค์ประกอบเพื่อแก้ไขคุณสมบัติ"
 
+#: templates/admin/element_builder/visual_builder.html:149
 msgid "Field Binding"
 msgstr "การผูกข้อมูล"
 
+#: templates/admin/element_builder/visual_builder.html:153
 msgid "Bind to Field"
 msgstr "ผูกกับฟิลด์"
 
+#: templates/admin/element_builder/visual_builder.html:159
 msgid "Thumbnail Size"
 msgstr "ขนาดรูปย่อ"
 
+#: templates/admin/element_builder/visual_builder.html:172
 msgid "Layout"
 msgstr "การจัดวาง"
 
+#: templates/admin/element_builder/visual_builder.html:176
 msgid "Display"
 msgstr "แสดง"
 
+#: templates/admin/element_builder/visual_builder.html:191
 msgid "Direction"
 msgstr "ทิศทาง"
 
+#: templates/admin/element_builder/visual_builder.html:200
 msgid "Wrap"
 msgstr "พิมพ์แบบห่อ"
 
+#: templates/admin/element_builder/visual_builder.html:210
 msgid "Justify"
 msgstr "จัดวางให้ตรงกลาง"
 
+#: templates/admin/element_builder/visual_builder.html:221
 msgid "Align"
 msgstr "จัดตำแหน่ง"
 
+#: templates/admin/element_builder/visual_builder.html:232
+#: templates/admin/element_builder/visual_builder.html:254
 msgid "Gap"
 msgstr "ระยะห่าง"
 
+#: templates/admin/element_builder/visual_builder.html:242
 msgid "Columns"
 msgstr "คอลัมน์"
 
+#: templates/admin/element_builder/visual_builder.html:258
 msgid "Align Items"
 msgstr "จัดตำแหน่งรายการ"
 
+#: templates/admin/element_builder/visual_builder.html:268
 msgid "Justify Items"
 msgstr "จัดวางรายการให้ตรงกลาง"
 
+#: templates/admin/element_builder/visual_builder.html:281
 msgid "Width"
 msgstr "ความกว้าง"
 
+#: templates/admin/element_builder/visual_builder.html:285
 msgid "Height"
 msgstr "ความสูง"
 
+#: templates/admin/element_builder/visual_builder.html:295
 msgid "Spacing"
 msgstr "ระยะห่าง"
 
+#: templates/admin/element_builder/visual_builder.html:299
 msgid "Padding"
 msgstr "ระยะห่างภายใน"
 
+#: templates/admin/element_builder/visual_builder.html:305
 msgid "Margin"
 msgstr "ระยะขอบ"
 
+#: templates/admin/element_builder/visual_builder.html:316
 msgid "Typography"
 msgstr "แบบอักษร"
 
+#: templates/admin/element_builder/visual_builder.html:321
 msgid "Font Size"
 msgstr "ขนาดตัวอักษร"
 
+#: templates/admin/element_builder/visual_builder.html:325
 msgid "Font Weight"
 msgstr "ความหนาของตัวอักษร"
 
+#: templates/admin/element_builder/visual_builder.html:337
 msgid "Line Height"
 msgstr "ความสูงของบรรทัด"
 
+#: templates/admin/element_builder/visual_builder.html:341
 msgid "Text Align"
 msgstr "การจัดวางข้อความ"
 
+#: templates/admin/element_builder/visual_builder.html:351
 msgid "Text Color"
 msgstr "สีข้อความ"
 
+#: templates/admin/element_builder/visual_builder.html:366
 msgid "Background"
 msgstr "พื้นหลัง"
 
+#: templates/admin/element_builder/visual_builder.html:372
 msgid "Border"
 msgstr "เส้นขอบ"
 
+#: templates/admin/element_builder/visual_builder.html:378
 msgid "Border Radius"
 msgstr "รัศมีของเส้นขอบ"
 
+#: templates/admin/element_builder/visual_builder.html:382
 msgid "Box Shadow"
 msgstr "เงาของกล่อง"
 
+#: templates/admin/element_builder/visual_builder.html:388
 msgid "Opacity"
 msgstr "ความโปร่งใส"
 
+#: templates/admin/element_builder/visual_builder.html:397
 msgid "Delete Element"
 msgstr "ลบองค์ประกอบ"

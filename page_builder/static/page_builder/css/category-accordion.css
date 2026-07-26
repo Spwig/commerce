@@ -54,12 +54,18 @@
    ========================================================================== */
 
 .cat-accordion__panel {
-  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
   position: relative;
   overflow: hidden;
   border-radius: var(--theme-element-category-accordion-frame-radius, 0.5rem);
-  transition: flex var(--theme-element-category-accordion-transition-duration, 500ms)
-    var(--theme-element-category-accordion-transition-easing, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+  transition: flex-grow
+    var(
+      --accordion-transition-speed,
+      var(--theme-element-category-accordion-transition-duration, 500ms)
+    )
+    var(--theme-element-category-accordion-transition-easing, cubic-bezier(0.32, 0.72, 0, 1));
   cursor: pointer;
   min-width: 0;
   display: block;
@@ -67,19 +73,11 @@
   color: inherit;
 }
 
-/* Hover expansion: all panels shrink to 1, hovered panel expands */
-.cat-accordion:hover .cat-accordion__panel {
-  flex: 1;
-}
-
-.cat-accordion:hover .cat-accordion__panel:hover,
+/* Expansion is driven by a single state — the active class, which the JS
+   moves on hover. Keying flex off :hover as well makes the layout fight
+   itself (snap when crossing the gap, bounce on mouse-out). */
 .cat-accordion__panel--active {
-  flex: var(--theme-element-category-accordion-expand-ratio, 3);
-}
-
-/* Keep default active panel when container not hovered */
-.cat-accordion:not(:hover) .cat-accordion__panel--active {
-  flex: var(--theme-element-category-accordion-expand-ratio, 3);
+  flex-grow: var(--accordion-expand-ratio, var(--theme-element-category-accordion-expand-ratio, 3));
 }
 
 /* ==========================================================================
@@ -95,8 +93,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--theme-element-category-accordion-transition-duration, 500ms)
-    var(--theme-element-category-accordion-transition-easing, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+  transition: transform
+    var(
+      --accordion-transition-speed,
+      var(--theme-element-category-accordion-transition-duration, 500ms)
+    )
+    var(--theme-element-category-accordion-transition-easing, cubic-bezier(0.32, 0.72, 0, 1));
 }
 
 .cat-accordion__panel:hover .cat-accordion__image {
@@ -147,15 +149,17 @@
   z-index: 2;
   opacity: 0;
   transform: translateY(var(--theme-element-category-accordion-content-slide-offset, 10px));
+  /* Collapsing panels fade their content out immediately (no delay) */
   transition:
-    opacity 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 150ms,
-    transform 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 150ms;
+    opacity 250ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 250ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.cat-accordion__panel:hover .cat-accordion__content,
-.cat-accordion:not(:hover) .cat-accordion__panel--active .cat-accordion__content {
+.cat-accordion__panel--active .cat-accordion__content {
   opacity: 1;
   transform: translateY(0);
+  /* Let the panel start widening before the content fades in */
+  transition-delay: 120ms;
 }
 
 /* ==========================================================================
@@ -226,24 +230,19 @@
     height: auto;
   }
 
-  .cat-accordion__panel {
-    flex: none;
-    height: var(--theme-element-category-accordion-mobile-height, 12rem);
-  }
-
   /* All panels same size on mobile, no expansion */
-  .cat-accordion:hover .cat-accordion__panel,
-  .cat-accordion:hover .cat-accordion__panel:hover,
-  .cat-accordion__panel--active,
-  .cat-accordion:not(:hover) .cat-accordion__panel--active {
+  .cat-accordion__panel,
+  .cat-accordion__panel--active {
     flex: none;
     height: var(--theme-element-category-accordion-mobile-height, 12rem);
   }
 
   /* Always show content on mobile */
-  .cat-accordion__content {
+  .cat-accordion__content,
+  .cat-accordion__panel--active .cat-accordion__content {
     opacity: 1;
     transform: translateY(0);
+    transition: none;
   }
 
   .cat-accordion__title {
@@ -256,16 +255,7 @@
    ========================================================================== */
 
 @media (hover: none) {
-  .cat-accordion:hover .cat-accordion__panel,
-  .cat-accordion:hover .cat-accordion__panel:hover {
-    flex: 1;
-  }
-
-  .cat-accordion__panel--active,
-  .cat-accordion:not(:hover) .cat-accordion__panel--active {
-    flex: var(--theme-element-category-accordion-expand-ratio, 3);
-  }
-
+  /* Sticky :hover from a tap must not zoom or dim panels */
   .cat-accordion__panel:hover .cat-accordion__image {
     transform: none;
   }
@@ -275,9 +265,11 @@
   }
 
   /* Always show content on touch */
-  .cat-accordion__content {
+  .cat-accordion__content,
+  .cat-accordion__panel--active .cat-accordion__content {
     opacity: 1;
     transform: translateY(0);
+    transition: none;
   }
 }
 

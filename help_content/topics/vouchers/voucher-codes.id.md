@@ -2,7 +2,9 @@
 title: Kode Voucher
 ---
 
-Kode Voucher memungkinkan Anda membuat kode diskon, kupon, dan kartu hadiah yang dimasukkan oleh pelanggan saat checkout untuk mendapatkan diskon. Navigasikan ke **Marketing > Vouchers** di sidebar admin.
+Kode Voucher memungkinkan Anda membuat kode diskon dan kupon yang pelanggan masukkan saat checkout untuk mendapatkan diskon. Navigasikan ke **Marketing > Vouchers** di sidebar admin.
+
+Ingin menjual kredit toko alih-alih diskon? Itu adalah kartu hadiah, dikelola secara terpisah di bawah **Products > Gift Cards** — lihat topik bantuan **Gift Cards**.
 
 ![Daftar voucher](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 
@@ -18,10 +20,10 @@ Halaman voucher menampilkan ringkasan dengan:
 
 1. Klik **+ Tambah Voucher** di pojok kanan atas
 2. Isi detail voucher:
-   - **Kode** — Kode yang dimasukkan oleh pelanggan saat checkout (contoh: "SAVE20", "FREESHIP")
+   - **Kode** — Kode yang dimasukkan pelanggan saat checkout (misalnya, "SAVE20", "FREESHIP")
    - **Nama/Deskripsi** — Deskripsi internal untuk referensi Anda
    - **Tipe Diskon** — Pilih cara diskon diterapkan
-   - **Nilai Diskon** — Jumlah atau persentase diskon
+   - **Nilai Diskon** — Jumlah atau persentase potongan
 3. Konfigurasikan aturan penggunaan:
    - **Batas Penggunaan** — Maksimal total penggunaan (0 = tidak terbatas)
    - **Batas per Pelanggan** — Maksimal penggunaan per pelanggan
@@ -38,8 +40,8 @@ Halaman voucher menampilkan ringkasan dengan:
 
 | Tipe | Deskripsi | Contoh |
 |------|-------------|---------|
-| **Jumlah Tetap** | Mengurangi jumlah dolar tetap | $20 diskon dari pesanan |
-| **Persentase** | Mengurangi persentase dari total | 15% diskon dari pesanan |
+| **Jumlah Tetap** | Mengurangi jumlah dolar tetap | $20 potongan dari pesanan |
+| **Persentase** | Mengurangi persentase dari total | 15% potongan dari pesanan |
 | **Pengiriman Gratis** | Menghilangkan biaya pengiriman | Pengiriman gratis untuk setiap pesanan |
 
 ## Mengelola Voucher
@@ -49,8 +51,8 @@ Halaman voucher menampilkan ringkasan dengan:
 Setiap kartu voucher menampilkan:
 - **Kode** — Kode voucher dalam teks tebal
 - **Deskripsi** — Apa yang dilakukan voucher
-- **Status badge** — Aktif atau Tidak Aktif
-- **Detail Diskon** — Tipe dan nilai (contoh: "$ 20.00" atau "15.00%")
+- **Lencana Status** — Aktif atau Tidak Aktif
+- **Detail Diskon** — Tipe dan nilai (misalnya, "$ 20.00" atau "15.00%")
 - **Ruang Lingkup** — Apakah berlaku untuk seluruh keranjang atau item tertentu
 - **Jumlah Penggunaan** — Berapa kali voucher telah digunakan
 - **Tanggal Dibuat** — Saat voucher dibuat
@@ -65,7 +67,7 @@ Setiap kartu memiliki tombol aksi:
 
 ### Memfilter Voucher
 
-Gunakan bar filter untuk menemukan voucher tertentu:
+Gunakan baris filter untuk menemukan voucher tertentu:
 - **Cari** — Cari berdasarkan kode, nama, atau deskripsi
 - **Tipe** — Jumlah Tetap, Persentase, atau Pengiriman Gratis
 - **Status** — Aktif atau Tidak Aktif
@@ -74,7 +76,7 @@ Gunakan bar filter untuk menemukan voucher tertentu:
 ## Pembuatan Voucher dalam Batch
 
 Untuk kampanye besar, Anda dapat membuat voucher dalam batch:
-1. Sistem secara otomatis menghasilkan kode unik (contoh: "COUPONX1600406498")
+1. Sistem secara otomatis menghasilkan kode unik (misalnya, "COUPONX1600406498")
 2. Tetapkan parameter umum untuk semua voucher yang dihasilkan
 3. Sebarkan kode melalui email, media sosial, atau cetak
 
@@ -90,9 +92,9 @@ Jika voucher tidak valid (kedaluwarsa, batas penggunaan tercapai, nilai minimum 
 
 ## Tips
 
-- Gunakan kode yang mudah diingat untuk kampanye pemasaran (contoh: "SUMMER20" alih-alih string acak).
+- Gunakan kode yang mudah diingat untuk kampanye pemasaran (misalnya, "SUMMER20" alih-alih string acak).
 - Tetapkan batas per pelanggan untuk mencegah penyalahgunaan diskon bernilai tinggi.
-- Gunakan nilai pesanan minimum untuk menjaga keuntungan (contoh: "$10 diskon untuk pesanan di atas $50").
+- Gunakan nilai pesanan minimum untuk menjaga keuntungan (misalnya, "$10 potongan untuk pesanan di atas $50").
 - Pantau jumlah penggunaan di dashboard untuk melacak efektivitas kampanye.
-- Buat voucher dengan batas waktu untuk menciptakan urgensi (contoh: "Hanya berlaku akhir pekan ini").
+- Buat voucher dengan batas waktu untuk menciptakan urgensi (misalnya, "Hanya berlaku akhir pekan ini").
 - Gunakan status Aktif/Tidak Aktif untuk menghentikan voucher tanpa menghapusnya.

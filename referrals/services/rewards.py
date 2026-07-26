@@ -11,8 +11,33 @@ from django.db import transaction
 from django.utils import timezone
 
 from core.utils import get_default_currency
+from core.utils.codes import generate_unique_code
 
 logger = logging.getLogger(__name__)
+
+
+def _validated_kind(kind, recipient_type):
+    """
+    Reject a reward kind that ``issue_reward`` cannot dispatch on.
+
+    ``issue_reward`` falls through to ``success = False`` for an unrecognised
+    kind, and ``create_and_issue_rewards`` only logs that as a generic failure —
+    so a typo or a stale config value in ``program.reward_config`` silently
+    produced rewards that were never issued. Failing at creation makes the
+    misconfiguration visible at the point it can be fixed.
+
+    Raises:
+        ValueError: If ``kind`` is not one of ReferralReward.KIND_CHOICES.
+    """
+    from ..models import ReferralReward
+
+    valid = {choice for choice, _label in ReferralReward.KIND_CHOICES}
+    if kind not in valid:
+        raise ValueError(
+            f"Invalid {recipient_type} reward kind {kind!r} in program reward_config. "
+            f"Expected one of {sorted(valid)}."
+        )
+    return kind
 
 
 def create_rewards(attribution):
@@ -47,7 +72,7 @@ def create_rewards(attribution):
             referrer_identity=attribution.referrer_identity,
             customer=attribution.referrer_identity.customer,
             recipient_type="referrer",
-            kind=referrer_config.get("kind", "credit"),
+            kind=_validated_kind(referrer_config.get("kind", "credit"), "referrer"),
             amount=referrer_config.get("amount", 10),
             amount_currency=referrer_config.get("currency", get_default_currency()),
             percentage=referrer_config.get("percentage"),
@@ -66,7 +91,12 @@ def create_rewards(attribution):
             referrer_identity=attribution.referrer_identity,  # Link to referrer for tracking
             customer=attribution.referee_customer,
             recipient_type="referee",
-            kind=referee_config.get("kind", "discount"),
+            # Default "credit", matching the referrer branch above. This was
+            # "discount", which is not in ReferralReward.KIND_CHOICES — any
+            # referee config without an explicit kind produced a reward that
+            # fell through the issue_reward dispatcher and was never issued,
+            # logged only as a generic failure.
+            kind=_validated_kind(referee_config.get("kind", "credit"), "referee"),
             amount=referee_config.get("amount", 10),
             amount_currency=referee_config.get("currency", get_default_currency()),
             percentage=referee_config.get("percentage"),
@@ -274,9 +304,27 @@ def create_wallet_credit(reward):
     return True
 
 
+def _generate_referral_voucher_code():
+    """
+    Generate a unique referral voucher code.
+
+    Uses the shared secrets-backed generator. The previous implementation used
+    ``random.choices`` (predictable from observed output) and had no uniqueness
+    check at all, relying on the database to raise IntegrityError on collision.
+    """
+    from vouchers.models import VoucherCode
+
+    return generate_unique_code(
+        exists=lambda code: VoucherCode.objects.filter(code=code).exists(),
+        length=8,
+        prefix="REF",
+        separator="",
+    )
+
+
 def create_coupon_code(reward):
     """
-    Create coupon code for customer.
+    Create a fixed-amount coupon for a referral reward.
 
     Args:
         reward (ReferralReward): Reward instance
@@ -284,28 +332,26 @@ def create_coupon_code(reward):
     Returns:
         bool: True if successful
     """
-    import random
-    import string
+    from djmoney.money import Money
 
     from vouchers.models import VoucherCode
 
-    # Generate unique coupon code
-    code = f"REF{''.join(random.choices(string.ascii_uppercase + string.digits, k=8))}"
+    currency = reward.amount.currency
 
-    # Create voucher
     voucher = VoucherCode.objects.create(
-        code=code,
+        code=_generate_referral_voucher_code(),
         name=f"Referral Reward - {reward.customer.email}",
         description=reward.description,
         discount_type="fixed",
         discount_value=reward.amount.amount,
-        minimum_spend=0,
+        min_order_value=Money(0, currency),
+        max_uses_total=1,
+        max_uses_per_customer=1,
+        issued_to=reward.customer,
+        end_date=reward.expires_at,
         is_active=True,
-        single_use=True,
-        usage_limit=1,
     )
 
-    # Store voucher ID reference
     reward.voucher_code_id = voucher.id
     reward.save(update_fields=["voucher_code_id"])
 
@@ -314,37 +360,46 @@ def create_coupon_code(reward):
 
 def create_percentage_coupon(reward):
     """
-    Create percentage discount coupon for customer.
+    Create a percentage-discount coupon for a referral reward.
 
     Args:
         reward (ReferralReward): Reward instance
 
     Returns:
         bool: True if successful
+
+    Raises:
+        ValueError: If the reward carries no percentage. This used to silently
+            fall back to 10%, inventing a discount the merchant never configured.
     """
-    import random
-    import string
+    from djmoney.money import Money
 
     from vouchers.models import VoucherCode
 
-    # Generate unique coupon code
-    code = f"REF{''.join(random.choices(string.ascii_uppercase + string.digits, k=8))}"
+    if reward.percentage is None:
+        raise ValueError(
+            f"Referral reward {reward.id} has kind='percent' but no percentage set. "
+            f"Fix the program's reward_config rather than assuming a rate."
+        )
 
-    # Create voucher
+    currency = reward.amount.currency if reward.amount else get_default_currency()
+
     voucher = VoucherCode.objects.create(
-        code=code,
+        code=_generate_referral_voucher_code(),
         name=f"Referral Reward - {reward.customer.email}",
         description=reward.description,
         discount_type="percentage",
-        discount_value=reward.percentage or 10,
-        minimum_spend=0,
-        maximum_discount=reward.amount.amount if reward.amount else None,
+        discount_value=reward.percentage,
+        min_order_value=Money(0, currency),
+        # Caps the percentage at the reward's cash value where one is set.
+        max_discount_amount=reward.amount if reward.amount else None,
+        max_uses_total=1,
+        max_uses_per_customer=1,
+        issued_to=reward.customer,
+        end_date=reward.expires_at,
         is_active=True,
-        single_use=True,
-        usage_limit=1,
     )
 
-    # Store voucher ID reference
     reward.voucher_code_id = voucher.id
     reward.save(update_fields=["voucher_code_id"])
 

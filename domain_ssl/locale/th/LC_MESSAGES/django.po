@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,113 +18,316 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "โดเมนแบบกำหนดเอง"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "โดเมนและ SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "ไม่มี (HTTP เท่านั้น)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "ใบรับรองแบบกำหนดเอง"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "เซลฟ์-เซ็น"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "จัดการภายนอก"
 
+#: models.py:22
 msgid "Idle"
 msgstr "ว่าง"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "ตรวจสอบ DNS"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "กำลังตั้งค่า"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "กำลังรับใบรับรอง"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "กำลังโหลดบริการอีกครั้ง"
 
+#: models.py:27
 msgid "Error"
 msgstr "ข้อผิดพลาด"
 
+#: models.py:34
 msgid "Domain"
 msgstr "โดเมน"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "ชื่อโดเมนที่สมบูรณ์ (ตัวอย่างเช่น shop.example.com)"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "โดเมนก่อนหน้า"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr "โดเมนก่อนการเปลี่ยนครั้งสุดท้าย สำหรับการติดตามการคืนค่า"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "โหมด SSL"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "โดเมนใบรับรอง"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "ผู้ออกใบรับรอง"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "วันหมดอายุใบรับรอง"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "ได้รับใบรับรอง"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "ใบรับรองแบบ Wildcard"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "โทเคน API ของ Cloudflare"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "โทเค็น API สำหรับการท้าทาย DNS-01 หรือ Origin CA"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "Zone ID ของ Cloudflare"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "อีเมลผู้ดูแลระบบ"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "อีเมลติดต่อสำหรับการแจ้งเตือน Let's Encrypt"
 
+#: models.py:108
 msgid "Status"
 msgstr "สถานะ"
 
+#: models.py:113
 msgid "Last Error"
 msgstr "ข้อผิดพลาดล่าสุด"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "ID งานที่กำลังดำเนินอยู่"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "ID งาน Celery สำหรับการดำเนินการปัจจุบัน"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "อัตโนมัติการต่ออายุ"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "ต่ออายุใบรับรองอัตโนมัติก่อนวันหมดอายุ"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "การตั้งค่าโดเมน"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "ไม่มีโดเมนที่ตั้งค่า"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "โดเมนร้านค้าของคุณ"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "กำลังโหลดการตั้งค่าโดเมน..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "URL ปัจจุบัน"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "โดเมนแบบกำหนดเองเปิดใช้งาน"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "ลบโดเมนแบบกำหนดเอง"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "เชื่อมต่อโดเมนของคุณเอง"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr "ใช้ชื่อโดเมนของคุณเองแทนที่ที่อยู่ myspwig.com ค่าเริ่มต้น"
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "ชื่อโดเมนของคุณ"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr "กรอกโดเมนที่สมบูรณ์ (เช่น www.yourstore.com หรือ shop.yourdomain.com)"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "ดำเนินการต่อ"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "ตั้งค่าโดเมนของคุณให้ชี้ไปยังร้านค้าของคุณ"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr "เพิ่มบันทึก DNS สองรายการนี้ในการตั้งค่าของผู้จดทะเบียนโดเมนของคุณ:"
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "ชี้โดเมน"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "ประเภท"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "ชื่อ"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "คัดลอก"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "ค่า"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "การตรวจสอบความเป็นเจ้าของ"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "ฉันจะเพิ่มบันทึก DNS ได้อย่างไร?"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr ""
+"ลงชื่อเข้าใช้ที่ผู้จดทะเบียนโดเมนของคุณ (ที่คุณซื้อโดเมน) และค้นหาการตั้งค่า"
+" DNS ผู้จดทะเบียนที่พบบ่อย:"
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr "สินค้าของฉัน > DNS > จัดการ"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "รายการโดเมน > จัดการ > DNS ขั้นสูง"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > บันทึก > เพิ่มบันทึก"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > บันทึกแบบกำหนดเอง"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr ""
+"การเปลี่ยนแปลง DNS อาจใช้เวลาถึง 24 ชั่วโมงในการเผยแพร่ทั่วโลก "
+"แต่โดยทั่วไปจะมีผลภายในไม่กี่นาที"
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "ฉันได้เพิ่มบันทึกเหล่านี้ - ตรวจสอบ"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "กำลังตรวจสอบบันทึก DNS ของคุณ..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "โดเมนเชื่อมต่อแล้ว!"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "ร้านของคุณจะสามารถใช้งานได้ที่"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "เร็ว ๆ นี้。"
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "การจัดเตรียมใบรับรอง SSL อาจใช้เวลาไม่กี่นาที"
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "ยังไม่พบบันทึก"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr ""
+"การเปลี่ยนแปลง DNS อาจใช้เวลาได้ถึง 24 ชั่วโมง "
+"คุณสามารถลองอีกครั้งจากหน้านี้ในภายหลัง"
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "ลองอีกครั้ง"

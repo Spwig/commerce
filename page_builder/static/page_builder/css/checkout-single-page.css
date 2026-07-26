@@ -23,7 +23,11 @@
 
 @media (min-width: 768px) {
   .checkout-container--single-page {
-    grid-template-columns: 1fr 380px;
+    /* Single stacking column: the express-checkout block (full width) then
+       the form+summary columns. The 2-column form|sidebar split lives on
+       .single-page__columns, not here — this container holds two children
+       that must each span the full width. */
+    grid-template-columns: 1fr;
     gap: var(--theme-space-8, 2rem);
     padding: 0 var(--theme-space-4, 1rem);
     padding-bottom: var(--theme-space-8, 2rem);
@@ -121,6 +125,19 @@
   pointer-events: none;
 }
 
+/* Per-section continue button */
+.checkout-container--single-page .single-page__section-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--theme-space-4, 1rem);
+}
+
+@media (max-width: 639px) {
+  .checkout-container--single-page .single-page__section-actions .btn {
+    width: 100%;
+  }
+}
+
 /* Place order area - Mobile First */
 .single-page__submit {
   background: var(--theme-color-surface, #fff);
@@ -182,4 +199,31 @@
   flex: 1;
   height: 1px;
   background: var(--theme-color-border, #e5e7eb);
+}
+
+/* Mobile-first: stack the columns and float the order summary to the top as
+   a collapsible bar (shared .checkout-summary__toggle). */
+.single-page__columns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-space-6, 1.5rem);
+}
+
+.single-page__columns .single-page__sidebar {
+  order: -1;
+}
+
+/* Desktop: form on the left, 380px order-summary sidebar on the right —
+   matching accordion/express. 1024px breakpoint aligns with the mobile
+   summary-bar toggle so the two never overlap. */
+@media (min-width: 1024px) {
+  .single-page__columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    align-items: start;
+    gap: var(--theme-space-8, 2rem);
+  }
+  .single-page__columns .single-page__sidebar {
+    order: 0;
+  }
 }

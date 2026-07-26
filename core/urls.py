@@ -23,6 +23,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 import accounts.urls
+from agentic import views_wellknown as agentic_wellknown
 from catalog.api.image_endpoints import get_product_images
 from catalog.api.translation_endpoints import get_available_languages
 from catalog.download_views import download_digital_asset
@@ -48,6 +49,15 @@ urlpatterns = [
         name="apple_aasa",
     ),
     path(".well-known/security.txt", views.security_txt, name="security_txt"),
+    # Agentic commerce discovery (UCP). Off by default; returns 404 unless a
+    # merchant has enabled agentic commerce. Kept in this first block so it
+    # survives the activation / licence / setup-wizard middleware — a discovery
+    # endpoint that 302s to /activate/ is worse than a 404.
+    path(
+        ".well-known/ucp",
+        agentic_wellknown.ucp_discovery,
+        name="ucp_discovery",
+    ),
 ]
 
 # Platform activation (non-i18n, must work before auth/license/setup)
@@ -91,15 +101,17 @@ urlpatterns += [
         currency_endpoints.reorder_currencies,
         name="api_currencies_reorder",
     ),
-    path(
-        "api/currencies/<str:code>/",
-        currency_endpoints.update_currency_settings,
-        name="api_currency_update",
-    ),
+    # Literal routes MUST precede the "<str:code>/" catch-all below, or it
+    # swallows them (e.g. "bulk-update" matched as a currency code → POST 405).
     path(
         "api/currencies/bulk-update/",
         currency_endpoints.bulk_update_currencies,
         name="api_currencies_bulk_update",
+    ),
+    path(
+        "api/currencies/<str:code>/",
+        currency_endpoints.update_currency_settings,
+        name="api_currency_update",
     ),
     # Translation and Product Image APIs
     path("api/translations/languages/", get_available_languages, name="api_available_languages"),
@@ -205,6 +217,8 @@ urlpatterns += [
     path("api/address/", include("address_autocomplete.urls")),
     # Search API (non-i18n as it's an API)
     path("api/search/", include("search.api_urls")),
+    # Agentic commerce API (non-i18n; every route 404s unless enabled)
+    path("api/agentic/", include("agentic.api_urls")),
     # Element Builder API (non-i18n as it's an API)
     path("api/element-builder/", include("element_builder.urls")),
     # POS API (non-i18n, license-gated via middleware)
@@ -385,6 +399,7 @@ urlpatterns += i18n_patterns(
     # Search URLs
     path("search/", include("search.urls")),
     # Frontend URLs
+    path("", include("catalog.urls")),
     path("", include("page_builder.urls")),
     prefix_default_language=True,
 )

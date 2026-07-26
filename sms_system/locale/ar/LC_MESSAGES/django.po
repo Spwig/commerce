@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
+#: admin.py:58
 msgid "-- Select Provider --"
 msgstr "-- اختر مزودًا --"
 
+#: admin.py:200 admin.py:212
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:149
+#: templates/admin/sms_system/wizard/step3_credentials.html:33
 msgid "Provider Credentials"
 msgstr "بيانات مزود الخدمة"
 
+#: admin.py:203
 msgid "Enter your provider API credentials."
 msgstr "أدخل بيانات API لمزود الخدمة."
 
+#: admin.py:216
 msgid ""
 "Select a provider above to see credential fields, or use the Setup Wizard "
 "for a guided experience."
@@ -34,42 +40,80 @@ msgstr ""
 "اختر مزودًا من الأعلى لرؤية حقول المصادقة، أو استخدم مساعد التكوين للحصول "
 "على تجربة موجهة."
 
+#: admin.py:226
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:178
+#: templates/admin/sms_system/wizard/step4_test.html:53
 msgid "Default Settings"
 msgstr "الإعدادات الافتراضية"
 
+#: admin.py:237 models.py:92
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:202
 msgid "Connection Status"
 msgstr "حالة الاتصال"
 
+#: admin.py:248 admin.py:347
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:228
 msgid "Timestamps"
 msgstr "الوقت الزمني"
 
+#: admin.py:273 models.py:76 models.py:251
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:32
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:69
+#: templates/admin/sms_system/smstemplate/change_list.html:82
 msgid "Active"
 msgstr "نشط"
 
+#: admin.py:274
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:34
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:73
+#: templates/admin/sms_system/smstemplate/change_list.html:86
 msgid "Inactive"
 msgstr "غير نشط"
 
+#: admin.py:276 admin.py:410 models.py:334
+#: templates/admin/sms_system/smsoutbox/change_list.html:76
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:108
+#: templates/admin/sms_system/wizard/complete.html:30
 msgid "Status"
 msgstr "الحالة"
 
+#: admin.py:281
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:37
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:79
+#: templates/admin/sms_system/wizard/complete.html:40
 msgid "Default SMS"
 msgstr "الرسالة القصيرة الافتراضية"
 
+#: admin.py:284 models.py:290
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:56
+#: templates/admin/sms_system/provider_browse.html:130
+#: templates/admin/sms_system/smsoutbox/change_list.html:96
 msgid "SMS"
 msgstr "الرسائل القصيرة (SMS)"
 
+#: admin.py:290
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:40
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:85
+#: templates/admin/sms_system/wizard/complete.html:50
 msgid "Default WhatsApp"
 msgstr "واتساب الافتراضي"
 
+#: admin.py:294 models.py:291
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:52
+#: templates/admin/sms_system/provider_browse.html:135
+#: templates/admin/sms_system/smsoutbox/change_list.html:97
 msgid "WhatsApp"
 msgstr "واتساب"
 
+#: admin.py:308
 msgid "Connection"
 msgstr "الاتصال"
 
+#: admin.py:338
 msgid "Message Content"
 msgstr "محتوى الرسالة"
 
+#: admin.py:342
 #, python-brace-format
 msgid ""
 "Use {variable} syntax for placeholders. Example: \"Hello {name}, your order "
@@ -78,175 +122,260 @@ msgstr ""
 "استخدم بناء {variable} للقوالب. مثال: \"مرحباً {name}, جاهز طلبك "
 "#{order_number}.\""
 
+#: apps.py:8
 msgid "SMS System"
 msgstr "نظام الرسائل القصيرة"
 
+#: models.py:39
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:47
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:99
 msgid "Untested"
 msgstr "غير مختبر"
 
+#: models.py:40
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:43
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:91
+#: templates/admin/sms_system/wizard/complete.html:33
 msgid "Connected"
 msgstr "متصل"
 
+#: models.py:41
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:24
 msgid "Connection Failed"
 msgstr "فشل الاتصال"
 
+#: models.py:52 templates/admin/sms_system/wizard/complete.html:26
 msgid "Provider"
 msgstr "المزوّد"
 
+#: models.py:53
 msgid "SMS/messaging service provider"
 msgstr "مزود خدمة الرسائل/الرسائل القصيرة"
 
+#: models.py:62
 msgid "Provider Component"
 msgstr "مكوّن المزوّد"
 
+#: models.py:63
 msgid "Reference to installed provider component"
 msgstr "مرجع إلى مكون المزود المثبّت"
 
+#: models.py:67 templates/admin/sms_system/wizard/complete.html:22
+#: templates/admin/sms_system/wizard/step3_credentials.html:20
 msgid "Display Name"
 msgstr "اسم العرض"
 
+#: models.py:68
 msgid "Friendly name for this account"
 msgstr "اسم ودّي لهذا الحساب"
 
+#: models.py:71
 msgid "Encrypted Credentials"
 msgstr "البيانات المشفّرة"
 
+#: models.py:72
 msgid "Encrypted API credentials for this provider"
 msgstr "بيانات المصادقة المشفرة لواجهة برمجة التطبيقات لهذا المزود"
 
+#: models.py:80
 msgid "Default SMS Account"
 msgstr "الحساب الافتراضي لرسائل SMS"
 
+#: models.py:81
 msgid "Use this account for sending SMS by default"
 msgstr "استخدم هذا الحساب لإرسال رسائل SMS بشكل افتراضي"
 
+#: models.py:85
 msgid "Default WhatsApp Account"
 msgstr "الحساب الافتراضي لواتساب"
 
+#: models.py:86
 msgid "Use this account for sending WhatsApp messages by default"
 msgstr "استخدم هذا الحساب لإرسال رسائل WhatsApp بشكل افتراضي"
 
+#: models.py:97
 msgid "Last Checked"
 msgstr "التحقق الأخير"
 
+#: models.py:103
 msgid "SMS Provider Account"
 msgstr "حساب مزود خدمة الرسائل القصيرة"
 
+#: models.py:104
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:21
 msgid "SMS Provider Accounts"
 msgstr "حسابات مزودي خدمة الرسائل القصيرة"
 
+#: models.py:225
 msgid "POS Receipt"
 msgstr "فاتورة نقطة البيع"
 
+#: models.py:226
 msgid "Order Confirmation"
 msgstr "تأكيد الطلب"
 
+#: models.py:227
 msgid "Shipping Update"
 msgstr "تحديث الشحن"
 
+#: models.py:228
 msgid "Delivery Notification"
 msgstr "إشعار التسليم"
 
+#: models.py:229
 msgid "Password Reset"
 msgstr "إعادة تعيين كلمة المرور"
 
+#: models.py:230
 msgid "Verification Code"
 msgstr "كود التحقق"
 
+#: models.py:231
 msgid "Marketing"
 msgstr "التسويق"
 
+#: models.py:232
 msgid "Custom"
 msgstr "مخصص"
 
+#: models.py:239
 msgid "Template Type"
 msgstr "نوع القالب"
 
+#: models.py:243
 msgid "Name"
 msgstr "الاسم"
 
+#: models.py:246 models.py:328
 msgid "Message"
 msgstr "الرسالة"
 
+#: models.py:247
 #, python-brace-format
 msgid "Message template. Use {variable} syntax for placeholders."
 msgstr "قالب الرسالة. استخدم تركيب {variable} للمساحات المخصصة."
 
+#: models.py:257
 msgid "SMS Template"
 msgstr "نموذج رسالة SMS"
 
+#: models.py:258 templates/admin/sms_system/smstemplate/change_list.html:4
+#: templates/admin/sms_system/smstemplate/change_list.html:21
 msgid "SMS Templates"
 msgstr "قوالب رسائل SMS"
 
+#: models.py:280 templates/admin/sms_system/partials/smsoutbox_cards.html:26
+#: templates/admin/sms_system/smsoutbox/change_list.html:80
 msgid "Pending"
 msgstr "معلق"
 
+#: models.py:281 templates/admin/sms_system/partials/smsoutbox_cards.html:30
+#: templates/admin/sms_system/smsoutbox/change_list.html:81
 msgid "Queued"
 msgstr "مُخطَّط"
 
+#: models.py:282 templates/admin/sms_system/partials/smsoutbox_cards.html:34
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsoutbox/change_list.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:82
 msgid "Sent"
 msgstr "تم الإرسال"
 
+#: models.py:283 templates/admin/sms_system/partials/smsoutbox_cards.html:38
+#: templates/admin/sms_system/smsoutbox/change_list.html:43
+#: templates/admin/sms_system/smsoutbox/change_list.html:83
 msgid "Delivered"
 msgstr "تم التسليم"
 
+#: models.py:284 templates/admin/sms_system/partials/smsoutbox_cards.html:42
+#: templates/admin/sms_system/smsoutbox/change_list.html:48
+#: templates/admin/sms_system/smsoutbox/change_list.html:84
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:45
 msgid "Failed"
 msgstr "فشل"
 
+#: models.py:285 templates/admin/sms_system/partials/smsoutbox_cards.html:46
+#: templates/admin/sms_system/smsoutbox/change_list.html:85
 msgid "Skipped"
 msgstr "تم تجاوزه"
 
+#: models.py:286
+msgid "Sandbox Logged"
+msgstr "تم تسجيل الدخول إلى البيئة التجريبية"
+
+#: models.py:306
 msgid "Provider Account"
 msgstr "حساب المزوّد"
 
+#: models.py:314
 msgid "Template"
 msgstr "القالب"
 
+#: models.py:320 templates/admin/sms_system/smsoutbox/change_list.html:92
 msgid "Message Type"
 msgstr "نوع الرسالة"
 
+#: models.py:324
 msgid "Phone Number"
 msgstr "رقم الهاتف"
 
+#: models.py:325
 msgid "Recipient phone number in E.164 format"
 msgstr "رقم هاتف المستقبل بتنسيق E.164"
 
+#: models.py:339
 msgid "Provider Message ID"
 msgstr "معرّف رسالة المزود"
 
+#: models.py:340
 msgid "Message ID from the SMS provider"
 msgstr "معرّف الرسالة من مزود SMS"
 
+#: models.py:344
 msgid "Error Message"
 msgstr "رسالة الخطأ"
 
+#: models.py:349
 msgid "Skip Reason"
 msgstr "سبب التخطي"
 
+#: models.py:350
 msgid ""
 "Reason why SMS was skipped (e.g., user_preference_disabled, unsubscribed)"
 msgstr ""
 "السبب الذي دفع إلى تجاهل الرسائل القصيرة (مثلاً: تفضيلات المستخدم معطلة، "
 "الغاء الاشتراك)"
 
+#: models.py:354
 msgid "Retry Count"
 msgstr "عدد محاولات إعادة الإرسال"
 
+#: models.py:360
 msgid "Queued At"
 msgstr "تم ترتيبها في"
 
+#: models.py:365
 msgid "Sent At"
 msgstr "تم إرسالها في"
 
+#: models.py:370
 msgid "Delivered At"
 msgstr "تم توصيلها في"
 
+#: models.py:374 models.py:375
 msgid "SMS Outbox"
 msgstr "صندوق إخراج الرسائل القصيرة"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:64
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:69
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "ago"
 msgstr "منذ"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:75
 #, python-format
 msgid "%(counter)s retry"
 msgid_plural "%(counter)s retries"
@@ -257,30 +386,42 @@ msgstr[3] "%(counter)s محاولة"
 msgstr[4] "%(counter)s محاولة"
 msgstr[5] "%(counter)s محاولة"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:88
 msgid "View"
 msgstr "عرض"
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:100
 msgid "No messages found matching your criteria."
 msgstr "لم يتم العثور على رسائل تتطابق مع معاييرك."
 
+#: templates/admin/sms_system/partials/smsoutbox_cards.html:101
 msgid "Try adjusting your filters or search terms."
 msgstr "حاول تعديل فلاترك أو كلمات البحث الخاصة بك."
 
+#: templates/admin/sms_system/provider_browse.html:4
+#: templates/admin/sms_system/provider_browse.html:36
 msgid "Browse SMS Providers"
 msgstr "تصفح مزودي خدمة الرسائل القصيرة"
 
+#: templates/admin/sms_system/provider_browse.html:4
 msgid "Site Admin"
 msgstr "مدير الموقع"
 
+#: templates/admin/sms_system/provider_browse.html:25
 msgid "Home"
 msgstr "الرئيسية"
 
+#: templates/admin/sms_system/provider_browse.html:26
 msgid "SMS Accounts"
 msgstr "حسابات الرسائل القصيرة"
 
+#: templates/admin/sms_system/provider_browse.html:27
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:33
+#: templates/admin/sms_system/wizard/step1_select.html:58
 msgid "Browse Providers"
 msgstr "تصفح المزودين"
 
+#: templates/admin/sms_system/provider_browse.html:38
 msgid ""
 "Choose an SMS provider to integrate with your store. Send transactional SMS "
 "and WhatsApp messages to your customers."
@@ -288,18 +429,22 @@ msgstr ""
 "اختر مزود SMS لدمجه مع متجرك. أرسل رسائل SMS ورسائل WhatsApp الترفيهية "
 "لعملائك."
 
+#: templates/admin/sms_system/provider_browse.html:45
 msgid "Update Server Unavailable"
 msgstr "خادم التحديث غير متاح"
 
+#: templates/admin/sms_system/provider_browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr ""
 "لم يتم الاتصال بخادم التحديث. سيتم عرض مزوّدي الخدمة المثبتين محليًا فقط."
 
+#: templates/admin/sms_system/provider_browse.html:57
 msgid "SMS Provider Marketplace"
 msgstr "سوق مزوّد الرسائل القصيرة"
 
+#: templates/admin/sms_system/provider_browse.html:69
 msgid ""
 "Here you can discover and configure SMS providers to send transactional "
 "messages, including order confirmations, shipping updates, and delivery "
@@ -308,36 +453,47 @@ msgstr ""
 "هنا يمكنك اكتشاف وتكوين مزودي SMS لإرسال رسائل ترفيهية، بما في ذلك تأكيدات "
 "الطلبات، تحديثات الشحن، والإشعارات عند التسليم."
 
+#: templates/admin/sms_system/provider_browse.html:76
 msgid "Capabilities:"
 msgstr "المهارات:"
 
+#: templates/admin/sms_system/provider_browse.html:81
 msgid "Send SMS order confirmations and shipping notifications"
 msgstr "إرسال تأكيدات الطلبات وتحديثات الشحن عبر SMS"
 
+#: templates/admin/sms_system/provider_browse.html:85
 msgid "WhatsApp Business messaging support"
 msgstr "دعم الرسائل التجارية لواتساب"
 
+#: templates/admin/sms_system/provider_browse.html:89
 msgid "Delivery status tracking and webhooks"
 msgstr "تتبع حالة التسليم و ويب هوك"
 
+#: templates/admin/sms_system/provider_browse.html:93
 msgid "POS digital receipts via SMS"
 msgstr "إيصالات نقاط البيع الرقمية عبر الرسائل القصيرة"
 
+#: templates/admin/sms_system/provider_browse.html:101
 msgid "Getting Started:"
 msgstr "البدء:"
 
+#: templates/admin/sms_system/provider_browse.html:104
 msgid "Browse providers below and select your SMS service"
 msgstr "استعرض مزوّدي الخدمة أدناه واختر خدمة الرسائل النصية الخاصة بك"
 
+#: templates/admin/sms_system/provider_browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "انقر على 'تثبيت' لإضافة مزوّد الخدمة إلى متجرك"
 
+#: templates/admin/sms_system/provider_browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr "اتبع دليل التكوين لتكوين بيانات الاعتماد الخاصة بـ API"
 
+#: templates/admin/sms_system/provider_browse.html:107
 msgid "Test the connection and start sending messages"
 msgstr "جرب الاتصال وابدأ بإرسال الرسائل"
 
+#: templates/admin/sms_system/provider_browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -372,51 +528,70 @@ msgstr[5] ""
 "                    %(counter)s مزود مثبت\n"
 "                "
 
+#: templates/admin/sms_system/provider_browse.html:140
 msgid "MMS"
 msgstr "MMS"
 
+#: templates/admin/sms_system/provider_browse.html:143
 msgid "Filter"
 msgstr "فلتر"
 
+#: templates/admin/sms_system/provider_browse.html:145
 msgid "Clear"
 msgstr "مسح"
 
+#: templates/admin/sms_system/provider_browse.html:157
 msgid "Installed Providers"
 msgstr "المزوّدون المثبتون"
 
+#: templates/admin/sms_system/provider_browse.html:168
 msgid "Update Available"
 msgstr "تحديث متوفر"
 
+#: templates/admin/sms_system/provider_browse.html:191
 msgid "Installed"
 msgstr "مثبت"
 
+#: templates/admin/sms_system/provider_browse.html:234
 msgid "Delivery Reports"
 msgstr "تقارير التسليم"
 
+#: templates/admin/sms_system/provider_browse.html:260
 msgid "Update"
 msgstr "تحديث"
 
+#: templates/admin/sms_system/provider_browse.html:265
 msgid "Configure"
 msgstr "Configure"
 
+#: templates/admin/sms_system/provider_browse.html:274
+#: templates/admin/sms_system/provider_browse.html:377
 msgid "View Details"
 msgstr "عرض التفاصيل"
 
+#: templates/admin/sms_system/provider_browse.html:282
+#: templates/admin/sms_system/provider_browse.html:385
 msgid "Learn More"
 msgstr "المزيد من المعلومات"
 
+#: templates/admin/sms_system/provider_browse.html:298
 msgid "Available from Marketplace"
 msgstr "متاح من السوق"
 
+#: templates/admin/sms_system/provider_browse.html:324
 msgid "Available"
 msgstr "متوفر"
 
+#: templates/admin/sms_system/provider_browse.html:369
 msgid "Install"
 msgstr "تثبيت"
 
+#: templates/admin/sms_system/provider_browse.html:402
+#: templates/admin/sms_system/wizard/step1_select.html:55
 msgid "No Providers Available"
 msgstr "لا توجد مزودين متاحين"
 
+#: templates/admin/sms_system/provider_browse.html:403
 msgid ""
 "No SMS providers are currently available. Please check your update server "
 "connection or contact support."
@@ -424,270 +599,382 @@ msgstr ""
 "لا توجد مزودين لـ SMS متاحين حاليًا. يرجى التحقق من اتصال خادم التحديث أو "
 "الاتصال بدعم العملاء."
 
+#: templates/admin/sms_system/provider_browse.html:412
 msgid "Installing provider..."
 msgstr "جارٍ تثبيت المزود..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:4
+#: templates/admin/sms_system/smsoutbox/change_list.html:21
 msgid "Message Log"
 msgstr "سجل الرسائل"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:23
 msgid "Track sent SMS and WhatsApp messages"
 msgstr "تتبع الرسائل SMS ورسائل WhatsApp المرسلة"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:28
 msgid "Overview"
 msgstr "نظرة عامة"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:33
 msgid "Total Messages"
 msgstr "إجمالي الرسائل"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:57
 msgid "Filters"
 msgstr "المرشحات"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:68
 msgid "Search"
 msgstr "البحث"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:70
 msgid "Phone number or message..."
 msgstr "رقم الهاتف أو الرسالة..."
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:79
 msgid "All Statuses"
 msgstr "جميع الحالات"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:95
 msgid "All Types"
 msgstr "جميع الأنواع"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:106
 msgid "Apply Filters"
 msgstr "تطبيق المرشحات"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:109
 msgid "Clear All"
 msgstr "مسح الكل"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:117
 msgid "Messages"
 msgstr "الرسائل"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:120
 msgid "messages"
 msgstr "رسائل"
 
+#: templates/admin/sms_system/smsoutbox/change_list.html:130
 msgid "Loading messages..."
 msgstr "جارٍ تحميل الرسائل..."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:22
 msgid "Edit SMS Provider"
 msgstr "تحرير مزود الرسائل القصيرة"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:4
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:24
 msgid "Add SMS Provider"
 msgstr "إضافة مزود الرسائل القصيرة"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:30
 msgid "Created"
 msgstr "تم الإنشاء"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:53
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:253
 msgid "Save and continue editing"
 msgstr "حفظ والانتقال إلى التحرير"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:56
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:252
 msgid "Save"
 msgstr "حفظ"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:69
 msgid "Please correct the errors below"
 msgstr "يرجى تصحيح الأخطاء أدناه"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:95
 msgid "Basic"
 msgstr "أساسية"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:99
+#: templates/admin/sms_system/wizard/base.html:45
 msgid "Credentials"
 msgstr "الهويات"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:103
 msgid "Defaults"
 msgstr "الافتراضات"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:119
 msgid "Basic Information"
 msgstr "المعلومات الأساسية"
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:165
 msgid "Select a provider in the Basic tab to see credential fields."
 msgstr "اختر مزودًا في علامة التبويب الأساسية لرؤية حقول بيانات الاعتماد."
 
+#: templates/admin/sms_system/smsprovideraccount/change_form.html:179
 msgid "Configure which messaging channels use this provider by default."
 msgstr "حدد أي قنوات الرسائل ستستخدم هذا المزود افتراضيًا."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:23
 msgid "Manage your SMS and WhatsApp provider connections"
 msgstr "إدارة اتصالات مزودي SMS وWhatsApp"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:28
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:131
 msgid "Setup Wizard"
 msgstr "دليل الإعداد"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:42
 msgid "Provider Accounts"
 msgstr "حسابات المزوّدين"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:45
 msgid "accounts"
 msgstr "حسابات"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:108
 msgid "Last checked"
 msgstr "التحقق الأخير"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:115
+#: templates/admin/sms_system/smstemplate/change_list.html:100
 msgid "Edit"
 msgstr "تحرير"
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:127
 msgid "No provider accounts configured."
 msgstr "لم يتم تكوين حسابات مزوّد."
 
+#: templates/admin/sms_system/smsprovideraccount/change_list.html:128
 msgid "Use the Setup Wizard to add one."
 msgstr "استخدم مساعد التكوين لإضافته."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:23
 msgid "Manage message templates for SMS and WhatsApp notifications"
 msgstr "إدارة قوالب الرسائل لرسائل SMS وWhatsApp"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:27
+#: templates/admin/sms_system/smstemplate/change_list.html:118
 msgid "Add Template"
 msgstr "إضافة قالب"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:35
 msgid "Templates"
 msgstr "القوالب"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:38
 msgid "templates"
 msgstr "القوالب"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:94
 msgid "Updated"
 msgstr "تم التحديث"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:103
 msgid "Delete"
 msgstr "حذف"
 
+#: templates/admin/sms_system/smstemplate/change_list.html:115
 msgid "No SMS templates configured yet."
 msgstr "لم يتم تكوين قوالب الرسائل القصيرة بعد."
 
+#: templates/admin/sms_system/smstemplate/change_list.html:116
 msgid "Create a template to get started with SMS notifications."
 msgstr "أنشئ نموذجًا للبدء بإشعارات SMS."
 
+#: templates/admin/sms_system/wizard/base.html:4
 msgid "SMS Provider Setup"
 msgstr "إعداد مزود الرسائل القصيرة"
 
+#: templates/admin/sms_system/wizard/base.html:17
 msgid "SMS Provider Setup Wizard"
 msgstr "دليل إعداد مزوّد الرسائل القصيرة"
 
+#: templates/admin/sms_system/wizard/base.html:18
 msgid "Follow these steps to connect your SMS provider"
 msgstr "اتبع هذه الخطوات لربط مزود SMS الخاص بك"
 
+#: templates/admin/sms_system/wizard/base.html:27
 msgid "Select"
 msgstr "اختر"
 
+#: templates/admin/sms_system/wizard/base.html:36
 msgid "Instructions"
 msgstr "التعليمات"
 
+#: templates/admin/sms_system/wizard/base.html:54
 msgid "Test"
 msgstr "اختبار"
 
+#: templates/admin/sms_system/wizard/base.html:61
 msgid "Complete"
 msgstr "اكتمال"
 
+#: templates/admin/sms_system/wizard/complete.html:4
+#: templates/admin/sms_system/wizard/complete.html:5 views.py:365
 msgid "Setup Complete"
 msgstr "الإعداد مكتمل"
 
+#: templates/admin/sms_system/wizard/complete.html:11
 msgid "Your SMS provider has been configured!"
 msgstr "تم تكوين مزود SMS الخاص بك!"
 
+#: templates/admin/sms_system/wizard/complete.html:12
 msgid "You can now send SMS and WhatsApp messages from your store."
 msgstr "يمكنك الآن إرسال رسائل SMS وWhatsApp من متجرك."
 
+#: templates/admin/sms_system/wizard/complete.html:19
+#: templates/admin/sms_system/wizard/step4_test.html:37
 msgid "Account Details"
 msgstr "تفاصيل الحساب"
 
+#: templates/admin/sms_system/wizard/complete.html:43
+#: templates/admin/sms_system/wizard/complete.html:53
 msgid "Yes"
 msgstr "نعم"
 
+#: templates/admin/sms_system/wizard/complete.html:45
+#: templates/admin/sms_system/wizard/complete.html:55
 msgid "No"
 msgstr "لا"
 
+#: templates/admin/sms_system/wizard/complete.html:65
 msgid "What's Next?"
 msgstr "ما الذي يلي؟"
 
+#: templates/admin/sms_system/wizard/complete.html:71
 msgid "Configure SMS templates"
 msgstr "تكوين قوالب الرسائل القصيرة"
 
+#: templates/admin/sms_system/wizard/complete.html:75
 msgid "View message logs"
 msgstr "عرض سجلات الرسائل"
 
+#: templates/admin/sms_system/wizard/complete.html:79
 msgid "Add another provider"
 msgstr "إضافة مزوّد آخر"
 
+#: templates/admin/sms_system/wizard/complete.html:90
 msgid "View All Accounts"
 msgstr "عرض جميع الحسابات"
 
+#: templates/admin/sms_system/wizard/step1_select.html:4
+#: templates/admin/sms_system/wizard/step1_select.html:5 views.py:85
 msgid "Select SMS Provider"
 msgstr "اختر مزوّد الرسائل القصيرة"
 
+#: templates/admin/sms_system/wizard/step1_select.html:9
 msgid "Select a Provider"
 msgstr "اختر مزودًا"
 
+#: templates/admin/sms_system/wizard/step1_select.html:10
 msgid "Choose the SMS provider you want to configure."
 msgstr "اختر مزود SMS الذي ترغب في تكوينه."
 
+#: templates/admin/sms_system/wizard/step1_select.html:56
 msgid ""
 "No SMS providers are installed. Install providers from the provider browse "
 "page."
 msgstr "لا توجد مزودين لـ SMS مثبتين. قم بتثبيت مزودين من صفحة عرض المزودين."
 
+#: templates/admin/sms_system/wizard/step1_select.html:68
 msgid "Cancel"
 msgstr "إلغاء"
 
+#: templates/admin/sms_system/wizard/step1_select.html:72
+#: templates/admin/sms_system/wizard/step2_instructions.html:46
+#: templates/admin/sms_system/wizard/step3_credentials.html:98
 msgid "Next"
 msgstr "التالي"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:4
+#: templates/admin/sms_system/wizard/step2_instructions.html:5
+#: templates/admin/sms_system/wizard/step2_instructions.html:9 views.py:148
 msgid "Setup Instructions"
 msgstr "تعليمات التثبيت"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:10
 msgid "Follow these instructions to set up your provider account."
 msgstr "اتبع هذه التعليمات لتكوين حساب مزودك."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:27
 msgid "No specific setup instructions available"
 msgstr "لا توجد تعليمات إعداد محددة متاحة"
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:28
 msgid "Please proceed to enter your credentials."
 msgstr "يرجى المتابعة لتسجيل بيانات الاعتماد الخاصة بك."
 
+#: templates/admin/sms_system/wizard/step2_instructions.html:43
+#: templates/admin/sms_system/wizard/step3_credentials.html:95
+#: templates/admin/sms_system/wizard/step4_test.html:94
 msgid "Back"
 msgstr "العودة"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:4
+#: templates/admin/sms_system/wizard/step3_credentials.html:5
+#: templates/admin/sms_system/wizard/step3_credentials.html:9 views.py:193
 msgid "Enter Credentials"
 msgstr "إدخال المصادقة"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:10
 #, python-format
 msgid "Enter the credentials from your %(name)s account."
 msgstr "أدخل بيانات الاعتماد من حساب %(name)s."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:17
 msgid "Account Name"
 msgstr "اسم الحساب"
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:26
 msgid "A friendly name to identify this account."
 msgstr "اسم ودّي لتحديد هذه الحساب."
 
+#: templates/admin/sms_system/wizard/step3_credentials.html:86
 msgid "Your credentials are encrypted before being stored."
 msgstr "تُشفّر بيانات الاعتماد الخاصة بك قبل تخزينها."
 
+#: templates/admin/sms_system/wizard/step4_test.html:4
+#: templates/admin/sms_system/wizard/step4_test.html:5
+#: templates/admin/sms_system/wizard/step4_test.html:9 views.py:281
 msgid "Test Connection"
 msgstr "اختبار الاتصال"
 
+#: templates/admin/sms_system/wizard/step4_test.html:10
 msgid "We've tested the connection to your provider."
 msgstr "لقد قمنا بفحص الاتصال بموفر الخدمة الخاص بك."
 
+#: templates/admin/sms_system/wizard/step4_test.html:22
 msgid "Connection Successful"
 msgstr "تمت العملية بنجاح"
 
+#: templates/admin/sms_system/wizard/step4_test.html:29
 msgid "Successfully connected to the SMS provider."
 msgstr "تم الاتصال بنجاح بمزوّد الرسائل القصيرة (SMS)."
 
+#: templates/admin/sms_system/wizard/step4_test.html:31
 msgid "Failed to connect to the SMS provider."
 msgstr "فشل الاتصال بمزوّد الرسائل القصيرة (SMS)."
 
+#: templates/admin/sms_system/wizard/step4_test.html:40
 msgid "Account"
 msgstr "الحساب"
 
+#: templates/admin/sms_system/wizard/step4_test.html:55
 msgid "Configure how this account should be used."
 msgstr "قم بتكوين كيفية استخدام هذا الحساب."
 
+#: templates/admin/sms_system/wizard/step4_test.html:60
 msgid "Set as default for SMS messages"
 msgstr "تحديد كافتراضي للرسائل القصيرة (SMS)"
 
+#: templates/admin/sms_system/wizard/step4_test.html:68
 msgid "Set as default for WhatsApp messages"
 msgstr "تحديد كافتراضي للرسائل عبر واتساب"
 
+#: templates/admin/sms_system/wizard/step4_test.html:78
 msgid "Connection test failed"
 msgstr "فشل اختبار الاتصال"
 
+#: templates/admin/sms_system/wizard/step4_test.html:79
 msgid ""
 "Check your credentials and try again, or save anyway if you're sure they're "
 "correct."
@@ -695,84 +982,108 @@ msgstr ""
 "تحقق من بيانات الاعتماد الخاصة بك وحاول مرة أخرى، أو احفظها إذا كنت متأكدًا "
 "من صحتها."
 
+#: templates/admin/sms_system/wizard/step4_test.html:82
 msgid "Save account anyway (not recommended)"
 msgstr "احفظ الحساب بأي حال (ليس موصى به)"
 
+#: templates/admin/sms_system/wizard/step4_test.html:97
 msgid "Create Account"
 msgstr "إنشاء حساب"
 
+#: views.py:97
 msgid "Please select a provider"
 msgstr "يرجى اختيار مزود"
 
+#: views.py:102
 msgid "Selected provider is not available"
 msgstr "المزود المحدد غير متوفر"
 
+#: views.py:131 views.py:183
 msgid "Provider not found"
 msgstr "لم يتم العثور على المزود"
 
+#: views.py:211
 msgid "Unable to get credential schema"
 msgstr "لا يمكن الحصول على نموذج بيانات الاعتماد"
 
+#: views.py:228
 #, python-format
 msgid "Missing required fields: %(fields)s"
 msgstr "الحقول المطلوبة مفقودة: %(fields)s"
 
+#: views.py:304
 msgid "Connection test failed. Check your credentials and try again."
 msgstr "فشل اختبار الاتصال. تحقق من بيانات الاعتماد الخاصة بك وحاول مرة أخرى."
 
+#: views.py:328
 msgid "SMS provider account created successfully!"
 msgstr "تم إنشاء حساب مزود الرسائل النصية النصية بنجاح!"
 
+#: views.py:333
 #, python-format
 msgid "Failed to create account: %(error)s"
 msgstr "فشل إنشاء الحساب: %(error)s"
 
+#: views.py:424
 msgid "SMS Providers"
 msgstr "مزودو الرسائل النصية"
 
+#: views.py:525
 msgid "Provider is already installed. Configure it now."
 msgstr "الספק مثبت بالفعل. قم بتكوينه الآن."
 
+#: views.py:554 views.py:701
 msgid "Provider not found on update server."
 msgstr "لم يتم العثور على مزود على خادم التحديث."
 
+#: views.py:567
 msgid "Could not determine provider version."
 msgstr "لم تتمكن من تحديد إصدار مزود الخدمة."
 
+#: views.py:590
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "فشل تنزيل مزود: %(error)s"
 
+#: views.py:602
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "فشل تثبيت مزود: %(error)s"
 
+#: views.py:630
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "تم تثبيت المزود \"%(name)s\" بنجاح! قم بتكوينه الآن."
 
+#: views.py:669
 msgid "Provider not installed."
 msgstr "لم يتم تثبيت المزود."
 
+#: views.py:686
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "لم تتمكن من الاتصال بخادم التحديث: %(error)s"
 
+#: views.py:713
 msgid "Could not determine latest version."
 msgstr "لم تتمكن من تحديد أحدث إصدار."
 
+#: views.py:723
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "المزود \"%(name)s\" بالفعل محدث (v%(version)s)."
 
+#: views.py:739
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "فشل تنزيل التحديث: %(error)s"
 
+#: views.py:750
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "فشل تثبيت التحديث: %(error)s"
 
+#: views.py:780
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "تم تحديث المزود \"%(name)s\" بنجاح إلى v%(version)s!"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,113 +18,310 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:53 templates/admin/domain_ssl/custom_domain.html:4
+#| msgid "Previous Domain"
+msgid "Custom Domain"
+msgstr "自定義域名"
+
+#: apps.py:8
 msgid "Domain & SSL"
 msgstr "域名與 SSL"
 
+#: models.py:13
 msgid "None (HTTP only)"
 msgstr "無 (僅 HTTP)"
 
+#: models.py:14
 msgid "Let's Encrypt (HTTP-01)"
 msgstr "Let's Encrypt (HTTP-01)"
 
+#: models.py:15
 msgid "Let's Encrypt (DNS-01)"
 msgstr "Let's Encrypt (DNS-01)"
 
+#: models.py:16
 msgid "Cloudflare Origin CA"
 msgstr "Cloudflare Origin CA"
 
+#: models.py:17
 msgid "Custom Certificate"
 msgstr "自訂憑證"
 
+#: models.py:18
 msgid "Self-Signed"
 msgstr "自簽証書"
 
+#: models.py:19
 msgid "Managed Externally"
 msgstr "外部管理"
 
+#: models.py:22
 msgid "Idle"
 msgstr "閒置"
 
+#: models.py:23
 msgid "Validating DNS"
 msgstr "驗證 DNS"
 
+#: models.py:24
 msgid "Configuring"
 msgstr "配置中"
 
+#: models.py:25
 msgid "Obtaining Certificate"
 msgstr "取得證書"
 
+#: models.py:26
 msgid "Reloading Services"
 msgstr "重新載入服務"
 
+#: models.py:27
 msgid "Error"
 msgstr "錯誤"
 
+#: models.py:34
 msgid "Domain"
 msgstr "域名"
 
+#: models.py:35
 msgid "Fully qualified domain name (e.g., shop.example.com)"
 msgstr "完整的網域名稱（例如：shop.example.com）"
 
+#: models.py:41
 msgid "Previous Domain"
 msgstr "先前域名"
 
+#: models.py:42
 msgid "Domain before the last change, for rollback tracking"
 msgstr "上次更改前的網域名稱，用於回滾追蹤"
 
+#: models.py:50
 msgid "SSL Mode"
 msgstr "SSL 模式"
 
+#: models.py:58
 msgid "Certificate Domain"
 msgstr "證書域名"
 
+#: models.py:64
 msgid "Certificate Issuer"
 msgstr "證書頒發機構"
 
+#: models.py:69
 msgid "Certificate Expiry"
 msgstr "證書到期日"
 
+#: models.py:74
 msgid "Certificate Obtained"
 msgstr "證書取得時間"
 
+#: models.py:78
 msgid "Wildcard Certificate"
 msgstr "萬用證書"
 
+#: models.py:85
 msgid "Cloudflare API Token"
 msgstr "Cloudflare API 令牌"
 
+#: models.py:86
 msgid "API token for DNS-01 challenges or Origin CA"
 msgstr "用於 DNS-01 挑战或 Origin CA 的 API 令牌"
 
+#: models.py:92
 msgid "Cloudflare Zone ID"
 msgstr "Cloudflare 區域 ID"
 
+#: models.py:99
 msgid "Admin Email"
 msgstr "管理員郵箱"
 
+#: models.py:100
 msgid "Contact email for Let's Encrypt notifications"
 msgstr "Let's Encrypt 通知的聯繫郵箱"
 
+#: models.py:108
 msgid "Status"
 msgstr "狀態"
 
+#: models.py:113
 msgid "Last Error"
 msgstr "上次錯誤"
 
+#: models.py:119
 msgid "Active Task ID"
 msgstr "活動任務 ID"
 
+#: models.py:120
 msgid "Celery task ID for the current operation"
 msgstr "當前操作的 Celery 任務 ID"
 
+#: models.py:126
 msgid "Auto-Renew"
 msgstr "自動續約"
 
+#: models.py:127
 msgid "Automatically renew certificates before expiry"
 msgstr "在證書到期前自動續約"
 
+#: models.py:135 models.py:136
 msgid "Domain Configuration"
 msgstr "域名設定"
 
+#: models.py:141
 msgid "No domain configured"
 msgstr "未配置域名"
+
+#: templates/admin/domain_ssl/custom_domain.html:12
+msgid "Your Store Domain"
+msgstr "您的商店域名"
+
+#: templates/admin/domain_ssl/custom_domain.html:17
+#| msgid "Domain Configuration"
+msgid "Loading domain configuration..."
+msgstr "正在加載域名配置..."
+
+#: templates/admin/domain_ssl/custom_domain.html:21
+msgid "Current URL"
+msgstr "目前的 URL"
+
+#: templates/admin/domain_ssl/custom_domain.html:25
+msgid "Custom Domain Active"
+msgstr "自定義域名已啟用"
+
+#: templates/admin/domain_ssl/custom_domain.html:29
+#| msgid "Previous Domain"
+msgid "Remove Custom Domain"
+msgstr "移除自定義域名"
+
+#: templates/admin/domain_ssl/custom_domain.html:39
+msgid "Connect Your Own Domain"
+msgstr "連接您自己的域名"
+
+#: templates/admin/domain_ssl/custom_domain.html:45
+msgid "Use your own domain name instead of the default myspwig.com address."
+msgstr "使用您自己的域名，而非預設的 myspwig.com 地址。"
+
+#: templates/admin/domain_ssl/custom_domain.html:47
+#| msgid "No domain configured"
+msgid "Your domain name"
+msgstr "您的域名"
+
+#: templates/admin/domain_ssl/custom_domain.html:52
+msgid "Enter the full domain (e.g., www.yourstore.com or shop.yourdomain.com)"
+msgstr "輸入完整的域名（例如：www.yourstore.com 或 shop.yourdomain.com）"
+
+#: templates/admin/domain_ssl/custom_domain.html:56
+msgid "Continue"
+msgstr "繼續"
+
+#: templates/admin/domain_ssl/custom_domain.html:63
+msgid "Point your domain to your store"
+msgstr "將您的域名指向您的商店"
+
+#: templates/admin/domain_ssl/custom_domain.html:64
+msgid "Add these two DNS records in your domain registrar's settings:"
+msgstr "在您的域名註冊商設定中新增這兩個DNS記錄："
+
+#: templates/admin/domain_ssl/custom_domain.html:71
+#| msgid "Domain"
+msgid "Domain Pointer"
+msgstr "域名指針"
+
+#: templates/admin/domain_ssl/custom_domain.html:75
+#: templates/admin/domain_ssl/custom_domain.html:103
+msgid "Type"
+msgstr "類型"
+
+#: templates/admin/domain_ssl/custom_domain.html:79
+#: templates/admin/domain_ssl/custom_domain.html:107
+msgid "Name"
+msgstr "名稱"
+
+#: templates/admin/domain_ssl/custom_domain.html:81
+#: templates/admin/domain_ssl/custom_domain.html:88
+#: templates/admin/domain_ssl/custom_domain.html:109
+#: templates/admin/domain_ssl/custom_domain.html:116
+msgid "Copy"
+msgstr "複製"
+
+#: templates/admin/domain_ssl/custom_domain.html:86
+#: templates/admin/domain_ssl/custom_domain.html:114
+msgid "Value"
+msgstr "值"
+
+#: templates/admin/domain_ssl/custom_domain.html:99
+msgid "Ownership Verification"
+msgstr "所有權驗證"
+
+#: templates/admin/domain_ssl/custom_domain.html:125
+msgid "How do I add DNS records?"
+msgstr "如何新增DNS記錄？"
+
+#: templates/admin/domain_ssl/custom_domain.html:127
+msgid ""
+"Log in to your domain registrar (where you bought your domain) and find the "
+"DNS settings. Common registrars:"
+msgstr "登入您的域名註冊商（您購買域名的地方），並找到 DNS 設定。常見的註冊商："
+
+#: templates/admin/domain_ssl/custom_domain.html:129
+msgid "My Products > DNS > Manage"
+msgstr "我的產品 > DNS > 管理"
+
+#: templates/admin/domain_ssl/custom_domain.html:130
+msgid "Domain List > Manage > Advanced DNS"
+msgstr "域名列表 > 管理 > 高級 DNS"
+
+#: templates/admin/domain_ssl/custom_domain.html:131
+msgid "DNS > Records > Add Record"
+msgstr "DNS > 記錄 > 新增記錄"
+
+#: templates/admin/domain_ssl/custom_domain.html:132
+msgid "DNS > Custom Records"
+msgstr "DNS > 自定義記錄"
+
+#: templates/admin/domain_ssl/custom_domain.html:134
+msgid ""
+"DNS changes can take up to 24 hours to propagate worldwide, but usually take"
+" effect within minutes."
+msgstr "DNS 更改可能需要最多 24 小時在全球範圍內傳播，但通常在幾分鐘內生效。"
+
+#: templates/admin/domain_ssl/custom_domain.html:140
+msgid "I've added these records - Verify"
+msgstr "我已新增這些記錄 - 驗證"
+
+#: templates/admin/domain_ssl/custom_domain.html:143
+msgid "Cancel"
+msgstr "取消"
+
+#: templates/admin/domain_ssl/custom_domain.html:152
+msgid "Checking your DNS records..."
+msgstr "正在檢查您的DNS記錄..."
+
+#: templates/admin/domain_ssl/custom_domain.html:158
+msgid "Domain connected!"
+msgstr "域名已連接！"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "Your store will be available at"
+msgstr "您的商店將會在"
+
+#: templates/admin/domain_ssl/custom_domain.html:159
+msgid "shortly."
+msgstr "不久後。"
+
+#: templates/admin/domain_ssl/custom_domain.html:160
+msgid "SSL certificate provisioning may take a few minutes."
+msgstr "SSL 證書的配置可能需要幾分鐘。"
+
+#: templates/admin/domain_ssl/custom_domain.html:166
+msgid "Records not found yet"
+msgstr "尚未找到記錄"
+
+#: templates/admin/domain_ssl/custom_domain.html:168
+msgid ""
+"DNS changes can take up to 24 hours. You can try again later from this page."
+msgstr "DNS 更改可能需要最長達 24 小時。您稍後可以從此頁面再次嘗試。"
+
+#: templates/admin/domain_ssl/custom_domain.html:170
+msgid "Try Again"
+msgstr "重試"

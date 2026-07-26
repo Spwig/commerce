@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <LL@li.org>\n"
@@ -18,62 +18,69 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:71
 msgid "Provider Information"
 msgstr "प्रोवाइडर जानकारी"
 
+#: admin.py:75
 msgid ""
 "Component and User cannot be changed after creation for security and audit "
 "purposes."
 msgstr ""
-"सुरक्षा और परीक्षण के उद्देश्य से घटक और उपयोगकर्ता को बनाने के बाद बदला नहीं जा सकता।"
+"सुरक्षा और परीक्षण के उद्देश्य से घटक और उपयोगकर्ता को बनाने के बाद बदला "
+"नहीं जा सकता।"
 
-msgid "Payment Configuration"
-msgstr "भुगतान विन्यास"
-
-msgid ""
-"Configure which payment methods are offered to customers. Leave empty to "
-"show all available methods."
-msgstr ""
-"ग्राहकों के लिए कौन-से भुगतान विधियां प्रदान की जाएं। खाली छोड़ें ताकि सभी उपलब्ध विधियां "
-"दिखाई दें।"
-
+#: admin.py:79
 msgid "Configuration"
 msgstr "संfiguration"
 
+#: admin.py:80 admin.py:172
+#: templates/admin/payment_providers/payment_dashboard.html:417
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:73
 msgid "Status"
 msgstr "स्थिति"
 
+#: admin.py:82
 msgid "Payment Method Synchronization"
 msgstr "भुगतान विधि संगति"
 
+#: admin.py:92
 msgid "Payment methods can be synced from your provider account. "
 msgstr "आपके प्रदाता खाते से भुगतान विधि सिंक की जा सकती हैं।"
 
+#: admin.py:96
 msgid "Sync Payment Methods Now"
 msgstr "अब भुगतान विधि संगति करें"
 
+#: admin.py:100
 msgid "Save the account first to enable payment method synchronization."
 msgstr "भुगतान विधि सिंक को सक्षम करने के लिए पहले खाता सहेजें।"
 
+#: admin.py:104
 msgid "Connection Health"
 msgstr "कनेक्शन स्वास्थ्य"
 
+#: admin.py:109
 msgid ""
-"Connection health is automatically updated when you test the connection from "
-"the wizard."
+"Connection health is automatically updated when you test the connection from"
+" the wizard."
 msgstr ""
-"जब आप विजार्ड से कनेक्शन का परीक्षण करते हैं तो कनेक्शन के स्वास्थ्य का अपडेट स्वचालित रूप से "
-"किया जाता है।"
+"जब आप विजार्ड से कनेक्शन का परीक्षण करते हैं तो कनेक्शन के स्वास्थ्य का "
+"अपडेट स्वचालित रूप से किया जाता है।"
 
+#: admin.py:113
 msgid "Metadata"
 msgstr "मेटाडेटा"
 
+#: admin.py:120
 msgid "Create Provider"
 msgstr "प्रोवाइडर बनाएं"
 
+#: admin.py:127
 msgid "Please use the Payment Provider Connection Wizard"
 msgstr "कृपया भुगतान प्रदाता कनेक्शन विजार्ड का उपयोग करें।"
 
+#: admin.py:131
 #, python-format
 msgid ""
 "For the best experience, please use the <a href=\"%(url)s\">Provider "
@@ -82,242 +89,368 @@ msgstr ""
 "सर्वोत्तम अनुभव के लिए, कृपया नए प्रोवाइडर को सेट अप करने के लिए <a "
 "href=\"%(url)s\">प्रोवाइडर कनेक्शन विजार्ड</a> का उपयोग करें।"
 
+#: admin.py:148
 msgid "Name"
 msgstr "नाम"
 
+#: admin.py:164
 msgid "Connection"
 msgstr "कनेक्शन"
 
+#: admin.py:180 templates/admin/payment_providers/payment_dashboard.html:334
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:79
 msgid "Default"
 msgstr "डिफ़ॉल्ट"
 
+#: admin.py:192
+#: templates/admin/payment_providers/wizard/step3_credentials.html:195
 msgid "Checkout Mode"
 msgstr "चेकआउट मोड"
 
+#: admin.py:194
 msgid "Environment"
 msgstr "वातावरण"
 
+#: admin.py:330
 msgid "Connection test completed"
 msgstr "कनेक्शन परीक्षण पूरा हो गया"
 
+#: admin.py:336 admin.py:359 admin.py:383 admin.py:446 admin.py:539
+#: admin.py:598 admin.py:648 admin.py:688 services/webhook_service.py:114
 msgid "Provider account not found"
 msgstr "प्रोवाइडर खाता नहीं मिला"
 
+#: admin.py:342
 #, python-format
 msgid "Connection test failed: %(error)s"
 msgstr "कनेक्शन परीक्षण विफल रहा: %(error)s"
 
+#: admin.py:356
 msgid "Set as default provider"
 msgstr "डिफ़ॉल्ट प्रोवाइडर के रूप में सेट करें"
 
+#: admin.py:366 admin.py:389 admin.py:544 admin.py:615 admin.py:664
 msgid "Method not allowed"
 msgstr "विधि अनुमत नहीं है"
 
+#: admin.py:376
+#| msgid "Provider not installed"
+msgid "Provider enabled"
+msgstr "प्रदाता योग्य है"
+
+#: admin.py:378
+#| msgid "Provider not installed"
+msgid "Provider disabled"
+msgstr "प्रदाता अक्षम है"
+
+#: admin.py:402
 msgid "This provider does not support payment method synchronization"
 msgstr "यह प्रदाता भुगतान विधि सिंक का समर्थन नहीं करता है।"
 
+#: admin.py:410
 #, python-format
 msgid "Failed to load provider: %(error)s"
 msgstr "प्रदाता लोड करने में विफल: %(error)s"
 
+#: admin.py:426
 #, python-format
 msgid ""
 "Successfully synced %(methods)d payment methods across %(countries)d "
 "countries"
-msgstr "%(methods)d भुगतान विधियों को %(countries)d देशों में सिंक्रनाइज कर दिया गया है"
+msgstr ""
+"%(methods)d भुगतान विधियों को %(countries)d देशों में सिंक्रनाइज कर दिया गया"
+" है"
 
+#: admin.py:441
 msgid "Synchronization failed"
 msgstr "संगति विफल रही"
 
+#: admin.py:450
 #, python-format
 msgid "Unexpected error: %(error)s"
 msgstr "अप्रत्याशित त्रुटि: %(error)s"
 
+#: admin.py:481
+#| msgid "All Countries"
+msgid "Global (All Countries)"
+msgstr "ग्लोबल (सभी देश)"
+
+#: admin.py:528
 #, python-format
 msgid "Configure Payment Methods - %(provider)s"
 msgstr "भुगतान विधियों के निर्माण - %(provider)s"
 
+#: admin.py:558
 msgid "Missing required parameters"
 msgstr "आवश्यक पैरामीटर लापता हैं"
 
+#: admin.py:564 admin.py:626
+msgid "Invalid country code"
+msgstr "अमान्य देश कोड"
+
+#: admin.py:570
+#| msgid "enabled payment methods"
+msgid "Invalid payment method identifier"
+msgstr "अमान्य भुगतान विधि पहचानकर्ता"
+
+#: admin.py:576
+#| msgid "Invalid request"
+msgid "Invalid enabled value"
+msgstr "अमान्य एनेबल्ड मान"
+
+#: admin.py:583
 #, python-format
 msgid "Enabled %(method)s for %(country)s"
 msgstr "%(method)s को %(country)s के लिए सक्रिय कर दिया गया है"
 
+#: admin.py:589
 #, python-format
 msgid "Disabled %(method)s for %(country)s"
 msgstr "%(method)s को %(country)s के लिए असक्रिय कर दिया गया है"
 
+#: admin.py:603 admin.py:651
+#| msgid "Invalid request"
+msgid "Invalid request body"
+msgstr "अमान्य रिक्वेस्ट बॉडी"
+
+#: admin.py:609 admin.py:657
+#| msgid "Unexpected error: %(error)s"
+msgid "An unexpected error occurred"
+msgstr "अप्रत्याशित त्रुटि हुई"
+
+#: admin.py:640
+#, python-format
+msgid "Country override removed. Global settings will apply for %(country)s."
+msgstr ""
+"देश के ओवरराइड हटा दिया गया। ग्लोबल सेटिंग %(country)s के लिए लागू होंगे।"
+
+#: admin.py:676
 msgid ""
 "Cannot delete provider with existing transactions. Deactivate it instead."
-msgstr "मौजूदा लेनदेन वाले प्रोवाइडर को हटा नहीं सकते। इसके बजाय इसे अक्षम करें।"
+msgstr ""
+"मौजूदा लेनदेन वाले प्रोवाइडर को हटा नहीं सकते। इसके बजाय इसे अक्षम करें।"
 
+#: admin.py:684
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:332
 msgid "Provider deleted successfully"
 msgstr "प्रदाता सफलतापूर्वक हटा दिया गया"
 
+#: admin.py:739
 msgid "Transaction Information"
 msgstr "लेनदेन जानकारी"
 
+#: admin.py:752
 msgid "Payment Details"
 msgstr "भुगतान विवरण"
 
+#: admin.py:756 admin.py:776 admin.py:982
 msgid "Provider Response"
 msgstr "प्रोवाइडर प्रतिक्रिया"
 
+#: admin.py:760
 msgid "Error Information"
 msgstr "त्रुटि जानकारी"
 
+#: admin.py:764 admin.py:985
 msgid "Timestamps"
 msgstr "टाइमस्टैंप"
 
+#: admin.py:774
 msgid "No response data"
 msgstr "कोई प्रतिक्रिया डेटा नहीं"
 
+#: admin.py:850
 msgid "Webhook Information"
 msgstr "वेबहुक जानकारी"
 
+#: admin.py:863
 msgid "Payload"
 msgstr "पेलोड"
 
+#: admin.py:864
 msgid "Headers"
 msgstr "हेडर"
 
+#: admin.py:866 models.py:511 models.py:1006
 msgid "Processing"
 msgstr "प्रोसेसिंग"
 
+#: admin.py:872
 msgid "System Information"
 msgstr "सिस्टम जानकारी"
 
+#: admin.py:880
 msgid "No payload data"
 msgstr "कोई पेलोड डेटा नहीं"
 
+#: admin.py:882
 msgid "Webhook Payload"
 msgstr "वेबहुक पेलोड"
 
+#: admin.py:889
 msgid "No headers data"
 msgstr "कोई हेडर डेटा नहीं"
 
+#: admin.py:891
 msgid "HTTP Headers"
 msgstr "HTTP हेडर"
 
+#: admin.py:957
 msgid "Intent Information"
 msgstr "इंटेंट जानकारी"
 
+#: admin.py:971
 msgid "Checkout Details"
 msgstr "चेकआउट विवरण"
 
+#: admin.py:975
 msgid "3DS / Authentication"
 msgstr "3DS / प्रमाणीकरण"
 
+#: api_serializers.py:21
 msgid ""
 "Checkout session ID. If not provided, uses current user's active session."
 msgstr ""
-"चेकआउट सेशन के आईडी। यदि निर्देशित नहीं किया गया है, तो वर्तमान उपयोगकर्ता के सक्रिय "
-"सेशन का उपयोग करता है।"
+"चेकआउट सेशन के आईडी। यदि निर्देशित नहीं किया गया है, तो वर्तमान उपयोगकर्ता "
+"के सक्रिय सेशन का उपयोग करता है।"
 
+#: api_serializers.py:26
 msgid ""
 "Payment provider account ID. If not provided, uses session's selected "
 "provider."
 msgstr ""
-"भुगतान प्रदाता खाता आईडी। यदि निर्देशित नहीं किया गया है, तो सेशन के चुने हुए प्रदाता का "
-"उपयोग करता है।"
+"भुगतान प्रदाता खाता आईडी। यदि निर्देशित नहीं किया गया है, तो सेशन के चुने "
+"हुए प्रदाता का उपयोग करता है।"
 
+#: api_serializers.py:30
 msgid "Saved payment method ID for returning customers."
 msgstr "वापस आए ग्राहकों के लिए सहेजा गया भुगतान विधि आईडी।"
 
+#: api_serializers.py:33
 msgid "URL to redirect after successful payment."
 msgstr "सफल भुगतान के बाद रीडायरेक्ट करने के लिए URL।"
 
+#: api_serializers.py:36
 msgid "URL to redirect on payment cancellation."
 msgstr "भुगतान रद्द करने पर रीडायरेक्ट करने के लिए URL।"
 
+#: api_serializers.py:39
 msgid "Additional metadata to attach to the payment."
 msgstr "भुगतान के साथ जोड़े जाने वाले अतिरिक्त मेटाडेटा।"
 
+#: api_serializers.py:49 models.py:1092
 msgid "Type of action required (redirect, 3ds_challenge, etc.)"
 msgstr "आवश्यक कार्रवाई के प्रकार (रीडायरेक्ट, 3ds_challenge, आदि)"
 
+#: api_serializers.py:52
 msgid "URL to redirect for action completion."
 msgstr "कार्रवाई के पूरा होने के लिए रीडायरेक्ट करने के लिए URL।"
 
+#: api_serializers.py:55
 msgid "Provider-specific action data for SDK handling."
 msgstr "एसडीके हैंडलिंग के लिए प्रदाता विशिष्ट कार्रवाई डेटा।"
 
+#: api_serializers.py:64
 msgid "Whether the operation succeeded."
 msgstr "कार्य सफल रहा कि नहीं।"
 
+#: api_serializers.py:65 api_serializers.py:413
 msgid "Payment intent ID."
 msgstr "भुगतान इंटेंट ID।"
 
+#: api_serializers.py:67
 msgid "Order ID (created with 'unpaid' status)."
 msgstr "आदेश आईडी ('unpaid' स्थिति के साथ बनाया गया)"
 
+#: api_serializers.py:70 api_serializers.py:422
 msgid "Order number for display."
 msgstr "प्रदर्शन के लिए आदेश संख्या।"
 
+#: api_serializers.py:72 api_serializers.py:414
 msgid "Current payment intent status."
 msgstr "वर्तमान भुगतान इंटेंट स्थिति।"
 
+#: api_serializers.py:74
 msgid "Type of checkout flow (hosted or embedded)."
 msgstr "चेकआउट फ्लो के प्रकार (मेजबान या एम्बेडेड)"
 
+#: api_serializers.py:80
 msgid "Hosted checkout redirect URL (for hosted checkout)."
 msgstr "मेजबान चेकआउट के लिए रीडायरेक्ट URL (मेजबान चेकआउट के लिए)"
 
+#: api_serializers.py:86
 msgid "Client secret for provider SDK (for embedded checkout)."
 msgstr "एम्बेडेड चेकआउट के लिए प्रदाता एसडीके के लिए क्लाइंट सीक्रेट।"
 
+#: api_serializers.py:89
 msgid "Provider's publishable key for SDK initialization."
 msgstr "एसडीके प्रारंभीकरण के लिए प्रदाता की प्रकाशित कुंजी।"
 
+#: api_serializers.py:92
 msgid "URL to provider's checkout handler JavaScript."
 msgstr "प्रदाता के चेकआउट हैंडलर जावास्क्रिप्ट के लिए URL।"
 
+#: api_serializers.py:95
 msgid "Configuration data for handler initialization."
 msgstr "हैंडलर प्रारंभ के लिए विन्यास डेटा।"
 
+#: api_serializers.py:98
 msgid "External SDK URLs required by provider."
 msgstr "प्रदाता द्वारा आवश्यक बाहरी SDK URLs।"
 
+#: api_serializers.py:101
 msgid "Provider identifier (slug) for handler lookup."
 msgstr "हैंडलर खोज के लिए प्रदाता पहचानकर्ता (स्लग)।"
 
+#: api_serializers.py:104
 msgid "Whether customer action is required (3DS, etc.)."
 msgstr "क्या ग्राहक कार्रवाई आवश्यक है (3DS, आदि)"
 
+#: api_serializers.py:107 api_serializers.py:426
 msgid "Action details if requires_action is true."
 msgstr "यदि requires_action सच है तो कार्रवाई विवरण।"
 
+#: api_serializers.py:109
 msgid "When this payment intent expires."
 msgstr "जब यह भुगतान इंटेंट समाप्त हो जाता है।"
 
+#: api_serializers.py:110 api_serializers.py:428
 msgid "Error details if payment failed."
 msgstr "यदि भुगतान विफल हो जाता है तो त्रुटि विवरण।"
 
+#: api_serializers.py:416
 msgid "Order ID."
 msgstr "आदेश ID।"
 
+#: api_serializers.py:424
 msgid "Whether customer action is required."
 msgstr "ग्राहक के कार्रवाई की आवश्यकता है या नहीं।"
 
+#: api_serializers.py:455
 msgid "Provider-specific payment method data for confirmation."
 msgstr "पुष्टि के लिए प्रदाता विशिष्ट भुगतान विधि डेटा।"
 
+#: api_serializers.py:468
 msgid "Optional reason for cancellation."
 msgstr "रद्द के लिए वैकल्पिक कारण।"
 
+#: api_serializers.py:516
 msgid "Payment provider account ID."
 msgstr "भुगतान प्रोवाइडर खाता ID।"
 
+#: api_serializers.py:518
 msgid "Token from provider SDK representing the payment method."
 msgstr "भुगतान विधि को दर्शाने वाला प्रदाता एसडीके से प्राप्त टोकन।"
 
+#: api_serializers.py:521
 msgid "Whether to set this as the default payment method."
 msgstr "क्या इसे डिफ़ॉल्ट भुगतान विधि के रूप में सेट करें।"
 
+#: api_views.py:53
 msgid "Create payment intent"
 msgstr "भुगतान इंटेंट बनाएं"
 
+#: api_views.py:54
 msgid ""
 "\n"
 "Create a payment intent for checkout.\n"
@@ -334,8 +467,7 @@ msgid ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -359,8 +491,7 @@ msgstr ""
 "- **Embedded checkout:** Use `client_secret` with provider's JavaScript SDK\n"
 "\n"
 "**Retry Handling:**\n"
-"If payment fails, the customer can retry. A new PaymentIntent will be "
-"created\n"
+"If payment fails, the customer can retry. A new PaymentIntent will be created\n"
 "for the same Order (stock remains allocated).\n"
 "\n"
 "**Security:**\n"
@@ -369,21 +500,28 @@ msgstr ""
 "- Amounts are validated against checkout session totals\n"
 "        "
 
+#: api_views.py:81 services/payment_orchestration_service.py:265
+#: services/payment_service.py:131
 msgid "Payment intent created successfully"
 msgstr "भुगतान इंटेंट सफलतापूर्वक बनाया गया"
 
+#: api_views.py:84
 msgid "Invalid request, checkout not ready, or validation failed"
 msgstr "अमान्य अनुरोध, चेकआउट तैयार नहीं है, या जांच विफल रही"
 
+#: api_views.py:86 api_views.py:102
 msgid "Checkout session not found"
 msgstr "चेकआउट सत्र नहीं मिला"
 
+#: api_views.py:110
 msgid "Payment provider not found or not configured"
 msgstr "भुगतान प्रदाता नहीं मिला या संfigत नहीं किया गया।"
 
+#: api_views.py:205
 msgid "Get payment intent status"
 msgstr "भुगतान इंटेंट की स्थिति प्राप्त करें"
 
+#: api_views.py:206
 msgid ""
 "\n"
 "        Get the current status of a payment intent.\n"
@@ -421,22 +559,27 @@ msgstr ""
 "        - `canceled`: Payment was canceled\n"
 "        "
 
+#: api_views.py:228
 msgid "Payment intent UUID"
 msgstr "भुगतान इंटेंट UUID"
 
+#: api_views.py:235
 msgid ""
 "Payment intent details (full handler data for active intents, status-only "
 "for terminal states)"
 msgstr ""
-"भुगतान इंटेंट विवरण (सक्रिय इंटेंट के लिए पूरा हैंडलर डेटा, टर्मिनल स्थितियों के लिए केवल "
-"स्थिति)"
+"भुगतान इंटेंट विवरण (सक्रिय इंटेंट के लिए पूरा हैंडलर डेटा, टर्मिनल "
+"स्थितियों के लिए केवल स्थिति)"
 
+#: api_views.py:238 api_views.py:287 api_views.py:342
 msgid "Payment intent not found"
 msgstr "भुगतान इंटेंट नहीं मिला"
 
+#: api_views.py:270
 msgid "Confirm payment intent"
 msgstr "भुगतान इंटेंट की पुष्टि करें"
 
+#: api_views.py:271
 msgid ""
 "\n"
 "        Confirm a payment intent after customer completes required action.\n"
@@ -446,8 +589,7 @@ msgid ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 msgstr ""
 "\n"
@@ -458,19 +600,22 @@ msgstr ""
 "        - Customer authorizes payment on redirect\n"
 "        - Any other required customer action\n"
 "\n"
-"        The confirmation may succeed immediately or require additional "
-"actions.\n"
+"        The confirmation may succeed immediately or require additional actions.\n"
 "        "
 
+#: api_views.py:284
 msgid "Confirmation result"
 msgstr "पुष्टि परिणाम"
 
+#: api_views.py:286
 msgid "Confirmation failed"
 msgstr "पुष्टि विफल रही"
 
+#: api_views.py:327
 msgid "Cancel payment intent"
 msgstr "भुगतान इंटेंट रद्द करें"
 
+#: api_views.py:328
 msgid ""
 "\n"
 "        Cancel a payment intent.\n"
@@ -480,8 +625,7 @@ msgid ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 msgstr ""
 "\n"
@@ -492,28 +636,34 @@ msgstr ""
 "        - Cancel the associated order (if no other active intents)\n"
 "        - Release allocated stock\n"
 "\n"
-"        **Note**: Cannot cancel intents in terminal states (succeeded, "
-"failed, canceled).\n"
+"        **Note**: Cannot cancel intents in terminal states (succeeded, failed, canceled).\n"
 "        "
 
+#: api_views.py:340
 msgid "Payment canceled successfully"
 msgstr "भुगतान सफलता पूर्वक रद्द कर दिया गया"
 
+#: api_views.py:341
 msgid "Cannot cancel this payment"
 msgstr "इस भुगतान को रद्द नहीं किया जा सकता"
 
+#: api_views.py:367
 msgid "List saved payment methods"
 msgstr "सहेजे गए भुगतान विधियों की सूची"
 
+#: api_views.py:368
 msgid "List all saved payment methods for the authenticated user."
 msgstr "प्रमाणित उपयोगकर्ता के लिए सभी बचाए गए भुगतान विधियों की सूची।"
 
+#: api_views.py:372
 msgid "List of saved payment methods"
 msgstr "सहेजे गए भुगतान विधियों की सूची"
 
+#: api_views.py:390
 msgid "Save a new payment method"
 msgstr "एक नई भुगतान विधि सहेजें"
 
+#: api_views.py:391
 msgid ""
 "\n"
 "        Save a new payment method for future use.\n"
@@ -529,42 +679,55 @@ msgstr ""
 "        after collecting card details on the client side.\n"
 "        "
 
+#: api_views.py:401
 msgid "Payment method saved successfully"
 msgstr "भुगतान विधि सफलतापूर्वक सहेज गई"
 
+#: api_views.py:403
 msgid "Invalid request"
 msgstr "अमान्य अनुरोध"
 
+#: api_views.py:422 services/payment_orchestration_service.py:122
 msgid "Payment provider not found"
 msgstr "भुगतान प्रोवाइडर नहीं मिला"
 
+#: api_views.py:434
 msgid "Provider does not support saved payment methods"
 msgstr "प्रदाता सहेजे गए भुगतान विधि का समर्थन नहीं करता।"
 
+#: api_views.py:494
 msgid "Get saved payment method details"
 msgstr "सहेजी गई भुगतान विधि के विवरण प्राप्त करें"
 
+#: api_views.py:497
 msgid "Payment method details"
 msgstr "भुगतान विधि विवरण"
 
+#: api_views.py:499 api_views.py:519 api_views.py:551
 msgid "Payment method not found"
 msgstr "भुगतान विधि नहीं मिली"
 
+#: api_views.py:516
 msgid "Delete saved payment method"
 msgstr "सहेजी गई भुगतान विधि को हटाएं"
 
+#: api_views.py:518 api_views.py:536
 msgid "Payment method deleted"
 msgstr "भुगतान विधि हटा दी गई"
 
+#: api_views.py:548
 msgid "Set default payment method"
 msgstr "डिफ़ॉल्ट भुगतान विधि निर्धारित करें"
 
+#: api_views.py:550 api_views.py:566
 msgid "Default payment method updated"
 msgstr "डिफ़ॉल्ट भुगतान विधि अपडेट कर दी गई"
 
+#: api_views.py:579
 msgid "Report payment SDK failure"
 msgstr "भुगतान SDK विफलता की रिपोर्ट"
 
+#: api_views.py:580
 msgid ""
 "\n"
 "Report a payment SDK loading failure. Used by the checkout frontend\n"
@@ -586,1137 +749,1824 @@ msgstr ""
 "**Authentication:** Not required (supports guest checkout).\n"
 "        "
 
+#: api_views.py:590
 msgid "Failure reported"
 msgstr "विफलता की रिपोर्ट की गई"
 
+#: apps.py:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:6
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:4
 msgid "Payment Providers"
 msgstr "भुगतान प्रोवाइडर"
 
-msgid "Enabled Payment Methods"
-msgstr "सक्रिय भुगतान विधियाँ"
-
-msgid ""
-"Select payment methods to offer customers. Leave empty for all available "
-"methods."
-msgstr "ग्राहकों के लिए भुगतान विधियों का चयन करें। सभी उपलब्ध विधियों के लिए खाली छोड़ें।"
-
+#: management/commands/sync_payment_methods.py:17
 msgid "Sync payment methods from payment provider APIs"
 msgstr "भुगतान प्रदाता APIs से भुगतान विधि सिंक करें।"
 
+#: models.py:27
 msgid "component"
 msgstr "कॉम्पोनेंट"
 
+#: models.py:28
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:170
 msgid "Installed payment provider component"
 msgstr "इंस्टॉल किया गया भुगतान प्रोवाइडर कॉम्पोनेंट"
 
+#: models.py:35
 msgid "user"
 msgstr "उपयोगकर्ता"
 
+#: models.py:36
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:184
 msgid "User who owns this provider account"
 msgstr "इस प्रदाता खाता के मालिक उपयोगकर्ता।"
 
+#: models.py:42
 msgid "display name"
 msgstr "प्रदर्शन नाम"
 
+#: models.py:43
 msgid "Friendly name for this connection (e.g., \"My Payment Provider\")"
 msgstr "इस कनेक्शन के लिए अच्छा नाम (उदाहरण के लिए, \"मेरा भुगतान प्रदाता\")"
 
+#: models.py:49 templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "credentials"
 msgstr "अधिकार पत्र"
 
+#: models.py:50
 msgid "Encrypted API credentials (never stored in plain text)"
-msgstr "एन्क्रिप्टेड API योग्यता (कभी भी सामान्य पाठ में नहीं संग्रहित किया जाता)"
+msgstr ""
+"एन्क्रिप्टेड API योग्यता (कभी भी सामान्य पाठ में नहीं संग्रहित किया जाता)"
 
+#: models.py:56
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "settings"
 msgstr "सेटिंग्स"
 
+#: models.py:57
 msgid "Provider-specific configuration (checkout mode, features, etc.)"
 msgstr "प्रदाता विशिष्ट संfigतिकरण (चेकआउट मोड, विशेषताएं, आदि)"
 
+#: models.py:63
 msgid "signup URL"
 msgstr "रजिस्टर करें URL"
 
+#: models.py:64
 msgid "Link for merchants to create provider account (may be affiliate link)"
-msgstr "व्यापारियों के लिए प्रदाता खाता बनाने के लिए लिंक (एफ़िलिएट लिंक हो सकता है)"
+msgstr ""
+"व्यापारियों के लिए प्रदाता खाता बनाने के लिए लिंक (एफ़िलिएट लिंक हो सकता है)"
 
+#: models.py:69
 msgid "is active"
 msgstr "सक्रिय है"
 
+#: models.py:70
 msgid "Whether this provider connection is active for checkout"
 msgstr "क्या यह प्रदाता कनेक्शन चेकआउट के लिए सक्रिय है"
 
+#: models.py:75
 msgid "is default"
 msgstr "डिफ़ॉल्ट है"
 
+#: models.py:76
 msgid "Use this provider as default for payment processing"
 msgstr "भुगतान प्रक्रिया के लिए इस प्रदाता का डिफ़ॉल्ट के रूप में उपयोग करें"
 
+#: models.py:83
 msgid "Hosted - Redirect to provider"
 msgstr "मेजबान - प्रोवाइडर के पास भेजें"
 
+#: models.py:84
+#: templates/admin/payment_providers/wizard/step3_credentials.html:200
 msgid "Integrated - On-site checkout"
 msgstr "एकीकृत - वेबसाइट पर चेकआउट"
 
+#: models.py:87
 msgid "checkout mode"
 msgstr "चेकआउट मोड"
 
+#: models.py:88
 msgid "How customers will complete payment"
 msgstr "ग्राहक कैसे भुगतान पूरा करेंगे"
 
+#: models.py:94
 msgid "sort order"
 msgstr "क्रमबद्ध करें"
 
+#: models.py:95
 msgid "Display order in checkout (lower numbers appear first)"
 msgstr "चेकआउट में प्रदर्शन के क्रम (छोटी संख्या पहले दिखाई देती है)"
 
+#: models.py:102
 msgid "last tested at"
 msgstr "अंतिम परीक्षण के समय"
 
+#: models.py:103
 msgid "Last successful connection test"
 msgstr "अंतिम सफल कनेक्शन परीक्षण"
 
+#: models.py:109
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:238
 msgid "Unknown"
 msgstr "अज्ञात"
 
+#: models.py:110
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:57
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:62
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:118
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:230
 msgid "Connected"
 msgstr "कनेक्ट करें"
 
+#: models.py:111
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:288
 msgid "Connection Error"
 msgstr "कनेक्शन त्रुटि"
 
+#: models.py:114
 msgid "connection status"
 msgstr "कनेक्शन स्थिति"
 
+#: models.py:118
 msgid "connection error"
 msgstr "कनेक्शन त्रुटि"
 
+#: models.py:118
 msgid "Last connection error message"
 msgstr "अंतिम कनेक्शन त्रुटि संदेश"
 
+#: models.py:125
 msgid "available payment methods"
 msgstr "उपलब्ध भुगतान विधियाँ"
 
+#: models.py:127
+#| msgid ""
+#| "Payment methods available from provider API, organized by country. Format: "
+#| "{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgid ""
-"Payment methods available from provider API, organized by country. Format: "
-"{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"Payment methods available from provider API, organized by country. Use "
+"\"_global\" key for methods available regardless of country. Format: "
+"{\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgstr ""
-"प्रदाता API से उपलब्ध भुगतान विधि, देश के अनुसार संगठित। प्रारूप: {\"US\": [\"card\", "
-"\"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"प्रोवाइडर API से उपलब्ध भुगतान विधियां, देश के आधार पर संगठित। देश के "
+"अपेक्षा भुगतान विधियों के लिए \"_global\" कुंजी का उपयोग करें। प्रारूप: "
+"{\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 
+#: models.py:136
 msgid "enabled payment methods"
 msgstr "सक्रिय भुगतान विधियाँ"
 
+#: models.py:138
+#| msgid ""
+#| "Payment methods enabled by merchant for each country. Format: {\"US\": "
+#| "[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
 msgid ""
-"Payment methods enabled by merchant for each country. Format: {\"US\": "
-"[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
+"Payment methods enabled by merchant. Use \"_global\" for all countries, or "
+"per-country keys to override. Format: {\"_global\": [\"card\", "
+"\"apple_pay\"], \"SG\": [\"card\"]}"
 msgstr ""
-"प्रत्येक देश के लिए व्यापारी द्वारा सक्रिय की गई भुगतान विधि। प्रारूप: {\"US\": "
-"[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
+"व्यापारी द्वारा सक्रिय भुगतान विधियाँ। सभी देशों के लिए \"_global\" का उपयोग"
+" करें, या देश-दर-देश कुंजियों का उपयोग करके ओवरराइड करें। प्रारूप: "
+"{\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
 
+#: models.py:147
 msgid "last method sync at"
 msgstr "अंतिम विधि सिंक्रोनाइज़ के समय"
 
+#: models.py:148
 msgid "When payment methods were last synced from provider"
 msgstr "जब भुगतान विधि प्रदाता से अंतिम बार सिंक की गई थी।"
 
+#: models.py:154
 msgid "Pending - Not synced yet"
 msgstr "स्थगित - अभी तक सिंक्रोनाइज़ नहीं किया गया"
 
+#: models.py:155
 msgid "Syncing - In progress"
 msgstr "सिंक्रोनाइज़ कर रहे हैं - प्रगति में"
 
+#: models.py:156
 msgid "Success - Synced successfully"
 msgstr "सफलता - सिंक्रोनाइज़ कर दिया गया"
 
+#: models.py:157
 msgid "Error - Sync failed"
 msgstr "त्रुटि - सिंक्रोनाइज़ विफल रहा"
 
+#: models.py:160
 msgid "method sync status"
 msgstr "विधि सिंक्रोनाइज़ स्थिति"
 
+#: models.py:161
 msgid "Status of payment method synchronization"
 msgstr "भुगतान विधि सिंक्रोनाइज़ की स्थिति"
 
+#: models.py:166
 msgid "method sync error"
 msgstr "विधि सिंक्रोनाइज़ त्रुटि"
 
+#: models.py:167
 msgid "Last payment method sync error message"
 msgstr "अंतिम भुगतान विधि सिंक त्रुटि संदेश।"
 
+#: models.py:171 models.py:757 models.py:1134
 msgid "created at"
 msgstr "बनाया गया समय"
 
+#: models.py:172 models.py:758 models.py:1135
 msgid "updated at"
 msgstr "अपडेट किया गया समय"
 
+#: models.py:176
 msgid "payment provider account"
 msgstr "भुगतान प्रोवाइडर खाता"
 
+#: models.py:177
 msgid "payment provider accounts"
 msgstr "भुगतान प्रोवाइडर खाते"
 
+#: models.py:313
 msgid "Provider does not support payment method synchronization"
 msgstr "प्रदाता भुगतान विधि सिंक का समर्थन नहीं करता।"
 
+#: models.py:345
 msgid "Payment methods synced successfully"
 msgstr "भुगतान विधियाँ सफलतापूर्वक सिंक्रोनाइज़ कर दी गई हैं"
 
+#: models.py:510
+#: templates/admin/payment_providers/partials/webhook_cards.html:28
 msgid "Pending"
 msgstr "स्थगित"
 
+#: models.py:512
 msgid "Authorized - Not captured"
 msgstr "अधिकृत - अभी तक अपंगित नहीं"
 
+#: models.py:513
 msgid "Completed - Payment successful"
 msgstr "पूर्ण - भुगतान सफल"
 
+#: models.py:514 models.py:1009
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:61
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:40
 msgid "Failed"
 msgstr "विफल"
 
+#: models.py:515
 msgid "Voided - Authorization canceled"
 msgstr "रद्द कर दिया गया - अधिकृत रद्द कर दिया गया"
 
+#: models.py:516
 msgid "Refunded - Full refund"
 msgstr "वापसी - पूर्ण रिफंड"
 
+#: models.py:517
 msgid "Partially Refunded"
 msgstr "भागश: रिफंड किया गया"
 
+#: models.py:521
 msgid "Charge - Immediate payment"
 msgstr "चार्ज - तत्काल भुगतान"
 
+#: models.py:522
 msgid "Authorize - Hold funds"
 msgstr "अधिकृत - धनराशि अटूट रखें"
 
+#: models.py:523
 msgid "Capture - Collect authorized funds"
 msgstr "अपंगित - अधिकृत धनराशि एकत्रित करें"
 
+#: models.py:524
 msgid "Void - Cancel authorization"
 msgstr "रद्द करें - अधिकृत रद्द करें"
 
+#: models.py:525
 msgid "Refund - Return payment"
 msgstr "वापसी - भुगतान लौटाएं"
 
+#: models.py:547
+#| msgid "Payment Providers"
+msgid "Payment provider"
+msgstr "भुगतान प्रदाता"
+
+#: models.py:548
+msgid "Gift Card"
+msgstr "गिफ्ट कार्ड"
+
+#: models.py:549
+msgid "Store Credit"
+msgstr "स्टोर क्रेडिट"
+
+#: models.py:550
+msgid "Cash"
+msgstr "कैश"
+
+#: models.py:551
+msgid "Card (Terminal)"
+msgstr "कार्ड (टर्मिनल)"
+
+#: models.py:552
+msgid "Card (Manual)"
+msgstr "कार्ड (मैन्युअल)"
+
+#: models.py:568 models.py:872 models.py:1029
 msgid "provider account"
 msgstr "प्रोवाइडर खाता"
 
+#: models.py:569
 msgid "Payment provider account used for this transaction"
 msgstr "इस लेनदेन के लिए उपयोग किया गया भुगतान प्रदाता खाता।"
 
+#: models.py:579 models.py:1037
 msgid "order"
 msgstr "आदेश"
 
+#: models.py:587
 msgid "transaction ID"
 msgstr "लेनदेन की आईडी"
 
+#: models.py:588
 msgid "Internal transaction ID"
 msgstr "आंतरिक लेनदेन आईडी"
 
+#: models.py:595
 msgid "provider transaction ID"
 msgstr "प्रोवाइडर लेनदेन के आईडी"
 
+#: models.py:596
 msgid "Provider transaction ID (charge ID, payment intent ID, etc.)"
 msgstr "प्रदाता लेनदेन आईडी (चार्ज आईडी, भुगतान इंटेंट आईडी, आदि)"
 
+#: models.py:604
 msgid "authorization ID"
 msgstr "अधिकृतीकरण के आईडी"
 
+#: models.py:605
 msgid "Provider authorization ID (if applicable)"
 msgstr "प्रोवाइडर अधिकृतीकरण आईडी (यदि लागू हो)"
 
+#: models.py:613 models.py:1077
 msgid "amount"
 msgstr "राशि"
 
+#: models.py:614
 msgid "Transaction amount"
 msgstr "लेनदेन की राशि"
 
+#: models.py:618 models.py:1069
 msgid "status"
 msgstr "स्थिति"
 
+#: models.py:622
 msgid "type"
 msgstr "प्रकार"
 
-msgid "customer email"
-msgstr "ग्राहक का ईमेल"
+#: models.py:633
+#| msgid "event type"
+msgid "tender type"
+msgstr "टेंडर प्रकार"
 
-msgid "customer name"
-msgstr "ग्राहक का नाम"
+#: models.py:634
+msgid "How this payment was made"
+msgstr "इस भुगतान कैसे किया गया"
 
-msgid "payment method type"
-msgstr "भुगतान विधि प्रकार"
+#: models.py:643
+msgid "gift card"
+msgstr "गिफ्ट कार्ड"
 
-msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
-msgstr "उपयोग की गई भुगतान विधि के प्रकार (क्रेडिट कार्ड, बैंक ट्रांसफर, आदि)"
+#: models.py:644
+msgid "Gift card this tender draws on"
+msgstr "इस टेंडर द्वारा उपयोग की जाने वाली गिफ्ट कार्ड"
 
-msgid "last 4 digits"
-msgstr "अंतिम 4 अंक"
+#: models.py:656
+#| msgid "Wallets"
+msgid "wallet"
+msgstr "वॉलेट"
 
-msgid "Last 4 digits of card/account"
-msgstr "कार्ड/खाता के अंतिम 4 अंक"
+#: models.py:657
+msgid "Customer wallet this tender draws on"
+msgstr "इस टेंडर द्वारा उपयोग की जाने वाली ग्राहक की वॉलेट"
 
-msgid "metadata"
-msgstr "मेटाडेटा"
-
-msgid "Additional transaction metadata"
-msgstr "अतिरिक्त लेनदेन मेटाडेटा"
-
-msgid "provider response"
-msgstr "प्रोवाइडर प्रतिक्रिया"
-
-msgid "Raw response from payment provider"
-msgstr "भुगतान प्रोवाइडर से कच्ची प्रतिक्रिया"
-
-msgid "error message"
-msgstr "त्रुटि संदेश"
-
-msgid "error code"
-msgstr "त्रुटि कोड"
-
-msgid "expires at"
-msgstr "अवधि समाप्त होती है"
-
-msgid "When authorization expires (if applicable)"
-msgstr "जब अधिकृतीकरण समाप्त होता है (यदि लागू हो)"
-
-msgid "completed at"
-msgstr "जब पूर्ण होता है"
-
-msgid "payment transaction"
-msgstr "भुगतान लेनदेन"
-
-msgid "payment transactions"
-msgstr "भुगतान लेनदेन"
-
-msgid "provider slug"
-msgstr "प्रोवाइडर का पहचान चिह्न रूटिंग के लिए"
-
-msgid "Provider identifier for routing"
-msgstr "प्रोवाइडर का पहचान चिह्न रूटिंग के लिए"
-
-msgid "event ID"
-msgstr "इवेंट के आईडी"
-
-msgid "Provider webhook event ID"
-msgstr "प्रोवाइडर वेबहॉक इवेंट आईडी"
-
-msgid "event type"
-msgstr "इवेंट प्रकार"
-
-msgid "Type of webhook event"
-msgstr "वेबहॉक इवेंट के प्रकार"
-
-msgid "payload"
-msgstr "लोड"
-
-msgid "Complete webhook payload"
-msgstr "पूर्ण वेबहॉक लोड"
-
-msgid "headers"
-msgstr "HTTP हेडर वेबहॉक अनुरोध से"
-
-msgid "HTTP headers from webhook request"
-msgstr "वेबहॉक अनुरोध से HTTP हेडर"
-
-msgid "processed"
-msgstr "क्या वेबहॉक प्रोसेस किया गया है"
-
-msgid "Whether webhook has been processed"
-msgstr "क्या वेबहॉक प्रोसेस किया गया है"
-
-msgid "processing result"
-msgstr "वेबहॉक हैंडलर से परिणाम"
-
-msgid "Result from webhook handler"
-msgstr "वेबहॉक हैंडलर से परिणाम"
-
-msgid "processing error"
-msgstr "प्रोसेसिंग विफल होने पर त्रुटि संदेश"
-
-msgid "Error message if processing failed"
-msgstr "प्रोसेसिंग विफल होने पर त्रुटि संदेश"
-
-msgid "signature verified"
-msgstr "क्या वेबहॉक साइनचर जांचा गया है"
-
-msgid "Whether webhook signature was verified"
-msgstr "क्या वेबहॉक साइनचर जांचा गया है"
-
-msgid "idempotency key"
-msgstr "दोहराए बिना प्रोसेस करने के लिए की"
-
-msgid "Key to prevent duplicate processing"
-msgstr "दोहराए बिना प्रोसेस करने के लिए की"
-
-msgid "received at"
-msgstr "जब प्राप्त हुआ"
-
-msgid "processed at"
-msgstr "जब प्रोसेस किया गया"
-
-msgid "payment webhook"
-msgstr "भुगतान वेबहॉक"
-
-msgid "payment webhooks"
-msgstr "भुगतान वेबहॉक"
-
-msgid "Created"
-msgstr "बनाया गया"
-
-msgid "Requires Payment Method"
-msgstr "भुगतान विधि की आवश्यकता है"
-
-msgid "Requires Confirmation"
-msgstr "पुष्टि की आवश्यकता है"
-
-msgid "Requires Action"
-msgstr "कार्रवाई की आवश्यकता है"
-
-msgid "Succeeded"
-msgstr "सफल"
-
-msgid "Canceled"
-msgstr "रद्द कर दिया गया"
-
+#: models.py:669 models.py:1021
 msgid "checkout session"
 msgstr "चेकआउट सेशन"
 
+#: models.py:681
+#| msgid "payment transaction"
+msgid "parent transaction"
+msgstr "माता लेनदेन"
+
+#: models.py:694
+#| msgid "Payment amount"
+msgid "settlement amount"
+msgstr "सेटलमेंट राशि"
+
+#: models.py:695
+msgid "This tender's value in the order's currency"
+msgstr "इस टेंडर का मूल्य ऑर्डर की मुद्रा में"
+
+#: models.py:703
+msgid "exchange rate"
+msgstr "आदान-प्रदान दर"
+
+#: models.py:704
+msgid "Rate used to convert amount into settlement_amount"
+msgstr "रेट एमाउंट को settlement_amount में बदलने के लिए उपयोग किया जाता है"
+
+#: models.py:708
+msgid "customer email"
+msgstr "ग्राहक का ईमेल"
+
+#: models.py:710
+msgid "customer name"
+msgstr "ग्राहक का नाम"
+
+#: models.py:716
+msgid "payment method type"
+msgstr "भुगतान विधि प्रकार"
+
+#: models.py:717
+msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
+msgstr "उपयोग की गई भुगतान विधि के प्रकार (क्रेडिट कार्ड, बैंक ट्रांसफर, आदि)"
+
+#: models.py:723
+msgid "last 4 digits"
+msgstr "अंतिम 4 अंक"
+
+#: models.py:724
+msgid "Last 4 digits of card/account"
+msgstr "कार्ड/खाता के अंतिम 4 अंक"
+
+#: models.py:731 models.py:1113
+msgid "metadata"
+msgstr "मेटाडेटा"
+
+#: models.py:732
+msgid "Additional transaction metadata"
+msgstr "अतिरिक्त लेनदेन मेटाडेटा"
+
+#: models.py:739 models.py:1120
+msgid "provider response"
+msgstr "प्रोवाइडर प्रतिक्रिया"
+
+#: models.py:740 models.py:1121
+msgid "Raw response from payment provider"
+msgstr "भुगतान प्रोवाइडर से कच्ची प्रतिक्रिया"
+
+#: models.py:744 models.py:1127
+msgid "error message"
+msgstr "त्रुटि संदेश"
+
+#: models.py:746 models.py:1125
+msgid "error code"
+msgstr "त्रुटि कोड"
+
+#: models.py:752 models.py:1131
+msgid "expires at"
+msgstr "अवधि समाप्त होती है"
+
+#: models.py:753
+msgid "When authorization expires (if applicable)"
+msgstr "जब अधिकृतीकरण समाप्त होता है (यदि लागू हो)"
+
+#: models.py:759
+msgid "completed at"
+msgstr "जब पूर्ण होता है"
+
+#: models.py:763
+msgid "payment transaction"
+msgstr "भुगतान लेनदेन"
+
+#: models.py:764
+msgid "payment transactions"
+msgstr "भुगतान लेनदेन"
+
+#: models.py:881
+msgid "provider slug"
+msgstr "प्रोवाइडर का पहचान चिह्न रूटिंग के लिए"
+
+#: models.py:882
+msgid "Provider identifier for routing"
+msgstr "प्रोवाइडर का पहचान चिह्न रूटिंग के लिए"
+
+#: models.py:891
+msgid "event ID"
+msgstr "इवेंट के आईडी"
+
+#: models.py:892
+msgid "Provider webhook event ID"
+msgstr "प्रोवाइडर वेबहॉक इवेंट आईडी"
+
+#: models.py:900
+msgid "event type"
+msgstr "इवेंट प्रकार"
+
+#: models.py:901
+msgid "Type of webhook event"
+msgstr "वेबहॉक इवेंट के प्रकार"
+
+#: models.py:905
+msgid "payload"
+msgstr "लोड"
+
+#: models.py:905
+msgid "Complete webhook payload"
+msgstr "पूर्ण वेबहॉक लोड"
+
+#: models.py:910
+msgid "headers"
+msgstr "HTTP हेडर वेबहॉक अनुरोध से"
+
+#: models.py:911
+msgid "HTTP headers from webhook request"
+msgstr "वेबहॉक अनुरोध से HTTP हेडर"
+
+#: models.py:918
+msgid "processed"
+msgstr "क्या वेबहॉक प्रोसेस किया गया है"
+
+#: models.py:919
+msgid "Whether webhook has been processed"
+msgstr "क्या वेबहॉक प्रोसेस किया गया है"
+
+#: models.py:925
+msgid "processing result"
+msgstr "वेबहॉक हैंडलर से परिणाम"
+
+#: models.py:926
+msgid "Result from webhook handler"
+msgstr "वेबहॉक हैंडलर से परिणाम"
+
+#: models.py:931
+msgid "processing error"
+msgstr "प्रोसेसिंग विफल होने पर त्रुटि संदेश"
+
+#: models.py:932
+msgid "Error message if processing failed"
+msgstr "प्रोसेसिंग विफल होने पर त्रुटि संदेश"
+
+#: models.py:938
+msgid "signature verified"
+msgstr "क्या वेबहॉक साइनचर जांचा गया है"
+
+#: models.py:939
+msgid "Whether webhook signature was verified"
+msgstr "क्या वेबहॉक साइनचर जांचा गया है"
+
+#: models.py:947
+msgid "idempotency key"
+msgstr "दोहराए बिना प्रोसेस करने के लिए की"
+
+#: models.py:948
+msgid "Key to prevent duplicate processing"
+msgstr "दोहराए बिना प्रोसेस करने के लिए की"
+
+#: models.py:952
+msgid "received at"
+msgstr "जब प्राप्त हुआ"
+
+#: models.py:953
+msgid "processed at"
+msgstr "जब प्रोसेस किया गया"
+
+#: models.py:957
+msgid "payment webhook"
+msgstr "भुगतान वेबहॉक"
+
+#: models.py:958
+msgid "payment webhooks"
+msgstr "भुगतान वेबहॉक"
+
+#: models.py:1002
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:41
+msgid "Created"
+msgstr "बनाया गया"
+
+#: models.py:1003
+msgid "Requires Payment Method"
+msgstr "भुगतान विधि की आवश्यकता है"
+
+#: models.py:1004
+msgid "Requires Confirmation"
+msgstr "पुष्टि की आवश्यकता है"
+
+#: models.py:1005
+msgid "Requires Action"
+msgstr "कार्रवाई की आवश्यकता है"
+
+#: models.py:1007
+msgid "Succeeded"
+msgstr "सफल"
+
+#: models.py:1008
+msgid "Canceled"
+msgstr "रद्द कर दिया गया"
+
+#: models.py:1022
 msgid "Checkout session this payment intent was created for"
 msgstr "इस भुगतान इंटेंट के लिए चेकआउट सेशन।"
 
+#: models.py:1030
 msgid "Payment provider account used for this intent"
 msgstr "इस इंटेंट के लिए उपयोग किया गया भुगतान प्रदाता खाता।"
 
+#: models.py:1038
 msgid "Order this payment intent is for"
 msgstr "इस भुगतान इंटेंट के लिए आदेश।"
 
+#: models.py:1045
 msgid "provider intent ID"
 msgstr "प्रोवाइडर इंटेंट ID"
 
+#: models.py:1046
 msgid "Provider payment intent ID (e.g., Stripe pi_xxx, AirWallex int_xxx)"
-msgstr "प्रदाता भुगतान इंटेंट आईडी (उदाहरण के लिए, Stripe pi_xxx, AirWallex int_xxx)"
+msgstr ""
+"प्रदाता भुगतान इंटेंट आईडी (उदाहरण के लिए, Stripe pi_xxx, AirWallex int_xxx)"
 
+#: models.py:1052
 msgid "client secret"
 msgstr "क्लाइंट सीक्रेट"
 
+#: models.py:1053
 msgid "Client secret for embedded checkout (never expose in logs)"
 msgstr "एम्बेडेड चेकआउट के लिए क्लाइंट सीक्रेट (लॉग में कभी भी खुलासा न करें)"
 
+#: models.py:1059
 msgid "checkout URL"
 msgstr "चेकआउट URL"
 
+#: models.py:1060
 msgid "Hosted checkout redirect URL"
 msgstr "होस्ट किया गया चेकआउट रीडायरेक्ट URL"
 
+#: models.py:1078
 msgid "Payment amount"
 msgstr "भुगतान राशि"
 
+#: models.py:1084
 msgid "requires action"
 msgstr "कार्रवाई की आवश्यकता है"
 
+#: models.py:1085
 msgid "Whether customer action is required (e.g., 3DS)"
 msgstr "ग्राहक के द्वारा कार्रवाई की आवश्यकता है (जैसे, 3DS)"
 
+#: models.py:1091
 msgid "action type"
 msgstr "कार्रवाई प्रकार"
 
+#: models.py:1098
 msgid "action URL"
 msgstr "कार्रवाई URL"
 
+#: models.py:1099
 msgid "URL to redirect for action (3DS, verification, etc.)"
 msgstr "कार्रवाई के लिए रीडायरेक्ट करने के लिए URL (3DS, सत्यापन, आदि)"
 
+#: models.py:1105
 msgid "action data"
 msgstr "कार्रवाई डेटा"
 
+#: models.py:1106
 msgid "Provider-specific action data for SDK handling"
 msgstr "SDK के उपयोग के लिए प्रदाता-विशिष्ट कार्रवाई डेटा"
 
+#: models.py:1114
 msgid "Additional intent metadata"
 msgstr "अतिरिक्त इंटेंट मेटाडेटा"
 
+#: models.py:1131
 msgid "When this payment intent expires"
 msgstr "जब यह भुगतान इंटेंट समाप्त हो जाता है"
 
+#: models.py:1139
 msgid "payment intent"
 msgstr "भुगतान इंटेंट"
 
+#: models.py:1140
 msgid "payment intents"
 msgstr "भुगतान इंटेंट्स"
 
+#: services/payment_orchestration_service.py:82 services/payment_service.py:76
 msgid "Payment provider is not active"
 msgstr "भुगतान प्रोवाइडर सक्रिय नहीं है"
 
+#: services/payment_orchestration_service.py:85 services/payment_service.py:79
 msgid "Payment provider is not properly configured"
 msgstr "भुगतान प्रदाता सही तरीके से निर्मित नहीं है"
 
+#: services/payment_orchestration_service.py:127
 msgid "Failed to initialize payment provider"
 msgstr "भुगतान प्रोवाइडर की पहचान विफल रही"
 
+#: services/payment_orchestration_service.py:197
 #, python-brace-format
 msgid "Failed to create payment with provider: {error}"
 msgstr "प्रदाता के साथ भुगतान बनाने में विफल: {error}"
 
+#: services/payment_orchestration_service.py:381
+#: services/payment_orchestration_service.py:592
 msgid "Payment intent is already in terminal state"
 msgstr "भुगतान की इच्छा पहले से ही अंतिम स्थिति में है"
 
+#: services/payment_orchestration_service.py:391
 msgid "Provider does not support payment confirmation"
 msgstr "प्रदाता भुगतान के सत्यापन का समर्थन नहीं करता है"
 
+#: services/payment_orchestration_service.py:411
 msgid "Payment confirmed"
 msgstr "भुगतान पुष्टि कर दिया गया"
 
+#: services/payment_orchestration_service.py:454
 msgid "Payment already processed"
 msgstr "भुगतान पहले से ही प्रक्रिया में है"
 
+#: services/payment_orchestration_service.py:552
 msgid "Payment processed successfully"
 msgstr "भुगतान सफलतापूर्वक प्रक्रिया में है"
 
+#: services/payment_orchestration_service.py:634
 msgid "Payment cancelled"
 msgstr "भुगतान रद्द कर दिया गया"
 
+#: services/payment_service.py:44
 msgid "Payment amount must be greater than zero"
 msgstr "भुगतान राशि शून्य से अधिक होनी चाहिए"
 
+#: services/payment_service.py:48
 msgid "Payment amount exceeds maximum allowed"
 msgstr "भुगतान राशि अधिकतम अनुमत राशि से अधिक है"
 
+#: services/payment_service.py:93 services/refund_service.py:131
 msgid "Payment provider not found in registry"
 msgstr "भुगतान प्रदाता पंजीकरण में नहीं मिला"
 
+#: services/payment_service.py:107
 msgid "Payment intent creation failed"
 msgstr "भुगतान इंटेंट बनाना विफल रहा"
 
+#: services/payment_service.py:135
 #, python-brace-format
 msgid "Payment processing error: {error}"
 msgstr "भुगतान प्रक्रिया त्रुटि: {error}"
 
+#: services/payment_service.py:153
 msgid "Payment transaction is not in pending state"
 msgstr "भुगतान लेनदेन अपेक्षाकृत स्थिति में नहीं है"
 
+#: services/payment_service.py:169
 msgid "Authorization failed"
 msgstr "अनुमोदन विफल रहा"
 
+#: services/payment_service.py:189
 msgid "Payment authorized successfully"
 msgstr "भुगतान सफलतापूर्वक अनुमोदित कर दिया गया"
 
+#: services/payment_service.py:196
 #, python-brace-format
 msgid "Payment authorization error: {error}"
 msgstr "भुगतान अनुमोदन त्रुटि: {error}"
 
+#: services/payment_service.py:214
 msgid "Payment transaction is not authorized"
 msgstr "भुगतान लेनदेन अनुमोदित नहीं है"
 
+#: services/payment_service.py:221
 msgid "Capture amount exceeds authorized amount"
 msgstr "कैप्चर राशि अनुमोदित राशि से अधिक है"
 
+#: services/payment_service.py:235
 msgid "Capture failed"
 msgstr "कैप्चर विफल रहा"
 
+#: services/payment_service.py:256
 msgid "Payment captured successfully"
 msgstr "भुगतान सफलतापूर्वक कैप्चर कर दिया गया"
 
+#: services/payment_service.py:260
 #, python-brace-format
 msgid "Payment capture error: {error}"
 msgstr "भुगतान पकड़ त्रुटि: {error}"
 
+#: services/payment_service.py:310
 msgid "Only pending or authorized payments can be cancelled"
 msgstr "केवल अपेक्षाकृत या अनुमोदित भुगतान को रद्द किया जा सकता है"
 
+#: services/payment_service.py:325
 msgid "Cancellation failed"
 msgstr "रद्द करना विफल रहा"
 
+#: services/payment_service.py:340
 msgid "Payment cancelled successfully"
 msgstr "भुगतान सफलतापूर्वक रद्द कर दिया गया"
 
+#: services/payment_service.py:344
 #, python-brace-format
 msgid "Payment cancellation error: {error}"
 msgstr "भुगतान रद्द त्रुटि: {error}"
 
+#: services/refund_service.py:43
 msgid "Refund amount must be greater than zero"
 msgstr "वापसी की राशि शून्य से अधिक होनी चाहिए"
 
+#: services/refund_service.py:66
 #, python-brace-format
 msgid "Refund amount ({amount}) exceeds available amount ({available})"
 msgstr "वापसी की राशि ({amount}) उपलब्ध राशि ({available}) से अधिक है"
 
+#: services/refund_service.py:102
 msgid "Only successful payments can be refunded"
 msgstr "केवल सफल भुगतान को वापसी के लिए अनुमति दी जा सकती है"
 
+#: services/refund_service.py:105
 msgid "Only charge transactions can be refunded"
 msgstr "केवल चार्ज लेनदेन को वापसी के लिए अनुमति दी जा सकती है"
 
+#: services/refund_service.py:149
 msgid "Refund failed"
 msgstr "वापसी विफल रही"
 
+#: services/refund_service.py:213
 msgid "Refund processed successfully"
 msgstr "वापसी सफलतापूर्वक प्रक्रिया में है"
 
+#: services/refund_service.py:217
 #, python-brace-format
 msgid "Refund processing error: {error}"
 msgstr "वापसी प्रक्रिया त्रुटि: {error}"
 
+#: services/refund_service.py:231
 msgid "Transaction is not a refund"
 msgstr "लेनदेन वापसी नहीं है"
 
+#: services/webhook_service.py:103
 msgid "Webhook already processed"
 msgstr "वेबहूक पहले से ही प्रक्रिया में है"
 
+#: services/webhook_service.py:197
 msgid "Webhook processed successfully"
 msgstr "वेबहूक सफलतापूर्वक प्रक्रिया में है"
 
+#: services/webhook_service.py:546
 msgid "Webhook already processed successfully"
 msgstr "वेबहूक पहले से ही सफलतापूर्वक प्रक्रिया में है"
 
+#: services/webhook_service.py:560
 msgid "Webhook not found"
 msgstr "वेबहूक नहीं मिला"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:4
+#: templates/admin/payment_providers/configure_payment_methods.html:17
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:243
 msgid "Configure Payment Methods"
 msgstr "भुगतान विधियों को सेट करें"
 
-msgid "Enable or disable payment methods per country"
-msgstr "प्रत्येक देश के लिए भुगतान विधियों को एनेबल या डिसएबल करें"
+#: templates/admin/payment_providers/configure_payment_methods.html:19
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid "Configure which payment methods are available at checkout"
+msgstr "चेकआउट पर कौन सी भुगतान विधियाँ उपलब्ध हैं इसका विन्यास करें"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:23
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:246
+#| msgid "Back to Provider"
+msgid "Sync from Provider"
+msgstr "प्रोवाइडर से सिंक करें"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:26
 msgid "Back to Provider"
 msgstr "प्रोवाइडर के पास वापस"
 
-msgid "No Shipping Countries Configured"
-msgstr "कोई डिलीवरी देश सेट नहीं किया गया"
+#: templates/admin/payment_providers/configure_payment_methods.html:35
+#| msgid "No Payment Providers Available"
+msgid "No Payment Methods Available"
+msgstr "कोई भुगतान विधि उपलब्ध नहीं है"
 
-msgid ""
-"Configure shipping countries first to set up payment methods per country."
+#: templates/admin/payment_providers/configure_payment_methods.html:36
+#| msgid "Sync payment methods from payment provider APIs"
+msgid "Sync payment methods from your provider first using the button above."
 msgstr ""
-"प्रत्येक देश के लिए भुगतान विधियों को सेट अप करने के लिए पहले डिलीवरी देशों को कॉन्फ़िगर करें।"
+"पहले ऊपर दिए गए बटन का उपयोग करके अपने प्रोवाइडर से भुगतान विधियों को सिंक "
+"करें।"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:43
 msgid "How it works"
 msgstr "कैसे काम करता है"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:44
 msgid ""
-"Toggle payment methods on or off for each country. Changes are saved "
-"automatically."
+"The Global section applies to all customers. Add country-specific overrides "
+"below to customize methods for particular countries — country overrides take"
+" priority over global settings. Changes are saved automatically."
 msgstr ""
-"प्रत्येक देश के लिए भुगतान विधियों को ऑन या ऑफ करें। बदलाव स्वचालित रूप से सहेजे जाते हैं।"
+"ग्लोबल अनुच्छेद सभी ग्राहकों पर लागू होता है। विशिष्ट देशों के लिए विशेष "
+"अनुमति नीचे जोड़ें ताकि विशिष्ट देशों के लिए विधियों को विशेष रूप से तैयार "
+"किया जा सके - देश विशेष अनुमति ग्लोबल सेटिंग्स के ऊपर प्राथमिकता रखता है। "
+"परिवर्तन स्वत: सहेजे जाते हैं।"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:53
 msgid ""
-"No payment methods available. Try syncing payment methods from the provider "
-"first."
+"These payment methods are available to customers in all countries unless "
+"overridden below."
 msgstr ""
-"भुगतान विधियाँ उपलब्ध नहीं हैं। पहले प्रदाता से भुगतान विधियों को सिंक करने की कोशिश करें।"
+"ये भुगतान विधियाँ सभी देशों में ग्राहकों के लिए उपलब्ध हैं अपवाद के बिना "
+"नीचे के अनुसार।"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:58
+#: templates/admin/payment_providers/configure_payment_methods.html:110
+#| msgid "Enable"
+msgid "Enable All"
+msgstr "सभी को एनेबल करें"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:61
+#: templates/admin/payment_providers/configure_payment_methods.html:113
+#| msgid "Disable"
+msgid "Disable All"
+msgstr "सभी को डिसएबल करें"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:80
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid "No payment methods available. Try syncing from the provider first."
+msgstr ""
+"कोई भुगतान विधि उपलब्ध नहीं है। पहले प्रोवाइडर से सिंक करने की कोशिश करें।"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:88
+#| msgid "All Countries"
+msgid "Country Overrides"
+msgstr "देश के अधिकृतिकरण"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:89
+msgid "(optional)"
+msgstr "(वैकल्पिक)"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:91
+msgid ""
+"Add country-specific configurations that override the global settings above."
+" Useful if certain payment methods are only available or should be "
+"restricted in specific countries."
+msgstr ""
+"ऊपर दिए गए ग्लोबल सेटिंग्स के ऊपर वाले विशिष्ट देशों के लिए विशेष विन्यास "
+"जोड़ें। यह उपयोगी है यदि विशिष्ट देशों में कुछ भुगतान विधियां केवल उपलब्ध "
+"हों या विशिष्ट रूप से सीमित की जानी चाहिए।"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:102
+msgid "Remove override — will fall back to global"
+msgstr "ओवरराइड हटाएं — वैश्विक में वापस जाएंगे"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:103
+msgid "Remove"
+msgstr "हटाएं"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:132
+#| msgid ""
+#| "No payment methods available. Try syncing payment methods from the provider "
+#| "first."
+msgid ""
+"No payment methods available for this country. Methods from the global "
+"section will apply."
+msgstr ""
+"इस देश के लिए कोई भुगतान विधि उपलब्ध नहीं है। वैश्विक अनुभाग से विधियां लागू"
+" होंगी।"
+
+#: templates/admin/payment_providers/configure_payment_methods.html:144
 msgid "Saved"
 msgstr "सहेजा गया"
 
+#: templates/admin/payment_providers/configure_payment_methods.html:145
 msgid "Error saving change"
 msgstr "परिवर्तन सहेजने में त्रुटि"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:17
 msgid "Unknown Provider"
 msgstr "अज्ञात प्रोवाइडर"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:69
+#: templates/admin/payment_providers/payment_dashboard.html:413
 msgid "Order"
 msgstr "आदेश"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:76
+#: templates/admin/payment_providers/partials/webhook_cards.html:65
 msgid "View"
 msgstr "देखें"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:89
 msgid "No transactions found."
 msgstr "कोई लेनदेन नहीं मिला।"
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:91
+#: templates/admin/payment_providers/partials/webhook_cards.html:80
 msgid "Try adjusting your filters or search terms."
 msgstr "अपने फ़िल्टर या खोज शब्दों को समायोजित करने की कोशिश करें।"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:24
+#: templates/admin/payment_providers/partials/webhook_cards.html:52
+#: templates/admin/payment_providers/payment_dashboard.html:482
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:86
 msgid "Processed"
 msgstr "प्रक्रिया में"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:45
 msgid "Verified"
 msgstr "सत्यापित"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:39
 msgid "Unverified"
 msgstr "असत्यापित"
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:78
 msgid "No webhooks found."
 msgstr "कोई वेबहूक नहीं मिला।"
 
+#: templates/admin/payment_providers/payment_dashboard.html:4
+#: templates/admin/payment_providers/payment_dashboard.html:19
+#: templates/admin/payment_providers/payment_dashboard.html:30
+#: views/payment_dashboard.py:94
 msgid "Payment Dashboard"
 msgstr "भुगतान डैशबोर्ड"
 
+#: templates/admin/payment_providers/payment_dashboard.html:18
+#: templates/admin/payment_providers/providers/browse.html:26
 msgid "Home"
 msgstr "होम"
 
+#: templates/admin/payment_providers/payment_dashboard.html:33
 msgid "Monitor payment performance, provider health, and transaction metrics"
-msgstr "भुगतान के प्रदर्शन, प्रदाता के स्वास्थ्य और लेनदेन मापदंडों की निगरानी करें"
+msgstr ""
+"भुगतान के प्रदर्शन, प्रदाता के स्वास्थ्य और लेनदेन मापदंडों की निगरानी करें"
 
+#: templates/admin/payment_providers/payment_dashboard.html:42
 msgid "Period"
 msgstr "अवधि"
 
+#: templates/admin/payment_providers/payment_dashboard.html:54
 msgid "From"
 msgstr "से"
 
+#: templates/admin/payment_providers/payment_dashboard.html:60
 msgid "To"
 msgstr "तक"
 
+#: templates/admin/payment_providers/payment_dashboard.html:72
 msgid "Compare with previous period"
 msgstr "पिछले अवधि के साथ तुलना करें"
 
+#: templates/admin/payment_providers/payment_dashboard.html:83
 msgid "Quick Navigation"
 msgstr "त्वरित नेविगेशन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:86
 msgid "Jump to section..."
 msgstr "खंड तक जाएं..."
 
+#: templates/admin/payment_providers/payment_dashboard.html:87
+#: templates/admin/payment_providers/payment_dashboard.html:103
 msgid "Actions Required"
 msgstr "आवश्यक कार्रवाई"
 
+#: templates/admin/payment_providers/payment_dashboard.html:88
 msgid "Revenue Over Time"
 msgstr "समय के साथ रेवेन्यू"
 
+#: templates/admin/payment_providers/payment_dashboard.html:89
+#: templates/admin/payment_providers/payment_dashboard.html:179
 msgid "Payment Performance"
 msgstr "भुगतान प्रदर्शन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:90
+#: templates/admin/payment_providers/payment_dashboard.html:266
 msgid "Refund Metrics"
 msgstr "वापसी मापदंड"
 
+#: templates/admin/payment_providers/payment_dashboard.html:91
 msgid "Provider Performance"
 msgstr "प्रदाता प्रदर्शन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:92
 msgid "Transaction Status"
 msgstr "लेनदेन की स्थिति"
 
+#: templates/admin/payment_providers/payment_dashboard.html:93
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:212
 msgid "Payment Methods"
 msgstr "भुगतान विधियाँ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:94
+#: templates/admin/payment_providers/payment_dashboard.html:406
 msgid "Recent Transactions"
 msgstr "हालिया लेनदेन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:95
+#: templates/admin/payment_providers/payment_dashboard.html:464
 msgid "Webhook Statistics"
 msgstr "वेबहूक सांख्यिकी"
 
+#: templates/admin/payment_providers/payment_dashboard.html:111
 msgid "Failed Transactions (7d)"
 msgstr "असफल लेनदेन (7d)"
 
+#: templates/admin/payment_providers/payment_dashboard.html:119
 msgid "Pending Captures"
 msgstr "अपेक्षित कैप्चर"
 
+#: templates/admin/payment_providers/payment_dashboard.html:127
 msgid "Pending Refunds"
 msgstr "अपेक्षित वापसी"
 
+#: templates/admin/payment_providers/payment_dashboard.html:135
 msgid "Connection Errors"
 msgstr "कनेक्शन त्रुटियाँ"
 
+#: templates/admin/payment_providers/payment_dashboard.html:143
 msgid "Unprocessed Webhooks"
 msgstr "अप्रक्रियित वेबहूक"
 
+#: templates/admin/payment_providers/payment_dashboard.html:153
 msgid "Payment Revenue Over Time"
 msgstr "समय के साथ भुगतान रेवेन्यू"
 
+#: templates/admin/payment_providers/payment_dashboard.html:157
 msgid "Group by"
 msgstr "समूह द्वारा"
 
+#: templates/admin/payment_providers/payment_dashboard.html:160
 msgid "Day"
 msgstr "दिन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:163
 msgid "Week"
 msgstr "हफ्ता"
 
+#: templates/admin/payment_providers/payment_dashboard.html:166
 msgid "Month"
 msgstr "महीना"
 
+#: templates/admin/payment_providers/payment_dashboard.html:187
 msgid "Total Revenue"
 msgstr "कुल रेवेन्यू"
 
+#: templates/admin/payment_providers/payment_dashboard.html:203
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:30
 msgid "Total Transactions"
 msgstr "कुल लेनदेन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:219
+#: templates/admin/payment_providers/payment_dashboard.html:354
 msgid "Success Rate"
 msgstr "सफलता दर"
 
+#: templates/admin/payment_providers/payment_dashboard.html:235
 msgid "Average Transaction"
 msgstr "औसत लेनदेन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:245
 msgid "Authorized (Not Captured)"
 msgstr "अनुमोदित (कैप्चर नहीं किया गया)"
 
+#: templates/admin/payment_providers/payment_dashboard.html:255
+#: templates/admin/payment_providers/payment_dashboard.html:274
 msgid "Total Refunded"
 msgstr "कुल वापसी"
 
+#: templates/admin/payment_providers/payment_dashboard.html:290
 msgid "Refund Count"
 msgstr "वापसी की संख्या"
 
+#: templates/admin/payment_providers/payment_dashboard.html:306
 msgid "Refund Rate"
 msgstr "वापसी दर"
 
+#: templates/admin/payment_providers/payment_dashboard.html:317
 msgid "Provider Performance Comparison"
 msgstr "प्रदाता प्रदर्शन तुलना"
 
+#: templates/admin/payment_providers/payment_dashboard.html:337
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:127
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:253
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:339
 msgid "Active"
 msgstr "सक्रिय"
 
+#: templates/admin/payment_providers/payment_dashboard.html:339
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:72
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:257
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:340
 msgid "Inactive"
 msgstr "असक्रिय"
 
+#: templates/admin/payment_providers/payment_dashboard.html:346
 msgid "Revenue"
 msgstr "रेवेन्यू"
 
+#: templates/admin/payment_providers/payment_dashboard.html:350
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:125
 msgid "Transactions"
 msgstr "लेनदेन"
 
+#: templates/admin/payment_providers/payment_dashboard.html:360
 msgid "Avg Amount"
 msgstr "औसत राशि"
 
+#: templates/admin/payment_providers/payment_dashboard.html:368
 msgid "No payment providers configured"
 msgstr "कोई भुगतान प्रदाता सेट अप नहीं किया गया है"
 
+#: templates/admin/payment_providers/payment_dashboard.html:370
 msgid "Setup First Provider"
 msgstr "पहला प्रदाता सेट अप करें"
 
+#: templates/admin/payment_providers/payment_dashboard.html:383
 msgid "Transaction Status Breakdown"
 msgstr "लेनदेन स्थिति विस्तार"
 
+#: templates/admin/payment_providers/payment_dashboard.html:393
 msgid "Payment Methods Distribution"
 msgstr "भुगतान विधियों के वितरण"
 
+#: templates/admin/payment_providers/payment_dashboard.html:412
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:65
 msgid "Transaction ID"
 msgstr "लेनदेन की पहचान"
 
+#: templates/admin/payment_providers/payment_dashboard.html:414
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:99
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:73
 msgid "Provider"
 msgstr "प्रदाता"
 
+#: templates/admin/payment_providers/payment_dashboard.html:415
 msgid "Amount"
 msgstr "राशि"
 
+#: templates/admin/payment_providers/payment_dashboard.html:416
 msgid "Payment Method"
 msgstr "भुगतान विधि"
 
+#: templates/admin/payment_providers/payment_dashboard.html:418
 msgid "Date"
 msgstr "तारीख"
 
+#: templates/admin/payment_providers/payment_dashboard.html:451
 msgid "No recent transactions"
 msgstr "कोई हालिया लेनदेन नहीं"
 
+#: templates/admin/payment_providers/payment_dashboard.html:472
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:30
 msgid "Total Webhooks"
 msgstr "कुल वेबहॉक्स"
 
+#: templates/admin/payment_providers/payment_dashboard.html:492
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:40
 msgid "Unprocessed"
 msgstr "असंसाधित"
 
+#: templates/admin/payment_providers/payment_dashboard.html:502
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:98
 msgid "Signature Verified"
 msgstr "हस्ताक्षर सत्यापित"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
 msgid "Add Payment Provider"
 msgstr "भुगतान प्रदाता जोड़ें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:46
 msgid "Last Tested"
 msgstr "अंतिम परीक्षण"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:86
+#| msgid "Hosted Mode"
+msgid "Test Mode"
+msgstr "परीक्षण मोड"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:90
+msgid "Live"
+msgstr "लाइव"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:97
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:87
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:215
 msgid "Hosted"
 msgstr "मेजबान"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:99
 msgid "Embedded"
 msgstr "एम्बेडेड"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:109
 msgid "Settings"
 msgstr "सेटिंग्स"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:113
 msgid "Status & Health"
 msgstr "स्थिति एवं स्वास्थ्य"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:117
 msgid "Advanced"
 msgstr "उन्नत"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:133
+#| msgid "Webhook Information"
+msgid "Webhook Endpoint"
+msgstr "वेबहुक अंत्य"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:135
+msgid ""
+"Configure this URL in your payment provider's dashboard to receive payment "
+"notifications."
+msgstr ""
+"अपने भुगतान प्रदाता के डैशबोर्ड में इस URL को सेट करें ताकि भुगतान सूचनाएं "
+"प्राप्त की जा सके।"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:138
+msgid "Copy to clipboard"
+msgstr "क्लिपबोर्ड में कॉपी करें"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:149
+#| msgid "Payment Dashboard"
+msgid "Provider Dashboard"
+msgstr "प्रदाता डैशबोर्ड"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:163
 msgid "Component"
 msgstr "कम्पोनेंट"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:177
 msgid "User"
 msgstr "उपयोगकर्ता"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:215
+#| msgid ""
+#| "Configure which payment methods are offered to customers. Leave empty to "
+#| "show all available methods."
+msgid ""
+"Configure which payment methods are shown to customers at checkout, "
+"organized by country."
+msgstr ""
+"ग्राहकों को चेकआउट पर कौन-से भुगतान विधियां दिखाई जाएं, देश के आधार पर "
+"संगठित करें।"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:221
+#| msgid "Last tested:"
+msgid "Last synced:"
+msgstr "अंतिम सिंक्रनाइज़ किया गया:"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:227
+#| msgid "Basic Configuration"
+msgid "Global configuration active"
+msgstr "वैश्विक सेटिंग सक्रिय है"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:232
+#| msgid "No payment providers configured"
+msgid "countries configured"
+msgstr "एमएल विन्यासित"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:237
+msgid "Not configured — all available methods will be shown"
+msgstr "अपूर्व व्यवस्थित - सभी उपलब्ध विधियाँ दिखाई जाएंगी"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:277
 msgid "Connection Status"
 msgstr "कनेक्शन स्थिति"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:300
 msgid "Last Tested At"
 msgstr "अंतिम परीक्षण के समय"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:311
 msgid "Payment Method Sync Status"
 msgstr "भुगतान विधि सिंक स्थिति"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:322
 msgid "Last Method Sync At"
 msgstr "अंतिम विधि सिंक के समय"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:334
 msgid "Method Sync Error"
 msgstr "विधि सिंक त्रुटि"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:369
+#: templates/admin/payment_providers/wizard/step3_credentials.html:46
+msgid "API Credentials"
+msgstr "API प्रमाणपत्र"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:371
+msgid ""
+"API credentials are encrypted and managed through the setup wizard for "
+"security. To update your API keys or secrets, use the wizard to reconfigure "
+"this provider."
+msgstr ""
+"API योग्यता एन्क्रिप्ट की गई हैं और सुरक्षा के लिए सेटअप विजार्ड के माध्यम "
+"से प्रबंधित की गई हैं। अपने API कुंजियों या रहस्यों को अपडेट करने के लिए, इस"
+" प्रदाता को पुनः विन्यासित करने के लिए विजार्ड का उपयोग करें।"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:373
+#| msgid "Enter Your Credentials"
+msgid "Reconfigure Credentials"
+msgstr "अनुकूलन गुप्त जानकारी"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:380
 msgid "Created At"
 msgstr "बनाया गया"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:390
 msgid "Updated At"
 msgstr "अपडेट किया गया"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:400
 msgid "Save"
 msgstr "सहेजें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:401
 msgid "Save and continue editing"
 msgstr "सहेजें और संपादन जारी रखें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:403
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:293
 msgid "Delete"
 msgstr "हटाएं"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:418
 msgid "Select All"
 msgstr "सभी चुनें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:419
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:117
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:115
 msgid "Clear All"
 msgstr "सभी को साफ करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:18
+#: templates/admin/payment_providers/providers/browse.html:27
 msgid "Payment Provider Accounts"
 msgstr "भुगतान प्रदाता खाता"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:20
 msgid "Manage payment gateway integrations and API connections"
 msgstr "भुगतान गेटवे एकीकरण और API कनेक्शन का प्रबंधन करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:22
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] "%(counter)s प्रोवाइडर"
 msgstr[1] "%(counter)s प्रोवाइडर्स"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:23
 msgid "active"
 msgstr "सक्रिय"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:24
 msgid "connected"
 msgstr "जुड़ा हुआ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:29
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:305
+#: templates/admin/payment_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr "प्रदाताओं की जांच करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:32
 msgid "Setup New Provider"
 msgstr "नए प्रदाता की स्थापना करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:51
 msgid "Search providers..."
 msgstr "प्रदाताओं की तलाश करें..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:60
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:76
 msgid "All Statuses"
 msgstr "सभी स्थितियाँ"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:65
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:234
 msgid "Error"
 msgstr "त्रुटि"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:74
 msgid "All Active Status"
 msgstr "सभी सक्रिय स्थिति"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:76
 msgid "Active Only"
 msgstr "केवल सक्रिय"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:79
 msgid "Inactive Only"
 msgstr "केवल असक्रिय"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:85
 msgid "All Checkout Modes"
 msgstr "सभी चेकआउट मोड"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:90
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:219
 msgid "Integrated"
 msgstr "एकीकृत"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:97
 msgid "All Provider Types"
 msgstr "सभी प्रदाता प्रकार"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:136
 msgid "Hosted Mode"
 msgstr "मेजबान मोड"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:145
 msgid "Integrated Mode"
 msgstr "एकीकृत मोड"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:155
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:184
 msgid "Default Provider"
 msgstr "डिफ़ॉल्ट प्रदाता"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:199
 msgid "Provider:"
 msgstr "प्रदाता:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "Last tested:"
 msgstr "अंतिम परीक्षण:"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "ago"
 msgstr "पहले"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:267
 msgid "Edit"
 msgstr "संपादित करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:272
+#: templates/admin/payment_providers/wizard/base.html:46
+#: templates/admin/payment_providers/wizard/step4_test.html:13
 msgid "Test Connection"
 msgstr "कनेक्शन परीक्षण करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:338
 msgid "Disable"
 msgstr "अक्षम करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:337
 msgid "Enable"
 msgstr "सक्रिय करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:288
 msgid "Set as Default"
 msgstr "डिफ़ॉल्ट के रूप में सेट करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:302
 msgid "No Payment Providers Connected"
 msgstr "कोई भुगतान प्रदाता जुड़ा नहीं है"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:303
 msgid "Get started by connecting your first payment provider"
 msgstr "अपने पहले भुगतान प्रदाता के साथ कनेक्ट करके शुरुआत करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:308
 msgid "Setup Your First Provider"
 msgstr "अपना पहला प्रदाता सेट अप करें"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:318
 msgid "providers"
 msgstr "प्रदाता"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:327
 msgid "Testing..."
 msgstr "परीक्षण..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:328
 msgid "Setting..."
 msgstr "सेटिंग..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:329
 msgid "Deleting..."
 msgstr "हटाना..."
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:330
 msgid "Connection test failed"
 msgstr "कनेक्शन परीक्षण विफल रहा"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:331
 msgid "Failed to set default"
 msgstr "डिफ़ॉल्ट सेट करने में विफल"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:333
 msgid "Failed to delete"
 msgstr "हटाने में विफल"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:334
 msgid "Set this provider as the default payment provider?"
-msgstr "क्या आप इस प्रदाता को डिफ़ॉल्ट भुगतान प्रदाता के रूप में सेट करना चाहते हैं?"
-
-msgid ""
-"Are you sure you want to delete this payment provider? This action cannot be "
-"undone."
 msgstr ""
-"क्या आप निश्चित हैं कि आप इस भुगतान प्रदाता को हटाना चाहते हैं? यह कार्रवाई वापस नहीं "
-"की जा सकती।"
+"क्या आप इस प्रदाता को डिफ़ॉल्ट भुगतान प्रदाता के रूप में सेट करना चाहते हैं?"
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:335
+msgid ""
+"Are you sure you want to delete this payment provider? This action cannot be"
+" undone."
+msgstr ""
+"क्या आप निश्चित हैं कि आप इस भुगतान प्रदाता को हटाना चाहते हैं? यह कार्रवाई "
+"वापस नहीं की जा सकती।"
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:336
+#| msgid "Failed to initialize payment provider"
+msgid "Failed to toggle provider"
+msgstr "प्रदाता को स्विच करने में विफल"
+
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:4
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:18
 msgid "Payment Transactions"
 msgstr "भुगतान लेनदेन"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:20
 msgid "View and track all payment transactions"
 msgstr "सभी भुगतान लेनदेन देखें और ट्रैक करें"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:25
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:25
 msgid "Overview"
 msgstr "सारांश"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:35
 msgid "Successful"
 msgstr "सफल"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:45
 msgid "Refunded"
 msgstr "वापसी"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:54
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:54
 msgid "Filters"
 msgstr "फ़िल्टर"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:67
 msgid "Search by transaction ID..."
 msgstr "लेनदेन आईडी द्वारा खोजें..."
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:86
 msgid "Type"
 msgstr "प्रकार"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:89
 msgid "All Types"
 msgstr "सभी प्रकार"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:102
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:76
 msgid "All Providers"
 msgstr "सभी प्रदाता"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:114
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:112
 msgid "Apply Filters"
 msgstr "फ़िल्टर लागू करें"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:128
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:126
 msgid "entries"
 msgstr "एंट्री"
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:137
 msgid "Loading transactions..."
 msgstr "लेनदेन लोड कर रहा है..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:4
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:18
 msgid "Payment Webhooks"
 msgstr "भुगतान वेबहॉक्स"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:20
 msgid "Monitor incoming payment provider webhooks"
 msgstr "आने वाले भुगतान प्रदाता वेबहॉक्स की निगरानी करें"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:65
 msgid "Event ID / Type"
 msgstr "इवेंट आईडी / प्रकार"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:67
 msgid "Search by event ID or type..."
 msgstr "घटना ID या प्रकार द्वारा खोजें..."
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:89
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:101
 msgid "All"
 msgstr "सभी"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:90
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:102
 msgid "Yes"
 msgstr "हां"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:91
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:103
 msgid "No"
 msgstr "नहीं"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:123
+#: templates/admin/payment_providers/providers/browse.html:281
 msgid "Webhooks"
 msgstr "वेबहॉक्स"
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:135
 msgid "Loading webhooks..."
 msgstr "वेबहॉक्स लोड हो रहे हैं..."
 
+#: templates/admin/payment_providers/providers/browse.html:4
+#: templates/admin/payment_providers/providers/browse.html:37
+#: views/provider_browse.py:212
 msgid "Browse Payment Providers"
 msgstr "भुगतान प्रदाताओं की जांच करें"
 
+#: templates/admin/payment_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr "साइट प्रशासक"
 
+#: templates/admin/payment_providers/providers/browse.html:39
 msgid ""
 "Choose a payment provider to integrate with your store. Install new "
 "providers or configure existing ones."
 msgstr ""
-"अपने स्टोर के साथ एकीकृत करने के लिए एक भुगतान प्रदाता चुनें। नए प्रदाताओं की इंस्टॉल करें या "
-"मौजूदा के सेटिंग करें।"
+"अपने स्टोर के साथ एकीकृत करने के लिए एक भुगतान प्रदाता चुनें। नए प्रदाताओं "
+"की इंस्टॉल करें या मौजूदा के सेटिंग करें।"
 
+#: templates/admin/payment_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr "अपडेट सर्वर अस्वीकृत"
 
+#: templates/admin/payment_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr ""
-"अपडेट सर्वर के साथ कनेक्शन नहीं हो सका। केवल स्थानीय रूप से इंस्टॉल किए गए प्रदाताओं का "
-"दिखावट किया जा रहा है।"
+"अपडेट सर्वर के साथ कनेक्शन नहीं हो सका। केवल स्थानीय रूप से इंस्टॉल किए गए "
+"प्रदाताओं का दिखावट किया जा रहा है।"
 
+#: templates/admin/payment_providers/providers/browse.html:58
 msgid "Payment Provider Marketplace"
 msgstr "भुगतान प्रदाता मार्केटप्लेस"
 
+#: templates/admin/payment_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payment providers to accept payments from "
 "customers worldwide, including credit cards, digital wallets, and local "
 "payment methods."
 msgstr ""
-"यहां आप विश्व भर के ग्राहकों से भुगतान के रूप में लेने के लिए भुगतान प्रदाताओं की खोज कर सकते "
-"हैं, जिसमें क्रेडिट कार्ड, डिजिटल वॉलेट और स्थानीय भुगतान विधियां शामिल हैं।"
+"यहां आप विश्व भर के ग्राहकों से भुगतान के रूप में लेने के लिए भुगतान "
+"प्रदाताओं की खोज कर सकते हैं, जिसमें क्रेडिट कार्ड, डिजिटल वॉलेट और स्थानीय "
+"भुगतान विधियां शामिल हैं।"
 
+#: templates/admin/payment_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr "आप क्या कर सकते हैं:"
 
+#: templates/admin/payment_providers/providers/browse.html:82
 msgid "Browse available payment providers by country and payment methods"
 msgstr "देश और भुगतान विधियों के आधार पर उपलब्ध भुगतान प्रदाताओं की जांच करें"
 
+#: templates/admin/payment_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr "एक क्लिक के साथ नए प्रदाताओं की इंस्टॉल करें"
 
+#: templates/admin/payment_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr "इंस्टॉल किए गए प्रदाताओं को नवीनतम संस्करणों में अपडेट करें"
 
+#: templates/admin/payment_providers/providers/browse.html:94
 msgid "Configure provider settings and API credentials"
 msgstr "प्रदाता सेटिंग्स और API आधार विवरण का प्रबंधन करें"
 
+#: templates/admin/payment_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr "शुरू करना:"
 
+#: templates/admin/payment_providers/providers/browse.html:105
 msgid "Browse providers below and find your payment processor"
 msgstr "नीचे प्रदाताओं की जांच करें और अपने भुगतान प्रोसेसर को ढूंढें"
 
+#: templates/admin/payment_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr "प्रदाता को अपने स्टोर में जोड़ने के लिए 'इंस्टॉल' पर क्लिक करें"
 
+#: templates/admin/payment_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr "API आधार विवरण के सेटिंग के लिए 'सेटिंग' तक जाएं"
 
+#: templates/admin/payment_providers/providers/browse.html:108
 msgid "Test the provider with a sample transaction"
 msgstr "एक नमूना लेनदेन के साथ प्रदाता का परीक्षण करें"
 
+#: templates/admin/payment_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -1735,6 +2585,7 @@ msgstr[1] ""
 "                    वर्तमान में: %(total)s प्रदाता उपलब्ध\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:121
 #, python-format
 msgid ""
 "\n"
@@ -1753,517 +2604,787 @@ msgstr[1] ""
 "                    %(installed)s इंस्टॉल किया गया\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:136
 msgid "Filter by Country:"
 msgstr "देश द्वारा फ़िल्टर करें:"
 
+#: templates/admin/payment_providers/providers/browse.html:142
 msgid "All Countries"
 msgstr "सभी देश"
 
+#: templates/admin/payment_providers/providers/browse.html:156
 msgid "Active Filter:"
 msgstr "सक्रिय फ़िल्टर:"
 
+#: templates/admin/payment_providers/providers/browse.html:163
 msgid "Clear filter"
 msgstr "फ़िल्टर क्लीयर करें"
 
+#: templates/admin/payment_providers/providers/browse.html:181
 msgid "Update Available"
 msgstr "अपडेट उपलब्ध है"
 
+#: templates/admin/payment_providers/providers/browse.html:207
 msgid "Installed"
 msgstr "इंस्टॉल किया गया"
 
+#: templates/admin/payment_providers/providers/browse.html:222
 msgid "Available"
 msgstr "उपलब्ध"
 
+#: templates/admin/payment_providers/providers/browse.html:245
 msgid "Cards"
 msgstr "कार्ड"
 
+#: templates/admin/payment_providers/providers/browse.html:250
 msgid "Bank"
 msgstr "बैंक"
 
+#: templates/admin/payment_providers/providers/browse.html:255
 msgid "Wallets"
 msgstr "वॉलेट"
 
+#: templates/admin/payment_providers/providers/browse.html:260
 msgid "Local"
 msgstr "स्थानीय"
 
+#: templates/admin/payment_providers/providers/browse.html:271
+#: templates/admin/payment_providers/wizard/step1_select.html:94
 msgid "3D Secure"
 msgstr "3D सुरक्षित"
 
+#: templates/admin/payment_providers/providers/browse.html:276
+#: templates/admin/payment_providers/wizard/step1_select.html:82
 msgid "Refunds"
 msgstr "वापसी"
 
+#: templates/admin/payment_providers/providers/browse.html:314
 msgid "Update"
 msgstr "अपडेट करें"
 
+#: templates/admin/payment_providers/providers/browse.html:320
+#: templates/admin/payment_providers/wizard/base.html:54
 msgid "Configure"
 msgstr "सेट करें"
 
+#: templates/admin/payment_providers/providers/browse.html:328
 msgid "Install"
 msgstr "इंस्टॉल करें"
 
+#: templates/admin/payment_providers/providers/browse.html:338
 msgid "View Details"
 msgstr "विवरण देखें"
 
+#: templates/admin/payment_providers/providers/browse.html:347
 msgid "Learn More"
 msgstr "अधिक जानें"
 
+#: templates/admin/payment_providers/providers/browse.html:361
 msgid "No Providers Available"
 msgstr "कोई प्रदाता उपलब्ध नहीं"
 
+#: templates/admin/payment_providers/providers/browse.html:362
 msgid ""
 "No payment providers are currently available. Please check your update "
 "server connection or contact support."
 msgstr ""
-"वर्तमान में कोई भुगतान प्रदाता उपलब्ध नहीं है। कृपया अपने अपडेट सर्वर के कनेक्शन की जांच करें "
-"या समर्थन से संपर्क करें।"
+"वर्तमान में कोई भुगतान प्रदाता उपलब्ध नहीं है। कृपया अपने अपडेट सर्वर के "
+"कनेक्शन की जांच करें या समर्थन से संपर्क करें।"
 
+#: templates/admin/payment_providers/providers/browse.html:371
 msgid "Installing provider..."
 msgstr "प्रदाता इंस्टॉल कर रहा है..."
 
+#: templates/admin/payment_providers/wizard/base.html:13
 msgid "Connect Payment Provider"
 msgstr "भुगतान प्रदाता के साथ कनेक्ट करें"
 
+#: templates/admin/payment_providers/wizard/base.html:14
 msgid "Follow these steps to connect your payment provider account"
 msgstr "अपने भुगतान प्रदाता खाता को कनेक्ट करने के लिए इन चरणों का पालन करें"
 
+#: templates/admin/payment_providers/wizard/base.html:22
 msgid "Select Provider"
 msgstr "प्रदाता चुनें"
 
+#: templates/admin/payment_providers/wizard/base.html:30
 msgid "Setup Instructions"
 msgstr "स्थापना निर्देश"
 
+#: templates/admin/payment_providers/wizard/base.html:38
 msgid "Enter Credentials"
 msgstr "सीधा आधार दर्ज करें"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:6
 msgid "Select a Payment Provider"
 msgstr "एक भुगतान प्रदाता चुनें"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:7
 msgid "Choose the payment provider you want to connect to your store."
-msgstr "अपने स्टोर के साथ कनेक्ट करने के लिए आपके द्वारा चुने गए भुगतान प्रदाता का चयन करें।"
+msgstr ""
+"अपने स्टोर के साथ कनेक्ट करने के लिए आपके द्वारा चुने गए भुगतान प्रदाता का "
+"चयन करें।"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:20
+#, python-format
+#| msgid ""
+#| "\n"
+#| "                    Currently: %(total)s provider available\n"
+#| "                "
+#| msgid_plural ""
+#| "\n"
+#| "                    Currently: %(total)s providers available\n"
+#| "                "
+msgid ""
+"\n"
+"                %(counter)s payment provider needs repair\n"
+"                "
+msgid_plural ""
+"\n"
+"                %(counter)s payment providers need repair\n"
+"                "
+msgstr[0] ""
+"\n"
+"                %(counter)s भुगतान प्रदाता मरम्मत की आवश्यकता है\n"
+"                "
+msgstr[1] ""
+"\n"
+"                %(counter)s भुगतान प्रदाता मरम्मत की आवश्यकता है\n"
+"                "
+
+#: templates/admin/payment_providers/wizard/step1_select.html:27
+msgid ""
+"These providers are registered but their files are missing on disk. Click "
+"Reinstall to download a fresh copy from the update server."
+msgstr ""
+"इन प्रदाताओं को पंजीकृत किया गया है लेकिन डिस्क पर उनके फ़ाइलें लापता हैं। "
+"अपडेट सर्वर से एक ताज़ा कॉपी डाउनलोड करने के लिए Reinstall पर क्लिक करें।"
+
+#: templates/admin/payment_providers/wizard/step1_select.html:39
+#| msgid "Install"
+msgid "Reinstall"
+msgstr "पुनः स्थापित करें"
+
+#: templates/admin/payment_providers/wizard/step1_select.html:76
 msgid "Recurring"
 msgstr "पुनरावृत्ति"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:88
 msgid "International"
 msgstr "अंतर्राष्ट्रीय"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:100
 msgid "Digital Wallets"
 msgstr "डिजिटल वॉलेट"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:115
 msgid "No Payment Providers Available"
 msgstr "कोई भुगतान प्रदाता उपलब्ध नहीं"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:116
 msgid ""
 "Install payment provider components from the Component Manager to get "
 "started."
-msgstr "शुरू करने के लिए कॉम्पोनेंट मैनेजर से भुगतान प्रदाता कॉम्पोनेंट्स की इंस्टॉल करें।"
+msgstr ""
+"शुरू करने के लिए कॉम्पोनेंट मैनेजर से भुगतान प्रदाता कॉम्पोनेंट्स की इंस्टॉल"
+" करें।"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:118
 msgid "Browse Components"
 msgstr "कॉम्पोनेंट्स की जांच करें"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:130
 msgid "Cancel"
 msgstr "रद्द करें"
 
+#: templates/admin/payment_providers/wizard/step1_select.html:133
+#: templates/admin/payment_providers/wizard/step2_setup.html:80
+#: templates/admin/payment_providers/wizard/step3_credentials.html:223
+#: templates/admin/payment_providers/wizard/step4_test.html:119
 msgid "Continue"
 msgstr "जारी रखें"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:14
 msgid "Follow these instructions to set up your account"
 msgstr "अपने खाता को सेट करने के लिए इन निर्देशों का पालन करें"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:24
 msgid "Setup Information"
 msgstr "स्थापना जानकारी"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:31
 msgid "Create an Account"
 msgstr "एक खाता बनाएं"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "If you don't already have an account with"
 msgstr "यदि आपके पास अभी तक एक खाता नहीं है"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "you'll need to create one."
 msgstr "आपको एक बनाने की आवश्यकता होगी।"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:36
 msgid "Sign Up for"
 msgstr "लॉग इन करें अपने"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:45
 msgid "Get Your API Credentials"
 msgstr "अपने API प्रमाणपत्र प्राप्त करें"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid "Log in to your"
 msgstr "अपने"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid ""
 "dashboard and navigate to the API or Developer section to obtain your "
 "credentials."
-msgstr "डैशबोर्ड और API या डेवलपर सेक्शन में जाएं और अपने आधार विवरण प्राप्त करें।"
+msgstr ""
+"डैशबोर्ड और API या डेवलपर सेक्शन में जाएं और अपने आधार विवरण प्राप्त करें।"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:53
 msgid "Copy Your Credentials"
 msgstr "अपने प्रमाणपत्र की प्रतिलिपि बनाएं"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:54
 msgid "Have your API credentials ready. You'll need them in the next step."
 msgstr "अपने API आधार विवरण तैयार रखें। आपको अगले चरण में उनकी आवश्यकता होगी।"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:62
 msgid "Security Note"
 msgstr "सुरक्षा के नोट"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:63
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored. They are never stored in plain text."
 msgstr ""
-"आपके आधार विवरण को भंडारण करने से पहले AES-256 एन्क्रिप्शन का उपयोग करके एन्क्रिप्ट किए "
-"जाएंगे। वे कभी भी सामान्य पाठ में भंडारित नहीं किए जाते हैं।"
+"आपके आधार विवरण को भंडारण करने से पहले AES-256 एन्क्रिप्शन का उपयोग करके "
+"एन्क्रिप्ट किए जाएंगे। वे कभी भी सामान्य पाठ में भंडारित नहीं किए जाते हैं।"
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:75
+#: templates/admin/payment_providers/wizard/step3_credentials.html:220
+#: templates/admin/payment_providers/wizard/step4_test.html:116
+#: templates/admin/payment_providers/wizard/step5_configure.html:196
 msgid "Back"
 msgstr "पीछे"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:13
 msgid "Enter Your Credentials"
 msgstr "अपने प्रमाणपत्र दर्ज करें"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "Provide your"
 msgstr "अपना"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "API credentials"
 msgstr "API प्रमाणपत्र"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:25
+#: templates/admin/payment_providers/wizard/step5_configure.html:25
 msgid "Please correct the errors below:"
 msgstr "कृपया नीचे दिए गए त्रुटियों को सुधारें:"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:38
+#: templates/admin/payment_providers/wizard/step3_credentials.html:231
 msgid "TEST MODE"
 msgstr "परीक्षण मोड"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:39
+#: templates/admin/payment_providers/wizard/step3_credentials.html:232
 msgid "Using test credentials - no real transactions"
 msgstr "टेस्ट क्रेडेंशियल्स का उपयोग - कोई वास्तविक लेनदेन नहीं"
 
-msgid "API Credentials"
-msgstr "API प्रमाणपत्र"
-
+#: templates/admin/payment_providers/wizard/step3_credentials.html:166
 msgid "This provider does not require additional credentials."
 msgstr "इस प्रदाता के लिए अतिरिक्त आधार विवरण की आवश्यकता नहीं है।"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:173
 msgid "Basic Configuration"
 msgstr "मूल विन्यास"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:178
 msgid "Display Name"
 msgstr "प्रदर्शन नाम"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:189
 msgid "A friendly name to identify this payment provider connection"
 msgstr "इस भुगतान प्रदाता कनेक्शन की पहचान के लिए एक मित्रता नाम"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:199
 msgid "Hosted - Redirect to provider (recommended)"
 msgstr "मेजबान - प्रदाता के लिए रीडायरेक्ट (सिफारिश की गई)"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:204
 msgid ""
 "How customers will complete payment. Hosted mode is more secure and easier "
 "to maintain."
-msgstr "ग्राहक भुगतान कैसे पूरा करेंगे। मेजबान मोड सुरक्षित और बरकरार रखने में आसान है।"
+msgstr ""
+"ग्राहक भुगतान कैसे पूरा करेंगे। मेजबान मोड सुरक्षित और बरकरार रखने में आसान "
+"है।"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:211
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database. They are never stored in plain text."
 msgstr ""
-"आपके आधार विवरण को डेटाबेस में भंडारित करने से पहले AES-256 एन्क्रिप्शन का उपयोग करके "
-"एन्क्रिप्ट किए जाएंगे। वे कभी भी सामान्य पाठ में भंडारित नहीं किए जाते हैं।"
+"आपके आधार विवरण को डेटाबेस में भंडारित करने से पहले AES-256 एन्क्रिप्शन का "
+"उपयोग करके एन्क्रिप्ट किए जाएंगे। वे कभी भी सामान्य पाठ में भंडारित नहीं किए"
+" जाते हैं।"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:233
 msgid "PRODUCTION MODE"
 msgstr "उत्पादन मोड"
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:234
 msgid "Using live credentials - real transactions!"
 msgstr "लाइव क्रेडेंशियल्स का उपयोग - वास्तविक लेनदेन!"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "Verify your"
 msgstr "अपना"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:26
 msgid "Connection Successful!"
 msgstr "कनेक्शन सफल!"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "Your"
 msgstr "आपका"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "account has been verified and is ready to use."
 msgstr "खाता सत्यापित कर लिया गया है और उपयोग के लिए तैयार है।"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:31
 msgid "Account Information"
 msgstr "खाता जानकारी"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:34
 msgid "Account ID"
 msgstr "खाता आईडी"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:39
 msgid "Email"
 msgstr "ईमेल"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:44
 msgid "Country"
 msgstr "देश"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:49
 msgid "Default Currency"
 msgstr "मूल विन्यास मुद्रा"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:54
 msgid "Account Status"
 msgstr "खाता स्थिति"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:68
 msgid "Connection Failed"
 msgstr "कनेक्शन विफल"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:69
 msgid ""
-"Unable to connect to the payment provider. Please check your credentials and "
-"try again."
+"Unable to connect to the payment provider. Please check your credentials and"
+" try again."
 msgstr ""
-"भुगतान प्रदाता के साथ कनेक्शन करने में असमर्थ। कृपया अपने आधार विवरण की जांच करें और पुनः "
-"प्रयास करें।"
+"भुगतान प्रदाता के साथ कनेक्शन करने में असमर्थ। कृपया अपने आधार विवरण की जांच"
+" करें और पुनः प्रयास करें।"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:73
 msgid "Technical Details"
 msgstr "तकनीकी विवरण"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:79
 msgid "Troubleshooting Tips"
 msgstr "समस्या के समाधान के सुझाव"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:81
 msgid "Verify that your API credentials are correct"
 msgstr "अपने API आधार विवरण सही हैं यह जांचें"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:82
 msgid "Check that your account is active with the payment provider"
 msgstr "जांचें कि आपके खाता भुगतान प्रदाता के साथ सक्रिय है"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:83
 msgid "Ensure you're using the correct environment (test/production)"
-msgstr "सुनिश्चित करें कि आप सही वातावरण (टेस्ट/प्रोडक्शन) का उपयोग कर रहे हैं"
+msgstr ""
+"सुनिश्चित करें कि आप सही वातावरण (टेस्ट/प्रोडक्शन) का उपयोग कर रहे हैं"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:84
 msgid "Verify that your IP address is not blocked by the provider"
 msgstr "सुनिश्चित करें कि आपके IP पता प्रदाता द्वारा अवरुद्ध नहीं है"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:97
 msgid "Testing Connection..."
 msgstr "कनेक्शन के परीक्षण कर रहे हैं..."
 
+#: templates/admin/payment_providers/wizard/step4_test.html:98
 msgid "Please wait while we verify your credentials with"
 msgstr "कृपया इंतजार करें जब तक हम आपकी प्रमाणिकता की जांच करते हैं"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:123
 msgid "Edit Credentials"
 msgstr "प्रमाणपत्र संपादित करें"
 
+#: templates/admin/payment_providers/wizard/step4_test.html:126
 msgid "Retry Test"
 msgstr "परीक्षण को फिर से करें"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:13
 msgid "Configure Provider"
 msgstr "प्रदाता के विन्यास करें"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "Finalize your"
 msgstr "अपना"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:33
 msgid "Activation"
 msgstr "सक्रियता"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:42
 msgid "Enable this payment provider for checkout"
 msgstr "चेकआउट के लिए इस भुगतान प्रदाता को एनेबल करें"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:46
 msgid ""
 "When enabled, customers will be able to use this payment method during "
 "checkout."
-msgstr "एनेबल करने पर, ग्राहक चेकआउट के दौरान इस भुगतान विधि का उपयोग कर सकते हैं।"
+msgstr ""
+"एनेबल करने पर, ग्राहक चेकआउट के दौरान इस भुगतान विधि का उपयोग कर सकते हैं।"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:56
 msgid "Set as default payment provider"
 msgstr "मूल भुगतान प्रदाता के रूप में सेट करें"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:60
 msgid ""
-"The default provider will be pre-selected during checkout. You can only have "
-"one default provider."
+"The default provider will be pre-selected during checkout. You can only have"
+" one default provider."
 msgstr ""
-"चेकआउट के दौरान डिफ़ॉल्ट प्रदाता पहले से चुना गया होगा। आपके पास केवल एक डिफ़ॉल्ट प्रदाता "
-"हो सकता है।"
+"चेकआउट के दौरान डिफ़ॉल्ट प्रदाता पहले से चुना गया होगा। आपके पास केवल एक "
+"डिफ़ॉल्ट प्रदाता हो सकता है।"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:67
 msgid "Display Order"
 msgstr "प्रदर्शन क्रम"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:72
 msgid "Sort Order"
 msgstr "क्रमबद्ध क्रम"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:82
 msgid ""
 "Lower numbers appear first in the checkout payment method list. Use this to "
 "control the order of payment options."
 msgstr ""
-"चेकआउट भुगतान विधि सूची में छोटी संख्या पहले दिखाई देती है। इसका उपयोग भुगतान विकल्पों के "
-"क्रम को नियंत्रित करने के लिए करें।"
+"चेकआउट भुगतान विधि सूची में छोटी संख्या पहले दिखाई देती है। इसका उपयोग "
+"भुगतान विकल्पों के क्रम को नियंत्रित करने के लिए करें।"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:90
 msgid "Advanced Settings"
 msgstr "उन्नत विन्यास"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:167
 msgid "Webhook Configuration"
 msgstr "वेबहॉक विन्यास"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid ""
 "To receive real-time payment notifications, configure the following webhook "
 "URL in your"
 msgstr ""
-"वास्तविक समय भुगतान सूचनाओं को प्राप्त करने के लिए, अपने में निम्नलिखित वेबहॉक URL की "
-"स्थापना करें"
+"वास्तविक समय भुगतान सूचनाओं को प्राप्त करने के लिए, अपने में निम्नलिखित "
+"वेबहॉक URL की स्थापना करें"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid "dashboard:"
 msgstr "डैशबोर्ड:"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:176
 msgid "Copy"
 msgstr "कॉपी"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:183
 msgid "Important"
 msgstr "महत्वपूर्ण"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:184
 msgid ""
-"Webhooks allow your store to receive instant notifications when payments are "
-"completed, refunded, or encounter issues. Configure this in your payment "
+"Webhooks allow your store to receive instant notifications when payments are"
+" completed, refunded, or encounter issues. Configure this in your payment "
 "provider's dashboard to ensure smooth operation."
 msgstr ""
-"वेबहॉक्स आपके स्टोर को भुगतान पूरा हो जाने, वापसी के बाद या समस्याओं के साथ तत्काल सूचनाओं "
-"को प्राप्त करने की अनुमति देते हैं। आपके भुगतान प्रदाता के डैशबोर्ड में इसकी स्थापना करें ताकि "
-"सुचारू संचालन सुनिश्चित किया जा सके।"
+"वेबहॉक्स आपके स्टोर को भुगतान पूरा हो जाने, वापसी के बाद या समस्याओं के साथ "
+"तत्काल सूचनाओं को प्राप्त करने की अनुमति देते हैं। आपके भुगतान प्रदाता के "
+"डैशबोर्ड में इसकी स्थापना करें ताकि सुचारू संचालन सुनिश्चित किया जा सके।"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:199
 msgid "Complete Setup"
 msgstr "सेटअप पूरा करें"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:208
 msgid "Copied!"
 msgstr "कॉपी कर दिया गया!"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:209
 msgid "Failed to copy to clipboard. Please copy manually."
-msgstr "क्लिपबोर्ड में कॉपी करने में विफल रहा। कृपया मनमाने तरीके से कॉपी करें।"
+msgstr ""
+"क्लिपबोर्ड में कॉपी करने में विफल रहा। कृपया मनमाने तरीके से कॉपी करें।"
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:210
 msgid ""
 "Setting this as the default will remove the default status from any other "
 "payment provider. Continue?"
 msgstr ""
-"इसे डिफ़ॉल्ट के रूप में सेट करने से किसी अन्य भुगतान प्रदाता से डिफ़ॉल्ट स्थिति हटा दी जाएगी। "
-"जारी रखें?"
+"इसे डिफ़ॉल्ट के रूप में सेट करने से किसी अन्य भुगतान प्रदाता से डिफ़ॉल्ट "
+"स्थिति हटा दी जाएगी। जारी रखें?"
 
-msgid "Cannot set as default while inactive. Please enable the provider first."
+#: templates/admin/payment_providers/wizard/step5_configure.html:211
+msgid ""
+"Cannot set as default while inactive. Please enable the provider first."
 msgstr ""
-"असक्रिय होने के दौरान इसे डिफ़ॉल्ट के रूप में सेट करा जा सकता है। पहले प्रदाता को एनेबल करें।"
+"असक्रिय होने के दौरान इसे डिफ़ॉल्ट के रूप में सेट करा जा सकता है। पहले "
+"प्रदाता को एनेबल करें।"
 
+#: views/handlers.py:111
 msgid "Provider not found"
 msgstr "प्रदाता नहीं मिला"
 
+#: views/payment_dashboard.py:118
 msgid "Today"
 msgstr "आज"
 
+#: views/payment_dashboard.py:119
 msgid "Yesterday"
 msgstr "कल"
 
+#: views/payment_dashboard.py:120
 msgid "Last 7 Days"
 msgstr "अंतिम 7 दिन"
 
+#: views/payment_dashboard.py:121
 msgid "Last 30 Days"
 msgstr "अंतिम 30 दिन"
 
+#: views/payment_dashboard.py:122
 msgid "This Month"
 msgstr "इस महीने"
 
+#: views/payment_dashboard.py:123
 msgid "Last Month"
 msgstr "पिछला महीना"
 
+#: views/payment_dashboard.py:124
 msgid "This Quarter"
 msgstr "इस तिमाही में"
 
+#: views/payment_dashboard.py:125
 msgid "Last Quarter"
 msgstr "पिछली तिमाही"
 
+#: views/payment_dashboard.py:126
 msgid "This Year / YTD"
 msgstr "इस वर्ष / YTD"
 
+#: views/payment_dashboard.py:127
 msgid "Last Year"
 msgstr "पिछला वर्ष"
 
+#: views/payment_dashboard.py:128
 msgid "Custom Range"
 msgstr "निर्धारित रेंज"
 
+#: views/provider_browse.py:62
 msgid ""
 "Could not fetch providers from update server. Showing installed providers "
 "only."
 msgstr ""
-"अपडेट सर्वर से प्रदाताओं को प्राप्त करने में विफल रहा। केवल इंस्टॉल किए गए प्रदाताओं को "
-"दिखाया जा रहा है।"
+"अपडेट सर्वर से प्रदाताओं को प्राप्त करने में विफल रहा। केवल इंस्टॉल किए गए "
+"प्रदाताओं को दिखाया जा रहा है।"
 
+#: views/provider_browse.py:269
 msgid "Provider is already installed"
 msgstr "प्रदाता पहले से इंस्टॉल हो चुका है"
 
+#: views/provider_browse.py:306
 msgid "Provider not found on update server."
 msgstr "अपडेट सर्वर पर प्रदाता नहीं मिला।"
 
+#: views/provider_browse.py:316
 msgid "Could not determine provider version."
 msgstr "प्रदाता के वर्जन का पता लगाया नहीं जा सका।"
 
+#: views/provider_browse.py:338
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "प्रदाता डाउनलोड करने में विफल: %(error)s"
 
+#: views/provider_browse.py:351
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "प्रदाता इंस्टॉल करने में विफल: %(error)s"
 
+#: views/provider_browse.py:389
 #, python-format
 msgid "Provider %(name)s installed successfully"
 msgstr "प्रदाता %(name)s सफलतापूर्वक इंस्टॉल कर दिया गया है"
 
+#: views/provider_browse.py:398
 #, python-format
 msgid "Installation failed: %(error)s"
 msgstr "इंस्टॉल करने में विफल: %(error)s"
 
+#: views/provider_browse.py:424
 msgid "Provider not installed"
 msgstr "प्रदाता इंस्टॉल नहीं है"
 
+#: views/provider_browse.py:437
 msgid "Could not find latest version on update server"
 msgstr "अपडेट सर्वर पर नवीनतम संस्करण नहीं मिला"
 
+#: views/provider_browse.py:450
 #, python-format
 msgid "Provider updated successfully to v%(version)s"
 msgstr "प्रदाता को v%(version)s तक सफलतापूर्वक अपडेट कर दिया गया है"
 
+#: views/provider_browse.py:456
 msgid "Update failed"
 msgstr "अपडेट विफल रहा"
 
+#: views/wizard.py:104
+msgid "Provider files missing on disk"
+msgstr "प्रदाता फ़ाइलें डिस्क पर अपूर्ण हैं"
+
+#: views/wizard.py:115
+#| msgid "Provider account not found"
+msgid "Provider manifest could not be loaded"
+msgstr "प्रोवाइडर मैनिफेस्ट लोड करने में समस्या हुई"
+
+#: views/wizard.py:127
+#| msgid "Provider not installed"
+msgid "Provider manifest is empty or invalid"
+msgstr "प्रोवाइडर मैनिफेस्ट खाली है या अमान्य है"
+
+#: views/wizard.py:144
 msgid "Connect Payment Provider - Select Provider"
 msgstr "भुगतान प्रदाता कनेक्ट करें - प्रदाता चुनें"
 
+#: views/wizard.py:157
 msgid "Please select a provider."
 msgstr "कृपया एक प्रदाता चुनें।"
 
+#: views/wizard.py:165
 msgid "Invalid provider selected."
 msgstr "अमान्य प्रदाता चुना गया है।"
 
+#: views/wizard.py:193 views/wizard.py:262
 msgid "Please select a provider first."
 msgstr "कृपया पहले एक प्रदाता चुनें।"
 
+#: views/wizard.py:222 views/wizard.py:279
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "प्रदाता लोड करने में त्रुटि: %(error)s"
 
+#: views/wizard.py:232
 msgid "Connect Payment Provider - Setup Instructions"
 msgstr "भुगतान प्रदाता कनेक्ट करें - स्थापना निर्देश"
 
+#: views/wizard.py:273
 msgid "Could not load provider configuration."
 msgstr "प्रदाता के सेटअप को लोड करने में विफल रहा।"
 
+#: views/wizard.py:293
 msgid "Connect Payment Provider - Enter Credentials"
 msgstr "भुगतान प्रदाता कनेक्ट करें - प्रमाणिकता दर्ज करें"
 
+#: views/wizard.py:321
 msgid "Error loading provider configuration."
 msgstr "प्रदाता के सेटअप को लोड करते समय त्रुटि हुई।"
 
+#: views/wizard.py:333
 msgid "Display name is required."
 msgstr "एक दिखाए जाने वाला नाम आवश्यक है।"
 
+#: views/wizard.py:364
 msgid "Please complete previous steps first."
 msgstr "कृपया पहले पिछले चरण पूरा करें।"
 
+#: views/wizard.py:377 views/wizard.py:495
 msgid "Provider not found."
 msgstr "प्रदाता नहीं मिला।"
 
+#: views/wizard.py:381
 msgid "Connect Payment Provider - Test Connection"
 msgstr "भुगतान प्रदाता कनेक्ट करें - कनेक्शन परीक्षण करें"
 
+#: views/wizard.py:408
 msgid "Provider implementation not found."
 msgstr "प्रदाता के लेआउट को नहीं मिला।"
 
+#: views/wizard.py:478
 msgid "Please complete all previous steps."
 msgstr "कृपया सभी पिछले चरण पूरा करें।"
 
+#: views/wizard.py:499
 msgid "Connect Payment Provider - Configure"
 msgstr "भुगतान प्रदाता कनेक्ट करें - सेट करें"
 
+#: views/wizard.py:578
 #, python-format
 msgid "Payment provider \"%(name)s\" connected successfully!"
 msgstr "भुगतान प्रदाता \"%(name)s\" सफलतापूर्वक जुड़ गया!"
 
+#: views/wizard.py:603
+#, python-format
+msgid ""
+"Provider was saved but payment methods could not be auto-synced (%(error)s)."
+" The provider will not appear at checkout until methods are synced — try the"
+" \"Sync methods\" action on the provider list."
+msgstr ""
+"प्रोवाइडर सहेजा गया है लेकिन भुगतान विधियां स्वचालित सिंक करने में विफल रही "
+"(%(error)s)। विधियों के सिंक होने तक प्रोवाइडर चेकआउट पर दिखाई देगा — "
+"प्रोवाइडर सूची पर \"Sync methods\" क्रिया को प्रयास करें।"
+
+#: views/wizard.py:618
 #, python-format
 msgid "Error saving provider: %(error)s"
 msgstr "प्रदाता सहेजने में त्रुटि: %(error)s"
+
+#~ msgid "Payment Configuration"
+#~ msgstr "भुगतान विन्यास"
+
+#~ msgid "Enabled Payment Methods"
+#~ msgstr "सक्रिय भुगतान विधियाँ"
+
+#~ msgid ""
+#~ "Select payment methods to offer customers. Leave empty for all available "
+#~ "methods."
+#~ msgstr ""
+#~ "ग्राहकों के लिए भुगतान विधियों का चयन करें। सभी उपलब्ध विधियों के लिए खाली "
+#~ "छोड़ें।"
+
+#~ msgid "Enable or disable payment methods per country"
+#~ msgstr "प्रत्येक देश के लिए भुगतान विधियों को एनेबल या डिसएबल करें"
+
+#~ msgid "No Shipping Countries Configured"
+#~ msgstr "कोई डिलीवरी देश सेट नहीं किया गया"
+
+#~ msgid ""
+#~ "Configure shipping countries first to set up payment methods per country."
+#~ msgstr ""
+#~ "प्रत्येक देश के लिए भुगतान विधियों को सेट अप करने के लिए पहले डिलीवरी देशों "
+#~ "को कॉन्फ़िगर करें।"
+
+#~ msgid ""
+#~ "Toggle payment methods on or off for each country. Changes are saved "
+#~ "automatically."
+#~ msgstr ""
+#~ "प्रत्येक देश के लिए भुगतान विधियों को ऑन या ऑफ करें। बदलाव स्वचालित रूप से "
+#~ "सहेजे जाते हैं।"

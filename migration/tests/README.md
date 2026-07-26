@@ -85,9 +85,9 @@ from migration.tests.manual_test_woocommerce import test_woocommerce_connection
 
 # Test with your WooCommerce store
 test_woocommerce_connection(
-    store_url='https://yourstore.com',
-    consumer_key='ck_xxxxxxxxxxxxxxxxxxxx',
-    consumer_secret='cs_xxxxxxxxxxxxxxxxxxxx'
+    store_url="https://yourstore.com",
+    consumer_key="ck_xxxxxxxxxxxxxxxxxxxx",
+    consumer_secret="cs_xxxxxxxxxxxxxxxxxxxx",
 )
 ```
 
@@ -100,9 +100,9 @@ from migration.tests.manual_test_woocommerce import test_woocommerce_connection
 
 # Note: You'll need to create your own API keys from the demo admin
 test_woocommerce_connection(
-    store_url='https://demo.woothemes.com',
-    consumer_key='YOUR_DEMO_KEY',
-    consumer_secret='YOUR_DEMO_SECRET'
+    store_url="https://demo.woothemes.com",
+    consumer_key="YOUR_DEMO_KEY",
+    consumer_secret="YOUR_DEMO_SECRET",
 )
 ```
 

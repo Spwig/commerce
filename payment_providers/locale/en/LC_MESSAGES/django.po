@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
+"PO-Revision-Date: 2026-07-21 02:37+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -18,295 +18,418 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:71
 msgid "Provider Information"
 msgstr ""
 
+#: admin.py:75
 msgid ""
 "Component and User cannot be changed after creation for security and audit "
 "purposes."
 msgstr ""
 
-msgid "Payment Configuration"
-msgstr ""
-
-msgid ""
-"Configure which payment methods are offered to customers. Leave empty to "
-"show all available methods."
-msgstr ""
-
+#: admin.py:79
 msgid "Configuration"
 msgstr ""
 
+#: admin.py:80 admin.py:172
+#: templates/admin/payment_providers/payment_dashboard.html:417
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:73
 msgid "Status"
 msgstr ""
 
+#: admin.py:82
 msgid "Payment Method Synchronization"
 msgstr ""
 
+#: admin.py:92
 msgid "Payment methods can be synced from your provider account. "
 msgstr ""
 
+#: admin.py:96
 msgid "Sync Payment Methods Now"
 msgstr ""
 
+#: admin.py:100
 msgid "Save the account first to enable payment method synchronization."
 msgstr ""
 
+#: admin.py:104
 msgid "Connection Health"
 msgstr ""
 
+#: admin.py:109
 msgid ""
 "Connection health is automatically updated when you test the connection from "
 "the wizard."
 msgstr ""
 
+#: admin.py:113
 msgid "Metadata"
 msgstr ""
 
+#: admin.py:120
 msgid "Create Provider"
 msgstr ""
 
+#: admin.py:127
 msgid "Please use the Payment Provider Connection Wizard"
 msgstr ""
 
+#: admin.py:131
 #, python-format
 msgid ""
 "For the best experience, please use the <a href=\"%(url)s\">Provider "
 "Connection Wizard</a> to set up new providers."
 msgstr ""
 
+#: admin.py:148
 msgid "Name"
 msgstr ""
 
+#: admin.py:164
 msgid "Connection"
 msgstr ""
 
+#: admin.py:180 templates/admin/payment_providers/payment_dashboard.html:334
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:79
 msgid "Default"
 msgstr ""
 
+#: admin.py:192
+#: templates/admin/payment_providers/wizard/step3_credentials.html:195
 msgid "Checkout Mode"
 msgstr ""
 
+#: admin.py:194
 msgid "Environment"
 msgstr ""
 
+#: admin.py:330
 msgid "Connection test completed"
 msgstr ""
 
+#: admin.py:336 admin.py:359 admin.py:383 admin.py:446 admin.py:539
+#: admin.py:598 admin.py:648 admin.py:688 services/webhook_service.py:114
 msgid "Provider account not found"
 msgstr ""
 
+#: admin.py:342
 #, python-format
 msgid "Connection test failed: %(error)s"
 msgstr ""
 
+#: admin.py:356
 msgid "Set as default provider"
 msgstr ""
 
+#: admin.py:366 admin.py:389 admin.py:544 admin.py:615 admin.py:664
 msgid "Method not allowed"
 msgstr ""
 
+#: admin.py:376
+msgid "Provider enabled"
+msgstr ""
+
+#: admin.py:378
+msgid "Provider disabled"
+msgstr ""
+
+#: admin.py:402
 msgid "This provider does not support payment method synchronization"
 msgstr ""
 
+#: admin.py:410
 #, python-format
 msgid "Failed to load provider: %(error)s"
 msgstr ""
 
+#: admin.py:426
 #, python-format
 msgid ""
 "Successfully synced %(methods)d payment methods across %(countries)d "
 "countries"
 msgstr ""
 
+#: admin.py:441
 msgid "Synchronization failed"
 msgstr ""
 
+#: admin.py:450
 #, python-format
 msgid "Unexpected error: %(error)s"
 msgstr ""
 
+#: admin.py:481
+msgid "Global (All Countries)"
+msgstr ""
+
+#: admin.py:528
 #, python-format
 msgid "Configure Payment Methods - %(provider)s"
 msgstr ""
 
+#: admin.py:558
 msgid "Missing required parameters"
 msgstr ""
 
+#: admin.py:564 admin.py:626
+msgid "Invalid country code"
+msgstr ""
+
+#: admin.py:570
+msgid "Invalid payment method identifier"
+msgstr ""
+
+#: admin.py:576
+msgid "Invalid enabled value"
+msgstr ""
+
+#: admin.py:583
 #, python-format
 msgid "Enabled %(method)s for %(country)s"
 msgstr ""
 
+#: admin.py:589
 #, python-format
 msgid "Disabled %(method)s for %(country)s"
 msgstr ""
 
+#: admin.py:603 admin.py:651
+msgid "Invalid request body"
+msgstr ""
+
+#: admin.py:609 admin.py:657
+msgid "An unexpected error occurred"
+msgstr ""
+
+#: admin.py:640
+#, python-format
+msgid "Country override removed. Global settings will apply for %(country)s."
+msgstr ""
+
+#: admin.py:676
 msgid ""
 "Cannot delete provider with existing transactions. Deactivate it instead."
 msgstr ""
 
+#: admin.py:684
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:332
 msgid "Provider deleted successfully"
 msgstr ""
 
+#: admin.py:739
 msgid "Transaction Information"
 msgstr ""
 
+#: admin.py:752
 msgid "Payment Details"
 msgstr ""
 
+#: admin.py:756 admin.py:776 admin.py:982
 msgid "Provider Response"
 msgstr ""
 
+#: admin.py:760
 msgid "Error Information"
 msgstr ""
 
+#: admin.py:764 admin.py:985
 msgid "Timestamps"
 msgstr ""
 
+#: admin.py:774
 msgid "No response data"
 msgstr ""
 
+#: admin.py:850
 msgid "Webhook Information"
 msgstr ""
 
+#: admin.py:863
 msgid "Payload"
 msgstr ""
 
+#: admin.py:864
 msgid "Headers"
 msgstr ""
 
+#: admin.py:866 models.py:511 models.py:1006
 msgid "Processing"
 msgstr ""
 
+#: admin.py:872
 msgid "System Information"
 msgstr ""
 
+#: admin.py:880
 msgid "No payload data"
 msgstr ""
 
+#: admin.py:882
 msgid "Webhook Payload"
 msgstr ""
 
+#: admin.py:889
 msgid "No headers data"
 msgstr ""
 
+#: admin.py:891
 msgid "HTTP Headers"
 msgstr ""
 
+#: admin.py:957
 msgid "Intent Information"
 msgstr ""
 
+#: admin.py:971
 msgid "Checkout Details"
 msgstr ""
 
+#: admin.py:975
 msgid "3DS / Authentication"
 msgstr ""
 
+#: api_serializers.py:21
 msgid ""
 "Checkout session ID. If not provided, uses current user's active session."
 msgstr ""
 
+#: api_serializers.py:26
 msgid ""
 "Payment provider account ID. If not provided, uses session's selected "
 "provider."
 msgstr ""
 
+#: api_serializers.py:30
 msgid "Saved payment method ID for returning customers."
 msgstr ""
 
+#: api_serializers.py:33
 msgid "URL to redirect after successful payment."
 msgstr ""
 
+#: api_serializers.py:36
 msgid "URL to redirect on payment cancellation."
 msgstr ""
 
+#: api_serializers.py:39
 msgid "Additional metadata to attach to the payment."
 msgstr ""
 
+#: api_serializers.py:49 models.py:1092
 msgid "Type of action required (redirect, 3ds_challenge, etc.)"
 msgstr ""
 
+#: api_serializers.py:52
 msgid "URL to redirect for action completion."
 msgstr ""
 
+#: api_serializers.py:55
 msgid "Provider-specific action data for SDK handling."
 msgstr ""
 
+#: api_serializers.py:64
 msgid "Whether the operation succeeded."
 msgstr ""
 
+#: api_serializers.py:65 api_serializers.py:413
 msgid "Payment intent ID."
 msgstr ""
 
+#: api_serializers.py:67
 msgid "Order ID (created with 'unpaid' status)."
 msgstr ""
 
+#: api_serializers.py:70 api_serializers.py:422
 msgid "Order number for display."
 msgstr ""
 
+#: api_serializers.py:72 api_serializers.py:414
 msgid "Current payment intent status."
 msgstr ""
 
+#: api_serializers.py:74
 msgid "Type of checkout flow (hosted or embedded)."
 msgstr ""
 
+#: api_serializers.py:80
 msgid "Hosted checkout redirect URL (for hosted checkout)."
 msgstr ""
 
+#: api_serializers.py:86
 msgid "Client secret for provider SDK (for embedded checkout)."
 msgstr ""
 
+#: api_serializers.py:89
 msgid "Provider's publishable key for SDK initialization."
 msgstr ""
 
+#: api_serializers.py:92
 msgid "URL to provider's checkout handler JavaScript."
 msgstr ""
 
+#: api_serializers.py:95
 msgid "Configuration data for handler initialization."
 msgstr ""
 
+#: api_serializers.py:98
 msgid "External SDK URLs required by provider."
 msgstr ""
 
+#: api_serializers.py:101
 msgid "Provider identifier (slug) for handler lookup."
 msgstr ""
 
+#: api_serializers.py:104
 msgid "Whether customer action is required (3DS, etc.)."
 msgstr ""
 
+#: api_serializers.py:107 api_serializers.py:426
 msgid "Action details if requires_action is true."
 msgstr ""
 
+#: api_serializers.py:109
 msgid "When this payment intent expires."
 msgstr ""
 
+#: api_serializers.py:110 api_serializers.py:428
 msgid "Error details if payment failed."
 msgstr ""
 
+#: api_serializers.py:416
 msgid "Order ID."
 msgstr ""
 
+#: api_serializers.py:424
 msgid "Whether customer action is required."
 msgstr ""
 
+#: api_serializers.py:455
 msgid "Provider-specific payment method data for confirmation."
 msgstr ""
 
+#: api_serializers.py:468
 msgid "Optional reason for cancellation."
 msgstr ""
 
+#: api_serializers.py:516
 msgid "Payment provider account ID."
 msgstr ""
 
+#: api_serializers.py:518
 msgid "Token from provider SDK representing the payment method."
 msgstr ""
 
+#: api_serializers.py:521
 msgid "Whether to set this as the default payment method."
 msgstr ""
 
+#: api_views.py:53
 msgid "Create payment intent"
 msgstr ""
 
+#: api_views.py:54
 msgid ""
 "\n"
 "Create a payment intent for checkout.\n"
@@ -358,21 +481,28 @@ msgstr ""
 "- Amounts are validated against checkout session totals\n"
 "        "
 
+#: api_views.py:81 services/payment_orchestration_service.py:265
+#: services/payment_service.py:131
 msgid "Payment intent created successfully"
 msgstr ""
 
+#: api_views.py:84
 msgid "Invalid request, checkout not ready, or validation failed"
 msgstr ""
 
+#: api_views.py:86 api_views.py:102
 msgid "Checkout session not found"
 msgstr ""
 
+#: api_views.py:110
 msgid "Payment provider not found or not configured"
 msgstr ""
 
+#: api_views.py:205
 msgid "Get payment intent status"
 msgstr ""
 
+#: api_views.py:206
 msgid ""
 "\n"
 "        Get the current status of a payment intent.\n"
@@ -410,20 +540,25 @@ msgstr ""
 "        - `canceled`: Payment was canceled\n"
 "        "
 
+#: api_views.py:228
 msgid "Payment intent UUID"
 msgstr ""
 
+#: api_views.py:235
 msgid ""
 "Payment intent details (full handler data for active intents, status-only "
 "for terminal states)"
 msgstr ""
 
+#: api_views.py:238 api_views.py:287 api_views.py:342
 msgid "Payment intent not found"
 msgstr ""
 
+#: api_views.py:270
 msgid "Confirm payment intent"
 msgstr ""
 
+#: api_views.py:271
 msgid ""
 "\n"
 "        Confirm a payment intent after customer completes required action.\n"
@@ -449,15 +584,19 @@ msgstr ""
 "actions.\n"
 "        "
 
+#: api_views.py:284
 msgid "Confirmation result"
 msgstr ""
 
+#: api_views.py:286
 msgid "Confirmation failed"
 msgstr ""
 
+#: api_views.py:327
 msgid "Cancel payment intent"
 msgstr ""
 
+#: api_views.py:328
 msgid ""
 "\n"
 "        Cancel a payment intent.\n"
@@ -483,24 +622,31 @@ msgstr ""
 "failed, canceled).\n"
 "        "
 
+#: api_views.py:340
 msgid "Payment canceled successfully"
 msgstr ""
 
+#: api_views.py:341
 msgid "Cannot cancel this payment"
 msgstr ""
 
+#: api_views.py:367
 msgid "List saved payment methods"
 msgstr ""
 
+#: api_views.py:368
 msgid "List all saved payment methods for the authenticated user."
 msgstr ""
 
+#: api_views.py:372
 msgid "List of saved payment methods"
 msgstr ""
 
+#: api_views.py:390
 msgid "Save a new payment method"
 msgstr ""
 
+#: api_views.py:391
 msgid ""
 "\n"
 "        Save a new payment method for future use.\n"
@@ -516,42 +662,55 @@ msgstr ""
 "        after collecting card details on the client side.\n"
 "        "
 
+#: api_views.py:401
 msgid "Payment method saved successfully"
 msgstr ""
 
+#: api_views.py:403
 msgid "Invalid request"
 msgstr ""
 
+#: api_views.py:422 services/payment_orchestration_service.py:122
 msgid "Payment provider not found"
 msgstr ""
 
+#: api_views.py:434
 msgid "Provider does not support saved payment methods"
 msgstr ""
 
+#: api_views.py:494
 msgid "Get saved payment method details"
 msgstr ""
 
+#: api_views.py:497
 msgid "Payment method details"
 msgstr ""
 
+#: api_views.py:499 api_views.py:519 api_views.py:551
 msgid "Payment method not found"
 msgstr ""
 
+#: api_views.py:516
 msgid "Delete saved payment method"
 msgstr ""
 
+#: api_views.py:518 api_views.py:536
 msgid "Payment method deleted"
 msgstr ""
 
+#: api_views.py:548
 msgid "Set default payment method"
 msgstr ""
 
+#: api_views.py:550 api_views.py:566
 msgid "Default payment method updated"
 msgstr ""
 
+#: api_views.py:579
 msgid "Report payment SDK failure"
 msgstr ""
 
+#: api_views.py:580
 msgid ""
 "\n"
 "Report a payment SDK loading failure. Used by the checkout frontend\n"
@@ -573,1122 +732,1746 @@ msgstr ""
 "**Authentication:** Not required (supports guest checkout).\n"
 "        "
 
+#: api_views.py:590
 msgid "Failure reported"
 msgstr ""
 
+#: apps.py:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:6
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:4
 msgid "Payment Providers"
 msgstr ""
 
-msgid "Enabled Payment Methods"
-msgstr ""
-
-msgid ""
-"Select payment methods to offer customers. Leave empty for all available "
-"methods."
-msgstr ""
-
+#: management/commands/sync_payment_methods.py:17
 msgid "Sync payment methods from payment provider APIs"
 msgstr ""
 
+#: models.py:27
 msgid "component"
 msgstr ""
 
+#: models.py:28
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:170
 msgid "Installed payment provider component"
 msgstr ""
 
+#: models.py:35
 msgid "user"
 msgstr ""
 
+#: models.py:36
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:184
 msgid "User who owns this provider account"
 msgstr ""
 
+#: models.py:42
 msgid "display name"
 msgstr ""
 
+#: models.py:43
 msgid "Friendly name for this connection (e.g., \"My Payment Provider\")"
 msgstr ""
 
+#: models.py:49 templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "credentials"
 msgstr ""
 
+#: models.py:50
 msgid "Encrypted API credentials (never stored in plain text)"
 msgstr ""
 
+#: models.py:56
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "settings"
 msgstr ""
 
+#: models.py:57
 msgid "Provider-specific configuration (checkout mode, features, etc.)"
 msgstr ""
 
+#: models.py:63
 msgid "signup URL"
 msgstr ""
 
+#: models.py:64
 msgid "Link for merchants to create provider account (may be affiliate link)"
 msgstr ""
 
+#: models.py:69
 msgid "is active"
 msgstr ""
 
+#: models.py:70
 msgid "Whether this provider connection is active for checkout"
 msgstr ""
 
+#: models.py:75
 msgid "is default"
 msgstr ""
 
+#: models.py:76
 msgid "Use this provider as default for payment processing"
 msgstr ""
 
+#: models.py:83
 msgid "Hosted - Redirect to provider"
 msgstr ""
 
+#: models.py:84
+#: templates/admin/payment_providers/wizard/step3_credentials.html:200
 msgid "Integrated - On-site checkout"
 msgstr ""
 
+#: models.py:87
 msgid "checkout mode"
 msgstr ""
 
+#: models.py:88
 msgid "How customers will complete payment"
 msgstr ""
 
+#: models.py:94
 msgid "sort order"
 msgstr ""
 
+#: models.py:95
 msgid "Display order in checkout (lower numbers appear first)"
 msgstr ""
 
+#: models.py:102
 msgid "last tested at"
 msgstr ""
 
+#: models.py:103
 msgid "Last successful connection test"
 msgstr ""
 
+#: models.py:109
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:238
 msgid "Unknown"
 msgstr ""
 
+#: models.py:110
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:57
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:62
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:118
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:230
 msgid "Connected"
 msgstr ""
 
+#: models.py:111
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:288
 msgid "Connection Error"
 msgstr ""
 
+#: models.py:114
 msgid "connection status"
 msgstr ""
 
+#: models.py:118
 msgid "connection error"
 msgstr ""
 
+#: models.py:118
 msgid "Last connection error message"
 msgstr ""
 
+#: models.py:125
 msgid "available payment methods"
 msgstr ""
 
+#: models.py:127
 msgid ""
-"Payment methods available from provider API, organized by country. Format: "
-"{\"US\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
+"Payment methods available from provider API, organized by country. Use "
+"\"_global\" key for methods available regardless of country. Format: "
+"{\"_global\": [\"card\", \"apple_pay\"], \"SG\": [\"card\", \"paynow\"]}"
 msgstr ""
 
+#: models.py:136
 msgid "enabled payment methods"
 msgstr ""
 
+#: models.py:138
 msgid ""
-"Payment methods enabled by merchant for each country. Format: {\"US\": "
-"[\"card\", \"apple_pay\"], \"SG\": [\"card\"]}"
+"Payment methods enabled by merchant. Use \"_global\" for all countries, or "
+"per-country keys to override. Format: {\"_global\": [\"card\", "
+"\"apple_pay\"], \"SG\": [\"card\"]}"
 msgstr ""
 
+#: models.py:147
 msgid "last method sync at"
 msgstr ""
 
+#: models.py:148
 msgid "When payment methods were last synced from provider"
 msgstr ""
 
+#: models.py:154
 msgid "Pending - Not synced yet"
 msgstr ""
 
+#: models.py:155
 msgid "Syncing - In progress"
 msgstr ""
 
+#: models.py:156
 msgid "Success - Synced successfully"
 msgstr ""
 
+#: models.py:157
 msgid "Error - Sync failed"
 msgstr ""
 
+#: models.py:160
 msgid "method sync status"
 msgstr ""
 
+#: models.py:161
 msgid "Status of payment method synchronization"
 msgstr ""
 
+#: models.py:166
 msgid "method sync error"
 msgstr ""
 
+#: models.py:167
 msgid "Last payment method sync error message"
 msgstr ""
 
+#: models.py:171 models.py:757 models.py:1134
 msgid "created at"
 msgstr ""
 
+#: models.py:172 models.py:758 models.py:1135
 msgid "updated at"
 msgstr ""
 
+#: models.py:176
 msgid "payment provider account"
 msgstr ""
 
+#: models.py:177
 msgid "payment provider accounts"
 msgstr ""
 
+#: models.py:313
 msgid "Provider does not support payment method synchronization"
 msgstr ""
 
+#: models.py:345
 msgid "Payment methods synced successfully"
 msgstr ""
 
+#: models.py:510
+#: templates/admin/payment_providers/partials/webhook_cards.html:28
 msgid "Pending"
 msgstr ""
 
+#: models.py:512
 msgid "Authorized - Not captured"
 msgstr ""
 
+#: models.py:513
 msgid "Completed - Payment successful"
 msgstr ""
 
+#: models.py:514 models.py:1009
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:61
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:40
 msgid "Failed"
 msgstr ""
 
+#: models.py:515
 msgid "Voided - Authorization canceled"
 msgstr ""
 
+#: models.py:516
 msgid "Refunded - Full refund"
 msgstr ""
 
+#: models.py:517
 msgid "Partially Refunded"
 msgstr ""
 
+#: models.py:521
 msgid "Charge - Immediate payment"
 msgstr ""
 
+#: models.py:522
 msgid "Authorize - Hold funds"
 msgstr ""
 
+#: models.py:523
 msgid "Capture - Collect authorized funds"
 msgstr ""
 
+#: models.py:524
 msgid "Void - Cancel authorization"
 msgstr ""
 
+#: models.py:525
 msgid "Refund - Return payment"
 msgstr ""
 
+#: models.py:547
+msgid "Payment provider"
+msgstr ""
+
+#: models.py:548
+msgid "Gift Card"
+msgstr ""
+
+#: models.py:549
+msgid "Store Credit"
+msgstr ""
+
+#: models.py:550
+msgid "Cash"
+msgstr ""
+
+#: models.py:551
+msgid "Card (Terminal)"
+msgstr ""
+
+#: models.py:552
+msgid "Card (Manual)"
+msgstr ""
+
+#: models.py:568 models.py:872 models.py:1029
 msgid "provider account"
 msgstr ""
 
+#: models.py:569
 msgid "Payment provider account used for this transaction"
 msgstr ""
 
+#: models.py:579 models.py:1037
 msgid "order"
 msgstr ""
 
+#: models.py:587
 msgid "transaction ID"
 msgstr ""
 
+#: models.py:588
 msgid "Internal transaction ID"
 msgstr ""
 
+#: models.py:595
 msgid "provider transaction ID"
 msgstr ""
 
+#: models.py:596
 msgid "Provider transaction ID (charge ID, payment intent ID, etc.)"
 msgstr ""
 
+#: models.py:604
 msgid "authorization ID"
 msgstr ""
 
+#: models.py:605
 msgid "Provider authorization ID (if applicable)"
 msgstr ""
 
+#: models.py:613 models.py:1077
 msgid "amount"
 msgstr ""
 
+#: models.py:614
 msgid "Transaction amount"
 msgstr ""
 
+#: models.py:618 models.py:1069
 msgid "status"
 msgstr ""
 
+#: models.py:622
 msgid "type"
 msgstr ""
 
-msgid "customer email"
+#: models.py:633
+msgid "tender type"
 msgstr ""
 
-msgid "customer name"
+#: models.py:634
+msgid "How this payment was made"
 msgstr ""
 
-msgid "payment method type"
+#: models.py:643
+msgid "gift card"
 msgstr ""
 
-msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
+#: models.py:644
+msgid "Gift card this tender draws on"
 msgstr ""
 
-msgid "last 4 digits"
+#: models.py:656
+msgid "wallet"
 msgstr ""
 
-msgid "Last 4 digits of card/account"
+#: models.py:657
+msgid "Customer wallet this tender draws on"
 msgstr ""
 
-msgid "metadata"
-msgstr ""
-
-msgid "Additional transaction metadata"
-msgstr ""
-
-msgid "provider response"
-msgstr ""
-
-msgid "Raw response from payment provider"
-msgstr ""
-
-msgid "error message"
-msgstr ""
-
-msgid "error code"
-msgstr ""
-
-msgid "expires at"
-msgstr ""
-
-msgid "When authorization expires (if applicable)"
-msgstr ""
-
-msgid "completed at"
-msgstr ""
-
-msgid "payment transaction"
-msgstr ""
-
-msgid "payment transactions"
-msgstr ""
-
-msgid "provider slug"
-msgstr ""
-
-msgid "Provider identifier for routing"
-msgstr ""
-
-msgid "event ID"
-msgstr ""
-
-msgid "Provider webhook event ID"
-msgstr ""
-
-msgid "event type"
-msgstr ""
-
-msgid "Type of webhook event"
-msgstr ""
-
-msgid "payload"
-msgstr ""
-
-msgid "Complete webhook payload"
-msgstr ""
-
-msgid "headers"
-msgstr ""
-
-msgid "HTTP headers from webhook request"
-msgstr ""
-
-msgid "processed"
-msgstr ""
-
-msgid "Whether webhook has been processed"
-msgstr ""
-
-msgid "processing result"
-msgstr ""
-
-msgid "Result from webhook handler"
-msgstr ""
-
-msgid "processing error"
-msgstr ""
-
-msgid "Error message if processing failed"
-msgstr ""
-
-msgid "signature verified"
-msgstr ""
-
-msgid "Whether webhook signature was verified"
-msgstr ""
-
-msgid "idempotency key"
-msgstr ""
-
-msgid "Key to prevent duplicate processing"
-msgstr ""
-
-msgid "received at"
-msgstr ""
-
-msgid "processed at"
-msgstr ""
-
-msgid "payment webhook"
-msgstr ""
-
-msgid "payment webhooks"
-msgstr ""
-
-msgid "Created"
-msgstr ""
-
-msgid "Requires Payment Method"
-msgstr ""
-
-msgid "Requires Confirmation"
-msgstr ""
-
-msgid "Requires Action"
-msgstr ""
-
-msgid "Succeeded"
-msgstr ""
-
-msgid "Canceled"
-msgstr ""
-
+#: models.py:669 models.py:1021
 msgid "checkout session"
 msgstr ""
 
+#: models.py:681
+msgid "parent transaction"
+msgstr ""
+
+#: models.py:694
+msgid "settlement amount"
+msgstr ""
+
+#: models.py:695
+msgid "This tender's value in the order's currency"
+msgstr ""
+
+#: models.py:703
+msgid "exchange rate"
+msgstr ""
+
+#: models.py:704
+msgid "Rate used to convert amount into settlement_amount"
+msgstr ""
+
+#: models.py:708
+msgid "customer email"
+msgstr ""
+
+#: models.py:710
+msgid "customer name"
+msgstr ""
+
+#: models.py:716
+msgid "payment method type"
+msgstr ""
+
+#: models.py:717
+msgid "Type of payment method used (credit_card, bank_transfer, etc.)"
+msgstr ""
+
+#: models.py:723
+msgid "last 4 digits"
+msgstr ""
+
+#: models.py:724
+msgid "Last 4 digits of card/account"
+msgstr ""
+
+#: models.py:731 models.py:1113
+msgid "metadata"
+msgstr ""
+
+#: models.py:732
+msgid "Additional transaction metadata"
+msgstr ""
+
+#: models.py:739 models.py:1120
+msgid "provider response"
+msgstr ""
+
+#: models.py:740 models.py:1121
+msgid "Raw response from payment provider"
+msgstr ""
+
+#: models.py:744 models.py:1127
+msgid "error message"
+msgstr ""
+
+#: models.py:746 models.py:1125
+msgid "error code"
+msgstr ""
+
+#: models.py:752 models.py:1131
+msgid "expires at"
+msgstr ""
+
+#: models.py:753
+msgid "When authorization expires (if applicable)"
+msgstr ""
+
+#: models.py:759
+msgid "completed at"
+msgstr ""
+
+#: models.py:763
+msgid "payment transaction"
+msgstr ""
+
+#: models.py:764
+msgid "payment transactions"
+msgstr ""
+
+#: models.py:881
+msgid "provider slug"
+msgstr ""
+
+#: models.py:882
+msgid "Provider identifier for routing"
+msgstr ""
+
+#: models.py:891
+msgid "event ID"
+msgstr ""
+
+#: models.py:892
+msgid "Provider webhook event ID"
+msgstr ""
+
+#: models.py:900
+msgid "event type"
+msgstr ""
+
+#: models.py:901
+msgid "Type of webhook event"
+msgstr ""
+
+#: models.py:905
+msgid "payload"
+msgstr ""
+
+#: models.py:905
+msgid "Complete webhook payload"
+msgstr ""
+
+#: models.py:910
+msgid "headers"
+msgstr ""
+
+#: models.py:911
+msgid "HTTP headers from webhook request"
+msgstr ""
+
+#: models.py:918
+msgid "processed"
+msgstr ""
+
+#: models.py:919
+msgid "Whether webhook has been processed"
+msgstr ""
+
+#: models.py:925
+msgid "processing result"
+msgstr ""
+
+#: models.py:926
+msgid "Result from webhook handler"
+msgstr ""
+
+#: models.py:931
+msgid "processing error"
+msgstr ""
+
+#: models.py:932
+msgid "Error message if processing failed"
+msgstr ""
+
+#: models.py:938
+msgid "signature verified"
+msgstr ""
+
+#: models.py:939
+msgid "Whether webhook signature was verified"
+msgstr ""
+
+#: models.py:947
+msgid "idempotency key"
+msgstr ""
+
+#: models.py:948
+msgid "Key to prevent duplicate processing"
+msgstr ""
+
+#: models.py:952
+msgid "received at"
+msgstr ""
+
+#: models.py:953
+msgid "processed at"
+msgstr ""
+
+#: models.py:957
+msgid "payment webhook"
+msgstr ""
+
+#: models.py:958
+msgid "payment webhooks"
+msgstr ""
+
+#: models.py:1002
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:41
+msgid "Created"
+msgstr ""
+
+#: models.py:1003
+msgid "Requires Payment Method"
+msgstr ""
+
+#: models.py:1004
+msgid "Requires Confirmation"
+msgstr ""
+
+#: models.py:1005
+msgid "Requires Action"
+msgstr ""
+
+#: models.py:1007
+msgid "Succeeded"
+msgstr ""
+
+#: models.py:1008
+msgid "Canceled"
+msgstr ""
+
+#: models.py:1022
 msgid "Checkout session this payment intent was created for"
 msgstr ""
 
+#: models.py:1030
 msgid "Payment provider account used for this intent"
 msgstr ""
 
+#: models.py:1038
 msgid "Order this payment intent is for"
 msgstr ""
 
+#: models.py:1045
 msgid "provider intent ID"
 msgstr ""
 
+#: models.py:1046
 msgid "Provider payment intent ID (e.g., Stripe pi_xxx, AirWallex int_xxx)"
 msgstr ""
 
+#: models.py:1052
 msgid "client secret"
 msgstr ""
 
+#: models.py:1053
 msgid "Client secret for embedded checkout (never expose in logs)"
 msgstr ""
 
+#: models.py:1059
 msgid "checkout URL"
 msgstr ""
 
+#: models.py:1060
 msgid "Hosted checkout redirect URL"
 msgstr ""
 
+#: models.py:1078
 msgid "Payment amount"
 msgstr ""
 
+#: models.py:1084
 msgid "requires action"
 msgstr ""
 
+#: models.py:1085
 msgid "Whether customer action is required (e.g., 3DS)"
 msgstr ""
 
+#: models.py:1091
 msgid "action type"
 msgstr ""
 
+#: models.py:1098
 msgid "action URL"
 msgstr ""
 
+#: models.py:1099
 msgid "URL to redirect for action (3DS, verification, etc.)"
 msgstr ""
 
+#: models.py:1105
 msgid "action data"
 msgstr ""
 
+#: models.py:1106
 msgid "Provider-specific action data for SDK handling"
 msgstr ""
 
+#: models.py:1114
 msgid "Additional intent metadata"
 msgstr ""
 
+#: models.py:1131
 msgid "When this payment intent expires"
 msgstr ""
 
+#: models.py:1139
 msgid "payment intent"
 msgstr ""
 
+#: models.py:1140
 msgid "payment intents"
 msgstr ""
 
+#: services/payment_orchestration_service.py:82 services/payment_service.py:76
 msgid "Payment provider is not active"
 msgstr ""
 
+#: services/payment_orchestration_service.py:85 services/payment_service.py:79
 msgid "Payment provider is not properly configured"
 msgstr ""
 
+#: services/payment_orchestration_service.py:127
 msgid "Failed to initialize payment provider"
 msgstr ""
 
+#: services/payment_orchestration_service.py:197
 #, python-brace-format
 msgid "Failed to create payment with provider: {error}"
 msgstr ""
 
+#: services/payment_orchestration_service.py:381
+#: services/payment_orchestration_service.py:592
 msgid "Payment intent is already in terminal state"
 msgstr ""
 
+#: services/payment_orchestration_service.py:391
 msgid "Provider does not support payment confirmation"
 msgstr ""
 
+#: services/payment_orchestration_service.py:411
 msgid "Payment confirmed"
 msgstr ""
 
+#: services/payment_orchestration_service.py:454
 msgid "Payment already processed"
 msgstr ""
 
+#: services/payment_orchestration_service.py:552
 msgid "Payment processed successfully"
 msgstr ""
 
+#: services/payment_orchestration_service.py:634
 msgid "Payment cancelled"
 msgstr ""
 
+#: services/payment_service.py:44
 msgid "Payment amount must be greater than zero"
 msgstr ""
 
+#: services/payment_service.py:48
 msgid "Payment amount exceeds maximum allowed"
 msgstr ""
 
+#: services/payment_service.py:93 services/refund_service.py:131
 msgid "Payment provider not found in registry"
 msgstr ""
 
+#: services/payment_service.py:107
 msgid "Payment intent creation failed"
 msgstr ""
 
+#: services/payment_service.py:135
 #, python-brace-format
 msgid "Payment processing error: {error}"
 msgstr ""
 
+#: services/payment_service.py:153
 msgid "Payment transaction is not in pending state"
 msgstr ""
 
+#: services/payment_service.py:169
 msgid "Authorization failed"
 msgstr ""
 
+#: services/payment_service.py:189
 msgid "Payment authorized successfully"
 msgstr ""
 
+#: services/payment_service.py:196
 #, python-brace-format
 msgid "Payment authorization error: {error}"
 msgstr ""
 
+#: services/payment_service.py:214
 msgid "Payment transaction is not authorized"
 msgstr ""
 
+#: services/payment_service.py:221
 msgid "Capture amount exceeds authorized amount"
 msgstr ""
 
+#: services/payment_service.py:235
 msgid "Capture failed"
 msgstr ""
 
+#: services/payment_service.py:256
 msgid "Payment captured successfully"
 msgstr ""
 
+#: services/payment_service.py:260
 #, python-brace-format
 msgid "Payment capture error: {error}"
 msgstr ""
 
+#: services/payment_service.py:310
 msgid "Only pending or authorized payments can be cancelled"
 msgstr ""
 
+#: services/payment_service.py:325
 msgid "Cancellation failed"
 msgstr ""
 
+#: services/payment_service.py:340
 msgid "Payment cancelled successfully"
 msgstr ""
 
+#: services/payment_service.py:344
 #, python-brace-format
 msgid "Payment cancellation error: {error}"
 msgstr ""
 
+#: services/refund_service.py:43
 msgid "Refund amount must be greater than zero"
 msgstr ""
 
+#: services/refund_service.py:66
 #, python-brace-format
 msgid "Refund amount ({amount}) exceeds available amount ({available})"
 msgstr ""
 
+#: services/refund_service.py:102
 msgid "Only successful payments can be refunded"
 msgstr ""
 
+#: services/refund_service.py:105
 msgid "Only charge transactions can be refunded"
 msgstr ""
 
+#: services/refund_service.py:149
 msgid "Refund failed"
 msgstr ""
 
+#: services/refund_service.py:213
 msgid "Refund processed successfully"
 msgstr ""
 
+#: services/refund_service.py:217
 #, python-brace-format
 msgid "Refund processing error: {error}"
 msgstr ""
 
+#: services/refund_service.py:231
 msgid "Transaction is not a refund"
 msgstr ""
 
+#: services/webhook_service.py:103
 msgid "Webhook already processed"
 msgstr ""
 
+#: services/webhook_service.py:197
 msgid "Webhook processed successfully"
 msgstr ""
 
+#: services/webhook_service.py:546
 msgid "Webhook already processed successfully"
 msgstr ""
 
+#: services/webhook_service.py:560
 msgid "Webhook not found"
 msgstr ""
 
+#: templates/admin/payment_providers/configure_payment_methods.html:4
+#: templates/admin/payment_providers/configure_payment_methods.html:17
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:243
 msgid "Configure Payment Methods"
 msgstr ""
 
-msgid "Enable or disable payment methods per country"
+#: templates/admin/payment_providers/configure_payment_methods.html:19
+msgid "Configure which payment methods are available at checkout"
 msgstr ""
 
+#: templates/admin/payment_providers/configure_payment_methods.html:23
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:246
+msgid "Sync from Provider"
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:26
 msgid "Back to Provider"
 msgstr ""
 
-msgid "No Shipping Countries Configured"
+#: templates/admin/payment_providers/configure_payment_methods.html:35
+msgid "No Payment Methods Available"
 msgstr ""
 
-msgid ""
-"Configure shipping countries first to set up payment methods per country."
+#: templates/admin/payment_providers/configure_payment_methods.html:36
+msgid "Sync payment methods from your provider first using the button above."
 msgstr ""
 
+#: templates/admin/payment_providers/configure_payment_methods.html:43
 msgid "How it works"
 msgstr ""
 
+#: templates/admin/payment_providers/configure_payment_methods.html:44
 msgid ""
-"Toggle payment methods on or off for each country. Changes are saved "
-"automatically."
+"The Global section applies to all customers. Add country-specific overrides "
+"below to customize methods for particular countries — country overrides take "
+"priority over global settings. Changes are saved automatically."
 msgstr ""
 
+#: templates/admin/payment_providers/configure_payment_methods.html:53
 msgid ""
-"No payment methods available. Try syncing payment methods from the provider "
-"first."
+"These payment methods are available to customers in all countries unless "
+"overridden below."
 msgstr ""
 
+#: templates/admin/payment_providers/configure_payment_methods.html:58
+#: templates/admin/payment_providers/configure_payment_methods.html:110
+msgid "Enable All"
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:61
+#: templates/admin/payment_providers/configure_payment_methods.html:113
+msgid "Disable All"
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:80
+msgid "No payment methods available. Try syncing from the provider first."
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:88
+msgid "Country Overrides"
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:89
+msgid "(optional)"
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:91
+msgid ""
+"Add country-specific configurations that override the global settings above. "
+"Useful if certain payment methods are only available or should be restricted "
+"in specific countries."
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:102
+msgid "Remove override — will fall back to global"
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:103
+msgid "Remove"
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:132
+msgid ""
+"No payment methods available for this country. Methods from the global "
+"section will apply."
+msgstr ""
+
+#: templates/admin/payment_providers/configure_payment_methods.html:144
 msgid "Saved"
 msgstr ""
 
+#: templates/admin/payment_providers/configure_payment_methods.html:145
 msgid "Error saving change"
 msgstr ""
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:17
 msgid "Unknown Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:69
+#: templates/admin/payment_providers/payment_dashboard.html:413
 msgid "Order"
 msgstr ""
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:76
+#: templates/admin/payment_providers/partials/webhook_cards.html:65
 msgid "View"
 msgstr ""
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:89
 msgid "No transactions found."
 msgstr ""
 
+#: templates/admin/payment_providers/partials/transaction_cards.html:91
+#: templates/admin/payment_providers/partials/webhook_cards.html:80
 msgid "Try adjusting your filters or search terms."
 msgstr ""
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:24
+#: templates/admin/payment_providers/partials/webhook_cards.html:52
+#: templates/admin/payment_providers/payment_dashboard.html:482
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:86
 msgid "Processed"
 msgstr ""
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:35
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:45
 msgid "Verified"
 msgstr ""
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:39
 msgid "Unverified"
 msgstr ""
 
+#: templates/admin/payment_providers/partials/webhook_cards.html:78
 msgid "No webhooks found."
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:4
+#: templates/admin/payment_providers/payment_dashboard.html:19
+#: templates/admin/payment_providers/payment_dashboard.html:30
+#: views/payment_dashboard.py:94
 msgid "Payment Dashboard"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:18
+#: templates/admin/payment_providers/providers/browse.html:26
 msgid "Home"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:33
 msgid "Monitor payment performance, provider health, and transaction metrics"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:42
 msgid "Period"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:54
 msgid "From"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:60
 msgid "To"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:72
 msgid "Compare with previous period"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:83
 msgid "Quick Navigation"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:86
 msgid "Jump to section..."
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:87
+#: templates/admin/payment_providers/payment_dashboard.html:103
 msgid "Actions Required"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:88
 msgid "Revenue Over Time"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:89
+#: templates/admin/payment_providers/payment_dashboard.html:179
 msgid "Payment Performance"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:90
+#: templates/admin/payment_providers/payment_dashboard.html:266
 msgid "Refund Metrics"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:91
 msgid "Provider Performance"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:92
 msgid "Transaction Status"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:93
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:212
 msgid "Payment Methods"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:94
+#: templates/admin/payment_providers/payment_dashboard.html:406
 msgid "Recent Transactions"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:95
+#: templates/admin/payment_providers/payment_dashboard.html:464
 msgid "Webhook Statistics"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:111
 msgid "Failed Transactions (7d)"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:119
 msgid "Pending Captures"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:127
 msgid "Pending Refunds"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:135
 msgid "Connection Errors"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:143
 msgid "Unprocessed Webhooks"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:153
 msgid "Payment Revenue Over Time"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:157
 msgid "Group by"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:160
 msgid "Day"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:163
 msgid "Week"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:166
 msgid "Month"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:187
 msgid "Total Revenue"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:203
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:30
 msgid "Total Transactions"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:219
+#: templates/admin/payment_providers/payment_dashboard.html:354
 msgid "Success Rate"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:235
 msgid "Average Transaction"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:245
 msgid "Authorized (Not Captured)"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:255
+#: templates/admin/payment_providers/payment_dashboard.html:274
 msgid "Total Refunded"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:290
 msgid "Refund Count"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:306
 msgid "Refund Rate"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:317
 msgid "Provider Performance Comparison"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:337
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:68
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:127
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:253
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:339
 msgid "Active"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:339
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:72
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:257
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:340
 msgid "Inactive"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:346
 msgid "Revenue"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:350
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:125
 msgid "Transactions"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:360
 msgid "Avg Amount"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:368
 msgid "No payment providers configured"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:370
 msgid "Setup First Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:383
 msgid "Transaction Status Breakdown"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:393
 msgid "Payment Methods Distribution"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:412
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:65
 msgid "Transaction ID"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:414
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:99
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:73
 msgid "Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:415
 msgid "Amount"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:416
 msgid "Payment Method"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:418
 msgid "Date"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:451
 msgid "No recent transactions"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:472
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:30
 msgid "Total Webhooks"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:492
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:40
 msgid "Unprocessed"
 msgstr ""
 
+#: templates/admin/payment_providers/payment_dashboard.html:502
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:98
 msgid "Signature Verified"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:8
 msgid "Add Payment Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:46
 msgid "Last Tested"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:86
+msgid "Test Mode"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:90
+msgid "Live"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:97
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:87
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:215
 msgid "Hosted"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:99
 msgid "Embedded"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:109
 msgid "Settings"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:113
 msgid "Status & Health"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:117
 msgid "Advanced"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:133
+msgid "Webhook Endpoint"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:135
+msgid ""
+"Configure this URL in your payment provider's dashboard to receive payment "
+"notifications."
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:138
+msgid "Copy to clipboard"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:149
+msgid "Provider Dashboard"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:163
 msgid "Component"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:177
 msgid "User"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:215
+msgid ""
+"Configure which payment methods are shown to customers at checkout, "
+"organized by country."
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:221
+msgid "Last synced:"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:227
+msgid "Global configuration active"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:232
+msgid "countries configured"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:237
+msgid "Not configured — all available methods will be shown"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:277
 msgid "Connection Status"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:300
 msgid "Last Tested At"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:311
 msgid "Payment Method Sync Status"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:322
 msgid "Last Method Sync At"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:334
 msgid "Method Sync Error"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:369
+#: templates/admin/payment_providers/wizard/step3_credentials.html:46
+msgid "API Credentials"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:371
+msgid ""
+"API credentials are encrypted and managed through the setup wizard for "
+"security. To update your API keys or secrets, use the wizard to reconfigure "
+"this provider."
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:373
+msgid "Reconfigure Credentials"
+msgstr ""
+
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:380
 msgid "Created At"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:390
 msgid "Updated At"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:400
 msgid "Save"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:401
 msgid "Save and continue editing"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:403
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:293
 msgid "Delete"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:418
 msgid "Select All"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_form.html:419
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:117
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:115
 msgid "Clear All"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:18
+#: templates/admin/payment_providers/providers/browse.html:27
 msgid "Payment Provider Accounts"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:20
 msgid "Manage payment gateway integrations and API connections"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:22
 #, python-format
 msgid "%(counter)s provider"
 msgid_plural "%(counter)s providers"
 msgstr[0] ""
 msgstr[1] ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:23
 msgid "active"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:24
 msgid "connected"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:29
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:305
+#: templates/admin/payment_providers/providers/browse.html:28
 msgid "Browse Providers"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:32
 msgid "Setup New Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:51
 msgid "Search providers..."
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:60
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:76
 msgid "All Statuses"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:65
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:234
 msgid "Error"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:74
 msgid "All Active Status"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:76
 msgid "Active Only"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:79
 msgid "Inactive Only"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:85
 msgid "All Checkout Modes"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:90
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:219
 msgid "Integrated"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:97
 msgid "All Provider Types"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:136
 msgid "Hosted Mode"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:145
 msgid "Integrated Mode"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:155
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:184
 msgid "Default Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:199
 msgid "Provider:"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "Last tested:"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:244
 msgid "ago"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:267
 msgid "Edit"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:272
+#: templates/admin/payment_providers/wizard/base.html:46
+#: templates/admin/payment_providers/wizard/step4_test.html:13
 msgid "Test Connection"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:338
 msgid "Disable"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:278
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:337
 msgid "Enable"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:288
 msgid "Set as Default"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:302
 msgid "No Payment Providers Connected"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:303
 msgid "Get started by connecting your first payment provider"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:308
 msgid "Setup Your First Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:318
 msgid "providers"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:327
 msgid "Testing..."
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:328
 msgid "Setting..."
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:329
 msgid "Deleting..."
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:330
 msgid "Connection test failed"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:331
 msgid "Failed to set default"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:333
 msgid "Failed to delete"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:334
 msgid "Set this provider as the default payment provider?"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:335
 msgid ""
 "Are you sure you want to delete this payment provider? This action cannot be "
 "undone."
 msgstr ""
 
+#: templates/admin/payment_providers/paymentprovideraccount/change_list.html:336
+msgid "Failed to toggle provider"
+msgstr ""
+
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:4
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:18
 msgid "Payment Transactions"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:20
 msgid "View and track all payment transactions"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:25
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:25
 msgid "Overview"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:35
 msgid "Successful"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:45
 msgid "Refunded"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:54
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:54
 msgid "Filters"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:67
 msgid "Search by transaction ID..."
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:86
 msgid "Type"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:89
 msgid "All Types"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:102
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:76
 msgid "All Providers"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:114
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:112
 msgid "Apply Filters"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:128
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:126
 msgid "entries"
 msgstr ""
 
+#: templates/admin/payment_providers/paymenttransaction/change_list.html:137
 msgid "Loading transactions..."
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:4
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:18
 msgid "Payment Webhooks"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:20
 msgid "Monitor incoming payment provider webhooks"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:65
 msgid "Event ID / Type"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:67
 msgid "Search by event ID or type..."
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:89
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:101
 msgid "All"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:90
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:102
 msgid "Yes"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:91
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:103
 msgid "No"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:123
+#: templates/admin/payment_providers/providers/browse.html:281
 msgid "Webhooks"
 msgstr ""
 
+#: templates/admin/payment_providers/paymentwebhook/change_list.html:135
 msgid "Loading webhooks..."
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:4
+#: templates/admin/payment_providers/providers/browse.html:37
+#: views/provider_browse.py:212
 msgid "Browse Payment Providers"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:4
 msgid "Site Admin"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:39
 msgid ""
 "Choose a payment provider to integrate with your store. Install new "
 "providers or configure existing ones."
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:46
 msgid "Update Server Unavailable"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:47
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:58
 msgid "Payment Provider Marketplace"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:70
 msgid ""
 "Here you can discover and install payment providers to accept payments from "
 "customers worldwide, including credit cards, digital wallets, and local "
 "payment methods."
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:77
 msgid "What you can do:"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:82
 msgid "Browse available payment providers by country and payment methods"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:86
 msgid "Install new providers with one click"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:90
 msgid "Update installed providers to the latest versions"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:94
 msgid "Configure provider settings and API credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:102
 msgid "Getting Started:"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:105
 msgid "Browse providers below and find your payment processor"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:106
 msgid "Click 'Install' to add the provider to your store"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:107
 msgid "Navigate to Settings to configure API credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:108
 msgid "Test the provider with a sample transaction"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:115
 #, python-format
 msgid ""
 "\n"
@@ -1707,6 +2490,7 @@ msgstr[1] ""
 "                    Currently: %(total)s provider available\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:121
 #, python-format
 msgid ""
 "\n"
@@ -1725,495 +2509,712 @@ msgstr[1] ""
 "                    %(installed)s installed\n"
 "                "
 
+#: templates/admin/payment_providers/providers/browse.html:136
 msgid "Filter by Country:"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:142
 msgid "All Countries"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:156
 msgid "Active Filter:"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:163
 msgid "Clear filter"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:181
 msgid "Update Available"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:207
 msgid "Installed"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:222
 msgid "Available"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:245
 msgid "Cards"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:250
 msgid "Bank"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:255
 msgid "Wallets"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:260
 msgid "Local"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:271
+#: templates/admin/payment_providers/wizard/step1_select.html:94
 msgid "3D Secure"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:276
+#: templates/admin/payment_providers/wizard/step1_select.html:82
 msgid "Refunds"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:314
 msgid "Update"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:320
+#: templates/admin/payment_providers/wizard/base.html:54
 msgid "Configure"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:328
 msgid "Install"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:338
 msgid "View Details"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:347
 msgid "Learn More"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:361
 msgid "No Providers Available"
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:362
 msgid ""
 "No payment providers are currently available. Please check your update "
 "server connection or contact support."
 msgstr ""
 
+#: templates/admin/payment_providers/providers/browse.html:371
 msgid "Installing provider..."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/base.html:13
 msgid "Connect Payment Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/base.html:14
 msgid "Follow these steps to connect your payment provider account"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/base.html:22
 msgid "Select Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/base.html:30
 msgid "Setup Instructions"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/base.html:38
 msgid "Enter Credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:6
 msgid "Select a Payment Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:7
 msgid "Choose the payment provider you want to connect to your store."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:20
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                    Currently: %(total)s provider available\n"
+#| "                "
+#| msgid_plural ""
+#| "\n"
+#| "                    Currently: %(total)s providers available\n"
+#| "                "
+msgid ""
+"\n"
+"                %(counter)s payment provider needs repair\n"
+"                "
+msgid_plural ""
+"\n"
+"                %(counter)s payment providers need repair\n"
+"                "
+msgstr[0] ""
+"\n"
+"                    Currently: %(total)s provider available\n"
+"                "
+msgstr[1] ""
+"\n"
+"                    Currently: %(total)s provider available\n"
+"                "
+
+#: templates/admin/payment_providers/wizard/step1_select.html:27
+msgid ""
+"These providers are registered but their files are missing on disk. Click "
+"Reinstall to download a fresh copy from the update server."
+msgstr ""
+
+#: templates/admin/payment_providers/wizard/step1_select.html:39
+msgid "Reinstall"
+msgstr ""
+
+#: templates/admin/payment_providers/wizard/step1_select.html:76
 msgid "Recurring"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:88
 msgid "International"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:100
 msgid "Digital Wallets"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:115
 msgid "No Payment Providers Available"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:116
 msgid ""
 "Install payment provider components from the Component Manager to get "
 "started."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:118
 msgid "Browse Components"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:130
 msgid "Cancel"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step1_select.html:133
+#: templates/admin/payment_providers/wizard/step2_setup.html:80
+#: templates/admin/payment_providers/wizard/step3_credentials.html:223
+#: templates/admin/payment_providers/wizard/step4_test.html:119
 msgid "Continue"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:14
 msgid "Follow these instructions to set up your account"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:24
 msgid "Setup Information"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:31
 msgid "Create an Account"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "If you don't already have an account with"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:32
 msgid "you'll need to create one."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:36
 msgid "Sign Up for"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:45
 msgid "Get Your API Credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid "Log in to your"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:46
 msgid ""
 "dashboard and navigate to the API or Developer section to obtain your "
 "credentials."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:53
 msgid "Copy Your Credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:54
 msgid "Have your API credentials ready. You'll need them in the next step."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:62
 msgid "Security Note"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:63
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored. They are never stored in plain text."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step2_setup.html:75
+#: templates/admin/payment_providers/wizard/step3_credentials.html:220
+#: templates/admin/payment_providers/wizard/step4_test.html:116
+#: templates/admin/payment_providers/wizard/step5_configure.html:196
 msgid "Back"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:13
 msgid "Enter Your Credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "Provide your"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:14
 msgid "API credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:25
+#: templates/admin/payment_providers/wizard/step5_configure.html:25
 msgid "Please correct the errors below:"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:38
+#: templates/admin/payment_providers/wizard/step3_credentials.html:231
 msgid "TEST MODE"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:39
+#: templates/admin/payment_providers/wizard/step3_credentials.html:232
 msgid "Using test credentials - no real transactions"
 msgstr ""
 
-msgid "API Credentials"
-msgstr ""
-
+#: templates/admin/payment_providers/wizard/step3_credentials.html:166
 msgid "This provider does not require additional credentials."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:173
 msgid "Basic Configuration"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:178
 msgid "Display Name"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:189
 msgid "A friendly name to identify this payment provider connection"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:199
 msgid "Hosted - Redirect to provider (recommended)"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:204
 msgid ""
 "How customers will complete payment. Hosted mode is more secure and easier "
 "to maintain."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:211
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database. They are never stored in plain text."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:233
 msgid "PRODUCTION MODE"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step3_credentials.html:234
 msgid "Using live credentials - real transactions!"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:14
 msgid "Verify your"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:26
 msgid "Connection Successful!"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "Your"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:27
 msgid "account has been verified and is ready to use."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:31
 msgid "Account Information"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:34
 msgid "Account ID"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:39
 msgid "Email"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:44
 msgid "Country"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:49
 msgid "Default Currency"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:54
 msgid "Account Status"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:68
 msgid "Connection Failed"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:69
 msgid ""
 "Unable to connect to the payment provider. Please check your credentials and "
 "try again."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:73
 msgid "Technical Details"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:79
 msgid "Troubleshooting Tips"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:81
 msgid "Verify that your API credentials are correct"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:82
 msgid "Check that your account is active with the payment provider"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:83
 msgid "Ensure you're using the correct environment (test/production)"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:84
 msgid "Verify that your IP address is not blocked by the provider"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:97
 msgid "Testing Connection..."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:98
 msgid "Please wait while we verify your credentials with"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:123
 msgid "Edit Credentials"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step4_test.html:126
 msgid "Retry Test"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:13
 msgid "Configure Provider"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:14
 msgid "Finalize your"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:33
 msgid "Activation"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:42
 msgid "Enable this payment provider for checkout"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:46
 msgid ""
 "When enabled, customers will be able to use this payment method during "
 "checkout."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:56
 msgid "Set as default payment provider"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:60
 msgid ""
 "The default provider will be pre-selected during checkout. You can only have "
 "one default provider."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:67
 msgid "Display Order"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:72
 msgid "Sort Order"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:82
 msgid ""
 "Lower numbers appear first in the checkout payment method list. Use this to "
 "control the order of payment options."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:90
 msgid "Advanced Settings"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:167
 msgid "Webhook Configuration"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid ""
 "To receive real-time payment notifications, configure the following webhook "
 "URL in your"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:171
 msgid "dashboard:"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:176
 msgid "Copy"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:183
 msgid "Important"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:184
 msgid ""
 "Webhooks allow your store to receive instant notifications when payments are "
 "completed, refunded, or encounter issues. Configure this in your payment "
 "provider's dashboard to ensure smooth operation."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:199
 msgid "Complete Setup"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:208
 msgid "Copied!"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:209
 msgid "Failed to copy to clipboard. Please copy manually."
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:210
 msgid ""
 "Setting this as the default will remove the default status from any other "
 "payment provider. Continue?"
 msgstr ""
 
+#: templates/admin/payment_providers/wizard/step5_configure.html:211
 msgid "Cannot set as default while inactive. Please enable the provider first."
 msgstr ""
 
+#: views/handlers.py:111
 msgid "Provider not found"
 msgstr ""
 
+#: views/payment_dashboard.py:118
 msgid "Today"
 msgstr ""
 
+#: views/payment_dashboard.py:119
 msgid "Yesterday"
 msgstr ""
 
+#: views/payment_dashboard.py:120
 msgid "Last 7 Days"
 msgstr ""
 
+#: views/payment_dashboard.py:121
 msgid "Last 30 Days"
 msgstr ""
 
+#: views/payment_dashboard.py:122
 msgid "This Month"
 msgstr ""
 
+#: views/payment_dashboard.py:123
 msgid "Last Month"
 msgstr ""
 
+#: views/payment_dashboard.py:124
 msgid "This Quarter"
 msgstr ""
 
+#: views/payment_dashboard.py:125
 msgid "Last Quarter"
 msgstr ""
 
+#: views/payment_dashboard.py:126
 msgid "This Year / YTD"
 msgstr ""
 
+#: views/payment_dashboard.py:127
 msgid "Last Year"
 msgstr ""
 
+#: views/payment_dashboard.py:128
 msgid "Custom Range"
 msgstr ""
 
+#: views/provider_browse.py:62
 msgid ""
 "Could not fetch providers from update server. Showing installed providers "
 "only."
 msgstr ""
 
+#: views/provider_browse.py:269
 msgid "Provider is already installed"
 msgstr ""
 
+#: views/provider_browse.py:306
 msgid "Provider not found on update server."
 msgstr ""
 
+#: views/provider_browse.py:316
 msgid "Could not determine provider version."
 msgstr ""
 
+#: views/provider_browse.py:338
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr ""
 
+#: views/provider_browse.py:351
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr ""
 
+#: views/provider_browse.py:389
 #, python-format
 msgid "Provider %(name)s installed successfully"
 msgstr ""
 
+#: views/provider_browse.py:398
 #, python-format
 msgid "Installation failed: %(error)s"
 msgstr ""
 
+#: views/provider_browse.py:424
 msgid "Provider not installed"
 msgstr ""
 
+#: views/provider_browse.py:437
 msgid "Could not find latest version on update server"
 msgstr ""
 
+#: views/provider_browse.py:450
 #, python-format
 msgid "Provider updated successfully to v%(version)s"
 msgstr ""
 
+#: views/provider_browse.py:456
 msgid "Update failed"
 msgstr ""
 
+#: views/wizard.py:104
+msgid "Provider files missing on disk"
+msgstr ""
+
+#: views/wizard.py:115
+msgid "Provider manifest could not be loaded"
+msgstr ""
+
+#: views/wizard.py:127
+msgid "Provider manifest is empty or invalid"
+msgstr ""
+
+#: views/wizard.py:144
 msgid "Connect Payment Provider - Select Provider"
 msgstr ""
 
+#: views/wizard.py:157
 msgid "Please select a provider."
 msgstr ""
 
+#: views/wizard.py:165
 msgid "Invalid provider selected."
 msgstr ""
 
+#: views/wizard.py:193 views/wizard.py:262
 msgid "Please select a provider first."
 msgstr ""
 
+#: views/wizard.py:222 views/wizard.py:279
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr ""
 
+#: views/wizard.py:232
 msgid "Connect Payment Provider - Setup Instructions"
 msgstr ""
 
+#: views/wizard.py:273
 msgid "Could not load provider configuration."
 msgstr ""
 
+#: views/wizard.py:293
 msgid "Connect Payment Provider - Enter Credentials"
 msgstr ""
 
+#: views/wizard.py:321
 msgid "Error loading provider configuration."
 msgstr ""
 
+#: views/wizard.py:333
 msgid "Display name is required."
 msgstr ""
 
+#: views/wizard.py:364
 msgid "Please complete previous steps first."
 msgstr ""
 
+#: views/wizard.py:377 views/wizard.py:495
 msgid "Provider not found."
 msgstr ""
 
+#: views/wizard.py:381
 msgid "Connect Payment Provider - Test Connection"
 msgstr ""
 
+#: views/wizard.py:408
 msgid "Provider implementation not found."
 msgstr ""
 
+#: views/wizard.py:478
 msgid "Please complete all previous steps."
 msgstr ""
 
+#: views/wizard.py:499
 msgid "Connect Payment Provider - Configure"
 msgstr ""
 
+#: views/wizard.py:578
 #, python-format
 msgid "Payment provider \"%(name)s\" connected successfully!"
 msgstr ""
 
+#: views/wizard.py:603
+#, python-format
+msgid ""
+"Provider was saved but payment methods could not be auto-synced (%(error)s). "
+"The provider will not appear at checkout until methods are synced — try the "
+"\"Sync methods\" action on the provider list."
+msgstr ""
+
+#: views/wizard.py:618
 #, python-format
 msgid "Error saving provider: %(error)s"
 msgstr ""

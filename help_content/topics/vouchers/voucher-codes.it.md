@@ -2,7 +2,9 @@
 title: Codici Buono
 ---
 
-I codici buono ti permettono di creare codici sconto, coupon e carte regalo che i clienti possono inserire al momento del checkout per ottenere uno sconto. Naviga verso **Marketing > Buoni** nel menu laterale dell'amministratore.
+I codici buono ti permettono di creare codici sconto e coupon che i clienti possono inserire al momento del checkout per ricevere uno sconto. Naviga verso **Marketing > Buoni** nel menu laterale dell'amministratore.
+
+Vuoi vendere credito per il negozio invece di uno sconto? Si tratta di una carta regalo, gestita separatamente sotto **Prodotti > Carte Regalo** — consulta l'argomento di aiuto **Carte Regalo**.
 
 ![Elenco dei buoni](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 
@@ -10,7 +12,7 @@ I codici buono ti permettono di creare codici sconto, coupon e carte regalo che 
 
 La pagina dei buoni mostra un riepilogo con:
 
-- **Cartelle Statistiche** — Conteggio dei buoni attivi, non attivi, riscossioni e totali
+- **Cartelle Statistiche** — Conteggio dei buoni attivi, inattivi, riscossioni e totali
 - **Filtri** — Cerca per codice o nome, filtra per Tipo, Stato e Ambito
 - **Cartelle dei Buoni** — Ogni buono visualizzato con dettagli sull'utilizzo e lo stato
 
@@ -29,7 +31,7 @@ La pagina dei buoni mostra un riepilogo con:
 4. Imposta l'**ambito**:
    - **Intero Carrello** — Lo sconto si applica all'intero ordine
    - **Prodotti Specifici** — Si applica solo agli elementi selezionati
-   - **Categorie Specifiche** — Si applica solo agli elementi delle categorie selezionate
+   - **Categorie Specifiche** — Si applica solo agli elementi nelle categorie selezionate
 5. Imposta eventualmente la scadenza:
    - **Data di Scadenza** — Quando il buono smette di funzionare
 6. Clicca su **Salva**
@@ -40,7 +42,7 @@ La pagina dei buoni mostra un riepilogo con:
 |------|-------------|---------|
 | **Importo Fisso** | Deduce un importo fisso in dollari | $20 di sconto sull'ordine |
 | **Percentuale** | Deduce una percentuale del totale | 15% di sconto sull'ordine |
-| **Spedizione Gratuita** | Rimuove le spese di spedizione | Spedizione gratuita per qualsiasi ordine |
+| **Spedizione Gratuita** | Rimuove le spese di spedizione | Spedizione gratuita su qualsiasi ordine |
 
 ## Gestione dei Buoni
 
@@ -49,7 +51,7 @@ La pagina dei buoni mostra un riepilogo con:
 Ogni cartella del buono mostra:
 - **Codice** — Il codice del buono in grassetto
 - **Descrizione** — Cosa fa il buono
-- **Etichetta di Stato** — Attivo o Non attivo
+- **Etichetta di Stato** — Attivo o Inattivo
 - **Dettagli dello Sconto** — Tipo e valore (es. "$ 20.00" o "15.00%")
 - **Ambito** — Se si applica all'intero carrello o a elementi specifici
 - **Conteggio dell'Utilizzo** — Quante volte il buono è stato riscosso
@@ -58,7 +60,7 @@ Ogni cartella del buono mostra:
 
 ### Azioni sui Buoni
 
-Ogni cartella ha pulsanti per le azioni:
+Ogni cartella ha pulsanti di azione:
 - **Modifica** — Modifica le impostazioni del buono
 - **Visualizza Storico** — Vedi l'history delle riscossioni
 - **Elimina** — Rimuovi il buono
@@ -68,7 +70,7 @@ Ogni cartella ha pulsanti per le azioni:
 Utilizza la barra di filtro per trovare buoni specifici:
 - **Cerca** — Trova per codice, nome o descrizione
 - **Tipo** — Importo Fisso, Percentuale o Spedizione Gratuita
-- **Stato** — Attivo o Non attivo
+- **Stato** — Attivo o Inattivo
 - **Ambito** — Intero Carrello o specifico per prodotti
 
 ## Generazione di Buoni in Blocco
@@ -81,8 +83,8 @@ Per campagne di grandi dimensioni, puoi generare buoni in blocco:
 ## Esperienza del Cliente
 
 Quando un cliente ha un codice buono:
-1. Procede al **checkout**
-2. Inserisce il codice nel campo **codice sconto**
+1. Procedono al **checkout**
+2. Inseriscono il codice nel campo **codice sconto**
 3. Lo sconto viene applicato immediatamente se il buono è valido
 4. Il riepilogo dell'ordine viene aggiornato per mostrare lo sconto
 
@@ -93,6 +95,6 @@ Se un buono non è valido (scaduto, limite di utilizzo raggiunto, valore minimo 
 - Utilizza codici memorabili per le campagne di marketing (es. "SUMMER20" invece di stringhe casuali).
 - Imposta limiti per cliente per prevenire l'abuso di sconti di valore.
 - Utilizza valori minimi dell'ordine per mantenere la redditività (es. "$10 di sconto su ordini superiori a $50").
-- Monitora il conteggio delle riscossioni sulla dashboard per tracciare l'efficacia delle campagne.
+- Monitora il conteggio delle riscossioni sulla dashboard per tracciare l'efficacia della campagna.
 - Crea buoni con scadenza per creare urgenza (es. "Valido solo questo fine settimana").
-- Utilizza lo stato Attivo/Non attivo per sospendere i buoni senza eliminarli.
+- Utilizza lo stato Attivo/Inattivo per sospendere i buoni senza eliminarli.

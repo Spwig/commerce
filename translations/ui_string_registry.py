@@ -32,6 +32,7 @@ UI_STRING_SECTIONS = {
     "configurator_3d": _("3D Configurator"),
     "form_builder": _("Form Builder"),
     "loyalty": _("Loyalty Program"),
+    "gift_card": _("Gift Cards"),
     "social_share": _("Social Share"),
     "widgets": _("Header & Footer Widgets"),
     "cookies": _("Cookie Consent"),
@@ -113,7 +114,19 @@ UI_STRING_REGISTRY = {
     "checkout.postal_code": gettext_noop("Postal Code"),
     "checkout.country": gettext_noop("Country"),
     "checkout.phone": gettext_noop("Phone"),
+    "checkout.select_country": gettext_noop("Select country"),
+    "checkout.phone_delivery_help": gettext_noop(
+        "Used by the carrier to contact you about delivery."
+    ),
+    "checkout.saved_address_needs_phone": gettext_noop(
+        "This address needs a phone number so the carrier can contact you about delivery."
+    ),
     "checkout.use_different_address": gettext_noop("Use a different address"),
+    # Accessible names for the express-checkout "Change" controls — the visible
+    # text is just "Change", which is ambiguous to a screen reader out of
+    # context. ("Change payment method" already exists as js.change_payment_method.)
+    "checkout.change_shipping_address": gettext_noop("Change shipping address"),
+    "checkout.change_shipping_method": gettext_noop("Change shipping method"),
     "checkout.continue_to_shipping_method": gettext_noop("Continue to Shipping Method"),
     "checkout.shipping_method": gettext_noop("Shipping Method"),
     "checkout.loading_shipping_methods": gettext_noop("Loading shipping methods..."),
@@ -121,6 +134,9 @@ UI_STRING_REGISTRY = {
     "checkout.payment": gettext_noop("Payment"),
     "checkout.loading_payment_methods": gettext_noop("Loading payment methods..."),
     "checkout.billing_same_as_shipping": gettext_noop("Billing address same as shipping"),
+    "checkout.billing_country_help": gettext_noop(
+        "Used to show the payment methods available in your country."
+    ),
     "checkout.continue_to_review": gettext_noop("Continue to Review"),
     "checkout.review_place_order": gettext_noop("Review & Place Order"),
     "checkout.items": gettext_noop("Items"),
@@ -250,7 +266,62 @@ UI_STRING_REGISTRY = {
     ),
     "stock.notify_success": gettext_noop("You're on the list! We'll email you when it's back."),
     # === Account ===
+    # Gift card balance page — P2.5e
+    "gift_card.balance_title": gettext_noop("Gift Card Balance"),
+    "gift_card.check_your_balance": gettext_noop("Check your gift card balance"),
+    "gift_card.balance_intro": gettext_noop(
+        "Enter the code from your gift card email to see the remaining balance."
+    ),
+    "gift_card.code_label": gettext_noop("Gift card code"),
+    "gift_card.check_balance": gettext_noop("Check balance"),
+    "gift_card.not_found": gettext_noop(
+        "We could not find a gift card with that code. Check the code and try again."
+    ),
+    "gift_card.spend_hint": gettext_noop(
+        "Gift cards are applied at checkout, on the payment step."
+    ),
+    # Gift card product page (denomination picker) — P2.5e-2
+    "gift_card.delivered_by_email": gettext_noop("Delivered by email once payment clears"),
+    "gift_card.amount": gettext_noop("Amount"),
+    "gift_card.or_enter_amount": gettext_noop("Or enter an amount"),
+    "gift_card.min": gettext_noop("Min"),
+    "gift_card.max": gettext_noop("Max"),
+    "gift_card.send_to": gettext_noop("Send to (their email)"),
+    "gift_card.their_name": gettext_noop("Their name"),
+    "gift_card.from_name": gettext_noop("From"),
+    "gift_card.gift_message": gettext_noop("Gift message"),
+    "gift_card.delivery_date": gettext_noop("Delivery date (optional)"),
+    "gift_card.delivery_date_hint": gettext_noop(
+        "Leave empty to send as soon as payment clears. Up to a year ahead."
+    ),
+    "gift_card.add_to_cart": gettext_noop("Add gift card to cart"),
+    "gift_card.valid_for": gettext_noop("Card is valid for"),
+    "gift_card.days_after_delivery": gettext_noop("days after delivery."),
+    # Account pages — P2.5e-3/4
+    "gift_card.my_gift_cards": gettext_noop("My Gift Cards"),
+    "gift_card.purchased_by_you": gettext_noop("Gift cards you have purchased"),
+    "gift_card.sent_to": gettext_noop("Sent to"),
+    "gift_card.of": gettext_noop("of"),
+    "gift_card.status_inactive": gettext_noop("Inactive"),
+    "gift_card.status_expired": gettext_noop("Expired"),
+    "gift_card.status_delivered": gettext_noop("Delivered"),
+    "gift_card.status_scheduled": gettext_noop("Scheduled"),
+    "gift_card.codes_security_note": gettext_noop(
+        "For security, full codes are only shown in the delivery email sent to the recipient."
+    ),
+    "gift_card.none_purchased": gettext_noop("You have not purchased any gift cards yet."),
+    "account.wallet_history": gettext_noop("History"),
+    "account.no_store_credit": gettext_noop(
+        "You have no store credit yet. Credit from loyalty rewards, referrals and refunds appears here."
+    ),
     "account.my_account": gettext_noop("My Account"),
+    # Wallet card on the dashboard — P2.5c (D2 visibility)
+    "account.store_credit": gettext_noop("Store Credit"),
+    "account.store_credit_hint": gettext_noop(
+        "Spend it at checkout — it is applied before any card payment."
+    ),
+    "account.available_balance": gettext_noop("Available Balance"),
+    "account.view_history": gettext_noop("View History"),
     "account.sign_in": gettext_noop("Sign In"),
     "account.sign_out": gettext_noop("Sign Out"),
     "account.register": gettext_noop("Register"),
@@ -442,7 +513,9 @@ UI_STRING_REGISTRY = {
     "js.failed_to_save_payment_method": gettext_noop(
         "Failed to save payment method. Please try again."
     ),
-    "js.no_payment_methods": gettext_noop("No payment methods available."),
+    "js.no_payment_methods": gettext_noop(
+        "No payment methods are available for this location. Try a different country, or contact us for help."
+    ),
     "js.failed_to_load_payment": gettext_noop("Failed to load payment methods."),
     "js.payment_form_unavailable": gettext_noop("Unable to load payment form"),
     "js.payment_form_error_message": gettext_noop(
@@ -462,6 +535,24 @@ UI_STRING_REGISTRY = {
     "js.adding": gettext_noop("Adding..."),
     "js.added": gettext_noop("Added!"),
     "js.error": gettext_noop("Error"),
+    "js.change_payment_method": gettext_noop("Change payment method"),
+    "js.name_required": gettext_noop("Please enter your full name."),
+    "js.phone_required": gettext_noop(
+        "Please enter a phone number so the carrier can contact you about delivery."
+    ),
+    "js.phone_invalid": gettext_noop("Please enter a valid phone number."),
+    # Same English value as checkout.saved_address_needs_phone — this key
+    # makes the message reachable from JS (only js.* keys are exposed to
+    # window.UI_STRINGS by the js_ui_translations context processor)
+    "js.saved_address_needs_phone": gettext_noop(
+        "This address needs a phone number so the carrier can contact you about delivery."
+    ),
+    # Shown in the payment section (express checkout) when payment can't be
+    # mounted yet because the shipping address is missing a delivery phone —
+    # otherwise a previously chosen provider reads as "ready" with no button.
+    "js.add_phone_to_pay": gettext_noop(
+        "Add a phone number to your shipping address above to continue to payment."
+    ),
     "js.invalid_voucher": gettext_noop("Invalid voucher code"),
     "js.failed_apply_voucher": gettext_noop("Failed to apply voucher. Please try again."),
     "js.qty_prefix": gettext_noop("Qty:"),
@@ -716,6 +807,19 @@ UI_STRING_REGISTRY = {
         "You'll be able to create an account after placing your order"
     ),
     "checkout.or_continue_below": gettext_noop("or continue below"),
+    # Tenders (gift card / store credit at the payment step) — P2.5b
+    "checkout.gift_card_or_credit": gettext_noop("Gift card or store credit"),
+    "checkout.store_credit": gettext_noop("Store credit"),
+    "checkout.gift_card_code": gettext_noop("Gift card code"),
+    "checkout.apply_gift_card": gettext_noop("Apply"),
+    "checkout.store_credit_available": gettext_noop("Store credit available:"),
+    "checkout.use_store_credit": gettext_noop("Use store credit"),
+    "checkout.remove_tender": gettext_noop("Remove"),
+    "checkout.amount_due": gettext_noop("Amount due"),
+    "checkout.no_payment_needed": gettext_noop(
+        "No payment needed — your gift card or store credit covers this order."
+    ),
+    "checkout.place_order_free": gettext_noop("Place Order"),
     # === Contact Page ===
     "contact.address": gettext_noop("Address"),
     "contact.business_hours": gettext_noop("Business Hours"),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Thai <LL@li.org>\n"
@@ -18,12 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:47 templates/admin/announcements/announcement/change_form.html:42
 msgid "Content"
 msgstr "เนื้อหา"
 
+#: admin.py:53 templates/admin/announcements/announcement/change_form.html:122
 msgid "Image"
 msgstr "รูปภาพ"
 
+#: admin.py:58
 msgid ""
 "Optional image for modal display. Choose between banner (above content) or "
 "background (behind text with overlay)."
@@ -31,38 +34,51 @@ msgstr ""
 "รูปภาพเสริมสำหรับการจัดแสดงในหน้าต่างแบบมอดัล ให้เลือกระหว่างแบนเนอร์ (เหนือเนื้อหา) "
 "หรือพื้นหลัง (หลังข้อความพร้อมลามิน่า)"
 
+#: admin.py:63 templates/admin/announcements/announcement/change_form.html:64
 msgid "Link"
 msgstr "ลิงก์"
 
+#: admin.py:78
 msgid "Display"
 msgstr "การแสดงผล"
 
+#: admin.py:84 templates/admin/announcements/announcement/change_form.html:182
 msgid "Visibility Rules"
 msgstr "กฎการมองเห็น"
 
+#: admin.py:89
 msgid ""
 "Optional: restrict when this announcement is shown based on advanced "
 "conditions."
 msgstr "ตัวเลือก: จำกัดเวลาที่จะแสดงการประกาศนี้ตามเงื่อนไขที่ซับซ้อน"
 
+#: admin.py:111 templates/admin/announcements/announcement/change_form.html:46
 msgid "Title"
 msgstr "หัวข้อ"
 
+#: admin.py:117
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:49
 msgid "No expiry"
 msgstr "ไม่มีการหมดอายุ"
 
+#: admin.py:119 templates/admin/announcements/announcement/change_list.html:61
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:42
 msgid "Expired"
 msgstr "หมดอายุแล้ว"
 
+#: admin.py:121
 msgid "Active"
 msgstr "ใช้งาน"
 
+#: admin.py:123 templates/admin/announcements/announcement/change_form.html:148
 msgid "Status"
 msgstr "สถานะ"
 
+#: api_views.py:50
 msgid "List active announcements"
 msgstr "รายการประกาศที่ใช้งานอยู่"
 
+#: api_views.py:52
 msgid ""
 "Public endpoint. Returns all enabled, non-expired announcements ordered by "
 "priority ascending, then created_at descending. Used by the storefront "
@@ -72,12 +88,15 @@ msgstr ""
 "โดยเรียงลำดับตามความสำคัญจากน้อยไปมาก แล้วตาม created_at จากมากไปน้อย "
 "ใช้โดยวิดเจ็ตประกาศของร้านค้า"
 
+#: api_views.py:58
 msgid "List of active announcements"
 msgstr "รายการของประกาศที่ใช้งานอยู่"
 
+#: api_views.py:102
 msgid "Get announcement detail"
 msgstr "ดูรายละเอียดประกาศ"
 
+#: api_views.py:104
 msgid ""
 "Public endpoint. Returns full announcement data including body HTML, image "
 "URL, and display mode for the storefront modal. Returns 404 if the "
@@ -87,80 +106,107 @@ msgstr ""
 "และโหมดการแสดงผลสำหรับหน้าต่างแบบมอดอลของร้านค้า หากประกาศไม่ได้เปิดใช้งาน หมดอายุ "
 "หรือไม่มีอยู่ จะคืนค่า 404"
 
+#: api_views.py:114
 msgid "Announcement primary key"
 msgstr "คีย์หลักของประกาศ"
 
+#: api_views.py:118
 msgid "Announcement detail"
 msgstr "รายละเอียดประกาศ"
 
+#: api_views.py:119
 msgid "Not found, inactive, or expired"
 msgstr "ไม่พบ ไม่ใช้งาน หรือหมดอายุ"
 
+#: apps.py:8 models.py:152
+#: templates/admin/announcements/announcement/change_list.html:4
+#: templates/admin/announcements/announcement/change_list.html:18
 msgid "Announcements"
 msgstr "ประกาศ"
 
+#: models.py:15
 msgid "No Link"
 msgstr "ไม่มีลิงก์"
 
+#: models.py:16
 msgid "Product"
 msgstr "สินค้า"
 
+#: models.py:17
 msgid "Category"
 msgstr "หมวดหมู่"
 
+#: models.py:18
 msgid "Blog Post"
 msgstr "โพสต์บล็อก"
 
+#: models.py:19 templates/admin/announcements/announcement/change_list.html:108
 msgid "Page"
 msgstr "หน้า"
 
+#: models.py:20 templates/admin/announcements/announcement/change_form.html:84
 msgid "Custom URL"
 msgstr "URL แบบกำหนดเอง"
 
+#: models.py:24
 msgid "Banner Image (above content)"
 msgstr "รูปภาพแบนเนอร์ (เหนือเนื้อหา)"
 
+#: models.py:25
 msgid "Background Image (with overlay)"
 msgstr "รูปภาพพื้นหลัง (พร้อมโอเวอร์เลย์)"
 
+#: models.py:30
 msgid "Announcement title - supports basic styling (bold, italic, color)"
 msgstr "หัวข้อการประกาศ - รองรับการจัดรูปแบบพื้นฐาน (ตัวหนา, เติมตัว, สีตัวอักษร)"
 
+#: models.py:32
 msgid "Optional detailed content for modal display"
 msgstr "เนื้อหาละเอียดเพิ่มเติมสำหรับการจัดแสดงในหน้าต่างแบบมอดัล"
 
+#: models.py:41
 msgid "Optional image for modal display"
 msgstr "รูปภาพเสริมสำหรับการแสดงผลแบบมอดัล"
 
+#: models.py:47
 msgid "How to display the image in the modal"
 msgstr "วิธีการจัดแสดงรูปภาพในหน้าต่างแบบมอดัล"
 
+#: models.py:55
 msgid ""
 "Overlay opacity when image is used as background (0 = transparent, 1 = "
 "opaque)"
 msgstr "ความโปร่งใสของลามิน่าเมื่อใช้รูปภาพเป็นพื้นหลัง (0 = โปร่งใส, 1 = ไม่โปร่งใส)"
 
+#: models.py:64
 msgid "Type of link for this announcement"
 msgstr "ประเภทลิงก์สำหรับการประกาศนี้"
 
+#: models.py:72
 msgid "Product to link to"
 msgstr "สินค้าที่ต้องการลิงก์ไป"
 
+#: models.py:80
 msgid "Category to link to"
 msgstr "หมวดหมู่ที่ต้องการลิงก์ไป"
 
+#: models.py:88
 msgid "Blog post to link to"
 msgstr "โพสต์บล็อกที่ต้องการลิงก์ไป"
 
+#: models.py:96
 msgid "Page to link to"
 msgstr "หน้าที่ต้องการลิงก์ไป"
 
+#: models.py:99
 msgid "Custom URL for the link"
 msgstr "URL แบบกำหนดเองสำหรับลิงก์"
 
+#: models.py:105
 msgid "Button text for modal link, e.g. \"Shop Now\""
 msgstr "ข้อความปุ่มสำหรับลิงก์แบบมอดัล เช่น \"Shop Now\""
 
+#: models.py:112
 msgid ""
 "If enabled, clicking the announcement opens a modal with full content. If "
 "disabled, clicking navigates directly to the link URL."
@@ -168,9 +214,11 @@ msgstr ""
 "หากเปิดใช้งาน การคลิกที่การประกาศจะเปิดหน้าต่างแบบมอดัลที่มีเนื้อหาเต็มรูปแบบ หากปิดใช้งาน "
 "การคลิกจะนำผู้ใช้ไปยัง URL ลิงก์โดยตรง"
 
+#: models.py:119
 msgid "Enable or disable this announcement"
 msgstr "เปิดหรือปิดการใช้งานประกาศนี้"
 
+#: models.py:125
 msgid ""
 "Announcement will automatically stop displaying after this date/time. Leave "
 "blank for no expiry."
@@ -178,170 +226,231 @@ msgstr ""
 "การประกาศจะหยุดแสดงออกอัตโนมัติหลังจากวันที่/เวลาที่กำหนด "
 "ทิ้งว่างไว้หากไม่ต้องการกำหนดเวลาหมดอายุ"
 
+#: models.py:129
 msgid "Lower number = higher priority (displayed first)"
 msgstr "จำนวนที่ต่ำกว่า = ลำดับความสำคัญสูงกว่า (แสดงก่อน)"
 
+#: models.py:137
 msgid "Visibility rules for conditional display"
 msgstr "กฎความเป็นไปได้สำหรับการแสดงตามเงื่อนไข"
 
+#: models.py:142
 msgid "Translations for announcement content"
 msgstr "การแปลเนื้อหาประกาศ"
 
+#: models.py:151
 msgid "Announcement"
 msgstr "ประกาศ"
 
+#: templates/admin/announcements/announcement/change_form.html:5
 msgid "Edit Announcement"
 msgstr "แก้ไขประกาศ"
 
+#: templates/admin/announcements/announcement/change_form.html:5
+#: templates/admin/announcements/announcement/change_list.html:24
 msgid "Add Announcement"
 msgstr "เพิ่มประกาศ"
 
+#: templates/admin/announcements/announcement/change_form.html:27
 msgid "Please correct the errors below."
 msgstr "กรุณาแก้ไขข้อผิดพลาดด้านล่าง"
 
+#: templates/admin/announcements/announcement/change_form.html:49
 msgid "Announcement headline — supports bold, italic, and font color."
 msgstr "หัวข้อการประกาศ — รองรับตัวหนา, เติมตัว, และสีตัวอักษร"
 
+#: templates/admin/announcements/announcement/change_form.html:52
 msgid "Body"
 msgstr "เนื้อหา"
 
+#: templates/admin/announcements/announcement/change_form.html:55
 msgid "Optional detail text shown in the modal popup."
 msgstr "ข้อความรายละเอียดเพิ่มเติมที่แสดงในหน้าต่างแบบมอดัล"
 
+#: templates/admin/announcements/announcement/change_form.html:68
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:17
 msgid "Link Type"
 msgstr "ประเภทลิงก์"
 
+#: templates/admin/announcements/announcement/change_form.html:91
 msgid "Button Text"
 msgstr "ข้อความปุ่ม"
 
+#: templates/admin/announcements/announcement/change_form.html:93
 msgid "E.g. \\"
 msgstr "ตัวอย่างเช่น \""
 
+#: templates/admin/announcements/announcement/change_form.html:98
 msgid "Show Modal"
 msgstr "แสดงหน้าต่างแบบมอดอล"
 
+#: templates/admin/announcements/announcement/change_form.html:100
 msgid "Open details in a popup instead of navigating."
 msgstr "เปิดรายละเอียดในหน้าต่างแบบมอดัลแทนการนำทาง"
 
+#: templates/admin/announcements/announcement/change_form.html:123
 msgid "Optional"
 msgstr "ไม่จำเป็น"
 
+#: templates/admin/announcements/announcement/change_form.html:130
 msgid ""
 "Image for the modal popup. Shown when a visitor clicks the announcement."
 msgstr "รูปภาพสำหรับหน้าต่างแบบมอดัล แสดงเมื่อผู้เยี่ยมชมคลิกที่การประกาศ"
 
+#: templates/admin/announcements/announcement/change_form.html:133
 msgid "Display Mode"
 msgstr "โหมดการแสดงผล"
 
+#: templates/admin/announcements/announcement/change_form.html:137
 msgid "Overlay Opacity"
 msgstr "ความโปร่งใสของชั้นทับ"
 
+#: templates/admin/announcements/announcement/change_form.html:139
 msgid "0 = transparent, 1 = opaque"
 msgstr "0 = โปร่งใส, 1 = ไม่โปร่งใส"
 
+#: templates/admin/announcements/announcement/change_form.html:154
+#: templates/admin/announcements/announcement/change_list.html:49
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:35
 msgid "Enabled"
 msgstr "เปิดใช้งาน"
 
+#: templates/admin/announcements/announcement/change_form.html:158
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:14
 msgid "Priority"
 msgstr "ลำดับความสำคัญ"
 
+#: templates/admin/announcements/announcement/change_form.html:160
 msgid "Lower = shown first"
 msgstr "ต่ำ = แสดงก่อน"
 
+#: templates/admin/announcements/announcement/change_form.html:163
 msgid "Expires At"
 msgstr "หมดอายุที่"
 
+#: templates/admin/announcements/announcement/change_form.html:165
 msgid "Leave blank for no expiry."
 msgstr "เว้นว่างเพื่อไม่ตั้งค่าการหมดอายุ"
 
+#: templates/admin/announcements/announcement/change_form.html:171
 msgid "Created"
 msgstr "สร้างขึ้น"
 
+#: templates/admin/announcements/announcement/change_form.html:172
 msgid "Updated"
 msgstr "อัปเดตแล้ว"
 
+#: templates/admin/announcements/announcement/change_form.html:183
 msgid "Advanced"
 msgstr "ขั้นสูง"
 
+#: templates/admin/announcements/announcement/change_form.html:187
 msgid ""
 "Restrict when this announcement is shown. Leave empty to show to everyone."
 msgstr "จำกัดเวลาที่จะแสดงการประกาศนี้ ทิ้งว่างไว้หากต้องการให้แสดงกับทุกคน"
 
+#: templates/admin/announcements/announcement/change_form.html:191
 msgid "Hold Ctrl / Cmd to select multiple."
 msgstr "กด Ctrl / Cmd เพื่อเลือกหลายรายการ"
 
+#: templates/admin/announcements/announcement/change_form.html:198
 msgid "Save"
 msgstr "บันทึก"
 
+#: templates/admin/announcements/announcement/change_form.html:201
 msgid "Save & Continue"
 msgstr "บันทึกและดำเนินการต่อ"
 
+#: templates/admin/announcements/announcement/change_form.html:205
 msgid "Save & Add Another"
 msgstr "บันทึกและเพิ่มอีกตัว"
 
+#: templates/admin/announcements/announcement/change_form.html:210
 msgid "Delete"
 msgstr "ลบ"
 
+#: templates/admin/announcements/announcement/change_list.html:20
 msgid "Manage store announcements displayed in headers and footers"
 msgstr "จัดการการประกาศที่แสดงในหัวและท้ายของร้านค้า"
 
+#: templates/admin/announcements/announcement/change_list.html:43
 msgid "All"
 msgstr "ทั้งหมด"
 
+#: templates/admin/announcements/announcement/change_list.html:55
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:37
 msgid "Disabled"
 msgstr "ปิดการใช้งาน"
 
+#: templates/admin/announcements/announcement/change_list.html:78
 msgid "Search announcements..."
 msgstr "ค้นหาประกาศ..."
 
+#: templates/admin/announcements/announcement/change_list.html:101
 msgid "announcements"
 msgstr "ประกาศ"
 
+#: templates/admin/announcements/announcement/change_list.html:106
 msgid "Previous"
 msgstr "ก่อนหน้า"
 
+#: templates/admin/announcements/announcement/change_list.html:108
 msgid "of"
 msgstr "ของ"
 
+#: templates/admin/announcements/announcement/change_list.html:110
 msgid "Next"
 msgstr "ถัดไป"
 
+#: templates/admin/announcements/announcement/change_list.html:119
 msgid "No Announcements Found"
 msgstr "ไม่พบประกาศ"
 
+#: templates/admin/announcements/announcement/change_list.html:122
 msgid "No announcements match your search query."
 msgstr "ไม่มีการประกาศที่ตรงกับคำค้นหาของคุณ"
 
+#: templates/admin/announcements/announcement/change_list.html:124
 msgid ""
 "Create your first announcement to display in your store's header or footer."
 msgstr "สร้างการประกาศแรกของคุณเพื่อแสดงในหัวหรือท้ายของร้านค้า"
 
+#: templates/admin/announcements/announcement/change_list.html:128
 msgid "Create Announcement"
 msgstr "สร้างประกาศ"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:21
 msgid "Opens modal on click"
 msgstr "เปิดหน้าต่างแบบมูดอลเมื่อคลิก"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:22
 msgid "Modal"
 msgstr "มูดอล"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:25
 msgid "Direct link on click"
 msgstr "ลิงก์โดยตรงเมื่อคลิก"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:26
 msgid "Direct Link"
 msgstr "ลิงก์โดยตรง"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:29
 msgid "Last updated"
 msgstr "แก้ไขล่าสุด"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:30
 msgid "ago"
 msgstr "ที่ผ่านมา"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:45
 msgid "Expires"
 msgstr "หมดอายุ"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:54
 msgid "Has Image"
 msgstr "มีรูปภาพ"
 
+#: templates/admin/announcements/announcement/partials/announcement_cards.html:60
 msgid "Edit"
 msgstr "แก้ไข"

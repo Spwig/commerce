@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Turkish <LL@li.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:33
 msgid "Provider Information"
 msgstr "Sağlayıcı Bilgileri"
 
+#: admin.py:34
 msgid "Configuration"
 msgstr "Yapılandırma"
 
+#: admin.py:36 admin.py:80
 msgid "Credentials"
 msgstr "Kimlik Bilgileri"
 
+#: admin.py:40
 msgid ""
 "Credentials are encrypted and managed through the provider wizard. To update "
 "credentials, reinstall the provider."
@@ -34,38 +38,50 @@ msgstr ""
 "Kimlik bilgileri sağlayıcı sihirbazı üzerinden şifrelenerek yönetilir. "
 "Kimlik bilgilerini güncellemek için sağlayıcıyı yeniden yükleyin."
 
+#: admin.py:45
 msgid "Timestamps"
 msgstr "Zaman Stampası"
 
+#: admin.py:48
 msgid "Name"
 msgstr "İsim"
 
+#: admin.py:52
 msgid "Provider"
 msgstr "Sağlayıcı"
 
+#: admin.py:58
 msgid "Status"
 msgstr "Durum"
 
+#: admin.py:72 templates/admin/seo_generator/dashboard.html:161
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:51
 msgid "Primary"
 msgstr "Öncelikli"
 
+#: admin.py:88
 msgid "Credentials are encrypted and stored securely"
 msgstr "Kimlik bilgileri şifrelenerek güvenli bir şekilde depolanır"
 
+#: admin.py:95
 msgid "No credentials configured (built-in provider)"
 msgstr "Kimlik bilgisi yapılandırılmadı (yerel sağlayıcı)"
 
+#: api/endpoints.py:63
 #, python-format
 msgid "Invalid model type: %(type)s. Must be one of: %(valid)s"
 msgstr ""
 "Geçersiz model türü: %(type)s. Aşağıdakilerden biri olmalıdır: %(valid)s"
 
+#: api/endpoints.py:80 api/endpoints.py:428
 msgid "Permission denied."
 msgstr "İzin verilmedi."
 
+#: api/endpoints.py:176
 msgid "Generate SEO content for a single object"
 msgstr "Bir nesne için SEO içeriği oluştur"
 
+#: api/endpoints.py:178
 msgid ""
 "Generate meta title, meta description, and keywords for a product, category, "
 "brand, page, blog post, or blog category. The generated content is "
@@ -75,43 +91,56 @@ msgstr ""
 "başlık, meta açıklama ve anahtar kelimeler oluşturun. Oluşturulan içerik "
 "nesneye otomatik olarak kaydedilir."
 
+#: api/endpoints.py:185 api/endpoints.py:503
 msgid "Model type: product, category, brand, page, blogpost, or blogcategory"
 msgstr ""
 "Model türü: ürün, kategori, marka, sayfa, blog yazısı veya blog kategorisi"
 
+#: api/endpoints.py:191
 msgid "ID of the object to generate SEO for"
 msgstr "SEO oluşturmak için nesnenin ID'si"
 
+#: api/endpoints.py:217
 msgid "Invalid model type, provider key, or language code"
 msgstr "Geçersiz model türü, sağlayıcı anahtarı veya dil kodu"
 
+#: api/endpoints.py:218
 msgid "Permission denied"
 msgstr "İzin verilmedi"
 
+#: api/endpoints.py:219 api/endpoints.py:523
 msgid "Object not found"
 msgstr "Nesne bulunamadı"
 
+#: api/endpoints.py:220
 msgid "Generation failed or unexpected error"
 msgstr "Üretim başarısız oldu veya beklenmeyen bir hata oluştu"
 
+#: api/endpoints.py:241 api/endpoints.py:383
 msgid "Invalid provider key."
 msgstr "Geçersiz sağlayıcı anahtarı."
 
+#: api/endpoints.py:248
 msgid "Invalid language code."
 msgstr "Geçersiz dil kodu."
 
+#: api/endpoints.py:265 api/endpoints.py:541
 msgid "Object not found."
 msgstr "Nesne bulunamadı."
 
+#: api/endpoints.py:282
 msgid "SEO generation failed. Please try again."
 msgstr "SEO üretimi başarısız oldu. Lütfen tekrar deneyin."
 
+#: api/endpoints.py:311 api/endpoints.py:487 api/endpoints.py:565
 msgid "An unexpected error occurred. Please try again."
 msgstr "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin."
 
+#: api/endpoints.py:318
 msgid "Batch generate SEO for multiple objects"
 msgstr "Birden fazla nesne için SEO'yu topluca oluştur"
 
+#: api/endpoints.py:320
 msgid ""
 "Generate SEO content for multiple objects at once. Each item specifies a "
 "model type and object ID. Results include per-item success/failure and a "
@@ -121,27 +150,35 @@ msgstr ""
 "türü ve nesne kimliği belirtir. Sonuçlar, öğe başına başarı/başarısızlık ve "
 "bir özet içerir."
 
+#: api/endpoints.py:359
 msgid "Invalid request body, no items, or invalid provider"
 msgstr "Geçersiz istek gövdesi, öğe yok veya geçersiz sağlayıcı"
 
+#: api/endpoints.py:360 api/endpoints.py:524
 msgid "Unexpected error"
 msgstr "Beklenmeyen hata"
 
+#: api/endpoints.py:372
 msgid "Invalid request body."
 msgstr "Geçersiz istek gövdesi."
 
+#: api/endpoints.py:376
 msgid "No items provided."
 msgstr "Hiçbir öğe sağlanmadı."
 
+#: api/endpoints.py:410
 msgid "Missing model_type or object_id."
 msgstr "model_type veya object_id eksik."
 
+#: api/endpoints.py:462
 msgid "Generation failed for this item."
 msgstr "Bu öğe için üretim başarısız oldu."
 
+#: api/endpoints.py:494
 msgid "Check SEO status for an object"
 msgstr "Bir nesnenin SEO durumunu kontrol et"
 
+#: api/endpoints.py:496
 msgid ""
 "Check whether an object has SEO content, whether it was auto-generated, and "
 "return the current meta title and description with their lengths."
@@ -150,24 +187,31 @@ msgstr ""
 "oluşturulmadığını ve mevcut meta başlık ve açıklamayı uzunluklarıyla "
 "birlikte döndürün."
 
+#: api/endpoints.py:506
 msgid "ID of the object"
 msgstr "Nesnenin Kimliği"
 
+#: api/endpoints.py:522
 msgid "Invalid model type"
 msgstr "Geçersiz model türü"
 
+#: apps.py:8
 msgid "SEO Generator"
 msgstr "SEO Üretici"
 
+#: management/commands/generate_seo.py:33
 msgid "Model type to generate SEO for (or \"all\" for all models)"
 msgstr "SEO üretmek için model türü (tüm modeller için \"all\")"
 
+#: management/commands/generate_seo.py:39
 msgid "Number of items to process in each batch (default: 50)"
 msgstr "Her partide işlenecek öğe sayısı (varsayılan: 50)"
 
+#: management/commands/generate_seo.py:44
 msgid "Only generate SEO for items with seo_auto_generated=True"
 msgstr "Sadece seo_auto_generated=True olan öğeler için SEO üret"
 
+#: management/commands/generate_seo.py:51
 msgid ""
 "SEO provider to use (default: primary provider, or deterministic if none "
 "configured)"
@@ -175,32 +219,40 @@ msgstr ""
 "Kullanılacak SEO sağlayıcısı (varsayılan: ana sağlayıcı, veya hiç "
 "yapılandırılmamışsa belirleyici)"
 
+#: management/commands/generate_seo.py:58
 msgid "Language code for generation (default: site primary language)"
 msgstr "Üretim için dil kodu (varsayılan: site ana dili)"
 
+#: management/commands/generate_seo.py:76
 #, python-format
 msgid "Using language: %(lang)s"
 msgstr "%(lang)s dili kullanılıyor"
 
+#: management/commands/generate_seo.py:83
 #, python-format
 msgid "Using provider: %(name)s"
 msgstr "%(name)s sağlayıcısı kullanılıyor"
 
+#: management/commands/generate_seo.py:103
 msgid "SEO Generation Complete"
 msgstr "SEO Üretimi Tamamlandı"
 
+#: management/commands/generate_seo.py:104
 #, python-format
 msgid "Total Processed: %(count)d"
 msgstr "Toplam İşlenmiş: %(count)d"
 
+#: management/commands/generate_seo.py:106
 #, python-format
 msgid "Successful: %(count)d"
 msgstr "Başarılı: %(count)d"
 
+#: management/commands/generate_seo.py:109
 #, python-format
 msgid "Failed: %(count)d"
 msgstr "Başarısız: %(count)d"
 
+#: management/commands/generate_seo.py:118
 #, python-format
 msgid ""
 "\n"
@@ -209,6 +261,7 @@ msgstr ""
 "\n"
 "Bilinmeyen model türü atlanıyor: %(type)s"
 
+#: management/commands/generate_seo.py:134
 #, python-format
 msgid ""
 "\n"
@@ -217,6 +270,7 @@ msgstr ""
 "\n"
 "İşlenecek %(type)s öğesi yok"
 
+#: management/commands/generate_seo.py:138
 #, python-format
 msgid ""
 "\n"
@@ -225,137 +279,183 @@ msgstr ""
 "\n"
 "%(type)s (%(count)d öğe)"
 
+#: management/commands/generate_seo.py:171
 #, python-format
 msgid "  Failed %(type)s %(pk)s: %(error)s"
 msgstr "Başarısız %(type)s %(pk)s: %(error)s"
 
+#: management/commands/generate_seo.py:181
 #, python-format
 msgid "  %(type)s: %(success)d successful, %(failed)d failed"
 msgstr "%(type)s: %(success)d başarılı, %(failed)d başarısız"
 
+#: models.py:15
 msgid "Site"
 msgstr "Site"
 
+#: models.py:16
 msgid "Site this provider account belongs to"
 msgstr "Bu sağlayıcı hesabı ait olduğu site"
 
+#: models.py:26
 msgid "Provider Component"
 msgstr "Sağlayıcı Bileşeni"
 
+#: models.py:27
 msgid "SEO provider component from update system (null for built-in)"
 msgstr "Güncelleme sistemindeki SEO sağlayıcı bileşeni (yerleşik için null)"
 
+#: models.py:33
 msgid "Provider Key"
 msgstr "Sağlayıcı Anahtarı"
 
+#: models.py:34
 msgid ""
 "Built-in provider key (e.g., 'deterministic'). Used when component is null."
 msgstr ""
 "Yerleşik sağlayıcı anahtarı (örneğin, 'deterministic'). Bileşen null "
 "olduğunda kullanılır."
 
+#: models.py:39
 msgid "Account Name"
 msgstr "Hesap Adı"
 
+#: models.py:40
 msgid "Friendly name for this provider account"
 msgstr "Bu sağlayıcı hesabı için dostça ad"
 
+#: models.py:46
 msgid "Encrypted Credentials"
 msgstr "Şifrelenmiş Kimlik Bilgileri"
 
+#: models.py:47
 msgid "Encrypted API credentials for this provider"
 msgstr "Bu sağlayıcı için şifrelenmiş API kimlik bilgileri"
 
+#: models.py:52
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:54
 msgid "Active"
 msgstr "Aktif"
 
+#: models.py:53
 msgid "Whether this provider account is active"
 msgstr "Bu sağlayıcı hesabı aktif mi?"
 
+#: models.py:58
 msgid "Primary Provider"
 msgstr "Öncelikli Sağlayıcı"
 
+#: models.py:59
 msgid "Use this provider as primary source for SEO generation"
 msgstr "SEO üretimi için bu sağlayıcıyı temel kaynak olarak kullan"
 
+#: models.py:64
 msgid "Priority"
 msgstr "Öncelik"
 
+#: models.py:65
 msgid "Priority for fallback chain (lower = higher priority)"
 msgstr "Yedekleme zinciri için öncelik (düşük = daha yüksek öncelik)"
 
+#: models.py:71
 msgid "Provider Settings"
 msgstr "Sağlayıcı Ayarları"
 
+#: models.py:72
 msgid "Provider-specific settings and configuration"
 msgstr "Sağlayıcıya özel ayarlar ve yapılandırma"
 
+#: models.py:79
 msgid "SEO Provider Account"
 msgstr "SEO Sağlayıcı Hesabı"
 
+#: models.py:80
 msgid "SEO Provider Accounts"
 msgstr "SEO Sağlayıcı Hesapları"
 
+#: providers/base.py:50
 msgid "provider_key must be set by subclass"
 msgstr "provider_key alt sınıf tarafından ayarlanmalıdır"
 
+#: providers/base.py:52
 msgid "provider_name must be set by subclass"
 msgstr "provider_name alt sınıf tarafından ayarlanmalıdır"
 
+#: providers/base.py:61
 #, python-format
 msgid "Provider '%(key)s' requires credentials"
 msgstr "'%(key)s' sağlayıcısı kimlik bilgileri gerektirir"
 
+#: providers/builtin.py:94 templates/admin/seo_generator/dashboard.html:158
+#: templates/admin/seo_generator/dashboard.html:165
 msgid "Built-in Generator"
 msgstr "Yerel Üretici"
 
+#: providers/builtin.py:197
 #, python-format
 msgid "Keyword extraction failed: %(error)s"
 msgstr "Anahtar kelime çıkarma başarısız oldu: %(error)s"
 
+#: providers/builtin.py:221 providers/builtin.py:278
 msgid "Content must have a 'name' field"
 msgstr "İçerik 'name' alanına sahip olmalıdır"
 
+#: providers/builtin.py:259
 #, python-format
 msgid "Meta title generation failed: %(error)s"
 msgstr "Meta başlık üretimi başarısız oldu: %(error)s"
 
+#: providers/builtin.py:349
 #, python-format
 msgid "Meta description generation failed: %(error)s"
 msgstr "Meta açıklama üretimi başarısız oldu: %(error)s"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/dashboard.html:22 views/dashboard.py:76
 msgid "SEO Dashboard"
 msgstr "SEO Gösterge Paneli"
 
+#: templates/admin/seo_generator/dashboard.html:4
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
 msgid "Site Admin"
 msgstr "Site Yöneticisi"
 
+#: templates/admin/seo_generator/dashboard.html:25
 msgid ""
 "Monitor SEO coverage across your store and generate missing meta content"
 msgstr "Mağazanızdaki SEO kapsamını izleyin ve eksik meta içeriğini oluşturun"
 
+#: templates/admin/seo_generator/dashboard.html:33
 msgid "Total Items"
 msgstr "Toplam Öğeler"
 
+#: templates/admin/seo_generator/dashboard.html:38
 msgid "Complete SEO"
 msgstr "SEO'u Tamamla"
 
+#: templates/admin/seo_generator/dashboard.html:43
 msgid "Missing SEO"
 msgstr "Eksik SEO"
 
+#: templates/admin/seo_generator/dashboard.html:48
 msgid "Active Providers"
 msgstr "Aktif Sağlayıcılar"
 
+#: templates/admin/seo_generator/dashboard.html:59
 msgid "SEO Coverage"
 msgstr "SEO Kapsamı"
 
+#: templates/admin/seo_generator/dashboard.html:61
 msgid "Refresh"
 msgstr "Yenile"
 
+#: templates/admin/seo_generator/dashboard.html:82
 #, python-format
 msgid "%(pct)s%% of your content has complete SEO"
 msgstr "%(pct)s%% içeriğiniz tam SEO'ya sahiptir"
 
+#: templates/admin/seo_generator/dashboard.html:85
 #, python-format
 msgid ""
 "\n"
@@ -371,70 +471,101 @@ msgstr ""
 "sahiptir.\n"
 "                            "
 
+#: templates/admin/seo_generator/dashboard.html:96
 msgid "Coverage by Content Type"
 msgstr "İçerik Türüne Göre Kapsam"
 
+#: templates/admin/seo_generator/dashboard.html:112
 msgid "No content found."
 msgstr "İçerik bulunamadı."
 
+#: templates/admin/seo_generator/dashboard.html:123
 msgid "Quality Check"
 msgstr "Kalite Kontrolü"
 
+#: templates/admin/seo_generator/dashboard.html:128
 msgid "Titles too short"
 msgstr "Başlıklar çok kısa"
 
+#: templates/admin/seo_generator/dashboard.html:128
+#: templates/admin/seo_generator/dashboard.html:132
+#: templates/admin/seo_generator/dashboard.html:136
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "chars"
 msgstr "karakter"
 
+#: templates/admin/seo_generator/dashboard.html:132
 msgid "Titles too long"
 msgstr "Başlıklar çok uzun"
 
+#: templates/admin/seo_generator/dashboard.html:136
 msgid "Descriptions short"
 msgstr "Açıklamalar kısa"
 
+#: templates/admin/seo_generator/dashboard.html:140
 msgid "Descriptions long"
 msgstr "Açıklamalar uzun"
 
+#: templates/admin/seo_generator/dashboard.html:149
 msgid "Active Provider"
 msgstr "Aktif Sağlayıcı"
 
+#: templates/admin/seo_generator/dashboard.html:166
 msgid "No external provider configured"
 msgstr "Dış sağlayıcı yapılandırılmadı"
 
+#: templates/admin/seo_generator/dashboard.html:168
 msgid "Connect a provider"
 msgstr "Bir sağlayıcı bağla"
 
+#: templates/admin/seo_generator/dashboard.html:178
 msgid "Quick Actions"
 msgstr "Hızlı İşlemler"
 
+#: templates/admin/seo_generator/dashboard.html:184
 #, python-format
 msgid "Generate SEO for %(count)s missing items"
 msgstr "%(count)s eksik öğe için SEO oluştur"
 
+#: templates/admin/seo_generator/dashboard.html:189
 msgid "Manage Providers"
 msgstr "Sağlayıcıları Yönet"
 
+#: templates/admin/seo_generator/dashboard.html:193
+#: templates/admin/seo_generator/providers/browse.html:27
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:28
+#: templates/admin/seo_generator/wizard/step1_select.html:86
 msgid "Browse Providers"
 msgstr "Sağlayıcıları Gözden Geçir"
 
+#: templates/admin/seo_generator/dashboard.html:204
 msgid "Generating SEO Content"
 msgstr "SEO İçeriği Oluşturuluyor"
 
+#: templates/admin/seo_generator/dashboard.html:212
 msgid "Preparing..."
 msgstr "Hazırlanıyor..."
 
+#: templates/admin/seo_generator/dashboard.html:218
+#: templates/admin/seo_generator/wizard/step1_select.html:97
 msgid "Cancel"
 msgstr "İptal"
 
+#: templates/admin/seo_generator/providers/browse.html:4
+#: templates/admin/seo_generator/providers/browse.html:36
+#: views/provider_browse.py:132
 msgid "Browse SEO Providers"
 msgstr "SEO Sağlayıcılarını Gözden Geçir"
 
+#: templates/admin/seo_generator/providers/browse.html:25
 msgid "Home"
 msgstr "Ana Sayfa"
 
+#: templates/admin/seo_generator/providers/browse.html:26
 msgid "Provider Accounts"
 msgstr "Sağlayıcı Hesapları"
 
+#: templates/admin/seo_generator/providers/browse.html:38
 msgid ""
 "Choose an SEO generation provider to integrate with your store. Install new "
 "providers or configure existing ones."
@@ -442,9 +573,11 @@ msgstr ""
 "Mağazanızla entegre olacak bir SEO üretici sağlayıcısı seçin. Yeni "
 "sağlayıcılar yükleyin veya mevcutları yapılandırın."
 
+#: templates/admin/seo_generator/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "Güncelleme Sunucusu Kullanılamıyor"
 
+#: templates/admin/seo_generator/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
@@ -452,9 +585,11 @@ msgstr ""
 "Güncelleme sunucusuna bağlanılamadı. Yerel olarak yüklenen sağlayıcılar "
 "yalnızca gösterilecek."
 
+#: templates/admin/seo_generator/providers/browse.html:57
 msgid "SEO Provider Marketplace"
 msgstr "SEO Sağlayıcı Pazar Yeri"
 
+#: templates/admin/seo_generator/providers/browse.html:69
 msgid ""
 "Here you can discover and install SEO generation providers to automatically "
 "create optimized meta titles, descriptions, and keywords for your products, "
@@ -464,36 +599,47 @@ msgstr ""
 "açıklamalar ve anahtar kelimeler oluşturmak için SEO üretimi sağlayıcılarını "
 "keşfedip yükleyebilirsiniz."
 
+#: templates/admin/seo_generator/providers/browse.html:76
 msgid "What you can do:"
 msgstr "Ne yapabilirsiniz:"
 
+#: templates/admin/seo_generator/providers/browse.html:81
 msgid "Browse available SEO providers by capability"
 msgstr "Yeteneklere göre mevcut SEO sağlayıcılarını inceleyin"
 
+#: templates/admin/seo_generator/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "Yeni sağlayıcıları tek tıkla yükleyin"
 
+#: templates/admin/seo_generator/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "Yüklenen sağlayıcıları en son sürümlere güncelleyin"
 
+#: templates/admin/seo_generator/providers/browse.html:93
 msgid "Configure provider settings after installation"
 msgstr "Yükleme sonrası sağlayıcı ayarlarını yapılandırın"
 
+#: templates/admin/seo_generator/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "Başlamak İçin:"
 
+#: templates/admin/seo_generator/providers/browse.html:104
 msgid "Browse providers below and find the right one for you"
 msgstr "Aşağıdaki sağlayıcıları inceleyin ve size uygun olanı bulun"
 
+#: templates/admin/seo_generator/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "Sağlayıcıyı mağazanıza eklemek için 'Yükle'ye tıklayın"
 
+#: templates/admin/seo_generator/providers/browse.html:106
 msgid "Navigate to Settings to configure API credentials"
 msgstr "API kimlik bilgilerini yapılandırmak için Ayarlar bölümüne gidin"
 
+#: templates/admin/seo_generator/providers/browse.html:107
 msgid "Test the provider connection and start generating SEO"
 msgstr "Sağlayıcı bağlantısını test edin ve SEO üretmeye başlayın"
 
+#: templates/admin/seo_generator/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -512,48 +658,70 @@ msgstr[1] ""
 "                    Şu anda: %(counter)s sağlayıcı mevcut\n"
 "                "
 
+#: templates/admin/seo_generator/providers/browse.html:133
 msgid "Update Available"
 msgstr "Güncelleme Mevcut"
 
+#: templates/admin/seo_generator/providers/browse.html:156
 msgid "Installed"
 msgstr "Yüklendi"
 
+#: templates/admin/seo_generator/providers/browse.html:171
 msgid "Available"
 msgstr "Mevcut"
 
+#: templates/admin/seo_generator/providers/browse.html:192
+#: templates/admin/seo_generator/wizard/step1_select.html:45
 msgid "Meta Titles"
 msgstr "Meta Başlıkları"
 
+#: templates/admin/seo_generator/providers/browse.html:197
+#: templates/admin/seo_generator/wizard/step1_select.html:50
 msgid "Descriptions"
 msgstr "Açıklamalar"
 
+#: templates/admin/seo_generator/providers/browse.html:202
+#: templates/admin/seo_generator/wizard/step1_select.html:55
 msgid "Keywords"
 msgstr "Anahtar Kelimeler"
 
+#: templates/admin/seo_generator/providers/browse.html:207
+#: templates/admin/seo_generator/wizard/step1_select.html:60
 msgid "Multi-Language"
 msgstr "Çok Dil"
 
+#: templates/admin/seo_generator/providers/browse.html:212
+#: templates/admin/seo_generator/wizard/step1_select.html:65
 msgid "Bulk Generation"
 msgstr "Toplu Üretim"
 
+#: templates/admin/seo_generator/providers/browse.html:226
 msgid "Update"
 msgstr "Güncelle"
 
+#: templates/admin/seo_generator/providers/browse.html:231
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:72
 msgid "Configure"
 msgstr "Yapılandır"
 
+#: templates/admin/seo_generator/providers/browse.html:238
 msgid "Install"
 msgstr "Yükle"
 
+#: templates/admin/seo_generator/providers/browse.html:247
 msgid "View Details"
 msgstr "Ayrıntıları Görüntüle"
 
+#: templates/admin/seo_generator/providers/browse.html:255
 msgid "Learn More"
 msgstr "Daha Fazlasını Öğren"
 
+#: templates/admin/seo_generator/providers/browse.html:268
+#: templates/admin/seo_generator/wizard/step1_select.html:82
 msgid "No Providers Available"
 msgstr "Kullanıcı Sağlayıcısı Yok"
 
+#: templates/admin/seo_generator/providers/browse.html:269
 msgid ""
 "No SEO generation providers are currently available. The built-in "
 "deterministic provider is always available without installation."
@@ -561,27 +729,36 @@ msgstr ""
 "Şu anda SEO üretimi sağlayıcıları mevcut değildir. Yükleme olmadan her zaman "
 "kullanılabilir yerleşik deterministik sağlayıcı mevcuttur."
 
+#: templates/admin/seo_generator/providers/browse.html:278
 msgid "Installing provider..."
 msgstr "Sağlayıcı yükleniyor..."
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:4
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:18
 msgid "SEO Providers"
 msgstr "SEO Sağlayıcıları"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:20
 msgid "Manage SEO generation provider integrations"
 msgstr "SEO Üretim Sağlayıcı Entegrasyonlarını Yönet"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:22
 msgid "provider"
 msgstr "sağlayıcı"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:23
 msgid "active"
 msgstr "etkin"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:56
 msgid "Inactive"
 msgstr "Etkin Değil"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:79
 msgid "No SEO Providers Configured"
 msgstr "Hiçbir SEO Sağlayıcısı Yapılandırılmadı"
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:80
 msgid ""
 "The built-in deterministic provider is available by default. Connect "
 "additional providers for AI-powered SEO generation."
@@ -589,42 +766,59 @@ msgstr ""
 "Yerleşik deterministik sağlayıcı varsayılan olarak mevcuttur. AI destekli "
 "SEO üretimi için ek sağlayıcılar bağlayabilirsiniz."
 
+#: templates/admin/seo_generator/seoprovideraccount/change_list.html:82
 msgid "Connect Provider"
 msgstr "Sağlayıcıya Bağlan"
 
+#: templates/admin/seo_generator/wizard/base.html:14
 msgid "Connect SEO Provider"
 msgstr "SEO Sağlayıcıya Bağlan"
 
+#: templates/admin/seo_generator/wizard/base.html:15
 msgid "Follow these steps to connect your SEO generation provider"
 msgstr "SEO üretimi sağlayıcınızı bağlamak için bu adımları izleyin"
 
+#: templates/admin/seo_generator/wizard/base.html:24
 msgid "Select Provider"
 msgstr "Sağlayıcı Seç"
 
+#: templates/admin/seo_generator/wizard/base.html:33
+#: templates/admin/seo_generator/wizard/step2_setup.html:8
 msgid "Setup Instructions"
 msgstr "Kurulum Talimatları"
 
+#: templates/admin/seo_generator/wizard/base.html:42
 msgid "Enter Credentials"
 msgstr "Kimlik Bilgilerini Gir"
 
+#: templates/admin/seo_generator/wizard/base.html:51
+#: templates/admin/seo_generator/wizard/step4_test.html:7
+#: templates/admin/seo_generator/wizard/step4_test.html:29
 msgid "Test Connection"
 msgstr "Bağlantıyı Test Et"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:6
 msgid "Select an SEO Provider"
 msgstr "Bir SEO Sağlayıcı Seç"
 
+#: templates/admin/seo_generator/wizard/step1_select.html:7
 msgid "Choose the SEO generation provider you want to connect to your store."
 msgstr "Mağazanıza bağlamak istediğiniz SEO üretimi sağlayıcısını seçin."
 
+#: templates/admin/seo_generator/wizard/step1_select.html:83
 msgid "No SEO provider components are currently installed."
 msgstr "Şu anda herhangi bir SEO sağlayıcı bileşeni yüklenmemiştir."
 
+#: templates/admin/seo_generator/wizard/step1_select.html:84
 msgid "Please browse and install SEO provider components from the marketplace."
 msgstr "Lütfen pazar yerinden SEO sağlayıcı bileşenlerini tarayın ve yükleyin."
 
+#: templates/admin/seo_generator/wizard/step1_select.html:100
+#: templates/admin/seo_generator/wizard/step3_credentials.html:123
 msgid "Next"
 msgstr "İleri"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:11
 #, python-format
 msgid ""
 "\n"
@@ -637,9 +831,11 @@ msgstr ""
 "adımlarını gözden geçirin.\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:22
 msgid "Setup Instructions Not Available"
 msgstr "Kurulum Talimatları Mevcut Değil"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:24
 #, python-format
 msgid ""
 "\n"
@@ -655,15 +851,21 @@ msgstr ""
 "bir sürüm kontrol edin.\n"
 "                    "
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:43
+#: templates/admin/seo_generator/wizard/step3_credentials.html:120
+#: templates/admin/seo_generator/wizard/step4_test.html:51
 msgid "Back"
 msgstr "Geri"
 
+#: templates/admin/seo_generator/wizard/step2_setup.html:46
 msgid "Continue to Credentials"
 msgstr "Kimlik Bilgilerine Devam Et"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:6
 msgid "Enter API Credentials"
 msgstr "API Kimlik Bilgilerini Gir"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:8
 #, python-format
 msgid ""
 "\n"
@@ -676,24 +878,31 @@ msgstr ""
 "güvenli şekilde şifrelenerek saklanacaktır.\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:17
 msgid "Don't have an account yet?"
 msgstr "Hâlâ bir hesabınız yok mu?"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:19
 msgid "You'll need an account to get API credentials."
 msgstr "API kimlik bilgileri almak için bir hesaba ihtiyacınız olacak."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:21
 msgid "Sign up here"
 msgstr "Buradan kayıt olun"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:33
 msgid "API Credentials"
 msgstr "API Kimlik Bilgileri"
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:65
 msgid "Select..."
 msgstr "Seç..."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:104
 msgid "No credential fields configured for this provider."
 msgstr "Bu sağlayıcı için kimlik bilgi alanları yapılandırılmamış."
 
+#: templates/admin/seo_generator/wizard/step3_credentials.html:111
 msgid ""
 "Your credentials will be encrypted using AES-256 encryption before being "
 "stored in the database."
@@ -701,6 +910,7 @@ msgstr ""
 "Kimlik bilgileriniz veritabanında saklanmadan önce AES-256 şifrelemesi "
 "kullanılarak şifrelenir."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:9
 #, python-format
 msgid ""
 "\n"
@@ -713,174 +923,232 @@ msgstr ""
 "olduğundan emin olun.\n"
 "        "
 
+#: templates/admin/seo_generator/wizard/step4_test.html:21
+#: templates/admin/seo_generator/wizard/step4_test.html:63
 msgid "Testing connection..."
 msgstr "Bağlantı test ediliyor..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:22
+#: templates/admin/seo_generator/wizard/step4_test.html:64
 msgid "Please wait while we verify your credentials."
 msgstr "Kimlik bilgileriniz doğrulanırken lütfen bekleyin."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:32
 msgid "Click to test the connection with your entered credentials."
 msgstr "Girilen kimlik bilgileriyle bağlantıyı test etmek için tıklayın."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:42
+#: templates/admin/seo_generator/wizard/step4_test.html:65
 msgid "Connection Successful!"
 msgstr "Bağlantı Başarılı!"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:54
+#: templates/admin/seo_generator/wizard/step4_test.html:73
 msgid "Save & Finish"
 msgstr "Kaydet ve Bitir"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:66
 msgid "Your credentials were verified successfully."
 msgstr "Kimlik bilgileriniz başarıyla doğrulandı."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:67
 msgid "Connection Failed"
 msgstr "Bağlantı Başarısız Oldu"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:68
 msgid "Could not connect to the provider API."
 msgstr "Sağlayıcı API'sine bağlanılamadı."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:69
 msgid "Error"
 msgstr "Hata"
 
+#: templates/admin/seo_generator/wizard/step4_test.html:70 views/wizard.py:481
 msgid "An unexpected error occurred."
 msgstr "Beklenmeyen bir hata oluştu."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:71
 msgid "Saving..."
 msgstr "Kaydediliyor..."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:72
 msgid "Failed to save provider account."
 msgstr "Sağlayıcı hesabı kaydedilemedi."
 
+#: templates/admin/seo_generator/wizard/step4_test.html:74
 msgid "An error occurred while saving."
 msgstr "Kaydedilirken bir hata oluştu."
 
+#: views/dashboard.py:98
 msgid "Failed to calculate coverage."
 msgstr "Kapsamın hesaplanması başarısız oldu."
 
+#: views/dashboard.py:113
 msgid "Failed to refresh coverage."
 msgstr "Kapsamın yenilenmesi başarısız oldu."
 
+#: views/dashboard.py:133
 msgid "Failed to get missing items."
 msgstr "Eksik öğeler alınamadı."
 
+#: views/dashboard.py:142
 msgid "Invalid content type."
 msgstr "Geçersiz içerik türü."
 
+#: views/dashboard.py:208
 msgid "Failed to load items."
 msgstr "Öğelerin yüklenmesi başarısız oldu."
 
+#: views/provider_browse.py:158
 msgid "Provider is already installed. Configure it now."
 msgstr "Sağlayıcı zaten yüklenmiştir. Şimdi onu yapılandırın."
 
+#: views/provider_browse.py:184 views/provider_browse.py:311
 msgid "Provider not found on update server."
 msgstr "Güncelleme sunucusunda sağlayıcı bulunamadı."
 
+#: views/provider_browse.py:193
 msgid "Could not determine provider version."
 msgstr "Sağlayıcı sürümü belirlenemedi."
 
+#: views/provider_browse.py:212
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "Sağlayıcı indirilemedi: %(error)s"
 
+#: views/provider_browse.py:224
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "Sağlayıcı kurulumu başarısız oldu: %(error)s"
 
+#: views/provider_browse.py:253
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
 msgstr "\"%(name)s\" sağlayıcısı başarıyla kuruldu! Şimdi onu yapılandırın."
 
+#: views/provider_browse.py:262
 msgid "An unexpected error occurred during installation."
 msgstr "Yükleme sırasında beklenmeyen bir hata oluştu."
 
+#: views/provider_browse.py:283
 msgid "Provider not installed."
 msgstr "Sağlayıcı yüklenmedi."
 
+#: views/provider_browse.py:298
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "Güncelleme sunucusuna bağlanılamadı: %(error)s"
 
+#: views/provider_browse.py:319
 msgid "Could not determine latest version."
 msgstr "En son sürüm belirlenemedi."
 
+#: views/provider_browse.py:326
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "\"%(name)s\" sağlayıcısı zaten güncel (v%(version)s)."
 
+#: views/provider_browse.py:339
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "Güncelleme indirilemedi: %(error)s"
 
+#: views/provider_browse.py:350
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "Güncelleme kurulumu başarısız oldu: %(error)s"
 
+#: views/provider_browse.py:381
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "\"%(name)s\" sağlayıcısı v%(version)s'ye başarıyla güncellendi!"
 
+#: views/provider_browse.py:390
 msgid "An unexpected error occurred during the update."
 msgstr "Güncelleme sırasında beklenmeyen bir hata oluştu."
 
+#: views/wizard.py:141
 msgid "Connect SEO Provider - Select Provider"
 msgstr "SEO Sağlayıcısı Bağla - Sağlayıcı Seç"
 
+#: views/wizard.py:154
 msgid "Please select a provider."
 msgstr "Lütfen bir sağlayıcı seçin."
 
+#: views/wizard.py:162
 msgid "Invalid provider selected."
 msgstr "Geçersiz sağlayıcı seçildi."
 
+#: views/wizard.py:189 views/wizard.py:264
 msgid "Please select a provider first."
 msgstr "Lütfen önce bir sağlayıcı seçin."
 
+#: views/wizard.py:219
 #, python-format
 msgid "Setup instructions not found for %(provider)s."
 msgstr "%(provider)s için kurulum talimatları bulunamadı."
 
+#: views/wizard.py:224 views/wizard.py:285
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "Sağlayıcı yükleme hatası: %(error)s"
 
+#: views/wizard.py:233
 msgid "Connect SEO Provider - Setup Instructions"
 msgstr "SEO Sağlayıcısı Bağla - Kurulum Talimatları"
 
+#: views/wizard.py:278
 msgid "Could not load provider configuration."
 msgstr "Sağlayıcı yapılandırması yüklenemedi."
 
+#: views/wizard.py:289
 msgid "Connect SEO Provider - Enter Credentials"
 msgstr "SEO Sağlayıcısı Bağla - Kimlik Bilgilerini Gir"
 
+#: views/wizard.py:318
 msgid "Error loading provider configuration."
 msgstr "Sağlayıcı yapılandırması yüklenirken hata oluştu."
 
+#: views/wizard.py:349
 msgid "Please complete previous steps first."
 msgstr "Lütfen önceki adımları tamamlayın."
 
+#: views/wizard.py:357
 msgid "Provider not found."
 msgstr "Sağlayıcı bulunamadı."
 
+#: views/wizard.py:361
 msgid "Connect SEO Provider - Test Connection"
 msgstr "SEO Sağlayıcısı Bağla - Bağlantıyı Test Et"
 
+#: views/wizard.py:380
 msgid "Missing data."
 msgstr "Eksik veri."
 
+#: views/wizard.py:389
 msgid "Provider implementation not found."
 msgstr "Sağlayıcı uygulaması bulunamadı."
 
+#: views/wizard.py:408
 msgid "An error occurred while testing the connection."
 msgstr "Bağlantı testi sırasında bir hata oluştu."
 
+#: views/wizard.py:420
 msgid "Site not configured."
 msgstr "Site yapılandırılmadı."
 
+#: views/wizard.py:431
 msgid "Connection test failed"
 msgstr "Bağlantı testi başarısız oldu"
 
+#: views/wizard.py:457
 msgid "Provider connected successfully!"
 msgstr "Sağlayıcı başarıyla bağlandı!"
 
+#: views/wizard.py:470
 msgid "An error occurred while saving the provider."
 msgstr "Sağlayıcı kaydedilirken bir hata oluştu."
 
+#: views/wizard.py:476
 msgid "Invalid action."
 msgstr "Geçersiz işlem."

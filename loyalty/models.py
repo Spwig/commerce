@@ -333,6 +333,22 @@ class LoyaltyTransaction(models.Model):
             models.Index(fields=["expires_at"]),
             models.Index(fields=["related_object_type", "related_object_id"]),
         ]
+        constraints = [
+            # A transaction may be reversed/refunded exactly once.
+            #
+            # LedgerService.refund_redemption guards with .exists() before
+            # inserting, but a read followed by an insert is not atomic: under
+            # READ COMMITTED two concurrent refunds of the same redemption both
+            # see zero rows and both credit the balance, minting points. The
+            # row lock on the *balance* serialises the write but not the
+            # decision. This constraint is what actually makes it safe — the
+            # application check becomes a friendly error, not the control.
+            models.UniqueConstraint(
+                fields=["reversal_of"],
+                condition=models.Q(reversal_of__isnull=False),
+                name="uniq_reversal_per_transaction",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.member} - {self.transaction_type}: {self.points} points"

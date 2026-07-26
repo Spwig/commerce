@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:26+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,270 +18,341 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: admin.py:16
 msgid "Enter client secret (leave blank to keep current)"
 msgstr "वर्तमान रखें बिना ग्राहक रहस्य दर्ज करें (खाली छोड़ें)"
 
+#: admin.py:20
 msgid "Client Secret"
 msgstr "क्लाइंट सीक्रेट"
 
+#: admin.py:21
 msgid ""
 "Application/Client secret from your identity provider. Stored encrypted."
-msgstr ""
-"आपके पहचान प्रदाता से एप्लिकेशन/ग्राहक रहस्य। एन्क्रिप्टेड रूप में संग्रहीत।"
+msgstr "आपके पहचान प्रदाता से एप्लिकेशन/ग्राहक रहस्य। एन्क्रिप्टेड रूप में संग्रहीत।"
 
+#: admin.py:55
 msgid ""
 "A client secret is currently configured. Leave blank to keep it, or enter a "
 "new value to replace it."
 msgstr ""
-"वर्तमान में एक ग्राहक रहस्य सेट किया गया है। इसे बरकरार रखने के लिए इसे खाली"
-" छोड़ दें, या इसके बजाय एक नया मूल्य दर्ज करें।"
+"वर्तमान में एक ग्राहक रहस्य सेट किया गया है। इसे बरकरार रखने के लिए इसे खाली छोड़ दें, या "
+"इसके बजाय एक नया मूल्य दर्ज करें।"
 
+#: admin.py:75
 msgid "Provider"
 msgstr "प्रदाता"
 
+#: admin.py:81
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:101
 msgid "OIDC Discovery"
 msgstr "OIDC खोज"
 
+#: admin.py:87
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:238
 msgid "OIDC Endpoints"
 msgstr "OIDC अंत्य बिंदु"
 
+#: admin.py:99
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:127
 msgid "Client Credentials"
 msgstr "क्लाइंट योग्यता"
 
+#: admin.py:105
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:180
 msgid "Claims Mapping"
 msgstr "दावा मैपिंग"
 
+#: admin.py:111
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:216
 msgid "Role Mapping"
 msgstr "भूमिका मान"
 
+#: admin.py:117
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:270
 msgid "Scopes & Behavior"
 msgstr "प्रभाव के सीमा"
 
+#: models.py:23
 msgid "Provider Name"
 msgstr "प्रदाता का नाम"
 
+#: models.py:25
 msgid ""
-"Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google "
-"Workspace'"
+"Display name for the SSO button, e.g. 'Microsoft', 'Okta', 'Google Workspace'"
 msgstr ""
-"एसएसओ बटन के लिए डिस्प्ले नाम, उदाहरण के लिए 'माइक्रोसॉफ्ट', 'ओक्टा', 'गूगल "
-"वर्कस्पेस'"
+"एसएसओ बटन के लिए डिस्प्ले नाम, उदाहरण के लिए 'माइक्रोसॉफ्ट', 'ओक्टा', 'गूगल वर्कस्पेस'"
 
+#: models.py:33
 msgid "OIDC Discovery URL"
 msgstr "OIDC खोज URL"
 
+#: models.py:35
 #, python-brace-format
 msgid ""
-"OpenID Connect discovery endpoint (e.g. "
-"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-"
-"configuration)"
+"OpenID Connect discovery endpoint (e.g. https://login.microsoftonline.com/"
+"{tenant}/v2.0/.well-known/openid-configuration)"
 msgstr ""
-"ओपेन आईडी कनेक्ट खोज अंत मित्र (उदाहरण के लिए "
-"https://login.microsoftonline.com/{tenant}/v2.0/.well-known/openid-"
-"configuration)"
+"ओपेन आईडी कनेक्ट खोज अंत मित्र (उदाहरण के लिए https://login.microsoftonline.com/"
+"{tenant}/v2.0/.well-known/openid-configuration)"
 
+#: models.py:41
 msgid "Authorization Endpoint"
 msgstr "अनुमोदन अंत-बिंदु"
 
+#: models.py:46
 msgid "Token Endpoint"
 msgstr "टोकन अंत-बिंदु"
 
+#: models.py:51
 msgid "UserInfo Endpoint"
 msgstr "यूजर जानकारी एंडपॉइंट"
 
+#: models.py:56
 msgid "JWKS Endpoint"
 msgstr "JWKS एंडपॉइंट"
 
+#: models.py:61
 msgid "End Session Endpoint"
 msgstr "सेशन समाप्त करें एंडपॉइंट"
 
+#: models.py:62
 msgid "Used for single sign-out (optional)"
 msgstr "एकल साइन-आउट के लिए उपयोग किया जाता है (वैकल्पिक)"
 
+#: models.py:69
 msgid "Client ID"
 msgstr "क्लाइंट आईडी"
 
+#: models.py:70
 msgid "Application/Client ID from your identity provider"
 msgstr "आपके पहचान प्रदाता से एप्लिकेशन/क्लाइंट आईडी"
 
+#: models.py:75
 msgid "Client Secret (Encrypted)"
 msgstr "क्लाइंट सीक्रेट (एन्क्रिप्टेड)"
 
+#: models.py:82
 msgid "Email Claim"
 msgstr "ईमेल क्लेम"
 
+#: models.py:83
 msgid "OIDC claim field for user email address"
 msgstr "उपयोगकर्ता ईमेल पते के लिए OIDC दावा क्षेत्र"
 
+#: models.py:88
 msgid "First Name Claim"
 msgstr "पहला नाम क्लेम"
 
+#: models.py:89
 msgid "OIDC claim field for first name"
 msgstr "पहला नाम के लिए OIDC दावा क्षेत्र"
 
+#: models.py:94
 msgid "Last Name Claim"
 msgstr "अंतिम नाम क्लेम"
 
+#: models.py:95
 msgid "OIDC claim field for last name"
 msgstr "अंतिम नाम के लिए OIDC दावा क्षेत्र"
 
+#: models.py:101
 msgid "Groups Claim"
 msgstr "ग्रुप क्लेम"
 
+#: models.py:103
 msgid ""
-"OIDC claim field for group memberships (leave blank to disable group "
-"mapping)"
-msgstr ""
-"समूह सदस्यता के लिए OIDC दावा क्षेत्र (खाली छोड़ें ग्रुप मैपिंग अक्षम करने "
-"के लिए)"
+"OIDC claim field for group memberships (leave blank to disable group mapping)"
+msgstr "समूह सदस्यता के लिए OIDC दावा क्षेत्र (खाली छोड़ें ग्रुप मैपिंग अक्षम करने के लिए)"
 
+#: models.py:110
 msgid "Staff Groups"
 msgstr "स्टाफ ग्रुप"
 
+#: models.py:111
 msgid "Comma-separated group names or IDs that grant staff status"
 msgstr "कमा से अलग ग्रुप नाम या आईडी जो स्टाफ स्थिति प्रदान करते हैं"
 
+#: models.py:115
 msgid "Superuser Groups"
 msgstr "सुपर यूजर ग्रुप"
 
+#: models.py:116
 msgid "Comma-separated group names or IDs that grant superuser status"
 msgstr "कमा से अलग ग्रुप नाम या आईडी जो सुपर यूजर स्थिति प्रदान करते हैं"
 
+#: models.py:123
 msgid "OIDC Scopes"
 msgstr "OIDC स्कोप"
 
+#: models.py:124
 msgid "Space-separated OIDC scopes to request"
 msgstr "अनुरोध के लिए स्थान अलग किए गए OIDC स्कोप"
 
+#: models.py:130
 msgid "Auto-Create Users"
 msgstr "स्वचालित उपयोगकर्ता बनाएं"
 
+#: models.py:132
 msgid ""
 "Automatically create a user account when an SSO user signs in for the first "
 "time"
-msgstr ""
-"जब एसएसओ यूजर पहली बार साइन इन करता है तो एक यूजर अकाउंट स्वतः बनाए रखें"
+msgstr "जब एसएसओ यूजर पहली बार साइन इन करता है तो एक यूजर अकाउंट स्वतः बनाए रखें"
 
+#: models.py:137
 msgid "Restrict to Staff"
 msgstr "केवल स्टाफ के लिए सीमित करें"
 
+#: models.py:139
 msgid ""
 "Only allow existing staff users to sign in via SSO. Disable to allow SSO "
 "user auto-creation."
 msgstr ""
-"केवल अस्तित्व में वाले स्टाफ उपयोगकर्ताओं को SSO के माध्यम से साइन इन करने "
-"की अनुमति दें। अक्टूबर करने के लिए अक्टूबर करें।"
+"केवल अस्तित्व में वाले स्टाफ उपयोगकर्ताओं को SSO के माध्यम से साइन इन करने की अनुमति दें। "
+"अक्टूबर करने के लिए अक्टूबर करें।"
 
+#: models.py:144 models.py:145
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:4
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:19
 msgid "SSO Provider Configuration"
 msgstr "एसएसओ प्रदाता विन्यास"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:24
 msgid "Configured"
 msgstr "विन्यासित"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:28
 msgid "Not Configured"
 msgstr "कॉन्फ़िगर नहीं किया गया"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:34
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:308
 msgid "Save and continue editing"
 msgstr "सहेजें और संपादन जारी रखें"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:37
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:307
 msgid "Save"
 msgstr "सहेजें"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:48
 msgid "Please correct the errors below"
 msgstr "कृपया नीचे की त्रुटियों को सही करें"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:73
 msgid "Connection"
 msgstr "कनेक्शन"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:77
 msgid "Claims & Roles"
 msgstr "अधिकार और भूमिकाएँ"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:81
 msgid "Advanced"
 msgstr "उन्नत"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:90
 msgid "Identity Provider"
 msgstr "पहचान प्रदाता"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:102
 msgid ""
 "Enter the OIDC Discovery URL and click Auto-Discover to populate the "
 "endpoint fields automatically."
 msgstr ""
-"OIDC Discovery URL दर्ज करें और अंत-बिंदु क्षेत्रों को स्वचालित रूप से भरने "
-"के लिए Auto-Discover पर क्लिक करें।"
+"OIDC Discovery URL दर्ज करें और अंत-बिंदु क्षेत्रों को स्वचालित रूप से भरने के लिए Auto-"
+"Discover पर क्लिक करें।"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:111
 msgid "Please enter a Discovery URL first."
 msgstr "कृपया पहले एक Discovery URL दर्ज करें।"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:112
 msgid "Discovering..."
 msgstr "खोज रहा है..."
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:113
 msgid "Discovery failed:"
 msgstr "खोज विफल रही:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:114
 msgid "Discovery successful!"
 msgstr "खोज सफल!"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:115
 msgid "endpoints populated."
 msgstr "अंत बिंदुओं को भर दिया गया।"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:116
 msgid "Discovery request failed:"
 msgstr "खोज अनुरोध विफल रहा:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:117
 msgid "Auto-Discover"
 msgstr "स्वचालित खोज"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:138
 msgid "Secret is configured"
 msgstr "गुप्त रखरखमा लगाया गया है"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:142
 msgid "No secret configured"
 msgstr "कोई गुप्त रखरखमा नहीं लगाया गया"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:154
 msgid "Quick Setup Guide"
 msgstr "त्वरित सेटअप मार्गदर्शिका"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:157
 msgid "Redirect URI"
 msgstr "पुनर्निर्देशित यूआरएल"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:161
 msgid "Microsoft Entra ID:"
 msgstr "माइक्रोसॉफ्ट एंट्रा ID:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:162
 msgid "App registrations > New > Web platform > Redirect URI"
 msgstr "एप्लिकेशन रजिस्ट्रेशन > नया > वेब प्लेटफॉर्म > रीडायरेक्ट URI"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:165
 msgid "Google Workspace:"
 msgstr "गूगल वर्कस्पेस:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:166
 msgid ""
 "Cloud Console > APIs & Services > Credentials > OAuth 2.0 > Redirect URI"
-msgstr ""
-"क्लाउड कंसोल > APIs & सर्विस > प्रमाणपत्र > OAuth 2.0 > रीडायरेक्ट URI"
+msgstr "क्लाउड कंसोल > APIs & सर्विस > प्रमाणपत्र > OAuth 2.0 > रीडायरेक्ट URI"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:169
 msgid "Okta:"
 msgstr "ओक्टा:"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:170
 msgid "Applications > New App > OIDC Web > Sign-in redirect URI"
 msgstr "एप्लिकेशन > नया एप्लिकेशन > OIDC वेब > साइन-इन रीडायरेक्ट URI"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:181
 msgid "Map OIDC claims to user fields. The defaults work for most providers."
 msgstr ""
-"उपयोगकर्ता के फील्ड में OIDC दावे करें। डिफ़ॉल्ट अधिकांश प्रदाताओं के लिए "
-"काम करता है।"
+"उपयोगकर्ता के फील्ड में OIDC दावे करें। डिफ़ॉल्ट अधिकांश प्रदाताओं के लिए काम करता है।"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:217
 msgid ""
 "Map identity provider groups to staff permissions. Enter comma-separated "
 "group names or IDs."
 msgstr ""
-"स्टाफ अनुमति के लिए पहचान प्रदाता समूहों के तालिम दें। अल्पविराम से अलग समूह"
-" के नाम या आईडी दर्ज करें।"
+"स्टाफ अनुमति के लिए पहचान प्रदाता समूहों के तालिम दें। अल्पविराम से अलग समूह के नाम या "
+"आईडी दर्ज करें।"
 
+#: templates/admin/enterprise_sso/ssoproviderconfig/change_form.html:239
 msgid ""
 "These are auto-populated from the Discovery URL. Only edit manually if "
 "needed."
 msgstr ""
-"ये डिस्कवरी URL से स्वचालित रूप से भरे जाते हैं। यदि आवश्यक हो तो केवल "
-"मनमाने तौर पर संपादित करें।"
+"ये डिस्कवरी URL से स्वचालित रूप से भरे जाते हैं। यदि आवश्यक हो तो केवल मनमाने तौर पर "
+"संपादित करें।"
 
+#: views.py:40
 msgid "SSO authentication failed. Please try again or use local login."
-msgstr ""
-"एसएसओ ऑथेंटिकेशन विफल रहा। कृपया पुनः प्रयास करें या स्थानीय लॉगिन का उपयोग "
-"करें।"
+msgstr "एसएसओ ऑथेंटिकेशन विफल रहा। कृपया पुनः प्रयास करें या स्थानीय लॉगिन का उपयोग करें।"

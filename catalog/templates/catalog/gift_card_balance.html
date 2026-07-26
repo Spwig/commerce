@@ -1,0 +1,43 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'Gift Card Balance' %} | {{ site_settings.site_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'catalog/css/gift_card_balance.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="gc-balance"
+         data-endpoint="/api/catalog/gift-cards/check-balance/">
+    <div class="gc-balance__card">
+        <h1 class="gc-balance__title">{% mtrans 'Check your gift card balance' %}</h1>
+        <p class="gc-balance__intro">{% mtrans 'Enter the code from your gift card email to see the remaining balance.' %}</p>
+
+        <form class="gc-balance__form" id="gc-balance-form">
+            <label class="gc-balance__label" for="gc-code">{% mtrans 'Gift card code' %}</label>
+            <input type="text" id="gc-code" class="gc-balance__input"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false"
+                   placeholder="GC-XXXX-XXXX-XXXX" required>
+            <button type="submit" class="btn btn--primary gc-balance__submit">
+                {% mtrans 'Check balance' %}
+            </button>
+        </form>
+
+        <div class="gc-balance__result" id="gc-result" hidden>
+            <div class="gc-balance__amount" id="gc-amount"></div>
+            <div class="gc-balance__meta" id="gc-meta"></div>
+        </div>
+
+        <div class="gc-balance__error" id="gc-error" role="alert" hidden>
+            {% mtrans 'We could not find a gift card with that code. Check the code and try again.' %}
+        </div>
+
+        <p class="gc-balance__hint">{% mtrans 'Gift cards are applied at checkout, on the payment step.' %}</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'catalog/js/gift-card-balance.js' %}" defer></script>
+{% endblock %}

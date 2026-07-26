@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"POT-Creation-Date: 2026-07-20 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,124 +18,167 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:61 templates/admin/email_system/emailaccount/change_form.html:124
 msgid "Provider Information"
 msgstr "プロバイダー情報"
 
+#: admin.py:68 templates/admin/email_system/emailaccount/change_form.html:150
 msgid "Sender Configuration"
 msgstr "送信者設定"
 
+#: admin.py:75 templates/admin/email_system/emailaccount/change_form.html:172
 msgid "Configuration"
 msgstr "設定"
 
+#: admin.py:82 templates/admin/email_system/emailaccount/change_form.html:203
 msgid "DKIM Configuration"
 msgstr "DKIM設定"
 
+#: admin.py:86
 msgid ""
 "DKIM keys are used to digitally sign outgoing emails. Use \"Regenerate DKIM "
 "Keys\" action to create new keys."
 msgstr ""
-"DKIMキーは、送信メールをデジタル署名するために使用されます。新しいキーを作成"
-"するには、「DKIMキーの再生成」アクションを使用してください。"
+"DKIMキーは、送信メールをデジタル署名するために使用されます。新しいキーを作成するには、「DKIMキーの再生成」アクションを使用してください。"
 
+#: admin.py:92 admin.py:187
+#: templates/admin/email_system/emailaccount/change_form.html:230
 msgid "Credentials"
 msgstr "資格情報"
 
+#: admin.py:96
 msgid ""
 "Credentials are encrypted and managed through the provider setup. To update "
 "credentials, reconnect the provider."
-msgstr ""
-"資格情報は、プロバイダーの設定を通じて暗号化され管理されています。資格情報を"
-"更新するには、プロバイダーを再接続してください。"
+msgstr "資格情報は、プロバイダーの設定を通じて暗号化され管理されています。資格情報を更新するには、プロバイダーを再接続してください。"
 
+#: admin.py:102 templates/admin/email_system/emailaccount/change_form.html:261
 msgid "Connection Status"
 msgstr "接続状態"
 
+#: admin.py:109 admin.py:565 admin.py:751 admin.py:850
+#: templates/admin/email_system/emailaccount/change_form.html:287
 msgid "Timestamps"
 msgstr "タイムスタンプ"
 
+#: admin.py:122 admin.py:301 providers/builtin/setup_instructions.html:5
 msgid "Built-in SMTP Server"
 msgstr "組み込みSMTPサーバー"
 
+#: admin.py:124
 msgid "Unknown Provider"
 msgstr "未知のプロバイダー"
 
+#: admin.py:126
 msgid "Provider"
 msgstr "プロバイダー"
 
+#: admin.py:142 admin.py:559 admin.py:576 admin.py:739 admin.py:779
+#: templates/admin/email_system/emailaccount/change_form.html:112
+#: templates/admin/email_system/emailoutbox/change_list.html:73
+#: templates/admin/email_system/template_delete_confirm.html:35
+#: templates/admin/email_system/template_list.html:111
 msgid "Status"
 msgstr "ステータス"
 
+#: admin.py:152 templates/admin/email_system/emailaccount/change_form.html:44
+#: templates/admin/email_system/template_list.html:246
+#: templates/email_system/admin/account_card.html:88
 msgid "Default"
 msgstr "デフォルト"
 
+#: admin.py:167
 msgid "Connection"
 msgstr "接続"
 
+#: admin.py:177
 msgid "Credentials are encrypted and stored securely"
 msgstr "資格情報は暗号化され、安全に保存されています。"
 
+#: admin.py:184
 msgid "No credentials configured"
 msgstr "資格情報が設定されていません"
 
+#: admin.py:413
 msgid "DKIM keys are only managed for the built-in SMTP provider."
 msgstr "DKIMキーは、ビルトインのSMTPプロバイダーのみで管理されます。"
 
+#: admin.py:427
 msgid "No DKIM keys generated"
 msgstr "DKIMキーが生成されていません"
 
+#: admin.py:428
 msgid "Use \"Regenerate DKIM Keys\" action to generate keys."
 msgstr "\"DKIMキーの再生成\"アクションを使用してキーを生成してください。"
 
+#: admin.py:461
 msgid "DKIM keys configured"
 msgstr "DKIMキーが設定されています"
 
+#: admin.py:462
 msgid "DNS TXT Record:"
 msgstr "DNS TXTレコード:"
 
+#: admin.py:463
 msgid "Name"
 msgstr "名前"
 
+#: admin.py:465
 msgid "Value"
 msgstr "値"
 
+#: admin.py:468
 msgid "Copy DNS Record"
 msgstr "DNSレコードをコピー"
 
+#: admin.py:476
 msgid "Error loading DKIM keys"
 msgstr "DKIMキーの読み込みにエラーが発生しました"
 
+#: admin.py:480
 msgid "DKIM Keys"
 msgstr "DKIMキー"
 
+#: admin.py:516
 #, python-brace-format
 msgid "✓ DKIM keys regenerated for {account.name}"
 msgstr "✓ {account.name} の DKIM キーが再生成されました"
 
+#: admin.py:526
 #, python-brace-format
 msgid "Successfully regenerated DKIM keys for {regenerated_count} account(s)"
 msgstr "{regenerated_count} アカウントの DKIM キーを正常に再生成しました"
 
+#: admin.py:534
 msgid "Regenerate DKIM keys for selected accounts"
 msgstr "選択したアカウントのDKIMキーを再生成"
 
+#: admin.py:557
 msgid "Template Information"
 msgstr "テンプレート情報"
 
+#: admin.py:558 admin.py:729
 msgid "Content"
 msgstr "コンテンツ"
 
+#: admin.py:561
 msgid "Version Control"
 msgstr "バージョン管理"
 
+#: admin.py:584 templates/admin/email_system/template_list.html:96
 msgid "Type"
 msgstr "タイプ"
 
+#: admin.py:594 templates/admin/email_system/template_list.html:282
 msgid "Preview"
 msgstr "プレビュー"
 
+#: admin.py:597 templates/admin/email_system/newsletter_list.html:40
+#: templates/admin/email_system/translation_manager.html:121
 msgid "Actions"
 msgstr "アクション"
 
+#: admin.py:624
 msgid ""
 "Successfully cloned template: {template.get_template_type_display()} "
 "({template.language_code})"
@@ -143,3618 +186,4968 @@ msgstr ""
 "テンプレートを正常に複製しました: {template.get_template_type_display()} "
 "({template.language_code})"
 
+#: admin.py:633
 #, python-brace-format
 msgid "Successfully cloned {cloned_count} template(s)"
 msgstr "{cloned_count} テンプレートを正常に複製しました"
 
+#: admin.py:640
 msgid "Clone selected templates"
 msgstr "選択したテンプレートを複製"
 
+#: admin.py:659
 #, python-brace-format
 msgid "Successfully activated {activated_count} template(s)"
 msgstr "{activated_count} テンプレートを正常に有効化しました"
 
+#: admin.py:667
 msgid "Activate selected templates"
 msgstr "選択したテンプレートを有効化"
 
+#: admin.py:686
 #, python-brace-format
 msgid "Successfully deactivated {deactivated_count} template(s)"
 msgstr "{deactivated_count} テンプレートを正常に無効化しました"
 
+#: admin.py:694
 msgid "Deactivate selected templates"
 msgstr "選択したテンプレートを無効化"
 
+#: admin.py:726
 msgid "Email Details"
 msgstr "メールの詳細"
 
+#: admin.py:730
 msgid "Additional Recipients"
 msgstr "追加の受信者"
 
+#: admin.py:732
 msgid "Metadata"
 msgstr "メタデータ"
 
+#: admin.py:792
 #, python-format
 msgid "Released %d email(s) for delivery."
-msgstr ""
+msgstr "配信用に %d 件のメールをリリースしました。"
 
+#: admin.py:795
 msgid "No held emails in selection."
-msgstr ""
+msgstr "選択された保留中のメールはありません。"
 
+#: admin.py:797
 msgid "Release held emails for delivery"
-msgstr ""
+msgstr "保留中のメールを配信に解放"
 
+#: admin.py:843
 msgid "Event Information"
 msgstr "イベント情報"
 
+#: admin.py:844
 msgid "Event Data"
 msgstr "イベントデータ"
 
+#: admin.py:846
 msgid "Bounce Details"
 msgstr "バウンドの詳細"
 
+#: admin.py:849 templates/admin/email_system/wizard/step1_select.html:62
 msgid "Tracking"
 msgstr "トラッキング"
 
+#: admin.py:869
 msgid "Event Type"
 msgstr "イベントタイプ"
 
+#: admin_views.py:85
 msgid "Account enabled"
 msgstr "アカウントが有効"
 
+#: admin_views.py:85
 msgid "Account disabled"
 msgstr "アカウントが無効"
 
+#: admin_views.py:89 admin_views.py:129 admin_views.py:169 admin_views.py:203
 msgid "Account not found"
 msgstr "アカウントが見つからない"
 
+#: admin_views.py:109
 msgid "Cannot set an inactive account as default"
 msgstr "アクティブでないアカウントをデフォルトにすることはできません"
 
+#: admin_views.py:124
 #, python-format
 msgid "Default account updated to %(email)s"
 msgstr "デフォルトアカウントが %(email)s に更新されました"
 
+#: admin_views.py:154
 msgid "Connection test failed"
 msgstr "接続テストに失敗"
 
+#: admin_views.py:165
 msgid "Connection test completed"
 msgstr "接続テストが完了"
 
+#: admin_views.py:188
 msgid ""
 "Cannot delete the default email account. Set another account as default "
 "first."
-msgstr ""
-"デフォルトのメールアカウントは削除できません。まず別のアカウントをデフォルト"
-"に設定してください。"
+msgstr "デフォルトのメールアカウントは削除できません。まず別のアカウントをデフォルトに設定してください。"
 
+#: admin_views.py:199
 #, python-format
 msgid "Account %(email)s deleted"
 msgstr "アカウント %(email)s が削除されました"
 
+#: admin_views.py:222
 msgid "Action and account selection are required"
 msgstr "アクションとアカウントの選択が必要です"
 
+#: admin_views.py:234
 msgid "No accounts found"
 msgstr "アカウントが見つからない"
 
+#: admin_views.py:241
 #, python-format
 msgid "%(count)d account(s) enabled"
 msgstr "%(count)d アカウントが有効になりました"
 
+#: admin_views.py:244
 #, python-format
 msgid "%(count)d account(s) disabled"
 msgstr "%(count)d アカウントが無効になりました"
 
+#: admin_views.py:273
 #, python-format
 msgid "%(success)d of %(total)d connection tests passed"
 msgstr "%(total)d 件の接続テストのうち %(success)d 件が成功しました"
 
+#: admin_views.py:285
 msgid ""
 "Cannot delete the default email account. Remove it from selection or change "
 "the default first."
-msgstr ""
-"デフォルトのメールアカウントは削除できません。選択から外すか、最初にデフォル"
-"トを変更してください。"
+msgstr "デフォルトのメールアカウントは削除できません。選択から外すか、最初にデフォルトを変更してください。"
 
+#: admin_views.py:291
 #, python-format
 msgid "%(count)d account(s) deleted"
 msgstr "%(count)d アカウントが削除されました"
 
+#: admin_views.py:296
 #, python-format
 msgid "Unknown action: %(action)s"
 msgstr "不明なアクション: %(action)s"
 
+#: admin_views.py:304
 msgid "Invalid request data"
 msgstr "無効なリクエストデータ"
 
+#: apps.py:8
 msgid "Email System"
 msgstr "メールシステム"
 
+#: models.py:25 models.py:306 models.py:930
 msgid "site"
 msgstr "サイト"
 
+#: models.py:26
 msgid "Site this email account belongs to"
 msgstr "このメールアカウントが所属するサイト"
 
+#: models.py:36
 msgid "provider component"
 msgstr "プロバイダーコンポーネント"
 
+#: models.py:37
 msgid ""
 "Email provider component from update system (null for built-in providers)"
-msgstr ""
-"アップデートシステムからのメールプロバイダコンポーネント（ビルトインプロバイ"
-"ダの場合はnull）"
+msgstr "アップデートシステムからのメールプロバイダコンポーネント（ビルトインプロバイダの場合はnull）"
 
+#: models.py:43
 msgid "provider key"
 msgstr "プロバイダーキー"
 
+#: models.py:45
 msgid ""
 "Provider identifier (e.g., 'builtin_smtp', 'gmail_api'). Required for built-"
 "in providers."
-msgstr ""
-"プロバイダ識別子（例: 'builtin_smtp', 'gmail_api'）。ビルトインプロバイダの場"
-"合、必須です。"
+msgstr "プロバイダ識別子（例: 'builtin_smtp', 'gmail_api'）。ビルトインプロバイダの場合、必須です。"
 
+#: models.py:51
 msgid "account name"
 msgstr "アカウント名"
 
+#: models.py:52
 msgid "Friendly name for this email account (e.g., 'Main Email Account')"
 msgstr "このメールアカウントのフレンドリな名前（例: 'Main Email Account'）"
 
+#: models.py:57 models.py:947
 msgid "from email"
 msgstr "送信元メールアドレス"
 
+#: models.py:57
 msgid "Default sender email address"
 msgstr "デフォルトの送信元メールアドレス"
 
+#: models.py:61 models.py:950
 msgid "from name"
 msgstr "送信元名"
 
+#: models.py:61
 msgid "Default sender name"
 msgstr "デフォルトの送信元名"
 
+#: models.py:65
 msgid "reply-to email"
 msgstr "返信先メールアドレス"
 
+#: models.py:65
 msgid "Default reply-to email address"
 msgstr "デフォルトの返信先メールアドレス"
 
+#: models.py:70
 msgid "encrypted credentials"
 msgstr "暗号化された資格情報"
 
+#: models.py:71
 msgid "Encrypted API credentials for this provider"
 msgstr "このプロバイダ用の暗号化されたAPI資格情報"
 
+#: models.py:77 models.py:572
+#: templates/email_system/admin/emailaccount_changelist.html:23
 msgid "active"
 msgstr "アクティブ"
 
+#: models.py:78
 msgid "Whether this email account is active and should be used for sending"
 msgstr "このメールアカウントがアクティブで、送信に使用されるべきかどうか"
 
+#: models.py:83
 msgid "default account"
 msgstr "デフォルトアカウント"
 
+#: models.py:84
 msgid "Use this account as default for sending emails"
 msgstr "このアカウントをメール送信のデフォルトとして使用する"
 
+#: models.py:91
 msgid "provider settings"
 msgstr "プロバイダーセッティング"
 
+#: models.py:92
 msgid "Provider-specific settings and configuration"
 msgstr "プロバイダー固有の設定と構成"
 
+#: models.py:99
 msgid "Unknown"
 msgstr "不明"
 
+#: models.py:100 templates/admin/email_system/emailaccount/change_form.html:47
+#: templates/email_system/admin/account_card.html:60
+#: templates/email_system/admin/emailaccount_changelist.html:68
 msgid "Connected"
 msgstr "接続済み"
 
+#: models.py:101 models.py:1188 models.py:1209 models.py:1237 models.py:1265
+#: templates/admin/email_system/emailaccount/change_form.html:49
+#: templates/admin/email_system/template_preview.html:53
+#: templates/email_system/admin/account_card.html:64
+#: templates/email_system/admin/emailaccount_changelist.html:71
 msgid "Error"
 msgstr "エラー"
 
+#: models.py:104
 msgid "connection status"
 msgstr "接続状態"
 
+#: models.py:105
 msgid "Current connection status with provider"
 msgstr "プロバイダーとの現在の接続状態"
 
+#: models.py:110
 msgid "connection error"
 msgstr "接続エラー"
 
+#: models.py:111
 msgid "Error message from last connection test"
 msgstr "最後の接続テストからのエラーメッセージ"
 
+#: models.py:117
 msgid "last tested at"
 msgstr "最終テスト日時"
 
+#: models.py:118
 msgid "When connection was last tested"
 msgstr "接続が最後にテストされた時刻"
 
+#: models.py:124
 msgid "DNS validated"
 msgstr "DNS検証済み"
 
+#: models.py:125
 msgid "Whether DNS records (SPF/DKIM/DMARC) have been validated"
 msgstr "DNSレコード（SPF/DKIM/DMARC）が検証済みかどうか"
 
+#: models.py:131
 msgid "DNS validated at"
 msgstr "DNS検証日時"
 
+#: models.py:132
 msgid "When DNS validation last passed"
 msgstr "DNS検証が最後に成功した時刻"
 
+#: models.py:138
 msgid "DNS domain"
 msgstr "DNSドメイン"
 
+#: models.py:139
 msgid "Domain used for DNS validation (if different from email domain)"
 msgstr "DNS検証に使用されるドメイン（メールドメインと異なる場合）"
 
+#: models.py:143 models.py:598 models.py:1052 models.py:1140 models.py:1408
+#: models.py:1491
 msgid "created at"
 msgstr "作成日時"
 
+#: models.py:144 models.py:599 models.py:1053 models.py:1141 models.py:1291
+#: models.py:1409
 msgid "updated at"
 msgstr "更新日時"
 
+#: models.py:151 models.py:606
 msgid "created by"
 msgstr "作成者"
 
+#: models.py:155 models.py:939 models.py:1173
 msgid "email account"
 msgstr "メールアカウント"
 
+#: models.py:156
 msgid "email accounts"
 msgstr "メールアカウント一覧"
 
+#: models.py:307
 msgid "Site this template belongs to"
 msgstr "このテンプレートが所属するサイト"
 
+#: models.py:315
 msgid "Account Invitation"
 msgstr "アカウント招待"
 
+#: models.py:316
 msgid "Account Welcome"
 msgstr "アカウント歓迎"
 
+#: models.py:317
 msgid "Delivery Confirmation"
 msgstr "納品確認"
 
+#: models.py:318
 msgid "Email Verification"
 msgstr "メール認証"
 
+#: models.py:319
 msgid "Message Reply"
 msgstr "メッセージの返信"
 
+#: models.py:320
 msgid "Order Cancelled"
 msgstr "注文がキャンセルされました"
 
+#: models.py:321
 msgid "Order Confirmation"
 msgstr "注文確認"
 
+#: models.py:322
 msgid "Order Delay Notification"
 msgstr "注文遅延通知"
 
+#: models.py:323
 msgid "Order Note Notification"
 msgstr "注文メモ通知"
 
+#: models.py:324
 msgid "Order Shipped"
 msgstr "注文が発送されました"
 
+#: models.py:325
 msgid "Password Reset"
 msgstr "パスワードリセット"
 
-#, fuzzy
-#| msgid "Account Invitation"
+#: models.py:326
 msgid "Staff Invitation"
-msgstr "アカウント招待"
+msgstr "スタッフ招待"
 
+#: models.py:327
 msgid "Payment Confirmation"
 msgstr "支払い確認"
 
+#: models.py:328
 msgid "Refund Notification"
 msgstr "返金通知"
 
+#: models.py:329
 msgid "Review Request"
 msgstr "レビュー依頼"
 
+#: models.py:330
 msgid "Shipping Confirmation"
 msgstr "配送確認"
 
+#: models.py:331
 msgid "Shipping: Delayed"
 msgstr "配送: 遅延"
 
+#: models.py:332
 msgid "Shipping: Exception"
 msgstr "配送: 例外"
 
+#: models.py:333
 msgid "Shipping: Tracking Milestone"
 msgstr "配送: ミレストーン"
 
+#: models.py:334
 msgid "Order Status Update"
 msgstr "注文ステータスの更新"
 
+#: models.py:336
+#| msgid "Returns: Package Received"
+msgid "Returns: Request Received"
+msgstr "返品: 要求が受信されました"
+
+#: models.py:337
 msgid "Returns: Approved"
 msgstr "返品: 承認済み"
 
+#: models.py:338
 msgid "Returns: Rejected"
 msgstr "返品: 拒否"
 
+#: models.py:339
 msgid "Returns: Package Received"
 msgstr "返品: パッケージ到着"
 
+#: models.py:340
 msgid "Returns: Refund Processed"
 msgstr "返品: 払い戻し完了"
 
+#: models.py:342
 msgid "Admin: New Order"
 msgstr "管理者: 新規注文"
 
+#: models.py:343
 msgid "Admin: Payment Failed"
 msgstr "管理者: 支払い失敗"
 
+#: models.py:344
 msgid "Admin: Payment SDK Failure"
 msgstr "管理者: 支払いSDKの失敗"
 
+#: models.py:345
 msgid "Admin: Return Inspection Reminder"
 msgstr "管理者: 返品検査のリマインダー"
 
+#: models.py:346
 msgid "Admin: Abandoned Carts Summary"
 msgstr "管理者: 放棄されたカートの概要"
 
+#: models.py:347
 msgid "Admin: Customer Insights"
 msgstr "管理者: 顧客の洞察"
 
+#: models.py:348
 msgid "Admin: Daily Sales Report"
 msgstr "管理者: 日次販売レポート"
 
+#: models.py:349
 msgid "Admin: Low Stock Alert"
 msgstr "管理者: 在庫不足アラート"
 
+#: models.py:350
 msgid "Admin: Monthly Review"
 msgstr "管理者: 月次レビュー"
 
+#: models.py:351
 msgid "Admin: Revenue Forecast"
 msgstr "管理者: 売上予測"
 
+#: models.py:352
 msgid "Admin: Top Products"
 msgstr "管理者: 人気商品"
 
+#: models.py:353
 msgid "Admin: Weekly Digest"
 msgstr "管理者: 週次ダイジェスト"
 
+#: models.py:355
 msgid "Affiliate: Account Activated"
 msgstr "アフィリエイト: アカウントが有効化されました"
 
+#: models.py:356
 msgid "Affiliate: Account Approved"
 msgstr "アフィリエイト: アカウントが承認されました"
 
+#: models.py:357
 msgid "Affiliate: Account Rejected"
 msgstr "アフィリエイト: アカウントが拒否されました"
 
+#: models.py:358
 msgid "Affiliate: Account Suspended"
 msgstr "アフィリエイト: アカウントが停止されました"
 
+#: models.py:359
 msgid "Affiliate: Commission Approved"
 msgstr "アフィリエイト: 手数料が承認されました"
 
+#: models.py:360
 msgid "Affiliate: Commission Earned"
 msgstr "アフィリエイト: 手数料が獲得されました"
 
+#: models.py:361
 msgid "Affiliate: Commission Rejected"
 msgstr "アフィリエイト: 手数料が拒否されました"
 
+#: models.py:362
 msgid "Affiliate: Commission Reversed"
 msgstr "アフィリエイト: 手数料が返還されました"
 
+#: models.py:363
 msgid "Affiliate: High Commission Alert"
 msgstr "アフィリエイト: 高額手数料アラート"
 
+#: models.py:364
 msgid "Affiliate: Monthly Report"
 msgstr "アフィリエイト: 月次レポート"
 
+#: models.py:365
 msgid "Affiliate: Payout Cancelled"
 msgstr "アフィリエイト: 支払いがキャンセルされました"
 
+#: models.py:366
 msgid "Affiliate: Payout Completed"
 msgstr "アフィリエイト: 支払いが完了しました"
 
+#: models.py:367
 msgid "Affiliate: Payout Failed"
 msgstr "アフィリエイト: 支払い失敗"
 
+#: models.py:368
 msgid "Affiliate: Payout Processing"
 msgstr "アフィリエイト: 支払いが処理中です"
 
+#: models.py:369
 msgid "Affiliate: Payout Threshold Reached"
 msgstr "アフィリエイト: 支払い閾値に達しました"
 
+#: models.py:370
 msgid "Affiliate: Program Approved"
 msgstr "アフィリエイト: プログラムが承認されました"
 
+#: models.py:371
 msgid "Affiliate: Program Rejected"
 msgstr "アフィリエイト: プログラムが拒否されました"
 
+#: models.py:373
 msgid "Backup: Completed"
 msgstr "バックアップ: 完了"
 
+#: models.py:374
 msgid "Backup: Failed"
 msgstr "バックアップ: 失敗"
 
+#: models.py:375
 msgid "Backup: Restore Completed"
 msgstr "バックアップ: 復元完了"
 
+#: models.py:376
 msgid "Backup: Restore Failed"
 msgstr "バックアップ: 復元に失敗しました"
 
+#: models.py:377
 msgid "Backup: Scheduled Missed"
 msgstr "バックアップ: スケジュールされたバックアップが実施されませんでした"
 
+#: models.py:378
 msgid "Backup: Size Warning"
 msgstr "バックアップ: サイズに関する警告"
 
+#: models.py:379
 msgid "Backup: Storage Quota Alert"
 msgstr "バックアップ: ストレージ容量のアラート"
 
+#: models.py:380
 msgid "Backup: Weekly Report"
 msgstr "バックアップ: 週次レポート"
 
+#: models.py:382
 msgid "Admin: Booking Cancelled"
 msgstr "管理者: 予約がキャンセルされました"
 
+#: models.py:383
 msgid "Admin: New Booking"
 msgstr "管理者: 新しい予約"
 
+#: models.py:384
 msgid "Booking: Cancelled"
 msgstr "予約: キャンセル済み"
 
+#: models.py:385
 msgid "Booking: Completed"
 msgstr "予約: 完了"
 
+#: models.py:386
 msgid "Booking: Confirmation"
 msgstr "予約: 確認"
 
+#: models.py:387
 msgid "Booking: Deposit Receipt"
 msgstr "予約: 保証金の領収書"
 
+#: models.py:388
 msgid "Booking: No Show"
 msgstr "予約: 不参加"
 
+#: models.py:389
 msgid "Booking: Pending Confirmation"
 msgstr "予約: 確認待ち"
 
+#: models.py:390
 msgid "Booking: Recurring Series Created"
 msgstr "予約: 繰り返し予約系列が作成されました"
 
+#: models.py:391
 msgid "Booking: Reminder"
 msgstr "予約: リマインダー"
 
+#: models.py:392
 msgid "Booking: Rescheduled"
 msgstr "予約: 再予約されました"
 
+#: models.py:393
 msgid "Booking: Waitlist Notification"
 msgstr "予約: ウェイトリスト通知"
 
+#: models.py:395
 msgid "Blog: Comment Approved"
 msgstr "ブログ: コメントが承認されました"
 
+#: models.py:396
 msgid "Blog: Comment Reply"
 msgstr "ブログ: コメントへの返信"
 
+#: models.py:397
 msgid "Blog: Weekly Digest"
 msgstr "ブログ: 週次ダイジェスト"
 
+#: models.py:398
 msgid "Blog: Post Published"
 msgstr "ブログ: 投稿が公開されました"
 
+#: models.py:399
 msgid "Blog: Subscriber Welcome"
 msgstr "ブログ: サブスクライバー歓迎"
 
+#: models.py:400
 msgid "Blog: Subscription Confirmed"
 msgstr "ブログ: 購読が確認済み"
 
+#: models.py:402
 msgid "Cart: Abandoned (1 Hour)"
 msgstr "カート: 1時間後に放棄されました"
 
+#: models.py:403
 msgid "Cart: Abandoned (24 Hours)"
 msgstr "カート: 24時間後に放棄されました"
 
+#: models.py:404
 msgid "Cart: Abandoned (48 Hours)"
 msgstr "カート: 48時間後に放棄されました"
 
+#: models.py:405
 msgid "Cart: Abandoned (Discount Offer)"
 msgstr "カート: 放置 (割引オファー)"
 
+#: models.py:406
 msgid "Cart: Recovery Thank You"
 msgstr "カート: 回復完了のお礼"
 
+#: models.py:408
 msgid "Component: Deprecated Warning"
 msgstr "コンポーネント: 非推奨警告"
 
+#: models.py:409
 msgid "Component: Incompatible Warning"
 msgstr "コンポーネント: 異なるバージョン警告"
 
+#: models.py:410
 msgid "Component: Rollback Success"
 msgstr "コンポーネント: ロールバック成功"
 
+#: models.py:411
 msgid "Component: Security Update"
 msgstr "コンポーネント: セキュリティアップデート"
 
+#: models.py:412
 msgid "Component: Update Available"
 msgstr "コンポーネント: 更新可能"
 
+#: models.py:413
 msgid "Component: Update Failed"
 msgstr "コンポーネント: アップデート失敗"
 
+#: models.py:414
 msgid "Component: Update Installed"
 msgstr "コンポーネント: アップデートインストール済み"
 
+#: models.py:416
 msgid "Developer: Account Approved"
 msgstr "開発者: アカウント承認済み"
 
+#: models.py:417
 msgid "Developer: Account Rejected"
 msgstr "開発者: アカウント拒否"
 
+#: models.py:418
 msgid "Developer: Account Suspended"
 msgstr "開発者: アカウントの一時停止"
 
+#: models.py:419
 msgid "Developer: Component Published"
 msgstr "開発者: コンポーネントの公開"
 
+#: models.py:420
 msgid "Developer: License Approved"
 msgstr "開発者: ライセンス承認済み"
 
+#: models.py:421
 msgid "Developer: License Rejected"
 msgstr "開発者: ライセンス拒否"
 
+#: models.py:422
 msgid "Developer: New Review"
 msgstr "開発者: 新しいレビュー"
 
+#: models.py:423
 msgid "Developer: Registration Received"
 msgstr "開発者: 登録受信"
 
+#: models.py:424
 msgid "Developer: Review Digest"
 msgstr "開発者: レビュー要約"
 
+#: models.py:425
 msgid "Developer: Revision Requested"
 msgstr "開発者: 修正依頼"
 
+#: models.py:426
 msgid "Developer: Submission Approved"
 msgstr "開発者: 提出承認済み"
 
+#: models.py:427
 msgid "Developer: Submission Received"
 msgstr "開発者: 提出受信"
 
+#: models.py:428
 msgid "Developer: Submission Rejected"
 msgstr "開発者: 送信が拒否されました"
 
+#: models.py:430
 msgid "Digital Product: Download Ready"
 msgstr "デジタル商品: ダウンロード準備完了"
 
+#: models.py:431
 msgid "Digital Product: Download Link Expired"
 msgstr "デジタル商品: ダウンロードリンクの有効期限切れ"
 
+#: models.py:432
 msgid "Digital Product: License Expired"
 msgstr "デジタル商品: ライセンスの有効期限切れ"
 
+#: models.py:433
 msgid "Digital Product: License Key"
 msgstr "デジタル商品: ライセンスキー"
 
+#: models.py:435
 msgid "License: Trial Welcome"
 msgstr "ライセンス: トライアル歓迎"
 
+#: models.py:436
 msgid "License: Purchase Confirmation"
 msgstr "ライセンス: 購入確認"
 
+#: models.py:437
 msgid "License: Maintenance Renewal"
 msgstr "ライセンス: メンテナンス更新"
 
+#: models.py:439
+#| msgid "Feed: Generation Failed"
+msgid "Hosted: Provisioning Failed"
+msgstr "ホスト: プロビジョニングに失敗しました"
+
+#: models.py:440
+#| msgid "Feed: Generation Completed"
+msgid "Hosted: Provisioning Complete"
+msgstr "ホスト: プロビジョニング完了"
+
+#: models.py:441
+msgid "Hosted: Onboarding Tips"
+msgstr "ホスト: オンボーディングのヒント"
+
+#: models.py:443
+#| msgid "Blog: Subscription Confirmed"
+msgid "Hosted: Subscription Confirmation"
+msgstr "ホスト: サブスクリプション確認"
+
+#: models.py:444
+msgid "Hosted: Payment Receipt"
+msgstr "ホスト: 支払い領収書"
+
+#: models.py:445
+#| msgid "Admin: Payment Failed"
+msgid "Hosted: Payment Failed"
+msgstr "ホスト: 支払いに失敗しました"
+
+#: models.py:446
+msgid "Hosted: Payment Recovered"
+msgstr "ホスト: 支払いが復元されました"
+
+#: models.py:447
+msgid "Hosted: Suspension Warning"
+msgstr "ホスト: 懸念警告"
+
+#: models.py:448
+#| msgid "Affiliate: Account Suspended"
+msgid "Hosted: Account Suspended"
+msgstr "ホスト: アカウントが一時停止されました"
+
+#: models.py:449
+#| msgid "Blog: Subscription Confirmed"
+msgid "Hosted: Cancellation Confirmed"
+msgstr "ホスト: キャンセルが確認されました"
+
+#: models.py:450
+#| msgid "Loyalty: Tier Demotion Warning"
+msgid "Hosted: Termination Warning"
+msgstr "ホスト: 解約警告"
+
+#: models.py:451
+#| msgid "Account enabled"
+msgid "Hosted: Account Terminated"
+msgstr "ホスト: アカウントが解約されました"
+
+#: models.py:453
+msgid "Hosted: Onboarding Day 3"
+msgstr "ホスト: オンボーディング第3日"
+
+#: models.py:454
+msgid "Hosted: Onboarding Day 7"
+msgstr "ホスト: オンボーディング第7日"
+
+#: models.py:455
+msgid "Hosted: Onboarding Day 14"
+msgstr "ホスト: オンボーディング日14"
+
+#: models.py:457
 msgid "Form: Admin Notification"
 msgstr "フォーム: 管理者通知"
 
+#: models.py:458
 msgid "Form: Submission Approved"
 msgstr "フォーム: 送信が承認されました"
 
+#: models.py:459
 msgid "Form: Auto Response"
 msgstr "フォーム: 自動応答"
 
+#: models.py:460
 msgid "Form: Submission Confirmation"
 msgstr "フォーム: 送信確認"
 
+#: models.py:461
 msgid "Form: Submission Rejected"
 msgstr "フォーム: 送信が拒否されました"
 
+#: models.py:463
 msgid "Gift Card: Delivery Email"
 msgstr "ギフトカード: 配送メール"
 
+#: models.py:465
 msgid "Loyalty: Anniversary Bonus"
 msgstr "ロイヤルティ: 記念日ボーナス"
 
+#: models.py:466
 msgid "Loyalty: Birthday Bonus"
 msgstr "ロイヤルティ: 生日ボーナス"
 
+#: models.py:467
 msgid "Loyalty: Double Points Event"
 msgstr "ロイヤルティ: ポイント倍増イベント"
 
+#: models.py:468
 msgid "Loyalty: Points Earned"
 msgstr "ロイヤルティ: 獲得ポイント"
 
+#: models.py:469
 msgid "Loyalty: Points Expiring"
 msgstr "ロイヤルティ: 有効期限切れになるポイント"
 
+#: models.py:470
 msgid "Loyalty: Referral Bonus"
 msgstr "ロイヤルティ: ご紹介ボーナス"
 
+#: models.py:471
 msgid "Loyalty: Reward Available"
 msgstr "ロイヤルティ: リワード利用可能"
 
+#: models.py:472
 msgid "Loyalty: Tier Demotion Warning"
 msgstr "ロイヤルティ: レベル降格警告"
 
+#: models.py:473
 msgid "Loyalty: Tier Upgrade"
 msgstr "ロイヤルティ: レベルアップグレード"
 
+#: models.py:474
 msgid "Loyalty: Welcome"
 msgstr "ロイヤルティ: ウェルカム"
 
+#: models.py:476
 msgid "Newsletter"
 msgstr "ニュースレター"
 
+#: models.py:478
 msgid "POS: Cash Discrepancy Alert"
 msgstr "POS: 現金の不一致アラート"
 
+#: models.py:479
 msgid "POS: Daily Z-Report"
 msgstr "POS: 日次Zレポート"
 
+#: models.py:480
 msgid "POS: High Value Transaction"
 msgstr "POS: 高額取引"
 
+#: models.py:481
 msgid "POS: Low Inventory Alert"
 msgstr "POS: 在庫不足アラート"
 
+#: models.py:482
 msgid "POS: Receipt"
 msgstr "POS: 受領書"
 
+#: models.py:483
 msgid "POS: Shift Closed Report"
 msgstr "POS: シフト終了レポート"
 
+#: models.py:484
 msgid "POS: Terminal Offline"
 msgstr "POS: 終端がオフライン"
 
+#: models.py:485
+msgid "POS: License Expiration Warning"
+msgstr "POS: ライセンスの期限切れ警告"
+
+#: models.py:487
 msgid "Feed: Generation Completed"
 msgstr "フィード: 生成が完了しました"
 
+#: models.py:488
 msgid "Feed: Generation Failed"
 msgstr "フィード: 生成に失敗しました"
 
+#: models.py:489
 msgid "Feed: Sync Failed"
 msgstr "フィード: 同期失敗"
 
+#: models.py:490
 msgid "Feed: Sync Success"
 msgstr "フィード: 同期成功"
 
+#: models.py:491
 msgid "Feed: Validation Errors"
 msgstr "フィード: 検証エラー"
 
+#: models.py:492
 msgid "Feed: Weekly Report"
 msgstr "フィード: 週次レポート"
 
+#: models.py:494
 msgid "Referral: Invitation Email"
 msgstr "紹介: インビテーションメール"
 
+#: models.py:495
 msgid "Referral: Reward Expired"
 msgstr "紹介: リワード有効期限切れ"
 
+#: models.py:496
 msgid "Referral: Reward Expiring Soon"
 msgstr "紹介: リワードの期限が近づいています"
 
+#: models.py:497
 msgid "Referral: Reward Issued (Referee)"
 msgstr "リファラル: 報酬発行（被紹介者）"
 
+#: models.py:498
 msgid "Referral: Reward Issued (Referrer)"
 msgstr "リファラル: 報酬発行（紹介者）"
 
+#: models.py:499
 msgid "Referral: Reward Revoked"
 msgstr "紹介: リワード取消"
 
+#: models.py:500
 msgid "Referral: Successful Referral"
 msgstr "リファラル: 成功した紹介"
 
+#: models.py:502
 msgid "Back In Stock: Notification"
 msgstr "在庫復活: 通知"
 
+#: models.py:503
 msgid "Back In Stock: Low Stock Warning"
 msgstr "在庫復活: 在庫が少ない警告"
 
+#: models.py:504
 msgid "Back In Stock: Waitlist Confirmation"
 msgstr "在庫復活: 待ちリスト確認"
 
+#: models.py:506
 msgid "Subscription: Add-on Added"
 msgstr "サブスクリプション: アドオン追加"
 
+#: models.py:507
 msgid "Subscription: Add-on Removed"
 msgstr "サブスクリプション: アドオン削除"
 
+#: models.py:508
 msgid "Subscription: Canceled"
 msgstr "サブスクリプション: キャンセル済み"
 
+#: models.py:509
 msgid "Subscription: Created"
 msgstr "サブスクリプション: 作成済み"
 
+#: models.py:510
 msgid "Subscription: Dunning Final Notice"
 msgstr "サブスクリプション: 納付最終通知"
 
+#: models.py:511
 msgid "Subscription: Expired"
 msgstr "サブスクリプション: 有効期限切れ"
 
+#: models.py:512
 msgid "Subscription: Paused"
 msgstr "サブスクリプション: 一時停止"
 
+#: models.py:513
 msgid "Subscription: Payment Failed"
 msgstr "サブスクリプション: 支払い失敗"
 
+#: models.py:514
 msgid "Subscription: Payment Method Expiring"
 msgstr "サブスクリプション: 支払い方法の有効期限切れ"
 
+#: models.py:515
 msgid "Subscription: Payment Successful"
 msgstr "サブスクリプション: 支払い成功"
 
+#: models.py:516
 msgid "Subscription: Plan Downgraded"
 msgstr "サブスクリプション: プランダウングレード"
 
+#: models.py:517
 msgid "Subscription: Plan Upgraded"
 msgstr "サブスクリプション: プランアップグレード"
 
+#: models.py:518
 msgid "Subscription: Reactivated"
 msgstr "サブスクリプション: 再アクティベート"
 
+#: models.py:519
 msgid "Subscription: Renewal Reminder"
 msgstr "サブスクリプション: 継続のリマインダー"
 
+#: models.py:520
 msgid "Subscription: Resumed"
 msgstr "サブスクリプション: 再開"
 
+#: models.py:521
 msgid "Subscription: Trial Ending Soon"
 msgstr "サブスクリプション: トライアル終了が近づいています"
 
+#: models.py:523
 msgid "System: Critical Alert"
 msgstr "システム: 致命的アラート"
 
+#: models.py:524
 msgid "System: Daily Health Report"
 msgstr "システム: 日次健康状態レポート"
 
+#: models.py:525
 msgid "System: Issue Resolved"
 msgstr "システム: 問題解決済み"
 
+#: models.py:526
 msgid "System: Warning"
 msgstr "システム: 警告"
 
+#: models.py:527
 msgid "System: Performance Degraded"
 msgstr "システム: 性能低下"
 
+#: models.py:529
 msgid "Translation: Job Completed"
 msgstr "翻訳: ジョブ完了"
 
+#: models.py:530
 msgid "Translation: Job Failed"
 msgstr "翻訳: ジョブ失敗"
 
+#: models.py:531
 msgid "Translation: Job Started"
 msgstr "翻訳: ジョブ開始"
 
+#: models.py:532
 msgid "Translation: Quality Review Needed"
 msgstr "翻訳: クオリティレビューが必要"
 
+#: models.py:534
 msgid "Wishlist: Back In Stock"
 msgstr "ウィッシュリスト: 在庫復活"
 
+#: models.py:535
 msgid "Wishlist: Item Added"
 msgstr "ウィッシュリスト: アイテムが追加されました"
 
+#: models.py:536
 msgid "Wishlist: Low Stock Warning"
 msgstr "ウィッシュリスト: 在庫が少ない警告"
 
+#: models.py:537
 msgid "Wishlist: Price Drop"
 msgstr "ウィッシュリスト: 価格が下がりました"
 
+#: models.py:538
 msgid "Wishlist: Weekly Reminder"
 msgstr "ウィッシュリスト: 週次リマインダー"
 
+#: models.py:539
 msgid "Wishlist: Shared Confirmation"
 msgstr "お気に入りリスト: 共有確認"
 
+#: models.py:541 models.py:993 models.py:1469
 msgid "template type"
 msgstr "テンプレートタイプ"
 
+#: models.py:542
 msgid "Type of email (transactional or marketing)"
 msgstr "メールの種類（トランザクショナルまたはマーケティング）"
 
+#: models.py:548
 msgid "language code"
 msgstr "言語コード"
 
+#: models.py:549
 msgid "Language code for this template (e.g., 'en', 'es', 'fr')"
 msgstr "このテンプレート用の言語コード（例: 'en', 'es', 'fr'）"
 
+#: models.py:555 models.py:952 models.py:1359
 msgid "subject"
 msgstr "件名"
 
+#: models.py:556
 msgid "Email subject line (supports {{ variables }})"
 msgstr "メールの件名（{{変数}}をサポート）"
 
+#: models.py:560 models.py:1364
 msgid "HTML content"
 msgstr "HTMLコンテンツ"
 
+#: models.py:560
 msgid "HTML email content (MJML or plain HTML)"
 msgstr "HTMLメールの内容（MJMLまたはプレーンHTML）"
 
+#: models.py:565 models.py:1368
 msgid "text content"
 msgstr "テキストコンテンツ"
 
+#: models.py:566
 msgid "Plain text version (auto-generated if empty)"
 msgstr "プレーンテキストバージョン（空の場合、自動生成）"
 
+#: models.py:573
 msgid "Whether this template is active and should be used"
 msgstr "このテンプレートがアクティブで使用されるべきかどうか"
 
+#: models.py:578
 msgid "system template"
 msgstr "システムテンプレート"
 
+#: models.py:579
 msgid "Pre-installed system template (can be customized)"
 msgstr "事前にインストールされたシステムテンプレート（カスタマイズ可能）"
 
+#: models.py:584
 msgid "version"
 msgstr "バージョン"
 
+#: models.py:584
 msgid "Template version number"
 msgstr "テンプレートバージョン番号"
 
+#: models.py:593
 msgid "parent template"
 msgstr "親テンプレート"
 
+#: models.py:594
 msgid "Original template this was cloned from"
 msgstr "このテンプレートがクローンされたオリジナルテンプレート"
 
+#: models.py:610
 msgid "email template"
 msgstr "メールテンプレート"
 
+#: models.py:611
 msgid "email templates"
 msgstr "メールテンプレート一覧"
 
+#: models.py:931
 msgid "Site this email belongs to"
 msgstr "このメールが所属するサイト"
 
+#: models.py:940
 msgid "Email account used to send this message"
 msgstr "このメッセージを送信するために使用されるメールアカウント"
 
+#: models.py:944
 msgid "to email"
 msgstr "送信先メール"
 
+#: models.py:944
 msgid "Recipient email address"
 msgstr "受信者メールアドレス"
 
+#: models.py:947
 msgid "Sender email address"
 msgstr "送信者メールアドレス"
 
+#: models.py:954
 msgid "HTML body"
 msgstr "HTML本文"
 
+#: models.py:956
 msgid "text body"
 msgstr "テキスト本文"
 
+#: models.py:958
 msgid "reply-to"
 msgstr "返信先"
 
+#: models.py:962
 msgid "CC"
 msgstr "CC"
 
+#: models.py:962
 msgid "CC email addresses"
 msgstr "CCメールアドレス"
 
+#: models.py:966
 msgid "BCC"
 msgstr "BCC"
 
+#: models.py:966
 msgid "BCC email addresses"
 msgstr "BCCメールアドレス"
 
+#: models.py:971
 msgid "headers"
 msgstr "ヘッダー"
 
+#: models.py:971
 msgid "Custom email headers"
 msgstr "カスタムメールヘッダー"
 
+#: models.py:977
 msgid "tags"
 msgstr "タグ"
 
+#: models.py:978
 msgid "Provider tags for categorization"
 msgstr "分類用プロバイダタグ"
 
+#: models.py:985
 msgid "attachments"
 msgstr "添付ファイル"
 
+#: models.py:986
 msgid "Attachment file references"
 msgstr "添付ファイル参照"
 
+#: models.py:994
 msgid "Template used to generate this email"
 msgstr "このメールを生成するために使用されるテンプレート"
 
+#: models.py:1001 templates/admin/email_system/emailoutbox/change_list.html:45
+#: templates/admin/email_system/emailoutbox/change_list.html:77
+#: templates/admin/email_system/partials/emailoutbox_cards.html:39
+#: templates/admin/email_system/translation_manager.html:148
 msgid "Queued"
 msgstr "キューに保留"
 
+#: models.py:1002
 msgid "Held"
-msgstr ""
+msgstr "保留中"
 
+#: models.py:1003
 msgid "Logged"
-msgstr ""
+msgstr "ログイン済み"
 
+#: models.py:1004
+#| msgid "Logged"
+msgid "Sandbox Logged"
+msgstr "サンドボックス ログイン済み"
+
+#: models.py:1005 templates/admin/email_system/emailoutbox/change_list.html:78
+#: templates/admin/email_system/partials/emailoutbox_cards.html:35
 msgid "Sending"
 msgstr "送信中"
 
+#: models.py:1006 models.py:1462
+#: templates/admin/email_system/emailoutbox/change_list.html:35
+#: templates/admin/email_system/emailoutbox/change_list.html:79
+#: templates/admin/email_system/partials/emailoutbox_cards.html:23
+#: templates/admin/email_system/partials/emailoutbox_cards.html:58
 msgid "Sent"
 msgstr "送信済み"
 
+#: models.py:1007 models.py:1464
+#: templates/admin/email_system/emailoutbox/change_list.html:40
+#: templates/admin/email_system/emailoutbox/change_list.html:80
+#: templates/admin/email_system/partials/emailoutbox_cards.html:27
 msgid "Failed"
 msgstr "失敗"
 
+#: models.py:1008 models.py:1095
+#: templates/admin/email_system/emailoutbox/change_list.html:81
+#: templates/admin/email_system/partials/emailoutbox_cards.html:31
 msgid "Bounced"
 msgstr "戻り"
 
+#: models.py:1009
 msgid "Skipped"
 msgstr "スキップされました"
 
+#: models.py:1012 models.py:1489
 msgid "status"
 msgstr "ステータス"
 
+#: models.py:1018
 msgid "skip reason"
 msgstr "スキップ理由"
 
+#: models.py:1020
 msgid ""
 "Reason why email was skipped (e.g., 'user_preference_disabled', "
 "'unsubscribed')"
-msgstr ""
-"メールがスキップされた理由（例: 'user_preference_disabled', 'unsubscribed'）"
+msgstr "メールがスキップされた理由（例: 'user_preference_disabled', 'unsubscribed'）"
 
+#: models.py:1027
 msgid "provider message ID"
 msgstr "メールプロバイダのメッセージID"
 
+#: models.py:1028
 msgid "Message ID from email provider"
 msgstr "メールプロバイダからのメッセージID"
 
+#: models.py:1032 models.py:1493
 msgid "error message"
 msgstr "エラーメッセージ"
 
+#: models.py:1032
 msgid "Error details if sending failed"
 msgstr "送信に失敗した場合のエラー詳細"
 
+#: models.py:1038
 msgid "priority"
 msgstr "優先度"
 
+#: models.py:1039
 msgid ""
 "Email priority (1=highest, 10=lowest). Lower priority emails are sent first."
-msgstr ""
-"メールの優先度（1=最高, 10=最低）。優先度が低いメールが先に送信されます。"
+msgstr "メールの優先度（1=最高, 10=最低）。優先度が低いメールが先に送信されます。"
 
+#: models.py:1044
 msgid "retry count"
 msgstr "再試行回数"
 
+#: models.py:1044
 msgid "Number of send attempts"
 msgstr "送信試行回数"
 
+#: models.py:1048
 msgid "max retries"
 msgstr "最大再試行回数"
 
+#: models.py:1048
 msgid "Maximum number of retry attempts"
 msgstr "最大再試行回数"
 
+#: models.py:1054
 msgid "queued at"
 msgstr "キューイング時刻"
 
+#: models.py:1055 models.py:1492
 msgid "sent at"
 msgstr "送信時刻"
 
+#: models.py:1056
 msgid "failed at"
 msgstr "失敗時刻"
 
+#: models.py:1059 models.py:1060
 msgid "email outbox"
 msgstr "メール送信履歴"
 
+#: models.py:1086
 msgid "email"
 msgstr "メール"
 
+#: models.py:1087
 msgid "Email this event relates to"
 msgstr "このイベントに関連するメール"
 
+#: models.py:1094
 msgid "Delivered"
 msgstr "配信済み"
 
+#: models.py:1096
 msgid "Opened"
 msgstr "開封済み"
 
+#: models.py:1097
 msgid "Clicked"
 msgstr "クリック済み"
 
+#: models.py:1098
 msgid "Complained"
 msgstr "苦情"
 
+#: models.py:1099
 msgid "Unsubscribed"
 msgstr "購読解除"
 
+#: models.py:1101
 msgid "event type"
 msgstr "イベントタイプ"
 
+#: models.py:1107
 msgid "event data"
 msgstr "イベントデータ"
 
+#: models.py:1108
 msgid "Provider-specific event details"
 msgstr "プロバイダ固有のイベント詳細"
 
+#: models.py:1116
 msgid "Hard Bounce"
 msgstr "ハードバウンス"
 
+#: models.py:1117
 msgid "Soft Bounce"
 msgstr "ソフトバウンス"
 
+#: models.py:1118
 msgid "Transient"
 msgstr "一時的"
 
+#: models.py:1120
 msgid "bounce type"
 msgstr "バウンスタイプ"
 
+#: models.py:1123
 msgid "bounce reason"
 msgstr "バウンス理由"
 
+#: models.py:1128
 msgid "user agent"
 msgstr "ユーザーエージェント"
 
+#: models.py:1129
 msgid "Browser/client information for opens/clicks"
 msgstr "開封/クリック用のブラウザ/クライアント情報"
 
+#: models.py:1135
 msgid "IP address"
 msgstr "IPアドレス"
 
+#: models.py:1136
 msgid "IP address for opens/clicks"
 msgstr "開封/クリック用のIPアドレス"
 
+#: models.py:1144
 msgid "occurred at"
 msgstr "発生時刻"
 
+#: models.py:1145
 msgid "When the event occurred (from provider)"
 msgstr "イベントが発生した時間（プロバイダから）"
 
+#: models.py:1149
 msgid "email event"
 msgstr "メールイベント"
 
+#: models.py:1150
 msgid "email events"
 msgstr "メールイベント一覧"
 
+#: models.py:1174
 msgid "Email account being validated"
 msgstr "検証中のメールアカウント"
 
+#: models.py:1178
 msgid "domain"
 msgstr "ドメイン"
 
+#: models.py:1178
 msgid "Domain being validated"
 msgstr "検証中のドメイン"
 
+#: models.py:1185 models.py:1206 models.py:1234 models.py:1276
 msgid "Pass"
 msgstr "通過"
 
+#: models.py:1186 models.py:1207 models.py:1235 models.py:1278
 msgid "Fail"
 msgstr "失敗"
 
+#: models.py:1187 models.py:1208 models.py:1236 models.py:1277
+#: providers/builtin/dns_requirements_OLD.html:571
+#: providers/builtin/dns_requirements_OLD.html:632
+#: providers/builtin/dns_requirements_OLD.html:697
+#: providers/builtin/dns_requirements_OLD.html:758
+#: providers/builtin/dns_requirements_OLD.html:831
 msgid "Warning"
 msgstr "警告"
 
+#: models.py:1191
 msgid "SPF status"
 msgstr "SPFステータス"
 
+#: models.py:1195
 msgid "SPF record"
 msgstr "SPFレコード"
 
+#: models.py:1195
 msgid "SPF TXT record value found"
 msgstr "SPF TXTレコード値が見つかりました"
 
+#: models.py:1199
 msgid "SPF errors"
 msgstr "SPFエラー"
 
+#: models.py:1199
 msgid "SPF validation error messages"
 msgstr "SPF検証エラーメッセージ"
 
+#: models.py:1212
 msgid "DKIM status"
 msgstr "DKIMステータス"
 
+#: models.py:1216
 msgid "DKIM record"
 msgstr "DKIMレコード"
 
+#: models.py:1216
 msgid "DKIM TXT record value found"
 msgstr "DKIM TXTレコード値が見つかりました"
 
+#: models.py:1222
 msgid "DKIM selector"
 msgstr "DKIMセレクター"
 
+#: models.py:1223
 msgid "DKIM selector used for validation"
 msgstr "検証に使用されるDKIMセレクター"
 
+#: models.py:1227
 msgid "DKIM errors"
 msgstr "DKIMエラー"
 
+#: models.py:1227
 msgid "DKIM validation error messages"
 msgstr "DKIM検証エラーメッセージ"
 
+#: models.py:1240
 msgid "DMARC status"
 msgstr "DMARCステータス"
 
+#: models.py:1244
 msgid "DMARC record"
 msgstr "DMARCレコード"
 
+#: models.py:1244
 msgid "DMARC TXT record value found"
 msgstr "DMARC TXTレコード値が見つかりました"
 
+#: models.py:1248
 msgid "DMARC errors"
 msgstr "DMARCエラー"
 
+#: models.py:1248
 msgid "DMARC validation error messages"
 msgstr "DMARC検証エラーメッセージ"
 
+#: models.py:1255
 msgid "resolvers checked"
 msgstr "チェックされたリゾルバ"
 
+#: models.py:1256
 msgid ""
 "DNS resolver results (e.g., {'8.8.8.8': 'success', '1.1.1.1': 'success'})"
 msgstr "DNSリゾルバの結果（例: {'8.8.8.8': 'success', '1.1.1.1': 'success'}）"
 
+#: models.py:1262
 msgid "Fully Propagated"
 msgstr "完全に伝播済み"
 
+#: models.py:1263
 msgid "Partially Propagated"
 msgstr "部分的に伝播済み"
 
+#: models.py:1264
 msgid "Not Propagated"
 msgstr "伝播されていない"
 
+#: models.py:1268
 msgid "propagation status"
 msgstr "伝播状態"
 
+#: models.py:1269
 msgid "DNS propagation status across multiple resolvers"
 msgstr "複数のリゾルバにおけるDNSの伝播状態"
 
+#: models.py:1281
 msgid "overall status"
 msgstr "全体の状態"
 
+#: models.py:1282
 msgid "Overall DNS validation status"
 msgstr "全体のDNS検証状態"
 
+#: models.py:1288
 msgid "checked at"
 msgstr "チェックされた時間"
 
+#: models.py:1289
 msgid "When this DNS check was performed"
 msgstr "このDNSチェックが実施された時間"
 
+#: models.py:1298
 msgid "checked by"
 msgstr "チェックしたユーザー"
 
+#: models.py:1299
 msgid "User who initiated this check"
 msgstr "このチェックを開始したユーザー"
 
+#: models.py:1303
 msgid "DNS check"
 msgstr "DNSチェック"
 
+#: models.py:1304
 msgid "DNS checks"
 msgstr "DNSチェック一覧"
 
+#: models.py:1338
 msgid "Template this translation belongs to"
 msgstr "この翻訳が所属するテンプレート"
 
+#: models.py:1344 views/template_preview.py:160
 msgid "English"
 msgstr "英語"
 
+#: models.py:1345 views/template_preview.py:161
 msgid "Spanish"
 msgstr "スペイン語"
 
+#: models.py:1346 views/template_preview.py:162
 msgid "French"
 msgstr "フランス語"
 
+#: models.py:1347 views/template_preview.py:163
 msgid "German"
 msgstr "ドイツ語"
 
+#: models.py:1348 views/template_preview.py:164
 msgid "Japanese"
 msgstr "日本語"
 
+#: models.py:1349 views/template_preview.py:165
 msgid "Portuguese"
 msgstr "ポルトガル語"
 
+#: models.py:1350 views/template_preview.py:166
 msgid "Chinese (Simplified)"
 msgstr "中国語（簡体字）"
 
+#: models.py:1351
 msgid "Arabic"
 msgstr "アラビア語"
 
+#: models.py:1352
 msgid "Russian"
 msgstr "ロシア語"
 
+#: models.py:1354
 msgid "Language code (ISO 639-1)"
 msgstr "言語コード（ISO 639-1）"
 
+#: models.py:1360
 msgid "Translated email subject (template syntax)"
 msgstr "翻訳されたメール件名（テンプレート構文）"
 
+#: models.py:1364
 msgid "Translated MJML/HTML template"
 msgstr "翻訳されたMJML/HTMLテンプレート"
 
+#: models.py:1368
 msgid "Translated plain text version"
 msgstr "翻訳されたプレーンテキストバージョン"
 
+#: models.py:1377
 msgid "User who created/verified this translation"
 msgstr "この翻訳を作成/確認したユーザー"
 
+#: models.py:1386
 msgid "AI translation job that created this translation"
 msgstr "この翻訳を作成したAI翻訳ジョブ"
 
+#: models.py:1391
 msgid "verified"
 msgstr "確認済み"
 
+#: models.py:1392
 msgid "Has this translation been manually verified?"
 msgstr "この翻訳は手動で確認済みですか？"
 
+#: models.py:1398
 msgid "quality score"
 msgstr "品質スコア"
 
+#: models.py:1399
 msgid "Translation quality score (0-1) from AI service"
 msgstr "AIサービスによる翻訳品質スコア（0-1）"
 
+#: models.py:1404
 msgid "base template version"
 msgstr "ベーステンプレートバージョン"
 
+#: models.py:1405
 msgid "Version of base template this translation was created from"
 msgstr "この翻訳が作成されたベーステンプレートのバージョン"
 
+#: models.py:1413
 msgid "email template translation"
 msgstr "メールテンプレート翻訳"
 
+#: models.py:1414
 msgid "email template translations"
 msgstr "メールテンプレート翻訳一覧"
 
-msgid "DNS Configuration"
-msgstr "DNS設定"
-
-msgid "Configure your domain's DNS records to enable email sending"
-msgstr "メール送信を有効にするためにドメインのDNSレコードを設定してください"
-
-msgid "Step 1: Add DNS Records"
-msgstr "ステップ1: DNSレコードを追加"
-
-msgid "Detected DNS Provider:"
-msgstr "検出されたDNSプロバイダー:"
-
-msgid "Nameservers:"
-msgstr "ネームサーバ:"
-
-msgid "DKIM Keys Generated"
-msgstr "DKIMキーが生成されました"
-
-msgid "Your DKIM keys have been automatically generated and are ready to use."
-msgstr "DKIMキーが自動生成され、使用準備ができています。"
-
-msgid "Select your DNS provider for step-by-step instructions:"
-msgstr "ステップバイステップの指示のためにDNSプロバイダを選択してください:"
-
-msgid "Other"
-msgstr "その他"
-
-msgid "Step 2: Verify DNS Records"
-msgstr "ステップ2: DNSレコードを確認"
-
-msgid "Sender Policy Framework"
-msgstr "送信者ポリシーフレームワーク"
-
-msgid "Details"
-msgstr "詳細"
-
-msgid "Issue:"
-msgstr "問題:"
-
-msgid "Current:"
-msgstr "現在:"
-
-msgid "Updated:"
-msgstr "更新済:"
-
-msgid "Add this record:"
-msgstr "このレコードを追加:"
-
-msgid "DomainKeys Identified Mail"
-msgstr "ドメインキー識別メール (DKIM)"
-
-msgid "Copied!"
-msgstr "コピーしました！"
-
-msgid "Copy"
-msgstr "コピー"
-
-msgid "Hostname:"
-msgstr "ホスト名:"
-
-msgid "Domain-based Message Authentication"
-msgstr "ドメインベースのメッセージ認証"
-
-msgid "Mail Exchange Record"
-msgstr "メール交換レコード (MX)"
-
-msgid "DNS Records Reference"
-msgstr "DNSレコード参考"
-
-msgid "Configure DNS records for email authentication and deliverability"
-msgstr "メール認証および配信のためにDNSレコードを設定してください"
-
-msgid "Automatic SPF Record Merging"
-msgstr "SPFレコードの自動統合"
-
-msgid ""
-"We've automatically detected your existing DNS records and merged them with "
-"the built-in SMTP server requirements."
-msgstr ""
-"既存のDNSレコードを自動検出し、組み込みのSMTPサーバー要件と統合しました。"
-
-msgid "SPF:"
-msgstr "SPF:"
-
-msgid ""
-"The record below includes your existing providers PLUS the built-in server "
-"(mx, a)."
-msgstr ""
-"以下のレコードには、既存のプロバイダと組み込みサーバー（mx, a）が含まれていま"
-"す。"
-
-msgid "DKIM:"
-msgstr "DKIM:"
-
-msgid "Using selector 'mail' to avoid conflicts with other providers."
-msgstr "他のプロバイダと競合を避けるためにセレクタ 'mail' を使用しています。"
-
-msgid "DMARC:"
-msgstr "DMARC:"
-
-msgid "One record covers all email providers for your domain."
-msgstr "1つのレコードでドメインのすべてのメールプロバイダをカバーしています。"
-
-msgid "Just copy and paste the records below - they're ready to use!"
-msgstr "以下のレコードをコピー＆ペーストするだけで、使用可能です！"
-
-msgid "About Dynamic DNS"
-msgstr "動的DNSについて"
-
-msgid ""
-"We've configured your SPF record using 'mx' and 'a' mechanisms instead of "
-"hard-coding your IP address."
-msgstr ""
-"IPアドレスをハードコードせずに、'mx' および 'a' メカニズムを使用してSPFレコー"
-"ドを設定しました。"
-
-msgid "Why?"
-msgstr "なぜですか？"
-
-msgid "This makes your configuration flexible:"
-msgstr "これにより、設定が柔軟になります:"
-
-msgid "Authorizes servers in your domain's MX records"
-msgstr "ドメインのMXレコードに記載されたサーバーを認証します"
-
-msgid "Authorizes the server at your domain's A record"
-msgstr "ドメインのAレコードに記載されたサーバーを認証します"
-
-msgid ""
-"If your IP changes (dynamic DNS), you only need to update your A or MX "
-"record - not the SPF record"
-msgstr ""
-"IPアドレスが変更される場合（動的DNS）、SPFレコードではなく、AまたはMXレコード"
-"を更新するだけで十分です"
-
-msgid "Domain"
-msgstr "ドメイン"
-
-msgid "Server IP"
-msgstr "サーバーIP"
-
-msgid "DKIM Selector"
-msgstr "DKIMセレクタ"
-
-msgid "SPF Record"
-msgstr "SPFレコード"
-
-msgid "Valid"
-msgstr "有効"
-
-msgid "Invalid"
-msgstr "無効"
-
+#: models.py:1461 providers/builtin/dns_requirements_OLD.html:572
+#: providers/builtin/dns_requirements_OLD.html:633
+#: providers/builtin/dns_requirements_OLD.html:698
+#: providers/builtin/dns_requirements_OLD.html:759
+#: providers/builtin/dns_requirements_OLD.html:832
+#: templates/email_system/admin/account_card.html:68
+#: templates/email_system/admin/emailaccount_changelist.html:74
 msgid "Pending"
 msgstr "保留"
 
+#: models.py:1463
+#| msgid "Cancel"
+msgid "Cancelled"
+msgstr "キャンセル済み"
+
+#: models.py:1470
+#| msgid "Email Template Translations"
+msgid "EmailTemplate template_type to send"
+msgstr "送信するEmailTemplate テンプレートタイプ"
+
+#: models.py:1473
+#| msgid "Test Recipient Email"
+msgid "recipient email"
+msgstr "宛先のメール"
+
+#: models.py:1477
+#| msgid "template type"
+msgid "template context"
+msgstr "テンプレートコンテキスト"
+
+#: models.py:1478
+msgid "JSON context dict passed to EmailSendingService.send_template_email()"
+msgstr "\"JSONコンテキスト辞書がEmailSendingService.send_template_email()に渡されました\""
+
+#: models.py:1482
+msgid "scheduled for"
+msgstr "スケジュール済み:"
+
+#: models.py:1483
+#| msgid "Whether this template is active and should be used"
+msgid "When this email should be sent"
+msgstr "このメールを送信するタイミング"
+
+#: models.py:1497
+msgid "scheduled email"
+msgstr "スケジュール済みメール"
+
+#: models.py:1498
+msgid "scheduled emails"
+msgstr "スケジュール済みメール"
+
+#: providers/builtin/dns_requirements.html:354
+#: providers/builtin/dns_requirements_OLD.html:514
+#: templates/admin/email_system/wizard/step4_dns.html:6
+msgid "DNS Configuration"
+msgstr "DNS設定"
+
+#: providers/builtin/dns_requirements.html:355
+msgid "Configure your domain's DNS records to enable email sending"
+msgstr "メール送信を有効にするためにドメインのDNSレコードを設定してください"
+
+#: providers/builtin/dns_requirements.html:360
+msgid "Step 1: Add DNS Records"
+msgstr "ステップ1: DNSレコードを追加"
+
+#: providers/builtin/dns_requirements.html:364
+#: providers/builtin/dns_requirements_OLD.html:879
+msgid "Detected DNS Provider:"
+msgstr "検出されたDNSプロバイダー:"
+
+#: providers/builtin/dns_requirements.html:365
+#: providers/builtin/dns_requirements_OLD.html:882
+msgid "Nameservers:"
+msgstr "ネームサーバ:"
+
+#: providers/builtin/dns_requirements.html:373
+#: providers/builtin/dns_requirements_OLD.html:649
+msgid "DKIM Keys Generated"
+msgstr "DKIMキーが生成されました"
+
+#: providers/builtin/dns_requirements.html:373
+#: providers/builtin/dns_requirements_OLD.html:649
+msgid "Your DKIM keys have been automatically generated and are ready to use."
+msgstr "DKIMキーが自動生成され、使用準備ができています。"
+
+#: providers/builtin/dns_requirements.html:377
+#: providers/builtin/dns_requirements_OLD.html:888
+msgid "Select your DNS provider for step-by-step instructions:"
+msgstr "ステップバイステップの指示のためにDNSプロバイダを選択してください:"
+
+#: providers/builtin/dns_requirements.html:393
+#: providers/builtin/dns_requirements_OLD.html:904
+msgid "Other"
+msgstr "その他"
+
+#: providers/builtin/dns_requirements.html:403
+msgid "Step 2: Verify DNS Records"
+msgstr "ステップ2: DNSレコードを確認"
+
+#: providers/builtin/dns_requirements.html:416
+#: providers/builtin/dns_requirements.html:540
+msgid "Sender Policy Framework"
+msgstr "送信者ポリシーフレームワーク"
+
+#: providers/builtin/dns_requirements.html:423
+#: providers/builtin/dns_requirements.html:458
+#: providers/builtin/dns_requirements.html:493
+msgid "Details"
+msgstr "詳細"
+
+#: providers/builtin/dns_requirements.html:429
+#: providers/builtin/dns_requirements.html:499
+msgid "Issue:"
+msgstr "問題:"
+
+#: providers/builtin/dns_requirements.html:432
+#: providers/builtin/dns_requirements.html:502
+msgid "Current:"
+msgstr "現在:"
+
+#: providers/builtin/dns_requirements.html:433
+#: providers/builtin/dns_requirements.html:503
+msgid "Updated:"
+msgstr "更新済:"
+
+#: providers/builtin/dns_requirements.html:435
+#: providers/builtin/dns_requirements.html:463
+#: providers/builtin/dns_requirements.html:505
+msgid "Add this record:"
+msgstr "このレコードを追加:"
+
+#: providers/builtin/dns_requirements.html:451
+#: providers/builtin/dns_requirements.html:560
+msgid "DomainKeys Identified Mail"
+msgstr "ドメインキー識別メール (DKIM)"
+
+#: providers/builtin/dns_requirements.html:465
+#: providers/builtin/dns_requirements.html:546
+#: providers/builtin/dns_requirements.html:566
+#: providers/builtin/dns_requirements.html:586
+#: providers/builtin/dns_requirements_OLD.html:587
+#: providers/builtin/dns_requirements_OLD.html:653
+#: providers/builtin/dns_requirements_OLD.html:713
+#: providers/builtin/dns_requirements_OLD.html:1060
+#: providers/builtin/dns_requirements_OLD.html:1066
+#: providers/builtin/dns_requirements_OLD.html:1072
+#: providers/builtin/dns_requirements_OLD.html:1078
+#: providers/builtin/dns_requirements_OLD.html:1084
+msgid "Copied!"
+msgstr "コピーしました！"
+
+#: providers/builtin/dns_requirements.html:465
+#: providers/builtin/dns_requirements.html:546
+#: providers/builtin/dns_requirements.html:566
+#: providers/builtin/dns_requirements.html:586
+#: providers/builtin/dns_requirements_OLD.html:587
+#: providers/builtin/dns_requirements_OLD.html:653
+#: providers/builtin/dns_requirements_OLD.html:713
+#: providers/builtin/dns_requirements_OLD.html:1060
+#: providers/builtin/dns_requirements_OLD.html:1066
+#: providers/builtin/dns_requirements_OLD.html:1072
+#: providers/builtin/dns_requirements_OLD.html:1078
+#: providers/builtin/dns_requirements_OLD.html:1084
+#: templates/admin/email_system/template_edit.html:171
+msgid "Copy"
+msgstr "コピー"
+
+#: providers/builtin/dns_requirements.html:468
+#: providers/builtin/dns_requirements.html:549
+#: providers/builtin/dns_requirements.html:569
+#: providers/builtin/dns_requirements.html:589
+msgid "Hostname:"
+msgstr "ホスト名:"
+
+#: providers/builtin/dns_requirements.html:486
+#: providers/builtin/dns_requirements.html:580
+msgid "Domain-based Message Authentication"
+msgstr "ドメインベースのメッセージ認証"
+
+#: providers/builtin/dns_requirements.html:522
+msgid "Mail Exchange Record"
+msgstr "メール交換レコード (MX)"
+
+#: providers/builtin/dns_requirements.html:534
+msgid "DNS Records Reference"
+msgstr "DNSレコード参考"
+
+#: providers/builtin/dns_requirements_OLD.html:515
+msgid "Configure DNS records for email authentication and deliverability"
+msgstr "メール認証および配信のためにDNSレコードを設定してください"
+
+#: providers/builtin/dns_requirements_OLD.html:520
+msgid "Automatic SPF Record Merging"
+msgstr "SPFレコードの自動統合"
+
+#: providers/builtin/dns_requirements_OLD.html:521
+msgid ""
+"We've automatically detected your existing DNS records and merged them with "
+"the built-in SMTP server requirements."
+msgstr "既存のDNSレコードを自動検出し、組み込みのSMTPサーバー要件と統合しました。"
+
+#: providers/builtin/dns_requirements_OLD.html:523
+msgid "SPF:"
+msgstr "SPF:"
+
+#: providers/builtin/dns_requirements_OLD.html:523
+msgid ""
+"The record below includes your existing providers PLUS the built-in server "
+"(mx, a)."
+msgstr "以下のレコードには、既存のプロバイダと組み込みサーバー（mx, a）が含まれています。"
+
+#: providers/builtin/dns_requirements_OLD.html:524
+msgid "DKIM:"
+msgstr "DKIM:"
+
+#: providers/builtin/dns_requirements_OLD.html:524
+msgid "Using selector 'mail' to avoid conflicts with other providers."
+msgstr "他のプロバイダと競合を避けるためにセレクタ 'mail' を使用しています。"
+
+#: providers/builtin/dns_requirements_OLD.html:525
+msgid "DMARC:"
+msgstr "DMARC:"
+
+#: providers/builtin/dns_requirements_OLD.html:525
+msgid "One record covers all email providers for your domain."
+msgstr "1つのレコードでドメインのすべてのメールプロバイダをカバーしています。"
+
+#: providers/builtin/dns_requirements_OLD.html:527
+msgid "Just copy and paste the records below - they're ready to use!"
+msgstr "以下のレコードをコピー＆ペーストするだけで、使用可能です！"
+
+#: providers/builtin/dns_requirements_OLD.html:533
+msgid "About Dynamic DNS"
+msgstr "動的DNSについて"
+
+#: providers/builtin/dns_requirements_OLD.html:534
+msgid ""
+"We've configured your SPF record using 'mx' and 'a' mechanisms instead of "
+"hard-coding your IP address."
+msgstr "IPアドレスをハードコードせずに、'mx' および 'a' メカニズムを使用してSPFレコードを設定しました。"
+
+#: providers/builtin/dns_requirements_OLD.html:535
+msgid "Why?"
+msgstr "なぜですか？"
+
+#: providers/builtin/dns_requirements_OLD.html:535
+msgid "This makes your configuration flexible:"
+msgstr "これにより、設定が柔軟になります:"
+
+#: providers/builtin/dns_requirements_OLD.html:537
+msgid "Authorizes servers in your domain's MX records"
+msgstr "ドメインのMXレコードに記載されたサーバーを認証します"
+
+#: providers/builtin/dns_requirements_OLD.html:538
+msgid "Authorizes the server at your domain's A record"
+msgstr "ドメインのAレコードに記載されたサーバーを認証します"
+
+#: providers/builtin/dns_requirements_OLD.html:539
+msgid ""
+"If your IP changes (dynamic DNS), you only need to update your A or MX "
+"record - not the SPF record"
+msgstr "IPアドレスが変更される場合（動的DNS）、SPFレコードではなく、AまたはMXレコードを更新するだけで十分です"
+
+#: providers/builtin/dns_requirements_OLD.html:547
+msgid "Domain"
+msgstr "ドメイン"
+
+#: providers/builtin/dns_requirements_OLD.html:551
+msgid "Server IP"
+msgstr "サーバーIP"
+
+#: providers/builtin/dns_requirements_OLD.html:555
+msgid "DKIM Selector"
+msgstr "DKIMセレクタ"
+
+#: providers/builtin/dns_requirements_OLD.html:565
+msgid "SPF Record"
+msgstr "SPFレコード"
+
+#: providers/builtin/dns_requirements_OLD.html:569
+#: providers/builtin/dns_requirements_OLD.html:630
+#: providers/builtin/dns_requirements_OLD.html:695
+#: providers/builtin/dns_requirements_OLD.html:756
+#: providers/builtin/dns_requirements_OLD.html:829
+msgid "Valid"
+msgstr "有効"
+
+#: providers/builtin/dns_requirements_OLD.html:570
+#: providers/builtin/dns_requirements_OLD.html:631
+#: providers/builtin/dns_requirements_OLD.html:696
+#: providers/builtin/dns_requirements_OLD.html:757
+#: providers/builtin/dns_requirements_OLD.html:830
+msgid "Invalid"
+msgstr "無効"
+
+#: providers/builtin/dns_requirements_OLD.html:578
 msgid "What is SPF?"
 msgstr "SPFとは？"
 
+#: providers/builtin/dns_requirements_OLD.html:580
 msgid ""
 "Sender Policy Framework (SPF) specifies which mail servers can send emails "
 "for your domain"
-msgstr ""
-"Sender Policy Framework（SPF）は、ドメインのメールを送信できるメールサーバー"
-"を指定します"
+msgstr "Sender Policy Framework（SPF）は、ドメインのメールを送信できるメールサーバーを指定します"
 
+#: providers/builtin/dns_requirements_OLD.html:581
 msgid "Prevents spammers from forging emails from your domain"
 msgstr "ドメインからメールを偽装して送信するスパマーを防止します"
 
+#: providers/builtin/dns_requirements_OLD.html:582
 msgid "Required for good email deliverability"
 msgstr "メール配信性を高めるために必要です"
 
+#: providers/builtin/dns_requirements_OLD.html:590
+#: providers/builtin/dns_requirements_OLD.html:656
+#: providers/builtin/dns_requirements_OLD.html:716
+#: providers/builtin/dns_requirements_OLD.html:794
 msgid "Record Hostname:"
 msgstr "レコードホスト名:"
 
+#: providers/builtin/dns_requirements_OLD.html:603
 msgid "SPF Validation"
 msgstr "SPF検証"
 
+#: providers/builtin/dns_requirements_OLD.html:612
 msgid "Current SPF:"
 msgstr "現在のSPF:"
 
+#: providers/builtin/dns_requirements_OLD.html:613
 msgid "Updated SPF:"
 msgstr "更新されたSPF:"
 
+#: providers/builtin/dns_requirements_OLD.html:626
 msgid "DKIM Record"
 msgstr "DKIMレコード"
 
+#: providers/builtin/dns_requirements_OLD.html:639
 msgid "What is DKIM?"
 msgstr "DKIMとは?"
 
+#: providers/builtin/dns_requirements_OLD.html:641
 msgid "DomainKeys Identified Mail (DKIM) cryptographically signs your emails"
 msgstr "ドメインキー識別メール（DKIM）はメールを暗号化して署名します"
 
+#: providers/builtin/dns_requirements_OLD.html:642
 msgid "Proves that emails haven't been tampered with in transit"
 msgstr "メールが転送中に改ざんされていないことを証明します"
 
+#: providers/builtin/dns_requirements_OLD.html:643
 msgid "Improves email deliverability and reduces spam classification"
 msgstr "メールの配信性を向上させ、スパム分類を減らします"
 
+#: providers/builtin/dns_requirements_OLD.html:662
 msgid "DKIM Keys Auto-Generated"
 msgstr "DKIMキーは自動生成されます"
 
+#: providers/builtin/dns_requirements_OLD.html:663
 msgid ""
 "DKIM keys are automatically generated when you view this page. If you're "
 "seeing this message, please refresh the page."
-msgstr ""
-"このページを表示するとDKIMキーが自動生成されます。このメッセージを表示してい"
-"る場合は、ページを再読み込みしてください。"
+msgstr "このページを表示するとDKIMキーが自動生成されます。このメッセージを表示している場合は、ページを再読み込みしてください。"
 
+#: providers/builtin/dns_requirements_OLD.html:664
+#: providers/builtin/dns_requirements_OLD.html:801
+#: templates/admin/email_system/newsletter_delete_confirm.html:46
 msgid "Note:"
 msgstr "注意:"
 
+#: providers/builtin/dns_requirements_OLD.html:664
 msgid ""
 "Keys are securely stored in your session and will be saved to the database "
 "when you complete the wizard."
-msgstr ""
-"キーはセッション内に安全に保存され、ウィザードを完了するとデータベースに保存"
-"されます。"
+msgstr "キーはセッション内に安全に保存され、ウィザードを完了するとデータベースに保存されます。"
 
+#: providers/builtin/dns_requirements_OLD.html:676
 msgid "DKIM Validation"
 msgstr "DKIM検証"
 
+#: providers/builtin/dns_requirements_OLD.html:691
 msgid "DMARC Record"
 msgstr "DMARCレコード"
 
+#: providers/builtin/dns_requirements_OLD.html:704
 msgid "What is DMARC?"
 msgstr "DMARCとは?"
 
+#: providers/builtin/dns_requirements_OLD.html:706
 msgid ""
 "Domain-based Message Authentication, Reporting & Conformance (DMARC) builds "
 "on SPF and DKIM"
-msgstr ""
-"ドメインベースのメッセージ認証、レポート、コンプライアンス（DMARC）はSPFと"
-"DKIMに基づいて構築されています"
+msgstr "ドメインベースのメッセージ認証、レポート、コンプライアンス（DMARC）はSPFとDKIMに基づいて構築されています"
 
-msgid "Tells receiving servers what to do with emails that fail authentication"
+#: providers/builtin/dns_requirements_OLD.html:707
+msgid ""
+"Tells receiving servers what to do with emails that fail authentication"
 msgstr "認証に失敗したメールの処理方法を受信サーバーに伝えます"
 
+#: providers/builtin/dns_requirements_OLD.html:708
 msgid "Provides reporting on email authentication results"
 msgstr "メール認証の結果に関するレポートを提供します"
 
+#: providers/builtin/dns_requirements_OLD.html:729
 msgid "DMARC Validation"
 msgstr "DMARC検証"
 
+#: providers/builtin/dns_requirements_OLD.html:738
 msgid "Current DMARC:"
 msgstr "現在のDMARC:"
 
+#: providers/builtin/dns_requirements_OLD.html:739
 msgid "Updated DMARC:"
 msgstr "更新されたDMARC:"
 
+#: providers/builtin/dns_requirements_OLD.html:752
 msgid "MX Records (Mail Exchange)"
 msgstr "MXレコード (メール交換)"
 
+#: providers/builtin/dns_requirements_OLD.html:765
 msgid "What are MX Records?"
 msgstr "MXレコードとは?"
 
+#: providers/builtin/dns_requirements_OLD.html:767
 msgid ""
 "MX (Mail Exchange) records tell other mail servers where to deliver emails "
 "for your domain"
-msgstr ""
-"MX（メール交換）レコードは、他のメールサーバーにあなたのドメインのメールをど"
-"こに配信するかを伝えます"
+msgstr "MX（メール交換）レコードは、他のメールサーバーにあなたのドメインのメールをどこに配信するかを伝えます"
 
+#: providers/builtin/dns_requirements_OLD.html:768
 msgid "Essential for receiving emails to addresses at your domain"
 msgstr "ドメイン内のアドレスにメールを受信するための必須項目です"
 
+#: providers/builtin/dns_requirements_OLD.html:769
 msgid "Used by SPF 'mx' mechanism to authorize your mail servers for sending"
-msgstr ""
-"SPF 'mx' メカニズムによって、メールサーバーの送信を認証するために使用されます"
+msgstr "SPF 'mx' メカニズムによって、メールサーバーの送信を認証するために使用されます"
 
+#: providers/builtin/dns_requirements_OLD.html:775
 msgid "Current MX Records Detected"
 msgstr "現在検出されたMXレコード"
 
+#: providers/builtin/dns_requirements_OLD.html:778
+#: providers/builtin/dns_requirements_OLD.html:797
 msgid "Priority"
 msgstr "優先度"
 
-msgid "MX record points to your domain - this is correct for self-hosted email"
-msgstr ""
-"MXレコードはドメインを指しています。これはセルフホスティングメールの場合正し"
-"いです"
+#: providers/builtin/dns_requirements_OLD.html:782
+msgid ""
+"MX record points to your domain - this is correct for self-hosted email"
+msgstr "MXレコードはドメインを指しています。これはセルフホスティングメールの場合正しいです"
 
+#: providers/builtin/dns_requirements_OLD.html:784
 msgid ""
 "MX records point to external providers. If you want to receive emails on "
 "this server, add an MX record pointing to your domain."
-msgstr ""
-"MXレコードは外部プロバイダを指しています。このサーバーでメールを受信したい場"
-"合は、ドメインを指すMXレコードを追加してください。"
+msgstr "MXレコードは外部プロバイダを指しています。このサーバーでメールを受信したい場合は、ドメインを指すMXレコードを追加してください。"
 
+#: providers/builtin/dns_requirements_OLD.html:789
 msgid "No MX Records Found"
 msgstr "MXレコードが見つかりません"
 
+#: providers/builtin/dns_requirements_OLD.html:790
 msgid ""
 "You need to add an MX record to receive emails at your domain. Add the "
 "following to your DNS:"
-msgstr ""
-"ドメインでメールを受信するにはMXレコードを追加する必要があります。DNSに以下の"
-"内容を追加してください:"
+msgstr "ドメインでメールを受信するにはMXレコードを追加する必要があります。DNSに以下の内容を追加してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:798
 msgid "Mail Server"
 msgstr "メールサーバー"
 
+#: providers/builtin/dns_requirements_OLD.html:801
 msgid "Make sure your domain's A record points to your server's IP address:"
-msgstr ""
-"ドメインのAレコードがサーバーのIPアドレスを指していることを確認してください:"
+msgstr "ドメインのAレコードがサーバーのIPアドレスを指していることを確認してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:813
 msgid "MX Validation"
 msgstr "MX検証"
 
+#: providers/builtin/dns_requirements_OLD.html:825
 msgid "Reverse DNS (PTR)"
 msgstr "リバースDNS (PTR)"
 
+#: providers/builtin/dns_requirements_OLD.html:838
 msgid "What is PTR/rDNS?"
 msgstr "PTR/rDNSとは?"
 
+#: providers/builtin/dns_requirements_OLD.html:840
 msgid "Reverse DNS (PTR record) maps your server IP to your domain name"
-msgstr ""
-"リバースDNS（PTRレコード）は、サーバーのIPアドレスをドメイン名とマッピングし"
-"ます"
+msgstr "リバースDNS（PTRレコード）は、サーバーのIPアドレスをドメイン名とマッピングします"
 
+#: providers/builtin/dns_requirements_OLD.html:841
 msgid ""
 "Critical for email deliverability - many servers reject emails without PTR"
-msgstr ""
-"メールの配信性にとって重要です。PTRがないメールは多くのサーバーで拒否されます"
+msgstr "メールの配信性にとって重要です。PTRがないメールは多くのサーバーで拒否されます"
 
+#: providers/builtin/dns_requirements_OLD.html:842
 msgid "Must be configured by your hosting provider or datacenter"
-msgstr ""
-"ホスティングプロバイダまたはデータセンターによって構成する必要があります"
+msgstr "ホスティングプロバイダまたはデータセンターによって構成する必要があります"
 
+#: providers/builtin/dns_requirements_OLD.html:847
 msgid "Configure with Your Hosting Provider"
 msgstr "ホスティングプロバイダで設定してください"
 
+#: providers/builtin/dns_requirements_OLD.html:848
 msgid ""
 "PTR records must be set by your hosting provider. Contact them and request:"
-msgstr ""
-"PTRレコードはホスティングプロバイダによって設定する必要があります。彼らに連絡"
-"し、以下を依頼してください:"
+msgstr "PTRレコードはホスティングプロバイダによって設定する必要があります。彼らに連絡し、以下を依頼してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:850
 #, python-format
 msgid "Set PTR record for IP %(ip)s to %(domain)s"
 msgstr "IP %(ip)s の PTR レコードを %(domain)s に設定しました"
 
+#: providers/builtin/dns_requirements_OLD.html:862
 msgid "PTR Validation"
 msgstr "PTR検証"
 
+#: providers/builtin/dns_requirements_OLD.html:874
 msgid "DNS Registrar Setup Instructions"
 msgstr "DNSレジストラの設定手順"
 
+#: providers/builtin/dns_requirements_OLD.html:880
 msgid "We've automatically detected that you're using"
 msgstr "自動的に、あなたが使用していることを検出しました"
 
+#: providers/builtin/dns_requirements_OLD.html:880
 msgid "for DNS management."
 msgstr "DNS管理用です。"
 
+#: providers/builtin/dns_requirements_OLD.html:910
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:6
 msgid "Log in to Cloudflare"
 msgstr "Cloudflareにログイン"
 
+#: providers/builtin/dns_requirements_OLD.html:911
+#: providers/builtin/dns_requirements_OLD.html:942
+#: providers/builtin/dns_requirements_OLD.html:966
+#: providers/builtin/dns_requirements_OLD.html:994
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:7
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:43
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:79
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:119
 msgid "Go to"
 msgstr "移動する"
 
+#: providers/builtin/dns_requirements_OLD.html:911
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:7
 msgid "and select your domain"
 msgstr "ドメインを選択してください"
 
+#: providers/builtin/dns_requirements_OLD.html:914
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:10
 msgid "Navigate to DNS"
 msgstr "DNSに移動"
 
+#: providers/builtin/dns_requirements_OLD.html:915
+#: providers/builtin/dns_requirements_OLD.html:926
+#: providers/builtin/dns_requirements_OLD.html:935
+#: providers/builtin/dns_requirements_OLD.html:950
+#: providers/builtin/dns_requirements_OLD.html:959
+#: providers/builtin/dns_requirements_OLD.html:970
+#: providers/builtin/dns_requirements_OLD.html:974
+#: providers/builtin/dns_requirements_OLD.html:978
+#: providers/builtin/dns_requirements_OLD.html:998
+#: providers/builtin/dns_requirements_OLD.html:1002
+#: providers/builtin/dns_requirements_OLD.html:1011
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:11
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:15
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:26
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:35
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:51
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:62
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:71
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:83
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:87
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:91
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:102
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:123
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:127
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:137
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:146
 msgid "Click"
 msgstr "クリック"
 
+#: providers/builtin/dns_requirements_OLD.html:915
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:11
 msgid "in the left sidebar"
 msgstr "左サイドバー内"
 
+#: providers/builtin/dns_requirements_OLD.html:918
 msgid "Add MX Record (if needed)"
 msgstr "MXレコードを追加（必要に応じて）"
 
+#: providers/builtin/dns_requirements_OLD.html:919
 msgid "If you want to receive emails on this server, add an MX record:"
 msgstr "このサーバーでメールを受信したい場合は、MXレコードを追加してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:925
+#: providers/builtin/dns_requirements_OLD.html:949
+#: providers/builtin/dns_requirements_OLD.html:977
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:25
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:61
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:101
 msgid "Add TXT Records"
 msgstr "TXTレコードを追加"
 
+#: providers/builtin/dns_requirements_OLD.html:926
 msgid "and add each TXT record above:"
 msgstr "上記のTXTレコードをすべて追加してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:934
+#: providers/builtin/dns_requirements_OLD.html:958
+#: providers/builtin/dns_requirements_OLD.html:986
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:34
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:70
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:110
 msgid "Save Changes"
 msgstr "変更を保存"
 
+#: providers/builtin/dns_requirements_OLD.html:935
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:35
 msgid "for each record. DNS propagation typically takes 5-15 minutes."
 msgstr "各レコードに対して。DNSのプロパゲーションには通常5〜15分かかります。"
 
+#: providers/builtin/dns_requirements_OLD.html:941
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:42
 msgid "Log in to GoDaddy"
 msgstr "GoDaddyにログイン"
 
+#: providers/builtin/dns_requirements_OLD.html:945
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:46
 msgid "Manage DNS"
 msgstr "DNSの管理"
 
+#: providers/builtin/dns_requirements_OLD.html:946
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:47
 msgid "Click your domain, then"
 msgstr "ドメインをクリックし、次に"
 
+#: providers/builtin/dns_requirements_OLD.html:950
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:62
 msgid "and select"
 msgstr "選択してください"
 
+#: providers/builtin/dns_requirements_OLD.html:950
 msgid "record type:"
 msgstr "レコードタイプ:"
 
+#: providers/builtin/dns_requirements_OLD.html:959
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:71
 msgid "DNS propagation can take up to 48 hours with GoDaddy."
-msgstr ""
-"GoDaddyを使用している場合、DNSのプロパゲーションには最大48時間かかることがあ"
-"ります。"
+msgstr "GoDaddyを使用している場合、DNSのプロパゲーションには最大48時間かかることがあります。"
 
+#: providers/builtin/dns_requirements_OLD.html:965
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:78
 msgid "Log in to Namecheap"
 msgstr "Namecheapにログイン"
 
+#: providers/builtin/dns_requirements_OLD.html:969
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:82
 msgid "Manage Domain"
 msgstr "ドメインの管理"
 
+#: providers/builtin/dns_requirements_OLD.html:970
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:83
 msgid "click"
 msgstr "クリック"
 
+#: providers/builtin/dns_requirements_OLD.html:970
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:83
 msgid "next to your domain"
 msgstr "ドメインの隣"
 
+#: providers/builtin/dns_requirements_OLD.html:973
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:86
 msgid "Advanced DNS"
 msgstr "アドバンストDNS"
 
+#: providers/builtin/dns_requirements_OLD.html:974
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:87
 msgid "tab"
 msgstr "タブ"
 
+#: providers/builtin/dns_requirements_OLD.html:987
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:111
 msgid ""
 "Click the green checkmark to save. Propagation takes 30 minutes to 48 hours."
-msgstr ""
-"保存するには緑のチェックマークをクリックしてください。変更の反映には30分から"
-"48時間かかります。"
+msgstr "保存するには緑のチェックマークをクリックしてください。変更の反映には30分から48時間かかります。"
 
+#: providers/builtin/dns_requirements_OLD.html:993
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:118
 msgid "Log in to AWS Console"
 msgstr "AWSコンソールにログイン"
 
+#: providers/builtin/dns_requirements_OLD.html:997
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:122
 msgid "Select Hosted Zone"
 msgstr "ホストゾーンを選択"
 
+#: providers/builtin/dns_requirements_OLD.html:998
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:123
 msgid "select your domain"
 msgstr "ドメインを選択"
 
+#: providers/builtin/dns_requirements_OLD.html:1001
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:136
 msgid "Create TXT Records"
 msgstr "TXTレコードを作成"
 
+#: providers/builtin/dns_requirements_OLD.html:1002
 msgid "and add:"
 msgstr "以下を追加:"
 
+#: providers/builtin/dns_requirements_OLD.html:1010
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:145
 msgid "Create Records"
 msgstr "レコードを作成"
 
+#: providers/builtin/dns_requirements_OLD.html:1011
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:146
 msgid "Route 53 propagates changes within 60 seconds."
 msgstr "Route 53は60秒以内に変更を反映します。"
 
+#: providers/builtin/dns_requirements_OLD.html:1018
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:154
 msgid "Your DNS Nameservers"
 msgstr "DNSネームサーバー"
 
+#: providers/builtin/dns_requirements_OLD.html:1019
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:155
 msgid "Your domain uses the following nameservers:"
 msgstr "あなたのドメインは以下のネームサーバーを使用しています:"
 
+#: providers/builtin/dns_requirements_OLD.html:1026
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:162
 msgid "Tip:"
 msgstr "ヒント:"
 
+#: providers/builtin/dns_requirements_OLD.html:1026
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:162
 msgid ""
 "Search for your DNS provider's documentation using your nameserver names "
 "above."
-msgstr ""
-"上記のネームサーバー名を使って、DNSプロバイダのドキュメントを検索してくださ"
-"い。"
+msgstr "上記のネームサーバー名を使って、DNSプロバイダのドキュメントを検索してください。"
 
+#: providers/builtin/dns_requirements_OLD.html:1032
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:168
 msgid "General Instructions"
 msgstr "一般的な指示"
 
+#: providers/builtin/dns_requirements_OLD.html:1033
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:169
 msgid "Most DNS providers follow a similar process:"
 msgstr "ほとんどのDNSプロバイダは類似した手順に従います:"
 
+#: providers/builtin/dns_requirements_OLD.html:1035
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:171
 msgid "Log in to your DNS provider's control panel"
 msgstr "DNSプロバイダのコントロールパネルにログインしてください"
 
+#: providers/builtin/dns_requirements_OLD.html:1036
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:172
 msgid "Navigate to DNS management for your domain"
 msgstr "ドメインのDNS管理にアクセスしてください"
 
+#: providers/builtin/dns_requirements_OLD.html:1037
 msgid "Add TXT records with the values shown above"
 msgstr "上記に表示されている値を使用してTXTレコードを追加してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1038
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:183
 msgid "Wait for DNS propagation (15 minutes to 48 hours)"
 msgstr "DNSの反映を待ちましょう（15分から48時間）"
 
+#: providers/builtin/dns_requirements_OLD.html:1042
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:187
 msgid "Important Notes"
 msgstr "重要な注意事項"
 
+#: providers/builtin/dns_requirements_OLD.html:1044
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:189
 msgid "Some providers use"
 msgstr "一部のプロバイダは使用しています"
 
+#: providers/builtin/dns_requirements_OLD.html:1044
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:189
 msgid "for the root domain, others require the full domain name"
 msgstr "ルートドメインに対しては、他のものはフルドメイン名が必要です"
 
+#: providers/builtin/dns_requirements_OLD.html:1045
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:190
 msgid "DKIM and DMARC records must use the exact hostnames shown above"
-msgstr ""
-"DKIMおよびDMARCレコードは、上記に表示されている正確なホスト名を使用する必要が"
-"あります"
+msgstr "DKIMおよびDMARCレコードは、上記に表示されている正確なホスト名を使用する必要があります"
 
+#: providers/builtin/dns_requirements_OLD.html:1046
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:191
 msgid ""
 "If you have existing SPF records, you must merge them (only one SPF record "
 "allowed)"
-msgstr ""
-"既存のSPFレコードがある場合、それらをマージする必要があります（ドメインごとに"
-"1つのSPFレコードのみ許可されます）"
+msgstr "既存のSPFレコードがある場合、それらをマージする必要があります（ドメインごとに1つのSPFレコードのみ許可されます）"
 
+#: providers/builtin/dns_requirements_OLD.html:1054
 msgid "Verify DNS Configuration"
 msgstr "DNS設定を確認してください"
 
-msgid "Use these commands to verify your DNS records are configured correctly:"
-msgstr ""
-"DNSレコードが正しく設定されているかを確認するために、これらのコマンドを使用し"
-"てください:"
+#: providers/builtin/dns_requirements_OLD.html:1055
+msgid ""
+"Use these commands to verify your DNS records are configured correctly:"
+msgstr "DNSレコードが正しく設定されているかを確認するために、これらのコマンドを使用してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:1058
 msgid "Check SPF Record"
 msgstr "SPFレコードを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1064
 msgid "Check DKIM Record"
 msgstr "DKIMレコードを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1070
 msgid "Check DMARC Record"
 msgstr "DMARCレコードを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1076
 msgid "Check MX Records"
 msgstr "MXレコードを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1082
 msgid "Check PTR Record"
 msgstr "PTRレコードを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1088
 msgid "Alternative: Use nslookup"
 msgstr "代替: nslookupを使用してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1090
 msgid "- Check SPF"
 msgstr "- SPFを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1091
 msgid "- Check DKIM"
 msgstr "- DKIMを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1092
 msgid "- Check DMARC"
 msgstr "- DMARCを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1093
 msgid "- Check MX"
 msgstr "- MXを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1094
 msgid "- Check PTR"
 msgstr "- PTRを確認してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1101
 msgid "Troubleshooting"
 msgstr "トラブルシューティング"
 
+#: providers/builtin/dns_requirements_OLD.html:1104
 msgid "DNS records not appearing"
 msgstr "DNSレコードが表示されない"
 
+#: providers/builtin/dns_requirements_OLD.html:1106
 msgid ""
 "DNS propagation can take 15 minutes to 48 hours depending on your provider"
 msgstr "プロバイダによってDNSの反映にかかる時間は15分から48時間まで異なります"
 
+#: providers/builtin/dns_requirements_OLD.html:1107
 msgid "Try clearing your local DNS cache:"
 msgstr "ローカルDNSキャッシュをクリアしてみてください:"
 
+#: providers/builtin/dns_requirements_OLD.html:1108
 msgid "Use a different DNS server to check:"
 msgstr "別のDNSサーバーを使用して確認してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:1109
 msgid "Verify records at"
 msgstr "レコードを確認するには"
 
+#: providers/builtin/dns_requirements_OLD.html:1114
 msgid "Multiple SPF records detected"
 msgstr "複数のSPFレコードが検出されました"
 
+#: providers/builtin/dns_requirements_OLD.html:1116
 msgid "Only ONE SPF record is allowed per domain"
 msgstr "ドメインごとにSPFレコードは1つのみ許可されています"
 
+#: providers/builtin/dns_requirements_OLD.html:1117
 msgid "If you have existing SPF records, merge them:"
 msgstr "既存のSPFレコードがある場合、それらをマージしてください:"
 
+#: providers/builtin/dns_requirements_OLD.html:1118
 msgid "Delete all old SPF records before adding the new one"
 msgstr "新しいレコードを追加する前に、古いSPFレコードをすべて削除してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1123
 msgid "DKIM validation failing"
 msgstr "DKIM検証が失敗しています"
 
+#: providers/builtin/dns_requirements_OLD.html:1125
 msgid "Ensure the hostname is exactly:"
 msgstr "ホスト名が正確であることを確認してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:1126
 msgid ""
 "DKIM record must be a single TXT record (some providers split long records)"
-msgstr ""
-"DKIMレコードは1つのTXTレコードでなければなりません（一部のプロバイダは長いレ"
-"コードを分割します）"
+msgstr "DKIMレコードは1つのTXTレコードでなければなりません（一部のプロバイダは長いレコードを分割します）"
 
+#: providers/builtin/dns_requirements_OLD.html:1127
 msgid "Remove any extra quotes or whitespace from the TXT value"
 msgstr "TXT値から余分な引用符や空白を削除してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1128
 msgid "Regenerate DKIM keys if needed:"
 msgstr "必要に応じてDKIMキーを再生成してください:"
 
+#: providers/builtin/dns_requirements_OLD.html:1133
 msgid "PTR record issues"
 msgstr "PTRレコードの問題"
 
+#: providers/builtin/dns_requirements_OLD.html:1135
 msgid "PTR records MUST be configured by your hosting provider or datacenter"
-msgstr ""
-"PTRレコードは、ホスティングプロバイダまたはデータセンターによって設定する必要"
-"があります"
+msgstr "PTRレコードは、ホスティングプロバイダまたはデータセンターによって設定する必要があります"
 
+#: providers/builtin/dns_requirements_OLD.html:1136
 msgid "You cannot set PTR records through regular DNS management"
 msgstr "通常のDNS管理を通じてPTRレコードを設定することはできません"
 
+#: providers/builtin/dns_requirements_OLD.html:1137
 msgid "Contact your hosting provider's support team"
 msgstr "ホスティングプロバイダのサポートチームに連絡してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1138
 msgid "Provide them your IP address and domain name"
 msgstr "IPアドレスとドメイン名を提供してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1143
 msgid "Emails still going to spam"
 msgstr "メールが依然としてスパムに送信されている"
 
+#: providers/builtin/dns_requirements_OLD.html:1145
 msgid "All 4 DNS records (SPF, DKIM, DMARC, PTR) must be valid"
-msgstr ""
-"4つのDNSレコード（SPF、DKIM、DMARC、PTR）すべてが有効である必要があります"
+msgstr "4つのDNSレコード（SPF、DKIM、DMARC、PTR）すべてが有効である必要があります"
 
+#: providers/builtin/dns_requirements_OLD.html:1146
 msgid "Warm up your IP address by sending gradually increasing volumes"
 msgstr "徐々に増加する量でメールを送信してIPアドレスを温めます"
 
+#: providers/builtin/dns_requirements_OLD.html:1147
 msgid "Ensure your email content is not triggering spam filters"
 msgstr "メールの内容がスパムフィルタをトリガーしないようにしてください"
 
+#: providers/builtin/dns_requirements_OLD.html:1148
 msgid "Check your IP reputation at"
 msgstr "IPの評判を確認するには"
 
+#: providers/builtin/dns_requirements_OLD.html:1149
 msgid "Consider using a dedicated IP address for email sending"
 msgstr "メール送信用に専用のIPアドレスを使用することを検討してください"
 
+#: providers/builtin/dns_requirements_OLD.html:1157
 msgid "Validate DNS Now"
 msgstr "DNSの検証を今すぐ実行"
 
+#: providers/builtin/dns_requirements_OLD.html:1160
 msgid "Refresh Validation"
 msgstr "検証を再実行"
 
+#: providers/builtin/dns_requirements_OLD.html:1180
 msgid "Failed to copy to clipboard"
 msgstr "クリップボードへのコピーに失敗しました"
 
+#: providers/builtin/dns_requirements_OLD.html:1202
 msgid "DNS validation triggered. Please wait..."
 msgstr "DNSの検証が開始されました。お待ちください..."
 
+#: providers/builtin/setup_instructions.html:6
 msgid ""
-"Your platform includes a professional SMTP server that's ready to use. We'll "
-"handle all the technical setup automatically."
+"Your platform includes a professional SMTP server that's ready to use. We'll"
+" handle all the technical setup automatically."
 msgstr ""
-"あなたのプラットフォームには、すぐに使用できるプロフェッショナルなSMTPサー"
-"バーが含まれています。すべての技術的な設定は自動的に行います。"
+"あなたのプラットフォームには、すぐに使用できるプロフェッショナルなSMTPサーバーが含まれています。すべての技術的な設定は自動的に行います。"
 
+#: providers/builtin/setup_instructions.html:11
 msgid "Zero Configuration Required"
 msgstr "設定不要"
 
+#: providers/builtin/setup_instructions.html:12
 msgid ""
 "No management commands, no server configuration. Just enter your email "
 "details and we'll set everything up for you automatically."
-msgstr ""
-"管理コマンドもサーバー設定も不要です。単にメールの詳細を入力すれば、すべてを"
-"自動的に設定します。"
+msgstr "管理コマンドもサーバー設定も不要です。単にメールの詳細を入力すれば、すべてを自動的に設定します。"
 
+#: providers/builtin/setup_instructions.html:16
 msgid "What You Get"
 msgstr "あなたが得られるもの"
 
+#: providers/builtin/setup_instructions.html:20
 msgid "No Monthly Fees"
 msgstr "月額料金なし"
 
+#: providers/builtin/setup_instructions.html:21
 msgid "Completely free - no subscription costs or rate limits."
 msgstr "完全に無料 - サブスクリプション費用やレート制限はありません。"
 
+#: providers/builtin/setup_instructions.html:25
 msgid "Automatic DKIM Signing"
 msgstr "自動DKIM署名"
 
+#: providers/builtin/setup_instructions.html:26
 msgid "Professional email authentication configured automatically."
 msgstr "プロフェッショナルなメール認証が自動で設定されます。"
 
+#: providers/builtin/setup_instructions.html:30
 msgid "Privacy First"
 msgstr "プライバシー優先"
 
+#: providers/builtin/setup_instructions.html:31
 msgid "Your emails stay on your server - no third-party access."
-msgstr ""
-"メールはあなたのサーバーに残ります - 第三者によるアクセスはありません。"
+msgstr "メールはあなたのサーバーに残ります - 第三者によるアクセスはありません。"
 
+#: providers/builtin/setup_instructions.html:35
 msgid "Unlimited Sending"
 msgstr "無制限の送信"
 
+#: providers/builtin/setup_instructions.html:36
 msgid "Only limited by your server capacity."
 msgstr "サーバーの容量によってのみ制限されます。"
 
+#: providers/builtin/setup_instructions.html:42
 msgid "How It Works"
 msgstr "仕組み"
 
+#: providers/builtin/setup_instructions.html:47
 msgid "You Provide Email Details"
 msgstr "メールの詳細を提供"
 
+#: providers/builtin/setup_instructions.html:48
 msgid ""
-"Enter your sending email address in the next step (e.g., noreply@yourdomain."
-"com)"
-msgstr ""
-"次のステップで送信メールアドレスを入力してください（例: noreply@yourdomain."
-"com）"
+"Enter your sending email address in the next step (e.g., "
+"noreply@yourdomain.com)"
+msgstr "次のステップで送信メールアドレスを入力してください（例: noreply@yourdomain.com）"
 
+#: providers/builtin/setup_instructions.html:54
 msgid "We Generate DKIM Keys"
 msgstr "DKIMキーを生成"
 
+#: providers/builtin/setup_instructions.html:55
 msgid ""
 "Cryptographic keys are automatically created and encrypted in your database"
 msgstr "暗号化キーは自動的に作成され、データベース内で暗号化されます"
 
+#: providers/builtin/setup_instructions.html:61
 msgid "We Start the SMTP Server"
 msgstr "SMTPサーバーを起動"
 
+#: providers/builtin/setup_instructions.html:62
 msgid ""
 "The built-in server starts automatically and begins signing all outgoing "
 "emails"
 msgstr "組み込みサーバーは自動的に起動し、すべての出るメールを署名開始します"
 
+#: providers/builtin/setup_instructions.html:68
 msgid "Configure DNS Records"
 msgstr "DNSレコードを設定"
 
+#: providers/builtin/setup_instructions.html:69
 msgid ""
 "We'll show you exactly which DNS records to add for optimal deliverability"
 msgstr "最適な配信のために追加すべきDNSレコードを正確にご案内します"
 
+#: providers/builtin/setup_instructions.html:77
 msgid "What Happens Next?"
 msgstr "次に何が起こる？"
 
+#: providers/builtin/setup_instructions.html:78
 msgid ""
 "After you enter your email address, we'll automatically generate DKIM keys, "
 "start the SMTP server, and guide you through adding DNS records. The entire "
 "process takes about 2 minutes."
 msgstr ""
-"メールアドレスを入力した後、DKIMキーを自動生成し、SMTPサーバーを起動し、DNSレ"
-"コードの追加をガイドします。この全体的なプロセスは約2分かかります。"
+"メールアドレスを入力した後、DKIMキーを自動生成し、SMTPサーバーを起動し、DNSレコードの追加をガイドします。この全体的なプロセスは約2分かかります。"
 
+#: providers/builtin/setup_instructions.html:82
 msgid "Technical Details"
 msgstr "技術的詳細"
 
+#: providers/builtin/setup_instructions.html:84
 msgid "Only your shop can send through this email provider for security"
-msgstr ""
-"セキュリティ上の理由から、このメールプロバイダを通じてメールを送信できるのは"
-"あなたのショップだけです"
+msgstr "セキュリティ上の理由から、このメールプロバイダを通じてメールを送信できるのはあなたのショップだけです"
 
+#: providers/builtin/setup_instructions.html:85
 msgid "DKIM keys use RSA 2048-bit encryption for enhanced security"
 msgstr "DKIMキーは、セキュリティを強化するためにRSA 2048ビット暗号を使用します"
 
+#: providers/builtin/setup_instructions.html:86
 msgid ""
-"All emails are automatically signed before sending to ensure your emails are "
-"delivered and avoid hitting spam and junk folders"
-msgstr ""
-"メールが送信される前すべてが自動的に署名され、メールが配信されるようにし、ス"
-"パムやジャンクフォルダに届かないようにします"
+"All emails are automatically signed before sending to ensure your emails are"
+" delivered and avoid hitting spam and junk folders"
+msgstr "メールが送信される前すべてが自動的に署名され、メールが配信されるようにし、スパムやジャンクフォルダに届かないようにします"
 
+#: providers/builtin/setup_instructions.html:92
 msgid "Important for Production Use"
 msgstr "本番環境での使用に重要"
 
+#: providers/builtin/setup_instructions.html:93
 msgid ""
 "After setup, you'll need to add DNS records (SPF, DKIM, DMARC, PTR) with "
 "your domain provider for optimal email deliverability. We'll provide "
 "detailed instructions in Step 4."
 msgstr ""
-"セットアップ後、ドメインプロバイダにDNSレコード（SPF、DKIM、DMARC、PTR）を追"
-"加する必要があります。最適なメール配信のために、ステップ4で詳細な手順を提供し"
-"ます。"
+"セットアップ後、ドメインプロバイダにDNSレコード（SPF、DKIM、DMARC、PTR）を追加する必要があります。最適なメール配信のために、ステップ4で詳細な手順を提供します。"
 
+#: services/dns_assistant.py:97 services/dns_assistant.py:355
 msgid "DKIM selector not provided"
 msgstr "DKIMセレクタが提供されていません"
 
+#: services/dns_assistant.py:98
 msgid "DKIM validation skipped - no selector available"
 msgstr "DKIM検証をスキップしました - 選択子が利用できません"
 
+#: services/dns_assistant.py:151
 msgid "MX records found"
 msgstr "MXレコードが見つかりました"
 
-msgid "MX record correctly points to this server ({mx[\"host\"]})"
-msgstr "MXレコードはこのサーバー({mx[\"host\"]})に正しく指しています"
+#: services/dns_assistant.py:175
+#| msgid "MX record correctly points to this server ({mx[\"host\"]})"
+msgid "MX record correctly points to this server ({mx['host']})"
+msgstr "MXレコードがこのサーバーに正しく指しています ({mx[\"host\"]})"
 
+#: services/dns_assistant.py:181
+#| msgid ""
+#| "MX {mx[\"host\"]} points to {mx_ips[0]}, not this server ({self.server_ip})"
 msgid ""
-"MX {mx[\"host\"]} points to {mx_ips[0]}, not this server ({self.server_ip})"
+"MX {mx['host']} points to {mx_ips[0]}, not this server ({self.server_ip})"
 msgstr ""
-"MX {mx[\"host\"]} は {mx_ips[0]} に指していますが、このサーバー({self."
-"server_ip})ではありません"
+"MX {mx['host']} は {mx_ips[0]} にポイントしており、このサーバー ({self.server_ip}) ではありません"
 
-msgid "Could not resolve MX hostname {mx[\"host\"]}"
-msgstr "MXホスト名 {mx[\"host\"]} を解決できませんでした"
+#: services/dns_assistant.py:185
+#| msgid "Could not resolve MX hostname {mx[\"host\"]}"
+msgid "Could not resolve MX hostname {mx['host']}"
+msgstr "MX ホスト名 {mx['host']} を解決できませんでした"
 
+#: services/dns_assistant.py:193
 msgid "MX record should point to this server for built-in SMTP to work"
-msgstr ""
-"組み込みSMTPが動作するため、MXレコードはこのサーバーを指す必要があります"
+msgstr "組み込みSMTPが動作するため、MXレコードはこのサーバーを指す必要があります"
 
+#: services/dns_assistant.py:201 services/dns_assistant.py:222
 #, python-brace-format
 msgid "Points to your server at {ip}"
 msgstr "{ip} にあるあなたのサーバーを指しています"
 
+#: services/dns_assistant.py:205
 msgid "No MX records found - email delivery may fail"
 msgstr "MXレコードが見つかりません - メールの配信に失敗する可能性があります"
 
+#: services/dns_assistant.py:209
 msgid "Domain does not exist"
 msgstr "ドメインが存在しません"
 
+#: services/dns_assistant.py:210
 msgid "Cannot configure email for non-existent domain"
 msgstr "存在しないドメインのメールを設定することはできません"
 
+#: services/dns_assistant.py:214
 msgid "No MX records configured"
 msgstr "MXレコードが設定されていません"
 
+#: services/dns_assistant.py:215
 msgid "No MX records found. Add MX record pointing to your server."
-msgstr ""
-"MXレコードが見つかりませんでした。サーバーを指すMXレコードを追加してくださ"
-"い。"
+msgstr "MXレコードが見つかりませんでした。サーバーを指すMXレコードを追加してください。"
 
+#: services/dns_assistant.py:229 services/dns_assistant.py:235
 msgid "Error checking MX records"
 msgstr "MXレコードの確認中にエラーが発生しました"
 
+#: services/dns_assistant.py:303
 msgid "SPF record found and fully propagated"
 msgstr "SPFレコードが見つかり、完全にプロパゲートされています。"
 
+#: services/dns_assistant.py:313
 msgid "SPF record should include your email provider's servers"
-msgstr ""
-"SPFレコードには、あなたのメールプロバイダのサーバーを含める必要があります"
+msgstr "SPFレコードには、あなたのメールプロバイダのサーバーを含める必要があります"
 
+#: services/dns_assistant.py:317
 msgid ""
 "Update required: SPF record must be updated to include built-in SMTP server"
-msgstr ""
-"更新が必要です: 内蔵SMTPサーバーを含めるようにSPFレコードを更新してください。"
+msgstr "更新が必要です: 内蔵SMTPサーバーを含めるようにSPFレコードを更新してください。"
 
+#: services/dns_assistant.py:320
 msgid "SPF record found but has warnings"
 msgstr "SPFレコードが見つかりましたが、警告があります。"
 
+#: services/dns_assistant.py:325
 msgid "SPF record partially propagated"
 msgstr "SPFレコードが部分的に伝播しています"
 
+#: services/dns_assistant.py:326
 msgid "SPF record found on some DNS servers but not all"
-msgstr ""
-"一部のDNSサーバーではSPFレコードが見つかりますが、すべてではありません。"
+msgstr "一部のDNSサーバーではSPFレコードが見つかりますが、すべてではありません。"
 
+#: services/dns_assistant.py:330
 msgid "No SPF record found"
 msgstr "SPFレコードが見つかりません"
 
+#: services/dns_assistant.py:331
 msgid "SPF record not found on any DNS server"
 msgstr "どのDNSサーバーでもSPFレコードが見つかりません。"
 
+#: services/dns_assistant.py:337
 msgid "Error checking SPF record"
 msgstr "SPFレコードの確認中にエラーが発生しました"
 
+#: services/dns_assistant.py:356
 msgid "Cannot validate DKIM without selector"
 msgstr "セレクターがないとDKIMを検証できません"
 
+#: services/dns_assistant.py:427
 msgid "DKIM record found and fully propagated"
 msgstr "DKIMレコードが見つかり、完全にプロパゲートされています。"
 
+#: services/dns_assistant.py:434
 msgid "DKIM record found but has warnings"
 msgstr "DKIMレコードが見つかりましたが、警告があります。"
 
+#: services/dns_assistant.py:439
 msgid "DKIM record partially propagated"
 msgstr "DKIMレコードが部分的に配布されています"
 
+#: services/dns_assistant.py:440
 msgid "DKIM record found on some DNS servers but not all"
-msgstr ""
-"一部のDNSサーバーではDKIMレコードが見つかりますが、すべてではありません。"
+msgstr "一部のDNSサーバーではDKIMレコードが見つかりますが、すべてではありません。"
 
+#: services/dns_assistant.py:444
 msgid "No DKIM record found"
 msgstr "DKIMレコードが見つかりません"
 
+#: services/dns_assistant.py:446
 msgid "DKIM record not found. Please configure DKIM in your email provider."
-msgstr ""
-"DKIMレコードが見つかりません。メールプロバイダでDKIMを設定してください。"
+msgstr "DKIMレコードが見つかりません。メールプロバイダでDKIMを設定してください。"
 
+#: services/dns_assistant.py:453
 msgid "Error checking DKIM record"
 msgstr "DKIMレコードの確認中にエラーが発生しました"
 
+#: services/dns_assistant.py:529
 msgid "DMARC record found and fully propagated"
 msgstr "DMARCレコードが見つかり、完全にプロパゲートされています。"
 
+#: services/dns_assistant.py:536
 msgid "DMARC record found but has issues"
 msgstr "DMARCレコードが見つかりましたが、問題があります"
 
+#: services/dns_assistant.py:541
 msgid ""
 "Update required: DMARC record needs relaxed alignment for multi-provider "
 "compatibility"
-msgstr ""
-"更新が必要です: 複数プロバイダとの互換性のためにDMARCレコードのアライメントを"
-"緩和する必要があります。"
+msgstr "更新が必要です: 複数プロバイダとの互換性のためにDMARCレコードのアライメントを緩和する必要があります。"
 
+#: services/dns_assistant.py:550
 msgid "DMARC record partially propagated"
 msgstr "DMARCレコードが部分的に配布されています"
 
+#: services/dns_assistant.py:551
 msgid "DMARC record found on some DNS servers but not all"
-msgstr ""
-"一部のDNSサーバーではDMARCレコードが見つかりますが、すべてではありません。"
+msgstr "一部のDNSサーバーではDMARCレコードが見つかりますが、すべてではありません。"
 
+#: services/dns_assistant.py:555
 msgid "No DMARC record found"
 msgstr "DMARCレコードが見つかりません"
 
+#: services/dns_assistant.py:557
 msgid "DMARC record not found. Recommended for email authentication."
 msgstr "DMARCレコードが見つかりません。メール認証のために推奨されます。"
 
+#: services/dns_assistant.py:564
 msgid "Error checking DMARC record"
 msgstr "DMARCレコードの確認中にエラーが発生しました"
 
+#: services/dns_assistant.py:639
 msgid "SPF record must start with \"v=spf1\""
 msgstr "SPFレコードは\"v=spf1\"で始まる必要があります。"
 
+#: services/dns_assistant.py:666
 msgid "SPF record should end with \"~all\" or \"-all\" for better security"
-msgstr ""
-"セキュリティを向上させるために、SPFレコードは\"~all\"または\"-all\"で終わるべ"
-"きです。"
+msgstr "セキュリティを向上させるために、SPFレコードは\"~all\"または\"-all\"で終わるべきです。"
 
+#: services/dns_assistant.py:671
 #, python-format
 msgid "SPF record has %(count)d DNS lookups (max 10 allowed)"
-msgstr ""
-"SPFレコードには %(count)d 件のDNSルックアップが含まれています（最大10件まで許"
-"可されています）"
+msgstr "SPFレコードには %(count)d 件のDNSルックアップが含まれています（最大10件まで許可されています）"
 
+#: services/dns_assistant.py:679
 #, python-format
-msgid ""
-"SPF record should include \"include:%(include)s\" for your email provider"
-msgstr ""
-"SPFレコードには、あなたのメールプロバイダ用に \"include:%(include)s\" を含め"
-"る必要があります"
+msgid "SPF record should include \"include:%(include)s\" for your email provider"
+msgstr "SPFレコードには、あなたのメールプロバイダ用に \"include:%(include)s\" を含める必要があります"
 
+#: services/dns_assistant.py:689
 msgid ""
-"SPF record does not include \"mx\" or \"a\" mechanisms required for built-in "
-"SMTP server"
-msgstr ""
-"内蔵SMTPサーバーに必要な\"mx\"または\"a\"メカニズムがSPFレコードに含まれてい"
-"ません。"
+"SPF record does not include \"mx\" or \"a\" mechanisms required for built-in"
+" SMTP server"
+msgstr "内蔵SMTPサーバーに必要な\"mx\"または\"a\"メカニズムがSPFレコードに含まれていません。"
 
+#: services/dns_assistant.py:716
 msgid "DKIM record must contain public key (p=)"
 msgstr "DKIMレコードには公開鍵(p=)が含まれなければなりません。"
 
+#: services/dns_assistant.py:720
 msgid "DKIM public key is empty (revoked)"
 msgstr "DKIM公開鍵は空です（無効化されています）。"
 
+#: services/dns_assistant.py:724
 msgid "DKIM record should specify version (v=DKIM1)"
 msgstr "DKIMレコードはバージョン(v=DKIM1)を指定する必要があります。"
 
+#: services/dns_assistant.py:748
 msgid "DMARC record must start with \"v=DMARC1\""
 msgstr "DMARCレコードは\"v=DMARC1\"で始まる必要があります。"
 
+#: services/dns_assistant.py:752
 msgid "DMARC record must have a policy (p=none/quarantine/reject)"
 msgstr "DMARCレコードにはポリシー(p=none/quarantine/reject)が必要です。"
 
+#: services/dns_assistant.py:756
 msgid "DMARC record should include aggregate report address (rua=)"
 msgstr "DMARCレコードには集約レポートのアドレス(rua=)を含める必要があります。"
 
+#: services/dns_assistant.py:762
 msgid ""
 "DMARC policy is set to \"none\" - consider using \"quarantine\" or "
 "\"reject\" for better security"
 msgstr ""
-"DMARCポリシーは\"none\"に設定されています。セキュリティを向上させるために"
-"\"quarantine\"または\"reject\"を使用することを検討してください。"
+"DMARCポリシーは\"none\"に設定されています。セキュリティを向上させるために\"quarantine\"または\"reject\"を使用することを検討してください。"
 
+#: services/dns_assistant.py:776
 msgid ""
 "DMARC has strict SPF alignment (aspf=s) - this may break multi-provider "
 "email. Use aspf=r for relaxed alignment"
 msgstr ""
-"DMARCでSPFのアライメントが厳密（aspf=s）です。これにより、複数プロバイダの"
-"メールが破損する可能性があります。アライメントを緩和する場合はaspf=rを使用し"
-"てください。"
+"DMARCでSPFのアライメントが厳密（aspf=s）です。これにより、複数プロバイダのメールが破損する可能性があります。アライメントを緩和する場合はaspf=rを使用してください。"
 
+#: services/dns_assistant.py:782
 msgid ""
-"DMARC missing SPF alignment setting (aspf) - defaults to relaxed, but aspf=r "
-"recommended for clarity"
+"DMARC missing SPF alignment setting (aspf) - defaults to relaxed, but aspf=r"
+" recommended for clarity"
 msgstr ""
-"DMARCにはSPFのアライメント設定（aspf）が欠落しています。デフォルトはrelaxedで"
-"すが、明確さのためaspf=rが推奨されます"
+"DMARCにはSPFのアライメント設定（aspf）が欠落しています。デフォルトはrelaxedですが、明確さのためaspf=rが推奨されます"
 
+#: services/dns_assistant.py:789
 msgid ""
 "DMARC has strict DKIM alignment (adkim=s) - this may break multi-provider "
 "email. Use adkim=r for relaxed alignment"
 msgstr ""
-"DMARCでDKIMのアライメントが厳密（adkim=s）です。これにより、複数プロバイダの"
-"メールが破損する可能性があります。アライメントを緩和する場合はadkim=rを使用し"
-"てください。"
+"DMARCでDKIMのアライメントが厳密（adkim=s）です。これにより、複数プロバイダのメールが破損する可能性があります。アライメントを緩和する場合はadkim=rを使用してください。"
 
+#: services/dns_assistant.py:795
 msgid ""
 "DMARC missing DKIM alignment setting (adkim) - defaults to relaxed, but "
 "adkim=r recommended for clarity"
 msgstr ""
-"DMARCのDKIMアライメント設定(adkim)が欠落しています。デフォルトはrelaxedです"
-"が、明確さのためadkim=rを推奨します"
+"DMARCのDKIMアライメント設定(adkim)が欠落しています。デフォルトはrelaxedですが、明確さのためadkim=rを推奨します"
 
+#: services/dns_assistant.py:802
 #, python-format
 msgid ""
 "Consider adding failure report address (ruf=mailto:postmaster@%(domain)s)"
-msgstr ""
-"失敗報告のメールアドレスを追加することを検討してください (ruf=mailto:"
-"postmaster@%(domain)s)"
+msgstr "失敗報告のメールアドレスを追加することを検討してください (ruf=mailto:postmaster@%(domain)s)"
 
+#: services/dns_assistant.py:807
 msgid "Consider adding failure reporting options (fo=1) for detailed reports"
-msgstr ""
-"詳細なレポートのため、失敗レポートオプション（fo=1）の追加を検討してくださ"
-"い。"
+msgstr "詳細なレポートのため、失敗レポートオプション（fo=1）の追加を検討してください。"
 
+#: services/dns_assistant.py:833
 msgid "Required DNS records missing or invalid"
 msgstr "必要なDNSレコードが欠損または無効です。"
 
+#: services/dns_assistant.py:838 services/dns_assistant.py:841
 msgid "All DNS records configured correctly"
 msgstr "すべてのDNSレコードが正しく設定されています"
 
+#: services/dns_assistant.py:845
 msgid "SPF and DKIM configured, DMARC needs attention"
 msgstr "SPF および DKIM は設定されていますが、DMARC の設定に注意が必要です。"
 
+#: services/dns_assistant.py:850
 msgid "SPF and DKIM configured, DMARC recommended"
 msgstr "SPFとDKIMが設定されていますが、DMARCの使用が推奨されます。"
 
+#: services/dns_assistant.py:853
 msgid "Some DNS records have warnings"
 msgstr "一部のDNSレコードに警告があります"
 
+#: templates/admin/email_system/emailaccount/change_form.html:4
+#: templates/admin/email_system/emailaccount/change_form.html:22
 msgid "Edit Email Account"
 msgstr "メールアカウントの編集"
 
+#: templates/admin/email_system/emailaccount/change_form.html:4
+#: templates/admin/email_system/emailaccount/change_form.html:24
 msgid "Add Email Account"
 msgstr "メールアカウントの追加"
 
+#: templates/admin/email_system/emailaccount/change_form.html:32
 msgid "Built-in SMTP"
 msgstr "ビルトインSMTP"
 
+#: templates/admin/email_system/emailaccount/change_form.html:37
+#: templates/admin/email_system/newsletter_delete_confirm.html:28
+#: templates/admin/email_system/newsletter_list.html:39
+#: templates/admin/email_system/newsletter_send.html:42
 msgid "Created"
 msgstr "作成済み"
 
+#: templates/admin/email_system/emailaccount/change_form.html:39
+#: templates/admin/email_system/newsletter_list.html:51
+#: templates/admin/email_system/template_delete_confirm.html:38
+#: templates/admin/email_system/template_list.html:226
+#: templates/email_system/admin/account_card.html:77
+#: templates/email_system/admin/emailaccount_changelist.html:82
 msgid "Active"
 msgstr "アクティブ"
 
+#: templates/admin/email_system/emailaccount/change_form.html:41
+#: templates/admin/email_system/newsletter_list.html:53
+#: templates/admin/email_system/template_delete_confirm.html:40
+#: templates/email_system/admin/account_card.html:81
+#: templates/email_system/admin/emailaccount_changelist.html:85
 msgid "Inactive"
 msgstr "非アクティブ"
 
+#: templates/admin/email_system/emailaccount/change_form.html:51
 msgid "Untested"
 msgstr "未テスト"
 
+#: templates/admin/email_system/emailaccount/change_form.html:57
+#: templates/admin/email_system/emailaccount/change_form.html:312
 msgid "Save and continue editing"
 msgstr "保存して編集を続ける"
 
+#: templates/admin/email_system/emailaccount/change_form.html:60
+#: templates/admin/email_system/emailaccount/change_form.html:311
 msgid "Save"
 msgstr "保存"
 
+#: templates/admin/email_system/emailaccount/change_form.html:73
 msgid "Please correct the errors below"
 msgstr "以下のエラーを修正してください"
 
+#: templates/admin/email_system/emailaccount/change_form.html:99
 msgid "Basic"
 msgstr "基本"
 
+#: templates/admin/email_system/emailaccount/change_form.html:103
 msgid "Settings"
 msgstr "設定"
 
+#: templates/admin/email_system/emailaccount/change_form.html:107
 msgid "Security"
 msgstr "セキュリティ"
 
+#: templates/admin/email_system/emailaccount/change_form.html:151
 msgid "Configure the default sender identity for outgoing emails."
 msgstr "送信メールのデフォルト送信者IDを設定してください。"
 
+#: templates/admin/email_system/emailaccount/change_form.html:204
 msgid ""
 "DKIM keys are used to digitally sign outgoing emails. Use the 'Regenerate "
 "DKIM Keys' action to create new keys."
 msgstr ""
-"DKIMキーは、送信メールをデジタル署名するために使用されます。新しいキーを作成"
-"するには、「DKIMキーの再生成」アクションを使用してください。"
+"DKIMキーは、送信メールをデジタル署名するために使用されます。新しいキーを作成するには、「DKIMキーの再生成」アクションを使用してください。"
 
+#: templates/admin/email_system/emailaccount/change_form.html:231
 msgid "Credentials are encrypted and managed through the provider setup."
 msgstr "資格情報は暗号化され、プロバイダーの設定を通じて管理されます。"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:4
+#: templates/admin/email_system/emailoutbox/change_list.html:18
 msgid "Email Outbox"
 msgstr "メール送信ボックス"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:20
 msgid "Track outgoing email delivery status"
 msgstr "送信メールの配信状況を追跡"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:25
 msgid "Overview"
 msgstr "概要"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:30
 msgid "Total Emails"
 msgstr "メール総数"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:54
 msgid "Filters"
 msgstr "フィルター"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:65
+#: templates/admin/email_system/template_list.html:82
+#: templates/admin/email_system/template_list.html:130
 msgid "Search"
 msgstr "検索"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:67
 msgid "Subject, to, or from email..."
 msgstr "件名、宛先、または送信元メール..."
 
+#: templates/admin/email_system/emailoutbox/change_list.html:76
 msgid "All Statuses"
 msgstr "すべてのステータス"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:88
+#: templates/admin/email_system/template_delete_confirm.html:27
 msgid "Template Type"
 msgstr "テンプレートタイプ"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:91
+#: templates/admin/email_system/template_list.html:99
 msgid "All Types"
 msgstr "すべてのタイプ"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:103
 msgid "Apply Filters"
 msgstr "フィルターを適用"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:106
 msgid "Clear All"
 msgstr "すべてクリア"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:114
 msgid "Emails"
 msgstr "メール"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:117
 msgid "entries"
 msgstr "件"
 
+#: templates/admin/email_system/emailoutbox/change_list.html:126
 msgid "Loading emails..."
 msgstr "メールを読み込み中..."
 
+#: templates/admin/email_system/newsletter_create.html:4
+#: templates/admin/email_system/newsletter_create.html:16
+#: templates/admin/email_system/newsletter_list.html:29
+#: templates/admin/email_system/newsletter_list.html:97
+#: views/newsletter.py:132
 msgid "Create Newsletter"
 msgstr "ニュースレターを作成"
 
+#: templates/admin/email_system/newsletter_create.html:4
+#: templates/admin/email_system/newsletter_delete_confirm.html:4
+#: templates/admin/email_system/newsletter_list.html:4
+#: templates/admin/email_system/newsletter_send.html:4
+#: templates/admin/email_system/template_delete_confirm.html:4
+#: templates/admin/email_system/template_edit.html:4
+#: templates/admin/email_system/template_list.html:4
+#: templates/admin/email_system/template_preview.html:4
+#: templates/admin/email_system/translation_manager.html:4
+#: templates/admin/email_system/wizard/base.html:4
+#: templates/email_system/admin/emailaccount_changelist.html:4
+#: templates/email_system/oauth_setup.html:4
+#: templates/email_system/providers/browse.html:4
 msgid "Site Admin"
 msgstr "サイト管理者"
 
+#: templates/admin/email_system/newsletter_create.html:19
 msgid "Create a new newsletter template to send to your customers"
-msgstr ""
-"顧客にニュースレターを送信するための新しいテンプレートを作成してください。"
+msgstr "顧客にニュースレターを送信するための新しいテンプレートを作成してください。"
 
+#: templates/admin/email_system/newsletter_create.html:29
+#: templates/admin/email_system/template_edit.html:111
+#: templates/admin/email_system/template_preview.html:170
 msgid "Subject Line"
 msgstr "件名"
 
+#: templates/admin/email_system/newsletter_create.html:31
+#: views/newsletter.py:93
 msgid "New Newsletter"
 msgstr "新規ニュースレター"
 
+#: templates/admin/email_system/newsletter_create.html:37
 msgid "Enter newsletter subject..."
 msgstr "ニュースレターの件名を入力..."
 
+#: templates/admin/email_system/newsletter_create.html:41
 msgid "This will appear in your recipients' inbox"
 msgstr "これは、受信者のお届け物（インボックス）に表示されます。"
 
+#: templates/admin/email_system/newsletter_create.html:47
+#: templates/admin/email_system/template_delete_confirm.html:31
+#: templates/admin/email_system/template_preview.html:24
 msgid "Language"
 msgstr "言語"
 
+#: templates/admin/email_system/newsletter_create.html:57
 msgid ""
-"Select the language for this newsletter. Only languages you have enabled for "
-"your store are shown."
-msgstr ""
-"このニュースレターの言語を選択してください。ストアで有効にした言語のみが表示"
-"されます。"
+"Select the language for this newsletter. Only languages you have enabled for"
+" your store are shown."
+msgstr "このニュースレターの言語を選択してください。ストアで有効にした言語のみが表示されます。"
 
+#: templates/admin/email_system/newsletter_create.html:64
 msgid "Create & Edit Design"
 msgstr "デザインの作成と編集"
 
+#: templates/admin/email_system/newsletter_create.html:67
+#: templates/admin/email_system/newsletter_delete_confirm.html:57
+#: templates/admin/email_system/newsletter_send.html:160
+#: templates/admin/email_system/template_delete_confirm.html:73
+#: templates/admin/email_system/template_list.html:337
+#: templates/admin/email_system/template_preview.html:144
+#: templates/admin/email_system/template_preview.html:212
+#: templates/admin/email_system/translation_manager.html:226
+#: templates/admin/email_system/wizard/step1_select.html:106
+#: templates/email_system/oauth_setup.html:89
 msgid "Cancel"
 msgstr "キャンセル"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:4
+#: templates/admin/email_system/newsletter_delete_confirm.html:16
+#: templates/admin/email_system/newsletter_delete_confirm.html:61
+#: views/newsletter.py:284
 msgid "Delete Newsletter"
 msgstr "ニュースレターの削除"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:19
 msgid "Confirm newsletter deletion"
 msgstr "ニュースレターの削除を確認"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:36
 msgid "Are you sure you want to delete this newsletter?"
 msgstr "このニュースレターを削除してもよろしいですか？"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:38
 msgid "This action will:"
 msgstr "この操作により:"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:41
 msgid "Soft delete the newsletter template (can be restored from admin)"
-msgstr ""
-"ニュースレターのテンプレートを柔軟に削除します（管理者から復元可能です）。"
+msgstr "ニュースレターのテンプレートを柔軟に削除します（管理者から復元可能です）。"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:42
 msgid "Hide it from the newsletter list"
 msgstr "ニュースレターのリストから非表示にします。"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:43
 msgid "Prevent it from being used for future sends"
 msgstr "今後の送信に使用されないようにします。"
 
+#: templates/admin/email_system/newsletter_delete_confirm.html:47
 msgid ""
 "Past send history and analytics will be preserved. This newsletter can be "
 "restored by an administrator if needed."
-msgstr ""
-"過去の送信履歴と分析データは保持されます。必要に応じて、管理者によってこの"
-"ニュースレターを復元できます。"
+msgstr "過去の送信履歴と分析データは保持されます。必要に応じて、管理者によってこのニュースレターを復元できます。"
 
+#: templates/admin/email_system/newsletter_list.html:4
+#: templates/admin/email_system/newsletter_list.html:16 views/newsletter.py:69
 msgid "Newsletters"
 msgstr "ニュースレター"
 
+#: templates/admin/email_system/newsletter_list.html:19
 msgid "Create and send newsletters to your customers"
 msgstr "顧客にニュースレターを作成して送信してください。"
 
+#: templates/admin/email_system/newsletter_list.html:25
 msgid "Search newsletters..."
 msgstr "ニュースレターを検索..."
 
+#: templates/admin/email_system/newsletter_list.html:37
+#: templates/admin/email_system/template_preview.html:93
 msgid "Subject"
 msgstr "件名"
 
+#: templates/admin/email_system/newsletter_list.html:38
 msgid "Statistics"
 msgstr "統計"
 
+#: templates/admin/email_system/newsletter_list.html:61
 msgid "sent"
 msgstr "送信済み"
 
+#: templates/admin/email_system/newsletter_list.html:73
+#: templates/admin/email_system/template_list.html:287
+#: templates/email_system/admin/account_card.html:98
 msgid "Edit"
 msgstr "編集"
 
+#: templates/admin/email_system/newsletter_list.html:76
+#: templates/admin/email_system/template_preview.html:147
 msgid "Send"
 msgstr "送信"
 
+#: templates/admin/email_system/newsletter_list.html:79
 msgid "Duplicate"
 msgstr "複製"
 
+#: templates/admin/email_system/newsletter_list.html:82
+#: templates/admin/email_system/template_list.html:309
+#: templates/email_system/admin/account_card.html:118
 msgid "Delete"
 msgstr "削除"
 
+#: templates/admin/email_system/newsletter_list.html:93
 msgid "No newsletters yet"
 msgstr "ニュースレターはまだありません"
 
+#: templates/admin/email_system/newsletter_list.html:94
 msgid "Create your first newsletter to start engaging with your customers"
-msgstr ""
-"顧客と積極的に交流を開始するために、最初のニュースレターを作成してください。"
+msgstr "顧客と積極的に交流を開始するために、最初のニュースレターを作成してください。"
 
+#: templates/admin/email_system/newsletter_send.html:4
+#: templates/admin/email_system/newsletter_send.html:29
+#: templates/admin/email_system/newsletter_send.html:156
+#: views/newsletter.py:243
 msgid "Send Newsletter"
 msgstr "ニュースレターを送信"
 
+#: templates/admin/email_system/newsletter_send.html:16
 msgid "Send newsletter to "
 msgstr "ニュースレターを送信先に"
 
+#: templates/admin/email_system/newsletter_send.html:17
 msgid " recipients?"
 msgstr "送信先を選択しますか？"
 
+#: templates/admin/email_system/newsletter_send.html:32
 msgid "Select recipients and send your newsletter"
 msgstr "受信者を選択してニュースレターを送信してください。"
 
+#: templates/admin/email_system/newsletter_send.html:38
 msgid "Newsletter to Send:"
 msgstr "送信するニュースレター:"
 
+#: templates/admin/email_system/newsletter_send.html:52
 msgid "Recipients Selected"
 msgstr "選択された送信先"
 
+#: templates/admin/email_system/newsletter_send.html:56
 msgid "Select Recipients"
 msgstr "送信先を選択"
 
+#: templates/admin/email_system/newsletter_send.html:60
 msgid "Customer Segments"
 msgstr "顧客セグメント"
 
+#: templates/admin/email_system/newsletter_send.html:79
 msgid ""
 "No customer segments available. Newsletter will be sent to all customers."
-msgstr ""
-"顧客セグメントが利用できません。ニュースレターはすべての顧客に送信されます。"
+msgstr "顧客セグメントが利用できません。ニュースレターはすべての顧客に送信されます。"
 
+#: templates/admin/email_system/newsletter_send.html:85
 msgid "Customer Status"
 msgstr "顧客ステータス"
 
+#: templates/admin/email_system/newsletter_send.html:96
 msgid "All Customers"
 msgstr "すべての顧客"
 
+#: templates/admin/email_system/newsletter_send.html:107
 msgid "Customers with Orders"
 msgstr "注文がある顧客"
 
+#: templates/admin/email_system/newsletter_send.html:118
 msgid "Customers without Orders"
 msgstr "注文がない顧客"
 
+#: templates/admin/email_system/newsletter_send.html:127
 msgid "Or Upload Custom List"
 msgstr "またはカスタムリストをアップロード"
 
+#: templates/admin/email_system/newsletter_send.html:131
 msgid "CSV File"
 msgstr "CSVファイル"
 
+#: templates/admin/email_system/newsletter_send.html:140
 msgid ""
 "Upload a CSV file with custom recipient list. This will override segment "
 "filters."
-msgstr ""
-"カスタムな受信者リストを含むCSVファイルをアップロードしてください。これにより"
-"セグメントフィルタが上書きされます。"
+msgstr "カスタムな受信者リストを含むCSVファイルをアップロードしてください。これによりセグメントフィルタが上書きされます。"
 
+#: templates/admin/email_system/newsletter_send.html:144
 msgid "CSV Format:"
 msgstr "CSV形式:"
 
+#: templates/admin/email_system/newsletter_send.html:145
 msgid "Required columns:"
 msgstr "必須の列:"
 
+#: templates/admin/email_system/newsletter_send.html:146
 msgid "Optional columns:"
 msgstr "任意の列:"
 
+#: templates/admin/email_system/newsletter_send.html:147
 msgid "Example:"
 msgstr "例:"
 
+#: templates/admin/email_system/newsletter_send.html:167
 msgid ""
 "Newsletters will be queued for sending and processed by the email system. "
 "You can monitor delivery status in the Email Outbox. Orders placed within 7 "
 "days of opening this newsletter will be attributed for ROI tracking."
 msgstr ""
-"ニュースレターは送信キューに並べられ、メールシステムによって処理されます。配"
-"信状況は「メール出力」で確認できます。このニュースレターを開いた日から7日以内"
-"に注文されたものはROIの追跡に帰属されます。"
+"ニュースレターは送信キューに並べられ、メールシステムによって処理されます。配信状況は「メール出力」で確認できます。このニュースレターを開いた日から7日以内に注文されたものはROIの追跡に帰属されます。"
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:64
 msgid "retries"
 msgstr "再試行"
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:71
 msgid "View"
 msgstr "表示"
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:84
 msgid "No emails found."
 msgstr "メールが見つかりません。"
 
+#: templates/admin/email_system/partials/emailoutbox_cards.html:86
 msgid "Try adjusting your filters or search terms."
 msgstr "フィルタや検索語を調整してみてください。"
 
+#: templates/admin/email_system/template_delete_confirm.html:4
+#: templates/admin/email_system/template_delete_confirm.html:19
 msgid "Confirm Template Deletion"
 msgstr "テンプレートの削除を確認"
 
+#: templates/admin/email_system/template_delete_confirm.html:21
 msgid "Are you sure you want to delete this template?"
 msgstr "このテンプレートを削除してもよろしいですか？"
 
+#: templates/admin/email_system/template_delete_confirm.html:45
 msgid "Translations"
 msgstr "翻訳"
 
+#: templates/admin/email_system/template_delete_confirm.html:65
 msgid "This template can be safely deleted without affecting email sending."
 msgstr "このテンプレートを削除しても、メールの送信に影響はありません。"
 
+#: templates/admin/email_system/template_delete_confirm.html:79
+#: templates/admin/email_system/template_list.html:343
 msgid "Delete Template"
 msgstr "テンプレートを削除"
 
+#: templates/admin/email_system/template_delete_confirm.html:86
 msgid ""
 "Tip: Consider deactivating this template instead of deleting it to preserve "
 "it for future use."
-msgstr ""
-"ヒント: 今後利用できるようにするために、このテンプレートを削除する代わりに無"
-"効にしておくことを検討してください。"
+msgstr "ヒント: 今後利用できるようにするために、このテンプレートを削除する代わりに無効にしておくことを検討してください。"
 
+#: templates/admin/email_system/template_edit.html:4
 msgid "Edit Email Template"
 msgstr "メールテンプレートの編集"
 
+#: templates/admin/email_system/template_edit.html:21
+#: templates/admin/email_system/translation_manager.html:27
 msgid "Back to Templates"
 msgstr "テンプレートに戻る"
 
+#: templates/admin/email_system/template_edit.html:29
 msgid "Version"
 msgstr "バージョン"
 
+#: templates/admin/email_system/template_edit.html:34
 msgid "Editing"
 msgstr "編集中"
 
+#: templates/admin/email_system/template_edit.html:36
 msgid "Translation"
 msgstr "翻訳"
 
+#: templates/admin/email_system/template_edit.html:38
 msgid "Base Template"
 msgstr "ベーステンプレート"
 
+#: templates/admin/email_system/template_edit.html:47
 msgid ""
 "This is a system template (read-only). Clone it to create a customizable "
 "version."
-msgstr ""
-"これはシステムテンプレート（読み取り専用）です。カスタマイズ可能なバージョン"
-"を作成するには、これを複製してください。"
+msgstr "これはシステムテンプレート（読み取り専用）です。カスタマイズ可能なバージョンを作成するには、これを複製してください。"
 
+#: templates/admin/email_system/template_edit.html:53
 msgid "Refresh Preview"
 msgstr "プレビューを再読み込み"
 
+#: templates/admin/email_system/template_edit.html:57
 msgid "Full Preview"
 msgstr "フルプレビュー"
 
+#: templates/admin/email_system/template_edit.html:62
 msgid "Save Template"
 msgstr "テンプレートを保存"
 
+#: templates/admin/email_system/template_edit.html:69
 msgid "Clone to Edit"
 msgstr "編集用に複製"
 
+#: templates/admin/email_system/template_edit.html:84
 msgid "Code Editor"
 msgstr "コードエディタ"
 
+#: templates/admin/email_system/template_edit.html:86
+#: templates/admin/email_system/template_edit.html:205
 msgid "Expand/Collapse"
 msgstr "展開/折りたたみ"
 
+#: templates/admin/email_system/template_edit.html:95
 msgid "MJML Template"
 msgstr "MJMLテンプレート"
 
+#: templates/admin/email_system/template_edit.html:99
 msgid "Plain Text"
 msgstr "プレインテキスト"
 
+#: templates/admin/email_system/template_edit.html:103
 msgid "Variables"
 msgstr "変数"
 
+#: templates/admin/email_system/template_edit.html:117
 msgid "Email subject line (can use variables like {{ order_number }})"
 msgstr "メールの件名（{{ order_number }}などの変数を使用できます）"
 
+#: templates/admin/email_system/template_edit.html:127
 msgid "MJML Code"
 msgstr "MJMLコード"
 
+#: templates/admin/email_system/template_edit.html:130
 msgid "Format Code"
 msgstr "コードの整形"
 
+#: templates/admin/email_system/template_edit.html:133
 msgid "Validate MJML"
 msgstr "MJMLの検証"
 
+#: templates/admin/email_system/template_edit.html:146
+#: templates/admin/email_system/template_preview.html:113
 msgid "Plain Text Version"
 msgstr "プレインテキストバージョン"
 
+#: templates/admin/email_system/template_edit.html:157
 msgid "Available Variables"
 msgstr "利用可能な変数"
 
+#: templates/admin/email_system/template_edit.html:160
 msgid ""
 "Click a variable to copy it to your clipboard. Use these in your template "
 "with double curly braces:"
-msgstr ""
-"変数をクリックしてクリップボードにコピーしてください。テンプレートで使用する"
-"場合は、二重の波か括弧で囲んでください:"
+msgstr "変数をクリックしてクリップボードにコピーしてください。テンプレートで使用する場合は、二重の波か括弧で囲んでください:"
 
+#: templates/admin/email_system/template_edit.html:179
 msgid "Template Syntax Help"
 msgstr "テンプレート構文のヘルプ"
 
+#: templates/admin/email_system/template_edit.html:181
 msgid "Variables:"
 msgstr "変数:"
 
+#: templates/admin/email_system/template_edit.html:185
 msgid "Conditions:"
 msgstr "条件:"
 
+#: templates/admin/email_system/template_edit.html:189
 msgid "Loops:"
 msgstr "ループ:"
 
+#: templates/admin/email_system/template_edit.html:203
 msgid "Live Preview"
 msgstr "ライブプレビュー"
 
+#: templates/admin/email_system/template_edit.html:212
 msgid "Desktop View"
 msgstr "デスクトップビュー"
 
+#: templates/admin/email_system/template_edit.html:215
 msgid "Mobile View"
 msgstr "モバイルビュー"
 
+#: templates/admin/email_system/template_edit.html:223
 msgid "Loading preview..."
 msgstr "プレビューを読み込み中..."
 
+#: templates/admin/email_system/template_edit.html:229
 msgid "Template Preview"
 msgstr "テンプレートプレビュー"
 
+#: templates/admin/email_system/template_edit.html:240
 msgid "Saved"
 msgstr "保存済み"
 
+#: templates/admin/email_system/template_list.html:4
+#: templates/admin/email_system/template_list.html:17
+#: templates/admin/email_system/translation_manager.html:47
+#: views/template_management.py:295
 msgid "Email Templates"
 msgstr "メールテンプレート"
 
+#: templates/admin/email_system/template_list.html:20
 msgid ""
 "Manage email templates for your store. Clone system templates to customize "
 "them."
-msgstr ""
-"ストア用のメールテンプレートを管理します。システムテンプレートを複製してカス"
-"タマイズできます。"
+msgstr "ストア用のメールテンプレートを管理します。システムテンプレートを複製してカスタマイズできます。"
 
+#: templates/admin/email_system/template_list.html:30
 msgid "Total Templates"
 msgstr "全テンプレート"
 
+#: templates/admin/email_system/template_list.html:36
 msgid "System Templates"
 msgstr "システムテンプレート"
 
+#: templates/admin/email_system/template_list.html:42
 msgid "Custom Templates"
 msgstr "カスタムテンプレート"
 
+#: templates/admin/email_system/template_list.html:48
 msgid "Active Templates"
 msgstr "アクティブなテンプレート"
 
+#: templates/admin/email_system/template_list.html:58
 msgid "Quick Actions"
 msgstr "クイックアクション"
 
+#: templates/admin/email_system/template_list.html:65
+#: templates/admin/email_system/template_list.html:199
 msgid "Create Template"
 msgstr "テンプレートを作成"
 
+#: templates/admin/email_system/template_list.html:66
 msgid "Create a new custom email template"
 msgstr "新しいカスタムメールテンプレートを作成"
 
+#: templates/admin/email_system/template_list.html:68
 msgid "Create"
 msgstr "作成"
 
+#: templates/admin/email_system/template_list.html:88
 msgid "Search templates..."
 msgstr "テンプレートを検索..."
 
+#: templates/admin/email_system/template_list.html:114
 msgid "All Templates"
 msgstr "すべてのテンプレート"
 
+#: templates/admin/email_system/template_list.html:116
+#: templates/admin/email_system/template_list.html:231
 msgid "System"
 msgstr "システム"
 
+#: templates/admin/email_system/template_list.html:119
+#: templates/admin/email_system/template_list.html:235
 msgid "Custom"
 msgstr "カスタム"
 
+#: templates/admin/email_system/template_list.html:122
 msgid "Active Only"
 msgstr "アクティブのみ"
 
+#: templates/admin/email_system/template_list.html:136
 msgid "Clear"
 msgstr "クリア"
 
+#: templates/admin/email_system/template_list.html:151
 msgid "Show All Admin Languages"
 msgstr "すべての管理者用言語を表示"
 
+#: templates/admin/email_system/template_list.html:163
 msgid "Show Inactive Templates"
 msgstr "非アクティブなテンプレートを表示"
 
+#: templates/admin/email_system/template_list.html:177
 msgid "Recycle Bin"
 msgstr "ごみ箱"
 
+#: templates/admin/email_system/template_list.html:195
 msgid "No templates found"
 msgstr "テンプレートが見つかりません"
 
+#: templates/admin/email_system/template_list.html:196
 msgid "Try adjusting your filters or create a new template."
 msgstr "フィルタを調整するか、新しいテンプレートを作成してください。"
 
+#: templates/admin/email_system/template_list.html:265
 msgid "Restore from Recycle Bin"
 msgstr "ごみ箱から復元"
 
+#: templates/admin/email_system/template_list.html:267
 msgid "Restore"
 msgstr "復元"
 
+#: templates/admin/email_system/template_list.html:272
 msgid "Deleted"
 msgstr "削除済み"
 
+#: templates/admin/email_system/template_list.html:272
+#: templates/email_system/admin/account_card.html:46
 msgid "ago"
 msgstr "前"
 
+#: templates/admin/email_system/template_list.html:274
 msgid "by"
 msgstr "による"
 
+#: templates/admin/email_system/template_list.html:293
 msgid "Clone"
 msgstr "複製"
 
+#: templates/admin/email_system/template_list.html:300
 msgid "Deactivate"
 msgstr "非アクティブ化"
 
+#: templates/admin/email_system/template_list.html:300
 msgid "Activate"
 msgstr "アクティベート"
 
+#: templates/admin/email_system/template_list.html:329
 msgid "Confirm Deletion"
 msgstr "削除の確認"
 
+#: templates/admin/email_system/template_preview.html:4
+#: templates/admin/email_system/template_preview.html:18
 msgid "Email Template Preview"
 msgstr "メールテンプレートのプレビュー"
 
+#: templates/admin/email_system/template_preview.html:35
+#: templates/admin/email_system/template_preview.html:159
 msgid "Edit Translation"
 msgstr "翻訳の編集"
 
+#: templates/admin/email_system/template_preview.html:41
+#: templates/admin/email_system/template_preview.html:130
+#: templates/admin/email_system/wizard/step5_test.html:6
 msgid "Send Test Email"
 msgstr "テストメールの送信"
 
+#: templates/admin/email_system/template_preview.html:45
 msgid "Refresh"
 msgstr "リフレッシュ"
 
+#: templates/admin/email_system/template_preview.html:64
 msgid "Translation Not Available"
 msgstr "翻訳が利用できません"
 
+#: templates/admin/email_system/template_preview.html:66
 #, python-format
 msgid ""
 "\n"
-"                No translation exists for this template yet. The "
-"%(lang_name)s (base) template will be used until a translation is created.\n"
+"                No translation exists for this template yet. The %(lang_name)s (base) template will be used until a translation is created.\n"
 "                "
 msgstr ""
 "\n"
-"                このテンプレートの翻訳はまだ存在していません。翻訳が作成され"
-"るまで、%(lang_name)s（ベース）テンプレートが使用されます。\n"
+"                このテンプレートの翻訳はまだ存在していません。翻訳が作成されるまで、%(lang_name)s（ベース）テンプレートが使用されます。\n"
 "                "
 
+#: templates/admin/email_system/template_preview.html:71
 msgid "Create Translation"
 msgstr "翻訳の作成"
 
+#: templates/admin/email_system/template_preview.html:83
 msgid "Viewing Translation:"
 msgstr "表示中の翻訳:"
 
+#: templates/admin/email_system/template_preview.html:101
+#: templates/admin/email_system/template_preview.html:106
 msgid "HTML Preview"
 msgstr "HTML プレビュー"
 
+#: templates/admin/email_system/template_preview.html:134
 msgid "Recipient Email Address"
 msgstr "受信者メールアドレス"
 
+#: templates/admin/email_system/template_preview.html:176
 msgid "Translated subject line"
 msgstr "翻訳された件名"
 
+#: templates/admin/email_system/template_preview.html:184
 msgid "HTML Content"
 msgstr "HTML コンテンツ"
 
+#: templates/admin/email_system/template_preview.html:187
+#: templates/admin/email_system/template_preview.html:201
 msgid "Copy from Base"
 msgstr "ベースからコピー"
 
+#: templates/admin/email_system/template_preview.html:198
 msgid "Plain Text Content"
 msgstr "プレーンテキスト コンテンツ"
 
+#: templates/admin/email_system/template_preview.html:215
 msgid "Save Translation"
 msgstr "翻訳の保存"
 
+#: templates/admin/email_system/translation_manager.html:4
+#: templates/admin/email_system/translation_manager.html:18
+#: views/template_management.py:690
 msgid "Email Template Translations"
 msgstr "メールテンプレートの翻訳"
 
+#: templates/admin/email_system/translation_manager.html:21
 msgid ""
-"Manage translations for email templates. Use AI translation to automatically "
-"translate templates into multiple languages."
-msgstr ""
-"メールテンプレートの翻訳を管理します。AI翻訳を使用して、テンプレートを複数の"
-"言語に自動翻訳できます。"
+"Manage translations for email templates. Use AI translation to automatically"
+" translate templates into multiple languages."
+msgstr "メールテンプレートの翻訳を管理します。AI翻訳を使用して、テンプレートを複数の言語に自動翻訳できます。"
 
+#: templates/admin/email_system/translation_manager.html:33
 msgid "Translate All Missing"
 msgstr "すべての欠損を翻訳"
 
+#: templates/admin/email_system/translation_manager.html:56
 msgid "Languages"
 msgstr "言語"
 
+#: templates/admin/email_system/translation_manager.html:65
 msgid "Completed"
 msgstr "完了"
 
+#: templates/admin/email_system/translation_manager.html:74
 msgid "Missing"
 msgstr "不足"
 
+#: templates/admin/email_system/translation_manager.html:84
 msgid "Overall Translation Coverage"
 msgstr "全体の翻訳カバレッジ"
 
+#: templates/admin/email_system/translation_manager.html:92
 msgid "of"
 msgstr "of"
 
+#: templates/admin/email_system/translation_manager.html:92
 msgid "translations complete"
 msgstr "翻訳完了"
 
+#: templates/admin/email_system/translation_manager.html:101
 msgid "Translation Matrix"
 msgstr "翻訳マトリクス"
 
+#: templates/admin/email_system/translation_manager.html:104
 msgid ""
 "Green cells indicate completed translations. Click 'Translate' to create AI "
 "translation jobs for missing languages."
-msgstr ""
-"緑のセルは翻訳が完了していることを示しています。「翻訳」をクリックして、必要"
-"な言語のAI翻訳ジョブを作成してください。"
+msgstr "緑のセルは翻訳が完了していることを示しています。「翻訳」をクリックして、必要な言語のAI翻訳ジョブを作成してください。"
 
+#: templates/admin/email_system/translation_manager.html:112
 msgid "Template"
 msgstr "テンプレート"
 
+#: templates/admin/email_system/translation_manager.html:141
 msgid "Translation in progress"
 msgstr "翻訳中"
 
+#: templates/admin/email_system/translation_manager.html:141
 msgid "Translation queued"
 msgstr "翻訳キューに追加"
 
+#: templates/admin/email_system/translation_manager.html:144
 msgid "AI translation in progress"
 msgstr "AIによる翻訳中"
 
+#: templates/admin/email_system/translation_manager.html:146
 msgid "Translating"
 msgstr "翻訳しています"
 
+#: templates/admin/email_system/translation_manager.html:155
 msgid "Translation outdated - base template modified"
 msgstr "翻訳が古い - ベーステンプレートが変更されました"
 
+#: templates/admin/email_system/translation_manager.html:155
 msgid "Translated"
 msgstr "翻訳済み"
 
+#: templates/admin/email_system/translation_manager.html:158
 msgid "Verified"
 msgstr "確認済み"
 
+#: templates/admin/email_system/translation_manager.html:162
 msgid "Base template has been modified"
 msgstr "ベーステンプレートが変更されました"
 
+#: templates/admin/email_system/translation_manager.html:163
 msgid "Outdated"
 msgstr "古くなった"
 
+#: templates/admin/email_system/translation_manager.html:168
 msgid "Not translated"
 msgstr "未翻訳"
 
+#: templates/admin/email_system/translation_manager.html:183
+#: templates/admin/email_system/translation_manager.html:203
 msgid "Translate Template"
 msgstr "テンプレートを翻訳"
 
+#: templates/admin/email_system/translation_manager.html:186
+#: templates/admin/email_system/translation_manager.html:230
 msgid "Translate"
 msgstr "翻訳"
 
+#: templates/admin/email_system/translation_manager.html:210
 msgid ""
 "Select languages to translate. Existing translations will be updated with "
 "the current template."
-msgstr ""
-"翻訳する言語を選択してください。既存の翻訳は、現在のテンプレートで更新されま"
-"す。"
+msgstr "翻訳する言語を選択してください。既存の翻訳は、現在のテンプレートで更新されます。"
 
+#: templates/admin/email_system/translation_manager.html:221
 msgid ""
 "Translation jobs will be created and processed automatically by the AI "
 "translation service."
 msgstr "翻訳ジョブは、AI翻訳サービスによって自動的に作成および処理されます。"
 
+#: templates/admin/email_system/wizard/base.html:4
+#: templates/admin/email_system/wizard/base.html:17
 msgid "Email Provider Setup Wizard"
 msgstr "メールプロバイダ設定ウィザード"
 
+#: templates/admin/email_system/wizard/base.html:18
 msgid "Follow these steps to connect your email provider"
 msgstr "メールプロバイダーを接続するには、以下の手順に従ってください"
 
+#: templates/admin/email_system/wizard/base.html:27
 msgid "Select"
 msgstr "選択"
 
+#: templates/admin/email_system/wizard/base.html:36
+#: templates/email_system/providers/browse.html:268
+#: templates/email_system/providers/browse.html:273
 msgid "Configure"
 msgstr "設定"
 
+#: templates/admin/email_system/wizard/base.html:45
 msgid "Sender"
 msgstr "送信者"
 
+#: templates/admin/email_system/wizard/base.html:54
 msgid "DNS"
 msgstr "DNS"
 
+#: templates/admin/email_system/wizard/base.html:63
 msgid "Test"
 msgstr "テスト"
 
+#: templates/admin/email_system/wizard/base.html:70
 msgid "Complete"
 msgstr "完了"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:14
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:50
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:90
 msgid "Add MX Record"
 msgstr "MXレコードを追加"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:15
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:51
 msgid "select"
 msgstr "選択"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:15
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:51
 msgid "type:"
 msgstr "タイプ:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:17
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:28
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:29
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:30
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:53
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:93
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:139
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:140
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:141
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:176
 msgid "Type:"
 msgstr "タイプ:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:18
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:28
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:29
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:30
 msgid "Name:"
 msgstr "名前:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:19
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:55
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:95
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:178
 msgid "Priority:"
 msgstr "優先度:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:20
 msgid "Mail server:"
 msgstr "メールサーバ:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:22
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:58
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:98
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:133
 msgid "This directs incoming email to your server"
 msgstr "これは、入ってくるメールをあなたのサーバーに送信します"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:26
 msgid "and add each TXT record from Step 2 (Verify DNS Records) below:"
-msgstr ""
-"以下に示されているステップ2（DNSレコードの確認）から各TXTレコードを追加してく"
-"ださい:"
+msgstr "以下に示されているステップ2（DNSレコードの確認）から各TXTレコードを追加してください:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:28
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:29
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:30
 msgid "Content:"
 msgstr "コンテンツ:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:54
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:64
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:65
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:66
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:94
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:104
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:105
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:106
 msgid "Host:"
 msgstr "ホスト:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:56
 msgid "Points to:"
 msgstr "ポイント先:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:62
 msgid "record type. Copy values from Step 2 below:"
 msgstr "レコードタイプ。以下に示されているステップ2から値をコピーしてください:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:64
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:65
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:66
 msgid "TXT Value:"
 msgstr "TXT値:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:96
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:104
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:105
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:106
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:131
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:139
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:140
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:141
 msgid "Value:"
 msgstr "値:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:102
 msgid "Copy values from Step 2 below:"
 msgstr "以下に示されているステップ2から値をコピーしてください:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:126
 msgid "Create MX Record"
 msgstr "MXレコードを作成"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:129
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:139
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:140
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:141
 msgid "Record name:"
 msgstr "レコード名:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:130
 msgid "Record type:"
 msgstr "レコードタイプ:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:137
 msgid "and add. Copy values from Step 2 below:"
 msgstr "および追加。以下に示されているステップ2から値をコピーしてください:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:174
 msgid "Add MX Record:"
 msgstr "MXレコードを追加:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:177
 msgid "Name/Host:"
 msgstr "名前/ホスト:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:179
 msgid "Value/Points to:"
 msgstr "値/ポイント先:"
 
+#: templates/admin/email_system/wizard/dns_provider_tabs.html:182
 msgid "Add TXT records with the values shown in Step 2 below"
-msgstr ""
-"以下に示されているステップ2に表示されている値を使用してTXTレコードを追加して"
-"ください"
+msgstr "以下に示されているステップ2に表示されている値を使用してTXTレコードを追加してください"
 
+#: templates/admin/email_system/wizard/step1_select.html:6
 msgid "Select an Email Provider"
 msgstr "メールプロバイダを選択"
 
+#: templates/admin/email_system/wizard/step1_select.html:7
 msgid "Choose the service you want to use for sending transactional emails."
 msgstr "トランザクショナルメールの送信に使用したいサービスを選択してください。"
 
+#: templates/admin/email_system/wizard/step1_select.html:46
 msgid "OAuth"
 msgstr "OAuth"
 
+#: templates/admin/email_system/wizard/step1_select.html:50
 msgid "API Key"
 msgstr "APIキー"
 
+#: templates/admin/email_system/wizard/step1_select.html:56
+#: templates/email_system/providers/browse.html:213
 msgid "Attachments"
 msgstr "添付ファイル"
 
+#: templates/admin/email_system/wizard/step1_select.html:68
+#: templates/email_system/providers/browse.html:223
 msgid "Webhooks"
 msgstr "ウェブフック"
 
+#: templates/admin/email_system/wizard/step1_select.html:74
 msgid "Batch Send"
 msgstr "バッチ送信"
 
+#: templates/admin/email_system/wizard/step1_select.html:91
+#: templates/email_system/providers/browse.html:315
 msgid "No Providers Available"
 msgstr "利用可能なプロバイダがありません"
 
+#: templates/admin/email_system/wizard/step1_select.html:92
 msgid "No email provider components are currently installed."
 msgstr "現在、メールプロバイダーコンポーネントはインストールされていません。"
 
+#: templates/admin/email_system/wizard/step1_select.html:93
 msgid ""
 "Please download and install email provider components from the component "
 "registry."
-msgstr ""
-"コンポーネントレジストリからメールプロバイダーコンポーネントをダウンロードし"
-"てインストールしてください。"
+msgstr "コンポーネントレジストリからメールプロバイダーコンポーネントをダウンロードしてインストールしてください。"
 
+#: templates/admin/email_system/wizard/step1_select.html:95
 msgid "Browse Components"
 msgstr "コンポーネントを閲覧"
 
+#: templates/admin/email_system/wizard/step1_select.html:109
+#: templates/admin/email_system/wizard/step2_configure.html:145
+#: templates/admin/email_system/wizard/step3_sender.html:53
+#: templates/admin/email_system/wizard/step4_dns.html:177
 msgid "Next"
 msgstr "次へ"
 
+#: templates/admin/email_system/wizard/step1_select.html:118
 msgid "Using built-in SMTP server (only provider available)"
 msgstr "組み込みのSMTPサーバーを使用（利用可能なプロバイダーのみ）"
 
+#: templates/admin/email_system/wizard/step2_configure.html:6
 msgid "Configure Credentials"
 msgstr "資格情報を設定"
 
+#: templates/admin/email_system/wizard/step2_configure.html:7
 msgid "Enter the credentials for"
 msgstr "の資格情報を入力"
 
+#: templates/admin/email_system/wizard/step2_configure.html:11
 msgid "Setup Instructions"
 msgstr "設定手順"
 
+#: templates/admin/email_system/wizard/step2_configure.html:20
 msgid "Account Display Name"
 msgstr "アカウントの表示名"
 
+#: templates/admin/email_system/wizard/step2_configure.html:27
 msgid "A friendly name to identify this email account in your admin panel"
 msgstr "このメールアカウントを管理パネルで識別するためのフレンドリな名前"
 
+#: templates/admin/email_system/wizard/step2_configure.html:33
 msgid ""
 "This provider uses OAuth 2.0 authentication. Enter your OAuth credentials "
 "below to authorize the connection."
-msgstr ""
-"このプロバイダーはOAuth 2.0認証を使用しています。接続を承認するために、以下の"
-"OAuth認証情報を入力してください。"
+msgstr "このプロバイダーはOAuth 2.0認証を使用しています。接続を承認するために、以下のOAuth認証情報を入力してください。"
 
+#: templates/admin/email_system/wizard/step2_configure.html:37
+#: templates/email_system/oauth_setup.html:47
 msgid "Client ID"
 msgstr "クライアントID"
 
+#: templates/admin/email_system/wizard/step2_configure.html:44
 msgid "OAuth 2.0 client ID from your provider console"
 msgstr "プロバイダのコンソールから取得したOAuth 2.0クライアントID"
 
+#: templates/admin/email_system/wizard/step2_configure.html:48
+#: templates/email_system/oauth_setup.html:61
 msgid "Client Secret"
 msgstr "クライアントシークレット"
 
+#: templates/admin/email_system/wizard/step2_configure.html:54
 msgid "OAuth 2.0 client secret from your provider console"
 msgstr "プロバイダのコンソールから取得したOAuth 2.0クライアントシークレット"
 
+#: templates/admin/email_system/wizard/step2_configure.html:59
 msgid "Provider Credentials"
 msgstr "提供者の資格情報"
 
+#: templates/admin/email_system/wizard/step2_configure.html:100
 msgid "Select..."
 msgstr "選択..."
 
+#: templates/admin/email_system/wizard/step2_configure.html:125
 msgid "Your credentials will be securely encrypted before being stored."
 msgstr "あなたの資格情報は保存される前に安全に暗号化されます。"
 
+#: templates/admin/email_system/wizard/step2_configure.html:131
 msgid "No additional credential configuration is needed for this provider."
 msgstr "このプロバイダには追加の資格情報設定は必要ありません。"
 
+#: templates/admin/email_system/wizard/step2_configure.html:142
+#: templates/admin/email_system/wizard/step3_sender.html:50
+#: templates/admin/email_system/wizard/step4_dns.html:167
+#: templates/admin/email_system/wizard/step5_test.html:48
 msgid "Back"
 msgstr "戻る"
 
+#: templates/admin/email_system/wizard/step3_sender.html:6
 msgid "Configure Sender Details"
 msgstr "送信者情報を設定"
 
+#: templates/admin/email_system/wizard/step3_sender.html:7
 msgid "These details will appear in all outgoing emails"
 msgstr "これらの詳細は、すべての送信メールに表示されます。"
 
+#: templates/admin/email_system/wizard/step3_sender.html:13
 msgid "From Email Address"
 msgstr "送信メールアドレス"
 
+#: templates/admin/email_system/wizard/step3_sender.html:20
 msgid "This address must be verified with your email provider"
 msgstr "このアドレスは、メールプロバイダによって確認される必要があります。"
 
+#: templates/admin/email_system/wizard/step3_sender.html:24
 msgid "From Name"
 msgstr "送信者名"
 
+#: templates/admin/email_system/wizard/step3_sender.html:31
 msgid "Appears as \\"
 msgstr "表示形式は \""
 
+#: templates/admin/email_system/wizard/step3_sender.html:35
 msgid "Reply-To Email"
 msgstr "返信先メール"
 
+#: templates/admin/email_system/wizard/step3_sender.html:35
 msgid "optional"
 msgstr "任意"
 
+#: templates/admin/email_system/wizard/step3_sender.html:41
 msgid ""
 "Customers will reply to this address. Leave blank to use the From Email."
-msgstr ""
-"顧客はこのアドレスに返信します。From Emailを使用する場合は空白にしてくださ"
-"い。"
+msgstr "顧客はこのアドレスに返信します。From Emailを使用する場合は空白にしてください。"
 
+#: templates/admin/email_system/wizard/step4_dns.html:7
 msgid "Configure and validate DNS records for optimal email deliverability"
 msgstr "最適なメール配信のためにDNSレコードを設定および検証してください。"
 
+#: templates/admin/email_system/wizard/step4_dns.html:11
 msgid "Sending Domain"
 msgstr "送信ドメイン"
 
+#: templates/admin/email_system/wizard/step4_dns.html:18
 msgid "Domain for DNS Validation"
 msgstr "DNS検証用ドメイン"
 
+#: templates/admin/email_system/wizard/step4_dns.html:26
 msgid "Automatically extracted from"
 msgstr "自動的に抽出される"
 
+#: templates/admin/email_system/wizard/step4_dns.html:28
 msgid "(overridden)"
 msgstr "(上書き)"
 
+#: templates/admin/email_system/wizard/step4_dns.html:34
 msgid "Update & Re-validate"
 msgstr "更新＆再検証"
 
+#: templates/admin/email_system/wizard/step4_dns.html:41
 msgid "Notice:"
 msgstr "注意:"
 
+#: templates/admin/email_system/wizard/step4_dns.html:42
 #, python-format
 msgid ""
 "\n"
-"            Your email domain (%(email_domain)s) differs from your shop "
-"domain (%(site_domain)s).\n"
-"            This is fine if intentional, but ensure DNS records are "
-"configured for %(email_domain)s.\n"
+"            Your email domain (%(email_domain)s) differs from your shop domain (%(site_domain)s).\n"
+"            This is fine if intentional, but ensure DNS records are configured for %(email_domain)s.\n"
 "            "
 msgstr ""
 "\n"
-"            あなたのメールドメイン (%(email_domain)s) は、ショップドメイン "
-"(%(site_domain)s) と異なります。これは意図的であれば問題ありません"
-"が、%(email_domain)s 用のDNSレコードが設定されていることを確認してくださ"
-"い。\n"
+"            あなたのメールドメイン (%(email_domain)s) は、ショップドメイン (%(site_domain)s) と異なります。これは意図的であれば問題ありませんが、%(email_domain)s 用のDNSレコードが設定されていることを確認してください。\n"
 "            "
 
+#: templates/admin/email_system/wizard/step4_dns.html:53
 msgid "DNS Validation Status"
 msgstr "DNS検証ステータス"
 
+#: templates/admin/email_system/wizard/step4_dns.html:125
 msgid "Add:"
 msgstr "追加:"
 
+#: templates/admin/email_system/wizard/step4_dns.html:137
 msgid "DNS Setup Instructions"
 msgstr "DNS設定手順"
 
+#: templates/admin/email_system/wizard/step4_dns.html:145
 msgid "No DNS Setup Instructions Available"
 msgstr "利用可能なDNS設定手順はありません"
 
+#: templates/admin/email_system/wizard/step4_dns.html:146
 msgid ""
-"The provider has not provided DNS configuration instructions. Please consult "
-"the provider's documentation for SPF, DKIM, and DMARC setup."
+"The provider has not provided DNS configuration instructions. Please consult"
+" the provider's documentation for SPF, DKIM, and DMARC setup."
 msgstr ""
-"プロバイダはDNS設定の手順を提供していません。SPF、DKIM、DMARCの設定について"
-"は、プロバイダのドキュメンテーションをご参照ください。"
+"プロバイダはDNS設定の手順を提供していません。SPF、DKIM、DMARCの設定については、プロバイダのドキュメンテーションをご参照ください。"
 
+#: templates/admin/email_system/wizard/step4_dns.html:172
 msgid "Skip for Now"
 msgstr "今はスキップ"
 
+#: templates/admin/email_system/wizard/step5_test.html:7
 msgid "Verify your configuration by sending a test email"
 msgstr "テストメールを送信して設定を確認してください。"
 
+#: templates/admin/email_system/wizard/step5_test.html:13
 msgid "Test Recipient Email"
 msgstr "テスト受信者メール"
 
+#: templates/admin/email_system/wizard/step5_test.html:20
 msgid "Enter your email address to receive the test message"
 msgstr "テストメッセージを受信するためにメールアドレスを入力してください。"
 
+#: templates/admin/email_system/wizard/step5_test.html:25
 msgid "What to expect"
 msgstr "期待される内容"
 
+#: templates/admin/email_system/wizard/step5_test.html:26
 msgid ""
 "A real test email will be sent to verify your configuration. You should "
 "receive it within a few minutes."
-msgstr ""
-"設定を確認するために実際のテストメールが送信されます。数分以内に受信する必要"
-"があります。"
+msgstr "設定を確認するために実際のテストメールが送信されます。数分以内に受信する必要があります。"
 
+#: templates/admin/email_system/wizard/step5_test.html:27
 msgid ""
 "Check your inbox (and spam folder). The test email will show your provider "
 "configuration details."
-msgstr ""
-"メールボックス（およびスパムフォルダ）を確認してください。テストメールにはプ"
-"ロバイダの設定詳細が表示されます。"
+msgstr "メールボックス（およびスパムフォルダ）を確認してください。テストメールにはプロバイダの設定詳細が表示されます。"
 
+#: templates/admin/email_system/wizard/step5_test.html:31
 msgid "Test Email Preview"
 msgstr "テストメールプレビュー"
 
+#: templates/admin/email_system/wizard/step5_test.html:33
+#: templates/admin/email_system/wizard/step6_complete.html:21
 msgid "From:"
 msgstr "送信元:"
 
+#: templates/admin/email_system/wizard/step5_test.html:35
+#: templates/admin/email_system/wizard/step6_complete.html:27
 msgid "Reply-To:"
 msgstr "返信先:"
 
+#: templates/admin/email_system/wizard/step5_test.html:37
 msgid "Subject:"
 msgstr "件名:"
 
+#: templates/admin/email_system/wizard/step5_test.html:37
 msgid "Test Email from"
 msgstr "テストメールの送信元"
 
+#: templates/admin/email_system/wizard/step5_test.html:38
 msgid "Body:"
 msgstr "本文:"
 
+#: templates/admin/email_system/wizard/step5_test.html:38
 msgid ""
 "This is a test email to verify your email provider configuration is working "
 "correctly."
-msgstr ""
-"これは、メールプロバイダの設定が正しく動作しているかを確認するためのテスト"
-"メールです。"
+msgstr "これは、メールプロバイダの設定が正しく動作しているかを確認するためのテストメールです。"
 
+#: templates/admin/email_system/wizard/step5_test.html:51
 msgid "Send Test & Continue"
 msgstr "テスト送信＆継続"
 
+#: templates/admin/email_system/wizard/step6_complete.html:8
 msgid "Setup Complete!"
 msgstr "設定完了！"
 
+#: templates/admin/email_system/wizard/step6_complete.html:9
 msgid "Your email provider is ready to use"
 msgstr "メールプロバイダは使用準備が整っています。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:13
 msgid "Configuration Summary"
 msgstr "設定概要"
 
+#: templates/admin/email_system/wizard/step6_complete.html:16
+#: templates/email_system/admin/account_card.html:38
 msgid "Provider:"
 msgstr "プロバイダー:"
 
+#: templates/admin/email_system/wizard/step6_complete.html:33
 msgid "Status:"
 msgstr "ステータス:"
 
+#: templates/admin/email_system/wizard/step6_complete.html:36
 msgid "Ready"
 msgstr "準備完了"
 
+#: templates/admin/email_system/wizard/step6_complete.html:48
 msgid "Make this my default email account"
 msgstr "これを私のデフォルトのメールアカウントにします。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:50
 msgid ""
 "The default account will be used for all outgoing transactional emails "
 "unless specified otherwise"
-msgstr ""
-"他の指定がない限り、デフォルトのアカウントがすべての送信トランザクショナル"
-"メールに使用されます。"
+msgstr "他の指定がない限り、デフォルトのアカウントがすべての送信トランザクショナルメールに使用されます。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:55
 msgid "What's Next?"
 msgstr "次は？"
 
+#: templates/admin/email_system/wizard/step6_complete.html:58
 msgid "SMTP server is configured and ready to start"
 msgstr "SMTPサーバーは設定され、起動準備が整っています。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:59
 msgid "DKIM keys have been automatically generated and encrypted"
 msgstr "DKIMキーは自動的に生成され、暗号化されています。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:60
 msgid "Configure your DNS records (SPF, DKIM, DMARC) for best deliverability"
-msgstr ""
-"最高の配信性のためにDNSレコード（SPF、DKIM、DMARC）を設定してください。"
+msgstr "最高の配信性のためにDNSレコード（SPF、DKIM、DMARC）を設定してください。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:62
 msgid "Your email account is ready to send transactional emails"
-msgstr ""
-"あなたのメールアカウントはトランザクショナルメールの送信準備ができています。"
+msgstr "あなたのメールアカウントはトランザクショナルメールの送信準備ができています。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:63
 msgid "Configure DNS records for better deliverability (if required)"
 msgstr "より良い配信性のためにDNSレコードを設定してください（必要に応じて）。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:65
 msgid "Customize email templates to match your brand"
-msgstr ""
-"あなたのブランドに合わせてメールテンプレートをカスタマイズしてください。"
+msgstr "あなたのブランドに合わせてメールテンプレートをカスタマイズしてください。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:66
 msgid "Send a real test email from the Email Accounts page"
 msgstr "メールアカウントページから実際のテストメールを送信してください。"
 
+#: templates/admin/email_system/wizard/step6_complete.html:75
 msgid "View All Accounts"
 msgstr "すべてのアカウントを表示"
 
+#: templates/admin/email_system/wizard/step6_complete.html:78
 msgid "Finish Setup"
 msgstr "設定を完了"
 
+#: templates/email_system/admin/account_card.html:23
 msgid "Default Account"
 msgstr "デフォルトアカウント"
 
+#: templates/email_system/admin/account_card.html:46
 msgid "Last tested:"
 msgstr "最後にテストした:"
 
+#: templates/email_system/admin/account_card.html:51
 msgid "Never tested"
 msgstr "これまでテストしていない"
 
+#: templates/email_system/admin/account_card.html:103
+#: templates/email_system/admin/emailaccount_changelist.html:51
 msgid "Test Connection"
 msgstr "接続をテスト"
 
+#: templates/email_system/admin/account_card.html:109
 msgid "Disable"
 msgstr "無効"
 
+#: templates/email_system/admin/account_card.html:109
 msgid "Enable"
 msgstr "有効"
 
+#: templates/email_system/admin/emailaccount_changelist.html:4
+#: templates/email_system/admin/emailaccount_changelist.html:18
+#: templates/email_system/oauth_setup.html:14
+#: templates/email_system/providers/browse.html:26
 msgid "Email Accounts"
 msgstr "メールアカウント"
 
+#: templates/email_system/admin/emailaccount_changelist.html:20
 msgid "Manage email provider integrations and SMTP configurations"
 msgstr "メールプロバイダの統合およびSMTP設定を管理します。"
 
+#: templates/email_system/admin/emailaccount_changelist.html:22
+#: templates/email_system/admin/emailaccount_changelist.html:136
 #, python-format
 msgid "%(counter)s account"
 msgid_plural "%(counter)s accounts"
 msgstr[0] "%(counter)s アカウント"
 msgstr[1] "%(counter)s アカウント"
 
+#: templates/email_system/admin/emailaccount_changelist.html:24
 msgid "Default:"
 msgstr "デフォルト:"
 
+#: templates/email_system/admin/emailaccount_changelist.html:29
+#: templates/email_system/providers/browse.html:27
 msgid "Browse Providers"
 msgstr "プロバイダーを閲覧"
 
+#: templates/email_system/admin/emailaccount_changelist.html:48
 msgid "Bulk Actions"
 msgstr "バッチ操作"
 
+#: templates/email_system/admin/emailaccount_changelist.html:49
 msgid "Enable Selected"
 msgstr "選択したものを有効にする"
 
+#: templates/email_system/admin/emailaccount_changelist.html:50
 msgid "Disable Selected"
 msgstr "選択したものを無効にする"
 
+#: templates/email_system/admin/emailaccount_changelist.html:52
 msgid "Delete Selected"
 msgstr "選択したものを削除"
 
+#: templates/email_system/admin/emailaccount_changelist.html:54
 msgid "Apply"
 msgstr "適用"
 
+#: templates/email_system/admin/emailaccount_changelist.html:56
 msgid "selected"
 msgstr "選択済み"
 
+#: templates/email_system/admin/emailaccount_changelist.html:66
 msgid "All Connection Statuses"
 msgstr "すべての接続ステータス"
 
+#: templates/email_system/admin/emailaccount_changelist.html:80
 msgid "All Active Status"
 msgstr "すべてのアクティブステータス"
 
+#: templates/email_system/admin/emailaccount_changelist.html:92
 msgid "All Providers"
 msgstr "すべてのプロバイダ"
 
+#: templates/email_system/admin/emailaccount_changelist.html:108
 msgid "Search accounts..."
 msgstr "アカウントを検索..."
 
+#: templates/email_system/admin/emailaccount_changelist.html:118
 msgid "Select All"
 msgstr "すべて選択"
 
+#: templates/email_system/admin/emailaccount_changelist.html:145
 msgid "No email accounts found"
 msgstr "メールアカウントが見つかりません"
 
+#: templates/email_system/admin/emailaccount_changelist.html:148
 msgid "Try adjusting your filters or search query."
 msgstr "フィルタや検索クエリを調整してみてください。"
 
+#: templates/email_system/admin/emailaccount_changelist.html:150
 msgid "Get started by connecting your first email provider."
 msgstr "最初のメールプロバイダーを接続して開始してください。"
 
+#: templates/email_system/admin/emailaccount_changelist.html:155
 msgid "Browse & Install Providers"
 msgstr "プロバイダを閲覧＆インストール"
 
+#: templates/email_system/admin/emailaccount_changelist.html:166
 msgid "Loading..."
 msgstr "読み込み中..."
 
+#: templates/email_system/oauth_setup.html:4
 msgid "OAuth Setup"
 msgstr "OAuthの設定"
 
+#: templates/email_system/oauth_setup.html:13
+#: templates/email_system/providers/browse.html:25
 msgid "Home"
 msgstr "ホーム"
 
+#: templates/email_system/oauth_setup.html:15
 msgid "Connect"
 msgstr "接続"
 
+#: templates/email_system/oauth_setup.html:22
 #, python-format
 msgid "Connect %(provider_name)s"
 msgstr "%(provider_name)s を接続"
 
+#: templates/email_system/oauth_setup.html:25
 msgid "Before you begin:"
 msgstr "開始する前に:"
 
+#: templates/email_system/oauth_setup.html:27
 msgid "You need to have a Google Cloud Console project with Gmail API enabled"
-msgstr ""
-"Google Cloud ConsoleのプロジェクトでGmail APIが有効になっている必要がありま"
-"す。"
+msgstr "Google Cloud ConsoleのプロジェクトでGmail APIが有効になっている必要があります。"
 
+#: templates/email_system/oauth_setup.html:28
 msgid "You need OAuth 2.0 client credentials (Client ID and Client Secret)"
-msgstr ""
-"OAuth 2.0クライアント資格情報（クライアントIDとクライアントシークレット）が必"
-"要です。"
+msgstr "OAuth 2.0クライアント資格情報（クライアントIDとクライアントシークレット）が必要です。"
 
+#: templates/email_system/oauth_setup.html:29
 msgid ""
 "The redirect URI below must be added to your OAuth client's authorized "
 "redirect URIs"
-msgstr ""
-"下記のリダイレクトURIは、OAuthクライアントの認可されたリダイレクトURIに追加す"
-"る必要があります。"
+msgstr "下記のリダイレクトURIは、OAuthクライアントの認可されたリダイレクトURIに追加する必要があります。"
 
+#: templates/email_system/oauth_setup.html:33
 msgid "1. Configure Your Redirect URI"
 msgstr "1. リダイレクトURIを設定"
 
+#: templates/email_system/oauth_setup.html:34
 msgid ""
 "Add this redirect URI to your Google Cloud Console OAuth client "
 "configuration:"
-msgstr ""
-"このリダイレクトURIをGoogle Cloud ConsoleのOAuthクライアント設定に追加してく"
-"ださい:"
+msgstr "このリダイレクトURIをGoogle Cloud ConsoleのOAuthクライアント設定に追加してください:"
 
+#: templates/email_system/oauth_setup.html:39
 msgid ""
 "Location: Google Cloud Console → APIs & Services → Credentials → Your OAuth "
 "Client → Authorized redirect URIs"
 msgstr ""
-"場所: Google Cloud Console → APIs & Services → Credentials → あなたのOAuthク"
-"ライアント → 認可されたリダイレクトURI"
+"場所: Google Cloud Console → APIs & Services → Credentials → あなたのOAuthクライアント →"
+" 認可されたリダイレクトURI"
 
+#: templates/email_system/oauth_setup.html:42
 msgid "2. Enter Your OAuth Credentials"
 msgstr "2. OAuth認証情報を入力"
 
+#: templates/email_system/oauth_setup.html:56
 msgid "Your OAuth 2.0 client ID from Google Cloud Console"
 msgstr "Google Cloud ConsoleからのOAuth 2.0クライアントID"
 
+#: templates/email_system/oauth_setup.html:67
 msgid "Enter your client secret"
 msgstr "クライアントシークレットを入力してください"
 
+#: templates/email_system/oauth_setup.html:70
 msgid "Your OAuth 2.0 client secret from Google Cloud Console"
 msgstr "Google Cloud ConsoleからのOAuth 2.0クライアントシークレット"
 
+#: templates/email_system/oauth_setup.html:75
 msgid "What happens next?"
 msgstr "次に何が起こるか？"
 
+#: templates/email_system/oauth_setup.html:77
 msgid "You'll be redirected to Google to authorize access"
 msgstr "Googleにリダイレクトされ、アクセスを承認する必要があります。"
 
+#: templates/email_system/oauth_setup.html:78
 msgid "Sign in with the Gmail account you want to use for sending emails"
 msgstr "メール送信に使用したいGmailアカウントでサインインしてください。"
 
+#: templates/email_system/oauth_setup.html:79
 msgid "Review and approve the requested permissions (send email only)"
 msgstr "要求された権限（メール送信のみ）を確認し、承認してください。"
 
+#: templates/email_system/oauth_setup.html:80
 msgid "You'll be redirected back and your account will be connected"
 msgstr "戻ってきられ、あなたのアカウントが接続されます。"
 
+#: templates/email_system/oauth_setup.html:86
 msgid "Connect Gmail Account"
 msgstr "Gmailアカウントを接続"
 
+#: templates/email_system/oauth_setup.html:96
 msgid "Need Help?"
 msgstr "ヘルプが必要ですか？"
 
+#: templates/email_system/oauth_setup.html:97
 msgid ""
 "If you haven't set up your Google OAuth credentials yet, follow these steps:"
-msgstr ""
-"Google OAuth資格情報がまだ設定されていない場合は、以下の手順に従ってください:"
+msgstr "Google OAuth資格情報がまだ設定されていない場合は、以下の手順に従ってください:"
 
+#: templates/email_system/oauth_setup.html:100
 msgid "Create a Google Cloud Project"
 msgstr "Google Cloudプロジェクトを作成"
 
+#: templates/email_system/oauth_setup.html:101
 msgid "Visit"
 msgstr "アクセス"
 
+#: templates/email_system/oauth_setup.html:102
 msgid "and create a new project or select an existing one"
 msgstr "新しいプロジェクトを作成するか、既存のプロジェクトを選択してください。"
 
+#: templates/email_system/oauth_setup.html:105
 msgid "Enable Gmail API"
 msgstr "Gmail APIを有効にする"
 
+#: templates/email_system/oauth_setup.html:106
 msgid "Go to APIs & Services → Library, search for 'Gmail API', and enable it"
-msgstr ""
-"APIs & Services → Libraryに移動し、「Gmail API」を検索し、それを有効にしてく"
-"ださい。"
+msgstr "APIs & Services → Libraryに移動し、「Gmail API」を検索し、それを有効にしてください。"
 
+#: templates/email_system/oauth_setup.html:109
 msgid "Configure OAuth Consent Screen"
 msgstr "OAuth同意画面を設定"
 
+#: templates/email_system/oauth_setup.html:110
 msgid ""
 "Go to APIs & Services → OAuth consent screen and configure your app details"
-msgstr ""
-"APIs & Services → OAuth consent screenに移動し、アプリの詳細を設定してくださ"
-"い。"
+msgstr "APIs & Services → OAuth consent screenに移動し、アプリの詳細を設定してください。"
 
+#: templates/email_system/oauth_setup.html:113
 msgid "Create OAuth Credentials"
 msgstr "OAuth認証情報を作成"
 
+#: templates/email_system/oauth_setup.html:114
 msgid ""
 "Go to APIs & Services → Credentials → Create Credentials → OAuth client ID"
 msgstr ""
-"APIs & Services → Credentials → Credentialsを作成 → OAuth client IDに移動して"
-"ください。"
+"APIs & Services → Credentials → Credentialsを作成 → OAuth client IDに移動してください。"
 
+#: templates/email_system/oauth_setup.html:115
 msgid "Select 'Web application' and add the redirect URI shown above"
-msgstr ""
-"「Web application」を選択し、上記に表示されているリダイレクトURIを追加してく"
-"ださい。"
+msgstr "「Web application」を選択し、上記に表示されているリダイレクトURIを追加してください。"
 
+#: templates/email_system/oauth_setup.html:118
 msgid "Copy Credentials"
 msgstr "認証情報をコピー"
 
+#: templates/email_system/oauth_setup.html:119
 msgid "Copy the Client ID and Client Secret and paste them in the form above"
-msgstr ""
-"クライアントIDとクライアントシークレットをコピーし、上記のフォームに貼り付け"
-"てください。"
+msgstr "クライアントIDとクライアントシークレットをコピーし、上記のフォームに貼り付けてください。"
 
+#: templates/email_system/oauth_setup.html:124
 msgid "View detailed setup guide →"
 msgstr "詳細な設定ガイドを表示 →"
 
+#: templates/email_system/providers/browse.html:4
+#: templates/email_system/providers/browse.html:36
+#: views/provider_browse.py:338
 msgid "Browse Email Providers"
 msgstr "メールプロバイダを閲覧"
 
+#: templates/email_system/providers/browse.html:38
 msgid ""
-"Choose an email provider to integrate with your store. Install new providers "
-"or configure existing ones."
-msgstr ""
-"ストアと統合するメールプロバイダーを選択してください。新しいプロバイダーをイ"
-"ンストールするか、既存のものを設定してください。"
+"Choose an email provider to integrate with your store. Install new providers"
+" or configure existing ones."
+msgstr "ストアと統合するメールプロバイダーを選択してください。新しいプロバイダーをインストールするか、既存のものを設定してください。"
 
+#: templates/email_system/providers/browse.html:45
 msgid "Update Server Unavailable"
 msgstr "更新サーバーが利用不可"
 
+#: templates/email_system/providers/browse.html:46
 msgid ""
 "Could not connect to the update server. Showing locally installed providers "
 "only."
-msgstr ""
-"アップデートサーバーに接続できませんでした。ローカルにインストールされたプロ"
-"バイダーのみを表示しています。"
+msgstr "アップデートサーバーに接続できませんでした。ローカルにインストールされたプロバイダーのみを表示しています。"
 
+#: templates/email_system/providers/browse.html:57
 msgid "Email Provider Marketplace"
 msgstr "メールプロバイダマーケットプレイス"
 
+#: templates/email_system/providers/browse.html:69
 msgid ""
 "Here you can discover and install email providers to send transactional "
 "emails, including order confirmations, shipping notifications, and customer "
 "communications."
-msgstr ""
-"ここでは、注文確認、配送通知、顧客との通信などのトランザクショナルメールを送"
-"信するためにメールプロバイダーを発見し、インストールできます。"
+msgstr "ここでは、注文確認、配送通知、顧客との通信などのトランザクショナルメールを送信するためにメールプロバイダーを発見し、インストールできます。"
 
+#: templates/email_system/providers/browse.html:76
 msgid "What you can do:"
 msgstr "実行できる操作:"
 
+#: templates/email_system/providers/browse.html:81
 msgid "Browse available email providers by features and capabilities"
-msgstr ""
-"機能や能力に基づいて利用可能なメールプロバイダーをブラウズしてください。"
+msgstr "機能や能力に基づいて利用可能なメールプロバイダーをブラウズしてください。"
 
+#: templates/email_system/providers/browse.html:85
 msgid "Install new providers with one click"
 msgstr "ワンクリックで新しいプロバイダーをインストールしてください。"
 
+#: templates/email_system/providers/browse.html:89
 msgid "Update installed providers to the latest versions"
 msgstr "インストールされているプロバイダーを最新バージョンに更新してください。"
 
+#: templates/email_system/providers/browse.html:93
 msgid "Configure provider settings and credentials after installation"
 msgstr "インストール後でプロバイダの設定と資格情報を構成してください"
 
+#: templates/email_system/providers/browse.html:101
 msgid "Getting Started:"
 msgstr "開始方法:"
 
+#: templates/email_system/providers/browse.html:104
 msgid "Browse providers below and select your email service"
 msgstr "下のプロバイダをブラウズし、メールサービスを選択してください"
 
+#: templates/email_system/providers/browse.html:105
 msgid "Click 'Install' to add the provider to your store"
 msgstr "'インストール'をクリックして、プロバイダをストアに追加してください"
 
+#: templates/email_system/providers/browse.html:106
 msgid "Follow the setup wizard to configure API credentials"
 msgstr "設定ウィザードに従ってAPI資格情報を構成してください"
 
+#: templates/email_system/providers/browse.html:107
 msgid "Test the provider by sending a test email"
 msgstr "テストメールを送信してプロバイダをテストしてください"
 
+#: templates/email_system/providers/browse.html:114
 #, python-format
 msgid ""
 "\n"
@@ -3773,611 +5166,719 @@ msgstr[1] ""
 "                    Currently: %(counter)s provider available\n"
 "                "
 
+#: templates/email_system/providers/browse.html:134
 msgid "Update Available"
 msgstr "更新が利用可能です"
 
+#: templates/email_system/providers/browse.html:160
 msgid "Installed"
 msgstr "インストール済み"
 
+#: templates/email_system/providers/browse.html:175
 msgid "Available"
 msgstr "利用可能"
 
+#: templates/email_system/providers/browse.html:198
 msgid "Transactional"
 msgstr "トランザクショナル"
 
+#: templates/email_system/providers/browse.html:203
 msgid "Marketing"
 msgstr "マーケティング"
 
+#: templates/email_system/providers/browse.html:208
 msgid "Templates"
 msgstr "テンプレート"
 
+#: templates/email_system/providers/browse.html:218
 msgid "Analytics"
 msgstr "分析"
 
+#: templates/email_system/providers/browse.html:241
 msgid "Free"
 msgstr "無料"
 
+#: templates/email_system/providers/browse.html:261
 msgid "Update"
 msgstr "更新"
 
+#: templates/email_system/providers/browse.html:282
 msgid "Install"
 msgstr "インストール"
 
+#: templates/email_system/providers/browse.html:292
 msgid "View Details"
 msgstr "詳細を表示"
 
+#: templates/email_system/providers/browse.html:301
 msgid "Learn More"
 msgstr "もっと詳しく"
 
+#: templates/email_system/providers/browse.html:316
 msgid ""
 "No email providers are currently available. Please check your update server "
 "connection or contact support."
-msgstr ""
-"現在、メールプロバイダは利用できません。更新サーバーの接続を確認するか、サ"
-"ポートにご連絡ください。"
+msgstr "現在、メールプロバイダは利用できません。更新サーバーの接続を確認するか、サポートにご連絡ください。"
 
+#: templates/email_system/providers/browse.html:325
 msgid "Installing provider..."
 msgstr "プロバイダーのインストール中..."
 
+#: views/builtin_dns.py:209
 msgid "Domain is required"
 msgstr "ドメインは必須です"
 
+#: views/newsletter.py:121
 msgid "Newsletter template created! Now customize the design."
-msgstr ""
-"ニュースレターのテンプレートが作成されました！今からデザインをカスタマイズし"
-"てください。"
+msgstr "ニュースレターのテンプレートが作成されました！今からデザインをカスタマイズしてください。"
 
+#: views/newsletter.py:128
 #, python-format
 msgid "Error creating newsletter: %(error)s"
 msgstr "ニュースレターの作成中にエラーが発生しました: %(error)s"
 
+#: views/newsletter.py:183
 msgid "No recipients selected. Please select at least one recipient."
 msgstr "受信者を選択していません。少なくとも1人の受信者を選択してください。"
 
-msgid "No active email account found. Please configure an email account first."
-msgstr ""
-"アクティブなメールアカウントが見つかりません。まずメールアカウントを構成して"
-"ください。"
+#: views/newsletter.py:197
+msgid ""
+"No active email account found. Please configure an email account first."
+msgstr "アクティブなメールアカウントが見つかりません。まずメールアカウントを構成してください。"
 
+#: views/newsletter.py:222
 #, python-format
 msgid "Newsletter queued successfully! %(count)s emails will be sent."
-msgstr ""
-"ニュースレターが正常にキューに入れられました！ %(count)s 通のメールが送信され"
-"ます。"
+msgstr "ニュースレターが正常にキューに入れられました！ %(count)s 通のメールが送信されます。"
 
+#: views/newsletter.py:231
 #, python-format
 msgid "Error sending newsletter: %(error)s"
 msgstr "ニュースレターの送信中にエラーが発生しました: %(error)s"
 
+#: views/newsletter.py:264
 msgid "Newsletter duplicated successfully!"
 msgstr "ニュースレターを正常に複製しました！"
 
+#: views/newsletter.py:279
 msgid "Newsletter deleted successfully!"
 msgstr "ニュースレターを正常に削除しました！"
 
+#: views/newsletter.py:350
 #, python-format
 msgid "Error parsing CSV file: %(error)s"
 msgstr "CSV ファイルの解析中にエラーが発生しました: %(error)s"
 
+#: views/oauth.py:55
 #, python-format
 msgid "Email provider '%(provider)s' not found"
 msgstr "メールプロバイダ '%(provider)s' が見つかりません"
 
+#: views/oauth.py:63
 #, python-format
 msgid "Provider '%(provider)s' does not support OAuth"
 msgstr "プロバイダ '%(provider)s' は OAuth をサポートしていません"
 
+#: views/oauth.py:73
 msgid "Client ID and Client Secret are required"
 msgstr "クライアントIDとクライアントシークレットが必要です"
 
-msgid "OAuth credentials not found. Please start the connection process again."
+#: views/oauth.py:87
+msgid ""
+"OAuth credentials not found. Please start the connection process again."
 msgstr "OAuth資格情報が見つかりません。接続プロセスを再度開始してください。"
 
+#: views/oauth.py:119
 #, python-format
 msgid "Failed to initiate OAuth flow: %(error)s"
 msgstr "OAuth フローの開始に失敗しました: %(error)s"
 
+#: views/oauth.py:152
 msgid "Invalid OAuth state. Please try again."
 msgstr "無効なOAuth状態です。もう一度試してください。"
 
+#: views/oauth.py:161
 #, python-format
 msgid "OAuth authorization failed: %(error)s"
 msgstr "OAuth 認証に失敗しました: %(error)s"
 
+#: views/oauth.py:168
 msgid "Authorization code not received"
 msgstr "認証コードが届いていません"
 
+#: views/oauth.py:179
 msgid "OAuth session expired. Please start the connection process again."
 msgstr "OAuthセッションが終了しました。接続プロセスを再度開始してください。"
 
+#: views/oauth.py:185
 msgid "Provider mismatch. Please try again."
 msgstr "プロバイダーの不一致。もう一度お試しください。"
 
+#: views/oauth.py:191 views/oauth.py:396
 msgid "Email provider not found"
 msgstr "メールプロバイダーが見つかりません"
 
+#: views/oauth.py:228
 #, python-format
 msgid ""
 "Successfully authorized %(provider)s. Continue configuring your account."
-msgstr ""
-"%(provider)s が正常に認証されました。アカウントの設定を続けてください。"
+msgstr "%(provider)s が正常に認証されました。アカウントの設定を続けてください。"
 
+#: views/oauth.py:242
 #, python-format
 msgid "Connection test failed: %(error)s"
 msgstr "接続テストに失敗しました: %(error)s"
 
+#: views/oauth.py:259
 msgid "Email provider component not found in registry"
 msgstr "メールプロバイダコンポーネントがレジストリに見つかりません"
 
+#: views/oauth.py:287
 #, python-format
 msgid "Successfully connected %(provider)s account: %(email)s"
 msgstr "%(provider)s アカウントが正常に接続されました: %(email)s"
 
+#: views/oauth.py:303
 #, python-format
 msgid ""
 "OAuth validation failed: %(error)s. Please check your Client ID and Client "
 "Secret and try again."
-msgstr ""
-"OAuth の検証に失敗しました: %(error)s。Client ID と Client Secret を確認し、"
-"再度試してください。"
+msgstr "OAuth の検証に失敗しました: %(error)s。Client ID と Client Secret を確認し、再度試してください。"
 
+#: views/oauth.py:310
 #, python-format
 msgid "OAuth validation failed: %(error)s"
 msgstr "OAuth の検証に失敗しました: %(error)s"
 
+#: views/oauth.py:322
 #, python-format
 msgid ""
 "OAuth authorization failed: %(error)s. Please check your Client ID and "
 "Client Secret and try again."
-msgstr ""
-"OAuth認証に失敗しました: %(error)s。Client IDとClient Secretを確認し、再度試"
-"してください。"
+msgstr "OAuth認証に失敗しました: %(error)s。Client IDとClient Secretを確認し、再度試してください。"
 
+#: views/oauth.py:329
 #, python-format
 msgid "Failed to complete OAuth flow: %(error)s"
 msgstr "OAuthフローの完了に失敗しました: %(error)s"
 
+#: views/oauth.py:418
 #, python-format
 msgid "Failed to load OAuth setup form: %(error)s"
 msgstr "OAuth設定フォームの読み込みに失敗しました: %(error)s"
 
+#: views/provider_browse.py:378
 msgid "Provider is already installed. Configure it now."
 msgstr "プロバイダはすでにインストールされています。今すぐ設定してください。"
 
+#: views/provider_browse.py:407 views/provider_browse.py:546
 msgid "Provider not found on update server."
 msgstr "更新サーバー上にプロバイダが見つかりません。"
 
+#: views/provider_browse.py:417
 msgid "Could not determine provider version."
 msgstr "プロバイダーのバージョンを特定できませんでした。"
 
+#: views/provider_browse.py:441
 #, python-format
 msgid "Failed to download provider: %(error)s"
 msgstr "プロバイダのダウンロードに失敗しました: %(error)s"
 
+#: views/provider_browse.py:454
 #, python-format
 msgid "Failed to install provider: %(error)s"
 msgstr "プロバイダのインストールに失敗しました: %(error)s"
 
+#: views/provider_browse.py:487
 #, python-format
 msgid "Provider \"%(name)s\" installed successfully! Configure it now."
-msgstr ""
-"プロバイダー \"%(name)s\" が正常にインストールされました！今すぐ設定してくだ"
-"さい。"
+msgstr "プロバイダー \"%(name)s\" が正常にインストールされました！今すぐ設定してください。"
 
+#: views/provider_browse.py:516
 msgid "Provider not installed."
 msgstr "プロバイダーがインストールされていません。"
 
+#: views/provider_browse.py:532
 #, python-format
 msgid "Could not connect to update server: %(error)s"
 msgstr "アップデートサーバーへの接続に失敗しました: %(error)s"
 
+#: views/provider_browse.py:555
 msgid "Could not determine latest version."
 msgstr "最新バージョンを特定できませんでした。"
 
+#: views/provider_browse.py:564
 #, python-format
 msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
 msgstr "プロバイダー \"%(name)s\" はすでに最新です (v%(version)s)"
 
+#: views/provider_browse.py:579
 #, python-format
 msgid "Failed to download update: %(error)s"
 msgstr "アップデートのダウンロードに失敗しました: %(error)s"
 
+#: views/provider_browse.py:591
 #, python-format
 msgid "Failed to install update: %(error)s"
 msgstr "アップデートのインストールに失敗しました: %(error)s"
 
+#: views/provider_browse.py:628
 #, python-format
 msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
 msgstr "プロバイダー \"%(name)s\" が v%(version)s に正常に更新されました！"
 
+#: views/template_management.py:100
 #, python-format
 msgid ""
 "No translation available for %(language)s. Showing base template in "
 "%(base_lang)s."
-msgstr ""
-"%(language)s 用の翻訳がありません。%(base_lang)s 用の基本テンプレートを表示し"
-"ています。"
+msgstr "%(language)s 用の翻訳がありません。%(base_lang)s 用の基本テンプレートを表示しています。"
 
-msgid "System templates cannot be edited. Clone this template to customize it."
-msgstr ""
-"システムテンプレートは編集できません。このテンプレートを複製してカスタマイズ"
-"してください。"
+#: views/template_management.py:108
+msgid ""
+"System templates cannot be edited. Clone this template to customize it."
+msgstr "システムテンプレートは編集できません。このテンプレートを複製してカスタマイズしてください。"
 
+#: views/template_management.py:129
 #, python-format
 msgid "MJML validation failed: %(error)s"
 msgstr "MJMLの検証に失敗しました: %(error)s"
 
+#: views/template_management.py:154
 #, python-format
 msgid "Translation saved successfully (%(language)s)"
 msgstr "翻訳が正常に保存されました (%(language)s)"
 
+#: views/template_management.py:162
 msgid "Translation saved successfully!"
 msgstr "翻訳が正常に保存されました！"
 
+#: views/template_management.py:178
 #, python-format
 msgid "Template saved successfully! Version %(version)s"
 msgstr "テンプレートが正常に保存されました！バージョン %(version)s"
 
+#: views/template_management.py:187
 msgid "Template saved successfully!"
 msgstr "テンプレートを正常に保存しました！"
 
+#: views/template_management.py:202
 #, python-format
 msgid "Error saving template: %(error)s"
 msgstr "テンプレートの保存にエラーが発生しました: %(error)s"
 
+#: views/template_management.py:210
 #, python-format
 msgid "Edit Template: %(name)s"
 msgstr "テンプレートの編集: %(name)s"
 
+#: views/template_management.py:341
 #, python-format
 msgid ""
 "Successfully cloned template \"%(name)s\" (%(language)s). You can now "
 "customize it."
-msgstr ""
-"テンプレート \"%(name)s\" (%(language)s) が正常に複製されました。今からカスタ"
-"マイズできます。"
+msgstr "テンプレート \"%(name)s\" (%(language)s) が正常に複製されました。今からカスタマイズできます。"
 
+#: views/template_management.py:354
 #, python-format
 msgid ""
-"Note: No translation was available for %(language)s. The clone uses the base "
-"template in %(base_lang)s."
-msgstr ""
-"注意: %(language)sの翻訳が利用できません。クローンは%(base_lang)sのベーステン"
-"プレートを使用しています。"
+"Note: No translation was available for %(language)s. The clone uses the base"
+" template in %(base_lang)s."
+msgstr "注意: %(language)sの翻訳が利用できません。クローンは%(base_lang)sのベーステンプレートを使用しています。"
 
+#: views/template_management.py:366
 #, python-format
 msgid "Error cloning template: %(error)s"
 msgstr "テンプレートの複製にエラーが発生しました: %(error)s"
 
+#: views/template_management.py:393
 msgid ""
 "System templates cannot be deleted. Clone this template to customize it."
-msgstr ""
-"システムテンプレートは削除できません。このテンプレートを複製してカスタマイズ"
-"してください。"
+msgstr "システムテンプレートは削除できません。このテンプレートを複製してカスタマイズしてください。"
 
+#: views/template_management.py:426
 #, python-format
 msgid ""
-"Cannot delete the only active template for \"%(type)s\" (%(lang)s). Activate "
-"another template first, or deactivate this template instead of deleting it."
+"Cannot delete the only active template for \"%(type)s\" (%(lang)s). Activate"
+" another template first, or deactivate this template instead of deleting it."
 msgstr ""
-"\"%(type)s\" (%(lang)s) の唯一のアクティブなテンプレートは削除できません。他"
-"のテンプレートをアクティブ化するか、このテンプレートを削除する代わりに非アク"
-"ティブ化してください。"
+"\"%(type)s\" (%(lang)s) "
+"の唯一のアクティブなテンプレートは削除できません。他のテンプレートをアクティブ化するか、このテンプレートを削除する代わりに非アクティブ化してください。"
 
+#: views/template_management.py:440
 msgid ""
 "Deleting this active template will cause emails to fall back to the system "
 "template."
-msgstr ""
-"このアクティブなテンプレートを削除すると、メールがシステムテンプレートに"
-"フォールバックします。"
+msgstr "このアクティブなテンプレートを削除すると、メールがシステムテンプレートにフォールバックします。"
 
+#: views/template_management.py:455
 #, python-format
 msgid ""
 "Warning: %(count)s email(s) are queued using this template type. They will "
 "use the fallback template when sent."
-msgstr ""
-"警告: このテンプレートタイプで %(count)s 件のメールがキューに待機しています。"
-"送信時に代替テンプレートが使用されます。"
+msgstr "警告: このテンプレートタイプで %(count)s 件のメールがキューに待機しています。送信時に代替テンプレートが使用されます。"
 
+#: views/template_management.py:469
 #, python-format
 msgid "This template has %(count)s translation(s) that will also be deleted."
-msgstr ""
-"このテンプレートには %(count)s 個の翻訳が含まれており、これらも削除されます。"
+msgstr "このテンプレートには %(count)s 個の翻訳が含まれており、これらも削除されます。"
 
+#: views/template_management.py:487
 #, python-format
 msgid ""
 "This template type was used to send %(count)s email(s) in the last 30 days."
-msgstr ""
-"このテンプレートタイプは、過去30日間に %(count)s 件のメールを送信するために使"
-"用されました。"
+msgstr "このテンプレートタイプは、過去30日間に %(count)s 件のメールを送信するために使用されました。"
 
+#: views/template_management.py:523
 #, python-format
 msgid "Template \"%(name)s\" moved to recycle bin"
 msgstr "テンプレート \"%(name)s\" がリサイクル バインに移動しました"
 
+#: views/template_management.py:548
 #, python-format
 msgid "Template \"%(name)s\" restored successfully"
 msgstr "テンプレート \"%(name)s\" が正常に復元されました"
 
+#: views/template_management.py:574
 #, python-format
 msgid "Template \"%(name)s\" deactivated"
 msgstr "テンプレート \"%(name)s\" が非アクティブ化されました"
 
+#: views/template_management.py:581
 #, python-format
 msgid "Template \"%(name)s\" activated"
 msgstr "テンプレート \"%(name)s\" がアクティブ化されました"
 
+#: views/template_management.py:586
 #, python-format
 msgid "Error updating template: %(error)s"
 msgstr "テンプレートの更新エラー: %(error)s"
 
+#: views/template_management.py:724
 msgid "Please select at least one language"
 msgstr "少なくとも1つの言語を選択してください"
 
+#: views/template_management.py:740
 #, python-format
 msgid ""
 "Translation jobs created for %(count)s language(s). Translations will be "
 "processed automatically."
-msgstr ""
-"%(count)sか国語用の翻訳ジョブが作成されました。翻訳は自動的に処理されます。"
+msgstr "%(count)sか国語用の翻訳ジョブが作成されました。翻訳は自動的に処理されます。"
 
+#: views/template_management.py:747
 #, python-format
 msgid "Translation failed: %(message)s"
 msgstr "翻訳に失敗しました: %(message)s"
 
+#: views/template_management.py:753
 #, python-format
 msgid "Error creating translation jobs: %(error)s"
 msgstr "翻訳ジョブの作成エラー: %(error)s"
 
+#: views/template_management.py:797
 #, python-format
 msgid ""
 "Created %(count)s translation jobs. Translations will be processed "
 "automatically."
 msgstr "%(count)sつの翻訳ジョブが作成されました。翻訳は自動的に処理されます。"
 
+#: views/template_preview.py:361
 msgid "Email address is required"
 msgstr "メールアドレスは必須です"
 
+#: views/template_preview.py:386
 #, python-format
 msgid "Test email sent successfully to %(email)s"
 msgstr "%(email)sにテストメールが正常に送信されました"
 
+#: views/template_preview.py:497
 msgid "Subject line is required"
 msgstr "件名は必須です"
 
+#: views/template_preview.py:502
 msgid "HTML content is required"
 msgstr "HTML コンテンツは必須です"
 
+#: views/template_preview.py:518
 msgid "created"
 msgstr "作成済み"
 
+#: views/template_preview.py:518
 msgid "updated"
 msgstr "更新済み"
 
+#: views/template_preview.py:527
 #, python-format
 msgid "Translation %(action)s successfully"
 msgstr "翻訳 %(action)s が成功しました"
 
+#: views/wizard.py:120
 msgid "✓ Started built-in SMTP server"
 msgstr "✓ 内蔵SMTPサーバーを起動しました"
 
+#: views/wizard.py:132
 msgid "SMTP server started but may need more time to initialize"
 msgstr "SMTPサーバーが起動しましたが、初期化に時間がかかる場合があります"
 
+#: views/wizard.py:162
 msgid "✓ Started built-in SMTP server in background"
 msgstr "✓ 背景で組み込みのSMTPサーバーを起動しました"
 
+#: views/wizard.py:174
 msgid ""
-"SMTP server started but may need more time. If test fails, wait a moment and "
-"try again."
-msgstr ""
-"SMTPサーバーが起動しましたが、時間がかかる場合があります。テストが失敗した場"
-"合は、少し待ってから再度試してください。"
+"SMTP server started but may need more time. If test fails, wait a moment and"
+" try again."
+msgstr "SMTPサーバーが起動しましたが、時間がかかる場合があります。テストが失敗した場合は、少し待ってから再度試してください。"
 
+#: views/wizard.py:183
 msgid ""
-"Could not start SMTP server automatically. You may need to start it manually."
-msgstr ""
-"SMTPサーバーを自動で起動できませんでした。手動で起動する必要があります。"
+"Could not start SMTP server automatically. You may need to start it "
+"manually."
+msgstr "SMTPサーバーを自動で起動できませんでした。手動で起動する必要があります。"
 
+#: views/wizard.py:299 views/wizard.py:443
 msgid "Built-in SMTP is not available for Spwig-hosted installations."
-msgstr ""
+msgstr "Spwigホスティング環境では、ビルトインのSMTPが利用できません。"
 
+#: views/wizard.py:321 views/wizard.py:469
 msgid "Spwig Email is only available for Spwig-hosted installations."
-msgstr ""
+msgstr "Spwigメールは、Spwigホスティング環境でのみ利用可能です。"
 
+#: views/wizard.py:421
 msgid "Email Provider Setup - Select Provider"
 msgstr "メールプロバイダの設定 - プロバイダを選択"
 
+#: views/wizard.py:434
 msgid "Please select a provider."
 msgstr "プロバイダーを選択してください。"
 
+#: views/wizard.py:491 views/wizard.py:757
 msgid "Invalid provider selected."
 msgstr "無効なプロバイダーが選択されています。"
 
+#: views/wizard.py:522 views/wizard.py:671
 msgid "Please select a provider first."
 msgstr "まずプロバイダーを選択してください。"
 
+#: views/wizard.py:569
 msgid "Email Provider Setup - Configure Built-in SMTP"
 msgstr "メールプロバイダの設定 - 内蔵SMTPの構成"
 
+#: views/wizard.py:607 views/wizard.py:701 views/wizard.py:1131
 msgid "Could not load provider configuration."
 msgstr "プロバイダの設定を読み込めませんでした。"
 
+#: views/wizard.py:631
 #, python-format
 msgid "Error loading provider: %(error)s"
 msgstr "プロバイダーの読み込みエラー: %(error)s"
 
+#: views/wizard.py:649
 msgid "Email Provider Setup - Configure Credentials"
 msgstr "メールプロバイダの設定 - 認証情報の構成"
 
+#: views/wizard.py:714
 msgid "Client ID and Client Secret are required for OAuth authentication."
 msgstr "OAuth認証にはクライアントIDとクライアントシークレットが必要です。"
 
+#: views/wizard.py:762
 #, python-format
 msgid "Error processing credentials: %(error)s"
 msgstr "資格情報の処理エラー: %(error)s"
 
+#: views/wizard.py:781
 msgid "Please start from step 1."
 msgstr "ステップ1から開始してください。"
 
+#: views/wizard.py:785
 msgid "Email Provider Setup - Sender Details"
 msgstr "メールプロバイダの設定 - 送信者情報"
 
+#: views/wizard.py:800
 msgid "From email is required."
 msgstr "送信元のメールアドレスは必須です。"
 
+#: views/wizard.py:804
 msgid "From name is required."
 msgstr "送信元の名前は必須です。"
 
+#: views/wizard.py:816
 msgid "Invalid email address format."
 msgstr "メールアドレスの形式が無効です。"
 
+#: views/wizard.py:855
 #, python-format
 msgid "✓ DKIM keys generated automatically for %(domain)s"
 msgstr "✓ %(domain)s 用のDKIMキーが自動生成されました"
 
+#: views/wizard.py:866
 msgid ""
 "Could not auto-generate DKIM keys. You may need to generate them manually "
 "later."
-msgstr ""
-"DKIMキーを自動生成できませんでした。後で手動で生成する必要があるかもしれませ"
-"ん。"
+msgstr "DKIMキーを自動生成できませんでした。後で手動で生成する必要があるかもしれません。"
 
+#: views/wizard.py:904
 msgid "Please complete sender configuration first."
 msgstr "送信者設定をまず完了してください。"
 
+#: views/wizard.py:929 views/wizard.py:1101 views/wizard.py:1218
 msgid "Email Provider Setup - DNS Configuration"
 msgstr "メールプロバイダの設定 - DNS設定"
 
-#, python-format
-msgid "Error loading DNS configuration: %(error)s"
-msgstr "DNS設定の読み込みエラー: %(error)s"
+#: views/wizard.py:1243
+msgid ""
+"Spwig could not load the DNS configuration for this email provider. Please "
+"try again, or contact support if the problem continues."
+msgstr ""
+"SpwigはこのメールプロバイダのDNS設定を読み込めませんでした。再度試してください。問題が続いていれば、サポートにお問い合わせください。"
 
+#: views/wizard.py:1262
 msgid "Domain updated. DNS validation refreshed."
 msgstr "ドメインが更新されました。DNSの検証が再評価されました。"
 
+#: views/wizard.py:1264
 msgid "Invalid domain format."
 msgstr "ドメインの形式が無効です。"
 
+#: views/wizard.py:1277
 msgid ""
 "DNS validation incomplete. Your emails may be flagged as spam until DNS "
 "records are properly configured."
-msgstr ""
-"DNS検証が完了していません。DNSレコードが正しく設定されるまで、メールがスパム"
-"としてマークされる可能性があります。"
+msgstr "DNS検証が完了していません。DNSレコードが正しく設定されるまで、メールがスパムとしてマークされる可能性があります。"
 
+#: views/wizard.py:1303
 msgid "Please complete previous steps first."
 msgstr "まず前のステップを完了してください。"
 
+#: views/wizard.py:1307
 msgid "Email Provider Setup - Test Send"
 msgstr "メールプロバイダの設定 - テスト送信"
 
+#: views/wizard.py:1320
 msgid "Please enter a test recipient email."
 msgstr "テスト受信者のメールアドレスを入力してください。"
 
+#: views/wizard.py:1330
 msgid "Please enter a valid email address."
 msgstr "有効なメールアドレスを入力してください。"
 
+#: views/wizard.py:1346
 msgid "Built-in SMTP server could not be started. Please check the logs."
 msgstr "内蔵SMTPサーバーを起動できませんでした。ログを確認してください。"
 
+#: views/wizard.py:1363
 msgid "⚠ Postfix mail server is not running. Email delivery will fail."
-msgstr ""
-"⚠ Postfixメールサーバーが実行されていません。メールの配信に失敗します。"
+msgstr "⚠ Postfixメールサーバーが実行されていません。メールの配信に失敗します。"
 
+#: views/wizard.py:1368
 msgid ""
-"For Docker: Check container logs. For development: Run \"sudo postfix start\""
-msgstr ""
-"Dockerの場合: コンテナログを確認してください。開発環境の場合: \"sudo postfix "
-"start\"を実行してください。"
+"For Docker: Check container logs. For development: Run \"sudo postfix "
+"start\""
+msgstr "Dockerの場合: コンテナログを確認してください。開発環境の場合: \"sudo postfix start\"を実行してください。"
 
+#: views/wizard.py:1389
 #, python-format
 msgid "Provider not found: %(key)s"
 msgstr "プロバイダーが見つかりません: %(key)s"
 
+#: views/wizard.py:1410
 msgid ""
 "Spwig Email credentials have not been provisioned yet. Please contact "
 "support."
-msgstr ""
+msgstr "Spwigメールの資格情報はまだプロビジョニングされていません。サポートにお問い合わせください。"
 
-#, fuzzy
-#| msgid "Could not load provider configuration."
+#: views/wizard.py:1416
 msgid "Could not load email credentials."
-msgstr "プロバイダの設定を読み込めませんでした。"
+msgstr "メール資格情報を読み込めませんでした。"
 
+#: views/wizard.py:1422
 msgid "OAuth authentication not completed. Please go back to Step 2."
 msgstr "OAuth認証が完了していません。ステップ2に戻ってください。"
 
+#: views/wizard.py:1430
 #, python-format
 msgid "Test Email from %(name)s"
 msgstr "%(name)sからのテストメール"
 
+#: views/wizard.py:1535
 #, python-format
 msgid "✓ Test email sent successfully to %(email)s! Check your inbox."
-msgstr ""
-"✓ %(email)sにテストメールが正常に送信されました！メールボックスを確認してくだ"
-"さい。"
+msgstr "✓ %(email)sにテストメールが正常に送信されました！メールボックスを確認してください。"
 
+#: views/wizard.py:1541
 #, python-format
 msgid "Message ID: %(id)s"
 msgstr "メッセージID: %(id)s"
 
+#: views/wizard.py:1552
 msgid "Unknown error"
 msgstr "不明なエラー"
 
+#: views/wizard.py:1554
 #, python-format
 msgid "Failed to send test email: %(error)s"
 msgstr "テストメールの送信に失敗しました: %(error)s"
 
+#: views/wizard.py:1560
 #, python-format
 msgid "Error sending test email: %(error)s"
 msgstr "テストメールの送信エラー: %(error)s"
 
+#: views/wizard.py:1578
 msgid "Please complete all previous steps."
 msgstr "すべての前のステップを完了してください。"
 
+#: views/wizard.py:1617
 msgid "Email Provider Setup - Complete"
 msgstr "メールプロバイダの設定 - 完了"
 
+#: views/wizard.py:1628
 #, python-format
 msgid "Error: %(error)s"
 msgstr "エラー: %(error)s"
 
+#: views/wizard.py:1738 views/wizard.py:1752 views/wizard.py:1769
+#: views/wizard.py:1780 views/wizard.py:1794
 #, python-format
 msgid "✓ Email account \"%(name)s\" created successfully!"
 msgstr "✓ メールアカウント \"%(name)s\" が正常に作成されました！"
 
+#: views/wizard.py:1743
 msgid "✓ Built-in SMTP server is running and ready to send emails."
 msgstr "✓ 内蔵SMTPサーバーが実行中で、メールの送信が可能です。"
 
+#: views/wizard.py:1758
 msgid ""
 "The SMTP server should already be running. If emails don't send, please "
 "contact your system administrator."
-msgstr ""
-"SMTPサーバーはすでに実行されているはずです。メールが送信されない場合は、シス"
-"テム管理者にお問い合わせください。"
+msgstr "SMTPサーバーはすでに実行されているはずです。メールが送信されない場合は、システム管理者にお問い合わせください。"
 
+#: views/wizard.py:1773
 msgid "Your email system is configured and ready to use."
 msgstr "メールシステムは設定されており、使用準備が整っています。"
 
+#: views/wizard.py:1786
 msgid ""
 "Email system configured. If you experience issues sending emails, please "
 "contact your system administrator."
-msgstr ""
-"メールシステムが設定されました。メールの送信に問題がある場合は、システム管理"
-"者にお問い合わせください。"
+msgstr "メールシステムが設定されました。メールの送信に問題がある場合は、システム管理者にお問い合わせください。"
 
+#: views/wizard.py:1800
 msgid ""
-"Your email account is configured. The SMTP server should be running from the "
-"previous setup steps."
-msgstr ""
-"メールアカウントが設定されています。前の設定手順でSMTPサーバーが実行されてい"
-"る必要があります。"
+"Your email account is configured. The SMTP server should be running from the"
+" previous setup steps."
+msgstr "メールアカウントが設定されています。前の設定手順でSMTPサーバーが実行されている必要があります。"
 
+#: views/wizard.py:1806
 #, python-format
 msgid "Email account \"%(name)s\" created successfully!"
 msgstr "メールアカウント \"%(name)s\" が正常に作成されました！"
 
+#: views/wizard.py:1818
 #, python-format
 msgid "Error creating account: %(error)s"
 msgstr "アカウントの作成エラー: %(error)s"
+
+#, python-format
+#~ msgid "Error loading DNS configuration: %(error)s"
+#~ msgstr "DNS設定の読み込みエラー: %(error)s"

@@ -22,7 +22,16 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Build preinstalled component packages (themes + utilities) for deployment"
+    help = "Build preinstalled component packages (themes + utilities + providers) for deployment"
+
+    # First-party providers every install ships with. The test gateway lets a
+    # fresh store exercise the full checkout before any real PSP is configured.
+    PAYMENT_PROVIDER_SLUGS_TO_BUNDLE = [
+        "test_gateway",
+    ]
+
+    # Directories/files never shipped inside a provider package
+    PROVIDER_PACKAGE_EXCLUDES = {"tests", "__pycache__", ".pytest_cache", ".git"}
 
     THEME_SLUGS_TO_BUNDLE = [
         "starter",
@@ -42,7 +51,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--type",
-            choices=["theme", "utility", "all"],
+            choices=["theme", "utility", "payment_provider", "all"],
             default="all",
             help="Component type to build (default: all)",
         )
@@ -76,6 +85,7 @@ class Command(BaseCommand):
         # Create output directories
         (output_dir / "themes").mkdir(parents=True, exist_ok=True)
         (output_dir / "utilities").mkdir(parents=True, exist_ok=True)
+        (output_dir / "integrations").mkdir(parents=True, exist_ok=True)
 
         manifest_components = []
 
@@ -85,13 +95,26 @@ class Command(BaseCommand):
         if component_type in ("utility", "all"):
             manifest_components.extend(self._build_utility_packages(output_dir))
 
-        # Write master manifest
+        if component_type in ("payment_provider", "all"):
+            manifest_components.extend(self._build_payment_provider_packages(output_dir))
+
+        # Write master manifest. A partial build (--type theme etc.) merges
+        # with the existing manifest instead of clobbering the entries of
+        # types that weren't rebuilt.
+        manifest_path = output_dir / "manifest.json"
+        if component_type != "all" and manifest_path.exists():
+            with open(manifest_path) as f:
+                existing = json.load(f)
+            built_types = {c["type"] for c in manifest_components}
+            manifest_components = [
+                c for c in existing.get("components", []) if c["type"] not in built_types
+            ] + manifest_components
+
         manifest = {
             "platform_version": getattr(settings, "SPWIG_VERSION", "1.0.0"),
             "built_at": datetime.now(UTC).isoformat(),
             "components": manifest_components,
         }
-        manifest_path = output_dir / "manifest.json"
         with open(manifest_path, "w") as f:
             json.dump(manifest, f, indent=2)
 
@@ -248,6 +271,65 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS(
                     f"  + utility: {slug} v{version} ({zip_path.stat().st_size // 1024}KB)"
+                )
+            )
+
+        return components
+
+    def _build_payment_provider_packages(self, output_dir: Path) -> list:
+        """Build ZIP packages for bundled first-party payment providers.
+
+        Source layout mirrors marketplace provider packages: manifest.json and
+        code at the component root. The ZIP keeps everything at the root so
+        the installer can copy the extracted tree directly into a version
+        directory (same shape `_install_generic_provider_package` produces).
+        """
+        providers_src = self.components_dir / "integrations" / "payments"
+        if not providers_src.exists():
+            self.stdout.write(self.style.WARNING("  ! payments integrations source dir not found"))
+            return []
+
+        components = []
+        for slug in self.PAYMENT_PROVIDER_SLUGS_TO_BUNDLE:
+            provider_dir = providers_src / slug
+            if not provider_dir.exists():
+                self.stdout.write(
+                    self.style.WARNING(f"  ! payment provider {slug} not found, skipping")
+                )
+                continue
+
+            version_dir, version = self._resolve_component(provider_dir)
+            if not version_dir:
+                self.stdout.write(self.style.WARNING(f"  ! No manifest for {slug}, skipping"))
+                continue
+
+            zip_filename = f"{slug}-{version}.zip"
+            zip_path = output_dir / "integrations" / zip_filename
+
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                for file_path in sorted(version_dir.rglob("*")):
+                    if not file_path.is_file():
+                        continue
+                    rel = file_path.relative_to(version_dir)
+                    if any(part in self.PROVIDER_PACKAGE_EXCLUDES for part in rel.parts):
+                        continue
+                    if rel.name.startswith("."):
+                        continue
+                    zf.write(file_path, str(rel))
+
+            checksum = self._sha256(zip_path)
+            components.append(
+                {
+                    "type": "payment_provider",
+                    "slug": slug,
+                    "version": version,
+                    "package": f"integrations/{zip_filename}",
+                    "checksum": checksum,
+                }
+            )
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"  + payment_provider: {slug} v{version} ({zip_path.stat().st_size // 1024}KB)"
                 )
             )
 

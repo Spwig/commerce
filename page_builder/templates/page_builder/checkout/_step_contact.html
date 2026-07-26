@@ -17,6 +17,16 @@
            placeholder="{% mtrans 'your@email.com' %}" required>
 </div>
 
+{% if not cart_requires_shipping %}
+<!-- Digital-only carts never reach the shipping form, so the customer's
+     name is collected here — orders and payment providers require one -->
+<div class="checkout-form-group">
+    <label for="checkout-name">{% mtrans 'Full Name' %} <span class="required">*</span></label>
+    <input type="text" id="checkout-name" class="checkout-input"
+           value="{{ user_full_name }}" required autocomplete="name">
+</div>
+{% endif %}
+
 {% if not user.is_authenticated %}
     {% if account_creation_timing == 'before_checkout' %}
     <!-- Required Password Field -->

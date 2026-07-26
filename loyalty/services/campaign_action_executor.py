@@ -242,14 +242,25 @@ class CampaignActionExecutor:
         engine = RedemptionEngine()
 
         try:
-            redemption = engine.redeem_reward(
+            # redeem_reward returns (redemption, success, message) — the old
+            # code bound the whole tuple to `redemption` and passed a tuple to
+            # confirm_redemption, so every campaign reward issuance crashed
+            # into the broad except below and reported "Reward issuance
+            # failed". 100% broken since it was written.
+            redemption, redeemed, redeem_message = engine.redeem_reward(
                 member=member,
                 reward=reward,
                 notes=f"Campaign reward: {context.get('campaign_name', 'Unknown')}",
             )
+            if not redeemed:
+                return {"success": False, "error": f"Reward issuance failed: {redeem_message}"}
 
             # Auto-confirm campaign rewards
-            engine.confirm_redemption(redemption)
+            confirmed, confirm_message = engine.confirm_redemption(redemption)
+            if not confirmed:
+                # Points were refunded by confirm_redemption's failure path;
+                # surface the reason instead of pretending it worked.
+                return {"success": False, "error": f"Reward issuance failed: {confirm_message}"}
 
             return {
                 "success": True,

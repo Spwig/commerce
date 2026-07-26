@@ -104,6 +104,18 @@
                 <div class="migration-details">
                     <div class="migration-header-row">
                         <span class="migration-id">{{ migration.id|slice:":8" }}</span>
+                        {% if migration.status == 'running' and migration.cancel_requested %}
+                            {% comment %}
+                            Cancellation is cooperative: the job stays running
+                            until the worker reaches a batch boundary. Saying
+                            "Importing" here makes the operator think their
+                            click was ignored.
+                            {% endcomment %}
+                            <span class="migration-status stopping">
+                                <i class="fas fa-hourglass-half"></i>
+                                {% trans "Stopping…" %}
+                            </span>
+                        {% else %}
                         <span class="migration-status {{ migration.status }}">
                             {% if migration.status == 'pending' %}
                                 <i class="fas fa-clock"></i>
@@ -111,11 +123,18 @@
                                 <i class="fas fa-spinner fa-spin"></i>
                             {% elif migration.status == 'completed' %}
                                 <i class="fas fa-check-circle"></i>
-                            {% elif migration.status == 'failed' %}
+                            {% elif migration.status == 'failed' or migration.status == 'rollback_failed' %}
                                 <i class="fas fa-times-circle"></i>
+                            {% elif migration.status == 'cancelled' %}
+                                <i class="fas fa-ban"></i>
+                            {% elif migration.status == 'rolling_back' %}
+                                <i class="fas fa-spinner fa-spin"></i>
+                            {% elif migration.status == 'rolled_back' %}
+                                <i class="fas fa-undo"></i>
                             {% endif %}
                             {{ migration.get_status_display }}
                         </span>
+                        {% endif %}
                     </div>
 
                     {% if migration.status in 'running,paused,completed' %}
@@ -176,19 +195,29 @@
                         </a>
                     {% endif %}
 
-                    {% if migration.status == 'failed' %}
-                        <a href="{% url 'admin:migration_job_retry' migration.id %}" class="action-btn retry">
-                            <i class="fas fa-redo"></i> {% trans "Retry" %}
-                        </a>
+                    {% if migration.status == 'failed' or migration.status == 'cancelled' %}
+                        <form method="post" action="{% url 'admin:migration_job_retry' migration.id %}" class="migration-action-form">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-btn retry"
+                                    data-action="confirm-submit"
+                                    data-confirm-msg="{% trans 'Run this import again? It starts from the beginning and skips items that have already been imported.' %}">
+                                <i class="fas fa-redo"></i> {% trans "Retry" %}
+                            </button>
+                        </form>
                     {% endif %}
 
-                    {% if migration.status == 'running' %}
-                        <a href="{% url 'admin:migration_job_cancel' migration.id %}"
-                           class="action-btn delete"
-                           data-action="confirm-navigate"
-                           data-confirm-msg="{% trans 'Are you sure you want to cancel this migration?' %}">
-                            <i class="fas fa-stop"></i> {% trans "Cancel" %}
-                        </a>
+                    {# Hidden once a stop is already pending — clicking again does nothing. #}
+                    {% if migration.status == 'running' and not migration.cancel_requested %}
+                        <form method="post" action="{% url 'admin:migration_job_cancel' migration.id %}" class="migration-action-form">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-btn delete"
+                                    data-action="confirm-submit"
+                                    data-confirm-msg="{% trans 'Stop this import? It finishes the batch it is working on and then stops. Anything already imported stays in your store.' %}">
+                                <i class="fas fa-stop"></i> {% trans "Cancel" %}
+                            </button>
+                        </form>
                     {% endif %}
 
                     {% if migration.status == 'pending' %}
@@ -209,18 +238,21 @@
                         <a href="{% url 'admin:migration_job_rollback' migration.id %}"
                            class="action-btn rollback"
                            data-action="confirm-navigate"
-                           data-confirm-msg="{% trans 'Are you sure you want to rollback this migration? This will delete all imported data.' %}">
+                           data-confirm-msg="{% trans 'Review the rollback details? Rolling back removes what this import created, keeping anything your store now depends on. You will see exactly what it will remove before you confirm.' %}">
                             <i class="fas fa-undo"></i> {% trans "Rollback" %}
                         </a>
                     {% endif %}
 
-                    {% if migration.status in 'pending,failed,running' %}
-                        <a href="{% url 'admin:migration_job_delete' migration.id %}"
-                           class="action-btn delete"
-                           data-action="confirm-navigate"
-                           data-confirm-msg="{% trans 'Are you sure you want to force delete this migration? This cannot be undone.' %}">
-                            <i class="fas fa-trash"></i> {% trans "Delete" %}
-                        </a>
+                    {% if migration.status == 'pending' or migration.status == 'failed' or migration.status == 'cancelled' %}
+                        <form method="post" action="{% url 'admin:migration_job_delete' migration.id %}" class="migration-action-form">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-btn delete"
+                                    data-action="confirm-submit"
+                                    data-confirm-msg="{% trans 'Delete this migration record? This does not remove anything that was imported. Spwig will lose its record of which items came from this import, so you will not be able to roll it back afterwards.' %}">
+                                <i class="fas fa-trash"></i> {% trans "Delete" %}
+                            </button>
+                        </form>
                     {% endif %}
                 </div>
             </div>

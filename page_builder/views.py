@@ -264,8 +264,10 @@ def category_view(request, category_slug=None):
     from design.template_registry import get_category_options, get_category_template_path
 
     # Get all top-level categories for navigation
-    categories = Category.objects.filter(is_active=True, parent__isnull=True).order_by(
-        "sort_order", "name"
+    categories = (
+        Category.objects.filter(is_active=True, parent__isnull=True)
+        .select_related("image_asset")
+        .order_by("sort_order", "name")
     )
 
     # Get current category if specified
@@ -293,20 +295,10 @@ def category_view(request, category_slug=None):
             category_overrides["show_subcategories"] = False
     template_options = get_category_options(template_key, site_options, category_overrides)
 
-    # Accordion: annotate categories with product counts for display
-    if template_key == "accordion" and not category:
-        from django.db.models import Count
-
-        categories = categories.annotate(product_count=Count("products"))
-        categories = list(categories)  # Evaluate queryset once for chunking
-
     # Build product queryset
     products = Product.objects.filter(status="published", hide_from_storefront=False).exclude(
         sales_channel="pos_only"
     )
-    if category:
-        descendant_ids = category.get_descendant_ids()
-        products = products.filter(category_id__in=descendant_ids)
 
     # Filter by sales region (matches API behavior)
     from catalog.middleware import get_region_from_request
@@ -314,6 +306,48 @@ def category_view(request, category_slug=None):
     region = get_region_from_request(request)
     if region:
         products = products.available_in_region(region)
+
+    # Accordion: annotate categories with product counts for display.
+    # Count only storefront-visible products (same filters as the category
+    # detail page, applied above) and include each category's subtree, so
+    # the badge matches what clicking through actually shows.
+    if template_key == "accordion" and not category:
+        from collections import defaultdict
+
+        from django.db.models import Count
+
+        # order_by() clears Meta.ordering, which would otherwise leak into
+        # the GROUP BY and split the per-category counts
+        counts_by_category = dict(
+            products.order_by()
+            .values("category_id")
+            .annotate(n=Count("id", distinct=True))
+            .values_list("category_id", "n")
+        )
+        categories = list(categories)  # Evaluate queryset once for chunking
+        # Build the whole category tree in one query; walking it per
+        # category via get_descendant_ids() would issue a query per node.
+        # Seed the per-instance cache so the card-image fallback reuses it.
+        children_map = defaultdict(list)
+        for cat_id, parent_id in Category.objects.filter(is_active=True).values_list(
+            "id", "parent_id"
+        ):
+            children_map[parent_id].append(cat_id)
+
+        def collect_subtree(cat_id):
+            ids = [cat_id]
+            for child_id in children_map[cat_id]:
+                ids.extend(collect_subtree(child_id))
+            return ids
+
+        for cat in categories:
+            subtree_ids = collect_subtree(cat.id)
+            cat._descendant_ids_cache = subtree_ids
+            cat.product_count = sum(counts_by_category.get(i, 0) for i in subtree_ids)
+
+    if category:
+        descendant_ids = category.get_descendant_ids()
+        products = products.filter(category_id__in=descendant_ids)
 
     # Sorting
     sort_param = request.GET.get("sort", template_options.get("default_sort", "newest"))
@@ -523,6 +557,22 @@ def checkout_view(request):
     else:
         context["saved_addresses"] = []
 
+    # The customer's default saved address. Used to pre-fill the billing form
+    # on no-shipping (digital-only) carts — there's no shipping form to mirror,
+    # so pre-filling from the default lets express proceed straight to payment.
+    context["default_address"] = (
+        context["saved_addresses"].first() if request.user.is_authenticated else None
+    )
+
+    # Tenders UI: only offer the gift card field when the merchant actually
+    # sells (or has issued) gift cards
+    from catalog.models import GiftCard
+
+    context["gift_cards_enabled"] = (
+        Product.objects.filter(product_type="gift_card", status="published").exists()
+        or GiftCard.objects.filter(is_active=True).exists()
+    )
+
     # Geo country for address autocomplete bias
     geo_location = getattr(request, "geo_location", None)
     context["geo_country"] = ""
@@ -533,6 +583,36 @@ def checkout_view(request):
             context["geo_country"] = geo_location.country_code or ""
 
     context["user_email"] = request.user.email if request.user.is_authenticated else ""
+    context["user_full_name"] = (
+        request.user.get_full_name() if request.user.is_authenticated else ""
+    )
+    # Digital-only carts skip the shipping form entirely, so the contact
+    # step must collect the customer's name (orders and payment providers
+    # both need one).
+    context["cart_requires_shipping"] = cart.requires_shipping
+
+    # Country dropdown options — active shipping countries only, stored as
+    # ISO 3166-1 alpha-2 codes. A free-text country field let customers type
+    # names ("Singapore") that fail both the ShippingCountry ships-to lookup
+    # (no methods) and payment providers' ISO-2 requirement.
+    from django_countries import countries as _dj_countries
+
+    from shipping.models import ShippingCountry
+
+    _ship_codes = ShippingCountry.objects.filter(site_id=1, is_active=True).values_list(
+        "country_code", flat=True
+    )
+    context["shipping_countries"] = sorted(
+        ((code, _dj_countries.name(code) or code) for code in _ship_codes),
+        key=lambda pair: pair[1],
+    )
+
+    # Billing country options. For no-shipping (digital) carts the customer's
+    # billing country need not be a country the merchant ships to — restricting
+    # it to ShippingCountry locks out valid customers abroad and hides the
+    # payment methods available in their country. Offer the full ISO list; the
+    # shipping-address fields keep using shipping_countries.
+    context["billing_countries"] = list(_dj_countries)
 
     # Account creation context
     from accounts.services.account_creation_service import AccountCreationService
@@ -560,6 +640,18 @@ def checkout_view(request):
     config = PageTemplateConfig.get_config()
     template_key = request.GET.get("template") or config.checkout_template
     template_options = get_checkout_options(template_key, config.checkout_options)
+
+    # Express is a returning-customer flow: it rides a saved default address
+    # straight to payment. A shipping cart with no saved address has nothing to
+    # express — the client would load the returning-customer shell, then
+    # redirect to the fallback, flashing UI the customer can't use. Resolve it
+    # here instead so guests (and signed-in customers with no saved address)
+    # land on the right template first. No-shipping carts are exempt: express
+    # handles those for anyone, since there's no address to default from.
+    if template_key == "express" and cart.requires_shipping and not context["saved_addresses"]:
+        template_key = template_options.get("fallback_template") or "accordion"
+        template_options = get_checkout_options(template_key, config.checkout_options)
+
     context["template_options"] = template_options
     context["template_options_json"] = json.dumps(template_options)
     context["checkout_trust_badges"] = config.checkout_trust_badges or []
@@ -626,12 +718,16 @@ def order_confirmation_view(request, order_number):
 
     order = get_object_or_404(Order, order_number=order_number)
 
-    # Security: only allow order owner or staff
+    # Security: only allow order owner or staff. Guest checkout never
+    # authenticates the browser, so a guest is allowed through only for the
+    # specific order number recorded in their session when it was placed.
     if request.user.is_authenticated:
         if order.user and order.user != request.user and not request.user.is_staff:
             raise Http404
     else:
-        raise Http404
+        allowed = request.session.get("guest_order_numbers", [])
+        if order_number not in allowed:
+            raise Http404
 
     # Check if user is guest and should see account creation prompt
     settings = get_site_settings()
@@ -835,6 +931,13 @@ def product_view(request, product_slug):
     # Booking products always use the booking template
     if product.product_type == "booking":
         template_key = "booking"
+
+    # Gift cards always use the gift card template: it is the only one that
+    # collects the recipient details the API REQUIRES (recipient_email at
+    # minimum). Rendering a generic template leaves the product visible but
+    # unbuyable — every add-to-cart refuses for want of a recipient.
+    if product.product_type == "gift_card":
+        template_key = "gift_card"
 
     # Customizable products auto-select designer template unless overridden
     if product.product_type == "customizable" and not product.page_template:

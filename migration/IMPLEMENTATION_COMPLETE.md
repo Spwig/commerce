@@ -363,8 +363,8 @@ client.fetch_coupons(page=1, per_page=100)
 
 # Utilities
 client.get_total_counts()  # Returns: {'products': 153, 'categories': 49, ...}
-client.test_connection()   # Returns: True/False
-client.get_api_version()   # Returns: 'wc/v3'
+client.test_connection()  # Returns: True/False
+client.get_api_version()  # Returns: 'wc/v3'
 ```
 
 ---

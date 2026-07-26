@@ -131,6 +131,7 @@ class AddressFactory(factory.django.DjangoModelFactory):
     state = "NY"
     postal_code = "10013"
     country = "US"
+    phone = "+1 212 555 0100"
     is_default = False
     is_active = True
 

@@ -259,7 +259,9 @@ services:
       - default
 
   nginx:
-    image: fholzer/nginx-brotli:v1.27.3
+    # Minor-line alias, not an exact patch tag: this image's maintainer
+    # prunes old patch tags (v1.27.3 vanished and broke fresh installs).
+    image: fholzer/nginx-brotli:v1.30
     restart: unless-stopped
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
@@ -314,22 +316,22 @@ services:
 
 volumes:
   pgdata:
-    name: shop_pgdata
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_pgdata
   redis_data:
-    name: shop_redis_data
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_redis_data
   minio_data:
-    name: shop_minio_data
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_minio_data
   static_volume:
-    name: shop_static
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_static
   components_data:
-    name: shop_components_data
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_components_data
   translator_models:
-    name: shop_translator_models
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_translator_models
   huggingface_cache:
-    name: shop_huggingface_cache
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_huggingface_cache
   backups:
-    name: shop_backups
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_backups
 
 networks:
   default:
-    name: shop_network
+    name: ${SPWIG_VOLUME_PREFIX:-shop}_network

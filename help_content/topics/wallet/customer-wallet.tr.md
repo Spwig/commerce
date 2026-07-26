@@ -2,126 +2,101 @@
 title: Müşteri Cüzdanı
 ---
 
-Müşteri cüzdanı, müşterilere gelecekteki siparişlerde harcayabilecekleri bir bakiye sağlayan bir mağaza kredisi sistemidir. Mağaza kredisi, iade işlemleri, referans ödülleri, promosyon kampanyaları veya ekibiniz tarafından yapılan el ile ayarlamalar sonucu eklenebilir. Müşteriler, ödeme sırasında cüzdan bakiyelerini uygulayarak ödemelerini azaltabilirler.
+Müşteri cüzdanı, her müşteri için çalışan bir kredi bakiyesi defteridir. Mağaza kredisini, iade, referans ödülleri, kampanyalar veya ekibiniz tarafından yapılan el ile ayarlamalar sonucu ekleyebilirsiniz.
+
+> **Cüzdan bakiyeleri ödeme sırasında harcanabilir.** Giriş yapmış bir müşteri, mağaza kredisine sahipse, bunu ödeme adımda görecektir ve tek bir tıklamayla uygulayabilir. Kredi, vergi ve kargo sonrası fatura üzerinden düşecek ve kalan tutar normal şekilde kartına yüklenir. Eğer kredi tüm siparişi kapsıyorsa, hiçbir kart gerekmez. Kredi uygulandığında rezerv edilir ve ödeme onaylandıktan sonra gerçekten düşer, bu nedenle terk edilen bir ödeme müşteriye hiçbir maliyet getirmez.
 
 **Müşteriler > Müşteri Cüzdanları** menüsüne giderek cüzdanları görüntüleyebilir ve yönetebilirsiniz.
 
 ## Cüzdan bakiyelerini anlama
 
-Her müşteri cüzdanı dört bakiye rakamını gösterir:
+Her müşteri cüzdanı dört bakiye figürünü gösterir:
 
 | Bakiye | Açıklama |
 |---|---|
-| **Kullanılabilir Bakiye** | Müşterinin şu anda ödeme sırasında harcayabileceği miktar |
-| **Bekleyen Bakiye** | Henüz harcayamayacağınız krediler — örneğin, onay penceresi içinde olan bir iade |
-| **Toplam Kredili Bakiye** | Bu cüzdana asla kredili olan toplam miktar, geçmiş tüm krediler dahil |
-| **Toplam Kullanılan** | Müşterinin tüm siparişlerden cüzdanından harcadığı toplam miktar |
+| **Kullanılabilir Bakiye** | Müşterinin mevcut ve kullanıma elverişli kredisi — bu, bu özellik aktif hale geldiğinde ödeme sırasında harcanabilecek olan tutar |
+| **Bekleyen Bakiye** | Kullanılabilir bakiye olmayan krediler — örneğin, iade henüz onay penceresi içindeyken |
+| **Toplam Kredi** | Bu cüzdana asla kredi verildiğinden beri toplam tutar, geçmiş tüm krediler dahil |
+| **Toplam Kullanılan** | Bu cüzdanın asla çekilen toplam tutar |
 
-Ödeme sırasında sadece kullanılabilir bakiye önemli olur. Bekleyen krediler, bekleyen dönem sona erdiğinde kullanıma açılır.
+Kullanılabilir bakiye, ödeme harcaması aktif hale geldiğinde önemli olan rakamdır. Bekleyen krediler, bekleyen dönem sona erdiğinde kullanıma elverişli bakiyeye geçer.
 
 ## Müşteri cüzdanını görüntüleme
 
 1. **Müşteriler > Müşteri Cüzdanları** menüsüne gidin
-2. Ad ya da e-posta ile müşteri aramak için arama alanını kullanın
+2. Ad ya da e-posta ile müşteriyi bulmak için arama alanını kullanın
 3. Cüzdan girdisine tıklayarak detaylı görünümü açın
 
-Detaylı görünüm, üstte mevcut bakiyeleri ve altta tam bir işlem geçmişini gösterir. **Son Kredili Bakiye** ve **Son Kullanılan Bakiye** zaman damgaları, cüzdanın son aktif olduğu zamanı gösterir.
+Detaylı görünüm, üstte mevcut bakiyeleri ve altta tam bir işlem geçmişini gösterir. **Son Kredi Tarihi** ve **Son Kullanım Tarihi** zaman damkaları, cüzdanın son aktif olduğu zamanı gösterir.
 
 ### Cüzdan listesini filtreleme
 
-**Aktif** filtresini kullanarak canlı cüzdanları donmuş olanlardan ayırabilirsiniz. Bir cüzdan, aktif olarak işaretlenmiş olsa bile pozitif bir bakiye varsa ödeme sırasında kullanılamaz.
+**Aktif** filtresini kullanarak aktif cüzdanları donmuş olanlardan ayırabilirsiniz. Aktif olmayan bir cüzdan donmuş olur — bu cüzdana karşı kredi veya çekilmeler kaydedilemez, ancak bakiyesi korunur.
 
 ## İşlem geçmişini okuma
 
-Her cüzdan bakiyesindeki değişiklik, bireysel bir işlem olarak kaydedilir. İşlem geçmişi, tam ve kalıcı bir defterdir — işlemler hiçbir zaman düzenlenmez veya silinmez. Bir hata düzeltilmesi gerekiyorsa, bunun yerine yeni bir dengeleyici işlem eklenir.
+Her cüzdan bakiyesindeki değişiklik, bireysel bir işlem olarak kaydedilir. İşlem geçmişi, tam ve kalıcı bir defterdir — işlemler hiçbir zaman düzenlenmez veya silinmez. Bir hata düzeltilmesi gerekiyorsa, bunun yerine yeni bir dengeleme işlemi eklenir.
 
 Her işlem şu alanları gösterir:
 
 | Alan | Açıklama |
 |---|---|
-| **Tip** | Kredi, Debit, Iade, Ayarlama veya Geri Alım |
-| **Miktar** | Bu işlemin değeri (her zaman pozitif bir sayı olarak gösterilir) |
+| **Tip** | Kredi, Çekim, İade, Ayarlama veya Geri Alım |
+| **Tutar** | Bu işlemin değeri (her zaman pozitif bir sayı olarak gösterilir) |
 | **İşlem Sonrası Bakiye** | Bu işlem uygulandıktan hemen sonra cüzdan bakiyesi |
-| **Kaynak** | Kredi veya debiti başlatan yer |
+| **Kaynak** | Kredi veya çekimin geldiği yer |
 | **Durum** | Tamamlandı, Bekliyor veya Geri Alındı |
 | **Açıklama** | İşlemin kısa açıklaması |
 | **Referans Kimliği** | Kaynak kaydı (örneğin, bir sipariş numarası veya ödül kimliği) ile bağlantı kuran bir bağlantı |
-| **Oluşturulma Zamanı** | İşlem kaydedildiğinde |
+| **Oluşturulma Tarihi** | İşlem kaydedildiğinde |
 
-### İşlem türlerini anlama
+### İşlem tipleri açıklaması
 
-- **Kredi** — cüzdana eklenen fonlar (iade, promosyon veya el ile ayarlama sonucu)
-- **Debit** — ödeme sırasında harcanan fonlar
-- **Iade** — iade veya iptal edilen bir sipariş sonucu olarak özel olarak eklenen kredi
+- **Kredi** — cüzdana eklenen fonlar (iade, kampanya veya el ile ayarlama sonucu)
+- **Çekim** — cüzdanından kaldırılan fonlar. Ödeme harcaması aktif hale geldiğinde bu "bir siparişte harcanmış" anlamına gelecek — şu anda çekimlerin tek yolu el ile ayarlama olacaktır
+- **İade** — iade edilmiş veya iptal edilmiş bir sipariş sonucu olarak özel olarak eklenen kredi
 - **Ayarlama** — ekibiniz tarafından yapılan el ile düzeltme
 - **Geri Alım** — daha önceki bir girdiyi iptal eden bir işlem
 
-### İşlem kaynaklarını anlama
+### İşlem kaynakları açıklaması
 
-- **Sipariş Iadesi** — bir sipariş iade edildiğinde cüzdana verilen kredi
+- **Sipariş İadesi** — bir sipariş iade edildiğinde cüzdana verilen kredi
 - **Referans Ödülü** — referans programı aracılığıyla kazanılan kredi
-- **Promosyon** — pazarlama kampanyası kapsamında verilen kredi
-- **El ile Ayarlama** — bir personel tarafından doğrudan eklenebilen veya kaldırılabilecek kredi
-- **Sipariş Ödemesi** — bir sipariş için ödeme sırasında harcanan fonlar
+- **Kampanya** — pazarlama kampanyası kapsamında verilen kredi
+- **El ile Ayarlama** — bir personel tarafından doğrudan eklenen veya kaldırılan kredi
+- **Sipariş Ödemesi** — bir sipariş için ödeme sırasında harcanan fonlar. Şu anda kullanılmıyor — ödeme harcaması aktif hale geldiğinde için ayrılmıştır
 
 ## El ile cüzdan ayarlamaları
 
-Cüzdan detay görünümünden doğrudan fon ekleyemez veya kaldırılamaz — cüzdan işlemleri, ilgili süreçler aracılığıyla (iade, ödüller, promosyonlar) oluşturulur. Ancak, uygun izinlere sahip personel, **Cüzdan İşlemleri** bölümü üzerinden el ile ayarlama işlemleri oluşturabilir.
+Yönetim panelinden para ekleyemez veya çıkaramazsınız — cüzdan işlemleri yalnızca sahipleri olan süreçler tarafından oluşturulur: iade işlemleri, sadakat ödülleri ve referans ödülleri. Bu amaçlıdır. Her hareket, onu yaratan şeyle bir bağlantı taşır ve gece boyu bir kontrol, her cüzdanın bakiyesini kendi geçmişine göre doğrular; elle girilen satırlar bu zinciri bozar.
 
-**Müşteriler > Cüzdan İşlemleri** menüsüne gidin ve bir cüzdan kredisi başka bir kaynakla uyuşmuyorsa (örneğin, hizmet şikayetinden sonra iyi niyet kredisi) bir cüzdan işlemi uygulamak istiyorsanız **+ Cüzdan İşlemi Ekle** kullanın.
+İyi niyetli kredi — bir hizmet şikayeti, bir sorun sonrası bir el sıkışma — için yerine **hediye kartı** el ile verin (bkz. **Hediye Kartları** yardım konusu). Hediye kartı bunun için tasarlanmıştır: değerini siz kontrol edersiniz, müşteri e-posta yoluyla bir kod alır ve mağaza kredisi gibi ödeme sırasında harcanır.
 
-El ile ayarlama oluştururken:
+## Cüzdanı dondurma
 
-1.
+Bir müşteriye cüzdan bakiyesini kullanmasını engellemek gerekiyorsa — örneğin bir dolandırıcılık soruşturması sırasında — onu silmeden veya bakiyeyi çıkarmadan devre dışı bırakabilirsiniz.
 
-Ayarlamak istediğiniz **Cüzdan**ı seçin (müşteri e-postası ile arama yapın)
-2.
+1. Müşterinin cüzdan detay görünümünü açın
+2. **Aktif** anahtarını kaldırın
+3. **Kaydet**'e tıklayın
 
+Bakiye korunur ve cüzdan herhangi bir zaman tekrar etkinleştirilebilir. Etkinleştirilmemişken, yeni krediler veya borçlar — elle girilen veya aksi takdirde — cüzdana kaydedilemez.
 
-Set **Transaction Type** to `Adjustment`
-3.
+## Tüm işlemleri görüntüleme
 
-Set **Source** to `Manual Adjustment`
-4.
+Cüzdan aktivitesi için mağaza genelinde bir görünüm elde etmek için **Müşteriler > Cüzdan İşlemleri**'ne gidin. Bu liste, tüm müşteri cüzdanlarının her işlemini gösterir ve aşağıdaki filtrelerle:
 
-Enter the **Amount** — always a positive number regardless of direction
-5.
+- **İşlem Türü** — kredi, borç, ayarlama vb. ile filtreleyin
+- **Kaynak** — işlemlerin nereden geldiğini filtreleyin
+- **Durum** — tamamlanmış, bekleyen veya iptal edilmiş ile filtreleyin
+- **Tarih** — üstteki tarih hiyerarşisini kullanarak belirli bir gün, ay veya yıla inin
 
-Set the **Status** to `Completed` for an immediate credit
-6.
+İşlem listesi salt okunur — bu görünümde işlemler düzenlenemez veya silinemez.
 
-Add a clear **Description** explaining the reason — this is visible in the transaction history
-7.
+## İpuçları
 
-Click **Save**
-
-> **Note:** Because wallet transactions are immutable, double-check the amount and wallet before saving. If you make a mistake, you will need to create a reversal transaction to correct it.
-
-## Freezing a wallet
-
-If you need to prevent a customer from using their wallet balance — for example, during a fraud investigation — you can deactivate it without deleting it or removing the balance.
-
-1. Open the customer's wallet detail view
-2. Uncheck the **Active** toggle
-3. Click **Save**
-
-The balance is preserved and the wallet can be reactivated at any time. While inactive, the customer cannot apply the wallet balance at checkout.
-
-## Viewing all transactions
-
-For a store-wide view of wallet activity, navigate to **Customers > Wallet Transactions**. This list shows every transaction across all customer wallets, with filters for:
-
-- **Transaction Type** — filter by credit, debit, adjustment, etc.
-- **Source** — filter by where transactions originated
-- **Status** — filter by completed, pending, or reversed
-- **Date** — use the date hierarchy at the top to drill into a specific day, month, or year
-
-The transaction list is read-only — transactions cannot be edited or deleted from this view.
-
-## Tips
-
-- Check **Lifetime Credited** versus **Lifetime Used** to understand how actively a customer uses their store credit — a large unused balance may indicate the customer has forgotten it exists
-- If a customer reports their balance looks wrong, review the full transaction history to trace exactly how the balance changed over time; the **Balance After** column on each entry makes this easy
-- Use wallet credits as a customer retention tool — a goodwill credit after a difficult order experience can cost less than a refund while keeping the customer spending in your store
-- Frozen wallets retain their balance permanently; there is no expiry — if you deactivate a wallet temporarily, remember to reactivate it when the issue is resolved
-- The **Reference ID** on each transaction links back to the originating record, making it straightforward to verify why a credit or debit was applied without having to search elsewhere
+- **Ömür boyu kredi** ile **Ömür boyu kullanılmış** karşılaştırın, müşteri mağaza kredisini ne kadar aktif kullandığını anlamanıza yardımcı olur — büyük bir kullanılmamış bakiye, müşteri bunun var olduğunu unuttuğunu gösterebilir
+- Eğer bir müşteri bakiyesinin yanlış göründüğünü bildirirse, tam işlem geçmişini inceleyerek bakiyenin zaman içinde nasıl değiştiğini izleyin; her girdideki **İşlem Sonrası Bakiye** sütunu bunu kolaylaştırır
+- Büyük bir kullanılmamış bakiye bir uyarı değerindedir — müşteriler hesap panosunda ve ödeme adımında mağaza kredisini görürler, ancak onu belirten kısa bir e-posta genellikle bir siparişe dönüşür
+- Donmuş cüzdanlar bakiyelerini kalıcı olarak tutar; bir son kullanma tarihi yoktur — bir cüzdanı geçici olarak devre dışı bırakırsanız, sorun çözüldüğünde tekrar etkinleştirmeyi unutmayın
+- Her işlemdeki **Referans Kimliği**, orijinal kayda geri döner, bu da kredi veya borç uygulandığının nedenini doğrulamak için başka yerde arama yapmadan kolayca anlaşılır

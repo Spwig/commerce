@@ -7,7 +7,8 @@ Follows established admin patterns with wizard-based migration flow.
 import logging
 
 from django.contrib import admin, messages
-from django.http import FileResponse, JsonResponse
+from django.core.exceptions import PermissionDenied
+from django.http import FileResponse, HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import path, reverse
 from django.utils import timezone
@@ -17,6 +18,29 @@ from django.utils.translation import gettext_lazy as _
 from .models import MigrationJob, MigrationLog, MigrationMapping, MigrationStep
 
 logger = logging.getLogger(__name__)
+
+# Keys in connection_config that are NOT connection credentials and must survive
+# the connection step being re-run. affiliate_rollback_ids in particular is the
+# only record of which affiliate rows and accounts an import created — losing it
+# orphans them permanently, because those rows carry no migration_job of their
+# own.
+_PRESERVED_CONFIG_KEYS = (
+    "affiliate_rollback_ids",
+    "rollback_report",
+    "csv_column_mappings",
+    "price_adjustment_type",
+    "price_adjustment_value",
+)
+
+
+def _replace_connection_config(job, new_config):
+    """Swap the connection credentials while keeping non-credential state."""
+    preserved = {
+        key: value
+        for key, value in (job.connection_config or {}).items()
+        if key in _PRESERVED_CONFIG_KEYS
+    }
+    job.connection_config = {**new_config, **preserved}
 
 
 @admin.register(MigrationJob)
@@ -43,7 +67,12 @@ class MigrationJobAdmin(admin.ModelAdmin):
         "started_at",
         "completed_at",
         "duration_seconds",
-        "transaction_id",
+        # Must stay read-only. It holds source-platform credentials in clear
+        # text, and it holds the affiliate rollback manifest — the list of rows
+        # a rollback is allowed to delete. Editable, it would let anyone with
+        # change permission read those credentials and nominate arbitrary
+        # affiliates and user accounts for deletion by the next rollback.
+        "connection_config",
     ]
 
     # Custom template for list view
@@ -77,8 +106,13 @@ class MigrationJobAdmin(admin.ModelAdmin):
         # Get statistics
         total_jobs = MigrationJob.objects.count()
         completed_jobs = MigrationJob.objects.filter(status="completed").count()
-        failed_jobs = MigrationJob.objects.filter(status="failed").count()
-        running_jobs = MigrationJob.objects.filter(status="running").count()
+        # "Failed" covers every way an import stopped short, so the tiles add up
+        # against Total. A cancelled or failed-rollback job counted only toward
+        # Total before, and was invisible in the summary.
+        failed_jobs = MigrationJob.objects.filter(
+            status__in=["failed", "cancelled", "rollback_failed"]
+        ).count()
+        running_jobs = MigrationJob.objects.filter(status__in=["running", "rolling_back"]).count()
 
         extra_context["stats"] = {
             "total": total_jobs,
@@ -247,52 +281,27 @@ class MigrationJobAdmin(admin.ModelAdmin):
         if obj.status == "pending":
             resume_url = reverse("admin:migration_wizard_step2", args=[obj.pk])
             buttons.append(
-                f'<a href="{resume_url}" class="button" '
-                f'style="margin-right: 5px; background: var(--button-primary, #1a73e8); color: white;">'
+                f'<a href="{resume_url}" class="button migration-action-link primary">'
                 f'<i class="fas fa-play"></i> {_("Resume")}</a>'
             )
 
-        # Retry - for failed migrations
-        if obj.status == "failed":
-            retry_url = reverse("admin:migration_job_retry", args=[obj.pk])
-            buttons.append(
-                f'<a href="{retry_url}" class="button" '
-                f'style="margin-right: 5px; background: var(--warning-color, #ff9800); color: white;">'
-                f'<i class="fas fa-redo"></i> {_("Retry")}</a>'
-            )
+        # State-changing actions (Retry, Cancel, Delete) are deliberately absent
+        # here: they are POST-only, and a list_display cell cannot carry a CSRF
+        # token. They live on the migration dashboard cards instead, where they
+        # are rendered as proper forms.
 
         # View Details - link to appropriate wizard step
         view_url = self._get_wizard_url(obj)
         buttons.append(
-            f'<a href="{view_url}" class="button" style="margin-right: 5px;">'
+            f'<a href="{view_url}" class="button migration-action-link">'
             f'<i class="fas fa-eye"></i> {_("View")}</a>'
         )
-
-        # Rollback (if eligible)
-        if obj.is_rollbackable:
-            rollback_url = reverse("admin:migration_job_rollback", args=[obj.pk])
-            buttons.append(
-                f'<a href="{rollback_url}" class="button" '
-                f'style="margin-right: 5px; background: var(--error-color, #f44336); color: white;" '
-                f"onclick=\"return confirm('{_('Are you sure you want to rollback this migration? This will delete all imported data.')}');\">"
-                f'<i class="fas fa-undo"></i> {_("Rollback")}</a>'
-            )
 
         # Download Report (if completed)
         if obj.status == "completed" and obj.report_file:
             buttons.append(
                 f'<a href="{obj.report_file.url}" class="button" download>'
                 f'<i class="fas fa-download"></i> {_("Report")}</a>'
-            )
-
-        # Delete - for pending or failed migrations that can be cleaned up
-        if obj.status in ["pending", "failed"]:
-            delete_url = reverse("admin:migration_job_delete", args=[obj.pk])
-            buttons.append(
-                f'<a href="{delete_url}" class="button" '
-                f'style="margin-right: 5px; background: var(--body-quiet-color, #666); color: white;" '
-                f"onclick=\"return confirm('{_('Are you sure you want to delete this migration?')}');\">"
-                f'<i class="fas fa-trash"></i> {_("Delete")}</a>'
             )
 
         return format_html(" ".join(buttons))
@@ -354,6 +363,11 @@ class MigrationJobAdmin(admin.ModelAdmin):
                 "<uuid:job_id>/rollback/",
                 self.admin_site.admin_view(self.rollback_migration),
                 name="migration_job_rollback",
+            ),
+            path(
+                "<uuid:job_id>/start/",
+                self.admin_site.admin_view(self.start_migration),
+                name="migration_job_start",
             ),
             path(
                 "<uuid:job_id>/retry/",
@@ -502,11 +516,14 @@ class MigrationJobAdmin(admin.ModelAdmin):
                     )
 
                 # Save to job connection_config
-                job.connection_config = {
-                    "store_url": store_url,
-                    "consumer_key": consumer_key,
-                    "consumer_secret": consumer_secret,
-                }
+                _replace_connection_config(
+                    job,
+                    {
+                        "store_url": store_url,
+                        "consumer_key": consumer_key,
+                        "consumer_secret": consumer_secret,
+                    },
+                )
                 job.save()
 
                 messages.success(request, _("Connection configured successfully."))
@@ -535,11 +552,14 @@ class MigrationJobAdmin(admin.ModelAdmin):
                         },
                     )
 
-                job.connection_config = {
-                    "store_domain": store_domain,
-                    "client_id": client_id,
-                    "client_secret": client_secret,
-                }
+                _replace_connection_config(
+                    job,
+                    {
+                        "store_domain": store_domain,
+                        "client_id": client_id,
+                        "client_secret": client_secret,
+                    },
+                )
                 job.save()
 
                 messages.success(request, _("Connection configured successfully."))
@@ -565,10 +585,13 @@ class MigrationJobAdmin(admin.ModelAdmin):
                 # Normalize URL: strip trailing slash
                 store_url = store_url.rstrip("/")
 
-                job.connection_config = {
-                    "store_url": store_url,
-                    "access_token": access_token,
-                }
+                _replace_connection_config(
+                    job,
+                    {
+                        "store_url": store_url,
+                        "access_token": access_token,
+                    },
+                )
                 job.save()
 
                 messages.success(request, _("Connection configured successfully."))
@@ -645,7 +668,7 @@ class MigrationJobAdmin(admin.ModelAdmin):
                         },
                     )
 
-                job.connection_config = {"csv_files": csv_files}
+                _replace_connection_config(job, {"csv_files": csv_files})
                 job.save()
 
                 messages.success(request, _("CSV files uploaded successfully."))
@@ -860,6 +883,11 @@ class MigrationJobAdmin(admin.ModelAdmin):
             # Update job connection_config with import options
             job.connection_config.update(import_options)
 
+            # A real model field rather than a connection_config key: the
+            # failure path reads it from the database, and connection_config is
+            # replaced wholesale when the connection step is re-run.
+            job.auto_rollback_on_failure = "auto_rollback_on_failure" in request.POST
+
             # Save counts for accurate progress calculation
             if job.platform == "magento" and preview:
                 job.connection_config.update(
@@ -910,7 +938,7 @@ class MigrationJobAdmin(admin.ModelAdmin):
                     }
                 )
 
-            job.save()
+            job.save(update_fields=["connection_config", "auto_rollback_on_failure"])
 
             messages.success(request, _("Import options saved."))
             return redirect("admin:migration_wizard_step4", job_id=job.id)
@@ -972,21 +1000,30 @@ class MigrationJobAdmin(admin.ModelAdmin):
                         csv_column_mappings[file_type] = file_mappings
                 job.connection_config["csv_column_mappings"] = csv_column_mappings
 
-            # Save other settings to connection_config
+            # Save other settings to connection_config.
+            #
+            # import_tax_settings, import_shipping_settings and
+            # unmapped_category_action used to be written here and read nowhere.
+            # Their controls have been removed from step 4 rather than
+            # implemented: tax and shipping configuration is not something to
+            # copy across unreviewed, and offering a control that silently does
+            # nothing is worse than not offering it.
             job.connection_config.update(
                 {
                     "price_adjustment_type": request.POST.get("price_adjustment_type", "none"),
                     "price_adjustment_value": request.POST.get("price_adjustment_value", "0"),
-                    "import_tax_settings": "import_tax_settings" in request.POST,
-                    "import_shipping_settings": "import_shipping_settings" in request.POST,
-                    "unmapped_category_action": request.POST.get(
-                        "unmapped_category_action", "create"
-                    ),
                 }
             )
-            job.save()
+            job.save(update_fields=["connection_config"])
 
-            messages.success(request, _("Field mappings configured successfully."))
+            # Submitting this step is the merchant's intent to start the import,
+            # and this is a POST, so the import is queued here. Step 5 is then a
+            # pure progress view rather than a GET with side effects.
+            if job.status == "pending":
+                self._dispatch_import(request, job)
+            else:
+                messages.success(request, _("Field mappings configured successfully."))
+
             return redirect("admin:migration_wizard_step5", job_id=job.id)
 
         # GET: Auto-detect and show mappings
@@ -1167,42 +1204,70 @@ class MigrationJobAdmin(admin.ModelAdmin):
                 "current_step": 4,
                 "auto_mappings": auto_mappings,
                 "custom_fields": custom_fields,
-                "category_mapping_needed": import_flags.get("import_categories", False),
                 "csv_column_mappings": csv_column_mappings,
             },
         )
 
-    def wizard_step5(self, request, job_id):
-        """Step 5: Import progress"""
+    def _dispatch_import(self, request, job):
+        """Queue the import for `job` and mark it running.
+
+        Callers must have established intent through a POST — dispatching a
+        multi-hour store-wide import is a state change and must never happen on
+        a GET. Returns True if the task was queued.
+        """
+        try:
+            from .tasks import run_migration_job
+
+            # Delete old steps and logs from any previous attempts
+            job.steps.all().delete()
+            job.logs.all().delete()
+
+            # Dispatch Celery task to run migration asynchronously
+            task = run_migration_job.delay(str(job.id))
+
+            # Store task ID for monitoring
+            job.connection_config["celery_task_id"] = task.id
+            job.status = "running"
+            job.started_at = timezone.now()
+            job.save()
+
+            logger.info(f"Dispatched migration job {job.id} to Celery task {task.id}")
+            messages.success(
+                request,
+                _("Migration started. You can safely close this window and check back later."),
+            )
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to start import: {e}")
+            messages.error(request, _("Failed to start import: {}").format(str(e)))
+            return False
+
+    def start_migration(self, request, job_id):
+        """Start a configured but not-yet-started migration."""
+        if request.method != "POST":
+            return HttpResponseNotAllowed(["POST"])
+
         job = get_object_or_404(MigrationJob, pk=job_id)
 
-        # Auto-start import if job is still pending
-        if job.status == "pending":
-            try:
-                from .tasks import run_migration_job
+        if not self.has_change_permission(request, job):
+            raise PermissionDenied
 
-                # Delete old steps and logs from any previous attempts
-                job.steps.all().delete()
-                job.logs.all().delete()
+        if job.status != "pending":
+            messages.error(request, _("This migration has already been started."))
+            return redirect("admin:migration_wizard_step5", job_id=job.id)
 
-                # Dispatch Celery task to run migration asynchronously
-                task = run_migration_job.delay(str(job.id))
+        self._dispatch_import(request, job)
+        return redirect("admin:migration_wizard_step5", job_id=job.id)
 
-                # Store task ID for monitoring
-                job.connection_config["celery_task_id"] = task.id
-                job.status = "running"
-                job.started_at = timezone.now()
-                job.save()
+    def wizard_step5(self, request, job_id):
+        """Step 5: Import progress.
 
-                logger.info(f"Dispatched migration job {job.id} to Celery task {task.id}")
-                messages.success(
-                    request,
-                    _("Migration started! You can safely close this window and check back later."),
-                )
-
-            except Exception as e:
-                logger.error(f"Failed to start import: {e}")
-                messages.error(request, _("Failed to start import: {}").format(str(e)))
+        A pure progress view. It deliberately does not start the import — that
+        happens on the POST from step 4, or via the explicit Start button this
+        page renders when a job is still pending.
+        """
+        job = get_object_or_404(MigrationJob, pk=job_id)
 
         return render(
             request,
@@ -1300,6 +1365,9 @@ class MigrationJobAdmin(admin.ModelAdmin):
 
         job = get_object_or_404(MigrationJob, pk=job_id)
 
+        if not self.has_change_permission(request, job):
+            return JsonResponse({"error": "Permission denied"}, status=403)
+
         try:
             data = json.loads(request.body)
             link_id = data.get("link_id")
@@ -1344,6 +1412,9 @@ class MigrationJobAdmin(admin.ModelAdmin):
 
         job = get_object_or_404(MigrationJob, pk=job_id)
 
+        if not self.has_change_permission(request, job):
+            return JsonResponse({"error": "Permission denied"}, status=403)
+
         count = ContentLink.objects.filter(
             job=job,
             status="pending",
@@ -1371,6 +1442,9 @@ class MigrationJobAdmin(admin.ModelAdmin):
 
         job = get_object_or_404(MigrationJob, pk=job_id)
 
+        if not self.has_change_permission(request, job):
+            return JsonResponse({"error": "Permission denied"}, status=403)
+
         store_url = job.connection_config.get("store_url", "")
         source_domain = urlparse(store_url).netloc if store_url else ""
 
@@ -1391,24 +1465,82 @@ class MigrationJobAdmin(admin.ModelAdmin):
         )
 
     def rollback_migration(self, request, job_id):
-        """Rollback a completed migration"""
+        """Roll back a completed migration.
+
+        This is the most destructive operation in the app — it deletes products,
+        categories, customer accounts, orders and media across several apps — so
+        it requires delete permission, not merely staff access. `is_rollbackable`
+        below is a business-state check and is not an authorisation check.
+        """
         job = get_object_or_404(MigrationJob, pk=job_id)
+
+        if not self.has_delete_permission(request, job):
+            raise PermissionDenied
 
         if not job.is_rollbackable:
             messages.error(request, _("This migration cannot be rolled back."))
             return redirect("admin:migration_migrationjob_changelist")
 
         if request.method == "POST":
+            from .tasks import rollback_migration_task
+
+            # Claim the job atomically. A double-click on the confirmation page
+            # would otherwise pass the is_rollbackable check twice and dispatch
+            # two workers, which then plan against the same pre-delete state and
+            # race each other inside overlapping delete transactions.
+            claimed = MigrationJob.objects.filter(
+                pk=job.pk, status__in=MigrationJob.ROLLBACKABLE_STATUSES
+            ).update(status="rolling_back")
+
+            if not claimed:
+                messages.error(request, _("This rollback is already running."))
+                return redirect("admin:migration_migrationjob_changelist")
+
+            # Run it on a worker. A rollback spans many models and can take a
+            # long time on a large store; doing it in the request thread risks a
+            # gateway timeout partway through a destructive transaction.
             try:
-                # Import rollback utility
-                from .utils.rollback import rollback_migration
+                rollback_migration_task.delay(str(job.id))
+            except Exception:  # noqa: BLE001 - broker failures are opaque
+                # The status was already claimed above. If the message never
+                # reached the broker, release the claim — otherwise the job sits
+                # in "rolling_back" with no worker and no action available to
+                # the merchant.
+                logger.exception("Failed to queue rollback for job %s", job.id)
+                MigrationJob.objects.filter(pk=job.pk, status="rolling_back").update(
+                    status=job.status
+                )
+                messages.error(
+                    request,
+                    _("Spwig could not start the rollback. Nothing has been removed."),
+                )
+                return redirect("admin:migration_migrationjob_changelist")
 
-                rollback_migration(job)
-                messages.success(request, _("Migration rolled back successfully!"))
-            except Exception as e:
-                messages.error(request, _("Rollback failed: {}").format(str(e)))
-
+            messages.success(
+                request,
+                _(
+                    "Rollback started. This runs in the background — check back "
+                    "shortly to see what was removed and what was kept."
+                ),
+            )
             return redirect("admin:migration_migrationjob_changelist")
+
+        # GET: show the merchant exactly what this rollback would do, computed
+        # against their live data rather than described in the abstract.
+        preview = None
+        preview_error = None
+        try:
+            from .utils.rollback import rollback_migration as _rollback
+
+            preview = _rollback(job, dry_run=True)
+        except Exception as e:  # noqa: BLE001 - preview must never block the page
+            # Log the detail; show the merchant a generic message. Exception
+            # strings from the ORM carry table and column names.
+            logger.warning("Rollback preview failed for job %s: %s", job.id, e, exc_info=True)
+            preview_error = _(
+                "Spwig could not calculate this in advance. The rollback itself "
+                "will still report what it removed and what it kept."
+            )
 
         return render(
             request,
@@ -1417,51 +1549,34 @@ class MigrationJobAdmin(admin.ModelAdmin):
                 "title": _("Confirm Rollback"),
                 "opts": self.model._meta,
                 "job": job,
+                "preview": preview,
+                "preview_error": preview_error,
             },
         )
 
     def retry_migration(self, request, job_id):
-        """Retry a failed migration"""
+        """Re-run a failed migration from the beginning.
+
+        This is a fresh run, not a resume: the import restarts from the first data
+        type. Items that already imported are skipped by their external ID, so a
+        retry does not duplicate what survived the first attempt.
+        """
+        if request.method != "POST":
+            return HttpResponseNotAllowed(["POST"])
+
         job = get_object_or_404(MigrationJob, pk=job_id)
+
+        if not self.has_change_permission(request, job):
+            raise PermissionDenied
 
         if job.status != "failed":
             messages.error(request, _("Only failed migrations can be retried."))
             return redirect("admin:migration_migrationjob_changelist")
 
-        # Delete old steps and logs from previous attempt
-        job.steps.all().delete()
-        job.logs.all().delete()
-
-        # Reset the migration job to pending state
-        job.status = "pending"
-        job.progress_percent = 0
-        job.current_step = ""
-        job.error_summary = ""
-        job.started_at = None
-        job.completed_at = None
-        job.duration_seconds = None
-
-        # Reset statistics
-        job.products_imported = 0
-        job.products_failed = 0
-        job.products_skipped = 0
-        job.categories_imported = 0
-        job.categories_failed = 0
-        job.categories_skipped = 0
-        job.customers_imported = 0
-        job.customers_failed = 0
-        job.customers_skipped = 0
-        job.orders_imported = 0
-        job.orders_failed = 0
-        job.orders_skipped = 0
-        job.reviews_imported = 0
-        job.reviews_failed = 0
-        job.reviews_skipped = 0
-        job.coupons_imported = 0
-        job.coupons_failed = 0
-        job.coupons_skipped = 0
-
-        job.save()
+        # Zero every statistic, clear the previous run's progress, cancellation
+        # and forensic state, and drop its steps, logs and quarantined items.
+        # Everything error-prone about the old hand-written reset lives here now.
+        job.reset_for_retry()
 
         # Start the migration immediately via Celery
         try:
@@ -1474,10 +1589,16 @@ class MigrationJobAdmin(admin.ModelAdmin):
             job.connection_config["celery_task_id"] = task.id
             job.status = "running"
             job.started_at = timezone.now()
-            job.save()
+            job.save(update_fields=["connection_config", "status", "started_at"])
 
             logger.info(f"Retrying migration job {job.id} via Celery task {task.id}")
-            messages.success(request, _("Migration restarted! Redirecting to progress page..."))
+            messages.success(
+                request,
+                _(
+                    "Migration restarted. It runs from the beginning and skips items "
+                    "that have already been imported."
+                ),
+            )
             return redirect("admin:migration_wizard_step5", job_id=job.id)
 
         except Exception as e:
@@ -1486,26 +1607,32 @@ class MigrationJobAdmin(admin.ModelAdmin):
             return redirect("admin:migration_wizard_step2", job_id=job.id)
 
     def cancel_migration(self, request, job_id):
-        """Cancel a running migration"""
+        """Ask a running import to stop.
+
+        Cancellation is cooperative: this records the request and the worker
+        acts on it when it reaches its next safe point, between batches. The
+        status therefore stays "running" briefly — the executor is what writes
+        "cancelled", once it has actually stopped. Anything already imported
+        stays in the store; nothing is removed.
+        """
+        if request.method != "POST":
+            return HttpResponseNotAllowed(["POST"])
+
         job = get_object_or_404(MigrationJob, pk=job_id)
+
+        if not self.has_change_permission(request, job):
+            raise PermissionDenied
 
         if job.status != "running":
             messages.error(request, _("Only running migrations can be cancelled."))
             return redirect("admin:migration_migrationjob_changelist")
 
-        # Update job status to failed/cancelled
-        job.status = "failed"
-        job.error_summary = _("Migration cancelled by user")
-        job.completed_at = timezone.now()
+        # A queryset update, not an instance save: the executor is holding its
+        # own copy of this job and its next progress write would overwrite ours.
+        from .importers.cancellation import request_cancel
 
-        # Calculate duration if started
-        if job.started_at:
-            duration = timezone.now() - job.started_at
-            job.duration_seconds = int(duration.total_seconds())
+        request_cancel(job.pk)
 
-        job.save()
-
-        # Add log entry
         MigrationLog.objects.create(
             job=job,
             level="warning",
@@ -1514,31 +1641,74 @@ class MigrationJobAdmin(admin.ModelAdmin):
             source_id="cancel_action",
         )
 
-        messages.success(request, _("Migration cancelled successfully."))
+        messages.success(
+            request,
+            _(
+                "Stopping this import. It finishes the batch it is working on and "
+                "then stops, so this can take a moment. Anything already imported "
+                "stays in your store — you can roll it back afterwards if you "
+                "don't want it."
+            ),
+        )
         return redirect("admin:migration_migrationjob_changelist")
 
     def delete_migration(self, request, job_id):
-        """Delete a pending, failed, or running migration"""
+        """Delete a migration record.
+
+        This removes only the record of the migration, never the data it imported.
+        Because every imported row links back to this job with on_delete=SET_NULL,
+        deleting it permanently severs Spwig's record of what the import created —
+        after which the import can no longer be rolled back.
+        """
+        if request.method != "POST":
+            return HttpResponseNotAllowed(["POST"])
+
         job = get_object_or_404(MigrationJob, pk=job_id)
 
-        if job.status not in ["pending", "failed", "running"]:
+        if not self.has_delete_permission(request, job):
+            raise PermissionDenied
+
+        # A running job is never deletable. The worker may still be writing, and
+        # because the PK carries a default, Django turns an UPDATE matching zero
+        # rows into an INSERT — so the executor's next save() would re-create the
+        # row we just deleted, as "completed" and with no provenance.
+        #
+        # Deliberately not using elapsed time to infer that the worker is dead:
+        # started_at is stamped when the task is *enqueued*, not when it starts
+        # executing, so a long queue backlog makes a live job look expired.
+        #
+        # "cancelled" IS deletable, because only the worker writes that status —
+        # it means the import acknowledged the stop and unwound, so nothing is
+        # left to re-create the row. A job merely marked cancel_requested is
+        # still running and is not deletable yet. If the worker died without
+        # acknowledging, the stalled-job reaper moves it to a terminal state.
+        if job.status not in ["pending", "failed", "cancelled"]:
             messages.error(
-                request, _("Only pending, failed, or running migrations can be deleted.")
+                request,
+                _(
+                    "This migration can't be deleted yet. Cancel it first, and "
+                    "once it has finished stopping you'll be able to remove the "
+                    "record."
+                ),
             )
             return redirect("admin:migration_migrationjob_changelist")
 
-        # Special warning for running migrations
-        if job.status == "running":
-            messages.warning(
+        had_imported_data = job.total_imported > 0
+
+        # Deletes the job record only. Logs and steps cascade; imported rows keep
+        # their data and simply lose the link back to this job.
+        job.delete()
+
+        if had_imported_data:
+            messages.success(
                 request,
                 _(
-                    "Deleted a running migration. If this was stuck, the operation has been cleaned up."
+                    "Migration record deleted. Anything this import added is still in "
+                    "your store — deleting the record does not remove it."
                 ),
             )
-
-        # Delete the migration job (cascade will clean up logs, steps, etc.)
-        job.delete()
-        messages.success(request, _("Migration deleted successfully."))
+        else:
+            messages.success(request, _("Migration record deleted."))
         return redirect("admin:migration_migrationjob_changelist")
 
     def get_progress(self, request, job_id):
@@ -1673,6 +1843,11 @@ class MigrationJobAdmin(admin.ModelAdmin):
             {
                 "status": job.status,
                 "status_display": job.get_status_display(),
+                # A stop can be pending while the job is still "running" — the
+                # worker acts on it at its next batch boundary. The page needs
+                # this to show "Stopping…" instead of "Importing", or the
+                # operator thinks the Cancel button did nothing.
+                "cancel_requested": job.cancel_requested,
                 "overall_progress": min(100, overall_progress),
                 "steps": steps_data,
                 "recent_logs": logs_data,
@@ -2207,7 +2382,7 @@ class MigrationStepAdmin(admin.ModelAdmin):
         "duration_seconds",
     ]
     list_filter = ["status", "step_type"]
-    readonly_fields = ["job", "savepoint_id", "started_at", "completed_at", "duration_seconds"]
+    readonly_fields = ["job", "started_at", "completed_at", "duration_seconds"]
 
     def has_add_permission(self, request):
         return False

@@ -2,7 +2,9 @@
 title: Códigos de Cupón
 ---
 
-Los códigos de cupón le permiten crear códigos de descuento, cupones y tarjetas regalo que los clientes ingresan en el momento del pago para recibir un descuento. Navegue hasta **Marketing > Cupones** en el menú lateral de administración.
+Los códigos de cupón le permiten crear códigos de descuento y cupones que los clientes ingresan en el momento del pago para recibir un descuento. Navegue hasta **Marketing > Cupones** en el menú lateral de administración.
+
+¿Quiere vender créditos de tienda en lugar de un descuento? Eso es una tarjeta regalo, gestionada por separado bajo **Productos > Tarjetas Regalo** — consulte el tema de ayuda **Tarjetas Regalo**.
 
 ![Lista de cupones](/static/core/admin/img/help/voucher-codes/voucher-list.webp)
 
@@ -10,20 +12,20 @@ Los códigos de cupón le permiten crear códigos de descuento, cupones y tarjet
 
 La página de cupones muestra una vista general con:
 
-- **Tarjetas de Estadísticas** — Cuentas de cupones activos, inactivos, redimidos y totales
+- **Tarjetas de Estadísticas** — Cuentas de cupones Activos, Inactivos, Redenciones y Totales
 - **Filtros** — Buscar por código o nombre, filtrar por Tipo, Estado y Alcance
 - **Tarjetas de Cupones** — Cada cupón se muestra con detalles de uso y estado
 
 ## Crear un Cupón
 
 1. Haga clic en **+ Agregar Cupón** en la parte superior derecha
-2. Llene los detalles del cupón:
+2. Rellene los detalles del cupón:
    - **Código** — El código que los clientes ingresan en el momento del pago (ej. "SAVE20", "FREESHIP")
    - **Nombre/Descripción** — Descripción interna para su referencia
    - **Tipo de Descuento** — Elija cómo se aplica el descuento
    - **Valor del Descuento** — La cantidad o porcentaje de descuento
 3. Configure las reglas de uso:
-   - **Límite de Uso** — Máximo total de redimidos (0 = ilimitado)
+   - **Límite de Uso** — Máximo total de redenciones (0 = ilimitado)
    - **Límite por Cliente** — Máximo de usos por cliente
    - **Valor Mínimo del Pedido** — Valor mínimo del carrito requerido
 4. Establezca el **alcance**:
@@ -42,9 +44,9 @@ La página de cupones muestra una vista general con:
 | **Porcentaje** | Deduce un porcentaje del total | 15% de descuento en el pedido |
 | **Envío Gratis** | Elimina los cargos de envío | Envío gratis en cualquier pedido |
 
-## Administrar Cupones
+## Gestionar Cupones
 
-### Tarjetas de Cupones
+### Tarjetas de Cupón
 
 Cada tarjeta de cupón muestra:
 - **Código** — El código del cupón en negrita
@@ -60,7 +62,7 @@ Cada tarjeta de cupón muestra:
 
 Cada tarjeta tiene botones de acción:
 - **Editar** — Modificar la configuración del cupón
-- **Ver Historial** — Ver el historial de redimidos
+- **Ver Historial** — Ver el historial de redenciones
 - **Eliminar** — Eliminar el cupón
 
 ### Filtros de Cupones
@@ -69,7 +71,7 @@ Use la barra de filtro para encontrar cupones específicos:
 - **Buscar** — Buscar por código, nombre o descripción
 - **Tipo** — Monto Fijo, Porcentaje o Envío Gratis
 - **Estado** — Activo o Inactivo
-- **Alcance** — Todo el Carrito o productos específicos
+- **Alcance** — Todo el Carrito o específico a productos
 
 ## Generación Masiva de Cupones
 
@@ -93,6 +95,6 @@ Si un cupón es inválido (vencido, límite de uso alcanzado, valor mínimo no a
 - Use códigos memorables para campañas de marketing (ej. "SUMMER20" en lugar de cadenas aleatorias).
 - Establezca límites por cliente para prevenir el abuso de descuentos valiosos.
 - Use valores mínimos de pedido para mantener la rentabilidad (ej. "$10 de descuento en pedidos superiores a $50").
-- Monitorea el contador de redimidos en el panel para seguir la efectividad de la campaña.
+- Monitorea el contador de redenciones en el panel para seguir la efectividad de la campaña.
 - Crea cupones con vencimiento limitado para generar urgencia (ej. "Válido solo este fin de semana").
 - Usa el estado Activo/Inactivo para pausar cupones sin eliminarlos.

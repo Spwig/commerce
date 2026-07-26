@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,37 +18,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: apps.py:8
 msgid "POS API"
 msgstr "POS API"
 
+#: middleware.py:30
 msgid "A valid POS license is required to access this endpoint."
 msgstr "Bu uç noktaya erişmek için geçerli bir POS lisansı gerekir."
 
+#: permissions.py:12
 msgid "POS access requires a staff account."
 msgstr "POS erişimi için personel hesabı gerekir."
 
+#: permissions.py:24
 msgid "You are not assigned to this terminal."
 msgstr "Bu terminalde atanan değilsiniz."
 
+#: permissions.py:72
 #, python-format
 msgid "You do not have permission: %(label)s."
 msgstr "İzininiz yok: %(label)s."
 
+#: serializers/cart.py:48
 msgid "Bundle variant selections: {bundle_item_id: variant_id}"
 msgstr "Bundl variant seçimleri: {bundle_item_id: variant_id}"
 
+#: serializers/cart.py:54
 msgid "List of optional BundleItem IDs to exclude"
 msgstr "Çıkarılacak isteğe bağlı BundleItem ID'leri listesi"
 
+#: serializers/customer.py:22
 msgid "Search by email, phone, or name"
 msgstr "E-posta, telefon veya isime göre ara"
 
+#: serializers/inventory.py:46
 msgid "ID of the product to adjust stock for."
 msgstr "Stokunu ayarlamak istediğiniz ürünün ID'si."
 
+#: serializers/inventory.py:50
 msgid "ID of the variant (required for variable products)."
 msgstr "Değişken ürünler için gereken varyant ID'si."
 
+#: serializers/inventory.py:55
 msgid ""
 "Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
 "removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
@@ -59,6 +70,7 @@ msgstr ""
 "sayım), on_hand sayısını mutlak olarak ayarlar, \"return\" (iade), stok geri"
 " ekler (örn. müşteri iadesi)."
 
+#: serializers/inventory.py:65
 msgid ""
 "For receive/return: units to add. For damage: units to remove. For recount: "
 "new absolute on_hand count."
@@ -66,33 +78,42 @@ msgstr ""
 "\"receive\"/\"return\" için eklenecek birimler. \"damage\" için kaldırılacak"
 " birimler. \"recount\" için yeni mutlak on_hand sayısı."
 
+#: serializers/inventory.py:71
 msgid "Required explanation for this adjustment (audit trail)."
 msgstr "Bu ayarlama için gerekli açıklama (denetim izi)."
 
+#: serializers/inventory.py:74
 msgid "Optional UUID for offline deduplication."
 msgstr "Çevrimdışı yinelenmeyi önlemek için isteğe bağlı UUID."
 
+#: serializers/inventory.py:88
 msgid "Signed quantity delta."
 msgstr "İmzalı miktar farkı."
 
+#: serializers/payment.py:19
 msgid "Last four digits of card number (digits only)"
 msgstr "Kart numarasının son dört hanesi (sadece rakamlar)"
 
+#: serializers/payment.py:32
 msgid "Amount to charge. If not provided, charges the full remaining balance."
 msgstr "Ödenecek miktar. Eğer sağlanmazsa, kalan tam bakiye ödenecektir."
 
+#: serializers/terminal_provider.py:10
 msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
 msgstr ""
 "Terminal sağlayıcısından alınan Ödeme ID'si (örneğin Stripe PaymentIntent "
 "ID)"
 
+#: serializers/terminal_provider.py:57
 msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
 msgstr ""
 "Sağlayıcıya özel okuyucu ID'si (örneğin Adyen POIID, Square device_id)"
 
+#: serializers/terminal_provider.py:72
 msgid "Provider-specific transaction ID for status polling"
 msgstr "Durum sorgulamak için sağlayıcıya özel işlem ID'si"
 
+#: serializers/terminal_provider.py:77
 msgid ""
 "Initial status -- typically \"pending\" for async providers, \"succeeded\" "
 "for sync (Adyen)"
@@ -100,18 +121,23 @@ msgstr ""
 "İlk durum -- genellikle asenkron sağlayıcılar için \"pending\", senkron "
 "(Adyen) için \"succeeded\""
 
+#: serializers/terminal_provider.py:91
 msgid "Current payment status"
 msgstr "Mevcut ödeme durumu"
 
+#: serializers/terminal_provider.py:97
 msgid "Provider payment ID (when succeeded)"
 msgstr "Sağlayıcı ödeme kimliği (başarılı olduğunda)"
 
+#: serializers/terminal_provider.py:100
 msgid "Reason for cancellation (when canceled)"
 msgstr "İptal sebebi (iptal edildiğinde)"
 
+#: views/auth.py:19
 msgid "POS staff login"
 msgstr "POS personel girişi"
 
+#: views/auth.py:21
 msgid ""
 "Authenticate a staff member for POS access. Returns access and refresh "
 "tokens. Uses the same token system as the Admin API "
@@ -121,39 +147,51 @@ msgstr ""
 "token'ları döndürür. Admin API (MobileTokenAuthentication) ile aynı token "
 "sisteminde çalışır."
 
+#: views/auth.py:40
 msgid "Login successful, returns tokens and terminal config"
 msgstr "Giriş başarılı, token'lar ve terminal yapılandırması döner"
 
+#: views/auth.py:41
 msgid "Invalid credentials"
 msgstr "Geçersiz kimlik bilgileri"
 
+#: views/auth.py:42
 msgid "User is not a staff member"
 msgstr "Kullanıcı bir personel değildir"
 
+#: views/auth.py:183
 msgid "Refresh POS access token"
 msgstr "POS erişim jetonunu yenile"
 
+#: views/auth.py:184
 msgid "Exchange a refresh token for a new access token."
 msgstr "Yeniden token bir yeni erişim token'ı için değiştirilir."
 
+#: views/auth.py:195
 msgid "New access token"
 msgstr "Yeni erişim jetonu"
 
+#: views/auth.py:196
 msgid "Invalid or expired refresh token"
 msgstr "Geçersiz veya süresi dolmuş yenileme jetonu"
 
+#: views/auth.py:259
 msgid "POS logout"
 msgstr "POS çıkış"
 
+#: views/auth.py:260
 msgid "Invalidate the current access and refresh tokens."
 msgstr "Geçerli erişim ve yeniden token'ları geçersiz kılar."
 
+#: views/auth.py:262
 msgid "Logged out successfully"
 msgstr "Başarıyla çıkış yapıldı"
 
+#: views/cart.py:37
 msgid "Get current POS cart"
 msgstr "Mevcut POS sepetini al"
 
+#: views/cart.py:39
 msgid ""
 "Returns the current cart for the authenticated cashier. Creates a new cart "
 "if one does not exist. Requires staff authentication and valid POS license."
@@ -162,9 +200,11 @@ msgstr ""
 "yeni bir sepet oluşturur. Personel kimlik doğrulaması ve geçerli POS lisansı"
 " gerekir."
 
+#: views/cart.py:67
 msgid "Add item to POS cart"
 msgstr "POS sepetine ürün ekle"
 
+#: views/cart.py:69
 msgid ""
 "Add a product to the cashier's cart. Supports adding by product ID or "
 "barcode. When barcode is provided without product_id, it resolves the "
@@ -174,12 +214,15 @@ msgstr ""
 "destekler. product_id olmadan barkod sağlanırsa, ürün otomatik olarak "
 "çözülür. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:76
 msgid "Invalid product, variant, or insufficient stock"
 msgstr "Geçersiz ürün, varyant veya yetersiz stok"
 
+#: views/cart.py:194
 msgid "Update cart item quantity"
 msgstr "Sepet ürün miktarını güncelle"
 
+#: views/cart.py:196
 msgid ""
 "Update the quantity of a cart item. Set quantity to 0 to remove the item. "
 "Requires staff authentication and valid POS license."
@@ -187,15 +230,20 @@ msgstr ""
 "Sepet öğesinin miktarını günceller. Öğeyi kaldırmak için miktarı 0 olarak "
 "ayarlayın. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:202
 msgid "Invalid quantity or insufficient stock"
 msgstr "Geçersiz miktar veya yetersiz stok"
 
+#: views/cart.py:205 views/cart.py:274 views/cart.py:553 views/cart.py:695
+#: views/cart.py:1017
 msgid "Cart item not found"
 msgstr "Sepet ürün bulunamadı"
 
+#: views/cart.py:266
 msgid "Remove item from cart"
 msgstr "Sepetten ürün çıkar"
 
+#: views/cart.py:268
 msgid ""
 "Remove a specific item from the cart. Requires staff authentication and "
 "valid POS license."
@@ -203,9 +251,11 @@ msgstr ""
 "Sepetten belirli bir öğe kaldır. Personel kimlik doğrulaması ve geçerli POS "
 "lisansı gerekir."
 
+#: views/cart.py:321
 msgid "Apply voucher to cart"
 msgstr "Sepete kupon uygula"
 
+#: views/cart.py:323
 msgid ""
 "Apply a voucher/discount code to the cart. Only one voucher can be active at"
 " a time. Requires staff authentication and valid POS license."
@@ -213,12 +263,15 @@ msgstr ""
 "Sepete bir kupon/indirim kodu uygulayın. Aynı anda yalnızca bir kupon aktif "
 "olabilir. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:330
 msgid "Invalid or expired voucher code"
 msgstr "Geçersiz veya süresi dolmuş kupon kodu"
 
+#: views/cart.py:382
 msgid "Remove voucher from cart"
 msgstr "Sepetten kuponu kaldır"
 
+#: views/cart.py:384
 msgid ""
 "Remove the applied voucher from the cart. Requires staff authentication and "
 "valid POS license."
@@ -226,35 +279,30 @@ msgstr ""
 "Uygulanan kuponu sepetten kaldır. Personel kimlik doğrulaması ve geçerli POS"
 " lisansı gerekir."
 
+#: views/cart.py:389
 msgid "No voucher applied"
 msgstr "Kupon uygulanmadı"
 
-msgid "Apply gift card to cart"
-msgstr "Hediye kartını sepete uygula"
-
-msgid ""
-"Apply a gift card code to the cart to cover part or all of the total. "
-"Requires staff authentication and valid POS license."
-msgstr ""
-"Sepete bir hediye kartı kodu uygulayın, toplamın bir kısmını veya tamamını "
-"karşılamak için. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
-
-msgid "Invalid gift card or insufficient balance"
-msgstr "Geçersiz hediye kartı veya yetersiz bakiye"
-
+#: views/cart.py:428
 msgid "Clear all items from cart"
 msgstr "Sepetteki tüm öğeleri temizle"
 
+#: views/cart.py:430
+#| msgid ""
+#| "Remove the applied voucher from the cart. Requires staff authentication and "
+#| "valid POS license."
 msgid ""
-"Remove all items, vouchers, and gift cards from the cart. Requires staff "
-"authentication and valid POS license."
+"Remove all items and vouchers from the cart. Requires staff authentication "
+"and valid POS license."
 msgstr ""
-"Sepetten tüm öğeleri, kuponları ve hediye kartlarını kaldırın. Personel "
-"kimlik doğrulaması ve geçerli POS lisansı gerekir."
+"Sepetteki tüm ürünleri ve biletleri kaldırır. İş gücü kimlik doğrulaması ve "
+"geçerli POS lisansı gerektirir."
 
+#: views/cart.py:533
 msgid "Apply manual discount to cart item"
 msgstr "Sepet öğesine el ile indirim uygula"
 
+#: views/cart.py:535
 msgid ""
 "Apply a staff manual discount to a specific cart item. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -264,15 +312,19 @@ msgstr ""
 "sınırlarını aşıyorsa requires_approval=true döndürür. Personel kimlik "
 "doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:549 views/cart.py:759
 msgid "Discount applied or requires approval"
 msgstr "İndirim uygulandı veya onay gerektiriyor"
 
+#: views/cart.py:550 views/cart.py:760
 msgid "Invalid discount or not authorized"
 msgstr "Geçersiz indirim veya yetkilendirme yok"
 
+#: views/cart.py:686
 msgid "Remove manual discount from cart item"
 msgstr "Sepetteki el ile indirimi kaldır"
 
+#: views/cart.py:688
 msgid ""
 "Remove a staff manual discount from a specific cart item. Requires staff "
 "authentication and valid POS license."
@@ -280,12 +332,15 @@ msgstr ""
 "Belirli bir sepet öğesinden personel el ile indirimi kaldır. Personel kimlik"
 " doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:692 views/cart.py:893
 msgid "Discount removed"
 msgstr "İndirim kaldırıldı"
 
+#: views/cart.py:743
 msgid "Apply manual discount to cart"
 msgstr "El ile indirimi sepete uygula"
 
+#: views/cart.py:745
 msgid ""
 "Apply a staff manual discount to the entire cart. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -295,9 +350,11 @@ msgstr ""
 "aşıyorsa requires_approval=true döndürür. Personel kimlik doğrulaması ve "
 "geçerli POS lisansı gerekir."
 
+#: views/cart.py:887
 msgid "Remove manual discount from cart"
 msgstr "El ile indirimi sepetten kaldır"
 
+#: views/cart.py:889
 msgid ""
 "Remove the staff manual discount from the cart. Requires staff "
 "authentication and valid POS license."
@@ -305,9 +362,11 @@ msgstr ""
 "Sepetteki personel el ile indirimini kaldır. Personel kimlik doğrulama ve "
 "geçerli POS lisansı gerekir."
 
+#: views/cart.py:934
 msgid "Verify manager PIN"
 msgstr "Yönetici PIN'ini doğrula"
 
+#: views/cart.py:936
 msgid ""
 "Verify if a PIN is valid for a manager who can approve discounts. Returns "
 "the manager's name if valid. Requires staff authentication and valid POS "
@@ -317,12 +376,15 @@ msgstr ""
 "doğrula. Geçerli ise yöneticinin adını döndür. Personel kimlik doğrulaması "
 "ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:948
 msgid "PIN verification result"
 msgstr "PIN doğrulama sonucu"
 
+#: views/cart.py:992
 msgid "Approve discount with manager PIN"
 msgstr "Yönetici PIN'ini kullanarak indirimi onayla"
 
+#: views/cart.py:994
 msgid ""
 "Apply a discount that exceeds staff limits with manager approval. Requires a"
 " valid manager PIN to proceed. Requires staff authentication and valid POS "
@@ -332,15 +394,19 @@ msgstr ""
 "gerekir. Devam etmek için geçerli bir yönetici PIN'i gereklidir. Personel "
 "kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:1013
 msgid "Discount approved and applied"
 msgstr "İndirim onaylandı ve uygulandı"
 
+#: views/cart.py:1014
 msgid "Invalid PIN or discount parameters"
 msgstr "Geçersiz PIN veya indirim parametreleri"
 
+#: views/cart.py:1182
 msgid "Park current cart"
 msgstr "Mevcut sepeti park et"
 
+#: views/cart.py:1184
 msgid ""
 "Save the current cart state for later restoration. Used when a customer "
 "needs to step away and another customer needs to be served. Requires staff "
@@ -350,15 +416,19 @@ msgstr ""
 "olarak ayrılmak zorunda olduğu zamanlar için mevcut sepet durumunu kaydedin."
 " Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:1195
 msgid "Cart parked successfully"
 msgstr "Sepet başarıyla park edildi"
 
+#: views/cart.py:1196
 msgid "Cart is empty or cannot be parked"
 msgstr "Sepet boş veya park edilemez"
 
+#: views/cart.py:1290
 msgid "List parked carts"
 msgstr "Park edilmiş sepetleri listele"
 
+#: views/cart.py:1292
 msgid ""
 "Get all parked carts for the current terminal. Requires staff authentication"
 " and valid POS license."
@@ -366,12 +436,15 @@ msgstr ""
 "Mevcut terminal için tüm park edilmiş sepetleri al. Personel kimlik "
 "doğrulama ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:1296
 msgid "List of parked carts"
 msgstr "Park edilmiş sepetler listesi"
 
+#: views/cart.py:1345
 msgid "Restore parked cart"
 msgstr "Park edilmiş sepeti geri yükle"
 
+#: views/cart.py:1347
 msgid ""
 "Restore a parked cart, replacing the current cart contents. The current cart"
 " will be cleared before restoration. Requires staff authentication and valid"
@@ -381,18 +454,23 @@ msgstr ""
 "yükleme işleminden önce mevcut sepet temizlenecektir. İş gücü kimlik "
 "doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:1352
 msgid "Cart restored successfully"
 msgstr "Sepet başarıyla geri yüklendi"
 
+#: views/cart.py:1353
 msgid "Current cart is not empty"
 msgstr "Mevcut sepet boş değil"
 
+#: views/cart.py:1356 views/cart.py:1477
 msgid "Parked cart not found"
 msgstr "Duraklatılmış sepet bulunamadı"
 
+#: views/cart.py:1468
 msgid "Delete parked cart"
 msgstr "Duraklatılmış sepeti sil"
 
+#: views/cart.py:1470
 msgid ""
 "Permanently delete a parked cart. This cannot be undone. Requires staff "
 "authentication and valid POS license."
@@ -400,12 +478,15 @@ msgstr ""
 "Parked bir sepeti kalıcı olarak silin. Bu işlem geri alınamaz. İş gücü "
 "kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/cart.py:1474
 msgid "Parked cart deleted"
 msgstr "Duraklatılmış sepet silindi"
 
+#: views/catalog.py:527
 msgid "List POS products"
 msgstr "POS ürünleri listele"
 
+#: views/catalog.py:529
 msgid ""
 "Returns products available for in-store sale, filtered by sales channel. "
 "Includes warehouse-specific stock levels when a terminal is identified. "
@@ -416,47 +497,62 @@ msgstr ""
 "düzeylerini de içerir. Resimleri olan ürünler, depo bazlı popülerliğe göre "
 "ilk olarak sıralanır."
 
+#: views/catalog.py:534
 msgid "Search by name, SKU, or barcode"
 msgstr "İsim, SKU veya barkod ile ara"
 
+#: views/catalog.py:535
 msgid "Filter by category ID"
 msgstr "Kategori ID'sine göre filtrele"
 
+#: views/catalog.py:537
 msgid "Warehouse for stock levels"
 msgstr "Stok seviyeleri için depo"
 
+#: views/catalog.py:539 views/inventory.py:90 views/inventory.py:691
+#: views/orders.py:131 views/sync.py:67 views/sync.py:158 views/sync.py:723
 msgid "Page number (default: 1)"
 msgstr "Sayfa numarası (varsayılan: 1)"
 
+#: views/catalog.py:541 views/inventory.py:92
 msgid "Items per page (default: 50, max: 200)"
 msgstr "Sayfa başına öğeler (varsayılan: 50, maks: 200)"
 
+#: views/catalog.py:641
 msgid "Get product detail"
 msgstr "Ürün detayını al"
 
+#: views/catalog.py:642
 msgid "Returns full product details including variants and warehouse stock."
 msgstr "Ürünün tam detaylarını, varyasyonlarını ve depo stoklarını döndürür."
 
+#: views/catalog.py:695
 msgid "Barcode lookup"
 msgstr "Barkod sorgulama"
 
+#: views/catalog.py:696
 msgid ""
 "Look up a product or variant by barcode. Fast, indexed lookup for scanning."
 msgstr ""
 "Barkod ile ürün ya da varyasyonu ara. Tarama için hızlı ve indeksli arama."
 
+#: views/catalog.py:699
 msgid "No product found with this barcode"
 msgstr "Bu barkodla ürün bulunamadı"
 
+#: views/catalog.py:763
 msgid "List categories"
 msgstr "Kategorileri listele"
 
+#: views/catalog.py:764
 msgid "Returns the category tree for POS product navigation."
 msgstr "POS ürün gezintisi için kategori ağacını döndürür."
 
+#: views/checkout.py:499
 msgid "Process cash payment"
 msgstr "Nakit ödeme işleme"
 
+#: views/checkout.py:501
 msgid ""
 "Complete a POS transaction with cash payment. Validates that the amount "
 "tendered covers the order total and calculates change. Creates an Order with"
@@ -468,12 +564,15 @@ msgstr ""
 "oluşturur ve bir POSPayment kaydı oluşturur. Terminalde açık bir şifte "
 "gerekir. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/checkout.py:510
 msgid "Empty cart or insufficient cash tendered"
 msgstr "Boş sepet veya yetersiz nakit ödeme"
 
+#: views/checkout.py:599
 msgid "Process card payment"
 msgstr "Kart ödeme işleme"
 
+#: views/checkout.py:601
 msgid ""
 "Complete a POS transaction with card payment. Card processing is assumed to "
 "be handled by an external card terminal. This endpoint records the card "
@@ -485,12 +584,15 @@ msgstr ""
 "son dört rakamı kaydeder. Terminalde açık bir şifte gerekir. Personel kimlik"
 " doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/checkout.py:610
 msgid "Empty cart"
 msgstr "Sepeti boşalt"
 
+#: views/checkout.py:680
 msgid "Check gift card balance"
 msgstr "Hediye kartı bakiyesini kontrol et"
 
+#: views/checkout.py:682
 msgid ""
 "Check the balance of a gift card for POS checkout. Returns the current "
 "balance if valid, or an error message if invalid. Requires staff "
@@ -500,15 +602,19 @@ msgstr ""
 "bakiyeyi, geçersizse bir hata mesajı döndürür. Personel kimlik doğrulaması "
 "gerekir."
 
+#: views/checkout.py:696
 msgid "Gift card balance info"
 msgstr "Hediye kartı bakiye bilgisi"
 
+#: views/checkout.py:697
 msgid "Invalid gift card or missing code"
 msgstr "Geçersiz hediye kartı veya eksik kod"
 
+#: views/checkout.py:742
 msgid "Process gift card payment"
 msgstr "Hediye kartı ödemeyi işle"
 
+#: views/checkout.py:744
 msgid ""
 "Complete a POS transaction using a gift card. Validates the gift card has "
 "sufficient balance. If the gift card balance is less than the order total, "
@@ -521,12 +627,15 @@ msgstr ""
 " bir şifre gerekir. Personel kimlik doğrulaması ve geçerli POS lisansı "
 "gerekir."
 
+#: views/checkout.py:754
 msgid "Empty cart, invalid gift card, or insufficient balance"
 msgstr "Boş sepet, geçersiz hediye kartı veya yetersiz bakiye"
 
+#: views/checkout.py:911
 msgid "Process split tender payment"
 msgstr "Ayrık ödeme işleme"
 
+#: views/checkout.py:913
 msgid ""
 "Complete a POS transaction using multiple payment methods (split tender). "
 "The total of all payments must cover the order total. Change is calculated "
@@ -540,12 +649,15 @@ msgstr ""
 "hesaplanır. Terminalde açık bir şifte gerekir. Personel kimlik doğrulaması "
 "ve geçerli POS lisansı gerekir."
 
+#: views/checkout.py:922
 msgid "Empty cart, invalid payments, or insufficient total"
 msgstr "Boş sepet, geçersiz ödemeler veya yetersiz toplam"
 
+#: views/checkout.py:1117
 msgid "Process terminal card payment"
 msgstr "Terminal kart ödemeyi işle"
 
+#: views/checkout.py:1119
 msgid ""
 "Complete a POS transaction with an integrated card terminal payment. The "
 "frontend must have already collected payment via the terminal SDK and "
@@ -560,12 +672,15 @@ msgstr ""
 "açık bir şifte gerekir. Personel kimlik doğrulaması ve geçerli POS lisansı "
 "gerekir."
 
+#: views/checkout.py:1129
 msgid "Empty cart or payment verification failed"
 msgstr "Boş sepet veya ödeme doğrulaması başarısız oldu"
 
+#: views/customer.py:65
 msgid "Search customers"
 msgstr "Müşteri Ara"
 
+#: views/customer.py:67
 msgid ""
 "Search for customers by email, phone, first name, or last name. Returns up "
 "to 20 matching results. Minimum 2 characters required. Requires staff "
@@ -575,15 +690,19 @@ msgstr ""
 "eşleşen sonuç döndürür. Minimum 2 karakter gerekir. Personel kimlik "
 "doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/customer.py:76
 msgid "Search query (email, phone, or name). Minimum 2 characters."
 msgstr "Arama sorgusu (e-posta, telefon veya isim). En az 2 karakter."
 
+#: views/customer.py:81
 msgid "Search query too short"
 msgstr "Arama sorgusu çok kısa"
 
+#: views/customer.py:121
 msgid "Create walk-in customer"
 msgstr "Walk-in müşteri oluştur"
 
+#: views/customer.py:123
 msgid ""
 "Create a new customer for a walk-in sale. If a customer with the given email"
 " already exists, returns the existing customer instead of creating a "
@@ -596,12 +715,15 @@ msgstr ""
 "için e-posta isteğe bağlıdır. Personel kimlik doğrulaması ve geçerli POS "
 "lisansı gerekir."
 
+#: views/customer.py:131
 msgid "Existing customer found with this email"
 msgstr "Bu e-posta adresiyle bir müşteri zaten mevcut"
 
+#: views/customer.py:201
 msgid "Get customer details"
 msgstr "Müşteri detaylarını al"
 
+#: views/customer.py:203
 msgid ""
 "Retrieve customer details including contact info and recent order history. "
 "Requires staff authentication and valid POS license."
@@ -609,9 +731,11 @@ msgstr ""
 "Müşteri ayrıntılarını, iletişim bilgilerini ve yakın tarihli sipariş "
 "geçmişini alır. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/inventory.py:72
 msgid "List stock levels for warehouse"
 msgstr "Depo için stok seviyelerini listele"
 
+#: views/inventory.py:74
 msgid ""
 "Returns paginated stock levels for the terminal's warehouse. Supports search"
 " by product name or SKU and filtering for low-stock or no-stock items. "
@@ -621,21 +745,27 @@ msgstr ""
 " veya SKU ile arama ve düşük stok veya stok yok olan öğeler için filtreleme "
 "destekler. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/inventory.py:79
 msgid "Search by product name or SKU"
 msgstr "Ürün adı veya SKU ile ara"
 
+#: views/inventory.py:83
 msgid "Only return items at or below low stock threshold"
 msgstr "Sadece düşük stok eşiğindeki veya altında olan öğeleri döndür"
 
+#: views/inventory.py:88
 msgid "Only return items with zero available stock"
 msgstr "Sadece mevcut stoku sıfır olan öğeleri döndür"
 
+#: views/inventory.py:97 views/inventory.py:286 views/inventory.py:698
 msgid "Warehouse not determined"
 msgstr "Depo belirlenmedi"
 
+#: views/inventory.py:278
 msgid "Get product stock detail"
 msgstr "Ürün stok detaylarını al"
 
+#: views/inventory.py:280
 msgid ""
 "Returns stock levels for a specific product in the terminal's warehouse, "
 "including variant-level breakdown. Requires staff authentication and valid "
@@ -645,9 +775,11 @@ msgstr ""
 "düzeyinde ayrım dahil, döndürür. Personel kimlik doğrulaması ve geçerli POS "
 "lisansı gerekir."
 
+#: views/inventory.py:351
 msgid "Check stock across all locations"
 msgstr "Tüm lokasyonlarda stok durumunu kontrol et"
 
+#: views/inventory.py:353
 msgid ""
 "Returns stock levels for a product across all warehouse locations. Useful "
 "for checking if an out-of-stock item is available at another location. The "
@@ -659,9 +791,11 @@ msgstr ""
 "için yararlıdır. Mevcut terminalin deposu is_current=true ile işaretlenir. "
 "Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/inventory.py:501
 msgid "Adjust stock levels"
 msgstr "Stok seviyelerini ayarla"
 
+#: views/inventory.py:503
 msgid ""
 "Adjust stock for a product in the terminal's warehouse. Supports four "
 "adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
@@ -677,21 +811,27 @@ msgstr ""
 "kaydı oluşturur. Personel kimlik doğrulaması, geçerli POS lisansı ve "
 "pos_stock_adjustment izni gerekir."
 
+#: views/inventory.py:515
 msgid "Stock adjusted successfully"
 msgstr "Stok başarıyla ayarlandı"
 
+#: views/inventory.py:516
 msgid "Validation error or warehouse not determined"
 msgstr "Doğrulama hatası veya depo belirlenemedi"
 
+#: views/inventory.py:518
 msgid "Permission denied or POS license required"
 msgstr "İzin verilmedi veya POS lisansı gerekli"
 
+#: views/inventory.py:519
 msgid "Product or stock item not found"
 msgstr "Ürün veya stok öğesi bulunamadı"
 
+#: views/inventory.py:673
 msgid "List stock movement history"
 msgstr "Stok hareket geçmişini listele"
 
+#: views/inventory.py:675
 msgid ""
 "Returns paginated stock movement records for the terminal's warehouse. "
 "Useful for auditing recent stock changes (adjustments, damage, recounts, "
@@ -703,19 +843,24 @@ msgstr ""
 "sayım, iade). Ürün ve hareket türüne göre filtreleme destekler. Personel "
 "kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/inventory.py:684
 msgid "Filter movements by product ID"
 msgstr "Ürün ID'sine göre hareketleri filtrele"
 
+#: views/inventory.py:689
 msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
 msgstr ""
 "Dahil edilecek hareket türlerini virgülle ayırın (örneğin 'damage,recount')"
 
+#: views/inventory.py:693 views/orders.py:133
 msgid "Items per page (default: 20, max: 100)"
 msgstr "Sayfa başına öğeler (varsayılan: 20, maks: 100)"
 
+#: views/loyalty.py:20
 msgid "Get customer loyalty info"
 msgstr "Müşteri sadakat bilgilerini al"
 
+#: views/loyalty.py:22
 msgid ""
 "Retrieve loyalty membership status, tier, and points balance for a customer."
 " Returns `is_member: false` if the customer has no active loyalty "
@@ -725,6 +870,7 @@ msgstr ""
 " aktif bir sadakat üyeliği yoksa `is_member: false` döndürür. Personel "
 "kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/loyalty.py:29
 msgid ""
 "Loyalty membership info. `is_member` indicates whether the customer has an "
 "active membership. When true, includes `tier_name`, `tier_color`, and "
@@ -734,9 +880,11 @@ msgstr ""
 "true değerini alır. True olduğunda `tier_name`, `tier_color` ve "
 "`available_points` içerir."
 
+#: views/loyalty.py:105
 msgid "Preview loyalty points for cart"
 msgstr "Sepet için sadakat puanlarını önizle"
 
+#: views/loyalty.py:107
 msgid ""
 "Calculate the loyalty points a customer would earn for a given cart total. "
 "Returns 0 if the customer has no active loyalty membership. Requires staff "
@@ -746,11 +894,13 @@ msgstr ""
 "puanlarını hesaplar. Müşteri aktif bir loyality üyeliği yoksa 0 döndürür. İş"
 " gücü kimlik doğrulaması ve geçerli POS lisansı gerektirir."
 
+#: views/loyalty.py:115
 msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
 msgstr ""
 "Sepet toplamı ondalık bir dize olarak (örneğin '49.99'). Varsayılan olarak "
 "'0'dır."
 
+#: views/loyalty.py:121
 msgid ""
 "Points preview. `points_preview` is the number of points the customer would "
 "earn for the given cart total."
@@ -758,9 +908,11 @@ msgstr ""
 "Puan önizlemesi. `points_preview`, belirli bir sepet toplamı için müşteriye "
 "kazandıracak olan puan sayısını ifade eder."
 
+#: views/orders.py:77
 msgid "List POS orders"
 msgstr "POS siparişlerini listele"
 
+#: views/orders.py:79
 msgid ""
 "Returns orders with advanced filtering for date range, origin, customer, "
 "cashier, and search. Supports viewing web orders for return scenarios. "
@@ -777,6 +929,7 @@ msgstr ""
 "numarasına göre herhangi bir sipariş bulunur. Personel kimlik doğrulaması ve"
 " geçerli POS lisansı gerekir."
 
+#: views/orders.py:91
 msgid ""
 "Start date for range filter (ISO format, default: today). Ignored when "
 "search is provided."
@@ -784,6 +937,7 @@ msgstr ""
 "Aralık filtresi için başlangıç tarihi (ISO formatı, varsayılan: bugün). "
 "Arama sağlandığında ihmal edilir."
 
+#: views/orders.py:98
 msgid ""
 "End date for range filter (ISO format, default: today). Ignored when search "
 "is provided."
@@ -791,6 +945,7 @@ msgstr ""
 "Aralık filtresi için bitiş tarihi (ISO formatı, varsayılan: bugün). Arama "
 "sağlandığında ihmal edilir."
 
+#: views/orders.py:106
 msgid ""
 "Order origin filter: this_terminal (default), all_pos, all (includes web). "
 "Ignored when search is provided."
@@ -798,14 +953,17 @@ msgstr ""
 "Sipariş kaynağı filtresi: this_terminal (varsayılan), all_pos, all (web "
 "dahil). Arama sağlandığında bu filtre yok sayılır."
 
+#: views/orders.py:112
 msgid "Filter by customer user ID. Ignored when search is provided."
 msgstr ""
 "Müşteri kullanıcı ID'sine göre filtrele. Arama sağlandığında ihmal edilir."
 
+#: views/orders.py:117
 msgid "Filter by cashier staff ID. Ignored when search is provided."
 msgstr ""
 "Kasaya görevli ID'sine göre filtrele. Arama sağlandığında ihmal edilir."
 
+#: views/orders.py:123
 msgid ""
 "Search across ALL orders by order number, customer name, email, or phone. "
 "Bypasses date/origin filters."
@@ -813,12 +971,15 @@ msgstr ""
 "Sipariş numarası, müşteri adı, e-posta veya telefon numarasına göre tüm "
 "siparişlerde arama yapın. Tarih/çıkış filtrelerini atlar."
 
+#: views/orders.py:129
 msgid "Filter by order status (applies in both modes)"
 msgstr "Sipariş durumuna göre filtrele (her iki modda geçerlidir)"
 
+#: views/orders.py:342
 msgid "Get order details"
 msgstr "Sipariş detaylarını al"
 
+#: views/orders.py:344
 msgid ""
 "Returns full order details including items and payment breakdown. Supports "
 "both POS and web orders (for return scenarios). Requires staff "
@@ -828,9 +989,11 @@ msgstr ""
 "hem de web siparişlerini (iade senaryoları için) destekler. Personel kimlik "
 "doğrulaması ve geçerli bir POS lisansı gerektirir."
 
+#: views/orders.py:388
 msgid "Get receipt data for printing"
 msgstr "Baskı için fatura verilerini al"
 
+#: views/orders.py:390
 msgid ""
 "Returns receipt-formatted data for a POS order including store info, items, "
 "payments, and footer text. Designed for ESC/POS thermal printers. Requires "
@@ -840,9 +1003,11 @@ msgstr ""
 "ürünler, ödemeler ve alt bilgi metni içerir. ESC/POS termal yazıcılar için "
 "tasarlanmıştır. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/orders.py:653
 msgid "Process order refund"
 msgstr "Sipariş iadesini işle"
 
+#: views/orders.py:655
 msgid ""
 "Process a full or partial refund for a POS order. For partial refunds, "
 "specify the items and quantities to refund. Creates a Refund record and "
@@ -855,15 +1020,19 @@ msgstr ""
 "bir shift gereklidir. Personel kimlik doğrulaması ve geçerli POS lisansı "
 "gerekir."
 
+#: views/orders.py:700
 msgid "Refund processed successfully"
 msgstr "İade başarıyla işlendi"
 
+#: views/orders.py:701
 msgid "Invalid refund request or order already refunded"
 msgstr "Geçersiz iade talebi veya sipariş zaten iade edildi"
 
+#: views/orders.py:897
 msgid "Void a POS order"
 msgstr "Bir POS siparişini iptal et"
 
+#: views/orders.py:899
 msgid ""
 "Cancel a POS order from the current shift. Only orders placed during the "
 "current open shift can be voided. This creates a full refund and reverses "
@@ -876,15 +1045,19 @@ msgstr ""
 "açık bir shift gereklidir. Personel kimlik doğrulaması ve geçerli POS "
 "lisansı gerekir."
 
+#: views/orders.py:906
 msgid "Order voided successfully"
 msgstr "Sipariş başarıyla iptal edildi"
 
+#: views/orders.py:907
 msgid "Order cannot be voided (not from current shift)"
 msgstr "Sipariş iptal edilemez (geçerli vardiya dışı)"
 
+#: views/orders.py:1092
 msgid "List POS cashiers"
 msgstr "POS kasalara bak"
 
+#: views/orders.py:1094
 msgid ""
 "Returns list of staff members who have processed POS orders. Used to "
 "populate the cashier filter dropdown. Requires staff authentication and "
@@ -894,12 +1067,15 @@ msgstr ""
 "açılır menüsünü doldurmak için kullanılır. Personel kimlik doğrulaması ve "
 "geçerli POS lisansı gerektirir."
 
+#: views/orders.py:1100
 msgid "List of cashiers"
 msgstr "Kasa listesi"
 
+#: views/receipts.py:28
 msgid "Send digital receipt"
 msgstr "Dijital fatura gönder"
 
+#: views/receipts.py:30
 msgid ""
 "Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
 "receipt is sent asynchronously via Celery task. Requires staff "
@@ -909,12 +1085,15 @@ msgstr ""
 "Fiş, Celery görevi aracılığıyla asenkron olarak gönderilir. Personel kimlik "
 "doğrulaması ve geçerli POS lisansı gerektirir."
 
+#: views/receipts.py:57
 msgid "Receipt queued for sending"
 msgstr "Fatura gönderim için kuyruğa alındı"
 
+#: views/receipts.py:200
 msgid "Get receipt sending status"
 msgstr "Fatura gönderim durumu al"
 
+#: views/receipts.py:202
 msgid ""
 "Check which digital receipts have been sent for an order. Returns timestamps"
 " for email and SMS/WhatsApp deliveries."
@@ -922,12 +1101,15 @@ msgstr ""
 "Bir sipariş için hangi dijital fişlerin gönderildiğini kontrol eder. E-posta"
 " ve SMS/WhatsApp teslimatları için zaman damgaları döndürür."
 
+#: views/receipts.py:207
 msgid "Receipt status"
 msgstr "Fatura durumu"
 
+#: views/reports.py:86
 msgid "Get current shift summary"
 msgstr "Mevcut shift özeti al"
 
+#: views/reports.py:88
 msgid ""
 "Returns the open shift summary for the current cashier on the terminal, "
 "including totals, transaction count, and payment method breakdown. Returns "
@@ -938,9 +1120,11 @@ msgstr ""
 "sayısı ve ödeme yöntemi analizi dahil. Hiçbir şifre açık değilse null şifre "
 "döndürür. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/reports.py:128
 msgid "Open a new shift"
 msgstr "Yeni shift aç"
 
+#: views/reports.py:130
 msgid ""
 "Start a new shift on the terminal. Only one open shift is allowed per "
 "terminal at any time. Records the opening cash amount. Requires staff "
@@ -950,15 +1134,19 @@ msgstr ""
 "açık şifre izin verilir. Açılış nakit miktarını kaydeder. Personel kimlik "
 "doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/reports.py:137
 msgid "Invalid opening cash amount"
 msgstr "Geçersiz açılış nakit miktarı"
 
+#: views/reports.py:140
 msgid "A shift is already open on this terminal"
 msgstr "Bu terminalde bir vardiya zaten açıktır"
 
+#: views/reports.py:193
 msgid "Close current shift"
 msgstr "Mevcut shift kapat"
 
+#: views/reports.py:195
 msgid ""
 "Close the current open shift. Records the closing cash amount and calculates"
 " the expected vs actual cash difference. Requires staff authentication and "
@@ -968,9 +1156,11 @@ msgstr ""
 "ile gerçek nakit farkını hesaplar. Personel kimlik doğrulaması ve geçerli "
 "POS lisansı gerekir."
 
+#: views/reports.py:262
 msgid "Record cash movement"
 msgstr "Nakit hareketi kaydet"
 
+#: views/reports.py:264
 msgid ""
 "Record a cash-in or cash-out movement during the shift. Examples: adding "
 "float, removing for deposit, petty cash. Requires an open shift on the "
@@ -981,15 +1171,19 @@ msgstr ""
 "bir vardiya gerektirir. Personel kimlik doğrulaması ve geçerli POS lisansı "
 "gerekir."
 
+#: views/reports.py:271
 msgid "Cash movement recorded"
 msgstr "Nakit hareketi kaydedildi"
 
+#: views/reports.py:272
 msgid "Invalid movement data"
 msgstr "Geçersiz hareket verisi"
 
+#: views/reports.py:329
 msgid "Get daily sales report"
 msgstr "Günlük satış raporu al"
 
+#: views/reports.py:331
 msgid ""
 "Returns an aggregated daily sales report for the terminal including totals, "
 "transaction count, average transaction value, and payment method breakdown. "
@@ -999,12 +1193,15 @@ msgstr ""
 "ortalama işlem değeri ve ödeme yöntemi analizi içerir. Personel kimlik "
 "doğrulaması ve geçerli POS lisansı gerekir."
 
+#: views/reports.py:340 views/reports.py:450
 msgid "Report date (ISO format, default: today)"
 msgstr "Rapor tarihi (ISO formatı, varsayılan: bugün)"
 
+#: views/reports.py:440
 msgid "Get top selling products"
 msgstr "En çok satan ürünleri al"
 
+#: views/reports.py:442
 msgid ""
 "Returns the top selling products for the terminal on a given date, ranked by"
 " quantity sold. Requires staff authentication and valid POS license."
@@ -1013,12 +1210,15 @@ msgstr ""
 "miktarına göre sıralanmış şekilde döndürür. Personel kimlik doğrulaması ve "
 "geçerli POS lisansı gerekir."
 
+#: views/reports.py:455
 msgid "Number of products to return (default: 10, max: 50)"
 msgstr "İade edilecek ürün sayısı (varsayılan: 10, maks: 50)"
 
+#: views/sync.py:54
 msgid "Sync products since timestamp"
 msgstr "Tarih damgasından sonra ürünleri senkronize et"
 
+#: views/sync.py:56
 msgid ""
 "Returns products that have been created or updated since the given "
 "timestamp. Used for incremental product sync to the POS terminal's local "
@@ -1030,17 +1230,21 @@ msgstr ""
 "kullanılır. Bir sonraki senkronizasyon isteği için sync_token döndürür. İş "
 "gücünün yetkilendirilmesi ve geçerli POS lisansı gereklidir."
 
+#: views/sync.py:65 views/sync.py:156
 msgid "ISO timestamp to fetch changes since. Omit for full sync."
 msgstr ""
 "Değişiklikleri almak için ISO tarihsel damgası. Tam senkronizasyon için "
 "atla."
 
+#: views/sync.py:69 views/sync.py:160 views/sync.py:725
 msgid "Items per page (default: 100, max: 200)"
 msgstr "Sayfa başına öğeler (varsayılan: 100, maks: 200)"
 
+#: views/sync.py:146
 msgid "Sync customers since timestamp"
 msgstr "Tarih damgasından sonra müşterileri senkronize et"
 
+#: views/sync.py:148
 msgid ""
 "Returns customers that have been created or have placed orders since the "
 "given timestamp. Used for offline customer lookup. Requires staff "
@@ -1050,12 +1254,15 @@ msgstr ""
 " döndürür. Çevrimdışı müşteri arama işlemi için kullanılır. İş gücünün "
 "yetkilendirilmesi ve geçerli POS lisansı gereklidir."
 
+#: views/sync.py:164
 msgid "Customer sync data"
 msgstr "Müşteri senkronizasyon verisi"
 
+#: views/sync.py:225
 msgid "Upload offline transactions"
 msgstr "Çevrimdışı işlemler yükle"
 
+#: views/sync.py:227
 msgid ""
 "Batch upload transactions that were processed while the terminal was "
 "offline. Each transaction creates an Order with items and payments. Uses "
@@ -1067,12 +1274,15 @@ msgstr ""
 "idempotans için kullanılır - yinelenen yükleme işlemleri tespit edilir ve "
 "atlanır. İş gücünün yetkilendirilmesi ve geçerli POS lisansı gereklidir."
 
+#: views/sync.py:234
 msgid "Upload results with success/failure per transaction"
 msgstr "İşlem başına başarı/başarısızlık ile sonuçları yükle"
 
+#: views/sync.py:412
 msgid "Get sync status"
 msgstr "Senkronizasyon durumu al"
 
+#: views/sync.py:414
 msgid ""
 "Returns the current server time and database counts for sync planning. "
 "Requires staff authentication and valid POS license."
@@ -1081,9 +1291,11 @@ msgstr ""
 "sayımını döndürür. Personel kimlik doğrulaması ve geçerli POS lisansı "
 "gerekir."
 
+#: views/sync.py:457
 msgid "Get sync version info"
 msgstr "Senkronizasyon sürüm bilgisi al"
 
+#: views/sync.py:459
 msgid ""
 "Returns API version and data schema version for client compatibility checks."
 " Clients should clear and resync when schema version increases."
@@ -1092,12 +1304,15 @@ msgstr ""
 "döndürür. Şema sürümü arttığında müşterilerin temizlemesi ve yeniden "
 "senkronize etmesi gerekir."
 
+#: views/sync.py:463
 msgid "Version information"
 msgstr "Sürüm bilgisi"
 
+#: views/sync.py:483
 msgid "Upload offline stock adjustments"
 msgstr "Çevrimdışı stok ayarlamalarını yükle"
 
+#: views/sync.py:485
 msgid ""
 "Batch upload stock adjustments that were queued while the terminal was "
 "offline. Each adjustment uses an idempotency key to prevent duplicates. "
@@ -1109,15 +1324,19 @@ msgstr ""
 "kullanır. Personel kimlik doğrulaması, geçerli POS lisansı ve stok "
 "düzenlemesi izni gerekir."
 
+#: views/sync.py:491
 msgid "Upload results with success/failure per adjustment"
 msgstr "Düzenleme başına başarı/başarısızlık ile sonuçları yükle"
 
+#: views/sync.py:494
 msgid "POS license or permission required"
 msgstr "POS lisansı veya izin gerekli"
 
+#: views/sync.py:710
 msgid "Sync orders for offline cache"
 msgstr "Çevrimdışı önbellek için siparişleri senkronize et"
 
+#: views/sync.py:712
 msgid ""
 "Returns orders for offline caching on the POS terminal. POS orders are "
 "prioritised over web orders up to the terminal's sync limit. Supports delta "
@@ -1129,13 +1348,16 @@ msgstr ""
 "önceliklidir. 'since' parametresi aracılığıyla delta senkronizasyonu "
 "destekler. Personel kimlik doğrulaması ve geçerli bir POS lisansı gerekir."
 
+#: views/sync.py:721
 msgid "ISO timestamp for delta sync. Omit for full sync."
 msgstr ""
 "Delta senkronizasyonu için ISO zaman damgası. Tam senkronizasyon için atla."
 
+#: views/terminal.py:57
 msgid "Register POS terminal"
 msgstr "POS terminalini kaydet"
 
+#: views/terminal.py:59
 msgid ""
 "Register a new device as a POS terminal using a pairing code. The pairing "
 "code is generated in the admin panel when creating a terminal."
@@ -1144,34 +1366,43 @@ msgstr ""
 "kaydeder. Eşleştirme kodu, terminal oluşturulduğunda admin panelinde "
 "üretilir."
 
+#: views/terminal.py:65
 msgid "Terminal registered successfully, returns terminal config"
 msgstr "Terminal başarıyla kaydedildi, terminal yapılandırmasını döndürür"
 
+#: views/terminal.py:67
 msgid "Invalid or expired pairing code"
 msgstr "Geçersiz veya sona ermiş eşleştirme kodu"
 
+#: views/terminal.py:113
 msgid "Get terminal configuration"
 msgstr "Terminal konfigürasyonunu al"
 
+#: views/terminal.py:114
 msgid ""
 "Returns the current terminal's configuration including hardware settings."
 msgstr ""
 "Mevcut terminalin yapılandırmasını, donanım ayarlarını da dahil ederek "
 "döndürür."
 
+#: views/terminal.py:163
 msgid "Terminal heartbeat"
 msgstr "Terminal nabzı"
 
+#: views/terminal.py:164
 msgid "Report that the terminal is online. Should be called every 60 seconds."
 msgstr ""
 "Terminalin çevrimiçi olduğunu bildirir. Her 60 saniyede bir çağrılmalıdır."
 
+#: views/terminal.py:166
 msgid "Heartbeat recorded"
 msgstr "Nabzın kaydedildi"
 
+#: views/terminal.py:187
 msgid "Get receipt template"
 msgstr "Fatura şablonunu al"
 
+#: views/terminal.py:189
 msgid ""
 "Returns the receipt template for the terminal's warehouse. Falls back to the"
 " default template (no warehouse assigned) if the warehouse has no specific "
@@ -1181,12 +1412,15 @@ msgstr ""
 "varsayılan şablon (hiçbir depo atamadı) kullanılır. Hiçbir şablon yoksa "
 "mantıklı varsayılanlar döndürür."
 
+#: views/terminal.py:195
 msgid "Receipt template data"
 msgstr "Fatura şablonu verisi"
 
+#: views/terminal.py:328
 msgid "Get promo slides"
 msgstr "Promosyon kaydırma al"
 
+#: views/terminal.py:330
 msgid ""
 "Returns promotional slides for the terminal's warehouse. Slides are "
 "displayed on the customer-facing display during idle periods."
@@ -1194,12 +1428,15 @@ msgstr ""
 "Terminalin depoları için promosyon kaydırakları döndürür. Kaydıraklar, "
 "müşteriye yönelik ekran üzerinde boş zamanlarda görüntülenir."
 
+#: views/terminal.py:334
 msgid "List of promo slides with image URLs"
 msgstr "Resim URL'leriyle birlikte promosyon kaydırma listesi"
 
+#: views/terminal.py:408
 msgid "Generate display pairing code"
 msgstr "Gösterge eşleştirme kodu oluştur"
 
+#: views/terminal.py:410
 msgid ""
 "Generate a short-lived 6-digit pairing code for customer display "
 "authentication. The code expires after 5 minutes and can only be used once. "
@@ -1211,24 +1448,30 @@ msgstr ""
 "kullanılabilir. Yeni bir kod oluşturmak, bu terminal için mevcut ve "
 "kullanılmamış tüm kodları geçersiz kılar."
 
+#: views/terminal.py:415
 msgid "Pairing code generated"
 msgstr "Eşleştirme kodu oluşturuldu"
 
+#: views/terminal.py:464
 msgid "List managers for unlock override"
 msgstr "Kilit açma geçersizleştirmesi için yöneticileri listele"
 
+#: views/terminal.py:465
 msgid ""
 "Return list of managers (id and name) for the manager override unlock flow."
 msgstr ""
 "Yönetici geçersizleştirme kilidini açma akışı için yönetici listesini "
 "(kimlik ve isim) döndürün."
 
+#: views/terminal.py:467
 msgid "List of managers"
 msgstr "Yöneticiler listesi"
 
+#: views/terminal.py:503
 msgid "Verify unlock PIN"
 msgstr "Kilit açma PIN'ini doğrula"
 
+#: views/terminal.py:505
 msgid ""
 "Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
 "attempts, only manager PIN will be accepted. All attempts are logged for "
@@ -1238,15 +1481,19 @@ msgstr ""
 "başarısız denemeden sonra yalnızca yönetici PIN'i kabul edilecektir. Tüm "
 "denemeler, denetim amaçlı kaydedilir."
 
+#: views/terminal.py:537
 msgid "PIN verified successfully"
 msgstr "PIN başarıyla doğrulandı"
 
+#: views/terminal.py:538
 msgid "Invalid PIN"
 msgstr "Geçersiz PIN"
 
+#: views/terminal.py:700
 msgid "Log terminal lock event"
 msgstr "Terminal kilitleme olayını kaydet"
 
+#: views/terminal.py:702
 msgid ""
 "Log when a terminal is locked (manually or via auto-lock timeout). This "
 "endpoint is for audit logging only and does not change terminal state."
@@ -1255,15 +1502,19 @@ msgstr ""
 "tut. Bu uç nokta yalnızca denetim günlüğü için kullanılır ve terminalin "
 "durumunu değiştirmez."
 
+#: views/terminal.py:717
 msgid "Event logged successfully"
 msgstr "Olay başarıyla kaydedildi"
 
+#: views/terminal.py:718
 msgid "Invalid event type"
 msgstr "Geçersiz olay türü"
 
+#: views/terminal.py:784
 msgid "Verify unlock card"
 msgstr "Kilidi açma kartını doğrula"
 
+#: views/terminal.py:786
 msgid ""
 "Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
 " compared against stored card hashes. After 3 failed PIN attempts, only "
@@ -1273,38 +1524,49 @@ msgstr ""
 "verisi hashlenir ve depolanan kart hash'leri ile karşılaştırılır. 3 "
 "başarısız PIN denemesi sonra yalnızca yönetici kartları kabul edilir."
 
+#: views/terminal.py:805
 msgid "Card verified successfully"
 msgstr "Kart başarıyla doğrulandı"
 
+#: views/terminal.py:806
 msgid "Card not recognized"
 msgstr "Kart tanınamadı"
 
+#: views/terminal.py:951
 msgid "Register staff unlock card"
 msgstr "Personel kilidi açma kartını kaydet"
 
+#: views/terminal.py:952
 msgid "Register a card swipe for the current user's quick terminal unlock."
 msgstr ""
 "Mevcut kullanıcının hızlı terminal kilidini açmak için bir kart çekme "
 "işlemini kaydola."
 
+#: views/terminal.py:963
 msgid "Card registered successfully"
 msgstr "Kart başarıyla kaydedildi"
 
+#: views/terminal.py:964
 msgid "Card already registered to another user"
 msgstr "Kart başka bir kullanıcıya zaten kayıtlı"
 
+#: views/terminal.py:1013
 msgid "Remove staff unlock card"
 msgstr "Personel kilidi açma kartını kaldır"
 
+#: views/terminal.py:1014
 msgid "Remove the current user's registered unlock card."
 msgstr "Mevcut kullanıcının kayıtlı kilidi açma kartını kaldır."
 
+#: views/terminal.py:1016
 msgid "Card removed successfully"
 msgstr "Kart başarıyla kaldırıldı"
 
+#: views/terminal.py:1038
 msgid "Set cashier PIN"
 msgstr "Kasaya PIN ayarla"
 
+#: views/terminal.py:1040
 msgid ""
 "Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
 "must be 4-6 digits. Both pin and pin_confirm must match."
@@ -1313,12 +1575,15 @@ msgstr ""
 "ayarla veya güncelle. PIN 4-6 haneli olmalıdır. Hem pin hem de pin_confirm "
 "eşleşmelidir."
 
+#: views/terminal.py:1057
 msgid "PIN set successfully"
 msgstr "PIN başarıyla ayarlandı"
 
+#: views/terminal_provider.py:66
 msgid "Get terminal provider config"
 msgstr "Terminal sağlayıcı yapılandırmasını al"
 
+#: views/terminal_provider.py:68
 msgid ""
 "Returns the terminal provider configuration for the current terminal, "
 "including the integration mode (sdk, cloud, or manual) and connected reader "
@@ -1330,9 +1595,11 @@ msgstr ""
 "içerir. POS frontend'inin başlangıçta entegre kart okuyucusunun mevcut olup "
 "olmadığını ve hangi ödeme akışını kullanacağını belirlemek için kullanılır."
 
+#: views/terminal_provider.py:127
 msgid "Create connection token"
 msgstr "Bağlantı token'ı oluştur"
 
+#: views/terminal_provider.py:129
 msgid ""
 "Creates a short-lived connection token for SDK-mode terminal providers (e.g."
 " Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
@@ -1346,9 +1613,11 @@ msgstr ""
 "yalnızca. Bulut sağlayıcıları bağlantı tokenları kullanmaz. Sağlayıcı SDK "
 "tokenlarını desteklemiyorsa 400 döndürür."
 
+#: views/terminal_provider.py:200
 msgid "List card readers"
 msgstr "Kart okuyucularını listele"
 
+#: views/terminal_provider.py:202
 msgid ""
 "List available card readers from the terminal provider. Works for both SDK-"
 "mode and cloud-mode providers. Each reader object contains: id, label, type,"
@@ -1358,9 +1627,11 @@ msgstr ""
 "hem de bulut modu sağlayıcılar için çalışır. Her okuyucu nesnesi şu alanları"
 " içerir: id, etiket, tür, seri_numarası ve durum."
 
+#: views/terminal_provider.py:238
 msgid "Create payment intent for terminal"
 msgstr "Terminal için ödeme niyeti oluştur"
 
+#: views/terminal_provider.py:240
 msgid ""
 "Creates a PaymentIntent for card_present collection on the terminal reader. "
 "The frontend uses the returned client_secret to collect payment via the SDK."
@@ -1373,9 +1644,11 @@ msgstr ""
 "kullanmalıdır. Para birimi belirtilmezse, terminalin yapılandırılmış para "
 "birimine varsayılan olarak ayarlanır."
 
+#: views/terminal_provider.py:316
 msgid "Capture/verify terminal payment"
 msgstr "Terminal ödemeyi yakala/doğrula"
 
+#: views/terminal_provider.py:318
 msgid ""
 "Verifies that a PaymentIntent was successfully processed on the terminal "
 "reader and returns card details (brand, last4) from the provider. SDK only."
@@ -1384,9 +1657,11 @@ msgstr ""
 "doğrular ve sağlayıcıdan kart ayrıntılarını (marka, son4) döndürür. SDK "
 "yalnızca."
 
+#: views/terminal_provider.py:367
 msgid "Cancel terminal payment"
 msgstr "Terminal ödemeyi iptal et"
 
+#: views/terminal_provider.py:369
 msgid ""
 "Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
 "cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
@@ -1395,9 +1670,11 @@ msgstr ""
 "müşteri iptal etti). SDK yalnızca. Bulut sağlayıcıları cancel-cloud-payment "
 "kullanmalıdır."
 
+#: views/terminal_provider.py:420
 msgid "Initiate cloud payment on reader"
 msgstr "Okuyucuda bulut ödemesi başlat"
 
+#: views/terminal_provider.py:422
 msgid ""
 "Sends a payment request to a card reader via the provider's cloud API. For "
 "cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
@@ -1410,9 +1687,11 @@ msgstr ""
 "döndürür. Para birimi belirtilmemişse, terminalin yapılandırılmış para "
 "birimine varsayılan olarak ayarlanır."
 
+#: views/terminal_provider.py:519
 msgid "Check cloud payment status"
 msgstr "Bulut ödemeyi kontrol et"
 
+#: views/terminal_provider.py:521
 msgid ""
 "Poll the status of a cloud-initiated payment. Returns the current status: "
 "pending, succeeded, failed, or canceled. When status is 'succeeded', the "
@@ -1426,13 +1705,16 @@ msgstr ""
 "ise, cancel_reason içerir. Frontend, durum 'pending' olana kadar her 2 "
 "saniyede bir sorgulamalıdır."
 
+#: views/terminal_provider.py:532
 msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
 msgstr ""
 "Initiate-cloud-payment tarafından döndürülen sağlayıcıya özel işlem kimliği"
 
+#: views/terminal_provider.py:587
 msgid "Cancel cloud payment"
 msgstr "Bulut ödemeyi iptal et"
 
+#: views/terminal_provider.py:589
 msgid ""
 "Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
 " varies by provider."
@@ -1440,9 +1722,11 @@ msgstr ""
 "Okuyucu üzerinde bekleyen, bulut tarafından başlatılan bir ödemeyi iptal et."
 " Sadece bulut. Davranış sağlayıcıya göre değişebilir."
 
+#: views/webauthn.py:66
 msgid "Begin WebAuthn registration"
 msgstr "WebAuthn kaydı başlat"
 
+#: views/webauthn.py:68
 msgid ""
 "Generate registration options for biometric enrollment. Returns challenge "
 "and credential creation options."
@@ -1450,24 +1734,31 @@ msgstr ""
 "Biometrik kayıt için kayıt seçeneklerini oluştur. Zorlama ve kimlik "
 "doğrulama oluşturma seçeneklerini döndür."
 
+#: views/webauthn.py:70
 msgid "Registration options"
 msgstr "Kayıt seçenekleri"
 
+#: views/webauthn.py:136
 msgid "Complete WebAuthn registration"
 msgstr "WebAuthn kaydını tamamla"
 
+#: views/webauthn.py:137
 msgid "Verify attestation and store credential for biometric unlock."
 msgstr "Biometrik kilidi açmak için doğrulama ve kimlik bilgisi depola."
 
+#: views/webauthn.py:150
 msgid "Credential registered"
 msgstr "Kimlik doğrulama bilgisi kaydedildi"
 
+#: views/webauthn.py:151 views/webauthn.py:335
 msgid "Verification failed"
 msgstr "Doğrulama başarısız oldu"
 
+#: views/webauthn.py:222
 msgid "Begin WebAuthn authentication"
 msgstr "WebAuthn kimlik doğrulaması başlat"
 
+#: views/webauthn.py:224
 msgid ""
 "Generate authentication challenge for biometric unlock. Returns "
 "allowCredentials for the locked-by user and all managers. If failed_attempts"
@@ -1477,17 +1768,42 @@ msgstr ""
 "kullanıcı ve tüm yöneticiler için allowCredentials döndür. failed_attempts "
 ">= 3 ise sadece yönetici kimlik doğrulama bilgileri dahil edilir."
 
+#: views/webauthn.py:238
 msgid "Authentication options"
 msgstr "Kimlik doğrulama seçenekleri"
 
+#: views/webauthn.py:239
 msgid "No credentials registered"
 msgstr "Kimlik doğrulama bilgisi kaydedilmemiş"
 
+#: views/webauthn.py:319
 msgid "Complete WebAuthn authentication"
 msgstr "WebAuthn kimlik doğrulamasını tamamla"
 
+#: views/webauthn.py:320
 msgid "Verify biometric assertion and unlock terminal."
 msgstr "Biometrik doğrulamayı doğrula ve terminali kilitle."
 
+#: views/webauthn.py:334
 msgid "Authentication successful"
 msgstr "Kimlik doğrulama başarılı"
+
+#~ msgid "Apply gift card to cart"
+#~ msgstr "Hediye kartını sepete uygula"
+
+#~ msgid ""
+#~ "Apply a gift card code to the cart to cover part or all of the total. "
+#~ "Requires staff authentication and valid POS license."
+#~ msgstr ""
+#~ "Sepete bir hediye kartı kodu uygulayın, toplamın bir kısmını veya tamamını "
+#~ "karşılamak için. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+#~ msgid "Invalid gift card or insufficient balance"
+#~ msgstr "Geçersiz hediye kartı veya yetersiz bakiye"
+
+#~ msgid ""
+#~ "Remove all items, vouchers, and gift cards from the cart. Requires staff "
+#~ "authentication and valid POS license."
+#~ msgstr ""
+#~ "Sepetten tüm öğeleri, kuponları ve hediye kartlarını kaldırın. Personel "
+#~ "kimlik doğrulaması ve geçerli POS lisansı gerekir."

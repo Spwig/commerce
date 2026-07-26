@@ -274,3 +274,54 @@ def ensure_component_registry(
             "health_status": "healthy",
         },
     )
+
+
+def install_provider_from_package(
+    extract_dir: Path, manifest: dict, component_type: str = "payment_provider"
+) -> dict:
+    """
+    Install a provider integration (payment, shipping, ...) from an extracted
+    bundled package.
+
+    Mirrors the marketplace's symlink-versioned layout so bundled and
+    marketplace installs are indistinguishable on disk:
+
+        components_data/integrations/{component_type}/{slug}/v{version}/
+        components_data/integrations/{component_type}/{slug}/current -> v{version}
+
+    Registers the component in ComponentRegistry/ComponentVersion and stamps
+    the provider cache marker so the in-process provider registry reloads.
+    """
+    import shutil
+
+    from component_updates.integration_paths import (
+        INTEGRATIONS_DIR,
+        touch_provider_cache_marker,
+    )
+
+    slug = manifest["slug"]
+    version = manifest.get("version", "1.0.0")
+
+    try:
+        base_path = Path(INTEGRATIONS_DIR) / component_type / slug
+        base_path.mkdir(parents=True, exist_ok=True)
+
+        version_dir = base_path / f"v{version}"
+        if version_dir.exists():
+            shutil.rmtree(version_dir)
+        shutil.copytree(extract_dir, version_dir)
+
+        current_link = base_path / "current"
+        if current_link.exists() or current_link.is_symlink():
+            current_link.unlink()
+        current_link.symlink_to(f"v{version}")
+
+        ensure_component_registry(component_type, slug, manifest, install_method="bundled")
+        touch_provider_cache_marker(component_type)
+
+        logger.info("Installed bundled %s %s v%s", component_type, slug, version)
+        return {"success": True}
+
+    except Exception as e:
+        logger.error("Failed to install bundled %s %s: %s", component_type, slug, e)
+        return {"success": False, "error": str(e)}

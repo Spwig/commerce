@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"POT-Creation-Date: 2026-07-20 12:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,37 +18,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: apps.py:8
 msgid "POS API"
 msgstr "POS API"
 
+#: middleware.py:30
 msgid "A valid POS license is required to access this endpoint."
 msgstr "จำเป็นต้องมีใบอนุญาต POS ที่ถูกต้องเพื่อเข้าถึงจุดปลายทางนี้"
 
+#: permissions.py:12
 msgid "POS access requires a staff account."
 msgstr "การเข้าถึง POS จำเป็นต้องใช้บัญชีพนักงาน"
 
+#: permissions.py:24
 msgid "You are not assigned to this terminal."
 msgstr "คุณไม่ได้รับมอบหมายให้ใช้เทอร์มินัลนี้"
 
+#: permissions.py:72
 #, python-format
 msgid "You do not have permission: %(label)s."
 msgstr "คุณไม่มีสิทธิ์: %(label)s."
 
+#: serializers/cart.py:48
 msgid "Bundle variant selections: {bundle_item_id: variant_id}"
 msgstr "การเลือกตัวแปรของ Bundle: {bundle_item_id: variant_id}"
 
+#: serializers/cart.py:54
 msgid "List of optional BundleItem IDs to exclude"
 msgstr "รายการ ID BundleItem ที่ต้องการยกเว้น (เป็นตัวเลือก)"
 
+#: serializers/customer.py:22
 msgid "Search by email, phone, or name"
 msgstr "ค้นหาตามอีเมล โทรศัพท์ หรือชื่อ"
 
+#: serializers/inventory.py:46
 msgid "ID of the product to adjust stock for."
 msgstr "ID ของสินค้าที่ต้องการปรับปรุงสต็อก"
 
+#: serializers/inventory.py:50
 msgid "ID of the variant (required for variable products)."
 msgstr "ID ของตัวแปร (จำเป็นสำหรับสินค้าที่สามารถปรับแต่งได้)"
 
+#: serializers/inventory.py:55
 msgid ""
 "Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
 "removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
@@ -59,6 +70,7 @@ msgstr ""
 "ตั้งค่าจำนวนสต็อกที่มีอยู่เป็นค่าสัมบูรณ์, \"return\" เพิ่มสต็อกกลับ (เช่น "
 "การคืนสินค้าจากลูกค้า)"
 
+#: serializers/inventory.py:65
 msgid ""
 "For receive/return: units to add. For damage: units to remove. For recount: "
 "new absolute on_hand count."
@@ -66,34 +78,43 @@ msgstr ""
 "สำหรับ receive/return: จำนวนหน่วยที่จะเพิ่ม. สำหรับ damage: "
 "จำนวนหน่วยที่จะลบ. สำหรับ recount: จำนวนสต็อกที่มีอยู่ใหม่เป็นค่าสัมบูรณ์."
 
+#: serializers/inventory.py:71
 msgid "Required explanation for this adjustment (audit trail)."
 msgstr "คำอธิบายที่จำเป็นสำหรับการปรับแต่งนี้ (บันทึกการตรวจสอบ)"
 
+#: serializers/inventory.py:74
 msgid "Optional UUID for offline deduplication."
 msgstr "UUID ที่เป็นทางเลือกสำหรับการกำจัดรายการซ้ำในโหมดออฟไลน์"
 
+#: serializers/inventory.py:88
 msgid "Signed quantity delta."
 msgstr "ตัวแปรจำนวนสินค้าที่มีการลงนาม"
 
+#: serializers/payment.py:19
 msgid "Last four digits of card number (digits only)"
 msgstr "เลขสุดท้ายสี่หลักของหมายเลขบัตร (เฉพาะตัวเลขเท่านั้น)"
 
+#: serializers/payment.py:32
 msgid "Amount to charge. If not provided, charges the full remaining balance."
 msgstr ""
 "จำนวนเงินที่ต้องการเรียกเก็บ หากไม่ได้ระบุ จะเรียกเก็บยอดคงเหลือทั้งหมด"
 
+#: serializers/terminal_provider.py:10
 msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
 msgstr ""
 "ID การชำระเงินจากผู้ให้บริการปลายทาง (เช่น ID PaymentIntent จาก Stripe)"
 
+#: serializers/terminal_provider.py:57
 msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
 msgstr ""
 "ID ของเครื่องอ่านที่เฉพาะเจาะจงต่อผู้ให้บริการ (เช่น Adyen POIID, Square "
 "device_id)"
 
+#: serializers/terminal_provider.py:72
 msgid "Provider-specific transaction ID for status polling"
 msgstr "รหัสธุรกรรมเฉพาะผู้ให้บริการสำหรับการตรวจสอบสถานะ"
 
+#: serializers/terminal_provider.py:77
 msgid ""
 "Initial status -- typically \"pending\" for async providers, \"succeeded\" "
 "for sync (Adyen)"
@@ -101,18 +122,23 @@ msgstr ""
 "สถานะเริ่มต้น -- โดยทั่วไปเป็น \"pending\" สำหรับผู้ให้บริการแบบ async และ "
 "\"succeeded\" สำหรับ sync (Adyen)"
 
+#: serializers/terminal_provider.py:91
 msgid "Current payment status"
 msgstr "สถานะการชำระเงินปัจจุบัน"
 
+#: serializers/terminal_provider.py:97
 msgid "Provider payment ID (when succeeded)"
 msgstr "ไอดีการชำระเงินของผู้ให้บริการ (เมื่อสำเร็จ)"
 
+#: serializers/terminal_provider.py:100
 msgid "Reason for cancellation (when canceled)"
 msgstr "เหตุผลของการยกเลิก (เมื่อถูกยกเลิก)"
 
+#: views/auth.py:19
 msgid "POS staff login"
 msgstr "การเข้าสู่ระบบพนักงาน POS"
 
+#: views/auth.py:21
 msgid ""
 "Authenticate a staff member for POS access. Returns access and refresh "
 "tokens. Uses the same token system as the Admin API "
@@ -121,39 +147,51 @@ msgstr ""
 "ยืนยันตัวตนของพนักงานเพื่อเข้าถึง POS คืนโทเค็นการเข้าถึงและโทเค็นรีเฟรช "
 "ใช้ระบบโทเค็นเดียวกับ Admin API (MobileTokenAuthentication)"
 
+#: views/auth.py:40
 msgid "Login successful, returns tokens and terminal config"
 msgstr "เข้าสู่ระบบสำเร็จ คืนค่า token และการตั้งค่าปลายทาง"
 
+#: views/auth.py:41
 msgid "Invalid credentials"
 msgstr "ข้อมูลไม่ถูกต้อง"
 
+#: views/auth.py:42
 msgid "User is not a staff member"
 msgstr "ผู้ใช้ไม่ใช่สมาชิกสตัฟฟ์"
 
+#: views/auth.py:183
 msgid "Refresh POS access token"
 msgstr "รีเฟรชโทเคนเข้าถึง POS"
 
+#: views/auth.py:184
 msgid "Exchange a refresh token for a new access token."
 msgstr "แลกโทเคนรีเฟรชเพื่อขอโทเคนเข้าถึงใหม่"
 
+#: views/auth.py:195
 msgid "New access token"
 msgstr "โทเคนเข้าถึงใหม่"
 
+#: views/auth.py:196
 msgid "Invalid or expired refresh token"
 msgstr "โทเคนรีเฟรชไม่ถูกต้องหรือหมดอายุ"
 
+#: views/auth.py:259
 msgid "POS logout"
 msgstr "ออกจากระบบ POS"
 
+#: views/auth.py:260
 msgid "Invalidate the current access and refresh tokens."
 msgstr "ทำให้โทเคนเข้าถึงและโทเคนรีเฟรชปัจจุบันเป็นโมฆะ"
 
+#: views/auth.py:262
 msgid "Logged out successfully"
 msgstr "ออกจากระบบสำเร็จ"
 
+#: views/cart.py:37
 msgid "Get current POS cart"
 msgstr "ดึงตะกร้า POS ปัจจุบัน"
 
+#: views/cart.py:39
 msgid ""
 "Returns the current cart for the authenticated cashier. Creates a new cart "
 "if one does not exist. Requires staff authentication and valid POS license."
@@ -162,9 +200,11 @@ msgstr ""
 "สร้างตะกร้าใหม่หากยังไม่มี จำเป็นต้องมีการยืนยันตัวตนของพนักงานและใบอนุญาต "
 "POS ที่ถูกต้อง"
 
+#: views/cart.py:67
 msgid "Add item to POS cart"
 msgstr "เพิ่มสินค้าลงในตะกร้า POS"
 
+#: views/cart.py:69
 msgid ""
 "Add a product to the cashier's cart. Supports adding by product ID or "
 "barcode. When barcode is provided without product_id, it resolves the "
@@ -174,12 +214,15 @@ msgstr ""
 " เมื่อระบุบาร์โค้ดโดยไม่มี product_id ระบบจะค้นหาสินค้าโดยอัตโนมัติ "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:76
 msgid "Invalid product, variant, or insufficient stock"
 msgstr "สินค้าไม่ถูกต้อง รุ่นสินค้า หรือสต็อกไม่เพียงพอ"
 
+#: views/cart.py:194
 msgid "Update cart item quantity"
 msgstr "อัปเดตจำนวนสินค้าในตะกร้า"
 
+#: views/cart.py:196
 msgid ""
 "Update the quantity of a cart item. Set quantity to 0 to remove the item. "
 "Requires staff authentication and valid POS license."
@@ -187,15 +230,20 @@ msgstr ""
 "ปรับปรุงปริมาณของสินค้าในตะกร้า ตั้งค่าปริมาณเป็น 0 เพื่อลบสินค้า "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:202
 msgid "Invalid quantity or insufficient stock"
 msgstr "จำนวนไม่ถูกต้องหรือสต็อกไม่เพียงพอ"
 
+#: views/cart.py:205 views/cart.py:274 views/cart.py:553 views/cart.py:695
+#: views/cart.py:1017
 msgid "Cart item not found"
 msgstr "ไม่พบสินค้าในตะกร้า"
 
+#: views/cart.py:266
 msgid "Remove item from cart"
 msgstr "ลบสินค้าออกจากตะกร้า"
 
+#: views/cart.py:268
 msgid ""
 "Remove a specific item from the cart. Requires staff authentication and "
 "valid POS license."
@@ -203,9 +251,11 @@ msgstr ""
 "ลบสินค้าชิ้นหนึ่งออกจากตะกร้า ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต"
 " POS ที่ถูกต้อง"
 
+#: views/cart.py:321
 msgid "Apply voucher to cart"
 msgstr "ใช้คูปองในตะกร้า"
 
+#: views/cart.py:323
 msgid ""
 "Apply a voucher/discount code to the cart. Only one voucher can be active at"
 " a time. Requires staff authentication and valid POS license."
@@ -213,12 +263,15 @@ msgstr ""
 "ใช้คูปอง/โค้ดส่วนลดกับตะกร้าสินค้า สามารถใช้คูปองได้เพียงหนึ่งใบเท่านั้น "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:330
 msgid "Invalid or expired voucher code"
 msgstr "รหัสคูปองไม่ถูกต้องหรือหมดอายุ"
 
+#: views/cart.py:382
 msgid "Remove voucher from cart"
 msgstr "ลบคูปองออกจากตะกร้า"
 
+#: views/cart.py:384
 msgid ""
 "Remove the applied voucher from the cart. Requires staff authentication and "
 "valid POS license."
@@ -226,35 +279,30 @@ msgstr ""
 "ลบคูปองที่ใช้แล้วออกจากตะกร้า ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต"
 " POS ที่ถูกต้อง"
 
+#: views/cart.py:389
 msgid "No voucher applied"
 msgstr "ไม่มีคูปองที่ใช้งาน"
 
-msgid "Apply gift card to cart"
-msgstr "ใช้บัตรของขวัญในตะกร้า"
-
-msgid ""
-"Apply a gift card code to the cart to cover part or all of the total. "
-"Requires staff authentication and valid POS license."
-msgstr ""
-"ใช้โค้ดบัตรของขวัญกับตะกร้าสินค้าเพื่อครอบคลุมส่วนหนึ่งหรือทั้งหมดของยอดรวม "
-"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
-
-msgid "Invalid gift card or insufficient balance"
-msgstr "บัตรของขวัญไม่ถูกต้องหรือยอดเงินไม่เพียงพอ"
-
+#: views/cart.py:428
 msgid "Clear all items from cart"
 msgstr "ล้างสินค้าทั้งหมดในตะกร้า"
 
+#: views/cart.py:430
+#| msgid ""
+#| "Remove the applied voucher from the cart. Requires staff authentication and "
+#| "valid POS license."
 msgid ""
-"Remove all items, vouchers, and gift cards from the cart. Requires staff "
-"authentication and valid POS license."
+"Remove all items and vouchers from the cart. Requires staff authentication "
+"and valid POS license."
 msgstr ""
-"ลบสินค้า คูปอง และบัตรของขวัญทั้งหมดออกจากตะกร้า "
-"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+"ลบรายการและคูปองทั้งหมดออกจากตะกร้า "
+"ต้องการการตรวจสอบสิทธิ์ของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:533
 msgid "Apply manual discount to cart item"
 msgstr "ใช้ส่วนลดแบบมือถือกับรายการในตะกร้า"
 
+#: views/cart.py:535
 msgid ""
 "Apply a staff manual discount to a specific cart item. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -264,15 +312,19 @@ msgstr ""
 "หากส่วนลดเกินข้อจำกัดของพนักงาน จะคืนค่า requires_approval=true "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:549 views/cart.py:759
 msgid "Discount applied or requires approval"
 msgstr "ส่วนลดถูกใช้งานแล้วหรือต้องการการอนุมัติ"
 
+#: views/cart.py:550 views/cart.py:760
 msgid "Invalid discount or not authorized"
 msgstr "ส่วนลดไม่ถูกต้องหรือไม่มีสิทธิ์"
 
+#: views/cart.py:686
 msgid "Remove manual discount from cart item"
 msgstr "ลบส่วนลดแบบมือถือออกจากรายการในตะกร้า"
 
+#: views/cart.py:688
 msgid ""
 "Remove a staff manual discount from a specific cart item. Requires staff "
 "authentication and valid POS license."
@@ -280,12 +332,15 @@ msgstr ""
 "ลบส่วนลดมืออาชีพจากสินค้าในตะกร้าเฉพาะ "
 "ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:692 views/cart.py:893
 msgid "Discount removed"
 msgstr "ลบส่วนลดออก"
 
+#: views/cart.py:743
 msgid "Apply manual discount to cart"
 msgstr "ใช้ส่วนลดแบบมือถือกับตะกร้า"
 
+#: views/cart.py:745
 msgid ""
 "Apply a staff manual discount to the entire cart. Returns "
 "requires_approval=true if the discount exceeds staff limits. Requires staff "
@@ -295,9 +350,11 @@ msgstr ""
 "requires_approval=true ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS "
 "ที่ถูกต้อง"
 
+#: views/cart.py:887
 msgid "Remove manual discount from cart"
 msgstr "ลบส่วนลดแบบมือถือออกจากตะกร้า"
 
+#: views/cart.py:889
 msgid ""
 "Remove the staff manual discount from the cart. Requires staff "
 "authentication and valid POS license."
@@ -305,9 +362,11 @@ msgstr ""
 "ลบส่วนลดมือของเจ้าหน้าที่ออกจากตะกร้าสินค้า "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:934
 msgid "Verify manager PIN"
 msgstr "ตรวจสอบ PIN ผู้จัดการ"
 
+#: views/cart.py:936
 msgid ""
 "Verify if a PIN is valid for a manager who can approve discounts. Returns "
 "the manager's name if valid. Requires staff authentication and valid POS "
@@ -317,12 +376,15 @@ msgstr ""
 " หากเป็น PIN ที่ถูกต้อง จะคืนชื่อของผู้จัดการ "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:948
 msgid "PIN verification result"
 msgstr "ผลการตรวจสอบ PIN"
 
+#: views/cart.py:992
 msgid "Approve discount with manager PIN"
 msgstr "อนุมัติส่วนลดด้วย PIN ผู้จัดการ"
 
+#: views/cart.py:994
 msgid ""
 "Apply a discount that exceeds staff limits with manager approval. Requires a"
 " valid manager PIN to proceed. Requires staff authentication and valid POS "
@@ -332,15 +394,19 @@ msgstr ""
 "ต้องใช้ PIN ของผู้จัดการที่ถูกต้องเพื่อดำเนินการ "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:1013
 msgid "Discount approved and applied"
 msgstr "ส่วนลดได้รับการอนุมัติและใช้งานแล้ว"
 
+#: views/cart.py:1014
 msgid "Invalid PIN or discount parameters"
 msgstr "PIN หรือพารามิเตอร์ส่วนลดไม่ถูกต้อง"
 
+#: views/cart.py:1182
 msgid "Park current cart"
 msgstr "จอดรถตะกร้าสินค้าปัจจุบัน"
 
+#: views/cart.py:1184
 msgid ""
 "Save the current cart state for later restoration. Used when a customer "
 "needs to step away and another customer needs to be served. Requires staff "
@@ -350,15 +416,19 @@ msgstr ""
 "ใช้เมื่อลูกค้าต้องการหยุดพัก และลูกค้ารายอื่นต้องการรับบริการ "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:1195
 msgid "Cart parked successfully"
 msgstr "เพิ่มตะกร้าไว้สำเร็จ"
 
+#: views/cart.py:1196
 msgid "Cart is empty or cannot be parked"
 msgstr "ตะกร้าสินค้าว่างหรือไม่สามารถจอดได้"
 
+#: views/cart.py:1290
 msgid "List parked carts"
 msgstr "รายการตะกร้าที่ถูกเก็บไว้"
 
+#: views/cart.py:1292
 msgid ""
 "Get all parked carts for the current terminal. Requires staff authentication"
 " and valid POS license."
@@ -366,12 +436,15 @@ msgstr ""
 "ดึงตะกร้าสินค้าที่จอดไว้ทั้งหมดสำหรับเทอร์มินัลปัจจุบัน "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:1296
 msgid "List of parked carts"
 msgstr "รายการตะกร้าที่ถูกเก็บไว้"
 
+#: views/cart.py:1345
 msgid "Restore parked cart"
 msgstr "กู้คืนตะกร้าที่ถูกเก็บไว้"
 
+#: views/cart.py:1347
 msgid ""
 "Restore a parked cart, replacing the current cart contents. The current cart"
 " will be cleared before restoration. Requires staff authentication and valid"
@@ -381,18 +454,23 @@ msgstr ""
 "ตะกร้าสินค้าปัจจุบันจะถูกลบออกก่อนการกู้คืน "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:1352
 msgid "Cart restored successfully"
 msgstr "กู้คืนตะกร้าสำเร็จ"
 
+#: views/cart.py:1353
 msgid "Current cart is not empty"
 msgstr "ตะกร้าปัจจุบันไม่ว่าง"
 
+#: views/cart.py:1356 views/cart.py:1477
 msgid "Parked cart not found"
 msgstr "ไม่พบตะกร้าที่จอด"
 
+#: views/cart.py:1468
 msgid "Delete parked cart"
 msgstr "ลบตะกร้าที่จอด"
 
+#: views/cart.py:1470
 msgid ""
 "Permanently delete a parked cart. This cannot be undone. Requires staff "
 "authentication and valid POS license."
@@ -400,12 +478,15 @@ msgstr ""
 "ลบตะกร้าที่จอดไว้ถาวร ไม่สามารถยกเลิกได้ "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/cart.py:1474
 msgid "Parked cart deleted"
 msgstr "ตะกร้าที่จอดถูกลบแล้ว"
 
+#: views/catalog.py:527
 msgid "List POS products"
 msgstr "รายการสินค้า POS"
 
+#: views/catalog.py:529
 msgid ""
 "Returns products available for in-store sale, filtered by sales channel. "
 "Includes warehouse-specific stock levels when a terminal is identified. "
@@ -415,48 +496,63 @@ msgstr ""
 "รวมระดับสต็อกเฉพาะคลังเมื่อระบุได้ถึงอุปกรณ์ปลายทาง "
 "สินค้าที่มีรูปภาพจะปรากฏก่อน จัดเรียงตามความนิยมในแต่ละคลัง"
 
+#: views/catalog.py:534
 msgid "Search by name, SKU, or barcode"
 msgstr "ค้นหาตามชื่อ, SKU หรือบาร์โค้ด"
 
+#: views/catalog.py:535
 msgid "Filter by category ID"
 msgstr "กรองตาม ID หมวดหมู่"
 
+#: views/catalog.py:537
 msgid "Warehouse for stock levels"
 msgstr "คลังสินค้าสำหรับระดับสต็อก"
 
+#: views/catalog.py:539 views/inventory.py:90 views/inventory.py:691
+#: views/orders.py:131 views/sync.py:67 views/sync.py:158 views/sync.py:723
 msgid "Page number (default: 1)"
 msgstr "หมายเลขหน้า (ค่าเริ่มต้น: 1)"
 
+#: views/catalog.py:541 views/inventory.py:92
 msgid "Items per page (default: 50, max: 200)"
 msgstr "จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 50, ค่าสูงสุด: 200)"
 
+#: views/catalog.py:641
 msgid "Get product detail"
 msgstr "ดูรายละเอียดสินค้า"
 
+#: views/catalog.py:642
 msgid "Returns full product details including variants and warehouse stock."
 msgstr "คืนค่ารายละเอียดสินค้าทั้งหมด รวมถึงตัวเลือกและสต็อกในคลังสินค้า"
 
+#: views/catalog.py:695
 msgid "Barcode lookup"
 msgstr "ค้นหาบาร์โค้ด"
 
+#: views/catalog.py:696
 msgid ""
 "Look up a product or variant by barcode. Fast, indexed lookup for scanning."
 msgstr ""
 "ค้นหาสินค้าหรือตัวแปรโดยใช้บาร์โค้ด "
 "ค้นหาที่รวดเร็วและมีการจัดทำดัชนีสำหรับการสแกน"
 
+#: views/catalog.py:699
 msgid "No product found with this barcode"
 msgstr "ไม่พบสินค้าที่มีบาร์โค้ดนี้"
 
+#: views/catalog.py:763
 msgid "List categories"
 msgstr "รายการหมวดหมู่"
 
+#: views/catalog.py:764
 msgid "Returns the category tree for POS product navigation."
 msgstr "แสดงโครงสร้างประเภทสินค้าสำหรับการนำทางสินค้า POS"
 
+#: views/checkout.py:499
 msgid "Process cash payment"
 msgstr "ดำเนินการชำระเงินสด"
 
+#: views/checkout.py:501
 msgid ""
 "Complete a POS transaction with cash payment. Validates that the amount "
 "tendered covers the order total and calculates change. Creates an Order with"
@@ -469,12 +565,15 @@ msgstr ""
 "ต้องการให้มีการเปิดชิft บนเครื่องจ่ายเงิน "
 "ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/checkout.py:510
 msgid "Empty cart or insufficient cash tendered"
 msgstr "ตะกร้าว่างหรือเงินสดที่จ่ายไม่เพียงพอ"
 
+#: views/checkout.py:599
 msgid "Process card payment"
 msgstr "ดำเนินการชำระเงินด้วยบัตร"
 
+#: views/checkout.py:601
 msgid ""
 "Complete a POS transaction with card payment. Card processing is assumed to "
 "be handled by an external card terminal. This endpoint records the card "
@@ -487,12 +586,15 @@ msgstr ""
 "ต้องการให้มีการเปิดชิft บนเครื่องจ่ายเงิน "
 "ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/checkout.py:610
 msgid "Empty cart"
 msgstr "ตะกร้าว่าง"
 
+#: views/checkout.py:680
 msgid "Check gift card balance"
 msgstr "ตรวจสอบยอดคงเหลือบัตรของขวัญ"
 
+#: views/checkout.py:682
 msgid ""
 "Check the balance of a gift card for POS checkout. Returns the current "
 "balance if valid, or an error message if invalid. Requires staff "
@@ -503,15 +605,19 @@ msgstr ""
 "หรือแสดงข้อความแสดงข้อผิดพลาดหากบัตรไม่ถูกต้อง "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่"
 
+#: views/checkout.py:696
 msgid "Gift card balance info"
 msgstr "ข้อมูลยอดคงเหลือบัตรของขวัญ"
 
+#: views/checkout.py:697
 msgid "Invalid gift card or missing code"
 msgstr "บัตรของขวัญไม่ถูกต้องหรือไม่มีรหัส"
 
+#: views/checkout.py:742
 msgid "Process gift card payment"
 msgstr "ดำเนินการชำระเงินด้วยบัตรของขวัญ"
 
+#: views/checkout.py:744
 msgid ""
 "Complete a POS transaction using a gift card. Validates the gift card has "
 "sufficient balance. If the gift card balance is less than the order total, "
@@ -524,12 +630,15 @@ msgstr ""
 "tender แทน ต้องการการเปิด shift บนเครื่องจ่ายเงิน "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/checkout.py:754
 msgid "Empty cart, invalid gift card, or insufficient balance"
 msgstr "ตะกร้าว่าง บัตรของขวัญไม่ถูกต้อง หรือยอดเงินไม่เพียงพอ"
 
+#: views/checkout.py:911
 msgid "Process split tender payment"
 msgstr "ดำเนินการชำระเงินแบบแบ่งชำระ"
 
+#: views/checkout.py:913
 msgid ""
 "Complete a POS transaction using multiple payment methods (split tender). "
 "The total of all payments must cover the order total. Change is calculated "
@@ -543,12 +652,15 @@ msgstr ""
 "ต้องมีการเปิดชิft บนเครื่อง POS "
 "และต้องการการตรวจสอบตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/checkout.py:922
 msgid "Empty cart, invalid payments, or insufficient total"
 msgstr "ตะกร้าว่าง วิธีชำระเงินไม่ถูกต้อง หรือยอดเงินไม่เพียงพอ"
 
+#: views/checkout.py:1117
 msgid "Process terminal card payment"
 msgstr "ดำเนินการชำระเงินด้วยบัตรที่ตู้ขาย"
 
+#: views/checkout.py:1119
 msgid ""
 "Complete a POS transaction with an integrated card terminal payment. The "
 "frontend must have already collected payment via the terminal SDK and "
@@ -563,12 +675,15 @@ msgstr ""
 "ต้องมีการเปิดชิft บนเครื่อง POS "
 "และต้องการการตรวจสอบตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/checkout.py:1129
 msgid "Empty cart or payment verification failed"
 msgstr "ตะกร้าว่าง หรือการตรวจสอบวิธีชำระเงินล้มเหลว"
 
+#: views/customer.py:65
 msgid "Search customers"
 msgstr "ค้นหาลูกค้า"
 
+#: views/customer.py:67
 msgid ""
 "Search for customers by email, phone, first name, or last name. Returns up "
 "to 20 matching results. Minimum 2 characters required. Requires staff "
@@ -578,15 +693,19 @@ msgstr ""
 "ต้องมีอย่างน้อย 2 ตัวอักษร ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต "
 "POS ที่ถูกต้อง"
 
+#: views/customer.py:76
 msgid "Search query (email, phone, or name). Minimum 2 characters."
 msgstr "ค้นหา (อีเมล หมายเลขโทรศัพท์ หรือชื่อ). ต้องมีอย่างน้อย 2 ตัวอักษร."
 
+#: views/customer.py:81
 msgid "Search query too short"
 msgstr "คำค้นหาสั้นเกินไป"
 
+#: views/customer.py:121
 msgid "Create walk-in customer"
 msgstr "สร้างลูกค้าที่มาถึงโดยตรง"
 
+#: views/customer.py:123
 msgid ""
 "Create a new customer for a walk-in sale. If a customer with the given email"
 " already exists, returns the existing customer instead of creating a "
@@ -599,12 +718,15 @@ msgstr ""
 "อีเมลเป็นตัวเลือกสำหรับลูกค้าที่มาที่ร้านที่ไม่ต้องการระบุตัวตน "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/customer.py:131
 msgid "Existing customer found with this email"
 msgstr "พบลูกค้าที่มีอยู่แล้วด้วยอีเมลนี้"
 
+#: views/customer.py:201
 msgid "Get customer details"
 msgstr "ดูรายละเอียดลูกค้า"
 
+#: views/customer.py:203
 msgid ""
 "Retrieve customer details including contact info and recent order history. "
 "Requires staff authentication and valid POS license."
@@ -612,9 +734,11 @@ msgstr ""
 "ดึงข้อมูลลูกค้า รวมถึงข้อมูลการติดต่อและประวัติการสั่งซื้อล่าสุด "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/inventory.py:72
 msgid "List stock levels for warehouse"
 msgstr "รายการระดับสต็อกสำหรับคลังสินค้า"
 
+#: views/inventory.py:74
 msgid ""
 "Returns paginated stock levels for the terminal's warehouse. Supports search"
 " by product name or SKU and filtering for low-stock or no-stock items. "
@@ -625,21 +749,27 @@ msgstr ""
 "และการกรองสินค้าที่มีสต็อกต่ำหรือไม่มีสต็อก "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/inventory.py:79
 msgid "Search by product name or SKU"
 msgstr "ค้นหาตามชื่อสินค้าหรือ SKU"
 
+#: views/inventory.py:83
 msgid "Only return items at or below low stock threshold"
 msgstr "คืนรายการสินค้าที่มีจำนวนคงเหลือเท่ากับหรือต่ำกว่าระดับต่ำสุด"
 
+#: views/inventory.py:88
 msgid "Only return items with zero available stock"
 msgstr "คืนรายการสินค้าที่มีสต็อกคงเหลือเป็นศูนย์เท่านั้น"
 
+#: views/inventory.py:97 views/inventory.py:286 views/inventory.py:698
 msgid "Warehouse not determined"
 msgstr "ยังไม่กำหนดคลังสินค้า"
 
+#: views/inventory.py:278
 msgid "Get product stock detail"
 msgstr "ดูรายละเอียดสต็อกสินค้า"
 
+#: views/inventory.py:280
 msgid ""
 "Returns stock levels for a specific product in the terminal's warehouse, "
 "including variant-level breakdown. Requires staff authentication and valid "
@@ -649,9 +779,11 @@ msgstr ""
 "รวมถึงการแยกตามระดับตัวแปร ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต "
 "POS ที่ถูกต้อง"
 
+#: views/inventory.py:351
 msgid "Check stock across all locations"
 msgstr "ตรวจสอบสต็อกทั่วทั้งสาขา"
 
+#: views/inventory.py:353
 msgid ""
 "Returns stock levels for a product across all warehouse locations. Useful "
 "for checking if an out-of-stock item is available at another location. The "
@@ -663,9 +795,11 @@ msgstr ""
 "คลังของเทอร์มินัลปัจจุบันจะถูกทำเครื่องหมายด้วย is_current=true "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/inventory.py:501
 msgid "Adjust stock levels"
 msgstr "ปรับปรุงระดับสต็อก"
 
+#: views/inventory.py:503
 msgid ""
 "Adjust stock for a product in the terminal's warehouse. Supports four "
 "adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
@@ -682,21 +816,27 @@ msgstr ""
 "ต้องการการยืนยันตัวตนของพนักงาน ใบอนุญาต POS ที่ถูกต้อง และสิทธิ์ "
 "pos_stock_adjustment"
 
+#: views/inventory.py:515
 msgid "Stock adjusted successfully"
 msgstr "ปรับปรุงสต็อกสำเร็จ"
 
+#: views/inventory.py:516
 msgid "Validation error or warehouse not determined"
 msgstr "เกิดข้อผิดพลาดในการตรวจสอบ หรือไม่สามารถระบุคลังสินค้าได้"
 
+#: views/inventory.py:518
 msgid "Permission denied or POS license required"
 msgstr "ไม่สามารถเข้าถึงได้ หรือต้องการใบอนุญาต POS"
 
+#: views/inventory.py:519
 msgid "Product or stock item not found"
 msgstr "ไม่พบสินค้าหรือรายการสต็อก"
 
+#: views/inventory.py:673
 msgid "List stock movement history"
 msgstr "รายการประวัติการเคลื่อนไหวสต็อก"
 
+#: views/inventory.py:675
 msgid ""
 "Returns paginated stock movement records for the terminal's warehouse. "
 "Useful for auditing recent stock changes (adjustments, damage, recounts, "
@@ -708,19 +848,24 @@ msgstr ""
 "การนับใหม่ การคืนสินค้า) รองรับการกรองตามสินค้าและประเภทการเคลื่อนไหว "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/inventory.py:684
 msgid "Filter movements by product ID"
 msgstr "กรองการเคลื่อนไหวโดยใช้ ID สินค้า"
 
+#: views/inventory.py:689
 msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
 msgstr ""
 "ประเภทการเคลื่อนไหวที่ควรรวมกันด้วยเครื่องหมายจุลภาค (เช่น 'damage,recount')"
 
+#: views/inventory.py:693 views/orders.py:133
 msgid "Items per page (default: 20, max: 100)"
 msgstr "จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 20, ค่าสูงสุด: 100)"
 
+#: views/loyalty.py:20
 msgid "Get customer loyalty info"
 msgstr "ดึงข้อมูลความภักดีของลูกค้า"
 
+#: views/loyalty.py:22
 msgid ""
 "Retrieve loyalty membership status, tier, and points balance for a customer."
 " Returns `is_member: false` if the customer has no active loyalty "
@@ -730,6 +875,7 @@ msgstr ""
 "หากลูกค้าไม่มีสมาชิกความภักดีที่ใช้งานอยู่ "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/loyalty.py:29
 msgid ""
 "Loyalty membership info. `is_member` indicates whether the customer has an "
 "active membership. When true, includes `tier_name`, `tier_color`, and "
@@ -739,9 +885,11 @@ msgstr ""
 "บ่งบอกว่าลูกค้ามีสมาชิกที่ใช้งานอยู่หรือไม่ เมื่อเป็นจริง จะรวม `tier_name`,"
 " `tier_color`, และ `available_points`"
 
+#: views/loyalty.py:105
 msgid "Preview loyalty points for cart"
 msgstr "แสดงคะแนนความภักดีสำหรับตะกร้าสินค้า"
 
+#: views/loyalty.py:107
 msgid ""
 "Calculate the loyalty points a customer would earn for a given cart total. "
 "Returns 0 if the customer has no active loyalty membership. Requires staff "
@@ -751,9 +899,11 @@ msgstr ""
 "หากลูกค้าไม่มีสมาชิกความภักดีที่ใช้งานอยู่จะคืนค่า 0 "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/loyalty.py:115
 msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
 msgstr "ค่ารวมตะกร้าในรูปแบบทศนิยม (เช่น '49.99') ค่าเริ่มต้นคือ '0'"
 
+#: views/loyalty.py:121
 msgid ""
 "Points preview. `points_preview` is the number of points the customer would "
 "earn for the given cart total."
@@ -761,9 +911,11 @@ msgstr ""
 "การดูตัวอย่างคะแนน. `points_preview` "
 "คือจำนวนคะแนนที่ลูกค้าจะได้รับสำหรับยอดตะกร้าที่กำหนด"
 
+#: views/orders.py:77
 msgid "List POS orders"
 msgstr "รายการคำสั่งซื้อ POS"
 
+#: views/orders.py:79
 msgid ""
 "Returns orders with advanced filtering for date range, origin, customer, "
 "cashier, and search. Supports viewing web orders for return scenarios. "
@@ -779,6 +931,7 @@ msgstr ""
 "ตามหมายเลข ชื่อลูกค้า อีเมล หรือเบอร์โทรศัพท์ "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/orders.py:91
 msgid ""
 "Start date for range filter (ISO format, default: today). Ignored when "
 "search is provided."
@@ -786,6 +939,7 @@ msgstr ""
 "วันเริ่มต้นสำหรับการกรองช่วงเวลา (รูปแบบ ISO, ค่าเริ่มต้น: วันนี้) "
 "จะถูกมองข้ามเมื่อมีการค้นหา"
 
+#: views/orders.py:98
 msgid ""
 "End date for range filter (ISO format, default: today). Ignored when search "
 "is provided."
@@ -793,6 +947,7 @@ msgstr ""
 "วันสิ้นสุดสำหรับการกรองช่วงเวลา (รูปแบบ ISO, ค่าเริ่มต้น: วันนี้) "
 "จะถูกมองข้ามเมื่อมีการค้นหา"
 
+#: views/orders.py:106
 msgid ""
 "Order origin filter: this_terminal (default), all_pos, all (includes web). "
 "Ignored when search is provided."
@@ -800,12 +955,15 @@ msgstr ""
 "ตัวกรองแหล่งที่มาของคำสั่งซื้อ: this_terminal (ค่าเริ่มต้น), all_pos, all "
 "(รวมเว็บ). จะถูกเพิกเฉยเมื่อมีการค้นหา"
 
+#: views/orders.py:112
 msgid "Filter by customer user ID. Ignored when search is provided."
 msgstr "กรองตาม ID ผู้ใช้ลูกค้า ถ้ามีการค้นหา จะถูกมองข้าม"
 
+#: views/orders.py:117
 msgid "Filter by cashier staff ID. Ignored when search is provided."
 msgstr "กรองตาม ID พนักงานแคชเชียร์ ถ้ามีการค้นหา จะถูกมองข้าม"
 
+#: views/orders.py:123
 msgid ""
 "Search across ALL orders by order number, customer name, email, or phone. "
 "Bypasses date/origin filters."
@@ -813,12 +971,15 @@ msgstr ""
 "ค้นหาคำสั่งซื้อทั้งหมดได้โดยใช้หมายเลขคำสั่งซื้อ ชื่อลูกค้า อีเมล "
 "หรือเบอร์โทรศัพท์ ข้ามการกรองตามวันที่/แหล่งที่มา"
 
+#: views/orders.py:129
 msgid "Filter by order status (applies in both modes)"
 msgstr "กรองตามสถานะคำสั่งซื้อ (ใช้ได้ในทั้งสองโหมด)"
 
+#: views/orders.py:342
 msgid "Get order details"
 msgstr "ดึงรายละเอียดคำสั่งซื้อ"
 
+#: views/orders.py:344
 msgid ""
 "Returns full order details including items and payment breakdown. Supports "
 "both POS and web orders (for return scenarios). Requires staff "
@@ -828,9 +989,11 @@ msgstr ""
 "รองรับทั้งคำสั่งซื้อจาก POS และเว็บไซต์ (สำหรับสถานการณ์คืนสินค้า) "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/orders.py:388
 msgid "Get receipt data for printing"
 msgstr "ดึงข้อมูลใบเสร็จสำหรับการพิมพ์"
 
+#: views/orders.py:390
 msgid ""
 "Returns receipt-formatted data for a POS order including store info, items, "
 "payments, and footer text. Designed for ESC/POS thermal printers. Requires "
@@ -841,9 +1004,11 @@ msgstr ""
 "ออกแบบมาสำหรับเครื่องพิมพ์ความร้อน ESC/POS "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/orders.py:653
 msgid "Process order refund"
 msgstr "ดำเนินการคืนเงินคำสั่งซื้อ"
 
+#: views/orders.py:655
 msgid ""
 "Process a full or partial refund for a POS order. For partial refunds, "
 "specify the items and quantities to refund. Creates a Refund record and "
@@ -856,15 +1021,19 @@ msgstr ""
 "ต้องการมีช่วงเวลาที่เปิดอยู่บนเทอร์มินัล "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/orders.py:700
 msgid "Refund processed successfully"
 msgstr "ดำเนินการคืนเงินสำเร็จ"
 
+#: views/orders.py:701
 msgid "Invalid refund request or order already refunded"
 msgstr "คำขอคืนเงินไม่ถูกต้อง หรือคำสั่งซื้อได้รับการคืนเงินแล้ว"
 
+#: views/orders.py:897
 msgid "Void a POS order"
 msgstr "ยกเลิกคำสั่งซื้อ POS"
 
+#: views/orders.py:899
 msgid ""
 "Cancel a POS order from the current shift. Only orders placed during the "
 "current open shift can be voided. This creates a full refund and reverses "
@@ -877,15 +1046,19 @@ msgstr ""
 " ต้องมีช่วงเวลาทำงานเปิดอยู่บนเครื่องเทอร์มินัล "
 "ต้องมีการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/orders.py:906
 msgid "Order voided successfully"
 msgstr "ยกเลิกคำสั่งซื้อสำเร็จ"
 
+#: views/orders.py:907
 msgid "Order cannot be voided (not from current shift)"
 msgstr "ไม่สามารถยกเลิกคำสั่งซื้อได้ (ไม่ได้มาจากช่วงเวลาปัจจุบัน)"
 
+#: views/orders.py:1092
 msgid "List POS cashiers"
 msgstr "รายการแคชเชียร์ POS"
 
+#: views/orders.py:1094
 msgid ""
 "Returns list of staff members who have processed POS orders. Used to "
 "populate the cashier filter dropdown. Requires staff authentication and "
@@ -895,12 +1068,15 @@ msgstr ""
 "ใช้ในการเติมข้อมูลในเมนูกรองแคชเชียร์ "
 "ต้องมีการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/orders.py:1100
 msgid "List of cashiers"
 msgstr "รายการแคชเชียร์"
 
+#: views/receipts.py:28
 msgid "Send digital receipt"
 msgstr "ส่งใบเสร็จดิจิทัล"
 
+#: views/receipts.py:30
 msgid ""
 "Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
 "receipt is sent asynchronously via Celery task. Requires staff "
@@ -910,12 +1086,15 @@ msgstr ""
 "ใบเสร็จจะถูกส่งแบบอะซิงโครนัสผ่านงาน Celery "
 "ต้องการการตรวจสอบสิทธิ์ของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/receipts.py:57
 msgid "Receipt queued for sending"
 msgstr "ใบเสร็จกำลังรอการส่ง"
 
+#: views/receipts.py:200
 msgid "Get receipt sending status"
 msgstr "ดึงสถานะการส่งใบเสร็จ"
 
+#: views/receipts.py:202
 msgid ""
 "Check which digital receipts have been sent for an order. Returns timestamps"
 " for email and SMS/WhatsApp deliveries."
@@ -923,12 +1102,15 @@ msgstr ""
 "ตรวจสอบว่าใบเสร็จแบบดิจิทัลใดที่ถูกส่งสำหรับคำสั่งซื้อ "
 "คืนค่าเวลาที่ส่งสำหรับอีเมลและ SMS/WhatsApp"
 
+#: views/receipts.py:207
 msgid "Receipt status"
 msgstr "สถานะใบเสร็จ"
 
+#: views/reports.py:86
 msgid "Get current shift summary"
 msgstr "ดึงสรุปช่วงเวลาปัจจุบัน"
 
+#: views/reports.py:88
 msgid ""
 "Returns the open shift summary for the current cashier on the terminal, "
 "including totals, transaction count, and payment method breakdown. Returns "
@@ -940,9 +1122,11 @@ msgstr ""
 "หากไม่มีช่วงเวลาทำงานที่เปิดอยู่ จะคืนค่า null "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/reports.py:128
 msgid "Open a new shift"
 msgstr "เปิดช่วงเวลาใหม่"
 
+#: views/reports.py:130
 msgid ""
 "Start a new shift on the terminal. Only one open shift is allowed per "
 "terminal at any time. Records the opening cash amount. Requires staff "
@@ -953,15 +1137,19 @@ msgstr ""
 "บันทึกจำนวนเงินสดที่เริ่มต้น ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS "
 "ที่ถูกต้อง"
 
+#: views/reports.py:137
 msgid "Invalid opening cash amount"
 msgstr "จำนวนเงินเริ่มต้นไม่ถูกต้อง"
 
+#: views/reports.py:140
 msgid "A shift is already open on this terminal"
 msgstr "มีช่วงเวลาทำงานเปิดอยู่แล้วบนเครื่องนี้"
 
+#: views/reports.py:193
 msgid "Close current shift"
 msgstr "ปิดกะปัจจุบัน"
 
+#: views/reports.py:195
 msgid ""
 "Close the current open shift. Records the closing cash amount and calculates"
 " the expected vs actual cash difference. Requires staff authentication and "
@@ -971,9 +1159,11 @@ msgstr ""
 "บันทึกจำนวนเงินสดที่เหลือและคำนวณความแตกต่างระหว่างเงินสดที่คาดการณ์กับเงินสดจริง"
 " ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/reports.py:262
 msgid "Record cash movement"
 msgstr "บันทึกการเคลื่อนไหวของเงินสด"
 
+#: views/reports.py:264
 msgid ""
 "Record a cash-in or cash-out movement during the shift. Examples: adding "
 "float, removing for deposit, petty cash. Requires an open shift on the "
@@ -983,15 +1173,19 @@ msgstr ""
 "หรือเงินสดเล็กน้อย ต้องการรอบการทำงานที่เปิดอยู่บนเครื่องปลายทาง "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/reports.py:271
 msgid "Cash movement recorded"
 msgstr "บันทึกการเคลื่อนไหวของเงินสดเรียบร้อยแล้ว"
 
+#: views/reports.py:272
 msgid "Invalid movement data"
 msgstr "ข้อมูลการเคลื่อนไหวไม่ถูกต้อง"
 
+#: views/reports.py:329
 msgid "Get daily sales report"
 msgstr "รับรายงานยอดขายรายวัน"
 
+#: views/reports.py:331
 msgid ""
 "Returns an aggregated daily sales report for the terminal including totals, "
 "transaction count, average transaction value, and payment method breakdown. "
@@ -1001,12 +1195,15 @@ msgstr ""
 "ค่าเฉลี่ยของธุรกรรม และการแยกประเภทตามวิธีการชำระเงิน "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/reports.py:340 views/reports.py:450
 msgid "Report date (ISO format, default: today)"
 msgstr "วันที่รายงาน (รูปแบบ ISO, ค่าเริ่มต้น: วันนี้)"
 
+#: views/reports.py:440
 msgid "Get top selling products"
 msgstr "รับรายการสินค้าขายดี"
 
+#: views/reports.py:442
 msgid ""
 "Returns the top selling products for the terminal on a given date, ranked by"
 " quantity sold. Requires staff authentication and valid POS license."
@@ -1015,12 +1212,15 @@ msgstr ""
 "จัดอันดับตามปริมาณการขาย ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS "
 "ที่ถูกต้อง"
 
+#: views/reports.py:455
 msgid "Number of products to return (default: 10, max: 50)"
 msgstr "จำนวนสินค้าที่จะคืน (ค่าเริ่มต้น: 10, สูงสุด: 50)"
 
+#: views/sync.py:54
 msgid "Sync products since timestamp"
 msgstr "ซิงค์สินค้าตั้งแต่เวลาที่ระบุ"
 
+#: views/sync.py:56
 msgid ""
 "Returns products that have been created or updated since the given "
 "timestamp. Used for incremental product sync to the POS terminal's local "
@@ -1032,17 +1232,21 @@ msgstr ""
 "สำหรับคำขอการส 同步ครั้งต่อไป ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต "
 "POS ที่ถูกต้อง"
 
+#: views/sync.py:65 views/sync.py:156
 msgid "ISO timestamp to fetch changes since. Omit for full sync."
 msgstr ""
 "เวลาสติมแสตมป์ ISO เพื่อดึงการเปลี่ยนแปลงตั้งแต่เวลาที่ระบุ "
 "ไม่ระบุเพื่อซิงค์ทั้งหมด"
 
+#: views/sync.py:69 views/sync.py:160 views/sync.py:725
 msgid "Items per page (default: 100, max: 200)"
 msgstr "จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 100, สูงสุด: 200)"
 
+#: views/sync.py:146
 msgid "Sync customers since timestamp"
 msgstr "ซิงค์ลูกค้าตั้งแต่เวลาที่ระบุ"
 
+#: views/sync.py:148
 msgid ""
 "Returns customers that have been created or have placed orders since the "
 "given timestamp. Used for offline customer lookup. Requires staff "
@@ -1052,12 +1256,15 @@ msgstr ""
 "ใช้สำหรับการค้นหาลูกค้าแบบออฟไลน์ "
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/sync.py:164
 msgid "Customer sync data"
 msgstr "ข้อมูลซิงค์ลูกค้า"
 
+#: views/sync.py:225
 msgid "Upload offline transactions"
 msgstr "อัปโหลดธุรกรรมออฟไลน์"
 
+#: views/sync.py:227
 msgid ""
 "Batch upload transactions that were processed while the terminal was "
 "offline. Each transaction creates an Order with items and payments. Uses "
@@ -1069,12 +1276,15 @@ msgstr ""
 "เพื่อความสม่ำเสมอ -- การอัปโหลดซ้ำจะถูกตรวจจับและข้ามไป "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/sync.py:234
 msgid "Upload results with success/failure per transaction"
 msgstr "อัปโหลดผลลัพธ์พร้อมสถานะสำเร็จ/ล้มเหลวต่อรายการธุรกรรม"
 
+#: views/sync.py:412
 msgid "Get sync status"
 msgstr "ดูสถานะการซิงค์"
 
+#: views/sync.py:414
 msgid ""
 "Returns the current server time and database counts for sync planning. "
 "Requires staff authentication and valid POS license."
@@ -1082,9 +1292,11 @@ msgstr ""
 "คืนค่าเวลาของเซิร์ฟเวอร์และจำนวนข้อมูลในฐานข้อมูลสำหรับการวางแผนการซิงค์ "
 "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/sync.py:457
 msgid "Get sync version info"
 msgstr "ดูข้อมูลเวอร์ชันการซิงค์"
 
+#: views/sync.py:459
 msgid ""
 "Returns API version and data schema version for client compatibility checks."
 " Clients should clear and resync when schema version increases."
@@ -1093,12 +1305,15 @@ msgstr ""
 "และเวอร์ชันโครงสร้างข้อมูลสำหรับการตรวจสอบความเข้ากันได้ของไคลเอนต์ "
 "ไคลเอนต์ควรล้างข้อมูลและซิงค์อีกครั้งเมื่อเวอร์ชันโครงสร้างข้อมูลเพิ่มขึ้น"
 
+#: views/sync.py:463
 msgid "Version information"
 msgstr "ข้อมูลเวอร์ชัน"
 
+#: views/sync.py:483
 msgid "Upload offline stock adjustments"
 msgstr "อัปโหลดการปรับปรุงสต็อกแบบออฟไลน์"
 
+#: views/sync.py:485
 msgid ""
 "Batch upload stock adjustments that were queued while the terminal was "
 "offline. Each adjustment uses an idempotency key to prevent duplicates. "
@@ -1110,15 +1325,19 @@ msgstr ""
 "ต้องการการยืนยันตัวตนของเจ้าหน้าที่ ใบอนุญาต POS ที่ถูกต้อง "
 "และสิทธิ์ในการปรับปรุงสต็อก"
 
+#: views/sync.py:491
 msgid "Upload results with success/failure per adjustment"
 msgstr "อัปโหลดผลลัพธ์พร้อมสถานะสำเร็จ/ล้มเหลวต่อการปรับปรุง"
 
+#: views/sync.py:494
 msgid "POS license or permission required"
 msgstr "ต้องการใบอนุญาตหรือสิทธิ์ POS"
 
+#: views/sync.py:710
 msgid "Sync orders for offline cache"
 msgstr "ซิงค์คำสั่งซื้อสำหรับแคชออฟไลน์"
 
+#: views/sync.py:712
 msgid ""
 "Returns orders for offline caching on the POS terminal. POS orders are "
 "prioritised over web orders up to the terminal's sync limit. Supports delta "
@@ -1130,13 +1349,16 @@ msgstr ""
 " รองรับการซิงค์แบบ delta ผ่านพารามิเตอร์ 'since' "
 "ต้องการการตรวจสอบความถูกต้องของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
 
+#: views/sync.py:721
 msgid "ISO timestamp for delta sync. Omit for full sync."
 msgstr ""
 "ตัวอย่างเวลา ISO สำหรับการซิงค์แบบ delta ไม่ต้องใส่หากต้องการซิงค์แบบเต็ม"
 
+#: views/terminal.py:57
 msgid "Register POS terminal"
 msgstr "ลงทะเบียนอุปกรณ์ POS"
 
+#: views/terminal.py:59
 msgid ""
 "Register a new device as a POS terminal using a pairing code. The pairing "
 "code is generated in the admin panel when creating a terminal."
@@ -1144,31 +1366,40 @@ msgstr ""
 "ลงทะเบียนอุปกรณ์ใหม่เป็นเทอร์มินัล POS โดยใช้รหัสคู่กัน "
 "รหัสคู่กันจะถูกสร้างขึ้นในแดชบอร์ดผู้ดูแลเมื่อสร้างเทอร์มินัล"
 
+#: views/terminal.py:65
 msgid "Terminal registered successfully, returns terminal config"
 msgstr "อุปกรณ์ปลายทางได้ลงทะเบียนสำเร็จ คืนค่าการตั้งค่าอุปกรณ์ปลายทาง"
 
+#: views/terminal.py:67
 msgid "Invalid or expired pairing code"
 msgstr "รหัสคู่ที่ไม่ถูกต้องหรือหมดอายุ"
 
+#: views/terminal.py:113
 msgid "Get terminal configuration"
 msgstr "ดึงการตั้งค่าอุปกรณ์ปลายทาง"
 
+#: views/terminal.py:114
 msgid ""
 "Returns the current terminal's configuration including hardware settings."
 msgstr "คืนค่าการตั้งค่าของอุปกรณ์ปลายทางในปัจจุบัน รวมถึงการตั้งค่าฮาร์ดแวร์"
 
+#: views/terminal.py:163
 msgid "Terminal heartbeat"
 msgstr "การตรวจสอบชีพจรของอุปกรณ์ปลายทาง"
 
+#: views/terminal.py:164
 msgid "Report that the terminal is online. Should be called every 60 seconds."
 msgstr "รายงานว่าอุปกรณ์ปลายทางออนไลน์ ควรเรียกทุก 60 วินาที"
 
+#: views/terminal.py:166
 msgid "Heartbeat recorded"
 msgstr "การตรวจสอบชีพจรถูกบันทึก"
 
+#: views/terminal.py:187
 msgid "Get receipt template"
 msgstr "ดึงแม่แบบใบเสร็จ"
 
+#: views/terminal.py:189
 msgid ""
 "Returns the receipt template for the terminal's warehouse. Falls back to the"
 " default template (no warehouse assigned) if the warehouse has no specific "
@@ -1178,12 +1409,15 @@ msgstr ""
 "จะคืนแม่แบบเริ่มต้น (ไม่มีคลังสินค้าที่กำหนด) หากไม่มีแม่แบบใด ๆ ทั้งสิ้น "
 "จะคืนค่าเริ่มต้นที่เหมาะสม"
 
+#: views/terminal.py:195
 msgid "Receipt template data"
 msgstr "ข้อมูลแม่แบบใบเสร็จ"
 
+#: views/terminal.py:328
 msgid "Get promo slides"
 msgstr "ดึงสไลด์โปรโมชัน"
 
+#: views/terminal.py:330
 msgid ""
 "Returns promotional slides for the terminal's warehouse. Slides are "
 "displayed on the customer-facing display during idle periods."
@@ -1191,12 +1425,15 @@ msgstr ""
 "คืนสไลด์โปรโมชั่นสำหรับคลังสินค้าของปลายทาง "
 "สไลด์จะแสดงบนหน้าจอที่ติดตั้งเพื่อให้ลูกค้าเห็นในช่วงเวลาที่ไม่มีการใช้งาน"
 
+#: views/terminal.py:334
 msgid "List of promo slides with image URLs"
 msgstr "รายการสไลด์โปรโมชันพร้อม URL รูปภาพ"
 
+#: views/terminal.py:408
 msgid "Generate display pairing code"
 msgstr "สร้างรหัสคู่กับแสดงผล"
 
+#: views/terminal.py:410
 msgid ""
 "Generate a short-lived 6-digit pairing code for customer display "
 "authentication. The code expires after 5 minutes and can only be used once. "
@@ -1207,23 +1444,29 @@ msgstr ""
 "รหัสจะหมดอายุหลังจาก 5 นาทีและสามารถใช้ได้เพียงครั้งเดียว "
 "การสร้างรหัสใหม่จะทำให้รหัสที่ยังไม่ได้ใช้ในครั้งก่อนสำหรับเครื่องนี้เป็นโมฆะ"
 
+#: views/terminal.py:415
 msgid "Pairing code generated"
 msgstr "สร้างรหัสคู่กับแล้ว"
 
+#: views/terminal.py:464
 msgid "List managers for unlock override"
 msgstr "รายการผู้จัดการสำหรับการยกเลิกการล็อก"
 
+#: views/terminal.py:465
 msgid ""
 "Return list of managers (id and name) for the manager override unlock flow."
 msgstr ""
 "คืนรายการผู้จัดการ (id และชื่อ) สำหรับกระบวนการปลดล็อกการทับหลังผู้จัดการ"
 
+#: views/terminal.py:467
 msgid "List of managers"
 msgstr "รายการผู้จัดการ"
 
+#: views/terminal.py:503
 msgid "Verify unlock PIN"
 msgstr "ยืนยัน PIN สำหรับการยกเลิกการล็อก"
 
+#: views/terminal.py:505
 msgid ""
 "Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
 "attempts, only manager PIN will be accepted. All attempts are logged for "
@@ -1233,15 +1476,19 @@ msgstr ""
 "หลังจากพยายามล้มเหลว 3 ครั้ง จะยอมรับเฉพาะ PIN ของผู้จัดการเท่านั้น "
 "ทุกครั้งที่พยายามจะถูกบันทึกเพื่อวัตถุประสงค์ในการตรวจสอบ"
 
+#: views/terminal.py:537
 msgid "PIN verified successfully"
 msgstr "ยืนยัน PIN สำเร็จ"
 
+#: views/terminal.py:538
 msgid "Invalid PIN"
 msgstr "PIN ไม่ถูกต้อง"
 
+#: views/terminal.py:700
 msgid "Log terminal lock event"
 msgstr "บันทึกเหตุการณ์การล็อกอุปกรณ์"
 
+#: views/terminal.py:702
 msgid ""
 "Log when a terminal is locked (manually or via auto-lock timeout). This "
 "endpoint is for audit logging only and does not change terminal state."
@@ -1250,15 +1497,19 @@ msgstr ""
 "(ทำได้ทั้งแบบมือและผ่านการตั้งค่าการล็อกอัตโนมัติ) จุดปลายของ API "
 "นี้ใช้เพียงแค่การบันทึกสำหรับการตรวจสอบและไม่เปลี่ยนสถานะของเทอร์มินัล"
 
+#: views/terminal.py:717
 msgid "Event logged successfully"
 msgstr "บันทึกเหตุการณ์สำเร็จ"
 
+#: views/terminal.py:718
 msgid "Invalid event type"
 msgstr "ประเภทเหตุการณ์ไม่ถูกต้อง"
 
+#: views/terminal.py:784
 msgid "Verify unlock card"
 msgstr "ตรวจสอบการปลดล็อกบัตร"
 
+#: views/terminal.py:786
 msgid ""
 "Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
 " compared against stored card hashes. After 3 failed PIN attempts, only "
@@ -1268,37 +1519,48 @@ msgstr ""
 "ข้อมูลบัตรจะถูกแฮชและเปรียบเทียบกับแฮชบัตรที่เก็บไว้ หลังจากลอง PIN ล้มเหลว "
 "3 ครั้ง จะยอมรับเฉพาะบัตรของผู้จัดการเท่านั้น"
 
+#: views/terminal.py:805
 msgid "Card verified successfully"
 msgstr "ตรวจสอบบัตรสำเร็จ"
 
+#: views/terminal.py:806
 msgid "Card not recognized"
 msgstr "บัตรไม่ถูกยอมรับ"
 
+#: views/terminal.py:951
 msgid "Register staff unlock card"
 msgstr "ลงทะเบียนบัตรปลดล็อกพนักงาน"
 
+#: views/terminal.py:952
 msgid "Register a card swipe for the current user's quick terminal unlock."
 msgstr ""
 "ลงทะเบียนการสแกนบัตรสำหรับการปลดล็อกเทอร์มินัลแบบเร็วของผู้ใช้ปัจจุบัน"
 
+#: views/terminal.py:963
 msgid "Card registered successfully"
 msgstr "บัตรลงทะเบียนสำเร็จ"
 
+#: views/terminal.py:964
 msgid "Card already registered to another user"
 msgstr "บัตรนี้ได้ลงทะเบียนไว้กับผู้ใช้อื่นแล้ว"
 
+#: views/terminal.py:1013
 msgid "Remove staff unlock card"
 msgstr "ลบบัตรปลดล็อกพนักงาน"
 
+#: views/terminal.py:1014
 msgid "Remove the current user's registered unlock card."
 msgstr "ลบบัตรที่ลงทะเบียนไว้สำหรับการปลดล็อกของผู้ใช้ปัจจุบัน"
 
+#: views/terminal.py:1016
 msgid "Card removed successfully"
 msgstr "ลบบัตรสำเร็จ"
 
+#: views/terminal.py:1038
 msgid "Set cashier PIN"
 msgstr "ตั้งค่า PIN แคชเชียร์"
 
+#: views/terminal.py:1040
 msgid ""
 "Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
 "must be 4-6 digits. Both pin and pin_confirm must match."
@@ -1306,12 +1568,15 @@ msgstr ""
 "ตั้งค่าหรืออัปเดต PIN ของผู้ใช้ปัจจุบันสำหรับการล็อก/ปลดล็อกตู้จ่ายเงิน PIN "
 "ต้องมี 4-6 หลัก ทั้ง pin และ pin_confirm ต้องตรงกัน"
 
+#: views/terminal.py:1057
 msgid "PIN set successfully"
 msgstr "ตั้งค่า PIN สำเร็จ"
 
+#: views/terminal_provider.py:66
 msgid "Get terminal provider config"
 msgstr "ดึงการตั้งค่าของผู้ให้บริการตู้ขาย"
 
+#: views/terminal_provider.py:68
 msgid ""
 "Returns the terminal provider configuration for the current terminal, "
 "including the integration mode (sdk, cloud, or manual) and connected reader "
@@ -1324,9 +1589,11 @@ msgstr ""
 "ตอนเริ่มต้นเพื่อตรวจสอบว่าตัวอ่านบัตรแบบผสานมีอยู่หรือไม่ "
 "และใช้ขั้นตอนการชำระเงินแบบใด"
 
+#: views/terminal_provider.py:127
 msgid "Create connection token"
 msgstr "สร้างโทเคนการเชื่อมต่อ"
 
+#: views/terminal_provider.py:129
 msgid ""
 "Creates a short-lived connection token for SDK-mode terminal providers (e.g."
 " Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
@@ -1340,9 +1607,11 @@ msgstr ""
 "ผู้ให้บริการคลาวด์ไม่ได้ใช้โทเค็นการเชื่อมต่อ คืนค่า 400 "
 "หากผู้ให้บริการไม่รองรับโทเค็น SDK"
 
+#: views/terminal_provider.py:200
 msgid "List card readers"
 msgstr "รายการเครื่องอ่านบัตร"
 
+#: views/terminal_provider.py:202
 msgid ""
 "List available card readers from the terminal provider. Works for both SDK-"
 "mode and cloud-mode providers. Each reader object contains: id, label, type,"
@@ -1353,9 +1622,11 @@ msgstr ""
 "แต่ละวัตถุของเครื่องอ่านจะประกอบด้วย: id, label, type, serial_number และ "
 "status"
 
+#: views/terminal_provider.py:238
 msgid "Create payment intent for terminal"
 msgstr "สร้างเจตนาการชำระเงินสำหรับตู้ขาย"
 
+#: views/terminal_provider.py:240
 msgid ""
 "Creates a PaymentIntent for card_present collection on the terminal reader. "
 "The frontend uses the returned client_secret to collect payment via the SDK."
@@ -1368,9 +1639,11 @@ msgstr ""
 "ผู้ให้บริการคลาวด์ควรใช้ initiate-cloud-payment หากไม่ได้ระบุสกุลเงิน "
 "จะใช้สกุลเงินที่กำหนดไว้ในเทอร์มินัลเป็นค่าเริ่มต้น"
 
+#: views/terminal_provider.py:316
 msgid "Capture/verify terminal payment"
 msgstr "จับ/ตรวจสอบการชำระเงินผ่านตู้ขาย"
 
+#: views/terminal_provider.py:318
 msgid ""
 "Verifies that a PaymentIntent was successfully processed on the terminal "
 "reader and returns card details (brand, last4) from the provider. SDK only."
@@ -1379,9 +1652,11 @@ msgstr ""
 "และคืนรายละเอียดบัตร (แบรนด์, ตัวเลขสุดท้าย 4 ตัว) จากผู้ให้บริการ "
 "ใช้ได้เฉพาะ SDK เท่านั้น"
 
+#: views/terminal_provider.py:367
 msgid "Cancel terminal payment"
 msgstr "ยกเลิกการชำระเงินที่ตู้"
 
+#: views/terminal_provider.py:369
 msgid ""
 "Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
 "cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
@@ -1390,9 +1665,11 @@ msgstr ""
 "ลูกค้ายกเลิก) ใช้ได้เฉพาะ SDK เท่านั้น ผู้ให้บริการคลาวด์ควรใช้คำสั่ง "
 "cancel-cloud-payment"
 
+#: views/terminal_provider.py:420
 msgid "Initiate cloud payment on reader"
 msgstr "เริ่มต้นการชำระเงินแบบคลาวด์บนอุปกรณ์อ่านบัตร"
 
+#: views/terminal_provider.py:422
 msgid ""
 "Sends a payment request to a card reader via the provider's cloud API. For "
 "cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
@@ -1404,9 +1681,11 @@ msgstr ""
 "ใช้ได้เฉพาะในโหมดคลาวด์ หากผู้ให้บริการใช้โหมด SDK จะคืนค่า 400 "
 "หากไม่ระบุสกุลเงิน จะใช้สกุลเงินที่ตั้งค่าไว้ในอุปกรณ์ปลายทางเป็นค่าเริ่มต้น"
 
+#: views/terminal_provider.py:519
 msgid "Check cloud payment status"
 msgstr "ตรวจสอบสถานะการชำระเงินแบบคลาวด์"
 
+#: views/terminal_provider.py:521
 msgid ""
 "Poll the status of a cloud-initiated payment. Returns the current status: "
 "pending, succeeded, failed, or canceled. When status is 'succeeded', the "
@@ -1420,12 +1699,15 @@ msgstr ""
 "เมื่อสถานะเป็น 'canceled' จะรวมข้อมูล cancel_reason "
 "ฟรอนตเอนด์ควรตรวจสอบสถานะทุก 2 วินาทีจนกว่าสถานะจะไม่ใช่ 'pending' อีกต่อไป"
 
+#: views/terminal_provider.py:532
 msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
 msgstr "ไอดีการดำเนินการเฉพาะผู้ให้บริการที่คืนค่าโดย initiate-cloud-payment"
 
+#: views/terminal_provider.py:587
 msgid "Cancel cloud payment"
 msgstr "ยกเลิกการชำระเงินแบบคลาวด์"
 
+#: views/terminal_provider.py:589
 msgid ""
 "Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
 " varies by provider."
@@ -1433,9 +1715,11 @@ msgstr ""
 "ยกเลิกการชำระเงินที่ยังไม่ได้รับการอนุมัติซึ่งเริ่มต้นจากคลาวด์บนอุปกรณ์อ่านข้อมูล"
 " ใช้ได้เฉพาะคลาวด์เท่านั้น ผลลัพธ์อาจแตกต่างกันไปตามผู้ให้บริการ"
 
+#: views/webauthn.py:66
 msgid "Begin WebAuthn registration"
 msgstr "เริ่มการลงทะเบียน WebAuthn"
 
+#: views/webauthn.py:68
 msgid ""
 "Generate registration options for biometric enrollment. Returns challenge "
 "and credential creation options."
@@ -1443,25 +1727,32 @@ msgstr ""
 "สร้างตัวเลือกการลงทะเบียนสำหรับการลงทะเบียนชีวภาพ "
 "คืนค่าตัวเลือกการท้าทายและสร้างข้อมูลยืนยันตัวตน"
 
+#: views/webauthn.py:70
 msgid "Registration options"
 msgstr "ตัวเลือกการลงทะเบียน"
 
+#: views/webauthn.py:136
 msgid "Complete WebAuthn registration"
 msgstr "สมัครสมาชิก WebAuthn ให้สมบูรณ์"
 
+#: views/webauthn.py:137
 msgid "Verify attestation and store credential for biometric unlock."
 msgstr ""
 "ตรวจสอบการยืนยันและจัดเก็บข้อมูลประจำตัวสำหรับการปลดล็อกด้วยระบบชีวภาพ"
 
+#: views/webauthn.py:150
 msgid "Credential registered"
 msgstr "การรับรองถูกจัดเก็บแล้ว"
 
+#: views/webauthn.py:151 views/webauthn.py:335
 msgid "Verification failed"
 msgstr "การตรวจสอบล้มเหลว"
 
+#: views/webauthn.py:222
 msgid "Begin WebAuthn authentication"
 msgstr "เริ่มต้นการตรวจสอบ WebAuthn"
 
+#: views/webauthn.py:224
 msgid ""
 "Generate authentication challenge for biometric unlock. Returns "
 "allowCredentials for the locked-by user and all managers. If failed_attempts"
@@ -1471,17 +1762,42 @@ msgstr ""
 "allowCredentials สำหรับผู้ใช้ที่ถูกล็อกและผู้จัดการทั้งหมด หาก "
 "failed_attempts >= 3 จะรวมเพียงข้อมูลผู้จัดการเท่านั้น"
 
+#: views/webauthn.py:238
 msgid "Authentication options"
 msgstr "ตัวเลือกการตรวจสอบ"
 
+#: views/webauthn.py:239
 msgid "No credentials registered"
 msgstr "ยังไม่มีการรับรองที่จัดเก็บ"
 
+#: views/webauthn.py:319
 msgid "Complete WebAuthn authentication"
 msgstr "สมบูรณ์การยืนยัน WebAuthn"
 
+#: views/webauthn.py:320
 msgid "Verify biometric assertion and unlock terminal."
 msgstr "ตรวจสอบข้อความยืนยันทางชีวภาพและปลดล็อกเทอร์มินัล"
 
+#: views/webauthn.py:334
 msgid "Authentication successful"
 msgstr "การยืนยันสำเร็จ"
+
+#~ msgid "Apply gift card to cart"
+#~ msgstr "ใช้บัตรของขวัญในตะกร้า"
+
+#~ msgid ""
+#~ "Apply a gift card code to the cart to cover part or all of the total. "
+#~ "Requires staff authentication and valid POS license."
+#~ msgstr ""
+#~ "ใช้โค้ดบัตรของขวัญกับตะกร้าสินค้าเพื่อครอบคลุมส่วนหนึ่งหรือทั้งหมดของยอดรวม "
+#~ "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+#~ msgid "Invalid gift card or insufficient balance"
+#~ msgstr "บัตรของขวัญไม่ถูกต้องหรือยอดเงินไม่เพียงพอ"
+
+#~ msgid ""
+#~ "Remove all items, vouchers, and gift cards from the cart. Requires staff "
+#~ "authentication and valid POS license."
+#~ msgstr ""
+#~ "ลบสินค้า คูปอง และบัตรของขวัญทั้งหมดออกจากตะกร้า "
+#~ "ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"

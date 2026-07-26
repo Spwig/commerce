@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"POT-Creation-Date: 2026-07-20 12:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,43 +18,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: admin.py:33
 msgid "Data Binding"
 msgstr "データバインディング"
 
+#: admin.py:36
 msgid "Select which model this element will display data from."
 msgstr "この要素がデータを表示するモデルを選択してください。"
 
+#: admin.py:40 templates/admin/element_builder/visual_builder.html:362
 msgid "Appearance"
 msgstr "外観"
 
+#: admin.py:46 registry.py:61 registry.py:413
+#: templates/admin/element_builder/customelement/change_list.html:66
 msgid "Status"
 msgstr "ステータス"
 
+#: admin.py:52
 msgid "Timestamps"
 msgstr "タイムスタンプ"
 
+#: admin.py:87 templates/admin/element_builder/visual_builder.html:155
 msgid "None (Static)"
 msgstr "なし（静的）"
 
+#: admin.py:93 models.py:26
+#: templates/admin/element_builder/customelement/change_list.html:53
 msgid "Target Model"
 msgstr "対象モデル"
 
+#: admin.py:100 models.py:46 registry.py:258
 msgid "Icon"
 msgstr "アイコン"
 
+#: admin.py:106 models.py:67
+#: templates/admin/element_builder/customelement/change_list.html:4
+#: templates/admin/element_builder/customelement/change_list.html:19
+#: templates/admin/element_builder/visual_builder.html:22
 msgid "Custom Elements"
 msgstr "カスタム要素"
 
+#: admin_views.py:156 models.py:86
+#: templates/admin/element_builder/visual_builder.html:43
 msgid "None (Static Element)"
 msgstr "なし（静的要素）"
 
+#: admin_views.py:198
 #, python-format
 msgid "Element Builder: %(name)s"
 msgstr "要素ビルダー: %(name)s"
 
+#: api_views.py:39
 msgid "List custom elements"
 msgstr "カスタム要素を一覧表示"
 
+#: api_views.py:40
 msgid ""
 "\n"
 "Returns all active custom elements for the store.\n"
@@ -78,15 +97,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "        "
 
+#: api_views.py:52 api_views.py:75
 msgid "Not authenticated"
 msgstr "認証されていません"
 
+#: api_views.py:53 api_views.py:76
 msgid "Permission denied"
 msgstr "アクセス権がありません"
 
+#: api_views.py:58
 msgid "Create custom element"
 msgstr "カスタム要素を作成"
 
+#: api_views.py:59
 msgid ""
 "\n"
 "Creates a new custom element.\n"
@@ -114,12 +137,15 @@ msgstr ""
 "- Element becomes available in page builder element library\n"
 "        "
 
+#: api_views.py:74 api_views.py:141 api_views.py:160 api_views.py:320
 msgid "Validation error"
 msgstr "検証エラー"
 
+#: api_views.py:103
 msgid "Get custom element details"
 msgstr "カスタム要素の詳細を取得"
 
+#: api_views.py:104
 msgid ""
 "\n"
 "Returns full details of a custom element including its structure.\n"
@@ -141,15 +167,21 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "        "
 
+#: api_views.py:115
 msgid "Element ID"
 msgstr "要素ID"
 
+#: api_views.py:120 api_views.py:142 api_views.py:161 api_views.py:180
+#: api_views.py:387 api_views.py:433 api_views.py:471 api_views.py:713
+#: api_views.py:902
 msgid "Element not found"
 msgstr "要素が見つかりません"
 
+#: api_views.py:125
 msgid "Update custom element"
 msgstr "カスタム要素を更新"
 
+#: api_views.py:126
 msgid ""
 "\n"
 "Updates a custom element's structure and properties.\n"
@@ -177,9 +209,11 @@ msgstr ""
 "- Clears cached renders for this element\n"
 "        "
 
+#: api_views.py:147
 msgid "Partial update custom element"
 msgstr "カスタム要素を部分的に更新"
 
+#: api_views.py:148
 msgid ""
 "\n"
 "Partially updates a custom element.\n"
@@ -201,9 +235,11 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "        "
 
+#: api_views.py:166
 msgid "Delete custom element"
 msgstr "カスタム要素を削除"
 
+#: api_views.py:167
 msgid ""
 "\n"
 "Permanently deletes a custom element.\n"
@@ -231,12 +267,15 @@ msgstr ""
 "instead.\n"
 "        "
 
+#: api_views.py:179 api_views.py:432
 msgid "Element deleted"
 msgstr "要素が削除されました"
 
+#: api_views.py:194
 msgid "List bindable models"
 msgstr "バインド可能なモデルを一覧表示"
 
+#: api_views.py:195
 msgid ""
 "\n"
 "Returns all models that can be bound to custom elements.\n"
@@ -270,12 +309,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:213
 msgid "Dictionary of bindable models with their fields"
 msgstr "バインド可能なモデルとそのフィールドの辞書"
 
+#: api_views.py:267
 msgid "List thumbnail presets"
 msgstr "サムネイルプリセットを一覧表示"
 
+#: api_views.py:268
 msgid ""
 "\n"
 "Returns available image size presets for thumbnail selection.\n"
@@ -297,9 +339,11 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:307
 msgid "Add element to custom element tree"
 msgstr "要素をカスタム要素ツリーに追加"
 
+#: api_views.py:308
 msgid ""
 "\n"
 "Creates a new page_builder Element and adds it to the custom element's "
@@ -323,15 +367,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:319
 msgid "Element created"
 msgstr "要素が作成されました"
 
+#: api_views.py:321
 msgid "Custom element or parent not found"
 msgstr "カスタム要素または親要素が見つかりません"
 
+#: api_views.py:375
 msgid "Update element in custom element tree"
 msgstr "カスタム要素ツリー内の要素を更新"
 
+#: api_views.py:376
 msgid ""
 "\n"
 "Updates an element's content or properties in the custom element tree.\n"
@@ -353,12 +401,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:386
 msgid "Element updated"
 msgstr "要素が更新されました"
 
+#: api_views.py:421
 msgid "Delete element from custom element tree"
 msgstr "カスタム要素ツリーから要素を削除"
 
+#: api_views.py:422
 msgid ""
 "\n"
 "Removes an element and its children from the custom element tree.\n"
@@ -380,9 +431,11 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:458
 msgid "Set element binding"
 msgstr "要素のバインディングを設定"
 
+#: api_views.py:459
 msgid ""
 "\n"
 "Creates or updates a data binding for an element.\n"
@@ -404,12 +457,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:470
 msgid "Binding saved"
 msgstr "バインドが保存されました"
 
+#: api_views.py:535
 msgid "Clear all bindings for a custom element"
 msgstr "カスタム要素のすべてのバインディングをクリア"
 
+#: api_views.py:536
 msgid ""
 "\n"
 "Deletes all element bindings for a custom element.\n"
@@ -431,15 +487,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:546
 msgid "All bindings cleared"
 msgstr "すべてのバインドがクリアされました"
 
+#: api_views.py:547
 msgid "Custom element not found"
 msgstr "カスタム要素が見つかりません"
 
+#: api_views.py:569
 msgid "Get page builder element primitives"
 msgstr "ページビルダーエレメントプリミティブを取得"
 
+#: api_views.py:570
 msgid ""
 "\n"
 "Returns available page_builder element types for building custom elements.\n"
@@ -461,12 +521,15 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:580
 msgid "List of element types with config"
 msgstr "要素タイプとその設定のリスト"
 
+#: api_views.py:627
 msgid "Get element configuration"
 msgstr "エレメント構成を取得"
 
+#: api_views.py:628
 msgid ""
 "\n"
 "Returns full config.json data for a specific element type.\n"
@@ -494,18 +557,23 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:644
 msgid "Element type identifier (e.g., \"heading\", \"image\", \"container\")"
 msgstr "要素タイプの識別子（例: \"heading\", \"image\", \"container\"）"
 
+#: api_views.py:648
 msgid "Element configuration with tabs and properties"
 msgstr "タブとプロパティを持つ要素構成"
 
+#: api_views.py:649
 msgid "Element type not found"
 msgstr "エレメントタイプが見つかりません"
 
+#: api_views.py:691
 msgid "Apply container layout preset"
 msgstr "コンテナレイアウトプリセットを適用"
 
+#: api_views.py:692
 msgid ""
 "\n"
 "Applies a layout preset to a container element, creating child columns.\n"
@@ -545,15 +613,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:711
 msgid "Layout applied successfully"
 msgstr "レイアウトが正常に適用されました"
 
+#: api_views.py:712
 msgid "Invalid layout type"
 msgstr "無効なレイアウトタイプ"
 
+#: api_views.py:784
 msgid "Move element to new parent/position"
 msgstr "要素を新しい親/位置に移動"
 
+#: api_views.py:785
 msgid ""
 "\n"
 "Moves an element to a new parent container and/or position.\n"
@@ -577,15 +649,19 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:796
 msgid "Element moved successfully"
 msgstr "要素を正常に移動しました"
 
+#: api_views.py:797
 msgid "Element or parent not found"
 msgstr "要素または親が見つかりません"
 
+#: api_views.py:878
 msgid "Render element preview"
 msgstr "要素のプレビューをレンダリング"
 
+#: api_views.py:879
 msgid ""
 "\n"
 "Renders an element from the custom element tree as HTML for visual preview.\n"
@@ -607,37 +683,48 @@ msgstr ""
 "**Authentication:** Admin session required\n"
 "    "
 
+#: api_views.py:890
 msgid "Custom element ID"
 msgstr "カスタム要素ID"
 
+#: api_views.py:896
 msgid "Element ID to render (optional - renders root if not provided)"
 msgstr ""
 "レンダリングする要素ID（省略可 - 指定がない場合はルートをレンダリング）"
 
+#: api_views.py:901
 msgid "Rendered HTML preview"
 msgstr "レンダリングされたHTMLプレビュー"
 
+#: apps.py:8
 msgid "Element Builder"
 msgstr "要素ビルダー"
 
+#: models.py:13
 msgid "Name"
 msgstr "名前"
 
+#: models.py:13
 msgid "Display name for the custom element"
 msgstr "カスタム要素の表示名"
 
+#: models.py:16
 msgid "Slug"
 msgstr "スラッグ"
 
+#: models.py:16
 msgid "URL-friendly identifier"
 msgstr "URLに友好的な識別子"
 
+#: models.py:19 registry.py:226 registry.py:319
 msgid "Description"
 msgstr "説明"
 
+#: models.py:21
 msgid "Optional description of what this element displays"
 msgstr "この要素が表示する内容のオプションの説明"
 
+#: models.py:30
 msgid ""
 "Model to bind data from (e.g., \"catalog.Product\"). Leave empty for static "
 "elements."
@@ -645,594 +732,798 @@ msgstr ""
 "データをバインドするモデル（例: \"catalog.Product\"）。静的要素の場合は空にし"
 "てください。"
 
+#: models.py:41
 msgid "Root element of the custom element tree"
 msgstr "カスタム要素ツリーのルート要素"
 
+#: models.py:49
 msgid "Font Awesome icon class"
 msgstr "Font Awesome アイコンクラス"
 
+#: models.py:52 registry.py:215 registry.py:449
 msgid "Category"
 msgstr "カテゴリ"
 
+#: models.py:55
 msgid "Category for grouping in element library"
 msgstr "要素ライブラリでのグループ化用カテゴリ"
 
+#: models.py:59
+#: templates/admin/element_builder/customelement/change_list.html:70
+#: templates/admin/element_builder/partials/element_cards.html:26
 msgid "Active"
 msgstr "アクティブ"
 
+#: models.py:59
 msgid "Whether this element is available for use"
 msgstr "この要素が使用可能かどうか"
 
+#: models.py:62 templates/admin/element_builder/partials/element_cards.html:50
 msgid "Created"
 msgstr "作成済み"
 
+#: models.py:63 templates/admin/element_builder/partials/element_cards.html:46
 msgid "Updated"
 msgstr "更新済み"
 
+#: models.py:66 models.py:103
 msgid "Custom Element"
 msgstr "カスタム要素"
 
+#: models.py:109
 msgid "Element"
 msgstr "要素"
 
+#: models.py:113
 msgid "Content Field"
 msgstr "コンテンツフィールド"
 
+#: models.py:115
 msgid "Element content field to bind data to (e.g., \"text\", \"src\")"
 msgstr "データをバインドする要素コンテンツフィールド（例: \"text\", \"src\"）"
 
+#: models.py:119
 msgid "Model Field"
 msgstr "モデルフィールド"
 
+#: models.py:121
 msgid "Model field to bind data from (e.g., \"name\", \"get_price\")"
 msgstr "データをバインドするモデルフィールド（例: \"name\", \"get_price\"）"
 
+#: models.py:125
 msgid "Thumbnail Preset"
 msgstr "サムネイルプリセット"
 
+#: models.py:128
 msgid "Thumbnail preset for image fields (e.g., \"thumbnail\", \"medium\")"
 msgstr ""
 "画像フィールド用のサムネイルプリセット（例: \"thumbnail\", \"medium\"）"
 
+#: models.py:132
 msgid "Element Binding"
 msgstr "要素バインディング"
 
+#: models.py:133
 msgid "Element Bindings"
 msgstr "要素バインディング一覧"
 
+#: registry.py:23
 msgid "Product"
 msgstr "商品"
 
+#: registry.py:29
 msgid "Product Name"
 msgstr "商品名"
 
+#: registry.py:34
 msgid "Short Description"
 msgstr "短い説明"
 
+#: registry.py:39
 msgid "Full Description"
 msgstr "詳細説明"
 
+#: registry.py:40
 msgid "Rich text product description"
 msgstr "リッチテキスト商品説明"
 
+#: registry.py:45 registry.py:231 registry.py:330 registry.py:408
 msgid "URL Slug"
 msgstr "URL スラッグ"
 
+#: registry.py:50
 msgid "SKU"
 msgstr "SKU"
 
+#: registry.py:55
 msgid "Product Type"
 msgstr "商品タイプ"
 
+#: registry.py:56
 msgid "simple, variable, digital, bundle, gift_card"
 msgstr "シンプル、変動、デジタル、バンドル、ギフトカード"
 
+#: registry.py:62
 msgid "draft, published, discontinued"
 msgstr "下書き、公開済み、販売終了"
 
+#: registry.py:68
 msgid "Main Image"
 msgstr "メイン画像"
 
+#: registry.py:71
 msgid "Primary product image from gallery"
 msgstr "ギャラリーからの主な商品画像"
 
+#: registry.py:77
 msgid "Price"
 msgstr "価格"
 
+#: registry.py:79
 msgid "Formatted current price"
 msgstr "フォーマットされた現在価格"
 
+#: registry.py:84
 msgid "Compare at Price"
 msgstr "比較価格"
 
+#: registry.py:86
 msgid "Original price before discount"
 msgstr "割引前の元価格"
 
+#: registry.py:91
 msgid "Discount Percentage"
 msgstr "割引率"
 
+#: registry.py:93
 msgid "Percentage off (e.g., \"20%\")"
 msgstr "割引率（例: \"20%\"）"
 
+#: registry.py:98
 msgid "Savings Amount"
 msgstr "節約額"
 
+#: registry.py:100
 msgid "Amount saved (e.g., \"$10.00\")"
 msgstr "節約額（例: \"$10.00\"）"
 
+#: registry.py:105
 msgid "On Sale"
 msgstr "販売中"
 
+#: registry.py:107
 msgid "Whether product has active discount"
 msgstr "商品に有効な割引があるかどうか"
 
+#: registry.py:113
 msgid "Stock Status"
 msgstr "在庫状況"
 
+#: registry.py:115
 msgid "In Stock / Out of Stock / Low Stock"
 msgstr "在庫あり / 在庫なし / 在庫わずか"
 
+#: registry.py:120
 msgid "Is In Stock"
 msgstr "在庫あり"
 
+#: registry.py:122
 msgid "Boolean stock availability"
 msgstr "在庫の有無（ブール値）"
 
+#: registry.py:127
 msgid "Available Stock"
 msgstr "在庫数"
 
+#: registry.py:129
 msgid "Number of items available"
 msgstr "利用可能な商品数"
 
+#: registry.py:135 registry.py:221
 msgid "Category Name"
 msgstr "カテゴリ名"
 
+#: registry.py:137
 msgid "Primary category name"
 msgstr "主なカテゴリ名"
 
+#: registry.py:142 registry.py:314
 msgid "Brand Name"
 msgstr "ブランド名"
 
+#: registry.py:144
 msgid "Brand name if assigned"
 msgstr "割り当てられたブランド名"
 
+#: registry.py:150
 msgid "GTIN"
 msgstr "GTIN"
 
+#: registry.py:151
 msgid "Global Trade Item Number"
 msgstr "グローバル貿易品番号"
 
+#: registry.py:156
 msgid "EAN"
 msgstr "EAN"
 
+#: registry.py:157
 msgid "European Article Number"
 msgstr "ヨーロッパ商品番号"
 
+#: registry.py:162
 msgid "UPC"
 msgstr "UPC"
 
+#: registry.py:163
 msgid "Universal Product Code"
 msgstr "汎用商品コード"
 
+#: registry.py:168
 msgid "ISBN"
 msgstr "ISBN"
 
+#: registry.py:169
 msgid "ISBN for books"
 msgstr "書籍用ISBN"
 
+#: registry.py:174
 msgid "MPN"
 msgstr "MPN"
 
+#: registry.py:175
 msgid "Manufacturer Part Number"
 msgstr "製造元部品番号"
 
+#: registry.py:181 registry.py:287 registry.py:364 registry.py:494
 msgid "Meta Title"
 msgstr "メタタイトル"
 
+#: registry.py:182
 msgid "SEO title for search engines"
 msgstr "検索エンジン用SEOタイトル"
 
+#: registry.py:187 registry.py:293 registry.py:370 registry.py:500
 msgid "Meta Description"
 msgstr "メタディスクリプション"
 
+#: registry.py:188
 msgid "SEO meta description"
 msgstr "SEOメタディスクリプション"
 
+#: registry.py:194 registry.py:487
 msgid "View Count"
 msgstr "閲覧数"
 
+#: registry.py:195
 msgid "Number of product views"
 msgstr "商品の閲覧数"
 
+#: registry.py:200
 msgid "Sales Count"
 msgstr "販売数"
 
+#: registry.py:201
 msgid "Number of units sold"
 msgstr "販売された単位数"
 
+#: registry.py:207
 msgid "Product URL"
 msgstr "商品URL"
 
+#: registry.py:209
 msgid "Link to product page"
 msgstr "商品ページへのリンク"
 
+#: registry.py:236
 msgid "Full Path"
 msgstr "フルパス"
 
+#: registry.py:238
 msgid "Breadcrumb path including parents"
 msgstr "親要素を含むパンくずパス"
 
+#: registry.py:244
 msgid "Category Image"
 msgstr "カテゴリ画像"
 
+#: registry.py:250 registry.py:342
 msgid "Banner Image"
 msgstr "バナー画像"
 
+#: registry.py:252
 msgid "Category banner for headers"
 msgstr "ヘッダー用カテゴリバナー"
 
+#: registry.py:259
 msgid "Icon class or identifier"
 msgstr "アイコンクラスまたは識別子"
 
+#: registry.py:264
 msgid "Display Type"
 msgstr "表示タイプ"
 
+#: registry.py:265
 msgid "How products are displayed"
 msgstr "商品の表示方法"
 
+#: registry.py:271 registry.py:349
 msgid "Product Count"
 msgstr "商品数"
 
+#: registry.py:273
 msgid "Number of products in category"
 msgstr "カテゴリ内の商品数"
 
+#: registry.py:279
 msgid "Parent Category"
 msgstr "親カテゴリ"
 
+#: registry.py:281
 msgid "Name of parent category"
 msgstr "親カテゴリの名前"
 
+#: registry.py:288 registry.py:365 registry.py:495
 msgid "SEO title"
 msgstr "SEOタイトル"
 
+#: registry.py:294 registry.py:371 registry.py:501
 msgid "SEO description"
 msgstr "SEO説明"
 
+#: registry.py:300
 msgid "Category URL"
 msgstr "カテゴリURL"
 
+#: registry.py:302
 msgid "Link to category page"
 msgstr "カテゴリページへのリンク"
 
+#: registry.py:308
 msgid "Brand"
 msgstr "ブランド"
 
+#: registry.py:324
 msgid "Brand Story"
 msgstr "ブランドのストーリー"
 
+#: registry.py:325
 msgid "Extended brand narrative"
 msgstr "拡張ブランドナラティブ"
 
+#: registry.py:336
 msgid "Logo"
 msgstr "ロゴ"
 
+#: registry.py:337
 msgid "Brand logo image"
 msgstr "ブランドロゴ画像"
 
+#: registry.py:343
 msgid "Brand page banner"
 msgstr "ブランドページのバナー"
 
+#: registry.py:351
 msgid "Number of products for brand"
 msgstr "ブランドの商品数"
 
+#: registry.py:357
 msgid "Website"
 msgstr "ウェブサイト"
 
+#: registry.py:358
 msgid "Brand website URL"
 msgstr "ブランドウェブサイトURL"
 
+#: registry.py:377
 msgid "Brand URL"
 msgstr "ブランドURL"
 
+#: registry.py:379
 msgid "Link to brand page"
 msgstr "ブランドページへのリンク"
 
+#: registry.py:385
 msgid "Blog Post"
 msgstr "ブログ投稿"
 
+#: registry.py:391
 msgid "Title"
 msgstr "タイトル"
 
+#: registry.py:396
 msgid "Excerpt"
 msgstr "抜粋"
 
+#: registry.py:397
 msgid "Short summary for listings"
 msgstr "一覧用の短い概要"
 
+#: registry.py:402
 msgid "Content"
 msgstr "コンテンツ"
 
+#: registry.py:403
 msgid "Full post content"
 msgstr "投稿の全文コンテンツ"
 
+#: registry.py:414
 msgid "draft, scheduled, published, archived"
 msgstr "下書き、予約、公開、アーカイブ"
 
+#: registry.py:420
 msgid "Featured Image"
 msgstr "特集画像"
 
+#: registry.py:426
 msgid "Social Image"
 msgstr "ソーシャル画像"
 
+#: registry.py:428
 msgid "Image for social media sharing"
 msgstr "ソーシャルメディア共有用画像"
 
+#: registry.py:434
 msgid "Author Name"
 msgstr "著者名"
 
+#: registry.py:436
 msgid "Author display name"
 msgstr "著者の表示名"
 
+#: registry.py:441
 msgid "Author Avatar"
 msgstr "著者アバター"
 
+#: registry.py:443
 msgid "Author profile image"
 msgstr "著者プロフィール画像"
 
+#: registry.py:451
 msgid "Blog category name"
 msgstr "ブログカテゴリ名"
 
+#: registry.py:456
 msgid "Tags"
 msgstr "タグ"
 
+#: registry.py:458
 msgid "Comma-separated tag names"
 msgstr "コンマ区切りのタグ名"
 
+#: registry.py:464
 msgid "Published Date"
 msgstr "公開日"
 
+#: registry.py:465
 msgid "Publication date"
 msgstr "公開日"
 
+#: registry.py:470
 msgid "Created Date"
 msgstr "作成日"
 
+#: registry.py:475
 msgid "Updated Date"
 msgstr "更新日"
 
+#: registry.py:481
 msgid "Reading Time"
 msgstr "読み時間"
 
+#: registry.py:482
 msgid "Estimated minutes to read"
 msgstr "読みにかかる推定時間"
 
+#: registry.py:488
 msgid "Number of views"
 msgstr "閲覧数"
 
+#: registry.py:507
 msgid "Post URL"
 msgstr "投稿URL"
 
+#: registry.py:509
 msgid "Link to blog post"
 msgstr "ブログ投稿へのリンク"
 
+#: templates/admin/element_builder/customelement/change_list.html:21
 msgid "Create reusable data-bound UI components"
 msgstr "再利用可能なデータバインドUIコンポーネントを作成"
 
+#: templates/admin/element_builder/customelement/change_list.html:25
 msgid "Add Element"
 msgstr "要素を追加"
 
+#: templates/admin/element_builder/customelement/change_list.html:34
 msgid "Filters"
 msgstr "フィルター"
 
+#: templates/admin/element_builder/customelement/change_list.html:45
 msgid "Search"
 msgstr "検索"
 
+#: templates/admin/element_builder/customelement/change_list.html:47
 msgid "Search by name or description..."
 msgstr "名前または説明で検索..."
 
+#: templates/admin/element_builder/customelement/change_list.html:56
 msgid "All Models"
 msgstr "すべてのモデル"
 
+#: templates/admin/element_builder/customelement/change_list.html:69
 msgid "All"
 msgstr "すべて"
 
+#: templates/admin/element_builder/customelement/change_list.html:71
+#: templates/admin/element_builder/partials/element_cards.html:30
 msgid "Inactive"
 msgstr "非アクティブ"
 
+#: templates/admin/element_builder/customelement/change_list.html:78
 msgid "Active:"
 msgstr "アクティブ:"
 
+#: templates/admin/element_builder/customelement/change_list.html:82
 msgid "Apply"
 msgstr "適用"
 
+#: templates/admin/element_builder/customelement/change_list.html:85
 msgid "Clear"
 msgstr "クリア"
 
+#: templates/admin/element_builder/customelement/change_list.html:97
 msgid "Run the selected action"
 msgstr "選択されたアクションを実行"
 
+#: templates/admin/element_builder/customelement/change_list.html:97
 msgid "Go"
 msgstr "Go"
 
+#: templates/admin/element_builder/customelement/change_list.html:99
 msgid "of"
 msgstr "of"
 
+#: templates/admin/element_builder/customelement/change_list.html:108
 msgid "element"
 msgstr "要素"
 
+#: templates/admin/element_builder/customelement/change_list.html:125
 #, python-format
 msgid "1 element"
 msgid_plural "%(counter)s elements"
 msgstr[0] "%(counter)s要素"
 msgstr[1] "%(counter)s要素"
 
+#: templates/admin/element_builder/customelement/change_list.html:127
 msgid "elements"
 msgstr "要素一覧"
 
+#: templates/admin/element_builder/customelement/change_list.html:131
 msgid "Show all"
 msgstr "すべて表示"
 
+#: templates/admin/element_builder/partials/element_cards.html:46
 msgid "ago"
 msgstr "前"
 
+#: templates/admin/element_builder/partials/element_cards.html:58
 msgid "Open Builder"
 msgstr "ビルダーを開く"
 
+#: templates/admin/element_builder/partials/element_cards.html:63
 msgid "Edit"
 msgstr "編集"
 
+#: templates/admin/element_builder/partials/element_cards.html:68
 msgid "Delete"
 msgstr "削除"
 
+#: templates/admin/element_builder/partials/element_cards.html:78
 msgid "No custom elements found."
 msgstr "カスタム要素は見つかりませんでした。"
 
+#: templates/admin/element_builder/partials/element_cards.html:80
 msgid "Create your first custom element"
 msgstr "最初のカスタム要素を作成してください"
 
+#: templates/admin/element_builder/visual_builder.html:21
 msgid "Home"
 msgstr "ホーム"
 
+#: templates/admin/element_builder/visual_builder.html:24
 msgid "Visual Builder"
 msgstr "ビジュアルビルダー"
 
+#: templates/admin/element_builder/visual_builder.html:33
 msgid "Back to Elements"
 msgstr "要素に戻る"
 
+#: templates/admin/element_builder/visual_builder.html:41
 msgid "Model"
 msgstr "モデル"
 
+#: templates/admin/element_builder/visual_builder.html:53
+#: templates/admin/element_builder/visual_builder.html:72
+#: templates/admin/element_builder/visual_builder.html:74
+#: templates/admin/element_builder/visual_builder.html:104
 msgid "Preview"
 msgstr "プレビュー"
 
+#: templates/admin/element_builder/visual_builder.html:55
 msgid "Search for item..."
 msgstr "アイテムを検索..."
 
+#: templates/admin/element_builder/visual_builder.html:64
 msgid "Saved"
 msgstr "保存済み"
 
+#: templates/admin/element_builder/visual_builder.html:66
 msgid "Undo"
 msgstr "元に戻す"
 
+#: templates/admin/element_builder/visual_builder.html:69
 msgid "Redo"
 msgstr "やり直す"
 
+#: templates/admin/element_builder/visual_builder.html:76
+#: templates/admin/element_builder/visual_builder.html:78
 msgid "Save"
 msgstr "保存"
 
+#: templates/admin/element_builder/visual_builder.html:88
 msgid "Elements"
 msgstr "要素"
 
+#: templates/admin/element_builder/visual_builder.html:94
 msgid "Loading elements..."
 msgstr "要素を読み込み中..."
 
+#: templates/admin/element_builder/visual_builder.html:103
 msgid "Visual Preview"
 msgstr "視覚的なプレビュー"
 
+#: templates/admin/element_builder/visual_builder.html:106
 msgid "Structure View"
 msgstr "構造ビュー"
 
+#: templates/admin/element_builder/visual_builder.html:107
 msgid "Structure"
 msgstr "構造"
 
+#: templates/admin/element_builder/visual_builder.html:113
 msgid "Drag elements here to start building"
 msgstr "ここに要素をドラッグして構築を開始してください。"
 
+#: templates/admin/element_builder/visual_builder.html:119
 msgid "Loading preview..."
 msgstr "プレビューを読み込み中..."
 
+#: templates/admin/element_builder/visual_builder.html:131
 msgid "Properties"
 msgstr "プロパティ"
 
+#: templates/admin/element_builder/visual_builder.html:136
 msgid "Select an element to edit its properties"
 msgstr "プロパティを編集する要素を選択してください。"
 
+#: templates/admin/element_builder/visual_builder.html:149
 msgid "Field Binding"
 msgstr "フィールドバインディング"
 
+#: templates/admin/element_builder/visual_builder.html:153
 msgid "Bind to Field"
 msgstr "フィールドにバインド"
 
+#: templates/admin/element_builder/visual_builder.html:159
 msgid "Thumbnail Size"
 msgstr "サムネイルサイズ"
 
+#: templates/admin/element_builder/visual_builder.html:172
 msgid "Layout"
 msgstr "レイアウト"
 
+#: templates/admin/element_builder/visual_builder.html:176
 msgid "Display"
 msgstr "表示"
 
+#: templates/admin/element_builder/visual_builder.html:191
 msgid "Direction"
 msgstr "方向"
 
+#: templates/admin/element_builder/visual_builder.html:200
 msgid "Wrap"
 msgstr "ラップ"
 
+#: templates/admin/element_builder/visual_builder.html:210
 msgid "Justify"
 msgstr "ジャスティフィケーション"
 
+#: templates/admin/element_builder/visual_builder.html:221
 msgid "Align"
 msgstr "アライメント"
 
+#: templates/admin/element_builder/visual_builder.html:232
+#: templates/admin/element_builder/visual_builder.html:254
 msgid "Gap"
 msgstr "ギャップ"
 
+#: templates/admin/element_builder/visual_builder.html:242
 msgid "Columns"
 msgstr "列"
 
+#: templates/admin/element_builder/visual_builder.html:258
 msgid "Align Items"
 msgstr "アイテムのアライメント"
 
+#: templates/admin/element_builder/visual_builder.html:268
 msgid "Justify Items"
 msgstr "アイテムのジャスティフィケーション"
 
+#: templates/admin/element_builder/visual_builder.html:281
 msgid "Width"
 msgstr "幅"
 
+#: templates/admin/element_builder/visual_builder.html:285
 msgid "Height"
 msgstr "高さ"
 
+#: templates/admin/element_builder/visual_builder.html:295
 msgid "Spacing"
 msgstr "間隔"
 
+#: templates/admin/element_builder/visual_builder.html:299
 msgid "Padding"
 msgstr "パディング"
 
+#: templates/admin/element_builder/visual_builder.html:305
 msgid "Margin"
 msgstr "マージン"
 
+#: templates/admin/element_builder/visual_builder.html:316
 msgid "Typography"
 msgstr "タイポグラフィ"
 
+#: templates/admin/element_builder/visual_builder.html:321
 msgid "Font Size"
 msgstr "フォントサイズ"
 
+#: templates/admin/element_builder/visual_builder.html:325
 msgid "Font Weight"
 msgstr "フォントウェイト"
 
+#: templates/admin/element_builder/visual_builder.html:337
 msgid "Line Height"
 msgstr "行間"
 
+#: templates/admin/element_builder/visual_builder.html:341
 msgid "Text Align"
 msgstr "テキストの配置"
 
+#: templates/admin/element_builder/visual_builder.html:351
 msgid "Text Color"
 msgstr "文字色"
 
+#: templates/admin/element_builder/visual_builder.html:366
 msgid "Background"
 msgstr "背景"
 
+#: templates/admin/element_builder/visual_builder.html:372
 msgid "Border"
 msgstr "枠線"
 
+#: templates/admin/element_builder/visual_builder.html:378
 msgid "Border Radius"
 msgstr "角丸"
 
+#: templates/admin/element_builder/visual_builder.html:382
 msgid "Box Shadow"
 msgstr "ボックスシャドウ"
 
+#: templates/admin/element_builder/visual_builder.html:388
 msgid "Opacity"
 msgstr "不透明度"
 
+#: templates/admin/element_builder/visual_builder.html:397
 msgid "Delete Element"
 msgstr "要素を削除"
